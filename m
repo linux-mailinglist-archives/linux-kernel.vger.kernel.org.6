@@ -1,115 +1,126 @@
-Return-Path: <linux-kernel+bounces-449329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A8A9F4D46
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:12:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AECE9F4D41
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:12:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE8EF16D20E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:12:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28A137A82D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22DD1F7545;
-	Tue, 17 Dec 2024 14:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111C71F7071;
+	Tue, 17 Dec 2024 14:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="PeD/ivdh"
-Received: from mr85p00im-hyfv06021401.me.com (mr85p00im-hyfv06021401.me.com [17.58.23.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UQCTsnao"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872431F7542
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33E71F540D
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734444620; cv=none; b=iQLAwzKyZ2dykirX8Q9nwGDrMbSzMU5eZmmbl/1QlMZWauR5k7G5jM1jbrX3k7MJGKkhxH7lsi8S5a1bvyJ01nfwHRCg2V9IgHkMaJJtO8b8twaDT+AevnWmgpBogl7/+H/xA1CKbAa+fc8jsEitEteW05gip6j4gcMT9sa+3UU=
+	t=1734444598; cv=none; b=FmqEHRnF8eCCVWYXhI693SntMy5PJwa6OmHZi/IPgtU9V20I8D24ETrHCASS2/inVJeK4dTKwcT3mGX6vEu8uBkmF6sb74vG2iJfPVmUr7GCp2QrYh2kaVvFTkXD+vvciT52uBf97sVhJ/M31YAlB1CHqaYulYMAsprK3Ksit4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734444620; c=relaxed/simple;
-	bh=VLsnCtafXhDS7hweNxcgJtp3sZLnCmqILMkQI7ZbwxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=egFh9rKl0nr0U1ggZdn0hUaHFsMKkyUc++9EYLD9mAWKAbjT0knUPpzbnMvgTaU9ZGjwsmRLO8EZ7ZJ3Tf9gdoWRVNbbYL/IiIyJeKgrIoMBPMaJTcIgobVZibP/UlUsYt22TcJX42OJP///GFDnO90ZxRNfTS1DemfLo280Ya0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=PeD/ivdh; arc=none smtp.client-ip=17.58.23.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1734444617;
-	bh=Z37RZ5z2SjLpNzhBno1LkTxWUoMuUAtliAQC+gyH/dM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=PeD/ivdh2nr/rPjRF/bS/0P1DswFY+MV9l3xiHsxFEWPcA1gNjEJG2m2neuQEpc0P
-	 x67HAvvd8HOPUqWxxBZW54iWxuGqrX6aA5atN5ACIyB5ciquSEbyKJnmfszrY53dcv
-	 esAlsAHeP/vLNYjxAKfI0VpCrcd2psksBiQHpwGXrd7LzW0TE/QyOYApsF9FwZAMEH
-	 t4OnVFimMLmJ++l56kIi6amuiQuP2vC6ZaPUtmISBgHxpkfi4DrGry2OONddIk5Xgs
-	 x+fMBPMcJMf+R9y3IVq0gFLH4ennoTcQJqSSytTyXy3i4RqFb/sTblDbEIqLGmA3QY
-	 HslSA/MyTygtQ==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-hyfv06021401.me.com (Postfix) with ESMTPSA id 2BA4330382B0;
-	Tue, 17 Dec 2024 14:10:11 +0000 (UTC)
-Message-ID: <bffb665a-f747-421a-833a-a4820927e86c@icloud.com>
-Date: Tue, 17 Dec 2024 22:09:48 +0800
+	s=arc-20240116; t=1734444598; c=relaxed/simple;
+	bh=DTVaSDi1vlTbB2vKF1jfNBqEXNtrKAZiazfohZg5+fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNjY/LF2Fn9gmG2YU+KZdcTgkhQDYZezJtP+cc6XI8BLQ1o12z+/3ud5YjbNDcVfPmncC+uqLr64ojnoLHoJOThWbXMdNYVFbsabjLh3u7UBzZEiX2TfyB6HX8yQwiw3DnAgmhc3ex3KVOpinxMAuAp3PPl+pwRtZd4sLyl1+AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UQCTsnao; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-540215984f0so6013691e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:09:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734444595; x=1735049395; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mV9n8rD9lCXVFxHRKSb6HxnIcMmuUp+M9EhLoSWf19Q=;
+        b=UQCTsnaoIPaghcR45Bn6jeRU4UIGXrAhQVeWxbySq/rKYvxCz4DHWGNLI56MnoIht7
+         VAy2umfmf1+pGUBgRrAYv3KM11db/AHKiFnc0QGM8AjnGaHZ0wLZ1qDIEsXkew4nlcwl
+         vvR2Llp+MqcunvR+fDAT+LfRQH1+zpmPzyaA4XHMrb7ysk/WKrU7QAcknFyo/OjEa8LV
+         mkPJ8NJE385KgNpDVvLenhqmCsmlUy+jaAGDm4GXD094UFAErm8h4a7fccEFsvEFwMvu
+         7ygZwwUSpAf36JhkK2X3TM8wxJR7I+F1vs0jWV+XtkdGX/FOl3bE2FNW9Tomk5Lwd/FK
+         iNHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734444595; x=1735049395;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mV9n8rD9lCXVFxHRKSb6HxnIcMmuUp+M9EhLoSWf19Q=;
+        b=ssM+lY6dFUVRkYmg/jOgcAG66CM+dfBWpiQIxS1fWzHTfitLpupOLTt448r6rZmPpZ
+         fjVREeColEZR4o3g5sB6gqFZjJJgqLXD/i9lrf6LzP0vGi6gnuDMEAq1nwKPjC6W6uLB
+         iPhj0w6DWo0D2vQMpPy4g1ifHqerf5hFjh43tjqlAa+oTtL1DzrlaGMI/TPFZCFQ1Mvq
+         1uGxpuE7JRq8DKvZJdah4Ji2aYfDn1TPJMpKyEA9td338Lely2+QfeFdUHk9anVF9BFc
+         TMbMr2r9OTajry5ag1g+0PfPBdRYeCfs7pa80T7G6Db21jvIgX3P1TzmsgPOUEWheeW6
+         KEaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWq2yWLjZ2IpRwe/38gogbaC9aLRjC/PQiyUWhnPQlu/VU9M7Wp6z5yPsiL8HxNVof+1Eoc5Kam+HeIa8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOM+F/Aki+VoHuQJ+ClTziRwfClru7OT626rrjMXUhB7WW7Rvk
+	BHVqj1ilUAwpTZkGKWnI7dFtZr4aMD5mAkOPqmeujdNt/H6OUtRyzt5sUErfgH0=
+X-Gm-Gg: ASbGncsF6sm5NbWVFDb7AJC7Biu+gIlVtH7ATZIRwtKvfOu7mLPnpon8O0pwJWrS76T
+	sHtaJJpL4ptQWoznF0Xisnp0necpM4//VyXXVBYD7mMyPhhVWXmriN2/hO461HhQTEO4NzBHeXX
+	awkvI1LxWErWnzKJZoQnWP2j5ctskUhe/ujADkU8sOBFXEJizUXIyxQShF/w1CvDI9qIZ/OLsQN
+	zKKWmrSIQLn2uv73eCMw/t3TSuARF3CxEm9Nkv/lNHB8EmrqI+o/jA+8BT6b9duKCEHTkQoquMa
+	JOAhSSixQYBtS1FPs8kYpjg4AjafkyEyJ8+T
+X-Google-Smtp-Source: AGHT+IHTf5dvyD0mHW1jS/2vTroVhCSJd6opzQzzWVJuSVJWGrT5Dsv7wwpXGqTnNzyEJctFejbUSg==
+X-Received: by 2002:a05:6512:3189:b0:53e:3a01:cf4d with SMTP id 2adb3069b0e04-5409055dff5mr6856692e87.31.1734444594653;
+        Tue, 17 Dec 2024 06:09:54 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120ba9dcbsm1166017e87.73.2024.12.17.06.09.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 06:09:53 -0800 (PST)
+Date: Tue, 17 Dec 2024 16:09:50 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v7 00/10] drm: add DRM HDMI Codec framework
+Message-ID: <kyytu3nofrjkajwatmxdyav7oekkeigrhx5amddgjtlpsdl2m5@3moqad3gfds5>
+References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
+ <D6DZB443IQ7A.3P1135M6DMF2S@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/9] driver core: class: Fix wild pointer dereferences
- in API class_dev_iter_next()
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Tejun Heo <tj@kernel.org>,
- Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
- Boris Burkov <boris@bur.io>, Davidlohr Bueso <dave@stgolabs.net>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-cxl@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241212-class_fix-v3-0-04e20c4f0971@quicinc.com>
- <20241212-class_fix-v3-1-04e20c4f0971@quicinc.com>
- <20241216153611.00007f26@huawei.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20241216153611.00007f26@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 30aZxNNOonJSucW78TiIS4UeSm7wEU_U
-X-Proofpoint-ORIG-GUID: 30aZxNNOonJSucW78TiIS4UeSm7wEU_U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-17_08,2024-12-17_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- phishscore=0 bulkscore=0 mlxscore=0 clxscore=1011 malwarescore=0
- suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412170113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D6DZB443IQ7A.3P1135M6DMF2S@cknow.org>
 
-On 2024/12/16 23:36, Jonathan Cameron wrote:
->> Actually, all callers of these APIs have such usage pattern in kernel tree.
->> Fix by:
->> - Initialize output parameter @iter by memset() in class_dev_iter_init()
->>   and give callers prompt by pr_crit() for the error.
->> - Check if @iter is valid in class_dev_iter_next().
->>
->> Fixes: 7b884b7f24b4 ("driver core: class.c: convert to only use class_to_subsys")
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> This looks fine in general, but over to the core device model folk for which
-> element they think should be used as the sentinel and whether zeroing the
-> whole thing makes sense or just the one being used as a flag, or even setting
-> it to an error pointer.
+On Tue, Dec 17, 2024 at 01:36:29PM +0100, Diederik de Haas wrote:
+> On Tue Dec 17, 2024 at 1:40 AM CET, Dmitry Baryshkov wrote:
+> > This series depends on the ELD mutex series [1]
+> >
+> > [1] https://lore.kernel.org/r/20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org
+> 
+> There's a v2 of that patch series here:
+> https://lore.kernel.org/all/20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org/
 
-thank you Jonathan for code review.
+... and it's even merged to drm-misc-next. I dropped it from b4 deps,
+but I forgot to update the cover letter.
 
-i actually ever thought about below change and finally dropped it.
-
--       if (!sp)
-+       if (!sp) {
-+               iter->sp = NULL;
-                return;
-+       }
-
-
-For such APIs, they return void, and does not any output parameter to
-feedback operation results.
-it may be good practice to always reset its output parameters firstly.
+-- 
+With best wishes
+Dmitry
 
