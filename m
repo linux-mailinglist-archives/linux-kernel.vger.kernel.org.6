@@ -1,102 +1,108 @@
-Return-Path: <linux-kernel+bounces-449952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6A49F58B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:27:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94769F58BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40625188319E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:19:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7348E1890FD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9405F1F9F4E;
-	Tue, 17 Dec 2024 21:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C8E1F9F77;
+	Tue, 17 Dec 2024 21:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ol2zlekT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="DSJ0Il+o"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE431DA61D;
-	Tue, 17 Dec 2024 21:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD6D1DA61D;
+	Tue, 17 Dec 2024 21:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734470363; cv=none; b=bf/nbn6EZI/theIlOfd4s37NkID19TKXaoUf3rT5ucDqgYFTIZA4Iqxa2uAvfy/WndZq0+x12VuBfhlU7KzXMHFbB0M0DoCqNwTebaG5DKCrahLQ22p75nj0llDVjsSg7lHNCDvnO6hUKbiLoYrs1yzcjRTczBiJogzk1UTK4QA=
+	t=1734470423; cv=none; b=aiHzo1aRWPS5jUGSWA7hGJHvi88FauLKr0vG8TFMKQl9WVHUwtzcR7BkancI/IhYF/cuiNE7hffpsRjciz/26JViSMoPklWLUQ36Pmj1KxwNDjczoClqKe24T/0df+D5HXJGTTwil6vjeMrEFTjdsbfVQPYQAPTPmarCFaujsgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734470363; c=relaxed/simple;
-	bh=jrc3lY75xHWJSSzKDhwHm1denSyOJLkP2xgW2pqkhag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KTPD4gFH1w/qq9P9hQIijmTTWst+fZ4mh4UMXDjg5C9++P8dF5rVsRM7ZI6hxDdYxTAro3lrqsnMyR87BGKDDWrmx3asHODICaho4lZewBnqaDXjGq9QcaZ5ipF8YpPfb+R0qfeE4nqlwzNGDHV53JIyw3tRhmF4zzpZ/Y9l8U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ol2zlekT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6E1BC4CED3;
-	Tue, 17 Dec 2024 21:19:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734470362;
-	bh=jrc3lY75xHWJSSzKDhwHm1denSyOJLkP2xgW2pqkhag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ol2zlekTlcUlX42G6Y9JWMcaF4pKnf6xFOzNzkclzDB35apI0xnTEazu7c91I9hq6
-	 M7f+Xl3OzjIzCuJD3qs+PCuioRvGk4icTQas53Kip11pdM43aj6WnYEd7oQW2eNiCK
-	 t4V438NIE4HW3fB7tJaSKyFDXqDz7p7ctQf3tjRnbLl2C/Swyq3rVXJz7y4CgTGWrD
-	 VuJKpHLKX7rVYLA/bXEYc6XnBrI/gKR6Gi35EUtApLJLKdDpC5xyqBixyeZmt9UqNP
-	 O30vxDbupuSKPCUmKhKisxvX0GuWoEDQCZ5Hx+ZC3UIFaymbiq2DoWPDGujWC4mF9Z
-	 kKZNe/uTL6WzQ==
-Date: Tue, 17 Dec 2024 21:19:17 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Shree Ramamoorthy <s-ramamoorthy@ti.com>, aaro.koskinen@iki.fi,
-	andreas@kemnade.info, khilman@baylibre.com, rogerq@kernel.org,
-	tony@atomide.com, lgirdwood@gmail.com, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org, m-leonard@ti.com, praneeth@ti.com
-Subject: Re: [PATCH v1 2/4] regulator: tps65219: Update driver name
-Message-ID: <59e004d7-7e46-4141-bf61-f01a6e5296e2@sirena.org.uk>
-References: <20241217204526.1010989-1-s-ramamoorthy@ti.com>
- <20241217204526.1010989-3-s-ramamoorthy@ti.com>
- <23dd1912-31cf-4e99-8fb0-0fbd68eee8e2@sirena.org.uk>
- <2fdf8fd0-b764-4720-8f7b-71b5d63d2541@ti.com>
+	s=arc-20240116; t=1734470423; c=relaxed/simple;
+	bh=RgbePHvvaBeK0+l594OFpDIFAeIwpggIMOhdYkR0pjI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s8kmMFtiApTy1kLcWJSfonIHVgFWqtXUL4xDKaB6YDt4MMTWZO3PtR2HCzAqNedwBODdAW4vVoM3Dkgx9hwL8Cxdlv0JOnWDyYfx9u9Rda0l8AODZSCQkNoYaaaP1OI+ZkFQ9Cai3kw+tT4e6wuqL0cOPjCDaV6r7bHalr7MJuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=DSJ0Il+o; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc.intra.ispras.ru (unknown [10.10.165.15])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 9BC4A40777B2;
+	Tue, 17 Dec 2024 21:20:08 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 9BC4A40777B2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1734470408;
+	bh=ZIM6X6jHhJs3zfT8dqSZ/6JFwa46VTqpC1EF5WvsU/c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DSJ0Il+oThkN8V9hzYtc2EQ7xMgatryrZ7MYUH06Su/R9PZmqIcgmuTBDrsQTWYsh
+	 Z93ZNg8azPUCkIraS/9AeUk3hbG71KAprj7dzFoC/5Z3rG/r/IEeGbKnhmB8EaiP+G
+	 9GNw93O2PMZwCxLoEaqBTLqwOjsCCThSbGZEvmR8=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Eric Dumazet <edumazet@google.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	netdev@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] Bluetooth: L2CAP: handle NULL sock pointer in l2cap_sock_alloc
+Date: Wed, 18 Dec 2024 00:19:59 +0300
+Message-Id: <20241217211959.279881-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CYPEFqoeyAgL+0Ji"
-Content-Disposition: inline
-In-Reply-To: <2fdf8fd0-b764-4720-8f7b-71b5d63d2541@ti.com>
-X-Cookie: The sum of the Universe is zero.
+Content-Transfer-Encoding: 8bit
 
+A NULL sock pointer is passed into l2cap_sock_alloc() when it is called
+from l2cap_sock_new_connection_cb() and the error handling paths should
+also be aware of it.
 
---CYPEFqoeyAgL+0Ji
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Seemingly a more elegant solution would be to swap bt_sock_alloc() and
+l2cap_chan_create() calls since they are not interdependent to that moment
+but then l2cap_chan_create() adds the soon to be deallocated and still
+dummy-initialized channel to the global list accessible by many L2CAP
+paths. The channel would be removed from the list in short period of time
+but be a bit more straight-forward here and just check for NULL instead of
+changing the order of function calls.
 
-On Tue, Dec 17, 2024 at 03:16:44PM -0600, Andrew Davis wrote:
-> On 12/17/24 3:01 PM, Mark Brown wrote:
+Found by Linux Verification Center (linuxtesting.org) with SVACE static
+analysis tool.
 
-> > This isn't just a naming convention thing AFACIT, the MFD registers the
-> > new name so the driver wouldn't previously have loaded.  How did this
-> > ever work?
+Fixes: 7c4f78cdb8e7 ("Bluetooth: L2CAP: do not leave dangling sk pointer on error in l2cap_sock_create()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
+ net/bluetooth/l2cap_sock.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> It matches based on the platform device .id_table[0] which does have
-> "tps65219-regulator" listed, the driver .name itself is only used
-> as a last fallback when there is no .id_table.
+diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+index 3d2553dcdb1b..49f97d4138ea 100644
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@ -1888,7 +1888,8 @@ static struct sock *l2cap_sock_alloc(struct net *net, struct socket *sock,
+ 	chan = l2cap_chan_create();
+ 	if (!chan) {
+ 		sk_free(sk);
+-		sock->sk = NULL;
++		if (sock)
++			sock->sk = NULL;
+ 		return NULL;
+ 	}
+ 
+-- 
+2.39.5
 
-Ah, there's not enough context in the diff to show the ID table.
-
---CYPEFqoeyAgL+0Ji
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdh6tQACgkQJNaLcl1U
-h9ByzAf7Bc/PZDfMPtI9KxJCA6hCXGpfdjWES8E2VVongW5g6QXFNq7pYdHbRP+i
-DaEanNv4FztvVbVNHRNdcL4HPnUuVtK3/mU+Apm0Hkl8DjlJ22UKrgTtxb/qvxyT
-UHpJguD6lQauiFG5Skac4dGI/Nhh4cGTRJ4LKDK3vP/xAeVy2A8EPgaKsw3bRTVq
-ETeluEiwFxisxjLuasbWL1E3USy2EuFuilk9yMqeeBDfc+tU4FLUA8JjynrQy+Db
-Q/sLC8nzdkKUeuF7SlnsKbIdbXje703U+TF12B2MyRuaprRiN4QpNhS+der4caK5
-16WXZ46xpdD7a+zeCcYT8yE0z9AVbA==
-=acoK
------END PGP SIGNATURE-----
-
---CYPEFqoeyAgL+0Ji--
 
