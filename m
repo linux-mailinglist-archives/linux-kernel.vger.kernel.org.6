@@ -1,297 +1,377 @@
-Return-Path: <linux-kernel+bounces-449124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADB29F4A38
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:46:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610619F4A3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:47:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98AB97A54F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07BD4188D8CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32FD1EF0B7;
-	Tue, 17 Dec 2024 11:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D6C1EE021;
+	Tue, 17 Dec 2024 11:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dKRV42C+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCED1DA309;
-	Tue, 17 Dec 2024 11:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="aNYK47n6"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF741E885A;
+	Tue, 17 Dec 2024 11:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734435963; cv=none; b=uF46+yt6kkkphHhIIril7vb5YWjCOFtYjPavGg2vEGI8cmnXycYTjy2UuMR2OTbNi0Zc77tuQlh1OGndtmHaINpsttF7Vcu+nsegVw971bl9oDrhkrDf8uUPfOZ8DO4W41xoRoCibcJFHHxdCIoglabRF014EbrD5HPAP2Jgrx0=
+	t=1734436044; cv=none; b=WvRhcMVghZarh66NgGRC0Dt/yv5zcak/lJoBKJo5Rdm2baKh59MTnU+aNRZXcPegyheQ7n/f0ia3DlZHbtnby4PrPlc/4CgqZgmN7csSuftNmqUg1H87pMPnDnLi/s3fMYVqhHZzj25NKbTQLnOcb4jA1WSFMvoxmMMTiVdFe3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734435963; c=relaxed/simple;
-	bh=COFCXH2KK4Ktwv1Vx85qgbKkoPJWqNa3c+oYUPg4W4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=H5Q1kl4nbQgBGI7JjVgnqKkOxvLE885ZBjWYkV+OQRGjtTz1T0+c5wDriQUCA1GkrmXADbA8K1V61GppPTJr9tEDgE13D5+g8bKtpCiy4XIlv5uNGdUkbUZGos1bcgUPXxh6tl/j3iAgvoAIUd/8/B+Ew/G9mZT1Av4eYI2F5E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dKRV42C+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH6RlwC003621;
-	Tue, 17 Dec 2024 11:45:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Poy8u1ERUTetn7gECjlsVW4OLmGxnHVpVe/HJdcMtgo=; b=dKRV42C+j64MEhKp
-	Fnx43sgB9uOV8u7vGg6qq/US9uoYmP8hZbNqslciWthudHgz4R2qvuzlzFh4fTOX
-	HAsgYVZZEjFQ2KxRyWGYsi6v+Yl2tjZDK/TlY7bRBGGZh88Dg1AZbybVYhGtS4Xs
-	vQ4XzeijrAUiYccaDm9ZvtAVjkZMy79tqNoAgo+E12Qbw9/bBhyW0ATvZbr++vEe
-	UOjAS8s7AEOL3md2pw9pv8fS6kE416gBEP1cNvsWbJKgzECGLnm+MiVtDns1rxEZ
-	rf2aT07R9Fb2r0LPXMzpsi37TOs4AOCrhAiYZyzF1R1ArpZOt7fNn46pYI32RK27
-	ACCVng==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k424gvx2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 11:45:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHBjpSk030176
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 11:45:51 GMT
-Received: from [10.190.163.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Dec
- 2024 03:45:47 -0800
-Message-ID: <b31d2e68-e4e0-97e6-158c-1b9ab8308551@quicinc.com>
-Date: Tue, 17 Dec 2024 17:15:39 +0530
+	s=arc-20240116; t=1734436044; c=relaxed/simple;
+	bh=xhNBOu5KIheCLkpEWVbmn/Amv3CTLCdA8+O2/qKPJHw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=QaN66mHyVqZKYkTYFtQwzVJ1qMxWY6zfq79LAUtCHGpyL4haeFcWdxHvPhcS+IhnKfPUclQbLbH4T1Xd4WQ5iT97JeEkdCMvY0JaMf8oZB0/0pHCR0LBjtaNjDNucPqQKtoNTHVNncLMKs/DTzmv8gOFmosWnB/4jmVNm5txePk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=aNYK47n6; arc=none smtp.client-ip=117.135.210.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=E4jWkQr31MIerYLkGp
+	G6t1bAgXwRkJB4Ua9JuDCiN0M=; b=aNYK47n6voKw4KDSKtfhBVUY5jcHj67vtN
+	4QQP5H7+MJ6+B6sMXCgsyOHMu7+1g5gIPZBIa62Y+nO4nJGYuKHmY/7acatGUD3E
+	+kGloBhJgtHRsBJgc+lfKSKkwqhVsLjbre37LDzqDXynttmBAz/HT8riHwuxS/Xy
+	vUL002pB0=
+Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3j46lZGFnOsarAQ--.12517S2;
+	Tue, 17 Dec 2024 19:46:46 +0800 (CST)
+From: yangge1116@126.com
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	21cnbao@gmail.com,
+	david@redhat.com,
+	baolin.wang@linux.alibaba.com,
+	vbabka@suse.cz,
+	liuzixing@hygon.cn,
+	yangge <yangge1116@126.com>
+Subject: [PATCH V7] mm, compaction: don't use ALLOC_CMA for unmovable allocations
+Date: Tue, 17 Dec 2024 19:46:44 +0800
+Message-Id: <1734436004-1212-1-git-send-email-yangge1116@126.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID:_____wD3j46lZGFnOsarAQ--.12517S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Cr4rCFW8Jr18tFWUGr4DArb_yoWkZryfpF
+	48Wa4Iy3yrX3W3GFW8tF4vvF1Yqr48GF48AryIgw18Zw13KF9F9as7KFy3AFWrWr95AFWY
+	qFWqkrZ7GFsxAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zNAp5UUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOg64G2dhVmc+LQABsy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V4 1/5] dt-bindings: firmware: Document bindings for QCOM
- SCMI Generic Extension
-Content-Language: en-US
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: <cristian.marussi@arm.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
-        <quic_kshivnan@quicinc.com>, <conor+dt@kernel.org>,
-        <arm-scmi@vger.kernel.org>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <20241007061023.1978380-2-quic_sibis@quicinc.com> <Z1HGVhi5xebqc4d4@bogus>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <Z1HGVhi5xebqc4d4@bogus>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zQ7Xp9YpOoJYodr4bEeXFjMVpfgIg2x3
-X-Proofpoint-ORIG-GUID: zQ7Xp9YpOoJYodr4bEeXFjMVpfgIg2x3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 clxscore=1015 adultscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 suspectscore=0
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170097
 
+From: yangge <yangge1116@126.com>
 
+Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
+in __compaction_suitable()") allow compaction to proceed when free
+pages required for compaction reside in the CMA pageblocks, it's
+possible that __compaction_suitable() always returns true, and in
+some cases, it's not acceptable.
 
-On 12/5/24 20:57, Sudeep Holla wrote:
-> On Mon, Oct 07, 2024 at 11:40:19AM +0530, Sibi Sankar wrote:
->> Document the various memory buses that can be monitored and scaled by
->> the memory latency governor hosted by the QCOM SCMI Generic Extension
->> Protocol v1.0.
->>
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
->> ---
->>
->> v3:
->> * Restructure the bindings to mimic IMX [Christian]
->>
->>   .../bindings/firmware/arm,scmi.yaml           |   1 +
->>   .../bindings/firmware/qcom,scmi-memlat.yaml   | 246 ++++++++++++++++++
->>   .../dt-bindings/firmware/qcom,scmi-memlat.h   |  22 ++
->>   3 files changed, 269 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
->>   create mode 100644 include/dt-bindings/firmware/qcom,scmi-memlat.h
->>
->> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
->> index 54d7d11bfed4..1d405f429168 100644
->> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
->> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
->> @@ -24,6 +24,7 @@ description: |
->>   
->>   anyOf:
->>     - $ref: /schemas/firmware/nxp,imx95-scmi.yaml
->> +  - $ref: /schemas/firmware/qcom,scmi-memlat.yaml
->>   
->>   properties:
->>     $nodename:
->> diff --git a/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
->> new file mode 100644
->> index 000000000000..0e8ea6dacd6a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
->> @@ -0,0 +1,246 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/firmware/qcom,scmi-memlat.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm SCMI Memory Bus nodes
->> +
->> +maintainers:
->> +  - Sibi Sankar <quic_sibis@quicinc.com>
->> +
->> +description:
->> +  This binding describes the various memory buses that can be monitored and scaled
->> +  by memory latency governor running on the CPU Control Processor (SCMI controller).
->> +
->> +properties:
->> +  protocol@80:
->> +    $ref: '/schemas/firmware/arm,scmi.yaml#/$defs/protocol-node'
->> +    unevaluatedProperties: false
->> +
->> +    properties:
->> +      reg:
->> +        const: 0x80
->> +
->> +    patternProperties:
->> +      '^memory-[0-9]$':
->> +        type: object
->> +        unevaluatedProperties: false
->> +        description:
->> +          The list of all memory buses that can be monitored and scaled by the
->> +          memory latency governor running on the SCMI controller.
->> +
->> +        properties:
->> +          qcom,memory-type:
->> +            $ref: /schemas/types.yaml#/definitions/uint32
->> +            enum: [0, 1, 2]
->> +            description: |
->> +              Memory Bus Identifier
->> +              0 = QCOM_MEM_TYPE_DDR
->> +              1 = QCOM_MEM_TYPE_LLCC
->> +              2 = QCOM_MEM_TYPE_DDR_QOS
->> +
->> +          freq-table-hz:
->> +            items:
->> +              items:
->> +                - description: Minimum frequency of the memory bus in Hz
->> +                - description: Maximum frequency of the memory bus in Hz
->> +
->> +        patternProperties:
->> +          '^monitor-[0-9]$':
->> +            type: object
->> +            unevaluatedProperties: false
->> +            description:
->> +              The list of all monitors detecting the memory latency bound workloads using
->> +              various counters.
->> +
->> +            properties:
->> +              qcom,compute-type:
->> +                description:
->> +                  Monitors of type compute perform bus dvfs based on a rudimentary CPU
->> +                  frequency to memory frequency map.
->> +                type: boolean
->> +
->> +              qcom,ipm-ceil:
->> +                $ref: /schemas/types.yaml#/definitions/uint32
->> +                description:
->> +                  Monitors having this property perform bus dvfs based on the same
->> +                  rudimentary table but the scaling is performed only if the calculated
->> +                  IPM (Instruction Per Misses) exceeds the given ceiling.
->> +
->> +              cpus:
->> +                $ref: /schemas/types.yaml#/definitions/phandle-array
->> +                description:
->> +                  Should be a list of phandles to CPU nodes (as described in
->> +                  Documentation/devicetree/bindings/arm/cpus.yaml).
-> 
-> And what exactly this list of cpu phandles represent here ?
-> 
->> +
->> +              operating-points-v2: true
-> 
-> Can you elaborate why the protocol can't add a command to fetch this from
-> the firmware to avoid any possible mismatch between the DT and firmware.
-> 
->> +              opp-table:
->> +                type: object
->> +
->> +            required:
->> +              - cpus
->> +              - operating-points-v2
->> +
->> +            oneOf:
->> +              - required: [ 'qcom,compute-type' ]
->> +              - required: [ 'qcom,ipm-ceil' ]
->> +
->> +        required:
->> +          - qcom,memory-type
->> +          - freq-table-hz
->> +
->> +additionalProperties: true
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/firmware/qcom,scmi-memlat.h>
->> +
->> +    firmware {
->> +        scmi {
->> +            compatible = "arm,scmi";
->> +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
->> +            mbox-names = "tx", "rx";
->> +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
->> +
->> +            #address-cells = <1>;
->> +            #size-cells = <0>;
->> +
->> +            protocol@80 {
->> +                reg = <0x80>;
->> +
->> +                memory-0 {
+There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
+of memory. I have configured 16GB of CMA memory on each NUMA node,
+and starting a 32GB virtual machine with device passthrough is
+extremely slow, taking almost an hour.
 
+During the start-up of the virtual machine, it will call
+pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
+Long term GUP cannot allocate memory from CMA area, so a maximum
+of 16 GB of no-CMA memory on a NUMA node can be used as virtual
+machine memory. Since there is 16G of free CMA memory on the NUMA
+node, watermark for order-0 always be met for compaction, so
+__compaction_suitable() always returns true, even if the node is
+unable to allocate non-CMA memory for the virtual machine.
 
-Hey Sudeep,
+For costly allocations, because __compaction_suitable() always
+returns true, __alloc_pages_slowpath() can't exit at the appropriate
+place, resulting in excessively long virtual machine startup times.
+Call trace:
+__alloc_pages_slowpath
+    if (compact_result == COMPACT_SKIPPED ||
+        compact_result == COMPACT_DEFERRED)
+        goto nopage; // should exit __alloc_pages_slowpath() from here
 
-Thanks for taking time to review the series :)
+Other unmovable alloctions, like dma_buf, which can be large in a
+Linux system, are also unable to allocate memory from CMA, and these
+allocations suffer from the same problems described above. In order
+to quickly fall back to remote node, we should remove ALLOC_CMA both
+in __compaction_suitable() and __isolate_free_page() for unmovable
+alloctions. After this fix, starting a 32GB virtual machine with
+device passthrough takes only a few seconds.
 
-> 
-> I am not sure if it is just me, but I find this binding hard to understand.
-> Hence I thought I will look and the example and get better understanding
-> instead.
-> 
-> So these monitors are numbered ? If there were any meaningful name it would
+Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in __compaction_suitable()")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: yangge <yangge1116@126.com>
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
 
-A memory type can have a variable number of monitors. The
-monitors take in a table and memory type. They track the freq
-of a group of cpus and put in requests to scale the memory
-according to the table. The naming is just arbitrary here
-and we can choose whatever that makes the most sense.
+V7:
+-- fix the changelog and code documentation
 
+V6:
+-- update cc->alloc_flags to keep the original loginc
 
-> have been slightly better but irrespective of that I find it hard as why
-> the communication with firmware is not based on index and why they are not
-> part of the bindings though I see indices used in the driver.
-> 
->> +                    qcom,memory-type = <QCOM_MEM_TYPE_DDR>;
-> 
-> Also I see that the type can be easily derived from the index, care to
-> elaborate why the firmware expects it to be sent, if not why is that
-> information needed here in the DT ?
+V5:
+- add 'alloc_flags' parameter for __isolate_free_page()
+- remove 'usa_cma' variable
 
-The firmware doesn't have any information on the memory available
-for it to scale and relies of the linux telling it everything in
-order to function.
+V4:
+- rich the commit log description
 
+V3:
+- fix build errors
+- add ALLOC_CMA both in should_continue_reclaim() and compaction_ready()
 
--Sibi
+V2:
+- using the 'cc->alloc_flags' to determin if 'ALLOC_CMA' is needed
+- rich the commit log description
 
+ include/linux/compaction.h |  6 ++++--
+ mm/compaction.c            | 26 +++++++++++++++-----------
+ mm/internal.h              |  3 ++-
+ mm/page_alloc.c            |  7 +++++--
+ mm/page_isolation.c        |  3 ++-
+ mm/page_reporting.c        |  2 +-
+ mm/vmscan.c                |  4 ++--
+ 7 files changed, 31 insertions(+), 20 deletions(-)
 
-> 
+diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+index e947764..b4c3ac3 100644
+--- a/include/linux/compaction.h
++++ b/include/linux/compaction.h
+@@ -90,7 +90,8 @@ extern enum compact_result try_to_compact_pages(gfp_t gfp_mask,
+ 		struct page **page);
+ extern void reset_isolation_suitable(pg_data_t *pgdat);
+ extern bool compaction_suitable(struct zone *zone, int order,
+-					       int highest_zoneidx);
++					       int highest_zoneidx,
++					       unsigned int alloc_flags);
+ 
+ extern void compaction_defer_reset(struct zone *zone, int order,
+ 				bool alloc_success);
+@@ -108,7 +109,8 @@ static inline void reset_isolation_suitable(pg_data_t *pgdat)
+ }
+ 
+ static inline bool compaction_suitable(struct zone *zone, int order,
+-						      int highest_zoneidx)
++						      int highest_zoneidx,
++						      unsigned int alloc_flags)
+ {
+ 	return false;
+ }
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 07bd227..223f2da 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -655,7 +655,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+ 
+ 		/* Found a free page, will break it into order-0 pages */
+ 		order = buddy_order(page);
+-		isolated = __isolate_free_page(page, order);
++		isolated = __isolate_free_page(page, order, cc->alloc_flags);
+ 		if (!isolated)
+ 			break;
+ 		set_page_private(page, order);
+@@ -1634,7 +1634,7 @@ static void fast_isolate_freepages(struct compact_control *cc)
+ 
+ 		/* Isolate the page if available */
+ 		if (page) {
+-			if (__isolate_free_page(page, order)) {
++			if (__isolate_free_page(page, order, cc->alloc_flags)) {
+ 				set_page_private(page, order);
+ 				nr_isolated = 1 << order;
+ 				nr_scanned += nr_isolated - 1;
+@@ -2381,6 +2381,7 @@ static enum compact_result compact_finished(struct compact_control *cc)
+ 
+ static bool __compaction_suitable(struct zone *zone, int order,
+ 				  int highest_zoneidx,
++				  unsigned int alloc_flags,
+ 				  unsigned long wmark_target)
+ {
+ 	unsigned long watermark;
+@@ -2395,25 +2396,26 @@ static bool __compaction_suitable(struct zone *zone, int order,
+ 	 * even if compaction succeeds.
+ 	 * For costly orders, we require low watermark instead of min for
+ 	 * compaction to proceed to increase its chances.
+-	 * ALLOC_CMA is used, as pages in CMA pageblocks are considered
+-	 * suitable migration targets
++	 * In addition to unmovable allocations, ALLOC_CMA is used, as pages in
++	 * CMA pageblocks are considered suitable migration targets
+ 	 */
+ 	watermark = (order > PAGE_ALLOC_COSTLY_ORDER) ?
+ 				low_wmark_pages(zone) : min_wmark_pages(zone);
+ 	watermark += compact_gap(order);
+ 	return __zone_watermark_ok(zone, 0, watermark, highest_zoneidx,
+-				   ALLOC_CMA, wmark_target);
++				   alloc_flags & ALLOC_CMA, wmark_target);
+ }
+ 
+ /*
+  * compaction_suitable: Is this suitable to run compaction on this zone now?
+  */
+-bool compaction_suitable(struct zone *zone, int order, int highest_zoneidx)
++bool compaction_suitable(struct zone *zone, int order, int highest_zoneidx,
++				   unsigned int alloc_flags)
+ {
+ 	enum compact_result compact_result;
+ 	bool suitable;
+ 
+-	suitable = __compaction_suitable(zone, order, highest_zoneidx,
++	suitable = __compaction_suitable(zone, order, highest_zoneidx, alloc_flags,
+ 					 zone_page_state(zone, NR_FREE_PAGES));
+ 	/*
+ 	 * fragmentation index determines if allocation failures are due to
+@@ -2474,7 +2476,7 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
+ 		available = zone_reclaimable_pages(zone) / order;
+ 		available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
+ 		if (__compaction_suitable(zone, order, ac->highest_zoneidx,
+-					  available))
++					  alloc_flags, available))
+ 			return true;
+ 	}
+ 
+@@ -2499,7 +2501,7 @@ compaction_suit_allocation_order(struct zone *zone, unsigned int order,
+ 			      alloc_flags))
+ 		return COMPACT_SUCCESS;
+ 
+-	if (!compaction_suitable(zone, order, highest_zoneidx))
++	if (!compaction_suitable(zone, order, highest_zoneidx, alloc_flags))
+ 		return COMPACT_SKIPPED;
+ 
+ 	return COMPACT_CONTINUE;
+@@ -2893,6 +2895,7 @@ static int compact_node(pg_data_t *pgdat, bool proactive)
+ 	struct compact_control cc = {
+ 		.order = -1,
+ 		.mode = proactive ? MIGRATE_SYNC_LIGHT : MIGRATE_SYNC,
++		.alloc_flags = ALLOC_CMA,
+ 		.ignore_skip_hint = true,
+ 		.whole_zone = true,
+ 		.gfp_mask = GFP_KERNEL,
+@@ -3037,7 +3040,7 @@ static bool kcompactd_node_suitable(pg_data_t *pgdat)
+ 
+ 		ret = compaction_suit_allocation_order(zone,
+ 				pgdat->kcompactd_max_order,
+-				highest_zoneidx, ALLOC_WMARK_MIN);
++				highest_zoneidx, ALLOC_CMA | ALLOC_WMARK_MIN);
+ 		if (ret == COMPACT_CONTINUE)
+ 			return true;
+ 	}
+@@ -3058,6 +3061,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
+ 		.search_order = pgdat->kcompactd_max_order,
+ 		.highest_zoneidx = pgdat->kcompactd_highest_zoneidx,
+ 		.mode = MIGRATE_SYNC_LIGHT,
++		.alloc_flags = ALLOC_CMA | ALLOC_WMARK_MIN,
+ 		.ignore_skip_hint = false,
+ 		.gfp_mask = GFP_KERNEL,
+ 	};
+@@ -3078,7 +3082,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
+ 			continue;
+ 
+ 		ret = compaction_suit_allocation_order(zone,
+-				cc.order, zoneid, ALLOC_WMARK_MIN);
++				cc.order, zoneid, cc.alloc_flags);
+ 		if (ret != COMPACT_CONTINUE)
+ 			continue;
+ 
+diff --git a/mm/internal.h b/mm/internal.h
+index 3922788..6d257c8 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -662,7 +662,8 @@ static inline void clear_zone_contiguous(struct zone *zone)
+ 	zone->contiguous = false;
+ }
+ 
+-extern int __isolate_free_page(struct page *page, unsigned int order);
++extern int __isolate_free_page(struct page *page, unsigned int order,
++				    unsigned int alloc_flags);
+ extern void __putback_isolated_page(struct page *page, unsigned int order,
+ 				    int mt);
+ extern void memblock_free_pages(struct page *page, unsigned long pfn,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index dde19db..1bfdca3 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2809,7 +2809,8 @@ void split_page(struct page *page, unsigned int order)
+ }
+ EXPORT_SYMBOL_GPL(split_page);
+ 
+-int __isolate_free_page(struct page *page, unsigned int order)
++int __isolate_free_page(struct page *page, unsigned int order,
++				   unsigned int alloc_flags)
+ {
+ 	struct zone *zone = page_zone(page);
+ 	int mt = get_pageblock_migratetype(page);
+@@ -2823,7 +2824,8 @@ int __isolate_free_page(struct page *page, unsigned int order)
+ 		 * exists.
+ 		 */
+ 		watermark = zone->_watermark[WMARK_MIN] + (1UL << order);
+-		if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
++		if (!zone_watermark_ok(zone, 0, watermark, 0,
++			    alloc_flags & ALLOC_CMA))
+ 			return 0;
+ 	}
+ 
+@@ -6454,6 +6456,7 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
+ 		.order = -1,
+ 		.zone = page_zone(pfn_to_page(start)),
+ 		.mode = MIGRATE_SYNC,
++		.alloc_flags = ALLOC_CMA,
+ 		.ignore_skip_hint = true,
+ 		.no_set_skip_hint = true,
+ 		.alloc_contig = true,
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index c608e9d..a1f2c79 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -229,7 +229,8 @@ static void unset_migratetype_isolate(struct page *page, int migratetype)
+ 			buddy = find_buddy_page_pfn(page, page_to_pfn(page),
+ 						    order, NULL);
+ 			if (buddy && !is_migrate_isolate_page(buddy)) {
+-				isolated_page = !!__isolate_free_page(page, order);
++				isolated_page = !!__isolate_free_page(page, order,
++						    ALLOC_CMA);
+ 				/*
+ 				 * Isolating a free page in an isolated pageblock
+ 				 * is expected to always work as watermarks don't
+diff --git a/mm/page_reporting.c b/mm/page_reporting.c
+index e4c428e..fd3813b 100644
+--- a/mm/page_reporting.c
++++ b/mm/page_reporting.c
+@@ -198,7 +198,7 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
+ 
+ 		/* Attempt to pull page from list and place in scatterlist */
+ 		if (*offset) {
+-			if (!__isolate_free_page(page, order)) {
++			if (!__isolate_free_page(page, order, ALLOC_CMA)) {
+ 				next = page;
+ 				break;
+ 			}
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 5e03a61..33f5b46 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -5815,7 +5815,7 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
+ 				      sc->reclaim_idx, 0))
+ 			return false;
+ 
+-		if (compaction_suitable(zone, sc->order, sc->reclaim_idx))
++		if (compaction_suitable(zone, sc->order, sc->reclaim_idx, ALLOC_CMA))
+ 			return false;
+ 	}
+ 
+@@ -6043,7 +6043,7 @@ static inline bool compaction_ready(struct zone *zone, struct scan_control *sc)
+ 		return true;
+ 
+ 	/* Compaction cannot yet proceed. Do reclaim. */
+-	if (!compaction_suitable(zone, sc->order, sc->reclaim_idx))
++	if (!compaction_suitable(zone, sc->order, sc->reclaim_idx, ALLOC_CMA))
+ 		return false;
+ 
+ 	/*
+-- 
+2.7.4
+
 
