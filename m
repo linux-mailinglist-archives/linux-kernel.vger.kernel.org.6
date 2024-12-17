@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-449817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F419F567F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:49:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8096C9F5684
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:52:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 348347A38C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:49:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2242E1892E10
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC811F8900;
-	Tue, 17 Dec 2024 18:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B791F8AF6;
+	Tue, 17 Dec 2024 18:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqPiLuG2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="pJkQlWx1"
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731A71F8AD0;
-	Tue, 17 Dec 2024 18:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FF91F8ADF;
+	Tue, 17 Dec 2024 18:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734461379; cv=none; b=TO+QnFEAGWvASGjX+RzDbMXABdtTe8BlgBtnWQEDbmO3keIWFU1juMVs//PIPx6tWloPdNqrYnZckiY7M8B+Lt2xLqVaL3r2o6UWFp40AvV32wkE5Yxm3BE2TlaxwkUBnmURuCmisti9tCpBaeLzVZJiSsF5gSZvxyyuAl48E+w=
+	t=1734461515; cv=none; b=qeb1fzY0hF50iWxzhmgSdpCULNMcXH9vEAymu+v3hZa1fHeffs1cj1q+obyUif8fm8y7QKwSkwLpXKvbdT824gd96UOOe5qRTokBS9QyhcTjz/TjeI1iTAXcRkukFUwGFxdNm5OFgn4X3RvnS47/jiduG5ZHyYhdJwsvnM8jqcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734461379; c=relaxed/simple;
-	bh=ttW1ztqu1hCU9exDxWTyu+4ylc226xEK1pCskpFHxcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxEruiuUgC9YegbtoNkPZk0ovdmlR6bZI8/DkTpdEJ2e2skLLXViWetp+0s37KyCN3EIs8qgCR/QJCa+8BjqYWJeNCucs/2uh+Bfuf6Ky4+6zuQkQj5HpXrapAKP/RJWAHnbtujUmqcYzKOohrL6rAhKi3YhWQEQEjl1QuGGm+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqPiLuG2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2916C4CED3;
-	Tue, 17 Dec 2024 18:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734461378;
-	bh=ttW1ztqu1hCU9exDxWTyu+4ylc226xEK1pCskpFHxcU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hqPiLuG2HFYCnhdy87ycuvMdDYTCNv/jAjSIOPWTEB1Dv8EExDMGPCUAMPFyf6ByP
-	 Sl+7Bk8pSZl6pI5tDW0kikOpwCIZJO90fzqsptIEN+5d1JfIrzwnojlPUneA7TgByD
-	 ZzbHbXjMtnHmtjFk7NSFVKrMvUtGyaKIilGDor4jViKwVZ3697Eiq8bH18upP24sJY
-	 0HkDIwGOatLfPfNAZyUBCxl5G588K0xKOc+zv+b59tY0jtNNKDtuM0H4Vt9fGxm9oy
-	 0XrJ4RhUvznBs/txMbrJ+UYjt/iBVf6/+MUC/rn2jOt992mHG4VJmsOGf0QDdyfmbO
-	 NxziUYYhxysxg==
-Date: Tue, 17 Dec 2024 18:49:37 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-Cc: Wei Liu <wei.liu@kernel.org>, kys@microsoft.com, haiyangz@microsoft.com,
-	decui@microsoft.com, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
-	avladu@cloudbasesolutions.com
-Subject: Re: [PATCH] tools: hv: Fix cross-compilation
-Message-ID: <Z2HHwboni5wjNTY8@liuwe-devbox-debian-v2>
-References: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
- <Z1tsaJJhUsSilZqq@liuwe-devbox-debian-v2>
- <20241213040102.GA28827@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1734461515; c=relaxed/simple;
+	bh=cz0bWbKoqtVyq6GXABPaT+7du6UzBH9+35lzCs2VwTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ec7vh1BNAvrtzQNlPMFZkp7oAEKRij5HtBckq6T7OCWIVo7y1NXz3v63TdcTH1W8OH8fjaP1XXVBG37Bw1RWn6diLsZ4pU1q27JTg/GlF5/H0LjOnOtlJVj7TdGcyZK/e6Uz5QS29oUapmkqv/s1Cw93sE15ecI5tnbuTr16snc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=pJkQlWx1; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xCXds9H19fIG6chcSdekhwctZOGDmD8Lb4dtzKQQ0zg=; b=pJkQlWx1VGUEYOBTHbsQ7TLfAV
+	0rMOshbkAE8FhP61EqxofvpDuDeTozwa2ejjK6kkBErwdlGe3qSxBJWWjQgJ8v/SzeT2Nit9piJDU
+	q+MGoJGM1v5JefJr50BiDzEPbQ7JYEXA/K+Kybod68oStEsqLmrkS5WNHc5kZ6djKxH07KZjwNtTI
+	NOVYZey9QwLzURM01l6V7+Kw1v/ij+Pcl02oQjvA4WWUayp7Owyi2E1TUhnEq/2xSb4NQGvHdLFNQ
+	fVjY05p1yfHIVnx5OpeMqAvAZgJMHO0gX4/yjX505LdP+/rfP4G1VGFciIp3rgwVD/FiniPty7EXF
+	Fr/4y5bw==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:39620 helo=[192.168.0.142])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <david@lechnology.com>)
+	id 1tNchE-0005ul-2N;
+	Tue, 17 Dec 2024 13:51:51 -0500
+Message-ID: <be219dbe-847f-4f1d-affe-d616161e7dca@lechnology.com>
+Date: Tue, 17 Dec 2024 12:51:50 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213040102.GA28827@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: davinci: remove platform data struct
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20241217174154.84441-1-brgl@bgdev.pl>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <20241217174154.84441-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thu, Dec 12, 2024 at 08:01:02PM -0800, Saurabh Singh Sengar wrote:
-> On Thu, Dec 12, 2024 at 11:06:16PM +0000, Wei Liu wrote:
-> > On Thu, Dec 12, 2024 at 12:28:34AM -0800, Saurabh Sengar wrote:
-> > > Use the native ARCH only incase it is not set, this will allow
-> > > the cross complilation where ARCH is explicitly set. Add few
-> > > info prints as well to know what arch and toolchain is getting
-> > > used to build it.
-> > > 
-> > > Additionally, simplify the check for ARCH so that fcopy daemon
-> > > is build only for x86_64.
-> > > 
-> > > Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio driver")
-> > > Reported-by: Adrian Vladu <avladu@cloudbasesolutions.com>
-> > > Closes: https://lore.kernel.org/linux-hyperv/Z1Y9ZkAt9GPjQsGi@liuwe-devbox-debian-v2/
-> > > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> > > ---
-> > >  tools/hv/Makefile | 14 +++++++++++---
-> > >  1 file changed, 11 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/tools/hv/Makefile b/tools/hv/Makefile
-> > > index 34ffcec264ab..d29e6be6309b 100644
-> > > --- a/tools/hv/Makefile
-> > > +++ b/tools/hv/Makefile
-> > > @@ -2,7 +2,7 @@
-> > >  # Makefile for Hyper-V tools
-> > >  include ../scripts/Makefile.include
-> > >  
-> > > -ARCH := $(shell uname -m 2>/dev/null)
-> > > +ARCH ?= $(shell uname -m 2>/dev/null)
-> > >  sbindir ?= /usr/sbin
-> > >  libexecdir ?= /usr/libexec
-> > >  sharedstatedir ?= /var/lib
-> > > @@ -20,18 +20,26 @@ override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
-> > >  override CFLAGS += -Wno-address-of-packed-member
-> > >  
-> > >  ALL_TARGETS := hv_kvp_daemon hv_vss_daemon
-> > > -ifneq ($(ARCH), aarch64)
-> > > +ifeq ($(ARCH), x86_64)
-> > 
-> > Technically speaking, you can also build this for x86 (32bit). Whether
-> > anybody uses it is another question.
+On 12/17/24 11:41 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> My intention is to allow fcopy daemon build only for the arch it has
-> been tested. IMO its better than restricting only for arm64/aarch64.
+> There are no board files using struct davinci_pll_platform_data anymore.
+> The structure itself is currently used to store a single pointer. Let's
+> remove the struct definition, the header and rework the driver to not
+> require the syscon regmap to be stored in probe().
 > 
-> I tried with gcc '-m32' switch which I believe is for 32 bit x86 compilation
-> I see problems with it on other (kvp daemon) daemons too. I think we never
-> cared about 32 bit.
-> 
-> saurabh@Saurabh:/work/linux-next/tools/hv$ make ARCH=x86 CFLAGS=-m32
-> make[1]: Entering directory '/work/linux-next/tools/hv'
->   CC      hv_kvp_daemon.o
-> hv_kvp_daemon.c:25:10: fatal error: sys/poll.h: No such file or directory
->    25 | #include <sys/poll.h>
->       |          ^~~~~~~~~~~~
-> compilation terminated.
-> make[1]: *** [/work/linux-next/tools/build/Makefile.build:106: hv_kvp_daemon.o] Error 1
-> make[1]: Leaving directory '/work/linux-next/tools/hv'
-> make: *** [Makefile:37: hv_kvp_daemon-in.o] Error 2
-> 
-> 
-> I don't have any strong opinion here, if you want I can allow x86 compilation
-> for fcopy daemon as well.
-> 
-> Please let me know what is your preference.
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+Reviewed-by: David Lechner <david@lechnology.com>
 
-We can leave the code as-is. If and when someone wants to build this for
-32-bit x86, they can fix the code.
-
-I think the number of people who want to build this for 32-bit x86 is
-diminishing by the day -- it there was a large group in the first place.
-
-Thanks,
-Wei.
 
