@@ -1,94 +1,98 @@
-Return-Path: <linux-kernel+bounces-449774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 636749F55EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:20:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1743F9F55FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7AB1636AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87978188F2C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E441F8AC5;
-	Tue, 17 Dec 2024 18:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41411F941E;
+	Tue, 17 Dec 2024 18:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4SAPZDe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcQqwgVb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246C11F868E;
-	Tue, 17 Dec 2024 18:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C0C1F8932;
+	Tue, 17 Dec 2024 18:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734459594; cv=none; b=k8YVEcJGNZ20kFw3TCuZZKogtM237g01ddP9m9wQNhjZousp5QNaoIDxOSG7AenLbnf0DYqXPQeDQ4UxR52alDtK5+XM6mU0pj41Hm2uKH4xKbgGZ0ubmMjBOo6znLhQq9VTZJt3IclKaJwflkrRjsjhXOt36RfOP1N9utjz8No=
+	t=1734459602; cv=none; b=CD2YEky+AJHwjGNKljCdm+zCshGaBhaNcuGxsf8Ih+7ZHbkXuzWpSKPs2SipMoSn/Zi+AytmGtgQAlesMZHpoTX4jD/qeXaQSd/6W8cfXxYO26Yf8sUTJGbO8NGxVmWepl75KpCumLFUY5f4eUbk6FjWeU1yA2a1nfjCt2OxI1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734459594; c=relaxed/simple;
-	bh=3KXuVnD9D+xJr3IbkexI7hbjcfsyh7wWVwrrKoPjpeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I012L9+akaygoQDRas9NdoV8r9k0JrtWrdwU4xQ3Zy4uNakwgExOt0GZwcdsC4wFB3HHb4q88flxW+yOyPGWrjxayGC3cTqEsjf/4Nb9JLUu1afcnoVRg3EAbAh3JnfA4PYseh6leQhYxTQmqt3SL/jNd3oRb8EawY/2Qb932nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4SAPZDe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F80C4CEDE;
-	Tue, 17 Dec 2024 18:19:51 +0000 (UTC)
+	s=arc-20240116; t=1734459602; c=relaxed/simple;
+	bh=RuRjYBtd37eJ6BWE+WZCqpwEWnzVbgqMtoiwz31zqzM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DDXCXvNUImKZzNGuTSFJzDPbdAlm/kmi103rHOTwtO8AykRKxmx0H91uAeQ6gWQ9fl4Z4/EKYAU7/2K83QlARd6TQWZ3kGwOxPPR9dcDCTdiyVlgV1odZA+DIL/hN2rkdTcMsN398La7NVGlggj9K/0tk1gIThn1aI0BH1HtnnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PcQqwgVb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29FBC4CEE0;
+	Tue, 17 Dec 2024 18:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734459593;
-	bh=3KXuVnD9D+xJr3IbkexI7hbjcfsyh7wWVwrrKoPjpeo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V4SAPZDedYs3kXXyLmJSO7yQxmKumVijVWPamYYOeh0Kpif9cqyzpymhMfLZ3oo1y
-	 9QREygSOnYVvrDDgvtnt5Sx/QZi3w5jispy1rhlyN/yf9pgJPwaBUTTrG69WDWLi+6
-	 8QrF7zvyZOg4ttrVPksHfvRFucpsiV2gQ2HJZAYnRwHJpOUGfNV10kC7S55pKheg6H
-	 Q1w7loIbHIfi4r+nqFtd/XhyyF05Q+x3JzYgnUGEMwa5lY7P9emcXufhgHvw7jRCJE
-	 7LMzyE9mrdtKdYe9yVt/ghr8oXCHrQHBEsM6GXdG0vc6GLcT4SJ3ZP/elgVDcPsSO7
-	 AQD3bp1QXXf7g==
-Date: Tue, 17 Dec 2024 18:19:49 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com,
-	conor.dooley@microchip.com, conor+dt@kernel.org,
-	jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/4] riscv: export __cpuid_to_hartid_map
-Message-ID: <20241217-grape-disdain-26ee36738961@spud>
-References: <20241217113134.3508333-1-valentina.fernandezalanis@microchip.com>
- <20241217113134.3508333-3-valentina.fernandezalanis@microchip.com>
+	s=k20201202; t=1734459601;
+	bh=RuRjYBtd37eJ6BWE+WZCqpwEWnzVbgqMtoiwz31zqzM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PcQqwgVbF4eRBuC6Miw7kUsdH0T/T1OLpKoUL5hRT5+MOd07j8by2x6Dg+b3ogEn6
+	 b5Vti4yyMVboNIsu9s0qGBO+DyK86WJWkFgk7rW7eklHJvy2hPU2OiS+L6CoWcfklE
+	 2c3yT65FUk49T8l4n5NFfQdniSBP7qL1sHcO7T2MUTE25yCGce0j3AUz+jihMk1lHV
+	 WSmYzGQlMIvLvCvuW07tqb2ohLz9vpC2raKRbR8eV1R1wRvdDxG+wnOaCIh5nwFUr/
+	 lkzEsABN/BS3BdbHP3hRMD1xRqSPP83NEdwH24K2oVmUxIebIeGH5sxSBaB1olNfiM
+	 bosDYNS2NCICg==
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-844dae6a0caso162553639f.1;
+        Tue, 17 Dec 2024 10:20:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZGKzCD+ixPyy0tEwBmcPFuIkIDIBzhelzvqmLIDp0NbH479bAL+435CTxXeB9E3oyzjZ9z2jDGjFW@vger.kernel.org, AJvYcCUdwH02xJ45lK8TbuIRj5Z+ZBp72FjLQBQvmIilEOblxpv1CDbm2fHeviUBskRfoK7mD4Tt/WCqZaQQxBSLIcuXWxoSvMTN@vger.kernel.org, AJvYcCWdAkoWTjWzvEiFCHYroV89BHH8Fdjq3RnVFgss6t69It37I4Mnn9dWRrasV2Uc4X7o6ABT9xDw7IQXD1sj@vger.kernel.org, AJvYcCWo/15qfq3Ihns+SfXT/oVRHrOBwE3iH0H/WF69wg7I/itbgUBa/Y5HL1EQjMgUjymuSvK8KzcnrFoB@vger.kernel.org, AJvYcCXdR6WtxU1+9plK2sxq6ONMqBnLvBdveU3HUxXzXhaJftzPCjMmQLGw2dvMn0vKammubwdfZWli7s/OiA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7ezpzXFpwRlPj6hgInCduY1iwAIiDVGHNU2aqfZkfqf5mi/rd
+	eJTIVWa8Exqlgdl5gZJo/2nbfugUJip/Q8CZCpw3D+oYVxsx4WD3YrBzbDLZ73YxHL6IHwXzOeu
+	A8GJUpjZvbG3ivMoaZnQaInIt3+4=
+X-Google-Smtp-Source: AGHT+IGVF2/lzRonWuPyDH2ItNAehGEg982iraVqvHuFNJBoNdPieWEU/a4HYmGk0xpeWomItvBDrQWzPhD2J5GiKtc=
+X-Received: by 2002:a92:ca46:0:b0:3a0:9c99:32d6 with SMTP id
+ e9e14a558f8ab-3aff3860488mr155848315ab.24.1734459601030; Tue, 17 Dec 2024
+ 10:20:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vlUeFHDDVuswpK1n"
-Content-Disposition: inline
-In-Reply-To: <20241217113134.3508333-3-valentina.fernandezalanis@microchip.com>
-
-
---vlUeFHDDVuswpK1n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241216234308.1326841-1-song@kernel.org> <20241217173807.GD1977892@ZenIV>
+In-Reply-To: <20241217173807.GD1977892@ZenIV>
+From: Song Liu <song@kernel.org>
+Date: Tue, 17 Dec 2024 10:19:49 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5Jik1B9SOXr992pQPDuaXbUuAw9Ktp_OYPEkaev5NdUA@mail.gmail.com>
+Message-ID: <CAPhsuW5Jik1B9SOXr992pQPDuaXbUuAw9Ktp_OYPEkaev5NdUA@mail.gmail.com>
+Subject: Re: [RFC] lsm: fs: Use i_callback to free i_security in RCU callback
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	willy@infradead.org, corbet@lwn.net, clm@fb.com, josef@toxicpanda.com, 
+	dsterba@suse.com, brauner@kernel.org, jack@suse.cz, cem@kernel.org, 
+	djwong@kernel.org, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	fdmanana@suse.com, johannes.thumshirn@wdc.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 17, 2024 at 11:31:32AM +0000, Valentina Fernandez wrote:
-> EXPORT_SYMBOL_GPL() is missing for __cpuid_to_hartid_map array.
-> Export this symbol to allow drivers compiled as modules to use
-> cpuid_to_hartid_map().
->=20
-> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.c=
-om>
+On Tue, Dec 17, 2024 at 9:38=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> >  - Let pipe free inode from a RCU callback.
+>
+> ... which hurts the systems with LSM crap disabled.
+> NAK.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+How do we measure the overhead in such cases? AFAICT,
+the overhead is very small:
 
---vlUeFHDDVuswpK1n
-Content-Type: application/pgp-signature; name="signature.asc"
+1. Many (most) systems have some LSM enabled anyway.
+2. pipe create/release is not on any hot path. On a busy system
+  with 176 CPUs, I measured ~30 pipe create/release per second.
+3. The overhead of a rcu callback is small.
 
------BEGIN PGP SIGNATURE-----
+Given these measures, I don't think "hurts the system without LSM"
+justifies 2 extra pointers per inode.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2HAxQAKCRB4tDGHoIJi
-0uPrAP4/CsqF4xQUklJpDfXANiZA1Z3vqLRdOQwomW1QCh6cwwD8C4TNhyPMruzt
-3n13BSc3PEpaygd3us95wNDVC00i+Qc=
-=ZwHv
------END PGP SIGNATURE-----
-
---vlUeFHDDVuswpK1n--
+Thanks,
+Song
 
