@@ -1,139 +1,132 @@
-Return-Path: <linux-kernel+bounces-449559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E4B9F50BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:18:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4E29F50C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2D01890D2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:17:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A55163E76
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D6E1F9AAD;
-	Tue, 17 Dec 2024 16:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750561F9F4D;
+	Tue, 17 Dec 2024 16:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TvzS/Oym"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="RIzuAKKB"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23FE1F9428
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125B71F9428;
+	Tue, 17 Dec 2024 16:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734451664; cv=none; b=svG/b0XVaAXtsQtFzKRG4/iN+srAAJJullF8gAzSF1jCha8drDndqP8NERiwcFeD6EjaaU+COwfk10HeoDmZNcQIZyYi0DvsRjlq10pQsQn9oC4+wuHkVfuLlusOY208eeEVRkiwNUWKdnECN9w0yy1gJTSP8a1uFkjeQspdG1w=
+	t=1734451692; cv=none; b=iLe0uNODz4X+K95AL7FOR03hI+Cj06zEoWty8oSRokLvWdS4a70Blc2VG1SxYsee9pERjYariEhe0rEq63g8op4KIqF7DmQopWe31nJlswJTD2H3DirAtH4QfsFpEEY9SRZjA90NaOdqumwiMxvfI3M0jV8ESGyKFz5HnFuxhGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734451664; c=relaxed/simple;
-	bh=ahlxghrgd0S6AbzHWBxPPhV3sFgWCGSBYKhL5Ip9ApA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ddzGsB0+1kkNS2tthAoGE9Ls5XvN5qHgQr/h+PFgAHa3UA8FpEAOQUcnyCpMoHjDgGoD+lBsKPc1AJUxN3gzT1Kb4OWZ8bBhOJYw6M/fc+w8InriGV/BWrIdUcOaPUnbJ34wDgFhV6FWWuf6M2fELTg1IJbJTtq5DKzuHDJNOFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TvzS/Oym; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-436341f575fso42514365e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:07:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734451661; x=1735056461; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25XBrM0NJ6pePI9T2sJJh5JraqVj1fYsT/JFIPhqnSU=;
-        b=TvzS/Oymv9LgVjmZmSp/INsrmwIy4JjMDy7fukwVLDuajFlvDy6O1KDEHYLUJ6TmMV
-         McVt+BLmJTNb6cq+lFPVSwXDt5oJVkmAyXYR3Cvp5ZT0QIXPq77K8GG7e1WGJAIe+drq
-         /8fp7vGhzQFgujLBQp+Amh7OXJoNVmnhlA/OOZBqUHP6+Y3bK/ZvE5PIgO9Tnknjqo2S
-         oZHT4MbyUjf1T2QC9EupmGvKjvIRbBbppRkDlSpsLkVpX9AtPvNQeipAqHky9EPZ5Q8d
-         w7SPynzPDp9NOmLx48BaUiIBh9t4UVnlWEYNjOVIx67iWnP2IJ0+m8zNLp1REFTLFi+Q
-         S0Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734451661; x=1735056461;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=25XBrM0NJ6pePI9T2sJJh5JraqVj1fYsT/JFIPhqnSU=;
-        b=NNTrJYZ8XUieOARCLawzp/B9jzUWluGPLHvLPiWAZa4y5G3/wsWVgHp5uGGnWcZBr9
-         bAcGK+Pwpt9R2jyiwNfiRph1GUIWF+Owvr5C2J/BOnrjXXqu6YmD2jpfVKQx+bDzuQ5F
-         vUk4bDZFRfPCXWEmevccFEa8gGh8A8rFrgQW/Oja8xM4F+PuINyQwuOOKQIac58Qd43M
-         YUj5W86MYcE4HS3soiai0o93P0vttUiQjQP59vEBiBJx15gCWWLKbZYUK9kNmbxpFqO7
-         Nkk6WEZQK9TpuPlJUl3/dCSqdYwEKtHqDAv5GXHLMimFXWZ/xV+GyO13Pye052GqS8Vl
-         YlKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpBPXhCyYTnnLi0ROQQoazCCCh76gN0r5/VVNXJ8Y/H2uL1KdRN+KT65rbG8nZBx2U8cb0O/YvwFXt2Ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzH+itfF/GbAuZia1XA+/HAhCm+xOqGy5eKfYRM9obkb+Q/ogx
-	OOmDUN1/FwhsmnzY57r4Mta/4wYmPMe9RcfNtZ5yi8PDpxIZHeC9iT9IYmJ0Yeg=
-X-Gm-Gg: ASbGncuAZ5xBGHujmvs/L7lXf/btcJgboaSqPkkEQ8Z2ybjPwg3zIhkdX2DSXlYf6cu
-	q9UeBwsE0wGc0T8Nkr5en4pgF7NoQVjyhB1rfX0x7T3Cua3ac0oY+f64LeXQlEKMuZnlpDBZRiN
-	CiAQBbL+quG3Ev47pha9SU9jj0xeP+ns9+Vs/OYG/PwWNivEwIOhR6kPN8dhxmZP00Fd8Ia2eYR
-	/MjP9AFEV7iHFlWKZhOKo/mzckbM6QXw2REsKcOwSF6oDBZc1yO0fo52R6bo5FYIw==
-X-Google-Smtp-Source: AGHT+IGUdRAlaDf5RiyF6d3FjeSmlk/HeVhnRFJ2Zl4R4rz0gubeAGYhivS1TKe43q5VHpNM6Rcm5A==
-X-Received: by 2002:a05:600c:1e19:b0:434:a734:d279 with SMTP id 5b1f17b1804b1-4362aa5005fmr191362625e9.16.1734451661133;
-        Tue, 17 Dec 2024 08:07:41 -0800 (PST)
-Received: from vingu-cube.. ([2a01:e0a:f:6020:4e5f:e8c8:aade:2d1b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436257176a4sm176739435e9.38.2024.12.17.08.07.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 08:07:40 -0800 (PST)
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	lukasz.luba@arm.com,
-	rafael.j.wysocki@intel.com,
-	linux-kernel@vger.kernel.org
-Cc: qyousef@layalina.io,
-	hongyan.xia2@arm.com,
-	pierre.gondois@arm.com,
-	christian.loehle@arm.com,
-	qperret@google.com,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 7/7 v2] sched/fair: Update overutilized detection
-Date: Tue, 17 Dec 2024 17:07:20 +0100
-Message-ID: <20241217160720.2397239-8-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241217160720.2397239-1-vincent.guittot@linaro.org>
-References: <20241217160720.2397239-1-vincent.guittot@linaro.org>
+	s=arc-20240116; t=1734451692; c=relaxed/simple;
+	bh=5AGsLR3Hc8ztJEHetP6/py2T8/Je9jJMmNELRDyI/WA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=e7W1VremU9EoiWkGNnYriHUeqxrsLcvYdc8/rGrMOyoQNg1y1/9rgBai5ks7GYmt7e56uaWBTFtfkcDvD6W9eY60oLDTEEdZsC4D9o9W2+WVx49x3t+Attj7bvfl6tLMa+mHNLOQb0gX8YklNzH2iq4emMJL81xP4Z6k+5mp0L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=RIzuAKKB; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (p5de4533f.dip0.t-ipconnect.de [93.228.83.63])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 644C32FC0055;
+	Tue, 17 Dec 2024 17:08:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1734451685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3jBKadfXlvv4WnJlaffwJLQGwPQzodC+VnQaCiq74hA=;
+	b=RIzuAKKB1Rpy0en6Min2mN/y5fZs5A8MM2/IIJaivf0ROE8efChFf788APK+KPTF3hJQ87
+	oTvDSq0a0J/okvT2uFS1CorjIua4f0wiyZVg/amUr1YLgTlEKmVlLivpqDnAcd066x3P9z
+	dB0pFn1euBl4FnCe1WoRiRSPr7AcJhI=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <c6110fdb-cc43-4351-be43-63d251fefca5@tuxedocomputers.com>
+Date: Tue, 17 Dec 2024 17:08:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] PCI: Avoid putting some root ports into D3 on some
+ Ryzen chips
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: ggo@tuxedocomputers.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241209193614.535940-1-wse@tuxedocomputers.com>
+ <215cd12e-6327-4aa6-ac93-eac2388e7dab@amd.com>
+ <23c6140b-946e-4c63-bba4-a7be77211948@tuxedocomputers.com>
+ <823c393d-49f6-402b-ae8b-38ff44aeabc4@amd.com>
+ <2b38ea7b-d50e-4070-80b6-65a66d460152@tuxedocomputers.com>
+ <e0ee3415-4670-4c0c-897a-d5f70e0f65eb@amd.com>
+ <90631333-fda0-42cf-9e32-8289c353549f@tuxedocomputers.com>
+ <4dac3ff2-e3ab-42c0-b39f-379d5badca42@amd.com>
+ <7a9353d3-b9db-4499-a054-c7050bc7b4d5@tuxedocomputers.com>
+Content-Language: en-US
+In-Reply-To: <7a9353d3-b9db-4499-a054-c7050bc7b4d5@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Checking uclamp_min is useless and counterproductive for overutilized state
-as misfit can now happen without being in overutilized state
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/fair.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Am 17.12.24 um 16:58 schrieb Werner Sembach:
+>
+> Am 17.12.24 um 15:11 schrieb Mario Limonciello:
+>> On 12/17/2024 08:07, Werner Sembach wrote:
+>>
+>>>> '''
+>>>> Platform may hang resuming.  Upgrade your firmware or add pcie_port_pm=off 
+>>>> to kernel command line if you have problems
+>>>> '''
+>>> Yes, full log attached (kernel 6.13-rc3 one time without sudo one time with 
+>>> sudo)
+>>
+>> Yes; I see it in your log.
+>>
+>>>> "quirk: disabling D3cold for suspend"
+>>> On the fixed BIOS I see that line. On the unfixed BIOS it aborts the 
+>>> functions at "if (pm_suspend_target_state == PM_SUSPEND_ON)". Skipping the 
+>>> check on the unfixed BIOS it still hangs on resume.
+>>>>
+>>>> I'm /suspecting/ you do see it, but you're having problems with another 
+>>>> root port.
+>>>>
+>>>> I mentioned this in my previous iterations of patches that eventually 
+>>>> landed on that quirk, but Windows and Linux handle root ports differently 
+>>>> at suspend time and that could be why it's exposing your BIOS bug.
+>>>>
+>>>> If you can please narrow down which root ports actually need the quirk for 
+>>>> your side (feel free to do a similar style to 7d08f21f8c630) I think we 
+>>>> could land on something more narrow and upstreamable.
+>>>>
+>>>> At a minimum what you're doing today is covering both Rembrandt and Phoenix 
+>>>> and it should only apply to Phoenix.
+>>>
+>>> I also try to find out how many devices where actually shipped with this 
+>>> very first BIOS version.
+>>
+>> OK.
+>
+> Ok found out that the initial bios actually works, then there is one in 
+> between bios where it doesn't and the next one it works again.
+>
+> So i need to find out if the the in between bios was actually shipped, if not, 
+> this issue is actually void.
+>
+Dang it: seems like it.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9bddb094ee21..9eb4c4946ddc 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6870,16 +6870,15 @@ static inline void hrtick_update(struct rq *rq)
- #ifdef CONFIG_SMP
- static inline bool cpu_overutilized(int cpu)
- {
--	unsigned long  rq_util_min, rq_util_max;
-+	unsigned long rq_util_max;
- 
- 	if (!sched_energy_enabled())
- 		return false;
- 
--	rq_util_min = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MIN);
- 	rq_util_max = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MAX);
- 
- 	/* Return true only if the utilization doesn't fit CPU's capacity */
--	return !util_fits_cpu(cpu_util_cfs(cpu), rq_util_min, rq_util_max, cpu);
-+	return !util_fits_cpu(cpu_util_cfs(cpu), 0, rq_util_max, cpu);
- }
- 
- /*
--- 
-2.43.0
+So should i create a v3 of the patch with the correct pci ids just for this bios 
+version?
+
 
 
