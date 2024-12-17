@@ -1,182 +1,215 @@
-Return-Path: <linux-kernel+bounces-449132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BE29F4A52
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:52:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D8C9F4A47
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E411188C04B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:52:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237B0165BFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E991EF0B1;
-	Tue, 17 Dec 2024 11:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A051F03DF;
+	Tue, 17 Dec 2024 11:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FUaaihAj"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFKSWLf0"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9231EC01F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2090E1DD87D;
+	Tue, 17 Dec 2024 11:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734436348; cv=none; b=f1LDhlFQS9zquhwYNwNE37DA9329ErqbYx70pj/mF3NivcW6k1Q+7QBWBTzwathgaPApBodvX3AqCzKB7zEzbjuMo5Qpm/q+tP46PKNIyJl0l+J8o686pDQoIt6zbcrX6uaILYMcfO74vxCisPxkWcnJqbRrlGXQBNGtCCjRzUI=
+	t=1734436088; cv=none; b=RgqCaJdRl4/DP2gl1h9UPCCuDAPe9hILXixoSIA/u1cjmaAT65ZyL7TeGJ49ie9v8CSYLH4bG4ri+QaQYehokrqJhe7p9rh6WKkUNGHdpqQJ6EMxGCLy0SiEdThYnmxuqCUMJV/YoSrhwzDQw1fnrIc936uwkEeu6TKrp4fZ1zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734436348; c=relaxed/simple;
-	bh=Uyr/af5piLgIAsxETlp/Y6uGDkFZNrbFB8D0SeSre3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpR3lJJ3VMrQBqbuovVtwHIo19WexWK7IdH8wwpE3/uvY2x1RV9SvCi1MuOtOz6p/xZ2drVSRIh3VVZ1l372IkZYaq5HgaU/31fPz2rhsalYO1ioX775kI54pTuBckvO1OzHAmcsPZEvsPDoLFNN3/KwcIxl1ILCQt3n8eC19c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FUaaihAj; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ClCG25SUeVRyaAwiRmoF8ZisFQMziOb3AiLechO0cTo=; b=FUaaihAjoS2ArDwyBiJEEc7Qq1
-	V7qx+Vw2eFWsQkomhxIEXRJbuCOzqv85SHNdhU86tWRPHMazpCUoP++me0iVsZLidRTag5KwGsBqL
-	g2r+RiOZA6J6mUqm0hy8PIX8mzUybM92jFG7LogRwLSLa6Vv+Z0Ln7ZbqMxpn8r2WUiEHt7x5u8d+
-	EYvo9zMEKILgFZRHoaMBFJO149r+X5qbhRsI8rD85mLi4wwzx1WPKU+MdIMv+PRaJufJ/PrZnVxdT
-	YIpdnoVuEDTGLS6Y6IHkpacfkrHxFo16M0448Xnf1HP4N1pM3VnwNJLzjjn2zJzjf4f9bZJSa6zaz
-	8eKE4R7Q==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNW7f-00000006i9V-3tHt;
-	Tue, 17 Dec 2024 11:52:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 28FFA30015F; Tue, 17 Dec 2024 12:52:19 +0100 (CET)
-Date: Tue, 17 Dec 2024 12:52:19 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: "mingo@kernel.org" <mingo@kernel.org>,
-	"lucas.demarchi@intel.com" <lucas.demarchi@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"willy@infradead.org" <willy@infradead.org>,
-	"acme@kernel.org" <acme@kernel.org>,
-	"namhyung@kernel.org" <namhyung@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"irogers@google.com" <irogers@google.com>,
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH 19/19] perf: Make perf_pmu_unregister() useable
-Message-ID: <20241217115219.GH12500@noisy.programming.kicks-ass.net>
-References: <20241104133909.669111662@infradead.org>
- <20241104135519.715883982@infradead.org>
- <ae1f9492-dae0-4ce8-aa6b-f1890faf67e7@amd.com>
- <20241217091216.GK35539@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1734436088; c=relaxed/simple;
+	bh=8cUwwjxrd3gHpInQY9WHjrJke/ysO12iYLDp0ATqas4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DxyFXfBgRd54f08+0b90fgHOzam3Xku5KwPFQSB2/F4x43k5I8CLsZnrOzufIeUwS1OZzkvWRYyzwyXUDBLa6UZafoA5JfTm8Fnrx8NHgKop75Nyb6XZFO4OhB1/AqGruKwz7poLrm1hnwE8Bgc/rg4phLQL05F7DK8AbmaC1EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFKSWLf0; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so700171366b.3;
+        Tue, 17 Dec 2024 03:48:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734436084; x=1735040884; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TgPLNt6L5dfACZwwNJeFif8N+XzazwpAPkZQoHYaBOE=;
+        b=jFKSWLf0K3d/+8/S8GRIpmJpSc7XR0LqPrhpKI8a+VQn1qfhfGe8CmoK5/gED2df2O
+         JWvrkUwxAkyXrovVu4Z1CY4CMt5yQyWgWa5AWSuZXV5D7gy+AYg49Y7ulT5plzagAjKE
+         bVEEa3Aw0sy2Rklr1qaBJyvf1lDTJd8Sy42J8nHcBoSkoeSco9n1BRE1J+BK33rQx3It
+         VY2T4f907zWxe6TyZWD5fymkc2XM1UmO0TxNBZnSW8W3vYTRKOUHThP+BK5y8GE+a3Rc
+         FKZtyfubVyfdDhP69wb32i9kDqeEMJH0Ctz3ayTNMbV3P+olELNU1cwPi0OP4rP52HJM
+         6tZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734436084; x=1735040884;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TgPLNt6L5dfACZwwNJeFif8N+XzazwpAPkZQoHYaBOE=;
+        b=awWiSyRAsnJG5WZMrUZUPdmJAXOm4at7H7DR4LNLmdjsAGckYCMvuIRSdWe8gV/U6S
+         6I0Vk9WYsu4+5T2g5fSg2sRVnWdzyT9vIiWLdNmQbfYGPIR9QrKdWUM3iKLawCjzsSt/
+         /OXwGSDPZiFE6xiPPpXauCGKYt+XeeI9V+MGN6qACD7WN30QXOPhJ94hpVkWV2MfazDC
+         gh5BJcarHPIicoYb+pKshy/CCqhf0Zx43lfXW3qWRP3YMRKBFP9PzJmBW3B+Fvf9cW+0
+         SNNsazTvBJCnqIK/wWLG7rXaBWcQFrBGJulU7KdUVKct9KvcySeoBTPBveF/Ee8cEn7l
+         4bBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdA8t8SStS6WsdQc+7MtnaXrJ8ytWBvQb6Dv9ypUm2sV0/Pv6osKoTCNMEdAR3Wzc3lOmaferXF/Y0@vger.kernel.org, AJvYcCV5Nb5M78UUuT170ZWBFbslJIbh19SnY/2VLUNXj6uvoQABv8QgUw/xSq0+1CCnx7rwe5nD2ywfGoO4@vger.kernel.org, AJvYcCVDTqJDh44D40yd+P05BuCGfTlobiuU8MwLeC/ORIniSv/E/ODOUN3abBNxRRxhD9LUGjXs9zdDQj4X@vger.kernel.org, AJvYcCVpTIcuGzvclX+uopMez+2RmWPwJZDkCUuj9MhonE/ZLn8yMGLdO/3/8Wk9dJ78tyjhdOCP3Rh4U/6r@vger.kernel.org, AJvYcCXd1OLlO8Urce1TXN9r6WgBmgZiAqGBcuJUOUwe/yY+br0Pxs7RfcPt5uVfHPKsFhLVYdyh9qmiuKt/6ZbY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuRQlgVk36RZd84pTPQqKJwtfAIDRI+WHrrMfuu6GB19yf43DV
+	gvrmi5Ug2w14SH+G9m69P1StswGWLdARD7MPRvslAB7WzGawtLlO
+X-Gm-Gg: ASbGncs/bYOcglOwiQmZMVLg90J1I4o6JRrMbb4Ny4p5KALqYuOa+nOVsKwg8ZN9Eaj
+	zNClE8Mkr6Y/yX6nBOk9lZS3cDZCA419J54ih9mnIOxrc/FYSCgDcLIgxQoIKH9Jy8d/JQPxq44
+	oxVdnWn3vm7Hpt9Rfch6lapV6wQF+N06BGhor1E64jiRHOEr/P2K7zvM4o2VAj9mlM5YVsbTc9A
+	rLqMmCjlRpybCzOWfHQbEhBjtv0k5lThR23TzkPswI82nJO4jaWVdN/ocij8iXRKFzQaDk9/Z1w
+	6Y1+FtUeK7AFsASEmTM4gYwZ+AnlQ7sPXE0DbYJrsFSi/xcicMn8YVc1n2NaMgUPTcaJjVzclvq
+	srvYMCmigT0kssg==
+X-Google-Smtp-Source: AGHT+IEF6QcpZ2p7ADD57VCyJYUSCW81QUwTkzveHe8ErRkCWfSDWm1pGsP1JcA21NSgaDSm0tur6A==
+X-Received: by 2002:a05:6402:5214:b0:5d0:ed92:cdf6 with SMTP id 4fb4d7f45d1cf-5d63c3421f4mr34893683a12.19.1734436084354;
+        Tue, 17 Dec 2024 03:48:04 -0800 (PST)
+Received: from ?IPv6:2003:f6:ef10:f100:a045:a7a7:11d0:8676? (p200300f6ef10f100a045a7a711d08676.dip0.t-ipconnect.de. [2003:f6:ef10:f100:a045:a7a7:11d0:8676])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ad17d7sm4193524a12.25.2024.12.17.03.48.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 03:48:04 -0800 (PST)
+Message-ID: <27a8b987881eedc538afb6eaf300bc7909fb85b9.camel@gmail.com>
+Subject: Re: [PATCH v6 10/17] iio: adc: ad7944: don't use storagebits for
+ sizing
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron
+	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>
+Cc: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, David Jander	 <david@protonic.nl>, Martin Sperl
+ <kernel@martin.sperl.org>, 	linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, 	linux-pwm@vger.kernel.org
+Date: Tue, 17 Dec 2024 12:52:35 +0100
+In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-10-88ee574d5d03@baylibre.com>
+References: 
+	<20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
+	 <20241211-dlech-mainline-spi-engine-offload-2-v6-10-88ee574d5d03@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241217091216.GK35539@noisy.programming.kicks-ass.net>
 
-On Tue, Dec 17, 2024 at 10:12:16AM +0100, Peter Zijlstra wrote:
-> 
-> 
-> Oh sorry, I seem to have missed this email :/
-> 
-> On Mon, Nov 25, 2024 at 09:40:28AM +0530, Ravi Bangoria wrote:
-> > Hi Peter,
-> > 
-> > > @@ -6507,6 +6540,7 @@ static void perf_mmap_close(struct vm_ar
-> > >  	unsigned long size = perf_data_size(rb);
-> > >  	bool detach_rest = false;
-> > >  
-> > > +	/* FIXIES vs perf_pmu_unregister() */
-> > >  	if (event->pmu->event_unmapped)
-> > >  		event->pmu->event_unmapped(event, vma->vm_mm);
-> > 
-> > I assume you are already aware of the race between __pmu_detach_event()
-> > and perf_mmap_close() since you have put that comment. 
-> 
-> That comment was mostly about how we can't fix up the whole
-> ->event_unmapped() thing and have to abort pmu_unregister for it.
-> 
-> > In any case, below sequence of operations triggers a splat when
-> > perf_mmap_close() tries to access event->rb, event->pmu etc. which
-> > were already freed by __pmu_detach_event().
-> > 
-> > Sequence:
-> > 
-> >     Kernel                       Userspace
-> >     ------                       ---------
-> >     perf_pmu_register()
-> >                                 fd = perf_event_open()
-> >                                 p = mmap(fd)
-> >     perf_pmu_unregister()
-> >                                 munmap(p)
-> >                                 close(fd)
-> 
-> Right, let me go have a look. Thanks!
+On Wed, 2024-12-11 at 14:54 -0600, David Lechner wrote:
+> Replace use of storagebits with realbits for determining the number of
+> bytes needed for SPI transfers.
+>=20
+> When adding SPI offload support, storagebits will no longer be
+> guaranteed to be the "best fit" for 16-bit chips so we can no longer
+> rely on storagebits being the correct size expected by the SPI
+> framework. Instead, derive the correct size from realbits since it will
+> always be correct even when SPI offloads are used.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 
-Bah, that's a right mess indeed, however did I miss all that.
+Reviewed-vy: Nuno Sa <nuno.sa@analog.com>
 
-The easiest solution is probably to leave the RB around on detach, but
-now I need to remember why I did that in the first place :/
+> v6 changes: none
+>=20
+> v5 changes: none
+>=20
+> v4 changes: new patch in v4
+> ---
+> =C2=A0drivers/iio/adc/ad7944.c | 16 +++++++++-------
+> =C2=A01 file changed, 9 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
+> index
+> a5aea4e9f1a7bdd8ca10f9f4580ad3216ddcdfcb..6d1202bd55a013b092ff803f2065fd1=
+28dfa
+> 9bdd 100644
+> --- a/drivers/iio/adc/ad7944.c
+> +++ b/drivers/iio/adc/ad7944.c
+> @@ -98,6 +98,9 @@ struct ad7944_chip_info {
+> =C2=A0	const struct iio_chan_spec channels[2];
+> =C2=A0};
+> =C2=A0
+> +/* get number of bytes for SPI xfer */
+> +#define AD7944_SPI_BYTES(scan_type) ((scan_type).realbits > 16 ? 4 : 2)
+> +
+> =C2=A0/*
+> =C2=A0 * AD7944_DEFINE_CHIP_INFO - Define a chip info structure for a spe=
+cific chip
+> =C2=A0 * @_name: The name of the chip
+> @@ -164,7 +167,7 @@ static int ad7944_3wire_cs_mode_init_msg(struct devic=
+e
+> *dev, struct ad7944_adc *
+> =C2=A0
+> =C2=A0	/* Then we can read the data during the acquisition phase */
+> =C2=A0	xfers[2].rx_buf =3D &adc->sample.raw;
+> -	xfers[2].len =3D BITS_TO_BYTES(chan->scan_type.storagebits);
+> +	xfers[2].len =3D AD7944_SPI_BYTES(chan->scan_type);
+> =C2=A0	xfers[2].bits_per_word =3D chan->scan_type.realbits;
+> =C2=A0
+> =C2=A0	spi_message_init_with_transfers(&adc->msg, xfers, 3);
+> @@ -193,7 +196,7 @@ static int ad7944_4wire_mode_init_msg(struct device *=
+dev,
+> struct ad7944_adc *adc
+> =C2=A0	xfers[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
+> =C2=A0
+> =C2=A0	xfers[1].rx_buf =3D &adc->sample.raw;
+> -	xfers[1].len =3D BITS_TO_BYTES(chan->scan_type.storagebits);
+> +	xfers[1].len =3D AD7944_SPI_BYTES(chan->scan_type);
+> =C2=A0	xfers[1].bits_per_word =3D chan->scan_type.realbits;
+> =C2=A0
+> =C2=A0	spi_message_init_with_transfers(&adc->msg, xfers, 2);
+> @@ -228,7 +231,7 @@ static int ad7944_chain_mode_init_msg(struct device *=
+dev,
+> struct ad7944_adc *adc
+> =C2=A0	xfers[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
+> =C2=A0
+> =C2=A0	xfers[1].rx_buf =3D adc->chain_mode_buf;
+> -	xfers[1].len =3D BITS_TO_BYTES(chan->scan_type.storagebits) *
+> n_chain_dev;
+> +	xfers[1].len =3D AD7944_SPI_BYTES(chan->scan_type) * n_chain_dev;
+> =C2=A0	xfers[1].bits_per_word =3D chan->scan_type.realbits;
+> =C2=A0
+> =C2=A0	spi_message_init_with_transfers(&adc->msg, xfers, 2);
+> @@ -274,12 +277,12 @@ static int ad7944_single_conversion(struct ad7944_a=
+dc
+> *adc,
+> =C2=A0		return ret;
+> =C2=A0
+> =C2=A0	if (adc->spi_mode =3D=3D AD7944_SPI_MODE_CHAIN) {
+> -		if (chan->scan_type.storagebits > 16)
+> +		if (chan->scan_type.realbits > 16)
+> =C2=A0			*val =3D ((u32 *)adc->chain_mode_buf)[chan-
+> >scan_index];
+> =C2=A0		else
+> =C2=A0			*val =3D ((u16 *)adc->chain_mode_buf)[chan-
+> >scan_index];
+> =C2=A0	} else {
+> -		if (chan->scan_type.storagebits > 16)
+> +		if (chan->scan_type.realbits > 16)
+> =C2=A0			*val =3D adc->sample.raw.u32;
+> =C2=A0		else
+> =C2=A0			*val =3D adc->sample.raw.u16;
+> @@ -409,8 +412,7 @@ static int ad7944_chain_mode_alloc(struct device *dev=
+,
+> =C2=A0	/* 1 word for each voltage channel + aligned u64 for timestamp */
+> =C2=A0
+> =C2=A0	chain_mode_buf_size =3D ALIGN(n_chain_dev *
+> -		BITS_TO_BYTES(chan[0].scan_type.storagebits), sizeof(u64))
+> -		+ sizeof(u64);
+> +		AD7944_SPI_BYTES(chan[0].scan_type), sizeof(u64)) +
+> sizeof(u64);
+> =C2=A0	buf =3D devm_kzalloc(dev, chain_mode_buf_size, GFP_KERNEL);
+> =C2=A0	if (!buf)
+> =C2=A0		return -ENOMEM;
+>=20
 
-Oh.. I think I mostly that to serialize against perf_mmap(), which
-should reject creating further maps. But we can do that without actually
-detaching the RB -- we only need to acquire and release mmap_mutex.
-
-Ah, there's that perf_event_stop() inside of ring_buffer_attach(), that
-must not happen after detach, obviously. So that must be dealt with.
-
-Hmm, also if we leave ->rb around, then we need to deal with
-perf_event_set_output(), someone could try and redirect their things
-into our buffer -- which isn't technically broken, but still weird.
-
-Something like the below.
-
-How did you test; perf-fuzzer or something?
-
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1742,7 +1742,7 @@ static inline bool needs_branch_stack(st
- 
- static inline bool has_aux(struct perf_event *event)
- {
--	return event->pmu->setup_aux;
-+	return event->pmu && event->pmu->setup_aux;
- }
- 
- static inline bool has_aux_action(struct perf_event *event)
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5409,7 +5409,6 @@ static void _free_event(struct perf_even
- 	security_perf_event_free(event);
- 
- 	if (event->rb) {
--		WARN_ON_ONCE(!event->pmu);
- 		/*
- 		 * Can happen when we close an event with re-directed output.
- 		 *
-@@ -12023,7 +12022,10 @@ static void __pmu_detach_event(struct pm
- 	 */
- 	scoped_guard (mutex, &event->mmap_mutex) {
- 		WARN_ON_ONCE(pmu->event_unmapped);
--		ring_buffer_attach(event, NULL);
-+		/* 
-+		 * Mostly an empy lock sequence, such that perf_mmap(), which
-+		 * relies on mmap_mutex, is sure to observe the state change.
-+		 */
- 	}
- 
- 	perf_event_free_bpf_prog(event);
-@@ -12823,6 +12825,9 @@ perf_event_set_output(struct perf_event
- 		goto unlock;
- 
- 	if (output_event) {
-+		if (output_event->state <= PERF_EVENT_STATE_REVOKED)
-+			goto unlock;
-+
- 		/* get the rb we want to redirect to */
- 		rb = ring_buffer_get(output_event);
- 		if (!rb)
 
