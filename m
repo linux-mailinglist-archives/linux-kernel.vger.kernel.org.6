@@ -1,195 +1,378 @@
-Return-Path: <linux-kernel+bounces-448574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F359F41E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:09:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46639F41F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DFD3169627
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:09:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F0621889413
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EBC1487FE;
-	Tue, 17 Dec 2024 05:09:29 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F66B155C9E;
+	Tue, 17 Dec 2024 05:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h0JYA8Vf"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2071.outbound.protection.outlook.com [40.107.220.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C3170827
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734412168; cv=none; b=eCTRFq7i2EV5UM0hpCAkOE2bJGZknsQrpOK9rIFfU/ypvxH2lXyWdlaHTTTtrgundJrIlDmWP7A9wiUWB+j74gxpjJVAzlA/U9fGM3+/V31e7nLK5QvIdfUPaNqffGCYBZXd0A59FsUUhUkrDrRr5/lVbsmWD9JMmeKb58aZuIw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734412168; c=relaxed/simple;
-	bh=lRT53tnMpIkVZbU2tynbVlZyVKxCwls4sQu+kuKIn6o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=V8sZygIRmFocFg4Pfqroz2Nc5wZWHA7D3Cq9OA5/UcoEBarJNxAkqEfuPysCyXIvxjoYoi4oTsNC8T8HUEwXFXZRkLAJo0sfgaUSNvUbD5CedCl0AcuGRTrZm/OZfQwP0fNB5W1TG+XgIcjLEwc2/ZfkG4HZo2Vt/GEeAY4FYeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-844d02766f9so398419139f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:09:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734412166; x=1735016966;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tAWUH+vcmwxxItz1fFrTGcQLivAWtcTVB12gHeyDmAk=;
-        b=V4O6ho4526K1Nzu3nu+3ylK8qjMIXVuqxSuwcb/7O8B7Yocf9Kl4eqjKA8oMP+BwFF
-         vv5NdRCmAZTGXojhgFJ+AxhLo6jX32t6/TyueCSu8N+cbxuB+YXJ01NbtlvXwpiPF7xL
-         MbrFoNfSIZIoEnwC8JDB9yTCl1zStzW1Ld+m1EYdaD1M+qUoy5maQWRxrHrDwSuw2sO3
-         u/wJiAcRf4SL+NvZdWzVz/62oIyn4vuxxPV3M7tLlru6SiFJ2gu8TDDxq5AhFXpuqOdD
-         TMoOzMprM6+Rg+9gzM37hZHEvbPtl3uRCllNjnwSa++PAGv9pZn0Vy/veN4G+7/5UJ5H
-         XZjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUIJVlsmfsJAnEy+wAxgkYRs7htXBOMLIpsAy5ECTau3lFzwh4hPYo2nKXJHvbgz5luO5A4jC9Zt4Ho+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWloCVhzpE3P9+fz4v7GesBZXylZWl6HQ4n0rAfj+OB/8ALCEG
-	aBMJGhAfljEfIP/y1CK34OHPSbN9XR95SsIz9z17p/yVmZ9+mjDjaWXM+f/BExZBfHFUa65kzSs
-	22XF4+ekv7fyNxKGWP1jCcuYCl45S37MhGlN1koFJBWLmvZnHELFELNU=
-X-Google-Smtp-Source: AGHT+IG3N4EKJPQrzwwdyNhp9xhkkg/O25whQYjpvd6Xn8Pztd4Tfg5Ks9RVASfGDU2J6NmdjTcZyRYBsad1mMKQAfcu+tNcDdt3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D638470827;
+	Tue, 17 Dec 2024 05:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734412412; cv=fail; b=PRXrcKt+vS8TMxpf2VHNK74pwunRmXuGVPMfT1tR9pZWCA9XYpiXMA4XOYs5F2OooYhE0BFu9Z5RapylN5eeHXJmi63S9OI2blMIFzLNPTDh2q+FFfEmJu0V1VEZzL17q1PCBl52Zmmmw6vNmGCyUzkcz+P/eT9JzUYYuFiB4n0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734412412; c=relaxed/simple;
+	bh=IGMh93gSP/sMSjAc/LqQ8F6NPvWkFmiNgzxQmkuNv68=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ZTB3E29MRtg7naBUo/BpnY/yQgHDVA+5inbFFrAb6TWq9ne9exGutKoLjh0QyNd9pwddEwTVV70Uo5O0lr1GoLglsny8tt59RsSrFGnRzoiPFDK3Ovb1UcHV6XObdr+AO6mgIPe6lfO3DoPqN+Kn9ThZwBHCku44hu7YfNqBs+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h0JYA8Vf; arc=fail smtp.client-ip=40.107.220.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CArsXbOti08qmUdHoY0OUL4Q6v1KVTHTfAbytnrTtwo9xPSoXz28AcLctTDUee5mPM8Z4bXcnkX8BKUoREozzX8jW4c/rPQHry5rpvcOhJR8Aa0shIwghlNoX07L1IIgtBqMuVUQie7+UiClS0kIK/eEo/gEGYkM3bPM0dGCZtKQByLoWT6CUbbSbAnt3ZMHYrNyI6TGfnYYvcR2z0AJiKFg+HZoepuevZKfTY15AghQ7kK5W4ZvZQaIc+Z3mzU5H6idweLUIiv2abYW+lXF9DhcELo+MBR/+ndhts5w+emz6bK79dVPBkovUr3EwLjqEXQluJpMu1tZ5cUcKc3Fhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/3ctEhFLYPJl0ejLmEqc8V83PAPjatQzcHAuasxJTOs=;
+ b=GnntueXJykTuCndgQ4hvSceNfg8FnSEcvxJ4EksR/+5H5GSjR3rPglFWt4b3vqGgGOYZjcLD7dU3i97ZMvIkBPbe1wINm21/W1frWj37zrBWd4J/2dOsWdQQ/uS7pOyfL2aWxQ9D0WzLUO1Eki4c1FmLNSM+WnNGrRCr0nCPuptoMpKj1BQ8pkGIbQn6UbmHNJFX/pWr22eGgxrYUwFOC78lbRY1zS8qgZYxECYNW2belm0uCR5z+51MofaJVLJGFXGrWjGjMxwDSI+IFUmsM1r+S06ZFC/icTk9gJ+7Q/7K3CYf0AOBaurvWnUELUS9X05ZK1yYCnAX/D7zYml0lg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/3ctEhFLYPJl0ejLmEqc8V83PAPjatQzcHAuasxJTOs=;
+ b=h0JYA8VfymDmeDxaOPAj+rkxzQxjkw98IN58buwihm8ccL+LY/zj7D/cUkO+MFT2mKh5a7zwbVwoEqLSIcevK4JoiDQ8oaOCDyCyZ8OHWwP7iDW+qfXdoMm9LEHZTv+Nmwy7k5DGScGRoXSpHidSq5NTmBPYZEyFdfZZduEn0IrgBtvUJ94UPOcZDV2YplmBA1LD/82h4zfmQXp6JTQTk+3tKnwifsNLAlMwlcCE+GP0NxZ2kACLUz0hswznrz1gBRsc2LJtjKZVxX4K3qFEnQyHc10wDADZMexZKzvOVLn68FMAGIm+ACGQanAQ9wN1Bn18ZdptFH7ykQLNDm3Bpg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ CH3PR12MB8936.namprd12.prod.outlook.com (2603:10b6:610:179::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Tue, 17 Dec
+ 2024 05:13:25 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
+ 05:13:25 +0000
+From: Alistair Popple <apopple@nvidia.com>
+To: akpm@linux-foundation.org,
+	dan.j.williams@intel.com,
+	linux-mm@kvack.org
+Cc: Alistair Popple <apopple@nvidia.com>,
+	lina@asahilina.net,
+	zhang.lyra@gmail.com,
+	gerald.schaefer@linux.ibm.com,
+	vishal.l.verma@intel.com,
+	dave.jiang@intel.com,
+	logang@deltatee.com,
+	bhelgaas@google.com,
+	jack@suse.cz,
+	jgg@ziepe.ca,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	dave.hansen@linux.intel.com,
+	ira.weiny@intel.com,
+	willy@infradead.org,
+	djwong@kernel.org,
+	tytso@mit.edu,
+	linmiaohe@huawei.com,
+	david@redhat.com,
+	peterx@redhat.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	jhubbard@nvidia.com,
+	hch@lst.de,
+	david@fromorbit.com
+Subject: [PATCH v4 00/25] fs/dax: Fix ZONE_DEVICE page reference counts
+Date: Tue, 17 Dec 2024 16:12:43 +1100
+Message-ID: <cover.18cbcff3638c6aacc051c44533ebc6c002bf2bd9.1734407924.git-series.apopple@nvidia.com>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SY6PR01CA0117.ausprd01.prod.outlook.com
+ (2603:10c6:10:1b8::18) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e8:b0:3a7:e592:55ee with SMTP id
- e9e14a558f8ab-3aff8b9d0admr177433655ab.20.1734412166306; Mon, 16 Dec 2024
- 21:09:26 -0800 (PST)
-Date: Mon, 16 Dec 2024 21:09:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67610786.050a0220.37aaf.0149.GAE@google.com>
-Subject: [syzbot] [gpio?] general protection fault in gpiolib_seq_stop
-From: syzbot <syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com>
-To: brgl@bgdev.pl, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH3PR12MB8936:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a973c43-7f54-4223-3bf1-08dd1e598879
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Wpy5ZQ00jGuT5FToRPQvE5o3wjj0PFkPL4iNIwf/NVP432SkpdBgP37HNE9m?=
+ =?us-ascii?Q?kbo+Ae7AZIuPV3qIsfd5Z/GNhEYHsrAz5Qmzf9CYE38KT/Nn6aliiZCp/9HJ?=
+ =?us-ascii?Q?jjBRlA+mjhSMGUf2Vw6CVBrt7b6ggQ63KItbgfNep3A7ChTkmIdGnYQGFR+U?=
+ =?us-ascii?Q?DPWRbf5IGnNB+s7LPLZW5QLpN3r+cp7A4uQd2m7PwGLtyki9PsI6vNdgXnNI?=
+ =?us-ascii?Q?/edY0wInG5VVsORQpk3emhTXfLCBfhzeCGpRv/r+AZXDAY+ewBc3tvAg1T8E?=
+ =?us-ascii?Q?BSeqVw6jDZGz/datoeAkLytOY2IkUHw4LX0NarvFrsEhOXofZgQdK6WNBclZ?=
+ =?us-ascii?Q?mBtIcomGQoFvwLG9luiNINb1PXfodBkAQ2KylKNeM7UJ30YfXap3ctkjbFP+?=
+ =?us-ascii?Q?D3CuB2LdgG39rrT8dP0MyIJsAftUww3KZqzXqTyZ8GMWSzQlYmOJjjCcFZ+M?=
+ =?us-ascii?Q?6rNAzz0Hcvsg3G0XCAdV5KE+7nK39hqWQ4YC2uE62XClNxKKgHSyYEsE+pxv?=
+ =?us-ascii?Q?sEVja/FECv7LKehprXAbT0uU8TDGGvPm8Tc6Klk4f9MJexljj633sYswVrAL?=
+ =?us-ascii?Q?Fj2ez3LfG6jDamUiN7VxAS5r2VbXtVqatXf+0QcCewYTD9rXh9d1fcVG5eIW?=
+ =?us-ascii?Q?9jEmj2+81QbrmpKPfkJnwcE4a09LPSvr3oniFVu4rq+QA0YyKWTf/000RVUD?=
+ =?us-ascii?Q?7BoE8DYxtLI4jQyboMHyXDjtibk6I9i8TMreYcAkfF+07bllfT8eRS8AN3Hf?=
+ =?us-ascii?Q?P77ddLKgNBSNsa2R2cwcHmGWPy8+D8k0xpcx6ypc+YbcjP4XA/hZxEjmdZDW?=
+ =?us-ascii?Q?b8sKiPj5vFOYDUIEvpww7lLSDpPjzHs1WJmmwTEfCRRoMYQih3DnLXXyv3S8?=
+ =?us-ascii?Q?LYJQ7zu342+04psHr4npteS2So2Cqfc8BgnSUD9lN78fZMQIrrVnmqsOuP++?=
+ =?us-ascii?Q?t9x5+j8sZndd8QMaGj2e7AcJRcbVr+6mUrwbkHMuGCYHS1i5Xbjv1h7fHz8f?=
+ =?us-ascii?Q?npg6ITL+ypMT2rbxqseRbNKpeUFpUqPDUZ+5jT2BwsLUFZeDmn06ZzyYiYsL?=
+ =?us-ascii?Q?+v25Qp6Xe+YGcX6KJlNxPops0whNeL+lmFe0pL/ShO6LR1P4fh0XbIBXl6KU?=
+ =?us-ascii?Q?TqTjVccH2D2W+ln3ZIvABNmA3qHUOM2JnxX2+glBu3oX+IWO4uLiJmnZjBbO?=
+ =?us-ascii?Q?v9hbuMmO37LRF1AS7LYq/xh+sW2tJSOFUCjdVC9W8jtIqKFuOmdMOyBNS6JW?=
+ =?us-ascii?Q?eldxRJ82bAXdwYd2yUb1jKIw/uSrh7GgKPBbbZ5yGmn+nVdfxMjcOC0CJew+?=
+ =?us-ascii?Q?dr2parancdP3ALzy6NqleE4t/sdgbTxuB8Am6jMWnYayqYz2N94MSwg4eNq6?=
+ =?us-ascii?Q?f+pw+wW/00Q5NbTNyfhjFCUiA9Ac?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?k2l3I5o0dnrWYU7XfDzameO7P1AM/F7qWrlVlJW5uhEJ0ZWf0rztmC9X7QxV?=
+ =?us-ascii?Q?G0kiZ09+NeHRIvxJWAnkiD6xb2ZHO+0PxW/sWDmS2oHrK6KEOiB4YKcVJNDC?=
+ =?us-ascii?Q?ElS031aeTS9Y/b34+Xo62LXdOley1/qnMId05DVBakahIxb7xpqdSv0d4iPp?=
+ =?us-ascii?Q?vkLh5VL9dcoozgFdfdd6mDRxlaEGfSSTrBI5SJ+XwSV0sxHhV2rjjHiGOZpw?=
+ =?us-ascii?Q?44geCDYpjl8pySJLncoJ6GpEGSduP38uuzNuW8HB/HlU2bTiKdDCc8MoAkfF?=
+ =?us-ascii?Q?qPoGChstBPBGKaFm6TOMtG/6FXgXfGAwXUyXhMC8oXBgFfcHYDcAekiHK6BO?=
+ =?us-ascii?Q?+VgM+xEkPorjll3dIlNDYST/X/w/5kiIltFcXSJm++jZs5mWCXUgqI+dvkdb?=
+ =?us-ascii?Q?zou7sTnIBskaW8cgdXJ39/61XlcIHa45L3eeAL33ZxlL/LlLDFOVrqax/urt?=
+ =?us-ascii?Q?4a9JXaZvyI0f6OweJG36CYsT8X6vqNicH6YeHF76qopHcNCxG8gg9iEtSvPM?=
+ =?us-ascii?Q?TfXqfx4pKjZhU0M6tN+Kn17Z5Xh7r0fd2myovtG7FcZOqcfHZ34dsE4Nosr/?=
+ =?us-ascii?Q?cvQmHgm8vw6xassUNlF2Hq+KRNDRzSqZWu7nCRB35kugZTKYkS3Tfj27yVHU?=
+ =?us-ascii?Q?+FblWxxd1neYc4EfGg+Q5PGqoI92E3Yxs6BXfHQZbGB+HyxwJvyoH1RfZla4?=
+ =?us-ascii?Q?q4wDviJNfkqNNaSEWfziePSOAzwPzdCYCn2OMOlmhglMNSvzhzpEifcqppqJ?=
+ =?us-ascii?Q?145re5ByupiD/U+Kf4KHLZuj0DNu5B93PIvNzk6cHQqE0KHIkfA626IbuC1B?=
+ =?us-ascii?Q?UYWZdAAPm30wVR4S4b2e+BuYbeLKxRa6994JVmlWnAvd9ywTU3O38tLBQBnw?=
+ =?us-ascii?Q?VYLda2BWAz6kHIG1MBpUk/kiNvctvkaOJXZeHAphOfu9nZs1ZWSBnaja6EoU?=
+ =?us-ascii?Q?Lmr/pxt60zAOeYFBHzR9ES3WdYT8q/9YdYJI5dMZAeCkgFGXEgVgvs7/zPDO?=
+ =?us-ascii?Q?eMUx8fIrzdnnwRB76lR6vr1nPqqtA6qe2r/JziB29vmPK5szXkP6Zgoa9Swf?=
+ =?us-ascii?Q?UolaVSz7jKkVF3r5SHtp4KuS5DBMhtuFgRiRu55pac9uUqFy8RpZH9s4Ciw9?=
+ =?us-ascii?Q?WMFFUJPLQCiFnBCD1xjebRHOvGCNbZ9IW1IUERCJMa4sH/nx4wNvoiE3K/o+?=
+ =?us-ascii?Q?ssIs7GKVoSf/t0PyzuN8/5R29XAVg527HSyswD+dQyMqG5Ph1B5RfGxVzpbV?=
+ =?us-ascii?Q?mzTTV8CydJPh4LEPM9qRHFvMXCDm64LRhPXPLRWRt9uncFBXT86Ymwb6hBoh?=
+ =?us-ascii?Q?//QnGmpVna85P5Xu7l2rCSBcB1IIiJNuQbRAyEBPBmCu6F/dUQgjZGtJFtOu?=
+ =?us-ascii?Q?9QmJgNeptVGXySnPPoEpNWH/t8UIHdJ7q89TI+whmpZxti3ex/+PQqYrcP/b?=
+ =?us-ascii?Q?HCTz2eNFJm+bPlcac1vHPLjIt/F9wqR7lDoysryjNRIAeaO8EjswOdaT05Cw?=
+ =?us-ascii?Q?hzlxrEMpEiTm2jkHp7gMcSe/F0iBhae2EHlAJUXtwSAo8vw1H7W4AjYae5tA?=
+ =?us-ascii?Q?f+BDB5ujDOKFJEsxGGkgBVSx6FjetRVFOoBqGA2t?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a973c43-7f54-4223-3bf1-08dd1e598879
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 05:13:25.0330
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tGM3K2EakZl+6YtbryBHOVs8U0HvO+PYNw2bFb86RDEYwV7qotyHbvtGWNR6TP1UEKMM6QwlMgWdC/YQPyVHqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8936
 
-Hello,
+Main updates since v3:
+ - Rebased onto next-20241216
 
-syzbot found the following issue on:
+ - Fixed a bunch of build breakages reported by John Hubbard and the
+   kernel test robot due to various combinations of CONFIG options.
 
-HEAD commit:    2d8308bf5b67 Merge tag 'scsi-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1383bcdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=b95d0c98f01e7a95da72
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1189c344580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103b94f8580000
+ - Split the rmap changes into a separate patch as suggested by David H.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/66039e873a32/disk-2d8308bf.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/60744ba3f743/vmlinux-2d8308bf.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/25731ba013ad/bzImage-2d8308bf.xz
+ - Reworded the description for the P2PDMA change.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com
+Main updates since v2:
 
-RDX: 0000000000000008 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 0000000000000001 R08: 00007fffecdd9167 R09: 00007f4106f40032
-R10: 0000000000000005 R11: 0000000000000246 R12: 00007f4106f46618
-R13: 00007fffecdd95a8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5829 Comm: syz-executor520 Not tainted 6.13.0-rc2-syzkaller-00362-g2d8308bf5b67 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-RIP: 0010:gpiolib_seq_stop+0x4c/0xe0 drivers/gpio/gpiolib.c:5067
-Code: 48 c1 ea 03 80 3c 02 00 0f 85 98 00 00 00 48 8b 9b e0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 04 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 60 8b
-RSP: 0018:ffffc90003e1fa58 EFLAGS: 00010247
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffff88802463a018
-RDX: 0000000000000000 RSI: ffffffff84cc96be RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000dc0 R09: 00000000ffffffff
-R10: ffffffff8df7c5d3 R11: 0000000000000001 R12: ffffffff8bb596a0
-R13: 0000000000000000 R14: 0000000000000000 R15: ffffc90003e1fc40
-FS:  0000555557ff9380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055e43c381608 CR3: 0000000076408000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- traverse.part.0.constprop.0+0x2bd/0x640 fs/seq_file.c:131
- traverse fs/seq_file.c:98 [inline]
- seq_read_iter+0x934/0x12b0 fs/seq_file.c:195
- seq_read+0x39f/0x4e0 fs/seq_file.c:162
- full_proxy_read+0xfb/0x1b0 fs/debugfs/file.c:351
- vfs_read+0x1df/0xbe0 fs/read_write.c:563
- ksys_pread64 fs/read_write.c:756 [inline]
- __do_sys_pread64 fs/read_write.c:764 [inline]
- __se_sys_pread64 fs/read_write.c:761 [inline]
- __x64_sys_pread64+0x1f6/0x250 fs/read_write.c:761
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4106edb2e9
-Code: 48 83 c4 28 c3 e8 17 1a 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffecdd93c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000011
-RAX: ffffffffffffffda RBX: 00007fffecdd93d0 RCX: 00007f4106edb2e9
-RDX: 0000000000000008 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 0000000000000001 R08: 00007fffecdd9167 R09: 00007f4106f40032
-R10: 0000000000000005 R11: 0000000000000246 R12: 00007f4106f46618
-R13: 00007fffecdd95a8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:gpiolib_seq_stop+0x4c/0xe0 drivers/gpio/gpiolib.c:5067
-Code: 48 c1 ea 03 80 3c 02 00 0f 85 98 00 00 00 48 8b 9b e0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 04 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 60 8b
-RSP: 0018:ffffc90003e1fa58 EFLAGS: 00010247
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffff88802463a018
-RDX: 0000000000000000 RSI: ffffffff84cc96be RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000dc0 R09: 00000000ffffffff
-R10: ffffffff8df7c5d3 R11: 0000000000000001 R12: ffffffff8bb596a0
-R13: 0000000000000000 R14: 0000000000000000 R15: ffffc90003e1fc40
-FS:  0000555557ff9380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000080 CR3: 0000000076408000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	48 c1 ea 03          	shr    $0x3,%rdx
-   4:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   8:	0f 85 98 00 00 00    	jne    0xa6
-   e:	48 8b 9b e0 00 00 00 	mov    0xe0(%rbx),%rbx
-  15:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  1c:	fc ff df
-  1f:	48 8d 7b 04          	lea    0x4(%rbx),%rdi
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	0f b6 14 02          	movzbl (%rdx,%rax,1),%edx <-- trapping instruction
-  2e:	48 89 f8             	mov    %rdi,%rax
-  31:	83 e0 07             	and    $0x7,%eax
-  34:	83 c0 03             	add    $0x3,%eax
-  37:	38 d0                	cmp    %dl,%al
-  39:	7c 04                	jl     0x3f
-  3b:	84 d2                	test   %dl,%dl
-  3d:	75 60                	jne    0x9f
-  3f:	8b                   	.byte 0x8b
+ - Rename the DAX specific dax_insert_XXX functions to vmf_insert_XXX
+   and have them pass the vmf struct.
 
+ - Seperate out the device DAX changes.
+
+ - Restore the page share mapping counting and associated warnings.
+
+ - Rework truncate to require file-systems to have previously called
+   dax_break_layout() to remove the address space mapping for a
+   page. This found several bugs which are fixed by the first half of
+   the series. The motivation for this was initially to allow the FS
+   DAX page-cache mappings to hold a reference on the page.
+
+   However that turned out to be a dead-end (see the comments on patch
+   21), but it found several bugs and I think overall it is an
+   improvement so I have left it here.
+
+Device and FS DAX pages have always maintained their own page
+reference counts without following the normal rules for page reference
+counting. In particular pages are considered free when the refcount
+hits one rather than zero and refcounts are not added when mapping the
+page.
+
+Tracking this requires special PTE bits (PTE_DEVMAP) and a secondary
+mechanism for allowing GUP to hold references on the page (see
+get_dev_pagemap). However there doesn't seem to be any reason why FS
+DAX pages need their own reference counting scheme.
+
+By treating the refcounts on these pages the same way as normal pages
+we can remove a lot of special checks. In particular pXd_trans_huge()
+becomes the same as pXd_leaf(), although I haven't made that change
+here. It also frees up a valuable SW define PTE bit on architectures
+that have devmap PTE bits defined.
+
+It also almost certainly allows further clean-up of the devmap managed
+functions, but I have left that as a future improvment. It also
+enables support for compound ZONE_DEVICE pages which is one of my
+primary motivators for doing this work.
+
+Signed-off-by: Alistair Popple <apopple@nvidia.com>
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Cc: lina@asahilina.net
+Cc: zhang.lyra@gmail.com
+Cc: gerald.schaefer@linux.ibm.com
+Cc: dan.j.williams@intel.com
+Cc: vishal.l.verma@intel.com
+Cc: dave.jiang@intel.com
+Cc: logang@deltatee.com
+Cc: bhelgaas@google.com
+Cc: jack@suse.cz
+Cc: jgg@ziepe.ca
+Cc: catalin.marinas@arm.com
+Cc: will@kernel.org
+Cc: mpe@ellerman.id.au
+Cc: npiggin@gmail.com
+Cc: dave.hansen@linux.intel.com
+Cc: ira.weiny@intel.com
+Cc: willy@infradead.org
+Cc: djwong@kernel.org
+Cc: tytso@mit.edu
+Cc: linmiaohe@huawei.com
+Cc: david@redhat.com
+Cc: peterx@redhat.com
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: nvdimm@lists.linux.dev
+Cc: linux-cxl@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Cc: jhubbard@nvidia.com
+Cc: hch@lst.de
+Cc: david@fromorbit.com
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Alistair Popple (25):
+  fuse: Fix dax truncate/punch_hole fault path
+  fs/dax: Return unmapped busy pages from dax_layout_busy_page_range()
+  fs/dax: Don't skip locked entries when scanning entries
+  fs/dax: Refactor wait for dax idle page
+  fs/dax: Create a common implementation to break DAX layouts
+  fs/dax: Always remove DAX page-cache entries when breaking layouts
+  fs/dax: Ensure all pages are idle prior to filesystem unmount
+  fs/dax: Remove PAGE_MAPPING_DAX_SHARED mapping flag
+  mm/gup.c: Remove redundant check for PCI P2PDMA page
+  mm/mm_init: Move p2pdma page refcount initialisation to p2pdma
+  mm: Allow compound zone device pages
+  mm/memory: Enhance insert_page_into_pte_locked() to create writable mappings
+  mm/memory: Add vmf_insert_page_mkwrite()
+  rmap: Add support for PUD sized mappings to rmap
+  huge_memory: Add vmf_insert_folio_pud()
+  huge_memory: Add vmf_insert_folio_pmd()
+  memremap: Add is_device_dax_page() and is_fsdax_page() helpers
+  gup: Don't allow FOLL_LONGTERM pinning of FS DAX pages
+  proc/task_mmu: Ignore ZONE_DEVICE pages
+  mm/mlock: Skip ZONE_DEVICE PMDs during mlock
+  fs/dax: Properly refcount fs dax pages
+  device/dax: Properly refcount device dax pages when mapping
+  mm: Remove pXX_devmap callers
+  mm: Remove devmap related functions and page table bits
+  Revert "riscv: mm: Add support for ZONE_DEVICE"
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ Documentation/mm/arch_pgtable_helpers.rst     |   6 +-
+ arch/arm64/Kconfig                            |   1 +-
+ arch/arm64/include/asm/pgtable-prot.h         |   1 +-
+ arch/arm64/include/asm/pgtable.h              |  24 +-
+ arch/powerpc/Kconfig                          |   1 +-
+ arch/powerpc/include/asm/book3s/64/hash-4k.h  |   6 +-
+ arch/powerpc/include/asm/book3s/64/hash-64k.h |   7 +-
+ arch/powerpc/include/asm/book3s/64/pgtable.h  |  52 +---
+ arch/powerpc/include/asm/book3s/64/radix.h    |  14 +-
+ arch/powerpc/mm/book3s64/hash_pgtable.c       |   3 +-
+ arch/powerpc/mm/book3s64/pgtable.c            |   8 +-
+ arch/powerpc/mm/book3s64/radix_pgtable.c      |   5 +-
+ arch/powerpc/mm/pgtable.c                     |   2 +-
+ arch/riscv/Kconfig                            |   1 +-
+ arch/riscv/include/asm/pgtable-64.h           |  20 +-
+ arch/riscv/include/asm/pgtable-bits.h         |   1 +-
+ arch/riscv/include/asm/pgtable.h              |  17 +-
+ arch/x86/Kconfig                              |   1 +-
+ arch/x86/include/asm/pgtable.h                |  51 +---
+ arch/x86/include/asm/pgtable_types.h          |   5 +-
+ drivers/dax/device.c                          |  15 +-
+ drivers/gpu/drm/nouveau/nouveau_dmem.c        |   3 +-
+ drivers/nvdimm/pmem.c                         |   4 +-
+ drivers/pci/p2pdma.c                          |  19 +-
+ fs/dax.c                                      | 357 ++++++++++++++-----
+ fs/ext4/inode.c                               |  43 +--
+ fs/fuse/dax.c                                 |  35 +--
+ fs/fuse/virtio_fs.c                           |   3 +-
+ fs/proc/task_mmu.c                            |  18 +-
+ fs/userfaultfd.c                              |   2 +-
+ fs/xfs/xfs_inode.c                            |  40 +-
+ fs/xfs/xfs_inode.h                            |   3 +-
+ fs/xfs/xfs_super.c                            |  18 +-
+ include/linux/dax.h                           |  37 ++-
+ include/linux/huge_mm.h                       |  22 +-
+ include/linux/memremap.h                      |  28 +-
+ include/linux/migrate.h                       |   4 +-
+ include/linux/mm.h                            |  40 +--
+ include/linux/mm_types.h                      |  14 +-
+ include/linux/mmzone.h                        |  12 +-
+ include/linux/page-flags.h                    |   6 +-
+ include/linux/pfn_t.h                         |  20 +-
+ include/linux/pgtable.h                       |  21 +-
+ include/linux/rmap.h                          |  15 +-
+ lib/test_hmm.c                                |   3 +-
+ mm/Kconfig                                    |   4 +-
+ mm/debug_vm_pgtable.c                         |  59 +---
+ mm/gup.c                                      | 176 +---------
+ mm/hmm.c                                      |  12 +-
+ mm/huge_memory.c                              | 233 +++++++-----
+ mm/internal.h                                 |   2 +-
+ mm/khugepaged.c                               |   2 +-
+ mm/madvise.c                                  |   8 +-
+ mm/mapping_dirty_helpers.c                    |   4 +-
+ mm/memory-failure.c                           |   6 +-
+ mm/memory.c                                   | 126 ++++---
+ mm/memremap.c                                 |  59 +--
+ mm/migrate_device.c                           |   9 +-
+ mm/mlock.c                                    |   2 +-
+ mm/mm_init.c                                  |  23 +-
+ mm/mprotect.c                                 |   2 +-
+ mm/mremap.c                                   |   5 +-
+ mm/page_vma_mapped.c                          |   5 +-
+ mm/pagewalk.c                                 |  14 +-
+ mm/pgtable-generic.c                          |   7 +-
+ mm/rmap.c                                     |  56 +++-
+ mm/swap.c                                     |   2 +-
+ mm/truncate.c                                 |  16 +-
+ mm/userfaultfd.c                              |   5 +-
+ mm/vmscan.c                                   |   5 +-
+ 70 files changed, 922 insertions(+), 928 deletions(-)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+base-commit: e25c8d66f6786300b680866c0e0139981273feba
+-- 
+git-series 0.9.1
 
