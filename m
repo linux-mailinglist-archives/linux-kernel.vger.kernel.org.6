@@ -1,136 +1,99 @@
-Return-Path: <linux-kernel+bounces-448451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395589F4043
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:54:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD39D9F4040
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:53:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669CA16CDBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46BA16CD5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A78284D3E;
-	Tue, 17 Dec 2024 01:54:27 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id D331B2595;
-	Tue, 17 Dec 2024 01:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A06512C475;
+	Tue, 17 Dec 2024 01:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTrd9dUS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3C32E630;
+	Tue, 17 Dec 2024 01:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734400467; cv=none; b=N/1C1RjH3YLHmJhSvRYk1hXSlV78Nn3Wa+PgXCycMBp8vZlxZcKE5gTfLFHuksccGmM7HP/uL26o1yle/0EPeX75nD4O0Fg3AzA0RIScMzK3TrP9Abrscr67NbG/VSTfwNEjaRbyRLIXQa0KbXA1k2C+OF1/ZPcSZ1DRtRMCkGI=
+	t=1734400401; cv=none; b=hx39VOTkJS9GPuuVG5vRnhc3byaNpvBnXNinvRG75jWAUVFLGKbC5uoZJF3sHx9d0nUY9FbU4bfqmsm31QVTiWQwqYPJs80VpanFEEGaxoUc1TvkTHbgn+3/Rhgje20wNCPWW+yBAe4p4h+Oc27tx3Ei+NHQyJONXJ3jYc2xMpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734400467; c=relaxed/simple;
-	bh=AKnwrjfurYTExrdozB+/U9GlNZVTFyPpKBCJhqXDLbo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=TnMd6nijTmMq0YUIV/ju/tZsw1/rgJUJGDMv6HF/uhyYSqpM08p9rJTJXhRrcqhunrKt+J5ZwYthUcj/lu0P1aCl+ZrpJsoS1bMcGi7Vzfu286ILCCBcUhptmsqKRKSYIUwz0OMUd/oZt6+/7VutpEP5msR88a2k8bYfnhkOUIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [103.163.180.3])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 566BE6017097D;
-	Tue, 17 Dec 2024 09:54:09 +0800 (CST)
-X-MD-Sfrom: zhanxin@nfschina.com
-X-MD-SrcIP: 103.163.180.3
-From: Zhanxin Qi <zhanxin@nfschina.com>
-To: kherbst@redhat.com,
-	lyude@redhat.com,
-	dakr@redhat.com,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Zhanxin Qi <zhanxin@nfschina.com>,
-	Duanjun Li <duanjun@nfschina.com>
-Subject: [PATCH v2] drm/nouveau: Fix memory leak in nvbios_iccsense_parse
-Date: Tue, 17 Dec 2024 09:53:02 +0800
-Message-Id: <20241217015302.281769-1-zhanxin@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <Z2A0CuGRJD-asF3y@cassiopeiae>
+	s=arc-20240116; t=1734400401; c=relaxed/simple;
+	bh=cCd9LetX3I9zS6W6jciuR7KrPipj34UXM2ruuYYN6ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=isMHe3aqefgre/MjklwpzY0XOjbyXczB4EH82LIB0SUIFhKY02KkVEjUxTUD6uO00EM+/N3R+ypaXGnBNbBWUXCUlBLY7riqTlaUcZ1L2865qeN3cuFbS04QRLhdN+VLsPL2zs5tfektmRyq237t3mNr2hMrDbSS1FeYgL1UTXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTrd9dUS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 883A1C4CED0;
+	Tue, 17 Dec 2024 01:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734400398;
+	bh=cCd9LetX3I9zS6W6jciuR7KrPipj34UXM2ruuYYN6ow=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KTrd9dUSKuf1G8zT0vQWaGTTV6btHD770loPvhwgefnRcuIS35NrKKAVKemn26dMH
+	 1Vq3YrGwVOInX+bIip/ScVnffi4HRGD32O5AH1rFkmFIbOCY1PD63a7qQatrQXdn7P
+	 t3tz00u8KizTuaLegh6+fCa7HWssMVWMsBSdU11vJAczrUKxFqeFMvL9dWDJ5YVAQV
+	 Qsg5bCqoMzSEnP3D2VW/JRpIdr280Ob4HrLCE+ks3aJV3q2v5r6X4fwEeGD5cRD8zx
+	 M25ernHpTG46p+I49xAQoD362flfmjSbd+uJTKIwHdvB2Mk5FaXe7pXbprgq9RoeqT
+	 W/FFc+xwuZnHQ==
+Date: Mon, 16 Dec 2024 17:53:16 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, Paolo Abeni
+ <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Simon Horman <horms@kernel.org>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] net: phy: Move callback comments from
+ struct to kernel-doc section
+Message-ID: <20241216175316.6df45645@kernel.org>
+In-Reply-To: <Z2AbBilPf2JRXNzH@pengutronix.de>
+References: <20241206113952.406311-1-o.rempel@pengutronix.de>
+	<e6a812ba-b7ea-4f8a-8bdd-1306921c318f@redhat.com>
+	<Z1hJ4Wopr_4BJzan@shell.armlinux.org.uk>
+	<20241210063704.09c0ac8a@kernel.org>
+	<Z2AbBilPf2JRXNzH@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The nvbios_iccsense_parse function allocates memory for sensor data
-but fails to free it when the function exits, leading to a memory
-leak. Add proper cleanup to free the allocated memory.
+On Mon, 16 Dec 2024 13:20:22 +0100 Oleksij Rempel wrote:
+> On Tue, Dec 10, 2024 at 06:37:04AM -0800, Jakub Kicinski wrote:
+> > > I certainly can't help but write the "returns" statement in natural
+> > > English, rather than kernel-doc "Returns:" style as can be seen from
+> > > my recent patches that have been merged. "Returns" without a colon is
+> > > just way more natural when writing documentation.
+> > > 
+> > > IMHO, kernel-doc has made a wrong decision by requiring the colon.  
+> > 
+> > For the patch under consideration, however, I think _some_ attempt 
+> > to make fully documenting callbacks inline possible needs to be made :(  
+> 
+> Please rephrase, I do not understand.
+> 
+> Should I resend this patch with corrected "Return:" description, or
+> continue with inlined comments withing the struct and drop this patch?
 
-Fixes: b71c0892631a ("drm/nouveau/iccsense: implement for ina209, ina219 and ina3221")
+I'm not talking about Returns, I'm talking about the core idea of
+the patch. The duplicate definitions seem odd, can we teach kernel-doc
+to understand function args instead? Most obvious format which comes 
+to mind:
 
-Cc: stable@vger.kernel.org
-Co-developed-by: Duanjun Li <duanjun@nfschina.com>
-Signed-off-by: Zhanxin Qi <zhanxin@nfschina.com>
----
- .../include/nvkm/subdev/bios/iccsense.h       |  2 ++
- .../drm/nouveau/nvkm/subdev/bios/iccsense.c   | 20 +++++++++++++++++++
- .../drm/nouveau/nvkm/subdev/iccsense/base.c   |  3 +++
- 3 files changed, 25 insertions(+)
-
-diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h
-index 4c108fd2c805..8bfc28c3f7a7 100644
---- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h
-+++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h
-@@ -20,4 +20,6 @@ struct nvbios_iccsense {
- };
- 
- int nvbios_iccsense_parse(struct nvkm_bios *, struct nvbios_iccsense *);
-+
-+void nvbios_iccsense_cleanup(struct nvbios_iccsense *iccsense);
- #endif
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
-index dea444d48f94..ca7c27b92f16 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
-@@ -56,6 +56,19 @@ nvbios_iccsense_table(struct nvkm_bios *bios, u8 *ver, u8 *hdr, u8 *cnt,
- 	return 0;
- }
- 
-+/**
-+ * nvbios_iccsense_parse - Parse ICCSENSE table from VBIOS
-+ * @bios: VBIOS base pointer
-+ * @iccsense: ICCSENSE table structure to fill
-+ *
-+ * Parses the ICCSENSE table from VBIOS and fills the provided structure.
-+ * The caller must invoke nvbios_iccsense_cleanup() after successful parsing
-+ * to free the allocated rail resources.
-+ *
-+ * Returns:
-+ *   0        - Success
-+ *   -EINVAL  - Table not found
-+ */
- int
- nvbios_iccsense_parse(struct nvkm_bios *bios, struct nvbios_iccsense *iccsense)
- {
-@@ -127,3 +140,10 @@ nvbios_iccsense_parse(struct nvkm_bios *bios, struct nvbios_iccsense *iccsense)
- 
- 	return 0;
- }
-+
-+void
-+nvbios_iccsense_cleanup(struct nvbios_iccsense *iccsense)
-+{
-+	kfree(iccsense->rail);
-+	iccsense->rail = NULL;
-+}
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
-index 8f0ccd3664eb..4c1759ecce38 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
-@@ -291,6 +291,9 @@ nvkm_iccsense_oneinit(struct nvkm_subdev *subdev)
- 			list_add_tail(&rail->head, &iccsense->rails);
- 		}
- 	}
-+
-+	nvbios_iccsense_cleanup(&stbl);
-+
- 	return 0;
- }
- 
--- 
-2.30.2
-
+	* ...
+	* @config_init - Initialize the PHY, including after a reset.
+	* @config_init.phydev: The PHY device to initialize.
+	*
+	* Returns: 0 on success or a negative error code on failure.
+	* ...
 
