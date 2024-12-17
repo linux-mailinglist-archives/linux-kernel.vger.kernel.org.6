@@ -1,303 +1,245 @@
-Return-Path: <linux-kernel+bounces-449632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07A99F51EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:12:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 996D49F5214
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:14:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E334E1888596
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:11:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A1916D585
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D259F1F76B1;
-	Tue, 17 Dec 2024 17:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72ECE1F76C4;
+	Tue, 17 Dec 2024 17:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5HAmATNz"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2069.outbound.protection.outlook.com [40.107.212.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gxfS54UY"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D132F1F4735
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734455474; cv=fail; b=kwW41Qm45OQ6GVwMD2Y3mlNimzTxR/hYaa8tyMQlTRDB0CteLiOSdWkD4a5VF9DAl8tyQfMKiA4AiyrRqG/Z/9vZO5WoqUWJuB5O85ZGVy311xqAWjzgEtleKS3QCZztaMeOX1xbJ22uuVlq9TwAJ4QQCRIGDRH9OkRmNjTQ4Nw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734455474; c=relaxed/simple;
-	bh=Ffgd0hcgIFJjdjsft8tBm1uZ7/7S2m/u0PRCsbY6A0E=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BL7PLv6WllebMbDEQ/K+1QFjZN9tQmELREkL6/dVsOuGqFofVFIOv2CfLLlFSzC6z1mw38HPBS4uF+mGNIsesFR02IFdhjpocmyAS6mnHthYFmLvJ9rfLJyW3iLsI2eOAUJQ6IVoCRiWF2c4DDF+584QPrgwRI74bHh1b0dibtE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5HAmATNz; arc=fail smtp.client-ip=40.107.212.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UcHUynbZLV5KC5GqFlIUXq97+Y9BAShLYx1a1wcpyVQgNhQYXdmiBw5RqWmUSKkUtQEyB3NESNKZV6gTsp0mKtUDlA8Y6Jr3kUxXR4ZIqsci1icD9C8h0LTq5QAv8zRcg0BRwQIIN3m0dGgKsruR12FwBvMLODnS27I/rCmeldmXDxj6jL/W8VQtiBU+XxcqsSq1ugOotx/iWXjoRtxj3g7c6f2SB0sTqFNiMMz02cHeI/N5ci4+q41p6bJ2s2C+/HKfkcuVV6cAc7oeHeBfBaU1z2iqASGS+YVO9dxVmJiCulBfvtzWW2RLgfytFfE/nOkrnWb4P1YYvlxKBcIr+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q9Y0H4lFdkMzcPoaHekzflXxazvBOYcFZLJJ31qHhMo=;
- b=KbA4W6VO1LNPtWZ7egsrguSUnbglanL9rKyT0pGsZoPznSppQtmHkSkbJxbGinI09ZePEuwvs3THNFmvPuCYIMMb9mAg/4VdaweZros/RDdPSm6HyqQMNoXtYfQ53M0kKDmy3DZMI4o9IxMgnGWuWZmqxxSk2BjLodn5q/ZGaAicKum4a0/GZwlhthpBfW94YjNUsnsc9T9F3ZCV0XQoGSuw7i+OHx/6BsM84SdGJamsGJEEmhNPUT1zau4iRlADbkR/ZwH2S4TPORqc4EuUQAkK/t2aAqbW/Z2SNiCDky3G9ZF22aYzGx6aEpt2g/fblpcazOe7b2fUODVOSaiT7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q9Y0H4lFdkMzcPoaHekzflXxazvBOYcFZLJJ31qHhMo=;
- b=5HAmATNzKrs9XWo5NKNMPKatbHSdr+kI/BRoWNpKMsgau7Lbl9ucUPMDrTRnia9UlMeDzgypCX9O4g51WWaJl0MnJOpTU5XPuHah5ourGuWqkUyEeDE9waOJVSshcn/1ZR+AtZTa4wgDnbiVyZvbMcnY3MOhP6b7+R7jYfvT+Vg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19) by
- DS7PR12MB6311.namprd12.prod.outlook.com (2603:10b6:8:94::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8251.21; Tue, 17 Dec 2024 17:11:07 +0000
-Received: from DS7PR12MB6095.namprd12.prod.outlook.com
- ([fe80::c48a:6eaf:96b0:8405]) by DS7PR12MB6095.namprd12.prod.outlook.com
- ([fe80::c48a:6eaf:96b0:8405%5]) with mapi id 15.20.8272.005; Tue, 17 Dec 2024
- 17:11:07 +0000
-Message-ID: <ac6299c6-2388-4ac9-810b-2fa47d5272e7@amd.com>
-Date: Tue, 17 Dec 2024 11:11:05 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 1/2] accel/amdxdna: Add zero check for pad in ioctl
- input structures
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, min.ma@amd.com, max.zhen@amd.com,
- sonal.santan@amd.com, king.tam@amd.com
-References: <20241217165446.2607585-1-lizhi.hou@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20241217165446.2607585-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0087.namprd11.prod.outlook.com
- (2603:10b6:806:d2::32) To DS7PR12MB6095.namprd12.prod.outlook.com
- (2603:10b6:8:9c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CAA1F707D
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734455564; cv=none; b=Ai10I2o0lVmphUDn9QvX/t/cz0plRguH9tHccdh+Cwke80cdx2fomW5hANM35j/xlVLRcXEhicN2tz26xj3zp2Y4Ms7LbbwcWsgSygY6T5gFiI29Zr+RVzBq04yMpwcG9W5UO+qzVd9zKc4sJFYJ+FcYQSDLEr3BeImt0JlnA1M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734455564; c=relaxed/simple;
+	bh=9jCccRHUiglTN0cPKNY7Jp4r0KX1/0M6ivDsZeacZFs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jdLoBph6tiDYkahdBIDsyXccetzJF1HTem+mb6+5AQZhUQDcq0Pw3vPay4F9cHjbRxr+dNEATjQCU+SI0lkVFFbu4gb0RX2sQuHI5+0qS9NjvGSXVUoKinQveLIdV2AYziCrtV/DbZi6++qE9hlpe6pdDOMvwNbctdK4qQugJKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gxfS54UY; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43618283dedso54338705e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:12:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734455561; x=1735060361; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7BNxMzvyJQq1OSf1JXsrJtur5eicGSEc5DxJyV8C/PE=;
+        b=gxfS54UYPT6OS2B73ntB8d46ExlgaJAgQDQ+uaBYbjjGorrSxZbVFw0G5oNwPysUJ4
+         VHGhd7YEqBEQc2PBhwuwXI3xr70NOaqaveh8/gkwFUMfQkq0FRzpZh5BIKF6MfLb9MZH
+         IK3uNWNiCntlpTWtFfMwg8tBFdYBjT4vXz7SPT/YP1VmWvy1EgWuBEZW5Lmx4QJxBBXc
+         fIOPNctEOZ+BPDHwTJnoDkL9+nM9kLxMVOCDHNH8XaoG9w5i3FS2Lv9oLp8uS5H72TLj
+         hlAeKheO1nRTYVD5IRrQZ20QSIdORhI9699wLDSlnKvYfzmUAo6C9KpDP0eDK+sFRVme
+         725A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734455561; x=1735060361;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7BNxMzvyJQq1OSf1JXsrJtur5eicGSEc5DxJyV8C/PE=;
+        b=qbkzD7N5QVHc76/OQu4MnmLrzxjaDb6hGcqyaqgnoX/DfxGeQVWq8Pgi1P4DYvcZAh
+         eB3Bt+S83HLvdpZy9yzonQkp/tFt1JeLIouxHVFAwuAybybW1QsUq0iPUz+PsFtbI3qI
+         2kdhDWf7qO+XEfIdNm8/Vhji3q7U5EzIDeW1BrPUo6ZScasAxKcNvhIhJpRzA2X7zSGO
+         RTX2KFY76xYg1m2gY6oJIBoNjTmvNowLGHB8lOcoxF4yn9W3kKs1URgse2r6cB+CDeze
+         7PyCTN8b9XtXZKpTYsaQDo4Zabas/JYc6Mq0qS888BPVk1U9/lQTngR/QQkZ23dLP27U
+         08pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2R4MyLY6VHZU2Mj05yCnQJmFPCZGfONEkFcC8zUY5EEY3E1iwEQoBmIVClCzZ8u49QlYgFZkAe0M6Jzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzemiHJ7vBA3/mgMRmI1g/lnKJ5XoKTLA76OFq2RKKgNbdDERHU
+	81w/h43mCMoxQhcJhW1e4HGJEWTe6793DKscVLMOu7L8MaMnc8lxEVZ88tM1+sc=
+X-Gm-Gg: ASbGncv6aluih5grFap0gy7ZBmioqsFRNynVWNjmq52RE5R3AA83oS+i+5VeOJ/Exxo
+	nrO3uokZLVsfRU4CnspaakNjmlbuUkQjGKbPtDfYgsdr3/1WT2njp3qUasRZfNNUb4MXX3JqVjB
+	5FnRCyLjxDLlct6jCIObH5eSrrABsNZPq67Hlrz235OG2XOtEXBRSkzSP7U+23VhsuP0H86g/49
+	c1q9m9nzUlKFnUDJEQ8FAONu+NTmFV8+tZ+cQm7QeNbU21+3UeJyjqz
+X-Google-Smtp-Source: AGHT+IGSiqAXtYo/k8MN0k8v0TOiO3K7Mj9/v3WC0hPOafHJZMJVxrDNJwoO8nu2w8km+EC2EBgFBQ==
+X-Received: by 2002:a05:600c:1e0d:b0:42c:b9c8:2bb0 with SMTP id 5b1f17b1804b1-4362aa27057mr155476905e9.4.1734455560865;
+        Tue, 17 Dec 2024 09:12:40 -0800 (PST)
+Received: from pop-os.. ([145.224.66.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4363601574bsm122566915e9.7.2024.12.17.09.12.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 09:12:40 -0800 (PST)
+From: James Clark <james.clark@linaro.org>
+To: coresight@lists.linaro.org,
+	scclevenger@os.amperecomputing.com
+Cc: yeoreum.yun@arm.com,
+	James Clark <james.clark@linaro.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] coresight: Add a KUnit test for coresight_find_default_sink()
+Date: Tue, 17 Dec 2024 17:11:31 +0000
+Message-Id: <20241217171132.834943-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6095:EE_|DS7PR12MB6311:EE_
-X-MS-Office365-Filtering-Correlation-Id: efc91772-77f4-4206-72c9-08dd1ebdcbfd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dVJFaFJNWDBFVm5UZ2Qva043UzFIVTR6L3ZpekRyM1EvYmg1aHRKU1FJNitv?=
- =?utf-8?B?d0lQZEdxRXJZSVYrMEY4dWlsZW5sV3F5dnFKUmVJdXgxMklidlBNNXZVWHgy?=
- =?utf-8?B?NWcvS3ZXcVMra2tXRjRtczJTY0dkbUNxN3cyckJDOWJ0dEtLaU5BSW53U0gv?=
- =?utf-8?B?MzFVQ0RJKzJMcGtaaEp0Rko3dWg2a0dXZFEzN1NpYXNMaHJscGw4Y1R5V1kr?=
- =?utf-8?B?RHFaUkRvUkt3YThOSHpkNmViMStFVFBXRFMvRzljRFgyNVlCNkdqVDBQVUd2?=
- =?utf-8?B?NzdleFV2aitSM2MxejVQeEFxaVFpU0V4dGNKdEplZFdlTHBpSVBWbzRLSnBT?=
- =?utf-8?B?bFFXM0hST1F4OTBNTk9nd09UZC96dy9nZGkvOXlTNDhmSHpvcDFDaitneVBj?=
- =?utf-8?B?UElQSE5yZlZ1RmdGaVFpbm0zRTBCbFY3Z1VmVms4MmJTUXpNL1U4VzA5NWxT?=
- =?utf-8?B?aVB2eTJQMVd4RXpabTV4dTYwWGRNc1U1VURBZDRGYW5pRzc5OGlKeHRpRDhP?=
- =?utf-8?B?ajZicFZqQTZiUGhuTW5ac09SK0R6L3ZqdloySllEdTFGdUFZTUhhNWUwbk1F?=
- =?utf-8?B?QXR6c0tYdUo1dzRNOG1CV2lhMVhXdzJWTTg1OCtOQ2ZyTEdpbG5vOXE2ZTc2?=
- =?utf-8?B?K2tXZFk5YWUzK1BLZVBrdXBQUTRUdnhoOVdWRzdPWTc4YjNHQ3k3dDZHZ0dZ?=
- =?utf-8?B?eUtYSUNic1M5eXNaSnd4SmNWMFd5T2xCS3pPRE1FbHd6ckRxZ2VBUk1OQitM?=
- =?utf-8?B?YnQ3SUlieitKTkNzSXhGVG80OGFvYWs1Zy9qcm9sVWtuUUJxcVFQR2M1MWVR?=
- =?utf-8?B?VFQ5eGtFUGVpZkx4U1Noek5SVURjNVZtek41QkJmalRaWlZJd2s4TG1RejM0?=
- =?utf-8?B?U3RjbCtUSVhVKy9hVmlqWjRqanRnM29xME5hNllTRzBrZExFdUl1S3A5bkNH?=
- =?utf-8?B?WFE4NEU3VGRRTU9mdU9yaFFrNXhDL3E2QzB4ZVVmWVpWYUIrWGtvWG03TjNP?=
- =?utf-8?B?MVBMZ0R5SVZxMEQ1SjR4SzJEUXNWYXhkNmtIRTFXY2RMVG5xMUpPeUtWbWpS?=
- =?utf-8?B?dWxQaGJaQlF1Y2lFNXZibUJhTkNzaSt2dkRlemVHczZVaFUrSUNMd3FpaFZy?=
- =?utf-8?B?dXUxZDlNU1hJd0oxUkxlRTRoNWU2bGtoZE9xUG83NzJza2tUUG1pZ2tTNXRR?=
- =?utf-8?B?YjJQdGxzZmU5T0c2NkM1QllRTmxyQ3NTd00xMUU0V0cvVEM4ajU4ZFUzdTRl?=
- =?utf-8?B?N0hRcnFoZVVtcjh2VURZK0oxM0tkUFgwR2lKUkV6Y2N6RGg0T0VXRlBzcGR6?=
- =?utf-8?B?SFJqK0ZyREplci9wcmhkOXRCMUdCYTMzeGR6alkxVzgvbVNLdGhaQS9HelBa?=
- =?utf-8?B?c3NMcC9pcGRJNGQ4Y1EzcEJUS2x5SExXOEZLTGc2UGt2Rk5mNDRXRERzVi9V?=
- =?utf-8?B?N2Z4NmNDREM1WWtBNlhlWVAzRFkzYTZHdTdGWkJuMHordzdXL2tpL1loRHVO?=
- =?utf-8?B?SE1wd3hYdHJWUHMvNS9VMGlRM2plVTByVnYrc3RjazVuV2hkTHgzSVVCTExJ?=
- =?utf-8?B?Y0VZR2R1RjdURHRXWExsY0ZEUVNROVdsQXlBTXZGaTlIcjBhZTZFbElpUGZU?=
- =?utf-8?B?TUk5YVNKRUQzWkFUbkVkL2llRGFYOWwzOGszUk9nSkVFRkg1UExza2xJL2to?=
- =?utf-8?B?ZUduellvNHdDLzl1OUNpMVpFNXpOZjVFUmVhdDgxYXhpdEhiajl6dDF4bFlL?=
- =?utf-8?B?azZvY3Fvc2FGVzFrek9oUmFvWnFWVWsxeUxXR1dKWFNIVldQWG5RNkRnemFz?=
- =?utf-8?B?RUhidXpEUnRNVTFaRjI5Q2dNaTBGRWdrVCs3bDhYTDRtS2RwUWNiMWhiRm9t?=
- =?utf-8?Q?eTKKIpv2gDQJu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6095.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cXMwKzBzQ3djRklJRGV4bFM0SW9lYWVKODJ0Q3ZhSk90c3piYmgrZW1mcmdF?=
- =?utf-8?B?ajNlSlFGaktrM29Ycnd1S3JNc25QejNNbDBhTWwza1pQS25vTTlLUGk2aDRx?=
- =?utf-8?B?UVRNWjhVNWdGWUpOYXBTTFBNbWQza0NjWUtCbTN0M1dZaXZyY0xPQktPZ0Vw?=
- =?utf-8?B?UUx4YlgxWlZMdnh6dlRrRHBMWURsWlp1alkxNEtyclQwUVpGQi9qcmZKUldv?=
- =?utf-8?B?MzRoa2hvU0pQL2pKZFJMdjVEbmFGdG9RbG1qbUtESjBOZDllTW9MaFdIcUhW?=
- =?utf-8?B?cnBaZVFqMHJrN1dyYitpODZBdnpIdlEwUzU3QjAwSHRPR2FjQWV2T202VHdq?=
- =?utf-8?B?MzJSODMrYWwwVS9GVWxjNmsrU0Q3cE12TjNGZXJvNXBwZXgzcjQ5MmJqTENL?=
- =?utf-8?B?QVpEZlFRQUk0U1FhK09VMGR0WVltMUd5ZzZEbXJuRTNkUkRsVzEzZ3VJSUhh?=
- =?utf-8?B?RHQza08rLzN1WXFoQ3hlck9vVVhlc2o4SzByeDk2cEpzVWYrbWVVdnBzU0tt?=
- =?utf-8?B?Umx0Tng4cEc4Y3ZtejREU3p5ekVkZlBTU2JkTnNEUmJ3bDJEYTkwYW92RVJR?=
- =?utf-8?B?QlJ2cWtSRmtxYVpKRGtIUWJhdWVpSkNNSG0vV2IwUit4cDAxaTJHdHZPSStW?=
- =?utf-8?B?NC9QR0tQcUpjaXVPb05QTExDLzVMUnZ5VXNQVHl1ZEdsdGdoS1JFY1FYaWg0?=
- =?utf-8?B?TEtnZnNodXQ2V3RENXVBcS9ydHVGYktqUUdRRk44NnRwVFVyZXdqWkdKWGpL?=
- =?utf-8?B?aE10V0hjN2V3aERhSDc0V0NIc2pQYTVFMFFDZU0vdmY5aUhaS1JBMldoM2Fy?=
- =?utf-8?B?L0FTcGFINHQ4d3FGTTNMbHRNTWlyUXpoVHZ3OUhDN2RzOHNoV0dPM0ZuaEVC?=
- =?utf-8?B?bW1CV3F6VGFQRDQrQlNiZVRGNTFXdnRkRmc0RGxXNGVVYUZLRzdRRDdteXNk?=
- =?utf-8?B?ME5UUmdxckE1V1lWeTBJUTU5QVA1dEhlY1NIZnZYeGtVUFdCY05yc1p5VXhx?=
- =?utf-8?B?ZmdDR05JZm5jUVF1SnR5RUhYb3k5aEROWkxxRnpvT0Jud1hTZFI1SUJXbUtI?=
- =?utf-8?B?YWJ2SlhnaWhmQ2FreVlLTEpFU3dHc2F1eUR6RjVMYTFlWGdGd3BZZTdKdER5?=
- =?utf-8?B?WHZ1emtObkNlWS9VYnExSXZtR1lLZ2VrV1BEeldSQk8yeXdmcmpFZnlCNVhm?=
- =?utf-8?B?YnhWUmdHV2JsQnN6K1ZValJwUU04Zi9qUWU4K3hrRytUN21qUFovY2NFR3kr?=
- =?utf-8?B?akJid0VBVExhbzArMXp0dkFrcTdYWEFQeWpjczdHVTZ0Z3RnaFVrb0tJa2x1?=
- =?utf-8?B?UXhxWDFGQnZrWjVyMGFRVTdFN0hFVnpBVitWMWIrSzR6U2dpVHFNVG1iQVd6?=
- =?utf-8?B?SFBMb0hjVXpBQTNRRDdxNnN5a0FIK1JkM0oyMVJQbXFjTmhtaWxoNlNOUXQr?=
- =?utf-8?B?bDNpWldZSDlGL0dnQjUvYURnM3lwcit5YzE1WGVXMnBOV0l3NTk0VTVZa1RE?=
- =?utf-8?B?b0RBa0ZYU1RRY3BiMDBWWElETUJSMFpYL05GQTFZN1VwU3A1R250UGNnUkZF?=
- =?utf-8?B?U0hMcWFITkJmVlA2aG8yMFFQYVRmKzdkZS9CYmVzMnJFRnlvTmlTZGN4WmpT?=
- =?utf-8?B?aTZQL2w4SVduZW4xZ21iQUFTMGJZRHZKKzZwS01hOVJJSU9DQ0drMSt2clhm?=
- =?utf-8?B?enF6OGpOWmpWYXN0bTNGV0YxNkRoUFlGcTFuUndvR2NSNlBwZE5OWGlSaGxE?=
- =?utf-8?B?U0ZIMDNVTnZWd0JRMGF4V0RsWHljYmNwcFEyVGRjd2xIRXBFRWlDQ3R4NDNu?=
- =?utf-8?B?aWxEdy9Sd0V6eVFRN25DV3BSUjdQcklmSTVwQ1loRWtwK3dvME11UjFaQzN4?=
- =?utf-8?B?NlBtZVJRUWpMdXg2a0RLYzNTUC9jOVI2RzFCM3NvcEhaWGJ4U3czNUp6YU1Y?=
- =?utf-8?B?MXNxR3cxTGF5YnQvVmNibWNnZnkwTkRFZnUzYUJ1UTBTTFd0QUNiYVU5KzlS?=
- =?utf-8?B?NHIvc1JFWHRjZk1TQ0d3cjBvZHFQeVhKMW0rMFB1c1orMXNBc0hEcEo1M2xM?=
- =?utf-8?B?RVRRVzF2alVoYUk2VlpOZDRyRWUvZncxdmc3R1FHVUZFbzZsZ0dVWXhEdTZh?=
- =?utf-8?Q?ppp9ybthEa2hlJVh/utzRPZCb?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: efc91772-77f4-4206-72c9-08dd1ebdcbfd
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6095.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 17:11:07.8088
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7iWKgdafugegehTgRbF+WVONry3hn1VGKRG8nuRiCztfS1A/u2cPI4QSgIYuDiZk4w45MHd6eIkFZL31/u/gDA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6311
+Content-Transfer-Encoding: 8bit
 
-On 12/17/2024 10:54, Lizhi Hou wrote:
-> For input ioctl structures, it is better to check if the pad is zero.
-> Thus, the pad bytes might be usable in the future.
-> 
-> Suggested-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Add a test to confirm that default sink selection skips over an ETF
+and returns an ETR even if it's further away.
 
-> ---
->   drivers/accel/amdxdna/aie2_ctx.c     |  3 +++
->   drivers/accel/amdxdna/aie2_message.c |  3 +++
->   drivers/accel/amdxdna/amdxdna_ctx.c  |  6 ++++++
->   drivers/accel/amdxdna/amdxdna_gem.c  |  2 +-
->   include/uapi/drm/amdxdna_accel.h     | 10 +++++-----
->   5 files changed, 18 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
-> index cdeead75c6f5..9facf45818f9 100644
-> --- a/drivers/accel/amdxdna/aie2_ctx.c
-> +++ b/drivers/accel/amdxdna/aie2_ctx.c
-> @@ -690,6 +690,9 @@ static int aie2_hwctx_cu_config(struct amdxdna_hwctx *hwctx, void *buf, u32 size
->   	int ret;
->   
->   	XDNA_DBG(xdna, "Config %d CU to %s", config->num_cus, hwctx->name);
-> +	if (XDNA_MBZ_DBG(xdna, config->pad, sizeof(config->pad)))
-> +		return -EINVAL;
-> +
->   	if (hwctx->status != HWCTX_STAT_INIT) {
->   		XDNA_ERR(xdna, "Not support re-config CU");
->   		return -EINVAL;
-> diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
-> index b2ca78cfd0a7..9e2c9a44f76a 100644
-> --- a/drivers/accel/amdxdna/aie2_message.c
-> +++ b/drivers/accel/amdxdna/aie2_message.c
-> @@ -395,6 +395,9 @@ int aie2_config_cu(struct amdxdna_hwctx *hwctx)
->   	for (i = 0; i < hwctx->cus->num_cus; i++) {
->   		struct amdxdna_cu_config *cu = &hwctx->cus->cu_configs[i];
->   
-> +		if (XDNA_MBZ_DBG(xdna, cu->pad, sizeof(cu->pad)))
-> +			return -EINVAL;
-> +
->   		gobj = drm_gem_object_lookup(hwctx->client->filp, cu->cu_bo);
->   		if (!gobj) {
->   			XDNA_ERR(xdna, "Lookup GEM object failed");
-> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c b/drivers/accel/amdxdna/amdxdna_ctx.c
-> index 324f35c43f6c..d11b1c83d9c3 100644
-> --- a/drivers/accel/amdxdna/amdxdna_ctx.c
-> +++ b/drivers/accel/amdxdna/amdxdna_ctx.c
-> @@ -243,6 +243,9 @@ int amdxdna_drm_destroy_hwctx_ioctl(struct drm_device *dev, void *data, struct d
->   	struct amdxdna_hwctx *hwctx;
->   	int ret = 0, idx;
->   
-> +	if (XDNA_MBZ_DBG(xdna, &args->pad, sizeof(args->pad)))
-> +		return -EINVAL;
-> +
->   	if (!drm_dev_enter(dev, &idx))
->   		return -ENODEV;
->   
-> @@ -277,6 +280,9 @@ int amdxdna_drm_config_hwctx_ioctl(struct drm_device *dev, void *data, struct dr
->   	void *buf;
->   	u64 val;
->   
-> +	if (XDNA_MBZ_DBG(xdna, &args->pad, sizeof(args->pad)))
-> +		return -EINVAL;
-> +
->   	if (!xdna->dev_info->ops->hwctx_config)
->   		return -EOPNOTSUPP;
->   
-> diff --git a/drivers/accel/amdxdna/amdxdna_gem.c b/drivers/accel/amdxdna/amdxdna_gem.c
-> index 4dfeca306d98..606433d73236 100644
-> --- a/drivers/accel/amdxdna/amdxdna_gem.c
-> +++ b/drivers/accel/amdxdna/amdxdna_gem.c
-> @@ -552,7 +552,7 @@ int amdxdna_drm_get_bo_info_ioctl(struct drm_device *dev, void *data, struct drm
->   	struct drm_gem_object *gobj;
->   	int ret = 0;
->   
-> -	if (args->ext || args->ext_flags)
-> +	if (args->ext || args->ext_flags || args->pad)
->   		return -EINVAL;
->   
->   	gobj = drm_gem_object_lookup(filp, args->handle);
-> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-> index e4edb52bc27b..92eff83fac1f 100644
-> --- a/include/uapi/drm/amdxdna_accel.h
-> +++ b/include/uapi/drm/amdxdna_accel.h
-> @@ -87,7 +87,7 @@ struct amdxdna_drm_create_hwctx {
->   /**
->    * struct amdxdna_drm_destroy_hwctx - Destroy hardware context.
->    * @handle: Hardware context handle.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    */
->   struct amdxdna_drm_destroy_hwctx {
->   	__u32 handle;
-> @@ -98,7 +98,7 @@ struct amdxdna_drm_destroy_hwctx {
->    * struct amdxdna_cu_config - configuration for one CU
->    * @cu_bo: CU configuration buffer bo handle.
->    * @cu_func: Function of a CU.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    */
->   struct amdxdna_cu_config {
->   	__u32 cu_bo;
-> @@ -109,7 +109,7 @@ struct amdxdna_cu_config {
->   /**
->    * struct amdxdna_hwctx_param_config_cu - configuration for CUs in hardware context
->    * @num_cus: Number of CUs to configure.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    * @cu_configs: Array of CU configurations of struct amdxdna_cu_config.
->    */
->   struct amdxdna_hwctx_param_config_cu {
-> @@ -133,7 +133,7 @@ enum amdxdna_drm_config_hwctx_param {
->    * @param_val: A structure specified by the param_type struct member.
->    * @param_val_size: Size of the parameter buffer pointed to by the param_val.
->    *		    If param_val is not a pointer, driver can ignore this.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    *
->    * Note: if the param_val is a pointer pointing to a buffer, the maximum size
->    * of the buffer is 4KiB(PAGE_SIZE).
-> @@ -175,7 +175,7 @@ struct amdxdna_drm_create_bo {
->    * @ext: MBZ.
->    * @ext_flags: MBZ.
->    * @handle: DRM buffer object handle.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    * @map_offset: Returned DRM fake offset for mmap().
->    * @vaddr: Returned user VA of buffer. 0 in case user needs mmap().
->    * @xdna_addr: Returned XDNA device virtual address.
+This also makes it easier to add new unit tests in the future.
+
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+ drivers/hwtracing/coresight/Kconfig           |  9 ++
+ drivers/hwtracing/coresight/Makefile          |  1 +
+ drivers/hwtracing/coresight/coresight-core.c  |  1 +
+ .../coresight/coresight-kunit-tests.c         | 90 +++++++++++++++++++
+ 4 files changed, 101 insertions(+)
+ create mode 100644 drivers/hwtracing/coresight/coresight-kunit-tests.c
+
+diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+index 06f0a7594169..056d04bc540a 100644
+--- a/drivers/hwtracing/coresight/Kconfig
++++ b/drivers/hwtracing/coresight/Kconfig
+@@ -247,4 +247,13 @@ config CORESIGHT_DUMMY
+ 
+ 	  To compile this driver as a module, choose M here: the module will be
+ 	  called coresight-dummy.
++
++config CORESIGHT_KUNIT_TESTS
++	  tristate "Enable Coresight unit tests"
++	  depends on KUNIT
++	  default KUNIT_ALL_TESTS
++	  help
++	    Enable Coresight unit tests. Only useful for development and not
++	    intended for production.
++
+ endif
+diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+index 4ba478211b31..c170a41b3056 100644
+--- a/drivers/hwtracing/coresight/Makefile
++++ b/drivers/hwtracing/coresight/Makefile
+@@ -51,3 +51,4 @@ coresight-cti-y := coresight-cti-core.o	coresight-cti-platform.o \
+ 		   coresight-cti-sysfs.o
+ obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
+ obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
++obj-$(CONFIG_CORESIGHT_KUNIT_TESTS) += coresight-kunit-tests.o
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index ea38ecf26fcb..ce63b68d5503 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -869,6 +869,7 @@ coresight_find_default_sink(struct coresight_device *csdev)
+ 	}
+ 	return csdev->def_sink;
+ }
++EXPORT_SYMBOL_GPL(coresight_find_default_sink);
+ 
+ static int coresight_remove_sink_ref(struct device *dev, void *data)
+ {
+diff --git a/drivers/hwtracing/coresight/coresight-kunit-tests.c b/drivers/hwtracing/coresight/coresight-kunit-tests.c
+new file mode 100644
+index 000000000000..d022bacc8357
+--- /dev/null
++++ b/drivers/hwtracing/coresight/coresight-kunit-tests.c
+@@ -0,0 +1,90 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <kunit/test.h>
++#include <kunit/device.h>
++#include <linux/coresight.h>
++
++#include "coresight-priv.h"
++
++static struct coresight_device *coresight_test_device(struct device *dev)
++{
++	struct coresight_device *csdev = devm_kcalloc(dev, 1,
++						     sizeof(struct coresight_device),
++						     GFP_KERNEL);
++	csdev->pdata = devm_kcalloc(dev, 1,
++				   sizeof(struct coresight_platform_data),
++				   GFP_KERNEL);
++	return csdev;
++}
++
++static void coresight_free_test_device(struct device *dev,
++				       struct coresight_device *csdev)
++{
++	devm_kfree(dev, csdev->pdata->out_conns);
++	devm_kfree(dev, csdev->pdata);
++	devm_kfree(dev, csdev);
++}
++
++static int coresight_test_cpuid(struct coresight_device *csdev)
++{
++	return 0;
++}
++
++static void test_default_sink(struct kunit *test)
++{
++	/*
++	 * ETM -> ETF -> ETR -> CATU
++	 *                ^
++	 *                | default
++	 */
++	struct device *dev = kunit_device_register(test, "coresight_kunit");
++	struct coresight_device *etm = coresight_test_device(dev),
++				*etf = coresight_test_device(dev),
++				*etr = coresight_test_device(dev),
++				*catu = coresight_test_device(dev);
++	struct coresight_connection conn = {};
++	struct coresight_ops_source src_ops = {.cpu_id = coresight_test_cpuid };
++	struct coresight_ops etm_cs_ops = { .source_ops	= &src_ops };
++
++	etm->type = CORESIGHT_DEV_TYPE_SOURCE;
++	etm->ops = &etm_cs_ops;
++	etf->type = CORESIGHT_DEV_TYPE_LINKSINK;
++	etf->subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_BUFFER;
++	etr->type = CORESIGHT_DEV_TYPE_SINK;
++	etr->subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_SYSMEM;
++	catu->type = CORESIGHT_DEV_TYPE_HELPER;
++
++	conn.src_dev = etm;
++	conn.dest_dev = etf;
++	coresight_add_out_conn(dev, etm->pdata, &conn);
++
++	conn.src_dev = etf;
++	conn.dest_dev = etr;
++	coresight_add_out_conn(dev, etf->pdata, &conn);
++
++	conn.src_dev = etr;
++	conn.dest_dev = catu;
++	coresight_add_out_conn(dev, etr->pdata, &conn);
++
++	KUNIT_ASSERT_PTR_EQ(test, coresight_find_default_sink(etm), etr);
++
++	coresight_free_test_device(dev, etm);
++	coresight_free_test_device(dev, etf);
++	coresight_free_test_device(dev, etr);
++	coresight_free_test_device(dev, catu);
++}
++
++static struct kunit_case coresight_testcases[] = {
++	KUNIT_CASE(test_default_sink),
++	{}
++};
++
++static struct kunit_suite coresight_test_suite = {
++	.name = "coresight_test_suite",
++	.test_cases = coresight_testcases,
++};
++
++kunit_test_suites(&coresight_test_suite);
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("James Clark <james.clark@linaro.org>");
++MODULE_DESCRIPTION("Arm CoreSight KUnit tests");
+-- 
+2.34.1
 
 
