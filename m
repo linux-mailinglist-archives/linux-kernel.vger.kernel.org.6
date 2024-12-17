@@ -1,150 +1,129 @@
-Return-Path: <linux-kernel+bounces-448623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747AD9F4312
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:40:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878309F4313
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:41:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65F6A7A26AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC42D168B1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3175615624D;
-	Tue, 17 Dec 2024 05:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n5BOKR8h"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10FB154BE0;
+	Tue, 17 Dec 2024 05:41:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203181361;
-	Tue, 17 Dec 2024 05:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D02714D456
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734414025; cv=none; b=gAAbWh7ubXa71TGwXx7KgnKDAl/GyizriLZxY3VMLYZAtqhq9C1NVdPftWKZqvSsVd1Ojj95JTemJLwg3NAkPHaEEY7LZ+N0sCmZcGjF/X8DUZYoXFfIbQI9aQmdkUhQ7dhM0X3yqdN7RQySDzoL7lXkouWuPhy2OOEYpXP0qcI=
+	t=1734414082; cv=none; b=Q5cFBg+fAvYeVaX98Gc+74MRWboIxmKVFq4SY/02iHjH3LcgmdC+plo97BE+HAvTrdnMzv4B0NNh+i0+hulYr6FtfVg3zbt+ChZX5+SNee0AOPVZE8NXdBDCYpJsxaz1PDcBdha+EOjRZS0f8EujE9FvGNdV392bk0Zxnbm4XDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734414025; c=relaxed/simple;
-	bh=ajYQubgExtwxT9Y6UC7qPjH6IIHHBHbVSh6q42sE1Ts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jnqbAFVuDPmh7uH64RSQ4o3oXZMnCl2aVxeVFVB9lWd34O5ag0NUt1lbzE50/s7W4/jxLMA4c41mtVHjP4SgU+AqOA0Y60sUbg1JViTD8Kn+l/3LvHVrJcZ2LVmXcgb9wH9uYZIh2ZJ+W06c2z0UVrdy9ySPB86IOpjWgRWjbQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n5BOKR8h; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH4mKs6014621;
-	Tue, 17 Dec 2024 05:40:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	K/Ww6Sh1gy0E5p7ShT8721JM6G512LBTOkj2cFNkvpE=; b=n5BOKR8h89PeoeYE
-	oBQNbdfxt7DQva6LOYXjXaQFj+xReYHkI/Eq8MbzrdBSjBzn89KwKojpawRVXizK
-	vhT7whEdKOy6TGS05/g3K6XNYLSMZvlInPQCF1EvZfTXqQOH2DWLEyLk3WEmWMlu
-	Bqp3A/2GbtjkBMFMg5T35EKCI06eTiFKsQG80nOAdmyQFw9O825/qIXhRkyvYx3P
-	Z07il7nYeZDoqsLc6jPqr2uPxvDuYl/HkARoYJJhoX22UT5bNyRlv9NugBvXPfAd
-	30mS0x40/h8xv3H1EJwjVCozpHvRhwVUgMAX9APNewRPixddgpYKkRTXhvP2CawB
-	gYrBJQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k2k7g39w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 05:40:19 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BH5eIZw015849
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 05:40:18 GMT
-Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 21:40:15 -0800
-Message-ID: <203d7c3e-84fb-45db-a81b-525419abaa89@quicinc.com>
-Date: Tue, 17 Dec 2024 13:40:12 +0800
+	s=arc-20240116; t=1734414082; c=relaxed/simple;
+	bh=YIAgPx6TjU0VovQcp2U+hPkdjSUxehbsWh4alTYkSGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VwhpC/tpWQI1PvbazsM6Nvn7V89e1aw5ac9H688UftXYIJm43Fl1aqQ226gXQS7PC9NQNb+Pm5OPy12lacyqh77D0YosBkKJ9F4APNdwjfTISQHaqxFo4zhD2GHmcVHSZF2ox3/tPiMGVnehBcRAbj8hYYsn2G4jb/b1Tkyp7lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tNQKE-0004cp-Ul; Tue, 17 Dec 2024 06:40:54 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tNQKA-003oTV-2K;
+	Tue, 17 Dec 2024 06:40:51 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tNQKB-004RXK-1E;
+	Tue, 17 Dec 2024 06:40:51 +0100
+Date: Tue, 17 Dec 2024 06:40:51 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] net: phy: Move callback comments from
+ struct to kernel-doc section
+Message-ID: <Z2EO45xuUkzlw-Uy@pengutronix.de>
+References: <20241206113952.406311-1-o.rempel@pengutronix.de>
+ <e6a812ba-b7ea-4f8a-8bdd-1306921c318f@redhat.com>
+ <Z1hJ4Wopr_4BJzan@shell.armlinux.org.uk>
+ <20241210063704.09c0ac8a@kernel.org>
+ <Z2AbBilPf2JRXNzH@pengutronix.de>
+ <20241216175316.6df45645@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] arm64: dts: qcom: add venus node for the qcs615
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241213-add-venus-for-qcs615-v4-0-7e2c9a72d309@quicinc.com>
- <20241213-add-venus-for-qcs615-v4-3-7e2c9a72d309@quicinc.com>
- <ae83acc2-534d-49de-a0ec-b2117e5bd4d1@linaro.org>
-Content-Language: en-US
-From: Renjiang Han <quic_renjiang@quicinc.com>
-In-Reply-To: <ae83acc2-534d-49de-a0ec-b2117e5bd4d1@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: N4ZthVovUyymlxe7usnadGdo_m0l3Wff
-X-Proofpoint-GUID: N4ZthVovUyymlxe7usnadGdo_m0l3Wff
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 adultscore=0 suspectscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412170045
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241216175316.6df45645@kernel.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+On Mon, Dec 16, 2024 at 05:53:16PM -0800, Jakub Kicinski wrote:
+> On Mon, 16 Dec 2024 13:20:22 +0100 Oleksij Rempel wrote:
+> > On Tue, Dec 10, 2024 at 06:37:04AM -0800, Jakub Kicinski wrote:
+> > > > I certainly can't help but write the "returns" statement in natural
+> > > > English, rather than kernel-doc "Returns:" style as can be seen from
+> > > > my recent patches that have been merged. "Returns" without a colon is
+> > > > just way more natural when writing documentation.
+> > > > 
+> > > > IMHO, kernel-doc has made a wrong decision by requiring the colon.  
+> > > 
+> > > For the patch under consideration, however, I think _some_ attempt 
+> > > to make fully documenting callbacks inline possible needs to be made :(  
+> > 
+> > Please rephrase, I do not understand.
+> > 
+> > Should I resend this patch with corrected "Return:" description, or
+> > continue with inlined comments withing the struct and drop this patch?
+> 
+> I'm not talking about Returns, I'm talking about the core idea of
+> the patch. The duplicate definitions seem odd, can we teach kernel-doc
+> to understand function args instead? Most obvious format which comes 
+> to mind:
+> 
+> 	* ...
+> 	* @config_init - Initialize the PHY, including after a reset.
+> 	* @config_init.phydev: The PHY device to initialize.
+> 	*
+> 	* Returns: 0 on success or a negative error code on failure.
+> 	* ...
 
-On 12/13/2024 7:31 PM, Bryan O'Donoghue wrote:
-> On 13/12/2024 09:56, Renjiang Han wrote:
->> +            video-decoder {
->> +                compatible = "venus-decoder";
->> +            };
->> +
->> +            video-encoder {
->> +                compatible = "venus-encoder";
->> +            };
->
-> To be honest, I'd prefer not to continue on doing this.
->
-> Adding a compat string to existing yaml might work-around the issue 
-> but, it doesn't really _account_ for the issue.
->
-> I've posted a series to fix the problem
->
-> 20241209-media-staging-24-11-25-rb3-hw-compat-string-v5-0-ef7e5f85f302@linaro.org 
->
->
-> Either that or deeper rewrite of venus to remove the above 
-> dependencies should go ahead.
->
-> I'm not in favour of willfully continuing to do the wrong thing, 
-> especially when per above, there's a working solution for it.
->
-> ---
-> bod
+It will be too many side quests to me for now. I can streamline comments
+if there is agreement how it should look like. But fixing kdoc - I would leave
+it to the experts.
 
-Thanks for your review. Your change is a good way. But your change is a
-
-  big change, involving many platforms, I am not sure if other guys have
-
-  comments. Currently, my change only refers to SC7180 and falls back QCS615
-
-  to SC7180. Now I have verified my patches on SC7180 and QCS615. I think if
-
-  your change has passed the review, then we only need to remove the
-
-  video-decoder and video-encoder nodes in this device tree.
+What do you prefer, proceed with stats patch without fixing comments or
+fix comment without fixing kdoc?
 
 -- 
-Best Regards,
-Renjiang
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
