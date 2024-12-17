@@ -1,154 +1,175 @@
-Return-Path: <linux-kernel+bounces-449235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B721B9F4C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:29:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE199F4C20
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:27:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335EB1898FF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:17:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9E61782DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B8F1F868D;
-	Tue, 17 Dec 2024 13:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F491F8AC9;
+	Tue, 17 Dec 2024 13:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b33zhH/h"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jAZYWaZw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5gvWdi56"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403EE1F4263
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CDE1F4263;
+	Tue, 17 Dec 2024 13:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734440965; cv=none; b=aYAZMPjW8/8INGE5LdOz0RAIzvQJtnYH1KRwm1Dv1IGprBLyr8KsVd3MGcg3JyBcuLxZpiPDcaAcleWykJqfSe2d0r+S/+igKtYYgIbvRVWuT0Ogj3482dfy/5zY5yqd4XYab/+g4Zb81/HoTXep4I4cxTDTGvhFK7VQScgM42o=
+	t=1734440999; cv=none; b=F+hqM9sNJ6cTOAUlfA/ax+u9iiOi7FvMSuIWHlFQNRY0Exqnz9rpc3YCDOUB0WW60MNFhaqupzy/mZj0qraoREpZZsHqFMUNhXVtSCoSUGsg8dmqTfb81UossBIrPvFCCHWPKHlDQ14os1aoJrUpGha1nXC7M9AuzL2iiwj0M7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734440965; c=relaxed/simple;
-	bh=8ri6RbzWNaTPDTw7kmq71IKYTlN2CuqaBg+QxuJxeOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLgSRcNOShekr2w/Hpt8joXuZGQG8Deqw29Pfi7LeHXAg5L0aOvl0XT54qZeHE+rHy1v9HFAXRr8+PFLFmasBnH0k7pE8wMI9MubXTD0y1WB/1Mu8+AyWlzBCitJT/CEi3o+Pn8zVgs/ioHRXg3oFBcZNXyZk9HD7qxTP+nQtFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b33zhH/h; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d27243ba8bso392038a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:09:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734440963; x=1735045763; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gTusGh58VW6+2NSFZii2lA8KCNl1o8/ZwWDL6LUst5g=;
-        b=b33zhH/heFNBQBxLxdmVhNeHiSsJmmeTYurNgQFN+ta4Gac1tKbA4kAIY8dNBKGQiJ
-         53u/CkkBkN9mAQ/GDPwMsRoMDoGTZBDRpzUmllmX0IVcgtqCNCJYtwD2LY9zfxJjgWsF
-         53XUb0ovcV8qhzUj7SJu1dDDJ6XhBK9eBLkypii49A6hfA7X/zrDc93aSV5hqh9mVCug
-         n2bXSirrM30chutUHCkm6uXcXLH7rLUQNQ50STqHW/qRDTNejr1fAeijln2YL3e/FTGD
-         GL6y/UNnyAh5sELKxvfGbdm+4LrjVQAf2ftLkJoJGeY0dn+W1YjCFMp6Y8mQmERrTKya
-         bWQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734440963; x=1735045763;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gTusGh58VW6+2NSFZii2lA8KCNl1o8/ZwWDL6LUst5g=;
-        b=q/q+LhSXIfKd+izObRNXIGc+0Kag+bkaNH7ECrEWvUve2ppnIedG8gmoFsd/m22Wq5
-         pdlnPOODGaL//dcx1iscBrsA5Hy8BNbCESSzRZWdZUoqCRrRhPNgK2wwpiRtnePAQ9Z+
-         y6zhooeor8UTza/08zYKR2ZkTH1GNfbnSxtRgH1gp372Dw/jmmuGIEOzf8zEnu1a3AWG
-         2Pj+H+xA36o/XVPJnUb29/tVTwphgiG3DgGxsaTpc1ktzf8WFCCgu+4k2rqKAa0zypvm
-         fWRF4D6FFQsKqKyGoCfG5i1m6Q4lr817F51OW+bZFGUr5wMAL1zBXd+f9BW3dMM1uZJJ
-         hMBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrIYCjE6lwQsMfH3OAmbLGYqRNusG7d+/AdPGKNz+QX1iYJuKhr7q8SRwflHkt69mWZJ0AUbUra4OcHx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvaDLlNfsjOCSBBvtAeAHIGQfnh9T4O++wHNvzCtp/LSYhs4HT
-	VCZXiyaLzy95k4AwLI7XQfi7SjM/sH1PppWiGFQBg+ii/L8bP6BBpx0Fv3CMRw==
-X-Gm-Gg: ASbGncvKouQcSoyUN8OwVdBuhV6+Q2SZ5iGXUdBCswhne5jkmRX6BGJM9//fsZgw2Vy
-	GUvrcJ4ARyyx8M4QeFrorgdmRjwbbdDEkzmbdetxlMvi5dV3h3EO4mIWYErkf5qd7mRpZjuhCAc
-	hvOxNFaJCjUvIOQMMhPNe0Dvt6VvLxXtfh/SysBc0hjF0l9+lKn9Ts5JbWBm1mLkkgjkj803/VY
-	w2BAZCYToWmHYIRKOFPadiO5n0089F3lw3WHltijEoco9Uqa//EyjaCQQnRxwQiFAPlUXoAjk9K
-	RqrjYA5oD7dIdqg=
-X-Google-Smtp-Source: AGHT+IEnhJMVLLV7Owj/1nOGB+GoFuLCOhRtzgitfH4oBA0YabMmvVMaad90R/9EuoBl8AAIk2rV7Q==
-X-Received: by 2002:a05:6402:3890:b0:5d0:cfad:f6c with SMTP id 4fb4d7f45d1cf-5d63c3ad5c6mr13033930a12.21.1734440962482;
-        Tue, 17 Dec 2024 05:09:22 -0800 (PST)
-Received: from google.com (61.134.90.34.bc.googleusercontent.com. [34.90.134.61])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f271a6sm4443462a12.60.2024.12.17.05.09.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 05:09:22 -0800 (PST)
-Date: Tue, 17 Dec 2024 13:09:19 +0000
-From: Quentin Perret <qperret@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Sebastian Ene <sebastianene@google.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/18] KVM: arm64: Move host page ownership tracking
- to the hyp vmemmap
-Message-ID: <Z2F3_8rN3NBFZXRX@google.com>
-References: <20241216175803.2716565-1-qperret@google.com>
- <20241216175803.2716565-5-qperret@google.com>
- <86y10er2qb.wl-maz@kernel.org>
+	s=arc-20240116; t=1734440999; c=relaxed/simple;
+	bh=cgvsMxYlUm341r3hrTMydeHDObjyzjEs7Sn9f5zqtVM=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=N5aUwvRuYBjTcQOaxpM6trFVZp0McjjfYNCNg/8iGl6YxAko77Fb+A4H5NxIdeTPUkzQYefnb3QmwXtJSpk0PhAHfh5cmXLygySClz/++2H7xVgnBaMcl8Df6708sVxjjd3MgG+rncqoiCf4BHAG8fftCzoTSEANEZnyRrK3X/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jAZYWaZw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5gvWdi56; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 17 Dec 2024 13:09:54 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1734440995;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=41MvN9btwUR5UYatfG2r5w3WpfpcL0bYPrX5w1+/Cg8=;
+	b=jAZYWaZw05/Tz3DUOtxgWTwuTFgELbT72wpVJaHNSVXqR9AazV0+L0+RiM4B1BmwIxgnsN
+	6L/C1CkqkywmfsnMWTuOdhfrQAFA6E4YaC/ASZWY/y0vKKCMMQ7YVb2duTrRQqh6iCbaHY
+	XcJeV1hyyV+u/5Ah4to63PHRjpAj5SwzJAdzPJEHduaFI2xvVPyOaIbPwiAWllMill1706
+	hIZGSOw1LgQk6qNKLyZ7fyoeqXLTe8Io67PSY89UAVCKdY9WrTAx1xfR5b+S8eLrx5j5y6
+	zLevJ+U2b9aVFh14mbj47SjtINnM7kp+0o4CAVXtKrDztTsA6ESJX9Q8mBES4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1734440995;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=41MvN9btwUR5UYatfG2r5w3WpfpcL0bYPrX5w1+/Cg8=;
+	b=5gvWdi56txrZueosho1olTWThdRpL2MfDKEKte1kTbFJy2hFtv9eq5lo+3fnGAMHhF2ddU
+	3s+0ZT4XdrraimAw==
+From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
+Cc: "Xin Li (Intel)" <xin@zytor.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86y10er2qb.wl-maz@kernel.org>
+Message-ID: <173444099482.7135.8631452864658460320.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tuesday 17 Dec 2024 at 11:03:08 (+0000), Marc Zyngier wrote:
-> On Mon, 16 Dec 2024 17:57:49 +0000,
-> Quentin Perret <qperret@google.com> wrote:
-> > 
-> > We currently store part of the page-tracking state in PTE software bits
-> > for the host, guests and the hypervisor. This is sub-optimal when e.g.
-> > sharing pages as this forces to break block mappings purely to support
-> > this software tracking. This causes an unnecessarily fragmented stage-2
-> > page-table for the host in particular when it shares pages with Secure,
-> > which can lead to measurable regressions. Moreover, having this state
-> > stored in the page-table forces us to do multiple costly walks on the
-> > page transition path, hence causing overhead.
-> > 
-> > In order to work around these problems, move the host-side page-tracking
-> > logic from SW bits in its stage-2 PTEs to the hypervisor's vmemmap.
-> > 
-> > Signed-off-by: Quentin Perret <qperret@google.com>
-> > ---
-> >  arch/arm64/kvm/hyp/include/nvhe/memory.h |   6 +-
-> >  arch/arm64/kvm/hyp/nvhe/mem_protect.c    | 100 ++++++++++++++++-------
-> >  arch/arm64/kvm/hyp/nvhe/setup.c          |   7 +-
-> >  3 files changed, 77 insertions(+), 36 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> > index 45b8d1840aa4..8bd9a539f260 100644
-> > --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> > +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> > @@ -8,7 +8,7 @@
-> >  #include <linux/types.h>
-> >  
-> >  /*
-> > - * SW bits 0-1 are reserved to track the memory ownership state of each page:
-> > + * Bits 0-1 are reserved to track the memory ownership state of each page:
-> >   *   00: The page is owned exclusively by the page-table owner.
-> >   *   01: The page is owned by the page-table owner, but is shared
-> >   *       with another entity.
-> > @@ -43,7 +43,9 @@ static inline enum pkvm_page_state pkvm_getstate(enum kvm_pgtable_prot prot)
-> >  struct hyp_page {
-> >  	u16 refcount;
-> >  	u8 order;
-> > -	u8 reserved;
-> > +
-> > +	/* Host (non-meta) state. Guarded by the host stage-2 lock. */
-> > +	enum pkvm_page_state host_state : 8;
-> 
-> An enum as a bitfield? Crazy! :)
+The following commit has been merged into the x86/urgent branch of tip:
 
-Hehe, it works so why not :)
+Commit-ID:     e8b345babf2ace50f6bf380af77ee8ae415d81f2
+Gitweb:        https://git.kernel.org/tip/e8b345babf2ace50f6bf380af77ee8ae415d81f2
+Author:        Xin Li (Intel) <xin@zytor.com>
+AuthorDate:    Wed, 13 Nov 2024 09:59:34 -08:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Mon, 16 Dec 2024 15:44:19 -08:00
 
-> You probably want an assert somewhere that ensures that hyp_page is a
-> 32bit quantity, just to make sure (and avoid hard to track bugs).
+x86/fred: Clear WFE in missing-ENDBRANCH #CPs
 
-Sounds like a good idea, I'll stick a BUILD_BUG_ON() somewhere.
+An indirect branch instruction sets the CPU indirect branch tracker
+(IBT) into WAIT_FOR_ENDBRANCH (WFE) state and WFE stays asserted
+across the instruction boundary.  When the decoder finds an
+inappropriate instruction while WFE is set ENDBR, the CPU raises a #CP
+fault.
+
+For the "kernel IBT no ENDBR" selftest where #CPs are deliberately
+triggered, the WFE state of the interrupted context needs to be
+cleared to let execution continue.  Otherwise when the CPU resumes
+from the instruction that just caused the previous #CP, another
+missing-ENDBRANCH #CP is raised and the CPU enters a dead loop.
+
+This is not a problem with IDT because it doesn't preserve WFE and
+IRET doesn't set WFE.  But FRED provides space on the entry stack
+(in an expanded CS area) to save and restore the WFE state, thus the
+WFE state is no longer clobbered, so software must clear it.
+
+Clear WFE to avoid dead looping in ibt_clear_fred_wfe() and the
+!ibt_fatal code path when execution is allowed to continue.
+
+Clobbering WFE in any other circumstance is a security-relevant bug.
+
+[ dhansen: changelog rewording ]
+
+Fixes: a5f6c2ace997 ("x86/shstk: Add user control-protection fault handler")
+Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20241113175934.3897541-1-xin%40zytor.com
+---
+ arch/x86/kernel/cet.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+index d2c732a..303bf74 100644
+--- a/arch/x86/kernel/cet.c
++++ b/arch/x86/kernel/cet.c
+@@ -81,6 +81,34 @@ static void do_user_cp_fault(struct pt_regs *regs, unsigned long error_code)
+ 
+ static __ro_after_init bool ibt_fatal = true;
+ 
++/*
++ * By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
++ *
++ * For the kernel IBT no ENDBR selftest where #CPs are deliberately triggered,
++ * the WFE state of the interrupted context needs to be cleared to let execution
++ * continue.  Otherwise when the CPU resumes from the instruction that just
++ * caused the previous #CP, another missing-ENDBRANCH #CP is raised and the CPU
++ * enters a dead loop.
++ *
++ * This is not a problem with IDT because it doesn't preserve WFE and IRET doesn't
++ * set WFE.  But FRED provides space on the entry stack (in an expanded CS area)
++ * to save and restore the WFE state, thus the WFE state is no longer clobbered,
++ * so software must clear it.
++ */
++static void ibt_clear_fred_wfe(struct pt_regs *regs)
++{
++	/*
++	 * No need to do any FRED checks.
++	 *
++	 * For IDT event delivery, the high-order 48 bits of CS are pushed
++	 * as 0s into the stack, and later IRET ignores these bits.
++	 *
++	 * For FRED, a test to check if fred_cs.wfe is set would be dropped
++	 * by compilers.
++	 */
++	regs->fred_cs.wfe = 0;
++}
++
+ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+ {
+ 	if ((error_code & CP_EC) != CP_ENDBR) {
+@@ -90,6 +118,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+ 
+ 	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
+ 		regs->ax = 0;
++		ibt_clear_fred_wfe(regs);
+ 		return;
+ 	}
+ 
+@@ -97,6 +126,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+ 	if (!ibt_fatal) {
+ 		printk(KERN_DEFAULT CUT_HERE);
+ 		__warn(__FILE__, __LINE__, (void *)regs->ip, TAINT_WARN, regs, NULL);
++		ibt_clear_fred_wfe(regs);
+ 		return;
+ 	}
+ 	BUG();
 
