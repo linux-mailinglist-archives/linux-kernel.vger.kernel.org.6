@@ -1,329 +1,214 @@
-Return-Path: <linux-kernel+bounces-450021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028579F5977
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:21:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9859F5973
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:19:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9CFF18833B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:15:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 729E81635D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42ADC1F9A98;
-	Tue, 17 Dec 2024 22:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE411F8ADD;
+	Tue, 17 Dec 2024 22:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HcLI10rf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrhvA2TP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31F11DDC2A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 22:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E8C1CBE87;
+	Tue, 17 Dec 2024 22:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734473691; cv=none; b=q5eE6qGRwRhj0lrEDiZpS2sRcAE73mkyzyZJb/ayRhJNaBKDPT7M770SSkX6lNdT/aWJO4Vdvs32lxMWsPyLte8eA56oY2BTNhZeZ/zm5xFNRvnDp1/Tryad2QWwPIPXaaiYx+cqMBQYTkvNSFKjaHo5W55+2LTOCDB+tZ0rWc0=
+	t=1734473937; cv=none; b=OUInVx+zUIX8EZ/sKZEO9PNOFbNQmPXEGfE0ywl0UHMK59nUugzlzpj9tYRit0N0AoCnNkFcB5Nv4ZpBnMKeHKb1Wy81DYap4NhHNSF1Y1FuhQHeQZibrUW3p627Kng4BudlK9KOC4c60yXq5Cl8rQbK3ucsXSlscsb5Rj1LZwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734473691; c=relaxed/simple;
-	bh=C7WNlVEmJjhlFNyxh743Po7U6Z0u5qHtj09VBt/yqeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CxFRHfLZtQbE9DQUYZMU2ru4ZpKDo5ImRbYBdgzdS7kB3GDeE4+6z0PFUm+B4o0Yn2lrN41jaNpktXMpdZImnXHKVtq9c8DqlXYekhZsY7IlNuhKQ2I6T6t/qkpGpm70xPxTRooLT9wYiP3rDtxaGA2XcHt9/KX+CPYTTjukLn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HcLI10rf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734473688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4W/q1KrGX8XGQ17XCg/MjjkKWOXUGMRUZUVOWrHU3No=;
-	b=HcLI10rfdBbKQqidwhGKJZGVTB84ODZAh1gjceM76ogb6VTWjdkZwSLF92rLW3iIvbzeOT
-	HNA3Bq+s6mOCs/vmKcSgJ0ZaXH8SAXfh3zaQn2qt95Y3nIZYMrn4Q58tvKgme5QhqUuRc6
-	vQeRmbN6wPAJG1hErbhB6v70f8EXL24=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-96-H47QX6efP7yWgwB8X0rYZQ-1; Tue, 17 Dec 2024 17:14:47 -0500
-X-MC-Unique: H47QX6efP7yWgwB8X0rYZQ-1
-X-Mimecast-MFC-AGG-ID: H47QX6efP7yWgwB8X0rYZQ
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-436379713baso19249165e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:14:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734473685; x=1735078485;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4W/q1KrGX8XGQ17XCg/MjjkKWOXUGMRUZUVOWrHU3No=;
-        b=iAwKTFcD16t8ec1pdkgBenV9IphSn0CPfMNn6kjHxXs1AV12DCwgphPaua9BBEM/gv
-         x0ngAhJ7Yjagpu6hZUwRa0VFAqe/SqZj8UisOvQvq6clo26PnNFjwBE01Wan36pDG/24
-         W8VGANvldY8FwCYGdLzYePQi/FaBrVuthjWU7qEZXzwGm50oXpua30wimsLCE110zIQX
-         S3uu2B3Z8F4JGf3N/JmneEvQa3aO9NuL2D1lkK2Tygmqei19jQ7RLS7kUIIesZFsqcXc
-         UF9aLIXapEj0iQqD818e6F8bt6HKc2uj/REIf2SMU6yuQCUiOYiiMVfEeapTAWSUv5bM
-         3BPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKDUGwZDKnHMVNhtJf38xQSozFNjZhzIH9fSPLu/GZPIdMVQOlv6GzAi1gq3NAtle+LR02infsvF77pUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDb+JMuFczQPZ63HIat49snihGwF0QKOuZIPwJ4+W6OJBr06t9
-	7a+NpIs6XgoIfqNJ8KzkEnF/P0+zi17g/3SZDxiVIjCU/wbII5yzmEP/BtdIz26VL3onVXdqjTs
-	P5aLcKnKfmOfCkp/+UxLGtWvlfR2cRYBdJfsz1S/sPY/7Nh7evJfMm3Ua/vEWVg==
-X-Gm-Gg: ASbGncueLy9pQIGcqL+0hFNiTYZZHWjODtx6DtFTC8JsijD5fQBHJDruQlGl016wiAT
-	Nz1NtBNmjeE1YZG6ajsYDrsDDwHlWL5cJ5qvNoMjRC7bFw6GS0JUmM64BeBJ095Eb1eX3yt6SDq
-	TcKCJ9kWmr7OF1Qtay5apeAwsH+zpYYC8xWkJxWUjrc9ebNGS3q9xED9jY/HjlqqsVGFMeScmHU
-	GiNa+507sa4+uOJDxBpNyvrvBT5rNu5mK7KC9XEhfDlzcp45MXkYGtG++lfXSD5cKR26t0n6zrE
-	qePtOZy8h2hNJ92QzUzUsY8NM0zwRfW1dGpKnZWlD7ryhw8WCDw+Trbk5nKfO0Y7drGYh9HJgCJ
-	+tUTJ3EEk
-X-Received: by 2002:a05:600c:3c9f:b0:434:f5c0:32b1 with SMTP id 5b1f17b1804b1-4365537150fmr3537815e9.15.1734473685483;
-        Tue, 17 Dec 2024 14:14:45 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGTA6KpAji94rWVq0XTa+DJffBW/rQwG7DLaTq8FXlBm90uKsIvAH/DN3eMrFmLxXFdurudeQ==
-X-Received: by 2002:a05:600c:3c9f:b0:434:f5c0:32b1 with SMTP id 5b1f17b1804b1-4365537150fmr3537595e9.15.1734473685027;
-        Tue, 17 Dec 2024 14:14:45 -0800 (PST)
-Received: from ?IPV6:2003:cb:c73b:5600:c716:d8e0:609d:ae92? (p200300cbc73b5600c716d8e0609dae92.dip0.t-ipconnect.de. [2003:cb:c73b:5600:c716:d8e0:609d:ae92])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8046da0sm12634055f8f.74.2024.12.17.14.14.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 14:14:44 -0800 (PST)
-Message-ID: <359a1cf2-c5b0-4682-ba3c-980d77c4cfdb@redhat.com>
-Date: Tue, 17 Dec 2024 23:14:42 +0100
+	s=arc-20240116; t=1734473937; c=relaxed/simple;
+	bh=+cDN887R3QTVEjX6KEQYRZ2FEBrq1PPQJHjIoIcdQkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Owg72i1FZNofmErfBRFVg1UF3Bskqj9Est3lh+rYOQd8vwGLtD8EUXaWLTFsO3ZdwT1GU63o8NF3lRo8Y80GA2cSrfSbSBWdL0Rbgy6Qlo6CHXWZVOdw9AU98BDKyP+t85CMd+MgJSjslaJuGNgdxS2HTOfS7XmYpCOh+f2WJsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrhvA2TP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675F1C4CED3;
+	Tue, 17 Dec 2024 22:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734473936;
+	bh=+cDN887R3QTVEjX6KEQYRZ2FEBrq1PPQJHjIoIcdQkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jrhvA2TPhEHiyGY1AEBOf7bjQ40LICdGm6WCX/VlYN5Iipffw5mlwiGh5DY4DnTzD
+	 lTB+Iq+8zQz6mmCS9XLoFlWsTvHa/DcUQC/Kkgc8uaNZUNMnOEmid7ouP5lz+tsFoS
+	 1dWUKe4a+LbNzee2vMvGYtegnaYDNAR7mzeuYJNiHMVK02Sw2PJFdFIiGbvGyXOZ/n
+	 2TRQ2AxRP8vHrSG6xUY7IAWVDgVaF6Ic6qP+rDBUaMGR3QyFwmWc6uuII24/BSLGKk
+	 pose5P2JOBVQ4QcFDKoKlbTH4f9P069F0Xa+u+jBXZVk/ZTOz0FVnAA7xEKHVmyvP4
+	 /LmWOy4Vfx2tQ==
+Date: Tue, 17 Dec 2024 14:18:53 -0800
+From: Kees Cook <kees@kernel.org>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
+	torvalds@linux-foundation.org, adhemerval.zanella@linaro.org,
+	oleg@redhat.com, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	jorgelo@chromium.org, sroettger@google.com, ojeda@kernel.org,
+	adobriyan@gmail.com, anna-maria@linutronix.de, mark.rutland@arm.com,
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
+	rdunlap@infradead.org, davem@davemloft.net, hch@lst.de,
+	peterx@redhat.com, hca@linux.ibm.com, f.fainelli@gmail.com,
+	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
+	ardb@kernel.org, Liam.Howlett@oracle.com, mhocko@suse.com,
+	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
+	enh@google.com, rientjes@google.com, groeck@chromium.org,
+	mpe@ellerman.id.au, Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrei Vagin <avagin@gmail.com>,
+	Dmitry Safonov <0x7f454c46@gmail.com>,
+	Mike Rapoport <mike.rapoport@gmail.com>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Subject: Re: [PATCH v4 1/1] exec: seal system mappings
+Message-ID: <202412171248.409B10D@keescook>
+References: <20241125202021.3684919-1-jeffxu@google.com>
+ <20241125202021.3684919-2-jeffxu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 10/25] mm/mm_init: Move p2pdma page refcount
- initialisation to p2pdma
-To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org,
- dan.j.williams@intel.com, linux-mm@kvack.org
-Cc: lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
- vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
- bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
- will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
- dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org,
- djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, peterx@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
- david@fromorbit.com
-References: <cover.18cbcff3638c6aacc051c44533ebc6c002bf2bd9.1734407924.git-series.apopple@nvidia.com>
- <aaa23e6f315a2d9b30a422c3769100cdfa42e85a.1734407924.git-series.apopple@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <aaa23e6f315a2d9b30a422c3769100cdfa42e85a.1734407924.git-series.apopple@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125202021.3684919-2-jeffxu@google.com>
 
-On 17.12.24 06:12, Alistair Popple wrote:
-> Currently ZONE_DEVICE page reference counts are initialised by core
-> memory management code in __init_zone_device_page() as part of the
-> memremap() call which driver modules make to obtain ZONE_DEVICE
-> pages. This initialises page refcounts to 1 before returning them to
-> the driver.
+On Mon, Nov 25, 2024 at 08:20:21PM +0000, jeffxu@chromium.org wrote:
+> Seal vdso, vvar, sigpage, uprobes and vsyscall.
 > 
-> This was presumably done because it drivers had a reference of sorts
-> on the page. It also ensured the page could always be mapped with
-> vm_insert_page() for example and would never get freed (ie. have a
-> zero refcount), freeing drivers of manipulating page reference counts.
-
-It probably dates back to copying that code from other zone-init code 
-where we
-(a) Treat all available-at-boot memory as allocated before we release it 
-to the buddy
-(b) Treat all hotplugged memory as allocated until we release it to the 
-buddy
-
-As a side note, I'm working on converting (b) -- PageOffline pages -- to 
-have a refcount of 0 ("frozen").
-
+> Those mappings are readonly or executable only, sealing can protect
+> them from ever changing or unmapped during the life time of the process.
+> For complete descriptions of memory sealing, please see mseal.rst [1].
 > 
-> However it complicates figuring out whether or not a page is free from
-> the mm perspective because it is no longer possible to just look at
-> the refcount. Instead the page type must be known and if GUP is used a
-> secondary pgmap reference is also sometimes needed.
-> 
-> To simplify this it is desirable to remove the page reference count
-> for the driver, so core mm can just use the refcount without having to
-> account for page type or do other types of tracking. This is possible
-> because drivers can always assume the page is valid as core kernel
-> will never offline or remove the struct page.
-> 
-> This means it is now up to drivers to initialise the page refcount as
-> required. P2PDMA uses vm_insert_page() to map the page, and that
-> requires a non-zero reference count when initialising the page so set
-> that when the page is first mapped.
-> 
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> 
-> ---
-> 
-> Changes since v2:
-> 
->   - Initialise the page refcount for all pages covered by the kaddr
-> ---
->   drivers/pci/p2pdma.c | 13 +++++++++++--
->   mm/memremap.c        | 17 +++++++++++++----
->   mm/mm_init.c         | 22 ++++++++++++++++++----
->   3 files changed, 42 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index 0cb7e0a..04773a8 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -140,13 +140,22 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
->   	rcu_read_unlock();
->   
->   	for (vaddr = vma->vm_start; vaddr < vma->vm_end; vaddr += PAGE_SIZE) {
-> -		ret = vm_insert_page(vma, vaddr, virt_to_page(kaddr));
-> +		struct page *page = virt_to_page(kaddr);
-> +
-> +		/*
-> +		 * Initialise the refcount for the freshly allocated page. As
-> +		 * we have just allocated the page no one else should be
-> +		 * using it.
-> +		 */
-> +		VM_WARN_ON_ONCE_PAGE(!page_ref_count(page), page);
-> +		set_page_count(page, 1);
-> +		ret = vm_insert_page(vma, vaddr, page);
->   		if (ret) {
->   			gen_pool_free(p2pdma->pool, (uintptr_t)kaddr, len);
->   			return ret;
->   		}
->   		percpu_ref_get(ref);
-> -		put_page(virt_to_page(kaddr));
-> +		put_page(page);
->   		kaddr += PAGE_SIZE;
->   		len -= PAGE_SIZE;
->   	}
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index 40d4547..07bbe0e 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -488,15 +488,24 @@ void free_zone_device_folio(struct folio *folio)
->   	folio->mapping = NULL;
->   	folio->page.pgmap->ops->page_free(folio_page(folio, 0));
->   
-> -	if (folio->page.pgmap->type != MEMORY_DEVICE_PRIVATE &&
-> -	    folio->page.pgmap->type != MEMORY_DEVICE_COHERENT)
-> +	switch (folio->page.pgmap->type) {
-> +	case MEMORY_DEVICE_PRIVATE:
-> +	case MEMORY_DEVICE_COHERENT:
-> +		put_dev_pagemap(folio->page.pgmap);
-> +		break;
-> +
-> +	case MEMORY_DEVICE_FS_DAX:
-> +	case MEMORY_DEVICE_GENERIC:
->   		/*
->   		 * Reset the refcount to 1 to prepare for handing out the page
->   		 * again.
->   		 */
->   		folio_set_count(folio, 1);
-> -	else
-> -		put_dev_pagemap(folio->page.pgmap);
-> +		break;
-> +
-> +	case MEMORY_DEVICE_PCI_P2PDMA:
-> +		break;
-> +	}
->   }
->   
->   void zone_device_page_init(struct page *page)
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index 24b68b4..f021e63 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -1017,12 +1017,26 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
->   	}
->   
->   	/*
-> -	 * ZONE_DEVICE pages are released directly to the driver page allocator
-> -	 * which will set the page count to 1 when allocating the page.
-> +	 * ZONE_DEVICE pages other than MEMORY_TYPE_GENERIC and
-> +	 * MEMORY_TYPE_FS_DAX pages are released directly to the driver page
-> +	 * allocator which will set the page count to 1 when allocating the
-> +	 * page.
-> +	 *
-> +	 * MEMORY_TYPE_GENERIC and MEMORY_TYPE_FS_DAX pages automatically have
-> +	 * their refcount reset to one whenever they are freed (ie. after
-> +	 * their refcount drops to 0).
->   	 */
-> -	if (pgmap->type == MEMORY_DEVICE_PRIVATE ||
-> -	    pgmap->type == MEMORY_DEVICE_COHERENT)
-> +	switch (pgmap->type) {
-> +	case MEMORY_DEVICE_PRIVATE:
-> +	case MEMORY_DEVICE_COHERENT:
-> +	case MEMORY_DEVICE_PCI_P2PDMA:
->   		set_page_count(page, 0);
-> +		break;
-> +
-> +	case MEMORY_DEVICE_FS_DAX:
-> +	case MEMORY_DEVICE_GENERIC:
-> +		break;
-> +	}
->   }
->   
->   /*
+> System mappings such as vdso, vvar, and sigpage (for arm) are
+> generated by the kernel during program initialization, and are
+> sealed after creation.
+> [...]
+>  
+> +	exec.seal_system_mappings = [KNL]
+> +			Format: { no | yes }
+> +			Seal system mappings: vdso, vvar, sigpage, vsyscall,
+> +			uprobe.
+> +			- 'no':  do not seal system mappings.
+> +			- 'yes': seal system mappings.
+> +			This overrides CONFIG_SEAL_SYSTEM_MAPPINGS=(y/n)
+> +			If not specified or invalid, default is the value set by
+> +			CONFIG_SEAL_SYSTEM_MAPPINGS.
+> +			This option has no effect if CONFIG_64BIT=n
+
+I know there is a v5 coming, but I wanted to give my thoughts to help
+shape it based on the current discussion threads.
+
+The callers of _install_special_mapping() cover what is mentioned here.
+The vdso is very common (arm, arm64, csky, hexagon, loongarch, mips,
+parisc, powerpc, riscv, s390, sh, sparc, x86, um). For those with vdso,
+some also have vvar (arm, arm64, loongarch, mips, powerpc, riscv, s390,
+sparc, x86). After that, I see a few extra things, in addition to
+sigpage and uprobes as mentioned already in the patch:
+
+arm sigpage
+arm64 compat vectors (what is this for arm?)
+arm64 compat sigreturn (what is this for arm?)
+nios2 kuser helpers
+uprobes
+
+As mentioned in the patch, there is also the x86_64 vsyscall mapping which
+eludes a regular grep since it's not using _install_special_mapping() :)
+
+So I guess the question is: can we mseal all of these universally under
+a common knob? Do the different uses mean we need finer granularity of
+knob, and do different architectures need flexibility here too? The
+patch handles the arch question with CONFIG_ARCH_HAS_SEAL_SYSTEM_MAPPINGS
+(which I think will be renamed with s/SEAL/MSEAL/ if I am following the
+threads). This seems a good solution to me. My question is
+about if sigpage, vectors, and sigreturn can also be included? (It seems
+like the answer is "yes", but I didn't see mention of the arm64 compat
+mappings.)
+
+Linus has expressed the desire that security features be available by
+default if they don't break existing userspace and that they be compiled
+in if possible (rather than be behind a CONFIG) so that code paths are
+being exercised to gain the most exposure to finding bugs. To that end,
+it's best to have a kernel command line to control it if it isn't safe
+to have always enabled. This is how we've handled _many_ features so that
+the code is built into the kernel, but that end users (e.g. distro users)
+can enable/disable a feature without rebuilding the entire kernel.
+
+For a "built into the kernel but default disabled unless enabled at boot
+time" example see:
+
+config RANDOMIZE_KSTACK_OFFSET
+        bool "Support for randomizing kernel stack offset on syscall entry" if EXPERT
+        default y
+        depends on HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
+...
+config RANDOMIZE_KSTACK_OFFSET_DEFAULT
+        bool "Default state of kernel stack offset randomization"
+        depends on RANDOMIZE_KSTACK_OFFSET
+...
+#ifdef CONFIG_RANDOMIZE_KSTACK_OFFSET
+DEFINE_STATIC_KEY_MAYBE_RO(CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT,
+                           randomize_kstack_offset);
+...
+early_param("randomize_kstack_offset", early_randomize_kstack_offset);
 
 
-But that's a bit weird: we call __init_single_page()->init_page_count() 
-to initialize it to 1, to then set it back to 0.
+For an example of the older "not built into the kernel but when built in
+can be turned off at boot time" that predated Linus's recommendation see:
 
+config HARDENED_USERCOPY
+        bool "Harden memory copies between kernel and userspace"
+...
+static DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
+...
+__setup("hardened_usercopy=", parse_hardened_usercopy);
 
-Maybe we can just pass to __init_single_page() the refcount we want to 
-have directly? Can be a patch on top of course.
+(This should arguably be "default y" in the kernel these days, but
+whatever.)
 
-Apart from that
+So, if we want to have a CONFIG_MSEAL_SYSTEM_MAPPINGS at all, it should
+be "default y" since we have the ...ARCH_HAS... config already, and then
+add a CONFIG_MSEAL_SYSTEM_MAPPINGS_DEFAULT that is off by default (since
+we expect there may be userspace impact) and tie _that_ to the kernel
+command-line so that end users can use it, or system builders can enable
+CONFIG_MSEAL_SYSTEM_MAPPINGS_DEFAULT.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+For the command line name, if a namespace is desired, I'd agree that
+naming this "mseal.special_mappings" is reasonable. It does change process
+behavior, so I'm also not opposed to "process.mseal_special_mappings", and
+it happens at exec, so "exec.mseal_special_mappings" is fine by me too.
+I think the main question would be: will there be other things under the
+proposed "mseal", "process", or "exec" namespace? I'd like to encourage
+things being logically grouped since we have SO MANY already. :)
+
+Also from discussions it sounds like there may need to be even finer-gain
+control, likely via prctl, for dealing with the CRIU case. The proposal
+is to provide an opt-out prctl with CAP_CHECKPOINT_RESTORE? I think this
+is reasonable and lets this all work without a new CONFIG. I imagine it
+would look like:
+
+criu process (which has CAP_CHECKPOINT_RESTORE):
+	- prctl(GET_MSEAL_SYSTEM_MAPPINGS)
+	- if set:
+		- remember we need to mseal mappings
+		- prctl(SET_MSEAL_SYSTEM_MAPPINGS, 0)
+		- re-exec with --mseal-system-mappings (or something)
+	- perform the "fork a tree to restore" work
+	- in each child, move around all the mappings
+		- if we need to mseal mappings:
+			- prctl(SET_MSEAL_SYSTEM_MAPPINGS, 1)
+			- mseal each system mapping
+		- eventually drop CAP_CHECKPOINT_RESTORE
+		- become the restored process
+
+Does that all sound right? If so I think Jeff has all the details needed
+to spin a v5.
+
+-Kees
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Kees Cook
 
