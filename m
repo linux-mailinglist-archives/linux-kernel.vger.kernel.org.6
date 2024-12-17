@@ -1,185 +1,136 @@
-Return-Path: <linux-kernel+bounces-448832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2289F4630
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:38:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF91F9F4631
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5169D1884B1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:38:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4679167481
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59721DD872;
-	Tue, 17 Dec 2024 08:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85481DCB24;
+	Tue, 17 Dec 2024 08:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jnSWrHaQ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RFbqfDqz"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2447D1DB52D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806A718035
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734424715; cv=none; b=aQqQhdIX8CKu332oqA1Br+qGM3SDlDjj1tB/OGXzi1gM2r2UVJ8G+5Fn11GxSis15TBNy3OZgbJCIYR57yVsofwxh9CL57K+GG0HVefNWM2f1tOihFnksntaC3l0ESU2rOnSu3sw4bSXmus2gSWzNTO4lMhGMM66Ei7315wbvKA=
+	t=1734424801; cv=none; b=Nretr7Vr4iZBuoLjrsZXYG/LpiBNlcYw0LI2YnSNMEHrysDqoQ8L1GM3LUU1X1LgVzAYKEngGg2ZqTYNcMmUD/nySnoAsvtzXROReuyPITfeycNwB0jkCeSGMcFmiGEX7fbetdm4t35L1RTrQihXY71GZNLO7iNgSVraK/c+myI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734424715; c=relaxed/simple;
-	bh=QsxB+FcvHkxYn5Z6wPrrZeML8ztRrKsQibnLZJ59yf8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GCGV7SWxTJXnHt+HLbQamYk3uZQq54qYw5trH3dhvT9JFV7lvHxqlcYn7jOPNiC77ap7vPQqp14quRJf6litL3jGkTpq6rHczyuzOz5D6gGbEFj0MvsaHzndmrSrju0GbgExCasV2KoolIV8JGtMz34ZO5xE/U+EW/3FAAzkAaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jnSWrHaQ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so54727865e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:38:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734424711; x=1735029511; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LwKLcx3qWGZ0J4OB9gBZAl+ma98QJfj1A73XswW/D2s=;
-        b=jnSWrHaQL+3QaWFglq3oInfvSme4/Ez8Qe9BWQ8Stmqxyr1s2dH5bjIr1rnWoNY3Wh
-         ehYgxrLhFvhgJCGq9t/lg9s/MgbyRdOfW+4J6NghpFj2G3slbpaOCbbf20N6ODBqsB6d
-         Fh1sYneNougEAX7EQMXY+1IoLP1hZjv3TzN6t2An9iy8C90eHBGEeHd0EAR0sQ3s0sLy
-         102mR99+a4fFERFBneb2pkbF77T36Zl+wky00ON2rQ9zxfATIukXyZsTX+xUh16ESZoZ
-         Ipt/eFuAm2e0xNbxnyCg2n6JLGaSuiQwqsBwHveujCneEgiT0A8S4p6z1NVkHihaExmb
-         ZdJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734424711; x=1735029511;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwKLcx3qWGZ0J4OB9gBZAl+ma98QJfj1A73XswW/D2s=;
-        b=NX8BYNaU3bq64Oq0QiNNFQwb9lCHv1DKjMNn+hPyiHSGE2ymInqCEFVtm8n7YvWyjA
-         H08pA7yfun/dunMeZEdovaOvzUYKlzK348npj/wRDLYXijxYLCEQmu86i1KB3WLW9M6F
-         m3HH8+boRVhGJs0ch+G/nAEBuNXEU2eLwa+uL8S7+4hUswYLt+rEB1cgtLFysLljPqaj
-         +cEvmBIl1S+l1YFsp+ajU5GDs1STcvVPaX3Nk6UUVA1cFMoeqOwZC6q0AchLBbJMF6wk
-         wK2dd0fi/5+FC/jeP2JHiroNwqS/Umhepysrw7vYsVpVbFZTC7sTCjFhydhYRhXI1lnI
-         IW8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdUp54x2KgwK5Fqf+0QC/uXYuFcwRl4VfkM+wpycL+G+Si34hXET55x/7AMHU4aCZeXCQ6IQ1SuBJGLco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpHUjsJVoFQJ4QLb84+xpx8x5zOZpUX9NMNMAcxuiaJtRJndGQ
-	KYTWo11HqAFVgA4Y9nuhk9eibUDub3acoMmUYtLpjB77l9LJO2Js+jRsQrhwyWw=
-X-Gm-Gg: ASbGncuQdtCY7nT7CJs/zyPOLrDW7Gb6IYaDlGohvUG19UA02jYmTUp3DwElSlSZ/1O
-	leTGG9BxkONlz5Ap48vguN7pWAn+KtEaU1GubLOEmeG6+g9hNC/QB8JuwhWm/1bUyEpiOj2uxhn
-	AG1YMrX+/qK72GcxfDk+HvOgR7RmQgfaI22wudyowYkCu0oZwl/Kw5kOt4+qXTw7tEY6pemsSfk
-	51dGdnIXZfBhvKsIRKUVELoIsYVdQ5IcsUlCLniM8Ss4U7vLpK3Ff8zI7ue/E2a
-X-Google-Smtp-Source: AGHT+IG1ScKF9S6YLpA0VEyZm9yVfmIx7vyc5/iav7Ktgk6AaGAJ4fl38EJ0MOFcy/fDQp5fgbPrhQ==
-X-Received: by 2002:a5d:6c63:0:b0:385:ee59:4510 with SMTP id ffacd0b85a97d-38880ac1cc1mr14557623f8f.9.1734424711437;
-        Tue, 17 Dec 2024 00:38:31 -0800 (PST)
-Received: from [192.168.0.14] ([188.26.61.92])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8060592sm10298741f8f.98.2024.12.17.00.38.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 00:38:30 -0800 (PST)
-Message-ID: <4e8936e0-ac69-49e8-919f-b2776dd88779@linaro.org>
-Date: Tue, 17 Dec 2024 08:38:29 +0000
+	s=arc-20240116; t=1734424801; c=relaxed/simple;
+	bh=ls/AmNG93LU9ayn/71FsfGrw4+Ni4nHAglsLHh2S6aE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSxC7ZZjEjG/C/UJqRT2MFLj6r4tAoUTBrrZ6Ac2cnKidJAx5i7HQbH7JX0TvRvCehfawVnxVk3STgZmpG5MGWbsouYJZ0Z8ExoMFfCaGKZi0IlhgcmmPKNPWpKlGfrXLcRbpIr781nW5eumLwG9MD/HexI5Ag6HjZ7SxjmVNuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RFbqfDqz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=zHKSQ9Na+RcR019nXxbqF8cNu/t1XZ8eXhmHmP+Ovf0=; b=RFbqfDqz7m7V3l3Trt00C8orAY
+	C7XQPDYBkR8DcF1sWU6/Wv3RK1cG/70XUP5jwJwTfxjMeJrEs//69GCUwmdO1UxFchyhXzd1qlS2h
+	F4UoelRJrag+4OFNLkxdhRQxeShWKBPg3WDCEnCyFtyUqn3WHS+0/3yeOiaxQaPFLiz3+Yk5JVQVV
+	CRAJELFss3fNk7eMXQA2KcGpecbecOO2jSQ/9g+R4pi2keWiaGnVl8gxGwUZOeTrdsa4r2Hb7tiQh
+	wksqB0CnLpTSUgjxXCOdgF2eK3sYhO95X0g949AMg01U6+m9OX3SDrCGtG+zrBHKfrtF6KCQDZPPL
+	xTXjt21A==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNT7L-00000005q8b-3AUz;
+	Tue, 17 Dec 2024 08:39:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C7AE9300192; Tue, 17 Dec 2024 09:39:46 +0100 (CET)
+Date: Tue, 17 Dec 2024 09:39:46 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
+	Connor O'Brien <connoro@google.com>
+Subject: Re: [RFC][PATCH v14 2/7] locking/mutex: Rework
+ task_struct::blocked_on
+Message-ID: <20241217083946.GF35539@noisy.programming.kicks-ass.net>
+References: <20241125195204.2374458-1-jstultz@google.com>
+ <20241125195204.2374458-3-jstultz@google.com>
+ <20241213232214.GA17501@noisy.programming.kicks-ass.net>
+ <CANDhNCraMepXyQPs1q-aNa+Gh745WpaFPkngA9Eohi9vXRpe+w@mail.gmail.com>
+ <20241216165419.GE35539@noisy.programming.kicks-ass.net>
+ <CANDhNCpTfZFOkUkB4f4iQwXA3wnsDuUA_1ZLuseGYunnpgO9Rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64: dts: exynos: gs101: add ACPM protocol node
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: William McVicker <willmcvicker@google.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, kernel-team@android.com,
- daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
- ulf.hansson@linaro.org, arnd@arndb.de
-References: <20241212-b4-acpm-v4-upstream-dts-v2-0-91b7a6f6d0b0@linaro.org>
- <20241212-b4-acpm-v4-upstream-dts-v2-3-91b7a6f6d0b0@linaro.org>
- <Z2B3V78k2ibIdLYh@google.com>
- <45a54924-226e-4a94-b1ae-b0f1f703f854@linaro.org>
-Content-Language: en-US
-In-Reply-To: <45a54924-226e-4a94-b1ae-b0f1f703f854@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCpTfZFOkUkB4f4iQwXA3wnsDuUA_1ZLuseGYunnpgO9Rw@mail.gmail.com>
 
+On Mon, Dec 16, 2024 at 09:01:24PM -0800, John Stultz wrote:
+> On Mon, Dec 16, 2024 at 8:54 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Fri, Dec 13, 2024 at 07:39:57PM -0800, John Stultz wrote:
+> > > On Fri, Dec 13, 2024 at 3:22 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > > On Mon, Nov 25, 2024 at 11:51:56AM -0800, John Stultz wrote:
+> > > So yes, the description can use improvement here. I at one time had
+> > > 3-4 separate very fine grained patches (see the top 4 patches here:
+> > > https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v7-6.7-rc6-fine-grained/?after=c4cad6e353c00254a2dfbb227ef81d8c3827427d+35)
+> > > that I rolled into one when sending out(mostly to avoid overwhelming
+> > > folks), but the squished commit description isn't as clear.
+> > > So if it's helpful I can split this back out?
+> > >
+> > > I'll also add some better comments as well.
+> >
+> > Not sure yet about splitting back out -- let me try and figure out what
+> > all is actually done / needed.
+> >
+> > So blocked_lock started out as another lock around ttwu(), in order to
+> > serialize the task wakeup vs reading a remote ->blocked_on relation.
+> 
+> I think of it primarily to serialize the task->blocked* state (there
+> gets to be quite a bit by the end of the proxy series).
+> 
+> > Since we do this with rq->lock held, it can't be ->pi_lock, and hence
+> > ->blocked_lock was born.
+> 
+> Yeah, we needed to use something other than the task->pi_lock to
+> serialize it as it has to nest under the mutex->wait_lock.
 
+No, the critical bit is nesting under rq->lock -- we need to be able to
+walk the blocked relation in the middle of schedule(). You can equally
+wrap blocked_lock outside of wait_lock, that doesn't really matter much.
 
-On 12/17/24 7:20 AM, Tudor Ambarus wrote:
+> > Later patches appear to have moved it into mutex, mirroring the
+> > ->wait_lock -- this is probably better.
+> >
+> > /me goes chase that state thing for a bit..
 > 
-> 
-> On 12/16/24 6:54 PM, William McVicker wrote:
->> Hi Tudor,
-> 
-> Hi, William!
-> 
->>
->> On 12/12/2024, Tudor Ambarus wrote:
->>> Add the ACPM protocol node. ACPM protocol provides interface for all
->>> the client drivers making use of the features offered by the
->>> Active Power Management (APM) module.
->>>
->>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 22 ++++++++++++++++++++++
->>>  1 file changed, 22 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> index 04561e15b96c..8c3f07371912 100644
->>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> @@ -277,6 +277,28 @@ apm_sram: sram@2039000 {
->>>  		ranges = <0x0 0x0 0x2039000 0x40000>;
->>>  	};
->>>  
->>> +	firmware {
->>> +		acpm_ipc: power-management {
->>> +			compatible = "google,gs101-acpm-ipc";
->>> +			mboxes = <&ap2apm_mailbox 0 0
->>> +				  &ap2apm_mailbox 0 1
->>> +				  &ap2apm_mailbox 0 2
->>> +				  &ap2apm_mailbox 0 3
->>> +				  &ap2apm_mailbox 0 4
->>> +				  &ap2apm_mailbox 0 5
->>> +				  &ap2apm_mailbox 0 6
->>> +				  &ap2apm_mailbox 0 7
->>> +				  &ap2apm_mailbox 0 8
->>> +				  &ap2apm_mailbox 0 9
->>> +				  &ap2apm_mailbox 0 10
->>> +				  &ap2apm_mailbox 0 11
->>> +				  &ap2apm_mailbox 0 12
->>> +				  &ap2apm_mailbox 0 13
->>> +				  &ap2apm_mailbox 0 14>;
->>> +			shmem = <&apm_sram>;
->>> +		};
->>> +	};
->>
->> You mentioned in the previous patch that "GS101 has 14 mailbox controllers",
-> 
-> Right, I got the number from the GS101 memory map.
-> 
->> but here you have 15 mailboxes. I looked at the downstream driver and see the
-> 
-> Here we have a single mailbox controller, ap2apm_mailbox, with 15 channels.
-> 
->> number of mailboxes is defined by the ACPM framework (firmware) which is read
-> 
-> s/mailboxes/mailbox channels that ACPM uses/
-> 
->> from SRAM initdata. Dumping that, I see there are 15 ACPM channels. Have you
-> 
-> Correct.
-> 
->> looked into into extracting the data from the initdata SRAM address?
->>
-> 
-> Yes, that's the reason why I defined the 15 channels from above for the
-> ap2apm_mailbox controller.
-> 
+> ? I'm not sure I followed this.  The blocked_lock continues to
+> serialize the task->blocked* state through the patch series.
 
-Haven't explicitly mentioned in the commit message: the ACPM protocol is
-a mailbox client for the ap2apm_mailbox controller. The ACPM protocol
-uses 15 mailbox channels of a total of 16 channels that ap2apm_mailbox
-controller provides.
+Well, there was only ->blocked_on, and on UP you don't need
+serialization beyond disabling preemption.
 
-Let me know if you think I shall update the commit message.
-Thanks,
-ta
+The tricky bit is SMP, then you need something to stabilize the blocked
+relation.
 
