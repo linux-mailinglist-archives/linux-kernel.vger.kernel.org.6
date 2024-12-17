@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-448824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DFB9F4614
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:31:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63139F4611
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C3A16420F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:31:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A3F1887F83
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E3E1DB92E;
-	Tue, 17 Dec 2024 08:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0365F1684B0;
+	Tue, 17 Dec 2024 08:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBIXLWr3"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l71SWLKk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE68E42AA1
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5132342AA1;
+	Tue, 17 Dec 2024 08:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734424256; cv=none; b=iA4MN3E3izy7DLhkN//HUIeuV+apzxDi4nIjia/LtVWZMyNT9icQwbsFaouDsv5xA3IFzGnTHfoSI9HeG0O9TnrTJ7UxA630vob33Dd3vcBMwUoBAiDqgiZlV7I+MGKBrZq8jP4m40jT+jwmndD6R1uJygMWP8AXmjn7rLTDBTw=
+	t=1734424242; cv=none; b=RH1VoDeGzHk13AXVEOsiOUT8zl7Qht+k9CuZlDgH13MrSSLXibbOWJ7RkrFM/3YvHqAe+cY1BAjbJz8AGBBzI1sq6pAk0wD/AWHJYTob4I2m6hEAt5j17AJ1z4GIk45Mf5DyHHVqBJPyWGfgWsLk5vUC1r6RVbdb7jRZgpANYtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734424256; c=relaxed/simple;
-	bh=ANbHvocS0De2jFz5Ci7S4O7ZEw7An+x/6/xRKigOLGE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Fsgb0OqPqAh0KOCgLjugH4n/bSALPeA3ZXrJV/YJnsihXCv9rzWVjelYjhSGQtClSG1KriGJ36kppbUjA2G+9CkdTLQ4UqKAEv7huZs3PK+Vtbya/NZeZD6vh3OkaAQNXI+EiT2rW8hIOs70y8maTXNb/eCKS4qYHEWZm03Bsi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBIXLWr3; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-2166651f752so52685315ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:30:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734424254; x=1735029054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fd30tVWYoHtxQaUp8zbItFbdJ5ix/n8/w1NkV/nu/sE=;
-        b=SBIXLWr3SEilDmxg0AkZbARaWPOAarJZJee2clCcgyql/lBlZXVFSG5NDZ6AEJCqUW
-         K2S+k6osslczBWmBqwxRMZwuPKuOEzlpR1Kf0s8Ur9ECkNGW1hhpW/lFV2LBzXXuXXDp
-         3CVwh8Q6HADjtykNL4wMQcbWglzwx0F5G5y7t90TGHWlWR5CEI/czC4M4B25DnGlK/wc
-         qJfr3Qjc1XuVnpV3BcQ0CJjxT8XnkPfmBLKyXrqbXnszG2l5GRBWytpfgQEdAqtZaAEO
-         5wF4SBrX7R3UTuRAV4wv7SA36xAYH1xo/NyknqPOjpy4/sSQlCyfwe7ml3przeDlm6GV
-         1YPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734424254; x=1735029054;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fd30tVWYoHtxQaUp8zbItFbdJ5ix/n8/w1NkV/nu/sE=;
-        b=hTSkYzP+T4R1t1eev2gH00WIcngFyX24prmRpOllE+g3706U0Upb+JPLktjzJ0YggK
-         p7zdz5FPOClyF6zUh7zg8hVD4EcvVBzjBFvNTuTZfjSHA60aLFb+3ZppRccogb7BDBQu
-         cjzsXBuGXT+hntPmU0R6T1v0VjNwRWqL9hyFMt9ZOrn1C5jRIuEV2dyHV/LsWEChZSPa
-         pANS82BRSYmr2SPWAmqbKWL96cN2Tc62oa1UaAP9vpneh6y9GStReAPQYqIwDR40ZxjF
-         GCyOlhmeS7gVvZmt+Mis0DSdiYPvJ6fcv30plS2RNmS1por6Ez7IGUnye3pb2t9NyyOs
-         stng==
-X-Forwarded-Encrypted: i=1; AJvYcCUINPzHz5bcr8hb9b5tK9eTrEJN4KqOGWm4jUARIHkw9B+DcLz1Eyes/XCXLjxamSSsmfA3tZTu+gNtjuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM3hgFC465fYP0z+PpOlZdzadfKYvVk4yIslDWjxPnrsN0jftV
-	7cox3Yp4gvEk/NJwL6AQ9+QwOhBVk3e9Bu0LenG1Fdrm34nZSeyWJR6mn04y0fc=
-X-Gm-Gg: ASbGncubtztvNrd9l9ZMVIejfY4t5VS+mWoZdNH07rwikgbU7osCA5T0QPodv5yi/ly
-	rdZc8njB/1+XEBLusqO1EQCpt3yGVGMaxXByOJg1a7FA4XbSMZzNenzcN1hC2wAosoFcfMBrRt/
-	xUzSJPcaHuOC+22Qhr0MX5EyEqCzsbwVCC8UueKgw5wHeuDor+99JDjUfktuVBJEf0sCITBVeha
-	5f86vxNuYFf6QSgFvJOr73gjJyw8gLwQ+7YvyuuO+/atQ/+X/Ma1Jaq7sKuI8SNui0pJQi2DJcG
-	0g==
-X-Google-Smtp-Source: AGHT+IEZ3q8mOV01FO5bL3R8EO7xZNQ8atTdytKNqxrOkw9jgMbTPieqH1TEG7rAHfNDbABb4+gmrg==
-X-Received: by 2002:a17:902:f68f:b0:216:4853:4c0b with SMTP id d9443c01a7336-21892a0b4e7mr211960605ad.33.1734424253973;
-        Tue, 17 Dec 2024 00:30:53 -0800 (PST)
-Received: from localhost.localdomain ([2408:80e0:41fc:0:fe2d:0:1:6253])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e6370csm54383395ad.224.2024.12.17.00.30.51
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 17 Dec 2024 00:30:53 -0800 (PST)
-From: zhouzihan30 <15645113830zzh@gmail.com>
-X-Google-Original-From: zhouzihan30 <zhouzihan30@jd.com>
-To: liam.howlett@oracle.com
-Cc: 15645113830zzh@gmail.com,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	yaowenchao@jd.com,
-	zhouzihan30@jd.com
-Subject: Re: [PATCH V1] mm: fix bug in some memory information update
-Date: Tue, 17 Dec 2024 16:30:27 +0800
-Message-Id: <20241217083026.29122-1-zhouzihan30@jd.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <edigemkxkze3iicku3orrufdadevca33ndqxw2etqvustykpv6@smaext2j3bzp>
-References: <edigemkxkze3iicku3orrufdadevca33ndqxw2etqvustykpv6@smaext2j3bzp>
+	s=arc-20240116; t=1734424242; c=relaxed/simple;
+	bh=sJTelRh5BsOfm4lONdvvjAu3mDOe48NrRuTOIBtnAMI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K+HAseZuvJUF0HZxal4awqmQ16CGFCO9sKdOxr2ML6PzDoH6Gb48NK5xtpxnlOwnLcteW59dMJdypW1/CANg5H23c3OizQoP1gHityStU221d/9Jb2mTDT+QsjIINZhIvMIH02eT3GJTQBu9+Y9G33+rqGpyWLvu278k8GfxM1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l71SWLKk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4114C4CED3;
+	Tue, 17 Dec 2024 08:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734424241;
+	bh=sJTelRh5BsOfm4lONdvvjAu3mDOe48NrRuTOIBtnAMI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l71SWLKkp5Nr6M3mGg7Pnz7kNu8F11xrwYQn0V5no43bAVGRUefq9YI++b48YR2iF
+	 XLzjqUZM8Kxrli6aeQOs/nhmsuSFeNGB58flYwT/Osicp7ooEbd8k/maROtfilItWx
+	 95hl/39ExSBwDRDk4bJtjMT+Nbyye7DCJ6/WPw2lkagcGYv4pi58fdXz5JhxWL9ESo
+	 53w70EyCfe9PH5Z07DepXeIuhq7+cIVJYuMQ5oEEGF242D6/uau1OwGXGUfVnf37WB
+	 drfRHAwCnDGcxlCO89pXxOsWD7CExbpQTB5CIAN+tPV64VgIdYVKDufjF/4KaiRUPP
+	 dE4KMrklV1DIQ==
+Received: from [82.132.185.145] (helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tNSyV-004TdD-Hg;
+	Tue, 17 Dec 2024 08:30:39 +0000
+Date: Tue, 17 Dec 2024 08:30:37 +0000
+Message-ID: <875xnisocy.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Fix set_id_regs selftest for ASIDBITS becoming unwritable
+In-Reply-To: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
+References: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.185.145
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, pbonzini@redhat.com, shuah@kernel.org, catalin.marinas@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Thank you for your reply. The title of this patch is indeed not good.
-We are planning to rename it as "mm: page_alloc: fix missed updates of 
-lowmem_reserve in adjust_managed_page_count". Is it OK?
+On Mon, 16 Dec 2024 19:28:24 +0000,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> In commit 03c7527e97f7 ("KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits
+> to be overridden") we made that bitfield in the ID registers unwritable
+> however the change neglected to make the corresponding update to set_id_regs
+> resulting in it failing:
+> 
+> # ok 56 ID_AA64MMFR0_EL1_BIGEND
+> # ==== Test Assertion Failure ====
+> #   aarch64/set_id_regs.c:434: masks[idx] & ftr_bits[j].mask == ftr_bits[j].mask
+> #   pid=5566 tid=5566 errno=22 - Invalid argument
+> #      1	0x00000000004034a7: test_vm_ftr_id_regs at set_id_regs.c:434
+> #      2	0x0000000000401b53: main at set_id_regs.c:684
+> #      3	0x0000ffff8e6b7543: ?? ??:0
+> #      4	0x0000ffff8e6b7617: ?? ??:0
+> #      5	0x0000000000401e6f: _start at ??:?
+> #   0 != 0xf0 (masks[idx] & ftr_bits[j].mask != ftr_bits[j].mask)
+> not ok 8 selftests: kvm: set_id_regs # exit=254
+> 
+> Remove ID_AA64MMFR1_EL1.ASIDBITS from the set of bitfields we test for
+> writeability.
+> 
+> Fixes: 03c7527e97f7 ("KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits to be overridden")
 
-< The subject of this patch is really poor.  "some memory information"?
-< 
-< considering the text below is so much more descriptive, could we have a
-< meaningful subject?  You will not get the proper people looking at this
-< without a decent subject.  At least make it "mm/page_alloc" ?
+A patch for a test doesn't fix anything in the kernel.
 
-Regarding Signed-off-by, we are sorry that we do not have a particular
- good way. When we are on the intranet, we use jd.com email. However,
-this email cannot send emails externally, so we used our own Gmail as the
- sending email. My name is Zihan Zhou, and zhouzihan30 is my internal ERP.
- I also rely on this account to submit information on the intranet. 
-Do we have to prepare a new account for kernel submission?
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  tools/testing/selftests/kvm/aarch64/set_id_regs.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/aarch64/set_id_regs.c b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
+> index a79b7f18452d2ec336ae623b8aa5c9cf329b6b4e..3a97c160b5fec990aaf8dfaf100a907b913f057c 100644
+> --- a/tools/testing/selftests/kvm/aarch64/set_id_regs.c
+> +++ b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
+> @@ -152,7 +152,6 @@ static const struct reg_ftr_bits ftr_id_aa64mmfr0_el1[] = {
+>  	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, BIGENDEL0, 0),
+>  	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, SNSMEM, 0),
+>  	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, BIGEND, 0),
+> -	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, ASIDBITS, 0),
+>  	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, PARANGE, 0),
+>  	REG_FTR_END,
+>  };
+> 
 
-< Who are these people, really?
-< 
-< https://www.kernel.org/doc/html/v6.12/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
-< 
-< Also, the Signed-off-by doesn't match the sending email (gmail vs
-< jd.com)?
+With the Fixes: line dropped,
+
+Acked-by: Marc Zyngier <maz@kernel.org>
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
