@@ -1,70 +1,156 @@
-Return-Path: <linux-kernel+bounces-449954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB919F58A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:21:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD3E9F58B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FDAA7A3F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:20:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1C716DB77
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5A01F9F4E;
-	Tue, 17 Dec 2024 21:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F561FAC55;
+	Tue, 17 Dec 2024 21:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVICBSc5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g8y3R8+1"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413321F8F0A;
-	Tue, 17 Dec 2024 21:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78721FAC34
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734470439; cv=none; b=BIuFjdTDywAyWAy7Rx1Kad0FQsTiBmdGTZhA08tqN4PS/T2lUNyjNSJm1ddtsA0VsCOjsP0YXErWkSOh41kdb5vhpN+y42GWTYuQitLeQ44ZZ6qRa92pFM4hv+YGquqrMAXAoLmgKTgS3q5xmCcQf0jW4d6RmSuhDxd6qs6cH9g=
+	t=1734470477; cv=none; b=NpWgVBFAhibVXxFxmxJm1UfcspGG6S0KjOQneTDsDrdJziAw3WcbhatK5hm1gFLU90hoWU5uHCzOlkm7VBRa6yT0atyd62nIdRhgXPEyDcZBF+CFv52GGuQgLJLzkZNa22+5UaCRTsWwKbPALeiIPILoiEtE5aLH2wLZb+SXPCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734470439; c=relaxed/simple;
-	bh=OuhV49idgGSGTPuwn8qhhQpfCulTr1r67ho90pUomTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iE0bxeM9YCvYFK+VHkcR35FdL6wk1lLHRovfmZz6WDyevjYjw15e1Nl2eDPW2hdWxm1bljIpydu400TELmgtifibzWVUFCcJwJGtziJ/tEAA0Ray5Z/BWNUCe0cvTOxKfu4Zaip0Qj+tgL+Tkjo8DcGaKaoBVpCl7v2asAs2Wec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVICBSc5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DB4C4CED7;
-	Tue, 17 Dec 2024 21:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734470438;
-	bh=OuhV49idgGSGTPuwn8qhhQpfCulTr1r67ho90pUomTg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XVICBSc5WFUersqjelEVhLO8pc1wkrGnFbJLdvSBH7W52h/TKNdckIp3dzsB1/NOk
-	 DFuFKHi9crdtfNIHqSlBQTwO686ZYbqSwZbnUjT7qaSnWT3GXh1lK9w8MO2vWpAxl/
-	 Dvs43CII8mXQxki9JGUfrOVPhexTx+t9Av6RsJHWWn5DfvZC6rnK8xkvzAHmjBgRDG
-	 OX9objChsNhGNSh04dKOC722gpbsd99XKa/nRYXiE9SpAJDoKjj2UhJQVEfYUDPeJX
-	 ODSgE/UfBqXX7bSL4wNOivZvYsTBeS/gVnfrPWTXDlfZ8M5g8f04BUo41HTjBVkA7w
-	 be/tXWheL6JBw==
-Date: Tue, 17 Dec 2024 14:20:35 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: llvm@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: conor@kernel.org, ojeda@kernel.org
-Subject: Prebuilt LLVM 19.1.6 uploaded
-Message-ID: <20241217212035.GA2842889@ax162>
+	s=arc-20240116; t=1734470477; c=relaxed/simple;
+	bh=H1i76oQ62PnNOz7LOn+mMYk6kiHYTKnh8qFew67NezM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BaCetmZ0GExt7syx+kWyMiTOu/C8j4WLbQ+Hgy7+C5azSUDFlh/6qdPQLklL6kVjFTeDrfmXpoyu/acbSyDlsknQCd/jEDegYPmFUuWL9PSg+/xcVPQylDh4W/JLM09zvBCiGqkM5/dEbUSX+vWkbsbKoJ/DcgIq+KoJ5PHXz/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g8y3R8+1; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734470474;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t1F52j19RSTD/ExLTuDEtZGAnpbJL/8p4C5yMUPDC6w=;
+	b=g8y3R8+1mLdj6B0rrZccFsB+xmnkWbkci/JOQqvtvSISIfYMAJm57YPMEWQ6wQg26SrtvH
+	uFu0b6D0s4B8HdUqpw9OS5bvlR9KXr4Y5/bdsKTWstMN27yA9TvenzkT8dOpWQReDrnjm5
+	7QTmXH4ZmGLW1O3SpxtmEAyKt8hE9DY=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: kvmarm@lists.linux.dev
+Cc: Marc Zyngier <maz@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Colton Lewis <coltonlewis@google.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: [PATCH 05/18] KVM: arm64: Compute PMCEID from arm_pmu's event bitmaps
+Date: Tue, 17 Dec 2024 13:20:35 -0800
+Message-Id: <20241217212048.3709204-6-oliver.upton@linux.dev>
+In-Reply-To: <20241217212048.3709204-1-oliver.upton@linux.dev>
+References: <20241217212048.3709204-1-oliver.upton@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi all,
+The PMUv3 driver populates a couple of bitmaps with the values of
+PMCEID{0,1}, from which the guest's PMCEID{0,1} can be derived. This
+is particularly convenient when virtualizing PMUv3 on IMP DEF hardware,
+as reading the nonexistent PMCEID registers leads to a rather unpleasant
+UNDEF.
 
-I have built and uploaded LLVM 19.1.6 to
-https://mirrors.edge.kernel.org/pub/tools/llvm/.
+Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+---
+ arch/arm64/kvm/pmu-emul.c | 47 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 36 insertions(+), 11 deletions(-)
 
-If there are any issues found, please let us know via email or
-https://github.com/ClangBuiltLinux/linux/issues/new, so that we have an
-opportunity to get them fixed in main and backported before the 19.x
-series is no longer supported.
+diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
+index 456102bc0b55..809d65b912e8 100644
+--- a/arch/arm64/kvm/pmu-emul.c
++++ b/arch/arm64/kvm/pmu-emul.c
+@@ -861,8 +861,42 @@ static struct arm_pmu *kvm_pmu_probe_armpmu(void)
+ 	return pmu;
+ }
+ 
++static u64 __compute_pmceid(struct arm_pmu *pmu, bool pmceid1)
++{
++	u32 hi[2], lo[2];
++
++	bitmap_to_arr32(lo, pmu->pmceid_bitmap, ARMV8_PMUV3_MAX_COMMON_EVENTS);
++	bitmap_to_arr32(hi, pmu->pmceid_ext_bitmap, ARMV8_PMUV3_MAX_COMMON_EVENTS);
++
++	return ((u64)hi[pmceid1] << 32) | lo[pmceid1];
++}
++
++static u64 compute_pmceid0(struct arm_pmu *pmu)
++{
++	u64 val = __compute_pmceid(pmu, 0);
++
++	/* always support CHAIN */
++	val |= BIT(ARMV8_PMUV3_PERFCTR_CHAIN);
++	return val;
++}
++
++static u64 compute_pmceid1(struct arm_pmu *pmu)
++{
++	u64 val = __compute_pmceid(pmu, 1);
++
++	/*
++	 * Don't advertise STALL_SLOT*, as PMMIR_EL0 is handled
++	 * as RAZ
++	 */
++	val &= ~(BIT_ULL(ARMV8_PMUV3_PERFCTR_STALL_SLOT - 32) |
++		 BIT_ULL(ARMV8_PMUV3_PERFCTR_STALL_SLOT_FRONTEND - 32) |
++		 BIT_ULL(ARMV8_PMUV3_PERFCTR_STALL_SLOT_BACKEND - 32));
++	return val;
++}
++
+ u64 kvm_pmu_get_pmceid(struct kvm_vcpu *vcpu, bool pmceid1)
+ {
++	struct arm_pmu *cpu_pmu = vcpu->kvm->arch.arm_pmu;
+ 	unsigned long *bmap = vcpu->kvm->arch.pmu_filter;
+ 	u64 val, mask = 0;
+ 	int base, i, nr_events;
+@@ -871,19 +905,10 @@ u64 kvm_pmu_get_pmceid(struct kvm_vcpu *vcpu, bool pmceid1)
+ 		return 0;
+ 
+ 	if (!pmceid1) {
+-		val = read_sysreg(pmceid0_el0);
+-		/* always support CHAIN */
+-		val |= BIT(ARMV8_PMUV3_PERFCTR_CHAIN);
++		val = compute_pmceid0(cpu_pmu);
+ 		base = 0;
+ 	} else {
+-		val = read_sysreg(pmceid1_el0);
+-		/*
+-		 * Don't advertise STALL_SLOT*, as PMMIR_EL0 is handled
+-		 * as RAZ
+-		 */
+-		val &= ~(BIT_ULL(ARMV8_PMUV3_PERFCTR_STALL_SLOT - 32) |
+-			 BIT_ULL(ARMV8_PMUV3_PERFCTR_STALL_SLOT_FRONTEND - 32) |
+-			 BIT_ULL(ARMV8_PMUV3_PERFCTR_STALL_SLOT_BACKEND - 32));
++		val = compute_pmceid1(cpu_pmu);
+ 		base = 32;
+ 	}
+ 
+-- 
+2.39.5
 
-Cheers,
-Nathan
 
