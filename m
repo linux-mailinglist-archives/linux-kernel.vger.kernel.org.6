@@ -1,125 +1,137 @@
-Return-Path: <linux-kernel+bounces-449464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8954A9F4F66
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:26:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4BF9F4F70
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2DD41884304
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:25:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADB5E167539
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508401F7564;
-	Tue, 17 Dec 2024 15:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0932F1F7562;
+	Tue, 17 Dec 2024 15:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JB+9DGMZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6XsmFkn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF01F1F7545
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3591F6671;
+	Tue, 17 Dec 2024 15:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734449145; cv=none; b=EXmMLwwWNXXfSDgNrh3pwtsiAX18jLIxGMRI0r9CmNRpERMpEGWo0yDPxTbPHiqX07OWMi3Haei22pb8j88o8NmLgThfc0fLitCWnLumrVZivWVw8q3/oHqvgeUyLsug/XYfr0JgNEuvl03kGzXwuexTMan9pgKv7ee4SCj1014=
+	t=1734449234; cv=none; b=uUaErOlJ8fldhUNxZdyT4oqWj1hbCN2Ks8Ve92q2fVpzFmus/W1Wsdhzztj+12mwv6it/f5pYcMtiRXfkY+hKVRvueIWeU0KU6VR95mIV+h1aqYQ4UM9nUwDMxHwX0db5hwBQIp8gS+C6Qph37z0DQqOEn2vsWQE2tNnOu1El68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734449145; c=relaxed/simple;
-	bh=t4lCHfM/mAXjrGE7S2qLAcIcLim63yxLOA1JiYXXEZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ea/gukv+8rFm7X5uHqbW8GerYrqcl3ge0rJW1NUtxU5zfuY7ncH7SXfpzJuAzZpqDqugTDnRKKO2ZaojlsYzrHtV9sYRwCSdX6Nf3prQkPUfR3DMAIygfGNr9bKkjHkqniXSp0rtajqzHzjvjYhGXNK04reQdvVnX10HPZH/8nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JB+9DGMZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0602C4CED3;
-	Tue, 17 Dec 2024 15:25:44 +0000 (UTC)
+	s=arc-20240116; t=1734449234; c=relaxed/simple;
+	bh=CLxzXo9oeslqLy8tR41S5aelo9QQNAr/NdVVwT0J6wA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qHSzSMdHta4y/TQCqa4B2A2/xrtWs08UbXxFr2Qo5s1BEcWjwxjxthYQQBVxrByoEu9DIttQQHxxj6V89DOqw4wanK9QZ2i6uBjt29fm+5eoa2OusZBpbrSchM2pLfCPO2Nhq+RZsCRZMsoJt+cRf4N6jgveFD1N9ExAiD1sXFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6XsmFkn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ABF7C4CED3;
+	Tue, 17 Dec 2024 15:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734449145;
-	bh=t4lCHfM/mAXjrGE7S2qLAcIcLim63yxLOA1JiYXXEZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JB+9DGMZjhGVVSVR4UMhvdDnGxYdn/XBj1Np07pPvw5tpcylZICq9ARb9nRPFSyzT
-	 dkNF2Ykpam041FTbbCn4AQ7QXsrcZqJNGgPAEtx2zoIIGD9JnjelmasFcnaSZUaZVL
-	 +OFa572UYHn5kjCq0QzECvlJzgFiJVCsbJLFc0uNROsuIj7eCy1W+P/n2nhecFNFB6
-	 yXBSWbJ2auW28tRtClB8btu8yV2qj7DFT81Y+i6cGcUObLV9E+SOTTc7I9FT0ELt5H
-	 e9y5g6GfSjh2VINNc3h5tZRCAwg5YwCJkKyXGdskfSDma41qtT4NE5TuXrapQyl5yY
-	 jPA/ULH7MVswA==
-Date: Tue, 17 Dec 2024 16:25:42 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	kernel@collabora.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] drm/connector: hdmi: Validate supported_formats
- matches ycbcr_420_allowed
-Message-ID: <20241217-positive-elephant-of-resistance-f4b0ee@houat>
-References: <20241217-bridge-conn-fmt-prio-v3-0-3ecb3c8fc06f@collabora.com>
- <20241217-bridge-conn-fmt-prio-v3-2-3ecb3c8fc06f@collabora.com>
+	s=k20201202; t=1734449234;
+	bh=CLxzXo9oeslqLy8tR41S5aelo9QQNAr/NdVVwT0J6wA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=P6XsmFknP+cjnMMT6kMmQFvjqvUerbKSoxDX4MSvGPbQHycpp76w11ZijZLaegq72
+	 YYShpNBT19TsAgQlPreG+dTHM5dcY/u4+FTy2D1Z7lAMn4wKeHCi1iUXmo1WWIdIsX
+	 CTPIzgv49vqZT8P/r6Zpj4I0Q9DUam1dV6bmbgShZvCArEHwAd8rStd5WWyUDyslM4
+	 LOoaasihOugC9a2A6uVMSKlATfXS0mxim+VKio5y/5lJ24pN/2tjaLLtSmrcez5PP7
+	 Mm17cJUyw2KC4WH71dyv7HmCVA0OSdxErxECt1R0qCAaEJlOnO3Iq8hemprcratGxE
+	 jmamiQY5LTliA==
+Message-ID: <2e0e1fe3-af5e-4416-8b34-3fecb923b481@kernel.org>
+Date: Tue, 17 Dec 2024 16:27:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="4265vgf3cwvr5hxk"
-Content-Disposition: inline
-In-Reply-To: <20241217-bridge-conn-fmt-prio-v3-2-3ecb3c8fc06f@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] dmaengine: fsl-edma: wait until no hardware request
+ is in progress
+To: Larisa Ileana Grigore <larisa.grigore@oss.nxp.com>, Frank.Li@nxp.com
+Cc: dmaengine@vger.kernel.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, s32@nxp.com,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>
+References: <20241216075819.2066772-1-larisa.grigore@oss.nxp.com>
+ <20241216075819.2066772-8-larisa.grigore@oss.nxp.com>
+ <d4afb25d-5993-4f80-9f80-0a548b6532cd@kernel.org>
+ <d5badfcf-58d7-49d4-8a5a-d31de498f015@oss.nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <d5badfcf-58d7-49d4-8a5a-d31de498f015@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 17/12/2024 15:19, Larisa Ileana Grigore wrote:
+> On 12/17/2024 7:27 AM, Krzysztof Kozlowski wrote:
+>> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> On 16/12/2024 08:58, Larisa Grigore wrote:
+>>> Wait DMA hardware complete cleanup work by checking HRS bit before
+>>> disabling the channel to make sure trail data is already written to
+>>> memory.
+>>>
+>>> Fixes: 72f5801a4e2b7 ("dmaengine: fsl-edma: integrate v3 support")
+>>
+>> Why Fixes are at the end of the patchset? They must be either separate
+>> patchset or first patches.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Thank you for you review Krzysztof! Indeed, this commit should be moved 
+> right after "dmaengine: fsl-edma: add eDMAv3 registers to edma_regs" 
 
---4265vgf3cwvr5hxk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 2/2] drm/connector: hdmi: Validate supported_formats
- matches ycbcr_420_allowed
-MIME-Version: 1.0
+I don't understand this. Are you saying you introduce bug in one patch
+and fix in other? Why this cannot be separate patchset?
 
-On Tue, Dec 17, 2024 at 12:54:08AM +0200, Cristian Ciocaltea wrote:
-> Ensure HDMI connector initialization fails when the presence of
-> HDMI_COLORSPACE_YUV420 in the given supported_formats bitmask doesn't
-> match the value of drm_connector->ycbcr_420_allowed.
->=20
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/gpu/drm/drm_connector.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connec=
-tor.c
-> index fc35f47e2849ed6786d6223ac9c69e1c359fc648..ca7f43c8d6f1b31ef9d3a1ee0=
-5f4df930ecffac4 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -507,6 +507,9 @@ int drmm_connector_hdmi_init(struct drm_device *dev,
->  	if (!supported_formats || !(supported_formats & BIT(HDMI_COLORSPACE_RGB=
-)))
->  		return -EINVAL;
-> =20
-> +	if (connector->ycbcr_420_allowed !=3D !!(supported_formats & BIT(HDMI_C=
-OLORSPACE_YUV420)))
-> +		return -EINVAL;
-> +
->  	if (!(max_bpc =3D=3D 8 || max_bpc =3D=3D 10 || max_bpc =3D=3D 12))
->  		return -EINVAL;
-
-The patch looks fine to me, but we need to have unit tests to cover this ca=
-se.
-
-Maxime
-
---4265vgf3cwvr5hxk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2GX9QAKCRAnX84Zoj2+
-dlp/AX4zhUV/n+9WsZi3Av1I13uIvegSxFQT8yccNd/y1z8YEFM9hjmseO40j8u4
-yCx7rkwBfjXrK85HiBud+46zgKwK9REjzNjetipHdPzSs+uMS/UPq6vtswXwAb9d
-YVZ9uSF5Og==
-=P8wk
------END PGP SIGNATURE-----
-
---4265vgf3cwvr5hxk--
+Best regards,
+Krzysztof
 
