@@ -1,144 +1,145 @@
-Return-Path: <linux-kernel+bounces-449266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4429F4C84
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:38:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F419F4C86
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:38:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E57162CA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698BB1891EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0651F426B;
-	Tue, 17 Dec 2024 13:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DEE1F3D55;
+	Tue, 17 Dec 2024 13:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="f/58Wh/2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1u9sZZCJ"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7245C1F3D41;
-	Tue, 17 Dec 2024 13:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390851F3D3A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442427; cv=none; b=TMD3s9flZgG5+EOYGa89D0iqP48b35amd4XAxZOdNPKqPxXFm9ZA+1vrQxqPLFPKIhMwRT6bxGjPesXjQL6lKgVuTu4m+G6saDHQsvaeRfRlZxyZSiDbLReZi+ZVFnf7SRMyzCzaS2tJNLKbSOc6OaSESs0ST2cDH0lMobrz5zQ=
+	t=1734442443; cv=none; b=BmnEQYfKCEHhJ9868R50IdCNVwFbaCxthNzGbQSEMdgjBegoP1bMyzjwrWyC/vXXxIfurijLj7IYnKq8OIgTlJm+JRZ94qErCpTwtMah4IEo5PmgbbM7C2YwRYCRiggHQziKk5lwmselrg6lR/hbJ5Byaz9b0qz357f3I6cyd+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442427; c=relaxed/simple;
-	bh=YT3+ZFz9l1fk8kwTZgau3x62xAYstfOl9sQbSIveHI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUqWsydbxiZfN7lm5lFY8OKK8bfcwFdafVhkkJcRyS1C5fRkMKQulRIpvDfB8Ix4NT9sAgxdKlJWgnXJhmTMoz4emZ9E0P6eEmp6o+atLdd+h2pAyDTXSfK7RcqmGd35GEn8Y50tFGoZwzL61v/kVjv7BQUZcRbSY6Wpskapb6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=f/58Wh/2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8C3284C7;
-	Tue, 17 Dec 2024 14:33:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734442385;
-	bh=YT3+ZFz9l1fk8kwTZgau3x62xAYstfOl9sQbSIveHI0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f/58Wh/2eCMpGT5V8MWyxwDepQUft8sMLoMR9vrYC/sLtP1xEHAAgyviRqBqrv7d1
-	 bEWZsokzkVjFNg8VLMoGEfVa1ENX1cvS2T3ALrUNSJnMCC2T+dh92y40LQZn21579X
-	 3mwf4FVuz4Ky/QZFg+btD5AeNYvd7aJxl7heXtNs=
-Message-ID: <aa858619-56f6-4d3a-b27d-f38cbfa57d98@ideasonboard.com>
-Date: Tue, 17 Dec 2024 15:33:37 +0200
+	s=arc-20240116; t=1734442443; c=relaxed/simple;
+	bh=5xutDIjCyMIitN2CQux5XcwFtIsmOsvNxx/cYCqH9pA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNrcVg1NoMzHwJY9XAk0fTqQJxYLCmTxX2QxaW3ABmw5hazkkq1R/6k9vGlpvaRW4SpFZAD+2gdmudUX9iiIqTaQAGFp2qKlneYcA93e8DAJvLHtNFiN/lKIh2mwFz6dS+RtyKwv2n3XAM1lBlq+imAdIZ2UwcyQ+xESibK05gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1u9sZZCJ; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa66ead88b3so946000766b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:34:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734442440; x=1735047240; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QNzKWwcjuKoS1G8q7vft+5gTVP09htSDXmMOavO194=;
+        b=1u9sZZCJforiRLnXjMWvYrWvPIF7gxdEPW+r5xqXzpqCUJLM9yc/ue6s8HlF9sAaxJ
+         fGSh/C/JSPP1Ufff8raa2qoP05q0X02wz0kQN6XDoFaEaZxq164eGxxRomJgf6vU/rfb
+         etnaFh8KHgNlEbHelsePXLHiRmMxXMx+0ZV13/Un+Pauzl4t3HxxpC6FSgaE7nghL29N
+         p/cppF0t7JVdvYx3RDImPe6FHwIRUXEky16UHm5BWPxodCHPGE9dSw/JecLWehiIG7Lb
+         EoqvpJZlaK/e1CMLxkKcJuxZOWFZd9bfZ3WpndgK9LnLSA8EbH5QaM4xT0Fv0UcuF9WU
+         T4Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734442440; x=1735047240;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9QNzKWwcjuKoS1G8q7vft+5gTVP09htSDXmMOavO194=;
+        b=GMYmErL4pbmTKkfQJsxEPdv4lW0+9w6LF/LOVdtRQjF05JTfEKN44Gxhhji7MatqWr
+         lhP+sHURHsAQyAB8UvLT+25OceN2+BD58YYgvOFsOtYue0ncudUm2mXOUecp1U0tlaZE
+         s9XTdz7HJBYr94T1AqnRifzcOXDVYfn/LO26rvDKdSsLnroZdD6WTX55lPpHGqjVrvw2
+         f+bEMFIw0rAgmrTFmEpMAmsMGSotDr6bx33MxZwIhw+N8snLjn3Uo9kfYkpSw1DEtndC
+         FjEcTkike40yqGSjo/2oJWG1v9/26fPpXpllKzrPQ9hAEYlP8JkjYXdOx9L/Br9/49PA
+         t07g==
+X-Forwarded-Encrypted: i=1; AJvYcCXkyiccrEUiXVQo0zMpCgUBU0jTxBfswdYINQLMF2qD7qbLOYxID9SeBZbnjhpQog6fiDIzr3ioFSARJ/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUyAiFVpEjzDGeQlJJkZdVk8et/UPaZtZJmY78ZoAwLgUHHP7k
+	LHtgZujEQrn0iUKG/VSMsVGiFeuVh7CP0tN9XSZ7CjOB09si54CG32Qo1+TmKA==
+X-Gm-Gg: ASbGncsYg/ikljGJPIiLO1x/oI47nb36YAaZA0kKRjGAYR5w2lCeMEEaRVoA4QPJatd
+	hTAwP/KEKPiRiWxQTMXjnoMG1VlJVQeWLyFytPguyy/5n/vlVb2/BNFPBxDpLOoNR1fbHN1vCDO
+	5VGcc0+xuhDM9q3M2MbPRH1TUcAIWBeQ4/s5Os+8Qzs1oPS0vYwCtBKjEm+ACc0DvEpaXvZHsBz
+	EO2+jvh76OC0aK2meMJqN75gx7+AbIYgKEQmgKKev/NvUI7JltJN1jtlEDDrzXgMd7CB6/0Sp/J
+	SvgIDJ3QBuec/WE=
+X-Google-Smtp-Source: AGHT+IHaaBpKehN/3xKCSI4k6TebR04IYJYJaUaIapMz4+szmzBaeqriWGDQgSt0k6S3fPHQK0lNaA==
+X-Received: by 2002:a17:907:7296:b0:aa6:6c08:dc71 with SMTP id a640c23a62f3a-aab77909ee1mr1749746666b.23.1734442440424;
+        Tue, 17 Dec 2024 05:34:00 -0800 (PST)
+Received: from google.com (61.134.90.34.bc.googleusercontent.com. [34.90.134.61])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963c54c7sm442926066b.195.2024.12.17.05.34.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 05:34:00 -0800 (PST)
+Date: Tue, 17 Dec 2024 13:33:57 +0000
+From: Quentin Perret <qperret@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 11/18] KVM: arm64: Introduce
+ __pkvm_host_unshare_guest()
+Message-ID: <Z2F9xb4jrK1zRtNV@google.com>
+References: <20241216175803.2716565-1-qperret@google.com>
+ <20241216175803.2716565-12-qperret@google.com>
+ <86wmfyr1j4.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/7] drm: Add DSI/DP support for Renesas r8a779h0 V4M
- and grey-hawk board
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
- Biju Das <biju.das.jz@bp.renesas.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-clk@vger.kernel.org, stable@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86wmfyr1j4.wl-maz@kernel.org>
 
-Hi all,
-
-On 17/12/2024 07:31, Tomi Valkeinen wrote:
-> Add everything needed to support the DSI output on Renesas r8a779h0
-> (V4M) SoC, and the DP output (via sn65dsi86 DSI to DP bridge) on the
-> Renesas grey-hawk board.
+On Tuesday 17 Dec 2024 at 11:29:03 (+0000), Marc Zyngier wrote:
+> > +static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ipa)
+> > +{
+> > +	enum pkvm_page_state state;
+> > +	struct hyp_page *page;
+> > +	kvm_pte_t pte;
+> > +	u64 phys;
+> > +	s8 level;
+> > +	int ret;
+> > +
+> > +	ret = kvm_pgtable_get_leaf(&vm->pgt, ipa, &pte, &level);
+> > +	if (ret)
+> > +		return ret;
+> > +	if (level != KVM_PGTABLE_LAST_LEVEL)
 > 
-> Overall the DSI and the board design is almost identical to Renesas
-> r8a779g0 and white-hawk board.
-> 
-> Note: the v4 no longer has the dts and the clk patches, as those have
-> been merged to renesas-devel.
-> 
+> So there is still a very strong assumption that a guest is only
+> provided page mappings, and no blocks?
 
-I have pushed this to drm-misc-next. Thank you all for the reviews!
+Yep, very much so. It's one of the main limitations of the series as-is
+(with the absence of support for mapping anything else than memory in
+guests). Those limitations were mentioned in the cover letter of v1, but
+I should have kept that mention in later versions, sorry!
 
-  Tomi
+The last patch of the series has a tweak to user_mem_abort() to force
+mappings to PTE level which is trivial to do as we already need to do
+similar things for dirty logging. And __pkvm_host_share_guest() doesn't
+take a 'size' parameter in its current form, it assumes it is being
+passed a single pfn. So all in all this works well, and simplifies the
+series a lot.
 
+Huge-page support should come as a natural extension to this series, but
+I was hoping it could be done separately as that should have no
+*functional* impact observable from userspace. I'm slightly more
+concerned about the lack of support for mapping MMIO, but that too is
+going to be some work, and I guess you should just turn pKVM off if
+you want that for now...
+
+Happy to address either or both of these limitations as part of this
+series if we think they're strictly required to land this stuff
+upstream, this is obviously up for debate. But that's going to be quite
+a few patches on top :-)
+
+Thanks,
+Quentin
 
