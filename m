@@ -1,132 +1,109 @@
-Return-Path: <linux-kernel+bounces-449299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27119F4CF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:57:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 226489F4CDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:55:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4132C16B6DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 838951671A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D101F706D;
-	Tue, 17 Dec 2024 13:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792E91F5411;
+	Tue, 17 Dec 2024 13:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lf1IrWDn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mt/S1djM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A9F1F5437;
-	Tue, 17 Dec 2024 13:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16121F4E5A;
+	Tue, 17 Dec 2024 13:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734443734; cv=none; b=LGyXWdYQR0QtFO6VfH9I1ubl920NW+JnlCR4452O81e5n7pWQn4t2VwVKQpc7DdRPJrClrFtR/8DsLlXac91NqcQocQdsra58FXVOwleXk+BA6V9B72YlV5PvrlexmglT1+Rygb2MvSQ2h93ImP8g4PZfGq1qcrJFuMD59A8WLk=
+	t=1734443682; cv=none; b=lk7oWKEPMXq0MnrZ1UDyIdXM2f7+JLxWc79AoTaoPCTBwUx4pmyMfISDRwcFgZvWsqKA0RIqsfcQJXDD3MdUjyvf4RpcE6FTCE11GyCLc8jbHZJkyj+Rufqp4Rd5Tmnxevgjwr1/rrRkymAZS6DD4WurkHUeSxrua7QEHt7G0MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734443734; c=relaxed/simple;
-	bh=xoqRzVI0W8mzrozTSiloHUP8vgerlWiV4vwFpAgGE2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T0zpi/21sG5IzAYdfR9ZoQN4vQzPJ0zahbc85TwW4QnETv50YOqz58AtswT3Tzt8W8pJAjV5VYr7X71YtSiSwjQmGxtD0GIGgbTXomxxEM67nkSRscuill+ALkMl1UqfqE1TZpafhe/TKI8ziEOk5WvO80r5EPdyDDaUnSgCgnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lf1IrWDn; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734443733; x=1765979733;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xoqRzVI0W8mzrozTSiloHUP8vgerlWiV4vwFpAgGE2U=;
-  b=Lf1IrWDnoxSqVA+gF7+f6d9V7JToq3VlioZ14QKbrfJx8O0tgrLpD9jh
-   ZD407cpgb0kZ+tMwEk4Me1jYx8z422u22dpsOS7K3/ZifXZ4f4lpnj9hr
-   EKuUaPoZYpXhVqmMggEDWH2zRtwHiZ3o+N9fgYauKChNUbvr7LhYj2xLD
-   OCMNpefahGfx0brtFt27kb9WUIBUowvut5RSdW4ozAGa29o93XPJGbtnO
-   COrZwY49WmUZ2DKZhuxOs8R9TRcPPl3nGVf06wBfbrZmdT1of3hUeoo+V
-   CBmg/1A1fXpMBfSHpHAobCm1w7KN4IlYtdSp6Vt6ejmuHKUq2p1m7FpYQ
-   Q==;
-X-CSE-ConnectionGUID: +yhXDf8/TY2iQy7Z8Ijvfg==
-X-CSE-MsgGUID: VAbKbsqfTTmyADU/N0zktQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="34748440"
-X-IronPort-AV: E=Sophos;i="6.12,242,1728975600"; 
-   d="scan'208";a="34748440"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 05:55:32 -0800
-X-CSE-ConnectionGUID: zressglESBKhDC5JuZ8yNw==
-X-CSE-MsgGUID: nnSQZx3+RD2pqwVzlaO1ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,242,1728975600"; 
-   d="scan'208";a="98109607"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.192])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 05:55:28 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	"Oliver O'Halloran" <oohall@gmail.com>,
-	linuxppc-dev@lists.ozlabs.org,
+	s=arc-20240116; t=1734443682; c=relaxed/simple;
+	bh=MJYvanA7h6xElrGbzS7cgU/XuHLjMHmUTjsO1NBkkmQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rpSqg9fGlZ0g0aklP8u96aoriVOrB63BJbCj0WSLX9/2zSqFPqsdbjezMTkR/NgqleQcBYtQe6Uo5s5NnlSvVJfnQPdunwltv4Xaoa6L18DAUu7WUF+HFNSW50q8+PaCmsrWBN4GxrZCuaMJ544sM+RcSFWaCvzd/RmZ3HoTslM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mt/S1djM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 489E2C4CED3;
+	Tue, 17 Dec 2024 13:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734443682;
+	bh=MJYvanA7h6xElrGbzS7cgU/XuHLjMHmUTjsO1NBkkmQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mt/S1djMQv2WKW+N+6KKkms2IQ1X3PdPdb1FPNA96XVd+FinfPwpeF2uZtKFEKvNN
+	 xE3Lw7ewIK4es9B4N8UXNFLkviXVRiu3QhfTnXpkceyBSDMK/rySiS/PFrKHO1qRwY
+	 pTK63wWPW30a7odQ83dsSr8UV2Awh4eTvcpKoHRft+fY+hK5ZA+oPt6sBv2QuGflNn
+	 4bpPk9wAS+j7VLkBkTMShQ8Ee7MDcvuYFjuOsgrRD86H3B1oaXPtB+I07LueAjxn6j
+	 TytSd/HYGlhQ9ZdZOJtut9HdVs5UWsQcIR24P90fLClRnkfRhxXUJ9Hn0wnMnbfMmN
+	 00fgvv3XahMlQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tNY24-004Zaf-2Z;
+	Tue, 17 Dec 2024 13:54:40 +0000
+Date: Tue, 17 Dec 2024 13:54:39 +0000
+Message-ID: <86v7viqusg.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v7 8/8] PCI/AER: Add prefixes to printouts
-Date: Tue, 17 Dec 2024 15:53:58 +0200
-Message-Id: <20241217135358.9345-9-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241217135358.9345-1-ilpo.jarvinen@linux.intel.com>
-References: <20241217135358.9345-1-ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH] KVM: arm64: Fix set_id_regs selftest for ASIDBITS becoming unwritable
+In-Reply-To: <53b40aa8-f51c-4c4e-a4ad-e6a9512e5197@sirena.org.uk>
+References: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
+	<875xnisocy.wl-maz@kernel.org>
+	<53b40aa8-f51c-4c4e-a4ad-e6a9512e5197@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, pbonzini@redhat.com, shuah@kernel.org, catalin.marinas@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Only part of the AER diagnostic printouts use "AER:" prefix because
-they use low-level pci_printk() directly to allow selecting level.
+On Tue, 17 Dec 2024 13:12:12 +0000,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> [1  <text/plain; us-ascii (7bit)>]
+> On Tue, Dec 17, 2024 at 08:30:37AM +0000, Marc Zyngier wrote:
+> > Mark Brown <broonie@kernel.org> wrote:
+> 
+> > > Fixes: 03c7527e97f7 ("KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits to be overridden")
+> 
+> > A patch for a test doesn't fix anything in the kernel.
+> 
+> The selftests are shipped as part of the kernel source and frequently
+> used for testing the kernel, it's all one source base and we want to
+> ensure that for example the test fix gets backported if the relevant
+> kernel patch does.
 
-Add "AER:" prefix to lines that are printed with pci_printk().
+That's not what Fixes: describes. If you want to invent a new tag that
+expresses a dependency, do that. Don't use these tags to misrepresent
+what the patches does.
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- drivers/pci/pcie/aer.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+	M.
 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index ece8cb88d110..1c251ac65d1b 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -686,8 +686,8 @@ static void __aer_print_error(struct pci_dev *dev,
- 		if (!errmsg)
- 			errmsg = "Unknown Error Bit";
- 
--		pci_printk(level, dev, "   [%2d] %-22s%s\n", i, errmsg,
--				info->first_error == i ? " (First)" : "");
-+		pci_printk(level, dev, "%s   [%2d] %-22s%s\n", dev_fmt(""), i,
-+			   errmsg, info->first_error == i ? " (First)" : "");
- 	}
- 	pci_dev_aer_stats_incr(dev, info);
- }
-@@ -709,12 +709,12 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
- 
- 	level = (info->severity == AER_CORRECTABLE) ? KERN_WARNING : KERN_ERR;
- 
--	pci_printk(level, dev, "PCIe Bus Error: severity=%s, type=%s, (%s)\n",
--		   aer_error_severity_string[info->severity],
-+	pci_printk(level, dev, "%sPCIe Bus Error: severity=%s, type=%s, (%s)\n",
-+		   dev_fmt(""), aer_error_severity_string[info->severity],
- 		   aer_error_layer[layer], aer_agent_string[agent]);
- 
--	pci_printk(level, dev, "  device [%04x:%04x] error status/mask=%08x/%08x\n",
--		   dev->vendor, dev->device, info->status, info->mask);
-+	pci_printk(level, dev, "%s  device [%04x:%04x] error status/mask=%08x/%08x\n",
-+		   dev_fmt(""), dev->vendor, dev->device, info->status, info->mask);
- 
- 	__aer_print_error(dev, info);
- 
 -- 
-2.39.5
-
+Without deviation from the norm, progress is not possible.
 
