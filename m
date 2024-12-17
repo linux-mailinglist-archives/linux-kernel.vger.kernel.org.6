@@ -1,152 +1,149 @@
-Return-Path: <linux-kernel+bounces-449649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF43B9F52E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:23:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E69C9F5308
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2395616550E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:21:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B00691883A2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E26F1F7568;
-	Tue, 17 Dec 2024 17:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787161F8660;
+	Tue, 17 Dec 2024 17:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aAg37WfX"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTo3p09H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE73B1F7577
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B551F63D5;
+	Tue, 17 Dec 2024 17:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734456045; cv=none; b=M+M0qwNYlf14rSzhZE9WFi8RSGsZ7Xlx2ERU3b9LDCw3XJhrvo87xKzWCbjFAZLjEX4JBaQZvm2ifsebNoNX40U6agtW+6K8nwBPFu6fXplxpFxEfZYWG4qYk9ncK8NiY1KHr4fjC+6HUe3v0zXCZeM/uD/atXiLn9I9O0UXtpg=
+	t=1734456073; cv=none; b=Lu4HwqhaUq5F83vG5EkAqBsQN1A75bXQvANoZI3E2aUc+M3O4H4UR9NIpu7/2MR+p/0mq4jq8KzA8BzpUaMrIRC6ZAewKVdAY3A7yaujrnsOvGbOw+yv2WxtQnEtpXDYJ/YCACjJjen+QJ0OSmrs33X03Tw2IGEmaxZWsEXAvqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734456045; c=relaxed/simple;
-	bh=lU3v/h95t9yKq+oPE/QPiEX37Ydf45Rwlzuvm1RuHwU=;
+	s=arc-20240116; t=1734456073; c=relaxed/simple;
+	bh=gSxnS9OdKpfAXVd8d7j5pZW75+bllE3VDBoL+UPSVRs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IyUBRAL+Zj+tHKCgbhcex/Z2o1DIEU0yOGC/z1tqAxV6Ye7vX50D+0vx93T2j6JvlkA0rVR34pZtT3BLfoiq9blb9GNU2PAx3cym5RUV4ISdJ3YO5XwJfCaTllo/m7ZsEvNVhdOEgeF8u8OO/LnThZIAjNK/Bk7Y7vg4KJlMtAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aAg37WfX; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2162c0f6a39so58669485ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:20:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734456043; x=1735060843; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=97u39/mB75Gyvq3MUoP9A6BWuOZp1jV8oYjBZnf5YHs=;
-        b=aAg37WfXAKzH8J0gBo8+CmgbMQfNxTmLmgza8p7mM/WtKG4Udas38fPEtaCtY+COQ8
-         WREMrEuUdRJIWM3Ymd0PILouuqEj3uWXJ2ZM+GVrRzxOp3nmuymm1rGPfnU7ZCmztpsK
-         meVDvwXNmC6zdP1JJmkWIBpZvYmnFZ4FllTZid26VQpo5MC9INOj2k2jy56KfJXGIVNW
-         vpvVOGsmL235elLgXzSlNW1tfiW0d+BDwkPqXiSBGjcC33iMaJ+FuaUJ73055VvY0dcL
-         jowC5Fux9CdlXCmwEoyte6FMWxN7hArG0OBMzqpv1YmTObDdrzJjn1d73Cp+tc4RvTwY
-         y0Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734456043; x=1735060843;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=97u39/mB75Gyvq3MUoP9A6BWuOZp1jV8oYjBZnf5YHs=;
-        b=V93eMeuapf6dlR3UfE8PUGDbj6FQ1urqxH669tG8I5Bq/Tp0AYZWr3dAUciL8htfBv
-         HDNDODzpeDZGgtnSBbG/t78yq2KeaMZ2CfhwtlNodfhHj6Ks9GxjmyTNzQ8mY86EfA7a
-         eYw2oWT1E11L3dMrgciRWBBV1qLIyMAwQEMu3U2yyISnCOGxhMFhhwfQ+cNmUAMPHMdG
-         +xkOfqfS/K/G5JyImOzhA/SiNNftLUtDrgRSADMUYU0uCKPSdwLIyku0UNPEFxSrPVui
-         LTsLa3Y92K+0C8AwmuOIapcrv1GppSl/0qh9DRYlxKvIa/GwGxL+7TKEidNIkHh24ClY
-         1rpg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8hNhENSG8yi0DLW3Z+Szu3/+kKv/S93ChQotYEMqdQlp4T8XUov8XoE0HEuAcH/VLcJA4azWr76XgHcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS9QqVFMVz35Kbg8j2aTfN+Tx5q6KPl8N+YHt1v3JhxAH1qu1K
-	3U/VKoZYrBmMD4X6Ov1K3a3phxC5uTRHhQcooaFBuC89t7fNrVzfYZGcLzpvDQ==
-X-Gm-Gg: ASbGnctek+WRphfGrk8I98cjxFRXq0ecaKB8W86Sb/sYxSKLjNFZ91tC6q10R3vHHMG
-	9Brq0PSD5pXzz9xb5Xob3nPC27l6xDPTzMJV0ONpAyUr9LCaLurcXFUEdDxFziZ8c+6T4gu80gU
-	H7j8cBEihWN7VlHkkT0XQ/L0F1VlWUtFULXhFK+zacpRG1zSAa9+DO3UWPOmhyW00B4lkeCfiv+
-	ni7yukTtmoofkMrUYzVsAbrBc/+Soi0tiTSJ0/kwU2Ca7Xfm50WY7blZphY1JIrU/7z
-X-Google-Smtp-Source: AGHT+IGjUccenohiYb+SDkdAmpf0k5ZpdC9204RkXFZyFmXwB9GNV/fs0d/6P1jKINhalSCuMQyisw==
-X-Received: by 2002:a17:90b:2750:b0:2ee:7504:bb3d with SMTP id 98e67ed59e1d1-2f2d867445amr6395058a91.0.1734456043265;
-        Tue, 17 Dec 2024 09:20:43 -0800 (PST)
-Received: from thinkpad ([117.193.214.60])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a2434a7bsm6848964a91.36.2024.12.17.09.20.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 09:20:42 -0800 (PST)
-Date: Tue, 17 Dec 2024 22:50:33 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Christian Bruel <christian.bruel@foss.st.com>,
-	Rob Herring <robh+dt@kernel.org>, lpieralisi@kernel.org,
-	kw@linux.com, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
-	cassel@kernel.org, quic_schintav@quicinc.com,
-	fabrice.gasnier@foss.st.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: PCI: Add STM32MP25 PCIe root complex
- bindings
-Message-ID: <20241217172033.zxl4bufakzx7eww5@thinkpad>
-References: <20241126155119.1574564-2-christian.bruel@foss.st.com>
- <20241203222515.GA2967814@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uauaE+QAnfjjSIWjulGui0nGM97aTdsucFaXgC5W68ZC3xwiTpwGXkt/JGvJwzsWJu5uzZCY36TRe2v75/dvfCgYJKSplfUIKKQSfqS4WlM6i/lFzyyFrudMi3TpjbR7J+dm3f6h9dBTcDzm930OCpgwciMMROjkIzp0KsGRcUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTo3p09H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A627EC4CEDF;
+	Tue, 17 Dec 2024 17:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734456073;
+	bh=gSxnS9OdKpfAXVd8d7j5pZW75+bllE3VDBoL+UPSVRs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QTo3p09H4cMOYL0FydQyXHFf7eXEVuGWQHoPrBAwbMTGZ9yOmld+WlMig8fKO0ucg
+	 BhmmWEXrchYEe8MjLZrX3hkOkUdqQgtzBg+L6ArV5uW8MOI1IFo/868cNTyyuNDNvw
+	 tQZsBU5V3Oa8NSnz8O2TVMns+i4tn3frVx2jWiH+9sGKjur5C9cXXGGl018nk2Q36o
+	 B9fEZsOQ7Pdc+GiY0DH+0IjVLdX1tA3YZwcnGzLKBrhTWo3ixw9O1TZKjDkaJ5lC4n
+	 rteOmT/nwZYJaDNDv5IeE6K2btbB8PlFTSvAPNLMYf/UUpv+MrrQwgfHB974muo3bc
+	 WagjPbTiHXOnw==
+Date: Tue, 17 Dec 2024 18:21:10 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v7 00/10] drm: add DRM HDMI Codec framework
+Message-ID: <20241217-vivacious-chameleon-of-swiftness-f1edc4@houat>
+References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="mn7xe23uuqeljxgv"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241203222515.GA2967814@bhelgaas>
+In-Reply-To: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
 
-On Tue, Dec 03, 2024 at 04:25:15PM -0600, Bjorn Helgaas wrote:
-> On Tue, Nov 26, 2024 at 04:51:15PM +0100, Christian Bruel wrote:
-> > Document the bindings for STM32MP25 PCIe Controller configured in
-> > root complex mode.
-> > 
-> > Supports 4 legacy interrupts and MSI interrupts from the ARM
-> > GICv2m controller.
-> 
-> s/legacy/INTx/
-> 
-> > STM32 PCIe may be in a power domain which is the case for the STM32MP25
-> > based boards.
-> > 
-> > Supports wake# from wake-gpios
-> 
-> s/wake#/WAKE#/
-> 
-> > +  wake-gpios:
-> > +    description: GPIO controlled connection to WAKE# input signal
-> 
-> I'm not a hardware guy, but this sounds like a GPIO that *reads*
-> WAKE#, not controls it.
-> 
-> > +    pcie@48400000 {
-> > +        compatible = "st,stm32mp25-pcie-rc";
-> > +        device_type = "pci";
-> > +        num-lanes = <1>;
-> 
-> num-lanes applies to a Root Port, not to a Root Complex.  I know most
-> bindings conflate Root Ports with the Root Complex, maybe because many
-> of these controllers only support a single Root Port?
-> 
-> But are we ever going to separate these out?  I assume someday
-> controllers will support multiple Root Ports and/or additional devices
-> on the root bus, like RCiEPs, RCECs, etc., and we'll need per-RP phys,
-> max-link-speed, num-lanes, reset-gpios, etc.
-> 
-> Seems like it would be to our benefit to split out the Root Ports when
-> we can, even if the current hardware only supports one, so we can
-> start untangling the code and data structures.
-> 
 
-+1 for moving the properties to RP node where they should belong to. The
-controller driver might have to do some extra work to parse the RP node and get
-these properties, but it is worth the effort.
+--mn7xe23uuqeljxgv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 00/10] drm: add DRM HDMI Codec framework
+MIME-Version: 1.0
 
-- Mani
+Hi,
 
--- 
-மணிவண்ணன் சதாசிவம்
+On Tue, Dec 17, 2024 at 02:40:22AM +0200, Dmitry Baryshkov wrote:
+> While porting lt9611 DSI-to-HDMI bridge driver to use HDMI Connector
+> framework, I stumbled upon an issue while handling the Audio InfoFrames.
+> The HDMI codec callbacks weren't receiving the drm_atomic_state, so
+> there was no simple way to get the drm_connector that stayed at the end
+> of the bridge chain. At the same point the drm_hdmi_connector functions
+> expected to get drm_connector instance.
+>=20
+> While looking for a way to solve the issue, I stumbled upon several
+> deficiencies in existing hdmi_codec_ops implementations. Only few of the
+> implementations were able to handle codec's 'plugged' callback. One
+> third of the drivers didn't implement the get_eld() callback.
+>=20
+> Most of the issues can be solved if drm_connector handles
+> hdmi-audio-codec on its own, delegating functionality to the actual
+> implementation, be it a driver that implements drm_connector or
+> drm_bridge.
+>=20
+> Implement such high-level framework, adding proper support for Audio
+> InfoFrame generation to the LT9611 driver.
+>=20
+> Several design decisions to be kept in mind:
+>=20
+> - drm_connector_hdmi_codec is kept as simple as possible. It implements
+>   generic functionality (ELD, hotplug, registration).
+>=20
+> - drm_hdmi_connector sets up HDMI codec device if the connector
+>   is setup correspondingly (either I2S or S/PDIF is marked as
+>   supported).
+>=20
+> - drm_bridge_connector provides a way to link HDMI audio codec
+>   funcionality in the drm_bridge with the drm_connector_hdmi_codec
+>   framework.
+>=20
+> - It might be worth reverting the no_i2s_capture / no_spdif_capture
+>   bits. Only TDA889x driver sets them, while it's safe to assume that
+>   most of HDMI / DP devices do not support ARC / capture. I think the
+>   drivers should opt-in capture support rather than having to opt-out of
+>   it.
+
+Sorry if this isn't clear to me and I'm quite late to the party, but did
+you test this on vc4 with both a pi3 and pi4, or was it just compile
+tested?
+
+Maxime
+
+--mn7xe23uuqeljxgv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2GzBgAKCRAnX84Zoj2+
+doz7AYD+E+d4erzl9Bf5sWASu56Udkv+Nd2LpLqsDi351KTvI53a2703lFD4C28T
+bGfQBG0BfiHdABYx41nUCejaduluIOxnFrtPmutUYSE5mvh38CG3Ej7/08luvURz
+jbdIEtzSlQ==
+=zUgb
+-----END PGP SIGNATURE-----
+
+--mn7xe23uuqeljxgv--
 
