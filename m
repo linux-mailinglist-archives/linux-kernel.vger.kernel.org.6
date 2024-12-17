@@ -1,91 +1,134 @@
-Return-Path: <linux-kernel+bounces-448434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E458F9F400B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:33:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FEE9F4011
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:39:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A1B166C9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:33:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A981886101
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6690D2AF09;
-	Tue, 17 Dec 2024 01:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B906738DF9;
+	Tue, 17 Dec 2024 01:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCP71Z9n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Tthv0tKF"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C082379CD;
-	Tue, 17 Dec 2024 01:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989491E480;
+	Tue, 17 Dec 2024 01:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734399214; cv=none; b=bgEtpeQZ4RfXmjkXyG7hyzCtlp1cXblmGoz2z1EnevGF8wqc7iaGffr5UBg8lmRd8+jrEaPOu+J8mFGgswLUtPxtrRhefbjlAYMELhYFQRS3hxkkAwnKF5xc6zXWvH24zzm3PbdpBL1+T8QeUI6URa3FLP+0R+LM2S1k8PrOuM4=
+	t=1734399546; cv=none; b=oPOYKO954nNvGISFMmsOEH4VQE4bL8mPs0nO+NgGRJJnModKTxaC+6MmrM3zmpjzDly8u4V04LFEiMVnPEZSmEtnYxMbBG0zoh5xK0Il4WtwWFlRkzoIWVPbrfGBu35CVpwE58lifdrf2tpNP/ZKBlFvyIhpAb0Lm+U7N1LEE70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734399214; c=relaxed/simple;
-	bh=jQx59o3wR/vFzoPfSo4zsecm2GePz+OK8mpQNupeUek=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wpv8BLoZYAz8ojMri/tT2Uke2tcIOygKrzp26WMWoh/UhzFuLiWYklkyZy8F0ZfXZWscFekTPxLUzMIhGvj/bAJ4TVFB4A9DoxvQbvR/6YFEQ1zJ2LM8EVBYRLz98J/4ztQoVqNmZlmQWI9gMFi+L12drHvFVmUh3Zsii9ZucdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCP71Z9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB17BC4CED0;
-	Tue, 17 Dec 2024 01:33:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734399214;
-	bh=jQx59o3wR/vFzoPfSo4zsecm2GePz+OK8mpQNupeUek=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gCP71Z9nQNwt3IAPUQAkOKGdvWzMoRegQfY4Q2lItX3gZwmaSSQwC0+fbg3frju1S
-	 uty3sd2bWabuzWOiFoLSvfex6vwv1+Tes8g7HDi7Ye1WqIFyKQZdYsQPQ/ktnQoSn3
-	 MGw9zq6CdwIlxVFo4tcgRm2BKNqkFq/hhy6aO8r11h0/PF09mfxySUTJvlxhst1XIV
-	 c6jQWxs00GjjCy/5jqfxmwc8zYxzG+Hrwi9GYwl7s5ZP+Iwh/gFLoHaS3+OG/arcR+
-	 bZv+bOnwlsDQd4YYIx/JFQtKGyhGzszyxexsbIfjy7XSIqsjCJiJ7tbEIVPkelYwIo
-	 1PF5qPnajJM/A==
-Date: Mon, 16 Dec 2024 17:33:33 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Andrew
- Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
- <alexis.lothore@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: stmmac: dwmac-socfpga: Set interface
- modes from Lynx PCS as supported
-Message-ID: <20241216173333.55e35f34@kernel.org>
-In-Reply-To: <20241216094224.199e8df7@fedora.home>
-References: <20241213090526.71516-1-maxime.chevallier@bootlin.com>
-	<20241213090526.71516-3-maxime.chevallier@bootlin.com>
-	<Z1wnFXlgEU84VX8F@shell.armlinux.org.uk>
-	<20241213182904.55eb2504@fedora.home>
-	<Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
-	<20241216094224.199e8df7@fedora.home>
+	s=arc-20240116; t=1734399546; c=relaxed/simple;
+	bh=/JQxTLrSk+bn9KCS4BhHq1XaHn24Um+rn7bVloKUnXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LAtnGRYpwl4Hjhcxx1+Nctm4y9D83A0wbYVKaa4eZBnPq7rao2uw35J13FI7pCNJ39ZqGpEv90Erf3voceCQKczTbaJicdUI6R6ktQAHv8lI0Fa5o63XSkiSsaFZAK9ViLmJS+1pBhQDQdsV0bEE9DuVVLey54gmR54Ec8ZJ5lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Tthv0tKF; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=vvJ4qNUEi44vMx2Ffy89gG0D5fOc9H17NxvnqOiuKjQ=; b=Tthv0tKFt2LU2XGk
+	vA2H11+SwzVqEq/3jrRSHr+BMxewubJ7/w/7x6d/+6/DV+kXFCFGWJgKxblzpx4RHxd7As41234o9
+	2Cz9jzWdYav8T1JQXRVZ+eEGfllIY3XBq4fqlyniFHe7UN0De7w5Fchc4zhioWbYYDCXya77xoQKF
+	H532etx1TcRcE/8k84kzdo1qTJLLDYo2vFd2UARsFogTKQib/QIxQMy6KJIynL5i2fPvSGOJCnFET
+	aYjsxSQSvEH9PvJS9/sPwf3H4ag3wkSEs//EZJ74g5uVF7r4ngUdC/Oz9cWva6gVZ9DvO/+qGKVBK
+	eiNyJFaC9vVdsTwVNQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tNMY8-005lOw-14;
+	Tue, 17 Dec 2024 01:39:00 +0000
+From: linux@treblig.org
+To: deller@gmx.de,
+	linux-fbdev@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] video: hdmi: Remove unused hdmi_infoframe_check
+Date: Tue, 17 Dec 2024 01:38:59 +0000
+Message-ID: <20241217013859.2132527-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 16 Dec 2024 09:42:24 +0100 Maxime Chevallier wrote:
-> > I've actually already created that series!  
-> 
-> Woaw that was fast ! I'll review and give it a test on my setup then.
-> 
-> Maybe one thing to clarify with the net maintainers is that this work
-> you've done doesn't replace the series this thread is replying to,
-> which still makes sense (we need the
-> stmmac_priv->phylink_config.supported_interfaces to be correctly
-> populated on socfpga).
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Ah, sorry. Should have asked. 
+hdmi_infoframe_check() has been unused since it was added in
+commit c5e69ab35c0d ("video/hdmi: Constify infoframe passed to the pack
+functions")
 
-I assumed since Lynx PCS will have the SGMII and 1000BASEX set -
-Russell's patch 5 will copy them for you to
-priv->phylink_config.supported_interfaces. Your patch 1 is still needed.
-Did I get it wrong?
+Remove it.
+
+Note that the individual check functions for each type are
+actually used, so they're staying.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/video/hdmi.c | 28 ----------------------------
+ include/linux/hdmi.h |  1 -
+ 2 files changed, 29 deletions(-)
+
+diff --git a/drivers/video/hdmi.c b/drivers/video/hdmi.c
+index ba301f3f4951..45b42f14a750 100644
+--- a/drivers/video/hdmi.c
++++ b/drivers/video/hdmi.c
+@@ -894,34 +894,6 @@ hdmi_vendor_any_infoframe_pack(union hdmi_vendor_any_infoframe *frame,
+ 	return hdmi_vendor_any_infoframe_pack_only(frame, buffer, size);
+ }
+ 
+-/**
+- * hdmi_infoframe_check() - check a HDMI infoframe
+- * @frame: HDMI infoframe
+- *
+- * Validates that the infoframe is consistent and updates derived fields
+- * (eg. length) based on other fields.
+- *
+- * Returns 0 on success or a negative error code on failure.
+- */
+-int
+-hdmi_infoframe_check(union hdmi_infoframe *frame)
+-{
+-	switch (frame->any.type) {
+-	case HDMI_INFOFRAME_TYPE_AVI:
+-		return hdmi_avi_infoframe_check(&frame->avi);
+-	case HDMI_INFOFRAME_TYPE_SPD:
+-		return hdmi_spd_infoframe_check(&frame->spd);
+-	case HDMI_INFOFRAME_TYPE_AUDIO:
+-		return hdmi_audio_infoframe_check(&frame->audio);
+-	case HDMI_INFOFRAME_TYPE_VENDOR:
+-		return hdmi_vendor_any_infoframe_check(&frame->vendor);
+-	default:
+-		WARN(1, "Bad infoframe type %d\n", frame->any.type);
+-		return -EINVAL;
+-	}
+-}
+-EXPORT_SYMBOL(hdmi_infoframe_check);
+-
+ /**
+  * hdmi_infoframe_pack_only() - write a HDMI infoframe to binary buffer
+  * @frame: HDMI infoframe
+diff --git a/include/linux/hdmi.h b/include/linux/hdmi.h
+index 455f855bc084..96bda41d9148 100644
+--- a/include/linux/hdmi.h
++++ b/include/linux/hdmi.h
+@@ -445,7 +445,6 @@ ssize_t hdmi_infoframe_pack(union hdmi_infoframe *frame, void *buffer,
+ 			    size_t size);
+ ssize_t hdmi_infoframe_pack_only(const union hdmi_infoframe *frame,
+ 				 void *buffer, size_t size);
+-int hdmi_infoframe_check(union hdmi_infoframe *frame);
+ int hdmi_infoframe_unpack(union hdmi_infoframe *frame,
+ 			  const void *buffer, size_t size);
+ void hdmi_infoframe_log(const char *level, struct device *dev,
+-- 
+2.47.1
+
 
