@@ -1,243 +1,127 @@
-Return-Path: <linux-kernel+bounces-449517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27059F502B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:03:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB60F9F4FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:44:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FAB11677E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6D71660A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D96C1FD780;
-	Tue, 17 Dec 2024 15:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D681F75AD;
+	Tue, 17 Dec 2024 15:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qgSc0ZXV"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lU5CdzPV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B056F1FCF62;
-	Tue, 17 Dec 2024 15:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF081F7572;
+	Tue, 17 Dec 2024 15:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734450281; cv=none; b=ZEUY6ZiK2igld04GZMA54FtZpVnNt4Z7UoDVXiU8M9LdDw8ym0lpbfRrjdx6mlrL0a//U7JorZwaj0UpvldnWFP3BwhsT+BJiGo38jqIOxMVZNLN36/h78C1bSarNhP42o5E+FOpeA2GhSI+4D/wzjuj7AmP3KPqp2A5wxyNxh4=
+	t=1734450232; cv=none; b=squZIYW9+A48DhhWHvO5tsgwYoTYAWtWOSFyCw85JoofjFSDAbP6Nc/kNsqVNH6ZO/mTTnCWS7nJbHlt9jbmsCbzjRPKeLPmPwAHc3z4OwqLRH+XdXWuy59o6RcUe+cqo0k91ca8gmH/Rz09np8ouHhqCkQY0qLhaCvaAoADmZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734450281; c=relaxed/simple;
-	bh=6Axjsw2p28ucXLtnFHO6KrRsanFQsoF7IYwVDDxbztw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=We0lSH5r6PD3J0+/LPjZCCfDjmPb6ARxX43DCvGHileC4hfS2ewpt+B3aRxgiIqMZmhmx05do0cSqaIXm6LY+vnkTm1/3P/es3YtD7Wo9q7g0kosfcz8J2iAKmG8GTErxfz46b7ZPsQl5cG7FziVVHWkDGtwtF1vHDZcP5QjgOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qgSc0ZXV; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734450278;
-	bh=6Axjsw2p28ucXLtnFHO6KrRsanFQsoF7IYwVDDxbztw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qgSc0ZXVYLl/0d8jkK/mQ+6tjkC0gIJHJTxCCQKDf2OyP1rlVEv8leZ/jCIQd1ETw
-	 PhGbowtZsxQCKHTOnnWhxLlw5Y+gf2+dTZAZFWU++Vu8K5zrq2gQ/BM+EQ/vWkWi8E
-	 seISS4C0xviIbxDCwPUnYPDNdXXIuAUBV7OU+/ZCn2d9GmuvNlTzy8Hg/+BJOzx9O9
-	 jYpUhbYBTNsVSKhDgytg6O84Eii7molPy658bXsOfIXPwn+mnErWNdH3EcytyKGSJ6
-	 I1lhqlCW7H6H5doYFPbkobT+up9fRRAHuQEHzZL11s2wWQEqQdj34bF0XyZo3NlTuU
-	 Lg97C938fEkWg==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C9B5D17E37B9;
-	Tue, 17 Dec 2024 16:44:36 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: chunkuang.hu@kernel.org
-Cc: p.zabel@pengutronix.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	ck.hu@mediatek.com,
-	jitao.shi@mediatek.com,
-	jie.qiu@mediatek.com,
-	junzhi.zhao@mediatek.com,
-	dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com,
-	dmitry.baryshkov@linaro.org
-Subject: [PATCH v3 33/33] drm/mediatek: mtk_hdmi_v2: Add debugfs ops and implement ABIST
-Date: Tue, 17 Dec 2024 16:43:45 +0100
-Message-ID: <20241217154345.276919-34-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241217154345.276919-1-angelogioacchino.delregno@collabora.com>
-References: <20241217154345.276919-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1734450232; c=relaxed/simple;
+	bh=ZwVFELC71dzFSNCZimKgBWaJEA4Y5NkhJ2hwLvlGU/o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=McQBjEql1C1PfE8PMa/1TIlyLzVkCS306pIZB5w8yLgXowC7DVQglNuCJb+LiWfjq4i2O6w+Rj20ywquBPyZ3NhfwMHAuu5HeHyIIs2Q+dmmFAZy3uzYC0A89QystQKP3q6yQ7gZBEapCo2edf9liZYxKO0BiNDjU4aa0jLVHJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lU5CdzPV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A839AC4CED6;
+	Tue, 17 Dec 2024 15:43:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734450232;
+	bh=ZwVFELC71dzFSNCZimKgBWaJEA4Y5NkhJ2hwLvlGU/o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=lU5CdzPVHWwtUmTW2srGDqV3xpYk/1KqcXvrPHBaWOi1E8TXRWJHZf0MTs+o/eKe9
+	 B3mmm1PeAP07cpBVZ1+4C7zc27+tCuHqbH94XbYZVARogDeOewScoVSKr6gRtKKECh
+	 1qY98ZsvXpmzSNTAIzWvkBL4ptbvZBDjgP9ipXZoGLR8A6O0S9VhGRWl0O59gRMEOF
+	 DHTX3Pr+F1BqGKUQIVnKoCrNhJFr22jTamNMHi1nlyjOgLgR5Rhx9AvvEqoSyd36xc
+	 dzncCefvOQE5aOOwCa0BmcMj2SdUaRhld7tg8XuYdUq2bLwAsXSeKo731yILF8BmAB
+	 TJ0xMwIS1EvtQ==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Levi Zim <rsworktech@outlook.com>, Cong Wang <xiyou.wangcong@gmail.com>
+Cc: John Fastabend <john.fastabend@gmail.com>, Jakub Sitnicki
+ <jakub@cloudflare.com>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, David Ahern
+ <dsahern@kernel.org>, netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 0/2] Fix NPE discovered by running bpf kselftest
+In-Reply-To: <MEYP282MB2312EE60BC5A38AEB4D77BA9C6372@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
+References: <20241130-tcp-bpf-sendmsg-v1-0-bae583d014f3@outlook.com>
+ <MEYP282MB23129373641D74DE831E07E9C6342@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
+ <Z0+qA4Lym/TWOoSh@pop-os.localdomain>
+ <MEYP282MB2312EE60BC5A38AEB4D77BA9C6372@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
+Date: Tue, 17 Dec 2024 16:43:48 +0100
+Message-ID: <87y10e1fij.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Implement the Automated Built-In Self-Test ABIST functionality
-provided by the HDMIv2 IP and expose it through the "hdmi_abist"
-debugfs file.
+Levi Zim <rsworktech@outlook.com> writes:
 
-Write "1" to this file to activate ABIST, or "0" to deactivate.
+> On 2024-12-04 09:01, Cong Wang wrote:
+>> On Sun, Dec 01, 2024 at 09:42:08AM +0800, Levi Zim wrote:
+>>> On 2024-11-30 21:38, Levi Zim via B4 Relay wrote:
+>>>> I found that bpf kselftest sockhash::test_txmsg_cork_hangs in
+>>>> test_sockmap.c triggers a kernel NULL pointer dereference:
+>> Interesting, I also ran this test recently and I didn't see such a
+>> crash.
+>
+> I am also curious about why other people or the CI didn't hit such crash.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/gpu/drm/mediatek/mtk_hdmi_v2.c | 123 +++++++++++++++++++++++++
- 1 file changed, 123 insertions(+)
+FWIW, I'm hitting it on RISC-V:
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c b/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
-index 5b708fcc0e03..7daa0c8dd311 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
-@@ -1184,6 +1184,128 @@ static int mtk_hdmi_v2_bridge_atomic_check(struct drm_bridge *bridge,
- 						      conn_state->state);
- }
- 
-+static int mtk_hdmi_v2_set_abist(struct mtk_hdmi *hdmi, bool enable)
-+{
-+	struct drm_display_mode *mode = &hdmi->mode;
-+	int abist_format = -EINVAL;
-+	bool interlaced;
-+
-+	if (!enable) {
-+		regmap_clear_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_ENABLE);
-+		return 0;
-+	}
-+
-+	if (!mode->hdisplay || !mode->vdisplay)
-+		return -EINVAL;
-+
-+	interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
-+
-+	switch (mode->hdisplay) {
-+	case 720:
-+		if (mode->vdisplay == 480)
-+			abist_format = 2;
-+		else if (mode->vdisplay == 576)
-+			abist_format = 11;
-+		break;
-+	case 1280:
-+		if (mode->vdisplay == 720)
-+			abist_format = 3;
-+		break;
-+	case 1440:
-+		if (mode->vdisplay == 480)
-+			abist_format = interlaced ? 5 : 9;
-+		else if (mode->vdisplay == 576)
-+			abist_format = interlaced ? 14 : 18;
-+		break;
-+	case 1920:
-+		if (mode->vdisplay == 1080)
-+			abist_format = interlaced ? 4 : 10;
-+		break;
-+	case 3840:
-+		if (mode->vdisplay == 2160)
-+			abist_format = 25;
-+		break;
-+	case 4096:
-+		if (mode->vdisplay == 2160)
-+			abist_format = 26;
-+		break;
-+	default:
-+		break;
-+	}
-+	if (!abist_format)
-+		return -EINVAL;
-+
-+	regmap_update_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_VIDEO_FORMAT,
-+			   FIELD_PREP(HDMI_ABIST_VIDEO_FORMAT, abist_format));
-+	regmap_set_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_ENABLE);
-+	return 0;
-+}
-+
-+static int mtk_hdmi_v2_debug_abist_show(struct seq_file *m, void *arg)
-+{
-+	struct mtk_hdmi *hdmi = m->private;
-+	bool en;
-+	u32 val;
-+	int ret;
-+
-+	if (!hdmi)
-+		return -EINVAL;
-+
-+	ret = regmap_read(hdmi->regs, TOP_CFG00, &val);
-+	if (ret)
-+		return ret;
-+
-+	en = FIELD_GET(HDMI_ABIST_ENABLE, val);
-+
-+	seq_printf(m, "HDMI Automated Built-In Self Test: %s\n",
-+		   en ? "Enabled" : "Disabled");
-+
-+	return 0;
-+}
-+
-+static ssize_t mtk_hdmi_v2_debug_abist_write(struct file *file,
-+					     const char __user *ubuf,
-+					     size_t len, loff_t *offp)
-+{
-+	struct seq_file *m = file->private_data;
-+	int ret;
-+	u32 en;
-+
-+	if (!m || !m->private || *offp)
-+		return -EINVAL;
-+
-+	ret = kstrtouint_from_user(ubuf, len, 0, &en);
-+	if (ret)
-+		return ret;
-+
-+	if (en < 0 || en > 1)
-+		return -EINVAL;
-+
-+	mtk_hdmi_v2_set_abist((struct mtk_hdmi *)m->private, en);
-+	return len;
-+}
-+
-+static int mtk_hdmi_v2_debug_abist_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, mtk_hdmi_v2_debug_abist_show, inode->i_private);
-+}
-+
-+static const struct file_operations mtk_hdmi_debug_abist_fops = {
-+	.owner = THIS_MODULE,
-+	.open = mtk_hdmi_v2_debug_abist_open,
-+	.read = seq_read,
-+	.write = mtk_hdmi_v2_debug_abist_write,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+
-+static void mtk_hdmi_v2_debugfs_init(struct drm_bridge *bridge, struct dentry *root)
-+{
-+	struct mtk_hdmi *dpi = hdmi_ctx_from_bridge(bridge);
-+
-+	debugfs_create_file("hdmi_abist", 0640, root, dpi, &mtk_hdmi_debug_abist_fops);
-+}
-+
- static const struct drm_bridge_funcs mtk_v2_hdmi_bridge_funcs = {
- 	.attach = mtk_hdmi_v2_bridge_attach,
- 	.detach = mtk_hdmi_v2_bridge_detach,
-@@ -1204,6 +1326,7 @@ static const struct drm_bridge_funcs mtk_v2_hdmi_bridge_funcs = {
- 	.hdmi_tmds_char_rate_valid = mtk_hdmi_v2_hdmi_tmds_char_rate_valid,
- 	.hdmi_clear_infoframe = mtk_hdmi_v2_hdmi_clear_infoframe,
- 	.hdmi_write_infoframe = mtk_hdmi_v2_hdmi_write_infoframe,
-+	.debugfs_init = mtk_hdmi_v2_debugfs_init,
- };
- 
- /*
--- 
-2.47.0
+  |  Unable to handle kernel access to user memory without uaccess routines=
+ at virtual address 0000000000000008
+  |  Oops [#1]
+  |  Modules linked in: sch_fq_codel drm fuse drm_panel_orientation_quirks =
+backlight
+  |  CPU: 7 UID: 0 PID: 732 Comm: test_sockmap Not tainted 6.13.0-rc3-00017=
+-gf44d154d6e3d #1
+  |  Hardware name: riscv-virtio qemu/qemu, BIOS 2025.01-rc3-00042-gacab6e7=
+8aca7 01/01/2025
+  |  epc : splice_to_socket+0x376/0x49a
+  |   ra : splice_to_socket+0x37c/0x49a
+  |  epc : ffffffff803d9ffc ra : ffffffff803da002 sp : ff20000001c3b8b0
+  |   gp : ffffffff827aefa8 tp : ff60000083450040 t0 : ff6000008a12d001
+  |   t1 : 0000100100001001 t2 : 0000000000000000 s0 : ff20000001c3bae0
+  |   s1 : ffffffffffffefff a0 : ff6000008245e200 a1 : ff60000087dd0450
+  |   a2 : 0000000000000000 a3 : 0000000000000000 a4 : 0000000000000000
+  |   a5 : 0000000000000000 a6 : ff20000001c3b450 a7 : ff6000008a12c004
+  |   s2 : 000000000000000f s3 : ff6000008245e2d0 s4 : ff6000008245e280
+  |   s5 : 0000000000000000 s6 : 0000000000000002 s7 : 0000000000001001
+  |   s8 : 0000000000003001 s9 : 0000000000000002 s10: 0000000000000002
+  |   s11: ff6000008245e200 t3 : ffffffff8001e78c t4 : 0000000000000000
+  |   t5 : 0000000000000000 t6 : ff6000008869f230
+  |  status: 0000000200000120 badaddr: 0000000000000008 cause: 000000000000=
+000d
+  |  [<ffffffff803d9ffc>] splice_to_socket+0x376/0x49a
+  |  [<ffffffff803d8bc0>] direct_splice_actor+0x44/0x216
+  |  [<ffffffff803d8532>] splice_direct_to_actor+0xb6/0x1e8
+  |  [<ffffffff803d8780>] do_splice_direct+0x70/0xa2
+  |  [<ffffffff80392e40>] do_sendfile+0x26e/0x2d4
+  |  [<ffffffff803939d4>] __riscv_sys_sendfile64+0xf2/0x10e
+  |  [<ffffffff80fdfb64>] do_trap_ecall_u+0x1f8/0x26c
+  |  [<ffffffff80fedaee>] _new_vmalloc_restore_context_a0+0xc6/0xd2
+  |  Code: c5d8 9e35 c590 8bb3 40db eb01 6998 b823 0005 856e (6718) 2d05=20
+  |  ---[ end trace 0000000000000000 ]---
+  |  Kernel panic - not syncing: Fatal exception
+  |  SMP: stopping secondary CPUs
+  |  ---[ end Kernel panic - not syncing: Fatal exception ]---
 
+This is commit f44d154d6e3d ("Merge tag 'soc-fixes-6.13' of
+git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc").
+
+(Yet to bisect!)
+
+
+Bj=C3=B6rn
 
