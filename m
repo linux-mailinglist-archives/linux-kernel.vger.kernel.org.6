@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-448357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64459F3F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:44:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43DE9F3F04
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22A5816F6C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:43:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0DCD7A2CE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178FE142E7C;
-	Tue, 17 Dec 2024 00:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549F114C5AF;
+	Tue, 17 Dec 2024 00:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AxjT0fKA"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dDQrV6kA"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5DA147C86
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7B614A4E7
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734396052; cv=none; b=NfxjR+jY2JO6AeLrZFsXzU4k7PHAptydcBMIftZbVPkheb9RumvXxsqz9ZY5FbsvSZtI72YD1uwGEdEigS53p+N8iy7VS3uIkGrhGqdSMd1L6RBp0TyVkcWC9/7WrC/9JWPiGhn7eKaHXcmbp8ET4v9WzorFY6cIwErOsJtEi1U=
+	t=1734396054; cv=none; b=n2DyCQlpwwrqx0VpnBTNCsHhesxw8AuNfeAi+r9vlOKjlymjFbj36+8hjvqWwc0OMvo3YGU9NnWG5i3SPlx7rXspoUT15YwAnf81KdEXlP1ozta2sziW5ko4gCMpGY33J6WJj/b1Al+vUShyylK+QyWDrmE/ybNU4N/wVZM10hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734396052; c=relaxed/simple;
-	bh=6Y1sm65Qo2Q/7xl+pyz1/J9UMGUgCYPyoG1qbt4lRyk=;
+	s=arc-20240116; t=1734396054; c=relaxed/simple;
+	bh=Pn3jlKOdfQqOhTgwlNovK0Mjhw+ujx5JcQ8ESvBRcTY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LoJTa+1j30wgI4amJEyalYB3odP9bP9nHGcV0RUjJT607a3/abdpA1K354lW5/AfUfVZBeRWpDv1g5A+n2qdsf90HFLvoz/CVAkH2ZB6TWCix4akmLjLTSgrdE7SyGWM7mms1B514IUT+VWQgSD4OnTh7QmfkhhspumzSyPy2TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AxjT0fKA; arc=none smtp.client-ip=209.85.167.41
+	 In-Reply-To:To:Cc; b=gn598WjdaYL8nEpIqQtOLerfaunYWhnYptFivcTkIMtmHdn47NYiwqDwJOnli1qnvrVcU+qFXuT9WOn+czvVGUr+L0rn5dsotfaYt3OC4DDE6CD1L+0WDMmAfWI7KBPfdNbc11gmFrrMfnRvd2p9NKYLdcY0No9Yn8p1e72n6WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dDQrV6kA; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-540215984f0so5372904e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:40:49 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5401bd6cdb7so4838243e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:40:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734396048; x=1735000848; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734396051; x=1735000851; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=paTb+2HTrTNp9hvm1OCA2iLmtmvZyo4+owE4qzdFaRE=;
-        b=AxjT0fKA+YT6kqNdrUnCjYBHhlSZQ2H7XwbgWxXGLmsA1609rf5D2OYB5NLHTrECB7
-         gYcZyRYlOMaBEBu/MrwdFMYlQcpD7BcTguiT1GagboXIxt5qYS+U9F4/2sasazDRn2nD
-         dWOtOUBSCuPgV02DJUDyh67OrkmfuixAJEhjDD0UEvRR+8V5Mh6y0dJauKNjo6iLKfGM
-         quLt3Cbcd0JGUgx6UjFPrALdjE80Oh+9WCzRNS9MsqiHbnD3/F3I6y98k0ucE7/80gul
-         YMTnJltgp/PK1qzVRgqyxqGcKhATtRvvyQqYi0+k92SWRcDjMRB0ub+3V1tBUaHP52S8
-         qvQA==
+        bh=yOV9LGB+7crRuSYkJueJAduPKSeD1LHvXO2AOg6QFD8=;
+        b=dDQrV6kAOsz4eoZMtKnhNs/JSMxdTOjOuEZcv0rNjPYxjoyz1apJi/mL4mMQS0bdzH
+         z7T2DhjPQJ15SpbSWnSin52K635gOa7phM+xeREgfRhQZR4bg+sxgHpmZY7RVvkEZkNV
+         ipLPDDIOzNxeT0DaE++02040nYv8L5a4M5WuwMv3x1SLCpYuaYXH6cW4mN8Gm6T4ROIk
+         WvWCSYkHmLgKMOGqRhT6MTXbLTH9evuiscbRPA5SuHITebDnJnSPhdo06JIQH1VGQLKr
+         N1TIQ8WHqEaE3c18KgHbkTiL/CN43ywAOzGCuXBHnK9J2WLrvv1HtQjjEo/qFR/rOZpL
+         Rl+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734396048; x=1735000848;
+        d=1e100.net; s=20230601; t=1734396051; x=1735000851;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=paTb+2HTrTNp9hvm1OCA2iLmtmvZyo4+owE4qzdFaRE=;
-        b=apR7od0zOE5FDq+ywoy5e+b5L3Ssm0VzC0B9NiyOZWSW4dfRZLe6sSFpXOXcnWJqY/
-         DRcAb3XeWBWROjISdOr3dyTUTkz4IBcAMPLuUuBEdH4LY6HS9Jepi5LZT32Zg7OU54DP
-         ndakSAVdSpAGb75ifPFZxJSJ8nOnPh4GfXuUTxNw1njmxXcSn+qE+4mTI5p1bJHj+p9o
-         wCHt9slDPabdUwtf42+hKgcGxR/eczVVO5J4oCAgtoCaz57e3b5lh26dc0VYArqPJexn
-         wJCrvA3P9REVaEW3n7U5zRbESQJLAZQqOrENLPkyoY7aHm0/kBf25KQmxYl7BpNv1cKV
-         BhrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuAZPg0iWgZjsV1LKwvwGbuL+piDr01hM/r48aELIRk3HHgmWE1q/2e52+OV5aGak0OBBd6sf8OpFKl9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIRQMgzGseNiuBp+i+x16I/TN1rDs9mgkikFftmx6hcW2UbFnA
-	UvzH3xJ6pzxK44cSr89gqhhOMBZLvuxIsa2o6kzanVo2UQiMquaHbtIGYZCnxh4=
-X-Gm-Gg: ASbGncsrJ/tRiJ+nXWa1K6Gh2Az+cbUsUykUDHur9U2zn0b2TmxMbc4a2HQB0QBObID
-	K5HOHg07B+QWjLmkRUR/q7cCsCerlRPwivI+zF/TD0qv5PqUPlZWQAe8IYNhpTu27eg7ojkptKj
-	RsoRXRm9hwNdeJqzWCoBIFTKABCsztTrqQAkLhGC1TBLNs1OBMoPSB+yYj1wszUP9uF4CjM+8rs
-	xeDshK0WXw7bq5KsXpAJg129I1VogUSndsqNqMBNHrhRki8UBf/AxyWOj3teR9E
-X-Google-Smtp-Source: AGHT+IH4tL02rlsAd817EjeB0oQHTErm5C29t27CuFjcVt+3R8fvkOnGop7QdrSYReMUeYzTeVvb4Q==
-X-Received: by 2002:a05:6512:3049:b0:540:1b41:c75f with SMTP id 2adb3069b0e04-5409054bf54mr5505928e87.16.1734396048212;
-        Mon, 16 Dec 2024 16:40:48 -0800 (PST)
+        bh=yOV9LGB+7crRuSYkJueJAduPKSeD1LHvXO2AOg6QFD8=;
+        b=rDB2ADVmKWyYXVtgZc0xSjhlzEof5NGjkkye3dqjDOpVoQCx/MzxOV+Oe5XOvDUpiR
+         aNCOOehs5wR4rBPv9nsDHle0N2WBtq3cVJSaYF9eofCoe1zPkOeszBFfg+q3ElIIorx1
+         LsBQGWA8gxsnurEDBuqLQDWQsDol8j+8g0V85z5FirXi0d7D7gHfYqoqlssAfSDRPmx1
+         oWyZ7Cs5lh42QnJqPrXj5E+tn5719FbpTX8YxRmW5Z8C/XaFLlZti+J/rj1Y2LG0AlQU
+         wkmDIuh9HIOrXILujmSt0YCCLd3ZkQZj8zX5aHdfT+pXUOsRIzDayhX8wGprvJRESbfh
+         G3Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNO577DuRcDugt/sdXIhiKeSbmlk+K72qtdSJQGtWhkeK/LMRSW4Jf+Tllbm+cGrcHXGQxSQWkX8g6qTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK6JGmyJLID59nCmgc9a3sbvGjJ6ACOW0hNYHJhQ97e0xYJd7C
+	HZgaOAGgdzgZYl4m8abYwuoraw/Vzw06db0pBcSFr3w5CkOH/+Xc9IzUhnZOCqU=
+X-Gm-Gg: ASbGncvs1H8CXToYoJ4nuz+Q2x45D7AK5aWdKyfUYoKx04Bl/va62DUzulCG5HvrFf8
+	VeZnaK5L2JB1v5g51EXyIxr8X9mBSC6aZcqqPAjQMyX6FKAkeCuCVQ4efUZj8T5WoJaMgTGjD6G
+	DEfRH0LNMHaTpnPMz54lTe3fYmgQGxzR1N9e0iBoigE04GeQvIL4mNeaEvnK1E6yW0VeR8sFLVT
+	xv5vP5ghaSzkAnkHFIvl26SVx4V6rEANJA8Sunh0bmUFQdeZGAGev/jzufYpxF8
+X-Google-Smtp-Source: AGHT+IHw7VXjrPeZhfVp33UgiptzZosNfvLSX3nNYvM2KHEjnFm3we6xTly89BdAPcurVBRYJ3TzIg==
+X-Received: by 2002:a05:6512:3d8a:b0:540:75d3:95c0 with SMTP id 2adb3069b0e04-54099b6aeb9mr4716425e87.47.1734396050964;
+        Mon, 16 Dec 2024 16:40:50 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120ba9ab2sm1009122e87.74.2024.12.16.16.40.45
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120ba9ab2sm1009122e87.74.2024.12.16.16.40.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 16:40:46 -0800 (PST)
+        Mon, 16 Dec 2024 16:40:49 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 17 Dec 2024 02:40:30 +0200
-Subject: [PATCH v7 08/10] drm/vc4: hdmi: switch to using generic HDMI Codec
- infrastructure
+Date: Tue, 17 Dec 2024 02:40:31 +0200
+Subject: [PATCH v7 09/10] drm/vc4: hdmi: stop rereading EDID in get_modes()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +81,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-drm-bridge-hdmi-connector-v7-8-cb9df2b6a515@linaro.org>
+Message-Id: <20241217-drm-bridge-hdmi-connector-v7-9-cb9df2b6a515@linaro.org>
 References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
 In-Reply-To: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -116,195 +115,65 @@ Cc: Jani Nikula <jani.nikula@linux.intel.com>,
  linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
  linux-rockchip@lists.infradead.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6709;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1884;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=6Y1sm65Qo2Q/7xl+pyz1/J9UMGUgCYPyoG1qbt4lRyk=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnYMh5fP0aFF2grOUxQSROkIswl03VxBNpkLqR7
- 4wtYX6ownOJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ2DIeQAKCRCLPIo+Aiko
- 1fzWB/4r9PIwuX0nnImWs9/4IvVacPdvBIoD9XK2Fw8ymXagQsGGDCIIEaTAMHCA5Ixtz288OM9
- LdxorGylln4TDSQeSM4om3ulO7DaHvOOxOUg+B79Jkdkz6uTjlvs7gYgCfektpZ8Y5UZHjHLC1t
- 37rV6Y8PU+FCeOgZwPTA238IvVuKnXsw7vSP0HzjOf3NOwS94l+avMAOM/eSDPWY1+PySDLXRtQ
- UcqOO7k/epIOpu0vV0tNxGP/JcuN9/eD8WMXZO3go0ikLl78tlETnlmdWnEBx9blxml4PRcHwJl
- OEJ7xDq5LYdZ+Samj/H2FJrcvs5d9kFatiZViv6YSJX1vZkk
+ bh=Pn3jlKOdfQqOhTgwlNovK0Mjhw+ujx5JcQ8ESvBRcTY=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnYMh5AcX6vqsmyTSEOah3v/NRfb59bBLsVA0Am
+ 5PF/UeNbMuJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ2DIeQAKCRCLPIo+Aiko
+ 1UYkB/4nmHMFle4w74ujOB7redDUAjj366h2sS6n0SYJQS5bY63lKUrcybdCpnPcp6IQgM7zPJT
+ KI3Zu9Z+K2ZvACjsEqw5/l2aXc0xEcmWTAKox52w1HpK+mxERTYSNrKnEpHylqTK2aOcQrkwpGb
+ 90JB3CO4lyUmqID7sOLHsfS3eqBnYJiWYmplzScjqHDslUzYcE6rjuZaD3MtRPP2RLHo2S1yGht
+ YfwBKu2NZ6YKX0LN9PAhJb6RXOuJ0S37kgoycJB4XyXb/p3yPs0dM1IhItwoki1nGLfBOB3xKEY
+ EjldH/ijsNmTlfSrYitzNGnCyz43NBBdHpkVVJnf44FwvI7z
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Drop driver-specific implementation and use the generic HDMI Codec
-framework in order to implement the HDMI audio support.
+The vc4_hdmi_connector_detect_ctx() via vc4_hdmi_handle_hotplug()
+already reads EDID and propagates it to the drm_connector. Stop
+rereading EDID as a part of the .get_modes() callback and just update
+the list of modes. This matches the behaviour of the i915 driver.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/vc4/vc4_hdmi.c | 69 ++++++++++--------------------------------
- drivers/gpu/drm/vc4/vc4_hdmi.h |  2 --
- 2 files changed, 16 insertions(+), 55 deletions(-)
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
 diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 203293a8beca738dbfeaaf15f350026e263e646b..2a2aca7017994779a7163935df3fc87ca312d6dd 100644
+index 2a2aca7017994779a7163935df3fc87ca312d6dd..bb5e8738845c74d975c1e0e1262ced46e4ef8fde 100644
 --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
 +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -584,6 +584,7 @@ static const struct drm_connector_helper_funcs vc4_hdmi_connector_helper_funcs =
- };
+@@ -470,31 +470,10 @@ static int vc4_hdmi_connector_detect_ctx(struct drm_connector *connector,
  
- static const struct drm_connector_hdmi_funcs vc4_hdmi_hdmi_connector_funcs;
-+static const struct drm_connector_hdmi_codec_funcs vc4_hdmi_codec_funcs;
- 
- static int vc4_hdmi_connector_init(struct drm_device *dev,
- 				   struct vc4_hdmi *vc4_hdmi)
-@@ -609,6 +610,12 @@ static int vc4_hdmi_connector_init(struct drm_device *dev,
- 	if (ret)
- 		return ret;
- 
-+	ret = drm_connector_hdmi_audio_init(connector, dev->dev,
-+					    &vc4_hdmi_codec_funcs,
-+					    8, false, -1);
-+	if (ret)
-+		return ret;
-+
- 	drm_connector_helper_add(connector, &vc4_hdmi_connector_helper_funcs);
- 
- 	/*
-@@ -1921,9 +1928,9 @@ static bool vc4_hdmi_audio_can_stream(struct vc4_hdmi *vc4_hdmi)
- 	return true;
- }
- 
--static int vc4_hdmi_audio_startup(struct device *dev, void *data)
-+static int vc4_hdmi_audio_startup(struct drm_connector *connector)
+ static int vc4_hdmi_connector_get_modes(struct drm_connector *connector)
  {
--	struct vc4_hdmi *vc4_hdmi = dev_get_drvdata(dev);
-+	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
- 	struct drm_device *drm = vc4_hdmi->connector.dev;
- 	unsigned long flags;
+-	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
+ 	struct vc4_dev *vc4 = to_vc4_dev(connector->dev);
+-	const struct drm_edid *drm_edid;
  	int ret = 0;
-@@ -1985,9 +1992,9 @@ static void vc4_hdmi_audio_reset(struct vc4_hdmi *vc4_hdmi)
- 	spin_unlock_irqrestore(&vc4_hdmi->hw_lock, flags);
- }
  
--static void vc4_hdmi_audio_shutdown(struct device *dev, void *data)
-+static void vc4_hdmi_audio_shutdown(struct drm_connector *connector)
- {
--	struct vc4_hdmi *vc4_hdmi = dev_get_drvdata(dev);
-+	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
- 	struct drm_device *drm = vc4_hdmi->connector.dev;
- 	unsigned long flags;
- 	int idx;
-@@ -2057,13 +2064,12 @@ static int sample_rate_to_mai_fmt(int samplerate)
- }
- 
- /* HDMI audio codec callbacks */
--static int vc4_hdmi_audio_prepare(struct device *dev, void *data,
-+static int vc4_hdmi_audio_prepare(struct drm_connector *connector,
- 				  struct hdmi_codec_daifmt *daifmt,
- 				  struct hdmi_codec_params *params)
- {
--	struct vc4_hdmi *vc4_hdmi = dev_get_drvdata(dev);
-+	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
- 	struct drm_device *drm = vc4_hdmi->connector.dev;
--	struct drm_connector *connector = &vc4_hdmi->connector;
- 	struct vc4_dev *vc4 = to_vc4_dev(drm);
- 	unsigned int sample_rate = params->sample_rate;
- 	unsigned int channels = params->channels;
-@@ -2075,7 +2081,7 @@ static int vc4_hdmi_audio_prepare(struct device *dev, void *data,
- 	int ret = 0;
- 	int idx;
- 
--	dev_dbg(dev, "%s: %u Hz, %d bit, %d channels\n", __func__,
-+	dev_dbg(&vc4_hdmi->pdev->dev, "%s: %u Hz, %d bit, %d channels\n", __func__,
- 		sample_rate, params->sample_width, channels);
- 
- 	mutex_lock(&vc4_hdmi->mutex);
-@@ -2214,40 +2220,12 @@ static const struct snd_dmaengine_pcm_config pcm_conf = {
- 	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
- };
- 
--static int vc4_hdmi_audio_get_eld(struct device *dev, void *data,
--				  uint8_t *buf, size_t len)
--{
--	struct vc4_hdmi *vc4_hdmi = dev_get_drvdata(dev);
--	struct drm_connector *connector = &vc4_hdmi->connector;
+-	/*
+-	 * NOTE: This function should really take vc4_hdmi->mutex, but doing so
+-	 * results in reentrancy issues since cec_s_phys_addr() might call
+-	 * .adap_enable, which leads to that funtion being called with our mutex
+-	 * held.
+-	 *
+-	 * Concurrency isn't an issue at the moment since we don't share
+-	 * any state with any of the other frameworks so we can ignore
+-	 * the lock for now.
+-	 */
 -
--	mutex_lock(&connector->eld_mutex);
--	memcpy(buf, connector->eld, min(sizeof(connector->eld), len));
--	mutex_unlock(&connector->eld_mutex);
+-	drm_edid = drm_edid_read_ddc(connector, vc4_hdmi->ddc);
+-	drm_edid_connector_update(connector, drm_edid);
+-	cec_s_phys_addr(vc4_hdmi->cec_adap,
+-			connector->display_info.source_physical_address, false);
+-	if (!drm_edid)
+-		return 0;
 -
--	return 0;
--}
--
--static const struct hdmi_codec_ops vc4_hdmi_codec_ops = {
--	.get_eld = vc4_hdmi_audio_get_eld,
-+static const struct drm_connector_hdmi_codec_funcs vc4_hdmi_codec_funcs = {
- 	.prepare = vc4_hdmi_audio_prepare,
- 	.audio_shutdown = vc4_hdmi_audio_shutdown,
- 	.audio_startup = vc4_hdmi_audio_startup,
- };
+ 	ret = drm_edid_connector_add_modes(connector);
+-	drm_edid_free(drm_edid);
  
--static struct hdmi_codec_pdata vc4_hdmi_codec_pdata = {
--	.ops = &vc4_hdmi_codec_ops,
--	.max_i2s_channels = 8,
--	.i2s = 1,
--};
--
--static void vc4_hdmi_audio_codec_release(void *ptr)
--{
--	struct vc4_hdmi *vc4_hdmi = ptr;
--
--	platform_device_unregister(vc4_hdmi->audio.codec_pdev);
--	vc4_hdmi->audio.codec_pdev = NULL;
--}
--
- static int vc4_hdmi_audio_init(struct vc4_hdmi *vc4_hdmi)
- {
- 	const struct vc4_hdmi_register *mai_data =
-@@ -2255,7 +2233,6 @@ static int vc4_hdmi_audio_init(struct vc4_hdmi *vc4_hdmi)
- 	struct snd_soc_dai_link *dai_link = &vc4_hdmi->audio.link;
- 	struct snd_soc_card *card = &vc4_hdmi->audio.card;
- 	struct device *dev = &vc4_hdmi->pdev->dev;
--	struct platform_device *codec_pdev;
- 	const __be32 *addr;
- 	int index, len;
- 	int ret;
-@@ -2348,20 +2325,6 @@ static int vc4_hdmi_audio_init(struct vc4_hdmi *vc4_hdmi)
- 		return ret;
- 	}
- 
--	codec_pdev = platform_device_register_data(dev, HDMI_CODEC_DRV_NAME,
--						   PLATFORM_DEVID_AUTO,
--						   &vc4_hdmi_codec_pdata,
--						   sizeof(vc4_hdmi_codec_pdata));
--	if (IS_ERR(codec_pdev)) {
--		dev_err(dev, "Couldn't register the HDMI codec: %ld\n", PTR_ERR(codec_pdev));
--		return PTR_ERR(codec_pdev);
--	}
--	vc4_hdmi->audio.codec_pdev = codec_pdev;
--
--	ret = devm_add_action_or_reset(dev, vc4_hdmi_audio_codec_release, vc4_hdmi);
--	if (ret)
--		return ret;
--
- 	dai_link->cpus		= &vc4_hdmi->audio.cpu;
- 	dai_link->codecs	= &vc4_hdmi->audio.codec;
- 	dai_link->platforms	= &vc4_hdmi->audio.platform;
-@@ -2374,7 +2337,7 @@ static int vc4_hdmi_audio_init(struct vc4_hdmi *vc4_hdmi)
- 	dai_link->stream_name = "MAI PCM";
- 	dai_link->codecs->dai_name = "i2s-hifi";
- 	dai_link->cpus->dai_name = dev_name(dev);
--	dai_link->codecs->name = dev_name(&codec_pdev->dev);
-+	dai_link->codecs->name = dev_name(&vc4_hdmi->connector.hdmi_codec.codec_pdev->dev);
- 	dai_link->platforms->name = dev_name(dev);
- 
- 	card->dai_link = dai_link;
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdmi.h
-index b2424a21da230db99db207efa293417faccd254d..e3d989ca302b72533c374dfa3fd0d5bd7fe64a82 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.h
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
-@@ -104,8 +104,6 @@ struct vc4_hdmi_audio {
- 	struct snd_soc_dai_link_component codec;
- 	struct snd_soc_dai_link_component platform;
- 	struct snd_dmaengine_dai_dma_data dma_data;
--	struct hdmi_audio_infoframe infoframe;
--	struct platform_device *codec_pdev;
- 	bool streaming;
- };
- 
+ 	if (!vc4->hvs->vc5_hdmi_enable_hdmi_20) {
+ 		struct drm_device *drm = connector->dev;
 
 -- 
 2.39.5
