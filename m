@@ -1,161 +1,198 @@
-Return-Path: <linux-kernel+bounces-449411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814229F4EAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:00:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E36AC9F4E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:57:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19FA418953A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:57:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B77116C5F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849B21F890B;
-	Tue, 17 Dec 2024 14:55:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D811F5408;
-	Tue, 17 Dec 2024 14:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D9B1F76C1;
+	Tue, 17 Dec 2024 14:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U0tPmYZh"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268CC1F76BF;
+	Tue, 17 Dec 2024 14:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734447316; cv=none; b=exQXJE9sqwkIvbKyoT0ekZnuTw6XcO0UxxX/XGqE4mfOOKyFs9zhJlNmEmH8sYSdffsouWncxmu7XbhikEGbYRLOia1ElRCbrJm/OvCeipEOsUyAofHjzxpA9xBDqHWYT4L0d1aeJbhqjqWe8N7fgs02ijLJCdfGLO3PNBxyRGw=
+	t=1734447340; cv=none; b=FVUugFMzw+7XhtAIa54HAzEMec6rbWsq7Zc7GaeIKXPsKfFswBLtxFVPZYrEV1JcPQukjFPyZF/2pxzQ5zAEwPfriU9M2dAYCbkIHwCrhPl2vBCQJg1knc1Du31MNae0HnnjY4G04A8Ccu1sXJ9QnyALJwz4GaqVxPhR+zVeej8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734447316; c=relaxed/simple;
-	bh=tnOaCXr1PcPaOn0GsFurLu91jOQAlKHY2qOHCJ8XDB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R7QcUcvGQy9yEjdY6oGO5vXD5IKxwB3LK6skMmLVo2ZJt9K3glwh0xk8V+2QcmdCY/cvl6f4DZpWZq1Hnfg6doV30OL96Xha9J/0Kc9sGE7PExeroxnR4+bm/ESTX9e5mFTpcPFHfoaNaq3I+Z7YToJOTeTEFQaoFI778ZfL/60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E25D91063;
-	Tue, 17 Dec 2024 06:55:40 -0800 (PST)
-Received: from [10.57.71.247] (unknown [10.57.71.247])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9EFE03F528;
-	Tue, 17 Dec 2024 06:55:11 -0800 (PST)
-Message-ID: <8ca3d31b-74a0-497a-9b53-dfe9becd0f7a@arm.com>
-Date: Tue, 17 Dec 2024 14:55:10 +0000
+	s=arc-20240116; t=1734447340; c=relaxed/simple;
+	bh=DZPGLCtNSOyLqhOuehDqWwP4FJ4wG8X6ArCtEnT8q3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XaYwsN4HC4QVyiOvOeb9bP+q96JXEsAAcKG5/s0AAjkvhYNmdvdj4KK/FIaDh4g6Vvr/i0v3DW18Bv5qHNaDcV7196E81lsa3cZO1vOPpoGNDFZ25Gfky0LiWcpRugFj/WaeMFHXi+Mv5wIBVfeWyElNaDdavActKnTIg+Cj1MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U0tPmYZh; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHE6Gsi020811;
+	Tue, 17 Dec 2024 14:55:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:message-id:mime-version:subject:to; s=
+	pp1; bh=32wTygDdwBYAlFTBZycaIuXeyZSOIIiZG2ZaGNls/X8=; b=U0tPmYZh
+	PVMUCHwrtag4pjvVK07s/ziAmZJga1R4pFe2WBgAB2sbDic2gHaAzj9LIISKTTXH
+	E3xHKTU3H/+0G5XgUyD3UoJbQUf3zJ3zQtnQ130yYcLFY0S3kLLtoRgdo+dxBTbP
+	t6a7RXjl1wS0l6qhJ13bgliPmZKVKDUg7MQ+hSaTgCBRSDfc+gkuitCsw+lNvoof
+	WUF6HVV6JNwNA0DQKOqcSmYVi5EaAGytp5vWa8f6CCdX7iYq2AdqFA5gfnDb7z4m
+	HDJA98N4djWow6S3bnGqxwbhQbt2xEZItEeWfCeHeQwiaHdQO2+MNCF5iSIDSRdg
+	kourj2S911I0ig==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43kas4r8hh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 14:55:37 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHBw8lv024026;
+	Tue, 17 Dec 2024 14:55:36 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hnukb4xk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 14:55:36 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BHEtW2S48562462
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 14:55:32 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 397C32004F;
+	Tue, 17 Dec 2024 14:55:32 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 12BE22004D;
+	Tue, 17 Dec 2024 14:55:32 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 17 Dec 2024 14:55:32 +0000 (GMT)
+Date: Tue, 17 Dec 2024 15:55:30 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] s390 fixes for 6.13-rc4
+Message-ID: <Z2GQ4oCwZobLsNpp@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] coresight-tpdm: Add support to enable the lane for
- MCMB TPDM
-Content-Language: en-GB
-To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Tao Zhang <quic_taozha@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20241105123940.39602-1-quic_jinlmao@quicinc.com>
- <20241105123940.39602-4-quic_jinlmao@quicinc.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241105123940.39602-4-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: j408HSxV70waxB74PLldNLurh9qp0RBj
+X-Proofpoint-GUID: j408HSxV70waxB74PLldNLurh9qp0RBj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ mlxlogscore=975 mlxscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1011 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170115
 
-On 05/11/2024 12:39, Mao Jinlong wrote:
-> From: Tao Zhang <quic_taozha@quicinc.com>
-> 
-> Add the sysfs file to set/get the enablement of the lane. For MCMB
-> configurations, the field "E_LN" in CMB_CR register is the
-> individual lane enables. MCMB lane N is enabled for trace
-> generation when M_CMB_CR.E=1 and M_CMB_CR.E_LN[N]=1. For lanes
-> that are not implemented on a given MCMB configuration, the
-> corresponding bits of this field read as 0 and ignore writes.
-> 
-> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> ---
->   .../testing/sysfs-bus-coresight-devices-tpdm  |  7 +++++
->   drivers/hwtracing/coresight/coresight-tpdm.c  | 29 +++++++++++++++++++
->   drivers/hwtracing/coresight/coresight-tpdm.h  |  3 ++
->   3 files changed, 39 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-> index e833edfec79e..fcc2a8f1f17f 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-> @@ -265,3 +265,10 @@ Contact:	Tao Zhang (QUIC) <quic_taozha@quicinc.com>
->   Description:
->   		(RW) Set/Get which lane participates in the output pattern
->   		match cross trigger mechanism for the MCMB subunit TPDM.
-> +
-> +What:		/sys/bus/coresight/devices/<tpdm-name>/mcmb_lanes_select
-> +Date:		Nov 2024
-> +KernelVersion	6.13
+Hi Linus,
 
-6.14
+please pull s390 fixes for 6.13-rc4.
 
-Suzuki
+Thanks,
+Alexander
 
+The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
-> +Contact:	Tao Zhang (QUIC) <quic_taozha@quicinc.com>
-> +Description:
-> +		(RW) Set/Get the enablement of the individual lane.
-> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
-> index 2e4dc86b03ea..bb0d6505ec9f 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
-> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
-> @@ -1063,6 +1063,34 @@ static ssize_t mcmb_trig_lane_store(struct device *dev,
->   }
->   static DEVICE_ATTR_RW(mcmb_trig_lane);
->   
-> +static ssize_t mcmb_lanes_select_show(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      char *buf)
-> +{
-> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
-> +
-> +	return sysfs_emit(buf, "%u\n",
-> +			  (unsigned int)drvdata->cmb->mcmb.lane_select);
-> +}
-> +
-> +static ssize_t mcmb_lanes_select_store(struct device *dev,
-> +				       struct device_attribute *attr,
-> +				       const char *buf,
-> +				       size_t size)
-> +{
-> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
-> +	unsigned long val;
-> +
-> +	if (kstrtoul(buf, 0, &val) || (val & ~TPDM_MCMB_E_LN_MASK))
-> +		return -EINVAL;
-> +
-> +	guard(spinlock)(&drvdata->spinlock);
-> +	drvdata->cmb->mcmb.lane_select = val & TPDM_MCMB_E_LN_MASK;
-> +
-> +	return size;
-> +}
-> +static DEVICE_ATTR_RW(mcmb_lanes_select);
-> +
->   static struct attribute *tpdm_dsb_edge_attrs[] = {
->   	&dev_attr_ctrl_idx.attr,
->   	&dev_attr_ctrl_val.attr,
-> @@ -1227,6 +1255,7 @@ static struct attribute *tpdm_cmb_msr_attrs[] = {
->   
->   static struct attribute *tpdm_mcmb_attrs[] = {
->   	&dev_attr_mcmb_trig_lane.attr,
-> +	&dev_attr_mcmb_lanes_select.attr,
->   	NULL,
->   };
->   
-> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.h b/drivers/hwtracing/coresight/coresight-tpdm.h
-> index aa9746b2e77f..a80f3d680995 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpdm.h
-> +++ b/drivers/hwtracing/coresight/coresight-tpdm.h
-> @@ -48,6 +48,9 @@
->   /* MAX lanes in the output pattern for MCMB configurations*/
->   #define TPDM_MCMB_MAX_LANES 8
->   
-> +/* Filter bit 0~7 from the value for CR_E_LN */
-> +#define TPDM_MCMB_E_LN_MASK		GENMASK(7, 0)
-> +
->   /* DSB Subunit Registers */
->   #define TPDM_DSB_CR		(0x780)
->   #define TPDM_DSB_TIER		(0x784)
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.13-3
+
+for you to fetch changes up to 282da38b465395c930687974627c24f47ddce5ff:
+
+  s390/mm: Consider KMSAN modules metadata for paging levels (2024-12-15 23:35:09 +0100)
+
+----------------------------------------------------------------
+s390 fixes for 6.13-rc4
+
+- Fix DirectMap accounting in /proc/meminfo file
+
+- Fix strscpy() return code handling that led to "unsigned 'len' is
+  never less than zero" warning
+
+- Fix the calculation determining whether to use three- or four-level
+  paging: account KMSAN modules metadata
+
+----------------------------------------------------------------
+Alexander Gordeev (1):
+      s390/ipl: Fix never less than zero warning
+
+Heiko Carstens (1):
+      s390/mm: Fix DirectMap accounting
+
+Vasily Gorbik (1):
+      s390/mm: Consider KMSAN modules metadata for paging levels
+
+ arch/s390/boot/startup.c | 2 ++
+ arch/s390/boot/vmem.c    | 6 +++---
+ arch/s390/kernel/ipl.c   | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/arch/s390/boot/startup.c b/arch/s390/boot/startup.c
+index abe6e6c0ab98..6087d38c7235 100644
+--- a/arch/s390/boot/startup.c
++++ b/arch/s390/boot/startup.c
+@@ -234,6 +234,8 @@ static unsigned long get_vmem_size(unsigned long identity_size,
+ 	vsize = round_up(SZ_2G + max_mappable, rte_size) +
+ 		round_up(vmemmap_size, rte_size) +
+ 		FIXMAP_SIZE + MODULES_LEN + KASLR_LEN;
++	if (IS_ENABLED(CONFIG_KMSAN))
++		vsize += MODULES_LEN * 2;
+ 	return size_add(vsize, vmalloc_size);
+ }
+ 
+diff --git a/arch/s390/boot/vmem.c b/arch/s390/boot/vmem.c
+index 145035f84a0e..3fa28db2fe59 100644
+--- a/arch/s390/boot/vmem.c
++++ b/arch/s390/boot/vmem.c
+@@ -306,7 +306,7 @@ static void pgtable_pte_populate(pmd_t *pmd, unsigned long addr, unsigned long e
+ 			pages++;
+ 		}
+ 	}
+-	if (mode == POPULATE_DIRECT)
++	if (mode == POPULATE_IDENTITY)
+ 		update_page_count(PG_DIRECT_MAP_4K, pages);
+ }
+ 
+@@ -339,7 +339,7 @@ static void pgtable_pmd_populate(pud_t *pud, unsigned long addr, unsigned long e
+ 		}
+ 		pgtable_pte_populate(pmd, addr, next, mode);
+ 	}
+-	if (mode == POPULATE_DIRECT)
++	if (mode == POPULATE_IDENTITY)
+ 		update_page_count(PG_DIRECT_MAP_1M, pages);
+ }
+ 
+@@ -372,7 +372,7 @@ static void pgtable_pud_populate(p4d_t *p4d, unsigned long addr, unsigned long e
+ 		}
+ 		pgtable_pmd_populate(pud, addr, next, mode);
+ 	}
+-	if (mode == POPULATE_DIRECT)
++	if (mode == POPULATE_IDENTITY)
+ 		update_page_count(PG_DIRECT_MAP_2G, pages);
+ }
+ 
+diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
+index edbb52ce3f1e..7d12a1305fc9 100644
+--- a/arch/s390/kernel/ipl.c
++++ b/arch/s390/kernel/ipl.c
+@@ -270,7 +270,7 @@ static ssize_t sys_##_prefix##_##_name##_store(struct kobject *kobj,	\
+ 	if (len >= sizeof(_value))					\
+ 		return -E2BIG;						\
+ 	len = strscpy(_value, buf, sizeof(_value));			\
+-	if (len < 0)							\
++	if ((ssize_t)len < 0)						\
+ 		return len;						\
+ 	strim(_value);							\
+ 	return len;							\
 
