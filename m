@@ -1,181 +1,166 @@
-Return-Path: <linux-kernel+bounces-448891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0AF9F46E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:08:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C07F9F46E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF631188BEED
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:08:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DCD188E99C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40BA1DE3C5;
-	Tue, 17 Dec 2024 09:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AC31DE4C0;
+	Tue, 17 Dec 2024 09:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jShYx6So"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yqd1k7Hn"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF411DE2B3;
-	Tue, 17 Dec 2024 09:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA5F1DE2C3
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734426513; cv=none; b=EaK52dbYhjuuXdmuQkhY1yG9zYichdkTombUpiJso5mmpbaDyPoBef48FvAY+jWDr0XrEzigV6Rh+RqXf+OVmneKaMuK1952XTP9QHsxgPUcz9VQCjPd4g74dbIQBvcv0HWRrzfjhJhCyHf9RZ0vOzR+l6l4JLcnssGPMyUkfYY=
+	t=1734426572; cv=none; b=pGj5rakDYGwh56DeosTbHn6RlQi7oUIFMXJetmYRv7EIHWYX/0XV6RL3FjyvBS5/vGZcxcYECDWLDdWl0qfHviox/ZWIUsMwZUrE9Nhv9Sn+pTIj4L5PjywgyRhi+0BCD+TokhoO2X9N1Fmz9zWS2wzWcjAgBthwkRwDk2mXmGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734426513; c=relaxed/simple;
-	bh=CHyFqO9Srp6ss3rLdTR3OwjKwdFQnlQugV3a49zxFz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G9UjGOoSHaE4GEIaIemWHOsViHAayubq3KgunLFJ0s4MVLEaPf+xGWxNcmLN/F/ttgl8ZzsyIQ4ggqqfWGY7/jkRAzEwooEJLbGXaztZ/rnfeCl6gDALw6tasUz2/JqOTj2WPW9uB+i0xv0x/evUy5ixaksVmim+G3YlSYecXrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jShYx6So; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385eed29d17so2537531f8f.0;
-        Tue, 17 Dec 2024 01:08:30 -0800 (PST)
+	s=arc-20240116; t=1734426572; c=relaxed/simple;
+	bh=ApEhb33uCE8yBRHsse69NJsbjohMokRhjRb2vxI8iFA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mkuMkYEwTwIj++oF9d7m0cNMqYHSaG61nbFx+4S5EpMy2FyDhqU0D/riNLAdqNvre2xs/awzboTKBsvo29OJMl/WE9BdhCCKZPQfH7FSuDZrNhPlkeUugpuLcLRIbXkXUwoocHdDYs5+d76YeEzUR+Nh6WEYKNXOjq2Yzrq11kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yqd1k7Hn; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-aa6869e15ebso633831766b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:09:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734426509; x=1735031309; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q5weIQENd/TWSQgQ6aqWujhlJ38EIL0ozLxoFHUkrYE=;
-        b=jShYx6SowHf9YNXu3Ln9CRTXmQBMglmoHPXBI8oBfcd16goNWWuej/DfAGOCZSuCby
-         o8FcrG1UP+Yh9XOFQSDYEvRVGrZPfIB0jXo1VOYYraE74elGaDMQEo/d68N5ZFGp+IYB
-         Hg6nCetPOFoMbp6/m+tBDzzedISjCkZy1AracnS71LUEod9a3pEzXo7kVmUHmNu2Vspu
-         u8WlfER8vuwT50hDyUZ+j4uh43n8MvmI7SjmNFdMeNCyXh1lJJ6obqRmRrlf3WC3yZbR
-         CE5/7goAigf84F7hsaBag/eNxVDPRqtOSwGV0xaMhd3r8cl1dVDGbAUGh5If8ZrXuPyJ
-         n1qw==
+        d=google.com; s=20230601; t=1734426568; x=1735031368; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GdTUhvict8QP95ODVq3VBD/97IqwhvwNQQSLRxy9C2k=;
+        b=yqd1k7Hn7dBHYVqBiwJ5KytpJ4e9SzbUFOI8tU8VIz4jzFEVJo9BHK4YVLw9tAm8xr
+         hmFNK9gySXMdwO9TSE3+v0YZmawmdr/ik9+8nd5vJkoq9CqHiuyOudcfyUk3uHzTM3OI
+         1c/5tFEeXNXUD16Wk+XiZ4i7FB6lQ67Nbcn63Jc3st0VCeb/3TGVkNJm43AMfsKZZEp+
+         jaGGDdQYTSVOEEhfSkRzitJrGpKwAKNwbKJG3CS5mb1D/n7WdiJzAYyh7Kxdb2mC2LyW
+         btyfspASSQJOyw2WvJ4LBckpMBNxVpECMD3JbHUoFFm66N7hiEGlzQJIr8/WiXSlvp6H
+         2R6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734426509; x=1735031309;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q5weIQENd/TWSQgQ6aqWujhlJ38EIL0ozLxoFHUkrYE=;
-        b=tNalSb4nOBlfoVUsQ8eEYjV9vhfyBjjOpG0G7DQp8tObvXq2RC54ZVYlWhCycCT6D5
-         boyehJVfg3k5mVScojIJKk1UDss4FvBcc+Mt3MJNPhtL/+vy3UHtpRG5a36oz05OXeen
-         xJWqrgpopiFCyTSk+DKz6dmz8mWldRfcSmbfJr7FH/QTulWIXaG4fv2QqA8tH7e49Rw4
-         yX8fRXeIupsSPG0MbRlvE53kq/DwC7b7Vv/mgV5WYNro1V647c6UTpk1K/XtoqYSYkCO
-         sYcE7TtdTOb+ywjY2H8AOu3dEBnGwAL2Jn74P+ihPMzjEuvPHEQhcdfQfZQsNKPhP9HA
-         3ucg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ0Dgo1CuQIlVTN4JIKW+SbJysWwH1uhH4bjT8BjcgGWd0aJmzvj4CcEPq7iPunaWmYN19tKYJlZL2EPXaI3Sas3E=@vger.kernel.org, AJvYcCXCQPw7bXckZ2CxmpQrH58u1T5r+oD6QUjrDzhU85SVTvGvNIkDhY/kr4eCBkqWgKpHfWVLnZsJ0UIt@vger.kernel.org, AJvYcCXs311ZlseEShR1ml3zIURXENn4N+mwNh3ur+RdUdc5TJlzECrniVLKerSNNsx523cHmd3WphQX+rDgsm24@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZwwK4PymF0yucwRDjCDw8DAJL49lwT3BqbGIC0mnMBjVSewOQ
-	5dp+TKPlGCNaauvUKdWlfW2VIB7DiDKN1lLQ9XTHEMCYrxPvA5zs
-X-Gm-Gg: ASbGncs3oDZb0c2IvgBO9zarozxYfFr1oGAFY43cvPiaAjTGoGq7CuUuSm3fpwqjIgU
-	dXQARiwgPJYyap7x986JtKUqWIsWveUVKUl5AV2tLHyeENSmvmE8PLAJgtYOn7V2qZ8QQqipK+Y
-	WEJHnice2E3K4fk9wkkeSXkDWrCrsTXdegr/CxAVReNL3aoM599V7plpfsgfLXRL9y3Blh/0B9c
-	t8uRY2XFu1q3R8RibxbfLmz76bcYUd5YBorJirFsDpmP4SxQhbScUayCwPni3gMcLVvhHiEKT8p
-	oMEL9h+/iImHgrSRFDRUnA==
-X-Google-Smtp-Source: AGHT+IFKUA5hQNQSywoZDLpGUcdLM6zt8M6vh5FswSnswuK4fj51IzxHglfrE9X7z3ZJ7TaFHj1FhQ==
-X-Received: by 2002:a05:6000:156f:b0:385:e328:890a with SMTP id ffacd0b85a97d-3888e0c0520mr13813018f8f.49.1734426509180;
-        Tue, 17 Dec 2024 01:08:29 -0800 (PST)
-Received: from [172.16.20.173] (62-73-104-42.ip.btc-net.bg. [62.73.104.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80165c5sm10519556f8f.25.2024.12.17.01.08.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 01:08:28 -0800 (PST)
-Message-ID: <6e93d59d-71e5-4c09-862f-55b5504121aa@gmail.com>
-Date: Tue, 17 Dec 2024 11:08:26 +0200
+        d=1e100.net; s=20230601; t=1734426568; x=1735031368;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GdTUhvict8QP95ODVq3VBD/97IqwhvwNQQSLRxy9C2k=;
+        b=his10b0glc3PG6UR0bh8TRqfDO7eZWh4bvAMtxaUS3orb6tqKLPNGzox91l5XO7oeU
+         sn1NRKs4h9wf3OTbTMvK3WzVYY3WSD+sNmiWOch817vp3U1LoS88mex1j+OKi0qK/c3+
+         loq5SZlLyexz5V6Z13X+QHHyUlMMbVJTWCsm8PHd71KF1gLg1Jrw7v4g1etjg0nMXIga
+         e2r1qHcM0YDAY0K03zbL52bqFQgVmqdTdiXLxsu3eNKx5ctDBz98xhuiQmdyjN74H2dw
+         RweJizNy1IjebCLkeuZxLJoAWNBxBmomtziJZF8IsXt7Fu5WeWZuHGNG2QHjFtnEkiux
+         bW5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUeXCcNNSIEXVzDQ4cQDNBLXx6Fl/9d42DHQB/b9qujptTgdaqjDX06A/jZneffeKqPN9DNmp/lKlnTLrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp0/grwSaJRuTBcyVLVseJUrHt6nxhuEemc8irUEc1nM4p3m2z
+	pcFNyIjZVSW7XetjJmDnWNQeBGxLSuq0wDNAZ4lrNH/I/Tgt4B0tRuQegFVMS3zgt6WC+CAfPZp
+	ySQ==
+X-Google-Smtp-Source: AGHT+IGU20kqjTEH0qg2wrBjRVFipLJ0Ib95VwwIZLvzOerjf4VO//KSgFZw06uw+rufZ3TdiJ2B2NpM5Qs=
+X-Received: from edyd21.prod.google.com ([2002:a05:6402:795:b0:5d0:821b:cd59])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:2755:b0:5d0:7a0b:b45f
+ with SMTP id 4fb4d7f45d1cf-5d7d559404emr2416074a12.10.1734426568415; Tue, 17
+ Dec 2024 01:09:28 -0800 (PST)
+Date: Tue, 17 Dec 2024 10:09:26 +0100
+In-Reply-To: <20241216150722.4079213-2-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: exynos5: Add
- samsung,exynos8895-hsi2c compatible
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti
- <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
- <20241214220419.723100-2-ivo.ivanov.ivanov1@gmail.com>
- <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
- <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
- <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <2024121418-blazer-valiant-c51a@gregkh> <20241216150722.4079213-2-gnoack@google.com>
+Message-ID: <Z2E_tqgqXIwi5j4C@google.com>
+Subject: Re: [PATCH] tty: Permit some TIOCL_SETSEL modes without CAP_SYS_ADMIN
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jann Horn <jannh@google.com>, "Hanno =?utf-8?B?QsO2Y2s=?=" <hanno@hboeck.de>, Jiri Slaby <jirislaby@kernel.org>, 
+	linux-hardening@vger.kernel.org, regressions@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/17/24 07:24, Krzysztof Kozlowski wrote:
-> On 16/12/2024 21:59, Ivaylo Ivanov wrote:
->> On 12/16/24 10:44, Krzysztof Kozlowski wrote:
->>> On 14/12/2024 23:04, Ivaylo Ivanov wrote:
->>>> Add samsung,exynos8895-hsi2c dedicated compatible for representing
->>>> I2C of Exynos8895 SoC. Since there are I2C buses that aren't implemented
->>>> as a part of USIv1 blocks, they only require a single clock.
->>>>
->>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>>> ---
->>>>  .../devicetree/bindings/i2c/i2c-exynos5.yaml  | 26 ++++++++++++++++---
->>>>  1 file changed, 23 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
->>>> index cc8bba553..b029be88e 100644
->>>> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
->>>> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
->>>> @@ -25,6 +25,7 @@ properties:
->>>>            - samsung,exynos5250-hsi2c    # Exynos5250 and Exynos5420
->>>>            - samsung,exynos5260-hsi2c    # Exynos5260
->>>>            - samsung,exynos7-hsi2c       # Exynos7
->>>> +          - samsung,exynos8895-hsi2c
->>>>            - samsung,exynosautov9-hsi2c
->>>>        - items:
->>>>            - enum:
->>>> @@ -94,9 +95,28 @@ allOf:
->>>>          - clock-names
->>>>  
->>>>      else:
->>>> -      properties:
->>>> -        clocks:
->>>> -          maxItems: 1
->>>> +      if:
->>>> +        properties:
->>>> +          compatible:
->>>> +            contains:
->>>> +              enum:
->>>> +                - samsung,exynos8895-hsi2c
->>>> +
->>>> +      then:
->>>> +        properties:
->>>> +          clocks:
->>> Missing minItems
->>>
->>>> +            maxItems: 2
->>>> +
->>>> +          clock-names:
->>> Ditto
->>>
->>>> +            maxItems: 2
->>>> +
->>>> +        required:
->>>> +          - clock-names
->>> I don't understand why do you need second, same branch in if, basically
->> Because, as I stated in the commit message, we have HSI2C controllers
->> both implemented in USIv1 blocks and outside. These that are a part of
-> On Exynos8895? Where? With the same compatible?
+FYI, I have tested this locally - it makes the mouse curser show up again i=
+n
+Emacs.  (I do also believe that is it fine security-wise, but will also ver=
+y
+happily add a Reviewed-By or Tested-By from Hanno or others in the next
+iteration :))
 
-hsi2c_0 which has a clock from BUSC and hsi2c_1 to hsi2c_4 which use clocks
-from PERIC1 (CLK_GOUT_PERIC1_HSI2C_CAM{0,1,2,3}_IPCLK). Why would
-they need a different compatible though? It's functionally the same i2c design
-as the one implemented in USIv1 blocks.
+=E2=80=94G=C3=BCnther
 
->
->> USIv1 need 2 clocks, and those that aren't have only one. So it's not
->> a duplicate for the previous - autov9 sets a minitems of 2 and the
->> others have a maxitems of 1.
-> We talk here about branch that says 2 items. You duplicate that one.
-
-I see. I can just define the clocks for all at this point.
-
-Best regards,
-Ivo.
-
->
-> Best regards,
-> Krzysztof
-
+On Mon, Dec 16, 2024 at 03:07:23PM +0000, G=C3=BCnther Noack wrote:
+> With this, processes without CAP_SYS_ADMIN are able to use TIOCLINUX with
+> subcode TIOCL_SETSEL, in the selection modes TIOCL_SETPOINTER,
+> TIOCL_SELCLEAR and TIOCL_SELMOUSEREPORT.
+>=20
+> TIOCL_SETSEL was previously changed to require CAP_SYS_ADMIN, as this IOC=
+TL
+> let callers change the selection buffer and could be used to simulate
+> keypresses.  These three TIOCL_SETSEL selection modes, however, are safe =
+to
+> use, as they do not modify the selection buffer.
+>=20
+> This fixes a mouse support regression that affected Emacs (invisible mous=
+e
+> cursor).
+>=20
+> Link: https://lore.kernel.org/r/ee3ec63269b43b34e1c90dd8c9743bf8@finder.o=
+rg
+> Fixes: 8d1b43f6a6df ("tty: Restrict access to TIOCLINUX' copy-and-paste s=
+ubcommands")
+> Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+> ---
+>  drivers/tty/vt/selection.c | 14 ++++++++++++++
+>  drivers/tty/vt/vt.c        |  3 +--
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/tty/vt/selection.c b/drivers/tty/vt/selection.c
+> index 564341f1a74f..0bd6544e30a6 100644
+> --- a/drivers/tty/vt/selection.c
+> +++ b/drivers/tty/vt/selection.c
+> @@ -192,6 +192,20 @@ int set_selection_user(const struct tiocl_selection =
+__user *sel,
+>  	if (copy_from_user(&v, sel, sizeof(*sel)))
+>  		return -EFAULT;
+> =20
+> +	/*
+> +	 * TIOCL_SELCLEAR, TIOCL_SELPOINTER and TIOCL_SELMOUSEREPORT are OK to
+> +	 * use without CAP_SYS_ADMIN as they do not modify the selection.
+> +	 */
+> +	switch (v.sel_mode) {
+> +	case TIOCL_SELCLEAR:
+> +	case TIOCL_SELPOINTER:
+> +	case TIOCL_SELMOUSEREPORT:
+> +		break;
+> +	default:
+> +		if (!capable(CAP_SYS_ADMIN))
+> +			return -EPERM;
+> +	}
+> +
+>  	return set_selection_kernel(&v, tty);
+>  }
+> =20
+> diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+> index 96842ce817af..ed65b3b80fbd 100644
+> --- a/drivers/tty/vt/vt.c
+> +++ b/drivers/tty/vt/vt.c
+> @@ -3345,8 +3345,7 @@ int tioclinux(struct tty_struct *tty, unsigned long=
+ arg)
+> =20
+>  	switch (type) {
+>  	case TIOCL_SETSEL:
+> -		if (!capable(CAP_SYS_ADMIN))
+> -			return -EPERM;
+> +		/* CAP_SYS_ADMIN check happens in set_selection_user(). */
+>  		return set_selection_user(param, tty);
+>  	case TIOCL_PASTESEL:
+>  		if (!capable(CAP_SYS_ADMIN))
+> --=20
+> 2.47.1.613.gc27f4b7a9f-goog
+>=20
 
