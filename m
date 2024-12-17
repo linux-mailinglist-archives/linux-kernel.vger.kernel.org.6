@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-449824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074969F569C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:54:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B249F569E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:55:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44C0188162A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:54:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED54316DFAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FEB1F8AF0;
-	Tue, 17 Dec 2024 18:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9187D1F8AF6;
+	Tue, 17 Dec 2024 18:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjFbzyRU"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rf5sPkVG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3573D1F76AE;
-	Tue, 17 Dec 2024 18:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79801F8ADF;
+	Tue, 17 Dec 2024 18:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734461686; cv=none; b=k/AK7lKGffB4WYXYfXYkeiXtnbO3o71ctVOA1Aod+Hfl3HkRILxgqouPGE72xPLinp7jw88E7hFUdmZBtt8KTfIu4yER/+iH+hniUF28/Q+aDRYU3bArmRH0Z8TTKq8Z5Do/+JbnnZsFTmYPsSx9MwDDI9TEcaFp+XIz2lrXUeg=
+	t=1734461705; cv=none; b=Fmxa4Ef3X46ZFtDClN0uktpgoopzYFaJ7UmWRej+tnv1QK/5PsIMsNo4x8bzenTLAisEWqGOr4W1wHU4948fL/Hp3Iv5nA84hqxd1wAI9LK47GAeYfl7cFbY9LobKQr4NWB+T7N4hDuOdJBfGg0psj6JPAO5ACANF1PdqfU+duM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734461686; c=relaxed/simple;
-	bh=dwEK2V+NwsxoqVLt4qwUPzJuZxjpRpVr3DgeyYIkTus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tbAZ0ja/tdP+flIrBTGGNWySF0L1EHbzahnIAqnpkcJ/52/QTsY4wO8yFifSlhE+Q1+e7UWjn6JjYK29dy/wrgAvf1/6vhluV7Vf1OomiX73uFO6P1Mcn42TLsBJqJSmlIGxgw2FPeyRm7Z5rarD0IhBlZP4QOr9GZeDjYypVNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjFbzyRU; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5f2ed0b70d6so2477042eaf.3;
-        Tue, 17 Dec 2024 10:54:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734461684; x=1735066484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dwEK2V+NwsxoqVLt4qwUPzJuZxjpRpVr3DgeyYIkTus=;
-        b=QjFbzyRU/DApO6iDXHdYUvZQMNssZcrlCX3/zXyqcALL6A1XKJanfWYDRyNE0xk2Y2
-         x0iXfknthgthBJBUZ3gU5+rAaW6/4qwTooKTrhlrtoGM9EaCcKlolWnn/oYxeSC0O19P
-         JpVviiHZZocfLTa9xuek9gHyrMfmKREipcfARqMuO6xSRcTT8ccWvQz5NpjiunS5NgqU
-         ZnDkZbUNXLyiGSkxSSeCkTFJEGReO1XK/W5qe0RHJtI5Cf6II/mFclfsy4iggdpVRZG8
-         vS1BC3+Cq5lVuhx/iOENUVf3A+y9nZlmWgxELj5poKW8rQbLzkUiznpf4NiHyDYfvzNR
-         cSbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734461684; x=1735066484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dwEK2V+NwsxoqVLt4qwUPzJuZxjpRpVr3DgeyYIkTus=;
-        b=F3DogWWGhARziGuPcy/URTc+U1XuqOjsTDqezAWAp6Zh4LYhBfD4SwJ/p7IZeYJVui
-         ARGKWXiJikxpvheEvv+sQr8JsW/lBqN+DoTRZz0t6kBjwXeuLxanYRq3TAdT57Kk2opF
-         IWmnN2KgDORzMLsbAMj5IRnaks8m278Fww0hCYm5y2JU8V1ou7oU2EM9k/sw0Yi3GDZA
-         sNGuws48V+QTkIJFjW2P7Cu8xF/OCNIrhki4UsLTH+w+bOIDBDogoZVy5sa7I54JqgNZ
-         GsZCagcXVRh5exNKz9Fc5fwRN+Jm/QQgnwkJVYYtwPDdbgGjPFfulrEE+d8ZC7+l2nh1
-         jLwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUU4D2bdYUKJ0hubGYEWSIkREIHBUmQ9Ntl1jaqL0tCKRWyLZ4LGzPQTuUNOcqSgGeyfzkUT/Flxe0lSPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYAWeHqcKcG+Vwz3kYqgXcdYg1k3zYk+eUHv4l0GRzk0ipDXkr
-	dA2VMJJdEnvEjTwB4yLwbrgM6Ma+9yxOfKTErkIvdRD4xSOojSgp0/XzgxhEbMZxPOb+kx1pVi7
-	wGr93tpJCJL2MWEMgsl51k7GzgOM=
-X-Gm-Gg: ASbGncvi0KefeStAxUbdB6sVUu9e7qo2k7va34z1gZxWu0ZGhrASLPxo4LB8d4TP63h
-	Vq8OeOE9CW+M3heLND1/oxkufHMmRdInb3IwQ
-X-Google-Smtp-Source: AGHT+IGQDZLl7mfjaTH/5VIvgXt+Gr4zkRvh4UK8kHCuvd+Y3fLIH5he4Q8ShGTMod9GEHUuUogqecqkAtumrAGeHtE=
-X-Received: by 2002:a05:6870:808a:b0:29e:6211:1262 with SMTP id
- 586e51a60fabf-2a3abeeb4c0mr10681465fac.0.1734461684277; Tue, 17 Dec 2024
- 10:54:44 -0800 (PST)
+	s=arc-20240116; t=1734461705; c=relaxed/simple;
+	bh=oFnWjm+pqO0sYESC0cwc19ZduXpRAMOUBhQG0fcGYb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IpIT6t5kc9qsk3w2mO68eHLdaIT84S0hYZasKPZckBozRyEURNFU5q80QeC9D+fBH1T/jzk1Fv45VSxYhqJVSFgpC7zolLkmAkl/x7bOglwV4FCRJj3mMRlthFzb1ESlObD2a0dCEGAZjKbXJCOT+fLYCoCM8vU1LHrGXrfVRAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rf5sPkVG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B474C4CED3;
+	Tue, 17 Dec 2024 18:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734461704;
+	bh=oFnWjm+pqO0sYESC0cwc19ZduXpRAMOUBhQG0fcGYb0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rf5sPkVGqYAUNBUOicc+FNzgfIalPd/+cCHpGpUixLPjZypeFs/2eeWipBT5a8R9v
+	 TOUThH9k1EnVBjiFShDZR4kFIypHJU2tE+W6VNr7dYdHWbFvjUKGsMz5Ew43Sd1lrT
+	 a46B8iEd6+LJnvsz/LNNylUr2mjlXVqyiQ1M8Avt0eZGG+gx7nP1WeFrZfl6A5axL3
+	 HnJj4KELkgdFHqcbB8EfSBquHVzjM95lphYmC2xPlMcmjPPNgEsNsBgM72HWZhBQX/
+	 C5iiuoa1IYcclVaqz8hWJvukUue+GpsiaWNu1GkWWwdm0bCWTfMGSENaTOCUsFB20j
+	 xEiGT9kSBr0Uw==
+Date: Tue, 17 Dec 2024 18:55:03 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Wei Liu <wei.liu@kernel.org>,
+	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>, kys@microsoft.com,
+	haiyangz@microsoft.com, decui@microsoft.com
+Subject: [GIT PULL] Hyperv-fixes for v6.13-rc4
+Message-ID: <Z2HJB0qky91FHC7C@liuwe-devbox-debian-v2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122210346.2848578-1-alexthreed@gmail.com> <980c5cee-2dc3-4d26-b749-6ba00b9c2091@broadcom.com>
-In-Reply-To: <980c5cee-2dc3-4d26-b749-6ba00b9c2091@broadcom.com>
-From: Alex Shumsky <alexthreed@gmail.com>
-Date: Tue, 17 Dec 2024 21:54:32 +0300
-Message-ID: <CAF4oh-Pbbu-LJ22yyx95Zrw0rgwRHo_tEqhCnrRHRBHqADS8CA@mail.gmail.com>
-Subject: Re: [PATCH] brcmfmac: fix RSSI report in AP mode
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: linux-wireless@vger.kernel.org, Alexey Berezhok <a@bayrepo.ru>, 
-	=?UTF-8?Q?Alvin_=C5=A0ipraga?= <ALSI@bang-olufsen.dk>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Kalle Valo <kvalo@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Neal Gompa <neal@gompa.dev>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, brcm80211-dev-list.pdl@broadcom.com, 
-	brcm80211@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, Nov 26, 2024 at 2:13=E2=80=AFPM Arend van Spriel
-<arend.vanspriel@broadcom.com> wrote:
->
-> On 11/22/2024 10:03 PM, Alex Shumsky wrote:
-> > After commit 9a1590934d9a ("brcmfmac: correctly report average RSSI in
-> > station info") it is required from firmware to provide rx_lastpkt_rssi.
-> > If this field is not provided brcmfmac doesn't report any RSSI at all.
-> > Unfortunately some firmwares doesn't provide it. One example is firmwar=
-e
-> > for BCM43455 found in Raspbberry Pi.
-> > See https://github.com/raspberrypi/linux/issues/4574
-> >
-> > Fix it by falling back to rssi field if rx_lastpkt_rssi is not provided
-> > (like it was before 9a1590934d9a).
->
-> Sounds like a reasonable approach. However, I would like to learn more
-> about the issue. Maybe it is a per-vendor issue so I am interested what
-> the sta_info version is that we get from firmware. It is printed in
-> brcmf_cfg80211_get_station() with brcmf_dbg(). You can make it a
-> bphy_err() call instead or enable TRACE level debug messages in the drive=
-r.
->
-> Also would be good to know the firmware version and kernel version of
-> the BCM43455.
->
-> Regards,
-> Arend
+Hi Linus,
 
-Hi Arend,
+The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
-Is the info I have provided sufficient?
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed-20241217
+
+for you to fetch changes up to 175c71c2aceef173ae6d3dceb41edfc2ac0d5937:
+
+  tools/hv: reduce resource usage in hv_kvp_daemon (2024-12-09 18:44:15 +0000)
+
+----------------------------------------------------------------
+hyperv-fixes for v6.13-rc4
+  - Various fixes to Hyper-V tools in the kernel tree (Dexuan Cui,
+    Olaf Hering, Vitaly Kuznetsov)
+  - Fix a bug in the Hyper-V TSC page based sched_clock() (Naman Jain)
+  - Two bug fixes in the Hyper-V utility functions (Michael Kelley)
+  - Convert open-coded timeouts to secs_to_jiffies() in Hyper-V drivers
+    (Easwar Hariharan)
+----------------------------------------------------------------
+Dexuan Cui (1):
+      tools: hv: Fix a complier warning in the fcopy uio daemon
+
+Easwar Hariharan (1):
+      drivers: hv: Convert open-coded timeouts to secs_to_jiffies()
+
+Michael Kelley (2):
+      Drivers: hv: util: Don't force error code to ENODEV in util_probe()
+      Drivers: hv: util: Avoid accessing a ringbuffer not initialized yet
+
+Naman Jain (1):
+      x86/hyperv: Fix hv tsc page based sched_clock for hibernation
+
+Olaf Hering (5):
+      tools: hv: change permissions of NetworkManager configuration file
+      tools/hv: terminate fcopy daemon if read from uio fails
+      tools/hv: reduce resouce usage in hv_get_dns_info helper
+      tools/hv: add a .gitignore file
+      tools/hv: reduce resource usage in hv_kvp_daemon
+
+Vitaly Kuznetsov (1):
+      hv/hv_kvp_daemon: Pass NIC name to hv_get_dns_info as well
+
+ arch/x86/kernel/cpu/mshyperv.c     | 58 ++++++++++++++++++++++++++++++++++++++
+ drivers/clocksource/hyperv_timer.c | 14 ++++++++-
+ drivers/hv/hv_balloon.c            |  9 +++---
+ drivers/hv/hv_kvp.c                | 10 +++++--
+ drivers/hv/hv_snapshot.c           |  9 +++++-
+ drivers/hv/hv_util.c               | 13 +++++++--
+ drivers/hv/hyperv_vmbus.h          |  2 ++
+ drivers/hv/vmbus_drv.c             |  2 +-
+ include/clocksource/hyperv_timer.h |  2 ++
+ include/linux/hyperv.h             |  1 +
+ tools/hv/.gitignore                |  3 ++
+ tools/hv/hv_fcopy_uio_daemon.c     | 12 ++++----
+ tools/hv/hv_get_dns_info.sh        |  4 +--
+ tools/hv/hv_kvp_daemon.c           |  9 +++---
+ tools/hv/hv_set_ifconfig.sh        |  2 +-
+ 15 files changed, 125 insertions(+), 25 deletions(-)
+ create mode 100644 tools/hv/.gitignore
 
