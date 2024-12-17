@@ -1,161 +1,160 @@
-Return-Path: <linux-kernel+bounces-448960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9589F47B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:38:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C763D9F47BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:40:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6A37164675
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:38:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 023DE16415A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF681DEFC2;
-	Tue, 17 Dec 2024 09:38:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8FF1D5AA5;
-	Tue, 17 Dec 2024 09:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D781DED74;
+	Tue, 17 Dec 2024 09:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mqEUdgU+"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B232E628
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734428315; cv=none; b=IZAczVf55TsPJvnQTKqnAmvccwknoad8YbtbR881bK/1cdAne3VwN8cRhEKydK+qi8QkyhnKhbUP+qvUUeEn8+EoodH7INo4+ZL7E1gwjkbbgRmJLhMJBKlf84tZYJckqvANGoqWQhBTKA/0N+CWfibRm3lN10Zx5klHiVS2VCs=
+	t=1734428449; cv=none; b=KA20FalGjFzpqNAQsGfnGMp4xr+B3lH4+izvy1ysL4RGfXcQPoa9znpvYHK82W6htko0riaFSY6sNuoE+nLy1gnSLJDZ4lPfiJfRD0cqikFFNHa/+TL6iFqOF1vQCGWfdSd8AWAwEwpEnFX7i05CinAiooRorOycTMmQjvpAq6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734428315; c=relaxed/simple;
-	bh=bdqTMj31J0d19foueIwWZpipzFk7mkkYFLZuSeLOUHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fajt7T76uxckFZ9GhrLZrMy0vMze+0Kl4Um5Yue48MoPIE/pX10wSI79ZTjifJ3GjcIZQrGR8wVgVnpOqtlYrR9RtSv1Jfyzn6UZQ28Q9Bkm/5Zj6r0taaLigZFqDRqTR5OxWHgG6sG+PUtFxs3oZp0v/X9pDm6Xgk/eZZu3jZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C37B1007;
-	Tue, 17 Dec 2024 01:38:59 -0800 (PST)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BCCA3F720;
-	Tue, 17 Dec 2024 01:38:29 -0800 (PST)
-Message-ID: <31c86834-273b-458f-9914-eff76c283cfb@arm.com>
-Date: Tue, 17 Dec 2024 10:38:28 +0100
+	s=arc-20240116; t=1734428449; c=relaxed/simple;
+	bh=aqXs/GouKrhkgUshCq7lvESEEVCZFwMG74JU0NNq6zY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mpcP0Ki930i7rSoXb4SQeDLg0LiYZGA+/pS6IEY5XdGlM+bJdkPsLojM5ThPwHcygNKjmRYI63uSYlB7juA0mzomnppKL0KnCJ6iPbR8FB55eqk4A1TOCcqWGOL0U3XLG3IHr77QgBTqH7zrJbL8PKDcN8rp2dttdcI8NN/T1Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mqEUdgU+; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43634b570c1so23796395e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:40:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734428446; x=1735033246; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aB5cdeadV6hCwOqHqkeqnFHRRPrcOXD6QhSaEDTifao=;
+        b=mqEUdgU+XAfy8aseV+697NbN+JzY9Pbn8Iis4Ttt98OYEvNGSJ0k3DEQ8ePWDFgCIr
+         qgMZDrlkR7PWKtKPZstU8B3YcrCG4243dgx6xJHUTbDPOX87vwPYswxNvGLrRd6iWNqT
+         JG2y6er5cMx9cdeA+VfSJSjtkHdR+XtB9tzt77dfhz/e4HkVXpOxyeIbJAEFY7ASuW2v
+         ETm5PUUgITD2fBhR80KAOJf+ogL1wHcw1fTKTQ2Fm5TXMIpRQzodb5r6nVvBAn6h0rXC
+         6iEIXlqZwhzUjL0cXhXWayaTj7H61id80lokQivrKuZSLXdvpIFQ77p7SjcZIQDjEncF
+         sVjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734428446; x=1735033246;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aB5cdeadV6hCwOqHqkeqnFHRRPrcOXD6QhSaEDTifao=;
+        b=U+PgbiKZkIgVj/kELKRs6KZea8lOMnhp2Ca9bfFiOW5S/07BZpzcZHR1D4Ug6wYgc5
+         1ff8ykeP3dc9IE3+AaAUJHUA94JS9Ka5OsKkqImU0cqONDgMJQKZwc1am8pbDU5FnhFM
+         WajZzCD+wW8wDiQUvvOK7T5F4wcohLrCqkrlWpCUrXnVqwiT+khQXGM9iSGAKdj0QCId
+         wZnIvo1b0HQ5dhY+ANRQQ6jJiRrhj8xD9qDhWP8undrlO8W2YSbq742b9aX26vxH6Ljz
+         RsLfX1Vv3aifxS+4je4htg4pOxoTAiI+YOg9tGA92XK/8Ino/VrkrjwIGAIqR0lKDmZU
+         RkwA==
+X-Gm-Message-State: AOJu0YzkqyM93OdJDwy/ySJEhPQWq6ak52wt9dOY3ircaX871o/VODJ3
+	OxN6RM3CCCFzPU4b86wAEE+Jdo1/y4aI3gA131h/8jYheAgS+vupg91JC1FSZHQ=
+X-Gm-Gg: ASbGncu6ghQzV7g8Hhm9sTMLQcdCAldISqZXgRLt6OWMiwLPPZjA/83ig+9c0nIh8+m
+	/HHCRrAeN9Njam6k6YYE1Z0GhCG1zzlsqsKNU7KCuJhv8VnPcFj1ecQpU/W8KDSkoOW1TIozNPT
+	MxKkoJMWfKzmByFZPdnwP7OkgWjmAX7QWAqrPzMkqlWJaGIrLcFPn2ysIRqJE+o5sp6LvixHtN5
+	CjZjP8pJauqrwFxtsMf8uL+QWlMXAfOFTxw6AqYhc8u2oQzPifzwu+qAwLV1mTliJaAjeIT7xbM
+	2UaRz+7Bht3n/eW3YvvZY7jikMQYLEUEEQ==
+X-Google-Smtp-Source: AGHT+IFMPzbTWt1HkiEeugGyD0NbWrhqAxmzfxWPK1THCAUhCbVkXXzIU/nWMBLZuXZL1MeTGXgAYQ==
+X-Received: by 2002:a05:600c:1906:b0:434:eb86:aeca with SMTP id 5b1f17b1804b1-4362aa42b9bmr179229525e9.10.1734428445814;
+        Tue, 17 Dec 2024 01:40:45 -0800 (PST)
+Received: from ta2.c.googlers.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559ec46sm167475755e9.20.2024.12.17.01.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 01:40:45 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v5 0/3] mailbox: add Samsung Exynos driver
+Date: Tue, 17 Dec 2024 09:40:19 +0000
+Message-Id: <20241217-acpm-v4-upstream-mbox-v5-0-cd1d3951fe84@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v021 5/9] PM: EM: Introduce
- em_dev_expand_perf_domain()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>
-References: <5861970.DvuYhMxLoT@rjwysocki.net>
- <3353401.44csPzL39Z@rjwysocki.net>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <3353401.44csPzL39Z@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAARHYWcC/4WNQQqDMBBFryKz7pQYItWueo/iIupEBxojEysWy
+ d2beoEu34P//gGRhCnCvThAaOPIYc5QXQroJzuPhDxkBq20KXWp0faLx83ge4mrkPXou7BjY+p
+ baZQynaogbxchx/vZfbaZJ45rkM95s5mf/VfMQqHSrh6o0b2z7vHi2Uq4BhmhTSl9Ae8VCC67A
+ AAA
+To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com, 
+ willmcvicker@google.com, daniel.lezcano@linaro.org, 
+ vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734428445; l=2295;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=aqXs/GouKrhkgUshCq7lvESEEVCZFwMG74JU0NNq6zY=;
+ b=V0N28bPBxuwqNn8Aji3OUsPBTYyftNw2zGFwhrQtFnRXAbFk6Vu1sP/bEGYpyY70C20d7sHhs
+ +kce7NAcQ6WB7fLRsit3nSg+U5MV6iSAwYQfNKjAq0WnWq6fHwq51BH
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-On 29/11/2024 17:02, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Introduce a helper function for adding a CPU to an existing EM perf
-> domain.
-> 
-> Subsequently, this will be used by the intel_pstate driver to add new
-> CPUs to existing perf domains when those CPUs go online for the first
-> time after the initialization of the driver.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> v0.1 -> v0.2: No changes
+The samsung exynos mailbox controller has 16 flag bits for hardware
+interrupt generation and a shared register for passing mailbox messages.
+When the controller is used by the ACPM protocol the shared register is
+ignored and the mailbox controller acts as a doorbell. The controller
+just raises the interrupt to APM after the ACPM protocol has written
+the message to SRAM.
 
-Could you add information why this new EM interface is needed?
+Changes in v5:
+- fix dt-bindings by using the correct compatible name in the example
+- drop redundand "bindings" from the dt-bindings patch subject
+- rebase on top of v6.13-rc3
+- Link to v4: https://lore.kernel.org/r/20241212-acpm-v4-upstream-mbox-v4-0-02f8de92cfaf@linaro.org
 
-IIRC, you can't use the existing way (cpufreq_driver::register_em) since
-it gets called to early (3) for the PD cpumasks to be ready. This issue
-will be there for any system in which uarch domains are not congruent
-with clock domains which we hadn't have to deal with Arm's heterogeneous
-CPUs so far.
+Changes in v4:
+- rename bindings file to be based on compatible: google,gs101-acpm-mbox
+- specify doorbell or data mode via '#mbox-cells' dt property. Update
+  driver and introduce exynos_mbox_of_xlate() to parse the mode.
+- s/samsung/Samsung/, s/exynos/Exynos/
+- use writel instead of writel_relaxed
+- remove stray of_match_ptr()
+- Link to v3: https://lore.kernel.org/linux-arm-kernel/20241205174137.190545-1-tudor.ambarus@linaro.org/
 
-__init intel_pstate_init()
+Changes in v3:
+- decouple the mailbox controller driver from the ACPM protocol driver
+- address Krzysztof's review comments
 
-  intel_pstate_register_driver()
+v2:
+https://lore.kernel.org/linux-arm-kernel/20241017163649.3007062-1-tudor.ambarus@linaro.org/
 
-    cpufreq_register_driver()
+v1:
+https://lore.kernel.org/linux-arm-kernel/20241004165301.1979527-1-tudor.ambarus@linaro.org/
 
-      subsys_interface_register()
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Tudor Ambarus (3):
+      dt-bindings: mailbox: add google,gs101-mbox
+      mailbox: add Samsung Exynos driver
+      MAINTAINERS: add entry for Samsung Exynos mailbox driver
 
-        sif->add_dev() -> cpufreq_add_dev()
+ .../bindings/mailbox/google,gs101-mbox.yaml        |  79 +++++++++
+ MAINTAINERS                                        |  10 ++
+ drivers/mailbox/Kconfig                            |  11 ++
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/exynos-mailbox.c                   | 184 +++++++++++++++++++++
+ include/dt-bindings/mailbox/google,gs101.h         |  14 ++
+ 6 files changed, 300 insertions(+)
+---
+base-commit: 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
+change-id: 20241212-acpm-v4-upstream-mbox-948714004b05
 
-          cpufreq_online()
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
-            if (!new_policy && cpufreq_driver->online)
-
-            else
-
-              cpufreq_driver->init() -> intel_pstate_cpu_init()
-
-                __intel_pstate_cpu_init()
-
-                  intel_pstate_init_cpu()
-
-                    intel_pstate_get_cpu_pstates()
-
-                      hybrid_add_to_domain()
-
-                        em_dev_expand_perf_domain()              <-- (1)
-
-                  intel_pstate_init_acpi_perf_limits()
-
-                    intel_pstate_set_itmt_prio()                 <-- (2)
-
-            if (new_policy)
-
-              cpufreq_driver->register_em()                      <-- (3)
-
-    hybrid_init_cpu_capacity_scaling()
-
-      hybrid_refresh_cpu_capacity_scaling()
-
-        __hybrid_refresh_cpu_capacity_scaling()                  <-- (4)
-
-        hybrid_register_all_perf_domains()
-
-          hybrid_register_perf_domain()	
-
-            em_dev_register_perf_domain()                        <-- (5)
-
-      /* Enable EAS */
-      sched_clear_itmt_support()                                 <-- (6)
-
-Debugging this on a 'nosmt' i7-13700K (online mask =
-[0,2,4,6,8,10,12,14,16-23]
-
-(1) Add CPU to existing hybrid PD or create new hybrid PD.
-(2) Triggers sched domain rebuild (+ enabling EAS) already here during
-    startup ?
-    IMHO, reason is that max_highest_perf > min_highest_perf because of
-    different itmt prio
-    Happens for CPU8 on my machine (after CPU8 is added to hybrid PD
-    0,2,4,6,8) (itmt prio for CPU8=69 (1024) instead of 68 (1009)).
-    So it looks like EAS is enabled before (6) ?	
-(3) ARM's way to do (5)
-(4) Setting hybrid_max_perf_cpu
-(5) Register EM here
-(6) Actual call to initially triggers sched domain rebuild (+ enable
-    EAS) (done already in (2) on my machine)
-
-So (3) is not possible for Intel hybrid since the policy's cpumask(s)
-contain only one CPUs, i.e. CPUs are not sharing clock.
-And those cpumasks have to be build under (1) to be used in (5)?
-
-[...]
 
