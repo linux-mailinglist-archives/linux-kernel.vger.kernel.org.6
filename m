@@ -1,517 +1,259 @@
-Return-Path: <linux-kernel+bounces-450031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EFE9F59C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB169F59D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127D416D11A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DBF16F08B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F501FA267;
-	Tue, 17 Dec 2024 22:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1581F9F5F;
+	Tue, 17 Dec 2024 22:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="NovLET1v"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="mnZ54llD"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857B41F9F68
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 22:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734475508; cv=none; b=MhRxx+dNUNN2Ufs08mS10vdfyxebdUr5+ZR7RpnJleEfQl5ZLTK4JPpDEMdlGoK3lq7Y6CMsHkTfXqsmNLnG0XCdXvB3WPeiAtXc0sY6CecPU6ElkcFbkztO6GSQogqbS53Tb00h47AZyXitGlw67HAtaLbGAEIfmvBAZ4CJ7GI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734475508; c=relaxed/simple;
-	bh=wpyafckqo22LEgmRFK5sFgm/oXxSyWyTD75JOh7g7E8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zhrzb+S5sDKxjn/jiwwmFLx5RG5sAT1LN/UUG4mW+JB/nGbD3OtitoY14whMEw5PFlTwgj3JYBZjf4p5Cf5xG1UKFOG9mh5U/xTGK3ZXommGsOc6PJRz86acOzU5GEO+i8J3UP1Bzz7va/3otEKnF3/NLlqR3+5a+1GOIn1uHU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=NovLET1v; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 681082C0BE6;
-	Wed, 18 Dec 2024 11:45:03 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1734475503;
-	bh=tSL6RfI2t9n3wBGEs2DS4vNx+r8WnUJ+JVL9uhfC3MQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NovLET1vsAnEwPt9ytAlesMDjSfFnD1SB5xGcMz9iqZ6G3qRSEue00XKDOaWFwP+z
-	 3USJ16whLpud9SkcsMsoXb3m3n0A2DN6rhc26AHjrkg3QIcecOCxQ+Q9Lt88kxMxAK
-	 A3om14PXOFBG92hFWTHoWmSmCIM7fzARL6UzsW+LyfC9tUSggXI2csyoj5f+qMZpjs
-	 /zY2V+fkgASM3UEC+cFJWk/D8xEMg0vAlzy205VNpKrC/B3RuLa2jXKONpSWGaA6Uw
-	 FcQWR9U6XLnGXpMe+D/ZIIGHs27HnJKcYSY3znRAKfqISq0dNgGVogDlh+8H8FmnjF
-	 w5HbNLpTDnxRQ==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6761feef0003>; Wed, 18 Dec 2024 11:45:03 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 11C5513EE9B;
-	Wed, 18 Dec 2024 11:45:03 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 0E6102806F6; Wed, 18 Dec 2024 11:45:03 +1300 (NZDT)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	tsbogend@alpha.franken.de,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	markus.stockhausen@gmx.de
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v3 3/3] net: mdio: Add RTL9300 MDIO driver
-Date: Wed, 18 Dec 2024 11:45:01 +1300
-Message-ID: <20241217224501.398039-4-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241217224501.398039-1-chris.packham@alliedtelesis.co.nz>
-References: <20241217224501.398039-1-chris.packham@alliedtelesis.co.nz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7C84A23;
+	Tue, 17 Dec 2024 22:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.145.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734475643; cv=fail; b=a7wW4RvQSTf6Qj+al3u1Sf1T5z/0QW+8t2GBQ/d9Vufj8QdPl+EEh5Ysr9ESKWeJfkxJqOGtqjcC55yfEgVA3eRU9CPg1fZzGuSecIkTVZ8EdnwOSMENCje8HmkRc2H4AY0GsmboqiBZo6ObZ6RREW3CBTnVs3FVqsm3AAq05bI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734475643; c=relaxed/simple;
+	bh=NLiwe3DOTOUD6EpHmPUv+YkXIMzEqifzdeuVnKV/HGY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZekXZovA4tpXEJUJZ5EHo4HZOOTnZdlnu2joI15a1HyuO/o0HCLWiSHszHNC+tJs59puFpjGga7WxRP0lULAw0ADdyiRoHu71eNtL4Qk9cCeGaCwxMuoygGPxMqiUx0m+yGqOYI5/5SKzP2lneiNLxKxUzT8h4TcSZg43xcSYvU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=mnZ54llD; arc=fail smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHJNtxV029848;
+	Tue, 17 Dec 2024 14:47:17 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	s2048-2021-q4; bh=NLiwe3DOTOUD6EpHmPUv+YkXIMzEqifzdeuVnKV/HGY=; b=
+	mnZ54llD+2QGutr8BCKYNPF4qgqoFtEU7XzJHOyZYbOMZurzDz2SQLhlAvgzqwzi
+	CZWt/Z65fuf4Fh+Qy1J22kHVBTXDfKRnTIyXCZoSlK1TKBLmkvyIC8O6/B0gTFxU
+	y8HvB7Elh2IvTEcrzDeluZRPvJt3yGwW0U4ZpCYG1eDaVLsAqkvYiv7b9hwQrIe2
+	Ielhv/UVPXMyOD91DBBFNp9oxZujwO9tPlqGWrkvvVm2foVPmCVUEJrkd6rEXqCF
+	FzCUOPrqywPb81eR65GEVhyFIh4HdcetNO6A9YsRxO+oX7DN50WGQHrSTj/6A5gA
+	Xj/33OQJCwUhx+kJwsyc2A==
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2174.outbound.protection.outlook.com [104.47.58.174])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 43kfdtsb9y-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 14:47:17 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QTWOyfEqSr/A7uYJxqYcqugj0Zhn0LDg5Q0uqLRxt3nK99iUsqgbS3NcUViN0XZBqthCBbfy/KBEK1Qq2iE9OM6+FHPgR3Ce5KTv2zKBYGBjTbPFJyXPVVXL9P+oGrBNoJzgECrkQPR6gb2fM2zye0OFjtSgPhw1ZDg0GVaR9SWyGssrmyelR+K1ahKOJm0XfvtsrG5DNdUos+Yatjb/G7Fezj8gaLH+vGa+z4EOqau2rT9MLcsFikjzTwKvEIMi9xbbvm+FKkwwIBhVQvDJXJjLwa+l7+Zs8US9hcIHIQvc0zUOlmxWt/qmmSluz2Pdbo9Wf3QgbZdF3TEPDm/wWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NLiwe3DOTOUD6EpHmPUv+YkXIMzEqifzdeuVnKV/HGY=;
+ b=gGxBXFm1zYh3ZZXX2ZAlRHhIbz6OTU/MrsETQ7qTsj+L2hkfOnbJhjTLPibiFoquMdse9cunuUu/nhZiE8KhzPy/QjfGBWoZCoW7eOMSpLEfdCWHj5kgd+FRjVEgCrwOjH1J0sW1Z0V3SGikVPOH0O08hpiHef6aVivHp9+th0z4OGQx93EvgNTk/fW9bYL9UGiTbMnVTgIlfyO/6rQBJXG9EpvHHpkeyJWsV+PFbeHlg4t8TsmbgpJs2pfChMGHpqY0VS9Vn/eT8xbor9xGruDnJ1UDoBGK94NUcAB2lVxXwD6POvJLwRoHzmN7KpXPD0Pam6VRpzzk8Mzw/KVJ5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com (2603:10b6:806:1dc::10)
+ by DM4PR15MB6274.namprd15.prod.outlook.com (2603:10b6:8:18c::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Tue, 17 Dec
+ 2024 22:47:14 +0000
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610]) by SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610%7]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
+ 22:47:13 +0000
+From: Song Liu <songliubraving@meta.com>
+To: Song Liu <songliubraving@meta.com>
+CC: Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler
+	<casey@schaufler-ca.com>, Song Liu <song@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "roberto.sassu@huawei.com"
+	<roberto.sassu@huawei.com>,
+        "dmitry.kasatkin@gmail.com"
+	<dmitry.kasatkin@gmail.com>,
+        "eric.snowberg@oracle.com"
+	<eric.snowberg@oracle.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        Kernel Team <kernel-team@meta.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable IMA/EVM
+Thread-Topic: [RFC 0/2] ima: evm: Add kernel cmdline options to disable
+ IMA/EVM
+Thread-Index: AQHbUMHZ/pEEoDutDkiUOsUV91UKILLq8+2AgAAIjYCAAAEqgIAADAaA
+Date: Tue, 17 Dec 2024 22:47:13 +0000
+Message-ID: <B1D93B7E-7595-4B84-BC41-298067EAC8DC@fb.com>
+References: <20241217202525.1802109-1-song@kernel.org>
+ <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
+ <CAHC9VhTAJQJ1zh0EZY6aj2Pv=eMWJgTHm20sh_j9Z4NkX_ga=g@mail.gmail.com>
+ <8FCA52F6-F9AB-473F-AC9E-73D2F74AA02E@fb.com>
+In-Reply-To: <8FCA52F6-F9AB-473F-AC9E-73D2F74AA02E@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Apple Mail (2.3826.200.121)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5109:EE_|DM4PR15MB6274:EE_
+x-ms-office365-filtering-correlation-id: f46d54ad-4125-45b3-623b-08dd1eecc000
+x-fb-source: Internal
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?U0orSGN4cVhPQzFYN013SlZwY2c5VkhBdnRZL0ZqdHl4TWZGcXZLZXY2cTlm?=
+ =?utf-8?B?Z2xCWWgyLzdTVW1ZSmloUFZ1aldKenBqODdDQ0RVeXBRMURrYk5zNmV3enMz?=
+ =?utf-8?B?R1U0Nkw5UkMvWWJkaEI5bVBsdVR3Yk0xckJjSGV4OGtjLys2NEpSSVlBUlBi?=
+ =?utf-8?B?dmRLaHJHeUI1aXVPbzlPQloyYmRmQTJsbzJ3bXMvTEl4blNRVkdWRE81R2Fo?=
+ =?utf-8?B?UW9vbjJDSFFKem1sSnF6MlFVeVFLQ2pTYStZSTVJQVo4eHZLNXFVcG9jSnBa?=
+ =?utf-8?B?WDZGbDVFaEVJWUNTT3NveGVZTXdIMldVb2pIMFhlTVNTUzJUZXB4ejFmNHYz?=
+ =?utf-8?B?WllMUWtxKzFLOGVXdnJQdnFEZG1zbWtJdW81SVRyMmZaYVpIWHozUFdJTVZD?=
+ =?utf-8?B?Vmw5WXZCdU04QjBvRi9ncTJDN1l0ZmhKN0xSL0N4Uk1WbGMwZ0ZwYXNIUmYx?=
+ =?utf-8?B?bVhad2M0NDVQcDhvYmowRlNldjMzZUpMamRsUmtnbTI0TUkvRlhMZUZjMW1U?=
+ =?utf-8?B?QkVxZWg1UGNNMjBLOXZIRWdId09MRzc2Y0ZFVElYa2FKTU9pVlVzSEF0b2xZ?=
+ =?utf-8?B?SGNMeU8vVnFpUnUzdk0veldseFBsOEJMV1NaRi84MFJPeEZCZ255Q3YzdlM2?=
+ =?utf-8?B?cjNMZlRrOG9tVEtRSjB1S3UyL1JEVUczeUhlaHBzYmJlOVlFYzRIb3FpSjRm?=
+ =?utf-8?B?bTczRi9UT3VLbXRXVk9tc3c0L1JENklLUVUrdkwzUXJRSVRJMHRHM1R0MzBO?=
+ =?utf-8?B?RXpyNCtBVXhnRFVtdWMyM2tlWFpzZlZZSTgrVGNnenRKU2dIMmF5ajhpRUJ1?=
+ =?utf-8?B?WGl3dWJNalI4VVhmdmJmdVZmcVVLc0hKU2RndWk0eVFCMklIY0U4MTAvTzBi?=
+ =?utf-8?B?NXV2cEFPVTZvL2FtQmtSSVQ3Nmp1Q2RGYzYrK2xSTktrUmxLMlpDNml5TjBZ?=
+ =?utf-8?B?S1Y0L2NPWjlYWEN6VWJDZklqVVp2dFVTVlFxR3MybTQvYU9wZEVSdWdBMm5n?=
+ =?utf-8?B?Y2lOZmVZMXNyUW95ZHZwOUdyNG5LWnBHejc1S0FJelNIU1pQcnA1RlJvR0ky?=
+ =?utf-8?B?RzlHelF1ZE9vbnIvcTlsYjhiZi9XYWo3ay9uN0o1VXNsdkxLcnptd0IxMUtG?=
+ =?utf-8?B?cUd5dDY0NG90V0RjQVdLNzBXcDJQaW5TWE83U2ZkdFlpSjFHRGpIbmROUk9x?=
+ =?utf-8?B?T0lQU1RKSE1NNGRtNzNmVEExYnhZU09LRjVYNk56YzI1dFdGSnBkSWJNeXZM?=
+ =?utf-8?B?U2FNanRHZmNiN09PRnErLzR5cHd0OU1mUjV0RjRKU0xvSFdhcStaMmR2MEhK?=
+ =?utf-8?B?YmNraWRKK1dnUmpvYmRQUlZueUhjODFBRVdGdDVMTkRhMW5jMklHTGNLTldo?=
+ =?utf-8?B?Z1dwUUluano5dkhJVG8xL2hBY0lBdWxmWjZnd0QySDRuYTdXWFVMSTN4enU3?=
+ =?utf-8?B?Sys4SVJvQ1V3dFY3eDUvV09GV2hicnJJdkZzaE5IR0pWdThaQ3JkS3V3ZmVJ?=
+ =?utf-8?B?bVRCNGNJaGcvSXBleUJGaG5PV3FjZlJBd2w5SGEzcmhvTEkvcms1MjJLcVFt?=
+ =?utf-8?B?enFoelhZTUc0OFpLM1hjczdDQ2lqbkhvcjE1TEczREtUdmlDYXBNNjl3V1ZY?=
+ =?utf-8?B?MXU5aHMxZkJLQ1BNUkJEeFU0aFdVQTlKNENIdUlzbjVTbkttWXVkbkxrb1l4?=
+ =?utf-8?B?Q1QwQXRSUjRUNmd3QzIvWDI3d2hoc3F0Vk9YRHJxZS9XekxBL1lsUE9uK01H?=
+ =?utf-8?B?U3hWd0lFMVdnaFRiR2ZESEZjZW9DOTlISlpXTzQ3a1NTVVJpcnNTOTZTWUw0?=
+ =?utf-8?B?Q2xxOFE2YkhLM1FxRHlVOTNhWkFhOVFsVzdsVUhJREpraE9iWXJueXlYN2Zk?=
+ =?utf-8?B?TVMzckJwSkNPNmIzYllKMEtjMThwSmwrV1R4MHMwelJqc0tLZ2pyOHIxVXFQ?=
+ =?utf-8?Q?RxAp6ACWgbNJ2xrtijr15TfnrV/z096B?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5109.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YWo4MU5Pa2JDeDR0eFRyNDRoR2syUVhYTlpxQUxEN3VZNlhTVlBOUFcvQVRX?=
+ =?utf-8?B?OWovN0U4Y3JlaVBONEllZlRkY0FxNHRMV00vK3R1T1kyTVJpZENQYUE2RTk2?=
+ =?utf-8?B?ZHBRMHZXbisxN1I5dC9OYkhWLzlsbGVIdTV5WWh3NDd6aEh1VGN2MXU2VS91?=
+ =?utf-8?B?M2RrR2xFaHJTclhYRkpIbjBqNkJtL0xPSmVqUGtoM0JYVEkrak1RR1dsRm41?=
+ =?utf-8?B?RklSd0NabnRKNE1PVlRuSVlveDZzL002S0dRMmJReUhOUG5sTnNrdVBlUVJX?=
+ =?utf-8?B?NnR4QVNnNG54ZkZLN25ra3JLU1NMNXE1K3NROHJmeTFLQVF2d2MxeG1ZTDY0?=
+ =?utf-8?B?Vm5zSUpTOWJnM3FmMlFpcDNDUzdpa1NDZmN6a2ZUQm1xekhsSk9GaTFRWWd0?=
+ =?utf-8?B?cmlDOUlmbXhRS3BwMm1nSGtta3oyRUwzS3BHZytNejFXd3hRTE5xUkowRlpS?=
+ =?utf-8?B?OXcxenhKMUFjNE53c0FLQ3RnMXNrOEYyVGw1VTY2V0NmbE5wQXo0eFZrS05O?=
+ =?utf-8?B?c0ZMK3lUVHp0M3E5cjNWRGI4bUNTc24wb1o3NTlBWk5iREk5N240K2p2TVFK?=
+ =?utf-8?B?cEpJQU80TmdXWmV1WWVSVFBpSVpUcVU2Y2lsbjVvamg0d1kxaG9PQWVZSmpt?=
+ =?utf-8?B?SmNFVlVUMEoxM2FGNGhpZ0k2ZzdXcmZVZVB5czZsWnNwWU9pOE8xQWVxQ0tG?=
+ =?utf-8?B?Tk5QQnBuVFcrUDBJTlovZTM4UUV5SlphcCtqU1h4eWpHeGhIeDlzcFc1RmhE?=
+ =?utf-8?B?RjhnbTNjYkNyeWNlOWc1WXE3ODlOUkxiVWQ1cHF3L3FFMkJERDhLU1djdFRH?=
+ =?utf-8?B?Q1E1TUxQWFhBMVI2REVMYWJNRDZ2WmV5dHNzZldDSlZ6UDhwQ2pXcWVheTh0?=
+ =?utf-8?B?QnNURlB4MjVEVG9rWnArRExWcmZJK3E1bTFNTFR5WU4yS0htSnZOUFJoaEdG?=
+ =?utf-8?B?RHVNQ21pTjNXeXliZ1ZsQmRPS3NWaDZ5K0h1djE2K20xSHB6NEQ3TGlVZStZ?=
+ =?utf-8?B?QWcrYktyNndCL3gxY0dsTk5DUkNJUVZ3cEpFYjNmS09ZN1lHMzU2MFZKVXJI?=
+ =?utf-8?B?ZjBDRmVOUUl2djY5c0FTQnpidm1ESlhBU2M2dkkzbS9GUU4xV1VuQno4WXha?=
+ =?utf-8?B?YkRYZndwb0NnWG9xc2ZHSDZXTkpuYUVPQmV6cnl6aXpYdmxEM1UySm40M0t4?=
+ =?utf-8?B?Qlgxa21IUTFmY0k2am9VcE5nUVdqV05VVGdraWNoWVlTdlo2VVRwNDdSbmIy?=
+ =?utf-8?B?enpXMjJZTkROQkZhMEF3U0NKWTJ1ZHd4emtzZmhoa0xJdGMwdk1nOWVjajFh?=
+ =?utf-8?B?ejMrNUxJUG1VTVU4R0F5bEV3UW9tODJJd0Q1V3VNeU1QU21GcTREeE1SYnBr?=
+ =?utf-8?B?aHlzbWRpYVNEdmpoaFJvaVg1dzUvNzNOeE9sN09TVmNLb05qcnhBTFlkRWYz?=
+ =?utf-8?B?Sk1vc3pJNlBzZmc1TE4wWWlNWTVqdUNZd3dLNjJxSzY4dVZHS1pVYy9aTVZ0?=
+ =?utf-8?B?TXJGbW5MSDY5bHRUbjRXTFJsaXcvRzNDS3MrbmdPcDcrS3hjdG8zTGozSjZ6?=
+ =?utf-8?B?eEdoVnJ0dmJRUmlyQmxTY0Z3NGVDVDg2eFUyZHNiL01HUW8vN1N5eEQ3Y2JP?=
+ =?utf-8?B?a0graERybkZUczhlZUw1ZUJqb3lKN0hQU0Fmdk01T3BqUWdwM01qRHVZMzR5?=
+ =?utf-8?B?Y2NXUjlFbFErVHliQ1hTUnJ6VWsrd2w4cjBZOExBRDJwb0RSbFFDMWpOVTFx?=
+ =?utf-8?B?UlpnRldiTExiV0hpMkFwZkJVYnhINjlUOGZQd0hRdSs5cm5VWlhWTXpXUjE0?=
+ =?utf-8?B?alpQVGtteFpxdlJYRFlmZjN6OURobytYdDB6RHp6ckxldzFaMDJ1ZlRpVmh5?=
+ =?utf-8?B?REIrTjBORmZnVldrMWFHZGgrTVlxVFNqL0RZVFI2dWJ6YkRpbm5maFJuUGJj?=
+ =?utf-8?B?MzBZM3ZIMFpkS3dKRXhjYW42ckFYRkJSNGdyelpLeUhpTld6T2N5bzA3Ulpw?=
+ =?utf-8?B?NmJJZFFVWWNMYlFTU1FsU2pnWENNRHJ4TFA4WVNsaThsV3hqUUI0aXJleGFD?=
+ =?utf-8?B?SzBHdzBRU1BsUHhNN29ybFNiZjZ0OTdGdUhjcCsrYU1BbXNycU1Pa1padDNs?=
+ =?utf-8?B?VWdZWVBZeWJVVlJNekhPRlR4SUptckRLWTJSSzQyUytaeWdRNU9YUWI2emF0?=
+ =?utf-8?Q?Avxfeo6gDZYwz5oXH5WV4ac=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4D3C679FADCC2C4DB49DFD757D43AD92@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=6761feef a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=RZcAm9yDv7YA:10 a=cbL8N3GahYQ3_TZRw_4A:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5109.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f46d54ad-4125-45b3-623b-08dd1eecc000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2024 22:47:13.8469
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yvzB38n955UgA1lWr8nh+kAfov1wwIfxCTNvYv/u1zIENhXNMN+ArAk1/ZA+u1mkbarEPwxFC1sxcq6B68Hilw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR15MB6274
+X-Proofpoint-ORIG-GUID: 8s5JYPiyKP6wpUER2h1_EeHcY3efzYDH
+X-Proofpoint-GUID: 8s5JYPiyKP6wpUER2h1_EeHcY3efzYDH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
 
-Add a driver for the MDIO controller on the RTL9300 family of Ethernet
-switches with integrated SoC. There are 4 physical SMI interfaces on the
-RTL9300 but access is done using the switch ports so a single MDIO bus
-is presented to the rest of the system.
-
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
-
-Notes:
-    Changes in v3:
-    - Fix (another) off-by-one error
-    Changes in v2:
-    - Add clause 22 support
-    - Remove commented out code
-    - Formatting cleanup
-    - Set MAX_PORTS correctly for MDIO interface
-    - Fix off-by-one error in pn check
-
- drivers/net/mdio/Kconfig            |   7 +
- drivers/net/mdio/Makefile           |   1 +
- drivers/net/mdio/mdio-realtek-rtl.c | 341 ++++++++++++++++++++++++++++
- 3 files changed, 349 insertions(+)
- create mode 100644 drivers/net/mdio/mdio-realtek-rtl.c
-
-diff --git a/drivers/net/mdio/Kconfig b/drivers/net/mdio/Kconfig
-index 4a7a303be2f7..0c6240c4a7e9 100644
---- a/drivers/net/mdio/Kconfig
-+++ b/drivers/net/mdio/Kconfig
-@@ -185,6 +185,13 @@ config MDIO_IPQ8064
- 	  This driver supports the MDIO interface found in the network
- 	  interface units of the IPQ8064 SoC
-=20
-+config MDIO_REALTEK_RTL
-+	tristate "Realtek RTL9300 MDIO interface support"
-+	depends on MACH_REALTEK_RTL || COMPILE_TEST
-+	help
-+	  This driver supports the MDIO interface found in the Realtek
-+	  RTL9300 family of Ethernet switches with integrated SoC.
-+
- config MDIO_REGMAP
- 	tristate
- 	help
-diff --git a/drivers/net/mdio/Makefile b/drivers/net/mdio/Makefile
-index 1015f0db4531..2cd8b491f301 100644
---- a/drivers/net/mdio/Makefile
-+++ b/drivers/net/mdio/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_MDIO_MOXART)		+=3D mdio-moxart.o
- obj-$(CONFIG_MDIO_MSCC_MIIM)		+=3D mdio-mscc-miim.o
- obj-$(CONFIG_MDIO_MVUSB)		+=3D mdio-mvusb.o
- obj-$(CONFIG_MDIO_OCTEON)		+=3D mdio-octeon.o
-+obj-$(CONFIG_MDIO_REALTEK_RTL)		+=3D mdio-realtek-rtl.o
- obj-$(CONFIG_MDIO_REGMAP)		+=3D mdio-regmap.o
- obj-$(CONFIG_MDIO_SUN4I)		+=3D mdio-sun4i.o
- obj-$(CONFIG_MDIO_THUNDER)		+=3D mdio-thunder.o
-diff --git a/drivers/net/mdio/mdio-realtek-rtl.c b/drivers/net/mdio/mdio-=
-realtek-rtl.c
-new file mode 100644
-index 000000000000..d61a9273e86f
---- /dev/null
-+++ b/drivers/net/mdio/mdio-realtek-rtl.c
-@@ -0,0 +1,341 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * MDIO controller for RTL9300 switches with integrated SoC.
-+ *
-+ * The MDIO communication is abstracted by the switch. At the software l=
-evel
-+ * communication uses the switch port to address the PHY with the actual=
- MDIO
-+ * bus and address having been setup via the realtek,smi-address propert=
-y.
-+ */
-+
-+#include <linux/mdio.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/of_mdio.h>
-+#include <linux/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+
-+#define SMI_GLB_CTRL			0x000
-+#define   GLB_CTRL_INTF_SEL(intf)	BIT(16 + (intf))
-+#define SMI_PORT0_15_POLLING_SEL	0x008
-+#define SMI_ACCESS_PHY_CTRL_0		0x170
-+#define SMI_ACCESS_PHY_CTRL_1		0x174
-+#define   PHY_CTRL_RWOP			BIT(2)
-+#define   PHY_CTRL_TYPE			BIT(1)
-+#define   PHY_CTRL_CMD			BIT(0)
-+#define   PHY_CTRL_FAIL			BIT(25)
-+#define SMI_ACCESS_PHY_CTRL_2		0x178
-+#define SMI_ACCESS_PHY_CTRL_3		0x17c
-+#define SMI_PORT0_5_ADDR_CTRL		0x180
-+
-+#define MAX_PORTS       28
-+#define MAX_SMI_BUSSES  4
-+#define MAX_SMI_ADDR	0x1f
-+
-+struct realtek_mdio_priv {
-+	struct regmap *regmap;
-+	u8 smi_bus[MAX_PORTS];
-+	u8 smi_addr[MAX_PORTS];
-+	bool smi_bus_isc45[MAX_SMI_BUSSES];
-+	u32 reg_base;
-+};
-+
-+static int realtek_mdio_wait_ready(struct realtek_mdio_priv *priv)
-+{
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+
-+	return regmap_read_poll_timeout(regmap, reg_base + SMI_ACCESS_PHY_CTRL_=
-1,
-+					val, !(val & PHY_CTRL_CMD), 10, 500);
-+}
-+
-+static int realtek_mdio_read_c22(struct mii_bus *bus, int phy_id, int re=
-gnum)
-+{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+	int err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, phy_id <=
-< 16);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_1,
-+			   regnum << 20 |  0x1f << 15 | 0xfff << 3 | PHY_CTRL_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_read(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, &val);
-+	if (err)
-+		return err;
-+
-+	return val & 0xffff;
-+}
-+
-+static int realtek_mdio_write_c22(struct mii_bus *bus, int phy_id, int r=
-egnum, u16 value)
-+{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+	int err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_0, BIT(phy_=
-id));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, value <<=
- 16);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_1,
-+			   regnum << 20 |  0x1f << 15 | 0xfff << 3 | PHY_CTRL_RWOP | PHY_CTRL=
-_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_read_poll_timeout(regmap, reg_base + SMI_ACCESS_PHY_CTRL=
-_1,
-+				       val, !(val & PHY_CTRL_CMD), 10, 100);
-+	if (err)
-+		return err;
-+
-+	if (val & PHY_CTRL_FAIL)
-+		return -ENXIO;
-+
-+	return 0;
-+}
-+
-+static int realtek_mdio_read_c45(struct mii_bus *bus, int phy_id, int de=
-v_addr, int regnum)
-+{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+	int err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, phy_id <=
-< 16);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_3,
-+			   dev_addr << 16 | (regnum & 0xffff));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_1,
-+			   PHY_CTRL_TYPE | PHY_CTRL_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_read(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, &val);
-+	if (err)
-+		return err;
-+
-+	return val & 0xffff;
-+}
-+
-+static int realtek_mdio_write_c45(struct mii_bus *bus, int phy_id, int d=
-ev_addr,
-+				  int regnum, u16 value)
-+{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+	int err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_0, BIT(phy_=
-id));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, value <<=
- 16);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_3,
-+			   dev_addr << 16 | (regnum & 0xffff));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_1,
-+			   PHY_CTRL_RWOP | PHY_CTRL_TYPE | PHY_CTRL_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_read_poll_timeout(regmap, reg_base + SMI_ACCESS_PHY_CTRL=
-_1,
-+				       val, !(val & PHY_CTRL_CMD), 10, 100);
-+	if (err)
-+		return err;
-+
-+	if (val & PHY_CTRL_FAIL)
-+		return -ENXIO;
-+
-+	return 0;
-+}
-+
-+static int realtek_mdiobus_init(struct realtek_mdio_priv *priv)
-+{
-+	u32 glb_ctrl_mask =3D 0, glb_ctrl_val =3D 0;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 port_addr[5] =3D { 0 };
-+	u32 poll_sel[2] =3D { 0 };
-+	int i, err;
-+
-+	/* Associate the port with the SMI interface and PHY */
-+	for (i =3D 0; i < MAX_PORTS; i++) {
-+		int pos;
-+
-+		if (priv->smi_bus[i] > 3)
-+			continue;
-+
-+		pos =3D (i % 6) * 5;
-+		port_addr[i / 6] |=3D priv->smi_addr[i] << pos;
-+
-+		pos =3D (i % 16) * 2;
-+		poll_sel[i / 16] |=3D priv->smi_bus[i] << pos;
-+	}
-+
-+	/* Put the interfaces into C45 mode if required */
-+	for (i =3D 0; i < MAX_SMI_BUSSES; i++) {
-+		if (priv->smi_bus_isc45[i]) {
-+			glb_ctrl_mask |=3D GLB_CTRL_INTF_SEL(i);
-+			glb_ctrl_val |=3D GLB_CTRL_INTF_SEL(i);
-+		}
-+	}
-+
-+	err =3D regmap_bulk_write(regmap, reg_base + SMI_PORT0_5_ADDR_CTRL,
-+				port_addr, 5);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_bulk_write(regmap, reg_base + SMI_PORT0_15_POLLING_SEL,
-+				poll_sel, 2);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_update_bits(regmap, reg_base + SMI_GLB_CTRL,
-+				 glb_ctrl_mask, glb_ctrl_val);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int realtek_mdiobus_probe(struct platform_device *pdev)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct realtek_mdio_priv *priv;
-+	struct fwnode_handle *child;
-+	struct mii_bus *bus;
-+	int err;
-+
-+	bus =3D devm_mdiobus_alloc_size(dev, sizeof(*priv));
-+	if (!bus)
-+		return -ENOMEM;
-+
-+	bus->name =3D "Reaktek Switch MDIO Bus";
-+	bus->read =3D realtek_mdio_read_c22;
-+	bus->write =3D realtek_mdio_write_c22;
-+	bus->read_c45 =3D realtek_mdio_read_c45;
-+	bus->write_c45 =3D  realtek_mdio_write_c45;
-+	bus->parent =3D dev;
-+	priv =3D bus->priv;
-+
-+	priv->regmap =3D syscon_node_to_regmap(dev->parent->of_node);
-+	if (IS_ERR(priv->regmap))
-+		return PTR_ERR(priv->regmap);
-+
-+	err =3D device_property_read_u32(dev, "reg", &priv->reg_base);
-+	if (err)
-+		return err;
-+
-+	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", dev_name(dev));
-+
-+	device_for_each_child_node(dev, child) {
-+		u32 pn, smi_addr[2];
-+
-+		err =3D fwnode_property_read_u32(child, "reg", &pn);
-+		if (err)
-+			return err;
-+
-+		if (pn >=3D MAX_PORTS)
-+			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
-+
-+		err =3D fwnode_property_read_u32_array(child, "realtek,smi-address", s=
-mi_addr, 2);
-+		if (err) {
-+			smi_addr[0] =3D 0;
-+			smi_addr[1] =3D pn;
-+		}
-+
-+		if (smi_addr[0] >=3D MAX_SMI_BUSSES)
-+			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n",
-+					     smi_addr[0]);
-+
-+		if (smi_addr[1] > MAX_SMI_ADDR)
-+			return dev_err_probe(dev, -EINVAL, "illegal smi addr %d\n", smi_addr[=
-1]);
-+
-+		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
-+			priv->smi_bus_isc45[smi_addr[0]] =3D true;
-+
-+		priv->smi_bus[pn] =3D smi_addr[0];
-+		priv->smi_addr[pn] =3D smi_addr[1];
-+	}
-+
-+	err =3D realtek_mdiobus_init(priv);
-+	if (err)
-+		return dev_err_probe(dev, err, "failed to initialise MDIO bus controll=
-er\n");
-+
-+	err =3D devm_of_mdiobus_register(dev, bus, dev->of_node);
-+	if (err)
-+		return dev_err_probe(dev, err, "cannot register MDIO bus\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id realtek_mdio_ids[] =3D {
-+	{ .compatible =3D "realtek,rtl9301-mdio" },
-+	{ .compatible =3D "realtek,rtl9302b-mdio" },
-+	{ .compatible =3D "realtek,rtl9302c-mdio" },
-+	{ .compatible =3D "realtek,rtl9303-mdio" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, realtek_mdio_ids);
-+
-+static struct platform_driver rtl9300_mdio_driver =3D {
-+	.probe =3D realtek_mdiobus_probe,
-+	.driver =3D {
-+		.name =3D "mdio-rtl9300",
-+		.of_match_table =3D realtek_mdio_ids,
-+	},
-+};
-+
-+module_platform_driver(rtl9300_mdio_driver);
-+
-+MODULE_DESCRIPTION("RTL9300 MDIO driver");
-+MODULE_LICENSE("GPL");
---=20
-2.47.1
-
+DQoNCj4gT24gRGVjIDE3LCAyMDI0LCBhdCAyOjA04oCvUE0sIFNvbmcgTGl1IDxzb25nbGl1YnJh
+dmluZ0BtZXRhLmNvbT4gd3JvdGU6DQo+IA0KPiANCj4gDQo+PiBPbiBEZWMgMTcsIDIwMjQsIGF0
+IDE6NTnigK9QTSwgUGF1bCBNb29yZSA8cGF1bEBwYXVsLW1vb3JlLmNvbT4gd3JvdGU6DQo+PiAN
+Cj4+IE9uIFR1ZSwgRGVjIDE3LCAyMDI0IGF0IDQ6MjnigK9QTSBDYXNleSBTY2hhdWZsZXIgPGNh
+c2V5QHNjaGF1Zmxlci1jYS5jb20+IHdyb3RlOg0KPj4+IE9uIDEyLzE3LzIwMjQgMTI6MjUgUE0s
+IFNvbmcgTGl1IHdyb3RlOg0KPj4+PiBXaGlsZSByZWFkaW5nIGFuZCB0ZXN0aW5nIExTTSBjb2Rl
+LCBJIGZvdW5kIElNQS9FVk0gY29uc3VtZSBwZXIgaW5vZGUNCj4+Pj4gc3RvcmFnZSBldmVuIHdo
+ZW4gdGhleSBhcmUgbm90IGluIHVzZS4gQWRkIG9wdGlvbnMgdG8gZGlhYmxlIHRoZW0gaW4NCj4+
+Pj4ga2VybmVsIGNvbW1hbmQgbGluZS4gVGhlIGxvZ2ljIGFuZCBzeW50YXggaXMgbW9zdGx5IGJv
+cnJvd2VkIGZyb20gYW4NCj4+Pj4gb2xkIHNlcmlvdXMgWzFdLg0KPj4+IA0KPj4+IFdoeSBub3Qg
+b21pdCBpbWEgYW5kIGV2bSBmcm9tIHRoZSBsc209IHBhcmFtZXRlcj8NCj4+IA0KPj4gRXhhY3Rs
+eS4gIEhlcmUgaXMgYSBsaW5rIHRvIHRoZSBrZXJuZWwgZG9jdW1lbnRhdGlvbiBpZiBhbnlvbmUg
+aXMNCj4+IGludGVyZXN0ZWQgKHNlYXJjaCBmb3IgImxzbSIpOg0KPj4gDQo+PiBodHRwczovL2Rv
+Y3Mua2VybmVsLm9yZy9hZG1pbi1ndWlkZS9rZXJuZWwtcGFyYW1ldGVycy5odG1sDQo+PiANCj4+
+IEl0IGlzIHdvcnRoIG1lbnRpb25pbmcgdGhhdCB0aGlzIHdvcmtzIGZvciBhbGwgdGhlIExTTXMu
+DQo+IA0KPiBJIGd1ZXNzIHRoaXMgaXMgYSBidWcgdGhhdCBpbWEgYW5kIGV2bSBkbyBjYW5ub3Qg
+YmUgZGlzYWJsZWQNCj4gYnkgKG5vdCBiZWluZyBhZGQgdG8pIGxzbT0gcGFyYW1ldGVyPw0KDQpJ
+ZiB3ZSB1c2UgbHNtPSB0byBjb250cm9sIGltYSBhbmQgZXZtLCB3ZSB3aWxsIG5lZWQgdGhlIGZv
+bGxvd2luZw0KY2hhbmdlcyBpbiBvcmRlcmVkX2xzbV9wYXJzZSgpLiBXZSBzdGlsbCBuZWVkIHN1
+cHBvcnRpbmcgbG9naWMNCmluIGltYSBhbmQgZXZtIHNpZGUsIHNvIHRoYXQgaW1hIGFuZCBldm0g
+YXJlIG9ubHkgaW5pdGlhbGl6ZWQgDQp3aGVuIHRoZXkgYXJlIGluIGxzbT0uICANCg0KRG9lcyB0
+aGlzIHNvdW5kIHRoZSByaWdodCB3YXkgZm9yd2FyZD8NCg0KVGhhbmtzLA0KU29uZw0KDQoNCg0K
+DQoNCmRpZmYgLS1naXQgaS9zZWN1cml0eS9zZWN1cml0eS5jIHcvc2VjdXJpdHkvc2VjdXJpdHku
+Yw0KaW5kZXggMDk2NjRlMDlmZWM5Li4wMDI3MWJlM2IwYzEgMTAwNjQ0DQotLS0gaS9zZWN1cml0
+eS9zZWN1cml0eS5jDQorKysgdy9zZWN1cml0eS9zZWN1cml0eS5jDQpAQCAtMzY1LDYgKzM2NSw5
+IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBvcmRlcmVkX2xzbV9wYXJzZShjb25zdCBjaGFyICpvcmRl
+ciwgY29uc3QgY2hhciAqb3JpZ2luKQ0KICAgICAgICAgICAgICAgICAgICAgICAgaWYgKHN0cmNt
+cChsc20tPm5hbWUsIG5hbWUpID09IDApIHsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgaWYgKGxzbS0+b3JkZXIgPT0gTFNNX09SREVSX01VVEFCTEUpDQogICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgYXBwZW5kX29yZGVyZWRfbHNtKGxzbSwgb3JpZ2luKTsN
+CisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZWxzZSBpZiAobHNtLT5vcmRlciA9PSBM
+U01fT1JERVJfTEFTVCkNCisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBz
+ZXRfZW5hYmxlZChsc20sIHRydWUpOw0KKw0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBmb3VuZCA9IHRydWU7DQogICAgICAgICAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAg
+ICAgfQ0KQEAgLTM4Niw3ICszODksNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgb3JkZXJlZF9sc21f
+cGFyc2UoY29uc3QgY2hhciAqb3JkZXIsIGNvbnN0IGNoYXIgKm9yaWdpbikNCg0KICAgICAgICAv
+KiBMU01fT1JERVJfTEFTVCBpcyBhbHdheXMgbGFzdC4gKi8NCiAgICAgICAgZm9yIChsc20gPSBf
+X3N0YXJ0X2xzbV9pbmZvOyBsc20gPCBfX2VuZF9sc21faW5mbzsgbHNtKyspIHsNCi0gICAgICAg
+ICAgICAgICBpZiAobHNtLT5vcmRlciA9PSBMU01fT1JERVJfTEFTVCkNCisgICAgICAgICAgICAg
+ICBpZiAobHNtLT5vcmRlciA9PSBMU01fT1JERVJfTEFTVCAmJiBpc19lbmFibGVkKGxzbSkpDQog
+ICAgICAgICAgICAgICAgICAgICAgICBhcHBlbmRfb3JkZXJlZF9sc20obHNtLCAiICAgbGFzdCIp
+Ow0KICAgICAgICB9DQoNCg==
 
