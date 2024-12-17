@@ -1,79 +1,110 @@
-Return-Path: <linux-kernel+bounces-448518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BA79F4133
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:26:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B951E9F4137
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:28:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1126F16D075
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:26:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B8316139F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D09E13F42A;
-	Tue, 17 Dec 2024 03:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A487146599;
+	Tue, 17 Dec 2024 03:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+wQKkJG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="Goh5CCtD"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611E776034;
-	Tue, 17 Dec 2024 03:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17161B960;
+	Tue, 17 Dec 2024 03:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734405968; cv=none; b=YhkPUk6m42wKFA6MkXZ/8EMcUbRmEowX/fSFVNGHoWDBd+gmcUT3zNqflTZMeeCXX7xKZEx2rjzHNa8K+QGNN8J3JwHglkSCxud+KdKXsHswvDhhLBtM/95EZbTJho9uKTJ7UDoXqNWTHSWwGzXIs7/hCsdgU7Faak19N6J47EQ=
+	t=1734406119; cv=none; b=dhH+9l0Ya83NDXbfQ4/qAs6OFpYHx5vJWTl3MAt+YhS0rvlfp5vzoXEKIMwTnK5ByWPm+2lWWAOzutJKI/Kj1lMYeAS9O3rT4M7AgCuJ/lTc3bnwzw2L+yDRpVuMIXwNhinl4rSFqwg0ULpTEajE/L5lnUuyY+nPiMEjr83T6ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734405968; c=relaxed/simple;
-	bh=JlcQZlpEq87WaYonljOQJTcis2Rm4csqH0xDxg7Rw6U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Q69uiMsO0CyG7WHeNaUaun3osqVJNuJnBggaw8gnH4m5KRIUhRbgHETfSkJ2H27Rgtzol2gNVjYrOzsQEgU86STe52vx6Try6UvuqXDLDdiYROj9ge39mNUIgQdchdjz3bh2nypaBq8GCHdwCdkYV54eTIFCWJbhWu5Iq98KvsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+wQKkJG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1812C4CED3;
-	Tue, 17 Dec 2024 03:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734405968;
-	bh=JlcQZlpEq87WaYonljOQJTcis2Rm4csqH0xDxg7Rw6U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=n+wQKkJGSneOniU6dmPRnpTp6ZH0m7z+9AfPZtTgG7u59zo3MSnLnATocr/Ra902Z
-	 KB6QjK+ZTU8QoXTuf/C1fBQppIr17VtOZBBKWv+612jcR3eEqfErnQCabjXn3koyD+
-	 Azbf5HxWiMNCUV8Lex/3FAVltxbTLEstz68dNpUP5t9MDPHGD99lQeBe39oelRLgES
-	 PRVHDxbWDTXaIS6bYaubRMlvs35J3WszV2sosGZFwU9VwvLGQTud31a6ncxJNa2kK2
-	 hCJB9fu5fKLEdNZ6tNGmUmK2hrUWVcC9A0fWhZztSygPbzxn8W5gVg0STF3mckYfaO
-	 JgjKvR1u90EIw==
-From: Michael Ellerman <mpe@kernel.org>
-To: Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, fbarrat@linux.ibm.com,
- ukrishn@linux.ibm.com, manoj@linux.ibm.com, clombard@linux.ibm.com,
- vaibhav@linux.ibm.com
-Subject: Re: [PATCH 0/2] Remove cxl and cxlflash drivers
-In-Reply-To: <20241210072721.157323-1-ajd@linux.ibm.com>
-References: <20241210072721.157323-1-ajd@linux.ibm.com>
-Date: Tue, 17 Dec 2024 14:26:04 +1100
-Message-ID: <87y10f2do3.fsf@mpe.ellerman.id.au>
+	s=arc-20240116; t=1734406119; c=relaxed/simple;
+	bh=yBrDAAXumKw6y2JtZX/K7A8At2LpR6oDAyXEsca0iag=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C56uENeXFKEvwcqihOi1FUU0lR2xwvJz9VyiuYmVg06NnTFayKxVeWLLqBNsZUiX/rBQsjDbz4DWNbM+9V6WKqmwcq9s3hUIMUcUklS5ddaK32aOve+pPG2I0WPal4LIqlsl+1qo+GfEW7GPPoN6Y8qHDcY/Tm57sfzmhh6paMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=Goh5CCtD; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from newone.lan (99-158-29-91.lightspeed.miamfl.sbcglobal.net [99.158.29.91])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 65AC5165D79;
+	Tue, 17 Dec 2024 04:28:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1734406113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=89/Ied276i9FOsoHd8vBC5qsTunh5CJ0SvVAdLuPAlg=;
+	b=Goh5CCtDS0tPNf+WJafGDsjV46WvVKe3mlRhlW6LAED2fz52JcKVwm0FYXThOcm/Tn/aED
+	SLg6MGyhHs+ldP9qcn3PRVdJDDUvcdQPprh/FBA5qy8sJe6mbuDkoQiMQAiyxSACOJM1pv
+	+sJk2QVvBaFGOZo6RfgKXP6SGRUmjkE=
+From: David Heidelberg <david@ixit.cz>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: David Heidelberg <david@ixit.cz>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: media: imx283: Describe sensor address using the reg property
+Date: Mon, 16 Dec 2024 22:28:17 -0500
+Message-ID: <20241217032821.1712916-1-david@ixit.cz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Andrew Donnellan <ajd@linux.ibm.com> writes:
-> This series removes the cxl and cxlflash drivers for IBM CAPI devices.
->
-> CAPI devices have been out of production for some time, and we're not
-> aware of any remaining users who are likely to want a modern kernel.
-> There's almost certainly some remaining driver bugs and we don't have much
-> hardware available to properly test the drivers any more. Removing these
-> drivers will also mean we can get rid of a non-trivial amount of support
-> code in arch/powerpc.
->
-> Thanks to everyone who's worked on these drivers over the last decade.
+Use the reg property instead of text in the description.
 
-It would be good to explain that this only removes support for the
-original CAPI interface - not the Power9 "OpenCAPI", which is still
-supported by drivers/misc/ocxl.
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+ .../devicetree/bindings/media/i2c/sony,imx283.yaml         | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-cheers
+diff --git ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml
+index e4f49f1435a5..f4ee991c89a3 100644
+--- ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml
++++ ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml
+@@ -13,16 +13,15 @@ maintainers:
+ 
+ description:
+   IMX283 sensor is a Sony CMOS active pixel digital image sensor with an active
+-  array size of 5472H x 3648V. It is programmable through I2C interface. The
+-  I2C client address is fixed to 0x1a as per sensor data sheet. Image data is
+-  sent through MIPI CSI-2.
++  array size of 5472H x 3648V. It is programmable through I2C interface.
++  Image data is sent through MIPI CSI-2.
+ 
+ properties:
+   compatible:
+     const: sony,imx283
+ 
+   reg:
+-    maxItems: 1
++    const: 0x1a
+ 
+   clocks:
+     description: Clock frequency from 6 to 24 MHz.
+-- 
+2.45.2
+
 
