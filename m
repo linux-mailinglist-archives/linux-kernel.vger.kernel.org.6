@@ -1,137 +1,113 @@
-Return-Path: <linux-kernel+bounces-448338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6658C9F3ECA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:29:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C1F9F3ECB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:30:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2482D1886851
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:29:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8671716DAD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A8E15AF6;
-	Tue, 17 Dec 2024 00:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187A21F92A;
+	Tue, 17 Dec 2024 00:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mN5EcNW9"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wrP2M+ww"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15569BA4B
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F396182BD
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734395373; cv=none; b=hSKrsW/2RUErC4TkraHn5K6vZhkX8GpHAVpgYKLl06JRRfRgPIVe/GnKLL+p0ipPv934gcDUE4nF5/RYXILE25Gn+8uqt5TbFlwDhVHjeWvJinifSl8e9UwnXOU6jg+T/qJ30/ILYzjuCgPJBVkzCj6ENflOssvjKaqT92M2LCM=
+	t=1734395376; cv=none; b=Cpy1N3NrgurDwWhoYx4bErS+qDUiDQqu7w+tUwlruCtlrccnKoym3QJ7S3AW0ZDOve5Hk+tP4u2rxcZ2oM3WVylgAP/LF20bvR/HATPvE+vGXw80gbAs/5fSAZLPMAP0mK49u/7pqkCfpgq5OEKt39+LUmxl1wn/HgAzbADCcvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734395373; c=relaxed/simple;
-	bh=EcMHthg8w1+nS6G5Zs4+7mc0M0kkZqrbK9TwcDBa+AQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cLt5C1FfBgYtlSbD9Uq7Ru5wIJgwXX7YNtRsOXs827GJmp7iZ4EMezBHMnfRMkk2WKV4XE4jlGqjqMeF1VSgYnt9jo2hricHrFPS4zY7HWCHoMpQzNvMfR5ghIRCHDRC5XiYBA4kWyCu4RWncjEZP5SUuQiEXf+4CUxhTBmIwM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mN5EcNW9; arc=none smtp.client-ip=209.85.208.52
+	s=arc-20240116; t=1734395376; c=relaxed/simple;
+	bh=tKgUb236+UPmH908Ihb+K0eHexiRBeuza+BHm3B48YY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mdwaoXJkkvszv54qqdIiCh2HS9Ydi61eILWg55RBebA+Z4H4viXEGTOMJoyyNbc58u5JriUdqf9O8ruumFXMSN5gcGalNLrtAVum9uicGkTYraMaV8eKCcIz9K4bpqhiwM9gLLY49BfzkTjg+kllGx2Ku11X42iUJ/jrnm3xPrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wrP2M+ww; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d3cfdc7e4fso4337a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:29:31 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7fd48914d9bso3010388a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:29:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734395370; x=1735000170; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EcMHthg8w1+nS6G5Zs4+7mc0M0kkZqrbK9TwcDBa+AQ=;
-        b=mN5EcNW99p0a/m15MLCy5FgbzR73l83cvVDY3nylpKt0BVLymchG1XSdFYwt9t1Vve
-         THoJ9JjfazCJdHEAe0vcXCvOcRzdBy++hcTPwL7b3v5DA/phnxi3+4Pb4AmpywvjofCn
-         NfiL4PXGfESvLpCcyGnc20f4G81c7bfM3KfHdlokpu/HMSRQkn3dYQR/Af/saEvHu4lh
-         FaoWYpc+/fnqYZ7Icu1Nm4eMl6NWE8Z/SpvWEwhloiBlDDbgeg2AiHqQZzmLQX9lTSXj
-         3uDA5k5HA9ab0HlTbNbSCPDdt5x7VoncrmaS3+3OvwhiyIxxbRmCrBMzA/hppgw20lmk
-         7uPQ==
+        d=google.com; s=20230601; t=1734395374; x=1735000174; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Db/ZmD8RsS+Ekv1pMP4d94SEiz9JgoOtJsiGIN6ZfPs=;
+        b=wrP2M+ww2GXNXy0EeLfKYbum7tW6pdjMeD33J7j0F1Sq78agC+bNg3W5IRqv4WFlOb
+         UT4W7rKDb/XxjWhtqgg5a1vbHDAnAihGFL5X2S94LVloN4Qw5zM2vvlFbWXmAxXirRd7
+         T7rMay4+bN3gF6XRJXP7DOYF06I9kXIbySi6mZoXrmPkcmaU0vbOxc97hr3bj8JU7eWM
+         E6+9+slkHMIi+ck8fI6QRQ61SJDeY1F4yKy8Obm+EJ189plv1cZTMwUdXgaTvC62cIgZ
+         KDZW7CDc9KpcCTVHddexPAxgBohvxl2s1wq7Mi55pUAJP3jnAkhYAXFrq2qbDzhBSuJ5
+         TKAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734395370; x=1735000170;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EcMHthg8w1+nS6G5Zs4+7mc0M0kkZqrbK9TwcDBa+AQ=;
-        b=aIqzQyfX2E1sxGkFA+GjVxjOg3ap/aOTZK1vj80NxmT6agqTHOS/pxrmOLgYRgI9Rh
-         iQ4kzd7X7lfsqxhKXCZ/EjFU04/oosd31UIMQBwhyOBH6/u7c5Lke5iq0eGm6rtGkr7Q
-         s4+TNI7+dkRGO6ewlk1B4gwnYcfY7mG79Q8zBb7KBDTvw8hOskaRWYa+cj4PNxKjfSW1
-         L/qWngQD9uHRl0droRDX4C3+F5ylVF3NnAT3ZZZq1CPftcGphPq6H9eWk56bH4WbNp/S
-         UBDD1y4d49Igw8F9CgO/Zrqho8wOCu0W0VnkSt2C9qMdFTozEtktjJNRKW4UO+t6zmYL
-         Eu4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWiuUPxImsirF8E4u2CU7aEA7PNmlqcWhAj5nt9AgVSiMlchvvpmDARaSD21isvsiaaQCN1s7Ijq49qbjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgnYhK9s5SyRvQ4WzdMOeA7REuzkhVJ/fa/ZCbCcMhsPMlEG8U
-	mueyGNRedwCCtFx7D2FJ1wooyNFi8s8v/OjoT6wu4npcu4HPP4By2XGVCFFM67HH1qGLB0bWc3b
-	KIE0Dt4xAgxZJPl+UayNiTx6XPqY8bySJ5ILE
-X-Gm-Gg: ASbGncsgt5SU9rdw0cu2D2Zm/YtAkOO7I8000mz6e1EZ5Wq/AjaVCLpK2rocpWpr1W2
-	8e+JOc7mjUTjhyoXHOy0O/04I56olxJiLe2M=
-X-Google-Smtp-Source: AGHT+IGJ2vMJeNxhiowuw33Qt/H3cjobYWBekImH6tWUBKuxTu+odWdOFkVa8jp2BkFSKsaw+CS/TQ1/n07AUP5JKDM=
-X-Received: by 2002:aa7:d3d2:0:b0:5d0:d7ca:7bf4 with SMTP id
- 4fb4d7f45d1cf-5d7d638f84dmr41885a12.0.1734395370189; Mon, 16 Dec 2024
- 16:29:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734395374; x=1735000174;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Db/ZmD8RsS+Ekv1pMP4d94SEiz9JgoOtJsiGIN6ZfPs=;
+        b=EaDhFOcn0fWI/TwEI6K9HmaLntA8Eocmk0NmgJ5L1+CN53mTN8sXTLuBDv6jN69Ue5
+         WGjMDhYNkqNwT+UQt31kSMVH2V3zkr8toZkprAZuZ4c/eagq1ec212RZeO2exT+d0sYQ
+         S2nVgVmhia6IMfxAo46Fk3EN/24Q0qDc2Yk5LN52aZ3tLAulMsey7CAbcQg+glurn0I9
+         3AMckgMT/gomY5BPIr8awcF9qbHAVMhBilFxk1DG1q4TyfHC+dn1ea6pmGPKuwp7VZQA
+         DtTLgjiVHFfI6KzjaeAj/rZLpda6daRGNzoIpHa0EYIxoX/tKoRfkg1b6zsjORhVtyyZ
+         vzuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZrWd3b1BRcb3mrVF96mScZnRTDi5Zm1ECgYETx2v58cDEzg8r+nCroc9N6x8BGOd6m4RKKOsfHPbKFrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/upceqCUHSTXee9WjzbMSt63PnY0BXdyg/iHAjA8FC1fN9Cnc
+	AY3VHPnEJy9766lAxXxGCY3sHhMf7fjZ7B64uqP8VoWRY7V4Aq2+nCT7+e9SOBZ65C5xLoMQ4hu
+	IJQ==
+X-Google-Smtp-Source: AGHT+IHjgHrA7xG0NpkEgyerFx4NYRTJeFfDwmp5imjiS4hM3JmM9g8Y/8s0n5IjWFI1IdYyAKTqLOiDHjQ=
+X-Received: from pjbsj13.prod.google.com ([2002:a17:90b:2d8d:b0:2ef:79ee:65c0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:6cb:b0:2ea:5e0c:2847
+ with SMTP id 98e67ed59e1d1-2f2d7eece3fmr1895400a91.22.1734395374509; Mon, 16
+ Dec 2024 16:29:34 -0800 (PST)
+Date: Mon, 16 Dec 2024 16:29:33 -0800
+In-Reply-To: <20241206221257.7167-1-huibo.wang@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241121204220.2378181-20-samitolvanen@google.com>
- <20241121204220.2378181-38-samitolvanen@google.com> <CAK7LNAS7Pi9=Hcm7Kr=Ju4fMWK4taXEPLOqYombSLqGQ3ehR+w@mail.gmail.com>
-In-Reply-To: <CAK7LNAS7Pi9=Hcm7Kr=Ju4fMWK4taXEPLOqYombSLqGQ3ehR+w@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Mon, 16 Dec 2024 16:28:53 -0800
-X-Gm-Features: AbW1kvaGgMMEILJN5boY_yIqECmEZxfHxS0KrWFUsA14957v4WM1ex3EXvwLDI0
-Message-ID: <CABCJKudLD15R1YoR37NcKGZPqdwrwBVLcoCiH1m-HDZYUt+Gfw@mail.gmail.com>
-Subject: Re: [PATCH v6 18/18] Documentation/kbuild: Add DWARF module versioning
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20241206221257.7167-1-huibo.wang@amd.com>
+Message-ID: <Z2DF7UFNt1vayroN@google.com>
+Subject: Re: [PATCH 0/2] KVM: SVM: Make VMGEXIT GHCB exit codes more readable
+From: Sean Christopherson <seanjc@google.com>
+To: Melody Wang <huibo.wang@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Dhaval Giani <dhaval.giani@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi,
+On Fri, Dec 06, 2024, Melody Wang wrote:
+> Hi all,
+> 
+> Here are two patches to make VMGEXIT GHCB exit codes more readable. All
+> feedback is appreciated.
+> 
+> Thanks,
+> Melody
+> 
+> Melody Wang (2):
+>   KVM: SVM: Convert plain error code numbers to defines
 
-On Sat, Dec 14, 2024 at 3:34=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Fri, Nov 22, 2024 at 5:43=E2=80=AFAM Sami Tolvanen <samitolvanen@googl=
-e.com> wrote:
-> >
-> > +When a symbol pointer is found in DWARF, gendwarfksyms can use its
-> > +type for calculating symbol versions even if the symbol is defined
-> > +elsewhere. The name of the symbol pointer is expected to start with
-> > +`__gendwarfksyms_ptr_`, followed by the name of the exported symbol.
->
-> I am interested in this sentence.
->
-> __GENDWARFKSYMS_EXPORT() is primarily introduced to handle
-> EXPORT_SYMBOL() in *.S files.
-> In fact, .discard.gendwarfksyms is always output for EXPORT_SYMBOL()
-> from *.c files.
->
-> Can we make it faster by processing only symbol references in the
-> .dscard.gendwarfksyms section, and skipping all other sections entirely?
+When adding patches to a series, please treat the "new" series as a continuation
+of the previous series, and follow all of the normal "rules" for documenting the
+delta between versions.  I.e. this should be v3, since patch 1 was posted as v2.
 
-I don't think we can, because the DWARF type information is still all
-in the same .debug_info section no matter where we place the actual
-symbol references. Also, locating exported symbols from the debugging
-information is already pretty quick, the slow part is actually
-recursing through the types, which would still be the same amount of
-work even if we had separate debugging information only for
-.discard.gendwarfksyms.
+https://lore.kernel.org/all/20241202214032.350109-1-huibo.wang@amd.com
 
-> > +4.3. Adding structure members
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > +
-> > +Perhaps the most common ABI compatible changeis adding a member to a
->
-> changeis -> change is
-
-Thanks, I'll fix this.
-
-Sami
+>   KVM: SVM: Provide helpers to set the error code
+> 
+>  arch/x86/include/asm/sev-common.h |  8 +++++++
+>  arch/x86/kvm/svm/sev.c            | 39 +++++++++++++++++--------------
+>  arch/x86/kvm/svm/svm.c            |  6 +----
+>  arch/x86/kvm/svm/svm.h            | 24 +++++++++++++++++++
+>  4 files changed, 54 insertions(+), 23 deletions(-)
+> 
+> -- 
+> 2.34.1
+> 
 
