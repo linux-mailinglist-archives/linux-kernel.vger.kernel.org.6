@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-449951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5374E9F5899
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:18:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6A49F58B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:27:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6481170B0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:17:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40625188319E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F7C1FA14A;
-	Tue, 17 Dec 2024 21:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9405F1F9F4E;
+	Tue, 17 Dec 2024 21:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QltKi+N2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ol2zlekT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3CA1F9F6F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE431DA61D;
+	Tue, 17 Dec 2024 21:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734470232; cv=none; b=mjm+H9aCh5cjWoWqTPA7y6PJsv5otU9Gf/9Z83ISEXYQBERlP4gMs4j3ChzSMlEBcJyadr24LLdsa7OVMRqt4oJvWzAfBzu1FwtbrKwbeh3JriLooQoRy4jgp3/PISBDHdt5Uo3fl0E9hcABn4ERibLl8eaTMz0dvG8osFMhqG8=
+	t=1734470363; cv=none; b=bf/nbn6EZI/theIlOfd4s37NkID19TKXaoUf3rT5ucDqgYFTIZA4Iqxa2uAvfy/WndZq0+x12VuBfhlU7KzXMHFbB0M0DoCqNwTebaG5DKCrahLQ22p75nj0llDVjsSg7lHNCDvnO6hUKbiLoYrs1yzcjRTczBiJogzk1UTK4QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734470232; c=relaxed/simple;
-	bh=XQqcSXCS7+3yXeFhYE/LHLIlCgVev1+/ITPt3X/ZZ0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u012NiAannVfggu73ayW4NtvvL3mUVQ5omg2kSiCRxZrso+ebC7cTn4slmcPzXi4edV5Y16O8t6DRRbkbPbUwB2vLTdysbL1LDI+l5Ekua1WFPuGL1AlgZ2Igo/wxgFm8Mc8MwcKq1Hums/zZSpkeGEjiuw3E1vqYKbR/GWBYLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QltKi+N2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734470229;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=PORQUlxGEfR5cpiw3XNjF5GcFo76IHLBJiTCdzbzG9A=;
-	b=QltKi+N2AOEts6L9huF5blf2Ruhjd/upV2OKUfQVQDcPCxkd2Bfq1QeTNAGLYVVJceWemw
-	diUO+/uarRKV9+ULsx609SnbkqNq0OqnCHIFIiFKgxQL45zOmQiq/JJx7tEikEJdU25QBb
-	PAEYdq4BO7KEULJDOt5lFSL5eeltmmI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-442-SC-GqNSmPEexydsu2nAyJg-1; Tue,
- 17 Dec 2024 16:17:08 -0500
-X-MC-Unique: SC-GqNSmPEexydsu2nAyJg-1
-X-Mimecast-MFC-AGG-ID: SC-GqNSmPEexydsu2nAyJg
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29EDD1955F66;
-	Tue, 17 Dec 2024 21:17:06 +0000 (UTC)
-Received: from antares.redhat.com (unknown [10.39.194.221])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1B00419560A2;
-	Tue, 17 Dec 2024 21:17:00 +0000 (UTC)
-From: Adrian Moreno <amorenoz@redhat.com>
-To: linux-kselftest@vger.kernel.org
-Cc: Adrian Moreno <amorenoz@redhat.com>,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Aaron Conole <aconole@redhat.com>,
-	netdev@vger.kernel.org,
-	dev@openvswitch.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] selftests: openvswitch: fix tcpdump execution
-Date: Tue, 17 Dec 2024 22:16:51 +0100
-Message-ID: <20241217211652.483016-1-amorenoz@redhat.com>
+	s=arc-20240116; t=1734470363; c=relaxed/simple;
+	bh=jrc3lY75xHWJSSzKDhwHm1denSyOJLkP2xgW2pqkhag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KTPD4gFH1w/qq9P9hQIijmTTWst+fZ4mh4UMXDjg5C9++P8dF5rVsRM7ZI6hxDdYxTAro3lrqsnMyR87BGKDDWrmx3asHODICaho4lZewBnqaDXjGq9QcaZ5ipF8YpPfb+R0qfeE4nqlwzNGDHV53JIyw3tRhmF4zzpZ/Y9l8U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ol2zlekT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6E1BC4CED3;
+	Tue, 17 Dec 2024 21:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734470362;
+	bh=jrc3lY75xHWJSSzKDhwHm1denSyOJLkP2xgW2pqkhag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ol2zlekTlcUlX42G6Y9JWMcaF4pKnf6xFOzNzkclzDB35apI0xnTEazu7c91I9hq6
+	 M7f+Xl3OzjIzCuJD3qs+PCuioRvGk4icTQas53Kip11pdM43aj6WnYEd7oQW2eNiCK
+	 t4V438NIE4HW3fB7tJaSKyFDXqDz7p7ctQf3tjRnbLl2C/Swyq3rVXJz7y4CgTGWrD
+	 VuJKpHLKX7rVYLA/bXEYc6XnBrI/gKR6Gi35EUtApLJLKdDpC5xyqBixyeZmt9UqNP
+	 O30vxDbupuSKPCUmKhKisxvX0GuWoEDQCZ5Hx+ZC3UIFaymbiq2DoWPDGujWC4mF9Z
+	 kKZNe/uTL6WzQ==
+Date: Tue, 17 Dec 2024 21:19:17 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Shree Ramamoorthy <s-ramamoorthy@ti.com>, aaro.koskinen@iki.fi,
+	andreas@kemnade.info, khilman@baylibre.com, rogerq@kernel.org,
+	tony@atomide.com, lgirdwood@gmail.com, linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org, m-leonard@ti.com, praneeth@ti.com
+Subject: Re: [PATCH v1 2/4] regulator: tps65219: Update driver name
+Message-ID: <59e004d7-7e46-4141-bf61-f01a6e5296e2@sirena.org.uk>
+References: <20241217204526.1010989-1-s-ramamoorthy@ti.com>
+ <20241217204526.1010989-3-s-ramamoorthy@ti.com>
+ <23dd1912-31cf-4e99-8fb0-0fbd68eee8e2@sirena.org.uk>
+ <2fdf8fd0-b764-4720-8f7b-71b5d63d2541@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CYPEFqoeyAgL+0Ji"
+Content-Disposition: inline
+In-Reply-To: <2fdf8fd0-b764-4720-8f7b-71b5d63d2541@ti.com>
+X-Cookie: The sum of the Universe is zero.
 
-Fix the way tcpdump is executed by:
-- Using the right variable for the namespace. Currently the use of the
-  empty "ns" makes the command fail.
-- Waiting until it starts to capture to ensure the interesting traffic
-  is caught on slow systems.
-- Using line-buffered output to ensure logs are available when the test
-  is paused with "-p". Otherwise the last chunk of data might only be
-  written when tcpdump is killed.
 
-Fixes: 74cc26f416b9 ("selftests: openvswitch: add interface support")
-Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
----
- tools/testing/selftests/net/openvswitch/openvswitch.sh | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+--CYPEFqoeyAgL+0Ji
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/tools/testing/selftests/net/openvswitch/openvswitch.sh
-index cc0bfae2bafa..960e1ab4dd04 100755
---- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
-+++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
-@@ -171,8 +171,10 @@ ovs_add_netns_and_veths () {
- 		ovs_add_if "$1" "$2" "$4" -u || return 1
- 	fi
- 
--	[ $TRACING -eq 1 ] && ovs_netns_spawn_daemon "$1" "$ns" \
--			tcpdump -i any -s 65535
-+	if [ $TRACING -eq 1 ]; then
-+		ovs_netns_spawn_daemon "$1" "$3" tcpdump -l -i any -s 6553
-+		ovs_wait grep -q "listening on any" ${ovs_dir}/stderr
-+	fi
- 
- 	return 0
- }
--- 
-2.47.1
+On Tue, Dec 17, 2024 at 03:16:44PM -0600, Andrew Davis wrote:
+> On 12/17/24 3:01 PM, Mark Brown wrote:
 
+> > This isn't just a naming convention thing AFACIT, the MFD registers the
+> > new name so the driver wouldn't previously have loaded.  How did this
+> > ever work?
+
+> It matches based on the platform device .id_table[0] which does have
+> "tps65219-regulator" listed, the driver .name itself is only used
+> as a last fallback when there is no .id_table.
+
+Ah, there's not enough context in the diff to show the ID table.
+
+--CYPEFqoeyAgL+0Ji
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdh6tQACgkQJNaLcl1U
+h9ByzAf7Bc/PZDfMPtI9KxJCA6hCXGpfdjWES8E2VVongW5g6QXFNq7pYdHbRP+i
+DaEanNv4FztvVbVNHRNdcL4HPnUuVtK3/mU+Apm0Hkl8DjlJ22UKrgTtxb/qvxyT
+UHpJguD6lQauiFG5Skac4dGI/Nhh4cGTRJ4LKDK3vP/xAeVy2A8EPgaKsw3bRTVq
+ETeluEiwFxisxjLuasbWL1E3USy2EuFuilk9yMqeeBDfc+tU4FLUA8JjynrQy+Db
+Q/sLC8nzdkKUeuF7SlnsKbIdbXje703U+TF12B2MyRuaprRiN4QpNhS+der4caK5
+16WXZ46xpdD7a+zeCcYT8yE0z9AVbA==
+=acoK
+-----END PGP SIGNATURE-----
+
+--CYPEFqoeyAgL+0Ji--
 
