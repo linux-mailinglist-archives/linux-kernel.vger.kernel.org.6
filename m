@@ -1,100 +1,84 @@
-Return-Path: <linux-kernel+bounces-448734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9568C9F44CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:08:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C6F9F44D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:09:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5088D160F8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5D11889137
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A1D171092;
-	Tue, 17 Dec 2024 07:08:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3992315B0EE;
+	Tue, 17 Dec 2024 07:08:54 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69161714BE
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2841814F9FF;
+	Tue, 17 Dec 2024 07:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734419286; cv=none; b=bc8Px5Dcm9kitCngc07n/s73IzH5WVrXHI4sPJz97KU/fSw1cUfpuVfEEfSQCSFBbP9jRtQVUU+WgB24iisBc1s853lfmeHlZyp3vJJmmpZiCAwrabGglc4OuMqgtJcKwb+Gzx+47nwvStrZq0HXgmjEOmLwjVOZH70SUQgt1vs=
+	t=1734419333; cv=none; b=XNQeWn+a5YfJmAXzFt058fEVDbl/YC3wzMOBs4uUw2IuyHvcAEqD70rcDJQ1sAGneQP8m5F6kQjxpflEtxAItdAeVqkj5S6n9H/J5oiJwKNEosICWp22WMc/zCXsjmgtdVmp+/197R/v/WmKcweh28ekCQehct7VkSf6DN/hckc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734419286; c=relaxed/simple;
-	bh=0cYUGOJCMk9hzrUYNGZJvUmOELe0ky4OpSutraZO9xY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tCUSDy1i4q0JMWdv7LZzDAOf5lvUH/Dc1LYDVVsdZrS4J98V2VBbIsWzXf+sOuZKR40Ob0kgxZrNO6G/sBSpROXdOZzZFwVDhgXygHhpUzp67rIge+n+zvvMOY4+L0WxkbzM6qvvBU6JBSMyBB/Ar+cHjbftKXVaoA4iTpasz/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a9c9b37244so103692075ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:08:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734419284; x=1735024084;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DRDwN1zpEWcBzT1VaG16wQzKWgPiascUQWIG+YKo2t8=;
-        b=fqCtgZcadREx2qcYvG3dTIHPUUx/D/pi2DLqNP3LmzlIbljflqlHOHgaibYGIUcQ4Q
-         zSCoWGDv3V+Jsued9gbTyiXxrOoOj1+H6UCBn9MqXYMORV0PYc93656vA7lX3pVUSJii
-         p4FtFqyk73nMhIcJcXeN/kGgH+VxMnvdOMqnioLq9YhO6ABztKWmNa/tGn1NwZAqhzns
-         ZjCOLI2QiYbOyupNF7D1zNj2XebeA6TKnGVjyIpzXTtrrdVd4GCiddUi9/uM/YagaVf0
-         iX3b6Hi34Mwq4vf/Q4092KEBWvkn+20erPcShPziQzGaO7n0F/Uy1i5Ad69UA1xFlrbB
-         JWyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVj+kObxFfdZyp0qExfflNzO8zDq5DeAo8ORO3FXAgX0Yna8lWHqRMrn+gGHScngZGb42XTG6JeeKDmA8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0vkB1ghdZmjgN4gwVgU0ljXTF4Q7cPYDPN66NeyfSH50WA/ZZ
-	bIreYuBMho7XJq+0YZvi4y9RQxXtLzbUBqiGWaQfvD1OXV7wKofKynENe18hjYF6/aok26QhN8w
-	HY5YUj7sFOz8Txr2vRUcqM+ySmQVhbqT3GTbE4NqHdzlZA/NLtz2Umnk=
-X-Google-Smtp-Source: AGHT+IH3TVKzgzi+hMwYzO8I6JCvRep3STNawVlhYQTcJYYxYeDO/5IrYAcVZ0f3Eq89idW5DxD31qNagFQCCAtYbUD/FBjFNorF
+	s=arc-20240116; t=1734419333; c=relaxed/simple;
+	bh=cTGL2MgAvjT/VcTus4jDUkzAYGM7RM1d1PRC/IA0Tl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NWWucAaLujC3rdiRJb53WNgY898O5BH0+RXTgekFiv9t5+opsrZAydewaRtZqhqm+g+rckniMc09fTy5O9yJRti9U76/wbjPWlB3aOKGnmmI9zc13wobGPhZN3J2YLIk30v6DJKIssvY3OIHK/JvA3ZUoIJF6GuNaefMeMO27ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id A62BE68B05; Tue, 17 Dec 2024 08:08:45 +0100 (CET)
+Date: Tue, 17 Dec 2024 08:08:45 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, John Garry <john.g.garry@oracle.com>,
+	brauner@kernel.org, cem@kernel.org, dchinner@redhat.com,
+	ritesh.list@gmail.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v2 2/7] iomap: Add zero unwritten mappings dio support
+Message-ID: <20241217070845.GA19358@lst.de>
+References: <20241210125737.786928-1-john.g.garry@oracle.com> <20241210125737.786928-3-john.g.garry@oracle.com> <20241211234748.GB6678@frogsfrogsfrogs> <4d34e14f-6596-483b-86e8-d4b7e44acd9a@oracle.com> <20241212204007.GL6678@frogsfrogsfrogs> <20241213144740.GA17593@lst.de> <20241214005638.GJ6678@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3b89:b0:3a7:dd62:e954 with SMTP id
- e9e14a558f8ab-3baccadd1edmr32269245ab.0.1734419284013; Mon, 16 Dec 2024
- 23:08:04 -0800 (PST)
-Date: Mon, 16 Dec 2024 23:08:03 -0800
-In-Reply-To: <tencent_A2CD92F8865949AE6ED1AED2CC9327C50606@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67612353.050a0220.37aaf.014c.GAE@google.com>
-Subject: Re: [syzbot] [gpio?] general protection fault in gpiolib_seq_stop
-From: syzbot <syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com>
-To: brgl@bgdev.pl, eadavis@qq.com, linus.walleij@linaro.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241214005638.GJ6678@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hello,
+On Fri, Dec 13, 2024 at 04:56:38PM -0800, Darrick J. Wong wrote:
+> > > "If you receive -EBADMAP, then call fallocate(FALLOC_FL_MAKE_OVERWRITE)
+> > > to force all the mappings to pure overwrites."
+> > 
+> > Ewwwwwwwwwwwwwwwwwwwww.
+> > 
+> > That's not a sane API in any way.
+> 
+> Oh I know, I'd much rather stick to the view that block untorn writes
+> are a means for programs that only ever do IO in large(ish) blocks to
+> take advantage of a hardware feature that also wants those large
+> blocks.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING: lock held when returning to user space in gpiolib_seq_start
+I (vaguely) agree ith that.
 
-RBP: 00007fe66f38b090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000005 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000000 R14: 00007fe66e775fa0 R15: 00007ffe92372dd8
- </TASK>
-================================================
-WARNING: lock held when returning to user space!
-6.12.0-syzkaller-10299-gc1f7eb90d8d5 #0 Not tainted
-------------------------------------------------
-syz.0.18/6685 is leaving the kernel with locks still held!
-1 lock held by syz.0.18/6685:
- #0: ffffffff8e96d590 (gpio_devices_srcu){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:158 [inline]
- #0: ffffffff8e96d590 (gpio_devices_srcu){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:249 [inline]
- #0: ffffffff8e96d590 (gpio_devices_srcu){.+.+}-{0:0}, at: gpiolib_seq_start+0x13e/0x270 drivers/gpio/gpiolib.c:5039
+> And only if the file mapping is in the correct state, and the
+> program is willing to *maintain* them in the correct state to get the
+> better performance.
 
+I kinda agree with that, but the maintain is a bit hard as general
+rule of thumb as file mappings can change behind the applications
+back.  So building interfaces around the concept that there are
+entirely stable mappings seems like a bad idea.
 
-Tested on:
+> I don't want xfs to grow code to write zeroes to
+> mapped blocks just so it can then write-untorn to the same blocks.
 
-commit:         c1f7eb90 fs/seq_file: Exit the subsequent process when..
-git tree:       https://github.com/ea1davis/linux gpio/syz
-console output: https://syzkaller.appspot.com/x/log.txt?x=12dfb4f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e8d97faf7b870c89
-dashboard link: https://syzkaller.appspot.com/bug?extid=b95d0c98f01e7a95da72
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Agreed.
 
-Note: no patches were applied.
 
