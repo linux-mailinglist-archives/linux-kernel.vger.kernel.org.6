@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-448358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43DE9F3F04
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:43:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 202ED9F3F3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0DCD7A2CE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:43:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073361886BB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549F114C5AF;
-	Tue, 17 Dec 2024 00:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71698528E;
+	Tue, 17 Dec 2024 00:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dDQrV6kA"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ED+Ppexr"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7B614A4E7
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7114C5B0
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734396054; cv=none; b=n2DyCQlpwwrqx0VpnBTNCsHhesxw8AuNfeAi+r9vlOKjlymjFbj36+8hjvqWwc0OMvo3YGU9NnWG5i3SPlx7rXspoUT15YwAnf81KdEXlP1ozta2sziW5ko4gCMpGY33J6WJj/b1Al+vUShyylK+QyWDrmE/ybNU4N/wVZM10hE=
+	t=1734396057; cv=none; b=h6pnT/TL8KRnmiNahXdfHYKa2uQ3mr1nOex/mLUFkm94qEutwEad1baHPMIX339o0j+0M/7Z/tGRw7XF+dj097Id+UEDPLVjbhDkZggtHcGKE1lK1T+jRGF1cOvSQ1u4N7nkeqP+BLN8ZK7ONSme1cPzoW91OsT4pfryIWtF8wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734396054; c=relaxed/simple;
-	bh=Pn3jlKOdfQqOhTgwlNovK0Mjhw+ujx5JcQ8ESvBRcTY=;
+	s=arc-20240116; t=1734396057; c=relaxed/simple;
+	bh=7s/0WO/aTzEx9yhjto9LxdTyBBJwSv9ES82NKKPeNQ4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gn598WjdaYL8nEpIqQtOLerfaunYWhnYptFivcTkIMtmHdn47NYiwqDwJOnli1qnvrVcU+qFXuT9WOn+czvVGUr+L0rn5dsotfaYt3OC4DDE6CD1L+0WDMmAfWI7KBPfdNbc11gmFrrMfnRvd2p9NKYLdcY0No9Yn8p1e72n6WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dDQrV6kA; arc=none smtp.client-ip=209.85.167.47
+	 In-Reply-To:To:Cc; b=kaCRuwnEixvJXyPPWUeq6ue0qiv7yzbe5tocdd+f0+hMqoNqqNbW5qBzno5ylCwK/f7WQ7B5Vf2+zwASx9450vLZGWROfAbMI5mBuFG8NP7noqPvwHvRb+jJArrO9YpLWgcxyJWWQk5iUGIJTvYaVU4NcV+2K5PpMyIBgl25M+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ED+Ppexr; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5401bd6cdb7so4838243e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:40:52 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-540218726d5so5016632e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:40:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734396051; x=1735000851; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734396054; x=1735000854; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yOV9LGB+7crRuSYkJueJAduPKSeD1LHvXO2AOg6QFD8=;
-        b=dDQrV6kAOsz4eoZMtKnhNs/JSMxdTOjOuEZcv0rNjPYxjoyz1apJi/mL4mMQS0bdzH
-         z7T2DhjPQJ15SpbSWnSin52K635gOa7phM+xeREgfRhQZR4bg+sxgHpmZY7RVvkEZkNV
-         ipLPDDIOzNxeT0DaE++02040nYv8L5a4M5WuwMv3x1SLCpYuaYXH6cW4mN8Gm6T4ROIk
-         WvWCSYkHmLgKMOGqRhT6MTXbLTH9evuiscbRPA5SuHITebDnJnSPhdo06JIQH1VGQLKr
-         N1TIQ8WHqEaE3c18KgHbkTiL/CN43ywAOzGCuXBHnK9J2WLrvv1HtQjjEo/qFR/rOZpL
-         Rl+Q==
+        bh=Lunr+AM74GTPPfWmRn+AT8+K2i2rNeiOvxZLJo+1HHg=;
+        b=ED+Ppexr4fWWEoP04SGR15GW2Vr+7bO6iBk7pTng6Qc+s9nqfIpCFoAMpXLHhhRXti
+         4LAG1DXRmk6znOfdrKsZ5RcjZdRcGq87CaDwvo7OSitVWsu0N3SRWDt9mKFV1QVtAipL
+         xb3IdE3mfz0ODoUsQg6ZbYvdBBImn4OC5lUw8+qylseZKYomQCzJ3i/Ejc5Irfw0V47n
+         Zd3tY0wxNS0epgXv31/zVYnwZvV3OULujs7PKGPqGrdpCHKoDdXPiadF4ECohPrHh+hq
+         pbhRK0TY6ZNCjoipid1DUH62GfHyTNOhJMQpF3Lt+0P9+1gvRKodoDJkwcXX8OUOkAHs
+         s/vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734396051; x=1735000851;
+        d=1e100.net; s=20230601; t=1734396054; x=1735000854;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yOV9LGB+7crRuSYkJueJAduPKSeD1LHvXO2AOg6QFD8=;
-        b=rDB2ADVmKWyYXVtgZc0xSjhlzEof5NGjkkye3dqjDOpVoQCx/MzxOV+Oe5XOvDUpiR
-         aNCOOehs5wR4rBPv9nsDHle0N2WBtq3cVJSaYF9eofCoe1zPkOeszBFfg+q3ElIIorx1
-         LsBQGWA8gxsnurEDBuqLQDWQsDol8j+8g0V85z5FirXi0d7D7gHfYqoqlssAfSDRPmx1
-         oWyZ7Cs5lh42QnJqPrXj5E+tn5719FbpTX8YxRmW5Z8C/XaFLlZti+J/rj1Y2LG0AlQU
-         wkmDIuh9HIOrXILujmSt0YCCLd3ZkQZj8zX5aHdfT+pXUOsRIzDayhX8wGprvJRESbfh
-         G3Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNO577DuRcDugt/sdXIhiKeSbmlk+K72qtdSJQGtWhkeK/LMRSW4Jf+Tllbm+cGrcHXGQxSQWkX8g6qTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK6JGmyJLID59nCmgc9a3sbvGjJ6ACOW0hNYHJhQ97e0xYJd7C
-	HZgaOAGgdzgZYl4m8abYwuoraw/Vzw06db0pBcSFr3w5CkOH/+Xc9IzUhnZOCqU=
-X-Gm-Gg: ASbGncvs1H8CXToYoJ4nuz+Q2x45D7AK5aWdKyfUYoKx04Bl/va62DUzulCG5HvrFf8
-	VeZnaK5L2JB1v5g51EXyIxr8X9mBSC6aZcqqPAjQMyX6FKAkeCuCVQ4efUZj8T5WoJaMgTGjD6G
-	DEfRH0LNMHaTpnPMz54lTe3fYmgQGxzR1N9e0iBoigE04GeQvIL4mNeaEvnK1E6yW0VeR8sFLVT
-	xv5vP5ghaSzkAnkHFIvl26SVx4V6rEANJA8Sunh0bmUFQdeZGAGev/jzufYpxF8
-X-Google-Smtp-Source: AGHT+IHw7VXjrPeZhfVp33UgiptzZosNfvLSX3nNYvM2KHEjnFm3we6xTly89BdAPcurVBRYJ3TzIg==
-X-Received: by 2002:a05:6512:3d8a:b0:540:75d3:95c0 with SMTP id 2adb3069b0e04-54099b6aeb9mr4716425e87.47.1734396050964;
-        Mon, 16 Dec 2024 16:40:50 -0800 (PST)
+        bh=Lunr+AM74GTPPfWmRn+AT8+K2i2rNeiOvxZLJo+1HHg=;
+        b=cG95KrRoG+gAbug6M64e3JKFGRRkLRB9Ow0DhV6PpeB3M7+RGrS5K9KWomMUWqtlwZ
+         cyd4q8+w62Foaef+esTmmFdHBNRMq2LyqGGHSNDpcsj9gDWMd8x23mP5ChZ7lbAAu7wb
+         r0epj4ZR7LB14o0U4md4VoFU9P8V/NDpBGQ/w5su1NzLl7xYWmeJ6CfhisGxDmjjF3q8
+         qxd87mB7xMJFjPpFXe9lBLl3MVjUbW5TqME1iDt4MisY1a1phatt7JlaAuLmt1gI6aTj
+         xY7EhhLmkIeYbcA3Sh4IZxYg9Q5B808MZdJCvBUNcjckv3euluGUAl0U9vm/j+WLm6Cr
+         mfFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRq2RPcaIo+O/As9G2SBXm3MfDEawuFT+gYw/7J53YvRPYXiY31YgR+9K5cCN9FB63UEfReSm9Mk9b18g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZhBpCOM2vOtAo64uoWOakAulGAmrxW2Yv23aoGMPiEwQLDlSx
+	0TQoBUSFdIjykloT/vfY/yWGeX5744GdFm+pV9k9N7L+UnbnJCTGtR1YHlTr2nw=
+X-Gm-Gg: ASbGncuTQ8mtWlT5XElhbWc2Yelq/axQcQYJCfcIa2QLIkTP5K/caKkjLeSAyWpgssq
+	lJIl7LfKwgnkZkTDEJ4P9jSXsu7ZJR+7zVWIZH6ppFameOojFY41vOfJPZOmI/okCUKFa8rEqAN
+	5blefFycjeddwrv1sAJahG+3cnsNEYktHNcymW5fidc0tmHBYeQIGXSjOori2AQP6iRCNqufHas
+	KaabMgXDZFG3KxQkDPVYyy9LUAJo/wHJ6qN+fuSgRJ/jwxIPIZ7+UNN9+0BVLFl
+X-Google-Smtp-Source: AGHT+IGe0QdLZY73JsApHksPxAww/oxjVlJdjygOnTwbgrdsohY4NxxLR2cwt2MC32di//BAmFafkQ==
+X-Received: by 2002:a05:6512:b06:b0:540:17ac:b371 with SMTP id 2adb3069b0e04-54099b6ecdcmr4290758e87.56.1734396053589;
+        Mon, 16 Dec 2024 16:40:53 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120ba9ab2sm1009122e87.74.2024.12.16.16.40.48
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120ba9ab2sm1009122e87.74.2024.12.16.16.40.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 16:40:49 -0800 (PST)
+        Mon, 16 Dec 2024 16:40:52 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 17 Dec 2024 02:40:31 +0200
-Subject: [PATCH v7 09/10] drm/vc4: hdmi: stop rereading EDID in get_modes()
+Date: Tue, 17 Dec 2024 02:40:32 +0200
+Subject: [PATCH v7 10/10] drm/vc4: hdmi: use
+ drm_atomic_helper_connector_hdmi_hotplug_edid()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-drm-bridge-hdmi-connector-v7-9-cb9df2b6a515@linaro.org>
+Message-Id: <20241217-drm-bridge-hdmi-connector-v7-10-cb9df2b6a515@linaro.org>
 References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
 In-Reply-To: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -115,65 +116,68 @@ Cc: Jani Nikula <jani.nikula@linux.intel.com>,
  linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
  linux-rockchip@lists.infradead.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1884;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1868;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=Pn3jlKOdfQqOhTgwlNovK0Mjhw+ujx5JcQ8ESvBRcTY=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnYMh5AcX6vqsmyTSEOah3v/NRfb59bBLsVA0Am
- 5PF/UeNbMuJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ2DIeQAKCRCLPIo+Aiko
- 1UYkB/4nmHMFle4w74ujOB7redDUAjj366h2sS6n0SYJQS5bY63lKUrcybdCpnPcp6IQgM7zPJT
- KI3Zu9Z+K2ZvACjsEqw5/l2aXc0xEcmWTAKox52w1HpK+mxERTYSNrKnEpHylqTK2aOcQrkwpGb
- 90JB3CO4lyUmqID7sOLHsfS3eqBnYJiWYmplzScjqHDslUzYcE6rjuZaD3MtRPP2RLHo2S1yGht
- YfwBKu2NZ6YKX0LN9PAhJb6RXOuJ0S37kgoycJB4XyXb/p3yPs0dM1IhItwoki1nGLfBOB3xKEY
- EjldH/ijsNmTlfSrYitzNGnCyz43NBBdHpkVVJnf44FwvI7z
+ bh=7s/0WO/aTzEx9yhjto9LxdTyBBJwSv9ES82NKKPeNQ4=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnYMh66KurD/so/4BhoqlDVPuK2xAohhbIWN/EG
+ x67827EyE2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ2DIegAKCRCLPIo+Aiko
+ 1ZsiCACZHuxK0m8L9MH1NhE2yPwWUTbzhXV2jMuyyQcJBcJKvwYMEAdKnau9ASgbjUyjrS0EqxK
+ PG9HYh7v6OQuoktgWtwxcZgo8DyLPYPsH3ep2lhRl3cz3v19tta06Uegl+D5MxWNoOployl5pF4
+ LYT81VevjzV55DOYBg/jYXMGpIZF+9d3Umz+KLMKQZ5DXC85lct2mD6XBUBijzLjKir8Yn92L2b
+ o6p48mzqad3L+E2Mxe5QGYoLg5IvVV+ouFScCpgfmP28rZL9PzfgkdmP0ahbxw/xtzK1kfWSxSI
+ 2DH1/dpfUzApuoHsTjp/y0HbjKkiH/BbrYduZ4L2RBFNDDAi
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The vc4_hdmi_connector_detect_ctx() via vc4_hdmi_handle_hotplug()
-already reads EDID and propagates it to the drm_connector. Stop
-rereading EDID as a part of the .get_modes() callback and just update
-the list of modes. This matches the behaviour of the i915 driver.
+Use the helper function to update the connector's information. This
+makes sure that HDMI-related events are handled in a generic way.
+Currently it is limited to the HDMI state reporting to the sound system.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/vc4/vc4_hdmi.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 2a2aca7017994779a7163935df3fc87ca312d6dd..bb5e8738845c74d975c1e0e1262ced46e4ef8fde 100644
+index bb5e8738845c74d975c1e0e1262ced46e4ef8fde..328a845ce0c4168b5463d344b3ad1f77a5437cff 100644
 --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
 +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -470,31 +470,10 @@ static int vc4_hdmi_connector_detect_ctx(struct drm_connector *connector,
- 
- static int vc4_hdmi_connector_get_modes(struct drm_connector *connector)
+@@ -383,7 +383,6 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
+ 				    enum drm_connector_status status)
  {
--	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
- 	struct vc4_dev *vc4 = to_vc4_dev(connector->dev);
+ 	struct drm_connector *connector = &vc4_hdmi->connector;
 -	const struct drm_edid *drm_edid;
- 	int ret = 0;
+ 	int ret;
  
--	/*
--	 * NOTE: This function should really take vc4_hdmi->mutex, but doing so
--	 * results in reentrancy issues since cec_s_phys_addr() might call
--	 * .adap_enable, which leads to that funtion being called with our mutex
--	 * held.
--	 *
--	 * Concurrency isn't an issue at the moment since we don't share
--	 * any state with any of the other frameworks so we can ignore
--	 * the lock for now.
--	 */
--
+ 	/*
+@@ -405,17 +404,14 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
+ 		return;
+ 	}
+ 
 -	drm_edid = drm_edid_read_ddc(connector, vc4_hdmi->ddc);
--	drm_edid_connector_update(connector, drm_edid);
--	cec_s_phys_addr(vc4_hdmi->cec_adap,
--			connector->display_info.source_physical_address, false);
--	if (!drm_edid)
--		return 0;
--
- 	ret = drm_edid_connector_add_modes(connector);
--	drm_edid_free(drm_edid);
++	drm_atomic_helper_connector_hdmi_hotplug(connector, status);
  
- 	if (!vc4->hvs->vc5_hdmi_enable_hdmi_20) {
- 		struct drm_device *drm = connector->dev;
+-	drm_edid_connector_update(connector, drm_edid);
+ 	cec_s_phys_addr(vc4_hdmi->cec_adap,
+ 			connector->display_info.source_physical_address, false);
+ 
+-	if (!drm_edid)
++	if (status != connector_status_connected)
+ 		return;
+ 
+-	drm_edid_free(drm_edid);
+-
+ 	for (;;) {
+ 		ret = vc4_hdmi_reset_link(connector, ctx);
+ 		if (ret == -EDEADLK) {
+@@ -549,6 +545,7 @@ static void vc4_hdmi_connector_reset(struct drm_connector *connector)
+ }
+ 
+ static const struct drm_connector_funcs vc4_hdmi_connector_funcs = {
++	.force = drm_atomic_helper_connector_hdmi_force,
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.reset = vc4_hdmi_connector_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
 
 -- 
 2.39.5
