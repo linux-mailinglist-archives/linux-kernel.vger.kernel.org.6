@@ -1,152 +1,79 @@
-Return-Path: <linux-kernel+bounces-449811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29DDD9F566C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:38:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 967C59F5674
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:42:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72E3316FDF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:38:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB0CB7A3FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5211F8AD4;
-	Tue, 17 Dec 2024 18:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97AB1F75A7;
+	Tue, 17 Dec 2024 18:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dyp9/OYf"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="zDEs9lQs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B150A1F8929;
-	Tue, 17 Dec 2024 18:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FB0442F;
+	Tue, 17 Dec 2024 18:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734460698; cv=none; b=fzbaJpUvvHL+oI+XDtd9zSZuvtaOmzqAcKttQMrbJClNC5wm/WgGjIxh4vETXS9w2URYMSMAERnHYtvrpr26Uck7Btr0vxg1rfr8mwoPZbtpLxxuAiCquBCQ+sy33OSWHvJNNSPVfOqBouzkIySE8tqxcRDXLHd80i0dkuOmeis=
+	t=1734460941; cv=none; b=sd4CBc85dXuih65+anPl44u/WdtLhkt9TWLpYeglU0G9d8sQgMHa0Nd1c24cNH6t7A50BTvgp9UzbSUDpwwg7zhKWiUgFI6W1rj3O+UowOpGJySFoEx6tk+JfvfkZYJFoL9y10g0mnDneVm3kh8ppmLpa+pdRvx+yjwkST5Fkec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734460698; c=relaxed/simple;
-	bh=f2FzyaOyPDsaxGvjsPFzwqvEoZrvAjj453BH8q7XiRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i5Key6jEJL8IBaB2M6M8yvUqoAr/Q4hz6+7UJFcIlb1kbCcWnsarFqumlVrS2KAnMykoOv5ymhTgBv8NqjQktWNgLfl/H1sV4apG5mKyXoQ9cJQ5+iWrcrgNFpnFDds03FHa6szKHxnRII+58s5Mbb9Co2aoRvNaFzwnYkMWLYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dyp9/OYf; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2161eb95317so52590885ad.1;
-        Tue, 17 Dec 2024 10:38:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734460696; x=1735065496; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aRGe4dTLtYwj2VBbTgj28SHXLo2nIoOZT7krPn0WOLo=;
-        b=Dyp9/OYf8gNBATmCgDUeIyk5m8XzjqDMNyKasSsVjXM0SljRgmKRJ5UmYFP8ZQmblP
-         kd47wwgXLbPOFHGkksqTBjjyleaRaAgOZX0ZdGkk0gB+iaYCFPPpHo/Wq4SGZhte8+vc
-         KdJTHypQgbe+euf6lqaSUXg/CedOZUPj3eoJQOFk3SyLU9eN39ZY7M62gE/cOnDZXVf7
-         Fik335abDnUBF7mba4ge24rr9bZqbqs8OyWf+9u7yCCVfOX7wuW7ogsDfS+aK2v5EfO3
-         YGZNDTYJt9h3iOxQs9CbCl7ukzOA0B+h5uumvzHV1V3Cm5XawkH5748wy/P2nkIgLd+B
-         gK5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734460696; x=1735065496;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aRGe4dTLtYwj2VBbTgj28SHXLo2nIoOZT7krPn0WOLo=;
-        b=Dxzf988NuaIuZhhZzFxPy4KAwTVS15/A3Imwmvd+qQruAMRP56IMNlbpm8KMvbfMUr
-         P05kp9dUYxMAN1dNUR0J4hMz/TxduHkOS1+vdnIv2DAuk6gexxRSSGo8bXlGSkICAcZ4
-         m1IkRSnJ0icEMV7ylgcNKFfLO7IKJnYaRJUeIf2zMELY33GgzZZ+4mHXBsTlw6pjSZsk
-         OZy+ztpTkEK+/8hOj9Zd4czU2eA5wWPHn7DdJvEKSR2bO9keQxMSFgfkSRIOozljlGb+
-         2EU9vxoADqE+9+693dDXtDlOlbUtKfqvCcxXbQtd+Av5L5HRbcyqTlg3UDrzduLHOm6g
-         h/wA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcH4abNpRJhDtiKRFhtsZByRFOSKlZ5Um9PTWYHLvrXEp0/6moIeeSP4FBC2Alj05nU1E=@vger.kernel.org, AJvYcCXgY8POITllJf5232G+6+/764n9QuKm+61Cm/L0BD8h1OtByTHg/aGa0lKyEYqUoba7fRqSe2isdk27kQnF@vger.kernel.org
-X-Gm-Message-State: AOJu0YydOL49Rlbx7IMBsQubgKJgyzY1m+BvmAoeIoHSDqEgOwOHcSvP
-	fHI+Gwhv5lRHo/ryapKN0Ajpr+738JCOLPg+Df1nG/egWNN2MTs2bc2ujXFgljZ7iUyWJPRY6zu
-	g5ZYNULKAAbpbSwHF3iaGpPt2/WM=
-X-Gm-Gg: ASbGnctFX1dJ3HZlMfm3PhQsmW1B6wBhsUgFbaHBuwC9p63LKL9069yBuDeKeyRcDNV
-	EdjP8nYfWSYzctwzHgz0zxG+r6VcrTi6EE3VFGv5xyVN9n0TuVZRzpg==
-X-Google-Smtp-Source: AGHT+IFADJk/V58dwhr51hK6ZTD8QXMcJm0GrImcTeXtre7ml3uwCxBqdwX/u0y6Z9dO1DDy1js2m/uLEUa1z8MzI5I=
-X-Received: by 2002:a17:903:946:b0:215:a179:14d2 with SMTP id
- d9443c01a7336-21892a5c0ecmr241780545ad.50.1734460696019; Tue, 17 Dec 2024
- 10:38:16 -0800 (PST)
+	s=arc-20240116; t=1734460941; c=relaxed/simple;
+	bh=GWzdSVxsk5HvUFxwCBmAjB4KeW9Vk0N37P+SEQjdPIE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ZsfyekmqDZ7RWWv8fel2z3JLc2k3NcvXn2XrjAY0iMLzbbpRlKIoEzYjNaKHN1f+cW/ikuun3LRtq5dSH5yDWB5V9wdvjhB9xaPjq8TzXOMEdz5PczfB9herVYAn0M1xHUS+n5Hex/mzUbhI9YCJr9dCC24Mz0hqdafMBb2Mt3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=zDEs9lQs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94793C4CED3;
+	Tue, 17 Dec 2024 18:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1734460940;
+	bh=GWzdSVxsk5HvUFxwCBmAjB4KeW9Vk0N37P+SEQjdPIE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=zDEs9lQsKTR6UEFOzWnHYNHawM5msCTXTdYyzjxhQ9A1VMv020nn564/w+R+uaHLR
+	 0uav94hP/pxYQmpoSIodvl6xJGXaLQxsiCdCSwvwQ29/DqyJK85MPbyj2B0Nf1ygrk
+	 CjMKt3tOzCPY1CGPJRzFwwgYlIHzd9XO6uscTDO0=
+Date: Tue, 17 Dec 2024 10:42:18 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: peterz@infradead.org, willy@infradead.org, liam.howlett@oracle.com,
+ lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
+ hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+ mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+ oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org,
+ dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
+ lokeshgidra@google.com, minchan@google.com, jannh@google.com,
+ shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com,
+ klarasmodin@gmail.com, corbet@lwn.net, linux-doc@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v6 00/16] move per-vma lock into vm_area_struct
+Message-Id: <20241217104218.7ed493c6647cea5c5c0a73c6@linux-foundation.org>
+In-Reply-To: <CAJuCfpHL33E_=hHmM-4sgcG892j3NS+J69RWHJNmJs-N16y4Lg@mail.gmail.com>
+References: <20241216192419.2970941-1-surenb@google.com>
+	<CAJuCfpHL33E_=hHmM-4sgcG892j3NS+J69RWHJNmJs-N16y4Lg@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241216210031.551278-1-arighi@nvidia.com>
-In-Reply-To: <20241216210031.551278-1-arighi@nvidia.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 17 Dec 2024 10:38:04 -0800
-Message-ID: <CAEf4BzbKZ3JL7FigJ1aRDJSiRYBA8wYjh0+TYNfnsNVHd30j7g@mail.gmail.com>
-Subject: Re: [PATCH v2] bpf: Fix bpf_get_smp_processor_id() on !CONFIG_SMP
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 16, 2024 at 1:00=E2=80=AFPM Andrea Righi <arighi@nvidia.com> wr=
-ote:
->
-> On x86-64 calling bpf_get_smp_processor_id() in a kernel with CONFIG_SMP
-> disabled can trigger the following bug, as pcpu_hot is unavailable:
->
->  [    8.471774] BUG: unable to handle page fault for address: 00000000936=
-a290c
->  [    8.471849] #PF: supervisor read access in kernel mode
->  [    8.471881] #PF: error_code(0x0000) - not-present page
->
-> Fix by inlining a return 0 in the !CONFIG_SMP case.
->
-> Fixes: 1ae6921009e5 ("bpf: inline bpf_get_smp_processor_id() helper")
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> ---
->  kernel/bpf/verifier.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> ChangeLog v1 -> v2:
->   - inline a "return 0" instead of not inlining bpf_get_smp_processor_id(=
-) at
->     all in the !CONFIG_SMP case, as suggested by Daniel
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index f7f892a52a37..761c70899754 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -21281,11 +21281,15 @@ static int do_misc_fixups(struct bpf_verifier_e=
-nv *env)
->                          * changed in some incompatible and hard to suppo=
-rt
->                          * way, it's fine to back out this inlining logic
->                          */
-> +#ifdef CONFIG_SMP
->                         insn_buf[0] =3D BPF_MOV32_IMM(BPF_REG_0, (u32)(un=
-signed long)&pcpu_hot.cpu_number);
->                         insn_buf[1] =3D BPF_MOV64_PERCPU_REG(BPF_REG_0, B=
-PF_REG_0);
->                         insn_buf[2] =3D BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF=
-_REG_0, 0);
->                         cnt =3D 3;
-> -
-> +#else
-> +                       BPF_ALU32_REG(BPF_XOR, BPF_REG_0, BPF_REG_0),
+On Mon, 16 Dec 2024 11:39:16 -0800 Suren Baghdasaryan <surenb@google.com> wrote:
 
-um... shouldn't this be `insns_buf[0] =3D ` assignment? And that comma
-instead of semicolon at the end?
+> > Patchset applies over mm-unstable after reverting v5 of this patchset [4]
+> > (currently 687e99a5faa5-905ab222508a)
+> 
+> ^^^
+> Please be aware of this if trying to apply to a branch. mm-unstable
+> contains an older version of this patchset which needs to be reverted
+> before this one can be applied.
 
-pw-bot: cr
-
-> +                       cnt =3D 1;
-> +#endif
->                         new_prog =3D bpf_patch_insn_data(env, i + delta, =
-insn_buf, cnt);
->                         if (!new_prog)
->                                 return -ENOMEM;
-> --
-> 2.47.1
->
+I quietly updated mm-unstable to v6.  I understand that a v7 is expected.
 
