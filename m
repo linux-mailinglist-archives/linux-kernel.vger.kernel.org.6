@@ -1,183 +1,146 @@
-Return-Path: <linux-kernel+bounces-449188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CB09F4B2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:43:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F8D9F4B2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3B5188F256
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:43:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B531018817B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8311F37D6;
-	Tue, 17 Dec 2024 12:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFE31F3D29;
+	Tue, 17 Dec 2024 12:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C8bVd78O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="na08JaC7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D1D1F12FA;
-	Tue, 17 Dec 2024 12:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976AF1F2C23;
+	Tue, 17 Dec 2024 12:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734439371; cv=none; b=YVjo1iPYPYkcSNP9prmxBz8Z16lXu/zNizvpkjbm9gB3T2Lp41jgxYoxZPlRIKCxLSYjRbCMFIhRSVt10lWaFfzqpu6AUI4NGPlbwzLsTVl6hONSKdh+zax79IJwPlHC+BKsgkhB8F+lp8SVLBoCbM6I+MnX9g8QDh7b78D7lLI=
+	t=1734439398; cv=none; b=YFt7KBDZswcybKCr9uKLBOZbmX9qb7g51EDlPpwv+/m7uOYGG2sROSOpvJynQzSTTy/mgRQ+UsTLrRpKwxaE0i3wNcJVJ5IGOhDm98wXAVQPWrgchd2a3J75v86fVPDphGxQY2hVEd92X67gHCPg8tM1+NtFzsZDRiNLgK37xUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734439371; c=relaxed/simple;
-	bh=IBow5Q+/ahbEbl2AJp+9GIlzjEFcfY6jpwl/h1/bkjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I2iVYcIuBF26juz1tRIZRSNOfDPfDpfUTm7AUxDMkCQTDRuHkeU6oQNT+wZvNwxYy+oL1tOWke0kGEdoLZclZlRJpFrVNNmGdjHW2zW/k/FY5wiaYFg+lczjFcnwSEdByqI/+hnZ1t1bsNnNy/b4MKkM6YBOTL/muNW+tEDx4pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C8bVd78O; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734439369; x=1765975369;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IBow5Q+/ahbEbl2AJp+9GIlzjEFcfY6jpwl/h1/bkjA=;
-  b=C8bVd78OGzKLuJzT7JtsRM4sq/t2k6ZzL8LYCWimoMH9CFtnBlSR938v
-   JobdPyJ7Ob05/iwLt7rt4Ncq57ZeZTXAM6JYZ8p2QOY/wU5Q5k7tZgkyJ
-   Jm1cChFmjg3THm2N5SBmfZYKZrsUvWlmZJeAQf4yky0xxqWMWIsk1wWmw
-   Dc84XuaD17HoiTnlU23RN3BBhFUcC3kj7Bvk4ZpHEhQ1JOo5E3bgW0n1C
-   G6efBhAR4nTuEGbDgR/nsv2Gx0NCbbXNl0fuvepZ/CqmYmqI5W5IpzKX1
-   oPScS6b0HmGn/VIS9fMHnlEQoQsWzPH+uIMia0KObiRyAY+o9O/qdcdtl
-   Q==;
-X-CSE-ConnectionGUID: drg3KRuBS6W3CEFIsGyEzQ==
-X-CSE-MsgGUID: 8zXQ8oN9Si6atLWpgg0M4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="35084438"
-X-IronPort-AV: E=Sophos;i="6.12,241,1728975600"; 
-   d="scan'208";a="35084438"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 04:42:48 -0800
-X-CSE-ConnectionGUID: sG414cBhRt6lumNQ8O7dfA==
-X-CSE-MsgGUID: Jm79IggMSQa7+VUnFhhvnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="134866979"
-Received: from ksztyber-mobl2.ger.corp.intel.com (HELO [10.245.245.179]) ([10.245.245.179])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 04:42:45 -0800
-Message-ID: <6bb2ba2e-bb51-4637-b254-2603c38a5537@linux.intel.com>
-Date: Tue, 17 Dec 2024 13:42:35 +0100
+	s=arc-20240116; t=1734439398; c=relaxed/simple;
+	bh=YJD5j6axAfcKPnmYpT9mtMCTx0yWBgcnrv0V5xHFMqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bPV5v2Jrw9mHCY4HMjVtKQ7OwOBbuQbBWHC/oZsUWJFA4WxP4oy/HocXkqKFHGf9LzL8MnUGg/llJcVF0Xlo6ZHFhSc441oUe3jujy54oUt1MMNOXgqWouPeqwrFrjIP80GzcMfvmOdHg8fx+ShgSKfXqKjU4XO4+QsnC098GJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=na08JaC7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C050FC4CED3;
+	Tue, 17 Dec 2024 12:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734439398;
+	bh=YJD5j6axAfcKPnmYpT9mtMCTx0yWBgcnrv0V5xHFMqk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=na08JaC7s/BwOgzsBqRm2F22zocI122O+xG8ZxTDuDT5FKgrTByKNw2z4fzDbXrm8
+	 tkoUxAYA1yuHxYivexqtwP/hMF9OH5ujj0OWej9qqjSR1X1D9Uie+IrHdJR51cpSUv
+	 tUAslkLgIcfr5ePMA5VrihVuhFWrSPWM1V/oeqYfC9jgMRoUsI/5iRWKm3uYu9a6No
+	 sDOj6f2uy2FczZDWYeRZGZabMHmcnO2XgKnjnWbN1CJ1QRwhlyXaej6o5Adw/9nUR4
+	 chvLT0TJvRxdZevDujgGvLhrT9aJ6ThmuF5Xj9uVGnLPw4TPWbxWoTD9jmRbDkBm+M
+	 sWTVhz0HQlonw==
+Date: Tue, 17 Dec 2024 06:43:16 -0600
+From: Rob Herring <robh@kernel.org>
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Aubin Constans <aubin.constans@microchip.com>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: mmc: atmel,hsmci: Convert to json schema
+Message-ID: <20241217124316.GA1136537-robh@kernel.org>
+References: <20241209-hsmci-v2-1-b5a6d7c59b67@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/4] intel_idle: Provide the default enter_dead()
- handler
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, peterz@infradead.org,
- dave.hansen@linux.intel.com, gautham.shenoy@amd.com, tglx@linutronix.de,
- len.brown@intel.com, artem.bityutskiy@linux.intel.com
-References: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com>
- <20241204140828.11699-4-patryk.wlazlyn@linux.intel.com>
- <CAJZ5v0hL0QOT17DnsUKONHVy1+Yy84soPWU74gHAxjsozerPgg@mail.gmail.com>
-Content-Language: en-US
-From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-In-Reply-To: <CAJZ5v0hL0QOT17DnsUKONHVy1+Yy84soPWU74gHAxjsozerPgg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209-hsmci-v2-1-b5a6d7c59b67@microchip.com>
 
->> Recent Intel platforms require idle driver to provide information about
->> the MWAIT hint used to enter the deepest idle state in the play_dead
->> code.
->>
->> Provide the default enter_dead() handler for all of the platforms and
->> allow overwriting with a custom handler for each platform if needed.
->
-> My changelog for this patch:
->
-> "A subsequent change is going to make native_play_dead() rely on the
-> idle driver to put CPUs going offline into appropriate idle states.
->
-> For this reason, provide the default :enter_dead() handler for all of
-> the idle states on all platforms supported by intel_idle with an
-> option to override it with a custom handler if needed."
->
+On Mon, Dec 09, 2024 at 10:02:30AM +0530, Dharma Balasubiramani wrote:
+> Convert atmel,hsmci documentation to yaml format. The new file will inherit
+> from mmc-controller.yaml.
+> 
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> ---
+> Changes in v2:
+> - Drop the duplicate properties in the slot node.
+> - Link to v1: https://lore.kernel.org/r/20241205-hsmci-v1-1-5a25e622dfed@microchip.com
+> ---
+>  .../devicetree/bindings/mmc/atmel,hsmci.yaml       | 110 +++++++++++++++++++++
+>  .../devicetree/bindings/mmc/atmel-hsmci.txt        |  73 --------------
+>  2 files changed, 110 insertions(+), 73 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml b/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml
+> new file mode 100644
+> index 000000000000..26686ada6288
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/atmel,hsmci.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Atmel High-Speed MultiMedia Card Interface (HSMCI)
+> +
+> +description:
+> +  The Atmel HSMCI controller provides an interface for MMC, SD, and SDIO memory
+> +  cards.
+> +
+> +maintainers:
+> +  - Nicolas Ferre <nicolas.ferre@microchip.com>
+> +  - Aubin Constans <aubin.constans@microchip.com>
+> +
+> +allOf:
+> +  - $ref: mmc-controller.yaml
+> +
+> +properties:
+> +  compatible:
+> +    const: atmel,hsmci
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  dmas:
+> +    maxItems: 1
+> +
+> +  dma-names:
+> +    const: rxtx
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: mci_clk
+> +
+> +  "#address-cells":
+> +    const: 1
+> +    description: Used for slot IDs.
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^slot@[0-9]+$":
+> +    type: object
+> +    description: A slot node representing an MMC, SD, or SDIO slot.
 
-Ok. I'll apply that in the next version.
+There's a schema for slots now queued for 6.14[1]. You should use that. 
+One issue is 'compatible' is required. Either that would have to be 
+dropped as required or you could just add it in your .dts files.
 
->> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
->> ---
->>  drivers/idle/intel_idle.c | 18 ++++++++++++++++--
->>  1 file changed, 16 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
->> index ac4d8faa3886..c6874a6dbe95 100644
->> --- a/drivers/idle/intel_idle.c
->> +++ b/drivers/idle/intel_idle.c
->> @@ -56,6 +56,7 @@
->>  #include <asm/mwait.h>
->>  #include <asm/spec-ctrl.h>
->>  #include <asm/fpu/api.h>
->> +#include <asm/smp.h>
->>
->>  #define INTEL_IDLE_VERSION "0.5.1"
->>
->> @@ -227,6 +228,16 @@ static __cpuidle int intel_idle_s2idle(struct cpuidle_device *dev,
->>         return 0;
->>  }
->>
->> +static __cpuidle void intel_idle_enter_dead(struct cpuidle_device *dev,
->> +                                           int index)
->> +{
->> +       struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
->> +       struct cpuidle_state *state = &drv->states[index];
->> +       unsigned long eax = flg2MWAIT(state->flags);
->> +
->> +       mwait_play_dead(eax);
->> +}
->> +
->>  /*
->>   * States are indexed by the cstate number,
->>   * which is also the index into the MWAIT hint array.
->> @@ -1798,6 +1809,7 @@ static void __init intel_idle_init_cstates_acpi(struct cpuidle_driver *drv)
->>                         state->flags |= CPUIDLE_FLAG_TIMER_STOP;
->>
->>                 state->enter = intel_idle;
->> +               state->enter_dead = intel_idle_enter_dead;
->>                 state->enter_s2idle = intel_idle_s2idle;
->>         }
->>  }
->> @@ -2143,10 +2155,12 @@ static void __init intel_idle_init_cstates_icpu(struct cpuidle_driver *drv)
->>                 if (intel_idle_max_cstate_reached(cstate))
->>                         break;
->>
->> -               if (!cpuidle_state_table[cstate].enter &&
->> -                   !cpuidle_state_table[cstate].enter_s2idle)
->> +               if (!cpuidle_state_table[cstate].enter)
->
-> I don't think that the above change belongs to this patch.  If I'm
-> mistaken, it should be mentioned in the changelog and the reason for
-> making it should be explained.
-
-Yeah, you are right, removing enter_s2idle check doesn't make much sense.
-I think I was changing much more code, but eventually decided not to
-change too much in one go and forgot to roll back that one.
-
-With this:
-                if (!cpuidle_state_table[cstate].enter &&
-                    !cpuidle_state_table[cstate].enter_s2idle)
-
-we would not set enter_dead for states that only provide enter_dead handler, but I doesn't seem to happen in practice, so for the sake of simplicity I am just going to leave the check unchanged.
-Unless you think it makes more sense to do:
-                if (!cpuidle_state_table[cstate].enter &&
-+                   !cpuidle_state_table[cstate].enter_dead &&
-                    !cpuidle_state_table[cstate].enter_s2idle)
-
->
->>                         break;
->>
->> +               if (!cpuidle_state_table[cstate].enter_dead)
->> +                       cpuidle_state_table[cstate].enter_dead = intel_idle_enter_dead;
->> +
->>                 /* If marked as unusable, skip this state. */
->>                 if (cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_UNUSABLE) {
->>                         pr_debug("state %s is disabled\n",
->> --
-
+Rob
 
