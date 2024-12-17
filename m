@@ -1,115 +1,159 @@
-Return-Path: <linux-kernel+bounces-449742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908F99F558E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6B59F5594
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35656175D6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD7F171985
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDE51FBCB8;
-	Tue, 17 Dec 2024 17:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6101B145B25;
+	Tue, 17 Dec 2024 17:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RyHAqJ/m"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBd0brOY"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC9D1EE02E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B0A1FBEAC;
+	Tue, 17 Dec 2024 17:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734458071; cv=none; b=LKFHFSczsXw1CqkRXuopmhPR6NYx6ddChdg6V336vWlRfb/DB51Kg9kFiL4rDjmmr9Jql/KIB3vD11dDYJHC3LGBNW9LPMsPdXhNLp0szYu40yu5rz4kNm1QFVnjl3ClRuk9XGIQoR7RrHCPqlymnOSildLT1C5ROLvrFfE9Lf0=
+	t=1734458096; cv=none; b=RaiKJAVl88PYsDoBALDCPAP49uvjJUTVFycG9BDOb/NQMR5z9jIXgQtXi/gb+caU5aOBcYCD3G4MHr14IOXvQhMBXrLwEbA0kAjdsNgc9ORz+Nl91NMQ6MZHXxvCh2HK+A1EvPt0BUNGmdiLih0FYTQ1pbRA0sVLM8YrDExpqOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734458071; c=relaxed/simple;
-	bh=Lyz3pxba+WfjDFPIDQ6xn8XAtkSqhUaQDO2p6HbBcnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j06cTvgXqfMslPHgBalp1YJqjEakKB+j3yYd7J3BUjx6iG9/X9lsi3lyUoL7167uxVjKh086ohxQQ5Y4fwOdm/JbjHCMTyOjoCGNQ3Ms+WE694CT68RmnJt9Hk74STb5dWrMpdr15Arfb5iZVsqSattxUcP75rNiRjhujO6jEfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RyHAqJ/m; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a8146a8ddaso17574895ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:54:28 -0800 (PST)
+	s=arc-20240116; t=1734458096; c=relaxed/simple;
+	bh=5PykxEFIGGCVAhvaitz/8BJOTQ+bEmFMD3w76LQued0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ib4OH/bs4XiWThNLuTRdXO5uMxR8E5vX0PCBnuu4ynEWrmg15sj2Xsyyaq0XQROT9h3EsOhVrAMd1NqjTUOb6lO6Lgd0Ti3q/XheCL1h9zJeBLBD8133UUAqreBO5pRZS/9yp2OQPQlVeV76vTbI7k1B/giP7wIopwIlsfX/CT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JBd0brOY; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434a766b475so59173805e9.1;
+        Tue, 17 Dec 2024 09:54:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734458067; x=1735062867; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+S2KbhIrhYKECFApyJjGLk7qrmZwBnp+gEfOwbZqgUo=;
-        b=RyHAqJ/mDor0NPB6E4y9tWb453DBiOvljE6m6eiPMtOr4e2sRJSzWqNZYd1dkMO3bl
-         7vKY0s0MkSFXVmEZ3ZA8VhVNsx62cY3/jKsFeVzfY/bsR1gHnKXu4hx1iK1dKA8Cce6p
-         XrKrmuCa8p7I7qyn7u8G5SKpBrsC42+6iXol+y7UoYJ+YT3cHPwn8p2zBVyFDkfpjPyF
-         JfoaFmmD3JyyXzanbOmSUA+E8coMIOaRCGJkBDpr9Q6CgsaoyRaLZENp2i9/cgpjxPEu
-         YUaxV2SMYjK6shepU6EPMNADn+CZGuDKOYrzxXC8n+1TTnIQVopfXVRhWJe1KbHD6wMI
-         rksA==
+        d=gmail.com; s=20230601; t=1734458093; x=1735062893; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AyrmzpRaBGC3KODJNI/AuY5aXSnDASObC2Ra3ok3feg=;
+        b=JBd0brOY1ieWqV9pT5fIUm6AL/7l74X7zwKCkM2OX2X2Q/ApqMpPftr8aAFvgfrNcB
+         1g4+igtYVJAdA6A0AmBoESBvHISasNfqFTCXgby6gTl2foIp5SVsF4onrD7R3F84RdeF
+         zGma2CbRyDDh4OXTu6Z4NIu238FD6aytQ8N7wP5RIIVC6FTYUdIRy45qdG7WKQa5wI5Z
+         9byDYvshaX3g1QAxUerRSKQ9IaKf7JC6/ksF428K1JTD9PS5fP38xbRhqBIWwaa/e09/
+         Eee1VBCFxqq8lwIspTjp9EA7DZYEIgVwuP1+R+v0WkEKxTsDAj15Du/TUnTr+olNraAE
+         oUkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734458067; x=1735062867;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+S2KbhIrhYKECFApyJjGLk7qrmZwBnp+gEfOwbZqgUo=;
-        b=ucJ72Z/VBq+tqiiSlsI3gzFx7te3+/oD9v+8EmA5hk4WKkWJDdIH9ANEQdXA6WrAD1
-         kkuJgDw5VIVWUpLc8QCRBfME1cS2SstOON/EX1SX/Q7u/auGF1ruYhdk8iL+VOZ72YwE
-         WUB78uRpGfEHaJTVHnJ7rk0UEhFnHvGAk+3WC1XNYPuRhcxbjLYus7qk7DjkRHgdby/t
-         DYozm6+SYctjfKTHnMWem80C0+zIB9kedTVzDNaM2Dxri6cXOzwr1PMpaMBJiH9gesde
-         i8coAawfL8CKbEBAolkN9W7ACxIR0zrRATqH3js58BEgb1bygm4cF1KX+MDOkgJdVFZb
-         S8mA==
-X-Forwarded-Encrypted: i=1; AJvYcCXi8W4iU1TCZuc8SUobdDT6SW/4tDKlIDVLgkBfJnvB4w+fMHXMzyqIbhnyuAd6/DoOUC9wh1xJEUoZ2CM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHc8CyxL0cEgeCEicrWbG+FsHDUsD21VpOGZwNZJ8SrDm92VsW
-	sgokZFOU/aAca8/vfnwsBUA9z4rirt/JG+tKt/SLsDJTMVulWUoRtKERZRzaQSY=
-X-Gm-Gg: ASbGncuACPy5bPSAiMbi8xigjU/6Ng5z/84W3WzhLYMkGK8oALYu5ERvX6J0nMcZ5mJ
-	KflYFqCyiA/jU3s18+EjwiI4FNbsKSMYZxZeGSP6Aw7tLbcU5Hup5b/+wBaM5kLe5Jx4B+UhBnK
-	dCInJ/MPGkC7UPemJoab9Iy3EwAeE9bJPXgYAkdszT/MphaCXZqIEuJPS9SmfiooPq767HrNjfv
-	oEai7HqD2+IeCkfvJKNnoQx5ltUtlPeEeqiNX7/503UC+LT1Se+
-X-Google-Smtp-Source: AGHT+IEu4IjNs/5xorwpYlZBESvq5LvFi/8gufZqjoD/nmtALPkmYF9FSVwvwu7wAaOMQC3j/4k6gQ==
-X-Received: by 2002:a92:c564:0:b0:3a7:6636:eb3b with SMTP id e9e14a558f8ab-3aff800d5d2mr172047215ab.17.1734458067401;
-        Tue, 17 Dec 2024 09:54:27 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e5e32a33cdsm1793038173.81.2024.12.17.09.54.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 09:54:26 -0800 (PST)
-Message-ID: <acaf46f3-3f6c-44c9-86b5-98aa7845f1b6@kernel.dk>
-Date: Tue, 17 Dec 2024 10:54:26 -0700
+        d=1e100.net; s=20230601; t=1734458093; x=1735062893;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AyrmzpRaBGC3KODJNI/AuY5aXSnDASObC2Ra3ok3feg=;
+        b=PJzx9byympXIWfxAVzKdxxZWRTuB0YgT7u8TGx1tUhZWJBhNPnnwaY/p34xnZYU6se
+         w7IuLWVB4TA5OFEWgoWZSxNS0W45yRPCcwyjAoaAu2IsTidyzjNuoVNg0jqhO45K0gPg
+         C634aT8C0Lnwhzpbn8Js7b5BwQqkwMt8l63J273nGpBPGl7tayy7RfKn770KZ/NWLH9I
+         EQOn7tapN/+eIzBok7BGY466KF42N5smzkBvJLc8zzR/44EO7daVbCOXhr/4lmmrl5VH
+         l0DLCM1/ZX5DhsHWA4TxeWLqwRGlT4r9EwmYxfNf8wxSJy/RJcPZQSr1JAMC0uOENGvE
+         0TuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOwrrpyQ5caJFDu9J0iXuI5fA5QSUXIlNTUXg8HKjKG+gSxYhrpHBvV1KD8n3xjK1jHxto1zKd6bLcjzM=@vger.kernel.org, AJvYcCXWCGsj7uzzEn5aVMF3CXLTISNmyChWuJAm4wK351wixKGMbWi6pJHeD1LquMFrUGMg73X5ukKa@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV7QBZq37k4cn3Y3hXtpaIEL5eUHmJforzck++EA8HpZNwEGzA
+	ir6kRQZQMfGhMYF++QtGC8hDwwYtpWb1FY41DxhRyhN0z7EbfWMu
+X-Gm-Gg: ASbGncvcQM0q89QibNlSsp8oRiFs6L3adPcuZnTDbpbFbZHDDaRYPuCfb3G4CKLatOm
+	aerH9HHMp8haGBMLJp7YFvfg1g21EriZnB4ElFw2Tuq3IxtYQaLFIWOhCw+Hbp57Ui+mdgXH4NW
+	Rdyz2LlUfOL6W1rAjxuQvTmNoJtm90Mms0mSrmNdhvqy5gr2d4zFAaCx4CsLZsazHi7leis5yTr
+	UqvbXfb0i80fgv0ptgiX5r/4Ex7lzw6myoz9Bv+NTWHxzUCUOyM
+X-Google-Smtp-Source: AGHT+IECFEtLkTK128lu9CsBumM33qWpYgZlGgNWPCfhtohQpNVOeboAjx2KzumX7eW6XvHOBHMIHQ==
+X-Received: by 2002:a05:600c:3b25:b0:435:9ed3:5698 with SMTP id 5b1f17b1804b1-436530eeefamr2315305e9.24.1734458093037;
+        Tue, 17 Dec 2024 09:54:53 -0800 (PST)
+Received: from debian ([2a00:79c0:674:2500:224:9bff:fe22:6dd6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625553213sm178825245e9.8.2024.12.17.09.54.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 09:54:52 -0800 (PST)
+Date: Tue, 17 Dec 2024 18:54:50 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: dp83822: Add support for PHY LEDs on
+ DP83822
+Message-ID: <20241217175450.GA716460@debian>
+References: <20241217-dp83822-leds-v1-1-800b24461013@gmail.com>
+ <20241217163208.GT780307@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for
- virtio-blk
-To: Jingbo Xu <jefflexu@linux.alibaba.com>,
- Stefan Hajnoczi <stefanha@gmail.com>, Christoph Hellwig <hch@infradead.org>
-Cc: Ferry Meng <mengferry@linux.alibaba.com>,
- "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- linux-block@vger.kernel.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
- Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20241203121424.19887-1-mengferry@linux.alibaba.com>
- <Z2BNHWFWgLjEMiAn@infradead.org>
- <CAJSP0QXU_uNqL-9LmLRkDdPPSdUAGdesQ2DFuCMHnjyEuREvXQ@mail.gmail.com>
- <0535520b-a6a6-4578-9aca-c698e148004e@linux.alibaba.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <0535520b-a6a6-4578-9aca-c698e148004e@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217163208.GT780307@kernel.org>
 
-On 12/16/24 11:08 PM, Jingbo Xu wrote:
->> That's why I asked Jens to weigh in on whether there is a generic
->> block layer solution here. If uring_cmd is faster then maybe a generic
->> uring_cmd I/O interface can be defined without tying applications to
->> device-specific commands. Or maybe the traditional io_uring code path
->> can be optimized so that bypass is no longer attractive.
+Am Tue, Dec 17, 2024 at 04:32:08PM +0000 schrieb Simon Horman:
+> On Tue, Dec 17, 2024 at 10:16:03AM +0100, Dimitri Fedrau wrote:
+> > The DP83822 supports up to three configurable Light Emitting Diode (LED)
+> > pins: LED_0, LED_1 (GPIO1), COL (GPIO2) and RX_D3 (GPIO3). Several
+> > functions can be multiplexed onto the LEDs for different modes of
+> > operation. LED_0 and COL (GPIO2) use the MLED function. MLED can be routed
+> > to only one of these two pins at a time. Add minimal LED controller driver
+> > supporting the most common uses with the 'netdev' trigger.
+> > 
+> > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> > ---
+> >  drivers/net/phy/dp83822.c | 271 +++++++++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 269 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
+> 
+> ...
+> 
+> > +static int dp83822_led_hw_control_set(struct phy_device *phydev, u8 index,
+> > +				      unsigned long rules)
+> > +{
+> > +	int mode;
+> > +
+> > +	mode = dp83822_led_mode(index, rules);
+> > +	if (mode < 0)
+> > +		return mode;
+> > +
+> > +	if (index == DP83822_LED_INDEX_LED_0 || index == DP83822_LED_INDEX_COL_GPIO2)
+> > +		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
+> > +				      MII_DP83822_MLEDCR, DP83822_MLEDCR_CFG,
+> > +				      FIELD_PREP(DP83822_MLEDCR_CFG, mode));
+> 
+> ...
+> 
+> > +}
+> > +
+> > +static int dp83822_led_hw_control_get(struct phy_device *phydev, u8 index,
+> > +				      unsigned long *rules)
+> > +{
+> > +	int val;
+> > +
+> > +	if (index == DP83822_LED_INDEX_LED_0 || DP83822_LED_INDEX_COL_GPIO2) {
+> 
+> Hi Dimitri,
+> 
+> As per the condition near the top of dp83822_led_hw_control_set(), should
+> this be:
+> 
+> 	if (index == DP83822_LED_INDEX_LED_0 ||
+> 	    index == DP83822_LED_INDEX_COL_GPIO2) {
+> 
+> Flagged by W=1 + -Wno-error build with clang-19.
+> 
+>  drivers/net/phy/dp83822.c:1029:39: note: use '|' for a bitwise operation
+>   1029 |         if (index == DP83822_LED_INDEX_LED_0 || DP83822_LED_INDEX_COL_GPIO2) {
+>        |                                              ^~
+>        |
+> 
+> ...
+Thanks, will fix it.
 
-It's not that the traditional io_uring code path is slower, it's in fact
-basically the same thing. It's that all the other jazz that happens
-below io_uring slows things down, which is why passthrough ends up being
-faster.
-
--- 
-Jens Axboe
+Best regards,
+Dimitri
 
