@@ -1,151 +1,205 @@
-Return-Path: <linux-kernel+bounces-448873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916DE9F46A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:57:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BCA19F46A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:58:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92CD164BE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B347016450F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A6D1DE2AC;
-	Tue, 17 Dec 2024 08:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F3D1DDA36;
+	Tue, 17 Dec 2024 08:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jFCw6vNY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uQ/WltW1"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911D61D63DB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4BA192B66
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734425841; cv=none; b=uYeGcb3AsKPvQjJVyvCQ7pEPjUqlCshwtkIrudAP4/XUDrCoZUHRHbO4ymQJFtl6NEhYudPDSBmRn1dnaAuzKfYY9lZkFH++mauCV260fu8C5k9xbTqFKulIHEK949qP6QZ6fFp++8b08pOxxqKSy7Vv6vH1rP3eX/DisdSV7/k=
+	t=1734425878; cv=none; b=HX524cuVzOQlSlQsVpsvN0EjOPwgoUKfC4C7Yy8pX41pkKct6QM0tWp5KQFbCiiHerP+WR0PUO4QuRO2gPmDWhTbAxmclFjGs3FJokgC1QuC03DaWfmy8REZxIrzgQy34aA2QRD1zCkLWwyMaCx0wzzYQjdhxvW0ch1KObGlp1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734425841; c=relaxed/simple;
-	bh=my89gapazaRXABx0ds8EDdV5LyYYL2x4cidIM74wTVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DBC1brqDFL/oUPaxAtll8ORaa9tuNUvaIqkY0sLdMYseuH/33h6Yq2m7tGRDLYNMUjeODlbQv/E2hrZq4TNFMVY3Oc2+IqqQqh110l5oUW1Td0mhgeThJkfg19BlwtU/vBLgh8mfhSyiXqh5HO8weOqqmNQe/n5esFYSFKUziN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jFCw6vNY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734425838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e36MqRAUUxdsVobCeHh3rEjTnXYHMB/28HuSecqnBzU=;
-	b=jFCw6vNYan504jBB4wZB9SbjOBHITFDAg51rRIikZ7zjte6SXLjM/ETav1Ygwe83k4CPOC
-	oD+jYi+rXshEBZItmoOMRk4oY0ow1pIsK2lMWH8W+CYbdYhA9O5XM+VKvZigpYKLYtaT9d
-	lzo7CeluNgWScLqOV8HwGU5dB5zDbxA=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-91-xt9GXcfvMkO0ikhMh30o3w-1; Tue, 17 Dec 2024 03:57:17 -0500
-X-MC-Unique: xt9GXcfvMkO0ikhMh30o3w-1
-X-Mimecast-MFC-AGG-ID: xt9GXcfvMkO0ikhMh30o3w
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d88d56beb7so51240406d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:57:17 -0800 (PST)
+	s=arc-20240116; t=1734425878; c=relaxed/simple;
+	bh=KSNgjhFPDqRZpu7/UdXMTYonkVgq2dG2a6Kv/xslTxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VTbSjizdkcxZrFzi2oW3jvn/jqlIGiUEjpPsZMdnWXcGJtW1+6jyUbjsx1Kg/dc6wVs7Sr7UiqXzbj4VUAaYf0AT3g29GMKWWCX+LBoztgSWc9+enotfgxbfF+iqRgWTvej54ptAl0rOqqDdp4vXlGW/iYTGLTFZ643eSPb5yn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uQ/WltW1; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-435b0df5dbdso39665e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:57:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734425874; x=1735030674; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=A9mGOwcKJkPD0/hT208rpyXS4+JWLUF2rILHUVjXzsc=;
+        b=uQ/WltW1ZL8NaRDFJuvtIHyQH5n9GslaL6SMHLRQO1y354p/IbbOqTBMPb4us2NTiX
+         mF4I1NZR7X5hPvKjEJikBa/gEG5Baksr02wVAGiWfQTGuKnG4tNTuDZBtp3A48T+pKg4
+         SE2+Gr5BL9GASa9GEduz/rejsV05AJdnQ4W41vW+orftxHQWAgihpqAPQ7+L8KN5/wKF
+         c3QUfbTBFyXad8j2+vlizT3O9Ca0k6tcBxl7/PdhjCtPhzBu0oSL+YgteJXmdDwB4VIZ
+         k0RUw48Qr/je8udTiA9elAGXkC4A+wkJ1bC2AKrhuYiycjmvLng4eY7z90IGZPgHQ4Up
+         9j5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734425837; x=1735030637;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e36MqRAUUxdsVobCeHh3rEjTnXYHMB/28HuSecqnBzU=;
-        b=wZbxBlbcph0HUYH3kwn9XEhcjONVixb+0C1Zdo0DmtWcQCMWsKrPIe1M1ha4RchNMc
-         RZ2mhU9rcEB1K75AyW/hHPX5QiOyuacfRuEku+jc7mv3YRK5Q06Fl2URqG8RD4obQlyk
-         RAzaGTTmMZB6NNZ0mCdt/pzGbrBYK3Jv6tZTZmEPC6Xc18kaIzHR8rDJSpRY3isoqt/U
-         wWVrkCKmfzAIa2NllcuugpdK/rgHdoPU8kNuYIwFLJ2LCNMPxNuelRZ377/QwVGRorgh
-         VpGeq4klGp5XZEeBZgK2UlV/gHLX4ppYt87L8bLMqCWOEt3+b6ZpD26CZv1IdwfE4Zk8
-         KhJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV55gUwbK6hyIdWGOAQ9SJg/ztz0oiGwpA7Ucinien40M/y7zSB1e5eX32nsdjqxg40bz61NRfOGpUzim4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrZmHyVULuE8uOR0nQ+9JMoqYNxrXHu9wUM/zHXAbKLOrIOMc6
-	4Ja2b/tNxTRuPiHoht1CUxls84cVRPfME3Sm2EZDihoF2xix3vJXxA7CzrROu/bEPFh7B4rCqtM
-	p/SWBJcJk9I17k8FINZMhoNiHUiwlVfckJZXCSSQrj2TZ0nTRXpJ+ZdR1ZyeD3w==
-X-Gm-Gg: ASbGncuRiqgYAaRtwbALa/unuqwwNdhNwN/ifhIuIVwGpy3nj48YsGfBhMArLQRe4T8
-	TFNRlxWRmRF2KmkQwxuu6bla8Gd2Ze3APRaPkAzXG566DoUPnWhQo+Ou/2yQwlcEvkkX7Ac7zdN
-	EaXiEI4i3hR6GGlNdwUPXcCKAbFggB8YjX4+su/zekyQ2hDYqXqh9H3F4ohBYRKVwVNtVspHWdu
-	H54+bzWUeZFcAHrZVA33TYniZA8F6R4zkkeU90V+6Fk6cbGrkjay0iRqEKSLQicCzZBTS7NI60V
-	0aIJ/6NVEceqwWdoRDSUFcWxhClxGm2QwV2eik/2CCQ=
-X-Received: by 2002:ad4:5c6f:0:b0:6d8:a32e:8426 with SMTP id 6a1803df08f44-6dc86ad7976mr257129826d6.3.1734425837027;
-        Tue, 17 Dec 2024 00:57:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH7OHDlYB62X/RjbCS6tlztv/Jo/Zkez7NULudfz1M3aDsbY23BSx9G1w3C9AIZrsP6H+k8zA==
-X-Received: by 2002:ad4:5c6f:0:b0:6d8:a32e:8426 with SMTP id 6a1803df08f44-6dc86ad7976mr257129666d6.3.1734425836698;
-        Tue, 17 Dec 2024 00:57:16 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-40-237-196.as13285.net. [80.40.237.196])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd25a0c9sm36322796d6.33.2024.12.17.00.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 00:57:16 -0800 (PST)
-Date: Tue, 17 Dec 2024 08:57:11 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Ranguvar <ranguvar@ranguvar.io>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@gmail.com>,
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>,
-	"regressions@leemhuis.info" <regressions@leemhuis.info>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [REGRESSION][BISECTED] from bd9bbc96e835: cannot boot Win11 KVM
- guest
-Message-ID: <Z2E858-8jA6_xWFd@jlelli-thinkpadt14gen4.remote.csb>
-References: <jGQc86Npv2BVcA61A7EPFQYcclIuxb07m-UqU0w22FA8_o3-0_xc6OQPp_CHDBZhId9acH4hyiOqki9w7Q0-WmuoVqsCoQfefaHNdfcV2ww=@ranguvar.io>
- <20241214185248.GE10560@noisy.programming.kicks-ass.net>
- <gvam6amt25mlvpxlpcra2caesdfpr5a75cba3e4n373tzqld3k@ciutribtvmjj>
- <Z2BaZSKtaAPGSCqb@google.com>
- <b6d8WzC2p_tpdLs36QeL_oqtEKy_pRy-PdeOxa08JtTcPhHNNOCjN73b799C0gv8NnmIJKH9gD6J4W-Dv5JKEVdrbMoVUp3wSOrqEY_LrDg=@ranguvar.io>
+        d=1e100.net; s=20230601; t=1734425874; x=1735030674;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A9mGOwcKJkPD0/hT208rpyXS4+JWLUF2rILHUVjXzsc=;
+        b=iUCcGHYxX2IW75C09YpFOMpq80SrdivyjBQm2T0MLThXEh5tSveVOLbK67Ut++GfoZ
+         HuBAUyr8Iwi18SZqTpe/syrApAj8IrM1EBGGclRMpxJZghyMJLL+End1BB1XyMIgQruW
+         U4CmZuPOTfKJuSMKPYahbnf7VCZeul9/dWR4P+p9QS1ttJh8PQ98qS8tdxl0poGpTWhL
+         TEVmU8fVEi33eaixhOSPbZcGkFviOY8U6rFnahAu9OPBLyFh7ltYEiuG0g1pk6zT0ug9
+         49eLmVnRMMluUid5anOhaxfXbxFhS8QPJ6HmkTKc780N+sUFKm0knn4JRCGwTsrPa2lL
+         mcxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvY0DkgL+H6skF86VJ3eNDEqTBR83HGQuO480t4TlkthaK506NTgQf4J7Hpr2qe+FE1dL6Q/82RadPKd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqBIIF1PbYP0rHoonSXKS1UmuRULsExrkM0elZMxRgDiWm/hRe
+	lt+5RPDWhTkTxP4ikXmolI4c3K6FBXxys+fm+atDSIvngOrQR5bkA+WLux0meuoDlCBqU3EOYB3
+	8Zho6+N4fTJ7l0q5dB4CLyo0uc8zqlLKQBK08
+X-Gm-Gg: ASbGncux6+A8k88hJVZKAhFvQdDVuF9cIuFowwKyk+YnE/MisSgqrf3jpqFY5Hsv4mS
+	4T4GnceLqu+fn0CgKj8xEmNiwLW4Bw04L0DQDAla+F6Nv3YZV500VAkdqXDc9z8yU6Lk=
+X-Google-Smtp-Source: AGHT+IEYjt67uUTelKuWfZAZMUFcRBjP36zX3A1L63lz75C+g/NuQwlwiqMKzdVpK/gkc3nId/dg69M2v0a1+rqPXqA=
+X-Received: by 2002:a7b:cd88:0:b0:434:c967:e4b5 with SMTP id
+ 5b1f17b1804b1-4364ad490dbmr705545e9.1.1734425874443; Tue, 17 Dec 2024
+ 00:57:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6d8WzC2p_tpdLs36QeL_oqtEKy_pRy-PdeOxa08JtTcPhHNNOCjN73b799C0gv8NnmIJKH9gD6J4W-Dv5JKEVdrbMoVUp3wSOrqEY_LrDg=@ranguvar.io>
+References: <20241216175803.2716565-1-qperret@google.com> <20241216175803.2716565-13-qperret@google.com>
+In-Reply-To: <20241216175803.2716565-13-qperret@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Tue, 17 Dec 2024 08:57:17 +0000
+Message-ID: <CA+EHjTy-tzmmu0vNCkK_J614FG1QVO79WSfzV78hQRYqGhP7EQ@mail.gmail.com>
+Subject: Re: [PATCH v3 12/18] KVM: arm64: Introduce __pkvm_host_relax_guest_perms()
+To: Quentin Perret <qperret@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
+	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 16/12/24 20:40, Ranguvar wrote:
-> On Monday, December 16th, 2024 at 16:50, Sean Christopherson <seanjc@google.com> wrote:
-> > 
-> > On Mon, Dec 16, 2024, Juri Lelli wrote:
-> > 
-> > > On 14/12/24 19:52, Peter Zijlstra wrote:
-> > > 
-> > > > On Sat, Dec 14, 2024 at 06:32:57AM +0000, Ranguvar wrote:
-> > > > 
-> > > > > I have in kernel cmdline `iommu=pt isolcpus=1-7,17-23 rcu_nocbs=1-7,17-23 nohz_full=1-7,17-23`. Removing iommu=pt does not produce a change, and
-> > > > > dropping the core isolation freezes the host on VM startup.
-> > 
-> > As in, dropping all of isolcpus, rcu_nocbs, and nohz_full? Or just dropping
-> > isolcpus?
-> 
-> Thanks for looking.
-> I had dropped all three, but not altered the VM guest config, which is:
-> 
-> <cputune>
-> <vcpupin vcpu='0' cpuset='2'/>
-> <vcpupin vcpu='1' cpuset='18'/>
-> ...
-> <vcpupin vcpu='11' cpuset='23'/>
-> <emulatorpin cpuset='1,17'/>
-> <iothreadpin iothread='1' cpuset='1,17'/>
-> <vcpusched vcpus='0' scheduler='fifo' priority='95'/>
-> ...
-> <iothreadsched iothreads='1' scheduler='fifo' priority='50'/>
+On Mon, 16 Dec 2024 at 17:58, Quentin Perret <qperret@google.com> wrote:
+>
+> Introduce a new hypercall allowing the host to relax the stage-2
+> permissions of mappings in a non-protected guest page-table. It will be
+> used later once we start allowing RO memslots and dirty logging.
+>
+> Signed-off-by: Quentin Perret <qperret@google.com>
 
-Are you disabling/enabling/configuring RT throttling (sched_rt_{runtime,
-period}_us) in your configuration?
+Reviewed-by: Fuad Tabba <tabba@google.com>
 
-> </cputune>
-> 
-> CPU mode is host-passthrough, cache mode is passthrough.
-> 
-> The 24GB VRAM did cause trouble when setting up resizeable BAR months ago as well. It necessitated a special qemu config:
-> <qemu:commandline>
-> <qemu:arg value='-fw_cfg'/>
-> <qemu:arg value='opt/ovmf/PciMmio64Mb,string=65536'/>
-> </qemu:commandline>
-> 
+Cheers,
+/fuad
 
+> ---
+>  arch/arm64/include/asm/kvm_asm.h              |  1 +
+>  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  1 +
+>  arch/arm64/kvm/hyp/nvhe/hyp-main.c            | 20 ++++++++++++++++
+>  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 23 +++++++++++++++++++
+>  4 files changed, 45 insertions(+)
+>
+> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+> index 0b6c4d325134..66ee8542dcc9 100644
+> --- a/arch/arm64/include/asm/kvm_asm.h
+> +++ b/arch/arm64/include/asm/kvm_asm.h
+> @@ -67,6 +67,7 @@ enum __kvm_host_smccc_func {
+>         __KVM_HOST_SMCCC_FUNC___pkvm_host_unshare_hyp,
+>         __KVM_HOST_SMCCC_FUNC___pkvm_host_share_guest,
+>         __KVM_HOST_SMCCC_FUNC___pkvm_host_unshare_guest,
+> +       __KVM_HOST_SMCCC_FUNC___pkvm_host_relax_perms_guest,
+>         __KVM_HOST_SMCCC_FUNC___kvm_adjust_pc,
+>         __KVM_HOST_SMCCC_FUNC___kvm_vcpu_run,
+>         __KVM_HOST_SMCCC_FUNC___kvm_flush_vm_context,
+> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> index e528a42ed60e..a308dcd3b5b8 100644
+> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> @@ -41,6 +41,7 @@ int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
+>  int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
+>  int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot);
+>  int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
+> +int __pkvm_host_relax_perms_guest(u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot);
+>
+>  bool addr_is_memory(phys_addr_t phys);
+>  int host_stage2_idmap_locked(phys_addr_t addr, u64 size, enum kvm_pgtable_prot prot);
+> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> index 3c3a27c985a2..287e4ee93ef2 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> @@ -264,6 +264,25 @@ static void handle___pkvm_host_unshare_guest(struct kvm_cpu_context *host_ctxt)
+>         cpu_reg(host_ctxt, 1) =  ret;
+>  }
+>
+> +static void handle___pkvm_host_relax_perms_guest(struct kvm_cpu_context *host_ctxt)
+> +{
+> +       DECLARE_REG(u64, gfn, host_ctxt, 1);
+> +       DECLARE_REG(enum kvm_pgtable_prot, prot, host_ctxt, 2);
+> +       struct pkvm_hyp_vcpu *hyp_vcpu;
+> +       int ret = -EINVAL;
+> +
+> +       if (!is_protected_kvm_enabled())
+> +               goto out;
+> +
+> +       hyp_vcpu = pkvm_get_loaded_hyp_vcpu();
+> +       if (!hyp_vcpu || pkvm_hyp_vcpu_is_protected(hyp_vcpu))
+> +               goto out;
+> +
+> +       ret = __pkvm_host_relax_perms_guest(gfn, hyp_vcpu, prot);
+> +out:
+> +       cpu_reg(host_ctxt, 1) = ret;
+> +}
+> +
+>  static void handle___kvm_adjust_pc(struct kvm_cpu_context *host_ctxt)
+>  {
+>         DECLARE_REG(struct kvm_vcpu *, vcpu, host_ctxt, 1);
+> @@ -475,6 +494,7 @@ static const hcall_t host_hcall[] = {
+>         HANDLE_FUNC(__pkvm_host_unshare_hyp),
+>         HANDLE_FUNC(__pkvm_host_share_guest),
+>         HANDLE_FUNC(__pkvm_host_unshare_guest),
+> +       HANDLE_FUNC(__pkvm_host_relax_perms_guest),
+>         HANDLE_FUNC(__kvm_adjust_pc),
+>         HANDLE_FUNC(__kvm_vcpu_run),
+>         HANDLE_FUNC(__kvm_flush_vm_context),
+> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> index 30243b7922f1..aa8e0408aebb 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> @@ -1488,3 +1488,26 @@ int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *vm)
+>
+>         return ret;
+>  }
+> +
+> +int __pkvm_host_relax_perms_guest(u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot)
+> +{
+> +       struct pkvm_hyp_vm *vm = pkvm_hyp_vcpu_to_hyp_vm(vcpu);
+> +       u64 ipa = hyp_pfn_to_phys(gfn);
+> +       u64 phys;
+> +       int ret;
+> +
+> +       if (prot & ~KVM_PGTABLE_PROT_RWX)
+> +               return -EINVAL;
+> +
+> +       host_lock_component();
+> +       guest_lock_component(vm);
+> +
+> +       ret = __check_host_shared_guest(vm, &phys, ipa);
+> +       if (!ret)
+> +               ret = kvm_pgtable_stage2_relax_perms(&vm->pgt, ipa, prot, 0);
+> +
+> +       guest_unlock_component(vm);
+> +       host_unlock_component();
+> +
+> +       return ret;
+> +}
+> --
+> 2.47.1.613.gc27f4b7a9f-goog
+>
 
