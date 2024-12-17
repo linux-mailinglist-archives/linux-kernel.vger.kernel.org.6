@@ -1,183 +1,237 @@
-Return-Path: <linux-kernel+bounces-449280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 403719F4CAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:45:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0853A9F4CB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC87016FA3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF9E1880908
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410F41F4720;
-	Tue, 17 Dec 2024 13:42:26 +0000 (UTC)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5941F427C;
+	Tue, 17 Dec 2024 13:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+NLiLGM"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD091F426B;
-	Tue, 17 Dec 2024 13:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05FF3E49D;
+	Tue, 17 Dec 2024 13:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442945; cv=none; b=UZiw24jifiIl4odwS7Ink5w2VyH/JvMZbqzC+K9M781sCQ7uKvNNR03jLo0pI9vIPHBKlOWo3SDwKhjtqY+uwlRg59R90qDAQtwzNMCP5OqXeLxRcJLI09tGb+qrh5IXz5UW1/QRBmmrbZiywfS3I2KaPFhgNH1bkjS6pZw5X6k=
+	t=1734442984; cv=none; b=Huo4HOvIBGyqSaZtazAQcQgKkTIZb35iRbNDaa82QhBw2qUSoHA98Wpw3KStXElZBKPjGfZRCWI8uFm0w53Tk0oO4LrHaDwfze/kj47Efonl1H1joYmTj3eFDYAiRYGrHxrAvaZBuDEIWYokfHFUNUC5F6eFWV1ZiqkeSpUrQno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442945; c=relaxed/simple;
-	bh=+NLEb6CqCiJoZfeGjcIUH+M3JreOrl4k58RvErRAt5c=;
+	s=arc-20240116; t=1734442984; c=relaxed/simple;
+	bh=MANkfU86brZqQ6fYLavORJQ/GnRpq2p22/A6njWrwIs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MMY+vi5HMr/PWnSnenH0IXrE9k1+vn8yC4fxgM+AspWkKztPds7R62uG38KQptBNDXmqI7NQHTEpKlBSuaW4raNeob5VsVqjpiesbIpvawUh4Fp3kPbDL/8NZJ4FnBVbQbxs6lTGael12VRbyMMBZ8VPBdt+cjVu89jjJYxw+h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=jc6fV+KO1AmqaHlDeTmOBIL3gnUxyNrw8ospTNDN1PTogjM8pIbUUirur9OigPIpljkMQzf+7iiwScd1g1EkB8Ptx4MdjVK+baoYO4ceKF4q2MtxMdU/g2PJ7zmryEsBIrlPXqIV0mORygm8y2VzgsuaC98Nx92Fhkroopxm9uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+NLiLGM; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-85b88a685e6so2379683241.2;
-        Tue, 17 Dec 2024 05:42:23 -0800 (PST)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso2979035a12.3;
+        Tue, 17 Dec 2024 05:43:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734442982; x=1735047782; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GkIq8q3L8rJGyueaNhKKxXEE17k+mgKtdHU5gacy0ek=;
+        b=b+NLiLGM6fsZiIwuXFVb2/judxSQ17GBnYAqqlFW/B2zJYWDhkZePP9YxoHE9gv+fz
+         Z1UWUmFxYfd+pR3FW9XQtbnxwz0rnxpRf93HzH/HVD6hsuV2y0bKpxBjYGOUc+UWhVGV
+         d7dcZuzibYDQwMHnQc2wFCf+dVo7D9L2ZY4wzWOBsSCk8DBESQQr92vlvoARUfAMOPOh
+         3wR5sHdUET4SrrVQx1/gr1f5vz0OUZb/HtvO5itOwxmHfShB/bYivrXrJYPS/C1ruYx3
+         7K8wCBrMJ+btMDEUY5h9Xhuc6RG9KZjJqzp44YbievpdIXHv34y1gdzlxz5IAz+533eI
+         +AjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734442941; x=1735047741;
+        d=1e100.net; s=20230601; t=1734442982; x=1735047782;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=55x747loPYs9UKeI6ysGYmeJmLBuEdA1brrJreZX3rI=;
-        b=TqbUZh7BV5YNOZPfnHfynMuCM+/d+khBPjUPAat2EYoda+6as69wlNsyk9hI8Altxw
-         d0CZepN+s0uzz6zsJOVajY5vrwive3IMeMXCC7csI1YaL6CkFJcX1c94uEU4v2Igxwiu
-         rdt7PJbwW3Z7A43zeDCAJlih5g9yvN5v3u9Hgw48Q2dMIpdgsFmPpgp0fNMnaqha16Y3
-         qMU+GvlleFO17Wr+kc5oLY4zARfb1XZU6MSQ93CwsQfm8vWSsp0eOCqqv/2512bHnrAr
-         xAU/H3UF7or2ncyQUGvpAlI8vYVe2YMmwb0D1ImhAuSCZ0i18M8gEMJ4KwJGTszvAslZ
-         nnkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUw2/zj/mJhbPT0QY93YU//tIR+YxTbljhaDTfkv99QXigfsPAX53XAG7Taon3HrxaRq7WQyS28DXzH9e2n@vger.kernel.org, AJvYcCVphbEriuK2a6pJdSejX3jutQjvgTL5NYcj5CbVcPmI8MnF9Oxo5dLEUpX+43jqIWk1e/OEFfbfKP1NpZNJ8n0z1aw=@vger.kernel.org, AJvYcCVt0S26APclShmorTS2T5aiHhMaBcRy5rRBWsUqVnDacuOr62WXLwV41daHLLA7lcDjHbV5Jvcyx2he@vger.kernel.org, AJvYcCWlhn9eHQfwAmVAkYnRrEgOXaAN6xf40dMPELbrzU5p8AeK/rmWDQtgp1dz1IWvOMyK1UErzK1vEH97@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW3RFMzGm1HAS9Kx+wF/ttiGiScSLOZE9XRBg1sdVYYJLBj1XG
-	ldSVDXwDX323CwolQsz8NThj3ZGk18pddiRmf3Kx3gXdtkhuamjw2CEdMA/P
-X-Gm-Gg: ASbGncuKdCECl2xB+BjjxiyT+96cFnfhuMKz0OaYuRsOkT7O4/Mvc4EenswznJ935DQ
-	9+PcIrq32/dHGObrFSJtdHP2TOd8nE7BS7PeR/4pDhiSojuo8+ssjBl6r2vGrpzJ6ZpcuQjEhWR
-	vhNHeB7ottOKylMIy4w9GwRSMIm9vpB3mmyzlwnCv8WWBfh3bQIbO5BrDLDNEC45vV1uxowSno2
-	eHedErhvGIZdJFmWZWqjsT4AtH+6ofpfHBrdsUuJ2o0BG0C6/WIOkOhrwuTBKkjYTK7eylNi0ow
-	HiLmJny2h30IQ78sQtw=
-X-Google-Smtp-Source: AGHT+IGXk+bIQkA+vs44jCZavZSL5TkL+WHLryMuIhUxedGP6axYmeZUHD20UU7WTIEuf2HUgL3MMA==
-X-Received: by 2002:a05:6102:3e27:b0:4b0:2d7c:43ca with SMTP id ada2fe7eead31-4b25ddc752dmr16415745137.18.1734442940972;
-        Tue, 17 Dec 2024 05:42:20 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b270231d1dsm1152174137.8.2024.12.17.05.42.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 05:42:20 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-85b88a685e6so2379653241.2;
-        Tue, 17 Dec 2024 05:42:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCURyLqochOV57Y96LSnZjbAYgLK+bo5rvmBWrdKoY7riQXiUXfBI2S4Pdby+hHFqUEUL2Ma7RfeXZoUoman8ABVXqs=@vger.kernel.org, AJvYcCV4svlOnXcN4Zh8inM7x7s61ZqOtpwUUZVt1ubeacZhDObA/iQIB1XF2xm8COjUbt5FQgVXLqv8ulu8@vger.kernel.org, AJvYcCXctSyRc+IdZFuKCxUsWMzZBBDP8dFzAu8zh5JqkF6OGK+iC/aQlfUcE9uPmnZTSNj+dVpDHKiFAOQznfLO@vger.kernel.org, AJvYcCXq7cEj4KX+jXWwpJb18cG00xlcOnoEhtP4S9sQq0qs1FXnUIs48VFokQ8I59GgluGK2mIQqIFpLER4@vger.kernel.org
-X-Received: by 2002:a05:6102:1591:b0:4af:597b:ef with SMTP id
- ada2fe7eead31-4b25dca388dmr15489033137.8.1734442939984; Tue, 17 Dec 2024
- 05:42:19 -0800 (PST)
+        bh=GkIq8q3L8rJGyueaNhKKxXEE17k+mgKtdHU5gacy0ek=;
+        b=o/r4CYNEkspprRwkoR13tL95nAsLwUuoiAOipWtjomOSKGfTU+234wTzzWJeV5MlW7
+         ZxgDGVZmOGhkkY4ZNu6PEkIS3BzuD3xl4u8EcbIYylGFTPaDglPzsN0ReD/x58lCZYEn
+         VCeOfxtypWjYQWeqr1FulFm2egAqRTXeZ7XNbfTniEgxLzfE4fGA9z5YQxgYHQs4Tcl+
+         uMF+JjgUxlsYbe0VcvoGC7n41wu2KAESOfUAAffh5BdkiYjoHhNH+75pWb+KAHF0pERe
+         a7acMUTQrSay55iE7Iv831g6VUitGNPaiBnhT4ysNqEXrLmwEmd/yudbjBBs99ldtqny
+         iV5g==
+X-Forwarded-Encrypted: i=1; AJvYcCU3L6tL55dw78MqFVFPacP8K5TtQfhcDtwm9z4TZiU9e04vpXTHfL4vJe3KGFLMxRsueN3pUj+8HZr1YiG/7CVHiL8a@vger.kernel.org, AJvYcCX+fH7OcNd4UVjqy1yLsgLv8sWt0mUM2L2NevlDcDKaeLDK48JM5sYaECSL6sBKGGB1qkCYqdlZEXuhOvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze3GHJCPSDgI0depXTo6tzGWKITlEHZJvgALdiZMillfPJhPrT
+	xaFcOT9Ahq0wpxuDJVsak+tCoRXeqGW5TI/9KaPn8tnqhTi5Zb3dqjEQ5KMQeYuHGVMTebEr3t6
+	V1yHuU7d2PxSmTpYqvbnsYso+gZo=
+X-Gm-Gg: ASbGncsOjaev5d0/4jRLq0mTi7ZPjTYe0jfx7G8IKqnxinNSjMSMD5Yg49mC9JzjAuE
+	emBBGTWU2nujWuwC2ogB6BGEoFtvGGFLs6arra/Mo
+X-Google-Smtp-Source: AGHT+IGi1xeCLzYpI9IUs7Cxa3BTl64nW6CdU0gPYtNrYByOcHi/Uerf0EvuXh2hO3PajPYio3YmU2nSUx1MndD3SPI=
+X-Received: by 2002:a17:90b:1c03:b0:2ee:c457:bf91 with SMTP id
+ 98e67ed59e1d1-2f2d7d9cff9mr5318156a91.10.1734442981931; Tue, 17 Dec 2024
+ 05:43:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
- <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com> <CAMuHMdWx5v24UMV7DabxUcYJUeetGeiWidGurT2vEWRw4BTrNg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWx5v24UMV7DabxUcYJUeetGeiWidGurT2vEWRw4BTrNg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Dec 2024 14:42:07 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX+baSFtX-U-w4CBSqMsceDS+RoQY55qs=SmyydK6BLVA@mail.gmail.com>
-Message-ID: <CAMuHMdX+baSFtX-U-w4CBSqMsceDS+RoQY55qs=SmyydK6BLVA@mail.gmail.com>
-Subject: Re: [PATCH v3 10/10] arm64: dts: renesas: gray-hawk-single: Add
- DisplayPort support
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	LUU HOAI <hoai.luu.ub@renesas.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Saravana Kannan <saravanak@google.com>
+References: <Z2BpY5LimG7E3LpC@google.com> <24508411-0980-43EE-8224-C3B81E456AFF@gmail.com>
+ <Z2E4cWMkzGqAafFQ@google.com>
+In-Reply-To: <Z2E4cWMkzGqAafFQ@google.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Tue, 17 Dec 2024 22:42:53 +0900
+Message-ID: <CAO9qdTGwQJvVZt2HtnBUdJGLti0ZWuPeqVFginJYcwY2xLnwRg@mail.gmail.com>
+Subject: Re: [PATCH] ring-buffer: fix array bounds checking
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	david@redhat.com, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-CC Saravana
-
-On Tue, Dec 17, 2024 at 2:29=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
-> On Mon, Dec 16, 2024 at 2:33=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
-> > <tomi.valkeinen@ideasonboard.com> wrote:
-> > > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Vincent Donnefort <vdonnefort@google.com> wrote:
+>
+> On Tue, Dec 17, 2024 at 10:28:49AM +0900, Jeongjun Park wrote:
+> >
+> >
+> > > Vincent Donnefort <vdonnefort@google.com> wrote:
+> > > =EF=BB=BFOn Tue, Dec 17, 2024 at 01:49:30AM +0900, Jeongjun Park wrot=
+e:
+> > >> If there is a case where the variable s is greater than or equal to =
+nr_subbufs
+> > >> before entering the loop, oob read or use-after-free will occur. Thi=
+s problem
+> > >> occurs because the variable s is used as an index to dereference the
+> > >> struct page before the variable value range check. This logic preven=
+ts the
+> > >> wrong address value from being copied to the pages array through the=
+ subsequent
+> > >> range check, but oob read still occurs, so the code needs to be modi=
+fied.
 > > >
-> > > Add support for the mini DP output on the Gray Hawk board.
+> > > Hi Jeongjun, thanks for the patch.
 > > >
-> > > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.co=
-m>
-> > > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.=
-com>
-> > > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Did you find a reproducer for that problem or has it just been found =
+by code
+> > > inspection?
+> > >
+> > > As discussed here [1], s >=3D nr_subbufs should really never happen a=
+s we already
+> > > cap nr_pages.
+> > >
+> > > [1] https://lore.kernel.org/all/78e20e98-bdfc-4d7b-a59c-988b81fcc58b@=
+redhat.com/,
 > >
-> > Thanks for your patch, which is now commit b1000645dc29701f
-> > ("arm64: dts: renesas: gray-hawk-single: Add DisplayPort support")
-> > in renesas-devel/renesas-dts-for-v6.14.
-> >
-> > Apparently this patch breaks s2idle on Gray Hawk Single when "[PATCH
-> > v3 06/10] drm/rcar-du: dsi: Add r8a779h0 support" is not present, or
-> > when CONFIG_DRM_RCAR_USE_MIPI_DSI is not enabled. If the DSI driver
-> > is not available, the ti_sn65dsi86.bridge part fails to probe with
-> > -EPROBE_DEFER and "failed to attach dsi host".  Still, the sn65dsi86
-> > driver must do something critical, as resuming from s2idle now hangs.
-> > I haven't identified yet where exactly it hangs.
-> >
-> > As a result, s2idle is broken in current renesas-devel, which only
-> > has the DTS changes.  Perhaps I should drop the DTS until the issue
-> > is resolved?
-> >
-> > However, I suspect White Hawk has the same issue (if
-> > CONFIG_DRM_RCAR_USE_MIPI_DSI=3Dn), but I cannot verify as my local Whit=
-e
-> > Hawk is currently not available for kernel testing.
+> > I didn't find the bug caused by this separately, but I found it while a=
+nalyzing
+> > the code. However, since it has been confirmed that syzbot
+> > has a reproducer that generates oob and uaf, this will definitely be
+> > reproduced.
 >
-> Confirmed on White Hawk by Tomi and me.
+> Could you share that reproducer? Or at least the steps. As this situation=
+ should
+> never happen a, follow-up fix will be necessary.
+
+[1] When tested with a reproducer, pgoff was 8, subbuf_order was 0, and
+subbuf_pages was 1. However, nr_subbufs was 3, so oob-read or uaf occurred.
+
+[1] : https://syzkaller.appspot.com/text?tag=3DReproC&x=3D14514730580000
+
 >
-> When the hang occurs, magic sysrq no longer works. However, the system
-> still prints "nfs server not responding" once in a while, so I added
-> calls to various sysrq print functions to rpc_check_timeout().
-> This revealed that the system is blocked on wait_for_completion()
-> in dpm_wait_for_superior(), called from device_resume_noirq().
-> Printing the actual device and parent gives:
+> >
+> > The reason I suggested this patch is because I think the logic of the c=
+ode
+> > is a bit inappropriate. Normally, a range check is performed before usi=
+ng
+> > a specific variable as an index of an array. Of course, in this loop, t=
+he page
+> > structure pointer that was oob-read will not be copied to the pages arr=
+ay,
+> > but I don't think it's very appropriate to read the array using a varia=
+ble
+> > value that may be out of range as an index before the range check.
+> > Therefore, I suggest patching it like this.
 >
->     platform fed80000.dsi-encoder: PM: device_resume_noirq
->     platform fed80000.dsi-encoder: PM: dpm_wait_for_superior: parent fed8=
-0000.dsi-encoder
+> Of course, no question about that.
+>
+> >
+> > >
+> > >>
+> > >> Fixes: 117c39200d9d ("ring-buffer: Introducing ring-buffer mapping f=
+unctions")
+> > >> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > >> ---
+> > >> kernel/trace/ring_buffer.c | 10 +++++-----
+> > >> 1 file changed, 5 insertions(+), 5 deletions(-)
+> > >>
+> > >> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> > >> index 7e257e855dd1..83da74bf7bd6 100644
+> > >> --- a/kernel/trace/ring_buffer.c
+> > >> +++ b/kernel/trace/ring_buffer.c
+> > >> @@ -6994,9 +6994,9 @@ static int __rb_map_vma(struct ring_buffer_per=
+_cpu *cpu_buffer,
+> > >> {
+> > >>    unsigned long nr_subbufs, nr_pages, nr_vma_pages, pgoff =3D vma->=
+vm_pgoff;
+> > >>    unsigned int subbuf_pages, subbuf_order;
+> > >> -    struct page **pages;
+> > >> +    struct page **pages, *page;
+> > >>    int p =3D 0, s =3D 0;
+> > >> -    int err;
+> > >> +    int err, off;
+> > >>
+> > >>    /* Refuse MP_PRIVATE or writable mappings */
+> > >>    if (vma->vm_flags & VM_WRITE || vma->vm_flags & VM_EXEC ||
+> > >> @@ -7055,14 +7055,14 @@ static int __rb_map_vma(struct ring_buffer_p=
+er_cpu *cpu_buffer,
+> > >>    }
+> > >>
+> > >>    while (p < nr_pages) {
+> > >> -        struct page *page =3D virt_to_page((void *)cpu_buffer->subb=
+uf_ids[s]);
+> > >> -        int off =3D 0;
+> > >> -
+> > >
+> > > I believe we can keep the struct page and off declaration within the =
+while loop.
+> >
+> > The reason I modified it this way is that, since this loop will always =
+be
+> > entered if there are no other issues, these variables will be used in
+> > many situations, so I think it is quite inefficient to continue to decl=
+are variables
+> > in a loop where you don't know how many times it will be repeated.
+> > So, I think that declaring variables in advance and then continuously i=
+nitializing
+> > their values is advantageous in terms of performance and there are
+> > no other issues. What do you think?
+>
+> I'm pretty sure the compiler would do the right thing here and no additio=
+nal
+> step would result from declaring both variables inside the loop.
 
-So it's waiting for itself, i.e. deadlock :-(
+Okay. In that case, I will just remove the variable declaration related pat=
+ches
+and send you the v2 patch right away.
 
-When the DSI driver is available:
+Regards,
 
-    rcar-mipi-dsi fed80000.dsi-encoder: PM: device_resume_noirq:627
-    rcar-mipi-dsi fed80000.dsi-encoder: PM: dpm_wait_for_superior:280
-    rcar-mipi-dsi fed80000.dsi-encoder: PM: dpm_wait_for_superior:296:
-parent fed80000.dsi-encoder
+Jeongjun Park
 
-still waiting for itself, but it does continue!
-Note that the fed80000.dsi-encoder block is now bound, and
-"rcar-mipi-dsi" is printed instead of "platform".
-
-fw_devlink issue?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>
+> >
+> > Regards,
+> >
+> > Jeongjun Park
+> >
+> > >
+> > >>        if (WARN_ON_ONCE(s >=3D nr_subbufs)) {
+> > >>            err =3D -EINVAL;
+> > >>            goto out;
+> > >>        }
+> > >>
+> > >> +        page =3D virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
+> > >> +        off =3D 0;
+> > >> +
+> > >>        for (; off < (1 << (subbuf_order)); off++, page++) {
+> > >>            if (p >=3D nr_pages)
+> > >>                break;
+> > >> --
 
