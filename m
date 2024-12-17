@@ -1,120 +1,77 @@
-Return-Path: <linux-kernel+bounces-448772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C2B9F4547
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9869F450C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:25:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35FD1696B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:40:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF761669A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80221D434F;
-	Tue, 17 Dec 2024 07:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859251990CD;
+	Tue, 17 Dec 2024 07:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="le6+j9Up"
-Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VckP0Aj+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126481714B2;
-	Tue, 17 Dec 2024 07:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE63E1E529;
+	Tue, 17 Dec 2024 07:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734421177; cv=none; b=X8HHajTHupvRbRbFikmnYbSOjnj+Dq8FsC14ltc5RI7XFJoJauFIy9jjr9peoWQrD/x4oQn/k9LRxyXKFi9Mit+JvZmblhSW6y10eMum0HQjtBrwvJkDv+iOV5xJVwBmRGhvaKzljgEp4BBuks1ga0pq8rj1nJ06Q/PkkRMJvHs=
+	t=1734420316; cv=none; b=TdsNfwLwlFyFOvhFTMYCgh4CFisDWhw3bnfnoo+v7TOUaVswANIyFWT5I0HrQgeh931b9YEaR7CahRLGotSVnZuQGXp6cfehDO8/SVXveYtrgaRenJeJPielc4Mc7tqPA2+S3hNZhQVref1t648ZMQ0PEMkY9XNTKiey9AoPA6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734421177; c=relaxed/simple;
-	bh=pVC0kP6bkVarlPNOUGz5sO5BZZlWGZkSrWcUehVaBig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jRZYRcH/GdaHZ4OQaEN5t3aprpC57sF3Kdg4xpZ9BMyrCk8qXq3A1j7v5/aHjP0pUzL15/qHxKhxnQ+f0qqLko/GqIKPM2r8/lwEUVuU8RKab2IdCIBF28Kic8CbOrsgSV5lsn8Hju1uR5Z+j376X81V4tR8K/7ez+/NPfnnJ8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=le6+j9Up; arc=none smtp.client-ip=91.232.154.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-	s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tD0w9hGE0HHz3hp3Nt0ft5ye3qwggV6ir0MMxdx6g+8=; b=le6+j9UpKB5XBjVYLVyHZ4HtRB
-	tMarVuf71hL0pP/kLHxvv4c+Y1/+2dpKIps9GKlI88Gm3odi1Bas3kIEz/kXw1GAE1bzvI+jTBeAu
-	7eST2E3guutYIJL3tQe/Z2JlaLhgwxx7aIGxY3VTHBNXBoaOUsbaV1VJ5NYCUA//itPnhVaEgOTqs
-	lSgm1nAX3m/P9sJRIY90bOShfPVUws/4+aRgg6G2pZAK6a7kveGqAOs1UTbgst6cio1LIMZ4movPE
-	6VuGrBl7/4OfRA7PecPBcz3d9NTmceelHNZeo6QOY7YbPRF8SqyyrjPKyNCMbv/CRJ/mrkgwVAjml
-	8luSOoiw==;
-Received: from [2404:7a80:b960:1a00:1b57:df18:efe3:20c1]
-	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <cyndis@kapsi.fi>)
-	id 1tNRtb-009eYK-1I;
-	Tue, 17 Dec 2024 09:21:32 +0200
-Message-ID: <0036ecec-8476-4617-ac40-8ff90fb33c07@kapsi.fi>
-Date: Tue, 17 Dec 2024 16:24:00 +0900
+	s=arc-20240116; t=1734420316; c=relaxed/simple;
+	bh=SIqktI3t0AAhjSeYSQWiux57263h5Nx+YwGr7UnQ6qM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J2NFCgpPddWFazrXU5Oz/hzdWa/u4onljctuuyDGvSEjn9XAr+OwbkeKs6IkDKmH2KU9lb8X34bt5fx9MgD6Kj+oJ4bVVpoVAsVo07D52QbntvziY7kVFamqicz+681Hi8ox+4Pmka7ePEoUfHSLy8b/VrMtqsIpdtB0y6YmklA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VckP0Aj+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 765BCC4CED3;
+	Tue, 17 Dec 2024 07:25:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734420315;
+	bh=SIqktI3t0AAhjSeYSQWiux57263h5Nx+YwGr7UnQ6qM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VckP0Aj+Dqk2g4fmpH3WQSfPdFr6hDVsvhKgGIlwewonZlOpgBsT87wvDdMNTTv6c
+	 USqLU7mwP43lb84GQpH3a1O/SnDvdAw0APRtLUthlIWPWXJAQPskMoxJsaAPGb2t6S
+	 W3reYwe4iQJy4S5TGjZtDAl7IH+vkSVFHFsHa5J+NIi+iqV6TmoA+t7wISR3WsQYBo
+	 q0iA3mJ6zbZAf7Ou/HLQPO5h95+xNv1tMKD+6F1NcHvbb5ghGp86sP8V/H9YgMv1Sn
+	 Iwy+ceb4m6WNklNv7yoIKjA33dLPLUoLhg8p/woX4QkUa61aD6eaQG+dho8K7SaXBv
+	 76m1xWDFWb76g==
+Date: Tue, 17 Dec 2024 08:25:11 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	djakov@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: interconnect: Add Qualcomm IPQ5424
+ support
+Message-ID: <yloopcxo3elwkrhq5cncy3bnbxyyi4wvgtvoslc6v6mc4ecwqs@gknbpccuwqao>
+References: <20241213105808.674620-1-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpu: host1x: Remove unused host1x_debug_dump_syncpts
-To: linux@treblig.org, thierry.reding@gmail.com, mperttunen@nvidia.com,
- linux-tegra@vger.kernel.org
-Cc: airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241215214750.448209-1-linux@treblig.org>
-Content-Language: en-US
-From: Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <20241215214750.448209-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:1b57:df18:efe3:20c1
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241213105808.674620-1-quic_varada@quicinc.com>
 
-On 12/16/24 6:47 AM, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Fri, Dec 13, 2024 at 04:28:07PM +0530, Varadarajan Narayanan wrote:
+> Add master/slave ids for Qualcomm IPQ5424 Network-On-Chip
+> interfaces. This will be used by the gcc-ipq5424 driver
+> for providing interconnect services using the icc-clk framework.
 > 
-> host1x_debug_dump_syncpts() has been unused since
-> commit f0fb260a0cdb ("gpu: host1x: Implement syncpoint wait using DMA
-> fences")
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->   drivers/gpu/host1x/debug.c | 9 ---------
->   drivers/gpu/host1x/debug.h | 1 -
->   2 files changed, 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
-> index a18cc8d8caf5..6433c00d5d7e 100644
-> --- a/drivers/gpu/host1x/debug.c
-> +++ b/drivers/gpu/host1x/debug.c
-> @@ -216,12 +216,3 @@ void host1x_debug_dump(struct host1x *host1x)
->   
->   	show_all(host1x, &o, true);
->   }
-> -
-> -void host1x_debug_dump_syncpts(struct host1x *host1x)
-> -{
-> -	struct output o = {
-> -		.fn = write_to_printk
-> -	};
-> -
-> -	show_syncpts(host1x, &o, false);
-> -}
-> diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
-> index 62bd8a091fa7..c43c61d876a9 100644
-> --- a/drivers/gpu/host1x/debug.h
-> +++ b/drivers/gpu/host1x/debug.h
-> @@ -41,6 +41,5 @@ extern unsigned int host1x_debug_trace_cmdbuf;
->   void host1x_debug_init(struct host1x *host1x);
->   void host1x_debug_deinit(struct host1x *host1x);
->   void host1x_debug_dump(struct host1x *host1x);
-> -void host1x_debug_dump_syncpts(struct host1x *host1x);
->   
->   #endif
 
-Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
