@@ -1,247 +1,125 @@
-Return-Path: <linux-kernel+bounces-448998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1E39F483E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:01:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB9B9F486F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00CF616B213
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92B5188488F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCC41DE3D9;
-	Tue, 17 Dec 2024 10:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873541DF27F;
+	Tue, 17 Dec 2024 10:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUxwuvbo"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lOt6DQ8/"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDFC1D1E74;
-	Tue, 17 Dec 2024 10:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570FF1DC747
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734429671; cv=none; b=hMAfelJUth7IcDCX7v/eJLF5yKgsS68iBsg5GSI11JK0/s24CQvVpOyUttAjojPSg5sJ7xBRUB1ZqDL5WFBALvq0S3g4KfPXaSmUIKSdwtkcTKnU7slMV1eN9/rd9Bc/Z67b1RT4+lVm0Sgg8SNSek5KejP58/OCDT0atan+dKA=
+	t=1734430044; cv=none; b=S5XQGil7p8AvLDte4YAxjnG7Ohs6PmWeffMZAHzZJOLd1IdHrRmCb3GkHVvKHH5QECfL+aHcsfR5B6sJpOaf4JetTAx8aITw/F5MVHryQSLcdBnVhn2oyUSUfxqFkrJE8HfherJxnEHFo2uPb+neivi4R1GOuZExpZ+Cf1SGwMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734429671; c=relaxed/simple;
-	bh=Y26ngMJwmzLrecKXox6zLaQNcWVmYecAcG5gSb/BW3o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jaL7b/AMj8stpYuwH9hpcRYUkZ0NUNJJtvmbUDsniVwGFZUQZPe/EluwNMBKJkvo2y3inQ4B2v+fuJnqOn+QBEH39tcDJkIG+xL2LO+KgPKLMUusWwLK1BK7FibsrlDpgckT0JvYljHqfhqY2+vdfiBnZmMBR2InoNnqB2vcG9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUxwuvbo; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa5f1909d6fso857460566b.3;
-        Tue, 17 Dec 2024 02:01:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734429668; x=1735034468; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=T/KooR6IQJjeTGPNoTWcPk0AI9wdR/UJG41mcu5SvWU=;
-        b=VUxwuvbod1Nun2iG3bouDNc1UQeoLEmqktvc2YzGm5xqDLVwavk7+puSJ9XWoPFSyp
-         Ym6wKzjZFEGBEtzJ/lcifCJXYqNLJeT4v5ixXMHA53TBy+GaaolEGtcZpP5sNPXIb3DS
-         APz0KBn5v6GiK98pKsiN7XQKNPqFQVty+YKBctirPOGtga6bNJbCEBDja7FqAqp0VuLG
-         qwKP3Cna0rznUV2m9MNAMlze4gSqLUXwXs+BVHQ/UGwt2L2ipRiH+RSgyrI/c6ARUbtg
-         4/vbmHZZBs8WtZfduYcwSLjzXQKRuUD5kGxYc2Xe1QoLmJNyH/5alKTcfgNhj4HlTXu1
-         JE0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734429668; x=1735034468;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T/KooR6IQJjeTGPNoTWcPk0AI9wdR/UJG41mcu5SvWU=;
-        b=vHMmfCfc3XuxYQFk+8BRAXqvTZoAijLxGkUeO5tckKUeyCOQ2ixbxfd73hS5TSwJH0
-         XaJvTXstzi+YLYqMi9uYmnBv0WMNi4MaA3pFcBcWks+SDN5W8Yeif86o+WDNnxX306T8
-         EeV9z/olCzOLsWbkRKVAz3hGKhNccb3FwQwcE3w1crsfad05tz3aOauLI2so+/fPkUFq
-         rAbcEfB2fHdEcHD+SZkdvTm0af+h5vtffThFVso8EodbkZEztFoKW5J/edldW3zdo952
-         qlAIjTsiSW4fZ03UoDk6iboRUOB6m2iPbHehD3J9OIGYdyQonldxf99cCb49fKVarG8D
-         6PmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0V+AKUELAXjJAUMD2NX9OwW+ltcl4MaxBzcrZJJpITizo/QgCylC64MK8aZW0nbbmZIsKfCSDGABiYTEZ@vger.kernel.org, AJvYcCWTENqHcIjCSNbnEz2E1POY5aCT+8ghspXl1KeUD55ISPR9ILIIN5ldS7UWwRng8FVxT7rt5IZxaAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZwl4AFIj3Ep9zCC+2n8c6Vt/57DwElNxmRApT4UayUqsHoVf+
-	sDALFuVeWmUuWmIGEtcAlNP1YqRpGSWm9kKIJ/N4s4P/18g2Bl33
-X-Gm-Gg: ASbGnctoTHVZHhqyobJPS3AYIL6PIZGs06yj0A3hkdaU2YJUGTFGpHNt8HV7+7lVjKR
-	If60LSqhlGaR+OYa+1/iH3RVr03ddrX+htdjbxcDJh82IieSJMnYcfvMw6mRyXksKIzi88zSkY5
-	eGD+0RfKoqLKzPAw9lM4r4o6hZmSTFaKHXwPQHg0nWXwm+LM/HoDGjT6kMztJfe1Aodxyd2Zy0S
-	/0ADQkE3N07VyM3stup0jFMXluDVRDDjEZtWG9uW0YNxIQaLadIONrxw3FqI13PNzdqZLPtAg1Q
-	/H+pyULD1cQ5PBebEorD61n2eaoYkcRS12YCP1nWE4tFobzOigvrX0b7JuBb93EVhmqDE+Ko9fb
-	wC127dhKFYQ371Q==
-X-Google-Smtp-Source: AGHT+IFzYJKhIqYUcWAJCCoFgQwgCGkoZ5FkRNxYWL4g0lWYIy/cSB5K0Fn22tTr1JWlMgO5CmKtlA==
-X-Received: by 2002:a17:906:6bd4:b0:aab:9268:2626 with SMTP id a640c23a62f3a-aab92682666mr1148960166b.25.1734429667673;
-        Tue, 17 Dec 2024 02:01:07 -0800 (PST)
-Received: from ?IPv6:2003:f6:ef10:f100:a045:a7a7:11d0:8676? (p200300f6ef10f100a045a7a711d08676.dip0.t-ipconnect.de. [2003:f6:ef10:f100:a045:a7a7:11d0:8676])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aabbe35c629sm249217166b.175.2024.12.17.02.01.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 02:01:07 -0800 (PST)
-Message-ID: <f24abf927dcd21866bdb335d5ed27f3be4d94705.camel@gmail.com>
-Subject: Re: [PATCH v2] iio: dac: ad7293: enable power before reset
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Liam Girdwood	
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Antoniu Miclaus	
- <antoniu.miclaus@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>, 	linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 17 Dec 2024 11:05:38 +0100
-In-Reply-To: <20241216-iio-regulator-cleanup-round-6-v2-1-9482164b68cb@baylibre.com>
-References: 
-	<20241216-iio-regulator-cleanup-round-6-v2-1-9482164b68cb@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1734430044; c=relaxed/simple;
+	bh=tTG8if1cFBa0UkHbhql2MRB0dk3EhU3EspWmWIt2AA8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=jHfIDeSr54l1yq6OAldpgDQXt+fAPVl3ce15DiDeyqhYUVu6qyJRNTFB2pnIUsxY7hVSG7EMTi57fGKbxy53C9kDt6CEQJOswRdySmxYfcC/Z2Mc/yRnhxwbPKUdyQPgjS3NNstI+pOGKvc/psPTzaW6/l/h4oTkMavxN84uYhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lOt6DQ8/; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=tTG8if1cFBa0UkHbhql2MRB0dk3EhU3EspWmWIt2AA8=; b=lOt6DQ8/oiDGkuAx/pS2y6mgpp
+	HdzQa/TlKplkcTVzXwSRZtlGyE02UXHszw1CLqDIP0Ph1yhVsl7s5Y/xKbR83Pe2uG8gZIt1D2vNl
+	nTLK/0v59xqZsM0N9+GalRk9pr+MSCPaKubc3K8nt2hVQXDW1bM7Xdm11XMpttL2iIT4jv1OdCcEP
+	u7Le2Z6NBwApeICy6gVArHWMo4VuKNvCL902jpSztVkA7Uorq/4Yheh+mjdopk8znPQcyDgFrK16U
+	4qgtXmtfLTsWCclvOKDifpSs+k2ZV2J8Ws1Btaub/dT5VrRW4lYwbuADo5uXWyRLX2zYeWmoyPYu7
+	oINnL49w==;
+Received: from [89.27.170.32] (helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNUTh-000000053dm-2E3G;
+	Tue, 17 Dec 2024 10:06:57 +0000
+Date: Tue, 17 Dec 2024 11:06:57 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Eric Biederman <ebiederm@xmission.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Sourabh Jain <sourabhjain@linux.ibm.com>,
+ Hari Bathini <hbathini@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+ Yuntao Wang <ytcoode@gmail.com>, David Kaplan <david.kaplan@amd.com>,
+ Tao Liu <ltao@redhat.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Breno Leitao <leitao@debian.org>, Wei Yang <richard.weiyang@gmail.com>,
+ Rong Xu <xur@google.com>,
+ =?ISO-8859-1?Q?Thomas_Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+ linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+ Simon Horman <horms@kernel.org>, Dave Young <dyoung@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de, nathan@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_9/9=5D_x86/kexec=3A_Use_typedef_f?=
+ =?US-ASCII?Q?or_relocate=5Fkernel=5Ffn_function_prototype?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAMj1kXE-60BqLx4VH6Cw_s0nt=bkx=oFQuts+m6sZFeziH1sqg@mail.gmail.com>
+References: <20241216233704.3208607-1-dwmw2@infradead.org> <20241216233704.3208607-10-dwmw2@infradead.org> <CAMj1kXE2abZ8v83vSr5sDZ1QNF-WMr4XCMRhZoc9EW=JAwvdCA@mail.gmail.com> <A18A8675-B1FB-496E-9D8F-FAD412A3FF65@infradead.org> <CAMj1kXFiZvT1joU5gOhZTC18aYi4dPOnFbX1nsHgmnXNy6c6Wg@mail.gmail.com> <27388506-9BE8-4540-A444-166C49133295@infradead.org> <CAMj1kXE-60BqLx4VH6Cw_s0nt=bkx=oFQuts+m6sZFeziH1sqg@mail.gmail.com>
+Message-ID: <111B7BEE-FDA0-4085-8A97-89EC9DE7A51B@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, 2024-12-16 at 15:44 -0600, David Lechner wrote:
-> Change the order of regulator enable and reset so that power supplies
-> are turned on before touching the reset line. Generally, chips should
-> have the VDRIVE supply enabled before applying voltage on any pins.
->=20
-> While we are at it, remove the voltage level checks. If the power
-> supplies are not supplying the correct voltage, this is a hardware
-> design problem, not a software problem.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
+On 17 December 2024 10:54:19 CET, Ard Biesheuvel <ardb@kernel=2Eorg> wrote:
+>On Tue, 17 Dec 2024 at 10:42, David Woodhouse <dwmw2@infradead=2Eorg> wro=
+te:
+>> Hm, I am perfectly happy to believe that my memory is failing me, espec=
+ially when it comes to specifics of i386 assembler code=2E But are you also=
+ telling me that
+>> <https://kernelnewbies=2Eorg/FAQ/asmlinkage> is a lie?
+>>
+>
+>It seems wildly out of date, at least=2E
+>
+>Commit 96a388de5dc53a8b2 from 2007 removed the asmlinkage definition
+>containing regparm(0) from include/asm-i386/linkage=2Eh, and I'm not
+>convinced it was ever sound to conflate linkage with calling
+>convention like that=2E Today, asmlinkage evaluates to 'extern "C"' when
+>using a C++ compiler, which is also not part of the type=2E
+>
+>However, I failed to notice that this just moves code around, and only
+>applies to 32-bit in the first place=2E So I won't waste any more of
+>your time obsessing over this=2E
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+Too late :)
 
-> Changes in v2:
-> - Dropped patches from "iio: use devm_regulator_get_enable_read_voltage
-> =C2=A0 round 6" that have already been applied.
-> - New patch for ad7293 that just enables power supplies and no longer
-> =C2=A0 reads the voltage.
-> - Link to v1:
-> https://lore.kernel.org/r/20241120-iio-regulator-cleanup-round-6-v1-0-d5a=
-5360f7ec3@baylibre.com
-> ---
-> =C2=A0drivers/iio/dac/ad7293.c | 68 +++++++------------------------------=
-----------
-> -
-> =C2=A01 file changed, 9 insertions(+), 59 deletions(-)
->=20
-> diff --git a/drivers/iio/dac/ad7293.c b/drivers/iio/dac/ad7293.c
-> index
-> 1d403267048240be1bf3d8b2a59685409b9087fd..d3f49b5337d2f512363d50b434d99d4=
-e9b95
-> 059f 100644
-> --- a/drivers/iio/dac/ad7293.c
-> +++ b/drivers/iio/dac/ad7293.c
-> @@ -141,8 +141,6 @@ struct ad7293_state {
-> =C2=A0	/* Protect against concurrent accesses to the device, page selecti=
-on
-> and data content */
-> =C2=A0	struct mutex lock;
-> =C2=A0	struct gpio_desc *gpio_reset;
-> -	struct regulator *reg_avdd;
-> -	struct regulator *reg_vdrive;
-> =C2=A0	u8 page_select;
-> =C2=A0	u8 data[3] __aligned(IIO_DMA_MINALIGN);
-> =C2=A0};
-> @@ -777,6 +775,15 @@ static int ad7293_reset(struct ad7293_state *st)
-> =C2=A0static int ad7293_properties_parse(struct ad7293_state *st)
-> =C2=A0{
-> =C2=A0	struct spi_device *spi =3D st->spi;
-> +	int ret;
-> +
-> +	ret =3D devm_regulator_get_enable(&spi->dev, "avdd");
-> +	if (ret)
-> +		return dev_err_probe(&spi->dev, ret, "failed to enable
-> AVDD\n");
-> +
-> +	ret =3D devm_regulator_get_enable(&spi->dev, "vdrive");
-> +	if (ret)
-> +		return dev_err_probe(&spi->dev, ret, "failed to enable
-> VDRIVE\n");
-> =C2=A0
-> =C2=A0	st->gpio_reset =3D devm_gpiod_get_optional(&st->spi->dev, "reset",
-> =C2=A0						 GPIOD_OUT_HIGH);
-> @@ -784,24 +791,9 @@ static int ad7293_properties_parse(struct ad7293_sta=
-te
-> *st)
-> =C2=A0		return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_reset),
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get the reset GPIO\n");
-> =C2=A0
-> -	st->reg_avdd =3D devm_regulator_get(&spi->dev, "avdd");
-> -	if (IS_ERR(st->reg_avdd))
-> -		return dev_err_probe(&spi->dev, PTR_ERR(st->reg_avdd),
-> -				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get the AVDD voltage\n");
-> -
-> -	st->reg_vdrive =3D devm_regulator_get(&spi->dev, "vdrive");
-> -	if (IS_ERR(st->reg_vdrive))
-> -		return dev_err_probe(&spi->dev, PTR_ERR(st->reg_vdrive),
-> -				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get the VDRIVE voltage\n");
-> -
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> -static void ad7293_reg_disable(void *data)
-> -{
-> -	regulator_disable(data);
-> -}
-> -
-> =C2=A0static int ad7293_init(struct ad7293_state *st)
-> =C2=A0{
-> =C2=A0	int ret;
-> @@ -816,48 +808,6 @@ static int ad7293_init(struct ad7293_state *st)
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
-> =C2=A0
-> -	ret =3D regulator_enable(st->reg_avdd);
-> -	if (ret) {
-> -		dev_err(&spi->dev,
-> -			"Failed to enable specified AVDD Voltage!\n");
-> -		return ret;
-> -	}
-> -
-> -	ret =3D devm_add_action_or_reset(&spi->dev, ad7293_reg_disable,
-> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->reg_avdd);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret =3D regulator_enable(st->reg_vdrive);
-> -	if (ret) {
-> -		dev_err(&spi->dev,
-> -			"Failed to enable specified VDRIVE Voltage!\n");
-> -		return ret;
-> -	}
-> -
-> -	ret =3D devm_add_action_or_reset(&spi->dev, ad7293_reg_disable,
-> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->reg_vdrive);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret =3D regulator_get_voltage(st->reg_avdd);
-> -	if (ret < 0) {
-> -		dev_err(&spi->dev, "Failed to read avdd regulator: %d\n",
-> ret);
-> -		return ret;
-> -	}
-> -
-> -	if (ret > 5500000 || ret < 4500000)
-> -		return -EINVAL;
-> -
-> -	ret =3D regulator_get_voltage(st->reg_vdrive);
-> -	if (ret < 0) {
-> -		dev_err(&spi->dev,
-> -			"Failed to read vdrive regulator: %d\n", ret);
-> -		return ret;
-> -	}
-> -	if (ret > 5500000 || ret < 1700000)
-> -		return -EINVAL;
-> -
-> =C2=A0	/* Check Chip ID */
-> =C2=A0	ret =3D __ad7293_spi_read(st, AD7293_REG_DEVICE_ID, &chip_id);
-> =C2=A0	if (ret)
->=20
-> ---
-> base-commit: 01958cb8a00d9721ae56ad1eef9cd7b22b5a34bb
-> change-id: 20241120-iio-regulator-cleanup-round-6-78b05be06718
->=20
-> Best regards,
+You've already made me concerned about what the calling convention *is* fo=
+r relocate_kernel() on i386=2E Because if asmlinkage doesn't mean regparm(0=
+) any more and the i386 kernel is still built with -mregparm=3D3, then how =
+does the asm code (which seems to believe all its arguments are on the stac=
+k) actually work?
+
+It seems slightly unlikely that kexec on i386 has just been broken since 2=
+007 but I'm not sure I'd completely rule it out=2E
+
+So now I guess I have to actually build a 32-bit userspace test case and *=
+test* it=2E
+
+And that means I no longer have any excuse for not doing all the same clea=
+nups in the i386 version of the code that I've done for x86_64=2E=2E=2E
+
+Thanks for that :)
 
 
