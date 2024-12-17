@@ -1,179 +1,120 @@
-Return-Path: <linux-kernel+bounces-449585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51129F5110
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:32:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329C69F5113
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0739188D05E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:31:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CE27169B9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF0114A615;
-	Tue, 17 Dec 2024 16:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C4F14A609;
+	Tue, 17 Dec 2024 16:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uJtdd9Wh"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ScZyn5/S"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560CE149DE8
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3921386BF
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734453099; cv=none; b=OHw+aCb7JOnX3iwGm1YApxJBxNon6w4mOw+KLNUcw28XDHCIBpvQ76pmqTMAsoNyH8Crlp2uX9wmELR0SHGTQcPmZVRB9H7OB5jRRjMvwtwYeBFUUSCHHgSHHTcXMTOidMuTq0Pnbm+gEWO/sNX2kF4Puln/mBIqb1eweB8i698=
+	t=1734453130; cv=none; b=POUANgKZbv+KS2EkGB+CtVMpWpLwdB3Muas+ggenzQ42nn4W2s6VjBYtGnUVdHLLpLgVGRAWAZXOXHB2wExYhcn5ltifWqQuIfSILsEcMsR1Q33VjFjrc+kMti0DHfyxOZuGS/nB5nK0/XYI5yqdKVheB0q1YCCAhTJsoN2EBBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734453099; c=relaxed/simple;
-	bh=6NK+z3FpBQ4dkU1zWgFEJ2Zy0a5kaq2ol65YQrQVycM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iaT/R3V4vOBwGv/SFhbB8vtzrLUQ/+Tg15wOoJUrEh/r09bcSMMTCsvmW9OHXAwCRF/s1oYigXNIbCzP1IJGgJST6A/Zbbyq5xOccZ8FVTf8fgCjLQ5IW73cPqosPoEWtJlne649yoazsBEB6D7BLpXD6Rf87FQFKheGu/LSsus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uJtdd9Wh; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-215740b7fb8so172805ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:31:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734453098; x=1735057898; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dbbarN/Rdy7B5sGVq7bbZZ+SWYVMjVxy+N4dBbT/+3Q=;
-        b=uJtdd9Wh6OReJOzg9E+5y+SvG7XqG0yTy360CjLcY0vvk2NKN/oQzoNbh+qMJDKyzY
-         Ow18yks25Yfx/ISExH7MBOkjpYEhmnvPA3Wt3z0yJ15BshYlALr7uMW8EwXUPdJLgiKk
-         jHohbEdvGkVFaoXdUKvetY4N6+JVUO+g/AiIzQwVv4/NIq6WIYXMwzFniz45fig5oUX+
-         LgQKcarSk+eutNXwVl1+KXvJ4ZFEjtJYqBklC43wEv+RCtSy+0pNhP4+y5B92wdiQoEa
-         ODfqJ+YAN0AWvJMHitInXXV80R/NoOGLWPdnKkDSIqAARwDWKj9vZppzgdrfqY+GcgJm
-         waeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734453098; x=1735057898;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dbbarN/Rdy7B5sGVq7bbZZ+SWYVMjVxy+N4dBbT/+3Q=;
-        b=WGhTsS0u1/bwS9a3v6prgUxYPvdAkc684kzzucsCpPj33y9lAVa7/VaLcytwvWGT81
-         Ww33jQsr2qYx8L7sR+h4qcfDqY/HhqjUoECLy8xY1xVxap2sMo7CkXD6Wu7swWAVfwy1
-         POPyHgqyahj7oJCzp4r4XRKw7ffgRxp2Q3eE1j70GLd1TEflgL0fQ/T/caUgi9lteRqx
-         HKIuvcjj0qMTMW832DTH+pSN6PCoNVRjaFAZ9Cc/XEQW0x61ST+C70FrsIHLXH33A3dB
-         r4UzVVt93w58YRz4Jw+M2Od0wC/bfZOtg/ryfHl6qGYZOW08PLyVREfAMCQQWP9HWJRW
-         gdhg==
-X-Forwarded-Encrypted: i=1; AJvYcCV41aUc7WD1MWXA0N3eKDVJisYu1K/SyGcw2FJSDZwb945Grq0v/8Wgq+0Hi6QCGeqvl6x5TJu/IMCBaEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO0UlD2xQhMRLb/0VXA6Ip1HkZ3jAevaz/aPEgJOhql8BJLYjH
-	eZjzUJuBscEzbb3O99ZnHeMkIm3WYOFI4vZ84o1AYuimpKmmWkeQ2nwGK0ZzaNkxhxEJJrDIbHd
-	cbTiJ1dtYl/BDn0OpHv2zHiEdd4qM2QjbepYV
-X-Gm-Gg: ASbGncvQ3rufOCPwxBBKKLDmFc6tBbrDGzdjl/7GG4l7mPwbE0U3zwPoB3XDoNO+aOb
-	dU3oTBE0kKoiF4pfuAm36vpWyZ5CaozXAfnO0
-X-Google-Smtp-Source: AGHT+IF6zBycCZgZ37K0c0Mqt5KJZFgdpLPzxa4ka10RBRwmmEZmWl6gZSB2IrjVjllJ9HN8WQ+yjoAvN3boMOxpI+Y=
-X-Received: by 2002:a17:902:c409:b0:215:7152:36e4 with SMTP id
- d9443c01a7336-218cb220b48mr2367185ad.27.1734453097470; Tue, 17 Dec 2024
- 08:31:37 -0800 (PST)
+	s=arc-20240116; t=1734453130; c=relaxed/simple;
+	bh=AzYqycXinGWcdaLz7RHQ7T4u2K49gpeMyor7Vit9yuQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mZYmQHC3jneU8UQaYpMBZHjEg9GIjWtkQLG1OS4ikmX/ZxoDTbwCBYoZvU5IOzgqrb32PSR1B7XWPs4p2vVTuWW6VOgjh8emDJvzzHH+W1rPBPxhidVjOZbuR86mBJafvOZZ+bzrodmOLUEd0Ma9ZwGmpJzvIcFb17SqtIU8sM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ScZyn5/S; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734453127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=v4a78Nrl6r5YnvCCV5tI8Jed2xDlkXGLKzm9cenTmJA=;
+	b=ScZyn5/S9dTHcz6YX4Hfh0J+vZSWnFIv0rz6KnmRhmZqguvM8Rz89mDfFCsvNLpO279AxB
+	hYC0RA4XIfRfBerMDkvOrAyHcZ2cfdhqZCEG+NxS9zSSVb0gUODdl6oc/p6ekBae73my1O
+	oMBSG+NcyHWz5UqNCmLUXi5oqa9w3tY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-169-irORv65YNUaa8NIP11YVcA-1; Tue,
+ 17 Dec 2024 11:32:02 -0500
+X-MC-Unique: irORv65YNUaa8NIP11YVcA-1
+X-Mimecast-MFC-AGG-ID: irORv65YNUaa8NIP11YVcA
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 33F211955F44;
+	Tue, 17 Dec 2024 16:32:00 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.65.20])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6610A30044C1;
+	Tue, 17 Dec 2024 16:31:58 +0000 (UTC)
+From: Luiz Capitulino <luizcap@redhat.com>
+To: linux-mm@kvack.org,
+	mgorman@techsingularity.net,
+	willy@infradead.org
+Cc: david@redhat.com,
+	linux-kernel@vger.kernel.org,
+	lcapitulino@gmail.com
+Subject: [PATCH 0/2] mm: alloc_pages_bulk: small API refactor
+Date: Tue, 17 Dec 2024 11:31:26 -0500
+Message-ID: <cover.1734453061.git.luizcap@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240426080548.8203-1-xuewen.yan@unisoc.com> <20241016-kurieren-intellektuell-50bd02f377e4@brauner>
- <ZxAOgj9RWm4NTl9d@google.com> <Z1saBPCh_oVzbPQy@google.com>
- <CADyq12y=MGzcvemZTVVGN4yhzr2ihr96OB-Vpg0yvrtrewnFDg@mail.gmail.com> <2024121705-unrigged-sanitary-7b19@gregkh>
-In-Reply-To: <2024121705-unrigged-sanitary-7b19@gregkh>
-From: Brian Geffon <bgeffon@google.com>
-Date: Tue, 17 Dec 2024 11:31:01 -0500
-Message-ID: <CADyq12ynffJLMFJvzf-hsq3OYiLG=TtRVOWev_nBVtOjK91pPw@mail.gmail.com>
-Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for ep_poll_callback
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "# v4 . 10+" <stable@vger.kernel.org>, Xuewen Yan <xuewen.yan@unisoc.com>, 
-	Christian Brauner <brauner@kernel.org>, jack@suse.cz, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
-	vschneid@redhat.com, cmllamas@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ke.wang@unisoc.com, jing.xia@unisoc.com, 
-	xuewen.yan94@gmail.com, viro@zeniv.linux.org.uk, mingo@redhat.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	lizeb@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Dec 17, 2024 at 10:34=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
->
-> On Tue, Dec 17, 2024 at 09:30:51AM -0500, Brian Geffon wrote:
-> > On Thu, Dec 12, 2024 at 12:14=E2=80=AFPM Brian Geffon <bgeffon@google.c=
-om> wrote:
-> > >
-> > > On Wed, Oct 16, 2024 at 03:05:38PM -0400, Brian Geffon wrote:
-> > > > On Wed, Oct 16, 2024 at 03:10:34PM +0200, Christian Brauner wrote:
-> > > > > On Fri, 26 Apr 2024 16:05:48 +0800, Xuewen Yan wrote:
-> > > > > > Now, the epoll only use wake_up() interface to wake up task.
-> > > > > > However, sometimes, there are epoll users which want to use
-> > > > > > the synchronous wakeup flag to hint the scheduler, such as
-> > > > > > Android binder driver.
-> > > > > > So add a wake_up_sync() define, and use the wake_up_sync()
-> > > > > > when the sync is true in ep_poll_callback().
-> > > > > >
-> > > > > > [...]
-> > > > >
-> > > > > Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> > > > > Patches in the vfs.misc branch should appear in linux-next soon.
-> > > > >
-> > > > > Please report any outstanding bugs that were missed during review=
- in a
-> > > > > new review to the original patch series allowing us to drop it.
-> > > > >
-> > > > > It's encouraged to provide Acked-bys and Reviewed-bys even though=
- the
-> > > > > patch has now been applied. If possible patch trailers will be up=
-dated.
-> > > > >
-> > > > > Note that commit hashes shown below are subject to change due to =
-rebase,
-> > > > > trailer updates or similar. If in doubt, please check the listed =
-branch.
-> > > > >
-> > > > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.g=
-it
-> > > > > branch: vfs.misc
-> > > >
-> > > > This is a bug that's been present for all of time, so I think we sh=
-ould:
-> > > >
-> > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > > Cc: stable@vger.kernel.org
-> > >
-> > > This is in as 900bbaae ("epoll: Add synchronous wakeup support for
-> > > ep_poll_callback"). How do maintainers feel about:
-> > >
-> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > Cc: stable@vger.kernel.org
-> >
-> > Dear stable maintainers, this fixes a bug goes all the way back and
-> > beyond Linux 2.6.12-rc2. Can you please add this commit to the stable
-> > releases?
-> >
-> > commit 900bbaae67e980945dec74d36f8afe0de7556d5a upstream.
->
+Hi,
 
-Hi Greg,
+Today, alloc_pages_bulk_noprof() supports two arguments to return allocated
+pages: a linked list and an array. There are also higher level APIs for both.
 
-> How is this a bugfix?  It looks like it is just a new feature being
-> added to epoll, what bug does it "fix"?
+However, the linked list API has apparently never been used. So, this series
+removes it along with the list API and also refactors the remaining API naming
+for consistency.
 
-The bug this fixes is that epoll today completely ignores the WF_SYNC
-flag. The end result is the same, the wakee is woken, but the kernel has
-several places where a synchronous wakeup is expected and with epoll
-this isn't honored. However, it is honored with poll, select, recvmsg, etc.
-Ultimately, epoll is inconsistent with other polling methods and this
-inconsistency can lead to unexpected and surprising scheduling properties
-based on the mechanism used in userspace.
+I've boot-tested this series on arm64 and built-tested it on x86.
 
-For example, f467a6a664 ("pipe: fix and clarify pipe read wakeup logic")
-highlighted the importance of sync wakeups for pipes, should GNU make
-start using epoll we would see the same regression that resulted in this
-fix from Linus.
+PS: Matthew, it was easier to keep my patch instead of fixing up Mel's but I
+included the API refactoring patch as well.
 
->
-> confused,
->
-> greg k-h
+PPS: It's probably good to have a free_pages_bulk() function, but I'll leave
+this for another day.
 
-Thanks,
-Brian
+Luiz Capitulino (2):
+  mm: alloc_pages_bulk_noprof: drop page_list argument
+  mm: alloc_pages_bulk: rename API
+
+ .../staging/media/atomisp/pci/hmm/hmm_bo.c    | 12 +++---
+ drivers/vfio/pci/mlx5/cmd.c                   | 14 +++----
+ drivers/vfio/pci/virtio/migrate.c             |  6 +--
+ fs/btrfs/extent_io.c                          |  2 +-
+ fs/erofs/zutil.c                              |  4 +-
+ fs/splice.c                                   |  2 +-
+ fs/xfs/xfs_buf.c                              |  4 +-
+ include/linux/gfp.h                           | 22 +++++------
+ kernel/bpf/arena.c                            |  2 +-
+ lib/alloc_tag.c                               |  4 +-
+ lib/kunit_iov_iter.c                          |  2 +-
+ lib/test_vmalloc.c                            |  2 +-
+ mm/mempolicy.c                                | 28 ++++++-------
+ mm/page_alloc.c                               | 39 ++++++-------------
+ mm/vmalloc.c                                  |  4 +-
+ net/core/page_pool.c                          |  7 ++--
+ net/sunrpc/svc.c                              |  4 +-
+ net/sunrpc/svc_xprt.c                         |  3 +-
+ 18 files changed, 70 insertions(+), 91 deletions(-)
+
+-- 
+2.47.1
+
 
