@@ -1,68 +1,59 @@
-Return-Path: <linux-kernel+bounces-449636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E6CE9F5202
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:13:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D3B29F522A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:16:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A4CA7A42A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:13:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE80816DF12
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C431C1F869D;
-	Tue, 17 Dec 2024 17:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116871F8932;
+	Tue, 17 Dec 2024 17:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqS5blzl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Mh+32zj2"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6AE1F4735;
-	Tue, 17 Dec 2024 17:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B347A1F893C;
+	Tue, 17 Dec 2024 17:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734455574; cv=none; b=nb/NDfvTAQD1ac11ZK6X/upCcazbMOog3IfQSyGyKKsGDNBULneAjFERaPySODYp5zl+AtVsQcAfpR1QQMG3kR8myzvKMPXHc8fKhVO/dWHMWlEfCjRwARkr+xiSueW05cDlnxpWWZOfBS6x30egcxdg58MXoi2XhMkBMGe5Rnc=
+	t=1734455616; cv=none; b=Nj7zk3Bm65DLre/Tix89S0ESRkBwW63N5eQ+1jwwUnA5MBghEB7kq6bZM9P8Uf9fEYx4vEemMU8JAwBc/BefrUssDHvcQubj2dOZ/+Xc6GSG7Objkdi0kAbwTQ1/kLrEMWh4pkVUmgmWDuzknUyhnkskz8RZeo8ghEdnofGV/As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734455574; c=relaxed/simple;
-	bh=cF7o9F9J8om2/yKsO344CwdD5FDj0djBgNVEMiYMls0=;
+	s=arc-20240116; t=1734455616; c=relaxed/simple;
+	bh=NQIFuZ2w8wBywiVkh0UxxQCB2JhNO2d1k9CVUOotSt0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ERXIEIuvHmUvUEfPdxmj6zAbHsp0jr8PYDBcvkFA4Bq58Ck7Db0IDv8XkDaSl128YnWU4MCtTrTVk5sqxHMBbNhzAC7HsaEou91Bw98CFxWcqqqx0bJGl4b4NlhGSDgFjy1fqItFr4t/Is+w+jbvn8iXc/CXo+dC7r+DVXsZcag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqS5blzl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99BCC4CED3;
-	Tue, 17 Dec 2024 17:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734455574;
-	bh=cF7o9F9J8om2/yKsO344CwdD5FDj0djBgNVEMiYMls0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VqS5blzlMIV41JRUsRQRjAZtFcImCMXXOJlY6XXmrI/N6DLHNR+1ct6NlWLv9guG5
-	 2HG4HeYr4lYNt3v++IgvlVxqotuECulKPhZZRF6OAUA2beePcHbKuiK+fiBvY3Qowi
-	 SshIlWjh5/aVr8XqVRbp98BY08xzqQY5Oqy5NJOyr1lsoWWPaX1EC9VdtKWWvQDxCy
-	 4Z9b3MlmFxkdBmiQTqFCfns67pq5sgr6pMWY9CEVQCczXsixsy7Wwp9N0HxYjwEngk
-	 uBCjlpjFuQ/SNwh0rqswat9IZeoTiQxONC0z33r6PD/JGesx+E1sWQVm5KnCmsoHo/
-	 Qud28MG39LGPg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tNb7w-000000002kp-1mG3;
-	Tue, 17 Dec 2024 18:12:57 +0100
-Date: Tue, 17 Dec 2024 18:12:56 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH] Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on
- usb-c ports"
-Message-ID: <Z2GxGJTrBJ6Md80b@hovoldconsulting.com>
-References: <20241206172402.20724-1-johan+linaro@kernel.org>
- <173445353301.470882.1221462093815662513.b4-ty@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DI34xd/7ny5a7cXRc+qRJuq1JZUXCJuVTPCxI0XA+M67Rlo8sc/0dEiaRThANBwqgbkuEfVNkwSmlb7FTxIHN7zirzLxMvrWdhOhK18xe1EFFTUFjuADTz2RVSabyC5uDM3gPap8pH8iflBNz0nStwwHgOYruLrscZ8ikoZRCb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Mh+32zj2; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=OwvvlQsYTx0tgG6sjUD5o9s0h+RyVyrmKa+xFxpm5LY=; b=Mh+32zj2yAJ/IVktXG48OACcDL
+	YWCy39aEXY10lJo9QiBWR7wgWqhQ/1zNpXAHV/N1KM2FdKndF0RqLnU5QCrHJhEZ1TLn8yZhtLK2G
+	bbYY0v6WAj4I2Ltmjs1s+ID3JKCW3doXD7QqXzS3c3m8+D+q3Y+TwmIJQapREioc8EZQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tNb8P-00116n-TV; Tue, 17 Dec 2024 18:13:25 +0100
+Date: Tue, 17 Dec 2024 18:13:25 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: dp83822: Add support for PHY LEDs on
+ DP83822
+Message-ID: <1a7513fd-c78f-47de-94d7-757c83e9b94c@lunn.ch>
+References: <20241217-dp83822-leds-v1-1-800b24461013@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,42 +62,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <173445353301.470882.1221462093815662513.b4-ty@kernel.org>
+In-Reply-To: <20241217-dp83822-leds-v1-1-800b24461013@gmail.com>
 
-On Tue, Dec 17, 2024 at 10:38:51AM -0600, Bjorn Andersson wrote:
-> 
-> On Fri, 06 Dec 2024 18:24:02 +0100, Johan Hovold wrote:
-> > This reverts commit 1a48dd7b9ac809d1bd0fd2fef509abba83433846.
-> > 
-> > A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
-> > ports can break SuperSpeed device hotplugging. The host controller is
-> > enumerated, but the device is not:
-> > 
-> > 	xhci-hcd xhci-hcd.5.auto: xHCI Host Controller
-> > 	xhci-hcd xhci-hcd.5.auto: new USB bus registered, assigned bus number 3
-> > 	xhci-hcd xhci-hcd.5.auto: hcc params 0x0110ffc5 hci version 0x110 quirks 0x000080a000000810
-> > 	xhci-hcd xhci-hcd.5.auto: irq 247, io mem 0x0a800000
-> > 	xhci-hcd xhci-hcd.5.auto: xHCI Host Controller
-> > 	xhci-hcd xhci-hcd.5.auto: new USB bus registered, assigned bus number 4
-> > 	xhci-hcd xhci-hcd.5.auto: Host supports USB 3.1 Enhanced SuperSpeed
-> > 	hub 3-0:1.0: USB hub found
-> > 	hub 3-0:1.0: 1 port detected
-> > 	hub 4-0:1.0: USB hub found
-> > 	hub 4-0:1.0: 1 port detected
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports"
->       commit: 1fb5cf0d165afc3be76ec754d1b1013515c3896a
+> +static int dp83822_led_hw_control_set(struct phy_device *phydev, u8 index,
+> +				      unsigned long rules)
+> +{
+> +	int mode;
+> +
+> +	mode = dp83822_led_mode(index, rules);
+> +	if (mode < 0)
+> +		return mode;
+> +
+> +	if (index == DP83822_LED_INDEX_LED_0 || index == DP83822_LED_INDEX_COL_GPIO2)
+> +		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
+> +				      MII_DP83822_MLEDCR, DP83822_MLEDCR_CFG,
+> +				      FIELD_PREP(DP83822_MLEDCR_CFG, mode));
+> +	else if (index == DP83822_LED_INDEX_LED_1_GPIO1)
+> +		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
+> +				      MII_DP83822_LEDCFG1,
+> +				      DP83822_LEDCFG1_LED1_CTRL,
+> +				      FIELD_PREP(DP83822_LEDCFG1_LED1_CTRL,
+> +						 mode));
+> +	else
+> +		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
+> +				      MII_DP83822_LEDCFG1,
+> +				      DP83822_LEDCFG1_LED3_CTRL,
+> +				      FIELD_PREP(DP83822_LEDCFG1_LED3_CTRL,
+> +						 mode));
 
-Oh, you appear to have picked v1 here.
+index is taken direct from DT. Somebody might have:
 
-We need to revert also the other two patches from that series to address
-a suspend issue and to unbreak UCSI and DP support:
+           leds {
+                #address-cells = <1>;
+                #size-cells = <0>;
 
-	https://lore.kernel.org/lkml/20241210111444.26240-1-johan+linaro@kernel.org/
+                led@42 {
+                    reg = <42>;
+                    color = <LED_COLOR_ID_WHITE>;
+                    function = LED_FUNCTION_LAN;
+                    default-state = "keep";
+                };
+            };
 
-Johan
+so you should not assume if it is not 0, 1 or 2, then it must be
+3. Please always validate index.
+
+
+    Andrew
+
+---
+pw-bot: cr
 
