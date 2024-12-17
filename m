@@ -1,214 +1,148 @@
-Return-Path: <linux-kernel+bounces-449678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12D29F5434
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:38:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 795249F5448
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:39:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F459189213D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:35:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5E1189645D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871E51FA8EE;
-	Tue, 17 Dec 2024 17:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9125A1FBEB9;
+	Tue, 17 Dec 2024 17:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wo/XjA1m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFpIn5i6"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB301FA8E0;
-	Tue, 17 Dec 2024 17:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB9B1FBCB8;
+	Tue, 17 Dec 2024 17:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734456655; cv=none; b=qTYVeDnDISEDQK4TMHiT8SAtvXLpe27Ol0cvvqmbxycAbIMIVHycETU+6MVkU+sS87YB7cKeCFiKHWA3BJfJ7YJUruOPMK2YmbaU5ZfkmfpV222+jtSfuIhoSoWkCzADHsGJKPg182E0zaxqXzKgEs4fosSHq38yBDkKCapIz3o=
+	t=1734456671; cv=none; b=roGpR3izlfU9F+U9IXIwtQHUtoEKdzaelH9tphC4h3hPt8fbtexFASC87lE6sRB5suQ+DKKzxBDfjpxlkzM9upQ1OIrW5Q86a7f53iiOYRMrzIMOFonlzOqdbDkL+dnYVmLZUQwYEtWoSi0bwpDP7fitkoERZxTHmtltDs2XEMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734456655; c=relaxed/simple;
-	bh=RBSJMFhUNwwLj0YsUUz9OY82tBCJme5IpUfYAxQ+j3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wvpzowpyezv8g0E/QRXTBw0FWaiHgRxWeO8CGCqVkxOK5hYFLTwb/GuaPChyp6DcgCME+XO5uauA21O+t26M0HWmlolssAlv+oSwcTYfln70JJTJO0ghZVByrnYiKGHlLEPlB22mi1jqcb7yVp9UdwCa78tbCZgirf62L8aZhIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wo/XjA1m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DECF3C4CED3;
-	Tue, 17 Dec 2024 17:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734456655;
-	bh=RBSJMFhUNwwLj0YsUUz9OY82tBCJme5IpUfYAxQ+j3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wo/XjA1mFSaYsupbAAUr8bULLRg6N53vo/Rm+ZLZj0IMcY3Vids2lwWA+pRRKsvZ6
-	 fJuIGhqzoqFEMEoikkuTFNX+tCxZmkLDd6QR7K1057P0A6QQYZf/cqVUN/I4ig3ezu
-	 /zzCuA89neUs26M6Wrmruvc8JTWJJeUtUcM3ta8Hs3zZnrWfhJYtPNwCb5ejebyMTk
-	 0fxt7EbxZ3jRdKu5SRpjC98OzXjRF5ouuZMobUMcOFRBBmzW225X65tSSLHMG2uwI0
-	 inQVDerFjjbeglVktHJFFiKuZSYDrUWQfPvtmZ/RxmV8UVTMdbyeUraH+7wW4DuUpa
-	 D+jIa2Xzm47Xw==
-Date: Tue, 17 Dec 2024 18:30:52 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Louis Chauvet <louis.chauvet@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 3/3] drm: bridge: ti-sn65dsi83: Add error recovery
- mechanism
-Message-ID: <20241217-tangible-nostalgic-salamander-27edaa@houat>
-References: <20241217143216.658461-1-herve.codina@bootlin.com>
- <20241217143216.658461-4-herve.codina@bootlin.com>
+	s=arc-20240116; t=1734456671; c=relaxed/simple;
+	bh=0u8GZTE/ATgnlJ77MnJjoFgTTZFTZia0rw7GhwEPga4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=diGoIKyQSAZDbEkBEldYbvLP1Dx8SwACQzmwiCQ8lWdo/g3uYOgNAz7ZRBIt39+SnCYZRkNlvb7b9z3joxk3/1A1B8h6kCAJey5wrYV3WL6Pg4SkwuLhZd/FDI5FFTciVxXVpyMLx/3pMx26jIW+7g2LacwfUuK6yjZjdWINwyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UFpIn5i6; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9e44654ae3so859772566b.1;
+        Tue, 17 Dec 2024 09:31:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734456668; x=1735061468; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rBBCHmjJ8BfQE5A/y32+aeYDRhAmzBYfai/tB2V6O2c=;
+        b=UFpIn5i6PCFfGw9zSWKPLS+DueuAjZDDOt4ym8muRN07z3eLL9jTF3utNjn7okvl6G
+         myBrzNWn5T498OnLfYoSEYIzQWJa9814blAmR+FAtRFgsODYO9GJbrEaiZAgtAiSRe8R
+         uQsKpCHzBfH+blp/BaTOYuTxYyyPyeAll+bIxFFYDLLLaQWTpW+J0yy9J7Zo0YIgcCFo
+         BkbuwRfjpUwhORrxNd9cbpUC6icWgPda0LsvUed3/LjxeILF32EP9HeBSxRx7V/j9v7+
+         tchyZ4KH0ChXT0atpP0KnqtXI2GAHQIICYFkas8Z8HFLPVm9W9ofhVmDcN2MP4AzYgaU
+         C9KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734456668; x=1735061468;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rBBCHmjJ8BfQE5A/y32+aeYDRhAmzBYfai/tB2V6O2c=;
+        b=vcdHoLIt7uNRQE8iwKKHEMPz0466gyI6HzeUy5BgkahmS6YzvFtD2Ge1brJvyFphvC
+         o/kAF2+x/jHuSosc39HKc2VvoibqwOrGT2CQ0l9VQkreKQ05qn3mx/kSkeAia4p8tpgx
+         A+DL1/ivdGtDSEVgoA5naLiOZM6VWFuek4abYfUEFHNJgwFxS5SMDeQJANKb8KyYfx3r
+         8yRBRmLe0P8F96d4Dqkp3BORVMfE0gWcjqTkfW5TqInqYAcOzMPucNMEdUYk7fD9MQxA
+         ioEVPfFm7x/oJS9Sfv7o56T7GMGX9/XbkVYrcLuS0iFkzZ1NlmYNivvPftcG5yFBcMm/
+         EORg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Ha42f/EJ6qMGLrbVonZmZlAz2z6oXHti3XknLNnqCOHeGlWsgZXoILHDWOOvJFeGD7yuSPn5uXopahZ7k1WfzvI=@vger.kernel.org, AJvYcCV3y7Wkk57oRxz7ol4c1zTpWP0f3EOpBdtwmpymdkWpY2lqDT4JuqDRJa2YI6tK0mhloIuFuf0/2yX7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSXd6I9PgdWLpl/6QvJv9aGn6hg2Gh8DCR2rYeTCI/W6r620KL
+	q22mrHONXQUjCozkMY1uONgrEhBn3LYXPbWBK65ERo2ju4M465+0
+X-Gm-Gg: ASbGnctChDUtvdLcPLYXj8AabrVh5Q2OM3B6QxWpIDeGR84rYDxkhysyEJTS6zHkAfZ
+	JaFzn+zgD3ZmFF/MmU85CS1gqzYznIqTAyjaJClHVHm8Rg89T2PINwzgoP47cPnLa0wyopkWQTh
+	Dw/gFLvvx4wVVv0Eh/no14C5EpVvKFVqfmOMuZj95uIICm2pNjnun2PP/6rOHv1rcMwD5gs1+Lh
+	Xxmmgw4PXcgq0PL9XG4SOxx9ywDsV2s3Y1b43RJjRdKnO7CHiyNuK21QzMTyvhsmFPU
+X-Google-Smtp-Source: AGHT+IET9mrZEHGyCN84q2P3UbSuc+Z8xHdme19p+Tq4s9g/cPQ1ee4Z1KgRDlQkyuj9FtD2I63F3g==
+X-Received: by 2002:a17:907:7811:b0:aa6:8b4a:46a4 with SMTP id a640c23a62f3a-aabf1c85370mr15686266b.44.1734456667314;
+        Tue, 17 Dec 2024 09:31:07 -0800 (PST)
+Received: from [192.168.31.111] ([194.39.226.133])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96067ef1sm461047266b.48.2024.12.17.09.31.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 09:31:07 -0800 (PST)
+Message-ID: <6b257549-b166-4772-a824-894b4b84e322@gmail.com>
+Date: Tue, 17 Dec 2024 19:31:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="xewikwxfd6p4z2uo"
-Content-Disposition: inline
-In-Reply-To: <20241217143216.658461-4-herve.codina@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] soc: samsung: Add a driver for Samsung SPEEDY host
+ controller
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Maksym Holovach <nergzd@nergzd723.xyz>, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+References: <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
+ <44419be4-65b3-41eb-a696-cfefae84a423@web.de>
+Content-Language: en-US
+From: Markuss Broks <markuss.broks@gmail.com>
+In-Reply-To: <44419be4-65b3-41eb-a696-cfefae84a423@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Hi Markus,
+
+On 12/14/24 4:43 PM, Markus Elfring wrote:
+> …
+>> SPEEDY is a proprietary 1 wire serial bus used by Samsung
+>> in various devices …
+> You may occasionally put more than 57 characters into text lines
+> of such a change description.
+
+But does it really matter where I break the line? For me, it just seems 
+ugly no matter where I do it...
+
+>
+>
+> …
+>> +++ b/drivers/soc/samsung/exynos-speedy.c
+>> @@ -0,0 +1,457 @@
+> …
+>> +static int _speedy_read(struct speedy_controller *speedy, u32 reg, u32 addr, u32 *val)
+>> +{
+>> +	int ret;
+>> +	u32 cmd, int_ctl, int_status;
+>> +
+>> +	mutex_lock(&speedy->io_lock);
+> …
+>> +	ret = speedy_int_clear(speedy);
+>> +
+>> +	mutex_unlock(&speedy->io_lock);
+>> +
+>> +	return ret;
+>> +}
+> …
+>
+> Under which circumstances would you become interested to apply a statement
+> like “guard(mutex)(&speedy->io_lock);”?
+> https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/mutex.h#L201
 
 
---xewikwxfd6p4z2uo
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/3] drm: bridge: ti-sn65dsi83: Add error recovery
- mechanism
-MIME-Version: 1.0
+I did not know such statement existed, thanks for the tip, it definitely 
+helps and makes it simpler!
 
-On Tue, Dec 17, 2024 at 03:32:15PM +0100, Herve Codina wrote:
-> In some cases observed during ESD tests, the TI SN65DSI83 cannot recover
-> from errors by itself. A full restart of the bridge is needed in those
-> cases to have the bridge output LVDS signals again.
->=20
-> Also, during tests, cases were observed where reading the status of the
-> bridge was not even possible. Indeed, in those cases, the bridge stops
-> to acknowledge I2C transactions. Only a full reset of the bridge (power
-> off/on) brings back the bridge to a functional state.
->=20
-> The TI SN65DSI83 has some error detection capabilities. Introduce an
-> error recovery mechanism based on this detection.
->=20
-> The errors detected are signaled through an interrupt. On system where
-> this interrupt is not available, the driver uses a polling monitoring
-> fallback to check for errors. When an error is present or when reading
-> the bridge status leads to an I2C failure, the recovery process is
-> launched.
->=20
-> Restarting the bridge needs to redo the initialization sequence. This
-> initialization sequence has to be done with the DSI data lanes driven in
-> LP11 state. In order to do that, the recovery process resets the whole
-> output path (i.e the path from the encoder to the connector) where the
-> bridge is located.
->=20
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  drivers/gpu/drm/bridge/ti-sn65dsi83.c | 142 ++++++++++++++++++++++++++
->  1 file changed, 142 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/brid=
-ge/ti-sn65dsi83.c
-> index e6264514bb3f..f3d66d17f28c 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-> @@ -35,9 +35,12 @@
->  #include <linux/of_graph.h>
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/timer.h>
-> +#include <linux/workqueue.h>
-> =20
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_bridge.h>
-> +#include <drm/drm_drv.h> /* DRM_MODESET_LOCK_ALL_BEGIN() need drm_drv_us=
-es_atomic_modeset() */
->  #include <drm/drm_mipi_dsi.h>
->  #include <drm/drm_of.h>
->  #include <drm/drm_panel.h>
-> @@ -147,6 +150,9 @@ struct sn65dsi83 {
->  	struct regulator		*vcc;
->  	bool				lvds_dual_link;
->  	bool				lvds_dual_link_even_odd_swap;
-> +	bool				use_irq;
-> +	struct delayed_work		monitor_work;
-> +	struct work_struct		reset_work;
->  };
-> =20
->  static const struct regmap_range sn65dsi83_readable_ranges[] =3D {
-> @@ -328,6 +334,106 @@ static u8 sn65dsi83_get_dsi_div(struct sn65dsi83 *c=
-tx)
->  	return dsi_div - 1;
->  }
-> =20
-> +static int sn65dsi83_reset_drm_output(struct sn65dsi83 *sn65dsi83)
-> +{
-> +	struct drm_atomic_state *state =3D ERR_PTR(-EINVAL);
-> +	struct drm_device *dev =3D sn65dsi83->bridge.dev;
-> +	struct drm_modeset_acquire_ctx ctx;
-> +	struct drm_connector *connector;
-> +	int err;
-> +
-> +	/*
-> +	 * Reset components available from the encoder to the connector.
-> +	 * To do that, we disable then re-enable the connector linked to the
-> +	 * encoder.
-> +	 *
-> +	 * This way, drm core will reconfigure each components. In our case,
-> +	 * this will force the previous component to go back in LP11 mode and
-> +	 * so allow the reconfiguration of SN64DSI83 bridge.
-> +	 *
-> +	 * Keep the lock during the whole operation to be atomic.
-> +	 */
-> +
-> +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
-> +
-> +	state =3D drm_atomic_helper_duplicate_state(dev, &ctx);
-> +	if (IS_ERR(state)) {
-> +		err =3D PTR_ERR(state);
-> +		goto unlock;
-> +	}
-> +
-> +	connector =3D drm_atomic_get_old_connector_for_encoder(state,
-> +							     sn65dsi83->bridge.encoder);
-> +	if (!connector) {
-> +		err =3D -EINVAL;
-> +		goto unlock;
-> +	}
-> +
-> +	err =3D drm_atomic_helper_disable_connector(connector, &ctx);
-> +	if (err < 0)
-> +		goto unlock;
-> +
-> +	/* Restore original state to re-enable the connector */
-> +	err =3D drm_atomic_helper_commit_duplicated_state(state, &ctx);
-> +
-> +unlock:
-> +	DRM_MODESET_LOCK_ALL_END(dev, ctx, err);
-> +	if (!IS_ERR(state))
-> +		drm_atomic_state_put(state);
-> +	return err;
-> +}
 
-In the previous version, we advised to create a generic helper similar
-to vc4 and i915 reset_pipe() and and intel_modeset_commit_pipes().
+>
+> Regards,
+> Markus
 
-It looks like you chose a different path. Can you expand why?
 
-Maxime
+- Markuss
 
---xewikwxfd6p4z2uo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2G1SwAKCRAnX84Zoj2+
-djH4AX9tMX7N6ta8NhRqAqOqM7/GAzG8t26WiCFfHiqEFJ4H/qRCwyp5ysuEtp3R
-Xs71qTwBf3EkvbAlYzvKRAVSraxZX1CgnFZXcCxA0FefEt/4o1IVEGwsZ/ehmoBp
-pnroUS5Mtg==
-=WBgd
------END PGP SIGNATURE-----
-
---xewikwxfd6p4z2uo--
 
