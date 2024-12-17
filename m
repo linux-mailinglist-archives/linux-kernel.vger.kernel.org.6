@@ -1,102 +1,231 @@
-Return-Path: <linux-kernel+bounces-449618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A185C9F5185
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B37AE9F5188
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:03:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE6D1690FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5ECE16932F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6EA1F4735;
-	Tue, 17 Dec 2024 17:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3A/LYSq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAEC1F76C4;
+	Tue, 17 Dec 2024 17:03:24 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998681F5420
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627AE1F758C
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734454989; cv=none; b=aqYMh1qFps2s9tSPqEB8h5/17DVB32XaQew/gfgyPECgSTIaEal8cvs8AUw0f/iiXmtRIjVAHVLxoY58HzWoeeUteR3cRUnXt+zUNJb766xRoRHFIR5awKUY6H7lzBgXS6IJJclmvKMTZlzRnQ2LdE0UrglVLozZMAHkB9wqFho=
+	t=1734455004; cv=none; b=ckj2W6f448uO95JuP/2lPS2Z0wyrD9U1v/yRDRUm1whlCgIonutsjd9TIrf32hFViJjQ4tTdI31RYwHlDGdaniTMD4ZgyNMR0KZjjxXZ8w/GJH1gkYY2w4r058T33iD2w0P/A4ZE5yv94U9//umasNr6npMWL6c6EihU5YPaMxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734454989; c=relaxed/simple;
-	bh=y4rvd2i45ul2OIU5/nJesQGlmoS4ZWQ/I/mmlz+Q+ow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VWE5qqRqyyvGNZi/AEXBtHiE9g6CmNL6RfvpmMQuvO+r5YewWrNo5mlJ/WfG7zj4NyXEA6j7Zj+kxUVAhL41j/e6VBeMOPZMlviBQ60hFEZMJs9tVlLXFt7RLysKcd0Nq+Qrg+MyFXp/+GB6fePaLI5gIvb5e9ZMcAx536CuPFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3A/LYSq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 300CFC4CEDF
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:03:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734454989;
-	bh=y4rvd2i45ul2OIU5/nJesQGlmoS4ZWQ/I/mmlz+Q+ow=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=i3A/LYSqFumD5PYmmp1gUpj+0qB+2xkRxXi2l7E/ripxz9fZlHVcmj9lsU0HxzRn+
-	 QIMV4RbqDd6Tu3z16J+OVDrfXm3Uxmh17biZLf/xWBqmE6dMMTgkuO8uIY14maKNEh
-	 SezSLO9l7KNVKfJZ+bxBU+u34gVl1pwJb0vdDevX/hCV4MzgzXRLYIzT7a9LERiyvo
-	 YBImUV+TW740F6GnGi1LQQqLkDEGSN2BdjOR89EhfsxhX/aOlCpYjmsFN54iRL52Rp
-	 RwuVUqtXEhMrph6yYSdO7cUrB3H1BNp9VcVu9068jW3oEMa5F2eBR0DLQQtuzZPeG9
-	 FWAiFeBIcdnZg==
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e3dace03a73so3517165276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:03:09 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUQaHL3pyLu8IMe4K8wpdO52uzJaE4B5DL6pvFiyUWmTc4iHIN7tseCWL/2/ZcnIg6V1vtNHOSn2hB84rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBFS1OS95pviI3Gat6DpyFO9/FS3p9H+NS+vm+DBPKr0UyUZ6R
-	XTu1ATQVzlt7JzJkUERy9lbvxbQbG58BggndVnLh9yC3GN0SByaX8xIEF2mlJ5/H6X45IRTUV9c
-	SyelNZKh58fREAsr0c6hrutsBCw==
-X-Google-Smtp-Source: AGHT+IGKvG8I/im/k/IPybn045bPPxXVEzIGxeaZoFQYWf7CnT275gjzpCkuXW1FxOqOUlHA0uA3p6+cPeXvMyJJp6Q=
-X-Received: by 2002:a05:6902:2681:b0:e4b:b2bd:5fa0 with SMTP id
- 3f1490d57ef6-e53606627d2mr320097276.20.1734454988345; Tue, 17 Dec 2024
- 09:03:08 -0800 (PST)
+	s=arc-20240116; t=1734455004; c=relaxed/simple;
+	bh=PmCO1saefPNelwgYlhiOYl4s9nWwvTyuZ8toAOOnN3k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cWZrp0j9w5L9Bz1V+6B9bDhgQlaEWWAVBj+zygaH4KD8rA3Geudo/4iIo929YDv163h367laYC/8TI9Dqjwt3l9u25Tqr3iNXItuPsEFM8yk//+VKOsiQmhLHclj8PWEF8rKuBhBJx8oflNiFY569c9z2G/k4Fq5FzWTjazVIVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-844e344b0b5so458516639f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:03:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734455001; x=1735059801;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M1i8N8MltEGs/Cs4l8HSYYVKaEokhBJdoFZb2Lqw43E=;
+        b=PunKw/3B/7n23ZH680IthTcAJd9c/plmrGKD8A9oxF4GdkIxVayQkeemFLFUHUeb0b
+         vtP3dKAylU3mBpWowLASTVLjF2ibCAUU6cWAOGLIwzIBO94/DvBmVvDrkNIG3JcGLOVG
+         N3k1/gauia5ilOrZK/T/dAJLee+pd4bZQ9Ofp+IFux591nMr3KlH4RRyq4RcbFT7QdLr
+         SM/+4c8Q+bO3XtVrx0GGnrpNJEcT1eUbRGGOWCnKnAuU1bvTJ1OU5BWQN7yrGwhPafdn
+         E09AX+viAY0y3Xy5UrvxGoAAcktdE63pJg31LKKIfqWHqPEGd5s/9aQXNlndM+HT+nnX
+         wyAg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7Atv7JSfKmpDlDkXx9t+DHY0zFVlO1mfvDtrCHs4aJfzJnhHXhMHkMsxsHcuzLs2Te6GnbhXXFn7J2SM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ9G/7sHhmeRBj7Vz674O1cYVo9ykmeedA7QYP9x3T2j7++F1M
+	Dr93xVSEnYpOW0b2eNgyhczV0/ee/WyLkqh087kHzZ09stze/tURXi/jXp/bkg35JIAPwE73FJT
+	7gGNKT+fZvrQkp73CpHV1jLDSF/XKGRTspHJkmVuUZfY2uDiBid7fiqU=
+X-Google-Smtp-Source: AGHT+IFakiee4ROgWbDu9hm0AJP7nzqSk50fk1gsjGPP11/LRufNAksPaNyEp8UxBsOKCOAve9/1jRbKaN6FiA3QmqzqbgcyJeBd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210055311.780688-1-anshuman.khandual@arm.com>
- <20241210055311.780688-19-anshuman.khandual@arm.com> <20241216231505.GA601635-robh@kernel.org>
- <a442bca4-d1c0-4f3e-ae13-4836caec2da9@sirena.org.uk>
-In-Reply-To: <a442bca4-d1c0-4f3e-ae13-4836caec2da9@sirena.org.uk>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 17 Dec 2024 11:02:57 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+45YNGNEcDVFvKH3Tiwtz0HF9_O4tPfQH0dbXra2bcRQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+45YNGNEcDVFvKH3Tiwtz0HF9_O4tPfQH0dbXra2bcRQ@mail.gmail.com>
-Subject: Re: [PATCH V2 18/46] arm64/sysreg: Add register fields for PMUACR_EL1
-To: Mark Brown <broonie@kernel.org>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>, linux-kernel@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, maz@kernel.org, 
-	ryan.roberts@arm.com, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+X-Received: by 2002:a05:6e02:1d81:b0:3a7:a738:d9c8 with SMTP id
+ e9e14a558f8ab-3afee9a3aafmr138714295ab.2.1734455001355; Tue, 17 Dec 2024
+ 09:03:21 -0800 (PST)
+Date: Tue, 17 Dec 2024 09:03:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6761aed9.050a0220.29fcd0.006b.GAE@google.com>
+Subject: [syzbot] [net?] general protection fault in put_page (4)
+From: syzbot <syzbot+38a095a81f30d82884c1@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	martineau@kernel.org, matttbe@kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 17, 2024 at 9:30=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> On Mon, Dec 16, 2024 at 05:15:05PM -0600, Rob Herring wrote:
-> > On Tue, Dec 10, 2024 at 11:22:43AM +0530, Anshuman Khandual wrote:
->
-> > > +Sysreg     PMUACR_EL1      3       0       9       14      4
->
-> > I already added this and various other PMUv3.9 registers you've added
-> > here in v6.12 and v6.13. So are you on an old base or the tool allows
-> > multiple definitions? If the latter, that should be fixed.
->
-> The tool is written in awk and hence *really* dumb so it's not going to
-> notice this, and so long as the resulting definitions are identical the
-> compiler won't either.  It would indeed be nice if the tooling were able
-> to detect this.
+Hello,
 
-Something like this should work:
+syzbot found the following issue on:
 
-git grep -h '^Sysreg\s' arch/arm64/tools/sysreg | tr -s ' \t' ' ' |
-sort | uniq -c | sort -n | grep -E '^\s+([2-9]|1[0-9])'
+HEAD commit:    78d4f34e2115 Linux 6.13-rc3
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16445730580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6c532525a32eb57d
+dashboard link: https://syzkaller.appspot.com/bug?extid=38a095a81f30d82884c1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169b0b44580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f502df980000
 
-No duplicates currently.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7129ee07f8aa/disk-78d4f34e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c23c0af59a16/vmlinux-78d4f34e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/031aecf04ea7/bzImage-78d4f34e.xz
 
-Rob
+The issue was bisected to:
+
+commit b83fbca1b4c9c45628aa55d582c14825b0e71c2b
+Author: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Date:   Mon Sep 2 10:45:53 2024 +0000
+
+    mptcp: pm: reduce entries iterations on connect
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=163682df980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=153682df980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=113682df980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+38a095a81f30d82884c1@syzkaller.appspotmail.com
+Fixes: b83fbca1b4c9 ("mptcp: pm: reduce entries iterations on connect")
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 1 UID: 0 PID: 5836 Comm: sshd Not tainted 6.13.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+RIP: 0010:_compound_head include/linux/page-flags.h:242 [inline]
+RIP: 0010:put_page+0x23/0x260 include/linux/mm.h:1552
+Code: 90 90 90 90 90 90 90 55 41 57 41 56 53 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 f8 5e 12 f8 49 8d 5e 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 8f c7 78 f8 48 8b 1b 48 89 de 48 83
+RSP: 0000:ffffc90003916c90 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000008 RCX: ffff888030458000
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffffffff898ca81d R09: 1ffff110054414ac
+R10: dffffc0000000000 R11: ffffed10054414ad R12: 0000000000000007
+R13: ffff88802a20a542 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f34f496e800(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9d6ec9ec28 CR3: 000000004d260000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ skb_page_unref include/linux/skbuff_ref.h:43 [inline]
+ __skb_frag_unref include/linux/skbuff_ref.h:56 [inline]
+ skb_release_data+0x483/0x8a0 net/core/skbuff.c:1119
+ skb_release_all net/core/skbuff.c:1190 [inline]
+ __kfree_skb+0x55/0x70 net/core/skbuff.c:1204
+ tcp_clean_rtx_queue net/ipv4/tcp_input.c:3436 [inline]
+ tcp_ack+0x2442/0x6bc0 net/ipv4/tcp_input.c:4032
+ tcp_rcv_state_process+0x8eb/0x44e0 net/ipv4/tcp_input.c:6805
+ tcp_v4_do_rcv+0x77d/0xc70 net/ipv4/tcp_ipv4.c:1939
+ tcp_v4_rcv+0x2dc0/0x37f0 net/ipv4/tcp_ipv4.c:2351
+ ip_protocol_deliver_rcu+0x22e/0x440 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x341/0x5f0 net/ipv4/ip_input.c:233
+ NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
+ NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
+ __netif_receive_skb_one_core net/core/dev.c:5672 [inline]
+ __netif_receive_skb+0x2bf/0x650 net/core/dev.c:5785
+ process_backlog+0x662/0x15b0 net/core/dev.c:6117
+ __napi_poll+0xcb/0x490 net/core/dev.c:6883
+ napi_poll net/core/dev.c:6952 [inline]
+ net_rx_action+0x89b/0x1240 net/core/dev.c:7074
+ handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
+ __do_softirq kernel/softirq.c:595 [inline]
+ invoke_softirq kernel/softirq.c:435 [inline]
+ __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+ sysvec_apic_timer_interrupt+0x57/0xc0 arch/x86/kernel/apic/apic.c:1049
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0033:0x7f34f4519ad5
+Code: 85 d2 74 0d 0f 10 02 48 8d 54 24 20 0f 11 44 24 20 64 8b 04 25 18 00 00 00 85 c0 75 27 41 b8 08 00 00 00 b8 0f 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 75 48 8b 15 24 73 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffec5b32ce0 EFLAGS: 00000246
+RAX: 0000000000000001 RBX: 00000000000668a0 RCX: 00007f34f4519ad5
+RDX: 00007ffec5b32d00 RSI: 0000000000000004 RDI: 0000564f4bc6cae0
+RBP: 0000564f4bc6b5a0 R08: 0000000000000008 R09: 0000000000000000
+R10: 00007ffec5b32de8 R11: 0000000000000246 R12: 0000564f48ea8aa4
+R13: 0000000000000001 R14: 0000564f48ea93e8 R15: 00007ffec5b32d68
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:_compound_head include/linux/page-flags.h:242 [inline]
+RIP: 0010:put_page+0x23/0x260 include/linux/mm.h:1552
+Code: 90 90 90 90 90 90 90 55 41 57 41 56 53 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 f8 5e 12 f8 49 8d 5e 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 8f c7 78 f8 48 8b 1b 48 89 de 48 83
+RSP: 0000:ffffc90003916c90 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000008 RCX: ffff888030458000
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffffffff898ca81d R09: 1ffff110054414ac
+R10: dffffc0000000000 R11: ffffed10054414ad R12: 0000000000000007
+R13: ffff88802a20a542 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f34f496e800(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9d6ec9ec28 CR3: 000000004d260000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	55                   	push   %rbp
+   8:	41 57                	push   %r15
+   a:	41 56                	push   %r14
+   c:	53                   	push   %rbx
+   d:	49 89 fe             	mov    %rdi,%r14
+  10:	48 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbp
+  17:	fc ff df
+  1a:	e8 f8 5e 12 f8       	call   0xf8125f17
+  1f:	49 8d 5e 08          	lea    0x8(%r14),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	48 89 df             	mov    %rbx,%rdi
+  33:	e8 8f c7 78 f8       	call   0xf878c7c7
+  38:	48 8b 1b             	mov    (%rbx),%rbx
+  3b:	48 89 de             	mov    %rbx,%rsi
+  3e:	48                   	rex.W
+  3f:	83                   	.byte 0x83
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
