@@ -1,221 +1,124 @@
-Return-Path: <linux-kernel+bounces-449060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D8F9F4933
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:48:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5A69F4934
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:48:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B555616FC15
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A79916C1EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B9E1E9B34;
-	Tue, 17 Dec 2024 10:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I66qyFLM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D191E260A;
+	Tue, 17 Dec 2024 10:48:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F1F1E260A;
-	Tue, 17 Dec 2024 10:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EC11DE4E0
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734432463; cv=none; b=Jpr2gTHd+K+4OZw0bJX+6T36CwquvEhGyVTwSjOfn9bNPgzdijCshd7avZVQSQZoLets7FO9naNciu4bh/WzHZstGBR644cbjKvkd8BbjW9BOsIktTb1uJ463fCVR8VQhS5Lt05CaiSdjQv6UP5Jn60zpcmB62CXeI1tTBbrP2Y=
+	t=1734432486; cv=none; b=ACzw2Wrsjvh2Fgu4QixWeMBl8vXRuB9TQltskaVMvERnWvlnfFJt3SMpULoo/IeZrByxvuckK1go8j0HZOeFxrOYZcV75FdHDuMAwvLjevQpHYgxs4UN76jL+E0Ae8Ha80VrSKIT/CEDt9KDxmQ0IHGdHV7MTEtvpwMuYF3+FkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734432463; c=relaxed/simple;
-	bh=m9YLopjD2BjlIvWN9XhjNV/ZSRqTAGjbTzVj8bOX5fA=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=b1W05uaabrqbz8WVCEegk+TmUYVnElv2FkZucrDcAx2/fBx6Ulpk/10NTFC25g8mqDMYws6Fbi4S84LKNaQqHMc09oAWYV7nysOFWq0mcSgitIB4UE9KuDV5Po6B/kp/+Q/cuz7Bs0L6MDbimPXBpT6KsK4VVMxQjEJdQHEcpkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I66qyFLM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AF5CC4CEDE;
-	Tue, 17 Dec 2024 10:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734432462;
-	bh=m9YLopjD2BjlIvWN9XhjNV/ZSRqTAGjbTzVj8bOX5fA=;
-	h=Date:From:To:cc:Subject:From;
-	b=I66qyFLMpHLoH6+P+oWFNwvEEzG3PTyLqPHXwWg66UtBKv9lFmXsWkzWSgMu5/UWs
-	 Ejra20fWTbzBUTlHIuwuG4edP84/1N2FwXWFCozFHKrqPuVJbZ4kQLbPgAXsx4LFQA
-	 IU61jLX5KrU/gEkM+XUgVgzlij9JhXVEMoYjSlni+QtYCGn7w2AP99Zv11d4iPR/FE
-	 ASPocpsMlC+sr0ccA/yINvxnquNew9iI6oB8Hd8fzd9tThvs81uxjoEwX5b35uVQ2/
-	 jVFcu8+/eja88wzoPO2mGn5vsXnxSq0FR521LjDfb/EQx1gx6QLcwzK5XRBBzUzfks
-	 X4f6wQNjva0NQ==
-Date: Tue, 17 Dec 2024 11:47:39 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [PATCH] [RFC] Input: remove evbug driver
-Message-ID: <8n377s5p-3r9n-ro38-3r2o-p536745552qo@xreary.bet>
+	s=arc-20240116; t=1734432486; c=relaxed/simple;
+	bh=dnVJ5bjsIiyoFarcMSfXkq1h0ZVI8No88ktlC58fagQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RjbiCsBLqrL+axFYe+O2NOaVlAiR71nsDw5qQ7eJovCraJG8fL/UwVvjjZEoqpw9+n5djKDnXZA61c5now0KHFVDAfVQgzQtvIl5HURPySbK8BuipR77FlJBXYRLm+mQEr95ERoYZIK/vwa8HKOK0t1awtrnNTY8ume4SLdQqjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a81357cdc7so60803305ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 02:48:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734432484; x=1735037284;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kSKLWVdIklW4E/y+Drls4xRb+G0etWH5x+OHW1mBX8M=;
+        b=b2i4ZLXcQVMM45V/0b7CrzhmHxuX++r2O4KNx+gX2k5VafkioHle+4QqyXIm8DSZ2P
+         RcRKamI1CQZ+IdshgILa2CmQEL0Y4n/3eWMaMzn97zI7TWn5aN4A5iP+ILnw/0czXIuE
+         g1F0W0z2f2yJgvpPM5s4oaQM6775vwoC1ShEnFmPg18eGmwWuWzI9/RlimitNC/MN6nc
+         f+gvpjf9msHnSPr7oWXt2kSA3MIJQhoX54hRYObkIUT2hgytcGlxSuYFj4D+QftIRTrK
+         k0+RXYdsaBqaM3x58s3LTzbSRogh+580wFpC9rwAC1K8Ysr1igorXROHS3Ihiz7g/+8B
+         Nz2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXl+G2OwjZMWbjm3Riju1W5gKmlA/ELACQl1BA+jHFXgGTuoAWWo1m0PiAH6McthHvDaSQvkKzzSLQdZEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEMfyI/n1wN/Fzeb7isiWHiUush1me7Uz1YGXlvj9VIcPPT0XM
+	CQgFMHfBmRaCic6DhJL8YbSB213OZzmHqHBmvp693hrdVqZSVLQgDto0M4xkUbM65z0xVGEW6Iz
+	GKdOiDGILwX+JOrWdN9oWGuWPpzSKROS+NgLLGI4HgLt4DSpPQiWp2UE=
+X-Google-Smtp-Source: AGHT+IEfAbxixMcB0YO39q51tz8GSAkZ3y8rL4GlBb786/vjekqHf9NdcjQSzBin3Tf2S1CTituiW515U+L4H5NfUYlktl18D3WY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Received: by 2002:a05:6e02:1f88:b0:3a7:e786:afb4 with SMTP id
+ e9e14a558f8ab-3bb079e4360mr26405805ab.2.1734432484347; Tue, 17 Dec 2024
+ 02:48:04 -0800 (PST)
+Date: Tue, 17 Dec 2024 02:48:04 -0800
+In-Reply-To: <20241217103105.151-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <676156e4.050a0220.37aaf.0165.GAE@google.com>
+Subject: Re: [syzbot] [mm?] general protection fault in find_lock_task_mm
+From: syzbot <syzbot+c2e074db555379260750@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jiri Kosina <jkosina@suse.com>
+Hello,
 
-I've never heard of anyone having used this driver for debugging at least 
-in over past decade or so. Since we have tools like evtest, this driver 
-seems to be rather superficial.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: shift-out-of-bounds in ip_finish_output2
 
-Also, it apparently causes confusion among people who accidentaly enable 
-CONFIG_INPUT_EVBUG and are annoyed/confused by their kernel log being 
-spammed by a lot of useless data.
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in ./include/net/neighbour.h:306:44
+shift exponent 32 is too large for 32-bit type 'unsigned int'
+CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.13.0-rc3-syzkaller-gf44d154d6e3d-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+Workqueue: wg-kex-wg0 wg_packet_handshake_send_worker
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x2a5/0x480 lib/ubsan.c:468
+ ___neigh_lookup_noref include/net/neighbour.h:306 [inline]
+ __ipv4_neigh_lookup_noref include/net/arp.h:27 [inline]
+ ip_neigh_gw4 include/net/route.h:383 [inline]
+ ip_neigh_for_gw include/net/route.h:403 [inline]
+ ip_finish_output2.cold+0x56/0x5b net/ipv4/ip_output.c:230
+ __ip_finish_output net/ipv4/ip_output.c:314 [inline]
+ __ip_finish_output+0x49e/0x950 net/ipv4/ip_output.c:296
+ ip_finish_output+0x35/0x380 net/ipv4/ip_output.c:324
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip_output+0x13b/0x2a0 net/ipv4/ip_output.c:434
+ dst_output include/net/dst.h:450 [inline]
+ ip_local_out+0x33e/0x4a0 net/ipv4/ip_output.c:130
+ iptunnel_xmit+0x5d9/0xa00 net/ipv4/ip_tunnel_core.c:82
+ send4+0x48e/0xe30 drivers/net/wireguard/socket.c:85
+ wg_socket_send_skb_to_peer+0x196/0x220 drivers/net/wireguard/socket.c:175
+ wg_socket_send_buffer_to_peer+0x148/0x1a0 drivers/net/wireguard/socket.c:200
+ wg_packet_send_handshake_initiation+0x227/0x360 drivers/net/wireguard/send.c:40
+ wg_packet_handshake_send_worker+0x1c/0x30 drivers/net/wireguard/send.c:51
+ process_one_work+0x958/0x1b30 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+---[ end trace ]---
 
-Let's just remove it.
 
-Signed-off-by: Jiri Kosina <jkosina@suse.com>
----
- drivers/input/Kconfig  |  14 ------
- drivers/input/Makefile |   1 -
- drivers/input/evbug.c  | 100 -----------------------------------------
- 3 files changed, 115 deletions(-)
- delete mode 100644 drivers/input/evbug.c
+Tested on:
 
-diff --git a/drivers/input/Kconfig b/drivers/input/Kconfig
-index 3bdbd34314b3..88ecdf5218ee 100644
---- a/drivers/input/Kconfig
-+++ b/drivers/input/Kconfig
-@@ -152,20 +152,6 @@ config INPUT_EVDEV
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called evdev.
- 
--config INPUT_EVBUG
--	tristate "Event debugging"
--	help
--	  Say Y here if you have a problem with the input subsystem and
--	  want all events (keypresses, mouse movements), to be output to
--	  the system log. While this is useful for debugging, it's also
--	  a security threat - your keypresses include your passwords, of
--	  course.
--
--	  If unsure, say N.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called evbug.
--
- config INPUT_KUNIT_TEST
- 	tristate "KUnit tests for Input" if !KUNIT_ALL_TESTS
- 	depends on INPUT && KUNIT
-diff --git a/drivers/input/Makefile b/drivers/input/Makefile
-index c78753274921..930b64d2115e 100644
---- a/drivers/input/Makefile
-+++ b/drivers/input/Makefile
-@@ -18,7 +18,6 @@ obj-$(CONFIG_INPUT_LEDS)	+= input-leds.o
- obj-$(CONFIG_INPUT_MOUSEDEV)	+= mousedev.o
- obj-$(CONFIG_INPUT_JOYDEV)	+= joydev.o
- obj-$(CONFIG_INPUT_EVDEV)	+= evdev.o
--obj-$(CONFIG_INPUT_EVBUG)	+= evbug.o
- 
- obj-$(CONFIG_INPUT_KEYBOARD)	+= keyboard/
- obj-$(CONFIG_INPUT_MOUSE)	+= mouse/
-diff --git a/drivers/input/evbug.c b/drivers/input/evbug.c
-deleted file mode 100644
-index e47bdf92088a..000000000000
---- a/drivers/input/evbug.c
-+++ /dev/null
-@@ -1,100 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- *  Copyright (c) 1999-2001 Vojtech Pavlik
-- */
--
--/*
-- *  Input driver event debug module - dumps all events into syslog
-- */
--
--#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
--
--#include <linux/slab.h>
--#include <linux/module.h>
--#include <linux/input.h>
--#include <linux/init.h>
--#include <linux/device.h>
--
--MODULE_AUTHOR("Vojtech Pavlik <vojtech@ucw.cz>");
--MODULE_DESCRIPTION("Input driver event debug module");
--MODULE_LICENSE("GPL");
--
--static void evbug_event(struct input_handle *handle, unsigned int type, unsigned int code, int value)
--{
--	printk(KERN_DEBUG pr_fmt("Event. Dev: %s, Type: %d, Code: %d, Value: %d\n"),
--	       dev_name(&handle->dev->dev), type, code, value);
--}
--
--static int evbug_connect(struct input_handler *handler, struct input_dev *dev,
--			 const struct input_device_id *id)
--{
--	struct input_handle *handle;
--	int error;
--
--	handle = kzalloc(sizeof(struct input_handle), GFP_KERNEL);
--	if (!handle)
--		return -ENOMEM;
--
--	handle->dev = dev;
--	handle->handler = handler;
--	handle->name = "evbug";
--
--	error = input_register_handle(handle);
--	if (error)
--		goto err_free_handle;
--
--	error = input_open_device(handle);
--	if (error)
--		goto err_unregister_handle;
--
--	printk(KERN_DEBUG pr_fmt("Connected device: %s (%s at %s)\n"),
--	       dev_name(&dev->dev),
--	       dev->name ?: "unknown",
--	       dev->phys ?: "unknown");
--
--	return 0;
--
-- err_unregister_handle:
--	input_unregister_handle(handle);
-- err_free_handle:
--	kfree(handle);
--	return error;
--}
--
--static void evbug_disconnect(struct input_handle *handle)
--{
--	printk(KERN_DEBUG pr_fmt("Disconnected device: %s\n"),
--	       dev_name(&handle->dev->dev));
--
--	input_close_device(handle);
--	input_unregister_handle(handle);
--	kfree(handle);
--}
--
--static const struct input_device_id evbug_ids[] = {
--	{ .driver_info = 1 },	/* Matches all devices */
--	{ },			/* Terminating zero entry */
--};
--
--MODULE_DEVICE_TABLE(input, evbug_ids);
--
--static struct input_handler evbug_handler = {
--	.event =	evbug_event,
--	.connect =	evbug_connect,
--	.disconnect =	evbug_disconnect,
--	.name =		"evbug",
--	.id_table =	evbug_ids,
--};
--
--static int __init evbug_init(void)
--{
--	return input_register_handler(&evbug_handler);
--}
--
--static void __exit evbug_exit(void)
--{
--	input_unregister_handler(&evbug_handler);
--}
--
--module_init(evbug_init);
--module_exit(evbug_exit);
--- 
-2.43.0
+commit:         f44d154d Merge tag 'soc-fixes-6.13' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c9560f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c22efbd20f8da769
+dashboard link: https://syzkaller.appspot.com/bug?extid=c2e074db555379260750
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=175f27e8580000
+
 
