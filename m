@@ -1,87 +1,83 @@
-Return-Path: <linux-kernel+bounces-449908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D191F9F57CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:31:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 883A49F57D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11FAA18907C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:31:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9042A18856AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26E11F9AAD;
-	Tue, 17 Dec 2024 20:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F35C1F942E;
+	Tue, 17 Dec 2024 20:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPpreQ3O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qGvfourp"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433911607AC;
-	Tue, 17 Dec 2024 20:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D4415DBBA;
+	Tue, 17 Dec 2024 20:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734467440; cv=none; b=t9JBTCvvO8qgYjMU0NrJLjNWm1dHrsxBgXSkoIKE47pW9djxE6OGtiYYd2B3CowQTIkLUH/RGUUYftPm4ZgSZ7GLqRupIsOBaqZ5gLRmlFpHUHpzbBQIrH/SLBjA6wWmYaMxSlAh+jjLlVYrUB8n17dcwXdWudtKS13a40lhP14=
+	t=1734467512; cv=none; b=iPEsycmSRbrqB9I5Y6CHGk6rS+DnoQ1CQM4Ov50hNvrfdnjgKTS4aiJpEJvlzTA+ppytLXRixFdWWUE8+bRFTRcDzRww4s6H+25HgIFTsGvq1aLPXYAPS3a02rm3Po/CbQ9sR0D3g35ImU3mDj7wdmPMLviPSUbbXU4JE/JD5DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734467440; c=relaxed/simple;
-	bh=+Z8MagIxxUoKw0hroBmcul2wy1Et9DFwaw4LuCwEjyA=;
+	s=arc-20240116; t=1734467512; c=relaxed/simple;
+	bh=F35cSH8lzmfU48CK6C1xYC+KTBU/f00fTD2zySlVK0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S5c5d3aAy0jwtENKgL0brbITw1xVc0fvCJq7yFoY7n13xvBFjnGlfk9vs0oMrwrX5/Fqx8q68/TCiVGkyT6zNPXqsVGywd7bE1nJWzXdEzokXLVLgamva6kA/EcAOX0+7/qgS/CtUQqNoNF3iT9NHRGHpTVtTFLrP7JaAQqYMk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JPpreQ3O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D989C4CED3;
-	Tue, 17 Dec 2024 20:30:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734467439;
-	bh=+Z8MagIxxUoKw0hroBmcul2wy1Et9DFwaw4LuCwEjyA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JPpreQ3Of8vylmIe3GUXtSyIXeFQ+qLUqRAkxpNW8toZjK1Qbrj7ahgK3ZMABBv8i
-	 lOvFXkf1qIWarnc2k4PRkUOvcXa/zivIZ4WTXyhnbGLwugM5Ku0rVfHpxzlRgkFTuR
-	 hPgbGtNMo4Bk5Gee0gok9OiYVr1sQhNqWThVu6euX+mU5SxfEG1DHLP2uHRNdqsfaF
-	 oRXyAFlWImNCjt69XyIX4cQTwHHSf60gFDZyDAOJyYYKKo41/J3oYwr7ql0n9Fjcb1
-	 hVyTAGcS/PrFHmx8OmHgoFDYQtFHQCKBYRwZw8z8NMpPa/05AsCFRcUJ9SUCo9IWCk
-	 yHo9D7zD7iMuQ==
-Date: Tue, 17 Dec 2024 12:30:36 -0800
-From: Kees Cook <kees@kernel.org>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, Simon Horman <horms@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Joe Damato <jdamato@fastly.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] net: core: dev.c confirmed to use classic sockaddr
-Message-ID: <202412171230.824B83D@keescook>
-References: <20241217012445.work.979-kees@kernel.org>
- <67619a5029d2c_a046929426@willemb.c.googlers.com.notmuch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WShqSbYuDZjJs1ug6UWHjy768TgKezVR4tFItCPO0SkIrPoa4dg8qFiefp62rBLJjyjChyVySY3megO7YXk/oQaepw0diyPkFH2kD41bJ//aGslome6s4Kq5z/0Lod2d33hYB13S+TJJdQdTEgora06V9r5LBt9iJaHo80xNQ1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qGvfourp; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=F35cSH8lzmfU48CK6C1xYC+KTBU/f00fTD2zySlVK0c=; b=qGvfourp3VZFsraJAFvqmbCRqy
+	6a5Gx1YODVaY3csQ9iQnbkO7W29mpXhGCgtjIU0PeWeAhpEVB4JVR3ec9cJO3dTU0M+wvh6KvaDtw
+	SDcF7u9x17sDYva+Alke48Nv5Jfrup/uTNi6GfDsUu6FeZg4HevHs57eFGDFZFKBDwcjrQmrpWVSM
+	AgwoQAzzFURGq/qSADdp1oJB5HBhBn7co7RM7sdHSEnXgkmYI6eIQmTKUMVXZnYo/Z6az3BqEo0kX
+	4wObHeoWESEmbwztl1zmoVZnyxqW2NAiG/xH6MIobYqs690IE43jJNLihCcV0E/rEwKs7Qgd5NBJ8
+	WzKymmLw==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNeEH-00000009K8N-3ci9;
+	Tue, 17 Dec 2024 20:31:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D8D5E3003E1; Tue, 17 Dec 2024 21:31:40 +0100 (CET)
+Date: Tue, 17 Dec 2024 21:31:40 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Arnd Bergmann <arnd@arndb.de>,
+	sonicadvance1@gmail.com, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com, linux-api@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Vinicius Peixoto <vpeixoto@lkcamp.dev>
+Subject: Re: [PATCH v3 0/3] futex: Create set_robust_list2
+Message-ID: <20241217203140.GH11133@noisy.programming.kicks-ass.net>
+References: <20241217174958.477692-1-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <67619a5029d2c_a046929426@willemb.c.googlers.com.notmuch>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241217174958.477692-1-andrealmeid@igalia.com>
 
-On Tue, Dec 17, 2024 at 10:35:44AM -0500, Willem de Bruijn wrote:
-> Kees Cook wrote:
-> > As part of trying to clean up struct sock_addr, add comments about the
-> > sockaddr arguments of dev_[gs]et_mac_address() being actual classic "max
-> > 14 bytes in sa_data" sockaddr instances and not struct sockaddr_storage.
-> 
-> What is this assertion based on?
-> 
-> I see various non-Ethernet .ndo_set_mac_address implementations, which
-> dev_set_mac_address calls. And dev_set_mac_addr_user is called from
-> rtnetlink do_setlink. Which kmalloc's sa based on dev->addr_len.
+On Tue, Dec 17, 2024 at 02:49:55PM -0300, André Almeida wrote:
+> This patch adds a new robust_list() syscall. The current syscall
+> can't be expanded to cover the following use case, so a new one is
+> needed. This new syscall allows users to set multiple robust lists per
+> process and to have either 32bit or 64bit pointers in the list.
 
-Yeah, I was clearly missing several cases. Please ignore this patch. I
-will re-examine this.
+Last time a whole list of short comings of the current robust scheme
+were laid bare. I feel we should address all that if we're going to
+create a new scheme.
 
--- 
-Kees Cook
 
