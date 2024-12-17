@@ -1,129 +1,139 @@
-Return-Path: <linux-kernel+bounces-449816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D68C89F567D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:49:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F419F567F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:49:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF281892DA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:49:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 348347A38C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708011F8ADF;
-	Tue, 17 Dec 2024 18:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC811F8900;
+	Tue, 17 Dec 2024 18:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZvP/Eebs"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqPiLuG2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6221F8930
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 18:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731A71F8AD0;
+	Tue, 17 Dec 2024 18:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734461357; cv=none; b=UBPa+OfFTDrk4LbpmU9HG4WazhLRClKVw/dWv63cfN9NueKAFxr2vPW9iEF82adeVCn5W08CaHn/Pa+7UxJGljGEF2plwwWBF+oVBQDHQI1+s7vddxqtDl/1hBH7y4+LMVzKildHYE6xwZL8xgBFm/btJ4d3gKIzdMmKw1Jl3go=
+	t=1734461379; cv=none; b=TO+QnFEAGWvASGjX+RzDbMXABdtTe8BlgBtnWQEDbmO3keIWFU1juMVs//PIPx6tWloPdNqrYnZckiY7M8B+Lt2xLqVaL3r2o6UWFp40AvV32wkE5Yxm3BE2TlaxwkUBnmURuCmisti9tCpBaeLzVZJiSsF5gSZvxyyuAl48E+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734461357; c=relaxed/simple;
-	bh=gECHGDLfmlLFxfHSrS7Vrb8smZ7Grw8PZn2db5us/TQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YwmFVPwsao51sFD1uJFsMwySQKdXjo4HpGg58G2+zzxB4vRjHiT6y4aL6FTDJ5VaSF8QisXJUQyvod7ntkQDubbNGnU2KeZzU6GaDbneR7qr2NAKswVBe+2E2Q0Ly9VOTtvW/uSINmOt1baDqN398SAydglzIyRPEbe6+VSGRUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZvP/Eebs; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-467abce2ef9so26281cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:49:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734461355; x=1735066155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bYDU7PRkfogGx5ejuFzE77B1xu7cZtt+iKdyoItbELU=;
-        b=ZvP/EebsLDKmDFi/5NYF7bPUkTwdyfzFBBBPd3aUoQ+IgwpHHMHlhPu1Xx75zpPUTV
-         aEAn+sFfHG6l5IdUvRac5mchob+ohkW3LXCNfkTuII7apRf7jiuggVuVyef1lWaxcOiq
-         bbK9TyjZjONSd1dq0KOCGTsBewZRUW6djnTOq6rO+BFWd6+y4mVlZLdLoO5Vt3SInMPN
-         QwgKZVXzO8pC8ok9E51wahz9OlGUfNTcnyWwKybgjpJXGk3O6jiwREcYe2a9bTXnI832
-         9H3h670xWvEECey7+Yl6yURnF4T5DOC5UWxfJSup3ku5+yfDRdDmFSnijNAUTyIibU7t
-         DDug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734461355; x=1735066155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bYDU7PRkfogGx5ejuFzE77B1xu7cZtt+iKdyoItbELU=;
-        b=kCJtWGJlZeTh5/DHAbwod2HQS67w3VnOJHjaej+6/LICSePQGCwh+AZ9u7P5AJFdYM
-         VnWUWOXyhh9jHiknLyi9s2vOMYKg/+nSYyInljAkF9WsTFQO0+qxj9HyAgdIQmKI9lc2
-         7jV5Z6B4ea8SbCOGyOszApinwzpG/gqMiFRyyXGr4dT3WCtkjZXiTW+MnDcgxAZn91G5
-         QYdLkSsSapFfAmm2rhHj05n1XzB6jY+I/KcGUxE0FSQTlNYGrbcrHDvCjdMPi00f+6Ko
-         dp/F1sckJnYg0MLZZdl/LJsfjnAepiGb/ZdxGIyBgVMAlaK4yvg5AwhWldI2XGlOtqvu
-         uetw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwrb/ig8kTQ2DqCc9EEBBOyBrJRr8Mv/B06OAoHDj9t5J3Q1V6OXdwhOjvDWbR7B2hnzDsz8UxCqUizcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoSjztYcLU5x3+Idntxmt+AWGH8LCgK6HjAkDassqOkZ8mS/WI
-	8KE23a5QEYyIqIEx/S4eHB/AjvfiqShh4FGmqhDQgnZyezbCubhwJ8kUn6tZKljETcxMQtE9SP/
-	6I9ayW+rULBhe0uM1ZE3JFjfjm+aUCDPKgzRz
-X-Gm-Gg: ASbGncs8Bn32t8LMHVVv/QDumejs7LCIr4mTQ6WSTd/8NbepIRLbZiMCYclZ/yBHOjo
-	AoGXDOczgmMW/yLJIRihbw0O3KRR+Vi8A+r1yn+jea8xcOpZFIyM5ER2Z1f2aVxtc4ims
-X-Google-Smtp-Source: AGHT+IHhoaVUwQriIDrG+/nQrc5mfXTcjuZa/bAfk12lhZxf4kuyi2fU1Br0CJni6OGQIi809n/wf3XVbe+mIK2WnAg=
-X-Received: by 2002:a05:622a:347:b0:466:91fd:74c0 with SMTP id
- d75a77b69052e-469085ac13fmr130791cf.0.1734461354934; Tue, 17 Dec 2024
- 10:49:14 -0800 (PST)
+	s=arc-20240116; t=1734461379; c=relaxed/simple;
+	bh=ttW1ztqu1hCU9exDxWTyu+4ylc226xEK1pCskpFHxcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XxEruiuUgC9YegbtoNkPZk0ovdmlR6bZI8/DkTpdEJ2e2skLLXViWetp+0s37KyCN3EIs8qgCR/QJCa+8BjqYWJeNCucs/2uh+Bfuf6Ky4+6zuQkQj5HpXrapAKP/RJWAHnbtujUmqcYzKOohrL6rAhKi3YhWQEQEjl1QuGGm+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqPiLuG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2916C4CED3;
+	Tue, 17 Dec 2024 18:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734461378;
+	bh=ttW1ztqu1hCU9exDxWTyu+4ylc226xEK1pCskpFHxcU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hqPiLuG2HFYCnhdy87ycuvMdDYTCNv/jAjSIOPWTEB1Dv8EExDMGPCUAMPFyf6ByP
+	 Sl+7Bk8pSZl6pI5tDW0kikOpwCIZJO90fzqsptIEN+5d1JfIrzwnojlPUneA7TgByD
+	 ZzbHbXjMtnHmtjFk7NSFVKrMvUtGyaKIilGDor4jViKwVZ3697Eiq8bH18upP24sJY
+	 0HkDIwGOatLfPfNAZyUBCxl5G588K0xKOc+zv+b59tY0jtNNKDtuM0H4Vt9fGxm9oy
+	 0XrJ4RhUvznBs/txMbrJ+UYjt/iBVf6/+MUC/rn2jOt992mHG4VJmsOGf0QDdyfmbO
+	 NxziUYYhxysxg==
+Date: Tue, 17 Dec 2024 18:49:37 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+Cc: Wei Liu <wei.liu@kernel.org>, kys@microsoft.com, haiyangz@microsoft.com,
+	decui@microsoft.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
+	avladu@cloudbasesolutions.com
+Subject: Re: [PATCH] tools: hv: Fix cross-compilation
+Message-ID: <Z2HHwboni5wjNTY8@liuwe-devbox-debian-v2>
+References: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
+ <Z1tsaJJhUsSilZqq@liuwe-devbox-debian-v2>
+ <20241213040102.GA28827@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216192419.2970941-1-surenb@google.com> <CAJuCfpHL33E_=hHmM-4sgcG892j3NS+J69RWHJNmJs-N16y4Lg@mail.gmail.com>
- <20241217104218.7ed493c6647cea5c5c0a73c6@linux-foundation.org>
-In-Reply-To: <20241217104218.7ed493c6647cea5c5c0a73c6@linux-foundation.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 17 Dec 2024 10:49:02 -0800
-Message-ID: <CAJuCfpF+Gi25-JpL8dav-Uw3Lx9iVA8BDH2ZJr3OtZcVP1FS=Q@mail.gmail.com>
-Subject: Re: [PATCH v6 00/16] move per-vma lock into vm_area_struct
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: peterz@infradead.org, willy@infradead.org, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
-	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	lokeshgidra@google.com, minchan@google.com, jannh@google.com, 
-	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	klarasmodin@gmail.com, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213040102.GA28827@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 
-On Tue, Dec 17, 2024 at 10:42=E2=80=AFAM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Mon, 16 Dec 2024 11:39:16 -0800 Suren Baghdasaryan <surenb@google.com>=
- wrote:
->
-> > > Patchset applies over mm-unstable after reverting v5 of this patchset=
- [4]
-> > > (currently 687e99a5faa5-905ab222508a)
-> >
-> > ^^^
-> > Please be aware of this if trying to apply to a branch. mm-unstable
-> > contains an older version of this patchset which needs to be reverted
-> > before this one can be applied.
->
-> I quietly updated mm-unstable to v6.  I understand that a v7 is expected.
+On Thu, Dec 12, 2024 at 08:01:02PM -0800, Saurabh Singh Sengar wrote:
+> On Thu, Dec 12, 2024 at 11:06:16PM +0000, Wei Liu wrote:
+> > On Thu, Dec 12, 2024 at 12:28:34AM -0800, Saurabh Sengar wrote:
+> > > Use the native ARCH only incase it is not set, this will allow
+> > > the cross complilation where ARCH is explicitly set. Add few
+> > > info prints as well to know what arch and toolchain is getting
+> > > used to build it.
+> > > 
+> > > Additionally, simplify the check for ARCH so that fcopy daemon
+> > > is build only for x86_64.
+> > > 
+> > > Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio driver")
+> > > Reported-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+> > > Closes: https://lore.kernel.org/linux-hyperv/Z1Y9ZkAt9GPjQsGi@liuwe-devbox-debian-v2/
+> > > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > > ---
+> > >  tools/hv/Makefile | 14 +++++++++++---
+> > >  1 file changed, 11 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/tools/hv/Makefile b/tools/hv/Makefile
+> > > index 34ffcec264ab..d29e6be6309b 100644
+> > > --- a/tools/hv/Makefile
+> > > +++ b/tools/hv/Makefile
+> > > @@ -2,7 +2,7 @@
+> > >  # Makefile for Hyper-V tools
+> > >  include ../scripts/Makefile.include
+> > >  
+> > > -ARCH := $(shell uname -m 2>/dev/null)
+> > > +ARCH ?= $(shell uname -m 2>/dev/null)
+> > >  sbindir ?= /usr/sbin
+> > >  libexecdir ?= /usr/libexec
+> > >  sharedstatedir ?= /var/lib
+> > > @@ -20,18 +20,26 @@ override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+> > >  override CFLAGS += -Wno-address-of-packed-member
+> > >  
+> > >  ALL_TARGETS := hv_kvp_daemon hv_vss_daemon
+> > > -ifneq ($(ARCH), aarch64)
+> > > +ifeq ($(ARCH), x86_64)
+> > 
+> > Technically speaking, you can also build this for x86 (32bit). Whether
+> > anybody uses it is another question.
+> 
+> My intention is to allow fcopy daemon build only for the arch it has
+> been tested. IMO its better than restricting only for arm64/aarch64.
+> 
+> I tried with gcc '-m32' switch which I believe is for 32 bit x86 compilation
+> I see problems with it on other (kvp daemon) daemons too. I think we never
+> cared about 32 bit.
+> 
+> saurabh@Saurabh:/work/linux-next/tools/hv$ make ARCH=x86 CFLAGS=-m32
+> make[1]: Entering directory '/work/linux-next/tools/hv'
+>   CC      hv_kvp_daemon.o
+> hv_kvp_daemon.c:25:10: fatal error: sys/poll.h: No such file or directory
+>    25 | #include <sys/poll.h>
+>       |          ^~~~~~~~~~~~
+> compilation terminated.
+> make[1]: *** [/work/linux-next/tools/build/Makefile.build:106: hv_kvp_daemon.o] Error 1
+> make[1]: Leaving directory '/work/linux-next/tools/hv'
+> make: *** [Makefile:37: hv_kvp_daemon-in.o] Error 2
+> 
+> 
+> I don't have any strong opinion here, if you want I can allow x86 compilation
+> for fcopy daemon as well.
+> 
+> Please let me know what is your preference.
 
-Thanks! Yes, I'll post v7 once our discussion with Peter on
-refcounting is concluded.
+We can leave the code as-is. If and when someone wants to build this for
+32-bit x86, they can fix the code.
 
-Could you please fixup the issue that Lokesh found in
-https://lore.kernel.org/all/20241216192419.2970941-7-surenb@google.com/
-?
-Instead of
+I think the number of people who want to build this for 32-bit x86 is
+diminishing by the day -- it there was a large group in the first place.
 
-+                if (!vma_start_read_locked(*dst_vmap)) {
-
-it should be:
-
-+                if (vma_start_read_locked(*dst_vmap)) {
-
-That's the only critical issue found in v6 so far.
-Thanks!
+Thanks,
+Wei.
 
