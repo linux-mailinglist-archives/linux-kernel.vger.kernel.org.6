@@ -1,243 +1,369 @@
-Return-Path: <linux-kernel+bounces-448570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A229F41DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:00:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F052C9F41E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0884E188C33E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317BD165984
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D44A14D70E;
-	Tue, 17 Dec 2024 05:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B18145335;
+	Tue, 17 Dec 2024 05:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZuWxelUp"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2045.outbound.protection.outlook.com [40.107.244.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lny16gt6"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424F314D70B;
-	Tue, 17 Dec 2024 05:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734411620; cv=fail; b=aSqPrXmo8vXJOcF61hnQkOw0slAv7FNNSJEVO2wr0x6rP81WN7NVzwx29Qug+9E2VlDyM/Li43Y9Xji+HNTY5UfqSD3fvOP9wTN4X+hcEiOuQ70UkGKH6KGNPRxwfUAn/pxK8m3SVd22I4dw9U/VZr8Entq5EC6HcWns1TOx5Qc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734411620; c=relaxed/simple;
-	bh=FgpIzz9+xMTI7dcJ+QmQgB878cSeUquRr0jO8gJtpFI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=k6vs9f4pJOR8/uyAI1fx/Q4HLcW6BGLI916a8C34nLr2bTFXdCTWoEWvrMdZIQJu8fH0uM+dOYxnVgjLqjZdL8souEnD1joxEmXdhxf9tN/JfyIx4zG0nK4iHganEfjLR6FrdDcdRgyaGTUkP6ZYkRu40cqFJLErZ96kLycI5BY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZuWxelUp; arc=fail smtp.client-ip=40.107.244.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kWVJVTbbXlvlid+13BWuLzT41y3FcfT381V4LSsU/hrlUTiijNzg5/GuIZ/kv/7WMqwCoMiJeLlQG0ZrGrsyAAnlnIDfTVFKahu4wb6B5L8986IhhsgM74yHI+Hkp6E63RbeTTBMDP/V38sJDMo5w+gXpM9nYXnAGgEGt+OSgSxXU1+fKr/bN3vKR7Sfst0x3eyxbUNQ2UF4ql1Phw/D7J/VUxS5BT+pfOSf3krJKt57BKqYIY2QGGkKWTGfBaJNmEsQ4DJA/8hTzBrV269OGbS/Exm/0BRBQcLJeEK8zr6Kp7QE++lDBXRYuajCRrcIj/xrUlImfTqcq+af58DL5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FgpIzz9+xMTI7dcJ+QmQgB878cSeUquRr0jO8gJtpFI=;
- b=vY14zjN7I8AQobMLGbghLDAB8QG0naXoBLEW2m4EEi9PcaHpcICcwCZcBzGPavAge4i7FjaTFaKlePCj+nCWoZFGxMVQyxuJ6GcTC75T7CMTS4koVc1u6Z+RY5mxb+4OdqrPoDLrMVzg5H3ogFO5oxLFP5IAzXuDZpewn6bfGyeU7Iex7X0+Ox5pfg32JO2NCuOPQ5ZPbImMuQH6HiG0w905QGCD8FCPsLVyVkNruDxeYYEJtyNlrjPIiNjNdQ+eCwfvIrZPjhAZJiW1shpksime630jTI6op6SBvbFECcKgKnVpqyrDY/fwe/nZV9+JJmbXJpC990c8OCjB6y7lAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FgpIzz9+xMTI7dcJ+QmQgB878cSeUquRr0jO8gJtpFI=;
- b=ZuWxelUpF2fP4Q+WC9LpOdxGnUofbMFHNjmUDIDi9Wocg0w5zu9PjvF6KyNlv8X4LRkL+S3Rk3/rnzIiqZhOTAUSSy76Uqk0vVO/GnExCEikSwrzsaDpz0eJMWOVQoF9qSlXbHhBhO+uES/ibSl/WmImr2z8gTAt7aFv7CVzW30gQ5m552pon5wEeJObecNoGfoNWb4iEkFGBBIUu1IMRkoxEd04Ym0+KSXVhk1+K+gkjm8WoRcJNjmxRET/iSEtOIzwO6SglXn7ag7iEnU6AAgq7SPGkoPNrGGHdAKWEZ6ETeWpkBec2tXxBkiHkNxkRzL+Xt3eSb6uJl5dOxR7RQ==
-Received: from DS0PR11MB7410.namprd11.prod.outlook.com (2603:10b6:8:151::11)
- by BL3PR11MB6340.namprd11.prod.outlook.com (2603:10b6:208:3b4::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Tue, 17 Dec
- 2024 05:00:14 +0000
-Received: from DS0PR11MB7410.namprd11.prod.outlook.com
- ([fe80::bc90:804:a33d:d710]) by DS0PR11MB7410.namprd11.prod.outlook.com
- ([fe80::bc90:804:a33d:d710%6]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
- 05:00:14 +0000
-From: <Charan.Pedumuru@microchip.com>
-To: <krzk@kernel.org>
-CC: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <Nicolas.Ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: mfd: atmel,at91sam9260: Convert to json
- schema
-Thread-Topic: [PATCH] dt-bindings: mfd: atmel,at91sam9260: Convert to json
- schema
-Thread-Index: AQHbS8APw+ZU4Xjwh0acaGZqn7hy2LLorvwAgAE6oIA=
-Date: Tue, 17 Dec 2024 05:00:13 +0000
-Message-ID: <92579055-5a46-4f20-b579-123188554a03@microchip.com>
-References: <20241211-matrix-v1-1-5ef0104a3af4@microchip.com>
- <dxgqkdo6ulmqfa5vyerwta3vubuy32gzzu2cxfwwtespydfc4b@5wjrno3lgjsp>
-In-Reply-To: <dxgqkdo6ulmqfa5vyerwta3vubuy32gzzu2cxfwwtespydfc4b@5wjrno3lgjsp>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR11MB7410:EE_|BL3PR11MB6340:EE_
-x-ms-office365-filtering-correlation-id: 7fcf37d9-5ca1-4923-a8a6-08dd1e57b12c
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7410.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?MFVlcitCRTJveU5oaCtFMUlaRnZ3c1dUazlDNnl6eHFZcG1ZeWxRb1grWElm?=
- =?utf-8?B?eVRQVFk5VE1oem1FL3RQdWtad0g1MzJ6MWRzU1FESXN2RHlWR1FmdmlRYWRZ?=
- =?utf-8?B?Q0puWEFQYlpZekxpREFJNlFYTWNrak1qdWNITGVtTDFiUm41SHFNZm5mOThD?=
- =?utf-8?B?cUs4U3RaZzdOVnBHYW1FV1RSSmZrZHRuL2N3dnJQOG1FQUNnZlIwWkNpbGFV?=
- =?utf-8?B?V3ZmWG85eThkNTFzTHdiMUxHR3hGQW9ienZNWUJqZ0VINGFJWE53bm9DbU80?=
- =?utf-8?B?WGNSanBOQ0p6S1dvbjlYem1aQ1JGNGpVaUtOSXFIRHBhYm16blBXZEw5YjRj?=
- =?utf-8?B?L0g5UXZLZnZTbkNyV2hzVVpIT1MvaTVQM01IN3hjQ1lGbTQ3ck80OHRXb0ha?=
- =?utf-8?B?T0VuM1pTQXhrYlowVmVTS0d5dGhXdHE2TXc4YmxDVmdiT3dJWlA3SnhYVzBH?=
- =?utf-8?B?Wm9TWHVXNE1qcmVVeVRrazN2ZUpPVWE0ZzdXOTBqN0Z3eUJYQ1VEYk9uRzFs?=
- =?utf-8?B?elFzMEJGTXB6WHVRQmtiNzBiU01YRm1PV1ZqZnN4SFJBWWV0MTZZcUo1bHRR?=
- =?utf-8?B?YkM1MWVpbFhvKzhSd2p4Qy8wakhkS3hCSytNR2lrZ2JaVkorWENFR2ZXZGNJ?=
- =?utf-8?B?STdjdE4yMUtEem52b1ZzQ0RUbkR3SzJiNmthYTkrYmpJYzdHM0JLU1NnaVFF?=
- =?utf-8?B?OHNOZVdCTEIrdnQ4c2dGTFlsaVV2bTdRRm5WZ2lxeTNaa2Nib2hvdW5TdXFQ?=
- =?utf-8?B?V0FSZk5sbjdyaEhZa1ZqNTk0N0RyS01lZGZQM2JQcU9FRnJGNllOYk1Ga2F0?=
- =?utf-8?B?NkRVMnhZcWxFbGh5UEh0ZlZyRUVxWS9yK3RVUjhXOC8vYUE3RzRjdE1LS1Qx?=
- =?utf-8?B?UDlueUtwZWR0QnJOdlVydWNyTS8wR0xBaUVyb1g0VGJSdkhwaXhCUlNWUGhY?=
- =?utf-8?B?K0x3eWdQd0hqM2ZQbUQ2TUJtY1lxZ2JEa0lEb28wRVRCL1NzTDJjRkV2Y0F5?=
- =?utf-8?B?N2dHcVRLM1V6YUZneDdSeGl1cnRaQXplVmowa0tsa3NqM0tFYU8rVXQ2K0lo?=
- =?utf-8?B?OHN2ZVRuVmdiRjJhb01zdy91VThXU2ZaTkZWWU5xZllnVFpmd01CTDVKT1Vv?=
- =?utf-8?B?S2tnNDNnWExwNlRqc2NlYUNpaW1MWmRPYVZFRUMxL21lWW9hVXNMckNlZk5X?=
- =?utf-8?B?eTBJMG1ESlRyRGZpS0VFdGE0ZHg1SC9wMFV2WnB3eFlZUU0wSFo2eTdIbHpI?=
- =?utf-8?B?bGhOcEJYTlcwRFFBZ01XNVJtQ3JTNzZUaWpqS2RYMmlHU3lYc0U1aEFvdG5u?=
- =?utf-8?B?ZTN1V2hFMmVZYlNkUWgraytZRWM0ZGYrcUFVZHZKZWl2akJMWUNrVjF0Ulp4?=
- =?utf-8?B?aElscndwMm1nV2tjN3ZJT0tJQzN4RjRrZ2NsRUVzclVVNUZ3NVVJa0pEZkVY?=
- =?utf-8?B?Vlc1ejFBV21oalc1Ry9uS2V4UVVxdzgxNVNYa1VXbFRxTmJDZVpzWGFMcjBO?=
- =?utf-8?B?aURvSVI5cnNwUlYzam51RnRiOXluVEt5cC8vMnZhSU9VaDhWZk9OWC9LQXJG?=
- =?utf-8?B?SHhJc2w1ckc3Q2tRUkk1QWdsMnF0UFBDZ2EyMURtSmdBSFR0SUlNZEdWSWZx?=
- =?utf-8?B?Wm9GUFNCdCt0Y0VRTFFoTHFveHloNXFZdjBzQ2c5Zk0wdWdkRktVakcrcjUx?=
- =?utf-8?B?K292OUxweDVJcFdpWmVJQWRuZ3pjSzNXNHNrSXFZZjFPUkNDbTdSYjVUZjAz?=
- =?utf-8?B?SXh1TXJoVlBXNDY1WFpsRlY5R2wzMkVKRUttbXI0TWFBVmxHL2l2aE0vVUVI?=
- =?utf-8?B?Rjl2aE1qMzJXUEtFMlo2VTN5SXdQR040amNpV2lXY0RWUjZuVDRWb0k3WnFt?=
- =?utf-8?B?TFRQZTFmVmF6S2d5RUJEeHZpRUpQQ3lsOVBxWW05SGlxaGc9PQ==?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bVdENDFFcFc4MVhlcTVqMmY1ME40V0lwOVR0WThCSXJCa2tWMW91aTNWcHNU?=
- =?utf-8?B?QUlQOThJYWNwQmRSVXl6TnJoUmtNVEJVdWg0WVRaRnA3OWhKdjNUSm4vc2ls?=
- =?utf-8?B?Um9oQ2xnR0VMb2NCai95OVRCUlFsZHYrVmxQdld6ZzhZYk1pVklWMkxZRjdW?=
- =?utf-8?B?TXpiNHNwL2VRYSt0dGo1ZVpFangvc1BRSnI2L3ErY3ZJcWVpSjVOY1V1R3BW?=
- =?utf-8?B?L0ZaMTJYZU9NdXNrdFVUQlNKb21JWG9rbDQ0enNHb3J5UTY0anFmbXkvOXdT?=
- =?utf-8?B?eWRUdW8vUU1Cc0RtN1I3YytucDhVTVBDdVpjZldmempGVXU5aDFQd3BUeGd1?=
- =?utf-8?B?TnBQZDF3amNsWFQvcklRL1l0dXFERmxBdEYxaWU1NzhzMTFkbkcveDF0dk5N?=
- =?utf-8?B?dEU5ZHVneTV3TUxwSllSVTlxWmsyL1dGczNJd2g3TVNYS1RlV2xTcXRFYkkv?=
- =?utf-8?B?QWdIR05nZG9Zd2taaXFXanRibTBzd1pxYmpLNFJiOEFDcWdQK0QyUEZZTk5q?=
- =?utf-8?B?cHJCdjllWkFYbW5FaGdyWWJ5clVYTDlvSUlwa2xjelQ3V2pvdEhtR2xsaFZG?=
- =?utf-8?B?V1NpNWEvcS9HaTQ4bkhGWThibXhwclpjQWpZVktrZmdQT2M2V2tCbWxXd0dK?=
- =?utf-8?B?OTIrUkVHYlpVTitEOTc2OFpaZXkzT2hKRWEwYjNkRUkyQXFGOHRMTlA4Nzht?=
- =?utf-8?B?a3VGWWVSWkozNzd6bkp0VFRmWEMrMFZYb2xxMVZPWnFSZm1iL2ZHRlp2WUxI?=
- =?utf-8?B?bWxIUkRmTkcvK0FpcWxuSE5iMy95K3JGbFJIYnJjcm9mVTJIZlNnNkdyRzZ3?=
- =?utf-8?B?ek9xZHhtdnJNa0paM3FLcVJobHF4OFI0N3Q5SEtEaGRpMHBRNXMxUzAvZFd2?=
- =?utf-8?B?eVluaXc1WHZGU3FuM29Wbmx4TGdrS1JiSkxOSm94NmhaSEtiaW1TcWZsZTU1?=
- =?utf-8?B?K2RaeTh4S3Q1c1RYZGU4UTg3Q3BmWThvb1BzNXNNNEEwY09WQXlOc1A4TnZQ?=
- =?utf-8?B?TzlOaUZPWjF0dVY1Ymk5R1V3NGw5R0VVbWtZK241TENwWFpRdzB1Vkd5T25U?=
- =?utf-8?B?bmc3eVRZbVo5VnlWVnpBbkZzNzBxd0VGczJuaWJwL2ZrN0FzMUVicjFUZGFD?=
- =?utf-8?B?OWJKT3hxMlhVSjRKV3h0Y1l5T2JEc1lFN1laR3BWUFFKaVV1MVQ3WnBaZEZo?=
- =?utf-8?B?aFg3aTVWR2x3WWtpejBrK1UyQkNtSlBNT3JscjhEWHl0Sk15cFptVEoybHpt?=
- =?utf-8?B?NnMzZ0NybnFFRkdEZndsT0orbHFnM0JXam51cy9uNzRLVCt4dzdEQ3lISkxr?=
- =?utf-8?B?emdmN2QwTGpMZmVGczl6bGFrZHp3M2QzQmptUkdyNXpOUUJwQXovYTFtbGpy?=
- =?utf-8?B?TExyZ3RVMENTTGp2UWFQQUlUZzI3ZXFtbGVtbnNSZm1vaGhxckF3WVpIdUZK?=
- =?utf-8?B?ZmRIdGgxWkNKSmlaaEQ5T3EvTExiMnZ2c1kreDdsNnhoU0xHWW11OUlXeE9n?=
- =?utf-8?B?T1lxc213NHRvdER4aVBMcWhZQm11ZkZpUVlkZGFpTTZ4YWZzU0pnK2tydGdh?=
- =?utf-8?B?NVpqcy94dUJtSWE3YkloUFhhbFFiV3lFL0c3K2dvMkpWSFc0dktqcHFwWUJM?=
- =?utf-8?B?WXVUMktnTzBHV0t3UE1MWWUyWlZvNXhGS1pIU0l0VUkzOWZ0UCtxdVY3cTdo?=
- =?utf-8?B?aHV6anRsZG56a01OZVhGTE10ZDRuYmd2WVlUMzVVcVR1djdSK1RPTlpvWlhP?=
- =?utf-8?B?U1NHRXE3UldtQ05vK2twVU5mcXVOL0dRdVVra3oxRlpNbnFjUHFLbFZLMzZF?=
- =?utf-8?B?QXUwYWFXQXRQdnl5UUVLcHN6d0NzcDBPek5ocUJJRWsxSjR3ZWg1UU9OcXRt?=
- =?utf-8?B?NnltOTd1b1NpNmVmYTZUUFAycmlOa3lnQU52djVGMXhBMkw0SHR2d091dXVi?=
- =?utf-8?B?KzRINWRqZEk1dW1YQzlZd2VKNE5VYWFQYTVJTUVncGt0cGRYNGpNRHRMTzRl?=
- =?utf-8?B?aHczTmZjczRTS3ZyZG90UkhyRTJpaS96SHBpcFpJN0d0dWlmYTBXTVgvWElx?=
- =?utf-8?B?TDV2Zkl2bUhhelNaMmVjVWVmTVVCYkdZMFVQR1UybXF6VXV4dXluR2xlVGkr?=
- =?utf-8?B?dFBPT0dPSjBERUlkS3djeWdjSU4xNDczSEp2YlREM214SGNrNENieWlaYmxD?=
- =?utf-8?B?bWc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <52B64CE11E1EFE4C91704F144C4A1804@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B378F77
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734411700; cv=none; b=MsTCPDgPTXyDMYIkI8Mj3zeSTNy9KSRSB93JFMwYQUtF3GzWF784gl+NRoSGHoIUVidFxHjBF5hg9oCNMa2zdtaCl4GrnfjXZWfFXRp95aX/7rErxz5PqxrMqcO3ak51pKhUqC54LVyGQ7kTRKFngvsRLUcGPF11jqVjbPq4BNc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734411700; c=relaxed/simple;
+	bh=OpwUEwuHJ4OJxOmVc8v8COqq0NHQoSPIIBHPJt9iUO0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UJOIXHCSOcfTl4R4NgEsQDH9p7opR6iHgFRVO1xLBUG3R0sKmnqE4ILDKbOlF1t2dkCgf9htNkJFbiB1U12PWaYwAIsw5W5JMZa/ci2S/uQlD3Skq5aZc5p8za+jJLGzjzt6EHKlgrcHJT4tHohtsHgS0t2DuwdvJO3WmTrrAPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lny16gt6; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa6aad76beeso681281166b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:01:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734411697; x=1735016497; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ajdhzWmLQCrCaLfXCLSrq860JSowAhFhFuI7a9oxV5Y=;
+        b=lny16gt6aITzxzbMP+jcRRdA+eNvkonF1wdF2/INqfq3eyCiuUyvSuxC04fRnaFeDS
+         TyqBuiXp/Katz7I4u1meha6Am70KXuegBGmH5Vcqp0vGObPNdVQADnUrLVIUZxwsHhpH
+         jOs1T5Mcn1/nzNy506v0qmhIvq3ZTtHZdsGx0f8o9y1ti5sH1MEOHMtlvec58sRTuXEk
+         gSoIofseFJd2wXqDvKP2Zjh7nE6/fuQsNMtE0ixRiwIaydDhR3c50zdo1Rw5FWvsribz
+         bXuCmmxESjMVAvgA6otTfIV2V/Jf1KJsGFrw2qZY7yPx0tHJzai1L0KW3PNF+T4KaBv4
+         ejvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734411697; x=1735016497;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ajdhzWmLQCrCaLfXCLSrq860JSowAhFhFuI7a9oxV5Y=;
+        b=n85URXWirulDNHOPH5b4kpwllVDiu9/sKns78tMp2LqbRQMm9AgTo4Smt5v6ZuGX+i
+         B+ZdAl+MxJvp0oeYNgK3tv2LIqA3UK2kt3iWuqJOuo1dmfTACDwVJ28mFvxUatKw5360
+         uNPkSCJOngcPTikORCSZXZg3oRf/bQIaJS8RBpHN6OM2w1uiuy843hG4VyOrcQ3IZCEs
+         tQeRYVwcEQGyGWWwfj64R+PUvk9TgsnJPeQglv71ge4BIwAfaiQVonwQYEl5IFeBL/lN
+         8D/po2yrcYNsfg8LPABFumqvsAJXzwypHlgpC7QvC9LkpjU5YEXwZJoZcRkMAsBrm+Ai
+         toWw==
+X-Gm-Message-State: AOJu0YzEq3SJyBLshzUon+aT1nKmKTv+ZhVl1lkfHzQAOR7795KbQOuu
+	MRp8H2rCTEIJaA6G3AiI5c7wmZ5f33UxzX3VnqV+lv2+KTNTeHFTa8UMK/RuzsVTZhF6gY04B7q
+	ERdvWtDTE8LAXUM4OQXDt9tC6ZJ45pa+Dl7A=
+X-Gm-Gg: ASbGncsxrEe7TY84JycM8U6CwOTSKvv5Wn0PM48eavJRzS2Q63T+YsPeavjUNyJ32ws
+	FwAFbw72RO+RrkXZCyTWqDwKt6D00OigNChzh+1AhA2Bm5kt3+pSoAI5LxHtxj2uPZas=
+X-Google-Smtp-Source: AGHT+IEh62vtUmScKMpxSUABAkkpF29tVHmu3tU1zCY52K8cGDETjJGq1UC+MU8O4iy0CtBGSoDZgGT7/N5QxPNDEgQ=
+X-Received: by 2002:a17:907:7205:b0:aa6:a05c:b06d with SMTP id
+ a640c23a62f3a-aab77ed4578mr1631214066b.55.1734411696562; Mon, 16 Dec 2024
+ 21:01:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7410.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7fcf37d9-5ca1-4923-a8a6-08dd1e57b12c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2024 05:00:13.9554
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wXWdPq/uXpWzThtbVNn38dk4MAqN+MM5jH8g/qhHCcDSb7ArssTbokX3ozRiP9OTynRmU8mU93EiewJNNaSyP15F4Dq6EYsbSuQK3nh3/04=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6340
+References: <20241125195204.2374458-1-jstultz@google.com> <20241125195204.2374458-3-jstultz@google.com>
+ <20241213232214.GA17501@noisy.programming.kicks-ass.net> <CANDhNCraMepXyQPs1q-aNa+Gh745WpaFPkngA9Eohi9vXRpe+w@mail.gmail.com>
+ <20241216165419.GE35539@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241216165419.GE35539@noisy.programming.kicks-ass.net>
+From: John Stultz <jstultz@google.com>
+Date: Mon, 16 Dec 2024 21:01:24 -0800
+X-Gm-Features: AbW1kvbxkRP-PzP9_D_XzKtqXiUozjAOnwnxAyY-as2OZjEdAhqsHy9acKTPslo
+Message-ID: <CANDhNCpTfZFOkUkB4f4iQwXA3wnsDuUA_1ZLuseGYunnpgO9Rw@mail.gmail.com>
+Subject: Re: [RFC][PATCH v14 2/7] locking/mutex: Rework task_struct::blocked_on
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com, 
+	"Connor O'Brien" <connoro@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gMTYvMTIvMjQgMTU6NDQsIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+IEVYVEVSTkFM
-IEVNQUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91
-IGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPg0KPiBPbiBXZWQsIERlYyAxMSwgMjAyNCBhdCAw
-NDo1OToyMlBNICswNTMwLCBDaGFyYW4gUGVkdW11cnUgd3JvdGU6DQo+PiBDb252ZXJ0IG9sZCB0
-ZXh0IGJhc2VkIGJpbmRpbmcgdG8ganNvbiBzY2hlbWEuDQo+PiBDaGFuZ2VzIGR1cmluZyBjb252
-ZXJzaW9uOg0KPj4gQWRkIGEgZmFsbGJhY2sgZm9yIGFsbCBjb21wYXRpYmxlcyBhcyB0aGUgSVAg
-Y29yZSBpcyBjb21wYXRpYmxlDQo+PiB3aXRoIGBzeXNjb25gLg0KPiBJIGRvbid0IHVuZGVyc3Rh
-bmQuIFRoZSBzeXNjb24gd2FzIGFscmVhZHkgdGhlcmUuIFlvdSBhZGRlZCBkaWZmZXJlbnQNCj4g
-ZmFsbGJhY2ssIHNvIHByb3ZpZGUgZXhwbGFuYXRpb24gd2h5IGRvIHlvdSB0aGluayB0aGV5IGFy
-ZSBjb21wYXRpYmxlLg0KDQpUaGUgb2xkIGJpbmRpbmcgd2FzIG1pc2xlYWRpbmcsIGBtaWNyb2No
-aXAsc2FtOXg2MC1tYXRyaXhgIGhhcyBhIA0KY29tcGF0aWJsZSBgYXRtZWwsYXQ5MXNhbTl4NS1t
-YXRyaXhgIGFuZCBgYXRtZWwsYXQ5MXNhbTl4NS1tYXRyaXhgIGhhcyBhIA0KY29tcGF0aWJsZSBg
-c3lzY29uYCwgd2hpY2ggd2FzIG1pc3NpbmcgaW4gdGhlIG9sZCBiaW5kaW5nLiBJIHdpbGwgYWRk
-IA0KdGhpcyB0byB0aGUgY29tbWl0IG1lc3NhZ2UuDQoNCj4NCj4+IFNpZ25lZC1vZmYtYnk6IENo
-YXJhbiBQZWR1bXVydSA8Y2hhcmFuLnBlZHVtdXJ1QG1pY3JvY2hpcC5jb20+DQo+PiAtLS0NCj4+
-ICAgLi4uL2JpbmRpbmdzL21mZC9hdG1lbCxhdDkxc2FtOTI2MC1tYXRyaXgueWFtbCAgICAgfCA1
-NCArKysrKysrKysrKysrKysrKysrKysrDQo+PiAgIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL21m
-ZC9hdG1lbC1tYXRyaXgudHh0ICAgICAgIHwgMjYgLS0tLS0tLS0tLS0NCj4+ICAgMiBmaWxlcyBj
-aGFuZ2VkLCA1NCBpbnNlcnRpb25zKCspLCAyNiBkZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZmIC0t
-Z2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9hdG1lbCxhdDkxc2Ft
-OTI2MC1tYXRyaXgueWFtbCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQv
-YXRtZWwsYXQ5MXNhbTkyNjAtbWF0cml4LnlhbWwNCj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+
-PiBpbmRleCAwMDAwMDAwMDAwMDAuLjBlODI3ODgyODIzZg0KPj4gLS0tIC9kZXYvbnVsbA0KPj4g
-KysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9hdG1lbCxhdDkxc2Ft
-OTI2MC1tYXRyaXgueWFtbA0KPj4gQEAgLTAsMCArMSw1NCBAQA0KPj4gKyMgU1BEWC1MaWNlbnNl
-LUlkZW50aWZpZXI6IChHUEwtMi4wLW9ubHkgT1IgQlNELTItQ2xhdXNlKQ0KPj4gKyVZQU1MIDEu
-Mg0KPj4gKy0tLQ0KPj4gKyRpZDogaHR0cDovL2RldmljZXRyZWUub3JnL3NjaGVtYXMvbWZkL2F0
-bWVsLGF0OTFzYW05MjYwLW1hdHJpeC55YW1sIw0KPj4gKyRzY2hlbWE6IGh0dHA6Ly9kZXZpY2V0
-cmVlLm9yZy9tZXRhLXNjaGVtYXMvY29yZS55YW1sIw0KPj4gKw0KPj4gK3RpdGxlOiBNaWNyb2No
-aXAgQVQ5MSBCdXMgTWF0cml4DQo+PiArDQo+PiArbWFpbnRhaW5lcnM6DQo+PiArICAtIE5pY29s
-YXMgRmVycmUgPG5pY29sYXMuZmVycmVAbWljcm9jaGlwLmNvbT4NCj4+ICsNCj4+ICtkZXNjcmlw
-dGlvbjoNCj4+ICsgIFRoZSBCdXMgTWF0cml4IChNQVRSSVgpIGltcGxlbWVudHMgYSBtdWx0aS1s
-YXllciBBSEIsIGJhc2VkIG9uIHRoZQ0KPj4gKyAgQUhCLUxpdGUgcHJvdG9jb2wsIHRoYXQgZW5h
-YmxlcyBwYXJhbGxlbCBhY2Nlc3MgcGF0aHMgYmV0d2VlbiBtdWx0aXBsZQ0KPj4gKyAgbWFzdGVy
-cyBhbmQgc2xhdmVzIGluIGEgc3lzdGVtLCB0aHVzIGluY3JlYXNpbmcgdGhlIG92ZXJhbGwgYmFu
-ZHdpZHRoLg0KPj4gKw0KPj4gK3Byb3BlcnRpZXM6DQo+PiArICBjb21wYXRpYmxlOg0KPj4gKyAg
-ICBhbnlPZjoNCj4gb25lT2YNCj4gU2VlIG90aGVyIGJpbmRpbmdzIGZvciBwcmVmZXJyZWQgc3lu
-dGF4LiBUaGVyZSBpcyBuZXZlciBhbnlPZi4NCg0KWWVzLCBJIHdpbGwgY2hhbmdlIHRoYXQuDQoN
-Cj4NCj4+ICsgICAgICAtIGl0ZW1zOg0KPj4gKyAgICAgICAgICAtIGVudW06DQo+PiArICAgICAg
-ICAgICAgICAtIGF0bWVsLGF0OTFzYW05MjYwLW1hdHJpeA0KPj4gKyAgICAgICAgICAgICAgLSBh
-dG1lbCxhdDkxc2FtOTI2MS1tYXRyaXgNCj4+ICsgICAgICAgICAgICAgIC0gYXRtZWwsYXQ5MXNh
-bTkyNjMtbWF0cml4DQo+PiArICAgICAgICAgICAgICAtIGF0bWVsLGF0OTFzYW05cmwtbWF0cml4
-DQo+PiArICAgICAgICAgICAgICAtIGF0bWVsLGF0OTFzYW05ZzQ1LW1hdHJpeA0KPj4gKyAgICAg
-ICAgICAgICAgLSBhdG1lbCxhdDkxc2FtOW4xMi1tYXRyaXgNCj4+ICsgICAgICAgICAgICAgIC0g
-YXRtZWwsYXQ5MXNhbTl4NS1tYXRyaXgNCj4+ICsgICAgICAgICAgICAgIC0gYXRtZWwsc2FtYTVk
-My1tYXRyaXgNCj4+ICsgICAgICAgICAgLSBjb25zdDogc3lzY29uDQo+PiArICAgICAgLSBpdGVt
-czoNCj4+ICsgICAgICAgICAgLSBjb25zdDogbWljcm9jaGlwLHNhbTl4NjAtbWF0cml4DQo+PiAr
-ICAgICAgICAgIC0gY29uc3Q6IGF0bWVsLGF0OTFzYW05eDUtbWF0cml4DQo+PiArICAgICAgICAg
-IC0gY29uc3Q6IHN5c2Nvbg0KPj4gKyAgICAgIC0gaXRlbXM6DQo+PiArICAgICAgICAgIC0gY29u
-c3Q6IG1pY3JvY2hpcCxzYW05eDctbWF0cml4DQo+IFNvIHRoYXQncyBqdXN0IGVudW0gd2l0aCBw
-cmV2aW91cyBncm91cC4NCg0KWWVzLCBhcyBib3RoIGJvYXJkcyBoYXZlIDIgY29tcGF0aWJsZXMg
-b25lIGFmdGVyIGFub3RoZXIsIEkgZGVmaW5lZCB0aGVtIA0KYXMgdHdvIGRpZmZlcmVudCBncm91
-cHMgdG8gcmVzb2x2ZSBkdF9jaGVjayB3YXJuaW5ncy4NCg0KPg0KPg0KPj4gKyAgICAgICAgICAt
-IGNvbnN0OiBhdG1lbCxhdDkxc2FtOXg1LW1hdHJpeA0KPj4gKyAgICAgICAgICAtIGNvbnN0OiBz
-eXNjb24NCj4+ICsNCj4+ICsgIHJlZzoNCj4+ICsgICAgbWF4SXRlbXM6IDENCj4+ICsNCj4+ICty
-ZXF1aXJlZDoNCj4+ICsgIC0gY29tcGF0aWJsZQ0KPj4gKyAgLSByZWcNCj4+ICsNCj4+ICthZGRp
-dGlvbmFsUHJvcGVydGllczogZmFsc2UNCj4+ICsNCj4+ICtleGFtcGxlczoNCj4+ICsgIC0gfA0K
-Pj4gKyAgICBtYXRyaXhAZmZmZmVjMDAgew0KPiBzeXNjb25ADQo+IG9yIHN5c3RlbS1jb250cm9s
-bGVyQA0KDQpXaWxsIHVzZSBgc3lzY29uQGAgaW5zdGVhZCBvZsKgIGBtYXRyaXhAYCBpbiBuZXh0
-IHJldmlzaW9uLg0KDQo+DQo+DQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQo+DQoNCg0K
-LS0gDQpCZXN0IFJlZ2FyZHMsDQpDaGFyYW4uDQoNCg==
+On Mon, Dec 16, 2024 at 8:54=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+> On Fri, Dec 13, 2024 at 07:39:57PM -0800, John Stultz wrote:
+> > On Fri, Dec 13, 2024 at 3:22=E2=80=AFPM Peter Zijlstra <peterz@infradea=
+d.org> wrote:
+> > > On Mon, Nov 25, 2024 at 11:51:56AM -0800, John Stultz wrote:
+> > So yes, the description can use improvement here. I at one time had
+> > 3-4 separate very fine grained patches (see the top 4 patches here:
+> > https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v7-6.7-=
+rc6-fine-grained/?after=3Dc4cad6e353c00254a2dfbb227ef81d8c3827427d+35)
+> > that I rolled into one when sending out(mostly to avoid overwhelming
+> > folks), but the squished commit description isn't as clear.
+> > So if it's helpful I can split this back out?
+> >
+> > I'll also add some better comments as well.
+>
+> Not sure yet about splitting back out -- let me try and figure out what
+> all is actually done / needed.
+>
+> So blocked_lock started out as another lock around ttwu(), in order to
+> serialize the task wakeup vs reading a remote ->blocked_on relation.
+
+I think of it primarily to serialize the task->blocked* state (there
+gets to be quite a bit by the end of the proxy series).
+
+> Since we do this with rq->lock held, it can't be ->pi_lock, and hence
+> ->blocked_lock was born.
+
+Yeah, we needed to use something other than the task->pi_lock to
+serialize it as it has to nest under the mutex->wait_lock.
+
+> Later patches appear to have moved it into mutex, mirroring the
+> ->wait_lock -- this is probably better.
+>
+> /me goes chase that state thing for a bit..
+
+? I'm not sure I followed this.  The blocked_lock continues to
+serialize the task->blocked* state through the patch series.
+
+
+> > > > @@ -627,6 +628,7 @@ __mutex_lock_common(struct mutex *lock, unsigne=
+d int state, unsigned int subclas
+> > > >                       goto err_early_kill;
+> > > >       }
+> > > >
+> > > > +     set_task_blocked_on(current, lock);
+> > > >       set_current_state(state);
+> > >
+> > > blocked_on_state mirrors task-state
+> >
+> > Yea. I know I always move a little fast in my talks but at OSPM and
+> > LPC, but I've raised the point that the blocked_on_state very much
+> > seems like it aliases the task->__state.
+> > (See slide 26: https://lpc.events/event/18/contributions/1887/attachmen=
+ts/1402/3074/LPC_%20Proxy%20Exec%20deep%20dive%20outline.pdf)
+> >
+> > I've not quite worked out how to integrate it though.
+> >
+> > My initial introduction of the blocked_on_state was mostly to help
+> > detangle the code, as there were a number of cases originally where in
+> > order to let the task be selected to try to acquire the mutex, we
+> > cleared the task->blocked_on pointer.  But this often ran into races
+> > with ttwu, as if it cleared the blocked_on pointer, the task could get
+> > selected to run before the return migration happened. So having the
+> > tri-state BLOCKED->WAKING->RUNNABLE be explicit helped ensure we
+> > enforced the rules properly so we didn't run on the wrong cpu.
+>
+> Right, so we already have a TASK_WAKING state, that is that
+> intermediate. But let me try and get a feel for how things relate;
+> TASK_WAKING is after we've determined it is elegible for wakeup, but
+> before it is enqueued -- eg. it sits on the wakelist.
+>
+> This BO_WAKING is not quite that. It happens before doing the actual
+> wakeup.
+
+Right. So BO_WAKING is set from the point that the mutex unlock (or
+ww_mutex_wound/die code) tries to wake up a task, as the task may have
+been proxy-migrated, so we need to return it back before it runs.
+So it's sort of a guard to make sure __schedule() doesn't just run the
+task (as we could if it were BO_RUNNABLE), but also that we don't try
+to proxy for it (as we would if it were BO_BLOCKED), since it needs to
+be migrated.
+
+My suspicion is reframing BO_WAKING as TASK_NEEDS_RETURN might be
+doable, but I couldn't be sure we wouldn't hit an edge case where
+TASK_RUNNING gets written over everything - effectively clearing the
+guard.
+Maybe the NEEDS_RETURN could just be a side state similar to the
+blocked_on_state, and then BO_BLOCKED vs BO_RUNNABLE would just be
+distinguishable by the !!task->blocked_on value.
+
+> Also, when I pull your proxy-exec-v7-6.7-rc6-fine-gained and put that
+> next to your slides, I'm a little confused.
+
+So, apologies for the confusion. The link I sent you to the
+fine-grained changes are a bit old (v7), since I stopped maintaining
+the fine-grained patches around v11 (and the most recently shared
+version is v14).
+I just shared the v7 link as an example to see if it would be helpful
+to split the patches here out again in a similar fashion (and I don't
+think I published later versions of the fine grained series).
+
+> Specifically, slide 27 talks about a modification to try_to_wake_up() in
+> order to force the task into ttwu_runnable() such that it then hits
+> proxy_needs_return(). This latter part I can find, but not the former.
+>
+> /me puzzles
+
+So the slides actually have links to the code at that time, which
+should be the v12 series:
+  https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v12-6.11-=
+rc5
+
+And the try_to_wake_up() change from slide 27 is here:
+https://github.com/johnstultz-work/linux-dev/commit/cc828a6bac87dcd57349020=
+21973659fe52ef7e6#diff-cc1a82129952a910fdc4292448c2a097a2ba538bebefcf3c0638=
+1e45639ae73eR4158
+
+(and here's the link to the v14 version of the same:
+https://github.com/johnstultz-work/linux-dev/commit/602a4197c83b83cff08c7ad=
+da31324739c7938c7#diff-cc1a82129952a910fdc4292448c2a097a2ba538bebefcf3c0638=
+1e45639ae73eR4314
+)
+
+> Hmm, since a blocked task is on the runqueue and all that, you should
+> always walk that path, anything else would be buggy.
+>
+> So fundamentally the problem is that you want to do a reverse migration
+> -- it needs to go back to a CPU where it is allowed to run. The way it
+> does this is to dequeue itself and let ttwu continue and clean up the
+> mess.
+
+Yep.
+
+> This all makes sense, but why can't you do this on the waking side? That
+> is, instead of setting BO_WAKING, do this whole if (!is_cpu_allowed())
+> deactivate_task() thing right there, before issuing the wakeup.
+>
+> Notably, that sched_proxy_exec() block in __mutex_unlock_slowpath():
+>
+>  - probably doesn't need current->blocked_lock, current isn't blocked
+>
+>  - probably doesn't need lock->wait_lock, donor is stable under
+>    preempt_disable().
+>
+>
+> Something like the completely untested below (also, ttwu path needs
+> surgery now):
+>
+> diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+> index 2711af8c0052..47cfa01cd066 100644
+> --- a/kernel/locking/mutex.c
+> +++ b/kernel/locking/mutex.c
+> @@ -946,32 +946,11 @@ static noinline void __sched __mutex_unlock_slowpat=
+h(struct mutex *lock, unsigne
+>         }
+>
+>         preempt_disable();
+> +       next =3D proxy_handoff(lock);
+> +
+>         raw_spin_lock_irqsave(&lock->wait_lock, flags);
+>         debug_mutex_unlock(lock);
+>
+> -       if (sched_proxy_exec()) {
+> -               raw_spin_lock(&current->blocked_lock);
+> -               /*
+> -                * If we have a task boosting current, and that task was =
+boosting
+> -                * current through this lock, hand the lock to that task,=
+ as that
+> -                * is the highest waiter, as selected by the scheduling f=
+unction.
+> -                */
+> -               donor =3D current->blocked_donor;
+> -               if (donor) {
+> -                       struct mutex *next_lock;
+> -
+> -                       raw_spin_lock_nested(&donor->blocked_lock, SINGLE=
+_DEPTH_NESTING);
+> -                       next_lock =3D get_task_blocked_on(donor);
+> -                       if (next_lock =3D=3D lock) {
+> -                               next =3D donor;
+> -                               donor->blocked_on_state =3D BO_WAKING;
+> -                               wake_q_add(&wake_q, donor);
+> -                               current->blocked_donor =3D NULL;
+> -                       }
+> -                       raw_spin_unlock(&donor->blocked_lock);
+> -               }
+> -       }
+> -
+>         /*
+>          * Failing that, pick any on the wait list.
+>          */
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 6eaffa913495..30d7371bb5c4 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -4035,6 +4035,53 @@ static inline void activate_blocked_entities(struc=
+t rq *target_rq,
+>  }
+>  #endif /* CONFIG_SCHED_PROXY_EXEC */
+>
+> +struct task_struct *proxy_handoff(struct mutex *lock);
+> +{
+> +       struct task_struct *next;
+> +
+> +       if (!sched_proxy_exec())
+> +               return NULL;
+> +
+> +       /*
+> +        * current->blocked_donor can't change if we can't schedule
+> +        * caller needs to do this, since its needs stabiliy of return va=
+lue
+> +        */
+> +       lockdep_assert_preemption_disabled();
+> +       next =3D current->blocked_donor;
+> +       if (!next)
+> +               return NULL;
+> +
+> +       scoped_guard (task_rq_lock, next) {
+> +               /*
+> +                * current->blocked_donor had better be on the same CPU a=
+s current
+> +                */
+> +               WARN_ON_ONCE(scope.rq !=3D this_rq());
+> +
+> +               scoped_guard (raw_spin_lock, next->blocked_lock) {
+> +                       /*
+> +                        * WARN_ON on this? How can this happen
+> +                        */
+> +                       if (next->blocked_on !=3D lock)
+> +                               return NULL;
+> +               }
+> +
+> +               /*
+> +                * blocked_on relation is stable, since we hold both
+> +                * next->pi_lock and it's rq->lock
+> +                *
+> +                * OK -- we have a donor, it is blocked on the lock we're=
+ about
+> +                * to release and it cannot run on this CPU -- fixies are
+> +                * required.
+> +                *
+> +                * Dequeue the task, such that ttwu() can fix up the plac=
+ement thing.
+> +                */
+> +               if (!is_cpu_allowed(next, cpu_of(scope.rq)))
+
+nit, we'd want to check its not the wake_cpu so we try to return it so
+proxy migrations don't upset the tasks' original placement
+
+> +                       deactivate_task(scope.rq, next, DEQUEUE_SLEEP);
+> +       }
+> +
+> +       return next;
+> +}
+> +
+
+Ok. I'll stare at all this a bit and see if I can give it a try.  I
+fret that this doesn't handle the case if wakeups on the task occur
+through other code paths? (So we still need BO_WAKING/NEEDS_RETURN to
+prevent us from running until we migrate back). I don't really have a
+specific case I can articulate, but my gut is telling me the problem
+will be w/ ww_mutexes as that was a major source of problems with the
+early versions of the patches that I believe tried to use logic
+similar to this.
+
+Again, I really appreciate your insight and suggestions here!
+
+thanks
+-john
 
