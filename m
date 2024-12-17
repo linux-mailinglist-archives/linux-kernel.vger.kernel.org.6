@@ -1,157 +1,142 @@
-Return-Path: <linux-kernel+bounces-449432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC1A9F4EFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:12:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F999F4F02
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6ED1883CC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:09:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E18C1888F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2DA1F7074;
-	Tue, 17 Dec 2024 15:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1005B1F7577;
+	Tue, 17 Dec 2024 15:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="slaz++ay"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="di9EVSPi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76799148850
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9EF1F707A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734448159; cv=none; b=lclSGDSu+nz8yTZPsTPJoxia2B/UqbVkMdbhm6fZQiE9tlr2lZRTjd96oaVd6N9k5oa7a7/DG/RtcF8FuLvKQDu/T82tn3COMfrKewwiELWr5ZeIZiBsAXzRTKuCj4ryO03KcWpWb4AUW520JpcmFJOvgTdtIVR+If+vu7Qq8w8=
+	t=1734448192; cv=none; b=pJBQZ9dgupGMGEbP1ygwFgW4/4PKA4a3AeJJdWMGUWB+C/XFsMiVeBDLrUkoucNZjkZcb8XV+NlC6B8nSllcThZ+e19AW4wZZX6aTCLLwRwhk1M+WKWOEth1royi/SdUj1G7Q0x+cLBXLznhUZNNDqXF4Lwc0ACQT1C/ch6+F7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734448159; c=relaxed/simple;
-	bh=t8Vs683urZA2aCYmnDvsgfI9tVP0SgQmznGh5Uf5YEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u37D5qUWGrKzrq/d6n4IoqNK/u0jLeCS4PGWeYp4+QB6uQTdWx5D2qm/Wr8LRkZLmyBkIP6YqGe/rS7dCuP6wLNb6ASChJnIU9BT7jc06m8qMil9LbZlDAO39yJTvEvskaniNN2MSrYsc1RbUdmhhAXNB6XQAz7tc6HeUDR92/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=slaz++ay; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3035210e2d1so20040671fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:09:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1734448155; x=1735052955; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xJMaV7UmSOqQnJmmYNC2YNSOGH/6QVrTZ9CiZALJymE=;
-        b=slaz++ayrsGcyEiTL4WDQ/UWJcxdZTl3koP06SBN5QQraatDdb9TxYRXhb0oPSYOiE
-         8+3WkAdxdX0EARKx9UC4Q5h9HQLNB9fIZMIOD1RFPNhT6RSXOVbWonYPSsaa4Np6YgDh
-         t19bYLOSZ5wGJhKB0TCQ4NfOqv1BGCp5Z/S9fu9ss+ieXFK3wRXZ4CcEnTAALCCwzJ/p
-         rUUFSouV4IEW/QJIdep/dbbsIQ9dzcuxxSSwmPbA5NYAezi3SI2GOm+Dl15/x60jexYt
-         v9KLZwdIvEqbwoHWfpm4LEZ74LGcP8pkto2kkmLvsAahUPBh6xotJgkiOIJ7Fps69xt6
-         rCug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734448155; x=1735052955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xJMaV7UmSOqQnJmmYNC2YNSOGH/6QVrTZ9CiZALJymE=;
-        b=gP3xuPnAB7py3sM5Mt3Fk73Di59eOOajfLfVcST3Lyv7b+AId6Usr/kqbg7XFdK7oU
-         pXGJQGKUEPvo/Jmp5HDlmqtEUauPjcB2Wa+3Mu2uZ+qWUM2k6b7Ib2Cvhb6PuiZ/XZKd
-         E0QFohpfMHvLjOA0w4VW/D4sV8qgLdbCWtSma3NYSoG/NxOjvP4lPzQ9Ac0gEfCTgSH6
-         GzW/XIQ1EZiPFcbi+Q5ZO1/22Smhx6o2WTkYbq118xIikAmtkVZiMz9+s7KN27OqIat3
-         W8al3oPFAd39+57U+/O8ecmWhSM4cjTGYal5fiv1BrZM7JCgv/kNfkmPCxUN/X6CJEhQ
-         8nbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFYcj8vvK0a3hYnPB0Z1bJvFrqXXL1BRzhIgofqT1rPOWUUTFNcQ7Qv0h5c0xtwaKEyN3Js+hyaeBM94o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiH3SNXqP4+N7kBckswtWxwLaClm9/7vp2gAE9ZlvMBnd+4Ja0
-	K0sErsAzryhJXQWWZZ46ZBUrCBQcpgnFYYnAXYJLIkeqzLhQBS+bu/FSPDKppkj7SICWLKPZPPl
-	Di5cgsYywnDJZFAfx6MoE4nwH/n7LmvFrsKmkOg==
-X-Gm-Gg: ASbGncuBera8olg/E8ib4nZcL95sT81QXsH3tIgtn0aIQqoxI9vtIpiwYQ0RENzSb+E
-	rszZ5c2bb7jxwnGraKd0ASieLWzkT8AZuaYlrWB3XmTK3aLZiiokz+4zOqVkTrCVHMAItfw==
-X-Google-Smtp-Source: AGHT+IHn2z+8xFDM1ych7/SJHm2I1uCOb9OrGIC/DxV/OB5hK1sRyL/vbFsj0eFSDsONM3UlyR1ROcXDvtoGtKLL2Z8=
-X-Received: by 2002:a2e:bc12:0:b0:300:1f12:bbc9 with SMTP id
- 38308e7fff4ca-302544cbdb2mr63979171fa.34.1734448155392; Tue, 17 Dec 2024
- 07:09:15 -0800 (PST)
+	s=arc-20240116; t=1734448192; c=relaxed/simple;
+	bh=4eP60qs48KatjV27oK9VXq50Pn4jVK8V8NN5JyN3p3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gir8sRuVT4Plhtl/dSJvk6nfJ3huTEYT6kK2Q6s0RNXx3yMc5n2hvpK+rR4SywblJ7S0VVl8jQTEhz6z0A0oyG+rDM/0QlTuuT0XdZF0TJw6RT0fH9kj07/9744dl7tsj3KFHANWyQyRg6XwZKXXzVK+m/9jWOJP5tYDJpKb7tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=di9EVSPi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734448189;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MqetoIFcgXu59rkxSpWYfsgYEfKFRQrtPQ/2cVt2LjY=;
+	b=di9EVSPizGBvJnbrxoMgIsZlX/8zemOKXCsaN7Y5fbv0RksdVD2cKjgGHWOb7QPSshnARi
+	nsgl0O3gCKcvI7e790p0Soptq/KPAYvIwQCBZ2cgXiefUMb3tZUkEWAf2Lc1rSXAy6RpxT
+	ZBWnKXlYRMrzdzkZzL3m7dvoofp5Q5E=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-310-dFrx-ed-Ot-DGKWnwgWqEA-1; Tue,
+ 17 Dec 2024 10:09:45 -0500
+X-MC-Unique: dFrx-ed-Ot-DGKWnwgWqEA-1
+X-Mimecast-MFC-AGG-ID: dFrx-ed-Ot-DGKWnwgWqEA
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 77CC119560BE;
+	Tue, 17 Dec 2024 15:09:43 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.190])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7BE8419560A2;
+	Tue, 17 Dec 2024 15:09:39 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 17 Dec 2024 16:09:19 +0100 (CET)
+Date: Tue, 17 Dec 2024 16:09:14 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Shuah Khan <shuah@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dylan Hatch <dylanbhatch@google.com>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs/proc: do_task_stat: Fix ESP not readable during
+ coredump
+Message-ID: <20241217150913.GB29091@redhat.com>
+References: <cover.1730883229.git.namcao@linutronix.de>
+ <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
+ <20241217145923.GA29091@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217130714.51406-1-brgl@bgdev.pl> <20241217140325.qgm6m7qf2fdj35j2@thinkpad>
-In-Reply-To: <20241217140325.qgm6m7qf2fdj35j2@thinkpad>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 17 Dec 2024 16:09:04 +0100
-Message-ID: <CAMRc=Mf7bcfD3+vu9veWrd44hqiHZZnSgiiaObeMUfajLRqPmQ@mail.gmail.com>
-Subject: Re: [PATCH] power: sequencing: qcom-wcn: explain why we need the
- WLAN_EN GPIO hack
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217145923.GA29091@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Dec 17, 2024 at 3:03=E2=80=AFPM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On 12/17, Oleg Nesterov wrote:
 >
-> On Tue, Dec 17, 2024 at 02:07:14PM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> On 11/06, Nam Cao wrote:
 > >
-> > With the recent rework of the PCI power control code, the workaround fo=
-r
-> > the wlan-enable GPIO - where we don't set a default (low) state in the
-> > power sequencing driver, but instead request the pin as-is - should no
-> > longer be needed but some platforms still fail to probe the WLAN
-> > controller. This is caused by the Qcom PCIe controller and needs a
-> > workaround in the controller driver so add a FIXME to eventually remove
-> > the hack from this driver once this is done.
+> > @@ -534,6 +517,23 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+> >  		ppid = task_tgid_nr_ns(task->real_parent, ns);
+> >  		pgid = task_pgrp_nr_ns(task, ns);
 > >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  drivers/power/sequencing/pwrseq-qcom-wcn.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/drivers/power/sequencing/pwrseq-qcom-wcn.c b/drivers/power=
-/sequencing/pwrseq-qcom-wcn.c
-> > index cc03b5aaa8f2..9d6a68ac719f 100644
-> > --- a/drivers/power/sequencing/pwrseq-qcom-wcn.c
-> > +++ b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-> > @@ -396,6 +396,14 @@ static int pwrseq_qcom_wcn_probe(struct platform_d=
-evice *pdev)
-> >               return dev_err_probe(dev, PTR_ERR(ctx->bt_gpio),
-> >                                    "Failed to get the Bluetooth enable =
-GPIO\n");
-> >
-> > +     /*
-> > +      * FIXME: This should actually be GPIOD_OUT_LOW. The driver model=
- can
-> > +      * correctly handle provider <-> consumer dependencies but there =
-is a
-> > +      * known issue with Qcom PCIe controllers where, if the device is
-> > +      * powered off abrubtly (without controller driver noticing), the=
- PCIe
-> > +      * link moves to link down state. Until the link-down handling is
-> > +      * addressed in the controller driver, we need to keep this worka=
-round.
+> > +		/*
+> > +		 * esp and eip are intentionally zeroed out.  There is no
+> > +		 * non-racy way to read them without freezing the task.
+> > +		 * Programs that need reliable values can use ptrace(2).
 >
-> Maybe we should add some info on how GPIOD_OUT_LOW causes link down. Like=
-,
+> OK,
 >
-
-Sure.
-
->         /*
->          * FIXME: This should actually be GPIOD_OUT_LOW. But doing so wou=
-ld
->          * cause the WLAN power to be toggled, resulting in PCIe link dow=
-n.
->          * Since the PCIe controller driver is not handling link down cur=
-rently,
->          * the device becomes unusable. So we need to keep this workaroun=
-d until
->          * the link down handling is implemented in the controller driver=
-.
->          */
+> but then:
 >
-> But the comment applies to gpiod_direction_output() call as well, right?
+> > +		 * The only exception is if the task is core dumping because
+> > +		 * a program is not able to use ptrace(2) in that case. It is
+> > +		 * safe because the task has stopped executing permanently.
+> > +		 */
+> > +		if (permitted && task->signal->core_state) {
+> > +			if (try_get_task_stack(task)) {
+> > +				eip = KSTK_EIP(task);
+> > +				esp = KSTK_ESP(task);
+> > +				put_task_stack(task);
 >
+> How can the task->signal->core_state check help ?
+>
+> Suppose we have a task T1 with T1-pid == 100 and you read /proc/100/stat.
+> It is possible that the T1's sub-thread T2 starts the coredumping and sets
+> signal->core_state != NULL.
+>
+> But read(/proc/100/stat) can run before T1 gets SIGKILL from T2 and enters
+> the kernel mode?
 
-Yes, but there is already a comment above it.
+Can't the trivial patch below fix the problem?
 
-Bartosz
+Oleg.
+
+
+--- xfs/proc/array.c
++++ x/fs/proc/array.c
+@@ -500,7 +500,7 @@
+ 		 * a program is not able to use ptrace(2) in that case. It is
+ 		 * safe because the task has stopped executing permanently.
+ 		 */
+-		if (permitted && (task->flags & (PF_EXITING|PF_DUMPCORE))) {
++		if (permitted && (task->flags & (PF_EXITING|PF_DUMPCORE|PF_POSTCOREDUMP))) {
+ 			if (try_get_task_stack(task)) {
+ 				eip = KSTK_EIP(task);
+ 				esp = KSTK_ESP(task);
+
 
