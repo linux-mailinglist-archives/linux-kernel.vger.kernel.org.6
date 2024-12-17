@@ -1,85 +1,109 @@
-Return-Path: <linux-kernel+bounces-449787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582959F5617
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:26:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2A99F561F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6DBD16AF22
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:26:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 373CA16B083
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E951F8EF0;
-	Tue, 17 Dec 2024 18:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61731F8AE1;
+	Tue, 17 Dec 2024 18:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="CYmzLw+X"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11021115.outbound.protection.outlook.com [52.101.62.115])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LgfYyfU9";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="cp0YjIAL"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D241F8925;
-	Tue, 17 Dec 2024 18:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A641F8676;
+	Tue, 17 Dec 2024 18:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734459941; cv=fail; b=YNOmcghyl5dRWgr3GjW5Ryuvt2Xs/hGaBo8lJsmgdqPkYdaorhSYYFPKo3VNNv6xQkuxMNrTqKgd7Bc5T6DVzEkxBVIjXzW0Wn3VTte2dngYwLotla7nY9Gm3E3v5qMvNhXwcfd2YdE3830OTXHDD9z3OzfSko9OudgcHz9MfgQ=
+	t=1734459970; cv=fail; b=PIqoG8Z3IoogDIwlDYWiwxx0u+MOB/koTXi8pRkmAucRkMUiQFemBA3RaHx687wm4ayvtHJ9tLA5d4YNZ6auYX7cbx3NS0ty+h2igMjMIXD55ggV78Z3fPNuUQL1CSnA5YYO1hivHHl3heGs6TAtWWWiBxgamNsslcwPhk2lhr4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734459941; c=relaxed/simple;
-	bh=xeEzf1LbUs/WMKSlYBaaBcEWfVul+8p6SxNrb3l1Hkk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RNohY7t4pz5K73vgFdOymYgXyGnaGu2HKBSDliVdURQ/z+cpiuNb1Txi35ZcE1jminw6t97T/aggRBNOQx2ZRXIvlHqj6F2ilBvaJAxUjW8Y6djIQD7ycJAhH5jcpWX9tF9lLYti0lX98HhaTe3uaZiXFfeWfrgNG1YS1IeaMUE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=CYmzLw+X; arc=fail smtp.client-ip=52.101.62.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1734459970; c=relaxed/simple;
+	bh=E5QICVzaohnBtxppBG8VR0yIOifPFNxJpCp2bMSrJqY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PC5BP9hQrGeamK9EGbw2o4t8wRW0R1r/NMrd+y6c02xUP4vg65OzBR2cIdHMFY35fAvKw77AQkXf0IDKYedWJ9xW3QZMGpLZRfzaThv+Z+0Sw2v/0hu519TPwWpToCf1avcK02ch+T6ofvFuYI+VfroNnsUZQVqoOv7H98e0hFQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LgfYyfU9; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=cp0YjIAL; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHCu0te010793;
+	Tue, 17 Dec 2024 18:25:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=dEYNxJw/Th7aV/XvzKR793JL9g2ce2LW72PDENJkH3Y=; b=
+	LgfYyfU9p1ZaFZpsXuwMp8QFOoz/pL9ZWhVcgpS4BxCccf8JYBsjwVKGIHCvjqdw
+	RcfO3FFGpbNkCFPRiOycFCPSDt+0kiWHijF035/SgX7UzGLt/1c4VCy2iO7D9Qpk
+	N1EdURemFUab/lEtc4TlAee/TTIQ2Rnm8iG/UvfRftf1xsrNw9PvLYBdHe64rbV2
+	EGz6SCU84ppbS1NM0M2PM3OE2tgSlBtH0P8+6f+U+N61D62If1UzLAVqMT/B2aWs
+	VNFra0zzWdKlRJW5n5GlhPFqsX3sBl0TieTXCt1XIxBkJMlCRBhEz+rXcg/fyrZ7
+	Mxfylvy3XYtD3RC1XK9hWw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43jaj5ck3h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 18:25:49 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHHVRgG006376;
+	Tue, 17 Dec 2024 18:25:48 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2044.outbound.protection.outlook.com [104.47.51.44])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43h0f9r0pj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 18:25:48 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nMrxy18nWeiCo2iZts32mLQ2rDas++9oLpjhE5GRVW4ieXnnLtuNa7+fIzfxX1ooszPPpkBpff3q+dA/BWRVr6xXr3DbW1OIZz4rhbQgCjT8dSC6HIkNewdApOu5tXqb8NJ55lSEkHcJTuCk3q6vYbQLgMXrXb3PkXrkQKwZ8U/fcDBtnh+Um9mQ0ReWBfZS2sTG9VbGTbZzDO51u2CDqAZHRTPbIGVLUrd/dk9o2L/toGdHdSoDP2HC9tmLJxGsyTa5NJdnLoxlHQsl3C+a1Fem7F7X7lmFjUeeMfH3vnZ+fp7EKwNFCxOLvu38Dw7W78+oJoxdLDJSSm05nzNGQA==
+ b=fa5PK7KHyLmVRIw5+txCnhn9R2YVhtIWNiKQByR6E63JHuRSud7gUoon1Ozs3OnnjOQRubfSZkC3k4MDgDzRc++f1i8ubMNHIDie6G4/d4h+H+oTH6cQlLSWZqwnNx1Z/49tMihQsgTluzXjhhZrMd8veMBNLVdnLkeuXw9azskvygl96ufs+LJkkzwGgVx4G/4U5ZVUmALiO/0JfXJ0BBQwMlclYzMvP7qgOHgzu+21nuIqpYUcrtJxl2o+RqUwVgd7E6ggYgngg+PSNgwxE9pzrpxNLMlxVwheGig5nQfmr6RQBO0hRgKtOBIYXFT2Tb68FWYi9+hFe8ir/VTYNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j2IdcbOC9MiM4vbz4RW+cyJG0bxHn87acmyqH2ODNRs=;
- b=K46P0vPx5mn/9kc7RGpNPF6mJ/6e2i+T7yrbiaE67fGUoVhT6txqUHKyd9ZfVlYpCd/WLOK3VpO9oRKFWYQaXUYpJEMtam4eG8jLo6tjG144jzVPomk1eHAnca2sDKD3rED7uuvq2sNlKneNS1g1336ww6kJxSqTRLuBt257bU7mwM9fDFCOyfIFPkrBdQNyzMVkLhhxvI4WxVp+L+sKZ47/Y8XeRPMpFlQ17uszSbELmR8d2zMY/KAhwUL5j3YlxUFolZhrfXE6Sv1CYRsre0wMsEO8+KTWopenjK6zTGL4BrU1edbHOH/2MjqVMwCERvLq0TEYowaEQtkQi6MVCA==
+ bh=dEYNxJw/Th7aV/XvzKR793JL9g2ce2LW72PDENJkH3Y=;
+ b=DoLfaCJbtwD7IVbklYvrNjAK2aggkBe9EE0hcJg8GU2oOJl2J2ygYMifEVyUBpNjCZrH4+5FVxRxfYR82EGTu/tMaMRoj4ROFLNLlaOqJk48qz7cDUlQTZFqTRlOR4LoU95Wbt7d7A/yIqvZJFg/7dL172MeAvdhIkOWzud0d65pMBjRttijMnjKzTA/GKE+nNYpVjBhp6qElpp9wisDdaRwc2Zt/lYqJb9rfsmejdkVLZBne4xGJwWk/JCrOSufnoVQRzUYVxj/W/pNF1Vk3saeUpAYt8Pcj7u0pwPTzolaWegRuT5FI/rCvYyvlvZ70HZQI3WisuzA6HplKCuc2w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j2IdcbOC9MiM4vbz4RW+cyJG0bxHn87acmyqH2ODNRs=;
- b=CYmzLw+X7Q0MTjcSkZmlIlCSqkDVn8YsMtJ/i62c3wJh9UIMsimGj1LXTqltHvM/WVBhMtCvjiECll7kdHaQUENel9sUi5T1ajEsPjoy4tKi/NA2+hrZXJKTdvoZJ5hbg5FJbQ7ExI/MGQH+t1ohPwMZlDXvTX5QQiMuBFXZpvE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
- CH5PR01MB8911.prod.exchangelabs.com (2603:10b6:610:20d::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8272.12; Tue, 17 Dec 2024 18:25:35 +0000
-Received: from SA0PR01MB6171.prod.exchangelabs.com
- ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
- ([fe80::b0e5:c494:81a3:5e1d%6]) with mapi id 15.20.8272.005; Tue, 17 Dec 2024
- 18:25:35 +0000
-From: admiyo@os.amperecomputing.com
-To: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: [PATCH v9 1/1] mctp pcc: Implement MCTP over PCC Transport
-Date: Tue, 17 Dec 2024 13:25:28 -0500
-Message-ID: <20241217182528.108062-2-admiyo@os.amperecomputing.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241217182528.108062-1-admiyo@os.amperecomputing.com>
-References: <20241217182528.108062-1-admiyo@os.amperecomputing.com>
+ bh=dEYNxJw/Th7aV/XvzKR793JL9g2ce2LW72PDENJkH3Y=;
+ b=cp0YjIAL6d1cSfARXcPfwyxe/3E+bExzUC3mqdnEbTfjhrGvTfIMdI2aKiTBlMwONE86S+zVaywh5VnPqAau0PPjX429cQ80w5juQjn3AeoEPDqAdtrKOHwyjb2qcSQsYh09OlDsXbezxap9BBkSKZiUGG8xWl7V9U7wPjPiT54=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Tue, 17 Dec
+ 2024 18:25:46 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%7]) with mapi id 15.20.8272.005; Tue, 17 Dec 2024
+ 18:25:45 +0000
+Message-ID: <7b0ec3c4-77a1-49cf-aadf-7d393c750f8e@oracle.com>
+Date: Tue, 17 Dec 2024 13:25:43 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2024-50106: nfsd: fix race between laundromat and
+ free_stateid
+To: Li Lingfeng <lilingfeng3@huawei.com>, cve@kernel.org,
+        linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Olga Kornievskaia <okorniev@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>, NeilBrown <neilb@suse.de>,
+        yangerkun <yangerkun@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>,
+        Hou Tao <houtao1@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>,
+        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+        ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+References: <2024110553-CVE-2024-50106-c095@gregkh>
+ <ef9774e3-572b-427f-99e9-c6a456ffe4fc@huawei.com>
+Content-Language: en-US
+From: Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <ef9774e3-572b-427f-99e9-c6a456ffe4fc@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN9P221CA0020.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:408:10a::32) To SA0PR01MB6171.prod.exchangelabs.com
- (2603:10b6:806:e5::16)
+X-ClientProxiedBy: CH3P220CA0019.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:610:1e8::18) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,465 +111,317 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|CH5PR01MB8911:EE_
-X-MS-Office365-Filtering-Correlation-Id: 468498cb-9cc8-4960-8a8e-08dd1ec832ea
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|PH0PR10MB4759:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1e017ef-5d57-47f9-b787-08dd1ec8391a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|7416014|376014|1800799024|52116014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pnkCyRoRMPYwAc3pkRL1zxOCKZrmSkkozJ084fJQgkcWXq/QDHaeQiqjpQmb?=
- =?us-ascii?Q?kcr7IaFTzukMvsEvHzwNpiqWNuNA/ZixOtxfH73OjAkuP60iJphDY22ltWIu?=
- =?us-ascii?Q?16oPL49HW314lXEA3r0rkQDICAaXPdEaW1itpxEZ25dRKy1SdwtxVDvnF1Zn?=
- =?us-ascii?Q?MjGTT/Ihz/uGW1e6xnoycycF/vzTxRNiaIcsCWDjYL8GQp2s7gvSATMBSYDg?=
- =?us-ascii?Q?kOoj/mmu7dNL38Xa3BwhHZHz8Yy6UfxcwbOISxWIgc4NIO/JjvM2S4WSNJkT?=
- =?us-ascii?Q?Z0DDlQ+YrdrWYYdgQAU+WHKBjyHNqb6YDscLwm/U6FD/wvgOTWI3lZoCByq9?=
- =?us-ascii?Q?A1eZGO8hRNKf7QE43SSDhkSFj8PBZKGEPuOJ9tVL0u7RvzlsknRGj5oOequZ?=
- =?us-ascii?Q?5QigRqneqF57nAIWwXAtIIRjtOKXs2nvAZR3/ON7n0LZ/UTCBZhK4V9pfRrK?=
- =?us-ascii?Q?V1AOjWey4eailsMsMv3USUs+D8kyamwX7E80i2CS9Ec2lrEEQothoZVeJsW3?=
- =?us-ascii?Q?vR4riH22luTfTjaTn9lGHVYog3EiUHf/o/ppCqDQFT7LNi2hUw6nckYlBbOE?=
- =?us-ascii?Q?2IE9gwgs2qZAbI970ZnyyE9tuU8yrmzNObIu1ZTXcCWgdllM673P52UJYNQT?=
- =?us-ascii?Q?v5XYT+v4r/29ew1GsQEtI+gkdUI74lhcjg6YfAFxZAD01+Qme2jJwoAlRzCA?=
- =?us-ascii?Q?Wf0KmuFFzfQ25CV88ZU01wR5944zmtxaMHajEVPR0MrgT1tChBJRuCaSo1Kx?=
- =?us-ascii?Q?MXOfaWy9QFGz8HZAQ6qRpg7Eldilpz92KaZkLjk1wq2V/R9QnYOWs1WtEGbv?=
- =?us-ascii?Q?FnFy1u6dwjkY9VZ0muWg92gYYB19yPsTbEzH85xskgf5XxIF5CtrImev2CJg?=
- =?us-ascii?Q?deQONzCD1dyTvQss7sI2VpusZWEHkM2QqymI9dEPyPiRGZXISk1yoOMW1mtD?=
- =?us-ascii?Q?1HdXi2TvEJzw4zLHk0m9sUGykl2r1pcqP8y1jS/A/RYGeS2nDwf7xZsNgTTw?=
- =?us-ascii?Q?/T9ApcXuKU5tDa3VaoaW+7n9EUKo8jH8mnPwvrPzkZCy9cabj3eS8gLsY9Jp?=
- =?us-ascii?Q?zfpem/7JJU8h/UFkwd02UkEm7vD3V/K9s1Qdzq5EVoKFJtQvqISklTeWQZuI?=
- =?us-ascii?Q?10eP2zanKv1Vdo4IgZ39/C5bvth35BpRl4e5u0yRlqZxxPfO2CbSXhB4ChIp?=
- =?us-ascii?Q?A3xYPGIYDn5TRI2n2UbaN+Ub6KiRksiyHNuyZIhVJaKqogqVlmHh/bNtcHWm?=
- =?us-ascii?Q?IS/jgPvsyznTyuYKEi6Fe7XpSABtceL/7WRKNTzZS5mZWSJtq9QGH7/lY8Zu?=
- =?us-ascii?Q?OmLq5KnCqdAmfwNwNvlAKQr3OXMES/ECTukXvZFqrC/Ote+ud532vp93ZvMR?=
- =?us-ascii?Q?0XyK+VKPOhgP4XQaqYdzFB5a9gSr?=
+	=?utf-8?B?eVR5WUtnMGl0SmgzZFltbUxXbzNjVEZaQnNZOEhsdEdRblVscVl5NzUzWmk4?=
+ =?utf-8?B?UGNQdkQyUnRLaEt0T2hHelNka2IxMHBwN2lUYVBna0h5K3lLMFVEWDhsRzdB?=
+ =?utf-8?B?eE1abEFvMDVkQi9PckRLOUxRK2Vra0hsTmNVb1RNU3YwSHdnTDV2NVVsNTBV?=
+ =?utf-8?B?dERuNFZTUXVuNVIvNmN4K0VTbmZWZnVjNDUyclZHdE1nNGcwV3d4MGtlamhr?=
+ =?utf-8?B?Y0UrU2xxOW4va0tLQnVrWHVrdU5zRGdPSWZVMUtvYlhscXJmVTlaOE5pRW1L?=
+ =?utf-8?B?WkJUbDRkdXV0SnRwdVB0OHBYTHRKb3AzN28wRHlRYTc4Ui9IVG15VUtDcEdE?=
+ =?utf-8?B?bVJFUEsxZ0RyaGJXU1ZvNmtRbE9KazFEVDNOdDZrUFE4NGk0M1FhRHFqbldC?=
+ =?utf-8?B?bTIwb25DbCtndU1OQmhleGdMbFRrbWxaVnhyRHo0NVdBbGE2V1FSdFJCNUZG?=
+ =?utf-8?B?V3V3OTVDQVN3dXpRRDJxaXBWKzNHcGphTjVkMjQyNFRFV1lWTWhCZmQ1YndP?=
+ =?utf-8?B?Mk1OMlZEbUczMlJxaE9hcWRidzdIQXE1a2dOS3lpUU90SFl1L2wwaWlhRnNq?=
+ =?utf-8?B?dDFEVGRTNTl2NnZBZ2wzaExRYXhGNEtqVTBOci91Z3U3ZlBSaTkwL0VRMEs2?=
+ =?utf-8?B?NU4vb3d1ODluandTRDk5RVFMcjl1dmVZbWlXYjcrNytob0txanBRa3hxQkp4?=
+ =?utf-8?B?aWJxZjlyazBmckd3NG85emh0RDlic09rL1FnTGE2ZlBQdWxYV1hXOW5HUWtv?=
+ =?utf-8?B?ckJhM3M4Nmt1U1hxYjhQUDJiWlVjWEEwUnlIS2FPY1l4Y0lIWXV5UzFFU0Qz?=
+ =?utf-8?B?K2FURXBNViswTG9odlFwb0hPMzZ0dVl6NlZnNWowZ0ZxYjVuVWhMOGRrajFR?=
+ =?utf-8?B?RmNxdlZsY1N6Vm80RU5KSEc4cVhFMjhUeGhvbU84d1pRZ3ZOZXVHYjZMLzc3?=
+ =?utf-8?B?YTJVKzVLRStCWWFwdG1NM0xaaE9Naks0cUVpL2MvV0tnWmhta05FRnZhSW1a?=
+ =?utf-8?B?MnBkNFc4bDFadXduZnZNTEJuZm5YWHZLWHhncXk1N1pHVUpEYXlEbXczTzFo?=
+ =?utf-8?B?NGZDampiRGJFMW1VTlIyallyU0RBV3BKMkoxdE9jRVFyTndxa0hKallxVWNG?=
+ =?utf-8?B?b0lFcGh3eXZ6OW10YlAvbmhyZnovYXVCMG5rdUV3NlU4d0p3M0hTT0grd1dG?=
+ =?utf-8?B?TURrSGx3YzEzOE1WUTIrUHFJQTE3cEsyaWlWa0FBeTE4Y0tCbVcxam9CWkYy?=
+ =?utf-8?B?SjErNzB5VUJhYmNqd1VSbUx6cGs2OENMZmVmSGE0YXdCUTNiK3psaWdORy9C?=
+ =?utf-8?B?ZUM1ZGJkd1RmbE40VUlaQW0yTWw2bVpYdlR6bHYvc1ZnSWlmSE00bE9jNjRE?=
+ =?utf-8?B?VzZQSUtaZWhrZWkrV1d0b29lUXBGalhjK3E3RGhNSjlpVFBXdU1hNklObkZz?=
+ =?utf-8?B?T0tNcXZzcXJmOVZIR1Y3TE9TM0xqOGY4bExpS1RhQytXV241UEMwWFZOQUZj?=
+ =?utf-8?B?VU01WUNGTEMyY0xxUDRLK09WVWRZV3NvL1ppUWhxektQZThTRG4vajc1cVdm?=
+ =?utf-8?B?YnM5L3JqS0tnaWt6Ky9wUnZ2bWZGbkM2MCtVdGFYSUtoTHRzMDQ1QktFcGxB?=
+ =?utf-8?B?MUM1aFdXVVpBeWphaDAxWkpVdnJLN2VXMmZZYkxCUnlKZHBZRzhQbnJvM0U3?=
+ =?utf-8?B?MVBXbGtHT3ZvejUycWwzVEpzanZvbldPd3hPVnRNV2FSWk5uRnVqTTVSSkpI?=
+ =?utf-8?B?Y2RUbVFDWFBvL3FUKzFOeFFqUTNLRk1CL3RUREh5YzZiOEE5MU13SHVYUzBn?=
+ =?utf-8?B?QlB3WXdSSXBxbkcyK3JSQT09?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(7416014)(376014)(1800799024)(52116014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bgOnQX3eE8KGFo1Tei8hMKTcGM9RvoDyANwnMWB4pRdvh6mLP2Os1ywvK5RJ?=
- =?us-ascii?Q?rB166SP3K96ytyTGtpQxDRS599nDG6zlyEEp4MQQXGeDNc1nOBqlYmyvIwvV?=
- =?us-ascii?Q?7M7X4X7IsZIxfdx8JmwpNcKKO0CZf6GkLy7I1USqq+45IlaMsuMPHlyM1fn7?=
- =?us-ascii?Q?Pe6JugSHWnKXp2zIFt/eWOeAehyldm8OIt5hOXYI8QSQbJLA++slrRv3lxlS?=
- =?us-ascii?Q?r0G6ZPbKVD4IfdZT+AcquxlN+H26nBhpsv86IQNfS55qVnFOc17UUEILdUiJ?=
- =?us-ascii?Q?JfUy2lYyT7mi5VU8dcV2n6ICnw2R/1y8J1vuy9972oBujJw6nDwG8GJcsuDj?=
- =?us-ascii?Q?Y05ur8p8twx28lKrxtoalvM5buN3WS+YwUwbEm/a6rGC9pdXfAzNEOgk8kOM?=
- =?us-ascii?Q?W+8nzwRkE2QrL50/eubBJ68XBbIfTpeAz6vCMdUF9+YktlDsYRVQ+PhylLZK?=
- =?us-ascii?Q?jmCD+jdoaLc+0vqd+v0pcpCG7MDk77tij0xBf6deNyv6LeDaz9FWb/LH0E19?=
- =?us-ascii?Q?ybcZHCvYmu5OyAPWZ8BL43EDSLE2XA22V4+cGChf31It+YU6qlERXiM3BaHQ?=
- =?us-ascii?Q?innhC6R5JqMre5utrJWuIySiNg1j61rVvZgywGhBLdNfrW9EoL42cSNldbSO?=
- =?us-ascii?Q?MnsLnd66yQrJmqelGeh1a6f8OEL9PsvWnGbSJEpYeAf7ol1HjfzPUFXSnFRi?=
- =?us-ascii?Q?oxFIPAo99J2xtHvoDiBvH26XU08Agc4ixuIykgq/5g/LNP8skSA//eiDQD+a?=
- =?us-ascii?Q?WJm5BtuKf8gyxAJSHGam0jRz4+8PN2caFtfjezAoqAiu8GjgPHMgNuOqiKkf?=
- =?us-ascii?Q?EShDXw0h+o/68sZD2yAVv25zg0ibLuRGg8dW5niW75Yac4RVHjsjIvQowukJ?=
- =?us-ascii?Q?R2ZH8qK7EJjZH5Z729rWckE7AQsastWiGdEOqGMCoKzmhWY3ubiidhetzufY?=
- =?us-ascii?Q?kix0TA4E56ONTdiPYoae52TGvoeSTK4CjveV4VEcvIXTc4l2fPOkHpEvs2bv?=
- =?us-ascii?Q?FxFaiK1UxRCO3/z970aOclwQrpcEsWfHhg/RtXd0QtNKM2kHe3q56GFiSmw3?=
- =?us-ascii?Q?Ce5w9QtzKZ9aw7s8GgIcqWgCAKZYxdKjppcV6DmN4mFTw4Hl3Kv4RMNpHBkk?=
- =?us-ascii?Q?C8nji8QLBwiJ7otMG1xQ4i9ExQ6wMPwHLBULPjT00lT8Ql5zSok3zjpfp0gS?=
- =?us-ascii?Q?9ApAgEKJdMsNxeeI6PH2+KKuqck8JEesyURvQgvAkNqY9hTVuwSZivAik+Xf?=
- =?us-ascii?Q?HaqCLcd8ItCdgVCs9kt0rBuOCJi998dtwRSW8Kj8WYiUuT+XmJLhCQ50BgVa?=
- =?us-ascii?Q?9ZKRpjX01FLzuU02neVJfN43CUpYreekkP3W7VTMIVo8CeokDAOvPCFXEXrl?=
- =?us-ascii?Q?NP7gN8zYnrDHXRIfeKRcjvex8xzd0yfkALSwq7Hh0La58sAeOpVAXYgVr2rm?=
- =?us-ascii?Q?z92QYg2sVW659EClW90BCEmUvXbRAKvUvRZ0wshsazkZMEct++2ALEqt1gDO?=
- =?us-ascii?Q?onadqCvVBQlJCgBVr5FvS3w2n9IghVv2BUm/6Qaotjc2GNPb8r0qU2jHFDbE?=
- =?us-ascii?Q?56ZaEY7O9TG79O3Tx8tjk0wJcuA+L2Sti+48qkmyo+QefUCA6eHD9nZGMvW3?=
- =?us-ascii?Q?4m+x/zUb/G77QDz+sNtfRpOzgjgZPVyyBY6iJ7DOcwdbLqQK60nXvyFXGG+i?=
- =?us-ascii?Q?7U4icv0uJ5aB68Kqdc9kOeZ0xo0=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 468498cb-9cc8-4960-8a8e-08dd1ec832ea
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
+	=?utf-8?B?ckF2RmozZGlsTERWK1lvMjBaQURVd0xMYUVFVWgzUVAvdG43aUthM1doMzlZ?=
+ =?utf-8?B?WExRMHlwU0xqZVRheVpzTEFkWDNDdlhKS1RZNnV3S0ZiUldxOFVEQVlIYVVF?=
+ =?utf-8?B?dC9SQnBPZ3htNDhXYlVvcUk1akxhd0VrZ0VEUTJXbVNRUk84ZmhXRlBJVFdD?=
+ =?utf-8?B?bmtwbVhpSm9pRDhMbU8xd1B0Y3lUVzU2NWJCTGlEUU8zRzJaU2ZFeXFxWUdm?=
+ =?utf-8?B?eXZoWjJHdVU2Mk5Xa0pCcyt6TlRjS3IxQUV0NWhmVzQ1QitQSmRWZVBCTXF2?=
+ =?utf-8?B?VUMyU01xRFE0R1llN1lqWWdJbXNzVDF6T0paa0Z0ODJHVE1pWWd1VXJjZG9p?=
+ =?utf-8?B?SUYxU29SZG5HL3BmZGdNclJ4R1Z5QWtjVlUxb2lZK2F4OTBISUljTDZTdHFG?=
+ =?utf-8?B?UlVDRnJBcm1PVUQzT25mbll3R1FFV0hWV3RyNEtzMkZYVU1ma20vM2lZQkRJ?=
+ =?utf-8?B?MEFaUjBkcEJKZUpkeVBlQklVT3lsTDFRaXYvUTdiY0pOSkFZRkZtZ0sxR29W?=
+ =?utf-8?B?Slg2WWtnWXcvdFZqVFlZcVdyOHRkR2N4L3N5K0Z5OEtXRXp5Qk1WRmJTR2hn?=
+ =?utf-8?B?NWRPcWVkUnhieVI2ZzYxK09NSUhjMElOYVpFdTlpc2h1dnU5dGlXSFQ2QnYw?=
+ =?utf-8?B?Si92ajJXNGh4L2UzemU3MUJrdFZFQmlaV3BtR0JJWS9RRmdtdVI2RFNCVlJj?=
+ =?utf-8?B?MkhMdFViVHh2MnN5TGtYOEkxZkZHR2ZQdG5YOHFUUWlDZForOE81WHJWNXc0?=
+ =?utf-8?B?anhrWGhkeFo4bEVwOURuTk0yek93N0krWXhaV1lWWWRPTkxEMVNSaEd0THVP?=
+ =?utf-8?B?L3Z0ZldobmRIc0g0VjdFUFlWek5ObkxlcWxOZUpvUkFqbmJ3d3NRTWhDR1N1?=
+ =?utf-8?B?d2t6a3huaGlBTjR2bjQ4M09oVTY0RU1GZWNGdFNRTXRGWTJPc21jditjVVVQ?=
+ =?utf-8?B?alRUSVVVdGc1R3JXZmJraWtkdTdyYlFxeXl6S2lWWUFPWFVJZkVna0tlZnVt?=
+ =?utf-8?B?WTBiVlQyWXFBSnk2YWtlTXFEelU2a1hGS0V6SHN0SlBpc0M2RCt0NUNPNlJm?=
+ =?utf-8?B?M3RXcy8yWktCNUkyaHlHOVYyRzRlZ1F6Sy9JWUJVQVFwQ1ZoaTd2aS92T1lv?=
+ =?utf-8?B?a2NHODdoTWtmMlVqY1l3NCtlLzA4RmxFYW1mNHVrdmtZVVhWcDlXekJxNVFn?=
+ =?utf-8?B?TmdnT2QydHBrTmVpVHVmZm9PNmxtdXppaERrTTVtanNMVHFiRjBoS3J0RlNp?=
+ =?utf-8?B?N2s2OXJkNi9GZFgvanl2Y1VKVVgzd1N3QWNMeFVNRkgvK0RWdVNJQkdDSUJG?=
+ =?utf-8?B?WWlWNVpIL2tJQ3B6Y29BdDEvNWxncThTRjRiR1pEVndCQmtDbnlUVlFlKzM3?=
+ =?utf-8?B?WUUrZThXcXdGY2hWV1FkZEd3azhFV3A2ejZYaDZIUmduL3F4M0FYK0tnc2Jo?=
+ =?utf-8?B?SHdJOUtPWW9lYWVxMWxKa2txcHZPcElmQUxYdUQ5bCtydnVOMi9Ld0xkVE9k?=
+ =?utf-8?B?MzduK3ppcHNlWm9aNEEwazFDcDM1OW9oblFlMUxRTnJFNUJJK0VVRTBISkdN?=
+ =?utf-8?B?d2JHdkRUQWVtaGVNd0VpSjQwREE3ZjBrcmxseG1DWVRYTEt2RGs2UDZaNy9N?=
+ =?utf-8?B?Q2NDK00zMzhBRnNldmt2T3BNTVVlR2VNWjQyNnM5eFNGRjNjNktpQk1sdUN4?=
+ =?utf-8?B?c0ZDUFlwSnRDdWpza0tjL1grWE16NTZkdlp0ZTlvU2p0Z0ZvUHhJUkkrMGJu?=
+ =?utf-8?B?NzNWY3hheUNZNHFvbENZMWR3VldETmZSSnYxdVg1WU9RSCtFOXRTM3g5MkZM?=
+ =?utf-8?B?WmJQRFhEVlliUnFkV0dzNWZOV2NRYkJGS3ByTndjZTVkYkxhSjFpdGRkdm92?=
+ =?utf-8?B?QW95NWRhdzVpWkdRRnhtNnEvK0hJVFFXK3lSYmpmU0NhdnFJam5DR0QvTlI1?=
+ =?utf-8?B?b3NsOUs0U1BsVEtvVTdkYm5EZmx2Q3g5MmFYSTdNRWU1blY0RnF1TUErbC9C?=
+ =?utf-8?B?OHZGYlNMVWMxZnQ5MlI5TmJ3ajhEdjRjLzBjWERFQ1BtRjVpSnE5dncrY3NG?=
+ =?utf-8?B?UzQza3pZMDk5Z1oyWkNLMnIxZDJIc3pIMnNsdTBMRUFpYkNwa0tmWC9janVl?=
+ =?utf-8?B?TjRLL3R4bWxudG1IZFd3NjVIZ2F1SFR6Y056TGx6SlZvMEtsV2djUWxwcFE1?=
+ =?utf-8?B?TUE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	hiQBUrNxwWeMKQf7M+j2Esmg2yTgOVGRMcluhl7IOKD/4vBCUF7tKOJsMOoYcwedqc2XI7ufgNE5zuvZhmHniUbDEbUJRbjUdAyHnvyDktyoGwP4GIsOTtl82gXhK9cV7nYN6E3U8EwS87ndC2uCxi6mWe2nJ1oWvrBBGSV4Wpd9Dg+2jRZX1phLv2huDAWsu4QBZPpCyGQ/CE1EmixXDjrnAMny2JlHAa8jSnBjkjBhHG0jmGhn4ermMqhXaV9Hf+uSp1dLOReNjcL2t4swUR8kT3qWadORMXwGzXtHGe0IKTePIF2xR8TScJs0eqAHIVEwGaE6TuusaRXb1PDBgdoYbcbJkC6+9XrBZ2V3jkQ84RYB2UoSVSgb637mzB4dxGRrxPbbcwPXeWmo2QoF18C69kuw73C6r6r754XHB1Rc8GPfxIHWtjzfftsuXFE+JVXj8ZkI1ZVP931KUy0vglJXtxRXXlH9DDVXKTQb31N4XXusFbYih7COX7JCeIYN7iI26uO2ZpwTQ+uJU/xkDF8shA0ES5CBm+i5pa/DBoR9xCOpLy+LnQ+6hHiaE1kWLTd3nlLe3kFfMqczm5L3SJE8aNyEptGznuSNK+Ob/3U=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1e017ef-5d57-47f9-b787-08dd1ec8391a
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 18:25:35.4812
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 18:25:45.8632
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0PaifWD0gGlAorSTc1I0QfyJJtqJOhBrl6lrOG0O2HQsuajqodV33Bg7F7sTlEd3yq3kceanpokXX0vmR4KMZVUnnwQL0WYNANpDxA3T8x1aCe40ZNIC7a9A0hd43Ck8
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH5PR01MB8911
+X-MS-Exchange-CrossTenant-UserPrincipalName: j9ygPLzaIMvhjiy2YBleXT50DSxAYFiaWyYAHXmY3TKGREFS2lHN01+vkYbsHMlh13V0RUEcOize4FSWvRVkCA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4759
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-17_10,2024-12-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ malwarescore=0 bulkscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2411120000 definitions=main-2412170140
+X-Proofpoint-GUID: 7CXciR2KUADn58TbiAmHVGk0swmSVdSQ
+X-Proofpoint-ORIG-GUID: 7CXciR2KUADn58TbiAmHVGk0swmSVdSQ
 
-From: Adam Young <admiyo@os.amperecomputing.com>
+On 12/17/24 10:30 AM, Li Lingfeng wrote:
+> Hi,
+> after analysis, we think that this issue is not introduced by commit
+> 2d4a532d385f ("nfsd: ensure that clp->cl_revoked list is protected by
+> clp->cl_lock") but by commit 83e733161fde ("nfsd: avoid race after
+> unhash_delegation_locked()").
+> Therefore, kernel versions earlier than 6.9 do not involve this issue.
 
-Implementation of network driver for
-Management Control Transport Protocol(MCTP) over
-Platform Communication Channel(PCC)
+A more practical question is: has anyone reproduced the reported crash
+on a pre-v6.9 kernel?
 
-DMTF DSP:0292
-https://www.dmtf.org/sites/default/files/standards/documents/DSP0292_1.0.0WIP50.pdf
+I recall (dimly) that we knew that 8dd91e8d31fe ("nfsd: fix race between
+laundromat and free_stateid") could not be cleanly applied before v6.9.
+It was less clear at the time whether a more extensive LTS backport
+would be required.
 
-MCTP devices are specified by entries in DSDT/SDST and
-reference channels specified in the PCCT.
 
-Communication with other devices use the PCC based
-doorbell mechanism.
+> // normal case 1 -- free deleg by delegreturn
+> 1) OP_DELEGRETURN
+> nfsd4_delegreturn
+>   nfsd4_lookup_stateid
+>   destroy_delegation
+>    destroy_unhashed_deleg
+>     nfs4_unlock_deleg_lease
+>      vfs_setlease // unlock
+>   nfs4_put_stid // put last refcount
+>    idr_remove // remove from cl_stateids
+>    s->sc_free // free deleg
+> 
+> 2) OP_FREE_STATEID
+> nfsd4_free_stateid
+>   find_stateid_locked // can not find the deleg in cl_stateids
+> 
+> 
+> // normal case 2 -- free deleg by laundromat
+> nfs4_laundromat
+>   state_expired
+>   unhash_delegation_locked // set NFS4_REVOKED_DELEG_STID
+>   list_add // add the deleg to reaplist
+>   list_first_entry // get the deleg from reaplist
+>   revoke_delegation
+>    destroy_unhashed_deleg
+>     nfs4_unlock_deleg_lease
+>     nfs4_put_stid
+> 
+> 
+> // abnormal case
+> nfs4_laundromat
+>   state_expired
+>   unhash_delegation_locked
+>    // set NFS4_REVOKED_DELEG_STID
+>   list_add
+>    // add the deleg to reaplist
+>                                  1) OP_DELEGRETURN
+>                                  nfsd4_delegreturn
+>                                   nfsd4_lookup_stateid
+> nfsd4_stid_check_stateid_generation
+>                                    nfsd4_verify_open_stid
+>                                     // check NFS4_REVOKED_DELEG_STID
+>                                     // and return nfserr_deleg_revoked
+>                                   // skip destroy_delegation
+> 
+>                                  2) OP_FREE_STATEID
+>                                  nfsd4_free_stateid
+>                                   // check NFS4_REVOKED_DELEG_STID
+>                                   list_del_init
+>                                    // remove deleg from reaplist
+>                                   nfs4_put_stid
+>                                    // free deleg
+>   list_first_entry
+>    // cant not get the deleg from reaplist
+> 
+> 
+> Before commit 83e733161fde ("nfsd: avoid race after
+> unhash_delegation_locked()"), nfs4_laundromat --> unhash_delegation_locked
+> would not set NFS4_REVOKED_DELEG_STID for the deleg.
+> So the description "it marks the delegation stid revoked" in the CVE fix
+> patch does not hold true. And the OP_FREE_STATEID operation will not
+> release the deleg.
+> 
+> Thanks.
+> 
+> 在 2024/11/6 1:10, Greg Kroah-Hartman 写道:
+>> Description
+>> ===========
+>>
+>> In the Linux kernel, the following vulnerability has been resolved:
+>>
+>> nfsd: fix race between laundromat and free_stateid
+>>
+>> There is a race between laundromat handling of revoked delegations
+>> and a client sending free_stateid operation. Laundromat thread
+>> finds that delegation has expired and needs to be revoked so it
+>> marks the delegation stid revoked and it puts it on a reaper list
+>> but then it unlock the state lock and the actual delegation revocation
+>> happens without the lock. Once the stid is marked revoked a racing
+>> free_stateid processing thread does the following (1) it calls
+>> list_del_init() which removes it from the reaper list and (2) frees
+>> the delegation stid structure. The laundromat thread ends up not
+>> calling the revoke_delegation() function for this particular delegation
+>> but that means it will no release the lock lease that exists on
+>> the file.
+>>
+>> Now, a new open for this file comes in and ends up finding that
+>> lease list isn't empty and calls nfsd_breaker_owns_lease() which ends
+>> up trying to derefence a freed delegation stateid. Leading to the
+>> followint use-after-free KASAN warning:
+>>
+>> kernel: 
+>> ==================================================================
+>> kernel: BUG: KASAN: slab-use-after-free in 
+>> nfsd_breaker_owns_lease+0x140/0x160 [nfsd]
+>> kernel: Read of size 8 at addr ffff0000e73cd0c8 by task nfsd/6205
+>> kernel:
+>> kernel: CPU: 2 UID: 0 PID: 6205 Comm: nfsd Kdump: loaded Not tainted 
+>> 6.11.0-rc7+ #9
+>> kernel: Hardware name: Apple Inc. Apple Virtualization Generic 
+>> Platform, BIOS 2069.0.0.0.0 08/03/2024
+>> kernel: Call trace:
+>> kernel: dump_backtrace+0x98/0x120
+>> kernel: show_stack+0x1c/0x30
+>> kernel: dump_stack_lvl+0x80/0xe8
+>> kernel: print_address_description.constprop.0+0x84/0x390
+>> kernel: print_report+0xa4/0x268
+>> kernel: kasan_report+0xb4/0xf8
+>> kernel: __asan_report_load8_noabort+0x1c/0x28
+>> kernel: nfsd_breaker_owns_lease+0x140/0x160 [nfsd]
+>> kernel: nfsd_file_do_acquire+0xb3c/0x11d0 [nfsd]
+>> kernel: nfsd_file_acquire_opened+0x84/0x110 [nfsd]
+>> kernel: nfs4_get_vfs_file+0x634/0x958 [nfsd]
+>> kernel: nfsd4_process_open2+0xa40/0x1a40 [nfsd]
+>> kernel: nfsd4_open+0xa08/0xe80 [nfsd]
+>> kernel: nfsd4_proc_compound+0xb8c/0x2130 [nfsd]
+>> kernel: nfsd_dispatch+0x22c/0x718 [nfsd]
+>> kernel: svc_process_common+0x8e8/0x1960 [sunrpc]
+>> kernel: svc_process+0x3d4/0x7e0 [sunrpc]
+>> kernel: svc_handle_xprt+0x828/0xe10 [sunrpc]
+>> kernel: svc_recv+0x2cc/0x6a8 [sunrpc]
+>> kernel: nfsd+0x270/0x400 [nfsd]
+>> kernel: kthread+0x288/0x310
+>> kernel: ret_from_fork+0x10/0x20
+>>
+>> This patch proposes a fixed that's based on adding 2 new additional
+>> stid's sc_status values that help coordinate between the laundromat
+>> and other operations (nfsd4_free_stateid() and nfsd4_delegreturn()).
+>>
+>> First to make sure, that once the stid is marked revoked, it is not
+>> removed by the nfsd4_free_stateid(), the laundromat take a reference
+>> on the stateid. Then, coordinating whether the stid has been put
+>> on the cl_revoked list or we are processing FREE_STATEID and need to
+>> make sure to remove it from the list, each check that state and act
+>> accordingly. If laundromat has added to the cl_revoke list before
+>> the arrival of FREE_STATEID, then nfsd4_free_stateid() knows to remove
+>> it from the list. If nfsd4_free_stateid() finds that operations arrived
+>> before laundromat has placed it on cl_revoke list, it marks the state
+>> freed and then laundromat will no longer add it to the list.
+>>
+>> Also, for nfsd4_delegreturn() when looking for the specified stid,
+>> we need to access stid that are marked removed or freeable, it means
+>> the laundromat has started processing it but hasn't finished and this
+>> delegreturn needs to return nfserr_deleg_revoked and not
+>> nfserr_bad_stateid. The latter will not trigger a FREE_STATEID and the
+>> lack of it will leave this stid on the cl_revoked list indefinitely.
+>>
+>> The Linux kernel CVE team has assigned CVE-2024-50106 to this issue.
+>>
+>>
+>> Affected and fixed versions
+>> ===========================
+>>
+>>     Issue introduced in 3.17 with commit 2d4a532d385f and fixed in 
+>> 6.11.6 with commit 967faa26f313
+>>     Issue introduced in 3.17 with commit 2d4a532d385f and fixed in 
+>> 6.12-rc5 with commit 8dd91e8d31fe
+>>
+>> Please see https://www.kernel.org for a full list of currently supported
+>> kernel versions by the kernel community.
+>>
+>> Unaffected versions might change over time as fixes are backported to
+>> older supported kernel versions.  The official CVE entry at
+>>     https://cve.org/CVERecord/?id=CVE-2024-50106
+>> will be updated if fixes are backported, please check that for the most
+>> up to date information about this issue.
+>>
+>>
+>> Affected files
+>> ==============
+>>
+>> The file(s) affected by this issue are:
+>>     fs/nfsd/nfs4state.c
+>>     fs/nfsd/state.h
+>>
+>>
+>> Mitigation
+>> ==========
+>>
+>> The Linux kernel CVE team recommends that you update to the latest
+>> stable kernel version for this, and many other bugfixes.  Individual
+>> changes are never tested alone, but rather are part of a larger kernel
+>> release.  Cherry-picking individual commits is not recommended or
+>> supported by the Linux kernel community at all.  If however, updating to
+>> the latest release is impossible, the individual changes to resolve this
+>> issue can be found at these commits:
+>>     https://git.kernel.org/stable/ 
+>> c/967faa26f313a62e7bebc55d5b8122eaee43b929
+>>     https://git.kernel.org/stable/ 
+>> c/8dd91e8d31febf4d9cca3ae1bb4771d33ae7ee5a
 
-Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
----
- drivers/net/mctp/Kconfig    |  13 ++
- drivers/net/mctp/Makefile   |   1 +
- drivers/net/mctp/mctp-pcc.c | 320 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 334 insertions(+)
- create mode 100644 drivers/net/mctp/mctp-pcc.c
 
-diff --git a/drivers/net/mctp/Kconfig b/drivers/net/mctp/Kconfig
-index 15860d6ac39f..073eb2a21841 100644
---- a/drivers/net/mctp/Kconfig
-+++ b/drivers/net/mctp/Kconfig
-@@ -47,6 +47,19 @@ config MCTP_TRANSPORT_I3C
- 	  A MCTP protocol network device is created for each I3C bus
- 	  having a "mctp-controller" devicetree property.
- 
-+config MCTP_TRANSPORT_PCC
-+	tristate "MCTP PCC transport"
-+	depends on ACPI
-+	help
-+	  Provides a driver to access MCTP devices over PCC transport,
-+	  A MCTP protocol network device is created via ACPI for each
-+	  entry in the DST/SDST that matches the identifier. The Platform
-+	  communication channels are selected from the corresponding
-+	  entries in the PCCT.
-+
-+	  Say y here if you need to connect to MCTP endpoints over PCC. To
-+	  compile as a module, use m; the module will be called mctp-pcc.
-+
- endmenu
- 
- endif
-diff --git a/drivers/net/mctp/Makefile b/drivers/net/mctp/Makefile
-index e1cb99ced54a..492a9e47638f 100644
---- a/drivers/net/mctp/Makefile
-+++ b/drivers/net/mctp/Makefile
-@@ -1,3 +1,4 @@
-+obj-$(CONFIG_MCTP_TRANSPORT_PCC) += mctp-pcc.o
- obj-$(CONFIG_MCTP_SERIAL) += mctp-serial.o
- obj-$(CONFIG_MCTP_TRANSPORT_I2C) += mctp-i2c.o
- obj-$(CONFIG_MCTP_TRANSPORT_I3C) += mctp-i3c.o
-diff --git a/drivers/net/mctp/mctp-pcc.c b/drivers/net/mctp/mctp-pcc.c
-new file mode 100644
-index 000000000000..6a29b164f208
---- /dev/null
-+++ b/drivers/net/mctp/mctp-pcc.c
-@@ -0,0 +1,320 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * mctp-pcc.c - Driver for MCTP over PCC.
-+ * Copyright (c) 2024, Ampere Computing LLC
-+ */
-+
-+/* Implementation of MCTP over PCC DMTF Specification DSP0256
-+ * https://www.dmtf.org/sites/default/files/standards/documents/DSP0256_2.0.0WIP50.pdf
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/if_arp.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/netdevice.h>
-+#include <linux/platform_device.h>
-+#include <linux/string.h>
-+
-+#include <acpi/acpi_bus.h>
-+#include <acpi/acpi_drivers.h>
-+#include <acpi/acrestyp.h>
-+#include <acpi/actbl.h>
-+#include <net/mctp.h>
-+#include <net/mctpdevice.h>
-+#include <acpi/pcc.h>
-+
-+#define MCTP_PAYLOAD_LENGTH     256
-+#define MCTP_CMD_LENGTH         4
-+#define MCTP_PCC_VERSION        0x1 /* DSP0253 defines a single version: 1 */
-+#define MCTP_SIGNATURE          "MCTP"
-+#define MCTP_SIGNATURE_LENGTH   (sizeof(MCTP_SIGNATURE) - 1)
-+#define MCTP_HEADER_LENGTH      12
-+#define MCTP_MIN_MTU            68
-+#define PCC_MAGIC               0x50434300
-+#define PCC_HEADER_FLAG_REQ_INT 0x1
-+#define PCC_HEADER_FLAGS        PCC_HEADER_FLAG_REQ_INT
-+#define PCC_DWORD_TYPE          0x0c
-+
-+struct mctp_pcc_hdr {
-+	__be32 signature;
-+	__be32 flags;
-+	__be32 length;
-+	char mctp_signature[MCTP_SIGNATURE_LENGTH];
-+};
-+
-+struct mctp_pcc_mailbox {
-+	u32 index;
-+	struct pcc_mbox_chan *chan;
-+	struct mbox_client client;
-+};
-+
-+/* The netdev structure. One of these per PCC adapter. */
-+struct mctp_pcc_ndev {
-+	/* spinlock to serialize access to PCC outbox buffer and registers
-+	 * Note that what PCC calls registers are memory locations, not CPU
-+	 * Registers.  They include the fields used to synchronize access
-+	 * between the OS and remote endpoints.
-+	 *
-+	 * Only the Outbox needs a spinlock, to prevent multiple
-+	 * sent packets triggering multiple attempts to over write
-+	 * the outbox.  The Inbox buffer is controlled by the remote
-+	 * service and a spinlock would have no effect.
-+	 */
-+	spinlock_t lock;
-+	struct mctp_dev mdev;
-+	struct acpi_device *acpi_device;
-+	struct mctp_pcc_mailbox inbox;
-+	struct mctp_pcc_mailbox outbox;
-+};
-+
-+static void mctp_pcc_client_rx_callback(struct mbox_client *c, void *buffer)
-+{
-+	struct mctp_pcc_ndev *mctp_pcc_ndev;
-+	struct mctp_pcc_hdr mctp_pcc_hdr;
-+	struct pcpu_dstats *dstats;
-+	struct mctp_skb_cb *cb;
-+	struct sk_buff *skb;
-+	void *skb_buf;
-+	u32 data_len;
-+
-+	mctp_pcc_ndev = container_of(c, struct mctp_pcc_ndev, inbox.client);
-+	memcpy_fromio(&mctp_pcc_hdr, mctp_pcc_ndev->inbox.chan->shmem,
-+		      sizeof(struct mctp_pcc_hdr));
-+	data_len = mctp_pcc_hdr.length + MCTP_HEADER_LENGTH;
-+	skb = netdev_alloc_skb(mctp_pcc_ndev->mdev.dev, data_len);
-+
-+	dstats = this_cpu_ptr(mctp_pcc_ndev->mdev.dev->dstats);
-+	u64_stats_update_begin(&dstats->syncp);
-+	if (data_len > mctp_pcc_ndev->mdev.dev->mtu) {
-+		u64_stats_inc(&dstats->rx_drops);
-+		u64_stats_inc(&dstats->rx_drops);
-+		u64_stats_update_end(&dstats->syncp);
-+		return;
-+	}
-+	if (!skb) {
-+		u64_stats_inc(&dstats->rx_drops);
-+		u64_stats_update_end(&dstats->syncp);
-+		return;
-+	}
-+	u64_stats_inc(&dstats->rx_packets);
-+	u64_stats_add(&dstats->rx_bytes, data_len);
-+	u64_stats_update_end(&dstats->syncp);
-+
-+	skb->protocol = htons(ETH_P_MCTP);
-+	skb_buf = skb_put(skb, data_len);
-+	memcpy_fromio(skb_buf, mctp_pcc_ndev->inbox.chan->shmem, data_len);
-+
-+	skb_reset_mac_header(skb);
-+	skb_pull(skb, sizeof(struct mctp_pcc_hdr));
-+	skb_reset_network_header(skb);
-+	cb = __mctp_cb(skb);
-+	cb->halen = 0;
-+	netif_rx(skb);
-+}
-+
-+static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
-+{
-+	struct mctp_pcc_ndev *mpnd = netdev_priv(ndev);
-+	struct mctp_pcc_hdr  *mctp_pcc_header;
-+	struct pcpu_dstats *dstats;
-+	void __iomem *buffer;
-+	unsigned long flags;
-+	int len = skb->len;
-+
-+	dstats = this_cpu_ptr(ndev->dstats);
-+	u64_stats_update_begin(&dstats->syncp);
-+	u64_stats_inc(&dstats->tx_packets);
-+	u64_stats_add(&dstats->tx_bytes, skb->len);
-+	u64_stats_update_end(&dstats->syncp);
-+
-+	spin_lock_irqsave(&mpnd->lock, flags);
-+	mctp_pcc_header = skb_push(skb, sizeof(struct mctp_pcc_hdr));
-+	buffer = mpnd->outbox.chan->shmem;
-+	mctp_pcc_header->signature = PCC_MAGIC | mpnd->outbox.index;
-+	mctp_pcc_header->flags = PCC_HEADER_FLAGS;
-+	memcpy(mctp_pcc_header->mctp_signature, MCTP_SIGNATURE,
-+	       MCTP_SIGNATURE_LENGTH);
-+	mctp_pcc_header->length = len + MCTP_SIGNATURE_LENGTH;
-+
-+	memcpy_toio(buffer, skb->data, skb->len);
-+	mpnd->outbox.chan->mchan->mbox->ops->send_data(mpnd->outbox.chan->mchan,
-+						    NULL);
-+	spin_unlock_irqrestore(&mpnd->lock, flags);
-+
-+	dev_consume_skb_any(skb);
-+	return NETDEV_TX_OK;
-+}
-+
-+static const struct net_device_ops mctp_pcc_netdev_ops = {
-+	.ndo_start_xmit = mctp_pcc_tx,
-+};
-+
-+static void  mctp_pcc_setup(struct net_device *ndev)
-+{
-+	ndev->type = ARPHRD_MCTP;
-+	ndev->hard_header_len = 0;
-+	ndev->tx_queue_len = 0;
-+	ndev->flags = IFF_NOARP;
-+	ndev->netdev_ops = &mctp_pcc_netdev_ops;
-+	ndev->needs_free_netdev = true;
-+	ndev->pcpu_stat_type = NETDEV_PCPU_STAT_DSTATS;
-+}
-+
-+struct mctp_pcc_lookup_context {
-+	int index;
-+	u32 inbox_index;
-+	u32 outbox_index;
-+};
-+
-+static acpi_status lookup_pcct_indices(struct acpi_resource *ares,
-+				       void *context)
-+{
-+	struct  mctp_pcc_lookup_context *luc = context;
-+	struct acpi_resource_address32 *addr;
-+
-+	switch (ares->type) {
-+	case PCC_DWORD_TYPE:
-+		break;
-+	default:
-+		return AE_OK;
-+	}
-+
-+	addr = ACPI_CAST_PTR(struct acpi_resource_address32, &ares->data);
-+	switch (luc->index) {
-+	case 0:
-+		luc->outbox_index = addr[0].address.minimum;
-+		break;
-+	case 1:
-+		luc->inbox_index = addr[0].address.minimum;
-+		break;
-+	}
-+	luc->index++;
-+	return AE_OK;
-+}
-+
-+static void mctp_cleanup_netdev(void *data)
-+{
-+	struct net_device *ndev = data;
-+
-+	mctp_unregister_netdev(ndev);
-+}
-+
-+static void mctp_cleanup_channel(void *data)
-+{
-+	struct pcc_mbox_chan *chan = data;
-+
-+	pcc_mbox_free_channel(chan);
-+}
-+
-+static int mctp_pcc_initialize_mailbox(struct device *dev,
-+				       struct mctp_pcc_mailbox *box, u32 index)
-+{
-+	int ret;
-+
-+	box->index = index;
-+	box->chan = pcc_mbox_request_channel(&box->client, index);
-+	if (IS_ERR(box->chan))
-+		return PTR_ERR(box->chan);
-+	devm_add_action_or_reset(dev, mctp_cleanup_channel, box->chan);
-+	ret = pcc_mbox_ioremap(box->chan->mchan);
-+	if (ret)
-+		return -EINVAL;
-+	return 0;
-+}
-+
-+static int mctp_pcc_driver_add(struct acpi_device *acpi_dev)
-+{
-+	struct mctp_pcc_lookup_context context = {0, 0, 0};
-+	struct mctp_pcc_ndev *mctp_pcc_ndev;
-+	struct device *dev = &acpi_dev->dev;
-+	struct net_device *ndev;
-+	acpi_handle dev_handle;
-+	acpi_status status;
-+	int mctp_pcc_mtu;
-+	char name[32];
-+	int rc;
-+
-+	dev_dbg(dev, "Adding mctp_pcc device for HID %s\n",
-+		acpi_device_hid(acpi_dev));
-+	dev_handle = acpi_device_handle(acpi_dev);
-+	status = acpi_walk_resources(dev_handle, "_CRS", lookup_pcct_indices,
-+				     &context);
-+	if (!ACPI_SUCCESS(status)) {
-+		dev_err(dev, "FAILURE to lookup PCC indexes from CRS\n");
-+		return -EINVAL;
-+	}
-+
-+	//inbox initialization
-+	snprintf(name, sizeof(name), "mctpipcc%d", context.inbox_index);
-+	ndev = alloc_netdev(sizeof(struct mctp_pcc_ndev), name, NET_NAME_ENUM,
-+			    mctp_pcc_setup);
-+	if (!ndev)
-+		return -ENOMEM;
-+
-+	mctp_pcc_ndev = netdev_priv(ndev);
-+	rc =  devm_add_action_or_reset(dev, mctp_cleanup_netdev, ndev);
-+	if (rc)
-+		goto cleanup_netdev;
-+	spin_lock_init(&mctp_pcc_ndev->lock);
-+
-+	rc = mctp_pcc_initialize_mailbox(dev, &mctp_pcc_ndev->inbox,
-+					 context.inbox_index);
-+	if (rc)
-+		goto cleanup_netdev;
-+	mctp_pcc_ndev->inbox.client.rx_callback = mctp_pcc_client_rx_callback;
-+
-+	//outbox initialization
-+	rc = mctp_pcc_initialize_mailbox(dev, &mctp_pcc_ndev->outbox,
-+					 context.outbox_index);
-+	if (rc)
-+		goto cleanup_netdev;
-+
-+	mctp_pcc_ndev->acpi_device = acpi_dev;
-+	mctp_pcc_ndev->inbox.client.dev = dev;
-+	mctp_pcc_ndev->outbox.client.dev = dev;
-+	mctp_pcc_ndev->mdev.dev = ndev;
-+	acpi_dev->driver_data = mctp_pcc_ndev;
-+
-+	/* There is no clean way to pass the MTU to the callback function
-+	 * used for registration, so set the values ahead of time.
-+	 */
-+	mctp_pcc_mtu = mctp_pcc_ndev->outbox.chan->shmem_size -
-+		sizeof(struct mctp_pcc_hdr);
-+	ndev->mtu = MCTP_MIN_MTU;
-+	ndev->max_mtu = mctp_pcc_mtu;
-+	ndev->min_mtu = MCTP_MIN_MTU;
-+
-+	/* ndev needs to be freed before the iomemory (mapped above) gets
-+	 * unmapped,  devm resources get freed in reverse to the order they
-+	 * are added.
-+	 */
-+	rc = register_netdev(ndev);
-+	return rc;
-+cleanup_netdev:
-+	free_netdev(ndev);
-+	return rc;
-+}
-+
-+static const struct acpi_device_id mctp_pcc_device_ids[] = {
-+	{ "DMT0001"},
-+	{}
-+};
-+
-+static struct acpi_driver mctp_pcc_driver = {
-+	.name = "mctp_pcc",
-+	.class = "Unknown",
-+	.ids = mctp_pcc_device_ids,
-+	.ops = {
-+		.add = mctp_pcc_driver_add,
-+	},
-+};
-+
-+module_acpi_driver(mctp_pcc_driver);
-+
-+MODULE_DEVICE_TABLE(acpi, mctp_pcc_device_ids);
-+
-+MODULE_DESCRIPTION("MCTP PCC ACPI device");
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Adam Young <admiyo@os.amperecomputing.com>");
 -- 
-2.43.0
-
+Chuck Lever
 
