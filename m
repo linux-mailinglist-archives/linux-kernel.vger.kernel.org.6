@@ -1,166 +1,173 @@
-Return-Path: <linux-kernel+bounces-449802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592DF9F564D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:33:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A259F5652
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7577A7A37A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:33:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8D817A3A3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678B11FBCAF;
-	Tue, 17 Dec 2024 18:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC451598F4;
+	Tue, 17 Dec 2024 18:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6Kv27+R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="mAVt18oh"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAE21FAC53;
-	Tue, 17 Dec 2024 18:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EFB442F
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 18:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734460206; cv=none; b=KYk/yTpEXcpA8q37MdzzpRbXYIji01CuoABEy0omzoDgpemrSlK9n1sU/HqZG7pYwiks09Ailcu0zLek1gbYpam3ZkrnPGUj+9Oj+pvo9nLnsUqll01NYZIkEefbROlyvdlHXnSNA1tzyF1oMefmTjB6BKdFdOI5M+V4+tV4yyk=
+	t=1734460269; cv=none; b=guj5KTWmH7Ih65ac4DrvdwhUICCP1ogHO2czHd1EMx9eD4TeYUMT+s+9lUEYuaFtDTialjvndUtJH+y34vCxzVoOxSW2V5MV4spRaZQkWaybGsHeFxqf8cqkLUZPhCsveStQSOo9DxoY3YRNR91Glerhy1kxCs7/SQmEXfA5hUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734460206; c=relaxed/simple;
-	bh=6NgFV7+SLJHkzCci3gNbm7cBYHWTyZIkNamwDIlbLeY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bj6HiztUGL39yxOUV/zzs8LHw7kcroQFEP5yfrXmmVy+nwmnyZ/+4M9TpiJ3a0W0cY1QmPrtBQWlqpb43catXnn5MPco1XktayKkFMdmuL8F7UAqY1gQ9wU5l3IZaRqyDbKR39rKyGIlQ0qj3Fb5jSel4PlrHIpuO7/9xQSkVZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s6Kv27+R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEDBC4CED7;
-	Tue, 17 Dec 2024 18:30:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734460206;
-	bh=6NgFV7+SLJHkzCci3gNbm7cBYHWTyZIkNamwDIlbLeY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=s6Kv27+RnXSPrl2jQCg0fkmNWjHVSiB/hAypqxFY66hSV7caMFNcFSK9tefnE2j9D
-	 4VbA1/GbM9ZVKy8tWqx699sdcqv9NCX8Pbgz/cDonCQ1O4uhOltf/ng8vOftMg8qLI
-	 lmxKzV9+CUUzhx85La7dhEaQgYdecAI5Ogz0N/F6chL7REarIP7YADQY4s+x45YeFH
-	 vV5ptlSjGSqA+RYyXOk99DPYju/HT35KkViwL5WI2VvpjJK6uNHYY5ZLa1KLPSUkk7
-	 xMfjlLKxelpJ/H5zZtseSfB/nl/OowQ7AE/vSLMPBeemE+TXvoPmt90w9y20mhLuQh
-	 bglrtOGwWgJRA==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Tue, 17 Dec 2024 19:29:43 +0100
-Subject: [PATCH v4 9/9] blk-mq: issue warning when offlining hctx with
- online isolcpus
+	s=arc-20240116; t=1734460269; c=relaxed/simple;
+	bh=Pe6tvbhsMmToE+mb1CKNBDUIKPcCIvGQehInaITBRSg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A5HqOz7Z4Z8Fp8wlAuUoNa4hJwblD9wkXsZtedDcck9YYuSC4RNqH4uN4w6dPBKRBfe8gc9/N82lr+/BRXU/XL0y3TAkWsVWfKq0GYKovyrgBuGrU0CuDdZhudaxwg22dqtJ0qY4YuxrXQoq2idcRXCNgAi36kdvSCVvs4LhdPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=mAVt18oh; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
+	by cmsmtp with ESMTPS
+	id NE1XtdprYvH7lNcLTtLeDs; Tue, 17 Dec 2024 18:31:00 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id NcLStobmOWvXpNcLTt9HSr; Tue, 17 Dec 2024 18:30:59 +0000
+X-Authority-Analysis: v=2.4 cv=LtdZyWdc c=1 sm=1 tr=0 ts=6761c363
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
+ a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7T7KSl7uo7wA:10 a=NEAV23lmAAAA:8
+ a=_Wotqz80AAAA:8 a=VwQbUJbxAAAA:8 a=Eymyif60OLRgAUHZ3uAA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=buJP51TR1BpY-zbLSsyS:22 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=E2r8Z9qRGeJk2+J3GMCUCiaRUUtYxFm6EV4/xEqs6Fg=; b=mAVt18ohtS0DMAjMZPXetI/HfX
+	TouWZY9yaGjH2qj1txnaY+qsuiZnYDbaSi6nulYgSXo41wWXAO4dUeQuxAULAJI90MsXDroCQMqM/
+	s3Btq9PysEbDnNeHiXpyjunMCceryvc1OCOSBpBO84cWF3Ksxk+ryqNScvpucJIFrD9zZOE/SiOyQ
+	4P6zGezbDP0385nZ2T5iP2BJHIrEwYo1P8c8Wt4Z9K5uaxYIKhdkvX4ysxxhcZzCRD/Tuj8gZg4ik
+	iMSBFKAWZ94dk3PhFgI8Z4+zsG5nnGle/zni3te70RMW7GyLGdiRuG6NLZgEyExnKEwlOhmw5jtC2
+	ln+oR60g==;
+Received: from [177.238.21.80] (port=16484 helo=[192.168.0.21])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1tNcLR-001oj4-2N;
+	Tue, 17 Dec 2024 12:30:57 -0600
+Message-ID: <49add42f-42d9-4f34-b4ad-cff31e473f40@embeddedor.com>
+Date: Tue, 17 Dec 2024 12:30:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-isolcpus-io-queues-v4-9-5d355fbb1e14@kernel.org>
-References: <20241217-isolcpus-io-queues-v4-0-5d355fbb1e14@kernel.org>
-In-Reply-To: <20241217-isolcpus-io-queues-v4-0-5d355fbb1e14@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
- Kashyap Desai <kashyap.desai@broadcom.com>, 
- Sumit Saxena <sumit.saxena@broadcom.com>, 
- Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, 
- Chandrakanth patil <chandrakanth.patil@broadcom.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, 
- Don Brace <don.brace@microchip.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
- Jason Wang <jasowang@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
- Stefan Hajnoczi <stefanha@redhat.com>, 
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Costa Shulyupin <costa.shul@redhat.com>, 
- Juri Lelli <juri.lelli@redhat.com>, 
- Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, 
- Ming Lei <ming.lei@redhat.com>, 
- =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
- Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
- Hannes Reinecke <hare@suse.de>, 
- Sridhar Balaraman <sbalaraman@parallelwireless.com>, 
- "brookxu.cn" <brookxu.cn@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
- megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
- storagedev@microchip.com, virtualization@lists.linux.dev, 
- Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] UAPI: net/sched: Open-code __struct_group() in flex
+ struct tc_u32_sel
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Kees Cook <kees@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ cferris@google.com, Jamal Hadi Salim <jhs@mojatatu.com>,
+ Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ netdev@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20241217025950.work.601-kees@kernel.org>
+ <f4947447-aa66-470c-a48d-06ed77be58da@intel.com>
+ <bbed49c7-56c0-4642-afec-e47b14425f76@embeddedor.com>
+ <c49d316d-ce8f-43d4-8116-80c760e38a6b@intel.com>
+ <ff680866-b81f-48c1-8a59-1107b4ce14ff@embeddedor.com>
+ <b9a20b9e-c871-451d-8b16-0704eec27329@intel.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <b9a20b9e-c871-451d-8b16-0704eec27329@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.21.80
+X-Source-L: No
+X-Exim-ID: 1tNcLR-001oj4-2N
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:16484
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBJ5Vhu1ri58UTYPGlgPTdUiHCae1WYSR6Zu68StlHLgJ5pUSCsFtZvXIVi3MTLQERCqIM8W/yuIuBEutjlgS7qO1aXj9FmOBF4kFGQozF52Fr62fw5O
+ GQoCNJ54ibtj6ZwGZuofm+UaiT4n54vyHEM4P8Zam6P9gNVKRpEc0S0KmDBnrRwQozQffy48JATSOz+Tnvz3D6+j11zhZiwCTB+sRw840Ww+0ZiTlpw6UYSd
 
-When we offlining a hardware context which also serves isolcpus mapped
-to it, any IO issued by the isolcpus will stall as there is nothing
-which handles the interrupts etc.
 
-This configuration/setup is not supported at this point thus just issue
-a warning.
 
-Signed-off-by: Daniel Wagner <wagi@kernel.org>
----
- block/blk-mq.c | 43 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+On 17/12/24 10:54, Alexander Lobakin wrote:
+> From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Date: Tue, 17 Dec 2024 10:25:29 -0600
+> 
+>>
+>>
+>> On 17/12/24 10:04, Alexander Lobakin wrote:
+>>> From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>> Date: Tue, 17 Dec 2024 09:58:28 -0600
+>>>
+>>>>
+>>>>
+>>>> On 17/12/24 08:55, Alexander Lobakin wrote:
+>>>>> From: Kees Cook <kees@kernel.org>
+>>>>> Date: Mon, 16 Dec 2024 18:59:55 -0800
+>>>>>
+>>>>>> This switches to using a manually constructed form of struct tagging
+>>>>>> to avoid issues with C++ being unable to parse tagged structs within
+>>>>>> anonymous unions, even under 'extern "C"':
+>>>>>>
+>>>>>>      ../linux/include/uapi/linux/pkt_cls.h:25124: error: ‘struct
+>>>>>> tc_u32_sel::<unnamed union>::tc_u32_sel_hdr,’ invalid; an anonymous
+>>>>>> union may only have public non-static data members [-fpermissive]
+>>>>>
+>>>>> I worked around that like this in the past: [0]
+>>>>> As I'm not sure it would be fine to fix every such occurrence manually
+>>>>> by open-coding.
+>>>>> What do you think?
+>>>>
+>>>> The thing is that, in this particular case, we need a struct tag to
+>>>> change
+>>>> the type of an object in another struct. See:
+>>>
+>>> But the fix I mentioned still allows you to specify a tag in C code...
+>>> cxgb4 is for sure not C++.
+>>
+>>
+>> Oh yes, I see what you mean. If it works, then you should probably
+>> submit that
+>> patch upstream. :)
+> 
+> I added it to my CI tree and will wait for a report (24-36 hrs) before
+> sending. In the meantime, feel free to test whether it solves your issue
+> and give a Tested-by (or an error report :)).
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index de15c0c76f874a2a863b05a23e0f3dba20cb6488..f9af0f5dd6aac8da855777acf2ffc61128f15a74 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3619,6 +3619,45 @@ static bool blk_mq_hctx_has_requests(struct blk_mq_hw_ctx *hctx)
- 	return data.has_rq;
- }
- 
-+static void blk_mq_hctx_check_isolcpus_online(struct blk_mq_hw_ctx *hctx, unsigned int cpu)
-+{
-+	const struct cpumask *hk_mask;
-+	int i;
-+
-+	if (!housekeeping_enabled(HK_TYPE_MANAGED_IRQ))
-+		return;
-+
-+	hk_mask = housekeeping_cpumask(HK_TYPE_MANAGED_IRQ);
-+
-+	for (i = 0; i < hctx->nr_ctx; i++) {
-+		struct blk_mq_ctx *ctx = hctx->ctxs[i];
-+
-+		if (ctx->cpu == cpu)
-+			continue;
-+
-+		/*
-+		 * Check if this context has at least one online
-+		 * housekeeping CPU in this case the hardware context is
-+		 * usable.
-+		 */
-+		if (cpumask_test_cpu(ctx->cpu, hk_mask) &&
-+		    cpu_online(ctx->cpu))
-+			break;
-+
-+		/*
-+		 * The context doesn't have any online housekeeping CPUs
-+		 * but there might be an online isolated CPU mapped to
-+		 * it.
-+		 */
-+		if (cpu_is_offline(ctx->cpu))
-+			continue;
-+
-+		pr_warn("%s: offlining hctx%d but there is still an online isolcpu CPU %d mapped to it, IO stalls expected\n",
-+			hctx->queue->disk->disk_name,
-+			hctx->queue_num, ctx->cpu);
-+	}
-+}
-+
- static bool blk_mq_hctx_has_online_cpu(struct blk_mq_hw_ctx *hctx,
- 		unsigned int this_cpu)
- {
-@@ -3638,8 +3677,10 @@ static bool blk_mq_hctx_has_online_cpu(struct blk_mq_hw_ctx *hctx,
- 			continue;
- 
- 		/* this hctx has at least one online CPU */
--		if (this_cpu != cpu)
-+		if (this_cpu != cpu) {
-+			blk_mq_hctx_check_isolcpus_online(hctx, this_cpu);
- 			return true;
-+		}
- 	}
- 
- 	return false;
+Hopefully, Christopher can confirm whether this[0] resolves the issue he's seeing.
 
--- 
-2.47.1
+> 
+> BTW, I mentioned in the commit message back in 2022 that some C++
+> standards support tagged structs with anonymous unions (I don't remember
+> that already). Would it make sense to use a separate #define not for the
+> whole __cplusplus, but only for certain standards?
 
+I'd say entirely preventing C++ from seeing the tag is cleaner and safer for
+now.
+
+Thanks
+-Gustavo
+
+[0] https://github.com/alobakin/linux/commit/2a065c7bae821f5fa85fff6f97fbbd460f4aa0f3
 
