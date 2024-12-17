@@ -1,239 +1,89 @@
-Return-Path: <linux-kernel+bounces-449830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496799F56AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:04:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36959F56AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:07:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E0D18939DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:04:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 640EC7A2BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21401F9405;
-	Tue, 17 Dec 2024 19:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Qi1/LXSx"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C9E1F8EF4;
+	Tue, 17 Dec 2024 19:07:17 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CC01F76DA
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB4813EFF3;
+	Tue, 17 Dec 2024 19:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734462252; cv=none; b=pjKGV2t6BX81WPIKn+JDxzERRzDbqcfs9FzdxhDhWeuyQjK3MKpav2aK1IhuslEPweB8lS6wYRQw1+G8tohOmtvTi3mtBKArUHc8Av4f6b58oCQK+B1iHYj/lDETDsj4IvWHiZs3JYYJfuyk83blDUK3WtZBdXED6mGrP7YHUAw=
+	t=1734462436; cv=none; b=IaePuqJBykNDeJpkQoLqkhi8nGbvUKcJ4aXuTFU2WFiwd9NAtKBUt6gtWcGoolEcD/J7mPfU2NrjpIStRM08Qy4fwMFwTt5Bhc+j2yG6fgDmxTdohJyDcRqPJXILHlsdAJv0obZ5UDMOCEIhsfMSzKt5Lo3okqiyPUwKfb5RWjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734462252; c=relaxed/simple;
-	bh=jPr1fiLzQKQshsYCM0HhYICbbGSGu9nt2W3zqbl1eic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ucKdvChfl4UNsVc8rNVYL/PBO1q8pWMXsAxKTScB3Iswz7oA8hgkxk4+cBidZdeZN1ai7lw6+/htd2FtuRwQYzxpISMEJTI9kfnP+sAip5L/KkGh/vG0/CgNKhH2fWEgF2F9jTtOkaFE+27S/l5GNhWO53RnnVv6DXoc/ePNazw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Qi1/LXSx; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-725abf74334so4981841b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:04:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1734462248; x=1735067048; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tKJBJiI/cCQJDsqcNpZzhWufhzaH41z5oYV6DpzM/Eo=;
-        b=Qi1/LXSxWPo79F5K6WUx2Ss7OFHrPz/PPHnucDSKChfuL/04x2EMlDpK2ty3Q5hfOi
-         LRwg/o3BKHsmPU70aHViEotPWYiNy9Dx15+jlZNPrTpW/0YJsY9IG8qQZ81E95fPgmfB
-         2iMTk70oBue4mk3pLkuU6ZO5d6+VM2lLULwI0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734462248; x=1735067048;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKJBJiI/cCQJDsqcNpZzhWufhzaH41z5oYV6DpzM/Eo=;
-        b=cdG3/p8J7PTn8bRx5l+VLGqGbpnFOgroGjp8VtBQapJqt7/U4bmCqT9ikzhDBa/eK4
-         JBEmby4Q+qE+8xGUe8tobRqy5LxqY97JVKm0jKBznRY9UMs3oh/3IzB9EfYGQndv7VHB
-         9qxxm0Pd71lVPzYsMj5H5IgTHH1mzDCOoIE3R2rC7GRCWQ4206s8soXXY9LTKnfgnOIG
-         IFJUTSVm7jKOvyYmTOdd+LUVWG+c6PUOKpepNKjtkDB7++FqXqt6TF2os9vLYB7IQnYt
-         7D+KSazeWfxqDtuEMuuJC/X5eXc81NRWeM6O+TeILmEr/bShnMtiCGjhkiUjukG1Ptvl
-         5DrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Huy0y4AAP/2DyLMhNIJq2ZHowI/CBpt9OT3whhCslMpThov3mpFwmmsOw8tI18jE/Xs0Y3rCY7wwW9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwOW3MIZ0HZK/zwlXNK6bixXjFzuhBNRCbdhOOTpCO5vuwhBto
-	+TR8SW/Wrxg5x2xCoFnMLgxn1uRhJWgHZ5kOH2XvxvRaQfKseDPwWuMXjWiZDok=
-X-Gm-Gg: ASbGncsK5h3THSIwA1vtz/zJdEajhMTuTmLrHZFVvIzzFjynBx5s1Uj2PLEAPHeWcJw
-	BHsmAGrKDxajMd/yZwDanl8Ub2IZhCZw0TrFQmhNQDmtr/1TblKaqzjB+2Gi+K8zKtqwPUnz23Z
-	SThN7qquntUiy+Whzft3mdI4W0C8OwB5TeHKMzyG2nOs4TCHJRv/U7ekfaPhX8PhwT0Dw8k+lmJ
-	oSkcDhyKJqVBQE+bi24x2qI4hfQr2qs1Nr6ALebs2aIvRTg8a62vUSMHJXxUFFUp/XTAhdhUovx
-	wDDEw1AO8nGQuU2QoH8fel8=
-X-Google-Smtp-Source: AGHT+IE+GB/uOPJugYId7Ak0rCgLL5JK0sjF/ExW6l2pU/DIdUf+9Oge4ycpx+fvSa4yS9mkavnIgA==
-X-Received: by 2002:a05:6a21:78a7:b0:1dc:37a:8dc0 with SMTP id adf61e73a8af0-1e5b48228b3mr227465637.21.1734462248303;
-        Tue, 17 Dec 2024 11:04:08 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918b790a6sm7240393b3a.128.2024.12.17.11.04.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 11:04:07 -0800 (PST)
-Date: Tue, 17 Dec 2024 11:04:04 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: admiyo@os.amperecomputing.com
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH v9 1/1] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <Z2HLJD8z3wFNvnlV@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	admiyo@os.amperecomputing.com,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-References: <20241217182528.108062-1-admiyo@os.amperecomputing.com>
- <20241217182528.108062-2-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1734462436; c=relaxed/simple;
+	bh=nwUc8PRvDlPDZ/wjrfTuqf6oRv/lHr4t2YSfVdA1iKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WLcTHElj7SaIa3hverWapV5k24reL73q6uogNdGa9POx8D09FmnF7ruL+ajX/au79TM0KOz1lPVTvnYkyxC5m6BTEUUggftLSSlJGRaOq/kxKzDTnje9eo+6agb/8hWWruoXY6rOFpSqNoizUtI5ZSh3wgjpW5PAHtZYiz/ydMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B49AC4CED7;
+	Tue, 17 Dec 2024 19:07:15 +0000 (UTC)
+Date: Tue, 17 Dec 2024 14:07:50 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
+ persistent ring buffer
+Message-ID: <20241217140750.43a65a01@gandalf.local.home>
+In-Reply-To: <CAHk-=whV+=eymQ_eU8mj4fFw643nkvqZfeFM9gdGYavD44rB9w@mail.gmail.com>
+References: <20241217173237.836878448@goodmis.org>
+	<20241217173520.314190793@goodmis.org>
+	<CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
+	<20241217130454.5bb593e8@gandalf.local.home>
+	<CAHk-=whLJW1SWvJTHYmdVAL2yL=dh4RzMuxgT7rnksSpkfUVaA@mail.gmail.com>
+	<20241217133318.06f849c9@gandalf.local.home>
+	<CAHk-=wgi1z85Cs4VmxTqFiG75qzoS_h_nszg6qP1ennEpdokkw@mail.gmail.com>
+	<CAHk-=whV+=eymQ_eU8mj4fFw643nkvqZfeFM9gdGYavD44rB9w@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241217182528.108062-2-admiyo@os.amperecomputing.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 17, 2024 at 01:25:28PM -0500, admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@os.amperecomputing.com>
+On Tue, 17 Dec 2024 11:03:28 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Tue, 17 Dec 2024 at 10:42, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > My initial suggestion was to just fix up the boot time array.
+> >
+> > I think that's actually wrong. Just print the raw data and analyze it
+> > in user space.  
 > 
-> Implementation of network driver for
-> Management Control Transport Protocol(MCTP) over
-> Platform Communication Channel(PCC)
+> .. I still think it's not the optimal solution, but fixing up the
+> event data from the previous boot (*before* printing it, and entirely
+> independently of vsnprintf()) would at least avoid the whole "mess
+> with vsnprintf and switch the format string around as you are trying
+> to walk the va_list in sync".
 > 
-> DMTF DSP:0292
-> https://www.dmtf.org/sites/default/files/standards/documents/DSP0292_1.0.0WIP50.pdf
+> Because that was really a non-starter. Both the format string hackery
+> and the va_list hackery was just fundamentally bogus.
 > 
-> MCTP devices are specified by entries in DSDT/SDST and
-> reference channels specified in the PCCT.
-> 
-> Communication with other devices use the PCC based
-> doorbell mechanism.
-> 
-> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
-> ---
->  drivers/net/mctp/Kconfig    |  13 ++
->  drivers/net/mctp/Makefile   |   1 +
->  drivers/net/mctp/mctp-pcc.c | 320 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 334 insertions(+)
->  create mode 100644 drivers/net/mctp/mctp-pcc.c
+> If you massage the data before printing - and independently of it -
+> those two issues should at least go away.
 
-[...]
- 
-> --- /dev/null
-> +++ b/drivers/net/mctp/mctp-pcc.c
-> @@ -0,0 +1,320 @@
+But I can't massage the data without the deltas. That takes us back to
+having to have the same kernel and only processing kernel core data and
+ignoring modules.
 
-[...]
+-- Steve
 
-> +static void mctp_pcc_client_rx_callback(struct mbox_client *c, void *buffer)
-> +{
-> +	struct mctp_pcc_ndev *mctp_pcc_ndev;
-> +	struct mctp_pcc_hdr mctp_pcc_hdr;
-> +	struct pcpu_dstats *dstats;
-> +	struct mctp_skb_cb *cb;
-> +	struct sk_buff *skb;
-> +	void *skb_buf;
-> +	u32 data_len;
-> +
-> +	mctp_pcc_ndev = container_of(c, struct mctp_pcc_ndev, inbox.client);
-> +	memcpy_fromio(&mctp_pcc_hdr, mctp_pcc_ndev->inbox.chan->shmem,
-> +		      sizeof(struct mctp_pcc_hdr));
-> +	data_len = mctp_pcc_hdr.length + MCTP_HEADER_LENGTH;
-> +	skb = netdev_alloc_skb(mctp_pcc_ndev->mdev.dev, data_len);
-> +
-> +	dstats = this_cpu_ptr(mctp_pcc_ndev->mdev.dev->dstats);
-> +	u64_stats_update_begin(&dstats->syncp);
-> +	if (data_len > mctp_pcc_ndev->mdev.dev->mtu) {
-> +		u64_stats_inc(&dstats->rx_drops);
-> +		u64_stats_inc(&dstats->rx_drops);
-
-Double counting rx_drops ?
-
-> +		u64_stats_update_end(&dstats->syncp);
-> +		return;
-> +	}
-> +	if (!skb) {
-> +		u64_stats_inc(&dstats->rx_drops);
-> +		u64_stats_update_end(&dstats->syncp);
-> +		return;
-> +	}
-> +	u64_stats_inc(&dstats->rx_packets);
-> +	u64_stats_add(&dstats->rx_bytes, data_len);
-> +	u64_stats_update_end(&dstats->syncp);
-
-I suspect what Jeremy meant (but please feel free to correct me if
-I'm mistaken, Jeremy) was that you may want to use the helpers in:
-
-include/linux/netdevice.h
-
-e.g. 
-
-  dev_dstats_rx_add(mctp_pcc_ndev->mdev.dev, data_len);
-  dev_dstats_rx_dropped(mctp_pcc_ndev->mdev.dev);
-
-etc.
-
-[...]
-
-> +
-> +static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
-> +{
-> +	struct mctp_pcc_ndev *mpnd = netdev_priv(ndev);
-> +	struct mctp_pcc_hdr  *mctp_pcc_header;
-> +	struct pcpu_dstats *dstats;
-> +	void __iomem *buffer;
-> +	unsigned long flags;
-> +	int len = skb->len;
-> +
-> +	dstats = this_cpu_ptr(ndev->dstats);
-> +	u64_stats_update_begin(&dstats->syncp);
-> +	u64_stats_inc(&dstats->tx_packets);
-> +	u64_stats_add(&dstats->tx_bytes, skb->len);
-> +	u64_stats_update_end(&dstats->syncp);
-
-Likewise, as above with the helpers from include/linux/netdevice.h:
-
-  dev_dstats_tx_add( ... );
-  dev_dstats_tx_dropped( ... );
-
-But, I'll let Jeremy weigh-in to make sure I've not misspoken.
-
-[...]
-
-> +
-> +static void  mctp_pcc_setup(struct net_device *ndev)
-              ^^  nit: double space ?
-
-[...]
-
-> +static acpi_status lookup_pcct_indices(struct acpi_resource *ares,
-> +				       void *context)
-> +{
-> +	struct  mctp_pcc_lookup_context *luc = context;
-              ^^ nit: double space?
-
-[...]
-
-> +static int mctp_pcc_driver_add(struct acpi_device *acpi_dev)
-> +{
-
-[...]
-
-> +
-> +	rc =  devm_add_action_or_reset(dev, mctp_cleanup_netdev, ndev);
-            ^^ nit: double space
 
