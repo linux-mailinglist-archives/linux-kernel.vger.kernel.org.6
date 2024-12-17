@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-449812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797D89F5671
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:42:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C8B9F5676
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:43:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7E9C16E413
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:42:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C61DE7A3BFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310181F76A0;
-	Tue, 17 Dec 2024 18:42:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283891F76A0;
+	Tue, 17 Dec 2024 18:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WVGOMTqA"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C8A442F;
-	Tue, 17 Dec 2024 18:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EA6155326
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 18:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734460924; cv=none; b=KrdH1ZUUgCMkYK4nx+ALYNzide9yO9oQj+wiplF/e7+chhDItzyq0eliNv97f+gtgTgROgxrnaVjizSjUnulZ8cWZr3ON3WW4zOef4zuSV14vi6KWig/EwVS52xHKhR+sy1VFzYEChZK7L1gjPBCznp+NUpdOrPj9bV4gAYKfdI=
+	t=1734460989; cv=none; b=QNy/6Yxtpnyh17ANHjFeF2QpnqAFEf0MC9calduRiiYuzttjqpLq8zOY1PUUIwwxJ+KAtgbnGirz5ptOulME0P97ko4A33nctmU/TdJ2N5uWwjcF0QH3gJL6uSX55dgeh52pSjHyFI7q0X48w4tO5tbdvbobnB2Mw9bCPkvt7xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734460924; c=relaxed/simple;
-	bh=nLEBAbT68ZYoMtJ41mflcfC/vqMvDCDxGv+G/pCeiEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LwgH6palX7aFQMF/cZLMRahdk1CHmBjrfJgXKtmlQ7Y0vgdeEAS3tEysQnUN5x1+nz+A25AS55RNwgET0WVamFs+2RxK6KNHCbHE5Ox0gucoXSNyIssRkM1dGAnRk3kOp09IOZzEm6hc6kRTbgVGH/ncQr1azDt/3MZ+CvowGwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52ED2C4CED3;
-	Tue, 17 Dec 2024 18:42:03 +0000 (UTC)
-Date: Tue, 17 Dec 2024 13:42:38 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
- persistent ring buffer
-Message-ID: <20241217134238.475b4011@gandalf.local.home>
-In-Reply-To: <CAHk-=wjThke2-HB_Zi35xHe9ayTPk=zB_kjd0Hr-Yn1oV0ZSsg@mail.gmail.com>
-References: <20241217173237.836878448@goodmis.org>
-	<20241217173520.314190793@goodmis.org>
-	<CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
-	<20241217130454.5bb593e8@gandalf.local.home>
-	<CAHk-=whLJW1SWvJTHYmdVAL2yL=dh4RzMuxgT7rnksSpkfUVaA@mail.gmail.com>
-	<CAHk-=wjThke2-HB_Zi35xHe9ayTPk=zB_kjd0Hr-Yn1oV0ZSsg@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734460989; c=relaxed/simple;
+	bh=MFBOghCFQxrMYgoC0DhigqYvAwhKz8jTiCtMSSCoSqo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pNiTAULfwLTBvdP7fftmoc78ZxIsZjkJSvpVDFnVpe8/uWtTpMRe6lIRVnUSFbIbh9FXK+rfaXbJshJtjC8SXiB62ELusIzRqf1Spn3GlZqcBwiqsMr3bukmKI3ZoYckaAlcyrxUJ+4MaQEcf7QxCaAAmygS8yMWnDC0deL1p0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WVGOMTqA; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so761588066b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:43:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1734460986; x=1735065786; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3mQXudYgFs4URfCivrY8wmstofKcT17DyeXJ55pVZ80=;
+        b=WVGOMTqAqmsIikGyvdcwcELBSLjetSb8gEyUVs5smCmv7cBWrJAFp5FwgwsQOK+zXF
+         63FxoTRkGgPnJuYJJcqrXbnw4L86vVPw+cPPZv8xlPxxF4de6vrYVTzbgBsyGGe1aG0S
+         ZB26qqglhAndBFMZWkQU5nFM+R2FWqG2tJYzE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734460986; x=1735065786;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3mQXudYgFs4URfCivrY8wmstofKcT17DyeXJ55pVZ80=;
+        b=L7vx86pW51TozCsuS7hhvVJPiSrlq3PtdgdLWqUzdiTAL39TPwvuGkD7JRlDzlEBXe
+         FZbqzTdf52+HfP/5X04y854Uzp/OoWhz7eZQrbxeS7l3RzWp5jmLHGoVQAGO6v+RL+Vs
+         BfarTBRX6fmk0Y1SyZf5cdAnuyA+mDNT5TDFL8vEBhNfdXaL4q/9My4LTt2SwmjCs67F
+         +f48NNhsC54DGmIfKyVBaUpdBDNGAV7SPtEurUbJ+ZTuZ/FE2yTHznEBiU7cF9r+scIW
+         LcnNgE7OhIm7uloS9jSsh017nWs/SmV1EeBFTf5Ut0K3NhgXtGYU5x0B+PyAwmMDj49G
+         BmLA==
+X-Gm-Message-State: AOJu0YyotM0SFkn+4ap8IUhDbM2zIv1OBI4eDd46jAStb6oRW63wg3Ru
+	cdYb1GJRDY7xZznvPI3V9AO8dJQYyvXds0NH18ykHvjRmyHt9EoDSR+ubvwKFG7TTPbR1Qffkqx
+	BPXA=
+X-Gm-Gg: ASbGncuB/IPGA2yFlSnCDlaoIpOzdGkqDHsD4ggXaQmx9eLdEpKpxi+SCsBE+hc5gJU
+	ar3+h4ux9iofj78QQ5DPW9rL0/+g8I+PdfsKmUNQei1ZUwYJCw3nMcQJD2JBDGm/y7mEqthH3KG
+	RTo5sAPILVIHHoXBk2YZMMdmwjldnp2vsBfJIse1w6ikHOzSYOgQRa8PKbWyLLddECxyqOpKQLC
+	4+M9Cfw9FSNxVFcIxF9xJtkQD2YY7hnp9d73NoLSOCSWt/68r+9gKQo0bOqgSYGJcQYNiKEPmdI
+	DEQJZ/Hn7sJfHc37f5SuxnaJ8kwzzzs=
+X-Google-Smtp-Source: AGHT+IF/qzIwcoyejTQxAuMN6U3zfMp3+4oEFu+2x40hXfV4zwc9eAoEbzJJUVDe2lwzpjEaK3vHXQ==
+X-Received: by 2002:a05:6402:40ca:b0:5d3:cf89:bd3e with SMTP id 4fb4d7f45d1cf-5d7ee3fd177mr298191a12.30.1734460985842;
+        Tue, 17 Dec 2024 10:43:05 -0800 (PST)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ab50desm4743340a12.3.2024.12.17.10.43.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 10:43:05 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso779048966b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:43:04 -0800 (PST)
+X-Received: by 2002:a05:6402:40cc:b0:5d4:55e:f99e with SMTP id
+ 4fb4d7f45d1cf-5d7ee3b57d2mr405372a12.18.1734460984008; Tue, 17 Dec 2024
+ 10:43:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241217173237.836878448@goodmis.org> <20241217173520.314190793@goodmis.org>
+ <CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
+ <20241217130454.5bb593e8@gandalf.local.home> <CAHk-=whLJW1SWvJTHYmdVAL2yL=dh4RzMuxgT7rnksSpkfUVaA@mail.gmail.com>
+ <20241217133318.06f849c9@gandalf.local.home>
+In-Reply-To: <20241217133318.06f849c9@gandalf.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 17 Dec 2024 10:42:47 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgi1z85Cs4VmxTqFiG75qzoS_h_nszg6qP1ennEpdokkw@mail.gmail.com>
+Message-ID: <CAHk-=wgi1z85Cs4VmxTqFiG75qzoS_h_nszg6qP1ennEpdokkw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
+ persistent ring buffer
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 17 Dec 2024 10:24:42 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, 17 Dec 2024 at 10:32, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> How else do I get the function name?
 
-> On Tue, 17 Dec 2024 at 10:19, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > What *woiuld* have been an acceptable model is to actually modify the
-> > boot-time buffers in place, using actual real heuristics that look at
-> > whether a pointer was IN THE CODE SECTION OR THE STATIC DATA section
-> > of the previous boot.
-> >
-> > But you never did that. All this delta code has always been complete
-> > and utter garbage, and complete hacks.  
-> 
-> Actually, I think the proper model isn't even that "modify boot time
-> buffers in place" thing.
-> 
-> The proper model was probably always to just do the "give the raw
-> data, and analyze the previous boot data in user mode". Don't do
-> "delta between old and new kernel", print out the actual KASLR base of
-> the old kernel, and let user mode figure it out. Because user mode may
-> actually have the old and different vmlinux image too - something that
-> kernel mode *never* has.
+My initial suggestion was to just fix up the boot time array.
 
-I already support this somewhat, as the text_delta (and data_delta) are
-presented in the tracefs directory so that trace-cmd can parse it.
+I think that's actually wrong. Just print the raw data and analyze it
+in user space.
 
-For my use case, this would work, as we are extracting the raw data and
-need to do most the processing in user space anyway. I could have it export
-the KASLR offset of the previous boot and then trace-cmd should be able to
-handle it fine if the events and kallsyms of the previous boot are all
-saved. It could easily put things back together, including modules and
-dynamic events.
+> I can make sure that it only works for core kernel code, and print the raw
+> address if it isn't.
 
-This will just make it useless for those that want to use the tracefs
-directly.
+Streven, STOP HACKING AROUND GARBAGE.
 
--- Steve
+Your solution to "I had a bad idea that resulted in bad code" seems to
+always be "write more bad code".
 
+STOP IT.
+
+Really. This is literally what I started the whole original complaint
+about. Go back to my original email, and try to understand the
+original issue. Let me quote the really relevant part of that email
+again:
+
+  This stuff is full of crazy special cases for things that should never
+  be done in the first place.
+
+Note - and really INTERNALIZE - that "for stuff that should never be
+done in the first place".
+
+You started with the wrong design. Then you keep hacking it up, and
+the hacks just get wilder and crazier as you notice there are more
+special cases.
+
+This is now getting to the point where I'm considering just ripping
+out the whole boot-time previous kernel buffer crap because you seem
+to have turned an interesting idea into just a morass of problems.
+
+Your choice: get rid of the crazy, or have me rip it out.
+
+            Linus
 
