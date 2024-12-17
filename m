@@ -1,148 +1,98 @@
-Return-Path: <linux-kernel+bounces-448792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4B29F4587
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E61679F458E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:56:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9990C188C18F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:54:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A587B188CEFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0E61D63E8;
-	Tue, 17 Dec 2024 07:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12041D934D;
+	Tue, 17 Dec 2024 07:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRkCymkk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B01518A6AE;
-	Tue, 17 Dec 2024 07:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="INX7Y4QS"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174A4A29;
+	Tue, 17 Dec 2024 07:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734422030; cv=none; b=kdDrbmap1HO/hZ5VX+S406TPKeIYTxs2Q3jfn6cxAbbL/69TWMw9R0VhsxsM3PF5zs6Rk+BxE5dyte2dKQQGvrar19YaPu9/Jo216qFDgilBhpn+Ia1unDtTRwJUy+VTs6+w0LCDDAlCJe6j3/4vsvT9j2G194vwEtKGIAvC2j0=
+	t=1734422175; cv=none; b=EO+/Owgvyg0XbCh2IBgmfQlgHvkoqy9T3+kwMC0qZHP341q46v914wGQwMPwh2PXwDgf65w57+rYNH5CN0qM9rx1VmxKccgFfXIDGPDW6nUhM2VqESDY1SqNHh11OpkBN0RkvkcLxs5kkBVW4y1s0mZekXhVWm02qbFCwUjopWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734422030; c=relaxed/simple;
-	bh=vlzD3RAiBnvqmVmP0dbDaT7MMdxEo6mzUNf2MrpEPRE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ayFxtfhN78+iGREOJvaq85FYfPSQR4dejzbq5q5px7TBuuW7JSVctDK1aV2T+beLgh5WioRhLe2dR0UeP7vT4OQWVnNcpj3no4YuMbikLpsDOihbMzPIW34q5RfxapnuBEZNfmVlmJ0MGl1hvotRyGUhNZFSH46fkxmmay7gbwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRkCymkk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183D8C4CED6;
-	Tue, 17 Dec 2024 07:53:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734422030;
-	bh=vlzD3RAiBnvqmVmP0dbDaT7MMdxEo6mzUNf2MrpEPRE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=bRkCymkkT0fstZ3f/YbR5LI7F09s5lrJkOCYzmhbvfGJn0Fdpmw97r0Ou7fyclK8C
-	 jOUjntt2+AXgFznYwk5CqsjdHPpRK0cIIqgImiUOj2WIMzxnLcwi9OQGDIW4qvwTBz
-	 Aaz243Yp8slxsaaEnmGH9Qb+HoZXySR2xfW669oc7Oiu7yuP/JiP6bu/LOeylyFl6M
-	 QnG5DHtOpGwiAKQpXDjH13xQIcHErgQaK/yNhNdQPn8q3UbMzINjh+nY+RUPebhWn7
-	 k8jIK4XwSmK4dy2pcogbSlmGcQKSpfMBByNQcf2h2kEu3neZ0Un86JNcAchiGBmO3e
-	 toYPaALFjIlHA==
-Date: Mon, 16 Dec 2024 23:53:46 -0800
-From: Kees Cook <kees@kernel.org>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-CC: davem@davemloft.net, edumazet@google.com, horms@kernel.org, idosch@nvidia.com,
- kuba@kernel.org, kuniyu@amazon.com, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- petrm@nvidia.com
-Subject: Re: [PATCH] rtnetlink: do_setlink: Use true struct sockaddr
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20241217024156.43328-1-kuniyu@amazon.com>
-References: <20241217020441.work.066-kees@kernel.org> <20241217024156.43328-1-kuniyu@amazon.com>
-Message-ID: <36C08CAB-1D3A-46CE-BCE2-820605E222CF@kernel.org>
+	s=arc-20240116; t=1734422175; c=relaxed/simple;
+	bh=BwcP21tQkxLKS1noATp5ZwYvzvZWpXAPS91ac0YK+ZI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IoAZSkvk2CqtFHSut6JQNM5ocqoD+ln7GD0wrpDMHim0S2JgQgswb2keXTY2Tlhwkq9Fdo3WHnwx9rtgHfCLoqyWynVsoZvruuLss83ahRylDuoBwSCUB6rxc8kNZwsdYJqvdTnL+Zb2xpUWH3KCAfJ+BUOIbuWgqPzYAg2WOZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=INX7Y4QS; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Jni+N
+	qq9ZhLhAcR6lFqnnFsxAP48f+BhrROL74A+7Z8=; b=INX7Y4QSe0FaYd6q6AF8m
+	XKyXg4ALe6G3E0968E2YXQnTjzToCwf/op3CXr7fY6xQNNUj36CMd/BowwStA6DJ
+	qyyjKvxfhutgGAeHtellwIDtIievcTv5GGj46o86FnmviXfIyOrPOxcUsxkJUHmE
+	oiD17Car3SshPVZ8lMNiMY=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDnz7x7LmFnjtdxBA--.22023S4;
+	Tue, 17 Dec 2024 15:55:46 +0800 (CST)
+From: Ma Ke <make_ruc2021@163.com>
+To: bvanassche@acm.org,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make_ruc2021@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] RDMA/srp: Fix error handling in srp_add_port
+Date: Tue, 17 Dec 2024 15:55:38 +0800
+Message-Id: <20241217075538.2909996-1-make_ruc2021@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnz7x7LmFnjtdxBA--.22023S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gr15JF48GrWrAw48ZFW3GFg_yoWkZFc_Kr
+	4jvr92gr18Ca1ktw43XwnxZr1Igrn2q34fXrZ2qwnak3y5XFn7Zwn7Wrs0yr17Za429r1U
+	JF13Gr40yr45KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRWGQhUUUUUU==
+X-CM-SenderInfo: 5pdnvshuxfjiisr6il2tof0z/xtbBFRy4C2dhI2DBTgABsx
 
+The reference count of the device incremented in device_initialize() is
+not decremented when device_add() fails. Add a put_device() call before
+returning from the function to decrement reference count for cleanup.
+Or it could cause memory leak.
 
+As comment of device_add() says, if device_add() succeeds, you should
+call device_del() when you want to get rid of it. If device_add() has
+not succeeded, use only put_device() to drop the reference count.
 
-On December 16, 2024 6:41:56 PM PST, Kuniyuki Iwashima <kuniyu@amazon=2Eco=
-m> wrote:
->From: Kees Cook <kees@kernel=2Eorg>
->Date: Mon, 16 Dec 2024 18:04:45 -0800
->> Instead of a heap allocation use a stack allocated struct sockaddr, as
->> dev_set_mac_address_user() is the consumer (which uses a classic
->> struct sockaddr)=2E
->
->I remember Eric's feedback was to keep using heap instead of stack
->because rtnl_newlink() path already uses too much on stack=2E
+Found by code review.
 
-See below=2E=2E=2E
+Cc: stable@vger.kernel.org
+Fixes: c8e4c2397655 ("RDMA/srp: Rework the srp_add_port() error path")
+Signed-off-by: Ma Ke <make_ruc2021@163.com>
+---
+ drivers/infiniband/ulp/srp/ib_srp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
->
->
->> Cap the copy to the minimum address size between
->> the incoming address and the traditional sa_data field itself=2E
->>=20
->> Putting "sa" on the stack means it will get a reused stack slot since
->> it is smaller than other existing single-scope stack variables (like
->> the vfinfo array)=2E
+diff --git a/drivers/infiniband/ulp/srp/ib_srp.c b/drivers/infiniband/ulp/srp/ib_srp.c
+index 2916e77f589b..7289ae0b83ac 100644
+--- a/drivers/infiniband/ulp/srp/ib_srp.c
++++ b/drivers/infiniband/ulp/srp/ib_srp.c
+@@ -3978,7 +3978,6 @@ static struct srp_host *srp_add_port(struct srp_device *device, u32 port)
+ 	return host;
+ 
+ put_host:
+-	device_del(&host->dev);
+ 	put_device(&host->dev);
+ 	return NULL;
+ }
+-- 
+2.25.1
 
-That's why I included the rationale above=2E (I=2Ee=2E stack usage does no=
-t grow with this patch=2E)
-
--Kees
-
->>=20
->> Signed-off-by: Kees Cook <kees@kernel=2Eorg>
->> ---
->> Cc: Eric Dumazet <edumazet@google=2Ecom>
->> Cc: "David S=2E Miller" <davem@davemloft=2Enet>
->> Cc: Jakub Kicinski <kuba@kernel=2Eorg>
->> Cc: Paolo Abeni <pabeni@redhat=2Ecom>
->> Cc: Ido Schimmel <idosch@nvidia=2Ecom>
->> Cc: Petr Machata <petrm@nvidia=2Ecom>
->> Cc: netdev@vger=2Ekernel=2Eorg
->> ---
->>  net/core/rtnetlink=2Ec | 22 +++++++---------------
->>  1 file changed, 7 insertions(+), 15 deletions(-)
->>=20
->> diff --git a/net/core/rtnetlink=2Ec b/net/core/rtnetlink=2Ec
->> index ab5f201bf0ab=2E=2E6da0edc0870d 100644
->> --- a/net/core/rtnetlink=2Ec
->> +++ b/net/core/rtnetlink=2Ec
->> @@ -3048,21 +3048,13 @@ static int do_setlink(const struct sk_buff *skb=
-, struct net_device *dev,
->>  	}
->> =20
->>  	if (tb[IFLA_ADDRESS]) {
->> -		struct sockaddr *sa;
->> -		int len;
->> -
->> -		len =3D sizeof(sa_family_t) + max_t(size_t, dev->addr_len,
->> -						  sizeof(*sa));
->> -		sa =3D kmalloc(len, GFP_KERNEL);
->> -		if (!sa) {
->> -			err =3D -ENOMEM;
->> -			goto errout;
->> -		}
->> -		sa->sa_family =3D dev->type;
->> -		memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
->> -		       dev->addr_len);
->> -		err =3D dev_set_mac_address_user(dev, sa, extack);
->> -		kfree(sa);
->> +		struct sockaddr sa =3D { };
->> +
->> +		/* dev_set_mac_address_user() uses a true struct sockaddr=2E */
->> +		sa=2Esa_family =3D dev->type;
->> +		memcpy(sa=2Esa_data, nla_data(tb[IFLA_ADDRESS]),
->> +		       min(dev->addr_len, sizeof(sa=2Esa_data_min)));
->> +		err =3D dev_set_mac_address_user(dev, &sa, extack);
->>  		if (err)
->>  			goto errout;
->>  		status |=3D DO_SETLINK_MODIFIED;
->> --=20
->> 2=2E34=2E1
->
-
---=20
-Kees Cook
 
