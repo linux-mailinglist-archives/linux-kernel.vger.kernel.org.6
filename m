@@ -1,642 +1,272 @@
-Return-Path: <linux-kernel+bounces-449385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2379F4E31
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:48:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D6A9F4E3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35C8F188A453
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:48:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C985188AE72
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F35D1F63E8;
-	Tue, 17 Dec 2024 14:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDA21F756B;
+	Tue, 17 Dec 2024 14:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0+jQpTd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lx4xYJZ4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CA3762F7;
-	Tue, 17 Dec 2024 14:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734446879; cv=none; b=XSecwMMRixP98b+ch4bh4qgYWL+DPKsrjxyfAuwOCdwbjVmQidkA8N7McgtL4+VktCyct6rs5tHBBTPdZZ39xLR0SxLH9q3w9ax1Q2cx3rtHJFzsD9nuPiaKHmS9/gFqO9nAHfRxVZuBqR2VNalmxqThA0oBf3ekz7BO8s4ro9g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734446879; c=relaxed/simple;
-	bh=8YRQT85o3MHtbHlGPvyry7vc0yOcV1rxr2g3AmsRtaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RcySxxid1BveDIj84n78n9G74dBMrqhTyP8z5+hE7VTEq9eNsvJQTRPLXZSlNEd1emtWtyf6ZjlcN/Myru8sMlkPKP+BPJSBb7ut5e3XVZldTjyyyGFotjMIfrL3kngvmzkXqIuukOYunLFwLCA+B5iYJOT/Uwmf8fnWSn+0MXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0+jQpTd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D593EC4CED3;
-	Tue, 17 Dec 2024 14:47:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734446878;
-	bh=8YRQT85o3MHtbHlGPvyry7vc0yOcV1rxr2g3AmsRtaw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o0+jQpTd4ixF4nH9wdItacbYzxjMqnuNk2UHELA18J498TGU366+S8xTsl4oZvaox
-	 krHgfpCiH/VvY6TX4urFfmPK8vIZ7cAX/8fBavdGb5lpFDjQ8IvdJItsnT1a1x+UVY
-	 9ySj2TmPjE8mEnW6mMVuEW2dikADLpn/WvhPCW7ABTtKeC65ZwMnsTcA2zWgRINmRl
-	 09LQlST1A7Am7CD2uCMR5wO4jbeGChc3t1wolkVuWUTrSL18MU+IAyKjMWX5MC/S4/
-	 pQNfBISCBVHbn1rkKlTJipFz6bmVgd5XWjuEYD/euWU5MqjB624ay1jSdSjAZ3IWYO
-	 EZCi4SwwdQGeA==
-Date: Tue, 17 Dec 2024 14:47:54 +0000
-From: Lee Jones <lee@kernel.org>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v9] leds: Add LED1202 I2C driver
-Message-ID: <20241217144754.GK2418536@google.com>
-References: <20241121165829.8210-1-vicentiu.galanopulo@remote-tech.co.uk>
- <20241121165829.8210-4-vicentiu.galanopulo@remote-tech.co.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A681F7065;
+	Tue, 17 Dec 2024 14:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734446952; cv=fail; b=DobBNVa0EnR501VGLvsBskjhv/U2vSP2XPeSG2Z0Od2nBNx50Kv+OcpRPZzCc8/DCik4uix5B0rA1u2XWSMen8wI0wtAr1XjIn6Y62hp894VZZ6aXYixawHKzLatK6H5DE67xBs360/jYXs55nLexy6VnC5FzjB/1u1TLeEWVA4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734446952; c=relaxed/simple;
+	bh=IBXEdJsW50m4ECLro+iuJ2utiodli+FieSYJeCEHXU8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZRJAq1Vobo2di0LaIyqQYdp2C3MXgX6Jfyz+Me5Bb9rNkR9/Ixs3p1e/0Tn1gm8LSBwQq2lXEAPWQiOcLjqbW/dqtHKcLfZeHUdkpa6lR25LDOLKoTJd7lqnzQp0kCUtfJP5J6IpsaHJCGb8V9xmnSMXyLBVKur/5I15LN5Qo5U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lx4xYJZ4; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734446951; x=1765982951;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=IBXEdJsW50m4ECLro+iuJ2utiodli+FieSYJeCEHXU8=;
+  b=Lx4xYJZ4JBeDgXhwbria89hSZHFWx2ki31rfXOdngc/IBWgxamAnnvRj
+   BIUCWlOtp/MmLUbYgU10Bc0UtKhnDtcoKHXH1DWcZczvMLxb41U3UAUai
+   Kq8qMQwN0wMPhZG+u4e0X6kYWlzAq+H0X10Ubnuw7wNh53k4xBzIcepKb
+   7Z79Fgzb8iKNsShRXrqBqN1no4oHqdFzreVbZVrJGAhjp1oO6KWZTd+Z4
+   5R+jKUIjvFcVjAICsGqmRhq2BBRJZvk88hdAjWSYJO2nocIfqpdTt2aIG
+   YDHeSN7rSIrSVJKq6tZfYn+BIBGqtVz2vFCxlAFyLJ5+t243mSzHVXSkO
+   A==;
+X-CSE-ConnectionGUID: 5iritld6TBe1RVx+SSmtww==
+X-CSE-MsgGUID: uLKnUoNoS9+ct+ExneTP7g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="35005036"
+X-IronPort-AV: E=Sophos;i="6.12,242,1728975600"; 
+   d="scan'208";a="35005036"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 06:49:10 -0800
+X-CSE-ConnectionGUID: cvTJrCOQQUyjVI/ZJyZlmQ==
+X-CSE-MsgGUID: t6qvkiVMSMCBkTqv86V1lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="134898566"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Dec 2024 06:49:06 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 17 Dec 2024 06:49:05 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Tue, 17 Dec 2024 06:49:05 -0800
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.174)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 17 Dec 2024 06:49:05 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=asp18s5s2BodCUu22UZpV5lLafXmHZ0gP8ZqGHb5mdJfxSQaKiithCv3g597+7l/eEikmVnSXhxlvaTZQqze4GeqdfOoPYKBz7pf/q6D4qBywIvqGQA6wISTGcA8HeCw1pCyP0D/WUxwSSFNofZy8ksG3vqzpbGKbeOOzPWmIJgpIrCXihVq31EMBUhPr0+u7BWDGDYlE/vBifwoGOgAKCnkV7SUbKhr+mXAs2gdZCrEmAXoj/suHDcAoE92tm5vnDkvu9o5JeIOkd7StoPwQW7aCdVEYhM7LXz+yNJzxXO6UnL8iohUrd8UCbUDzs0GXIke3Ik7GyC9vsS/OK/bDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z0q8xhoC9YAP0p2n7CBq1cOX2d/1uFwS5AIsDkWJfS4=;
+ b=fmUh08QZ39OavWMQcZq4sUD2HtSaX0M9ncPDsd4lqv8Wkc9BxGeS8ezhTkys//Tn9ZtRV36la2EiQ6W8eySUKU871NwncCZSBavpPfBOP/e26VFgNS3C56ipUTrhzfOLuCRSBqSisOsd8GSjstdLgNEj4vQXGRHkDqknQOnBAO24Bbmlpk0x6Cts/JJK9YuI/AO2I8ctu1eBk6rO8DY1mjfrNRA14BYqKUB/CaRAN0jz/PO0Nv+nzB5InPWEyLGiykWhCkhAkKsflJs9ZdhkxddWUZJgZ9b2fqU2H68H9/HeqTF/BtcVSARTQFlWmSebfW7dstq8Nqo/VxTKmxnvZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by DM3PR11MB8733.namprd11.prod.outlook.com (2603:10b6:0:40::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.21; Tue, 17 Dec 2024 14:49:03 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
+ 14:49:03 +0000
+Message-ID: <aa49d578-dee4-4ee8-b17b-b6e941d9126c@intel.com>
+Date: Tue, 17 Dec 2024 15:48:34 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [net-next] ice: expose non_eop_descs to ethtool
+To: Jon Maxwell <jmaxwell37@gmail.com>
+CC: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
+	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <intel-wired-lan@lists.osuosl.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241216234850.494198-1-jmaxwell37@gmail.com>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <20241216234850.494198-1-jmaxwell37@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DUZPR01CA0015.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:3c3::18) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241121165829.8210-4-vicentiu.galanopulo@remote-tech.co.uk>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|DM3PR11MB8733:EE_
+X-MS-Office365-Filtering-Correlation-Id: 324abff2-d8e3-412f-9613-08dd1ea9f2d0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NWNUSWQwK0RZNVBYWmRzLzJSL0grc1gza3ZCMkI2bUFxblVFWnQzM0lBOXB0?=
+ =?utf-8?B?eDIwMEtFVGtQbE0yeHRUem5CQWpNQzh3T2loY1RIKzkydFkwZDJPZjU2Zlpr?=
+ =?utf-8?B?cjFUV2tqdTlJTkljU1ErNDhKd09Vd1VNZHdGbWJlQnVuR1hEL0VDMlg5V3ZV?=
+ =?utf-8?B?LzVSY3EyNlhDdkJtWVhBMWRremhXVWtCS0JSa2hmYzlQUDRjRjJqUnBna3dS?=
+ =?utf-8?B?ZkViaGJnOEtINU1KbTMzY3FFamt2Q0xPdHJXUXhDVFB0QWo2UjhPZmtmcHg2?=
+ =?utf-8?B?OUhFUXZyc0VSQ1lJc0tDc0M3QmlqNnAzcDIxVytFS2FmbFZ3bmRzNWpUeG85?=
+ =?utf-8?B?RnloekMwbDk2UTNFZHlwWDE2N2JzRmdZcFg2K3dpK2RJQ0NRcDlMamdQd2pW?=
+ =?utf-8?B?aVppSGM5Yk41K3I3U3FzMDQ2S0JkVVZVV2V4K1N0VlMrRFVoeFlZdWdXLzNL?=
+ =?utf-8?B?alpzSXB5WERJcXc0M3dpSkNQKzBIZkw4RWw2Vk13T0xrdEh4NjFuK1VBT2hX?=
+ =?utf-8?B?RS83TVdNbzZoa3VDMmwzNTV1UCtMOEYyeGJSNXQ5SkFrSFJHRk1BV1hxcmx0?=
+ =?utf-8?B?VlBsYU1wZXByTmhPSXg4NS9zaWtzZVFuaFQrUkNLTXFoRXV5WSsvRUlQNE80?=
+ =?utf-8?B?dFhQWURxTWJMQkx2VHJvdlE1cXFSZFVmWWtid2xZR1V4V2w3N2xLZDhVS3d6?=
+ =?utf-8?B?cTB2aURlbjM2SmE4Mk5VVUc1ODJBd21BRy85ME4ybENxZlE2RzNwZ0t6NnVm?=
+ =?utf-8?B?dmVZMXhHV1RHYWx4dy95bG1wMG9FZk1TTWlFYkdZNFlzcCs5RmpkRVB4amU5?=
+ =?utf-8?B?YWhjdCtjNXFvOWM2K3Fmc1FNNlQ3UlROcGlMdXg0MVNpd1B1SWlkRnc1cHJJ?=
+ =?utf-8?B?NURCSXl6WTVZcXJUaks2TGVJZDFtR0Z5bjdJK3NZNWpUVmtnL1MrYS9RZURM?=
+ =?utf-8?B?UktZQ3hZdWRzbWJnaGVwVERQTEVCTWRCMnRtQ08xNFJ5dExidnVFQkZwNkVn?=
+ =?utf-8?B?YXF4TTROR2F2STlQOTZIa0V5WTJpdkFYZmtCL2ozODNPVU5WVnd6d2hya1E5?=
+ =?utf-8?B?VmkvY3RwRE4reldJVEFIK2lYZnE1L1BsdGtwZHpEM2xqbmluQm9CMU9nazU1?=
+ =?utf-8?B?eHcyd2xaRHE1RlpYT1VQY1hyVnpjN0tYaWFhZW0xZlNlTHZ6Y05uTEhQSkxo?=
+ =?utf-8?B?MDh2eHBBeHpWSCthVnhqVUhQcm0zNGZuM3BCRHNwVUUwS3lNUTljUXQrUDhB?=
+ =?utf-8?B?dVFKU2JVM1hkRVNMb1c5RzZGRWRMZ2t0dTkxZGkxK0N3SHBhMnZCUDNqUXRp?=
+ =?utf-8?B?TTdPdENrVDhYNWc0dEZGakIzZVVBQ3JxeHpDWFFlMi9CN2Y5STV0NkxnNTBw?=
+ =?utf-8?B?cU1kOHZTL2Z0OG9UcGFUOGlsUjdQa0ZzcFFudkFHR0NZRmtXbm12SUhHQTI2?=
+ =?utf-8?B?MFNveDIzZXNKbVhGVUNKTjhmQjNBYk85T0hPbHpIcyt0aXZRVDBGVEFPNk92?=
+ =?utf-8?B?N3FDY2pIR0lWcVNUVUVoU3kzdkNSQkdiUndTYkNUME1ZcXBYZ0lRV091aEJK?=
+ =?utf-8?B?MUR6YVdSTGtyWUdnR1Njb1NtdU5TbWREdEVaNU5PbUJxVlF4TkFQMENtR0Js?=
+ =?utf-8?B?ZENGaUNrWGcrSGN1M0VLa1UzbDRsVDB3YmV4Y1dQVHJYZVFjVFBLUDVRYXVo?=
+ =?utf-8?B?MEJkczJRaW9HQlVHdys0WCtIZEVDRTVyR2hNam1yVU9yNXJMYlhMeHpIQ1Nm?=
+ =?utf-8?B?K09RN1N2cjU5L1B4OHV0ckJERnNaMUxWdmZVZ0JRR2dsSWFpcXJJR01aMDJx?=
+ =?utf-8?Q?KKTIbOBLkwkPPKo/w7YMh3aJDmAD9ZpqtvxCw=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QXJxVGtoUzBaMHhUMDVoYzlGVlhFcW5zNkhBT0Z5eVRIUG0vNXZVOFNMZXRY?=
+ =?utf-8?B?VURLeExHL3JmTEdiQWZFWER4UXdMclczVTgvYjhSUWtpcG40R1VrTGR4M1hm?=
+ =?utf-8?B?UlJ6UUJLcW1mRnU0SXp1WE1naS9PSDVKazZ3T2Q4VS9zVFhiUVQyK25CWGs3?=
+ =?utf-8?B?cCtUVWdEYTFQUkRRRDlwOW1OZlNyOHMwRzFtU3ZwNjhIQ1hiZ0JDdm5GZmgz?=
+ =?utf-8?B?ZVRYRTBicTQ0YWhqa3MxdnRoOGhndlJkQ1pBeG0zZmhZZmF1LzI5bU5UYTBK?=
+ =?utf-8?B?eFVVZlFCS2dhUzFRS0FRaU9KcERMK0R1YU8wQlFpakNocWIwZDFxaURSa2hw?=
+ =?utf-8?B?ZExzNzhwM1dyUEpvVnhsa2hvOXNPV25HaXZEMUdobExhMzQwMFd5R0ptdjFS?=
+ =?utf-8?B?TWlHZ21kRzR2b1FMK1lBU295WHlnamk4dkJVQldrcWN2M0EzZUlnWktpUHhI?=
+ =?utf-8?B?NEFxME96OWEzY2wrNEd6Q1Mrakt2RUxqU1hFQk1xNG5QUUtFQjFXbXBua3F3?=
+ =?utf-8?B?ckUyM0ZmamhLWEkrVjdWVVZnT2hYd2ZiZGVORjVvN1JQd3NvYmFIWGlHQlNN?=
+ =?utf-8?B?M2VrcElSeWNObk84TFdpR1UyQkpnM1FEWktLbXJxSVNQR0Qra2p4blJWS2hG?=
+ =?utf-8?B?MGNnR3BHc0lSNTFCd0V5REZNbkJPT08zbnM5bWUrWWFtMVhvT0VqMTRISkJM?=
+ =?utf-8?B?d2tTZEl3OGV2by8xRHYweUZDYzhiQW5QYXlFbEUzTUpGVHBJNkkxRmxrN3hr?=
+ =?utf-8?B?bG5DMFhLcFBHbytxejFBQjFCckh5MVprMTJYYUJvOXpzbS9sOWFadnRncFhY?=
+ =?utf-8?B?Vlk0bUZaZENDdm9VdDlhQzkxM01wUmgxSVAvczIzTjQ4UGZRalMwVGU5VTJJ?=
+ =?utf-8?B?QktZaW96Zkxtazk2Q29UTVkyUTRxQ3FkMmthVGZ0SDRXNENVaWVIaXU1SDB2?=
+ =?utf-8?B?eWU4R1dZVWRqVnB2VEcxRkFlbFNXemZiZTJOYVZHM3k4YlViWlhFRWdlME8x?=
+ =?utf-8?B?TlE5TWx4SVRBS1RnQjBlT2YwSkhTakFyZ2Z5TUpRSTMrMzhCVEpWRFMxdDdy?=
+ =?utf-8?B?U0ljcTZvRllPSlFnbzhncjRENCtvNnU4QzBKMG1MUjBxcEJ4QlJYS0RRVGlm?=
+ =?utf-8?B?dGdCYjRXOXJQZjNOWWpLc0MrbmRGdmg2NkVUQzlSckh0czgvaHM2UjZsZDdW?=
+ =?utf-8?B?ZXROdm9WZGY0WGszQ2tjRW4zRFZBTktYOHg5ZE93eEdaNGRmTGh1aEIzbjl6?=
+ =?utf-8?B?ZlREU2hhSmp5WldoUzlDeW82VkZxckROeHplM3FaQXZlbkdaMEpBbGI1Z0NC?=
+ =?utf-8?B?UVJmcnpqQzM4Y0pXNkVVRFJHdFk1V3ZHamFpZ1g3WlU0dVBtUDdEUi9aTlgx?=
+ =?utf-8?B?TkorZkNpblFEMzNpN3JIemFCcTlYY1FnaTRSaXdmd0pvdVVnT3JlU2t1c2pi?=
+ =?utf-8?B?V2I3dWd1UUV2NDRjM2hnS0RyUnhvVThQdTdub21NRUxsTHozNFNIckNYVGw1?=
+ =?utf-8?B?c2cramQ1aHZZK1JLQlZnZ1Z5WWlUYWFJeG5OYjV6WGRoT0NPZ0QrMEdoZnJ2?=
+ =?utf-8?B?Q2szOWdWeWVWa2h6OFp6TmJyT2FWc29vTVoxSE5lS2pkYTB1WDNHb1ZWZ1hn?=
+ =?utf-8?B?M2o0eDdpc05zTnhCU21JZzRvREh0eklyZWw4WEdjUGdaZHNQbDgvVzhZenRM?=
+ =?utf-8?B?ZCtOQUp5OEdzS1ZhVk1tSk4zcFNJazBEUHcxbklnV1g4RHpuTEVrcTZKRGNh?=
+ =?utf-8?B?WnFDZXkxREY3OGxDTTREM1lnQTVIWXMwemhzd1gwKzhYYWtDcWdyNUxuL1dj?=
+ =?utf-8?B?WGhPanVtREV4R29sbTZtMDFHRmYzSlZJTVdsek5mMG9waENhTjl6ek1YNDFu?=
+ =?utf-8?B?NzlOcVZjVk92ZHJSSG1YSHdzSklUQjFWNy9FSzE2WkpaNHNYK0lLRUh4a1Aw?=
+ =?utf-8?B?TFVnM0poRVdLQi8vd3VMSlJ4am9tbzFDUVJrblkxM0J1RWt6NlpXUTJPQmg5?=
+ =?utf-8?B?amhUT0MyWmM5bmpVcTcvRzJ5WGo4aFBWWTVWNkVva2FyWllDWitYdU1xR3hM?=
+ =?utf-8?B?WExCY3Fwa0lHWk8yeFFkSkdQUy9nVmpocnZSWDd3YWRzQ0ZpZXc0QUM3RGpq?=
+ =?utf-8?B?NFNTekVabHl1Y2FkK3M5eWJ4b204a3dNMHZxclJtdngzaEFjMmNmSkk2QW4w?=
+ =?utf-8?Q?ZUbdKR7/QSqocXvuERPj+Es=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 324abff2-d8e3-412f-9613-08dd1ea9f2d0
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 14:49:03.1177
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IGyfa6DmEyCsQtw1UBQYyVpGMHYncqD1otdjn+4IPtspta1tGw7iZ4TjRfSwDUdWGllb7f71SewxdoaHTQNsynC9kpjtBy0dmWYKfbqd2VI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR11MB8733
+X-OriginatorOrg: intel.com
 
-What's going on with the subject line format?  Are you editing those
-manually?  If so, please stop.  `git format-patch` should create those
-for you.
+From: Jon Maxwell <jmaxwell37@gmail.com>
+Date: Tue, 17 Dec 2024 10:48:50 +1100
 
-> The output current can be adjusted separately for each channel by 8-bit
-> analog (current sink input) and 12-bit digital (PWM) dimming control. The
-> LED1202 implements 12 low-side current generators with independent dimming
-> control.
-> Internal volatile memory allows the user to store up to 8 different patterns,
-> each pattern is a particular output configuration in terms of PWM
-> duty-cycle (on 4096 steps). Analog dimming (on 256 steps) is per channel but
-> common to all patterns. Each device tree LED node will have a corresponding
-> entry in /sys/class/leds with the label name. The brightness property
-> corresponds to the per channel analog dimming, while the patterns[1-8] to the
-> PWM dimming control.
+> The ixgbe driver exposes non_eop_descs to ethtool. Do the same for ice.
+
+Only due to that?
+Why would we need it in the first place?
+
 > 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+> With this patch:
+> 
+> ethtool -S ens2f0np0 | grep non_eop_descs
+>      non_eop_descs: 956719320
+> 
+> Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
 > ---
-> Changes in v9:
->   - log errors directly in st1202_write_reg and st1202_read_reg
->   - use mutex guards instead of lock/unlock
->   - remove i2c_set_clientdata
-> Changes in v7:
->   - fix st1202_brightness_get() error: uninitialized symbol 'value'
-> Changes in v6:
->   - fix build error
-> Changes in v5:
->   - remove unused macros
->   - switch to using devm_led_classdev_register_ext (struct st1202_led update)
->   - add prescalar_to_milliseconds (convert [22..5660]ms to [0..255] reg value)
->   - remove register range check in dt_init (range protected by yaml)
->   - address all review comments in v4
-> Changes in v4:
->   - Remove attributes/extended attributes implementation
->   - Use /sys/class/leds/<led>/hw_pattern (Pavel suggestion)
->   - Implement review findings of Christophe JAILLET
-> Changes in v3:
->   - Rename all ll1202 to st1202, including driver file name
->   - Convert all magic numbers to defines
->   - Refactor the show/store callbacks as per Lee's and Thomas's review
->   - Remove ll1202_get_channel and use dev_ext_attributes instead
->   - Log all error values for all the functions
->   - Use sysfs_emit for show callbacks
-> Changes in v2:
->   - Fix build error for device_attribute modes
->  drivers/leds/Kconfig       |  11 +
->  drivers/leds/Makefile      |   1 +
->  drivers/leds/leds-st1202.c | 431 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 443 insertions(+)
->  create mode 100644 drivers/leds/leds-st1202.c
+>  drivers/net/ethernet/intel/ice/ice.h         | 1 +
+>  drivers/net/ethernet/intel/ice/ice_ethtool.c | 1 +
+>  drivers/net/ethernet/intel/ice/ice_main.c    | 2 ++
+>  3 files changed, 4 insertions(+)
 > 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index b784bb74a837..c4fdacc00066 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -931,6 +931,17 @@ config LEDS_LM36274
->  	  Say Y to enable the LM36274 LED driver for TI LMU devices.
->  	  This supports the LED device LM36274.
+> diff --git a/drivers/net/ethernet/intel/ice/ice.h b/drivers/net/ethernet/intel/ice/ice.h
+> index 2f5d6f974185..8ff94400864e 100644
+> --- a/drivers/net/ethernet/intel/ice/ice.h
+> +++ b/drivers/net/ethernet/intel/ice/ice.h
+> @@ -345,6 +345,7 @@ struct ice_vsi {
+>  	u32 rx_buf_failed;
+>  	u32 rx_page_failed;
+>  	u16 num_q_vectors;
+> +	u64 non_eop_descs;
+>  	/* tell if only dynamic irq allocation is allowed */
+>  	bool irq_dyn_alloc;
 >  
-> +config LEDS_ST1202
-> +	tristate "LED Support for STMicroelectronics LED1202 I2C chips"
-> +	depends on LEDS_CLASS
-> +	depends on I2C
-> +	depends on OF
-> +	select LEDS_TRIGGERS
-> +	help
-> +	  Say Y to enable support for LEDs connected to LED1202
-> +	  LED driver chips accessed via the I2C bus.
-> +	  Supported devices include LED1202.
+> diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool.c b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+> index 3072634bf049..e85b664fa647 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+> @@ -65,6 +65,7 @@ static const struct ice_stats ice_gstrings_vsi_stats[] = {
+>  	ICE_VSI_STAT("tx_linearize", tx_linearize),
+>  	ICE_VSI_STAT("tx_busy", tx_busy),
+>  	ICE_VSI_STAT("tx_restart", tx_restart),
+> +	ICE_VSI_STAT("non_eop_descs", non_eop_descs),
+>  };
+>  
+>  enum ice_ethtool_test_id {
+> diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+> index 0ab35607e5d5..948c38c0770b 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_main.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_main.c
+> @@ -6896,6 +6896,7 @@ static void ice_update_vsi_ring_stats(struct ice_vsi *vsi)
+>  	vsi->tx_linearize = 0;
+>  	vsi->rx_buf_failed = 0;
+>  	vsi->rx_page_failed = 0;
+> +	vsi->non_eop_descs = 0;
+>  
+>  	rcu_read_lock();
+>  
+> @@ -6916,6 +6917,7 @@ static void ice_update_vsi_ring_stats(struct ice_vsi *vsi)
+>  		vsi_stats->rx_bytes += bytes;
+>  		vsi->rx_buf_failed += ring_stats->rx_stats.alloc_buf_failed;
+>  		vsi->rx_page_failed += ring_stats->rx_stats.alloc_page_failed;
+> +		vsi->non_eop_descs += ring_stats->rx_stats.non_eop_descs;
+>  	}
+>  
+>  	/* update XDP Tx rings counters */
 
-This last line is unnecessary.
-
->  config LEDS_TPS6105X
->  	tristate "LED support for TI TPS6105X"
->  	depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 18afbb5a23ee..e8b39ef760cc 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -81,6 +81,7 @@ obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
->  obj-$(CONFIG_LEDS_PWM)			+= leds-pwm.o
->  obj-$(CONFIG_LEDS_REGULATOR)		+= leds-regulator.o
->  obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
-> +obj-$(CONFIG_LEDS_ST1202)		+= leds-st1202.o
->  obj-$(CONFIG_LEDS_SUN50I_A100)		+= leds-sun50i-a100.o
->  obj-$(CONFIG_LEDS_SUNFIRE)		+= leds-sunfire.o
->  obj-$(CONFIG_LEDS_SYSCON)		+= leds-syscon.o
-> diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-> new file mode 100644
-> index 000000000000..963e2b11758f
-> --- /dev/null
-> +++ b/drivers/leds/leds-st1202.c
-> @@ -0,0 +1,431 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * LED driver for STMicroelectronics LED1202 chip
-> + *
-> + * Copyright (C) 2024 Remote-Tech Ltd. UK
-> + */
-> +
-> +#include <linux/cleanup.h>
-> +#include <linux/ctype.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio.h>
-> +#include <linux/i2c.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/string.h>
-> +
-> +#define ST1202_CHAN_DISABLE_ALL            0x00
-> +#define ST1202_CHAN_ENABLE_HIGH            0x03
-> +#define ST1202_CHAN_ENABLE_LOW             0x02
-> +#define ST1202_CONFIG_REG                  0x04
-> +/* PATS: Pattern sequence feature enable */
-> +#define ST1202_CONFIG_REG_PATS             BIT(7)
-> +/* PATSR: Pattern sequence runs (self-clear when sequence is finished) */
-> +#define ST1202_CONFIG_REG_PATSR            BIT(6)
-> +#define ST1202_CONFIG_REG_SHFT             BIT(3)
-> +#define ST1202_DEV_ENABLE                  0x01
-> +#define ST1202_DEV_ENABLE_ON               BIT(0)
-> +#define ST1202_DEV_ENABLE_RESET            BIT(7)
-> +#define ST1202_DEVICE_ID                   0x00
-> +#define ST1202_ILED_REG0                   0x09
-> +#define ST1202_MAX_LEDS                    12
-> +#define ST1202_MAX_PATTERNS                8
-> +#define ST1202_MILLIS_PATTERN_DUR_MAX      5660
-> +#define ST1202_MILLIS_PATTERN_DUR_MIN      22
-> +#define ST1202_PATTERN_DUR                 0x16
-> +#define ST1202_PATTERN_PWM                 0x1E
-> +#define ST1202_PATTERN_REP                 0x15
-> +
-> +struct st1202_led {
-> +	struct fwnode_handle *fwnode;
-> +	struct led_classdev led_cdev;
-> +	struct st1202_chip *chip;
-> +	bool is_active;
-> +	int led_num;
-> +};
-> +
-> +struct st1202_chip {
-> +	struct i2c_client *client;
-> +	struct mutex lock;
-> +	struct st1202_led leds[ST1202_MAX_LEDS];
-> +};
-> +
-> +static struct st1202_led *cdev_to_st1202_led(struct led_classdev *cdev)
-> +{
-> +	return container_of(cdev, struct st1202_led, led_cdev);
-> +}
-> +
-> +static int st1202_read_reg(struct st1202_chip *chip, int reg, uint8_t *val)
-> +{
-> +	struct device *dev;
-> +	int ret;
-> +
-> +	dev = &chip->client->dev;
-
-This should go on the declaration line.
-
-> +	ret = i2c_smbus_read_byte_data(chip->client, reg);
-> +	if (ret < 0) {
-> +		dev_err(&chip->client->dev, "Reading register [0x%x] failed, error: %d\n",
-> +				reg, ret);
-
-This would save the line wrap:
-
-  "Failed to read register [0x%x]: %d\n"
-
-> +		return ret;
-> +	}
-> +
-> +	*val = (uint8_t)ret;
-> +	return 0;
-> +}
-> +
-> +static int st1202_write_reg(struct st1202_chip *chip, int reg, uint8_t val)
-> +{
-> +	struct device *dev;
-> +	int ret;
-> +
-> +	dev = &chip->client->dev;
-
-As above.
-
-> +	ret = i2c_smbus_write_byte_data(chip->client, reg, val);
-> +	if (ret != 0)
-> +		dev_err(dev, "Failed writing value %d to register [0x%x], error: %d\n",
-> +				val, reg, ret);
-
-As above.
-
-> +
-> +	return ret;
-> +}
-> +
-> +static uint8_t st1202_prescalar_to_miliseconds(unsigned int value)
-> +{
-> +	return value/ST1202_MILLIS_PATTERN_DUR_MIN - 1;
-
-Doesn't scripts/checkpatch.pl warn about this?
-
-Spaces around the '/'.
-
-> +}
-> +
-> +static int st1202_pwm_pattern_write(struct st1202_chip *chip, int led_num,
-> +				int pattern, unsigned int value)
-> +{
-> +	u8 value_l, value_h;
-> +	int ret;
-> +
-> +	value_l = (u8)value;
-> +	value_h = (u8)(value >> 8);
-> +
-> +	/*
-> +	 *  Datasheet: Register address low = 1Eh + 2*(xh) + 18h*(yh),
-> +	 *  where x is the channel number (led number) in hexadecimal (x = 00h .. 0Bh)
-> +	 *  and y is the pattern number in hexadecimal (y = 00h .. 07h)
-> +	 */
-> +	ret = st1202_write_reg(chip, (ST1202_PATTERN_PWM + (led_num * 2) + 0x18 * pattern),
-> +				value_l);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * Datasheet: Register address high = 1Eh + 01h + 2(xh) +18h*(yh),
-> +	 * where x is the channel number in hexadecimal (x = 00h .. 0Bh)
-> +	 * and y is the pattern number in hexadecimal (y = 00h .. 07h)
-> +	 */
-> +	ret = st1202_write_reg(chip, (ST1202_PATTERN_PWM + 0x1 + (led_num * 2) + 0x18 * pattern),
-> +				value_h);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int st1202_duration_pattern_write(struct st1202_chip *chip, int pattern,
-> +					unsigned int value)
-> +{
-> +	return st1202_write_reg(chip, (ST1202_PATTERN_DUR + pattern),
-> +				st1202_prescalar_to_miliseconds(value));
-> +}
-> +
-> +static void st1202_brightness_set(struct led_classdev *led_cdev,
-> +				enum led_brightness value)
-> +{
-> +	struct st1202_led *led;
-> +	struct st1202_chip *chip;
-> +
-> +	led = cdev_to_st1202_led(led_cdev);
-> +	chip = led->chip;
-
-Move these to the lines above.
-
-> +	guard(mutex)(&chip->lock);
-
-'\n'
-
-> +	st1202_write_reg(chip, ST1202_ILED_REG0 + led->led_num, value);
-> +}
-> +
-> +static enum led_brightness st1202_brightness_get(struct led_classdev *led_cdev)
-> +{
-> +	struct st1202_led *led;
-> +	struct st1202_chip *chip;
-> +	u8 value = 0;
-> +
-> +	led = cdev_to_st1202_led(led_cdev);
-> +	chip = led->chip;
-
-As above.
-
-And everywhere else that this happens.
-
-> +	guard(mutex)(&chip->lock);
-
-'\n'
-
-> +	st1202_read_reg(chip, ST1202_ILED_REG0 + led->led_num, &value);
-
-'\n'
-
-> +	return value;
-> +}
-> +
-> +static int st1202_channel_set(struct st1202_chip *chip, int led_num, bool active)
-> +{
-> +	u8 chan_low, chan_high;
-> +	int ret;
-> +
-> +	guard(mutex)(&chip->lock);
-> +
-> +	if (led_num <= 7) {
-> +		ret = st1202_read_reg(chip, ST1202_CHAN_ENABLE_LOW, &chan_low);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		chan_low = active ? chan_low | BIT(led_num) : chan_low & ~BIT(led_num);
-> +
-> +		ret = st1202_write_reg(chip, ST1202_CHAN_ENABLE_LOW, chan_low);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +	} else {
-> +		ret = st1202_read_reg(chip, ST1202_CHAN_ENABLE_HIGH, &chan_high);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		chan_high = active ? chan_high | (BIT(led_num) >> 8) :
-> +					chan_high & ~(BIT(led_num) >> 8);
-> +
-> +		ret = st1202_write_reg(chip, ST1202_CHAN_ENABLE_HIGH, chan_high);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int st1202_led_set(struct led_classdev *ldev, enum led_brightness value)
-> +{
-> +	struct st1202_led *led;
-> +	struct st1202_chip *chip;
-> +
-> +	led = cdev_to_st1202_led(ldev);
-> +	chip = led->chip;
-> +
-> +	return st1202_channel_set(chip, led->led_num, value == LED_OFF ? false : true);
-> +}
-> +
-> +static int st1202_led_pattern_clear(struct led_classdev *ldev)
-> +{
-> +	struct st1202_led *led;
-> +	struct st1202_chip *chip;
-> +	int ret;
-> +
-> +	led = cdev_to_st1202_led(ldev);
-> +	chip = led->chip;
-> +
-> +	guard(mutex)(&chip->lock);
-> +
-> +	for (int patt = 0; patt < ST1202_MAX_PATTERNS; patt++) {
-> +		ret = st1202_pwm_pattern_write(chip, led->led_num, patt, LED_OFF);
-> +		if (ret != 0)
-> +			return ret;
-> +
-> +		ret = st1202_duration_pattern_write(chip, patt, ST1202_MILLIS_PATTERN_DUR_MIN);
-> +		if (ret != 0)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int st1202_led_pattern_set(struct led_classdev *ldev,
-> +				struct led_pattern *pattern,
-> +				u32 len, int repeat)
-> +{
-> +	struct st1202_led *led;
-> +	struct st1202_chip *chip;
-> +	int ret;
-> +
-> +	led = cdev_to_st1202_led(ldev);
-> +	chip = led->chip;
-> +
-> +	if (len > ST1202_MAX_PATTERNS)
-> +		return -EINVAL;
-> +
-> +	guard(mutex)(&chip->lock);
-> +
-> +	for (int patt = 0; patt < len; patt++) {
-> +		if (pattern[patt].delta_t < ST1202_MILLIS_PATTERN_DUR_MIN ||
-> +				pattern[patt].delta_t > ST1202_MILLIS_PATTERN_DUR_MAX)
-> +			return -EINVAL;
-> +
-> +		ret = st1202_pwm_pattern_write(chip, led->led_num, patt, pattern[patt].brightness);
-> +		if (ret != 0)
-> +			return ret;
-> +
-> +		ret = st1202_duration_pattern_write(chip, patt, pattern[patt].delta_t);
-> +		if (ret != 0)
-> +			return ret;
-> +	}
-> +
-> +	ret = st1202_write_reg(chip, ST1202_PATTERN_REP, repeat);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, (ST1202_CONFIG_REG_PATSR |
-> +				ST1202_CONFIG_REG_PATS | ST1202_CONFIG_REG_SHFT));
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int st1202_dt_init(struct st1202_chip *chip)
-> +{
-> +	struct device *dev = &chip->client->dev;
-> +	struct st1202_led *led;
-> +	int err, reg;
-> +
-> +	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
-> +		struct led_init_data init_data = {};
-> +
-> +		err = of_property_read_u32(child, "reg", &reg);
-> +		if (err)
-> +			return dev_err_probe(dev, err, "Invalid register\n");
-> +
-> +		led = &chip->leds[reg];
-> +		led->is_active = true;
-> +		led->fwnode = of_fwnode_handle(child);
-> +
-> +		led->led_cdev.max_brightness = U8_MAX;
-> +		led->led_cdev.brightness_set_blocking = st1202_led_set;
-> +		led->led_cdev.pattern_set = st1202_led_pattern_set;
-> +		led->led_cdev.pattern_clear = st1202_led_pattern_clear;
-> +		led->led_cdev.default_trigger = "pattern";
-> +
-> +		init_data.fwnode = led->fwnode;
-> +		init_data.devicename = "st1202";
-> +		init_data.default_label = ":";
-
-'\n'
-
-> +		err = devm_led_classdev_register_ext(dev, &led->led_cdev, &init_data);
-> +		if (err < 0)
-> +			return dev_err_probe(dev, err, "Failed to register LED class device\n");
-> +
-> +		led->led_cdev.brightness_set = st1202_brightness_set;
-> +		led->led_cdev.brightness_get = st1202_brightness_get;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int st1202_setup(struct st1202_chip *chip)
-> +{
-> +	int ret;
-> +
-> +	guard(mutex)(&chip->lock);
-
-'\n'
-
-> +	/*
-> +	 * Once the supply voltage is applied, the LED1202 executes some internal checks,
-> +	 * afterwords it stops the oscillator and puts the internal LDO in quiescent mode.
-> +	 * To start the device, EN bit must be set inside the “Device Enable” register at
-> +	 * address 01h. As soon as EN is set, the LED1202 loads the adjustment parameters
-> +	 * from the internal non-volatile memory and performs an auto-calibration procedure
-> +	 * in order to increase the output current precision.
-> +	 * Such initialization lasts about 6.5 ms.
-> +	 */
-> +
-> +	/* Reset the chip during setup */
-> +	ret = st1202_write_reg(chip, ST1202_DEV_ENABLE, ST1202_DEV_ENABLE_RESET);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Enable phase-shift delay feature */
-> +	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_SHFT);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Enable the device */
-> +	ret = st1202_write_reg(chip, ST1202_DEV_ENABLE, ST1202_DEV_ENABLE_ON);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Duration of initialization */
-> +	usleep_range(6500, 10000);
-> +
-> +	/* Deactivate all LEDS (channels) and activate only the ones found in Device Tree */
-> +	ret = st1202_write_reg(chip, ST1202_CHAN_ENABLE_LOW, ST1202_CHAN_DISABLE_ALL);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = st1202_write_reg(chip, ST1202_CHAN_ENABLE_HIGH, ST1202_CHAN_DISABLE_ALL);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = st1202_write_reg(chip, ST1202_CONFIG_REG,
-> +				ST1202_CONFIG_REG_PATS | ST1202_CONFIG_REG_PATSR);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int st1202_probe(struct i2c_client *client)
-> +{
-> +	struct st1202_chip *chip;
-> +	struct st1202_led *led;
-> +	int ret;
-> +
-> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-> +		return dev_err_probe(&client->dev, -EIO, "SMBUS Byte Data not Supported\n");
-> +
-> +	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-> +	if (!chip)
-> +		return -ENOMEM;
-> +
-> +	devm_mutex_init(&client->dev, &chip->lock);
-> +	chip->client = client;
-> +
-> +	ret = st1202_dt_init(chip);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = st1202_setup(chip);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	for (int i = 0; i < ST1202_MAX_LEDS; i++) {
-> +		led = &chip->leds[i];
-> +		led->chip = chip;
-> +		led->led_num = i;
-> +
-> +		if (led->is_active) {
-
-if (!led->is_active)
-	continue;
-
-Then you can pull these back:
-
-> +			ret = st1202_channel_set(led->chip, led->led_num, true);
-> +			if (ret < 0)
-> +				return dev_err_probe(&client->dev, ret,
-> +						"Failed to activate LED channel\n");
-> +
-> +			ret = st1202_led_pattern_clear(&led->led_cdev);
-> +			if (ret < 0)
-> +				return dev_err_probe(&client->dev, ret,
-> +						"Failed to clear LED pattern\n");
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct i2c_device_id st1202_id[] = {
-> +	{ "st1202-i2c" },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, st1202_id);
-> +
-> +static const struct of_device_id st1202_dt_ids[] = {
-> +	{ .compatible = "st,led1202" },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, st1202_dt_ids);
-> +
-> +static struct i2c_driver st1202_driver = {
-> +	.driver = {
-> +		.name = "leds-st1202",
-> +		.of_match_table = of_match_ptr(st1202_dt_ids),
-> +	},
-> +	.probe = st1202_probe,
-> +	.id_table = st1202_id,
-> +};
-> +module_i2c_driver(st1202_driver);
-> +
-> +MODULE_AUTHOR("Remote Tech LTD");
-> +MODULE_DESCRIPTION("STMicroelectronics LED1202 : 12-channel constant current LED driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.39.3 (Apple Git-145)
-> 
-> 
-
--- 
-Lee Jones [李琼斯]
+Thanks,
+Olek
 
