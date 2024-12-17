@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-449032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBED9F48C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:20:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AFC9F48CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5243116B4CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:20:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B4CD7A3C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91ED31E5702;
-	Tue, 17 Dec 2024 10:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159C21E5726;
+	Tue, 17 Dec 2024 10:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dLiR97cQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="ZfXbkZaL"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E841E2607;
-	Tue, 17 Dec 2024 10:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B3A1E3DF4;
+	Tue, 17 Dec 2024 10:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734430770; cv=none; b=u7T2Pc3aqE/HhR1jfolTOxn9S8CYby1U9uRBwiakwv0i46S0qEYFBbmcYK0vA2dnAlE6DQgxMamF3xiy9JHWMCZ0hxBwDLGVSe01ABRzdoBK528fcByjJUrwZaapSQf+WA1So1dktGEZPBXRd2h4X5qloch41fxryRUp25/EnC0=
+	t=1734431102; cv=none; b=IVSLRsXwUjvPysUo4Q4dI79jBoRZFLpP0fIC+vSNkcAtNtqKh4NfxmmT1+QiQVm/7MK0lNJkOELB+0uME/gsv1s3u/TCNCv6n8ITB1HuYEeQkYXMfQywDpmkEzyFvPDIEPev7NnTKPXJQsAuX9QvY4IEPV4nwOgmITx6Aga/4x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734430770; c=relaxed/simple;
-	bh=UEptcp5tU8de3p6vaM3drmHNttcrpLSfkG2TaLiBuYM=;
+	s=arc-20240116; t=1734431102; c=relaxed/simple;
+	bh=fvOxptUDJkKhRMg6B7X5L307c4AE27xkBnHRuUkedDU=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UV8eXmlX/eMi38h6uSqWus/AaUHEIvT1kbACyrsZxnl6ISJZMUgzxAf0RDSedQJ7NBkEnzLR1H1kiteXRjnNtvBgVjtm6oK8w5vz0y2ZqJfgqTdTRSJuEx3hY02svlnCEQeV1zVPohV4zgz/TC1DC64ppdrkCluSyntOJUGQhs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dLiR97cQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH95efE023901;
-	Tue, 17 Dec 2024 10:19:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Vjsiep5ZRr98Ed5cctG12xE+
-	Kw6m+dJm4BgkndjpywM=; b=dLiR97cQc/lzQ11H1TZrowBPM+OSwXr+4RTsdAl/
-	NcdqgjGSzk24r3I4NPa5YjuaKUs+bYPuZkrKJ7mogfAX9gvSs0xbMJsnas9XrfdP
-	bPd0Pt1MdoQ7ae16tD1Fs4lcxXVLk6IcAPspa2sVFCCxnEPKs6mLx5N4CzlgzvnG
-	zfoIHlhptqeGkSzZDZ/2JDX/7pvtRzQ16626pRj1vPmCXn6i5M9zWgS5fTRKIDaa
-	2EYY/Tr3EyTtZsQrmdv6pxHpxjvk8imr2l5fMUvpFFSKcrbCi+CGpUJRcLMosViX
-	Mb7IZL/LQUe+KkXNXu32/FqE/swWQx+IJY479P44dzFJWQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k6c8g7ev-1
+	 Content-Type:Content-Disposition:In-Reply-To; b=PsvXQfAc8BVlLEN6q1NMD6Ng0rnxOxuIK92tc0VS4AS8H4Y8SixP02A/0jWTLmzmTxrZQHAC8LZkPxM1tRBj/xr6JW3reeZ9DEiSoExSsitxomxAStXXZCg8sJFZyprdxRRI3bWcuZF3RPdWnumFEpmiMlS8ccEhpwLc/i8TZzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=ZfXbkZaL; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH59Kkr017522;
+	Tue, 17 Dec 2024 04:24:37 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=qlg9VacJZiR6r1+ghW
+	Nbp56zd1uNub8WDjVBF3OucJM=; b=ZfXbkZaLKmBqvyWIHxB2iybSp7ZQH/BhRX
+	R12rbJLpR9DB141pxnjCTF8vB7jTz0HSMWRwAVmeeZS1Z7H+kjhkLigpaDLniuLA
+	rvv0gnKrN3yTtSZPzFtwr2tY1/2iJZRNZecjI4kCtT1wG3KSAiGTER6le+dDT2LW
+	1i2ILf9kb/koXCoRlgc9Liqo5nDFaCdoi5KuAB97b+C+ZXF+xH8u3Y+dPTdNWoy1
+	Qph/d2EnjR8+V9f1jdZsFBEuhJN70LmT/ebuf/FLlRvXlnjLzfOoSp26oHraBn7V
+	dIMrsEJCRtByN3TXCVS0KFBUWHPqpaWoDoV6KP9CB/vAWirZMuqg==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 43h8a237gu-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 10:19:24 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHAJNO9026529
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 10:19:23 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 17 Dec 2024 02:19:18 -0800
-Date: Tue, 17 Dec 2024 18:19:15 +0800
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: <ulf.hansson@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <bhupesh.sharma@linaro.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_yuanjiey@quicinc.com>
-Subject: Re: [PATCH 0/2] Enable SDHC1 and SDHC2 on QCS615
-Message-ID: <Z2FQI+8A8U7dhqhQ@cse-cd02-lnx.ap.qualcomm.com>
-References: <20241217100237.2932895-1-quic_yuanjiey@quicinc.com>
+	Tue, 17 Dec 2024 04:24:37 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Tue, 17 Dec
+ 2024 10:24:34 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.13 via Frontend Transport; Tue, 17 Dec 2024 10:24:34 +0000
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id B1D0B820248;
+	Tue, 17 Dec 2024 10:24:34 +0000 (UTC)
+Date: Tue, 17 Dec 2024 10:24:33 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+CC: <vkoul@kernel.org>, <peter.ujfalusi@linux.intel.com>,
+        <yung-chuan.liao@linux.intel.com>, <sanyog.r.kale@intel.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH] soundwire: intel_auxdevice: Don't disable IRQs before
+ removing children
+Message-ID: <Z2FRYfHoHX4Dv+C2@opensource.cirrus.com>
+References: <20241212110221.1509163-1-ckeepax@opensource.cirrus.com>
+ <3eb98099-75da-4464-97d1-9e8538375e34@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,77 +76,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20241217100237.2932895-1-quic_yuanjiey@quicinc.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wo2X3sbkGQtjiTARDXhB1jOAPgWDpJxk
-X-Proofpoint-ORIG-GUID: wo2X3sbkGQtjiTARDXhB1jOAPgWDpJxk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- suspectscore=0 mlxlogscore=999 malwarescore=0 clxscore=1015
- impostorscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412170085
+In-Reply-To: <3eb98099-75da-4464-97d1-9e8538375e34@linux.dev>
+X-Proofpoint-ORIG-GUID: EsSGbeVkrS5v4q5LqwshsvR3Zb2aVO26
+X-Proofpoint-GUID: EsSGbeVkrS5v4q5LqwshsvR3Zb2aVO26
+X-Proofpoint-Spam-Reason: safe
 
-On Tue, Dec 17, 2024 at 06:02:35PM +0800, Yuanjie Yang wrote:
-> Add SDHC1 and SDHC2 support to the QCS615 Ride platform. The
-> SDHC1 and SDHC2 of QCS615 are derived from SM6115. Include
-> the configuration of SDHC1-related and SDHC2-related opp,
-> power, and interconnect settings in the device tree.
+On Mon, Dec 16, 2024 at 11:35:23AM -0600, Pierre-Louis Bossart wrote:
+> On 12/12/24 5:02 AM, Charles Keepax wrote:
+> > Currently the auxiliary device for the link disables IRQs before it
+> > calls sdw_bus_master_delete(). This has the side effect that
+> > none of the devices on the link can access their own registers whilst
+> > their remove functions run, because the IRQs are required for bus
+> > transactions to function. Obviously, devices should be able to access
+> > their own registers during disable to park the device suitably.
 > 
-> Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> What does 'park the device suitably' mean really? That sounds
+> scary. What happens if the manager abruptly ceases to operate and
+> yanks the power? Does the device catch on fire? On a related note,
+> the manager should *never* expect to find the device in a 'suitable'
+> state but always proceed with complete re-initialization.
 > 
-> ---
-> This patch series depends on below patch series:
-> - gcc: https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com/
+> It would be good to expand on the issue, introducing new locks
+> is one of those "no good deed goes unpunished" situations.
 > 
-> Changes in v5:
-> - Modify SDHC1 and SDHC2 interconnects, for the cpu path, use
-> QCOM_ICC_TAG_ACTIVE_ONLY to replace QCOM_ICC_TAG_ALWAYS
-> - For SDHC1 and SDHC2, Add a newline before status
-> - Rebase Change on tag: next-20241217
-> - Modify dependency changes
-> - Link to v4: https://lore.kernel.org/all/20241206023711.2541716-1-quic_yuanjiey@quicinc.com/
-> 
-> Changes in v4:
-> - Move properties which are not properties of the SoC to board DTS
-> - Add ice region to SDHC1 Node reg
-> - Add 50Mhz 200Mhz to SDHC1 opp table, add 50Mhz to SDHC2 opp table 
-> - fix SDHC2 Node compatible space
-> - Link to v3: https://lore.kernel.org/all/20241122065101.1918470-1-quic_yuanjiey@quicinc.com/
-> 
-> Changes in v3:
-> - Improve the commit messages and cover letter
-> - Link to v2: https://lore.kernel.org/all/20241106072343.2070933-1-quic_yuanjiey@quicinc.com/
-> 
-> Changes in v2:
-> - Improve the commit messages and cover letter
-> - Remove applied patches 1
-> - Pad sdhc_1 node and sdhc_2 node register addresses to 8 hex digits
-> - Adjust sdhc_1 node and sdhc_2 node register addresses to hexadecimal
-> - Modify sdhc_2 vqmmc-supply incorrect power configuration
-> - Link to v1: https://lore.kernel.org/all/20241023092708.604195-1-quic_yuanjiey@quicinc.com/
-> 
-> ---
-> Yuanjie Yang (2):
->   arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
->   arm64: dts: qcom: qcs615-ride: enable SDHC1 and SDHC2
-> 
->  arch/arm64/boot/dts/qcom/qcs615-ride.dts |  37 ++++
->  arch/arm64/boot/dts/qcom/qcs615.dtsi     | 211 +++++++++++++++++++++++
->  2 files changed, 248 insertions(+)
-> 
-> -- 
-> 2.34.1
 
-Sent by mistake, please ignore this patch. I have sent a correct patch.
-https://lore.kernel.org/all/20241217101017.2933587-1-quic_yuanjiey@quicinc.com/
+I would agree that one should never make hardware that needs parked
+to avoid damage, but people do stupid things. Also, it doesn't
+have to be as catastrophic as that, it is usually a case of wanting
+to move the device into its lowest power state, turn off regulators
+on the device etc.
+
+> > It would appear the reason for the disabling of the IRQs is that the IRQ
+> > handler iterates through a linked list of all the links, once a link is
+> > removed the memory pointed at by this linked list is freed, but not
+> > removed from the linked_list itself. Add a list_del() for the linked
+> > list item, note whilst the list itself is contained in the intel_init
+> > portion of the code, the list remove needs to be attached to the
+> > auxiliary device for the link, since that owns the memory that the list
+> > points at. Locking is also required to ensure the IRQ handler runs
+> > before or after any additions/removals from the list.
+> 
+> that sounds very detailed but the initial reason for all this is still
+> unclear.
+
+If you want, I can add the exact reason I am adding this change to
+the commit message, which is that regmap IRQ sensibly masks IRQs
+as they are removed, so when the cs42l43 removes one sees a bunch
+of failed transations, as the bus has broken. But to be honest I
+feel like it is overly specific, one could construct any number of
+similar situations, the real problem here is it is completely normal
+and reasonable to want to communicate with a device in remove and
+we should support that.
 
 Thanks,
-yuanjie
-
+Charles
 
