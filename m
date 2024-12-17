@@ -1,82 +1,103 @@
-Return-Path: <linux-kernel+bounces-448756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA349F4516
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:27:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665869F452A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:32:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E00A167602
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:27:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABEE516A103
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511AF18FDAF;
-	Tue, 17 Dec 2024 07:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2498E193427;
+	Tue, 17 Dec 2024 07:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8ZQlRnZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1BD189F42;
-	Tue, 17 Dec 2024 07:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JlB3dIW+"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A9A15B0EE;
+	Tue, 17 Dec 2024 07:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734420457; cv=none; b=S1d8KMfgCJecieRXXmpZs4iQ+dROs/W+dxliZ/zS8Xdpz8bM3K9h8f+tmWe2piQchCyieuRsfdlfsGljIIutGInqU0UrksBwOl3I0GVh4mppjYq0lZE5E0IPRDuiA9hvVY6iFpp3i3WlIh8tZbNm2bB6clrl0gR7q/tPpi7/8RU=
+	t=1734420726; cv=none; b=tugUwsAuPSKwTWCfeSUi+1Z4PIa6jNNuD6ELfmemyyRXTj87ElRfH+rgwWaV13S8YQBNdrDyp0gDeba3ZPjbewXd9DuXb+l6NvoKviCovQLzbr9uRV+aizHaOIj6Thdk/u6XLFyK9zrsD7ZFWI0/zPtwxZ+dS2xytJx8oMlIKYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734420457; c=relaxed/simple;
-	bh=E/Ox3kudr//gds5CCkXEvKZN4F2VPAOGkX7l6mnxOOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTdN79Z2ayjVk+f+9535YyRhu2ewlFtyVITjhMnLLk4YkmS3iEGogGDg7rffzU5xxO3+sv7vwxsrCfLHpVL2RmVatr6mzonBu///ShaTpgaHy+ThIpOFV0YF00y0snGvH8vj28tO5vZ8ORCKvmnhNo+pQNzY6o9DRzPWjuUVoUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8ZQlRnZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76026C4CED3;
-	Tue, 17 Dec 2024 07:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734420457;
-	bh=E/Ox3kudr//gds5CCkXEvKZN4F2VPAOGkX7l6mnxOOU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F8ZQlRnZJITWtv7Nv//BDvpDhrjU/74eSXmUNJOZffUsOIYx51Ib2GRbjN82QaSXj
-	 WW8U1PR7gLpqS88fX03C0+F7KegOUljHRgIIIMn+Ax7DIihhBcb6pthzGLQYwzgvdR
-	 rbVgYwQPdvSWfD6GNM5JyRU/8iPYvqpgkqf9m69ZSfEQdwkOacM6lTtnWU88cA5xY0
-	 wBuKOtwyG6brhdZ2JvUs9JSNINRumimHmV903Cz1FnwrYRgFz9rgBZfs9CXwcmze00
-	 ptFRPLf8zIYGomQPMqyC2RM2IFzIKZnCDFR2Kio8g3eOvLcWxNxiS3xYJThJK61pWV
-	 4cenV94mXsnIg==
-Date: Tue, 17 Dec 2024 08:27:34 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, quic_srichara@quicinc.com, 
-	quic_varada@quicinc.com
-Subject: Re: [PATCH 2/4] dt-bindings: phy: qcom,ipq8074-qmp-pcie: Document
- the IPQ5424 QMP PCIe PHYs
-Message-ID: <lbzoom3xyareorikzgdcroiysgewh5z6r3pnkkjdoxcyogeyc5@pjyeldrte4jb>
-References: <20241213134950.234946-1-quic_mmanikan@quicinc.com>
- <20241213134950.234946-3-quic_mmanikan@quicinc.com>
+	s=arc-20240116; t=1734420726; c=relaxed/simple;
+	bh=J/xxn//Qm+RozpXZk+Z8UjqyMjIaFfwCSJTuh4OLR6g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t0UsDp3WYT9JoIfDBdoe9GghT0zVhJCtgMg0jGZxKEbYoL0zJPiYU352NDZ8lF1EMYX9JB6za65T1WvCHaE9yLRGuIu+Zj1iSqG3PHQB80tKMLAuNSGJ2U6C+2DTHHg0yaKMFHiGKJVjgl9lfIcu97g/97aJKh1/6mOII4GTCd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JlB3dIW+; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=QNcGf
+	gASXiwUkT0sXAhHlcJlf5pLc4GvYuZ2YvQKUUQ=; b=JlB3dIW+CUzBh3BNTfiVD
+	6uLvgRQpbo1/rY82EAFXOgxjtuDXbgdV1jAw0pMQskUHDZbD5dwYINWXhKCXg6ve
+	RZfIA91JHYjZKq7BkoVBFGYAKja+x5Igwj6MHX1WFLXWROybQrEpjmMK0fA8ds7z
+	hFoR/oh2H7vJaOK6DkSTfU=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDn1xrWKGFn1RR_BA--.21494S4;
+	Tue, 17 Dec 2024 15:31:41 +0800 (CST)
+From: Ma Ke <make_ruc2021@163.com>
+To: broonie@kernel.org,
+	aaro.koskinen@nokia.com
+Cc: linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make_ruc2021@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] spi: fix reference leak in spi_register_controller()
+Date: Tue, 17 Dec 2024 15:31:33 +0800
+Message-Id: <20241217073133.2908052-1-make_ruc2021@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241213134950.234946-3-quic_mmanikan@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn1xrWKGFn1RR_BA--.21494S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GF13GrWUGF4kurWDCF4fAFb_yoWkZFbEkF
+	429r1UWr4DC397Ar9xKr4rZFy09Fs2gFySya1DtF4rtayrXr9rXr18XrW5Zry5Aw47urnr
+	Zw17trsYkr13CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRWGQhUUUUUU==
+X-CM-SenderInfo: 5pdnvshuxfjiisr6il2tof0z/1tbizR+4C2dhIXyjCQAAsQ
 
-On Fri, Dec 13, 2024 at 07:19:48PM +0530, Manikanta Mylavarapu wrote:
-> Document the PCIe phy on the IPQ5424 platform using the
-> IPQ9574 bindings as a fallback, since the PCIe phy on the
-> IPQ5424 is similar to IPQ9574.
-> 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
->  .../phy/qcom,ipq8074-qmp-pcie-phy.yaml        | 21 +++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
+Once device_add() failed, we should call put_device() to decrement
+reference count for cleanup. Or it could cause memory leak.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Found by code review.
 
-Best regards,
-Krzysztof
+Cc: stable@vger.kernel.org
+Fixes: f9981d4f50b4 ("spi: spi_register_controller(): free bus id on error paths")
+Signed-off-by: Ma Ke <make_ruc2021@163.com>
+---
+ drivers/spi/spi.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index ff1add2ecb91..6477c2f4ae82 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -3339,8 +3339,10 @@ int spi_register_controller(struct spi_controller *ctlr)
+ 		ctlr->last_cs[idx] = SPI_INVALID_CS;
+ 
+ 	status = device_add(&ctlr->dev);
+-	if (status < 0)
++	if (status < 0) {
++		put_device(&ctlr->dev);
+ 		goto free_bus_id;
++	}
+ 	dev_dbg(dev, "registered %s %s\n",
+ 			spi_controller_is_target(ctlr) ? "target" : "host",
+ 			dev_name(&ctlr->dev));
+@@ -3356,6 +3358,7 @@ int spi_register_controller(struct spi_controller *ctlr)
+ 		status = spi_controller_initialize_queue(ctlr);
+ 		if (status) {
+ 			device_del(&ctlr->dev);
++			put_device(&ctlr->dev);
+ 			goto free_bus_id;
+ 		}
+ 	}
+-- 
+2.25.1
 
 
