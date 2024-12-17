@@ -1,126 +1,220 @@
-Return-Path: <linux-kernel+bounces-449098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1DE9F49DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:27:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325599F49DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58F41889FA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:27:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE70188B994
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A541EC00F;
-	Tue, 17 Dec 2024 11:27:19 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F081C1EC4FD;
+	Tue, 17 Dec 2024 11:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRDb92u8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C3750276
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C94B50276;
+	Tue, 17 Dec 2024 11:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734434838; cv=none; b=t1nhM3YGNyyvODkAVwqgjw+2iNGZuNSfBbRK60d4SS1BHLt1oh5K/Pl36Zb4ISWQn30w/3+Gvx7EafqxZaoXgITbLVyfwwI4/t4WKGdccvxe4u3cemF3bDrHK3raw0NXms1I5NqVLMzSzJ/qag+G4comavOXLu1bzFEI0Zw+DEE=
+	t=1734434946; cv=none; b=bALP5DDIYdsO6zbgbssVE5ZIjOok2xOq2Nt0sgT1EcO9iV7yaLP4mHx+jL8QrMaBX0ef0bTyB7TRFqXMg+JJ65cOmH7oGG4QQ0vXQOPP0djKTXV7t1aQ0xj75LAYeSAmqmZGeXVxQ/MnTkmKAvq9698juTvkYJpiaySx6XKgWTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734434838; c=relaxed/simple;
-	bh=vqALQt09fwYnd0MOAWYVVvbDKV3l718+gC/GiJHJjMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dFWSUtgyiceSUrOIM43hyWGAu7av2s+E+G87z1FwUPqNnPRNroKSFFRZHmyCq8koVLnQvScqr/tE0IW4zDQ6aiA5ALR/vhz/XwH6bf+5GA/yk6SxOxxcB4r87b3CTbu6Bn4+IJCoVx/yzXkJ20yqdOVgwcp3TTwqApKc8GZdgnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YCDzZ1XDMz4f3lDK
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:26:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B35851A07BA
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:27:10 +0800 (CST)
-Received: from [10.174.177.210] (unknown [10.174.177.210])
-	by APP4 (Coremail) with SMTP id gCh0CgAXP4MLYGFnpi5sEw--.55710S3;
-	Tue, 17 Dec 2024 19:27:08 +0800 (CST)
-Message-ID: <30e13c1c-5dd7-da94-9d2a-6277ade3e9e4@huaweicloud.com>
-Date: Tue, 17 Dec 2024 19:27:07 +0800
+	s=arc-20240116; t=1734434946; c=relaxed/simple;
+	bh=ZA5XJc1vs+Zrcy5PAhS+ySqSiRH75TTc9k5gF60rrqQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p3rCZ7qWH16OgW9BfjmEF0xD2KNTru2pA4Y4d1f6/HJmUxoIMYJg7eiMbJtOA2Kj7TUd/IThqjA31js4JlqB6/Z5XqNEHjJiOo/2pDrsz/CHwoU/Sj71zA2c32fSjCRZ6EwvjMrjlyNA9KQK2EFi5scYd+dPTpJPGEPjr+Q2TcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRDb92u8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE4CBC4CED3;
+	Tue, 17 Dec 2024 11:29:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734434945;
+	bh=ZA5XJc1vs+Zrcy5PAhS+ySqSiRH75TTc9k5gF60rrqQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iRDb92u8TAdFe2L/MQWADYGyZL8MCBNrpOsboMkeHw0/zWr0gojL+7Mt3c+iwyf91
+	 boA8Cz82WAde/dYj8fUeAybaStJvaLTqOZbHFNwHXpW11XE89HLAMuerU6fKTjMH3w
+	 CwJZPtz85bsnz5hS0rESPLdufXsvlCSCqJqvHZM9E8/rXrvA68SGI4uWdqsRoRFVph
+	 Jy0pwm/pSLruQFXTSYdO/kg2H13Rw9szuIlw12OpG95c4tAKivjnu51Z9ZIg4+l8Wh
+	 nJ/YXO2G965ZdtDOmYQnzkueWm+Xv7H88UZUQGcTJO9CuXLFkdRo0HFifcOYx/59AC
+	 85zgxgcSM+/nA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tNVl9-004X4R-H3;
+	Tue, 17 Dec 2024 11:29:03 +0000
+Date: Tue, 17 Dec 2024 11:29:03 +0000
+Message-ID: <86wmfyr1j4.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Quentin Perret <qperret@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Fuad Tabba <tabba@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 11/18] KVM: arm64: Introduce __pkvm_host_unshare_guest()
+In-Reply-To: <20241216175803.2716565-12-qperret@google.com>
+References: <20241216175803.2716565-1-qperret@google.com>
+	<20241216175803.2716565-12-qperret@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH 1/2] maple_tree: Fix mas_alloc_cyclic() second search
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: maple-tree@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, chuck.lever@oracle.com, brauner@kernel.org
-References: <20241216190113.1226145-1-Liam.Howlett@oracle.com>
- <20241216190113.1226145-2-Liam.Howlett@oracle.com>
-From: yangerkun <yangerkun@huaweicloud.com>
-In-Reply-To: <20241216190113.1226145-2-Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXP4MLYGFnpi5sEw--.55710S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KrWkWF4xWr4rKFy5Cr18Grg_yoW8Gw45pa
-	1DWa1UKrZ7Jr48Kw1kWrWUXas2qrnYgr1xWayDJw1rZry5JFySgr15CFWfuF47Z3srA3Wa
-	yF4av3W0ka4DZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
-	tUUUUU=
-X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, tabba@google.com, vdonnefort@google.com, sebastianene@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-
-在 2024/12/17 3:01, Liam R. Howlett 写道:
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+On Mon, 16 Dec 2024 17:57:56 +0000,
+Quentin Perret <qperret@google.com> wrote:
 > 
-> The first search may leave the maple state in an error state.  Reset the
-> maple state before the second search so that the search has a chance of
-> executing correctly after an exhausted first search.
+> In preparation for letting the host unmap pages from non-protected
+> guests, introduce a new hypercall implementing the host-unshare-guest
+> transition.
 > 
-> Link: https://lore.kernel.org/all/20241216060600.287B4C4CED0@smtp.kernel.org/
-> Fixes: 9b6713cc7522 ("maple_tree: Add mtree_alloc_cyclic()")
-> Cc: Yang Erkun <yangerkun@huaweicloud.com>
-> Cc: chuck.lever@oracle.com
-> Cc: brauner@kernel.org
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> Signed-off-by: Quentin Perret <qperret@google.com>
 > ---
->   lib/maple_tree.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-
-This looks more clear!
-
-Reviewed-by: Yang Erkun <yangerkun@huawei.com>
-
+>  arch/arm64/include/asm/kvm_asm.h              |  1 +
+>  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  1 +
+>  arch/arm64/kvm/hyp/include/nvhe/pkvm.h        |  6 ++
+>  arch/arm64/kvm/hyp/nvhe/hyp-main.c            | 21 ++++++
+>  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 67 +++++++++++++++++++
+>  arch/arm64/kvm/hyp/nvhe/pkvm.c                | 12 ++++
+>  6 files changed, 108 insertions(+)
 > 
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index 940d30653407b..f7153ade1be5f 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -4335,7 +4335,6 @@ int mas_alloc_cyclic(struct ma_state *mas, unsigned long *startp,
->   {
->   	unsigned long min = range_lo;
->   	int ret = 0;
-> -	struct ma_state m = *mas;
->   
->   	range_lo = max(min, *next);
->   	ret = mas_empty_area(mas, range_lo, range_hi, 1);
-> @@ -4344,7 +4343,7 @@ int mas_alloc_cyclic(struct ma_state *mas, unsigned long *startp,
->   		ret = 1;
->   	}
->   	if (ret < 0 && range_lo > min) {
-> -		*mas = m;
-> +		mas_reset(mas);
->   		ret = mas_empty_area(mas, min, range_hi, 1);
->   		if (ret == 0)
->   			ret = 1;
+> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+> index 449337f5b2a3..0b6c4d325134 100644
+> --- a/arch/arm64/include/asm/kvm_asm.h
+> +++ b/arch/arm64/include/asm/kvm_asm.h
+> @@ -66,6 +66,7 @@ enum __kvm_host_smccc_func {
+>  	__KVM_HOST_SMCCC_FUNC___pkvm_host_share_hyp,
+>  	__KVM_HOST_SMCCC_FUNC___pkvm_host_unshare_hyp,
+>  	__KVM_HOST_SMCCC_FUNC___pkvm_host_share_guest,
+> +	__KVM_HOST_SMCCC_FUNC___pkvm_host_unshare_guest,
+>  	__KVM_HOST_SMCCC_FUNC___kvm_adjust_pc,
+>  	__KVM_HOST_SMCCC_FUNC___kvm_vcpu_run,
+>  	__KVM_HOST_SMCCC_FUNC___kvm_flush_vm_context,
+> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> index a7976e50f556..e528a42ed60e 100644
+> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> @@ -40,6 +40,7 @@ int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages);
+>  int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
+>  int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
+>  int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot);
+> +int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
+>  
+>  bool addr_is_memory(phys_addr_t phys);
+>  int host_stage2_idmap_locked(phys_addr_t addr, u64 size, enum kvm_pgtable_prot prot);
+> diff --git a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
+> index be52c5b15e21..0cc2a429f1fb 100644
+> --- a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
+> +++ b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
+> @@ -64,6 +64,11 @@ static inline bool pkvm_hyp_vcpu_is_protected(struct pkvm_hyp_vcpu *hyp_vcpu)
+>  	return vcpu_is_protected(&hyp_vcpu->vcpu);
+>  }
+>  
+> +static inline bool pkvm_hyp_vm_is_protected(struct pkvm_hyp_vm *hyp_vm)
+> +{
+> +	return kvm_vm_is_protected(&hyp_vm->kvm);
+> +}
+> +
+>  void pkvm_hyp_vm_table_init(void *tbl);
+>  
+>  int __pkvm_init_vm(struct kvm *host_kvm, unsigned long vm_hva,
+> @@ -78,6 +83,7 @@ void pkvm_put_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu);
+>  struct pkvm_hyp_vcpu *pkvm_get_loaded_hyp_vcpu(void);
+>  
+>  struct pkvm_hyp_vm *get_pkvm_hyp_vm(pkvm_handle_t handle);
+> +struct pkvm_hyp_vm *get_np_pkvm_hyp_vm(pkvm_handle_t handle);
+>  void put_pkvm_hyp_vm(struct pkvm_hyp_vm *hyp_vm);
+>  
+>  #endif /* __ARM64_KVM_NVHE_PKVM_H__ */
+> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> index d659462fbf5d..3c3a27c985a2 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> @@ -244,6 +244,26 @@ static void handle___pkvm_host_share_guest(struct kvm_cpu_context *host_ctxt)
+>  	cpu_reg(host_ctxt, 1) =  ret;
+>  }
+>  
+> +static void handle___pkvm_host_unshare_guest(struct kvm_cpu_context *host_ctxt)
+> +{
+> +	DECLARE_REG(pkvm_handle_t, handle, host_ctxt, 1);
+> +	DECLARE_REG(u64, gfn, host_ctxt, 2);
+> +	struct pkvm_hyp_vm *hyp_vm;
+> +	int ret = -EINVAL;
+> +
+> +	if (!is_protected_kvm_enabled())
+> +		goto out;
+> +
+> +	hyp_vm = get_np_pkvm_hyp_vm(handle);
+> +	if (!hyp_vm)
+> +		goto out;
+> +
+> +	ret = __pkvm_host_unshare_guest(gfn, hyp_vm);
+> +	put_pkvm_hyp_vm(hyp_vm);
+> +out:
+> +	cpu_reg(host_ctxt, 1) =  ret;
+> +}
+> +
+>  static void handle___kvm_adjust_pc(struct kvm_cpu_context *host_ctxt)
+>  {
+>  	DECLARE_REG(struct kvm_vcpu *, vcpu, host_ctxt, 1);
+> @@ -454,6 +474,7 @@ static const hcall_t host_hcall[] = {
+>  	HANDLE_FUNC(__pkvm_host_share_hyp),
+>  	HANDLE_FUNC(__pkvm_host_unshare_hyp),
+>  	HANDLE_FUNC(__pkvm_host_share_guest),
+> +	HANDLE_FUNC(__pkvm_host_unshare_guest),
+>  	HANDLE_FUNC(__kvm_adjust_pc),
+>  	HANDLE_FUNC(__kvm_vcpu_run),
+>  	HANDLE_FUNC(__kvm_flush_vm_context),
+> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> index fb9592e721cf..30243b7922f1 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> @@ -1421,3 +1421,70 @@ int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu,
+>  
+>  	return ret;
+>  }
+> +
+> +static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ipa)
+> +{
+> +	enum pkvm_page_state state;
+> +	struct hyp_page *page;
+> +	kvm_pte_t pte;
+> +	u64 phys;
+> +	s8 level;
+> +	int ret;
+> +
+> +	ret = kvm_pgtable_get_leaf(&vm->pgt, ipa, &pte, &level);
+> +	if (ret)
+> +		return ret;
+> +	if (level != KVM_PGTABLE_LAST_LEVEL)
 
+So there is still a very strong assumption that a guest is only
+provided page mappings, and no blocks?
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
