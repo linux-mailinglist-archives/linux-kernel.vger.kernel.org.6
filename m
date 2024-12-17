@@ -1,135 +1,112 @@
-Return-Path: <linux-kernel+bounces-449633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0D89F51F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:12:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6CE9F5202
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:13:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 799AE18881D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A4CA7A42A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC4B1F8660;
-	Tue, 17 Dec 2024 17:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C431C1F869D;
+	Tue, 17 Dec 2024 17:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="luGFw+xh"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqS5blzl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF85C149DFA;
-	Tue, 17 Dec 2024 17:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6AE1F4735;
+	Tue, 17 Dec 2024 17:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734455516; cv=none; b=QR2S2Ubwq19cR8p0wH2JiohSEm4y0xCo4kxlSYdhmxRd2mZJg6eOhrnNSAUsyhWzzFbsgo7iE7EslwQjIfuLf/43/Z3GMDpkg5FHCYih2BrpB3ZCGZW1JAgckTG/U7vA5DZ0nYi+HiKJy/GgiCnH97e9ELtBCcUHCfagccvO4Bg=
+	t=1734455574; cv=none; b=nb/NDfvTAQD1ac11ZK6X/upCcazbMOog3IfQSyGyKKsGDNBULneAjFERaPySODYp5zl+AtVsQcAfpR1QQMG3kR8myzvKMPXHc8fKhVO/dWHMWlEfCjRwARkr+xiSueW05cDlnxpWWZOfBS6x30egcxdg58MXoi2XhMkBMGe5Rnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734455516; c=relaxed/simple;
-	bh=5I2Fz+Zw+MQQod4tC46e0e80mrv/zcGvwwgYR+3lAG4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GIjbr/tzchA7cEbOQwLKWjgBrgYHL9Od5p3Ej3osPY4ncvKxEdeu8wcXRcRW2HWUAMRKewiVmLtT0r2lqCTwMdgqstAhEQh4R06YQe0NG5uPFw1dUbC7HVMOSA+HjImyJwhjI/J4/40ISEcI4gb05Rb8hxElYjvv60opJlH8fJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=luGFw+xh; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3862d161947so2688061f8f.3;
-        Tue, 17 Dec 2024 09:11:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734455513; x=1735060313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wDe+OjYsEchyhWL3fZePRFw+ytkHRR5OcslzF4bh7Go=;
-        b=luGFw+xhaPBEMUvHVoKqgMENJhbNefJCHVxRRLS4YZ/XPuiewNXkEdLpuQcEZUVzKE
-         1POYtRrwtI4Pid3dF0Y+YP/ySW9JGipIqCUq+vjliiANek6tp0+F7bQ/xMmvP2r/HXsT
-         DUPVRKmOY4gWkcf33lF+pqkw7Ac0+Lxg421gPyKWQ6qGFwEcgmLjqUzTzP32fjiXS4qi
-         CyvF0qJMeNB8mGUop1o6Z5QFeNBZy7o5Lk7x32rFHJSoIO/0/AnY6LU29sf3+fzUXHNW
-         /gBjkrFtrlsrduRNXIB2yF3MVATQW5mfS3TJM2TWCaCJCId66UdUeQEiXokEHkPCop5/
-         OJPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734455513; x=1735060313;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wDe+OjYsEchyhWL3fZePRFw+ytkHRR5OcslzF4bh7Go=;
-        b=U5riV5nBTNB/FVvdHFy0yYo9mFpv6oVxw8+D+0a0Yapmz2d97PhobnDYB/abCURjqr
-         6H60krtg7+CdnEPTyEymNssaUGB/nBpCzCOQR6XokmXlN2r0OZobfiwUhc1bwtLfN4jE
-         9dJ6memhV1Gl5Wp6XLWLnonfCKNOd/ninO4ESDoTrRyplsgtdksZO7PXpVMHCFlos+Xu
-         Fmi3BCNqRxyDZNJ8B4XaVGrqFHC0jq4dyrm6NAr3cx3SNwiejDa+DjVu5qt2PTri0OU4
-         7892xggzJ+0gBdwSHtP6A+FH+VBzcBB6FGs96yLKbxV8hFQFYl9UnltamV/jMp2uBuNr
-         sE+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWu45BjE980w9kBoLOKbfxiPnxis9Uaqu/0s+KbKgH4Xe9BmdzKPGe13BDrK58w5O0Sd1yjCLi+wTU8Kso=@vger.kernel.org, AJvYcCXW9rZbh1SlcixfXWUY3b8Gt9YMuZcpPgoyj0FbkqBe1rh+43Wy5sojpnQ5fix2Y/LLjHEMI4qu4zMCdgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzji7As887lCH350G/XwUGQ6DmeBrapVnT3BhIf8OuoBwGdEsYu
-	IPSCIcM+5yFKKsdMkocEMhhIL8zfqNMydvNaFHY4COZsZ7ZHDNY+DgmU7Q==
-X-Gm-Gg: ASbGncsfn00XSnHm5h5Dbtl3ebNyj6o9gY7lI6tZMTQeCgyCP+NF457iMt2EqxWKIXp
-	BY0UzCVI2r5qNERlusEZGprpXz6uVzexvIzmSMJ6HrB176bApIFZOW5C0FkL+bTnvAzfg5diZFD
-	VKDgF07t/FwW5TceFp4LnLCiYTFZYmZn7dL3bvGYJak4a3MqNrW92I1meq1LnPg43HDQQt0OIBx
-	XIWhyJb+rJ3eA+z7ReRnU3DCCSL72hpnNu3zrpcUv+DD9GN7gPZUKPUFw==
-X-Google-Smtp-Source: AGHT+IHEAuUoVlbNVbA7z8LHgDBOq8SuDDK7gMuVqYHCnWWTwXRtt81eXUzwttb7CKAHzFK2a2wCvw==
-X-Received: by 2002:a05:6000:695:b0:381:f443:21d3 with SMTP id ffacd0b85a97d-3888e0c0840mr16149664f8f.57.1734455512939;
-        Tue, 17 Dec 2024 09:11:52 -0800 (PST)
-Received: from localhost ([194.120.133.23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801211dsm11616848f8f.17.2024.12.17.09.11.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 09:11:52 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: soc-core: remove redundant assignment to variable ret
-Date: Tue, 17 Dec 2024 17:11:51 +0000
-Message-ID: <20241217171151.354550-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1734455574; c=relaxed/simple;
+	bh=cF7o9F9J8om2/yKsO344CwdD5FDj0djBgNVEMiYMls0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERXIEIuvHmUvUEfPdxmj6zAbHsp0jr8PYDBcvkFA4Bq58Ck7Db0IDv8XkDaSl128YnWU4MCtTrTVk5sqxHMBbNhzAC7HsaEou91Bw98CFxWcqqqx0bJGl4b4NlhGSDgFjy1fqItFr4t/Is+w+jbvn8iXc/CXo+dC7r+DVXsZcag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqS5blzl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99BCC4CED3;
+	Tue, 17 Dec 2024 17:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734455574;
+	bh=cF7o9F9J8om2/yKsO344CwdD5FDj0djBgNVEMiYMls0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VqS5blzlMIV41JRUsRQRjAZtFcImCMXXOJlY6XXmrI/N6DLHNR+1ct6NlWLv9guG5
+	 2HG4HeYr4lYNt3v++IgvlVxqotuECulKPhZZRF6OAUA2beePcHbKuiK+fiBvY3Qowi
+	 SshIlWjh5/aVr8XqVRbp98BY08xzqQY5Oqy5NJOyr1lsoWWPaX1EC9VdtKWWvQDxCy
+	 4Z9b3MlmFxkdBmiQTqFCfns67pq5sgr6pMWY9CEVQCczXsixsy7Wwp9N0HxYjwEngk
+	 uBCjlpjFuQ/SNwh0rqswat9IZeoTiQxONC0z33r6PD/JGesx+E1sWQVm5KnCmsoHo/
+	 Qud28MG39LGPg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tNb7w-000000002kp-1mG3;
+	Tue, 17 Dec 2024 18:12:57 +0100
+Date: Tue, 17 Dec 2024 18:12:56 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH] Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on
+ usb-c ports"
+Message-ID: <Z2GxGJTrBJ6Md80b@hovoldconsulting.com>
+References: <20241206172402.20724-1-johan+linaro@kernel.org>
+ <173445353301.470882.1221462093815662513.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173445353301.470882.1221462093815662513.b4-ty@kernel.org>
 
-The variable ret is being assigned a zero value that is never read,
-it is being re-assigned a new value from the return value from the
-call to snd_soc_dapm_add_routes. The assignment is redundant and can
-be removed.
+On Tue, Dec 17, 2024 at 10:38:51AM -0600, Bjorn Andersson wrote:
+> 
+> On Fri, 06 Dec 2024 18:24:02 +0100, Johan Hovold wrote:
+> > This reverts commit 1a48dd7b9ac809d1bd0fd2fef509abba83433846.
+> > 
+> > A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
+> > ports can break SuperSpeed device hotplugging. The host controller is
+> > enumerated, but the device is not:
+> > 
+> > 	xhci-hcd xhci-hcd.5.auto: xHCI Host Controller
+> > 	xhci-hcd xhci-hcd.5.auto: new USB bus registered, assigned bus number 3
+> > 	xhci-hcd xhci-hcd.5.auto: hcc params 0x0110ffc5 hci version 0x110 quirks 0x000080a000000810
+> > 	xhci-hcd xhci-hcd.5.auto: irq 247, io mem 0x0a800000
+> > 	xhci-hcd xhci-hcd.5.auto: xHCI Host Controller
+> > 	xhci-hcd xhci-hcd.5.auto: new USB bus registered, assigned bus number 4
+> > 	xhci-hcd xhci-hcd.5.auto: Host supports USB 3.1 Enhanced SuperSpeed
+> > 	hub 3-0:1.0: USB hub found
+> > 	hub 3-0:1.0: 1 port detected
+> > 	hub 4-0:1.0: USB hub found
+> > 	hub 4-0:1.0: 1 port detected
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [1/1] Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports"
+>       commit: 1fb5cf0d165afc3be76ec754d1b1013515c3896a
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/soc-core.c | 1 -
- 1 file changed, 1 deletion(-)
+Oh, you appear to have picked v1 here.
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index c8b7f78b02f0..710c278e4f36 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -2228,25 +2228,24 @@ static int snd_soc_bind_card(struct snd_soc_card *card)
- 	snd_soc_dapm_link_dai_widgets(card);
- 	snd_soc_dapm_connect_dai_link_widgets(card);
- 
- 	ret = snd_soc_add_card_controls(card, card->controls,
- 					card->num_controls);
- 	if (ret < 0)
- 		goto probe_end;
- 
- 	ret = snd_soc_dapm_add_routes(&card->dapm, card->dapm_routes,
- 				      card->num_dapm_routes);
- 	if (ret < 0) {
- 		if (card->disable_route_checks) {
--			ret = 0;
- 			dev_info(card->dev,
- 				 "%s: disable_route_checks set, ignoring errors on add_routes\n",
- 				 __func__);
- 		} else {
- 			dev_err(card->dev,
- 				 "%s: snd_soc_dapm_add_routes failed: %d\n",
- 				 __func__, ret);
- 			goto probe_end;
- 		}
- 	}
- 
- 	ret = snd_soc_dapm_add_routes(&card->dapm, card->of_dapm_routes,
--- 
-2.45.2
+We need to revert also the other two patches from that series to address
+a suspend issue and to unbreak UCSI and DP support:
 
+	https://lore.kernel.org/lkml/20241210111444.26240-1-johan+linaro@kernel.org/
+
+Johan
 
