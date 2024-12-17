@@ -1,115 +1,185 @@
-Return-Path: <linux-kernel+bounces-449639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3B29F522A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:16:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6589F522C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:16:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE80816DF12
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:14:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3044F188B516
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116871F8932;
-	Tue, 17 Dec 2024 17:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06251F8675;
+	Tue, 17 Dec 2024 17:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Mh+32zj2"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOzwMCZF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B347A1F893C;
-	Tue, 17 Dec 2024 17:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91951F8697;
+	Tue, 17 Dec 2024 17:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734455616; cv=none; b=Nj7zk3Bm65DLre/Tix89S0ESRkBwW63N5eQ+1jwwUnA5MBghEB7kq6bZM9P8Uf9fEYx4vEemMU8JAwBc/BefrUssDHvcQubj2dOZ/+Xc6GSG7Objkdi0kAbwTQ1/kLrEMWh4pkVUmgmWDuzknUyhnkskz8RZeo8ghEdnofGV/As=
+	t=1734455611; cv=none; b=OEMZA3hUJTE81BHkkkuUIguvzu2XY/j+HtcJnm5Ah12sF44OPopiK4+pC87TrPlUcwPLaCH19bXVeSCp3jlD3a7oUh9mJDDefR73HU4J30KbVKPcse6kYoxMj3GKIeh7yE27zd13tnszO5DPKjPxOeUwmjvu78iBtjEP65V04+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734455616; c=relaxed/simple;
-	bh=NQIFuZ2w8wBywiVkh0UxxQCB2JhNO2d1k9CVUOotSt0=;
+	s=arc-20240116; t=1734455611; c=relaxed/simple;
+	bh=jLjXGQRuYhHX2FPYDCj3e7QwJ0rtcdIW6eV0G++iz2s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DI34xd/7ny5a7cXRc+qRJuq1JZUXCJuVTPCxI0XA+M67Rlo8sc/0dEiaRThANBwqgbkuEfVNkwSmlb7FTxIHN7zirzLxMvrWdhOhK18xe1EFFTUFjuADTz2RVSabyC5uDM3gPap8pH8iflBNz0nStwwHgOYruLrscZ8ikoZRCb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Mh+32zj2; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=OwvvlQsYTx0tgG6sjUD5o9s0h+RyVyrmKa+xFxpm5LY=; b=Mh+32zj2yAJ/IVktXG48OACcDL
-	YWCy39aEXY10lJo9QiBWR7wgWqhQ/1zNpXAHV/N1KM2FdKndF0RqLnU5QCrHJhEZ1TLn8yZhtLK2G
-	bbYY0v6WAj4I2Ltmjs1s+ID3JKCW3doXD7QqXzS3c3m8+D+q3Y+TwmIJQapREioc8EZQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tNb8P-00116n-TV; Tue, 17 Dec 2024 18:13:25 +0100
-Date: Tue, 17 Dec 2024 18:13:25 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: dp83822: Add support for PHY LEDs on
- DP83822
-Message-ID: <1a7513fd-c78f-47de-94d7-757c83e9b94c@lunn.ch>
-References: <20241217-dp83822-leds-v1-1-800b24461013@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NoUZGUBAADjZBt0fa/GyzWjGfPJjC0EZ2S/nB9p7TpqkA4spg51/FM9GHwJQr3JQoU/00znMoTBSetS+UBCubIQXMCsJIpadB8WM7HnHNgZQ73F6qnNhcU7aNUaDQcS/ddeGBoIlGTY6zel1bIB2tkX90ZVgW+b5J62SyP2+vlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOzwMCZF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E999BC4CED3;
+	Tue, 17 Dec 2024 17:13:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734455610;
+	bh=jLjXGQRuYhHX2FPYDCj3e7QwJ0rtcdIW6eV0G++iz2s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KOzwMCZFWUA2AqJ1WijKIDZ3FG9jWwCSzdAkuGZZk8CcgC3MyQihVL/tAVIiQAakk
+	 qyHscAgc8d66oucPc5BpPhk/KTUJ71yRFgZoX3tX7UkL4+zbh2hDnsSf/GHyjtNKSW
+	 RjOrc1ydi4UaaLqtcsRPq6vPcccmYLHTyP10s8zr1KbVVEGlKdA1f5DjB+yx2Wj4ei
+	 DfdAyXT08iOVVhOxzzrk7PBP3Jip+7BZAHqv+G3+oyIpMIa08Ye/iSu1kSKJYt840D
+	 i8Igg57Gubrn1nFnXYuUHv2WdInHj9fnqvBVbcvBArEHmirJx3HKuYIClQkXQtu753
+	 6iWHuWgzJcXvg==
+Date: Tue, 17 Dec 2024 18:13:27 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v6 09/10] drm/vc4: hdmi: stop rereading EDID in
+ get_modes()
+Message-ID: <20241217-curly-mauve-scallop-d84a3d@houat>
+References: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
+ <20241206-drm-bridge-hdmi-connector-v6-9-50dc145a9c06@linaro.org>
+ <20241206-caped-proficient-rattlesnake-c882f3@houat>
+ <73xdxb575n4ncmadffkwqzczoewbadq3forpvqt4vp7zfln2nq@o2wmbbbepwgg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="tibevjcmq2hqubs4"
 Content-Disposition: inline
-In-Reply-To: <20241217-dp83822-leds-v1-1-800b24461013@gmail.com>
-
-> +static int dp83822_led_hw_control_set(struct phy_device *phydev, u8 index,
-> +				      unsigned long rules)
-> +{
-> +	int mode;
-> +
-> +	mode = dp83822_led_mode(index, rules);
-> +	if (mode < 0)
-> +		return mode;
-> +
-> +	if (index == DP83822_LED_INDEX_LED_0 || index == DP83822_LED_INDEX_COL_GPIO2)
-> +		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
-> +				      MII_DP83822_MLEDCR, DP83822_MLEDCR_CFG,
-> +				      FIELD_PREP(DP83822_MLEDCR_CFG, mode));
-> +	else if (index == DP83822_LED_INDEX_LED_1_GPIO1)
-> +		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
-> +				      MII_DP83822_LEDCFG1,
-> +				      DP83822_LEDCFG1_LED1_CTRL,
-> +				      FIELD_PREP(DP83822_LEDCFG1_LED1_CTRL,
-> +						 mode));
-> +	else
-> +		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
-> +				      MII_DP83822_LEDCFG1,
-> +				      DP83822_LEDCFG1_LED3_CTRL,
-> +				      FIELD_PREP(DP83822_LEDCFG1_LED3_CTRL,
-> +						 mode));
-
-index is taken direct from DT. Somebody might have:
-
-           leds {
-                #address-cells = <1>;
-                #size-cells = <0>;
-
-                led@42 {
-                    reg = <42>;
-                    color = <LED_COLOR_ID_WHITE>;
-                    function = LED_FUNCTION_LAN;
-                    default-state = "keep";
-                };
-            };
-
-so you should not assume if it is not 0, 1 or 2, then it must be
-3. Please always validate index.
+In-Reply-To: <73xdxb575n4ncmadffkwqzczoewbadq3forpvqt4vp7zfln2nq@o2wmbbbepwgg>
 
 
-    Andrew
+--tibevjcmq2hqubs4
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 09/10] drm/vc4: hdmi: stop rereading EDID in
+ get_modes()
+MIME-Version: 1.0
 
----
-pw-bot: cr
+On Sun, Dec 08, 2024 at 01:06:46PM +0200, Dmitry Baryshkov wrote:
+> On Fri, Dec 06, 2024 at 03:34:52PM +0100, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Fri, Dec 06, 2024 at 12:16:03PM +0200, Dmitry Baryshkov wrote:
+> > > The vc4_hdmi_connector_detect_ctx() via vc4_hdmi_handle_hotplug()
+> > > already reads EDID and propagates it to the drm_connector. Stop
+> > > rereading EDID as a part of the .get_modes() callback and just update
+> > > the list of modes. This matches the behaviour of the i915 driver.
+> > >=20
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 21 ---------------------
+> > >  1 file changed, 21 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4=
+_hdmi.c
+> > > index e5ab42f72f618b90f956482db6c9c8074c1e3bf1..3364ef90968dad3074800=
+f02926300ffceb75c69 100644
+> > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > > @@ -470,31 +470,10 @@ static int vc4_hdmi_connector_detect_ctx(struct=
+ drm_connector *connector,
+> > > =20
+> > >  static int vc4_hdmi_connector_get_modes(struct drm_connector *connec=
+tor)
+> > >  {
+> > > -	struct vc4_hdmi *vc4_hdmi =3D connector_to_vc4_hdmi(connector);
+> > >  	struct vc4_dev *vc4 =3D to_vc4_dev(connector->dev);
+> > > -	const struct drm_edid *drm_edid;
+> > >  	int ret =3D 0;
+> > > =20
+> > > -	/*
+> > > -	 * NOTE: This function should really take vc4_hdmi->mutex, but doin=
+g so
+> > > -	 * results in reentrancy issues since cec_s_phys_addr() might call
+> > > -	 * .adap_enable, which leads to that funtion being called with our =
+mutex
+> > > -	 * held.
+> > > -	 *
+> > > -	 * Concurrency isn't an issue at the moment since we don't share
+> > > -	 * any state with any of the other frameworks so we can ignore
+> > > -	 * the lock for now.
+> > > -	 */
+> > > -
+> > > -	drm_edid =3D drm_edid_read_ddc(connector, vc4_hdmi->ddc);
+> > > -	drm_edid_connector_update(connector, drm_edid);
+> > > -	cec_s_phys_addr(vc4_hdmi->cec_adap,
+> > > -			connector->display_info.source_physical_address, false);
+> > > -	if (!drm_edid)
+> > > -		return 0;
+> > > -
+> > >  	ret =3D drm_edid_connector_add_modes(connector);
+> > > -	drm_edid_free(drm_edid);
+> >=20
+> > I don't think that works though, for mostly two reasons:
+> >=20
+> >  1) We're not sure we'll even have an hotplug interrupt if the system
+> >     boots with the connector plugged in for example.
+> >=20
+> >  2) afaik, the get_modes ioctl directly calls get_modes too.
+>=20
+> I think both paths use .fill_modes, not get_modes.
+
+The standard fill_modes helper calls get_modes.
+
+> And fill_modes explicitly calls .detect / .detect_ctx. It would be
+> nice if somebody can verify the change on the acual hw. But as I
+> wrote, i915 driver does exactly the same: the EDID is read / updated
+> in .detect_ctx(), while .get_modes() only performs
+> drm_edid_connector_add_modes(). Okay, there is one significant
+> difference which we should probably patch out: the .force() is also
+> implemented to update EDID in the forced case. I should probably do
+> the same for the drivers being handled in this patchset.
+
+Ack. Worst case scenario we can fix it later on.
+
+Maxime
+
+--tibevjcmq2hqubs4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2GxNwAKCRAnX84Zoj2+
+dkQFAX0SszndvYXwUlXHlEuKUMjRu6IRXcqwYhtGDEU4Pa5CP+DEeeU2aVcCBV57
+8JlgY1EBgJoNXW3bl5jfa7bCf56cHn19NuMdQETCLtTWVjLm+TwQe7iYK5KnDYrP
+uvMZWYlUTg==
+=d8qr
+-----END PGP SIGNATURE-----
+
+--tibevjcmq2hqubs4--
 
