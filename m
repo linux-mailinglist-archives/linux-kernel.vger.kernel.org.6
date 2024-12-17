@@ -1,185 +1,188 @@
-Return-Path: <linux-kernel+bounces-448359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202ED9F3F3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:44:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8B09F3F42
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:44:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073361886BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:43:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D28188AED9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71698528E;
-	Tue, 17 Dec 2024 00:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92782156230;
+	Tue, 17 Dec 2024 00:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ED+Ppexr"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEK6fhmj"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7114C5B0
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEAF14F108;
+	Tue, 17 Dec 2024 00:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734396057; cv=none; b=h6pnT/TL8KRnmiNahXdfHYKa2uQ3mr1nOex/mLUFkm94qEutwEad1baHPMIX339o0j+0M/7Z/tGRw7XF+dj097Id+UEDPLVjbhDkZggtHcGKE1lK1T+jRGF1cOvSQ1u4N7nkeqP+BLN8ZK7ONSme1cPzoW91OsT4pfryIWtF8wE=
+	t=1734396057; cv=none; b=SKVVIGyBauOs+SF6xaSDDFGU8OPJAMvpw5NX4UbpSW4FkXbiHFuE0WIlbBCjcy1dU4gTtpZ0u7m32MajuDQVkiYklxiTQGC/AanPNa63wgXzWG3DxcjQ74Uoeh29LwwcI7cUd8hE33mL2iDZmEzOFdoU0sr0uwHtO8aA1R76PWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734396057; c=relaxed/simple;
-	bh=7s/0WO/aTzEx9yhjto9LxdTyBBJwSv9ES82NKKPeNQ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kaCRuwnEixvJXyPPWUeq6ue0qiv7yzbe5tocdd+f0+hMqoNqqNbW5qBzno5ylCwK/f7WQ7B5Vf2+zwASx9450vLZGWROfAbMI5mBuFG8NP7noqPvwHvRb+jJArrO9YpLWgcxyJWWQk5iUGIJTvYaVU4NcV+2K5PpMyIBgl25M+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ED+Ppexr; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-540218726d5so5016632e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:40:55 -0800 (PST)
+	bh=247vX3QT5EtTl1GXu6dgkLQz7nrsHcyczBjG8kxwV68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YEUMaowbIgwBqKL+KtSB0yOrAbr6vDfINjvmn8rMqpZiL2Tkmfv8WxJxg+OVLNNqRRL7EyURTR6XWY7phRb9/ITF7ki+cAaMXubhf0sgNrvbfN++s9yO5+IuH/RwM4XvKtp4lXSHHlyc99tcA0hBakfbO8fKSmkG03RWEo3jngQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEK6fhmj; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6d8fd060e27so40349646d6.1;
+        Mon, 16 Dec 2024 16:40:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734396054; x=1735000854; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lunr+AM74GTPPfWmRn+AT8+K2i2rNeiOvxZLJo+1HHg=;
-        b=ED+Ppexr4fWWEoP04SGR15GW2Vr+7bO6iBk7pTng6Qc+s9nqfIpCFoAMpXLHhhRXti
-         4LAG1DXRmk6znOfdrKsZ5RcjZdRcGq87CaDwvo7OSitVWsu0N3SRWDt9mKFV1QVtAipL
-         xb3IdE3mfz0ODoUsQg6ZbYvdBBImn4OC5lUw8+qylseZKYomQCzJ3i/Ejc5Irfw0V47n
-         Zd3tY0wxNS0epgXv31/zVYnwZvV3OULujs7PKGPqGrdpCHKoDdXPiadF4ECohPrHh+hq
-         pbhRK0TY6ZNCjoipid1DUH62GfHyTNOhJMQpF3Lt+0P9+1gvRKodoDJkwcXX8OUOkAHs
-         s/vQ==
+        d=gmail.com; s=20230601; t=1734396055; x=1735000855; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0/Cbl6nhU596TlRfXtw+zhpPruCALp8m+NWfU1RZMcs=;
+        b=gEK6fhmjR5GQE+NNs8nD/tWCmHTS7rlVVrOFPaa5QpES+QYrQ6bX13WnSn19KpkXfh
+         A0R0IzPwIhC6jhsUGRHozSfIaNY6evNRDylLc3kVfyDWGZZjrpWvqZvo0gIlFPCRPbOY
+         MWDFOA3scy7Ws3of1UKI2EugS0ejoPZ9Xi9J1xhBnfd9LyARBxlzUOi/bkNuaNncg0ze
+         rRlYfLwUV+2fjQK2xo23XURmjtmy8HS6aFejiF3kzJbud+tfdDqRLhwn6+6nB4d47uxF
+         dumBeXeEAm+MAsJCoQIJrR9neKQLa0kRBFckutb24YnE5OMzsGUjTvWDmQjtbT9Cdhrb
+         Vz/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734396054; x=1735000854;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lunr+AM74GTPPfWmRn+AT8+K2i2rNeiOvxZLJo+1HHg=;
-        b=cG95KrRoG+gAbug6M64e3JKFGRRkLRB9Ow0DhV6PpeB3M7+RGrS5K9KWomMUWqtlwZ
-         cyd4q8+w62Foaef+esTmmFdHBNRMq2LyqGGHSNDpcsj9gDWMd8x23mP5ChZ7lbAAu7wb
-         r0epj4ZR7LB14o0U4md4VoFU9P8V/NDpBGQ/w5su1NzLl7xYWmeJ6CfhisGxDmjjF3q8
-         qxd87mB7xMJFjPpFXe9lBLl3MVjUbW5TqME1iDt4MisY1a1phatt7JlaAuLmt1gI6aTj
-         xY7EhhLmkIeYbcA3Sh4IZxYg9Q5B808MZdJCvBUNcjckv3euluGUAl0U9vm/j+WLm6Cr
-         mfFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRq2RPcaIo+O/As9G2SBXm3MfDEawuFT+gYw/7J53YvRPYXiY31YgR+9K5cCN9FB63UEfReSm9Mk9b18g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZhBpCOM2vOtAo64uoWOakAulGAmrxW2Yv23aoGMPiEwQLDlSx
-	0TQoBUSFdIjykloT/vfY/yWGeX5744GdFm+pV9k9N7L+UnbnJCTGtR1YHlTr2nw=
-X-Gm-Gg: ASbGncuTQ8mtWlT5XElhbWc2Yelq/axQcQYJCfcIa2QLIkTP5K/caKkjLeSAyWpgssq
-	lJIl7LfKwgnkZkTDEJ4P9jSXsu7ZJR+7zVWIZH6ppFameOojFY41vOfJPZOmI/okCUKFa8rEqAN
-	5blefFycjeddwrv1sAJahG+3cnsNEYktHNcymW5fidc0tmHBYeQIGXSjOori2AQP6iRCNqufHas
-	KaabMgXDZFG3KxQkDPVYyy9LUAJo/wHJ6qN+fuSgRJ/jwxIPIZ7+UNN9+0BVLFl
-X-Google-Smtp-Source: AGHT+IGe0QdLZY73JsApHksPxAww/oxjVlJdjygOnTwbgrdsohY4NxxLR2cwt2MC32di//BAmFafkQ==
-X-Received: by 2002:a05:6512:b06:b0:540:17ac:b371 with SMTP id 2adb3069b0e04-54099b6ecdcmr4290758e87.56.1734396053589;
-        Mon, 16 Dec 2024 16:40:53 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120ba9ab2sm1009122e87.74.2024.12.16.16.40.51
+        d=1e100.net; s=20230601; t=1734396055; x=1735000855;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0/Cbl6nhU596TlRfXtw+zhpPruCALp8m+NWfU1RZMcs=;
+        b=Ou8yQFNLTC1VtXHWn4EPb71CzEpHOjvG7yofIHAODa7BS42AplFlq3CJDC1WDnMFVQ
+         4a0XNsIY5/hBxeCAAkjr+y0BCLU+DXdI9o6yBHI7SnJs25PV2EDGWqoRCgm67cJ67Ajg
+         xjadL4ntmyFgvhUIfxbnwo0PRuTVxVrJu2zAgrUFueRVrsCfqVeADa3GzztG211piANj
+         +RsGAjXu76ArSMIGdC3d6QwNwYMVBNLbzAnwxCvPVWYsGU7i2qGY9seOzjR3H8gtpybq
+         PUrcKc9PIZgbHo7rNDxlKSA9h+ZMHEDvMQw9XrbJz2YET2SNJYqcPJ4wmaZwjcEATTay
+         ao1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQoxR90ObR/bKkmyX8FLuh2Pta3uzvWLUul7H7vG93f52z/JZbxh8LMpZ3yzd6a7WQXwBxP/O0DkOg1jTy@vger.kernel.org, AJvYcCVN5H/PeY0tFQZwn/liwHEirk2Zpjmx9L6vAtrfp7R9cQS3fVC41loXIow12tVRG/jKkGniDTeoxbwm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUIk/r+JR/DxsXxzGZnIFtpQAt0JSq4C5aXCrCflTJhDWFZEAU
+	JDOYNb45EROzf7mdPCF6R1jtoxeV/QDhD2iVCJiA30ElIPIA3MtL
+X-Gm-Gg: ASbGncvJQleoqu8mv6D7PMxi6+LKWfMcmTB6M2NsXk5M/oZkCplvokkFLExpfICQWap
+	RwEDD823bWe/P78b709RUG+SgG0HrmQ0ba0YAOwv/DJQ8DB7t4cFT+PdhMg1ee5KTxrap5OA+Nb
+	ACnkUyV6sKz/8iexHmOkeuIWL0dHB9w4Q92Hf2fc7zZImF5s9tswzxqXuHvbnS1NCk0nj2Vi/cY
+	0FjukGxd4EtqOMzGHM5DPSf750Poj72
+X-Google-Smtp-Source: AGHT+IFjlHavhWPup7PYJT9N7NM8bEbqLWCujII2gri7ZdjsWeFP1Oce1YQLQy+5HsbVwzgWEwWqJg==
+X-Received: by 2002:a05:6214:2123:b0:6d8:a1fe:7293 with SMTP id 6a1803df08f44-6dc9686b652mr266239766d6.42.1734396054914;
+        Mon, 16 Dec 2024 16:40:54 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd257215sm33097316d6.41.2024.12.16.16.40.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 16:40:52 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 17 Dec 2024 02:40:32 +0200
-Subject: [PATCH v7 10/10] drm/vc4: hdmi: use
- drm_atomic_helper_connector_hdmi_hotplug_edid()
+        Mon, 16 Dec 2024 16:40:54 -0800 (PST)
+Date: Tue, 17 Dec 2024 08:40:37 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Yangyu Chen <cyy@cyyself.name>, Inochi Amaoto <inochiama@gmail.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, Evan Green <evan@rivosinc.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Jesse Taube <jesse@rivosinc.com>, Andy Chiu <andybnac@gmail.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Cc: linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, 
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v3 3/3] riscv: hwprobe: export bfloat16 ISA extension
+Message-ID: <sh3fu66fltjccbygbdxilbos4bi5wqk2cdiihc6ixnodsbxtox@rezkyqnpp5yv>
+References: <20241206055829.1059293-1-inochiama@gmail.com>
+ <20241206055829.1059293-4-inochiama@gmail.com>
+ <tencent_8F35B6F07D09566A873982E0E2C76085280A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-drm-bridge-hdmi-connector-v7-10-cb9df2b6a515@linaro.org>
-References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
-In-Reply-To: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>, 
- Raphael Gallais-Pou <rgallaispou@gmail.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-rockchip@lists.infradead.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1868;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=7s/0WO/aTzEx9yhjto9LxdTyBBJwSv9ES82NKKPeNQ4=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnYMh66KurD/so/4BhoqlDVPuK2xAohhbIWN/EG
- x67827EyE2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ2DIegAKCRCLPIo+Aiko
- 1ZsiCACZHuxK0m8L9MH1NhE2yPwWUTbzhXV2jMuyyQcJBcJKvwYMEAdKnau9ASgbjUyjrS0EqxK
- PG9HYh7v6OQuoktgWtwxcZgo8DyLPYPsH3ep2lhRl3cz3v19tta06Uegl+D5MxWNoOployl5pF4
- LYT81VevjzV55DOYBg/jYXMGpIZF+9d3Umz+KLMKQZ5DXC85lct2mD6XBUBijzLjKir8Yn92L2b
- o6p48mzqad3L+E2Mxe5QGYoLg5IvVV+ouFScCpgfmP28rZL9PzfgkdmP0ahbxw/xtzK1kfWSxSI
- 2DH1/dpfUzApuoHsTjp/y0HbjKkiH/BbrYduZ4L2RBFNDDAi
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tencent_8F35B6F07D09566A873982E0E2C76085280A@qq.com>
 
-Use the helper function to update the connector's information. This
-makes sure that HDMI-related events are handled in a generic way.
-Currently it is limited to the HDMI state reporting to the sound system.
+On Tue, Dec 17, 2024 at 12:00:23AM +0800, Yangyu Chen wrote:
+> Possible conflict with: https://lore.kernel.org/linux-riscv/20241111-v5_user_cfi_series-v8-22-dce14aa30207@rivosinc.com/
+> 
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Yeah, I know the conflict. As the time of merging these patch is
+uncertain, what I can do now is to match the upstream code.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index bb5e8738845c74d975c1e0e1262ced46e4ef8fde..328a845ce0c4168b5463d344b3ad1f77a5437cff 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -383,7 +383,6 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
- 				    enum drm_connector_status status)
- {
- 	struct drm_connector *connector = &vc4_hdmi->connector;
--	const struct drm_edid *drm_edid;
- 	int ret;
- 
- 	/*
-@@ -405,17 +404,14 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
- 		return;
- 	}
- 
--	drm_edid = drm_edid_read_ddc(connector, vc4_hdmi->ddc);
-+	drm_atomic_helper_connector_hdmi_hotplug(connector, status);
- 
--	drm_edid_connector_update(connector, drm_edid);
- 	cec_s_phys_addr(vc4_hdmi->cec_adap,
- 			connector->display_info.source_physical_address, false);
- 
--	if (!drm_edid)
-+	if (status != connector_status_connected)
- 		return;
- 
--	drm_edid_free(drm_edid);
--
- 	for (;;) {
- 		ret = vc4_hdmi_reset_link(connector, ctx);
- 		if (ret == -EDEADLK) {
-@@ -549,6 +545,7 @@ static void vc4_hdmi_connector_reset(struct drm_connector *connector)
- }
- 
- static const struct drm_connector_funcs vc4_hdmi_connector_funcs = {
-+	.force = drm_atomic_helper_connector_hdmi_force,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.reset = vc4_hdmi_connector_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+Regards,
+Inochi
 
--- 
-2.39.5
-
+> On 12/6/24 13:58, Inochi Amaoto wrote:
+> > Export Zfbmin, Zvfbfmin, Zvfbfwma ISA extension through hwprobe.
+> > 
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > Reviewed-by: Clément Léger <cleger@rivosinc.com>
+> > ---
+> >   Documentation/arch/riscv/hwprobe.rst  | 12 ++++++++++++
+> >   arch/riscv/include/uapi/asm/hwprobe.h |  3 +++
+> >   arch/riscv/kernel/sys_hwprobe.c       |  3 +++
+> >   3 files changed, 18 insertions(+)
+> > 
+> > diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> > index 955fbcd19ce9..a9cb40e407a4 100644
+> > --- a/Documentation/arch/riscv/hwprobe.rst
+> > +++ b/Documentation/arch/riscv/hwprobe.rst
+> > @@ -242,6 +242,18 @@ The following keys are defined:
+> >     * :c:macro:`RISCV_HWPROBE_EXT_SUPM`: The Supm extension is supported as
+> >          defined in version 1.0 of the RISC-V Pointer Masking extensions.
+> > +  * :c:macro:`RISCV_HWPROBE_EXT_ZFBFMIN`: The Zfbfmin extension is supported as
+> > +       defined in the RISC-V ISA manual starting from commit 4dc23d6229de
+> > +       ("Added Chapter title to BF16").
+> > +
+> > +  * :c:macro:`RISCV_HWPROBE_EXT_ZVFBFMIN`: The Zvfbfmin extension is supported as
+> > +       defined in the RISC-V ISA manual starting from commit 4dc23d6229de
+> > +       ("Added Chapter title to BF16").
+> > +
+> > +  * :c:macro:`RISCV_HWPROBE_EXT_ZVFBFWMA`: The Zvfbfwma extension is supported as
+> > +       defined in the RISC-V ISA manual starting from commit 4dc23d6229de
+> > +       ("Added Chapter title to BF16").
+> > +
+> >   * :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated.  Returns similar values to
+> >        :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_SCALAR_PERF`, but the key was
+> >        mistakenly classified as a bitmask rather than a value.
+> > diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+> > index 3af142b99f77..aecc1c800d54 100644
+> > --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> > +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> > @@ -73,6 +73,9 @@ struct riscv_hwprobe {
+> >   #define		RISCV_HWPROBE_EXT_ZCMOP		(1ULL << 47)
+> >   #define		RISCV_HWPROBE_EXT_ZAWRS		(1ULL << 48)
+> >   #define		RISCV_HWPROBE_EXT_SUPM		(1ULL << 49)
+> > +#define		RISCV_HWPROBE_EXT_ZFBFMIN	(1ULL << 50)
+> > +#define		RISCV_HWPROBE_EXT_ZVFBFMIN	(1ULL << 51)
+> > +#define		RISCV_HWPROBE_EXT_ZVFBFWMA	(1ULL << 52)
+> >   #define RISCV_HWPROBE_KEY_CPUPERF_0	5
+> >   #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
+> >   #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
+> > diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+> > index cb93adfffc48..bd215f58bd1b 100644
+> > --- a/arch/riscv/kernel/sys_hwprobe.c
+> > +++ b/arch/riscv/kernel/sys_hwprobe.c
+> > @@ -131,6 +131,8 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
+> >   			EXT_KEY(ZVE64D);
+> >   			EXT_KEY(ZVE64F);
+> >   			EXT_KEY(ZVE64X);
+> > +			EXT_KEY(ZVFBFMIN);
+> > +			EXT_KEY(ZVFBFWMA);
+> >   			EXT_KEY(ZVFH);
+> >   			EXT_KEY(ZVFHMIN);
+> >   			EXT_KEY(ZVKB);
+> > @@ -147,6 +149,7 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
+> >   			EXT_KEY(ZCD);
+> >   			EXT_KEY(ZCF);
+> >   			EXT_KEY(ZFA);
+> > +			EXT_KEY(ZFBFMIN);
+> >   			EXT_KEY(ZFH);
+> >   			EXT_KEY(ZFHMIN);
+> >   		}
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
