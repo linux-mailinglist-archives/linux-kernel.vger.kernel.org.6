@@ -1,148 +1,176 @@
-Return-Path: <linux-kernel+bounces-449143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E736F9F4A6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:59:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65309F4A5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E698A16F6C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:58:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBCE616D8F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959651F12F9;
-	Tue, 17 Dec 2024 11:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WmrD2b/b"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E6A1F131C;
+	Tue, 17 Dec 2024 11:56:29 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911311F426B
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990701F1308
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734436605; cv=none; b=uT3C6yYEO9UOFuXxq+HySHaW4thatAYEgxB9rSA2NPEVhK8iL06iOKgc8OEJPbUtycg40lZgzEr1j3J1scUgvppZ5PvrUpXI4j68asEFkz0OZyNHpkrWhghrof5DgxRAkgEhSb5bz9SvShu1x0Dtq5OLmXM1SNRevq5/JrsXngQ=
+	t=1734436589; cv=none; b=SNIl/YiM+fu37/tn6GFvK2K1w3tTHAAaApUU9kcSsbI0g2/bTk4+GwkaB2CD/P/FW+LwewqNKTE5zQL7ap+2O37amIZe5EUrF9Ck7QYYBtzBXRl/B4x6KeH9WkCOYz4sLDPJ448z/kf5nkISgcl7gQvI1MCstKJ8WG5qQxJl6D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734436605; c=relaxed/simple;
-	bh=fyI0/dhbkFxqKd8iWh2Jzy9mpwkSrgNFZ+i9alPd06w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=frMiR+vOgpnpLxR2XHv7tAVbwoC7AN9uCva7ZISBDJ0La0GbauAWMfHUdRJQtjshVcH6XvER7nXK7JFK9SRPTgylhC048lSdHKMx7nNRXNzVE9i6eYBELGCAQtmdf/j7h6RX0PoHZ15mBCtMn6gsD2rXY64showWYoynEIX/Ops=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WmrD2b/b; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43635796b48so20317625e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734436601; x=1735041401; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bFM1q7jsB7Su3lAVmgr0rlaLhCHhfoFOEst7jXnFLG4=;
-        b=WmrD2b/ble34C9MwCDKzGxVg0vFLBUyrDuJVfLLw1rqm1qyUXqWiR4eOZbNAk1BNVb
-         w4Jfgt14YAEDSRgePSBFuicKaAgUGvmJ9KwAjmlzoZcAyaMCeTIcWsakq8DZKghJYTTH
-         RdTK+wh+fy0FLBLE1CNgxbjk/MuMoXFuOBFn+mGQMYKWiW1kkYesLDjNUohiIRRv42L3
-         tEBnBEcZhdBHqtYPB2CqdsAuXKhNiySB36/XPUBHQ89xX+TnS84awpFdq5CEcJlr6M+X
-         jGSfOJdqpWl7+gNYy60d/+FvDsWF+ezjMtjKNRe8YzoCgnw5JWBID5d1O+20jG16Uw+B
-         YZQQ==
+	s=arc-20240116; t=1734436589; c=relaxed/simple;
+	bh=5hZe+P6oo66jzrzq+rFGDC7o7eRsEGDDwl+Pd0KU7jg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bvOjSZT6ii6hVmFLijsnXBQNNZKKAYsMrs+na54MsH563XxLehnN0lky0rMTZNiSh8t8HW0iI3njdKRYCZeP0eh1bF+wJDFMZO76zT2R1TDvzfHTMVNDTkQLmBux5ac7YvvVb3SmxUf7aH9Wu0bVZi3me+ZspoSKqi2azrvxh3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a9cd0b54c1so55244575ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:56:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734436601; x=1735041401;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bFM1q7jsB7Su3lAVmgr0rlaLhCHhfoFOEst7jXnFLG4=;
-        b=ofzQInw1PzhM/Df+NJLFb/hxeaE83VtfR0g4w8wLXx2u5CjZfXtkYjNkae5IKL+QUs
-         6sR/peh8Xsrot+bYpYv2BjKy8A/Gb3aJQj5YmFrMYnHePe5QCXhNA2cc42UW0uzaejbH
-         lEcISrurBt+pdPltNblOuO8XXBrCreD6OmYn0V8gS9iMdimOyoV4jaQ8Bb20sflgt6CO
-         7qx2bVbiZE8oY5+coSqr1g18V2ZCoJWXs7TVrAD4GOxfqDKcgxbnU33ld+/o7DOz7WQS
-         G9hv2QZRVuJma6A7/U6KmPM5v6GVNCSrvrfXAyZIBj9FCAFCNYPp8VBkDmPPgumdM4fv
-         Arlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSDNtn+du9B7krGbhWhRE1+Vo6XQQ3k636hyCw5oI0iwIg7JsfyNiJIOWe2/+sF4h8ogejnfco9uOq5ps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnE2/xcAIoot1qG76Z58kJNz26qEoFQlkR9EQ23QxoWXa6Di3a
-	CwSXamjulNd0JLe7Ob4qAWNIxKIX02kz+Y0zrhBID3ydckqrBr/q1nbOujWkztU=
-X-Gm-Gg: ASbGncu8crfrZAhhlFAkRum0xeX/DducBm3faF8xwr3rVNC+wg09GA9ucy/8mvObEUu
-	oHEiKVEaxV3/8L0+T66qTu7s6dgWKvN5hd7KhVcZHpGpYIt2ctLzznXRKzaCytiwOKRTsVSOOtN
-	oFpiv1bOL22acbC786OrO1i/AkKGqOvbhHEP83nfNV2rOUpL0mZUSqlX0l2jlm4vHWQtKGW9iLy
-	FYpQW4ktfXy08CizukvBP8DCqTjoZ5uxve48LcaFuw3U98tFGj9V1in
-X-Google-Smtp-Source: AGHT+IGHK04q5y+mpaaNrdicK1T9ozCfgAnXqS1cmz3u3H1E5qAKa1r9yR6aB/fLQM8NPU3JxtkxJw==
-X-Received: by 2002:a05:600c:3516:b0:436:1b77:b5aa with SMTP id 5b1f17b1804b1-4364815c7d6mr27745645e9.8.1734436601097;
-        Tue, 17 Dec 2024 03:56:41 -0800 (PST)
-Received: from pop-os.. ([145.224.66.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436360159aasm114935825e9.6.2024.12.17.03.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 03:56:40 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Graham Woodward <graham.woodward@arm.com>,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH 5/5] perf docs: arm_spe: Document new discard mode
-Date: Tue, 17 Dec 2024 11:56:08 +0000
-Message-Id: <20241217115610.371755-6-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241217115610.371755-1-james.clark@linaro.org>
-References: <20241217115610.371755-1-james.clark@linaro.org>
+        d=1e100.net; s=20230601; t=1734436586; x=1735041386;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zlkkrQiCZExvjqP+weAj44cHCo/kJFfLp/BEKnWeR9I=;
+        b=mc0A1FGt310PGzIaGjwYaYzfHrkhm1+TpqvLaXPeaeL4WLG+FAkGzpOsn+tu6GO8Cm
+         iNDkapC4vf7ARhITh86BkNoErdIiCeEjdeV2PXnXl8kWh35nbD/IGeAionJCI+oM+TIM
+         Uiw/V1TitFkpPfEkiPegmO0b7eEabJEcQd/Q4p4ZbFn9D3y84M+NB8eqIwwYBs5tEupp
+         rApkNCUOiUE0Bvqwi2WETQtVh2Czu0nlZ8Fpho39bjaMXter0OryK2GxMHP8ra1G6wgr
+         baNNzlKAEes61IqnHsTs80Hqv9M1tPklMo8hFim8VacAbTyGrMqs7FTvWENOmz1y5d6d
+         jBlw==
+X-Gm-Message-State: AOJu0Yx2cNvhhbnptdyZgDIkEY1yxHQ9AuyjxHmfOjD0TN3Mj40Mzof7
+	E6smCuMWOOg2BLP6DvnuD+aFsbyrC+oS9zk5cpqQ7DsSg7VXwRxalFUAwRiduPibkgMVKn8el3m
+	l84oxkQn2poIf9wV4rxJob6gAyQk4xO+U+wcwqCEuEf4PiYRewhhoKwbYbA==
+X-Google-Smtp-Source: AGHT+IEoYsiy3il0PRPN/8uQITzOGRYXbiiXnB+uwNY8qFT+cH6OwCh/YBqSUAH1zHwFVwQhFLCBFrNWIypuvrkmTqyVMoxRj4rZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:20cf:b0:3a7:6566:1e8f with SMTP id
+ e9e14a558f8ab-3aff243f4f3mr146334115ab.16.1734436586706; Tue, 17 Dec 2024
+ 03:56:26 -0800 (PST)
+Date: Tue, 17 Dec 2024 03:56:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <676166ea.050a0220.37aaf.0174.GAE@google.com>
+Subject: [syzbot] [trace?] kernel BUG in ring_buffer_map
+From: syzbot <syzbot+b565bf4a6ba3a0fc072c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Document the flag, hint what it's used for and give an example with
-other useful options to get minimal output.
+Hello,
 
-Signed-off-by: James Clark <james.clark@linaro.org>
+syzbot found the following issue on:
+
+HEAD commit:    78d4f34e2115 Linux 6.13-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10840b44580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9cac7e24ceea492
+dashboard link: https://syzkaller.appspot.com/bug?extid=b565bf4a6ba3a0fc072c
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120334f8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11a19730580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2cc4d7ad894c/disk-78d4f34e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d726c69c5750/vmlinux-78d4f34e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/514b5ee15ec5/bzImage-78d4f34e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b565bf4a6ba3a0fc072c@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at arch/x86/mm/physaddr.c:28!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5838 Comm: syz-executor194 Not tainted 6.13.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+RIP: 0010:__phys_addr+0xd8/0x150 arch/x86/mm/physaddr.c:28
+Code: 48 d3 e8 48 89 c5 48 89 c6 e8 c4 c7 4e 00 48 85 ed 75 11 e8 4a c5 4e 00 48 89 d8 5b 5d 41 5c c3 cc cc cc cc e8 39 c5 4e 00 90 <0f> 0b e8 31 c5 4e 00 48 c7 c0 10 80 ba 8d 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc90003d77770 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: f8f97078f8f8f8f8 RCX: ffffffff814a8930
+RDX: ffff888079ed9e00 RSI: ffffffff814a89b7 RDI: 0000000000000006
+RBP: f8f8f8f978f8f8f8 R08: 0000000000000006 R09: f8f8f8f978f8f8f8
+R10: f8f97078f8f8f8f8 R11: ffffffff81fb8dda R12: 0000000000000000
+R13: ffff888076006308 R14: 0000000000000003 R15: 0000000000000001
+FS:  00007f203d1b16c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055f26faf8bf8 CR3: 00000000324ec000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __rb_map_vma+0x5b3/0xae0 kernel/trace/ring_buffer.c:7058
+ ring_buffer_map+0x56e/0x9b0 kernel/trace/ring_buffer.c:7138
+ tracing_buffers_mmap+0xa6/0x120 kernel/trace/trace.c:8482
+ call_mmap include/linux/fs.h:2183 [inline]
+ mmap_file mm/internal.h:124 [inline]
+ __mmap_new_file_vma mm/vma.c:2291 [inline]
+ __mmap_new_vma mm/vma.c:2355 [inline]
+ __mmap_region+0x1786/0x2670 mm/vma.c:2456
+ mmap_region+0x127/0x320 mm/mmap.c:1348
+ do_mmap+0xc00/0xfc0 mm/mmap.c:496
+ vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
+ ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
+ __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
+ __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
+ __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f203d1fecb9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f203d1b1228 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007f203d2823c8 RCX: 00007f203d1fecb9
+RDX: 0000000000000001 RSI: 000000000000401f RDI: 0000000020ffc000
+RBP: 00007f203d2823c0 R08: 0000000000000003 R09: 0000000001000000
+R10: 000000000008e051 R11: 0000000000000246 R12: 00007f203d2823cc
+R13: 0000000000000000 R14: 00007ffc95e2dbc0 R15: 00007ffc95e2dca8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__phys_addr+0xd8/0x150 arch/x86/mm/physaddr.c:28
+Code: 48 d3 e8 48 89 c5 48 89 c6 e8 c4 c7 4e 00 48 85 ed 75 11 e8 4a c5 4e 00 48 89 d8 5b 5d 41 5c c3 cc cc cc cc e8 39 c5 4e 00 90 <0f> 0b e8 31 c5 4e 00 48 c7 c0 10 80 ba 8d 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc90003d77770 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: f8f97078f8f8f8f8 RCX: ffffffff814a8930
+RDX: ffff888079ed9e00 RSI: ffffffff814a89b7 RDI: 0000000000000006
+RBP: f8f8f8f978f8f8f8 R08: 0000000000000006 R09: f8f8f8f978f8f8f8
+R10: f8f97078f8f8f8f8 R11: ffffffff81fb8dda R12: 0000000000000000
+R13: ffff888076006308 R14: 0000000000000003 R15: 0000000000000001
+FS:  00007f203d1b16c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f203d24e008 CR3: 00000000324ec000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- tools/perf/Documentation/perf-arm-spe.txt | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/perf/Documentation/perf-arm-spe.txt b/tools/perf/Documentation/perf-arm-spe.txt
-index de2b0b479249..588eead438bc 100644
---- a/tools/perf/Documentation/perf-arm-spe.txt
-+++ b/tools/perf/Documentation/perf-arm-spe.txt
-@@ -150,6 +150,7 @@ arm_spe/load_filter=1,min_latency=10/'
-   pct_enable=1        - collect physical timestamp instead of virtual timestamp (PMSCR.PCT) - requires privilege
-   store_filter=1      - collect stores only (PMSFCR.ST)
-   ts_enable=1         - enable timestamping with value of generic timer (PMSCR.TS)
-+  discard=1           - enable SPE PMU events but don't collect sample data - see 'Discard mode' (PMBLIMITR.FM = DISCARD)
- 
- +++*+++ Latency is the total latency from the point at which sampling started on that instruction, rather
- than only the execution latency.
-@@ -220,6 +221,16 @@ Common errors
- 
-    Increase sampling interval (see above)
- 
-+Discard mode
-+~~~~~~~~~~~~
-+
-+SPE PMU events can be used without the overhead of collecting sample data if
-+discard mode is supported (optional from Armv8.6). First run a system wide SPE
-+session (or on the core of interest) using options to minimize output. Then run
-+perf stat:
-+
-+  perf record -e arm_spe/discard/ -a -N -B --no-bpf-event -o - > /dev/null &
-+  perf stat -e SAMPLE_FEED_LD
- 
- SEE ALSO
- --------
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
