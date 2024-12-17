@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-449196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439E19F4B4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:54:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974B39F4B5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:56:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A6B16F63E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:54:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBEC016F39C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A671F3D3F;
-	Tue, 17 Dec 2024 12:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4011F3D35;
+	Tue, 17 Dec 2024 12:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aWn5r3Pg"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l6qmMKjy"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31A41F238D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A161F03DE
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734440080; cv=none; b=m1JzV6k7JGm3LjjLt+CWVpv3LCigaerfSPKpaDca56Mws2FPiQ5AgVwWMB6IMHAKK11ACSDWiXIAj0uOyfrRHboLQl9LaCiI1nk3mcRRPxvZI9SAv/24tENIw5PVOvTRMY3883dMeWnic9yJhCofMmEbCkh96cUkBXoW4ZlQnz4=
+	t=1734440153; cv=none; b=P3cggG07Ln0RVE0HEcsriZzUYl82muP6Y7on6m5YVznG4MhYWjqzvmiT+wZLSliY7Stt8VHSyUYfNnjSsoI+Cg1eRrmvX5fuWNrVNRESXEq18r0iQ0iscMcCY774FkRsEbH+6FNRliUUL/Noa7FNBNaqtY1U+xz282HgeNzNNj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734440080; c=relaxed/simple;
-	bh=enEM7izX+IlEaXtIAqMApARsvSAxsklzletXgpXLJvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q65w8bsnsCpJIlAoYcVnup0JD09JEG4mIBYeQDn1uyWOR/7pVVnfua4aIX2JWtfMULXPf1BWdqkpldQrJKql6hrl25o2xjUs2CBKFmq6ZpaEJB8A6eLhAvttySt/U2qAF9pZcjJWTcU6ACoLlRrNylmYs5nUB27KYKussjeI6as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aWn5r3Pg; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38633b5dbcfso5685243f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:54:37 -0800 (PST)
+	s=arc-20240116; t=1734440153; c=relaxed/simple;
+	bh=3CKnHNjH+jwH5zwLJfrFBP0tmerBCMeB7tmsQ+JP9YU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OB0OBoyIwDA9QmrCm1LguOC2CKhd/eRLNLhuqeevVZWqv6sWlX0KeIfmaDRS5e1XP2riK5RwV0Dz3wXZXmEg1LKYYLqmRXIxwPjNMia99EUzjiGR2j4aCLpCDjEOzDCK9lulPn5UuKeHOaETdD9qQCcrrmWTDHMj6FlMRqOjgUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l6qmMKjy; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d7e527becaso493868a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:55:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1734440076; x=1735044876; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wNJH0bZIRp/lLbJRiuys3BD3sasknh5mv0Tb1tCrHk4=;
-        b=aWn5r3PgcX+VuwKF1Qb4xaF3EGvbi5fUxCm2vWZOna3CZtgNfsNCOFduUlpkZYElkQ
-         SPdqDxqgv3AAdJUPSIkvm/t4MvFlla4Q18kVdtvJsy9cOtmdX2Z5DQOoGxIe6U8h1sf7
-         gDu5WHDdf2P0e3ePy+Zzx21sJG9Y2yNwDGLKc5YjTrHVKah18RE1oVSQkmqbkf4m2cf1
-         9MfPzcYKK0zjqNeZsc/MRYoPRA9UeFga+4Tox3unPEHp8BQHE4GG63eN1DUGHsObyI0M
-         yf+1QaSteR9vX1WeN7r/RT6Tktsg9Fc92G4QKM3sh92DmY744qe95yBocj5ZX41kOWNM
-         ihnw==
+        d=linaro.org; s=google; t=1734440149; x=1735044949; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FgZd//oGB3D0/SHnIuOr6EaXxeoNU4PXKsD5sDU9eng=;
+        b=l6qmMKjy1Nx8j7FS8+4zg11AiQbKj2jRauVENOYlwqirRSQMW+sN1POdS0zhK6Z/V3
+         vSEAJinymgUp6lhUlqIBJJrywzVN7E8rv9E5J03tm79YiWwZjr05gxLZFym5r/idZAUZ
+         IOoXgFJ9LUTYHk/IKB1B0k2LV13rYIe08cAX80TQcGtvcamTtFHGRK1v2ByTnzxIj4KN
+         K1Ac84fRs5iZyF8DaobsmLybtfCNs5lUYyymTlsb4oSiH1Lnswope2rf8zGpBsEsxX/A
+         z0F5KdctahZC39RnFq9TtX4+fAv/eEhklWR8UQnzPKoP6mme+Y+fCTr5LqdWLvbAkBgk
+         tbfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734440076; x=1735044876;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wNJH0bZIRp/lLbJRiuys3BD3sasknh5mv0Tb1tCrHk4=;
-        b=SUg/HnAXgtcbV+gLOCjyZM2Wt500OYCsjVJOFh9vLMyDsEW/O5YMEpGCs30GlOgIEC
-         +2/rUdf20yZHSxp8zx6Ub51S7LYlzkzjVCfMUwJLV+RmYXx5Qkls7+6UT1CXeMlT0dfm
-         hEhWo9UOQeL+vhiPaZ5Ssve8G9jNPXJdDe6xAIKTUX+/R8VfoGkLkEsXc6XdDxmuw3nm
-         UvdkXJMg2kqHQDx47uyWQQsSKIqZOI8S4axelgiBbNqqP9xScvNrtjIMtUL9QYgG3aYH
-         Et/lz/VIgVwRSBkmrQCzWpHBeJAzlEKMQ/NEd6wmzbgeD2kgaFTGtc7eZAoVlvls07wI
-         mRXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUN/NKTtQHYmSCtir5PZtzsIwKWbfdz8JV5XU7Rpa6BLxtqA5xC6wo/mzh81MEoMjCzDgE8uOA4Q59m6U4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsEy7w1x95JtGM53bnlpolQiZCwJcbwwdXVX4s2NFsWJatlniz
-	nPslaPb9Qw6ITSPkSJDmDCz7E9dl/NdhM4RrGHlNElSBF7HDKxH3Aw9aAtMTvUY=
-X-Gm-Gg: ASbGncuJUmgwdIX3F2d7mC6WCvjUcweSSrNYTIn3iLFV29tRw/XaP9YrBLiSceHrceM
-	8gmABu205zjRPOQ5E2+LW0DS/b813sBQ+L2w45UaPwjmjBYNNYcDGs1yyFbNaBL0X5eJHFftr+q
-	7BcMvP6plOrV210fQd8ajmShG85+AdCvkYm5701ng55Cbj6at/y9FvXl+KiuZYJyu/JK1NauTL7
-	IEYaZwMEJQxCeKCqd3TpyrF6km6rvTfRgCkfKeSrmsm+l6QLSReCSjYMUfhVSkCRoQ=
-X-Google-Smtp-Source: AGHT+IGIkCksbdZEfvo6ki5xx29/1TnH2HLfVEMtjsycZHejT40HWMLMjlwqoedRINBd6o/828MIhA==
-X-Received: by 2002:a5d:5886:0:b0:385:f66a:4271 with SMTP id ffacd0b85a97d-38880ac61f7mr14775811f8f.4.1734440076073;
-        Tue, 17 Dec 2024 04:54:36 -0800 (PST)
-Received: from localhost (109-81-89-64.rct.o2.cz. [109.81.89.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963cdfa5sm442501466b.199.2024.12.17.04.54.35
+        d=1e100.net; s=20230601; t=1734440149; x=1735044949;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FgZd//oGB3D0/SHnIuOr6EaXxeoNU4PXKsD5sDU9eng=;
+        b=I5ysxe0guERsW7EW7P0qz4cU3Lfr26CdvZ4ddG8d7Ai/QSqfanAdYHqBjVNRqW8En4
+         2TNxgPNQLy4E7dOpqBL7wfa8dsDm4OmiAiH3b0xPte4if7M6cqp6buDh4K4/Xb0iqC50
+         pa6x+0r4DTVRz8f/V67L6etyY5IWyI+8QEX0szjqIeCFFG2BlSEs91feDnjS73fs+QYc
+         FDHnmjUzb4uuOMXpDTt3e7BDu+xiLGao/EOswMiAU+XP+Qkfglw7yu84nyh5lET2wQom
+         mu9C4B21LOw+q0NEntQ2lcnItxhm3SJgXQ+iuvR7G9Rr2mZIqMMN/ubHRe5/APWXGCYi
+         xpDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYR7y/dNyx3WLJtxAX/iMs8+KAjT23xRYUb5WmAKSkNO47iNTbE1pnK4WAhr4kKol9IZx/2Rc64jXvc8I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpLrn/E81Qu+7likBcOfEr6gNNbefsT8H9RRhcimxJ5HBHWL/c
+	ac7+8PIqDkmYnM7sk2gli1iC/VMw2N067HeNRzo7D++ENTgapvVKn8B2HO2ZzXE=
+X-Gm-Gg: ASbGncvQtCgD1EPWe+DQ8NMonNMMIRgnbcbV2z64iOwx4/dOIa2167BM/q2wNzQpPmR
+	9DPuBe5euGBU1Ia2xV2RkhU55q9kYQQPZ4OEeTEFYWmcKqTZw/y2LyMPr93kI92h5rTY32UzzUh
+	BKhNMzc73pHC5gcG+RZG5a5QTKNbkr9raz2t3jLUfNBrIAbIbGxkffIy9VqA9Nk9b4sGxJ8LPrk
+	Bc6Jktrw6Qt1cF3dyhkb+gsR53PtLWPPaAk7zMY8oG+fYzSddtbd9seJzoSgBPxDcI=
+X-Google-Smtp-Source: AGHT+IHy3wTLEBYa02eLhJwDwxGpeyqkNg2ZTkwe4hozyHj/eJSkGWPwUopusDKgYBQ/2qDVMAUv3w==
+X-Received: by 2002:a05:6402:4499:b0:5d4:55e:f99e with SMTP id 4fb4d7f45d1cf-5d63c3405bfmr43091113a12.18.1734440149347;
+        Tue, 17 Dec 2024 04:55:49 -0800 (PST)
+Received: from [192.168.1.140] ([85.235.12.238])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963892c1sm439921366b.133.2024.12.17.04.55.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 04:54:35 -0800 (PST)
-Date: Tue, 17 Dec 2024 13:54:35 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yosryahmed@google.com,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, davidf@vimeo.com, vbabka@suse.cz,
-	handai.szj@taobao.com, rientjes@google.com,
-	kamezawa.hiroyu@jp.fujitsu.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	chenridong@huawei.com, wangweiyang2@huawei.com
-Subject: Re: [PATCH v1] memcg: fix soft lockup in the OOM process
-Message-ID: <Z2F0ixNUW6kah1pQ@tiehlicka>
-References: <20241217121828.3219752-1-chenridong@huaweicloud.com>
+        Tue, 17 Dec 2024 04:55:49 -0800 (PST)
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 17 Dec 2024 13:55:48 +0100
+Subject: [PATCH] wifi: cw1200: Fix potential NULL dereference
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241217121828.3219752-1-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241217-cw1200-fix-v1-1-911e6b5823ec@linaro.org>
+X-B4-Tracking: v=1; b=H4sIANN0YWcC/x2MQQqAIBAAvyJ7TnCX0Ogr0UF0rb1YKFQQ/j3pO
+ AMzL1QuwhVm9ULhS6ocuQMOCsLu88ZaYmcgQyMSOh1uJGN0kkdH6x1RQrZTgh6chbv+Z8va2gd
+ EkCRMXAAAAA==
+X-Change-ID: 20241217-cw1200-fix-d6a722f1e68f
+To: Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+ Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Tue 17-12-24 12:18:28, Chen Ridong wrote:
-[...]
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 1c485beb0b93..14260381cccc 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -390,6 +390,7 @@ static int dump_task(struct task_struct *p, void *arg)
->  	if (!is_memcg_oom(oc) && !oom_cpuset_eligible(p, oc))
->  		return 0;
->  
-> +	cond_resched();
->  	task = find_lock_task_mm(p);
->  	if (!task) {
->  		/*
+A recent refactoring was identified by static analysis to
+cause another potential NULL dereference, fix this!
 
-This is called from RCU read lock for the global OOM killer path and I
-do not think you can schedule there. I do not remember specifics of task
-traversal for crgoup path but I guess that you might need to silence the
-soft lockup detector instead or come up with a different iteration
-scheme.
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202411271742.Xa7CNVh1-lkp@intel.com/
+Fixes: 2719a9e7156c ("wifi: cw1200: Convert to GPIO descriptors")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/net/wireless/st/cw1200/cw1200_spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/st/cw1200/cw1200_spi.c b/drivers/net/wireless/st/cw1200/cw1200_spi.c
+index 862964a8cc8761bb412b15addef562d61811440b..52386dfb5f4aa9c1f3e12e2a4002241d9ece72ee 100644
+--- a/drivers/net/wireless/st/cw1200/cw1200_spi.c
++++ b/drivers/net/wireless/st/cw1200/cw1200_spi.c
+@@ -442,8 +442,8 @@ static void cw1200_spi_disconnect(struct spi_device *func)
+ 			cw1200_core_release(self->core);
+ 			self->core = NULL;
+ 		}
++		cw1200_spi_off(self, dev_get_platdata(&func->dev));
+ 	}
+-	cw1200_spi_off(self, dev_get_platdata(&func->dev));
+ }
+ 
+ static int __maybe_unused cw1200_spi_suspend(struct device *dev)
+
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241217-cw1200-fix-d6a722f1e68f
+
+Best regards,
 -- 
-Michal Hocko
-SUSE Labs
+Linus Walleij <linus.walleij@linaro.org>
+
 
