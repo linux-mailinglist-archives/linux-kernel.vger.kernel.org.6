@@ -1,146 +1,111 @@
-Return-Path: <linux-kernel+bounces-449156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF769F4AA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:09:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5047C9F4AA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DE661890851
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:09:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E92E1663B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475311F1319;
-	Tue, 17 Dec 2024 12:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B6E1F1319;
+	Tue, 17 Dec 2024 12:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AZ/ACVu5"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="pNQCeYb8"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94861F03EB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9CE1E5708;
+	Tue, 17 Dec 2024 12:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734437369; cv=none; b=skVfgrPMdZV3+rJEdOph+Vkm2Q/3bLjxylBR90xCYaFToxqH/9sOEQvCgCWA1x/rQT53bAgW/fCFogjrR/CwthTX4088UwhRYlqyBZIvA1y9U5JTsd8qoAOKCEyjVvL6xmz2moaM00OAZ8tEv5jAKcdi/IwucNTzf1RvaNVLDAA=
+	t=1734437389; cv=none; b=tH1PJN/QySpnb5NrVjfqwK09fLwc1is2qr50BwBzXdomctDqwpnO8R988yvtiyv1aOG7IV0nLOxXVmrkbtL27o2MN0BVChGooaOytxtkPa5cPuEH78lj7VaX9p81gJtG3vbTK7rC1n/y2IXV+Iq3iyuQFv56ROu0HcgdsBEJrME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734437369; c=relaxed/simple;
-	bh=16XPmy2jH/zD27A72OtSAQ/rMDX0OJmNbRLWaTM298k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SKLioWhzIMfAEHplYg89JxuqPQNX9qWL8giwn3UB33DkwHvd7+IXPEru+01wPZwyZYlU2dNV2CRoqmbed2dw+5K1IXBP4+u7jreC4cJtRkxw6vHUOLcxHgW0XKG3saDIDjnuKeAJITH9QS5N9TTHtsW0Gh7WYISNDu37aGNQS7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AZ/ACVu5; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53e3c47434eso5253911e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:09:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734437364; x=1735042164; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=v2zlUatx24q8uGjuBR7tMIQ8jxT+mtpak1Ok6qCQguw=;
-        b=AZ/ACVu5PIcKCEJuyLrxVKh99Uzm4W0y/ASGt7tFbau/Ph2Bhdd4Ric3mCzeviMIrD
-         SGailBdErUEih2AuvFQgjAdlu/TB3yWnrtFH0e9y+sg2EJhCJ1a9XXZ4aWYxUYCBoQ9J
-         yn+u6soIQ5MLvQHZkPYmRCEH92kQpzEpVJ2PSqj+r1vLUy+LktqEgvgQ4oj+CuIMeQSd
-         HZxVg1EC2tDdERs9FMq1+qOCyR16gL+GRYsh6L2nFVomXL5DbtUqXaQiZcPWhhrPF5FX
-         evzkNV/WL3E0VZi0yaGsva1sD7V8y4RNnSrWG3FueKCjwTlbrxzBeztRx84QWStI6GIQ
-         bfHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734437364; x=1735042164;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v2zlUatx24q8uGjuBR7tMIQ8jxT+mtpak1Ok6qCQguw=;
-        b=RTBTdhQffEtpvYKq0CJTCpZwJO1Pc4glScfKTu4cngGmoEga/KlTQpUiMmgyT4/a5v
-         y3/96APrcg7HUNeTIT6L6HPsHAQaarDcNIXmSpHbcbCVOT0pB0HgDmDLsuTfA7854xUT
-         gSXKHbImw8DCS/YYEfLaY9YwixYFsawCqvl9O2+P+Jo2XWdkBtrrIYI6niZCchS/kreq
-         t7sdbN/rM4mUWh4dJBHKM9l+nCfjPLj172j4XZW4nNYIKUKr9FoU4uc5Z1Gf2BLEZ6yS
-         L0OoTAbaW9uWo3mc7ZQjBUb674KLyTJlKcrCdFdh8LqEnvxu1fVSod9ly26B21ada8QI
-         jnaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFakzISovJ79ejv4lw70vNjxyQZcVySPV6yYyQXMsFtkAMK07aVM8SyvbNQAds8zqEZAUeAiVUremqBwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ3EuDbHC9hucjscvR3Gi2xbN3gk6RJ+WnES4pN9Zmvq+auP2b
-	TRrtxAGUK6TjQjcyGhr/zFi9ABLWWNqWnxZZT9GHkMLCwAETmzDMj9O5snaGoJc=
-X-Gm-Gg: ASbGnctU4KuqrkL5NY2G8g0BX53LugPkgFAk+djp6pcLESMKDJ8sbd5nY8LaFiJHPeM
-	isTWWTetNqpK9XxfU1fjgkcQ7GJ2Jsd5laGE0WBOzJ+Bso5NdvPLfTADshxlnI/sKOvw8op5/RF
-	SkQ/+vjFmz85uD3wWErunBeyYWwkbVJZStIJ4ysyYhzbWV7F0RW3zQyPN0fJWBFU+bar+Dd7V6N
-	aJwm3sukMy0SudWPgwg/n3YLOa00hGm2sKRARoQaAxeSaouMcS0PoXAThtMofpAsVJz7VYcGsvB
-	a6S0GYcQ7mwFFGzWZrqA4p0lFJwf54FZ6Rk4
-X-Google-Smtp-Source: AGHT+IH3yIaXKqPUlVfDov4PSCpBT+vDZFRyKj3waNb6em6MSG5hbhb05XacOHw8jeYisHOZJ9kJTg==
-X-Received: by 2002:a05:6512:6cf:b0:540:1f67:689f with SMTP id 2adb3069b0e04-54099b72cb6mr5558607e87.56.1734437363989;
-        Tue, 17 Dec 2024 04:09:23 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30344045d28sm12351511fa.49.2024.12.17.04.09.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 04:09:23 -0800 (PST)
-Date: Tue, 17 Dec 2024 14:09:22 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Renjiang Han <quic_renjiang@quicinc.com>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH v5 3/4] arm64: dts: qcom: qcs615: add venus node
-Message-ID: <hu5nkn34gkx5x4wdtpvstf5atrgl533vynlgvjec4z3jdo4rac@yt6t5mmfcwtm>
-References: <20241217-add-venus-for-qcs615-v5-0-747395d9e630@quicinc.com>
- <20241217-add-venus-for-qcs615-v5-3-747395d9e630@quicinc.com>
- <83fcb683-d610-4e47-bcce-128453a0afef@linaro.org>
- <3cb0d715-3756-4cef-bcc0-3bb550811c73@quicinc.com>
+	s=arc-20240116; t=1734437389; c=relaxed/simple;
+	bh=/SG3AzAHOff+hccD3OcucAh5OThZTC7Mgq9xZD7ruxo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HVVGndGlEZKrMpJv9OjjYWzZUmrkJ6sAU5oMhNNeep/KyRqtKm/jPzm6vJPTljrIDYXK7Qkqal975O15Zo2nTZ+gU7IMhP7+HKtTABdmCOXoDUoyMIDJtJIky0g9Tu2sc9WrVJtkvsOlRBkXWIQnpCwXl2DdaHk6Xw+dwDe39X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=pNQCeYb8; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=/SG3AzAHOff+hccD3OcucAh5OThZTC7Mgq9xZD7ruxo=;
+	t=1734437387; x=1735646987; b=pNQCeYb83bndxl855f4uqARs9WCSwk/EO1DiZMYjKFFCzkh
+	/yFNBKAw/VBS84dA5tpLBMsmQeQBmSA4iC5CxV9hVsP0ylxLG4scE4pa7/Bk9K9jXRWJnWw0lVpR1
+	wVrO/9lzw/n0LLJujUghScnQY1xBq64E6EQyPCFPnDPvO3mVs+fDQjRkweps+ACOqWncOEeOIeDOp
+	wWidTDmDJuV74Rq+QhG2vYwQbMXDmqKgy4BCJQUfI3zvv8YkCHMITbzLsx6PLWVXl5mdu5o73LYOk
+	8PFylKxK5pJ4PxAN3Sicxs2tBg9XnUzJcK/m2aMZLG4izNQ74BHXQXpBuYuQX8rA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tNWOW-000000027FC-06Rs;
+	Tue, 17 Dec 2024 13:09:44 +0100
+Message-ID: <70f796f623a67b283c4fe3a1b56e59647a39ce6c.camel@sipsolutions.net>
+Subject: Re: [Bug] Deadlock between rfkill_fop_write() and
+ nfc_unregister_device()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Sam Sun <samsun1006219@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, Simon Horman <horms@kernel.org>, pabeni@redhat.com,
+ 	kuba@kernel.org, Eric Dumazet <edumazet@google.com>, davem@davemloft.net, 
+	krzk@kernel.org
+Date: Tue, 17 Dec 2024 13:09:42 +0100
+In-Reply-To: <CAEkJfYP297P=RjvZ9-ctpYHXu7bDhVN0+ZBoMNz2xjzyqOakLQ@mail.gmail.com>
+References: 
+	<CAEkJfYOyWgJW-WAd+GhT07zd2Y3vUWz81+pjbZT9nUAsCc7FGQ@mail.gmail.com>
+	 <b27dc4d0c3456c6796437b26b887b931d9871977.camel@sipsolutions.net>
+	 <de5d98be99086a7182ba2bd0676b261349a145c4.camel@sipsolutions.net>
+	 <CAEkJfYP297P=RjvZ9-ctpYHXu7bDhVN0+ZBoMNz2xjzyqOakLQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3cb0d715-3756-4cef-bcc0-3bb550811c73@quicinc.com>
+X-malware-bazaar: not-scanned
 
-On Tue, Dec 17, 2024 at 05:54:57PM +0800, Renjiang Han wrote:
-> 
-> On 12/17/2024 5:38 PM, Bryan O'Donoghue wrote:
-> > On 17/12/2024 09:17, Renjiang Han wrote:
-> > > +
-> > > +            video-decoder {
-> > > +                compatible = "venus-decoder";
-> > > +            };
-> > > +
-> > > +            video-encoder {
-> > > +                compatible = "venus-encoder";
-> > > +            };
-> > 
-> > I gave you feedback on this in v4.
-> > 
-> > Could you please provide some commentary on why you're persisting with
-> > this ?
-> > 
-> > - Driver configuration should not live in dts
-> > - A patchset exists to mitigate this
-> > - If you don't want to use that series, what do you propose
-> >   to resolve this ?
-> > 
-> > Please don't just ignore feedback, either act on it or add to your
-> > commit log _why_ you didn't act on it.
-> > 
-> > ---
-> > bod
-> 
->  Thanks for your review. You pointed it out correctly. As replied in v4,
-> 
->  I also think your change is a good change, but your change involves many
-> 
->  platforms.
+On Tue, 2024-12-17 at 20:01 +0800, Sam Sun wrote:
+> On Tue, Dec 17, 2024 at 7:33=E2=80=AFPM Johannes Berg <johannes@sipsoluti=
+ons.net> wrote:
+> >=20
+> > On Tue, 2024-12-17 at 11:46 +0100, Johannes Berg wrote:
+> > > On Tue, 2024-12-17 at 17:33 +0800, Sam Sun wrote:
+> > > > Dear developers and maintainers,
+> > > >=20
+> > > > We originally encountered a task hung while using our modified
+> > > > syzkaller. It was tested against the latest upstream kernel. We
+> > > > analyzed the root cause and pinpoint the kernel crash log to the
+> > > > following two tasks.
+> > > >=20
+> > >=20
+> > > This issue has been known a very long time and should be fixed in NFC=
+,
+> > > but I guess nobody is around to do it.
+> > >=20
+> > > https://syzkaller.appspot.com/bug?extid=3Dbb540a4bbfb4ae3b425d
+> > >=20
+> >=20
+> > I think this one is also the same:
+> >=20
+> > https://syzkaller.appspot.com/bug?extid=3D9ef743bba3a17c756174
+> >=20
+> > and that's much older still.
+> >=20
+>=20
+> Thanks for your quick reply! I am sorry that I didn't double-check the
+> call stack of historical bugs reported by Syzbot. I will be careful
+> next time.
+>=20
 
-You can help it by reviewing it and then providing a Tested-by tag for
-it.
+No worries. Maybe someone who feels responsible for NFC will wake up ;-)
 
-P.S. Something is wrong with your emails, I see a lot of lines separated
-by empty lines. It makes it harder to read.
-
-
--- 
-With best wishes
-Dmitry
+johannes
 
