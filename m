@@ -1,101 +1,162 @@
-Return-Path: <linux-kernel+bounces-448557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA2C9F41C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:33:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D855A9F41C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:33:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C612A188E0D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D31316D8C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FF6142E7C;
-	Tue, 17 Dec 2024 04:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Oq3OoyoJ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C61442F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D759E14831E;
+	Tue, 17 Dec 2024 04:33:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE3413C689
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734409982; cv=none; b=g3R7Nys8iRF+n7f6LC/xmVTiO7XyfSaprEp5pabj0JCXZJBmgTbjDSYj1PaGS9LBBn5NDfjKMaheUAUTSKyCCa69OZyAJyU+h9Uj3pbx8RWMiFKsYd7rs5M/FAd5h6DgLOPuksXdbtOBtW1TdCjujX75ABf6kk58F+Ykm5Q3bpM=
+	t=1734409999; cv=none; b=Hd4Pz+nYMtQiG1S2C3YagvLLFQpxsWO+pR9hCsme+jtCzJ1pfQBUOC8/WdMf9J/SwUpkehloRhg4jCSgRIKaEQUXrHXZK1X0waC1BsDTxue9Dee64JC0I/kkNzMFCVxDbS6LprTjz7+yKOZVrBrMOx4oUh+/YXUgAvGE6Ho/Ac4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734409982; c=relaxed/simple;
-	bh=JMxTNOTLT+FZz0cdfUOzaELcgsuyz5fRasxiew6zlZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e+dKi+oCHiEr58izr/id1a7yc8gp1a1fSFFCZc3UtikRAHcd9lvf/WsZirS8k8MZ0q2b2nBwMElT68LhXsz+qjBFRHWVeXnMTKxrvYUoGEYNcKekTE9Idnc2DAwXH7xzZ1DnEBGSPGbMr+ufmHioW2SNUcuuzYTRDeR8hOdeCrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Oq3OoyoJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mwdKcfCFIULPvQgRme/rxFTQjrctWSSEqgxMd/sJ7Qs=; b=Oq3OoyoJb4z382imCKiKPnvw55
-	0BqkqdrwqTdwvGm+Z1Foeq7SbgNMOsVz1Y2ruScOLmYNY5GKmtxJ2kC7lUJrra9q9jpr9dlPsYPnZ
-	V+T4bpWFuLoOcOC/ZiTsGnYqyNGZVmAF+rqWL5Egst1mAMyu2/JGw/h0jxJJnrvKk/FDDsG2jm+ND
-	TmpDgJhZvQQW5ChogL0vEN53ZegPY9vTabil4ErCOJ/dnnThSvHipSf2+21TBkiTMWgaxIsfAVc66
-	3b6FqpO5m9poz8WnN4mlmhej69pa829qRA4FQtHLCfVNM+CdRmlOdghLwd3fdm2gsfXcxhDMNbiOx
-	ZvV6FVHQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNPGB-00000004pWG-3AEd;
-	Tue, 17 Dec 2024 04:32:39 +0000
-Date: Tue, 17 Dec 2024 04:32:39 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Dev Jain <dev.jain@arm.com>, g@casper.infradead.org
-Cc: akpm@linux-foundation.org, david@redhat.com,
-	kirill.shutemov@linux.intel.com, ryan.roberts@arm.com,
-	anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
-	vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
-	dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
-	jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
-	hughd@google.com, aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com,
-	wangkefeng.wang@huawei.com, ziy@nvidia.com, jglisse@google.com,
-	surenb@google.com, vishal.moola@gmail.com, zokeefe@google.com,
-	zhengqi.arch@bytedance.com, jhubbard@nvidia.com, 21cnbao@gmail.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 05/12] khugepaged: Generalize
- __collapse_huge_page_isolate()
-Message-ID: <Z2D-5y65onX_qOLi@casper.infradead.org>
-References: <20241216165105.56185-1-dev.jain@arm.com>
- <20241216165105.56185-6-dev.jain@arm.com>
+	s=arc-20240116; t=1734409999; c=relaxed/simple;
+	bh=sd81yIlf0nBnARe0qAYmvCM77kaaeYj7T2eUfE939ms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DfN/ruA8KxcN3MfwtY75mYGwBmN3LZlWVWkZGxgnhbg9D3/r24UtJ8V/tS7F2kZcu57VlC+JyLcHZI+UMsr7Iwq0BTyFn4Vkd+DbktUfuH/frweH6H6mt1ELOLvEvkI4e68wNP9t/LyZL8wBbHPgkFgcnn2t7q6MgSCrxMUXPLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E5411063;
+	Mon, 16 Dec 2024 20:33:44 -0800 (PST)
+Received: from [10.162.16.49] (a077893.blr.arm.com [10.162.16.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6F1E3F720;
+	Mon, 16 Dec 2024 20:33:12 -0800 (PST)
+Message-ID: <0b8a055f-eab9-4b44-baac-ad25756dbbfd@arm.com>
+Date: Tue, 17 Dec 2024 10:03:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216165105.56185-6-dev.jain@arm.com>
-
-On Mon, Dec 16, 2024 at 10:20:58PM +0530, Dev Jain wrote:
->  {
-> -	struct page *page = NULL;
-> -	struct folio *folio = NULL;
-> -	pte_t *_pte;
-> +	unsigned int max_ptes_shared = khugepaged_max_ptes_shared >> (HPAGE_PMD_ORDER - order);
-> +	unsigned int max_ptes_none = khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER - order);
->  	int none_or_zero = 0, shared = 0, result = SCAN_FAIL, referenced = 0;
-> +	struct folio *folio = NULL;
-> +	struct page *page = NULL;
-
-why are you moving variables around unnecessarily?
-
->  	bool writable = false;
-> +	pte_t *_pte;
->  
-> -	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
-> +
-> +	for (_pte = pte; _pte < pte + (1UL << order);
-
-spurious blank line
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 18/46] arm64/sysreg: Add register fields for PMUACR_EL1
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, maz@kernel.org, ryan.roberts@arm.com,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Brown <broonie@kernel.org>
+References: <20241210055311.780688-1-anshuman.khandual@arm.com>
+ <20241210055311.780688-19-anshuman.khandual@arm.com>
+ <20241216231505.GA601635-robh@kernel.org>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20241216231505.GA601635-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-also you might first want to finish off the page->folio conversion in
-this function first; we have a vm_normal_folio() now.
+
+On 12/17/24 04:45, Rob Herring wrote:
+> On Tue, Dec 10, 2024 at 11:22:43AM +0530, Anshuman Khandual wrote:
+>> This adds register fields for PMUACR_EL1 as per the definitions based
+>> on DDI0601 2024-09.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  arch/arm64/tools/sysreg | 37 +++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 37 insertions(+)
+>>
+>> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+>> index 214ad6da1dff..462adb8031ca 100644
+>> --- a/arch/arm64/tools/sysreg
+>> +++ b/arch/arm64/tools/sysreg
+>> @@ -2349,6 +2349,43 @@ Res0	63:5
+>>  Field	4:0	SEL
+>>  EndSysreg
+>>  
+>> +Sysreg	PMUACR_EL1	3	0	9	14	4
+> 
+> I already added this and various other PMUv3.9 registers you've added 
+> here in v6.12 and v6.13. So are you on an old base or the tool allows 
+> multiple definitions? If the latter, that should be fixed.
+
+This series is based on v6.13-rc1 and as you mentioned PMUACR_EL1 has
+already been added into tools sysreg.
+
+Sysreg  PMUACR_EL1      3       0       9       14      4
+Res0    63:33
+Field   32      F0
+Field   31      C
+Field   30:0    P
+EndSysreg
+
+Seems like the tool does allow multiple definitions for a single register.
+The generated header (arch/arm64/include/generated/asm/sysreg-defs.h) does
+include redundant blocks for the following.
+
+#define REG_PMUACR_EL1                                  S3_0_C9_C14_4
+#define SYS_PMUACR_EL1                                  sys_reg(3, 0, 9, 14, 4)
+#define SYS_PMUACR_EL1_Op0                              3
+#define SYS_PMUACR_EL1_Op1                              0
+#define SYS_PMUACR_EL1_CRn                              9
+#define SYS_PMUACR_EL1_CRm                              14
+#define SYS_PMUACR_EL1_Op2                              4
+
+#define PMUACR_EL1_C                                    GENMASK(31, 31)
+#define PMUACR_EL1_C_MASK                               GENMASK(31, 31)
+#define PMUACR_EL1_C_SHIFT                              31
+#define PMUACR_EL1_C_WIDTH                              1
+
+I am wondering how this did not cause any re-definition warning ?
+
+> 
+>> +Res0	63:33
+>> +Field	32	FM
+>> +Field	31	C
+>> +Field	30	P30
+>> +Field	29	P29
+>> +Field	28	P28
+>> +Field	27	P27
+>> +Field	26	P26
+>> +Field	25	P25
+>> +Field	24	P24
+>> +Field	23	P23
+>> +Field	22	P22
+>> +Field	21	P21
+>> +Field	20	P20
+>> +Field	19	P19
+>> +Field	18	P18
+>> +Field	17	P17
+>> +Field	16	P16
+>> +Field	15	P15
+>> +Field	14	P14
+>> +Field	13	P13
+>> +Field	12	P12
+>> +Field	11	P11
+>> +Field	10	P10
+>> +Field	9	P9
+>> +Field	8	P8
+>> +Field	7	P7
+>> +Field	6	P6
+>> +Field	5	P5
+>> +Field	4	P4
+>> +Field	3	P3
+>> +Field	2	P2
+>> +Field	1	P1
+>> +Field	0	P0
+> 
+> We're never going to use Pnn defines. This is just useless bloat unless 
+> we're aiming to top amd gpu defines LOC.
+
+Okay, this patch was trying to be cautiously comprehensive. But anyways
+PMUACR_EL1 has already been added and hence this is redundant now.
 
