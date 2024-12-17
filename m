@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-448520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B951E9F4137
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:28:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4859F413D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B8316139F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4E9188B377
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A487146599;
-	Tue, 17 Dec 2024 03:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E24E13BACB;
+	Tue, 17 Dec 2024 03:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="Goh5CCtD"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17161B960;
-	Tue, 17 Dec 2024 03:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="mZFxNiac"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B04A182CD;
+	Tue, 17 Dec 2024 03:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734406119; cv=none; b=dhH+9l0Ya83NDXbfQ4/qAs6OFpYHx5vJWTl3MAt+YhS0rvlfp5vzoXEKIMwTnK5ByWPm+2lWWAOzutJKI/Kj1lMYeAS9O3rT4M7AgCuJ/lTc3bnwzw2L+yDRpVuMIXwNhinl4rSFqwg0ULpTEajE/L5lnUuyY+nPiMEjr83T6ho=
+	t=1734406405; cv=none; b=UJZK6bODfEafEig3dDsydSOOQ07kIYKunAweNnyRv9I/ksqbG/8/bfkVugTs3k5yHFoGnrsFWcOOY7ttBMdVVTQ4YYIzodUSENmh2rJj8Gjic+ci1F8L3ZpA3o1sR9N5njzbx2PQnQCfBj6sQwCsdpMLODpJSXGvyLsRooj5k20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734406119; c=relaxed/simple;
-	bh=yBrDAAXumKw6y2JtZX/K7A8At2LpR6oDAyXEsca0iag=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C56uENeXFKEvwcqihOi1FUU0lR2xwvJz9VyiuYmVg06NnTFayKxVeWLLqBNsZUiX/rBQsjDbz4DWNbM+9V6WKqmwcq9s3hUIMUcUklS5ddaK32aOve+pPG2I0WPal4LIqlsl+1qo+GfEW7GPPoN6Y8qHDcY/Tm57sfzmhh6paMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=Goh5CCtD; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from newone.lan (99-158-29-91.lightspeed.miamfl.sbcglobal.net [99.158.29.91])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 65AC5165D79;
-	Tue, 17 Dec 2024 04:28:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1734406113;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=89/Ied276i9FOsoHd8vBC5qsTunh5CJ0SvVAdLuPAlg=;
-	b=Goh5CCtDS0tPNf+WJafGDsjV46WvVKe3mlRhlW6LAED2fz52JcKVwm0FYXThOcm/Tn/aED
-	SLg6MGyhHs+ldP9qcn3PRVdJDDUvcdQPprh/FBA5qy8sJe6mbuDkoQiMQAiyxSACOJM1pv
-	+sJk2QVvBaFGOZo6RfgKXP6SGRUmjkE=
-From: David Heidelberg <david@ixit.cz>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: David Heidelberg <david@ixit.cz>,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: media: imx283: Describe sensor address using the reg property
-Date: Mon, 16 Dec 2024 22:28:17 -0500
-Message-ID: <20241217032821.1712916-1-david@ixit.cz>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1734406405; c=relaxed/simple;
+	bh=hD7lPTejmqYuPJFcXB+8pwN17kgBK5tZ84GafSwM11I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UHDpbWnlS7P9VomNEDgCcXl4mmOJxY7bksSgGelFYacUneL2rlB/aUwS631tN/lxfPt8b+cRuy4oVDNxE+WfeKKXFH+cRssjhmol2ZUDA4tCDi3hwUNWhgquCS/Wx4mkqzT1fGVSvHXh2TlTqDvkOzNQjCfkbg2wzB+Hwq4nuYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=mZFxNiac; arc=none smtp.client-ip=117.135.210.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=ve1cdARtLaTM5vK1iPSn+RtSKdLG519mcJyi0I7S5BQ=;
+	b=mZFxNiaczaFlZrDztbPn5wt0+w2yGuYwTlxAnuqtpUe0JaHuG0888DZPUFajkr
+	iAPRNcfJS98qQaZYsBaX2napIHmEP8biNHpufWF8RfvVTIrAbqa9vZHM/OX07TLz
+	CkPPLc7vrNcM6qGhEGjOX36kHgrGa6U3FohHfFyUjcpCY=
+Received: from [172.21.22.210] (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD3RzXk8GBnx6U4Ag--.41661S2;
+	Tue, 17 Dec 2024 11:32:53 +0800 (CST)
+Message-ID: <d70d670b-f5af-4f19-a547-6d0ca0bcee5b@126.com>
+Date: Tue, 17 Dec 2024 11:32:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5] mm, compaction: don't use ALLOC_CMA in long term GUP
+ flow
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ 21cnbao@gmail.com, david@redhat.com, vbabka@suse.cz, liuzixing@hygon.cn
+References: <1734350044-12928-1-git-send-email-yangge1116@126.com>
+ <78586900-a5bc-4377-8fb9-f322f2028310@linux.alibaba.com>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <78586900-a5bc-4377-8fb9-f322f2028310@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3RzXk8GBnx6U4Ag--.41661S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uF13CF4UCF4rJr1rJFy7Wrg_yoW8Kw1kpF
+	1xAasrtrs8XF9Fkws7t39Y9FWjvw48tFWUGr9Fvr1kuFnI9FnayFs7ta4jka4UXr15ta1Y
+	qFWkuasrJa17AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UqeHgUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbifhC4G2dg7uYnXgAAs7
 
-Use the reg property instead of text in the description.
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- .../devicetree/bindings/media/i2c/sony,imx283.yaml         | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml
-index e4f49f1435a5..f4ee991c89a3 100644
---- ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml
-+++ ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml
-@@ -13,16 +13,15 @@ maintainers:
- 
- description:
-   IMX283 sensor is a Sony CMOS active pixel digital image sensor with an active
--  array size of 5472H x 3648V. It is programmable through I2C interface. The
--  I2C client address is fixed to 0x1a as per sensor data sheet. Image data is
--  sent through MIPI CSI-2.
-+  array size of 5472H x 3648V. It is programmable through I2C interface.
-+  Image data is sent through MIPI CSI-2.
- 
- properties:
-   compatible:
-     const: sony,imx283
- 
-   reg:
--    maxItems: 1
-+    const: 0x1a
- 
-   clocks:
-     description: Clock frequency from 6 to 24 MHz.
--- 
-2.45.2
+在 2024/12/17 10:35, Baolin Wang 写道:
+> 
+> 
+> On 2024/12/16 19:54, yangge1116@126.com wrote:
+>> From: yangge <yangge1116@126.com>
+>>
+>> Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
+>> in __compaction_suitable()") allow compaction to proceed when free
+>> pages required for compaction reside in the CMA pageblocks, it's
+>> possible that __compaction_suitable() always returns true, and in
+>> some cases, it's not acceptable.
+>>
+>> There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
+>> of memory. I have configured 16GB of CMA memory on each NUMA node,
+>> and starting a 32GB virtual machine with device passthrough is
+>> extremely slow, taking almost an hour.
+>>
+>> During the start-up of the virtual machine, it will call
+>> pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
+>> Long term GUP cannot allocate memory from CMA area, so a maximum
+>> of 16 GB of no-CMA memory on a NUMA node can be used as virtual
+>> machine memory. Since there is 16G of free CMA memory on the NUMA
+>> node, watermark for order-0 always be met for compaction, so
+>> __compaction_suitable() always returns true, even if the node is
+>> unable to allocate non-CMA memory for the virtual machine.
+>>
+>> For costly allocations, because __compaction_suitable() always
+>> returns true, __alloc_pages_slowpath() can't exit at the appropriate
+>> place, resulting in excessively long virtual machine startup times.
+>> Call trace:
+>> __alloc_pages_slowpath
+>>      if (compact_result == COMPACT_SKIPPED ||
+>>          compact_result == COMPACT_DEFERRED)
+>>          goto nopage; // should exit __alloc_pages_slowpath() from here
+>>
+>> In order to quickly fall back to remote node, we should remove
+>> ALLOC_CMA both in __compaction_suitable() and __isolate_free_page()
+>> in long term GUP flow. After this fix, starting a 32GB virtual machine
+>> with device passthrough takes only a few seconds.
+>>
+>> Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in 
+>> __compaction_suitable()")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: yangge <yangge1116@126.com>
+>> ---
+> 
+> I sent a follow-up fix patch[1] to update the cc->alloc_flags, and with 
+> that, looks good to me.
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> 
+> [1] 
+> https://lore.kernel.org/all/20241217022955.141818-1-baolin.wang@linux.alibaba.com/
+Thanks
 
 
