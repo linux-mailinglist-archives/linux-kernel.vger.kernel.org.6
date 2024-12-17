@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-449386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CEEF9F4E36
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:49:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8CF9F4E3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7421885ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:49:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0D2C188865E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B8B1F6674;
-	Tue, 17 Dec 2024 14:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0981F7076;
+	Tue, 17 Dec 2024 14:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwJmiM3M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqHQ23rN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25A91F427A;
-	Tue, 17 Dec 2024 14:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EA11F706D;
+	Tue, 17 Dec 2024 14:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734446948; cv=none; b=KV46+O+uHa/RkruPYBZNH+ZefRIPRyh2Ozwsz4FtwY2RInPlMLsliZIHoJU/nLxI2RKARsXg4EN3sza4xzjeyDmQRMuTyWJFylxBeGVp37SH2A02CwMc4Mu+BNeh3z/+k6I8s0JqApkBzURbYFfSofhqDD/8hY+pts5wBFMIjVg=
+	t=1734446950; cv=none; b=kwJMwkjUuEHal77C51Uhj56WdaEPG8iAOxi6Woomhj1ZPfMtdwwqrJobdz6WCz1iH3qz2o98JNYPR68Kzb44adM5cRM2Dl8u0g7cy8wWmvGRCGE6usDnQVqt+z5YR9P5SQXhQZtIONebRGhd7Wqb7aLKO/yqP5OfABdbfbeDQkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734446948; c=relaxed/simple;
-	bh=ovUCsXIAcZwln0owfwVIC8+hc5eQXi2CD0JoDSmNu74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VXZ6Jzt5vYGd/eymIVLuuTFBYNyDXDa8285z8rSpPuXRQDyTXdmTCmGQPuC8jLlF7eKDMHthr6mPyt5SCEM3mjLmAmUWKgy1Jxad+IundHMdDcJAC4A8Y/3HmwqIDfKlCJ2riF2/lwBS2pY+hNs/TMMZpUCncNSDh0cTVPxKNzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwJmiM3M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C0AC4CEDD;
-	Tue, 17 Dec 2024 14:49:05 +0000 (UTC)
+	s=arc-20240116; t=1734446950; c=relaxed/simple;
+	bh=S5/ik6fbwrpyH3KSs+GVUj/CwVH+gNMOhnzP7q730h0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MjhSxD6hYhFUp6kwxtn9EI+tiMbsr4SWz/o/FEt0LlR6cfqjEI8RC4riFbzLsCnwocmvD5oSSRN7oVQ/j4rrnytOeVgR5FovD2K5rcNc1g1aJJiTaEskioWv9SM5nC2PObF0jCFU11wfh9i7HDo1/Ln3+lw9Y1pDaD9rcXyiclY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqHQ23rN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC30C4CED4;
+	Tue, 17 Dec 2024 14:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734446947;
-	bh=ovUCsXIAcZwln0owfwVIC8+hc5eQXi2CD0JoDSmNu74=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hwJmiM3MCtayeazrAxE0vsMDLigqnketgZff9rdBg6XV0JvlJLy2+fyU5Uo5jcZfr
-	 r/3NSW5d6FD5gheiQPq1orEGlReGRPlRY/xlUwIe/AUOhqlS9Kyyh9Q1OQdXYqDTUI
-	 5t0Pc+BSgg3Hw99PQ655QxCQReM6uptUyT5iXg1S+UfHGy01emoQWM2lQrf6Jo0xO/
-	 zmeTvvb5z0ET7Bcwak3aMLjyTBQ7+YYJE9CUaiCTQJ1xtIEQ8MRUCK53x51563PnEu
-	 EM8CA3wispePvBh+ZQJFJ7YCKmuqRwdav3lgu+ccYz0wSzwFroc8K6d/k+WA+pAXzS
-	 K5F4dkK0RBPZQ==
-Date: Tue, 17 Dec 2024 14:49:02 +0000
-From: Lee Jones <lee@kernel.org>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v9 1/3] Documentation:leds: Add leds-st1202.rst
-Message-ID: <20241217144902.GL2418536@google.com>
-References: <20241121165829.8210-1-vicentiu.galanopulo@remote-tech.co.uk>
- <20241121165829.8210-2-vicentiu.galanopulo@remote-tech.co.uk>
+	s=k20201202; t=1734446950;
+	bh=S5/ik6fbwrpyH3KSs+GVUj/CwVH+gNMOhnzP7q730h0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IqHQ23rNJvtV2zSWtz1Es0/zYfqBOVMSlTnIkbbPmk2R1d5jMnegR/jaVbOQdNwy5
+	 FVMq/xQd+jsedpESIGo7NCI+aQtoUtPuU4EcrT9DeTBmDfAD+h/at4RRBKhpQx0w5V
+	 /mj54HSZ1Cf0TzeGBfxwsSywidecWbwuBpOd4MY6kcKUsY6fOihCe+DXedu6u0rHV7
+	 upgf8hqlwkc9fm/M6L00ZcFJKs2XC2JRXZJCdeacJ3PKJagahHY/fjLsE9YjOLiXy+
+	 0GOsrJH+VuoIhHw9kzWHb/6mIVDM3SZZTxhTIBN4Cuxw7LnRu1ABU0nBAz8s3An6Rf
+	 WSlKf7rBrlnEQ==
+Date: Tue, 17 Dec 2024 06:49:07 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
+ <alexis.lothore@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: stmmac: dwmac-socfpga: Set interface
+ modes from Lynx PCS as supported
+Message-ID: <20241217064907.0e509769@kernel.org>
+In-Reply-To: <20241217135932.60711288@fedora.home>
+References: <20241213090526.71516-1-maxime.chevallier@bootlin.com>
+	<20241213090526.71516-3-maxime.chevallier@bootlin.com>
+	<Z1wnFXlgEU84VX8F@shell.armlinux.org.uk>
+	<20241213182904.55eb2504@fedora.home>
+	<Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
+	<20241216094224.199e8df7@fedora.home>
+	<20241216173333.55e35f34@kernel.org>
+	<20241217135932.60711288@fedora.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241121165829.8210-2-vicentiu.galanopulo@remote-tech.co.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, 21 Nov 2024, Vicentiu Galanopulo wrote:
+Let me triple check ;)
 
-> Add usage for sysfs hw_pattern entry for leds-st1202
+On Tue, 17 Dec 2024 13:59:32 +0100 Maxime Chevallier wrote:
+> - The priv->phylink_config.supported_interfaces is incomplete on
+> dwmac-socfpga. Russell's patch 5 intersects these modes with that the
+                                   ^^^^^^^^^^
+> PCS supports :
 > 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-> ---
->  - Changes in v3: Add leds-st1202 to index.rst
->  - Changes in v2: Implement review comments
+> +		phy_interface_or(priv->phylink_config.supported_interfaces,
+                              ^^
+> +				 priv->phylink_config.supported_interfaces,
+> +				 pcs->supported_interfaces);
 > 
->  Documentation/leds/index.rst       |  1 +
->  Documentation/leds/leds-st1202.rst | 36 ++++++++++++++++++++++++++++++
->  2 files changed, 37 insertions(+)
->  create mode 100644 Documentation/leds/leds-st1202.rst
-> 
-> diff --git a/Documentation/leds/index.rst b/Documentation/leds/index.rst
-> index 3ade16c18328..0ab0a2128a11 100644
-> --- a/Documentation/leds/index.rst
-> +++ b/Documentation/leds/index.rst
-> @@ -28,4 +28,5 @@ LEDs
->     leds-mlxcpld
->     leds-mt6370-rgb
->     leds-sc27xx
-> +   leds-st1202.rst
->     leds-qcom-lpg
-> diff --git a/Documentation/leds/leds-st1202.rst b/Documentation/leds/leds-st1202.rst
-> new file mode 100644
-> index 000000000000..e647966e496c
-> --- /dev/null
-> +++ b/Documentation/leds/leds-st1202.rst
-> @@ -0,0 +1,36 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +============================================
-> +Kernel driver for STMicroelectronics LED1202
-> +============================================
-> +
-> +/sys/class/leds/<led>/hw_pattern
-> +--------------------------------
-> +
-> +Specify a hardware pattern for the ST1202 LED. The LED
-> +controller implements 12 low-side current generators
-> +with independent dimming control. Internal volatile memory
-> +allows the user to store up to 8 different patterns.
-> +Each pattern is a particular output configuration in terms
-> +of PWM duty-cycle and duration (ms).
-> +
-> +To be compatible with the hardware pattern
-> +format, maximum 8 tuples of brightness (PWM) and duration must
-> +be written to hw_pattern.
+> So without patch 2 in the series, we'll be missing
+> PHY_INTERFACE_MODE_1000BASEX in the end result :)
 
-Some very odd formatting here.
+"Or" is a sum/union, not intersection.
 
-Doesn't your editor do line-wrapping for you?
+You set the bits in priv->phylink_config.supported_interfaces.
+Russell does:
 
-> +
-> +- Min pattern duration: 22 ms
-> +- Max pattern duration: 5660 ms
-> +
-> +The format of the hardware pattern values should be:
-> +"brightness duration brightness duration ..."
-> +
-> +/sys/class/leds/<led>/repeat
-> +----------------------------
-> +
-> +Specify a pattern repeat number, which is common for all channels.
-> +Default is 1; negative numbers and 0 are invalid.
-> +
-> +This file will always return the originally written repeat number.
-> +
-> +When the 255 value is written to it, all patterns will repeat
-> +indefinitely.
-> -- 
-> 2.39.3 (Apple Git-145)
-> 
+	priv->phylink_config.supported_interfaces |=
+		pcs->supported_interfaces;
 
--- 
-Lee Jones [李琼斯]
+If I'm missing the point please repost once Russell's patches 
+are merged :)
 
