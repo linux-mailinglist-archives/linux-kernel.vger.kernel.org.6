@@ -1,207 +1,188 @@
-Return-Path: <linux-kernel+bounces-448431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B23D9F3FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:29:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BB69F4005
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:29:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5201885C58
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:29:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41791885A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3EF49620;
-	Tue, 17 Dec 2024 01:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4BC7C6E6;
+	Tue, 17 Dec 2024 01:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tg/zBSnI"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QcQLKOJ3"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461AD4437C;
-	Tue, 17 Dec 2024 01:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAD142AA5
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734398943; cv=none; b=qxrI6AiQ6mzdmWiBAYdT++x3mQZcW47dyctb3jnMphvs7jBThVnyJf202qIYeSKvRLvwbdvMaIiueNLI5pi1/et97wcxQdXIOKmP6PmvBYYEKy0iXXW8UK/WrDgcDAPQPmv99oPvchCQ2C6X4zp6fNeX6e3rpub3WHnlukjjh5E=
+	t=1734398980; cv=none; b=pnCRoW12s+eEq6UiY/shqEbv2PMWkXX9e0lO/UDg1FKGF86vkV7ZkxwONmjBab0xQNPEhV3xhJJ8ZLRECg6RnXtxmla6c87TBo8Es+iUBjgwXnTCwdNyMPa6Y5Meuv81j88kYZI8fXZKeCb6DQ+b1NqNQpc6gFFHEDhnQr3AlRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734398943; c=relaxed/simple;
-	bh=CaQDUIxOIMEtqnBw/A6LTtX6GxUKxbJRJ6MB22zitRg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Cc:Date:
-	 Message-Id:References:To; b=BIY1rMZTRy0gGNIzSscruPobgRnENqHbJ34Fd6tKy/17QmRPIkOjIMzAQ2OllHE0xl/vzEzq/r7p/Z0F3X3X5Lwu7izSavL/S7Q2kYjhNDFzwxU58J4fcTNGr9SmxicEEy6DAOLYU8zuivvOjhi1vox6Dtmgufz0alwnRyRv91M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tg/zBSnI; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21644aca3a0so56099845ad.3;
-        Mon, 16 Dec 2024 17:29:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734398941; x=1735003741; darn=vger.kernel.org;
-        h=to:references:message-id:date:cc:in-reply-to:from:subject
-         :mime-version:content-transfer-encoding:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JUWCQu9bMeepyw57zq6LKufODvVwxEvgznMOI7r4KSM=;
-        b=Tg/zBSnIRw+EdWhTBwTorlpRYnDOAYpZa1nd8TSFGVH3w4tSNh2Jz6yr4sB0UjmpMW
-         iKFKIPpJon38jKVr9jq7wpp+P8Ts1xr9omsoHpVzLjmrnF9TCib+oQfydTRpVORlJSpX
-         vdRP3uJpTc0hSVlMZpcQGbZTq0uOV9/7Qv1AZH5S7VceGxvJeSwfTsIhIFqguZWdRfsm
-         F7wWcYktBzM/ox1mQhVyS6GXDb2HA/6gWTHUTAgpmhsqg9uCJPi7KRoR0FZbS9lSRtxt
-         URWnurXwSYcLpY4WhHRLIrS1gq00J2E7mCfBVYghKaTpiz9wOH5lnkDFpEYYB5MH0fbY
-         pt5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734398941; x=1735003741;
-        h=to:references:message-id:date:cc:in-reply-to:from:subject
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JUWCQu9bMeepyw57zq6LKufODvVwxEvgznMOI7r4KSM=;
-        b=xH2wYwUmQmSkU9Q6nbCxTr+hQST/cItTBbOUjqPU2ci40nYvhQkoYhQw5rSR9fXdFW
-         3WPFzbYcwcuOaFx7ceqqLnlOzeMqIwvaRLC+eUuqT6EkKJpUU/D/INBVJnKDDXRnNtP/
-         y1c4SV98lLBnBPEz6C8ouNQoADlgVlALpCL0frS9m7dBFHpwX78HDhaHXBB3wMtj5oc5
-         YVt2ILWh5CQc9pOhYYmcJGiZ3aypi6yy6YKQD+xJD3x03KqqxgHOnxyhvZ2o/svlPXu0
-         cDpsS9EXUsevBz78JyIifWh2oUVuqvQZ8+fdu4SFWgmM6rEKOUSqW5puhTFVH4p8m6hU
-         X4Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCU3yNCvwObV4MpyAAjyg7kFF+u/uZlPDgpw5+52QlLwh+K61gLgHO6DjoSDqXXrFcTqqGaqzI/QF2ylo8sx/QTkOum7@vger.kernel.org, AJvYcCXsTFDfXGT+Mj12SRC5LSwDkIK0Jk/ACF7WaMhXUF+chk4pOB7MiErp5AZqAdDdYB1tnIxaWWso2cC2W7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA2uKynUGe2i6eYksAYIWY+sS6EIxk13UDv7ldX/zKkMuACwxD
-	tBEdD0TLut/3IYnbKeWX5MH2B7bqx8Fy+DkMan2UtVRTxz1iLNYd
-X-Gm-Gg: ASbGnculE8xO7GI00agWPsESbAjlqqmbukFuQQOKyBtZj/ix7rcx+NqnNzDrCZMd15t
-	W3vJwjdHNdSXVjOOQjc+yMVcgKcWJFaxG2WBI3bFHGc7ICqk6vgbf6zCh11mgldnEQYPr0HoBeB
-	7/nmjULpB7myfPZTo/Znw9dKkdzXZm5P6NnulE1ZYqtFccZYZtpEaWpMqBwtVOX6cJw9p6Pxpc/
-	6bDOf8HiGLpHTO1Cfxk9u88sdzsTG+LqTFon3smQnJehu5IRnn6NC+BfdRd4kaOBET8S440e2l+
-	oYPiPmE=
-X-Google-Smtp-Source: AGHT+IEhCzQQnpl20e7IZlZzHPsPJ7hdyBJuRn8hoR818WmMWQsSuQhE2a3oMgqv/9gxbNynv97bZQ==
-X-Received: by 2002:a17:902:e801:b0:215:603e:2141 with SMTP id d9443c01a7336-218929b7999mr223132965ad.19.1734398941383;
-        Mon, 16 Dec 2024 17:29:01 -0800 (PST)
-Received: from smtpclient.apple ([2001:e60:a01e:ee2e:e8f2:be36:d4e1:2042])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e64068sm48821325ad.232.2024.12.16.17.29.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 17:29:01 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1734398980; c=relaxed/simple;
+	bh=wpcHoOcYIOaa6emnw+AWzNeqd7KX+IW2SvptWOYO+v8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Re9V6RfbJQ54Y5AZqT9SF85ZDAPmbWthSpGsTiHLzE8dWiGciiBZqzHIEzSbHZZgwK7iG6oOWKOGGnM+gkLbqjxIHXkr3z63hxaLrfInHSZI4Vh+qj3U/gLaXUGpE2esYzhJtx/zFi6044kpGUoCsN32giOVlVZN9QnT1JHNfpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QcQLKOJ3; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241217012931epoutp014c7cfb71737d7551b0637e63e1ae6729~R0qzYkF6-0172001720epoutp01R
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:29:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241217012931epoutp014c7cfb71737d7551b0637e63e1ae6729~R0qzYkF6-0172001720epoutp01R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1734398971;
+	bh=UGmkPmQUidBIuYKKI9fgy8HdP95zF6NSlMy/pMEWJxU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=QcQLKOJ3KmMnVisUpoWD9aB5sGSCohDrr8htjz6h+DQ/YOeW+hP+BVNXFoc2CnsFK
+	 BCFPZz9NfVNFEQK7JbYFrQZqe/mKo5UMxzMWIB51Eu3LDa5WJZ/NH88O12QjRCKVho
+	 dLn524oiAxLGlPBN4TNQWpPyPJUbsRYd8Orgt/S8=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20241217012930epcas2p13a739f31a8ae2d882076e1f40a1a1798~R0qzAauE03081530815epcas2p1U;
+	Tue, 17 Dec 2024 01:29:30 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4YBzkL0S7Wz4x9Q9; Tue, 17 Dec
+	2024 01:29:30 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	69.49.22105.9F3D0676; Tue, 17 Dec 2024 10:29:29 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241217012929epcas2p143c323e728c1e22144579b7b827d4580~R0qxo5Rjr3081530815epcas2p1G;
+	Tue, 17 Dec 2024 01:29:29 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241217012929epsmtrp2047d7fd2a280f865e8912eb8b4016a55~R0qxoO4660834408344epsmtrp2H;
+	Tue, 17 Dec 2024 01:29:29 +0000 (GMT)
+X-AuditID: b6c32a47-fd1c970000005659-cd-6760d3f982ed
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BD.4B.33707.9F3D0676; Tue, 17 Dec 2024 10:29:29 +0900 (KST)
+Received: from KORCO078619 (unknown [10.229.8.183]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241217012929epsmtip11ecba00ce3f580c8a57ce4d22c32be3f~R0qxXO2LM0333703337epsmtip16;
+	Tue, 17 Dec 2024 01:29:29 +0000 (GMT)
+From: =?utf-8?B?64KY7IaM7JuQL1NPV09OIE5B?= <sowon.na@samsung.com>
+To: <robh@kernel.org>, <krzk@kernel.org>, <conor+dt@kernel.org>,
+	<vkoul@kernel.org>, <alim.akhtar@samsung.com>, <kishon@kernel.org>
+Cc: <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20241118021009.2858849-1-sowon.na@samsung.com>
+Subject: RE: [PATCH v3 0/3] Support ExynosAutov920 ufs phy driver
+Date: Tue, 17 Dec 2024 10:29:29 +0900
+Message-ID: <000001db5023$1ddaaf30$59900d90$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] ring-buffer: fix array bounds checking
-From: Jeongjun Park <aha310510@gmail.com>
-In-Reply-To: <Z2BpY5LimG7E3LpC@google.com>
-Cc: rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- david@redhat.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Date: Tue, 17 Dec 2024 10:28:49 +0900
-Message-Id: <24508411-0980-43EE-8224-C3B81E456AFF@gmail.com>
-References: <Z2BpY5LimG7E3LpC@google.com>
-To: Vincent Donnefort <vdonnefort@google.com>
-X-Mailer: iPhone Mail (22B91)
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQEnffo+LGCDWdayZVn9ec1kNib2MAKN54LKtDzZ33A=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmqe7PywnpBh339CwezNvGZrFm7zkm
+	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLfYeecEswOXx6ZVnWwefVtW
+	MXp83iQXwByVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6Dr
+	lpkDdIuSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8C8QK84Mbe4NC9dLy+1xMrQ
+	wMDIFKgwITvj/oOjrAVP+St6dl9ga2B8xtPFyMkhIWAi8ft4H0sXIxeHkMAORolJx5dBOZ8Y
+	JTYcvsMM59x70MQI0/J9egMTRGIno8SryxfZIZwXjBKnzh5gBaliE3CUaHuwCGyWiEArUOLR
+	LCCHg4NZoFZif6cJSA2ngI3E7M2r2EFsYaD6Oyc3s4HYLAKqEpsunwCbwytgKXH94WcWCFtQ
+	4uTMJ2A2s4C2xLKFr5khLlKQ+Pl0GVi9iICVxLsfT5ghakQkZne2gb0gIbCUQ2Ji4w0WiAYX
+	ida1vUwQtrDEq+Nb2CFsKYnP7/ayQdj5Eusf3oWyKyTuHvoP1WsvsejMT3aIXzQl1u/SBzEl
+	BJQljtyCOo1PouPwX3aIMK9ER5sQRKOSRMf5OVBLJSRWvZjMNoFRaRaSx2YheWwWkgdmIexa
+	wMiyilEstaA4Nz212KjAGB7Zyfm5mxjByVTLfQfjjLcf9A4xMnEwHmKU4GBWEuGtMYlNF+JN
+	SaysSi3Kjy8qzUktPsRoCgzqicxSosn5wHSeVxJvaGJpYGJmZmhuZGpgriTOe691boqQQHpi
+	SWp2ampBahFMHxMHp1QD0/Lkz0E6l7ON9R6Z+0s/kD1h/ijZNOBd16qnFRXcIm/WNk9b8PsN
+	B8u3s10PZBirlvNPEZM4sqT9xbl5eq4Lp2udE/x3Q/xS7o/Hn2rZfj3apDux8mnmvZ5XGi+3
+	W9YnLQ+/6n3mgNnxPS/Ee2Slb4uuZ7kjEK7GkscyxXR1V4ZTG3PoVP+sYMei53szTH2nR2dP
+	UA+fZH+oaXnr2r+/cs5vu2pT2SreuyPNlHcqr7ofp8LiqfecFoTVXJ0wl3nCH+H/EwU35D79
+	dOfD0pde54+YbEsMiq6bvqtw34V5WQuKT+eUm5zg3fbn9a4tEUdXbdGW1ohZk5yz8lTzc8NQ
+	udbuVQpn3P+9Yb9hqLbg/j8lluKMREMt5qLiRAAjBZlALwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsWy7bCSnO7PywnpBid3iVk8mLeNzWLN3nNM
+	FvOPnGO1ONr6n9ni5ax7bBbnz29gt7i8aw6bxYzz+5gs/u/ZwW6x884JZgcuj02rOtk8+ras
+	YvT4vEkugDmKyyYlNSezLLVI3y6BK2PrnQ7GgsP8Fcu2bmNuYDzA08XIySEhYCLxfXoDUxcj
+	F4eQwHZGiRVdS9khEhIS397sYYKwhSXutxxhhSh6xiixfP80ZpAEm4CjRNuDRSwgCRGBXkaJ
+	8xNWs4AkmAUaGSUudrBBdAAljl1/zQaS4BSwkZi9eRXYCmGg7jsnN4PFWQRUJTZdPsEKYvMK
+	WEpcf/iZBcIWlDg58wnUUG2JpzefwtnLFr5mhjhPQeLn02VgvSICVhLvfjxhhqgRkZjd2QZV
+	YyrxdPI3Nph37j54yT6BUXQWkhWzkKyYhWTFLCSjFjCyrGIUTS0ozk3PTS4w1CtOzC0uzUvX
+	S87P3cQIjkKtoB2My9b/1TvEyMTBeIhRgoNZSYS3xiQ2XYg3JbGyKrUoP76oNCe1+BCjNAeL
+	kjivck5nipBAemJJanZqakFqEUyWiYNTqoEpndl/7+OFmWeVYjLMD0U81tkZWbuLSe3d9UdO
+	jE8lOrVtmre+TNS2+y6upeGql6DBc+3h/Jf9IWKBzb/1OzsbV06Uttl3z1tiveFxV5vQ9f87
+	Mh/fPP5u15vPyfzHnyZ+36C0JWDFEbFtS+bzqAY+snrG+d01Z+aPFO8lkTZTLX5+sX12x/G6
+	+UNDfbPWo6lPAuVsXy83SHv7xUo5bep57eUKwVwlb3+4Ba6e+5B1OWvkQ1OX058PBB5I3Trr
+	kdPetrM/z/205/pvduhje//7i4mPgzd2bpnBsTgo/VDNp++x7+7sbF73WmwSU/djDbZ1AaZx
+	0jaZRYdXmRQZbZu9YN912a51Uy1EHvfNndCno8RSnJFoqMVcVJwIAOos6D4xAwAA
+X-CMS-MailID: 20241217012929epcas2p143c323e728c1e22144579b7b827d4580
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241118021011epcas2p397736dd9e5c7d96d799716e09919c136
+References: <CGME20241118021011epcas2p397736dd9e5c7d96d799716e09919c136@epcas2p3.samsung.com>
+	<20241118021009.2858849-1-sowon.na@samsung.com>
+
+Hi Krzysztof, Vinod,
 
 
-
-> Vincent Donnefort <vdonnefort@google.com> wrote:
-> =EF=BB=BFOn Tue, Dec 17, 2024 at 01:49:30AM +0900, Jeongjun Park wrote:
->> If there is a case where the variable s is greater than or equal to nr_su=
-bbufs
->> before entering the loop, oob read or use-after-free will occur. This pro=
-blem
->> occurs because the variable s is used as an index to dereference the
->> struct page before the variable value range check. This logic prevents th=
-e
->> wrong address value from being copied to the pages array through the subs=
-equent
->> range check, but oob read still occurs, so the code needs to be modified.=
-
+> -----Original Message-----
+> From: Sowon Na <sowon.na=40samsung.com>
+> Sent: Monday, November 18, 2024 11:10 AM
+> To: robh=40kernel.org; krzk=40kernel.org; conor+dt=40kernel.org;
+> vkoul=40kernel.org; alim.akhtar=40samsung.com; kishon=40kernel.org
+> Cc: krzk+dt=40kernel.org; linux-kernel=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-samsung-soc=40vger.kernel.org;
+> sowon.na=40samsung.com
+> Subject: =5BPATCH v3 0/3=5D Support ExynosAutov920 ufs phy driver
 >=20
-> Hi Jeongjun, thanks for the patch.
+> This patchset introduces ExynosAuto v920 SoC ufs phy driver as Generic PH=
+Y
+> driver framework.
 >=20
-> Did you find a reproducer for that problem or has it just been found by co=
-de
-> inspection?
+> Changes from v2:
+> - simplify function name from samsung_exynosautov920_ufs_phy_wait_cdr_loc=
+k
+>   to exynosautov920_ufs_phy_wait_cdr_lock
+> - return immediately after getting the CDR lock
+> - add comment for wait CDR lock
 >=20
-> As discussed here [1], s >=3D nr_subbufs should really never happen as we a=
-lready
-> cap nr_pages.
+> Changes from v1:
+> - use exynosautov920 instead of exynosauto to specify
+> - remove obvious comment
+> - change soc name as ExynosAutov920 to keep consistent
+> - use macros instead of magic numbers
+> - specify function name
+> - add error handling for CDR lock failure
 >=20
-> [1] https://lore.kernel.org/all/78e20e98-bdfc-4d7b-a59c-988b81fcc58b@redha=
-t.com/,
-
-I didn't find the bug caused by this separately, but I found it while analyz=
-ing
-the code. However, since it has been confirmed that syzbot
-has a reproducer that generates oob and uaf, this will definitely be
-reproduced.
-
-The reason I suggested this patch is because I think the logic of the code
-is a bit inappropriate. Normally, a range check is performed before using
-a specific variable as an index of an array. Of course, in this loop, the pa=
-ge
-structure pointer that was oob-read will not be copied to the pages array,
-but I don't think it's very appropriate to read the array using a variable
-value that may be out of range as an index before the range check.
-Therefore, I suggest patching it like this.
-
+> Sowon Na (3):
+>   dt-bindings: phy: Add ExynosAutov920 UFS PHY bindings
+>   phy: samsung-ufs: support ExynosAutov920 ufs phy driver
+>   arm64: dts: exynosautov920: add ufs phy for ExynosAutov920 SoC
 >=20
->>=20
->> Fixes: 117c39200d9d ("ring-buffer: Introducing ring-buffer mapping functi=
-ons")
->> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->> ---
->> kernel/trace/ring_buffer.c | 10 +++++-----
->> 1 file changed, 5 insertions(+), 5 deletions(-)
->>=20
->> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
->> index 7e257e855dd1..83da74bf7bd6 100644
->> --- a/kernel/trace/ring_buffer.c
->> +++ b/kernel/trace/ring_buffer.c
->> @@ -6994,9 +6994,9 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *=
-cpu_buffer,
->> {
->>    unsigned long nr_subbufs, nr_pages, nr_vma_pages, pgoff =3D vma->vm_pg=
-off;
->>    unsigned int subbuf_pages, subbuf_order;
->> -    struct page **pages;
->> +    struct page **pages, *page;
->>    int p =3D 0, s =3D 0;
->> -    int err;
->> +    int err, off;
->>=20
->>    /* Refuse MP_PRIVATE or writable mappings */
->>    if (vma->vm_flags & VM_WRITE || vma->vm_flags & VM_EXEC ||
->> @@ -7055,14 +7055,14 @@ static int __rb_map_vma(struct ring_buffer_per_cp=
-u *cpu_buffer,
->>    }
->>=20
->>    while (p < nr_pages) {
->> -        struct page *page =3D virt_to_page((void *)cpu_buffer->subbuf_id=
-s[s]);
->> -        int off =3D 0;
->> -
+>  .../bindings/phy/samsung,ufs-phy.yaml         =7C   1 +
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi =7C  11 ++
+>  drivers/phy/samsung/Makefile                  =7C   1 +
+>  drivers/phy/samsung/phy-exynosautov920-ufs.c  =7C 167 ++++++++++++++++++
+>  drivers/phy/samsung/phy-samsung-ufs.c         =7C   9 +-
+>  drivers/phy/samsung/phy-samsung-ufs.h         =7C   4 +
+>  6 files changed, 190 insertions(+), 3 deletions(-)  create mode 100644
+> drivers/phy/samsung/phy-exynosautov920-ufs.c
 >=20
-> I believe we can keep the struct page and off declaration within the while=
- loop.
-
-The reason I modified it this way is that, since this loop will always be=20=
-
-entered if there are no other issues, these variables will be used in=20
-many situations, so I think it is quite inefficient to continue to declare v=
-ariables=20
-in a loop where you don't know how many times it will be repeated.=20
-So, I think that declaring variables in advance and then continuously initia=
-lizing=20
-their values =E2=80=8B=E2=80=8Bis advantageous in terms of performance and t=
-here are=20
-no other issues. What do you think?
-
-Regards,
-
-Jeongjun Park
-
+> --
+> 2.45.2
 >=20
->>        if (WARN_ON_ONCE(s >=3D nr_subbufs)) {
->>            err =3D -EINVAL;
->>            goto out;
->>        }
->>=20
->> +        page =3D virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
->> +        off =3D 0;
->> +
->>        for (; off < (1 << (subbuf_order)); off++, page++) {
->>            if (p >=3D nr_pages)
->>                break;
->> --
+
+I can't see these patches in -next, do let me know if anything is missing t=
+o be addressed from myside.
+
+Best regards,
+Sowon Na.
+
 
