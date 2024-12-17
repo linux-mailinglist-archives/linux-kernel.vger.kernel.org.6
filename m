@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-448768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D4D9F4541
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 434049F4542
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:39:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6B0168A08
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890B21694AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318AB1D95B3;
-	Tue, 17 Dec 2024 07:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0evr5sG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AF450276;
-	Tue, 17 Dec 2024 07:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FF11CCEF8;
+	Tue, 17 Dec 2024 07:39:10 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477AD13D244
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734421132; cv=none; b=Bug1cpIX4CfN15tIpzdbqbO1obkjo/1fz8ipM0nC/S4OSo89DCmQIx5xlw7CfOVjdUWAv0xeTVY4Sk/o8EL2ugoA/AV2ymIcksjwCOPNXGlgKwY1Gzboacfy98TjlehWR4rgAJ7BzRvIzhRQ36htZpb67DvYvHPK0KfjeRHoNqI=
+	t=1734421149; cv=none; b=pA8vYdnZBX5bUkKstG8ZCq+iO4VaNjXu3GDNj4qcPL4x6/CmJEnsQOzThztQhS+i8bpYTBi8kT7uiubt7q9Jy6oMUzD9Lc14oE6KK50kZorpWTS58O0Mapk1y/U6F2huaQQWjVthNKaWLYZ/3jvTS4j2WgNtEqgYisTAl1GBip8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734421132; c=relaxed/simple;
-	bh=tNHnx9DVG5hJfoO2tUFgXbCyMPBkjZoAyxqDuz8uz6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s36R1Nii8CAiqCnzcRihKoXHD+xWvTY38/98nnfXkW5EGXkoAcNdulsaX7nFhOuIpn7T9P+VpIDLCtdAx7xxIU5eq2GiQ+z+GOFuw/OxXUxtP/edlIZeA6XxdGLX/1swkG2u7XmcfuVzXk8fUUilq4VLY1AsjxPVjh5rwS+Rd8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0evr5sG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D886C4CED3;
-	Tue, 17 Dec 2024 07:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734421132;
-	bh=tNHnx9DVG5hJfoO2tUFgXbCyMPBkjZoAyxqDuz8uz6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L0evr5sGGa5QqC5BW9/gKXf1MZE2aOZ9mU4WpN+8BCRd/iJGFbWiiUuHAe7irkost
-	 Lg5P4mDLIKVyOY4wODXqHaOKe2D6G2Zm2loLKKZGIta5HuqPOmFanAxOSxpDWPvVcN
-	 ZmuOfy6U02IiKuI4TVCw9cnWfKn+a2rz5BZin6cPp38y7aDGilU7e5cMYQcNIBrPY7
-	 24yWFECXtMF17Mk3oPRH97CI6GuZQV2kNRiBEAo+glLQA6clbHigr7TewOUxw9Zzj1
-	 6NB1TnXhJGGb0sxien9H999MPOudYCA0brnO0zUKNZfFtEluUA/tZLka9WQERCxbNC
-	 S+uP5kjD79bTg==
-Date: Tue, 17 Dec 2024 08:38:48 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64: dts: exynos: gs101-oriole: move common Pixel6
- & 6Pro parts into a .dtsi
-Message-ID: <fw2a6taf4kd3sggmyppeym2uxkuyotxy7ugj3bh73vetnra4m6@jllekadordju>
-References: <20241216-gs101-simplefb-v1-0-8ccad1830281@linaro.org>
- <20241216-gs101-simplefb-v1-3-8ccad1830281@linaro.org>
+	s=arc-20240116; t=1734421149; c=relaxed/simple;
+	bh=lZaSCDinLNbXyNw5XItSecUxZgUaVwU+bIj/T/SAgRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q8bnNUEmdEBkz9OPiZEjNEA48sjATIjclOcPXvRn92n/sRxP3W+Y682PLkrb8703XfmRzbb+y9MzdXmXY6Yc989PqMqNnN6ujLe/Ulo7ghKec3rfUqGTieg8vsRxNSyYroElK6/G/0Jg/Pgkb8hbecDob9Lxj28YQiBpLruNRlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.7])
+	by gateway (Coremail) with SMTP id _____8DxmeCZKmFn17FXAA--.40807S3;
+	Tue, 17 Dec 2024 15:39:05 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.7])
+	by front1 (Coremail) with SMTP id qMiowMBxnseTKmFnxQUAAA--.26S2;
+	Tue, 17 Dec 2024 15:39:03 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	loongson-kernel@lists.loongnix.cn,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Chao Li <lichao@loongson.cn>,
+	Juxin Gao <gaojuxin@loongson.cn>
+Subject: [PATCH] LoongArch: Correct the cacheinfo sharing information
+Date: Tue, 17 Dec 2024 15:38:54 +0800
+Message-ID: <20241217073854.3346051-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241216-gs101-simplefb-v1-3-8ccad1830281@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxnseTKmFnxQUAAA--.26S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Kw4xCr1fZF1rGrW7Zr4DZFc_yoW8Xw17pr
+	W2yrZ8KrWrurn3G3yYqa1xWryxG3ykGFsFq3WakFyrA3ZIvrykXrs5ta9xAF9rZ395GFWI
+	qF45JF4SgF4UA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+	AKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
+	6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0epB3UUUUU==
 
-On Mon, Dec 16, 2024 at 01:06:28PM +0000, Andr=C3=A9 Draszik wrote:
-> In order to support Pixel 6 (Oriole) and Pixel 6 Pro (Raven) properly,
-> we have to be able to distinguish them properly as we add support for
-> more features.
->=20
-> For example, Raven has a larger display. There are other differences,
-> like battery design capacity, etc.
->=20
-> Move all the parts that are common for now into a gs101-raviole.dtsi,
-> and just leave the display related things in gs101-oriole.dts.
->=20
-> Raviole was chosen as the name because Google uses that when referring
-> to the combination of Oriole & Raven, keeping the familiar terminology.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->=20
-> ---
-> Note: MAINTAINERS doesn't need updating, it covers this whole directory
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 290 +--------------=
------
->  .../boot/dts/exynos/google/gs101-raviole.dtsi      | 297 +++++++++++++++=
-++++++
->  2 files changed, 305 insertions(+), 282 deletions(-)
->=20
+SMT cores and their sibling cores share the same L1 and L2 private
+caches (of course last level cache is also shared), so correct the
+cacheinfo sharing information to let shared_cpu_map correctly reflect
+this relationship.
 
-This looks like move of the code, so -M/-B/-C format patch arguments
-would create better diff.
+Below is the output of "lscpu" on Loongson-3A6000 (4 cores, 8 threads).
 
-Best regards,
-Krzysztof
+1. Before patch:
+
+  L1d:                    512 KiB (8 instances)
+  L1i:                    512 KiB (8 instances)
+  L2:                     2 MiB (8 instances)
+  L3:                     16 MiB (1 instance)
+
+2. After patch:
+
+  L1d:                    256 KiB (4 instances)
+  L1i:                    256 KiB (4 instances)
+  L2:                     1 MiB (4 instances)
+  L3:                     16 MiB (1 instance)
+
+Reported-by: Chao Li <lichao@loongson.cn>
+Signed-off-by: Juxin Gao <gaojuxin@loongson.cn>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/kernel/cacheinfo.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/loongarch/kernel/cacheinfo.c b/arch/loongarch/kernel/cacheinfo.c
+index c7988f757281..0d28228d0a8a 100644
+--- a/arch/loongarch/kernel/cacheinfo.c
++++ b/arch/loongarch/kernel/cacheinfo.c
+@@ -51,6 +51,12 @@ static void cache_cpumap_setup(unsigned int cpu)
+ 				continue;
+ 
+ 			sib_leaf = sib_cpu_ci->info_list + index;
++			/* SMT cores share all caches */
++			if (cpus_are_siblings(i, cpu)) {
++				cpumask_set_cpu(cpu, &sib_leaf->shared_cpu_map);
++				cpumask_set_cpu(i, &this_leaf->shared_cpu_map);
++			}
++			/* Node's cores share shared caches */
+ 			if (cache_leaves_are_shared(this_leaf, sib_leaf)) {
+ 				cpumask_set_cpu(cpu, &sib_leaf->shared_cpu_map);
+ 				cpumask_set_cpu(i, &this_leaf->shared_cpu_map);
+-- 
+2.43.5
 
 
