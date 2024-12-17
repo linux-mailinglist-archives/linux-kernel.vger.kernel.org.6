@@ -1,263 +1,217 @@
-Return-Path: <linux-kernel+bounces-449732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5B09F555C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:02:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADDD9F5565
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:03:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712D5171BDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA48188F34C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F761FAC56;
-	Tue, 17 Dec 2024 17:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92531F869B;
+	Tue, 17 Dec 2024 17:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kQbwo01M"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lk+mI58y"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB46C1FA8DB;
-	Tue, 17 Dec 2024 17:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9305A442F;
+	Tue, 17 Dec 2024 17:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734457839; cv=none; b=qPEjW7/M2HX5rhQfBH/UbFOFi0ZdU3ILKasE8XGGT0r/kHzYdEdJMR0m8c5/stTQvOSuH48iuqWuZl+kvXSN2ynkyemMveNEvxM1M5ZQvc5e9/eeD+PR9ELRiRWONiGDA0UFbBXnEnNbK2U0MaLpxR8eieXF7EaN0kJKXZwnl9A=
+	t=1734457968; cv=none; b=kKZa2PHr6JvGznNd0/6oWbLEEpcwK3nAEZ2CCOfLe0f7JgPa8ylX2K3LH4Lc0F8zaxVMBTx+yzKD690z2c0Wya3oREp6D2H0aHAfm6a2vJCytQkQmQ/34X+O9Q9srUTdfKMmxl6Uo3hB26e5Jz6akSU9ZdeDUmaO/mUzlK/YtB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734457839; c=relaxed/simple;
-	bh=HAi87V/owSYqcmOH2qXHfQCQhtv9TGEo2V3BglU/K7c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N4akr8siXxVCNAVvDltiKkBvXji4rsRr9x+NTb/rVHinV9xXNLFtjEUMeowbew1OCyf79n9vQUDnMInqf5PAaYqdqvEUwGqfn+DLTJ89BzK8sQSpYD5b+8xMWWxDzZSVaNjAqXSrbBOqvc9evT0Bn1sB9oYAuRnAUeqM8B6yggE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kQbwo01M; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=k31wiIoUzLrWCgYj1M0YuvVzOzaxq5Oj9IA4O2pUxyc=; b=kQbwo01MxQUGeIJ1UTqazU7lo7
-	jNDfe83ln3mFW82MFu+OprCPHLK7WKOtgA0cKot7wDnyfDAKx9KGTTa7jDslFEkjxUDsAx51ddzyq
-	thXikFIuIyvGI7fjRnYdCZEfNeTdQ2lKKOSD3XGBbQqji9L1TqoyJt/TdxEb1Q1YORcDx+Npf9Z+L
-	dqYGLRibV6ZiqCMpxXmjOb7L4gUwwwownLiRuKUbR2INYVol3TPDdnxpJwd4s1OIkl01YwwKPhypE
-	hScAPAklx78RI5vl/BKrWWdXvP34f9gybcO0u1CUnHBCgxYI/hKRoCrKax0/ob8EDIym3twuukooK
-	F+af53fg==;
-Received: from [179.193.1.214] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tNbi6-004TVV-9k; Tue, 17 Dec 2024 18:50:18 +0100
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	sonicadvance1@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	linux-api@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Vinicius Peixoto <vpeixoto@lkcamp.dev>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v3 3/3] futex: Wire up set_robust_list2 syscall
-Date: Tue, 17 Dec 2024 14:49:58 -0300
-Message-ID: <20241217174958.477692-4-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241217174958.477692-1-andrealmeid@igalia.com>
-References: <20241217174958.477692-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1734457968; c=relaxed/simple;
+	bh=rxNmGYj0cm7vKEkNLss+ezOoW5pNuuLmVUQeMHt4HNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=W1EI3Rncn6FV8p1/B/QR2uxMxWq89blHb9jqyHeikG/XHMflUsZ75BIyzeTIqh9Wolx3Yhtk710ykPR2IGE+b9Hrz+7s6U85KzTtEpTTZaPNv0hJsACcjt4Iwn+KWZQVorJJ4mDAqiQJw5YRdr/Sk64SLhqAthyjjkR2el7Kdfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lk+mI58y; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHFlfp1002919;
+	Tue, 17 Dec 2024 17:52:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	X7hlMd/FaZ0PUinVQ7uhLnPJtp3fAZlrCPqFWnHaizs=; b=Lk+mI58yDwLy+t7l
+	u7gmMzXVXCCPuTblH+fCg0iWfBfiA1qCek3IT5mAAxx+OO5qc8oTggOIsNKZi8AM
+	fo0npBnXmp7ba0OULhYXtmjpds9k4trnHTBA0fGu4WaGy85awicX+oWfm79qNds9
+	S9AsxQQXv5KLNA0bzgqBsJkxJFwa45Jn6nqPaJvxzpmOweauzHZdBWDQuhAYGvSX
+	1eg3gAP5zwdtv2CdyQfxnJ1/n1TGFhPA1RWhheeuET+hOooGMjG9HWMuPpE27ZsC
+	ttOtmOz069I2gHaZk0ICQ3pyi2KXhAXpXUPuShxtQU8X5+Qx6Vz3hSEkejgiZqTf
+	mSIAkA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43kc8m8bgg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:52:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHHqaNN028967
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:52:36 GMT
+Received: from [10.216.20.10] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Dec
+ 2024 09:52:30 -0800
+Message-ID: <44f0bdee-5d85-4544-a91f-23804073237f@quicinc.com>
+Date: Tue, 17 Dec 2024 23:22:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/7] drm/msm: adreno: dynamically generate GMU bw table
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20241217-topic-sm8x50-gpu-bw-vote-v6-0-1adaf97e7310@linaro.org>
+ <20241217-topic-sm8x50-gpu-bw-vote-v6-3-1adaf97e7310@linaro.org>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <20241217-topic-sm8x50-gpu-bw-vote-v6-3-1adaf97e7310@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Hf9Xvo-hgUZr1ATiwos_YVRuf9ofXIvW
+X-Proofpoint-GUID: Hf9Xvo-hgUZr1ATiwos_YVRuf9ofXIvW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ mlxlogscore=999 bulkscore=0 phishscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170137
 
-Wire up the new set_robust_list2 syscall in all available architectures.
+On 12/17/2024 8:21 PM, Neil Armstrong wrote:
+> The Adreno GPU Management Unit (GMU) can also scale the ddr
+> bandwidth along the frequency and power domain level, but for
+> now we statically fill the bw_table with values from the
+> downstream driver.
+> 
+> Only the first entry is used, which is a disable vote, so we
+> currently rely on scaling via the linux interconnect paths.
+> 
+> Let's dynamically generate the bw_table with the vote values
+> previously calculated from the OPPs.
+> 
+> Those entries will then be used by the GMU when passing the
+> appropriate bandwidth level while voting for a gpu frequency.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
- arch/arm/tools/syscall.tbl                  | 1 +
- arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
- arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
- arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
- arch/s390/kernel/syscalls/syscall.tbl       | 1 +
- arch/sh/kernel/syscalls/syscall.tbl         | 1 +
- arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
- kernel/sys_ni.c                             | 1 +
- scripts/syscall.tbl                         | 1 +
- 17 files changed, 17 insertions(+)
+Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index c59d53d6d3f3..d1193a7f948e 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -506,3 +506,4 @@
- 574	common	getxattrat			sys_getxattrat
- 575	common	listxattrat			sys_listxattrat
- 576	common	removexattrat			sys_removexattrat
-+577	common	set_robust_list2		sys_robust_list2
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 49eeb2ad8dbd..269721f54a5c 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -481,3 +481,4 @@
- 464	common	getxattrat			sys_getxattrat
- 465	common	listxattrat			sys_listxattrat
- 466	common	removexattrat			sys_removexattrat
-+467	common	set_robust_list2		sys_set_robust_list2
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index f5ed71f1910d..75a387585b3a 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -466,3 +466,4 @@
- 464	common	getxattrat			sys_getxattrat
- 465	common	listxattrat			sys_listxattrat
- 466	common	removexattrat			sys_removexattrat
-+467	common  set_robust_list2		sys_set_robust_list2
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 680f568b77f2..176f84b79c1c 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -472,3 +472,4 @@
- 464	common	getxattrat			sys_getxattrat
- 465	common	listxattrat			sys_listxattrat
- 466	common	removexattrat			sys_removexattrat
-+467	common	set_robust_list2		sys_set_robust_list2
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 0b9b7e25b69a..47e28d67ca8a 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -405,3 +405,4 @@
- 464	n32	getxattrat			sys_getxattrat
- 465	n32	listxattrat			sys_listxattrat
- 466	n32	removexattrat			sys_removexattrat
-+467	n32	set_robust_list2		sys_set_robust_list2
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index c844cd5cda62..488c1bca7715 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -381,3 +381,4 @@
- 464	n64	getxattrat			sys_getxattrat
- 465	n64	listxattrat			sys_listxattrat
- 466	n64	removexattrat			sys_removexattrat
-+467	n64	set_robust_list2		sys_set_robust_list2
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 349b8aad1159..f983086695a8 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -454,3 +454,4 @@
- 464	o32	getxattrat			sys_getxattrat
- 465	o32	listxattrat			sys_listxattrat
- 466	o32	removexattrat			sys_removexattrat
-+467	o32	set_robust_list2		sys_set_robust_list2
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index d9fc94c86965..f8735cb8046b 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -465,3 +465,4 @@
- 464	common	getxattrat			sys_getxattrat
- 465	common	listxattrat			sys_listxattrat
- 466	common	removexattrat			sys_removexattrat
-+467	common	set_robust_list2		sys_set_robust_list2
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index d8b4ab78bef0..1da55a6a3bb5 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -557,3 +557,4 @@
- 464	common	getxattrat			sys_getxattrat
- 465	common	listxattrat			sys_listxattrat
- 466	common	removexattrat			sys_removexattrat
-+467	common	set_robust_list2		sys_set_robust_list2
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index e9115b4d8b63..93bda0d6580b 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -469,3 +469,4 @@
- 464  common	getxattrat		sys_getxattrat			sys_getxattrat
- 465  common	listxattrat		sys_listxattrat			sys_listxattrat
- 466  common	removexattrat		sys_removexattrat		sys_removexattrat
-+467  common	set_robust_list2	sys_set_robust_list2		sys_set_robust_list2
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index c8cad33bf250..dd591da98af5 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -470,3 +470,4 @@
- 464	common	getxattrat			sys_getxattrat
- 465	common	listxattrat			sys_listxattrat
- 466	common	removexattrat			sys_removexattrat
-+467	common	set_robust_list2		sys_set_robust_list2
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 727f99d333b3..a4ee76e234a3 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -512,3 +512,4 @@
- 464	common	getxattrat			sys_getxattrat
- 465	common	listxattrat			sys_listxattrat
- 466	common	removexattrat			sys_removexattrat
-+467	common	set_robust_list2		sys_set_robust_list2
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 4d0fb2fba7e2..8d609abda75b 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -472,3 +472,4 @@
- 464	i386	getxattrat		sys_getxattrat
- 465	i386	listxattrat		sys_listxattrat
- 466	i386	removexattrat		sys_removexattrat
-+467	i386	set_robust_list2	sys_set_robust_list2
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 5eb708bff1c7..2c6461df154b 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -390,6 +390,7 @@
- 464	common	getxattrat		sys_getxattrat
- 465	common	listxattrat		sys_listxattrat
- 466	common	removexattrat		sys_removexattrat
-+467	common	set_robust_list2	sys_set_robust_list2
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 37effc1b134e..fa46635d7380 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -437,3 +437,4 @@
- 464	common	getxattrat			sys_getxattrat
- 465	common	listxattrat			sys_listxattrat
- 466	common	removexattrat			sys_removexattrat
-+467	common	set_robust_list2		sys_set_robust_list2
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index c00a86931f8c..71fbac6176c8 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -195,6 +195,7 @@ COND_SYSCALL(move_pages);
- COND_SYSCALL(set_mempolicy_home_node);
- COND_SYSCALL(cachestat);
- COND_SYSCALL(mseal);
-+COND_SYSCALL(set_robust_list2);
- 
- COND_SYSCALL(perf_event_open);
- COND_SYSCALL(accept4);
-diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-index ebbdb3c42e9f..615a3043c982 100644
---- a/scripts/syscall.tbl
-+++ b/scripts/syscall.tbl
-@@ -407,3 +407,4 @@
- 464	common	getxattrat			sys_getxattrat
- 465	common	listxattrat			sys_listxattrat
- 466	common	removexattrat			sys_removexattrat
-+467	common	set_robust_list2		sys_set_robust_list2
--- 
-2.47.1
+-Akhil
+
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 48 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 47 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> index cb8844ed46b29c4569d05eb7a24f7b27e173190f..995526620d678cd05020315f771213e4a6943bec 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/list.h>
+>  
+>  #include <soc/qcom/cmd-db.h>
+> +#include <soc/qcom/tcs.h>
+>  
+>  #include "a6xx_gmu.h"
+>  #include "a6xx_gmu.xml.h"
+> @@ -259,6 +260,48 @@ static int a6xx_hfi_send_perf_table(struct a6xx_gmu *gmu)
+>  		NULL, 0);
+>  }
+>  
+> +static void a6xx_generate_bw_table(const struct a6xx_info *info, struct a6xx_gmu *gmu,
+> +				   struct a6xx_hfi_msg_bw_table *msg)
+> +{
+> +	unsigned int i, j;
+> +
+> +	for (i = 0; i < GMU_MAX_BCMS; i++) {
+> +		if (!info->bcms[i].name)
+> +			break;
+> +		msg->ddr_cmds_addrs[i] = cmd_db_read_addr(info->bcms[i].name);
+> +	}
+> +	msg->ddr_cmds_num = i;
+> +
+> +	for (i = 0; i < gmu->nr_gpu_bws; ++i)
+> +		for (j = 0; j < msg->ddr_cmds_num; j++)
+> +			msg->ddr_cmds_data[i][j] = gmu->gpu_ib_votes[i][j];
+> +	msg->bw_level_num = gmu->nr_gpu_bws;
+> +
+> +	/* Compute the wait bitmask with each BCM having the commit bit */
+> +	msg->ddr_wait_bitmask = 0;
+> +	for (j = 0; j < msg->ddr_cmds_num; j++)
+> +		if (msg->ddr_cmds_data[0][j] & BCM_TCS_CMD_COMMIT_MASK)
+> +			msg->ddr_wait_bitmask |= BIT(j);
+> +
+> +	/*
+> +	 * These are the CX (CNOC) votes - these are used by the GMU
+> +	 * The 'CN0' BCM is used on all targets, and votes are basically
+> +	 * 'off' and 'on' states with first bit to enable the path.
+> +	 */
+> +
+> +	msg->cnoc_cmds_addrs[0] = cmd_db_read_addr("CN0");
+> +	msg->cnoc_cmds_num = 1;
+> +
+> +	msg->cnoc_cmds_data[0][0] = BCM_TCS_CMD(true, false, 0, 0);
+> +	msg->cnoc_cmds_data[1][0] = BCM_TCS_CMD(true, true, 0, BIT(0));
+> +
+> +	/* Compute the wait bitmask with each BCM having the commit bit */
+> +	msg->cnoc_wait_bitmask = 0;
+> +	for (j = 0; j < msg->cnoc_cmds_num; j++)
+> +		if (msg->cnoc_cmds_data[0][j] & BCM_TCS_CMD_COMMIT_MASK)
+> +			msg->cnoc_wait_bitmask |= BIT(j);
+> +}
+> +
+>  static void a618_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+>  {
+>  	/* Send a single "off" entry since the 618 GMU doesn't do bus scaling */
+> @@ -664,6 +707,7 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+>  	struct a6xx_hfi_msg_bw_table *msg;
+>  	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>  	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+> +	const struct a6xx_info *info = adreno_gpu->info->a6xx;
+>  
+>  	if (gmu->bw_table)
+>  		goto send;
+> @@ -672,7 +716,9 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+>  	if (!msg)
+>  		return -ENOMEM;
+>  
+> -	if (adreno_is_a618(adreno_gpu))
+> +	if (info->bcms && gmu->nr_gpu_bws > 1)
+> +		a6xx_generate_bw_table(info, gmu, msg);
+> +	else if (adreno_is_a618(adreno_gpu))
+>  		a618_build_bw_table(msg);
+>  	else if (adreno_is_a619(adreno_gpu))
+>  		a619_build_bw_table(msg);
+> 
 
 
