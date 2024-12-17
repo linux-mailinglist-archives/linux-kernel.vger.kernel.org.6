@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-448661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AAD59F43D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:38:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 141EA9F43D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 654487A52CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19F5618900D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD6816D9AF;
-	Tue, 17 Dec 2024 06:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAD8187554;
+	Tue, 17 Dec 2024 06:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="queR8hmt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c5RWmFRT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC9B14C5AF;
-	Tue, 17 Dec 2024 06:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C446315B111;
+	Tue, 17 Dec 2024 06:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734417499; cv=none; b=fytx/ojlIUyBYlhiFGZE/MJKu8/RqNldNoUbMm/E/5NYtb4jsxQAuon5v2QmDfPNHp6gYGl/2frQgvgzNjxSI3VtonWpTTJInpG8ys60i2hwQHVn3rkj3gewKt6VFPNJ64NYVSvjolPsM+D4CFX8mF9dLrddsa5KsJ5d+Tb0E60=
+	t=1734417509; cv=none; b=W8D4Jpj/rNi+p4bGT6RqM+ehDPgHxQUsHdmNF6sVvE1hak8e/oJU2UMNfN3J8tS/XgKwO7RlTseI5iLUi5bnzDYPbvkUa1JgoLVvoXo/V26RuVqotYGySctBxtibKn16w6xNBbElslfLZV57W5LtmXsHoQNCe7nRmKyMhatqZ60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734417499; c=relaxed/simple;
-	bh=iXgTN+THXFFDY1ixNjCIqNClPIcvMU+2H7cPf+003N4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vb4KhxRBIl8yOJ/q+Z12KIlckNpPgue/X4OZUhh4n4/fbGK89iRrLeVMDX4plXm+7qlvPLPgNg/nkmCRfLaH6DYPrAYxoC2oOxzTJYVTXJ633r2GoZRusA/pS7d5EHHw6q9Uekf6dPElkTBxqyPmqrN5rFWhB5J9Xc2LJQcnekw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=queR8hmt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EB68C4CED3;
-	Tue, 17 Dec 2024 06:38:18 +0000 (UTC)
+	s=arc-20240116; t=1734417509; c=relaxed/simple;
+	bh=boyS65jhqMXSVcqNQBzlAGscorMmiO3BTj7FviB7ydg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jXAvqhTXnsU7Yknjw3dJGHM114T3CUkPAU15TJsulsVRdWrCuMwGslpH0PU661CrU6I3fS8Rx733d1Sq5Wnd8LNlgnu0YorUIhU5TNbAq1vgLUldYZsqsHgtN/Gj78NSU2RR+wAgDJ87xvJbLLPtnSmdlv14nApCyst0NGf9cCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c5RWmFRT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433F4C4CED3;
+	Tue, 17 Dec 2024 06:38:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734417499;
-	bh=iXgTN+THXFFDY1ixNjCIqNClPIcvMU+2H7cPf+003N4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=queR8hmtQVc+yn1esnw/lzAc7CHHD28ehkLb9dqDDIvghFxahycnGT++oNfjwjk/u
-	 ay6Red0gTMk2ETogtxzn7c+a0f0PZNI2Y6K9/hjJhyxyZxdm+Qjyz5+J8PCBJSzPgs
-	 XhqT+oCvkwZNm0PwFrhDjZBGI2GcH/boRIhYSqkBE7eOTMX0ZslY4nuJN18UP3rpG6
-	 AaAVVXztdSvyLR73KProaRrJAr+s4h+KVIwQrVDumNPDQcV7zGFKfb6x2Rp1x2GOzJ
-	 Cp2LMdnH8yvKKKgAkrINhQ7Ner0w3lXEt+b2Agry1UeqsHJHEk086AC8ioO7XaYd0T
-	 Y0Zoneiw/uV8A==
-Date: Tue, 17 Dec 2024 07:38:15 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Karol Przybylski <karprzy7@gmail.com>
-Cc: andreas@kemnade.info, rogerq@kernel.org, lee@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org
-Subject: Re: [PATCHv3] dt-bindings: mfd: omap-usb-tll: convert to YAML
-Message-ID: <r4gzj34igulq7ivb6jed5liw5ya62b7fyhp4aqpuuc6wok2bp5@wbyxkpa7q6wd>
-References: <20241214215207.842765-1-karprzy7@gmail.com>
+	s=k20201202; t=1734417509;
+	bh=boyS65jhqMXSVcqNQBzlAGscorMmiO3BTj7FviB7ydg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c5RWmFRTKIRNea2VlCt5c5VKABGJkbbcbCOr/N2W+kfBso8Mih/qiQrIc55/NbwQS
+	 9ajnyN8mEbL0AY92I5AwfObXDXhF4evOlR319cHu08Rc1MR3gCUOZSdFCHSRDTFNbA
+	 uju1nFyiAg8UBrAnp5pbKLeP874QRKXP5ikjiQ0qbT/BIuR5IofiXty/evMBMpQGOL
+	 zEmvBetSYgkbf4YT6FwIt6BBUzmhxHs/ekJw/kMmdfMA7cRFqTMw6tgdphkgHDiORK
+	 qPwW5Am6vRAfVKoPB4uX/DNbI+Hjebp6mU6J848AnQPMyC92QqNvn1jCspSzqRtIf6
+	 iwA28jeC84nVA==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	liamwisehart@meta.com,
+	shankaran@meta.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v4 bpf-next 0/6] Enable writing xattr from BPF programs
+Date: Mon, 16 Dec 2024 22:38:15 -0800
+Message-ID: <20241217063821.482857-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241214215207.842765-1-karprzy7@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Dec 14, 2024 at 10:52:07PM +0100, Karol Przybylski wrote:
-> Conversion of omap-usb-tll.txt into yaml format, inspired by discussion in
-> lore.kernel.org/all/cd915c18-7230-4c38-a860-d2a777223147@kernel.org/
-> 
-> Changes made to the binding during conversion:
-> - Added Roger Quadros as maintainer
-> - Removed deprecated ti,hwmod
-> - Renamed .yaml file to ti,usbhs-tll.yaml
-> 
-> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
-> ---
+Add support to set and remove xattr from BPF program. Also add
+security.bpf. xattr name prefix.
 
-Changelog goes here. I asked about this last time.
+kfuncs are added to set and remove xattrs with security.bpf. name
+prefix. Update kfuncs bpf_get_[file|dentry]_xattr to read xattrs
+with security.bpf. name prefix. Note that BPF programs can read
+user. xattrs, but not write and remove them.
 
-Use b4 or `git format-patch -v3`, so there will be proper space before
-v3 in subject prefix.
+Cover letter of v1 and v2:
 
-These are nits but the problem is that you never responded to my review
-and did not implement it fully.
+Follow up discussion in LPC 2024 [1], that we need security.bpf xattr
+prefix. This set adds "security.bpf." xattr name prefix, and allows
+bpf kfuncs bpf_get_[file|dentry]_xattr() to read these xattrs.
 
->  .../devicetree/bindings/mfd/omap-usb-tll.txt  | 27 -----------
->  .../devicetree/bindings/mfd/ti,usbhs-tll.yaml | 47 +++++++++++++++++++
->  2 files changed, 47 insertions(+), 27 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
+[1] https://lpc.events/event/18/contributions/1940/
 
-...
+Changes v3 => v4
+1. Do write permission check with inode locked. (Jan Kara)
+2. Fix some source_inline warnings.
 
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    items:
-> +      - const: usb_tll_hs_usb_ch0_clk
-> +      - const: usb_tll_hs_usb_ch1_clk
-> +      - const: usb_tll_hs_usb_ch2_clk
-> +    minItems: 1
+v3: https://lore.kernel.org/bpf/20241210220627.2800362-1-song@kernel.org/
 
-Same question as last time - why the number of clocks is flexible?
-Original binding suggested that if clocks are present, then three clocks
-are required, so you are changing here something which should be
-explained in commit msg.
+Changes v2 => v3
+1. Add kfuncs to set and remove xattr from BPF programs.
 
-More over, implementation suggests that you could provide clock "ch2"
-without "ch0" and "ch1", which your binding does not allow. So again a
-change or deviation from the current ABI.
+v2: https://lore.kernel.org/bpf/20241016070955.375923-1-song@kernel.org/
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    usbhstll@4a062000 {
-> +      compatible = "ti,usbhs-tll";
-> +      reg = <0x4a062000 0x1000>;
-> +      interrupts = <78>;
+Changes v1 => v2
+1. Update comment of bpf_get_[file|dentry]_xattr. (Jiri Olsa)
+2. Fix comment for return value of bpf_get_[file|dentry]_xattr.
 
-Nothing improved here. See my last comment.
+v1: https://lore.kernel.org/bpf/20241002214637.3625277-1-song@kernel.org/
 
-Best regards,
-Krzysztof
+Song Liu (6):
+  fs/xattr: bpf: Introduce security.bpf. xattr name prefix
+  selftests/bpf: Extend test fs_kfuncs to cover security.bpf. xattr
+    names
+  bpf: lsm: Add two more sleepable hooks
+  bpf: fs/xattr: Add BPF kfuncs to set and remove xattrs
+  selftests/bpf: Test kfuncs that set and remove xattr from BPF programs
+  selftests/bpf: Add __failure tests for set/remove xattr kfuncs
 
+ fs/bpf_fs_kfuncs.c                            | 262 +++++++++++++++++-
+ include/uapi/linux/xattr.h                    |   4 +
+ kernel/bpf/bpf_lsm.c                          |   2 +
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |  10 +
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 165 ++++++++++-
+ .../selftests/bpf/progs/test_get_xattr.c      |  28 +-
+ .../bpf/progs/test_set_remove_xattr.c         | 129 +++++++++
+ .../bpf/progs/test_set_remove_xattr_failure.c |  56 ++++
+ 8 files changed, 636 insertions(+), 20 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr_failure.c
+
+--
+2.43.5
 
