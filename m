@@ -1,62 +1,58 @@
-Return-Path: <linux-kernel+bounces-449779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00BF9F55FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:23:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18889F5602
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:23:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B587168856
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:22:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4656188CED8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C7D1F8691;
-	Tue, 17 Dec 2024 18:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13ED1F8911;
+	Tue, 17 Dec 2024 18:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFbMk+aj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZ0mqIgv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADC614B965;
-	Tue, 17 Dec 2024 18:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE3E1EEE0;
+	Tue, 17 Dec 2024 18:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734459717; cv=none; b=Hh+GRaF7I1YQADQyX9uLiyrA+1/Wnz/fwdQTwwc12Pde7Mb3zZGka7hgZ7JN4n//6zWwGuI28Y/4vEzyB7TXP0nyIPA9WcTHuAEfPKc3d/2lvgjRkYq7s5Ldm6TVb9UPtkt4nzYJbKLoavJf6AO1TEJnQnz306K0AAGg/ohOgR4=
+	t=1734459739; cv=none; b=pME6tuNSUcW9LDuEv7l47VqngZ5Xy6F12Qq0DtjYVEdQQ7/RIVc1EqBT9xB3zCxfqeMNnhlR+F1HArcn38v3uq11noodxb5oJ21aV+6q0KNpJRgK5Pf2k6QjSQKwXZF3hyBCkncMR0Mf+DrAOE+INP00pgQfnGER9QAyoYNwiQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734459717; c=relaxed/simple;
-	bh=Qx6v/m0eT0KVSkXg4Yl87aJQFBilKDmCaBMeZU4RyC8=;
+	s=arc-20240116; t=1734459739; c=relaxed/simple;
+	bh=2P9lRz+X9ysJoY3Z0POj161iz4jlESzdjLZAlJxgNb4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlfOfnUeygP2SDCBPKP4ieVOMeYEwsBCkxynYXhtCZBNbdbP/FsBkroHCKoACS7cZxgxIvbBKl911J2SjTH7dNYVHq5kRU7nmXEGREy67XJpentXe0N5XUVlu2CnpUr+azf9Zq8b2FXoC5jLnZ1MxgpB1op4gZEUxCZat2h3WIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFbMk+aj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFA4C4CED3;
-	Tue, 17 Dec 2024 18:21:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nj3Jqom9NC7Ai77k4tIVwtanGC3oO5MdEgEu1NS9C41ATMKEEgaKlxXgO5vM0w+t99zMHa2Bsem4zV18IDzyZ8bJea7X5sNR4mpxv6CGYXAo7VbkQzt1T9VdYpzJFfVH+IUQGJ103pNAFVhlLsYp88XVc9D9j9vTrrACBv3r7Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZ0mqIgv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49989C4CED3;
+	Tue, 17 Dec 2024 18:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734459716;
-	bh=Qx6v/m0eT0KVSkXg4Yl87aJQFBilKDmCaBMeZU4RyC8=;
+	s=k20201202; t=1734459738;
+	bh=2P9lRz+X9ysJoY3Z0POj161iz4jlESzdjLZAlJxgNb4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AFbMk+ajQKp5dDA43QrwJ+xzQxWM3/BDfTQYgHZvN8frM+tkIwZz8hKVYhI58RkA4
-	 TCWxTPglaS1d4ipiIy0OqjQKF5TgzkiahZwJrIyS82lZrogsxCsNRIrbdGYJbrWbNh
-	 sXiR6R7oF+ljaDPyv7/cdukLqIz1mdyYQWqiFtlI6sjsL92Ir59ml4/vnQO+yuBQ6r
-	 pJurWJumZ3ABc5LPmvSMyklqE2jqZRlayXVBKpGztFR9VvqjZe+G9izSmkqkCT2RUA
-	 sZRe5qUSzmZEZZRd+UOWudJQWlau/fGYfEAsT5snSG4OU6Zk0KiRwnUwtoBTxU/Pzg
-	 rUlo4w3dk/ITw==
-Date: Tue, 17 Dec 2024 18:21:52 +0000
+	b=EZ0mqIgv9ecvN+XF9LE5Fjt8JO7UKfGsS+id0MOMPD8gIi00iXXoBysPwj9/KqXsP
+	 qyV07dT4fl0PMpyehMfMEWXffETHSQYKhCRQVVaA+Qd+HO/c2C9IgWMlv7h6qmnyy6
+	 Lj0vwBkRNWgYib7tjiwScdlQUPJMwoRZ1oZYG9jfi+B0mbKtlSd2IBtJx0qjgOv9XH
+	 zjYrbF9S3p3KW5/hRb2IljarhfIa4U2NwFVM31vCnyCYQes2hDyWMgYQL39HGfu7K0
+	 3fu3++FPVTPqe+GJ6/ofWrI4S9BRwaUPxqlS9F7GbU7PlLvd4FkCoVsv4J31xanjmn
+	 C8MmK5BUV1yBw==
+Date: Tue, 17 Dec 2024 18:22:14 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] dt-bindings: mfd: sprd,sc2731: reference
- sprd,sc2731-efuse bindings
-Message-ID: <20241217-envoy-plant-c088f5f80bd1@spud>
-References: <Z1_9ROiI2ZHKsbAD@standask-GA-A55M-S2HP>
- <20241216-bobbed-lend-abf4b2b5323c@spud>
- <Z2ErogZuX_bLtM2c@standask-GA-A55M-S2HP>
+To: Mohan Kumar D <mkumard@nvidia.com>
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, treding@nvidia.com,
+	jonathanh@nvidia.com, spujar@nvidia.com
+Subject: Re: [PATCH v2 RESEND 1/2] dt-bindings: dma: Support channel page to
+ nvidia,tegra210-adma
+Message-ID: <20241217-stamina-starting-d39f3795d85a@spud>
+References: <20241217074358.340180-1-mkumard@nvidia.com>
+ <20241217074358.340180-2-mkumard@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,97 +60,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="r9y0Ru4J3JjlPJb/"
+	protocol="application/pgp-signature"; boundary="kBsqXjaDGNP7JibP"
 Content-Disposition: inline
-In-Reply-To: <Z2ErogZuX_bLtM2c@standask-GA-A55M-S2HP>
+In-Reply-To: <20241217074358.340180-2-mkumard@nvidia.com>
 
 
---r9y0Ru4J3JjlPJb/
+--kBsqXjaDGNP7JibP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 17, 2024 at 08:43:30AM +0100, Stanislav Jakubek wrote:
-> On Mon, Dec 16, 2024 at 06:39:09PM +0000, Conor Dooley wrote:
-> > On Mon, Dec 16, 2024 at 11:13:24AM +0100, Stanislav Jakubek wrote:
-> > > Directly reference the sc2731-efuse bindings to simplify the schema.
-> > > Remove the duplicate example from the efuse bindings.
-> > > While at it, add the "pmic_adc" label that was missed during the
-> > > initial YAML conversion.
-> > >=20
-> > > Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
-> > > ---
-> > > Changes in V4:
-> > > - rebase on next-20241216
-> > > - drop patch 1 (already applied)
-> > > - add the pmic_adc label that was initially missed
-> > >=20
-> > > Changes in V3:
-> > > - new patch due to a missing dependency in the MFD tree=20
-> > >=20
-> > > Link to V3: https://lore.kernel.org/lkml/cd8cc95b59c31418b174bba521dd=
-2599a7929fda.1730709384.git.stano.jakubek@gmail.com/
-> > > Link to V2: https://lore.kernel.org/lkml/ZyExK01iprBHhGm6@standask-GA=
--A55M-S2HP/
-> > > Link to V1: https://lore.kernel.org/lkml/Zr3X1RoQs7ElTnlJ@standask-GA=
--A55M-S2HP/
-> > >=20
-> > >  .../devicetree/bindings/mfd/sprd,sc2731.yaml  | 12 ++------
-> > >  .../bindings/nvmem/sprd,sc2731-efuse.yaml     | 29 -----------------=
---
-> > >  2 files changed, 2 insertions(+), 39 deletions(-)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml b=
-/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-> > > index 8beec7e8e4c6..b023e1ef8d3c 100644
-> > > --- a/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-> > > +++ b/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-> > > @@ -67,15 +67,7 @@ patternProperties:
-> > > =20
-> > >    "^efuse@[0-9a-f]+$":
-> > >      type: object
-> > > -    additionalProperties: true
-> > > -    properties:
-> > > -      compatible:
-> > > -        enum:
-> > > -          - sprd,sc2720-efuse
-> > > -          - sprd,sc2721-efuse
-> > > -          - sprd,sc2723-efuse
-> > > -          - sprd,sc2730-efuse
-> > > -          - sprd,sc2731-efuse
-> > > +    $ref: /schemas/nvmem/sprd,sc2731-efuse.yaml#
-> > > =20
-> > >    "^fuel-gauge@[0-9a-f]+$":
-> > >      type: object
-> > > @@ -199,7 +191,7 @@ examples:
-> > >            };
-> > >          };
-> > > =20
-> > > -        adc@480 {
-> > > +        pmic_adc: adc@480 {
-> >=20
-> > I don't understand the point of this hunk, nothing ever references it.
-> > Examples aren't supposed to contain unused labels.
+On Tue, Dec 17, 2024 at 01:13:57PM +0530, Mohan Kumar D wrote:
+> Multiple ADMA Channel page hardware support has been added from
+> TEGRA186 and onwards. Update the DT binding to use any of the
+> ADMA channel page address space region.
 >=20
-> Hi Conor,
->=20
-> this label is used by the fuel-gauge io-channels in the example:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/devicetree/bindings/mfd/sprd,sc2731.yaml?h=3Dv6.13-rc3#n219
+> Signed-off-by: Mohan Kumar D <mkumard@nvidia.com>
 
-Ah shit, my bad. I didn't realise all that was one example.
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---r9y0Ru4J3JjlPJb/
+--kBsqXjaDGNP7JibP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2HBQAAKCRB4tDGHoIJi
-0jvUAQDG5kNOA0nT9wNL2zOUvJlunou1KWj07v4pclFPUFUQvgD/dQYGIe0icVnP
-eamHwUDdp0bNswgb95leLFma8qeHUwU=
-=OA2B
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2HBVQAKCRB4tDGHoIJi
+0rNMAQCNyyoTOpHxpr5GguE2VK2cZLlCSzZqPVcZD9Uj84zATQEA/H98btCbnXda
+tz2JSt3Pjtpk5p2MbU73HfIHupP7ogM=
+=0vlB
 -----END PGP SIGNATURE-----
 
---r9y0Ru4J3JjlPJb/--
+--kBsqXjaDGNP7JibP--
 
