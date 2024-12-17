@@ -1,173 +1,104 @@
-Return-Path: <linux-kernel+bounces-449803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A259F5652
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:33:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDEC9F5658
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:34:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8D817A3A3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:33:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D0216F9F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC451598F4;
-	Tue, 17 Dec 2024 18:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85001F8F0A;
+	Tue, 17 Dec 2024 18:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="mAVt18oh"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5w9r2zm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EFB442F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 18:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304871F8AF0;
+	Tue, 17 Dec 2024 18:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734460269; cv=none; b=guj5KTWmH7Ih65ac4DrvdwhUICCP1ogHO2czHd1EMx9eD4TeYUMT+s+9lUEYuaFtDTialjvndUtJH+y34vCxzVoOxSW2V5MV4spRaZQkWaybGsHeFxqf8cqkLUZPhCsveStQSOo9DxoY3YRNR91Glerhy1kxCs7/SQmEXfA5hUQ=
+	t=1734460276; cv=none; b=FqHBbcdDkS4teCXTAh/AluOYIO0BntQT/jIeLydh/W12k/hsthYxgRB/MF4y3B1xWrz5G1pZ+KRFjmZedSl4NgX2fyJDdFg5+Av4snM2jb+vDnNFdOb5YIKDJd+0UicjogR/0l2iUbLlMbNAvgBmQJk/RMAfYS+zbNFjk12CvT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734460269; c=relaxed/simple;
-	bh=Pe6tvbhsMmToE+mb1CKNBDUIKPcCIvGQehInaITBRSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A5HqOz7Z4Z8Fp8wlAuUoNa4hJwblD9wkXsZtedDcck9YYuSC4RNqH4uN4w6dPBKRBfe8gc9/N82lr+/BRXU/XL0y3TAkWsVWfKq0GYKovyrgBuGrU0CuDdZhudaxwg22dqtJ0qY4YuxrXQoq2idcRXCNgAi36kdvSCVvs4LhdPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=mAVt18oh; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
-	by cmsmtp with ESMTPS
-	id NE1XtdprYvH7lNcLTtLeDs; Tue, 17 Dec 2024 18:31:00 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id NcLStobmOWvXpNcLTt9HSr; Tue, 17 Dec 2024 18:30:59 +0000
-X-Authority-Analysis: v=2.4 cv=LtdZyWdc c=1 sm=1 tr=0 ts=6761c363
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
- a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7T7KSl7uo7wA:10 a=NEAV23lmAAAA:8
- a=_Wotqz80AAAA:8 a=VwQbUJbxAAAA:8 a=Eymyif60OLRgAUHZ3uAA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=buJP51TR1BpY-zbLSsyS:22 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=E2r8Z9qRGeJk2+J3GMCUCiaRUUtYxFm6EV4/xEqs6Fg=; b=mAVt18ohtS0DMAjMZPXetI/HfX
-	TouWZY9yaGjH2qj1txnaY+qsuiZnYDbaSi6nulYgSXo41wWXAO4dUeQuxAULAJI90MsXDroCQMqM/
-	s3Btq9PysEbDnNeHiXpyjunMCceryvc1OCOSBpBO84cWF3Ksxk+ryqNScvpucJIFrD9zZOE/SiOyQ
-	4P6zGezbDP0385nZ2T5iP2BJHIrEwYo1P8c8Wt4Z9K5uaxYIKhdkvX4ysxxhcZzCRD/Tuj8gZg4ik
-	iMSBFKAWZ94dk3PhFgI8Z4+zsG5nnGle/zni3te70RMW7GyLGdiRuG6NLZgEyExnKEwlOhmw5jtC2
-	ln+oR60g==;
-Received: from [177.238.21.80] (port=16484 helo=[192.168.0.21])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tNcLR-001oj4-2N;
-	Tue, 17 Dec 2024 12:30:57 -0600
-Message-ID: <49add42f-42d9-4f34-b4ad-cff31e473f40@embeddedor.com>
-Date: Tue, 17 Dec 2024 12:30:54 -0600
+	s=arc-20240116; t=1734460276; c=relaxed/simple;
+	bh=GAObJk0Yfgosp9KMX93U3UB5Xlzjykd+Mc2oGONgf+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VXdEPKDdV0cd0BRvgPvlxqKcUouf7GVZMmCtFyGqGT0o/hn9GUUKP5EAkX9JjYeVfxHX592USV3CCSZpVkadSPWM01MCjivrze/Fo57Y/PH9sBX3p28xdZi5+h1j+24WL50wO0pkbdStZ8dPcxDTIjb6B+QbWlWcBGRjfkDpjNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5w9r2zm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90E75C4CED3;
+	Tue, 17 Dec 2024 18:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734460274;
+	bh=GAObJk0Yfgosp9KMX93U3UB5Xlzjykd+Mc2oGONgf+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d5w9r2zmvH38bUiC7L1IG1hZEQKRiYiWgHXHjtZpDK8tueiGuNL9DHxuZP+WFdzpK
+	 qO7eredHd1CBi1srQC5xF+fDqUM4QMAQsM0h2a3utvPhxbhNdUFJa4o+OL3/VAFf/d
+	 9WLzv5Ler4SPOgxYAHpD3rmdRjIGtUgaFCTa02DdswgHOPYuFWk73G+b16/O+rSEDr
+	 i2YkGHX0ioKOxtFMlYo+ukKWtYw7DUEEWecQtslMaW4OGLTfX0C83iLFbwM0NTwjOL
+	 WlBJlze9cZCZovx9SMA8XmF3hfJWArvbTJVmltW0Przx3FSa7NDKowz0EFAZA14npi
+	 RyfPJXXoYPeOA==
+Date: Tue, 17 Dec 2024 18:31:09 +0000
+From: Conor Dooley <conor@kernel.org>
+To: mgonellabolduc@dimonoff.com
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [PATCH 2/9] dt-bindings: media: clarify stm32 csi & simplify
+ example
+Message-ID: <20241217-brilliant-jubilance-54641c6ba990@spud>
+References: <20241216-apds9160-driver-v3-0-c29f6c670bdb@dimonoff.com>
+ <20241216-apds9160-driver-v3-1-c29f6c670bdb@dimonoff.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] UAPI: net/sched: Open-code __struct_group() in flex
- struct tc_u32_sel
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Kees Cook <kees@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- cferris@google.com, Jamal Hadi Salim <jhs@mojatatu.com>,
- Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
- netdev@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20241217025950.work.601-kees@kernel.org>
- <f4947447-aa66-470c-a48d-06ed77be58da@intel.com>
- <bbed49c7-56c0-4642-afec-e47b14425f76@embeddedor.com>
- <c49d316d-ce8f-43d4-8116-80c760e38a6b@intel.com>
- <ff680866-b81f-48c1-8a59-1107b4ce14ff@embeddedor.com>
- <b9a20b9e-c871-451d-8b16-0704eec27329@intel.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <b9a20b9e-c871-451d-8b16-0704eec27329@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 177.238.21.80
-X-Source-L: No
-X-Exim-ID: 1tNcLR-001oj4-2N
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:16484
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfBJ5Vhu1ri58UTYPGlgPTdUiHCae1WYSR6Zu68StlHLgJ5pUSCsFtZvXIVi3MTLQERCqIM8W/yuIuBEutjlgS7qO1aXj9FmOBF4kFGQozF52Fr62fw5O
- GQoCNJ54ibtj6ZwGZuofm+UaiT4n54vyHEM4P8Zam6P9gNVKRpEc0S0KmDBnrRwQozQffy48JATSOz+Tnvz3D6+j11zhZiwCTB+sRw840Ww+0ZiTlpw6UYSd
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CpCfpLzPvqQyQS/7"
+Content-Disposition: inline
+In-Reply-To: <20241216-apds9160-driver-v3-1-c29f6c670bdb@dimonoff.com>
 
 
+--CpCfpLzPvqQyQS/7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 17/12/24 10:54, Alexander Lobakin wrote:
-> From: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Date: Tue, 17 Dec 2024 10:25:29 -0600
-> 
->>
->>
->> On 17/12/24 10:04, Alexander Lobakin wrote:
->>> From: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> Date: Tue, 17 Dec 2024 09:58:28 -0600
->>>
->>>>
->>>>
->>>> On 17/12/24 08:55, Alexander Lobakin wrote:
->>>>> From: Kees Cook <kees@kernel.org>
->>>>> Date: Mon, 16 Dec 2024 18:59:55 -0800
->>>>>
->>>>>> This switches to using a manually constructed form of struct tagging
->>>>>> to avoid issues with C++ being unable to parse tagged structs within
->>>>>> anonymous unions, even under 'extern "C"':
->>>>>>
->>>>>>      ../linux/include/uapi/linux/pkt_cls.h:25124: error: ‘struct
->>>>>> tc_u32_sel::<unnamed union>::tc_u32_sel_hdr,’ invalid; an anonymous
->>>>>> union may only have public non-static data members [-fpermissive]
->>>>>
->>>>> I worked around that like this in the past: [0]
->>>>> As I'm not sure it would be fine to fix every such occurrence manually
->>>>> by open-coding.
->>>>> What do you think?
->>>>
->>>> The thing is that, in this particular case, we need a struct tag to
->>>> change
->>>> the type of an object in another struct. See:
->>>
->>> But the fix I mentioned still allows you to specify a tag in C code...
->>> cxgb4 is for sure not C++.
->>
->>
->> Oh yes, I see what you mean. If it works, then you should probably
->> submit that
->> patch upstream. :)
-> 
-> I added it to my CI tree and will wait for a report (24-36 hrs) before
-> sending. In the meantime, feel free to test whether it solves your issue
-> and give a Tested-by (or an error report :)).
+On Mon, Dec 16, 2024 at 05:55:40PM -0500, Mikael Gonella-Bolduc via B4 Rela=
+y wrote:
+> From: Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
+>=20
+> Add device tree bindings for APDS9160
+> Note: Using alternate email for maintainer
+>=20
+> Signed-off-by: Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
 
-Hopefully, Christopher can confirm whether this[0] resolves the issue he's seeing.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-> 
-> BTW, I mentioned in the commit message back in 2022 that some C++
-> standards support tagged structs with anonymous unions (I don't remember
-> that already). Would it make sense to use a separate #define not for the
-> whole __cplusplus, but only for certain standards?
+--CpCfpLzPvqQyQS/7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I'd say entirely preventing C++ from seeing the tag is cleaner and safer for
-now.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks
--Gustavo
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2HDbQAKCRB4tDGHoIJi
+0mzSAP4l0iYkVJ4K841MVb5zASg1PE5Xsu7UgDMqFS1oGZTfswEAum0NTyv0erzv
+MIXXCRJhOqlFKFMKxHlFYcJd0jzGfgw=
+=rX52
+-----END PGP SIGNATURE-----
 
-[0] https://github.com/alobakin/linux/commit/2a065c7bae821f5fa85fff6f97fbbd460f4aa0f3
+--CpCfpLzPvqQyQS/7--
 
