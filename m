@@ -1,87 +1,74 @@
-Return-Path: <linux-kernel+bounces-448775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BF39F454E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:41:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F439F4552
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:41:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF46188A632
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:41:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5DC97A54FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CBC1D5178;
-	Tue, 17 Dec 2024 07:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F121D63DB;
+	Tue, 17 Dec 2024 07:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzaWEVm1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbxekWgh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE6B13D244;
-	Tue, 17 Dec 2024 07:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A04E13D244;
+	Tue, 17 Dec 2024 07:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734421257; cv=none; b=jGBXqiHknY7S0LQkIm2KC2vZaNFzDi4RVJ5/+L4zoms1B+6hCP+06NBnypmdOu5xj62oN9zjXi+YHAJIODgp8kbXd6o2bVBKcKlodVPg1xAAhgVVaHBDp4MHDRG1eOw9BcXTTrT1BJTtiGexZD6JBFwGyoR7hzZw36wXpjOyc5g=
+	t=1734421264; cv=none; b=BeL9JMwwQXtOwlrHo8E/vysiSgX2jOkOXuRMvRH02tuHeGhmoQPVHkH+TTM/zJNckw0gRVQDdX5kvWgxXvz8P/qFN2MMM7QmRTmUxIT/vAtyZ7aK470I1JBi3QNobrkUaF8WHT5NnxC60SGiNth8MsKYj6V3NfTn+r/5lRpjqtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734421257; c=relaxed/simple;
-	bh=qh5Rv3ZXcyqgzSC7cezcMXk4bK1CN2n8Om3V6cn9Eqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CprsFjxsa8W+43oYrB83WPBsSmkPZpi8rtHuTLn7yOGFHWRnmmGOeMX8zbAXJ69t87lvgeheOF/rqG8/0TnQPCCgK6kuC4Hu/jl2MCwGbYeD5bDESL3c7e2FKS6D3Aiperye2lmmNGh9nsR4VNs0h4yT8jVK9YP8PDZgVO5MCjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XzaWEVm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8690DC4CED3;
-	Tue, 17 Dec 2024 07:40:55 +0000 (UTC)
+	s=arc-20240116; t=1734421264; c=relaxed/simple;
+	bh=RX9k1VmegBCx5K+I/yb/Brg71gytyPPuM70sMeD07I4=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=KTGAECgZK6MlubR9NcXHKmSBbyEWt1zp2NPv5giHigXhBtMn5lNw8yTh7XsRKe6WliFQBfxG6TgLo0GZ+lMOQGSVKUDLxoTgyVPIwX0PeA6nopN0CgFQ8JSnS7CL0MCFEnRgMU3sPurcsvSyHLTchUJLEYq8MhNrmBWCODq8kiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbxekWgh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF942C4CED3;
+	Tue, 17 Dec 2024 07:41:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734421256;
-	bh=qh5Rv3ZXcyqgzSC7cezcMXk4bK1CN2n8Om3V6cn9Eqk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XzaWEVm17jBCCgA6EawOmJaL13vCmwwYoDM8LchPQZRPjXJsEdki1DPL0LaVTOKOL
-	 33lDiZl1cKjx/bvh8FTAuDG3IeAeyGJRXBP3HQYavNdwioH3e3/WwbNSfAKqerMer9
-	 4AIbhD7o5TdQu3Ks7hBxOILpteYBgK3bufnSVx+xpQtef8O3vn0tl7PrbGL01CsReQ
-	 /myqOsnKL2oIsxlKamz1YdFgT0g7dh9naLeA0wssLMpuQqS/2PmbV/qY483BZTLk9/
-	 V06T6WZPxiVtU6WwGQY4tNzpw+JY/0bt5UnEb5pwhiCBeSXYr+OwVimrckSE4YkyT4
-	 S5eInycqMSSig==
-Date: Tue, 17 Dec 2024 08:40:52 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: media: imx219: Describe sensor address
- using the reg property
-Message-ID: <6djxfcuroxlth2th3tpuesauhdnowatzgnyhesewjfz32v6gbz@q2dj7jsxiqlw>
-References: <20241217024206.1700170-1-david@ixit.cz>
- <20241217024206.1700170-2-david@ixit.cz>
+	s=k20201202; t=1734421264;
+	bh=RX9k1VmegBCx5K+I/yb/Brg71gytyPPuM70sMeD07I4=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=ZbxekWgh/0GWDXFIXpU1Vmpz713NEebbw6dPS9jcFBWYoVoCezr6bYKI8eFqkJUit
+	 /C3KqHtmYib/a9z3Kkam5Vn9iauekzVv3OovbrZaCXmwKOD/iaZVY0NN/4lfwqbg3S
+	 kNENzTUTxGxcAkqTSDVd/FaAD4QTkgHGea6ByHPXmixy1VRxKs5muouphn0AFYXcEs
+	 7nYefIbJ8y7SJoMtLCg4dy2dzDnsvDitUXKKKgzc2wgms5hM+QVIXoI1NBijrL5Wi/
+	 f3CmButgU9BLUJ8fsIuAstEUWktpVp8R0jOsGbi4hnr3qLzQSboLcwHUG0ROCIuPfg
+	 73rJgbn+sbW9Q==
+Message-ID: <17fbc356583050369235d1a23456eb2e@kernel.org>
+Date: Tue, 17 Dec 2024 07:41:01 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Brian Norris" <briannorris@chromium.org>
+Subject: Re: [PATCH v3 2/3] drivers: base: test: Enable device model tests
+ with KUNIT_ALL_TESTS
+In-Reply-To: <20241216201148.535115-3-briannorris@chromium.org>
+References: <20241216201148.535115-3-briannorris@chromium.org>
+Cc: kunit-dev@googlegroups.com, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, "David
+ Gow" <davidgow@google.com>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Maxime
+ Ripard" <mripard@kernel.org>, "Rae Moar" <rmoar@google.com>, "\"Rafael J. Wysocki\"" <rafael@kernel.org>, "Rob
+ Herring" <robh@kernel.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241217024206.1700170-2-david@ixit.cz>
 
-On Mon, Dec 16, 2024 at 09:41:51PM -0500, David Heidelberg wrote:
-> Use the reg property instead of text in the description.
-> Drop useless description of reg property.
+On Mon, 16 Dec 2024 12:11:43 -0800, Brian Norris wrote:
+> Per commit bebe94b53eb7 ("drivers: base: default KUNIT_* fragments to
+> KUNIT_ALL_TESTS"), it seems like we should default to KUNIT_ALL_TESTS.
 > 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->  Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> This enables these platform_device tests for common configurations, such
+> as with:
 > 
-> diff --git ./Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml ./Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
+> [ ... ]
 
-You are using non-standard tools to generate patches. See checkpatch
-warnings.
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Thanks!
+Maxime
 
