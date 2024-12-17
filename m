@@ -1,127 +1,208 @@
-Return-Path: <linux-kernel+bounces-449247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545539F4C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:32:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086999F4C2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:28:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE91189B41A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED374171820
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35F51F429B;
-	Tue, 17 Dec 2024 13:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E961F471A;
+	Tue, 17 Dec 2024 13:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DxdZ2zbb"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjF9Zc5G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE731F03E8;
-	Tue, 17 Dec 2024 13:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BECE1F2360;
+	Tue, 17 Dec 2024 13:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734441566; cv=none; b=HGy+1nmc11F7UojC8ikzkkjpkWHU8di3GoQ7Cns/gvJNmbpm9YfEJQSX+bfvhNiqrt4Tx0WOSablZMbQ1UaFn8Pe9TeJs/oEh2oFQTGyoPQZqxmtccUaGquFrFB1imcLd5jdmv18Doobjdbq/0nDnIsF2m8FpJ5X32w5APrZZvw=
+	t=1734441676; cv=none; b=T70tNy0s9rsAW07bvELqpc+/9rOBUgTjTiBMOyi01/eeNucp7VqqbgYoHW4E6KK8d/WD3rD+x25XY0NyxMmnNUxNxehnNRIcL/7VVJrbI0UiIxKeSTPsjwzOeS6jAlyHDi/9hqC3uHsBZ6WEeZJGfMIXfDDVKKb5TnPdwO7JKDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734441566; c=relaxed/simple;
-	bh=A8fII84AFmjcafFwK5VTw+0G0huOuWv2dJPM8L5Hf0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jhawIyPgzJF09x5QKNYum8KCwqKKbyJJMZlZKBr2uZhCOLMg2AVF7vn0yttOozcB8pW8rj5WlXwZcIluW8+jLX9TuJSo8BEvfMifOETwhfUjXWnAVExw/Lw+SUfu9QH6N44TOco9KiutKWDyeYXfpzIafTxmuYLWZ1ikkF9eGB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DxdZ2zbb; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1A297C000C;
-	Tue, 17 Dec 2024 13:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734441556;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RUvAF8nNh95eCP+DJf/kow70CTWmtALCQZrGVyhyTco=;
-	b=DxdZ2zbbF9lT2rC9CkWB74l9vT5Dd/ap3ZVFqQhl+iuUntR7iTeWMeBIM9cgAynMsFp1QU
-	6jerE5mJBZ3SgAXJ4nh//VZbyCfDGhp5j0QBWFWWZThca7x9uOKfWL0sKzzUg/D4qEo+oo
-	VHci9RDcY7P08cW97PcYF+zzjjJATwEFYpMFojaWxvKf/Y2pkLGX3w4YB6vVy6XCyCp4GY
-	zcW6PTtzazInS0ktppzzY4Ui5RsjY8Un0rexPzG/pZ8PMBSiJCaI6xzVEOUj5SKz9vbTsE
-	xOMfvE1igIujLiMl5NHBzAsQ5IgUIt5/xMVqkt7nITzwNsxSzPOhs/qIqrHrow==
-Date: Tue, 17 Dec 2024 14:19:12 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
- <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
- <alexis.lothore@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 5/5] net: stmmac: use PCS supported_interfaces
-Message-ID: <20241217141912.34cdd5ae@fedora.home>
-In-Reply-To: <E1tMBRQ-006vat-7F@rmk-PC.armlinux.org.uk>
-References: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
-	<E1tMBRQ-006vat-7F@rmk-PC.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1734441676; c=relaxed/simple;
+	bh=lz1BDubUThnIaImK55i42Dmzh4zororNqc8GEHLXdcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hSvTdXKXU698uG48qeSt2Mv91Jm8IspWu1FkuilWJJRvbTKRyqaLcPMiCX16OmoNFCBQ4XLo1I+oCSl3o+0eL4He3cXQebNQDSg1yJXZcUMQxpDdorJqzd8g1VASonnQGF7jWtm/8/abeEd24TnkPn+s+/nnMIKo5w2wAe20ZaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjF9Zc5G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A881C4CEDE;
+	Tue, 17 Dec 2024 13:21:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734441676;
+	bh=lz1BDubUThnIaImK55i42Dmzh4zororNqc8GEHLXdcI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TjF9Zc5Go8FP7q0IaF36NMXC4NH0JXrHcKjsWBRM52aTEFwR6kyWJxc9uY7uFxYB/
+	 ruutgNWb1fbp3+ukgKkhMXdVtTp2SsnYHRV+Rg96K2Kli6xZpSwQ+VBrYstcaDb10u
+	 ZE9YNXs3lwXkdiEUvJ7Hk4Pfpufjyy/KW+f/AxZ1hdKC9oB7zqNgkC0IviUprdZ5w9
+	 yEHKUFwdxYyTQu9OcH6uPwba+TtLsHLRP+ezxFaGF7a6SRi++Mk7KWRvOdpwClHcju
+	 XrLc6mpsG5GNdNi4H4lubPIxaVEEtgQu46wosya1/fbSSma0JwMWMwM2tNRFmz91wc
+	 AVDOtdvKBxCAw==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d3e9f60bf4so8584437a12.3;
+        Tue, 17 Dec 2024 05:21:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVYWbaDQwiKjUDn/DSZn3XweAWwrcKH3z8Lvkg5GYyiKZ/7L6MAzNKNb767fnunjO9Xxa7OfgvBBdgRv/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvLwH/h+n9xGv8zioNpUUg814T6pfLU821j6Km+1ZxyNv7Q0G4
+	8DB5bW7AZbkC4UstsOsPeJdPgtLIBU5w1uWKbN/cuZnrpnv/2VAn4Dadn2jtstajELVrfNfFwRF
+	qRRmztIecxNOw0jvRyiV9qFfJcrk=
+X-Google-Smtp-Source: AGHT+IFxMD1nUlVD9gGHX9OcPkRtAxGMpOywf+SAbDFMXhIkSA27ZGpD2syVGSswat7uVI29Iw9egJv32BSXtXQ1JaM=
+X-Received: by 2002:a17:907:72c4:b0:aa6:824c:4ae5 with SMTP id
+ a640c23a62f3a-aab77eda8f2mr1409202966b.56.1734441674713; Tue, 17 Dec 2024
+ 05:21:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20241211111315.65007-1-sunjunchao2870@gmail.com> <CAL3q7H5DhmjX_G7PGQQ40O7wtaV7TqFp_7L9yL7asjLA27J8pA@mail.gmail.com>
+In-Reply-To: <CAL3q7H5DhmjX_G7PGQQ40O7wtaV7TqFp_7L9yL7asjLA27J8pA@mail.gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Tue, 17 Dec 2024 13:20:38 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H44KsXkB4Q=y5YnGrAVW91S73mac+9ObvC+S6oO6uih2Q@mail.gmail.com>
+Message-ID: <CAL3q7H44KsXkB4Q=y5YnGrAVW91S73mac+9ObvC+S6oO6uih2Q@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: fix an assertion failure related to squota feature.
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, clm@fb.com, 
+	josef@toxicpanda.com, dsterba@suse.com, wqu@suse.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+On Mon, Dec 16, 2024 at 5:35=E2=80=AFPM Filipe Manana <fdmanana@kernel.org>=
+ wrote:
+>
+> On Wed, Dec 11, 2024 at 11:13=E2=80=AFAM Julian Sun <sunjunchao2870@gmail=
+.com> wrote:
+> >
+> > With the config CONFIG_BTRFS_ASSERT enabled, an assertion
+> > failure occurs regarding the simple quota feature.
+> >
+> > [    5.596534] assertion failed: btrfs_fs_incompat(fs_info, SIMPLE_QUOT=
+A), in fs/btrfs/qgroup.c:365
+> > [    5.597098] ------------[ cut here ]------------
+> > [    5.597371] kernel BUG at fs/btrfs/qgroup.c:365!
+> > [    5.597946] CPU: 1 UID: 0 PID: 268 Comm: mount Not tainted 6.13.0-rc=
+2-00031-gf92f4749861b #146
+> > [    5.598450] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), B=
+IOS 1.16.2-debian-1.16.2-1 04/01/2014
+> > [    5.599008] RIP: 0010:btrfs_read_qgroup_config+0x74d/0x7a0
+> > [    5.604303]  <TASK>
+> > [    5.605230]  ? btrfs_read_qgroup_config+0x74d/0x7a0
+> > [    5.605538]  ? exc_invalid_op+0x56/0x70
+> > [    5.605775]  ? btrfs_read_qgroup_config+0x74d/0x7a0
+> > [    5.606066]  ? asm_exc_invalid_op+0x1f/0x30
+> > [    5.606441]  ? btrfs_read_qgroup_config+0x74d/0x7a0
+> > [    5.606741]  ? btrfs_read_qgroup_config+0x74d/0x7a0
+> > [    5.607038]  ? try_to_wake_up+0x317/0x760
+> > [    5.607286]  open_ctree+0xd9c/0x1710
+> > [    5.607509]  btrfs_get_tree+0x58a/0x7e0
+> > [    5.608002]  vfs_get_tree+0x2e/0x100
+> > [    5.608224]  fc_mount+0x16/0x60
+> > [    5.608420]  btrfs_get_tree+0x2f8/0x7e0
+> > [    5.608897]  vfs_get_tree+0x2e/0x100
+> > [    5.609121]  path_mount+0x4c8/0xbc0
+> > [    5.609538]  __x64_sys_mount+0x10d/0x150
+> >
+> > The issue can be easily reproduced using the following reproduer:
+> > root@q:linux# cat repro.sh
+> > set -e
+> >
+> > mkfs.btrfs -f /dev/sdb > /dev/null
+> > mount /dev/sdb /mnt/btrfs
+> > btrfs quota enable -s /mnt/btrfs
+> > umount /mnt/btrfs
+> > mount /dev/sdb /mnt/btrfs
+> >
+> > The root cause of this issue is as follows:
+> > When simple quota is enabled, the BTRFS_FEATURE_INCOMPAT_SIMPLE_QUOTA
+> > flag is set after btrfs_commit_transaction(), whereas the
+> > BTRFS_QGROUP_STATUS_FLAG_SIMPLE_MODE flag is set before btrfs_commit_tr=
+ansaction(),
+> > which led to the first flag not being flushed to disk, and the second
+> > flag is successfully flushed. Finally causes this assertion failure
+> > after umount && mount again.
+> >
+> > To resolve this issue, the BTRFS_FEATURE_INCOMPAT_SIMPLE_QUOTA flag
+> > is set immediately after setting the BTRFS_QGROUP_STATUS_FLAG_SIMPLE_MO=
+DE.
+> > This ensures that both flags are flushed to disk within the same
+> > transaction.
+> >
+> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+>
+> Fixes: 182940f4f4db ("btrfs: qgroup: add new quota mode for simple quotas=
+")
+> Reviewed-by: Filipe Manana <fdmanana@suse.com>
+>
+> Looks good, thanks.
+> We should also turn the reproducer into a test case for fstests.
 
-On Fri, 13 Dec 2024 19:35:12 +0000
-"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk> wrote:
+Pushed it to the for-next branch with a few changes to the changelog:
 
-> Use the PCS' supported_interfaces member to build the MAC level
-> supported_interfaces bitmap.
-> 
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index d45fd7a3acd5..0e45c4a48bb5 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -1206,6 +1206,7 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
->  	struct stmmac_mdio_bus_data *mdio_bus_data;
->  	int mode = priv->plat->phy_interface;
->  	struct fwnode_handle *fwnode;
-> +	struct phylink_pcs *pcs;
->  	struct phylink *phylink;
->  
->  	priv->phylink_config.dev = &priv->dev->dev;
-> @@ -1227,8 +1228,14 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
->  
->  	/* If we have an xpcs, it defines which PHY interfaces are supported. */
->  	if (priv->hw->xpcs)
-> -		xpcs_get_interfaces(priv->hw->xpcs,
-> -				    priv->phylink_config.supported_interfaces);
-> +		pcs = xpcs_to_phylink_pcs(priv->hw->xpcs);
-> +	else
-> +		pcs = priv->hw->phylink_pcs;
-> +
-> +	if (pcs)
-> +		phy_interface_or(priv->phylink_config.supported_interfaces,
-> +				 priv->phylink_config.supported_interfaces,
-> +				 pcs->supported_interfaces);
->  
->  	fwnode = priv->plat->port_node;
->  	if (!fwnode)
+1) Renamed the subject to "btrfs: fix transaction atomicity bug when
+enabling simple quotas".
+     Note that we don't add punctuation at the end of the subject line.
 
-I think that we could even make xpcs_get_interfaces a static
-non-exported function now :) But this can be done in a subsequent patch.
+2) Changed the paragraphs that explain the bug below the reproducer to:
 
-Thanks for that work !
+"The issue is that when enabling quotas, at btrfs_quota_enable(), we set
+BTRFS_QGROUP_STATUS_FLAG_SIMPLE_MODE at fs_info->qgroup_flags and persist
+it in the quota root in the item with the key BTRFS_QGROUP_STATUS_KEY, but
+we only set the incompat bit BTRFS_FEATURE_INCOMPAT_SIMPLE_QUOTA after we
+commit the transaction used to enable simple quotas.
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+This means that if after that transaction commit we unmount the filesystem
+without starting and committing any other transaction, or we have a power
+failure, the next time we mount the filesystem we will find the flag
+BTRFS_QGROUP_STATUS_FLAG_SIMPLE_MODE set in the item with the key
+BTRFS_QGROUP_STATUS_KEY but we will not find the incompat bit
+BTRFS_FEATURE_INCOMPAT_SIMPLE_QUOTA set in the superblock, triggering an
+assertion failure at:
 
-Maxime
+    btrfs_read_qgroup_config() -> qgroup_read_enable_gen()
+
+To fix this issue, set the BTRFS_FEATURE_INCOMPAT_SIMPLE_QUOTA flag
+immediately after setting the BTRFS_QGROUP_STATUS_FLAG_SIMPLE_MODE.
+This ensures that both flags are flushed to disk within the same
+transaction."
+
+Thanks.
+
+
+>
+> > ---
+> >  fs/btrfs/qgroup.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+> > index a6f92836c9b1..f9b214992212 100644
+> > --- a/fs/btrfs/qgroup.c
+> > +++ b/fs/btrfs/qgroup.c
+> > @@ -1121,6 +1121,7 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_i=
+nfo,
+> >         fs_info->qgroup_flags =3D BTRFS_QGROUP_STATUS_FLAG_ON;
+> >         if (simple) {
+> >                 fs_info->qgroup_flags |=3D BTRFS_QGROUP_STATUS_FLAG_SIM=
+PLE_MODE;
+> > +               btrfs_set_fs_incompat(fs_info, SIMPLE_QUOTA);
+> >                 btrfs_set_qgroup_status_enable_gen(leaf, ptr, trans->tr=
+ansid);
+> >         } else {
+> >                 fs_info->qgroup_flags |=3D BTRFS_QGROUP_STATUS_FLAG_INC=
+ONSISTENT;
+> > @@ -1254,8 +1255,6 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_i=
+nfo,
+> >         spin_lock(&fs_info->qgroup_lock);
+> >         fs_info->quota_root =3D quota_root;
+> >         set_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags);
+> > -       if (simple)
+> > -               btrfs_set_fs_incompat(fs_info, SIMPLE_QUOTA);
+> >         spin_unlock(&fs_info->qgroup_lock);
+> >
+> >         /* Skip rescan for simple qgroups. */
+> > --
+> > 2.39.5
+> >
+> >
 
