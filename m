@@ -1,139 +1,109 @@
-Return-Path: <linux-kernel+bounces-449895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE67D9F5784
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:18:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E299F5783
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:17:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C6F18900B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:18:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DC3B16991C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C851F9411;
-	Tue, 17 Dec 2024 20:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=derek.foreman@collabora.com header.b="eEweObNW"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE0A1F942F;
+	Tue, 17 Dec 2024 20:17:34 +0000 (UTC)
+Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E9B1D9A48
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 20:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734466677; cv=pass; b=TzTjReY2AH7nba8yxx4qX9NbXq/nrKbGAUiGDFziArnsO4/Llfk6gr3h4kb78SKrqTXOgycLj3PYXovNujt8D9aFfBQtw3ms0W0bYUYjeSCM9QI1+GA7zYuTun2Oxxx4Jyh6iR+alKukaVICMnIKHfuz2+m2a1runCsdtbL/WwM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734466677; c=relaxed/simple;
-	bh=5IIoXOdIysaeX9dtIN3IJl57s/JJzEOG++dIauQhNGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PAlxWkGg+UXUsylKYZhJGagrrNIcaHqcJWeT1/zFibX1jip9SB1hKpBnM6JH5MX3jyyoF/d4DUXlgb69liaNhGXsi77Sg2uKVypnEc6Ptn4BsS+KdZpEP0CsApleuEIhlsqv0dmcQBvunYtQONgKGRQ+48HchjgJExx81zT61V8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=derek.foreman@collabora.com header.b=eEweObNW; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1734466644; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aqDfAGDK7mX2EqvbeqXWjB7qnHyvMZcbrIj//lpApUyMlrZfxsJuFJ9DCXAKcvq/EhH1lmWLSF6/BUaCTWM8bVZLss1B8SYeCmyIemgXkV+4op3JGzFpz8Tt+W/gP3JjzL5SJJmNFPlklvXkoG5X7eiJvlsZzN9ssQTRG2f2zm8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734466644; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=jg83Q2oVU4lXu4Mv8M8jYyiHKvWW+8+1IP4WxXXIwmQ=; 
-	b=Q/BC6FTAKoJpFiGhschv8pcnir7UdyhwCkf5Z6B8smOH3206ob3L9QI+z2sHgkJ2SGtrqSQAayGwsGykn8cfxGtOrzkvDSFXHRhFclH5AaDTkgO7fbyX/AprfxDn/Xyb3kiYQ7r6BhnTXVb2QfFvVGIDPS8bZIKtWvxQvotIAMs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=derek.foreman@collabora.com;
-	dmarc=pass header.from=<derek.foreman@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734466644;
-	s=zohomail; d=collabora.com; i=derek.foreman@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=jg83Q2oVU4lXu4Mv8M8jYyiHKvWW+8+1IP4WxXXIwmQ=;
-	b=eEweObNWXybKvUEAnW484esoWsyVWo/Yf0jD/TGapY6yugdr8pz71hvJ/3efwPpE
-	43m6SYZzgcpi4b6z41/mj8GCS7+71PkUNfvuKiPYVz2Bx+nKYVfRi0y2Kzvni9vBvQ9
-	kue/luD9beAvOMcwervCIhNI06nPyH1vjWAwqeTQ=
-Received: by mx.zohomail.com with SMTPS id 1734466642641430.9536683331079;
-	Tue, 17 Dec 2024 12:17:22 -0800 (PST)
-From: Derek Foreman <derek.foreman@collabora.com>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Algea Cao <algea.cao@rock-chips.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Derek Foreman <derek.foreman@collabora.com>,
-	kernel@collabora.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/rockchip: Don't change hdmi reference clock rate
-Date: Tue, 17 Dec 2024 14:17:07 -0600
-Message-ID: <20241217201708.3320673-1-derek.foreman@collabora.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832C11F8EEF;
+	Tue, 17 Dec 2024 20:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734466654; cv=none; b=rntxRW8lNAJQNx8Gv7TWijpepXFyXGthT5LLgxX2LygInnYHc1hcSHTT5Sz8Gdye5R8wHPhaj5Rplg9lvMMEQORV2cnilPjoWr5H8KpnNmguTndmHkq0Vro/w+/Zn1XyVZlP7CIlJo9p5p0kSVd30XpiWUjPzQM85I+6F95IoeI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734466654; c=relaxed/simple;
+	bh=p3GaFQZHi3m+TeT6OrllpUeQjXe6ODh4B2+UIRKSsIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s7yGscJGxqrtOFpaD4zTsLocCIAcmUWAkEB27kJuduBD4c12BD9UMlKNaNz27liG/Ch/CBW2gXScTVW+umBQt6WFKXBa8XNBCnAXW2k+5bviL36UWHUIDcIZut3aakZhW/0tjsc7fE261GGqCRH4UVmnBvj9hfDQacMRs46R0iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se; spf=none smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lankhorst.se
+Message-ID: <61b95c08-a3c2-4f92-b6e5-df77fd2491e2@lankhorst.se>
+Date: Tue, 17 Dec 2024 21:17:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
+ cgroup.
+To: Tejun Heo <tj@kernel.org>, Simona Vetter <simona.vetter@ffwll.ch>,
+ Dave Airlie <airlied@gmail.com>
+Cc: Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+References: <20241204134410.1161769-1-dev@lankhorst.se>
+ <20241213-proud-kind-uakari-df3a70@houat>
+ <80c49a80-d49c-4ca5-9568-9f7950618275@lankhorst.se>
+ <20241213-gentle-glittering-salamander-22addf@houat>
+ <5a50a992-9286-4179-8031-ffb514bca34f@lankhorst.se>
+ <20241217-meek-bullfinch-of-luck-2c3468@houat>
+ <a69a3500-be17-4899-bdb9-c6a63bf8dc81@lankhorst.se>
+ <Z2GwpOQDVshpv-ml@slm.duckdns.org>
+ <c0a539e7-0f1b-496a-9848-73a7ada66bfb@lankhorst.se>
+ <Z2HBqtKDSTkd1lST@slm.duckdns.org>
+Content-Language: en-US
+From: Maarten Lankhorst <dev@lankhorst.se>
+In-Reply-To: <Z2HBqtKDSTkd1lST@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The code that changes hdmi->ref_clk was accidentally copied from
-downstream code that sets a different clock. We don't actually
-want to set any clock here at all.
+Hey,
 
-Setting this clock incorrectly leads to incorrect timings for
-DDC, CEC, and HDCP signal generation.
+Den 2024-12-17 kl. 19:23, skrev Tejun Heo:
+> Hello,
+> 
+> On Tue, Dec 17, 2024 at 06:37:22PM +0100, Maarten Lankhorst wrote:
+>> Den 2024-12-17 kl. 18:11, skrev Tejun Heo:
+>>> On Tue, Dec 17, 2024 at 03:28:50PM +0100, Maarten Lankhorst wrote:
+>>>> Now that all patches look good, what is needed to merge the series? Without
+>>>> patch 6/7 as it is a hack for testing.
+>>>
+>>> There were some questions raised about device naming. One thing we want to
+>>> get right from the beginning is the basic interface.
+>>>
+>>> Thanks.
+>>>
+>> I believe it was solved. The conclusion appears to be that we go with how we
+>> defined it in this series. drm/$pciid/$regionname. With the only regions
+>> defined now being VRAM. Main memory will be a followup, but requires some
+>> discussions on hwo to be prevent double accounting, and what to do with the
+>> limited amount of mappable memory.
+> 
+> Provided Johannes is okay with the series, how do you want to route the
+> series? If you want to route it through drm, that's fine by me and please
+> feel free to add:
+> 
+>   Acked-by: Tejun Heo <tj@kernel.org>
+> 
+> Thanks.
+> 
 
-No Fixes listed, as the theoretical timing error in DDC appears to
-still be within tolerances and harmless - and HDCP and CEC are not
-yet supported.
+Thank you!
 
-Signed-off-by: Derek Foreman <derek.foreman@collabora.com>
----
- drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 13 -------------
- 1 file changed, 13 deletions(-)
+I've discussed this with the DRM maintainers. What was suggested is to 
+create a topic branch, merge it to drm-misc whichwhere it will be picked 
+up into drm.git during the next pull request. At the same time the topic 
+branch can be also be merged into the cgroup tree if needed.
 
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-index e498767a0a66..cebd72bf1ef2 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-@@ -54,7 +54,6 @@ struct rockchip_hdmi_qp {
- 	struct regmap *regmap;
- 	struct regmap *vo_regmap;
- 	struct rockchip_encoder encoder;
--	struct clk *ref_clk;
- 	struct dw_hdmi_qp *hdmi;
- 	struct phy *phy;
- 	struct gpio_desc *enable_gpio;
-@@ -81,7 +80,6 @@ static void dw_hdmi_qp_rockchip_encoder_enable(struct drm_encoder *encoder)
- 	if (crtc && crtc->state) {
- 		rate = drm_hdmi_compute_mode_clock(&crtc->state->adjusted_mode,
- 						   8, HDMI_COLORSPACE_RGB);
--		clk_set_rate(hdmi->ref_clk, rate);
- 		/*
- 		 * FIXME: Temporary workaround to pass pixel clock rate
- 		 * to the PHY driver until phy_configure_opts_hdmi
-@@ -330,17 +328,6 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
- 		return ret;
- 	}
- 
--	for (i = 0; i < ret; i++) {
--		if (!strcmp(clks[i].id, "ref")) {
--			hdmi->ref_clk = clks[1].clk;
--			break;
--		}
--	}
--	if (!hdmi->ref_clk) {
--		drm_err(hdmi, "Missing ref clock\n");
--		return -EINVAL;
--	}
--
- 	hdmi->enable_gpio = devm_gpiod_get_optional(hdmi->dev, "enable",
- 						    GPIOD_OUT_HIGH);
- 	if (IS_ERR(hdmi->enable_gpio)) {
--- 
-2.45.2
+The drm-misc tree already handles dma-buf and fbdev core, think DMEM 
+could fit in there too.
 
+Cheers,
+~Maarten
 
