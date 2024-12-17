@@ -1,134 +1,135 @@
-Return-Path: <linux-kernel+bounces-449759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D669F55BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:13:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D0C9F55D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A17171883B15
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE596167B49
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5011F8AE7;
-	Tue, 17 Dec 2024 18:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C788D1F9ECC;
+	Tue, 17 Dec 2024 18:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeGJV7Tz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="OOC0KBc3"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2920D1F8AD9
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 18:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D8E1F9402;
+	Tue, 17 Dec 2024 18:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734459122; cv=none; b=EPiniv2aZweT8rD0Tq44sWGOqThPR/0aTSgWyODmwaDDpXdOlj1I41F2/OolhxA1NgW4hLiSq7yqM0WLsONgAlKGYdUUASTIsp0m7U8X/DFOGEkbb34M04GkjBeNkFxuIkYl6K7oTaczEG5q50/uLeofu/77/TKi65Ay6OBEjAQ=
+	t=1734459325; cv=none; b=eHITNAmAw6mKbGPB0f6tlQWAnUmT6nVAgCuR1hl+a5jzvt9LHKngSjeaQk04sdn3FsRZyQXksJOZHc4p4+tV37e5L2rKtWdJ5/eKm5w3S8QD0k6ta90HO16pRa9wvzHqp7VqSwbIdywM12TA9tCKtKMLf3u1LpZKysXY34rPU7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734459122; c=relaxed/simple;
-	bh=d9mGnZDHaJzDeXuKCaPy+9xk0XBg5gLpu9ArK0AHMKM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rZBIKihVfYERF6LPFVkzLbjZiX1oYRgpomejZ2Bt1C89ILwKBEkMzmiNd1gekPHh9JExIE85BPwEdb8klXcqog17UaMun1RKN9dtIuRHOmEg/zM3Q4IRHXNdCDS1Xo5QMLMRR9oK+XqUwf+u6cRYCIBSNKvz1UIJytLIq+0NRhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeGJV7Tz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 357FFC4CEDD;
-	Tue, 17 Dec 2024 18:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734459121;
-	bh=d9mGnZDHaJzDeXuKCaPy+9xk0XBg5gLpu9ArK0AHMKM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=oeGJV7TzMO2K/f4KYDTiE7oK8pvu0X6kilCxjF5oFugyKqzLn+6n34touk83bBI+F
-	 skpEqsPKCkHdiNdFIBGSRhJndcH41NadHgdnnn5LSoCdZbpBoE8+VzsUH/3UA4VE5D
-	 /zyFHELz5BOhGK0S0aS5NwjPHbFEMTOE8v7gKxCgg7Kl2Hf/nrFywk2LbP40jJ1e1P
-	 G7yGDFVr1i9vvN69t0G1BcnUbV/qjvlPQi6C9CHQfZvaivfRTBfRJL/VMASFIM4xpa
-	 syn1KdPb9tFSzE25V9vueRU9bBIJ6fFv6Zu4RAF5vbZl7O/L6ErrPliOQVDL8iAjp2
-	 /BpPqY4vXonMg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Date: Tue, 17 Dec 2024 12:11:42 -0600
-Subject: [PATCH v2 3/3] mfd: syscon: Allow syscon nodes without a "syscon"
- compatible
+	s=arc-20240116; t=1734459325; c=relaxed/simple;
+	bh=ITkuq+6POg0AanjQB8FVEij5/J3aYF1KyLOXLajovkY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WPXNwlX91mq0qL1HVQz5rzYBvnDT067HaCVY8+2+TrJHiVrr62BHUv6k0fGeo3itN6/Hra3tj129bSS6HrivN/DC3V1BFN3+xcZe3sgotnIvSf0yih/4qJq+paWKmVaLYndVXCVHt+RnGZ0IXmAf9Tg8fZ+k/KNdDHtlp77YNzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=OOC0KBc3; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1734459324; x=1765995324;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=C7BDBrHqmM0HTnPyPCcOuOLMIShtH1iqrRhw5e72kCQ=;
+  b=OOC0KBc34LZnDX77Gk58KMIycrZzVIQ10U2joTNursR15wZ7CFPiBRy6
+   enZg2aCFE6yy1vmsFGE5VqV2ZzzB1CqnGtKp8z4TPFJMJvjU04bOvRDVC
+   RwnV0nZKWj1luKg7ToT61XykCRRtdeuZ1dLl4pj4wGU/7wX1dUaGdnUYb
+   8=;
+X-IronPort-AV: E=Sophos;i="6.12,242,1728950400"; 
+   d="scan'208";a="451553361"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 18:15:19 +0000
+Received: from EX19MTAUEB002.ant.amazon.com [10.0.0.204:55090]
+ by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.89.141:2525] with esmtp (Farcaster)
+ id 9c68495e-a5b7-44a8-a2d2-f592d5e3a294; Tue, 17 Dec 2024 18:15:07 +0000 (UTC)
+X-Farcaster-Flow-ID: 9c68495e-a5b7-44a8-a2d2-f592d5e3a294
+Received: from EX19D008UEA001.ant.amazon.com (10.252.134.62) by
+ EX19MTAUEB002.ant.amazon.com (10.252.135.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Tue, 17 Dec 2024 18:15:06 +0000
+Received: from EX19MTAUWB002.ant.amazon.com (10.250.64.231) by
+ EX19D008UEA001.ant.amazon.com (10.252.134.62) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Tue, 17 Dec 2024 18:15:06 +0000
+Received: from email-imr-corp-prod-pdx-1box-2b-8c2c6aed.us-west-2.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.228) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.39 via Frontend Transport; Tue, 17 Dec 2024 18:15:05 +0000
+Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
+	by email-imr-corp-prod-pdx-1box-2b-8c2c6aed.us-west-2.amazon.com (Postfix) with ESMTPS id B731CA07D5;
+	Tue, 17 Dec 2024 18:15:03 +0000 (UTC)
+From: Ivan Orlov <iorlov@amazon.com>
+To: <bp@alien8.de>, <dave.hansen@linux.intel.com>, <mingo@redhat.com>,
+	<pbonzini@redhat.com>, <seanjc@google.com>, <shuah@kernel.org>,
+	<tglx@linutronix.de>
+CC: Ivan Orlov <iorlov@amazon.com>, <hpa@zytor.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<x86@kernel.org>, <dwmw@amazon.co.uk>, <pdurrant@amazon.co.uk>,
+	<jalliste@amazon.co.uk>
+Subject: [PATCH v3 0/7] Enhance event delivery error handling
+Date: Tue, 17 Dec 2024 18:14:51 +0000
+Message-ID: <20241217181458.68690-1-iorlov@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-syscon-fixes-v2-3-4f56d750541d@kernel.org>
-References: <20241217-syscon-fixes-v2-0-4f56d750541d@kernel.org>
-In-Reply-To: <20241217-syscon-fixes-v2-0-4f56d750541d@kernel.org>
-To: Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Pankaj Dubey <pankaj.dubey@samsung.com>, Heiko Stuebner <heiko@sntech.de>, 
- Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, 
- John Madieu <john.madieu.xa@bp.renesas.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-of_syscon_register_regmap() was added for nodes which need a custom
-regmap setup. It's not really correct for those nodes to claim they are
-compatible with "syscon" as the default handling likely doesn't work in
-those cases. If device_node_get_regmap() happens to be called first,
-then of_syscon_register() will be called and an incorrect regmap will be
-created (barring some other error). That may lead to unknown results in
-the worst case. In the best case, of_syscon_register_regmap() will fail
-with -EEXIST. This problem remains unless these cases drop "syscon" (an
-ABI issue) or we exclude them using their specific compatible. ATM,
-there is only one user: "google,gs101-pmu"
+Currently, the unhandleable vectoring (e.g. when guest accesses MMIO
+during vectoring) is handled differently on VMX and SVM: on VMX KVM
+returns internal error, when SVM goes into infinite loop trying to
+deliver an event again and again.
 
-There are also cases of adding "syscon" compatible to existing nodes
-after the fact in order to register the syscon. That presents a
-potential DT ABI problem. Instead, if there's a kernel change needing a
-syscon for a node, then it should be possible to allow the kernel to
-register a syscon without a DT change. That's only possible by using
-of_syscon_register_regmap() currently, but in the future we may want to
-support a match list for cases which don't need a custom regmap.
+This patch series eliminates this difference by returning a KVM internal
+error when KVM can't emulate during vectoring for both VMX and SVM.
 
-With this change, the lookup functions will succeed for any node
-registered by of_syscon_register_regmap() regardless of whether the node
-compatible contains "syscon".
+Also, introduce a selftest test case which covers the error handling
+mentioned above.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-v2:
- - Fix logic when a syscon is found in list to not return an error
----
- drivers/mfd/syscon.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+V1 -> V2:
+- Make commit messages more brief, avoid using pronouns
+- Extract SVM error handling into a separate commit
+- Introduce a new X86EMUL_ return type and detect the unhandleable
+vectoring error in vendor-specific check_emulate_instruction instead of
+handling it in the common MMU code (which is specific for cached MMIO)
 
-diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-index bfb1f69fcff1d3cd35cf04ccd4c449e7d0395c79..226915ca3c93dcaf47bdd46b58e00e10e155f952 100644
---- a/drivers/mfd/syscon.c
-+++ b/drivers/mfd/syscon.c
-@@ -171,9 +171,12 @@ static struct regmap *device_node_get_regmap(struct device_node *np,
- 			break;
- 		}
- 
--	if (!syscon)
--		syscon = of_syscon_register(np, check_res);
--
-+	if (!syscon) {
-+		if (of_device_is_compatible(np, "syscon"))
-+			syscon = of_syscon_register(np, check_res);
-+		else
-+			syscon = ERR_PTR(-EINVAL);
-+	}
- 	mutex_unlock(&syscon_list_lock);
- 
- 	if (IS_ERR(syscon))
-@@ -238,9 +241,6 @@ EXPORT_SYMBOL_GPL(device_node_to_regmap);
- 
- struct regmap *syscon_node_to_regmap(struct device_node *np)
- {
--	if (!of_device_is_compatible(np, "syscon"))
--		return ERR_PTR(-EINVAL);
--
- 	return device_node_get_regmap(np, true);
- }
- EXPORT_SYMBOL_GPL(syscon_node_to_regmap);
+V2 -> V3:
+- Make the new X86EMUL_ code more generic
+- Prohibit any emulation during vectoring if it is due to an intercepted
+#PF
+- Add a new patch for checking whether unprotect & retry is possible
+before exiting to userspace due to unhandleable vectoring
+- Codestyle fixes
+
+
+Ivan Orlov (7):
+  KVM: x86: Add function for vectoring error generation
+  KVM: x86: Add emulation status for unhandleable vectoring
+  KVM: x86: Unprotect & retry before unhandleable vectoring check
+  KVM: VMX: Handle vectoring error in check_emulate_instruction
+  KVM: SVM: Handle vectoring error in check_emulate_instruction
+  selftests: KVM: extract lidt into helper function
+  selftests: KVM: Add test case for MMIO during vectoring
+
+ arch/x86/include/asm/kvm_host.h               | 11 +++-
+ arch/x86/kvm/kvm_emulate.h                    |  2 +
+ arch/x86/kvm/svm/svm.c                        |  6 +++
+ arch/x86/kvm/vmx/vmx.c                        | 30 ++++-------
+ arch/x86/kvm/x86.c                            | 31 +++++++++++
+ .../selftests/kvm/include/x86_64/processor.h  |  7 +++
+ .../selftests/kvm/set_memory_region_test.c    | 53 ++++++++++++++++++-
+ .../selftests/kvm/x86_64/sev_smoke_test.c     |  2 +-
+ 8 files changed, 117 insertions(+), 25 deletions(-)
 
 -- 
-2.45.2
+2.43.0
 
 
