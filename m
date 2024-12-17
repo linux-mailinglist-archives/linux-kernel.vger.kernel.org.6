@@ -1,55 +1,62 @@
-Return-Path: <linux-kernel+bounces-448787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2709F4577
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:48:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 701E79F4581
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:51:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB2C16C5A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:48:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AAE16C77F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FDA1D5179;
-	Tue, 17 Dec 2024 07:48:01 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954341D5CFD;
+	Tue, 17 Dec 2024 07:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OZ8yJ3Ui"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C986E15624D;
-	Tue, 17 Dec 2024 07:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6AFA29;
+	Tue, 17 Dec 2024 07:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734421680; cv=none; b=VPLG/mlx7DIE8+jx2SBGZ53xl4V6jFqnzoNwSvQShANkm17ZaQZ++TvYKacQLpWEyZSFxmj9RwOnrxnULNvR71cmUHKxL1UayvFIEnoOKpFa+fHsEl2B4BWh9JzueWC2Y6PYOs/GIgbnTOcFqJJFMBH5TlAehSA4BLSqUcjsQ0Y=
+	t=1734421869; cv=none; b=mC3kPOSpMSzY3A9CA9fdVdoreDduQodiMQZxdazUXdrGJIGAzIjwEvsxX49BuI3m1KY/LxW4cDk2yrxb9Zq9nD5P5Ub84xwkzavqYNENSbNe8i3kuhPCMxYJ1G6uwOkobzRzM2ivbD6hWvGvWHtI27jhtd1KWtYxGg7zeOeC+dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734421680; c=relaxed/simple;
-	bh=MgOQrO27meBf7NsG6OWTkY99J5lARFg7R+CbynX6vlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eqUFnnTMZ/MBT21nWtVLJyqMbP4V+Mqn/qOK19tFKwEgn2BZEQCkyCX8vA8BvQHudq+Do6x9sjAaVL5XpyqFvICkc4EicK5RdWHRxslcidFrSpHvrRUXxMevEDxKql1igROyclFc0TA3kEooei3ziSMS+ibRMyiMPz0ZinMBtgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4YC86z6Lcmz9sPd;
-	Tue, 17 Dec 2024 08:47:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id fC7tw8E5ccA2; Tue, 17 Dec 2024 08:47:55 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4YC86z5K7qz9rvV;
-	Tue, 17 Dec 2024 08:47:55 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A3F418B768;
-	Tue, 17 Dec 2024 08:47:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id iR2VLUnfgYsc; Tue, 17 Dec 2024 08:47:55 +0100 (CET)
-Received: from [192.168.232.97] (unknown [192.168.232.97])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 73D238B763;
-	Tue, 17 Dec 2024 08:47:54 +0100 (CET)
-Message-ID: <ddd4439e-6f6f-4513-a7dc-b7f01bec03dc@csgroup.eu>
-Date: Tue, 17 Dec 2024 08:47:54 +0100
+	s=arc-20240116; t=1734421869; c=relaxed/simple;
+	bh=/7pgGC3NTj2JpUtIKHmal2KVbCa5wlHMP7hJIk5gmQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=m79+06TnYbTIQM+w8zYkPnqxHiDiveqLkiE0D/WxgNMgVAj5UPqiq7/+05c7F9JejO2EdTt7asW6X9ZLo3msa1p8MsTs8yjUO+T8CeNWkcp8TmVKNJJIjfXBYvr4IBJ7s5x5+O3Udpgjh228xUB/keNJusHhMPBzP8ATRXtjxaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OZ8yJ3Ui; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH6231h005880;
+	Tue, 17 Dec 2024 07:50:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aQL5qS2pe+X8kDeHnQVqNSkQhE3qui4U3YosF4AomTs=; b=OZ8yJ3Ui89Z5Uhi/
+	hG8EzDrXmLKBaWRwiFLOaf8rzxUlqMe2t1X4hxPR38Av+6ip/R0oldSRCP69dYx2
+	geMNfS518MXgen3E/CZ/3ClOCXUlPJx31CbQZ1f5pvz8YMliJwbuVmdie9XE9XXi
+	H5afzyZhhISur0pXSnsP7wN6bBw80Kpa5WFbsMu2LBS+YIHO7LpigQS1y0fYVagU
+	xEp4390g2kObKdUuvKCEjM80AnB7H6vlVBZM0bPgnoF0sgfh4N6FYAuDe++EmBzP
+	hiAnjEcOt8RQ5JHvcIzjsUec6f5eOK13jKkNxy1S+C0XM24oNzY0jJYFZ1gcuILv
+	6f3AFw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k3p48908-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 07:50:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BH7orrD021258
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 07:50:53 GMT
+Received: from [10.239.133.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 23:50:49 -0800
+Message-ID: <f839a280-aa76-4963-9580-a6e089136bb5@quicinc.com>
+Date: Tue, 17 Dec 2024 15:50:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,133 +64,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/ptdump: Drop GENERIC_PTDUMP
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: steven.price@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Marc Zyngier <maz@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org
-References: <20241217034807.2541349-1-anshuman.khandual@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241217034807.2541349-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v1 0/2] Add Qualcomm extended CTI support
+From: Jinlong Mao <quic_jinlmao@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross
+	<agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20240903121847.6964-1-quic_jinlmao@quicinc.com>
+ <742d1cec-13ec-4f08-b7f3-611c6d602b3b@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <742d1cec-13ec-4f08-b7f3-611c6d602b3b@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GLJg2LnoYiq9y_XL-l9hMt1WX2YF8zQO
+X-Proofpoint-GUID: GLJg2LnoYiq9y_XL-l9hMt1WX2YF8zQO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 spamscore=0 clxscore=1011 suspectscore=0
+ mlxscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170063
 
 
 
-Le 17/12/2024 à 04:48, Anshuman Khandual a écrit :
-> GENERIC_PTDUMP does not guard any code but instead just used for platform's
-> subscription into core ptdump defined under PTDUMP_CORE, which is selected.
-> Instead use PTDUMP_CORE for platform subscription and drop GENERIC_PTDUMP.
+On 2024/10/10 17:49, Jinlong Mao wrote:
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: kvmarm@lists.linux.dev
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-s390@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This patch applies on v6.13-rc3 and has been tested on arm64, although it
-> also clears build tests on impacted platforms.
 > 
->   Documentation/arch/arm64/ptdump.rst       | 1 -
->   arch/arm64/Kconfig                        | 2 +-
->   arch/arm64/kvm/Kconfig                    | 3 +--
->   arch/powerpc/Kconfig                      | 2 +-
->   arch/powerpc/configs/mpc885_ads_defconfig | 1 -
->   arch/riscv/Kconfig                        | 2 +-
->   arch/s390/Kconfig                         | 2 +-
->   arch/x86/Kconfig                          | 2 +-
->   arch/x86/Kconfig.debug                    | 2 +-
->   kernel/configs/debug.config               | 1 -
->   mm/Kconfig.debug                          | 8 ++------
->   11 files changed, 9 insertions(+), 17 deletions(-)
+> On 2024/9/3 20:18, Mao Jinlong wrote:
+>> The QCOM extended CTI is a heavily parameterized version of ARM’s CSCTI.
+>> It allows a debugger to send to trigger events to a processor or to send
+>> a trigger event to one or more processors when a trigger event occurs on
+>> another processor on the same SoC, or even between SoCs.
+>>
+>> QCOM extended CTI supports up to 128 triggers. And some of the register
+>> offsets are changed.
+>>
+>> The commands to configure CTI triggers are the same as ARM's CTI.
+>>
 > 
+> Hi Reviewers,
+> 
+> Could you please help to provide some comments from the design point of 
+> view for the changes ?
+> 
+> The main difference of extended CTI to the normal CTI is that the
+> address mapping is changed and it supports a max of 128 trigger signals.
+> 
+> On one soc, there will be both normal arm CTIs and QCOM extended CTIs.
+> 
+> As max trigger number becomes 128. So triger registers becomes 4.
+> 
+> Like CTITRIGINSTATUS  --- > CTITRIGINSTATUS_EXTENDED(n)     (0x040 + (4 
+> * n))  n is 0 to 4.
+> 
+> Thanks
+> Jinlong Mao
 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index a0ce777f9706..c716f8df10de 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -203,7 +203,7 @@ config PPC
->   	select GENERIC_IRQ_SHOW
->   	select GENERIC_IRQ_SHOW_LEVEL
->   	select GENERIC_PCI_IOMAP		if PCI
-> -	select GENERIC_PTDUMP
-> +	select PTDUMP_CORE
+Gentle reminder for the review from the code design point of view.
 
-Please keep alphabetical order.
-
->   	select GENERIC_SMP_IDLE_THREAD
->   	select GENERIC_TIME_VSYSCALL
->   	select GENERIC_VDSO_TIME_NS
-
-> diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-> index 41a58536531d..b206e5a11f96 100644
-> --- a/mm/Kconfig.debug
-> +++ b/mm/Kconfig.debug
-> @@ -187,7 +187,7 @@ config DEBUG_WX
->   	bool "Warn on W+X mappings at boot"
->   	depends on ARCH_HAS_DEBUG_WX
->   	depends on MMU
-> -	select PTDUMP_CORE
-> +	depends on PTDUMP_CORE
-
-This change is unclear to me. It works because all arch selecting 
-ARCH_HAS_DEBUG_WX also select GENERIC_PTDUMP. For riscv it's even more 
-tricking, Riscv only selects GENERIC_PTDUMP when MMU is set, so it works 
-because here it also depends on MMU.
-
-But what happens if in the future an architecture selects 
-ARCH_HAS_DEBUG_WX without selecting PTDUMP_CORE ?
-
-
->   	help
->   	  Generate a warning if any W+X mappings are found at boot.
->   
-> @@ -212,9 +212,6 @@ config DEBUG_WX
->   
->   	  If in doubt, say "Y".
->   
-> -config GENERIC_PTDUMP
-> -	bool
-> -
->   config PTDUMP_CORE
->   	bool
->   
-> @@ -222,8 +219,7 @@ config PTDUMP_DEBUGFS
->   	bool "Export kernel pagetable layout to userspace via debugfs"
->   	depends on DEBUG_KERNEL
->   	depends on DEBUG_FS
-> -	depends on GENERIC_PTDUMP
-> -	select PTDUMP_CORE
-> +	depends on PTDUMP_CORE
->   	help
->   	  Say Y here if you want to show the kernel pagetable layout in a
->   	  debugfs file. This information is only useful for kernel developers
+> 
+>> Mao Jinlong (2):
+>>    dt-bindings: arm: Add Qualcomm extended CTI
+>>    coresight: cti: Add Qualcomm extended CTI support
+>>
+>>   .../bindings/arm/arm,coresight-cti.yaml       |  14 ++
+>>   .../hwtracing/coresight/coresight-cti-core.c  |  75 +++++++----
+>>   .../coresight/coresight-cti-platform.c        |  16 ++-
+>>   .../hwtracing/coresight/coresight-cti-sysfs.c | 124 ++++++++++++++----
+>>   drivers/hwtracing/coresight/coresight-cti.h   | 123 +++++++++++------
+>>   5 files changed, 253 insertions(+), 99 deletions(-)
+>>
+> 
 
 
