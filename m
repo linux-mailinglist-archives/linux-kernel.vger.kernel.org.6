@@ -1,163 +1,144 @@
-Return-Path: <linux-kernel+bounces-449999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F7F9F5908
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:50:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F889F591E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9F37A462A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81738166225
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558691F9F60;
-	Tue, 17 Dec 2024 21:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B261FA827;
+	Tue, 17 Dec 2024 21:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="YWoIsZoe"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zf/dBjjv"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A4E1DD54C;
-	Tue, 17 Dec 2024 21:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158431DD54C
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734472047; cv=none; b=heBUdPreVPux+2hYER60Z73Q3eQm5UoEmGKBwZyT0C79iJoFgKrGt+GTT7IZ+ai+b0Gel3qwDwOqh8ZcG44/f5BpjG5S1hwL4IctSyhl/BlEgItue/IgZLvgCbXmjRGF2QRsm9pMovwpR3oW+vAmaqApslr7U2XwFbk5MOl3GOI=
+	t=1734472055; cv=none; b=D4RpVzSQ1tHY9EXEsWczVyvyqeijWQjNzf3AsQiS6roIIdQuOUeOAmkQDhG3CzAnDpaH4TdG1+qRAosRWq25f4h9MVdVcc4cccd1e3BXxU7+uWM/Yi0Y0/daPLd+0h9hKDXdL58sMz7hADP6H0yVzGzr3YtP6DrpuaysDBUCSFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734472047; c=relaxed/simple;
-	bh=pYyX1T/5vK2+5pV8VU/rJ/K/+cNIGuO1HaL7v0uBAfs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kBqkqZUdWFSqUqsLFeM9QznUMZcKXf5Hom5z6NQ0VZrvNQ6DZPD8O7Y9/kQHquCwtYhKBtrcvSQ0wcpvrbFbPZncsxWamf8YdkyGa1POQVZmSedwLcRKlOTB9vVlG68lX1QIa2IjcNjznq/I9lRLJ0RzGVm/e3AogiUhO3a1nmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=YWoIsZoe; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4YCVld3CRCz6ClY9C;
-	Tue, 17 Dec 2024 21:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1734472036; x=1737064037; bh=oKc3I7/BFaJjoh8h/Omv70y7
-	8k6J2IuKTo+Wlw0Dg8E=; b=YWoIsZoeUpFXDc6cTr2oX4nSRWQYxxJ8eNk3ZPZX
-	GTKEUOqfY9bLa2s06i9EiFmhKdc8tzD4AFXdsHmUOMj/zZxo7haxGXVSwuHHmmq+
-	XzuFNXqjuftS92EddbPzTeB3YeDcI3uf0H8RaPu25IE/DZZ1hlFZK/LyV+ETtl0f
-	BGGFMOEuk2bOw55GKXrfiJ2TozD39lMmncYptbLI0GOcrnezzQ0oTDtRnjhXRSy4
-	lLetMaff7cqcoRrYCpouCoDe+RW2PJD+oYrM8AqIFcHFoayixhWtK/GHr+J6lYDh
-	hZL+JyVoo+nQ37hGOhoHi9G9qVAcp6xXu4cpaoAn7Lcyhg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id XX7dlaQA97iz; Tue, 17 Dec 2024 21:47:16 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4YCVlP1X5qz6ClY94;
-	Tue, 17 Dec 2024 21:47:12 +0000 (UTC)
-Message-ID: <698a01e6-cb03-43a2-a0f1-5c8555dea8c1@acm.org>
-Date: Tue, 17 Dec 2024 13:47:11 -0800
+	s=arc-20240116; t=1734472055; c=relaxed/simple;
+	bh=9LBkbRZjR8OtDCWd3DaTMKnZFmldhuPelOwiNGPdPXU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Fxi2spy1lqyPOKn4W2TdcJLypx1dwpvVt5E1C4XfXeJB6PXI11WBnpjcgTZezf0dn8sABwFhirmj5EeENG54R2suDdrn760YypvLniWZ9fs9gTaOHHzN5YBdoNL5gnGNEaiBZdYtxx8C0jItY9I+nB+my862loIdQe6Mo8RY8Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zf/dBjjv; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-46677ef6920so1427111cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:47:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734472051; x=1735076851; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7E616DPF2CInBFtwDOpZgMtLKnq3DIfHRsefh6j34i8=;
+        b=zf/dBjjvgx3inKBocwKksUxiVakIX4FU9hXltC3GipfxVbLkFVHdyiqwQ/8/XZugdI
+         IbSg6EI8PKy5llugXKEgTjA189uPiVektYBEqWP/rYn5njfmF9HRRCN/P9tHC72U7Mud
+         M5tKKw8pEnfhY2lvLigYAB59ZR4kzrhynD2iycI7tevWbbjlgvQOmx6MU9znX0w886Ma
+         Vrw4uotLsyjsF/PxmJJlzvK4vsdWm2ZPwCyOg/QFlhTcI4IZ1SsRzELTNjjbEzCyYGJ4
+         k1qxiSr2BU9tSisUIRm7awlMeM0Me4TcMQtHrSibMr465nwBNEvnCRaOTR47Po65eSqZ
+         rMUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734472051; x=1735076851;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7E616DPF2CInBFtwDOpZgMtLKnq3DIfHRsefh6j34i8=;
+        b=NoZzdpzkQ/cIJJ9Zqp4xL7oHi4Tw6KJthN85fnGQr8OeFkf92af3T12jHp+7dw7vlV
+         8MiFFkQpGEE62OqV65lLGlP3lFLH06UMy93RNzd48oHb5xIsy8bicOe6mUkM6+JPRVza
+         lY9TZXGfp/Vmhv3YXOp8ZJsgFh9HQ6IJmZTPMVVf99lobonaMC3i7D4BItOPyxfeRivO
+         d4WO85fRW3xGmXRU5nP4b8PXQMxM/ETRFTXeSf0oyZaTLlmQiB2c92CfcSKF5UbMPLLI
+         tDz0mVWIP6KwmAVhLtalVwFEm9P4UinSxjwa8gOiywElHODlfjBueUyszLvEmWT+7i2j
+         VpPw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8LJszevctzsPkTOQy/7h0Y7ezov2wXOuiTxqDfaxIYp9BWuNIlX0EO4RWCpUHAvfr6C/3v1l+rIxEhCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxocNgOxtKk3961uaHk/mtun1Or2MftJi6ny2kzmTXywBEESTGl
+	UPOZzWJXyXl0evTQi7VWDPBjuSFITLrVBWLXJQP4J9H8U6q0cM01bfcyr0r4coE=
+X-Gm-Gg: ASbGncs+I6N3xFyL52v0uh89hk/NX+ufz6uDttP5yHjTVW4kDGanqeNyFKa3kxbITPY
+	1d+nzdt191jH8GI2RJO3tgwimmDoIJfmYTt+B9WFzbpe/LGvjBf0fRmSehf2sBgYZ8D3lE3UdXw
+	XQYo73g78hqAadWqYPLJmpl8fHy6/Ju3f33eX8iDHckQClbNxQWWXVGEgBMeVBxbw4C8Ko13EZt
+	2GcCHeX5of4w1wSWI03rpj4b5TJFHCQsImTZcpCjdFVVfvq3FpgTMiIb3IG6Z6+O2BAa/qFWFfs
+	jjQI/aNgOUh/ThEH
+X-Google-Smtp-Source: AGHT+IGoYnyvG2Q7UWCGRRgjtVttlrB1QOCo98O5Isd/VOtrfcyapcvE7rNT79egsgGNsj+K7L6G1w==
+X-Received: by 2002:ac8:57c2:0:b0:467:6d36:4c94 with SMTP id d75a77b69052e-468f8cc8052mr76744101cf.2.1734472050941;
+        Tue, 17 Dec 2024 13:47:30 -0800 (PST)
+Received: from localhost (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2eccbe6sm43135171cf.82.2024.12.17.13.47.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 13:47:30 -0800 (PST)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+Subject: [PATCH 0/2] iio: adc: ad4695: add oversampling support
+Date: Tue, 17 Dec 2024 16:47:27 -0500
+Message-Id: <20241217-ad4695-oversampling-v1-0-0b045d835dac@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RFC 2/4] lib/sbitmap: fix shallow_depth tag allocation
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
- akpm@linux-foundation.org, ming.lei@redhat.com, yang.yang@vivo.com,
- osandov@fb.com, paolo.valente@linaro.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-References: <20241217024047.1091893-1-yukuai1@huaweicloud.com>
- <20241217024047.1091893-3-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241217024047.1091893-3-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG/xYWcC/x3MTQqAIBBA4avErBPyJ6OuEi0sRxsoCwUJpLsnL
+ b/FewUSRsIEU1MgYqZEV6jgbQPbboJHRrYaRCcUF3xgxio99uzKGJM574OCZ2JU2q0ojXMSanl
+ HdPT813l53w//XlrEZQAAAA==
+To: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Jonathan Cameron <jic23@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Trevor Gamblin <tgamblin@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On 12/16/24 6:40 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Currently, shallow_depth is used by bfq, kyber and mq-deadline, they both
+Add driver logic and documentation for the oversampling feature of the
+AD469x parts from Analog Devices. For now, this only works with offload
+support, and takes advantage of that mode's higher performance to make
+oversampling possible on multiple channels with varying sampling
+frequencies. Some significant rework of the driver had to be done in
+order to conditionally support this feature, including use of
+iio_scan_types to help determine the appropriate spi message
+configurations depending on oversampling ratio.
 
-both -> all
+A dilemma that came up during development of this feature was whether or
+not the implementation of oversampling ratios against sampling frequency
+was actually correct. More specifically, it's unclear if the sampling
+frequency attribute is supposed to be the conversion rate or the data
+read rate (according to the IIO subsystem). If it's the former, then
+this implementation is probably incorrect. David Lechner pointed out
+during review that it would be easier if it were defined as the
+conversion rate and that it was userspace's responsibility to handle
+oversampling ratio, but that might also require more work in the IIO
+subsystem. Two other ADC drivers that were referenced for inspiration
+when working through this were the ad7380 and the rtq6056. The ad7380
+has a global oversampling setting rather than per-channel, and the
+rtq6056 seems at least partially broken because it only takes
+oversampling ratio into account when getting the sampling frequency (but
+not when setting it). Instead of per-driver implementation, these three
+drivers might serve as inspiration for changes to how oversampling is
+handled in IIO?
 
-> pass in the value for the whole sbitmap, while sbitmap treats the value
+This series depends on David's recent SPI engine changes for adding
+offload support:
 
-treats for -> applies to
+https://lore.kernel.org/all/20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com/
 
-> for just one word. Which means, shallow_depth never work as expected,
+Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+---
+Trevor Gamblin (2):
+      iio: adc: ad4695: add offload-based oversampling support
+      doc: iio: ad4695: describe oversampling support
 
-work -> works
+ Documentation/iio/ad4695.rst |  36 ++++-
+ drivers/iio/adc/ad4695.c     | 378 +++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 383 insertions(+), 31 deletions(-)
+---
+base-commit: 0c6c3bf84f541fb4ec7097baf9eac10136f98c62
+change-id: 20241217-ad4695-oversampling-2946fbe3aff3
 
-> and there really is no such functional tests to covert it.
+Best regards,
+-- 
+Trevor Gamblin <tgamblin@baylibre.com>
 
-is ... tests -> is ... test or are ... tests
-
-covert -> cover
-
-> Consider that callers doesn't know which word will be used, and it's
-
-Consider -> Considering
-doesn't -> don't
-
-> diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-> index 189140bf11fc..92e77bc13cf6 100644
-> --- a/include/linux/sbitmap.h
-> +++ b/include/linux/sbitmap.h
-> @@ -213,12 +213,12 @@ int sbitmap_get(struct sbitmap *sb);
->    * sbitmap_get_shallow() - Try to allocate a free bit from a &struct sbitmap,
->    * limiting the depth used from each word.
->    * @sb: Bitmap to allocate from.
-> - * @shallow_depth: The maximum number of bits to allocate from a single word.
-> + * @shallow_depth: The maximum number of bits to allocate from the bitmap.
->    *
->    * This rather specific operation allows for having multiple users with
->    * different allocation limits. E.g., there can be a high-priority class that
->    * uses sbitmap_get() and a low-priority class that uses sbitmap_get_shallow()
-> - * with a @shallow_depth of (1 << (@sb->shift - 1)). Then, the low-priority
-> + * with a @shallow_depth of (sb->depth << 1). Then, the low-priority
-
-(sb->depth << 1) -> (sb->depth >> 1)
-
-> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-> index d3412984170c..6b8b909614a5 100644
-> --- a/lib/sbitmap.c
-> +++ b/lib/sbitmap.c
-> @@ -208,8 +208,27 @@ static int sbitmap_find_bit_in_word(struct sbitmap_word *map,
->   	return nr;
->   }
->   
-> +static unsigned int __map_depth_with_shallow(const struct sbitmap *sb,
-> +					     int index,
-> +					     unsigned int shallow_depth)
-> +{
-> +	unsigned int pre_word_bits = 0;
-> +
-> +	if (shallow_depth >= sb->depth)
-> +		return __map_depth(sb, index);
-> +
-> +	if (index > 0)
-> +		pre_word_bits += (index - 1) << sb->shift;
-
-Why "index - 1" instead of "index"?
-
-> +
-> +	if (shallow_depth <= pre_word_bits)
-> +		return 0;
-> +
-> +	return min_t(unsigned int, __map_depth(sb, index),
-> +				   shallow_depth - pre_word_bits);
-> +}
-
-How about renaming pre_word_bits into lower_bound?
-
-Otherwise this patch looks good to me.
-
-Thanks,
-
-Bart.
 
