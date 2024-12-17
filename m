@@ -1,107 +1,118 @@
-Return-Path: <linux-kernel+bounces-449950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF799F5898
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:18:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5374E9F5899
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:18:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5270017040F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6481170B0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCDA1F9432;
-	Tue, 17 Dec 2024 21:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F7C1FA14A;
+	Tue, 17 Dec 2024 21:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UAdrKaHI"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QltKi+N2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3131D192D69;
-	Tue, 17 Dec 2024 21:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3CA1F9F6F
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734470229; cv=none; b=aS66kX6F/qgax/w0ST44uzvprp0WOdtP7vBieNChRzOGiCrLYizl0tG+gxnN+h8o3ny3peGxBdNDwPzdnfFs7VHXDvJJPxaBjMIrPQDlMLs6ibaMr82ogvxEIt/Kwt3ezKhmEZze0cYM8WrdmbYbPsp4KyjL3IgUS11+4UZ+FDk=
+	t=1734470232; cv=none; b=mjm+H9aCh5cjWoWqTPA7y6PJsv5otU9Gf/9Z83ISEXYQBERlP4gMs4j3ChzSMlEBcJyadr24LLdsa7OVMRqt4oJvWzAfBzu1FwtbrKwbeh3JriLooQoRy4jgp3/PISBDHdt5Uo3fl0E9hcABn4ERibLl8eaTMz0dvG8osFMhqG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734470229; c=relaxed/simple;
-	bh=rRuqQWHCRh/L2HMMYesVvKdsrU626UbHdu7OsM0npT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qQCZXiRHNXhr7gMASsJJ2ofnOYom62vJYCLdj6mq6DcYM+0/ilu2BIYPO9BRPfJ45n+QijgwF9497i+O7PM8pTUxf3kUudInpn75sj76cXCFhmIXrE5nUOmcHx6oVNlJ/nZR+orevGVQencv+lZNFNwsmE719h++IAZQAoZC2XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UAdrKaHI; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4BHLGjoD058263
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 17 Dec 2024 15:16:45 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1734470205;
-	bh=AWyN1W0khLp3wZTvJXUm8eER3uSe9m0A8SxumxnNAy4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=UAdrKaHIfVGFiAAUxjV/c2RbMiQHaR6oYUdHwiwzvDuu19jV5BrfW0uSpx/DonQpn
-	 9xy5UtnTGEF6xV9e/Kj9LXOWPjdfpRG+ImJW7M8ok/VxiJhD9RKHYZvqIqlmEs48VT
-	 qyDbjTBXT/+hs/n8Ot1ybOoGWDuUsUzP+UWWMfsc=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BHLGjL5005367
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 17 Dec 2024 15:16:45 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
- Dec 2024 15:16:45 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 17 Dec 2024 15:16:44 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BHLGit0127738;
-	Tue, 17 Dec 2024 15:16:44 -0600
-Message-ID: <2fdf8fd0-b764-4720-8f7b-71b5d63d2541@ti.com>
-Date: Tue, 17 Dec 2024 15:16:44 -0600
+	s=arc-20240116; t=1734470232; c=relaxed/simple;
+	bh=XQqcSXCS7+3yXeFhYE/LHLIlCgVev1+/ITPt3X/ZZ0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u012NiAannVfggu73ayW4NtvvL3mUVQ5omg2kSiCRxZrso+ebC7cTn4slmcPzXi4edV5Y16O8t6DRRbkbPbUwB2vLTdysbL1LDI+l5Ekua1WFPuGL1AlgZ2Igo/wxgFm8Mc8MwcKq1Hums/zZSpkeGEjiuw3E1vqYKbR/GWBYLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QltKi+N2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734470229;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PORQUlxGEfR5cpiw3XNjF5GcFo76IHLBJiTCdzbzG9A=;
+	b=QltKi+N2AOEts6L9huF5blf2Ruhjd/upV2OKUfQVQDcPCxkd2Bfq1QeTNAGLYVVJceWemw
+	diUO+/uarRKV9+ULsx609SnbkqNq0OqnCHIFIiFKgxQL45zOmQiq/JJx7tEikEJdU25QBb
+	PAEYdq4BO7KEULJDOt5lFSL5eeltmmI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-442-SC-GqNSmPEexydsu2nAyJg-1; Tue,
+ 17 Dec 2024 16:17:08 -0500
+X-MC-Unique: SC-GqNSmPEexydsu2nAyJg-1
+X-Mimecast-MFC-AGG-ID: SC-GqNSmPEexydsu2nAyJg
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29EDD1955F66;
+	Tue, 17 Dec 2024 21:17:06 +0000 (UTC)
+Received: from antares.redhat.com (unknown [10.39.194.221])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1B00419560A2;
+	Tue, 17 Dec 2024 21:17:00 +0000 (UTC)
+From: Adrian Moreno <amorenoz@redhat.com>
+To: linux-kselftest@vger.kernel.org
+Cc: Adrian Moreno <amorenoz@redhat.com>,
+	Pravin B Shelar <pshelar@ovn.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Aaron Conole <aconole@redhat.com>,
+	netdev@vger.kernel.org,
+	dev@openvswitch.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] selftests: openvswitch: fix tcpdump execution
+Date: Tue, 17 Dec 2024 22:16:51 +0100
+Message-ID: <20241217211652.483016-1-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] regulator: tps65219: Update driver name
-To: Mark Brown <broonie@kernel.org>, Shree Ramamoorthy <s-ramamoorthy@ti.com>
-CC: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
-        <rogerq@kernel.org>, <tony@atomide.com>, <lgirdwood@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <m-leonard@ti.com>, <praneeth@ti.com>
-References: <20241217204526.1010989-1-s-ramamoorthy@ti.com>
- <20241217204526.1010989-3-s-ramamoorthy@ti.com>
- <23dd1912-31cf-4e99-8fb0-0fbd68eee8e2@sirena.org.uk>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <23dd1912-31cf-4e99-8fb0-0fbd68eee8e2@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 12/17/24 3:01 PM, Mark Brown wrote:
-> On Tue, Dec 17, 2024 at 02:45:24PM -0600, Shree Ramamoorthy wrote:
-> 
->> Follow the same naming convention in tps6594-regulator.c with
->> tpsxxx-regulator instead of tpsxxx-pmic.
-> 
->>   static struct platform_driver tps65219_regulator_driver = {
->>   	.driver = {
->> -		.name = "tps65219-pmic",
->> +		.name = "tps65219-regulator",
->>   		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-> 
-> This isn't just a naming convention thing AFACIT, the MFD registers the
-> new name so the driver wouldn't previously have loaded.  How did this
-> ever work?
+Fix the way tcpdump is executed by:
+- Using the right variable for the namespace. Currently the use of the
+  empty "ns" makes the command fail.
+- Waiting until it starts to capture to ensure the interesting traffic
+  is caught on slow systems.
+- Using line-buffered output to ensure logs are available when the test
+  is paused with "-p". Otherwise the last chunk of data might only be
+  written when tcpdump is killed.
 
-It matches based on the platform device .id_table[0] which does have
-"tps65219-regulator" listed, the driver .name itself is only used
-as a last fallback when there is no .id_table.
+Fixes: 74cc26f416b9 ("selftests: openvswitch: add interface support")
+Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+---
+ tools/testing/selftests/net/openvswitch/openvswitch.sh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/base/platform.c#n1352
+diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/tools/testing/selftests/net/openvswitch/openvswitch.sh
+index cc0bfae2bafa..960e1ab4dd04 100755
+--- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
++++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
+@@ -171,8 +171,10 @@ ovs_add_netns_and_veths () {
+ 		ovs_add_if "$1" "$2" "$4" -u || return 1
+ 	fi
+ 
+-	[ $TRACING -eq 1 ] && ovs_netns_spawn_daemon "$1" "$ns" \
+-			tcpdump -i any -s 65535
++	if [ $TRACING -eq 1 ]; then
++		ovs_netns_spawn_daemon "$1" "$3" tcpdump -l -i any -s 6553
++		ovs_wait grep -q "listening on any" ${ovs_dir}/stderr
++	fi
+ 
+ 	return 0
+ }
+-- 
+2.47.1
 
-Andrew
 
