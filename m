@@ -1,158 +1,357 @@
-Return-Path: <linux-kernel+bounces-448523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFC09F4141
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54EDD9F412D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5879188B36A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:34:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94785188AF07
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D691147C91;
-	Tue, 17 Dec 2024 03:34:12 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2100.outbound.protection.partner.outlook.cn [139.219.17.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCEE145335;
+	Tue, 17 Dec 2024 03:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBDmBqNY"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EC42BCF5;
-	Tue, 17 Dec 2024 03:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.100
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734406451; cv=fail; b=AYn0xY2e47Z1XCb5dfIyfaCjBvSuOkctO19grxRpX7BBVoPt5BDV01sNUmp16rIcRlrGxD4WXAXV4TtK40MTFAy1vG/J5HLRYLeHANDw2KWNE41VYVlztD/Jo1BdPjfF9G2kCxMCofOMl3JZxdCQh/x+ZLtXwOi7uznk5bofEIY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734406451; c=relaxed/simple;
-	bh=GjlAAGzzSGWSQoNDq5FLmqPdfUsf3xC/tQcck9NiKvU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hME5YoMQw49t8A9Aef6mWhMMEU2LwAr9aXZN1/jfF0ecNnuo0HEgbxgC7fPkmq04IXIfihzonRsegWmTT4cv8XykN982gKiuokc3eNLIoZes3PSG307XrRZ4Z+wePk5ORXhWiMy7AN7FIXnDv70IWsOEF+fa5vsGpR0Rh7UO6bI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dezFEIWK21P4vfzFAjjPo+yHqy6jAvMIfHKeKqXVUO/vLWjuxB/1NOlbNlCISrekVX2q40LnPh8RxmLgbG7ricd956L6K50hUsDI5g82Urm85lL1BQ5DY2atvj70R0k3VYocKWNTxI2cBuUD6CmM4oCRYIh2YDTl8qmKXuuxkUsBtzrZNpVLx7fa5sb4omgqDf8gHUNr9SW++K+9SkUiQkMLVydiveoV0//1ff8AvJ1/BDW88CjfEwwXCHzvRKc1pjTtIXriIYTX2Q+iR5UYmc+l0KicZBBQ+kISYsxgDI+S3Nkq+49HPMvzpm2FNSKbcTazk29c0CBCykV955DkYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GjlAAGzzSGWSQoNDq5FLmqPdfUsf3xC/tQcck9NiKvU=;
- b=g000BkUHq0y7B7S4EiwZ6rDNNalU6nmur6qV1zs45S9wZ/ogBmJQ+GjhnTuXAv9vezv1p1c2C11GDPb9EquR4wKvnx7xjwLCqum4ny8YMUYl2MtqHlyrxcSXhelwJV39mmjFhiXYSdt/REkn7GI7SnJcjhrtnR9fnb1iK+Cc/TnY9mQkONYrt2Km4Lc1NYxCHKQA71idypRKKOohmF2G6Z8SMnFbJf1E0QGUJIfBFEQKYqIaJbfsBJ7zipoUF5slreGfmRFW4MBocEI/pUqn36mulu7xD2W3hmhzu8eXByJcv9CD2725HrgAgu4v+EkRVUDP/CqEdHpb4RBdeFDazg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14) by ZQ2PR01MB1163.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Tue, 17 Dec
- 2024 02:02:04 +0000
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7%7]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
- 02:02:04 +0000
-From: Hal Feng <hal.feng@starfivetech.com>
-To: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Jianlong Huang
-	<jianlong.huang@starfivetech.com>, E Shattow <e@freeshell.de>, Jisheng Zhang
-	<jszhang@kernel.org>
-CC: Conor Dooley <conor.dooley@microchip.com>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Emil Renner
- Berthing <emil.renner.berthing@canonical.com>
-Subject: RE: [PATCH] riscv: dts: starfive: jh7110-common: Use named definition
- for mmc1 card detect
-Thread-Topic: [PATCH] riscv: dts: starfive: jh7110-common: Use named
- definition for mmc1 card detect
-Thread-Index: AQHbT/cItPZg0BYxikqmhcJqnrbnzLLpqmPA
-Date: Tue, 17 Dec 2024 02:02:04 +0000
-Message-ID:
- <ZQ2PR01MB1307F1FC7EEB8701525AC9DEE604A@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-References: <20241210040652.164030-1-e@freeshell.de>
- <20241216-elixir-cupped-f7a83bce4e12@spud>
-In-Reply-To: <20241216-elixir-cupped-f7a83bce4e12@spud>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1163:EE_
-x-ms-office365-filtering-correlation-id: ef55491c-dba9-4c0d-d1d9-08dd1e3ecda3
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|41320700013|366016|38070700018|921020;
-x-microsoft-antispam-message-info:
- KjvX5tuOpz8qu3vCBtMOdy3Gu6/67rRtVVqZb3vFMwsoULqxOwrG72zvfDQMfMXJyawYn4tnOclMJ2Z9bWYiNlktPxTp8LbgWt3FBOH+LNju4nmFrAoQYIwRL7H81T4+Dxb7jq6E/NLM4CHwjIeQSomcv4+tjWhG+K9lrXmj7h0ZW/4MSGGfyi4D19DkUKFu9srBJHGigKRldI5MDm5sJJFdKo6M4IqTNrv53N6ftANFOWysnf/vL47OmQ8mlHJ3eNUqqKjK5jo695gNmtuWyAqw1RDW+DeRoLBSzK6U0eNflTD3Jx+Kq2dPNOcyCvpg4K4QTOa+HE4VcOa0MDhMpyeia8uoM8gXnYUlf3dLiNVv9eKD1AFCwO6yjGwfGvKQL+0THBIYZKODBhuvLFSAgrMMK73HvdgTEXXTu1vZcO+MeZC8KH0qVMGLMfAypfFflUKCr9rlfNU7QHS6obrJi3mMe6CFHtb0xl4Kt8CbuxkKCdYjd3bIJgDuEKEFyW893zHGKn5DZl6tWdoqNmYm8ecigZTzqltZGnbJYK3CwI/ibqrBwQRX1iA6h5FHFzkA5p3T/wannwk/tFL8wnPgzq2VCi9aKK6QlhRybNgiCgg=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(41320700013)(366016)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VGZKUnZpMTVPdGZqVDVrby8zMjI3V3E1MTFnZU0xbGxDOCs1VGE3TUpSSC9D?=
- =?utf-8?B?UUF1clNORDZQWS9FWGlNMnJRYkEzRXdDZ3VwUGI2WTd5QTdvN3NCemw2bXpw?=
- =?utf-8?B?L2EwcDJ4b2JtaExEVGR5a3ZuRjl5RlpLSE5yRCt4ZlJwcGx0WExlNmVMQTFX?=
- =?utf-8?B?WmpxUmJFTHQ3dlQ4VkRZSUhOeFBITVdwQ0x3R3ZRK2pjbk4rL0d1OUtpdXNJ?=
- =?utf-8?B?bjdJY2l4RFVPd01seE9salNTbks5b1RZU0Q2bDRkVmdpWlVIV1k0N3NRbTdL?=
- =?utf-8?B?N3dFaG9GK1JlWG5QYVhaZjd0R1NhMkkzRGl2dlQ0eVlRTW5FdThRbmtNamlJ?=
- =?utf-8?B?dWtxSkJpNzU4bjF6SjBCUkpmeE5iOFR4TDRUWkdxc1NXcExBUndvaGVHQjdn?=
- =?utf-8?B?NEJkdWxrVk9yZTk0SmsveFZhdFd3OVFZWmIwKzBNOVNPUHVYNjc3amc3MGlF?=
- =?utf-8?B?ZDNZd0hlazZ5YloyamNlY09hVjVIOVFUakhwMko2YkpJR3NCaGYvVnNsYTJK?=
- =?utf-8?B?ODg5WVA4T2F2UzlncjhiU3pBak4zNmlQNndLSzRRcDRWeGlWQXIrYlM2bW53?=
- =?utf-8?B?M2hDTkFrTWlDeVJ2bnRrV0VsRW5aQjgvdWNDWFlSYjF1ODh4OG1tVGZ6WkVD?=
- =?utf-8?B?bmoyRUpmdkIwSWZZTzU4ZU0wQVhUbHZxNmRZQ01teFNkaXExajhpQlkxVTc1?=
- =?utf-8?B?OUFYTEpKb3lOMjBuRXl1NHU2aitVWU1kNjZSWURFckxPeWc5UFRUSlZZa2hE?=
- =?utf-8?B?KzhMWmhXaFNnK01OV1RkZUVndlZhU1FiaFdrOURwZmNobk9MSUlwd01SMThQ?=
- =?utf-8?B?V2J3NEEvK1dBRDN1dlgyd25HeWJRNGcxZEJvQnZXSG1Ed0lhM2NKOCtSUHpO?=
- =?utf-8?B?TUZkM2h1S2tDaUdLTndGN2lBS3MwbjZuS01ZZ3QyV1RReHM4YUNTejQrSzBt?=
- =?utf-8?B?T0lIRFgybm5ESFNOYWppUVdtWEZJOVZ2ZUVCYnptUFk2eGhwNHB4SU43TTNn?=
- =?utf-8?B?d3R3K0FzdGRHOWJKWVRWalVSaXJteW84eWF0NWxMcUl0MGpwajRvdXpHTVIy?=
- =?utf-8?B?ZWxNNmZTTmJJczNBVDNqTUkwZnlPckxJcHRydGNLMHpiUzQxZEFrVElyTlVv?=
- =?utf-8?B?WUd3blVCQlk0S3dEQlNRSnVpOTI2azluYUlIZlNsWTZyZldKUFdwdWpSaHhK?=
- =?utf-8?B?NmdoODFyTkVoN2w2eGZMRnVXTnFSSGkxaFJjdXJtcXhxMWpIczFmVzJOSFFU?=
- =?utf-8?B?VktJRVJXaHplY1l4WFZRZTM5Q0YxcGpIYlM2WnZHWmxVbWE1OVptK3FrR29N?=
- =?utf-8?B?VnpPcFZ2SWVEZTQrcHUwV0ZxdTIvVVVSWlNOVitORGRCRVhuejFZUk9LcTIz?=
- =?utf-8?B?MDNUWThiYStuOFZsYkF2WFJQL3FCZkovQjZ4NkE4OWdnUUZJeVZ3NEhYZ1R4?=
- =?utf-8?B?QlBZWExadGFZSlF6b3p6SzVocmNRZlM0Zm9LbVhCN0tBVEYxVzl6YlozUjkz?=
- =?utf-8?B?RzJ4QkFmRW9rUXArRi9KRnFVOW1GVHRMZCt5QTN5bDJVa3BKWVo1Zlpwc2pn?=
- =?utf-8?B?TS9VSDZkKytzeHRDMHRwVnZ5RjF0Y21NOWpxUG5QS0dEWmRJSmtrbElsNkQy?=
- =?utf-8?B?SFJUT0lQd0tGUTdtc2hwOFVvRkcyTDY4cDIwekI1bnhTYTRNVkR3M0hVL0h2?=
- =?utf-8?B?Q09ma1NjQ2lncTdtYklVVGczSkV5T3paOHZWbnJzUWVRM0dXWDg0YWhrRkYw?=
- =?utf-8?B?WXBYbDZ5WVh4V2t0dHhHZDdteWlGd2Q4VEU3NkF6K0pIcmI4VlVZZlBmcEVH?=
- =?utf-8?B?SEplUGZITUgvNlc3dXBua1VwbEJ5OTRSNWF0M1kvNE4vUFNLQ0M4WHRFSmdZ?=
- =?utf-8?B?d0VacEVDa0wrN0ZDMFBlRmcvaUFzeFp4VUQwMVVIb3NtTFZTQ1hvRHRicGtS?=
- =?utf-8?B?ZkFsbVpnb0RKaGpUMmtTMnhYdmZLaDBFUU94L09XaGQwenYwdncvTkdFeGFB?=
- =?utf-8?B?SjlKOXFzaUpvcGdVSUpmVVRmUFAxbnpVNFhWM0lKOWpRejJPeU9VN09CZVN6?=
- =?utf-8?B?MTRPZ3VKS0g5bzkxYzU3R2hXdjFEb3U4YjhQdTZlNnlwTnFxR1VEMWNMWXJl?=
- =?utf-8?Q?5EyJlTO7hl88jFmFRcyWEXxap?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F27B182CD;
+	Tue, 17 Dec 2024 03:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734405363; cv=none; b=s/dCOJRTQJZ9PsAkL+95CFJkdW8jPsyPB4apK3v1JVH5VFPb1BK1VPfXqsEf+OgArC7CUEWJ8wCv+bPlMfGAmnPmk8+lK0PBo97V5uquJCdrgT+D1qOrrlbVmzenji17esvs885Yp0oQfbBd791secq80HERhxYbHlInSba4iGI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734405363; c=relaxed/simple;
+	bh=eSRcpHm69MKKFSD0FM6k6Y/jBE7bXgw9nkqltvgqD6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F1icJ5UmweHTByYyo7lfG3lMNwcCXz1+StX9rSUO5W1qwnilTa58pr/83avArO8G6Lb1+8gLSH5t98No1osUUWc1mjIFZjsQKmF76w0eBQlbGmwFta+kC0c0SvzDdxRT8UFS22Ret42opJRgeBZn871cABOvZXBEa5+8UmMYtzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBDmBqNY; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-303489e8775so26277391fa.3;
+        Mon, 16 Dec 2024 19:16:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734405358; x=1735010158; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ek0BUeoz9KKImBp4+0OJ6FTIElZBmqTJgwSOKMqpYcU=;
+        b=jBDmBqNYU65ksy49Dl/+ypyCEPJKi6Kp/qjzlYxyJvIet0JzELXmKKod1p+o9AR8AL
+         jOqmR72xlxmFidRULDQPqgRPPohrd5ZIYKaRJZrz1rDHoYyalX3085BDsyJ3JFepVoQk
+         IhgRcpXJNRnZbRMDgBZyY2JWDTt13OFqDULhO2zzWHflhuO+vE6n3ML0T9qO9MK/OFrt
+         gblpsEm3ruR0usTgg2F5yocB9QOftjKQs9wvNrU4DU6gQLgrPv0I+TsDODqhuAn35Gzs
+         4+fUD41G6/2UGLlPOOW+Catq6Fd8aZhIKHJn9N7YIE3dUxFL+kxLcQf0GlrtPNnsgHX5
+         oo6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734405358; x=1735010158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ek0BUeoz9KKImBp4+0OJ6FTIElZBmqTJgwSOKMqpYcU=;
+        b=jjSR0CH5G5JfdwD+r4hNZsIiPeAIa3MmRbAgeT7qA2tU7S3HFyIAFqEuP75TqYMrRh
+         TAhwPZTXXWHB9/rKv6ncuE/8BagptJEZ1PxdhhNpZPt5WPDdQ+et2snFg9tu4cmq3rSO
+         qzrCLxDYqFz5aZZ/gOJkACnAIEOqe8xBAw/hH70iu/ykyklRukOsv5fyEKMYKFqiQyEs
+         65f5ChwEWllREhkdHVWea8fj5jeBGFog9uHGYy4fzdQsEwhmtlZgtEpGHNNfEpaZ0hBS
+         veCpxhIarjyZJj8ffEGMWIPP4accEh4zQgZxS5tUc/LHpDfmtmGU6rLGTHQtv3lEC4f0
+         pzyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQk5ZH8Zk2kWbyAJ2OytwnsFX9Kxq0mmS56XT6AH4ffZLc7dYXXJLjlOI8Ww9iIRHPImPUSp81DzhjeBdE@vger.kernel.org, AJvYcCX8S5jJkx+LE5p2tFIbbvlEa+mOgnOSotWrqhK9cYaVwHxl0dTR7l6TwMqa5RI085OCnKunSu+Sfyjz64u+aDQ=@vger.kernel.org, AJvYcCXGUsy5gyMhyxGeBx5trEcBCQarkhyG95+hc7SNu0qyl3Q6DNQopP/qMsBzte3e6NfZNB6Bl5/S@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwqrKCGKKHLh45tUmjRlkHZqvxX08NDxY+mIZFx6gWn7rcuCfx
+	LkXUco2/Y2u5zGG3vSIibt+nXuFPFdZNZnN+IX7wAFqugSw/tllKD65hdWTh31BEIpjS8Lg8oHo
+	v+0g3dopEafhiFvB+vNpZnhndK3U=
+X-Gm-Gg: ASbGncv1Qw0YiC/6c7ORZWRM50G2o3EJ/TMZE0QU6JEuxOFT8kKgOtpO2ik7WuZPdEs
+	88VZvGcLwcZa75Kin7vn36mj+3WAmEPW8arNUceM=
+X-Google-Smtp-Source: AGHT+IGBI2eiHe1xauNXuOrvtUOCDdglVJvOd736H8nBHkg5e1lGanGQKA9/FcfdAawrxdgo3wHCsrWRmFNWtb0NZxk=
+X-Received: by 2002:a05:651c:b29:b0:300:3a15:8f26 with SMTP id
+ 38308e7fff4ca-3025447e328mr49690201fa.0.1734405358076; Mon, 16 Dec 2024
+ 19:15:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef55491c-dba9-4c0d-d1d9-08dd1e3ecda3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2024 02:02:04.2721
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QnzSBKsX2AGfNYd7x2fMdm6pSugQ1CwwOnftV4PYdifp1mdVXVeyzxtUSTLjI4VVZKibmFgyqBlQ5NP3Q5Lj6vpzYXWvJ84WubqLUH7bZ8Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1163
+References: <20241216080758.3450976-1-quic_chejiang@quicinc.com>
+ <CABBYNZLRdu_f9eNEapPp5mNqgcUE0jby5VPpaMaArY_FjyjB8Q@mail.gmail.com>
+ <CABBYNZKPu20vHx3DMGXVobR_5t-WUgt-KX41+tA1Lrz+aDFY-Q@mail.gmail.com> <bb9505d6-e8ae-47dc-a1e0-6d1974dc12ac@quicinc.com>
+In-Reply-To: <bb9505d6-e8ae-47dc-a1e0-6d1974dc12ac@quicinc.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 16 Dec 2024 22:15:45 -0500
+Message-ID: <CABBYNZJuic=HfeF1-ybuKELCOEOYk9OWtvqXC4vyrnnZLUp7RQ@mail.gmail.com>
+Subject: Re: [PATCH v1] Bluetooth: hci_sync: Fix disconnect complete event
+ timeout issue
+To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_jiaymao@quicinc.com, 
+	quic_shuaz@quicinc.com, quic_zijuhu@quicinc.com, quic_mohamull@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiBPbiAxNy4xMi4yNCAwNDoxMywgQ29ub3IgRG9vbGV5IHdyb3RlOiANCj4gT24gTW9uLCAwOSBE
-ZWMgMjAyNCAyMDowNjo0NiAtMDgwMCwgRSBTaGF0dG93IHdyb3RlOg0KPiA+IFVzZSBuYW1lZCBk
-ZWZpbml0aW9uIGZvciBtbWMxIGNhcmQgZGV0ZWN0IEdQSU8gaW5zdGVhZCBvZiBudW1lcmljIGxp
-dGVyYWwuDQo+ID4NCj4gPg0KPiANCj4gQXBwbGllZCB0byByaXNjdi1kdC1mb3ItbmV4dCwgdGhh
-bmtzIQ0KPiANCj4gWzEvMV0gcmlzY3Y6IGR0czogc3RhcmZpdmU6IGpoNzExMC1jb21tb246IFVz
-ZSBuYW1lZCBkZWZpbml0aW9uIGZvciBtbWMxDQo+IGNhcmQgZGV0ZWN0DQo+ICAgICAgIGh0dHBz
-Oi8vZ2l0Lmtlcm5lbC5vcmcvY29ub3IvYy9jOTZmMTVkNzkxNzINCg0KTm8sIGhlcmUgIjQxIiBt
-ZWFucyB0aGUgR1BJTyBudW1iZXIsIGJ1dCBHUElfU1lTX1NESU8xX0NEIG1lYW5zIHRoZQ0KbXVs
-dGlwbGV4ZWQgZnVuY3Rpb24gYW5kIHNob3VsZCBiZSB1c2VkIGJ5IHBpbmN0cmwgcGlubXV4IG5v
-dCBncGlvIHN1YnN5c3RlbS4NCkFsdGhvdWdoIEdQSS1TWVNfU0RJTzFfQ0QgaXMgbnVtZXJpY2Fs
-bHkgdGhlIHNhbWUgYXMgNDEuDQoNCkJlc3QgcmVnYXJkcywNCkhhbA0K
+Hi Cheng,
+
+On Mon, Dec 16, 2024 at 9:49=E2=80=AFPM Cheng Jiang (IOE)
+<quic_chejiang@quicinc.com> wrote:
+>
+> Hi Luiz,
+>
+> On 12/16/2024 10:42 PM, Luiz Augusto von Dentz wrote:
+> > Hi Cheng,
+> >
+> > On Mon, Dec 16, 2024 at 9:32=E2=80=AFAM Luiz Augusto von Dentz
+> > <luiz.dentz@gmail.com> wrote:
+> >>
+> >> Hi Cheng,
+> >>
+> >> On Mon, Dec 16, 2024 at 3:08=E2=80=AFAM Cheng Jiang <quic_chejiang@qui=
+cinc.com> wrote:
+> >>>
+> >>> Sometimes, the remote device doesn't acknowledge the LL_TERMINATE_IND
+> >>> in time, requiring the controller to wait for the supervision timeout=
+,
+> >>> which may exceed 2 seconds. In the current implementation, the
+> >>> HCI_EV_DISCONN_COMPLETE event is ignored if it arrives late, since
+> >>> the hci_abort_conn_sync has cleaned up the connection after 2 seconds=
+.
+> >>> This causes the mgmt to get stuck, resulting in bluetoothd waiting
+> >>> indefinitely for the mgmt response to the disconnect. To recover,
+> >>> restarting bluetoothd is necessary.
+> >>>
+> >>> bluetoothctl log like this:
+> >>> [Designer Mouse]# disconnect D9:B5:6C:F2:51:91
+> >>> Attempting to disconnect from D9:B5:6C:F2:51:91
+> >>> [Designer Mouse]#
+> >>> [Designer Mouse]# power off
+> >>> [Designer Mouse]#
+> >>> Failed to set power off: org.freedesktop.DBus.Error.NoReply.
+> >>>
+> >>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> >>> ---
+> >>>  include/net/bluetooth/hci_core.h |  2 ++
+> >>>  net/bluetooth/hci_conn.c         |  9 +++++++++
+> >>>  net/bluetooth/hci_event.c        |  9 +++++++++
+> >>>  net/bluetooth/hci_sync.c         | 18 ++++++++++++++++++
+> >>>  4 files changed, 38 insertions(+)
+> >>>
+> >>> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth=
+/hci_core.h
+> >>> index 734cd50cd..2ab079dcf 100644
+> >>> --- a/include/net/bluetooth/hci_core.h
+> >>> +++ b/include/net/bluetooth/hci_core.h
+> >>> @@ -753,6 +753,8 @@ struct hci_conn {
+> >>>
+> >>>         struct bt_codec codec;
+> >>>
+> >>> +       struct completion disc_ev_comp;
+> >>> +
+> >>>         void (*connect_cfm_cb)  (struct hci_conn *conn, u8 status);
+> >>>         void (*security_cfm_cb) (struct hci_conn *conn, u8 status);
+> >>>         void (*disconn_cfm_cb)  (struct hci_conn *conn, u8 reason);
+> >>> diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
+> >>> index d097e308a..e0244e191 100644
+> >>> --- a/net/bluetooth/hci_conn.c
+> >>> +++ b/net/bluetooth/hci_conn.c
+> >>> @@ -1028,6 +1028,15 @@ static struct hci_conn *__hci_conn_add(struct =
+hci_dev *hdev, int type, bdaddr_t
+> >>>
+> >>>         hci_conn_init_sysfs(conn);
+> >>>
+> >>> +       /* This disc_ev_comp is inited when we send a disconnect requ=
+est to
+> >>> +        * the remote device but fail to receive the disconnect compl=
+ete
+> >>> +        * event within the expected time (2 seconds). This occurs be=
+cause
+> >>> +        * the remote device doesn't ack the terminate indication, fo=
+rcing
+> >>> +        * the controller to wait for the supervision timeout.
+> >>> +        */
+> >>> +       init_completion(&conn->disc_ev_comp);
+> >>> +       complete(&conn->disc_ev_comp);
+> >>> +
+> >>>         return conn;
+> >>>  }
+> >>>
+> >>> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> >>> index 2cc7a9306..60ecb2b18 100644
+> >>> --- a/net/bluetooth/hci_event.c
+> >>> +++ b/net/bluetooth/hci_event.c
+> >>> @@ -3366,6 +3366,15 @@ static void hci_disconn_complete_evt(struct hc=
+i_dev *hdev, void *data,
+> >>>         if (!conn)
+> >>>                 goto unlock;
+> >>>
+> >>> +       /* Wake up disc_ev_comp here is ok. Since we hold the hdev lo=
+ck
+> >>> +        * hci_abort_conn_sync will wait hdev lock release to continu=
+e.
+> >>> +        */
+> >>> +       if (!completion_done(&conn->disc_ev_comp)) {
+> >>> +               complete(&conn->disc_ev_comp);
+> >>> +               /* Add some delay for hci_abort_conn_sync to handle t=
+he complete */
+> >>> +               usleep_range(100, 1000);
+> >>> +       }
+> >>> +
+> >>>         if (ev->status) {
+> >>>                 mgmt_disconnect_failed(hdev, &conn->dst, conn->type,
+> >>>                                        conn->dst_type, ev->status);
+> >>> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+> >>> index 0badec712..783d04b57 100644
+> >>> --- a/net/bluetooth/hci_sync.c
+> >>> +++ b/net/bluetooth/hci_sync.c
+> >>> @@ -5590,6 +5590,24 @@ int hci_abort_conn_sync(struct hci_dev *hdev, =
+struct hci_conn *conn, u8 reason)
+> >>>                 break;
+> >>>         }
+> >>>
+> >>> +       /* Check whether the connection is successfully disconnected.
+> >>> +        * Sometimes the remote device doesn't acknowledge the
+> >>> +        * LL_TERMINATE_IND in time, requiring the controller to wait
+> >>> +        * for the supervision timeout, which may exceed 2 seconds. I=
+n
+> >>> +        * this case, we need to wait for the HCI_EV_DISCONN_COMPLETE
+> >>> +        * event before cleaning up the connection.
+> >>> +        */
+> >>> +       if (err =3D=3D -ETIMEDOUT) {
+> >>> +               u32 idle_delay =3D msecs_to_jiffies(10 * conn->le_sup=
+v_timeout);
+> >>> +
+> >>> +               reinit_completion(&conn->disc_ev_comp);
+> >>> +               if (!wait_for_completion_timeout(&conn->disc_ev_comp,=
+ idle_delay)) {
+> >>> +                       bt_dev_warn(hdev, "Failed to get complete");
+> >>> +                       mgmt_disconnect_failed(hdev, &conn->dst, conn=
+->type,
+> >>> +                                              conn->dst_type, conn->=
+abort_reason);
+> >>> +               }
+> >>> +       }
+> >>
+> >> Why don't we just set the supervision timeout as timeout then? If we
+> >> will have to wait for it anyway just change hci_disconnect_sync to use
+> >> 10 * conn->le_supv_timeout as timeout instead.
+> >>
+> hci_disconnect_sync uses __hci_cmd_sync_status_sk to wait for the
+> HCI_EV_DISCONN_COMPLETE event, which will send the command in hci_cmd_wor=
+k.
+> In hci_cmd_work, it will start a timer with HCI_CMD_TIMEOUT(2s) to wait
+> for the event. So even in hci_disconnect_sync we can set the timeout to
+> supervision timeout, hci_disconnect_sync still timeout after 2s.
+
+Wait, why are you talking about HCI_CMD_TIMEOUT when I told you to use
+the supervision timeout instead? If it still timeout after to 2
+seconds then there is something still forcing HCI_CMD_TIMEOUT which
+shouldn't happen.
+
+> >> That said, we really need to fix bluetoothd if it is not able to be
+> >> cleaned up if SET_POWERED command fails, but it looks like it is
+> >> handling errors correctly so it sounds like something else is at play.
+> >
+> The issue arises after a 2-second timeout of hci_disconnect_sync. During
+> hci_abort_conn_sync, the connection is cleaned up by hci_conn_failed.
+> after supervision timeout, the disconnect complete event arrives, but
+> it returns at line 3370 since the connection has already been removed.
+> As a result, bluetoothd does not send the mgmt event for MGMT_OP_DISCONNE=
+CT
+> to the application layer (bluetoothctl), causing bluetoothctl to get stuc=
+k
+> and unable to perform other mgmt commands.
+
+The command shall have completed regardless if disconnect complete has
+been received or not, the is the whole point of having a timeout, so
+this makes no sense to me, or you are not describing what is happening
+here. Also there is no MGMT_OP_DISCONNECT pending, it is
+MGMT_OP_SET_POWERED, if you are talking about the DISCONNECTED event
+that is a totally different thing and perhaps that is the source of
+the problem because if we do cleanup hci_conn even in case the command
+fails/times out then we should be generating a disconnected event as
+well.
+
+>
+> 3355 static void hci_disconn_complete_evt(struct hci_dev *hdev, void *dat=
+a,
+> 3356              struct sk_buff *skb)
+> 3357 {
+> 3358   struct hci_ev_disconn_complete *ev =3D data;
+> 3359   u8 reason;
+> 3360   struct hci_conn_params *params;
+> 3361   struct hci_conn *conn;
+> 3362   bool mgmt_connected;
+> 3363
+> 3364   bt_dev_dbg(hdev, "status 0x%2.2x", ev->status);
+> 3365
+> 3366   hci_dev_lock(hdev);
+> 3367
+> 3368   conn =3D hci_conn_hash_lookup_handle(hdev, __le16_to_cpu(ev->handl=
+e));
+> 3369   if (!conn)
+> 3370     goto unlock;
+> 3371
+> 3372   if (ev->status) {
+> 3373     mgmt_disconnect_failed(hdev, &conn->dst, conn->type,
+> 3374                conn->dst_type, ev->status);
+> 3375     goto unlock;
+> 3376   }
+> 3377
+> 3378   conn->state =3D BT_CLOSED;
+> 3379
+> 3380   mgmt_connected =3D test_and_clear_bit(HCI_CONN_MGMT_CONNECTED, &co=
+nn->flags);
+> 3381
+>
+> > I double checked this and apparently this could no longer fail:
+> >
+> > +               /* Disregard possible errors since hci_conn_del shall h=
+ave been
+> > +                * called even in case of errors had occurred since it =
+would
+> > +                * then cause hci_conn_failed to be called which calls
+> > +                * hci_conn_del internally.
+> > +                */
+> > +               hci_abort_conn_sync(hdev, conn, reason);
+> >
+> > So it will clean up the hci_conn no matter what is the timeout, so
+> > either you don't have this change or it is not working for some
+> > reason.
+> >
+> The issue is mgmt command is not repsonsed by bluetoothd, then the blueto=
+otlctl is
+> blocked. It does not happen during the power off stage. It happened when =
+disconnect
+> a BLE device, but the disconnect complete event sent from controller to h=
+ost 2s later.
+> Then it causes the mgmt in bluetoothctl is blocked as decribed as above.
+
+There is a difference about a MGMT command, initiated by bluetoothd,
+versus a MGMT event initiated by the kernel, so the daemon is not
+blocked it just don't get a disconnection event, which is different
+than a command complete.
+
+What is the command sequence that you use to reproduce the problem?
+
+> >>>         hci_dev_lock(hdev);
+> >>>
+> >>>         /* Check if the connection has been cleaned up concurrently *=
+/
+> >>>
+> >>> base-commit: e25c8d66f6786300b680866c0e0139981273feba
+> >>> --
+> >>> 2.34.1
+> >>>
+> >>
+> >>
+> >> --
+> >> Luiz Augusto von Dentz
+> >
+> >
+> >
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
