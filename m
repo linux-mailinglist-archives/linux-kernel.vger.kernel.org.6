@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-450043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECCF9F5A0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2024 00:01:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A539F5A0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2024 00:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC36170C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:00:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177D41894AFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126591F8AE6;
-	Tue, 17 Dec 2024 23:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB7B1F9415;
+	Tue, 17 Dec 2024 23:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCsdw82b"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DATmz7KC"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB94718B46E;
-	Tue, 17 Dec 2024 23:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406BB18B46E;
+	Tue, 17 Dec 2024 23:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734476445; cv=none; b=Z+0RSZeSPIms968KlDTnmQYqo7XR9rshiAOftCnn8kcJt76VQ/A1IC8De4DQzoUoNokYA/rJs5rI5FDZz31sKYUgJwcEf8xEccBqBle9l1ZGQQq2w1PRpIorg6fA98sZTaTUnSZ9HtlB0atjI2EBVHCFglIqZqR+Xim01FLi+Mw=
+	t=1734476469; cv=none; b=Go+xnuFI6hHcMypu2cUFK78Qrntuwm2To9KKEhtqPgTlJruxP39hXETrPia4yUm6On3jJdm6C1M0rr3Wmzetfwhj56TpCF18kwkLr14ofZHRAq+inb6fvrwXcs3++NVo732FBCfEVZRQaE6PF9cuHc7WenxkkfCm5g47xJoEI3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734476445; c=relaxed/simple;
-	bh=RawtYvaWz6lWliHs/9+GsdxwzXSxR9r3tQxnvTbR8cY=;
+	s=arc-20240116; t=1734476469; c=relaxed/simple;
+	bh=2gmBJwbnhf2ZNSTCF79SKc22fvs/vLTCAS8CYCrtr14=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j0ZcN76dbRQMXk1trZrkseGlCrIwQ9CIcK2xG2mBCJ6vQN/EmlOk3ublEn4Kh30q33PsD4DtZfYLgHbSJOzU2ZEPYyKL7PIPkdNuJ2RlO8Q+jBlqSQo0toZ/A0Sxq0bPJ9m3Hkvi5lW1v1sueW3JLGnMD0nFGs2Uj88IYgFTk6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCsdw82b; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version:Content-Type; b=MpubswME7US0Cd5cIiEVXmiI0Qw79ONSXnPcuTya4Z5uEoOCvDisAuMt7TS5ITKUpJ+mY5bIs+/nK2ScwdwO8bhoiKOtVMRaXO7eOsGHBvG9RM7SPsayBcaBy8+wBu8xdh3VWnvhjAf8s3hf78brAMaO/gltpkQ5+cDh2ELSd+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DATmz7KC; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aab6fa3e20eso843828466b.2;
-        Tue, 17 Dec 2024 15:00:43 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa69077b93fso873164066b.0;
+        Tue, 17 Dec 2024 15:01:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734476442; x=1735081242; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734476465; x=1735081265; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4XEz6rhnsFVB96wbkpW+lhU7b364boMylDpIEeHqrE4=;
-        b=SCsdw82bYjaIk6MRn9VG/hBpG067Ph/nD+szKQt1Q8gxVl4XbAz9snRYAfuKV42fpm
-         9VTx7DmmAQkv4FjMm1kIxmd8o88XtzkROz2Gl+/fWMXLD4TpXq9j/U6YZafjFX/9WCf1
-         JZ2cdxptMac7ajRUlT+o2R/SqMjjkIKh+gNYl/eV8PEsd3K5yTX3sxyJuAs64iECzkRY
-         kOx2c0c+Fa8Ujto3bd07UFbQuXO86zwsopQBJIkfMvFty4upG2VZlnSef0ZWqIqN68LG
-         he3uGH2B60TbOyOU+97lhH92e7IxViok52wlUlBhMk+g9hdy39fhTXWUpwov5izG9TOA
-         E52g==
+        bh=K2Q+5lZ93c/1180fBGK9dFi80vfh3bKphGjr5C1ObCA=;
+        b=DATmz7KCZwWl+YnfY5HDKS0d71QMTLUn6Hgv0yEmc8yte+Q8Ge8uLZFaUe2c6CmP2S
+         zumNH8jarLdJHJ4croHCgLzZmsejMeStcoQ5vsMhV2Hf9vWek0SeOoHuUmmS2jWW9ux/
+         kxoFxZD3/kkBR9qru5oYqg11c+eCQaZIvOayl6s5KnB7kqV2sg8W2jBv+qiNQ2M1AMBx
+         pFlcTabFq8KTORdKU+a4nhs61iJlORElvxSeqFLzfQmYTRLwjxk5KpzpLvGBA9Jrgq5U
+         26rHTUNgKQ4Rh62ScgbfCbTGWhX+oAdsYFpQn3LEb0xXWZQ79mdUgyGSwBPrKlQrTEHQ
+         GsEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734476442; x=1735081242;
+        d=1e100.net; s=20230601; t=1734476465; x=1735081265;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4XEz6rhnsFVB96wbkpW+lhU7b364boMylDpIEeHqrE4=;
-        b=YMCf6/K/tZlOtrONN2s+VAfpdkJEcqxUadIpEKO3qxQr3XoEqh5SzhadnYiR2wCLc5
-         vOrCP3UdJVAzY1byvnNfeydP7kY81vpbzvmL6udMHVC3+CLojkzX5mlWv2dg7RoTM+D1
-         L7VLhYAtYr1vN7tmYoJoAVwBfkGKReXc2AvcHE2KyZFIGbZltRpwELuBNo20N4Rc0HVl
-         uuhU84BaSEkK8YqjAsZn+U5fp+MGUUlgKndbe7Kjo9ZHoPhudCVCD25SX6InOEgszQ98
-         vmajpLEYbtL77CeUpko1dO6+Qjoqa/sP7JBFGHYsk8IuvF6Tmy1D3+c9XllrIC6b/rFQ
-         gb/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWH7274bivz7pvMcV46hvTRy+RNVyphVXRoBS9PnAwM+xS5ir0dmMgZnW2tMR6lUimOBBVblgNyMbfY@vger.kernel.org, AJvYcCWr5KYn8ZAO+2SHtxOKOuNhD7KJW1Hlu+dY2Gx/rf3S+NdquSo8a9+IPuq0u9smvkxVPIUQjyUIjiwOqK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfvmBwKqat8VxhHcTL/yGIpF571g4D5TVbaSyPWo/fhfPD5GeE
-	5H8R4MTtzAcny0PesWzqQvQxrwXrODc0q5c1F5ejpdIxgtX2G0vVxFQ7PQ==
-X-Gm-Gg: ASbGncutyz2LxBMK1tI+ssrA1Jhx/ENsihPoJtjlmGHl+J3ecRlSbr7QNmlmc3+92qs
-	jgI6sYEK2EpyBPt1P5ueLIaa0ocSGTLYZWjthf5BIySr5YeBxNowcSuduc9bc6dw8BvnpxcVn/o
-	26HOhMutjnYT86OUB+Z4xCosBgqFM6qdxk41fkYeYS/IEzuugwyOxsJfCxT4O7n2rEPhjGjsk2R
-	tStd0XbxHEvwEwijMNaW98Wbx8rTDSMkAGCuV697lS2WEOOoOIe/F3TDbgcsekmU6X5BO6z
-X-Google-Smtp-Source: AGHT+IFQX77wgpGspEiR873ojumfcvZFoep/771Bg+U3/cA+lXsvCwJn7F5mSufydfw/ldrxkhTLGg==
-X-Received: by 2002:a17:907:da8:b0:aa6:a228:afa9 with SMTP id a640c23a62f3a-aabf46fbf1emr45475166b.3.1734476441886;
-        Tue, 17 Dec 2024 15:00:41 -0800 (PST)
+        bh=K2Q+5lZ93c/1180fBGK9dFi80vfh3bKphGjr5C1ObCA=;
+        b=bH2o/eumzSi2/OPVoc2azkdnhRPlsXQnBY5HE8qFz0oN7L6TVL4zvluccWmN1+Xgmp
+         hqrd9eaQ/LJsPxMCOnonbBHHS7RpFq+5ZYJUaw9QZds94M+EICbUD4JNHWhH4itlA7A/
+         ROp6kUDWZi59C4BmvnqoKThNOJywZYCeepnv9igddTcimBZSq/WRmlrIhy7YgakbyBvp
+         AsM1wD2JNoJ2nvQ5/0BlX4n9kJKZ9kQDoHA1IfMrBwNm6NcRnkE3dQAG7WMXLiW3IkvV
+         wMEUqLU75Th4dG2R/Ne6DmewdEsovofyVE7Jg0KFZBasImRaaVa4TAsQy6ZOc2Oe4X1f
+         DEDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPBRtGrJmfSlaynQ+MivbVXZiOutLOch/HVOMq8oL9XkC1PkN8P+V70p11ERdndBKUpiu/xNO5Yq3iUY+b@vger.kernel.org, AJvYcCXSdDJw5Ve+y40U7lpp/U+K1DJQdSU8NYpXZUaOd/CTbAjIQSwwe+Fb+4OU0mUyVvLJmqhqQZGh7IZxMQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnz1UF7SjVAGcqoWOehGTva6+PjWc1kEzlc+THjBryCOOuedRU
+	XZcFqge67+NUZHih7+V+knmbyt6/Fnb3tTte7uyxnBe/GS/Faih0
+X-Gm-Gg: ASbGncuBkHAjEXFtl7nZwhPWVx/TZdYSG7pnNhH1KJwH9FTyWO+lOLt7Rz30UfRldwz
+	zYp2sqpfOxxpSgOoc68tg2v7JR2tCVXVS1VLxoj+Qd6SuOSpgOZvvoy/B5/40KoaEENDDVUWIkk
+	bePFyUjtZFp6VEZPczC/pLfu/P3xjK/ks05fOZj4taqYGtp2HSojppLnrMnxJX4dRzUd59xvagf
+	ltC3Tpa08I4BKKXMI7AlMldu4WV8hk8xy8R8Rqf1ESQIm1oqRcdshEPc1ou8jnwxjnd7K53
+X-Google-Smtp-Source: AGHT+IGDgT1XC/54LMv/yuGZqK7CHwcriAKun+hCdwFovWUgDOgR+DiY5cNn7w+69HSV/VlAf9rmcw==
+X-Received: by 2002:a17:907:2d12:b0:aa6:8d51:8fe2 with SMTP id a640c23a62f3a-aabf48f9900mr33660766b.42.1734476465330;
+        Tue, 17 Dec 2024 15:01:05 -0800 (PST)
 Received: from localhost (dh207-43-57.xnet.hr. [88.207.43.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab9c3eb5e0sm468944766b.44.2024.12.17.15.00.41
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab960065f2sm494726366b.29.2024.12.17.15.01.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 15:00:41 -0800 (PST)
+        Tue, 17 Dec 2024 15:01:04 -0800 (PST)
 From: Mirsad Todorovac <mtodorovac69@gmail.com>
 To: Alex Deucher <alexander.deucher@amd.com>,
 	Victor Skvortsov <victor.skvortsov@amd.com>,
@@ -81,14 +81,13 @@ Cc: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
 	Mirsad Todorovac <mtodorovac69@gmail.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Dave Chinner <dchinner@redhat.com>,
-	linux-xfs@vger.kernel.org
-Subject: [PATCH v1 2/3] xfs/libxfs: replace kmalloc() and memcpy() with kmemdup()
-Date: Tue, 17 Dec 2024 23:58:12 +0100
-Message-ID: <20241217225811.2437150-4-mtodorovac69@gmail.com>
+	Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org
+Subject: [PATCH v1 3/3] btrfs: replace kmalloc() and memcpy() with kmemdup()
+Date: Tue, 17 Dec 2024 23:58:14 +0100
+Message-ID: <20241217225811.2437150-6-mtodorovac69@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241217225811.2437150-2-mtodorovac69@gmail.com>
 References: <20241217225811.2437150-2-mtodorovac69@gmail.com>
@@ -101,58 +100,61 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The source static analysis tool gave the following advice:
+The static analyser tool gave the following advice:
 
-./fs/xfs/libxfs/xfs_dir2.c:382:15-22: WARNING opportunity for kmemdup
+./fs/btrfs/ioctl.c:4987:9-16: WARNING opportunity for kmemdup
 
- → 382         args->value = kmalloc(len,
-   383                          GFP_KERNEL | __GFP_NOLOCKDEP | __GFP_RETRY_MAYFAIL);
-   384         if (!args->value)
-   385                 return -ENOMEM;
-   386
- → 387         memcpy(args->value, name, len);
-   388         args->valuelen = len;
-   389         return -EEXIST;
+   4986                 if (!iov) {
+ → 4987                         iov = kmalloc(sizeof(struct iovec) * args.iovcnt, GFP_NOFS);
+   4988                         if (!iov) {
+   4989                                 unlock_extent(io_tree, start, lockend, &cached_state);
+   4990                                 btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+   4991                                 ret = -ENOMEM;
+   4992                                 goto out_acct;
+   4993                         }
+   4994
+ → 4995                         memcpy(iov, iovstack, sizeof(struct iovec) * args.iovcnt);
+   4996                 }
 
 Replacing kmalloc() + memcpy() with kmemdump() doesn't change semantics.
 Original code works without fault, so this is not a bug fix but proposed improvement.
 
 Link: https://lwn.net/Articles/198928/
-Fixes: 94a69db2367ef ("xfs: use __GFP_NOLOCKDEP instead of GFP_NOFS")
-Fixes: 384f3ced07efd ("[XFS] Return case-insensitive match for dentry cache")
-Fixes: 2451337dd0439 ("xfs: global error sign conversion")
-Cc: Carlos Maiolino <cem@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Chandan Babu R <chandanbabu@kernel.org>
-Cc: Dave Chinner <dchinner@redhat.com>
-Cc: linux-xfs@vger.kernel.org
+Fixes: 34310c442e175 ("btrfs: add io_uring command for encoded reads (ENCODED_READ ioctl)")
+Cc: Chris Mason <clm@fb.com>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
 ---
  v1:
 	initial version.
 
- fs/xfs/libxfs/xfs_dir2.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/btrfs/ioctl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_dir2.c b/fs/xfs/libxfs/xfs_dir2.c
-index 202468223bf9..24251e42bdeb 100644
---- a/fs/xfs/libxfs/xfs_dir2.c
-+++ b/fs/xfs/libxfs/xfs_dir2.c
-@@ -379,12 +379,11 @@ xfs_dir_cilookup_result(
- 					!(args->op_flags & XFS_DA_OP_CILOOKUP))
- 		return -EEXIST;
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 3af8bb0c8d75..c2f769334d3c 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -4984,15 +4984,13 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
+ 		 * undo this.
+ 		 */
+ 		if (!iov) {
+-			iov = kmalloc(sizeof(struct iovec) * args.iovcnt, GFP_NOFS);
++			iov = kmemdup(iovstack, sizeof(struct iovec) * args.iovcnt, GFP_NOFS);
+ 			if (!iov) {
+ 				unlock_extent(io_tree, start, lockend, &cached_state);
+ 				btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+ 				ret = -ENOMEM;
+ 				goto out_acct;
+ 			}
+-
+-			memcpy(iov, iovstack, sizeof(struct iovec) * args.iovcnt);
+ 		}
  
--	args->value = kmalloc(len,
-+	args->value = kmemdup(name, len,
- 			GFP_KERNEL | __GFP_NOLOCKDEP | __GFP_RETRY_MAYFAIL);
- 	if (!args->value)
- 		return -ENOMEM;
- 
--	memcpy(args->value, name, len);
- 	args->valuelen = len;
- 	return -EEXIST;
- }
+ 		count = min_t(u64, iov_iter_count(&iter), disk_io_size);
 -- 
 2.43.0
 
