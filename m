@@ -1,98 +1,104 @@
-Return-Path: <linux-kernel+bounces-449776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1743F9F55FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:22:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087DB9F55F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87978188F2C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:21:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57F9A166583
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41411F941E;
-	Tue, 17 Dec 2024 18:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A67A1F893B;
+	Tue, 17 Dec 2024 18:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcQqwgVb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8TKNLVu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C0C1F8932;
-	Tue, 17 Dec 2024 18:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B918F5A;
+	Tue, 17 Dec 2024 18:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734459602; cv=none; b=CD2YEky+AJHwjGNKljCdm+zCshGaBhaNcuGxsf8Ih+7ZHbkXuzWpSKPs2SipMoSn/Zi+AytmGtgQAlesMZHpoTX4jD/qeXaQSd/6W8cfXxYO26Yf8sUTJGbO8NGxVmWepl75KpCumLFUY5f4eUbk6FjWeU1yA2a1nfjCt2OxI1c=
+	t=1734459656; cv=none; b=bgq5Wpg0UmonUZxv69hmt41DXWxPMfYuu0ntxGRqsvzaobAeTspmQShVhuwnwrnlEmZL/zHXXuAP3QdyLs0APZnSxg4Cik6hgkXsUWSwaKkEzXLIvM0Q28X78gTgEpepaeE2mev0GWSU3lrqz/VDK7xCdxhkYOO8I2SDDOuZf+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734459602; c=relaxed/simple;
-	bh=RuRjYBtd37eJ6BWE+WZCqpwEWnzVbgqMtoiwz31zqzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DDXCXvNUImKZzNGuTSFJzDPbdAlm/kmi103rHOTwtO8AykRKxmx0H91uAeQ6gWQ9fl4Z4/EKYAU7/2K83QlARd6TQWZ3kGwOxPPR9dcDCTdiyVlgV1odZA+DIL/hN2rkdTcMsN398La7NVGlggj9K/0tk1gIThn1aI0BH1HtnnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PcQqwgVb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29FBC4CEE0;
-	Tue, 17 Dec 2024 18:20:01 +0000 (UTC)
+	s=arc-20240116; t=1734459656; c=relaxed/simple;
+	bh=yildsclURKwBrFcuZYzExOtDLbmKY9IGWCKkE4r0JCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhTGC7f64FE01oFvjjKF27W2ejKmwzRK0EO+UbN1nC5641pd/cwNM6O8Udv7a7dOVN9wqJHIdwhTs+OkPl5jCpwumFhHO7BUKWKL/ETV96z8MTnK1MEawZg2f+4IMOF8iI6bOBYxlOfnLb0nZwndCbcHJUY/nNhtp5x6U5iR9sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8TKNLVu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E710C4CED3;
+	Tue, 17 Dec 2024 18:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734459601;
-	bh=RuRjYBtd37eJ6BWE+WZCqpwEWnzVbgqMtoiwz31zqzM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PcQqwgVbF4eRBuC6Miw7kUsdH0T/T1OLpKoUL5hRT5+MOd07j8by2x6Dg+b3ogEn6
-	 b5Vti4yyMVboNIsu9s0qGBO+DyK86WJWkFgk7rW7eklHJvy2hPU2OiS+L6CoWcfklE
-	 2c3yT65FUk49T8l4n5NFfQdniSBP7qL1sHcO7T2MUTE25yCGce0j3AUz+jihMk1lHV
-	 WSmYzGQlMIvLvCvuW07tqb2ohLz9vpC2raKRbR8eV1R1wRvdDxG+wnOaCIh5nwFUr/
-	 lkzEsABN/BS3BdbHP3hRMD1xRqSPP83NEdwH24K2oVmUxIebIeGH5sxSBaB1olNfiM
-	 bosDYNS2NCICg==
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-844dae6a0caso162553639f.1;
-        Tue, 17 Dec 2024 10:20:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUZGKzCD+ixPyy0tEwBmcPFuIkIDIBzhelzvqmLIDp0NbH479bAL+435CTxXeB9E3oyzjZ9z2jDGjFW@vger.kernel.org, AJvYcCUdwH02xJ45lK8TbuIRj5Z+ZBp72FjLQBQvmIilEOblxpv1CDbm2fHeviUBskRfoK7mD4Tt/WCqZaQQxBSLIcuXWxoSvMTN@vger.kernel.org, AJvYcCWdAkoWTjWzvEiFCHYroV89BHH8Fdjq3RnVFgss6t69It37I4Mnn9dWRrasV2Uc4X7o6ABT9xDw7IQXD1sj@vger.kernel.org, AJvYcCWo/15qfq3Ihns+SfXT/oVRHrOBwE3iH0H/WF69wg7I/itbgUBa/Y5HL1EQjMgUjymuSvK8KzcnrFoB@vger.kernel.org, AJvYcCXdR6WtxU1+9plK2sxq6ONMqBnLvBdveU3HUxXzXhaJftzPCjMmQLGw2dvMn0vKammubwdfZWli7s/OiA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7ezpzXFpwRlPj6hgInCduY1iwAIiDVGHNU2aqfZkfqf5mi/rd
-	eJTIVWa8Exqlgdl5gZJo/2nbfugUJip/Q8CZCpw3D+oYVxsx4WD3YrBzbDLZ73YxHL6IHwXzOeu
-	A8GJUpjZvbG3ivMoaZnQaInIt3+4=
-X-Google-Smtp-Source: AGHT+IGVF2/lzRonWuPyDH2ItNAehGEg982iraVqvHuFNJBoNdPieWEU/a4HYmGk0xpeWomItvBDrQWzPhD2J5GiKtc=
-X-Received: by 2002:a92:ca46:0:b0:3a0:9c99:32d6 with SMTP id
- e9e14a558f8ab-3aff3860488mr155848315ab.24.1734459601030; Tue, 17 Dec 2024
- 10:20:01 -0800 (PST)
+	s=k20201202; t=1734459655;
+	bh=yildsclURKwBrFcuZYzExOtDLbmKY9IGWCKkE4r0JCA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s8TKNLVu7XA5lXmycWns29seqO2hyRgVnNOPtDYIK1ZvGtRRuq3/lni9a7rj6NRwA
+	 7PpxpAOIusn9wTEce/uJMivoDJ+t8Cc3myGHyo5l6Cw8DZI1J1QJSMfrPz6N0ipLsA
+	 ioIkdczq83kqYRtTaUBLRAzkiqu8O2gDl0OhAQhgA/vXU/gZvuKk1xeUXBTBOnOqq/
+	 QCzvGg8isuiccF9y3WIVz1BJnMjH8FvJKEIeFD5hz9gmozKkDk/FVFtlOHVAH+rn3c
+	 2XI0zdgvBVBIRFYcy/81QfCNBTGKJ9R6qw136CcVzdD2qopafyyEA3mMt0jWNldRH5
+	 40N1rjSlTBjTw==
+Date: Tue, 17 Dec 2024 18:20:51 +0000
+From: Conor Dooley <conor@kernel.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: nvmem: imx-ocotp: Introduce
+ #access-controller-cells
+Message-ID: <20241217-compare-craftily-94425c53b4d8@spud>
+References: <20241217-imx-ocotp-v2-0-3faa6cbff41b@nxp.com>
+ <20241217-imx-ocotp-v2-1-3faa6cbff41b@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216234308.1326841-1-song@kernel.org> <20241217173807.GD1977892@ZenIV>
-In-Reply-To: <20241217173807.GD1977892@ZenIV>
-From: Song Liu <song@kernel.org>
-Date: Tue, 17 Dec 2024 10:19:49 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW5Jik1B9SOXr992pQPDuaXbUuAw9Ktp_OYPEkaev5NdUA@mail.gmail.com>
-Message-ID: <CAPhsuW5Jik1B9SOXr992pQPDuaXbUuAw9Ktp_OYPEkaev5NdUA@mail.gmail.com>
-Subject: Re: [RFC] lsm: fs: Use i_callback to free i_security in RCU callback
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	willy@infradead.org, corbet@lwn.net, clm@fb.com, josef@toxicpanda.com, 
-	dsterba@suse.com, brauner@kernel.org, jack@suse.cz, cem@kernel.org, 
-	djwong@kernel.org, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	fdmanana@suse.com, johannes.thumshirn@wdc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xHQ/yDLv8t1eplxP"
+Content-Disposition: inline
+In-Reply-To: <20241217-imx-ocotp-v2-1-3faa6cbff41b@nxp.com>
+
+
+--xHQ/yDLv8t1eplxP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 17, 2024 at 9:38=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> >  - Let pipe free inode from a RCU callback.
->
-> ... which hurts the systems with LSM crap disabled.
-> NAK.
+On Tue, Dec 17, 2024 at 04:43:36PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> Introduce "#access-controller-cells" to make OCOTP be an accessing
+> controller, because i.MX Family OCOTP supports a specific peripheral
+> or function being fused which means being disabled.
+>=20
+> Add the i.MX[95,93] OCOTP gate index.
+>=20
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-How do we measure the overhead in such cases? AFAICT,
-the overhead is very small:
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-1. Many (most) systems have some LSM enabled anyway.
-2. pipe create/release is not on any hot path. On a busy system
-  with 176 CPUs, I measured ~30 pipe create/release per second.
-3. The overhead of a rcu callback is small.
+--xHQ/yDLv8t1eplxP
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Given these measures, I don't think "hurts the system without LSM"
-justifies 2 extra pointers per inode.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Song
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2HBAgAKCRB4tDGHoIJi
+0mqiAQCvW9eoF6N7cbHaOx0lGoN8Anj0wtcz8D/mTXwQMot4WgD+NXPCSLjx/jyI
+l1ucvLcVZh77ERggFbTtxPhpmvr9hA0=
+=qNnf
+-----END PGP SIGNATURE-----
+
+--xHQ/yDLv8t1eplxP--
 
