@@ -1,135 +1,108 @@
-Return-Path: <linux-kernel+bounces-448345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFF89F3EDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:39:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F7B9F3EEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:40:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93CD716E039
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:39:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD8316E1C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9F515AF6;
-	Tue, 17 Dec 2024 00:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4929535B9;
+	Tue, 17 Dec 2024 00:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZLRPrlzf"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="T23qSbCK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A659A8C0B
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5378A12E5B;
+	Tue, 17 Dec 2024 00:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734395940; cv=none; b=KEQ4CqRvXtvBW4LAnkj2JDS6r2xZwkF9AZtiDtWx0fzSVV2Ee/TgRr4+qi04o1WnzgSQk+rHrYssV3PStgDD8G9sHQHHO8Q2c9wcm+GCWMgj3MnnLsv+e4anwR8ttixibGtqydzkAp9UU1MW4bnekZ5kuod9rGA50zS+sYZ8ef0=
+	t=1734395999; cv=none; b=H9wv8/O36KR5vzKMcHjT+MrHzLnPK20pMaH9WwQF3kx2em9bm2m+uPZLFj2m1wuJ49l5dswkUrXtQrLB5ch97pTQrpevk0SXco9h9E/hi8K+aC031h963eE2DCGSLFuKHX01IeM7Xw6JaUSekAd+bvHwjhmbY93VAFQmkDtHfXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734395940; c=relaxed/simple;
-	bh=cCT7yCvueY9SltdJob3Us/rABE/fV3u5HIoVCezbvm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MVGmhHpvgStBI9KWPsy1QvRNA0H93NcvIY2BjMTVcGpQxl9W3tfaqZyeljLNmUITLobX0zB58kwuPWgUDJQgbZfPP0eRuI5u9im17l2xcAlFcnP0QKGi8so+WLS5DDEzPoWCeRAH5BnArEuDDMzsQUxUxUJOdLrP6W5u/JyTYX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZLRPrlzf; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734395936;
-	bh=cCT7yCvueY9SltdJob3Us/rABE/fV3u5HIoVCezbvm4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZLRPrlzfCzLfY/oZBMRGtmvFCtexxef32YgFBs5nnJBmYBqWAlEJkMW0+ICU/6LxJ
-	 PbAWZfEPLa1vl6cqa/IsHtyH0jpUDm7OzpZBrXMIqHAhPWnBh7w6OwtyfQhouxnA5h
-	 VB/e1NBqjBnAvsimHIAbvsSGYbSVZ72hHi9xgW8uhFkhDOoVqRgboEXfpH6Ux9sUIz
-	 WXavXJZ8VALJNScVjFDobY+LVUYWRwzKyORKrj+8EWz6VISqGWPOjbZm9O30s1qJ+c
-	 IexJ3e7MPSfXCdEdSWvGKCbDZX+67hOTjPg9rbCFaXGcv0HznQ0bGPfamAlyJU0YMK
-	 aeCWiefQrb2ZA==
-Received: from [192.168.1.90] (unknown [188.27.48.199])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1734395999; c=relaxed/simple;
+	bh=axG5ZnrBvV+bCXWM2zhn9qzR1RyHszeUyJgoS3ylD08=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q9un+JrghNwsBGglAzTwDw6IKEAeib5dyFjR62x/s3Ys98AJr+euRRrkuN94ZiIK6GJJMOOPSoirGoAc17xyfCxiJG52ZdMUDV9xRouvIbxASRv0Ihke0ZEYujC3mJXX8YELoHzfQjBJR9m9jxnUTRlD8k5J+aCdYnaSVTqF7Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=T23qSbCK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1734395983;
+	bh=axG5ZnrBvV+bCXWM2zhn9qzR1RyHszeUyJgoS3ylD08=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=T23qSbCKTg5HKmhJrrlVsvNAYZFsqdtGLNXAPaPQghQolGi7BDCQaSXr7UsbNEGat
+	 +JMEXu9/F8dZbri4giw/ILZr7Zqxq55xD2ndp9N3AIsZTpAoQuHbbr/bTrE1ZRa5vD
+	 DMIKqhiES6R0mD79dJlRfzmZMz7DZTllQpLUoWFf1jmeEVFnbkM6FJNLq7CJOpL96s
+	 d+iFPmdahsdF19R0N+ATN3VNbwnNb5ksPMniP8Ku74x+xL485yVeAmmuOa9rNwkWpK
+	 ZPiKWWQhBz4ehWSLKuvh/RUkBasr4WAn/PT0rDgS7FQH2olmjppc9LRTlW4DKHIVSh
+	 K1Tw6n09hygIw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1D70317E0E6E;
-	Tue, 17 Dec 2024 01:38:56 +0100 (CET)
-Message-ID: <b7e1c0e9-f8bc-4f93-a280-49cce1658baa@collabora.com>
-Date: Tue, 17 Dec 2024 02:38:55 +0200
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YBycv2Lvtz4wnx;
+	Tue, 17 Dec 2024 11:39:43 +1100 (AEDT)
+Date: Tue, 17 Dec 2024 11:39:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnaldo Carvalho de Melo
+ <arnaldo.melo@gmail.com>, Namhyung Kim <namhyung@kernel.org>, Ruffalo
+ Lavoisier <ruffalolavoisier@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the perf tree
+Message-ID: <20241217113947.0ad90c47@canb.auug.org.au>
+In-Reply-To: <Z2DG41WOlZgQl9Ue@x1>
+References: <20241216082725.2ef47ce1@canb.auug.org.au>
+	<Z2DG41WOlZgQl9Ue@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm/bridge-connector: Prioritize supported_formats
- over ycbcr_420_allowed
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241217-bridge-conn-fmt-prio-v3-0-3ecb3c8fc06f@collabora.com>
- <20241217-bridge-conn-fmt-prio-v3-1-3ecb3c8fc06f@collabora.com>
- <c36o6ro5qqfkqipltlecb3r22d5k3xiqdt46rtl2gdyha7xtmm@l2ovdfono7np>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <c36o6ro5qqfkqipltlecb3r22d5k3xiqdt46rtl2gdyha7xtmm@l2ovdfono7np>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/DX6mA7x4uZYPCiIdIBsc.qh";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 12/17/24 1:27 AM, Dmitry Baryshkov wrote:
-> On Tue, Dec 17, 2024 at 12:54:07AM +0200, Cristian Ciocaltea wrote:
->> Bridges having the DRM_BRIDGE_OP_HDMI flag set in drm_bridge->ops are
->> supposed to rely on drm_bridge->supported_formats bitmask to advertise
->> the supported colorspaces, including HDMI_COLORSPACE_YUV420.  Therefore,
->> the newly introduced drm_bridge->ycbcr_420_allowed flag becomes
->> redundant in this particular context.
->>
->> Moreover, when drm_bridge_connector gets initialised, only
->> drm_bridge->ycbcr_420_allowed is considered in the process of adjusting
->> the equivalent property of the base drm_connector, which effectively
->> discards the formats advertised by the HDMI bridge.
->>
->> Handle the inconsistency by overwriting drm_bridge->ycbcr_420_allowed
->> for HDMI bridges according to drm_bridge->supported_formats, before
->> adding them to the global bridge list.
->>
->> Additionally, ensure the YUV420 related bit is removed from the bitmask
->> passed to drmm_connector_hdmi_init() when the final ycbcr_420_allowed
->> flag for the connector ends up not being set (i.e. the case of having at
->> least one non-HDMI bridge in the pipeline that didn't enable it).
->>
->> Fixes: 3ced1c687512 ("drm/display: bridge_connector: handle ycbcr_420_allowed")
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/gpu/drm/display/drm_bridge_connector.c | 8 ++++++--
->>  drivers/gpu/drm/drm_bridge.c                   | 4 ++++
->>  2 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> I think the second patch in the series is enough, it ensures that
-> connector's state is consistent, no matter if the drm_bridge_connector
-> is being used or a normal drm_connector.
-> 
-> Nevertheless, I'd leave the final decision to DRM maintainers.
+--Sig_/DX6mA7x4uZYPCiIdIBsc.qh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This patch has 2 parts, maybe I should have put them into separate patches
-as they kind of relate to distinct problems.
+Hi Arnaldo,
 
-The 1st part makes sure that drm_bridge->ycbcr_420_allowed is automatically
-set when HDMI_COLORSPACE_YUV420 is provided in drm_bridge->supported_formats, 
-to avoid the need of requiring redundant information on HDMI bridges 
-initialization.  This implicitly ensures the consistency needed to further 
-allow relying on ->ycbcr_420_allowed internally.
+On Mon, 16 Dec 2024 21:33:39 -0300 Arnaldo Carvalho de Melo <acme@kernel.or=
+g> wrote:
+>
+> I can force push after the original author provides the Signed-off-by,
+> but for such a simple patch can we just keep things as-is?
+>=20
+> Is that that what you're saying?
 
-While the 1st part could be dropped (assuming redundancy & consistency is
-not really something we want/need to handle), the 2nd part I think is
-mandatory, i.e. we must adjust supported_formats before calling
-drmm_connector_hdmi_init() to ensure the presence of HDMI_COLORSPACE_YUV420
-reflects the status of the computed connector->ycbcr_420_allowed, which
-might end up being different than what the HDMI bridge advertised, i.e. the
-case of having an HDMI bridge in the pipeline advertising YUV420 via 
-supported_formats and a non-HDMI one that didn't enable ycbcr_420_allowed.
+Yeah, hardly worth a rebase/rewrite.
 
-Thanks,
-Cristian
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/DX6mA7x4uZYPCiIdIBsc.qh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdgyFMACgkQAVBC80lX
+0GyZ7wgAkHwylsJZmkx9y+vVZCcaRp3EpgqJ1cIZzgVJtlO3FAlu3eB6kxwJ33Qo
+6S/rG935vQv4knE6HzWyb6RWslcz78PolSNbrHa5DQHL8eGKmqlEhmidXO/SLJ72
+9njwz9CPV4rgZQTFN3NbYYXxlHZBGokEmfiivGqHwANjGkO9aTsQE90DZ4FcRN9Z
+qovHHRRB3A1qqoKPW1ylVj52grvrlfHAVM1GOGRZcvXULFGNZYSxRkiBo6K5vd+H
+lkWMqGrsuns5xE/gEah40XoMDFlkCVXmx/c3rwMnJqrzpQclq5mbZjS/RJojomSs
+r9KH9clP8EEPZkUmXJ+l5d0Uw0vKsw==
+=XrN+
+-----END PGP SIGNATURE-----
+
+--Sig_/DX6mA7x4uZYPCiIdIBsc.qh--
 
