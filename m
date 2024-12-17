@@ -1,45 +1,39 @@
-Return-Path: <linux-kernel+bounces-448636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0599F434B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:08:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FB19F434C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D290167F62
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:08:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCD391680D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E21715380A;
-	Tue, 17 Dec 2024 06:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qtMU7+QX"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781E9150994;
-	Tue, 17 Dec 2024 06:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448D7150994;
+	Tue, 17 Dec 2024 06:09:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A9815380A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734415714; cv=none; b=LaqR1y3WG7r21lQXJmZxDXRc8xZ4l3744swu4LLZSPs0zoS4Owa74mPrXfqSv8/fdA9gFoYj0HvyXmR5bp7kcDJNVuTwcr3MDyWwA6hc7iPR5OLDp9v3yRkuB6zTxaErgbUhBXUoxvO/x3RsFXt4AUGKovqRSfTti0DbdkEPDyk=
+	t=1734415747; cv=none; b=BXhNBwQulc6YhmGke/eqiFwR+ciAoMQMivo5K7qsj7QXk2zJuBFeUqRgKj+9JvwoOxyBtRxavN1Xh1UkYeW8a+83dxt8tD3JZqAsNWCKja+Z/SM6+EV12M0Gykem0ce3Ml9DNDH0RRD4sqHvpSEfh4tfkrEcUu7fOrhaWYVxVvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734415714; c=relaxed/simple;
-	bh=oiAvLMPsMgZzEivH5VJj51Hqd0MMOhOJQd/2QXeY5mk=;
+	s=arc-20240116; t=1734415747; c=relaxed/simple;
+	bh=DqA4WM89z1WrORq9X4f4WttFGExmUEogLWQ1fM1DZiU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M6bK2l79Cc25xCwhWG+/lUxzZGMfBc4+O2uiRIWZZ68GAPdaiMC+XEMz6I6KTOC2HRhB+xPEagEpXC72wxu+87HnKvv6ZHTAhH8e5Jj/srZolhdZVCj1dbd3skam6gaTldVLzsHVHCslKLXHHxvoBoK+NHwfaipvX5mmJWd/k+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qtMU7+QX; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734415709; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=iSUAqEtIVozqVmN/iyji3v3vEfG6rUwbxmxWRBFEjLE=;
-	b=qtMU7+QXbZCpFijKCqD84sD7bfWK72WqHyJMOxFcGm5LD/1ufmNoC95rA3ipKnMJnLuv0tALohl8B20+QlsThTd+a4RoDDnc7hNw5d+XNHiR39YXGq/Ov8GP8W+Hmjk/m+1qj7sxxgS3GThZPUcRd/r+ykHxZRnXke+RnA0Zlh8=
-Received: from 30.221.144.145(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WLhfemn_1734415707 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Dec 2024 14:08:28 +0800
-Message-ID: <0535520b-a6a6-4578-9aca-c698e148004e@linux.alibaba.com>
-Date: Tue, 17 Dec 2024 14:08:25 +0800
+	 In-Reply-To:Content-Type; b=hEomD3MpKEmwgANkon1G+l1tIhgnQCKLzuAjiRbPS8H0VUiWOaLjicP/u0HiRg91lFHeZg6tcubf69hh8wN0/W4kFer/kLT0ULixviES7LmXzO/YypMI9b9WthBXlhHlSEZmp/joyyC7tup7XOz0d5vokhNFgI85rxRQdb+IjFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62CBC1007;
+	Mon, 16 Dec 2024 22:09:32 -0800 (PST)
+Received: from [10.162.40.67] (K4MQJ0H1H2.blr.arm.com [10.162.40.67])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA66B3F528;
+	Mon, 16 Dec 2024 22:08:54 -0800 (PST)
+Message-ID: <2beb19c5-ead3-4934-81f6-00dd48e9156b@arm.com>
+Date: Tue, 17 Dec 2024 11:38:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,54 +41,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for
- virtio-blk
-To: Stefan Hajnoczi <stefanha@gmail.com>,
- Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Ferry Meng <mengferry@linux.alibaba.com>,
- "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- linux-block@vger.kernel.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
- Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20241203121424.19887-1-mengferry@linux.alibaba.com>
- <Z2BNHWFWgLjEMiAn@infradead.org>
- <CAJSP0QXU_uNqL-9LmLRkDdPPSdUAGdesQ2DFuCMHnjyEuREvXQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/12] khugepaged: Generalize alloc_charge_folio()
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ david@redhat.com, willy@infradead.org, kirill.shutemov@linux.intel.com
+Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
+ hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
+ peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
+ ziy@nvidia.com, jglisse@google.com, surenb@google.com,
+ vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
+ jhubbard@nvidia.com, 21cnbao@gmail.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20241216165105.56185-1-dev.jain@arm.com>
+ <20241216165105.56185-3-dev.jain@arm.com>
+ <53073c25-a5c4-4292-832d-10e13cd53aa5@linux.alibaba.com>
 Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJSP0QXU_uNqL-9LmLRkDdPPSdUAGdesQ2DFuCMHnjyEuREvXQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <53073c25-a5c4-4292-832d-10e13cd53aa5@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Stefan & Christoph,
 
-On 12/17/24 12:13 AM, Stefan Hajnoczi wrote:
-> On Mon, 16 Dec 2024 at 10:54, Christoph Hellwig <hch@infradead.org> wrote:
+On 17/12/24 8:21 am, Baolin Wang wrote:
+>
+>
+> On 2024/12/17 00:50, Dev Jain wrote:
+>> Pass order to alloc_charge_folio() and update mTHP statistics.
 >>
->> Hacking passthrough into virtio_blk seems like not very good layering.
->> If you have a use case where you want to use the core kernel virtio code
->> but not the protocol drivers we'll probably need a virtqueue passthrough
->> option of some kind.
-> 
-> I think people are finding that submitting I/O via uring_cmd is faster
-> than traditional io_uring. The use case isn't really passthrough, it's
-> bypass :).
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   include/linux/huge_mm.h |  2 ++
+>>   mm/huge_memory.c        |  4 ++++
+>>   mm/khugepaged.c         | 13 +++++++++----
+>>   3 files changed, 15 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 93e509b6c00e..8b6d0fed99b3 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -119,6 +119,8 @@ enum mthp_stat_item {
+>>       MTHP_STAT_ANON_FAULT_ALLOC,
+>>       MTHP_STAT_ANON_FAULT_FALLBACK,
+>>       MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+>> +    MTHP_STAT_ANON_COLLAPSE_ALLOC,
+>> +    MTHP_STAT_ANON_COLLAPSE_ALLOC_FAILED,
+>>       MTHP_STAT_ZSWPOUT,
+>>       MTHP_STAT_SWPIN,
+>>       MTHP_STAT_SWPIN_FALLBACK,
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 2da5520bfe24..2e582fad4c77 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -615,6 +615,8 @@ static struct kobj_attribute _name##_attr = 
+>> __ATTR_RO(_name)
+>>   DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
+>>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, 
+>> MTHP_STAT_ANON_FAULT_FALLBACK);
+>>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, 
+>> MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+>> +DEFINE_MTHP_STAT_ATTR(anon_collapse_alloc, 
+>> MTHP_STAT_ANON_COLLAPSE_ALLOC);
+>> +DEFINE_MTHP_STAT_ATTR(anon_collapse_alloc_failed, 
+>> MTHP_STAT_ANON_COLLAPSE_ALLOC_FAILED);
+>>   DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+>>   DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
+>>   DEFINE_MTHP_STAT_ATTR(swpin_fallback, MTHP_STAT_SWPIN_FALLBACK);
+>> @@ -636,6 +638,8 @@ static struct attribute *anon_stats_attrs[] = {
+>>       &anon_fault_alloc_attr.attr,
+>>       &anon_fault_fallback_attr.attr,
+>>       &anon_fault_fallback_charge_attr.attr,
+>> +    &anon_collapse_alloc_attr.attr,
+>> +    &anon_collapse_alloc_failed_attr.attr,
+>>   #ifndef CONFIG_SHMEM
+>>       &zswpout_attr.attr,
+>>       &swpin_attr.attr,
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index 95643e6e5f31..02cd424b8e48 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -1073,21 +1073,26 @@ static int __collapse_huge_page_swapin(struct 
+>> mm_struct *mm,
+>>   }
+>>     static int alloc_charge_folio(struct folio **foliop, struct 
+>> mm_struct *mm,
+>> -                  struct collapse_control *cc)
+>> +                  int order, struct collapse_control *cc)
+>>   {
+>>       gfp_t gfp = (cc->is_khugepaged ? 
+>> alloc_hugepage_khugepaged_gfpmask() :
+>>                GFP_TRANSHUGE);
+>>       int node = hpage_collapse_find_target_node(cc);
+>>       struct folio *folio;
+>>   -    folio = __folio_alloc(gfp, HPAGE_PMD_ORDER, node, 
+>> &cc->alloc_nmask);
+>> +    folio = __folio_alloc(gfp, order, node, &cc->alloc_nmask);
+>>       if (!folio) {
+>>           *foliop = NULL;
+>>           count_vm_event(THP_COLLAPSE_ALLOC_FAILED);
+>> +        if (order != HPAGE_PMD_ORDER)
+>> +            count_mthp_stat(order, 
+>> MTHP_STAT_ANON_COLLAPSE_ALLOC_FAILED);
+>>           return SCAN_ALLOC_HUGE_PAGE_FAIL;
+>>       }
+>>         count_vm_event(THP_COLLAPSE_ALLOC);
+>> +    if (order != HPAGE_PMD_ORDER)
+>> +        count_mthp_stat(order, MTHP_STAT_ANON_COLLAPSE_ALLOC);
+>
+> File collapse will also call alloc_charge_folio() to allocate THP, so 
+> using term '_ANON_' is not suitable for both anon and file collapse.
 
-Right, the initial purpose is bypassing the block layer (in the guest)
-to achieve better latency when the user process is operating on a raw
-virtio-blk device directly.
-
-
-> 
-> That's why I asked Jens to weigh in on whether there is a generic
-> block layer solution here. If uring_cmd is faster then maybe a generic
-> uring_cmd I/O interface can be defined without tying applications to
-> device-specific commands. Or maybe the traditional io_uring code path
-> can be optimized so that bypass is no longer attractive.
-
-We are fine with that if it looks good to Jens.
-
-
--- 
-Thanks,
-Jingbo
+But currently file collapse will only allocate a PMD-folio, and I have 
+extended to mTHP only for anon, so it makes sense? Although
+I get your point in general...
 
