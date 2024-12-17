@@ -1,242 +1,108 @@
-Return-Path: <linux-kernel+bounces-449974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0676C9F58E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:43:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304AB9F58E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB92189AFCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:28:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D7A189B4A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F521FA179;
-	Tue, 17 Dec 2024 21:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F541F9F77;
+	Tue, 17 Dec 2024 21:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VA67n1iq"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="XPJ20hPz"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A151A1FA175
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1E51DD54C;
+	Tue, 17 Dec 2024 21:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734470650; cv=none; b=DBf682kOljgsJpMYbuN/BHDu2CqboE7kj01XWglnU0RGqh3+Ud2TRfd6iEmVWzuUdmE8Pq5QBvqKoWWNMtMO0Tcfk9bvUsHuNEOTFuzeU7pV5ICACegw8gL0cX4tfUqHcr4QI73Fn+pUL18ymneib4/9NMPyKm5WyKEUe8CQVuM=
+	t=1734470873; cv=none; b=Sc0LhJWcjFYDf7OAA7iiIdhAkv2/B0NOi6aADpl6bl4C+2jMsBNaguZ3TUhtSLz8LvdM6O7yR12tuywDM7dsKw8/x5EH+uPftVc51I+5QkvpMRDhJwzXCh/X9hEN1T3Vm4kcpUsZw3RYVgavYEX0pDoLlp5Wrd86/Vam+gEWzTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734470650; c=relaxed/simple;
-	bh=0f9wBCQbmZ3UMKrf1z+BBVUrpPmS0z0ymG1sBaR15+8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VJOFOJCxDyKaXYw0Y7V5YdCVDivxVdJRemZxI5tg2x+/eZ9KRd1npx+8yT6FhyB4v0se9fkq1ptxwR2hiHm+RCyzRUeo7Y9o3kCQ5P3H8Ysfe7EiGaijaB7UBiAFFuXRUxoSTQ6/2cnB6G340T4hr41HZVBf8epQfMoELFDAQvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VA67n1iq; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1734470647;
+	s=arc-20240116; t=1734470873; c=relaxed/simple;
+	bh=f83wCTT1wpK425tjdbaFLHHtomQLC4Ai+losaizQJTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVVgt6neUCckqFsDajSdkaAxfMwhckMLRD2Go1QKK+RVAI/xKQGAe2NIq7EAVkN6VGwAxpOkliFKuq+5PJkL8soshG36LNiLEwCra5o6rXVzYJopRYD+TZ/WexCM0K7S/UaqczMeK2N6BdhSDvNEZWKaZHDfIt/6Z0spGsRX+QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=XPJ20hPz; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49A271047DC0C;
+	Tue, 17 Dec 2024 22:27:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1734470868;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SSMKPr218zjQZP8gl2Xn0SkINEtcf07/ruTFBToN5tY=;
-	b=VA67n1iq+co1LRtOkonRL8hQMfYqG8eeihPXIot35jdV2OqnM0IjIoEclBz4iiySst4K0O
-	LpbiaLE1FVTaMHBQwCzSQ5mBlfh37Ts9KNZjGnmfFVXlJQjc0cOLHDRXz9b+O2BGfhJIK0
-	0sykWNf2bqTb28Q1+oNUBAVGbdQCK7U=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: kvmarm@lists.linux.dev
-Cc: Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Colton Lewis <coltonlewis@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: [HACK PATCH 18/18] KVM: arm64: selftests: Add test for probing PMUv3 sysregs
-Date: Tue, 17 Dec 2024 13:23:58 -0800
-Message-Id: <20241217212358.3709634-1-oliver.upton@linux.dev>
-In-Reply-To: <20241217212048.3709204-1-oliver.upton@linux.dev>
-References: <20241217212048.3709204-1-oliver.upton@linux.dev>
+	bh=ulZWFdUfedMYggmMJehvBZS59d3toO4ILEWn/Eq076o=;
+	b=XPJ20hPz+E0RKD8NmavdyCVsYucrWqTvteBxiurCTahmpCZFGdHfCj7UaY4DsDnK/9U+4t
+	WolkTan1iZ58E0NplWf961LqtRxXOdRXXXkthX3wQJiJKFfwuL6Nunp0dgwvcplflyIbYB
+	nVubTYz1R/kUDWbLNXvlANlm+25N8mXLsTrBRbpPKhBD0EWIGgCoyaAadcTIDXU6dWBztD
+	njT1hBU6X+4tDzmgin+1IkpSPxsFrFrPKHAf6juk5kkmzV3QQejsKNC/uNlw3FcJ3N+J59
+	PKJzW2kdCjpJneLsf96BSUSu5MuLWQQge22bg+mIaX1wdlPyR96ImlmsQKHhUw==
+Date: Tue, 17 Dec 2024 22:27:44 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 00/76] 6.1.121-rc1 review
+Message-ID: <Z2Hs0PV9R07G8Up1@duo.ucw.cz>
+References: <20241217170526.232803729@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Xsb8EpWmWNcWWTTc"
+Content-Disposition: inline
+In-Reply-To: <20241217170526.232803729@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Add a test for sniffing out PMUv3 register traps.
 
-Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
----
+--Xsb8EpWmWNcWWTTc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Not intended to be applied, just sharing in case someone finds it
-useful.
+Hi!
 
- tools/testing/selftests/kvm/Makefile          |   1 +
- .../kvm/aarch64/pmuv3_register_probe.c        | 135 ++++++++++++++++++
- 2 files changed, 136 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/aarch64/pmuv3_register_probe.c
+> This is the start of the stable review cycle for the 6.1.121 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 41593d2e7de9..739542928306 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -159,6 +159,7 @@ TEST_GEN_PROGS_aarch64 += aarch64/debug-exceptions
- TEST_GEN_PROGS_aarch64 += aarch64/hypercalls
- TEST_GEN_PROGS_aarch64 += aarch64/mmio_abort
- TEST_GEN_PROGS_aarch64 += aarch64/page_fault_test
-+TEST_GEN_PROGS_aarch64 += aarch64/pmuv3_register_probe
- TEST_GEN_PROGS_aarch64 += aarch64/psci_test
- TEST_GEN_PROGS_aarch64 += aarch64/set_id_regs
- TEST_GEN_PROGS_aarch64 += aarch64/smccc_filter
-diff --git a/tools/testing/selftests/kvm/aarch64/pmuv3_register_probe.c b/tools/testing/selftests/kvm/aarch64/pmuv3_register_probe.c
-new file mode 100644
-index 000000000000..859b0162dbeb
---- /dev/null
-+++ b/tools/testing/selftests/kvm/aarch64/pmuv3_register_probe.c
-@@ -0,0 +1,135 @@
-+#include <perf/arm_pmuv3.h>
-+
-+#include "vgic.h"
-+#include "test_util.h"
-+#include "processor.h"
-+
-+static bool undef_taken;
-+
-+#define test_read(sr)							\
-+do {									\
-+	u64 __val = read_sysreg(sr);					\
-+									\
-+	if (READ_ONCE(undef_taken))					\
-+		GUEST_PRINTF("read_sysreg("#sr"): UNDEFINED\n");	\
-+	else								\
-+		GUEST_PRINTF("read_sysreg("#sr"): %lx\n", __val);	\
-+	WRITE_ONCE(undef_taken, false);					\
-+} while (0)
-+
-+#define test_write(val, sr)							\
-+do {										\
-+	write_sysreg(val, sr);							\
-+										\
-+	if (READ_ONCE(undef_taken))						\
-+		GUEST_PRINTF("write_sysreg(%x, "#sr"): UNDEFINED\n", val);	\
-+	else									\
-+		GUEST_PRINTF("write_sysreg(%x, "#sr"): OK\n", val);		\
-+	WRITE_ONCE(undef_taken, false);						\
-+} while (0)
-+
-+static void guest_undef_handler(struct ex_regs *regs)
-+{
-+	WRITE_ONCE(undef_taken, true);
-+	regs->pc += 4;
-+}
-+
-+#define READ_PMEVCNTRN(n)	test_read(pmevcntr##n##_el0)
-+static void test_read_evcntr(int n)
-+{
-+	PMEVN_SWITCH(n, READ_PMEVCNTRN);
-+}
-+
-+#define READ_PMEVTYPERN(n)	test_read(pmevtyper##n##_el0);
-+static void test_read_evtyper(int n)
-+{
-+	PMEVN_SWITCH(n, READ_PMEVTYPERN);
-+}
-+
-+static void guest_code(void)
-+{
-+	test_read(pmcr_el0);
-+	test_read(pmcntenset_el0);
-+	test_read(pmcntenclr_el0);
-+	test_read(pmovsset_el0);
-+	test_read(pmovsclr_el0);
-+	test_read(pmintenset_el1);
-+	test_read(pmintenclr_el1);
-+	test_read(pmceid0_el0);
-+	test_read(pmceid1_el0);
-+
-+	test_read(pmccntr_el0);
-+	test_read(pmccfiltr_el0);
-+	test_write(0, pmswinc_el0);
-+
-+	test_write(0, pmselr_el0);
-+	test_read(pmxevcntr_el0);
-+	test_read(pmxevtyper_el0);
-+
-+	test_read(pmuserenr_el0);
-+
-+	for (int i = 0; i < 31; i++) {
-+		test_read_evcntr(i);
-+		test_read_evtyper(i);
-+	}
-+
-+	GUEST_DONE();
-+}
-+
-+static void run_test(struct kvm_vcpu *vcpu)
-+{
-+	struct ucall uc;
-+
-+	while (true) {
-+		vcpu_run(vcpu);
-+
-+		switch (get_ucall(vcpu, &uc)) {
-+		case UCALL_PRINTF:
-+			REPORT_GUEST_PRINTF(uc);
-+			break;
-+		case UCALL_DONE:
-+			return;
-+		default:
-+			TEST_FAIL("Unknown ucall %lu", uc.cmd);
-+		}
-+	}
-+}
-+
-+int main(void)
-+{
-+	struct kvm_device_attr attr;
-+	struct kvm_vcpu_init init;
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+	int irq = 23;
-+
-+	TEST_REQUIRE(kvm_has_cap(KVM_CAP_ARM_PMU_V3));
-+
-+	vm = vm_create(1);
-+	vm_ioctl(vm, KVM_ARM_PREFERRED_TARGET, &init);
-+	init.features[0] |= (1 << KVM_ARM_VCPU_PMU_V3);
-+	vcpu = aarch64_vcpu_add(vm, 0, &init, guest_code);
-+
-+	__TEST_REQUIRE(vgic_v3_setup(vm, 1, 64) >= 0,
-+		       "Failed to create vgic-v3, skipping");
-+
-+	vm_init_descriptor_tables(vm);
-+	vcpu_init_descriptor_tables(vcpu);
-+	vm_install_sync_handler(vm, VECTOR_SYNC_CURRENT, ESR_ELx_EC_UNKNOWN,
-+				guest_undef_handler);
-+
-+	attr = (struct kvm_device_attr) {
-+		.group	= KVM_ARM_VCPU_PMU_V3_CTRL,
-+		.attr	= KVM_ARM_VCPU_PMU_V3_IRQ,
-+		.addr	= (u64)&irq,
-+	};
-+	vcpu_ioctl(vcpu, KVM_SET_DEVICE_ATTR, &attr);
-+
-+	attr = (struct kvm_device_attr) {
-+		.group	= KVM_ARM_VCPU_PMU_V3_CTRL,
-+		.attr	= KVM_ARM_VCPU_PMU_V3_INIT,
-+	};
-+	vcpu_ioctl(vcpu, KVM_SET_DEVICE_ATTR, &attr);
-+
-+	run_test(vcpu);
-+}
--- 
-2.39.5
+CIP testing did not find any problems here:
 
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--Xsb8EpWmWNcWWTTc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ2Hs0AAKCRAw5/Bqldv6
+8o5rAJ4+mi1iwwMO8eb+DqfcO6MYCOQWTgCffBm83LoadGZZUIZzAjZ0XGbH+5U=
+=IuSd
+-----END PGP SIGNATURE-----
+
+--Xsb8EpWmWNcWWTTc--
 
