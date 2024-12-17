@@ -1,165 +1,145 @@
-Return-Path: <linux-kernel+bounces-448946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 909829F4772
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:27:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A687E9F477E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6E317A31D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFCF6161A9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700861DEFEB;
-	Tue, 17 Dec 2024 09:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064B21DDA35;
+	Tue, 17 Dec 2024 09:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EebKne8L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="demC7ZDJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94821D63F6;
-	Tue, 17 Dec 2024 09:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57640EEB2
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734427607; cv=none; b=jDlqoxAMRY+eWFsdO6faNHgZg2sU5/dvAslXrUDjKPg7A74lGeQ7Eh53645MD+tLplNPjDxlCDTSplmji7wPPrq8K7iyp7bgKIPDj7EulVHxeWKgFKrojaYzPrK4eI8szOoWip2Sv3YxNvDrUIEtbtSZ6YqIkrBfvvmOmjztCBI=
+	t=1734427774; cv=none; b=B6iVMLMwXRm8bO94Zpdel0RN3VfdEkukUXmIfTMogUZQBdS2P07tM7J/3Kajwg9dG7ltB7D/fI0Csr2ZUU/NRv5mOvigibYXBDvtxXI/SEhkWR73FZnMRqQzH7Q4zYaHQlnMP2caoSnoB5P2hY7nrY4LP6lY7Ww7X+32ij/zUYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734427607; c=relaxed/simple;
-	bh=hH+aXQtRv0LkIufCC2+NDXYdogSlCDjYzhV7jhPovxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kFAtslIBxH9i3oWpidRKNfEnRawp+EWzb2IU+5J3zOPZAl2DxZancjxzrjXerwv8p9RXXvqg0nZG0Hq6dQGgr3iG+DiVQWyyKHzOcmT4WeVibIDT/atTD3UvKuaTVTmiqb+BNGRdGVwWXDJLaOoj00bgv35hScEnzVGHLsn0McI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EebKne8L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42C5BC4CED3;
-	Tue, 17 Dec 2024 09:26:42 +0000 (UTC)
+	s=arc-20240116; t=1734427774; c=relaxed/simple;
+	bh=/JXGSjeuFwORUWi/GcIJoWS9cDLwv2BhC9G+AZ7MvpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=utOSqp/SEesVqiV4+dgBDR+A13b3QXD34EsMb0nKlqIgNkDZheGaHfzCFbD8UUVzaqlWjCf8HjeYxAUfPJlS8R1CGW42RaWAseTraey/T0C1+rBZNkfZn/xQd7iDSmwo2vB16BcdlE6E5TJHIQOBbKoPfDXhi8wFiknZk5LaddA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=demC7ZDJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE492C4CEE1
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:29:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734427607;
-	bh=hH+aXQtRv0LkIufCC2+NDXYdogSlCDjYzhV7jhPovxo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EebKne8LQEylRxUK5CD0+WlXZ8S9OBHOWvJxCv+DHguqsHTP0cLHPSLM3278+gikD
-	 HGYAvLyJcnfK//ljZlyF4e8Lio3k0uwDxOSDqJWFnatskJPuc4DPrXBdF2kt4x7w81
-	 aox4nSuc7Q3bD1GyJxOAo/f+fVB6ZU/wo+rOtwOQp7JZ1G5POuUcMAuSaPOCU9Nanc
-	 3eYY98aviZgT4iME5ZRHHgeyiLbHjlpCTBOWV5+39v2HCFLvtTxPwe7qID25RGCsAJ
-	 wAQMgtDyCtmLnw4GGDU/tesrQxfwmcX+CGcZTBxf5YMrxkr2A2voczQNZ7WuPifykL
-	 xI2zDpuWlOfPQ==
-Message-ID: <69fd1dbc-a29f-488c-a30f-7e5ea8f01a23@kernel.org>
-Date: Tue, 17 Dec 2024 10:26:41 +0100
+	s=k20201202; t=1734427774;
+	bh=/JXGSjeuFwORUWi/GcIJoWS9cDLwv2BhC9G+AZ7MvpQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=demC7ZDJn15wSuIoAGNY8DtLEbT1B2vJvIQ+CV/+RhcnwptyTnMQMjUVNxNf181ZP
+	 Tmyf5SOfmkUfnAJNFdRXSgYB2Q6BJUpQMwe4fKA0QeRrp6zcVqJGm4MUzk5AcgGE3Q
+	 t181E/v0H65/JHYXS4BJbzwm6Ry/6VSGdVtR4auUUu3teRxVhCoy9MO9H57W+F4ZXw
+	 h5/lz510keOOk1UaWV1rcTF3Agr6n+pFHqj6M+yKSF3wrwgHF06rkOjbbmZtKZTZeZ
+	 WB5mu4XONbSgUO/CMK2FY6r2TAZwR7VibH0ujkZK4UNq4PX5q8o3L2SsoBbXHkanvq
+	 E5BzMNSM+fC2g==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30229d5b21cso45107101fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:29:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWakIIaYrux87Y2ifxoKHsxAtZ1H/ebSF4oQc6PLkgJlq0+Ye+z2P5qSTRX0Yy6OSJqWU8VhbhQr3L2zlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2rlwEuKWjGvdw193iwtjGq3eYTzcQPdgcPAUh26XAHp3lSNJt
+	dpgOnVM1NWlSKITWMDCnXto/MUUImfE9vo2TXDOJEc7dTw7aEi3XLEm64vlmBhOxrxK9cUHoDrE
+	nv/9VbJBLThPxNab9Vr8YJJvTvDc=
+X-Google-Smtp-Source: AGHT+IGOH5xXs/+jrxW1Uzgqvgm0yh2wLN2TclacuxMVFx8bCIsWqUKBZFrn5vEMXVVRDkoO62PL6n0VVePgSX65jPA=
+X-Received: by 2002:a05:6512:158e:b0:53e:3740:4a86 with SMTP id
+ 2adb3069b0e04-5409055551emr5018316e87.18.1734427772258; Tue, 17 Dec 2024
+ 01:29:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: exynos5: Add
- samsung,exynos8895-hsi2c compatible
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
- <20241214220419.723100-2-ivo.ivanov.ivanov1@gmail.com>
- <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
- <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
- <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
- <6e93d59d-71e5-4c09-862f-55b5504121aa@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <6e93d59d-71e5-4c09-862f-55b5504121aa@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241216233704.3208607-1-dwmw2@infradead.org> <20241216233704.3208607-10-dwmw2@infradead.org>
+ <CAMj1kXE2abZ8v83vSr5sDZ1QNF-WMr4XCMRhZoc9EW=JAwvdCA@mail.gmail.com> <A18A8675-B1FB-496E-9D8F-FAD412A3FF65@infradead.org>
+In-Reply-To: <A18A8675-B1FB-496E-9D8F-FAD412A3FF65@infradead.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 17 Dec 2024 10:29:21 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFiZvT1joU5gOhZTC18aYi4dPOnFbX1nsHgmnXNy6c6Wg@mail.gmail.com>
+Message-ID: <CAMj1kXFiZvT1joU5gOhZTC18aYi4dPOnFbX1nsHgmnXNy6c6Wg@mail.gmail.com>
+Subject: Re: [PATCH 9/9] x86/kexec: Use typedef for relocate_kernel_fn
+ function prototype
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Eric Biederman <ebiederm@xmission.com>, 
+	David Woodhouse <dwmw@amazon.co.uk>, Sourabh Jain <sourabhjain@linux.ibm.com>, 
+	Hari Bathini <hbathini@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>, David Kaplan <david.kaplan@amd.com>, 
+	Tao Liu <ltao@redhat.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Wei Yang <richard.weiyang@gmail.com>, Rong Xu <xur@google.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org, 
+	Simon Horman <horms@kernel.org>, Dave Young <dyoung@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de, nathan@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/12/2024 10:08, Ivaylo Ivanov wrote:
->>>>>        - items:
->>>>>            - enum:
->>>>> @@ -94,9 +95,28 @@ allOf:
->>>>>          - clock-names
->>>>>  
->>>>>      else:
->>>>> -      properties:
->>>>> -        clocks:
->>>>> -          maxItems: 1
->>>>> +      if:
->>>>> +        properties:
->>>>> +          compatible:
->>>>> +            contains:
->>>>> +              enum:
->>>>> +                - samsung,exynos8895-hsi2c
->>>>> +
->>>>> +      then:
->>>>> +        properties:
->>>>> +          clocks:
->>>> Missing minItems
->>>>
->>>>> +            maxItems: 2
->>>>> +
->>>>> +          clock-names:
->>>> Ditto
->>>>
->>>>> +            maxItems: 2
->>>>> +
->>>>> +        required:
->>>>> +          - clock-names
->>>> I don't understand why do you need second, same branch in if, basically
->>> Because, as I stated in the commit message, we have HSI2C controllers
->>> both implemented in USIv1 blocks and outside. These that are a part of
->> On Exynos8895? Where? With the same compatible?
-> 
-> hsi2c_0 which has a clock from BUSC and hsi2c_1 to hsi2c_4 which use clocks
-> from PERIC1 (CLK_GOUT_PERIC1_HSI2C_CAM{0,1,2,3}_IPCLK). Why would
-> they need a different compatible though? It's functionally the same i2c design
-> as the one implemented in USIv1 blocks.
-If one block is part of USI and other not, they might not be the same
-I2C blocks, even if interface is similar. If they were the same or even
-functionally the same, they would have the same clock inputs. However
-user manual also suggests that there is only one clock, not two (for
-both cases), so they could be functionally equivalent but then number of
-clocks looks incorrect.
+On Tue, 17 Dec 2024 at 10:21, David Woodhouse <dwmw2@infradead.org> wrote:
+>
+> On 17 December 2024 09:49:04 CET, Ard Biesheuvel <ardb@kernel.org> wrote:
+> >On Tue, 17 Dec 2024 at 00:37, David Woodhouse <dwmw2@infradead.org> wrot=
+e:
+> >>
+> >> From: David Woodhouse <dwmw@amazon.co.uk>
+> >>
+> >> Both i386 and x86_64 now copy the relocate_kernel function into the co=
+ntrol
+> >> page and execute it from there, using an open-coded function pointer.
+> >>
+> >> Use a typedef for it instead.
+> >>
+> >> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> >> ---
+> >>  arch/x86/include/asm/kexec.h       | 26 +++++++++++++-------------
+> >>  arch/x86/kernel/machine_kexec_32.c |  7 +------
+> >>  arch/x86/kernel/machine_kexec_64.c |  6 +-----
+> >>  3 files changed, 15 insertions(+), 24 deletions(-)
+> >>
+> >> diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec=
+.h
+> >> index 48e4f44f794f..8ad187462b68 100644
+> >> --- a/arch/x86/include/asm/kexec.h
+> >> +++ b/arch/x86/include/asm/kexec.h
+> >> @@ -111,21 +111,21 @@ static inline void crash_setup_regs(struct pt_re=
+gs *newregs,
+> >>  }
+> >>
+> >>  #ifdef CONFIG_X86_32
+> >> -asmlinkage unsigned long
+> >> -relocate_kernel(unsigned long indirection_page,
+> >> -               unsigned long control_page,
+> >> -               unsigned long start_address,
+> >> -               unsigned int has_pae,
+> >> -               unsigned int preserve_context);
+> >> +typedef asmlinkage unsigned long
+> >> +relocate_kernel_fn(unsigned long indirection_page,
+> >> +                  unsigned long control_page,
+> >> +                  unsigned long start_address,
+> >> +                  unsigned int has_pae,
+> >> +                  unsigned int preserve_context);
+> >
+> >linkage is not part of the type. 'asmlinkage' is #define'd to the
+> >empty string today, so it doesn't matter, but better to omit it here.
+>
+> This is the i386 version. I thought ut was something like regparm(3) ther=
+e?
+>
+> And... WTF? How is the calling convention not part of the fundamental typ=
+e of the function? If I have a pointer to such a function, using this typed=
+ef to ensure we all share the same prototype, are you telling me all the us=
+ers of the typedef have to remember to tag that part on for themselves?
 
-Best regards,
-Krzysztof
+No. I am talking about linkage not the calling convention.
+
+Look at how __efiapi is used in the kernel if you would like to
+understand the difference.
 
