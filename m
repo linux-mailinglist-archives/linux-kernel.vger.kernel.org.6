@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-450011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E92B9F595E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:11:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69E59F5960
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:11:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CBEE1896EE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:00:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F64C1896ADC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76CE1FAC33;
-	Tue, 17 Dec 2024 22:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F921F9F77;
+	Tue, 17 Dec 2024 21:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Dt3B9Gv7"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DT8ho8VJ"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27F91FA8E5
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 22:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BB01F7580;
+	Tue, 17 Dec 2024 21:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734472805; cv=none; b=iIgCstyl10IWaVPDfMV91zL2/2CWN5Xsu21fJ3WBQmKuA2VFG+92FkVQf+avsBAOECwM5E4A6QXW5+zxvZDhvhmGCqGxWiUQsU9Jxpbh6nFwAWw/rl+TzArTxG3CmErge6UxXFtQbSUTsJh+w1oRLCkfVd5vklD2L6ebDSxTflk=
+	t=1734472798; cv=none; b=qQ0RHTU/65+ZWlbTD0xEhRKUzQvIXw4v4lLleR59DCvALgOZ4ZfqZTzblTae+FDLYcj5XrgpkW+fx/2nPUoHs4DRo1ZwkKEF1w3cbk64SD7GiLu/BuTrMzVKS4/VyvJtTHOb/bIh2NJYShzTygTUv/wUVXPkHjPYiuE0iqZV0fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734472805; c=relaxed/simple;
-	bh=RX/zhaiq0L9l8ly9a3z2OFOaSe+5bBHH/nUVnvYlvXU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HU7CWL1YMmrlgtvGTBGl2b4gJQbu87C1aoK3ipmnp2ogbNXBTAMD5nzEzfpHWlEMAHsfeqJGxtZvfLyAAnkviaylfua5mQ+UZZgbZx2pjgmny6yZzm9uN28YL/NPO/vZdQquL0eaLO8sVT5DxWxwz3lG01bPffhaFvZ5LqNow50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Dt3B9Gv7; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e3c9ec344efso4031690276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:00:03 -0800 (PST)
+	s=arc-20240116; t=1734472798; c=relaxed/simple;
+	bh=EHYD4oZWJmAzUyWanXz1oMro6dFB+kC7qF8uM0EZd/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YX0T1hKv3FvypsKPl5ljmuDPoLBCcpVoqnpuVtUNAlAQRXsO1S+48D8ztY1GCBKbydoC7l/7kW6pvl+3BlbVwlOHAJaEEYSwFrmsXwX+y5fzNjMHDZ6selHhk2RjKhlS7e9zi/I6A3/M2sDr5PeG2foUdiiOnR4Mw4yfFkuflZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DT8ho8VJ; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-725dac69699so5104168b3a.0;
+        Tue, 17 Dec 2024 13:59:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1734472802; x=1735077602; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ftdzShgtX/tEAx6aAhp++i3l0eubtYOM8tBAmWgBMfE=;
-        b=Dt3B9Gv7TgfxnTpwvvWDpvMtVKgCNSQXIdGn2cDp+WAZiKRU1+Sl/btlbAFtGJkDUO
-         7ftqo0GX7GV56dIB5CAnJpTKDklKfL+QMPnD9LTGlnSegpXwB/SCiJTFFrGEfBUV40Z7
-         DdaTSkT0YtYdhuzZrNmdGfw5C+JSoxdJNeaXdP/Et2vZENVZBahV+7cllhWFoupSHCPn
-         aibJhEsPsPcWRs4yMiS060XWLD25cfNreE9Y4eU46v9cCgKS1inNqsjwXYkSIrMrCUt7
-         TFOzRLfz5qVudqD4DUme7zAI96PPs1eTO5ZFOn/mwyaUzitABONMhcZyvqkOt4A4SEvP
-         afBA==
+        d=gmail.com; s=20230601; t=1734472797; x=1735077597; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I6MKIJBHCmwKX7x471bAup/6RTilEf/LujOhbRa33/E=;
+        b=DT8ho8VJ+aHdZOGIC4c7mVDwqqbLbkl6FZCXkhxUXhj9KCGomk+jwrK0RG3025ouqK
+         9h7DZJSmxty0JwWMKOJUSZlhg7xU7iO3DA+ChI5JWuzS8/akmuJf3L2eTNZlnGTqptO8
+         qj6SGbwXa40/N7bbUQ/S2p1IVfLQ0hY5ghKSJRLWrRSXi+V6RU1Q/N05+2oQr4zFhmLE
+         PJ+71acKrmojZqKa7imqFCns7mSRyX8MYRyibFwcfxSHMBGVzPmVfcfXKgY1JPP7qNwM
+         ML3b2IWU2elJnojvKt/l8pnUgLQLjBeJ/wVy5AMV+qOBV7kgvYJ09nujbbWDo+BJQQ1D
+         Tr+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734472802; x=1735077602;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ftdzShgtX/tEAx6aAhp++i3l0eubtYOM8tBAmWgBMfE=;
-        b=wD8YWUDkLzhA69uTbuG7kvGn7Tk8FdEXc2znursDDswo68n+slc5UM5CMLxn5jucHi
-         2iEeybvqkOAJPsd5CAsD53SNhqBa3KupScNIOhzXtXmobwAZW6SDUCuFRVVa7gee5z4R
-         2XgI6JURqA7FkDQmNWNH3H9EI5rHVFAyLHLX7qZSClcOBsqBdrCyLLv49wpk7jUEQTxA
-         stq2AKIuZ5r9lbpsFyNd+vaEcuhzQoPcgzLKSVIc8s2aQ0YR+uAqZdM8HaaSM53KBl6I
-         qIiMrOtYUJA4kUroXaZISmO1MVbsJKmnUX6GKRjRQ6DJ4NFwvhqSjlQyjwBJqJht/Mft
-         DMdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKJaDTdso27H0wUNa/KfaakrK1A7jVcWUdVBkjHsJuaFbmsI3+M+TDe8HJI1Ql6NV3C23GT765aboKrdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIvqo6+HmGDA42s0WJqDyrviXmeA+XbUDxQAfa7cK8H/i8N6oB
-	2ljCziifhK6nyYlzvBbjCrgu+e8Jcq/yMUe+jzMnKJa/izG/sYPwLki5lX05wwnAkr0BsVgLNAu
-	sAhf+Neq/nnRyyHKSlym8cyL2Zmd1sfKN17El
-X-Gm-Gg: ASbGncvc35cMw1rjN9o8/GXUpivycIyXqznNPx4uPTdxzo7SUeYIqYfx8rnlE/aQkr0
-	r03r5o7cI3L29rhV8iFIp+3NaaiQjW5z52MnP
-X-Google-Smtp-Source: AGHT+IEU7ZqkpQLdLUs+NmpFyHzcV/krv50XAmUj5bf5ADbtRq+UVr88p+tUmkW66IRG+xuXXznG0o19SeGqPqHFkkQ=
-X-Received: by 2002:a05:6902:2204:b0:e2e:440e:d29f with SMTP id
- 3f1490d57ef6-e5362122e49mr679348276.20.1734472802619; Tue, 17 Dec 2024
- 14:00:02 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734472797; x=1735077597;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I6MKIJBHCmwKX7x471bAup/6RTilEf/LujOhbRa33/E=;
+        b=DhXk3tnWsw3713mXTL4fbDY1pPQsd23btn57Noh3LeVbfZlQ2Nu7pIfDe+iGhz/8wB
+         +DNEDEs8zXk3x66aXkFH8urdYllw3yzBSrbNIa2tysOPnS49BxAuBiXlpQkxlRwkmSuE
+         es3DgYxkh61ezbaCucrKi+WQVECe46xWxYPb4g22Zo+qof1SLHGHK5TJDq4F2TiBWe43
+         tw/I2NodpCfPgU+ZsylcC7zY7bvmhfAPNXQEzqFKJDfi+xJAxRXp7Hs4mLK6SWEFw4wf
+         ClU1go9HqUDV+1OZ5hBH2Lp1pfwtiw3uHCJ8orzVfQVZH4x9cirdp84eS1tMW9TjkfxY
+         kAcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlYhB+qqxscSt2YsYPh0rRWFVCAICDUDsCBjaeeA3ejT754LQCs7HCjZEDyDxmbNcMiZzw1ezhhBR6Ogs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrgMP88v/u0jJHl8HX3Hw1r6Sef19KHmuWp0kW9nXL+PrEXZ+G
+	VfJqPDqpZyJ1jmt8UPw6E/DhhRgSoBAOBlxDo0dC6pDk8l2XUQFN
+X-Gm-Gg: ASbGnctBew8lo7AxRwsWm4ns40LlowD2oBXpWtxi0Hbgh0OyGbhhEZQh3f9a8z+hUdW
+	b9ny7ZiootwH6/fl6X5IWbPsIX9CmtLEDObTgEiIAtrLMzY/9P4MKK0HhX4O3Z0SBeys5kJvIEW
+	1jFwAASUko5fnSA3njGASGwiXdK07DdO7tb91yaw8lXlEDKf0M8zzmgxy/ezANqFWjSEfs01dwo
+	3Iwc1JgCt9MTMUESXg/j+co2Hi55VWGXaLMxoWb39QdePHhXkYGrkv6TQ==
+X-Google-Smtp-Source: AGHT+IGB1viY6bldpXmzP2I3zwqRqV2auadVhK5phSF2pMr9cn2tziGNdJKobysgcy7u6jExhjazSw==
+X-Received: by 2002:a05:6a00:4085:b0:71e:a3:935b with SMTP id d2e1a72fcca58-72a8d2ccaabmr875143b3a.25.1734472796732;
+        Tue, 17 Dec 2024 13:59:56 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:55e2:6799:5b4f:83ea])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-801d5ac8766sm6278091a12.33.2024.12.17.13.59.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 13:59:56 -0800 (PST)
+Date: Tue, 17 Dec 2024 13:59:54 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] Convert input core to use new cleanup facilities
+Message-ID: <Z2H0Wszo8jYbccvq@google.com>
+References: <20241107071538.195340-1-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217202525.1802109-1-song@kernel.org> <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
-In-Reply-To: <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 17 Dec 2024 16:59:51 -0500
-Message-ID: <CAHC9VhTAJQJ1zh0EZY6aj2Pv=eMWJgTHm20sh_j9Z4NkX_ga=g@mail.gmail.com>
-Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable IMA/EVM
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, roberto.sassu@huawei.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	serge@hallyn.com, kernel-team@meta.com, brauner@kernel.org, jack@suse.cz, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107071538.195340-1-dmitry.torokhov@gmail.com>
 
-On Tue, Dec 17, 2024 at 4:29=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
-> On 12/17/2024 12:25 PM, Song Liu wrote:
-> > While reading and testing LSM code, I found IMA/EVM consume per inode
-> > storage even when they are not in use. Add options to diable them in
-> > kernel command line. The logic and syntax is mostly borrowed from an
-> > old serious [1].
->
-> Why not omit ima and evm from the lsm=3D parameter?
+On Wed, Nov 06, 2024 at 11:15:27PM -0800, Dmitry Torokhov wrote:
+> Hi,
+> 
+> This series converts input core (but not input handlers such as evdev,
+> joydev, etc) to use new __free() and guard() cleanup facilities that
+> simplify the code and ensure that all resources are released
+> appropriately.
+> 
+> Input handlers will be converted separately later.
 
-Exactly.  Here is a link to the kernel documentation if anyone is
-interested (search for "lsm"):
+Since there were no objections applied for the 6.14 merge window.
 
-https://docs.kernel.org/admin-guide/kernel-parameters.html
+Thanks.
 
-It is worth mentioning that this works for all the LSMs.
-
-> > [1] https://lore.kernel.org/lkml/cover.1398259638.git.d.kasatkin@samsun=
-g.com/
-> >
-> > Song Liu (2):
-> >   ima: Add kernel parameter to disable IMA
-> >   evm: Add kernel parameter to disable EVM
-> >
-> >  security/integrity/evm/evm.h       |  6 ++++++
-> >  security/integrity/evm/evm_main.c  | 22 ++++++++++++++--------
-> >  security/integrity/evm/evm_secfs.c |  3 ++-
-> >  security/integrity/ima/ima_main.c  | 13 +++++++++++++
-> >  4 files changed, 35 insertions(+), 9 deletions(-)
-> >
-> > --
-> > 2.43.5
-
---=20
-paul-moore.com
+-- 
+Dmitry
 
