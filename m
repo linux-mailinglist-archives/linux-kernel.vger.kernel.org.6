@@ -1,223 +1,142 @@
-Return-Path: <linux-kernel+bounces-449592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E879F512A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:37:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC05A9F512E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F39577A1E22
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:36:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E71188B595
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD05156F20;
-	Tue, 17 Dec 2024 16:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BA21F7558;
+	Tue, 17 Dec 2024 16:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="j4RLQUW7"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YkvrTB0a"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7314213D891;
-	Tue, 17 Dec 2024 16:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F245014AD29
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734453408; cv=none; b=ia7FKQZ6lBhSmwbxLi5wVNI7YNNR0jbl8yNL4b5XXK33L8uZSiY9z9CR9KmxkJiAQRUo5lj3u30DM2mN8DINnekyOojoa6h6sT7cN+0RY8wHEz2kXJu4UZRHkJOhZpA54G0R2SfDLfn4P7QXf5l6WRFR3Vw0lXB7KfXVmsX2+E8=
+	t=1734453442; cv=none; b=Z4FkSGtiq69jFT/+ItZvTuyIS9/Ro8nuScAJkR5WXqXqg6s0tVS5/n6KnFLi9y4c/D7PR3qZyij2jaB+6Mam8xMb4vjkxxvWeJ52aC6ZTY8j4gY/h8muM7hiCsk+cTNBKxX7HTPvB6CTmMxak5u4YCSaw7kD2vokVnAfpMwduwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734453408; c=relaxed/simple;
-	bh=PAu25BTtqRIZ7TehGqU+OEInbWitHM7ErDsbsrjdeLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rHtXo62Bsa2ekmBwM0gK9URuyQa9xg6YUT9Mr8wHlQ6x7DIBRGat2/heARKzT3OB78wk6cO7q5XpskOzJQnUk2JBnMVsFML0bCgS0oRgGp0p90pE6pnxE72PoRRjYNmUGpgdnlYeZC4Iy2SYJjHieqnLrHnxNSBivf47UQCz2w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=j4RLQUW7; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734453404;
-	bh=PAu25BTtqRIZ7TehGqU+OEInbWitHM7ErDsbsrjdeLs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j4RLQUW7ucEUCYXiyDkUlnsBvM/2UW3XQ+tXe5QtFGmabPBx/LEHLzuToIckoi5IE
-	 zM3iHNiqHKT2QFXip3jfVJFifsncvj5ApK2DQ8dmGHB2+qwUWZuwSJViEwPrcvnuer
-	 PLuBaW2XhQIz6BhRQ31wDM23mjlyMMaumPdvrxi/WoUJFI7K8eMCjGeo0lFTRFmM8Y
-	 LV4D6WbdcnnnNMoy95UFIYJQDoJ90kDeP2ZeWPKamvyUqUiF/rEHfsCsCwluXgJ2Z5
-	 SSJ4atgRy08XXAkbddJdCVc5VcANcz0QUfFFLV+5HqC0DMbUsC0+ZSS3iKYSN0wGTS
-	 3hJ6hpWYhdifA==
-Received: from [192.168.1.90] (unknown [84.232.140.38])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EF34517E37B2;
-	Tue, 17 Dec 2024 17:36:43 +0100 (CET)
-Message-ID: <c45ff74a-c9a4-4cf1-8530-04087e06b07a@collabora.com>
-Date: Tue, 17 Dec 2024 18:36:41 +0200
+	s=arc-20240116; t=1734453442; c=relaxed/simple;
+	bh=1ATu9wgaYAQKhmswVhuoVZ2QLTUdUkiXPcR6R4v8PvA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=L/FPcXf4knjcMMq/TTVy+J3/QmWAqMPPNHn7Y72uGYIcJ9obVXIj/t6rc3qLUgti7bK3oMSD3kOW8QxLCS0SN5Uu1dQGn9frkvW1EzcrA/on0WRVKZxU4pGPh9NnpOzp62hNualFG9WXFT9G2LeDDk9R8EYmLaPLAb9Cr9UiGpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YkvrTB0a; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a8aed87a0dso18953495ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:37:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734453440; x=1735058240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eLXAYiyU1iqMID7+HfNyBZxwgcF9EMYHiTYuuHxkZvc=;
+        b=YkvrTB0aNwKvR4xRlDpztlOMbeGYbo4Ym1ToMR0mUwdkDj9J59eG6lLIA1luzDT1tB
+         Z5GvUBO1asaMNLI0vh6XMq1oB4V3MfCWBl/JHIYoclfd+hNwEc42Rdgt3mXOMwUuCX8p
+         tcBlcLxeNkR/iMJHOTsg1OMzMJoXJwFVVKKstenMMcC9lnXvKFNoN9VgWtXaemj0AF+a
+         vTx/aA/pm+I4h7s9Rbw8T0mbO47cPcDl162FZsDTchFamGnzW2OWUeMtxLq32eb0xIa+
+         7i58HBGU0nE0yB0+R7qBns6wt3VAQldTcQL2mJ7HitNLPcK65E5mSmkcazdPuJtJUjB6
+         FN5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734453440; x=1735058240;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eLXAYiyU1iqMID7+HfNyBZxwgcF9EMYHiTYuuHxkZvc=;
+        b=p0khNC1Blqto39Kjtj6AistV5nlv3G2m9jdk4YNMRVTAI6y8vNno1DS8VwwrrKDhdq
+         D2Qtvt7OleDdwWHCPJfyDy06Rl7ZClA11x2vH4UjrQjChLuIQZ/zDGiPVslc7Q4J0+TH
+         PFMZyX5ITvwlLBgiyTzBlt+1PhnoApsgVSdfx1O9606ciq2hVDcBBByGLE4qZp/suCuE
+         bnsQqSilSC0afR4cbcfqA+4Wz6HwH8w/w3SjzXKcJ7PH5RjYa68h8u3M9qXYsbS0hVpI
+         cbY2xi85jjMhVgrnqcK4ctlkoSvUezEnnm6/Ol6d8b1qP9/AyuOIkuI1M6wjpnfvvVkx
+         3S+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXOSkr/ppZBgd363TrZpJJiwMVvAMkxce0aBluQX/MtZRtvt00jlcgkYg3UEthMVpyhMu6fcLFdlxK4Wjg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDB849QysBTG3CHoYc9OmIblHMwexWvUvvZ+lUfGDLeEicMj2U
+	91+juvS2vl8/JOlEHJfhsjSVS7Q/t5MEMbhXopV/jbhSkx30w2Ah62V/behwaJo=
+X-Gm-Gg: ASbGncsQJeQ/r5RrW1485gFnU0RKW0TslR4Ti6Ukkjy+QZOtn58tD+749Paetmj1Sc8
+	0N5gH6gBzkTArSSbE2OIKH3lfbabFaWKb1+L96BTFe5jMiekuJPhLkRkaGsJH2QW+vSRgikyDVH
+	4Z1TQBVbDJX0hQ+zb7IQV0OCbLYclw7OsTAZeJKysSzjoD0Kg8yeNCJmLEFFcTTUZQXjscIT1u4
+	y/GJlBjBWGn87WtQE3dBtlnp0greuo1CuO8w4J8h1/J/Y0=
+X-Google-Smtp-Source: AGHT+IE/HVlmxcalHVFA9B+15PGcwD/7VUAayQaHnmJ8VTv9HsAtDcrPfDzLFsYJKWRCm33fWsrd4w==
+X-Received: by 2002:a05:6e02:1d11:b0:3a7:708b:da28 with SMTP id e9e14a558f8ab-3bd8b195aa9mr912455ab.21.1734453440010;
+        Tue, 17 Dec 2024 08:37:20 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e5e0a3de5esm1774339173.51.2024.12.17.08.37.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 08:37:19 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, John Garry <john.g.garry@oracle.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, 
+ Daniel Wagner <wagi@kernel.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, virtualization@lists.linux.dev, 
+ linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
+ mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
+ storagedev@microchip.com, linux-nvme@lists.infradead.org
+In-Reply-To: <20241202-refactor-blk-affinity-helpers-v6-0-27211e9c2cd5@kernel.org>
+References: <20241202-refactor-blk-affinity-helpers-v6-0-27211e9c2cd5@kernel.org>
+Subject: Re: [PATCH v6 0/8] blk: refactor queue affinity helpers
+Message-Id: <173445343855.487134.18283101203931240403.b4-ty@kernel.dk>
+Date: Tue, 17 Dec 2024 09:37:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] drm/rockchip: vop2: Improve display modes handling
- on RK3588 HDMI0
-To: Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>
-Cc: Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, FUKAUMI Naoki <naoki@radxa.com>
-References: <20241211-vop2-hdmi0-disp-modes-v2-0-471cf5001e45@collabora.com>
- <1820767.5KxKD5qtyk@diego>
- <a4ex3s23r4k6wehyoaw3aylpcexfrclrxxykjpabhdfne2jgmu@ii6riiiga2zj>
- <1756448.izSxrag8PF@diego>
- <20241217-ubiquitous-refreshing-finch-aceade@houat>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241217-ubiquitous-refreshing-finch-aceade@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-86319
 
-On 12/17/24 5:00 PM, Maxime Ripard wrote:
-> On Wed, Dec 11, 2024 at 07:01:15PM +0100, Heiko Stübner wrote:
->> Am Mittwoch, 11. Dezember 2024, 18:47:44 CET schrieb Maxime Ripard:
->>> On Wed, Dec 11, 2024 at 06:23:03PM +0100, Heiko Stübner wrote:
->>>> Am Mittwoch, 11. Dezember 2024, 18:07:57 CET schrieb Maxime Ripard:
->>>>> On Wed, Dec 11, 2024 at 12:15:07PM +0200, Cristian Ciocaltea wrote:
->>>>>> The RK3588 specific implementation is currently quite limited in terms
->>>>>> of handling the full range of display modes supported by the connected
->>>>>> screens, e.g. 2560x1440@75Hz, 2048x1152@60Hz, 1024x768@60Hz are just a
->>>>>> few of them.
->>>>>>
->>>>>> Additionally, it doesn't cope well with non-integer refresh rates like
->>>>>> 59.94, 29.97, 23.98, etc.
->>>>>>
->>>>>> Make use of HDMI0 PHY PLL as a more accurate DCLK source to handle
->>>>>> all display modes up to 4K@60Hz.
->>>>>>
->>>>>> Tested-by: FUKAUMI Naoki <naoki@radxa.com>
->>>>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->>>>>> ---
->>>>>>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 34 ++++++++++++++++++++++++++++
->>>>>>  1 file changed, 34 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->>>>>> index 8b2f53ffefdbf1cc8737b3a86e630a03a7fd9348..393fe6aa170aaee9663c4a6d98c1cd6a5ef79392 100644
->>>>>> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->>>>>> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->>>>>> @@ -158,6 +158,7 @@ struct vop2_video_port {
->>>>>>  	struct drm_crtc crtc;
->>>>>>  	struct vop2 *vop2;
->>>>>>  	struct clk *dclk;
->>>>>> +	struct clk *dclk_src;
->>>>>>  	unsigned int id;
->>>>>>  	const struct vop2_video_port_data *data;
->>>>>>  
->>>>>> @@ -212,6 +213,7 @@ struct vop2 {
->>>>>>  	struct clk *hclk;
->>>>>>  	struct clk *aclk;
->>>>>>  	struct clk *pclk;
->>>>>> +	struct clk *pll_hdmiphy0;
->>>>>>  
->>>>>>  	/* optional internal rgb encoder */
->>>>>>  	struct rockchip_rgb *rgb;
->>>>>> @@ -220,6 +222,8 @@ struct vop2 {
->>>>>>  	struct vop2_win win[];
->>>>>>  };
->>>>>>  
->>>>>> +#define VOP2_MAX_DCLK_RATE		600000 /* kHz */
->>>>>> +
->>>>>>  #define vop2_output_if_is_hdmi(x)	((x) == ROCKCHIP_VOP2_EP_HDMI0 || \
->>>>>>  					 (x) == ROCKCHIP_VOP2_EP_HDMI1)
->>>>>>  
->>>>>> @@ -1033,6 +1037,9 @@ static void vop2_crtc_atomic_disable(struct drm_crtc *crtc,
->>>>>>  
->>>>>>  	vop2_crtc_disable_irq(vp, VP_INT_DSP_HOLD_VALID);
->>>>>>  
->>>>>> +	if (vp->dclk_src)
->>>>>> +		clk_set_parent(vp->dclk, vp->dclk_src);
->>>>>> +
->>>>>>  	clk_disable_unprepare(vp->dclk);
->>>>>>  
->>>>>>  	vop2->enable_count--;
->>>>>> @@ -2049,6 +2056,27 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
->>>>>>  
->>>>>>  	vop2_vp_write(vp, RK3568_VP_MIPI_CTRL, 0);
->>>>>>  
->>>>>> +	/*
->>>>>> +	 * Switch to HDMI PHY PLL as DCLK source for display modes up
->>>>>> +	 * to 4K@60Hz, if available, otherwise keep using the system CRU.
->>>>>> +	 */
->>>>>> +	if (vop2->pll_hdmiphy0 && mode->crtc_clock <= VOP2_MAX_DCLK_RATE) {
->>>>>> +		drm_for_each_encoder_mask(encoder, crtc->dev, crtc_state->encoder_mask) {
->>>>>> +			struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
->>>>>> +
->>>>>> +			if (rkencoder->crtc_endpoint_id == ROCKCHIP_VOP2_EP_HDMI0) {
->>>>>> +				if (!vp->dclk_src)
->>>>>> +					vp->dclk_src = clk_get_parent(vp->dclk);
->>>>>> +
->>>>>> +				ret = clk_set_parent(vp->dclk, vop2->pll_hdmiphy0);
->>>>>> +				if (ret < 0)
->>>>>> +					drm_warn(vop2->drm,
->>>>>> +						 "Could not switch to HDMI0 PHY PLL: %d\n", ret);
->>>>>> +				break;
->>>>>> +			}
->>>>>> +		}
->>>>>> +	}
->>>>>> +
->>>>>
->>>>> It seems pretty fragile to do it at atomic_enable time, even more so
->>>>> since you don't lock the parent either.
->>>>>
->>>>> Any reason not to do it in the DRM or clock driver probe, and make sure
->>>>> you never change the parent somehow?
->>>>
->>>> On rk3588 we have 3 dclk_s and 2 hdmi controllers. Each video-port can
->>>> use the clock generated from either the hdmi0phy or hdmi1phy, depending
->>>> on which hdmi-controller it uses.
->>>>
->>>> So you actually need to know which vpX will output to which hdmiY to then
->>>> reparent that dclk to the hdmiphy output.
->>>
->>> The Rockchip nomenclature isn't super obvious to me, sorry. Is there a
->>> datasheet for this somewhere? Also, does this vpX -> HDMI-Y mapping need
->>> to be dynamic?
->>
->> VPs are CRTCs in drm-language and each of them can drive a differing
->> number of output encoders. Those video-ports also have differing output
->> characteristics in terms of supported resolution and other properties.
->>
->> The rk3588 TRM has leaked in a number of places, and if you find a
->> TRM-part2, there is a section labeled "Display Output Interface Description"
->> that has a nice graphic for that.
->>
->> Or in short:
->> - CRTC(VP)0 supports 8K resolution and can drive DP0+1, HDMI0+1, eDP0+1
->>   [if I'm reading things correctly, 8K together with CRTC1 somehow)
->> - CRTC(VP)1 supports 4K resolution and can drive DP0+1, HDMI0+1, eDP0+1
->> - CRTC(VP)2 supports 4K resolution and can drive DP0+1, HDMI0+1, eDP01, DSI0+1
->> - CRTC(VP)3 supports 2K resolution and can drive DSI0+1 and some BT1120,BT656
->>
->> so for the 3 higher resolution CRTCs there are essentially 6 or 8 output options
->> depending on the board design
+
+On Mon, 02 Dec 2024 15:00:08 +0100, Daniel Wagner wrote:
+> I've rebased and retested the series on top of for-6.14/block and updated
+> the docummentation as requested by John.
 > 
-> That's much clearer, thanks. I'm not entirely sure how that links to the
-> need for the PLL to change its parent depending on the ouput. Do you
-> need to always have all the outputs on the same PLL?
+> Original cover letter:
+> 
+> These patches were part of 'honor isolcpus configuration' [1] series. To
+> simplify the review process I decided to send this as separate series
+> because I think it's a nice cleanup independent of the isolcpus feature.
+> 
+> [...]
 
-One of the problems is that the PHY PLLs cannot be used as clock sources
-for resolutions above 4K@60Hz, while VOP2 on RK3588 supports up to 8K@60Hz,
-which is supposed to be handled by the system CRU.
+Applied, thanks!
 
-Moreover, the 2 PLLs are shared between 3 out of the 4 video ports already
-mentioned by Heiko.  There is quite a bit of complexity in downstream
-driver to handle all possible usecases - see [1] for a brief description on
-how was that designed to work.
+[1/8] driver core: bus: add irq_get_affinity callback to bus_type
+      commit: ccddd556cfba3db6cb4d45d9f7d30c075e34808b
+[2/8] PCI: hookup irq_get_affinity callback
+      commit: 86ae920136e7c6352e7239a459544b0eae57613a
+[3/8] virtio: hookup irq_get_affinity callback
+      commit: df0e932e866b5cfad8cedafa0123ab0072a665ce
+[4/8] blk-mq: introduce blk_mq_map_hw_queues
+      commit: 2b30fab613e2ef54ae4b3fbb238245a29ba2a285
+[5/8] scsi: replace blk_mq_pci_map_queues with blk_mq_map_hw_queues
+      commit: 7c72e20573d0d350c7c087289e7b7b605100651f
+[6/8] nvme: replace blk_mq_pci_map_queues with blk_mq_map_hw_queues
+      commit: f0d672680e0b383b14add766b57db60c4c4acf92
+[7/8] virtio: blk/scsi: replace blk_mq_virtio_map_queues with blk_mq_map_hw_queues
+      commit: 5a1c50296039ca32a22015bbb9696d6a96514947
+[8/8] blk-mq: remove unused queue mapping helpers
+      commit: 737371e839a368007758be329413b3f5ec9e7976
 
-Regards,
-Cristian
+Best regards,
+-- 
+Jens Axboe
 
-[1] https://github.com/radxa/kernel/blob/linux-6.1-stan-rkr4.1/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c#L4742
+
+
 
