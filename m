@@ -1,62 +1,46 @@
-Return-Path: <linux-kernel+bounces-449709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7AE9F5526
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:55:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE439F5523
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDD0B175AA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:50:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4150116A428
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB15B1FBCAE;
-	Tue, 17 Dec 2024 17:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA7C1FA8FE;
+	Tue, 17 Dec 2024 17:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TDmhYCYa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2C61FAC4D;
-	Tue, 17 Dec 2024 17:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VkPXr4Q5"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4661FA24A;
+	Tue, 17 Dec 2024 17:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734457428; cv=none; b=IrP6VnOv3x1ULamLkdq58mOW2sn3Y9eOYkM26H6scDHIMAMe3rJchV7TLWtQcdsYJscUIwTT35arxGfu9V53QshHIyEChePxKgzsNtZeq4Gtv7N2orqHPPxri31FYX+C/pT1hAasJOvXvTpgJNCKY0cEiM/4kP6kZBoM/AQNDUw=
+	t=1734457425; cv=none; b=uydDUNVCCdBV7WhmXD2f6HyMk008XcXZgITXqGV5/NsKx9qVQ9SJin0EPAH0XXr2gaqzYcopSo9DL0eQ1V+AmaAV+2bRpx9r/vgxQ6QuFL9wqA9QR+NdirOATWCrZ7voXo8Gi+6nkiw6hEITJOdPd7ZYwaCti3angAtKFsUUheg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734457428; c=relaxed/simple;
-	bh=FYuJu3NbEe5lSnrHntXRbXVwdwGRUBBep8WKxjSMvBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HeinAeqUfAryUQVKF2mYt2DOkArKz9wF+G2UfCcGi+hlh0uqMFtqIxbn/xx/onAIk9n2nyIrOX4a4sxc+KNGT2AUHqL1xl0kqmF9meQ63OJ7+TVmVcYkfbo/NRHnBUEOJsiK+hp/fZjV227i7J9UuHMIwd+T6oOBjH4E9piBDn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TDmhYCYa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHAlers025603;
-	Tue, 17 Dec 2024 17:43:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DZQQ8RH8WAsu9/QY/AVjXNavP/iYh1Mq0GWJKtUVRsE=; b=TDmhYCYa1//TzkO9
-	I2WQpUMYsB+gJuPMxLHRXlMUNbDoeX5cSedCb2/3shVvdOAqC2jZY/5BrqPRPBzB
-	55kw30GoDaj0eEM95Io/MpEq4XrNqM5C8Au0AUyNxdgVBy+DeemJW9prGrNKJXVK
-	wZOMnqhqjUlkcOvwvLan53zsw6yie1b+bXwq18wL3GFqlaRO9QfVM9vSALcDeWIR
-	eXGilIo3kFp5ts3B2+3TumzBjiVa2P1liFjeSVDpsrTlvEGgB2Qq1f2+UZtULNO8
-	KKjnLgDGEZG7HdRYtynrr2KMEUVqf88q/SNloHM6KTob27Dm6HtodEN8dIZOqiFp
-	2rqyyQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k7v094cm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 17:43:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHHhXXU007244
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 17:43:33 GMT
-Received: from [10.50.34.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Dec
- 2024 09:43:24 -0800
-Message-ID: <a9f99bdf-1f77-416e-a13b-83338212186d@quicinc.com>
-Date: Tue, 17 Dec 2024 23:13:21 +0530
+	s=arc-20240116; t=1734457425; c=relaxed/simple;
+	bh=8L9yZu+YSSMC3BBiLERVQU5N7SevsXLGZW7h8pfgPR8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=m6jJlDXE3BNb7ve8PvLvGuN5QqhJyyXCL5txmQb74C9QoNRa8CejS8xyT2VKDcqJa6IQqcwgo1GhhKeHdE0PwMjHM2NbRP3YpMABX1G6aeVXSqztyP8lalaVD9o9ZygrlKNftY3mNJPWJum5ekpShwxnvBdSrg6uvQMYu6gkNWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VkPXr4Q5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 4C1542171F87;
+	Tue, 17 Dec 2024 09:43:32 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4C1542171F87
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1734457414;
+	bh=qz8oz73s4rCDJSC1TgNUQNYJjOVU8exHA2BYkyw+ZD0=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=VkPXr4Q51kSzYXC6iV4Rnt0hdXMx9YWH59To4VTRyzVF/4SXLeJpUxO01knfWumzM
+	 CzAbcmQnzc2Qsz94yaL1AgsNLmsei1LV793lD8Qkn1YDLJvzyEf9X476Tc2IwzAabU
+	 HeEAso29uXPVkfVcznz9hizNBAvL5QWBolCDD9Qs=
+Message-ID: <f3f9a686-8be3-49f0-bcfb-10b864fa5a11@linux.microsoft.com>
+Date: Tue, 17 Dec 2024 09:43:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,92 +48,144 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/4] media: dt-bindings: update clocks for
- sc7280-camss
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <akapatra@quicinc.com>,
-        <hariramp@quicinc.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
-References: <20241217140656.965235-1-quic_vikramsa@quicinc.com>
- <20241217140656.965235-2-quic_vikramsa@quicinc.com>
- <02da691b-1f5d-41a6-847c-c7e9b8239919@kernel.org>
- <c14493b0-c9d3-4e1c-9f86-991b4cb25c98@linaro.org>
- <fe28a9bc-82ef-4fef-af50-9d9261ed9b39@kernel.org>
- <a1032d53-6f3e-48f6-a2e9-1315bb1a3232@linaro.org>
+Cc: eahariha@linux.microsoft.com, Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>, Russell King
+ <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
+ Oded Gabbay <ogabbay@kernel.org>, Lucas De Marchi
+ <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jeroen de Borst <jeroendb@google.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ James Smart <james.smart@broadcom.com>,
+ Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+ Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
+ Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel Holtmann
+ <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+ Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Louis Peens <louis.peens@corigine.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr,
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ath11k@lists.infradead.org, linux-mm@kvack.org,
+ linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
+ live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
+ oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: Re: [PATCH v3 02/19] coccinelle: misc: Add secs_to_jiffies script
+To: Julia Lawall <julia.lawall@inria.fr>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
+ <20241210-converge-secs-to-jiffies-v3-2-ddfefd7e9f2a@linux.microsoft.com>
+ <Z2G02RN7VelcrjNT@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <alpine.DEB.2.22.394.2412171831300.3566@hadrien>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
 Content-Language: en-US
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-In-Reply-To: <a1032d53-6f3e-48f6-a2e9-1315bb1a3232@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <alpine.DEB.2.22.394.2412171831300.3566@hadrien>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9EzJcUqCZyXoXPWBvCz3ppG6gkV2rKR0
-X-Proofpoint-ORIG-GUID: 9EzJcUqCZyXoXPWBvCz3ppG6gkV2rKR0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0 bulkscore=0
- impostorscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170135
 
+On 12/17/2024 9:33 AM, Julia Lawall wrote:
+> 
+> 
+> On Tue, 17 Dec 2024, Alexander Gordeev wrote:
+> 
+>> On Tue, Dec 10, 2024 at 10:02:33PM +0000, Easwar Hariharan wrote:
+>>
+>> Hi Easwar,
+>>
+>>> This script finds and suggests conversions of timeout patterns that
+>>> result in seconds-denominated timeouts to use the new secs_to_jiffies()
+>>> API in include/linux/jiffies.h for better readability.
+>>>
+>>> Suggested-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+>>> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+>>> ---
+>>>  scripts/coccinelle/misc/secs_to_jiffies.cocci | 22 ++++++++++++++++++++++
+>>>  1 file changed, 22 insertions(+)
+>>>
+>>> diff --git a/scripts/coccinelle/misc/secs_to_jiffies.cocci b/scripts/coccinelle/misc/secs_to_jiffies.cocci
+>>> new file mode 100644
+>>> index 0000000000000000000000000000000000000000..8bbb2884ea5db939c63fd4513cf5ca8c977aa8cb
+>>> --- /dev/null
+>>> +++ b/scripts/coccinelle/misc/secs_to_jiffies.cocci
+>>> @@ -0,0 +1,22 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +///
+>>> +/// Find usages of:
+>>> +/// - msecs_to_jiffies(value*1000)
+>>> +/// - msecs_to_jiffies(value*MSEC_PER_SEC)
+>>> +///
+>>> +// Confidence: High
+>>> +// Copyright: (C) 2024 Easwar Hariharan, Microsoft
+>>> +// Keywords: secs, seconds, jiffies
+>>> +//
+>>> +
+>>> +virtual patch
+>>> +
+>>> +@depends on patch@ constant C; @@
+>>> +
+>>> +- msecs_to_jiffies(C * 1000)
+>>> ++ secs_to_jiffies(C)
+>>> +
+>>> +@depends on patch@ constant C; @@
+>>> +
+>>> +- msecs_to_jiffies(C * MSEC_PER_SEC)
+>>> ++ secs_to_jiffies(C)
+>>
+>> If you used this script only, then it did not seem to recognize line arch/s390/mm/cmm.c:207
+>>
+>> 	mod_timer(&cmm_timer, jiffies + msecs_to_jiffies(cmm_timeout_seconds * MSEC_PER_SEC));
+> 
+> There is the requirement that C is a constant, and cmm_timeout_seconds is
+> not considered to be a constant, ie it is not all capital letters.
+> Indeed, it doesn't seem to be a constant at all.  I don't know if the
+> requirement of being a comstant is really necessary.
+> 
+> julia
+> 
+>>
+>> Thanks!
+>>
 
-On 12/17/2024 10:00 PM, Bryan O'Donoghue wrote:
-> On 17/12/2024 16:23, Krzysztof Kozlowski wrote:
->> On 17/12/2024 17:12, Bryan O'Donoghue wrote:
->>> On 17/12/2024 14:10, Krzysztof Kozlowski wrote:
->>>> On 17/12/2024 15:06, Vikram Sharma wrote:
->>>>> This patch change clock names to make it consistent with
->>>>> existing platforms as gcc_cam_hf_axi -> gcc_axi_hf.
->>>>> This also adds gcc_axi_sf and remove gcc_camera_ahb.
->>>>
->>>> Don't combine ABI changes with some less important things.
->>>>
->>>> You miss here explanation why doing the ABI change in the first place.
->>>> Without that explanation I find it rather churn. But anyway, reason 
->>>> for
->>>> ABI break and impact should be documented in commit msg.
->>>>
->>>>>
->>>>> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
->>>>> ---
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>
->>> This change should be fine since we haven't committed and upstream 
->>> dtsi,
->>> so there's no ABI to break yet.
->>>
->>> Agree the cover letter should have been explicit in explaining.
->>
->> So these are recently added bindings (sc7280 is not particularly new)?
->> If so mention in the commit msg that no users are affected because of 
->> this.
->>
->> Best regards,
->> Krzysztof
->
-> Agreed.
->
-> The commit log should make clear that the ABI hasn't been cemented yet.
->
-> 20241217140656.965235-4-quic_vikramsa@quicinc.com <- is still pending
-Thanks Krzysztof and Bryan.
-I will update commit text to explain why ABI is not braking with this 
-change.
->
-> ---
-> bod
+As the cover letter says, this is part 1. I intend to do further parts
+that address the cases where the multiplicand is an expression, as well
+as the cases where the timeout provided to msecs_to_jiffies() is
+denominated in seconds (i.e. ends in 000)
+
+Thanks,
+Easwar
 
