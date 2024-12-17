@@ -1,136 +1,210 @@
-Return-Path: <linux-kernel+bounces-449338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F3B9F4D60
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:15:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434D89F4D69
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7F516C678
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A7D188E452
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B560A1F4E31;
-	Tue, 17 Dec 2024 14:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA7B1F63DC;
+	Tue, 17 Dec 2024 14:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="H/eEKRV3"
-Received: from mr85p00im-ztdg06011201.me.com (mr85p00im-ztdg06011201.me.com [17.58.23.181])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fmxpjfUF"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2056.outbound.protection.outlook.com [40.107.92.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEC71F4E49
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734444816; cv=none; b=DvW0mg/5D+IS/EJiKdLxP4hjY3w22WC54GIA5FYeNc9PIXRhWQqEUjXRxlOC9pBRuxzciaDl1391P5UGVP/vM8Gpw7yi7cen6l3WqnVXvbsMomOAcP7oKmQTN1bVt3iSo4zFesRKe39HzuGFgKYKD7qcLKps69cpM9VHRcoxH4c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734444816; c=relaxed/simple;
-	bh=eFBjYsTE76euirqn3tovFPfiVwIu6gmxs7bFrEiCKeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H39EQD6NcBav9cGq6tKbZNd+NidbE3xuS+A5voE/v9yHSHlVUpAcBSoC1CnpMvqffcG96g9awRp3M2FrBIzr3UC+3LH5jdYxgHz3ayCMv0jigRS4AD8tGC5JVOSluUUTyxDV45BqpZfk1KbcMWxXQiVVSgVqq7UVLPdKYMc/GpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=H/eEKRV3; arc=none smtp.client-ip=17.58.23.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1734444814;
-	bh=O1YX+oUbanCKI4PLZgWVURex1Gcui39acgWXzxMi1fY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=H/eEKRV3YDhoeq3i4YHtYRxLqEqPm1ZsRQqlzFPeldm/bJwH3RxJnDOEv7Akwly7u
-	 cKaw0c1+AwhV/movKyRCNxa1dyktu7HZNUlii431G+OG2kggtDbfJnO7Bkgat0zgtQ
-	 yQH5RKCFjUPwk+HiBY4ztjAuMP/moISpj27P+n6oX9FZHKaC0vBHNhJZkdSgf8yUBF
-	 K3+oZkpJ7YyV4nIknzEKTsYvKRBiWNzL8Fv7KuDZkVb6SAGl9Rfc2kN2VyzhiTnBLB
-	 Hgc0/wILo9aSlqmInEdXpEvqr96mEHjV3ZehY5VnWIqTYQrBWfAf+fAIWVGsndNXMm
-	 q/MZTX8JwtPfA==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06011201.me.com (Postfix) with ESMTPSA id 529F79602F1;
-	Tue, 17 Dec 2024 14:13:26 +0000 (UTC)
-Message-ID: <26ca6aa2-1641-4809-8b75-5579931874bf@icloud.com>
-Date: Tue, 17 Dec 2024 22:13:22 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117501F12FE;
+	Tue, 17 Dec 2024 14:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734444862; cv=fail; b=f4QkJRVhQMYabFHj72CkSKk30CMrM3HeCbgkcyfdsVX2dS/MP8X4e6/qeaMrrup6AcD8/apm0/qM8vRtSMH9deWy9oDei6uCqETlVUskmuo0wYD86LK0mVcfbmQyKxv4qUM0I0YbzTq0hwQP2eA4wJrLw6INvUER2ZPrH7/oUJk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734444862; c=relaxed/simple;
+	bh=GgQF2K25hMaRVX2jjzIDIN5ypdJqaVhjD7LUNxnhfBA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PLXlAbYQ2EWcZ6ffcwWwJcuNuyqUZhd8MOJiWcVDZMQhLl+W/QlywkZvp3HhtDtM4MWK6y9+VOTq8yxGqGE+SpFaZpdMZX8+1ivC/EQNpID92REQBrn0juZaZG0/OifqXC840R8vmzfTSyfMT7+O6Gk2sfRISZABPZVC8nt58YY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fmxpjfUF; arc=fail smtp.client-ip=40.107.92.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y0vSOEC3zRT8TNuDmCElRwekto8G2GUyoCEiqK3xuPOTTc6XXmcQBAlmNWXOpnGkjtwotm+74xJcTFzredmuIFUN6bH5nNnqToWIl9Iccxg9g8+cSzD509DAewfjAd/rIIq29W6akxv6mxOuL5TklJnaHtmnoNlDK8Rx8KTbMO3lR1t5d9x/vRKOSPsq3eDYZ2XoanweNkDu05ymN55TvH/gG9xsFpLNNRKedDb23EE7mTX3m6Tf+qMDJakwMjVr+7K2xzvANNdiQgqRHhpp9yUln+obuMMZ/TRg08mKGGkB2QTZ2PeIYCucczuEXVEdIz37N6Mo5iABUfZaCFOakw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NG1c4jBI9nOK+TsnC3dbsDWDW5SWHHoFK1juUM2PEAo=;
+ b=Q0gMfu1dhhWj2L2koJ03zMCyjXn4Kj6Jbp04elKxwK9KXXw1+QqfjqFWRCu2dL7a59oEZ0WH147ugpd4pMdzAxnKn7bT/ikkexoQ7+dnw/exwuJkRnGlef2fpOPFZma7RECxpakciotju3nqxx3OuFtcAONTdic4AijWbbgRw3N7Cj4ws50T2vbRujbNTdYZWa791oSim0zw/GK9rytyegbdGhvR5mK3V4w6roeM0rxjr7JvKoLFur7RvujsESYXYlMwNwmc6AkhHdHD16YxeqXv2HtqwTwI3fAekqEl+Mzjio22LI2L9yXWe6T1sfDaObDu3yBkRP4o96NTMxxAnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NG1c4jBI9nOK+TsnC3dbsDWDW5SWHHoFK1juUM2PEAo=;
+ b=fmxpjfUFXEkrDLjSnBuTRIQqDY6LXWK5VZ4ggMHx+TkJx1/1yttpn3/aMcFVDKHs7Eb+BerVuMeT1B9nZeVTcH03dN1z4jD9xJolzlzE4DcUNPsyTjrbOWKHQnpD/L9hIJfn4qS12mol0KNtG6SBN2gq0eB+x/8Suf0aS2wj4Wk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19) by
+ BL1PR12MB5947.namprd12.prod.outlook.com (2603:10b6:208:39a::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.21; Tue, 17 Dec 2024 14:14:18 +0000
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405]) by DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405%5]) with mapi id 15.20.8272.005; Tue, 17 Dec 2024
+ 14:14:18 +0000
+Message-ID: <511e8690-f5a7-4d59-af3f-58184727dc1b@amd.com>
+Date: Tue, 17 Dec 2024 08:14:15 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ASoC: amd: yc: Fix the wrong return value
+To: potturu venkata prasad <venkataprasad.potturu@amd.com>,
+ "..." <end.to.start@mail.ru>, Mark Brown <broonie@kernel.org>
+Cc: Vijendar.Mukunda@amd.com, Basavaraj.Hiregoudar@amd.com,
+ Sunil-kumar.Dommati@amd.com, syed.sabakareem@amd.com,
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Jiawei Wang <me@jwang.link>,
+ "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
+ <linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ alsa-devel@alsa-project.org
+References: <20241210091026.996860-1-venkataprasad.potturu@amd.com>
+ <173384228352.64342.12647978237032666087.b4-ty@kernel.org>
+ <1734430927.112015823@f318.i.mail.ru>
+ <e5a42dbb-ff8e-486d-ab2c-66798af1fd80@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <e5a42dbb-ff8e-486d-ab2c-66798af1fd80@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9P223CA0008.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:806:26::13) To DS7PR12MB6095.namprd12.prod.outlook.com
+ (2603:10b6:8:9c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/9] driver core: Move true expression out of if
- condition in API driver_find_device()
-To: Fan Ni <nifan.cxl@gmail.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Tejun Heo <tj@kernel.org>,
- Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
- Boris Burkov <boris@bur.io>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-cxl@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241212-class_fix-v3-0-04e20c4f0971@quicinc.com>
- <20241212-class_fix-v3-4-04e20c4f0971@quicinc.com> <Z2BrFjRedjEX4OU_@fan>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <Z2BrFjRedjEX4OU_@fan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: bKkMIOrZlJBb5V63CNtOUVPQqiSXbmOk
-X-Proofpoint-GUID: bKkMIOrZlJBb5V63CNtOUVPQqiSXbmOk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-17_08,2024-12-17_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 bulkscore=0
- suspectscore=0 mlxscore=0 spamscore=0 mlxlogscore=999 malwarescore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412170113
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6095:EE_|BL1PR12MB5947:EE_
+X-MS-Office365-Filtering-Correlation-Id: 248fad2e-3a78-494a-a1d4-08dd1ea5184f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WkszSjY3YTNyTlAyalRxTGR4L0hJOThjS3BwalpIVnMxdEE4aTBJN3NmSUVr?=
+ =?utf-8?B?UmpidVRVQXNWendGVGJmeWVRd3NlU2g3RGFMOGlmZm1EUlNOUmtzTHpPbHdt?=
+ =?utf-8?B?Q1Y4SlliVkZxbDhMZHdwQ1VEcCt0alFlRTdsRllxME5uWVgzUkYvazUwcVg1?=
+ =?utf-8?B?b2dwbDdLZDNTU1RKK00xdld3VUlSeGZhN25Ya3hKTm9DS1ltWHJnUU1TcGpQ?=
+ =?utf-8?B?WDJTUFNVd05iMVRWZUFVbkF5bXl2K2J4ZGVPbENSalhoSHNLSFJTSGw2SlpZ?=
+ =?utf-8?B?dndRS1BvaHpjWmc5MnR5YWh4Y3lSRHZvY0ZnMXNPMVdva1oxVkhnd2swVCt3?=
+ =?utf-8?B?RFR3d2JiMEJHdFVnNzJTakhWendIb2RFQ1lGbGROeFJjeDhjTm9xL3E4a1Ax?=
+ =?utf-8?B?OFUvY3BhM2kvbXRXaG1jUUcyajNZaHRraXhrZzlvdnBHRUtXcjZERTJWczN0?=
+ =?utf-8?B?U21uUTZUUEdLaGI3TGxXc25ZKzNHSjZ0UHBERGtmRGdHd05peXpUZ0xNSWRl?=
+ =?utf-8?B?bjUyZWZrUFpvT3RBeGtYSk0vZFZnUzVMbHNqZEpQM0dkOG9pVWp0Z3l1NjVv?=
+ =?utf-8?B?STY5VWhUdEV4c2VRT2NaTysxTjBLbjRvUFhGUG1ocDBLUEIxQjI0UlNDeGVw?=
+ =?utf-8?B?QVFIVm14eVYrY1hBbXdyaGhtOVZHQXV1TllXWFErb2JGM1Q5V0RiNlZCdjhJ?=
+ =?utf-8?B?TWd4UU5oN0Zya1Y1ZkhqSkNtNGJJVzJtQ3c4cFRLSHU4STBEVzRYaS9KK0N5?=
+ =?utf-8?B?V2kvQXV5bjRqNUh4K2c0RXd4elloekh0L2NrSWpHREdSNDBVcWM3WHBESldq?=
+ =?utf-8?B?VEdIS1ZHcFBCbHRZdnhxQnVLK3BUcXlKd3ZaREVpYkp1ZEx6RktQckdoZ1pk?=
+ =?utf-8?B?a1NhYjdkeVZpZWtwZHNVMTdCQ3NnS29DaE5RYWxRQ01ibnN6K0JWbXI2NDl1?=
+ =?utf-8?B?dDVLdy9UZWlxVFFiSFowdHh6Vm1aNkhsZUY5VSsvVTNHYkhZaC8wMmVRb3NC?=
+ =?utf-8?B?NEtIVmNRSFhjZG13NWg5ZUJLZWdrNjBBZEJyRnFzTHE1RVFSVzFJZGd2cVRW?=
+ =?utf-8?B?VnJGNUtCVTJRQVBOaDZPMnlwMUZvK2VVNzBhclZXUC9uRm9YMFQydmRpL2Iv?=
+ =?utf-8?B?NDl5WTdHbzErd09vckJjNUpnYkFVVjUyY1ZTdUhMVFBJTXdmSVJGb2gyOUZh?=
+ =?utf-8?B?MmF4eXNLOUgxNFQvUy9lY09uTzBDMFFLRy8wMU85ODR3b3A3Q2lRcERCM1N6?=
+ =?utf-8?B?cEN1cHVrbFRDdFZIQjhkbEd2YzJMNVB4MTNrOGJlSzR6cThFeHZFbVhHSjdO?=
+ =?utf-8?B?MWNWZ0RPN0NKbFlnS2FmV05RWWVBVTcydkVUTDNMMkY4N2s3Zng1OE11ZXdM?=
+ =?utf-8?B?WDNpZlBSTEJ2MVhOT3YzMUVySk5QamV3R2pGZlZ6L0VMWnJXdStqQkVmYmxW?=
+ =?utf-8?B?SmxkS1ZKdzRJWWh2TnQ2WllLdERMVU42eDFFVGZETEJacndvZWUxdFovOU9B?=
+ =?utf-8?B?bWoyR1FiUnZDbkNjdmNnby9YTFd4UEdVc1Roem9XN1I4UzNtUk41UlUrbldv?=
+ =?utf-8?B?Ujh3cG5KcEtjQ1BrSlcxYmw1WWtTUUprdUk3eWc0QklkZjMyTXU2NlIrSVB6?=
+ =?utf-8?B?a3RRNDhGZUpCQ2VMOEhjaS92RE5zYTMvMWdiK3ZSNUVmRVlKSXptelVyM1dR?=
+ =?utf-8?B?UVlsQU44YmZJaHQxVWhYZDZJZkFJMGdKS1pLSnY2bllnN2lmdWdaQ2lKSFk4?=
+ =?utf-8?B?Z2I5MVp5cW9kRWNjc1VWRWtKWFd3bHl5SlJDWmtodXEzK0tLQnRmem10NEVn?=
+ =?utf-8?B?a0U3RXcrdUMyZUF2eWFFZTF6UlFRcWRkb2ZjdjVsb1Nsa2N1dU1LZEtraXFN?=
+ =?utf-8?Q?j74Kz9gNIZ/wN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6095.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L2NTb3NqdW5DUEZNVC9hU1Y4Y2VMYTBLNU5CM2J3MnRubThNVmVoSW0wTkw3?=
+ =?utf-8?B?SGpPVFQxT3NWKzV1RjlwalFSaTBWRzBXQkowelNBTVBnOXZIdWhuY3N5c0x4?=
+ =?utf-8?B?UmpqMnh2SlNUZHlkeEtybjJvd3JwUWlRM2dPcXFXSjVoWDRiOVZ2alRaSHFP?=
+ =?utf-8?B?V1hmSmRIK2RFMnN4MVFkejN5cTNOeSttNGJWWDJ3cDZWNUtwdGNpeVNjSTRV?=
+ =?utf-8?B?YlJDaFA0Y2lreFJNbnJHRnBPWi9vNzhqZHZXZkQraHFjdDNaUFQrQThQa2xZ?=
+ =?utf-8?B?QXRndWpnQ3ZYVVZXUTc5cDdPTWZDTWIyQWlCTFRYRUMyQkZJZUFGaWF6cUhD?=
+ =?utf-8?B?UUtucGljaTBYLzFPeFhNSjRNRlhoMElLdGQrY3ZsbWZQWk5JQjRRS25uN2xW?=
+ =?utf-8?B?dnc3MytqN1ZiQkxqTHhaYWNHS3Z5dmNvUzJzeFF3SWVpUUZFamFWRVBnRlZZ?=
+ =?utf-8?B?dUlDWjhhcWk1blNxeSs5YllqemZLREYzaGJaL2xwSU9NZ3pld3RFdzBhdDQy?=
+ =?utf-8?B?a1JETVVVem9NWnQ0NVFDdFhRV3djOThyNE9GNEw0c1NCZFJXWDdjUUd3aElL?=
+ =?utf-8?B?TUNabitZNFVwTm5HdGJWRlViYnlTOHpoZHZReUVPZ3R0YTJncWtrOWdkdkh2?=
+ =?utf-8?B?SThva0VrVTZsWGJqMGQxRG9lTjV3VW9FTitKRThJbTJsc0k2VnFSeFBJbnJh?=
+ =?utf-8?B?eG11RkgwbnFsb0tPU2hrVjJIdkpDVEo1TmNqMytUOTBWQ2hmelVRZ0RWUldB?=
+ =?utf-8?B?TWd1SlB3Wjg1SXZkSEVFNWNqcm4xbjQ5WEhpRHhwWVNDTmJRMXk1OWxtM2p0?=
+ =?utf-8?B?aitaYnA1S25WcnUrZkYrT2xJSjVVc2RnclNWcnJFbWJKa2w1TEQ5RXpXdDFu?=
+ =?utf-8?B?K1ZEZm5wNUlPc2VUaUQ2c3ZFcFNXUUhjNmtBYzFZR1R1NlpUQTExUi85MzRK?=
+ =?utf-8?B?aENkNUdQdm5vVDVoUEd6cDQ0U2ZudDNZWE5Xc0txR2xxL0U0UTVRbmRiZ09M?=
+ =?utf-8?B?NVFkbngrKzFISnpFeWFwcWdmbkpjSnZlR0V5T0pxYlRpMHhhbVJlZkdKWkVO?=
+ =?utf-8?B?aXpUVlpFYzhOd0t2MEp4N1ZkTWp5K09jQmQ0Vld0THVrRjdMSlJralc2Y1pU?=
+ =?utf-8?B?a1FBVEhLTVJHUUkzVnBQempoQnY2VEVodUIwcmRXbEpaUGxEdDV1SWY1ellt?=
+ =?utf-8?B?TVRiMDRQZ3RxWmtpWHdNNGN1TmNtZ3JJYldnQ1Y4dEJYNU03eURScWY2R0Rj?=
+ =?utf-8?B?R25CbFRPbEt2L0dVNGx6akhHWk9INmJ4WjdqMEdoZnhJejNBT0R1R0hoVjBL?=
+ =?utf-8?B?NVVCYWoybVRVV2g5cDk4NDBKL3NhMkZ3R0R0MFR1dDNpNzFaQ0MyOHFqOWZr?=
+ =?utf-8?B?cUkza2RjeTZkSG9DSy9pSmtXNE82TkhVUktyZE1yaDBhRXRPRGhNM1ZGaVg2?=
+ =?utf-8?B?SGtxd0dwRFpNcm9sdWZDTW9WQXptQVRzOWtseHpEbU42QXByUzQ4bnh0akZX?=
+ =?utf-8?B?YTFOYm0vQUcyYi9WZmp3RnJWWGI0V2JRNTV0TGdhbFg0eiticVJtdGVvQnVZ?=
+ =?utf-8?B?UWFXMVQ3cmg3TlNjZnhFY2s3TlAwMnRIa2tLZ2Zubmx5YjRIei95YlBVQmls?=
+ =?utf-8?B?TzZZbE8zbnhqc241STJ4TVZmYzhVcnJYUDRHUWc5ckMyT2dvWlJjVUVSQkNX?=
+ =?utf-8?B?M1dYV1BidXVudWhwSFFCOUZ0RCtvNWQ5aXloMnk2QndqLy91TmVTZmtUc3NI?=
+ =?utf-8?B?UExneGNCMk84NjcvaEY4RW8vcFRHZGtoKzVaZTdqTE9hZGF2ZEROb09Td00v?=
+ =?utf-8?B?cW5sZHJna0tKS05rbDZqamJhMzFRSzJtWGxvN1d1MUJ5TDE3NzZxM1FkcDZN?=
+ =?utf-8?B?TTZ2bTZaVUV0SGFBbDA4U0NxcFdPYmJFTjQ5M3JtMlRkUTRCZ1Y2MUV5OXEv?=
+ =?utf-8?B?WU14cFQwckx4NC9RdEVDTjFHVzhQNVpodjQyQ2duR2VKWG8yaFE3RGdNQk1P?=
+ =?utf-8?B?WHhNN0M5emVHbUxpWHFiT0c0QWRkaE1zR0huc2ZOODVEeXhPazNiWDlDa2pl?=
+ =?utf-8?B?V0ZqWTloMWh5cFY1cnFSQWttbG03b1BwVnZ4bVVWZzNkN0R4cy9zLzhKZTFM?=
+ =?utf-8?Q?rD3Rd1lzTpwJBxUhcgN/5s98i?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 248fad2e-3a78-494a-a1d4-08dd1ea5184f
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6095.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 14:14:18.4243
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 94T1lD4m/tDdGbp+RO4ZDSwbI+J2noZ75FchObeyKmZBCO4X8k29bTJ40w0JFuuxjU15zMfnvI/R5Rs44GLUog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5947
 
-On 2024/12/17 02:01, Fan Ni wrote:
-> On Thu, Dec 12, 2024 at 09:38:40PM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> For driver_find_device(), get_device() in the if condition always returns
->> true, move it to if body to make the API's logic more clearer.
->>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
+On 12/17/2024 04:34, potturu venkata prasad wrote:
+> Hi,
 > 
-> This patch and the next patch can be squished into one patch.
+> On 12/17/24 15:52, ... wrote:
+>> the patch that has already been added to the kernel breaks the work of 
+>> acp6x and the microphone no longer works, so far I am looking for the 
+>> reason in this person's code, but it is obvious that this patch breaks 
+>> the work of acp6x.
+> We have tested this patch at our end, it's working fine.
+> Could you please share the dev_dbg logs.
 > 
-> Reviewed-by: Fan Ni <fan.ni@samsung.com>
+> With this patch if ACPI method read failure then jump to check dmi 
+> entry, if dmi entries also not found then driver won't register sound 
+> card it will return -ENODEV.
 > 
-
-thank you Fan and Jonathan for code review.
-
-good suggestion.
-will squish the three similar changes into one in v4. (^^)(^^)
-
->>  drivers/base/driver.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/base/driver.c b/drivers/base/driver.c
->> index b4eb5b89c4ee7bc35458fc75730b16a6d1e804d3..6f033a741aa7ce6138d1c61e49e72b2a3eb85e06 100644
->> --- a/drivers/base/driver.c
->> +++ b/drivers/base/driver.c
->> @@ -160,9 +160,12 @@ struct device *driver_find_device(const struct device_driver *drv,
->>  
->>  	klist_iter_init_node(&drv->p->klist_devices, &i,
->>  			     (start ? &start->p->knode_driver : NULL));
->> -	while ((dev = next_device(&i)))
->> -		if (match(dev, data) && get_device(dev))
->> +	while ((dev = next_device(&i))) {
->> +		if (match(dev, data)) {
->> +			get_device(dev);
->>  			break;
->> +		}
->> +	}
->>  	klist_iter_exit(&i);
->>  	return dev;
->>  }
->>
->> -- 
->> 2.34.1
->>
+> Could you please share more details on this issue.
 > 
 
+Do you perhaps have microphone disabled in your BIOS?
+
+I think it would be really helpful to open a kernel bugzilla and attach 
+the output of the following:
+
+1) acpidump > acpidump.bin
+(attach acpidump.bin)
+
+2) dmesg > dmesg.txt
+(attach dmesg.txt)
+
+3) dmidecode > dmidecode.txt
+(attach dmidecode.txt)
 
