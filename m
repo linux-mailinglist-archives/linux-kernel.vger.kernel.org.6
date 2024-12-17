@@ -1,47 +1,66 @@
-Return-Path: <linux-kernel+bounces-449576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4959F50F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:25:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F20A9F50F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:26:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681D5188CE71
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DA8F7A1EB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E77B1F7594;
-	Tue, 17 Dec 2024 16:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7219C1F5401;
+	Tue, 17 Dec 2024 16:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eT8uVHEE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="rsGNnJFy"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67EA1F5401;
-	Tue, 17 Dec 2024 16:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3208E1D2B11
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734452626; cv=none; b=ByJ5AW4P3Gr+kzTlU0C/6ku3yJ72rg1ElEo+J11HuZgekjU7ztO74nyrbFSWhjy6Ocq7NelnY6If3S8r1dSU2zdT/hG1avD8EJ1K4dsCpiH3SWFpB7eJAVPeAEY/tdfAKbpzrVwDha6wYBRC4SPXBp3keySepw9cIiO2+w50+l8=
+	t=1734452742; cv=none; b=kJNifUzGODYQkuOdRLmb2NKy1WC76W6NXHpfFu12WARX/aq9z+s6UkWWEvRt56lBGP79taJYfm112OS3Y4y0bZ/rk3fqt4mfmQ9qzWMIa44FLrbYsqV1j6wCXvxIuXctmwy+QRY7FVJmPx2ETBsDTCK/hLlvuhEDKCVayVskcd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734452626; c=relaxed/simple;
-	bh=eQ1AM83YSlFbtgipzDoNPjwJZv8IbEVQhzkdelzb5lY=;
+	s=arc-20240116; t=1734452742; c=relaxed/simple;
+	bh=marL0g/AeC3kq0LTYdIstsHGV6iTl3SfJQRXW9FJp+A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V8GUItRL48LHFS02jDfCxg2ngRMbpmXxZ40XxYteYsTyrLSQ/qjsUtPmuwJMBuM2voTflOGxAApUB+PFbe05Bo+TZV6ytIxqhaT1tGoRLfVEvx9i8Xy02vTJRDsLxUiiODrFrDXzDdogCkPIGuSYz1361BfZ8LF4nB/SkiHxmDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eT8uVHEE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B18D1C4CED3;
-	Tue, 17 Dec 2024 16:23:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734452626;
-	bh=eQ1AM83YSlFbtgipzDoNPjwJZv8IbEVQhzkdelzb5lY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eT8uVHEEJg3mB9zVdORI8l/6Mrdq2MbfvMarxckKN66UMMmQmKh79tnUUTzVzNldc
-	 we5df6fJQcI8Ip5Le0oiN83Z7SAm02EevIatTKX8zaYsNC/VeOYwc3hHGWtQ6U8ZLS
-	 WJGRo4Iezt/8aifXWG4skMhUo16B9bW9tPWvKmLjWfuhUq7au/vmyj4InwCOPGnm5o
-	 EyuDmlYq7CC+QwJcjDGSUf79uRiO7EG8qv9t8UxuGnQy3TDnM9xYhKBPYwVuVWIi41
-	 /qMD8Wp6K+mr/6RiRET/ZRaQN+oPkWqfv8+XQNNX09UlfARKqBcqNuih5K2Y4fDSrJ
-	 GEXt59WUrzj7g==
-Message-ID: <fe28a9bc-82ef-4fef-af50-9d9261ed9b39@kernel.org>
-Date: Tue, 17 Dec 2024 17:23:36 +0100
+	 In-Reply-To:Content-Type; b=FWQcz1/oRgGVsR6JHvlsdp+C/ufMw54jgDq7Sm19ZWjnlbdZNGgHfktD5xHVWsby8Eky3bZ9JQA0IMt2M2Ftv62i9hg687+Ao9fiAwKFq05sdpPRjPsOyyd9PQ+N0EbZF3F07j/5q6Z+doF2OvTW76khlKraI842U2p9nYf81kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=rsGNnJFy; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
+	by cmsmtp with ESMTPS
+	id NE1RtaagUg2lzNaOCtHPBE; Tue, 17 Dec 2024 16:25:40 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id NaOBtPR09WdNZNaOBti3qb; Tue, 17 Dec 2024 16:25:39 +0000
+X-Authority-Analysis: v=2.4 cv=FtTO/Hrq c=1 sm=1 tr=0 ts=6761a603
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
+ a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7T7KSl7uo7wA:10 a=_Wotqz80AAAA:8
+ a=VwQbUJbxAAAA:8 a=47l3tzjqmLtwkH2Ukf8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=buJP51TR1BpY-zbLSsyS:22 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=u1t2bCB/btS7LZ6d6eYaJLiS3EvRiz7HQNF2Ap5Ee1Q=; b=rsGNnJFyjhOM4Ewe65c1/Z/frN
+	4K/jiR8E2M/JG8ES5cOdwq/Xj/RiTYCf5iRxvsdBN5yDPPlYb7ANGW6+h930neJ+AFfFwBuAy5u6q
+	dBfH/CKamNFBni6BOy/shwWJpR29rIg61zu0AVr00nS/4YSOVzZ4cywODE/ndLi3mQaCLnmMrJWad
+	4J8ZTIskmUQ8GqwVPHVVp7m04j5X9wp4P9+BfAB/32T8Pk4vP9+YsPwOdTmThHXYdKe+dTLXGNIR5
+	tFy6rD0nD7vL5F4qVRlmdr1tcIIADYKhQVosNh0KCfL+YTMmrFkboOiGaPcKGk0FeUZ2lTi6LqpK5
+	JecdV8AQ==;
+Received: from [177.238.21.80] (port=38346 helo=[192.168.0.21])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1tNaOA-004Mf9-16;
+	Tue, 17 Dec 2024 10:25:38 -0600
+Message-ID: <ff680866-b81f-48c1-8a59-1107b4ce14ff@embeddedor.com>
+Date: Tue, 17 Dec 2024 10:25:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,99 +68,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/4] media: dt-bindings: update clocks for
- sc7280-camss
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
- hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241217140656.965235-1-quic_vikramsa@quicinc.com>
- <20241217140656.965235-2-quic_vikramsa@quicinc.com>
- <02da691b-1f5d-41a6-847c-c7e9b8239919@kernel.org>
- <c14493b0-c9d3-4e1c-9f86-991b4cb25c98@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] UAPI: net/sched: Open-code __struct_group() in flex
+ struct tc_u32_sel
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Kees Cook <kees@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ cferris@google.com, Jamal Hadi Salim <jhs@mojatatu.com>,
+ Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ netdev@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20241217025950.work.601-kees@kernel.org>
+ <f4947447-aa66-470c-a48d-06ed77be58da@intel.com>
+ <bbed49c7-56c0-4642-afec-e47b14425f76@embeddedor.com>
+ <c49d316d-ce8f-43d4-8116-80c760e38a6b@intel.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c14493b0-c9d3-4e1c-9f86-991b4cb25c98@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <c49d316d-ce8f-43d4-8116-80c760e38a6b@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.21.80
+X-Source-L: No
+X-Exim-ID: 1tNaOA-004Mf9-16
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:38346
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfJ8bJXFv6XOhEwu+5yNhFAmo2XZ6oVHp6mchUhj25T+xobkqUSKpti0TmifEsmPZReUwJbrzi3LkCAu19GsMxMq+g8CaVhl8vQA7Rh6vhljYkRDjcy6G
+ e5zPe1F1Sa2pOrcFZ7UZNeQfzVWMdgnTNwv6JUy5ajBV9v0iiseYkymgYKOzVfi9/1AEwPHqYv8+WboMm2AMjNN5AZsWBQtXICBtyciOtzWXwQBUPETzJSCu
 
-On 17/12/2024 17:12, Bryan O'Donoghue wrote:
-> On 17/12/2024 14:10, Krzysztof Kozlowski wrote:
->> On 17/12/2024 15:06, Vikram Sharma wrote:
->>> This patch change clock names to make it consistent with
->>> existing platforms as gcc_cam_hf_axi -> gcc_axi_hf.
->>> This also adds gcc_axi_sf and remove gcc_camera_ahb.
+
+
+On 17/12/24 10:04, Alexander Lobakin wrote:
+> From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Date: Tue, 17 Dec 2024 09:58:28 -0600
+> 
 >>
->> Don't combine ABI changes with some less important things.
 >>
->> You miss here explanation why doing the ABI change in the first place.
->> Without that explanation I find it rather churn. But anyway, reason for
->> ABI break and impact should be documented in commit msg.
->>
+>> On 17/12/24 08:55, Alexander Lobakin wrote:
+>>> From: Kees Cook <kees@kernel.org>
+>>> Date: Mon, 16 Dec 2024 18:59:55 -0800
 >>>
->>> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
->>> ---
+>>>> This switches to using a manually constructed form of struct tagging
+>>>> to avoid issues with C++ being unable to parse tagged structs within
+>>>> anonymous unions, even under 'extern "C"':
+>>>>
+>>>>     ../linux/include/uapi/linux/pkt_cls.h:25124: error: ‘struct
+>>>> tc_u32_sel::<unnamed union>::tc_u32_sel_hdr,’ invalid; an anonymous
+>>>> union may only have public non-static data members [-fpermissive]
+>>>
+>>> I worked around that like this in the past: [0]
+>>> As I'm not sure it would be fine to fix every such occurrence manually
+>>> by open-coding.
+>>> What do you think?
 >>
->> Best regards,
->> Krzysztof
+>> The thing is that, in this particular case, we need a struct tag to change
+>> the type of an object in another struct. See:
 > 
-> This change should be fine since we haven't committed and upstream dtsi, 
-> so there's no ABI to break yet.
-> 
-> Agree the cover letter should have been explicit in explaining.
+> But the fix I mentioned still allows you to specify a tag in C code...
+> cxgb4 is for sure not C++.
 
-So these are recently added bindings (sc7280 is not particularly new)?
-If so mention in the commit msg that no users are affected because of this.
 
-Best regards,
-Krzysztof
+Oh yes, I see what you mean. If it works, then you should probably submit that
+patch upstream. :)
+
+Thanks
+--
+Gustavo
 
