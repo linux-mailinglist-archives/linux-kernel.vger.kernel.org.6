@@ -1,157 +1,120 @@
-Return-Path: <linux-kernel+bounces-448498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841909F40FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:44:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923EF9F410E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC26188EA2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:44:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D631697A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B59145335;
-	Tue, 17 Dec 2024 02:44:36 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A226014658B;
+	Tue, 17 Dec 2024 02:46:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F79018035;
-	Tue, 17 Dec 2024 02:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348E78F49;
+	Tue, 17 Dec 2024 02:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734403475; cv=none; b=gAfFxzhnPAfxbFlNrM64794SbXTPas/vpCkTSJXcjRXQSRQPjIhTi6e18ZsUUNKq29LtVGoB0r5X+8+U2E9xlFf8yjlXAGWKZ9GlpQbnZ4T3fQj7KH3GWDti5VSkuRl3GIwWhEjPiJnzdEOOwyLLiP6BtHgz1f9kBtUdUOk/ELs=
+	t=1734403606; cv=none; b=PQ94boDy0p545i6m/70HdPRCvMecxqXHft9Rg6erC3ZB043Krk1GK7iDDx1GcojpzjBCVCmPjQO3E0ItSfs4EPnxuMnenCmJVdUMscKOq8lJ3Lcy6NKVVZGJoAu72uvgOKRhlBe5p3QZF6xxv0yRt5mR1yux96JxqJ2SjHn8tEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734403475; c=relaxed/simple;
-	bh=K9SoLNCfEeUaljYFOjFnHTxHoqjk1HY5h19jRWTR4As=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WPePlKg0EhbiGXRiBo0S58IfnsaYyjA8BPZkvan6kUqVJEXEeTNfraFNkLZ4aza8u9pXc/aYyu5vMe6DcnVq+yupWa9Dmn4xrjCZv4fXQWVN7veogI+Z0MPDYWNlw7xkLKDJL5sgBj7m7VqOSz1FGtDBTL24CnojOZ7DQcnKqyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YC1NN4JZBz4f3lWG;
-	Tue, 17 Dec 2024 10:44:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1C67A1A018D;
-	Tue, 17 Dec 2024 10:44:25 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAHMYWE5WBndhZJEw--.48443S8;
-	Tue, 17 Dec 2024 10:44:24 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	akpm@linux-foundation.org,
-	ming.lei@redhat.com,
-	yang.yang@vivo.com,
-	bvanassche@acm.org,
-	osandov@fb.com,
-	paolo.valente@linaro.org
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH RFC v2 4/4] block/mq-deadline: introduce min_async_depth
-Date: Tue, 17 Dec 2024 10:40:47 +0800
-Message-Id: <20241217024047.1091893-5-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241217024047.1091893-1-yukuai1@huaweicloud.com>
-References: <20241217024047.1091893-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1734403606; c=relaxed/simple;
+	bh=+meYEWCHHgJpgYBqdWW8S/7CO2A7qz1tONeLBxp9h18=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=jbV4QZuwZfuI9pOCEOQzD07w0BaBMR6mZE13r2tFOEecwjbObjsDcDJiNXwTDSKpNj43hhdUPk7QOkTDzMluDg2vadeCwNzw9bjvaiyJ/p/wgSShH6mYT5TV4B+R4zU4nsGu8rH/Yv+saKs5bXd/3fgA/hxFxy1vGHLTPGLnWS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9832C4CED0;
+	Tue, 17 Dec 2024 02:46:45 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tNNcG-000000087UV-1P2r;
+	Mon, 16 Dec 2024 21:47:20 -0500
+Message-ID: <20241217024118.587584221@goodmis.org>
+User-Agent: quilt/0.68
+Date: Mon, 16 Dec 2024 21:41:18 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@ZenIV.linux.org.uk>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 0/4] tracing: Replace trace_check_printf() with ignore_event()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHMYWE5WBndhZJEw--.48443S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF4DAF4Dtw4ruFWftr4fZrb_yoW5AF47pr
-	W5Ja1kKr1jqF4j9rWDA3y3Xr1rWws5Wry3GF1rt3yfCF95ArZxXF1rtF13WF93XFZ7Aw47
-	Kr1qqayfJ3Z8tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-	WIevJa73UjIFyTuYvjfUOyIUUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
 
-min_shallow_depth must be less or equal to any shallow_depth value, and
-it's 1 currently, and this will change default wake_batch to 1, causing
-performance degradation for fast disk with high concurrency. This patch
-make following changes:
+A bug was found where if the hash-ptr option was disabled, it would
+pass the iter->fmt temp buffer to the trace_check_vprintf() function
+that tests to make sure the "%s" strings do not point to non static
+strings or strings in the ring buffer. The problem with that was
+the trace_check_vprintf() used the iter->fmt as a temp buffer itself
+and would overwrite the content of what it was processing.
 
-- set default minimal async_depth to 64, to avoid performance
-  degradation in the commen case. And user can set lower value if
-  necessary.
-- disable throttling asynchronous requests by default, to prevent
-  performance degradation in some special setup. User must set a value
-  to async_depth to enable it.
-- if async_depth is set already, don't reset it if user sets new
-  nr_requests.
+On the git pull request[1], Linus did not take too kindly for the
+way trace_check_vprintf() was using va_list. It relied on implementation
+details of the compiler and would not even work if the compiler used
+a copy to pass the va_list and not by reference.
 
-Fixes: 07757588e507 ("block/mq-deadline: Reserve 25% of scheduler tags for synchronous requests")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/mq-deadline.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+I didn't like that code myself when I first wrote it, but I was tired
+of fixing the "%s" bugs that were constantly reported as a bug in
+the tracing sub system. Using the va_list was the only method I knew
+at the time.
 
-diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-index 1f0d175a941e..9be0a33985ce 100644
---- a/block/mq-deadline.c
-+++ b/block/mq-deadline.c
-@@ -24,6 +24,16 @@
- #include "blk-mq-debugfs.h"
- #include "blk-mq-sched.h"
- 
-+/*
-+ * async_depth is used to reserve scheduler tags for synchronous requests,
-+ * and the value will affect sbitmap wake_batch. The default minimal value is 64
-+ * because the corresponding wake_batch is 8, and lower wake_batch may affect
-+ * IO performance.
-+ */
-+static unsigned int min_async_depth = 64;
-+module_param(min_async_depth, int, 0444);
-+MODULE_PARM_DESC(min_async_depth, "The minimal number of tags available for asynchronous requests");
-+
- /*
-  * See Documentation/block/deadline-iosched.rst
-  */
-@@ -513,9 +523,12 @@ static void dd_depth_updated(struct blk_mq_hw_ctx *hctx)
- 	struct deadline_data *dd = q->elevator->elevator_data;
- 	struct blk_mq_tags *tags = hctx->sched_tags;
- 
--	dd->async_depth = max(1UL, 3 * q->nr_requests / 4);
-+	if (q->nr_requests > min_async_depth)
-+		sbitmap_queue_min_shallow_depth(&tags->bitmap_tags,
-+						min_async_depth);
- 
--	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, dd->async_depth);
-+	if (q->nr_requests <= dd->async_depth)
-+		dd->async_depth = 0;
- }
- 
- /* Called by blk_mq_init_hctx() and blk_mq_init_sched(). */
-@@ -814,7 +827,7 @@ STORE_JIFFIES(deadline_write_expire_store, &dd->fifo_expire[DD_WRITE], 0, INT_MA
- STORE_JIFFIES(deadline_prio_aging_expire_store, &dd->prio_aging_expire, 0, INT_MAX);
- STORE_INT(deadline_writes_starved_store, &dd->writes_starved, INT_MIN, INT_MAX);
- STORE_INT(deadline_front_merges_store, &dd->front_merges, 0, 1);
--STORE_INT(deadline_async_depth_store, &dd->async_depth, 1, INT_MAX);
-+STORE_INT(deadline_async_depth_store, &dd->async_depth, min_async_depth, INT_MAX);
- STORE_INT(deadline_fifo_batch_store, &dd->fifo_batch, 0, INT_MAX);
- #undef STORE_FUNCTION
- #undef STORE_INT
--- 
-2.39.2
+As Linus stated he wanted that removed regardless, I thought hard on
+another approach, which leads to this solution. The test_event_printk()
+works when the event is registered and it reads the print format as
+well as the arguments that are passed to it (what's printed in the
+format files), and can mostly figure out if the dereferenced pointers
+in the print format are safe or not. Most "%s" in the trace events
+use helper macros like __get_str() which can also be verified at boot.
+The only ones that can not be, are a few events (which includes the
+RCU events, some IPI events, and some others). In this case, we can
+tag the event with a new flag TRACE_EVENT_FL_TEST_STR, and also the
+fields that contain the pointers that we do not trust with a new
+"needs_test" flag.
 
+Now, instead of parsing the print format via vsnprintf() va_list hacks
+at runtime, before printing the event, it calls a new function
+ignore_event() that checks if the event has the TEST_STR flag set. If so, it
+then iterates the event's field structures and for every field that has a
+"needs_test" flag set, it will read the event buffer, getting the pointer
+from the field structure's offset field, and then checks if that pointer is
+"safe". If all the fields marked with "needs_test" are safe, the
+ignore_event() function returns false, but if it finds anything that is
+not safe, it returns true, triggers a WARN_ON() and writes into the
+ring buffer that the event's field points to non-safe memory. In this case
+the event's print format is never used.
+
+The ignore_event() makes the trace_check_printf() obsolete and that function
+is removed.
+
+This passed various tests, but I'm going to run it through more tests
+as well as my standard tests before pushing. I'll create an event that
+uses a bad pointer to make sure it triggers (I hacked it up to make
+the pointer it calculates from the field to be off by 4 and it did
+trigger. But I still want to test it on a real "bad" event).
+
+[1] https://lore.kernel.org/all/20241214182138.4e7984a2@batman.local.home/
+
+Steven Rostedt (4):
+      tracing: Fix test_event_printk() to process entire print argument
+      tracing: Add missing helper functions in event pointer dereference check
+      tracing: Add "%s" check in test_event_printk()
+      tracing: Check "%s" dereference via the field and not the TP_printk format
+
+----
+ include/linux/trace_events.h |   6 +-
+ kernel/trace/trace.c         | 255 +++++++++----------------------------------
+ kernel/trace/trace.h         |   6 +-
+ kernel/trace/trace_events.c  | 225 +++++++++++++++++++++++++++++---------
+ kernel/trace/trace_output.c  |   6 +-
+ 5 files changed, 242 insertions(+), 256 deletions(-)
 
