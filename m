@@ -1,443 +1,139 @@
-Return-Path: <linux-kernel+bounces-449083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29869F4986
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:03:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EAD89F4982
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FD11883EA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C05C188CEE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898991EE006;
-	Tue, 17 Dec 2024 11:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870971D934D;
+	Tue, 17 Dec 2024 11:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="m0EYeqnB"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFE31EC013;
-	Tue, 17 Dec 2024 11:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzU4up4z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAF81DFE0C;
+	Tue, 17 Dec 2024 11:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734433399; cv=none; b=Sf/hv4OmOrFEOpdyfkXK8wfdP99d5wrG25DTXz+bUuPVQJQjjZpZISzSb9rDhqGyyDcw2DNSdGdeqQIhajPmc16w/PbrlBgXFcaHI0EC/GC/T8l84AgMIeZ7Y4pY+W+R39YberKs9E41wXQ/Dltv8tKsCNes6uCjH7+eprT+hRY=
+	t=1734433393; cv=none; b=dSaeV1fe29hZYPEGIG2EbYWs6kYSLnTGZGelLwrcVLKq8eR72AjRFI8Mrn2RiWh418hFtESAvl141RPA7QvjHt4adKgteKglj+AYjbqATv6oJ6Mw8eBevg/Xnpojyux7925sCNIFiKnOuEd+mUnAHDSf+W23+CYGzme/VsEC4EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734433399; c=relaxed/simple;
-	bh=nYvrXhMHRSdqhSkHBR/TZTlF5sSlSIYO1m2zbIVO9K0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MRPjRSVR4OwD6jKbo5Iw6pJ7+emVpd+2a3artKGGWmrxwKa7IYAli+nHTB+uQsMtuP3wjuEIl7CSESgw2qspOCSxWIFO3ZYT1AJDGcGJWZ6bb3DvUuYnXodD0doimTp/cxYM2eie3VBHYJMFR4Vf2gTEPkwCCvHP9v1HZjU88pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=m0EYeqnB; arc=none smtp.client-ip=220.197.31.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=fC1AUrI43IQ3ukIr1TECB40peqU8jmbZEQ/NJSFHlvg=;
-	b=m0EYeqnBYlfjAf0KnSL1YpOqw5rzSUsRuDsGs0Upl4yIiRQt8vBLphThiNpoBh
-	WbwRDZakMop/2f5woWNRlDqefzabh4AHDXENU7oEqIQJFqp2mxK37RvyP9GQvr/l
-	JMDPCg/mUyfvuoylyv5p+QRbbDFAw05vVeKcIox/Rg1p4=
-Received: from [172.21.22.210] (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD338JSWmFnialTAg--.47635S2;
-	Tue, 17 Dec 2024 19:02:43 +0800 (CST)
-Message-ID: <7c0d3745-c566-4f14-8ceb-05d882b609aa@126.com>
-Date: Tue, 17 Dec 2024 19:02:42 +0800
+	s=arc-20240116; t=1734433393; c=relaxed/simple;
+	bh=2NJR/iFzF/OAv9mApDUHc/rR7eYb/PKueeBcLQtbFwQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Iz5Vq7Vyl2cWAPMT+mMp7fvzHZj1JbUhJz62LHIW1+gd55mLZbDUp9pisx4L/b4Z96igAGME2As9ymyaoRfLHAL8q3cIZpy+4fDXEHNFCv6P0q+/5fl+Ywyl8XsyTin/P3D6ghlD7eVWDjyRJaAFOEnZYM0HYQq4NccI1lzTKTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzU4up4z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 581E1C4CED4;
+	Tue, 17 Dec 2024 11:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734433392;
+	bh=2NJR/iFzF/OAv9mApDUHc/rR7eYb/PKueeBcLQtbFwQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jzU4up4z8oan5qBtU82XldC7ibWuEKkBdxlJ1RFuynkMDjZolZdAvA3an/+n/Wp2E
+	 CtX/DcEHQxDF9PAQmGZ0JUi60U6viCwoBvvqTnZXhpuNg5Rx2cYg6C040rnkJyPVEG
+	 xjf0W93WwkuyWE5LBMFhmPsQ52QFiUr5YYAMLibyY58eu9jxOOXakYXS5/IYUOUAge
+	 aLEvFBGkxtHmKxHPK7kxqV628cKL9BxRTCkbSooL3CjCXtbMfWzfOiChtc8tPfcYjb
+	 c+8uCd7h9sS1QSrAox0ryLpaBkPCFGNbU0XEIIJbKUW40H0XwLzrIifeDYpvaN5JXz
+	 pxfZ+GaxY8cJw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tNVM5-004WjL-0a;
+	Tue, 17 Dec 2024 11:03:09 +0000
+Date: Tue, 17 Dec 2024 11:03:08 +0000
+Message-ID: <86y10er2qb.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Quentin Perret <qperret@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Fuad Tabba <tabba@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 04/18] KVM: arm64: Move host page ownership tracking to the hyp vmemmap
+In-Reply-To: <20241216175803.2716565-5-qperret@google.com>
+References: <20241216175803.2716565-1-qperret@google.com>
+	<20241216175803.2716565-5-qperret@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6] mm, compaction: don't use ALLOC_CMA in long term GUP
- flow
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, david@redhat.com,
- baolin.wang@linux.alibaba.com, vbabka@suse.cz, liuzixing@hygon.cn
-References: <1734406405-25847-1-git-send-email-yangge1116@126.com>
- <CAGsJ_4xSbw7XDe1CWBAfYvMH35n0s1KaSze+wTUDOpwE-VrhfQ@mail.gmail.com>
- <CAGsJ_4zW9wmtGtTNZ4HowvL=suZAf-yAeqLBuKW_soOAEjmo3Q@mail.gmail.com>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <CAGsJ_4zW9wmtGtTNZ4HowvL=suZAf-yAeqLBuKW_soOAEjmo3Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD338JSWmFnialTAg--.47635S2
-X-Coremail-Antispam: 1Uf129KBjvAXoW3Cr4xZrWftr18Kw4ruw1kAFb_yoW8Xr1DCo
-	W3GFnrC3Z5Wry3ZF4fGw17Ka9rW34kGw4xJF15Aw1DCF90va1ayay5Kw43ZFW7WFy5tF4f
-	G34xta1a9rWSvFn3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU54SoDUUUU
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOgy4G2dhOfh63QABs0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, tabba@google.com, vdonnefort@google.com, sebastianene@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-
-在 2024/12/17 14:31, Barry Song 写道:
-> On Tue, Dec 17, 2024 at 7:14 PM Barry Song <21cnbao@gmail.com> wrote:
->>
->> On Tue, Dec 17, 2024 at 4:33 PM <yangge1116@126.com> wrote:
->>>
->>> From: yangge <yangge1116@126.com>
->>>
->>> Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
->>> in __compaction_suitable()") allow compaction to proceed when free
->>> pages required for compaction reside in the CMA pageblocks, it's
->>> possible that __compaction_suitable() always returns true, and in
->>> some cases, it's not acceptable.
->>>
->>> There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
->>> of memory. I have configured 16GB of CMA memory on each NUMA node,
->>> and starting a 32GB virtual machine with device passthrough is
->>> extremely slow, taking almost an hour.
->>>
->>> During the start-up of the virtual machine, it will call
->>> pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
->>> Long term GUP cannot allocate memory from CMA area, so a maximum
->>> of 16 GB of no-CMA memory on a NUMA node can be used as virtual
->>> machine memory. Since there is 16G of free CMA memory on the NUMA
->>
->> Other unmovable allocations, like dma_buf, which can be large in a
->> Linux system, are
->> also unable to allocate memory from CMA. My question is whether the issue you
->> described applies to these allocations as well.
->>
->>> node, watermark for order-0 always be met for compaction, so
->>> __compaction_suitable() always returns true, even if the node is
->>> unable to allocate non-CMA memory for the virtual machine.
->>>
->>> For costly allocations, because __compaction_suitable() always
->>> returns true, __alloc_pages_slowpath() can't exit at the appropriate
->>> place, resulting in excessively long virtual machine startup times.
->>> Call trace:
->>> __alloc_pages_slowpath
->>>      if (compact_result == COMPACT_SKIPPED ||
->>>          compact_result == COMPACT_DEFERRED)
->>>          goto nopage; // should exit __alloc_pages_slowpath() from here
->>>
->>
->> Do we face the same issue if we allocate dma-buf while CMA has plenty
->> of free memory, but non-CMA has none?
->>
->>> In order to quickly fall back to remote node, we should remove
->>> ALLOC_CMA both in __compaction_suitable() and __isolate_free_page()
->>> in long term GUP flow. After this fix, starting a 32GB virtual machine
->>> with device passthrough takes only a few seconds.
->>>
->>> Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in __compaction_suitable()")
->>> Cc: <stable@vger.kernel.org>
->>> Signed-off-by: yangge <yangge1116@126.com>
->>> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> ---
->>>
->>> V6:
->>> -- update cc->alloc_flags to keep the original loginc
->>>
->>> V5:
->>> - add 'alloc_flags' parameter for __isolate_free_page()
->>> - remove 'usa_cma' variable
->>>
->>> V4:
->>> - rich the commit log description
->>>
->>> V3:
->>> - fix build errors
->>> - add ALLOC_CMA both in should_continue_reclaim() and compaction_ready()
->>>
->>> V2:
->>> - using the 'cc->alloc_flags' to determin if 'ALLOC_CMA' is needed
->>> - rich the commit log description
->>>
->>>   include/linux/compaction.h |  6 ++++--
->>>   mm/compaction.c            | 26 +++++++++++++++-----------
->>>   mm/internal.h              |  3 ++-
->>>   mm/page_alloc.c            |  7 +++++--
->>>   mm/page_isolation.c        |  3 ++-
->>>   mm/page_reporting.c        |  2 +-
->>>   mm/vmscan.c                |  4 ++--
->>>   7 files changed, 31 insertions(+), 20 deletions(-)
->>>
->>> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
->>> index e947764..b4c3ac3 100644
->>> --- a/include/linux/compaction.h
->>> +++ b/include/linux/compaction.h
->>> @@ -90,7 +90,8 @@ extern enum compact_result try_to_compact_pages(gfp_t gfp_mask,
->>>                  struct page **page);
->>>   extern void reset_isolation_suitable(pg_data_t *pgdat);
->>>   extern bool compaction_suitable(struct zone *zone, int order,
->>> -                                              int highest_zoneidx);
->>> +                                              int highest_zoneidx,
->>> +                                              unsigned int alloc_flags);
->>>
->>>   extern void compaction_defer_reset(struct zone *zone, int order,
->>>                                  bool alloc_success);
->>> @@ -108,7 +109,8 @@ static inline void reset_isolation_suitable(pg_data_t *pgdat)
->>>   }
->>>
->>>   static inline bool compaction_suitable(struct zone *zone, int order,
->>> -                                                     int highest_zoneidx)
->>> +                                                     int highest_zoneidx,
->>> +                                                     unsigned int alloc_flags)
->>>   {
->>>          return false;
->>>   }
->>> diff --git a/mm/compaction.c b/mm/compaction.c
->>> index 07bd227..d92ba6c 100644
->>> --- a/mm/compaction.c
->>> +++ b/mm/compaction.c
->>> @@ -655,7 +655,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
->>>
->>>                  /* Found a free page, will break it into order-0 pages */
->>>                  order = buddy_order(page);
->>> -               isolated = __isolate_free_page(page, order);
->>> +               isolated = __isolate_free_page(page, order, cc->alloc_flags);
->>>                  if (!isolated)
->>>                          break;
->>>                  set_page_private(page, order);
->>> @@ -1634,7 +1634,7 @@ static void fast_isolate_freepages(struct compact_control *cc)
->>>
->>>                  /* Isolate the page if available */
->>>                  if (page) {
->>> -                       if (__isolate_free_page(page, order)) {
->>> +                       if (__isolate_free_page(page, order, cc->alloc_flags)) {
->>>                                  set_page_private(page, order);
->>>                                  nr_isolated = 1 << order;
->>>                                  nr_scanned += nr_isolated - 1;
->>> @@ -2381,6 +2381,7 @@ static enum compact_result compact_finished(struct compact_control *cc)
->>>
->>>   static bool __compaction_suitable(struct zone *zone, int order,
->>>                                    int highest_zoneidx,
->>> +                                 unsigned int alloc_flags,
->>>                                    unsigned long wmark_target)
->>>   {
->>>          unsigned long watermark;
->>> @@ -2395,25 +2396,26 @@ static bool __compaction_suitable(struct zone *zone, int order,
->>>           * even if compaction succeeds.
->>>           * For costly orders, we require low watermark instead of min for
->>>           * compaction to proceed to increase its chances.
->>> -        * ALLOC_CMA is used, as pages in CMA pageblocks are considered
->>> -        * suitable migration targets
->>> +        * In addition to long term GUP flow, ALLOC_CMA is used, as pages in
->>> +        * CMA pageblocks are considered suitable migration targets
->>
->> I'm not sure if this document is correct for cases other than GUP.
+On Mon, 16 Dec 2024 17:57:49 +0000,
+Quentin Perret <qperret@google.com> wrote:
 > 
-> Hi yangge,
+> We currently store part of the page-tracking state in PTE software bits
+> for the host, guests and the hypervisor. This is sub-optimal when e.g.
+> sharing pages as this forces to break block mappings purely to support
+> this software tracking. This causes an unnecessarily fragmented stage-2
+> page-table for the host in particular when it shares pages with Secure,
+> which can lead to measurable regressions. Moreover, having this state
+> stored in the page-table forces us to do multiple costly walks on the
+> page transition path, hence causing overhead.
 > 
-> Could we please run the same test using dma-buf? The simplest approach is
-> to use system_heap from drivers/dma-buf/heaps/system_heap.c.
+> In order to work around these problems, move the host-side page-tracking
+> logic from SW bits in its stage-2 PTEs to the hypervisor's vmemmap.
 > 
-> Userspace programming it is quite straightforward:
-> https://static.linaro.org/connect/lvc21/presentations/lvc21-120.pdf
+> Signed-off-by: Quentin Perret <qperret@google.com>
+> ---
+>  arch/arm64/kvm/hyp/include/nvhe/memory.h |   6 +-
+>  arch/arm64/kvm/hyp/nvhe/mem_protect.c    | 100 ++++++++++++++++-------
+>  arch/arm64/kvm/hyp/nvhe/setup.c          |   7 +-
+>  3 files changed, 77 insertions(+), 36 deletions(-)
 > 
-> struct dma_heap_allocation_data heap_data = { .len = 1048576,  // 1meg
->      .fd_flags = O_RDWR | O_CLOEXEC, };
-> 
-> fd = open(“/dev/dma_heap/system”, O_RDONLY | O_CLOEXEC);
-> if (fd < 0)
->        return fd;
-> ret = ioctl(fd, DMA_HEAP_IOCTL_ALLOC, &heap_data);
-> 
-After enabled CONFIG_DMABUF_HEAPS_SYSTEM, CONFIG_DMABUF_HEAPS_CMA, and 
-CONFIG_HEAPS, I can see '/dev/dma_heap_system'.
+> diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> index 45b8d1840aa4..8bd9a539f260 100644
+> --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> @@ -8,7 +8,7 @@
+>  #include <linux/types.h>
+>  
+>  /*
+> - * SW bits 0-1 are reserved to track the memory ownership state of each page:
+> + * Bits 0-1 are reserved to track the memory ownership state of each page:
+>   *   00: The page is owned exclusively by the page-table owner.
+>   *   01: The page is owned by the page-table owner, but is shared
+>   *       with another entity.
+> @@ -43,7 +43,9 @@ static inline enum pkvm_page_state pkvm_getstate(enum kvm_pgtable_prot prot)
+>  struct hyp_page {
+>  	u16 refcount;
+>  	u8 order;
+> -	u8 reserved;
+> +
+> +	/* Host (non-meta) state. Guarded by the host stage-2 lock. */
+> +	enum pkvm_page_state host_state : 8;
 
-But, after executing the following code, no memory allocation is seen.
+An enum as a bitfield? Crazy! :)
 
-struct dma_heap_allocation_data heap_data = { .len = 30*1024*1024*1024,
-		.fd_flags = O_RDWR | O_CLOEXEC, };
-fd = open(“/dev/dma_heap/system”, O_RDONLY | O_CLOEXEC);
-if (fd < 0)
-	return fd;
-ret = ioctl(fd, DMA_HEAP_IOCTL_ALLOC, &heap_data);
+You probably want an assert somewhere that ensures that hyp_page is a
+32bit quantity, just to make sure (and avoid hard to track bugs).
 
-> There are two objectives:
-> 1. Whether we should fix the changelog and code documentation, then send
-> another version.
+Thanks,
 
-I will fix the changelog and code documentation in next version.
+	M.
 
-> 2. If there are issues elsewhere, we need to port the patch into the Android
-> common kernel, which heavily uses dma-buf.
-
-I think dma_buf also have this problem:
-__alloc_pages_slowpath() can't exit at the appropriate
-place, and it will continue to perform meaningless memory reclaim and 
-compaction.
-
-> 
->>
->>>           */
->>>          watermark = (order > PAGE_ALLOC_COSTLY_ORDER) ?
->>>                                  low_wmark_pages(zone) : min_wmark_pages(zone);
->>>          watermark += compact_gap(order);
->>>          return __zone_watermark_ok(zone, 0, watermark, highest_zoneidx,
->>> -                                  ALLOC_CMA, wmark_target);
->>> +                                  alloc_flags & ALLOC_CMA, wmark_target);
->>>   }
->>>
->>>   /*
->>>    * compaction_suitable: Is this suitable to run compaction on this zone now?
->>>    */
->>> -bool compaction_suitable(struct zone *zone, int order, int highest_zoneidx)
->>> +bool compaction_suitable(struct zone *zone, int order, int highest_zoneidx,
->>> +                                  unsigned int alloc_flags)
->>>   {
->>>          enum compact_result compact_result;
->>>          bool suitable;
->>>
->>> -       suitable = __compaction_suitable(zone, order, highest_zoneidx,
->>> +       suitable = __compaction_suitable(zone, order, highest_zoneidx, alloc_flags,
->>>                                           zone_page_state(zone, NR_FREE_PAGES));
->>>          /*
->>>           * fragmentation index determines if allocation failures are due to
->>> @@ -2474,7 +2476,7 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
->>>                  available = zone_reclaimable_pages(zone) / order;
->>>                  available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
->>>                  if (__compaction_suitable(zone, order, ac->highest_zoneidx,
->>> -                                         available))
->>> +                                         alloc_flags, available))
->>>                          return true;
->>>          }
->>>
->>> @@ -2499,7 +2501,7 @@ compaction_suit_allocation_order(struct zone *zone, unsigned int order,
->>>                                alloc_flags))
->>>                  return COMPACT_SUCCESS;
->>>
->>> -       if (!compaction_suitable(zone, order, highest_zoneidx))
->>> +       if (!compaction_suitable(zone, order, highest_zoneidx, alloc_flags))
->>>                  return COMPACT_SKIPPED;
->>>
->>>          return COMPACT_CONTINUE;
->>> @@ -2893,6 +2895,7 @@ static int compact_node(pg_data_t *pgdat, bool proactive)
->>>          struct compact_control cc = {
->>>                  .order = -1,
->>>                  .mode = proactive ? MIGRATE_SYNC_LIGHT : MIGRATE_SYNC,
->>> +               .alloc_flags = ALLOC_CMA,
->>>                  .ignore_skip_hint = true,
->>>                  .whole_zone = true,
->>>                  .gfp_mask = GFP_KERNEL,
->>> @@ -3037,7 +3040,7 @@ static bool kcompactd_node_suitable(pg_data_t *pgdat)
->>>
->>>                  ret = compaction_suit_allocation_order(zone,
->>>                                  pgdat->kcompactd_max_order,
->>> -                               highest_zoneidx, ALLOC_WMARK_MIN);
->>> +                               highest_zoneidx, ALLOC_CMA | ALLOC_WMARK_MIN);
->>>                  if (ret == COMPACT_CONTINUE)
->>>                          return true;
->>>          }
->>> @@ -3058,6 +3061,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
->>>                  .search_order = pgdat->kcompactd_max_order,
->>>                  .highest_zoneidx = pgdat->kcompactd_highest_zoneidx,
->>>                  .mode = MIGRATE_SYNC_LIGHT,
->>> +               .alloc_flags = ALLOC_CMA | ALLOC_WMARK_MIN,
->>>                  .ignore_skip_hint = false,
->>>                  .gfp_mask = GFP_KERNEL,
->>>          };
->>> @@ -3078,7 +3082,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
->>>                          continue;
->>>
->>>                  ret = compaction_suit_allocation_order(zone,
->>> -                               cc.order, zoneid, ALLOC_WMARK_MIN);
->>> +                               cc.order, zoneid, cc.alloc_flags);
->>>                  if (ret != COMPACT_CONTINUE)
->>>                          continue;
->>>
->>> diff --git a/mm/internal.h b/mm/internal.h
->>> index 3922788..6d257c8 100644
->>> --- a/mm/internal.h
->>> +++ b/mm/internal.h
->>> @@ -662,7 +662,8 @@ static inline void clear_zone_contiguous(struct zone *zone)
->>>          zone->contiguous = false;
->>>   }
->>>
->>> -extern int __isolate_free_page(struct page *page, unsigned int order);
->>> +extern int __isolate_free_page(struct page *page, unsigned int order,
->>> +                                   unsigned int alloc_flags);
->>>   extern void __putback_isolated_page(struct page *page, unsigned int order,
->>>                                      int mt);
->>>   extern void memblock_free_pages(struct page *page, unsigned long pfn,
->>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>> index dde19db..1bfdca3 100644
->>> --- a/mm/page_alloc.c
->>> +++ b/mm/page_alloc.c
->>> @@ -2809,7 +2809,8 @@ void split_page(struct page *page, unsigned int order)
->>>   }
->>>   EXPORT_SYMBOL_GPL(split_page);
->>>
->>> -int __isolate_free_page(struct page *page, unsigned int order)
->>> +int __isolate_free_page(struct page *page, unsigned int order,
->>> +                                  unsigned int alloc_flags)
->>>   {
->>>          struct zone *zone = page_zone(page);
->>>          int mt = get_pageblock_migratetype(page);
->>> @@ -2823,7 +2824,8 @@ int __isolate_free_page(struct page *page, unsigned int order)
->>>                   * exists.
->>>                   */
->>>                  watermark = zone->_watermark[WMARK_MIN] + (1UL << order);
->>> -               if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
->>> +               if (!zone_watermark_ok(zone, 0, watermark, 0,
->>> +                           alloc_flags & ALLOC_CMA))
->>>                          return 0;
->>>          }
->>>
->>> @@ -6454,6 +6456,7 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
->>>                  .order = -1,
->>>                  .zone = page_zone(pfn_to_page(start)),
->>>                  .mode = MIGRATE_SYNC,
->>> +               .alloc_flags = ALLOC_CMA,
->>>                  .ignore_skip_hint = true,
->>>                  .no_set_skip_hint = true,
->>>                  .alloc_contig = true,
->>> diff --git a/mm/page_isolation.c b/mm/page_isolation.c
->>> index c608e9d..a1f2c79 100644
->>> --- a/mm/page_isolation.c
->>> +++ b/mm/page_isolation.c
->>> @@ -229,7 +229,8 @@ static void unset_migratetype_isolate(struct page *page, int migratetype)
->>>                          buddy = find_buddy_page_pfn(page, page_to_pfn(page),
->>>                                                      order, NULL);
->>>                          if (buddy && !is_migrate_isolate_page(buddy)) {
->>> -                               isolated_page = !!__isolate_free_page(page, order);
->>> +                               isolated_page = !!__isolate_free_page(page, order,
->>> +                                                   ALLOC_CMA);
->>>                                  /*
->>>                                   * Isolating a free page in an isolated pageblock
->>>                                   * is expected to always work as watermarks don't
->>> diff --git a/mm/page_reporting.c b/mm/page_reporting.c
->>> index e4c428e..fd3813b 100644
->>> --- a/mm/page_reporting.c
->>> +++ b/mm/page_reporting.c
->>> @@ -198,7 +198,7 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
->>>
->>>                  /* Attempt to pull page from list and place in scatterlist */
->>>                  if (*offset) {
->>> -                       if (!__isolate_free_page(page, order)) {
->>> +                       if (!__isolate_free_page(page, order, ALLOC_CMA)) {
->>>                                  next = page;
->>>                                  break;
->>>                          }
->>> diff --git a/mm/vmscan.c b/mm/vmscan.c
->>> index 5e03a61..33f5b46 100644
->>> --- a/mm/vmscan.c
->>> +++ b/mm/vmscan.c
->>> @@ -5815,7 +5815,7 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
->>>                                        sc->reclaim_idx, 0))
->>>                          return false;
->>>
->>> -               if (compaction_suitable(zone, sc->order, sc->reclaim_idx))
->>> +               if (compaction_suitable(zone, sc->order, sc->reclaim_idx, ALLOC_CMA))
->>>                          return false;
->>>          }
->>>
->>> @@ -6043,7 +6043,7 @@ static inline bool compaction_ready(struct zone *zone, struct scan_control *sc)
->>>                  return true;
->>>
->>>          /* Compaction cannot yet proceed. Do reclaim. */
->>> -       if (!compaction_suitable(zone, sc->order, sc->reclaim_idx))
->>> +       if (!compaction_suitable(zone, sc->order, sc->reclaim_idx, ALLOC_CMA))
->>>                  return false;
->>>
->>>          /*
->>> --
->>> 2.7.4
->>>
->>>
->>
-> Thanks
-> Barry
-
+-- 
+Without deviation from the norm, progress is not possible.
 
