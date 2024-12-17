@@ -1,55 +1,86 @@
-Return-Path: <linux-kernel+bounces-449142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D2459F4A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E25D39F4A6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E083116A87D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2468816F414
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347931F429B;
-	Tue, 17 Dec 2024 11:56:43 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F931F4E24;
+	Tue, 17 Dec 2024 11:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ELZ2f7bN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A610F1F4270;
-	Tue, 17 Dec 2024 11:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95441F4E2A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734436602; cv=none; b=hFTjh+nvFkOvDS1jcLvMYdG+7M9wAdCYRFhgoEnvpL3ByR/EecMQeA73ELJqBhGpShiNfmTHyK6ijSXk7Ehbb3gZ+a93lB6mAv++LgkhF+ZO42eDJRbUDB/tUBTrJyGDOxqyiFA2xxi8r0tr5N/Q0GijJ5AXe0KFbYEFLcfYR5c=
+	t=1734436610; cv=none; b=OF4UvgaGxcVfcuNQCjbyo/aPQAdZaPFuJRODMTt98vOOboCDaTh0Ed4oZOZo2jb5hGZvyLEYXWagyI84ho9M/c1B9iTISWXPuyaCJvPmwqDj93nKXKgGR0U8jR5BsuP99bll/wyAJdK1eEFZ5WydMGjwDd2D8bXCrlRwjXH3VnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734436602; c=relaxed/simple;
-	bh=Do2X/IiaJW5oPWMmOezg0YcEX+VrBCjV/aOJ0SrBA0Q=;
+	s=arc-20240116; t=1734436610; c=relaxed/simple;
+	bh=r06WS41rxN0/35nQSW+GD844biqXNAP0/imkHhzW+/8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jLGmMAtVViAlNwjllmj9kY4aw+1T9ARab/iDQjmS+4YJNLq3hkRg8a4cwAu1+3piIMZMLWyJCRFFOy6+Rc4xbsL9FHF1aPn2QsX7XQ8NWOdvdgBN4pqOt2R62NMUYR98IlXUMVpDqGW1D5gko0Z8l2gjmAFmEDjvK0gqrSuFyus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4YCFdy4vqjz9sPd;
-	Tue, 17 Dec 2024 12:56:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 3KXSFH_hy5ma; Tue, 17 Dec 2024 12:56:38 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4YCFdy3s6Tz9rvV;
-	Tue, 17 Dec 2024 12:56:38 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6CC908B76E;
-	Tue, 17 Dec 2024 12:56:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 0q0Ly6XhAO90; Tue, 17 Dec 2024 12:56:38 +0100 (CET)
-Received: from [192.168.232.97] (unknown [192.168.232.97])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D40788B763;
-	Tue, 17 Dec 2024 12:56:37 +0100 (CET)
-Message-ID: <49844fde-9424-4c81-85a0-c5c26a77321d@csgroup.eu>
-Date: Tue, 17 Dec 2024 12:56:37 +0100
+	 In-Reply-To:Content-Type; b=GdBGj7K/IMBHMD7C0CR1hF1yj4Fwn3+PGjZLAokz7e3f2Qj7wqRJpMxATVxM2RLqOgTv22ociNXNj3bl6jnEhM03T2YrfL9kspRs7KABCOib94mH6PQlGDiQ/6ZkjaJ/NaZrhw0d+K4kpU3DYmmuEUEqveFqtylHBSDDjCL+4Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ELZ2f7bN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734436606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4j3RJ6u8WKht0eWYFAXC4mdKyekBt3cyxE0dVaW09rM=;
+	b=ELZ2f7bNoxAsbeAHewpwIPzHDHDXnO0wLph93lv60dikWsxhSuVNjX4rbPNigW3+iiybBS
+	GbRfb7GITOyR45H29N/+LbvNQv+LstMav4Y6+sLEVtT7vmk7CloEENCjvpvmDaoa/SyK0/
+	2LoYESqzR31pZM+O/bjhyxnoIohKkQY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-77-f3MDQ10mNfCj0PkFCGLeSA-1; Tue, 17 Dec 2024 06:56:44 -0500
+X-MC-Unique: f3MDQ10mNfCj0PkFCGLeSA-1
+X-Mimecast-MFC-AGG-ID: f3MDQ10mNfCj0PkFCGLeSA
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-388d1f6f3b2so1061778f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:56:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734436604; x=1735041404;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4j3RJ6u8WKht0eWYFAXC4mdKyekBt3cyxE0dVaW09rM=;
+        b=oiVK6wlvTTj10htsqkqbL/VfD1kPm6SgLjrHQ9lLi5o9ITH+TH9JUeetkGDiDL16I7
+         zCFNOV3Dd9pIBDyILbWXpiRBEPb47Uj26tbT/zwLvZwE3q3SS9G4cEipqBZIaeuzoHCP
+         krP/GZPhioC4qwqXvZ0jau9wKtCn7WUES9msbF5NW5QQakNmJalRFp/oJmEJdk2R588x
+         5l1CMScGOFhNIxYf3IdTVSymfn29y01AAPpubK26D2TAs1yw+vA+0U4c8H1nfs6CMU9/
+         qTVZr3oKCE4k+EiX4GTFDghVRV4LxK/0lmm+AhlOnJ4cy/hJnSXF1DWhqLV9NYXmnGHe
+         SVPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsX4x3YPObBaL9oPdpflmnP+0nwkHK/dcWWC5ibUBykByHZMSccD6+ifZz3UPrNrnEx/8vuvxzdmx/Z8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6SsS0Vch5b+C5DyYOex3/CCUTB63CM8Oo54atxRdMnpzmE9o+
+	v6Ja5Wxjl//EVO5C2wmaoYXnFZYVIQP/ajJyrNlDjxT2rJBFvnwSiOVpjGZoOQEU2KRmTJE1Q2U
+	Z3swrxnhrDs7Mwbv/t4N7WgSKap+E7Rf6v0Gi0JEGtkuR/gX9UPHGQa4HNMScAA==
+X-Gm-Gg: ASbGnctQ+c59MUyew6cD/YlVHL5nZrumscSgH9oOIyP6CBYuI8kaJsVg5vpUexe3uCg
+	nDemcYuO6+qKw5HhCYUzs5oJqOiGeThxk4IqB6c4lXk4WcJ0TDH5GpepSKEmyEnt1DZxwRPisR1
+	dO0CwrVv958sM/pJf7ovURaM6qtVVudEEtjaUd9t7SRvc3muOEzzvRXlCvzOGiZiA9g+sEeqQ7G
+	WngZiW5sg8BZSn2GsbfxVyUaLfJdaKtsRbsWqfWy0E4QqI4Y178Qxrwe81HWUasvBva4ePBSB/W
+	M9zeBYMQQ41Je5A=
+X-Received: by 2002:a05:6000:1fae:b0:385:ed16:c8b with SMTP id ffacd0b85a97d-388da39cd7dmr2484416f8f.23.1734436603663;
+        Tue, 17 Dec 2024 03:56:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHa6WYqV5Qge4oQqUVyLttlkTx2SZO8PlQZNXX//tdqnqghLk3HOX4fGS672Qzkn0EpanB+qw==
+X-Received: by 2002:a05:6000:1fae:b0:385:ed16:c8b with SMTP id ffacd0b85a97d-388da39cd7dmr2484393f8f.23.1734436603302;
+        Tue, 17 Dec 2024 03:56:43 -0800 (PST)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80121d4sm11215958f8f.2.2024.12.17.03.56.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 03:56:42 -0800 (PST)
+Message-ID: <d863bcc8-ce96-4095-b4ef-4a0da73e985e@redhat.com>
+Date: Tue, 17 Dec 2024 12:56:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,136 +88,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: sysfs: Fix deadlock situation in sysfs accesses
-To: Eric Dumazet <edumazet@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, "Eric W. Biederman"
- <ebiederm@xmission.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>,
- TRINH THAI Florent <florent.trinh-thai@cs-soprasteria.com>,
- CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>
-References: <d416a14ec38c7ba463341b83a7a9ec6ccc435246.1734419614.git.christophe.leroy@csgroup.eu>
- <CANn89iK1+oLktXjHXs0U3Wo4zRZEqimoSgfPVzGGycH7R_HxnA@mail.gmail.com>
- <49a43774-bf97-4b20-8382-4fb921f34c66@csgroup.eu>
- <CANn89iLKPx+=gHaM_V77iwUwzqQe_zyUc0Dm1KkPo3GuE40SRw@mail.gmail.com>
- <8e3c9ebc-e047-4dfd-ad1d-6bbe918aa98b@csgroup.eu>
- <CANn89iLTGLe2uWz+yCu5ewnDBW2hubqGm8=aRbZVTeXN1Trdaw@mail.gmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <CANn89iLTGLe2uWz+yCu5ewnDBW2hubqGm8=aRbZVTeXN1Trdaw@mail.gmail.com>
+Subject: Re: [PATCH] mm: hugetlb: independent PMD page table shared count
+To: Liu Shixin <liushixin2@huawei.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Muchun Song <muchun.song@linux.dev>,
+ Kenneth W Chen <kenneth.w.chen@intel.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Nanyong Sun <sunnanyong@huawei.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20241214104401.1052550-1-liushixin2@huawei.com>
+ <8e59d2bd-77d3-41bc-83b7-532b018db4e2@redhat.com>
+ <00edd087-8df6-343a-95bf-ca23381085a8@huawei.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <00edd087-8df6-343a-95bf-ca23381085a8@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-Le 17/12/2024 à 10:52, Eric Dumazet a écrit :
-> On Tue, Dec 17, 2024 at 10:41 AM Christophe Leroy
-> <christophe.leroy@csgroup.eu> wrote:
->>
->>
->>
->> Le 17/12/2024 à 10:20, Eric Dumazet a écrit :
->>> On Tue, Dec 17, 2024 at 9:59 AM Christophe Leroy
->>> <christophe.leroy@csgroup.eu> wrote:
->>>>
->>>>
->>>>
->>>> Le 17/12/2024 à 09:16, Eric Dumazet a écrit :
->>>>> On Tue, Dec 17, 2024 at 8:18 AM Christophe Leroy
->>>>> <christophe.leroy@csgroup.eu> wrote:
->>>>>>
->>>>>> The following problem is encountered on kernel built with
->>>>>> CONFIG_PREEMPT. An snmp daemon running with normal priority is
->>>>>> regularly calling ioctl(SIOCGMIIPHY). Another process running with
->>>>>> SCHED_FIFO policy is regularly reading /sys/class/net/eth0/carrier.
->>>>>>
->>>>>> After some random time, the snmp daemon gets preempted while holding
->>>>>> the RTNL mutex then the high priority process is busy looping into
->>>>>> carrier_show which bails out early due to a non-successfull
->>>>>> rtnl_trylock() which implies restart_syscall(). Because the snmp
->>>>>> daemon has a lower priority, it never gets the chances to release
->>>>>> the RTNL mutex and the high-priority task continues to loop forever.
->>>>>>
->>>>>> Replace the trylock by lock_interruptible. This will increase the
->>>>>> priority of the task holding the lock so that it can release it and
->>>>>> allow the reader of /sys/class/net/eth0/carrier to actually perform
->>>>>> its read.
->>>>>>
->>>>
->>>> ...
->>>>
->>>>>>
->>>>>> Fixes: 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in sysfs methods.")
->>>>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->>>>>> ---
->>>>>
->>>>> At a first glance, this might resurface the deadlock issue Eric W. Biederman
->>>>> was trying to fix in 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in
->>>>> sysfs methods.")
->>>>
->>>> Are you talking about the deadlock fixed (incompletely) by 5a5990d3090b
->>>> ("net: Avoid race between network down and sysfs"), or the complement
->>>> provided by 336ca57c3b4e ?
->>>>
->>>> My understanding is that mutex_lock() will return EINTR only if a signal
->>>> is pending so there is no need to set signal_pending like it was when
->>>> using mutex_trylock() which does nothing when the mutex is already locked.
->>>>
->>>> And an EINTR return is expected and documented for a read() or a
->>>> write(), I can't see why we want ERESTARTNOINTR instead of ERSTARTSYS.
->>>> Isn't it the responsibility of the user app to call again read or write
->>>> if it has decided to not install the necessary sigaction for an
->>>> automatic restart ?
->>>>
->>>> Do you think I should instead use rtnl_lock_killable() and return
->>>> ERESTARTNOINTR in case of failure ? In that case, is it still possible
->>>> to interrupt a blocked 'cat /sys/class/net/eth0/carrier' which CTRL+C ?
->>>
->>> Issue is when no signal is pending, we have a typical deadlock situation :
->>>
->>> One process A is :
->>>
->>> Holding sysfs lock, then attempts to grab rtnl.
->>>
->>> Another one (B) is :
->>>
->>> Holding rtnl, then attempts to grab sysfs lock.
->>
->> Ok, I see.
->>
->> But then what can be the solution to avoid busy looping with
->> mutex_trylock , not giving any chance to the task holding the rtnl to
->> run and unlock it ?
+On 17.12.24 03:02, Liu Shixin wrote:
 > 
-> One idea would be to add a usleep(500, 1000) if the sysfs read/write handler in
-> returns -ERESTARTNOINTR;
 > 
-> Totally untested idea :
+> On 2024/12/16 23:34, David Hildenbrand wrote:
+>> On 14.12.24 11:44, Liu Shixin wrote:
+>>> The folio refcount may be increased unexpectly through try_get_folio() by
+>>> caller such as split_huge_pages. In huge_pmd_unshare(), we use refcount to
+>>> check whether a pmd page table is shared. The check is incorrect if the
+>>> refcount is increased by the above caller, and this can cause the page
+>>> table leaked:
+>>
+>> Are you sure it is "leaked" ?
+>>
+>> I assume what happens is that we end up freeing a page table without calling its constructor. That's why page freeing code complains about "nonzero mapcount" (overlayed by something else).
 > 
-> diff --git a/fs/seq_file.c b/fs/seq_file.c
-> index 8bbb1ad46335c3b8f50dd35d552f86767e62ead1..276c6d594129a18a7a4c2b1df447b34993398ab4
-> 100644
-> --- a/fs/seq_file.c
-> +++ b/fs/seq_file.c
-> @@ -290,6 +290,8 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct
-> iov_iter *iter)
->                  m->read_pos += copied;
->          }
->          mutex_unlock(&m->lock);
-> +       if (copied == -ERESTARTNOINTR)
-> +               usleep_range(500, 1000);
->          return copied;
->   Enomem:
->          err = -ENOMEM;
+> 1. The page table itself will be discarded after reporting the "nonzero mapcount".
+> 
+> 2. The HugeTLB page mapped by the page table miss freeing since we treat the page table as shared
+>      and a shared page table will not be to unmap.
 
-Ok, that may solve the issue, but it looks more like a hack than a real 
-solution, doesn't it ?
-It doesn't guarantee that the task holding the RTNL lock will be given 
-the floor to run and free the lock.
+Ah, the page table still maps something, that makes sense. So we're 
+leaking that indeed.
 
-The real issue is the nest between sysfs lock and RTNL lock. Can't we 
-ensure that they are always held in the same order ?
+-- 
+Cheers,
 
-Christophe
+David / dhildenb
+
 
