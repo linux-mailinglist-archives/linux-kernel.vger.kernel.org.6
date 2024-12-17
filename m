@@ -1,63 +1,54 @@
-Return-Path: <linux-kernel+bounces-448803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C48449F45B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:11:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B339F45B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9364E7A1686
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D684F188F27C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFA01DACBF;
-	Tue, 17 Dec 2024 08:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D331DB372;
+	Tue, 17 Dec 2024 08:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCcn0jKe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EA3126BF7;
-	Tue, 17 Dec 2024 08:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EMM+MPKT"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC2F1DA113;
+	Tue, 17 Dec 2024 08:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734423062; cv=none; b=RChIalZcGys+7RyuIPmDP3VXgmLXvH16Gx6FAqqTGShDrPh1x4QPjIwCkX/N/stJpHj3oSydeQvgbU22Xzr4eBWB2LsAyvU2Rhru1zy/tM0SMIx4WZU9u0DwtIecZg5BfEmz9NzEpsg9nUjSHziivrHCyKmQHd5zundlPr7E1OQ=
+	t=1734423076; cv=none; b=dH76veBoLu5kGsVKgET9hmzayKFiFuFEmv3Y5pQivyU9HEWYembb0IM51HTqS9UK994IT+BcrjI/WEbPfgDt/DYMUaVPUQfgfC1P4BYTbOWvAJHsFDs8O4srO7Otl7xaxqFJzmGFsfY6lIOMHoK0NL2VtqFDuidjeOEXMMXIgsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734423062; c=relaxed/simple;
-	bh=2z7JFRJcAUvGHRU71NcCuaR1lyuqm1pPGOs2diBBCOA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rsWRKt7S1WFIkvyBllzSGKn8QsRTkFMHAMaM9hzSVhatlO7Yys2sPy/RTBvS8uz5NKg30oGlDzaLG47uWraC2d79OWqmAfQNWyCeVVX9oJ4PRLICKlui+AiC7L8DE0gWl3/QFXsuot2fa2CaY/Comvd8ZzuZxeDPKHt7Phs/AGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCcn0jKe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CC72C4CED3;
-	Tue, 17 Dec 2024 08:10:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734423062;
-	bh=2z7JFRJcAUvGHRU71NcCuaR1lyuqm1pPGOs2diBBCOA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DCcn0jKeLG2nM+e/bAZpIHfhSxtAPAyFHhu9PB3rgk7JyBxywwxnYpxmlsZgBSFLl
-	 vD7upSsrHYfVwu0GKcZ/MZtAPUkWDA/lWsOyat7JRqK5sNvIqeGUdbs5inYV+jAD85
-	 JAOO81JRbpEljrKzneVZdaFRNsKODU1EThVxWTExIb/Gpn7YG9LjtweW1Rv1dUzBrJ
-	 UQWtGAmwRECgdYcMRX7HsD8SYSOuTqtxsg+RlTtznEb3F3obrH0RNyTYiR+fpbbuhX
-	 ll8jbuJfzaNbdmP2RcM3QMCDpPUz4pnA9fyZMjcEV1zQoqdGCaDTJ+WfEv09kPCd8/
-	 s+kCsIjDMjHaA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Xu Liang <lxu@maxlinear.com>,
-	Daniel Golle <daniel@makrotopia.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Raju Lakkaraju <Raju.Lakkaraju@microchip.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: phy: avoid undefined behavior in *_led_polarity_set()
-Date: Tue, 17 Dec 2024 09:10:34 +0100
-Message-Id: <20241217081056.238792-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1734423076; c=relaxed/simple;
+	bh=+tmVQNDbPLLjALMas9jkB+FitqvhPC+w92rzlYHAmaQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Psnv2tw+bj5L/tRCab12jOHpR77ubQaRXN27tKYJH+LslMiFsvgqOVHf8oJlx+slL0osMdDExz5Vfp/8lpGfIz5bNfieUD7Vdhnx1LCynO8bfopNzyAE5Qm2ldJKlyfBJ5DgcARp1uOUb9F0ZKB7z0dohvnyoi91QQV81zHxzHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EMM+MPKT; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=rv8l9
+	YFNfbS2Fc/AUsV3HzdcDIM3qTrTB46nCaLjGlg=; b=EMM+MPKTqMV6xOv8zQ/ot
+	lvv10XN/krfZkJ1c5IJ/KCZ1k/hBOXfm4yTbgpHXRJPUWznI/kTQCxX/pCbZcmtC
+	MKPz8fzTIcdoQ5DBOnxDas7bWM5Uts/LdXu4Wbtpe47pjbY/24zcCakXZIEiqkSb
+	MIB90AawKLUfsyBd7GSphg=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDXb4kGMmFn2IKJBA--.19125S4;
+	Tue, 17 Dec 2024 16:10:49 +0800 (CST)
+From: Ma Ke <make_ruc2021@163.com>
+To: jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	jeff@garzik.org,
+	James.Bottomley@SteelEye.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make_ruc2021@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] [SCSI] raid class: Fix error handling in raid_component_add
+Date: Tue, 17 Dec 2024 16:10:39 +0800
+Message-Id: <20241217081039.2911399-1-make_ruc2021@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,72 +56,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXb4kGMmFn2IKJBA--.19125S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gr15JF48GrWrAw48ZFW3GFg_yoWkAFg_GF
+	40vryIgr1Ikrs7XasxtanxZr1vgFsF93yfuFWIvFn3Zay3XFZFqr1DWrs0vryUW3yUXw17
+	J3W5tr40vr409jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRZnYFUUUUUU==
+X-CM-SenderInfo: 5pdnvshuxfjiisr6il2tof0z/xtbBFQC4C2dhLpU15wABsI
 
-From: Arnd Bergmann <arnd@arndb.de>
+The reference count of the device incremented in device_initialize() is
+not decremented when device_add() fails. Add a put_device() call before
+returning from the function to decrement reference count for cleanup.
+Or it could cause memory leak.
 
-gcc runs into undefined behavior at the end of the three led_polarity_set()
-callback functions if it were called with a zero 'modes' argument and it
-just ends the function there without returning from it.
+As comment of device_add() says, if device_add() succeeds, you should
+call device_del() when you want to get rid of it. If device_add() has
+not succeeded, use only put_device() to drop the reference count.
 
-This gets flagged by 'objtool' as a function that continues on
-to the next one:
+Found by code review.
 
-drivers/net/phy/aquantia/aquantia_leds.o: warning: objtool: aqr_phy_led_polarity_set+0xf: can't find jump dest instruction at .text+0x5d9
-drivers/net/phy/intel-xway.o: warning: objtool: xway_gphy_led_polarity_set() falls through to next function xway_gphy_config_init()
-drivers/net/phy/mxl-gpy.o: warning: objtool: gpy_led_polarity_set() falls through to next function gpy_led_hw_control_get()
-
-There is no point to micro-optimize the behavior here to save a single-digit
-number of bytes in the kernel, so just change this to a "return -EINVAL"
-as we do when any unexpected bits are set.
-
-Fixes: 1758af47b98c ("net: phy: intel-xway: add support for PHY LEDs")
-Fixes: 9d55e68b19f2 ("net: phy: aquantia: correctly describe LED polarity override")
-Fixes: eb89c79c1b8f ("net: phy: mxl-gpy: correctly describe LED polarity")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: stable@vger.kernel.org
+Fixes: ed542bed126c ("[SCSI] raid class: handle component-add errors")
+Signed-off-by: Ma Ke <make_ruc2021@163.com>
 ---
- drivers/net/phy/aquantia/aquantia_leds.c | 2 +-
- drivers/net/phy/intel-xway.c             | 2 +-
- drivers/net/phy/mxl-gpy.c                | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/raid_class.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/phy/aquantia/aquantia_leds.c b/drivers/net/phy/aquantia/aquantia_leds.c
-index 00ad2313fed3..951f46104eff 100644
---- a/drivers/net/phy/aquantia/aquantia_leds.c
-+++ b/drivers/net/phy/aquantia/aquantia_leds.c
-@@ -156,5 +156,5 @@ int aqr_phy_led_polarity_set(struct phy_device *phydev, int index, unsigned long
- 	if (force_active_high || force_active_low)
- 		return aqr_phy_led_active_low_set(phydev, index, force_active_low);
- 
--	unreachable();
-+	return -EINVAL;
+diff --git a/drivers/scsi/raid_class.c b/drivers/scsi/raid_class.c
+index 898a0bdf8df6..2cb2949a78c6 100644
+--- a/drivers/scsi/raid_class.c
++++ b/drivers/scsi/raid_class.c
+@@ -251,6 +251,7 @@ int raid_component_add(struct raid_template *r,struct device *raid_dev,
+ 	list_del(&rc->node);
+ 	rd->component_count--;
+ 	put_device(component_dev);
++	put_device(&rc->dev);
+ 	kfree(rc);
+ 	return err;
  }
-diff --git a/drivers/net/phy/intel-xway.c b/drivers/net/phy/intel-xway.c
-index b672c55a7a4e..e6ed2413e514 100644
---- a/drivers/net/phy/intel-xway.c
-+++ b/drivers/net/phy/intel-xway.c
-@@ -529,7 +529,7 @@ static int xway_gphy_led_polarity_set(struct phy_device *phydev, int index,
- 	if (force_active_high)
- 		return phy_clear_bits(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_INV(index));
- 
--	unreachable();
-+	return -EINVAL;
- }
- 
- static struct phy_driver xway_gphy[] = {
-diff --git a/drivers/net/phy/mxl-gpy.c b/drivers/net/phy/mxl-gpy.c
-index db3c1f72b407..a8ccf257c109 100644
---- a/drivers/net/phy/mxl-gpy.c
-+++ b/drivers/net/phy/mxl-gpy.c
-@@ -1014,7 +1014,7 @@ static int gpy_led_polarity_set(struct phy_device *phydev, int index,
- 	if (force_active_high)
- 		return phy_clear_bits(phydev, PHY_LED, PHY_LED_POLARITY(index));
- 
--	unreachable();
-+	return -EINVAL;
- }
- 
- static struct phy_driver gpy_drivers[] = {
 -- 
-2.39.5
+2.25.1
 
 
