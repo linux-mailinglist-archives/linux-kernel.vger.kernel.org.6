@@ -1,79 +1,100 @@
-Return-Path: <linux-kernel+bounces-449472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACF39F4F7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:31:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD5A49F4F7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB161882ADB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8BCD18827D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88C81F76A7;
-	Tue, 17 Dec 2024 15:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC65D1F7096;
+	Tue, 17 Dec 2024 15:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="esFnBqER"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTFUHCE0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C155D23DE;
-	Tue, 17 Dec 2024 15:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DD923DE;
+	Tue, 17 Dec 2024 15:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734449469; cv=none; b=Fjw0gcjpInjqsogmf08mSfjO8GkIUd+SlQMnMajiPxELbkImGvAghH1dJruGgwntuT+XIlRo0O+5CIyZdooRdPpHMEziNzhkTBPx8vnAgW5Dz2/TesSBYLPjIqDkntmvOsE2r7AEKPXFdwQaPowd38+s+I7/SGzKn1P7Z1PEPxg=
+	t=1734449528; cv=none; b=Ruq+dTktSrPXJDwhRF+ZncgpZTaXyY01bku3IFeIN9ZzKEgngrOrFW17mgavEtN44q5MLwVqpPonxxlQM5/ftavGfyEEQRKom8YEPcy5fRDZz+kuREIJL+Fwhm7qzlQTmnfIoAotZtSXAjpQmbv6qcK5gZlaGmffsxQUwPGgDMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734449469; c=relaxed/simple;
-	bh=LH+u52El4eJuW6tlodccRYEdSm8ys4Ozz406z1uibkY=;
+	s=arc-20240116; t=1734449528; c=relaxed/simple;
+	bh=VNdS8C7T+jc6Z+1WXA06O4uZglTbKaiGuklo+JyL5uE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hhLdjM3Sdg8qwkfhEFMLuNJfJcgWSOZevILmtrEcE40+BJhsBoP2jNoSaWJYWbb/K0s09I/FCN8jKdkbYhfyh0xK/pYeGCo4qJEfPwBC8XWDN6vU2zuuSgFdy440xyHps5PI6LDzZdy62Hy6cgcjf+nmlpwKOyGiVS6J5oABtfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=esFnBqER; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=b1SNfDI1ZZp+kuZp2eJyy8k7g0+fJHQ+1bu9bfsYOuM=; b=esFnBqERE6O2PRiFu+NOufY9AN
-	sOQsoR1pzaIetyG9Mej8/p8RDsSR6fw2tWtlsXz91AFwQGcCM0GGV/yNBdP8ZPEzbopUfBLI2r4Wj
-	+wouj/Q89ObUvVMs9zAE6meA7xECaH7uhhmix1WXlxoIwvcYH5klIem+Tkg1dVkNWUXs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tNZXC-000zRs-Or; Tue, 17 Dec 2024 16:30:54 +0100
-Date: Tue, 17 Dec 2024 16:30:54 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	TRINH THAI Florent <florent.trinh-thai@cs-soprasteria.com>,
-	CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>
-Subject: Re: [PATCH net] net: sysfs: Fix deadlock situation in sysfs accesses
-Message-ID: <c0a07217-df63-4b5d-b1a5-13b386b0d7d7@lunn.ch>
-References: <d416a14ec38c7ba463341b83a7a9ec6ccc435246.1734419614.git.christophe.leroy@csgroup.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G1q576Ahoa6+QluCVfhI7QD3owieYNJrJ0DatxV1LYmKw0HPKNaJ34SfDx0hV0l3/v/T8FqrNnIJGDsK+0G5WNpc0u2wDK2ofTqYhoRe2Iwv05WQz8svD27ydFn2cj0QYawlaIjfwZpNWMU+JlILlN+mvND3VNz2YwlvtdkZNqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTFUHCE0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44013C4CED3;
+	Tue, 17 Dec 2024 15:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734449527;
+	bh=VNdS8C7T+jc6Z+1WXA06O4uZglTbKaiGuklo+JyL5uE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gTFUHCE00yur8UAgdzHnNcwi/0X9XdKxFt0CHqCDLlGsCUng1eFvyOunlxGAlCQ+A
+	 NqA7RB5N7CnRA7Xu/QQk/PnexrM+HWhdogWRI1lJw5bW/qZ82Dsu1FTjbLCwRb7ywx
+	 3iQWpCHD6vBoXcrL4gfLmQ3+lhmtlvlx8x6MNTBDTy3OEiumGsN48mrLL4PhhTgk+9
+	 mrKZNK0bGKGn+nBN0EYqOwHkVF8iZ3HmtckIijEee3rkL7LdbCcHyGvLdjsJa9+bRd
+	 l7PkxUXwHK7NQDg59GlClsKFcHjpzs3TlHJn8rGowBvq3ZhoxSLfIr+St0qwtvEBD+
+	 /AX+ZifMZoC5A==
+Date: Tue, 17 Dec 2024 15:32:02 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	maz@kernel.org, ryan.roberts@arm.com,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH V2 18/46] arm64/sysreg: Add register fields for PMUACR_EL1
+Message-ID: <88f15900-03d2-49f0-bc44-7ded076d9a42@sirena.org.uk>
+References: <20241210055311.780688-1-anshuman.khandual@arm.com>
+ <20241210055311.780688-19-anshuman.khandual@arm.com>
+ <20241216231505.GA601635-robh@kernel.org>
+ <0b8a055f-eab9-4b44-baac-ad25756dbbfd@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Yu3fCeulO66Lix3+"
+Content-Disposition: inline
+In-Reply-To: <0b8a055f-eab9-4b44-baac-ad25756dbbfd@arm.com>
+X-Cookie: The sum of the Universe is zero.
+
+
+--Yu3fCeulO66Lix3+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d416a14ec38c7ba463341b83a7a9ec6ccc435246.1734419614.git.christophe.leroy@csgroup.eu>
 
-On Tue, Dec 17, 2024 at 08:18:25AM +0100, Christophe Leroy wrote:
-> The following problem is encountered on kernel built with
-> CONFIG_PREEMPT. An snmp daemon running with normal priority is
-> regularly calling ioctl(SIOCGMIIPHY).
+On Tue, Dec 17, 2024 at 10:03:10AM +0530, Anshuman Khandual wrote:
 
-Why is an SNMP daemon using that IOCTL? What MAC driver is this? Is it
-using phylib? For phylib, that IOCTL is supposed to be for debug only,
-and is a bit of a foot gun. So i would not recommend it.
+> I am wondering how this did not cause any re-definition warning ?
 
-    Andrew
+If the redefinition is identical to the one that was already there then
+the compiler will usually not warn.
+
+--Yu3fCeulO66Lix3+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdhmXEACgkQJNaLcl1U
+h9A0MAf/QvtVkjC9zldXDgdlYsDu0STRvGbwDmC7CqmD860xMuOC+z7Gm0jDpIpV
+Zg9WpeVaK51NOo7hzNkN3v00mH2sIZI5+S5h+uPERrS7nxOQO1PhQNBlERxzM93m
+5umg9GSVRm++4ginwxk6BrD70VeNTXXGSMoeVpG/JodFCd1E5vqm+pK2sVM+40HG
++W0vMnWTDgot0LTwo2382Zq/9Rc+O9zYdgAe0qmB6ZDB0Dw3fZVdD9mHmBGk0TVr
+0X5xc1/NBR4KaP/dRO2sDI4REicFM9gqT5CB/79gNnp0Hm2nXK9B+gIA2DLCR95J
+eGIKCA31D2t52hR1hdN0ghEa7ckxYg==
+=nc2H
+-----END PGP SIGNATURE-----
+
+--Yu3fCeulO66Lix3+--
 
