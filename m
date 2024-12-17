@@ -1,382 +1,156 @@
-Return-Path: <linux-kernel+bounces-448797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71ED9F45A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:03:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3992D9F45A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BB4F188F2CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:03:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7923C16D605
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2342C18754F;
-	Tue, 17 Dec 2024 08:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4801D63D9;
+	Tue, 17 Dec 2024 08:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7/OfnB5"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQESHe4h"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCDF145B39;
-	Tue, 17 Dec 2024 08:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AD2288A2;
+	Tue, 17 Dec 2024 08:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734422576; cv=none; b=DfRxor+pvx3wFkfuzvrPT300DqjytS0KaSeYN/8G/yQCyHNGezoPZIHWanyNJbTTafSc6gyfdL4PbvqipO79ZFPjiTONibeXNOAKOwdAKtoKup8KwiJttBX6d7GpvkJWzrqt5luZ1WkHhDQIykkLVvcM9URjybUuT9Qk9dT6kLA=
+	t=1734422613; cv=none; b=I5PHu+92jJeJMT0Dpcfc+tj6OFkNUSCtKvukzs8dmEyfu1D8Es+P8JRZj3O8OgAltnBD1TXafmlwLrCRWPvTrkdduZy3qKgo0hRVvxfYyYgosZX27LRmpD6oVY8j/4v/jfHSnrOsLRCuXy1GoBGFCjuIVAvBOVwHQWak5Gd8kEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734422576; c=relaxed/simple;
-	bh=9Hp6gBaZltBdCJpha2XOW2+2tQX3NfSz4GmobUXmJL0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ug2DnfzXCKlgZBKQI1pGOUITHC5XvajfSZHqD9LFFiqqg6KZaMd99fAgtC9NDGQqXl7D5SNFYXe98Nf17Y4wyHTT3+zKC8BsnswIDia2jmg70W58E9ccyiJcC362iRuGRw8adKekriLkrzSyQ+7rEvNWuBZCFV/DLrYf9euYPiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7/OfnB5; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1734422613; c=relaxed/simple;
+	bh=NgamYC8cJquApLL5URatb+CGOC/W3TZppVHX71VqPz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V/nXH8fhLBoTreOMdy2FXmDGTfbKdyN+5X7FO/Q0ZcZpGz4vKRclleGgEp1iz0y6xNHHFAk6690Ceqqi/62uFX78fWpFQbnGJ/mgUYv7IJNlTrTPd1nRaSFDiv8g1izH3H65g/MLTSk2AR6Xu3w5l1Ynzn7U6nhlc4x8v0qMHrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQESHe4h; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so672890566b.1;
-        Tue, 17 Dec 2024 00:02:53 -0800 (PST)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ef66a7ac14so56748447b3.0;
+        Tue, 17 Dec 2024 00:03:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734422572; x=1735027372; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=I8KYznOvQ9Ns7fS2EG3QX401236xaX+oyKJLcRk8+uE=;
-        b=V7/OfnB5fAFUyy20fEV3itHWCGeYd7aZi0PQfv1acm73a1nA77qeqSA/EHvRsGvGpV
-         7TppkkZ0fCwrSk07ONfwe9v4p9XYjzF5r7rteGvMKkaKqNepe63Oaqs6uu71cUczHA5f
-         K0El6JhFQzqSvwgtB3riHkEdQcU89kzqsJY0hf7Hs7NaQigULrDRWVdyzjQr1T/6bJ5I
-         5dM9/zXmCAhEBQ48HUiAbZFo5c/lzKWSgW9kAzrdQvdXZBdUZhY462HtuERxZRdKexDH
-         jWeKsCzCY+qUodRnR+KRkJCCPBNXnioA+OYGMJdxCRskXe1azHm157KcX4h6FuoTk0AY
-         oTuQ==
+        d=gmail.com; s=20230601; t=1734422611; x=1735027411; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oj96oH1DOgPsAsfx7X7JlJNQT7Oe+0uriUt8dn6RoMA=;
+        b=FQESHe4hlkUyiVaIvC6aTE65gG0eTUXdEpC75dYa9uJZO6crDlI+QbpBpOfIs/utE6
+         uj7Iga4qld2jUtMaz9P585HnuO4Mb0pBZJA0oILsydbE6HZwXhxSt7LU7YwBqDEP8Ofx
+         j0dpDOKXGiqSOXd45fj1VlF1ABjMwFLnVJQM+zqnHyiTHpwv0I5ld+YSmzv0xcNONXeq
+         uPwQ6043laJLX1Hbj+CuP9mxXh5lmCvLogr75NDC86vi+fwVxo0PtTh4R+8UV0qlxNeY
+         UP2/VuaL2EdJpIYlPubHTpxaF2ZzR++jinSyleM1FWd8oOuQJS7iU1VgWbPv3n0MCR5n
+         rJ1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734422572; x=1735027372;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I8KYznOvQ9Ns7fS2EG3QX401236xaX+oyKJLcRk8+uE=;
-        b=Teo/HIIueAHbBUoBT0+BrfUznxhDvAMylpceSobrZYFqNt3Fomz/zt0OiEdNITjrj+
-         l2X/2fuPmGAZdvClWBpHaizYeEOSMEL439xVqUWKhfXdy9ozS9enWcALNRUvD2s1gxVB
-         U1HcNLaiyhTRVSGdtwNRsMm2mxmKwOFug9YADti7q+6UjLdPCXwmTSGJZYzichf99DFu
-         2j1GE8JZXpYcGtsfxCFYozS1I9D/8CwETkT7i7ZCO4uWPAT5LNG4/gBBZxcOTRVr/vLP
-         UN6z9pFovIyR7DJko+WewR1i4kMss/Gvx9lwtsE2UliB1lb8hN5Tfo6Yz4sgml5SEuvR
-         cQag==
-X-Forwarded-Encrypted: i=1; AJvYcCUcO5aSCdeIE9etKdpSXpofvult0F+eEmUOQt/5icP/xwAFzGLVo7O6FrP50E4TaIGg2w0=@vger.kernel.org, AJvYcCWryiXvB/Iq4JHcDEsFkTK9iw9yUiGm4gkmdDnwZV2J5nZpf/Y9Sk8bHupA6Sgm77njLs5fGeqy3Td/5T78@vger.kernel.org, AJvYcCXp9hZYowP7b+G6uKOSQYjsJ8nwfS6ow+8UhN0km345GrGiA5af7Ou+VSnAudBySrwGaBFNBJ0eGQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZBrTMdSHlnANa7xCeNucpBm60znbB5A2t5xZzOwm677gjuSDU
-	mwlQ8mfKLRLU9v7fjdoyD4FzuK4CDo3bjRztFe/RDAw4IxeCHWLB
-X-Gm-Gg: ASbGncvkY9zOrdE/DZRWkaPh68HoHVyMo3Xx+jaytN5qDxmjAftaXMW8uWxOuDoI4RJ
-	ms1Ts/jWsjSP9rXOoFEfyLSvBvlZvimN71NBcMJMNpYmr1HAr+voJ77zbwbaE8PrNi9AoMgp02Z
-	ayk/+r3HUOvx7fdZj/ETIb4HWk3xMUrZr2Y/al6RLtVPruH/X6Kqxcgio55jwsDdbvv0gbmH9TT
-	JZJcidPhpk0RtA7iCjCF+4l6311xNrOc/yDPexGVcYmbDqbK0bNw0TZFsUV8061ih/BWr6LrJtm
-	yQ40YoWWsTWoynkfZYFwgarYq0IwqQ==
-X-Google-Smtp-Source: AGHT+IEe3pc2lVsVkhnqLCSlyDpewTkSJC79/CsviL5DkUxD+u6OxER0DZOVHU5iwPxiRLJwA2Z93A==
-X-Received: by 2002:a05:6402:40cf:b0:5d3:ba42:e9fa with SMTP id 4fb4d7f45d1cf-5d63c3405a8mr33138305a12.16.1734422571994;
-        Tue, 17 Dec 2024 00:02:51 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ae12a7sm3990967a12.50.2024.12.17.00.02.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 00:02:51 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 17 Dec 2024 09:02:49 +0100
-To: Alan Maguire <alan.maguire@oracle.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>, Uros Bizjak <ubizjak@gmail.com>,
-	Laura Nao <laura.nao@collabora.com>, bpf@vger.kernel.org,
-	chrome-platform@lists.linux.dev, kernel@collabora.com,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	"dwarves@vger.kernel.org" <dwarves@vger.kernel.org>
-Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on next
-Message-ID: <Z2EwKSgh0cA2EHun@krava>
-References: <20241115171712.427535-1-laura.nao@collabora.com>
- <20241204155305.444280-1-laura.nao@collabora.com>
- <CAFULd4a+GjfN5EgPM-utJNfwo5vQ9Sq+uqXJ62eP9ed7bBJ50w@mail.gmail.com>
- <Z10MkXtzyY9RDqSp@pop-os.localdomain>
- <3be0346a-8bc9-4be1-8418-b26c7aa4a862@oracle.com>
- <c067bc3d-62d6-4677-9daf-17c57f007e67@oracle.com>
+        d=1e100.net; s=20230601; t=1734422611; x=1735027411;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oj96oH1DOgPsAsfx7X7JlJNQT7Oe+0uriUt8dn6RoMA=;
+        b=Gw1vJXXSp6F458oQQhVeAL33dlWFCXA6rwWo+BqxLsgdke1a66xyXKaBfgSBcpzQh1
+         SDvfy+SzSDl4Qih9G2VvOEa19lmHtgQ7xBdUB3O9R2dw3fjtjkGfkNLLuOHj+gw2fCkb
+         MJN9H1BKfipQD9yfc/FNC/dXCb+FdQQc1D80UHDW0lQBppT+pvlLQ8+bparK1DgcyELt
+         zy2yurtFFJLj/P9z1HrCH9E7ykp5H+mbm6gCuds5LxKAGxahzqMGNE5xFlRVvlE1i/jC
+         U0c5sEvxyJ182oSq8bSEyUFcUnzv4B7xdFi0Bu8P4uGvV56ZDgb1RaB3gfk0V1Xh2jgO
+         njuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWx67Q1HyL2zuihDFEQruIrkl8jLSNWD3TVJSvj8F1sMbUkVfRTsiXaQE+gtlU+xo05boOd0p/pj1WVwln+lxk=@vger.kernel.org, AJvYcCX2cdSxcMnHz/KJ4/nyfMBwfXk0gYIgdtksWYTeTld2THiLkoU0N84i5u8EP3Gm/3RVpe3fXLjcSUxFmvug@vger.kernel.org, AJvYcCXFI6AcOPLtORd/xt/zjV1o5ilSjbts5oURexzqlaFGq5VxJ+D7L/JcrDJvefblY3Gaj41YBg64@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv8OGYr978s4PSRBpf2gUo2Swb/oZa2SjvHKEPDSaMsWDMt5kv
+	C/LozmmymqGA1k5Z+1KK77byZHTcT+wc5Tc0ibyiGE2NBqlg0rv2ZxhWTJbqpWmtNXUiQff4Ao6
+	RZgr83vQSsapV5cfCPG6IHwNvAVI=
+X-Gm-Gg: ASbGnctBqByyX7APR/dI3q2zQcq4EBnthRZTJPsEeYqACUu5cb3XcuRE9KcLjyEPqRy
+	kUyOkGcYe1ueJ2j6Bi/iwIjJJb5HrhjaxcXreX3EuwsUARZasSt6dTp/OjUWdaS8e/UthEPX+
+X-Google-Smtp-Source: AGHT+IF29xv0SwBMtXwtMISpjFk9CjnFAM9hGctuUD1mZExG2czaJ9ohAKO4vZYzuXWekm0XNLaOT3nYxqK5YQXYPe8=
+X-Received: by 2002:a05:690c:3343:b0:6e5:adf8:b0a8 with SMTP id
+ 00721157ae682-6f2bbad6d2amr23344097b3.6.1734422610892; Tue, 17 Dec 2024
+ 00:03:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c067bc3d-62d6-4677-9daf-17c57f007e67@oracle.com>
+References: <20241217020441.work.066-kees@kernel.org>
+In-Reply-To: <20241217020441.work.066-kees@kernel.org>
+From: ericnetdev dumazet <erdnetdev@gmail.com>
+Date: Tue, 17 Dec 2024 09:03:19 +0100
+Message-ID: <CAHTyZGz4T80-gvSaY8hp_bspiL5SVr1mJd7Z1Vv0hVxnvQvkwA@mail.gmail.com>
+Subject: Re: [PATCH] rtnetlink: do_setlink: Use true struct sockaddr
+To: Kees Cook <kees@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>, 
+	Petr Machata <petrm@nvidia.com>, netdev@vger.kernel.org, Simon Horman <horms@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 03:19:01PM +0000, Alan Maguire wrote:
-> On 14/12/2024 12:15, Alan Maguire wrote:
-> > On 14/12/2024 04:41, Cong Wang wrote:
-> >> On Thu, Dec 05, 2024 at 08:36:33AM +0100, Uros Bizjak wrote:
-> >>> On Wed, Dec 4, 2024 at 4:52 PM Laura Nao <laura.nao@collabora.com> wrote:
-> >>>>
-> >>>> On 11/15/24 18:17, Laura Nao wrote:
-> >>>>> I managed to reproduce the issue locally and I've uploaded the vmlinux[1]
-> >>>>> (stripped of DWARF data) and vmlinux.raw[2] files, as well as one of the
-> >>>>> modules[3] and its btf data[4] extracted with:
-> >>>>>
-> >>>>> bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko > cros_kbd_led_backlight.ko.raw
-> >>>>>
-> >>>>> Looking again at the logs[5], I've noticed the following is reported:
-> >>>>>
-> >>>>> [    0.415885] BPF:    type_id=115803 offset=177920 size=1152
-> >>>>> [    0.416029] BPF:
-> >>>>> [    0.416083] BPF: Invalid offset
-> >>>>> [    0.416165] BPF:
-> >>>>>
-> >>>>> There are two different definitions of rcu_data in '.data..percpu', one
-> >>>>> is a struct and the other is an integer:
-> >>>>>
-> >>>>> type_id=115801 offset=177920 size=1152 (VAR 'rcu_data')
-> >>>>> type_id=115803 offset=177920 size=1152 (VAR 'rcu_data')
-> >>>>>
-> >>>>> [115801] VAR 'rcu_data' type_id=115572, linkage=static
-> >>>>> [115803] VAR 'rcu_data' type_id=1, linkage=static
-> >>>>>
-> >>>>> [115572] STRUCT 'rcu_data' size=1152 vlen=69
-> >>>>> [1] INT 'long unsigned int' size=8 bits_offset=0 nr_bits=64 encoding=(none)
-> >>>>>
-> >>>>> I assume that's not expected, correct?
-> >>>>>
-> >>>>> I'll dig a bit deeper and report back if I can find anything else.
-> >>>>
-> >>>> I ran a bisection, and it appears the culprit commit is:
-> >>>> https://lore.kernel.org/all/20241021080856.48746-2-ubizjak@gmail.com/
-> >>>>
-> >>>> Hi Uros, do you have any suggestions or insights on resolving this issue?
-> >>>
-> >>> There is a stray ";" at the end of the #define, perhaps this makes a difference:
-> >>>
-> >>> +#define PERCPU_PTR(__p) \
-> >>> + (typeof(*(__p)) __force __kernel *)(__p);
-> >>> +
-> >>>
-> >>> and SHIFT_PERCPU_PTR macro now expands to:
-> >>>
-> >>> RELOC_HIDE((typeof(*(p)) __force __kernel *)(p);, (offset))
-> >>>
-> >>> A follow-up patch in the series changes PERCPU_PTR macro to:
-> >>>
-> >>> #define PERCPU_PTR(__p) \
-> >>> ({ \
-> >>> unsigned long __pcpu_ptr = (__force unsigned long)(__p); \
-> >>> (typeof(*(__p)) __force __kernel *)(__pcpu_ptr); \
-> >>> })
-> >>>
-> >>> so this should again correctly cast the value.
-> >>
-> >> Hm, I saw a similar bug but with pahole 1.28. My kernel complains about
-> >> BTF invalid offset:
-> >>
-> >> [    7.785788] BPF: 	 type_id=2394 offset=0 size=1
-> >> [    7.786411] BPF:
-> >> [    7.786703] BPF: Invalid offset
-> >> [    7.787119] BPF:
-> >>
-> >> Dumping the vmlinux (there is no module invovled), I saw it is related to
-> >> percpu pointer too:
-> >>
-> >> [2394] VAR '__pcpu_unique_cpu_hw_events' type_id=2, linkage=global
-> >> ...
-> >> [163643] DATASEC '.data..percpu' size=2123280 vlen=808
-> >>         type_id=2393 offset=0 size=1 (VAR '__pcpu_scope_cpu_hw_events')
-> >>         type_id=2394 offset=0 size=1 (VAR '__pcpu_unique_cpu_hw_events')
-> >> ...
-> >>
-> >> I compiled and installed the latest pahole from its git repo:
-> >>
-> >> $ pahole --version
-> >> v1.28
-> >>
-> >> Thanks.
-> > 
-> > Thanks for the report! Looking at percpu-defs.h it looks like the
-> > existence of such variables requires either
-> > 
-> > #if defined(ARCH_NEEDS_WEAK_PER_CPU) ||
-> > defined(CONFIG_DEBUG_FORCE_WEAK_PER_CPU)
-> > 
-> > ...
-> > 
-> > #define DEFINE_PER_CPU_SECTION(type, name, sec)                         \
-> >         __PCPU_DUMMY_ATTRS char __pcpu_scope_##name;                    \
-> >         extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;            \
-> >         __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;                   \
-> >         extern __PCPU_ATTRS(sec) __typeof__(type) name;                 \
-> >         __PCPU_ATTRS(sec) __weak __typeof__(type) name
-> > 
-> > 
-> > I'm guessing your .config has CONFIG_DEBUG_FORCE_WEAK_PER_CPU, or are
-> > you building on s390/alpha?
-> > 
-> > I've reproduced this on bpf-next with CONFIG_DEBUG_FORCE_WEAK_PER_CPU=y,
-> > pahole v1.28 and gcc-12; I see ~900 __pcpu_ variables and get the same
-> > BTF errors since multipe __pcpu_ vars share the offset 0.
-> > 
-> > A simple workaround in dwarves - and I verified this resolved the issue
-> > for me - would be
-> > 
-> > diff --git a/btf_encoder.c b/btf_encoder.c
-> > index 3754884..4a1799a 100644
-> > --- a/btf_encoder.c
-> > +++ b/btf_encoder.c
-> > @@ -2174,7 +2174,8 @@ static bool filter_variable_name(const char *name)
-> >                 X("__UNIQUE_ID"),
-> >                 X("__tpstrtab_"),
-> >                 X("__exitcall_"),
-> > -               X("__func_stack_frame_non_standard_")
-> > +               X("__func_stack_frame_non_standard_"),
-> > +               X("__pcpu_")
-> >                 #undef X
-> >         };
-> >         int i;
-> > 
-> > ...but I'd like us to understand further why variables which were
-> > supposed to be in a .discard section end up being encoded as there may
-> > be other problems lurking here aside from this one. More soon hopefully...
-> >
-> 
-> 
-> A bit more context here - variable encoding takes the address of the
-> variable from DWARF to locate the associated ELF section. Because we
-> insist on having a variable specification - with a location - this
-> usually works fine. However the problem is that because these dummy
-> __pcpu_ variables specify a .discard section, their addresses are 0, so
-> we get for example:
-> 
->  <1><1e535>: Abbrev Number: 114 (DW_TAG_variable)
->     <1e536>   DW_AT_name        : (indirect string, offset: 0x5e97):
-> __pcpu_unique_kstack_offset
->     <1e53a>   DW_AT_decl_file   : 1
->     <1e53b>   DW_AT_decl_line   : 823
->     <1e53d>   DW_AT_decl_column : 1
->     <1e53e>   DW_AT_type        : <0x57>
->     <1e542>   DW_AT_external    : 1
->     <1e542>   DW_AT_declaration : 1
->  <1><1e542>: Abbrev Number: 156 (DW_TAG_variable)
->     <1e544>   DW_AT_specification: <0x1e535>
->     <1e548>   DW_AT_location    : 9 byte block: 3 0 0 0 0 0 0 0 0
-> (DW_OP_addr: 0)
-> 
-> 
-> You can see the same thing for a simple program like this:
-> 
-> #include <stdio.h>
-> 
-> #define SEC(name) __attribute__((section(name)))
-> 
-> SEC("/DISCARD/") int d1;
-> extern int d1;
-> SEC("/DISCARD/") int d2;
-> extern int d2;
-> 
-> int main(int argc, char *argv[])
-> {
-> 	return 0;
-> }
-> 
-> 
-> If you compile it with -g, the DWARF shows that d1 and d2 both have
-> address 0:
-> 
->  <1><72>: Abbrev Number: 5 (DW_TAG_variable)
->     <73>   DW_AT_name        : d1
->     <76>   DW_AT_decl_file   : 1
->     <77>   DW_AT_decl_line   : 5
->     <78>   DW_AT_decl_column : 22
->     <79>   DW_AT_type        : <0x57>
->     <7d>   DW_AT_external    : 1
->     <7d>   DW_AT_location    : 9 byte block: 3 0 0 0 0 0 0 0 0
-> (DW_OP_addr: 0)
->  <1><87>: Abbrev Number: 5 (DW_TAG_variable)
->     <88>   DW_AT_name        : d2
->     <8b>   DW_AT_decl_file   : 1
->     <8c>   DW_AT_decl_line   : 7
->     <8d>   DW_AT_decl_column : 22
->     <8e>   DW_AT_type        : <0x57>
->     <92>   DW_AT_external    : 1
->     <92>   DW_AT_location    : 9 byte block: 3 0 0 0 0 0 0 0 0
-> (DW_OP_addr: 0)
-> 
-> 
-> So the reason this happens for dwarves v1.28 in particular is - as I
-> understand it - we moved away from recording ELF section information for
-> each variable and matching that with DWARF info, instead relying on the
-> address to locate the associated ELF section. In cases like the above
-> the address information unfortunately leads us astray.
-> 
-> Seems like there's a few approaches we can take in fixing this:
-> 
-> 1. designate "__pcpu_" prefix as a variable prefix to filter out. This
-> resolves the immediate problem but is too narrowly focused IMO and we
-> may end up playing whack-a-mole with other dummy variable prefixes.
-> 2. resurrect ELF section variable information fully; i.e. record a list
-> of variables per ELF section (or at least per ELF section we care
-> about). If variable is not on the list for the ELF section, do not
-> encode it.
-> 3. midway between the two; for the 0 address case specifically, verify
-> that the variable name really _is_ in the associated ELF section. No
-> need to create a local ELF table variable representation, we could just
-> walk the table in the case of the 0 addresses.
-> 
-> Diff for approach 3 is as follows
-> 
-> diff --git a/btf_encoder.c b/btf_encoder.c
-> index 3754884..21a0ab6 100644
-> --- a/btf_encoder.c
-> +++ b/btf_encoder.c
-> @@ -2189,6 +2189,26 @@ static bool filter_variable_name(const char *name)
->         return false;
->  }
-> 
-> +bool variable_in_sec(struct btf_encoder *encoder, const char *name,
-> size_t shndx)
-> +{
-> +       uint32_t sym_sec_idx;
-> +       uint32_t core_id;
-> +       GElf_Sym sym;
-> +
-> +       elf_symtab__for_each_symbol_index(encoder->symtab, core_id, sym,
-> sym_sec_idx) {
-> +               const char *sym_name;
-> +
-> +               if (sym_sec_idx != shndx || elf_sym__type(&sym) !=
-> STT_OBJECT)
-> +                       continue;
-> +               sym_name = elf_sym__name(&sym, encoder->symtab);
-> +               if (!sym_name)
-> +                       continue;
-> +               if (strcmp(name, sym_name) == 0)
-> +                       return true;
-> +       }
-> +       return false;
-> +}
-> +
->  static int btf_encoder__encode_cu_variables(struct btf_encoder *encoder)
->  {
->         struct cu *cu = encoder->cu;
-> @@ -2258,6 +2278,11 @@ static int
-> btf_encoder__encode_cu_variables(struct btf_encoder *encoder)
->                 if (filter_variable_name(name))
->                         continue;
-> 
-> +               /* A 0 address may be in a .discard section; ensure the
-> +                * variable really is in this section by checking ELF
-> symtab.
-> +                */
-> +               if (addr == 0 && !variable_in_sec(encoder, name, shndx))
-> +                       continue;
->                 /* Check for invalid BTF names */
->                 if (!btf_name_valid(name)) {
->                         dump_invalid_symbol("Found invalid variable name
-> when encoding btf",
-> 
-> 
-> ...so slightly more complex than option 1, but a bit more general in its
-> applicability to .discard section variables.
-> 
-> For the pahole folks, what do we think? Which option (or indeed other
-> ones I haven't thought of) makes sense for a fix for this? Thanks!
+Le mar. 17 d=C3=A9c. 2024 =C3=A0 03:05, Kees Cook <kees@kernel.org> a =C3=
+=A9crit :
+>
+> Instead of a heap allocation use a stack allocated struct sockaddr, as
+> dev_set_mac_address_user() is the consumer (which uses a classic
+> struct sockaddr). Cap the copy to the minimum address size between
+> the incoming address and the traditional sa_data field itself.
 
-I can reproduce this with the CONFIG_DEBUG_FORCE_WEAK_PER_CPU enable,
-the fix looks fine, could you send formal patch?
+Not sure what is a 'classic sockaddr'
 
-thanks,
-jirka
+>
+> Putting "sa" on the stack means it will get a reused stack slot since
+> it is smaller than other existing single-scope stack variables (like
+> the vfinfo array).
+>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Ido Schimmel <idosch@nvidia.com>
+> Cc: Petr Machata <petrm@nvidia.com>
+> Cc: netdev@vger.kernel.org
+> ---
+>  net/core/rtnetlink.c | 22 +++++++---------------
+>  1 file changed, 7 insertions(+), 15 deletions(-)
+>
+> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+> index ab5f201bf0ab..6da0edc0870d 100644
+> --- a/net/core/rtnetlink.c
+> +++ b/net/core/rtnetlink.c
+> @@ -3048,21 +3048,13 @@ static int do_setlink(const struct sk_buff *skb, =
+struct net_device *dev,
+>         }
+>
+>         if (tb[IFLA_ADDRESS]) {
+> -               struct sockaddr *sa;
+> -               int len;
+> -
+> -               len =3D sizeof(sa_family_t) + max_t(size_t, dev->addr_len=
+,
+> -                                                 sizeof(*sa));
+> -               sa =3D kmalloc(len, GFP_KERNEL);
+> -               if (!sa) {
+> -                       err =3D -ENOMEM;
+> -                       goto errout;
+> -               }
+> -               sa->sa_family =3D dev->type;
+> -               memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
+> -                      dev->addr_len);
+> -               err =3D dev_set_mac_address_user(dev, sa, extack);
+> -               kfree(sa);
+> +               struct sockaddr sa =3D { };
+> +
+> +               /* dev_set_mac_address_user() uses a true struct sockaddr=
+. */
+> +               sa.sa_family =3D dev->type;
+> +               memcpy(sa.sa_data, nla_data(tb[IFLA_ADDRESS]),
+> +                      min(dev->addr_len, sizeof(sa.sa_data_min)));
+> +               err =3D dev_set_mac_address_user(dev, &sa, extack);
+
+Have you added debug checks in dev_set_mac_address_user() to make sure
+dev->addr_len is always smaller than 14 ?
+
+I think we support devices with bigger addresses.
 
