@@ -1,127 +1,281 @@
-Return-Path: <linux-kernel+bounces-448855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CE99F4674
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:49:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3BCC9F4673
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F191885855
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:49:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941831889940
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7F71DD54C;
-	Tue, 17 Dec 2024 08:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yY0aVGXw"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A764C1DE2B3
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738261DE3A3;
+	Tue, 17 Dec 2024 08:48:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAAF1DAC93;
+	Tue, 17 Dec 2024 08:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734425346; cv=none; b=s+t10AwxwBE1aGNt2fFX58nrRHmo8ReVFOTiExkdJSO2ZS/vRwdJDeQDYd0ieo4L3lj6k5PvqoCZUgug4my0l9LjiABXFv3fXCZsMNQ1sApYjITuH+nguDjixTWzpWqIkLYrPfeENL3U3s7a6WAUIQ8gX+z0SZ0phLiDU05sQD8=
+	t=1734425320; cv=none; b=fVhNFww2UJvqxMbLvfTvO2sqsWXnrogGy6D86pUEjL/fM6fE72cRq/6eTMSasCdMShWndglMpJq8Ip4b5cbntL006042IvyOOk/ug4o+BTCE+DHXaJUykOLTftMEzAvB1IzB2TJK6Os4s4NBko5Q2+7NGFaYn+CTp2WL/zFk0cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734425346; c=relaxed/simple;
-	bh=0VUvLaeI1jcSJGzPxHY0N25cfAWXw/BqQdLY1b0053U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I3mmNNX4gIh8TPXJ0YdcfLZAaG59oLPBr+0byINOnUHe+ssu6JDIg5NYyiodegO/8FI/1chxSSKodgGHb/JwC24fsrTMyLZGE8y/9jfSt+Qy/Gz7naeIwMAdX4ssSsPPjDyv+1vp751HQToaBwjaGsWJfg2Jrkq7Igo6pHDqQLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yY0aVGXw; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43621d2dd4cso38715e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:49:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734425343; x=1735030143; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4gjynL615gvuMEubyjzZgIcz73t6loj7FWYasvQLRBg=;
-        b=yY0aVGXwPgY68opsfopP4tkRYFflUWD+zJaLpfPBbdxQsBUTcrH+kvoSvgIcXauiW6
-         kHXamY7C0EFthzfT4ZvqTKfJYq71UQM6VIwpnq7Z761/g5pDCGwCjBozDF4wJyPlY8eI
-         +1prPwIil3UKida0e9FqVCd1GQ9tzcNWJo47J18fiP/bEyiVRVy0wNEDfAQWQAeemMyM
-         5YSHx6qx1lykqE05jIPYbKD1MTgNtpGSrfbcBgJeacyN1xRUclYm4ZQOEbId9sR3qmy5
-         w0UECY8MoN4BibxW8VVKSPSzRXyH8NdNzNKBsWKgpf9XNKZjMeciowWhf1sXI1CYmk2w
-         McFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734425343; x=1735030143;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4gjynL615gvuMEubyjzZgIcz73t6loj7FWYasvQLRBg=;
-        b=SAo+GWNGyRiVcHNuaWHMkETJkL793ccc3+aH45uU2pfBB7ih1ToyJ0F86q0DLmumSh
-         XCGkMqkKHys24pGsV29bxdtwqpoJpUUmyPzCll39cc8bn3DZ+cUiTRMgeknDyyFVXgxK
-         3xrb00gSkY2pjwopdogAMMcteS5Y1dFJ9Y8hQvORAhezVwvdVtNTofpceJpLMqJMQDo8
-         717JzlkiKhiAaSFU/HW5LmCrJbTxkEpd7yrNUZubuyCkisgDazJ5zxqTPJj1RHUJvLoj
-         9hN1sGw9fmhvZ+/LsaaUxIOKOE873WgFz1m0s22ecFvoLh8Ul37PY7yg4uOCF1pDI0Nk
-         osRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSUudtfu4qOCVE1KynajTnf0DUH+QZLZBa8uhEVwAqL27gK69FHsAxYNdWFcKp0x33aAzEDRJJ0jYD4gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfuh8lBZIaVIZurAbWcRMrHed81mQBfOgT4qHNZcAESSa7I7mS
-	59iYKkreKtT/P4kXUP6QNtzFDsGWbaSQoaB1caG9BiUqrMHLphoeLscoZ/YPsmnHocm7yXcYwCi
-	Lyq5frO1HWuSY2Tu2+gblVMj5GooMekMOoEpp
-X-Gm-Gg: ASbGncvI5dt0kPX67U5EMM+9MnZwSodJozb539zhz8a6RKl/+1FI63PUP/1eizTJjUU
-	cYEJfJs8kNpjhOtNusaoTs/KLDk1zyJLrq5fEmCvkkIiM1qc7x+iEGLNSg3N8GhhhgNo=
-X-Google-Smtp-Source: AGHT+IGAI2rWVb4Uka3Gw6cExIudf/OJEn5z1n6O5hn8Pif2f/f8zmfBayaqT+8yKyhtBHAyACTgJA5pJBzp//b6lyU=
-X-Received: by 2002:a05:600c:5741:b0:436:1811:a79c with SMTP id
- 5b1f17b1804b1-4364ad4db33mr735715e9.5.1734425342932; Tue, 17 Dec 2024
- 00:49:02 -0800 (PST)
+	s=arc-20240116; t=1734425320; c=relaxed/simple;
+	bh=+26mOEZQWL2sesFz1H/XDGXnEAa1Bzahc8q7pZ00C8k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o65/GGHKF6xRYZnRV3YzXP4tOlSPk/C2hwv2QDVD5yMnkLLMkNqGgGFUgTpKblz3guiuHsvFaFv9dyuHV4j2uC2FZcIJ7yVB2avzW4WDM8nu3KBh9MkzNKbZBV6436AOWzrHDemebhkufoS64thG6q0491F+taFDxZL7PBXMqJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 305611007;
+	Tue, 17 Dec 2024 00:49:02 -0800 (PST)
+Received: from [10.162.16.49] (a077893.blr.arm.com [10.162.16.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D82F3F720;
+	Tue, 17 Dec 2024 00:48:29 -0800 (PST)
+Message-ID: <c64709f7-e1c6-482e-8665-912be50b15bd@arm.com>
+Date: Tue, 17 Dec 2024 14:18:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216175803.2716565-1-qperret@google.com> <20241216175803.2716565-8-qperret@google.com>
-In-Reply-To: <20241216175803.2716565-8-qperret@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 17 Dec 2024 08:48:26 +0000
-Message-ID: <CA+EHjTyYy6JxL0EH2=_VQe8+Qz7iCndPaU0C8gH69UnSkKhgtQ@mail.gmail.com>
-Subject: Re: [PATCH v3 07/18] KVM: arm64: Make kvm_pgtable_stage2_init() a
- static inline function
-To: Quentin Perret <qperret@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 6/7] arm64/boot: Enable EL2 requirements for
+ FEAT_Debugv8p9
+To: Rob Herring <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ kvmarm@lists.linux.dev, linux-doc@vger.kernel.org
+References: <20241216040831.2448257-1-anshuman.khandual@arm.com>
+ <20241216040831.2448257-7-anshuman.khandual@arm.com>
+ <20241216234251.GA629562-robh@kernel.org>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20241216234251.GA629562-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 16 Dec 2024 at 17:58, Quentin Perret <qperret@google.com> wrote:
->
-> Turn kvm_pgtable_stage2_init() into a static inline function instead of
-> a macro. This will allow the usage of typeof() on it later on.
->
-> Signed-off-by: Quentin Perret <qperret@google.com>
+On 12/17/24 05:12, Rob Herring wrote:
+> On Mon, Dec 16, 2024 at 09:38:30AM +0530, Anshuman Khandual wrote:
+>> Fine grained trap control for MDSELR_EL1 register needs to be configured in
+>> HDFGRTR2_EL2, and HDFGWTR2_EL2 registers when kernel enters at EL1, but EL2
+>> is also present.
+> 
+> Shouldn't this be "when kernel enters at EL2, and EL3 is also present"?
 
-Reviewed-by: Fuad Tabba <tabba@google.com>
+AFAICT - HDFGRTR2_EL2 and HDFGWTR2_EL2 registers configure traps into EL2 when
+accessed from EL1/EL0, provided all required EL3 trap controls are in place as
+well. These EL2 based trap configs need to be set before the kernel finally
+enters EL1. Although there is an assumption about EL3 based trap configs being
+in place, do we need to mention that in commit message as well. Is not updating 
+booting.rst takes care of all EL3 requirements.
 
-Cheers,
-/fuad
+> Though it is really "If EL3 set FGTEn2 and the kernel is entered in 
+> EL2, then FGT2 must be initialized for MDSELR_EL1."
+> 
+> If it was me, I'd just plagarize what was written for prior FGT 
+> commits for this code. :)
 
-> ---
->  arch/arm64/include/asm/kvm_pgtable.h | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
-> index c2f4149283ef..04418b5e3004 100644
-> --- a/arch/arm64/include/asm/kvm_pgtable.h
-> +++ b/arch/arm64/include/asm/kvm_pgtable.h
-> @@ -526,8 +526,11 @@ int __kvm_pgtable_stage2_init(struct kvm_pgtable *pgt, struct kvm_s2_mmu *mmu,
->                               enum kvm_pgtable_stage2_flags flags,
->                               kvm_pgtable_force_pte_cb_t force_pte_cb);
->
-> -#define kvm_pgtable_stage2_init(pgt, mmu, mm_ops) \
-> -       __kvm_pgtable_stage2_init(pgt, mmu, mm_ops, 0, NULL)
-> +static inline int kvm_pgtable_stage2_init(struct kvm_pgtable *pgt, struct kvm_s2_mmu *mmu,
-> +                                         struct kvm_pgtable_mm_ops *mm_ops)
-> +{
-> +       return __kvm_pgtable_stage2_init(pgt, mmu, mm_ops, 0, NULL);
-> +}
->
->  /**
->   * kvm_pgtable_stage2_destroy() - Destroy an unused guest stage-2 page-table.
-> --
-> 2.47.1.613.gc27f4b7a9f-goog
->
+There are many commits that changed __init_el2_fgt() with different description
+formats. Do you have particular one in mind which can be followed here ? :)
+
+> 
+>> This adds a new helper __init_el2_fgt2() initializing this
+>> new FEAT_FGT2 based fine grained registers.
+> 
+> "This adds" is the same as saying "This patch/commit adds" which is well 
+> documented to avoid. Use imperative "Add a new helper...". Though it is 
+> clear from the diff that is what you are doing...
+
+Sure, will fix it.
+
+> 
+> 
+>> MDCR_EL2.EBWE needs to be enabled for additional (beyond 16) breakpoint and
+>> watchpoint exceptions when kernel enters at EL1, but EL2 is also present.
+>> This updates __init_el2_debug() as required for FEAT_Debugv8p9.
+>>
+>> While here, also update booting.rst with MDCR_EL3 and SCR_EL3 requirements.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Jonathan Corbet <corbet@lwn.net>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> Cc: Oliver Upton <oliver.upton@linux.dev>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-doc@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: kvmarm@lists.linux.dev
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>> Changes in V3:
+>>
+>> - Dropped MDCR_EL3.TDA boot requirement from documentation (separate series)
+>> - Dropped MDCR_EL2_EBWE definition as MDCR_EL2 is now defined in tools sysreg
+>>
+>> https://lore.kernel.org/all/20241211065425.1106683-1-anshuman.khandual@arm.com/
+>>
+>>  Documentation/arch/arm64/booting.rst | 18 ++++++++++++++++++
+>>  arch/arm64/include/asm/el2_setup.h   | 26 ++++++++++++++++++++++++++
+>>  2 files changed, 44 insertions(+)
+>>
+>> diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
+>> index 3278fb4bf219..054cfe1cad18 100644
+>> --- a/Documentation/arch/arm64/booting.rst
+>> +++ b/Documentation/arch/arm64/booting.rst
+>> @@ -288,6 +288,12 @@ Before jumping into the kernel, the following conditions must be met:
+>>  
+>>      - SCR_EL3.FGTEn (bit 27) must be initialised to 0b1.
+>>  
+>> +  For CPUs with the Fine Grained Traps (FEAT_FGT2) extension present:
+>> +
+>> +  - If EL3 is present and the kernel is entered at EL2:
+>> +
+>> +    - SCR_EL3.FGTEn2 (bit 59) must be initialised to 0b1.
+>> +
+>>    For CPUs with support for HCRX_EL2 (FEAT_HCX) present:
+>>  
+>>    - If EL3 is present and the kernel is entered at EL2:
+>> @@ -322,6 +328,18 @@ Before jumping into the kernel, the following conditions must be met:
+>>      - ZCR_EL2.LEN must be initialised to the same value for all CPUs the
+>>        kernel will execute on.
+>>  
+>> +  For CPUs with FEAT_Debugv8p9 extension present:
+>> +
+>> +  - If the kernel is entered at EL1 and EL2 is present:
+>> +
+>> +    - HDFGRTR2_EL2.nMDSELR_EL1 (bit 5) must be initialized to 0b1
+>> +    - HDFGWTR2_EL2.nMDSELR_EL1 (bit 5) must be initialized to 0b1
+>> +    - MDCR_EL2.EBWE (bit 43) must be initialized to 0b1
+>> +
+>> +  - If EL3 is present:
+>> +
+>> +    - MDCR_EL3.EBWE (bit 43) must be initialized to 0b1
+>> +
+>>    For CPUs with the Scalable Matrix Extension (FEAT_SME):
+>>  
+>>    - If EL3 is present:
+>> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+>> index 4ef52d7245bb..2fbfe27d38b5 100644
+>> --- a/arch/arm64/include/asm/el2_setup.h
+>> +++ b/arch/arm64/include/asm/el2_setup.h
+>> @@ -105,6 +105,13 @@
+>>  						// to own it.
+>>  
+>>  .Lskip_trace_\@:
+>> +	mrs	x1, id_aa64dfr0_el1
+>> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_DebugVer_SHIFT, #4
+>> +	cmp	x1, #ID_AA64DFR0_EL1_DebugVer_V8P9
+>> +	b.lt	.Lskip_dbg_v8p9_\@
+>> +
+>> +	orr	x2, x2, #MDCR_EL2_EBWE
+>> +.Lskip_dbg_v8p9_\@:
+>>  	msr	mdcr_el2, x2			// Configure debug traps
+>>  .endm
+>>  
+>> @@ -244,6 +251,24 @@
+>>  .Lskip_gcs_\@:
+>>  .endm
+>>  
+>> +.macro __init_el2_fgt2
+>> +	mrs	x1, id_aa64mmfr0_el1
+>> +	ubfx	x1, x1, #ID_AA64MMFR0_EL1_FGT_SHIFT, #4
+>> +	cmp	x1, #ID_AA64MMFR0_EL1_FGT_FGT2
+> 
+> We already read this field in __init_el2_fgt, shouldn't we leverage that 
+> and move all this there rather than read the feature reg twice.
+
+Should not __init_el2_fgt2() remain separate to contain all future FEAT_FGT2
+related trap enabled/disable checks ? OTOH reading id_aa64mmfr0_el1 register
+should improve some performance as well.
+
+> 
+>> +	b.lt	.Lskip_fgt2_\@
+>> +
+>> +	mrs	x1, id_aa64dfr0_el1
+>> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_DebugVer_SHIFT, #4
+>> +	cmp	x1, #ID_AA64DFR0_EL1_DebugVer_V8P9
+>> +	b.lt	.Lskip_dbg_v8p9_\@
+>> +
+>> +	mov_q   x0, HDFGWTR2_EL2_nMDSELR_EL1
+>> +	msr_s	SYS_HDFGWTR2_EL2, x0
+>> +	msr_s	SYS_HDFGRTR2_EL2, x0
+> 
+> If Debug v8.9 is not present, but FGT2 is, shouldn't we write 0 to these 
+> registers? That is what we do for FGT.
+
+Just to summerize what's being done in __init_el2_fgt()
+
+.macro __init_el2_fgt
+	...............
+	mov     x0, xzr
+	...............
+.Lskip_spe_fgt_\@:
+        msr_s   SYS_HDFGRTR_EL2, x0
+        msr_s   SYS_HDFGWTR_EL2, x0
+	...............
+.Lset_fgt_\@:
+        msr_s   SYS_HFGRTR_EL2, x0
+        msr_s   SYS_HFGWTR_EL2, x0
+        msr_s   SYS_HFGITR_EL2, xzr
+	...............
+
+If the relevant features are not present and their traps need not be handled,
+all FEAT_FGT based trap control registers (SYS_HDFGRTR_EL2, SYS_HDFGWTR_EL2,
+SYS_HFGRTR_EL2, SYS_HFGWTR_EL2 and SYS_HFGITR_EL2) get cleared. Hence same
+needs to be done for all FEAT_FGT2 register as well. Fair enough, something
+like the following makes sense ?
+
+.macro __init_el2_fgt2
+        mrs     x1, id_aa64mmfr0_el1
+        ubfx    x1, x1, #ID_AA64MMFR0_EL1_FGT_SHIFT, #4
+        cmp     x1, #ID_AA64MMFR0_EL1_FGT_FGT2
+        b.lt    .Lskip_fgt2_\@
+
+        mov     x0, xzr
+        mrs     x1, id_aa64dfr0_el1
+        ubfx    x1, x1, #ID_AA64DFR0_EL1_DebugVer_SHIFT, #4
+        cmp     x1, #ID_AA64DFR0_EL1_DebugVer_V8P9
+        b.lt    .Lskip_dbg_v8p9_\@
+
+        orr     x0, x0, #HDFGWTR2_EL2_nMDSELR_EL1
+.Lskip_dbg_v8p9_\@:
+        msr_s   SYS_HDFGWTR2_EL2, x0
+        msr_s   SYS_HDFGRTR2_EL2, x0
+        msr_s   SYS_HFGRTR2_EL2, xzr
+        msr_s   SYS_HFGWTR2_EL2, xzr
+        msr_s   SYS_HFGITR2_EL2, xzr
+.Lskip_fgt2_\@:
+.endm
+
+Just wondering - following the same principle if clearing these FEAT_FGT2 trap
+registers would make sense in itself, even without FEAT_Debugv8p9 enablement ?
+
+Something like the commit
+
+commit 31c00d2aeaa2da89361f5b64a64ca831433be5fc
+Author: Mark Brown <broonie@kernel.org>
+Date:   Thu Apr 1 19:09:40 2021 +0100
+
+    arm64: Disable fine grained traps on boot
+    
+    The arm64 FEAT_FGT extension introduces a set of traps to EL2 for accesses
+    to small sets of registers and instructions from EL1 and EL0.  Currently
+    Linux makes no use of this feature, ensure that it is not active at boot by
+    disabling the traps during EL2 setup.
+
+
+> 
+> 
+> I just realized I forgot to add FGT2 setup for the PMUv3.9 features I 
+> already added in 6.12 and 6.13. So this really needs to land sooner 
+> rather than later to add that. 
+Not sure if I got this correctly. Are you suggesting to carve out __init_el2_fgt2()
+from the series and post separately with PMUv3.9 requirements and fallback clearing
+for all FEAT_FGT2 trap config registers as mentioned above ?
 
