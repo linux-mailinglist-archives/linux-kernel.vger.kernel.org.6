@@ -1,265 +1,126 @@
-Return-Path: <linux-kernel+bounces-449096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B920A9F49C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:23:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1DE9F49DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:27:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0F93188580A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:23:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58F41889FA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B8D1EE01F;
-	Tue, 17 Dec 2024 11:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QrgmId60"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A541EC00F;
+	Tue, 17 Dec 2024 11:27:19 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21DC16A959
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C3750276
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734434601; cv=none; b=CAJZ33IjPMJmV4IxTaMgys+DisoZH1AbO2MnoLDxW/uX1uny/94MgRYoHAtRgIHtpqA3hwFynn6FyzGnId52RQh79d9yD+yssI0o0AnTOxVOhbyvi0ThG4kjIUq1LLf2mRQbRK8GnlgSMxuRlkGGhWoDR/Fx1n+9iw85k+cJDIo=
+	t=1734434838; cv=none; b=t1nhM3YGNyyvODkAVwqgjw+2iNGZuNSfBbRK60d4SS1BHLt1oh5K/Pl36Zb4ISWQn30w/3+Gvx7EafqxZaoXgITbLVyfwwI4/t4WKGdccvxe4u3cemF3bDrHK3raw0NXms1I5NqVLMzSzJ/qag+G4comavOXLu1bzFEI0Zw+DEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734434601; c=relaxed/simple;
-	bh=RmSIt/3Ns4FBCqw8NFpzWMRkTFrQMhrc2MyPlmAiKwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4bWtVgl5ek3Y7kKiz6ze7wfnbsGSCXgFaJt/IfJwVWZ0vdaqHIvz57YGRljy/p4TPQwtpnKz9JVXDNnLyvKmbA/YA+ivI0yzhrrYSr3FHs8USivLq7r0S47NmjaVXKnKgU7gjaKp9CMcZXEYByzEvLT8W3GYJVtGK6plDiWJcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QrgmId60; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734434598;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rxFk4ZzElKHondedZg8yku+jbtm7e4uZWvmWgn/Up8c=;
-	b=QrgmId6031O5nKva+9Rq1OfMvrOLt8UC0ofwNm59rul05TGQK+fAXckEdyAyXmQAt+v3am
-	WZrGNS60yfzvgx8LjN9G4A/HQ0rq51Krw3bfwZtBWpg5rBQ4BQwaLRJwP6AHTnVu3D/7gy
-	El8+ZisfCh555vb0nK99sMPbQq+7sfQ=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-393-UeKoeePxPQG2-8mRjcTtFQ-1; Tue, 17 Dec 2024 06:23:17 -0500
-X-MC-Unique: UeKoeePxPQG2-8mRjcTtFQ-1
-X-Mimecast-MFC-AGG-ID: UeKoeePxPQG2-8mRjcTtFQ
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-467a409b8ddso82437181cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:23:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734434597; x=1735039397;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rxFk4ZzElKHondedZg8yku+jbtm7e4uZWvmWgn/Up8c=;
-        b=PgMVm4M02nNWtcK0qahaLeo9TOmxtpIHJdQnpULFQytW7GF7ZH90Ya8R5HbLQM50SJ
-         cz3zTXmNmVF9O4ftQ7Pi98bfsQgGRRcubcZLzuBA3lwr2oXWV6PnS16/GyjJX2P3nn2F
-         LCJQoO161/Huw1VgtjzL9ZcU0D/CvQcXVQfPvXqAe8FY9dudteFMeUXDp/e5mjBqQF1i
-         nvZe6CNs5gNg2P70jGRs5f8Ymzh9MtvrQud5tjKmI7y+j0o1mMK5wr7syBmvEfQYnsX4
-         WJM4DOa9N/NHLmJQ1tk5eBb86ijdTs4MAyTe1NZRHD9YsIO/XD4VMstT0d2xmttspny1
-         DLiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEQGyKUMN1uvi5uFqwZhu5dqSwUysvPxp9g3hsXUuVPy991z0pw/qzKqpw5ZcogO2zefJImyixzwf/18k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgjhGGniXOq5b+xhfz+/r09YGOYU0h6kBKsWtOa10uCYxVSqzM
-	p+oId/IKYP/+meDaG+hqzLKpNq8rGL//YSnYOJNo8TecfKLzel5lae8PT6zq14vUXO5k4q40mtM
-	yIAIF7U+CN1zXdOzZevVviICreaIaxZ4FT/PEgp9qlJ/no8HmUwOnpl8YQHlsZw==
-X-Gm-Gg: ASbGncuNNVlQmYUmtjy3Tf/MjkF7Pd32lAvZHpEAfQcYPSlrSmDa+i2+F8RoTvlMM1B
-	7y4c3GLDp4E/xq+riZ7HpKzzyDv7s34ZrpCJ/C+tS7JpopvAU7hqCBQw2mOi/MeAsjdwMFmkVBK
-	m6az8/iMJF/FFtayGR4swa6fEktlEK3JMcSt5j27tmze34qBtav7jHCR1Y+8v2lv92tFqe66spj
-	WRdxz06w151Sb+jH4wVogntHbRZguIih82/6GEg6au6bOZ/eRCMtFko38iov8oHxOBiF5dW+xLg
-	3aoFVQ2lyA7eMkVzTIaeLCJF74L8eLH6t/MBC/FWWmo=
-X-Received: by 2002:ac8:7c49:0:b0:467:603d:1cd5 with SMTP id d75a77b69052e-468f8dd49eamr46825281cf.26.1734434597073;
-        Tue, 17 Dec 2024 03:23:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEDlnfHsZwL618rCmU7oi6Y1uHEhl66Xxg1NEAZrBlzi7MfB/k934xEyHJarN/SUCDyDssw+A==
-X-Received: by 2002:ac8:7c49:0:b0:467:603d:1cd5 with SMTP id d75a77b69052e-468f8dd49eamr46824991cf.26.1734434596710;
-        Tue, 17 Dec 2024 03:23:16 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-40-237-196.as13285.net. [80.40.237.196])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2c72fa9sm37976241cf.12.2024.12.17.03.23.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 03:23:15 -0800 (PST)
-Date: Tue, 17 Dec 2024 11:23:11 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-rt-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-	Frauke =?iso-8859-1?Q?J=E4ger?= <frauke@linutronix.de>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@linaro.org>
-Subject: Registration open for OSPM-summit 2025
-Message-ID: <Z2FfH3JK7yMt20Td@jlelli-thinkpadt14gen4.remote.csb>
-References: <ZytlAkTiuZApK23Y@jlelli-thinkpadt14gen4.remote.csb>
- <Z02EBA_0SwWPhTAi@jlelli-thinkpadt14gen4.remote.csb>
+	s=arc-20240116; t=1734434838; c=relaxed/simple;
+	bh=vqALQt09fwYnd0MOAWYVVvbDKV3l718+gC/GiJHJjMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dFWSUtgyiceSUrOIM43hyWGAu7av2s+E+G87z1FwUPqNnPRNroKSFFRZHmyCq8koVLnQvScqr/tE0IW4zDQ6aiA5ALR/vhz/XwH6bf+5GA/yk6SxOxxcB4r87b3CTbu6Bn4+IJCoVx/yzXkJ20yqdOVgwcp3TTwqApKc8GZdgnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YCDzZ1XDMz4f3lDK
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:26:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B35851A07BA
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:27:10 +0800 (CST)
+Received: from [10.174.177.210] (unknown [10.174.177.210])
+	by APP4 (Coremail) with SMTP id gCh0CgAXP4MLYGFnpi5sEw--.55710S3;
+	Tue, 17 Dec 2024 19:27:08 +0800 (CST)
+Message-ID: <30e13c1c-5dd7-da94-9d2a-6277ade3e9e4@huaweicloud.com>
+Date: Tue, 17 Dec 2024 19:27:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH 1/2] maple_tree: Fix mas_alloc_cyclic() second search
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: maple-tree@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, chuck.lever@oracle.com, brauner@kernel.org
+References: <20241216190113.1226145-1-Liam.Howlett@oracle.com>
+ <20241216190113.1226145-2-Liam.Howlett@oracle.com>
+From: yangerkun <yangerkun@huaweicloud.com>
+In-Reply-To: <20241216190113.1226145-2-Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z02EBA_0SwWPhTAi@jlelli-thinkpadt14gen4.remote.csb>
+X-CM-TRANSID:gCh0CgAXP4MLYGFnpi5sEw--.55710S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KrWkWF4xWr4rKFy5Cr18Grg_yoW8Gw45pa
+	1DWa1UKrZ7Jr48Kw1kWrWUXas2qrnYgr1xWayDJw1rZry5JFySgr15CFWfuF47Z3srA3Wa
+	yF4av3W0ka4DZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
+	tUUUUU=
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
-Hello,
 
-Last reminder for this edition, promise.
 
-Registration is now open!
-
-Please use the following form to register
-
-https://forms.gle/Yvk7aS79pvNR6hbv8
-
-Please share the word and see you soon!
-
-Best,
-Juri
-
-On 02/12/24 10:55, Juri Lelli wrote:
-> Hello Everybody,
+在 2024/12/17 3:01, Liam R. Howlett 写道:
+> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
 > 
-> Quick reminder that deadline for topics submission is approaching
-> (December 9, 2024 - next Monday).
+> The first search may leave the maple state in an error state.  Reset the
+> maple state before the second search so that the search has a chance of
+> executing correctly after an exhausted first search.
 > 
-> Please use the form to submit your topic(s) or reply to me privately
-> with topic's details.
+> Link: https://lore.kernel.org/all/20241216060600.287B4C4CED0@smtp.kernel.org/
+> Fixes: 9b6713cc7522 ("maple_tree: Add mtree_alloc_cyclic()")
+> Cc: Yang Erkun <yangerkun@huaweicloud.com>
+> Cc: chuck.lever@oracle.com
+> Cc: brauner@kernel.org
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> ---
+>   lib/maple_tree.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+
+This looks more clear!
+
+Reviewed-by: Yang Erkun <yangerkun@huawei.com>
+
 > 
-> https://forms.gle/Vbvpxsh8pqBffx8b6
-> 
-> Don't wait until last minute or Santa will add you to the naughty list!
-> 
-> Best,
-> Juri
-> 
-> On 06/11/24 13:45, Juri Lelli wrote:
-> > Power Management and Scheduling in the Linux Kernel (OSPM-summit) VII edition
-> > 
-> > March 18-20, 2025
-> > Alte Fabrik
-> > Uhldingen-Mühlhofen, Germany
-> > 
-> > ---
-> > 
-> > .:: FOCUS
-> > 
-> > OSPM is moving to Germany!
-> > 
-> > The VII edition of the Power Management and Scheduling in the Linux
-> > Kernel (OSPM) summit aims at fostering discussions on power management
-> > and (real-time) scheduling techniques. Summit will be held in Uhldingen
-> > (Germany) on March 18-20, 2025.
-> > 
-> > We welcome anybody interested in having discussions on the broad scope
-> > of scheduler techniques for reducing energy consumption while meeting
-> > performance and latency requirements, real-time systems, real-time and
-> > non-real-time scheduling, tooling, debugging and tracing.
-> > 
-> > Feel free to take a look at what happened previous years:
-> > 
-> >  I   edition - https://lwn.net/Articles/721573/
-> >  II  edition - https://lwn.net/Articles/754923/
-> >  III edition - https://lwn.net/Articles/793281/
-> >  IV  edition - https://lwn.net/Articles/820337/ (online)
-> >  V   edition - https://lwn.net/Articles/934142/
-> >                https://lwn.net/Articles/934459/
-> >                https://lwn.net/Articles/935180/
-> >  VI  edition - https://lwn.net/Articles/981371/
-> > 
-> > .:: FORMAT
-> > 
-> > The summit is organized to cover three days of discussions and talks.
-> > 
-> > The list of topics of interest includes (but it is not limited to):
-> > 
-> >  * Power management techniques
-> >  * Scheduling techniques (real-time and non real-time)
-> >  * Energy consumption and CPU capacity aware scheduling
-> >  * Real-time virtualization
-> >  * Mobile/Server power management real-world use cases (successes and
-> >    failures)
-> >  * Power management and scheduling tooling (configuration, integration,
-> >    testing, etc.)
-> >  * Tracing
-> >  * Recap/lightning talks
-> > 
-> > Presentations (50 min) can cover recently developed technologies,
-> > ongoing work and new ideas. Please understand that this workshop is not
-> > intended for presenting sales and marketing pitches.
-> > 
-> > .:: SUBMIT A TOPIC/PRESENTATION
-> > 
-> > To submit a topic/presentation use the form available at
-> > https://forms.gle/Vbvpxsh8pqBffx8b6.
-> > 
-> > Or, if you prefer, simply reply (only to me, please :) to this email
-> > specifying:
-> > 
-> > - name/surname
-> > - affiliation
-> > - short bio
-> > - email address
-> > - title
-> > - abstract
-> > 
-> > Deadline for submitting topics/presentations is December 9, 2024.
-> > Notifications for accepted topics/presentations will be sent out
-> > December 16, 2024.
-> > 
-> > .:: ATTENDING
-> > 
-> > Attending the OSPM-summit is free of charge, but registration to the
-> > event is mandatory. The event can allow a maximum of 50 people (so, be
-> > sure to register early!).
-> > 
-> > Registrations open on December 16, 2024.
-> > To register fill in the registration form available at
-> > https://forms.gle/Yvk7aS79pvNR6hbv8.
-> > 
-> > While it is not strictly required to submit a topic/presentation,
-> > registrations with a topic/presentation proposal will take precedence.
-> > 
-> > .:: VENUE
-> > 
-> > The conference will take place at Alte Fabrik [1], Daisendorfer Str. 4,
-> > 88689 Uhldingen-Mühlhofen, Germany
-> > 
-> > The conference venue is located in a 2 minute walking distance [2] to
-> > the Hotel Sternen [3] that has been pre-reserved for the participants.
-> > Since it is a very rural area, we recommend booking this hotel as it is
-> > close to the conference room. The price ranges per night incl. breakfast
-> > between 85€ (Standard Single Room) up to 149€ (Junior Suite). There is
-> > an availability of 37 rooms in the hotel. Another 13 rooms are
-> > pre-reserved in the Hotel Kreuz which is also a 5min walking distance to
-> > the conference location [4]. Cost is 75€ inkl. breakfast. Please choose
-> > your hotel (and room) and arrange booking yourself. We recommend arrival
-> > on March 17 and departure on March 21 due to the length of the trip.
-> > 
-> > Please use the code ‘LINUTRONIX’ when booking your hotel room. 
-> > Deadline for hotel booking in Hotel Sternen is February 28, 2025.
-> > Deadline for hotel booking in Hotel Kreuz is January 17, 2025.  
-> > After these dates, cancellations are not free of charge anymore.
-> > 
-> > You can reach Uhldingen-Mühlhofen best from Zürich Airport [5] or
-> > Friedrichshafen Airport [6]. From both airports there are train and/or
-> > bus connections to Uhldingen-Mühlhofen which you can check here [7]. The
-> > rides are quite long, so another possibility is to organize yourself in
-> > groups and share a taxi/shuttle [8].
-> > 
-> > [1] https://www.fabrik-muehlhofen.de/
-> > [2] https://maps.app.goo.gl/S6cnTgx1KJAGRkMr7
-> > [3] https://www.steAlte Fabrik Mühlhofenrnen-muehlhofen.de/
-> > [4] https://www.bodensee-hotel-kreuz.de/
-> > [5] https://www.flughafen-zuerich.ch/de/passagiere/praktisches/parking-und-transport/zug-tram-und-bus
-> > [6] https://www.bodensee-airport.eu/passagiere-besucher/anreise-parken-uebernachten/
-> > [7] https://www.bahn.de/
-> > [8] https://airporttaxi24.ch/?gad_source=1&gclid=EAIaIQobChMIo_y9l56iiQMVfp6DBx16NxPtEAAYAiAAEgJOO_D_BwE
-> > 
-> > .:: ORGANIZERS
-> > 
-> > Juri Lelli (Red Hat)
-> > Frauke Jäger (Linutronix)
-> > Tommaso Cucinotta (SSSA)
-> > Lorenzo Pieralisi (Linaro)
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index 940d30653407b..f7153ade1be5f 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -4335,7 +4335,6 @@ int mas_alloc_cyclic(struct ma_state *mas, unsigned long *startp,
+>   {
+>   	unsigned long min = range_lo;
+>   	int ret = 0;
+> -	struct ma_state m = *mas;
+>   
+>   	range_lo = max(min, *next);
+>   	ret = mas_empty_area(mas, range_lo, range_hi, 1);
+> @@ -4344,7 +4343,7 @@ int mas_alloc_cyclic(struct ma_state *mas, unsigned long *startp,
+>   		ret = 1;
+>   	}
+>   	if (ret < 0 && range_lo > min) {
+> -		*mas = m;
+> +		mas_reset(mas);
+>   		ret = mas_empty_area(mas, min, range_hi, 1);
+>   		if (ret == 0)
+>   			ret = 1;
 
 
