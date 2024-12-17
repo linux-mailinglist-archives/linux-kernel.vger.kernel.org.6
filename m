@@ -1,216 +1,180 @@
-Return-Path: <linux-kernel+bounces-448844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D9A9F4656
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:45:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512AF9F466A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5701886CD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1FBE16895E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9B81DED77;
-	Tue, 17 Dec 2024 08:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E6A1DEFF3;
+	Tue, 17 Dec 2024 08:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ChzQXF4N"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="Ey8zGE2Y"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CB31DED70
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CE7171092
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734425065; cv=none; b=l852hbwQi+K2cHiKqJ8wla9wR3R3JlQHFwve8Iz2pp0G8JDJlJGo6eUOmaJZGJEC0+IfaYGar/IosbN02dbU+Ey/R1gege+mC7jhKf75jxboo17daLrVMHzAlL7IQooS3fQ+qDzPelAsl6jH0QKM3XtnWPFboT3ZBbOaSvuDgy8=
+	t=1734425177; cv=none; b=QJwMdwPeND3UbADZRfo3vH9knQfqDwhp3xfVWczElyhPmEhY8Pwt5k0jJkqC4nc04n9AbhCyUR3ASx3vdbNYTEil4SBZ2lwQzGkilJUdbnuWhpYokx/wWqSp75v/W4ZiNjCIZZzkDYwu6LpPMHYh7W1QeRfgO/Ajj/N/D7ScGKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734425065; c=relaxed/simple;
-	bh=oE9r30qVJ25lEtpADYxY0kb0u8ajuTEGjpH+9tV4SVo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LPScBYFHywieuIiLzeRC1dUR1prs7RZASTYXZAUtg4pmv8ABvqMbCQDjmBFecFqID0GjtspOrJKy9MJwF8VSYbUhra3D9w4nvh+82GwOCi1lwH+rAW4FSMGQdUiDXXsDEujpbJgukh9n9tPJb9daxStz8hTdI6ea7b1SulY3MIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ChzQXF4N; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43622893c3cso26405e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:44:23 -0800 (PST)
+	s=arc-20240116; t=1734425177; c=relaxed/simple;
+	bh=oOlSR/inyA80CTgFMIToej0wYVKqLBtuNwJvZZfAoVA=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=tC5BMFbpcTrbhPhLRsJFMRQasxRtqLWPOmhWyjI2A3TnHzglotQ+zmzC9qWYl80JD2n1dKQ3eCnuVJ8g8pbaO+maNng/gQKf+grWLBEzB4a0ChTDSgF3D1euqymsG1kWC5PJgWxHhwpFvHouGPaRkdz6BSI1dhF+FQ2Jmpb1Plc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=Ey8zGE2Y; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734425062; x=1735029862; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XC2ZwAn0E++YNctCTdRNukhVgGGxBVyakf6CmRi2f4=;
-        b=ChzQXF4N1xEbOmpOdBu7exm9u/BC91JmuwM71AMVGPwT3eT6wVufEUYMM8jcFdMoSP
-         v7RXjdx9zImGPSKOam/lxYsXJTARHVVJnULH/dGpt5lrmotgEZfFChhlj/Qf3RuGQUwG
-         Jui0HlSClDGjkoSv463uALLAAf0lDmggnPu/Y111bikek+ZqwGqj9EM5y4LSwJ5v4gfq
-         2Ui4FjWmywfTHc2RLLYqdGOztGGArORd0ig6T2LI4pzkYxGXrlrXL03o3kE/NQGA+Tt2
-         V3OSRnxRpB7x7U82AnQmoFu2KEMcfsQu7zFvhS4D6sY2WSk5UgcR/XGUQBk/wziIYfL8
-         QZ3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734425062; x=1735029862;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0XC2ZwAn0E++YNctCTdRNukhVgGGxBVyakf6CmRi2f4=;
-        b=wy99ycq7hhjnIzvT2qOnmHwUwR6phx5Mt7UtYSXw/bMmW4fSOEz109UGJHlUiiaL5n
-         J6rpmysVvdmtlf0zhT7burs6ikazkNhkQikFiOV6vleRX54jFw5/EDaT59pP+VFuwd75
-         BaHeTh0idAC3V36J0pdhsvJuhf0FzXoefGWV8rll80+we3wMxDwQ4jpcCwI8uKIJd6vW
-         jHuPsLGHVpwKH0iRHqBHUGo4jNr5WRsOeSpRMeK8xuP4T5rN6Tjrf1GmHSQrTtdF7Lvu
-         vVeUVnhIXn7qZlrhLb2QCJEas+Ql/RHVAqs9/+lbomh41PvMepFa5ecNu3FTOfnSb5xq
-         cVKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoGrfpbw89/ui8gK9c34Mg/853stToJ1zzAsyAz6cqRTYSbcYwEaGDd5yaDaqviHahCmUt5F6U5F/ibN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYCa5S9/vAHm58iy21hkW/htaH88fAXR94FwveCikPxNePq/9G
-	UoePACybz5V5yl7uZ7NzEwqGeX+BdhT6WWLXKg5w4ltUJ1L1RN5ddwOA0MIXi3s6ui+9RUk8O3T
-	phV0dFu24Vduvvo0KvZkdSaEGuptWxanscRzO
-X-Gm-Gg: ASbGncvkQCW5xzZO2XXdilyn9PeoDVnvz3Wd0hbqGnXAnQFHFqysDLpKeB9kxw+tglB
-	yNj1YbhBuz/NW5QynX3+rzvfUC7kBwMjkEftBr6BrhbUhfqEi8Q9Ho81CBiUTzHRDCHA=
-X-Google-Smtp-Source: AGHT+IGM0bpr7//XD6OxuzJzrQz8DmDuxUXL0rgx8RL7HNA2kZE/P+I6liY2VW7R5nSj/mMRt13Okt8o4WT6PlKUZeY=
-X-Received: by 2002:a05:600c:2317:b0:42c:9e35:cde6 with SMTP id
- 5b1f17b1804b1-4364901b009mr920745e9.2.1734425061742; Tue, 17 Dec 2024
- 00:44:21 -0800 (PST)
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Y1JGsxqNjY8bz1ktiFgTDJJPb3UnpO7XcGc6KNyhQWU=;
+  b=Ey8zGE2YJipR+kL3DBOfs+IXhr6QcoOsqF0o72rmoA8s6IsZNimFMO/o
+   SwjKDOQpa51hSVD+N4kHXqe84dyNBHDw8KIZjnpELSO2yZE1vFQ64TiHf
+   8oNaZ2y+oIHwWThxjBJdRsXn++WEFrt4PsCIAGiURAiXC4jF8uFdLkjIR
+   c=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.12,241,1728943200"; 
+   d="scan'208";a="104515743"
+Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 09:45:02 +0100
+Date: Tue, 17 Dec 2024 09:45:01 +0100 (CET)
+From: Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+cc: linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev
+Subject: drivers/thunderbolt/debugfs.c:532:5-33: opportunity for
+ str_yes_no(supports_software ( margining )) (fwd)
+Message-ID: <alpine.DEB.2.22.394.2412170944390.3436@hadrien>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216175803.2716565-1-qperret@google.com> <20241216175803.2716565-4-qperret@google.com>
-In-Reply-To: <20241216175803.2716565-4-qperret@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 17 Dec 2024 08:43:45 +0000
-Message-ID: <CA+EHjTznFMF77kfUTkMeRpHnz9HAD1gSw6Do6tQvYSJ_jXG3gg@mail.gmail.com>
-Subject: Re: [PATCH v3 03/18] KVM: arm64: Make hyp_page::order a u8
-To: Quentin Perret <qperret@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, 16 Dec 2024 at 17:58, Quentin Perret <qperret@google.com> wrote:
->
-> We don't need 16 bits to store the hyp page order, and we'll need some
-> bits to store page ownership data soon, so let's reduce the order
-> member.
->
-> Signed-off-by: Quentin Perret <qperret@google.com>
 
-Reviewed-by: Fuad Tabba <tabba@google.com>
 
-Cheers,
-/fuad
+---------- Forwarded message ----------
+Date: Tue, 17 Dec 2024 16:26:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: oe-kbuild@lists.linux.dev
+Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
+Subject: drivers/thunderbolt/debugfs.c:532:5-33: opportunity for
+    str_yes_no(supports_software ( margining ))
 
-> ---
->  arch/arm64/kvm/hyp/include/nvhe/gfp.h    |  6 +++---
->  arch/arm64/kvm/hyp/include/nvhe/memory.h |  5 +++--
->  arch/arm64/kvm/hyp/nvhe/page_alloc.c     | 14 +++++++-------
->  3 files changed, 13 insertions(+), 12 deletions(-)
->
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/gfp.h b/arch/arm64/kvm/hyp/include/nvhe/gfp.h
-> index 97c527ef53c2..f1725bad6331 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/gfp.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/gfp.h
-> @@ -7,7 +7,7 @@
->  #include <nvhe/memory.h>
->  #include <nvhe/spinlock.h>
->
-> -#define HYP_NO_ORDER   USHRT_MAX
-> +#define HYP_NO_ORDER   0xff
->
->  struct hyp_pool {
->         /*
-> @@ -19,11 +19,11 @@ struct hyp_pool {
->         struct list_head free_area[NR_PAGE_ORDERS];
->         phys_addr_t range_start;
->         phys_addr_t range_end;
-> -       unsigned short max_order;
-> +       u8 max_order;
->  };
->
->  /* Allocation */
-> -void *hyp_alloc_pages(struct hyp_pool *pool, unsigned short order);
-> +void *hyp_alloc_pages(struct hyp_pool *pool, u8 order);
->  void hyp_split_page(struct hyp_page *page);
->  void hyp_get_page(struct hyp_pool *pool, void *addr);
->  void hyp_put_page(struct hyp_pool *pool, void *addr);
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> index c84b24234ac7..45b8d1840aa4 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> @@ -41,8 +41,9 @@ static inline enum pkvm_page_state pkvm_getstate(enum kvm_pgtable_prot prot)
->  }
->
->  struct hyp_page {
-> -       unsigned short refcount;
-> -       unsigned short order;
-> +       u16 refcount;
-> +       u8 order;
-> +       u8 reserved;
->  };
->
->  extern u64 __hyp_vmemmap;
-> diff --git a/arch/arm64/kvm/hyp/nvhe/page_alloc.c b/arch/arm64/kvm/hyp/nvhe/page_alloc.c
-> index e691290d3765..a1eb27a1a747 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/page_alloc.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/page_alloc.c
-> @@ -32,7 +32,7 @@ u64 __hyp_vmemmap;
->   */
->  static struct hyp_page *__find_buddy_nocheck(struct hyp_pool *pool,
->                                              struct hyp_page *p,
-> -                                            unsigned short order)
-> +                                            u8 order)
->  {
->         phys_addr_t addr = hyp_page_to_phys(p);
->
-> @@ -51,7 +51,7 @@ static struct hyp_page *__find_buddy_nocheck(struct hyp_pool *pool,
->  /* Find a buddy page currently available for allocation */
->  static struct hyp_page *__find_buddy_avail(struct hyp_pool *pool,
->                                            struct hyp_page *p,
-> -                                          unsigned short order)
-> +                                          u8 order)
->  {
->         struct hyp_page *buddy = __find_buddy_nocheck(pool, p, order);
->
-> @@ -94,7 +94,7 @@ static void __hyp_attach_page(struct hyp_pool *pool,
->                               struct hyp_page *p)
->  {
->         phys_addr_t phys = hyp_page_to_phys(p);
-> -       unsigned short order = p->order;
-> +       u8 order = p->order;
->         struct hyp_page *buddy;
->
->         memset(hyp_page_to_virt(p), 0, PAGE_SIZE << p->order);
-> @@ -129,7 +129,7 @@ static void __hyp_attach_page(struct hyp_pool *pool,
->
->  static struct hyp_page *__hyp_extract_page(struct hyp_pool *pool,
->                                            struct hyp_page *p,
-> -                                          unsigned short order)
-> +                                          u8 order)
->  {
->         struct hyp_page *buddy;
->
-> @@ -183,7 +183,7 @@ void hyp_get_page(struct hyp_pool *pool, void *addr)
->
->  void hyp_split_page(struct hyp_page *p)
->  {
-> -       unsigned short order = p->order;
-> +       u8 order = p->order;
->         unsigned int i;
->
->         p->order = 0;
-> @@ -195,10 +195,10 @@ void hyp_split_page(struct hyp_page *p)
->         }
->  }
->
-> -void *hyp_alloc_pages(struct hyp_pool *pool, unsigned short order)
-> +void *hyp_alloc_pages(struct hyp_pool *pool, u8 order)
->  {
-> -       unsigned short i = order;
->         struct hyp_page *p;
-> +       u8 i = order;
->
->         hyp_spin_lock(&pool->lock);
->
-> --
-> 2.47.1.613.gc27f4b7a9f-goog
->
+BCC: lkp@intel.com
+CC: oe-kbuild-all@lists.linux.dev
+CC: linux-kernel@vger.kernel.org
+TO: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f44d154d6e3d633d4c49a5d6aed8a0e4684ae25e
+commit: ec6f888ed08aeceaebfdd7d344ae0cd91a1b9a1b thunderbolt: Split out margining from USB4 port
+date:   6 months ago
+:::::: branch date: 14 hours ago
+:::::: commit date: 6 months ago
+config: loongarch-randconfig-r061-20241217 (https://download.01.org/0day-ci/archive/20241217/202412171648.LGwq0U3d-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Julia Lawall <julia.lawall@inria.fr>
+| Closes: https://lore.kernel.org/r/202412171648.LGwq0U3d-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+   drivers/thunderbolt/debugfs.c:544:4-25: opportunity for str_yes_no(both_lanes ( margining ))
+>> drivers/thunderbolt/debugfs.c:532:5-33: opportunity for str_yes_no(supports_software ( margining ))
+   drivers/thunderbolt/debugfs.c:565:6-41: opportunity for str_yes_no(cap1 & USB4_MARGIN_CAP_1_TIME_DESTR)
+
+vim +532 drivers/thunderbolt/debugfs.c
+
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  515
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  516  static int margining_caps_show(struct seq_file *s, void *not_used)
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  517  {
+ec6f888ed08aece Mika Westerberg 2023-03-14  518  	struct tb_margining *margining = s->private;
+ec6f888ed08aece Mika Westerberg 2023-03-14  519  	struct tb *tb = margining->port->sw->tb;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  520  	u32 cap0, cap1;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  521
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  522  	if (mutex_lock_interruptible(&tb->lock))
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  523  		return -ERESTARTSYS;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  524
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  525  	/* Dump the raw caps first */
+ec6f888ed08aece Mika Westerberg 2023-03-14  526  	cap0 = margining->caps[0];
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  527  	seq_printf(s, "0x%08x\n", cap0);
+ec6f888ed08aece Mika Westerberg 2023-03-14  528  	cap1 = margining->caps[1];
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  529  	seq_printf(s, "0x%08x\n", cap1);
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  530
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  531  	seq_printf(s, "# software margining: %s\n",
+ec6f888ed08aece Mika Westerberg 2023-03-14 @532  		   supports_software(margining) ? "yes" : "no");
+ec6f888ed08aece Mika Westerberg 2023-03-14  533  	if (supports_hardware(margining)) {
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  534  		seq_puts(s, "# hardware margining: yes\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  535  		seq_puts(s, "# minimum BER level contour: ");
+ec6f888ed08aece Mika Westerberg 2023-03-14  536  		ber_level_show(s, margining->min_ber_level);
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  537  		seq_puts(s, "# maximum BER level contour: ");
+ec6f888ed08aece Mika Westerberg 2023-03-14  538  		ber_level_show(s, margining->max_ber_level);
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  539  	} else {
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  540  		seq_puts(s, "# hardware margining: no\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  541  	}
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  542
+706d73836481cce Colin Ian King  2022-09-06  543  	seq_printf(s, "# both lanes simultaneously: %s\n",
+ec6f888ed08aece Mika Westerberg 2023-03-14  544  		  both_lanes(margining) ? "yes" : "no");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  545  	seq_printf(s, "# voltage margin steps: %u\n",
+ec6f888ed08aece Mika Westerberg 2023-03-14  546  		   margining->voltage_steps);
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  547  	seq_printf(s, "# maximum voltage offset: %u mV\n",
+ec6f888ed08aece Mika Westerberg 2023-03-14  548  		   margining->max_voltage_offset);
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  549
+ec6f888ed08aece Mika Westerberg 2023-03-14  550  	switch (independent_voltage_margins(margining)) {
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  551  	case USB4_MARGIN_CAP_0_VOLTAGE_MIN:
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  552  		seq_puts(s, "# returns minimum between high and low voltage margins\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  553  		break;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  554  	case USB4_MARGIN_CAP_0_VOLTAGE_HL:
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  555  		seq_puts(s, "# returns high or low voltage margin\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  556  		break;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  557  	case USB4_MARGIN_CAP_0_VOLTAGE_BOTH:
+706d73836481cce Colin Ian King  2022-09-06  558  		seq_puts(s, "# returns both high and low margins\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  559  		break;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  560  	}
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  561
+ec6f888ed08aece Mika Westerberg 2023-03-14  562  	if (supports_time(margining)) {
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  563  		seq_puts(s, "# time margining: yes\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  564  		seq_printf(s, "# time margining is destructive: %s\n",
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  565  			   cap1 & USB4_MARGIN_CAP_1_TIME_DESTR ? "yes" : "no");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  566
+ec6f888ed08aece Mika Westerberg 2023-03-14  567  		switch (independent_time_margins(margining)) {
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  568  		case USB4_MARGIN_CAP_1_TIME_MIN:
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  569  			seq_puts(s, "# returns minimum between left and right time margins\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  570  			break;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  571  		case USB4_MARGIN_CAP_1_TIME_LR:
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  572  			seq_puts(s, "# returns left or right margin\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  573  			break;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  574  		case USB4_MARGIN_CAP_1_TIME_BOTH:
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  575  			seq_puts(s, "# returns both left and right margins\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  576  			break;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  577  		}
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  578
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  579  		seq_printf(s, "# time margin steps: %u\n",
+ec6f888ed08aece Mika Westerberg 2023-03-14  580  			   margining->time_steps);
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  581  		seq_printf(s, "# maximum time offset: %u mUI\n",
+ec6f888ed08aece Mika Westerberg 2023-03-14  582  			   margining->max_time_offset);
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  583  	} else {
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  584  		seq_puts(s, "# time margining: no\n");
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  585  	}
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  586
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  587  	mutex_unlock(&tb->lock);
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  588  	return 0;
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  589  }
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  590  DEBUGFS_ATTR_RO(margining_caps);
+d0f1e0c2a699092 Mika Westerberg 2022-02-22  591
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
