@@ -1,189 +1,99 @@
-Return-Path: <linux-kernel+bounces-450037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2AF9F59DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:53:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B53F79F59DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53A216F9C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530091891AFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B1E1F9F5E;
-	Tue, 17 Dec 2024 22:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xL2+mjJi"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B871F8EFD;
+	Tue, 17 Dec 2024 22:52:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE63155CB3
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 22:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE819155CB3;
+	Tue, 17 Dec 2024 22:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734475923; cv=none; b=IkzPBjr6xJRIXB9Qc01+os9FxNEVGEafFprmKftR3yHZv5pUJWVUM0LrXKMdC7vYybeOEGOSPOAMmzim/Y405oK50eghFkPnr4+8ktxEXDmzbranAkmae7rb70anVYFH9EMMgFuOzp2vY1EsU7iSNMF993n5sRvYQc1rHLp/+94=
+	t=1734475947; cv=none; b=MR6/KdyhBEdzu+TB0U1RYZ+8ZlfdOUWbT+7sWBWoT4BSULdf0CCEkF9uSUcc5VxXVz22S8kZhBCv4QpxrIz9NviolMbIJrnVrNN7DRdWestXASSs+O4uU4npwZnOQ7fr66sKEs98fV6j6WnnCs2z7D5E4jlRHfNLYWbWKaHK0cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734475923; c=relaxed/simple;
-	bh=+eyhKNJumZs6/FTEwOn6NrjFWtzki3e9oRxmhRQgX1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f1OszNyaHWe7veQbFwJnAOIY2ltWefH4CXgsZEZIDqWsX5ceBao2jHvvuoMS4TjxyHGCK+tde+nN0NMLV32HY5pyhb0GnFMEChWVwb57ab8RHqg4dKNOQCw3PGY52YZAm/e3nCPUwq6T2OYZUjvlgUJtKT4FImiRWbfd3htdTjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xL2+mjJi; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so1175368066b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:52:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734475919; x=1735080719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IVYL3s9CILTnwogTJZ1OTIZuv0ARpRPo5KpbFGa6KD8=;
-        b=xL2+mjJi2YQwtSt4Yapr/JgbFLX9aECv5HMoMBmOG3xvVfDIIG2n1gK9XrKlBpxpwH
-         90qjWwizqyRFAJt7176MCmN+5YBUGI9TshVBz5kTtoE4n+SlB2UMYosMkaGt4FWl4Nvi
-         eh3eZ5nJxmuiIHN5QUW/zxuZNq+YmuWuZ8OSYMZbZIez3nFgs0cL2hbBHcyBs2MV9XEf
-         HL/+vJmEYft9P0hCn2BiLUOgWTgQygby9ZeOuB9W4/Xtmx6a9aFMTWOVXYN9caaPcdy0
-         JaXuEZsKQbHPykEDA3JPV/snigAlHVRryUzMOaOWqzd4OOeAOIGB9ZobUFgKJDHLrkLG
-         iW4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734475919; x=1735080719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IVYL3s9CILTnwogTJZ1OTIZuv0ARpRPo5KpbFGa6KD8=;
-        b=fUC2IJsvPZnK8mH61WzOONrN49aa9wsQeOtYRL53CwaLzeHpdR6iaZNm5HYr5lAyYX
-         l38/k+SyLSOjYhwbABcaAOkR8Zup9nt4Dmc7VrPIgoiQWbu/NcVzG9L+YZAbNffEfzRT
-         dF6aX5ZkLWPx3FSYhS0S8xvyoGcdjKz9L5nwKznsc7Drk1CNurVWxu1Ai7ifE5j45ZEl
-         zuPqZzDaCBtMdNUskl1dM/bc7gWf2rHxZufXXNmPeiVwgArpvq+7CSl2574A2389jzwS
-         5O9Eat1ZZBmR+dRZ1BafYlUh7pu5ocuSFzvMQY+vVudqzY9z+0LOreElUROb9yCU/mgT
-         p3bA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMQqp/1OFDGh4YuqVvjZFhBNyGdlBmgelCc1pzCjfgl8yQY+oARFlQTEn61DIp+xxORIy9AxX59q4Bl3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJkSJ91GIp2Hcsdju52tUNeMjFcARWw9qt3llJ1ph8FzHjvWiI
-	q76KDJAVOZcVLsHFP8icfGJsx7IRBsWEen8p2Tvrd6N5baDrdkaQlUVao8h6k18koF1IfHL86F0
-	v9qRvobEblRA1a9nB99fh5bacWS0DMGGKNi5c
-X-Gm-Gg: ASbGncvvDaOKn8g/FnnUHjEUKQrEZn/SMiajAitj7u9C4inyf+gkCij6819PFgwjQcC
-	PJvPi9MeaQ4YN/iKa9yt7hZzZl3JBZqE/Ah+9GQ==
-X-Google-Smtp-Source: AGHT+IH1GTjImrAaApRrEGDhHMKaiEFNxqjHCuhUD4o38YaFXBS8IA8KoPJRL636fi9mhowUw350/nmafoSV7nTEPLA=
-X-Received: by 2002:a17:907:72cb:b0:aa6:8a1b:8b74 with SMTP id
- a640c23a62f3a-aabf4920960mr39223766b.53.1734475918650; Tue, 17 Dec 2024
- 14:51:58 -0800 (PST)
+	s=arc-20240116; t=1734475947; c=relaxed/simple;
+	bh=Xyb0HXId3pOZNdVW9rcyiCOIr69ico/rvnIB22rWzJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r1jNZTHIseQ4KoTWzK0ueoFCT9bITmmPBaApJ3NSuQm0BklU6gkQCdb/f9+l79C4FL6gofFmIV/KaEYsMlc+W2j2lvkWazIDkh9S0T7rBcqyFbRL8Ihmqcrb2ITioCo5aMluTzaNc2MOVTHLdnD6KwL24Of8JhGfXfzmIXambiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A13BC4CED3;
+	Tue, 17 Dec 2024 22:52:25 +0000 (UTC)
+Date: Tue, 17 Dec 2024 17:53:01 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
+ persistent ring buffer
+Message-ID: <20241217175301.03d25799@gandalf.local.home>
+In-Reply-To: <CAHk-=whWfmZbwRmySSpOyYEZJgcKG3d-qheYidnwu+b+rk6THg@mail.gmail.com>
+References: <20241217173237.836878448@goodmis.org>
+	<20241217173520.314190793@goodmis.org>
+	<CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
+	<20241217130454.5bb593e8@gandalf.local.home>
+	<CAHk-=whLJW1SWvJTHYmdVAL2yL=dh4RzMuxgT7rnksSpkfUVaA@mail.gmail.com>
+	<20241217133318.06f849c9@gandalf.local.home>
+	<CAHk-=wgi1z85Cs4VmxTqFiG75qzoS_h_nszg6qP1ennEpdokkw@mail.gmail.com>
+	<20241217140153.22ac28b0@gandalf.local.home>
+	<CAHk-=wgpjLhSv9_rnAGS1adekEHMHbjVFvmZEuEmVftuo2sJBw@mail.gmail.com>
+	<20241217144411.2165f73b@gandalf.local.home>
+	<CAHk-=whWfmZbwRmySSpOyYEZJgcKG3d-qheYidnwu+b+rk6THg@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1734392473.git.ashish.kalra@amd.com> <a148a9d450b3c1dfd4e171d2c1d326381f11b504.1734392473.git.ashish.kalra@amd.com>
-In-Reply-To: <a148a9d450b3c1dfd4e171d2c1d326381f11b504.1734392473.git.ashish.kalra@amd.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Tue, 17 Dec 2024 14:51:47 -0800
-X-Gm-Features: AbW1kvaHDgTDS8JrAFaBs3expr5K210DWpQNsbnGYLLnTtGnZ9fPc2iUNyA1dYg
-Message-ID: <CAAH4kHai4mqmY6CB3Ybk6JxD7M=OX44k0S=2n_h_F4mVSVco6w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] crypto: ccp: Register SNP panic notifier only if
- SNP is enabled
-To: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, thomas.lendacky@amd.com, john.allen@amd.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, michael.roth@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 16, 2024 at 3:58=E2=80=AFPM Ashish Kalra <Ashish.Kalra@amd.com>=
- wrote:
->
-> From: Ashish Kalra <ashish.kalra@amd.com>
->
-> Register the SNP panic notifier if and only if SNP is actually
-> initialized and deregistering the notifier when shutting down
-> SNP in PSP driver when KVM module is unloaded.
->
-> Currently the SNP panic notifier is being registered
-> irrespective of SNP being enabled/initialized and with this
-> change the SNP panic notifier is registered only if SNP
-> support is enabled and initialized.
->
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> ---
->  drivers/crypto/ccp/sev-dev.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-> index 9632a9a5c92e..7c15dec55f58 100644
-> --- a/drivers/crypto/ccp/sev-dev.c
-> +++ b/drivers/crypto/ccp/sev-dev.c
-> @@ -109,6 +109,13 @@ static void *sev_init_ex_buffer;
->   */
->  static struct sev_data_range_list *snp_range_list;
->
-> +static int snp_shutdown_on_panic(struct notifier_block *nb,
-> +                                unsigned long reason, void *arg);
-> +
-> +static struct notifier_block snp_panic_notifier =3D {
-> +       .notifier_call =3D snp_shutdown_on_panic,
-> +};
-> +
->  static inline bool sev_version_greater_or_equal(u8 maj, u8 min)
->  {
->         struct sev_device *sev =3D psp_master->sev_data;
-> @@ -1191,6 +1198,9 @@ static int __sev_snp_init_locked(int *error)
->         dev_info(sev->dev, "SEV-SNP API:%d.%d build:%d\n", sev->api_major=
-,
->                  sev->api_minor, sev->build);
->
-> +       atomic_notifier_chain_register(&panic_notifier_list,
-> +                                      &snp_panic_notifier);
-> +
->         sev_es_tmr_size =3D SNP_TMR_SIZE;
->
->         return 0;
-> @@ -1751,6 +1761,9 @@ static int __sev_snp_shutdown_locked(int *error, bo=
-ol panic)
->         sev->snp_initialized =3D false;
->         dev_dbg(sev->dev, "SEV-SNP firmware shutdown\n");
->
-> +       atomic_notifier_chain_unregister(&panic_notifier_list,
-> +                                        &snp_panic_notifier);
-> +
->         /* Reset TMR size back to default */
->         sev_es_tmr_size =3D SEV_TMR_SIZE;
->
-> @@ -2490,10 +2503,6 @@ static int snp_shutdown_on_panic(struct notifier_b=
-lock *nb,
->         return NOTIFY_DONE;
->  }
->
-> -static struct notifier_block snp_panic_notifier =3D {
-> -       .notifier_call =3D snp_shutdown_on_panic,
-> -};
-> -
->  int sev_issue_cmd_external_user(struct file *filep, unsigned int cmd,
->                                 void *data, int *error)
->  {
-> @@ -2542,8 +2551,6 @@ void sev_pci_init(void)
->         dev_info(sev->dev, "SEV%s API:%d.%d build:%d\n", sev->snp_initial=
-ized ?
->                 "-SNP" : "", sev->api_major, sev->api_minor, sev->build);
->
-> -       atomic_notifier_chain_register(&panic_notifier_list,
-> -                                      &snp_panic_notifier);
->         return;
->
->  err:
-> @@ -2561,6 +2568,4 @@ void sev_pci_exit(void)
->
->         sev_firmware_shutdown(sev);
->
-> -       atomic_notifier_chain_unregister(&panic_notifier_list,
-> -                                        &snp_panic_notifier);
->  }
-> --
-> 2.34.1
->
+On Tue, 17 Dec 2024 14:24:08 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Reviewed-by: Dionna Glaze <dionnaglaze@google.com>
+> (Aside: are those binary buffers actually exported to user space (that
+> "u32 *bin_buf, size_t size" thing), or could we fix the binary printf
+> code to really use a whole word for char/short values? The difference
+> between '%hhd' and '%d' should be how it's printed out, not how the
+> data is accessed)
 
---=20
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
+libtraceevent is able to parse the raw trace_printk() events:
+
+  https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/tree/src/event-parse.c#n5155
+
+The format it reads is from /sys/kernel/tracing/events/ftrace/bprint/format:
+
+name: bprint
+ID: 6
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:unsigned long ip;	offset:8;	size:8;	signed:0;
+	field:const char * fmt;	offset:16;	size:8;	signed:0;
+	field:u32 buf[];	offset:24;	size:0;	signed:0;
+
+print fmt: "%ps: %s", (void *)REC->ip, REC->fmt
+
+In this case, the "print fmt" is ignored.
+
+Where the buf value holds the binary storage from vbin_printf() and written
+in trace_vbprintk(). Yeah, it looks like it does depend on the arguments
+being word aligned.
+
+-- Steve
 
