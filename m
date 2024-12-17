@@ -1,129 +1,144 @@
-Return-Path: <linux-kernel+bounces-449562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E3C9F50BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:20:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E9D9F50E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8EF1888E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:19:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6D591713E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993851FA16A;
-	Tue, 17 Dec 2024 16:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726131FBE80;
+	Tue, 17 Dec 2024 16:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QzKGxsaS"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="alRyg0p0"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4271A1F76C0
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B781FBCAE
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734451960; cv=none; b=KhbjjoXxKChO0O4oCSdYUeKvtPbzcSO0gaFgEsi/QfZdcRiMJuaTpFAondkXeNWxv/QR76xY3AwXHhVRl9zJ9O64wiMNbLZbxUZz+uPjlHKwt6CGUVUgxZvYzbGd0ISZVvMUubk2CYIFDpwGNRd+JENukAJxst4e7abGyt32EgE=
+	t=1734452057; cv=none; b=oVVgjkrXEyCivhm3fJukc4nh/clE5LMiSl9Z+3oFP54+EL2vNf+fHerKHpQyGpNmChOAUnye1Evs3ATmxn+GgwJBhQGKEsQCo7XgDm+VtUcTwdt6lvNixAyy5HcrwG6PKbnCIaHyMDfMn2Nu38AOW24nHbJxXEO3JK31edf7XpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734451960; c=relaxed/simple;
-	bh=sqzKG9IUExlr9KeYwf2YH/lDQlNJlbVgJNgZtw7i//0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gxuvCXv2H4ESTfI1HDvJ0v7LKMoSUVE+llbTDqNlZl5ujY8pDD1XNCpptK6+jUIkUw9OkqrNEaA4AAEqq8f1WVDDAQlSITS4A56d76g4s1bopRRYix/G0G1VwV44uulfBZ7XeFmkx6UN+7LBp+BnMqYFlcPpy/Q4ws/h8pNd1M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QzKGxsaS; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38633b5dbcfso5978585f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:12:37 -0800 (PST)
+	s=arc-20240116; t=1734452057; c=relaxed/simple;
+	bh=J6QwD7x+lm5XadIBl1uLohp69xgLjMMyXU1tNM/lWUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DM8WM/n8KqSjMTGJ0tdJCd/R8LiTG2HYH98owlHJy6ybFrySG/dEfm0xxxZX/4C2qEyB3BzHBKp4pVqo/2Y+X4TCCcxpCOiXLdKrXFnz9725BvwuO9Go2zALGLks6n5ob8qY6MKvk+BHt9/82tw+GcbQ7KNuhlxkotCwGQnfpaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=alRyg0p0; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-467838e75ffso68110551cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:14:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734451956; x=1735056756; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O0MSBSw6+OhbTrh1m9W9JgXC4AYYLnaI//MfIF3U6z0=;
-        b=QzKGxsaSswGje4kZD0R4Uajytp/h/lQAEKFim8aFhWa+n32/EK0wf+zYoI5ZlP+v24
-         iauG68+ofWySIyrDnXySuesBjw+5F/MSuRIJy15QGcW1zK5Gj2FMibX5LZKD47B1YEgb
-         HwDHHiQYySWYkwX6TgR3nwRsG0ilwNbjlhkuOyiW1Oc9c0FLqvCISzG/aFWEmWx4EhuV
-         eZYm2VY+RffJDJfxGnivgX2MO+sZtGH83SzqjbreeeiQNZAskGKr/fl1XAinCY6K/sHl
-         2xvdQL30cfOIriDH1E86opyq9eb/YcKs94Cz5bySpYt2ddN32lFoQW+NDtRN/CSKgTya
-         eJFA==
+        d=rowland.harvard.edu; s=google; t=1734452055; x=1735056855; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+3Rccgquk3pMB0e8JLxIrtXCYyTNacSqTIXQ+I+xU6k=;
+        b=alRyg0p0eHkzRig8i/llDqD5OHw4O0W9NCPLdS58FsCVY5l8WPkKQVcUHowOt8Lqvv
+         ckxpSQNtc/Si53S84tmV/mQ4zSnGiVi+pn1aeMYkqZmOUeitXCtacuAxQ4mPivZelgwJ
+         iRbKDZcsRZSeZ7PoZf3WWUBxulwQy+rz48VuGRH0LEUO0Mnli+xYBYu00/cy4EwvaR5w
+         zPbaxlFceemxWvlISPIMWyyt2fr7sSYYPhkt8pcO8u7p+oq4lpCELX6QWOGdJXO/Vwpj
+         yJ1MyIxYNPlhRACjG9G/YGzrU7TThO/ZMVJcQYtGLmh5xKdU4l6prlMHrj9i9MZ9YZx2
+         dO7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734451956; x=1735056756;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O0MSBSw6+OhbTrh1m9W9JgXC4AYYLnaI//MfIF3U6z0=;
-        b=edU/33W2Y05IGoBk7lzaj+J8Iy9D8oEOTT25paQkc8y8ZGA8ul6C+0h5AUGqBdVwk3
-         sRJTrYeEhcIVLJGgT/n2GomoYnfwV48sruLGRmqoa1ClNSw1QTxayBuUp4oxBvTUfqjn
-         CjNzEfekjZZzLXJaBU5WE4ey/0jaeJ5wtm6bB7f0tPdbiDr3puHyKvqGhOhbNVrlYZwM
-         9fvkPAvVIcmFfWknzSGnmtecBAmhmHt4ogC9ZdFsGoaodwxDmvGW2+/9JxL1LidgJVVB
-         vo/TXQwqqsKJSL+uA8vNEOBTt5xgpHVHR33kC4y5ZnzyHzzE1WA+S6jQsWaQ7TCd0ZN9
-         ZS9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXlZ4Wt5FFiCNbWF+CoyMMqvYRirjpQy6Bp6T4G2y9MbYNBcAcSFYJZWGkd81R27wsF1XBZgRuKuj2wC1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrfq3fJYo+J2HXje/g+2yVFDri0MvJq3qjG86g27HMZ6kYAK+V
-	fCHKc5C8q25P8mOZ4DYLAeX5UxWIYC7y7vfE90P7oAydATGbxkVMo7/6U982NX4=
-X-Gm-Gg: ASbGnctw5LnXFs89XmDiydzZscf4WJDOnuF/thIammwrlY/l7/oO/LSAfKFTv1n98mR
-	KOXnWYYpVEdKspE44kdBU4QIXG7VEji+ko3X+4vFQ56wQm4pZ0gEoHtNwJblefT5PpWw++H6bQz
-	mqVwqsOo2X15rz2qdHo9AeiTyT2o2SLQCRfOk29JdYG/AIZvYe9UneK7As/28Y21xpGkrc3/4nq
-	7rK8DJbwCFn2cMKdbokh4O6U7Ps3dmwGDmZ40nuEswHEHhR1RPGjZGxpZDUvjth7ZRgMA==
-X-Google-Smtp-Source: AGHT+IGNQ7hhBEySJuTG7bF8w2ZzmrZV4ZxMbtUaczoA4N/EwDXYjOiMdMzulLRJCZ/qQh7rX7Zo2Q==
-X-Received: by 2002:a05:6000:18c6:b0:385:fe66:9f32 with SMTP id ffacd0b85a97d-3888e0bfcc4mr12807413f8f.52.1734451956514;
-        Tue, 17 Dec 2024 08:12:36 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8046c05sm11739012f8f.73.2024.12.17.08.12.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 08:12:36 -0800 (PST)
-Message-ID: <c14493b0-c9d3-4e1c-9f86-991b4cb25c98@linaro.org>
-Date: Tue, 17 Dec 2024 16:12:34 +0000
+        d=1e100.net; s=20230601; t=1734452055; x=1735056855;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+3Rccgquk3pMB0e8JLxIrtXCYyTNacSqTIXQ+I+xU6k=;
+        b=DO63hlCXjB1ZlKLieS8dgRH+LznXL/RJEM4emDhp3Jtx24KJQ5nZF67z3q93diiOK5
+         1NvYV/m1G/sLoBllJYW+YSnUv9/KWx+/N+IWzGlC6QFr6JOMtTno3rNf7tfp7oQr0y3o
+         5xFHO07Gl8MS+8iDqvVd4S2I1pViAQ5S6Ougem9JHakSC2DTdU6bVOoO6l+yUk61lo5H
+         i4vUGCKeXdVfldWJkJ7Qvaj+d8Sr3xwpHqyiADruWgpKOQdL5N7ZqPFfGdDjp0E4Mb4M
+         rNJOppKkwqTaqq7I+25acBkV3R3OyWOK4e1ZlLD48mIx/7Wvrn3yaJ7X5pntigG5da0a
+         f5Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbOIURjPPwwkCwyN8FqSi0dB5snmAIuXof8TRJbfZ+6mT8WVwY6CwWS5sF9RFZoo6mAihdE4jsl6vm0mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKNX1rnj7oQpGrakTleywaKNy7M6E2gOmqSuvLgsVRk5nTZ8bp
+	zb+uqS9GfQG5wHn6IVz9g50O8sMwdw8ojt85o8Wdf9npx1xgA0p7hNm8HEI8eA==
+X-Gm-Gg: ASbGnculzZbIILzWk70Kj0b0b3IBaCr1hDW0c8PfFRkb95fDYqTyuDr2bpfm2HkQhiT
+	S6KZVD3ave/2UDvey7AczLSxQTM84Q80pcGuqz46jN0Dw3rhmxzNvD2M1NCfYMpA5IQ8ZMdqxaS
+	J9b1Sed8BVnA3m+VQUxkhpu3LqPhk9iaamyvVoswBKvCZ+TZlWYzmytH7e46zZTN/vRUMcyJYcO
+	q/VIW4KHis0I9fWDYOATgI+NrD3pA4hKThMuX/c5+2eh7yxcGTmAHxg0Q==
+X-Google-Smtp-Source: AGHT+IFoPz5nV0F70qkjNPbX4NA7B77WNReqNOXg8KtZoNW+iEe5zl1EB6kQNtekItrIEdv6nU0pbQ==
+X-Received: by 2002:ac8:5741:0:b0:467:6cd9:3093 with SMTP id d75a77b69052e-467a582a976mr334266611cf.46.1734452054891;
+        Tue, 17 Dec 2024 08:14:14 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::ba54])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2e84db6sm40614951cf.54.2024.12.17.08.14.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 08:14:14 -0800 (PST)
+Date: Tue, 17 Dec 2024 11:14:11 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Ma Ke <make_ruc2021@163.com>
+Cc: gregkh@linuxfoundation.org, mka@chromium.org,
+	christophe.jaillet@wanadoo.fr, quic_ugoswami@quicinc.com,
+	oneukum@suse.com, stanley_chang@realtek.com,
+	javier.carrasco@wolfvision.net, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] usb: fix reference leak in usb_new_device()
+Message-ID: <ccc1083b-5ae8-490b-b357-52e162ba0a1f@rowland.harvard.edu>
+References: <20241217035353.2891942-1-make_ruc2021@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/4] media: dt-bindings: update clocks for
- sc7280-camss
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
- hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241217140656.965235-1-quic_vikramsa@quicinc.com>
- <20241217140656.965235-2-quic_vikramsa@quicinc.com>
- <02da691b-1f5d-41a6-847c-c7e9b8239919@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <02da691b-1f5d-41a6-847c-c7e9b8239919@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217035353.2891942-1-make_ruc2021@163.com>
 
-On 17/12/2024 14:10, Krzysztof Kozlowski wrote:
-> On 17/12/2024 15:06, Vikram Sharma wrote:
->> This patch change clock names to make it consistent with
->> existing platforms as gcc_cam_hf_axi -> gcc_axi_hf.
->> This also adds gcc_axi_sf and remove gcc_camera_ahb.
-> 
-> Don't combine ABI changes with some less important things.
-> 
-> You miss here explanation why doing the ABI change in the first place.
-> Without that explanation I find it rather churn. But anyway, reason for
-> ABI break and impact should be documented in commit msg.
-> 
->>
->> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
->> ---
-> 
-> Best regards,
-> Krzysztof
+On Tue, Dec 17, 2024 at 11:53:52AM +0800, Ma Ke wrote:
+> When device_add(&udev->dev) failed, calling put_device() to explicitly
+> release udev->dev. Otherwise, it could cause double free problem.
 
-This change should be fine since we haven't committed and upstream dtsi, 
-so there's no ABI to break yet.
+If you're worried that the same object might be freed more than once 
+(double free), how can calling put_device() help?  Won't that cause 
+udev->dev to be freed a third time?
 
-Agree the cover letter should have been explicit in explaining.
+> Found by code review.
 
----
-bod
+In your code review, did you check to see whether the routine which 
+calls usb_new_device() will do the put_device() when an error occurs?
+
+> Cc: stable@vger.kernel.org
+> Fixes: 9f8b17e643fe ("USB: make usbdevices export their device nodes instead of using a separate class")
+> Signed-off-by: Ma Ke <make_ruc2021@163.com>
+> ---
+>  drivers/usb/core/hub.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 4b93c0bd1d4b..05b778d2ad63 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -2651,6 +2651,7 @@ int usb_new_device(struct usb_device *udev)
+>  	err = device_add(&udev->dev);
+>  	if (err) {
+>  		dev_err(&udev->dev, "can't device_add, error %d\n", err);
+> +		put_device(&udev->dev);
+>  		goto fail;
+>  	}
+>  
+> @@ -2683,6 +2684,9 @@ int usb_new_device(struct usb_device *udev)
+>  	pm_runtime_put_sync_autosuspend(&udev->dev);
+>  	return err;
+>  
+> +out_del_dev:
+> +	device_del(&udev->dev);
+> +	put_device(&udev->dev);
+
+You added a new statement label but you did not add any jumps to that 
+label.  As a result, these two lines will never be executed.
+
+Alan Stern
+
+>  fail:
+>  	usb_set_device_state(udev, USB_STATE_NOTATTACHED);
+>  	pm_runtime_disable(&udev->dev);
+> -- 
+> 2.25.1
+> 
 
