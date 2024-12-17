@@ -1,163 +1,132 @@
-Return-Path: <linux-kernel+bounces-448815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7FC9F45E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D7F9F45E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DEB188DA0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:16:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FCA4188F573
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D79189521;
-	Tue, 17 Dec 2024 08:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B941DAC93;
+	Tue, 17 Dec 2024 08:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ajqB7DlV"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYxCNpij"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A62D1D63D9
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3F6155393;
+	Tue, 17 Dec 2024 08:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734423396; cv=none; b=X79ncgBXOuCpMi20hv+/sFxBLl5oem9k9tLjlRytdaeXRZHudO9srBayXhUH8vwi5hQ478Zej6dC5a8H2ZSJfc4B6350jcCg0kEBd3UfYfSMy/osEj0S+qpo5thBH8t9aDvAzGcMNwmkKBuiyyTnPa3/gIFeCqSiPzFK7iT3x/g=
+	t=1734423572; cv=none; b=JiRTRW3aw2CAilC/CHT0XgSWapJ+ef+TMBG79ywz4jk5v1yeQHttWHMITqQ70UXOVQBOmRmtc54du1Kj6Qh8w7sqgA4l/ZKA+Gc0cweUkvtI8VWRE9fqnZ4SmjbmPZV2K7OPx69VYUUTitp5fZgB5lUxSfydwWMONy6oYqm05bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734423396; c=relaxed/simple;
-	bh=TEQwfjMPGkhdsR+WurQ2jiRxK3ahF+A9mPh6oCOch4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pFuGCXoETG9FyE6HJR111Sx7aO5eOedlUSR2zUVnh/OMPw/lkwwEnaSVBHLfrQDXWd/n2eMBGSz8z/s6TUYa+xGKYiowBQOluL8v80GNLFXsYmWYOr/iPP0XPga64+mS47TDbNs/xvsMwJsat/kgdDS6Ao7oDPg9s/vCCDz+6Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ajqB7DlV; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d3e8f64d5dso9170240a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:16:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734423392; x=1735028192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JL2feE5AJ6SSI4pvTMa55DednyFd7NS2A7NZzkYnzHo=;
-        b=ajqB7DlVyyMvz3Jb6onUgI2rK1paJZDmsfk3fsgpLfl2yOSmW5TV05Vzo/aUkXAE+h
-         LsXDpoJsQ+UAcRKszEcsadhYkUv5+ukYkCYpZdacHFB1MbSpDsxz9W0k+RZTDZp55PJT
-         aAACnTz6QcSRraQQkHODNiLODDjYqgcH18TKxPG5Gha63X0fcMabAH4Uy+A/rMYctDEZ
-         F6Z0z5lXRXF+/sYL97TFIS6KUuMITqlZVE+b9IXHVCepq1VOfJUamza5Q2Xt/46NXdxE
-         DU6xsiHd2SIOhgzIZ2mtqMTQFzvh77EiZesLPyVoiS5wTNH7pUHyBcVK+aP7OqKMU4iW
-         r3SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734423392; x=1735028192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JL2feE5AJ6SSI4pvTMa55DednyFd7NS2A7NZzkYnzHo=;
-        b=ol+9GGx6mtvkiEobSviLVK7vRsjVcHGrEHlfnJtUDVZzb2/e9CIv3Lfgqd4oXSwdde
-         Jbi8rTTp+CiPWQeFNN2wdilOlEDd+qPKB+5bf2758M+Od5YlpADLKHiZjg/ZUt8LX3p3
-         j12Cisw3jsmOBAqWAUzMFe44oEh6rzGv/rYbPk8ejnumVfRtcdqA6rBEuuN8neuYdYN7
-         Tlc4xPMvsdFgkQHjPETRbfX/UMbhqOdwaZRGJfEChugOpNlXOJHhB6FbodmalQ6mM+mm
-         nmUS2i05YWvExVJJAr+Sa7BOUNGxaslD434sbv+mYJ77wpyIGumKxtoWdxu8cHdWT+lW
-         xaPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgAKjj6513rdAW0+Y+Fx1fMcUpdPb5IKYrNFZlr3mYRj1ZRNlz27Glq/y3y+GwlcRyx78nym5K2L2iGi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsv9BwC1ZKLS02iYklGrYdb0dwvsZYM+tiOMjVuKk1onwE5CC4
-	bA66ygrTOxAlauhJDIZ0BW8pUBbpk/RNE5XHMGlxL58060nwCxb0QpZxJEqPy2WH04FvXuO6Gop
-	nTxJev2kQlIF9mmbREsTm0LIBX7tDQGINeKtK
-X-Gm-Gg: ASbGncuqo6s1Kojr8I7ojtEk4DVFjJQ6lY5FTUmiOg86XZiItM2sQZNbTaUO+O9zMzz
-	IdngAdzgA6ieNx1lIZj8GkLyLwIo7UOdXN2qUG1WD9nI9mPhMuhocjP+wr80gdoZDJneLmP0k
-X-Google-Smtp-Source: AGHT+IHvOQNHHUzZZhpakqGzbgg0f+KZLUwMpZirhCCXzghhhZojKMMtWfuof6FgPRbxHa3SPEkaCDyvaCOA0s5LVS0=
-X-Received: by 2002:a05:6402:1ed5:b0:5d3:e79b:3b3d with SMTP id
- 4fb4d7f45d1cf-5d63c42a44dmr14310743a12.28.1734423391517; Tue, 17 Dec 2024
- 00:16:31 -0800 (PST)
+	s=arc-20240116; t=1734423572; c=relaxed/simple;
+	bh=aYa3RIWaGsSZmGLSGpEKECcp/S+cC/X2OhaJlWubKdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NqTcPG/vJJfV3FCgSln4ErS7L8XvyOmNlbxC5ytvyoNg/EPokC0iF1Vsgepag7V+2KLl5cZvwZ6JroOqeqkvDBR+AiEAvApDSM0RgpliAdh1/msKWyLd5lub2qDa47/TuZz1zMxjp8Xx6k9TroYcmo+FDGajrfOHCXk2sssyTfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYxCNpij; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D22BC4CED6;
+	Tue, 17 Dec 2024 08:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734423572;
+	bh=aYa3RIWaGsSZmGLSGpEKECcp/S+cC/X2OhaJlWubKdY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QYxCNpijNpOsz0L1m7C0o4M5LtA5HE4cTxtR8XlPORgm0xHFkDPzlYatP44Tz0q2o
+	 TcbKj5g5mY/xUebBAvYr9lz51tOH+wH7rkIGPx4OtcIB/jcPzjiWT9uKUwGFTgvxLQ
+	 +ISngo+lg/zUCFiJ54DPA0WfUlXdQp0HyZ7vg2BEeEZLzGAZIWjHCWKBNnrSCHQ4Bx
+	 Pzgq319u//KoxYd+NIMOOnoYi/G7CWty2nldiyOoNJ2bS5643oi6i+sb5DWOIsqVEw
+	 1+WgU6UR3qyTKhBRB+geKvpXp0XfKo4oZ1A/XH1sm2NJPM4mEb1ALzeYsJc9VlU+7T
+	 G9Mt95lLNkdEQ==
+Date: Tue, 17 Dec 2024 09:19:28 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?B?V2lsY3p577+977+977+9c2tp?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] misc: pci_endpoint_test: Set reserved BARs for each
+ SoCs
+Message-ID: <Z2E0EDC3tV76303d@ryzen>
+References: <20241216073941.2572407-1-hayashi.kunihiko@socionext.com>
+ <20241216073941.2572407-2-hayashi.kunihiko@socionext.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d416a14ec38c7ba463341b83a7a9ec6ccc435246.1734419614.git.christophe.leroy@csgroup.eu>
-In-Reply-To: <d416a14ec38c7ba463341b83a7a9ec6ccc435246.1734419614.git.christophe.leroy@csgroup.eu>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 17 Dec 2024 09:16:20 +0100
-Message-ID: <CANn89iK1+oLktXjHXs0U3Wo4zRZEqimoSgfPVzGGycH7R_HxnA@mail.gmail.com>
-Subject: Re: [PATCH net] net: sysfs: Fix deadlock situation in sysfs accesses
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>, 
-	TRINH THAI Florent <florent.trinh-thai@cs-soprasteria.com>, 
-	CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216073941.2572407-2-hayashi.kunihiko@socionext.com>
 
-On Tue, Dec 17, 2024 at 8:18=E2=80=AFAM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
->
-> The following problem is encountered on kernel built with
-> CONFIG_PREEMPT. An snmp daemon running with normal priority is
-> regularly calling ioctl(SIOCGMIIPHY). Another process running with
-> SCHED_FIFO policy is regularly reading /sys/class/net/eth0/carrier.
->
-> After some random time, the snmp daemon gets preempted while holding
-> the RTNL mutex then the high priority process is busy looping into
-> carrier_show which bails out early due to a non-successfull
-> rtnl_trylock() which implies restart_syscall(). Because the snmp
-> daemon has a lower priority, it never gets the chances to release
-> the RTNL mutex and the high-priority task continues to loop forever.
->
-> Replace the trylock by lock_interruptible. This will increase the
-> priority of the task holding the lock so that it can release it and
-> allow the reader of /sys/class/net/eth0/carrier to actually perform
-> its read.
->
-> The problem can be reproduced with the following two simple apps:
->
-> The one below runs with normal SCHED_OTHER priority:
->
->         int main(int argc, char **argv)
->         {
->                 int sk =3D socket(AF_INET, SOCK_DGRAM, 0);
->                 char buf[32];
->                 struct ifreq ifr =3D {.ifr_name =3D "eth0"};
->
->                 for (;;)
->                         ioctl(sk, SIOCGMIIPHY, &ifr);
->
->                 exit(0);
->         }
->
-> And the following one is started with chrt -f 80 so it runs with
-> SCHED_FIFO policy:
->
->         int main(int argc, char **argv)
->         {
->                 int fd =3D open("/sys/class/net/eth0/carrier", O_RDONLY);
->                 char buf[32];
->
->                 for (;;) {
->                         read(fd, buf, sizeof(buf));
->                         lseek(fd, 0, SEEK_SET);
->                         usleep(5000);
->                 }
->
->                 exit(0);
->         }
->
-> When running alone, that high priority task takes approx 6% CPU time.
->
-> When running together with the first one above, the high priority task
-> reaches almost 100% of CPU time.
->
-> With this fix applied, the high priority task remains at 6% CPU time
-> while the other one takes the remaining CPU time available.
->
-> Fixes: 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in sysfs methods.")
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
+Hello Hayashisan,
 
-At a first glance, this might resurface the deadlock issue Eric W. Biederma=
-n
-was trying to fix in 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in
-sysfs methods.")
+On Mon, Dec 16, 2024 at 04:39:41PM +0900, Kunihiko Hayashi wrote:
+> There are bar numbers that cannot be used on the endpoint.
+> So instead of SoC-specific conditions, add "reserved_bar" bar number
+> bitmap to the SoC data.
 
-I was hoping that at some point, some sysfs write methods could be
-marked as : "We do not need to hold the sysfs lock"
+I think that it was mistake to put is_am654_pci_dev() checks in
+pci_endpoint_test.c in the first place. However, let's not make the
+situation worse by introducing a reserved_bar bitmap on the host side as
+well.
+
+IMO, we should not have any logic for this the host side at all.
+
+
+Just like for am654, rk3588 has a BAR (BAR4) that should not be written by
+pci_endpoint_test.c (as it exposes the ATU registers in BAR4, so if the
+host writes this BAR, all address translation will be broken).
+
+An EPC driver can mark a BAR as reserved and that is exactly was rk3588
+does for BAR4:
+https://github.com/torvalds/linux/blob/v6.13-rc3/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L300
+
+Marking a BAR as reserved means that an EPF driver should not touch that
+BAR at all.
+
+However, this by itself is not enough if the BAR is enabled by default,
+in that case we also need to disable the BAR for the host side to not
+be able to write to it:
+https://github.com/torvalds/linux/blob/v6.13-rc3/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L248-L249
+
+
+If we look at am654, we can see that it does set BAR0 and BAR1 as reserved:
+https://github.com/torvalds/linux/blob/v6.13-rc3/drivers/pci/controller/dwc/pci-keystone.c#L967-L968
+
+The problem is that am654 does not also disable these BARs by default.
+
+
+If you look at most DWC based EPC drivers:
+drivers/pci/controller/dwc/pci-dra7xx.c:                dw_pcie_ep_reset_bar(pci, bar);
+drivers/pci/controller/dwc/pci-imx6.c:          dw_pcie_ep_reset_bar(pci, bar);
+drivers/pci/controller/dwc/pci-layerscape-ep.c:         dw_pcie_ep_reset_bar(pci, bar);
+drivers/pci/controller/dwc/pcie-artpec6.c:              dw_pcie_ep_reset_bar(pci, bar);
+drivers/pci/controller/dwc/pcie-designware-plat.c:              dw_pcie_ep_reset_bar(pci, bar);
+drivers/pci/controller/dwc/pcie-dw-rockchip.c:          dw_pcie_ep_reset_bar(pci, bar);
+drivers/pci/controller/dwc/pcie-qcom-ep.c:              dw_pcie_ep_reset_bar(pci, bar);
+drivers/pci/controller/dwc/pcie-rcar-gen4.c:            dw_pcie_ep_reset_bar(pci, bar);
+drivers/pci/controller/dwc/pcie-uniphier-ep.c:          dw_pcie_ep_reset_bar(pci, bar);
+
+They call dw_pcie_ep_reset_bar() in EP init for all BARs.
+(An EPF driver will be able to re-enable all BARs that are not marked as
+reserved.)
+
+am654 seems to be the exception here.
+
+
+If you simply add code that disables all BARs by default in am654, you
+should be able to remove these ugly is_am654_pci_dev() checks in the host
+driver, and the host driver should not be able to write to these reserved
+BARs, as they will never get enabled by pci-epf-test.c.
+
+
+Kind regards,
+Niklas
 
