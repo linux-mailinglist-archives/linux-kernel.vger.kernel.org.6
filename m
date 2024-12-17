@@ -1,135 +1,151 @@
-Return-Path: <linux-kernel+bounces-449537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F50C9F5084
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:12:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56DE09F5086
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:12:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA74171251
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:10:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318341700B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E636D1FC0F8;
-	Tue, 17 Dec 2024 15:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AD71FC7C5;
+	Tue, 17 Dec 2024 15:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o9NeR9jW"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="A5wWcXNO"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05F21F76D3
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F911FC117
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734451110; cv=none; b=NPFCGHRVGyvm7EPe+S0W/j+OE1hEkOGUgnYBXKx+0W65bYGsa57aipLc2mvYfCdL8hzVjfDrHn3bXGVfsQ0UQ/tE0EFUY2jFtm4BVAWAqPT4U2gYW+tf1CCPhJMC/wCVhTmErnxI5er4nzPMpCfCKBpt439sWiegIAs82Sj8XeU=
+	t=1734451121; cv=none; b=e+UV4C/bUCPmRhAuXTbF7wIPcLSi6lHlL+ADxcgEFvDhnLZo0QsRwgq5EEBsg1t7cnIiNDnLJcyEPL+XRU7NBlwmW1To0N9+v7ADskMa6oYWL2F6/3v8s5D4UaAv9B7OfK0Qi9eIvWedQ3MlemoVxNpgnifcuD/F7NNpg9qSbK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734451110; c=relaxed/simple;
-	bh=dBH/+O7g6d06xn0ec8a6KSHrWYZBqAa/QIx306iaTM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sr2IpwWE2GsbFY1tcGU4SZ/uuhz3m/zSu8nMYb4YUQzHAqPNi2CHYSN4KeYv+tc2IgMF70s9pm3JdObshMF4eC2tFghq1Z02U6Ms1XtJOcSwf5NEuS7Ygu1r+e+nDD5MndUlgKfhSbMAJGhuYnfxd6HPeK61eDfoMVDovJvgqYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o9NeR9jW; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4678c9310afso260901cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:58:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734451106; x=1735055906; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NbVYvO44lAz7K8MjpLCIdcOgRywKqjJNL2ZPeifyjMs=;
-        b=o9NeR9jWFbLpCNIoxkmiukPogdEZ2XuIfq+j/46xSFQia9H6DHMYjpW1GOsYdbsfzr
-         1J7sKw/4i/gpfQImHUI3aSHZpBLXdFvmF37MddMAOCza/xITnQwL3ZC/HZN1p3FJMTqs
-         OemGFd91XfpAekxBDQlxUDGmZC8UU9pHAmf1qsteVQ8AyqOTJy8e61L3QfxRq0DyVvVt
-         ZE5ECIKZSmPnFNOhM74LxvDXciIwxuWNQXMFJt2+Nn0XHi6DgItnxzAxDk7XL9WvluQK
-         IIs8z78+KmKRCLrKMO8DlHH+SSMIm2Te723syXP2Om9ayp3DuqSCIPGCcw+vlWq6nl8j
-         fTog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734451106; x=1735055906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NbVYvO44lAz7K8MjpLCIdcOgRywKqjJNL2ZPeifyjMs=;
-        b=QtJVcbUfOP/T0/tKGqxs4IHBcDTF9J9sOhvRq60UStJom9PjXz3CHLhfhvXhRcQxt2
-         wze3KTsWd2kGxmWg8P4tCDPXsKFDo7g7DxbIrzO4ZPtVP4CvHje/6vNt6kch34hLX3cA
-         M1vZzenSxE6QLCoeyiiEfZBkIS+4TJMvDEYBF8uvkQRDlX4pyQooRyPyss6/5SsV8Dsh
-         ql74/mDxdhEsleKz3LCWH+JRHRnAkMTcItDRdBw/ZXOkpxdDtM1HHz1QxZ97KomshuZS
-         1MlWrKn0b54cyY3VnGIM0AP/NU5oMLizlSbIZ9Bh/9vhwZ/LDdpQlm9IHddkBU45o3X7
-         yLkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjuOE2vtTZI5X0ybsz7NcM6X6idO93xtOjJZTaFhjyd37nljk3k/P3NoIXt1nwzt1V3QPemaN5ZHKz1d0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMtdeCvPQ6rxPXgGq8Ls75WwT/wwM9c7BVi6WKdXzkiHUtL+c2
-	T4BWFgULGSJHOkkyFZ6jTl/hVpToJ5EcI5QWQRAy8ZmJulPbJHUSaX1M03tu7VwuRETETcMzZm/
-	8WvOH5Y92dXk2S0vO5JtbX/hKAeh3vW/PkF8G
-X-Gm-Gg: ASbGnct5oStu1aZs7X0uyv5pSvecc8PLWhgu35RBEQXlbl0szuTgRCaLUK6WP/Fjo8s
-	zNp/JMqCcbIX78sd2IGcdrh2uFdhxBYekd0sDOgwoFGM8nTrEB704zdEQdW0xqzreLZoE
-X-Google-Smtp-Source: AGHT+IFoNxbLSivCB8O+mxImiir970GdW7OaKshYzGwkWOn3yHVrguyW7CMWfUXbyO03XcT7Rr+UjXFED1Gcx3L2cUs=
-X-Received: by 2002:a05:622a:1115:b0:468:f7e0:ad40 with SMTP id
- d75a77b69052e-468f971ac80mr4409181cf.14.1734451106340; Tue, 17 Dec 2024
- 07:58:26 -0800 (PST)
+	s=arc-20240116; t=1734451121; c=relaxed/simple;
+	bh=+sDpWVjLDBeBSjHRJ7joaJqh4lAqvOv3lpfPurbkbjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LD40N/0hjoSzYSbcISNc/kEOdt7NcX0bLALM1YY9fqOMrvLYqeDeGi5Wja4TkykJ2FpMpOMyY5uOYXmVzCeyV7sKh09G80oE/vVr8NzgYgiEeerq6kMHlNKvlzMXK4irUoTgnDDjS2qHvhg5ITciHB+KE3DscOir46uXO6pZdsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=A5wWcXNO; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5001a.ext.cloudfilter.net ([10.0.29.139])
+	by cmsmtp with ESMTPS
+	id NE1Utaaj0g2lzNZxwtHAQY; Tue, 17 Dec 2024 15:58:32 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id NZxvtFI4EmNYjNZxvt6zUz; Tue, 17 Dec 2024 15:58:31 +0000
+X-Authority-Analysis: v=2.4 cv=fb9myFQF c=1 sm=1 tr=0 ts=67619fa7
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
+ a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=NADnHABVQi_v-tRIJv0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=uZfLtnsGJf44tIM+Q6RRYwmZq5kswEScs/pdo66+oA4=; b=A5wWcXNOCgiywYJPfR0ZuW8nYZ
+	gcv3VdK4TP8/lD0v1ZAoIcs3g/EGQlNCKzvO267+cRYd9kAlXulI91yV+8/eHkGJWXs52co+3sICI
+	r49gKDtdN7Gk5Z7UmgY4KWqdfBoaHZ5YEB2nF+NHLoj/u6uqd4ogoJYrUP6n+2sDnYrze7NFzkjeI
+	dUjvcqF9dWMKQItYyLt0Uvo9BJ/2zfP2vS2TNQwgU0nfY1uc/rFDpzAPXfbL/N+Jc0snRmYjmjtlN
+	oEBRpoZKvV0n/cgIk7ait9Ghnvrii7uWcQtvt2CWJ1TlawROshXDbzdi446tRjo08mnF7cYt4gVpJ
+	D7GIJZyg==;
+Received: from [177.238.21.80] (port=2 helo=[192.168.0.21])
+	by gator4166.hostgator.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1tNZxu-003vsV-0c;
+	Tue, 17 Dec 2024 09:58:30 -0600
+Message-ID: <bbed49c7-56c0-4642-afec-e47b14425f76@embeddedor.com>
+Date: Tue, 17 Dec 2024 09:58:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216192419.2970941-1-surenb@google.com> <20241216192419.2970941-14-surenb@google.com>
- <20241217102620.GC11133@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241217102620.GC11133@noisy.programming.kicks-ass.net>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 17 Dec 2024 07:58:15 -0800
-Message-ID: <CAJuCfpHMouycE-G7vtph5nu_E92VTMvUdKuoteiqf7Gz0GR0nA@mail.gmail.com>
-Subject: Re: [PATCH v6 13/16] mm: introduce vma_ensure_detached()
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
-	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	lokeshgidra@google.com, minchan@google.com, jannh@google.com, 
-	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	klarasmodin@gmail.com, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] UAPI: net/sched: Open-code __struct_group() in flex
+ struct tc_u32_sel
+To: Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Kees Cook <kees@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, cferris@google.com,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20241217025950.work.601-kees@kernel.org>
+ <f4947447-aa66-470c-a48d-06ed77be58da@intel.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <f4947447-aa66-470c-a48d-06ed77be58da@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.21.80
+X-Source-L: No
+X-Exim-ID: 1tNZxu-003vsV-0c
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:2
+X-Source-Auth: guzidine
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfIeMbGEFmTZ/ojSiTmpTc4I0jem3ZtHX7I3sr8P5BMMmOybEExIFJJlThu51mRhV0ll1WSATldTp795kmzIKpIfs3Nj9Yfe4ZPwQtvCkU5su+YSpKNpN
+ wi4KToygONi2pwU9rfUfeHmZ7pW7jbN/Jbszttd0HmnKa+EUZbmY8tMH2A+lOTKsX27M3TpD93NjuttqRatgb07NaNvm4ObY6OdFTm04UTi2v3/RTpfR5PZ4
 
-On Tue, Dec 17, 2024 at 2:26=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Mon, Dec 16, 2024 at 11:24:16AM -0800, Suren Baghdasaryan wrote:
-> > vma_start_read() can temporarily raise vm_refcnt of a write-locked and
-> > detached vma:
-> >
-> > // vm_refcnt=3D=3D1 (attached)
-> > vma_start_write()
-> >     vma->vm_lock_seq =3D mm->mm_lock_seq
-> >
-> >                     vma_start_read()
-> >                        vm_refcnt++; // vm_refcnt=3D=3D2
-> >
-> > vma_mark_detached()
-> >     vm_refcnt--; // vm_refcnt=3D=3D1
-> >
-> > // vma is detached but vm_refcnt!=3D0 temporarily
-> >
-> >                        if (vma->vm_lock_seq =3D=3D mm->mm_lock_seq)
-> >                            vma_refcount_put()
-> >                                vm_refcnt--; // vm_refcnt=3D=3D0
-> >
-> > This is currently not a problem when freeing the vma because RCU grace
-> > period should pass before kmem_cache_free(vma) gets called and by that
-> > time vma_start_read() should be done and vm_refcnt is 0. However once
-> > we introduce possibility of vma reuse before RCU grace period is over,
-> > this will become a problem (reused vma might be in non-detached state).
-> > Introduce vma_ensure_detached() for the writer to wait for readers unti=
-l
-> > they exit vma_start_read().
->
-> So aside from the lockdep problem (which I think is fixable), the normal
-> way to fix the above is to make dec_and_test() do the kmem_cache_free().
->
-> Then the last user does the free and everything just works.
 
-I see your point. Let me reply in the other patch where you have more
-comments about this.
+
+On 17/12/24 08:55, Alexander Lobakin wrote:
+> From: Kees Cook <kees@kernel.org>
+> Date: Mon, 16 Dec 2024 18:59:55 -0800
+> 
+>> This switches to using a manually constructed form of struct tagging
+>> to avoid issues with C++ being unable to parse tagged structs within
+>> anonymous unions, even under 'extern "C"':
+>>
+>>    ../linux/include/uapi/linux/pkt_cls.h:25124: error: ‘struct tc_u32_sel::<unnamed union>::tc_u32_sel_hdr,’ invalid; an anonymous union may only have public non-static data members [-fpermissive]
+> 
+> I worked around that like this in the past: [0]
+> As I'm not sure it would be fine to fix every such occurrence manually
+> by open-coding.
+> What do you think?
+
+The thing is that, in this particular case, we need a struct tag to change
+the type of an object in another struct. See:
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h
+index 9050568a034c..64663112cad8 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h
+@@ -242,7 +242,7 @@ struct cxgb4_next_header {
+  	 * field's value to jump to next header such as IHL field
+  	 * in IPv4 header.
+  	 */
+-	struct tc_u32_sel sel;
++	struct tc_u32_sel_hdr sel;
+  	struct tc_u32_key key;
+  	/* location of jump to make */
+  	const struct cxgb4_match_field *jump;;
+
+You can also take a look at the original series:
+
+https://lore.kernel.org/linux-hardening/cover.1723586870.git.gustavoars@kernel.org/
+
+Thanks
+--
+Gustavo
+
+
 
