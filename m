@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-449903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983E69F57BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:29:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D191F9F57CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CE21885029
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:29:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11FAA18907C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EED01F943F;
-	Tue, 17 Dec 2024 20:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26E11F9AAD;
+	Tue, 17 Dec 2024 20:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jb2OFox3"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPpreQ3O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C1742A9B;
-	Tue, 17 Dec 2024 20:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433911607AC;
+	Tue, 17 Dec 2024 20:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734467374; cv=none; b=ZyzkZm1GCOF5zLyS0NT+QX805CieQ5jELK3ak5p/oFPRINuGYDeX//m7NQpnOO+O7KePMFT5brx5u7hNv/KuPhdw8jGWETKucsJXJK9UakLziS5x0+lPAa8orGvABrckk7auPb2FGA8VJUkJxNFJa+Wiw2Rl/UuZut7Tl8TF0Cs=
+	t=1734467440; cv=none; b=t9JBTCvvO8qgYjMU0NrJLjNWm1dHrsxBgXSkoIKE47pW9djxE6OGtiYYd2B3CowQTIkLUH/RGUUYftPm4ZgSZ7GLqRupIsOBaqZ5gLRmlFpHUHpzbBQIrH/SLBjA6wWmYaMxSlAh+jjLlVYrUB8n17dcwXdWudtKS13a40lhP14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734467374; c=relaxed/simple;
-	bh=eWeXh3padBIVZXFXGw3YT3LPGZ55w+pqerK1il1z0tk=;
+	s=arc-20240116; t=1734467440; c=relaxed/simple;
+	bh=+Z8MagIxxUoKw0hroBmcul2wy1Et9DFwaw4LuCwEjyA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZpJaxUmx3TM3MJ0Pi6q97Jolri1PX9G/+hPn0550r9auUGFhZgLXvIi2XOqvuxTIkFS4i9MSt0a6aJVjC+F1ZCV3AqUjmFl+5+49dDtHSXl5xbGwIQYzCJDGZQ/8HWkCF+xKTLyV4PJTQXxZR7zBcU/h5FwwNGa8nWm0fJhcUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jb2OFox3; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9aP9Zr26Vzamj4jtRSpIPXMz4aO8AxXiYD0Uc3A2+XE=; b=jb2OFox3hZo7o9puh+LWtE5Jb3
-	P6Al/CjbtuMEQocNsx6yVFICPnT1E51ZDaylvqpJLqeQ1+CrTLH747PwMhgo1d8z5aOcRRNz4Q8i7
-	23kEnQSqwp6N2YK5Er+D/dn4bfz2Vmb1ar6qLilQ2BWRupaveCy45gF9/fPliUW90N5cjeMODEEzp
-	6/Yfu7hnAbNfEKXN4EHmJlcghpkrg6dPzGfEzTOdqfs68sn93XZUadpLdeib88HN/GqW6ZHaOuduG
-	ju4z2+a0wmm0LK6XVom3+iL3zUSNus7XnodFm1GzI4hEIkrRXiMj2kpKQCUepZtWwhRg1RncEP939
-	2zTT/BVQ==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNeC1-000000057tn-0ddm;
-	Tue, 17 Dec 2024 20:29:21 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D92CD3003E1; Tue, 17 Dec 2024 21:29:19 +0100 (CET)
-Date: Tue, 17 Dec 2024 21:29:19 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, ak@linux.intel.com,
-	eranian@google.com
-Subject: Re: [PATCH V5 4/4] perf/x86/intel: Support PEBS counters snapshotting
-Message-ID: <20241217202919.GG11133@noisy.programming.kicks-ass.net>
-References: <20241216204505.748363-1-kan.liang@linux.intel.com>
- <20241216204505.748363-4-kan.liang@linux.intel.com>
- <20241217133707.GB2354@noisy.programming.kicks-ass.net>
- <96cb859f-8265-4f5a-99bb-44cfdcd25b9e@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5c5d3aAy0jwtENKgL0brbITw1xVc0fvCJq7yFoY7n13xvBFjnGlfk9vs0oMrwrX5/Fqx8q68/TCiVGkyT6zNPXqsVGywd7bE1nJWzXdEzokXLVLgamva6kA/EcAOX0+7/qgS/CtUQqNoNF3iT9NHRGHpTVtTFLrP7JaAQqYMk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JPpreQ3O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D989C4CED3;
+	Tue, 17 Dec 2024 20:30:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734467439;
+	bh=+Z8MagIxxUoKw0hroBmcul2wy1Et9DFwaw4LuCwEjyA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JPpreQ3Of8vylmIe3GUXtSyIXeFQ+qLUqRAkxpNW8toZjK1Qbrj7ahgK3ZMABBv8i
+	 lOvFXkf1qIWarnc2k4PRkUOvcXa/zivIZ4WTXyhnbGLwugM5Ku0rVfHpxzlRgkFTuR
+	 hPgbGtNMo4Bk5Gee0gok9OiYVr1sQhNqWThVu6euX+mU5SxfEG1DHLP2uHRNdqsfaF
+	 oRXyAFlWImNCjt69XyIX4cQTwHHSf60gFDZyDAOJyYYKKo41/J3oYwr7ql0n9Fjcb1
+	 hVyTAGcS/PrFHmx8OmHgoFDYQtFHQCKBYRwZw8z8NMpPa/05AsCFRcUJ9SUCo9IWCk
+	 yHo9D7zD7iMuQ==
+Date: Tue, 17 Dec 2024 12:30:36 -0800
+From: Kees Cook <kees@kernel.org>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, Simon Horman <horms@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Joe Damato <jdamato@fastly.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] net: core: dev.c confirmed to use classic sockaddr
+Message-ID: <202412171230.824B83D@keescook>
+References: <20241217012445.work.979-kees@kernel.org>
+ <67619a5029d2c_a046929426@willemb.c.googlers.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,71 +65,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <96cb859f-8265-4f5a-99bb-44cfdcd25b9e@linux.intel.com>
+In-Reply-To: <67619a5029d2c_a046929426@willemb.c.googlers.com.notmuch>
 
-On Tue, Dec 17, 2024 at 12:45:56PM -0500, Liang, Kan wrote:
-
-
-> > Why can't you use something like the below -- that gives you a count
-> > value matching the pmc value you put in, as long as it is 'near' the
-> > current value.
-> > 
-> > ---
-> > diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> > index 8f218ac0d445..3cf8b4f2b2c1 100644
-> > --- a/arch/x86/events/core.c
-> > +++ b/arch/x86/events/core.c
-> > @@ -154,6 +154,26 @@ u64 x86_perf_event_update(struct perf_event *event)
-> >  	return new_raw_count;
-> >  }
-> >  
-> > +u64 x86_perf_event_pmc_to_count(struct perf_event *event, u64 pmc)
-> > +{
-> > +	struct hw_perf_event *hwc = &event->hw;
-> > +	int shift = 64 - x86_pmu.cntval_bits;
-> > +	u64 prev_pmc, prev_count;
-> > +	u64 delta;
-> > +
-> > +	do {
-> > +		prev_pmc = local64_read(&hwc->prev_count);
-> > +		barrier();
-> > +		prev_count = local64_read(&event->count);
-> > +		barrier();
-> > +	} while (prev_pmc != local64_read(&hwc->prev_count));
+On Tue, Dec 17, 2024 at 10:35:44AM -0500, Willem de Bruijn wrote:
+> Kees Cook wrote:
+> > As part of trying to clean up struct sock_addr, add comments about the
+> > sockaddr arguments of dev_[gs]et_mac_address() being actual classic "max
+> > 14 bytes in sa_data" sockaddr instances and not struct sockaddr_storage.
 > 
-> Is the "while()" to handle PMI? But there should be no PMI, since the
-> PMU has been disabled when draining the PEBS buffer.
-
-Perhaps not in your case, but this way the function is more widely
-usable.
-
-> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-> index e06ac9a3cdf8..7f0b850f7277 100644
-> --- a/arch/x86/events/intel/ds.c
-> +++ b/arch/x86/events/intel/ds.c
-> @@ -1969,6 +1969,23 @@ static void adaptive_pebs_save_regs(struct
-> pt_regs *regs,
+> What is this assertion based on?
 > 
->  #define PEBS_LATENCY_MASK			0xffff
-> 
-> +void intel_perf_event_pmc_to_count(struct perf_event *event, u64 pmc)
-> +{
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	int shift = 64 - x86_pmu.cntval_bits;
-> +	u64 prev_pmc;
-> +	u64 delta;
-> +
-> +	prev_pmc = local64_read(&hwc->prev_count);
-> +
-> +	delta = (pmc << shift) - (prev_pmc << shift);
-> +	delta >>= shift;
-> +
-> +	local64_add(delta, &event->count);
-> +	local64_sub(delta, &hwc->period_left);
-> +	local64_set(&hwc->prev_count, pmc);
-> +}
+> I see various non-Ethernet .ndo_set_mac_address implementations, which
+> dev_set_mac_address calls. And dev_set_mac_addr_user is called from
+> rtnetlink do_setlink. Which kmalloc's sa based on dev->addr_len.
 
-This seems very fragile, at least keep the same store order and assert
-you're in NMI/PMI context.
+Yeah, I was clearly missing several cases. Please ignore this patch. I
+will re-examine this.
 
+-- 
+Kees Cook
 
