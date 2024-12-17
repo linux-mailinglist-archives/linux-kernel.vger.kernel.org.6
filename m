@@ -1,141 +1,187 @@
-Return-Path: <linux-kernel+bounces-448625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB849F4318
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:42:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0082C9F4319
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9095188D5E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ECDE188C901
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE67155CB3;
-	Tue, 17 Dec 2024 05:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1208B155C9E;
+	Tue, 17 Dec 2024 05:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ql8e6YBa"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="husBgj6e"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB134A23
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9393114D456
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734414156; cv=none; b=SuaalZOEVYr3dYjAIb/t9dS+F0+X9ktQVI72yPR7TGa34wVAATYTupsCAUBKMH5Yy0HuhFx7ZTWJTSSOaiOtkU3MnHad/1qacEil/EZUZNqvTnkC6MJRxYynjAQVNnt4Be0DrFl4nIDhG1FbsdL6HF6Mk2sC47ODSXbM7+00hGY=
+	t=1734414167; cv=none; b=Jqcs82p5nttq4a3B/5VpuvjnF+OKYiPKlzr/45wbqhIRbxdnXgFky3bLGs/Nev396I9dfSC762aVt6ayUTouHeij7Ru8G5cwZ8531chZuF3S0aU09tkgc3/R3QlfkMZ/BT36UA/oDZzKJjTi/NLqN5a3Nd3T0AxLqGmBJhbTRsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734414156; c=relaxed/simple;
-	bh=cPivUNa56W6N1sStio3q00/3N/9gTc/US/eop8L90hA=;
+	s=arc-20240116; t=1734414167; c=relaxed/simple;
+	bh=zDfeMhxQClLHlRKNg0xWcox9GYazka1dScf3t1EIuj4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QwMwuU8nwQj8TqKXXNFWZ58g8uFnwjxwMdB7hnb1nMzYn8GldkxIEjQBnKBntBJjizZ0BtOu9KBnDripr0uokP3+i9mvp1Tx/PXriBAAgO9ICl97fk/0fp4UpYwnZP7gCMOA8pxcv9xok/LTG+LYvOdp6Rpjy3LucaMLm8BMtfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ql8e6YBa; arc=none smtp.client-ip=209.85.208.45
+	 To:Cc:Content-Type; b=moyaVczOqozXmQKbD22xIymV3XUB0nzB/UKUfZej0dxMqWhjjIMbg2Sczf3auxuihOfVbNL+7z7pwihc00ocWCEKDMkSxcqYtFKBD6iOAQUFO7TZ3n3UGnmjLVdmGwkSnYaaMNEkE1IwqxHI9mUNymYxmskLfRw1BTB98Ze1xDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=husBgj6e; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d3bbb0f09dso7746534a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:42:34 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso744527266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:42:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734414153; x=1735018953; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734414164; x=1735018964; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aUg1bki9qmjd3PJLJEpIdRdHInyz217prumbOrfoS3g=;
-        b=ql8e6YBaYVJT3fnDO5wVghkTxP3/2RWDtk2s8BqWrmg5oBbOVGP3IXzN+L70AkDrQK
-         +cd8ueNvmx2VXB0qw+MBQZOaZuy0i7X8PZdfVIpJSQ8hjeFOfKH/9FtyX/tPpu7exK2t
-         c9b7FiL6fb7Hjx8eq0o78i6ssO3+8VRN8sYKF5t8do8leyPZS2Y4ft7dWow3FazQbRka
-         UTbftJm45qgybNn9o+99y1jxHz7fLQRDpAxlWWTbg9XhGbWum6EpZ3vCuEo6XwBXwzz2
-         h19WiR0Edc0+1GNA9IOoq2xpXzp5RGIvjjOsPAcJ+6kHU9Ck8PDWlh4XBBsWeJQGh6AI
-         DXJA==
+        bh=6RHo1jtSk4Mm2ImsZhCHdjVBF5TTUFkPvcVLGKrrVN8=;
+        b=husBgj6e0s0ygz1IL38n4u6zM1dR/BeYSsYSCb6hl4MVExOHtXZ4DGk2aD0nbDcFVp
+         2iG1UCO6+c+gBigsz4+cE7dNL8miGoB9eUgbLHrwXzHvoqwi7e4ddJ7dsq+jzz3RLcWX
+         05nRXG2jVb3fozj6DO9A/I6sA8PSDR2QnyCw41tSPvQTZQru9gTKan+E0GA7vI4DwdXC
+         laQ483YuLDox8gZ6JBuZXBTfezmybJQD7K0dF2hVUUiN/bdaePUJNS16MxoCajaCfmhP
+         +pPEejkpUSx9pzgtqKhDdjgIOtiiMk2FXX3N2yVQI3ymVAuFfhUdHn7vxS6DcFqj5/kv
+         cifg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734414153; x=1735018953;
+        d=1e100.net; s=20230601; t=1734414164; x=1735018964;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aUg1bki9qmjd3PJLJEpIdRdHInyz217prumbOrfoS3g=;
-        b=Thn1VGAicU+F7ltMNSlgW6/Qr6C+tsJOWI8uQ4woejO0bGuyS1bIErPINRdE2TjqRt
-         /Fv/oJgkIVmo+PYJABbRUMB7mi9XL2FcfhaX+v0OsxTug/G1dmbYjCAjM58jvemAn9+R
-         y0PzGO9fJ0ScAJ6opBVQnjXw0KVRUfTXgD9E6YuEziok+GfxbX0QOsJDL+LIgVoZffXy
-         fCK36+ox6BcjjJp6H8Zi60ckpXIUTOU2TCD9Yo8ZyPw6vyQIELKZydi9IatW0NJC37TD
-         wNrZISDapF2YnJ27XTETRgN4P+sA6OZrXfEqmbbqUo9BuW3WKWS37O5sbaKN9XLEBl47
-         5frg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpkI57gmp/hgspHIwWJpA4VndOQCAcRW1Ismq6CqlAlElwWnj9LB7I/Sr9iTfm5EOINzicr5qihco+mAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyscl1n84U/6dXut8dWxYJmsEQvqRILK9XvGLTujb7BwfbPc+Mg
-	66duryxHAzNuMus+rrbGvcXoZPFcfv/+9kYjAP0lud3nqls1fno5D2UT/wKWtMYp28dEadmpYhQ
-	G0rFI97qliYLUQLRObkVW/+Oyr3zHveG6efBI
-X-Gm-Gg: ASbGncvArhEj+3jUhxRk0IUb+BlxDzaNfK2ErwWlB6OY8q6GQ3uJt8AkOKOECwSOxW0
-	DFIZPd0YipX6xTm+t3/SF2YRQhrCD2bvXZh7B0750nD/+1IlG5Nu8WLcVn9CSArNaJSipYb2Q
-X-Google-Smtp-Source: AGHT+IH99quBmvN2TDeWTDk539NK15McxLqg0X/XtBmhtgNOj1cVTY+zUKR7hJOqgfEiiueQ2zMaCt3FvZjmiR62mig=
-X-Received: by 2002:a05:6402:1ed5:b0:5d3:e79b:3b3d with SMTP id
- 4fb4d7f45d1cf-5d63c42a44dmr14015978a12.28.1734414153242; Mon, 16 Dec 2024
- 21:42:33 -0800 (PST)
+        bh=6RHo1jtSk4Mm2ImsZhCHdjVBF5TTUFkPvcVLGKrrVN8=;
+        b=t2RM/hD319kp8KdPvtrVyhoetRjorsjBFMrBJfGg84y+BqcW+8XSgn5qzutVX9mv8c
+         LCeqyg9epX9kICpSlkyQ1V+JDICBM1Hk0XOxqH1gTgiJJtWQk/pHDNwpZ0HZVICSLGFw
+         5fRTNziaG5YsS5af3MYB+ltUw5BERaTHaRZqulidh13jiRO+bH/JT9uXJA2dqhvprvBJ
+         9bx8mPgcu3+79Hl0NihFC2A/uss8//6h3pqgHEkS42kfcN4KpTts6ixHE/MkAkvT1YoG
+         gUkofsDzcHEc9kibHaAB10hZD+oLM2b1qqSOWjAXVYxwFSL9LebsUYo8F9BkNQykWY2H
+         0ljQ==
+X-Gm-Message-State: AOJu0YyYuvRBFIOIsDc4tVnSMhZHdCYbcbKBQzd9oZOjBNIf2r8FYE2r
+	UjHF+4+hRoVcVU/xwbl+0fiim57Oa1KgPrXLaSuARWCZVPYAMnanNeC26L4ETZBD/fgp2058JC/
+	cY2EaiGbn//Q1Z5lh0Yncn8YumMhwiouCdeY=
+X-Gm-Gg: ASbGncvDlZ7vRvv9tcnahYf2964kRoA8iWMzdW3NXb7MV//e6jtSogMderiMdyCB7CI
+	1ca8quuFnA6WjDZLfQWiQmIo4OzFC4xN9nC659k2bKe5SsdDWdEsDWmGjwhF8dtNOtc0=
+X-Google-Smtp-Source: AGHT+IGH9WTQm0PuV21F/NU+4B/x2Bn3wqP71IKCOkyPuG0oTNFDOVfsNIexhUBrVVRsZz6POhzwWn7pHPx4GOT8hHI=
+X-Received: by 2002:a17:907:2da0:b0:aa6:9176:61ed with SMTP id
+ a640c23a62f3a-aab77ea6187mr1387926466b.48.1734414163675; Mon, 16 Dec 2024
+ 21:42:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217030751.11226-1-mazin@getstate.dev>
-In-Reply-To: <20241217030751.11226-1-mazin@getstate.dev>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 17 Dec 2024 06:42:22 +0100
-Message-ID: <CANn89iJeh5wCRpiBBBucmJXRdTb=DbOjXTHtEm1rOpvq=dGgvQ@mail.gmail.com>
-Subject: Re: [PATCH] ip6_tunnel: Fix uninit-value in ip6_tnl_xmit
-To: Mazin Al Haddad <mazin@getstate.dev>
-Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com
+References: <20241125195204.2374458-1-jstultz@google.com> <20241125195204.2374458-6-jstultz@google.com>
+ <20241214000559.GC17501@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241214000559.GC17501@noisy.programming.kicks-ass.net>
+From: John Stultz <jstultz@google.com>
+Date: Mon, 16 Dec 2024 21:42:31 -0800
+X-Gm-Features: AbW1kvakRXnldIu3hG10v6VrndWiuit2lHbunPb9uBZ1F7g12qIFVUEw4Fdis6M
+Message-ID: <CANDhNCpYgQ6KspsykWhewNAm1N1mPSh=hthx2OnisX3c+7M0ng@mail.gmail.com>
+Subject: Re: [RFC][PATCH v14 5/7] sched: Add an initial sketch of the
+ find_proxy_task() function
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 17, 2024 at 4:09=E2=80=AFAM Mazin Al Haddad <mazin@getstate.dev=
-> wrote:
+On Fri, Dec 13, 2024 at 4:06=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
 >
-> When taking the branch with skb_realloc_headroom, pskb_expand_head is
-> called, as such, pointers referencing content within the new skb's header
-> are invalid. Currently, the assignment of hop_limit accesses the now
-> invalid pointer in the network header of this "new" skb. Fix this by
-> moving the logic to assign hop_limit earlier so that the assignment
-> references the original un-resized skb instead.
+> On Mon, Nov 25, 2024 at 11:51:59AM -0800, John Stultz wrote:
+>
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index f8714050b6d0d..b492506d33415 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -5052,6 +5052,34 @@ static void do_balance_callbacks(struct rq *rq, =
+struct balance_callback *head)
+> >       }
+> >  }
+> >
+> > +/*
+> > + * Only called from __schedule context
+> > + *
+> > + * There are some cases where we are going to re-do the action
+> > + * that added the balance callbacks. We may not be in a state
+> > + * where we can run them, so just zap them so they can be
+> > + * properly re-added on the next time around. This is similar
+> > + * handling to running the callbacks, except we just don't call
+> > + * them.
+> > + */
+>
+> Which specific callbacks are this? sched_core_balance()?
+>
+> In general, shooting down all callbacks like this makes me feel somewhat
+> uncomfortable.
 
-Unfortunately this is not fixing anything.
+So, if we originally picked a RT task, I believe it would setup the
+push_rt_tasks callback, but if it got migrated and if we needed to
+pick again,  we'd end up tripping on
+`SCHED_WARN_ON(rq->balance_callback && rq->balance_callback !=3D
+&balance_push_callback);`
 
-If the IPv6 header was in the skb head before skb_realloc_headroom()
-and/or pskb_expand_head(),
-it would be copied in the new skb head.
+For a while I tried to unpin and run the balance callbacks before
+calling pick_again, if find_proxy_task() failed, but that was running
+into troubles with tasks getting unintentionally added to the rt
+pushable list (this was back in ~feb, so my memory is a little fuzzy).
 
-Note how the repro is sending a packet with vlan tag (88A8 : ETH_P_8021AD)
+So that's when I figured zaping the callbacks would be best, with the
+idea being that we are starting selection over, so we effectively have
+to undo any of the state that was set by pick_next_task() before
+calling it again.
 
-endto$packet(r0, &(0x7f0000000180)=3D"a6bea8a120e5f8320c30ce5088a8",
-0x12, 0x0, &(0x7f0000000140)=3D{0x11, 0x0, r3, 0x1, 0x0, 0x6, @local},
-0x14)
+Let me know if you have concerns with this, or suggestions for other approa=
+ches.
 
-Current code, using pskb_inet_may_pull() is not ready yet.
+> > +/*
+> > + * Initial simple proxy that just returns the task if it's waking
+> > + * or deactivates the blocked task so we can pick something that
+> > + * isn't blocked.
+> > + */
+> > +static struct task_struct *
+> > +find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_fl=
+ags *rf)
+> > +{
+> > +     struct task_struct *p =3D donor;
+> > +     struct mutex *mutex;
+> > +
+> > +     mutex =3D p->blocked_on;
+> > +     /* Something changed in the chain, so pick again */
+> > +     if (!mutex)
+> > +             return NULL;
+> > +     /*
+> > +      * By taking mutex->wait_lock we hold off concurrent mutex_unlock=
+()
+> > +      * and ensure @owner sticks around.
+> > +      */
+> > +     raw_spin_lock(&mutex->wait_lock);
+> > +     raw_spin_lock(&p->blocked_lock);
+>
+> I'm still wondering what this blocked_lock does, that previous patch had
+> it mirror wait_mutex too, so far I don't see the point.
 
-My patch has been tested by syzbot and I was about to submit it.
+Yeah, early on in the series it's maybe not as useful, but as we start
+dealing with sleeping owner enqueuing, its doing more:
+  https://github.com/johnstultz-work/linux-dev/commit/d594ca8df88645aa3b2b9=
+daa105664893818bdb7
 
-diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
-index 235808cfec705032b545d6f396f8e58f4693e8d8..c4f0383a136cf5f5e6846293078=
-ec8b826c754c9
-100644
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -910,7 +910,7 @@ static netdev_tx_t ip6gre_tunnel_xmit(struct sk_buff *s=
-kb,
-        __be16 payload_protocol;
-        int ret;
+But it is possible it is more of a crutch for me to keep straight the
+locking rules as it's simpler to keep in my head. :)
+Happy to think a bit more on if it can be folded together with another lock=
+.
 
--       if (!pskb_inet_may_pull(skb))
-+       if (!skb_vlan_inet_prepare(skb, false))
-                goto tx_err;
+Thanks again for the review and thoughts here!
 
-        if (!ip6_tnl_xmit_ctl(t, &t->parms.laddr, &t->parms.raddr))
-@@ -958,7 +958,7 @@ static netdev_tx_t ip6erspan_tunnel_xmit(struct
-sk_buff *skb,
-        __u32 mtu;
-        int nhoff;
-
--       if (!pskb_inet_may_pull(skb))
-+       if (!skb_vlan_inet_prepare(skb, false))
-                goto tx_err;
-
-        if (!ip6_tnl_xmit_ctl(t, &t->parms.laddr, &t->parms.raddr))
+thanks
+-john
 
