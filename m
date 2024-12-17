@@ -1,187 +1,190 @@
-Return-Path: <linux-kernel+bounces-448626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0082C9F4319
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:43:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9859F431C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ECDE188C901
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:43:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFB9188B17F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1208B155C9E;
-	Tue, 17 Dec 2024 05:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E97215624D;
+	Tue, 17 Dec 2024 05:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="husBgj6e"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNifS0Bs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9393114D456
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526D51411EB;
+	Tue, 17 Dec 2024 05:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734414167; cv=none; b=Jqcs82p5nttq4a3B/5VpuvjnF+OKYiPKlzr/45wbqhIRbxdnXgFky3bLGs/Nev396I9dfSC762aVt6ayUTouHeij7Ru8G5cwZ8531chZuF3S0aU09tkgc3/R3QlfkMZ/BT36UA/oDZzKJjTi/NLqN5a3Nd3T0AxLqGmBJhbTRsw=
+	t=1734414209; cv=none; b=S5DgZQBgh80hTRhWCgv4p0VfHp7BnMZa/+uUEEjEDDp3iBAMRjt9uj9FgXJ/W3m/fJP7Ywx2BkOKGD2r9QRAXTKFhLVN4Ucuif3mXWxM0S6RgGl6xg4ZELahX88wCrE/uDWsd6u3Okm8G97tG3s5u8AsPFz/tDg4vC/CQnjaQwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734414167; c=relaxed/simple;
-	bh=zDfeMhxQClLHlRKNg0xWcox9GYazka1dScf3t1EIuj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=moyaVczOqozXmQKbD22xIymV3XUB0nzB/UKUfZej0dxMqWhjjIMbg2Sczf3auxuihOfVbNL+7z7pwihc00ocWCEKDMkSxcqYtFKBD6iOAQUFO7TZ3n3UGnmjLVdmGwkSnYaaMNEkE1IwqxHI9mUNymYxmskLfRw1BTB98Ze1xDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=husBgj6e; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso744527266b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:42:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734414164; x=1735018964; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6RHo1jtSk4Mm2ImsZhCHdjVBF5TTUFkPvcVLGKrrVN8=;
-        b=husBgj6e0s0ygz1IL38n4u6zM1dR/BeYSsYSCb6hl4MVExOHtXZ4DGk2aD0nbDcFVp
-         2iG1UCO6+c+gBigsz4+cE7dNL8miGoB9eUgbLHrwXzHvoqwi7e4ddJ7dsq+jzz3RLcWX
-         05nRXG2jVb3fozj6DO9A/I6sA8PSDR2QnyCw41tSPvQTZQru9gTKan+E0GA7vI4DwdXC
-         laQ483YuLDox8gZ6JBuZXBTfezmybJQD7K0dF2hVUUiN/bdaePUJNS16MxoCajaCfmhP
-         +pPEejkpUSx9pzgtqKhDdjgIOtiiMk2FXX3N2yVQI3ymVAuFfhUdHn7vxS6DcFqj5/kv
-         cifg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734414164; x=1735018964;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6RHo1jtSk4Mm2ImsZhCHdjVBF5TTUFkPvcVLGKrrVN8=;
-        b=t2RM/hD319kp8KdPvtrVyhoetRjorsjBFMrBJfGg84y+BqcW+8XSgn5qzutVX9mv8c
-         LCeqyg9epX9kICpSlkyQ1V+JDICBM1Hk0XOxqH1gTgiJJtWQk/pHDNwpZ0HZVICSLGFw
-         5fRTNziaG5YsS5af3MYB+ltUw5BERaTHaRZqulidh13jiRO+bH/JT9uXJA2dqhvprvBJ
-         9bx8mPgcu3+79Hl0NihFC2A/uss8//6h3pqgHEkS42kfcN4KpTts6ixHE/MkAkvT1YoG
-         gUkofsDzcHEc9kibHaAB10hZD+oLM2b1qqSOWjAXVYxwFSL9LebsUYo8F9BkNQykWY2H
-         0ljQ==
-X-Gm-Message-State: AOJu0YyYuvRBFIOIsDc4tVnSMhZHdCYbcbKBQzd9oZOjBNIf2r8FYE2r
-	UjHF+4+hRoVcVU/xwbl+0fiim57Oa1KgPrXLaSuARWCZVPYAMnanNeC26L4ETZBD/fgp2058JC/
-	cY2EaiGbn//Q1Z5lh0Yncn8YumMhwiouCdeY=
-X-Gm-Gg: ASbGncvDlZ7vRvv9tcnahYf2964kRoA8iWMzdW3NXb7MV//e6jtSogMderiMdyCB7CI
-	1ca8quuFnA6WjDZLfQWiQmIo4OzFC4xN9nC659k2bKe5SsdDWdEsDWmGjwhF8dtNOtc0=
-X-Google-Smtp-Source: AGHT+IGH9WTQm0PuV21F/NU+4B/x2Bn3wqP71IKCOkyPuG0oTNFDOVfsNIexhUBrVVRsZz6POhzwWn7pHPx4GOT8hHI=
-X-Received: by 2002:a17:907:2da0:b0:aa6:9176:61ed with SMTP id
- a640c23a62f3a-aab77ea6187mr1387926466b.48.1734414163675; Mon, 16 Dec 2024
- 21:42:43 -0800 (PST)
+	s=arc-20240116; t=1734414209; c=relaxed/simple;
+	bh=GF72uodN9Zq6P+OkRp5RAxXAPD/nElPUq/MurGzorkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RiCqj8sSIU6KYKHm7W+tOc3CPEKeIUx7B32hqegyuI/NU7bVyCIqwsj58ZTP1N8D6pyRZLIHEIe+J+ROfDvomxeGOePMhUmZW7FC7FLvn2zaAnsmNzF1/7eej80t2S0jQH2blj0Xcbj/mu8Kx07Y5VJr0DLHi5JkRgRFHi1qJVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNifS0Bs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4689C4CED3;
+	Tue, 17 Dec 2024 05:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734414208;
+	bh=GF72uodN9Zq6P+OkRp5RAxXAPD/nElPUq/MurGzorkw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NNifS0BsCOdwg4g3+3+u64apaf1CgLe8nQsN0jcQ76OvxokIVAp9XzSwazDnKdKM9
+	 t4vn+Ek42Ox8bfp4Nl6nQWZkIHCCdIjodesKIRqBjWOlyVb8+mx8yomJgWBzux3If9
+	 jNqsDn78Dp4fNZjWGEVyZdMI4eCY8PgwyR/Fl3evvHmp9kvFw1SE/KVGg6xWbAXYF9
+	 s/6SRTGeydtWG4yPh4e0MASDUJ9/BfaHC0zSmYetU3dnmABzPUbkde1j1k++nqRg/S
+	 HHRjbG5HCEjezS5Qr+v+p4jopJ5bPvye7SbqIWzipn3yRCkyah3aKTPOEdHP07MEyj
+	 gGG7XWSl52B9w==
+Message-ID: <d5294015-4790-490e-8136-615039a5c733@kernel.org>
+Date: Tue, 17 Dec 2024 06:43:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125195204.2374458-1-jstultz@google.com> <20241125195204.2374458-6-jstultz@google.com>
- <20241214000559.GC17501@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241214000559.GC17501@noisy.programming.kicks-ass.net>
-From: John Stultz <jstultz@google.com>
-Date: Mon, 16 Dec 2024 21:42:31 -0800
-X-Gm-Features: AbW1kvakRXnldIu3hG10v6VrndWiuit2lHbunPb9uBZ1F7g12qIFVUEw4Fdis6M
-Message-ID: <CANDhNCpYgQ6KspsykWhewNAm1N1mPSh=hthx2OnisX3c+7M0ng@mail.gmail.com>
-Subject: Re: [RFC][PATCH v14 5/7] sched: Add an initial sketch of the
- find_proxy_task() function
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/8] dt-bindings: media: platform: visconti: Add
+ Toshiba Visconti Video Input Interface
+To: yuji2.ishikawa@toshiba.co.jp, laurent.pinchart@ideasonboard.com,
+ mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+ nobuhiro1.iwamatsu@toshiba.co.jp
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <20241125092146.1561901-1-yuji2.ishikawa@toshiba.co.jp>
+ <20241125092146.1561901-3-yuji2.ishikawa@toshiba.co.jp>
+ <04a7ebf7-2924-4894-bc53-ba77e2f64fae@kernel.org>
+ <TY3PR01MB99822E6161ED319B4DE855B492042@TY3PR01MB9982.jpnprd01.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <TY3PR01MB99822E6161ED319B4DE855B492042@TY3PR01MB9982.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 13, 2024 at 4:06=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Mon, Nov 25, 2024 at 11:51:59AM -0800, John Stultz wrote:
->
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index f8714050b6d0d..b492506d33415 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -5052,6 +5052,34 @@ static void do_balance_callbacks(struct rq *rq, =
-struct balance_callback *head)
-> >       }
-> >  }
-> >
-> > +/*
-> > + * Only called from __schedule context
-> > + *
-> > + * There are some cases where we are going to re-do the action
-> > + * that added the balance callbacks. We may not be in a state
-> > + * where we can run them, so just zap them so they can be
-> > + * properly re-added on the next time around. This is similar
-> > + * handling to running the callbacks, except we just don't call
-> > + * them.
-> > + */
->
-> Which specific callbacks are this? sched_core_balance()?
->
-> In general, shooting down all callbacks like this makes me feel somewhat
-> uncomfortable.
+On 17/12/2024 01:00, yuji2.ishikawa@toshiba.co.jp wrote:
+> Hello Krzysztof
+> 
+> Thank you for your review
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Monday, November 25, 2024 7:08 PM
+>> To: ishikawa yuji(石川 悠司 ○ＲＤＣ□ＡＩＴＣ○ＥＡ開)
+>> <yuji2.ishikawa@toshiba.co.jp>; Laurent Pinchart
+>> <laurent.pinchart@ideasonboard.com>; Mauro Carvalho Chehab
+>> <mchehab@kernel.org>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+>> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Sakari Ailus
+>> <sakari.ailus@linux.intel.com>; Hans Verkuil <hverkuil-cisco@xs4all.nl>;
+>> iwamatsu nobuhiro(岩松 信洋 ○ＤＩＴＣ□ＤＩＴ○ＯＳＴ)
+>> <nobuhiro1.iwamatsu@toshiba.co.jp>
+>> Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org
+>> Subject: Re: [PATCH v12 2/8] dt-bindings: media: platform: visconti: Add
+>> Toshiba Visconti Video Input Interface
+>>
+>> On 25/11/2024 10:21, Yuji Ishikawa wrote:
+>>> Adds the Device Tree binding documentation that allows to describe the
+>>> Video Input Interface found in Toshiba Visconti SoCs.
+>>>
+>>> Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+>>> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+>>
+>> Why this tag stayed and other was removed? What was the reason of tag
+>> removal?
+>>
+> 
+> The stayed tag is due to internal review.
 
-So, if we originally picked a RT task, I believe it would setup the
-push_rt_tasks callback, but if it got migrated and if we needed to
-pick again,  we'd end up tripping on
-`SCHED_WARN_ON(rq->balance_callback && rq->balance_callback !=3D
-&balance_push_callback);`
+Did the internal review really happened? How is it that immediately new
+version has internal review without any traces?
 
-For a while I tried to unpin and run the balance callbacks before
-calling pick_again, if find_proxy_task() failed, but that was running
-into troubles with tasks getting unintentionally added to the rt
-pushable list (this was back in ~feb, so my memory is a little fuzzy).
+I have doubts this review happened in the context of reviewer's
+statement of oversight.
 
-So that's when I figured zaping the callbacks would be best, with the
-idea being that we are starting selection over, so we effectively have
-to undo any of the state that was set by pick_next_task() before
-calling it again.
 
-Let me know if you have concerns with this, or suggestions for other approa=
-ches.
+> The removed tag is due to code's change (split of csi2rx part) after the last review.
+> If the code is largely changed following the instruction of another reviewer
+> after obtaining the tags, how should the tags be handled?
 
-> > +/*
-> > + * Initial simple proxy that just returns the task if it's waking
-> > + * or deactivates the blocked task so we can pick something that
-> > + * isn't blocked.
-> > + */
-> > +static struct task_struct *
-> > +find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_fl=
-ags *rf)
-> > +{
-> > +     struct task_struct *p =3D donor;
-> > +     struct mutex *mutex;
-> > +
-> > +     mutex =3D p->blocked_on;
-> > +     /* Something changed in the chain, so pick again */
-> > +     if (!mutex)
-> > +             return NULL;
-> > +     /*
-> > +      * By taking mutex->wait_lock we hold off concurrent mutex_unlock=
-()
-> > +      * and ensure @owner sticks around.
-> > +      */
-> > +     raw_spin_lock(&mutex->wait_lock);
-> > +     raw_spin_lock(&p->blocked_lock);
->
-> I'm still wondering what this blocked_lock does, that previous patch had
-> it mirror wait_mutex too, so far I don't see the point.
+Drop all reviews and perform reviews on the list.
 
-Yeah, early on in the series it's maybe not as useful, but as we start
-dealing with sleeping owner enqueuing, its doing more:
-  https://github.com/johnstultz-work/linux-dev/commit/d594ca8df88645aa3b2b9=
-daa105664893818bdb7
+Such internal review appearing afterwards is rather a proof it you are
+adding just the tags to satisfy your process. I have no way to even
+verify whether that person performed any reasonable review or maybe just
+acked your patch. I cannot even verify that that person understands the
+reviewer's statement of oversight.
 
-But it is possible it is more of a crutch for me to keep straight the
-locking rules as it's simpler to keep in my head. :)
-Happy to think a bit more on if it can be folded together with another lock=
-.
 
-Thanks again for the review and thoughts here!
+...
 
-thanks
--john
+>>>
+>>> Changelog v11:
+>>> - no change
+>>>
+>>> Changelog v12:
+>>> - remove property "clock-noncontinuous" as VIIF switches both modes
+>>> automatically
+>>> - remove property "link-frequencies" as VIIF does not use the
+>>> information
+>>
+>> Driver does not use or hardware supports only one frequency?
+>>
+> 
+> My comment was incorrect.
+> It should be "Driver does not use the information"
+
+Then this is not that helping. Maybe hardware supports only one frequency?
+
+
+Best regards,
+Krzysztof
 
