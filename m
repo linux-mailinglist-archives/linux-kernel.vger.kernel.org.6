@@ -1,124 +1,119 @@
-Return-Path: <linux-kernel+bounces-449589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280A39F5116
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:32:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DD49F5120
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 253447A7631
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:32:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AFC1189132B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DA61F76C3;
-	Tue, 17 Dec 2024 16:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7H91zBU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891171494CF;
+	Tue, 17 Dec 2024 16:33:15 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046791F76A3;
-	Tue, 17 Dec 2024 16:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF84211C
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734453134; cv=none; b=bXyBhUoBwJ00fAHgKgfmZSR3JFPUyY05i4CpO8seiVlyoj8ns9YM2AgK63tX+x9hlbmnxoUjZVjKeQLJx2jbaGmeFOSoE1G6NUpjFrGvKiXkZfyrOxgzrlwEdBewuyluAYFbLYJGIEFUkVC1DH4wW6CZ0W/NOw4SPlb3k4PKIrY=
+	t=1734453195; cv=none; b=Y+UJSMBymTOTxB/P+dQyw8+Jz937KG45YosREQvQaSbiY4x/KYcRMrsRW8F/bJP3XmrMXLWKhIcJ2CeJjqW/2NVF7eNlsdXk6hL5QNpOUxTJ14kDJDPAr6WW0BLrbrKWKrkt3EAEKADVV1J0N6BuRcQyRCI52uwHNXW5wn0E3Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734453134; c=relaxed/simple;
-	bh=NXCDV/TEsO/tkTQikUC6ICuqE+1kO8I/+7YqK4yleGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=erUMYhawVllm5gQ+Dien4PishSXs6VkJUPNxxr6rVcNNnv9xux0WzgbBHuCVdFEkQfTVpB7wRc9dd2Jy4kUukb4gJpw0IXRmIxapTfkZDanAQ3I0CjNJ2wwRyqysNgVpaQBPyP2Ky7kpB5lGI6a6qk4qCloUyyBqzZQwIbIHjvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7H91zBU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F382C4CED7;
-	Tue, 17 Dec 2024 16:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734453133;
-	bh=NXCDV/TEsO/tkTQikUC6ICuqE+1kO8I/+7YqK4yleGo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q7H91zBULR+20rclvPa6by87g7IVtdG+2/FlrROgeg91Ie3UJnr2sM4xQK6WrqROh
-	 U6KRzGEtwutUrNDY1WT2u4gWanxaiKJfdjzoC5q/maa2IX/NUo8pKmLxHAwPBnXhu0
-	 2fRlSj+5dPK9AS83Bymb+8roJ91Uh+AKxoC/jVzmW/rZRDc2IZjUxyxS2MaJqedrjf
-	 RaAqHwFUGs+N58HXbImJVR6oqjSIvUQ/HirIeqN2lsDphwnPNBSOur6agOagXML3FX
-	 fsexXvF4LY37kn9fyiY3oEaRCL5YCT2co1+eEuJJ89V6hU8YTnhxEFyS/3fLt3gANK
-	 /HN4EzmHlnWvA==
-Date: Tue, 17 Dec 2024 16:32:08 +0000
-From: Simon Horman <horms@kernel.org>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: dp83822: Add support for PHY LEDs on
- DP83822
-Message-ID: <20241217163208.GT780307@kernel.org>
-References: <20241217-dp83822-leds-v1-1-800b24461013@gmail.com>
+	s=arc-20240116; t=1734453195; c=relaxed/simple;
+	bh=fu8Jd6MX6mUNEOcutqCnKWQXmIFDOR8HRzSPSxMI9O4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ri4QtL/gl3E3KdzpZqLN+mDjFnA1PGiDILHbVdNa6/rrOLEzZ1H0w2K1Yb/BpZS1mEa9u8VxLRqMgrRkZJ7XQbFgtT1CrdmRKRDpHL7ZVWBftCDANX174DNmPPSzsN5puet4ZXkSUbYtDRiluTyyBzc91TzAxSYIhL/p71SmtcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24755C4CED3;
+	Tue, 17 Dec 2024 16:33:14 +0000 (UTC)
+Date: Tue, 17 Dec 2024 11:33:49 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Al Viro
+ <viro@ZenIV.linux.org.uk>, Michal Simek <monstr@monstr.eu>
+Subject: Re: [for-linus v2][PATCH 0/2] ftrace: Fixes for v6.13
+Message-ID: <20241217113349.398c3370@gandalf.local.home>
+In-Reply-To: <20241217161840.069495339@goodmis.org>
+References: <20241217161840.069495339@goodmis.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241217-dp83822-leds-v1-1-800b24461013@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 17, 2024 at 10:16:03AM +0100, Dimitri Fedrau wrote:
-> The DP83822 supports up to three configurable Light Emitting Diode (LED)
-> pins: LED_0, LED_1 (GPIO1), COL (GPIO2) and RX_D3 (GPIO3). Several
-> functions can be multiplexed onto the LEDs for different modes of
-> operation. LED_0 and COL (GPIO2) use the MLED function. MLED can be routed
-> to only one of these two pins at a time. Add minimal LED controller driver
-> supporting the most common uses with the 'netdev' trigger.
+On Tue, 17 Dec 2024 11:18:40 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> Ftrace fixes for 6.13:
 > 
-> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-> ---
->  drivers/net/phy/dp83822.c | 271 +++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 269 insertions(+), 2 deletions(-)
+> - Always try to initialize the idle functions when graph tracer starts
 > 
-> diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
+>   A bug was found that when a CPU is offline when graph tracing starts
+>   and then comes online, that CPU is not traced. The fix to that was
+>   to move the initialization of the idle shadow stack over to the
+>   hot plug online logic, which also handle onlined CPUs. The issue was
+>   that it removed the initialization of the shadow stack when graph tracing
+>   starts, but the callbacks to the hot plug logic do nothing if graph
+>   tracing isn't currently running. Although that fix fixed the onlining
+>   of a CPU during tracing, it broke the CPUs that were already online.
+> 
+> - Have microblaze not try to get the "true parent" in function tracing
+> 
+>   If function tracing and graph tracing are both enabled at the same time
+>   the parent of the functions traced by the function tracer may sometimes
+>   be the graph tracing trampoline. The graph tracing hijacks the return
+>   pointer of the function to trace it, but that can interfere with the
+>   function tracing parent output. This was fixed by using the
+>   ftrace_graph_ret_addr() function passing in the kernel stack pointer
+>   using the ftrace_regs_get_stack_pointer() function. But Al Viro reported
+>   that Microblaze does not implement the kernel_stack_pointer(regs)
+>   helper function that ftrace_regs_get_stack_pointer() uses and fails
+>   to compile when function graph tracing is enabled.
+> 
+>   It was first thought that this was a microblaze issue, but the real
+>   cause is that this only works when an architecture implements
+>   HAVE_DYNAMIC_FTRACE_WITH_ARGS, as a requirement for that config
+>   is to have ftrace always pass a valid ftrace_regs to the callbacks.
+>   That also means that the architecture supports ftrace_regs_get_stack_pointer()
+>   Microblaze does not set HAVE_DYNAMIC_FTRACE_WITH_ARGS nor does it
+>   implement ftrace_regs_get_stack_pointer() which caused it to fail to
+>   build. Only implement the "true parent" logic if an architecture has
+>   that config set.
+> 
+> Changes since v1: https://lore.kernel.org/all/20241214182138.4e7984a2@batman.local.home/
+> 
+> - Removed the hash-ptr fix as Linus was unhappy with the code it was
+>   fixing and I have another series to address that. It didn't even
+>   belong in this pull request, as this is the ftrace topic and that
+>   was a tracing topic.
+> 
+> - Properly fix the function_get_true_parent_ip(), which wasn't a
+>   microblaze issue at all, but an issue for any architecture that
+>   does not support HAVE_DYNAMIC_FTRACE_WITH_ARGS.
 
-...
 
-> +static int dp83822_led_hw_control_set(struct phy_device *phydev, u8 index,
-> +				      unsigned long rules)
-> +{
-> +	int mode;
-> +
-> +	mode = dp83822_led_mode(index, rules);
-> +	if (mode < 0)
-> +		return mode;
-> +
-> +	if (index == DP83822_LED_INDEX_LED_0 || index == DP83822_LED_INDEX_COL_GPIO2)
-> +		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
-> +				      MII_DP83822_MLEDCR, DP83822_MLEDCR_CFG,
-> +				      FIELD_PREP(DP83822_MLEDCR_CFG, mode));
+I forgot to append the diffstat and branch where this lives:
 
-...
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ftrace/fixes
 
-> +}
-> +
-> +static int dp83822_led_hw_control_get(struct phy_device *phydev, u8 index,
-> +				      unsigned long *rules)
-> +{
-> +	int val;
-> +
-> +	if (index == DP83822_LED_INDEX_LED_0 || DP83822_LED_INDEX_COL_GPIO2) {
+Head SHA1: 166438a432d76c68d3f0da60667248f3c2303d6c
 
-Hi Dimitri,
 
-As per the condition near the top of dp83822_led_hw_control_set(), should
-this be:
+Steven Rostedt (2):
+      fgraph: Still initialize idle shadow stacks when starting
+      ftrace: Do not find "true_parent" if HAVE_DYNAMIC_FTRACE_WITH_ARGS is not set
 
-	if (index == DP83822_LED_INDEX_LED_0 ||
-	    index == DP83822_LED_INDEX_COL_GPIO2) {
-
-Flagged by W=1 + -Wno-error build with clang-19.
-
- drivers/net/phy/dp83822.c:1029:39: note: use '|' for a bitwise operation
-  1029 |         if (index == DP83822_LED_INDEX_LED_0 || DP83822_LED_INDEX_COL_GPIO2) {
-       |                                              ^~
-       |
-
-...
+----
+ kernel/trace/fgraph.c          | 8 +++++++-
+ kernel/trace/trace_functions.c | 3 ++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
