@@ -1,102 +1,147 @@
-Return-Path: <linux-kernel+bounces-449934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DA89F5851
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:01:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528179F5857
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63A3A1888745
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E0C1892445
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA751F9EA1;
-	Tue, 17 Dec 2024 21:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVimyfjb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8351F8AF9;
+	Tue, 17 Dec 2024 21:04:23 +0000 (UTC)
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896C71D79BB;
-	Tue, 17 Dec 2024 21:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63332208CA
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734469296; cv=none; b=CvC5qppHBMuE6BDo9rlWGMAy8mFdwHWm9ckEhqkxU124LKBqZngMUFE7za7rlyCwEF4/5Wu7YSPZlcBFgtiSh5wEjTGOru7jR8dsD5PoY+2099oi1Vzq6HOa+nC6wnORliX9l4oaJPLORq6mnLADSWpDIcahI1ToGMUzyZsOqWQ=
+	t=1734469463; cv=none; b=ndOrOryZpcNeVlbeROxTRYCf9smYBGXTWLfSZ3YXx7o2RaWs7wRY30MsnnpJrCW5iXuAcXGW222i7A6mbHBz787G8i55RKEklsA/jUXgRwLih9mCvTIIZG1fmVcx/+G32uyIN42ngoECvaUsT52hgdIU74mZycLRf/AS3PT+PnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734469296; c=relaxed/simple;
-	bh=VUTPzTzwFVOLmuJLL7CWUZhd9L/dIR/ROldGB7DsnoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBLwGyYeORZRi+fLK3jg3Ra6x88fGaaoJTCodfzNDpSL70h0h8jlXF3TRz0gFwvS1j/Fi2LHJ/bTvg+0hzbHyeG5r4RsvittKlLy1gSV0T5hZmBIrpxmvp00ECUOO1bAxfClUeWOSczGdSfIQnZQWGGVOxtGFkQ7KCgPNzaBrFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVimyfjb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C274C4CED3;
-	Tue, 17 Dec 2024 21:01:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734469296;
-	bh=VUTPzTzwFVOLmuJLL7CWUZhd9L/dIR/ROldGB7DsnoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CVimyfjbA64s6dDiO9fOvlX6QOta3iH1rS8ERqdG+tqM7jiy1Thy2f5559sWBviGD
-	 ODVT3T03iTKRKBRzLEK/jzr/jO/jmmF8kwlTgKmV7sbfyubNNH66hJLINII+ZEZRDu
-	 iwl6x4Ak5p1GkIC6X5wKIFzLc3JdPyicBxn7HDIBYDaEldRiRGZSL3fQh9NV17ZyiH
-	 tuqf/Edx81hpCSyZkEjdzQZjFed5NBCxj4dBsiYrxQP7S+00+3hWPqAygW5ZFU0ybM
-	 iqGayZrO5oVRsgpHBdannKTn4z9zx0dELEYopKt6CgP7jlIl9zLJ2LCfkVvUnuYgGS
-	 GfCYQ68bbwH7A==
-Date: Tue, 17 Dec 2024 21:01:30 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-Cc: aaro.koskinen@iki.fi, andreas@kemnade.info, khilman@baylibre.com,
-	rogerq@kernel.org, tony@atomide.com, lgirdwood@gmail.com,
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-	m-leonard@ti.com, praneeth@ti.com
-Subject: Re: [PATCH v1 2/4] regulator: tps65219: Update driver name
-Message-ID: <23dd1912-31cf-4e99-8fb0-0fbd68eee8e2@sirena.org.uk>
-References: <20241217204526.1010989-1-s-ramamoorthy@ti.com>
- <20241217204526.1010989-3-s-ramamoorthy@ti.com>
+	s=arc-20240116; t=1734469463; c=relaxed/simple;
+	bh=l6D1mT2VWBESQSXbEZ30D8ey4IP/zcaz0b3H6y5Iw9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jZXo80ZBIfU2yKAQY/FXjMxF+ul4YOT5l3Gz+2gfvTG80wMNEvgdvFkcjpsMY+L8Eff7eTuC3pjTT5DCDZcrDArLcc3Dzwh486/iVjaMce4t/AQ6/HmTDXZUEF3FDO3Fh+/zRLmMcqdaXy9hlxJ0z3caRpGUi7rIpFMpo92u6F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net; spf=fail smtp.mailfrom=users.sourceforge.net; arc=none smtp.client-ip=185.67.36.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=users.sourceforge.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id C2EAD240027
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 22:02:59 +0100 (CET)
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4YCTmL5sTgz9rxB;
+	Tue, 17 Dec 2024 22:02:58 +0100 (CET)
+Date: Tue, 17 Dec 2024 21:02:59 +0000
+From: Michele Martone <michelemartone@users.sourceforge.net>
+To: linux-kernel@vger.kernel.org, kernelnewbies@kernelnewbies.org
+Cc: Julia Lawall <julia.lawall@inria.fr>,
+	Michele Martone <michelemartone@users.sourceforge.net>
+Subject: Training: Semantic Patching of C and C++ Code with Coccinelle
+Message-ID: <Z2HnA3E1ahiBVUPW@localhost>
+Mail-Followup-To: linux-kernel@vger.kernel.org,
+	kernelnewbies@kernelnewbies.org,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Michele Martone <michelemartone@users.sourceforge.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="w2s6dpggywszs1sx"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZLJOIGXCvwN8W1OT"
 Content-Disposition: inline
-In-Reply-To: <20241217204526.1010989-3-s-ramamoorthy@ti.com>
-X-Cookie: The sum of the Universe is zero.
 
 
---w2s6dpggywszs1sx
+--ZLJOIGXCvwN8W1OT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 17, 2024 at 02:45:24PM -0600, Shree Ramamoorthy wrote:
+Dear Linux Kernel Hackers,
 
-> Follow the same naming convention in tps6594-regulator.c with
-> tpsxxx-regulator instead of tpsxxx-pmic.
+this pretty unusual on-site training at LRZ in Munich, Germany may be=20
+of interest to some you, despite the HPC context that motivated it.
+___________________________________________________________________________=
+_______
 
->  static struct platform_driver tps65219_regulator_driver = {
->  	.driver = {
-> -		.name = "tps65219-pmic",
-> +		.name = "tps65219-regulator",
->  		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+ What: Introduction to Semantic Patching of C and C++ Programs with Coccine=
+lle,
+   or
+      A language to update large swathes of C/C++ code with non-trivial cha=
+nges
+          (with emphasis on HPC-specific restructurings).
+ Why: Code maintenance and porting to new CPUs/GPUs is difficult. This can =
+help.
+ When:               Wednesday, January 22, 2025,   09:30 - 17:30
+ Where: Leibniz Supercomputing Centre, Garching near Munich, Germany  (ON-S=
+ITE)
+ Who: Dr. Michele Martone    https://github.com/michelemartone
+ Prerequisites: Good C/C++ knowledge; HPC experience recommended.
+___________________________________________________________________________=
+_______
 
-This isn't just a naming convention thing AFACIT, the MFD registers the
-new name so the driver wouldn't previously have loaded.  How did this
-ever work?
+ Registration URL:  =3D=3D=3D>  --->  https://tiny.badw.de/gsRkBW  <---  <=
+=3D=3D=3D
+___________________________________________________________________________=
+_______
 
---w2s6dpggywszs1sx
+ The maintenance of a large software project can be very demanding. External
+ factors like evolving third-party software library APIs, or constantly cha=
+nging
+ hardware platforms might require significant code adaptions for the code t=
+o run
+ efficiently, or to run at all. Failure in coping with this can lead to
+ obsolescence, loss of performance, incompatibility, vendor lock-in, bugs.
+=20
+ Have you ever wondered how to detect and manipulate specified C/C++ code
+ constructs, be it for code analysis, or better, to restructure an arbitrar=
+ily
+ large codebase according to a specified, non-trivial `pattern', without wr=
+iting
+ a source-to-source translator yourself, but using an existing programmable=
+ one?
+=20
+ In this training we introduce you to a tool to do exactly this: match and
+ restructure code in a programmatic, formal way.
+=20
+ After this training, you shall be able to write your own code transformati=
+ons,
+ be it for a refactoring, performance improvement, paving the way to an
+ experimental fork, or for debug/analysis reasons.
+=20
+ The training will also show how to analyse code looking for interesting
+ patterns (e.g. bugs), integrate your Python scripts to achieve the custom
+ transformations you need, and leverage Coccinelle's increasing C++ support.
+ =20
+ Special mention will go to performance-oriented transformations, of intere=
+st of
+ HPC practitioners.
+___________________________________________________________________________=
+_______
+
+--=20
+Dr. Michele Martone                                   https://michelemarton=
+e.org
+Leibniz Supercomputing Centre (LRZ)            High Performance Systems Div=
+ision
+Boltzmannstrasse 1           D-85748 Garching bei Muenchen               Ge=
+rmany
+      ()     ASCII ribbon campaign   - against HTML e-mail
+      /\                             - against proprietary attachments
+
+--ZLJOIGXCvwN8W1OT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdh5qkACgkQJNaLcl1U
-h9B4Igf/e8JHlXkUwidCE7brRSxYGPTGGWSDZ4qaea6p6ip875qLUpSvPpN+bA3e
-DEhI2lEkeyrGc2o5vza73yr1i35ilq/ipBjilvbg+Y9Nvpls74HEgWbvvHspCwDY
-BTTENSjPL6nSr1LEsOuIDOPU3Sk0dln0OFr5SFYx4V40knClnR2LuJ/o3ifdikRv
-e/BAhnAPqbfDxVws+olal+wQCGPTbNXwUpG13y+rHVDR2htc1jtXM7o+S3Ftq1s5
-8q6CuaDHjh0qtFy9D8J3wLYmNWqzYHCDLRgq19PpVhpug4WjG0KpfAVGZsLBQUNe
-4vxWCPQbmYz+GZxnoW6SHF9Nid7GsQ==
-=whWH
+iF0EABECAB0WIQQdu1Va6jWbiq8Ma4jg5mnI7xJYuAUCZ2HnAgAKCRDg5mnI7xJY
+uC+EAKCCAco6iJjf7xMo1e9DN1KWHnUXiACfcECQ9WTQL0DeaMhX3uk0AYg3BHo=
+=5jUJ
 -----END PGP SIGNATURE-----
 
---w2s6dpggywszs1sx--
+--ZLJOIGXCvwN8W1OT--
 
