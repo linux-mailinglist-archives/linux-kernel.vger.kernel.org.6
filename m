@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-449253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F1C9F4C2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:28:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A553A9F4C4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6BBD7A20A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:27:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39231895302
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813DA1F4276;
-	Tue, 17 Dec 2024 13:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA8C1F4713;
+	Tue, 17 Dec 2024 13:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K9keieNb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bz1Jffin"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3A81F3D3A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937431F37C6;
+	Tue, 17 Dec 2024 13:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442037; cv=none; b=vDtyH7CtAi4snkFyjlSTulVzCWIL+ehM5C7E4cgI67Hsxmt8or2t+rlLm5oDn/mZXQLkus3FMPwrj0CV+GJe8bO/nXnWKrRvd602Blgvg/QHnY1+Mv0GUoMs+ZKrXj4rLYXIyjy0PeuISCpe8q6zl80v30Xd7bIFnYV4W3sudlk=
+	t=1734442047; cv=none; b=W/JRhWKs1NLqKOIvnCgVKFNfxTxFJEMUhZ7iPxs5ZHfPMTxrMZLaPJBq5Zctn1rDMazoQRL64XdDvUPTPXsN54+M5dl5fWdhBPMLkI9rll77xLeWK+M5fGYzIc2QMZZjQkqG64YVywhDQFAN4lveUDN5VmemmQEm0NHcYZfcRKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442037; c=relaxed/simple;
-	bh=oXu9vyR8bEvz/6FdRmpHZsnE9d8Gvkxr2zsBDjlNIDE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZmWPEmg4KbN/D9beXIc6Z9z/qvmOb3Q0YqNkvNZpt0Vc+eCErY+io4jdFItShmzfI7FEii2NoZuG/QVW26hJtNyeQ2A+WzywhnEaHIWjoP3vsQSpdxE/qAMN4hrdSmBN3/QM8b5wTctp0Fl8rq5OdkrNXB4f45keTnodY5BHMSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K9keieNb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734442035;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k09JBCTkQ8smzatbd5fY89UwRwfw+yFRHrgaj7+5wvE=;
-	b=K9keieNbCNki7NR/EtMOEoE6ymQXl+czNorQ7XixPqGelrnYiu1RCY4JxM+dzald6vGuQw
-	fu1tQAYEkfPXYAej/iyAuRau96XQ9ZymwS+12EMpoBdBDSRUdG093cORFY+tV6MUNd9KMV
-	lDxGMLo+00imqHlwSV91odg/7PRMtr8=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-333-oB4ynsq5OumJKMnUNPZI7g-1; Tue,
- 17 Dec 2024 08:27:09 -0500
-X-MC-Unique: oB4ynsq5OumJKMnUNPZI7g-1
-X-Mimecast-MFC-AGG-ID: oB4ynsq5OumJKMnUNPZI7g
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 134601956087;
-	Tue, 17 Dec 2024 13:27:08 +0000 (UTC)
-Received: from RHTRH0061144 (unknown [10.22.81.98])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46C7D30044C1;
-	Tue, 17 Dec 2024 13:27:05 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org,  Yotam Gigi <yotam.gi@gmail.com>,  "David S.
- Miller" <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Simon
- Horman <horms@kernel.org>,  Ido Schimmel <idosch@nvidia.com>,  Eelco
- Chaudron <echaudro@redhat.com>,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] psample: adjust size if rate_as_probability is set
-In-Reply-To: <20241217113739.3929300-1-amorenoz@redhat.com> (Adrian Moreno's
-	message of "Tue, 17 Dec 2024 12:37:39 +0100")
-References: <20241217113739.3929300-1-amorenoz@redhat.com>
-Date: Tue, 17 Dec 2024 08:27:02 -0500
-Message-ID: <f7ty10etp7d.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1734442047; c=relaxed/simple;
+	bh=2GaD3sMPebMUphWDx5huB7scIRnQSIGcV+KEy7uN5qg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KNsUUDxEIG3mY+d39zcyfRo64dRE4eWUULvwlF/vs+9ja1/3oGXGxCz9OaZD7gyPruV8HYDZuQUF6NxDjlLvTcmXxAmxydEvq7hlSGreKv1/6IVAnVqbMp2cSyZLNyIzfaUpiKsH6IF3XyCwdHxHJOWSjCmgJDruqyMOWW49P4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bz1Jffin; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF8FC4CED3;
+	Tue, 17 Dec 2024 13:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734442047;
+	bh=2GaD3sMPebMUphWDx5huB7scIRnQSIGcV+KEy7uN5qg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=bz1Jffinq0ThMU8TkWhB67W4ebfuh2N4+xhVCEFd+zULQpoQGcLqlnjqPaWuNJAZ5
+	 6sqzz2JrL5qdjzOq2fqk73zMAwCC+AoZfHgz7YPvD8l64H3VN1ONQ7kVcEMvrf2EU3
+	 DbVaduFy5jd+3YyHNVoy68lA90uBsJh8+p9Yh1xhFigAxcDo5K3dYnEkBcpQlRDg/v
+	 ZfXeEL2hsnvF3XBwWKbD35ZWFgNI+cThuEsyAr5PTIeShXDtbQNH5jPjthsnSWyUvL
+	 MxKWQSHIv3lHCj97qHE0/v4KlUdMFL0Q132f8gjyYwM8c2yQSnk7++b4eUfwON5Jcc
+	 zu6MUuIN12Wug==
+From: Mark Brown <broonie@kernel.org>
+To: konradybcio@kernel.org, andersson@kernel.org, 
+ srinivas.kandagatla@linaro.org, Alexey Klimov <alexey.klimov@linaro.org>
+Cc: tiwai@suse.com, lgirdwood@gmail.com, perex@perex.cz, robh@kernel.org, 
+ krzk+dt@kernel.org, conor+dt@kernel.org, dmitry.baryshkov@linaro.org, 
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241205023344.2232529-1-alexey.klimov@linaro.org>
+References: <20241205023344.2232529-1-alexey.klimov@linaro.org>
+Subject: Re: (subset) [PATCH v1 0/3] db845c/rb3: add i2s playback support
+Message-Id: <173444204405.31585.10764828283359007380.b4-ty@kernel.org>
+Date: Tue, 17 Dec 2024 13:27:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-Adrian Moreno <amorenoz@redhat.com> writes:
+On Thu, 05 Dec 2024 02:33:41 +0000, Alexey Klimov wrote:
+> There are i2s signals provided in low-speed connector on such boards
+> as required by 96boards spec. Looks like it is possible to actually
+> playback something via these pins after adding missing parts here
+> and there.
+> 
+> I tested simple widely available cheap DACs like UDA1334 and PCM5102A
+> and they works just fine without need for mclk. I guess any DAC that
+> can handle 48 kHz and 16bit will do.
+> 
+> [...]
 
-> If PSAMPLE_ATTR_SAMPLE_PROBABILITY flag is to be sent, the available
-> size for the packet data has to be adjusted accordingly.
->
-> Also, check the error code returned by nla_put_flag.
->
-> Fixes: 7b1b2b60c63f ("net: psample: allow using rate as probability")
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
+Applied to
 
-Reviewed-by: Aaron Conole <aconole@redhat.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
->  net/psample/psample.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/net/psample/psample.c b/net/psample/psample.c
-> index a0ddae8a65f9..25f92ba0840c 100644
-> --- a/net/psample/psample.c
-> +++ b/net/psample/psample.c
-> @@ -393,7 +393,9 @@ void psample_sample_packet(struct psample_group *group,
->  		   nla_total_size_64bit(sizeof(u64)) +	/* timestamp */
->  		   nla_total_size(sizeof(u16)) +	/* protocol */
->  		   (md->user_cookie_len ?
-> -		    nla_total_size(md->user_cookie_len) : 0); /* user cookie */
-> +		    nla_total_size(md->user_cookie_len) : 0) + /* user cookie */
-> +		   (md->rate_as_probability ?
-> +		    nla_total_size(0) : 0);	/* rate as probability */
->  
->  #ifdef CONFIG_INET
->  	tun_info = skb_tunnel_info(skb);
-> @@ -498,8 +500,9 @@ void psample_sample_packet(struct psample_group *group,
->  		    md->user_cookie))
->  		goto error;
->  
-> -	if (md->rate_as_probability)
-> -		nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
-> +	if (md->rate_as_probability &&
-> +	    nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY))
-> +		goto error;
->  
->  	genlmsg_end(nl_skb, data);
->  	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
+Thanks!
+
+[2/3] ASoC: qcom: sdm845: add handling of secondary MI2S clock
+      commit: 8bfb66c75cdace542dabe87841152614fd5b8d91
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
