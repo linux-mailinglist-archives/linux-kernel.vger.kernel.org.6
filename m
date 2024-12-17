@@ -1,132 +1,245 @@
-Return-Path: <linux-kernel+bounces-449172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9D29F4AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:28:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118B09F4AEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09574188DA8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:28:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49A7916C72F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6201F37D5;
-	Tue, 17 Dec 2024 12:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268101F37BF;
+	Tue, 17 Dec 2024 12:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Tsqwhpa/"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mavW8GkO"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C69F1CEEBB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81C91F2C23
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734438480; cv=none; b=dj+lfaMgJhRm5fvNlNJrbRjppVLizREtTrALAmzH1vTCiiIBxoo0tsJs8LugyM/x58FAJiG8otMvEUt+e3EisYc3Sx9tsJF5SqNfjpyhFloCsCUhw2Usayb3CnBvRD4ymaEqoffnp3hQGs3+YbxpEXDozAbctGbtRT8X3PJbyfU=
+	t=1734438612; cv=none; b=ouLGKWIJRKtFZQzp0sPtCuULRR5cJAX7Y7srFLJAACwxjRdnsPzAeEXMrrjbExSB03aUQZcB3OMEBHxwO1w2gZC5/LKaplWmSsa+jFGbsiyp7RPoZUzvP62I9hH5Du3fN+EKGs41PT8KbjvGALwnvHN3d7p5oDECuY5lf1w4jc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734438480; c=relaxed/simple;
-	bh=Dmr+zkG6rFj7xhl58ZvOs1fQmtdJiMol3R2JlnjN8rs=;
+	s=arc-20240116; t=1734438612; c=relaxed/simple;
+	bh=601UAN188A6cMX11FnH+sOdmhoW63ndmmRxJeMn0NG8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fi3zjtF0G8DBx3PKOSIi/DB6FDqZvKTjHd48Un8xnWTz9yV7qXVzxAYHrh6xTI2c1zHrIg+gA/Fg+kmhhnO2bk44KzUF5in0MQ/ZR0qFkYf0pA1BETZtuUVcuqu1ACbpkcQ2NQgpwaMj7PuuYaWTkdzbHXON8a4ueTLaG6ITSAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Tsqwhpa/; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43622267b2eso55516845e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:27:58 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=opCPW5D0exrrDe5EAZpAZc3RyRvkmqWhkptF86UVpvO+/g+KS1VKHjSdkGJgyQPrIFs5v8djK3+PDCzMN5Zt2b2Qyei2or7/tHzv8+D2ZN19YRXu1UNWJxOsW6GOaOfwQJ4LROHQKX82ZtKTwcXqmq8WbY51gfqnQ8rffcWuJi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mavW8GkO; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3003d7ca01cso52493631fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:30:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1734438477; x=1735043277; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0LZxufIyLTNTAhqLSUtBRCFT9U3DEE8+8dGiQI78bU=;
-        b=Tsqwhpa/fVz1Q+9/Czx+kDuVvryX0xpoVLS/D/QrAZ5+guWUlGND8ol9ThqjxP77Xp
-         SNmI5NLjCKpFFxlIutqruREEbNTSD0vj7IIOQ63RaVDy3Aj7ATnQ4giS8VmmQrHd3ulM
-         efBmwIKgTtJEG/1qhMgjp6SPsgV/ktKL55Us+tRLggT/iddgCRHmhMofKOL+TVOdiCKa
-         PhSbrVmP9W/nvfZucCSAoulJQvVTjwu+FYRoKIcry1VQgeL1rwaHk8cP2yRkXR5iKFRv
-         d1KMDG85c9mU7iUV+uOXDkFBnOh1Ij805cZcSQT7WQiV7Azdgp2d7tkpjcphH4LzhVbY
-         ottQ==
+        d=linaro.org; s=google; t=1734438608; x=1735043408; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Cpeg+OoZlAk/avwRjAkuR0FSLO7wRA76WtZnvtz5hp4=;
+        b=mavW8GkOhxd6SL6IQwDxrmRMp8L/M0qwuRvXYggvs3N7jxDuKfcQLa9chPA/2ewlh3
+         H8NdTJpkXlVZTWvxolQVakOHuHYI5sw3d6YNISHlWtrhnYUQ6FQL7nhuZnM974rfewSv
+         MMHBod+U1OoOrCutkDXU8Ji5Oh27Ow4vFWlbAv5TivdvrqqJBgSewwmeJET8uRFxX4MR
+         N775X0skZ53csiu6+C4cb7dXGBdBUqY/BcGNCi53jqLfBHNPnwK5eevQo1O7GDFegfLO
+         jJpGYqAoYv3jgsD/qu4RfXHOi4h5Wf7UpbWMidBc/iAfXouJVo6t8Ej70hrUAmfFftkh
+         zdzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734438477; x=1735043277;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f0LZxufIyLTNTAhqLSUtBRCFT9U3DEE8+8dGiQI78bU=;
-        b=q4n1hpI+KqUm7x79TBL7eUWR69J5qVmbzAWL3n96jFdlzFo+iKKcTsVYXa3rJUAji6
-         Qhs3PN1E1WnqafkEZeVsewDVFf46hyrCVf70b2OXao1kvoV725F9sffttdK6RrVXOqE2
-         7A1arHbtwlFk/iJxmHT6wPb+jFJiZ8k5xZoKhhSJxsrMXKRB5wLe28He3dXyZPaeRIsU
-         JaDWujkfq+GTzYcgXbbkMT5ihGRJWWSvDYwOjYpD3+Jn2+dFI6ea5qYqD6Lh4UZbadYG
-         q3d8S5OEKmQczMXe5GdHz27M7ntNGpR1nfMyWcmdTWp9okilguZi1Vl7rXW6MkyIlyZz
-         lJ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWx6m8fsHWf0K9YpodgJ26gApjChknQeLpWxKQAqiA8WFAbCbS6UjuIXr4T32eZ9pdlekwuMUm5TUpT2cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvM88inQj3Mw1enF2NbU25tsQsma+edbIayKnQ0HAzbNa8AZfy
-	rsRlFjs/M0Z1qg6jSgtojsCyVFEhZ7jU+M3bFm3xFmFauOUWi2KGx4f0zZfJreU=
-X-Gm-Gg: ASbGncsjIKnpwYmBU4ZSPWt3vBxzgIOzJhQey1HIG4Jk43Sz8mk2o6wOSMrKIbs/0EK
-	IFZR5qNu+Z3nPYT111M+Fon5Vmp3Cq/KMB4asYoMlk4ksh4WpWa0PUn8thZCRR6ovNScbFVrECs
-	RHZMH3sq/OmABHIRaZQ+IPtORDWZE3pqkawyVzIoGHoq7uYrvoQNWjn+SrKhMkaiYeJL4jKx+GS
-	wuEAhtGZIAwJuot378U0AMVaoCakiocWTHrB6Tc/ypxtFAlRgSj3++9SHs=
-X-Google-Smtp-Source: AGHT+IHBtk/ewjC+33KbY4kiTsyCa8gijFZMuXZ9Ou3NqePKUlzgP3VG7Yh6lLlkFNIG7kqZNOpvkQ==
-X-Received: by 2002:a05:600c:4e11:b0:434:f804:a9b0 with SMTP id 5b1f17b1804b1-4362aaa49b1mr148537805e9.29.1734438476734;
-        Tue, 17 Dec 2024 04:27:56 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4364a376846sm19216035e9.0.2024.12.17.04.27.56
+        d=1e100.net; s=20230601; t=1734438608; x=1735043408;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cpeg+OoZlAk/avwRjAkuR0FSLO7wRA76WtZnvtz5hp4=;
+        b=TjNOyMntUYilv3NqVsExgkWkd4jTr0GuRPNNnEvUI4o+f2b5IDp3p9anERQfQ9WmLn
+         MWvzUFWFGoXwfzgk1yjzih79Q3VZMojhyODJ4Rytf0N34TFT9B99l3hDT76DEIvExVrW
+         G9eXa+p5LrZ4breLxRA4QtAKZ7as/cCwVd2GTHM9tMJG/gpYMaR0/W+EX2RadKmukM/s
+         WTayJfcybFbVEmONsx+La9STu1BYoWuXuqP+SaOaoYeMx2Ra4kXn8hhbcNVOHa08xdER
+         0ictuZQdoCCbZWetTKkCfqFdbofucDsrqKbWEfjnQc1GU5kMjfh6DbupBNCjz09G4ELm
+         Zcpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXX2999R1QexsfcMwRQDcGTKsVwvhV4zm4IqxdSqJ+nY1OLQeXHd11ezFA0+x7pJe9Tc/Mb6raOAJe85sE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2gImVY6HyZnvUUXf/xU5k8s71YTd1qRTBRH+5cnE76iGKQH0t
+	40+lV/yNHTE/4Y89pKwgMT5p1ZyHOevMLYnOA6+ZfTdrnLAJgU0SEem6DZFwBbI=
+X-Gm-Gg: ASbGncsG6nMD+LEuIoecwLjzS0JdvFWHT88l/iPLOHl0bQjc0QbJDSVS2dTRkyNB3GF
+	JXRAnAX9KO1JENTaug0RssM4QWNbkwYU8T+l5yCqEXXFYa8V47IJ5S1oAzLtvzPtjMh3CnoFPEi
+	bLlRBln3KAhIcsziXB7F2Vv4HsxeLE+Djo29QCXnW6cy9GaQv4N99OOQzP/cDDUbo106peQmG4B
+	MLO+R5S2oY4B9ka3f+bq/ln9gqZ6r7Stnuz3ytDb6n2H/ck50+Vr2oiFx8/E9oLfgxaGFQYFyf+
+	wK6XIgFrxlWY1QdXPFGVrO3a597MFf3PnsI4
+X-Google-Smtp-Source: AGHT+IG/o83HRTYlBKwHjBbNkkDbTOVwon5AjYEKHu8C9oNpfKtoWKENsqidPqi+Ggy0KZ4EaXhgqA==
+X-Received: by 2002:a2e:bc1d:0:b0:302:2620:ec84 with SMTP id 38308e7fff4ca-304434d9d6emr11629731fa.7.1734438607708;
+        Tue, 17 Dec 2024 04:30:07 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-303441a5a75sm12573331fa.99.2024.12.17.04.30.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 04:27:56 -0800 (PST)
-Date: Tue, 17 Dec 2024 13:27:54 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, hannes@cmpxchg.org, 
-	yosryahmed@google.com, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev, davidf@vimeo.com, vbabka@suse.cz, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, chenridong@huawei.com, 
-	wangweiyang2@huawei.com
-Subject: Re: [next -v1 2/5] memcg: call the free function when allocation of
- pn fails
-Message-ID: <ohkphvmcs6c6lpz6ogglkg3p3maqgx6mrv53gezsqdf2mk7u3h@klcxc76nloq7>
-References: <20241206013512.2883617-1-chenridong@huaweicloud.com>
- <20241206013512.2883617-3-chenridong@huaweicloud.com>
+        Tue, 17 Dec 2024 04:30:06 -0800 (PST)
+Date: Tue, 17 Dec 2024 14:30:04 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Xin Ji <xji@analogixsemi.com>
+Cc: Pin-yen Lin <treapking@chromium.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Bernie Liang <bliang@analogixsemi.com>, 
+	Qilin Wen <qwen@analogixsemi.com>, "treapking@google.com" <treapking@google.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] drm/bridge:anx7625: Update HDCP status at
+ atomic_enable()
+Message-ID: <6xyyujq7pizt6a2ztjfuapz7pphz33lxgvsjextlrhnefkjaq2@lhpy4bo4wajd>
+References: <20241212055110.1862487-1-xji@analogixsemi.com>
+ <vkrl7om7hepboovp2uivcnernia3ygqwrj3y3kkjydeclwvrk5@7tkdc4etkcjs>
+ <BY5PR04MB673977C1DB1E774CB261C119C7382@BY5PR04MB6739.namprd04.prod.outlook.com>
+ <4q2jncpnmeu7ytuyuv5pjzurh3ai5663jmu2we6cebuad2r3r5@tfb6hf6unioc>
+ <BY5PR04MB673902E047FF8ADAFD8B94B3C7382@BY5PR04MB6739.namprd04.prod.outlook.com>
+ <CAA8EJprGjuGFjZnXUxiMZMV=FO9O9CYt06H_nSL82fEOvPytyA@mail.gmail.com>
+ <BY5PR04MB6739C5804F0E9764EFD3A3EBC73B2@BY5PR04MB6739.namprd04.prod.outlook.com>
+ <fyltwqxyrmy3rz75nosc4wn6z5zglwv7pelzdf5g6ztloq4ncj@yigwmszuhigb>
+ <CAEXTbpf3Bipid7bgnYzGJ6C6d+pgPcA2mjwFijSBwz_6Ub4aaw@mail.gmail.com>
+ <BY5PR04MB6739B4BEAEFD0292C1AC9E3FC7042@BY5PR04MB6739.namprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3ki3l36ikdb6o5jh"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241206013512.2883617-3-chenridong@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BY5PR04MB6739B4BEAEFD0292C1AC9E3FC7042@BY5PR04MB6739.namprd04.prod.outlook.com>
 
+On Tue, Dec 17, 2024 at 01:50:00AM +0000, Xin Ji wrote:
+> > -----Original Message-----
+> > From: Pin-yen Lin <treapking@chromium.org>
+> > Sent: Monday, December 16, 2024 8:05 PM
+> > To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Cc: Xin Ji <xji@analogixsemi.com>; Andrzej Hajda <andrzej.hajda@intel.com>;
+> > Neil Armstrong <neil.armstrong@linaro.org>; Robert Foss <rfoss@kernel.org>;
+> > Laurent Pinchart <Laurent.pinchart@ideasonboard.com>; Jonas Karlman
+> > <jonas@kwiboo.se>; Jernej Skrabec <jernej.skrabec@gmail.com>; Maarten
+> > Lankhorst <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+> > <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>; David
+> > Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Bernie Liang
+> > <bliang@analogixsemi.com>; Qilin Wen <qwen@analogixsemi.com>;
+> > treapking@google.com; dri-devel@lists.freedesktop.org; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH v3] drm/bridge:anx7625: Update HDCP status at
+> > atomic_enable()
+> > 
+> > 
+> > Hi Dmitry,
+> > 
+> > On Mon, Dec 16, 2024 at 7:59 PM Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> > >
+> > > On Mon, Dec 16, 2024 at 08:33:23AM +0000, Xin Ji wrote:
+> > > > > -----Original Message-----
+> > > > > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > Sent: Friday, December 13, 2024 9:17 PM
+> > > > > To: Xin Ji <xji@analogixsemi.com>
+> > > > > Cc: Andrzej Hajda <andrzej.hajda@intel.com>; Neil Armstrong
+> > > > > <neil.armstrong@linaro.org>; Robert Foss <rfoss@kernel.org>;
+> > > > > Laurent Pinchart <Laurent.pinchart@ideasonboard.com>; Jonas
+> > > > > Karlman <jonas@kwiboo.se>; Jernej Skrabec
+> > > > > <jernej.skrabec@gmail.com>; Maarten Lankhorst
+> > > > > <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+> > > > > <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>;
+> > > > > David Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>;
+> > > > > Bernie Liang <bliang@analogixsemi.com>; Qilin Wen
+> > > > > <qwen@analogixsemi.com>; treapking@google.com;
+> > > > > dri-devel@lists.freedesktop.org; linux- kernel@vger.kernel.org
+> > > > > Subject: Re: [PATCH v3] drm/bridge:anx7625: Update HDCP status at
+> > > > > atomic_enable()
+> > > > >
+> > > > > CAUTION: This email originated from outside of the organization.
+> > > > > Please do not click links or open attachments unless you recognize
+> > > > > the sender, and know the content is safe.
+> > > > >
+> > > > >
+> > > > > On Fri, 13 Dec 2024 at 13:00, Xin Ji <xji@analogixsemi.com> wrote:
+> > > > > >
+> > > > > > Hi Dmitry, sorry, I didn't clear describe the reason.
+> > > > >
+> > > > > Please. Do not top-post. Please paste your answer under the
+> > > > > question, not somewhere at the top of the email. This allows us to
+> > > > > have a more constructive dialog. Additional bonus if you can fix
+> > > > > your email client to insert sensible quoting information instead of dumping
+> > the headers of the original email.
+> > > > Hi Dmitry, OK, sorry about it. Currently, we have problem to fetch
+> > > > email from Microsoft on Ubuntu. I'll try to fix it later.
+> > > > >
+> > > > > >
+> > > > > > Anx7625 implement DSI to DP convert behind USB Type-C port, when
+> > > > > > user plug into USB Type-C Dongle with DP monitor, the user space
+> > > > > > will enable HDCP feature, then kernel do HDCP and output display
+> > > > > > and set HDCP content to ENABLE, but the issue happened if user
+> > > > > > manually change the
+> > > > > monitor's resolution later.
+> > > > > >
+> > > > > > Each time user change the resolution, kernel will call bridge
+> > > > > > interface .atomic_disable() and .atomic_enable(), the old driver
+> > > > > > will keep HDCP state to ENABLE, this is a BUG, when user change
+> > > > > > the resolution, kernel must change HDCP content too (mustn't
+> > > > > > keep to ENABLE),
+> > > > >
+> > > > > Why? Could you please point me to the corresponding documentation
+> > > > > or a code path in the other driver? Preferably i915, AMD or Nouveau.
+> > > > As
+> > https://elixir.bootlin.com/linux/v6.12.5/source/drivers/gpu/drm/drm_connecto
+> > r.c#L1423:
+> > > >         - ENABLED -> DESIRED (termination of authentication) As
+> > > > there is no other interface to tell anx7625 bridge driver, so the I
+> > > > think best place to handle ENABLE -> DESIRED in .atomic_disable().
+> > >
+> > > I was looking for something like cdns_mhdp_connector_atomic_check(),
+> > > which switches to UNDESIRED if there is no new CRTC. Likewise i915
+> > > driver performs this in intel_hdcp_atomic_check() if there is a need
+> > > for modeset.
+> Hi Dmitry, the bridge driver is different with i915, anx7625 bridge driver
+> only implement some passive callback interface. There is no HDCP status
+> checking while do resolution switch.
 
---3ki3l36ikdb6o5jh
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Does that mean that you _have_ to reestablish HDCP after mode switching
+in order for it to work?
 
-On Fri, Dec 06, 2024 at 01:35:09AM GMT, Chen Ridong <chenridong@huaweicloud=
-=2Ecom> wrote:
-> From: Chen Ridong <chenridong@huawei.com>
->=20
-> The 'free_mem_cgroup_per_node_info' function is used to free
-> the 'mem_cgroup_per_node' struct. Using 'pn' as the input for the
-> free_mem_cgroup_per_node_info function will be much clearer.
-> Call 'free_mem_cgroup_per_node_info' when 'alloc_mem_cgroup_per_node_info'
-> fails, to free 'pn' as a whole, which makes the code more cohesive.
->=20
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->  mm/memcontrol.c | 27 ++++++++++++---------------
->  1 file changed, 12 insertions(+), 15 deletions(-)
+> > 
+> > I believe you mean "DESIRED" here.
+> > >
+> > > For the "termination of authentication" case see
+> > > cdns_mhdp_hdcp_check_link(), which detects if the HDCP got disabled by
+> > > HW and then updates the status accordingly.
+> > >
+> > > >
+> > > > >
+> > > > > > as DRM doc said, kernel cannot change from ENABLE to UNDESIRE,
+> > > > > > so next patch, I'll change it to DESIRE in .atomic_disable().
+> > >
+> > > This e.g. will result in HDCP being restarted for all modesets. Is
+> > > this an expected behaviour?
+> > 
+> > The bridge could be powered off between .atomic_disable()
+> > and .atomic_enable(), though I'm not sure if this would be a concern for
+> > anx7625. I'll let Xin to comment on this.
+> The flow of resolution switch is:
+>     -> .atomic_disable().
+>         -> .atomic_enable().
+>             -> HDCP status check and enable.
+> As resolution switch is triggered by user space, at this moment, the HDCP
+> works fine(cannot get disabled event from HW).
+> So, I think, .atomic_disable() is
+> the best place to do termination of authentication (turn HDCP status to DESIRED).
+> This is the only entrance which can do termination of authentication, I cannot
+> find others.
 
-(Little of a judgment call but also)
-Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
+I'm probably still missing a reference to the standard (please excuse
+me, I don't know it by heart). Is it a standard requirement to
+reauthenticate on the mode switch?
 
---3ki3l36ikdb6o5jh
-Content-Type: application/pgp-signature; name="signature.asc"
+BTW, while reading the anx7625 code, I noticed that there is a possible
+race between .atomic_enable() / .atomic_disable() which set
+ctx->connector and the hdcp_check_work_func() which reads ctx->connector
+without any protection.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ2FuSAAKCRAt3Wney77B
-SfQ+AP9X381Jf33s+FoGPIzwzpwnzlojkNv+6yBvGADf83dixAEAuDtx7wBMm/XQ
-5z+3XnDlJossa9WZtwtwcsYoas3gtQc=
-=d3q2
------END PGP SIGNATURE-----
-
---3ki3l36ikdb6o5jh--
+-- 
+With best wishes
+Dmitry
 
