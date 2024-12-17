@@ -1,103 +1,173 @@
-Return-Path: <linux-kernel+bounces-448985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E325C9F47FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:50:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5C09F47FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FA7B1892089
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:49:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6571D166DF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD271DF274;
-	Tue, 17 Dec 2024 09:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GQssds4y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DA71DFE00;
+	Tue, 17 Dec 2024 09:48:27 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC9112C80C;
-	Tue, 17 Dec 2024 09:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E488A1DFDB5
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734428892; cv=none; b=h/KeWATvzixUKNNfKVkOrbZMdIavlVhoikiQyufHGsKBCO8g75L9RAuMcoVDhwdmF+ZtyVV6IYsTG0uvs3tzRYUCUsk66pOaG2txjEuEqi9+oLmoka0sEXUztkuqu0BJyd/3tsWs8cKHT9K4pkpg8mnUNrjansSL4zfAdAAfPHs=
+	t=1734428906; cv=none; b=I5FxOuixubbngFsrzSmMg1vLQj1pLhhUbFo0jfTruJm0cGRYESR/mUfWAsAGNGacTLzOJivTPULLCGipa5MHcFPHBb3M22+F70VGFo9AvMs9/xwbJ+rDrxWX0n2w9zZRryLdD+X7FZxZX7QkBTywGbM2PzPkB4KQEPeJ/yEw3jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734428892; c=relaxed/simple;
-	bh=IK/9xyDrnlo+0jqWPtN3vD0Tkun74103r13QnCikifo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fsg6qBcX8wcG2HNqFtBrNm5pHUPLd1yu+UTXSpORY3KeacpY7GMDhFFiTz/FNtpJw9Q61CNPs71uSkWyoLcGOHKRb55K7RF4M8ToVC/NhJanv3sPuzb6v0yYwSUhvTuR98liFZvY4BNySvLwpGakNT7EBNdf1YMfelrvTxeIsLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GQssds4y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7770C4CED3;
-	Tue, 17 Dec 2024 09:48:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734428892;
-	bh=IK/9xyDrnlo+0jqWPtN3vD0Tkun74103r13QnCikifo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GQssds4y6xwDoIMxdaTH7nXJXkJfZT/6FyeUEBXS9ePObnuUxgwQPFZgDXU9oXN5p
-	 Yiu6MvPqrVNV/u9kGgBcPJArS/VV/Nuuo85cPJobE3ztPd4Wsy4pYp6tx6USg3Fr4g
-	 YKXGW4eDwrNx5Su89xfBweLvrKUUOOQkS1HL9yRo=
-Date: Tue, 17 Dec 2024 10:48:01 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 5.10 000/459] 5.10.231-rc1 review
-Message-ID: <2024121753-ransack-monstrous-712b@gregkh>
-References: <20241212144253.511169641@linuxfoundation.org>
- <68b0559e-47e8-4756-b3de-67d59242756e@roeck-us.net>
+	s=arc-20240116; t=1734428906; c=relaxed/simple;
+	bh=I0fyUejRXrcZeygj2FiK1acNIwCSe5DLIYY2zBUhphM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=byOMAjegSY+uYRLnQxoBMTWhZoIVVIF9bVjPQvzZLrQrf2J3nwIR0NkWp5lxQl6hsMOtoqKIVTDD9M93u7b89iadOrvamQRKWT2NGpPPjbR4qm8mNlD5xKfGf17uHEHCGCOzQS/dcIp68QZ2MvmRjgByhpTvSd3M2EBhRQMnd/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-844d54c3e74so388214839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:48:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734428904; x=1735033704;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=k7Ohw9FdZun9tCxVR+V58AxTTwpDnpaw4I4rebrkACs=;
+        b=ouFOEoPsCRN8s7bK6Ci9dYtGyF4P1Km+mLoZPEzPzKJwZ6grKKh3xwW0SoZGjFlQfq
+         FuXtoIz62F3M8XQE73YqU9fCbJ+kGfWYONyC5WD6cS2ndsavCvTn3aARF5Tw4d3gmI9B
+         D1m/TWZwlYQNmQ/4sCVBKDm7h7iuVIbZswG3fq3i6te1WXDcQInOqAoUp9MJWnGt6SEp
+         3/6kr+EnX84KFPtd868f9eYRNH+b1ekAuaOMIWrzqvaYn1Kaw9CqAsZFhA8cxInZtHDD
+         XTtcvvp7TTNjG5NAyyBKfPkmswWYbxx8PblG6g/9eJhl/YRRQSbExVnJzE8sN5arH74u
+         /Guw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuQb1VC79BjjdO0o/PQdurL5wiLIk613LH3JnFiTXZLxFqBgi9+lN8nrCSUSrTPsSdGDndk5V0elgw27g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHnCm6thzaDllV/TxNDH9dNRX6IPAcGaRpJ12M2O2XUSzVlIVz
+	VRF8PEpjx8Qc47tz17HAVTiwH+tTguLGRTPlokuJzn6Vffp7G14O4127kCvtT1FTd0s5Im+10Gq
+	2wgnmZacWsvAGY7t3US5ULKLGCdF9hJYELXpCC/1vknHB74fzmG6Dozg=
+X-Google-Smtp-Source: AGHT+IHI9tYk8oBynelfPrOkch9cOquRNVuGZrHan+16Hk0hGAubvsg8DCIGxrVhoM/XYZRyY38tAlmP5tjN4bfiN2UpHZ89frcW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68b0559e-47e8-4756-b3de-67d59242756e@roeck-us.net>
+X-Received: by 2002:a05:6e02:1905:b0:3a0:c820:c5f0 with SMTP id
+ e9e14a558f8ab-3aff9256d09mr175850255ab.24.1734428904148; Tue, 17 Dec 2024
+ 01:48:24 -0800 (PST)
+Date: Tue, 17 Dec 2024 01:48:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <676148e8.050a0220.37aaf.0158.GAE@google.com>
+Subject: [syzbot] [kvmarm?] BUG: unable to handle kernel paging request in vgic_its_set_attr
+From: syzbot <syzbot+62e8b837d5ec5953c8e2@syzkaller.appspotmail.com>
+To: catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	maz@kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, 
+	syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Dec 15, 2024 at 07:15:24AM -0800, Guenter Roeck wrote:
-> On 12/12/24 06:55, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.10.231 release.
-> > There are 459 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> > Anything received after that time might be too late.
-> > 
-> 
-> Build results:
-> 	total: 156 pass: 147 fail: 9
-> Failed builds:
-> 	m68k:allnoconfig
-> 	m68k:tinyconfig
-> 	m68k_nommu:m5272c3_defconfig
-> 	m68k_nommu:m5307c3_defconfig
-> 	m68k_nommu:m5249evb_defconfig
-> 	m68k_nommu:m5407c3_defconfig
-> 	m68k_nommu:m5475evb_defconfig
-> 	mips:ar7_defconfig
-> 	nds32:allmodconfig
-> Qemu test results:
-> 	total: 480 pass: 479 fail: 1
-> Failed tests:
-> 	m68k:mcf5208evb:m5208:m5208evb_defconfig:initrd
-> 
-> Some details below. Reverting
-> 
-> ef1db3d1d2bf clocksource/drivers:sp804: Make user selectable
-> d08932bb6e38 clkdev: remove CONFIG_CLKDEV_LOOKUP
-> 
-> fixes the problem for m68k:tinyconfig and m68k:m5272c3_defconfig. I didn't check
-> if it fixes the other failures, or if the revert affects anything else.
+Hello,
 
-Now dropped, thanks.
+syzbot found the following issue on:
 
-greg k-h
+HEAD commit:    5db899a34f75 Merge remote-tracking branch 'kernel/kvmarm/n..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git fuzzme
+console output: https://syzkaller.appspot.com/x/log.txt?x=148b6a0f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fde68ab6d6c8c8ab
+dashboard link: https://syzkaller.appspot.com/bug?extid=62e8b837d5ec5953c8e2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-5db899a3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4938b757ff4a/vmlinux-5db899a3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/936938b47987/Image-5db899a3.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+62e8b837d5ec5953c8e2@syzkaller.appspotmail.com
+
+Unable to handle kernel paging request at virtual address efff800000000001
+KASAN: null-ptr-deref in range [0x0000000000000010-0x000000000000001f]
+Mem abort info:
+  ESR = 0x0000000096000005
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x05: level 1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+swapper pgtable: 4k pages, 52-bit VAs, pgdp=0000000044a53000
+[efff800000000001] pgd=1000000049992003, p4d=1000000049993003, pud=0000000000000000
+Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 UID: 0 PID: 5975 Comm: syz.1.647 Not tainted 6.12.0-rc7-syzkaller-g5db899a34f75 #0
+Hardware name: linux,dummy-virt (DT)
+pstate: 60402009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __hwasan_check_x0_67043362+0x4/0x30
+lr : vgic_its_save_ite arch/arm64/kvm/vgic/vgic-its.c:2101 [inline]
+lr : vgic_its_save_itt arch/arm64/kvm/vgic/vgic-its.c:2204 [inline]
+lr : vgic_its_save_device_tables arch/arm64/kvm/vgic/vgic-its.c:2353 [inline]
+lr : vgic_its_save_tables_v0+0x258/0x634 arch/arm64/kvm/vgic/vgic-its.c:2573
+sp : ffff80008bd17be0
+x29: ffff80008bd17c30 x28: 6cf0000019180180 x27: 5bf000001952a880
+x26: 0000000000000008 x25: 0000000000000000 x24: 0000000000000000
+x23: 07f000001952a8c0 x22: 07f000001952a8d0 x21: 00000000c0030000
+x20: 07f000001952a8d0 x19: efff800000000000 x18: 00000000000000e8
+x17: 0000000000000000 x16: 0000000000000001 x15: 0000000000000000
+x14: 000000000002061b x13: 0000000000000000 x12: 0000000001fbb6cb
+x11: 0000000000000000 x10: 0000000000002000 x9 : efff800000000000
+x8 : 0000000020000000 x7 : ffff8000800fc528 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 8df00000195be2f0 x3 : 0000000000000008
+x2 : ffff8000800fc5a4 x1 : 0000000000000000 x0 : 0000000000000010
+Call trace:
+ __hwasan_check_x0_67043362+0x4/0x30
+ vgic_its_set_attr+0x394/0x508 arch/arm64/kvm/vgic/vgic-its.c:2736
+ kvm_device_ioctl_attr+0x150/0x18c virt/kvm/kvm_main.c:4721
+ kvm_device_ioctl+0x154/0x1b0
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+Code: a90efbfd d2800401 143a3edf 9344dc10 (38706930) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	a90efbfd 	stp	x29, x30, [sp, #232]
+   4:	d2800401 	mov	x1, #0x20                  	// #32
+   8:	143a3edf 	b	0xe8fb84
+   c:	9344dc10 	sbfx	x16, x0, #4, #52
+* 10:	38706930 	ldrb	w16, [x9, x16] <-- trapping instruction
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
