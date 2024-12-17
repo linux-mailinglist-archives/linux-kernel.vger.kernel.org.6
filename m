@@ -1,145 +1,102 @@
-Return-Path: <linux-kernel+bounces-449596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A329F5134
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:38:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F1E9F5138
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8FC0165841
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:38:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90971164BC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8031F75BE;
-	Tue, 17 Dec 2024 16:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C651F4735;
+	Tue, 17 Dec 2024 16:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UuQhqn/M"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbtGxK+L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13BC1F6676
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5250142E77;
+	Tue, 17 Dec 2024 16:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734453490; cv=none; b=L5kxBLGudig6eBdO5a8FCqhOmIM8ofQFE68Eh9oiQb8lVUI+PSUpkCnM7H+6oThO/7nhiEFB+fOd2FPg19Ev1PYYLz/Q8WLD69KiMDH+AFsRiLqAwAOwCaGeAqNmgk62Bbg+dwdl84/6OTYXXrEe/nryYk4CM8g2H2A8+DkbZUs=
+	t=1734453539; cv=none; b=hXwT4Luv3xf0PAAtqF6b30U2dhxIiVEjh3jeNvbuve4NCK2A9tuhjI+DHfD4jq2+6QAp34jbr5bpjDXPJtbN8MiMvpECesvBtzDHdLc3uwUoPX9ld/r6ILS4XFP7FBR4lY4u96UqU7bmCV8EP5k3xgcHFM54KRzydQPVNTrgJg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734453490; c=relaxed/simple;
-	bh=ZfXv8cNLEnRBxg9wVVM5y+8TMf0SysnxIcST/G9iWRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Xt9wPOTQVeMM/aVGrfJN33JqMgT1MyQBuzWrzBI+9Ag1a6ht90sa6rx2pNkONRazpM/nT/xwhCxEi72VztsLWo41oIQW+CKz2YfdQQ9P0NmaWWDxKJ7VyKIRBPmBcl7x1nZiZGQHGV/AweSFcKBTOB6Ye0VNl7RKKqLmozfg3J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UuQhqn/M; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa696d3901bso1063080766b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:38:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734453487; x=1735058287; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=iH70s4kN1OmYyU7l5ZxBv++8EBPGyuzfTKRoG/MitJE=;
-        b=UuQhqn/MOBXxny5qbgX3UUQ875QZ0OrGRy1S6ufY0twzsToeYrQzk6o6Ii6iiZFdYx
-         RXOKc1YMTjJuy8wAaVrEw1XG5Y0+qc+quGcciGT7nQcRBU8DdhW5D07Kg34ZBM8rXhm1
-         L5Xf01IQUnfgpk9hqz/IIRFuGQ2NG4BqbHEVZHzDb0PcBEDwTIiPzcWpwYeCV0B5bTdi
-         6mK/jKfhGIHdhWC3Wn367el2K24DCxRfTP5heu81xefOUFe/hKr7l11oZrlgriB/7a4I
-         LcIL4vol3cn+ZoT86mb8zBafyeZeXm0lAsilUCE2P2+bvxKoyFisNVClh565HT5USINu
-         3nwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734453487; x=1735058287;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iH70s4kN1OmYyU7l5ZxBv++8EBPGyuzfTKRoG/MitJE=;
-        b=W/TZk6bUvxoCxce0fQyCyEjII+gZWHDKRA5DP5CZtNc0/Vtoi2klby9OxqjoNcqQt5
-         arLR24n8Z2xn5rnrTglH/F3ZHmKWHRmsnA5JXO0uosd0NeYtstftDcysw1N1ON+8qImX
-         fbicIFxN9o8fLA7YhU7PhKJsrJQUdItfxsgwZszG6hGeBgZ8uoIPZoXqvY+jtFyfaOyh
-         CEgs/HFfcSjPe30ELGgIOklhCwzZrv7N2f9atlyvQalcbH9XMF9MraWBknp/ohpyDNLZ
-         LHG4tuvA+mvQI+ocUdoHKn8Wom3Y45K8GfMZV8ftIgRPSOTxecG5LDCRE7MDiiJbmqJk
-         GnPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgmbEwXOj5aLV9siEA+eY6LD4jT86fe6kR0i9qKiSO1S1M0JM/uZnEk6LUV2nGuwMUG8M+Hnp4z/hVJco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhtHi3mV+jymjRM0A5pOLY6xyzqn5HMhuoi88II5/h+mZt+pFF
-	hKDLAH9hHgp8jKI8AByYAi4CXPUlCH3lrOkDjSdVUo8s5xGfjMo+
-X-Gm-Gg: ASbGncuVyvjajOC7UbDeGTW2sR401G5VW+iZwzzeOb5guYb7Sy94JbX+9QjVr0jW3qc
-	R4zuujOpKD4sP6Cix30mTSMlTLiKYIDMe4nhL8CM+NfHaDJTAPaQNYsxAc+ioQRI3gGTYJhU+9f
-	wkudE/2coDNV61tB4ybT7yum+2wO4xmRI8L93eQJiSUj1UoTNLWFZvLNWbmcBYwm6VTa+HCum2b
-	tVKeURZbGM1LQ5D7h098A+fWQD7ai+eM3/yrIQrpF6bjGbFC9cn/rYHtQ==
-X-Google-Smtp-Source: AGHT+IFdOTWlQ3XGT9Bbtyc5hUf6TLwfRJLJZcM8KJ/JAayRtZbKneHKECG4frLOlCSEzCF6vLj9aw==
-X-Received: by 2002:a17:906:dc92:b0:aab:736c:558 with SMTP id a640c23a62f3a-aab77ebcacdmr2066488266b.55.1734453486800;
-        Tue, 17 Dec 2024 08:38:06 -0800 (PST)
-Received: from [192.168.1.100] ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963595ffsm463142266b.94.2024.12.17.08.38.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 08:38:06 -0800 (PST)
-Message-ID: <05bde41f-9f2a-18e9-05ef-c5b29a66caf8@gmail.com>
-Date: Tue, 17 Dec 2024 17:38:04 +0100
+	s=arc-20240116; t=1734453539; c=relaxed/simple;
+	bh=69+55AMwxYgC7yebAzKAof5dQbloZSQVUEf583Fd7BI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pF+k+SauQ1fO3DOU49mxRDLVeAKhjZs3clzzfsYXGYQwny82cxvtG6y0yE2M2L+gmzNGjZ8ar7Ov0Yocbqv5L7JCVeyhIVQI/o4NUbYcwhDXGLMO9lFaKSUAR35xte0LPuqBHZI885pYCcBrSxNgN5u8nE1cdUt8x2tEYEw9+yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbtGxK+L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A006C4CED3;
+	Tue, 17 Dec 2024 16:38:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734453539;
+	bh=69+55AMwxYgC7yebAzKAof5dQbloZSQVUEf583Fd7BI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bbtGxK+Ls3Vi6642CXh6vu08U03HjZDjb9claMlC+XGubm5qhwAel3Us/H4zBnMkO
+	 m4ZdIyMimlHAEGIh/Hk7KQoLitJC9z1ttR43kj0uZE5BTy3Zayw1GY0SxStRdCk6a9
+	 kgE0PYmT7z5KbWsVzpYiY4/orjyMixSaQARir97TiTSs0MqHr5Lq3xrOYKJTdQMtmP
+	 PF5bpDh8ReAcxzzH95KhTi/E28clTcXQQPeLAJ1ShvRnwd/cScvD4aSNR/J+ImZ8Eg
+	 m2Ber9m7kOok/USkXNGGjDPYCAQf7rhPpBEkobqQfEMpvQl5AZS5x9vkC2iqcUDo/7
+	 nxpvW6wJvlnfw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH] Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports"
+Date: Tue, 17 Dec 2024 10:38:51 -0600
+Message-ID: <173445353301.470882.1221462093815662513.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241206172402.20724-1-johan+linaro@kernel.org>
+References: <20241206172402.20724-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 2/9] x86/kexec: Ensure preserve_context flag is set on
- return to kernel
-To: David Woodhouse <dwmw2@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Eric Biederman <ebiederm@xmission.com>, David Woodhouse <dwmw@amazon.co.uk>,
- Sourabh Jain <sourabhjain@linux.ibm.com>,
- Hari Bathini <hbathini@linux.ibm.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Thomas Zimmermann <tzimmermann@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
- Yuntao Wang <ytcoode@gmail.com>, David Kaplan <david.kaplan@amd.com>,
- Tao Liu <ltao@redhat.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Breno Leitao <leitao@debian.org>,
- Wei Yang <richard.weiyang@gmail.com>, Rong Xu <xur@google.com>,
- =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <thomas.weissschuh@linutronix.de>,
- linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
- Simon Horman <horms@kernel.org>, Dave Young <dyoung@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de, nathan@kernel.org
-References: <20241216233704.3208607-1-dwmw2@infradead.org>
- <20241216233704.3208607-3-dwmw2@infradead.org>
-Content-Language: en-US
-From: Uros Bizjak <ubizjak@gmail.com>
-In-Reply-To: <20241216233704.3208607-3-dwmw2@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-
-On 17. 12. 24 00:24, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
+On Fri, 06 Dec 2024 18:24:02 +0100, Johan Hovold wrote:
+> This reverts commit 1a48dd7b9ac809d1bd0fd2fef509abba83433846.
 > 
-> The swap_pages function will only actually *swap*, as its name implies,
-> if the preserve_context flag in the %r11 register is non-zero. On the
-> way back from a ::preserve_context kexec, ensure that the %r11 register
-> is non-zero so that the pages get swapped back.
+> A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
+> ports can break SuperSpeed device hotplugging. The host controller is
+> enumerated, but the device is not:
 > 
-> Fixes: 9e5683e2d0b5 ("x86/kexec: Only swap pages for ::preserve_context mode")
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
->   arch/x86/kernel/relocate_kernel_64.S | 1 +
->   1 file changed, 1 insertion(+)
+> 	xhci-hcd xhci-hcd.5.auto: xHCI Host Controller
+> 	xhci-hcd xhci-hcd.5.auto: new USB bus registered, assigned bus number 3
+> 	xhci-hcd xhci-hcd.5.auto: hcc params 0x0110ffc5 hci version 0x110 quirks 0x000080a000000810
+> 	xhci-hcd xhci-hcd.5.auto: irq 247, io mem 0x0a800000
+> 	xhci-hcd xhci-hcd.5.auto: xHCI Host Controller
+> 	xhci-hcd xhci-hcd.5.auto: new USB bus registered, assigned bus number 4
+> 	xhci-hcd xhci-hcd.5.auto: Host supports USB 3.1 Enhanced SuperSpeed
+> 	hub 3-0:1.0: USB hub found
+> 	hub 3-0:1.0: 1 port detected
+> 	hub 4-0:1.0: USB hub found
+> 	hub 4-0:1.0: 1 port detected
 > 
-> diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-> index 9bd601dd8659..1a52e4339c1d 100644
-> --- a/arch/x86/kernel/relocate_kernel_64.S
-> +++ b/arch/x86/kernel/relocate_kernel_64.S
-> @@ -220,6 +220,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
->   	movq	kexec_pa_table_page(%rip), %rax
->   	movq	%rax, %cr3
->   	lea	PAGE_SIZE(%r8), %rsp
-> +	movq	$1, %r11	/* Ensure preserve_context flag is set */
+> [...]
 
-You can save a byte here by using "movl $1, %r11d".
+Applied, thanks!
 
->   	call	swap_pages
->   	movq	kexec_va_control_page(%rip), %rax
->   	addq	$(virtual_mapped - relocate_kernel), %rax
+[1/1] Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports"
+      commit: 1fb5cf0d165afc3be76ec754d1b1013515c3896a
 
-Uros.
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
