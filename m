@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-448958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46089F47B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:37:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D339F47B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:38:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9313C18846B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:37:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4B5A18824F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573BC1DB372;
-	Tue, 17 Dec 2024 09:37:34 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408671D2B11;
+	Tue, 17 Dec 2024 09:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JRpd96Xp"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD341D2B11
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EC71D5ACD
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734428254; cv=none; b=RBGmHnLavFIR71U8GvHhsOaRtd94naqsuDpZebjSqNOV7zqUNvlkJQg2bbXiOR5LSE2A/Be+9z/6W+agXjxQsDMeNeFSCOEaqc7iF3T1UyQ1XhR8NxCT/3Z4G8H0EieUbPMh8sFU3BTQve2ucnlZljhcrmcLy8jgzD/hi/MHjNM=
+	t=1734428297; cv=none; b=hU2UzbbCsjqFUp3Fowd4V41CEwFm7QoWzTZ9gm50RN03FFEDlelB2zGJS4j20DEOMxyQBNBDDvfodAyWzG/XBRONhaNo9LVGU/lNuGvEsB4aroHLt0M9utQAe00nUA8Cjwe6MRLOz8DOZYpeI/rXmVJEJ0o/tUHLV3+Z00df7r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734428254; c=relaxed/simple;
-	bh=PbdsB2BhIDuxuM2K/h5mPZ7JGcHKlNVmrrssGgyp37A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DEzFDV7wArrCiFfYi1MVnAZaiVP3PUX1jKLZBs2JGr4w+ihDFNxfeGWaaRhgR4AfnBzlbw2IVMV9IC9I8ZmHgtGPH/M8dOB5KlL00tMDfswlqguKh9LzisPxzRiR7XqPSW9jHvk6uezOz5DJN7jXvBqjvWwmx5hdvgo/sz9xtrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1tNU0y-0006bG-N7; Tue, 17 Dec 2024 10:37:16 +0100
-Message-ID: <8956e0daffc89f8c6791f8a53b1666ca31011a45.camel@pengutronix.de>
-Subject: Re: imx8m-blk-ctrl: WARNING, no release() function
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Peng Fan <peng.fan@nxp.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>, "linux-pm@vger.kernel.org"
- <linux-pm@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
- Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>, Marek Vasut
- <marex@denx.de>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Jindong Yue <jindong.yue@nxp.com>, Benjamin
- Gaignard <benjamin.gaignard@collabora.com>, Paul Elder
- <paul.elder@ideasonboard.com>,  =?ISO-8859-1?Q?Herv=E9?= Codina
- <herve.codina@bootlin.com>
-Date: Tue, 17 Dec 2024 10:37:14 +0100
-In-Reply-To: <20241217094219.788cad88@booty>
-References: <20241212141003.GA44219@francesco-nb>
-	 <PAXPR04MB8459AB53B142CB43782757D988042@PAXPR04MB8459.eurprd04.prod.outlook.com>
-	 <20241217094219.788cad88@booty>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1734428297; c=relaxed/simple;
+	bh=kb3kP9tneB+GVEHe2feWWDmh0vqws9+suKVVH1/v88Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I98QaoFo7uC3GBQKMLqC4WNsokLKAPHiud921bse851+xdNa4ulunajeFHaqlOt+134HqSGCE/Bd2SyelZ+pbAR0yfmNQn5tRmuywoNPAoBEXwk0pgz7oqrpDJLgdYVniTVH4CFYvmJY0WD9MNJylcZvOqgzK1V01t0xXCy9uEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JRpd96Xp; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434e3953b65so35260415e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:38:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734428294; x=1735033094; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tq5sZ+Fiv/wP7Onp2aVQfa+BtrbtLGAGU7hb6Q0naGI=;
+        b=JRpd96XpZnF7KpYTnIWvBqeJK7CX8ZAvpdzi4dhvtffl8WsAcKYtKBsxn0RCPz5L8F
+         UmIbquasaXa/5RM4t4rDU1rft2PKLl6t1Uiks4P+Xs5Kth8AxuqJzgxTkDqNzAesCcZw
+         gh6fnXDyKA9APPiEEsTrJJpN6ZZUXG4TpP93P+h2e+JDHo70RRqZBoSI3kQlda2X8xk0
+         akPYh4Bc3O9fh93gbIJ3Ki3YaOV34cZe38F6NDEKK6GvjJl1NNPJJIJwLfEBxoUp2UTe
+         QnghlFKF9uMhj28fg76ijjWEn2zpie6uEByIKXnOVZfktla8GlchsgSzArCjBHzh1L9h
+         /eyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734428294; x=1735033094;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tq5sZ+Fiv/wP7Onp2aVQfa+BtrbtLGAGU7hb6Q0naGI=;
+        b=NL+bD9PRhjTYTwXZm1XGBet6MBVPPeIIsYRi+coIvWjCWTwr9JKye2Oj4jGz2IUPR9
+         2pAWeWpoMk1e2yDHI4DGSmg4DHvk5K3Wk7c+3yN0fAImu4BYRdu1hA8XyUxcbadaITXy
+         udlW0gtYHVc47L87VVb//VvV6sYsWPp1VY17/uDlYcgSaPc1++PreKeW40IeWDbKO05+
+         f0KhNl5RcBg0/TinYniGTBEmTyTIwlqDD4YULQ3X0jQtkXj3VDmcLk53m7kGWyg7QUJt
+         JzcaOeUg6INbIXfTMwqg7GcC2v10l91j48qINYs0c30iFECDwELx5Pz3lcFmqeQOSnGU
+         RVKg==
+X-Forwarded-Encrypted: i=1; AJvYcCURmR5uQxQAvtTA5/vbkrASnZxPQN8AdDeKC8MYBLTnFrj+Yhe0ptXY8T8YwoxK/oyBkoK5jby2Wnndjl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXarjWdPewGVUP1xirvWr38+TAiJ4HooSH7KoDe/FspPxMicJF
+	A2pF1zwKWoh2ssKRWiI3cBm8qz4XDze5b99m2kbxEzL/9Ykk8JiagVnT0arVFrg=
+X-Gm-Gg: ASbGncu8hi1FwiJcsCWgWpJEATzMJImZ6CtuMcwM8DKDOrgTR/ria842qmzxjc4ymuR
+	9inYRCzjDY0BiKWyWJEDhKNnV3YoVbBXazZ9GpvnwlFxNIvLPJAVZx1NF04gPl7xDNhz5QS1iE8
+	ZDqommH5CQ6HGCxg6v8mzOqoLxkgtzJvA9/L1s2G02QSPtFDQrp2GD51F9Dir8xz4mexAJUyyYl
+	6OiZJyZObIkHlSiky2k03EshsNt3yq4MCCCcLkBPrrA8hmFioB3w7aJ4Q9eFnMIH0dWpw==
+X-Google-Smtp-Source: AGHT+IGf3odSobzW67Hr2M4E4Qy568hruQO6sy10F4fQguns3CYgMLLwqVah+AMfzIWxgAU66q+a0Q==
+X-Received: by 2002:a05:600c:214a:b0:434:f7e3:bfbd with SMTP id 5b1f17b1804b1-4362aa947admr142363025e9.23.1734428294427;
+        Tue, 17 Dec 2024 01:38:14 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436362b656fsm112454035e9.34.2024.12.17.01.38.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 01:38:14 -0800 (PST)
+Message-ID: <83fcb683-d610-4e47-bcce-128453a0afef@linaro.org>
+Date: Tue, 17 Dec 2024 09:38:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/4] arm64: dts: qcom: qcs615: add venus node
+To: Renjiang Han <quic_renjiang@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Stanimir Varbanov <stanimir.varbanov@linaro.org>
+References: <20241217-add-venus-for-qcs615-v5-0-747395d9e630@quicinc.com>
+ <20241217-add-venus-for-qcs615-v5-3-747395d9e630@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241217-add-venus-for-qcs615-v5-3-747395d9e630@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Luca,
+On 17/12/2024 09:17, Renjiang Han wrote:
+> +
+> +			video-decoder {
+> +				compatible = "venus-decoder";
+> +			};
+> +
+> +			video-encoder {
+> +				compatible = "venus-encoder";
+> +			};
 
-Am Dienstag, dem 17.12.2024 um 09:42 +0100 schrieb Luca Ceresoli:
-> Hello Peng,
->=20
-> On Tue, 17 Dec 2024 01:39:09 +0000
-> Peng Fan <peng.fan@nxp.com> wrote:
->=20
-> > > Subject: imx8m-blk-ctrl: WARNING, no release() function =20
-> >=20
-> > Please try this patch.
-> > https://lore.kernel.org/all/20241206112731.98244-1-peng.fan@oss.nxp.com=
-/
->=20
-> I cherry-picked the two patches from linux-next:
->=20
->   e1a875703470 ("pmdomain: imx-gpcv2: Suppress bind attrs")
->   afb2a86f002b ("pmdomain: imx8m[p]-blk-ctrl: Suppress bind attrs")
->=20
-> but I still have the same warnings:
->=20
-> [    5.427038] Device 'mediablk-mipi-csi2-1' does not have a release() fu=
-nction, it is broken and must be fixed. See Documentation/core-api/kobject.=
-rst.
-> [    6.464219] Device 'mediablk-mipi-dsi-1' does not have a release() fun=
-ction, it is broken and must be fixed. See Documentation/core-api/kobject.r=
-st.
-> [    6.752903] Device 'mediablk-mipi-csi2-1' does not have a release() fu=
-nction, it is broken and must be fixed. See Documentation/core-api/kobject.=
-rst.
-> [    7.303529] Device 'mediablk-mipi-dsi-1' does not have a release() fun=
-ction, it is broken and must be fixed. See Documentation/core-api/kobject.r=
-st.
-> [    8.006575] Device 'mediablk-mipi-csi2-1' does not have a release() fu=
-nction, it is broken and must be fixed. See Documentation/core-api/kobject.=
-rst.
-> [    8.598453] Device 'mediablk-mipi-dsi-1' does not have a release() fun=
-ction, it is broken and must be fixed. See Documentation/core-api/kobject.r=
-st.
->=20
-> This is with 6.13-rc3 on a imx8mp.
+I gave you feedback on this in v4.
 
-As far as I can see this isn't emitted due to the blk-ctrl device
-itself missing the release function, but from the pseudo devices used
-by genpd to control the power of the secondary power domains.
+Could you please provide some commentary on why you're persisting with 
+this ?
 
-I think this needs to be fixed in genpd itself. I'll take a look.
+- Driver configuration should not live in dts
+- A patchset exists to mitigate this
+- If you don't want to use that series, what do you propose
+   to resolve this ?
 
-Regards,
-Lucas
+Please don't just ignore feedback, either act on it or add to your 
+commit log _why_ you didn't act on it.
+
+---
+bod
 
