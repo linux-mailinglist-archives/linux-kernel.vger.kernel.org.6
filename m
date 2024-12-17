@@ -1,109 +1,130 @@
-Return-Path: <linux-kernel+bounces-448807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0484C9F45BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:12:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAC79F45BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18DD77A3768
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:12:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E626162938
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD851DB34C;
-	Tue, 17 Dec 2024 08:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F2E1DB363;
+	Tue, 17 Dec 2024 08:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cfaxVZuo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Oa4KZcRd"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906071DA628
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F36B126BF7;
+	Tue, 17 Dec 2024 08:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734423116; cv=none; b=grY3QFN2UybglCgydhJfHN0SEk27U3qNssEk1/B/IaDtETlOt7/lmzz2ZLkOq7ritX09WMmgirhEItDWGhX+dThKnD1nTPpnngZ3qM0fE7v2ivTyMckBwGtl/h09Dda8eKIYsnj0iDtB7qZFCVdUxTjVjjRx3wt4OcCo0xq5hgI=
+	t=1734423148; cv=none; b=ZYWcFan92/xrD/gatb81fBfbYh+DmQ1EaamdhomqJYGD32wqPdBSn3JazhJgXkfQP/xsFhNXR7JvCV3ZtQxrZrNORKTHpyoVOf+ZdACIBeORizDYvZ+7c3GGd5Vhq5b8eLifZVMhRNgrjgIhjrdecZRIKtrXPwQIG/HgkSSbuH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734423116; c=relaxed/simple;
-	bh=AERxveNaD/e1FdBKgOrry3YDia9uVcY/sn/NeRqtnS4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tsghGC4EF4rW1Mgyj2a0KEvpTbCb6e2QqgkwjfEEfwNwngB5z8Cia1xxM+p08BTMuqlo5YBjrXdPttQ5qovbrfan3aOzn4m8InGIjGSiLi9VxZ5DdICVZYv7XuOO32pdqWg22cMf7e2znk+luWkMxaxXe/IVj5xPAlB1txqHekU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cfaxVZuo; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734423115; x=1765959115;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=AERxveNaD/e1FdBKgOrry3YDia9uVcY/sn/NeRqtnS4=;
-  b=cfaxVZuow4Z0pXMA1HAzZfYtESw9qpK+MfvZjmmqoVC+A7eyJT7vPITJ
-   rrF5AYSy45n97KXLfhmPWCQXVCxXskwTPICUZD6CA5cpag0LfpT2UeDd3
-   K33bqU/yt/mBfzg/akVoYZI/4NB0kRggOpGDrnMRbwkz1rbvBSF9jkXIp
-   P3UgCZV6EPaRh5VBAy41ZLxGvcfvtu0KT793gWExAwFOB5vsXWH8F4pxj
-   9nPGtnz436+eseA2/k+Dbn19X5Neq+mU/QvGLUJj+jtCuSO9UWS1iDtzf
-   XlbLW8Jdh0eCedMva0JcLf+dwXu4XgmkCR/FlbuJVOqBPQ081SPqvQtzK
-   A==;
-X-CSE-ConnectionGUID: Kq8ybs+5RLS8z2OIKRCVaA==
-X-CSE-MsgGUID: t7hqa69fReG3cbSuKBr8Dg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="34714765"
-X-IronPort-AV: E=Sophos;i="6.12,241,1728975600"; 
-   d="scan'208";a="34714765"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 00:11:55 -0800
-X-CSE-ConnectionGUID: CB/AFxD9TDmvgcENTL9KtQ==
-X-CSE-MsgGUID: olMcKVAyQ3mQL4+nA6zAzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="128442656"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.241.34]) ([10.124.241.34])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 00:11:52 -0800
-Message-ID: <4807944c-2855-46da-9ba9-9f425ad30411@linux.intel.com>
-Date: Tue, 17 Dec 2024 16:11:49 +0800
+	s=arc-20240116; t=1734423148; c=relaxed/simple;
+	bh=VQoQE1pvDps6u/TV5tR/+cZkT00vTknF3QtDIvmdGAk=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=jylHnYuf+aZoiMcDiFj3CX8/yyzVo4uITeaGTNOoO+xXLCw0ThjVcEf5Jzgy/UTX/0YL0feE68X8Q9ELNmLgdP+6V0MTsbtgqxS0yP+LHwuW4GY+lrMUxQ3ERuev7oUi9RiZtmHjyr+lTZlFZMiVGGLZRYWmcJi6NEhSs0FwxQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Oa4KZcRd; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 86C8E120005;
+	Tue, 17 Dec 2024 11:12:14 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 86C8E120005
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1734423134;
+	bh=Vc5nQTsMDqaeAk7HGlOpFwI9UvyMNhXjT59IqE4f+TA=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
+	b=Oa4KZcRdDq4IoWRLLehI8LZt69Xj+Vgm0JcvvMaSJJvfW+N3z4JV7mC1TdnqHL2aC
+	 mWr6vCnSwudGvP6CipiBAnb9hGuyWO4lTbP/1IyBdXWZJxN0ehoiaHT3DWHcDMb8dJ
+	 BiZqGytwvg0BAKMpiyUbEUY/4VJ1E/WnIhQTGKM2BWq9ljBilZcgr76sObCvC9IoRU
+	 uKv6tsPrhWuH4PVtIZay6MhuRYHdfELHJkEPpFYvl2YokXz0fZ+2IUY7wlUVQhMAyQ
+	 EEQbuKEFsz+8Dtrs8orPDmjhSMP8jvboPePboa5MSMzgpO95Ujhry9fJ1u79u/Q7yT
+	 33UKFM4Erwx8Q==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 17 Dec 2024 11:12:14 +0300 (MSK)
+Message-ID: <d159c57f-8490-4c26-79da-6ad3612c4a14@salutedevices.com>
+Date: Tue, 17 Dec 2024 11:12:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] iommu/vt-d: Draining PRQ in sva unbind path when FPD
- bit set
-To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- "Liu, Yi L" <yi.l.liu@intel.com>
-References: <20241217024240.139615-1-baolu.lu@linux.intel.com>
- <BL1PR11MB52712961A13B55ED1DDCCFE28C042@BL1PR11MB5271.namprd11.prod.outlook.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BL1PR11MB52712961A13B55ED1DDCCFE28C042@BL1PR11MB5271.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>
+CC: <oxffffaa@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>
+From: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Subject: [PATCH v2] Bluetooth: hci_uart: fix race during initialization
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189880 [Dec 17 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 47 0.3.47 57010b355d009055a5b6c34e0385c69b21a4e07f, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/12/17 06:22:00 #26894014
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 2024/12/17 15:39, Tian, Kevin wrote:
->> From: Lu Baolu<baolu.lu@linux.intel.com>
->> Sent: Tuesday, December 17, 2024 10:43 AM
->>
->> When a device uses a PASID for SVA (Shared Virtual Address), it's possible
->> that the PASID entry is marked as non-present and FPD bit set before the
->> device flushes all ongoing DMA requests and removes the SVA domain. This
->> can occur when an exception happens and the process terminates before the
->> device driver stops DMA and calls the iommu driver to unbind the PASID.
->>
->> There's no need to drain the PRQ in the mm release path. Instead, the PRQ
->> will be drained in the SVA unbind path. But in such case,
->> intel_pasid_tear_down_entry() only checks the presence of the pasid entry
->> and returns directly.
->>
->> Add the code to clear the FPD bit and drain the PRQ.
->>
->> Suggested-by: Kevin Tian<kevin.tian@intel.com>
->> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
-> Need a fix tag given the old code doesn't work correctly?
+'hci_register_dev()' calls power up function, which is executed by
+kworker - 'hci_power_on()'. This function does access to bluetooth chip
+using callbacks from 'hci_ldisc.c', for example 'hci_uart_send_frame()'.
+Now 'hci_uart_send_frame()' checks 'HCI_UART_PROTO_READY' bit set, and
+if not - it fails. Problem is that 'HCI_UART_PROTO_READY' is set after
+'hci_register_dev()', and there is tiny chance that 'hci_power_on()' will
+be executed before setting this bit. In that case HCI init logic fails.
 
-Yes.
+Patch moves setting of 'HCI_UART_PROTO_READY' before calling function
+'hci_uart_register_dev()'.
 
-Fixes: c43e1ccdebf2 ("iommu/vt-d: Drain PRQs when domain removed from RID")
+Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+---
+ Changelog v1->v2:
+ * Move 'set_bit()' before 'hci_uart_register_dev()' instead of
+   adding new bit 'HCI_UART_PROTO_INIT'.
+
+ drivers/bluetooth/hci_ldisc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+index 30192bb083549..07b9aa09bbe2e 100644
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -704,12 +704,13 @@ static int hci_uart_set_proto(struct hci_uart *hu, int id)
+ 
+ 	hu->proto = p;
+ 
++	set_bit(HCI_UART_PROTO_READY, &hu->flags);
++
+ 	err = hci_uart_register_dev(hu);
+ 	if (err) {
+ 		return err;
+ 	}
+ 
+-	set_bit(HCI_UART_PROTO_READY, &hu->flags);
+ 	return 0;
+ }
+ 
+-- 
+2.30.1
 
