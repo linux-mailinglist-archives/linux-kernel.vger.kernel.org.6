@@ -1,107 +1,178 @@
-Return-Path: <linux-kernel+bounces-449041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6685A9F48E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:30:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC3E9F48E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:30:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FC37A53E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:30:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9EC1890A86
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069D41DF992;
-	Tue, 17 Dec 2024 10:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020431DF96E;
+	Tue, 17 Dec 2024 10:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xzz/dgxy"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ClY9o+2U"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436071E3771
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AC01D5CFD;
+	Tue, 17 Dec 2024 10:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734431422; cv=none; b=YdBCmH4kfT6eHKFMaV/11/NhzNX9u69LgqjZtkjNAIL3zgjnELuebquHk1hLVQyRJzMYKOMfaAgYTOtaiRxGm02Jlrx4uMhhL8B6UXBxQWOkXqCgQvIOOftOo2GET0lFgILnKU9Z7lJudjzxlRyk5nXHi4YzKFj6HKitjc7nIIQ=
+	t=1734431449; cv=none; b=AkXQffVMfxQd0LO44UwRAMP5xX2JSMiMWpYZRQAj9Lf0WErXMjRJtArV5ZAa0jYwPIt8encn8fxluFXoVkiOwjYkXMGa7EtLBLaYAPhmdbUbGjLNF6LklU+o/4zWnTH3y5d4ekJSwOjN5OjyrkNfWwbqwrY+e9Q3QDT1dV0ch5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734431422; c=relaxed/simple;
-	bh=fc4wn50i60mq+Dm0Qh6J/tmpBTHkS57i6cRyHCynELE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=bHYrOn8em49AeOjXdbNIfvvzw/pmCrHuwE6z9+eHwvy5IniqsqRcNTVkfhIxYGInRDN2eLSP0yNepYXsPgqpuKhTvttlXtDuuRMH4um99rXebsvoJQqaMpn2jFeAnPQ9lBZSmoUK2FIkoQH7Qmt6W5MNjjGta+k0Q0CCQdWi4bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xzz/dgxy; arc=none smtp.client-ip=90.155.92.199
+	s=arc-20240116; t=1734431449; c=relaxed/simple;
+	bh=nMye4Fzq1MQwNPB3OPFATyd8wr7HLm5fGd90VZY1apo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ahsLJOyj1tdKK4/ol/TLdvbt5wag7cFnzwGx9tbBr0/ANvsRU5lr1t7ZRyKsBIr4OuzFxQG4xnlvJ4pYEf+XzpVucZ8hipiwZXbc0thmZlSIQHV1AwlMv61S/55/vJPJpLS/0eJPPoINhJMUkUWx1RglBcbHycPOI1tGHV6oz2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ClY9o+2U; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
 	Sender:Reply-To:Content-ID:Content-Description;
-	bh=fc4wn50i60mq+Dm0Qh6J/tmpBTHkS57i6cRyHCynELE=; b=Xzz/dgxylPHf8RPZ5bh9svZ0Le
-	5cFy2EKzJsc9D9VEO86o3bs4MNTQSUdEtSHCy7QeUw4N/IlUoE8aXqdbYv/owP149oV6I8HJwUu7E
-	9HWThw//PWRvlMNFOtpEaUtJKbGs6v58dg0bt1kntfZ0WF4p20R7ovFKSFkTws3VYZBmAtpX7o/pb
-	8lGxxOZV+P+ikiVn7oDJVxU6oBDHZsqaSh5de0u8VQ/9t4CenjKiD+LXvYnvDUUFqLFKKCiHt2mRw
-	fAWdfISPSiH/qYCBMaiTRYB+nwzS0GBrEoPfX5nE4qmuIkVwp5kts5fqIUVF6wnKYaKGuGfei9cML
-	TQmIyi+g==;
-Received: from [89.27.170.32] (helo=[127.0.0.1])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNUpw-000000053l0-3r0J;
-	Tue, 17 Dec 2024 10:29:57 +0000
-Date: Tue, 17 Dec 2024 11:29:56 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Eric Biederman <ebiederm@xmission.com>, David Woodhouse <dwmw@amazon.co.uk>,
- Sourabh Jain <sourabhjain@linux.ibm.com>,
- Hari Bathini <hbathini@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
- Yuntao Wang <ytcoode@gmail.com>, David Kaplan <david.kaplan@amd.com>,
- Tao Liu <ltao@redhat.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Breno Leitao <leitao@debian.org>, Wei Yang <richard.weiyang@gmail.com>,
- Rong Xu <xur@google.com>,
- =?ISO-8859-1?Q?Thomas_Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
- linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
- Simon Horman <horms@kernel.org>, Dave Young <dyoung@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de, nathan@kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_9/9=5D_x86/kexec=3A_Use_typedef_f?=
- =?US-ASCII?Q?or_relocate=5Fkernel=5Ffn_function_prototype?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAMj1kXE-60BqLx4VH6Cw_s0nt=bkx=oFQuts+m6sZFeziH1sqg@mail.gmail.com>
-References: <20241216233704.3208607-1-dwmw2@infradead.org> <20241216233704.3208607-10-dwmw2@infradead.org> <CAMj1kXE2abZ8v83vSr5sDZ1QNF-WMr4XCMRhZoc9EW=JAwvdCA@mail.gmail.com> <A18A8675-B1FB-496E-9D8F-FAD412A3FF65@infradead.org> <CAMj1kXFiZvT1joU5gOhZTC18aYi4dPOnFbX1nsHgmnXNy6c6Wg@mail.gmail.com> <27388506-9BE8-4540-A444-166C49133295@infradead.org> <CAMj1kXE-60BqLx4VH6Cw_s0nt=bkx=oFQuts+m6sZFeziH1sqg@mail.gmail.com>
-Message-ID: <74A36EA6-D0C8-4CF3-A00B-77C852AC6527@infradead.org>
+	bh=cRjzNOV1ffJ13/MtKPV0Ob+50aKeLsbdFVRQjpo8i44=; b=ClY9o+2UruJ9cz1NKhNFGNqvo+
+	wPnfdc1ZhXBJe7kT8WONPHMeF4C3nXgKTY8bVozqBH0ah4tvPBS9KutMS3rxPekUv0I4lFR8PMCN7
+	3TEKYbq/w1JYAp0Vq5wu8fY8dYq3JSMTkLZGvw2LIHQgTZgPuXGRYuSwy0PV/KwXTORuqUD6JlX29
+	ic1eZC3I5R7JhGDxvWD9B9NE7gcPm1zk51N9GfUGyBZUh9SdDFhlHD51hknyO5rVDV/wMqI3HjRDY
+	Rvf7MwdKTPZ7He2sa/eOxS3sQplVAdVKTs/ZJBTTGoMUSLW27y0BbL3V89ijkPMrfMv7uMvyBr//u
+	m2Kja0Tg==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNUqa-00000006Kxn-0oOT;
+	Tue, 17 Dec 2024 10:30:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id ACBB330015F; Tue, 17 Dec 2024 11:30:35 +0100 (CET)
+Date: Tue, 17 Dec 2024 11:30:35 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
+	hughd@google.com, lokeshgidra@google.com, minchan@google.com,
+	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com,
+	pasha.tatashin@soleen.com, klarasmodin@gmail.com, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v6 10/16] mm: replace vm_lock and detached flag with a
+ reference count
+Message-ID: <20241217103035.GD11133@noisy.programming.kicks-ass.net>
+References: <20241216192419.2970941-1-surenb@google.com>
+ <20241216192419.2970941-11-surenb@google.com>
+ <20241216213753.GD9803@noisy.programming.kicks-ass.net>
+ <CAJuCfpEu_rZkC+ktWXE=rA-VenFBZR9VQ-SnVkDbXUqsd3Ys_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpEu_rZkC+ktWXE=rA-VenFBZR9VQ-SnVkDbXUqsd3Ys_A@mail.gmail.com>
 
-On 17 December 2024 10:54:19 CET, Ard Biesheuvel <ardb@kernel=2Eorg> wrote:
->On Tue, 17 Dec 2024 at 10:42, David Woodhouse <dwmw2@infradead=2Eorg> wro=
-te:
->> Hm, I am perfectly happy to believe that my memory is failing me, espec=
-ially when it comes to specifics of i386 assembler code=2E But are you also=
- telling me that
->> <https://kernelnewbies=2Eorg/FAQ/asmlinkage> is a lie?
->>
->
->It seems wildly out of date, at least=2E
->
->Commit 96a388de5dc53a8b2 from 2007 removed the asmlinkage definition
->containing regparm(0) from include/asm-i386/linkage=2Eh,=20
+On Mon, Dec 16, 2024 at 01:44:45PM -0800, Suren Baghdasaryan wrote:
+> On Mon, Dec 16, 2024 at 1:38 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Mon, Dec 16, 2024 at 11:24:13AM -0800, Suren Baghdasaryan wrote:
+> > > +static inline void vma_refcount_put(struct vm_area_struct *vma)
+> > > +{
+> > > +     int refcnt;
+> > > +
+> > > +     if (!__refcount_dec_and_test(&vma->vm_refcnt, &refcnt)) {
+> > > +             rwsem_release(&vma->vmlock_dep_map, _RET_IP_);
+> > > +
+> > > +             if (refcnt & VMA_STATE_LOCKED)
+> > > +                     rcuwait_wake_up(&vma->vm_mm->vma_writer_wait);
+> > > +     }
+> > > +}
+> > > +
+> > >  /*
+> > >   * Try to read-lock a vma. The function is allowed to occasionally yield false
+> > >   * locked result to avoid performance overhead, in which case we fall back to
+> > > @@ -710,6 +728,8 @@ static inline void vma_lock_init(struct vm_area_struct *vma)
+> > >   */
+> > >  static inline bool vma_start_read(struct vm_area_struct *vma)
+> > >  {
+> > > +     int oldcnt;
+> > > +
+> > >       /*
+> > >        * Check before locking. A race might cause false locked result.
+> > >        * We can use READ_ONCE() for the mm_lock_seq here, and don't need
+> > > @@ -720,13 +740,20 @@ static inline bool vma_start_read(struct vm_area_struct *vma)
+> > >       if (READ_ONCE(vma->vm_lock_seq) == READ_ONCE(vma->vm_mm->mm_lock_seq.sequence))
+> > >               return false;
+> > >
+> > > +
+> > > +     rwsem_acquire_read(&vma->vmlock_dep_map, 0, 0, _RET_IP_);
+> > > +     /* Limit at VMA_STATE_LOCKED - 2 to leave one count for a writer */
+> > > +     if (unlikely(!__refcount_inc_not_zero_limited(&vma->vm_refcnt, &oldcnt,
+> > > +                                                   VMA_STATE_LOCKED - 2))) {
+> > > +             rwsem_release(&vma->vmlock_dep_map, _RET_IP_);
+> > >               return false;
+> > > +     }
+> > > +     lock_acquired(&vma->vmlock_dep_map, _RET_IP_);
+> > >
+> > >       /*
+> > > +      * Overflow of vm_lock_seq/mm_lock_seq might produce false locked result.
+> > >        * False unlocked result is impossible because we modify and check
+> > > +      * vma->vm_lock_seq under vma->vm_refcnt protection and mm->mm_lock_seq
+> > >        * modification invalidates all existing locks.
+> > >        *
+> > >        * We must use ACQUIRE semantics for the mm_lock_seq so that if we are
+> > > @@ -734,10 +761,12 @@ static inline bool vma_start_read(struct vm_area_struct *vma)
+> > >        * after it has been unlocked.
+> > >        * This pairs with RELEASE semantics in vma_end_write_all().
+> > >        */
+> > > +     if (oldcnt & VMA_STATE_LOCKED ||
+> > > +         unlikely(vma->vm_lock_seq == raw_read_seqcount(&vma->vm_mm->mm_lock_seq))) {
+> > > +             vma_refcount_put(vma);
+> >
+> > Suppose we have detach race with a concurrent RCU lookup like:
+> >
+> >                                         vma = mas_lookup();
+> >
+> >         vma_start_write();
+> >         mas_detach();
+> >                                         vma_start_read()
+> >                                         rwsem_acquire_read()
+> >                                         inc // success
+> >         vma_mark_detach();
+> >         dec_and_test // assumes 1->0
+> >                      // is actually 2->1
+> >
+> >                                         if (vm_lock_seq == vma->vm_mm_mm_lock_seq) // true
+> >                                           vma_refcount_put
+> >                                             dec_and_test() // 1->0
+> >                                               *NO* rwsem_release()
+> >
+> 
+> Yes, this is possible. I think that's not a problem until we start
+> reusing the vmas and I deal with this race later in this patchset.
+> I think what you described here is the same race I mention in the
+> description of this patch:
+> https://lore.kernel.org/all/20241216192419.2970941-14-surenb@google.com/
+> I introduce vma_ensure_detached() in that patch to handle this case
+> and ensure that vmas are detached before they are returned into the
+> slab cache for reuse. Does that make sense?
 
-No, it's still there in arch/x86/include/asm/linkage=2Eh:
-<https://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/torvalds/linux=2Egit/=
-tree/arch/x86/include/asm/linkage=2Eh#n20>
+So I just replied there, and no, I don't think it makes sense. Just put
+the kmem_cache_free() in vma_refcount_put(), to be done on 0.
 
-And maybe you're right that it's a poorly named macro and we shouldn't con=
-flate calling convention with linkage=2E But I think it *should* be part of=
- the typedef=2E
+Anyway, my point was more about the weird entanglement of lockdep and
+the refcount. Just pull the lockdep annotation out of _put() and put it
+explicitly in the vma_start_read() error paths and vma_end_read().
 
+Additionally, having vma_end_write() would allow you to put a lockdep
+annotation in vma_{start,end}_write() -- which was I think the original
+reason I proposed it a while back, that and having improved clarity when
+reading the code, since explicitly marking the end of a section is
+helpful.
 
