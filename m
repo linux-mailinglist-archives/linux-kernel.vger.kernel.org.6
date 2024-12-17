@@ -1,122 +1,173 @@
-Return-Path: <linux-kernel+bounces-449977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703019F58D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:37:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD619F58F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:47:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C1F163718
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:37:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8B5188F768
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C3D1F9F7E;
-	Tue, 17 Dec 2024 21:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD1D1FA827;
+	Tue, 17 Dec 2024 21:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BILBghsH"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACJowqyV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F461F8AE6
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E9214A0A3;
+	Tue, 17 Dec 2024 21:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734471464; cv=none; b=OnbwgJmlPIIu5OOMGF1bJb8Eb0/AYu2Oa6EGsC4qnOhEhdyIMDNgeKezf/kb5xYcqYfJuw2lkhsDB3+rC28PiGVok2R836cMFCpl9usXEqN721Mnvo7XV6hN2En7A5kLlpZRqxp8zwY8rP0UFCWXjgdC8uuikH5nTBDN32Aw1t4=
+	t=1734471563; cv=none; b=fcrpGFRtqjY5Re0uXui9pxx2EKZcJHEepOQtBRgr1G8U+V+qDYHWFleELr1MXYS0YIAubadE1zymJnkWsnoplAIGAt+BD/RfW37ru39OfHijrqOljraUIQxKtF3Nbna9YDhBiKME+vm0oSLRd63ui/gYq+ogEpOO9EWwmTc3JMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734471464; c=relaxed/simple;
-	bh=FR0P8x7/9ngEgKiXbPcjZ9SkDVlLITONVwCAUmfHs9I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AFSB5d8//sbOBmsV9zI0eGaJGZDix6YqSgEw9X7rY96OqlxPfrzvdNwWAAdg7V1D8l8WXtaqVvAw43/f+NCvl6QeXL2lIBu6DOTepchXi0MO5xmFKUrEyEdNLbcsKOKEQ2+QtTxMgDAG0wMqyiWAAcin6+FRnEi6wcHsopAUKOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BILBghsH; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7fcd2430636so3875871a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:37:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734471462; x=1735076262; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rw3V5l3zgEdyqeowifhhV2t/72Ab4n6g+8l5OuuzZOM=;
-        b=BILBghsHVK5s1gsbkhi8u1FS2+AP5vCtWCg5wg3FDrFbHCoeVfR9BTnSy/J4di64Iz
-         YABBGQxPspvWx4jdXUH62oPeCynQxXW6K5fdMV12ZzzBqq+z6pwT8+yPV1ASA5C7C5Nq
-         y8wbGT0bf3hRxDBIowG45mknIiIkk0rN05jZH6S5NvjwUjMrte0UMZ7RbsX9yWiemtDo
-         Q7vOMZ1YYn2m7dlSOrYHJPf1Yec8sVc5u9RiBVCpe4ECCoCekf/zwrUlKfmOKQ5jpzC7
-         yjAFHmUaW7u3yJE11jONM3JNOpgCPTRkcbQVFBUcaWoLg1BxmrJj+DVwmVRYoQbNsAu3
-         r3SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734471462; x=1735076262;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rw3V5l3zgEdyqeowifhhV2t/72Ab4n6g+8l5OuuzZOM=;
-        b=uyGdKecSvtxcVbzg10iwHcw7xTra1upWQdGoA4nKvSAM10QUjN0+exavVLubkmOv1D
-         yizHOUlysMQBTtGVFz1udrsN2y+N5l+wlxvI6FuDP/y1voylFVKyJcwCXLRnxRa5zr/0
-         tFI8yfCosJ8kq6MqVuEC8D3quu1xfiNrC4oln3NvbcfZUHsHKgKlXJ/aeNPTr1nD39Yy
-         BN8jxGWayrEww0WIzYYpj2DUN/ZUg+pq1bJZ2UMi8wNyg2mdGn4DbKl9zdZWSlK3V6aQ
-         V9xzJUC465mhZ20bFJdZkYsGfI6W5FpkmgTglUMH6BsUbvnj3AxHPhQCL56gQgIGqPJ7
-         Agsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUARGvbzH1/gmXETUKrxGSvd3t6ZWCx+XQEfrfYyWlE6FqY3ncOLZz46jnKuEbmigB/XzEhLkqvo0VAdVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztttJqjSqp2uz9dNwciVBfn/6RrYQ3SQTCpa/AhelLtjb81I4s
-	+zC5CsTMRst/KLeK2oXmHxuNS66+huJ+4UwxzVFo4Q+9u7FH9PbFuhMWRGNZ84avmIeZlfcNms3
-	4lw==
-X-Google-Smtp-Source: AGHT+IHkBuqTQ7UlVlQLJaGwJ+fr7nw0ge3h4GeiLflYNngZHZg+PnIluUNLdsY9fVUJdSpCtTapg9gTOXQ=
-X-Received: from pjbpd5.prod.google.com ([2002:a17:90b:1dc5:b0:2ef:6d06:31e4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d88c:b0:2ee:b6c5:1def
- with SMTP id 98e67ed59e1d1-2f2e91a9f37mr670257a91.8.1734471462252; Tue, 17
- Dec 2024 13:37:42 -0800 (PST)
-Date: Tue, 17 Dec 2024 13:37:40 -0800
-In-Reply-To: <cc27bfe2-de7c-4038-86e3-58da65f84e50@amd.com>
+	s=arc-20240116; t=1734471563; c=relaxed/simple;
+	bh=n1JZHGtXkl1/iBBt0OCNPeTKOztwlU7Xcfro9qYAbzs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=InQwEzoqddVgqeVZLFl1ItTsCmvKQaY4mJMGpVaBe69i76b99KawkvEMh0ouuaiVnMvd5rztEfNrGAhIEgWnel8B9N40E1pqf+CIdmT7J4YivMfllreHJoxcwJ1egSZtD21Ps0dKVjbnTqGEppkhpAamuPQzwgAphP6MJ8CEpLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACJowqyV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 140A0C4CEDE;
+	Tue, 17 Dec 2024 21:39:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734471563;
+	bh=n1JZHGtXkl1/iBBt0OCNPeTKOztwlU7Xcfro9qYAbzs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ACJowqyVsEc1bCyfpmCT+CRLvHhiEBm9gOPl4MRstXNX6r0ZDynpaM+LSRL/UYLGb
+	 MVSR9yQJA5hdA6mpF12DqRYKgWhOddu3pZobLrRnCvxD2RkLC24Pq/Sr6R7ZHc8lbO
+	 Rcx2CjyCbSL+hnrw7f4dyomZ074Jz4rSIy7XdLrH4qZjVw9b8MENW1vakbb9yIVE6M
+	 rgOywiPrswUAHCvK0RlOQ7Z7M1zvOngnYwnNxS7QYTLnTpm9IxASqXeCCq0Fj5BJ8D
+	 wHgDAUl0qa9a1rnk0nXYe11RFJ6V0Hs2feK325MGB5ulvHxJxMyPb9p2gW5/u4UKWo
+	 AybSjpOngTcGQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12E9E7717F;
+	Tue, 17 Dec 2024 21:39:22 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH v5 00/13] media: i2c: imx214: Miscellaneous cleanups and
+ improvements
+Date: Tue, 17 Dec 2024 22:39:12 +0100
+Message-Id: <20241217-imx214-v5-0-387f52adef4d@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1734392473.git.ashish.kalra@amd.com> <CAAH4kHa2msL_gvk12h_qv9h2M43hVKQQaaYeEXV14=R3VtqsPg@mail.gmail.com>
- <cc27bfe2-de7c-4038-86e3-58da65f84e50@amd.com>
-Message-ID: <Z2HvJESqpc7Gd-dG@google.com>
-Subject: Re: [PATCH v2 0/9] Move initializing SEV/SNP functionality to KVM
-From: Sean Christopherson <seanjc@google.com>
-To: Ashish Kalra <ashish.kalra@amd.com>
-Cc: Dionna Amalie Glaze <dionnaglaze@google.com>, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, thomas.lendacky@amd.com, john.allen@amd.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, michael.roth@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAIDvYWcC/23NTQ7CIBCG4asY1mKYgbbgynsYF0CnloU/KdpUm
+ 95dWmM16vIjPO/0LFITKLL1omcNtSGG0zGNbLlgvrbHPfFQps1QoBIaNA+HDkFxLVEVWvnCEbH
+ 0+dxQFboptN2lXYd4OTW3qdvC+PpMGIGvRAtccG9y76zRRkK2sedwuUdfr+jKxkiLMwSBMENMs
+ HIlSjImU0C/UL4himKGMkHrcmGrgsj8u6g+IOQzVAlq70oLuaic/7o4DMMDiNrgZkkBAAA=
+X-Change-ID: 20240818-imx214-8324784c7bee
+To: Ricardo Ribalda <ribalda@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Vincent Knecht <vincent.knecht@mailoo.org>, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734471561; l=3563;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=n1JZHGtXkl1/iBBt0OCNPeTKOztwlU7Xcfro9qYAbzs=;
+ b=WlqSfx42gMMwaD3JHUg6joz0lESwS0Bz63CQj6ccuLiPk+7wKMUOBI792kP9/9C+vmlMb9e98
+ TMQCocuUjEYCvY/ykEBzqkyCtjXjsd8Z5VUEqZV7P4VsZN4bgtfRmG0
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On Tue, Dec 17, 2024, Ashish Kalra wrote:
->=20
->=20
-> On 12/17/2024 10:00 AM, Dionna Amalie Glaze wrote:
-> > On Mon, Dec 16, 2024 at 3:57=E2=80=AFPM Ashish Kalra <Ashish.Kalra@amd.=
-com> wrote:
-> >>
-> >> From: Ashish Kalra <ashish.kalra@amd.com>
-> >=20
-> >> The on-demand SEV initialization support requires a fix in QEMU to
-> >> remove check for SEV initialization to be done prior to launching
-> >> SEV/SEV-ES VMs.
-> >> NOTE: With the above fix for QEMU, older QEMU versions will be broken
-> >> with respect to launching SEV/SEV-ES VMs with the newer kernel/KVM as
-> >> older QEMU versions require SEV initialization to be done before
-> >> launching SEV/SEV-ES VMs.
-> >>
-> >=20
-> > I don't think this is okay. I think you need to introduce a KVM
-> > capability to switch over to the new way of initializing SEV VMs and
-> > deprecate the old way so it doesn't need to be supported for any new
-> > additions to the interface.
-> >=20
->=20
-> But that means KVM will need to support both mechanisms of doing SEV
-> initialization - during KVM module load time and the deferred/lazy
-> (on-demand) SEV INIT during VM launch.
+This patch series is a collection of miscellaneous cleanups and
+improvements to the imx214 driver.
 
-What's the QEMU change?  Dionna is right, we can't break userspace, but may=
-be
-there's an alternative to supporting both models.
+The series converts the driver to the CCI helpers and adds controls
+needed to make the driver work with libcamera.
+
+The changes are inspired by the imx219 driver.
+
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+Changes in v5:
+- Remove cur_mode field
+- Link to v4: https://lore.kernel.org/r/20241216-imx214-v4-0-8cbda160fbce@apitzsch.eu
+
+Changes in v4:
+- Drop function name from dev error message
+- Initialize *format to fix compile error
+- Improve comment "Update {FPS -> blank} limit"
+- Improve code formatting
+- Warn once on usage of frame_interval functions
+- Fix commit message
+- Add patch to fix clock handling on probe error or remove
+- Warn if number of DT provided link frequencies != 1
+- Add A-b tags
+- Link to v3: https://lore.kernel.org/r/20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu
+
+Changes in v3:
+- Also keep previous link freq for backward compatibility
+- Move link freq patch to the end of the series
+- Remove return-early check from imx214_set_format()
+- Remove unneeded struct imx214 function parameter
+- Use correct ret value on number of data lanes error
+- Revert changing order (imx214_parse_fwnode, devm_kzalloc)
+- Fix typo
+- Remove unused definition IMX214_EXPOSURE_MAX
+- Don't set FPS to default
+- Simplify exposure_def definition
+- Set state and format only if control id is V4L2_CID_VBLANK
+- Restore Ricardo's message to Sony
+- Drop "media: i2c: imx214: Extract format and crop settings" patch
+- Add A-b tag
+- Link to v2: https://lore.kernel.org/r/20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu
+
+Changes in v2:
+- Add patch to fix link frequency
+- Don't use and remove fmt and crop from struct imx214
+- Squash patch 1/13 and 2/13
+- Only check if #lanes == 4
+- Add comment that enum_frame_interval() shouldn't be used by userspace
+- Set V4L2_CID_VBLANK step size to 2 (according to datasheet Table 4-4)
+- Increase IMX214_VBLANK_MIN to limit max frame rate of full resolution
+  to the documented 30 fps
+- As bpp is always 10, simplify setting IMX214_REG_CSI_DATA_FORMAT and
+  IMX214_REG_OPPXCK_DIV
+- Simplify imx214_get_format_code()
+- Cluster hflip and vflip
+- Remove kernel log note from 11/13, issue was fixed by a kernel update
+- Add A-b tags
+- Link to v1: https://lore.kernel.org/r/20240902-imx214-v1-0-c96cba989315@apitzsch.eu
+
+---
+André Apitzsch (13):
+      media: i2c: imx214: Use subdev active state
+      media: i2c: imx214: Simplify with dev_err_probe()
+      media: i2c: imx214: Convert to CCI register access helpers
+      media: i2c: imx214: Replace register addresses with macros
+      media: i2c: imx214: Drop IMX214_REG_EXPOSURE from mode reg arrays
+      media: i2c: imx214: Check number of lanes from device tree
+      media: i2c: imx214: Add vblank and hblank controls
+      media: i2c: imx214: Implement vflip/hflip controls
+      media: i2c: imx214: Add analogue/digital gain control
+      media: i2c: imx214: Verify chip ID
+      media: i2c: imx214: Add test pattern control
+      media: i2c: imx214: Fix clock handling on probe error or remove
+      media: i2c: imx214: Fix link frequency validation
+
+ drivers/media/i2c/Kconfig  |    1 +
+ drivers/media/i2c/imx214.c | 1265 ++++++++++++++++++++++++++------------------
+ 2 files changed, 752 insertions(+), 514 deletions(-)
+---
+base-commit: 62f608176a46b6a794725022101d0d7f42faedb9
+change-id: 20240818-imx214-8324784c7bee
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
 
