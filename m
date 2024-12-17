@@ -1,99 +1,81 @@
-Return-Path: <linux-kernel+bounces-448845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D30C9F4669
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:47:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0519F466C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D271C7A72B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:46:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3224F18872EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA501DE2B3;
-	Tue, 17 Dec 2024 08:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63871DC747;
+	Tue, 17 Dec 2024 08:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbLX2/Rh"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SoxlDpoq"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE7D1714BE;
-	Tue, 17 Dec 2024 08:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB190189521
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734425174; cv=none; b=sV+AYMYzSa/1GSaG2V9P4GShEZ3kSgFSD1dkpIQQwB3c7024ezBFPqIyiWOofLvW4cse944cIl3sj1IxsGJhyNZlkNhsTFusQkJiGWBGvr5mGccJWqFX0Mf+bfPHKY6R/j0rRXBIo+wsGwRfHMFO/BFeDcYZ32eCn6u3mBuiB64=
+	t=1734425213; cv=none; b=YKbca2tXKmZVGdkK8DLVZWU8q+BKLGtLUrEtqNec+vU2mVQwRNqSgJ+7CeNBvU265sbeTl+vx2QpVeqk6kfH7YBZoRLxH3joDsvD/QP8SNDvS8L438GKTn98Jy3n/sQFilC8fcN/SkI6X6WnIU7bSFMgm9RCkPwp/6cZPtkjet4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734425174; c=relaxed/simple;
-	bh=2MP+waN3js1IP5hQ9c6jLyb48oqtoqTUAX3rOoZ+ThE=;
+	s=arc-20240116; t=1734425213; c=relaxed/simple;
+	bh=wH+KlnPkWW5GnsOPiWJoIQdMXNXmO7S8bhnsPMXmVCc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K0xbka+KaOHOnuNKId9gpwG0bvVKonQnSXido08V8TYdngVGXFDv092PbgnGS4w88ux9NIXUucy9WeOQeLAA/ExtQnz3H5NVv1LJIZ42mLgz8WBLCfTnSGs+UpfUPDvdKyI5YEX8ylo/JVFt+1qgPSc+R+EenRSxRH5W/vb9S6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbLX2/Rh; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-436203f1203so4458095e9.2;
-        Tue, 17 Dec 2024 00:46:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734425171; x=1735029971; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DANgJX5B+e8ghUsL1ks3H+WRdxDzAQe7jNh5Uly4bsE=;
-        b=mbLX2/Rh9tLrIc/SbnhoxdFZ/EvTO+x+Uv7Ka8WoAckCAgB9WGBCO6RKrIRab/kS6i
-         VF31iO5gE4xNuY/+GJ0CesjUmeMQs3ESURYad/5A0LGcBHLVz87qiz0+a3jwtEEcXXcf
-         WuvVUJInL5ChDu7EP8Jv4hicwq9mQxg+b3asvrbdNlTumD87RTALRAnAtI0Q4qI3jQQL
-         hvt1r7JhAg8OZdP+B6hsnNPCO0fFuCCWbt8BTHc6fH+eOz2qwR2GBbH6RprVqn3nH7Cy
-         cK8MlMa9HyFky7GjGYqdKMWHWlZODsaEEC1Lcu3Qs83mO2D8OAjiFg24sUlbkwMpyg1Q
-         CrGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734425171; x=1735029971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DANgJX5B+e8ghUsL1ks3H+WRdxDzAQe7jNh5Uly4bsE=;
-        b=hM3zwQ0gVv1Q/d/YH1b5eZ34m4fGFcMOx8XQuCO/dc+uwXddwLt2Lip10QUgVtRdJV
-         Uw9DjFfw1khmfYyDoRBoQh/9yDHS3z2s791TR7W3DxE0sz1lBaoXUO/Ma/IBgPedo1oj
-         BhditfHbqsrsJDg244rpQ8+qehsaj/+wL3/sDL+BD++sQq+Cap6kYLAdo366ywi1QMLP
-         0PpC94G/IYX8clf6xbbldFGolahZQLMzUxa0C4XPnOWhj0w52l4nSmxFm6qE6yQyNjM/
-         YDCDtRBAFAiNjj2muVj8Gwdk+70o5U5y1jyt7wfWVM9vHHWLaQzxKZGHNjUKyAL8Ooxq
-         FbLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEhWr0ltXTGx62uNvfV3HIMsTYRAek0dNK55TJ2PeIyMg0qH5vamNgbISOG4KBw2MWj+E=@vger.kernel.org, AJvYcCWNpS3nG+2I5XkhIFLHyZk1XlH1leiarSf//YAGWenkpWnm9q6CUWChii6unyzbjo6lgQQaEM8z7GXJrT5q@vger.kernel.org, AJvYcCXz9lz6fFHgehGyEDGoXURI9nnJQ75kMGQdG99Ge8oi6joN1s2jcHAfD7BAzQnV8XpSNmPKry79@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB9RACK7aT2FzwLNhv+vqJOnJxxu+ouI8Hagrgy9xX+NIQKVpH
-	xAaZOGBCpmP7lcIjK68jRkmOkxL2hQY/EooYZbqgft0c2DmVqF/Y
-X-Gm-Gg: ASbGncvLRfURii0EKqXaEuYlIacIa5EAG4enj/U2vHmtYOR+RFjZrwseS9zpoQllzXg
-	EU46lC6yM74mnkVR+LRh01CjcY+IH+D+Zl/kCHqDEiBp3Nh11rHnBVtwyqs201zrXw5zO7MK8is
-	sZT1RzDXbNfx4osqF10NjIAHoNiBEGlAV0tdIpYMpIOAndfPlDikuPFDY0OsrQWjLULdjMIwk32
-	R0B0DwQzh6FhqHMNlZojg8H5LWv+yGkZ7DWn0xs3Lw2
-X-Google-Smtp-Source: AGHT+IGO3QFP0qqBnYh1mqcB6H4pNm+oGioUq900aBrsRIHsJrRzcrb969fkxZI5Qt2wJjRhv1ydDA==
-X-Received: by 2002:a05:600c:450e:b0:434:f001:8680 with SMTP id 5b1f17b1804b1-4362aa26e0emr52929955e9.2.1734425170963;
-        Tue, 17 Dec 2024 00:46:10 -0800 (PST)
-Received: from skbuf ([86.127.124.81])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4364b0566f1sm10142665e9.2.2024.12.17.00.46.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 00:46:09 -0800 (PST)
-Date: Tue, 17 Dec 2024 10:46:06 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>,
-	Furong Xu <0x1207@gmail.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH iwl-next 6/9] igc: Add support for frame preemption
- verification
-Message-ID: <20241217084606.3lbne7kv4rlkhoct@skbuf>
-References: <20241216064720.931522-1-faizal.abdul.rahim@linux.intel.com>
- <20241216064720.931522-1-faizal.abdul.rahim@linux.intel.com>
- <20241216064720.931522-7-faizal.abdul.rahim@linux.intel.com>
- <20241216064720.931522-7-faizal.abdul.rahim@linux.intel.com>
- <20241217002254.lyakuia32jbnva46@skbuf>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rvfMF5ExOxmHswPFUxU2qmj3Tvw0AmG4dYIpGkdbYVnn7TdnmD69ZRvAWSoWX4p83wCzCK+clICtOS92EfAnv1x9aMa8ZJoEG+vOS2F+dfBpXCKDMukGFH5lTJvJknjDXfaOSfZi0cqdrvr20BJ5SE5NIliNFVYdRtrftgrcKuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SoxlDpoq; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=q6ThPRmnd+IBqm5XEqcBm+eF4xD/75P3K23bnCaaDZ0=; b=SoxlDpoqlM7hvjSVTMy9UVCXK7
+	vB2iP3rxKrElFlxM443Tm4vD7lpPI6Ho0FI84kq0MUY/wFOCkYfvU/gvIBajwjNVPdjT3XLFKEnQc
+	IKSLdu3th3JBZoZfaIdW+m65tdBsgYDMlABJmdCtSzfC4/vyG+jH8wKbT1VpBcuZ7BhfaG+qWGTCQ
+	3Uah26DZJc8JuiZcoPEQjXDfb1QhZ9gFQW8I+PeViHMfVbInEF6ckNOP2IUxF/rxDTqBiot+0WXEU
+	FR4IQRpbjvKRykyqNZg4FmGmap7jj+82+fLSdLSt7Z9RZYZ2hVi4i0pBq9zqPOXTj/y3OdakwhDCR
+	5h3QGG+Q==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNTE3-00000005ro8-2Du9;
+	Tue, 17 Dec 2024 08:46:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 170F0300192; Tue, 17 Dec 2024 09:46:43 +0100 (CET)
+Date: Tue, 17 Dec 2024 09:46:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
+	Connor O'Brien <connoro@google.com>
+Subject: Re: [RFC][PATCH v14 2/7] locking/mutex: Rework
+ task_struct::blocked_on
+Message-ID: <20241217084643.GG35539@noisy.programming.kicks-ass.net>
+References: <20241125195204.2374458-1-jstultz@google.com>
+ <20241125195204.2374458-3-jstultz@google.com>
+ <20241213232214.GA17501@noisy.programming.kicks-ass.net>
+ <CANDhNCraMepXyQPs1q-aNa+Gh745WpaFPkngA9Eohi9vXRpe+w@mail.gmail.com>
+ <20241216165419.GE35539@noisy.programming.kicks-ass.net>
+ <CANDhNCpTfZFOkUkB4f4iQwXA3wnsDuUA_1ZLuseGYunnpgO9Rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,27 +84,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241217002254.lyakuia32jbnva46@skbuf>
+In-Reply-To: <CANDhNCpTfZFOkUkB4f4iQwXA3wnsDuUA_1ZLuseGYunnpgO9Rw@mail.gmail.com>
 
-On Tue, Dec 17, 2024 at 02:22:54AM +0200, Vladimir Oltean wrote:
-> I spent a bit of time extracting stmmac's core logic and putting it in
-> ethtool.
+On Mon, Dec 16, 2024 at 09:01:24PM -0800, John Stultz wrote:
 
-There's at least one bug in this conversion:
+> > +struct task_struct *proxy_handoff(struct mutex *lock);
+> > +{
+> > +       struct task_struct *next;
+> > +
+> > +       if (!sched_proxy_exec())
+> > +               return NULL;
+> > +
+> > +       /*
+> > +        * current->blocked_donor can't change if we can't schedule
+> > +        * caller needs to do this, since its needs stabiliy of return value
+> > +        */
+> > +       lockdep_assert_preemption_disabled();
+> > +       next = current->blocked_donor;
+> > +       if (!next)
+> > +               return NULL;
+> > +
+> > +       scoped_guard (task_rq_lock, next) {
+> > +               /*
+> > +                * current->blocked_donor had better be on the same CPU as current
+> > +                */
+> > +               WARN_ON_ONCE(scope.rq != this_rq());
+> > +
+> > +               scoped_guard (raw_spin_lock, next->blocked_lock) {
+> > +                       /*
+> > +                        * WARN_ON on this? How can this happen
+> > +                        */
+> > +                       if (next->blocked_on != lock)
+> > +                               return NULL;
+> > +               }
+> > +
+> > +               /*
+> > +                * blocked_on relation is stable, since we hold both
+> > +                * next->pi_lock and it's rq->lock
+> > +                *
+> > +                * OK -- we have a donor, it is blocked on the lock we're about
+> > +                * to release and it cannot run on this CPU -- fixies are
+> > +                * required.
+> > +                *
+> > +                * Dequeue the task, such that ttwu() can fix up the placement thing.
+> > +                */
+> > +               if (!is_cpu_allowed(next, cpu_of(scope.rq)))
+> 
+> nit, we'd want to check its not the wake_cpu so we try to return it so
+> proxy migrations don't upset the tasks' original placement
 
--- >8 --
-diff --git a/net/ethtool/mm.c b/net/ethtool/mm.c
-index 3063fe00eef7..d305208dd0c8 100644
---- a/net/ethtool/mm.c
-+++ b/net/ethtool/mm.c
-@@ -292,7 +292,7 @@ static void ethtool_mmsv_configure_tx(struct ethtool_mmsv *mmsv,
- static void ethtool_mmsv_configure_pmac(struct ethtool_mmsv *mmsv,
- 					bool pmac_enabled)
- {
--	mmsv->ops->configure_tx(mmsv, pmac_enabled);
-+	mmsv->ops->configure_pmac(mmsv, pmac_enabled);
- }
- 
- static void ethtool_mmsv_send_mpacket(struct ethtool_mmsv *mmsv,
--- >8 --
+I don't think that really matters, not doing this migration is probably
+faster and then load balance will try and fix things again.
+
+The thing is, you want this task to take over the lock and start running
+ASAP, and we know *this* CPU is about to release the lock and then the
+power of the block-chain is likely to make the next task run.
+
+So less migration is more better, otherwise you then get to pull the
+entire block chain over to whatever -- and you know how much 'fun' that
+is.
+
+> > +                       deactivate_task(scope.rq, next, DEQUEUE_SLEEP);
+> > +       }
+> > +
+> > +       return next;
+> > +}
+> > +
+> 
+> Ok. I'll stare at all this a bit and see if I can give it a try.  I
+> fret that this doesn't handle the case if wakeups on the task occur
+> through other code paths? (So we still need BO_WAKING/NEEDS_RETURN to
+> prevent us from running until we migrate back). I don't really have a
+> specific case I can articulate, but my gut is telling me the problem
+> will be w/ ww_mutexes as that was a major source of problems with the
+> early versions of the patches that I believe tried to use logic
+> similar to this.
+
+Right, so I've not looked at ww_mutex specifically yet, but I thought to
+have understood it was more or less the same problem there. If you've
+got more details, please do share :-)
 
