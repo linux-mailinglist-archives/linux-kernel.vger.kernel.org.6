@@ -1,183 +1,218 @@
-Return-Path: <linux-kernel+bounces-510170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA99EA31944
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:02:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F254FA31946
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:02:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 799EB165C20
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:02:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2C1C165446
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CD5262D22;
-	Tue, 11 Feb 2025 23:02:13 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD396272924;
-	Tue, 11 Feb 2025 23:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C89267B03;
+	Tue, 11 Feb 2025 23:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MeoARZ3u"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D2027293C;
+	Tue, 11 Feb 2025 23:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739314933; cv=none; b=GNormyHsuLTTLuzwDeakUr6mkyZIh8836a7ZqJLMpWdlEgy7DKnadds387VU+Y4DkFxB1q0zM++sTtIdPDlXnaVZqAo48O+5JoRM+3tnA5tztCRwocHf31snjt7/0fa09zqV2tP7f4PSjUotIOMfTSG2anOwLTga4didYdrb6sk=
+	t=1739314956; cv=none; b=ULRlc/vaw5/4x30YGFuwJyistZNjYdbiYQqaGL+vAQ1POKjargGu6eS3VVJmTGVAnHjsAxRwHDoh9LAYqlGCQm777pgHUV27s4Rd3mbr+sIbkAUD9bVH6Z0gV5A3qMgofo5eWO3aMGaDT6a4AnlMUjHZ38BqUSLHkgProTdk1F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739314933; c=relaxed/simple;
-	bh=H7bdxn0MkgRyaqEuoBJoO78Bs2zTYOuyVXTnazydVek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GfmHsF3vfiG9iHIQavrwAD0CUgye5Rh62txrVy4eL6SRrw4zZPXT82QEcjd3DDCdSQP7SSByq67yelAUwGaSGKV0xSOmJiZQ8F2Fp5Zr7S9LazUPbKf3oJbHxUg5+6gTLy2yW0iOOunSGEcJrztlnk8W6ITLpotESn0bBl8qvX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id 8588872C8CC;
-	Wed, 12 Feb 2025 02:02:09 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-	id 6DA1F7CCB3A; Wed, 12 Feb 2025 01:02:09 +0200 (IST)
-Date: Wed, 12 Feb 2025 01:02:09 +0200
-From: "Dmitry V. Levin" <ldv@strace.io>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Oleg Nesterov <oleg@redhat.com>, Alexey Gladkov <legion@kernel.org>,
-	Eugene Syromyatnikov <evgsyr@gmail.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, strace-devel@lists.strace.io,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: fix mips_get_syscall_arg() for o32
-Message-ID: <20250211230209.GA19616@strace.io>
-References: <alpine.DEB.2.21.2502101732120.65342@angie.orcam.me.uk>
+	s=arc-20240116; t=1739314956; c=relaxed/simple;
+	bh=xQgsE9rA1Dgv6PH+aG++0LXJ52qEJWoMLGNX0KvlTpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=L27WQfTW6OcOOVMbL0eh8okeLjftlvVkWI6dkXobHm8IyTyEt66VGnc6320cb0JSJoCOQkb3DLbhTFIh4nyHBGhRCm+Owh8SMvv1rpSPSOlHUeUmkRd957+TVSCJDV2hFG2+H5dcTWYwIb6dOcC/Ps0RveAYz0MYIZIa+xXbFrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MeoARZ3u; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739314955; x=1770850955;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=xQgsE9rA1Dgv6PH+aG++0LXJ52qEJWoMLGNX0KvlTpo=;
+  b=MeoARZ3uwtAK9Z1lJT7gUBRLR6h6CwNDunAVTWoVfoSTgxsc2dNx3Txw
+   FVb2zMW7dAAdg1d3g+OWCToGN7Q/ORsHOCbqR4P1KMiB7gwFZMx+CZJXH
+   UjwiOMWUKAMinY9CBB9pRH8zcYl8756E/f0NIGRFWBxkl+4OzAXmEjKp1
+   l4JZ40dMiw3P9FPsUqqIRwLRaAqSapx8ftAdogqIe+gYgkGut/tCgeW4u
+   pgjU8/wy+u/Xg2Ag+DL2u41kQuwfhOpccDRhtuWghdY+ekI104cpmBpAe
+   xEbKIZBnzr0WzQOIP+CoLYQjsyJAhwIaWAi+4qY6aIm5NdWEau4h06F2F
+   g==;
+X-CSE-ConnectionGUID: qg5EXiNeQiyuWspkkdr1Zw==
+X-CSE-MsgGUID: 6VmcSf6QR/m296pD5pIPVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50179390"
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="50179390"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 15:02:34 -0800
+X-CSE-ConnectionGUID: dKfOVGqsQX2U6yTo21T2MQ==
+X-CSE-MsgGUID: c9ppi4RKTW+GmuPX0y/r8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113127012"
+Received: from agladkov-desk.ger.corp.intel.com (HELO [10.125.108.65]) ([10.125.108.65])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 15:02:32 -0800
+Message-ID: <4fff3c86-090b-497e-a432-6f591502a84b@intel.com>
+Date: Tue, 11 Feb 2025 16:02:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2502101732120.65342@angie.orcam.me.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 08/17] cxl/pci: Map CXL PCIe Upstream Switch Port RAS
+ registers
+To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
+ ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
+References: <20250211192444.2292833-1-terry.bowman@amd.com>
+ <20250211192444.2292833-9-terry.bowman@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250211192444.2292833-9-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This makes ptrace/get_syscall_info selftest pass on mips o32 and
-mips64 o32 by fixing the following two test assertions:
 
-1. get_syscall_info test assertion on mips o32:
-  # get_syscall_info.c:218:get_syscall_info:Expected exp_args[5] (3134521044) == info.entry.args[4] (4911432)
-  # get_syscall_info.c:219:get_syscall_info:wait #1: entry stop mismatch
 
-2. get_syscall_info test assertion on mips64 o32:
-  # get_syscall_info.c:209:get_syscall_info:Expected exp_args[2] (3134324433) == info.entry.args[1] (18446744072548908753)
-  # get_syscall_info.c:210:get_syscall_info:wait #1: entry stop mismatch
+On 2/11/25 12:24 PM, Terry Bowman wrote:
+> Add logic to map CXL PCIe Upstream Switch Port (USP) RAS registers.
+> 
+> Introduce 'struct cxl_regs' member into 'struct cxl_port' to cache a
+> pointer to the CXL Upstream Port's mapped RAS registers.
+> 
+> Also, introduce cxl_uport_init_ras_reporting() to perform the USP RAS
+> register mapping. This is similar to the existing
+> cxl_dport_init_ras_reporting() but for USP devices.
+> 
+> The USP may have multiple downstream endpoints. Before mapping RAS
+> registers check if the registers are already mapped.
+> 
+> Introduce a mutex for synchronizing accesses to the cached RAS
+> mapping.
 
-The first assertion happens due to mips_get_syscall_arg() trying to access
-another task's context but failing to do it properly because get_user() it
-calls just peeks at the current task's context.  It usually does not crash
-because the default user stack always gets assigned the same VMA, but it
-is pure luck which mips_get_syscall_arg() wouldn't have if e.g. the stack
-was switched (via setcontext(3) or however) or a non-default process's
-thread peeked at, and in any case irrelevant data is obtained just as
-observed with the test case.
+s/Introduce a mutex/Use the ras_init_mutex/ since it was introduced in the previous patch.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
 
-mips_get_syscall_arg() ought to be using access_remote_vm() instead to
-retrieve the other task's stack contents, but given that the data has been
-already obtained and saved in `struct pt_regs' it would be an overkill.
+Just a minor comment below
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-The first assertion is fixed for mips o32 by using struct pt_regs.args
-instead of get_user() to obtain syscall arguments.  This approach works
-due to this piece in arch/mips/kernel/scall32-o32.S:
+> ---
+>  drivers/cxl/core/pci.c | 19 ++++++++++++++++++-
+>  drivers/cxl/cxl.h      |  4 ++++
+>  drivers/cxl/mem.c      |  8 ++++++++
+>  3 files changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index 143c853a52c4..25513b9a8aff 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -775,6 +775,24 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
+>  	writel(aer_cmd, aer_base + PCI_ERR_ROOT_COMMAND);
+>  }
+>  
+> +void cxl_uport_init_ras_reporting(struct cxl_port *port)
+> +{
+> +
+> +	/* uport may have more than 1 downstream EP. Check if already mapped. */
+> +	mutex_lock(&ras_init_mutex);
 
-        /*
-         * Ok, copy the args from the luser stack to the kernel stack.
-         */
+You can use guard() here. 
 
-        .set    push
-        .set    noreorder
-        .set    nomacro
+> +	if (port->uport_regs.ras) {
+> +		mutex_unlock(&ras_init_mutex);
+> +		return;
+> +	}
+> +
+> +	port->reg_map.host = &port->dev;
+> +	if (cxl_map_component_regs(&port->reg_map, &port->uport_regs,
+> +				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
+> +		dev_err(&port->dev, "Failed to map RAS capability\n");
+> +	mutex_unlock(&ras_init_mutex);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_uport_init_ras_reporting, "CXL");
+> +
+>  /**
+>   * cxl_dport_init_ras_reporting - Setup CXL RAS report on this dport
+>   * @dport: the cxl_dport that needs to be initialized
+> @@ -801,7 +819,6 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
+>  				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
+>  		dev_err(dport_dev, "Failed to map RAS capability\n");
+>  	mutex_unlock(&ras_init_mutex);
+> -
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
+>  
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 82d0a8555a11..49f29a3ef68e 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -581,6 +581,7 @@ struct cxl_dax_region {
+>   * @parent_dport: dport that points to this port in the parent
+>   * @decoder_ida: allocator for decoder ids
+>   * @reg_map: component and ras register mapping parameters
+> + * @uport_regs: mapped component registers
+>   * @nr_dports: number of entries in @dports
+>   * @hdm_end: track last allocated HDM decoder instance for allocation ordering
+>   * @commit_end: cursor to track highest committed decoder for commit ordering
+> @@ -602,6 +603,7 @@ struct cxl_port {
+>  	struct cxl_dport *parent_dport;
+>  	struct ida decoder_ida;
+>  	struct cxl_register_map reg_map;
+> +	struct cxl_component_regs uport_regs;
+>  	int nr_dports;
+>  	int hdm_end;
+>  	int commit_end;
+> @@ -755,8 +757,10 @@ struct cxl_dport *devm_cxl_add_rch_dport(struct cxl_port *port,
+>  
+>  #ifdef CONFIG_PCIEAER_CXL
+>  void cxl_dport_init_ras_reporting(struct cxl_dport *dport);
+> +void cxl_uport_init_ras_reporting(struct cxl_port *port);
+>  #else
+>  static inline void cxl_dport_init_ras_reporting(struct cxl_dport *dport) { }
+> +static inline void cxl_uport_init_ras_reporting(struct cxl_port *port) { }
+>  #endif
+>  
+>  struct cxl_decoder *to_cxl_decoder(struct device *dev);
+> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> index 8c1144bbc058..541cabca434e 100644
+> --- a/drivers/cxl/mem.c
+> +++ b/drivers/cxl/mem.c
+> @@ -60,6 +60,7 @@ static bool dev_is_cxl_pci(struct device *dev, u32 pcie_type)
+>  static void cxl_init_ep_ports_aer(struct cxl_ep *ep)
+>  {
+>  	struct cxl_dport *dport = ep->dport;
+> +	struct cxl_port *port = ep->next;
+>  
+>  	if (dport) {
+>  		struct device *dport_dev = dport->dport_dev;
+> @@ -68,6 +69,13 @@ static void cxl_init_ep_ports_aer(struct cxl_ep *ep)
+>  		    dev_is_cxl_pci(dport_dev, PCI_EXP_TYPE_ROOT_PORT))
+>  			cxl_dport_init_ras_reporting(dport);
+>  	}
+> +
+> +	if (port) {
+> +		struct device *uport_dev = port->uport_dev;
+> +
+> +		if (dev_is_cxl_pci(uport_dev, PCI_EXP_TYPE_UPSTREAM))
+> +			cxl_uport_init_ras_reporting(port);
+> +	}
+>  }
+>  
+>  static int devm_cxl_add_endpoint(struct device *host, struct cxl_memdev *cxlmd,
 
-    load_a4: user_lw(t5, 16(t0))		# argument #5 from usp
-    load_a5: user_lw(t6, 20(t0))		# argument #6 from usp
-    load_a6: user_lw(t7, 24(t0))		# argument #7 from usp
-    load_a7: user_lw(t8, 28(t0))		# argument #8 from usp
-    loads_done:
-
-        sw	t5, PT_ARG4(sp)		# argument #5 to ksp
-        sw	t6, PT_ARG5(sp)		# argument #6 to ksp
-        sw	t7, PT_ARG6(sp)		# argument #7 to ksp
-        sw	t8, PT_ARG7(sp)		# argument #8 to ksp
-        .set	pop
-
-        .section __ex_table,"a"
-        PTR_WD	load_a4, bad_stack_a4
-        PTR_WD	load_a5, bad_stack_a5
-        PTR_WD	load_a6, bad_stack_a6
-        PTR_WD	load_a7, bad_stack_a7
-        .previous
-
-arch/mips/kernel/scall64-o32.S has analogous code for mips64 o32 that
-allows fixing the issue by obtaining syscall arguments from struct
-pt_regs.regs[4..11] instead of the erroneous use of get_user().
-
-The second assertion is fixed by truncating 64-bit values to 32-bit
-syscall arguments.
-
-Fixes: c0ff3c53d4f9 ("MIPS: Enable HAVE_ARCH_TRACEHOOK.")
-Signed-off-by: Dmitry V. Levin <ldv@strace.io>
----
-
-This started as a part of PTRACE_SET_SYSCALL_INFO API series[1].
-It has been rebased on top of [2] as suggested by Maciej in [3].
-
-[1] https://lore.kernel.org/all/20250210113336.GA887@strace.io/
-[2] https://lore.kernel.org/all/alpine.DEB.2.21.2502101732120.65342@angie.orcam.me.uk/
-[3] https://lore.kernel.org/all/alpine.DEB.2.21.2502111530080.65342@angie.orcam.me.uk/
-
- arch/mips/include/asm/syscall.h | 32 ++++++++------------------------
- 1 file changed, 8 insertions(+), 24 deletions(-)
-
-diff --git a/arch/mips/include/asm/syscall.h b/arch/mips/include/asm/syscall.h
-index ebdf4d910af2..056aa1b713e2 100644
---- a/arch/mips/include/asm/syscall.h
-+++ b/arch/mips/include/asm/syscall.h
-@@ -57,37 +57,21 @@ static inline void mips_syscall_update_nr(struct task_struct *task,
- static inline void mips_get_syscall_arg(unsigned long *arg,
- 	struct task_struct *task, struct pt_regs *regs, unsigned int n)
- {
--	unsigned long usp __maybe_unused = regs->regs[29];
--
-+#ifdef CONFIG_32BIT
- 	switch (n) {
- 	case 0: case 1: case 2: case 3:
- 		*arg = regs->regs[4 + n];
--
--		return;
--
--#ifdef CONFIG_32BIT
--	case 4: case 5: case 6: case 7:
--		get_user(*arg, (int *)usp + n);
- 		return;
--#endif
--
--#ifdef CONFIG_64BIT
- 	case 4: case 5: case 6: case 7:
--#ifdef CONFIG_MIPS32_O32
--		if (test_tsk_thread_flag(task, TIF_32BIT_REGS))
--			get_user(*arg, (int *)usp + n);
--		else
--#endif
--			*arg = regs->regs[4 + n];
--
-+		*arg = regs->args[n];
- 		return;
--#endif
--
--	default:
--		BUG();
- 	}
--
--	unreachable();
-+#else
-+	*arg = regs->regs[4 + n];
-+	if ((IS_ENABLED(CONFIG_MIPS32_O32) &&
-+	     test_tsk_thread_flag(task, TIF_32BIT_REGS)))
-+		*arg = (unsigned int)*arg;
-+#endif
- }
- 
- static inline long syscall_get_error(struct task_struct *task,
--- 
-ldv
 
