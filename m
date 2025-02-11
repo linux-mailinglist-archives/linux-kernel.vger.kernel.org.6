@@ -1,87 +1,64 @@
-Return-Path: <linux-kernel+bounces-510177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DD8A3195A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:16:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12418A3195E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:17:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155633A68B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:16:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6FA5167240
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E460A26773A;
-	Tue, 11 Feb 2025 23:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F1826A0A5;
+	Tue, 11 Feb 2025 23:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bwJUtEBV"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bttBPPcj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33065267AFC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E940726A08F;
+	Tue, 11 Feb 2025 23:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739315805; cv=none; b=nzolF7E/iJ5lSJYIB2fuZjFIAOfLDJHFWXIpAyIxZ46rp28PnSG1v+uYbPsuWhfZZTNFIo70Ip726UE9wsY+DEXEwVKev1TuhNrZ/EtIfndbNT9xSTeeCmCxHxF/06noEmFFehHC+tHRGi9qFm3HzvengaLR2m5Y8uBkmhyk0m0=
+	t=1739315809; cv=none; b=qkFIZccYC/Va3QL5lHZq+HSR14Rwog0uSECaZoaXQaCNq+Banu1TubhQhHxoBly1/OvkAHhvHMOJo1xmzP2N98+Qxb4k7u+9OLmRfYfTk/d03QNbulFJ4vUaV7lsrd9E/CcIrj02zF9nH5rbl/PlysZ2mHzOGPJgsl38cxZc+hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739315805; c=relaxed/simple;
-	bh=dCWsKsGHrypWkEy2BhbaTsLTiMr3Y+oercFl/4NqAkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQn1yN83mUGviCFhbyhsMMNRjQdNoO9H28W13xAAZy9XABm4BVorow5801tz0EHXkv5nYHavmKmhWcOSlqLu8WmMy0EhA5j/8CJFxk2nCsiNDLHMMg1egC4wNEX78uTaScrVR8xnPQI2eR79g4CpMzFPpB3BI8dZKXYOGJ8A3jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bwJUtEBV; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-543e47e93a3so6861449e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 15:16:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739315801; x=1739920601; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xdPjDM4Ktjpdiq8TPEXfIq9RN+Hdq37W2M7XnzEYgL8=;
-        b=bwJUtEBVtMjlTWzxwzyDduDM5gkE0yBQVASyQSiaCnfl8/KSUfaVRxwPuY/5vrQ8Vg
-         tHz98FEqMO3UjFVj2ZhEZ4TtOwyAExpZ1R1A7yN+dDgGpAKXjjYUN5zpSi9Ps2GRT4YD
-         2eRTr16prXz+8rkXR3Ip3yXycpMVaDJY4sMR8aijqIlz57AH/juYZoHavN3jdgv4Zivi
-         l71SWy3a+IzeOuYeQ7oV6WRc6F+nlDxJcxqXv9oUQq2Zcgu6i3a6H6fS5JOqEl/U8UcQ
-         0oy/WWvrnLBsid0eu8l3/cLl7abrF0KVKKU9ckOgmeiCQGpl2EPJrV8btTIXwoqmIeNT
-         jwMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739315801; x=1739920601;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xdPjDM4Ktjpdiq8TPEXfIq9RN+Hdq37W2M7XnzEYgL8=;
-        b=bUe9Tj/fVMswAm+3I0VvWQ/2P+zZV0rtzMfiqQ7tIPmtc8X33XMBgrZLi+WPIpd8oM
-         t/JPaXFERvWy4UegAsSs62Y1IumESr5gOW4LrOvWOG7PqhlXUxB4jTo6yFTRPIGkNV+R
-         V5w8lKWiR9vePUMbs3j92+rWj6s8wyP7ksbwunVblKSxySsDocAN7NzmerSUTZDMZ9lu
-         IfeTZZEZfdUa58byRg4gLdN+GPei+DXiZVF9QXswNmYAyFUsZsyT1Iyn/NIfTyfGHZjj
-         e2uq38R+Z/bdk0YdEnu1LKXNKALYNjsZW/gQbmF3oPgZViszXKwcobB+AdLxIX857QAo
-         n4iA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhISbwuaJnr+ga5ARQ8Wn+6nPWN7UpFl0rolcDK3pzkr34Udt59+QNiTD9vI8a7iYw94FT0CsO68+lP4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwENamMRd+gVaMtNcoQyoUwDiM/pP2HOsGz4D7Rl9k+7MWInkU2
-	azktiOqSYd1Lw600ycJWB/3g/iH+GBNM/Zn39ZhGtB7SD/Y+pr56VU4Ma8UiGjM=
-X-Gm-Gg: ASbGncvlFuj3gEF4MHpvJ+un0bGf0GlmzGkFRJXLBBBDANP9mxGiAJQ4k/Wqqa/jhwN
-	73eTUJLsAIcEGkkUorAXHulnETTJGUWZQVcSe13mZcG0hLLJPjbAfhO4xGQmsI0xXWn/EZ6Lp5E
-	Dmu8YKA8G9cqQiAvi6WDZpS3pXSMViFBbIGqfwVvjGy7hkrOuy3RM5t8qbDwJ6oFBkOtEDqmcQa
-	SEBKVsNdraNUCX8kGxdBUQdLwpBMYmHDx7KgRFydro+iczPRu9FpCk1QB7lqKiKd8puNKh7A6pB
-	dlLrMsdHv9GXRUh2laEMV58lEDr6TjccJ+eWlspOT9ZAX+Ry6xIsjyXW9jNHbrNCCOdGwpM=
-X-Google-Smtp-Source: AGHT+IHt1P5dSEzek/rhSRYjyu1EcKb97y+OgEvT96wL/qYwjHZTpXFCGduS/FI+zG4gVD14oHfTjg==
-X-Received: by 2002:a05:6512:696:b0:545:a89:4dd3 with SMTP id 2adb3069b0e04-54518166ac8mr211738e87.46.1739315801127;
-        Tue, 11 Feb 2025 15:16:41 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5450e1121ebsm646692e87.136.2025.02.11.15.16.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 15:16:39 -0800 (PST)
-Date: Wed, 12 Feb 2025 01:16:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: "James A. MacInnes" <james.a.macinnes@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	quic_wcheng@quicinc.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	lgirdwood@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 2/3] regulator: qcom_usb_vbus: Add support for PMI8998
- VBUS
-Message-ID: <aldyktqe5sypkb6tdzl5omraohn5ee272b2ww7vwax3sj7csbd@ccldsyvguuc7>
-References: <20250211194918.2517593-1-james.a.macinnes@gmail.com>
- <20250211194918.2517593-3-james.a.macinnes@gmail.com>
+	s=arc-20240116; t=1739315809; c=relaxed/simple;
+	bh=3zTpwPVBu5FhsZX4yiDd5kXq166OpvaNogmElK6aTus=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ja4KmqyQGro7DhUzxizSEdtBgbeY96e+AUG54pGutGaB+QG+ppTdgunfZOhigc+vXQA9Uqay5Ud1EvYwBPu5o6hsgrHWm0XpvIpWOhNJSn8Ay6nnOXn0ZOb1kgacjbmSuUYC7D3Ngode17kaWlA2DDz2AT6MN+60Z1tZs0Pmcxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bttBPPcj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218A4C4CEE2;
+	Tue, 11 Feb 2025 23:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739315808;
+	bh=3zTpwPVBu5FhsZX4yiDd5kXq166OpvaNogmElK6aTus=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=bttBPPcjLAml4vtqknB3/v0wkFPPoVEK8XZ2S+iaArQyIcmJF8Ai/gxtHPWBlHF3G
+	 /7ZI0j7SBZCnw4BO85GshXa2qKk0PRM0mIYpBXsM58GxjFQ3p61g/k1AqIuyXtdZ1w
+	 flr6BOMRxeRTC8IjVyv45+6xPabbmlmqEsa8jJtZFXZuLmckds/S/wFbauFftMY9Vs
+	 uzKGfSWphT53CgHR7Bn3D6yDJkbxlE1psObKa1cNbjLh4EW/Yfwba9BJLQR/lUPGUO
+	 pHz5o5yVMm5YY/foY11CLPaxo19JesEZ9IJCAs3CC9vjBsOvlbP5c1x/G+Htn1Pr94
+	 aIcSdF5qBOUwA==
+Date: Tue, 11 Feb 2025 17:16:46 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+	linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [v8 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
+Message-ID: <20250211231646.GA58828@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,125 +67,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211194918.2517593-3-james.a.macinnes@gmail.com>
+In-Reply-To: <60c5504d-341f-4ce5-b337-1eca92a9506f@web.de>
 
-On Tue, Feb 11, 2025 at 11:49:15AM -0800, James A. MacInnes wrote:
-> This patch extends the Qualcomm USB VBUS regulator driver to support
-> PMI8998 PMIC alongside the existing support for PM8150B.
-> 
-> Key changes:
-> - Added current limit tables specific to PMI8998.
-> - Dynamically configure the VBUS regulator based on the PMIC type.
-> - Updated debug messages to reflect successful initialization for
->   supported PMICs.
-> - Changed registration log message
-> 
-> These changes ensure proper VBUS current limit configuration and
-> compatibility across multiple Qualcomm PMICs.
-> 
-> Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
-> ---
->  drivers/regulator/qcom_usb_vbus-regulator.c | 33 +++++++++++++++++----
->  1 file changed, 28 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/regulator/qcom_usb_vbus-regulator.c b/drivers/regulator/qcom_usb_vbus-regulator.c
-> index cd94ed67621f..bfcb77698ba2 100644
-> --- a/drivers/regulator/qcom_usb_vbus-regulator.c
-> +++ b/drivers/regulator/qcom_usb_vbus-regulator.c
-> @@ -20,10 +20,15 @@
->  #define OTG_CFG				0x53
->  #define OTG_EN_SRC_CFG			BIT(1)
->  
-> -static const unsigned int curr_table[] = {
-> +static const unsigned int curr_table_pm8150b[] = {
->  	500000, 1000000, 1500000, 2000000, 2500000, 3000000,
->  };
->  
-> +static const unsigned int curr_table_pmi8998[] = {
-> +	250000, 500000, 750000, 1000000,
-> +	1250000, 1500000, 1750000, 2000000,
-> +};
-> +
->  static const struct regulator_ops qcom_usb_vbus_reg_ops = {
->  	.enable = regulator_enable_regmap,
->  	.disable = regulator_disable_regmap,
-> @@ -37,8 +42,8 @@ static struct regulator_desc qcom_usb_vbus_rdesc = {
->  	.ops = &qcom_usb_vbus_reg_ops,
->  	.owner = THIS_MODULE,
->  	.type = REGULATOR_VOLTAGE,
-> -	.curr_table = curr_table,
-> -	.n_current_limits = ARRAY_SIZE(curr_table),
-> +	.curr_table = NULL,
-> +	.n_current_limits = 0,
->  };
->  
->  static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
-> @@ -50,6 +55,7 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
->  	struct regulator_init_data *init_data;
->  	int ret;
->  	u32 base;
-> +	const char *pmic_type;
->  
->  	ret = of_property_read_u32(dev->of_node, "reg", &base);
->  	if (ret < 0) {
-> @@ -68,6 +74,19 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
->  	if (!init_data)
->  		return -ENOMEM;
->  
-> +	// Determine PMIC type
-> +	pmic_type = of_device_get_match_data(dev);
-> +	if (pmic_type && strcmp(pmic_type, "pmi8998") == 0) {
+On Fri, Feb 07, 2025 at 07:39:03AM +0100, Markus Elfring wrote:
+> > I don't *really* like guard() anyway because it's kind of magic in
+> > that the unlock doesn't actually appear in the code, and it's kind of
+> > hard to unravel what guard() is and how it works.  But I guess that's
+> > mostly because it's just a new idiom that takes time to internalize.
+>
+> How will the circumstances evolve further for growing applications of
+> scope-based resource management?
 
-I think a traditional way is to define an enum and then use that enum
-values as match data. Or you can just add a struct with curr_table and
-get that as a match data.
+I'm sure it will evolve to become the typical style.  Right now, it's
+not quite there yet, as evidenced by the fact that the only reference
+to them in Documentation/ is this somewhat ambivalent note:
 
-> +		qcom_usb_vbus_rdesc.curr_table = curr_table_pmi8998;
-> +		qcom_usb_vbus_rdesc.n_current_limits =
-> +			ARRAY_SIZE(curr_table_pmi8998);
-> +	} else if (pmic_type && strcmp(pmic_type, "pm8150b") == 0) {
-> +		qcom_usb_vbus_rdesc.curr_table = curr_table_pm8150b;
-> +		qcom_usb_vbus_rdesc.n_current_limits =
-> +			ARRAY_SIZE(curr_table_pm8150b);
-> +	} else {
-> +		return -ENODEV;
-> +	}
->  	qcom_usb_vbus_rdesc.enable_reg = base + CMD_OTG;
->  	qcom_usb_vbus_rdesc.enable_mask = OTG_EN;
->  	qcom_usb_vbus_rdesc.csel_reg = base + OTG_CURRENT_LIMIT_CFG;
-> @@ -80,18 +99,22 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
->  	rdev = devm_regulator_register(dev, &qcom_usb_vbus_rdesc, &config);
->  	if (IS_ERR(rdev)) {
->  		ret = PTR_ERR(rdev);
-> -		dev_err(dev, "not able to register vbus reg %d\n", ret);
-> +		dev_err(dev, "Failed to register vbus reg %d\n", ret);
->  		return ret;
->  	}
->  
->  	/* Disable HW logic for VBUS enable */
->  	regmap_update_bits(regmap, base + OTG_CFG, OTG_EN_SRC_CFG, 0);
->  
-> +	dev_info(dev, "Registered QCOM %s VBUS regulator\n",
-> +		 pmic_type);
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/maintainer-netdev.rst?id=v6.13#n380
 
-dev_dbg, the driver should be silent by default.
+We do already have a few uses of guard() and scoped_guard() in
+drivers/pci, and I don't really object to more, including in this
+amd-mdb case.  Whatever we do, I *would* want to do it consistently
+throughout the file.
 
-> +
->  	return 0;
->  }
->  
->  static const struct of_device_id qcom_usb_vbus_regulator_match[] = {
-> -	{ .compatible = "qcom,pm8150b-vbus-reg" },
-> +	{ .compatible = "qcom,pm8150b-vbus-reg", .data = "pm8150b" },
-> +	{ .compatible = "qcom,pmi8998-vbus-reg", .data = "pmi8998" },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, qcom_usb_vbus_regulator_match);
-> -- 
-> 2.43.0
-> 
-
--- 
-With best wishes
-Dmitry
+Bjorn
 
