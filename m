@@ -1,164 +1,142 @@
-Return-Path: <linux-kernel+bounces-509949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EA7A31670
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:11:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDECBA31671
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE763A2249
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:10:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E39B87A1D03
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D5F262D0D;
-	Tue, 11 Feb 2025 20:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IC3VwTCF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F5526158E;
+	Tue, 11 Feb 2025 20:11:26 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E9D265603;
-	Tue, 11 Feb 2025 20:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C52B265603
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 20:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739304657; cv=none; b=c0EMQJsb0jcnmWTpvrHp07B5uP3G6De44DFS/KH5cvoZF1M0PmA1Z19SfmKPsF38wpcaXoWgPWqx14xby6+zoBc+xZnAk3jDi/UKqUlLvPcwysQ/x4V+2JO6LWWVm92b/Uxg48A6ELosOIAk2LSUpwu74JpIHkX4cc2u/EG7Oz8=
+	t=1739304686; cv=none; b=im2ulY+gawb1xCIOfQpMzqEvKO97+0/MWFqZXsUaEl8yd96Tvik1tleeQD7RIvMgCxkQsTLm/zTZvvmox8ssqwT6lcj+RnJ6lp9ip5XtQQ5pgIsCsqAWP5T5+qVqDqvRdrSQsdoRFTw5CZ7M/rRB7LbjH4zBC+Cgi+ZvMa54c7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739304657; c=relaxed/simple;
-	bh=E6uMHNRrqvX68qYvnwYOEDWtD7KowOQ+Y/xaRqFhUqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ulaA9y7SJvuP00WrBrYDfhlc4fdCfZgCqA9nGmFtnf8Mls1KeQz+b2AXlUU7Jksd0YuoqY4U24uuq1+d4GMgtDVl76oHU9ZoNGDOgal9ClI27xtbDU3/iEFQMKICWjdwNZeB/jqQk8OSMFMR1s+g6n5ZZ/nPEFMP3dod1B9/CMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IC3VwTCF; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739304656; x=1770840656;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=E6uMHNRrqvX68qYvnwYOEDWtD7KowOQ+Y/xaRqFhUqk=;
-  b=IC3VwTCFpZTwmm8RyNbn6pgh1vA6KrCwlnFUtdQrJxxtfLobqEvGMRwT
-   5YVatV9FNOwZhQq2Pv9eiu3cbX1dbA9fwJkrZJUekVibR0a5kxBZj/IYY
-   bxqu+gUByc6lkKU+ucVZbHHg/e3tpXliINUxIdFEY9A0J6E54Haz3pfyS
-   zjtrfW04F7K9/hFYpkDm2I6M67IzBozIqEKfMJ1E24Ya50aIZ3GY5Slzg
-   Z89PsVpX3MGbhFS6v7agwU0+Ek9IwDO4SD4h563xMBdsRk6RGm1br3Qm3
-   Dj/LGkfvL+wmGqaqoX2ZEvKZ7EGCmKuMcBKHvt14uO18/Y/ufnrUxzbLb
-   w==;
-X-CSE-ConnectionGUID: oa4bHUOBQ5Wr4P5YtC4s3Q==
-X-CSE-MsgGUID: W3mPqZJqQ9aWDcrm3ptBYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="42787707"
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="42787707"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 12:10:55 -0800
-X-CSE-ConnectionGUID: j7GB39CpStKmyqktQdhAaQ==
-X-CSE-MsgGUID: tp+rj++cT9y4A7cEUlLEPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="112831724"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.48]) ([10.125.108.48])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 12:10:53 -0800
-Message-ID: <cd4828de-3a60-41a1-bb5a-9212bbe01e60@intel.com>
-Date: Tue, 11 Feb 2025 12:10:53 -0800
+	s=arc-20240116; t=1739304686; c=relaxed/simple;
+	bh=qkTtrfTVE2e5VnCCfLqDdAUacevlSdasx1HzE+O11r4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F0NgO419408P+R7HU6HYEMWuO407GsmF299GUxinc9UKSUz3ZogvikX2GKijLifIHeAe5nMTAzOn9H0A4w36ZOcr0sDD/cZ9vp19Zid5813uMKfG0wDVdPjuT27r34yYCIFj5x2nIWXt5OCI4heDJKfSvOFegMtFIg6qbpPf3Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3cf6ceaccdbso44250675ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 12:11:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739304684; x=1739909484;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NRVAjGpy53j9eMkWE5h3z1GKtU13K2c7lkx79j1/V8k=;
+        b=e5DMPgg1LC3WO+E6suhP+iU/MbqSmKr5K0YqE/taElnEl/XhoX7XN+dG3uBmJtK9Lz
+         JWfkyhlUEIIhS436meTmERzn3utDgFKfqfajxTE91hbzcLO7HeTarg/Hn2X+cdsTQz8f
+         X+4hKHHhHePD4K72Yh5876Y7HBND20oryPkB9z7Thk9PwU+9Y82E7h8at8wrw4hnrgGU
+         aXDaaYwoC7nPQZFBGm5VVe+suALSrvmU/4mHw9kDMcivPtFi0O7G9k/Q99h5DuKaIZHk
+         2R0eXBPi9OdeOZjZbUymEPKQ6md5Cr6abNgprQixcJFLCg9i+1LJFiKQ2qx6tnQn7ysQ
+         Ql7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVs4Vszp8qeieF/LPVbUtmpU96KSvf+4MxWN46rREqMp39K3m/rId8GFLiNEVPduVzBriOkbNQ9lhYx35Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoU7RsB7ZpdXtPq3QQV5hFzFuKsdtuHaho7K4n37ILuq9Gi/L6
+	+3EICQR3iUZ5pcQgl7xyUNK3i0/GExUIw3lYAUBohUDSY8uXDBM3nAiYe6UKTqLRX6El41/sNnT
+	1h+NVDcecd6ub5bZ+N7Rsi965Av3hTGk9z9FfsresKl2RvHcM1Ca8OkA=
+X-Google-Smtp-Source: AGHT+IEB0erOopqlfKrN/oqmh8lDIEhXJynd0cj6id7WlVR43LgxciVegxBjDWXuto70F+E5kupPmj6oIrriPnUDIaYNc6jvPyHb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/17] x86/smpboot: Fix INIT delay optimization for
- extended Intel Families
-To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Fenghua Yu <fenghua.yu@intel.com>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Zhang Rui <rui.zhang@intel.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- David Laight <david.laight.linux@gmail.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20250211194407.2577252-1-sohil.mehta@intel.com>
- <20250211194407.2577252-3-sohil.mehta@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250211194407.2577252-3-sohil.mehta@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:17cc:b0:3cf:fd28:852 with SMTP id
+ e9e14a558f8ab-3d17bdfe77amr9760125ab.3.1739304684201; Tue, 11 Feb 2025
+ 12:11:24 -0800 (PST)
+Date: Tue, 11 Feb 2025 12:11:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67abaeec.050a0220.3d72c.0087.GAE@google.com>
+Subject: [syzbot] [v9fs?] KCSAN: data-race in p9_conn_cancel / p9_write_work (7)
+From: syzbot <syzbot+d69a7cc8c683c2cb7506@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/11/25 11:43, Sohil Mehta wrote:
-> Currently only Family 6 is considered as modern and avoids the 10 msec
-> INIT delay. The optimization doesn't extend to the upcoming Family 18/19
-> models.
+Hello,
 
-This doesn't quite parse correctly to me.
+syzbot found the following issue on:
 
-Let's say it this way:
+HEAD commit:    febbc555cf0f Merge tag 'nfsd-6.14-1' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=114123f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7722a092753bcf03
+dashboard link: https://syzkaller.appspot.com/bug?extid=d69a7cc8c683c2cb7506
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-	Some old crusty CPUs need an extra delay that slows down
-	booting. See the comment above 'init_udelay' for details. Newer
-	CPUs don't need the delay.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-	Right now, for Intel, Family 6 and only Family 6 skips the
-	delay. That leaves out both the Family 15 (Pentium 4s) and brand
-	new Family 18/19 models.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/34e7d4c83286/disk-febbc555.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/483282168b02/vmlinux-febbc555.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/510fcf6f96a7/bzImage-febbc555.xz
 
-	The omission of Family 15 (Pentium 4s) seems like an oversight
-	and 18/19 do not need the delay.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d69a7cc8c683c2cb7506@syzkaller.appspotmail.com
 
-	Skip the delay on all Intel processors Family 6 and beyond.
+==================================================================
+BUG: KCSAN: data-race in p9_conn_cancel / p9_write_work
 
-Is there anything wrong there?
+write to 0xffff88810db66428 of 4 bytes by task 23357 on cpu 1:
+ p9_conn_cancel+0x89/0x400 net/9p/trans_fd.c:199
+ p9_poll_mux net/9p/trans_fd.c:631 [inline]
+ p9_poll_workfn+0x133/0x410 net/9p/trans_fd.c:1177
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3317
+ worker_thread+0x51d/0x6f0 kernel/workqueue.c:3398
+ kthread+0x4ae/0x520 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+read to 0xffff88810db66428 of 4 bytes by task 23378 on cpu 0:
+ p9_write_work+0x26/0x750 net/9p/trans_fd.c:453
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3317
+ worker_thread+0x51d/0x6f0 kernel/workqueue.c:3398
+ kthread+0x4ae/0x520 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+value changed: 0x00000000 -> 0xffffff98
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 UID: 0 PID: 23378 Comm: kworker/0:8 Tainted: G        W          6.14.0-rc2-syzkaller-00034-gfebbc555cf0f #0
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Workqueue: events p9_write_work
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
