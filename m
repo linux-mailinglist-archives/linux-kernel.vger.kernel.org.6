@@ -1,87 +1,100 @@
-Return-Path: <linux-kernel+bounces-510181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36FEA31974
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:21:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94396A31975
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:23:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 506521887B95
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:21:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F6531887C2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B44268FE3;
-	Tue, 11 Feb 2025 23:21:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F385267AF5;
-	Tue, 11 Feb 2025 23:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5885267AFE;
+	Tue, 11 Feb 2025 23:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Zla9nlGE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C111A272908
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739316106; cv=none; b=FMWO2ftBjMuSIswieWqDSWZn2ZMy2FGKLbJHITruxCV2+qMITUUX/CHsq5y7ZO1UrjCz4/NXqF4aX+H8os11soEcONENX/3ljzY93/UkfGa6s99vZpRH9BDhY4h/5vwmpTf1oR9goqqtTqpMMW7e7EHcBO66g8LMZ8pmPhymqqY=
+	t=1739316223; cv=none; b=JC08G5dNx9L5+B8EFkP59mm/SJhRkbSBQd9RxdFDjRpWpjPb+kI+mv7iZ1YAC1kxY1QmNPyL/WZFRZgSjjFRgj/RBZpUIgqHbIoh7suu9ggu6f0mZ9f1OqwRH7OUQ86COCm/YtXp3/G9JzMyZc6vvbkR0B7e8UIASozNkL7+Aeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739316106; c=relaxed/simple;
-	bh=sB2itsFohXunEWga5+rM3EMf9osNj1QTEbWJbv6fN8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dOce9i6vcBdtH4c9x1hpBQ0dSg0ZkS2JIuB4sR3EkSaS/N0tVHvOQ8ybyUgAKq79ItwZAhL5lF3a6K6pMZEtE6OpK3SW5Pd8ECU4rHcsFHDT/1UtMeMd3mUb+jdu7mUNiHnPlb2wdQ55rXw1oAsypr7FF6ZvZ4Yq1DVEngojkaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 353431D15;
-	Tue, 11 Feb 2025 15:22:05 -0800 (PST)
-Received: from [10.118.111.35] (G9L3377F54.austin.arm.com [10.118.111.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9597D3F58B;
-	Tue, 11 Feb 2025 15:21:43 -0800 (PST)
-Message-ID: <e9d255f0-82d9-4c6d-b854-e3ba1ca0e8e2@arm.com>
-Date: Tue, 11 Feb 2025 17:21:43 -0600
+	s=arc-20240116; t=1739316223; c=relaxed/simple;
+	bh=9CEq1rU+igBd9gYOH1zNJ9QAxFtqVyfFNmpUYP8FoJE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=AxNm7YsR2t+avpZTu6NyoY9cvDBn3qgA2tw19BqAsoBqV7N569olvNajMy37di+2jMw0YznZMSw8Htbd1QNAPc1FSkuU2HL9FyFMwTQnOzU16N4jmL/FHv83AoS03MYoRQSNl3zevYfuXL8z8C77nVkHZvLxrYh4BEUg3RsvLB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Zla9nlGE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1F0C4CEDD;
+	Tue, 11 Feb 2025 23:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1739316223;
+	bh=9CEq1rU+igBd9gYOH1zNJ9QAxFtqVyfFNmpUYP8FoJE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Zla9nlGE43GU6OGohify5G8boYIZyP0qo/Ry2s7xigt2q3x3h+gYzTQ25RZ1tgg0G
+	 7bFU8DF8ZC1xORlm7sKmPc0Al4+R+mpGlAq8romE1+EuEfw2Vm+hRmcMD/jc7UuWhl
+	 vxHm9irAvecpJ2oz9wAaoAlxcHeN5qbptzPOvJik=
+Date: Tue, 11 Feb 2025 15:23:41 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: david@redhat.com, willy@infradead.org, kirill.shutemov@linux.intel.com,
+ npache@redhat.com, ryan.roberts@arm.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com,
+ apopple@nvidia.com, dave.hansen@linux.intel.com, will@kernel.org,
+ baohua@kernel.org, jack@suse.cz, srivatsa@csail.mit.edu,
+ haowenchao22@gmail.com, hughd@google.com, aneesh.kumar@kernel.org,
+ yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com,
+ wangkefeng.wang@huawei.com, ziy@nvidia.com, jglisse@google.com,
+ surenb@google.com, vishal.moola@gmail.com, zokeefe@google.com,
+ zhengqi.arch@bytedance.com, jhubbard@nvidia.com, 21cnbao@gmail.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/17] khugepaged: Asynchronous mTHP collapse
+Message-Id: <20250211152341.3431089327c5e0ec6ba6064d@linux-foundation.org>
+In-Reply-To: <20250211111326.14295-1-dev.jain@arm.com>
+References: <20250211111326.14295-1-dev.jain@arm.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] tpm_crb: implement driver compliant to CRB over FF-A
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
- sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250210232227.97761-1-stuart.yoder@arm.com>
- <20250210232227.97761-2-stuart.yoder@arm.com> <Z6u8Yb-NIs0_v2gm@kernel.org>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <Z6u8Yb-NIs0_v2gm@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Tue, 11 Feb 2025 16:43:09 +0530 Dev Jain <dev.jain@arm.com> wrote:
 
-
-On 2/11/25 3:08 PM, Jarkko Sakkinen wrote:
-> On Mon, Feb 10, 2025 at 05:22:24PM -0600, Stuart Yoder wrote:
->> The Arm specification TPM Service CRB over FF-A specification
->> defines the FF-A messages to interact with a CRB-based TPM
->> implemented as an FF-A secure partition.
->>
->> Spec URL:
->> https://developer.arm.com/documentation/den0138/latest/
->>
->> This driver is probed when a TPM Secure Partition is
->> discovered by the FF-A subsystem. It exposes APIs
->> used by the TPM CRB driver to send notifications to
->> the TPM.
->>
->> Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
->> ---
->>   drivers/char/tpm/Kconfig   |   9 ++
->>   drivers/char/tpm/Makefile  |   1 +
->>   drivers/char/tpm/ffa_crb.c | 310 +++++++++++++++++++++++++++++++++++++
->>   drivers/char/tpm/ffa_crb.h |  30 ++++
+> This patchset extends khugepaged from collapsing only PMD-sized THPs to
+> collapsing anonymous mTHPs.
 > 
-> Let's use tpm_ prefix for these.
+> mTHPs were introduced in the kernel to improve memory management by allocating
+> chunks of larger memory, so as to reduce number of page faults, TLB misses (due
+> to TLB coalescing), reduce length of LRU lists, etc. However, the mTHP property
+> is often lost due to CoW, swap-in/out, and when the kernel just cannot find
+> enough physically contiguous memory to allocate on fault. Henceforth, there is a
+> need to regain mTHPs in the system asynchronously. This work is an attempt in
+> this direction, starting with anonymous folios.
+> 
+> In the fault handler, we select the THP order in a greedy manner; the same has
+> been used here, along with the same sysfs interface to control the order of
+> collapse. In contrast to PMD-collapse, we (hopefully) get rid of the mmap_write_lock().
+> 
+> ---------------------------------------------------------
+> Testing
+> ---------------------------------------------------------
+> 
+> The set has been build tested on x86_64.
+> For Aarch64,
+> 1. mm-selftests: No regressions.
+> 2. Analyzing with tools/mm/thpmaps on different userspace programs mapping
+>    aligned VMAs of a large size, faulting in basepages/mTHPs (according to sysfs),
+>    and then madvise()'ing the VMA, khugepaged is able to 100% collapse the VMAs.
 
-Ok, will do.
+It would be nice to provide some evidence that this patchset actually
+makes Linux better for our users, and by how much.
 
-Thanks,
-Stuart
-
+Thanks, I think I'll skip v2 and shall await reviewer input.
 
