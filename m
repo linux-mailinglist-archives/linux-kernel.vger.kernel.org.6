@@ -1,166 +1,202 @@
-Return-Path: <linux-kernel+bounces-509965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB28A316A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:27:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BFBAA316A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7293A7369
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF3C188242F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B0E2638B7;
-	Tue, 11 Feb 2025 20:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1962E2638A7;
+	Tue, 11 Feb 2025 20:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dTAwEfJV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azvTjfJZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DF61D8DF6;
-	Tue, 11 Feb 2025 20:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D3C1D8DF6;
+	Tue, 11 Feb 2025 20:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739305613; cv=none; b=eilsGeTc84CVAAl7Uk0qMXDle7LsySUTyZBxikkzeHhPLjozqR3nHtB9g+T1bDMABh+VKafQowoRXJXJZDhqPNL1HtBaKfdbzz815nXu5+3LXYTakahwGvTR6ac3YCMVjOz96+nFSLIBjFvbU3viOpD39K6YBXE5/tPG8blVpI0=
+	t=1739305709; cv=none; b=GXPnGZLoHPF7MNYjuegmdlGkZZaJy+HyZAUq8j/zxSVA2Mht1LRbBpelZ0VAH6vHdJguO+QADGt9GFTwhjIvAHxLDnqyAHlboEn//Sf/IMafvAUPCecxWCkCO8Woa8iyMvZPrpp3MgCNgaJz3NzGkUXgEcClHnpKW959IUkV4fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739305613; c=relaxed/simple;
-	bh=+fClqH3t9Av9cG/CYZpvXyUGwAqU8nH5zY+gHkCMoro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mu0bqT1y/kEQKivC2orx3Jds4iTjSKwUrKHwWdQ5pblICz70W95oah2VWj7Yg0KE0DvecJvHC/rrgNl1CWYg1urH/HomVtp8VCsP1zNEtVWy7yOuVE2CNiSDZXxAXmuyin2vOePcwupitHcjp9Ud2FLm7MFtfYxyJ6AqVAI3kzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dTAwEfJV; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739305612; x=1770841612;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+fClqH3t9Av9cG/CYZpvXyUGwAqU8nH5zY+gHkCMoro=;
-  b=dTAwEfJVkE6N2a33oKKNF9Fx1OF2v89PPMZ3EQB7qWG/1zUkR/8V7t+e
-   LAAXQAjdd05t0LWdSMLkHL/vKiCcspLVs8yxMZIDInljuioTMJISSTJ2G
-   fZ9z7f/NrLaN8wV55LKfukRnJ40tHOpAh/wxeFcIUw5EwEWiA9XwVUz0e
-   H9U1MwTPJqv69IUCDz0fqVeAP9Sma/W/7ucMKlZkZvgMQaV4pbk9l7aK4
-   jWW/VpMWK0hwiU29mlrlwLX4RvJLGkEA8oBX2tPMxOYNaePotJpA4Zqg7
-   /JpJz7+5MeEAzPlTsEm+SZfkBKZPXM8/XyYM0nqqgLnKyRHw0X45sDdkP
-   w==;
-X-CSE-ConnectionGUID: /geln+N4Qp++x/yYExFlEg==
-X-CSE-MsgGUID: SrSvyDy9Q+OyUVwLkuon4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39179283"
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="39179283"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 12:26:50 -0800
-X-CSE-ConnectionGUID: +AQkDedoTIKh72G7pqxSBg==
-X-CSE-MsgGUID: Ol+TZdIeQLup+dPw9nkEAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="149801495"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.48]) ([10.125.108.48])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 12:26:49 -0800
-Message-ID: <5b954a96-1034-467d-a5dc-3d3f7bc112a1@intel.com>
-Date: Tue, 11 Feb 2025 12:26:48 -0800
+	s=arc-20240116; t=1739305709; c=relaxed/simple;
+	bh=PorxhQhKaeA4sE5AZrSXMieeD8CtaoH/d52ZQgaCyTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=R17Pd1y1JJqw07XtymGk7jgHjYZ5AU/PCtsWThG4s3EzBTWc0DFLH5SE/iE/vSa32knJhq8qM5imxtpSx84brQhocpg1avhe4W/msNssPIJQthnXOdgnXRdOY/2OlkZSN9Bg1dp0hVogdjuq9bPktbt2b12JBS6umUtr9AUq0Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azvTjfJZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2643FC4CEDD;
+	Tue, 11 Feb 2025 20:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739305709;
+	bh=PorxhQhKaeA4sE5AZrSXMieeD8CtaoH/d52ZQgaCyTw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=azvTjfJZxWlUxUbpjz7qqIi2vW3to74F+MVLnsHdmAiRXYbf43SmlZUFedUj2iRKs
+	 cgOx0VcObG25xO9qCUOUR6BpLqSKNrIq2KtAK32mRj9gwBQsQpamJIUtzQhYeqBWS2
+	 eYDjBC6XQSzQPOFSYApYbWza7VQzMHCkNWoaeQfhCdCsXcEZntmeNTxikxNfjdKq4l
+	 sD1URsFQqS5PvoTCyCl0sdi04oQ9xww9k0CKHm5UzqcKwQM6Wry/bbnU67IhGBrHbs
+	 dLJbWOqBc1KLcpsdIh97xM3A2+o4EwJT06Mf0Nrf0QYrzhxiUIKiucrGNRJTGQ2a9T
+	 iHq7SjfSHyjZw==
+Date: Tue, 11 Feb 2025 14:28:27 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+	ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+	rrichter@amd.com, nathan.fontenot@amd.com,
+	Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
+	ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
+Subject: Re: [PATCH v7 03/17] CXL/PCI: Introduce PCIe helper functions
+ pcie_is_cxl() and pcie_is_cxl_port()
+Message-ID: <20250211202827.GA53859@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/17] x86/cpu/intel: Fix the movsl alignment
- preference for extended Families
-To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Fenghua Yu <fenghua.yu@intel.com>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Zhang Rui <rui.zhang@intel.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- David Laight <david.laight.linux@gmail.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20250211194407.2577252-1-sohil.mehta@intel.com>
- <20250211194407.2577252-5-sohil.mehta@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20250211194407.2577252-5-sohil.mehta@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211192444.2292833-4-terry.bowman@amd.com>
 
-We should really rename intel_workarounds() to make it more clear that
-it's 32-bit only. But I digress...
-
-On 2/11/25 11:43, Sohil Mehta wrote:
-> The alignment preference for 32-bit movsl based bulk memory move has
-> been 8-byte for a long time. However this preference is only set for
-> Family 6 and 15 processors.
+On Tue, Feb 11, 2025 at 01:24:30PM -0600, Terry Bowman wrote:
+> CXL and AER drivers need the ability to identify CXL devices and CXL port
+> devices.
 > 
-> Extend the preference to upcoming Family numbers 18 and 19 to maintain
-> legacy behavior. Also, use a VFM based check instead of switching based
-> on Family numbers. Refresh the comment to reflect the new check.
-"Legacy behavior" is not important here. If anyone is running 32-bit
-kernel binaries on their brand new CPUs they (as far as I know) have a
-few screws loose. They don't care about performance or security and we
-shouldn't care _for_ them.
+> First, add set_pcie_cxl() with logic checking for CXL Flexbus DVSEC
+> presence. The CXL Flexbus DVSEC presence is used because it is required
+> for all the CXL PCIe devices.[1]
+> 
+> Add boolean 'struct pci_dev::is_cxl' with the purpose to cache the CXL
+> Flexbus presence.
+> 
+> Add pcie_is_cxl() as a macro to return 'struct pci_dev::is_cxl'.
+> 
+> Add pcie_is_cxl_port() to check if a device is a CXL Root Port, CXL
+> Upstream Switch Port, or CXL Downstream Switch Port. Also, verify the
+> CXL Extensions DVSEC for Ports is present.[1]
+> 
+> [1] CXL 3.1 Spec, 8.1.1 PCIe Designated Vendor-Specific Extended
+>     Capability (DVSEC) ID Assignment, Table 8-2
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
-If the code yielded the "wrong" movsl_mask.mask for 18/19, it wouldn't
-matter one bit.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-The thing that _does_ matter is someone auditing to figure out whether
-the code comprehends families>15 or whether it would break in horrible
-ways. The new check is shorter and it's more obvious that it will work
-forever.
+But I would change the subject to:
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+  PCI/CXL: ...
+
+since this only changes drivers/pci files.
+
+> ---
+>  drivers/pci/pci.c             | 13 +++++++++++++
+>  drivers/pci/probe.c           | 10 ++++++++++
+>  include/linux/pci.h           |  5 +++++
+>  include/uapi/linux/pci_regs.h |  3 ++-
+>  4 files changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 869d204a70a3..a2d8b41dd043 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5032,6 +5032,19 @@ static u16 cxl_port_dvsec(struct pci_dev *dev)
+>  					 PCI_DVSEC_CXL_PORT);
+>  }
+>  
+> +inline bool pcie_is_cxl(struct pci_dev *pci_dev)
+> +{
+> +	return pci_dev->is_cxl;
+> +}
+> +
+> +bool pcie_is_cxl_port(struct pci_dev *dev)
+> +{
+> +	if (!pcie_is_cxl(dev))
+> +		return false;
+> +
+> +	return (cxl_port_dvsec(dev) > 0);
+> +}
+> +
+>  static bool cxl_sbr_masked(struct pci_dev *dev)
+>  {
+>  	u16 dvsec, reg;
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index b6536ed599c3..7737b9ce7a83 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -1676,6 +1676,14 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
+>  		dev->is_thunderbolt = 1;
+>  }
+>  
+> +static void set_pcie_cxl(struct pci_dev *dev)
+> +{
+> +	u16 dvsec = pci_find_dvsec_capability(dev, PCI_VENDOR_ID_CXL,
+> +					      PCI_DVSEC_CXL_FLEXBUS);
+> +	if (dvsec)
+> +		dev->is_cxl = 1;
+> +}
+> +
+>  static void set_pcie_untrusted(struct pci_dev *dev)
+>  {
+>  	struct pci_dev *parent = pci_upstream_bridge(dev);
+> @@ -2006,6 +2014,8 @@ int pci_setup_device(struct pci_dev *dev)
+>  	/* Need to have dev->cfg_size ready */
+>  	set_pcie_thunderbolt(dev);
+>  
+> +	set_pcie_cxl(dev);
+> +
+>  	set_pcie_untrusted(dev);
+>  
+>  	if (pci_is_pcie(dev))
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 1d62e785ae1f..82a0401c58d3 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -452,6 +452,7 @@ struct pci_dev {
+>  	unsigned int	is_hotplug_bridge:1;
+>  	unsigned int	shpc_managed:1;		/* SHPC owned by shpchp */
+>  	unsigned int	is_thunderbolt:1;	/* Thunderbolt controller */
+> +	unsigned int	is_cxl:1;               /* Compute Express Link (CXL) */
+>  	/*
+>  	 * Devices marked being untrusted are the ones that can potentially
+>  	 * execute DMA attacks and similar. They are typically connected
+> @@ -741,6 +742,10 @@ static inline bool pci_is_vga(struct pci_dev *pdev)
+>  	return false;
+>  }
+>  
+> +bool pcie_is_cxl(struct pci_dev *pci_dev);
+> +
+> +bool pcie_is_cxl_port(struct pci_dev *dev);
+> +
+>  #define for_each_pci_bridge(dev, bus)				\
+>  	list_for_each_entry(dev, &bus->devices, bus_list)	\
+>  		if (!pci_is_bridge(dev)) {} else
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index 3445c4970e4d..dbc0f23d8c82 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -1208,9 +1208,10 @@
+>  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		0x00ff0000
+>  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_NEXT_INDEX	0xff000000
+>  
+> -/* Compute Express Link (CXL r3.1, sec 8.1.5) */
+> +/* Compute Express Link (CXL r3.1, sec 8.1) */
+>  #define PCI_DVSEC_CXL_PORT				3
+>  #define PCI_DVSEC_CXL_PORT_CTL				0x0c
+>  #define PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR		0x00000001
+> +#define PCI_DVSEC_CXL_FLEXBUS				7
+>  
+>  #endif /* LINUX_PCI_REGS_H */
+> -- 
+> 2.34.1
+> 
 
