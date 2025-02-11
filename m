@@ -1,100 +1,121 @@
-Return-Path: <linux-kernel+bounces-509918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BE2A31605
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:54:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56095A31606
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:54:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1964A1885428
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:54:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CA973A1135
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587A026561F;
-	Tue, 11 Feb 2025 19:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F247226561E;
+	Tue, 11 Feb 2025 19:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9F/IQ8P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="a5DtbJVv"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A767C265602;
-	Tue, 11 Feb 2025 19:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB76D265613
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 19:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739303639; cv=none; b=BIQGy0zVE7iMgnrmA73N/0l7w+HVUvBb+HyqwjIlP3dm3xoaOKj12iCj8G+E1E4AqauNHr9bQiEkOe+kIgbThrwHWYmiPpSW9FC4nRyE2yIAE8cEAOoeEDEs17tScp/3Ee66C+WKyvw0JgI82xO22tg9pHt1xG5jTyMjRa+/fqs=
+	t=1739303679; cv=none; b=m6S5Rw22BdTdztx9LGyH+939xrtgU+DvpLX0XLglqlb33OADNPZbha56GFg3gPSRxpS3h84bJJg9LO6WJKkJTAYhY1IaSZ4N1dbjpgmYtacWuP2iVht8Gjwjjix/3IXwCmoX/hTM1NS5Ink/X6tVfoRdLhn3n0+ymsZ+6L7uecw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739303639; c=relaxed/simple;
-	bh=IxYvfyovUNcDI5USK3wHo2cjirVOuW1enOAgQxSKOxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pcg3jAuyIZDUZOJECF9BQvswWvxR+ulAwCJJavYGxyd6AvkoDFjtFSufhsrQ9fcSX5i6tnY2eD3xVtRIxHHUPvZvnSKIYYJqScY3hCVuVw88cwN8KfttJaNiosUbvbC46VieJ4gwv8d6gvQFWknWuAELgerjWQ4YOycklmF6D3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9F/IQ8P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C67C1C4CEDD;
-	Tue, 11 Feb 2025 19:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739303639;
-	bh=IxYvfyovUNcDI5USK3wHo2cjirVOuW1enOAgQxSKOxM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R9F/IQ8PhHOb+h+6BJ1CZUSgqqPucjET++LPobJpyG0cEE+DCzPQQgPT9J39J4ahA
-	 S1OHmC0MB7ZODQW0r8VXcWTn8W+qhYOm8cfKkNpe0zPt8pX9Wb+FrrLAx6Ll/oyas3
-	 /tQgcZ1Q2YfF5rM9axNANhNmWX4R6QC1hQ+ofxIrRxgJr0V/Dbu7v6+cZNYaN2eES5
-	 /oCDCMlaWeMMSFHRtjRz251Rct9W2UO1hgM3A41JEj9j+xF5f6kbiSswdyIKHitQql
-	 Vg3e5YKBHerelGnTZZEYGRmHB2nNyllkMDA1UKbv+L99N6hgT4EmMKIH8Go8V4HpcX
-	 aYMv8M1CtuoBA==
-Date: Tue, 11 Feb 2025 19:53:51 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, robh@kernel.org,
- conor+dt@kernel.org, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v12 5/9] dt-bindings: iio: adc: add ad485x axi variant
-Message-ID: <20250211195351.5331b2e6@jic23-huawei>
-In-Reply-To: <20250211-industrious-rugged-gecko-9b5c02@krzk-bin>
-References: <20250207140918.7814-1-antoniu.miclaus@analog.com>
-	<20250207140918.7814-6-antoniu.miclaus@analog.com>
-	<20250208162058.3b50ae20@jic23-huawei>
-	<20250211-industrious-rugged-gecko-9b5c02@krzk-bin>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739303679; c=relaxed/simple;
+	bh=vLPYepmCn4mhfGlDn5smbuR/5pRrA54KLcq81jDIMU0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=irX7iY4bugWyod8aG2sSi8WLjD4cBHCWsHvsMvZlII6Ie0jcYflG7Uzh8Gjx8Z/VfYqnebcwo7PXvDaiYNm9Tfii2X7tJUUOJFuQ8lyDAfkjz5x8bMjseMDs/FuhrJIemy+Ua2QASVXKrGHXd/ilLubJJ8ORBa/aLBMoF0o/oXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=a5DtbJVv; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1739303673;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bjtWxBs83BeuDmTbDt+EHDOyKdhyT00WLwVNCX8IS6s=;
+	b=a5DtbJVvwtvk4xeAZlHBtFv9PNrT5Ibudy9tbKBSrDOeYgmOY/LhvzgXaqIKmHU1rVRGR1
+	lNMhh4/6bI/At3zCJVrIrDttdqUXM8Sl9oQL+fAs5hgs/DJIkWZJ76RfQixqvNhHeJrzIN
+	4wsV1Eomj/5177fqUXxiQLl63Q731+b5Jvc0k/ZlQ1SkYIWlOIfO73OCNIfX7CS8K20mzM
+	+Vyha15mA1vpWiOVmPaRTS9XBhDmYUP0gqtfPGgu93Z6ghvXIx51Jxt0GbE/06f+4/rLE5
+	x2NxelrrE4Ibh4JhDXqXi5kHM1FINGakkaulLE6b9SKPuBfKEu9jsjxdlmdQ0g==
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Subject: [PATCH 0/7] PCI: apple: support t6020
+Date: Tue, 11 Feb 2025 14:54:25 -0500
+Message-Id: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPGqq2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDI0ND3YLkzFTdEjNd4zQTC0uL5FTLJMMUJaDqgqLUtMwKsEnRsbW1AIz
+ yLv1ZAAAA
+X-Change-ID: 20250211-pcie-t6-3f4898ce9b1d
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, 
+ Marc Zyngier <maz@kernel.org>, Stan Skowronek <stan@corellium.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Janne Grunau <j@jannau.net>, stable@vger.kernel.org
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1159; i=alyssa@rosenzweig.io;
+ h=from:subject:message-id; bh=vLPYepmCn4mhfGlDn5smbuR/5pRrA54KLcq81jDIMU0=;
+ b=owEBbQKS/ZANAwAIAf7+UFoK9VgNAcsmYgBnq6r1hX/zYTOcr8IsxIdT6f8LIeprpn21i7hFi
+ FMMsjhwAHmJAjMEAAEIAB0WIQRDXuCbsK8A0B2q9jj+/lBaCvVYDQUCZ6uq9QAKCRD+/lBaCvVY
+ DQBfD/9Vrm3zDhNnwWZJlv0XHhz5dXaXNFpop4FmbBwlOS1GI18cZWC6vaX65sUOGm2pLgG4i6F
+ Tf9Vo6DRIEdQYPMkzZMg6AvsXjLrPO2CypPLGd8TOkmk9VowXTedeU+ub2KgUJXmOY7LQEO6VtY
+ T+JF8DkiGLjvlxHrjkhRm0R7seTPpMfIP5Z+lSeJ3bS+LhkxSfC24d+CcX+1A02MZNAudHhiqWm
+ SkxTDbiHRvJm5mjkXfnoIg0Q+2c4re8xd5TC0pk6wnTN+5XvZbZC3DirRGxAcEAN02OUddXVpVC
+ Ong9Db+NV9xXoaRUhEiinE+emBlAabt1lIAdJOXe5pCWvP+8LZmtaeCofozy5ztqIWU+C1YjDY/
+ Hrt9EZFGQUpypV0USyXLl/LAepePjC9SVaBhCcI2iSVV66RW4VBNyn3TZkQOlEneA/PzmG0jIHt
+ sSgxbr19Yz0IHLZURp12jlSXDHojbbWknY1uPrrmL/llw8YoQQacVI5s6mfCYEiXDfwXv6w4WwK
+ bwP5XF7iiqm8ZToXwAAhfzHfro6D/Ep6r0f6RuyNxJ2SHKJYavuyaDY8yQs0k6lhiorhWIOR1wg
+ ykDz6mRLBMLq2oXcp9Jpvb1/VJH4/+wznxYsYZahNfiSVGPu8Sh4MP5unjkI5x5Y3WY4m+CkqA6
+ iwEjEi2dojl2iGA==
+X-Developer-Key: i=alyssa@rosenzweig.io; a=openpgp;
+ fpr=435EE09BB0AF00D01DAAF638FEFE505A0AF5580D
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 11 Feb 2025 09:16:31 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+This series adds T6020 support to the Apple PCIe controller. Mostly
+Apple shuffled registers around (presumably to accommodate the larger
+configurations on those machines). So there's a bit of churn here but
+not too much in the way of functional changes.
 
-> On Sat, Feb 08, 2025 at 04:20:58PM +0000, Jonathan Cameron wrote:
-> > On Fri, 7 Feb 2025 16:09:14 +0200
-> > Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
-> >   
-> > > Add a new compatible and related bindings for the fpga-based
-> > > AD485x AXI IP core, a variant of the generic AXI ADC IP.
-> > > 
-> > > The AXI AD485x IP is a very similar HDL (fpga) variant of the
-> > > generic AXI ADC IP, intended to control ad485x familiy.  
-> > 
-> > Hmm. Should we name this after a specific part? Very unlikely
-> > the wildcard will go wrong here because of how specific this
-> > binding is anyway but we should perhaps stick to normal rules
-> > of no wild cards.  
-> 
-> I am pretty sure we had this discussion about this or other block
-> already and we reached some sort of concensus... which is undocumented
-> in commit msg, so we are doomed to repeat the discussion.
-> 
-Having just seen similar the axi-ad7606x support. I think the key bit
-I was missing here is that ADI has published the firmware under the
-name with wild card. If they shoot themselves in the foot in future
-then fair enough.  I'm fine with the wild card though a statement
-in the commit to make me notice that detail would have been great!
+Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+---
+Alyssa Rosenzweig (1):
+      dt-bindings: pci: apple,pcie: Add t6020 support
 
-Jonathan
+Hector Martin (5):
+      PCI: apple: Fix missing OF node reference in apple_pcie_setup_port
+      PCI: apple: Move port PHY registers to their own reg items
+      PCI: apple: Drop poll for CORE_RC_PHYIF_STAT_REFCLK
+      PCI: apple: Use gpiod_set_value_cansleep in probe flow
+      PCI: apple: Add T602x PCIe support
 
-> Best regards,
-> Krzysztof
-> 
+Janne Grunau (1):
+      PCI: apple: Set only available ports up
+
+ .../devicetree/bindings/pci/apple,pcie.yaml        |   1 +
+ drivers/pci/controller/pcie-apple.c                | 189 ++++++++++++++++-----
+ 2 files changed, 146 insertions(+), 44 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250211-pcie-t6-3f4898ce9b1d
+
+Best regards,
+-- 
+Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
 
