@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-510023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5C0A3175B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:10:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A54A31758
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF66D7A4830
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:09:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30DC188B8BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A5B269CE6;
-	Tue, 11 Feb 2025 21:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA62267F6A;
+	Tue, 11 Feb 2025 21:08:39 +0000 (UTC)
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFBB264FAE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88AD265CB1
 	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739308119; cv=none; b=dzdmGyqx6E0VeK9wVJ10KiZrvN/HahTDB9+GA0+/2kUsjsJ2CU5KDHyPHYIkzVqIAZjDqADgBiGUKPkXUjc5I5yZLvTZbKWtywYBQnBUoCQg2u+MSKeEQBo2EwfrGPh0QFu9rKMW0N6ymh+X92wdw/9ooIH0TVQQvyqRNuvD++0=
+	t=1739308118; cv=none; b=Rob9eiH2LbcoeKjta5sSem/80KwNINtDqO3bM7H+qZ74Yve1MoGvxoRapj7IrKsPGrYX8gKuAu/GDu4K8Rnr84E095tEvkp/riqt0QbjlyOTCZKfkBpkrnCGOu1M7BqM/ftdE81m8DlxMc17WQ5iZ66DMwkC7wa5vEw+7ffu74g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739308119; c=relaxed/simple;
-	bh=RzAuH9KpTZVw8x8wpf/JxWXT94WV1p/WlUbJQC6TwoY=;
+	s=arc-20240116; t=1739308118; c=relaxed/simple;
+	bh=UtuFvFsmUy02U+c14rBYp+5jQtbSyROBxzSrga3V2RY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nf/4ODq7leXclWzqaCDK5YMJKhljbz/giiATvuU74lMYWa1BBtOU3TT8vqpVRFZQqpuNrGF8KE2R29JxMwfjIPt2YMlAxp/QLlqUARAd6l6VGynIlD9YifP+sYHds64zhAdTX6r96oKSwBwfPI+uMm6jeRKJ0Hb086DrWgC1+tY=
+	 MIME-Version; b=A7PCuXCFLzWv85mRN9A0CuQA5JSvNPS8Mi3lLPHcAUvJHer30mv6yFIkO2Gr7KLGFQgv5agHoGXI62JGBwqGgrf7PbXSPKlJ7rNWazb4W8tAnZn1a5fBrDUE5WdnfQAWIa0dqC/wQe/CFACHD7HgZwJRCVncddcjWDiei6f3FO4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
@@ -32,7 +32,7 @@ Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@shelob.surriel.com>)
-	id 1thxUX-000000008HU-3MEu;
+	id 1thxUX-000000008HU-3Re4;
 	Tue, 11 Feb 2025 16:08:25 -0500
 From: Rik van Riel <riel@surriel.com>
 To: x86@kernel.org
@@ -52,9 +52,9 @@ Cc: linux-kernel@vger.kernel.org,
 	andrew.cooper3@citrix.com,
 	Rik van Riel <riel@surriel.com>,
 	Manali Shukla <Manali.Shukla@amd.com>
-Subject: [PATCH v10 10/12] x86/mm: do targeted broadcast flushing from tlbbatch code
-Date: Tue, 11 Feb 2025 16:08:05 -0500
-Message-ID: <20250211210823.242681-11-riel@surriel.com>
+Subject: [PATCH v10 11/12] x86/mm: enable AMD translation cache extensions
+Date: Tue, 11 Feb 2025 16:08:06 -0500
+Message-ID: <20250211210823.242681-12-riel@surriel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250211210823.242681-1-riel@surriel.com>
 References: <20250211210823.242681-1-riel@surriel.com>
@@ -67,258 +67,88 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: riel@surriel.com
 
-Instead of doing a system-wide TLB flush from arch_tlbbatch_flush,
-queue up asynchronous, targeted flushes from arch_tlbbatch_add_pending.
+With AMD TCE (translation cache extensions) only the intermediate mappings
+that cover the address range zapped by INVLPG / INVLPGB get invalidated,
+rather than all intermediate mappings getting zapped at every TLB invalidation.
 
-This also allows us to avoid adding the CPUs of processes using broadcast
-flushing to the batch->cpumask, and will hopefully further reduce TLB
-flushing from the reclaim and compaction paths.
+This can help reduce the TLB miss rate, by keeping more intermediate
+mappings in the cache.
+
+From the AMD manual:
+
+Translation Cache Extension (TCE) Bit. Bit 15, read/write. Setting this bit
+to 1 changes how the INVLPG, INVLPGB, and INVPCID instructions operate on
+TLB entries. When this bit is 0, these instructions remove the target PTE
+from the TLB as well as all upper-level table entries that are cached
+in the TLB, whether or not they are associated with the target PTE.
+When this bit is set, these instructions will remove the target PTE and
+only those upper-level entries that lead to the target PTE in
+the page table hierarchy, leaving unrelated upper-level entries intact.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
 Tested-by: Manali Shukla <Manali.Shukla@amd.com>
 Tested-by: Brendan Jackman <jackmanb@google.com>
 ---
- arch/x86/include/asm/invlpgb.h  | 20 ++++-----
- arch/x86/include/asm/tlbflush.h | 19 ++++----
- arch/x86/mm/tlb.c               | 79 +++++++++++++++++++++++++++++++--
- 3 files changed, 96 insertions(+), 22 deletions(-)
+ arch/x86/include/asm/msr-index.h       | 2 ++
+ arch/x86/kernel/cpu/amd.c              | 4 ++++
+ tools/arch/x86/include/asm/msr-index.h | 2 ++
+ 3 files changed, 8 insertions(+)
 
-diff --git a/arch/x86/include/asm/invlpgb.h b/arch/x86/include/asm/invlpgb.h
-index a1d5dedd5217..43c331507cc0 100644
---- a/arch/x86/include/asm/invlpgb.h
-+++ b/arch/x86/include/asm/invlpgb.h
-@@ -31,7 +31,7 @@ static inline void __invlpgb(unsigned long asid, unsigned long pcid,
- }
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 3ae84c3b8e6d..dc1c1057f26e 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -25,6 +25,7 @@
+ #define _EFER_SVME		12 /* Enable virtualization */
+ #define _EFER_LMSLE		13 /* Long Mode Segment Limit Enable */
+ #define _EFER_FFXSR		14 /* Enable Fast FXSAVE/FXRSTOR */
++#define _EFER_TCE		15 /* Enable Translation Cache Extensions */
+ #define _EFER_AUTOIBRS		21 /* Enable Automatic IBRS */
  
- /* Wait for INVLPGB originated by this CPU to complete. */
--static inline void tlbsync(void)
-+static inline void __tlbsync(void)
- {
- 	cant_migrate();
- 	/* TLBSYNC: supported in binutils >= 0.36. */
-@@ -61,19 +61,19 @@ static inline void invlpgb_flush_user(unsigned long pcid,
- 				      unsigned long addr)
- {
- 	__invlpgb(0, pcid, addr, 0, 0, INVLPGB_PCID | INVLPGB_VA);
--	tlbsync();
-+	__tlbsync();
- }
+ #define EFER_SCE		(1<<_EFER_SCE)
+@@ -34,6 +35,7 @@
+ #define EFER_SVME		(1<<_EFER_SVME)
+ #define EFER_LMSLE		(1<<_EFER_LMSLE)
+ #define EFER_FFXSR		(1<<_EFER_FFXSR)
++#define EFER_TCE		(1<<_EFER_TCE)
+ #define EFER_AUTOIBRS		(1<<_EFER_AUTOIBRS)
  
--static inline void invlpgb_flush_user_nr_nosync(unsigned long pcid,
--						unsigned long addr,
--						u16 nr,
--						bool pmd_stride)
-+static inline void __invlpgb_flush_user_nr_nosync(unsigned long pcid,
-+						  unsigned long addr,
-+						  u16 nr,
-+						  bool pmd_stride)
- {
- 	__invlpgb(0, pcid, addr, nr - 1, pmd_stride, INVLPGB_PCID | INVLPGB_VA);
- }
- 
- /* Flush all mappings for a given PCID, not including globals. */
--static inline void invlpgb_flush_single_pcid_nosync(unsigned long pcid)
-+static inline void __invlpgb_flush_single_pcid_nosync(unsigned long pcid)
- {
- 	__invlpgb(0, pcid, 0, 0, 0, INVLPGB_PCID);
- }
-@@ -82,11 +82,11 @@ static inline void invlpgb_flush_single_pcid_nosync(unsigned long pcid)
- static inline void invlpgb_flush_all(void)
- {
- 	__invlpgb(0, 0, 0, 0, 0, INVLPGB_INCLUDE_GLOBAL);
--	tlbsync();
-+	__tlbsync();
- }
- 
- /* Flush addr, including globals, for all PCIDs. */
--static inline void invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
-+static inline void __invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
- {
- 	__invlpgb(0, 0, addr, nr - 1, 0, INVLPGB_INCLUDE_GLOBAL);
- }
-@@ -95,7 +95,7 @@ static inline void invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
- static inline void invlpgb_flush_all_nonglobals(void)
- {
- 	__invlpgb(0, 0, 0, 0, 0, 0);
--	tlbsync();
-+	__tlbsync();
- }
- 
- #endif /* _ASM_X86_INVLPGB */
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 234277a5ef89..89dddbcd1322 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -106,6 +106,9 @@ struct tlb_state {
- 	 * need to be invalidated.
- 	 */
- 	bool invalidate_other;
-+#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
-+	bool need_tlbsync;
-+#endif
- 
- #ifdef CONFIG_ADDRESS_MASKING
- 	/*
-@@ -310,6 +313,10 @@ static inline void broadcast_tlb_flush(struct flush_tlb_info *info)
- static inline void consider_global_asid(struct mm_struct *mm)
- {
- }
-+
-+static inline void tlbsync(void)
-+{
-+}
- #endif
- 
- #ifdef CONFIG_PARAVIRT
-@@ -359,21 +366,15 @@ static inline u64 inc_mm_tlb_gen(struct mm_struct *mm)
- 	return atomic64_inc_return(&mm->context.tlb_gen);
- }
- 
--static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
--					     struct mm_struct *mm,
--					     unsigned long uaddr)
--{
--	inc_mm_tlb_gen(mm);
--	cpumask_or(&batch->cpumask, &batch->cpumask, mm_cpumask(mm));
--	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
--}
--
- static inline void arch_flush_tlb_batched_pending(struct mm_struct *mm)
- {
- 	flush_tlb_mm(mm);
- }
- 
- extern void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
-+extern void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
-+					     struct mm_struct *mm,
-+					     unsigned long uaddr);
- 
- static inline bool pte_flags_need_flush(unsigned long oldflags,
- 					unsigned long newflags,
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index f3c0d8fafc57..41ac2d121d76 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -492,6 +492,37 @@ static void finish_asid_transition(struct flush_tlb_info *info)
- 	WRITE_ONCE(mm->context.asid_transition, false);
- }
- 
-+static inline void tlbsync(void)
-+{
-+	if (!this_cpu_read(cpu_tlbstate.need_tlbsync))
-+		return;
-+	__tlbsync();
-+	this_cpu_write(cpu_tlbstate.need_tlbsync, false);
-+}
-+
-+static inline void invlpgb_flush_user_nr_nosync(unsigned long pcid,
-+						unsigned long addr,
-+						u16 nr, bool pmd_stride)
-+{
-+	__invlpgb_flush_user_nr_nosync(pcid, addr, nr, pmd_stride);
-+	if (!this_cpu_read(cpu_tlbstate.need_tlbsync))
-+		this_cpu_write(cpu_tlbstate.need_tlbsync, true);
-+}
-+
-+static inline void invlpgb_flush_single_pcid_nosync(unsigned long pcid)
-+{
-+	__invlpgb_flush_single_pcid_nosync(pcid);
-+	if (!this_cpu_read(cpu_tlbstate.need_tlbsync))
-+		this_cpu_write(cpu_tlbstate.need_tlbsync, true);
-+}
-+
-+static inline void invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
-+{
-+	__invlpgb_flush_addr_nosync(addr, nr);
-+	if (!this_cpu_read(cpu_tlbstate.need_tlbsync))
-+		this_cpu_write(cpu_tlbstate.need_tlbsync, true);
-+}
-+
- static void broadcast_tlb_flush(struct flush_tlb_info *info)
- {
- 	bool pmd = info->stride_shift == PMD_SHIFT;
-@@ -798,6 +829,8 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
- 	if (IS_ENABLED(CONFIG_PROVE_LOCKING))
- 		WARN_ON_ONCE(!irqs_disabled());
- 
-+	tlbsync();
-+
- 	/*
- 	 * Verify that CR3 is what we think it is.  This will catch
- 	 * hypothetical buggy code that directly switches to swapper_pg_dir
-@@ -977,6 +1010,8 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
-  */
- void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
- {
-+	tlbsync();
-+
- 	if (this_cpu_read(cpu_tlbstate.loaded_mm) == &init_mm)
- 		return;
- 
-@@ -1640,9 +1675,7 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- 	 * a local TLB flush is needed. Optimize this use-case by calling
- 	 * flush_tlb_func_local() directly in this case.
- 	 */
--	if (cpu_feature_enabled(X86_FEATURE_INVLPGB)) {
--		invlpgb_flush_all_nonglobals();
--	} else if (cpumask_any_but(&batch->cpumask, cpu) < nr_cpu_ids) {
-+	if (cpumask_any_but(&batch->cpumask, cpu) < nr_cpu_ids) {
- 		flush_tlb_multi(&batch->cpumask, info);
- 	} else if (cpumask_test_cpu(cpu, &batch->cpumask)) {
- 		lockdep_assert_irqs_enabled();
-@@ -1651,12 +1684,52 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- 		local_irq_enable();
- 	}
- 
-+	/*
-+	 * If we issued (asynchronous) INVLPGB flushes, wait for them here.
-+	 * The cpumask above contains only CPUs that were running tasks
-+	 * not using broadcast TLB flushing.
-+	 */
-+	tlbsync();
-+
- 	cpumask_clear(&batch->cpumask);
- 
- 	put_flush_tlb_info();
- 	put_cpu();
- }
- 
-+void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
-+					     struct mm_struct *mm,
-+					     unsigned long uaddr)
-+{
-+	u16 asid = mm_global_asid(mm);
-+
-+	if (asid) {
-+		invlpgb_flush_user_nr_nosync(kern_pcid(asid), uaddr, 1, false);
-+		/* Do any CPUs supporting INVLPGB need PTI? */
-+		if (static_cpu_has(X86_FEATURE_PTI))
-+			invlpgb_flush_user_nr_nosync(user_pcid(asid), uaddr, 1, false);
-+
-+		/*
-+		 * Some CPUs might still be using a local ASID for this
-+		 * process, and require IPIs, while others are using the
-+		 * global ASID.
-+		 *
-+		 * In this corner case we need to do both the broadcast
-+		 * TLB invalidation, and send IPIs. The IPIs will help
-+		 * stragglers transition to the broadcast ASID.
-+		 */
-+		if (in_asid_transition(mm))
-+			asid = 0;
-+	}
-+
-+	if (!asid) {
-+		inc_mm_tlb_gen(mm);
-+		cpumask_or(&batch->cpumask, &batch->cpumask, mm_cpumask(mm));
-+	}
-+
-+	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
-+}
-+
  /*
-  * Blindly accessing user memory from NMI context can be dangerous
-  * if we're in the middle of switching the current user task or
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index bcf73775b4f8..21076252a491 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -1071,6 +1071,10 @@ static void init_amd(struct cpuinfo_x86 *c)
+ 
+ 	/* AMD CPUs don't need fencing after x2APIC/TSC_DEADLINE MSR writes. */
+ 	clear_cpu_cap(c, X86_FEATURE_APIC_MSRS_FENCE);
++
++	/* Enable Translation Cache Extension */
++	if (cpu_feature_enabled(X86_FEATURE_TCE))
++		msr_set_bit(MSR_EFER, _EFER_TCE);
+ }
+ 
+ #ifdef CONFIG_X86_32
+diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
+index 3ae84c3b8e6d..dc1c1057f26e 100644
+--- a/tools/arch/x86/include/asm/msr-index.h
++++ b/tools/arch/x86/include/asm/msr-index.h
+@@ -25,6 +25,7 @@
+ #define _EFER_SVME		12 /* Enable virtualization */
+ #define _EFER_LMSLE		13 /* Long Mode Segment Limit Enable */
+ #define _EFER_FFXSR		14 /* Enable Fast FXSAVE/FXRSTOR */
++#define _EFER_TCE		15 /* Enable Translation Cache Extensions */
+ #define _EFER_AUTOIBRS		21 /* Enable Automatic IBRS */
+ 
+ #define EFER_SCE		(1<<_EFER_SCE)
+@@ -34,6 +35,7 @@
+ #define EFER_SVME		(1<<_EFER_SVME)
+ #define EFER_LMSLE		(1<<_EFER_LMSLE)
+ #define EFER_FFXSR		(1<<_EFER_FFXSR)
++#define EFER_TCE		(1<<_EFER_TCE)
+ #define EFER_AUTOIBRS		(1<<_EFER_AUTOIBRS)
+ 
+ /*
 -- 
 2.47.1
 
