@@ -1,107 +1,149 @@
-Return-Path: <linux-kernel+bounces-510042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9A1A3178B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:22:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71587A317A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FAB4160934
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:21:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1644168766
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53DA1E282D;
-	Tue, 11 Feb 2025 21:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3D926658E;
+	Tue, 11 Feb 2025 21:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U4ZYYE46"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Qj7hL1Yt"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46A8266F16
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C088D2627EB;
+	Tue, 11 Feb 2025 21:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739308890; cv=none; b=F4+E59maWeGhqtMSa1CmoDHiZH9QkdGsGEqKiqJo1O4PSLNSlTYqx6XwnVAWrtI1mVEKpUGQ5K8o/gn5TnWr6SixY2bOjh5LjXBvuh0vlYXic/pzAHgaXd1+flGLT+ZBh9Fb/8U0xmU83lb2VCBBvpaG8N/jO5z1LDiDBs/pmFI=
+	t=1739309156; cv=none; b=YePxszIC38zJ7y0FJU/wY75mP9Ju4Np91P/1ZLd2hWdi+QuU1ExSOzMD8K6GQ8fQD7tnPPDcGRfsoCHRq1HFcQfI195yEbPw7wKZm0F6BbFCm883Qx/y6bHKA/nnIhY3pgQotiD0A+BEsn2etVOq7P1Iw+5Ju+/ZJqGUt34b9XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739308890; c=relaxed/simple;
-	bh=gvapE1cYu2+xdjV1udH7CQGdRY9ys95teQpUtH9qBw4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=t6SGV/vRUCxRhN5VCwNlkVFDIQRGLwBhLUOgo8h+VkLcGcWUrW4aRIOG6woRO0D4T/xvd25PimqQvWyIzxJWemNoE9R1YQqe16V0VQrfmRFklwL7YG4CzfnTI6hYbUpcIlOLVJj+CAIHiR/x4Olp3JyAvYIacNeo9fHyl9n9Ze0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ndesaulniers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U4ZYYE46; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ndesaulniers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-21f6cd48c67so60033065ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 13:21:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739308888; x=1739913688; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=J5laP/V6+PcdzfWFMorJmNY0OQhJmHjPg9oB6Jm1t1s=;
-        b=U4ZYYE46btJpUfve6JqocnMbshQAMuswD9trmvfu6Eq7PWWW9r5Iz5cF0WLygSkTaO
-         8BXtkk9hgRHTIS5eLEdyopYn9ulaBYlhwhxH1Np9CyiS0x0WCC1UgjYnTQtdDdy3lT4h
-         okVRGXbspZKWnVfXbogl5DUXSulONdOdOVgNzQE/XZEqyQ6gEcx500GrCpKo8e22/mcG
-         OnDY27yqRxdUEYpQef9mP88+p75xrSay9dbt7pHnxI+Nr+9OCnrzhl/3gvIlcUYSnnGv
-         gtLUxAxUeOpCWi6+B+5gZTpAsBZ750zTwMBUls2pfLPzviqqZw8XNYg+ncJU00NJnmM7
-         DWKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739308888; x=1739913688;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J5laP/V6+PcdzfWFMorJmNY0OQhJmHjPg9oB6Jm1t1s=;
-        b=GPs9dDLhvuGEJ35zoB+JGYgCsUggnYs6ZJ4HNnN106TG06GQ/2EC4gcehdN2Xl2Omn
-         IfmxZD6iRWgQcwFwnczSrynP7fwr1BN/Xt90PyW/E8n0lbN+OCUlqo9LcrbOQUZ0Bkxj
-         7KHNzw/VNst/IVD2iU7NE+4IWM1mA8NFrinqw3ZyiMlUKOHoDM+P/YJ1a6b+2Arv3DOT
-         06zF99l9OcrkuxRT9doE1GDn2PsWR+2r7NY1x9xYNpVE2YxQRQhh7GrQR1O66o+EClsA
-         x6bmIHVdLcgAKUYF6TRyrhBv2QdfFs7Jh2OrxdeCllSIrYRNtJEKJ5MnDV37wnU053IN
-         i7nQ==
-X-Gm-Message-State: AOJu0Yw5psMRWgx7UyOcqNBgt/GBO0bVNlNBxzbx/7zbO/Ac1XQg1FOn
-	XC2OPt9UN5IyssYu2luVolXGEkXQ7+Du+IOjho+qed03gjgfGYj1FMStUPpqH5zOVnNW6nm1VIC
-	Npfw+EC9lMRKk6YfR2vnpWhzcXw==
-X-Google-Smtp-Source: AGHT+IGAKzorqUO7KM6w0kCd0fW1T3BTYIAaoXLiOL6bdIJjPVaOeVOw7PBDbcS6YgXs/sfyKhCVrm1lsVDrFiQhx3c=
-X-Received: from pgbdr6.prod.google.com ([2002:a05:6a02:fc6:b0:ad5:b05:9f90])
- (user=ndesaulniers job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:6da3:b0:1e1:a716:3157 with SMTP id adf61e73a8af0-1ee5c73b656mr1172787637.17.1739308888098;
- Tue, 11 Feb 2025 13:21:28 -0800 (PST)
-Date: Tue, 11 Feb 2025 13:21:17 -0800
+	s=arc-20240116; t=1739309156; c=relaxed/simple;
+	bh=VuoTSEigWNJYu31OKoch+f2/NllpSnLp4IFoEBBOo+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KnM8R4sQ8pRicuW9XZNpH8WClMmhZn6hHsx31MBmKb2KCLfzbM0RT7IXWsGm1oyyT+UJGARdgRJ1x9K2+AhZ+TcNz8TbPUSyTrwEukZuQf5o+3o+VFUIiT3sgRGm1+pAyvXjcLqzvkZPMERD+MuQESv13aZMYWT9IPTqQgghbAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Qj7hL1Yt; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id cf83882a7dc398e9; Tue, 11 Feb 2025 22:25:44 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 371AD770175;
+	Tue, 11 Feb 2025 22:25:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1739309144;
+	bh=VuoTSEigWNJYu31OKoch+f2/NllpSnLp4IFoEBBOo+Y=;
+	h=From:Subject:Date;
+	b=Qj7hL1YtcpTwjSNbpGXCbnyb9gD7oW8SXlIH9yNV35gYEjLSZmUiG54x22N02VWoo
+	 cYaw3rBdIDmYY0TNMw8VW9DHS4ss7r3DILJLoQWFJe3cmucOoiDlBdcID3VG1AqhrV
+	 F6WPOdXXdBAHjQHkUWjWUCkd8YMRbpDoAvFSWncONqEtOorCFe5qF3M9bX1Tjc/irp
+	 +beMIHRzLynd1B0In1mjuRyjTUtgwcXa8z8S2wvKQ7D5BUoPU6iCVIQ99/IItv1t4w
+	 qB5qUEdn+02pqMbVuPAmz706uvmpu8LreJ/CCKuid1OKqd4mwoKYLqaSf9is/DzqV7
+	 hjaqmPnKy67fA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Subject:
+ [PATCH v1 09/10] PM: sleep: Propagate power.set_active in dependency chains
+Date: Tue, 11 Feb 2025 22:21:23 +0100
+Message-ID: <47028492.fMDQidcC6G@rjwysocki.net>
+In-Reply-To: <2314745.iZASKD2KPV@rjwysocki.net>
+References: <2314745.iZASKD2KPV@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
-Message-ID: <20250211212117.3195265-1-ndesaulniers@google.com>
-Subject: [PATCH] mailmap: update my entry
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Nick Desaulniers <ndesaulniers@google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegvddtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+After preparing pm_runtime_force_resume() for dealing with devices
+having power.set_active set, make the core propagate that flag in
+dependency chains, so that subordinate device are resumed along with
+the ones that they depend on, but take exceptions into account.
+
+Namely, do not set power.set_active for devices that have never had
+runtime PM enabled, for parents that have power.ignore_children set and
+for suppliers coming from device links with DL_FLAG_PM_RUNTIME unset.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-Pre-sharing some proof of secrets for updating this in the future.
-0fc5fc718f5a76f69579b289aa09aa2b
-a4a4b82be4b75bc2c62a54bc8362968810f0e259
-f3789570f13e233eb6f92edde2e890257923b2a6893587d9205ee1508a0f3b32
+ drivers/base/power/main.c |   25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1189,18 +1189,31 @@
+ 	return PMSG_ON;
+ }
+ 
++static void dpm_cond_set_active(struct device *dev, bool cond)
++{
++	if (cond && !pm_runtime_no_support(dev))
++		dev->power.set_active = true;
++}
++
+ static void dpm_superior_set_must_resume(struct device *dev)
+ {
++	bool set_active = dev->power.set_active;
+ 	struct device_link *link;
+ 	int idx;
+ 
+-	if (dev->parent)
++	if (dev->parent) {
+ 		dev->parent->power.must_resume = true;
++		dpm_cond_set_active(dev->parent, set_active &&
++				    !dev->parent->power.ignore_children);
++	}
+ 
+ 	idx = device_links_read_lock();
+ 
+-	list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node)
++	list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node) {
+ 		link->supplier->power.must_resume = true;
++		dpm_cond_set_active(link->supplier, set_active &&
++				    (link->flags & DL_FLAG_PM_RUNTIME));
++	}
+ 
+ 	device_links_read_unlock(idx);
+ }
+@@ -1277,13 +1290,7 @@
+ 		dev->power.must_resume = true;
+ 
+ 	if (dev->power.must_resume) {
+-		if (dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) &&
+-		    !pm_runtime_no_support(dev)) {
+-			dev->power.set_active = true;
+-			if (dev->parent && !dev->parent->power.ignore_children &&
+-			    !pm_runtime_no_support(dev->parent))
+-				dev->parent->power.set_active = true;
+-		}
++		dpm_cond_set_active(dev, dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND));
+ 		dpm_superior_set_must_resume(dev);
+ 	}
+ 
 
 
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/.mailmap b/.mailmap
-index ae0adc499f4a..c433f9cb130b 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -530,6 +530,7 @@ Nicholas Piggin <npiggin@gmail.com> <npiggin@kernel.dk>
- Nicholas Piggin <npiggin@gmail.com> <npiggin@suse.de>
- Nicholas Piggin <npiggin@gmail.com> <nickpiggin@yahoo.com.au>
- Nicholas Piggin <npiggin@gmail.com> <piggin@cyberone.com.au>
-+Nick Desaulniers <nick.desaulniers+lkml@gmail.com> <ndesaulniers@google.com>
- Nicolas Ferre <nicolas.ferre@microchip.com> <nicolas.ferre@atmel.com>
- Nicolas Pitre <nico@fluxnic.net> <nicolas.pitre@linaro.org>
- Nicolas Pitre <nico@fluxnic.net> <nico@linaro.org>
--- 
-2.48.1.502.g6dc24dfdaf-goog
 
 
