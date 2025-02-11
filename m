@@ -1,236 +1,207 @@
-Return-Path: <linux-kernel+bounces-510047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC12A31795
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:25:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86CC8A31799
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:26:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD4D3A404D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:24:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A28EE1667C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E1E2627E9;
-	Tue, 11 Feb 2025 21:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A550262804;
+	Tue, 11 Feb 2025 21:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kBL1EkHt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="KAmVYPl3"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8852627E0;
-	Tue, 11 Feb 2025 21:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590B32627E3;
+	Tue, 11 Feb 2025 21:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739309100; cv=none; b=BFMlbCeO0gVAJ2JGH9JdH7+2D85BSmU8zX1bKK6VDN/brz7SUgW6EK4knOMPEbovK+5tHqoxUDpVI51jApKCYifd64yKv3q2C+Ipuyk57wEEQw+g9Ywlxb1s1OMWGhsR8GlNguZUWmaZv4lSLzD40gMgJcRGAxgaYU9DpIIE4s4=
+	t=1739309154; cv=none; b=pw8QZobIflxXVpeznX4Azn3K3CE8+aMoQBr1oh8sMJSq9lIosvXuW1sUzlFrk9JROHMnDayuqrAxLqmLq0r3QTqMeKqSUyCdrVGfQ49pRCRYeOH6u0K36LuDGPKRlJviO4INP6RyJkQxU1sNUNCzdZk5JlgnvMz+PiG78kKWvbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739309100; c=relaxed/simple;
-	bh=ZJQOpFPaMYgJBqfBhK2doEaiich/YCB5XCXwWRVyOIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cDJJ0tYxbxy4scyH5E4HJPrHYS7LIhssILx1D/b926qRWG2R2z+K6NgiuqKBTCdbR8hj9ZoY6ST5pkI7pySLT+avfc35Fen65XSMg4pcKsG6qXjEK4F/ZaU3MhUqx+bXPmgHO09Wvyqx1xGcfcrUxbcSte70mOfPArgDYdP7kLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kBL1EkHt; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739309098; x=1770845098;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ZJQOpFPaMYgJBqfBhK2doEaiich/YCB5XCXwWRVyOIY=;
-  b=kBL1EkHtLSH9AMd7JrUNnm3+o/pR6Ce8PqQbwY8w9J2z+9l/degGw+d7
-   CT7CqHfpastzFUEgHueMICHoz6YgBImwGGse5+CW0oKMbpUh3StWUUs/Y
-   7I7Iik1u9NmVPwHqVtQH+kRXhDknmaeOihH2039+NEgcpMCJl+ePlutGI
-   hx3G/zsmualxIoie8nWoSn8GG3ubdo2xdpics76bkPk/OGA4xXecErFtR
-   V07B2P4XFrQIsMiJncyLdeVUE/nI0RLPKK5rJXNIZ+XlVGgx3Vrvx1Hfv
-   658oXG/OM4TApe4RtvbjH4T7rH1flWplGM81co0b+ERLUb7QgCPZuG/0V
-   Q==;
-X-CSE-ConnectionGUID: OALbNRn6Rtucc2lgEfFNSA==
-X-CSE-MsgGUID: iEtQ5o9EQO+N8QR94fOeBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="43875407"
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="43875407"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 13:24:56 -0800
-X-CSE-ConnectionGUID: p9dCfIwGRgOoN5xCVK5tng==
-X-CSE-MsgGUID: uQ485qtrQqenItwLlPX5YA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="112612093"
-Received: from agladkov-desk.ger.corp.intel.com (HELO [10.125.108.65]) ([10.125.108.65])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 13:24:56 -0800
-Message-ID: <d848f0ab-5055-4cda-8531-258c6fa7280e@intel.com>
-Date: Tue, 11 Feb 2025 14:24:54 -0700
+	s=arc-20240116; t=1739309154; c=relaxed/simple;
+	bh=cRfV58Kh8+/WrvCJJWhBR/V0oGVgKQc3FHgkhJO9CEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rbd4k5MLGgZfCl3LiR2LOfxbVQvHexpkRo/J9XapRjG0+Q4mdsK1ydHJegHx3mysPJA74hdUrzdnJZ8666LAmoSvGh3ZUMz34UQFebQTI002Z2qhD0B0HPjI0B+Dw6of1/+esGJbX2hq0SCqQGRSxeBUfFH2zutIUooNBLoHj/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=KAmVYPl3; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 31469b2175be8e51; Tue, 11 Feb 2025 22:25:43 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3E994770175;
+	Tue, 11 Feb 2025 22:25:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1739309143;
+	bh=cRfV58Kh8+/WrvCJJWhBR/V0oGVgKQc3FHgkhJO9CEE=;
+	h=From:Subject:Date;
+	b=KAmVYPl3THXVXJPDHj7GSdRgIqGt6gy1+wrnDKKSB0vpQEpPX1ZBWZB7PJTugLHg1
+	 Axni2/ZNjmuWWPcWjtPcKgLb7Tqalcj8+pp7WsPsudQ0YTkHgiNeV9qMDelXV1BI+i
+	 NlYXkH9KBVtDCgj8yAVpw1hYxA93kAxNqyOCI72eFVKG/KxsqNr+B9RQLUzv0/I++S
+	 F4gimHNrsZ7+9ETrZrxmyM2vV75SLCuTxD5g2SKcmFKqw4OUZZhOfG1aWaVEQGVRtf
+	 ccbeKgni+wMor+wWQ0mpydz7ru/eRS6NYp2PSOJqPOVUl3hYFlzxzFKiAJL2gR1b9A
+	 6u19KVx+2i0uQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v1 10/10] PM: runtime: Discover the lack of runtime PM support
+Date: Tue, 11 Feb 2025 22:25:29 +0100
+Message-ID: <2511990.jE0xQCEvom@rjwysocki.net>
+In-Reply-To: <2314745.iZASKD2KPV@rjwysocki.net>
+References: <2314745.iZASKD2KPV@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 7/7] cxl/region: Drop goto pattern of
- construct_region()
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Li Ming <ming.li@zohomail.com>
-Cc: dave@stgolabs.net, alison.schofield@intel.com, vishal.l.verma@intel.com,
- ira.weiny@intel.com, dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250211075727.351895-1-ming.li@zohomail.com>
- <20250211075727.351895-8-ming.li@zohomail.com>
- <20250211173606.00004d33@huawei.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250211173606.00004d33@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegvddtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Previous changes have updated the PM core to special-case devices that
+have never had runtime PM enabled in some places, but what if a device
+had had runtime PM enabled at one point, but then it was permanently
+disabled?  Arguably, there is not much of a difference between such
+devices and the devices that have never had runtime PM enabled as far
+as system-wide suspend and resume is concerned, so they should be
+handled in the same way.
+
+For this reason, add a mechanism for discovering "lost" runtime PM
+support in devices with the help of the power.last_status field used
+for saving the last runtime PM status of the device known at the time
+when runtime PM was disabled for it.
+
+That field is set to RPM_INVALID initially and whenever runtime PM is
+enabled for a device (that is, when its power.disable_depth counter
+drops down to zero) and it is set to the current runtime PM status of
+the device when runtime PM is disabled (that is, the power.disable_depth
+counter becomes nonzero).  Therefore, if power.last_status is equal to
+RPM_INVALID for a device with runtime PM disabled, it means that
+runtime PM has never been enabled for that device.
+
+The PM core will now change the power.last_status value to RPM_UNKNOWN
+for devices having runtime PM disabled and power.last_status different
+from RPM_INVALID during the "prepare" phase of system suspend.  Then,
+__pm_runtime_disable() called subsequently on the device will set
+power.last_status to RPM_INVALID unless it changes from RPM_UNKNOWN
+to some other value in the meantime which requires enabling runtime PM
+for the device.  When power.last_status becomes RPM_INVALID and runtime
+PM is still disabled, the device will be handled as a "no runtime PM
+support" one from that point on until runtime PM is enabled for it
+again.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/main.c    |    6 ++++++
+ drivers/base/power/runtime.c |   25 +++++++++++++++++++++++++
+ include/linux/pm.h           |    1 +
+ include/linux/pm_runtime.h   |    2 ++
+ 4 files changed, 34 insertions(+)
+
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1817,6 +1817,12 @@
+ 	 * it again during the complete phase.
+ 	 */
+ 	pm_runtime_get_noresume(dev);
++	/*
++	 * Devices that have had runtime PM disabled recently may need to be
++	 * handled as though they have never supported it, so arrange for
++	 * detecting that situation.
++	 */
++	pm_runtime_kick_last_status(dev);
+ 
+ 	if (dev->power.syscore)
+ 		return 0;
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1480,6 +1480,9 @@
+ 
+ 	if (dev->power.disable_depth > 0) {
+ 		dev->power.disable_depth++;
++		if (dev->power.last_status == RPM_UNKNOWN)
++			dev->power.last_status = RPM_INVALID;
++
+ 		goto out;
+ 	}
+ 
+@@ -1568,6 +1571,28 @@
+ EXPORT_SYMBOL_GPL(devm_pm_runtime_enable);
+ 
+ /**
++ * pm_runtime_kick_last_status - Start runtime PM support verification.
++ * @dev: Target device.
++ *
++ * If runtime PM is currently disabled for @dev, but it has been enabled at one
++ * point, change power.last_status for it to RPM_UNKNOWN, and if it is still
++ * RPM_UNKNOWN when __pm_runtime_disabled() is called for @dev next time, it
++ * will be changed to RPM_INVALID indicating no runtime PM support going
++ * forward until pm_runtime_enable() is called for @dev.
++ *
++ * This function is used by the PM core.
++ */
++void pm_runtime_kick_last_status(struct device *dev)
++{
++	spin_lock_irq(&dev->power.lock);
++
++	if (dev->power.disable_depth && dev->power.last_status != RPM_INVALID)
++		dev->power.last_status = RPM_UNKNOWN;
++
++	spin_unlock_irq(&dev->power.lock);
++}
++
++/**
+  * pm_runtime_forbid - Block runtime PM of a device.
+  * @dev: Device to handle.
+  *
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -597,6 +597,7 @@
+ 	RPM_RESUMING,
+ 	RPM_SUSPENDED,
+ 	RPM_SUSPENDING,
++	RPM_UNKNOWN,
+ };
+ 
+ /*
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -80,6 +80,7 @@
+ extern int pm_runtime_barrier(struct device *dev);
+ extern void pm_runtime_enable(struct device *dev);
+ extern void __pm_runtime_disable(struct device *dev, bool check_resume);
++extern void pm_runtime_kick_last_status(struct device *dev);
+ extern void pm_runtime_allow(struct device *dev);
+ extern void pm_runtime_forbid(struct device *dev);
+ extern void pm_runtime_no_callbacks(struct device *dev);
+@@ -288,6 +289,7 @@
+ static inline int pm_runtime_barrier(struct device *dev) { return 0; }
+ static inline void pm_runtime_enable(struct device *dev) {}
+ static inline void __pm_runtime_disable(struct device *dev, bool c) {}
++static inline void pm_runtime_kick_last_status(struct device *dev) {}
+ static inline void pm_runtime_allow(struct device *dev) {}
+ static inline void pm_runtime_forbid(struct device *dev) {}
+ 
 
 
-
-On 2/11/25 10:36 AM, Jonathan Cameron wrote:
-> On Tue, 11 Feb 2025 15:57:27 +0800
-> Li Ming <ming.li@zohomail.com> wrote:
-> 
->> Some operations need to be procted by the cxl_region_rwsem in construct
->> region(). Currently, construct_region() uses down_write() and up_write()
->> for the cxl_region_rwsem, so there is a goto pattern after down_write()
->> invoked to release cxl_region_rwsem.
->>
->> construct region() can be optimized to remove the goto pattern. The
->> changes are creating a new function called __construct_region() which
->> will include all checking and operations protected by the
->> cxl_region_rwsem, and using guard(rwsem_write) to replace down_write()
->> and up_write() in __construct_region().
->>
->> Signed-off-by: Li Ming <ming.li@zohomail.com>
->> ---
->>  drivers/cxl/core/region.c | 71 +++++++++++++++++++++------------------
->>  1 file changed, 39 insertions(+), 32 deletions(-)
->>
->> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->> index 36f3771818d3..170278bdcedc 100644
->> --- a/drivers/cxl/core/region.c
->> +++ b/drivers/cxl/core/region.c
->> @@ -3217,49 +3217,31 @@ static int match_region_by_range(struct device *dev, const void *data)
->>  	return rc;
->>  }
->>  
->> -/* Establish an empty region covering the given HPA range */
->> -static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->> -					   struct cxl_endpoint_decoder *cxled)
->> +static int __construct_region(struct cxl_region *cxlr,
-> 
-> This is only factoring out part, so I'm not sure the naming makes sense.
-> I don't have a better name however as this is doing various different things...
-> setup_region() doesn't feel right either...
-
-setup_auto_region()? construct_auto_region()?
-
-DJ
-
-> 
-> 
->> +			      struct cxl_root_decoder *cxlrd,
->> +			      struct cxl_endpoint_decoder *cxled)
->>  {
->>  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->> -	struct cxl_port *port = cxlrd_to_port(cxlrd);
->>  	struct range *hpa = &cxled->cxld.hpa_range;
->>  	struct cxl_region_params *p;
->> -	struct cxl_region *cxlr;
->>  	struct resource *res;
->>  	int rc;
->>  
->> -	do {
->> -		cxlr = __create_region(cxlrd, cxled->mode,
->> -				       atomic_read(&cxlrd->region_id));
->> -	} while (IS_ERR(cxlr) && PTR_ERR(cxlr) == -EBUSY);
->> -
->> -	if (IS_ERR(cxlr)) {
->> -		dev_err(cxlmd->dev.parent,
->> -			"%s:%s: %s failed assign region: %ld\n",
->> -			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
->> -			__func__, PTR_ERR(cxlr));
->> -		return cxlr;
->> -	}
->> -
->> -	down_write(&cxl_region_rwsem);
->> +	guard(rwsem_write)(&cxl_region_rwsem);
->>  	p = &cxlr->params;
->>  	if (p->state >= CXL_CONFIG_INTERLEAVE_ACTIVE) {
->>  		dev_err(cxlmd->dev.parent,
->>  			"%s:%s: %s autodiscovery interrupted\n",
->>  			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
->>  			__func__);
->> -		rc = -EBUSY;
->> -		goto err;
->> +		return -EBUSY;
->>  	}
->>  
->>  	set_bit(CXL_REGION_F_AUTO, &cxlr->flags);
->>  
->>  	res = kmalloc(sizeof(*res), GFP_KERNEL);
->> -	if (!res) {
->> -		rc = -ENOMEM;
->> -		goto err;
->> -	}
->> +	if (!res)
->> +		return -ENOMEM;
->>  
->>  	*res = DEFINE_RES_MEM_NAMED(hpa->start, range_len(hpa),
->>  				    dev_name(&cxlr->dev));
->> @@ -3282,7 +3264,7 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->>  
->>  	rc = sysfs_update_group(&cxlr->dev.kobj, get_cxl_region_target_group());
->>  	if (rc)
->> -		goto err;
->> +		return rc;
->>  
->>  	dev_dbg(cxlmd->dev.parent, "%s:%s: %s %s res: %pr iw: %d ig: %d\n",
->>  		dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev), __func__,
->> @@ -3291,14 +3273,39 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->>  
->>  	/* ...to match put_device() in cxl_add_to_region() */
->>  	get_device(&cxlr->dev);
->> -	up_write(&cxl_region_rwsem);
->>  
->> -	return cxlr;
->> +	return 0;
->> +}
->>  
->> -err:
->> -	up_write(&cxl_region_rwsem);
->> -	devm_release_action(port->uport_dev, unregister_region, cxlr);
->> -	return ERR_PTR(rc);
->> +/* Establish an empty region covering the given HPA range */
->> +static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->> +					   struct cxl_endpoint_decoder *cxled)
->> +{
->> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->> +	struct cxl_port *port = cxlrd_to_port(cxlrd);
->> +	struct cxl_region *cxlr;
->> +	int rc;
->> +
->> +	do {
->> +		cxlr = __create_region(cxlrd, cxled->mode,
->> +				       atomic_read(&cxlrd->region_id));
->> +	} while (IS_ERR(cxlr) && PTR_ERR(cxlr) == -EBUSY);
->> +
->> +	if (IS_ERR(cxlr)) {
->> +		dev_err(cxlmd->dev.parent,
->> +			"%s:%s: %s failed assign region: %ld\n",
->> +			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
->> +			__func__, PTR_ERR(cxlr));
->> +		return cxlr;
->> +	}
->> +
->> +	rc = __construct_region(cxlr, cxlrd, cxled);
->> +	if (rc) {
->> +		devm_release_action(port->uport_dev, unregister_region, cxlr);
->> +		return ERR_PTR(rc);
->> +	}
->> +
->> +	return cxlr;
->>  }
->>  
->>  int cxl_add_to_region(struct cxl_port *root, struct cxl_endpoint_decoder *cxled)
-> 
 
 
