@@ -1,140 +1,231 @@
-Return-Path: <linux-kernel+bounces-509951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7399DA31675
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:12:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27BC0A31678
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23290163675
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9143A12B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFF0262171;
-	Tue, 11 Feb 2025 20:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427F826217C;
+	Tue, 11 Feb 2025 20:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgY9IZVp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVRyW9TQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1E4265604;
-	Tue, 11 Feb 2025 20:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C19E265603;
+	Tue, 11 Feb 2025 20:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739304752; cv=none; b=KSpL1GrOxs802uILj1VVLPyn0A9DR8nfsGyaQbZI7LroO0PcN3zyEM1Gt/rxSWgo/22/LpEz105DUkL5262q/HvZTihniPF+1fXBmSDCx90B1ebemO4FcUuIkYe5GvGcweQYQ09/Umpc3mZ5tCAqdw93lFo4AYtI1dAt+9tgrGY=
+	t=1739304803; cv=none; b=Xvf73kmiVU/q+7XqhYb3WT9ErDL07X9tJQoqZqS4iCmcIJCzweizML1FLCSBp7BMtdr6oV/AgxwIcm9Ej8jTlaNYokFpYupcfOiC4/73+XVf8nuMxWehyOwEgsKU46Ft3fYmEe3kK+0dYLfaYulQGu4GcymLiL1gHqibLYP2mZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739304752; c=relaxed/simple;
-	bh=v/Jok9KiEPoYdLkGoT5WJHe5oUzwY5NHLVXVVA+iJRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CfMhjuEV2GVOJhTsw8kJ43C5F9kzLzrXBrtroxPojWBpv7CJxfukOLR66qX5H/imvKEdjN5lvOd4c5Gam7o6EEAnqFMzXPT24XW3UQSZyC1sEmUkjqWbLNC7RjZwlAqhV2LB2o+4ZhQmDPMuh2NAYHzyRYURc/6sh8Li5m2c3mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgY9IZVp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105B3C4CEDD;
-	Tue, 11 Feb 2025 20:12:31 +0000 (UTC)
+	s=arc-20240116; t=1739304803; c=relaxed/simple;
+	bh=CefzjmK0BdkwYXOZbMxOjHN4drslDEgWKRsmmeUuFPM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=P4aAT0RW2M/HDfMjwsPDN2QhamewaQCIuQUktMdHbmHtrG6uSdcVBDUAtXWN2GXjjG+Xi5WlIUMnY1qZodtPB39v0Rp5P3usZY4650tysBBZlcA0rRPl1fM2R0nyfGVDZvYfbjq3ffujmL/yN41npH5eqUvCGfWmK8G0hGuQosE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVRyW9TQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D835EC4CEDD;
+	Tue, 11 Feb 2025 20:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739304752;
-	bh=v/Jok9KiEPoYdLkGoT5WJHe5oUzwY5NHLVXVVA+iJRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XgY9IZVp67cVbFI4jfVr7xHVisU4vQHZuG1uZWlCrEFpbmg/2dNn4b/SuQvmUd0eq
-	 CVT/QkfAtdvp0+v1yC0NXDVvzmV4xeu1X1dDyeOxYM13irap3UlVed8o3FtqY43MUV
-	 /yoASTYArEkmeTqV/2DOvzzVgE1ytQqwU8toQtqau5UpYjKg1ZsC7npOemFAo2CXP+
-	 bHKrvp8r80hHPa+g8Hd6z41qLUigcsUjraZ6ZBD6qBRWZkSWrx3f8TyqEF2bQYdNSQ
-	 ySnRzKmC3aBxnzOtNbZMA9AeGIj9pMbZR9kqDyfnwWWYfr+78qRfb/Vs7lfYelK/Y7
-	 k1zOIv5I20AsQ==
-Date: Tue, 11 Feb 2025 14:12:30 -0600
-From: Rob Herring <robh@kernel.org>
-To: Dharma.B@microchip.com
-Cc: neil.armstrong@linaro.org, ulf.hansson@linaro.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, khilman@baylibre.com, jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2] dt-bindings: mmc: mmc-slot: make compatible
- property optional
-Message-ID: <20250211201230.GA600687-robh@kernel.org>
-References: <20250205-mmc-slot-v2-1-da3c5f30e2d9@microchip.com>
- <f6d7ffa0-6c08-45fb-9153-5e4aad1ca86a@linaro.org>
- <003ffa44-c88a-4234-a54a-50cd1140982a@microchip.com>
- <7180babd-302a-4f86-8770-bdd9f5c773cf@linaro.org>
- <7de20917-3176-4e80-8ccd-9c01c037cc9a@microchip.com>
+	s=k20201202; t=1739304803;
+	bh=CefzjmK0BdkwYXOZbMxOjHN4drslDEgWKRsmmeUuFPM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=mVRyW9TQeX02lGZuUFjXyaGcSd2VsH2extBmg31/iycVAsbQLMkNaVIz2sqtdoHHn
+	 roRTE1aojQRJFEnKZiuchVeLdvuJATem+KCULJN1biR4bJ8gbStDnY62pCvs4HsIvN
+	 eqclQYGMQcKn50a7SjLeJjIAfdj18eyZOuzxRGlApP49gmQCYuLdUB64na8ChbD1v3
+	 Rt6gaqUwX1VW5M9VsO0iDEuZ+k6NvRJqVPzVMENEO1XTYFYYeO/EDDAJTPLqAoD59f
+	 hl8+83cRJx4d4A0lM3UBiJGQO0yDulK9BSaUeJxD268FlSGYgx/hF2TGphlRZ7eWAr
+	 dl/L8yaB0p4xQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Gary Guo" <gary@garyguo.net>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,
+  =?utf-8?Q?Bj=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>,  "Benno Lossin"
+ <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Masahiro
+ Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
+  "Nicolas Schier" <nicolas@fjasle.eu>,  "Luis Chamberlain"
+ <mcgrof@kernel.org>,  "Trevor Gross" <tmgross@umich.edu>,  "Adam
+ Bratschi-Kaye" <ark.email@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>,  "Petr
+ Pavlu" <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
+  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
+ <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,
+  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v6 5/6] rust: str: add radix prefixed integer parsing
+ functions
+In-Reply-To: <20250211164301.47f8d414@eugeo> (Gary Guo's message of "Tue, 11
+	Feb 2025 16:43:01 +0000")
+References: <20250211-module-params-v3-v6-0-24b297ddc43d@kernel.org>
+	<20250211-module-params-v3-v6-5-24b297ddc43d@kernel.org>
+	<vf__dkyg05tUau0dIoKDIkuUlwyYrMe5z2AJGWdFLOM5GpCYJkB0F5-GkzkIC_cG9LjC_YPrdeVc8884CA7rhQ==@protonmail.internalid>
+	<20250211164301.47f8d414@eugeo>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 11 Feb 2025 21:13:10 +0100
+Message-ID: <87r04444vd.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7de20917-3176-4e80-8ccd-9c01c037cc9a@microchip.com>
+Content-Type: text/plain
 
-On Mon, Feb 10, 2025 at 05:28:27AM +0000, Dharma.B@microchip.com wrote:
-> On 07/02/25 2:47 pm, neil.armstrong@linaro.org wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know 
-> > the content is safe
-> > 
-> > On 07/02/2025 10:02, Dharma.B@microchip.com wrote:
-> >> On 07/02/25 2:25 pm, Neil Armstrong wrote:
-> >>> EXTERNAL EMAIL: Do not click links or open attachments unless you know
-> >>> the content is safe
-> >>>
-> >>> On 05/02/2025 04:48, Dharma Balasubiramani wrote:
-> >>>> Remove the compatible property from the list of required properties and
-> >>>> mark it as optional.
+"Gary Guo" <gary@garyguo.net> writes:
 
-The diff tells us that. Please say why 'compatible' being required is a 
-problem and needs to not be required.
+> On Tue, 11 Feb 2025 16:57:39 +0100
+> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>
+>> Add the trait `ParseInt` for parsing string representations of integers
+>> where the string representations are optionally prefixed by a radix
+>> specifier. Implement the trait for the primitive integer types.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>>  rust/kernel/str.rs | 111 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 111 insertions(+)
+>>
+>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>> index c102adac32757..192cd0ff5974f 100644
+>> --- a/rust/kernel/str.rs
+>> +++ b/rust/kernel/str.rs
+>> @@ -945,3 +945,114 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+>>  macro_rules! fmt {
+>>      ($($f:tt)*) => ( core::format_args!($($f)*) )
+>>  }
+>> +
+>> +pub mod parse_int {
+>> +    //! Integer parsing functions for parsing signed and unsigned integers
+>> +    //! potentially prefixed with `0x`, `0o`, or `0b`.
+>> +
+>> +    use crate::alloc::flags;
+>> +    use crate::prelude::*;
+>> +    use crate::str::BStr;
+>> +    use core::ops::Deref;
+>> +
+>> +    /// Trait that allows parsing a [`&BStr`] to an integer with a radix.
+>> +    ///
+>> +    /// [`&BStr`]: kernel::str::BStr
+>> +    // This is required because the `from_str_radix` function on the primitive
+>> +    // integer types is not part of any trait.
+>> +    pub trait FromStrRadix: Sized {
+>> +        /// Parse `src` to `Self` using radix `radix`.
+>> +        fn from_str_radix(src: &BStr, radix: u32) -> Result<Self, crate::error::Error>;
+>> +    }
+>> +
+>> +    /// Extract the radix from an integer literal optionally prefixed with
+>> +    /// one of `0x`, `0X`, `0o`, `0O`, `0b`, `0B`, `0`.
+>> +    fn strip_radix(src: &BStr) -> (u32, &BStr) {
+>> +        match src.deref() {
+>> +            [b'0', b'x' | b'X', ..] => (16, &src[2..]),
+>
+> This can be written as
+>
+> 	[b'0', b'x' | b'X', rest @ ..] => (16, rest),
+>
+> to avoid manual indexing. Same for o and b below.
 
-> >>>>
-> >>>> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-> >>>> ---
-> >>>> Changes in v2:
-> >>>> - Instead of moving the compatible string to the other binding, just
-> >>>> make it
-> >>>>     optional (remove from required list).
-> >>>> - Link to v1: https://lore.kernel.org/r/20241219-mmc-slot-v1-1-
-> >>>> dfc747a3d3fb@microchip.com
-> >>>> ---
-> >>>>    Documentation/devicetree/bindings/mmc/mmc-slot.yaml | 1 -
-> >>>>    1 file changed, 1 deletion(-)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/mmc/mmc-slot.yaml b/
-> >>>> Documentation/devicetree/bindings/mmc/mmc-slot.yaml
-> >>>> index 1f0667828063..ca3d0114bfc6 100644
-> >>>> --- a/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
-> >>>> +++ b/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
-> >>>> @@ -29,7 +29,6 @@ properties:
-> >>>>        maxItems: 1
-> >>>>
-> >>>>    required:
-> >>>> -  - compatible
-> >>>>      - reg
-> >>>
-> >>> If you remove it from here then it's still required in Documentation/
-> >>> devicetree/bindings/mmc/amlogic,meson-mx-sdio.yaml
-> >>> so please add it.
-> >>
-> >> If moving the compatible to its specific binding isn't appropriate (as
-> >> per Conor),
-> >> and if removing it from the required list here doesn’t seem reasonable
-> >> to you,
-> >> then adding an unnecessary compatible string in our DTS files doesn’t
-> >> make sense to me.
-> >>
-> >> What could be the solution then?
-> > 
-> > The solution is right but you modify the meson-mx-sdio bindings, so
-> > simply add compatible in a required list for the slot node.
-> 
-> Okay, we declare compatible as optional in the generic mmc-slot binding 
-> but make it required in the meson-mx-sdio binding, which inherits from it.
-> 
-> So why not define the property directly in the meson-mx-sdio binding 
-> instead?
+error[E0308]: mismatched types
+   --> /home/aeh/src/linux-rust/module-params/rust/kernel/str.rs:972:52
+    |
+972 |             [b'0', b'x' | b'X', rest @ ..] => (16, rest),
+    |                                                    ^^^^ expected `&BStr`, found `&[u8]`
+    |
+    = note: expected reference `&BStr`
+               found reference `&[u8]`
 
-Because mmc-slot.yaml is designed to be complete (hence 
-"unevaluatedProperties: false"). There's at least 2 bindings which use 
-it (with "mmc-slot" compatible). Leaving it at least prevents folks from 
-coming up with their own random compatible strings for mmc-slot.
+But I guess I could use the new AsRef impl. Or is it more idiomatic to
+implement `From<&[u8]> for &BStr` and go with `rest.into()`?
 
-Rob
+>
+>> +            [b'0', b'o' | b'O', ..] => (8, &src[2..]),
+>> +            [b'0', b'b' | b'B', ..] => (2, &src[2..]),
+>> +            [b'0', ..] => (8, src),
+>
+> Perhaps add a comment saying that this isn't using `src[1..]` so `0`
+> can be parsed.
+
+Good idea.
+
+>
+>> +            _ => (10, src),
+>> +        }
+>> +    }
+>> +
+>> +    /// Trait for parsing string representations of integers.
+>> +    ///
+>> +    /// Strings beginning with `0x`, `0o`, or `0b` are parsed as hex, octal, or
+>> +    /// binary respectively. Strings beginning with `0` otherwise are parsed as
+>> +    /// octal. Anything else is parsed as decimal. A leading `+` or `-` is also
+>> +    /// permitted. Any string parsed by [`kstrtol()`] or [`kstrtoul()`] will be
+>> +    /// successfully parsed.
+>> +    ///
+>> +    /// [`kstrtol()`]: https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.kstrtol
+>> +    /// [`kstrtoul()`]: https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.kstrtoul
+>> +    ///
+>> +    /// # Example
+>> +    /// ```
+>> +    /// use kernel::str::parse_int::ParseInt;
+>> +    /// use kernel::b_str;
+>> +    ///
+>> +    /// assert_eq!(Ok(0), u8::from_str(b_str!("0")));
+>> +    ///
+>> +    /// assert_eq!(Ok(0xa2u8), u8::from_str(b_str!("0xa2")));
+>> +    /// assert_eq!(Ok(-0xa2i32), i32::from_str(b_str!("-0xa2")));
+>> +    ///
+>> +    /// assert_eq!(Ok(-0o57i8), i8::from_str(b_str!("-0o57")));
+>> +    /// assert_eq!(Ok(0o57i8), i8::from_str(b_str!("057")));
+>> +    ///
+>> +    /// assert_eq!(Ok(0b1001i16), i16::from_str(b_str!("0b1001")));
+>> +    /// assert_eq!(Ok(-0b1001i16), i16::from_str(b_str!("-0b1001")));
+>> +    ///
+>> +    /// assert_eq!(Ok(127), i8::from_str(b_str!("127")));
+>> +    /// assert!(i8::from_str(b_str!("128")).is_err());
+>> +    /// assert_eq!(Ok(-128), i8::from_str(b_str!("-128")));
+>> +    /// assert!(i8::from_str(b_str!("-129")).is_err());
+>> +    /// assert_eq!(Ok(255), u8::from_str(b_str!("255")));
+>> +    /// assert!(u8::from_str(b_str!("256")).is_err());
+>> +    /// ```
+>> +    pub trait ParseInt: FromStrRadix {
+>> +        /// Parse a string according to the description in [`Self`].
+>> +        fn from_str(src: &BStr) -> Result<Self> {
+>> +            match src.iter().next() {
+>> +                None => Err(EINVAL),
+>> +                Some(sign @ b'-') | Some(sign @ b'+') => {
+>> +                    let (radix, digits) = strip_radix(BStr::from_bytes(&src[1..]));
+>> +                    let mut n_digits: KVec<u8> =
+>> +                        KVec::with_capacity(digits.len() + 1, flags::GFP_KERNEL)?;
+>> +                    n_digits.push(*sign, flags::GFP_KERNEL)?;
+>> +                    n_digits.extend_from_slice(digits, flags::GFP_KERNEL)?;
+>
+> I think my comment from a previous series saying that this shouldn't
+> need allocation is not addressed.
+
+Thanks for noticing. This is the discussion from v4:
+
+>> I don't think we should allocate for parsing. This can trivially be a
+>> non-allocating. Just check that the next byte is an ASCII digit (reject
+>> if so, in case people give multiple signs), and then from_str_radix and
+>> return as is or use `checked_neg`.
+>
+>The issue with that approach is that 2s complement signed integer types
+>of width `b` can assume values from -2^(b-1) to (2^(b-1))-1. We would
+>reject the value -2^(b-1) when trying to parse as 2^(b-1).
+>
+>We could parse into an unsigned type, but it gets kind of clunky.
+>
+>Another option is to stop relying on `from_str_radix` from core and roll
+>our own that takes sign as a separate function argument.
+
+What is your take on that?
+
+
+Best regards,
+Andreas Hindborg
+
+
 
