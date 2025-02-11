@@ -1,148 +1,145 @@
-Return-Path: <linux-kernel+bounces-510228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856FDA31A03
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:55:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76AF8A31A0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F323A245B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:55:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8ACB188A3FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53ED27180D;
-	Tue, 11 Feb 2025 23:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452D7271824;
+	Tue, 11 Feb 2025 23:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dS82vaaX"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yLp7Sbyl"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB28271803
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAD73BB54
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739318154; cv=none; b=ZG9dtqPKCoPIyLTYS29PdimYx1sis+KfUiCRvybV/5o58Q8Ns95aX06qqe+rhEoAMBSejmPG82wyj4irA4Q7ocDdovZggFZhTy2e0dD079lKtyLZcTuGB6mA8CxuqSP6+1YFay6a21If/AfyhB36DH/QbHOB2xiNL2uLJagEuTE=
+	t=1739318286; cv=none; b=F3HnRO/MgGkrwSUD79/a89/2IDF56QeBFFEXVihDf0b7J8UjM3otf90wtAFSNExUt2DY5JziuHJ6ixVJOslBzqJ8wR4KS/Tr9Evi8MUWQQNDr6MhvKAPzCXDbUDIW17OEY90bfElHOQ0r+Cpl7aPUL9VDxNVmUEK707ySiCaS2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739318154; c=relaxed/simple;
-	bh=zn/MEiaeMkqS+6/kfEldZQ8JkX+t51eC6E+hsKs0h2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e79WOY7yd6tNkMSeW+7iIQoSMtFddpXuVod7pl+UGddszWlDAQUwqe1KRmnG+O3dY6FmuhNFNECFrqg4iyv/QC34xeSA5d6puV2nPmIUT4I0F2Glr/bsmE5mCyE/r3feeUGInrEZHx6sLGe56qTSuUd+tyXqdbReGojJzvBDHZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dS82vaaX; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1739318286; c=relaxed/simple;
+	bh=RE+aHUIVuDPsDQj42j/fwrw4kpBxa9lJz16JhCXTAlU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I9/qAtuWje/GqfX3s2nqHX05cakOiy7jDDmFi9xz/jx6FGoqfDR9AqYqctSU1jbmvIJyk5DKj9GmBa5Tdr5p0W73HvA/5Y0wtsAnnSWsI0FNwDQm+oUe+Ji/yAg3jAXEpvyXvY6Lpwk81DrgHeSpebXWE7AccHqhMA9ttllbEN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yLp7Sbyl; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-439307d83f0so24123495e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 15:55:50 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54505c79649so3261005e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 15:58:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739318149; x=1739922949; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XexwhaJfLPqQn5rqo8bd5EO9HVDdHe/LGV/GV+wRqWQ=;
-        b=dS82vaaXtKVfgnmhxVcCcBboTBRAHZY+g/eYdygtNtAV4IPtKlr5gGtgUf9XocHiVe
-         RMv6CHVhodW7VV9Ry+ri3ZQdS2gJ943Vom3FnWn+eGEEafCWikvZDijtOOVYOEfmm2k7
-         onSzVTqOGw/4Zobmb6SO0dSeQq+9ruw4mJLBie4ey5gHvletRuvqH7h2TiOP5Unp7DaA
-         uq1idplKGBwgBhydneJenQHp+CMSt6ANXOHZQsDgdN4FpHzKF1Q1UBLD0+CmHIZdBkNy
-         LeaxJmBEgyhR6++A/YMF1gTUskD2YcgVhLKzR1K+6rblvvC+4sGYzI9zuj+mM41cn9F2
-         DvRw==
+        d=linaro.org; s=google; t=1739318283; x=1739923083; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LX/ULobNxBgRiiE6AfMWm4qglJRxW2bL2STp6gK7uVE=;
+        b=yLp7SbylZpV6KkaSft03RvdgKMMDJvCbp1+9KxKl5etNCsfLKcWaKWp6vqobcyoAx4
+         0s5SuVB24scHYfL5DRsd8opiUm642VHMw0wFiR20aial2/9DZWNwTSMVYAmQLCNki7jL
+         Jpxocb4OXYrDxTr12FjdGB61F5AGXC4BCtCpVw4Ry0VjUOlMondYP+Dt1un41k3mW63W
+         BdWiMgN6qxGRO2QvJOxAPbNEbtw23ny7uR4Gy1APWR3DeqJ7IXiENPu/sqn8YnK7tcbr
+         IqosVIT6PZ8miakhIlc7rCJ6Onerf/9e2h1Ogt9I3m8D1xIQXzW7KTYN+yMabSuDgZpE
+         bbpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739318149; x=1739922949;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XexwhaJfLPqQn5rqo8bd5EO9HVDdHe/LGV/GV+wRqWQ=;
-        b=LG/DbPlU9OPmGi1To+R+QaQ5NjVPKJcVyd2qaRja8ITuwe5W/f/FCVBjnNmEy57CK4
-         VcULg2Ea0HrnV54crgJsK7+TIl1tEks8zcN44zS5tnmAwIntBGCNiCvDpBN4ckrOwuPG
-         20ei1anwHll7KMGrFbudCa1pcqxjHcIghPaLb4NBMxfA3qnw8lpWkcN7Kjjb8bvwyPb8
-         2X8bqBPwZEfZcpzCqiVZV4QXHV5PFcueNfJwWUkOaAEw18dhZx62ObuO4Zo377LHG8cN
-         3O9NdQv1R/UprhoyzTYIJgNeR4o7UpzOZigM7EsLEZi+xbyvwHY3TJB/nstAalG5G4De
-         6Kxw==
-X-Gm-Message-State: AOJu0YxIkuwajJ1TJ8S5OVbv6eMcA0oJd1whNmitk81qJVMzuXobSwPS
-	eMPZPmeewe89vgPPLs1hEOSZmFvlfESfzJKOkLkpoJI4m++UrkIUOly7Yn4LwGw=
-X-Gm-Gg: ASbGncs5iSkdZxQBYCyHodH46GSFDliNxv2PjKk4rES0inmRp+dIY7MSzUiFQdp0LU/
-	a5kSUJ6WEabhOEIK0zmDS2/aKsdMF02FMy9XsCXlAmbkNG3TUW3LVwqfrFauue2V1iF1gW3xQ1N
-	LeC61rCadFRhtRAgLZe8ojqRC9Ynxooh3mP1kD/yUmRQamt3ShqUgYsNnIta41Ksl5x8a8/QJDD
-	Ni3InSBe/HOleRlNPLyDQF5Foni+6rCwzGvDpY1Rdxc/tOvEPtYMqiAQvNUcRF14hyd67KTld53
-	PQnaWMzYbx7LWjdZ92G/PzHb91xEiZuuL67UPxyZ79EQh5rGFTtyqocLig==
-X-Google-Smtp-Source: AGHT+IFLEnmaQXwA+RH1booCyaG9+or+G+muqfT8GCpoI2uuGUFMyD0LCVE1muL7WO/wlnwcoEr3/Q==
-X-Received: by 2002:a05:600c:1d9a:b0:439:4a2a:f318 with SMTP id 5b1f17b1804b1-439581c17f3mr8639005e9.28.1739318149510;
-        Tue, 11 Feb 2025 15:55:49 -0800 (PST)
-Received: from [192.168.0.156] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a04cda4sm2862615e9.1.2025.02.11.15.55.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2025 15:55:49 -0800 (PST)
-Message-ID: <84682c43-e480-41df-a258-1f5311bb441a@linaro.org>
-Date: Tue, 11 Feb 2025 23:55:47 +0000
+        d=1e100.net; s=20230601; t=1739318283; x=1739923083;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LX/ULobNxBgRiiE6AfMWm4qglJRxW2bL2STp6gK7uVE=;
+        b=c84YxU5XwoF2cqmPjEUVTaiuD4z7m0JJud59dXaGruDyQIuOnTIcL0WMEb51uyE1T+
+         T1pH33lCiKGJwaxEthTXqWNggkit5NIKsk7tYe9sT1IBwGuemxDFtrOX+e+Y2VWrklic
+         vTGS19L3zH8mIkCgOBntcSxBPfCeiVmcyNT1Ym5AIQ0ccVzNqY1vVwv8CJFAZ4Gx3ycT
+         xAYa3nn503EwUbdMY+bUhrbVXNZq2hupsH5TjQ3Y3+WIfgL25OKKXWczHKGWyCg2PZib
+         ay1rIYj5NsQ6nKY7X8q0B4IoDRuJdKTQatiA2X3OzfNU3FAmxwIae+Jm+FoglnrmbtnM
+         wEKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUU6mYgziJ5G1iPAqUSdeKbDxyCU58KkcNNlyit3UMZ+LXkLnni3YlOlatyR46nMbi6a9hrgem5ZjD5AYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG3vyNuQmKr8BDeXFH/3+BxV5MRj6LeBzapGmHbbVdaGEA13QF
+	6sBtIHYk0v8+mnvkpyqqEZKwYgoX5pelbN8WoGJU1uUh/dLkJBw/QEhE4OU2tWA=
+X-Gm-Gg: ASbGncsK8oy5nSY8OfXfuaBDIv8MNDupsPQVKMLDZ3hc61+8PwXe1dFqUJAMD3aXoEr
+	ec3H2D+0iEGxHJN+HKRR1uIdrt4kUl1LNT+oMHsu++ydvyJOF/S6IMu15E+Vzqw5YC5Br+/ahMQ
+	w6sQgjgttoIxRmEYI45Vb5H7TNPc5Zp7vip0ABZ5B/QMhs4TAY1kT87VirxlHNkCvJMiHFNraEa
+	ptf1Um+n/59uvfXLUwHbYlb27NEhYLfvYVuioTdTkI3p/7eJC6WaT31pyaNHSwem9cQ97HqgWOl
+	0Z+OHDhBGcUvU5qiyQir9mEkXBVQ11+SqPribodRi2cRXJAJ+76jFoouaZpbZ+3XVo5dMss=
+X-Google-Smtp-Source: AGHT+IEZuHKlP0HFN8WiWm/I8ajOzqgUnqFUKxuS5iwuMpASJK2/hwz0WfYOWgwjCMYH+7xZ6hFXEQ==
+X-Received: by 2002:a05:6512:124c:b0:545:353:4d46 with SMTP id 2adb3069b0e04-545181148dfmr238228e87.25.1739318282977;
+        Tue, 11 Feb 2025 15:58:02 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54512236ba5sm393771e87.110.2025.02.11.15.58.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 15:58:01 -0800 (PST)
+Date: Wed, 12 Feb 2025 01:57:59 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, quic_kamalw@quicinc.com, quic_jprakash@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v2 1/5] dt-bindings: thermal: Add MBG thermal monitor
+ support
+Message-ID: <sybrfmrpegq7fcqykgsfhm56wjyx5vp6zafqw2d73tiral64aw@hg4di55fzdle>
+References: <20241212-mbg-v2-support-v2-0-3249a4339b6e@quicinc.com>
+ <20241212-mbg-v2-support-v2-1-3249a4339b6e@quicinc.com>
+ <ojukpywkhu72cimujmijzidf26654g5vkjaj477imcf4suz2o6@cmow62jcqsfz>
+ <7a5db383-914c-4c1e-846e-5d68cc6a7765@quicinc.com>
+ <fcd718be-fe8a-466f-bd2b-7b75d5f8dd6c@kernel.org>
+ <c85903c6-6a89-4382-bfa2-2fed95f0cbc0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] regulator: qcom_usb_vbus: Add support for PMI8998
- VBUS
-To: "James A. MacInnes" <james.a.macinnes@gmail.com>,
- linux-arm-msm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, quic_wcheng@quicinc.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- lgirdwood@gmail.com, broonie@kernel.org
-References: <20250211194918.2517593-1-james.a.macinnes@gmail.com>
- <20250211194918.2517593-3-james.a.macinnes@gmail.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250211194918.2517593-3-james.a.macinnes@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c85903c6-6a89-4382-bfa2-2fed95f0cbc0@kernel.org>
 
-On 11/02/2025 19:49, James A. MacInnes wrote:
-> +	// Determine PMIC type
-> +	pmic_type = of_device_get_match_data(dev);
-> +	if (pmic_type && strcmp(pmic_type, "pmi8998") == 0) {
-> +		qcom_usb_vbus_rdesc.curr_table = curr_table_pmi8998;
-> +		qcom_usb_vbus_rdesc.n_current_limits =
-> +			ARRAY_SIZE(curr_table_pmi8998);
-> +	} else if (pmic_type && strcmp(pmic_type, "pm8150b") == 0) {
-> +		qcom_usb_vbus_rdesc.curr_table = curr_table_pm8150b;
-> +		qcom_usb_vbus_rdesc.n_current_limits =
-> +			ARRAY_SIZE(curr_table_pm8150b);
-> +	} else {
-> +		return -ENODEV;
-> +	}
->   	qcom_usb_vbus_rdesc.enable_reg = base + CMD_OTG;
->   	qcom_usb_vbus_rdesc.enable_mask = OTG_EN;
->   	qcom_usb_vbus_rdesc.csel_reg = base + OTG_CURRENT_LIMIT_CFG;
-> @@ -80,18 +99,22 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
->   	rdev = devm_regulator_register(dev, &qcom_usb_vbus_rdesc, &config);
->   	if (IS_ERR(rdev)) {
->   		ret = PTR_ERR(rdev);
-> -		dev_err(dev, "not able to register vbus reg %d\n", ret);
-> +		dev_err(dev, "Failed to register vbus reg %d\n", ret);
->   		return ret;
->   	}
->   
->   	/* Disable HW logic for VBUS enable */
->   	regmap_update_bits(regmap, base + OTG_CFG, OTG_EN_SRC_CFG, 0);
->   
-> +	dev_info(dev, "Registered QCOM %s VBUS regulator\n",
-> +		 pmic_type);
-> +
->   	return 0;
->   }
->   
->   static const struct of_device_id qcom_usb_vbus_regulator_match[] = {
-> -	{ .compatible = "qcom,pm8150b-vbus-reg" },
-> +	{ .compatible = "qcom,pm8150b-vbus-reg", .data = "pm8150b" },
-> +	{ .compatible = "qcom,pmi8998-vbus-reg", .data = "pmi8998" },
+On Tue, Feb 11, 2025 at 12:50:12PM +0100, Krzysztof Kozlowski wrote:
+> On 11/02/2025 12:46, Krzysztof Kozlowski wrote:
+> > On 11/02/2025 12:15, Satya Priya Kakitapalli wrote:
+> >>
+> >> On 12/13/2024 2:08 PM, Krzysztof Kozlowski wrote:
+> >>> On Thu, Dec 12, 2024 at 09:41:20PM +0530, Satya Priya Kakitapalli wrote:
+> >>>> +
+> >>>> +required:
+> >>>> +  - compatible
+> >>>> +  - reg
+> >>>> +  - interrupts
+> >>>> +  - io-channels
+> >>>> +  - io-channel-names
+> >>> Binding looks ok, but this wasn't tested due to unneeded dependency.
+> >>> Please decouple from dependency, so automation can properly test it.
+> >>
+> >>
+> >> The dependency is needed because this mbg peripheral is present on only 
+> >> targets which have GEN3 ADC5, for which the bindings support is added in 
+> >> the series [1]
+> >>
+> >>
+> >> [1] 
+> >> https://lore.kernel.org/linux-arm-msm/c4ca0a4c-e421-4cf6-b073-8e9019400f4c@quicinc.com/
+> > 
+> > Sure. Then this cannot be merged due to resulting test failure.
+> > 
+> > Please don't post new versions before this can be actually tested and
+> > applied.
+> 
+> Heh, you responded *after two months*, to an old email so even previous
+> discussion is gone from my inbox.
 
-I think the other two said much the same thing but .data should point to 
-the differentiator instead of being a string which you disjoin on and 
-then hook your differentiated data.
+Are you responding to your own email?
 
-i.e.
-
-.data = &my_driver_specific_static_data_here.
-
----
-bod
+-- 
+With best wishes
+Dmitry
 
