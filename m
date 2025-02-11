@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-510001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4BFA31717
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:02:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C25A317A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75ABA168E5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A847F169367
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1B2264F8D;
-	Tue, 11 Feb 2025 21:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82BB269AE7;
+	Tue, 11 Feb 2025 21:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nr1nbdha"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="oEQueXFV"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3340126563F;
-	Tue, 11 Feb 2025 21:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CD72627EF;
+	Tue, 11 Feb 2025 21:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739307757; cv=none; b=sHmva/tH/xVZnAAlTL8PfT2fKm1grSE0eNAEbRVE6cbxT2/yzZS5RgDdrgd+0G22anMMe6NbIS39srzA1zqtXdok040DPOyp/O8uI5tlja01fwqUfEu8gIYj49KuMVskofMKOO9KHgjCZhqE78vMmS0WffJIXxBHcrD+75IEbjo=
+	t=1739309156; cv=none; b=lhvMHxMcwpFnAmFM6l0ttex/i3Q9K9p8UBeAIBduQ/xnuwINskR+9fiEcUavDtuB3provfO8mz3tVGsbrK2W69ZNxGOC+SoraIE1oM9CXFTmol/cHwkiBj/P9lN4ubkmN4fkccSnNZUzX5TmnBAuGd8ctxQpPVuGurR+vOSfQsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739307757; c=relaxed/simple;
-	bh=/QztJwiK+yK+pqByLvZV4c6ax5WGvDEiytfyf5ixKJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=HL6bNbA4OFyctZCO4uJsn610zw6ZnvJXDrX38317uxg6GhBSZZ2P4QVgzJEGKvfLECedPE+gSr3AadRGcmUQrqR8Ged4AtljCrv0lNTNCJ6720oOBM0wZREIq9eyCxaL0t0FdqJFPHEUeDgIk5SNNJz8amR6eCSwcGJb5VVvH+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nr1nbdha; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E8FC4CEDD;
-	Tue, 11 Feb 2025 21:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739307757;
-	bh=/QztJwiK+yK+pqByLvZV4c6ax5WGvDEiytfyf5ixKJk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Nr1nbdhaaE4ygZdMUNvwf9SjBcZYtEivnfWwTpLiVWLY6WuH+frMKoWh/wVxk3U1c
-	 L4YvTPGPMrUsWM4SpkmfKH3utwpqy3sgw7oZexYf6UFkxyQqjrpsOtZjk3EZQTZeD1
-	 uMfPGmOCb7vmFzgkiI/FSkSvfkYxQs+5o8tlVG4xgekivx/MhJqI7H1KEcC1RTe+Ac
-	 QVfFp95Tr5NmSDDQ7flOqyKFKHLFPQQm8Afo2xUnNHtjb8heMqfOMyhs/1vFL7fjPJ
-	 loxoZ06hLAdlxr60oh0wcW76RHzuoQlxU5/ZFLJ82TNvdGPe8z2A6AiCAB8YaLJBYU
-	 HWblBGwUdmJ/Q==
-Date: Tue, 11 Feb 2025 15:02:35 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Purva Yeshi <purvayeshi550@gmail.com>, bhelgaas@google.com,
-	skhan@linuxfoundation.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH] drivers: pci: Fix flexible array usage
-Message-ID: <20250211210235.GA54524@bhelgaas>
+	s=arc-20240116; t=1739309156; c=relaxed/simple;
+	bh=31LpJUNvPXRT8Z6CSlJtIwY15E5H7sluasiMFMoNjTc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PvXRYzk4KZLXixzCzYH1y2xDtKF370bSmAMTIKs9IZaPb3JYyoTyu4Hu7onBnPM5+7/OeazLnSoPlCYklAsjpp9Uf+aibw03ZEdws5Kn4wWJsfslVNnDnE0y0BhDuu2h2sLhuWXVtkeSLHIb2m7+U7DnOZiEfRrSDE3fQOokoSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=oEQueXFV; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id d7342e8c6b5ededa; Tue, 11 Feb 2025 22:25:52 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 13B83770175;
+	Tue, 11 Feb 2025 22:25:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1739309152;
+	bh=31LpJUNvPXRT8Z6CSlJtIwY15E5H7sluasiMFMoNjTc=;
+	h=From:Subject:Date;
+	b=oEQueXFVNKfKq2izbXI620kezw+FaF8GYJHaUOBsbUxgUi1EGf0idEguf/Obi6DYZ
+	 ynAQzD+3QcCZvKJj8o8Oe5x8owdWk/RmpJnqV9OXOal6YSUCyMZQVsf1Gb4qale7go
+	 /IYR/SOPQEu/t4J6uiXpBVzsVAdVXzmW0c8/qvu4SrcyC5w+QWHMvb6Tm8Z+KsiY96
+	 2owWs5gpefEXn6DPNy7JKJ/0WHzTW8yBxpRpxk/tLZ3xCtCJ/Zz8tvrqMNlACPAsqF
+	 YEvbHds10FVw4sSDOyE8OSKD2Vu+Rm7F2EKzTF7g+zhCIW9on17VSnnG+ZT2a7WPTT
+	 WsXBrFzoiLV3w==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v1 01/10] PM: runtime: Introduce pm_runtime_no_support()
+Date: Tue, 11 Feb 2025 22:02:52 +0100
+Message-ID: <22608556.EfDdHjke4D@rjwysocki.net>
+In-Reply-To: <2314745.iZASKD2KPV@rjwysocki.net>
+References: <2314745.iZASKD2KPV@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6qFvrf1gsZGSIGo@kbusch-mbp>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegvddtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-On Mon, Feb 10, 2025 at 04:03:26PM -0700, Keith Busch wrote:
-> On Mon, Feb 10, 2025 at 06:57:40PM +0530, Purva Yeshi wrote:
-> > Fix warning detected by smatch tool:
-> > Array of flexible structure occurs in 'pci_saved_state' struct
-> > 
-> > The warning occurs because struct pci_saved_state contains struct
-> > pci_cap_saved_data cap[], where cap[] has a flexible array member (data[]).
-> > Arrays of structures with flexible members are not allowed, leading to this
-> > warning.
-> > 
-> > Replaced cap[] with a pointer (*cap), allowing dynamic memory allocation
-> > instead of embedding an invalid array of flexible structures.
-> > 
-> > Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
-> > ---
-> >  drivers/pci/pci.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > index 869d204a7..648a080ef 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -1929,7 +1929,7 @@ EXPORT_SYMBOL(pci_restore_state);
-> >  
-> >  struct pci_saved_state {
-> >  	u32 config_space[16];
-> > -	struct pci_cap_saved_data cap[];
-> > +	struct pci_cap_saved_data *cap;
-> >  };
-> 
-> I don't think this is right. Previously the space for "cap" was
-> allocated at the end of the pci_saved_state, but now it's just an
-> uninitialized pointer.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Thanks, I think you're right.  Dropped pending fix or better
-explanation.
+Introduce a new helper function called pm_runtime_no_support() for
+checking the power.last_status value indicating whether or not runtime
+PM has ever been enabled for the given device.
 
-This is kind of a complicated data structure.  IIUC, a struct
-pci_saved_state is allocated only in pci_store_saved_state(), where
-the size is determined by the sum of the sizes of all the entries in
-the dev->saved_cap_space list.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ include/linux/pm_runtime.h |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-The pci_saved_state is filled by copying from entries in the
-dev->saved_cap_space list.  The entries need not be all the same size
-because we copy each entry manually based on its size.
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -182,6 +182,19 @@
+ }
+ 
+ /**
++ * pm_runtime_no_support - Check runtime PM support.
++ * @dev: Target device.
++ *
++ * Return %true if runtime PM is currently disabled for @dev and its last
++ * runtime PM status value is %RPM_INVALID, which means that runtime PM has
++ * never been enabled for it, or %false otherwise.
++ */
++static inline bool pm_runtime_no_support(struct device *dev)
++{
++	return dev->power.disable_depth && dev->power.last_status == RPM_INVALID;
++}
++
++/**
+  * pm_runtime_enabled - Check if runtime PM is enabled.
+  * @dev: Target device.
+  *
+@@ -284,6 +297,7 @@
+ static inline bool pm_runtime_suspended(struct device *dev) { return false; }
+ static inline bool pm_runtime_active(struct device *dev) { return true; }
+ static inline bool pm_runtime_status_suspended(struct device *dev) { return false; }
++static inline bool pm_runtime_no_support(struct device *dev) { return true; }
+ static inline bool pm_runtime_enabled(struct device *dev) { return false; }
+ 
+ static inline void pm_runtime_no_callbacks(struct device *dev) {}
 
-So cap[] is really just the base of this buffer of variable-sized
-entries.  Maybe "struct pci_cap_saved_data cap[]" is not the best
-representation of this, but *cap (a pointer) doesn't seem better.
 
-Bjorn
+
 
