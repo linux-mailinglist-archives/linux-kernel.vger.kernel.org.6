@@ -1,155 +1,189 @@
-Return-Path: <linux-kernel+bounces-509939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FDEA31651
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:00:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A16A31655
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:01:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227F63A2CB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:00:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7273A2CEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50B6262D3D;
-	Tue, 11 Feb 2025 19:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8F0262170;
+	Tue, 11 Feb 2025 20:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kV4Cnzcg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1hBYkRL"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC1F264F8E;
-	Tue, 11 Feb 2025 19:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240DC265638;
+	Tue, 11 Feb 2025 20:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739303962; cv=none; b=BsZqYnhB+CZPHgm0lEl61BJatV72hMlU/U/+wyrkN2a4ecEzZRZ/1HdKH6wxAey1wzaOoSRYHFzR8LryFL+3tyalj/+zl6qEEMDEyOSSJZ9J/QpSwBdrQuTwpkN21tHDQrwkME/HmmiDNh4/pRlm/FXTd0j2owXyNK7ybdFrDFs=
+	t=1739304043; cv=none; b=cVY0LVdGMJlUIhD9vHU6IwSby7r3CcXMExS9k/Kd+QPwKq+sGivmvl7318iPelAMHvO9Y9NV4ryiSM3a/08HpbBGepOJ7VpcMXV+GuztCK0fGNfN/KFF1VvysdGh/joqP6d3v8HxuyZ+0U8VmKw9cecExDYgsttk3YTFi06oH6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739303962; c=relaxed/simple;
-	bh=EZK5iCn0AJDuDPnbI9PCvoAule1opEGrI+Q176VJ/nQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BFvSWWvy2QV4ZQiV4yjpgGddDQTlVfluCrMXBC32ctnn+MUhlkY3i/F+D9VrjLk4p2qdl3k6O35iyKsi/BBVaavmddkvJ1+GdkMLi+ZmV5zDNYn93hc3Yk61rsCeJEn4lPXpKg3VLrY4Q2foupud+vPTpfCHPJdtCSia2ho11DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kV4Cnzcg; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739303961; x=1770839961;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EZK5iCn0AJDuDPnbI9PCvoAule1opEGrI+Q176VJ/nQ=;
-  b=kV4CnzcgUFAcP3AvQwN+GDEg4/N7GIaKF9NwOU+iqynHMzph4pLQdgwj
-   /QLufWQ5CQAPM0Km/JfDtTtEpGVCjcxmphrId2WceJj2VzQmLSBVHbcHM
-   xWxSL2tStmeACLKvq0yogUxnIpe2n/QNbG5oOzaKKhidnj1GWM7bsVXMc
-   BbUISaIEtC++PITl128hD1TZdhuiakP+G1uDTyeV7/vtHrphtJ933cj2X
-   AMo3HxG5zSvXyZyd0PlGbfIORgNm0X3TPbPAZPeLXUYSTIHB5MdeXjXfC
-   /UE+275vUiw7hiBb/5e401fdoJHMelQmg9cHkQRjfIVRv7RM9cwXHyBbC
-   g==;
-X-CSE-ConnectionGUID: 3vtdIgeIRfSNV4WLn7tfng==
-X-CSE-MsgGUID: PChojoqoSjeoc03CMaXWQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="42786424"
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="42786424"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 11:59:20 -0800
-X-CSE-ConnectionGUID: O9AWFUy3RJO+9tb/yFTjLQ==
-X-CSE-MsgGUID: wP1KLtz+QiSuzJuh+2GpBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="112826024"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.48]) ([10.125.108.48])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 11:59:16 -0800
-Message-ID: <3d750b58-d911-4f24-93e4-b84213849071@intel.com>
-Date: Tue, 11 Feb 2025 11:59:15 -0800
+	s=arc-20240116; t=1739304043; c=relaxed/simple;
+	bh=eIOanNpHgZRp25LDvle44RVOT0SL2bgcaw3x9nsSjow=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFoOZW86vnQPH6isPOX4s8cJ5QtlFa8wPkdSXsaJ49dd2Tesql1NOhWK1F32Rl70a/LoWX6eaLbF++TUgKUNGb6+megz/h88j0SeSrjhvtxoPzgr3qL9Un99fKBKjog2+mjI8cqfQ6VxLRkAiHccYsjDox5/U6No26CIGJn1KR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g1hBYkRL; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21f2f386cbeso110978705ad.0;
+        Tue, 11 Feb 2025 12:00:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739304041; x=1739908841; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sEbWnqt2oULWwMWmZN54fieoZru+vYPqpAY8fjJmJgo=;
+        b=g1hBYkRLoVFWgbXF2Iptv3zRKGwn8vLWejUEuK6bEUf6iB6PtJYWMDhIEJFg62o1Yf
+         Jgwohhj/uc1SFbLHqaReYMBRG8B8iVEslSFG/ModaM+S5AacCgFVj1w6PpZWihoQqgOW
+         4ErNgDzWS5tvzEOX/MNIC05o1//Z36JYmit6ohN1taDU4Qj6hwKI8xkPk43vNL/lNxlJ
+         j6Sl+QQUVQEXzp9u221+cwzV0t5J6ycuEfF2WTjcHm+cOivC9/baZvKUi2gqoxEsymCG
+         EhV+EBn0S8dClUcviiZqMVQWsIEcnnWRMDQt9Ij4/zR5dqIBloYnTqDA3vejX+HVU3xf
+         bv0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739304041; x=1739908841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sEbWnqt2oULWwMWmZN54fieoZru+vYPqpAY8fjJmJgo=;
+        b=V1Aij8tyVplnGoN0d2vqNSUg84TNzUIqmP4DrDVvOWlwU/qP4+qkZFQn5XAV+zAzaA
+         L+gKNocvZJFtuSve+GwpFdks4JMA3v0DRK3Nljwiqboh0C/80+H6sp08HV9S6nvKSsWa
+         yf727yXXHtyu19095pAFBAUdwmTZ2Jc+F34zlzqs1eTLHYIHuWupWyWyuC1KMLbZMwj9
+         QIrC0MWjfqxiqP52pxzPztIoE51GpLGTYEDl6tuKoCFdma+TVMyw3Ouk8FHZ8RizgPds
+         ckvxDzjCwX3iXnzWka0bQjHNYM6I/vpu31OEP2EfiewtaaYocF/j1nSNs/6KiSTIsDQ0
+         TmAw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/pzAtCAYbZqMcktDl15Gt/gR4rS5N//BRIXYtQaWgri+zTIXVeGUBiOAbGgvq7wikgnk098hYUyzfh0RS@vger.kernel.org, AJvYcCUtJ3niJJyl0+GZAQQe2l8AM2NV6ro3iZGrPFYjqBGmqeHEmXSahROGkXswpY4M5qBRuT1Vv+HJtYkKoTT6CRZ3@vger.kernel.org, AJvYcCVMJOUNUdl5IpKXvpoF1i0X2a3HjWYDwHD66GBT7pdyn3GP1Z9vz58dwBezrH/N+nWYLYpylQKa@vger.kernel.org, AJvYcCWDHuqPcaa2CdaNfOnctD7LM3mc6Snw6u9LfwhQBpPCxnFPZ7SsWTgmAY4mjT8lerZmLK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw//jkElmFsxPjhpY7wHzWYTVefbXMUZPKlm3Fmjz1J4WdeJ92A
+	D1PcIoqDgtuZCr4Q2dCxLg6orh8Gz+NaVY5zRMZacmo4jUt7c40=
+X-Gm-Gg: ASbGncuRhntXD0zw5L+08S7b24o/3pRuZoFeQYWY1OUdPLzqZRYP0c+gztVhudVcKZh
+	dbN6aVlBnS09Y4GmNDqy6maCFENl8M9H6i/3VK05oldk9C+ePiHDW5pu6PwQxIWZhIVHzGzoLzk
+	vmCtgqAQhkwdqQwGfvj3/lImHDNyZrt51pGROljCBERRbviwVfZix40LEuzWq9eDrf+9z/YZK0H
+	lgX0s1lVJV+tAfYj+3tP8vppfntiL/KyIdEVogGgS2SEaVRsrQWUbZ0kuWarpMZAOntUjfPKTut
+	dLPNsq24gCuY2Ec=
+X-Google-Smtp-Source: AGHT+IHfoD/faKJSbsEJohkA+bmyKwVEJPr7kJDWs691jtvM85gENPzDCyvgllWAgAzxdA+rI+87PA==
+X-Received: by 2002:a17:902:e946:b0:215:e98c:c5bc with SMTP id d9443c01a7336-220bbc77f99mr10067545ad.48.1739304039817;
+        Tue, 11 Feb 2025 12:00:39 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-21f3683d529sm101225815ad.145.2025.02.11.12.00.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 12:00:39 -0800 (PST)
+Date: Tue, 11 Feb 2025 12:00:38 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Joe Damato <jdamato@fastly.com>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, horms@kernel.org, kuba@kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next v6 3/3] selftests: drv-net: Test queue xsk
+ attribute
+Message-ID: <Z6usZlrFJShn67su@mini-arch>
+References: <20250210193903.16235-1-jdamato@fastly.com>
+ <20250210193903.16235-4-jdamato@fastly.com>
+ <13afab27-2066-4912-b8f6-15ee4846e802@redhat.com>
+ <Z6uM1IDP9JgvGvev@LQ3V64L9R2>
+ <Z6urp3d41nvBoSbG@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/15] x86: Physical address comparisons in fill_p*d/pte
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: luto@kernel.org, xin@zytor.com, kirill.shutemov@linux.intel.com,
- palmer@dabbelt.com, tj@kernel.org, andreyknvl@gmail.com, brgerst@gmail.com,
- ardb@kernel.org, dave.hansen@linux.intel.com, jgross@suse.com,
- will@kernel.org, akpm@linux-foundation.org, arnd@arndb.de, corbet@lwn.net,
- dvyukov@google.com, richard.weiyang@gmail.com, ytcoode@gmail.com,
- tglx@linutronix.de, hpa@zytor.com, seanjc@google.com,
- paul.walmsley@sifive.com, aou@eecs.berkeley.edu, justinstitt@google.com,
- jason.andryuk@amd.com, glider@google.com, ubizjak@gmail.com,
- jannh@google.com, bhe@redhat.com, vincenzo.frascino@arm.com,
- rafael.j.wysocki@intel.com, ndesaulniers@google.com, mingo@redhat.com,
- catalin.marinas@arm.com, junichi.nomura@nec.com, nathan@kernel.org,
- ryabinin.a.a@gmail.com, dennis@kernel.org, bp@alien8.de,
- kevinloughlin@google.com, morbo@google.com, dan.j.williams@intel.com,
- julian.stecklina@cyberus-technology.de, peterz@infradead.org, cl@linux.com,
- kees@kernel.org, kasan-dev@googlegroups.com, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
- linux-doc@vger.kernel.org
-References: <cover.1738686764.git.maciej.wieczor-retman@intel.com>
- <2c2a71ec844db597f30754dd79faf87c9de0b21f.1738686764.git.maciej.wieczor-retman@intel.com>
- <c344dfaa-7e79-498f-89d7-44631140d0f4@intel.com>
- <lm5dg55q4vhhlsbsrvtskpz2hhdxa25pieq4gmf62ogtr4b4tw@xsq7ua7i5lto>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <lm5dg55q4vhhlsbsrvtskpz2hhdxa25pieq4gmf62ogtr4b4tw@xsq7ua7i5lto>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z6urp3d41nvBoSbG@LQ3V64L9R2>
 
-On 2/7/25 08:37, Maciej Wieczor-Retman wrote:
-> @@ -287,7 +290,7 @@ static pte_t *fill_pte(pmd_t *pmd, unsigned long vaddr)
->  	if (pmd_none(*pmd)) {
->  		pte_t *pte = (pte_t *) spp_getpage();
->  		pmd_populate_kernel(&init_mm, pmd, pte);
-> -		if (pte != pte_offset_kernel(pmd, 0))
-> +		if (__pa(pte) != (pmd_val(*pmd) & pmd_pfn_mask(*pmd)))
->  			printk(KERN_ERR "PAGETABLE BUG #03!\n");
->  	}
->  	return pte_offset_kernel(pmd, vaddr);
+On 02/11, Joe Damato wrote:
+> On Tue, Feb 11, 2025 at 09:45:56AM -0800, Joe Damato wrote:
+> > On Tue, Feb 11, 2025 at 12:09:50PM +0100, Paolo Abeni wrote:
+> > > On 2/10/25 8:38 PM, Joe Damato wrote:
+> > > > +def check_xdp(cfg, nl, xdp_queue_id=0) -> None:
+> > > > +    test_dir = os.path.dirname(os.path.realpath(__file__))
+> > > > +    xdp = subprocess.Popen([f"{test_dir}/xdp_helper", f"{cfg.ifindex}", f"{xdp_queue_id}"],
+> > > > +                           stdin=subprocess.PIPE, stdout=subprocess.PIPE, bufsize=1,
+> > > > +                           text=True)
+> > > > +    defer(xdp.kill)
+> > > > +
+> > > > +    stdout, stderr = xdp.communicate(timeout=10)
+> > > > +    rx = tx = False
+> > > > +
+> > > > +    queues = nl.queue_get({'ifindex': cfg.ifindex}, dump=True)
+> > > > +    if not queues:
+> > > > +        raise KsftSkipEx("Netlink reports no queues")
+> > > > +
+> > > > +    for q in queues:
+> > > > +        if q['id'] == 0:
+> > > > +            if q['type'] == 'rx':
+> > > > +                rx = True
+> > > > +            if q['type'] == 'tx':
+> > > > +                tx = True
+> > > > +
+> > > > +            ksft_eq(q['xsk'], {})
+> > > > +        else:
+> > > > +            if 'xsk' in q:
+> > > > +                _fail("Check failed: xsk attribute set.")
+> > > > +
+> > > > +    ksft_eq(rx, True)
+> > > > +    ksft_eq(tx, True)
+> > > 
+> > > This causes self-test failures:
+> > > 
+> > > https://netdev-3.bots.linux.dev/vmksft-net-drv/results/987742/4-queues-py/stdout
+> > > 
+> > > but I really haven't done any real investigation here.
+> > 
+> > I think it's because the test kernel in this case has
+> > CONFIG_XDP_SOCKETS undefined [1].
+> > 
+> > The error printed in the link you mentioned:
+> > 
+> >   socket creation failed: Address family not supported by protocol
+> > 
+> > is coming from the C program, which fails to create the AF_XDP
+> > socket.
+> > 
+> > I think the immediate reaction is to add more error checking to the
+> > python to make sure that the subprocess succeeded and if it failed,
+> > skip.
+> > 
+> > But, we may want it to fail for other error states instead of
+> > skipping? Not sure if there's general guidance on this, but my plan
+> > was to have the AF_XDP socket creation failure return a different
+> > error code (I dunno maybe -1?) and only skip the test in that case.
+> > 
+> > Will that work or is there a better way? I only want to skip if
+> > AF_XDP doesn't exist in the test kernel.
+> > 
+> > [1]: https://netdev-3.bots.linux.dev/vmksft-net-drv/results/987742/config
+> 
+> I'll give it a few more hours incase anyone has comments before I
+> resend, but I got something working (tested on kernels with and
+> without XDP sockets).
+> 
+> xdp_helper returns -1 if (errno == EAFNOSUPPORT). All other error
+> cases return 1.
+> 
+> Updated the python to do this:
+> 
+>   if xdp.returncode == 255:
+>       raise KsftSkipEx('AF_XDP unsupported')
+>   elif xdp.returncode > 0:
+>       raise KsftFailEx('unable to create AF_XDP socket')
+> 
+> Which seems to work on both types of kernels?
+> 
+> Happy to take feedback; will hold off on respinning for a bit just
+> incase there's a better way I don't know about.
 
-Open coding it like this is fine with me.  The p*_offset_kernel(p*,0)
-thing is arguably even harder to parse.
+Any reason not to enable CONFIG_XDP_SOCKETS on NIPA kernels? Seems a bit
+surprising that we run networking tests without XSKs enabled.
 
