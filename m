@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-509991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB95A316F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:55:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98EFDA316F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A275168A29
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:55:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166451888723
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333232641CB;
-	Tue, 11 Feb 2025 20:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89252641D8;
+	Tue, 11 Feb 2025 20:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRe+uaTp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqL4tP4i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A941CA84
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 20:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093F024E4A8;
+	Tue, 11 Feb 2025 20:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739307322; cv=none; b=VVIH+IzqfkHQwgMDwXYzVZfjrD2uD4PTvTMH2I90fnvjA3WSrqwcb9EHMctStdOEvVDiR+nup7fxVfFKaKIqrcy2uDA7JSNZ2bXQHqHiRmTBUz+KO1Yi/9MDqjQCb/9NF4qkknjYD+jv0tvX6e2uFJHRj/8wQdU89AdgbDd78yo=
+	t=1739307372; cv=none; b=pIbkldbgK/k0rd3VhVmsxX3sArOShpH3WFweDUGqy3Ob4jwfS+iSeV6U9W1Ap++nxNYHX8c6L6csE55YZtLyXh46AujvZ5+kSAMq39m5xajNnR+VqTIlGJs96KAvYzcx1dKLZA15giHHu5ddNNoDz1Uj7jNCddR0lNTP+tVlkgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739307322; c=relaxed/simple;
-	bh=MAVRVwvKPz2MTsRCiP/+SknMX+X6PxyJk7h5D/wVeJI=;
+	s=arc-20240116; t=1739307372; c=relaxed/simple;
+	bh=1kS5pRqJHQNPF4gP4Lxw9NbXHOwh+4VmYGQP1qPNoLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGLH9eh71LUV3gU5StFXkAR9O3i3VjFXsm4WREtqaWVmLVuL1F/oMj3N0ZQb3wwU/qpClifY6QIbPRiRabaU+/vOqRxximLcFJ5NTSGDTQOwIWxzNepPTUCeuILC05EPnkohG/t2fyd7oj9vCQHmQwBp0mz1w2QcG3t2u+cyezQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRe+uaTp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3764C4CEDD;
-	Tue, 11 Feb 2025 20:55:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJf3AgSkP9yUndhHzhoLu29cVFpDHItPoNY3ka25STd8BxOQpbZl3jOx95m4I1NrD/lydj+R0d0Kdf1EqwYNTxudYuOR24YSmf7a9lzcU6quaxo153D3JIgarozN8ftn8o+cz5KkqJqPHuujbHlwsAWeqjfxirsphapUo98ZkZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqL4tP4i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38EABC4CEE7;
+	Tue, 11 Feb 2025 20:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739307322;
-	bh=MAVRVwvKPz2MTsRCiP/+SknMX+X6PxyJk7h5D/wVeJI=;
+	s=k20201202; t=1739307370;
+	bh=1kS5pRqJHQNPF4gP4Lxw9NbXHOwh+4VmYGQP1qPNoLQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TRe+uaTpoNkO77iz4yUDQnTow/GlONddlvOVnFyupzlv4+EBLSA0PZVCqVdZfdObL
-	 goakqDmCMwQmksT0PUHVm9tDyrsgIJOcrPRHNXHOMsrYUwzWrjfxnRP96MoHJBAu7W
-	 qp3esDDaUVIay2Ctr997qxBcuPBL8NWaFSe/yNZilclqHl7ey1LbG4RldR8OIzzrYm
-	 i8DAGnghfplMKzv8673Ky+yTuttOWcFIHa1RKFyeVWZvZ+Et27/vniahIveasChuVX
-	 LF5AqK/1jfJ7xRsUvc9FmEoQLwEhdgbYC9NOqD2YtspIIdT/POla5BdhJAH+/SrwhC
-	 m9VYMuCdxU9/w==
-Date: Tue, 11 Feb 2025 10:55:20 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Dennis Zhou <dennis@kernel.org>, Filipe Manana <fdmanana@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH] mm, percpu: do not consider sleepable allocations atomic
-Message-ID: <Z6u5OJIQBw8QLGe_@slm.duckdns.org>
-References: <20250206122633.167896-1-mhocko@kernel.org>
+	b=NqL4tP4i++KBlmQncBwrcb+Pi3NtoUsIyvPzIr2nC45U5LJaw5rDADzGUV4jqO31e
+	 UZkSN3rhnATLbx5r+/H5kISE90GQHthoJ2GB+pvf4ePK3lsfwto4+d/e+aIavTWJRr
+	 kDe2C09R0TyoIo0EJmXDrVC9zSaNn2mGewxuc5T5BCW8U6l2s20Pq6hw70w9fmgM4V
+	 bsUA9Ke8W5ffkAveEIuFWBLHJwRW5nn0tDe2YC+mGfU6uZkVs+vJSV5O8gCbOMX7I8
+	 rLpsAlSi1tOQwUl0eeNBeu9Vqk5vb7l//i1wC9T0lTTQ1lBuccMaKBdcZbW18eCs+L
+	 Sy5GYbY4xw4nA==
+Date: Tue, 11 Feb 2025 14:56:09 -0600
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: pwm: Add support for PWM nexus node
+Message-ID: <20250211205609.GA1142491-robh@kernel.org>
+References: <20250205095547.536083-1-herve.codina@bootlin.com>
+ <20250205095547.536083-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,43 +61,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250206122633.167896-1-mhocko@kernel.org>
+In-Reply-To: <20250205095547.536083-2-herve.codina@bootlin.com>
 
-Hello, Michal.
+On Wed, Feb 05, 2025 at 10:55:42AM +0100, Herve Codina wrote:
+> Platforms can have a standardized connector/expansion slot that exposes
+> PWMs signals to expansion boards.
+> 
+> A nexus node [1] allows to remap a phandle list in a consumer node
+> through a connector node in a generic way. With this remapping, the
+> consumer node needs to know only about the nexus node. Resources behind
+> the nexus node are decoupled by the nexus node itself.
+> 
+> This is particularly useful when this consumer is described in a
+> device-tree overlay. Indeed, to have the exact same overlay reused with
+> several base systems the overlay needs to known only about the connector
+> is going to be applied to without any knowledge of the SoC (or the
+> component providing the resource) available in the system.
+> 
+> As an example, suppose 3 PWMs connected to a connector. The connector
+> PWM 0 and 2 comes from the PWM 1 and 3 of the pwm-controller1. The
+> connector PWM 1 comes from the PWM 4 of the pwm-controller2. An
+> expansion device is connected to the connector and uses the connector
+> PMW 1.
+> 
+> Nexus node support in PWM allows the following description:
+>         soc {
+>                 soc_pwm1: pwm-controller1 {
+>                         #pwm-cells = <3>;
+>                 };
+> 
+>                 soc_pwm2: pwm-controller2 {
+>                         #pwm-cells = <3>;
+>                 };
+>         };
+> 
+>         connector: connector {
+>                 #pwm-cells = <3>;
+>                 pwm-map = <0 0 0 &soc_pwm1 1 0 0>,
+>                           <1 0 0 &soc_pwm2 4 0 0>,
+>                           <2 0 0 &soc_pwm1 3 0 0>;
+>                 pwm-map-mask = <0xffffffff 0x0 0x0>;
+>                 pwm-map-pass-thru = <0x0 0xffffffff 0xffffffff>;
+>         };
+> 
+>         expansion_device {
+>                 pwms = <&connector 1 57000 0>;
+>         };
+> 
+> >From the expansion device point of view, the PWM requested is the PWM 1
+> available at the connector regardless of the exact PWM wired to this
+> connector PWM 1. Thanks to nexus node remapping described at connector
+> node, this PWM is the PWM 4 of the pwm-controller2.
+> 
+> [1] https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  .../bindings/pwm/pwm-nexus-node.yaml          | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-nexus-node.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-nexus-node.yaml b/Documentation/devicetree/bindings/pwm/pwm-nexus-node.yaml
+> new file mode 100644
+> index 000000000000..55412fe50d01
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-nexus-node.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/pwm-nexus-node.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: PWM Nexus node properties
+> +
+> +description:
 
-On Thu, Feb 06, 2025 at 01:26:33PM +0100, Michal Hocko wrote:
-...
-> It has turned out that iscsid has worked around this by dropping
-> PR_SET_IO_FLUSHER (https://github.com/open-iscsi/open-iscsi/pull/382)
-> when scanning host. But we can do better in this case on the kernel side
+You need '>' on the end to preserve paragraphs. With that,
 
-FWIW, requiring GFP_KERNEL context for probing doesn't sound too crazy to
-me.
-
-> @@ -2204,7 +2204,12 @@ static void pcpu_balance_workfn(struct work_struct *work)
->  	 * to grow other chunks.  This then gives pcpu_reclaim_populated() time
->  	 * to move fully free chunks to the active list to be freed if
->  	 * appropriate.
-> +	 *
-> +	 * Enforce GFP_NOIO allocations because we have pcpu_alloc users
-> +	 * constrained to GFP_NOIO/NOFS contexts and they could form lock
-> +	 * dependency through pcpu_alloc_mutex
->  	 */
-> +	unsigned int flags = memalloc_noio_save();
-
-Just for context, the reason why the allocation mask support was limited to
-GFP_KERNEL or not rather than supporting full range of GFP flags is because
-percpu memory area expansion can involve page table allocations in the
-vmalloc area which always uses GFP_KERNEL. memalloc_noio_save() masks IO
-part out of that, right? It might be worthwhile to explain why we aren't
-passing down GPF flags throughout and instead depending on masking.
-
-Also, doesn't the above always prevent percpu allocations from doing fs/io
-reclaims? ie. Shouldn't the masking only be used if the passed in gfp
-doesn't allow fs/io?
-
-Thanks.
-
--- 
-tejun
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
