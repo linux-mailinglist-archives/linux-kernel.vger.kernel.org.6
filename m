@@ -1,126 +1,115 @@
-Return-Path: <linux-kernel+bounces-510075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB44A317C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:33:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA481A317CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EA337A23BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB5F3A06AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D34263F49;
-	Tue, 11 Feb 2025 21:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5001226A1A0;
+	Tue, 11 Feb 2025 21:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Um0tHsY6"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yt2jK6fM"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C842A2676EE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA912268FE9
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739309502; cv=none; b=h5g2NaOCmx3oys9MpdoBkzm/JpnXgFUof4n1qVr2AfmVhtTBesrE41B2H+UdpdXaHKouOrao1llthIFmhhOJ2c0QiHa7BT4u9eEhXzMgU5C+OIiWlYhRjrLiMgbpD25BWAwb2mzcZPoAsWSfH7YAp63PlYM+pXchfkvTy2061p0=
+	t=1739309522; cv=none; b=Z3Pn+R+7jEUFO+U3cxZ6gij3i83wppRkiXtcNdl0wuuQRk9DuDQBEDs0nHNlPg20MKxRDYkQHVsbaL93HHiNmRXHzac6ZI49m6I0QI5cKaUQ/m2U4UcpVRMLCGvc8nT5HPgGPzg0NYrernlS07lVBAG/KjCodrv4YMs3U8PBLP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739309502; c=relaxed/simple;
-	bh=BFPUfUPV9C28sQ+5++oI/Mt7czcCX79RjU67ZXHg4wc=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=tYrBh0OpgVMJGdZYBv7+V9y+GBuExdno3LUrTyBJUh8BwxdHFDAPWx27jE8bmPO5fj+jX870hTfcl1QgR11UJ4C1E0BEfkfSdQwo5ekGkxSLSB8lGdoEWAABSyQpaPJ8udvZLV5UgHw9WUH4BJJ1cTPY8jaQhLUYnkXhPnrP/JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Um0tHsY6; arc=none smtp.client-ip=209.85.128.201
+	s=arc-20240116; t=1739309522; c=relaxed/simple;
+	bh=+LUKvtaq5+tVeSV8nn8P/esQQflfMiqhA8o10k5cyOo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=peVPCYV/uUxEn1fLMbrT+IZL9rhX7l/qG3Dug2yRsQsBPygLdElVyMtYRnmlO1LXwV5t9q/S2XDZDENvB3D6/2dz/6nqwAFNgGP5yI1f0B/qCB10MW4l/7fPlZ9ABmc6Q2E5JIa2nnOW0IHeTBF+7iTS4Cfr8czDIbf26HwOmpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yt2jK6fM; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6f46ad8a390so76949457b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 13:31:36 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21f61a983ddso151073775ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 13:31:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739309495; x=1739914295; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GJ1B/xiMtyqfDg8YY7mV/zwkOmMpFHIKV2LiJJcfRRg=;
-        b=Um0tHsY6LT7ErnQ3IgXlt5x1TUJXQLHyhzsFARvM7H/bD66BlktHfp/t2tQKT7Uur4
-         5wONkOzjkV884wT+MFrDSgNW8rTCOZPFCrLjF36CW9SJK6bOh58M7O5OgtMWzrhauhuI
-         H3RGErGbWC2lewru1bhzCCPsMspzgH9XftwA6GygYhzq3XFVL7NgMOo7osbWOP/L2ccc
-         GOVoyKDPvdkr9pbnR9uju1CbcIZxImXK8LRg7ry3RkBREDe63T1ebfpklO9vi6InGIdr
-         PmnIMofmTsUMhJpAInxWEbSnMBYT461FJspDAYRpDMAAY8V7CO70phJn2MTvckivDc7Z
-         A9Hg==
+        d=google.com; s=20230601; t=1739309516; x=1739914316; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VkaRbODbKGzYYO3d8B5U658Dnrd7njXNzj1iv9zbjaI=;
+        b=Yt2jK6fMaUwYFu0R9BfXwO83HnbAB3nmoxfLcm+fATbbAFSn9X7ilBa+qr+46Ak5wv
+         iBBTLZEDyCzyyvBIAQuRe4nFLpU4yySP/Byy2S1Z5yPhuPYoBbjLcFWX4YFBMcHFWhcP
+         5Yst1KkcHP+8EKveA5hY8hkId7TjWtpZok0ywaEQVAdRz4aado8DP+BptaqpMn7P6kFI
+         gPK1GUc0CdwBK25lpYhSAFb7aC1gR4Cv6u4MKpJJQz3Q/E7J0zACyDAj1wd01JZRspu0
+         KX2yG4lTy7WjQjNhjO6+A/aKApo3DiTLZxx+0v8eO6FqzvqBsGIuSsbbEdbtEatj3BtJ
+         Kt9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739309495; x=1739914295;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJ1B/xiMtyqfDg8YY7mV/zwkOmMpFHIKV2LiJJcfRRg=;
-        b=tHgxT9tvp/D8mbBzs+P0s6If1TEamQtBSJSGgzr4NFCajAwRlCcx72rq8VmpOsyNLO
-         bAVOz9OAc0RWzTs9QBhHhjmjWj4cN/TxiYBvUsjn2R2ib5oCkjvzehjVhZ1rNW3zjP4d
-         nU+lbv010KQzIIOUA8pG6U05qjGEaQlz4k456jGtRIdlRubxD8KUodCK4NR3lX4poJog
-         szjdorBHCQ9jiQkI9t3G4qGWxd2x6uEhy9/B1u0cqqopbCwaQO7RMHDADmxNG+dOqED8
-         F0MMrpX9KMKlvFPekGRWcNbddrdHudPfesHNJ4nFCXASr0gi978kgo8RuHcyzbVxL/7a
-         s4uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWu6/MXWR22LPU1pHBgqWOGTHVmURMEpaUIPhGFBIQuRHiEGd9Zt6LK8eeUyqMTcdPW3BtX0QFkQoH/KfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmfrQQnPi3aHX6EO28kxt3Gew5jRiF8AMxymERnldFDH/2KLjS
-	BMwoZIP5furWbX5MbG429Nqo1tgXIbAcdq0+KGB/bOECQfHIb5BPSmZDSRD8XeZV3W+rtaTzzdc
-	L8OnHeA==
-X-Google-Smtp-Source: AGHT+IHcP+fUgMI7D5VP489sJpp8yrK92+IZGMsVKgnNa6+/ErAQ38Qw7fxa/sOVeZ/4JY91WureC2X5HHwn
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:a24c:c86a:18a9:d15b])
- (user=irogers job=sendgmr) by 2002:a05:690c:5509:b0:6e3:f32:5fc8 with SMTP id
- 00721157ae682-6fb1f5957bamr98667b3.1.1739309495526; Tue, 11 Feb 2025 13:31:35
- -0800 (PST)
-Date: Tue, 11 Feb 2025 13:30:31 -0800
-In-Reply-To: <20250211213031.114209-1-irogers@google.com>
-Message-Id: <20250211213031.114209-25-irogers@google.com>
+        d=1e100.net; s=20230601; t=1739309516; x=1739914316;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VkaRbODbKGzYYO3d8B5U658Dnrd7njXNzj1iv9zbjaI=;
+        b=j0huPEzgo0OpvjHlZYj48UNrpEP8ywhSwNlKudlemG5n4ioY8PYU8JsyEw+Dyj5vV0
+         aAYUbQW77119sVJMaLpmKCXVHlUq+tIW4KW0FUOILpAgqvVXbOi2No7DqawYeLMeNVuJ
+         DXIqlCNfC9B6GskJZyoWkSKuqfk2Z7nmxsDnG4b7VaUNQe+Nnq86OxK6Fx75wkuA1C67
+         smaKNeYIMobTPlBr5rHQH05kyTT5oq8AdzTuEZHGBXwlWXoBRuEdZS1JjP4w2ycJKIcC
+         nluc732T0+Q5uoAXhrg5/V+RR/H2GvWMkDEGpPQWcOqFHUc1s4LUUYFD6T+ZMbK5AWH4
+         gb1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwcwNjwtbL9o8UGzNoBO6fIawxGAcKDaW2iGD3q+xNMGy+9Uqa3wdhMFwY0MnQ5PYkuhKIeuGQx9a6BKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgohmVR/XXxTeOs/vgOQZzgGecqVj7iC+/oiGCrbn5HjdrWFP7
+	kv9M2RA9ONA4oQyLn5J0IXd51HeSpeFIMBEji+FenxjkoObt/3iQLBYjxGvvWQPFDVdq21mm+gG
+	JmQ==
+X-Google-Smtp-Source: AGHT+IF0fRIVtQzGjHRyYmnEnH/8CimtcIxuPGCWLPNdmuUYuFVbVgvZHz2rDvO254ixr09jUnGGcU4Rzps=
+X-Received: from pfblb14.prod.google.com ([2002:a05:6a00:4f0e:b0:730:8a7b:24e0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2d06:b0:1e4:8fdd:8c77
+ with SMTP id adf61e73a8af0-1ee5c733c61mr1455053637.8.1739309515854; Tue, 11
+ Feb 2025 13:31:55 -0800 (PST)
+Date: Tue, 11 Feb 2025 13:31:54 -0800
+In-Reply-To: <cover.1739226950.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250211213031.114209-1-irogers@google.com>
-X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
-Subject: [PATCH v8 24/24] perf test stat_all_metrics: Ensure missing events
- fail test
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, 
-	"=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Weilin Wang <weilin.wang@intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
-	Caleb Biggers <caleb.biggers@intel.com>, Edward Baker <edward.baker@intel.com>, 
-	Michael Petlan <mpetlan@redhat.com>, Thomas Falcon <thomas.falcon@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <cover.1739226950.git.ashish.kalra@amd.com>
+Message-ID: <Z6vByjY9t8X901hQ@google.com>
+Subject: Re: [PATCH v4 0/3] Fix broken SNP support with KVM module built-in
+From: Sean Christopherson <seanjc@google.com>
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	thomas.lendacky@amd.com, john.allen@amd.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, joro@8bytes.org, suravee.suthikulpanit@amd.com, 
+	will@kernel.org, robin.murphy@arm.com, michael.roth@amd.com, 
+	dionnaglaze@google.com, nikunj@amd.com, ardb@kernel.org, 
+	kevinloughlin@google.com, Neeraj.Upadhyay@amd.com, vasant.hegde@amd.com, 
+	Stable@vger.kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-Issue reported by Thomas Falcon and diagnosed by Kan Liang here:
-https://lore.kernel.org/lkml/d44036481022c27d83ce0faf8c7f77042baedb34.camel@intel.com/
-Metrics with missing events can be erroneously skipped if they contain
-FP, AMX or PMM events.
+On Mon, Feb 10, 2025, Ashish Kalra wrote:
+> Ashish Kalra (1):
+>   x86/sev: Fix broken SNP support with KVM module built-in
+> 
+> Sean Christopherson (2):
+>   crypto: ccp: Add external API interface for PSP module initialization
+>   KVM: SVM: Ensure PSP module is initialized if KVM module is built-in
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/shell/stat_all_metrics.sh | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Unless I've overlooked a dependency, patch 3 (IOMMU vs. RMP) is entirely
+independent of patches 1 and 2 (PSP vs. KVM).  If no one objects, I'll take the
+first two patches through the kvm-x86 tree, and let the tip/iommu maintainers
+sort out the last patch.
 
-diff --git a/tools/perf/tests/shell/stat_all_metrics.sh b/tools/perf/tests/shell/stat_all_metrics.sh
-index 73e9347e88a9..ee817c66da06 100755
---- a/tools/perf/tests/shell/stat_all_metrics.sh
-+++ b/tools/perf/tests/shell/stat_all_metrics.sh
-@@ -20,7 +20,13 @@ for m in $(perf list --raw-dump metrics); do
-   result_err=$?
-   if [[ $result_err -gt 0 ]]
-   then
--    if [[ "$result" =~ \
-+    if [[ "$result" =~ "Cannot resolve IDs for" ]]
-+    then
-+      echo "Metric contains missing events"
-+      echo $result
-+      err=1 # Fail
-+      continue
-+    elif [[ "$result" =~ \
-           "Access to performance monitoring and observability operations is limited" ]]
-     then
-       echo "Permission failure"
--- 
-2.48.1.502.g6dc24dfdaf-goog
-
+>  arch/x86/include/asm/sev.h  |  2 ++
+>  arch/x86/kvm/svm/sev.c      | 10 ++++++++++
+>  arch/x86/virt/svm/sev.c     | 23 +++++++----------------
+>  drivers/crypto/ccp/sp-dev.c | 14 ++++++++++++++
+>  drivers/iommu/amd/init.c    | 34 ++++++++++++++++++++++++++++++----
+>  include/linux/psp-sev.h     |  9 +++++++++
+>  6 files changed, 72 insertions(+), 20 deletions(-)
+> 
+> -- 
+> 2.34.1
+> 
 
