@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-509956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2E8A31686
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:21:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE402A31688
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:23:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588C1188A634
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BC60188A23D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17A91E47AD;
-	Tue, 11 Feb 2025 20:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5D1261597;
+	Tue, 11 Feb 2025 20:23:29 +0000 (UTC)
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D0A26562D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 20:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC2D26562D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 20:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739305305; cv=none; b=oc6sPyEYMF0MQXnN2n9j8hoaLxGcicexa/MBBCxofpVQrKojyGwQ5sFOSz3d4/zbdwwphc18d3IOmKQOIzwD760J5RU8XZzOxC0Q2PNxg/AtqENNuwxbYC8+7bE8W95utO3merVGuq4PacqSkrkgfEzWlmWyY8XE4hm0jQTzib8=
+	t=1739305409; cv=none; b=Cep0M+W/wGv8RhUZ/8REV+8R0iTHdaP7PF41ojoMcQ12lnergUOtWho9maPc0WBmWPR5M+eNowwR/qtkX94zjjUFRyf1jiPPd4M1aomvn3zekCbhu7oGFvNuUtu4i16GR+z8siP99ZBYcbJNOpvxRGb5UIZN9VruTwDhnzROeuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739305305; c=relaxed/simple;
-	bh=sFkhB2tQiPOfHp1RZdvQ2uGxidw5nbYCgxULFFMUepw=;
+	s=arc-20240116; t=1739305409; c=relaxed/simple;
+	bh=5dq4xyGUc2jwFeJ+8G56MUWYoHUlqkXEf/52bcTWrHI=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mFrB+ctLvonPozyqzmYbiOLMthE4gzQGM6Q9zqqmcRD97roNKfSbCPXvHAhHeAmcj7OS5zps9bCQPHoNHb7mngjfB7XvMOcINR1NUZkByOMCm+SRp4iYsrZM5P+5DBuf75ziDqI6VYj8H6F56lfuOoNE5ac6NBSiLLUGLGQTHEM=
+	 Content-Type:MIME-Version; b=T43gQ8lCZTOKp2UEFN0tWHl/gRArDY8mYmjGAvaLjjFxSIXUMPV/IDTSxoI60uX1kyUaeZDV+pN3b+MfmYOABVkdOSrC50mlKqGOqjCBt1Q3Jju2CIFCrm/IHjUlmP2L1Q041+jyss5q0dMGNdo3TWD46VTOUgvGG9pYU3xxhuc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
@@ -32,26 +32,27 @@ Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@shelob.surriel.com>)
-	id 1thwku-000000007J8-3SrU;
-	Tue, 11 Feb 2025 15:21:16 -0500
-Message-ID: <e8a156d4c8f5db07cf03b55fb81c75d523cac680.camel@surriel.com>
-Subject: Re: [PATCH v9 10/12] x86/mm: do targeted broadcast flushing from
- tlbbatch code
+	id 1thwmt-000000007Kq-2LZB;
+	Tue, 11 Feb 2025 15:23:19 -0500
+Message-ID: <b56f0ef79708c66adf8971b78d631eb5f318e48c.camel@surriel.com>
+Subject: Re: [PATCH v9 01/12] x86/mm: make MMU_GATHER_RCU_TABLE_FREE
+ unconditional
 From: Rik van Riel <riel@surriel.com>
-To: Brendan Jackman <jackmanb@google.com>
+To: Brendan Jackman <jackmanb@google.com>, Peter Zijlstra
+ <peterz@infradead.org>
 Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
-	peterz@infradead.org, dave.hansen@linux.intel.com,
- zhengqi.arch@bytedance.com, 	nadav.amit@gmail.com, thomas.lendacky@amd.com,
- kernel-team@meta.com, 	linux-mm@kvack.org, akpm@linux-foundation.org,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com, Manali
- Shukla	 <Manali.Shukla@amd.com>
-Date: Tue, 11 Feb 2025 15:21:16 -0500
-In-Reply-To: <CA+i-1C16x5u-1qAqDPSONgs+pGWrfUTO1zq2r6Rrvq=q48NHpw@mail.gmail.com>
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+ nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
+ linux-mm@kvack.org, 	akpm@linux-foundation.org, jannh@google.com,
+ mhklinux@outlook.com, 	andrew.cooper3@citrix.com, Manali Shukla
+ <Manali.Shukla@amd.com>
+Date: Tue, 11 Feb 2025 15:23:19 -0500
+In-Reply-To: <CA+i-1C1fP+Lk4FGO+-sLMq+LmjVjm-1r-wG15oKtDDu0=gi+Gg@mail.gmail.com>
 References: <20250206044346.3810242-1-riel@surriel.com>
-	 <20250206044346.3810242-11-riel@surriel.com>
-	 <CA+i-1C2zuctxx6oPVVu0zBJ=Q=Hs73mgrWs5jsp8obARNcUS9g@mail.gmail.com>
-	 <2d20c333400b890f4983cf799576435abf1d8824.camel@surriel.com>
-	 <CA+i-1C16x5u-1qAqDPSONgs+pGWrfUTO1zq2r6Rrvq=q48NHpw@mail.gmail.com>
+	 <20250206044346.3810242-2-riel@surriel.com>
+	 <CA+i-1C2QgSTq4gbGZqjyzGcuscsFZvymHvXnfJYuT-CNjPPuMQ@mail.gmail.com>
+	 <20250211110721.GF29593@noisy.programming.kicks-ass.net>
+	 <CA+i-1C1fP+Lk4FGO+-sLMq+LmjVjm-1r-wG15oKtDDu0=gi+Gg@mail.gmail.com>
 Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
  keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
  eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
@@ -87,36 +88,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Sender: riel@surriel.com
 
-On Tue, 2025-02-11 at 11:02 +0100, Brendan Jackman wrote:
+On Tue, 2025-02-11 at 13:10 +0100, Brendan Jackman wrote:
 >=20
-> So I think here we're encoding the assumption that context_switch()
-> always calls either enter_lazy_tlb() or switch_mm_irqs_off(), which
-> is
-> a little awkward, plus the job of these functions is already kinda
-> hazy and this makes it even hazier. What about doing it in
-> arch_start_context_switch() instead?
+> Maybe I can send a separate patch to note this in the commentary,
+> it's
+> interesting and useful to know.
 >=20
-> That would mean a bit of plumbing since we'd still wanna have the
-> tlbsync() in tlb.c, but that seems worth it to me. Plus, having it in
-> one place would give us a spot to add a comment. Now that you point
-> it
-> out it does indeed seem obvious but it didn't seem so yesterday.
->=20
-While that would be a little bit cleaner to maintain,
-in theory, I'm not convinced that adding an extra
-function call to the context switch path is worthwhile
-for that small maintenance benefit.
 
-I'd rather add more comments than an extra function call :)
+I added a similar comment to this patch series
+for v10 yesterday. I'll send it out after a few
+more tests have finished running.
 
-> Now I think about it... if we always tlbsync() before a context
-> switch, is the cant_migrate() above actually required?
-
-Probably not, but I guess it won't hurt?
-
-I'm running tests right now on a kernel with a bunch
-of debug options enabled, and I'm getting all sorts
-of warnings, but not this one :)
+I'm not particularly invested in which version
+of the comment gets merged :)
 
 --=20
 All Rights Reversed.
