@@ -1,79 +1,151 @@
-Return-Path: <linux-kernel+bounces-510106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CD6A31842
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:51:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049F5A31849
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:54:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46BE4166904
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71563A6F48
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4670E268C50;
-	Tue, 11 Feb 2025 21:50:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895902676D0;
-	Tue, 11 Feb 2025 21:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DBF267B08;
+	Tue, 11 Feb 2025 21:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IivS/s9U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E1B267715;
+	Tue, 11 Feb 2025 21:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739310653; cv=none; b=fHxHleaeUCihguw15eas2fHPHxYxmHQti7Nh1jeHOTSAhpyqqP8rKF2bSPLzGfoJ45ux7iyXQa63XeTgdA//Jli0hZxPnJSlmJ7G78/BjxYn8tj634tRPGMBy2XFmG2VcCwJVifE4tkA49LF83YTu9PGxj+GdI77SV1aqPtk7K0=
+	t=1739310837; cv=none; b=rt1NA6aE1ASt8E4DqMbxNpCVe9M3GhdH75o2PJ8VPt2+Atyypw3w6WVbT1Hu3Iu0n8grTob1H5DBoWjgwt05hQksuKWhfjYQtuCGmzneEhqOZ/daQZEOdzOOm9KNaZC1+YoamYHauRFP1dcBgzapEDZkTd9nmapINKMZeGWeIYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739310653; c=relaxed/simple;
-	bh=HxP5Sli4K3SAZa0mS2dzwncRLUQw35Zz0t/vyHKGVvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k9i31YZuRfONlq+6JfB5jAug9WRBaHiQ4N/Q0KTyl0ITX3VtTtL2bzQv27N0bbA99e+a+2kRzhu8md/59+dURhSQqHGZ0lGv9uMZ2h+HsTCB90Stbnq07+5hzwwDkzvkgyLkAV1fu9dz/8xJ2nA8qzpanqQRzovq3VwSXBRtERw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D7011D14;
-	Tue, 11 Feb 2025 13:51:12 -0800 (PST)
-Received: from [10.118.111.35] (G9L3377F54.austin.arm.com [10.118.111.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E93B3F58B;
-	Tue, 11 Feb 2025 13:50:50 -0800 (PST)
-Message-ID: <8780f1e3-e0be-48e9-a329-2d48c5bef034@arm.com>
-Date: Tue, 11 Feb 2025 15:50:50 -0600
+	s=arc-20240116; t=1739310837; c=relaxed/simple;
+	bh=ZOTDV0C3q2CDB3rQM196vlVvGcBuD+GPHBG7B+1efHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OIjs6oEAtcV5Wi1q2rxayjtZYgvAJwP1MolB3CIQfL+9sIsNGVAlmrMp+pAPB3Tt4rHJrpBzUWsEJvhDBi/feHdx148ceF0pdTxwkKi7FWdM1kum5pjGlVm9OIj2xJUJJ9807iRsVIRLDiYgha9yqjJuxS3sJ3CZq6PeUeP+vbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IivS/s9U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31B36C4CEDD;
+	Tue, 11 Feb 2025 21:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739310835;
+	bh=ZOTDV0C3q2CDB3rQM196vlVvGcBuD+GPHBG7B+1efHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IivS/s9ULuONCMV6OfzkHOa/ur5svrKqO2MIkv0VAqg31CKNhm3tun4ISAd8k2Umc
+	 XVy7223Zs/zbBsqCd4Nm0sJ2mKy/h7hU/asbJCnHfAOSl3WHbOAh+5HesEm4An639Z
+	 aW/VF3DRmBJZNOF5IAewC9R+TZpV0XcddukUC66t49R0wqVkTzzLnHhOjHDtiJB+1l
+	 eQskcocha5U+xl6QGdXW3ERb2XCuHVQZiX+nd1O5KVqDnAEoMTj48dO+fNi+dGw/fB
+	 qZ6jR8Y5CmmOeG+PodM2Ijda05H+ShMp2G0SKGWFkvPPCkUo0GZpy4LEIu62PQkK6r
+	 4DSgBrgdEQ49A==
+Date: Tue, 11 Feb 2025 15:53:54 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ronak Jain <ronak.jain@amd.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, michal.simek@amd.com,
+	nava.kishore.manne@amd.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: firmware: xilinx: Add conditional
+ pinctrl schema
+Message-ID: <20250211215354.GA1244436-robh@kernel.org>
+References: <20250206142244.2553237-1-ronak.jain@amd.com>
+ <20250206142244.2553237-3-ronak.jain@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] ACPICA: add start method for Arm FF-A
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-integrity@vger.kernel.org, jarkko@kernel.org, peterhuewe@gmx.de,
- jgg@ziepe.ca, rafael@kernel.org, lenb@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250210232227.97761-1-stuart.yoder@arm.com>
- <20250210232227.97761-4-stuart.yoder@arm.com> <Z6sfB-tvhNhTek-Y@bogus>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <Z6sfB-tvhNhTek-Y@bogus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206142244.2553237-3-ronak.jain@amd.com>
 
-
-
-On 2/11/25 3:57 AM, Sudeep Holla wrote:
-> On Mon, Feb 10, 2025 at 05:22:26PM -0600, Stuart Yoder wrote:
->> Add TPM start method for Arm FF-A defined in the TCG ACPI
->> specification v1.4.
->>
+On Thu, Feb 06, 2025 at 06:22:43AM -0800, Ronak Jain wrote:
+> Updates the Device Tree bindings for Xilinx firmware by introducing
+> conditional schema references for the pinctrl node.
 > 
-> ACPICA changes require (at least) a pull request to be submitted to
-> the upstream ACPICA project on GitHub from where the changes get pulled
-> into the kernel along with other changes.
+> Previously, the pinctrl node directly referenced
+> xlnx,zynqmp-pinctrl.yaml. However, this patch modifies the schema to
+> conditionally apply the correct pinctrl schema based on the compatible
+> property. Specifically:
+> - If compatible contains "xlnx,zynqmp-pinctrl", reference
+>   xlnx,zynqmp-pinctrl.yaml.
+> - If compatible contains "xlnx,versal-pinctrl", reference
+>   xlnx,versal-pinctrl.yaml.
 > 
-> If such a pull request is already created, please resend the Linux patch
-> with a link pointing to that pull request to inform the maintainer about
-> the same so that it helps in the review of the patches here.
+> Additionally, an example entry for "xlnx,versal-pinctrl" has been
+> added under the examples section.
+> 
+> Signed-off-by: Ronak Jain <ronak.jain@amd.com>
+> ---
+>  .../firmware/xilinx/xlnx,zynqmp-firmware.yaml | 20 ++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
+> index 2b72fb9d3c22..d50438b0fca8 100644
+> --- a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
+> +++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
+> @@ -76,7 +76,6 @@ properties:
+>      type: object
+>  
+>    pinctrl:
+> -    $ref: /schemas/pinctrl/xlnx,zynqmp-pinctrl.yaml#
+>      description: The pinctrl node provides access to pinconfig and pincontrol
+>        functionality available in firmware.
+>      type: object
+> @@ -106,6 +105,21 @@ properties:
+>      type: object
+>      deprecated: true
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: xlnx,zynqmp-firmware
+> +    then:
+> +      properties:
+> +        pinctrl:
+> +          $ref: /schemas/pinctrl/xlnx,zynqmp-pinctrl.yaml#
+> +    else:
+> +      properties:
+> +        pinctrl:
+> +          $ref: /schemas/pinctrl/xlnx,versal-pinctrl.yaml#
 
-I will submit the pull request to acpiaca and send the link when I send
-v2 of this series.
+The somewhat preferred way to do this would be to do this in the top 
+level:
 
-Thanks,
-Stuart
+pinctrl:
+  type: object
+  additionalProperties: true
+  properties:
+    compatible:
+      contains:
+        enum:
+          - xlnx,zynqmp-pinctrl
+          - xlnx,versal-pinctrl
+  required:
+    - compatible
 
+Otherwise, the pinctrl schema ends up being applied twice.
+ 
+> +
+>  required:
+>    - compatible
+>  
+> @@ -164,6 +178,10 @@ examples:
+>          compatible = "xlnx,versal-fpga";
+>        };
+>  
+> +      pinctrl {
+> +        compatible = "xlnx,versal-pinctrl";
+> +      };
+> +
+>        xlnx_aes: zynqmp-aes {
+>          compatible = "xlnx,zynqmp-aes";
+>        };
+> -- 
+> 2.34.1
+> 
 
