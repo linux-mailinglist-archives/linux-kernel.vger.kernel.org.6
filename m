@@ -1,128 +1,106 @@
-Return-Path: <linux-kernel+bounces-510163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FEBA3191C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:56:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29B3A3191E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:57:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84304188A5F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 959F83A5959
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624EC262175;
-	Tue, 11 Feb 2025 22:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC91A1F4182;
+	Tue, 11 Feb 2025 22:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rt6058jz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BPCIvq52"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D03272905;
-	Tue, 11 Feb 2025 22:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23364272905;
+	Tue, 11 Feb 2025 22:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739314600; cv=none; b=RyPHA4BXDY6wfWQu/olZJlWIOg5WquNcZF5kbm3hYs3O+hSiQJ62628DXANEbpm+k85TjqWIO7zBuGq57ZrQ60bWgcc5joqIv+NfoYWlO05fWPLjIyREpCP/kZcG3HwQ/m+KYJnpUyXNF/kwCwZtAOdRhe3podMEy03dYZE4JQo=
+	t=1739314652; cv=none; b=sTBM54hXFoeBN+P1JoYeUYvDkigl/Htf/hiCG/YdXMUNmeCzP7iXoUS6C7kBpvQH17htT1Yi3TtE02L3CFyiCA20IfY4MDRCwOdK0jznCLEkOcDUoF64/17DCtlVzHjV1ZkA7bF+h+dQ4LnhQaKBe9fXi9srzVD8G+01QwiPvNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739314600; c=relaxed/simple;
-	bh=dYrJuMxdV6jozccHmg9SnWnNVYjGS6AulY33mzIFdgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QjhjLSsSQ6O84JNVChQFLRXxL1WkTZjoSJhGyAEeD0vYqYqd5/be2Z/elbZ5hDasrYDZwgbeE7GgKFRoj/IejMCux3XrWbciDUUqt7bZbuOplEMq8XSCPyP1mpCmFQljrvwfMADHKQO+lTAyeZhPyaCizRoqyRm8TcupzNc0aLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rt6058jz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1739314594;
-	bh=6L3fCjZVIAkhJkWYXypOk23dzFYJb9vXKqVETgLsesw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=rt6058jzOl2h12evXfojzYEJGWbjs1mz6SyQFCOD5UFO0sEQub+PeNdoACiliBGzz
-	 ZKJjgcwEtCAiBuv3dqP8GG/4wzsck7AYI0wLAyhXASnJEywYlioMX3GtuhqtBlec8j
-	 VKIdzfkEWscNJOtlk5+LnuoaqQMhKhlQ6CFP36QwwHI1He+0PjNzo22huWidOCussJ
-	 yhYAYXIUUl6dqQ0MGOmU/g4SqSRLwk4W+aQgqGlA1L6LcAYygtzmUPMcMfcA8B22Tu
-	 zXpb3OUBo4w1AEPGv3XeiHugqomJ3zmNmsiG8Z40je4AwcHYHST4zuefbKGinSVgWe
-	 nl+jygUBw11Xg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YsxdY1vhKz4wxh;
-	Wed, 12 Feb 2025 09:56:33 +1100 (AEDT)
-Date: Wed, 12 Feb 2025 09:56:32 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dan Williams
- <dan.j.williams@intel.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
- Jeff Layton <jlayton@kernel.org>, Jeremy Kerr <jk@ozlabs.org>, Joel Stanley
- <joel@jms.id.au>, Kent Overstreet <kent.overstreet@linux.dev>, Linus
- Walleij <linus.walleij@linaro.org>, Nick Terrell <terrelln@fb.com>, Vineet
- Gupta <vgupta@kernel.org>
-Subject: linux-next: trees being removed
-Message-ID: <20250212095632.6bdd50d7@canb.auug.org.au>
+	s=arc-20240116; t=1739314652; c=relaxed/simple;
+	bh=l3wCHtuiiyz1DjVrycJOAarx4FFHHVF/wtuFwDWPK00=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hqKZjmsNadcaKytpH+MQfPqqF12PbXQw+ccfHukjluJ7FLHYL+mTozjcQNx2H2+aGsvEBhffOPge49GbB2W8UcNrpbYXj0YSbvyxF9Wl/wnPSKe3c/EYcf1579HR4v0EYPYbrhnq9gp9gBjgaNchqWPTmnuqEW6/X18oejK1jJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BPCIvq52; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C955C4CEDD;
+	Tue, 11 Feb 2025 22:57:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1739314651;
+	bh=l3wCHtuiiyz1DjVrycJOAarx4FFHHVF/wtuFwDWPK00=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BPCIvq52OzV94jnl5cNujgSvko+IxN/iCUFzL/s9gW9d8+UdJ4SP0lPDTrJMrpQlJ
+	 GDgw4fMp3w9ZKLdJ6I47NMJIZq1bM1Lmf9wHpwckTTN8m/tmDxGf9m8aDcnHxkfS/j
+	 2k+IgzSMBL4kgvH/vwraRO8Uf5RRgVnnLTtp7lcQ=
+Date: Tue, 11 Feb 2025 14:57:30 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
+ <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov
+ <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams
+ <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ kasan-dev@googlegroups.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, Nico Pache
+ <npache@redhat.com>
+Subject: Re: [PATCH] kasan: Don't call find_vm_area() in RT kernel
+Message-Id: <20250211145730.5ff45281943b5b044208372c@linux-foundation.org>
+In-Reply-To: <20250211160750.1301353-1-longman@redhat.com>
+References: <20250211160750.1301353-1-longman@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Idhm0bL.jX/ZPT8E5ompBls";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/Idhm0bL.jX/ZPT8E5ompBls
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-The following trees are going to be removed from linux-next because they
-have not been updated in more than a year.  If you want a tree restored,
-just let me know (and update its branch).
+On Tue, 11 Feb 2025 11:07:50 -0500 Waiman Long <longman@redhat.com> wrote:
 
-Tree			Last commit date
-  URL
-  comits (if any)
-----			----------------
-arc			2023-09-10 16:28:41 -0700
-  git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git#for-next
-file-locks		2023-09-01 08:09:48 -0700
-  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git#locks-next
-fsi			2023-12-14 19:44:11 +1030
-  git://git.kernel.org/pub/scm/linux/kernel/git/joel/fsi.git#next
-  ec084e4ec314 ("fsi: sbefifo: Bump up user write cmd length")
-  f7236a0c919e ("fsi: sbefifo: Handle pending write command")
-  c5eeb63edac9 ("fsi: Fix panic on scom file read")
-gpio			2023-09-10 16:28:41 -0700
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-n=
-ext
-header_cleanup		2024-01-15 15:52:12 -0500
-  git://evilpiepirate.org/bcachefs.git#header_cleanup
-kspp-gustavo		2024-01-21 14:11:32 -0800
-  git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git#for-ne=
-xt/kspp
-tsm			2023-10-19 18:12:00 -0700
-  git://git.kernel.org/pub/scm/linux/kernel/git/djbw/linux#tsm-next
-zstd			2023-11-20 14:49:34 -0800
-  https://github.com/terrelln/linux.git#zstd-next
-  98988fc8e9ed ("zstd: import upstream v1.5.5")
-  40eb0e915deb ("zstd: Backport Huffman speed improvement from upstream")
-  3f832dfb8a8e ("zstd: fix g_debuglevel export warning")
-zstd-fixes		2023-11-14 17:12:52 -0800
-  https://github.com/terrelln/linux.git#zstd-linus
+> The following bug report appeared with a test run in a RT debug kernel.
+> 
+> [ 3359.353842] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> [ 3359.353848] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 140605, name: kunit_try_catch
+> [ 3359.353853] preempt_count: 1, expected: 0
+>   :
+> [ 3359.353933] Call trace:
+>   :
+> [ 3359.353955]  rt_spin_lock+0x70/0x140
+> [ 3359.353959]  find_vmap_area+0x84/0x168
+> [ 3359.353963]  find_vm_area+0x1c/0x50
+> [ 3359.353966]  print_address_description.constprop.0+0x2a0/0x320
+> [ 3359.353972]  print_report+0x108/0x1f8
+> [ 3359.353976]  kasan_report+0x90/0xc8
+> [ 3359.353980]  __asan_load1+0x60/0x70
+> 
+> The print_address_description() is run with a raw_spinlock_t acquired
+> and interrupt disabled. The find_vm_area() function needs to acquire
+> a spinlock_t which becomes a sleeping lock in the RT kernel. IOW,
+> we can't call find_vm_area() in a RT kernel. Fix this bug report
+> by skipping the find_vm_area() call in this case and just print out
+> the address as is.
+> 
+> For !RT kernel, follow the example set in commit 0cce06ba859a
+> ("debugobjects,locking: Annotate debug_object_fill_pool() wait type
+> violation") and use DEFINE_WAIT_OVERRIDE_MAP() to avoid a spinlock_t
+> inside raw_spinlock_t warning.
+> 
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks.  I added it and shall await review from the KASAN developers.
 
---Sig_/Idhm0bL.jX/ZPT8E5ompBls
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I'm thinking we add
 
------BEGIN PGP SIGNATURE-----
+Fixes: c056a364e954 ("kasan: print virtual mapping info in reports")
+Cc: <stable@vger.kernel.org>
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmer1aAACgkQAVBC80lX
-0GzX4Af+J6yS/VVn4Oqx1BqWRU7pW6/efAwut9epDpIG6sYDmu3b7Vl/SMw53aBi
-koFpzUOFX61b+OWZH+1/ugVasfE+mGO2sMUC/apiOwyAfqB0NzcgPcQBOcY8RxYB
-lpLD+feAd8bCH8Ypo4//6GywVJx38Hxy63BTohs9d14m9P+XTXi+OStj1x5gCj/y
-PuTne2xEujOjtVcOeCcmySLGFpk9T9G2S05CkCn/dVp+UIcPHuHawQXdgnDQptmC
-EXvnMW+R3XtuwsR5UEAWj4tFXBFlhzP3OjzTNqX9SppSR2zAAai4D+WgTg/Wf/zz
-545y0rq3dDitswEsI0OGfpbFvDlMXw==
-=DIGw
------END PGP SIGNATURE-----
+but c056a364e954 is 3 years old and I don't think we care about -rt in
+such old kernels.  Thoughts?
 
---Sig_/Idhm0bL.jX/ZPT8E5ompBls--
 
