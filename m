@@ -1,111 +1,200 @@
-Return-Path: <linux-kernel+bounces-510114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 522E7A31858
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:59:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 271A7A3185A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:00:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064383A4AD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 079ED1886018
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663AD268C4C;
-	Tue, 11 Feb 2025 21:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE4C268FD7;
+	Tue, 11 Feb 2025 22:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WVa8kEiT"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="IACazbVJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="urQjZ87Q"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B35A267AED
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AB9268FC4;
+	Tue, 11 Feb 2025 22:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739311172; cv=none; b=SNPYYjAP2XXze9iAbGDduU5RFHZ9wC5JmrbO5iFUPtUEsi5UsLL744A7hupd0PRuvx3tz2gyy12wdo3Q/OL35YuuMvyfhz8e/3PRXvRx+BegFTaOX8oCb1hvIRKSc0mjeM1XkdcsagP8ofiJXlZfFMiMM1wTeH6bAyCm4KrTCr0=
+	t=1739311225; cv=none; b=r4h2kZyjmP9eKGg4cnJwYBKYbrbDIMy08mi5AiCntDKBQoSqYltdhrQUnSAWnVOnbONk9MsPwcHT78eMVl0xP5KcTuetcU8pKjAYPuNcTTXvF7D0aokA9XOcFgx7zFwVIf4EGUt69xPduaNn4b+PtUbRdPNknya+WkRBi1wA/Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739311172; c=relaxed/simple;
-	bh=5lqoBiTkWp4nAjjdnJgWRRzXty3mpp66e4HfQbUks3M=;
+	s=arc-20240116; t=1739311225; c=relaxed/simple;
+	bh=lW3UwyDr2I/ENsb8Jco5YCmUTbiZO2iEDsoALXd/HCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bU44xxHfQnT9NFABoby6b1flmiG9dDQWpu2V8lv9XjpsCzwV9cT9wHs1W4PxnXpCCDveD3lYZEF25BTpoauO9IJMYQ3AoVvwdTvqY1Co6nl4g+IsJBDKtVE4AR2r6gVlay4sAj0KD4/BPMXb9tO2977jxuTuYNNnvCY2Ayptiv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WVa8kEiT; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4719141e711so23476801cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 13:59:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739311170; x=1739915970; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oWVLgu7olkt5+huG/rzR9Tf5v467L92GDvtiRJVBA8g=;
-        b=WVa8kEiT5p0p58WuyqtxBRtBsExVElIXVsBM9t+XiqOdtwx2t9r+dO3LzCnKfirdsv
-         GzM80i1e4cR6HuRWqvoZeCTWqr6ZSnHiDydxxorxFk2YX8Sflxtrxnz3Ak8VJ2A5qYQt
-         AyTryORAKTlL2gPrfWaMoyl3R8QJmTdrksI7DIZLJrdOwEFZY2wC+1KisPUlasmvvDg2
-         XZvF1gJjl5VM7Y6wNMK+On31OARrVI9M4Hi5LE6FdkZFFNYapv7UrSVRhNxb4KteOMQK
-         oufOXiWQ4dUjEwyPmst/u9dw7huwpfG+0veywh6ETIPQysoQcFu3ACu39ShVg1nMq8ap
-         qIqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739311170; x=1739915970;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWVLgu7olkt5+huG/rzR9Tf5v467L92GDvtiRJVBA8g=;
-        b=Wi/Zw+Uu0TwuOMjyF0TIyUnLbTAxQkAOV9eCFt9CX2lot72HoxoNgM1eJvJnq1HV8L
-         rebVZkBjorZeuLxLw0AclWV587Se5Lrly9GT7JV6qIph69BCnwX1zkxW32lfs3twSiYn
-         6S9J1fzt1XZ3UecA+sSJFniOMlg+pev+2VGZzk84CFkx8SzsnO+Lz7DuOST4n6DEL/71
-         /Lat3qHo1zg5bU554Vg2WK8dkbbxOllVPdWkDXR16Xa7Vamy0JFKrhdoCZ6CM3kaJqrY
-         YAwkL1YdbyXQEjh6xkjp9VXWcV1MWl9etU6RW1vsN/Y2J5XP93j63i2kazrk8lIfEyiB
-         S8Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5F6Np57szfq2deSpoo+hOBpGpyZJXccd7qfSDvP4cSrri3TIrpYeIW7oWqjpW2oE6lPdo373mmFGHiM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVUHcgVUUvLQx0eL5Zbfoz0TeOCuP6RngIERS3bUqxWMTmy/nR
-	2jfk3R1FNmY9LHrkQufUhEOxlqaiFzHOM0G5VO1adH9U/zC67sHd
-X-Gm-Gg: ASbGnctQYki7nQC57/SPr8WbfbOCGZI10EYxbZ5bixmcbGl+liLIDVsmR/GEGebhiID
-	+en9uJralDmGvZnk5nDi8TUaOrBRKjSt5V4Ft3FUgBXd4t98w0aP0oXFaUkxiWef6pUbdCOMnzA
-	wux3R+3pz5HxooMFAvNY+nsi2kECQ0w9vTBvP0P5LbMtR2WpR13SR7R+aYfqttXg7DuuckcI2ca
-	V8gd2Vm0XxgDVRM8Lb+P+GR3kl/2CmFhLrXyGvM2FxsngcfSOaH/iYVKsQki9EnQ7WvMs9o4OOS
-	eS2Ggay5k0/33bMK
-X-Google-Smtp-Source: AGHT+IEWJDst8vVUPVOzrV15rAaTZFTwjzJudF4qLztVldbN/osRbxPXG0hpawApAKGPW+1aSKayug==
-X-Received: by 2002:a05:622a:15ce:b0:471:90bd:1454 with SMTP id d75a77b69052e-471afe616bcmr13548361cf.23.1739311170152;
-        Tue, 11 Feb 2025 13:59:30 -0800 (PST)
-Received: from VM-Arch ([2600:1001:b149:3a35:2d69:a3ec:38da:b6af])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e4556d153asm42604646d6.13.2025.02.11.13.59.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 13:59:29 -0800 (PST)
-Date: Tue, 11 Feb 2025 16:59:26 -0500
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>
-Cc: airlied@gmail.com, simona@ffwll.ch, tzimmermann@suse.de, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Update maintainer of repaper and mi0283qt
-Message-ID: <uwkyq63ovr3xcvgvxeuzgwyplkqxdgjqtosvftxtv6awtds2sp@wa6synmq76ja>
-References: <20250210233232.3995143-1-lanzano.alex@gmail.com>
- <221ad1f2-307a-4ead-84e2-4b6c4331a20f@tronnes.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eRG9vSs67AyAIhGbFGA5djftXd966CPSwD1w1ROdztpenY3s3AtwICtckATkTZHunlUIbMyK23/VuoLI/JL5txDLODHOwdObj4UAucr/X8ADZG9NyCh3nTxs6vwZqemIr4bQpChbGz4tg80+cPJHlZTAv/gveZEmucJFD9CkMJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=IACazbVJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=urQjZ87Q; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 90CFC2540108;
+	Tue, 11 Feb 2025 17:00:22 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Tue, 11 Feb 2025 17:00:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1739311222; x=1739397622; bh=xDuUeB511X
+	EsJ9aYOfz6uSdSV2r8Wn7+ToSuq8Neosk=; b=IACazbVJOr+/0SV8BsMXSE+z01
+	lCpbKPtnxbDGVGxGRE3QS2Xy8meAwFT+JKkkmce4PswzzLsvVMEiAne+5DxO0TOA
+	fwmrBCuzcF4d6btWxTILkOaTZkPqWczwubjy40swu5Hd+oNXUv/jjPzyrzAE4XDa
+	gUATO6Lk4FD/21bo33w9LV/EAZAyG5sE1hSP7fppZwUd1umnbKSjnqSxBWeRMnaJ
+	EZV2G3NV3sg2MqCw5BpuWi4n5HWBMMGTCZdod9l7OzgS6GZiXhcr7zYDUM82+yQ7
+	ROvpJqv87czY5o0Qwr7yU320T9zZHJAsoVy7uoKO7+FgC7t05BtQfjCo4LWQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1739311222; x=1739397622; bh=xDuUeB511XEsJ9aYOfz6uSdSV2r8Wn7+ToS
+	uq8Neosk=; b=urQjZ87Q+1ik9N9K4932mTz4AwnK7D7SP6E6m3yHL0A8u8kYJGO
+	qUbLopmtZxzNBeOT3yQMd48Xcggg1WLyFOD7+oFN5+VFFuC3IAEEzPQH1UMO0b55
+	6F11nzlF7JEa7Aco73pNDKGylePOHEKTsfXWf+Mlbmd5kpkOae7I1V1+r/NzR6B9
+	ZDU2RxuzQd21hubzEJqNHgemVd+2MDeK4dWGTTZS6svVQHm6IYGPDruvbiuNBYNk
+	zQL6xkDy9G1GNFUs9iGBX2itPB7jhBoD7NTnWJTHS1WJ0c3WyrAeqFI5BEPVHdph
+	wihIF3TdLehwwvjtWNBeAS4ziHlf/DQtBzg==
+X-ME-Sender: <xms:dcirZ24nFMi7PqRO0O11AaBDIx7DDsJoixzFGp3tFsgpWEL6i-Ws6Q>
+    <xme:dcirZ_65X1EpZVynSs0tHoZEUAMNUU_LHtCTSo2eXrczMT3M68gaVKfl52raHls7i
+    F_mggY4qZ_tpp3gpdw>
+X-ME-Received: <xmr:dcirZ1e9ZFgBmCMFGosNnvbA--_D5nrTVS9iC95eeOZoVkFdJFn6TS9J5iJ15U7T-rYIzC1kWW4OSwBQ-9KBqON4kMvKwMpp0Oc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegvddugecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
+    necuhfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqne
+    cuggftrfgrthhtvghrnhepgfdvffevleegudejfeefheehkeehleehfefgjefffeetudeg
+    tefhuedufeehfeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopeelpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehhvghlghgrrghssehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdprhgtphhtthhopehl
+    phhivghrrghlihhsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhifsehlihhnuh
+    igrdgtohhmpdhrtghpthhtohepmhgrnhhivhgrnhhnrghnrdhsrgguhhgrshhivhgrmhes
+    lhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhi
+    nhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
+    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:dcirZzI0GGjQ4J6wInV6X-5tJrPBC7D13yptVE6PkG3hvnNJ03z8Ug>
+    <xmx:dcirZ6LpjsflYJ3c2aYevprO4vUuRwWRCtkad4rM2ZnktWVYr2FMYw>
+    <xmx:dcirZ0yi_7uAVY85f9LmDeb6CYQH0QAEWQIoE_fBgEgnmFa6UjyaSA>
+    <xmx:dcirZ-LzVbDLYCONsCA1qXje9Fa_n813Nr162mOs5BMfkX1HR-FzWA>
+    <xmx:dsirZ3XFSiL0kdNevTWXDfmOU42Zc9Yr5vVe_Pk3Beg13lztpUT9igB1>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Feb 2025 17:00:21 -0500 (EST)
+Date: Tue, 11 Feb 2025 23:00:19 +0100
+From: Janne Grunau <j@jannau.net>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: apple: Add depends on PAGE_SIZE_16KB
+Message-ID: <20250211220019.GC810942@robin.jannau.net>
+References: <20250211-pci-16k-v1-1-7fc7b34327f2@rosenzweig.io>
+ <20250211183859.GA51030@bhelgaas>
+ <20250211195601.GB810942@robin.jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <221ad1f2-307a-4ead-84e2-4b6c4331a20f@tronnes.org>
+In-Reply-To: <20250211195601.GB810942@robin.jannau.net>
 
-On Tue, Feb 11, 2025 at 03:16:37PM +0100, Noralf Trønnes wrote:
-> 
-> 
-> On 11.02.2025 00:32, Alex Lanzano wrote:
-> > Add myself as the maintainer of the recently orphaned repaper and
-> > mi0283qt drivers.
+On Tue, Feb 11, 2025 at 08:56:04PM +0100, Janne Grunau wrote:
+> On Tue, Feb 11, 2025 at 12:38:59PM -0600, Bjorn Helgaas wrote:
+> > On Tue, Feb 11, 2025 at 01:03:52PM -0500, Alyssa Rosenzweig wrote:
+> > > From: Janne Grunau <j@jannau.net>
+> > > 
+> > > The iommu on Apple's M1 and M2 supports only a page size of 16kB and is
+> > > mandatory for PCIe devices. Mismatched page sizes will render devices
+> > > useless due to non-working DMA. While the iommu prints a warning in this
+> > > scenario, it seems a common and hard to debug problem, so prevent it at
+> > > build-time.
 > > 
-> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
-> > ---
+> > Can we include a sample iommu warning here to help people debug this
+> > problem?
 > 
-> Thanks for picking these up:
-> 
-Of course. If anything changes in the future and you are able/want to maintain
-these again don't hesitate to reach out.
+> I don't remember and it might have changed in the meantime due to iommu
+> subsystem changes. What currently happens is that
+> apple_dart_attach_dev_identity() fails with -EINVAL. I can't say whether
+> that results in a failure to probe now. I'll test and report back.
 
-Best,
-Alex
+Using a kernel with 4K page size It results now in following warning per
+PCI device:
+
+| ------------[ cut here ]------------
+| WARNING: CPU: 7 PID: 260 at drivers/iommu/iommu.c:2979 iommu_setup_default_domain+0x348/0x590
+| Modules linked in: sm4_ce_gcm(-) tg3(+) nvme_apple(+) apple_sart nvme_core snd_soc_apple_mca clk_apple_nco snd_pcm_dmaengine apple_admac i2c_pasemi_platform apple_dart apple_soc_cpufreq i2c_pasemi_core
+| CPU: 7 UID: 0 PID: 260 Comm: systemd-udevd Not tainted 6.14.0-rc1+ #asahi-dev
+| Hardware name: Apple Mac mini (M1, 2020) (DT)
+| pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+| pc : iommu_setup_default_domain+0x348/0x590
+| lr : iommu_setup_default_domain+0x340/0x590
+| sp : ffffffc082c3b6b0
+| x29: ffffffc082c3b6b0 x28: 0000000000000000 x27: ffffffc082c3bcc0
+| x26: ffffffc082c3bbc0 x25: ffffffc0817d12f8 x24: ffffffc0816bf6c4
+| x23: 0000000000000000 x22: ffffff80301d5400 x21: ffffff80301d5448
+| x20: ffffffc079a332b8 x19: 00000000ffffffea x18: 0000000000000000
+| x17: 00000000007bb020 x16: 0000000000000020 x15: 0000000000000004
+| x14: 0000000000000002 x13: 0000000000000001 x12: 0000000000000000
+| x11: 0000000000000000 x10: 0000000000082630 x9 : ffffffc0808e7ad4
+| x8 : 0101010101010101 x7 : 0000000000000000 x6 : 0304000af2f9adf2
+| x5 : ffffff803030a480 x4 : ffffff81dfb29d40 x3 : 0000000000000001
+| x2 : ffffffc079a2d408 x1 : ffffff80266f60c8 x0 : 00000000ffffffea
+| Call trace:
+|  iommu_setup_default_domain+0x348/0x590 (P)
+|  __iommu_probe_device+0x340/0x3f8
+|  iommu_probe_device+0x3c/0x88
+|  of_iommu_configure+0xa8/0x258
+|  of_dma_configure_id+0x114/0x2a0
+|  pci_dma_configure+0x5c/0xc0
+|  really_probe+0x7c/0x3a0
+|  __driver_probe_device+0x84/0x160
+|  driver_probe_device+0x44/0x130
+|  __driver_attach+0xcc/0x208
+|  bus_for_each_dev+0x90/0x100
+|  driver_attach+0x2c/0x40
+|  bus_add_driver+0x118/0x250
+|  driver_register+0x70/0x140
+|  __pci_register_driver+0x4c/0x60
+|  tg3_driver_init+0x30/0xff8 [tg3]
+|  do_one_initcall+0x60/0x2a0
+|  do_init_module+0x5c/0x228
+|  load_module+0x1aec/0x20d8
+|  init_module_from_file+0x90/0xe0
+|  __arm64_sys_finit_module+0x274/0x380
+|  invoke_syscall.constprop.0+0x58/0xf0
+|  do_el0_svc+0x48/0xe8
+|  el0_svc+0x34/0x148
+|  el0t_64_sync_handler+0x10c/0x140
+|  el0t_64_sync+0x198/0x1a0
+| ---[ end trace 0000000000000000 ]---
+
+In addition the ethernet device for the connected tg3 does not exists
+and PCIe xhci_hcd spews following errors:
+
+| xhci_hcd 0000:02:00.0: Abort failed to stop command ring: -110
+| xhci_hcd 0000:02:00.0: xHCI host controller not responding, assume dead
+| xhci_hcd 0000:02:00.0: HC died; cleaning up
+| xhci_hcd 0000:02:00.0: Error while assigning device slot ID: Command Aborted
+| xhci_hcd 0000:02:00.0: Max number of devices this xHCI host supports is 32.
+| usb usb1-port1: couldn't allocate usb_device
+| usb usb2-port1: couldn't allocate usb_device
+
+This is much less sutle than I remember up to the point that I'm not
+sure if this change is still needed.
+
+Silently disabled CONFIG_* due to missing dependencies aren't nice either.
+
+Janne
 
