@@ -1,193 +1,106 @@
-Return-Path: <linux-kernel+bounces-510116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F555A3185C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:01:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A8CA3185E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:03:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F21E3A4C37
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:01:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF3347A2BBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F985268C7B;
-	Tue, 11 Feb 2025 22:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWntDGlu"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E5C267735;
-	Tue, 11 Feb 2025 22:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8393267B07;
+	Tue, 11 Feb 2025 22:03:37 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872B8267735;
+	Tue, 11 Feb 2025 22:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739311265; cv=none; b=ksvEbiQovxcnD7QueP1pUFzLemN8gv/z2wx4ONJByz5eGkLoDXyvJLVwAoriPv/JfP3PavJTjAOvncUSqgCW52w8feETxxY31us/2d2brbSn/iIqYUxFk9ID2ssmzlc0kpmenevj9tfKHigq00ghZk+yLYHCHlujJrhwwoagcWY=
+	t=1739311417; cv=none; b=ZOGP4cb1jmWXd7gcnCtrjScE9VaI5VrsKX+ApQyOAUET5+zEHWBvon/KkvYYx4DIBKIgIxyxOOkVxpIdVZ0YJuGTgP3x39isXp3AaKgO0EDtjpDv/fCkM1fO8Gs8FAGPsmUq9+0SfjOKtSDHsLqrX/GXK7O5CuBfTsZsr9zDdwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739311265; c=relaxed/simple;
-	bh=GuH3Xw0HWE/B7hWsyzMiU5RPcuf3s5ZFvK5M9bd5hso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oAXoFqJCKm/naO9NwWWxuIjULHDVobJrd0p4KXOgUG8c0afHp0Mlzd9TkoItYOmspl4rv8lemeM696oqZ9uy3h/tYofpWpIpbKO7Puf+TgHog738mIBHLAByixLWhxMpnrp1NePyZ9mBUCD5P9v+JaK6jmVFODdHOyoH04zcpPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWntDGlu; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-308f141518cso25096191fa.2;
-        Tue, 11 Feb 2025 14:01:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739311262; x=1739916062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jH0GdYMy8pz+jJrNXKtFU7Jsn2P+rBGG1+in1lbsGGI=;
-        b=PWntDGluqsT671zPX3a3NuIEpTS9coRTtbPaYnnhdP5H3PVPFoDO6Bz61xioAOEE+p
-         zwdy/NmdFg4Yj/hAJzSDQmmGCaGTQ+6VpwKgaoWLkpxECtuYl03KWWltXeutYMkizP2k
-         iUXOeCRTtCSqYyrOZ68bg3pQgGdg+1pmTJQRr7OMd358+b6Bfexp2XW8v6OX1ruZjAhc
-         ZKFlgtd9Pv+yfozj/9k48FKZNzpBpDkhV/r45VVl538Yoidj0oI9T0LaA3RtFEebC8EJ
-         SZ2OdMJWlmAyCLq8xGKgCJ7SwxCynHv4eF7sJpdzv2z5ls/+qSKkCbJfXqvbYlluMgXQ
-         jsyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739311262; x=1739916062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jH0GdYMy8pz+jJrNXKtFU7Jsn2P+rBGG1+in1lbsGGI=;
-        b=Ag57nUkUa4zA7ia8A0Q8PIw1jmplsGVQiqG7b2ZpdjEPRrL8VjMclXcZAxagSR0sXS
-         LProb0QOoRI1ux21dH8C7SxbqrvdyTVILNKX65lsbWUN/EDTK+GOXw+0dnOsrP/zb61f
-         Zb7X3LmR0004mGQQmpA+XmFDoWR4yR85/of8gy9q3XzGEcJfBRBZXlq9RFchjIH9g4de
-         eRQV8OQ9iBHmoSIH0VPQrdwF96N+8BkJOn6Z/7PSJB74jb/nKLV2+O6jnmwS0H9wVyb/
-         4jOUv4W4pfBH3+lIHcre3mb3mAalZCFS73hOJ6NB2SNZp2htyjTdJMRArpVYEeUrnLo+
-         PYwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVNObEUp8HwqKLI8C0aTLKlqUnhPCtlvv40gCu+44LVHL/YDNAj51XaPoJlCXbxBhjFY9op9rcWtEo+yU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywBmEVStYshXhZfrILwLwPdDsQviCothabfiwkuAbK6DOk+Y8R
-	P1VN4uwE0AWXJ1UmsSGk3PRgD5pO8yAwixvcdxVvPmsdoO/PJaEySmEoZcIqf1z8ggCRwfRT9KI
-	+LCeOPjZmDiMwDknZourjUH9ytDM=
-X-Gm-Gg: ASbGnctEM1rvQ02PeEXB+PmBhNC2G8QBqt6oH6uEBQjXoLNb0tf2Y6tl8lijdqnp5mp
-	Ie7bxt0OrL3SNHJfqB6hIcaigMbP8jgkcIXo7jCwURUVqSHGjW9kTUrj8O8bblYE/49hg+x45bQ
-	==
-X-Google-Smtp-Source: AGHT+IHzCAtMKaVIdmyqVtpg7GiB7UO6jzPNX/gawtcEZqDckoCITjFsdc8OQza+K+ZBqvia2Qn/1A+0GbvUz2Gtvjg=
-X-Received: by 2002:a05:651c:1b11:b0:300:3bcd:8d05 with SMTP id
- 38308e7fff4ca-30904ffcd24mr1219661fa.15.1739311261863; Tue, 11 Feb 2025
- 14:01:01 -0800 (PST)
+	s=arc-20240116; t=1739311417; c=relaxed/simple;
+	bh=nvSoEOFxC8JxeSbrfclDEASv/CNp4BMBplPUaLfaUv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XSYN9zeWvzTtRvgSK4AdgaQxdV/BVRWjRASttQhtNu0k9wrLS+yxPIlyBVDLjMfvQyoVFPMaKtgDikmysUgfPiZRxcsKRiXHQkYlwnh2O0kUAd3iqJSZ4bEagEjjSLeIT6eUqGXxy7b/ASqPsxiPz5f8DOxHR1EmZiJP9VZPI5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id E551672C8CC;
+	Wed, 12 Feb 2025 01:03:33 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+	id D67F27CCB3A; Wed, 12 Feb 2025 00:03:33 +0200 (IST)
+Date: Wed, 12 Feb 2025 00:03:33 +0200
+From: "Dmitry V. Levin" <ldv@strace.io>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>, Alexey Gladkov <legion@kernel.org>,
+	Eugene Syromyatnikov <evgsyr@gmail.com>,
+	Mike Frysinger <vapier@gentoo.org>,
+	Renzo Davoli <renzo@cs.unibo.it>,
+	Davide Berardi <berardi.dav@gmail.com>,
+	strace-devel@lists.strace.io, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/7] mips: fix mips_get_syscall_arg() for o32
+Message-ID: <20250211220333.GA19256@strace.io>
+References: <20250210113442.GB887@strace.io>
+ <alpine.DEB.2.21.2502111530080.65342@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210183224.v3.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
- <20250210103244.646150-1-chharry@google.com> <CABBYNZJ1LbN_3H1pJsZ6mH1nY7ijb9nbuPSJJwqyvJnC0=U6PQ@mail.gmail.com>
- <CADg1FFe1DeDFmudxWZp3_thvTnm1N=ZOjXts0sJ7mxaUsFxE5Q@mail.gmail.com>
-In-Reply-To: <CADg1FFe1DeDFmudxWZp3_thvTnm1N=ZOjXts0sJ7mxaUsFxE5Q@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Tue, 11 Feb 2025 17:00:49 -0500
-X-Gm-Features: AWEUYZnpY4Kq3DoNYOptzkzGa5JZEwFH7EJ3zIsQ9bxSY0Qtmw_qyh_q-k8KCg8
-Message-ID: <CABBYNZK8-8k5eZ8TZLM-g4KC_wt8VQ+jx_iryS9_xGxHt+u=1g@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] Bluetooth: Add ABI doc for sysfs isoc_alt
-To: Hsin-chen Chuang <chharry@google.com>
-Cc: linux-bluetooth@vger.kernel.org, 
-	chromeos-bluetooth-upstreaming@chromium.org, 
-	Hsin-chen Chuang <chharry@chromium.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	Marcel Holtmann <marcel@holtmann.org>, linux-kernel@vger.kernel.org, 
-	Ying Hsu <yinghsu@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2502111530080.65342@angie.orcam.me.uk>
 
-Hi Hsin-chen,
+On Tue, Feb 11, 2025 at 06:30:33PM +0000, Maciej W. Rozycki wrote:
+> On Mon, 10 Feb 2025, Dmitry V. Levin wrote:
+> 
+> > The first assertion is fixed for mips o32 by using struct pt_regs.pad0
+> > instead of get_user() to obtain syscall arguments.  This approach works
+> > due to this piece in arch/mips/kernel/scall32-o32.S:
+> 
+>  I've had a look now and I can see what's going on here.
+> 
+>  The thing is we're trying to access another task's context and obviously 
+> dereferencing $sp obtained from it is not going to work via get_user(), 
+> because that just peeks at the current task's context.  It often does not 
+> crash, because the default user stack always gets assigned the same VMA, 
+> but it is pure luck which we wouldn't have if the stack was switched (via 
+> setcontext(3) or however) or say a non-default process's thread peeked at, 
+> and in any case irrelevant data is obtained just as observed with the test 
+> case.
+> 
+>  We ought to be using access_remote_vm() to retrieve the other task's 
+> stack contents, but given that the data has been already obtained and 
+> saved in `struct pt_regs' it would be an overkill.
+> 
+>  So I think your change is actually the correct thing to do, but please 
+> let's not abuse a struct member called `pad', the name of which indicates 
+> its contents are not supposed to be of any use.  I have therefore posted a 
+> preparatory cleanup[1].  May you please rebase your patch on top of that 
+> and also update the change description so as to reflect the findings?
+> 
+>  Thomas, can you please apply my cleanup soon and ahead of Dmitry's change 
+> so as to make things easy to proceed with?  Or otherwise let me know what 
+> works for you best.
+> 
+>  Also I have a suspicion this stuff ought to be backported, but I guess it 
+> can be decided later on.
+> 
+>  Thank you for your patience.
+> 
+> [1] "MIPS: Export syscall stack arguments properly for remote use", 
+>     <https://lore.kernel.org/linux-mips/alpine.DEB.2.21.2502101732120.65342@angie.orcam.me.uk/>
 
-On Mon, Feb 10, 2025 at 11:23=E2=80=AFPM Hsin-chen Chuang <chharry@google.c=
-om> wrote:
->
-> Hi Luiz,
->
-> Thanks for the feedback.
->
-> On Tue, Feb 11, 2025 at 2:17=E2=80=AFAM Luiz Augusto von Dentz
-> <luiz.dentz@gmail.com> wrote:
-> >
-> > Hi Hsin-chen,
-> >
-> > On Mon, Feb 10, 2025 at 5:32=E2=80=AFAM Hsin-chen Chuang <chharry@googl=
-e.com> wrote:
-> > >
-> > > From: Hsin-chen Chuang <chharry@chromium.org>
-> > >
-> > > The functionality was completed in commit 5e5c3898ef49 ("Bluetooth: F=
-ix
-> > > possible race with userspace of sysfs isoc_alt")
-> > >
-> > > Fixes: 5e5c3898ef49 ("Bluetooth: Fix possible race with userspace of =
-sysfs isoc_alt")
-> > > Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
-> > > ---
-> > >
-> > > (no changes since v1)
-> > >
-> > >  Documentation/ABI/stable/sysfs-class-bluetooth | 12 ++++++++++++
-> > >  1 file changed, 12 insertions(+)
-> > >
-> > > diff --git a/Documentation/ABI/stable/sysfs-class-bluetooth b/Documen=
-tation/ABI/stable/sysfs-class-bluetooth
-> > > index 36be02471174..1168e0318e35 100644
-> > > --- a/Documentation/ABI/stable/sysfs-class-bluetooth
-> > > +++ b/Documentation/ABI/stable/sysfs-class-bluetooth
-> > > @@ -7,3 +7,15 @@ Description:   This write-only attribute allows user=
-s to trigger the vendor reset
-> > >                 The reset may or may not be done through the device t=
-ransport
-> > >                 (e.g., UART/USB), and can also be done through an out=
--of-band
-> > >                 approach such as GPIO.
-> > > +
-> > > +What:          /sys/class/bluetooth/hci<index>/isoc_alt
-> > > +Date:          10-Feb-2025
-> > > +KernelVersion: 6.13
-> > > +Contact:       linux-bluetooth@vger.kernel.org
-> > > +Description:   This attribute allows users to configure the USB Alte=
-rnate setting
-> > > +               for the specific HCI device. Reading this attribute r=
-eturns the
-> > > +               current setting, and writing any supported numbers wo=
-uld change
-> > > +               the setting. See the USB Alternate setting definition=
- in Bluetooth
-> > > +               core spec 5, vol 4, part B, table 2.1.
-> > > +               If the data is not a valid number, the write fails wi=
-th -EINVAL.
-> > > +               The other failures are vendor specific.
-> >
-> > Still not really convinced this is the right way to expose it, it is
-> > not an HCI attribute to begin with, not sure if we couldn't perhaps
->
-> Could you tell more about why this is not an HCI attr to begin with?
-> The alt setting is bonded to the USB device which is now under btusb's
-> control, and btusb creates a sysfs node for this. This attr location
-> decision seems natural to me.
-
-Well alt setting is (obviously) not covered as part of HCI
-specification, USB is one possible transport bus of HCI, but that
-itself is already saying that we would be mixing the transport with
-actual HCI protocol.
-
-> > add another node to control it or add via USB device?
->
-> I feel allowing this in the USB sysfs API might be an overkill as that
-> makes all USB devices' alt settings be controllable from the user
-> space. Limiting this usage in the scope of BT makes more sense to me.
-
-Not all, just btusb ones, that said what we could add another level to
-control transport specific attribute e.g
-/sys/class/bluetooth/usb#/isoc_alt than that becomes the parent of
-/sys/class/bluetooth/hci<index>
-
-> >
-> > --
-> > Luiz Augusto von Dentz
->
-> --
-> Best Regards,
-> Hsin-chen
+Thanks for the analysis, I'm going to rebase my fix and send it
+as a follow-up to your cleanup patch.
 
 
-
---=20
-Luiz Augusto von Dentz
+-- 
+ldv
 
