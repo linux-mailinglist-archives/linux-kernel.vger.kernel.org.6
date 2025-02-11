@@ -1,382 +1,108 @@
-Return-Path: <linux-kernel+bounces-509926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86B6A3161F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:56:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D414A31623
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:56:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A408166080
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:56:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A82B7A00E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296E7264FAB;
-	Tue, 11 Feb 2025 19:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B60262175;
+	Tue, 11 Feb 2025 19:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="anqR4Pu7"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnUrUTwd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B04A264FAD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 19:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED9426561B;
+	Tue, 11 Feb 2025 19:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739303698; cv=none; b=C7gH9BkpJoaEPHeFnVV29Jh4UT6vpokaDjxR0d7PfSIM4/mqmFxAebxoKrgfkUU9sNgVfBh9KvhF/cnJsa9XShnT5s+fUsmxNhiv2PXoZXAzP6Xh4/cMWnv3pIAoj7YioceFPMpwP2ou08VE75LXVaPcZS+61Bbm0hm6rNvDvWI=
+	t=1739303734; cv=none; b=SuumyQaE9Gf/HuSvKe9xtxZ330l60xjTIkiMc4xEkw9HO9z2cPlG+XnUNfLgyrCi81PUbIg8Z7Bsw3pkSJ7axD0lIMx1rLiuAYZwPl7Tz2OQbd/7tID7GrFFAuxu3j+dZjxXIHm5egZHdT+RcIgT2+m+CVJzFGKHc/Q/gBOXrHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739303698; c=relaxed/simple;
-	bh=/4aY8e4/EKwBSViCWWmVA8tLgFhQVwQ316OFmbEHQ60=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j9Fw9cC3FrDT0kK3fNHIwhXjvVlSe+wLSSlYPWcQMvE9LJz4lawEIY9apSKdfabWVPwv9UYuBNqGL3l/U48Dzj0Xs3CgI6/JYQm8kvG5EZEGzBZoBInlz/y61v5di59xfvH/L+FQsrbe9ymrbtcpPmPOPFP97Jem1+jA1vj5ht8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=anqR4Pu7; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1739303693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Hn9eo3mxMwP4PHVPqNLPOJKyU8EeYRHxTKZoXnCY/s=;
-	b=anqR4Pu7xBGTHCgc47nmaM24QW1F2Hjf0dSUtRWszaMtJNJyIhDaplvItl2K4CzN2GvsXd
-	LfWsV03wWFz39eoJZeJY5kJLyA5Q5wwpbmASPjuu3PxpSjlhUtIZY1MroOa/8Sg969Idxp
-	KSWMEAzRM/XKNF9h5xOLRQchUVIpgG0pWyvgfsaJJ7CD0P98idnU7BwEcuILbha0buTl+L
-	D//7o736krUM/9b1H7c6Y7ATFUXJmcx321hYvyP1X7x0WFewr3Lo6xYCgNk+z8V4aXKXHs
-	maZnjkdl3M6PePzcrBr9W/WzIVOBgQEJICsgUVv6Vorlb8Y4cvSDQmqRTBv9MA==
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Date: Tue, 11 Feb 2025 14:54:32 -0500
-Subject: [PATCH 7/7] PCI: apple: Add T602x PCIe support
+	s=arc-20240116; t=1739303734; c=relaxed/simple;
+	bh=YGBeiYvY6N2eP4tvuDNUETpII967sPU2WGuLJGNSh2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OhocRANJWfJ0sbNArXVohrHqPAi4Je2cEvXGvYIuTjPttz8Z/wx3TpV8WJwBBN+oHdtL2FPnNo7UC/m5/46n5mFREdeid4RWBeI7F3bpDn/pJJhvAc/3vSOHbqgd7uJPv5guQ4DEbawhfgfEAGBGjvUtRnvVPQKKJ8+NDDkXpp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnUrUTwd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29610C4CEDD;
+	Tue, 11 Feb 2025 19:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739303734;
+	bh=YGBeiYvY6N2eP4tvuDNUETpII967sPU2WGuLJGNSh2Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jnUrUTwdUq0tunyCQMWU7mEttGn6BiLTOrCWBHEMkRmGTnauyS1HYPMYwcWYzhTcp
+	 LnnFJdQpgcLjt1xYZZDHELBDAr61kHyLwNvteUH42uMAlx1dNmZdvqGNvOTRNbRURp
+	 2exb/6WJGwEeAslt5nuRoAhxlzF5veEd7K5MIH+w04cAQqgceoISNwyPL+RkB6fSfW
+	 jLPx2ba08oI8pNJHM/K441C6ZdLA7/d2Q6PQhRtr1zRhjvBmjvg7AW93sUOBMptYl6
+	 8DXVVyipI8IJ0LCpGYROGVxnZS4495oDXOFUKFdzugWiYzBsACi6mBINVgE2WCi2+0
+	 dpswlQxmHAXyA==
+Date: Tue, 11 Feb 2025 19:55:26 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, Nuno Sa <nuno.sa@analog.com>
+Subject: Re: [PATCH v12 6/9] iio: adc: adi-axi-adc: set data format
+Message-ID: <20250211195526.4e04c875@jic23-huawei>
+In-Reply-To: <20250208162209.2d43bae3@jic23-huawei>
+References: <20250207140918.7814-1-antoniu.miclaus@analog.com>
+	<20250207140918.7814-7-antoniu.miclaus@analog.com>
+	<20250208162209.2d43bae3@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
-References: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io>
-In-Reply-To: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, 
- Marc Zyngier <maz@kernel.org>, Stan Skowronek <stan@corellium.com>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Alyssa Rosenzweig <alyssa@rosenzweig.io>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9798; i=alyssa@rosenzweig.io;
- h=from:subject:message-id; bh=iFWGB/VvFeLzLyS+KG8D2A435AlKV4YFBa+MItwwa6Q=;
- b=owEBbQKS/ZANAwAIAf7+UFoK9VgNAcsmYgBnq6r22VdvMG95oRYpc0a3Y+hfrFPR4A8pH3KLr
- qRWrDjxCrCJAjMEAAEIAB0WIQRDXuCbsK8A0B2q9jj+/lBaCvVYDQUCZ6uq9gAKCRD+/lBaCvVY
- DZh3D/4l1pDvAfKmIk7/pSKwwZWYyq//39IbbNPtbdA4C9xFF0xX2BemF0eboTU/Oxu0rDo35wJ
- kwewSoizjtiZ05RUcNCrMseffi8gJn2LKfJxWPKasSfILP2WZ8OE16f5J/QUOHNW/HQJ8SCaH7B
- AZblR3lj/vG9Udc33jhKcElKYvDQh2D9E7yM0khFQDoJ6u+ltnslAIqRqwNC67TegydqV6zi0TC
- ET/OPGZ2WafXFsiYEVHZK2xeV71mNdJjetKXXniZcEIZe2aQeot2L466D00RdbLUl5LBUhGuVmF
- 4GaCjUJVOpxRZqaLXUJxp++UKghvAh7AL20DG1RC+UsqHXRvi2Rji8JPH2244jYysdzbrshCXc/
- KK/ebqG2Cu3dAFStQTvXEx88z2zhTKn5VNkv8ed2tWj4sA1jgXo9subxoIBx7WqNTe+OrG7DQB1
- ed5DzNfS9cp8xPN1r+qP1M4wbvgJe9Vp+cBgsAa6MTVGLOsSbu7NN2ydnRoKLzzpGDSfoBraV/f
- UhW+55q39Fi+1oxg0jkY2T5DNHnswFE7cPVi4Myf8HjrcJFFZhcxaYK1yRKzc+EEwtCIBgTp2W3
- BcsUbIx8Qsu1SHAY0H90vDN83Aq09Sl5KXKoZeI1sqW2sGkFC7jRVCl0eJ3mgAywvSyvINvHYv6
- eswFtJqRXmShJbA==
-X-Developer-Key: i=alyssa@rosenzweig.io; a=openpgp;
- fpr=435EE09BB0AF00D01DAAF638FEFE505A0AF5580D
-X-Migadu-Flow: FLOW_OUT
 
-From: Hector Martin <marcan@marcan.st>
+On Sat, 8 Feb 2025 16:22:09 +0000
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-This version of the hardware moved around a bunch of registers, so we
-drop the old compatible for these and introduce register offset
-structures to handle the differences.
+> On Fri, 7 Feb 2025 16:09:15 +0200
+> Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+> 
+> > Add support for selecting the data format within the AXI ADC ip.
+> > 
+> > Add separate complatible string for the custom AD485X IP and implement
+> > the necessary changes.
+> > 
+> > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> > ---
+> > changes in v12:
+> >  - add separate compatible for ad485x AXI IP core.
+> >  drivers/iio/adc/adi-axi-adc.c | 99 +++++++++++++++++++++++++++++++----
+> >  1 file changed, 90 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
+> > index d2e1dc63775c..272d82c6e887 100644
+> > --- a/drivers/iio/adc/adi-axi-adc.c
+> > +++ b/drivers/iio/adc/adi-axi-adc.c
+> > @@ -45,6 +45,12 @@
+> >  #define ADI_AXI_ADC_REG_CTRL			0x0044
+> >  #define    ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
+> >  
+> > +#define ADI_AXI_ADC_REG_CNTRL_3			0x004c
+> > +#define   AD485X_CNTRL_3_PACKET_FORMAT_MSK	GENMASK(1, 0)  
+> Sorry I missed this until now, but normal IIO thing is no wild cards
+> in naming (been bitten too often!)
+> 
+> So I'd like to see these named after a specific part.
+Having realized this is named after the IP naming (which
+indeed uses the wild card), maybe we could
+prefix with AXI_ perhaps to make that association more obvious?
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
----
- drivers/pci/controller/pcie-apple.c | 125 ++++++++++++++++++++++++++++++------
- 1 file changed, 105 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-index 7f4839fb0a5b15a9ca87337f53c14a1ce08301fc..7c598334427cb56ca066890ac61143ae1d3ed744 100644
---- a/drivers/pci/controller/pcie-apple.c
-+++ b/drivers/pci/controller/pcie-apple.c
-@@ -26,6 +26,7 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/msi.h>
-+#include <linux/of_device.h>
- #include <linux/of_irq.h>
- #include <linux/pci-ecam.h>
- 
-@@ -104,7 +105,7 @@
- #define   PORT_REFCLK_CGDIS		BIT(8)
- #define PORT_PERST			0x00814
- #define   PORT_PERST_OFF		BIT(0)
--#define PORT_RID2SID(i16)		(0x00828 + 4 * (i16))
-+#define PORT_RID2SID			0x00828
- #define   PORT_RID2SID_VALID		BIT(31)
- #define   PORT_RID2SID_SID_SHIFT	16
- #define   PORT_RID2SID_BUS_SHIFT	8
-@@ -122,7 +123,7 @@
- #define   PORT_TUNSTAT_PERST_ACK_PEND	BIT(1)
- #define PORT_PREFMEM_ENABLE		0x00994
- 
--#define MAX_RID2SID			64
-+#define MAX_RID2SID			512
- 
- /*
-  * The doorbell address is set to 0xfffff000, which by convention
-@@ -133,6 +134,57 @@
-  */
- #define DOORBELL_ADDR		CONFIG_PCIE_APPLE_MSI_DOORBELL_ADDR
- 
-+struct reg_info {
-+	u32 phy_lane_ctl;
-+	u32 port_msiaddr;
-+	u32 port_msiaddr_hi;
-+	u32 port_refclk;
-+	u32 port_perst;
-+	u32 port_rid2sid;
-+	u32 port_msimap;
-+	u32 max_rid2sid;
-+	u32 max_msimap;
-+};
-+
-+const struct reg_info t8103_hw = {
-+	.phy_lane_ctl = PHY_LANE_CTL,
-+	.port_msiaddr = PORT_MSIADDR,
-+	.port_msiaddr_hi = 0,
-+	.port_refclk = PORT_REFCLK,
-+	.port_perst = PORT_PERST,
-+	.port_rid2sid = PORT_RID2SID,
-+	.port_msimap = 0,
-+	.max_rid2sid = 64,
-+	.max_msimap = 0,
-+};
-+
-+#define PORT_T602X_MSIADDR		0x016c
-+#define PORT_T602X_MSIADDR_HI		0x0170
-+#define PORT_T602X_PERST		0x082c
-+#define PORT_T602X_RID2SID		0x3000
-+#define PORT_T602X_MSIMAP		0x3800
-+
-+#define PORT_MSIMAP_ENABLE		BIT(31)
-+#define PORT_MSIMAP_TARGET		GENMASK(7, 0)
-+
-+const struct reg_info t602x_hw = {
-+	.phy_lane_ctl = 0,
-+	.port_msiaddr = PORT_T602X_MSIADDR,
-+	.port_msiaddr_hi = PORT_T602X_MSIADDR_HI,
-+	.port_refclk = 0,
-+	.port_perst = PORT_T602X_PERST,
-+	.port_rid2sid = PORT_T602X_RID2SID,
-+	.port_msimap = PORT_T602X_MSIMAP,
-+	.max_rid2sid = 512, /* 16 on t602x, guess for autodetect on future HW */
-+	.max_msimap = 512, /* 96 on t602x, guess for autodetect on future HW */
-+};
-+
-+static const struct of_device_id apple_pcie_of_match_hw[] = {
-+	{ .compatible = "apple,t6020-pcie", .data = &t602x_hw },
-+	{ .compatible = "apple,pcie", .data = &t8103_hw },
-+	{ }
-+};
-+
- struct apple_pcie {
- 	struct mutex		lock;
- 	struct device		*dev;
-@@ -143,6 +195,7 @@ struct apple_pcie {
- 	struct completion	event;
- 	struct irq_fwspec	fwspec;
- 	u32			nvecs;
-+	const struct reg_info	*hw;
- };
- 
- struct apple_pcie_port {
-@@ -266,14 +319,14 @@ static void apple_port_irq_mask(struct irq_data *data)
- {
- 	struct apple_pcie_port *port = irq_data_get_irq_chip_data(data);
- 
--	writel_relaxed(BIT(data->hwirq), port->base + PORT_INTMSKSET);
-+	rmw_set(BIT(data->hwirq), port->base + PORT_INTMSK);
- }
- 
- static void apple_port_irq_unmask(struct irq_data *data)
- {
- 	struct apple_pcie_port *port = irq_data_get_irq_chip_data(data);
- 
--	writel_relaxed(BIT(data->hwirq), port->base + PORT_INTMSKCLR);
-+	rmw_clear(BIT(data->hwirq), port->base + PORT_INTMSK);
- }
- 
- static bool hwirq_is_intx(unsigned int hwirq)
-@@ -377,6 +430,7 @@ static void apple_port_irq_handler(struct irq_desc *desc)
- static int apple_pcie_port_setup_irq(struct apple_pcie_port *port)
- {
- 	struct fwnode_handle *fwnode = &port->np->fwnode;
-+	struct apple_pcie *pcie = port->pcie;
- 	unsigned int irq;
- 
- 	/* FIXME: consider moving each interrupt under each port */
-@@ -392,19 +446,35 @@ static int apple_pcie_port_setup_irq(struct apple_pcie_port *port)
- 		return -ENOMEM;
- 
- 	/* Disable all interrupts */
--	writel_relaxed(~0, port->base + PORT_INTMSKSET);
-+	writel_relaxed(~0, port->base + PORT_INTMSK);
- 	writel_relaxed(~0, port->base + PORT_INTSTAT);
-+	writel_relaxed(~0, port->base + PORT_LINKCMDSTS);
- 
- 	irq_set_chained_handler_and_data(irq, apple_port_irq_handler, port);
- 
- 	/* Configure MSI base address */
- 	BUILD_BUG_ON(upper_32_bits(DOORBELL_ADDR));
--	writel_relaxed(lower_32_bits(DOORBELL_ADDR), port->base + PORT_MSIADDR);
-+	writel_relaxed(lower_32_bits(DOORBELL_ADDR),
-+		       port->base + pcie->hw->port_msiaddr);
-+	if (pcie->hw->port_msiaddr_hi)
-+		writel_relaxed(0, port->base + pcie->hw->port_msiaddr_hi);
- 
- 	/* Enable MSIs, shared between all ports */
--	writel_relaxed(0, port->base + PORT_MSIBASE);
--	writel_relaxed((ilog2(port->pcie->nvecs) << PORT_MSICFG_L2MSINUM_SHIFT) |
--		       PORT_MSICFG_EN, port->base + PORT_MSICFG);
-+	if (pcie->hw->port_msimap) {
-+		int i;
-+
-+		for (i = 0; i < pcie->nvecs; i++) {
-+			writel_relaxed(FIELD_PREP(PORT_MSIMAP_TARGET, i) |
-+				       PORT_MSIMAP_ENABLE,
-+				       port->base + pcie->hw->port_msimap + 4 * i);
-+		}
-+
-+		writel_relaxed(PORT_MSICFG_EN, port->base + PORT_MSICFG);
-+	} else {
-+		writel_relaxed(0, port->base + PORT_MSIBASE);
-+		writel_relaxed((ilog2(pcie->nvecs) << PORT_MSICFG_L2MSINUM_SHIFT) |
-+			PORT_MSICFG_EN, port->base + PORT_MSICFG);
-+	}
- 
- 	return 0;
- }
-@@ -472,7 +542,9 @@ static int apple_pcie_setup_refclk(struct apple_pcie *pcie,
- 	u32 stat;
- 	int res;
- 
--	rmw_set(PHY_LANE_CTL_CFGACC, port->phy + PHY_LANE_CTL);
-+	if (pcie->hw->phy_lane_ctl)
-+		rmw_set(PHY_LANE_CTL_CFGACC, port->phy + pcie->hw->phy_lane_ctl);
-+
- 	rmw_set(PHY_LANE_CFG_REFCLK0REQ, port->phy + PHY_LANE_CFG);
- 
- 	res = readl_relaxed_poll_timeout(port->phy + PHY_LANE_CFG,
-@@ -489,10 +561,13 @@ static int apple_pcie_setup_refclk(struct apple_pcie *pcie,
- 	if (res < 0)
- 		return res;
- 
--	rmw_clear(PHY_LANE_CTL_CFGACC, port->phy + PHY_LANE_CTL);
-+	if (pcie->hw->phy_lane_ctl)
-+		rmw_clear(PHY_LANE_CTL_CFGACC, port->phy + pcie->hw->phy_lane_ctl);
- 
- 	rmw_set(PHY_LANE_CFG_REFCLKEN, port->phy + PHY_LANE_CFG);
--	rmw_set(PORT_REFCLK_EN, port->base + PORT_REFCLK);
-+
-+	if (pcie->hw->port_refclk)
-+		rmw_set(PORT_REFCLK_EN, port->base + pcie->hw->port_refclk);
- 
- 	return 0;
- }
-@@ -500,9 +575,9 @@ static int apple_pcie_setup_refclk(struct apple_pcie *pcie,
- static u32 apple_pcie_rid2sid_write(struct apple_pcie_port *port,
- 				    int idx, u32 val)
- {
--	writel_relaxed(val, port->base + PORT_RID2SID(idx));
-+	writel_relaxed(val, port->base + port->pcie->hw->port_rid2sid + 4 * idx);
- 	/* Read back to ensure completion of the write */
--	return readl_relaxed(port->base + PORT_RID2SID(idx));
-+	return readl_relaxed(port->base + port->pcie->hw->port_rid2sid + 4 * idx);
- }
- 
- static int apple_pcie_setup_port(struct apple_pcie *pcie,
-@@ -563,7 +638,7 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
- 	usleep_range(100, 200);
- 
- 	/* Deassert PERST# */
--	rmw_set(PORT_PERST_OFF, port->base + PORT_PERST);
-+	rmw_set(PORT_PERST_OFF, port->base + pcie->hw->port_perst);
- 	gpiod_set_value_cansleep(reset, 0);
- 
- 	/* Wait for 100ms after PERST# deassertion (PCIe r5.0, 6.6.1) */
-@@ -576,15 +651,12 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
- 		return ret;
- 	}
- 
--	rmw_clear(PORT_REFCLK_CGDIS, port->base + PORT_REFCLK);
--	rmw_clear(PORT_APPCLK_CGDIS, port->base + PORT_APPCLK);
--
- 	ret = apple_pcie_port_setup_irq(port);
- 	if (ret)
- 		return ret;
- 
- 	/* Reset all RID/SID mappings, and check for RAZ/WI registers */
--	for (i = 0; i < MAX_RID2SID; i++) {
-+	for (i = 0; i < pcie->hw->max_rid2sid; i++) {
- 		if (apple_pcie_rid2sid_write(port, i, 0xbad1d) != 0xbad1d)
- 			break;
- 		apple_pcie_rid2sid_write(port, i, 0);
-@@ -608,6 +680,12 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
- 	if (!wait_for_completion_timeout(&pcie->event, HZ / 10))
- 		dev_warn(pcie->dev, "%pOF link didn't come up\n", np);
- 
-+	if (pcie->hw->port_refclk)
-+		rmw_clear(PORT_REFCLK_CGDIS, port->base + PORT_REFCLK);
-+	else
-+		rmw_set(PHY_LANE_CFG_REFCLKCGEN, port->phy + PHY_LANE_CFG);
-+	rmw_clear(PORT_APPCLK_CGDIS, port->base + PORT_APPCLK);
-+
- 	return 0;
- }
- 
-@@ -732,7 +810,7 @@ static void apple_pcie_disable_device(struct pci_host_bridge *bridge, struct pci
- 	for_each_set_bit(idx, port->sid_map, port->sid_map_sz) {
- 		u32 val;
- 
--		val = readl_relaxed(port->base + PORT_RID2SID(idx));
-+		val = readl_relaxed(port->base + port->pcie->hw->port_rid2sid + 4 * idx);
- 		if ((val & 0xffff) == rid) {
- 			apple_pcie_rid2sid_write(port, idx, 0);
- 			bitmap_release_region(port->sid_map, idx, 0);
-@@ -750,13 +828,19 @@ static int apple_pcie_init(struct pci_config_window *cfg)
- 	struct platform_device *platform = to_platform_device(dev);
- 	struct device_node *of_port;
- 	struct apple_pcie *pcie;
-+	const struct of_device_id *match;
- 	int ret;
- 
-+	match = of_match_device(apple_pcie_of_match_hw, dev);
-+	if (!match)
-+		return -ENODEV;
-+
- 	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
- 	if (!pcie)
- 		return -ENOMEM;
- 
- 	pcie->dev = dev;
-+	pcie->hw = match->data;
- 
- 	mutex_init(&pcie->lock);
- 
-@@ -795,6 +879,7 @@ static const struct pci_ecam_ops apple_pcie_cfg_ecam_ops = {
- };
- 
- static const struct of_device_id apple_pcie_of_match[] = {
-+	{ .compatible = "apple,t6020-pcie", .data = &apple_pcie_cfg_ecam_ops },
- 	{ .compatible = "apple,pcie", .data = &apple_pcie_cfg_ecam_ops },
- 	{ }
- };
-
--- 
-2.48.1
+> 
+> 
+> 
+> 
 
 
