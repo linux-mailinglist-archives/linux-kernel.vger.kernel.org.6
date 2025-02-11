@@ -1,144 +1,147 @@
-Return-Path: <linux-kernel+bounces-510203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD86A319AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:46:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D368CA319B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3476D3A4056
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:46:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 056451636E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5274726A0BA;
-	Tue, 11 Feb 2025 23:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBBC268FE8;
+	Tue, 11 Feb 2025 23:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lAAyuezH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Ue5/nvR/"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AF926A0B6;
-	Tue, 11 Feb 2025 23:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D5B1F2367;
+	Tue, 11 Feb 2025 23:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739317588; cv=none; b=ouvkiVktbb93DrYwXfmiMiBww7ACPgBX+DnJBRAHDRF9aCHoSBEIREbL3B8VE629FCLcXdtqNnx32exI8HS2yE+NRn3wXagSdyMscLDxEL3Spxhmf0lI8+FNgpJ49eIRZAA6lrkn1n37k9uBuai5hybkoaiUOilDCoyLyIPBSlE=
+	t=1739317621; cv=none; b=BC2SB5F9DUwisWnpIxGUXn1AL56piEcHlrqe7b5SJDa0/yKL+GubvCVw699oR9dqBRyVRr8TELWBJePoAFa4PDvpWOWGxj7FZfA5KgYOE0EEqxZKprahE/pfzfENo7ff/ZatR+/gT/BY3Gu4PnwFmkufSFUYkRAtHQn8UDWJvAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739317588; c=relaxed/simple;
-	bh=mw9JLw4ZEZaMNoKEjCknWRqFUBQm0z0Z6HmoZlXeNuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tCX7NKXzn/DJAaB+SWoVoXI+0BJh/0QSk24szfOPsi4Y63WKIQR6s02rL3VDQ7CuGgC/d/+oNMUrqbRR5ZDd93O6aO/a8YjW4EFTQbuZvLTaQxu/cfLlAMEkPNM/2REcdcklhmbYEamq0G10t2TM2Icn/E0jxf7qL2eTYYUw04w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lAAyuezH; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739317587; x=1770853587;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mw9JLw4ZEZaMNoKEjCknWRqFUBQm0z0Z6HmoZlXeNuA=;
-  b=lAAyuezHo42amc8T3D17Xh7tWJLTNUnCQn5COstqwO5PKx3HDLnThRkc
-   51uhYqdx+A2/HmEKjQM9vXleVeqwiqhMbQ+bqc+QfQnzgnechIOsHnJaI
-   mrXdReCEF6EWKLVOKcb4aFan46P7sNrjs6lRh2ixkZGd4awJmlWmKwwkK
-   JMz0Ghp33d8gNvyJO83LXZxxvII9jfhgEX1ubr1fXsiL+m1l7iPDpT/oo
-   +IdDlq9GhaEV7QVIQM8OMHCLWXuHEbQxi47eCVlo5kDf/2y6hwTsHpGs+
-   S11aaRbBIM/wpt0s6fVIcgNaDw+sEsubOuMLn5CXzgIRR33VAnGxj+YjM
-   w==;
-X-CSE-ConnectionGUID: 3PQaQUeFQ0O5m/g4vmoRbA==
-X-CSE-MsgGUID: sSFH850SSBGC86HIr4D4XA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39195102"
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="39195102"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 15:46:26 -0800
-X-CSE-ConnectionGUID: pP/2sIh3QaGxaXN9TBK77g==
-X-CSE-MsgGUID: Pfg91G0JSM6Hnk6jc63knA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117829532"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.48]) ([10.125.108.48])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 15:46:25 -0800
-Message-ID: <c07fa2b7-d453-4a9d-b1fc-e3e96514a8d3@intel.com>
-Date: Tue, 11 Feb 2025 15:46:23 -0800
+	s=arc-20240116; t=1739317621; c=relaxed/simple;
+	bh=Ga0huOWxWjUQlMAL8oU5F00smsqeGn0hTk19j6Epg70=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l4dxGteMFbwpDRs/FtWsJQDsAh4zkMslUCjw0YW0f55Djne+2TN7I7ltG+GvXh8J+HQudAEjLyEwVciyp47zZnyh9QojBc4J8Hg7BYmdOcCNAg8CzEa/AZ5w/e5xrZUtnoiZm5ithU9T5rqcnz1RRzRuqf72+ryxLPKyaivciGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Ue5/nvR/; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51BI3PIr028462;
+	Tue, 11 Feb 2025 18:46:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=CBghFaVWFqOKBz5j1EtpZjKD6/Y
+	EwAO5k1qmX5x/kMI=; b=Ue5/nvR/2Rqm5Qj6msv63qp2+9NACrwNrSVct9V+j+W
+	nvlnMHjOFleDO7noI3l+Wwak86P25SngYDNwy6YfCkxF/vbsWrE6luJlygHT7AcD
+	WGX4IjkeohIyqZDZNpYK/CG8kcKluig4DTZpa8gBwUjDdgez882xjZXggrXBXg+2
+	3U1Lb86V2P4J6F+rGvSVsupdeI+vl7WVuojEoCticxSKw0zTHCjrKHU8IxwVNbSY
+	voN2931B1OuWW77emBm1Wq+zOXiKbQWskcbNnokWpCtfFbN4z4pzucJR3pYcaOoC
+	f7n1Lm1rRswka62o8DqkdUDJ2AfCHZZoj7aKy3O1T8A==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 44p209yskg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Feb 2025 18:46:45 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 51BNkiHp016965
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Feb 2025 18:46:44 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 11 Feb
+ 2025 18:46:44 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 11 Feb 2025 18:46:44 -0500
+Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51BNkXAl009863;
+	Tue, 11 Feb 2025 18:46:35 -0500
+From: Jonathan Santos <Jonathan.Santos@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
+        <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
+        <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <jonath4nns@gmail.com>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v3 02/17] iio: adc: ad7768-1: set MOSI idle state to prevent accidental reset
+Date: Tue, 11 Feb 2025 20:46:30 -0300
+Message-ID: <20250211234630.1007989-1-Jonathan.Santos@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/2] x86/tdx: Route safe halt execution via
- tdx_safe_halt()
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Vishal Annapurve <vannapurve@google.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com,
- seanjc@google.com, erdemaktas@google.com, ackerleytng@google.com,
- jxgao@google.com, sagis@google.com, oupton@google.com, pgonda@google.com,
- kirill@shutemov.name, dave.hansen@linux.intel.com,
- linux-coco@lists.linux.dev, chao.p.peng@linux.intel.com,
- isaku.yamahata@gmail.com, stable@vger.kernel.org
-References: <20250206222714.1079059-1-vannapurve@google.com>
- <wra363f7ye6mwv2papahmpgmybi45yqyzeohunbqju3zsf22td@zcutpjluiury>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <wra363f7ye6mwv2papahmpgmybi45yqyzeohunbqju3zsf22td@zcutpjluiury>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: MDcFvKKOP3YI3htj5VmP1Q1yAF9Cbep3
+X-Proofpoint-GUID: MDcFvKKOP3YI3htj5VmP1Q1yAF9Cbep3
+X-Authority-Analysis: v=2.4 cv=VPInn8PX c=1 sm=1 tr=0 ts=67abe165 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=T2h4t0Lz3GQA:10 a=gAnH3GRIAAAA:8 a=x-s49S57KS4xq0-Af7kA:9 a=oVHKYsEdi7-vN-J5QA_j:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-11_10,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 malwarescore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1015 mlxlogscore=916 phishscore=0 adultscore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502110158
 
-On 2/11/25 00:32, Kirill A. Shutemov wrote:
->> If CONFIG_PARAVIRT_XXL is disabled, "sti;hlt" sequences can still get
->> executed from TDX VMs via paths like:
->>         acpi_safe_halt() =>
->>         raw_safe_halt()  =>
->>         arch_safe_halt() =>
->> 	native_safe_halt()
->> There is a long term plan to fix these paths by carving out
->> irq.safe_halt() outside paravirt framework.
-> I don't think it is acceptable to keep !PARAVIRT_XXL (read no-Xen) config
-> broken.
+Datasheet recommends Setting the MOSI idle state to high in order to
+prevent accidental reset of the device when SCLK is free running.
+This happens when the controller clocks out a 1 followed by 63 zeros
+while the CS is held low.
 
-Oh, I thought it took PARAVIRT_XXL=y to even trigger this issue. Was I
-just confused?
+Check if SPI controller supports SPI_MOSI_IDLE_HIGH flag and set it.
+
+Fixes: a5f8c7da3dbe ("iio: adc: Add AD7768-1 ADC basic support")
+Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+---
+v3 Changes:
+* Patch moved closer to start of the patch set.
+
+v2 Changes:
+* Only setup SPI_MOSI_IDLE_HIGH flag if the controller supports it, otherwise the driver
+  continues the same. I realized that using bits_per_word does not avoid the problem that
+  MOSI idle state is trying to solve. If the controller drives the MOSI low between bytes
+  during a transfer, nothing happens.
+---
+ drivers/iio/adc/ad7768-1.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+index c3cf04311c40..2e2d50ccb744 100644
+--- a/drivers/iio/adc/ad7768-1.c
++++ b/drivers/iio/adc/ad7768-1.c
+@@ -574,6 +574,21 @@ static int ad7768_probe(struct spi_device *spi)
+ 		return -ENOMEM;
+ 
+ 	st = iio_priv(indio_dev);
++	/*
++	 * Datasheet recommends SDI line to be kept high when data is not being
++	 * clocked out of the controller and the spi clock is free running,
++	 * to prevent accidental reset.
++	 * Since many controllers do not support the SPI_MOSI_IDLE_HIGH flag
++	 * yet, only request the MOSI idle state to enable if the controller
++	 * supports it.
++	 */
++	if (spi->controller->mode_bits & SPI_MOSI_IDLE_HIGH) {
++		spi->mode |= SPI_MOSI_IDLE_HIGH;
++		ret = spi_setup(spi);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	st->spi = spi;
+ 
+ 	st->vref = devm_regulator_get(&spi->dev, "vref");
+-- 
+2.34.1
+
 
