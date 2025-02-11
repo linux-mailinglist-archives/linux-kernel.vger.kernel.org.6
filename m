@@ -1,141 +1,131 @@
-Return-Path: <linux-kernel+bounces-510317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E344A31B15
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:13:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1CCA31639
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A623A51E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:13:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D530E1613FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A46A4AEE2;
-	Wed, 12 Feb 2025 01:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99CC1EC00D;
+	Tue, 11 Feb 2025 19:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="byMPGyNh"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="JbJdRzQ+"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E80288B1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EB7265601;
+	Tue, 11 Feb 2025 19:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739322788; cv=none; b=Pb6MIR7eJbkWqoaZP/h9dLvzG44iI4KBKrQQWwAHPnNHa6NjmX/Z6tQqGeKLL61yhsc5fFVVTjfC7y34C5XY1kOY7oMohO9Hd/IuAPwmJA6Mm+44qipX+6cwibbpGFLL9FuzWIEQ9mhhF/ssn+uCovbYrpC0T9fMQn1aY16yM84=
+	t=1739303935; cv=none; b=RDaB6buaheSFC309z+MUVOFlxli6P/6wRtJpvsAoQaWbGxpzKGmHChjCYlBiZRhbHEgwsAhdKgyMy7PAO1wqG12t2ALKCOhjsTwvx6vU6aFYqochsgyHOgc0zbBmsEanSRN1NFqtbkzIiX440my8KyTpg8ICszozcwlr21ofj0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739322788; c=relaxed/simple;
-	bh=btuuGAHN0yAwnIydrz9luogYPZ/niqFXv+Dh58AVsiA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=TGV/uOe/PjF4nn6t26IU7T8ouGRYz5tfjeaT0q7bOitVT9f89ejASnC20FNNIL0bZ0L8Ky5OAsmHecjNCzDH9xquN/JlEdlvKWvAI4S1nQU0vDiBqunVi3pvQ4B17dNnVAEOxysDvz1P97d2BlPXUpEre2w2dlK3KlKC3Ik0Z+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=byMPGyNh; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250212011304epoutp031672e23927f5627793e38e79818bfd1f~jUNtYxepn1649716497epoutp03x
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:13:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250212011304epoutp031672e23927f5627793e38e79818bfd1f~jUNtYxepn1649716497epoutp03x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1739322784;
-	bh=xYvadG4L9+uv4OCgstcXZU5FpbGiAZUr3Y8c/BN7ytA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=byMPGyNh2g+Cv8tnKEER8fPkRnxbdNl7c16baLwhfkAiJgRFI3noaEOm+Tbk+HmI6
-	 szW6I84yClcHb0LGHaXkNh6aXFbZDVvcGNtLiJZ86oPgsLR90M3Gz9MHt20Xc8Onqz
-	 pU3RtvqPQcPRMOHB4XsPQLGZxxsXX6SahpQFEVZg=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20250212011303epcas5p2e7202c409a581852a46b063cdd8d32c8~jUNse5J9e0370603706epcas5p2Q;
-	Wed, 12 Feb 2025 01:13:03 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Yt0g30jQHz4x9QF; Wed, 12 Feb
-	2025 01:13:03 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250211115716epcas5p348e4f836ebc02cd4d0e6a2d0630da0f1~jJW5Sttkv2636626366epcas5p3z;
-	Tue, 11 Feb 2025 11:57:16 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250211115716epsmtrp17322dc316189a68f4a05a1b50d65bcb4~jJW5NfdMe1464414644epsmtrp19;
-	Tue, 11 Feb 2025 11:57:16 +0000 (GMT)
-X-AuditID: b6c32a52-1f7ff700000083ab-4a-67ab3b1c3df9
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1A.85.33707.C1B3BA76; Tue, 11 Feb 2025 20:57:16 +0900 (KST)
-Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250211115713epsmtip1f278a783743b2af22e21a8640d655df4~jJW2cjSbX1898518985epsmtip1L;
-	Tue, 11 Feb 2025 11:57:13 +0000 (GMT)
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-	WeitaoWang-oc@zhaoxin.com, Thinh.Nguyen@synopsys.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
-	akash.m5@samsung.com, h10.kim@samsung.com, eomji.oh@samsung.com,
-	alim.akhtar@samsung.com, thiagu.r@samsung.com, muhammed.ali@samsung.com,
-	pritam.sutar@samsung.com, cpgs@samsung.com, Selvarasu Ganesan
-	<selvarasu.g@samsung.com>, stable@vger.kernel.org
-Subject: [PATCH 2/2] usb: xhci: Fix unassigned variable 'bcdUSB' in
- xhci_create_usb3x_bos_desc()
-Date: Tue, 11 Feb 2025 17:26:30 +0530
-Message-ID: <1931444790.41739322783086.JavaMail.epsvc@epcpadp2new>
-X-Mailer: git-send-email 2.46.0.windows.1
-In-Reply-To: <20250211115635.757-1-selvarasu.g@samsung.com>
+	s=arc-20240116; t=1739303935; c=relaxed/simple;
+	bh=dXrQKTowhcH6aYf16tasRNrt4H28GYsSCzuKO49/K4A=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BLSbU2ese2KAtbgqK9lAHDA2qJkzCxWqx6JY6GcPRXe1t8dyrIGha9YtU4vVj3B5Zm5R59DiPdguN6uPxuU/b9muze3YD39PMPUauNUugVvHbtWKHr8+axRhHWfrcOrxVk7srQnCky4uLg6G/S/e2tFVJPmIqJ18uJVhFXDEbf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=JbJdRzQ+; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51BJAG2R002756;
+	Tue, 11 Feb 2025 14:58:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=tWWyMB1CD2IcO9XjxWYtDk7+nQm
+	rfd/CSOL888tfyBc=; b=JbJdRzQ+/aNBRIdFZ2ofQRX4wKvIgYpSF3GMrc6oePZ
+	RTm2DBmCFImchT3I08WZa2ztXnJG2CcypVqeEcxaLzZLc2SSd/aZvICwI4YyME7G
+	5A5q23kpz3V3vF4zIav9EFc5jr5Q9zhP/QXhdEAtPKs5K3QPKEwV+ygELspRYwGJ
+	WqfVuVqqDyaUPgO/Xbdzkws6KTnthTcpIUvwLweJ6NsFMtLmr3RHeCirEt8HOmiF
+	I1SuOvQrtkoOHAdUc8+r3II0Ep7cgP36lN9kOBN7WtNSzaGPvAhY7FbOPmEOfYHj
+	IHFMUjffmIbpodZQ3759GIp8zea9Ol+MY7wclMu12kw==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 44r857hd0a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Feb 2025 14:58:27 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 51BJwQ2D048362
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Feb 2025 14:58:26 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 11 Feb
+ 2025 14:58:26 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 11 Feb 2025 14:58:26 -0500
+Received: from desktop-robi.ad.analog.com ([10.48.65.85])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51BJwFR9031076;
+	Tue, 11 Feb 2025 14:58:17 -0500
+From: Robert Budai <robert.budai@analog.com>
+To: Nuno Sa <nuno.sa@analog.com>,
+        Ramona Gradinariu
+	<ramona.gradinariu@analog.com>,
+        Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        Robert Budai <robert.budai@analog.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron
+	<jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+Subject: [PATCH v7 0/6] Add support for ADIS16550
+Date: Tue, 11 Feb 2025 19:56:57 +0200
+Message-ID: <20250211175706.276987-1-robert.budai@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42LZdlhJTlfGenW6wedfWhZvrq5itXgwbxub
-	xctDmhZ3Fkxjsji1fCGTRfPi9WwWf29fZLW4+/AHi8XlXXPYLBYta2W2aN40hdXi/IsuVotP
-	R/+zWjy7t4LN4sjyj0wWCzY+YrRY0QxUsmrBAXaLRz/nMjkIeyze85LJY//cNewefVtWMXps
-	2f+Z0ePzJjmPX7dusQSwRXHZpKTmZJalFunbJXBlXL/+mLWgib3ix82VTA2MH1i7GDk5JARM
-	JH4c6QOyuTiEBLYzSrTcmssOkZCWeD2rixHCFpZY+e85O0TRV0aJd09fACU4ONgEDCWenbAB
-	iYsIbGCUuHpmNtgkZoFbTBIH/35gBukWFkiQaDrwHWwqi4CqxJW7a9lBmnkFrCQOT/CGWKAp
-	sXbvHiYQm1PAWuLlyfdgi4WASiaf3ArWyisgKHFy5hMWEJtZQF6ieets5gmMArOQpGYhSS1g
-	ZFrFKJpaUJybnptcYKhXnJhbXJqXrpecn7uJERxPWkE7GJet/6t3iJGJg/EQowQHs5IIr8nC
-	FelCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZVzOlOEBNITS1KzU1MLUotgskwcnFINTMFnghTV
-	Ja5N4Bd1ZnnWms2mOKW0+fmVsKT1r4+Frc1dmmrtWOM+6eS9A2dE2ZilVwu8Z8j1/Pn2rOmd
-	JCflGRJNLhe5Xmdxne10Obg4uP29bX3ESpE6liuWZqYXEm26/dSkHbd0TqhY/L8kJ2D39X9l
-	qxeel2faHScqt4iPp6LxJos/5wb272b2Oy/vztXtnHwlXXOTUseslOp8m/PvdPbxeV9S2Nb4
-	wPL6m70Lm2qUDUI09ZpsjP++uX2ikyezLfjopdd7pk2ZYu7NE+vs/kTlZrfXvvmnv60v1vFr
-	+jenW/nzus3nLm+cxPjOxPhlsXSDcYzTG+1Sn825viyvU6XCM27+f8K2alFZ+uYIJZbijERD
-	Leai4kQAbuOPnRYDAAA=
-X-CMS-MailID: 20250211115716epcas5p348e4f836ebc02cd4d0e6a2d0630da0f1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250211115716epcas5p348e4f836ebc02cd4d0e6a2d0630da0f1
-References: <20250211115635.757-1-selvarasu.g@samsung.com>
-	<CGME20250211115716epcas5p348e4f836ebc02cd4d0e6a2d0630da0f1@epcas5p3.samsung.com>
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: sCDfWyAc1bk1s3CE3GIFn4oVyrd_G9BR
+X-Proofpoint-ORIG-GUID: sCDfWyAc1bk1s3CE3GIFn4oVyrd_G9BR
+X-Authority-Analysis: v=2.4 cv=U5VoDfru c=1 sm=1 tr=0 ts=67ababe3 cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=f1vxr5TaGUlwJKkhg4gA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-11_08,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 phishscore=0 adultscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502110129
 
-Fix the following smatch error:
-drivers/usb/host/xhci-hub.c:71 xhci_create_usb3x_bos_desc() error: unassigned variable 'bcdUSB'
+*** BLURB HERE ***
 
-Fixes: eb02aaf21f29 ("usb: xhci: Rewrite xhci_create_usb3_bos_desc()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
----
- drivers/usb/host/xhci-hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Robert Budai (6):
+  iio: imu: adis: Add custom ops struct
+  iio: imu: adis: Add reset to custom ops
+  iio: imu: adis: Add DIAG_STAT register
+  dt-bindings: iio: Add adis16550 bindings
+  iio: imu: adis16550: add adis16550 support
+  docs: iio: add documentation for adis16550 driver
 
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 9693464c0520..5715a8bdda7f 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -39,7 +39,7 @@ static int xhci_create_usb3x_bos_desc(struct xhci_hcd *xhci, char *buf,
- 	struct usb_ss_cap_descriptor	*ss_cap;
- 	struct usb_ssp_cap_descriptor	*ssp_cap;
- 	struct xhci_port_cap		*port_cap = NULL;
--	u16				bcdUSB;
-+	u16				bcdUSB = 0;
- 	u32				reg;
- 	u32				min_rate = 0;
- 	u8				min_ssid;
+ .../bindings/iio/imu/adi,adis16550.yaml       |   73 ++
+ Documentation/iio/adis16550.rst               |  376 ++++++
+ Documentation/iio/index.rst                   |    1 +
+ MAINTAINERS                                   |   10 +
+ drivers/iio/imu/Kconfig                       |   13 +
+ drivers/iio/imu/Makefile                      |    1 +
+ drivers/iio/imu/adis.c                        |   36 +-
+ drivers/iio/imu/adis16550.c                   | 1151 +++++++++++++++++
+ include/linux/iio/imu/adis.h                  |   34 +-
+ 9 files changed, 1682 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+ create mode 100644 Documentation/iio/adis16550.rst
+ create mode 100644 drivers/iio/imu/adis16550.c
+
 -- 
-2.17.1
-
+2.34.1
 
 
