@@ -1,523 +1,462 @@
-Return-Path: <linux-kernel+bounces-509938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13FAA3164F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:00:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528B4A3150F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:25:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72BF516137B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:00:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5B6A1884FBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0F7262D33;
-	Tue, 11 Feb 2025 19:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723C7265CA5;
+	Tue, 11 Feb 2025 19:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="t/FVPQsE"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XIqdg6Et"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012010.outbound.protection.outlook.com [52.101.71.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B2C262179;
-	Tue, 11 Feb 2025 19:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739303960; cv=none; b=iiQBrRhCzgNhYZ4cTdlZzIJi9zGRLGqNAl3zDXOC9cnmVqsusX8ByTTTse/t5S+z1gJqA5hBSmXvL6+J3Mkb0WRMQuQvgBr5BCah21KeBa9S2RpzjwrI+4EjsdMD/l1eu1lHiBy6ZwTQohaFj1/bkDXz+IFw4ktT6xDUegaty5I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739303960; c=relaxed/simple;
-	bh=qz1cZqi/yuFyhg5b7Q9dmNpwqxB1x98e1HYbqrq0Eic=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gRgf0Cj3WpVO/uyA/p8qk1KN2J7drxg6DfpSGjix015JiHDfBLvp8oliKuCvRjeXMB5SEpcrsVTkcTxpOuL2KR1tmR1Yq/oU/9uSxirr/sNmfe54Co9KksYyFuAEx0Tk8hNoMYosdTBo7PqeLPfj6NBBKFINJunq0LWimEQ9eec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=t/FVPQsE; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51BJCs5p014211;
-	Tue, 11 Feb 2025 14:59:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=H29cq
-	cV7kkyq6wACcf36pcZDV0NhsViDxbNXS3ZQUGM=; b=t/FVPQsEZE8b7LJJRkDqi
-	bJPvz4Q35Oy2/cphxreG+I1IS6NmcysfnG8NZCFFf/UIxxJKDfUhD9H5kTpJYIG2
-	H/nncVHly9kFFo59WeqDsfOqm0t4Dzobp0V+6aQ5rhPmHvKBY29aYTB7fsiKenW6
-	duCFkCRr7QjctMXpAJ499Ao1zlMNQycgvjCwUl5bDLttqNz0LgIyQjROjFrkVRW9
-	kpLIDot6HCDul0MKhtVyVM2FF/6Lqz6O9QSmtL0NkgNX4i9gUDkH6YHdLAPyv5Eb
-	GwBf6OSaIH6dv0JPSU8O8+NEqQ7M1yVJb3/EJOY0NiuOzMh3rUOLfGZpKNQbzyYZ
-	g==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 44p529xf8e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Feb 2025 14:59:02 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 51BJx1JK048389
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 11 Feb 2025 14:59:01 -0500
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 11 Feb 2025 14:59:01 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 11 Feb 2025 14:59:01 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 11 Feb 2025 14:59:01 -0500
-Received: from desktop-robi.ad.analog.com ([10.48.65.85])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51BJwFRF031076;
-	Tue, 11 Feb 2025 14:58:54 -0500
-From: Robert Budai <robert.budai@analog.com>
-To: Nuno Sa <nuno.sa@analog.com>,
-        Ramona Gradinariu
-	<ramona.gradinariu@analog.com>,
-        Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        Robert Budai <robert.budai@analog.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron
-	<jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet
-	<corbet@lwn.net>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
-Subject: [PATCH v7 6/6] docs: iio: add documentation for adis16550 driver
-Date: Tue, 11 Feb 2025 19:57:03 +0200
-Message-ID: <20250211175706.276987-7-robert.budai@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250211175706.276987-1-robert.budai@analog.com>
-References: <20250211175706.276987-1-robert.budai@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B23267B93;
+	Tue, 11 Feb 2025 19:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739301781; cv=fail; b=AgUUqKZv73LEz2I+H13PK+B3c2Crxfakl3U1QUmmRbeV4pDObYVOXT6oUA3roGpXBGpmxSCaODeLm5o6XVVzThKolfPkiZo6iwZNGL1knxfy30F3nmK0/yzRFfaU1+Pex15shkCNwc+jMFAuKJ2Htzckz3Q0m8bVvY7cr0gANKM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739301781; c=relaxed/simple;
+	bh=XAph/8r+ALGWqIY64EB3n2ko6vnSDAS+25h6Hio+ol4=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=aOMVIBrZCEJu7y4Qphpx3bJZCDT0y0xvxScylo5dVHyed9IimIhghtU/aVe1K2DJf2jAYlisGyIKjkJaPih9b1LLSXT9DOZLNHSF2pqwDsMStqo56MhR3P2ZUVNRw4HamPz5uePYgphxASvOaSqbf4R9n0nmZ3xCQIXFXG89Op4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XIqdg6Et; arc=fail smtp.client-ip=52.101.71.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zUezZvRtUkOE78KeL+LN1LByPTpyuRo+Q/fEvuWfK5HpZgSCpooZ//LyDF6Dkx0fMOBbRoDSieUoA90vXeBecql2a8tSAB/Bn6T5e2dxotApGZO0bztIM37H+dngeJJBcyvzRbetrbRrDFuN4kcKBzQYHyUA2YreYKNiD9ASG6aOXuumzp2XK0hOy1EC8LZHO+kBK/+on3Ke3Zrfl8soPbwS8GlB/qbFNnp1cp/FnP0W7CSVZRJ7b/M/I0HmKcBTa8i6iRibze3VjHXHDfJYX4vFYXx/fvriUAV2tolGC79ypQEfIir7nPFPHyN+kVSEDyo+md4lwZAfoVMl2N1ZPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QBCNxP3+P0YaG12y7u44/+2A0OL7eWfFv9lPkxDjmb4=;
+ b=sFVaKHBgPLmikocmNMmyH/n4dYlF57zAeYHUH70jOWex6ws14DEfuv4CGk69dYTDh6/C8hndKIDBx8HV8vREIXYxu5euFD7lIrzgtNudKY7BzkiPM8XFchZUWY3bcVDugO1GJQ+GyG7RZVBBgVnaKdDKvuaa499qsw8YenWWYDFqXggd6XPBzDIz6aUMtQuWcSaaPnJtQPOyNLmGfY+ZIYBKmDxNNzXWWA36KgE/fswsw6ELJeeZE8WJqDISKub5IPgyT2U41k2EvFLnu/hkU9XdjbotE37g8PdO08kuRJKxoCZwCWgaXQpGGckYJY5jFmGHxl7KjDCtETq1sTZM+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QBCNxP3+P0YaG12y7u44/+2A0OL7eWfFv9lPkxDjmb4=;
+ b=XIqdg6EtsYkaN+U8R9zs2vMNIXhCueQXTTdHJO85O+To9+8+5d+A4ePMR8qqSsh+smBf3Wiab40NpbDLe2kDROs8gGwqW/t5KmgGY6RRFHw7OipIAGftzFsf94rJQDOMw4Tigd1OPrJf0l8uK9Xjn+6VKeCaS5gLIcxKKDfIBcF9QBEY+3nqk0hveiBTjk2E0uIOsluekJsuO6fSABb3vtVqJCCLijuDZkg4BY2cOi6E/vvbNMsNk/jKr58xalrd9peuTJnN1/3vkQeWRWzAHp1gcEU2us3+GGk1Dyse7GISJW7tQhKAw07X4WnGvlkFgv88UpqiH0BZuNYkYDajLw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI0PR04MB10291.eurprd04.prod.outlook.com (2603:10a6:800:245::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.16; Tue, 11 Feb
+ 2025 19:22:56 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8422.012; Tue, 11 Feb 2025
+ 19:22:56 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Date: Tue, 11 Feb 2025 14:21:59 -0500
+Subject: [PATCH v15 06/15] PCI: endpoint: Add RC-to-EP doorbell support
+ using platform MSI controller
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250211-ep-msi-v15-6-bcacc1f2b1a9@nxp.com>
+References: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
+In-Reply-To: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Anup Patel <apatel@ventanamicro.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Shuah Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org, jdmason@kudzu.us, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ imx@lists.linux.dev, devicetree@vger.kernel.org, 
+ Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739301723; l=8281;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=XAph/8r+ALGWqIY64EB3n2ko6vnSDAS+25h6Hio+ol4=;
+ b=NyTBqy5Cqn+ax4c+uCx4jAmC27Fi9cGARZVAqhXzqnRvO+lj456ej4B2+FmwigYtiJDft/DMX
+ CYJY92Uy5UbDlGS6Il/c77x1gHfaT77FWYOOOHCCAFvd174y1FZTLZO
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: SJ0PR13CA0231.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c1::26) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: bl9VZ__9XarVj-JMqKm0Lw_2gqokX085
-X-Authority-Analysis: v=2.4 cv=FabNxI+6 c=1 sm=1 tr=0 ts=67abac06 cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=gAnH3GRIAAAA:8 a=fAjUVFDDO8eWv5JNfJ0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=oVHKYsEdi7-vN-J5QA_j:22
-X-Proofpoint-GUID: bl9VZ__9XarVj-JMqKm0Lw_2gqokX085
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-11_08,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0
- spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502110129
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10291:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2a1f1414-763b-467e-d797-08dd4ad17d1b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|52116014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K1l0blhaNHJJRFluYTVhUUhKK2pBUlV6WmtKVEhiK1hBeDJnSi9qbFV5Rldz?=
+ =?utf-8?B?UDR2VTNwb0taakkzR3JuKzlDTWpvanZDTk9GVEEwQTF1VmZiS0VKSFFxbElU?=
+ =?utf-8?B?ZVlzTG14QTR0Y1ppbks1d2ZNdTBiSlR1RFRjWmRVY0R0cGZMM055VjNqckZk?=
+ =?utf-8?B?STdSU2MzaGJiTHpRbXY5aVZ6Y0MvaDFRS0ZRRjhXK09lV00rTEYwZ2pxb1hm?=
+ =?utf-8?B?NFhSY1RpSldibFBlRERBR2xscU15TlN2UXM5TmgvMzk5ZmF1N0lxVnFObEZP?=
+ =?utf-8?B?TTJ5aFdLdHV3cFNhRmJVVWJKRWNjdEp1aklkbmZsU1k2TXRYTE5NdmVtVTJ4?=
+ =?utf-8?B?RFRlcHFWcTBBemh0YURsVW5Ib1BlaS80d2s0RmI0ZzVleVI2RWR3NEluaGhC?=
+ =?utf-8?B?aG5DaVhkSkd3cHVkSTRjZ1QvQ0VneCs4b0pITS95S001bUF5OHoxTkJKU2RO?=
+ =?utf-8?B?VGFMNGNPaTJYWHpyU0JmMHVWQ2dPdEROMFQweGh3UWxZUVpNMjJ4KzdIc2ln?=
+ =?utf-8?B?djdKcG1EdWZhemhBcHN0YXpiMGVIZDA4YktZTGs1aUpGdmhRY09oandCR2M0?=
+ =?utf-8?B?K0xvMlJlKytnejY4SEtXdmRrOUdWck1xQWpMZElKRWxrRG9MSnorNVRBREIr?=
+ =?utf-8?B?dEgxYTZ1YzJCUlVRcXBwZkQ0QWJydk10ZFdwUERZNjFrSDJsQVNtMUw0UnNZ?=
+ =?utf-8?B?OXFLQXlmcnJuT3hEQlRKN1NxVE4vc0VtR1JQMDMrWGw0aEMzanlmMFJra1FB?=
+ =?utf-8?B?ZzVmVkcwRGpZOXQ5YVRUUjEvYlpmUVJxY0I1U29WQ3VIYVNTQUU5VkpUYm5W?=
+ =?utf-8?B?N29uU0dzN0lMMWNGMG5ZQ296d2puSXQ1QXdJdnU5bFBob2ovTVErMnZTM1pi?=
+ =?utf-8?B?VWJVYkx6bC8vZC81WCtjWldGS0huQTJCMnlwdFdQVFdzdDR4R0RPNHdHMEZG?=
+ =?utf-8?B?VGV2cXhvVmhyWGI5Wjd0VjVubjJYdHVPdEQwdVFZQnc1aW1ZdUNaUmFzRk5o?=
+ =?utf-8?B?cGRiYjI4UisrSnRBRDZNdUNQeUpZclRYajdxN0ZVYmtLd1JlVFVsSTlDaGhH?=
+ =?utf-8?B?UzhrbjBjY3VsQklrMXcwMm9OczFpelo0cExTaXhKUE5hV1VEclQ5SGh0RVdY?=
+ =?utf-8?B?Zk1SYzNnUXVyTWszWEozb2RHam9GeGtHbzA2RHJJbkt4V2txTmx0OHdSdkZk?=
+ =?utf-8?B?VWxrcDQ0amhMMmRheGZ4Mk1jN3pkb1hxMUxjeWUrK3VJRThzOVVpSlhEOTJY?=
+ =?utf-8?B?aXljZDJSS1dpYmZIcUtxYzRERGZBMnl2SXVuRWtBMG42RVR0aXowS3U4OTdL?=
+ =?utf-8?B?VzZ4R1ZaZ1Nsa3hTYTNOaGxFU0QxSVAyNE5VOWtyaTdsdmVIR09CaWlUWlgy?=
+ =?utf-8?B?RHpUZ25zYnJrcmxKemRqOEd1enNjZE1SOGVqNFlJMGNaTGYvTkFLRUdpVG8w?=
+ =?utf-8?B?SjJFMmZuNTVrbUhCSzRaei9wQ0E2TndDckE4VTlIM1F1d2R4Nytiei9vOVRK?=
+ =?utf-8?B?S3JpN0VWSENKN2M2Sk1qc2ZMZTdzRGVLVGhpRGNpdTZEUlJ5SjFsM2NXdXA3?=
+ =?utf-8?B?eHNteWQxclRENWNRZXl4djlFUWswb1gzUTlJbml6Tk5vK3FXUzhVczdTOW91?=
+ =?utf-8?B?YXJkc3luaXprZnA2MENFV2V2SkZHRUdzWnBNZ3lBYVAxWExWQzRINU1GM1FL?=
+ =?utf-8?B?aGJSMHR6RHVwQXNYOExvSHk5R3d0cmJWNXlZOERWdkpIT2gybHlDdXVCeG9s?=
+ =?utf-8?B?ZmdRNjIyai9kL1h0R2ZFckFxUE1nc0cyb3ZWenFhdm5kazQvRitNb3QyS0xW?=
+ =?utf-8?B?MlRBOHRCeWhzS2VVc0dPSWluVDBNWGdYUjc3bGFROWZHTlIxSnNuQU1kd2hz?=
+ =?utf-8?B?QlJaLzYraCtTV0ZBUE9KZEJ4U0tBWmVsMVc3WkJzbXZ3ZHU3Z3Zvc3FFYk5W?=
+ =?utf-8?B?ZmF5Y2RGLzYySGU3SGYyeWV6SnpsZjdUekJ3UEhjT0dDM000eEFlU0VubXNl?=
+ =?utf-8?B?SUdFdXhzU2RBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aEZWYStWaTFPaDAzMFg0blplOVV0bnp1aUN5emJkMkRkME5TS2p6Qy92RTJx?=
+ =?utf-8?B?VnpMdEU2OGQvSVlWNnUvLzI1Z2IwMEFoempUVVN5NnNVeUYzRVlvMSs3Rkdp?=
+ =?utf-8?B?aC9vYWNxck9tU05Na0k4MHZDK01yZitzenBWSjZCdDV1eHlYUzRkNHdYaUxa?=
+ =?utf-8?B?OVVNQkpialBxS1FOZzIzS3ZpTmR2NFJCS3lGSnR2RDl5eG9PaUs0QUdYeVJx?=
+ =?utf-8?B?U2YrWFZrZUZhZkc3MlZTSlZpVXBqOVczRjBKNzBFVldVdFhmVFJRNVg4RS9E?=
+ =?utf-8?B?cDZoTHdGZWRiQU9CMXgxZ1VUM1YvVXdSVzVFSFVqazJ3blErSkxuSU91WXkr?=
+ =?utf-8?B?a0FkL09taXVIcGQ5dzJFUitVY3lTc293dDhsZFNsOTN1TldUYXRXQXAzZzlS?=
+ =?utf-8?B?RUEvMnpidURJTVFDM1pvT1cyOUNHaXJTVit4TEN6RTJ2QmdiL09sUUIvTkF1?=
+ =?utf-8?B?cmtZZEZyL2lBNWwzRDdYNkVWcTBjWW1JRVVLTzRFVU1tQ3J2RDB4Z3daeVVV?=
+ =?utf-8?B?Tzc4d2pXK2dEMG8wNEh1cUNuRzV5RkxjWDgyOElGOG0vZUNBNWxtYysvM3R5?=
+ =?utf-8?B?RCtKSStFa3lNT3E0V1M1bjBvK3ljWGcrSnFnVWlaSDU0d29Cc2tvdmxMQVhv?=
+ =?utf-8?B?UWx5ZmhGVUEyUThDRjVEVFdNYXdQeXhkQnpHcU5rZm9GQ1VKcnZPcS9CRGxP?=
+ =?utf-8?B?cSsxVHRRUXVtOW92MHJYenZUNGhNMVg0TDBOT0VtNFVNdDZDV0I0ZVV4YXpq?=
+ =?utf-8?B?RUtFWTJxVTg5V1Ixa20vdy9KZDVsa3ZCUHRDRWFJek1CeGhHa0d4UTVUQWpa?=
+ =?utf-8?B?MGFYOUpzT1JIakJZUDFmb2NmVW4rZHRKeDF3WFZ1U042S25xdUwvdUVwV0ta?=
+ =?utf-8?B?SEtIS0dmZXF0U3BaWFZLTDl2c3Rtc2ZTeXpvS2J5cGg5N0F4U3greU5FQko3?=
+ =?utf-8?B?eThQby9IWUtHQVd3Q1VJVkwwMFB5Ylg4V1VuVFo2alAzYmhIZGo2SEw2eFFG?=
+ =?utf-8?B?ODIxcUE2ek9jdVJ6RjVMWWp4RjFmOFpOcExhQWIrc3lCdnpFeFhDdnN5WDdE?=
+ =?utf-8?B?eXgwNzdIK1RKTVN2L2MzRVc1VEZzNGRYU2hyaFQxanhTWnZXWUFlZWRCY0M4?=
+ =?utf-8?B?NkxvdVF5YlZPQlhTY3l1UCsyRkZNRHJkVkRLT21vVDJyd2ErS1dlVEVUWG9I?=
+ =?utf-8?B?eEtaOUp6eWtuSEFDRmRQd0pYQkV6UkpzRTRDaXo1ZkpTN2d1TlYvci9tN3VF?=
+ =?utf-8?B?OGRkSGkvU2RlTnptSHIzQWEvY0VCUVUxb3ZXTGtZR1RDa1hQYnM2WkIrbGta?=
+ =?utf-8?B?aHgzblMxVTVTdlU3NGZ0SUlqVFBBZHU0WS9LVWxYUXZoN09LbmVtYXhhZzVy?=
+ =?utf-8?B?Q3ZvWWhLNHJaT0tJYWJUZDVrT25rSWd0V1pRY01kYmt2QytjUllPaTFmK1Ry?=
+ =?utf-8?B?MzZpRStMR0gvM3FSMGFaS3N4N24wWGhDNTU1Wk9Pc2U5dXVPY3VXZ3laL20r?=
+ =?utf-8?B?NXZvL1lPckU4aDEwcTRPMTRnakxhY0RRM3kvKzB4MXN0U3BBUmhJUUVHR1VO?=
+ =?utf-8?B?SVNKRCtkODZjWHVhVEJMazRyZ2lRZDhrcTRHWmdDUUQyQmZmczBiK1pld2NO?=
+ =?utf-8?B?WHRzOXIrekNDd3d4TFRhV3dBcmhBTS84eEkrdGdSbVJSUElsS05EOE12Wk9w?=
+ =?utf-8?B?YkV3N2NwajlJSTg2Ulhrd1Bsd0NqUk1xQW5ib3I5QXZSSUxLaUdkV0hTTlBp?=
+ =?utf-8?B?QzdrODVVTlFkcjRNdzh3T2hpWnk3NGFJM3hlRDlNUHc1OTV0WC9tVjNwSEJt?=
+ =?utf-8?B?aWlnczBwbkZ1aXNsTk12OVBsckRJWU1kL0YwVXNyeWtxYkJqaXJpckxoWjBv?=
+ =?utf-8?B?bS9KS2tJR01NTkR3VytGdjRqTVEwKzUvU1FzaXRDTzB0VUVLU2J3Y2lBTWJI?=
+ =?utf-8?B?d0RpQVNJcGxyRjZBdmlNVEtxRWRveExDQ0IyQTlSanQ0Z01sVXJVZHBWRDBt?=
+ =?utf-8?B?LzdUeUJWWVFGckVRd3lxRnc0QklHNFRYbUFzekc1c1ZLVVduNk8wZ1A3emll?=
+ =?utf-8?B?TkxEdGF4Rm5BT2ZEVGZXcW90bkdoMDRrRzB1aHpPTWRjWWIvT2ZYdVFHMDBs?=
+ =?utf-8?Q?OK8NK7abdhTuIApWpk69oZQ0X?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a1f1414-763b-467e-d797-08dd4ad17d1b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2025 19:22:56.5054
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Yn8o1mV0qo3faDq7WENodtOZfpJzl0zBI+xvnnw5zg3xXcjnB5YwCN3Y9Ll9FzUDo79SSuQ3sBk9K1Ailf1GbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10291
 
-Add documentation for adis16550 driver which describes the driver device
-files and shows how the user may use the ABI for various scenarios
-(configuration, measurement, etc.).
+Doorbell feature is implemented by mapping the EP's MSI interrupt
+controller message address to a dedicated BAR in the EPC core. It is the
+responsibility of the EPF driver to pass the actual message data to be
+written by the host to the doorbell BAR region through its own logic.
 
-Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-Signed-off-by: Robert Budai <robert.budai@analog.com>
+Tested-by: Niklas Cassel <cassel@kernel.org>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- Documentation/iio/adis16550.rst | 376 ++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst     |   1 +
- 2 files changed, 377 insertions(+)
- create mode 100644 Documentation/iio/adis16550.rst
+Change from v14 to v15
+- check CONFIG_GENERIC_MSI
 
-diff --git a/Documentation/iio/adis16550.rst b/Documentation/iio/adis16550.rst
+Fix below build error
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502082204.6PRR3cfG-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/pci/endpoint/pci-ep-msi.c: In function 'pci_epf_alloc_doorbell':
+>> drivers/pci/endpoint/pci-ep-msi.c:53:15: error: implicit declaration of function 'platform_device_msi_init_and_alloc_irqs' [-Werror=implicit-function-declaration]
+      53 |         ret = platform_device_msi_init_and_alloc_irqs(&epf->dev, num_db, pci_epf_write_msi_msg);
+
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502082242.pOq1hB1d-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/pci/endpoint/pci-ep-msi.c: In function 'pci_epf_alloc_doorbell':
+>> drivers/pci/endpoint/pci-ep-msi.c:49:14: error: implicit declaration of function 'irq_domain_is_msi_immutable'; did you mean 'irq_domain_is_msi_device'? [-Werror=implicit-function-declaration]
+      49 |         if (!irq_domain_is_msi_immutable(dom)) {
+
+Change from v13 to v14
+- basic roll back to v9
+- use device:id as msi-map input, its will handle it
+- use existed platform_device_msi_init_and_alloc_irqs()
+- pass down epf->dev point, because epf->dev of-node will be the same as
+epc's parent.
+
+Change from v12 to v13
+- Use DOMAIN_BUS_DEVICE_PCI_EP_MSI
+
+Change from v10 to v12
+- none
+
+Change from v9 to v10
+- Create msi domain for each function device.
+- Remove only function support limiation. My hardware only support one
+function, so not test more than one case.
+- use "msi-map" descript msi information
+
+  msi-map = <func_no << 8  | vfunc_no, &its, start_stream_id,  size>;
+
+Chagne from v8 to v9
+- sort header file
+- use pci_epc_get(dev_name(msi_desc_to_dev(desc)));
+- check epf number at pci_epf_alloc_doorbell
+- Add comments for miss msi-parent case
+
+change from v5 to v8
+-none
+
+Change from v4 to v5
+- Remove request_irq() in pci_epc_alloc_doorbell() and leave to EP function
+driver, so ep function driver can register differece call back function for
+difference doorbell events and set irq affinity to differece CPU core.
+- Improve error message when MSI allocate failure.
+
+Change from v3 to v4
+- msi change to use msi_get_virq() avoid use msi_for_each_desc().
+- add new struct for pci_epf_doorbell_msg to msi msg,virq and irq name.
+- move mutex lock to epc function
+- initialize variable at declear place.
+- passdown epf to epc*() function to simplify code.
+---
+ drivers/pci/endpoint/Makefile     |  1 +
+ drivers/pci/endpoint/pci-ep-msi.c | 82 +++++++++++++++++++++++++++++++++++++++
+ include/linux/pci-ep-msi.h        | 28 +++++++++++++
+ include/linux/pci-epf.h           | 16 ++++++++
+ 4 files changed, 127 insertions(+)
+
+diff --git a/drivers/pci/endpoint/Makefile b/drivers/pci/endpoint/Makefile
+index 95b2fe47e3b06..c502ea7ef367c 100644
+--- a/drivers/pci/endpoint/Makefile
++++ b/drivers/pci/endpoint/Makefile
+@@ -6,3 +6,4 @@
+ obj-$(CONFIG_PCI_ENDPOINT_CONFIGFS)	+= pci-ep-cfs.o
+ obj-$(CONFIG_PCI_ENDPOINT)		+= pci-epc-core.o pci-epf-core.o\
+ 					   pci-epc-mem.o functions/
++obj-$(CONFIG_GENERIC_MSI_IRQ)		+= pci-ep-msi.o
+diff --git a/drivers/pci/endpoint/pci-ep-msi.c b/drivers/pci/endpoint/pci-ep-msi.c
 new file mode 100644
-index 000000000..f929c460a
+index 0000000000000..549b55b864d0e
 --- /dev/null
-+++ b/Documentation/iio/adis16550.rst
-@@ -0,0 +1,376 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+================
-+ADIS16550 driver
-+================
-+
-+This driver supports Analog Device's IMUs on SPI bus.
-+
-+1. Supported devices
-+====================
-+
-+* `ADIS16550 <https://www.analog.com/ADIS16550>`_
-+
-+The ADIS16550 is a complete inertial system that includes a triaxis gyroscope
-+and a triaxis accelerometer. The factory calibration characterizes each sensor for
-+sensitivity, bias, and alignment. As a result, each sensor has its own dynamic
-+compensation formulas that provide accurate sensor measurements.
-+
-+1. Device attributes
-+====================
-+
-+Accelerometer, gyroscope measurements are always provided. Furthermore, the
-+driver offers the capability to retrieve the delta angle and the delta velocity
-+measurements computed by the device.
-+
-+The delta angle measurements represent a calculation of angular displacement
-+between each sample update, while the delta velocity measurements represent a
-+calculation of linear velocity change between each sample update.
-+
-+Finally, temperature data are provided which show a coarse measurement of
-+the temperature inside of the IMU device. This data is most useful for
-+monitoring relative changes in the thermal environment.
-+
-+Each IIO device, has a device folder under ``/sys/bus/iio/devices/iio:deviceX``,
-+where X is the IIO index of the device. Under these folders reside a set of
-+device files, depending on the characteristics and features of the hardware
-+device in questions. These files are consistently generalized and documented in
-+the IIO ABI documentation.
-+
-+The following tables show the adis16550 related device files, found in the
-+specific device folder path ``/sys/bus/iio/devices/iio:deviceX``.
-+
-++-------------------------------------------+----------------------------------------------------------+
-+| 3-Axis Accelerometer related device files | Description                                              |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_scale                            | Scale for the accelerometer channels.                    |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_low_pass_3db_frequency    | Bandwidth for the accelerometer channels.                |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_calibbias                      | Calibration offset for the X-axis accelerometer channel. |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_calibscale                     | Calibration scale for the X-axis accelerometer channel.  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_raw                            | Raw X-axis accelerometer channel value.                  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_calibbias                      | Calibration offset for the Y-axis accelerometer channel. |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_calibscale                     | Calibration scale for the Y-axis accelerometer channel.  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_raw                            | Raw Y-axis accelerometer channel value.                  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_calibbias                      | Calibration offset for the Z-axis accelerometer channel. |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_calibscale                     | Calibration scale for the Z-axis accelerometer channel.  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_raw                            | Raw Z-axis accelerometer channel value.                  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_deltavelocity_scale                    | Scale for delta velocity channels.                       |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_deltavelocity_x_raw                    | Raw X-axis delta velocity channel value.                 |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_deltavelocity_y_raw                    | Raw Y-axis delta velocity channel value.                 |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_deltavelocity_z_raw                    | Raw Z-axis delta velocity channel value.                 |
-++-------------------------------------------+----------------------------------------------------------+
-+
-++--------------------------------------------+------------------------------------------------------+
-+| 3-Axis Gyroscope related device files      | Description                                          |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_scale                           | Scale for the gyroscope channels.                    |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_filter_low_pass_3db_frequency   | Scale for the gyroscope channels.                    |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_x_calibbias                     | Calibration offset for the X-axis gyroscope channel. |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_x_calibscale                    | Calibration scale for the X-axis gyroscope channel.  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_x_raw                           | Raw X-axis gyroscope channel value.                  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_y_calibbias                     | Calibration offset for the Y-axis gyroscope channel. |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_y_calibscale                    | Calibration scale for the Y-axis gyroscope channel.  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_y_raw                           | Raw Y-axis gyroscope channel value.                  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_z_calibbias                     | Calibration offset for the Z-axis gyroscope channel. |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_z_calibscale                    | Calibration scale for the Z-axis gyroscope channel.  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_z_raw                           | Raw Z-axis gyroscope channel value.                  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_deltaangl_scale                         | Scale for delta angle channels.                      |
-++--------------------------------------------+------------------------------------------------------+
-+| in_deltaangl_x_raw                         | Raw X-axis delta angle channel value.                |
-++--------------------------------------------+------------------------------------------------------+
-+| in_deltaangl_y_raw                         | Raw Y-axis delta angle channel value.                |
-++--------------------------------------------+------------------------------------------------------+
-+| in_deltaangl_z_raw                         | Raw Z-axis delta angle channel value.                |
-++--------------------------------------------+------------------------------------------------------+
-+
-++----------------------------------+-------------------------------------------+
-+| Temperature sensor related files | Description                               |
-++----------------------------------+-------------------------------------------+
-+| in_temp0_raw                     | Raw temperature channel value.            |
-++----------------------------------+-------------------------------------------+
-+| in_temp0_offset                  | Offset for the temperature sensor channel.|
-++----------------------------------+-------------------------------------------+
-+| in_temp0_scale                   | Scale for the temperature sensor channel. |
-++----------------------------------+-------------------------------------------+
-+
-++----------------------------+--------------------------------------------------------------------------------+
-+| Miscellaneous device files | Description                                                                    |
-++----------------------------+--------------------------------------------------------------------------------+
-+| name                       | Name of the IIO device.                                                        |
-++----------------------------+--------------------------------------------------------------------------------+
-+| sampling_frequency         | Currently selected sample rate.                                                |
-++----------------------------+--------------------------------------------------------------------------------+
-+
-+The following table shows the adis16550 related device debug files, found in the
-+specific device debug folder path ``/sys/kernel/debug/iio/iio:deviceX``.
-+
-++----------------------+-------------------------------------------------------------------------+
-+| Debugfs device files | Description                                                             |
-++----------------------+-------------------------------------------------------------------------+
-+| serial_number        | The serial number of the chip in hexadecimal format.                    |
-++----------------------+-------------------------------------------------------------------------+
-+| product_id           | Chip specific product id (16550).                                       |
-++----------------------+-------------------------------------------------------------------------+
-+| flash_count          | The number of flash writes performed on the device.                     |
-++----------------------+-------------------------------------------------------------------------+
-+| firmware_revision    | String containing the firmware revision in the following format ##.##.  |
-++----------------------+-------------------------------------------------------------------------+
-+| firmware_date        | String containing the firmware date in the following format mm-dd-yyyy. |
-++----------------------+-------------------------------------------------------------------------+
-+
-+Channels processed values
-+-------------------------
-+
-+A channel value can be read from its _raw attribute. The value returned is the
-+raw value as reported by the devices. To get the processed value of the channel,
-+apply the following formula:
-+
-+.. code-block:: bash
-+
-+        processed value = (_raw + _offset) * _scale
-+
-+Where _offset and _scale are device attributes. If no _offset attribute is
-+present, simply assume its value is 0.
-+
-+The adis16550 driver offers data for 5 types of channels, the table below shows
-+the measurement units for the processed value, which are defined by the IIO
-+framework:
-+
-++--------------------------------------+---------------------------+
-+| Channel type                         | Measurement unit          |
-++--------------------------------------+---------------------------+
-+| Acceleration on X, Y, and Z axis     | Meters per Second squared |
-++--------------------------------------+---------------------------+
-+| Angular velocity on X, Y and Z axis  | Radians per second        |
-++--------------------------------------+---------------------------+
-+| Delta velocity on X. Y, and Z axis   | Meters per Second         |
-++--------------------------------------+---------------------------+
-+| Delta angle on X, Y, and Z axis      | Radians                   |
-++--------------------------------------+---------------------------+
-+| Temperature                          | Millidegrees Celsius      |
-++--------------------------------------+---------------------------+
-+
-+Usage examples
-+--------------
-+
-+Show device name:
-+
-+.. code-block:: bash
-+
-+	root:/sys/bus/iio/devices/iio:device0> cat name
-+        adis16550
-+
-+Show accelerometer channels value:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_raw
-+        6903851
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_y_raw
-+        5650550
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_z_raw
-+        104873530
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_scale
-+        0.000000095
-+
-+- X-axis acceleration = in_accel_x_raw * in_accel_scale = 0.655865845 m/s^2
-+- Y-axis acceleration = in_accel_y_raw * in_accel_scale = 0.53680225 m/s^2
-+- Z-axis acceleration = in_accel_z_raw * in_accel_scale = 9.96298535 m/s^2
-+
-+Show gyroscope channels value:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_x_raw
-+        193309
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_y_raw
-+        -763676
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_z_raw
-+        -358108
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_scale
-+        0.000000003
-+
-+- X-axis angular velocity = in_anglvel_x_raw * in_anglvel_scale = 0.000579927 rad/s
-+- Y-axis angular velocity = in_anglvel_y_raw * in_anglvel_scale = −0.002291028 rad/s
-+- Z-axis angular velocity = in_anglvel_z_raw * in_anglvel_scale = −0.001074324 rad/s
-+
-+Set calibration offset for accelerometer channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        0
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 5000 > in_accel_x_calibbias
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        5000
-+
-+Set calibration offset for gyroscope channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_y_calibbias
-+        0
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo -5000 > in_anglvel_y_calibbias
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_y_calibbias
-+        -5000
-+
-+Set sampling frequency:
-+
-+.. code-block:: bash
-+
-+	root:/sys/bus/iio/devices/iio:device0> cat sampling_frequency
-+        4000.000000
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1000 > sampling_frequency
-+        1000.000000
-+
-+Set bandwidth for accelerometer channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency
-+        0
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 100 > in_accel_filter_low_pass_3db_frequency
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency
-+        100
-+
-+Show serial number:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat serial_number
-+        0x000000b6
-+
-+Show product id:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat product_id
-+        16550
-+
-+Show flash count:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat flash_count
-+        13
-+
-+Show firmware revision:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat firmware_revision
-+        1.5
-+
-+Show firmware date:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat firmware_date
-+        28-04-2021
-+
-+3. Device buffers
-+=================
-+
-+This driver supports IIO buffers.
-+
-+The device supports retrieving the raw acceleration, gyroscope, delta velocity,
-+delta angle and temperature measurements using buffers.
-+
-+However, when retrieving acceleration or gyroscope data using buffers, delta
-+readings will not be available and vice versa. This is because the device only
-+allows to read either acceleration and gyroscope data or delta velocity and
-+delta angle data at a time and switching between these two burst data selection
-+modes is time consuming.
-+
-+Usage examples
-+--------------
-+
-+Set device trigger in current_trigger, if not already set:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat trigger/current_trigger
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo adis16550-dev0 > trigger/current_trigger
-+        root:/sys/bus/iio/devices/iio:device0> cat trigger/current_trigger
-+        adis16550-dev0
-+
-+Select channels for buffer read:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_deltavelocity_x_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_deltavelocity_y_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_deltavelocity_z_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_temp0_en
-+
-+Set the number of samples to be stored in the buffer:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 10 > buffer/length
-+
-+Enable buffer readings:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > buffer/enable
-+
-+Obtain buffered data:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> hexdump -C /dev/iio\:device0
-+        ...
-+        0000cdf0  00 00 0d 2f 00 00 08 43  00 00 09 09 00 00 a4 5f  |.../...C......._|
-+        0000ce00  00 00 0d 2f 00 00 07 de  00 00 08 db 00 00 a4 4b  |.../...........K|
-+        0000ce10  00 00 0d 2f 00 00 07 58  00 00 08 a3 00 00 a4 55  |.../...X.......U|
-+        0000ce20  00 00 0d 2f 00 00 06 d6  00 00 08 5c 00 00 a4 62  |.../.......\...b|
-+        0000ce30  00 00 0d 2f 00 00 06 45  00 00 08 37 00 00 a4 47  |.../...E...7...G|
-+        0000ce40  00 00 0d 2f 00 00 05 d4  00 00 08 30 00 00 a3 fa  |.../.......0....|
-+        0000ce50  00 00 0d 2f 00 00 05 d0  00 00 08 12 00 00 a3 d3  |.../............|
-+        0000ce60  00 00 0d 2f 00 00 05 dd  00 00 08 2e 00 00 a3 e9  |.../............|
-+        0000ce70  00 00 0d 2f 00 00 05 cc  00 00 08 51 00 00 a3 d5  |.../.......Q....|
-+        0000ce80  00 00 0d 2f 00 00 05 ba  00 00 08 22 00 00 a3 9a  |.../......."....|
-+        0000ce90  00 00 0d 2f 00 00 05 9c  00 00 07 d9 00 00 a3 40  |.../...........@|
-+        0000cea0  00 00 0d 2f 00 00 05 68  00 00 07 94 00 00 a2 e4  |.../...h........|
-+        0000ceb0  00 00 0d 2f 00 00 05 25  00 00 07 8d 00 00 a2 ce  |.../...%........|
-+        ...
-+
-+See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+data is structured.
-+
-+4. IIO Interfacing Tools
-+========================
-+
-+See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+interfacing tools.
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 5710f5b9e..039ed2d75 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -26,6 +26,7 @@ Industrial I/O Kernel Drivers
-    ad7944
-    adis16475
-    adis16480
-+   adis16550
-    adxl380
-    bno055
-    ep93xx_adc
++++ b/drivers/pci/endpoint/pci-ep-msi.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PCI Endpoint *Controller* (EPC) MSI library
++ *
++ * Copyright (C) 2025 NXP
++ * Author: Frank Li <Frank.Li@nxp.com>
++ */
++
++#include <linux/device.h>
++#include <linux/irqdomain.h>
++#include <linux/module.h>
++#include <linux/msi.h>
++#include <linux/of_irq.h>
++#include <linux/pci-epc.h>
++#include <linux/pci-epf.h>
++#include <linux/pci-ep-cfs.h>
++#include <linux/pci-ep-msi.h>
++#include <linux/slab.h>
++
++static void pci_epf_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
++{
++	struct pci_epf *epf = to_pci_epf(desc->dev);
++
++	if (epf && epf->db_msg && desc->msi_index < epf->num_db)
++		memcpy(&epf->db_msg[desc->msi_index].msg, msg, sizeof(*msg));
++}
++
++int pci_epf_alloc_doorbell(struct pci_epf *epf, u16 num_db)
++{
++	struct pci_epc *epc = epf->epc;
++	struct device *dev = &epf->dev;
++	struct irq_domain *dom;
++	void *msg;
++	u32 rid;
++	int ret;
++	int i;
++
++	rid = PCI_EPF_DEVID(epf->func_no, epf->vfunc_no);
++	dom = of_msi_map_get_device_domain(epc->dev.parent, rid, DOMAIN_BUS_PLATFORM_MSI);
++	if (!dom) {
++		dev_err(dev, "Can't find msi domain\n");
++		return -EINVAL;
++	}
++
++	dev_set_msi_domain(dev, dom);
++
++	msg = kcalloc(num_db, sizeof(struct pci_epf_doorbell_msg), GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
++
++	epf->num_db = num_db;
++	epf->db_msg = msg;
++
++	ret = platform_device_msi_init_and_alloc_irqs(&epf->dev, num_db, pci_epf_write_msi_msg);
++	if (ret) {
++		/*
++		 * The pcie_ep DT node has to specify 'msi-parent' for EP
++		 * doorbell support to work. Right now only GIC ITS is
++		 * supported. If you have GIC ITS and reached this print,
++		 * perhaps you are missing 'msi-map' in DT.
++		 */
++		dev_err(dev, "Failed to allocate MSI\n");
++		kfree(msg);
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < num_db; i++)
++		epf->db_msg[i].virq = msi_get_virq(dev, i);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(pci_epf_alloc_doorbell);
++
++void pci_epf_free_doorbell(struct pci_epf *epf)
++{
++	platform_device_msi_free_irqs_all(&epf->dev);
++
++	kfree(epf->db_msg);
++	epf->db_msg = NULL;
++	epf->num_db = 0;
++}
++EXPORT_SYMBOL_GPL(pci_epf_free_doorbell);
+diff --git a/include/linux/pci-ep-msi.h b/include/linux/pci-ep-msi.h
+new file mode 100644
+index 0000000000000..6dfbe9353f0d8
+--- /dev/null
++++ b/include/linux/pci-ep-msi.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * PCI Endpoint *Function* side MSI header file
++ *
++ * Copyright (C) 2024 NXP
++ * Author: Frank Li <Frank.Li@nxp.com>
++ */
++
++#ifndef __PCI_EP_MSI__
++#define __PCI_EP_MSI__
++
++struct pci_epf;
++
++#ifdef CONFIG_GENERIC_MSI_IRQ
++int pci_epf_alloc_doorbell(struct pci_epf *epf, u16 nums);
++void pci_epf_free_doorbell(struct pci_epf *epf);
++#else
++static inline int pci_epf_alloc_doorbell(struct pci_epf *epf, u16 nums)
++{
++	return -EINVAL;
++}
++
++static inline void pci_epf_free_doorbell(struct pci_epf *epf)
++{
++}
++#endif /* CONFIG_GENERIC_MSI_IRQ */
++
++#endif /* __PCI_EP_MSI__ */
+diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+index d2790b8b29394..518bc4171285e 100644
+--- a/include/linux/pci-epf.h
++++ b/include/linux/pci-epf.h
+@@ -12,6 +12,7 @@
+ #include <linux/configfs.h>
+ #include <linux/device.h>
+ #include <linux/mod_devicetable.h>
++#include <linux/msi.h>
+ #include <linux/pci.h>
+ 
+ struct pci_epf;
+@@ -125,6 +126,17 @@ struct pci_epf_bar {
+ 	int		flags;
+ };
+ 
++/**
++ * struct pci_epf_doorbell_msg - represents doorbell message
++ * @msi_msg: MSI message
++ * @virq: irq number of this doorbell MSI message
++ * @name: irq name for doorbell interrupt
++ */
++struct pci_epf_doorbell_msg {
++	struct msi_msg msg;
++	int virq;
++};
++
+ /**
+  * struct pci_epf - represents the PCI EPF device
+  * @dev: the PCI EPF device
+@@ -152,6 +164,8 @@ struct pci_epf_bar {
+  * @vfunction_num_map: bitmap to manage virtual function number
+  * @pci_vepf: list of virtual endpoint functions associated with this function
+  * @event_ops: Callbacks for capturing the EPC events
++ * @db_msg: data for MSI from RC side
++ * @num_db: number of doorbells
+  */
+ struct pci_epf {
+ 	struct device		dev;
+@@ -182,6 +196,8 @@ struct pci_epf {
+ 	unsigned long		vfunction_num_map;
+ 	struct list_head	pci_vepf;
+ 	const struct pci_epc_event_ops *event_ops;
++	struct pci_epf_doorbell_msg *db_msg;
++	u16 num_db;
+ };
+ 
+ /**
+
 -- 
 2.34.1
 
