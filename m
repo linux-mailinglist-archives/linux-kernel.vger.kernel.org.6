@@ -1,134 +1,161 @@
-Return-Path: <linux-kernel+bounces-509871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99824A3155E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:30:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F7BA31570
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:33:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D18166D63
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:30:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B3F3A33C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6E026D5B1;
-	Tue, 11 Feb 2025 19:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE01264F86;
+	Tue, 11 Feb 2025 19:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ji8JsRAe"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bD3ER5Te"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729E12690DF;
-	Tue, 11 Feb 2025 19:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9401326388A;
+	Tue, 11 Feb 2025 19:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739302001; cv=none; b=BK1noy9g8OSkyr4Ch8/E66G2VwRTFW28T9K/N/0aBe/q8wpnmFIwRjwQGpmuGQe+DbHup1aQZIvVLcxgZ12IOUv3JDYeyiaN76PjVPyINfH+V86reO9T96knedbASs44j96dYfHJbYoifkIfyARSMCV0MEntCF92EajSCQ2DOYQ=
+	t=1739302108; cv=none; b=Lni2id2bDcLJT7GIBoJj/7Yjl11WOp5/twRzAB7FO5MeQbkPe/NBgkciARssHXGa+W45HKDzSznSlhUXJ6q4qy3gYZzT+DAV/LWmyX+pBg4HxJ7uv+1vcX6M9NsdwhJJ1ER4teVWAdVxWlZAWpJDyIHxLNIkz/KDYjzn6vqJddo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739302001; c=relaxed/simple;
-	bh=zY11n/8locnzNnbkUCvqokaSEOgtoe+VYyolUrGzvFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6/yQ3lcVT0yl4y1woVNZjLwXjHTSMgedxI3tjT1zU3pvq9b2lqWRHQwZpn10Vpyn4GEjXtti+/zcsOQcPgHESfjua50LD/6zlBMQjOZ4eaVXu7OgpE2F/2+OPOJaQcvcWofEXiVa9CPc76IHe3YtqwD2tawpRhmqizB2nZIruI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ji8JsRAe; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38dd93ace00so1712376f8f.1;
-        Tue, 11 Feb 2025 11:26:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739301998; x=1739906798; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iHUiGt2p3SNBSvSE4F77dmu0tTDl367av9kzRSudXp4=;
-        b=Ji8JsRAeKf6ee1r8oKkq8W5INpTh0fz1BO5t6uiPEGT1plPxWOVuhSFITnpkbS02rv
-         BQocHsGGsTsUzGVRk+wp1Mu6BFaLhECo4W3VAK/J69E9BOJ8+92ocdc+G9qS0vk/UBkl
-         nTUoeBBi3EkrWQChWakj+Fw0t1+utVsoUbFbhUYookPyRDxZnj+yWbglt1pBCR7u7eb7
-         hbQN38fIBNqXqXjl3k0sFcwosXwLc6EY1oXDNlXOry1mOtFqWSNK5hgykuGcnf1kmUe6
-         ZRkxAGxzSl3gwyld/jK6Jn5gpZsWEOJxS/2kzoS3DHlC6xybeXFpNQoNYvs6vvbadDym
-         YMVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739301998; x=1739906798;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iHUiGt2p3SNBSvSE4F77dmu0tTDl367av9kzRSudXp4=;
-        b=ljrFPngoUB0JhXwnTnUsRHEbx/0X5HZ/JNkXP2Xt2nom0lU70aEimBoLGceCi8L2ky
-         2C4Vi2aSYnU2hcKMVMrHPXrfCnp4zY6571HWInP7kPx/mVtNm82rGJU935pQhpEABLrP
-         CN+4v1/xG0KU0KSF2uvEn94NNcjYBC3hC2WkwcuBFJ52Uqk5opNNOK8Wik85dSieIhCF
-         d+lupNsfS/Nz+GuPJcc2yk4r5W+OZ4Md/QZ16WJ997TmMQ507SzFla+MckQkZ3ZviA0I
-         B2bdSCyndqSHgln3D5MyyqoOo8jsxB9/1aV2G/8Y3eth1xSw0JwMLZ47i25AzqzgLrPt
-         7pnw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9+fp5z5WYCmlPlOisqj6+ixE+TszrfKAIHTrsMpBnaKM5eJik4n+L/V7ILSz0BMsauDuGZCX9@vger.kernel.org, AJvYcCXUi/aD9d55kglBlML02KuWflXI6F5OlHZQ8e5Ts2DD8ItoiXNELbhQcvKz2ruweV1430KazxpRhaiBy68=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9O5/HdOWjvUTHTkZR1SCxA4SJbz5ZO+n3rVKUa2aiLoTj53e9
-	gO8P2VmggajRxjiceSvTb0pachMJQUv9O8r71bVoq3tMC8qVTVZa
-X-Gm-Gg: ASbGncv0seKdjuL3klCPfF3Cex7WrbMloKwAGFhjl/25oDHdpUMoPfpuxLupFcxrL4F
-	aWD6+yKSOnTIFQWVZO1qBLM2ZZDtEDTRGpTF4nsqbECxmP3qAhhWuAX4xSny1RgMHolTD1Uo4R2
-	6GkEnsGfBrVcze+HxMJjm3LjBbeumiW2B524BMN3vGfV1R8T6kBMmfosc1rF3T4RyARWcwSruvB
-	iQ8NzhtgsAvxMBIlQHE9PDZyRYwVkBj4yAIteZlR9LUBIPIla6Woh/3eymQgR8rCBAwqX9QgPWE
-	Q+NszqlU+ECsDAQ5t/PBpmfxBsbqNXYbZXDIRwQxyF0RwoML
-X-Google-Smtp-Source: AGHT+IGyH6u7C+JHOMK24CSqsOZoQFhGFN1iCccM/JmeDZM3j0hw0pWZnQFg6iEPrhN9OMVzP5k3xA==
-X-Received: by 2002:adf:cd87:0:b0:38d:cd8f:db00 with SMTP id ffacd0b85a97d-38dea28e259mr153109f8f.32.1739301997477;
-        Tue, 11 Feb 2025 11:26:37 -0800 (PST)
-Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dcd0fac67sm12549012f8f.54.2025.02.11.11.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 11:26:36 -0800 (PST)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 1230DBE2EE7; Tue, 11 Feb 2025 20:26:36 +0100 (CET)
-Date: Tue, 11 Feb 2025 20:26:36 +0100
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	xen-devel@lists.xenproject.org, iommu@lists.linux.dev,
-	Radoslav =?iso-8859-1?Q?Bod=F3?= <radoslav.bodo@igalileo.cz>,
-	regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Harshvardhan Jha <harshvardhan.j.jha@oracle.com>
-Subject: Re: [6.1.y] Regression from b1e6e80a1b42 ("xen/swiotlb: add
- alignment check for dma buffers") when booting with Xen and mpt3sas_cm0
- _scsih_probe failures
-Message-ID: <Z6ukbNnyQVdw4kh0@eldamar.lan>
-References: <Z6d-l2nCO1mB4_wx@eldamar.lan>
- <fd650c88-9888-46bc-a448-9c1ddcf2b066@oracle.com>
+	s=arc-20240116; t=1739302108; c=relaxed/simple;
+	bh=FtiCB/Gnit/rjhpi4OMYVtXqmpza4wtHtS9goXNepZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mCC6fnur3Jsp8S88ndUTBcTWpC3tZJOoPin5ksb5bv5ifwgEMRt9O4tSYrkXqRNmgH/VXsmE311PIXdhF9q2l02nTtNzJBZRWMchlEObMah+CRGvyOFTo+mdIYtKcgVtFEdzYNm25pXMcOJ1PuD2lzBZnlDAUkPHy7cuIiZnpGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bD3ER5Te; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B24C4CEDD;
+	Tue, 11 Feb 2025 19:28:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739302108;
+	bh=FtiCB/Gnit/rjhpi4OMYVtXqmpza4wtHtS9goXNepZI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bD3ER5TeFDc1/t8c6JcAsesFhr004XSAaDs+wWifLhe9Xq1WuzTXvU6tMa7LZZzCH
+	 x8ggsZEEkJfHGZTb80k8HRy4fBERdEIjSbF2Pv3G6p/NAoczO3Aqp0tGVhpZ6RHCKQ
+	 RYk1jJXc1SegL4CfEEpy1zX2lNGAqrkFehNSO5udyIjwMlYjRm22d1vQLTYkXvVbRD
+	 L5eRXh9yWkFeZdWR70w8nHss1GeGRUl3FeOecdtKRxPC8JXTrP09NlG8KmBYaUnjkz
+	 HKvdXYUT1q6R9EShsmePqWHZUGZ2GLNQNKeCwEQ+7nW+39Gm05bofaQEYQJDlYqQxg
+	 ltVXRYXRKIKYw==
+Date: Tue, 11 Feb 2025 19:28:19 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen	
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ Sa	 <nuno.sa@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: dac: adi-axi-dac: drop io_mode check
+Message-ID: <20250211192819.0c0be5fb@jic23-huawei>
+In-Reply-To: <4c526d89750e1578d8c341caae77aac0321d7ace.camel@gmail.com>
+References: <20250206-wip-bl-ad3552r-axi-v0-iio-testing-carlos-v1-1-863a4b2af4ea@baylibre.com>
+	<20250208154521.193da461@jic23-huawei>
+	<2ae962c19bc9d180dabf52e256a1d6bf215f9bf0.camel@gmail.com>
+	<20250210191353.2a5fcd4b@jic23-huawei>
+	<4c526d89750e1578d8c341caae77aac0321d7ace.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fd650c88-9888-46bc-a448-9c1ddcf2b066@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Harshit,
+On Tue, 11 Feb 2025 09:56:31 +0000
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-On Sun, Feb 09, 2025 at 01:45:38AM +0530, Harshit Mogalapalli wrote:
-> Hi Salvatore,
-> 
-> On 08/02/25 21:26, Salvatore Bonaccorso wrote:
-> > Hi Juergen, hi all,
-> > 
-> > Radoslav Bodó reported in Debian an issue after updating our kernel
-> > from 6.1.112 to 6.1.115. His report in full is at:
-> > 
-> > https://bugs.debian.org/1088159
-> > 
-> 
-> Note:
-> We have seen this on 5.4.y kernel: More details here:
-> https://lore.kernel.org/all/9dd91f6e-1c66-4961-994e-dbda87d69dad@oracle.com/
+> On Mon, 2025-02-10 at 19:13 +0000, Jonathan Cameron wrote:
+> > On Mon, 10 Feb 2025 10:05:47 +0000
+> > Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+> >  =20
+> > > On Sat, 2025-02-08 at 15:45 +0000, Jonathan Cameron wrote: =20
+> > > > On Thu, 06 Feb 2025 09:36:14 +0100
+> > > > Angelo Dureghello <adureghello@baylibre.com> wrote:
+> > > > =C2=A0  =20
+> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > >=20
+> > > > > Drop mode check, producing the following robot test warning:
+> > > > >=20
+> > > > > smatch warnings:
+> > > > > drivers/iio/dac/adi-axi-dac.c:731 axi_dac_bus_set_io_mode()
+> > > > > =C2=A0 warn: always true condition '(mode >=3D 0) =3D> (0-u32max =
+>=3D 0)'
+> > > > >=20
+> > > > > The range check results not useful since these are the only
+> > > > > plausible modes for enum ad3552r_io_mode.
+> > > > >=20
+> > > > > Fixes: 493122c53af1 ("iio: dac: adi-axi-dac: add bus mode setup")
+> > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>=C2=A0=
+  =20
+> > > > Ah. I missed this.=C2=A0 Anyhow made the same change directly so al=
+l is well
+> > > > than ends well!
+> > > > =C2=A0  =20
+> > >=20
+> > > Hi Angelo, Jonathan,
+> > >=20
+> > > I wanted to reply to this one when I saw it but I haven't done right =
+away
+> > > and
+> > > then totally forgot. Sorry about that!
+> > >=20
+> > > I don't really agree with the "fix" in this patch. AFAIU, smatch is
+> > > complaining
+> > > since the enum is apparently defaulting to an unsigned type which mea=
+ns
+> > > doing
+> > > the >=3D 0 check is useless. But we should keep the upper bound... =20
+> >=20
+> > Why? It's an enum so unless we are messing around with deliberate casts=
+ the
+> > compiler should always be able to spot this. The check may be needed on=
+ a
+> > future =20
+>=20
+> I do not think the compiler will catch this:
+>=20
+> diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
+> index c1dae58c1975..5234dd5e227d 100644
+> --- a/drivers/iio/dac/ad3552r-hs.c
+> +++ b/drivers/iio/dac/ad3552r-hs.c
+> @@ -293,7 +293,7 @@ static int ad3552r_hs_buffer_postenable(struct iio_dev
+> *indio_dev)
+>          * Back bus to simple SPI, this must be executed together with ab=
+ove
+>          * target mode unwind, and can be done only after it.
+>          */
+> -       st->data->bus_set_io_mode(st->back, AD3552R_IO_MODE_SPI);
+> +       st->data->bus_set_io_mode(st->back, -1);
+>=20
+> A W=3D1 build (clang) did not complained at all... Maybe tools like smatc=
+h will.
+>=20
+> > date if we add more types to that enum.
+> >=20
+> > So I agree the check wasn't terrible and perhaps acted as hardening but=
+ it
+> > isn't strictly speaking doing anything today.
+> >  =20
+>=20
+> It's not a very super important check, I agree... and being an enum will =
+be
+> easier to spot a raw value being passed during a review but since we alre=
+ady had
+> the check, I don't see why we should remove it completely and not keep th=
+e upper
+> bound.
 
-Thanks for the pointer, so looking at that thread I suspect the three
-referenced bugs in Debian are in the end all releated. We have one as
-well relating to the megasas_sas driver, this one for the mpt3sas
-driver and one for the i40e driver).
+ok.  I'd take a patch putting the upper bound back.   Enums checking is an =
+interesting
+hole to fall down.
 
-AFAICS, there is not yet a patch which has landed upstream which I can
-redirect to a affected user to test?
+Jonathan
 
-Regards,
-Salvatore
+>=20
+> - Nuno S=C3=A1
+
 
