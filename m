@@ -1,145 +1,238 @@
-Return-Path: <linux-kernel+bounces-510199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245B7A3199E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:37:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701D6A319A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:39:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CB1167DBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:37:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F6FC3A72FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BC41F8917;
-	Tue, 11 Feb 2025 23:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF52262D33;
+	Tue, 11 Feb 2025 23:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t7TnGWFI"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MqZw8H+Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A211BC07A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7F127291F;
+	Tue, 11 Feb 2025 23:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739317053; cv=none; b=TP6B9qSMtPtTZm35lhXRLBkJ335MHxSAC1bzzIB8JbTzXQyZIYTMkosCmBIf9tNHGDzf3k3KZfpk7PJWlRWilw7DbtZaMD4ucfc5x+naDX43s6NYVBzGiFbI6F8NLuaOV4kINL+4nvWxCn0jrftLzl12T1jBpUFwktRtZ0TIvKI=
+	t=1739317184; cv=none; b=nIACAXEAMG4tKLEDdc+Lo4KdDNxgKUP73i+PjET/PGXfO4gQMZXLkOyCefvYWMtl3j6IdHjFlfu0OxlTL5Bx90EgZC3hiLGEVus/nl6N0RaDzR4V0CXBbnmxQ15w736mMdIe3fH6OzspXSXJh8D7bmUwUa9qh6oLA6yfPs39Shk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739317053; c=relaxed/simple;
-	bh=GutEcZz61gwify1yCL/KrmgOIzRRqXpILaGYVs/GWDM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uaRBITeZoAsQGYpEhP3ufoTTy8lJKcgMfndhj+zmwZ2ZWc1V/XaYqHAXrruwfQlT0X1GEvu//Qmt5+jiodf3qDcYWS1GXEYtvE8xJYtulGDjtBlu4Nx3Twjhp7vKTK/yrSi1MBP9caGZHj3OZ3Ik6PhwXYhmj9d8tgIb/Dyh99Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t7TnGWFI; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-545092d763cso1191e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 15:37:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739317050; x=1739921850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YSbvnItNGBxBKAvRaSMscNhWBRYdPAos9+Z7zPAciRI=;
-        b=t7TnGWFIsKD9+cVu+60fmwiER5C1RhRvkaZTXuXTWThSfLEGq5qUR1DbWezDV15rKK
-         i/aHa6G0NphexjSj/yumK2LvzGNPA/UbQHLB76WJeOrIADvZtnXzEduQ3HaIJSl4wfoT
-         QF/SIsrZ+MfZ9M9VWkGosuzPsAM+bb/UUaOSQKlkApjOIFz7S4ZCBAN1Lusj82sDz/ry
-         DWgHOs9Shc71O+4QeF+DZ+5ahmk4a+MZP1SulGYgr5MKnYrSWZo+/n9UsIam7T3xEe6a
-         aJ53JBryVHXe7JjGRCj4GdEuRYqghlsLM8qTgqEo0eXBp1nFTn/ALipsbDTDBZxXM7T9
-         IocA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739317050; x=1739921850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YSbvnItNGBxBKAvRaSMscNhWBRYdPAos9+Z7zPAciRI=;
-        b=p3UCMCQ74dOk+mfCe+mi8CzGh6f0rlF2nmTbFF+qom9mk8PxRNCwseUFY7bgZiCG/b
-         2qeTdlVUnGPZdtcZaOm3t83uHnyAWlj1f8YI6IJ5E4zG6Rkwm5A1IDtU2W5j6lWALez5
-         xR7j+JGAKEC36/OM46LY+Eb986yG4y4FSKmdp3b6xxC7pmG9IuXs34fwR1s7P8bLjyjY
-         eo5ZSc5LUTE/SSqrxRshMUSLi5pyD2KntJ7nVSul4rRlqnNMLLOhyFq+nymHGeJ1tszt
-         ZWtWeoMDFqejD+nRhMLbf1bTMnagdThHXJAVSXd3s2bEkgU69YmtTBnSJX/zfnsiotMJ
-         VTGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHm8j6EcHHBJrDOpzI3SZBoVfXAy/Ti3jPfFIHXcRfLU1sQ1RMZO04lVCVzteEFlUlJJymyP4hIuRYMoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBWzXQCjIPoKcBKy5OTb6y5QbV/W0UUEMRWwhY4WiFHiHxXN+n
-	EIab7oSGbeJxu/QpZkJuZSdypWHHz9lOiL8R3+w9dEx3JPAitg+3CZc+gvel9ykVIbT+thrOkgR
-	wLLqXkq7/ufTlFcLvYP6/aaIo20pOGyoT6OfD
-X-Gm-Gg: ASbGncvX/386iIzh9ZJfcAsh+6Wn8+IaufQDCslb+Fb72aYMgwJT0HGLMxLqEw/YmCH
-	mxgg/KTJVd3Hp/Eo6ZCozLO05A/Q/YGpVtw1ve0IxNcEXzEVLZx0RN+lGUFvZ5y+9+ZD9druQR/
-	rY04Y92wPPk8a0udY7RVDXlKU5rl2yIQ==
-X-Google-Smtp-Source: AGHT+IFwqfZpukbm59rOXt6h263eOHCDjc136zYAOcXQHTigPOGAqt3tg2yJH93apvYN9rjDIs6HzHeYOQ9BeM6qfi4=
-X-Received: by 2002:a05:6512:3d90:b0:545:34e:16c0 with SMTP id
- 2adb3069b0e04-54518de9606mr38355e87.5.1739317050020; Tue, 11 Feb 2025
- 15:37:30 -0800 (PST)
+	s=arc-20240116; t=1739317184; c=relaxed/simple;
+	bh=KmZZdjl6ZufzH7ljJKE+F1Ax+O9hFfz9th1qlIB6io0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=K+Byi9cEOdL1b2RtMQTIjXXQa5i3ElCsokAkWICaklPU/pLkSP1zjD91dDHqYSiNurPHdFrsLs1KqwrKCp+WQnPchvcajh+3CSRFEMJ2kZsserv6r34tVcXo3JOXQt0yVl2Ltll2E8BgztCOmc0A2otIqGOJ9XmnAMHNFmLXa+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MqZw8H+Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 734CEC4CEDD;
+	Tue, 11 Feb 2025 23:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739317183;
+	bh=KmZZdjl6ZufzH7ljJKE+F1Ax+O9hFfz9th1qlIB6io0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MqZw8H+YK+HmXZ8Q98zirAJfh43qwJBjqC4G10PCMijbs7MHLqHyy8ij2y9JrFp4Y
+	 PCHqizlhN6EpikrsQQe5FdsUTHhsOTGGW834POt56J95wj2IetWFq/La6qE5s7qIWD
+	 lFtPuvJXA/j/mOsGzP0dkecwjTfjg+XXZoj2ZEHjV83V1j8ROlQO7rRak/uiOvJA7+
+	 GC46whdgpIU6Xvnq5Jmy7ioG0f1iei8TH/XPQR2gdUyKJoF+trlW/z4vs9bTYwZCWE
+	 T73a/s3i3elPvGLGZuYHDZfYAQU6mW966xT7NDg9TdS7wXkHBwEM2UGTspNCS6kcLL
+	 pMQbYYW9qSPGg==
+Date: Wed, 12 Feb 2025 08:39:40 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3 1/2] mm/memblock: Add reserved memory release
+ function
+Message-Id: <20250212083940.8a88be7b1f9cf68a2cb8465b@kernel.org>
+In-Reply-To: <20250211125211.1ce892a5@gandalf.local.home>
+References: <173928521419.906035.17750338150436695675.stgit@devnote2>
+	<173928522350.906035.5626965043208329135.stgit@devnote2>
+	<20250211125211.1ce892a5@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250206222714.1079059-1-vannapurve@google.com> <wra363f7ye6mwv2papahmpgmybi45yqyzeohunbqju3zsf22td@zcutpjluiury>
-In-Reply-To: <wra363f7ye6mwv2papahmpgmybi45yqyzeohunbqju3zsf22td@zcutpjluiury>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Tue, 11 Feb 2025 15:37:17 -0800
-X-Gm-Features: AWEUYZl70YOalrJ-dWWuIpBvrvuQpb_FScJ4zAQWzJRP5MMlca2CNQsA8FuLHfY
-Message-ID: <CAGtprH9yekaDTCn0P83k221sW2DoXL5AwKLmD54Pv=PmUPU6Aw@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] x86/tdx: Route safe halt execution via tdx_safe_halt()
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
-	seanjc@google.com, erdemaktas@google.com, ackerleytng@google.com, 
-	jxgao@google.com, sagis@google.com, oupton@google.com, pgonda@google.com, 
-	kirill@shutemov.name, dave.hansen@linux.intel.com, linux-coco@lists.linux.dev, 
-	chao.p.peng@linux.intel.com, isaku.yamahata@gmail.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 11, 2025 at 12:32=E2=80=AFAM Kirill A. Shutemov
-<kirill.shutemov@linux.intel.com> wrote:
->
-> On Thu, Feb 06, 2025 at 10:27:12PM +0000, Vishal Annapurve wrote:
-> > Direct HLT instruction execution causes #VEs for TDX VMs which is route=
-d
-> > to hypervisor via TDCALL. safe_halt() routines execute HLT in STI-shado=
-w
-> > so IRQs need to remain disabled until the TDCALL to ensure that pending
-> > IRQs are correctly treated as wake events. So "sti;hlt" sequence needs =
-to
-> > be replaced with "TDCALL; raw_local_irq_enable()" for TDX VMs.
-> >
-> > Commit bfe6ed0c6727 ("x86/tdx: Add HLT support for TDX guests")
-> > prevented the idle routines from using "sti;hlt". But it missed the
-> > paravirt routine which can be reached like this as an example:
-> >         acpi_safe_halt() =3D>
-> >         raw_safe_halt()  =3D>
-> >         arch_safe_halt() =3D>
-> >         irq.safe_halt()  =3D>
-> >         pv_native_safe_halt()
-> >
-> > Modify tdx_safe_halt() to implement the sequence "TDCALL;
-> > raw_local_irq_enable()" and invoke tdx_halt() from idle routine which j=
-ust
-> > executes TDCALL without changing state of interrupts.
-> >
-> > If CONFIG_PARAVIRT_XXL is disabled, "sti;hlt" sequences can still get
-> > executed from TDX VMs via paths like:
-> >         acpi_safe_halt() =3D>
-> >         raw_safe_halt()  =3D>
-> >         arch_safe_halt() =3D>
-> >       native_safe_halt()
-> > There is a long term plan to fix these paths by carving out
-> > irq.safe_halt() outside paravirt framework.
->
-> I don't think it is acceptable to keep !PARAVIRT_XXL (read no-Xen) config
-> broken.
->
-> We need either move irq.safe_halt() out of PARAVIRT_XXL now or make
-> non-paravirt arch_safe_halt() to use TDCALL. Or if we don't care about
-> performance of !PARAVIRT_XXL config, special-case HLT in
-> exc_virtualization_exception().
+On Tue, 11 Feb 2025 12:52:11 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-I will post v4 with the patch [1] move safe_halt/halt out of
-PARAVIRT_XXL included as the next step.
+> On Tue, 11 Feb 2025 23:47:03 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Add reserve_mem_release_by_name() to release a reserved memory region
+> > with a given name. This allows us to release reserved memory which is
+> > defined by kernel cmdline, after boot.
+> > 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Mike Rapoport <rppt@kernel.org>
+> > Cc: linux-mm@kvack.org
+> 
+> Hi, can we get one of the Memory Management maintainers to ack this patch?
+> 
+> We will be having devices going out with the reserve_mem option to perform
+> tracing in the field. But that only happens if the user grants permission
+> to do so. But the kernel command line does not change between users that
+> granted permission and those that do not. We would like to free up the
+> memory for those devices where the users did not grant permission to trace,
+> as then the memory is just wasted.
 
-[1] https://lore.kernel.org/lkml/20210517235008.257241-1-sathyanarayanan.ku=
-ppuswamy@linux.intel.com/
+Thanks Steve for explaining, I missed Ccing the background information.
+Here is the covermail of this series.
 
->
-> --
->   Kiryl Shutsemau / Kirill A. Shutemov
+https://lore.kernel.org/all/173928521419.906035.17750338150436695675.stgit@devnote2/
+
+Thank you,
+
+> 
+> Thanks!
+> 
+> -- Steve
+> 
+> 
+> > ---
+> >  Changes in v2:
+> >   - Rename reserved_mem_* to reserve_mem_*.
+> > ---
+> >  include/linux/mm.h |    1 +
+> >  mm/memblock.c      |   72 +++++++++++++++++++++++++++++++++++++++++++---------
+> >  2 files changed, 61 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index f02925447e59..fe5f7711df04 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -4197,6 +4197,7 @@ void vma_pgtable_walk_begin(struct vm_area_struct *vma);
+> >  void vma_pgtable_walk_end(struct vm_area_struct *vma);
+> >  
+> >  int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys_addr_t *size);
+> > +int reserve_mem_release_by_name(const char *name);
+> >  
+> >  #ifdef CONFIG_64BIT
+> >  int do_mseal(unsigned long start, size_t len_in, unsigned long flags);
+> > diff --git a/mm/memblock.c b/mm/memblock.c
+> > index 095c18b5c430..c8d207ebb93c 100644
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/kmemleak.h>
+> >  #include <linux/seq_file.h>
+> >  #include <linux/memblock.h>
+> > +#include <linux/mutex.h>
+> >  
+> >  #include <asm/sections.h>
+> >  #include <linux/io.h>
+> > @@ -2263,6 +2264,7 @@ struct reserve_mem_table {
+> >  };
+> >  static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
+> >  static int reserved_mem_count;
+> > +static DEFINE_MUTEX(reserve_mem_lock);
+> >  
+> >  /* Add wildcard region with a lookup name */
+> >  static void __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
+> > @@ -2276,6 +2278,21 @@ static void __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
+> >  	strscpy(map->name, name);
+> >  }
+> >  
+> > +static struct reserve_mem_table *reserve_mem_find_by_name_nolock(const char *name)
+> > +{
+> > +	struct reserve_mem_table *map;
+> > +	int i;
+> > +
+> > +	for (i = 0; i < reserved_mem_count; i++) {
+> > +		map = &reserved_mem_table[i];
+> > +		if (!map->size)
+> > +			continue;
+> > +		if (strcmp(name, map->name) == 0)
+> > +			return map;
+> > +	}
+> > +	return NULL;
+> > +}
+> > +
+> >  /**
+> >   * reserve_mem_find_by_name - Find reserved memory region with a given name
+> >   * @name: The name that is attached to a reserved memory region
+> > @@ -2289,22 +2306,53 @@ static void __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
+> >  int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys_addr_t *size)
+> >  {
+> >  	struct reserve_mem_table *map;
+> > -	int i;
+> >  
+> > -	for (i = 0; i < reserved_mem_count; i++) {
+> > -		map = &reserved_mem_table[i];
+> > -		if (!map->size)
+> > -			continue;
+> > -		if (strcmp(name, map->name) == 0) {
+> > -			*start = map->start;
+> > -			*size = map->size;
+> > -			return 1;
+> > -		}
+> > -	}
+> > -	return 0;
+> > +	guard(mutex)(&reserve_mem_lock);
+> > +	map = reserve_mem_find_by_name_nolock(name);
+> > +	if (!map)
+> > +		return 0;
+> > +
+> > +	*start = map->start;
+> > +	*size = map->size;
+> > +	return 1;
+> >  }
+> >  EXPORT_SYMBOL_GPL(reserve_mem_find_by_name);
+> >  
+> > +/**
+> > + * reserve_mem_release_by_name - Release reserved memory region with a given name
+> > + * @name: The name that is attatched to a reserved memory region
+> > + *
+> > + * Forcibly release the pages in the reserved memory region so that those memory
+> > + * can be used as free memory. After released the reserved region size becomes 0.
+> > + *
+> > + * Returns: 1 if released or 0 if not found.
+> > + */
+> > +int reserve_mem_release_by_name(const char *name)
+> > +{
+> > +	struct reserve_mem_table *map;
+> > +	unsigned int page_count;
+> > +	phys_addr_t start;
+> > +
+> > +	guard(mutex)(&reserve_mem_lock);
+> > +	map = reserve_mem_find_by_name_nolock(name);
+> > +	if (!map)
+> > +		return 0;
+> > +
+> > +	start = map->start;
+> > +	page_count = DIV_ROUND_UP(map->size, PAGE_SIZE);
+> > +
+> > +	for (int i = 0; i < page_count; i++) {
+> > +		phys_addr_t addr = start + i * PAGE_SIZE;
+> > +		struct page *page = pfn_to_page(addr >> PAGE_SHIFT);
+> > +
+> > +		page->flags &= ~BIT(PG_reserved);
+> > +		__free_page(page);
+> > +	}
+> > +	map->size = 0;
+> > +
+> > +	return 1;
+> > +}
+> > +
+> >  /*
+> >   * Parse reserve_mem=nn:align:name
+> >   */
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
