@@ -1,166 +1,153 @@
-Return-Path: <linux-kernel+bounces-510008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C05EA31732
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:06:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A62EA31736
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C668518824D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4646163209
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7505D264F9C;
-	Tue, 11 Feb 2025 21:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C83C264FA9;
+	Tue, 11 Feb 2025 21:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="lIYAB+CH"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NIQ9LDXt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE73264F81
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471692641CA;
+	Tue, 11 Feb 2025 21:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739308004; cv=none; b=Pl7kex1mBx+UjEgdBQcufpwUgjguEjcfHrPaGp3KRYQmAG5fzDMEYJb/n4e3tZWS/0n2NNYGwDkdGIiS4+yX8787SAVi+UIUSuEfJ2qQidg5/fUDsxAaQ/9yQfjXeWkQRv/uthJHJGR0+xS6q36lkVkUVADZS2hotrJz1djSmRg=
+	t=1739308019; cv=none; b=mbt6DYg2buJpeU580N8DARRTYGdqz9jVXBSVDaQtQXK4m7MW303iAfacac1v09qtEg7VuJ4jkJsiKkPT7GNg95m8ZR3NDjOIT18tk1u2DpthRthwylT4MWvlClAoqBW1fFK68i0wsJOTdnXOuc5HNJIHmutCtXbv+1xn+PGB3Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739308004; c=relaxed/simple;
-	bh=J+hVs6e//vHFgi0b32SqEreWeRMT7ejhN0dTtr8MH1o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=X+Mda52Hkl68NZlz+Cysx12PdBdxbWtk3eXDpQyKXjnG4QRzzjlsbWcKmDyn7/qmSH4Y/4wOAwZ7YbG6AQTK4BJFFIpCBFjCpOO0gukJphgb9QfYil40IHScu4TXiFFwbpY1Rl7Dgn3M4QleVomw7Dii0lCEu69RmOzNOlpSTWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=lIYAB+CH; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 942F72C02A8;
-	Wed, 12 Feb 2025 10:06:34 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1739307994;
-	bh=J+hVs6e//vHFgi0b32SqEreWeRMT7ejhN0dTtr8MH1o=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=lIYAB+CHbcZDmFuBg8DDXyAJrKEibG7KpIPj3siBkWC2vx6tKwIFBm7/U87cqoexT
-	 2kqWC8geetfg+zKKopgBGdMrr3r3wADwnpYGBREWP8tXPI7kfT9ZLcKbKfwEPGK4pw
-	 3kYnkxJQe6Sbl7KLE+MA59mX2Tgk6nTqdMf40Yap2f+i0k6FS+ePCjiA5HyCsr4/an
-	 QGD14c9IiGjKBQHa4/hxgSG+hlH8gguLkCCeewtuFmqYuMTGJnE41k4GMlwtZcSWew
-	 XS6eF7dXzcsFS8YM8mu103YK2+kfCISEqeBVaYv4dvpkof/6pF/XHtU45j+EeggGga
-	 HARBcwefWR/EA==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67abbbda0001>; Wed, 12 Feb 2025 10:06:34 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 12 Feb 2025 10:06:34 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.014; Wed, 12 Feb 2025 10:06:34 +1300
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Sander Vanheule <sander@svanheule.net>, "lee@kernel.org" <lee@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "daniel@makrotopia.org" <daniel@makrotopia.org>,
-	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH net-next v6 4/6] net: mdio: Add RTL9300 MDIO driver
-Thread-Topic: [PATCH net-next v6 4/6] net: mdio: Add RTL9300 MDIO driver
-Thread-Index: AQHbdrFbzRDaB5FJKUWZObR7MHYqebM+M/KAgAOWZYA=
-Date: Tue, 11 Feb 2025 21:06:34 +0000
-Message-ID: <bdfe3418-19c0-4c1e-b5f0-9bbe07b1db2c@alliedtelesis.co.nz>
-References: <20250204030249.1965444-1-chris.packham@alliedtelesis.co.nz>
- <20250204030249.1965444-5-chris.packham@alliedtelesis.co.nz>
- <091a2e9cc6fedd99f35da124f67a54b69478648f.camel@svanheule.net>
-In-Reply-To: <091a2e9cc6fedd99f35da124f67a54b69478648f.camel@svanheule.net>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <50E13F01366D854B9E2AAF0631479E51@alliedtelesis.co.nz>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1739308019; c=relaxed/simple;
+	bh=1cZnpbpTOiIQg9CEPVzPEcN13HtPcQ50VtV/KHNo+Sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=czaPyVU66bKSJUkMePdgbUL5whKjGVae7AO3dlhCF3A5dxfLKJJ6ETJX2RPojc6eL+s6AlcUoALJQ3yBb1dRh+7X94MsEIkXdZils859XEfcdFKQGYFvGif1UZpzkDJBc5ouD8atK7qIJ5GuESwKwyjwHriZmliF4F5++NZ/17E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NIQ9LDXt; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739308018; x=1770844018;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1cZnpbpTOiIQg9CEPVzPEcN13HtPcQ50VtV/KHNo+Sg=;
+  b=NIQ9LDXtSjo539gMRSGVQv+81t5pc9HI4ruylHRk2pp3MDa3aWcrvh1g
+   51SohZoNinTsjbd1hBgKoI+6XSp5QC+YnIjaKsfaPvbfWRculeOX5rdXt
+   QC4olPSGV6nybh94CpPPbnw458YBSRE/FhQlh/Mn4ZajM9Al/lOI9bIwT
+   ZBviLLFvzUPGXDuqdw1gdLq4tRDrqZkk105sBQOv7Ka/OpqJhMM975vFn
+   CIccBZxb1n8XsxY3pHY/SDbuu6s9Beyr9tIlKQiYJ/aC+VoLeK5ZuGUI1
+   Qe3orNE3cdnNfSaI5qvyHajHYV5A79h1YM2KYZMPu0BIE3iHXbVddVE2x
+   Q==;
+X-CSE-ConnectionGUID: zQIRdT09TfOxMkMSnwBbdQ==
+X-CSE-MsgGUID: RfvTMey5SV+p1kDocDNLaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="27547695"
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="27547695"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 13:06:56 -0800
+X-CSE-ConnectionGUID: mUH0w3szSq6RSnhlYXVfrg==
+X-CSE-MsgGUID: mcj59dfEStSmHZWVKo7q8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="135887755"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.48]) ([10.125.108.48])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 13:06:54 -0800
+Message-ID: <58147675-d5be-438d-8d5e-c32bc981a59d@intel.com>
+Date: Tue, 11 Feb 2025 13:06:53 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=QNvLRRLL c=1 sm=1 tr=0 ts=67abbbda a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=JlFAmtSrY9ouPlbKkEYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/17] x86/cpu/intel: Replace Family 5 model checks
+ with VFM ones
+To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Fenghua Yu <fenghua.yu@intel.com>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Zhang Rui <rui.zhang@intel.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ David Laight <david.laight.linux@gmail.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+References: <20250211194407.2577252-1-sohil.mehta@intel.com>
+ <20250211194407.2577252-13-sohil.mehta@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250211194407.2577252-13-sohil.mehta@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SGkgU2FuZGVyLA0KDQpJJ2xsIGhvbGQgb2ZmIG9uIHNlbmRpbmcgdjcgdW50aWwgSSBzb3J0IG91
-dCB0aGUgbWVzcyBJJ3ZlIG1hZGUgd2l0aCB0aGUgDQpkdC1iaW5kaW5ncyAoc3B1biBvZmYgaW50
-byBhIGRpZmZlcmVudCBzZXJpZXMgWzFdKQ0KDQpbMV0gLSANCmh0dHBzOi8vbG9yZS5rZXJuZWwu
-b3JnL2xrbWwvMjAyNTAyMDkyMzQ3NTEuNDYwNDA0LTEtY2hyaXMucGFja2hhbUBhbGxpZWR0ZWxl
-c2lzLmNvLm56Lw0KDQpPbiAxMC8wMi8yMDI1IDAzOjE5LCBTYW5kZXIgVmFuaGV1bGUgd3JvdGU6
-DQo+IEhpIENocmlzLA0KPg0KPiBPbiBUdWUsIDIwMjUtMDItMDQgYXQgMTY6MDIgKzEzMDAsIENo
-cmlzIFBhY2toYW0gd3JvdGU6DQo+PiBBZGQgYSBkcml2ZXIgZm9yIHRoZSBNRElPIGNvbnRyb2xs
-ZXIgb24gdGhlIFJUTDkzMDAgZmFtaWx5IG9mIEV0aGVybmV0DQo+PiBzd2l0Y2hlcyB3aXRoIGlu
-dGVncmF0ZWQgU29DLiBUaGVyZSBhcmUgNCBwaHlzaWNhbCBTTUkgaW50ZXJmYWNlcyBvbiB0aGUN
-Cj4+IFJUTDkzMDAgaG93ZXZlciBhY2Nlc3MgaXMgZG9uZSB1c2luZyB0aGUgc3dpdGNoIHBvcnRz
-LiBUaGUgZHJpdmVyIHRha2VzDQo+PiB0aGUgTURJTyBidXMgaGllcmFyY2h5IGZyb20gdGhlIERU
-UyBhbmQgdXNlcyB0aGlzIHRvIGNvbmZpZ3VyZSB0aGUNCj4+IHN3aXRjaCBwb3J0cyBzbyB0aGV5
-IGFyZSBhc3NvY2lhdGVkIHdpdGggdGhlIGNvcnJlY3QgUEhZLiBUaGlzIG1hcHBpbmcNCj4+IGlz
-IGFsc28gdXNlZCB3aGVuIGRlYWxpbmcgd2l0aCBzb2Z0d2FyZSByZXF1ZXN0cyBmcm9tIHBoeWxp
-Yi4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBQYWNraGFtIDxjaHJpcy5wYWNraGFtQGFs
-bGllZHRlbGVzaXMuY28ubno+DQo+PiAtLS0NCj4+DQo+PiBOb3RlczoNCj4+ICDCoMKgwqAgQ2hh
-bmdlcyBpbiB2NjoNCj4+ICDCoMKgwqAgLSBQYXJzZSBwb3J0LT5waHkgbWFwcGluZyBmcm9tIGRl
-dmljZXRyZWUgcmVtb3ZpbmcgdGhlIG5lZWQgZm9yIHRoZQ0KPj4gIMKgwqDCoMKgwqAgcmVhbHRl
-ayxwb3J0IHByb3BlcnR5DQo+IEdvb2QgdG8gc2VlIHlvdSBmb3VuZCBhIHdheSB0byBkbyB0aGlz
-IQ0KPg0KPg0KPj4gKy8qDQo+PiArICogTURJTyBjb250cm9sbGVyIGZvciBSVEw5MzAwIHN3aXRj
-aGVzIHdpdGggaW50ZWdyYXRlZCBTb0MuDQo+PiArICoNCj4+ICsgKiBUaGUgTURJTyBjb21tdW5p
-Y2F0aW9uIGlzIGFic3RyYWN0ZWQgYnkgdGhlIHN3aXRjaC4gQXQgdGhlIHNvZnR3YXJlIGxldmVs
-DQo+PiArICogY29tbXVuaWNhdGlvbiB1c2VzIHRoZSBzd2l0Y2ggcG9ydCB0byBhZGRyZXNzIHRo
-ZSBQSFkuIFdlIHdvcmsgb3V0IHRoZQ0KPj4gKyAqIG1hcHBpbmcgYmFzZWQgb24gdGhlIE1ESU8g
-YnVzIGRlc2NyaWJlZCBpbiBkZXZpY2UgdHJlZSBhbmQgdGhlIHJlYWx0ZWsscG9ydA0KPj4gKyAq
-IHByb3BlcnR5Lg0KPj4gKyAqLw0KPiBOZWVkcyBhbiB1cGRhdGUgYWdhaW4gOy0pDQpZZXAgd2ls
-bCBkby4NCj4+ICtzdGF0aWMgaW50IHJ0bDkzMDBfbWRpb19waHlfdG9fcG9ydChzdHJ1Y3QgbWlp
-X2J1cyAqYnVzLCBpbnQgcGh5X2lkKQ0KPj4gK3sNCj4+ICsJc3RydWN0IHJ0bDkzMDBfbWRpb19j
-aGFuICpjaGFuID0gYnVzLT5wcml2Ow0KPj4gKwlzdHJ1Y3QgcnRsOTMwMF9tZGlvX3ByaXYgKnBy
-aXYgPSBjaGFuLT5wcml2Ow0KPj4gKwlpbnQgaTsNCj4+ICsNCj4+ICsJZm9yIChpID0gZmluZF9m
-aXJzdF9iaXQocHJpdi0+dmFsaWRfcG9ydHMsIE1BWF9QT1JUUyk7DQo+PiArCcKgwqDCoMKgIGkg
-PCBNQVhfUE9SVFM7DQo+PiArCcKgwqDCoMKgIGkgPSBmaW5kX25leHRfYml0KHByaXYtPnZhbGlk
-X3BvcnRzLCBNQVhfUE9SVFMsIGkgKyAxKSkNCj4gWW91IGNvdWxkIHVzZSB0aGUgZm9yX2VhY2hf
-c2V0X2JpdChpLCBwcml2LT52YWxpZF9wb3J0cywgTUFYX1BPUlRTKSBsb29wIG1hY3JvLg0KDQpJ
-IGZpZ3VyZWQgdGhlcmUgbXVzdCBiZSBhIHdyYXBwZXIgZm9yIHRoaXMgaWRpb20gYnV0IEkgY291
-bGRuJ3QgZmluZCBpdCANCmZvciBsb29raW5nLg0KDQo+PiArc3RhdGljIGludCBydGw5MzAwX21k
-aW9fcmVhZF9jMjIoc3RydWN0IG1paV9idXMgKmJ1cywgaW50IHBoeV9pZCwgaW50IHJlZ251bSkN
-Cj4+ICt7DQo+IFsuLi5dDQo+PiArDQo+PiArCWVyciA9IHJlZ21hcF93cml0ZShyZWdtYXAsIFNN
-SV9BQ0NFU1NfUEhZX0NUUkxfMiwgcG9ydCA8PCAxNik7DQo+IEFub3RoZXIgY2FuZGlkYXRlIGZv
-ciBGSUVMRF9QUkVQKCkNClllcC4gVGhlcmUncyBhIGNvdXBsZSBtb3JlIHRvby4NCj4NCj4+ICsJ
-aWYgKGVycikNCj4+ICsJCXJldHVybiBlcnI7DQo+PiArDQo+PiArCXZhbCA9IEZJRUxEX1BSRVAo
-R0VOTUFTSygyNCwgMjApLCByZWdudW0pIHwNCj4+ICsJwqDCoMKgwqDCoCBGSUVMRF9QUkVQKEdF
-Tk1BU0soMTksIDE1KSwgMHgxZikgfA0KPj4gKwnCoMKgwqDCoMKgIEZJRUxEX1BSRVAoR0VOTUFT
-SygxNCwgMyksIDB4ZmZmKSB8DQo+IFlvdSBjb3VsZCB1c2UgI2RlZmluZS1zIGZvciB0aGUgR0VO
-TUFTSygpIGZpZWxkIG1hc2tzIHRvbywgc2ltaWxhciB0byBQSFlfQ1RSTF8qLiBUaGF0DQo+IHdv
-dWxkIG1ha2Ugd2hhdCB5b3UncmUgc2V0dGluZyBhIGJpdCBjbGVhcmVyLCBjb21wYXJlZCB0byB0
-aGVzZSBsaXRlcmFsIHZhbHVlcy4NClN1cmUgd2lsbCBkby4NCj4gTml0OiBZb3UncmUgYWxzbyBz
-ZXR0aW5nIGFsbC1vbmUgdmFsdWVzLCBzbyBHRU5NQVNLKDE5LCAxNSkgYW5kIEdFTk1BU0soMTQs
-IDMpIGJ5DQo+IHRoZW1zZWx2ZXMgYXJlIHN1ZmZpY2llbnQuIEUuZy4gUEhZX0NUUkxfTk9fUEFH
-RV9QQVJLIGFuZCBQSFlfQ1RSTF9OT19QQUdFX1NFTEVDVC4NCg0KVGhpcyBwYXJ0IEknbSBub3Qg
-cGxhbm5pbmcgb24gZG9pbmcuIFJpZ2h0IG5vdyBJIGFtIGp1c3Qgc2V0dGluZyB0aGVtIHRvIA0K
-YWxsLW9uZXMgYnV0IHRoZSBzYW1lIGNvZGUgbWF5IGVuZCB1cCBuZWVkaW5nIHRvIGdyb3cgcGFn
-ZSBsb2dpYyANCihSZWFsdGVrJ3MgU0RLIGhhcyBjb2RlIHRoYXQgYWRkcyBwYWdlIHJlYWQvd3Jp
-dGUgZnVuY3Rpb25zIHRvIHBoeWxpYikuDQoNCj4+ICtzdGF0aWMgaW50IHJ0bDkzMDBfbWRpb2J1
-c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPj4gK3sNCj4gWy4uLl0NCj4+
-ICsNCj4+ICsJZGV2aWNlX2Zvcl9lYWNoX2NoaWxkX25vZGUoZGV2LCBjaGlsZCkgew0KPj4gKwkJ
-ZXJyID0gcnRsOTMwMF9tZGlvYnVzX3Byb2JlX29uZShkZXYsIHByaXYsIGNoaWxkKTsNCj4gSW4g
-eW91ciBuZXh0IHBhdGNoIHlvdSB1c2UgJ3N0YXR1cyA9ICJkaXNhYmxlZCInIGZvciB0aGUgYmFz
-ZSBkdHNpLiBZb3UgbWF5IHdhbnQgdG8gdXNlDQo+IGZ3bm9kZV9mb3JfZWFjaF9hdmFpbGFibGVf
-Y2hpbGRfbm9kZSgpIGluIHRoYXQgY2FzZSwgc28gdW51c2VkIGJ1c3NlcyBhcmUgbm90IHByb2Jl
-ZC4NCg0KSG1tLCB0aGUgZXhpc3RpbmcgY29kZSBpcyBvbmx5IHJlZ2lzdGVyaW5nIHR3byBtZGlv
-IGJ1c2VzLiBBbHRob3VnaCBJIA0KY2FuJ3Qgc2VlIHdoeSBpdCdzIG5vdCBhdHRlbXB0aW5nIHRv
-IHRvIHJlZ2lzdGVyIHRoZSBvdGhlciB0d28uDQoNCkFoIE9LLiBJdCdzIGJlY2F1c2UgZGV2aWNl
-X2Zvcl9lYWNoX2NoaWxkX25vZGUoKSB3cmFwcyANCmRldmljZV9nZXRfbmV4dF9jaGlsZF9ub2Rl
-KCkgd2hpY2ggY2FsbHMgZndub2RlX2dldF9uZXh0X2NoaWxkX25vZGUoKSANCndoaWNoIGNhbGxz
-IG9mX2Z3bm9kZV9nZXRfbmV4dF9jaGlsZF9ub2RlKCkgd2hpY2ggZG9lcyB0aGUgYXZhaWxhYmxl
-IA0KY2hlY2sgd2l0aCBvZl9nZXRfbmV4dF9hdmFpbGFibGVfY2hpbGQoKS4NCg0KU28gSSBkb24n
-dCB0aGluayB0aGVyZSdzIGFueSBjaGFuZ2UgdG8gYmUgbWFkZSBoZXJlLg0K
+On 2/11/25 11:44, Sohil Mehta wrote:
+> Introduce names for some Family 5 models and convert some of the checks
+> to be VFM based.
+> 
+> Also, to keep the file sorted by family, move Family 5 to the top of the
+> header file.
+
+It seems a little crazy to be naming all these old CPUs, but it does
+make the code a lot more readable. Seeing INTEL_PENTIUM_MMX actually in
+the code also *SCREAMS* how horribly ancient these CPUs are. :)
+
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
