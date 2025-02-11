@@ -1,119 +1,121 @@
-Return-Path: <linux-kernel+bounces-510158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F30A318F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:43:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D8BA318F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:43:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1739216662B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:43:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8F53A2621
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656EB272913;
-	Tue, 11 Feb 2025 22:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FB9272907;
+	Tue, 11 Feb 2025 22:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSsPSOiV"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bRiQypg3"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A68272906;
-	Tue, 11 Feb 2025 22:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E252B272900
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 22:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739313818; cv=none; b=uJLYPN4fa+2U0rEmXK3IErXybXfs2BsayDHy1bD0w1O43LjdTJnIdD20Zu+zomFtm0/p9T9y2gRni+y4dXt19gp8B5WQIJyWsO5kHcnhcVUQ1UGiYcdGv+TEXmZ9CzFP51zxXrKq8qxFXJZeGGIvGeh4SsduE62zAZ1R8BvjZwg=
+	t=1739313800; cv=none; b=IwOsFFThv37KqOG6NM6s8oETVmRM/SWexOtqlOA7W1chYciIJodPe1pmWJasD5vR/yU29Avh8CuvDDSMPeiTi9CEFI1e8M9hjmdIukEpgl0MWj8y35lGBEI/49zgwSj1ZnJG6hhMEU5Ps23GT6ZL+uWgOknaxMV9lgFI3jxxXL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739313818; c=relaxed/simple;
-	bh=+P0q4a0fkVM7lU5+Wd/g02zcF7Ptx6plpBHI4r4wCY4=;
+	s=arc-20240116; t=1739313800; c=relaxed/simple;
+	bh=f9KY+6eNEKUf11+++hxSSdeAgCYvmlb6iCdNJHIeWzs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PioVW811w3mvadfUlSAHA0HkbxDmWvBJgWkoxz/WGZLeFRY0vkTW3eqOo/lZhu2kuGayKr06N3oOiYQ8AePgRGc4kvmsqub+BVlRVvc/mgKKB2skS3+zn64K09QLZ/THh5tzxWae7k7Ywuwf2RB2Z/mO0HF0UzFV1+LgJq23vBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSsPSOiV; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30762598511so59759151fa.0;
-        Tue, 11 Feb 2025 14:43:36 -0800 (PST)
+	 To:Cc:Content-Type; b=JF6otuRPBdZp5JsHBR+FAXNFvXawCQ0Z7E7AiogRi/uBEoU2QPyPdPFiHU0X/EkqQW7JRPdZURq5T0FyJ6H5iv6pmmxe4277XPLvLNFA24GkblD9QCv8qpkFYa93bAqpX2OAxtskJ67gKwoptZ01SvltNxrw19dWNpQIKId4U5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bRiQypg3; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3d147331fb5so48405ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 14:43:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739313815; x=1739918615; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739313798; x=1739918598; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+P0q4a0fkVM7lU5+Wd/g02zcF7Ptx6plpBHI4r4wCY4=;
-        b=XSsPSOiV03qBOMIcpWZHrILgSkrQKy/x8RQdlTr5qjED/IrHCquVMMVdIYTXjbLECd
-         XtgeEFjNgtEA5Y5Kadn8axlxg7CZ80MMj/4PpFyFoE/PRb5p5sdAyCjM8F7JlQ94Fp87
-         iKab8wyu4AJyVR2MSeoyZZlgDETYUq6oKcy1PuQ1TqkoNVTLVvrGVDnJ4UfNQmSUnfQZ
-         OgRGh/svChaFPqPe/sACcLFk6UKkGaArar9NvE8Xy8aYbiuXBTOkcbqMoHl2zTC+NAkA
-         cLSKPwP6IsXzrqvgel8VX3KYjhNpJYWUsqRQvtLZMBD1iRpfybwxX5CXCDGJZySnZTt5
-         zRxA==
+        bh=QB+Kz99xiql9mHJ4ulDoF28EHq/GR2RedSyzITbYkFc=;
+        b=bRiQypg3AU6ZI+W27dgsgAeIRjICjIhWl0wtHVUzrya7DTM0dgbfZqCzqGkqt69PM8
+         AcdMArKLgJZbgHWB+X4s+NWmFYSR4nS/oHT74/U0pa61yzexaUFJI+4/A46xQo3Lb/zD
+         tOTMzfIyrxrXeNufwpU3b3I64InWjzY/WhgmwdsJKT+fyl27rLDgqM+NYauAIW1Fx0qr
+         d0IHAvfQDiArNslg2vQTNNYdqp1utIWB6VAhYHd/PukVqtdyWJ1PhRoOv7/umUiO79mx
+         Vl5V4Glpe+tP2kB2KStIteEw41L9PlLe8w2cpRJGKx99lKJngP5gxkfROEw8bPI7zxpT
+         u/xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739313815; x=1739918615;
+        d=1e100.net; s=20230601; t=1739313798; x=1739918598;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+P0q4a0fkVM7lU5+Wd/g02zcF7Ptx6plpBHI4r4wCY4=;
-        b=sUcPrjvrF92F2fgBv8/UhbIoTHKFVh3xz/WG9EXOj/dE41uPXOaoSl+DzXyXXUZE8F
-         tf4uLSew3F0fruzwkjABF8zyysyFcLp4hZ8swsjp84p+jzfdbKhL+L1cdzqIZzZHMc3R
-         AnBoAS8iZXQ9FSs/qvXP6wC0X2GiJFnhIOV6Dbeix7IqLdWFKxBECQ98VWDN2JkDJbCc
-         lRDkFuTdEA/IgG4895ZB65010dD6OAdH5YUpLbK0YfBcVrL6ppttLNktFRB/Zj7HGXK6
-         E4sQilMtKQprqkkp/yCiLkekH8YTDHOrzgOSJPVLmtirTwXWZ3seEf5Qjd7SdLQ+EpJF
-         Nu1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUa2haqIKQjBH7/IUH2XXHNy2TYeOjSBQqgQdBVttdGFQVaSSE+fVS8Ubo9F7Ubnmz+lsTNHr/NPTO6v9vpeocq@vger.kernel.org, AJvYcCXF+QkGpPO9nLjobAkoFX1edtVKROi7PvGBx7OQeQbUM+w2BXeQ6Agw3nehm2oQrTYfr79krkzJnHeL5iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2No+oUL3iwruv+///1sBJxQpvWdl5MsTnCPgjQLfcLSs6FY8C
-	D/GlPWhuBNiSkxbVFkdgkbVt58ffBwbDggxY1omrd78a/FRWfx5iBq4zeoBTHw3sEk/PSc5kXS9
-	MHk9ggI1UvD+WO/qhXPvNcgeXB3M=
-X-Gm-Gg: ASbGncuTzMJ4dceb7nFXyY8nckgmuwVLDdzRKoK1YQ5ub8nWef3V5IXCPj9wcjlsx6q
-	8uSvn9Arp/Hft9et5Ey3rl7o9bkxuGDTLnz6nNaOeb/XjSeuxvbldmgEMYH+dFFTQSWxVz6lvSw
-	UH4IlMHMk2T42h
-X-Google-Smtp-Source: AGHT+IELdGNHUDK0UfZymCdzCGQppus55YE/nCQaFiA7ChFaTnW2wACEvhwP4JP61G9fF7ZueB1/JebEtHfPflOAhrg=
-X-Received: by 2002:a05:651c:2205:b0:308:e8d3:7571 with SMTP id
- 38308e7fff4ca-3090377bb96mr4324741fa.31.1739313815030; Tue, 11 Feb 2025
- 14:43:35 -0800 (PST)
+        bh=QB+Kz99xiql9mHJ4ulDoF28EHq/GR2RedSyzITbYkFc=;
+        b=IGRumqa9zZrFKRlJE3y+oEB22aV5DH19JqEaDq9FrINCk7faWMJQ7wrfJYPHag9eae
+         xhVfYstNrCW7rLlmrEVFrMZytYlimo6j/FLVLlukbbG9J523dOLA/Ol0kRTe3KfGNKCj
+         B1ZYg/sL6ZP/boiNtL0W7N6cUzGIXv9OKP+LKFR1xmS24cRodE2K+X9LbTQAVSXRE8ZT
+         +nV1GknvwYLtmgzBLA3IWl48YKSASn6rTrrGa2Yis2GHiQeqJc8KL7s5nFJWE3Xw18P9
+         5llnItlTeSqzl2CJFuC+B+CAnYpp9iXmnLC+Yd5lhGga5iXtBF1EHDb4zbgYmT0Qb2Lp
+         JJDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCebRsppb4VawM7Ur9vzH23MGnpWwbMD3Gx6sDpUqzm0+uwxzhDaftK/3jpZewZWA95pPRKUmDzCiYHfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAjHjSEm2iaapL985QbxDA9eGP5uNJexmq0Mgm7pjE+ltjwQQL
+	l6ffOPzhYaAtPY3GWlad8A9a7jpMDQ/96QQfsxsW/QjohUIqimJSBXM4rR+G0qH9WBOTaCoepdu
+	azMzwp/VT7TpJ5Bl4lIzPCzVq94VJWrLBGWq8DOFndE9rsfBXsZSM
+X-Gm-Gg: ASbGncsQaVcdGE6KOXqnZ8oUunCHdDSEGLK3seFBLNUGOlvYPZcOx3s2ds4VELq1Azw
+	S30wHeGb/Y0FOiXw+vRx/l3DcswCiNzWcKWP/Dz+oAM45O6Y1JQLAuD5VOhtwWMYNGPAvqPD7RP
+	vuEIUrzJqLjlZwf+pJgVYx6qxN
+X-Google-Smtp-Source: AGHT+IF+cb7GE8XgaPk0n38/Yi4kaWPSQbEoAefJVRYnQU6O9euNmFzz+KH9Emoxt8mZXUIIIsvpA+wdR0FLZmlK18o=
+X-Received: by 2002:a05:6e02:1c03:b0:3cf:a4e4:8f89 with SMTP id
+ e9e14a558f8ab-3d17cd5f2a3mr1080045ab.4.1739313797883; Tue, 11 Feb 2025
+ 14:43:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-ww_mutex-kunit-convert-v1-1-972f0201f71e@gmail.com> <Z6vRIZk7DsSNooFZ@boqun-archlinux>
-In-Reply-To: <Z6vRIZk7DsSNooFZ@boqun-archlinux>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 11 Feb 2025 17:42:59 -0500
-X-Gm-Features: AWEUYZmdVD87KgQWGbxD7rE2mUUzNYneLqMuLXWmOxVvy_-_F7I4uqgkp4eVj00
-Message-ID: <CAJ-ks9=EfdCenpTjSdsaGhbUyJ99JYEL_nY0Y8RqzOxXKYWY5A@mail.gmail.com>
-Subject: Re: [PATCH] ww_mutex: convert self-test to KUnit
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: David Gow <davidgow@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, llvm@lists.linux.dev
+References: <20250206000137.2026034-1-namhyung@kernel.org>
+In-Reply-To: <20250206000137.2026034-1-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 11 Feb 2025 14:43:05 -0800
+X-Gm-Features: AWEUYZm25vHIgauOaEXBMf2v_MqwEaiH1o1lrNB8Jgsn7jomjRRVF7NAhAargog
+Message-ID: <CAP-5=fUcjEONLZ5uTHMDep3xF2b7ZB7Krd1dEViUSYfuWT-G0w@mail.gmail.com>
+Subject: Re: [PATCH] perf report: Add 'tgid' sort key
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Stephane Eranian <eranian@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 11, 2025 at 5:38=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+On Wed, Feb 5, 2025 at 4:01=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
 rote:
 >
-> Hi Tamir,
-
-Hi Boqun, thanks for taking a look.
-
-> On Mon, Feb 10, 2025 at 10:59:12AM -0500, Tamir Duberstein wrote:
-> > Convert this unit test to a KUnit test.
-> >
+> Sometimes we need to analyze the data in process level but current sort
+> keys only work on thread level.  Let's add 'tgid' sort key for that as
+> 'pid' is already taken for thread.
 >
-> I would like to know the pros and cons between kunit tests and
-> kselftests, maybe someone Cced can answer that? It'll be good to put
-> these in the commit log as well.
+> This will look mostly the same, but it only uses tgid instead of tid.
+> Here's an example of a process with two threads (thloop).
+>
+>   $ perf record -- perf test -w thloop
+>
+>   $ perf report --stdio -s tgid,pid -H
+>   ...
+>   #
+>   #    Overhead  Tgid:Command / Pid:Command
+>   # ...........  ..........................
+>   #
+>      100.00%     2018407:perf
+>          50.34%     2018407:perf
+>          49.66%     2018409:perf
+>
+> Suggested-by: Stephane Eranian <eranian@google.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-David Gow gave a pretty detailed answer in
-https://lore.kernel.org/all/CABVgOS=3DKZrM2dWyp1HzVS0zh7vquLxmTY2T2Ti53DQAD=
-rW+sJg@mail.gmail.com/
-for a similar patch.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-David, what do you think about enumerating these reasons in the KUnit
-documentation? This is the 3rd of these patches that has received this
-question. It'd be a shame to have every commit enumerate KUnit's
-reasons for being.
-
-Tamir
+Thanks,
+Ian
 
