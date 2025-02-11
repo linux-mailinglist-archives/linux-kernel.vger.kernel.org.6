@@ -1,86 +1,104 @@
-Return-Path: <linux-kernel+bounces-510027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B88A31760
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:11:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A297A317AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C05EE188DB6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:11:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9953A1787
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE30726D5AB;
-	Tue, 11 Feb 2025 21:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF9F269B13;
+	Tue, 11 Feb 2025 21:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHhH+6io"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="UdE3VJlu"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E977426B2DD;
-	Tue, 11 Feb 2025 21:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EC726280D;
+	Tue, 11 Feb 2025 21:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739308135; cv=none; b=s6y2/+FfJAL5NcXahf73aRPyB9nr8O7nrVM+TZy2M/N3hublwMPnEXL0ICCiwm8WZLhHlAUHkSurnL9eAOYfHkoZf5B9EqYhu1wbwKOddkQu2XEHmxdmqk7XfIto4jwHrfM60b21WgQBL4GQfKKJm22GdqAFFFHXLwhODUuC/go=
+	t=1739309158; cv=none; b=Yr5XR9OM/XHQhFe8R6sLzbqQ5vmJ5Tx2mu/RqflV3R4x7fT1N8g83oW/mC3VAS7YvTl41fg+4JB1tKOvdP6vwm+iYf3YYoOIWAD7HE+ySitP4gqav+aztIv8Sy5EgvatBVksJYCnKxKJsKkL+kV7j7EKwvw3crXDSV4uyMhD5Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739308135; c=relaxed/simple;
-	bh=7HTPGAR48CRJjzHVBoG77n4rmyS/GxYTOxsXPhVkzho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D7FC3/yKKY3xgmF62lqcs8C5eT6v06sTWZvzL/uaQk2Yv4MNq/A4i8ermB7y+rC08ARJJlulFPWMs9TuM/HFB67/8uPHVQ+AMERvCngIZ+2K2Rf90pEVj5GqWKdcdOq6QTU5MI15kDuOZtFSCdfO5ezbzQR6aah3CU/PfRBBPSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHhH+6io; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF599C4CEDD;
-	Tue, 11 Feb 2025 21:08:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739308134;
-	bh=7HTPGAR48CRJjzHVBoG77n4rmyS/GxYTOxsXPhVkzho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uHhH+6io4Up/8fGx8BLwl7OMTe03HpALiGJXH3E6TkaOZ/PMEJC/adrYDD1ArWWh6
-	 cNFr2shyPONMl2VxULJJAgjqVPT1SiAuDWrzmBrMmuuZj2SznGilJAC2HUAHLyBOPN
-	 u0+2fxoDY0NQKM6V2eZ+3WtxLMAXil1ye/45tqGs1G8rBz4h+Bdksg0CnKYamDj9KE
-	 eookp+Qep3mg0nYltyrjeST7rmYf/lmUK47Z1fEgfqvicH9SEGKbpwFHWvM/udV/Qx
-	 F1YHBFciC5dEQuiZdHL3SeZIA3nkSqIHFAMHB3bWaf9tVtNiuBGLX0edMEPzSgAFd6
-	 YtYjxy59s7mGA==
-Date: Tue, 11 Feb 2025 23:08:49 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stuart Yoder <stuart.yoder@arm.com>
-Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-	sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] tpm_crb: implement driver compliant to CRB over FF-A
-Message-ID: <Z6u8Yb-NIs0_v2gm@kernel.org>
-References: <20250210232227.97761-1-stuart.yoder@arm.com>
- <20250210232227.97761-2-stuart.yoder@arm.com>
+	s=arc-20240116; t=1739309158; c=relaxed/simple;
+	bh=zmNhGZJdY16x0lBsxEUPSi9daEXT4yca9scHTcNRzzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=klVxPIRLK4P/POJSMgcINUJk/DRbHur+jSCXJEXaf9jpBcOnKBxlbt4WMhAAgS0sC/Htw/NJrtCkEH00tCxE3qKSWsnX1IK2X/o6k1vl0t93HsitjHEx5FI1YfwKj4bMTlRNGg/PXMOho7hX/205RHCu65BjysRu6Ke+yyRl0K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=UdE3VJlu; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 9daabc391473d490; Tue, 11 Feb 2025 22:25:48 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0B026770175;
+	Tue, 11 Feb 2025 22:25:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1739309148;
+	bh=zmNhGZJdY16x0lBsxEUPSi9daEXT4yca9scHTcNRzzU=;
+	h=From:Subject:Date;
+	b=UdE3VJluhfkRx/T9oWQ97SBw5OQ80FdN/4yRVlBX5ep0aPRdpHYTj55d0Wt+ye4IK
+	 5KcRI1zAz3TCSoZznKPcyL/LgqGmOJBC0nwwtzjCsAYRYT9oMhgd6ebeL06hYOX5An
+	 k7+hXmuPoGrp72XSfqHzpMipnluGlaWRNw2w9EjIe3/C8EZSwao12JIljnFAL7cTvB
+	 uXeJUqp40lGJ2i1srQgAfQBFP8aDDemicGhLVqL4mjiorhNDgICsTKenyKwMCTcCpP
+	 wvPyt2YG+senpQEP7z4Kqx8KxKmEFPreQ5oAUCDNZkJPrzdJT0f2/oAi9Do1EwCGmt
+	 KGXHAAOp+L5tg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Subject:
+ [PATCH v1 05/10] PM: runtime: Do not enable wakeup IRQs during system resume
+Date: Tue, 11 Feb 2025 22:09:11 +0100
+Message-ID: <8546164.NyiUUSuA9g@rjwysocki.net>
+In-Reply-To: <2314745.iZASKD2KPV@rjwysocki.net>
+References: <2314745.iZASKD2KPV@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250210232227.97761-2-stuart.yoder@arm.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegvddtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-On Mon, Feb 10, 2025 at 05:22:24PM -0600, Stuart Yoder wrote:
-> The Arm specification TPM Service CRB over FF-A specification
-> defines the FF-A messages to interact with a CRB-based TPM
-> implemented as an FF-A secure partition.
-> 
-> Spec URL:
-> https://developer.arm.com/documentation/den0138/latest/
-> 
-> This driver is probed when a TPM Secure Partition is
-> discovered by the FF-A subsystem. It exposes APIs
-> used by the TPM CRB driver to send notifications to
-> the TPM.
-> 
-> Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
-> ---
->  drivers/char/tpm/Kconfig   |   9 ++
->  drivers/char/tpm/Makefile  |   1 +
->  drivers/char/tpm/ffa_crb.c | 310 +++++++++++++++++++++++++++++++++++++
->  drivers/char/tpm/ffa_crb.h |  30 ++++
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Let's use tpm_ prefix for these.
+Enabling system wakeup IRQs during system resume transitions is
+not particularly useful, even on errors, so don't do it in the
+pm_runtime_force_resume() error path.
 
-BR, Jarkko
+Fixes: c46a0d5ae4f9 ("PM: runtime: Extend support for wakeirq for force_suspend|resume")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/runtime.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1978,7 +1978,6 @@
+ 	ret = callback ? callback(dev) : 0;
+ 	if (ret) {
+ 		pm_runtime_set_suspended(dev);
+-		dev_pm_enable_wake_irq_check(dev, false);
+ 		goto out;
+ 	}
+ 
+
+
+
 
