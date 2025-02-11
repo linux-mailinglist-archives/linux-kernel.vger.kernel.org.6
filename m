@@ -1,151 +1,156 @@
-Return-Path: <linux-kernel+bounces-509953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF23A3167C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:15:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C482A31684
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:20:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FA8E7A1F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:14:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89711188978F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587D926156B;
-	Tue, 11 Feb 2025 20:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FF1262162;
+	Tue, 11 Feb 2025 20:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBCcojcs"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="e25u7Awp"
+Received: from mail-io1-f98.google.com (mail-io1-f98.google.com [209.85.166.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6999C26562D;
-	Tue, 11 Feb 2025 20:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49E026562D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 20:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739304933; cv=none; b=pRB7Hgq467G6/KdfddK8vYYoGSbAg3deFm6alkzphFbuSGuVpItIwJO+e+bv1D+GxsvVw8PIiep/zX9aoF4agmXIQSybw4E8CO5/KRtuiZ+UqM8qK3QzP+HXyvicEH8sRlrmWfhujZ0+r1BG2t1dQMGzvH8zQfgBkmymZmByLdg=
+	t=1739305252; cv=none; b=GL4+SmlXg2/FzL+4MD15CKkVNXP0VV7VjQcuuVl69VDoSOng9Y0Wh7i2lUXpPkrL8ZyxS7SYLXOYrAs1aWQelU4rKcqFLHV5FjHHN4P+EE0Y6yq20Vsb77oeywucVcjR4ioF8Y+Z8/YRtJtnNoyuXwbKyPGXLra7o8Q/Ps6PafM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739304933; c=relaxed/simple;
-	bh=dcg9RpGPxYp5XRUaiEsUnrNrF/psnZ/GP6iQ3+Ue6DU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g8mEYNXQdtJkS6t9wzM0YD6fDXrSNKc+BxKqyQHmGKe78s7Q53w6HonXmh8aZ29zTn/nup4G+UG5rbBMxQpDOlcjn6uYUTEjScc3m/P+QblBJguXNwQYEB2bsktzSI356VuI0+mBx9Pl+lEH1spZiYljAGnMQ5jTWqn58o1eI0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iBCcojcs; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21f49bd087cso82270835ad.0;
-        Tue, 11 Feb 2025 12:15:32 -0800 (PST)
+	s=arc-20240116; t=1739305252; c=relaxed/simple;
+	bh=PU/4T9e5pHugUm+/ZNeeDqDdiuPHBuEOUvo8/mnQE9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uh5yf8TksGNHs2XmRhL1KExn8hTV6pRWZ3a38Y1aYjP9O3a7BTcy1xqOgh/hFSAaT00Lk0sC14rpnvE5LRBmofLz70aC3+F91bhDW8u3YcnVRJHdK5CfbpidbOVIAjfy1v9dNPInJvtmu7RqCFIOwxZrXK8Dwahmq7JLLfSXNbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=e25u7Awp; arc=none smtp.client-ip=209.85.166.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-io1-f98.google.com with SMTP id ca18e2360f4ac-8552944e0b4so8515839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 12:20:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739304932; x=1739909732; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hKXkzixeQgbhFTp23RVq91vCGlv0JVX+RKV3xjdQZxE=;
-        b=iBCcojcsfgAfkfxXRSmLcn4EExNXKdLwmHRWZQNfl79glfBOSPKiHg1hZ+DWZJNsVt
-         FAdtVelJ7/r3FouL2cTJBmgxahLzVRJvrAaU8KcE6YSSO5ZlSiwu2BdkrvRgLn4U+zLN
-         /m6ufo0qTCr0urMS1gt1B+KEuGtsFgrQN4L3rmwnT9m0fwVaPkKOOj6UCNS83zw0OJGg
-         lBN5k4z5LH5lpMrVzwhSAcq1PzNm919G3Qjcz2wzjR9B5W3b2bhwN3ce7/kDr1rwPvm/
-         5lrDdYLP/h8hc8BJuwBbmbQH8H5lM5Nuzvg4a+o0SAqJbXwWc8jlaUsMK0kZSBRKZAJ0
-         IGnw==
+        d=purestorage.com; s=google2022; t=1739305250; x=1739910050; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=csJ7f6rdwklnGRErPjOt9JKitwpK8CwkZyN2fZNR+N8=;
+        b=e25u7AwpN460hhdt4i2ViH9/bz6ojk36ckyTWTl7Ql7+BGhj49LhsG90/+Hw0AUJwX
+         /HRN2//HYcjsk3HsjojPoGVO/L6xgjA7RG4CLSY9QjOksAsMuG7CCfKKv0L7PVlCT5Wb
+         g4k02gDZ8ehX4ozE1oo3j1cNwbAjaxpVJcXvSX7liBVARqd+3KUXab1BbNmoxP61ML6G
+         JkFo1DYw/kVAX2TdRgJMR10O3TGLaksoAy9aEZNsoiv1gvAay0xeOitCFLx6Tikz3ZFt
+         4fmJcRr2mcCvbnB+fAtOaEDjWh/oSFwJYGHq5vBPU3CjEzoWHsutOX+fG/GsojpwhvfH
+         8CbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739304932; x=1739909732;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hKXkzixeQgbhFTp23RVq91vCGlv0JVX+RKV3xjdQZxE=;
-        b=uhOEfIKK7GY49C8PFc2ItbQXmIlZwcOwllfQ2P+ThxdNltlj1TMPKOKmOT2RK289JZ
-         dmWwb12FCaciX7SkcPMpCL9KS5Ko0hX9i8c3sCrWO0vygQSe2hJqz7i60Ybvl3bkA6wI
-         t56xgNpLuHTqaG8X5Dn0mvdI2EIOzy8PTptWQHTgmFfn6TGuink0UPzOvrBVI20hcIam
-         lNQSgpkQmBlG5Kryr9IEJR/e5kvwFret4gm6xEXwbxeRkJyim5OGBwFzvMxvl3Gh4xWJ
-         k4ZBvoOQ+ozXYRRsoV8wDdU5HS07oqqoxm9MsPO21Kwj1JoPj6/HIbFdP0T80+uebEQS
-         NBJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuCbstPw52g9jqZTyy0hVIftkndJTY8+TsxNfqN33lfyA57uT785KMP/2m80GnB4pLbKP0tPHBOtotcm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdgEJlJKO50pPYFlD5hgdpO/BxVZGMxf6ot9twoq3HPC83kFK9
-	tMedCXUMtsZpHPL6QPAyrT0CI5FZHq7cvWTqVD9HjcQhuVZ4mU8/
-X-Gm-Gg: ASbGnctQHxZllS3IJawrK/kk8XIDv48UM1b0zjh+gvLG2U8FlwvL0/LUUeuwl2EPoA4
-	I1PSNMDMd+cBg5KV8D4tPq5CpikUj8+sdPI1GXb0t/jEa2k/xqAXaWURLdQ3Z/dAc5PRSz6HNfZ
-	Vkicm0Sl2c57mxNzduA8XsyqgEdXHzyZ2SU187VTJxPyLlEi+s8be0C3K8YD0nB1a+qiPFbLfVv
-	1Le5O2RlPGiE7xds1URpfCYBmGeeQZNQblXYO0afJ6BtlfugDMhvZwOxHaX8oaiJv+itNtK5SiR
-	+HwjysB/TyLI
-X-Google-Smtp-Source: AGHT+IG1vKfAChOkwTPX9+7chsiPwIaH1WH3GP1697y38/vBbGAmUv8F5DHIC9pOxmAOp53ppBWSlg==
-X-Received: by 2002:a17:902:ce06:b0:21f:6a36:7bf3 with SMTP id d9443c01a7336-220bbae21e6mr10376505ad.12.1739304931600;
-        Tue, 11 Feb 2025 12:15:31 -0800 (PST)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f3683d529sm101333785ad.145.2025.02.11.12.15.29
+        d=1e100.net; s=20230601; t=1739305250; x=1739910050;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=csJ7f6rdwklnGRErPjOt9JKitwpK8CwkZyN2fZNR+N8=;
+        b=ozce+uWtI2By0yzmMHrBFvsdMssoEmeeUFSNilScweJCTU1YS1k0eTgiYlgW54uZT5
+         HeEGBxi9DriKz0zJmh2jhag1gYFHeIWhxBoCxGrSjRM8QBlBUuYOYAaPH+JDooV3bvKK
+         roDnGCF9radkvsFHpNK1ymtFJ9pLODS3rGOuiFFqk8DdAUVXRB7yqFvg8hDxBXRsu9cf
+         nQfIumBK7/HsP88BqT9MunA86zTscsDBZ7M095AiLKe1oONBO5YSuaZnlyx/jmn/ehf9
+         g8oMV2Rb2fzbMIlBRxJRIORXTHNvt2QdI3+Qk3k00Csrv0isloNn9pFy40vnmEuJvqoT
+         GsQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtqOXwBRfZJlRzJzG6X9KkG+DTyV+JrHDlWV0i4u+c+dmUKXJdF4Vafdkg5QO+Iy8VLdYsfhumrLN4A8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ3qbGshRqrIdjFu0U1z44pnV+p2H31Kc9F7lXR4RL0SQRNRef
+	m/ylZctE5nq2/xd/VHbedg6NbDckQk8y3HF6q9NfTPV3aGa9QbOPw/STPJnfXz2qaCDnHsbfzv7
+	gnQLlLddByYEyJ64qMJjN+YtgVw8+jUdq
+X-Gm-Gg: ASbGncvsDt8sCXAIQhw2EnuyG3zef1rtzKOmgJO+41aQMR7TahiWveg0kiCp9KPpbA3
+	3PzQb2VrBqafGOr7ic7NdoCU64EOSVs6SeNCamL+pkAAv94apSst8KqNClANLhM4J5IG3XIAyUT
+	+jQ3Dary2Nr4+b2M4Lp42LHHa+Tnk3uhaBC24A8K6g06ltM6puJbVayKyG2Kz6Em9n16owJyZUs
+	zDOnTLgufGn+Ufrf+vz9AGNR9FeDnzP4vTZ/dEoeHC005KQaBrNToGPnNR7w4+v5JJMdcm0kAKm
+	smv5TRWsj/C4/3AnScOGWzU1E/YPJvRGF/aKyQ==
+X-Google-Smtp-Source: AGHT+IHsTrPbdU/3vEFLg/XqPk1UsqIU4VwKugBocGrCcrJHn8lsYoNhUdDT/80cjTS/VgudnAQcEG0cfPfN
+X-Received: by 2002:a05:6602:13c2:b0:854:a5e8:3294 with SMTP id ca18e2360f4ac-85555dad5ebmr23112439f.3.1739305249960;
+        Tue, 11 Feb 2025 12:20:49 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id ca18e2360f4ac-854f669af2asm61994339f.18.2025.02.11.12.20.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 12:15:30 -0800 (PST)
-Message-ID: <1d2d919ae6848e2cf80b81ffe5f94fd31b8ea6ae.camel@gmail.com>
-Subject: Re: [PATCH bpf-next v2 8/9] selftests/bpf: Add selftests for
- load-acquire and store-release instructions
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Peilin Ye <yepeilin@google.com>
-Cc: bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bpf@ietf.org,
-  Xu Kuohai <xukuohai@huaweicloud.com>, David Vernet <void@manifault.com>,
- Alexei Starovoitov	 <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko	 <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Song Liu	 <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend	 <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev	 <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,  Jonathan Corbet	
- <corbet@lwn.net>, "Paul E. McKenney" <paulmck@kernel.org>, Puranjay Mohan	
- <puranjay@kernel.org>, Ilya Leoshkevich <iii@linux.ibm.com>, Heiko Carstens
-	 <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Catalin Marinas	
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Quentin Monnet	
- <qmo@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan
- <shuah@kernel.org>,  Ihor Solodrai <ihor.solodrai@linux.dev>, Yingchi Long
- <longyingchi24s@ict.ac.cn>, Josh Don <joshdon@google.com>,  Barret Rhoden
- <brho@google.com>, Neel Natu <neelnatu@google.com>, Benjamin Segall
- <bsegall@google.com>, 	linux-kernel@vger.kernel.org
-Date: Tue, 11 Feb 2025 12:15:25 -0800
-In-Reply-To: <Z6ugQ1bd0opoGRYg@google.com>
-References: <cover.1738888641.git.yepeilin@google.com>
-	 <3ac854ac5cc62e78fadd2a7f1af9087ec3fc7a9c.1738888641.git.yepeilin@google.com>
-	 <6976077bc2d417169a437bc582a72defd1dec3d4.camel@gmail.com>
-	 <Z6ugQ1bd0opoGRYg@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+        Tue, 11 Feb 2025 12:20:49 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E2C543404B6;
+	Tue, 11 Feb 2025 13:20:48 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id D1687E40DF3; Tue, 11 Feb 2025 13:20:18 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: use IO_REQ_LINK_FLAGS more
+Date: Tue, 11 Feb 2025 13:19:56 -0700
+Message-ID: <20250211202002.3316324-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-02-11 at 19:09 +0000, Peilin Ye wrote:
+Replace the 2 instances of REQ_F_LINK | REQ_F_HARDLINK with
+the more commonly used IO_REQ_LINK_FLAGS.
 
-[...]
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ io_uring/io_uring.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> > Nit: why is dummy_test() necessary?
->=20
-> It's just to make it clear when these tests are (effectively) skipped.
-> Otherwise, e.g. -cpuv4 runner with LLVM-18 on x86-64 would give:
->=20
->   #518     verifier_load_acquire:OK
->=20
-> With dummy_test(), we would see:
->=20
-> (FWIW, for v3 I'm planning to change __description() to the following,
-> since new tests no longer depend on __BPF_FEATURE_LOAD_ACQ_STORE_REL.)
->=20
->   #518/1   verifier_load_acquire/Clang version < 18, or JIT does not supp=
-ort load-acquire; use a dummy test:OK
->   #518     verifier_load_acquire:OK
->=20
-> Commit 147c8f4470ee ("selftests/bpf: Add unit tests for new
-> sign-extension load insns") did similar thing in verifier_ldsx.c.
-
-I see, thank you for explaining.
-We do have a concept of skipped tests in the test-suite,
-but it is implemented by calling test__skip() from the prog_tests/<smth>.c.
-This would translate as something like below in prog_tests/verifier.c:
-
-	void test_verifier_store_release(void) {
-	#if defined(ENABLE_ATOMICS_TESTS) && defined(__TARGET_ARCH_arm64)
-		RUN(verifier_store_release);
-	#else
-		test__skip()
-	#endif
-	}
-
-The number of tests skipped is printed after tests execution.
-Up to you if you'd like to change it like that or not.
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index ec98a0ec6f34..8bb8c099c3e1 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -108,15 +108,17 @@
+ 			  IOSQE_IO_HARDLINK | IOSQE_ASYNC)
+ 
+ #define SQE_VALID_FLAGS	(SQE_COMMON_FLAGS | IOSQE_BUFFER_SELECT | \
+ 			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS)
+ 
++#define IO_REQ_LINK_FLAGS (REQ_F_LINK | REQ_F_HARDLINK)
++
+ #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
+ 				REQ_F_POLLED | REQ_F_INFLIGHT | REQ_F_CREDS | \
+ 				REQ_F_ASYNC_DATA)
+ 
+-#define IO_REQ_CLEAN_SLOW_FLAGS (REQ_F_REFCOUNT | REQ_F_LINK | REQ_F_HARDLINK |\
++#define IO_REQ_CLEAN_SLOW_FLAGS (REQ_F_REFCOUNT | IO_REQ_LINK_FLAGS | \
+ 				 REQ_F_REISSUE | IO_REQ_CLEAN_FLAGS)
+ 
+ #define IO_TCTX_REFS_CACHE_NR	(1U << 10)
+ 
+ #define IO_COMPL_BATCH			32
+@@ -129,11 +131,10 @@ struct io_defer_entry {
+ 	u32			seq;
+ };
+ 
+ /* requests with any of those set should undergo io_disarm_next() */
+ #define IO_DISARM_MASK (REQ_F_ARM_LTIMEOUT | REQ_F_LINK_TIMEOUT | REQ_F_FAIL)
+-#define IO_REQ_LINK_FLAGS (REQ_F_LINK | REQ_F_HARDLINK)
+ 
+ /*
+  * No waiters. It's larger than any valid value of the tw counter
+  * so that tests against ->cq_wait_nr would fail and skip wake_up().
+  */
+@@ -1155,11 +1156,11 @@ static inline void io_req_local_work_add(struct io_kiocb *req,
+ 
+ 	/*
+ 	 * We don't know how many reuqests is there in the link and whether
+ 	 * they can even be queued lazily, fall back to non-lazy.
+ 	 */
+-	if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK))
++	if (req->flags & IO_REQ_LINK_FLAGS)
+ 		flags &= ~IOU_F_TWQ_LAZY_WAKE;
+ 
+ 	guard(rcu)();
+ 
+ 	head = READ_ONCE(ctx->work_llist.first);
+-- 
+2.45.2
 
 
