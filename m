@@ -1,115 +1,145 @@
-Return-Path: <linux-kernel+bounces-510058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D6F6A317A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:27:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D5BA31752
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92EF6188D601
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E40162DFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FABF269B14;
-	Tue, 11 Feb 2025 21:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="CHPt/RUh"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1B5265CD9;
+	Tue, 11 Feb 2025 21:08:36 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C52266589;
-	Tue, 11 Feb 2025 21:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CBE264FB7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739309158; cv=none; b=Ok/lmXSOtAO0WkoG019PL9RRP93ME8/2k+zb/jJS6VeQMzCU2D2mwjK1F3bLr9UjJ6Shgu8MpRiHJDrRSX/ZurF0jUBMmGRKZmFTI+IyCKTAUNTXWwbUSOsAROzB2X/9bu3X33Za3DLbGejL3F7Ym0TJeyLZiRW8smiO44G5BaA=
+	t=1739308116; cv=none; b=ukA1fSkpJ9Cfef2yrvyjS85oEkWY+SC3HKxGK2am/pGw1KOyCrsptGadM0fW0EuOwTTajAUtjTFzXgm0Kpr2KRCVyGk2hinFn9t9OLrP813BK5wigFUjEKoDC0cyAGCOfJKG/OreL62ZAvCfb68oAkfkFnzDiT6zD64Q1Piq1v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739309158; c=relaxed/simple;
-	bh=zVHK9tKkrrsUglkhVCFQZZeMj/6ZCvBq1S2weRFFqdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F/snKhzUDj7AWNrxUZL2lxtkhPc+XdH1r2EVUKju+rddeOFQ8wws/tuWtzSdswgRWkBxHc69JdNhm6GTeel8utYixQf8lKpSBTvxg3Nzs6QROB6cD2pA6C1wdl3urk1p7CrFuRXf/YVTLXaNamrjYoW4FczHvoWmEUf4kBt/OQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=CHPt/RUh; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id e027a457252b6505; Tue, 11 Feb 2025 22:25:49 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 100E6770175;
-	Tue, 11 Feb 2025 22:25:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1739309149;
-	bh=zVHK9tKkrrsUglkhVCFQZZeMj/6ZCvBq1S2weRFFqdk=;
-	h=From:Subject:Date;
-	b=CHPt/RUhm3cXLGMvxhiWdSgoVaBFqdO6LPDszthIOUdPfj8qeIHopckJZqaySZqpD
-	 xqdg57J/xp/fjdJqc7bCR5z8kfjPUyo8VV1bwFrqQCaCvtmwPWQPRErx4KDyl3RUCQ
-	 k6V1BTZ5Pxoy9mjSMMNFT4G8dTMs7/Mlv2bKKUF4l/yOXx5nsqD9fO6Cz30DHfmI1+
-	 XcU8JpkGoBdtgy4K1vz2DzKxvDWs3udxxtxD655gZeturWF2v7gA4Xl0XlqiSlJTQf
-	 rVKbZr+oiv8dZzOjynYjGdW2z0+eBhr8TpXLVrL5Q2LqeBQdyKY9h/VOAnspbBwWdT
-	 JM4fkG0AZ/zOg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
- Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jon Hunter <jonathanh@nvidia.com>
-Subject:
- [PATCH v1 04/10] PM: runtime: Drop status check from
- pm_runtime_force_resume()
-Date: Tue, 11 Feb 2025 22:07:52 +0100
-Message-ID: <6038511.MhkbZ0Pkbq@rjwysocki.net>
-In-Reply-To: <2314745.iZASKD2KPV@rjwysocki.net>
-References: <2314745.iZASKD2KPV@rjwysocki.net>
+	s=arc-20240116; t=1739308116; c=relaxed/simple;
+	bh=Qzi+Ln/O9bOTydxixMzIjY7LBCpDaCfI8F5/N0BbC9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DtJgRwpmDYOSUMdw5oi0ysCRirzja50bRk/7oT7yxWzfG40DmtFuBhIk+Si+kvisT2o4Y95Fj484nl38mYZj59cvfSPLAlCzTqA5YZi8jlj1IRjqYznR9t9QWzAah2212omoQRR5GMnsi5E8c6HQx2XfLDr5fl5quH/TFbrb9b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1thxUX-000000008HU-2Nws;
+	Tue, 11 Feb 2025 16:08:25 -0500
+From: Rik van Riel <riel@surriel.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bp@alien8.de,
+	peterz@infradead.org,
+	dave.hansen@linux.intel.com,
+	zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com,
+	thomas.lendacky@amd.com,
+	kernel-team@meta.com,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	jackmanb@google.com,
+	jannh@google.com,
+	mhklinux@outlook.com,
+	andrew.cooper3@citrix.com
+Subject: [PATCH v10 00/12] AMD broadcast TLB invalidation
+Date: Tue, 11 Feb 2025 16:07:55 -0500
+Message-ID: <20250211210823.242681-1-riel@surriel.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegvddtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
+Content-Transfer-Encoding: 8bit
+Sender: riel@surriel.com
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
 
-Since pm_runtime_force_resume() requires pm_runtime_force_suspend() to
-be called before it on the same device, the runtime PM status of that
-device is RPM_SUSPENDED when it is called unless the device's runtime
-PM status is changed somewhere else in the meantime.
+This allows the kernel to invalidate TLB entries on remote CPUs without
+needing to send IPIs, without having to wait for remote CPUs to handle
+those interrupts, and with less interruption to what was running on
+those CPUs.
 
-However, even if that happens, the power.needs_force_resume
-check is still required to pass and that flag is only set by
-pm_runtime_force_suspend() and it is cleared at the end of
-pm_runtime_force_resume(), so it cannot be taken into account
-twice in a row.
+Because x86 PCID space is limited, and there are some very large
+systems out there, broadcast TLB invalidation is only used for
+processes that are active on 3 or more CPUs, with the threshold
+being gradually increased the more the PCID space gets exhausted.
 
-Accordingly, the pm_runtime_status_suspended(dev) check in
-pm_runtime_force_resume() is redundant, so drop it.
+Combined with the removal of unnecessary lru_add_drain calls
+(see https://lkml.org/lkml/2024/12/19/1388) this results in a
+nice performance boost for the will-it-scale tlb_flush2_threads
+test on an AMD Milan system with 36 cores:
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/base/power/runtime.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+- vanilla kernel:           527k loops/second
+- lru_add_drain removal:    731k loops/second
+- only INVLPGB:             527k loops/second
+- lru_add_drain + INVLPGB: 1157k loops/second
 
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1963,7 +1963,7 @@
- 	int (*callback)(struct device *);
- 	int ret = 0;
- 
--	if (!pm_runtime_status_suspended(dev) || !dev->power.needs_force_resume)
-+	if (!dev->power.needs_force_resume)
- 		goto out;
- 
- 	/*
+Profiling with only the INVLPGB changes showed while
+TLB invalidation went down from 40% of the total CPU
+time to only around 4% of CPU time, the contention
+simply moved to the LRU lock.
 
+Fixing both at the same time about doubles the
+number of iterations per second from this case.
 
+Some numbers closer to real world performance
+can be found at Phoronix, thanks to Michael:
+
+https://www.phoronix.com/news/AMD-INVLPGB-Linux-Benefits
+
+My current plan is to implement support for Intel's RAR
+(Remote Action Request) TLB flushing in a follow-up series,
+after this thing has been merged into -tip. Making things
+any larger would just be unwieldy for reviewers.
+
+v10:
+ - simplify partial pages with min(nr, 1) in the invlpgb loop (Peter)
+ - document x86 paravirt, AMD invlpgb, and ARM64 flush without IPI (Brendan)
+ - remove IS_ENABLED(CONFIG_X86_BROADCAST_TLB_FLUSH) (Brendan)
+ - various cleanups (Brendan)
+v9:
+ - print warning when start or end address was rounded (Peter)
+ - in the reclaim code, tlbsync at context switch time (Peter)
+ - fix !CONFIG_CPU_SUP_AMD compile error in arch_tlbbatch_add_pending (Jan)
+v8:
+ - round start & end to handle non-page-aligned callers (Steven & Jan)
+ - fix up changelog & add tested-by tags (Manali)
+v7:
+ - a few small code cleanups (Nadav)
+ - fix spurious VM_WARN_ON_ONCE in mm_global_asid
+ - code simplifications & better barriers (Peter & Dave)
+v6:
+ - fix info->end check in flush_tlb_kernel_range (Michael)
+ - disable broadcast TLB flushing on 32 bit x86
+v5:
+ - use byte assembly for compatibility with older toolchains (Borislav, Michael)
+ - ensure a panic on an invalid number of extra pages (Dave, Tom)
+ - add cant_migrate() assertion to tlbsync (Jann)
+ - a bunch more cleanups (Nadav)
+ - key TCE enabling off X86_FEATURE_TCE (Andrew)
+ - fix a race between reclaim and ASID transition (Jann)
+v4:
+ - Use only bitmaps to track free global ASIDs (Nadav)
+ - Improved AMD initialization (Borislav & Tom)
+ - Various naming and documentation improvements (Peter, Nadav, Tom, Dave)
+ - Fixes for subtle race conditions (Jann)
+v3:
+ - Remove paravirt tlb_remove_table call (thank you Qi Zheng)
+ - More suggested cleanups and changelog fixes by Peter and Nadav
+v2:
+ - Apply suggestions by Peter and Borislav (thank you!)
+ - Fix bug in arch_tlbbatch_flush, where we need to do both
+   the TLBSYNC, and flush the CPUs that are in the cpumask.
+ - Some updates to comments and changelogs based on questions.
 
 
