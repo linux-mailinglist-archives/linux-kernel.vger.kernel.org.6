@@ -1,131 +1,224 @@
-Return-Path: <linux-kernel+bounces-510122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4D0A31875
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:17:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A445FA31878
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:19:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6D0C3A83DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:16:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3727188832A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67313267B06;
-	Tue, 11 Feb 2025 22:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415AD268FE0;
+	Tue, 11 Feb 2025 22:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PKj/Wekg"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbtqrJNF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE46267714
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 22:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8304C263885;
+	Tue, 11 Feb 2025 22:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739312221; cv=none; b=H9RycQL2STkhQm08qZzP8uyQEaDUYwTdMqw/gcECsDZ8QzHdVxl04820+weo/+kVM57eYPeR1te41Aj/J1MvxCbZLRfGK1m34vTyNcAVUF1AO52zvMiGH1M2yrvkP3EnTYhlZm+PZsfgbmO/BYUKy6DDQgyF6I+vG0FSBr2iqUQ=
+	t=1739312347; cv=none; b=URfeI6mg8jt9zQsReNmWM86z7GooH7qSwD1s9Zq7E5deJpNcbKVPMvTLo1CPSr56134gz3zk9zWthF2IsGljR1f45+TODT49KJJXcGmG4QoQH3STmibMGxiGZQNEokgtLHC/gGy/asvnO+RtUcns46I77YEWdBlmswNKtvuW6kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739312221; c=relaxed/simple;
-	bh=iY0JsvzdW/s8uAAjrKofbSU3WFhveVxvUFWtiQz/Z5A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MlsnOD2Ct1avDevhs2PZVYqgdQyDgpA65q0khogXPF9Qsx0NvZ5d6aMmzROHrIToJuD+fztl8oMRxJLpVOXVFuKPPt4o4iaNZHn4Gy48WH86XwcnTOlYYLkwp1wnPEUCXV0AWo9+LInbD6A88SUExn53LVZVjXvKpE/cDLY9O5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PKj/Wekg; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-545074b88aaso3472041e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 14:16:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739312217; x=1739917017; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6U/i0AyDpGaJpOZ3KaZQJIAbdIyIIccKfpuccmj4AeU=;
-        b=PKj/WekgTAsJWKFw7OEgsNLB0lVESWozQ9uXeMT+HiURaE5Cwhsrp9KRuRZVeEGnga
-         1a43b98Jj/2QlDTZRxjGXGzTHNR76CP+ldcr32ipUn6UgtNEPczgH4/gJvBJdaKMq1UO
-         DZrT4waN8vVm7AfPTw5eRHjudZa2mdryQ9Czw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739312217; x=1739917017;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6U/i0AyDpGaJpOZ3KaZQJIAbdIyIIccKfpuccmj4AeU=;
-        b=sdBUgJu+46buKl3/FOcJJURBQ10JeZCmMaXL34yESsIeDy5CevY95HyB152pcNhPO/
-         ZxdkGwZLbbsqpgsoc00rfy7vzwnNTnN6//PhK4EqWx8R3fX7PCJ98Jjw1Cvf0QP/FD/9
-         T44RHnGvnraYv/fl2D7Yq4ren9NfDQGLoh0WbZDHXf6gP/YoCuLCEdyc+1BUhRHFrckK
-         TEanWA4ivlJNJ9Yohz5zduWDhBuHaXFITnv5qR3YyIYYCGhLcWQeAOfqZVdbmdFxZguh
-         /qMvNsOxSzmva/YipagwSUWtA1Jck1FIjlawpZSVBNV0hu0y66t60SKvHB2FEaOsffjY
-         MWmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpBCr3hfQTI/sgcGiC0B/j8C8/PzrjBBn0s9NJke3ULaH+eNtwPUsQqg4v0ebfABDeLy9FqpjENVx1Lv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjIT2fkWW2oxp97N5GvKkPMdUOy35saYwnN+zGfciqZepzZIQk
-	lQ+jmY56g/MczaUIYZ+1NXWUSpCGvP6wYKjON2WeiRKETCen8IX46C5EFv72lobsCj4/Xegbzwb
-	b4g==
-X-Gm-Gg: ASbGncuPL2elkVYnhOu3MucDq3UCI6XyNhvlvZcgEqYJlsDXBGmkc588nqvWQK/jcOu
-	H4aJdBKaNWL/8+A729d7GE/c4bJpql7a7dmD3L383CnrYavNRSVD/8DUOqaNOFMEr78LuURhHLs
-	EvwOY/55Pm09oPOLIwMWYGOa4hKjwxVVWfdzbDZQz5923LQAaZPawj7PIJh/yHB3xO43joQpGiK
-	HwwPsAE6iUuaz42O5MPygpYtTuq3coZ1waXR08AAtA7wjPCHHcAJEHpHXXr4IVdMxo07l1ir9hY
-	y4aeU9Pcxirc+ZH18954AwcCfSuTLcU+PA64QOj0ikonUAAu8KGBDGw=
-X-Google-Smtp-Source: AGHT+IEj76oBkl/F5WTevwitrbZjwkv1IZjxlyaDg+2May2ycFKszVPTvXYS7EliI++GW+Us0ZmNDw==
-X-Received: by 2002:a05:6512:3988:b0:545:aa5:d455 with SMTP id 2adb3069b0e04-5451810917dmr177448e87.15.1739312217321;
-        Tue, 11 Feb 2025 14:16:57 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5450470b69csm1151847e87.129.2025.02.11.14.16.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2025 14:16:53 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-545039b6a67so3586104e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 14:16:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWmF0QXSo0KQjlDp7x67pW3uwqdaChob9dyVbAgbWiRTaNwC3FPN/GMDIW2JGp13xRGInSb3ki40LFxFew=@vger.kernel.org
-X-Received: by 2002:a05:6512:3691:b0:545:6cf:6f41 with SMTP id
- 2adb3069b0e04-5451819442fmr182315e87.48.1739312210792; Tue, 11 Feb 2025
- 14:16:50 -0800 (PST)
+	s=arc-20240116; t=1739312347; c=relaxed/simple;
+	bh=3L2XukuatOYg5/zh3ZhOK3hqE29EONmvF6HXiPcG9bU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCT1Z2ozZeWXiy6SKtqOpF5HWWINXusYBGLDHiJDmiWL2sOGmoIAiGsogny0D/P7ACOvLlN7CRgx3kU5NAfOlKOq5ppXiq/UfmEPh6zNKtcdp3SwiGq1J5BP5H56d7x8tZDSN+AfoK3pRqHJ1M3MSpNKpn4a/7be4wmKm6bT3SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dbtqrJNF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3780C4CEDD;
+	Tue, 11 Feb 2025 22:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739312346;
+	bh=3L2XukuatOYg5/zh3ZhOK3hqE29EONmvF6HXiPcG9bU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dbtqrJNFdT+wza4ffDei+crWQwihl/ahZeMM3x7EEDlkbBxi1pccSFpfAIsDUqbYv
+	 s81wMKJ48U/AC2VFesMhld2JyVQPtLkUo5FNhlaI82bCethp96jT8LRamy98lojUzb
+	 Exh65uaKDPM+EKp2/Ms0Xi7WyP8E11vLrUDQIw8q1Yn5caJA167rhpa7e6cIT1dY3J
+	 6+THLxSJAyghgqJqn1VU9uecbMXMzqtftmlI0Kx09XCEuTTXjPltu0FYzsSuEa6aTM
+	 cTEGm9CGfvyr696xNEJ+4nbwZj9oLMLu50GkmuU3HuYLo74NhuYj7kHNYgHLtEGnxd
+	 jt/ci5e5/sqIg==
+Date: Tue, 11 Feb 2025 16:19:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	patches@opensource.cirrus.com,
+	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC
+ and EQ support
+Message-ID: <20250211221904.GA1270109-robh@kernel.org>
+References: <20250206163152.423199-1-francesco@dolcini.it>
+ <20250206163152.423199-4-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250204-bridge-connector-v2-0-35dd6c834e08@kernel.org> <20250204-bridge-connector-v2-35-35dd6c834e08@kernel.org>
-In-Reply-To: <20250204-bridge-connector-v2-35-35dd6c834e08@kernel.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 11 Feb 2025 14:16:39 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WXkqfWoAiqbsfWiJo259oQxMV0UrQsX=qD5nVH=Dmaqg@mail.gmail.com>
-X-Gm-Features: AWEUYZmmeWZCqEjhBQK0EshkrCCF8NKprJL2-UJ0EsnsvngShwlhJQxLIfqImNM
-Message-ID: <CAD=FV=WXkqfWoAiqbsfWiJo259oQxMV0UrQsX=qD5nVH=Dmaqg@mail.gmail.com>
-Subject: Re: [PATCH v2 35/35] drm/bridge: ti-sn65dsi86: Use bridge_state crtc pointer
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206163152.423199-4-francesco@dolcini.it>
 
-Hi,
+On Thu, Feb 06, 2025 at 05:31:50PM +0100, Francesco Dolcini wrote:
+> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> 
+> Add two properties to select the IN1L/DMICDAT1 and IN2R/DMICDAT2
+> functionality:
+> - wlf,in1l-as-dmicdat1
+> - wlf,in1r-as-dmicdat2
+> 
+> Add a property to describe the GPIO configuration registers, that can be
+> used to set the four multifunction pins:
+> - wlf,gpio-cfg
+> 
+> Add a property to describe the mic bias control registers:
+> - wlf,mic-cfg
+> 
+> Add two properties to describe the Dynamic Range Controller (DRC),
+> allowing multiple named configurations where each config sets the 4 DRC
+> registers (R40-R43):
+> - wlf,drc-cfg-regs
+> - wlf,drc-cfg-names
+> 
+> Add three properties to describe the equalizer (ReTune Mobile), allowing
+> multiple named configurations (associated with a samplerate) that set
+> the 24 (R134-R157) EQ registers:
+> - wlf,retune-mobile-cfg-regs
+> - wlf,retune-mobile-cfg-names
+> - wlf,retune-mobile-cfg-rates
+> 
+> Datasheet: https://statics.cirrus.com/pubs/proDatasheet/WM8904_Rev4.1.pdf
+> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
+>  .../devicetree/bindings/sound/wlf,wm8904.yaml | 88 +++++++++++++++++++
+>  1 file changed, 88 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml b/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml
+> index 329260cf0fa0..b89d9db02848 100644
+> --- a/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml
+> +++ b/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml
+> @@ -38,6 +38,74 @@ properties:
+>    DCVDD-supply: true
+>    MICVDD-supply: true
+>  
+> +  wlf,in1l-as-dmicdat1:
+> +    type: boolean
+> +    description:
+> +      Use IN1L/DMICDAT1 as DMICDAT1, enabling the DMIC input path.
+> +
+> +  wlf,in1r-as-dmicdat2:
+> +    type: boolean
+> +    description:
+> +      Use IN1R/DMICDAT2 as DMICDAT2, enabling the DMIC input path.
+> +
+> +  wlf,gpio-cfg:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 4
+> +    maxItems: 4
+> +    description:
+> +      Default register values for R121/122/123/124 (GPIO Control).
+> +      If any entry has the value 0xFFFF, the related register won't be set.
+> +    default: [0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF]
+> +
+> +  wlf,mic-cfg:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 2
+> +    maxItems: 2
+> +    description:
+> +      Default register values for R6/R7 (Mic Bias Control).
+> +    default: [0, 0]
+> +
+> +  wlf,drc-cfg-names:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +    description:
+> +      List of strings for the available DRC modes.
+> +      If absent, DRC is disabled.
+> +
+> +  wlf,drc-cfg-regs:
+> +    $ref: /schemas/types.yaml#/definitions/uint16-array
+> +    description:
+> +      Default register values for R40/41/42/43 (DRC).
+> +      The list must be 4 times the length of wlf,drc-cfg-names.
+> +      If absent, DRC is disabled.
+> +
+> +  wlf,retune-mobile-cfg-names:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +    description:
+> +      List of strings for the available retune modes.
+> +      If absent, retune is disabled.
 
-On Tue, Feb 4, 2025 at 7:01=E2=80=AFAM Maxime Ripard <mripard@kernel.org> w=
-rote:
->
-> @@ -374,12 +377,15 @@ static int __maybe_unused ti_sn65dsi86_resume(struc=
-t device *dev)
->          * panel (including the aux channel) w/out any need for an input =
-clock
->          * so we can do it in resume which lets us read the EDID before
->          * pre_enable(). Without a reference clock we need the MIPI refer=
-ence
->          * clock so reading early doesn't work.
->          */
-> -       if (pdata->refclk)
-> -               ti_sn65dsi86_enable_comms(pdata);
-> +       if (pdata->refclk) {
-> +               drm_modeset_lock(&pdata->bridge.base.lock, NULL);
-> +               ti_sn65dsi86_enable_comms(pdata, drm_bridge_get_current_s=
-tate(&pdata->bridge));
-> +               drm_modeset_unlock(&pdata->bridge.base.lock);
+Is there no defined set of names?
 
-Oh. I haven't tested yet (my device is at home, but I think there is
-an easy solution to my deadlock problems. Drop the modeset locks here
-and just pass NULL for the state. We only end up here if
-"pdata->refclk" is not NULL. Then we only use the passed state if
-"pdata->refclk" _is_ NULL.
+> +
+> +  wlf,retune-mobile-cfg-rates:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      List of rates for the available retune modes.
+> +      The list must be the same length as wlf,retune-mobile-cfg-names.
+> +      If absent, retune is disabled.
+> +
+> +  wlf,retune-mobile-cfg-regs:
+> +    $ref: /schemas/types.yaml#/definitions/uint16-array
+> +    description:
+> +      Default register values for R134/.../157 (EQ).
+> +      The list must be 24 times the length of wlf,retune-mobile-cfg-names.
+> +      If absent, retune is disabled.
+> +
+> +dependencies:
+> +  wlf,drc-cfg-names: [ 'wlf,drc-cfg-regs' ]
+> +  wlf,drc-cfg-regs: [ 'wlf,drc-cfg-names' ]
+> +
+> +  wlf,retune-mobile-cfg-names: [ 'wlf,retune-mobile-cfg-rates', 'wlf,retune-mobile-cfg-regs' ]
+> +  wlf,retune-mobile-cfg-regs: [ 'wlf,retune-mobile-cfg-names', 'wlf,retune-mobile-cfg-rates' ]
+> +  wlf,retune-mobile-cfg-rates: [ 'wlf,retune-mobile-cfg-names', 'wlf,retune-mobile-cfg-regs' ]
+
+I'm not really a fan of these long lists of properties, but codecs and 
+touchscreens seem to need a bunch of parameters.
+
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -70,5 +138,25 @@ examples:
+>              DBVDD-supply = <&reg_1p8v>;
+>              DCVDD-supply = <&reg_1p8v>;
+>              MICVDD-supply = <&reg_1p8v>;
+> +
+> +            wlf,drc-cfg-names = "default", "peaklimiter", "tradition", "soft", "music";
+> +            wlf,drc-cfg-regs =
+> +                /* coded default: KNEE_IP = KNEE_OP = 0, HI_COMP = LO_COMP = 1  */
+> +                /bits/ 16 <0x01af 0x3248 0x0000 0x0000>,
+> +                /* coded default: KNEE_IP = -24, KNEE_OP = -6, HI_COMP = 1/4, LO_COMP = 1 */
+> +                /bits/ 16 <0x04af 0x324b 0x0010 0x0408>,
+> +                /* coded default: KNEE_IP = -42, KNEE_OP = -3, HI_COMP = 0, LO_COMP = 1 */
+> +                /bits/ 16 <0x04af 0x324b 0x0028 0x0704>,
+> +                /* coded default: KNEE_IP = -45, KNEE_OP = -9, HI_COMP = 1/8, LO_COMP = 1 */
+> +                /bits/ 16 <0x04af 0x324b 0x0018 0x078c>,
+> +                /* coded default: KNEE_IP = -30, KNEE_OP = -10.5, HI_COMP = 1/4, LO_COMP = 1 */
+> +                /bits/ 16 <0x04af 0x324b 0x0010 0x050e>;
+> +
+> +            wlf,gpio-cfg = <
+> +                0x0018 /* GPIO1 => DMIC_CLK */
+> +                0xffff /* GPIO2 => don't touch */
+> +                0xffff /* GPIO3 => don't touch */
+> +                0xffff /* GPIO4 => don't touch */
+> +            >;
+
+Please make your example full and add all the optional properties.
+
+>          };
+>      };
+> -- 
+> 2.39.5
+> 
 
