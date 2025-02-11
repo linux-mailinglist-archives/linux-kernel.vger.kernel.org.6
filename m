@@ -1,225 +1,146 @@
-Return-Path: <linux-kernel+bounces-510051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B0FA3179E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:26:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FDD1A31780
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:20:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55B0188BF05
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:26:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0293188D533
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B6926657E;
-	Tue, 11 Feb 2025 21:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694F1266F14;
+	Tue, 11 Feb 2025 21:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="FSG2BFPQ"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SuTXjTZ1"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7F32627EC;
-	Tue, 11 Feb 2025 21:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B063266F06
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739309155; cv=none; b=e00qaohZjYwzPEvtbNmdeLhtzxhLaxHaAcDYP0dnRXko+gCBJJyl2Y5JLgafgoDCm2373m48qQG7v0V9UL+TlP5XsiyK009DbJG+p+aIdVKbyagIebcHcFbp27YEi9n8zk4ZbyT4AZn7m1emkeG9wcPhY2sUzNKILl2Jo8HO95Q=
+	t=1739308791; cv=none; b=mJEVOIioaaX529ROZZ8bEWvQxKOrI5+0sK21jxFZ0Tv3vbWPfMmTbuMQ/YLpvL0fSPkMzmomVk2sdLIyq8qiig2G5dmj8N0NJRCSbK2VzBl8RQynEkP1iCXXW94ShpzUdF0UND68453h4Y1ZAuowZkHTWjFMrgMUfSHBRrTZDPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739309155; c=relaxed/simple;
-	bh=OrkfWzk4rOwXdbaA05EwAtgqA26NxnytAlDoPhIdPEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lQKewzB4C7EJp0tEmLWWCVx6tV68dGKmoIdL5NkoGtfKpr1emFeU6eFGmhNclUlpHOaFs20EXEctVy+cJjlvdyt7EPsfcLw8Bv6T9PTc0zSIpMHSGtVytJzp0GCRZXTyVSRghI46hfCU7gvPbQOi2qfuFwGJf78CN9B4ZdXNCUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=FSG2BFPQ; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id 78dce38ef4c9466c; Tue, 11 Feb 2025 22:25:45 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 22772770175;
-	Tue, 11 Feb 2025 22:25:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1739309145;
-	bh=OrkfWzk4rOwXdbaA05EwAtgqA26NxnytAlDoPhIdPEY=;
-	h=From:Subject:Date;
-	b=FSG2BFPQjhriNkTqRtnzq0OrBIgfgx2ep5iuEt2gejMEWnyM3l7hdoidJh4/mVduH
-	 tHgLmva6h7hJsvRaWPH7gfLygILxQPVnhCT6e2eaoc64tgXrbCiLrowIkW13BciI6v
-	 Bpvmon0Finl0+tAos4MAjLvkoM6kbf8IA4rSYGG9qqGZDP9NM4wcrGPUtKWZ/z0bGe
-	 1TKWnHWTtRHK92ZzPWFCmysMQTAARoTVaus92G1QrNhTwfQZrrZHkxuwAE7Jp1TYH2
-	 KS+4vbUhUzLArViUz2yDTQadJc7maDOA0huMny1rj7rwlxvyoH9+l2sQZgXZhjA+Jl
-	 6GtkSLiexCrlQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jon Hunter <jonathanh@nvidia.com>,
- Tony Lindgren <tony.lindgren@linux.intel.com>
-Subject:
- [PATCH v1 08/10] PM: sleep: Make pm_runtime_force_resume() look at
- power.set_active
-Date: Tue, 11 Feb 2025 22:19:13 +0100
-Message-ID: <3817761.MHq7AAxBmi@rjwysocki.net>
-In-Reply-To: <2314745.iZASKD2KPV@rjwysocki.net>
-References: <2314745.iZASKD2KPV@rjwysocki.net>
+	s=arc-20240116; t=1739308791; c=relaxed/simple;
+	bh=v+NotQmkypHRHE+nHTFJOTzrbxnNJ6Og8Bo7qTcrXqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IG30afzUNFLJj+JUqGy9UusYadLl74tct7Qb5pDipXMoLe3XI4YkDuYt8kaiczcldI1d/hfQ1t75MD5CpYN2+/XbBdUyToBGaSr8QuOOEaKuyk0SSY6AcCBAKG6XbtP70b/cQHbSADscuiHRVUf1393U0FayPgXVGH9bO0uER7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SuTXjTZ1; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f754678c29so55167177b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 13:19:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739308789; x=1739913589; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8vMpnOzz24XlelaJjtEfRnOqqAth0NeggjrcIGJFxfY=;
+        b=SuTXjTZ19A00FUPjfW5OIYpo1Pj7eXvnzezX2PSBJxCZFMy3+xCG+hWTjB2jaEIDpp
+         r1yomxBrNYd9IoPPc573d51xwZSGdEHbMvAHDMCw7RfK13I/BObzcJIoy2n75sXqpNaM
+         rq1gakYpbMsWWRVB0K3XKyMbl18OZDuNSZgiGThJsLH63GB7eyz+7nF9ynT1GX+x96d4
+         e5Qihpk/If7a0cWz2lTQy7yHbFLmS7phf/SbiTVUlrWVReoVlWTBxmutO3hhnPVBF+6F
+         TqqFHR2art6vHV1f6BHNGY0t4rm2RVQReGSXdSkfsgB6IaXy1Z0Yd5pN0r7KmEswCkkD
+         3HKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739308789; x=1739913589;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8vMpnOzz24XlelaJjtEfRnOqqAth0NeggjrcIGJFxfY=;
+        b=Xh+B2O82TasMwE3Ijebqc7sZIB+cw/ouoqCtF95sUofc09PnuLqNFgG050y4qxUVRg
+         VD/3wFncYLAAJI3u0ej+fKHpGCSzefkWDDqOtvvBXp9ondA3icZ1KFjmyoq5rt8qWq79
+         AuOyuQHEBQQbDvk8osJxRAmdbciy1+8XPvDAQdxT94pl8N3zDvHlZQupIh9JlbtRF60B
+         BqF8hDzqfN+lFy9pJdDbIdPCKoKKHgwsZazGp4kRNVJ2Ga5+sbr5+Ln9w6eQ51G7BxNk
+         odaK0yiDuMOhM+4J4/CD4ZJKLrm7wOsElvToAWL6BKqiVMDa+WJHfwXNqOJTkSTS5KhU
+         fGdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV10lVumva2Q1zl10uxXa/sQD3aWjMMHC1/C9nw6PNUClH/teM3XaP1SzYAlWgCKHn1VZ5s2IIGI8sz3u4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSF33XUq2qpPQ6iY0wn4D1Uohtuol4+qWlW3tIlE9hSewnsDyu
+	C121MDyOiYQNPn3DxaEAdfymoMyGwJqFpCrYmQo+lkLs7nVHNtujyZqD0v5EVMG0NQ63J15ZyEL
+	X70uv0Vg7zqcmCyIpTwpdsGzjlkBEpywuFcY2BA==
+X-Gm-Gg: ASbGncv1QOTEhOX4Jpj4utJsHsK4R8D3RXE2/Z5ulMCill5MxhavelpaCPLmmCZGBTk
+	wlyBqxLXRp/lUEUZLpMfkD54TIjR04w1KLYbUt+Qp3eJjfWOh8rbW2IDus+ye9Vn4mjcRKvxvlQ
+	/IDdM+7EmetDZr1yGreIKdLuzu02Tq
+X-Google-Smtp-Source: AGHT+IH9PQWCcTuU3a/WUrp8QtPQgxzfoa0eG9D03GuXuge0++Qcj4dBm/Lk+WFXHD1fsOGrWKTo04Qt3z/nEYlknZk=
+X-Received: by 2002:a05:690c:638a:b0:6f9:88ba:aa5d with SMTP id
+ 00721157ae682-6fb1f194f3dmr12585947b3.9.1739308789048; Tue, 11 Feb 2025
+ 13:19:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20250207-rb1-bt-v4-0-d810fc8c94a9@linaro.org> <20250207-rb1-bt-v4-6-d810fc8c94a9@linaro.org>
+ <6e5bb2f7-a23b-4fab-914b-e67911eaf408@oss.qualcomm.com>
+In-Reply-To: <6e5bb2f7-a23b-4fab-914b-e67911eaf408@oss.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 11 Feb 2025 23:19:37 +0200
+X-Gm-Features: AWEUYZlP4_dHB7Swwx_XD496R58hsBttKN3cXZEWV8-yu1YbBT4qWLOogarYxpE
+Message-ID: <CAA8EJpq504V48qqSX0mzxCffUkq_xpu_UE+qubB46A7zon=0iw@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] arm64: dts: qcom: qrb2210-rb1: add Bluetooth support
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegvddtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeekpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=8 Fuz1=8 Fuz2=8
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, 11 Feb 2025 at 16:52, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 7.02.2025 9:41 PM, Dmitry Baryshkov wrote:
+> > Add support for the onboard WCN3950 BT/WiFi chip. Corresponding firmware
+> > has been merged to linux-firmware and should be available in the next
+> > release.
+> >
+> > Bluetooth: hci0: setting up wcn399x
+> > Bluetooth: hci0: QCA Product ID   :0x0000000f
+> > Bluetooth: hci0: QCA SOC Version  :0x40070120
+> > Bluetooth: hci0: QCA ROM Version  :0x00000102
+> > Bluetooth: hci0: QCA Patch Version:0x00000001
+> > Bluetooth: hci0: QCA controller version 0x01200102
+> > Bluetooth: hci0: QCA Downloading qca/cmbtfw12.tlv
+> > Bluetooth: hci0: QCA Downloading qca/cmnv12.bin
+> > Bluetooth: hci0: QCA setup on UART is completed
+> >
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+>
+> [...]
+>
+> > +&uart3 {
+> > +     /delete-property/ interrupts;
+> > +     interrupts-extended = <&intc GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
+> > +                           <&tlmm 11 IRQ_TYPE_LEVEL_HIGH>;
+> > +     pinctrl-0 = <&uart3_default>;
+> > +     pinctrl-1 = <&uart3_sleep>;
+> > +     pinctrl-names = "default", "sleep";
+> > +
+> > +     status = "okay";
+> > +
+> > +     bluetooth {
+> > +             compatible = "qcom,wcn3950-bt";
+> > +
+> > +             vddio-supply = <&pm4125_l15>;
+> > +             vddxo-supply = <&pm4125_l13>;
+> > +             vddrf-supply = <&pm4125_l10>;
+> > +             vddch0-supply = <&pm4125_l22>;
+> > +             enable-gpios = <&tlmm 87 GPIO_ACTIVE_HIGH>;
+> > +             max-speed = <3200000>;
+>
+> I suppose we don't need a power sequencer for this smaller,
+> tightly-integrated-via-snoc chip?
 
-In theory (and also in practice after a change to come),
-pm_runtime_force_resume() can be called on a device with power.set_active
-set, in which case the core has already called pm_runtime_set_active()
-on it, and power.needs_force_resume may be clear.  This happens when the
-core decides to resume a device because new information on it has become
-available during the "noirq" phase of system-wide suspend.
+We can (and should) have it in a longer term. Currently none of
+wcm39xx chips have a powerseq implementation.
 
-In order to handle that case properly, make pm_runtime_force_resume()
-look at power.set_active in addition to power.needs_force_resume, so it
-does not skip the device when the former is set.  Namely, make it invoke
-the callback for the device then, but without disabling the wake IRQ if
-pm_runtime_force_resume() has not enabled it.  Also clear power.set_active
-in pm_runtime_force_resume() to prevent it from being taken into account
-twice in a row.
-
-Additionally, adjust the pm_runtime_force_resume() kerneldoc comment
-and the code comments inside it.  Moreover, remove a remark regarding
-DPM_FLAG_SMART_SUSPEND from the pm_runtime_force_suspend() kerneldoc
-comment because it is not valid any more after this change.
-
-This change is not expected to alter the behavior in the case when
-power.needs_force_resume is set.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-Unfortunately, I have not found a way to do this without adding
-a new device PM flag and now there are 2 flags specifically for
-pm_runtime_force_suspend/resume() which is a bit sad.
-
-Questions for Ulf:
-
-(1) How is the enabling of wakeirqs handled for devices that are runtime-
-    suspended before system suspend, so pm_runtime_force_suspend() skips
-    them?
-
-(2) What is supposed to happen to wakeirqs during system resume after
-    pm_runtime_force_suspend() has enabled them, but hasn't set
-    power.needs_force_resume at the same time?
-
----
- drivers/base/power/runtime.c |   41 ++++++++++++++++++++++++++---------------
- include/linux/pm.h           |    1 +
- 2 files changed, 27 insertions(+), 15 deletions(-)
-
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1897,10 +1897,6 @@
-  * sure the device is put into low power state and it should only be used during
-  * system-wide PM transitions to sleep states.  It assumes that the analogous
-  * pm_runtime_force_resume() will be used to resume the device.
-- *
-- * Do not use with DPM_FLAG_SMART_SUSPEND as this can lead to an inconsistent
-- * state where this function has called the ->runtime_suspend callback but the
-- * PM core marks the driver as runtime active.
-  */
- int pm_runtime_force_suspend(struct device *dev)
- {
-@@ -1923,6 +1919,7 @@
- 		goto err;
- 
- 	dev_pm_enable_wake_irq_complete(dev);
-+	dev->power.wake_irq_enabled = true;
- 
- 	/*
- 	 * If the device can stay in suspend after the system-wide transition
-@@ -1950,31 +1947,39 @@
-  * pm_runtime_force_resume - Force a device into resume state if needed.
-  * @dev: Device to resume.
-  *
-- * Prior invoking this function we expect the user to have brought the device
-- * into low power state by a call to pm_runtime_force_suspend(). Here we reverse
-- * those actions and bring the device into full power, if it is expected to be
-- * used on system resume.  In the other case, we defer the resume to be managed
-- * via runtime PM.
-+ * The primary role of this function is to reverse the actions carried out by
-+ * pm_runtime_force_suspend() for @dev, so it must always be balanced with a
-+ * matching invocation of the latter.  Accordingly, it is only valid to call
-+ * this function during system-wide resume transitions.
-+ *
-+ * Typically, it is used as a system resume callback of a device driver.
-  *
-- * Typically this function may be invoked from a system resume callback.
-+ * However, if @dev had been runtime-suspended before pm_runtime_force_suspend()
-+ * was called for it and that function did nothing, but power.set_active has
-+ * been set for it by the core, it still needs to be resumed.  That special case
-+ * is also handled by this function.
-  */
- int pm_runtime_force_resume(struct device *dev)
- {
- 	int (*callback)(struct device *);
- 	int ret = 0;
- 
--	if (!dev->power.needs_force_resume)
-+	if (!dev->power.needs_force_resume && !dev->power.set_active)
- 		goto out;
- 
- 	/*
--	 * The value of the parent's children counter is correct already, so
--	 * just update the status of the device.
-+	 * The parent's active children counter an the suppliers' usage counters
-+	 * are correct already, so just update the status (even though it is
-+	 * already RPM_ACTIVE if power.set_active is set).
- 	 */
- 	__update_runtime_status(dev, RPM_ACTIVE);
- 
--	callback = RPM_GET_CALLBACK(dev, runtime_resume);
-+	if (dev->power.wake_irq_enabled) {
-+		dev_pm_disable_wake_irq_check(dev, false);
-+		dev->power.wake_irq_enabled = false;
-+	}
- 
--	dev_pm_disable_wake_irq_check(dev, false);
-+	callback = RPM_GET_CALLBACK(dev, runtime_resume);
- 	ret = callback ? callback(dev) : 0;
- 	if (ret) {
- 		pm_runtime_set_suspended(dev);
-@@ -1982,6 +1987,12 @@
- 	}
- 
- 	pm_runtime_mark_last_busy(dev);
-+	/*
-+	 * Clear power.set_active in case this function runs for the same
-+	 * device again.
-+	 */
-+	dev->power.set_active = false;
-+
- out:
- 	dev->power.needs_force_resume = 0;
- 	pm_runtime_enable(dev);
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -698,6 +698,7 @@
- 	bool			request_pending:1;
- 	bool			deferred_resume:1;
- 	bool			needs_force_resume:1;
-+	bool			wake_irq_enabled:1;
- 	bool			runtime_auto:1;
- 	bool			ignore_children:1;
- 	bool			no_callbacks:1;
-
-
-
+-- 
+With best wishes
+Dmitry
 
