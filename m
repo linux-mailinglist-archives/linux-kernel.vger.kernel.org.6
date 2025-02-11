@@ -1,126 +1,143 @@
-Return-Path: <linux-kernel+bounces-510099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596F4A3182D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:47:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8361BA31837
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:49:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7090188384D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3869188665A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A9B1E47CC;
-	Tue, 11 Feb 2025 21:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA55267B19;
+	Tue, 11 Feb 2025 21:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="beqzTGUZ"
-Received: from mx0a-00300601.pphosted.com (mx0a-00300601.pphosted.com [148.163.146.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7711C26771B;
-	Tue, 11 Feb 2025 21:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.146.64
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="W6lfrsBq"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFBA2676D0;
+	Tue, 11 Feb 2025 21:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739310464; cv=none; b=fHYEgNjzVQMczIjtYmpFnZhq0O1NwumrEPcUtAy64cq1O2Z17hPNe8y2/J9zuXAkqMsCO1HVdDmYjepelxJtEFdIKcFoaNK3KjUQLi3ptqy2p+08VqzFXG4XH3B3XG2kgO/UG3bHxiP3zYHKgZKp1PTo9YuwV7X4cQhpt/lZYj0=
+	t=1739310588; cv=none; b=Hql4iqe5jXCk8UjNLLOp89DcJSOdiUeVoxipZA+R4xVx2qkNi9I8al1R362O669kbT1BJuVWxWyt/qrIMkqKXqrGJPlIzjcRMkn8yCbwcOfcyx6bJexqSne5fEAxbvGx3AxCZJEEqR0T1Rc8RzGgPOio3wCin6pTTQiFD1joObo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739310464; c=relaxed/simple;
-	bh=coqMg6R4RSna49dlawnOAeQor7Prt0yPKUxSGPFA8eY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TvTTDswgYeQgEDybdViNTizoXHMdmDHRieUab8CFiUyg9R88o8dpHz4zmtUutlqS30ooFFosKft5MK7QbB5D0MJTIr5etiwkkZzwS5xiB/0CIoDExIJ7tiK68sN5PXkVAAfHniRFzmT00xLgKSHDoZLQvEL0Xt9UrHlTKC7iOLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=beqzTGUZ; arc=none smtp.client-ip=148.163.146.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
-Received: from pps.filterd (m0359308.ppops.net [127.0.0.1])
-	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51BKitjD028129;
-	Tue, 11 Feb 2025 21:47:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PPS11142024; bh=PfY/o2LEZ82A6MHkTD5g
-	3kz8S6/9nqqtXO8mUdjoLBc=; b=beqzTGUZLggWQbkynxESm/exN46N0WH4DOB9
-	NQZC+mHskXcNrjC1+Cuou7B8RqNS4QRQ5Enb32TxKx9gTf/I5azbkvyqPQjSFoVU
-	61pww+6W0zKKFqerBBqjSFVFZTf6SxaO4KMMGbYQWiE+EWzgVJ1+JeKPMLmebAD+
-	xecTFdtJwa6TZVVPyUA3pEqG1mZq+fGsER+hbLaU+aPrAvJbJV4e8tMustNGrhGy
-	VhWBhuEmvSBjddb/FlqZqVV3VTRHiM/ZfQELdlg6i8TIRQlrtdpiDpCDlBDdbak8
-	gQ7MAY+vPO9xUEMpV8XpK37vHb9ybJDzyq2NwwYq+IaYC4A0fg==
-Received: from us-aus-excas-p2.ni.corp.natinst.com ([130.164.94.74])
-	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 44rduv8r6v-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Feb 2025 21:47:40 +0000 (GMT)
-Received: from us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) by
- us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Tue, 11 Feb 2025 15:47:29 -0600
-Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.32) by
- us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Tue, 11 Feb 2025 15:47:29
- -0600
-From: Erick Shepherd <erick.shepherd@ni.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        <adrian.hunter@intel.com>, <gratian.crisan@emerson.com>,
-        Erick Shepherd
-	<erick.shepherd@ni.com>,
-        Kyle Roeschley <kyle.roeschley@ni.com>,
-        Brad Mouring
-	<brad.mouring@ni.com>
-Subject: [PATCH] mmc: sdhci: Disable SD card clock before changing parameters
-Date: Tue, 11 Feb 2025 15:46:45 -0600
-Message-ID: <20250211214645.469279-1-erick.shepherd@ni.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1739310588; c=relaxed/simple;
+	bh=8aOOSnimxn8p/5k5Jds4OPiuu+rWOAGzXi1vvMG8xOU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qX/tjquPQzZiAmEkoRG4qsPYTEJJVHjRapn86F9xQzTCd/w7XMgu8+zIkI0ANEJG44UQC7ghqkyIz+tuzKH7ae7Zo2vu6WtYEdr65K8dGkl03xaMQGWY6TsVWmbfwxU0qA9wET4cy3nbGR7OMoHs1fSSVb88o/dbLZmmakwoGbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=W6lfrsBq; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from thinkpad-p16sg1.. (d66-183-104-158.bchsia.telus.net [66.183.104.158])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 929E52107AB1;
+	Tue, 11 Feb 2025 13:49:46 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 929E52107AB1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739310586;
+	bh=qcLGWzBNg70V0c6r3FQzFtO4ZnihoB96lAcR2RljZiY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=W6lfrsBq8jhCBQQ50U9GBdFWvcTiFiLk3MFvnmCI04LT75VtNPvxolcnLrGZl9CeI
+	 g4ghqujOKo31tN/GErCy3wz08wveT6TzojxFp7w3YHw48kCIITz78GpBPV5XKM0Tsi
+	 Isy+RBxfPXvTNF50M4k+Fd9pydon+U8fIaGcG6GA=
+From: Shyam Saini <shyamsaini@linux.microsoft.com>
+To: linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org
+Cc: code@tyhicks.com,
+	linux@rasmusvillemoes.dk,
+	christophe.leroy@csgroup.eu,
+	hch@infradead.org,
+	mcgrof@kernel.org,
+	frkaya@linux.microsoft.com,
+	vijayb@linux.microsoft.com,
+	petr.pavlu@suse.com,
+	linux@weissschuh.net,
+	samitolvanen@google.com,
+	da.gomez@samsung.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org
+Subject: [PATCH v3 0/4] Properly handle module_kobject creation
+Date: Tue, 11 Feb 2025 13:48:38 -0800
+Message-Id: <20250211214842.1806521-1-shyamsaini@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: wZTGXKVQnpgO2u0HRB8QVwEnC_g-8fSk
-X-Proofpoint-ORIG-GUID: wZTGXKVQnpgO2u0HRB8QVwEnC_g-8fSk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-11_09,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- mlxlogscore=629 mlxscore=0 phishscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2501170000 definitions=main-2502110143
 
-Per the SD Host Controller Simplified Specification v4.20 §3.2.3, change
-the SD card clock parameters only after first disabling the external card
-clock. Doing this fixes a spurious clock pulse on Baytrail and Apollo Lake
-SD controllers which otherwise breaks voltage switching with a specific
-Swissbit SD card.
+Hi Everyone,
 
-Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
-Signed-off-by: Brad Mouring <brad.mouring@ni.com>
-Signed-off-by: Erick Shepherd <erick.shepherd@ni.com>
+This patch series fixes handling of module_kobject creation.
+A driver expect module_kset list populated with its corresponding
+module_kobject to create its /sys/module/<built-in-module>/drivers
+directory.
+
+Since,
+[1] commit 96a1a2412acb ("kernel/params.c: defer most of param_sysfs_init() to late_initcall time")
+Call to populate module_kset list is deferred to save init time so that
+external watchdog doesn't fireup on some boards and Linux can take
+responsibility of feeding watchdog before it spuriously resets the
+system. However, [1] this fix caused another issue i.e, consumers
+of module_kset can't get related module_kobject during driver
+initialisation and hence can't create their
+/sys/module/<built-in-module>/drivers directory.
+
+Consequently, [1] breaks user-space applications for eg: DPDK, which
+expects /sys/module/vfio_pci/drivers/pci:vfio-pci/new_id to be present.
+
+The second issue was reported and the [2] revert of [1] was
+proposed. However, [2] the Revert doesn't address the original issue
+reported in [1].
+
+This patch series addresses both issues reported in [1] and [2].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=96a1a2412acb
+[2] https://lore.kernel.org/lkml/20250130225803.321004-1-shyamsaini@linux.microsoft.com/
+
+Thanks,
+Shyam
+
 ---
- drivers/mmc/host/sdhci.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+- Changes in v3:
+  - Split refactoring and globalisation of lookup_or_create_module_kobject() into two patches
+  - Fix commit message to better describe the change.
+  - Use IS_ENABLED instead of #ifdef macro construct
+  - Undo the moving of __modinit macro construct into module.h
+  - drop __modinit from lookup_or_create_module_kobject() declaration
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index f4a7733a8ad2..5f91b44891f9 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -2065,10 +2065,15 @@ void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
- 
- 	host->mmc->actual_clock = 0;
- 
--	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-+	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+	if (clk & SDHCI_CLOCK_CARD_EN)
-+		sdhci_writew(host, clk & ~SDHCI_CLOCK_CARD_EN,
-+			SDHCI_CLOCK_CONTROL);
- 
--	if (clock == 0)
-+	if (clock == 0) {
-+		sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
- 		return;
-+	}
- 
- 	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
- 	sdhci_enable_clk(host, clk);
+Changes in v2:
+- Undo the moving of to_module* and lookup_or_create_module_kobject() into module.h
+- Refactor and globalize lookup_or_create_module_kobject()
+- move __modinit macro construct to module.h
+- Fix commit message typos
+
+Changes in v1: 
+- Rename locate_module_kobject() to lookup_or_create_module_kobject() to accurately
+  describe its operations.
+- Moves lookup_or_create_module_kobject() and to_module* macros to module.h, so
+  that driver code can use these.
+- Handle module_kobject creation and population of module_kset list to fix [1]
+  and [2] issues.
+- Link: https://lore.kernel.org/lkml/20250204052222.1611510-1-shyamsaini@linux.microsoft.com/
+
+Changes in RFC:
+         Reverts commit 96a1a2412acb ("kernel/params.c: defer most of param_sysfs_init() to late_initcall time")
+
+Shyam Saini (4):
+  kernel: param: rename locate_module_kobject
+  kernel: refactor lookup_or_create_module_kobject()
+  kernel: globalize lookup_or_create_module_kobject()
+  drivers: base: handle module_kobject creation
+
+ drivers/base/module.c  | 13 +++++------
+ include/linux/module.h |  2 ++
+ kernel/params.c        | 49 ++++++++++++++++++++----------------------
+ 3 files changed, 30 insertions(+), 34 deletions(-)
+
 -- 
-2.43.0
+2.34.1
 
 
