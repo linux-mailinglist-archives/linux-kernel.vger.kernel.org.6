@@ -1,124 +1,92 @@
-Return-Path: <linux-kernel+bounces-509972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04556A316B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:33:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F1EA316B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:33:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E9C167579
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:33:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F3F3A6F8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49DE2641F5;
-	Tue, 11 Feb 2025 20:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9F62641C3;
+	Tue, 11 Feb 2025 20:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AFUlWZ0D"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTdX6qiu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7898D2641C9;
-	Tue, 11 Feb 2025 20:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DE0265626;
+	Tue, 11 Feb 2025 20:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739306010; cv=none; b=IhVkxR5WGzkpy10bHiLGsdl1kWeY8xz9PbfoP9bdtOY9R4UMECVTeet795x61PzzbQVZX9tCV4ETStXBTe33sLp0ZgHn1qYTL1Znua5HH6kFU7auUWRqkjl9P7h8j2/5DjTJt8QB+W8wqys89+AirSw64ghZhvIakFQULBfpjhk=
+	t=1739306006; cv=none; b=XjUarAgWLuEHH5E3NSjmty+ZqpaMnQsH+1ew0ccMFvpmcY2duv+RVrEPH/HZjEigxlaTMFlykILWDGbCY/cSR40Fstt5j32p0zPnI+xrw8gquujiDRma6hcSslmATh2LClFpt8G7lXmfUUBHmV7Z+2kMtDufHDiz5d5890pFqVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739306010; c=relaxed/simple;
-	bh=0f9pRQChVXubkmyasXArzZjjwmP416IPg/pG89VNEA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X6+ewDNNGWrdoj4iHUXNtBqjx6FXIOBtD72OAuWNkGYX1wkBZOrKRvrfxvdGSBisdAa7OBgR4JtNtwVuVVHKBgkSrkYGmoaQqUDSxZw5geExDk6B/hCFfBcfroDB/8qLVq5VOapLHO2bJ6y+JeH7lFzrwSTlW2SgqhcjQbGGLcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AFUlWZ0D; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DE2F840E01A3;
-	Tue, 11 Feb 2025 20:33:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 0PKbeqaqAjw5; Tue, 11 Feb 2025 20:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739306000; bh=vokWJlVITGsJPLU0E80fHH3PEIz2HUpoUnuaGEO2j6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AFUlWZ0DeHiRMMNZlsix1H04k414jFQXrFBZ4u3Kh2xhD2zeHLtcREVfv49eBYkRE
-	 2Uz9r44M6OkcAd2F5Tn7kyK54+mdJErAicpYaNXR5S8izEv6nOBNpsfOARwcge74iV
-	 TmFenLLylZGXmeyAeLI3nuHQQHBU2J6D6cdEUsbjr8oC/7h9T8eXDJLpgzdS3/+oed
-	 n+iLHWSmOZGWw6969PcR/8iGtpI6qBuDGIA8ivjzHStxYrTWMw4iMsEiBHObvGMiOE
-	 0F++vYiFXcsy06/Yyu+lUaQ0CD2ROX/Z7mFlltOaOF120lQPflr7FoK+/pnwpPv8RO
-	 o+BTQsdyQ1uay0JWxnM0UkpR8iMddQuZcfI0g+Pkv0NpO60BeLqja2fmr0932rvMzV
-	 H7swDSsow4+pjCTDJLJkUshJPe55qQFYObG4woYT3lFYOx6VaW8u6H/pHsQGIp4mDy
-	 2YqTmmnf4zue9xs9Zxbl0lkm/c4+hDjqw48dAXQQCo/YCqaJSZfmZVt6Lw1NSKjbbM
-	 xPSOgyxuaZxgWmt5yvo9yxKxR07xMLcPjtvKDfJL1ve7VLNfix1x6/FU76QemVtK4L
-	 c8kDVs/Lv7/yXWNcgMavW2AoNALm74nfMtCcWr8skhL1PWzrEeIzE/P6v/K7uMPWPZ
-	 08T7FYKdJuebMVv1SZsOImxo=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5016940E01A0;
-	Tue, 11 Feb 2025 20:32:56 +0000 (UTC)
-Date: Tue, 11 Feb 2025 21:32:50 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev, virtualization@lists.linux.dev,
-	linux-hyperv@vger.kernel.org, kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org, Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH 03/16] x86/tsc: Add helper to register CPU and TSC freq
- calibration routines
-Message-ID: <20250211203250.GHZ6uz8qs-bzcbi0_b@fat_crate.local>
-References: <20250201021718.699411-1-seanjc@google.com>
- <20250201021718.699411-4-seanjc@google.com>
- <20250211173238.GDZ6uJtkVBi8_X7kia@fat_crate.local>
- <Z6uMOyHD3C6-qCXz@google.com>
+	s=arc-20240116; t=1739306006; c=relaxed/simple;
+	bh=m6uW5LI+RTAP6gZ7LY7Y5BSyq7TILP8ZnWmH47ViD2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Mx60pV2h1saoDuigKbhDj4yr0MzUZaZt71OM8DHDyLA74bHQGXpaNQj9MLCHP3o2qxLPe72fhW7HVThRXJ8+lpRsr3NNNtDol1gFCt1d+egiyrDU92ras1I6SqgI3ewpH2TzxWz61l6BFFdjOyH+n1fWhE84aMb+LCEiE9fGZnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTdX6qiu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87328C4CEDD;
+	Tue, 11 Feb 2025 20:33:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739306005;
+	bh=m6uW5LI+RTAP6gZ7LY7Y5BSyq7TILP8ZnWmH47ViD2g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=YTdX6qiu5L9Qs3vdGhuZHTeLKJ+uNTRPgU7exdn7QBMmY3Qpg5Pj1ddbM9Yc2QIRJ
+	 PwbclK47wvCBblffZ5zBpGhqUUioRkitHcw6goGkSoaw0sz/H9VZcARqQns8tp4KT/
+	 CCGIfMqiWN4KcwxADPpWeq9mi0/qXZx+KzkMIH/dspacbbgiKf7GurrDfexv6J73ol
+	 VOVyqq/3Z4R/lOzgm/YVjAGq7S2tjEPZ10GrQniJ6CW8y0y0eW7DSzHfgyQmZUanyy
+	 QQUiqgz6FkHptDJ8xe72SvxEWaJml+MotLbMRYLEtMre02yjeoKjmwd/7LrorrRflZ
+	 Bdy5xqiS4MTrg==
+Date: Tue, 11 Feb 2025 14:33:24 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mark Kettenis <kettenis@openbsd.org>, Marc Zyngier <maz@kernel.org>,
+	Stan Skowronek <stan@corellium.com>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Janne Grunau <j@jannau.net>, stable@vger.kernel.org
+Subject: Re: [PATCH 3/7] PCI: apple: Set only available ports up
+Message-ID: <20250211203324.GA54082@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z6uMOyHD3C6-qCXz@google.com>
+In-Reply-To: <20250211-pcie-t6-v1-3-b60e6d2501bb@rosenzweig.io>
 
-On Tue, Feb 11, 2025 at 09:43:23AM -0800, Sean Christopherson wrote:
-> It conflates two very different things: host/bare metal support for memory
-> encryption, and SEV guest support.  For kernels that will never run in a VM,
-> pulling in all the SEV guest code just to enable host-side support for SME (and
-> SEV) is very undesirable.
+On Tue, Feb 11, 2025 at 02:54:28PM -0500, Alyssa Rosenzweig wrote:
+> From: Janne Grunau <j@jannau.net>
+> 
+> Fixes "interrupt-map" parsing in of_irq_parse_raw() which takes the
+> node's availability into account.
+> 
+> This became apparent after disabling unused PCIe ports in the Apple
+> silicon device trees instead of disabling them.
 
-Well, that might've grown in the meantime... when we started it, it was all
-small so it didn't really matter and we kept it simple. That's why I never
-thought about it. And actually, we've been thinking of even ripping out SME
-in favor of TSME which is transparent and doesn't need any SME glue. But there
-was some reason why we didn't want to do it yet, Tom would know.
+Is there something missing from this sentence?  "... after disabling
+unused ports instead of disabling them" doesn't sound quite complete.
 
-As to carving it out now, meh, dunno how much savings that would be. Got
-a student to put on that task? :-P
+> Link: https://lore.kernel.org/asahi/20230214-apple_dts_pcie_disable_unused-v1-0-5ea0d3ddcde3@jannau.net/
+> Link: https://lore.kernel.org/asahi/1ea2107a-bb86-8c22-0bbc-82c453ab08ce@linaro.org/
+> Fixes: 1e33888fbe44 ("PCI: apple: Add initial hardware bring-up")
+> Cc: stable@vger.kernel.org
 
-> And in this case, because AMD_MEM_ENCRYPT gates both host and guest code, it
-> can't depend on HYPERVISOR_GUEST like it should, because taking a dependency on
-> HYPERVISOR_GUEST to enable SME is obviously wrong.
+Can we have a hint about what makes this "stable" material?  I can't
+tell from the commit log what the impact of this change is.
 
-Right.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Bjorn
 
