@@ -1,139 +1,191 @@
-Return-Path: <linux-kernel+bounces-510195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A9BA31993
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:33:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073B2A31997
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C38188870C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:33:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78A717A2BE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8DF261368;
-	Tue, 11 Feb 2025 23:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313F5268FD9;
+	Tue, 11 Feb 2025 23:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JCDgV0jV"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2ICWTO9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85B818C936
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3D327291F;
+	Tue, 11 Feb 2025 23:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739316784; cv=none; b=SioqFwwNsQURtSDFBIOml3Jy/kwKMM17XamWE0NVO/OG8z+bz0FUbZ502sPTgNdyRcEAwzPfTq4oy1oi2D9NVbZWV4UgFSw2lqcZseTf9D9L5iIiOFzJIVCEI/cUepnGIXeg33LEdv0eysXrpibFxMBIas1eXkZGjKybSLHjMyw=
+	t=1739316872; cv=none; b=a010MCHog9G7EruZzOtQgswm38m/aM3YtRPTUsVyr0iLsH8UZrOKQLpoBQVx6RFt0eKDGXdJZSm10kq0KH1ooF3mIJjgdS9/9ZsVRiIiPXBXQhUax/kSj4kXwVMDXx+pvy13TRqufl/mJadmPQuISK982qxSG8X4uczATOCs73U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739316784; c=relaxed/simple;
-	bh=5FH5cvqCHRGQxFLU+IHFkeW2Dbf/nCNH2vIoY2msvPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bxC05HZ/S8E8XqnOmpIQO/TVmzxWjKqXId8YmuTXwcQnB4in4+GRAFrYGV85Y3vGm/uymln+wb3AQCxOV3JaU1JnetWDqoHkhSUJFf6ev47e0Q1akq6VTNvjveb2VbQFEcnmICv6vKj4cYdHw+ZW0C3zw1DHx7npehBYfeE/gXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JCDgV0jV; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-309025ec288so6070121fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 15:33:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739316781; x=1739921581; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rodQbk+x03x3x3m50M7JrNSJkTThLNOVG4NbQXJPotk=;
-        b=JCDgV0jVOJEhiBpYdACp6h4H+2/nZuoOOuLAPwfxxoyPfFE0xoesOFWp2IZoCr/9gc
-         IbUXI7iNsAmjPugAyxWAD0V3qmhZBUkSHHw7HejzKvrRrTeigVsyDJelDTEe8Dzy2pEh
-         erfrLqNKZz8/SYxzPL8xpdqID76X1c+APKNF/BhxBz8CVEPoxVpR0rFxIhy1Fy7Bb5m4
-         shwwtyeyZSXE8LVJiwVbPZk1xBNt0oUE1sAVOqSEWawzsJ3AJAvHhZ9bavj9IDOK/VxJ
-         Pyn4+H09SyjODHAN//pGfvztNkcuJsj0AZSVohrc7okxbYKbxA2zbeRb834Yd72Cy9pi
-         Cmhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739316781; x=1739921581;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rodQbk+x03x3x3m50M7JrNSJkTThLNOVG4NbQXJPotk=;
-        b=OujzpUkCw15PZjMY54sfwRqmGMOguCJJz5bPFCmnR7kBKHT2XMUuSnagFEMUoVGbyr
-         dcvZ3LOmpNU+xBCshCeK9ueApga0ZiJ/RdmCo+ZEP707Lx67W1rFW7i99QOoVzeKdzpW
-         LJd9ksJIbTRwn3vDFj66SYbKPSXQm/uXPQVW69n3g3CV9lAXs7/rQR4cY7Us9Vj5uNGm
-         t+sO+gbpUqnIC3odEQ58R3liQVvIoIG8OeqnzAJztxs3QHLZK2oOyEViHa2tzcrAUKRS
-         7UjV8UmwcJL+uEeZ290JDJfcDnZJQTMRtHWlrVqfkP6mEuAEeCx+0/0alwvLpkjmgp2Z
-         eXVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXiV2VhEWDbpvlU5voVnd6SDGVdafLXUU6LLhfCXcCrIqrRTBjH33bz16X93/WFuhZ+kRyuicidlVAjS9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYUepABombofPR+cGIPykrraIZakVLGwkIFJVxeK6f1xzqGebs
-	tjYy4ceJXvrhGY1iiKcoHLl05z1LHhQMMqtmG7jj90vL+AS+BYFL+uDQMWyEmLU=
-X-Gm-Gg: ASbGnctqSxYu6NYTEHQjQuTmh1MWwVmLG4vF1YTXIsyHoM7lBeESZ+uQqjVXeRhtWHu
-	9iRfSocoAxLS1so2x5pPhJmdR9Sch5PADJyc6fTXaBez0paeW+3AKmpUH2Ayve9R1o9peSNGf0+
-	RMuHrzVPpMnJo4i3t/RtHmMtCx8cVtiDqnwAt1bmpX3ZbCRFA2TzuabxqFzpcQ5KflzwEMHuX4w
-	GEuzE7K7nQClxA/n8ZyB1P758FJLSVDOpI/6uW79wWqBEnI9a2z0wdoHIefbd3xrAkdMJuj1HJr
-	xx6yxych47mGzm+T1VRTjAmGKqRnF4AfewFrCza8wDq8CFt+TLPt2MKnrC3JxwRBDfEINiw=
-X-Google-Smtp-Source: AGHT+IGB1Kv/nNI1yQM7J/jta9bV8fuqJGcXbtiJgiXWtxEIK0FnId8AJnNZYhlhIorjWhWV0YGZVQ==
-X-Received: by 2002:a05:651c:221d:b0:304:4e03:f9d9 with SMTP id 38308e7fff4ca-30903911d8cmr3728551fa.28.1739316780860;
-        Tue, 11 Feb 2025 15:33:00 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-307de2f6995sm16006451fa.107.2025.02.11.15.32.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 15:32:59 -0800 (PST)
-Date: Wed, 12 Feb 2025 01:32:57 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: "James A. MacInnes" <james.a.macinnes@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	quic_wcheng@quicinc.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	lgirdwood@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 3/3] arm64: boot: dts: pmi8998.dtsi: Add VBUS regulator
-Message-ID: <5efl5oppr5phgktwuk2n6rvdz37wuygdwsmrdqwh5gimofrrcq@qe6lena27emf>
-References: <20250211194918.2517593-1-james.a.macinnes@gmail.com>
- <20250211194918.2517593-4-james.a.macinnes@gmail.com>
+	s=arc-20240116; t=1739316872; c=relaxed/simple;
+	bh=nDtnBAQ+E7kXVtn1qwbaoJMQmIELR47EumTe1bf8h8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=nDae/q3xFZyflK4YdzjfQn4cxhzp6+s8KZpYUG4fHXMzAULNwKCMqsLvoXV4t2GtoqbeP5J1RgDGMxsvKqID/BckHOXnpSfLKPp0wUi48aHNsoor3GpXlgt+fK0zCn4+ZhFCizWu5LZUT6IqV3yDjvCPD2zdBRY0Y5e0JH8uFmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2ICWTO9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 943EFC4CEDD;
+	Tue, 11 Feb 2025 23:34:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739316871;
+	bh=nDtnBAQ+E7kXVtn1qwbaoJMQmIELR47EumTe1bf8h8w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=k2ICWTO9rwBqtNelUW9bhvvXeUcB0Q6JaiScS57tKkU2lEyzmcoidNcao1OWkKh7V
+	 hXkF6OH/GjwOaQm8WD4nxLZqxVfUtwk1JfLc2v7DcdV++l8vK/o+LeFuw6YB1S3oo3
+	 qPGAP5VDEsLuC/SkVipZrsMeCyPf+c/UMGB+pS/QcSBok5xl642Hgk3yHgTq/+hnhE
+	 ilq101pYZaDwtMzO+XmFrGaCFIz8eqLOLUMI9DdsMpJnKhLiX+aYX865NEE+wruw3r
+	 gwmqOeg7To+tJ1Z6fSLJgPfA0mj/C5s6QRFulxkOfiRFTrGdD+HfnIE4/MLB9iQkHJ
+	 O+JpnRG7Z9MxA==
+Date: Tue, 11 Feb 2025 17:34:30 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Chen Wang <unicorn_wang@outlook.com>
+Cc: Chen Wang <unicornxw@gmail.com>, kw@linux.com,
+	u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, arnd@arndb.de,
+	bhelgaas@google.com, conor+dt@kernel.org, guoren@kernel.org,
+	inochiama@outlook.com, krzk+dt@kernel.org, lee@kernel.org,
+	lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+	palmer@dabbelt.com, paul.walmsley@sifive.com, pbrobinson@gmail.com,
+	robh@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+	xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
+Subject: Re: [PATCH v3 1/5] dt-bindings: pci: Add Sophgo SG2042 PCIe host
+Message-ID: <20250211233430.GA55431@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250211194918.2517593-4-james.a.macinnes@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PN0PR01MB6028C76DCC20B81498081CE1FEED2@PN0PR01MB6028.INDPRD01.PROD.OUTLOOK.COM>
 
-On Tue, Feb 11, 2025 at 11:49:16AM -0800, James A. MacInnes wrote:
-> This patch adds support for the USB Type-C VBUS regulator to the
-> PMI8998 PMIC device tree.
+On Sun, Jan 26, 2025 at 10:27:27AM +0800, Chen Wang wrote:
+> On 2025/1/23 6:21, Bjorn Helgaas wrote:
+> > On Wed, Jan 15, 2025 at 03:06:37PM +0800, Chen Wang wrote:
+> > > From: Chen Wang <unicorn_wang@outlook.com>
+> > > 
+> > > Add binding for Sophgo SG2042 PCIe host controller.
+> > > +  sophgo,link-id:
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    description: |
+> > > +      SG2042 uses Cadence IP, every IP is composed of 2 cores (called link0
+> > > +      & link1 as Cadence's term). Each core corresponds to a host bridge,
+> > > +      and each host bridge has only one root port. Their configuration
+> > > +      registers are completely independent. SG2042 integrates two Cadence IPs,
+> > > +      so there can actually be up to four host bridges. "sophgo,link-id" is
+> > > +      used to identify which core/link the PCIe host bridge node corresponds to.
+> > IIUC, the registers of Cadence IP 1 and IP 2 are completely
+> > independent, and if you describe both of them, you would have separate
+> > "pcie@62000000" stanzas with separate 'reg' and 'ranges' properties.
+> 
+> To be precise, for two cores of a cadence IP, each core has a separate set
+> of configuration registers, that is, the configuration of each core is
+> completely independent. This is also what I meant in the binding by "Each
+> core corresponds to a host bridge, and each host bridge has only one root
+> port. Their configuration registers are completely independent.". Maybe the
+> "Their" here is a bit unclear. My original intention was to refer to the
+> core. I can improve this description next time.
+> 
+> >  From the driver, it does not look like the registers for Link0 and
+> > Link1 are independent, since the driver claims the
+> > "sophgo,sg2042-pcie-host", which includes two Cores, and it tests
+> > pcie->link_id to select the correct register address and bit mask.
+> In the driver code, one "sophgo,sg2042-pcie-host" corresponds to one core,
+> not two. So, you can see in patch 4 of this pathset [1], 3 pcie host-bridge
+> nodes are defined, pcie_rc0 ~ pcie_rc2, each corresponding to one core.
+> 
+> [1]:https://lore.kernel.org/linux-riscv/4a1f23e5426bfb56cad9c07f90d4efaad5eab976.1736923025.git.unicorn_wang@outlook.com/
+> 
+> I also need to explain that link0 and link1 are actually completely
+> independent in PCIE processing, but when sophgo implements the internal msi
+> controller for PCIE, its design is not good enough, and the registers for
+> processing msi are not made separately for link0 and link1, but mixed
+> together, which is what I said cdns_pcie0_ctrl/cdns_pcie1_ctrl. In these two
+> new register files added by sophgo (only involving MSI processing), take the
+> second cadence IP as an example, some registers are used to control the msi
+> controller of pcie_rc1 (corresponding to link0), and some registers are used
+> to control the msi controller of pcie_rc2 (corresponding to link1). In a
+> more complicated situation, some bits in a register are used to control
+> pcie_rc1, and some bits are used to control pcie_rc2. This is why I have to
+> add the link_id attribute to know whether the current PCIe host bridge
+> corresponds to link0 or link1, so that when processing the msi controller
+> related to this pcie host bridge, we can find the corresponding register or
+> even the bit of a register in cdns_pcieX_ctrl.
+> 
+> > "sophgo,link-id" corresponds to Cadence documentation, but I think it
+> > is somewhat misleading in the binding because a PCIe "Link" refers to
+> > the downstream side of a Root Port.  If we use "link-id" to identify
+> > either Core0 or Core1 of a Cadence IP, it sort of bakes in the
+> > idea that there can never be more than one Root Port per Core.
+>
+> The fact is that for the cadence IP used by sg2042, only one root port is
+> supported per core.
 
-"In order to enable USB Type-C VBUS support on the SDM845 platform add
-device node for the USB Vbus regulator to the PMI8998 PMIC device tree."
+1) That's true today but may not be true forever.
 
-Drop the rest of the commit message.
+2) Even if there's only one root port forever, "link" already means
+something specific in PCIe, and this usage means something different,
+so it's a little confusing.  Maybe a comment to say that this refers
+to a "Core", not a PCIe link, is the best we can do.
 
+> ...
+> Based on the above analysis, I think the introduction of a three-layer
+> structure (pcie-core-port) looks a bit too complicated for candence IP. In
+> fact, the source of the discussion at the beginning of this issue was
+> whether some attributes should be placed under the host bridge or the root
+> port. I suggest that adding the root port layer on the basis of the existing
+> patch may be enough. What do you think?
 > 
-> Key changes:
-> - Defined the `usb-vbus-regulator` node for VBUS handling, enabling
->   control over USB power delivery.
+> e.g.,
 > 
-> This addition enable USB Type-C VBUS support on sdm845 platforms.
+> pcie_rc0: pcie@7060000000 {
+>     compatible = "sophgo,sg2042-pcie-host";
+>     ...... // host bride level properties
+>     sophgo,link-id = <0>;
+>     port {
+>         // port level properties
+>         vendor-id = <0x1f1c>;
+>         device-id = <0x2042>;
+>         num-lanes = <4>;
+>     }
+> };
 > 
-> Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
-> ---
->  arch/arm64/boot/dts/qcom/pmi8998.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+> pcie_rc1: pcie@7062000000 {
+>     compatible = "sophgo,sg2042-pcie-host";
+>     ...... // host bride level properties
+>     sophgo,link-id = <0>;
+>     port {
+>         // port level properties
+>         vendor-id = <0x1f1c>;
+>         device-id = <0x2042>;
+>         num-lanes = <2>;
+>     };
+> };
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/pmi8998.dtsi b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-> index cd3f0790fd42..8cb1d851b5a3 100644
-> --- a/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-> @@ -29,6 +29,12 @@ pmi8998_charger: charger@1000 {
->  			status = "disabled";
->  		};
->  
-> +		pmi8998_vbus: usb-vbus-regulator@1100 {
-> +			compatible = "qcom,pmi8998-vbus-reg";
-> +			status = "disabled";
-> +			reg = <0x1100>;
-> +		};
-> +
->  		pmi8998_gpios: gpio@c000 {
->  			compatible = "qcom,pmi8998-gpio", "qcom,spmi-gpio";
->  			reg = <0xc000>;
-> -- 
-> 2.43.0
-> 
+> pcie_rc2: pcie@7062800000 {
+>     compatible = "sophgo,sg2042-pcie-host";
+>     ...... // host bride level properties
+>     sophgo,link-id = <0>;
+>     port {
+>         // port level properties
+>         vendor-id = <0x1f1c>;
+>         device-id = <0x2042>;
+>         num-lanes = <2>;
+>     }
+> };
 
--- 
-With best wishes
-Dmitry
+Where does linux,pci-domain go?
+
+Can you show how link-id 0 and link-id 1 would both be used?  I assume
+they need to be connected somehow, since IIUC there's some register
+shared between them?
+
+Bjorn
 
