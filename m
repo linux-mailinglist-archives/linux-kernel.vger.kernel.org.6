@@ -1,77 +1,115 @@
-Return-Path: <linux-kernel+bounces-510010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0093EA3173D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:07:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6F6A317A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C12B1889195
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92EF6188D601
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9400F265CA0;
-	Tue, 11 Feb 2025 21:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FABF269B14;
+	Tue, 11 Feb 2025 21:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVTrX4Nz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="CHPt/RUh"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB002641E8;
-	Tue, 11 Feb 2025 21:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C52266589;
+	Tue, 11 Feb 2025 21:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739308051; cv=none; b=gv/kC9aoU4BNU0oCEOj3z/lzbwp01uUt3Gs2QJBZ5MBqetQltNhKDc/GP+L7IUJwSafflAS1zE8Ys4lXExuz9eA6Y54hcKhm0TfB/SC4tGdGYOJAa4086hEGUCmcxd4PpaaeGziUeAENsXWAklB+LJrL8Pws0KY0uxwwAIC8Uuc=
+	t=1739309158; cv=none; b=Ok/lmXSOtAO0WkoG019PL9RRP93ME8/2k+zb/jJS6VeQMzCU2D2mwjK1F3bLr9UjJ6Shgu8MpRiHJDrRSX/ZurF0jUBMmGRKZmFTI+IyCKTAUNTXWwbUSOsAROzB2X/9bu3X33Za3DLbGejL3F7Ym0TJeyLZiRW8smiO44G5BaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739308051; c=relaxed/simple;
-	bh=FI0dG1Wzq9Ch0PpL2X49WF6QMuz/ZYuzGVaB0NDPLOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XC+sMxhn3gMvO0ic06f3IocKVHZdSTxuwQ1qwC8kyZF4K/MXY8NJIXtAOKokXnjNAsLVP+XrHACdG8szowiitMUoKrm+xOVfhX32709TU7ybb4H99iL8n00oPzE79xXUApuXfs4yQU8b0MW/wNTY/QGa5AyY7F96WifcEYCWFeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVTrX4Nz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B6DC4CEDD;
-	Tue, 11 Feb 2025 21:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739308050;
-	bh=FI0dG1Wzq9Ch0PpL2X49WF6QMuz/ZYuzGVaB0NDPLOA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DVTrX4Nz2j9+0+Dppl6U78REZy/2zvBYhgu+kl0dnV2RlJgZ8Mbt1ag0oy84owQZD
-	 YHBIkZDCZ6/R73K9EFq8lef30Gvai3uYlLucI66scPmOhc4hY37DlBKbnMy0hQrpy5
-	 suQl4ZRp0tVi0FbQ6vaj6sdnTAiLFFf0d7dVinFLurJAFdefzhC+MXouw/W3UNgZQX
-	 7FNh2qVRI/+RTndhCksPbeelbmxt2x7QEAW6eR0mDzw26kk+l+I7FaK8DwlyvoLRtt
-	 AWOXVaZXyeTGQbRd5ZYVMsGCfx4PTbPueKHMbRNZ01i97BLQpZXD90IrCfRpw2K+Yc
-	 +eync2dqHFgFg==
-Date: Tue, 11 Feb 2025 23:07:25 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stuart Yoder <stuart.yoder@arm.com>
-Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-	sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Add support for the TPM FF-A start method
-Message-ID: <Z6u8DbOlZflmQ9i7@kernel.org>
-References: <20250210232227.97761-1-stuart.yoder@arm.com>
+	s=arc-20240116; t=1739309158; c=relaxed/simple;
+	bh=zVHK9tKkrrsUglkhVCFQZZeMj/6ZCvBq1S2weRFFqdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F/snKhzUDj7AWNrxUZL2lxtkhPc+XdH1r2EVUKju+rddeOFQ8wws/tuWtzSdswgRWkBxHc69JdNhm6GTeel8utYixQf8lKpSBTvxg3Nzs6QROB6cD2pA6C1wdl3urk1p7CrFuRXf/YVTLXaNamrjYoW4FczHvoWmEUf4kBt/OQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=CHPt/RUh; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id e027a457252b6505; Tue, 11 Feb 2025 22:25:49 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 100E6770175;
+	Tue, 11 Feb 2025 22:25:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1739309149;
+	bh=zVHK9tKkrrsUglkhVCFQZZeMj/6ZCvBq1S2weRFFqdk=;
+	h=From:Subject:Date;
+	b=CHPt/RUhm3cXLGMvxhiWdSgoVaBFqdO6LPDszthIOUdPfj8qeIHopckJZqaySZqpD
+	 xqdg57J/xp/fjdJqc7bCR5z8kfjPUyo8VV1bwFrqQCaCvtmwPWQPRErx4KDyl3RUCQ
+	 k6V1BTZ5Pxoy9mjSMMNFT4G8dTMs7/Mlv2bKKUF4l/yOXx5nsqD9fO6Cz30DHfmI1+
+	 XcU8JpkGoBdtgy4K1vz2DzKxvDWs3udxxtxD655gZeturWF2v7gA4Xl0XlqiSlJTQf
+	 rVKbZr+oiv8dZzOjynYjGdW2z0+eBhr8TpXLVrL5Q2LqeBQdyKY9h/VOAnspbBwWdT
+	 JM4fkG0AZ/zOg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Subject:
+ [PATCH v1 04/10] PM: runtime: Drop status check from
+ pm_runtime_force_resume()
+Date: Tue, 11 Feb 2025 22:07:52 +0100
+Message-ID: <6038511.MhkbZ0Pkbq@rjwysocki.net>
+In-Reply-To: <2314745.iZASKD2KPV@rjwysocki.net>
+References: <2314745.iZASKD2KPV@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250210232227.97761-1-stuart.yoder@arm.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegvddtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-On Mon, Feb 10, 2025 at 05:22:23PM -0600, Stuart Yoder wrote:
-> These patches add support for the CRB FF-A start method defined
-> in the TCG ACPI specification v1.4 and the FF-A ABI defined
-> in the Arm TPM Service CRB over FF-A (DEN0138) specification. 
-> (https://developer.arm.com/documentation/den0138/latest/)
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Since pm_runtime_force_resume() requires pm_runtime_force_suspend() to
+be called before it on the same device, the runtime PM status of that
+device is RPM_SUSPENDED when it is called unless the device's runtime
+PM status is changed somewhere else in the meantime.
+
+However, even if that happens, the power.needs_force_resume
+check is still required to pass and that flag is only set by
+pm_runtime_force_suspend() and it is cleared at the end of
+pm_runtime_force_resume(), so it cannot be taken into account
+twice in a row.
+
+Accordingly, the pm_runtime_status_suspended(dev) check in
+pm_runtime_force_resume() is redundant, so drop it.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/runtime.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1963,7 +1963,7 @@
+ 	int (*callback)(struct device *);
+ 	int ret = 0;
+ 
+-	if (!pm_runtime_status_suspended(dev) || !dev->power.needs_force_resume)
++	if (!dev->power.needs_force_resume)
+ 		goto out;
+ 
+ 	/*
 
 
-It would bring a whole a lot of clarity to open up acronyms.
-What are F, F and A? There's quite a few of these in this
-industry.
 
-Also, probably you could take the spec out of parentheses and
-use double colon.
-
-BR, Jarkko 
 
