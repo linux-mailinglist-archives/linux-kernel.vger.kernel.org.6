@@ -1,68 +1,98 @@
-Return-Path: <linux-kernel+bounces-510124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 242FAA3187A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:21:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EAD3A3187F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:21:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6DD23A2B80
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F3E3A286F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FBD268FE5;
-	Tue, 11 Feb 2025 22:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A777268FD4;
+	Tue, 11 Feb 2025 22:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwxGUsru"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A0lCuePj"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1DD267735;
-	Tue, 11 Feb 2025 22:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5FA268FDB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 22:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739312453; cv=none; b=nuk+PEWnbzV1n2Qx+X1YpYTmfv32JYJkWpcMoH2bF5sKEBuCt/L8DUBl3vBejuN2d8g34nKXxUTT0O7mM7+67KZ9dm0g+ppy4y0QBt7MpIwzeC5s2Gr8NSx3U9BrfRoG7jLtRw3PO4EG6v9CZfJTKZr6YKOX9Q2B+iem1SF/4qU=
+	t=1739312479; cv=none; b=m35uQT8WccbDxEYx2GwbZt1v6S0u23LkKV6RkJ4KmG3tenR7epXq9HzJDgs2GMsDvibZbJVoy3VT1SSS6p3tJFF6lGNNO5G3q+FgDLAE8IipDXzayG1BVoccleYhnETO1HFpj5JX4La7eVvIJBD51MN21LIgOVB9B44P4C0hUJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739312453; c=relaxed/simple;
-	bh=rm/mPom9O53rzuai9/9yCCN3l8DHv5fmZsGl/Jcd/cA=;
+	s=arc-20240116; t=1739312479; c=relaxed/simple;
+	bh=a1YSwYfSHtvwJzBZ4RED+1zkCwMf/mzH1nEkn7wsbQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1uFYrX9yvN8p9EKLnZ5TII+YnFs+SH/jSsykA94EmsVPQh6WHUbS8G4gYyYhyDocPJJWUGbVtqW5w2Hd85YxZbrGIBgYM+m5Icqd4WfS0WB7B5/ixHiwxjgUfVfQcKC3eraRZYZVtTNlKAXhH+XO/IwR5YeYPKMTbTv4hxJB/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwxGUsru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9950C4CEDD;
-	Tue, 11 Feb 2025 22:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739312452;
-	bh=rm/mPom9O53rzuai9/9yCCN3l8DHv5fmZsGl/Jcd/cA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qwxGUsru+22EfdRz6VurnP19Mh+6v8rbJsY6pBppKOb6FUwmeRwAVCRLQOpxFj/q/
-	 ZUwGB+6X+pcMM2K4GFoimGUA1NnewnIEIFIscilqHBPWKsB0WzClu6Psb3HCz0wskk
-	 Hu9E5UVN5RjPBUh7etb+Rxr9goc9FzeA3+3Fn9UjTPeyRG+/5y0sDlaAa5JYVKZFi7
-	 b3SBuFrNTGIlkecNVNRCoRbWsMJXNTKthFxOSy3K6HwULlUXQC191OdjYj7yxJxZa9
-	 oanPS68QwU1KHMciEW4saxbVJU5oIpUyPmoLjUaqSdpaxCsN1cgKTSYbm7V6SoKy6D
-	 IYaIWXLABMnDA==
-Date: Tue, 11 Feb 2025 16:20:50 -0600
-From: Rob Herring <robh@kernel.org>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	John Cox <john.cox@raspberrypi.com>,
-	Dom Cobley <dom@raspberrypi.com>,
-	review list <kernel-list@raspberrypi.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	John Cox <jc@kynesim.co.uk>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/5] media: dt-bindings: media: Add binding for the
- Raspberry Pi HEVC decoder
-Message-ID: <20250211222050.GA1285038-robh@kernel.org>
-References: <20250206-media-rpi-hevc-dec-v2-0-69353c8805b2@raspberrypi.com>
- <20250206-media-rpi-hevc-dec-v2-3-69353c8805b2@raspberrypi.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWA7F64gBsEwlDtXq02c1OQmPh3rbpPnAo48hZ7cFvBgw8qwIk1Gz12YRpd/fN+8VXWoS4tlR/V5IZR027cU/hpWmF3x7OrTAnyBNkfl9Hl4rIBPvGFARVL6HtGrUSwo4eBQXYKSbIsvdX4gpoPOiA/2dyk/SkYzUrb1/pUR4Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A0lCuePj; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21f8c280472so15605ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 14:21:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739312477; x=1739917277; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EjzryGBicQVImcaUwF8Kk/J08SYkgXHEDzMrm9AaCFM=;
+        b=A0lCuePjEqndR/u2jYv1ql0b3NvLNdLV39OTn9zzp/SpH9Ffo0nZSbQDyt2SFhEULR
+         Vw83RJhOLHVFlvbSdhTnJeULok+zImblUmaOLqceK1kTq+2TJ3OyrqOPv2mW0VYkASOn
+         Iu4y+Tbbev0jRVYBn8CC0H8miYzZCa8y27YrcXxu1XC84A1wnCFLCW4hwdLDpX1BNW+l
+         L1d2FXTfkDzvvFUeo2aKHyVHkHYNEeU9L0O+PZCWPahzQyVUgorJ3g3TdlEovSrCEA+V
+         h8bZfytDmrox3TENLcuhozy2bWIxy7Fm4WUA1Ib0Qd8lmED6HjAXmi5+C0iAEyLe1DZv
+         0KXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739312477; x=1739917277;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EjzryGBicQVImcaUwF8Kk/J08SYkgXHEDzMrm9AaCFM=;
+        b=pfNNkHKIrwOHdV9tEWtRdn9QrIu24RvC4eWkSyN+/sgxtebgPay3utDJcnf4xXqFUg
+         1PvJX4MsA2N7dxo4HUMctftXF/szFuz0sf4MAs5Z/yEHQCCU445lVNF1t8QODsw+I1Ud
+         30AbpzNoqTtvm09wXxlo6dj0dP1hf5UkKHBtiqrTANRJm+9smGFnVemFynfjhTR/7hJw
+         lLxg4CkvdIMwr0o0hupCWrgrOv5gziu4G4lZ55/fXtk1AspUqFv0wN36khpth0d7kW73
+         L/WqOyrfUd5gTd1JtrX8B8lKwLAlXxCYG4lRX92nVBSMTueL7nEj3cDTEncr1LoUndBw
+         I3TA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+xJmb2b+uO4cBP+o91I5ZKrbZCM3hMhu7ff749MeU1jA/HI7yFVP1MxMWSn+2iyJDen3yHi5OcJHhkLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx5G/R8G2VS6HzEm15SOxQAEivSAqxcUB2/eva3G5XGjnhclWX
+	IMYfHMFA0XkdYy9aq+4oA/dXATWSeEC81Jzl1Tqy1q84ZhXmqDuIhPllHxhrRQ==
+X-Gm-Gg: ASbGncvKEBoFNT31bCla1UOyhbyYUd5LB3o+p4pIXlB2oWteN8csqRpdg2rkviCZjtY
+	YCW0VbtzlY1gyustlugUQlgVc3AAfoxqv6Jb+TpLFoHEDg7M04XybRiKjWNU7wy4MCCfgVD2Wht
+	RlXVwuHbNmZG6ZumzWKL7/EYTFKxnMM4tEALRaXhPgQCwOH+I5ipztEtK5JgNYePsDJqb07sJ0g
+	8d/pFIVsWYzaegC2fonLnSQxfnl0n23EgZeQg/Hw70/PkPLzoMEVsknDfDbLlmLqE6N6ERoDNZ5
+	u490R5VqWUYU1TzGFFpbabGVZ/8UPYhXGxbpWF6ObqTvAaLDwPBI
+X-Google-Smtp-Source: AGHT+IE9Eyuod2lYAzKcb7DlMkAvrPxHPMFUvHM7quPOLgjcn1Gu3gW3iwUvOBgkIXWv8Gbuo0K2Ag==
+X-Received: by 2002:a17:903:1664:b0:21a:87e8:3897 with SMTP id d9443c01a7336-220bc76be3amr773775ad.4.1739312476858;
+        Tue, 11 Feb 2025 14:21:16 -0800 (PST)
+Received: from google.com ([2a00:79e0:2e14:7:951b:5f7b:9042:f9d1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf9aaf7c9sm46982a91.46.2025.02.11.14.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 14:21:16 -0800 (PST)
+Date: Tue, 11 Feb 2025 14:21:11 -0800
+From: Brian Norris <briannorris@google.com>
+To: Ajay Agarwal <ajayagarwal@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Oliver Neukum <oneukum@suse.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Vincent Whitchurch <vincent.whitchurch@axis.com>,
+	"jic23@kernel.org" <jic23@kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	Brian Norris <briannorris@chromium.org>
+Subject: Re: PM runtime_error handling missing in many drivers?
+Message-ID: <Z6vNV8dDDPdWUKLS@google.com>
+References: <20220620144231.GA23345@axis.com>
+ <5caa944f-c841-6f74-8e43-a278b2b93b06@suse.com>
+ <20220708110325.GA5307@axis.com>
+ <4ca77763-53d0-965a-889e-be2eafadfd2f@intel.com>
+ <1937b65c-36c0-5475-c745-d7285d1a6e25@suse.com>
+ <CAJZ5v0j0mgOcfKXRzyx12EX8CYLzowXrM8DGCH9XvQGnRNv0iw@mail.gmail.com>
+ <5c37ee19-fe2c-fb22-63a2-638e3dab8f7a@suse.com>
+ <CAJZ5v0ijy4FG84xk_n8gxR_jS0xao246eVbnFj-dXzwz=8S9NQ@mail.gmail.com>
+ <Z6lzWfGbpa7jN1QD@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,96 +101,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250206-media-rpi-hevc-dec-v2-3-69353c8805b2@raspberrypi.com>
+In-Reply-To: <Z6lzWfGbpa7jN1QD@google.com>
 
-On Thu, Feb 06, 2025 at 06:02:36PM +0000, Dave Stevenson wrote:
-> Adds a binding for the HEVC decoder found on the BCM2711 / Raspberry Pi 4,
-> and BCM2712 / Raspberry Pi 5.
-> 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->  .../bindings/media/raspberrypi,hevc-dec.yaml       | 67 ++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/raspberrypi,hevc-dec.yaml b/Documentation/devicetree/bindings/media/raspberrypi,hevc-dec.yaml
-> new file mode 100644
-> index 000000000000..06db7004c765
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/raspberrypi,hevc-dec.yaml
-> @@ -0,0 +1,67 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/raspberrypi,hevc-dec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Raspberry Pi HEVC Decoder
-> +
-> +maintainers:
-> +  - John Cox <john.cox@raspberrypi.com>
-> +  - Dom Cobley <dom@raspberrypi.com>
-> +  - Dave Stevenson <dave.stevenson@raspberrypi.com>
-> +  - Raspberry Pi internal review list <kernel-list@raspberrypi.com>
-> +
-> +description:
-> +  The Raspberry Pi HEVC decoder is a hardware video decode accelerator block
-> +  found in the BCM2711 and BCM2712 processors used on Raspberry Pi 4 and 5
-> +  boards respectively.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - raspberrypi,hevc-dec
+Hi Ajay,
 
-SoC specific compatible please. If they are 'the same' then 2712 can 
-fallback to 2711.
+On Mon, Feb 10, 2025 at 09:02:41AM +0530, Ajay Agarwal wrote:
+> On Wed, Jul 27, 2022 at 06:31:48PM +0200, Rafael J. Wysocki wrote:
+> > On Wed, Jul 27, 2022 at 10:08 AM Oliver Neukum <oneukum@suse.com> wrote:
+> > > On 26.07.22 17:41, Rafael J. Wysocki wrote:
+> > > > Well, in general suspending or resuming a device is a collaborative
+> > > > effort and if one of the pieces falls over, making it work again
+> > > > involves fixing up the failing piece and notifying the others that it
+> > > > is ready again.  However, that part isn't covered and I'm not sure if
+> > > > it can be covered in a sufficiently generic way.
+> > >
+> > > True. But that still cannot solve the question what is to be done
+> > > if error handling fails. Hence my proposal:
+> > > - record all failures
+> > > - heed the record only when suspending
+> > 
+> > I guess that would boil down to moving the power.runtime_error update
+> > from rpm_callback() to rpm_suspend()?
+> Resuming this discussion. One of the ways the device drivers are
+> clearing the runtime_error flag is by calling pm_runtime_set_suspended
+> [1].
+> 
+> To me, it feels weird that a device driver calls pm_runtime_set_suspended
+> if the runtime_resume() has failed. It should be implied that the device
+> is in suspended state if the resume failed.
+> 
+> So how really should the runtime_error flag be cleared? Should there be
+> a new API exposed to device drivers for this? Or should we plan for it
+> in the framework itself?
 
-> +
-> +  reg:
-> +    items:
-> +      - description: The HEVC main register region
-> +      - description: The Interrupt control register region
-> +
-> +  reg-names:
-> +    items:
-> +      - const: hevc
-> +      - const: intc
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: The HEVC block clock
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - interrupts
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    video-codec@7eb10000 {
-> +        compatible = "raspberrypi,hevc-dec";
-> +        reg = <0x7eb00000 0x10000>, /* HEVC */
-> +              <0x7eb10000 0x1000>;  /* INTC */
-> +        reg-names = "hevc",
-> +                    "intc";
-> +
-> +        interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +        clocks = <&clk 0>;
-> +    };
-> +
-> +...
-> 
-> -- 
-> 2.34.1
-> 
+While the API naming is unclear, that's exactly what
+pm_runtime_set_suspended() is about. Personally, I find it nice when a
+driver adds the comment "clear runtime_error flag", because otherwise
+it's not really obvious why a driver has to take care of "suspending"
+after a failed resume. But that's not the biggest question here, IMO.
+
+The real reson I pointed you at this thread was because I think it's
+useful to pursue the proposal above: to avoid setting a persistent
+"runtime_error" for resume failures. This seems to just create a pitfall
+for clients, as asked by Vincent and Oliver upthread.
+
+And along this line, there are relatively few drivers that actually
+bother to reset this error flag ever (e.g., commit f2bc2afe34c1
+("accel/ivpu: Clear runtime_error after pm_runtime_resume_and_get()
+fails")).
+
+So to me, we should simply answer Rafael's question:
+
+(repeated:)
+> > I guess that would boil down to moving the power.runtime_error update
+> > from rpm_callback() to rpm_suspend()?
+
+Yes, I think so. (Although I'm not sure if this leaves undesirable spam
+where persistent .runtime_resume() failures occur.)
+
+...and then write/test/submit such a patch, provided it achieves the
+desired results.
+
+Unless of course one of the thread participants here has some other
+update in the intervening 2.5 years, or if Rafael was simply asking the
+above rhetorically, and wasn't actually interested in fielding such a
+change.
+
+Brian
 
