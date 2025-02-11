@@ -1,110 +1,144 @@
-Return-Path: <linux-kernel+bounces-509882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DFACA31578
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:33:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F63FA3157A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:34:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9A2E1883B1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:33:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 891543A46C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDBB26E622;
-	Tue, 11 Feb 2025 19:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F2E26E633;
+	Tue, 11 Feb 2025 19:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnsVHo1X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="afRLOIXH"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3098926E630;
-	Tue, 11 Feb 2025 19:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C396026E627
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 19:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739302374; cv=none; b=lh150Tlwmo2xu9HpcZ2Qs+qyP4U+jA/x/6LI5CNhiOQdNpjZVoCm/9OOy89bRKz3CU0wDtpU6pK5qqteYbUHC2/eo+m3ey39ZG3OCSsAH6/gfqy8VWOr9iPn+9F28lNC48qsKgUP+KzVSi36S/8Q5tWNGAiqnMtvtkOWGCwIjqY=
+	t=1739302443; cv=none; b=G1wjHBwwQ6iIIGR1Heg3zojfMTaFdJlcxfqCI7jgEj4RZ/sOIL+LM06+I5dfOg6Jq4mamVJhfgWK00qKG0KSjzdpkLKvsQGbNDjE5yjrXjnwMRGJcQeMjSVuSnkACYaqkMZWX/WBt+z12ZlbPSmlzmQcWhBSkwIjp4L/i4gdTy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739302374; c=relaxed/simple;
-	bh=nrF/BY5g0Fese/y5+1M+6ye+pt+/UVs0YfYfjIbl/kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RmGLGqXR5Hgbs3jSwL0Y8f2aj2Z5HkHVoHtGDMDjVB1+dSaEumdHDB5M+uAplY9JNU7yLyb7uebeRkGtK58Mgv6GEGYE6lW87lh0lNFkMtyPQLEV5sREIQ5jJsGbtVEZQk4+E3C4yoNTiFs3r8DerNSxoYXB2DG4IQSj4GUb+zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnsVHo1X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDD0C4CEDD;
-	Tue, 11 Feb 2025 19:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739302373;
-	bh=nrF/BY5g0Fese/y5+1M+6ye+pt+/UVs0YfYfjIbl/kw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rnsVHo1XDIw8OUvt711dV4Z4LzQhKN4mnKBWikxohCNxlxoizdFwcx4QMUgvbFc6g
-	 hz4BbIsOiykxXb2Nxt0Q48Ciw9Sg1rxo8Lz8rjgTc1vhfDMu5kYoCq0o93dXBlryl+
-	 cZ3IInQnhjeWwDxxJSip3cIr+5Srxwa8Z3OYXhBIsdBR3tDJmizr38cU83YISg6ZOf
-	 QcZbTlPVZFqJV0GGnLzlD0/CC9vhA4j6oSsocvpuJnL8128XSY0gjbeqidHNhYKct6
-	 zmEXjFkaaLFwjCmvTEHO3kmuSHP9XOONjSo90VFxvCGHmQn/g1QaP4J3blP0q9EWIq
-	 o+sky5Ojg235A==
-Date: Tue, 11 Feb 2025 19:32:42 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v8 11/17] iio: adc: ad7944: add support for SPI offload
-Message-ID: <20250211193242.6c9a6740@jic23-huawei>
-In-Reply-To: <f989c3d7-0fc0-40f0-8548-4d5dd1a336ac@baylibre.com>
-References: <20250207-dlech-mainline-spi-engine-offload-2-v8-0-e48a489be48c@baylibre.com>
-	<20250207-dlech-mainline-spi-engine-offload-2-v8-11-e48a489be48c@baylibre.com>
-	<f989c3d7-0fc0-40f0-8548-4d5dd1a336ac@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739302443; c=relaxed/simple;
+	bh=uoyqtNIM04n5gAatkZzlTXTmmLUlbkrkXia+O0lRb0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0FUF3tS5nJ5kEDUqFRI+IwfdhscBKR5TmMYPXSVkxa5FhVVo1n0NArx/Cnic5+lwYFp8k8kwrIsHs0pGwWgxxOUoUOORJzG+PmYEnn31x5UhEp2+lNsZhCGpXxXoW33EFWK3ei6WO+wTQ3LddPej1GtC844puaGfMCc6zTZ8Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=afRLOIXH; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21c2f1b610dso144660275ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 11:34:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1739302441; x=1739907241; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Msv1WId3SM86J5ukNlvxPp1WZW6DD4cvAARwpXj2Qqo=;
+        b=afRLOIXH9jny9X4zrBVMu/YCw0/TN0uDJnENv7hw17KwqmkiNcpkYW3suvfUqsrsmp
+         VFiYVYD1lTXL+yVhx/+pAsDdRbX3T/kz2+e60lBRpDr8XcWIrsDjt2GopwQyn1bWm2KV
+         ZJu1FBuIiWQhGXcjDoV1BqrfBTavAPOzd0peA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739302441; x=1739907241;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Msv1WId3SM86J5ukNlvxPp1WZW6DD4cvAARwpXj2Qqo=;
+        b=SrDEbyC4hrOKKZKOJV3/c/ahND1kWHD4orrFvLibkb8p8rJU777SKfJ1kwX0Nn4wc5
+         DeYJYBkDG37OWAuF3evrRGjQI8pcXWlDL61A7XsROPRFbTgGbCPloRNnRA9W2nzEQT3M
+         WfHEaYvGxO6OhDJMhqIXFNdVGerD9N1GS1oxui6aN563qn1s4Js1KcIc//ZJuTX7FVvJ
+         ymmVtC2d8WadY+PvQkhvc+9dmtTUJVhI7wbiBQHJ4t+uBVeO9DShIle1/qjlyrbTgf9C
+         AyrqxAqg4mMkKctqbZwQERZFEnbf5H38lg75ZVJaVmSFArg2CWQq2yrAjBveQ8/S7Q5P
+         QBkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUq+/FYc0XDFdrLjIBun5ZxWp4SIPwgF/nH1HavxLYOTJM+Wcx/aP8F8sttYCbpj/3yIiVVwni00zID2mI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEnrPJaSvdhGkK7e18QLB4dMpU0QVG7lz/NPipIE6JUJPW4KMw
+	Cwd89Z0I13jMYqxJlxZODo8Mvrnr7LXWiG1w2Rf7jckbfUvhUrVTuBxE8amybY/JdkCX71iF3Py
+	g
+X-Gm-Gg: ASbGncvwWlqy5JbWHpgjM3HZdGn+ilafhnugi0F5yWyW4Ex5VbNwezNBbY0Vq5Hr7QF
+	aSEzf+THa0rsu+9jnCrSUGby8EnrlhD56iWij5w6TkbCHE1YyiXtY2c3N/XHF48tMhTzTpHAVA2
+	yGLw1JUMiwpRXCsfPSOAJs4NOdwsoyNkH5DSsMuOFDZiKNjmxVsjkPfxV82CR7w5hf3r6vPK5qR
+	AMut84U83V5EyJ7uhzW+Ar5toYtpS8Zec28aQslPTgswFn3a9D+IS1gbkw+HC0A2VJuE8+hz5az
+	d+UE9KVtNMz2NwfU00nQkGl5Z/2agNx6VzbHjjYwaWE+vVyHL1TzyyEpYQ==
+X-Google-Smtp-Source: AGHT+IHK86v88nkiZFwWngSMVd5xUipJOnRzU/xcKu0bUXQMArrlf1yOCcyYQKPXqF+sA+tGrlOPkQ==
+X-Received: by 2002:a05:6a21:3992:b0:1e1:bdae:e054 with SMTP id adf61e73a8af0-1ee5c7909f8mr929676637.25.1739302441071;
+        Tue, 11 Feb 2025 11:34:01 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732194ee701sm1884223b3a.25.2025.02.11.11.33.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 11:34:00 -0800 (PST)
+Date: Tue, 11 Feb 2025 11:33:58 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: pavan.chebbi@broadcom.com, mchan@broadcom.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tg3: Check return value of tg3_nvram_lock before
+ resetting lock
+Message-ID: <Z6umJrdf0IsgAUWi@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Wentao Liang <vulab@iscas.ac.cn>, pavan.chebbi@broadcom.com,
+	mchan@broadcom.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250211152658.1094-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211152658.1094-1-vulab@iscas.ac.cn>
 
-On Mon, 10 Feb 2025 13:09:59 -0600
-David Lechner <dlechner@baylibre.com> wrote:
+On Tue, Feb 11, 2025 at 11:26:58PM +0800, Wentao Liang wrote:
+> The current code does not check the return value of tg3_nvram_lock before
+> resetting the lock count (tp->nvram_lock_cnt = 0). This is dangerous
+> because if tg3_nvram_lock fails, the lock state may be inconsistent,
+> leading to potential race conditions or undefined behavior.
+> 
+> This patch adds a check for the return value of tg3_nvram_lock. If the
+> function fails, the error is propagated to the caller, ensuring that
+> the lock state remains consistent.
+> 
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/net/ethernet/broadcom/tg3.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+> index 9cc8db10a8d6..851d19b3f43c 100644
+> --- a/drivers/net/ethernet/broadcom/tg3.c
+> +++ b/drivers/net/ethernet/broadcom/tg3.c
+> @@ -9160,7 +9160,9 @@ static int tg3_chip_reset(struct tg3 *tp)
+>  	if (!pci_device_is_present(tp->pdev))
+>  		return -ENODEV;
+>  
+> -	tg3_nvram_lock(tp);
+> +	err = tg3_nvram_lock(tp);
+> +	if (err)
+> +		return err;
+>  
+>  	tg3_ape_lock(tp, TG3_APE_LOCK_GRC);
 
-> On 2/7/25 2:09 PM, David Lechner wrote:
-> > Add support for SPI offload to the ad7944 driver. This allows reading
-> > data at the max sample rate of 2.5 MSPS.
-> >   
-> 
-> ...
-> 
-> > ---
-> >  drivers/iio/adc/Kconfig  |   1 +
-> >  drivers/iio/adc/ad7944.c | 291 ++++++++++++++++++++++++++++++++++++++++++++---
-> >  2 files changed, 276 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> > index a3e8ac569ce4c6b6b30b48acb265d530aa98e89c..995b9cacbaa964d26424346120c139858f93cdcd 100644
-> > --- a/drivers/iio/adc/Kconfig
-> > +++ b/drivers/iio/adc/Kconfig
-> > @@ -360,6 +360,7 @@ config AD7923
-> >  config AD7944
-> >  	tristate "Analog Devices AD7944 and similar ADCs driver"
-> >  	depends on SPI
-> > +	select SPI_OFFLOAD
-> >  	select IIO_BUFFER  
-> 
-> I missed adding
-> 
-> 	select IIO_BUFFER_DMAENGINE
-> 
-Tweaked and pushed out.
+A couple notes from me:
 
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502082251.NuHT15R7-lkp@intel.com/
-> 
-> >  	select IIO_TRIGGERED_BUFFER
-> >  	help  
-> 
-> 
+  1. Subject should say "PATCH net-next"
+  2. Use --base=auto to generate a base-commit.
+  3. code looks fine to me, tg3_nvram_lock is checked in all other
+     invocations.
+  4. that said, seems like tg3_ape_lock could have also gotten a
+     check added at the same time?
 
+I can see the argument that tg3_ape_lock cleanup should come
+separately, since there are a few unchecked invocations of it other
+than the one right next to the one you changed.
+
+So, if you resend with 1 & 2 fixed, feel free to add:
+
+Reviewed-by: Joe Damato <jdamato@fastly.com>
 
