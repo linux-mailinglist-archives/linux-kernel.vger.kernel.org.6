@@ -1,122 +1,128 @@
-Return-Path: <linux-kernel+bounces-510162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22412A3190A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:52:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FEBA3191C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:56:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC0271679BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84304188A5F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C25262D1A;
-	Tue, 11 Feb 2025 22:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624EC262175;
+	Tue, 11 Feb 2025 22:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ci3ny5AV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rt6058jz"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A374272905;
-	Tue, 11 Feb 2025 22:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D03272905;
+	Tue, 11 Feb 2025 22:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739314328; cv=none; b=LQCtf0EAbJQmtN0h3dPI3qPHOut5HsR0GnfHb4xY3ERf9fD2pJMWTwy0bHvoNgQTE3XtrDZyr+Y9ZHyjCDgJOKfsgV/WrnEsW3bEQT7ZBw0T4sHXvfYF62izbyW1rnd2xoqmdHfEcVyEDeYFDwmRsW1Utfd0/HDdMkYm0m7ApsQ=
+	t=1739314600; cv=none; b=RyPHA4BXDY6wfWQu/olZJlWIOg5WquNcZF5kbm3hYs3O+hSiQJ62628DXANEbpm+k85TjqWIO7zBuGq57ZrQ60bWgcc5joqIv+NfoYWlO05fWPLjIyREpCP/kZcG3HwQ/m+KYJnpUyXNF/kwCwZtAOdRhe3podMEy03dYZE4JQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739314328; c=relaxed/simple;
-	bh=DQYkM4ufN/n8fXrucc3V3ZOmG/KXTPHm940bJ+L/nRo=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=H+AaFXpWZVvS+fMoFKIUkdbUtXaZ18gERwGzXPGAMdfplPO0n1Ak2MlPUYyMN2M2wMo/T78QPpwZZbKOgZwGevY/TJvSu+Ckg3hJsOKCHh3SYV3Xg1OL0mK89RipFlX9kTDqWyRvENUTVdp0ThfbR2wJmr4WFaLovSuEmSqN8B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ci3ny5AV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CCBFC4CEDD;
-	Tue, 11 Feb 2025 22:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739314327;
-	bh=DQYkM4ufN/n8fXrucc3V3ZOmG/KXTPHm940bJ+L/nRo=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Ci3ny5AVly53CuRUMaV1XGNdXJJTMrWd41HwtrQv7r8BWqQIzQNx5fJQYMWsWzWeb
-	 iRhKPe5TPRGRWyDNLxPyLJkCGxO94ZgseKlQrmani83xOIQbeXHClPXhrwhR5qSum/
-	 JH85r7/gvE3WFBrGkI22up/qLHU17iW7UVuDfIGUQo2O9XXpOW2fKAJEwRaSFG6RlD
-	 pDtvhILqEGHRJvB/f5mKK1EnUFsjE9nBXxmkj9O+4hm4tdOZfBgPwTdJOOR5j5AEJK
-	 ssVkNQ9NYCRpWZ3xH1G2nCEqGAJ0XfGcoa2HRgpiV8/anapxxCI1hGhR0VGMhjSQTe
-	 08PQt7vr+mZ4A==
-Date: Tue, 11 Feb 2025 16:52:06 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1739314600; c=relaxed/simple;
+	bh=dYrJuMxdV6jozccHmg9SnWnNVYjGS6AulY33mzIFdgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QjhjLSsSQ6O84JNVChQFLRXxL1WkTZjoSJhGyAEeD0vYqYqd5/be2Z/elbZ5hDasrYDZwgbeE7GgKFRoj/IejMCux3XrWbciDUUqt7bZbuOplEMq8XSCPyP1mpCmFQljrvwfMADHKQO+lTAyeZhPyaCizRoqyRm8TcupzNc0aLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rt6058jz; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739314594;
+	bh=6L3fCjZVIAkhJkWYXypOk23dzFYJb9vXKqVETgLsesw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rt6058jzOl2h12evXfojzYEJGWbjs1mz6SyQFCOD5UFO0sEQub+PeNdoACiliBGzz
+	 ZKJjgcwEtCAiBuv3dqP8GG/4wzsck7AYI0wLAyhXASnJEywYlioMX3GtuhqtBlec8j
+	 VKIdzfkEWscNJOtlk5+LnuoaqQMhKhlQ6CFP36QwwHI1He+0PjNzo22huWidOCussJ
+	 yhYAYXIUUl6dqQ0MGOmU/g4SqSRLwk4W+aQgqGlA1L6LcAYygtzmUPMcMfcA8B22Tu
+	 zXpb3OUBo4w1AEPGv3XeiHugqomJ3zmNmsiG8Z40je4AwcHYHST4zuefbKGinSVgWe
+	 nl+jygUBw11Xg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YsxdY1vhKz4wxh;
+	Wed, 12 Feb 2025 09:56:33 +1100 (AEDT)
+Date: Wed, 12 Feb 2025 09:56:32 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dan Williams
+ <dan.j.williams@intel.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ Jeff Layton <jlayton@kernel.org>, Jeremy Kerr <jk@ozlabs.org>, Joel Stanley
+ <joel@jms.id.au>, Kent Overstreet <kent.overstreet@linux.dev>, Linus
+ Walleij <linus.walleij@linaro.org>, Nick Terrell <terrelln@fb.com>, Vineet
+ Gupta <vgupta@kernel.org>
+Subject: linux-next: trees being removed
+Message-ID: <20250212095632.6bdd50d7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, nicolas.ferre@microchip.com, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, krzk+dt@kernel.org, 
- conor+dt@kernel.org
-To: Mihai Sain <mihai.sain@microchip.com>
-In-Reply-To: <20250211143302.4102-1-mihai.sain@microchip.com>
-References: <20250211143302.4102-1-mihai.sain@microchip.com>
-Message-Id: <173931425548.1387873.8595837512080490773.robh@kernel.org>
-Subject: Re: [PATCH 0/2] Add power monitor support on sama7d65-curiosity
- board
+Content-Type: multipart/signed; boundary="Sig_/Idhm0bL.jX/ZPT8E5ompBls";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/Idhm0bL.jX/ZPT8E5ompBls
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Feb 2025 16:33:00 +0200, Mihai Sain wrote:
-> This patch series adds power monitor support on Microchip SAMA7D65 Curiosity board.
-> 
-> [root@SAMA7D65 ~]$ lsiio
-> Device 001: pac1934
-> Device 000: e1000000.adc
-> 
-> [root@SAMA7D65 ~]$ awk -f pac1934.awk
-> VDD3V3   current: 146.173 mA, voltage: 3302.73 mV
-> VDDIODDR current: 62.1356 mA, voltage: 1353.96 mV
-> VDDCORE  current: 242.248 mA, voltage: 1204.36 mV
-> VDDCPU   current: 213.565 mA, voltage: 1303.05 mV
-> 
-> Mihai Sain (2):
->   ARM: dts: microchip: sama7d65: Add flexcom 10 node
->   ARM: dts: microchip: sama7d65_curiosity: Add power monitor support
-> 
->  .../dts/microchip/at91-sama7d65_curiosity.dts | 52 +++++++++++++++++++
->  arch/arm/boot/dts/microchip/sama7d65.dtsi     | 21 ++++++++
->  2 files changed, 73 insertions(+)
-> 
-> 
-> base-commit: febbc555cf0fff895546ddb8ba2c9a523692fb55
-> --
-> 2.48.1
-> 
-> 
+The following trees are going to be removed from linux-next because they
+have not been updated in more than a year.  If you want a tree restored,
+just let me know (and update its branch).
 
+Tree			Last commit date
+  URL
+  comits (if any)
+----			----------------
+arc			2023-09-10 16:28:41 -0700
+  git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git#for-next
+file-locks		2023-09-01 08:09:48 -0700
+  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git#locks-next
+fsi			2023-12-14 19:44:11 +1030
+  git://git.kernel.org/pub/scm/linux/kernel/git/joel/fsi.git#next
+  ec084e4ec314 ("fsi: sbefifo: Bump up user write cmd length")
+  f7236a0c919e ("fsi: sbefifo: Handle pending write command")
+  c5eeb63edac9 ("fsi: Fix panic on scom file read")
+gpio			2023-09-10 16:28:41 -0700
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-n=
+ext
+header_cleanup		2024-01-15 15:52:12 -0500
+  git://evilpiepirate.org/bcachefs.git#header_cleanup
+kspp-gustavo		2024-01-21 14:11:32 -0800
+  git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git#for-ne=
+xt/kspp
+tsm			2023-10-19 18:12:00 -0700
+  git://git.kernel.org/pub/scm/linux/kernel/git/djbw/linux#tsm-next
+zstd			2023-11-20 14:49:34 -0800
+  https://github.com/terrelln/linux.git#zstd-next
+  98988fc8e9ed ("zstd: import upstream v1.5.5")
+  40eb0e915deb ("zstd: Backport Huffman speed improvement from upstream")
+  3f832dfb8a8e ("zstd: fix g_debuglevel export warning")
+zstd-fixes		2023-11-14 17:12:52 -0800
+  https://github.com/terrelln/linux.git#zstd-linus
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+--=20
+Cheers,
+Stephen Rothwell
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+--Sig_/Idhm0bL.jX/ZPT8E5ompBls
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+-----BEGIN PGP SIGNATURE-----
 
-  pip3 install dtschema --upgrade
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmer1aAACgkQAVBC80lX
+0GzX4Af+J6yS/VVn4Oqx1BqWRU7pW6/efAwut9epDpIG6sYDmu3b7Vl/SMw53aBi
+koFpzUOFX61b+OWZH+1/ugVasfE+mGO2sMUC/apiOwyAfqB0NzcgPcQBOcY8RxYB
+lpLD+feAd8bCH8Ypo4//6GywVJx38Hxy63BTohs9d14m9P+XTXi+OStj1x5gCj/y
+PuTne2xEujOjtVcOeCcmySLGFpk9T9G2S05CkCn/dVp+UIcPHuHawQXdgnDQptmC
+EXvnMW+R3XtuwsR5UEAWj4tFXBFlhzP3OjzTNqX9SppSR2zAAai4D+WgTg/Wf/zz
+545y0rq3dDitswEsI0OGfpbFvDlMXw==
+=DIGw
+-----END PGP SIGNATURE-----
 
-
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/microchip/' for 20250211143302.4102-1-mihai.sain@microchip.com:
-
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: flexcom@e2824000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['microchip,sama7d65-flexcom', 'atmel,sama5d2-flexcom'] is too long
-	'atmel,sama5d2-flexcom' was expected
-	'microchip,sam9x7-flexcom' was expected
-	'microchip,sama7g5-flexcom' was expected
-	from schema $id: http://devicetree.org/schemas/mfd/atmel,sama5d2-flexcom.yaml#
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/flexcom@e2824000: failed to match any schema with compatible: ['microchip,sama7d65-flexcom', 'atmel,sama5d2-flexcom']
-
-
-
-
-
+--Sig_/Idhm0bL.jX/ZPT8E5ompBls--
 
