@@ -1,200 +1,139 @@
-Return-Path: <linux-kernel+bounces-510035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA7AA31775
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:17:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B18A3177C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:18:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63746188D8E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:17:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755EC1691BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB502266582;
-	Tue, 11 Feb 2025 21:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021D7267532;
+	Tue, 11 Feb 2025 21:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lNDRcdMl"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kqjGnMRH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6C6266574
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B16B266581;
+	Tue, 11 Feb 2025 21:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739308639; cv=none; b=TSnS7X0m57Q+XowzqrsHols3612WYG4Yq3FDuU5EgsQ8w1TTzlAj2E+pJ3lXj+4lNQzAaJn6FNgx7NQmH9DWID6NmZjkjl85uOXOFd/ygFtHkCNKhFahJW6m7b7rJkm/M53wEXF8UFgXE5pcy+Tz1oe31daD0Sc+pl1Jp+Ak46s=
+	t=1739308710; cv=none; b=frHowoPM7NTmsNxiXxPyCf5REdmutFwEpOqUBvYAhm0+9WY+0sXu/WZSDJIbdwDIPqwntu5W3yylo6uLzCvrRH3kj3X8TpodC77Vhlj9oUa+MKj7wTis8Qw350UwY7Mu7e/M7XJ+jIk+3btvs3WoJnvC8K/Ji6ueziAEXV46d6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739308639; c=relaxed/simple;
-	bh=9wpSlaYQ+3T+GSVJ+uTjY7BZltuAqSqWdmPAKYj3qso=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ed3O4h8TiCrT3oeQMHGSdQB6VlR5KYY5TfGjNR+zu0rs8eMyliF5issQKQGPlOHeY5GEwEwUnKW1kqSWn6GN/iJBMH2FcyI8LK7exYQgmmcGSLrihD3QTSwsDGZ5OMZOUBai6yd86O4ACBA71TGlP9EfrXzR++7e9QwxsvruPOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lNDRcdMl; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-21f6cb3097bso97066225ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 13:17:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739308634; x=1739913434; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KIfvgky9veY2hzjiVBclsLjtmap1/nd7ereBYnmFQjs=;
-        b=lNDRcdMlMowlwOXgqgLIl/uq4rQvIuugHZxHd/ydkSQ8RB2Jnt/BjFifnpnFl4gWcd
-         o3R7CgfkVxEet/oveZGsiCnBlsVW53+9iBNC/UGWuSpax9LXNUazNUusPBVjZbI+/S8S
-         DaQ0paEdOfOiu+tCaiHnOJve9xntxjZ3SyvCzMq7Jxoc/4/m/OcV/qfLduM03HLyXODI
-         mXMwYObNJOEsKqrH1Kn0Xx0jkQqZfJHdtZhACZQYWoWgz/NBzI3YV/Ke54auoNXRTplP
-         4GWQ9Dxa7z+yKQaPEFzsw+17FI3KrMf1KVCLeO70UpthPXb5/MvJ+nQgnHJZtuiBQbAS
-         +pmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739308634; x=1739913434;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KIfvgky9veY2hzjiVBclsLjtmap1/nd7ereBYnmFQjs=;
-        b=rQPn/NNG4KqtLpGY4941iNMsSSf1FwL8/yopfPUN29U2jtcdy0Rk1ItvP7F5TSFw5L
-         clZNVqFSgtv4pDHkyRdfMlNwm/JVRCF1zorZ2whCPsZgRtl8kk8R8H9O0GzopzqrjiJG
-         PA3Zgh25fgDTweAOV6x8GTYAmZ318oMlJx/Ck/1qdgcfEmjYDGssYDYmIwPR4+hL6ke9
-         qWfA1glAqU97IABwfTA6f0k792MurgX49R99zrVc5VH2yRv6Ps0jq2PIZfiRQTp6dW0U
-         g6wlHqhhBO8yySohSewwEfUkJlPPDOtx795nw194d259M92Qxk78Um0RfX5E2bbOBrEg
-         vnxg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3ZVHqMAHcHHRVaM4aENuR9fjypP2CKJ3DkBkQwsO5XxHbi0i9Q+82fBcUdF3pP0inoqmgsPn75eqg0L0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7Sqk+fwCcZxBqkuhvzbdsn+2psPL3X5QB239OUEccYU/XrX37
-	jYi3ACI/snQ0hw+ak8efhanVjkkYo2i6cpdrKbD6umdG/Yc9FFsa4+ewVrWuOP3bYUWHgfvqqL3
-	zHw==
-X-Google-Smtp-Source: AGHT+IFET9IWVHjPlxyGR2feK6f9TwBvVgVNbG99vGLbfBvsF+l1UXScJabTFFPnkEjUA0nLxtM9c4Ik/Ws=
-X-Received: from pfaz1.prod.google.com ([2002:aa7:91c1:0:b0:730:8518:b97])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:788d:b0:1ee:4813:8a93
- with SMTP id adf61e73a8af0-1ee5c8410f6mr1165733637.27.1739308634574; Tue, 11
- Feb 2025 13:17:14 -0800 (PST)
-Date: Tue, 11 Feb 2025 13:17:13 -0800
-In-Reply-To: <20241118123948.4796-1-kalyazin@amazon.com>
+	s=arc-20240116; t=1739308710; c=relaxed/simple;
+	bh=/okSp1SamebmoZvprrOXat3uYAeyx547q4FKA2bMGnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MgsqDBEFipCLMRiR3ylOEKiBouvrfFFUeUCdThg8BMEu8yE+3YZkWiMlOWgvLwGBp6M8oJJtDUb8w9ezRgOw0O/iw6kMU5ins6hWgmouDGx4ItKb+4knMXjwkY/os7xicMt2N/zMBoFNNlKsvo2LlqTzaM3/Es0lK5LCmwzHFZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kqjGnMRH; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739308708; x=1770844708;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/okSp1SamebmoZvprrOXat3uYAeyx547q4FKA2bMGnY=;
+  b=kqjGnMRHqkPWIF91GNnqSKtqOgPz7L3gyVFAMjvbnfKn08JOf+XVxhbu
+   2TPG+VZzbmlfIJcDUHDdg9qe3+SjiTNG+MZIyHEHfa2lly1io5p3PcQwA
+   leGfBIPbmEklkli98FcX/ShQn93moEVt+keTx254f/htwGUpElHga9DSx
+   unF34shwn3WNc7+KgV52nhxFmU6hcI1T/cH1lJprv2OUpAmnm5TYojE19
+   b2UYCV8EIPcouyYZ3UUr0hsjOEHbxUCRPyE+4DCt9SRtnJg6Nk9TYLvx7
+   vWQJ3ity+cKeYKcU4lzYOWzPp6ndiQqyCJ3GB9ZCQ1n5Awmz6XsdzAd0I
+   A==;
+X-CSE-ConnectionGUID: 66dIsW4uS0e/1QNZ6CN+HA==
+X-CSE-MsgGUID: 2xQRvvhWQPGw3oe8zONdBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50584179"
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="50584179"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 13:18:27 -0800
+X-CSE-ConnectionGUID: 0FhQfMmPSm26Lwx7eLDwWA==
+X-CSE-MsgGUID: FS4r2JZIQBuZVRFR80ozcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113516411"
+Received: from jdoman-desk1.amr.corp.intel.com (HELO [10.124.222.44]) ([10.124.222.44])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 13:18:27 -0800
+Message-ID: <f4d2579c-97ab-41d7-a496-7c711243517f@linux.intel.com>
+Date: Tue, 11 Feb 2025 13:17:55 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241118123948.4796-1-kalyazin@amazon.com>
-Message-ID: <Z6u-WdbiW3n7iTjp@google.com>
-Subject: Re: [RFC PATCH 0/6] KVM: x86: async PF user
-From: Sean Christopherson <seanjc@google.com>
-To: Nikita Kalyazin <kalyazin@amazon.com>
-Cc: pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, jthoughton@google.com, david@redhat.com, 
-	peterx@redhat.com, oleg@redhat.com, vkuznets@redhat.com, gshan@redhat.com, 
-	graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com, 
-	nsaenz@amazon.es, xmarcalx@amazon.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] PCI/DPC: Rename pdev to err_port for dpc_handler
+To: Shuai Xue <xueshuai@linux.alibaba.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ bhelgaas@google.com, kbusch@kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
+ terry.bowman@amd.com
+References: <20250207093500.70885-1-xueshuai@linux.alibaba.com>
+ <20250207093500.70885-2-xueshuai@linux.alibaba.com>
+Content-Language: en-US
+From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20250207093500.70885-2-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 18, 2024, Nikita Kalyazin wrote:
-> Async PF [1] allows to run other processes on a vCPU while the host
-> handles a stage-2 fault caused by a process on that vCPU. When using
-> VM-exit-based stage-2 fault handling [2], async PF functionality is lost
-> because KVM does not run the vCPU while a fault is being handled so no
-> other process can execute on the vCPU. This patch series extends
-> VM-exit-based stage-2 fault handling with async PF support by letting
-> userspace handle faults instead of the kernel, hence the "async PF user"
-> name.
-> 
-> I circulated the idea with Paolo, Sean, David H, and James H at the LPC,
-> and the only concern I heard was about injecting the "page not present"
-> event via #PF exception in the CoCo case, where it may not work. In my
-> implementation, I reused the existing code for doing that, so the async
-> PF user implementation is on par with the present async PF
-> implementation in this regard, and support for the CoCo case can be
-> added separately.
-> 
-> Please note that this series is applied on top of the VM-exit-based
-> stage-2 fault handling RFC [2].
 
-...
+On 2/7/25 1:34 AM, Shuai Xue wrote:
+> The irq handler is registered for error port which recevie DPC
+> interrupt. Rename pdev to err_port.
+>
+> No functional changes.
+>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> ---
 
-> Nikita Kalyazin (6):
->   Documentation: KVM: add userfault KVM exit flag
->   Documentation: KVM: add async pf user doc
->   KVM: x86: add async ioctl support
->   KVM: trace events: add type argument to async pf
->   KVM: x86: async_pf_user: add infrastructure
->   KVM: x86: async_pf_user: hook to fault handling and add ioctl
-> 
->  Documentation/virt/kvm/api.rst  |  35 ++++++
->  arch/x86/include/asm/kvm_host.h |  12 +-
->  arch/x86/kvm/Kconfig            |   7 ++
->  arch/x86/kvm/lapic.c            |   2 +
->  arch/x86/kvm/mmu/mmu.c          |  68 ++++++++++-
->  arch/x86/kvm/x86.c              | 101 +++++++++++++++-
->  arch/x86/kvm/x86.h              |   2 +
->  include/linux/kvm_host.h        |  30 +++++
->  include/linux/kvm_types.h       |   1 +
->  include/trace/events/kvm.h      |  50 +++++---
->  include/uapi/linux/kvm.h        |  12 +-
->  virt/kvm/Kconfig                |   3 +
->  virt/kvm/Makefile.kvm           |   1 +
->  virt/kvm/async_pf.c             |   2 +-
->  virt/kvm/async_pf_user.c        | 197 ++++++++++++++++++++++++++++++++
->  virt/kvm/async_pf_user.h        |  24 ++++
->  virt/kvm/kvm_main.c             |  14 +++
->  17 files changed, 535 insertions(+), 26 deletions(-)
+I think you can combine patch 1 & 2 into a single patch. Change wise, it 
+looks
+fine to me.
 
-I am supportive of the idea, but there is way too much copy+paste in this series.
-And it's not just the code itself, it's all the structures and concepts.  Off the
-top of my head, I can't think of any reason there needs to be a separate queue,
-separate lock(s), etc.  The only difference between kernel APF and user APF is
-what chunk of code is responsible for faulting in the page.
+Reviewed-by: Kuppuswamy Sathyanarayanan 
+<sathyanarayanan.kuppuswamy@linux.intel.com>
 
-I suspect a good place to start would be something along the lines of the below
-diff, and go from there.  Given that KVM already needs to special case the fake
-"wake all" items, I'm guessing it won't be terribly difficult to teach the core
-flows about userspace async #PF.
+>   drivers/pci/pcie/dpc.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> index 242cabd5eeeb..1a54a0b657ae 100644
+> --- a/drivers/pci/pcie/dpc.c
+> +++ b/drivers/pci/pcie/dpc.c
+> @@ -346,21 +346,21 @@ static bool dpc_is_surprise_removal(struct pci_dev *pdev)
+>   
+>   static irqreturn_t dpc_handler(int irq, void *context)
+>   {
+> -	struct pci_dev *pdev = context;
+> +	struct pci_dev *err_port = context;
+>   
+>   	/*
+>   	 * According to PCIe r6.0 sec 6.7.6, errors are an expected side effect
+>   	 * of async removal and should be ignored by software.
+>   	 */
+> -	if (dpc_is_surprise_removal(pdev)) {
+> -		dpc_handle_surprise_removal(pdev);
+> +	if (dpc_is_surprise_removal(err_port)) {
+> +		dpc_handle_surprise_removal(err_port);
+>   		return IRQ_HANDLED;
+>   	}
+>   
+> -	dpc_process_error(pdev);
+> +	dpc_process_error(err_port);
+>   
+>   	/* We configure DPC so it only triggers on ERR_FATAL */
+> -	pcie_do_recovery(pdev, pci_channel_io_frozen, dpc_reset_link);
+> +	pcie_do_recovery(err_port, pci_channel_io_frozen, dpc_reset_link);
+>   
+>   	return IRQ_HANDLED;
+>   }
 
-I'm also not sure that injecting async #PF for all userfaults is desirable.  For
-in-kernel async #PF, KVM knows that faulting in the memory would sleep.  For
-userfaults, KVM has no way of knowing if the userfault will sleep, i.e. should
-be handled via async #PF.  The obvious answer is to have userspace only enable
-userspace async #PF when it's useful, but "an all or nothing" approach isn't
-great uAPI.  On the flip side, adding uAPI for a use case that doesn't exist
-doesn't make sense either :-/
+-- 
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
 
-Exiting to userspace in vCPU context is also kludgy.  It makes sense for base
-userfault, because the vCPU can't make forward progress until the fault is
-resolved.  Actually, I'm not even sure it makes sense there.  I'll follow-up in
-James' series.  Anyways, it definitely doesn't make sense for async #PF, because
-the whole point is to let the vCPU run.  Signalling userspace would definitely
-add complexity, but only because of the need to communicate the token and wait
-for userspace to consume said token.  I'll think more on that.
-
-diff --git a/virt/kvm/async_pf.c b/virt/kvm/async_pf.c
-index 0ee4816b079a..fc31b47cf9c5 100644
---- a/virt/kvm/async_pf.c
-+++ b/virt/kvm/async_pf.c
-@@ -177,7 +177,8 @@ void kvm_check_async_pf_completion(struct kvm_vcpu *vcpu)
-  * success, 'false' on failure (page fault has to be handled synchronously).
-  */
- bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
--                       unsigned long hva, struct kvm_arch_async_pf *arch)
-+                       unsigned long hva, struct kvm_arch_async_pf *arch,
-+                       bool userfault)
- {
-        struct kvm_async_pf *work;
- 
-@@ -202,13 +203,16 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-        work->addr = hva;
-        work->arch = *arch;
- 
--       INIT_WORK(&work->work, async_pf_execute);
--
-        list_add_tail(&work->queue, &vcpu->async_pf.queue);
-        vcpu->async_pf.queued++;
-        work->notpresent_injected = kvm_arch_async_page_not_present(vcpu, work);
- 
--       schedule_work(&work->work);
-+       if (userfault) {
-+               work->userfault = true;
-+       } else {
-+               INIT_WORK(&work->work, async_pf_execute);
-+               schedule_work(&work->work);
-+       }
- 
-        return true;
- }
 
