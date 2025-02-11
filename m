@@ -1,192 +1,160 @@
-Return-Path: <linux-kernel+bounces-510191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33880A31988
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:27:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94040A3198A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2583A4C45
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D20981888B83
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2902267AFF;
-	Tue, 11 Feb 2025 23:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA38B268FEE;
+	Tue, 11 Feb 2025 23:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VjOthoFE"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lrCVnEth"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02A6267AFD;
-	Tue, 11 Feb 2025 23:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712E9267AFD;
+	Tue, 11 Feb 2025 23:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739316413; cv=none; b=cHy7cAJtAFUTYZpGtfV8epOYV4oKFCOV212L27S6yJNnu8PNnW/JnwU4TVfTUkQ/z3sGJCKUdVGJ9rGUtj5b9s9bp0PTLhM0xW8k2RA844vbHYIXru4aSPBw2T0tFnSMhaV0gf7SUD1hgPBsxFptAFgCrk+LG5+Ad79u/T7zLSA=
+	t=1739316491; cv=none; b=giM8loF6lnKFsCbfciOxThrsknMZMCzF4WYCZBkM3h21CmY0kcK87bcRIu1gNsM86ZGq7Ds82LyRAbLyj+7Ntt37vul6S/HD0murRAH1koFvldboCSqdp+vGLh6uzdiJdBaZiYEr8Yx+8xsVtnV0u9aBYnxF88PcnW5QiQe3LWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739316413; c=relaxed/simple;
-	bh=am3HHZgqhhrukseYR/5fGOsbDNnRYelnnNaURmCA4f4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqU80/JS+3/AROy9vfhUhlMGMRYHMvKhlGcKWEcGSPD/+uGBqhPQI+AskEfxbeSB9Xbkg/VnM/jm3dUWC1DAHTSiv4x5hij0ISjbbyo2RUvTZ1P7mLZ15fY7cxjnQzXyb7M7cTlKGzeKnWXbdRzLfV/JoWMBpdD5gLuzqW9vuus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VjOthoFE; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-46c8474d8daso49053651cf.3;
-        Tue, 11 Feb 2025 15:26:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739316410; x=1739921210; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LHbTjBhQMHeo18vkdg+R70RaCpRDyN0SUOpcR7vgLAk=;
-        b=VjOthoFErlyW1EUfHtqApZ2qA/SC09+uFS/HAphOS3yrPurk7IxKSokVO0pfdtey7n
-         FooyD+hPZMFIYu8CQ60rh/L9ZsBZgA3I8MUJktq63ozLGXQ0Z6vhVE73TH3mlWrF6rXe
-         tZE0rh13tU5UBGtSSlQF+imtRsHa6KqcUOoJVfgL97E+oqqjRfQNoDAzhy0o9y5HtHcQ
-         7ZG6J5DPhxKYMS1nThNL+260anZDgj41KDLeym03zsZIouQ9rzm0uRU3uTnTQqWVEDx7
-         Z+Ydw/CtXlB2kXXVyPWO/0sCOwyEcmWhCsIjWR6q284Ppa3qnXG2Jry1J60+jSsqHm/v
-         hVcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739316410; x=1739921210;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LHbTjBhQMHeo18vkdg+R70RaCpRDyN0SUOpcR7vgLAk=;
-        b=A2Wf6VbUCefnnPrmxG9Vmw4TybdH2b5zHyYR9dXEf2Mjma0uEI+qnesh5lIY+piC5c
-         vyFmz+aDca7SUXIjY4NC2DFlauiRhBIcPZhr7Hw14mRb5l7CRXGuBeIg5NBrG+07+H6I
-         Y7tA/P9nmgK3n1UHjw//UBvQqH42GyKwMKFzknRz9W0DCfROIVoE2h7R5HbgEe0xiHyQ
-         FXBPbO+8Rm3I3Qi2vF0DVZ2QF4o3ynaTn3sjWvuvkmzw58ZLdqj/6IAc3ePdqpcweq2Z
-         GUK0KH0zcr22OPe07Tgi7yOr0rJ3sji3EIss49srJKzIR+0iakR6vVoBdreLLgwqOEqa
-         ve4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUZdqZh2RSJQCJw4J2PSWqO7ws++5CNL0xfE6Ye/SUA70gMsk/eNTDkyjGG0AX67Niy72hzGVLc2kCR@vger.kernel.org, AJvYcCV4llET+1zmB0CHD8X6nWTYBT5U6h81VdBYajd/vyMXtTyLmtBzoJN+WiSn46ZQCb1ni72uuUsTbGzIx7ca@vger.kernel.org, AJvYcCWt6GuO2palf1a1txTN9uR9i2anqPRK8jNvBVbslj01MoYVJHO72CBgpX3ft6jFwJ7/NUOPD33FEv5Q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx456qDpvCURUkdPzI3sqP1at5WHi5JvcpJliiezM5XokRAaH7N
-	u6THalRZw/yPhk2HVKA8QneUmB/DPKMzWrTBUuYK/y0AzO8NYBU1
-X-Gm-Gg: ASbGncvrqJWoS15twjD9bb3Id9VSBmgnvzqGKjT2HGA1zc1MRDanqtGTtxc0HFLcS1Q
-	ckJXnMOXSxlY0jYn9mY7Z5DqkE//7FBFhgxe+g0WUM3VmraKUTmLPDEAeTjgI3OahP9IVKd1KDM
-	rOM/GmZNl8NNb8ce2K2ksBsjt+s3st792Pz7wMtWkKRNuc+6FFECz86GzfYPa261DPYPE956ub/
-	4uQCL4Z5QwNDm7bGLG/qqZNKnW3MFAqDYP2TO+Hn9yyHUBBeVjLSlRO1eZFdynLqBQ=
-X-Google-Smtp-Source: AGHT+IGdYvrbgZUnhsysZ3YIfofS/ssklt7oluXB0IbrtQlBkVELl0TihfQbvfT0rCsNxXdeOI4zuw==
-X-Received: by 2002:ac8:7d8a:0:b0:471:91a8:d7f4 with SMTP id d75a77b69052e-471afe4c818mr14894221cf.24.1739316410424;
-        Tue, 11 Feb 2025 15:26:50 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47198ee3fd8sm25855121cf.55.2025.02.11.15.26.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 15:26:49 -0800 (PST)
-Date: Wed, 12 Feb 2025 07:26:42 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
-Cc: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
-	Jesse Taube <jesse@rivosinc.com>, Yong-Xuan Wang <yongxuan.wang@sifive.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Evan Green <evan@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Andy Chiu <andybnac@gmail.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Chen Wang <unicorn_wang@outlook.com>
-Subject: Re: [PATCH v3 2/3] riscv: add ISA extension parsing for bfloat16 ISA
- extension
-Message-ID: <rjnohunxmhyz4sonz5atmirpprpfwihsv7uazgb74josjxghjm@ju255opl6m6e>
-References: <20241206055829.1059293-1-inochiama@gmail.com>
- <20241206055829.1059293-3-inochiama@gmail.com>
- <374d3b07-e16c-4468-828a-a2a542cd88ac@rivosinc.com>
- <7qkfqzhytjq2qwo2wg3xtkoqu6id6wduckeeudbn2yt5p5p7xv@2gl5bcny26rk>
- <20250211-dizziness-eclair-2ef49cc5ad0e@spud>
+	s=arc-20240116; t=1739316491; c=relaxed/simple;
+	bh=4Dh0CToGuCsBSeXp8/ndnbhtxzc0MTEztaQouIwLxF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TXdSnBlbt+tbca0FueELGGnOId7saCVsV6tMChHPDoN2keV/xgdoQ4P0KbA6ZQZPExM0KOwC98VxFasT424e4CbVdrR1l/DPAxFuvK4sIFF0+oGEMsyMoMaaSXzoXjJeghy98r+TP+1KTrPL+QVyRf8fvyyHmLD6Pmblq8Ue8M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lrCVnEth; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739316490; x=1770852490;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=4Dh0CToGuCsBSeXp8/ndnbhtxzc0MTEztaQouIwLxF8=;
+  b=lrCVnEth55AZ9lYg6gJio2nyG7opeAknbVQLvzpPq8l8Iwr3T3Nuvc/3
+   T3shiQCCNofKaP99/XHdIQ9dfploUjnHanuHerFrClIvYI1GAPZHAvd1e
+   HSqBZs4WCY7vYgrY/tdhqfqwH6BMlTQX5wtH/M0W8oZCS+Wm6w1nfC5C8
+   MeUIvnkVCV0VTnM0lF7i35KiYdnLytiV+KrJFZdNowgrMDPrLOpey6I3t
+   FRpbbTb+foX8vq/eatP51WdvR4zbGcHtkQqnf+qoD+iz554kaSlosBL0v
+   ydTz7LGQCF2VKu3o/ITVXqf7CQgBZl/n1qVCC0audXiEydzSHMrWxE5sn
+   g==;
+X-CSE-ConnectionGUID: rzHmk3dfSw2byk0FvzPtIg==
+X-CSE-MsgGUID: RhNmCodMS+WipEwbg7T4ig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="57491990"
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="57491990"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 15:28:09 -0800
+X-CSE-ConnectionGUID: +i8SWOH5Qy29azynRTw/UQ==
+X-CSE-MsgGUID: iRTd9DKNST2wLMHilOnOoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="143498429"
+Received: from agladkov-desk.ger.corp.intel.com (HELO [10.125.108.65]) ([10.125.108.65])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 15:28:07 -0800
+Message-ID: <962aeb8c-fd1b-4356-9c0b-cd8dd21c421d@intel.com>
+Date: Tue, 11 Feb 2025 16:28:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250211-dizziness-eclair-2ef49cc5ad0e@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/17] cxl/pci: Add log message and add type check in
+ existing RAS handlers
+To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
+ ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
+References: <20250211192444.2292833-1-terry.bowman@amd.com>
+ <20250211192444.2292833-11-terry.bowman@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250211192444.2292833-11-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 11, 2025 at 01:45:06PM +0000, Conor Dooley wrote:
-> On Tue, Feb 11, 2025 at 08:42:39AM +0800, Inochi Amaoto wrote:
-> > On Mon, Feb 10, 2025 at 03:38:58PM +0100, Clément Léger wrote:
-> > > 
-> > > 
-> > > On 06/12/2024 06:58, Inochi Amaoto wrote:
-> > > > Add parsing for Zfbmin, Zvfbfmin, Zvfbfwma ISA extension which
-> > > > were ratified in 4dc23d62 ("Added Chapter title to BF16") of
-> > > > the riscv-isa-manual.
-> > > > 
-> > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > > ---
-> > > >  arch/riscv/include/asm/hwcap.h | 3 +++
-> > > >  arch/riscv/kernel/cpufeature.c | 3 +++
-> > > >  2 files changed, 6 insertions(+)
-> > > > 
-> > > > diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-> > > > index 869da082252a..14cc29f2a723 100644
-> > > > --- a/arch/riscv/include/asm/hwcap.h
-> > > > +++ b/arch/riscv/include/asm/hwcap.h
-> > > > @@ -100,6 +100,9 @@
-> > > >  #define RISCV_ISA_EXT_ZICCRSE		91
-> > > >  #define RISCV_ISA_EXT_SVADE		92
-> > > >  #define RISCV_ISA_EXT_SVADU		93
-> > > > +#define RISCV_ISA_EXT_ZFBFMIN		94
-> > > > +#define RISCV_ISA_EXT_ZVFBFMIN		95
-> > > > +#define RISCV_ISA_EXT_ZVFBFWMA		96
-> > > >  
-> > > >  #define RISCV_ISA_EXT_XLINUXENVCFG	127
-> > > >  
-> > > > diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-> > > > index c0916ed318c2..5cfcab139568 100644
-> > > > --- a/arch/riscv/kernel/cpufeature.c
-> > > > +++ b/arch/riscv/kernel/cpufeature.c
-> > > > @@ -341,6 +341,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
-> > > >  	__RISCV_ISA_EXT_DATA(zacas, RISCV_ISA_EXT_ZACAS),
-> > > >  	__RISCV_ISA_EXT_DATA(zawrs, RISCV_ISA_EXT_ZAWRS),
-> > > >  	__RISCV_ISA_EXT_DATA(zfa, RISCV_ISA_EXT_ZFA),
-> > > > +	__RISCV_ISA_EXT_DATA(zfbfmin, RISCV_ISA_EXT_ZFBFMIN),
-> > > 
-> > > Hi Inochi,
-> > > 
-> > > You could add a validation callback to that extension:
-> > > 
-> > > static int riscv_ext_f_depends(const struct riscv_isa_ext_data *data,
-> > > 			       const unsigned long *isa_bitmap)
-> > > {
-> > > 	if (__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_f))
-> > > 		return 0;
-> > > 
-> > > 	return -EPROBE_DEFER;
-> > > }
-> > > 
-> > >   ...
-> > >   __RISCV_ISA_EXT_DATA_VALIDATE(zfbfmin, RISCV_ISA_EXT_ZFBFMIN,
-> > > riscv_ext_f_depends),
-> > > 
-> > > 
-> > > But I'm ok with the current state of that patch since I have the same
-> > > thing coming for other extensions as well. 
-> > 
-> > 
-> > I think it is good for me to add the check, and I wonder it is possible
-> > to add the extra check for zvfbfmin and zvfbfwma like this:
-> > 
-> > static int riscv_ext_zvfbfmin_validate(const struct riscv_isa_ext_data *data,
-> > 				       const unsigned long *isa_bitmap)
-> > {
-> > 	if (__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_v))
-> > 		return 0;
+
+
+On 2/11/25 12:24 PM, Terry Bowman wrote:
+> The CXL RAS handlers do not currently log if the RAS registers are
+> unmapped. This is needed in order to help debug CXL error handling. Update
+> the CXL driver to log a warning message if the RAS register block is
+> unmapped.
 > 
-> This is not needed I think, V "turns on" Zve32f. If anything, you should
-> be checking for CONFIG_RISCV_ISA_V here ^^
+> Also, add type check before processing EP or RCH DP.
 > 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
 
-Thanks for pointing it. I will change the check.
-
-> You /could/ call the resulting riscv_vector_f_validate(), since this is
-> nothing specific to Zvfvfmin, and could be used for another extension
-> that requires a Zve32f or Zve64 minimum base.
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/cxl/core/pci.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 > 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index 69bb030aa8e1..af809e7cbe3b 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -658,15 +658,19 @@ static void __cxl_handle_cor_ras(struct device *dev,
+>  	void __iomem *addr;
+>  	u32 status;
+>  
+> -	if (!ras_base)
+> +	if (!ras_base) {
+> +		dev_warn_once(dev, "CXL RAS register block is not mapped");
+>  		return;
+> +	}
+>  
+>  	addr = ras_base + CXL_RAS_CORRECTABLE_STATUS_OFFSET;
+>  	status = readl(addr);
+> -	if (status & CXL_RAS_CORRECTABLE_STATUS_MASK) {
+> -		writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
+> +	if (!(status & CXL_RAS_CORRECTABLE_STATUS_MASK))
+> +		return;
+> +	writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
+> +
+> +	if (is_cxl_memdev(dev))
+>  		trace_cxl_aer_correctable_error(to_cxl_memdev(dev), status);
+> -	}
+>  }
+>  
+>  static void cxl_handle_endpoint_cor_ras(struct cxl_dev_state *cxlds)
+> @@ -702,8 +706,10 @@ static bool __cxl_handle_ras(struct device *dev, void __iomem *ras_base)
+>  	u32 status;
+>  	u32 fe;
+>  
+> -	if (!ras_base)
+> +	if (!ras_base) {
+> +		dev_warn_once(dev, "CXL RAS register block is not mapped");
+>  		return false;
+> +	}
+>  
+>  	addr = ras_base + CXL_RAS_UNCORRECTABLE_STATUS_OFFSET;
+>  	status = readl(addr);
+> @@ -722,7 +728,9 @@ static bool __cxl_handle_ras(struct device *dev, void __iomem *ras_base)
+>  	}
+>  
+>  	header_log_copy(ras_base, hl);
+> -	trace_cxl_aer_uncorrectable_error(to_cxl_memdev(dev), status, fe, hl);
+> +	if (is_cxl_memdev(dev))
+> +		trace_cxl_aer_uncorrectable_error(to_cxl_memdev(dev), status, fe, hl);
+> +
+>  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
+>  
+>  	return true;
 
-It is OK for me, I will change its name.
-
-Regards,
-Inochi
 
