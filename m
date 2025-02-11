@@ -1,195 +1,166 @@
-Return-Path: <linux-kernel+bounces-509931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7BFA31632
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:57:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7270A3166A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:07:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92540188B845
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 19:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8871A3A1D52
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0494D261586;
-	Tue, 11 Feb 2025 19:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4555260A28;
+	Tue, 11 Feb 2025 20:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="wYsvPKyB"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkw/yjvH"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CFF265602
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 19:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACE4265603;
+	Tue, 11 Feb 2025 20:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739303853; cv=none; b=mko1VAxULRmJE4OgRTNlsMlZwon1WYlvaHDVMaQ9u0Yn8TW0M9PMMMxUk/7B5VwL0LriEjcgFritK3oQekDulUEVi+SoHNHcWGRFcCG9x1r5wzyZxOQnicnjc6qnmIrytdLFEGdfl48zSXDomjT3N0nSnJusHdq6ZFnlydfuUzQ=
+	t=1739304456; cv=none; b=cKC4xBBuswXQXuodF6d9RpOAFjku/ehNA7+g2YCmiylSaWorABqOX7AfEUC5DjTO2gTh0JpDOE9//sENQKpwk2EkVioq6UBeTuu0ruWMPEZgoZzr6OPNLjna8ZS6byBHfxrDXIKRNvkMKN48Yd97DW5ZhVL8mEMQMH7LD584gKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739303853; c=relaxed/simple;
-	bh=4L1l3nbsQwxG4dhopMpRTZTo6TywqvNfWe0By30mxKA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwGui/mIQfgtnvMuJ6sfId49tMq7k3X8e1DZay/4rmuQZysG1FBA0D9W6POV1zShMvP/gZlOujd7CW8IJ0MkCqPrSZVNg4+SEQLbMpK73OOf6jB1iBd19wD2mYkDXXUaaw94/BcYzFw2Q9z6dwe9IgIJiOjLun9l8rgzWjkSKPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=wYsvPKyB; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21f4500a5c3so119987655ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 11:57:31 -0800 (PST)
+	s=arc-20240116; t=1739304456; c=relaxed/simple;
+	bh=3DD4EKvKVSd8aFRggmsk4mG5M75X0oz1cvV9FUbjaC8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hlmFYwL9Al/mmPO98+D1HY/5w5wpZBZUTh/k84XzNpGUi2SW4GlThkJq4BPwtYhMjHaeQiq5zLM6g8LnGs22/aSSTUpB5aanZg1A4iQ4wEGp2fkGLg7398En7dPlxHdIooENXvUr4iar+aO+BahI0BVYcI6KWYfdQtv7dYfWkQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkw/yjvH; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43690d4605dso41455995e9.0;
+        Tue, 11 Feb 2025 12:07:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1739303851; x=1739908651; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LZz21PoK7ESpRyCP00gJn2627gqZOHRBJZHWL/EIwBo=;
-        b=wYsvPKyBkoDXAYAkV39HQmlK8TOoSuLUE6ER8pM+sKGn78lxAmujZPT9cYAIlhtZDo
-         o1z8M1XBvBIrRDEmndONT4C68fO8Xyl0V4BjRVs3xfyI0eLoxQfVNJX1yfmfNi8uzNMB
-         Z7MptZhHeLUgnv0bJeXlV0/5rhe6vHGoFdBYQ=
+        d=gmail.com; s=20230601; t=1739304453; x=1739909253; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gEyL3Ra1dZj32nQnln1nD3gAOn0lhzcqC8+EuVYZvk4=;
+        b=dkw/yjvHbAeuXI9wAXT2i2k1IxEx+5w+/BIS1pMTpV4YIK3lafjeYDHvRxSa+EmuXt
+         iotBzK885MFA5nik0zJqnbseeAiTQkjh1z/UvcwPje84uU61wFQHOvJAoj7KT4dZ++PS
+         9xepgc4ji7422FeCQyyGZKkjv642qpxmn2EboFojPuxAP+nPzeabY7Pnp5vFeyKr/YOL
+         5rGZlFEBIYvZN6kRHm9kMhiRWa2rjbYZPkXF3oLwgyviDSxfmT6jedqzwPafoldF8Hq/
+         4V92ob9BQYsg1dVFFQ4FH3h+EHg75TKxYDs1FdaL15pFhfTESKACdxO5JqZfi6nNhiG0
+         swUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739303851; x=1739908651;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LZz21PoK7ESpRyCP00gJn2627gqZOHRBJZHWL/EIwBo=;
-        b=A7zah97afTNRoVsUX/kQgE2gZzqRK2QTaSYVbrLsfnuTibGtHZ3S9FYBopmyigNjYX
-         MMntMYHW55+ABDFY7G+lIkDSh8qflKncLu1CNxpbxJ/bBXHhN6oiYTt+5fv6jUJSxQRU
-         T6jFoZz4aTj+mpFyjeB95uqXNa0VhuIEpTsgtzbpY0+i9zESKw3yKzvTxsB//XO/xUK0
-         JbQN4grF7PrxD+exs375onwKenDlTktfoRApc6rJiYrnr1v8KdVwwldENOED9Vhybbkz
-         g5O5ueBQqGmdCI+cLvpde8QiZ1xsAUyKbM7ptKadUJRUENdiF880iico5qGUS1fd7mZ6
-         NRWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnoPAEtDbIEgB4oqfw32cYk720Jr2TiOMPAr2gFR8+hz+ZjK3NSu1ZWlDOv2QjPRdCiM9h/AJe14hpYZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySLkUVcpZ0nFI1+88JrucxKa3qyQ6IO8PwHqlUDEK8d7QJ8Udx
-	L+sy86nDwJzxXknaTo7AsbKVLdNsgno/zQqBJ6yM9BoGcSOge12GEpf38j3bEYw=
-X-Gm-Gg: ASbGncu/qBK4SjIQ1ZeWDEGIWb0DoX5gh/7kukwUQvSJl5cAb1bk5D0REbUBJrpDKJx
-	Np7pgDuiVEpdcRijIffsLRK6o9RsLVIqxGSPwjtYfU2dUbr63TUqrSnIXj58H3rZd92c9DImuhs
-	pAl0pkcI++s3a7Kqu9DZ6KAfPvu1/BYSxtraxkIE9jy8kv38syt5uVwR+/r1V69WgtAF7eawzg5
-	17OixwQxrBnQs5ftaRsNKO1PET2B0VxX4cTRRkpIkicSfltLKG4W1F4vNCw2dmBUJsJ91vixKn3
-	CuFCWuMN5iZE/kvAaTYEESIUf+ua/D3xOjkLz+tuAZzK7/PZCwze1GXoPw==
-X-Google-Smtp-Source: AGHT+IHGm6N7udAh5kUmRKYI+y4WUkbVC6Seg2Hl1n1knL0KkTOJXLUEmjJNH2ogtVLi5OCw8cUlqg==
-X-Received: by 2002:a05:6a21:7001:b0:1ed:534e:38b1 with SMTP id adf61e73a8af0-1ee5c85fa2cmr1060630637.41.1739303850821;
-        Tue, 11 Feb 2025 11:57:30 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ad53f481ec4sm5371235a12.9.2025.02.11.11.57.29
+        d=1e100.net; s=20230601; t=1739304453; x=1739909253;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gEyL3Ra1dZj32nQnln1nD3gAOn0lhzcqC8+EuVYZvk4=;
+        b=QBiW1pxjKs/carNN78rvwLjtQFgUD5d+y86zdfv29dSUYI480tdcXLTDxjokLv9pcX
+         NAejV3DBoRObHA2yDMXopP1L6ssH/qQYf//ltJMYyIXTIVbbJL6R7+/CVY3ecRirLpa0
+         veZSWBo6pyH8NvkYMutjt8iW2lX6mg8y2q63Eh2qNTGm0TkX3U8mqQJ2Vlbl4wPzjKwL
+         Jc+HTRqF4fKMs8kagMI79hrpcNNEG/u98qPm/nAm0Plyx3WpE8IP1X0b/z0h9PJ3bQ48
+         M2glRs4Rk/NeNBLHIMop60UZi+s3tYsViCJV0Uh5yQO/I2AiYDsR96t4HW6wlbk3l6d7
+         ZkJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmmj9d0crrMCpJFB03MhGrJvcTBjyk/XUtD8Q5GwFYYEKF126+/6i1I9qfQ/1h6Mz+p5ZnJCWUDJT4ifM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzywBCwFA18JEzi1i2le7PiYwmfbVIUOyauPx8vm8YZgJHfRKaq
+	2PhkNKkShZI1Pv+8D/pjPG3vYTmUEytf7EeDCPjUSEy35qz/BkMp
+X-Gm-Gg: ASbGnctvjL57HDS7Ymukd7JmgDfFi0uiRONvNx7btNFT1yXOopiPM0hqRS29RFQiGXO
+	cf99kNp98/6EhOwU2UUdaZZ5ItFkBKRTwSZlYW9VQSoo6flepFHLsLQJp7U7mrqheUhyMdBbesQ
+	kKvg+yMq4LaDOKNrcVmFUv5ZE7dZXlJ5yiH7xph2u2AtaJdOjUWr7xypLMY7U9waYzoZeKIr/Cd
+	jnIHqZL/t4x0U2nxVtZsDGyq3J9I7/jsk3Z8z3iVYq6pkiBoGuFS60jAlp96htXOTCYiTs5whMr
+	5Hr8Mso6POYXQwV8FMpTAKZbxpY2zA==
+X-Google-Smtp-Source: AGHT+IFReHQyspvddJVe6BAdIbiNMz3aJXBLAbR5Wy0ZwgSfNw5RzJGOdLB0dflO4lE9nI+KgPTYNg==
+X-Received: by 2002:a05:600c:3b11:b0:434:a902:97cd with SMTP id 5b1f17b1804b1-43958176305mr6382055e9.12.1739304452436;
+        Tue, 11 Feb 2025 12:07:32 -0800 (PST)
+Received: from localhost.localdomain ([2a02:c7c:6696:8300:998a:facd:f681:8fdc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43947a5be1bsm60051025e9.8.2025.02.11.12.07.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 11:57:30 -0800 (PST)
-Date: Tue, 11 Feb 2025 11:57:27 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	stfomichev@gmail.com, horms@kernel.org, kuba@kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v6 3/3] selftests: drv-net: Test queue xsk
- attribute
-Message-ID: <Z6urp3d41nvBoSbG@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	stfomichev@gmail.com, horms@kernel.org, kuba@kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-References: <20250210193903.16235-1-jdamato@fastly.com>
- <20250210193903.16235-4-jdamato@fastly.com>
- <13afab27-2066-4912-b8f6-15ee4846e802@redhat.com>
- <Z6uM1IDP9JgvGvev@LQ3V64L9R2>
+        Tue, 11 Feb 2025 12:07:31 -0800 (PST)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot <syzbot+812641c6c3d7586a1613@syzkaller.appspotmail.com>
+Subject: [PATCH] isofs: fix KMSAN uninit-value bug in do_isofs_readdir()
+Date: Tue, 11 Feb 2025 19:59:00 +0000
+Message-Id: <20250211195900.42406-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6uM1IDP9JgvGvev@LQ3V64L9R2>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 11, 2025 at 09:45:56AM -0800, Joe Damato wrote:
-> On Tue, Feb 11, 2025 at 12:09:50PM +0100, Paolo Abeni wrote:
-> > On 2/10/25 8:38 PM, Joe Damato wrote:
-> > > +def check_xdp(cfg, nl, xdp_queue_id=0) -> None:
-> > > +    test_dir = os.path.dirname(os.path.realpath(__file__))
-> > > +    xdp = subprocess.Popen([f"{test_dir}/xdp_helper", f"{cfg.ifindex}", f"{xdp_queue_id}"],
-> > > +                           stdin=subprocess.PIPE, stdout=subprocess.PIPE, bufsize=1,
-> > > +                           text=True)
-> > > +    defer(xdp.kill)
-> > > +
-> > > +    stdout, stderr = xdp.communicate(timeout=10)
-> > > +    rx = tx = False
-> > > +
-> > > +    queues = nl.queue_get({'ifindex': cfg.ifindex}, dump=True)
-> > > +    if not queues:
-> > > +        raise KsftSkipEx("Netlink reports no queues")
-> > > +
-> > > +    for q in queues:
-> > > +        if q['id'] == 0:
-> > > +            if q['type'] == 'rx':
-> > > +                rx = True
-> > > +            if q['type'] == 'tx':
-> > > +                tx = True
-> > > +
-> > > +            ksft_eq(q['xsk'], {})
-> > > +        else:
-> > > +            if 'xsk' in q:
-> > > +                _fail("Check failed: xsk attribute set.")
-> > > +
-> > > +    ksft_eq(rx, True)
-> > > +    ksft_eq(tx, True)
-> > 
-> > This causes self-test failures:
-> > 
-> > https://netdev-3.bots.linux.dev/vmksft-net-drv/results/987742/4-queues-py/stdout
-> > 
-> > but I really haven't done any real investigation here.
-> 
-> I think it's because the test kernel in this case has
-> CONFIG_XDP_SOCKETS undefined [1].
-> 
-> The error printed in the link you mentioned:
-> 
->   socket creation failed: Address family not supported by protocol
-> 
-> is coming from the C program, which fails to create the AF_XDP
-> socket.
-> 
-> I think the immediate reaction is to add more error checking to the
-> python to make sure that the subprocess succeeded and if it failed,
-> skip.
-> 
-> But, we may want it to fail for other error states instead of
-> skipping? Not sure if there's general guidance on this, but my plan
-> was to have the AF_XDP socket creation failure return a different
-> error code (I dunno maybe -1?) and only skip the test in that case.
-> 
-> Will that work or is there a better way? I only want to skip if
-> AF_XDP doesn't exist in the test kernel.
-> 
-> [1]: https://netdev-3.bots.linux.dev/vmksft-net-drv/results/987742/config
+In do_isofs_readdir() when assigning the variable 
+"struct iso_directory_record *de" the b_data field of the buffer_head 
+is accessed and an offset is added to it, the size of b_data is 2048 
+and the offset size is 2047, meaning 
+"de = (struct iso_directory_record *) (bh->b_data + offset);" 
+yields the final byte of the 2048 sized b_data block.
 
-I'll give it a few more hours incase anyone has comments before I
-resend, but I got something working (tested on kernels with and
-without XDP sockets).
+The first byte of the directory record (de_len) is then read and 
+found to be 31, meaning the directory record size is 31 bytes long. 
+The directory record is defined by the structure:
 
-xdp_helper returns -1 if (errno == EAFNOSUPPORT). All other error
-cases return 1.
+	struct iso_directory_record {
+		__u8 length;                     // 1 byte 
+		__u8 ext_attr_length;            // 1 byte 
+		__u8 extent[8];                  // 8 bytes 
+		__u8 size[8];                    // 8 bytes 
+		__u8 date[7];                    // 7 bytes 
+		__u8 flags;                      // 1 byte 
+		__u8 file_unit_size;             // 1 byte 
+		__u8 interleave;                 // 1 byte 
+		__u8 volume_sequence_number[4];  // 4 bytes
+		__u8 name_len;                   // 1 byte
+		char name[];                     // variable size
+	} __attribute__((packed));
 
-Updated the python to do this:
+The fixed portion of this structure occupies 33 bytes. Therefore, a 
+valid directory record must be at least 33 bytes long 
+(even without considering the variable-length name field). 
+Since de_len is only 31, it is insufficient to contain
+the complete fixed header. 
 
-  if xdp.returncode == 255:
-      raise KsftSkipEx('AF_XDP unsupported')
-  elif xdp.returncode > 0:
-      raise KsftFailEx('unable to create AF_XDP socket')
+The code later hits the following sanity check that 
+compares de_len against the sum of de->name_len and 
+sizeof(struct iso_directory_record):
 
-Which seems to work on both types of kernels?
+	if (de_len < de->name_len[0] + sizeof(struct iso_directory_record)) {
+		...
+	}
 
-Happy to take feedback; will hold off on respinning for a bit just
-incase there's a better way I don't know about.
+Since the fixed portion of the structure is 
+33 bytes (up to and including name_len member), 
+a valid record should have de_len of at least 33 bytes; 
+here, however, de_len is too short, and the field de->name_len 
+(located at offset 32) is accessed even though it lies beyond 
+the available 31 bytes. 
+
+This access on the corrupted isofs data triggers a KASAN uninitialized 
+memory warning. The fix would be to first verify that de_len is at least 
+sizeof(struct iso_directory_record) before accessing any 
+fields like de->name_len.
+
+Reported-by: syzbot <syzbot+812641c6c3d7586a1613@syzkaller.appspotmail.com>
+Tested-by: syzbot <syzbot+812641c6c3d7586a1613@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=812641c6c3d7586a1613
+Fixes: 2deb1acc653c ("isofs: fix access to unallocated memory when reading corrupted filesystem")
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+ fs/isofs/dir.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/isofs/dir.c b/fs/isofs/dir.c
+index eb2f8273e6f1..366ac8b95330 100644
+--- a/fs/isofs/dir.c
++++ b/fs/isofs/dir.c
+@@ -147,7 +147,8 @@ static int do_isofs_readdir(struct inode *inode, struct file *file,
+ 			de = tmpde;
+ 		}
+ 		/* Basic sanity check, whether name doesn't exceed dir entry */
+-		if (de_len < de->name_len[0] +
++		if (de_len < sizeof(struct iso_directory_record) ||
++		    de_len < de->name_len[0] +
+ 					sizeof(struct iso_directory_record)) {
+ 			printk(KERN_NOTICE "iso9660: Corrupted directory entry"
+ 			       " in block %lu of inode %lu\n", block,
+-- 
+2.39.5
+
 
