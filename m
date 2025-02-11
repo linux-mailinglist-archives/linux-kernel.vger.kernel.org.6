@@ -1,79 +1,60 @@
-Return-Path: <linux-kernel+bounces-509964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C248AA3169A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:26:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 285F9A31692
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A254167011
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:26:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A64167036
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB892641CF;
-	Tue, 11 Feb 2025 20:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA36263895;
+	Tue, 11 Feb 2025 20:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dUPEbBP6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0ggKZxi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302281D8DF6;
-	Tue, 11 Feb 2025 20:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CE71D8DF6;
+	Tue, 11 Feb 2025 20:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739305567; cv=none; b=VtsBUWPqmh2s6nT91LRlLOctxPNuabesGulIvSaGziz33sNwsE12XPYv7iFzLTl3ftZLhc6AnZYy9NznSj8/S8D8HDgvNvIZQkEvaahcbuScmu3yOSqiecRqdDVV48jLWEX8d1SrpfJ9Ukk6oIvsnNyrOvyBTem9mwD54s65LkM=
+	t=1739305525; cv=none; b=GqC7J0aBW56dEG2oxj6Uj8j9sDQWkq3REiD2YsGzlxlJn8kiXL/HbzwB8d5qo58ueT1Ifqc80LRlIIi5+gjzKtNh3fgatglGTF5vclDu2b5Wrdv2Zzc7IJgXOZHlqR/yg4v+2J0jlzZ2XQNhbPf7VduxVE5YHJxEB/KWs1NBLdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739305567; c=relaxed/simple;
-	bh=GYEqww3EBLVnWe6k0sAX86yC5Szn3LGi9iPyMVCxXQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dalaJY7AOfyukfINxaUfJqq1Yb3ebWFfS/mar40HQi+HjEei4TgNrtYWu2ZiQQhxDrQPRsZQ977XpUqleSeHZawsoWrFVXKZsBtH/PhltTK3/HFhWioTVBVQfzpfXdu1x6Ho9Pq8RofYwX2nQNEqfH/exG2GofoJ0Ri/5/dQm7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dUPEbBP6; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739305565; x=1770841565;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GYEqww3EBLVnWe6k0sAX86yC5Szn3LGi9iPyMVCxXQk=;
-  b=dUPEbBP6ERjybOwdNeUCDHDcdELK0g6fivJxncI5KRuuuNvy8I44TJHc
-   5EPsc1tiQwRVfRacGVL8DOrNkadAUE7qmf9pzFbcayfONiVJPptNmQefO
-   m+2MoOPBCqRFs21l3jsHD+BtfKz3Q7xMhEcrJFfB56lYJ7IW9drhQmzLq
-   sfQ/1OYbW2MNGUIpjJLoEdeDQWU9pbkWqgmKt4zGHuRLHdKH4IuWgDzZ6
-   vsmt2w5hFoMSR2aFy3REBz1S+kaSpH4ElunkBi7pvAutGxnvm5KlVxfKA
-   Zmn/s3ilAiVw3k8DrXTn6+AzQQrsKuQEQQ3CZUIwA7xPSnaqq7Nl6ENIF
-   w==;
-X-CSE-ConnectionGUID: adG1dVroTBaVaKlEwXkluA==
-X-CSE-MsgGUID: IhNoiqMMSGyzvNP305Jo9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39137463"
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="39137463"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 12:26:04 -0800
-X-CSE-ConnectionGUID: 7SJUQcyPQbi74R8o9WyK9A==
-X-CSE-MsgGUID: SSlMJQhpTpe3zjU+tOGBmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117791598"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 11 Feb 2025 12:26:00 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1thwpR-0014ff-0x;
-	Tue, 11 Feb 2025 20:25:57 +0000
-Date: Wed, 12 Feb 2025 04:25:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nas Chung <nas.chung@chipsnmedia.com>, mchehab@kernel.org,
-	hverkuil@xs4all.nl, sebastian.fricke@collabora.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-	jackson.lee@chipsnmedia.com, lafley.kim@chipsnmedia.com,
-	Nas Chung <nas.chung@chipsnmedia.com>
-Subject: Re: [PATCH 7/8] media: chips-media: wave6: Add Wave6 control driver
-Message-ID: <202502120449.ZTdCf6WQ-lkp@intel.com>
-References: <20250210090725.4580-8-nas.chung@chipsnmedia.com>
+	s=arc-20240116; t=1739305525; c=relaxed/simple;
+	bh=xzP6GLQeTmYS7XcczI9XGU2DuKAgN9+oh6WSsla3hLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JnJdKiXJ05GOe0ogcOsTvDzEeFRbBVcETUFdetbXQVaRCht6ZlfHkmrWtCLkHf9tOIo2yiRTkmjAtF3qLgbGI980AZPbHrAL1CZm72DcoqYdJ7U2CT/LpRzU0SH/pjuQ7Evqi1weavb+eVrMOrayKBUl+xDBWdmLR1yM8I7ggL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0ggKZxi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73694C4CEDD;
+	Tue, 11 Feb 2025 20:25:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739305524;
+	bh=xzP6GLQeTmYS7XcczI9XGU2DuKAgN9+oh6WSsla3hLM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=B0ggKZxiZOiMssnAJQUxpjQ6yoXRH5qRxIYwrgA9jlKMeH5AX9aHtTnRdJDELa1MK
+	 Ls91mvr3HAxmkGF+qQ9QtlSjJ1LQQhQEYqCsySvc2etUG6edgxrT4PPhXZw0ZDl+cA
+	 wBMCZK86FibynV66cBOdthZorWrarlhc2f7riKqx32SDvx9XKRnMqzm5jNk0LHfBUd
+	 DvwaO8PibLvbMUQarQBUfwmm9ACp+B6oCqxBwVQodrJZnj2cJTNOe+7dgC/EBZT+cn
+	 WUIxwD4PWvJcaO37A3rqU+ZgVqPJy09gMRdNlISXH3n9bKGGf73bt+9Hi74JFD9eJH
+	 j7mIiOfP//enQ==
+Date: Tue, 11 Feb 2025 14:25:23 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+	ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+	rrichter@amd.com, nathan.fontenot@amd.com,
+	Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
+	ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
+Subject: Re: [PATCH v7 16/17] PCI/AER: Enable internal errors for CXL
+ Upstream and Downstream Switch Ports
+Message-ID: <20250211202523.GA53686@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,145 +63,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250210090725.4580-8-nas.chung@chipsnmedia.com>
+In-Reply-To: <20250211192444.2292833-17-terry.bowman@amd.com>
 
-Hi Nas,
+On Tue, Feb 11, 2025 at 01:24:43PM -0600, Terry Bowman wrote:
+> The AER service driver enables PCIe Uncorrectable Internal Errors (UIE) and
+> Correctable Internal errors (CIE) for CXL Root Ports. The UIE and CIE are
+> used in reporting CXL Protocol Errors. The same UIE/CIE enablement is
+> needed for CXL Upstream Switch Ports and CXL Downstream Switch Ports
+> inorder to notify the associated Root Port and OS.[1]
+> 
+> Export the AER service driver's pci_aer_unmask_internal_errors() function
+> to CXL namespace.
+> 
+> Remove the function's dependency on the CONFIG_PCIEAER_CXL kernel config
+> because it is now an exported function.
+> 
+> Call pci_aer_unmask_internal_errors() during RAS initialization in:
+> cxl_uport_init_ras_reporting() and cxl_dport_init_ras_reporting().
+> 
+> [1] PCIe Base Spec r6.2-1.0, 6.2.3.2.2 Masking Individual Errors
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-kernel test robot noticed the following build warnings:
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-[auto build test WARNING on linuxtv-media-pending/master]
-[also build test WARNING on arm64/for-next/core robh/for-next linus/master v6.14-rc2 next-20250210]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I'd say this is really a CXL-centric change, given that
+pci_aer_unmask_internal_errors() is only used for CXL and it's
+exported in the CXL namespace.  So I would use
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nas-Chung/media-platform-chips-media-wave5-Rename-Kconfig-parameter/20250210-171144
-base:   https://git.linuxtv.org/media-ci/media-pending.git master
-patch link:    https://lore.kernel.org/r/20250210090725.4580-8-nas.chung%40chipsnmedia.com
-patch subject: [PATCH 7/8] media: chips-media: wave6: Add Wave6 control driver
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20250212/202502120449.ZTdCf6WQ-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502120449.ZTdCf6WQ-lkp@intel.com/reproduce)
+  cxl/pci: ...
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502120449.ZTdCf6WQ-lkp@intel.com/
+in the subject.
 
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/device.h:15,
-                    from include/linux/platform_device.h:13,
-                    from drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c:10:
-   drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c: In function 'wave6_vpu_ctrl_load_firmware':
->> drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c:383:36: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     383 |                 dev_err(ctrl->dev, "firmware size (%ld > %zd) is too big\n",
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c:383:17: note: in expansion of macro 'dev_err'
-     383 |                 dev_err(ctrl->dev, "firmware size (%ld > %zd) is too big\n",
-         |                 ^~~~~~~
-   drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c:383:54: note: format string is defined here
-     383 |                 dev_err(ctrl->dev, "firmware size (%ld > %zd) is too big\n",
-         |                                                    ~~^
-         |                                                      |
-         |                                                      long int
-         |                                                    %d
-   drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c: In function 'wave6_vpu_ctrl_probe':
->> drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c:928:38: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     928 |                 dev_info(&pdev->dev, "sram 0x%pad, 0x%pad, size 0x%lx\n",
-         |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:160:58: note: in expansion of macro 'dev_fmt'
-     160 |         dev_printk_index_wrap(_dev_info, KERN_INFO, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                          ^~~~~~~
-   drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c:928:17: note: in expansion of macro 'dev_info'
-     928 |                 dev_info(&pdev->dev, "sram 0x%pad, 0x%pad, size 0x%lx\n",
-         |                 ^~~~~~~~
-   drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c:928:69: note: format string is defined here
-     928 |                 dev_info(&pdev->dev, "sram 0x%pad, 0x%pad, size 0x%lx\n",
-         |                                                                   ~~^
-         |                                                                     |
-         |                                                                     long unsigned int
-         |                                                                   %x
-
-
-vim +383 drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c
-
-   357	
-   358	static void wave6_vpu_ctrl_load_firmware(const struct firmware *fw, void *context)
-   359	{
-   360		struct vpu_ctrl *ctrl = context;
-   361		struct wave6_vpu_entity *entity = ctrl->current_entity;
-   362		u32 product_code;
-   363		int ret;
-   364	
-   365		ret = pm_runtime_resume_and_get(ctrl->dev);
-   366		if (ret) {
-   367			dev_err(ctrl->dev, "pm runtime resume fail, ret = %d\n", ret);
-   368			mutex_lock(&ctrl->ctrl_lock);
-   369			wave6_vpu_ctrl_set_state(ctrl, WAVE6_VPU_STATE_OFF);
-   370			ctrl->current_entity = NULL;
-   371			mutex_unlock(&ctrl->ctrl_lock);
-   372			release_firmware(fw);
-   373			return;
-   374		}
-   375	
-   376		if (!fw || !fw->data) {
-   377			dev_err(ctrl->dev, "No firmware.\n");
-   378			ret = -EINVAL;
-   379			goto exit;
-   380		}
-   381	
-   382		if (fw->size + WAVE6_EXTRA_CODE_BUF_SIZE > wave6_vpu_ctrl_get_code_buf_size(ctrl)) {
- > 383			dev_err(ctrl->dev, "firmware size (%ld > %zd) is too big\n",
-   384				fw->size, ctrl->boot_mem.size);
-   385			ret = -EINVAL;
-   386			goto exit;
-   387		}
-   388	
-   389		product_code = entity->read_reg(entity->dev, W6_VPU_RET_PRODUCT_VERSION);
-   390		if (!PRODUCT_CODE_W_SERIES(product_code)) {
-   391			dev_err(ctrl->dev, "unknown product : %08x\n", product_code);
-   392			ret = -EINVAL;
-   393			goto exit;
-   394		}
-   395	
-   396		memcpy(ctrl->boot_mem.vaddr, fw->data, fw->size);
-   397	
-   398	exit:
-   399		mutex_lock(&ctrl->ctrl_lock);
-   400		if (!ret && wave6_vpu_ctrl_find_entity(ctrl, ctrl->current_entity)) {
-   401			wave6_vpu_ctrl_remap_code_buffer(ctrl);
-   402			ret = wave6_vpu_ctrl_init_vpu(ctrl);
-   403		} else {
-   404			ret = -EINVAL;
-   405		}
-   406		mutex_unlock(&ctrl->ctrl_lock);
-   407	
-   408		pm_runtime_put_sync(ctrl->dev);
-   409		release_firmware(fw);
-   410	
-   411		mutex_lock(&ctrl->ctrl_lock);
-   412		ctrl->current_entity = NULL;
-   413		if (ret)
-   414			wave6_vpu_ctrl_set_state(ctrl, WAVE6_VPU_STATE_OFF);
-   415		else
-   416			wave6_vpu_ctrl_boot_done(ctrl, 0);
-   417		mutex_unlock(&ctrl->ctrl_lock);
-   418	
-   419		wake_up_interruptible_all(&ctrl->load_fw_wq);
-   420	}
-   421	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>  drivers/cxl/core/pci.c | 2 ++
+>  drivers/pci/pcie/aer.c | 3 ++-
+>  include/linux/aer.h    | 1 +
+>  3 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index 03ae21a944e0..36e686a31045 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -912,6 +912,7 @@ void cxl_uport_init_ras_reporting(struct cxl_port *port)
+>  
+>  	cxl_assign_port_error_handlers(pdev);
+>  	devm_add_action_or_reset(&port->dev, cxl_clear_port_error_handlers, pdev);
+> +	pci_aer_unmask_internal_errors(pdev);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_uport_init_ras_reporting, "CXL");
+>  
+> @@ -959,6 +960,7 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
+>  	cxl_assign_port_error_handlers(pdev);
+>  	devm_add_action_or_reset(&port->dev, cxl_clear_port_error_handlers, pdev);
+>  	put_device(&port->dev);
+> +	pci_aer_unmask_internal_errors(pdev);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
+>  
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index ee38db08d005..8e3a60411610 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -948,7 +948,7 @@ static bool find_source_device(struct pci_dev *parent,
+>   * Note: AER must be enabled and supported by the device which must be
+>   * checked in advance, e.g. with pcie_aer_is_native().
+>   */
+> -static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+> +void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>  {
+>  	int aer = dev->aer_cap;
+>  	u32 mask;
+> @@ -961,6 +961,7 @@ static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>  	mask &= ~PCI_ERR_COR_INTERNAL;
+>  	pci_write_config_dword(dev, aer + PCI_ERR_COR_MASK, mask);
+>  }
+> +EXPORT_SYMBOL_NS_GPL(pci_aer_unmask_internal_errors, "CXL");
+>  
+>  static bool is_cxl_mem_dev(struct pci_dev *dev)
+>  {
+> diff --git a/include/linux/aer.h b/include/linux/aer.h
+> index 947b63091902..a54545796edc 100644
+> --- a/include/linux/aer.h
+> +++ b/include/linux/aer.h
+> @@ -61,5 +61,6 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
+>  int cper_severity_to_aer(int cper_severity);
+>  void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
+>  		       int severity, struct aer_capability_regs *aer_regs);
+> +void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+>  #endif //_AER_H_
+>  
+> -- 
+> 2.34.1
+> 
 
