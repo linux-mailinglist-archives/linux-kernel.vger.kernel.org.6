@@ -1,63 +1,83 @@
-Return-Path: <linux-kernel+bounces-510123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A445FA31878
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:19:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6581A31882
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:21:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3727188832A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:19:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6401888D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415AD268FE0;
-	Tue, 11 Feb 2025 22:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3D226A09A;
+	Tue, 11 Feb 2025 22:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbtqrJNF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VmXuRd7M"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8304C263885;
-	Tue, 11 Feb 2025 22:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A03268FE6;
+	Tue, 11 Feb 2025 22:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739312347; cv=none; b=URfeI6mg8jt9zQsReNmWM86z7GooH7qSwD1s9Zq7E5deJpNcbKVPMvTLo1CPSr56134gz3zk9zWthF2IsGljR1f45+TODT49KJJXcGmG4QoQH3STmibMGxiGZQNEokgtLHC/gGy/asvnO+RtUcns46I77YEWdBlmswNKtvuW6kw=
+	t=1739312482; cv=none; b=WNvUkUEPVeA/4b0nRZlqsE61qEzN7nLHJjKq3SDE2vDH1Ze03Wv03sZU1rgE7XexqNjClynbkNerNU0tTNF+ZvyoitgQ/8WT/I3l5+1QvKRVr/bhDUAy/D9AVDXwwJWLNHdrMgpkW3aj0oPdAeKgpZr/y/hsHOx4on+ZL6pjoj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739312347; c=relaxed/simple;
-	bh=3L2XukuatOYg5/zh3ZhOK3hqE29EONmvF6HXiPcG9bU=;
+	s=arc-20240116; t=1739312482; c=relaxed/simple;
+	bh=KmQ+tXg/m4ZK8Xhj8IZwShtRHzkqTHlubFqibbJilzM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iCT1Z2ozZeWXiy6SKtqOpF5HWWINXusYBGLDHiJDmiWL2sOGmoIAiGsogny0D/P7ACOvLlN7CRgx3kU5NAfOlKOq5ppXiq/UfmEPh6zNKtcdp3SwiGq1J5BP5H56d7x8tZDSN+AfoK3pRqHJ1M3MSpNKpn4a/7be4wmKm6bT3SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dbtqrJNF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3780C4CEDD;
-	Tue, 11 Feb 2025 22:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739312346;
-	bh=3L2XukuatOYg5/zh3ZhOK3hqE29EONmvF6HXiPcG9bU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dbtqrJNFdT+wza4ffDei+crWQwihl/ahZeMM3x7EEDlkbBxi1pccSFpfAIsDUqbYv
-	 s81wMKJ48U/AC2VFesMhld2JyVQPtLkUo5FNhlaI82bCethp96jT8LRamy98lojUzb
-	 Exh65uaKDPM+EKp2/Ms0Xi7WyP8E11vLrUDQIw8q1Yn5caJA167rhpa7e6cIT1dY3J
-	 6+THLxSJAyghgqJqn1VU9uecbMXMzqtftmlI0Kx09XCEuTTXjPltu0FYzsSuEa6aTM
-	 cTEGm9CGfvyr696xNEJ+4nbwZj9oLMLu50GkmuU3HuYLo74NhuYj7kHNYgHLtEGnxd
-	 jt/ci5e5/sqIg==
-Date: Tue, 11 Feb 2025 16:19:04 -0600
-From: Rob Herring <robh@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	patches@opensource.cirrus.com,
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v1 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC
- and EQ support
-Message-ID: <20250211221904.GA1270109-robh@kernel.org>
-References: <20250206163152.423199-1-francesco@dolcini.it>
- <20250206163152.423199-4-francesco@dolcini.it>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hmTBT6ATO8APNP35FcFNB7PKlbywArkpSrliFJMiESUut9DDfMMVRlPAzjHj4sc8VdZtEpXpUEZPA77tVHyLbfoMNooevdeR0E+Z99CPpl18cVSZJGi+NsTdYVMIZ98Vd5n6ttXY2JrqJZMq5lMh2ZPJylj9ruQScEg6v4YSm3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VmXuRd7M; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739312480; x=1770848480;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KmQ+tXg/m4ZK8Xhj8IZwShtRHzkqTHlubFqibbJilzM=;
+  b=VmXuRd7M+lRQwSnB/3n2J0WqOpiKZqOOi0EFt+uUMC7nDJ0ZVx+LH6uH
+   NcPZ0t0AyNQ/Av0z1m3gcLWvVPNELxzc3FY0Z1oLP+5EahDRtm7Lbq6tU
+   pNK4s4lRiu+n4rWLoF2JraRB8IR0BhJPpO7RVaCVjFE2ZD/IsIUVgZ7G9
+   XF217Q4mPXezhPHd8KZTQof5TA7kmkBnnYLWUpyffCvvDnp/vH8f9fZBS
+   VUtou+U1Wlv7eyrH22/pY9WMMZ85cROfIkHGxnrirhfWKkLRZni1vy2OM
+   SM3+TkxVNJCPOfdoTU2X+Pc6pcCB/jH/jIU1iKO5W4DeXM9kh8byojBdt
+   w==;
+X-CSE-ConnectionGUID: xeUpkHVhRROW5iMq123JDQ==
+X-CSE-MsgGUID: tRSaIwW5Tw6P9DFbnW721w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50938308"
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="50938308"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 14:21:19 -0800
+X-CSE-ConnectionGUID: Mnc4Nd50QAuuH5O4SxIE9A==
+X-CSE-MsgGUID: 2ZhjGQPqQMavXeVcEpA1iQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113529562"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 11 Feb 2025 14:21:12 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1thycv-0014lb-2H;
+	Tue, 11 Feb 2025 22:21:09 +0000
+Date: Wed, 12 Feb 2025 06:20:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Meghana Malladi <m-malladi@ti.com>, rogerq@kernel.org,
+	danishanwar@ti.com, pabeni@redhat.com, kuba@kernel.org,
+	edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch
+Cc: oe-kbuild-all@lists.linux.dev, bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, u.kleine-koenig@baylibre.com,
+	krzysztof.kozlowski@linaro.org, dan.carpenter@linaro.org,
+	m-malladi@ti.com, schnelle@linux.ibm.com, glaroque@baylibre.com,
+	rdunlap@infradead.org, diogo.ivo@siemens.com,
+	jan.kiszka@siemens.com, john.fastabend@gmail.com, hawk@kernel.org,
+	daniel@iogearbox.net, ast@kernel.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH net-next v2 3/3] net: ti: icssg-prueth: Add XDP support
+Message-ID: <202502120546.Y6ri4qi6-lkp@intel.com>
+References: <20250210103352.541052-4-m-malladi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,159 +86,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250206163152.423199-4-francesco@dolcini.it>
+In-Reply-To: <20250210103352.541052-4-m-malladi@ti.com>
 
-On Thu, Feb 06, 2025 at 05:31:50PM +0100, Francesco Dolcini wrote:
-> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> 
-> Add two properties to select the IN1L/DMICDAT1 and IN2R/DMICDAT2
-> functionality:
-> - wlf,in1l-as-dmicdat1
-> - wlf,in1r-as-dmicdat2
-> 
-> Add a property to describe the GPIO configuration registers, that can be
-> used to set the four multifunction pins:
-> - wlf,gpio-cfg
-> 
-> Add a property to describe the mic bias control registers:
-> - wlf,mic-cfg
-> 
-> Add two properties to describe the Dynamic Range Controller (DRC),
-> allowing multiple named configurations where each config sets the 4 DRC
-> registers (R40-R43):
-> - wlf,drc-cfg-regs
-> - wlf,drc-cfg-names
-> 
-> Add three properties to describe the equalizer (ReTune Mobile), allowing
-> multiple named configurations (associated with a samplerate) that set
-> the 24 (R134-R157) EQ registers:
-> - wlf,retune-mobile-cfg-regs
-> - wlf,retune-mobile-cfg-names
-> - wlf,retune-mobile-cfg-rates
-> 
-> Datasheet: https://statics.cirrus.com/pubs/proDatasheet/WM8904_Rev4.1.pdf
-> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
->  .../devicetree/bindings/sound/wlf,wm8904.yaml | 88 +++++++++++++++++++
->  1 file changed, 88 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml b/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml
-> index 329260cf0fa0..b89d9db02848 100644
-> --- a/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml
-> +++ b/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml
-> @@ -38,6 +38,74 @@ properties:
->    DCVDD-supply: true
->    MICVDD-supply: true
->  
-> +  wlf,in1l-as-dmicdat1:
-> +    type: boolean
-> +    description:
-> +      Use IN1L/DMICDAT1 as DMICDAT1, enabling the DMIC input path.
-> +
-> +  wlf,in1r-as-dmicdat2:
-> +    type: boolean
-> +    description:
-> +      Use IN1R/DMICDAT2 as DMICDAT2, enabling the DMIC input path.
-> +
-> +  wlf,gpio-cfg:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 4
-> +    maxItems: 4
-> +    description:
-> +      Default register values for R121/122/123/124 (GPIO Control).
-> +      If any entry has the value 0xFFFF, the related register won't be set.
-> +    default: [0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF]
-> +
-> +  wlf,mic-cfg:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 2
-> +    maxItems: 2
-> +    description:
-> +      Default register values for R6/R7 (Mic Bias Control).
-> +    default: [0, 0]
-> +
-> +  wlf,drc-cfg-names:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    description:
-> +      List of strings for the available DRC modes.
-> +      If absent, DRC is disabled.
-> +
-> +  wlf,drc-cfg-regs:
-> +    $ref: /schemas/types.yaml#/definitions/uint16-array
-> +    description:
-> +      Default register values for R40/41/42/43 (DRC).
-> +      The list must be 4 times the length of wlf,drc-cfg-names.
-> +      If absent, DRC is disabled.
-> +
-> +  wlf,retune-mobile-cfg-names:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    description:
-> +      List of strings for the available retune modes.
-> +      If absent, retune is disabled.
+Hi Meghana,
 
-Is there no defined set of names?
+kernel test robot noticed the following build errors:
 
-> +
-> +  wlf,retune-mobile-cfg-rates:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      List of rates for the available retune modes.
-> +      The list must be the same length as wlf,retune-mobile-cfg-names.
-> +      If absent, retune is disabled.
-> +
-> +  wlf,retune-mobile-cfg-regs:
-> +    $ref: /schemas/types.yaml#/definitions/uint16-array
-> +    description:
-> +      Default register values for R134/.../157 (EQ).
-> +      The list must be 24 times the length of wlf,retune-mobile-cfg-names.
-> +      If absent, retune is disabled.
-> +
-> +dependencies:
-> +  wlf,drc-cfg-names: [ 'wlf,drc-cfg-regs' ]
-> +  wlf,drc-cfg-regs: [ 'wlf,drc-cfg-names' ]
-> +
-> +  wlf,retune-mobile-cfg-names: [ 'wlf,retune-mobile-cfg-rates', 'wlf,retune-mobile-cfg-regs' ]
-> +  wlf,retune-mobile-cfg-regs: [ 'wlf,retune-mobile-cfg-names', 'wlf,retune-mobile-cfg-rates' ]
-> +  wlf,retune-mobile-cfg-rates: [ 'wlf,retune-mobile-cfg-names', 'wlf,retune-mobile-cfg-regs' ]
+[auto build test ERROR on acdefab0dcbc3833b5a734ab80d792bb778517a0]
 
-I'm not really a fan of these long lists of properties, but codecs and 
-touchscreens seem to need a bunch of parameters.
+url:    https://github.com/intel-lab-lkp/linux/commits/Meghana-Malladi/net-ti-icssg-prueth-Use-page_pool-API-for-RX-buffer-allocation/20250210-183805
+base:   acdefab0dcbc3833b5a734ab80d792bb778517a0
+patch link:    https://lore.kernel.org/r/20250210103352.541052-4-m-malladi%40ti.com
+patch subject: [PATCH net-next v2 3/3] net: ti: icssg-prueth: Add XDP support
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20250212/202502120546.Y6ri4qi6-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502120546.Y6ri4qi6-lkp@intel.com/reproduce)
 
-> +
->  required:
->    - compatible
->    - reg
-> @@ -70,5 +138,25 @@ examples:
->              DBVDD-supply = <&reg_1p8v>;
->              DCVDD-supply = <&reg_1p8v>;
->              MICVDD-supply = <&reg_1p8v>;
-> +
-> +            wlf,drc-cfg-names = "default", "peaklimiter", "tradition", "soft", "music";
-> +            wlf,drc-cfg-regs =
-> +                /* coded default: KNEE_IP = KNEE_OP = 0, HI_COMP = LO_COMP = 1  */
-> +                /bits/ 16 <0x01af 0x3248 0x0000 0x0000>,
-> +                /* coded default: KNEE_IP = -24, KNEE_OP = -6, HI_COMP = 1/4, LO_COMP = 1 */
-> +                /bits/ 16 <0x04af 0x324b 0x0010 0x0408>,
-> +                /* coded default: KNEE_IP = -42, KNEE_OP = -3, HI_COMP = 0, LO_COMP = 1 */
-> +                /bits/ 16 <0x04af 0x324b 0x0028 0x0704>,
-> +                /* coded default: KNEE_IP = -45, KNEE_OP = -9, HI_COMP = 1/8, LO_COMP = 1 */
-> +                /bits/ 16 <0x04af 0x324b 0x0018 0x078c>,
-> +                /* coded default: KNEE_IP = -30, KNEE_OP = -10.5, HI_COMP = 1/4, LO_COMP = 1 */
-> +                /bits/ 16 <0x04af 0x324b 0x0010 0x050e>;
-> +
-> +            wlf,gpio-cfg = <
-> +                0x0018 /* GPIO1 => DMIC_CLK */
-> +                0xffff /* GPIO2 => don't touch */
-> +                0xffff /* GPIO3 => don't touch */
-> +                0xffff /* GPIO4 => don't touch */
-> +            >;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502120546.Y6ri4qi6-lkp@intel.com/
 
-Please make your example full and add all the optional properties.
+All errors (new ones prefixed by >>):
 
->          };
->      };
-> -- 
-> 2.39.5
-> 
+   drivers/net/ethernet/ti/icssg/icssg_prueth.c: In function 'prueth_create_xdp_rxqs':
+>> drivers/net/ethernet/ti/icssg/icssg_prueth.c:568:55: error: 'struct xdp_rxq_info' has no member named 'napi_id'
+     568 |         ret = xdp_rxq_info_reg(rxq, emac->ndev, 0, rxq->napi_id);
+         |                                                       ^~
+
+
+vim +568 drivers/net/ethernet/ti/icssg/icssg_prueth.c
+
+   561	
+   562	static int prueth_create_xdp_rxqs(struct prueth_emac *emac)
+   563	{
+   564		struct xdp_rxq_info *rxq = &emac->rx_chns.xdp_rxq;
+   565		struct page_pool *pool = emac->rx_chns.pg_pool;
+   566		int ret;
+   567	
+ > 568		ret = xdp_rxq_info_reg(rxq, emac->ndev, 0, rxq->napi_id);
+   569		if (ret)
+   570			return ret;
+   571	
+   572		ret = xdp_rxq_info_reg_mem_model(rxq, MEM_TYPE_PAGE_POOL, pool);
+   573		if (ret)
+   574			xdp_rxq_info_unreg(rxq);
+   575	
+   576		return ret;
+   577	}
+   578	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
