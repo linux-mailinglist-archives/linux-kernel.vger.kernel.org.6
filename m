@@ -1,58 +1,90 @@
-Return-Path: <linux-kernel+bounces-509992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-509993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98EFDA316F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:56:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB65A316F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 21:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166451888723
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:56:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3937D7A38D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 20:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89252641D8;
-	Tue, 11 Feb 2025 20:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999AD2641CA;
+	Tue, 11 Feb 2025 20:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqL4tP4i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="njqP1IBt"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093F024E4A8;
-	Tue, 11 Feb 2025 20:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077462641CB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 20:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739307372; cv=none; b=pIbkldbgK/k0rd3VhVmsxX3sArOShpH3WFweDUGqy3Ob4jwfS+iSeV6U9W1Ap++nxNYHX8c6L6csE55YZtLyXh46AujvZ5+kSAMq39m5xajNnR+VqTIlGJs96KAvYzcx1dKLZA15giHHu5ddNNoDz1Uj7jNCddR0lNTP+tVlkgo=
+	t=1739307387; cv=none; b=ni6AeiQiUMrntphvhFAEWNpJeNGur6UM3nNyaQcwGFTxUH6gQDk7u2NYh0b5b5Dl7I5vjpAKSbdaP/338I/BbQ2PCOSkMh3NNbZZ38Irbr2kKJ1dfsHzvU7mZzGGpmHFHhAoHLqfO9UCJuSHkguUlKixd9peOR2nWDaMHOySsLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739307372; c=relaxed/simple;
-	bh=1kS5pRqJHQNPF4gP4Lxw9NbXHOwh+4VmYGQP1qPNoLQ=;
+	s=arc-20240116; t=1739307387; c=relaxed/simple;
+	bh=rryhzbS3Oo89ck9xsb//oMPMG0GTl8WvqO0d6fQNrBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJf3AgSkP9yUndhHzhoLu29cVFpDHItPoNY3ka25STd8BxOQpbZl3jOx95m4I1NrD/lydj+R0d0Kdf1EqwYNTxudYuOR24YSmf7a9lzcU6quaxo153D3JIgarozN8ftn8o+cz5KkqJqPHuujbHlwsAWeqjfxirsphapUo98ZkZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqL4tP4i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38EABC4CEE7;
-	Tue, 11 Feb 2025 20:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739307370;
-	bh=1kS5pRqJHQNPF4gP4Lxw9NbXHOwh+4VmYGQP1qPNoLQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NqL4tP4i++KBlmQncBwrcb+Pi3NtoUsIyvPzIr2nC45U5LJaw5rDADzGUV4jqO31e
-	 UZkSN3rhnATLbx5r+/H5kISE90GQHthoJ2GB+pvf4ePK3lsfwto4+d/e+aIavTWJRr
-	 kDe2C09R0TyoIo0EJmXDrVC9zSaNn2mGewxuc5T5BCW8U6l2s20Pq6hw70w9fmgM4V
-	 bsUA9Ke8W5ffkAveEIuFWBLHJwRW5nn0tDe2YC+mGfU6uZkVs+vJSV5O8gCbOMX7I8
-	 rLpsAlSi1tOQwUl0eeNBeu9Vqk5vb7l//i1wC9T0lTTQ1lBuccMaKBdcZbW18eCs+L
-	 Sy5GYbY4xw4nA==
-Date: Tue, 11 Feb 2025 14:56:09 -0600
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: pwm: Add support for PWM nexus node
-Message-ID: <20250211205609.GA1142491-robh@kernel.org>
-References: <20250205095547.536083-1-herve.codina@bootlin.com>
- <20250205095547.536083-2-herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hmket0K4IvYEwnFe6BOPNCtE5CoE5d7ndPETS30pWSkY+q2f3EhIjpECa8JTH7JARvbO3t8CbV9PaSqPfdu/mof8mqLSOoOBsWEb7VSK7S7yfis69pVWnoqTszcMdz/XS3n6PJezALHegyLIMWTeVKauqka1X1deLBgvI6JdD7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=njqP1IBt; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21f573ff39bso91751585ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 12:56:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739307385; x=1739912185; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yyoMkG5bzzx14S5ohymSPtkrSkcAjAOde1zaqVi+nGE=;
+        b=njqP1IBtpwvV6zr/fACeD+OTnN4PQ3ZtTHkQfLzCFSpHOirnQoHZr3GjoF/IC8VIjz
+         3/JVJ0pxpT+VBAvUMQIntsg4tYLLF9kRVJVETJZFVsG8EayVlG8SwrCYnTk4416nlKpG
+         ZswODyx8EVymPFBpnnWVVZ2HkIi0+pTJJvPD8naiI4tHPyJU7t8MYkeXLfzGUlL6tN/f
+         Cdjds0ynH7IrtQ8vUqnWS3Z7VwGa7qoI7wBGySCcL1qet19s9GkaFmo46tljweW6jkhh
+         VKLYoOs8SHcFobCc/zIAdKPSc3Tnc1QuUQ2yYreaqI+GyFbUoVRtrs6nYkEHxx/IEUzy
+         FEwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739307385; x=1739912185;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yyoMkG5bzzx14S5ohymSPtkrSkcAjAOde1zaqVi+nGE=;
+        b=m86E5TLNqKQrwaKO9T9b5iyemBs/AwcWmwELh4WPjLuNVZc9W0W3iWUJJ8peKUNNd3
+         yKtNyB0Y2P/UkJ3JZrfs8Nv26EqU2iW+uu5VdRqDRy/xLhrr+8Rinfx4AWGVDRSKryYL
+         GYiEq8d3VtL9kQRweX4wrQUoWoHN/nDsiAWWU5BEG8wlXcfvoB821jNlROVhg88TzE8/
+         QGSGUQDsEzzg2UdnCqI+Aybcm/1pQYPVJrx9FyEbww+ABa05fKypfbe2ZY8Hj5vOPIX7
+         uEqldSUdqggTXCGCFv7EO3eCt3Z0nHQABOwsnLisS2HcPss70+4AdT5B7zhKwtYzE3cD
+         V/8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVfn2b/i55UVAX1aK7ynWLMQlfdvACDLmbFffYXXMqsqTfoVIPCgNuXy888++PT/pDK2GLfGG8RuL8jJhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN3KNMKCYmqEa52dhp4hNJAJhZA8TgnNyZ9d2A9l9Nt0u024k0
+	dfpkCzY4Y6yMsApkNvX2MmijofrrzpZxL8kPEhhyAN1BWIXGDsmMsjCTsGP9oGU=
+X-Gm-Gg: ASbGnctvmquF02NyLzbXN90ivhFDI1w64+RRUeMSBEtjfRUvTJr4OgABpUE2dgoR7Zk
+	wqfH41jO2kmtuCmY4ttCOg0At2vWtbvbxDPW8hasS1H1cVV/mF6at+o/+fGLyDgahRx6a5NcV16
+	/EP9rPKIXfy+joeC+43gD4Phgyxzbc5mNa6MG39scZMj4jaEs547aMwV0bcs4wyRIvE9uFML4WD
+	Gt6Bw3+QiDnt4lv1BeRoNR8bvk43IvOlg3iCEY/TJuZa9vgYdbgyVE6JTzbg1s4iyaL0CNKhX76
+	Iv30ium7OqKcOlFZLA86KG7aedLq4FTEc+FiMUgj/HJd/orUmxZchOLNEgFPZ0lXH1Y=
+X-Google-Smtp-Source: AGHT+IEfHpSebUI54bc+vC2NBwLKUwK5koKIKhtVUi+WtfeB3o+yNTarMcSG1ESYsxHkheQAyV7j4Q==
+X-Received: by 2002:a05:6a20:c6c1:b0:1e1:f281:8d36 with SMTP id adf61e73a8af0-1ee5c73fec1mr1195231637.10.1739307385181;
+        Tue, 11 Feb 2025 12:56:25 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-730aad5535fsm2949623b3a.51.2025.02.11.12.56.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 12:56:24 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1thxIs-00000000133-0J1Y;
+	Wed, 12 Feb 2025 07:56:22 +1100
+Date: Wed, 12 Feb 2025 07:56:22 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Luis Henriques <luis@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Matt Harvey <mharvey@jumptrading.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	Joanne Koong <joannelkoong@gmail.com>
+Subject: Re: [PATCH v4] fuse: add new function to invalidate cache for all
+ inodes
+Message-ID: <Z6u5dumvZHf_BDHM@dread.disaster.area>
+References: <20250211092604.15160-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,83 +93,177 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250205095547.536083-2-herve.codina@bootlin.com>
+In-Reply-To: <20250211092604.15160-1-luis@igalia.com>
 
-On Wed, Feb 05, 2025 at 10:55:42AM +0100, Herve Codina wrote:
-> Platforms can have a standardized connector/expansion slot that exposes
-> PWMs signals to expansion boards.
+[ FWIW: if the commit message directly references someone else's
+related (and somewhat relevant) work, please directly CC those
+people on the patch(set). I only noticed this by chance, not because
+I read every FUSE related patch that goes by me. ]
+
+On Tue, Feb 11, 2025 at 09:26:04AM +0000, Luis Henriques wrote:
+> Currently userspace is able to notify the kernel to invalidate the cache
+> for an inode.  This means that, if all the inodes in a filesystem need to
+> be invalidated, then userspace needs to iterate through all of them and do
+> this kernel notification separately.
 > 
-> A nexus node [1] allows to remap a phandle list in a consumer node
-> through a connector node in a generic way. With this remapping, the
-> consumer node needs to know only about the nexus node. Resources behind
-> the nexus node are decoupled by the nexus node itself.
-> 
-> This is particularly useful when this consumer is described in a
-> device-tree overlay. Indeed, to have the exact same overlay reused with
-> several base systems the overlay needs to known only about the connector
-> is going to be applied to without any knowledge of the SoC (or the
-> component providing the resource) available in the system.
-> 
-> As an example, suppose 3 PWMs connected to a connector. The connector
-> PWM 0 and 2 comes from the PWM 1 and 3 of the pwm-controller1. The
-> connector PWM 1 comes from the PWM 4 of the pwm-controller2. An
-> expansion device is connected to the connector and uses the connector
-> PMW 1.
-> 
-> Nexus node support in PWM allows the following description:
->         soc {
->                 soc_pwm1: pwm-controller1 {
->                         #pwm-cells = <3>;
->                 };
-> 
->                 soc_pwm2: pwm-controller2 {
->                         #pwm-cells = <3>;
->                 };
->         };
-> 
->         connector: connector {
->                 #pwm-cells = <3>;
->                 pwm-map = <0 0 0 &soc_pwm1 1 0 0>,
->                           <1 0 0 &soc_pwm2 4 0 0>,
->                           <2 0 0 &soc_pwm1 3 0 0>;
->                 pwm-map-mask = <0xffffffff 0x0 0x0>;
->                 pwm-map-pass-thru = <0x0 0xffffffff 0xffffffff>;
->         };
-> 
->         expansion_device {
->                 pwms = <&connector 1 57000 0>;
->         };
-> 
-> >From the expansion device point of view, the PWM requested is the PWM 1
-> available at the connector regardless of the exact PWM wired to this
-> connector PWM 1. Thanks to nexus node remapping described at connector
-> node, this PWM is the PWM 4 of the pwm-controller2.
-> 
-> [1] https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> This patch adds a new option that allows userspace to invalidate all the
+> inodes with a single notification operation.  In addition to invalidate
+> all the inodes, it also shrinks the sb dcache.
+
+That, IMO, seems like a bit naive - we generally don't allow user
+controlled denial of service vectors to be added to the kernel. i.e.
+this is the equivalent of allowing FUSE fs specific 'echo 1 >
+/proc/sys/vm/drop_caches' via some fuse specific UAPI. We only allow
+root access to /proc/sys/vm/drop_caches because it can otherwise be
+easily abused to cause system wide performance issues.
+
+It also strikes me as a somewhat dangerous precendent - invalidating
+random VFS caches through user APIs hidden deep in random fs
+implementations makes for poor visibility and difficult maintenance
+of VFS level functionality...
+
+> Signed-off-by: Luis Henriques <luis@igalia.com>
 > ---
->  .../bindings/pwm/pwm-nexus-node.yaml          | 65 +++++++++++++++++++
->  1 file changed, 65 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-nexus-node.yaml
+> * Changes since v3
+> - Added comments to clarify semantic changes in fuse_reverse_inval_inode()
+>   when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
+> - Added comments to inodes iteration loop to clarify __iget/iput usage
+>   (suggested by Joanne)
+> - Dropped get_fuse_mount() call -- fuse_mount can be obtained from
+>   fuse_ilookup() directly (suggested by Joanne)
 > 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-nexus-node.yaml b/Documentation/devicetree/bindings/pwm/pwm-nexus-node.yaml
-> new file mode 100644
-> index 000000000000..55412fe50d01
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-nexus-node.yaml
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pwm/pwm-nexus-node.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: PWM Nexus node properties
-> +
-> +description:
+> (Also dropped the RFC from the subject.)
+> 
+> * Changes since v2
+> - Use the new helper from fuse_reverse_inval_inode(), as suggested by Bernd.
+> - Also updated patch description as per checkpatch.pl suggestion.
+> 
+> * Changes since v1
+> As suggested by Bernd, this patch v2 simply adds an helper function that
+> will make it easier to replace most of it's code by a call to function
+> super_iter_inodes() when Dave Chinner's patch[1] eventually gets merged.
+> 
+> [1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.com
 
-You need '>' on the end to preserve paragraphs. With that,
+That doesn't make the functionality any more palatable.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Those iterators are the first step in removing the VFS inode list
+and only maintaining it in filesystems that actually need this
+functionality. We want this list to go away because maintaining it
+is a general VFS cache scalability limitation.
+
+i.e. if a filesystem has internal functionality that requires
+iterating all instantiated inodes, the filesystem itself should
+maintain that list in the most efficient manner for the filesystem's
+iteration requirements not rely on the VFS to maintain this
+information for it.
+
+That's the point of the iterator methods the above patchset adds -
+it allows the filesystem to provide the VFS with a method for
+iterating all inodes in the filesystem whilst the transition period
+where we rework the inode cache structure (i.e. per-sb hash tables
+for inode lookup, inode LRU caching goes away, etc). Once that
+rework gets done, there won't be a VFS inode cache to iterate.....
+
+>  fs/fuse/inode.c           | 83 +++++++++++++++++++++++++++++++++++----
+>  include/uapi/linux/fuse.h |  3 ++
+>  2 files changed, 79 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index e9db2cb8c150..5aa49856731a 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -547,25 +547,94 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u64 nodeid,
+>  	return NULL;
+>  }
+>  
+> +static void inval_single_inode(struct inode *inode, struct fuse_conn *fc)
+> +{
+> +	struct fuse_inode *fi;
+> +
+> +	fi = get_fuse_inode(inode);
+> +	spin_lock(&fi->lock);
+> +	fi->attr_version = atomic64_inc_return(&fc->attr_version);
+> +	spin_unlock(&fi->lock);
+> +	fuse_invalidate_attr(inode);
+> +	forget_all_cached_acls(inode);
+> +}
+> +
+> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
+> +{
+> +	struct fuse_mount *fm;
+> +	struct super_block *sb;
+> +	struct inode *inode, *old_inode = NULL;
+> +
+> +	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
+> +	if (!inode || !fm)
+> +		return -ENOENT;
+> +
+> +	iput(inode);
+> +	sb = fm->sb;
+> +
+> +	spin_lock(&sb->s_inode_list_lock);
+> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+> +		spin_lock(&inode->i_lock);
+> +		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
+> +		    !atomic_read(&inode->i_count)) {
+> +			spin_unlock(&inode->i_lock);
+> +			continue;
+> +		}
+
+This skips every inode that is unreferenced and cached on the
+LRU. i.e. it only invalidates inodes that have a current reference
+(e.g. dentry pins it, has an open file, etc).
+
+What's the point of only invalidating actively referenced inodes?
+
+> +		/*
+> +		 * This __iget()/iput() dance is required so that we can release
+> +		 * the sb lock and continue the iteration on the previous
+> +		 * inode.  If we don't keep a ref to the old inode it could have
+> +		 * disappear.  This way we can safely call cond_resched() when
+> +		 * there's a huge amount of inodes to iterate.
+> +		 */
+
+If there's a huge amount of inodes to iterate, then most of them are
+going to be on the LRU and unreferenced, so this code won't even get
+here to be able to run cond_resched().
+
+> +		__iget(inode);
+> +		spin_unlock(&inode->i_lock);
+> +		spin_unlock(&sb->s_inode_list_lock);
+> +		iput(old_inode);
+> +
+> +		inval_single_inode(inode, fc);
+> +
+> +		old_inode = inode;
+> +		cond_resched();
+> +		spin_lock(&sb->s_inode_list_lock);
+> +	}
+> +	spin_unlock(&sb->s_inode_list_lock);
+> +	iput(old_inode);
+> +
+> +	shrink_dcache_sb(sb);
+
+Why drop all the referenced inodes held by the dentry cache -after-
+inode invalidation? Doesn't this mean that racing operations are
+going to see a valid dentries backed by an invalidated inode?  Why
+aren't the dentries pruned from the cache first, and new lookups
+blocked until the invalidation completes?
+
+I'm left to ponder why the invalidation isn't simply:
+
+	/* Remove all possible active references to cached inodes */
+	shrink_dcache_sb();
+
+	/* Remove all unreferenced inodes from cache */
+	invalidate_inodes();
+
+Which will result in far more of the inode cache for the filesystem
+being invalidated than the above code....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
