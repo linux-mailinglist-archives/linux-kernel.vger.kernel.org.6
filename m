@@ -1,190 +1,136 @@
-Return-Path: <linux-kernel+bounces-510154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C04AA318EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:41:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD32BA318C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 23:38:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14A816A447
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:41:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFA271887B05
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Feb 2025 22:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A283C26A0D7;
-	Tue, 11 Feb 2025 22:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068C226A0CF;
+	Tue, 11 Feb 2025 22:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnLAzDRc"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="HMRhqZW2"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FBD26A0CD;
-	Tue, 11 Feb 2025 22:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B212641CE;
+	Tue, 11 Feb 2025 22:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739313528; cv=none; b=a0F3J/lD1bnBUFX69opfMSr99PBDnHVAe07mTYh3o09HGRlWY/+TnNEYKuDXEwskBb2IwbE98hejfhMBv9hYUnVJuf8lnumKNiH5zGJOPfCfBeOjagEeKEJoTJrG6qalYfjBLGZIxZoSC+Vro9baQGpytbexSgDa9ijAaWSOChQ=
+	t=1739313498; cv=none; b=nTLmdbcDAucWWXCEBJwfPLfPcp8n4uY88NEYS5E4dxdKOUu/zN5CaDiFX48vSxhtcB/4MeUjd2l7lG6qfE4/V66vBeohErz3Qq6V7vPIU8t/ixFkDk6Uger1hPvozvAz75jCt5u4s1gwU6dPbVukETfXWeiT365M0PZ7p7VK4fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739313528; c=relaxed/simple;
-	bh=rB7BxSHW6EtSoabTXOHtfnbpaHJ0cVwUdAN/POuDev0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XYRVZd8kp6XIYi++l56sC53zebUU5EkYcr1eV6o65THYGVrwlFp3ggEMJhytr8uSbu1lcpI50zQPtFC0LcNKXlKnj/i2DOAkGtiLLEyDl8YXKoqd98hfEU/RKQLMfioTPtEas9tL44SE22Mt5h1WMAvKnv/TNF+hv/fyMAf4pR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnLAzDRc; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-46fa734a0b8so54883131cf.1;
-        Tue, 11 Feb 2025 14:38:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739313526; x=1739918326; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YmBWEKaqUFBzqHGnnve5ouXXEJaAw0Livsmfx5tApoU=;
-        b=EnLAzDRcdIxrLVXkxOphkNCvJNc3RSIqgPL6ec5UFUHTECZE2h+ctWDjSNxlMTka5F
-         NwxhUImVY83+lm0VZgxyQ/rLty7OVUhpxBfvVL2bhGC3wenzRl6Nm0ts+3BZTNSSre2M
-         y9du3GFZNd3oniIfRxaBZcyLkZfeWPO7+yXbZqG8mebmJbbi/hK1vEXVhArBllsNZUUT
-         8Z0fhvMVKkul85L/2xFK4zZbIq7nRK8ZT9dtZCj47URAJNHQzTrw7mEHM53orvD5AG+l
-         v2zYytdihxPUj0XJ6bXW+WOx849MpNaSIM46eebAD7kyfg74881FjSKvrGPzKXa44GLU
-         PD8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739313526; x=1739918326;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YmBWEKaqUFBzqHGnnve5ouXXEJaAw0Livsmfx5tApoU=;
-        b=Wnh0TTQZ6sm+Pd0flz8gjQKH090IVPimIjp9H1Zxl4Hs2RwAsFEjXX1fGKFffpW6BN
-         YMjU15E+JH+cfrU2GG5AdBdBvfkbdEZ4n33BNWgYuVMGD/uYWPEFrZQJYNrKkMIWjt4D
-         g7k3Z8YN+KOXMK7wWQQvMXLXKhUPBrmwx8CT95GcmwQNchhZPwYGiEZltwGgL5dGi8cG
-         egKH+eq9qv9+j/f778835QCxE4856Lp9By8zU32bRagHTuUbGbapJjRqlLaeFu4GR7AV
-         cG1KgtRpnOldRYowm8mxRFpPfKIA3FvOfmdh71XkdFRtLQUeiZCYLjONCV6ZXua9Q1Tf
-         bD3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWP9JzD88YRVI1IrXDYfYnP/sGmByoWBk7UJRBrxuxWThqw79rjeS/0PAfyTOMXyQUlJB6OLw6ZCGtxQ2fkzJ6t@vger.kernel.org, AJvYcCXRFk9yCg3S6og4oeUD6CFMRrINctT/4wiKszkfPMluXZ5q96j8QL9DGvmEuBbJRxPMvocGfkBItvrc7Qo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAi/H8h9SWMiAev9T8dLu1J1wQ0NPqJCcmk3hC4TFToXHnNiMW
-	eKgiCCzSzwohMVHnT0FpYwTTKl0YtQ6TIEkyRAmw0/jt1wBR2ZLk
-X-Gm-Gg: ASbGncsjIZQZmDRAjKzZ/wEbOGq2cAm8BEMJWVKHs6EhGkl5gwvFCvrvK0d+bI1qHQ5
-	CKC6x/tyPulpeioYxk9e2HdHpGGUp8Up0GS5IU6HDe5bJNM6T/px/C5PDv9b/Gzk7NsTQRZICMZ
-	7gkQwQLuKVnt3bKgiAwgEBa4+4Y3qQuOzgVAvUMVBF32z3ldqO2sz/B37Jz4Cq3P8lfKzKLVFlD
-	TQ0gXTJyodFtGSlwaS57WyQ6yf24hl7OetONdmu6xem/e5XcpTa2tre98el/iB+MVrMEz91/W6T
-	Y69fl4eAgNrmYUrerADlXjFce62lLT9ue+d3hh82KJopibUwW/Z6+p+5eGTComO5rYXzfaOEq3y
-	lUmdCJw==
-X-Google-Smtp-Source: AGHT+IEO9AyXzekNhsd8EdtjWApnNbjJdg5zmAFdkNj4BVJjZli/lTN21xPpUXmaP+8WJPWp5aYc3Q==
-X-Received: by 2002:a05:622a:5c7:b0:467:8217:aae3 with SMTP id d75a77b69052e-471b070d34emr8123011cf.47.1739313526095;
-        Tue, 11 Feb 2025 14:38:46 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e44e550783sm51208976d6.86.2025.02.11.14.38.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 14:38:45 -0800 (PST)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 24AC1120006A;
-	Tue, 11 Feb 2025 17:38:45 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Tue, 11 Feb 2025 17:38:45 -0500
-X-ME-Sender: <xms:ddGrZ-7nz1pK_q1szOpi7W3KVQfGB-XsCxtvYKKHSFCUYYnRHFOyAQ>
-    <xme:ddGrZ36wQ_AtIwyIEnrzPz9MTqCxGb1HYPIQBXW-9CQ0-HeLOyWL3Jr0oYh4_Wk8-
-    KKepFtQkcS5Nh2ELg>
-X-ME-Received: <xmr:ddGrZ9ex6wzy9h4GEuXb4Ji6kfd6in0yO8ApFAYVyRCsSp9VB3QMJ5oYwzg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegvddvfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduiedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepthgrmhhirhgusehgmhgrihhlrdgtohhmpd
-    hrtghpthhtohepuggrvhhiughgohifsehgohhoghhlvgdrtghomhdprhgtphhtthhopehp
-    vghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehrvg
-    guhhgrthdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghkphhmse
-    hlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehshhhurghhsehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ddGrZ7JOOesaVFaui5eNoxq2f3auchwWtsWyE8m66QHx71LpWfYXuQ>
-    <xmx:ddGrZyIydsiH7cRzEnKiS0iDVYY7mNhrlOBMcYSFPj6QZ8Nb625riA>
-    <xmx:ddGrZ8yAnL9Y1Zxsi6NCcrSk0iHRiQjGbpNH7bQ-TWVsFvnmqdzh7w>
-    <xmx:ddGrZ2KwB0gJlijq0EF6JOpuOYid2afthp6lzK_V_SKL7O9MEprt6w>
-    <xmx:ddGrZ5byxjJ6W8bf1lypP9hPFBx7z2Cn6VnXABb2jNt_YIezVqI3F1g5>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Feb 2025 17:38:44 -0500 (EST)
-Date: Tue, 11 Feb 2025 14:37:21 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: David Gow <davidgow@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] ww_mutex: convert self-test to KUnit
-Message-ID: <Z6vRIZk7DsSNooFZ@boqun-archlinux>
-References: <20250210-ww_mutex-kunit-convert-v1-1-972f0201f71e@gmail.com>
+	s=arc-20240116; t=1739313498; c=relaxed/simple;
+	bh=5/bBkjGSiUyr0eyYTgTn6gVjdqK5S7jACaykAWc9lMg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NhqYyCwZbirgKqplA91kq28EeO8ImJJY2+2oBbQjj8Upj5ata+avbWbPd1SHNOe2YcxFWc09yPoNTjovTA3CVMreZq/F6p7Q8q62ZM1VDSkdCSjuUnkjA7Cq2oDP0gue8hZuEMQdWmH1gDqVl0Bseol2zP4vrG1suiQ4FWAqCcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=HMRhqZW2; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.244.162] (254C21CD.nat.pool.telekom.hu [37.76.33.205])
+	by mail.mainlining.org (Postfix) with ESMTPSA id E83CEE4533;
+	Tue, 11 Feb 2025 22:38:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1739313486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iRA0rHhLejRTEHRY4py3J1wkqXCHBw6TYqdVvKcsqOc=;
+	b=HMRhqZW2bFbB3Q+a+V7tlkp1a8wbScExvcJGnyHov6/S0HdY6D63TUne51JjmrO5xBPZLi
+	VOGNEZ0f1Kjqbh1HPo2N+SVkt9IRVCNdMx9S7+NbxamVitYTRqV4dJFgyrronZsxowuaI4
+	WKShPEIBmKZiiTYxag2CmZ6KtJ0kzJ58o3N9hP08+ZbWtoZ6c1trHWCLmWk02wvZQhb5HR
+	ZGLMi1tY1bIgD6ssTid+XIqppegzmOlcU1YTNhtdFdE7Pq4sA+rrauDuTS+QAked6USmkD
+	RITJtymkN+HNIU4Q+zzMF4AP7dkCaJUxyuJJn31hkrcSLSFrG+2vkQKRJ3llTg==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH 00/10] Initial support of MSM8937 and Xiaomi Redmi 3S
+Date: Tue, 11 Feb 2025 23:37:44 +0100
+Message-Id: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250210-ww_mutex-kunit-convert-v1-1-972f0201f71e@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADnRq2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDI0MD3dziXAtLY3NdIyOL1DSDlGTj1GRLJaDqgqLUtMwKsEnRsbW1ABk
+ AALlZAAAA
+X-Change-ID: 20250210-msm8937-228ef0dc3ec9
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Daniil Titov <daniilt971@gmail.com>, Dang Huynh <danct12@riseup.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739313484; l=2210;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=5/bBkjGSiUyr0eyYTgTn6gVjdqK5S7jACaykAWc9lMg=;
+ b=mWTVmtj6I7bjnCl5io/j6l8G4RjSRRckn3ZyBcZbZoaR/xKWQU56znHHgQPNTJdKVM8aYV3Ve
+ o4dp4lyKed6Btxv5UAMSn2GmHfsYbmmWEBG5+TxOR6T+0bKWIYSYDMe
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Hi Tamir,
+This patch series add initial support for MSM8937 SoC
+and Xiaomi Redmi 3S (land).
 
-On Mon, Feb 10, 2025 at 10:59:12AM -0500, Tamir Duberstein wrote:
-> Convert this unit test to a KUnit test.
-> 
+The series is extending the MSM8917 gcc and pinctrl drivers
+because they are sibling SoCs.
+MSM8937 have 4 more A53 cores and have one more dsi port then
+MSM8917.
+It implements little-big architecture and uses Adreno 505.
 
-I would like to know the pros and cons between kunit tests and
-kselftests, maybe someone Cced can answer that? It'll be good to put
-these in the commit log as well.
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Barnabás Czémán (5):
+      dt-bindings: mfd: qcom,tcsr: Add compatible for MSM8937
+      dt-bindings: nvmem: Add compatible for MS8937
+      dt-bindings: iommu: qcom,iommu: Add MSM8937 IOMMU to SMMUv1 compatibles
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
+      arm64: dts: qcom: Add Xiaomi Redmi 3S
 
-Regards,
-Boqun
+Dang Huynh (2):
+      pinctrl: qcom: msm8917: Add MSM8937 wsa_reset pin
+      arm64: dts: qcom: Add initial support for MSM8937
 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> I tested this using:
-> $ tools/testing/kunit/kunit.py run --arch arm64 --make_options LLVM=1 ww_mutex
-> 
-> On success:
-> ; [12:48:16] ================== ww_mutex (5 subtests) ===================
-> ; [12:48:16] ======================= test_mutex  ========================
-> ; [12:48:16] [PASSED] flags=0
-> ; [12:48:16] [PASSED] flags=1
-> ; [12:48:16] [PASSED] flags=2
-> ; [12:48:16] [PASSED] flags=3
-> ; [12:48:16] [PASSED] flags=4
-> ; [12:48:17] [PASSED] flags=5
-> ; [12:48:17] [PASSED] flags=6
-> ; [12:48:17] [PASSED] flags=7
-> ; [12:48:17] =================== [PASSED] test_mutex ====================
-> ; [12:48:17] ========================= test_aa  =========================
-> ; [12:48:17] [PASSED] lock
-> ; [12:48:17] [PASSED] trylock
-> ; [12:48:17] ===================== [PASSED] test_aa =====================
-> ; [12:48:17] ======================== test_abba  ========================
-> ; [12:48:17] [PASSED] trylock=0,resolve=0
-> ; [12:48:17] [PASSED] trylock=1,resolve=1
-> ; [12:48:17] [PASSED] trylock=0,resolve=0
-> ; [12:48:17] [PASSED] trylock=1,resolve=1
-> ; [12:48:17] ==================== [PASSED] test_abba ====================
-> ; [12:48:17] ======================= test_cycle  ========================
-> ; [12:48:17] [PASSED] nthreads=2
-> ; [12:48:17] =================== [PASSED] test_cycle ====================
-> ; [12:48:21] ========================= stress  ==========================
-> ; [12:48:21] [PASSED] nlocks=16,nthreads_per_cpu=2,flags=1
-> ; [12:48:23] [PASSED] nlocks=16,nthreads_per_cpu=2,flags=2
-> ; [12:48:23] [PASSED] nlocks=2046,nthreads_per_cpu=3,flags=7
-> ; [12:48:23] ===================== [PASSED] stress ======================
-> ; [12:48:23] ==================== [PASSED] ww_mutex =====================
-> ; [12:48:23] ============================================================
-> ; [12:48:23] Testing complete. Ran 18 tests: passed: 18
-> 
-> On failure:
-> ---
-[...]
+Daniil Titov (3):
+      dt-bindings: clock: gcc-msm8917: Split to separate schema
+      dt-bindings: clock: Add MSM8937 Global Clock controller compatible
+      clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ .../bindings/clock/qcom,gcc-msm8909.yaml           |   10 +-
+ .../bindings/clock/qcom,gcc-msm8917.yaml           |   74 +
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
+ .../devicetree/bindings/mfd/qcom,tcsr.yaml         |    1 +
+ .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  402 ++++
+ arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2145 ++++++++++++++++++++
+ drivers/clk/qcom/Kconfig                           |    6 +-
+ drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
+ drivers/pinctrl/qcom/Kconfig.msm                   |    4 +-
+ drivers/pinctrl/qcom/pinctrl-msm8917.c             |    8 +-
+ include/dt-bindings/clock/qcom,gcc-msm8917.h       |   17 +
+ 14 files changed, 3277 insertions(+), 17 deletions(-)
+---
+base-commit: df5d6180169ae06a2eac57e33b077ad6f6252440
+change-id: 20250210-msm8937-228ef0dc3ec9
+
+Best regards,
+-- 
+Barnabás Czémán <barnabas.czeman@mainlining.org>
+
 
