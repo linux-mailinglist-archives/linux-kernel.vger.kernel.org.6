@@ -1,79 +1,217 @@
-Return-Path: <linux-kernel+bounces-512046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DAFA3334D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:21:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709AEA33353
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20872188B00E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:21:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F22103A7D52
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7780D20AF66;
-	Wed, 12 Feb 2025 23:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BF3211715;
+	Wed, 12 Feb 2025 23:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvaR9pTN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE69A1ACEA7;
-	Wed, 12 Feb 2025 23:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Myzmr8V7"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A551E3DED;
+	Wed, 12 Feb 2025 23:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739402465; cv=none; b=swRawNjRkt+f3Gc8lXujPKL0ONcoqk/AH0QxSgaasQBEU42DLTpFmeXsPfot3BlGI8evXAjkAVeOFPSy1lxUUu6hrab23YGjy3rL+OHWNm5YOF6y67xF4JcwkWgdICF1N+RlWYuDelM9k/eOJlOgO+z/hWFsHTW88q9ib9KGVfM=
+	t=1739402720; cv=none; b=s9XFfMFZYWk7zol47CZu34MZC7XtciIsj53gpF4UPWJcrwlF32b+1gtvF/OL7qi0Y/f6R0jAiYTZHJNNjkcKSsFd9zUwIXRFAnn3NwLbjgM/MrYc6+gMYZeB3yv7Ae9J98JaLd2mm5GJ8yaLaTmQ4E0RLXoDGuhj7+JHcsEw6J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739402465; c=relaxed/simple;
-	bh=kQIYPQFo29OQZbO7m5+t8bb704m2oVi1kaalXm4t/uU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SoJrE1UdOdwzv8xcOC2H8xFSbHEJJdO4FOPCHBxhPRNJQUVOiCUtHVmm866ez062uumenOQ6u4nraVnOMFhUO35Q0du7J5z6S4HRVX+Ux9GFZn/44eQuEQ4CrfMdoqPP7AWgS+0V+0l0wbNzW6D+P5CywkbcHJjmHcebyYHoPSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvaR9pTN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA2B8C4CEDF;
-	Wed, 12 Feb 2025 23:21:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739402465;
-	bh=kQIYPQFo29OQZbO7m5+t8bb704m2oVi1kaalXm4t/uU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XvaR9pTNhJzyGfqx53XYp6aTYLyBRhVAymoOPiFrsZpbdfFvFXZdEUt3tx6VXYZWZ
-	 zJTiheZy46U9hpIFgB0mKAojS0OgLaAbqhxUI0+Shv37Dm3Av+q6t206BicFQ23XxL
-	 HIrJftRf5at4HWtV6x4az3Nsq6xbQjY/qhRASeriY1XPysOWlh/56M1bT40cvqs7hv
-	 7dhwf0HFnrC8aCSt34gjLWBaafiF7ufRxISSeskkitT/BK2KFs1G9wykml6o6chv0N
-	 yA0IgnI1ymhOTF9hSqGeMtNR+vyBxUaG/FfazeLO9xOlZQvO1On5Q5BP3hbUxvH5UD
-	 u6xYTE8/r5STQ==
-Date: Wed, 12 Feb 2025 16:21:02 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
-	Riley Thomasson <riley@purestorage.com>, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
-Message-ID: <Z60s3ryl5UotleV-@kbusch-mbp>
-References: <20250212204546.3751645-1-csander@purestorage.com>
- <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
- <CADUfDZqK9+GLsRSdFVd47eZTsz863B3m16GtHc+Buiqdr7Jttg@mail.gmail.com>
- <999d55a6-b039-4a76-b0f6-3d055e91fd48@kernel.dk>
- <CADUfDZrjDF+xH1F98mMdR6brnPMARZ64yomfTYZ=5NStFM5osQ@mail.gmail.com>
+	s=arc-20240116; t=1739402720; c=relaxed/simple;
+	bh=JJOESapLO2+SNGjxaRn4lancp4HkpTbmjKN4hQ4GTgQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nI8A/NyYpdbshEjwbqYDoc8mz3lSlIFdRy+SckgbncuLijoxjEjATeoUwV9ecmtmKHifztixLhAGFwlJCkK2xHj+uI24zBM0G7a8yIaua6UetfDU2bZxxZ0hq0H+lBILK2B2HnZMnTyfwpz/I596LMyNs6B/fCrDMURRUNb/9uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Myzmr8V7; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-73-59-8-18.hsd1.wa.comcast.net [73.59.8.18])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5B743203F3C9;
+	Wed, 12 Feb 2025 15:25:17 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B743203F3C9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739402718;
+	bh=NEHC/D16UY+bXmmwgEqqnrJJWnx4kYCet5+1iUHXJyI=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Myzmr8V7LcRn8AMNURBvt16NH504Qgw/oOAzGyEu1obaVAh5xjFA7361va9Egw9B7
+	 VUSTCF83LNF45orrwJgg9NJ3cKdTWFgfN4P6KUEAKDBHKPBIf6Xsxhp6XW/fVD4eZN
+	 FuY3vHkOs3JAQFslCsQtLZzCl0xfzEosmRfi86Uw=
+Message-ID: <3263d63d-29bb-4c5d-81cb-f37eff442fb7@linux.microsoft.com>
+Date: Wed, 12 Feb 2025 15:25:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADUfDZrjDF+xH1F98mMdR6brnPMARZ64yomfTYZ=5NStFM5osQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, linux-hyperv@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, iommu@lists.linux.dev, kys@microsoft.com,
+ haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
+ decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+ arnd@arndb.de, jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mukeshrathor@microsoft.com
+Subject: Re: [PATCH] hyperv: Add CONFIG_MSHV_ROOT to gate hv_root_partition
+ checks
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+References: <1739312515-18848-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <20ba4b7c-bebb-4b1f-8c6c-4cd52a5083b5@linux.microsoft.com>
+ <f7ce3ca7-e555-418d-9c88-6df379a3ec56@linux.microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <f7ce3ca7-e555-418d-9c88-6df379a3ec56@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 03:07:30PM -0800, Caleb Sander Mateos wrote:
+On 2/12/2025 3:01 PM, Nuno Das Neves wrote:
+> On 2/11/2025 9:47 PM, Easwar Hariharan wrote:
+>> On 2/11/2025 2:21 PM, Nuno Das Neves wrote:
+>>> Introduce CONFIG_MSHV_ROOT as a tristate to enable root partition
+>>> booting and future mshv driver functionality.
+>>>
+>>> Change hv_root_partition into a function which always returns false
+>>> if CONFIG_MSHV_ROOT=n.
+>>>
+>>> Introduce hv_current_partition_type to store the type of partition
+>>> (guest, root, or other kinds in future), and hv_identify_partition_type()
+>>> to it up early in Hyper-V initialization.
+>>
+>> ...to *set* it up early?
+>>
+> Yep! Thanks for catching that
 > 
-> Yes, we completely agree. We are working on incorporating Keith's
-> patchset now. It looks like there is still an open question about
-> whether userspace will need to enforce ordering between the requests
-> (either using linked operations or waiting for completions before
-> submitting the subsequent operations).
+>>>
+>>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>>> ---
+>>> Depends on
+>>> https://lore.kernel.org/linux-hyperv/1738955002-20821-3-git-send-email-nunodasneves@linux.microsoft.com/
+>>>
+>>>  arch/arm64/hyperv/mshyperv.c       |  2 ++
+>>>  arch/x86/hyperv/hv_init.c          | 10 ++++----
+>>>  arch/x86/kernel/cpu/mshyperv.c     | 24 ++----------------
+>>>  drivers/clocksource/hyperv_timer.c |  4 +--
+>>>  drivers/hv/Kconfig                 | 12 +++++++++
+>>>  drivers/hv/Makefile                |  3 ++-
+>>>  drivers/hv/hv.c                    | 10 ++++----
+>>>  drivers/hv/hv_common.c             | 32 +++++++++++++++++++-----
+>>>  drivers/hv/vmbus_drv.c             |  2 +-
+>>>  drivers/iommu/hyperv-iommu.c       |  4 +--
+>>>  include/asm-generic/mshyperv.h     | 39 +++++++++++++++++++++++++-----
+>>>  11 files changed, 92 insertions(+), 50 deletions(-)
+>>>
+>>
+>> <snip>
+>>
+>>> +
+>>> +void hv_identify_partition_type(void)
+>>> +{
+>>> +	/*
+>>> +	 * Check partition creation and cpu management privileges
+>>> +	 *
+>>> +	 * Hyper-V should never specify running as root and as a Confidential
+>>> +	 * VM. But to protect against a compromised/malicious Hyper-V trying
+>>> +	 * to exploit root behavior to expose Confidential VM memory, ignore
+>>> +	 * the root partition setting if also a Confidential VM.
+>>> +	 */
+>>> +	if ((ms_hyperv.priv_high & HV_CREATE_PARTITIONS) &&
+>>> +	    (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) &&
+>>> +	    !(ms_hyperv.priv_high & HV_ISOLATION)) {
+>>> +		hv_current_partition_type = HV_PARTITION_TYPE_ROOT;
+>>> +		pr_info("Hyper-V: running as root partition\n");
+>>> +	} else {
+>>> +		hv_current_partition_type = HV_PARTITION_TYPE_GUEST;
+>>> +	}
+>>> +}
+>>
+>> This should assume GUEST as default and modify to ROOT if all the checks pass.
+>>
+> It is doing that, isn't it?
+> 
+> In fact the 'else' branch here is redundant and just there for additional clarity.
+> 
+> hv_current_partition_type is zeroed (so GUEST) by default, but I could make that explicit
+> if you prefer:
 
-In its current form, my series depends on you *not* using linked
-requests. I didn't think it would be a problem as it follows an existing
-pattern from the IORING_OP_FILES_UPDATE operation. That has to complete
-in its entirety before prepping any subsequent commands that reference
-the index, and using links would get the wrong results.
+Yes, explicit is better, but see comment below.
+
+> +enum hv_partition_type hv_current_partition_type = HV_PARTITION_TYPE_GUEST;
+> 
+> How does that sound? Am I misunderstanding something here?
+
+I'd suggest centralizing that in this function, instead of having it spread in 2 places.
+Since your commit message hints at future partition types, it's ideal to have this function be
+a central clearing house, which I suppose is the intent. The preferred pattern in general, and what I'm
+suggesting, is something like this:
+
+void hv_identify_partition_type(void)
+{
+	/* Assume guest role */
+	hv_current_partition_type = HV_PARTITION_TYPE_GUEST;
+
+	/*
+	 * Check partition creation and cpu management privileges
+	 *
+	 * Hyper-V should never specify running as root and as a Confidential
+	 * VM. But to protect against a compromised/malicious Hyper-V trying
+	 * to exploit root behavior to expose Confidential VM memory, ignore
+	 * the root partition setting if also a Confidential VM.
+	 */
+	if ((ms_hyperv.priv_high & HV_CREATE_PARTITIONS) &&
+	    (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) &&
+	    !(ms_hyperv.priv_high & HV_ISOLATION)) {
+		hv_current_partition_type = HV_PARTITION_TYPE_ROOT;
+		pr_info("Hyper-V: running as root partition\n");
+	}
+}
+
+> 
+>> <snip>
+>>
+>>> +static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
+>>> +{
+>>> +	return hv_result(U64_MAX);
+>>> +}
+>>
+>> Is there value in perhaps #defining hv_result_<whatever this is> as U64_MAX and returning that for documentation?
+>> For e.g. assuming this is something like EOPNOTSUPP
+>>
+>> #define HV_RESULT_NOT_SUPP U64_MAX
+>>
+>> static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
+>> { return hv_result(HV_RESULT_NOT_SUPP); }
+>>
+> The idea here was to copy what hv_do_hypercall does returning U64_MAX in case the hypercall
+> page is missing, which will hv_result() into an invalid status code. A special value for
+> that status could make this pattern clearer.
+
+Agreed, having a name for that status would be helpful, but we don't want to diverge too much from the hypervisor
+definitions, especially if we're going to change it later again anyway.
+
+ I'd want to call out that this isn't a "real"
+> Hyper-V status code somehow. HV_STATUS's are 16 bits, so it would look more like:
+> 
+> /* "LINUX" because this isn't really a status from the hypervisor.. */
+> #define HV_STATUS_LINUX_FAIL 0xFFFF
+> static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
+> { return HV_STATUS_LINUX_FAIL; }
+> 
+> Another option: there is another patch coming (which you know of) which maps hypercall
+> status codes to regular Linux errors like -EOPNOTSUPP. I could simply merge that patch
+> with this one (or make this a series for v2), and that would result in less churn.
+> (And leave alone the current use of U64_MAX in hv_do_hypercall, for now).
+> 
+
+I think that second option is a good idea. The hypervisor status should remain restricted to the functions that are
+hv_do_hypercall() or call it directly, while the rest of the code uses standard errno values. I'd suggest making
+it a series so each commit does 1 thing.
+
+Thanks,
+Easwar (he/him)
 
