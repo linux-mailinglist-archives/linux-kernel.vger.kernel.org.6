@@ -1,107 +1,138 @@
-Return-Path: <linux-kernel+bounces-510910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B47A32384
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:32:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBF1A32386
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:33:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD1B188B0E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:32:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9E7163020
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E69420896A;
-	Wed, 12 Feb 2025 10:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629032080EB;
+	Wed, 12 Feb 2025 10:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1LECqaT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apDjr8av"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697E41F9A83;
-	Wed, 12 Feb 2025 10:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3791F9A83;
+	Wed, 12 Feb 2025 10:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739356363; cv=none; b=MhBJnjz6kRo/HqSd9ibcbn213MalxJZ7B7oxqIdXFCo8FOiRwuMfyl6weXo5IzGIqVxgQnL6lpMgNsrzegnIr3UimoNeV0XtPCXZLyvuBeCnG6Dn4E6OTyBf7SWn3+1O9/kydZ9r/bAbeQJmyz5Aaozy3UBhjM5ugXZlyoZaVaY=
+	t=1739356413; cv=none; b=ABTvYvJVIykOsUvigokedw/FM4PHHW6zK3IEBNfjWD1qKsur9vnt9rR9tkEqiKXfJJqA79zXGer+ga491KaqSnoIgPhhUnS4IOFH6F879NHzkAz2MnxxJiGq5w7YGWjfCGj8sV96TfSrGlW7dk7a/b383+AO3ydzqUUP+yhX3n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739356363; c=relaxed/simple;
-	bh=sedcMzGgzynwVSx2PMNV5XsP9/FbqRF4gvQt3ENTXFc=;
+	s=arc-20240116; t=1739356413; c=relaxed/simple;
+	bh=JjXhB+/E2GYRT9cPPM8Yrb46y4WEBtQtoQZkMTTIIsU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOCauOBAP07PMpJKm1gvr/7fsDfdx+4gJapzC4rtd9Rd6xb/E2gj2iOKJy/q6+MrgTFSjNZIDGrohczwontR3x+ucw7FHu3Q5ThDQQu2u+szYWXA0UPxLaRqYqXY72uJ2D/U7/6Y60YQL4lS9UZmHPRZwcr1j7/HjRsMHvaqhwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1LECqaT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A1FBC4CEE7;
-	Wed, 12 Feb 2025 10:32:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rqoR3e9bMUA2vpedYLn13MkDciBUiYB1kIprWmTbnRt1QXkSaLYf+JKgYKQfkn7iJ35ldKNOlAup1zzJoT0Fi4zQT1CPwYZl+cF17y29j1yRFpQtZOAA2YppkSA0LSJmZud5FPaOpmAusJYcDLzr0OKgaCeQkpxsnML/txUPY+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apDjr8av; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D81C4CEDF;
+	Wed, 12 Feb 2025 10:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739356362;
-	bh=sedcMzGgzynwVSx2PMNV5XsP9/FbqRF4gvQt3ENTXFc=;
+	s=k20201202; t=1739356413;
+	bh=JjXhB+/E2GYRT9cPPM8Yrb46y4WEBtQtoQZkMTTIIsU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l1LECqaT0XrgFE/9ADMpysXjoQNy4yf3s8rfaVAsPxi5rkLSEog+21fU2BV2ts7FO
-	 Md1N5KkbjGuphksamJVPmlFGpGXjlmr/sazwEM+L9sUbhInNr8Q7esex1ICl3l53No
-	 1X8nFqEYX0BBwOwQV4Kaefx2kMPSbAwaXon+HbHiMz95BMidLFJZY3s1/tiYyaT0JA
-	 JEaGdXGwkTJhb4L6my8Rl74SRHc/bcEXQcF7ffgr+pgeVCHNUfmEmCjVgjp+MUHRoP
-	 E3UZ77odtmgcKJfkmBfvVvtiMl+hpBZDccmmC9TNP0dLBMfEQ6MzO2wUaSftts9oyv
-	 +UWWuITkV/5AA==
-Date: Wed, 12 Feb 2025 11:32:35 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Zicheng Qu <quzicheng@huawei.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, jlayton@kernel.org, axboe@kernel.dk, joel.granados@kernel.org, 
-	tglx@linutronix.de, hch@lst.de, len.brown@intel.com, pavel@ucw.cz, 
-	pengfei.xu@intel.com, rafael@kernel.org, tanghui20@huawei.com, zhangqiao22@huawei.com, 
-	judy.chenhui@huawei.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, linux-pm@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] acct: block access to kernel internal filesystems
-Message-ID: <20250212-summen-vergibt-6c6562c0b0bd@brauner>
-References: <20250211-work-acct-v1-0-1c16aecab8b3@kernel.org>
- <20250211-work-acct-v1-2-1c16aecab8b3@kernel.org>
- <20250211205418.GI1977892@ZenIV>
+	b=apDjr8avlkhnXF3iYJxdGj3L2E/iuYjYY0W+1VgglUF2zyfjUBWv/QfwhUWcaktWx
+	 f9zy5MauWALBXh1TzaiMxPgJc5g3WqukiknGRksl/qBTThVZopPV23wgS/UC91rcMT
+	 y/gN3QnR5SLCS9sxxG+8vIxJT9FZ2OwGzBnbTURQT8aczBtFfJYvJ5mkQtfx59UXvn
+	 pHMA1MLQ3ZKAPDKLMreZ7FRFiL+lASvFeKqtNzzTftT6xA9rQ1FD6csCO/Vmj0bBy4
+	 2VrLr0k5JgYH3PusfRJfAiNhPBF5evGq/gRaKsEJqxPnm6BQqdXB3FAbX5H05tKNkA
+	 Mr68rTFdKG2IA==
+Date: Wed, 12 Feb 2025 11:33:27 +0100
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Zheng Zengkai <zhengzengkai@huawei.com>
+Subject: Re: [PATCH] ACPI: GTDT: Relax sanity checking on Platform Timers
+ array count
+Message-ID: <Z6x4987CJ0zgmw3s@lpieralisi>
+References: <20250128001749.3132656-1-oliver.upton@linux.dev>
+ <Z5i2j9gFB2iyN9g4@lpieralisi>
+ <Z5lBMBY7XoFJmpGM@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211205418.GI1977892@ZenIV>
+In-Reply-To: <Z5lBMBY7XoFJmpGM@linux.dev>
 
-On Tue, Feb 11, 2025 at 08:54:18PM +0000, Al Viro wrote:
-> On Tue, Feb 11, 2025 at 06:16:00PM +0100, Christian Brauner wrote:
-> > There's no point in allowing anything kernel internal nor procfs or
-> > sysfs.
+On Tue, Jan 28, 2025 at 12:42:24PM -0800, Oliver Upton wrote:
+> Hi Lorenzo,
 > 
-> > +	/* Exclude kernel kernel internal filesystems. */
-> > +	if (file_inode(file)->i_sb->s_flags & (SB_NOUSER | SB_KERNMOUNT)) {
-> > +		kfree(acct);
-> > +		filp_close(file, NULL);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	/* Exclude procfs and sysfs. */
-> > +	if (file_inode(file)->i_sb->s_iflags & SB_I_USERNS_VISIBLE) {
-> > +		kfree(acct);
-> > +		filp_close(file, NULL);
-> > +		return -EINVAL;
-> > +	}
+> On Tue, Jan 28, 2025 at 11:50:55AM +0100, Lorenzo Pieralisi wrote:
+> > > @@ -188,13 +188,17 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+> > >  		cnt++;
+> > >  
+> > >  	if (cnt != gtdt->platform_timer_count) {
+> > > +		cnt = min(cnt, gtdt->platform_timer_count);
+> > 
+> > Thank you for reporting this.
+> > 
+> > There is something I need to understand.
+> > 
+> > What's wrong cnt (because platform_timer_valid() fails for some
+> > reason on some entries whereas before the commit we
+> > are fixing was applied we *were* parsing those entries) or
+> > gtdt->platform_timer_count ?
+> > 
+> > I *guess* the issue is the following:
+> > 
+> > gtdt->platform_timer_count reports the number of GT blocks in the
+> > GTDT not including Arm generic watchdogs, whereas cnt counts both
+> > structure types (and that's what gtdt->platform_timer_count should
+> > report too if it was correct).
 > 
-> That looks like a really weird way to test it, especially the second
-> part...
+> I've seen two different issues so far:
+> 
+>  - In one case, the offset of the platform timer array is entirely
+>    beyond the GTDT
+> 
+>  - In another, the GTDT has a timer array of length 2, but only the
+>    first structure falls within the length of the overall GTDT
+> 
+> Since cnt is the result of doing a bounds-checked walk of the platform
+> timer array, both of these issues cause the sanity check to fail.
+> 
+> > >  	if (platform_timer_count)
+> > > -		*platform_timer_count = gtdt->platform_timer_count;
+> > > +		*platform_timer_count = cnt;
+> > 
+> > I think this should be fine as things stand (but see above).
+> > 
+> > It is used in:
+> > 
+> > gtdt_sbsa_gwdt_init() - just to check if there are platform timers entries
+> > 
+> > arch_timer_mem_acpi_init() - to create a temporary array to init arch mem timer
+> > 			     entries (the array is oversized because it
+> > 			     includes watchdog entries in the count)
+> > 
+> > In both cases taking the
+> > 
+> > min(cnt, gtdt->platform_timer_count);
+> > 
+> > should work AFAICS
+> 
+> It was probably worth noting in the changelog that I did this to
+> gracefully handle the reverse of this issue where we could dereference
+> platform timer entries that are within the bounds of the GTDT but exceed
+> gtdt->platform_timer_count.
 
-SB_I_USERNS_VISIBLE has only ever applied to procfs and sysfs.
+Hi Oliver,
 
-Granted, it's main purpose is to indicate that a caller in an
-unprivileged userns might have a restricted view of sysfs/procfs already
-so mounting it again must be prevented to not reveal any overmounted
-entities (A Strong candidate for the price of least transparent cause of
-EPERMs from the kernel imho.).
+I was about to ask Catalin/Will to pick this up, don't know if you have
+time to update the changelog and send a v2 - a Link: to this thread will
+be added anyway.
 
-That flag could reasonably go and be replaced by explicit checks for
-procfs and sysfs in general because we haven't ever grown any additional
-candidates for that mess and it's unlikely that we ever will. But as
-long as we have this I don't mind using it. If it's important to you
-I'll happily change it. If you can live with the comment I added I'll
-leave it.
-
-To be perfectly blunt: Imho, this api isn't worth massaging a single
-line of VFS code which is why this isn't going to win the price of
-prettiest fix of a NULL-deref.
+Thanks,
+Lorenzo
 
