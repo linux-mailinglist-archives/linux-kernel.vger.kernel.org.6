@@ -1,166 +1,159 @@
-Return-Path: <linux-kernel+bounces-512024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE95A332DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:45:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB656A332E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95521162F8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:45:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1F31889F74
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0745E25B67C;
-	Wed, 12 Feb 2025 22:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F383B2045A1;
+	Wed, 12 Feb 2025 22:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="LUNIucAr"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wFEp7xgl"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80AD1FBC9C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BE41FF1D2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739400320; cv=none; b=SCnWKwGpdc3fqTu4bmTnLlvYznhgLcRUT0/L793yNxbfRrwFytM5759JuZ8AY5y91cYpBPYGb34DaMxiA4nCEE9bQ4J/75YoIg7ubRFT45qjghyqT5htPqoBg8XRBargJejN37olWLbVw9/YsWSNf5pJDLMcLVTPTMbFuyabxKU=
+	t=1739400653; cv=none; b=QH1fCZfky4zmrCA9qafnVBqjGJ0p337vyAFtZyjmpJfzFNncgQ22S3J4m87u/npoa90SOSR/M9kQk2mbbjiab2tF6litZhroG7KDRoPwHRU5uwKSLN4CQxbiB901I/tRlAc9HT8NjESTW9/xjXRQfwEnYLEfTONbOItHCkpfuis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739400320; c=relaxed/simple;
-	bh=TrYhj9YtDhjs2+zWIm8UW+a8Ijj+74m1trvWbyQOCSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MiIKdE7fS3jCLOJ2MWhvEykpXRm6ugzu+E+fgfQqouZaqSTnrqvG2LCIn9wcqkPDKutUv3hY8K2l+f3rfnb0TlwQ+RrdFV3qL4pH2c1KZH8uAQ2MbqOP7kTPzCh5aJ+3Rsd1B8QkBJYo2v6JIyjRL5c2fPBG8ZRuhvgvhB60zHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=LUNIucAr; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21f44e7eae4so3065385ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:45:17 -0800 (PST)
+	s=arc-20240116; t=1739400653; c=relaxed/simple;
+	bh=uXm8uKmNjS20RmDk1SMqOD3I2J1mL4UkI1TzOjxtnkQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=u9CKoO4Q3qsCqpHrcqtXpHI0Agm+Dfw/8AredMv5zhjfVBJkALFdnvTKXpP/V940EbE4nesZ9x4vFEz1cwdkcTlg+FfYaqpLHL3IHAHm700ElYHjQO14fE2TgC49A8CIz9VergWyqjOvzcJ+mvJMhOTy3IusW4UmfTZFYJow3K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wFEp7xgl; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fa1c093f12so781635a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:50:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1739400317; x=1740005117; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wxmsI4n3mNC29jNhrwky8mt9Y2e3VkJ4dixbH6NADTc=;
-        b=LUNIucArorYsj2QN+oCyqiEc2Od7dBSV+ZjPnevnjEjxbZhfKGMumO2ZzVzkBwu/Ey
-         2lInL35zv8oPciwRZn/7czzNrsBg+nlUyMwCvc8zzgRTmklGBobSmcg3iOYgZdCCf16p
-         1F3mY7XrLro9P7leQ6T6w4g4vxBH8hqzj8j+s=
+        d=google.com; s=20230601; t=1739400651; x=1740005451; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A7M7mwSZmFgIdf/jVcNpFyiHweXH73hNuBjTuWyoztw=;
+        b=wFEp7xgl0OVABYmzcnuN8JJWBU3n5vtSnjKDC5uRcaAlFC0StvVfPmaz81AgoAecA3
+         FQJ+WPi/Lk1q8pH++x8EQE2Td6E1Ug+453TTfL+cPFWHeAWeK6Qtyu5axET6rIiK9yPe
+         nmuGKLflrjoam6oEmYTVTaa3U2lPytuZxim+34czdxVr4PohG7eZPgGUC8ZkBS8Thv5p
+         /+iX6HmL663OXP1G2CuaFQRSv1/Ib1ADz70dXkhbssmnTjqvmg47ap4buTd8UHBMVZGQ
+         Ww4A5b/E8o2KD36r7bKZ7QGGnvuR+rI/77m/cKBNdVo/RKXTSpAJiNqJLJkU0qluyvJV
+         CEQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739400317; x=1740005117;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxmsI4n3mNC29jNhrwky8mt9Y2e3VkJ4dixbH6NADTc=;
-        b=TJLGFP/E4i9FxWqUReRXkr1KngGdc+kicIJtHkLNLgpPOLyDz6DtHvCNk5Z9xdPFp5
-         RhNXNgty5bK08dJCQLUQurJExCA4u1jkyGOsPbIN0Rq3WqJN1PC4oACJbexmucVJs6Ck
-         MzoSYsOzm+zqsJ3h9kXgLciXWhgJnMiC2cGSzFOm5oyBviWE8lUdP4LsKTMcB/Xh2/6N
-         SVsahTK+BCO2KtxYNjUq/reyiejJ3jC1MSjo87vb+bvauRncbl0HD5mf1E6xrPe1p5r1
-         GSNsAkGv01hqoJxzT9RZFcEBlhlhZd33Ei+f1Yzp7Lry1iGlqCoADGCIY4n2zk4JsS9K
-         bG/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWXPMTn2qJNW0Hh1xliThoBQqk3dbwkDao9E+DHVLrPAd0UIRmXhm9wAs9TVhv3zz9UOptqialF1cwd2Rc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFzOobT1S7YjEWcojszIG11IBEwOjNsrv3gAMk/Oy+KdsuxWfi
-	VQwdYX2k2K7hqFEl+jp3Gh4EbDF66OWKvTSbHKS9mGWaSd4CakxoNNuzpC7hgWo=
-X-Gm-Gg: ASbGncvkcvP93rClCTM4J61pHsCPaSmRk4nfBedKbezVwiKDlms+S8+kPjAxXVUUag1
-	A1nec2K9UeZPbQ58Ic44ESjpxQhv091mHXW9vJBxjiT58OLtyGNEHm58GUYIrFpHrHcKy8iG85b
-	nm0G3OT4SwB2/u1NWce/i4JheOVOaEYJnadcy2Eospa4Gx7Jj9irlkRI+UX8PLkfbVjdwtu7UTS
-	vIJJ7xM5oleNQHBqT6ol+O/FJLVXG/nDM5sxVkyLZ6g5Z3fPNCCbbeUr6tqGNRGQmDudAdqId8y
-	NHHogEKlLVVWkAUQKkDcSuSOct7itNZbrA7ly2W8bq86KVG1k8muihyPTA==
-X-Google-Smtp-Source: AGHT+IFUBiyhDYvXIFj3i8/1IXRfWTJGO1CJwO79pTr/N2oVci7/x1idO4rC9J9iW9gid4RM7SPniA==
-X-Received: by 2002:a17:902:f682:b0:220:cab1:810e with SMTP id d9443c01a7336-220cab18355mr25527595ad.6.1739400316978;
-        Wed, 12 Feb 2025 14:45:16 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55858d6sm541515ad.223.2025.02.12.14.45.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 14:45:16 -0800 (PST)
-Date: Wed, 12 Feb 2025 14:45:12 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Stefano Jordhani <sjordhani@gmail.com>
-Cc: netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Willem de Bruijn <willemb@google.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Jonathan Lemon <jonathan.lemon@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Mina Almasry <almasrymina@google.com>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:IO_URING" <io-uring@vger.kernel.org>,
-	"open list:XDP SOCKETS (AF_XDP)" <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: use napi_id_valid helper
-Message-ID: <Z60keJDOL_50cGbY@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Stefano Jordhani <sjordhani@gmail.com>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Willem de Bruijn <willemb@google.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Jonathan Lemon <jonathan.lemon@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Mina Almasry <almasrymina@google.com>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:IO_URING" <io-uring@vger.kernel.org>,
-	"open list:XDP SOCKETS (AF_XDP)" <bpf@vger.kernel.org>
-References: <CAEEYqun=uM-VuWZJ5puHnyp7CY06fr5kOU3hYwnOG+AydhhmNA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1739400651; x=1740005451;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A7M7mwSZmFgIdf/jVcNpFyiHweXH73hNuBjTuWyoztw=;
+        b=r+ft62rukGVnmo2Wpn/PyYywqiDy5kDmdLKqkgV6NpIro0R92ZlikuFgCONC7kxlnP
+         htzMna1eqlwxe4FYUJQnCc8sLZcqzhKNKjNhiA8L7/zKSTa+WwDhyxzgIIBod3QBK9ex
+         u348ynubL1OM7VB0m4SuSh5MvfzQkF65ZJz4XRqFVUclQFviJ8LFH38FVMlqRYPCxb2w
+         ii3ZWbbHd4MtDsQmR6ZnkFO1BMFmKYHBgi55e7L+TuNR4srVpeUzzeSqt/Jy0e93wTiP
+         rREFyLTAanvjBcAeL4g2N+e8uHATcg42nSf5ufIROIeY3AGCUAIj8YfmyEwLrc9pfePY
+         paQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgRpQa9ix7iuvaHkfJ9sG/lyhlWcbU0ifzF5njxz4I5NiEcAIRmx1GmNbgtEdjjicHB0IIpVsQKRP/bRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCSKO4ciFx5C2wlqFFgLt3jlivvlOU9lKLBPqw+y3Wpum2BTU6
+	t9IYm6L0kGxhk/3AqnqiDfbbXldEJtpbrBXijHovfjhgQ9keu130hHTIHqPh7yqVBHMC1dtOutT
+	m+A==
+X-Google-Smtp-Source: AGHT+IFVTTUUI1xszagrzillVwGnjrtr+PRt659s6KUyzEgsoiBKTxdBzhJcBaI8v4c/MK/Id5lMncRdTWE=
+X-Received: from pfblj12.prod.google.com ([2002:a05:6a00:71cc:b0:730:78e8:8e52])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2341:b0:730:97a6:f04
+ with SMTP id d2e1a72fcca58-7322c38479emr6679600b3a.7.1739400651124; Wed, 12
+ Feb 2025 14:50:51 -0800 (PST)
+Date: Wed, 12 Feb 2025 14:50:45 -0800
+In-Reply-To: <20250212221217.161222-1-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEEYqun=uM-VuWZJ5puHnyp7CY06fr5kOU3hYwnOG+AydhhmNA@mail.gmail.com>
+Mime-Version: 1.0
+References: <67689c62.050a0220.2f3838.000d.GAE@google.com> <20250212221217.161222-1-jthoughton@google.com>
+Message-ID: <Z60lxSqV1r257yW8@google.com>
+Subject: Re: [syzbot] [kvm?] WARNING in vmx_handle_exit (2)
+From: Sean Christopherson <seanjc@google.com>
+To: James Houghton <jthoughton@google.com>
+Cc: syzbot+ac0bc3a70282b4d586cc@syzkaller.appspotmail.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Feb 12, 2025 at 04:15:05PM -0500, Stefano Jordhani wrote:
-> In commit 6597e8d35851 ("netdev-genl: Elide napi_id when not present"),
-> napi_id_valid function was added. Use the helper to refactor open-coded
-> checks in the source.
+On Wed, Feb 12, 2025, James Houghton wrote:
+> Here's what I think is going on (with the C repro anyway):
 > 
-> Suggested-by: Paolo Abeni <pabeni@redhat.com>
-> Signed-off-by: Stefano Jordhani <sjordhani@gmail.com>
-> ---
->  fs/eventpoll.c            | 8 ++++----
->  include/net/busy_poll.h   | 4 ++--
->  io_uring/napi.c           | 4 ++--
->  net/core/dev.c            | 6 +++---
->  net/core/netdev-genl.c    | 2 +-
->  net/core/page_pool_user.c | 2 +-
->  net/core/sock.c           | 2 +-
->  net/xdp/xsk.c             | 2 +-
->  8 files changed, 15 insertions(+), 15 deletions(-)
+> 1. KVM_RUN a nested VM, and eventually we end up with
+>    nested_run_pending=1.
+> 2. Exit KVM_RUN with EINTR (or any reason really, but I see EINTR in
+>    repro attempts).
+> 3. KVM_SET_REGS to set rflags to 0x1ac585, which has X86_EFLAGS_VM,
+>    flipping it and setting vmx->emulation_required = true.
+> 3. KVM_RUN again. vmx->emulation_required will stop KVM from clearing
+>    nested_run_pending, and then we hit the
+>    KVM_BUG_ON(nested_run_pending) in __vmx_handle_exit().
+> 
+> So I guess the KVM_BUG_ON() is a little bit too conservative, but this
+> is nonsensical VMM behavior. So I'm not really sure what the best
+> solution is. Sean, any thoughts?
 
-Thanks for the cleanup. As far as I can tell, LGTM.
+Heh, deja vu.  This is essentially the same thing that was fixed by commit
+fc4fad79fc3d ("KVM: VMX: Reject KVM_RUN if emulation is required with pending
+exception"), just with a different WARN.
 
-Reviewed-by: Joe Damato <jdamato@fastly.com>
+This should fix it.  Checking nested_run_pending in handle_invalid_guest_state()
+is overkill, but it can't possibly do any harm, and the weirdness can be addressed
+with a comment.
+
+---
+ arch/x86/kvm/vmx/vmx.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f72835e85b6d..8c9428244cc6 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5869,11 +5869,17 @@ static int handle_nmi_window(struct kvm_vcpu *vcpu)
+ 	return 1;
+ }
+ 
+-static bool vmx_emulation_required_with_pending_exception(struct kvm_vcpu *vcpu)
++static bool vmx_unhandleable_emulation_required(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 
+-	return vmx->emulation_required && !vmx->rmode.vm86_active &&
++	if (!vmx->emulation_required)
++		return false;
++
++	if (vmx->nested.nested_run_pending)
++		return true;
++
++	return !vmx->rmode.vm86_active &&
+ 	       (kvm_is_exception_pending(vcpu) || vcpu->arch.exception.injected);
+ }
+ 
+@@ -5896,7 +5902,7 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
+ 		if (!kvm_emulate_instruction(vcpu, 0))
+ 			return 0;
+ 
+-		if (vmx_emulation_required_with_pending_exception(vcpu)) {
++		if (vmx_unhandleable_emulation_required(vcpu)) {
+ 			kvm_prepare_emulation_failure_exit(vcpu);
+ 			return 0;
+ 		}
+@@ -5920,7 +5926,7 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
+ 
+ int vmx_vcpu_pre_run(struct kvm_vcpu *vcpu)
+ {
+-	if (vmx_emulation_required_with_pending_exception(vcpu)) {
++	if (vmx_unhandleable_emulation_required(vcpu)) {
+ 		kvm_prepare_emulation_failure_exit(vcpu);
+ 		return 0;
+ 	}
+
+base-commit: b1da62b213ed5f01d7ead4d14e9d51b48b6256e4
+-- 
 
