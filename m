@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-510407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E90A31C61
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:54:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B66A31C8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:08:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C2C188754F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC87E3A696D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9454F1D79A0;
-	Wed, 12 Feb 2025 02:54:34 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED7D1D517E;
+	Wed, 12 Feb 2025 03:08:01 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDAA1CAA7F;
-	Wed, 12 Feb 2025 02:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD3CC148;
+	Wed, 12 Feb 2025 03:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739328874; cv=none; b=gXdZOR+dCZYhdTIZO8hX2arAFkJXhrWi43Z4nYmLx8LOumsALB03ODFArvTSgoKpfS+ztIZIkayP1NjITsfqx2F2v0I/kuJhxuzDegSu/b1RSaTBsKxVmenXX47xLR7xy7rTvkLKC+1R27esQwDNhnANUT9hmFQiiTa4aWGuKUw=
+	t=1739329680; cv=none; b=o108MTNVVFD10PQjgSkZMBuL6jScGae+AtOq6YRTM+KBQ+qzBsJJEeI6C7wW1sFQdSOcsghQLut37WMStV/01AkAMTj0E5l8D7E8n0ge/dUPeWrCPZyrrjE3NztcSQqV0KDwZAxoc8/GKrmTqxpz3+mH6jkW6GvNCXXEOGB2wFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739328874; c=relaxed/simple;
-	bh=5e4nqBQj9+FTs/Lw1huds1GxtSzJtquW0xbwEbljHYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nvonzPXasodvIwzjTS1HOE6OYawTzQiOwLXBmHLv9mO+RI1k1jomDju72dQRYByLcFgIQgJVB7oLzcoclsfUQ+x0ehaRu+WlgBPR5Mh12ZDT8brxdHod0enZrImRkjU3OFIj0xDcyVH1kj9YX6Gx+LKLazHh0dDMFJ0nHr3q5xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAAnVPtaDaxnZnmTDA--.32612S2;
-	Wed, 12 Feb 2025 10:54:20 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: borisp@nvidia.com,
-	john.fastabend@gmail.com,
-	kuba@kernel.org,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	pabeni@redhat.com,
-	edumazet@google.com,
-	horms@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] tls: Check return value of get_cipher_desc in fill_sg_out
-Date: Wed, 12 Feb 2025 10:53:50 +0800
-Message-ID: <20250212025351.380-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1739329680; c=relaxed/simple;
+	bh=jaIYd7cshqR/G5ETbAdsuBDEMdOgq06VwWSRJQs5sBw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZXNTphVwl8lc7JzxTfEOvr7MYUFOkg0BfXlnS3wuMot1h2JYq7B7fghI1usMyq8HiNU34zLnCASj1SZmYQ5Qo3FoydJ3dIVHKK8ExVh/TM5KkDc7YmRxTarGPW5fd4zR28mzALGWbtciOPn3+hj94BQU31Rq9TVP/+PiOSTmhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Yt3CF69hCz4f3jqb;
+	Wed, 12 Feb 2025 11:07:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id E0AF01A0BD9;
+	Wed, 12 Feb 2025 11:07:53 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP3 (Coremail) with SMTP id _Ch0CgDXKcSBEKxnbyc1Dg--.7428S2;
+	Wed, 12 Feb 2025 11:07:53 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	mhocko@kernel.org,
+	hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	davidf@vimeo.com,
+	vbabka@suse.cz,
+	mkoutny@suse.com,
+	paulmck@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	chenridong@huawei.com,
+	wangweiyang2@huawei.com
+Subject: [PATCH] mm/oom_kill: revert watchdog reset in global OOM process
+Date: Wed, 12 Feb 2025 02:57:07 +0000
+Message-Id: <20250212025707.67009-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,53 +64,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAnVPtaDaxnZnmTDA--.32612S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4fCr18tF1UXry7Cr47CFg_yoW8Jw1Upr
-	yq9FZ7K345WF15t3WUAF1kWa47Can0yay3Wr48ZryjkrsxtrWDJFy8JrWYyF45X39xAFyv
-	yryqgw1fZ3WDCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRELA2esAO8qlgAAsI
+X-CM-TRANSID:_Ch0CgDXKcSBEKxnbyc1Dg--.7428S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFy8Kry3Ww48GryrJw1fWFg_yoW8XF48pa
+	98ua4UK398J3Z8ZF47Aa4IvF17J395ZFW8JF9rK34FvwsxtFn2yrWIyr1aqryrAFWS9a4Y
+	vFs8Kr1xJrWavw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
+	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IUbmii3UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-The function get_cipher_desc() may return NULL if the cipher type is
-invalid or unsupported. In fill_sg_out(), the return value is used
-without any checks, which could lead to a NULL pointer dereference.
+From: Chen Ridong <chenridong@huawei.com>
 
-This patch adds a DEBUG_NET_WARN_ON_ONCE check to ensure that
-cipher_desc is valid and offloadable before proceeding. This prevents
-potential crashes and provides a clear warning in debug builds.
+Unlike memcg OOM, which is relatively common, global OOM events are rare
+and typically indicate that the entire system is under severe memory
+pressure. The commit ade81479c7dd ("memcg: fix soft lockup in the OOM
+process") added the touch_softlockup_watchdog in the global OOM handler to
+suppess the soft lockup issues. However, while this change can suppress
+soft lockup warnings, it does not address RCU stalls, which can still be
+detected and may cause unnecessary disturbances. Simply remove the
+modification from the global OOM handler.
 
-Fixes: 8db44ab26beb ("tls: rename tls_cipher_size_desc to tls_cipher_desc")
-Cc: stable@vger.kernel.org # 6.6+
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Fixes: ade81479c7dd ("memcg: fix soft lockup in the OOM process")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
 ---
- net/tls/tls_device_fallback.c | 1 +
- 1 file changed, 1 insertion(+)
+ mm/oom_kill.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/net/tls/tls_device_fallback.c b/net/tls/tls_device_fallback.c
-index f9e3d3d90dcf..0f93a0833ec2 100644
---- a/net/tls/tls_device_fallback.c
-+++ b/net/tls/tls_device_fallback.c
-@@ -306,6 +306,7 @@ static void fill_sg_out(struct scatterlist sg_out[3], void *buf,
- {
- 	const struct tls_cipher_desc *cipher_desc =
- 		get_cipher_desc(tls_ctx->crypto_send.info.cipher_type);
-+	DEBUG_NET_WARN_ON_ONCE(!cipher_desc || !cipher_desc->offloadable);
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 25923cfec9c6..2d8b27604ef8 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -44,7 +44,6 @@
+ #include <linux/init.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/cred.h>
+-#include <linux/nmi.h>
  
- 	sg_set_buf(&sg_out[0], dummy_buf, sync_size);
- 	sg_set_buf(&sg_out[1], nskb->data + tcp_payload_offset, payload_len);
+ #include <asm/tlb.h>
+ #include "internal.h"
+@@ -431,15 +430,10 @@ static void dump_tasks(struct oom_control *oc)
+ 		mem_cgroup_scan_tasks(oc->memcg, dump_task, oc);
+ 	else {
+ 		struct task_struct *p;
+-		int i = 0;
+ 
+ 		rcu_read_lock();
+-		for_each_process(p) {
+-			/* Avoid potential softlockup warning */
+-			if ((++i & 1023) == 0)
+-				touch_softlockup_watchdog();
++		for_each_process(p)
+ 			dump_task(p, oc);
+-		}
+ 		rcu_read_unlock();
+ 	}
+ }
 -- 
-2.42.0.windows.2
+2.34.1
 
 
