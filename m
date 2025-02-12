@@ -1,148 +1,101 @@
-Return-Path: <linux-kernel+bounces-510523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B91A31E30
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:47:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13566A31E36
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:48:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFAEE188BC71
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:47:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334183A8C9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C661C1F8F04;
-	Wed, 12 Feb 2025 05:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89931F9F64;
+	Wed, 12 Feb 2025 05:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iDrcQD4O"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F7E2BD10;
-	Wed, 12 Feb 2025 05:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="GGrDtlIq"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7027E271834;
+	Wed, 12 Feb 2025 05:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739339247; cv=none; b=MApmJOwH1HK5aSuHSodTlRKSkvz9IfF1dgEPt7oXm8wVgAv2yPPBiIeOMxTY8ifp/dIZxJkjOSiAa9gzvT6eGbSNyd6UGS3QnypU9JU6HmPNN7ZrbqvbK0ampESLpaJfMXu4MC/kGUa8x0eHnXBDsFe3TUXd1o17hhFpQVeoF30=
+	t=1739339304; cv=none; b=fgvSXwhblodBvkViud+YD+XBGC6guuWidV+6uCzWSwjT9OEr/h6qKhFW1vkxzXHkrXgBIuVwuynb39b0L/7PFGnPO4hPX9H5hZtjGTUZgkLJ0N9H96IDqnyjooP62NRlao1Z/7Bpltkfbr52+p9L0QSZv4ow3NLDV2R+4I7PDCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739339247; c=relaxed/simple;
-	bh=bKZCNONeJ8ga4R1OU5uHKgLTrt0Ti+1H6/HUJpIjnPw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=o9ptK51ZZdO31zf9IKKQ7/nXtenGBLvjXWXj0Y2oXk8hs5/tt4kieQvqGZVNXe6iQXQo4eyEdmwo9BuE51cy6lZ3DHudoOz0XFhKKCyCGWIeoAyjFcL1ISCreDzwyeDtwBcla0iTGY3ihT2fBfyx40NcxjT1tqnTYfZSrhrC7t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iDrcQD4O; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.35.166] (c-73-59-8-18.hsd1.wa.comcast.net [73.59.8.18])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 79DD82107AB7;
-	Tue, 11 Feb 2025 21:47:24 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 79DD82107AB7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739339245;
-	bh=2cvrA/jSJRuBK0OsorOMxFgUQoJApVJ8Yjx0E2P1rLo=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=iDrcQD4OZx3ePmwlps16DC5hZu4V/C9DuCTp+LaKEl3ZiloWrQfyzNMez2hcdI1uh
-	 XoGNtNuo/7DezrquDlx4sVkCzw3MiKGoeavdOOsF58V7ipziEgE5uGKn0KEVwZT/wq
-	 1mG0nWC0EPeb5nGqsafzZiwgfjhKdlAW889o53ac=
-Message-ID: <20ba4b7c-bebb-4b1f-8c6c-4cd52a5083b5@linux.microsoft.com>
-Date: Tue, 11 Feb 2025 21:47:24 -0800
+	s=arc-20240116; t=1739339304; c=relaxed/simple;
+	bh=ScOg7aiAPTeXbBcpVo1c4sXN5pW27p2xE46n2njDNLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nceUxqlknjyHRfEuuYollBFKRT/zGevhlly7jlRdp0sy6ELawYNghM4EqERYP5xXmU7vC/+Fir+VAheiRYVIQc0A7jVrNDzdc+M1/mc3xPYEkveTCIUCnBxLI03Blr4PQ6VgQzxG+cet28n1wQujbx3wLITpSBDXv3OuTNA9ySo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=GGrDtlIq; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ycHONxMQPF80DIruc10D2MrsS8Rh/RkcLxDH6/yynuo=; b=GGrDtlIqnDlQK2yOFShmfnPcnm
+	/2VVBNLE5LVEd4SqWhWtwNSOv5YjV6nw2+UAlhgUhWfNReFAGuEYPPCvOscQuTItV2k4Tw4SCwMWs
+	zmGlY5WTtV6RhPbCSIkUmmK62Iro6KZGhuzA4PmnhvkG15ohuPuwCUgiddQW/KSxHDaZSi6jz23+W
+	WkS8WoaE0mBAOqaUjmQekfJanfT60KYICI5i08EFTGo8dHundZun0fruo0ts88j9BMc7nxBokEyFC
+	xMn1tLAJRLxChqx+xeIPyiAxoLkEqxSb9q7vLaH/xgwgDgusHxbvTvKdlnilhMBx3ktFrpGfJN4O+
+	kQg5fwAg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1ti5Od-00HEQB-1D;
+	Wed, 12 Feb 2025 13:48:13 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 12 Feb 2025 13:48:12 +0800
+Date: Wed, 12 Feb 2025 13:48:12 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, Danny Tsen <dtsen@linux.ibm.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH] crypto: lib/Kconfig - Fix lib built-in failure when arch
+ is modular
+Message-ID: <Z6w2HNjkFo4jvP3s@gondor.apana.org.au>
+References: <202501230223.ikroNDr1-lkp@intel.com>
+ <Z6woN4vgdaywOZxm@gondor.apana.org.au>
+ <20250212050936.GB2010357@google.com>
+ <Z6wxp7UE9MAht4pc@gondor.apana.org.au>
+ <20250212054428.GC2010357@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- iommu@lists.linux.dev, eahariha@linux.microsoft.com, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
- decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
- arnd@arndb.de, jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mukeshrathor@microsoft.com
-Subject: Re: [PATCH] hyperv: Add CONFIG_MSHV_ROOT to gate hv_root_partition
- checks
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-References: <1739312515-18848-1-git-send-email-nunodasneves@linux.microsoft.com>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <1739312515-18848-1-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212054428.GC2010357@google.com>
 
-On 2/11/2025 2:21 PM, Nuno Das Neves wrote:
-> Introduce CONFIG_MSHV_ROOT as a tristate to enable root partition
-> booting and future mshv driver functionality.
-> 
-> Change hv_root_partition into a function which always returns false
-> if CONFIG_MSHV_ROOT=n.
-> 
-> Introduce hv_current_partition_type to store the type of partition
-> (guest, root, or other kinds in future), and hv_identify_partition_type()
-> to it up early in Hyper-V initialization.
+On Wed, Feb 12, 2025 at 05:44:28AM +0000, Eric Biggers wrote:
+>
+> The way that the arch options are selected is very much related to this issue,
+> but even disregarding that the first paragraph of my response is a review
+> comment directly on this patch about the naming it uses.
 
-...to *set* it up early?
+The CRC situation is not the same unfortunately.  For better or
+worse, the crypto API glue code is currently entangled with the
+lib/crypto arch code.  Meaning that a single Kconfig option ends
+up selecting both.
 
-> 
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
-> Depends on
-> https://lore.kernel.org/linux-hyperv/1738955002-20821-3-git-send-email-nunodasneves@linux.microsoft.com/
-> 
->  arch/arm64/hyperv/mshyperv.c       |  2 ++
->  arch/x86/hyperv/hv_init.c          | 10 ++++----
->  arch/x86/kernel/cpu/mshyperv.c     | 24 ++----------------
->  drivers/clocksource/hyperv_timer.c |  4 +--
->  drivers/hv/Kconfig                 | 12 +++++++++
->  drivers/hv/Makefile                |  3 ++-
->  drivers/hv/hv.c                    | 10 ++++----
->  drivers/hv/hv_common.c             | 32 +++++++++++++++++++-----
->  drivers/hv/vmbus_drv.c             |  2 +-
->  drivers/iommu/hyperv-iommu.c       |  4 +--
->  include/asm-generic/mshyperv.h     | 39 +++++++++++++++++++++++++-----
->  11 files changed, 92 insertions(+), 50 deletions(-)
-> 
+So I don't see how the MAY_HAVE options can map onto the ones that
+you've used for CRC.
 
-<snip>
+Sure you can clean this up and perhaps make the lib/crypto arch
+code always built-in.  But that is not something I wish to spend
+time on.
 
-> +
-> +void hv_identify_partition_type(void)
-> +{
-> +	/*
-> +	 * Check partition creation and cpu management privileges
-> +	 *
-> +	 * Hyper-V should never specify running as root and as a Confidential
-> +	 * VM. But to protect against a compromised/malicious Hyper-V trying
-> +	 * to exploit root behavior to expose Confidential VM memory, ignore
-> +	 * the root partition setting if also a Confidential VM.
-> +	 */
-> +	if ((ms_hyperv.priv_high & HV_CREATE_PARTITIONS) &&
-> +	    (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) &&
-> +	    !(ms_hyperv.priv_high & HV_ISOLATION)) {
-> +		hv_current_partition_type = HV_PARTITION_TYPE_ROOT;
-> +		pr_info("Hyper-V: running as root partition\n");
-> +	} else {
-> +		hv_current_partition_type = HV_PARTITION_TYPE_GUEST;
-> +	}
-> +}
+In any case, none of these new options are publicly exposed so
+you can rename them down the line with very little effort.
 
-This should assume GUEST as default and modify to ROOT if all the checks pass.
-
-<snip>
-
-> +static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
-> +{
-> +	return hv_result(U64_MAX);
-> +}
-
-Is there value in perhaps #defining hv_result_<whatever this is> as U64_MAX and returning that for documentation?
-For e.g. assuming this is something like EOPNOTSUPP
-
-#define HV_RESULT_NOT_SUPP U64_MAX
-
-static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
-{ return hv_result(HV_RESULT_NOT_SUPP); }
-
-<snip>
-
-Thanks,
-Easwar (he/him)
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
