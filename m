@@ -1,191 +1,173 @@
-Return-Path: <linux-kernel+bounces-511074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1233A3256D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:52:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A791DA3256F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:53:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C25E1684C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4008F3A6F0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D653E20B1ED;
-	Wed, 12 Feb 2025 11:52:25 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2685920B210;
+	Wed, 12 Feb 2025 11:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gtScDzWX"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B028F20AF8E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762D220AF93
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739361145; cv=none; b=JRdfMMnQwlKjZMMkUzS1R5ZhoxqZsRqrtTvsW+sEPYAJgJ/Zld5m6p1QXe+YXXnhsYeamJ+LS58njodKRg84pUV3nExhzqIBfNAZTyLkwswF5TyDY7wZl/hh9zoypDcr4qmEWMnAj2saIiRNvZJ2k01I9ZYW5ZKuVmLn+DUOvSs=
+	t=1739361217; cv=none; b=g/ICna7K1/Xnqnzg2Hfgo8b7yJPucrdwZ+pcDDhqkaOHryii2YcWLF5NLgbdW/9j/rBIrF+z0SGXRm2keLPF5W9HmkgLFjMEMh0+REPgJn+BUlBxF1fvDNc8z94jRMy3y6Ql+rexf3v/zUgX4wnD97AFbWkayCorNwL/KI3sDyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739361145; c=relaxed/simple;
-	bh=kWVSpqoeQhIJXhXKuwCnMmRQS0+ovdq7pd6yO5lK9F0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KShk+7Qjh48SzUZsrP7sLkygxkpQnPEuYq8ZrB/fu2gOT+IPMSdo9ICl1iFu/CjYwz2Q8X68whq2rxZZUq5mf+5CUhGmwviZt/rYX1YmTUIV+NO6onwn0ImrnLfJKgQsSpZOPHJxEoiLqBypebz7meO/xWsdpxMoG1iA02tmReg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d14bf806acso88389985ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:52:23 -0800 (PST)
+	s=arc-20240116; t=1739361217; c=relaxed/simple;
+	bh=F/Y6oZFsQtTxUrr9YYdhPnGY9CZOnlMoNkfED6ENZxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=GSlOtTasiGVBayPJXdtB12TXx1L3xLisIwkUp6RRJGPFL1q2RpQVsk5rDZu1jIinO8cwemvhK1fP9U38mzVQrWrbOSnntkUWLc2Y0lbafW/aG2j+X62nDVq/yYvli1TTXuP6KElfGwsslJm10DKaTN722gGcgojoaXHmvw11s1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gtScDzWX; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5de6ff9643fso6669732a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:53:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739361214; x=1739966014; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ve4GUfiMGd+JubWtGmw2gMxfkFox9RovPabXzAhTLMg=;
+        b=gtScDzWXT/xz8AMgZ2gUYup6p92FeeSmLTsHJswlGBRhztU1xS35hr2ggHNgDH60If
+         fCmSyoOqxnkh2GY9sqNK8IjUXtHK+pYHBxSY84v+nETr19VqB9Yc8cRrxrxQzyIysOSE
+         4Ivd60YwHsrcOxI+nGVfcXE1wJULUUInyQreL1diuAeAnHRlGQo2/OMlAIAt4VbONzay
+         FWpU/RMZId67TC8U/B8wNAUfNIHu55C7nOqsyzytkx77Sr1g1A6QLbPq+J+4ikUkMxwh
+         4bZNas/SuqBJn6Lju/0CDsIdRw2oK6saP55NYDMSKzX5FwkM1Gra9BC7e0C7ixVv+c2S
+         C3SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739361143; x=1739965943;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BxLGhq00wdOL+UyaW3IIL087bxULrFbeU4YWXL74hiw=;
-        b=oIM3Dsq2ghplrQ/I97q947Y5BFpMVftThzqUtqm+cGG10saAjBix8kyDSlZTtRD6VN
-         rHGabBxzkOPFY/Pc1kMp/evfdbbQC4lsYCy75ZwDXaci0Ij4mrqjrhpnfT9huBL+VV4A
-         Mlk65mehe78oWqizPrlIGR3mt1cPka4lJJWIjKKMpFiZPCRjAf1i9pxsCamdP5ljFLOD
-         Qf+bCBalm3kw5xtIliQovRQsOGeTJ793ajtPj92N78Q64ABcnzfPzmlV3iqQCFNBmzBj
-         jqQ+D5PE9kzDTr135aA4sNtmku6XrjehwCLfLqYMm7cYbfsr0C8nI2iQOa/A77JPTtVu
-         fs4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXW+w07VLvTGTcbYswKQ+KxCtfe/amYyIPlHdOucpEIWkYPXud3jf3YcXxBZhEOm86I4TwNBSOf82DXzWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxbLLFJOthZ+6XZj6NzeX/0NHaAzvORihdV3+ao7F6kahgSxnC
-	H/TZwEvYOjfQ4FJqvsSynEnGtiK/AsYqjbs48zo6RmWuZL121Bf6kpDn1rkLrbJqiBC+WKbLd2S
-	K8PogWUsbrlHO+Q3Utj+oFwBS6qCtiuGIdBE0b+dJ6+qS1StdANWpbgA=
-X-Google-Smtp-Source: AGHT+IH5T10ag3TdAdWLX/3uGYT0rhtfQzMzRhu11CNjuQ2mVUmi1zR7MMFxUvQQJ/o7312e0Yp21C/cLYTP6cWGRRXrvsqp12Bk
+        d=1e100.net; s=20230601; t=1739361214; x=1739966014;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ve4GUfiMGd+JubWtGmw2gMxfkFox9RovPabXzAhTLMg=;
+        b=TeeMzBqX7bQ4yHVl86EACObcqddAuneNR2BOAE80r/5v+z43lIzHuSHCmZeGepenLJ
+         txEXKX+6HCWpvJnz5S4S0dit0smj6FyrRhelmoUn5A6oQfC5v3WPDnr7GmXOX35Vjah4
+         vroB6dTO+t8psUkql+2dyDVW6hsGLN+nTRmcR2l4N2LQRMWi0iKZFHQ6OYe3Z6HB7/hB
+         KlDMArYwnUcE4lNOvDmd6jY2riawqqVPWpzYVAbCGZox1by/YfPpPLpbgP0G5Dz/EcjB
+         xpwfr05RjwiYmX0jny4OhVS1FtPWTTgFz/U+gbkGjdBRt7FfyJBkGQrMXD+/l2fxwHa8
+         XSOw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6l6O59eQtZHhTO7P9WFWw1+mUWy+pTNblLhf0FsBXDzg+E/P0fH4T+H6qA9y+Aj4cUy3xkrmJkvn28yI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUImDoVZHpYNcTDiF0wPE9qAOstOYDAIglFXtKbRkWRenyY6Ib
+	geI8GMkHoykqpMKFj5evkc1pZ+sc1lxdSB+D7IFRp6LABP5oEle3iUJX1z9uCk8=
+X-Gm-Gg: ASbGncuvHzr77KCb6xb0yRdpWklT4Is/vVhzvTTZNt7mOrbfpHP7OZWeCyCzKiPldvV
+	jYR+LyidqCreD4oWOiCDI2hwx+p0MjqyB0tBTx7cxKU/qAt0z89A4xn9ehbzn4DouNForo0A2VX
+	Oh5wcT41LGFqpcUcIeSMwWU0lHFAqOPMmcI2B8Mwf6PllhdBwlD5vBkaoWhoBCNYzbtGM6szws6
+	tCT4xrucljaTB3oEyaDehiixKHY/QBiTj7gy6C/zcNvu9sQLu9M75p0K5MPfrRgbhlDJojX0JNL
+	HIcT2h5wLqoTyDzAMtxj
+X-Google-Smtp-Source: AGHT+IEW37Ln8Rw9wZCx5hEW7SwbEBmh4Q/tDMUHGy/4+ny+FLprR4PjEwKabrQy3taBn4EwI9h/ug==
+X-Received: by 2002:a05:6402:4605:b0:5dc:8f03:bb5c with SMTP id 4fb4d7f45d1cf-5deadd9217bmr2454917a12.11.1739361213657;
+        Wed, 12 Feb 2025 03:53:33 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5de46b7b480sm10008537a12.36.2025.02.12.03.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 03:53:33 -0800 (PST)
+Date: Wed, 12 Feb 2025 14:53:30 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Tamir Duberstein <tamird@gmail.com>,
+	David Gow <davidgow@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	llvm@lists.linux.dev, Tamir Duberstein <tamird@gmail.com>
+Subject: Re: [PATCH] ww_mutex: convert self-test to KUnit
+Message-ID: <3dabe058-2308-4990-8e5d-0af1efd27431@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e2:b0:3d0:123e:fbdd with SMTP id
- e9e14a558f8ab-3d17bf37929mr23235785ab.11.1739361142802; Wed, 12 Feb 2025
- 03:52:22 -0800 (PST)
-Date: Wed, 12 Feb 2025 03:52:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ac8b76.050a0220.3d72c.0167.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_journal_keys_peek_max
-From: syzbot <syzbot+9b22c314d51cfbcd1ddc@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250210-ww_mutex-kunit-convert-v1-1-972f0201f71e@gmail.com>
 
-Hello,
+Hi Tamir,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    69b54314c975 Merge tag 'kbuild-fixes-v6.14' of git://git.k..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12213b18580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=147b7d49d83b8036
-dashboard link: https://syzkaller.appspot.com/bug?extid=9b22c314d51cfbcd1ddc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1580c2a4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17026bdf980000
+url:    https://github.com/intel-lab-lkp/linux/commits/Tamir-Duberstein/ww_mutex-convert-self-test-to-KUnit/20250211-000245
+base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
+patch link:    https://lore.kernel.org/r/20250210-ww_mutex-kunit-convert-v1-1-972f0201f71e%40gmail.com
+patch subject: [PATCH] ww_mutex: convert self-test to KUnit
+config: i386-randconfig-141-20250212 (https://download.01.org/0day-ci/archive/20250212/202502121806.CS6r741y-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4c15b70890a6/disk-69b54314.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0db5658a86a2/vmlinux-69b54314.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f6a408104f8b/bzImage-69b54314.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/1c7e787a9111/mount_0.gz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202502121806.CS6r741y-lkp@intel.com/
 
-The issue was bisected to:
+smatch warnings:
+kernel/locking/ww_mutex_kunit.c:238 test_abba_gen_params() warn: shift has higher precedence than mask
+kernel/locking/ww_mutex_kunit.c:249 test_abba() warn: shift has higher precedence than mask
 
-commit 7e5b8e00e2631ee1fa72edeb420e7393ad078ab3
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Fri Oct 25 02:12:37 2024 +0000
+vim +238 kernel/locking/ww_mutex_kunit.c
 
-    bcachefs: Implement bch2_btree_iter_prev_min()
+70207686e492fb kernel/locking/test-ww_mutex.c  Chris Wilson      2016-12-01  231  
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  232  static const void *test_abba_gen_params(const void *prev, char *desc)
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  233  {
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  234  	static unsigned int storage;
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  235  	const unsigned int *next = gen_range(&storage, 0b00, 0b11, prev);
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  236  
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  237  	if (next != NULL) {
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10 @238  		const bool trylock = *next & 0b01 >> 0;
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  239  		const bool resolve = *next & 0b10 >> 1;
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11572b18580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=13572b18580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=15572b18580000
+The shifts here are weird...  A zero shift is strange but even the 1 shift
+is odd.  The current code is equivalent to:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9b22c314d51cfbcd1ddc@syzkaller.appspotmail.com
-Fixes: 7e5b8e00e263 ("bcachefs: Implement bch2_btree_iter_prev_min()")
+	const bool resolve = *next & (0b10 >> 1);
 
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/btree_journal_iter.c:83!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5820 Comm: syz-executor138 Not tainted 6.14.0-rc1-syzkaller-00276-g69b54314c975 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-RIP: 0010:bch2_journal_keys_peek_max+0x164f/0x1660 fs/bcachefs/btree_journal_iter.c:83
-Code: 10 48 8d 5c 08 18 48 89 d8 48 c1 e8 03 42 80 3c 20 00 74 08 48 89 df e8 ff b1 e1 fd 4c 8b 33 e9 d7 fe ff ff e8 12 a0 7d fd 90 <0f> 0b e8 2a 49 ac 07 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
-RSP: 0018:ffffc90003fae620 EFLAGS: 00010293
-RAX: ffffffff8441af2e RBX: 000000000000003b RCX: ffff88807f1c1e00
-RDX: 0000000000000000 RSI: 000000000000003b RDI: ffffffffffffffff
-RBP: ffffc90003fae7e0 R08: ffffffff84419a25 R09: 0000000000000000
-R10: 00000001ffffffff R11: 2000000000000000 R12: dffffc0000000000
-R13: ffff888074e00000 R14: ffffffffffffffff R15: ffffc90003faf018
-FS:  000055558406b380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffdf737ed0 CR3: 0000000076148000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_btree_journal_peek fs/bcachefs/btree_iter.c:2137 [inline]
- btree_trans_peek_journal+0x342/0x5a0 fs/bcachefs/btree_iter.c:2166
- __bch2_btree_iter_peek fs/bcachefs/btree_iter.c:2303 [inline]
- bch2_btree_iter_peek_max+0x1502/0x6320 fs/bcachefs/btree_iter.c:2367
- bch2_btree_iter_peek_slot+0xe0a/0x27c0 fs/bcachefs/btree_iter.c:2820
- bch2_btree_iter_peek_prev_min+0x1f3/0x6390 fs/bcachefs/btree_iter.c:2606
- __bch2_resume_logged_op_finsert+0xd5c/0x3650 fs/bcachefs/io_misc.c:431
- bch2_fcollapse_finsert+0x257/0x380 fs/bcachefs/io_misc.c:535
- bchfs_fcollapse_finsert+0x3a8/0x630 fs/bcachefs/fs-io.c:594
- bch2_fallocate_dispatch+0x3c9/0x540
- vfs_fallocate+0x623/0x7a0 fs/open.c:338
- ksys_fallocate fs/open.c:362 [inline]
- __do_sys_fallocate fs/open.c:367 [inline]
- __se_sys_fallocate fs/open.c:365 [inline]
- __x64_sys_fallocate+0xbc/0x110 fs/open.c:365
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff945c437d9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff0aa22888 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
-RAX: ffffffffffffffda RBX: 00007fff0aa22890 RCX: 00007ff945c437d9
-RDX: 0000000000000000 RSI: 0000000000000020 RDI: 0000000000000004
-RBP: 0000400000000000 R08: 6c616b7a79732f2e R09: 6c616b7a79732f2e
-R10: 0000000007000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff0aa22a78 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_journal_keys_peek_max+0x164f/0x1660 fs/bcachefs/btree_journal_iter.c:83
-Code: 10 48 8d 5c 08 18 48 89 d8 48 c1 e8 03 42 80 3c 20 00 74 08 48 89 df e8 ff b1 e1 fd 4c 8b 33 e9 d7 fe ff ff e8 12 a0 7d fd 90 <0f> 0b e8 2a 49 ac 07 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
-RSP: 0018:ffffc90003fae620 EFLAGS: 00010293
-RAX: ffffffff8441af2e RBX: 000000000000003b RCX: ffff88807f1c1e00
-RDX: 0000000000000000 RSI: 000000000000003b RDI: ffffffffffffffff
-RBP: ffffc90003fae7e0 R08: ffffffff84419a25 R09: 0000000000000000
-R10: 00000001ffffffff R11: 2000000000000000 R12: dffffc0000000000
-R13: ffff888074e00000 R14: ffffffffffffffff R15: ffffc90003faf018
-FS:  000055558406b380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005572817bb0e8 CR3: 0000000076148000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+But changing it to:
 
+	const bool resolve = (*next & 0b10) >> 1;
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Doesn't make sense either...  Probably that makes less sense actually.
+What are you trying to communicate with this code?
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  240  
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  241  		snprintf(desc, KUNIT_PARAM_DESC_SIZE, "trylock=%d,resolve=%d", trylock, resolve);
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  242  	}
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  243  	return next;
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  244  }
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  245  
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  246  static void test_abba(struct kunit *test)
+70207686e492fb kernel/locking/test-ww_mutex.c  Chris Wilson      2016-12-01  247  {
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  248  	const unsigned int *param = test->param_value;
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10 @249  	const bool trylock = *param & 0b01 >> 0;
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  250  	const bool resolve = *param & 0b10 >> 1;
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Same.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+70207686e492fb kernel/locking/test-ww_mutex.c  Chris Wilson      2016-12-01  251  	struct test_abba abba;
+70207686e492fb kernel/locking/test-ww_mutex.c  Chris Wilson      2016-12-01  252  	struct ww_acquire_ctx ctx;
+daf92a37bd1117 kernel/locking/ww_mutex_kunit.c Tamir Duberstein  2025-02-10  253  	int err;
+70207686e492fb kernel/locking/test-ww_mutex.c  Chris Wilson      2016-12-01  254  
+70207686e492fb kernel/locking/test-ww_mutex.c  Chris Wilson      2016-12-01  255  	ww_mutex_init(&abba.a_mutex, &ww_class);
+70207686e492fb kernel/locking/test-ww_mutex.c  Chris Wilson      2016-12-01  256  	ww_mutex_init(&abba.b_mutex, &ww_class);
+70207686e492fb kernel/locking/test-ww_mutex.c  Chris Wilson      2016-12-01  257  	INIT_WORK_ONSTACK(&abba.work, test_abba_work);
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
