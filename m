@@ -1,73 +1,90 @@
-Return-Path: <linux-kernel+bounces-510303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0E7A31AEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:06:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E81A31AF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7500B3A8A3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:06:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD540167DF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63E51CAA4;
-	Wed, 12 Feb 2025 01:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E9E288CC;
+	Wed, 12 Feb 2025 01:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hfcBKe/C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhxXU12M"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2827D271811;
-	Wed, 12 Feb 2025 01:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96A8271811;
+	Wed, 12 Feb 2025 01:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739322386; cv=none; b=D15xJ+C4ydskHVB7T2k1woTEyPoe9TUPkAPDaRRBqRpKy0YMJL9fO7fFLRkDndQt5jK8IqbORMVFlIg2ZFpulzUpTG0FbpC5bN6p6M3Y7jXE/bR1Y2dUts+g3O0S+VcRrMSPgkcLrlQXFUmGTsZpzgeuu3zTLQDPHgHSVvtf7zk=
+	t=1739322501; cv=none; b=mGm7JwiZL+MzY9HY6HZlr/fXaSBJrWfTPi4aEgTqQxWzOBDdTBJcrug0c7Kmqhu6xL+cPgKPGxYFBYz2vJO8p21c7x4SntlMKWgRw1d3MPRZ7UgcGjxsuoy8eXhxLGhEQLlgWEXWuMnHtvy99NBR1XUsqITjXjWvKRkap65Wxes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739322386; c=relaxed/simple;
-	bh=lPLtbO08wzB1FZuAkE1t6UltO8e/hBN62YEOAPcWXpY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=h+DJtsjFyERBEuN//nTvvwuoBKG87WwQbHmXWd6MJcQ8+1/B9jVzwJOEzjMpO6k+vtNv+lS/TdMuJV+ViqHYRsguulCoLunL7sOiDurrLE3nQuKagCETvy2CfzR+BXC75seL6x3/8jnLp4AWn+aQTkoREh1Oxx8R4W9qfUAA14E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hfcBKe/C; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739322385; x=1770858385;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=lPLtbO08wzB1FZuAkE1t6UltO8e/hBN62YEOAPcWXpY=;
-  b=hfcBKe/CY3cHrs3D0kE37KsvP/Fp9eUVxyxVoLnUu0A3dBGbSXDVQdyF
-   PNpL262CU399KzWLGPufIUdv+WS9IRxCWZGdT1H158oX12K6pbIQBRuZi
-   s26cdRZgdrjcp6FW2Z+IrEWVZ94JtjZrTwbJL/iLJWsi7VLeJHhWfgb59
-   mvOFIipqWmnNmMp5bGFw/zDpceGRiQubdsyqrg9422qpbOwTpp1Gr5gVb
-   w32XXAVZO6ipUEt+9gzxId2aPEc3geVSRIx9SpwCKwcMwNoZJjLSMVTNx
-   gzfIDFOqGkDkaiT7fPQdhGXmKksexCTOk3sOJiHBrrBifD0q0w459u2Xd
-   g==;
-X-CSE-ConnectionGUID: 3eBHkES+RaOR9FF0ma1P7w==
-X-CSE-MsgGUID: gqSQhn18StSHgKX1HZoazA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50187930"
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="50187930"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 17:06:24 -0800
-X-CSE-ConnectionGUID: j4ShramuSlaO3SHJzaSjsw==
-X-CSE-MsgGUID: genqVSeeToGdVVdxvmP+nQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="149853272"
-Received: from iweiny-desk3.amr.corp.intel.com (HELO xpardee-desk.lan) ([10.124.222.126])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 17:06:23 -0800
-From: Xi Pardee <xi.pardee@linux.intel.com>
-To: xi.pardee@linux.intel.com,
-	irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v2] platform/x86:intel/pmc: Move arch specific action to init function
-Date: Tue, 11 Feb 2025 17:05:56 -0800
-Message-ID: <20250212010621.1003663-1-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1739322501; c=relaxed/simple;
+	bh=20Ap9aAZ+Ch4c8R+BNmFdvqVW+TRYONxjh68ki4MqOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QnIjCr3yQ6iPBPJtLtfqptzcFXWKVGpIqYhSEBLxynJfuRVlWXElFiJXg/8hhPeM4ewB1jC+IEBU/77t45H6r0nHPhtVfVR0WCQkoDKkcLV3CkREBOH2g2XuU0PBpDQMs3ZQcglola+Xva08TDR+k6pzRhSx/eY1VlETzw5vGeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhxXU12M; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2f441791e40so8573241a91.3;
+        Tue, 11 Feb 2025 17:08:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739322498; x=1739927298; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a1TRAUpwttsFmuI80sWwjqr4fHIXT9YMFZZ9UQxehD0=;
+        b=NhxXU12Mi0YMRUT9b7MGng0mNm2mZ5ssiYREDHTYzW9Qe/xIPZ/eNUrss5mdvmpfJt
+         AyNsNYuTzgWJV6444V5rGrdkf7o/NBR8Gm9tSYq2lVb+r29LkgUjXW4IXLuVL6swljA8
+         dDD1qARbyuAM+q9NB320OBkOfyb5mQupV/3GgwHNQceigcCWovIZsvbQQ/2az+RiXnJr
+         AJwqD9axSW0xb5FibsUSmmcPawvvn/oJZbY8FSrIn1yql2glyojh5Skvw+HKV+Xey0TN
+         k2MRH2neTUrsiaC2nJmOaGQonoGidHaL5yUswr6lqbBmp/vBHD35Fr/KToMphxcOs/Df
+         7Piw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739322498; x=1739927298;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a1TRAUpwttsFmuI80sWwjqr4fHIXT9YMFZZ9UQxehD0=;
+        b=NjafsMgCU15LIvDkVxb/zbWKY06nQE3FpdB5JHw7Cevu8z6qC7T1pQZ/mtOy/2Vkic
+         oYk1ufExK15Ft6PZdRje2/4KvXZXND2dqsv+JUOH8Lrccuvb5pAD/cXHQu54qJjcNznM
+         HuVG4SY/26ycxz2rB3JbUMGCyEItJjh25m052tN8kB2nWll6OVLqp4H1Ts7LYFgYFAR2
+         C+eD72Fklo4fEIhcbWY7S/0JcTYaCl0DqJ1CpM7T5MPC/ejv2mzVbzCfYp5hIDHSQEFZ
+         S8E8rpW0e44D5JtqVfd7HRcMHxctcuV2cskoP3a5QSzyUW8rKM2Bb8dbZKSxTTBOjpZo
+         nc3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUa4MiOhoZrbVDDEwC2pFFz0l/LFjTfdV7HNiOHh8hTRgV/gxNKl9z4/7g3vCkCto6PDQH41slNZl6s@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOx/OGQmoyEPggp51w7qYKPmp3UhBgAsSScxC0xpojjW/q+PW5
+	U5hydZur85xu4GQo5Fk+ro2nWcV5KAGmney4u/awROC18wNJsJ9Z3WW1G83C
+X-Gm-Gg: ASbGncuLrqM8+6L2YmoR/D4JxpMDfAgOPwrBLdjDjQJwo//v6YhraVs0Oc3zKUB92jH
+	bvafemuFDaaYMEVyFgpI8jsfIC54xG6hGwTkHLfzBdldmZi4yqsHDjVGAyCK6pUG7RQAXpNIz3i
+	G44kMtWRhir9RC1JlUMHfzvk9zvXUugrcyl5d1Lch5M6jpfS4lR3SfuUP4T+bENAe8bp41nB1tM
+	9tEKItg10OR+2IUhveOGYfHrcD8HcFgdoJZBW2IAYIMtQcALSyvVubW/jJ1uoJPI97/msKIKHxG
+	OomByJcAWDIQxrqbkB9yFwQhmPZzI3MCBmbMug==
+X-Google-Smtp-Source: AGHT+IF4TMKc6KT3C/K020xhd/HHg4qxnpumAIl79CQqU3rKDGbruejw3iY7NkRcKY0oF93E8plG7g==
+X-Received: by 2002:a17:90a:d645:b0:2ea:a9ac:eee1 with SMTP id 98e67ed59e1d1-2fbf5bf731dmr2170484a91.10.1739322497832;
+        Tue, 11 Feb 2025 17:08:17 -0800 (PST)
+Received: from localhost.localdomain ([66.119.214.127])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98d3d16sm190408a91.13.2025.02.11.17.08.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 17:08:17 -0800 (PST)
+From: "James A. MacInnes" <james.a.macinnes@gmail.com>
+To: linux-arm-msm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	andersson@kernel.org,
+	konradybcio@kernel.org,
+	quic_wcheng@quicinc.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	"James A. MacInnes" <james.a.macinnes@gmail.com>
+Subject: [PATCH 0/3] Add PMI8998 VBUS Regulator Support v2
+Date: Tue, 11 Feb 2025 17:07:41 -0800
+Message-ID: <20250212010744.2554574-1-james.a.macinnes@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -77,87 +94,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move arch specific action from core.c to the init() function of spt.c.
+Greetings,
 
-Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
----
-v2->v1:
-- Change the name of pmc_pci_ids to spt_pmc_pci_id
+Thank you all for your feedback. I have integrated your recommendations
+into this revised patch series (v2); please disregard the previous thread.
 
- drivers/platform/x86/intel/pmc/core.c | 13 -------------
- drivers/platform/x86/intel/pmc/spt.c  | 21 +++++++++++++++++++++
- 2 files changed, 21 insertions(+), 13 deletions(-)
+Summary of Changes:
+- Patch 1/3: Updates the Device Tree Schema bindings to include
+  "qcom,pmi8998-vbus-reg" for PMI8998 support.
+- Patch 2/3: Extends the Qualcomm USB VBUS regulator driver to support
+  PMI8998, dynamically configuring the regulator based on the PMIC type.
+- Patch 3/3: Adds the VBUS regulator node to pmi8998.dtsi, enabling
+  USB Type-C VBUS support.
 
-diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index d819478fea29a..bd90d38e62e94 100644
---- a/drivers/platform/x86/intel/pmc/core.c
-+++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -1418,11 +1418,6 @@ static const struct x86_cpu_id intel_pmc_core_ids[] = {
- 
- MODULE_DEVICE_TABLE(x86cpu, intel_pmc_core_ids);
- 
--static const struct pci_device_id pmc_pci_ids[] = {
--	{ PCI_VDEVICE(INTEL, SPT_PMC_PCI_DEVICE_ID) },
--	{ }
--};
--
- /*
-  * This quirk can be used on those platforms where
-  * the platform BIOS enforces 24Mhz crystal to shutdown
-@@ -1533,14 +1528,6 @@ static int pmc_core_probe(struct platform_device *pdev)
- 	if (!pmcdev->pkgc_res_cnt)
- 		return -ENOMEM;
- 
--	/*
--	 * Coffee Lake has CPU ID of Kaby Lake and Cannon Lake PCH. So here
--	 * Sunrisepoint PCH regmap can't be used. Use Cannon Lake PCH regmap
--	 * in this case.
--	 */
--	if (pmc_dev_info == &spt_pmc_dev && !pci_dev_present(pmc_pci_ids))
--		pmc_dev_info = &cnp_pmc_dev;
--
- 	mutex_init(&pmcdev->lock);
- 
- 	if (pmc_dev_info->init)
-diff --git a/drivers/platform/x86/intel/pmc/spt.c b/drivers/platform/x86/intel/pmc/spt.c
-index 956b2ec1c7510..440594acac6cf 100644
---- a/drivers/platform/x86/intel/pmc/spt.c
-+++ b/drivers/platform/x86/intel/pmc/spt.c
-@@ -8,6 +8,8 @@
-  *
-  */
- 
-+#include <linux/pci.h>
-+
- #include "core.h"
- 
- const struct pmc_bit_map spt_pll_map[] = {
-@@ -134,6 +136,25 @@ const struct pmc_reg_map spt_reg_map = {
- 	.pm_vric1_offset = SPT_PMC_VRIC1_OFFSET,
- };
- 
-+static const struct pci_device_id spt_pmc_pci_id[] = {
-+	{ PCI_VDEVICE(INTEL, SPT_PMC_PCI_DEVICE_ID) },
-+	{ }
-+};
-+
-+static int spt_core_init(struct pmc_dev *pmcdev, struct pmc_dev_info *pmc_dev_info)
-+{
-+	/*
-+	 * Coffee Lake has CPU ID of Kaby Lake and Cannon Lake PCH. So here
-+	 * Sunrisepoint PCH regmap can't be used. Use Cannon Lake PCH regmap
-+	 * in this case.
-+	 */
-+	if (!pci_dev_present(spt_pmc_pci_id))
-+		return generic_core_init(pmcdev, &cnp_pmc_dev);
-+
-+	return generic_core_init(pmcdev, pmc_dev_info);
-+}
-+
- struct pmc_dev_info spt_pmc_dev = {
- 	.map = &spt_reg_map,
-+	.init = spt_core_init,
- };
+Motivation:
+To enable VBUS operation on the SDM845 platform PMI8998 PMIC.
+
+Kernel Version & Testing:
+- These patches were developed and tested on Linux 6.13.
+- Attempting to run Linux 6.14-rc2 on our Lantronix SOM resulted in a
+  hard crash, making it unsuitable for validation.
+- Validation was performed using a modified device tree, confirming proper
+  regulator configuration.
+- No regressions were observed on existing PMIC configurations.
+
+Next Steps:
+If there are any suggestions or required changes, please let me know.
+I will be happy to revise and address any concerns.
+
+Thanks again,
+James A. MacInnes
+james.a.macinnes@gmail.com
+
+
+James A. MacInnes (3):
+  regulator: qcom_usb_vbus: Update DTS binding for PMI8998 support
+  regulator: qcom_usb_vbus: Add support for PMI8998 VBUS
+  arm64: boot: dts: pmi8998.dtsi: Add VBUS regulator node
+
+ .../regulator/qcom,usb-vbus-regulator.yaml    |  1 +
+ arch/arm64/boot/dts/qcom/pmi8998.dtsi         |  6 +++
+ drivers/regulator/qcom_usb_vbus-regulator.c   | 38 ++++++++++++++++---
+ 3 files changed, 40 insertions(+), 5 deletions(-)
+
 -- 
 2.43.0
 
