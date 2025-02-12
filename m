@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-511301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CE1A32916
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:49:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0682A3291B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 307123A7275
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:49:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D2AC1880A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD0320FAB7;
-	Wed, 12 Feb 2025 14:49:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B8620FAB7;
+	Wed, 12 Feb 2025 14:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rZaDLPF6"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF9D1CBEAA;
-	Wed, 12 Feb 2025 14:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5B62C859
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739371752; cv=none; b=XoVFtHSfK5N3YY0adf1CpDaOW74J28/PaM3NiXt00RTCa0G5/0C0jcrDH8mL52KwKz9iUNd/SJJN4Ox3AZ5dSgTFsyzLExZnrmEbTtVigDHwkpI7NLSeO1UYefFFOEKZmRNQR2J+IH72PXTVByXd3VYFvwO+YrLwdXqFzA9U54k=
+	t=1739371843; cv=none; b=sqkmxt7ZzAmAkkol1aZtJxPbpL9VInoELhfi1y5iU3zQHgxFKO/jfiFzKjRuBevK7iVZPD+Omtc5qr17wWBDhDvR2O2ItDPdzE8QzwOXN02A0+E/KTr4ojb8YNdsx9QART5aynVuvsuyXCj6kFoRHz7q1ajiTpbcqZK48pwfRxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739371752; c=relaxed/simple;
-	bh=1SeO8cxzH0/mw6NOXalw/fJw/wCSMCqyfPlFj00AO68=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gondszwyXG6hhzSiao5ZPD3uJ9NI3QGF2InjZvcaXIhjpBMq729VdXV3ni71o4rPsDh0hpt5IcQ6+sAa1Fe9a5mJze5eCkxgJ2NFy7EIHLmHBgaZK4enrv7ojUngjo8kHf6WgC18qfiobi8xoJtVmyw0d4DLItSiBjmvAd1g+xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2481C4CEDF;
-	Wed, 12 Feb 2025 14:49:10 +0000 (UTC)
-Date: Wed, 12 Feb 2025 09:49:17 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org, Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will
- Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Waiman Long
- <longman@redhat.com>, Guenter Roeck <linux@roeck-us.net>, Clark Williams
- <clrkwllms@kernel.org>
-Subject: Re: [PATCH 1/2] lockdep: Don't disable interrupts on RT in
- disable_irq_nosync_lockdep.*()
-Message-ID: <20250212094917.1ca8cc13@gandalf.local.home>
-In-Reply-To: <20250212103619.2560503-2-bigeasy@linutronix.de>
-References: <760e34f9-6034-40e0-82a5-ee9becd24438@roeck-us.net>
-	<20250212103619.2560503-1-bigeasy@linutronix.de>
-	<20250212103619.2560503-2-bigeasy@linutronix.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739371843; c=relaxed/simple;
+	bh=x12Rg1O/ihpcTLOBYbsro6dbc7IHgCIMhbS6FEZokI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MqYx8AYYKVK4V2cOdi5W8z1z3hz1mW4sfr88EpTSRQlKgo5BmSTx8jHeZCjfbThn3sO5iaV9+Ga4Abi+LTyGWKYB8Ox1pb75RM8nhYs4gBnGaKmqo0X7p3Z5kHvYCq9PMLhj2LkoH4/DZsrIVFEM3mjnerGC8rmluWQRaM4iQks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rZaDLPF6; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-85521efa9b5so89193539f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:50:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739371840; x=1739976640; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vijM9YkyBX7o+7ABNYM8odsbFppJ4LRUKbiEnaBtTGU=;
+        b=rZaDLPF6CjldkuGsnJEUIrVNJ3kWv2vZrM/DAa/K4ryBFpUusRjEmHLjzFBv98YFiy
+         03jJwt28WKJQShAFkXSU3PLMtiO9xteDN765ALSSCRemNO8Gak7XM2gQQZqb7Qz7nBmp
+         J4os1b/YhwPOrcrJTflwPE35PQQlK9Qlr5Dpfd0u/rGIaDSnxVxI8JU3qTAnGj5H7cBJ
+         VWOBro1Zxd/dw8WPLakpWBpSy0bENIjYIov1hiMNukMW/GCUahC/dgMqSihv8yQygGOd
+         /L3xAJngb4PG2iV1Hnnpk/VQG1bfZ99hGMzWx3gFZWLHixyZ7n/BShR1JwEqPHrOSSWW
+         8Vrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739371840; x=1739976640;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vijM9YkyBX7o+7ABNYM8odsbFppJ4LRUKbiEnaBtTGU=;
+        b=qataV9du20nj31xrFRixYHsT3YSjFXCNhe9UJXeH6C2uur8CwGhS06qLnN/eDtDxsJ
+         HrZcUjKzc4TRVDr96A62t8qFwuZxz4+s1KDH6FoOVB6v4MgfPCTJk2NMHO74zy2P8vlo
+         bJ3mskZKZXsyY/xnFSXU/r3pAoJmAIpaSNF4Vx/397SGUjz2zEW4Mj9bXQPXbRuDuU3A
+         yLNzz76PXpNDlWeXAKRhu8QmOhHLqPXWcqhJpTG5WVq/oQY3ILczBbOUpr5PzSjWXlaw
+         8SwYuikpP4kVnbu1AFNsiRO/JvNRjIp/ZfsMiS2UOX32tys+T/K+AkLtq+tVBQvq/oLZ
+         RjsA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7S+tRu46V5p0sl6NyyZmihTrBL9o1N+VeIG2tlibRCEW4WhxxYL390WO2pk1qC2yzm1Mbzs+pKmOq4CY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu5Bh7VuUO+ctjgkxKfIvsLguZhi7iKbnM+DQMyuQG8hHpWHsw
+	zDurH7fCPf0UFKsTQnplm5o7uFZ/zKG3piDA40xRPLmbLe4IwQ8MMtPvDAGcyyM=
+X-Gm-Gg: ASbGncvEiN211n7uOK4r4jd6n2tIN5jTxnewbNl7bkS3JKhhD30oeSi9ZLrIOSGr3EG
+	BKVJPxMgXhT3bDEGy/FmCblJfoxYNV4CFgCpf1Im4/gk6LYULmNCi1lDzgbkCH45u4OqZcgIvIj
+	tobM/avCkCC+q2h74hzRd5X2UgMhXECGgmqFyl+ZwUtbBj424i+GOmm7YxbfOj7ek7mrb2ord1j
+	krrjlIy0dmvcVeK1FoHPfDC/TLwn25mXqK5YrYdEi1/dG/9NemRcAoaeZllE8XjFggQYXaT92YH
+	bb1JtpVx5tw=
+X-Google-Smtp-Source: AGHT+IGUuXpTLMKIPyPN/4T1RaOT1aBqMghOF8MrGl17TV+ltTnO6Y+6WB4gfB3pJToSKmKJ0lSyEw==
+X-Received: by 2002:a05:6602:1543:b0:855:3ed8:ee8b with SMTP id ca18e2360f4ac-85555c7a306mr338951639f.5.1739371840578;
+        Wed, 12 Feb 2025 06:50:40 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ed0e1746fasm845136173.89.2025.02.12.06.50.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 06:50:39 -0800 (PST)
+Message-ID: <aa209ef0-bd9e-4e7a-8667-1be40ccbe28d@kernel.dk>
+Date: Wed, 12 Feb 2025 07:50:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: pass struct io_tw_state by value
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250211214539.3378714-1-csander@purestorage.com>
+ <8c21acb0-aee5-4628-a267-a4edc85616c4@kernel.dk>
+ <b478f8fd-d43b-429c-aa6c-1b94951421ab@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <b478f8fd-d43b-429c-aa6c-1b94951421ab@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 12 Feb 2025 11:36:18 +0100
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-
-> disable_irq_nosync_lockdep() disables interrupts with lockdep enabled to
-> avoid false positive reports by lockdep that a certain lock has not been
-> acquired with disabled interrupts. The user of this macros expects that
-> a lock can be acquried without disabling interrupts because the IRQ line
-> triggering the interrupt is disabled.
+On 2/12/25 7:49 AM, Pavel Begunkov wrote:
+> On 2/12/25 14:33, Jens Axboe wrote:
+>> On 2/11/25 2:45 PM, Caleb Sander Mateos wrote:
+>>> 8e5b3b89ecaf ("io_uring: remove struct io_tw_state::locked") removed the
+>>> only field of io_tw_state but kept it as a task work callback argument
+>>> to "forc[e] users not to invoke them carelessly out of a wrong context".
+>>> Passing the struct io_tw_state * argument adds a few instructions to all
+>>> callers that can't inline the functions and see the argument is unused.
+>>>
+>>> So pass struct io_tw_state by value instead. Since it's a 0-sized value,
+>>> it can be passed without any instructions needed to initialize it.
+>>>
+>>> Also add a comment to struct io_tw_state to explain its purpose.
+>>
+>> This is nice, reduces the code generated. It'll conflict with the
+>> fix that Pavel posted, but I can just mangle this one once I get
+>> the 6.15 branch rebased on top of -rc3. No need to send a v2.
 > 
-> This triggers a warning on PREEMPT_RT because after
-> disable_irq_nosync_lockdep.*() the following spinlock_t now is acquired
-> with disabled interrupts.
-> 
-> On PREEMPT_RT there is no difference between spin_lock() and
-> spin_lock_irq() so avoiding disabling interrupts in this case works for
-> the two remaining callers as of today.
-> 
-> Don't disable interrupts on PREEMPT_RT in disable_irq_nosync_lockdep.*().
-> 
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/760e34f9-6034-40e0-82a5-ee9becd24438@roeck-us.net
-> Fixes: e8106b941ceab ("[PATCH] lockdep: core, add enable/disable_irq_irqsave/irqrestore() APIs")
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  include/linux/interrupt.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> index 8cd9327e4e78d..a1b1be9bf73b2 100644
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -448,7 +448,7 @@ irq_calc_affinity_vectors(unsigned int minvec, unsigned int maxvec,
->  static inline void disable_irq_nosync_lockdep(unsigned int irq)
->  {
->  	disable_irq_nosync(irq);
-> -#ifdef CONFIG_LOCKDEP
-> +#if defined(CONFIG_LOCKDEP) && !defined(CONFIG_PREEMPT_RT)
+> Hold on this one, we're better to adjust the patch, I'll
+> follow up later today.
 
-Hmm, should you also add a:
+Sure no problem, it'll be early next week on the 6.15 front anyway,
+nothing is being committed right now.
 
-Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-?
+-- 
+Jens Axboe
 
-  https://lore.kernel.org/all/20250211182113.4875751a@gandalf.local.home/
-
-    ;-)
-
--- Steve
-
->  	local_irq_disable();
->  #endif
->  }
 
