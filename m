@@ -1,113 +1,178 @@
-Return-Path: <linux-kernel+bounces-511832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F4FA3304C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:01:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E754A33051
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:01:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EBE33AA1A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A9F81649B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9305B200118;
-	Wed, 12 Feb 2025 20:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8733D20102F;
+	Wed, 12 Feb 2025 20:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kR+uY2im"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/SYAqBl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E441FF601
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA9E201017;
+	Wed, 12 Feb 2025 20:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739390457; cv=none; b=W5sdcxf5jT206XDwGBBlQOdbzAsnD0G8S+koYVwef8amXX7WYM9BJQOZTd8xOK7rwbmJZUow2nqHdjl3WNbTiF8uzOzo84LdK7BFmHYLequkMx0+gKEcLrVY3z53lgrco/ntqO7yqRetitFcD5eAQCDDqLrTC682MIlSTJiaHSE=
+	t=1739390492; cv=none; b=aZ3F+CU/vH28peLkzniN0ogBoge6DMSNG/jhTQdOeXpTjOmSUeU0DSGrPdfhlV4LG88JV0UEYUXsfZE72HNuoZR21Ae77f3cl11lVzd8GyrK88RXq8GPKaNsnQhWM1N/cI/KEPREw32Gq2gyKEo4P3qUuY2oYCIWBpdPDf2HiUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739390457; c=relaxed/simple;
-	bh=0pG+JRaVXBqhNYTI0BMGYl5wF4aFO16HNm2CNHXCsRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EA0NK9s2ChHH6W2ifwxhZi+A0ewfp1b/rSK7pNKfwr+Nm4/7n40alTbK9gmt8Ny7+RmaI4sRwiOcfukhc+XZeZcJ5eIcJ7g56anNCNitDfx6bUbkF4nuiV9BN1WL6Ke1qhwq10WU+Cjzp2eN0gEwYWZ2pZMS3AdUslX/1hgCmt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kR+uY2im; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d18c325ee4so33195ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:00:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739390454; x=1739995254; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0pG+JRaVXBqhNYTI0BMGYl5wF4aFO16HNm2CNHXCsRE=;
-        b=kR+uY2im3vikgcdH6pNtrgT5uXPdBLXooyXAIYizJeZg9n92y4SdW9NeOiHeorD06C
-         uWsc/9eWaHlPI+j3FzhnKB5fnUL1TJKTmm3La+0XXAMt4KG9MWUn3ZL4Dquu0xLFE2fM
-         LOw0z07EV3HI2Brd0hS5qO1+qhLKrJK4FCpHHv/8wtiRK/UdTuLPwey6K85qDDM4m4J/
-         0uSSDQSM2knyrXxAzXIbkv+9M2FxI0TUecNLZ5pvQQbwuOr16GxrxqIYoPdaNhz+4w3c
-         xwlwugo41Sw2UxYJyZaQtsuHBxjY1mDXfqrEqLGJfcStdSMwgoAqAbCFyy+OVIHoCtNQ
-         xBrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739390454; x=1739995254;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0pG+JRaVXBqhNYTI0BMGYl5wF4aFO16HNm2CNHXCsRE=;
-        b=Z4zoPFQiY4EU5hglaGcoQb4PMYOGKcqPn6MCAK2XtLp5wk37aZaR4g5BpJmJO7jYDo
-         nI4PwtIncbwXSfdAtKx03tg1FoSWnl6evL29v1M05N5oqA4AbyXdQON3jHoiR73lvWim
-         mKSq2zXm30IyWZ8a4Ll6t99PkDleAHLGJm/bVcMN61b9WQrHBt9p36OXpsU6W9nVtfOE
-         opJgCHRG4WNU23y3Xfd4KqjfkkvbdAA3JlGGyNKzzRk07hxCHXgYpEtFuAdsAABkdK9T
-         cmcuW0NOOeRNJuupIVlqxd688tVSNUfHnNIk8h3bvjMWXc9PUNA0wZWsEr23HcLR9gEM
-         BmwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Z6CJM9DpFo58fUWy8/OBjQ0lktNwpLn3xh1KYBAxMS+Hc3mPIobmBjMz30LvMVFcJtGsdBAex3GV1CY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCDKV3mCorsZWDl6yHc+fpOY+iOkxWgYlPnzyfHwaMWwimyB8G
-	S3n/R9Jfov57WACijPXG0hO7pCwbyJOPI/6WoQgNWymXxSM2+/7R4d87HkXS0TyL8TLDuoRZS54
-	L7DOBu5WMOAYyOXs+Rw87bXpZkP/yQ3xrA+nb
-X-Gm-Gg: ASbGncsD6p779VjDzEIUyzW9uvXpzsC46gQk8Sjq50kMN9JGNlnKowz0s93BkK7E+xB
-	ddie54rfwS3P4t2rGf1LrTyb2ZyNqaVMP1C/sWXGE4mIpxCH5EblZQwwXsOv5PhwOwVRHgxE5JH
-	dwqiX+VhUv4BJf3/2Gbw0zips3
-X-Google-Smtp-Source: AGHT+IEB2+AmkIaAIOFeTQ3Nx+SbWIWSCka7nrurGRcxVhzIsTGvQ9larnnNye37zvZb1s5tc7xUC5PpYKHHlDl1Gic=
-X-Received: by 2002:a05:6e02:1d06:b0:3a7:a468:69e0 with SMTP id
- e9e14a558f8ab-3d18cd73592mr371945ab.1.1739390454354; Wed, 12 Feb 2025
- 12:00:54 -0800 (PST)
+	s=arc-20240116; t=1739390492; c=relaxed/simple;
+	bh=ih7UwWQTGH9m1+e48DnI4Kmn77m9E1quXg8pFdtmvwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Na/O+DlcVoNz6zuJywiDuyBGPmXWFajH3gCXWrEYZfDsl32x2v3R378GBqnPPbX9aG5YiTQSl7QwxnHr4fOfzyNunS52X4qtGSj6AX4nCgcaXN2O+MDtw5wRPzXNkNEMqgrSv+k1aozEk3V0ungOyZdivu4btmyFz4rZEehMBCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/SYAqBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF7BC4CEDF;
+	Wed, 12 Feb 2025 20:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739390492;
+	bh=ih7UwWQTGH9m1+e48DnI4Kmn77m9E1quXg8pFdtmvwE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u/SYAqBlCpPfF1iq+4ICv36S0WZyNqpyqeX0b1enYwZlNh5j2DPR8Opx8VV7fzkX4
+	 3a0UmILl6EVPNFxAerkdjEk1xBH3Az1b8tEjoLNLcsUXFQ2q9mnnK9f5hSM4NoivI8
+	 VK83HinlUaR1JvKM4QXOmocK/H9riF648gVnrJx90CVsSupWQrM20TXYfbfi4soNyC
+	 iofcBj2lqigFLl4YqTHcEt8kzHL2cyc9LgfOXFtCOjTqcW8U5+d/IQZygN0lFMy7dC
+	 Lh91Z9CHzPW0d5m6xoDI/2nuUa3GX0wvyGPDxhFlrXzjOznYXifgMaB2nMASjxEmFJ
+	 Li17Bkvb2AwfQ==
+Date: Wed, 12 Feb 2025 21:01:26 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>,
+	DJ Delorie <dj@redhat.com>, Eric Blake <eblake@redhat.com>,
+	Paul Eggert <eggert@cs.ucla.edu>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-man@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] rust: alloc: satisfy POSIX alignment requirement
+Message-ID: <Z6z-FlEUk9OfeJCV@cassiopeiae>
+References: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
+ <Z6zA9UNm_UckccRm@pollux>
+ <20250212163848.22e8dcff@eugeo>
+ <Z6zT6mZuxonewQ9z@pollux>
+ <CAJ-ks9=-kP5jBGQ_A88VPU_HW9VkF=OCqcGufqrJobhJu8dhww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250111190143.1029906-1-irogers@google.com> <Z6panMzNSm1op8Di@google.com>
- <CAP-5=fUY83gifsMZA0Q45kiQQbAKp2uJxkuwrwGtHK2hiUFRDA@mail.gmail.com>
- <Z6rAHhAIdlkAryGJ@google.com> <CAP-5=fXjmJ+Rr7ejL6fCMeu6PZSit7n84hQkjh=0jQhkr1on3Q@mail.gmail.com>
- <Z6uOGNO6p7i9Fese@google.com> <CAP-5=fVxFe4nMS_dHmO=6-ddA40XbVdvouPLuOxj5cenjUr8ng@mail.gmail.com>
- <Z6v-mPJq6m61pFA4@google.com> <CAP-5=fU+-4igQomO4Q41=7xo6YWyDdVqJdZd34dcMUS-Ua=N1Q@mail.gmail.com>
- <Z6zslLa8XM1ubwXj@google.com>
-In-Reply-To: <Z6zslLa8XM1ubwXj@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Feb 2025 12:00:42 -0800
-X-Gm-Features: AWEUYZkPHlCKO0ya0iQ7pvFOSdQsLxZFLpDtuZpM2UOOjOUU8vOMF1oHXBvfyp8
-Message-ID: <CAP-5=fUrzPvV3sD1_wMzQ7dF8xk3hL9_nkdS6toFjt7L+SRsgg@mail.gmail.com>
-Subject: Re: [PATCH v1 00/10] Move uid filtering to BPF filters
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Hao Ge <gehao@kylinos.cn>, James Clark <james.clark@linaro.org>, 
-	Howard Chu <howardchu95@gmail.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Levi Yun <yeoreum.yun@arm.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Tengda Wu <wutengda@huaweicloud.com>, Yang Jihong <yangjihong1@huawei.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ-ks9=-kP5jBGQ_A88VPU_HW9VkF=OCqcGufqrJobhJu8dhww@mail.gmail.com>
 
-On Wed, Feb 12, 2025 at 10:46=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
-> It's not completely broken and works sometimes.
+On Wed, Feb 12, 2025 at 01:44:45PM -0500, Tamir Duberstein wrote:
+> On Wed, Feb 12, 2025 at 12:01 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > On Wed, Feb 12, 2025 at 04:38:48PM +0000, Gary Guo wrote:
+> > > On Wed, 12 Feb 2025 16:40:37 +0100
+> > > Danilo Krummrich <dakr@kernel.org> wrote:
+> > >
+> > > > On Wed, Feb 12, 2025 at 09:43:02AM -0500, Tamir Duberstein wrote:
+> > > > > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+> > > > > index e3240d16040b..17a475380253 100644
+> > > > > --- a/rust/kernel/alloc/allocator_test.rs
+> > > > > +++ b/rust/kernel/alloc/allocator_test.rs
+> > > > > @@ -62,6 +62,26 @@ unsafe fn realloc(
+> > > > >              ));
+> > > > >          }
+> > > > >
+> > > > > +        // ISO C (ISO/IEC 9899:2011) defines `aligned_alloc`:
+> > > > > +        //
+> > > > > +        // > The value of alignment shall be a valid alignment supported by the implementation
+> > > > > +        // [...].
+> > > > > +        //
+> > > > > +        // As an example of the "supported by the implementation" requirement, POSIX.1-2001 (IEEE
+> > > > > +        // 1003.1-2001) defines `posix_memalign`:
+> > > > > +        //
+> > > > > +        // > The value of alignment shall be a power of two multiple of sizeof (void *).
+> > > > > +        //
+> > > > > +        // and POSIX-based implementations of `aligned_alloc` inherit this requirement. At the time
+> > > > > +        // of writing, this is known to be the case on macOS (but not in glibc).
+> > > > > +        //
+> > > > > +        // Satisfy the stricter requirement to avoid spurious test failures on some platforms.
+> > > > > +        let min_align = core::mem::size_of::<*const crate::ffi::c_void>();
+> > > > > +        let layout = layout.align_to(min_align).unwrap_or_else(|_err| {
+> > > > > +            crate::build_error!("invalid alignment")
+> > > >
+> > > > That's not what I thought this patch will look like. I thought you'll directly
+> > > > follow Gary's proposal, which is why I said you can keep the ACK.
+> > > >
+> > > > build_error!() doesn't work here, there is no guarantee that this can be
+> > > > evaluated at compile time.
+> > >
+> > > `align_to` will only fail if `min_align` is not a valid alignment (i.e.
+> > > not power of two), which the compiler should be easy to notice that the
+> > > size of pointer is indeed power of 2.
+> >
+> > From the documentation of align_to():
+> >
+> > "Returns an error if the combination of self.size() and the given align violates
+> > the conditions listed in Layout::from_size_align."
+> >
+> > Formally self.size() may still be unknown at compile time.
+> >
+> > Do I miss anything?
+> 
+> Formally, I agree. I tried testing (in allocator_test.rs):
+> 
+> #[cfg(test)]
+> mod tests {
+>     use super::*;
+> 
+>     #[test]
+>     fn test_allocate() {
+>         #[inline(never)]
+>         fn non_const_usize() -> usize {
+>             let x = 0;
+>             &x as *const _ as usize
+>         }
+> 
+>         let layout = Layout::array::<bool>(non_const_usize()).unwrap();
+>         let ptr = Cmalloc::alloc(layout, GFP_KERNEL).unwrap();
+>         let ptr = ptr.cast();
+>         // SAFETY:
+>         // - `ptr` was previously allocated with `Cmalloc`.
+>         // - `layout` is equal to the `Layout´ `ptr` was allocated with.
+>         unsafe { Cmalloc::free(ptr, layout) };
+>     }
+> }
+> 
+> and it compiled (and passed).
 
-No this is the definition of completely broken. If it only works
-sometimes then you can't use it, we can't put a test on it, there is
-no point in it. Even when it doesn't fail on perf_event_open, does it
-work for processes that start after /proc is scanned? No, it is
-completely broken.
+I suggest to try the following.
 
-Thanks,
-Ian
+Move non_const_usize() into allocator_test.rs and within realloc(), try [1];
+then try [2].
+
+Besides that, I still think build_error!() can't be used here correctly, since
+layout.size() might not be known at compile time. Please change things to what I
+did suggest previously.
+
+--
+
+[1]
+```
+if non_const_usize() < 0x42 {
+   crate::build_error!();
+}
+```
+
+[2]
+```
+if non_const_usize() >= 0x42 {
+   crate::build_error!();
+}
+```
 
