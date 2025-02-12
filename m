@@ -1,287 +1,137 @@
-Return-Path: <linux-kernel+bounces-511582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D126AA32CF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:09:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09192A32D01
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE283A1880
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E1B5169977
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C657D25A351;
-	Wed, 12 Feb 2025 17:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE3725D539;
+	Wed, 12 Feb 2025 17:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPELDo8X"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="oWrklSyM"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E58D2586F3;
-	Wed, 12 Feb 2025 17:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379889; cv=none; b=d5m4SndL5UvnxvPey4j0pwgshy0pLtYsEvTOe5ph7VGBng1ovlLTnHz16xpJfS2asACnRGZhHEhXS8HuYIabhSO0O2/ai1DknELJAQEKz4S7DyyvBotMuYivZJbNxEH00/llVg5BmEd1tI7lqwg9hProHww49EUAPgzT0jcfIcc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379889; c=relaxed/simple;
-	bh=jMfdTRsZdI5eWoj3aWSlH0xyFaWuq8yWsFhqFzD+kCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jsKxjLsJ8r83jErh9ONJKloXu0V4tJANT5cr3ZKC5XhsiPsIN3PGQ7IcTdiihz6R9DXWe5KnmeARK4ynBMwiCY1RGhuisRRUZ1sOPqtKci/k/qdu1JdJMMVJBfsLYEjR/hFdbXW12FaOlodf47TFmi/38lOBIrBX6iMHOttOctc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPELDo8X; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab7430e27b2so1342379066b.3;
-        Wed, 12 Feb 2025 09:04:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739379885; x=1739984685; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fvzxk7wvgu91bGu3wJDWmHVE0pCbZmsOLUpuRRBS1Oo=;
-        b=IPELDo8XCybDA94V3dqMxxlUG5PogtTcAxE5A23UUKckRH51ZAerPO7T2L7GDb/hBk
-         V7RNyAcgC/FU8STPfPOTieyDEsuja9yQH/Ds23dO9YbcaSDyhAd8sVoXz/0hxSkymwkq
-         RUKEzOHexDUqiLye4f1J0utFHAfpD5rt0eXKlUTCBLfefBhyxL25IArE+QUBfx/jZOAQ
-         Cytu+yku9rkS3os25seC78MjTRlYJRbFNMxtE4r+q4QbDGXGENOcU2oy8UKh/t/mDchj
-         C4zB3j0qii8q/ApruEXptJHKSceVZY1z4z1nJoC9LZeUiALE3WBAF3fbH4M0NMVdYOJO
-         eYwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739379885; x=1739984685;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fvzxk7wvgu91bGu3wJDWmHVE0pCbZmsOLUpuRRBS1Oo=;
-        b=bHPHd1OHwCguyTmjIigYhDt3r94l7nqUlRDWWLHNrPHz96RwirG8PdXL/Fw1H+JtW1
-         Wj6KP7BdiL5K7/+KHPtqAypVuHql96fX0siHla5PttKeBmZqWNJZu/hH68il6HE7tqen
-         4ELwwmv6gPJwcRAH3Yvmtti7tIaBypmLsg1b3O5s7BTXw2/fP9gpM0FpjOY9iHo5/HJ6
-         mMjWIkjLTMNPHJz8t6+1NIuNB45c5SPiHHIO7eyf5B5VKRDBVML98wgvaeS+CTB8fmzd
-         6q39dZDYqMWQjXO/FRF0j0/lUCqULP++5QQs/4kv0CHTardTezE/waDtkN8hwNX+JeXv
-         WO4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWsAmbEId9UKqByC+SnAHHZ/Tcy8YYONyieoTy/c2Xyeyk0BASSpc7lhA1u3kPUW4IzcLPOwJZ7JapzQiM=@vger.kernel.org, AJvYcCXcsMrciMfzKEAe/2cpa6NntZLEuEzaBv7etVqYHB6OErhA0BI/3Y8FXXG5LNECTlZAnECkO4/mZ1511KLK1+mtsWWo@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmbPv4jJYlKZXh/JFcBct9yLX41THjXW1cuJPFdq9D30dTaMlC
-	Fjl8jxW+8hL1uc1wLDNwPf4+8FmH22CnOrhZaYos2WqstDlvCWlx
-X-Gm-Gg: ASbGncu/+TP0F7TW+l7OvCmLll6XDWWngXPIAOtPeE+FOX+7A6P1+bTAt9dnm4J1EKo
-	3HZo9k9Bp7FL5Jflv9+jiSL1dmcgP/7IfD7HbgmeqkMQBf6pCMV8SXuWYce6RFGMVTAuWEPnvu8
-	yxkMGRnIhaOO8RPrlCmPISHDEt27zwuZLsreXOmIa0VVf+KexCbb78u3aT18mkFhRBqSa9X0UQJ
-	vqiS1rsm0alRAlUo55GvmbMhMJm2h6Tq+J7QyrMU69lgdi9J3j6ANYsLVTLkM0yBk6atBVQq3zC
-	8oORm9QL/Ll5MvQc8geXpaBctVpVIbFno16sSb3mN4kiGDxPSePHMKRrZr2fHQ==
-X-Google-Smtp-Source: AGHT+IG7q/wYJM73PiW8r3OsiQSf89b8XBujhBqSp6Ld1tSLhvrTp1ylssyeX8E7sgzOgoQUiPkV8Q==
-X-Received: by 2002:a17:907:d17:b0:ab7:9df1:e562 with SMTP id a640c23a62f3a-ab7f34d3323mr317980366b.48.1739379884809;
-        Wed, 12 Feb 2025 09:04:44 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1126:4:fb:39c9:9a24:d181? ([2620:10d:c092:500::6:8e63])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab78e3e212dsm1136599566b.147.2025.02.12.09.04.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 09:04:44 -0800 (PST)
-Message-ID: <9ade1f26-1642-48b3-b7e4-ba571892c7d6@gmail.com>
-Date: Wed, 12 Feb 2025 17:04:43 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7479F256C83
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739379949; cv=pass; b=d9uu9uR7nMch5ChBUqgWyZ/N8bPXMbs7Tb45XZ+i8AnmpCPeSPIBx2S5Rig2HhgGa/rPfboL4+Q7lh52WnWcCIroqNHtnhulZBxrwEFbVcmDOtlrKenhBEpGJIb0sddyRY0ofN+E0lyqHbmBoOQvXTeZqMC2cur/Im6dY7tKR3k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739379949; c=relaxed/simple;
+	bh=ehl4uK7N9uxnhjH5MyPg6eHObjNvCSmCx5FguWXMEPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=S+qXx4H3n23FrPHbgNsAVtOunv1sV6/o7T/rBwYWYOx5wW72uju/NUs2T63zjLrPQX94FGws7amrY0lnLyi6kmliwE0LtGyHCT9N7ZwtW6mwCEgnr6ZPW8vlMyI6xA63SSdKZBHpH5gJWmhyYEeWPpC92S5hcgEcvPuDGngYoJI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=oWrklSyM; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1739379935; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hTuz8gGCmAz6/NBm7x2386wVyrsN941gsocYRg+g3+UXSUKRFTlU7284FPZkcYKxLK4pWRo3DqMRqevPRv1rXhICt+FsAZeZ6a7ySdt1Bm+pVT6qBjUNBqjelUbrN5p7ymdZfpTjvVLWazQ991PYC+Q6yoImo4+SR3LrQF/9k08=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739379935; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zpnS5LdUZemikz3jDhlU3VLItf8J0nEAlg+TMLI01V8=; 
+	b=jiiALIKpOceXbs44izIR1/J28Rhiu+Cx/2ZZM0dVt6QGBCjx1JyJvt7AAeTSI9N1cOUhlPkIzpPH2Du7brk+hZhlghWoKP730j0UjGGwSNkaohd2TeYUYbo1/NmE2dtUCkijWKLZjvVVGPds37PLSCXLUCORycH/e5j1ZO12jdk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739379935;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=zpnS5LdUZemikz3jDhlU3VLItf8J0nEAlg+TMLI01V8=;
+	b=oWrklSyMJV7/9lYP4MoNQlK8kEEvvLyhL/rppCWn/mwCB3z46Qx6ddcYuR+NPhDm
+	Z9vecKExVTh+9t4M8kuc8Q8eFuSwuHINgzoO+HOqYKzQuJGjFfPC4C+Lhyni3tssAU/
+	WDuWfuOhmKkqZcbj6V8/cRy9/ftPPVyW/qGaePs60Xe+fu/VtlYJ3A2bJKpy4CfTgmC
+	jznRkRkx2aeH9XmrK7vUfdx50F1YYzOlcu0b+KR1DO3E7drpqt24V4krH3KjBDZAhou
+	z4+fr0Xhve+pysuvLG7/+Rjd2Fr+nniwHC7SJSIXBAq/wntlrgSjUR858dceKeGUTyT
+	lDmNDDLbDA==
+Received: by mx.zohomail.com with SMTPS id 1739379932694459.250015065458;
+	Wed, 12 Feb 2025 09:05:32 -0800 (PST)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 2/2] nvme-pci: skip CMB blocks incompatible with PCI P2P DMA
+Date: Thu, 13 Feb 2025 01:04:44 +0800
+Message-ID: <20250212170444.16138-3-uwu@icenowy.me>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250212170444.16138-1-uwu@icenowy.me>
+References: <20250212170444.16138-1-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 7/9] khugepaged: add mTHP support
-To: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
- hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
- peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, jglisse@google.com, surenb@google.com,
- vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
- jhubbard@nvidia.com, 21cnbao@gmail.com, willy@infradead.org,
- kirill.shutemov@linux.intel.com, david@redhat.com, aarcange@redhat.com,
- raquini@redhat.com, dev.jain@arm.com, sunnanyong@huawei.com,
- audra@redhat.com, akpm@linux-foundation.org, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, tiwai@suse.de,
- Johannes Weiner <hannes@cmpxchg.org>
-References: <20250211003028.213461-1-npache@redhat.com>
- <20250211003028.213461-8-npache@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20250211003028.213461-8-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
+The PCI P2PDMA code will register the CMB block to the memory
+hot-plugging subsystem, which have an alignment requirement. Memory
+blocks that do not satisfy this alignment requirement (usually 2MB) will
+lead to a WARNING from memory hotplugging.
 
+Verify the CMB block's address and size against the alignment and only
+try to send CMB blocks compatible with it to prevent this warning.
 
-On 11/02/2025 00:30, Nico Pache wrote:
-> Introduce the ability for khugepaged to collapse to different mTHP sizes.
-> While scanning a PMD range for potential collapse candidates, keep track
-> of pages in MIN_MTHP_ORDER chunks via a bitmap. Each bit represents a
-> utilized region of order MIN_MTHP_ORDER ptes. We remove the restriction
-> of max_ptes_none during the scan phase so we dont bailout early and miss
-> potential mTHP candidates.
-> 
-> After the scan is complete we will perform binary recursion on the
-> bitmap to determine which mTHP size would be most efficient to collapse
-> to. max_ptes_none will be scaled by the attempted collapse order to
-> determine how full a THP must be to be eligible.
-> 
-> If a mTHP collapse is attempted, but contains swapped out, or shared
-> pages, we dont perform the collapse.
-> 
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->  mm/khugepaged.c | 122 ++++++++++++++++++++++++++++++++----------------
->  1 file changed, 83 insertions(+), 39 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index c8048d9ec7fb..cd310989725b 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1127,13 +1127,14 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  {
->  	LIST_HEAD(compound_pagelist);
->  	pmd_t *pmd, _pmd;
-> -	pte_t *pte;
-> +	pte_t *pte, mthp_pte;
->  	pgtable_t pgtable;
->  	struct folio *folio;
->  	spinlock_t *pmd_ptl, *pte_ptl;
->  	int result = SCAN_FAIL;
->  	struct vm_area_struct *vma;
->  	struct mmu_notifier_range range;
-> +	unsigned long _address = address + offset * PAGE_SIZE;
->  	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
->  
->  	/*
-> @@ -1148,12 +1149,13 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  		*mmap_locked = false;
->  	}
->  
-> -	result = alloc_charge_folio(&folio, mm, cc, HPAGE_PMD_ORDER);
-> +	result = alloc_charge_folio(&folio, mm, cc, order);
->  	if (result != SCAN_SUCCEED)
->  		goto out_nolock;
->  
->  	mmap_read_lock(mm);
-> -	result = hugepage_vma_revalidate(mm, address, true, &vma, cc, HPAGE_PMD_ORDER);
-> +	*mmap_locked = true;
-> +	result = hugepage_vma_revalidate(mm, address, true, &vma, cc, order);
->  	if (result != SCAN_SUCCEED) {
->  		mmap_read_unlock(mm);
->  		goto out_nolock;
-> @@ -1171,13 +1173,14 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  		 * released when it fails. So we jump out_nolock directly in
->  		 * that case.  Continuing to collapse causes inconsistency.
->  		 */
-> -		result = __collapse_huge_page_swapin(mm, vma, address, pmd,
-> -				referenced, HPAGE_PMD_ORDER);
-> +		result = __collapse_huge_page_swapin(mm, vma, _address, pmd,
-> +				referenced, order);
->  		if (result != SCAN_SUCCEED)
->  			goto out_nolock;
->  	}
->  
->  	mmap_read_unlock(mm);
-> +	*mmap_locked = false;
->  	/*
->  	 * Prevent all access to pagetables with the exception of
->  	 * gup_fast later handled by the ptep_clear_flush and the VM
-> @@ -1187,7 +1190,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	 * mmap_lock.
->  	 */
->  	mmap_write_lock(mm);
-> -	result = hugepage_vma_revalidate(mm, address, true, &vma, cc, HPAGE_PMD_ORDER);
-> +	result = hugepage_vma_revalidate(mm, address, true, &vma, cc, order);
->  	if (result != SCAN_SUCCEED)
->  		goto out_up_write;
->  	/* check if the pmd is still valid */
-> @@ -1198,11 +1201,12 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	vma_start_write(vma);
->  	anon_vma_lock_write(vma->anon_vma);
->  
-> -	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, address,
-> -				address + HPAGE_PMD_SIZE);
-> +	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, _address,
-> +				_address + (PAGE_SIZE << order));
->  	mmu_notifier_invalidate_range_start(&range);
->  
->  	pmd_ptl = pmd_lock(mm, pmd); /* probably unnecessary */
-> +
->  	/*
->  	 * This removes any huge TLB entry from the CPU so we won't allow
->  	 * huge and small TLB entries for the same virtual address to
-> @@ -1216,10 +1220,10 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	mmu_notifier_invalidate_range_end(&range);
->  	tlb_remove_table_sync_one();
->  
-> -	pte = pte_offset_map_lock(mm, &_pmd, address, &pte_ptl);
-> +	pte = pte_offset_map_lock(mm, &_pmd, _address, &pte_ptl);
->  	if (pte) {
-> -		result = __collapse_huge_page_isolate(vma, address, pte, cc,
-> -					&compound_pagelist, HPAGE_PMD_ORDER);
-> +		result = __collapse_huge_page_isolate(vma, _address, pte, cc,
-> +					&compound_pagelist, order);
->  		spin_unlock(pte_ptl);
->  	} else {
->  		result = SCAN_PMD_NULL;
-> @@ -1248,8 +1252,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	anon_vma_unlock_write(vma->anon_vma);
->  
->  	result = __collapse_huge_page_copy(pte, folio, pmd, _pmd,
-> -					   vma, address, pte_ptl,
-> -					   &compound_pagelist, HPAGE_PMD_ORDER);
-> +					   vma, _address, pte_ptl,
-> +					   &compound_pagelist, order);
->  	pte_unmap(pte);
->  	if (unlikely(result != SCAN_SUCCEED))
->  		goto out_up_write;
-> @@ -1260,20 +1264,37 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	 * write.
->  	 */
->  	__folio_mark_uptodate(folio);
-> -	pgtable = pmd_pgtable(_pmd);
-> -
-> -	_pmd = mk_huge_pmd(&folio->page, vma->vm_page_prot);
-> -	_pmd = maybe_pmd_mkwrite(pmd_mkdirty(_pmd), vma);
-> -
-> -	spin_lock(pmd_ptl);
-> -	BUG_ON(!pmd_none(*pmd));
-> -	folio_add_new_anon_rmap(folio, vma, address, RMAP_EXCLUSIVE);
-> -	folio_add_lru_vma(folio, vma);
-> -	pgtable_trans_huge_deposit(mm, pmd, pgtable);
-> -	set_pmd_at(mm, address, pmd, _pmd);
-> -	update_mmu_cache_pmd(vma, address, pmd);
-> -	deferred_split_folio(folio, false);
-> -	spin_unlock(pmd_ptl);
-> +	if (order == HPAGE_PMD_ORDER) {
-> +		pgtable = pmd_pgtable(_pmd);
-> +		_pmd = mk_huge_pmd(&folio->page, vma->vm_page_prot);
-> +		_pmd = maybe_pmd_mkwrite(pmd_mkdirty(_pmd), vma);
-> +
-> +		spin_lock(pmd_ptl);
-> +		BUG_ON(!pmd_none(*pmd));
-> +		folio_add_new_anon_rmap(folio, vma, _address, RMAP_EXCLUSIVE);
-> +		folio_add_lru_vma(folio, vma);
-> +		pgtable_trans_huge_deposit(mm, pmd, pgtable);
-> +		set_pmd_at(mm, address, pmd, _pmd);
-> +		update_mmu_cache_pmd(vma, address, pmd);
-> +		deferred_split_folio(folio, false);
-> +		spin_unlock(pmd_ptl);
-> +	} else { //mTHP
-> +		mthp_pte = mk_pte(&folio->page, vma->vm_page_prot);
-> +		mthp_pte = maybe_mkwrite(pte_mkdirty(mthp_pte), vma);
-> +
-> +		spin_lock(pmd_ptl);
-> +		folio_ref_add(folio, (1 << order) - 1);
-> +		folio_add_new_anon_rmap(folio, vma, _address, RMAP_EXCLUSIVE);
-> +		folio_add_lru_vma(folio, vma);
-> +		spin_lock(pte_ptl);
-> +		set_ptes(vma->vm_mm, _address, pte, mthp_pte, (1 << order));
-> +		update_mmu_cache_range(NULL, vma, _address, pte, (1 << order));
-> +		spin_unlock(pte_ptl);
-> +		smp_wmb(); /* make pte visible before pmd */
-> +		pmd_populate(mm, pmd, pmd_pgtable(_pmd));
-> +		deferred_split_folio(folio, false);
+Tested on Intel DC D4502 SSD, which has a 512K CMB block that is too
+small for memory hotplugging (thus PCI P2PDMA).
 
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
+ drivers/nvme/host/pci.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-Hi Nico,
-
-This patch will have the same issue as the one I pointed out in
-https://lore.kernel.org/all/82b9efd1-f2a6-4452-b2ea-6c163e17cdf7@gmail.com/ ?
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 659ba85795a91..1a27688417b3f 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1982,6 +1982,19 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+ 	if (offset > bar_size)
+ 		return;
+ 
++	/*
++	 * Controllers may support a CMB size larger than their BAR,
++	 * for example, due to being behind a bridge. Reduce the CMB to
++	 * the reported size of the BAR
++	 */
++	if (size > bar_size - offset)
++		size = bar_size - offset;
++
++	if (!IS_ALIGNED(size, memremap_compat_align()) ||
++	    !IS_ALIGNED(pci_resource_start(pdev, bar),
++			memremap_compat_align()))
++		return;
++
+ 	/*
+ 	 * Tell the controller about the host side address mapping the CMB,
+ 	 * and enable CMB decoding for the NVMe 1.4+ scheme:
+@@ -1992,14 +2005,6 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+ 			     dev->bar + NVME_REG_CMBMSC);
+ 	}
+ 
+-	/*
+-	 * Controllers may support a CMB size larger than their BAR,
+-	 * for example, due to being behind a bridge. Reduce the CMB to
+-	 * the reported size of the BAR
+-	 */
+-	if (size > bar_size - offset)
+-		size = bar_size - offset;
+-
+ 	if (pci_p2pdma_add_resource(pdev, bar, size, offset)) {
+ 		dev_warn(dev->ctrl.device,
+ 			 "failed to register the CMB\n");
+-- 
+2.48.1
 
 
