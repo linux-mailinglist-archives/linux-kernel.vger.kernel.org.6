@@ -1,366 +1,222 @@
-Return-Path: <linux-kernel+bounces-512014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57BBA332B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:33:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7A5A332B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:34:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85937166583
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:33:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E42188818D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D5C1FFC59;
-	Wed, 12 Feb 2025 22:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B3D204594;
+	Wed, 12 Feb 2025 22:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVgzoqot"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TrMFcIVK"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC6D202C50;
-	Wed, 12 Feb 2025 22:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DC51FFC59
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739399580; cv=none; b=RoQ5VMNTknmgnxn+poWwc4co80beoD/LVrVHoX3GyPCoE0BQyx6pXTvUQjfkPUeOpeeiiK0yH0uoL3lfhgVSptyPLP1WVZQM1IepGuXmlnElaeeo2WY8MGf6LuuAtjkaG6dKblb9jCSth1OoVlG4P6UOV726aD7x372pfTEHV/M=
+	t=1739399656; cv=none; b=GRQRIlmKnWErBvg96IpDgdUSv68wMd6ikanVhIiNxDAIkOfNQ//EuHeWmRysVlu38pC9OkU43RAQqbHpxxJJcmJtIZq0kGYvRm/wN4D6r8kI9f7N/9ix6chPObpOL6Ym4djruX3MzB7tQCZ2o8u8uOLI9Om9PdDNdYA5UatTVWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739399580; c=relaxed/simple;
-	bh=Kht5JajSoFbjqk7SI1NfFmvei1QSTACfDSlpKDRNAMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IHD5jY4zUZTrEr1lQ55SADp7ctxyQG+itqV4GYSgJLGXyhPkhSfjj+ef30Fmj28ANnWLIca3WayFDlCTZUnRHdhXiYxo3oxp7zxGBMWv+4kImrdHaHgsscaWA10sfxT3/f+0+d6XheZsL7hsF3Tnlynq+xXK9LmBoMz4+s7DGuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EVgzoqot; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-866e8a51fa9so118547241.1;
-        Wed, 12 Feb 2025 14:32:58 -0800 (PST)
+	s=arc-20240116; t=1739399656; c=relaxed/simple;
+	bh=iI8oTfV4x3Xm93eIuNZRvXks7mKqu5m+w7wgua/5S/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rtBAMaId7s+QDgW0hhvH9Qu36F53PkJ/Er01loaNktokC88xhZY0eapGnDp2V1NwkBfOkYlmzzlnC9lN/UQwMLav9SNeXKTKnbni8pi52gqWJU9Qr37Af24RFJmY61W66wOjDEY8y8VdzoWC+VkXH2TesA1DhVYzTDIFpgxsYDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TrMFcIVK; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-851c4ee2a37so14051839f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:34:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739399578; x=1740004378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AjD5c5Z/nOcFqJ1zoOXQlAY5nML8UX6BLoysdrIad+g=;
-        b=EVgzoqotRmebpYI2ouivokutJvWtP2uC8re/43FORdzWU0YPK1HZsPcxtnUth/7aQp
-         gXpdT78oiNu38MVxl4N4+ycw8p+Wmbgxfq1DkaeA5TMEgCdA37+Nm4KWc4/iYbeWiZOa
-         Ue6wchMHCi0ARwL0ZsBo0inJnD1jGsU9bjzkyBQjEuTDTO6VvRMBdLGOFfXlqweoXpAk
-         uu1giRZLjJXoDvSzp59zfg0OhDAuRrEwsCB/TrUmYyXNd6Lj1AwqN6e9NJXDr0QoaetK
-         A+PYXr4+xkH11/tl0XSZ4AqsqsIvTuZa5aETHsjFbvzTq5atCuQ/m7Zjv89wKn4KWSCm
-         jB5A==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739399652; x=1740004452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sdWVN7dXCOa0o8E0xnUgj4zHQmXLVLq1Zm0R2oAFuGQ=;
+        b=TrMFcIVKChUNoFKeM4a4fLDH9Cp6JFm+YldRWT87uF6VJPtaPtrA5FrhLJD+G5DUzB
+         0hbxoUxFY8ZKhXPos012heZZwhmKJlvlb0drZ6hGkm3yODJMYImIxYzJl/cs2odrKKy4
+         yBRecBPzogCwPnA3r2plIxMtFAq1jlvszQI0LrPZyaCHtCS4RXxNDZbkbiCC07BuoDkv
+         y6dL0b129iPqbWPTtRgjG1n4pSCIy5FvbAlpgJf9NajC+v3uK8r0dwipiYo9kajh5bAP
+         8FdAV0Ph7Bn/2WkDegW/Kd5EnSj5mFplZo8lSCXuFvMXlEBQgtUc7EJZs8W+mCLSDhqF
+         rJYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739399578; x=1740004378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AjD5c5Z/nOcFqJ1zoOXQlAY5nML8UX6BLoysdrIad+g=;
-        b=LPhDaq7TiUfJ57tVcvP18EosYi6ErjlcU/OVq2gtYlsqAifwHQnGF1AufzSXzAunYT
-         W1FPXkbhJ0lMNnyIYVWkhQHFIOgoYu13OKbNNxEuG+eDVEoEJh//h1cdbcUj5bGgnhKm
-         SDU3GhTVr9YXWn4LX9LUfQZFrHRj3gWcYjsy+e292/gtQNkpNg6vgKUJ2vKpJn4ml5pp
-         aLaRqvmvTeMxstBFIIBHp7yVorPZOlUFxMkTn/k621PSE7RU3mbg3fut2852kz7PdCnw
-         viYEXJ4kMAHVcGvunYh1CbHqCZ0j9fxn2cAaaWleGzCjjV4QHH2r0ckcTFG7aoGC4CEW
-         cMkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrNecVBvPhUUH5gBKKp/jKlOmQ2v7tZ+tl2cWTQaGNH07fgdp5Z9loNCqPbnOo7/h/9DbG9ONyKUW+soY=@vger.kernel.org, AJvYcCXb7ozutBy1rc/Qlw3bA6sFbe7q89X+0sPzO2rBs+X+4GdcClSL8HcO1axNrb1IZTeBkzbcHobM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqcMV9Cs/sptA1aMEhUdGVcnXIROhGp+y3N3jMnja8g+QoU1kR
-	JzBIvoMrxHk72Eym2cmAXBBZ8vn1vzrRa3aYQKqyNIXCpH3/Dt2J2SgfykK2ixku7ntGKXZG/DH
-	KLzRsPqC3EGflE2gSr/ardwX+a5w=
-X-Gm-Gg: ASbGncuY3oLfH4USnOQiban0Z7GqjuMtlW5n6N0HMWMZ7QXbzlJcCiX3bnO6Wl1ee1C
-	vDNZwUpUFWoN4HRYdGgLM3Dz6kG8MfqQAbc44XEzUqEHiZySbKJszoXtJZRl6tDhtDLznSz5R6g
-	dnz4mf4tWM+6dCliTy4YatQhM4Bgv6
-X-Google-Smtp-Source: AGHT+IEc/svxJP9ZEqxO5z1spAxd5auUZZJlH9tuH8voVu2R9q6y4QOFPq0FU+OTG7o6Xj5WRxohz7nCkF9vt/f/ozY=
-X-Received: by 2002:a05:6102:511f:b0:4bb:ccf5:c24b with SMTP id
- ada2fe7eead31-4bc04dc08famr990664137.2.1739399577848; Wed, 12 Feb 2025
- 14:32:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739399652; x=1740004452;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sdWVN7dXCOa0o8E0xnUgj4zHQmXLVLq1Zm0R2oAFuGQ=;
+        b=uU1QLgPld/gnlLWwnYR7KfXmbEloClugRgZZMuaWi2nZRXLwJPm/4VRNsW/IDGJa4W
+         TGqPtF4DcFUXjDWR9OXGp3TxdzJANdaTIM4zr8gn17IUgjKVyaZkgpnyPbmRiiNOSZ+N
+         GALUznpfTQDc3kto775J58l/ft+IfukO0vXvgqpxj9jw2hqSY+r/SvgbJd2L1kUq89CG
+         Lz1fm2XngtopxjzR/EETCYAK3gqWLCU1D6+e4xvjZOk2fftZI/f3QEsidfLGLun1Tank
+         1fDXM68s3Zopbt2Cf5n4rBoDF+NQGdh+CB9X2zkddPvOSjEMDD07BOiSe5c6j9ZgIG+1
+         ICSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXw2T/XsOb0a3sIwHWOXe5LO3F0GHGE7yFVL95Bq1HqMxzGPTCY+xH8/2bSLTua/aRJHb3w4YvEY7qun7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypvleAyo1ejoij5HiUOHFfGHvEk3IaOqhpC/UE7zl/Nc5rJBTK
+	vhSP3tU+OzPjs09Oj9Q1Th6+FZlyoM0sHJS+108ya67LJQPiL4i2c386twySvoI=
+X-Gm-Gg: ASbGncugu5PdOArH3N9eNXMn0POSrA4frchHQiHtKJ4jRps3t2MTdRX9NQgdPu/33kc
+	nWAEKRo0P10YCE0PwgVbgQF+4ZlIsCzmqiS+bEB7upKQsQzaY/0IrijRXpSM46zxmlc9BR4iODB
+	Y3DFKwB/e2xv0Lf7bHfM6MkxaZfDkaypOJ9w29qQRgxOCAu1+znoHRMe14hSOD68McS/M9ipLZF
+	TKKA99fdWkyuYc7c8ZYhaDMyfQK+/VWikmW+icaLkWWLkqCJ9R3n52eE1/qZ9LApTodZ8RzdX/D
+	a0cS9F0S6G/o
+X-Google-Smtp-Source: AGHT+IHMpl+TjRIV5ZfN4Zt0lZhGHVSO11io9umn6Wzi1n1RjxU1Rse2BOVGsB8l5GQjDlP4aqYuFg==
+X-Received: by 2002:a05:6602:3fd5:b0:849:a2bb:ffdd with SMTP id ca18e2360f4ac-85555cbe80amr571816039f.4.1739399652071;
+        Wed, 12 Feb 2025 14:34:12 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ed282af37dsm15675173.85.2025.02.12.14.34.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 14:34:11 -0800 (PST)
+Message-ID: <e315e4f5-a3f0-48be-8400-05bfaf8714f8@kernel.dk>
+Date: Wed, 12 Feb 2025 15:34:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250208154350.75316-1-wejmanpm@gmail.com> <7d0fccb0-6fee-44d9-8f1c-455c889a21a1@intel.com>
-In-Reply-To: <7d0fccb0-6fee-44d9-8f1c-455c889a21a1@intel.com>
-From: Piotr Wejman <wejmanpm@gmail.com>
-Date: Wed, 12 Feb 2025 23:32:46 +0100
-X-Gm-Features: AWEUYZn2ddEQE9HrtaK8of06GwCrWd9kvlYSrFkI_l8dCvrsOFD7F0AasaLhrvs
-Message-ID: <CAMRHcQyp0MppaoL8fT+U7hh45zkZbFFRsDFU=nrYBpqFptTu6g@mail.gmail.com>
-Subject: Re: [Intel-wired-lan] [PATCH v2] net: e1000e: convert to
- ndo_hwtstamp_get() and ndo_hwtstamp_set()
-To: "Lifshits, Vitaly" <vitaly.lifshits@intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, intel-wired-lan@lists.osuosl.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
+To: Caleb Sander <csander@purestorage.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
+ Riley Thomasson <riley@purestorage.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250212204546.3751645-1-csander@purestorage.com>
+ <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
+ <50caa50c-5126-4072-8cfc-33b83b524489@kernel.dk>
+ <CADUfDZroLajE4sF6=oYopg=gNtv3Zko78ZcJv4eQ5SBxMxDOiw@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CADUfDZroLajE4sF6=oYopg=gNtv3Zko78ZcJv4eQ5SBxMxDOiw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 3:10=E2=80=AFPM Lifshits, Vitaly
-<vitaly.lifshits@intel.com> wrote:
->
->
->
-> On 2/8/2025 5:43 PM, Piotr Wejman wrote:
-> > Update the driver to use the new hardware timestamping API added in com=
-mit
-> > 66f7223039c0 ("net: add NDOs for configuring hardware timestamping").
-> > Use Netlink extack for error reporting in e1000e_hwtstamp_set.
-> > Align the indentation of net_device_ops.
-> >
-> > Signed-off-by: Piotr Wejman <wejmanpm@gmail.com>
-> > ---
-> > Changes in v2:
-> >    - amend commit message
-> >    - use extack for error reporting
-> >    - rename e1000_mii_ioctl to e1000_ioctl
-> >    - Link to v1: https://lore.kernel.org/netdev/20250202170839.47375-1-=
-piotrwejman90@gmail.com/
-> >
-> >   drivers/net/ethernet/intel/e1000e/e1000.h  |  2 +-
-> >   drivers/net/ethernet/intel/e1000e/netdev.c | 68 ++++++++++-----------=
--
-> >   2 files changed, 31 insertions(+), 39 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/intel/e1000e/e1000.h b/drivers/net/et=
-hernet/intel/e1000e/e1000.h
-> > index ba9c19e6994c..952898151565 100644
-> > --- a/drivers/net/ethernet/intel/e1000e/e1000.h
-> > +++ b/drivers/net/ethernet/intel/e1000e/e1000.h
-> > @@ -319,7 +319,7 @@ struct e1000_adapter {
-> >       u16 tx_ring_count;
-> >       u16 rx_ring_count;
-> >
-> > -     struct hwtstamp_config hwtstamp_config;
-> > +     struct kernel_hwtstamp_config hwtstamp_config;
-> >       struct delayed_work systim_overflow_work;
-> >       struct sk_buff *tx_hwtstamp_skb;
-> >       unsigned long tx_hwtstamp_start;
-> > diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/e=
-thernet/intel/e1000e/netdev.c
-> > index 286155efcedf..43933e64819b 100644
-> > --- a/drivers/net/ethernet/intel/e1000e/netdev.c
-> > +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-> > @@ -3574,6 +3574,7 @@ s32 e1000e_get_base_timinca(struct e1000_adapter =
-*adapter, u32 *timinca)
-> >    * e1000e_config_hwtstamp - configure the hwtstamp registers and enab=
-le/disable
-> >    * @adapter: board private structure
-> >    * @config: timestamp configuration
-> > + * @extack: netlink extended ACK for error report
-> >    *
-> >    * Outgoing time stamping can be enabled and disabled. Play nice and
-> >    * disable it when requested, although it shouldn't cause any overhea=
-d
-> > @@ -3587,7 +3588,8 @@ s32 e1000e_get_base_timinca(struct e1000_adapter =
-*adapter, u32 *timinca)
-> >    * exception of "all V2 events regardless of level 2 or 4".
-> >    **/
-> >   static int e1000e_config_hwtstamp(struct e1000_adapter *adapter,
-> > -                               struct hwtstamp_config *config)
-> > +                               struct kernel_hwtstamp_config *config,
-> > +                               struct netlink_ext_ack *extack)
-> >   {
-> >       struct e1000_hw *hw =3D &adapter->hw;
-> >       u32 tsync_tx_ctl =3D E1000_TSYNCTXCTL_ENABLED;
-> > @@ -3598,8 +3600,10 @@ static int e1000e_config_hwtstamp(struct e1000_a=
-dapter *adapter,
-> >       bool is_l2 =3D false;
-> >       u32 regval;
-> >
-> > -     if (!(adapter->flags & FLAG_HAS_HW_TIMESTAMP))
-> > +     if (!(adapter->flags & FLAG_HAS_HW_TIMESTAMP)) {
-> > +             NL_SET_ERR_MSG(extack, "No HW timestamp support\n");
-> >               return -EINVAL;
-> > +     }
-> >
-> >       switch (config->tx_type) {
-> >       case HWTSTAMP_TX_OFF:
-> > @@ -3608,6 +3612,7 @@ static int e1000e_config_hwtstamp(struct e1000_ad=
-apter *adapter,
-> >       case HWTSTAMP_TX_ON:
-> >               break;
-> >       default:
-> > +             NL_SET_ERR_MSG(extack, "Unsupported TX HW timestamp type\=
-n");
-> >               return -ERANGE;
-> >       }
-> >
-> > @@ -3681,6 +3686,7 @@ static int e1000e_config_hwtstamp(struct e1000_ad=
-apter *adapter,
-> >               config->rx_filter =3D HWTSTAMP_FILTER_ALL;
-> >               break;
-> >       default:
-> > +             NL_SET_ERR_MSG(extack, "Unsupported RX HW timestamp filte=
-r\n");
-> >               return -ERANGE;
-> >       }
-> >
-> > @@ -3693,7 +3699,7 @@ static int e1000e_config_hwtstamp(struct e1000_ad=
-apter *adapter,
-> >       ew32(TSYNCTXCTL, regval);
-> >       if ((er32(TSYNCTXCTL) & E1000_TSYNCTXCTL_ENABLED) !=3D
-> >           (regval & E1000_TSYNCTXCTL_ENABLED)) {
-> > -             e_err("Timesync Tx Control register not set as expected\n=
-");
-> > +             NL_SET_ERR_MSG(extack, "Timesync Tx Control register not =
-set as expected\n");
->
-> In the case where this function is being called from e1000e_systim_reset
-> function, won't it cause this debug print to do nothing?
+On 2/12/25 2:58 PM, Caleb Sander wrote:
+> On Wed, Feb 12, 2025 at 1:02?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 2/12/25 1:55 PM, Jens Axboe wrote:
+>>> On 2/12/25 1:45 PM, Caleb Sander Mateos wrote:
+>>>> In our application issuing NVMe passthru commands, we have observed
+>>>> nvme_uring_cmd fields being corrupted between when userspace initializes
+>>>> the io_uring SQE and when nvme_uring_cmd_io() processes it.
+>>>>
+>>>> We hypothesized that the uring_cmd's were executing asynchronously after
+>>>> the io_uring_enter() syscall returned, yet were still reading the SQE in
+>>>> the userspace-mapped SQ. Since io_uring_enter() had already incremented
+>>>> the SQ head index, userspace reused the SQ slot for a new SQE once the
+>>>> SQ wrapped around to it.
+>>>>
+>>>> We confirmed this hypothesis by "poisoning" all SQEs up to the SQ head
+>>>> index in userspace upon return from io_uring_enter(). By overwriting the
+>>>> nvme_uring_cmd nsid field with a known garbage value, we were able to
+>>>> trigger the err message in nvme_validate_passthru_nsid(), which logged
+>>>> the garbage nsid value.
+>>>>
+>>>> The issue is caused by commit 5eff57fa9f3a ("io_uring/uring_cmd: defer
+>>>> SQE copying until it's needed"). With this commit reverted, the poisoned
+>>>> values in the SQEs are no longer seen by nvme_uring_cmd_io().
+>>>>
+>>>> Prior to the commit, each uring_cmd SQE was unconditionally memcpy()ed
+>>>> to async_data at prep time. The commit moved this memcpy() to 2 cases
+>>>> when the request goes async:
+>>>> - If REQ_F_FORCE_ASYNC is set to force the initial issue to go async
+>>>> - If ->uring_cmd() returns -EAGAIN in the initial non-blocking issue
+>>>>
+>>>> This patch set fixes a bug in the EAGAIN case where the uring_cmd's sqe
+>>>> pointer is not updated to point to async_data after the memcpy(),
+>>>> as it correctly is in the REQ_F_FORCE_ASYNC case.
+>>>>
+>>>> However, uring_cmd's can be issued async in other cases not enumerated
+>>>> by 5eff57fa9f3a, also leading to SQE corruption. These include requests
+>>>> besides the first in a linked chain, which are only issued once prior
+>>>> requests complete. Requests waiting for a drain to complete would also
+>>>> be initially issued async.
+>>>>
+>>>> While it's probably possible for io_uring_cmd_prep_setup() to check for
+>>>> each of these cases and avoid deferring the SQE memcpy(), we feel it
+>>>> might be safer to revert 5eff57fa9f3a to avoid the corruption risk.
+>>>> As discussed recently in regard to the ublk zero-copy patches[1], new
+>>>> async paths added in the future could break these delicate assumptions.
+>>>
+>>> I don't think it's particularly delicate - did you manage to catch the
+>>> case queueing a request for async execution where the sqe wasn't already
+>>> copied? I did take a quick look after our out-of-band conversation, and
+>>> the only missing bit I immediately spotted is using SQPOLL. But I don't
+>>> think you're using that, right? And in any case, lifetime of SQEs with
+>>> SQPOLL is the duration of the request anyway, so should not pose any
+>>> risk of overwriting SQEs. But I do think the code should copy for that
+>>> case too, just to avoid it being a harder-to-use thing than it should
+>>> be.
+>>>
+>>> The two patches here look good, I'll go ahead with those. That'll give
+>>> us a bit of time to figure out where this missing copy is.
+>>
+>> Can you try this on top of your 2 and see if you still hit anything odd?
+>>
+>> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+>> index bcfca18395c4..15a8a67f556e 100644
+>> --- a/io_uring/uring_cmd.c
+>> +++ b/io_uring/uring_cmd.c
+>> @@ -177,10 +177,13 @@ static void io_uring_cmd_cache_sqes(struct io_kiocb *req)
+>>         ioucmd->sqe = cache->sqes;
+>>  }
+>>
+>> +#define SQE_COPY_FLAGS (REQ_F_FORCE_ASYNC|REQ_F_LINK|REQ_F_HARDLINK|REQ_F_IO_DRAIN)
+> 
+> I believe this still misses the last request in a linked chain, which
+> won't have REQ_F_LINK/REQ_F_HARDLINK set?
 
-Yes, you're right.
+Yeah good point, I think we should just be looking at link->head instead
+to see if the request is a link, or part of a linked submission. That
+may overshoot a bit, but that should be fine - it'll be a false
+positive. Alternatively, we can still check link flags and compare with
+link->last instead...
 
->
-> >               return -EAGAIN;
-> >       }
-> >
-> > @@ -3706,7 +3712,7 @@ static int e1000e_config_hwtstamp(struct e1000_ad=
-apter *adapter,
-> >                                E1000_TSYNCRXCTL_TYPE_MASK)) !=3D
-> >           (regval & (E1000_TSYNCRXCTL_ENABLED |
-> >                      E1000_TSYNCRXCTL_TYPE_MASK))) {
-> > -             e_err("Timesync Rx Control register not set as expected\n=
-");
->
-> Same question here.
->
-> > +             NL_SET_ERR_MSG(extack, "Timesync Rx Control register not =
-set as expected\n");
-> >               return -EAGAIN;
-> >       }
-> >
-> > @@ -3932,7 +3938,7 @@ static void e1000e_systim_reset(struct e1000_adap=
-ter *adapter)
-> >       spin_unlock_irqrestore(&adapter->systim_lock, flags);
-> >
-> >       /* restore the previous hwtstamp configuration settings */
-> > -     e1000e_config_hwtstamp(adapter, &adapter->hwtstamp_config);
-> > +     e1000e_config_hwtstamp(adapter, &adapter->hwtstamp_config, NULL);
+But the whole thing still feels a bit iffy. The whole uring_cmd setup
+with an SQE that's sometimes the actual SQE, and sometimes a copy when
+needed, does not fill me with joy.
 
-I'll pass an extack instead of NULL and add a print here.
+> IOSQE_IO_DRAIN also causes subsequent operations to be issued async;
+> is REQ_F_IO_DRAIN set on those operations too?
 
-> >   }
-> >
-> >   /**
-> > @@ -6079,8 +6085,8 @@ static int e1000_change_mtu(struct net_device *ne=
-tdev, int new_mtu)
-> >       return 0;
-> >   }
-> >
-> > -static int e1000_mii_ioctl(struct net_device *netdev, struct ifreq *if=
-r,
-> > -                        int cmd)
-> > +static int e1000_ioctl(struct net_device *netdev, struct ifreq *ifr,
-> > +                    int cmd)
-> >   {
-> >       struct e1000_adapter *adapter =3D netdev_priv(netdev);
-> >       struct mii_ioctl_data *data =3D if_mii(ifr);
-> > @@ -6140,7 +6146,8 @@ static int e1000_mii_ioctl(struct net_device *net=
-dev, struct ifreq *ifr,
-> >   /**
-> >    * e1000e_hwtstamp_set - control hardware time stamping
-> >    * @netdev: network interface device structure
-> > - * @ifr: interface request
-> > + * @config: timestamp configuration
-> > + * @extack: netlink extended ACK report
-> >    *
-> >    * Outgoing time stamping can be enabled and disabled. Play nice and
-> >    * disable it when requested, although it shouldn't cause any overhea=
-d
-> > @@ -6153,20 +6160,18 @@ static int e1000_mii_ioctl(struct net_device *n=
-etdev, struct ifreq *ifr,
-> >    * specified. Matching the kind of event packet is not supported, wit=
-h the
-> >    * exception of "all V2 events regardless of level 2 or 4".
-> >    **/
-> > -static int e1000e_hwtstamp_set(struct net_device *netdev, struct ifreq=
- *ifr)
-> > +static int e1000e_hwtstamp_set(struct net_device *netdev,
-> > +                            struct kernel_hwtstamp_config *config,
-> > +                            struct netlink_ext_ack *extack)
-> >   {
-> >       struct e1000_adapter *adapter =3D netdev_priv(netdev);
-> > -     struct hwtstamp_config config;
-> >       int ret_val;
-> >
-> > -     if (copy_from_user(&config, ifr->ifr_data, sizeof(config)))
-> > -             return -EFAULT;
-> > -
-> > -     ret_val =3D e1000e_config_hwtstamp(adapter, &config);
-> > +     ret_val =3D e1000e_config_hwtstamp(adapter, config, extack);
-> >       if (ret_val)
-> >               return ret_val;
-> >
-> > -     switch (config.rx_filter) {
-> > +     switch (config->rx_filter) {
-> >       case HWTSTAMP_FILTER_PTP_V2_L4_SYNC:
-> >       case HWTSTAMP_FILTER_PTP_V2_L2_SYNC:
-> >       case HWTSTAMP_FILTER_PTP_V2_SYNC:
-> > @@ -6178,38 +6183,23 @@ static int e1000e_hwtstamp_set(struct net_devic=
-e *netdev, struct ifreq *ifr)
-> >                * by hardware so notify the caller the requested packets=
- plus
-> >                * some others are time stamped.
-> >                */
-> > -             config.rx_filter =3D HWTSTAMP_FILTER_SOME;
-> > +             config->rx_filter =3D HWTSTAMP_FILTER_SOME;
-> >               break;
-> >       default:
-> >               break;
-> >       }
-> >
-> > -     return copy_to_user(ifr->ifr_data, &config,
-> > -                         sizeof(config)) ? -EFAULT : 0;
-> > +     return 0;
-> >   }
-> >
-> > -static int e1000e_hwtstamp_get(struct net_device *netdev, struct ifreq=
- *ifr)
-> > +static int e1000e_hwtstamp_get(struct net_device *netdev,
-> > +                            struct kernel_hwtstamp_config *kernel_conf=
-ig)
-> >   {
-> >       struct e1000_adapter *adapter =3D netdev_priv(netdev);
-> >
-> > -     return copy_to_user(ifr->ifr_data, &adapter->hwtstamp_config,
-> > -                         sizeof(adapter->hwtstamp_config)) ? -EFAULT :=
- 0;
-> > -}
-> > +     *kernel_config =3D adapter->hwtstamp_config;
-> >
-> > -static int e1000_ioctl(struct net_device *netdev, struct ifreq *ifr, i=
-nt cmd)
-> > -{
-> > -     switch (cmd) {
-> > -     case SIOCGMIIPHY:
-> > -     case SIOCGMIIREG:
-> > -     case SIOCSMIIREG:
-> > -             return e1000_mii_ioctl(netdev, ifr, cmd);
-> > -     case SIOCSHWTSTAMP:
-> > -             return e1000e_hwtstamp_set(netdev, ifr);
-> > -     case SIOCGHWTSTAMP:
-> > -             return e1000e_hwtstamp_get(netdev, ifr);
-> > -     default:
-> > -             return -EOPNOTSUPP;
-> > -     }
-> > +     return 0;
-> >   }
-> >
-> >   static int e1000_init_phy_wakeup(struct e1000_adapter *adapter, u32 w=
-ufc)
-> > @@ -7346,9 +7336,11 @@ static const struct net_device_ops e1000e_netdev=
-_ops =3D {
-> >   #ifdef CONFIG_NET_POLL_CONTROLLER
-> >       .ndo_poll_controller    =3D e1000_netpoll,
-> >   #endif
-> > -     .ndo_set_features =3D e1000_set_features,
-> > -     .ndo_fix_features =3D e1000_fix_features,
-> > +     .ndo_set_features       =3D e1000_set_features,
-> > +     .ndo_fix_features       =3D e1000_fix_features,
-> >       .ndo_features_check     =3D passthru_features_check,
-> > +     .ndo_hwtstamp_get       =3D e1000e_hwtstamp_get,
-> > +     .ndo_hwtstamp_set       =3D e1000e_hwtstamp_set,
-> >   };
-> >
-> >   /**
-> >
->
->
-> Also you are missing a subject prefix, I assume that you mean to send it
-> to iwl-next since it is not a bug fix. Please add it to your patch.
+The first 8 flags are directly set in the io_kiocb at init time. So if
+IOSQE_IO_DRAIN is set, then REQ_F_IO_DRAIN will be set as they are one
+and the same.
+
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index bcfca18395c4..9e60b5bb5a60 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -177,10 +177,14 @@ static void io_uring_cmd_cache_sqes(struct io_kiocb *req)
+ 	ioucmd->sqe = cache->sqes;
+ }
+ 
++#define SQE_COPY_FLAGS	(REQ_F_FORCE_ASYNC|REQ_F_IO_DRAIN)
++
+ static int io_uring_cmd_prep_setup(struct io_kiocb *req,
+ 				   const struct io_uring_sqe *sqe)
+ {
+ 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
++	struct io_ring_ctx *ctx = req->ctx;
++	struct io_submit_link *link = &ctx->submit_state.link;
+ 	struct io_uring_cmd_data *cache;
+ 
+ 	cache = io_uring_alloc_async_data(&req->ctx->uring_cache, req);
+@@ -190,7 +194,8 @@ static int io_uring_cmd_prep_setup(struct io_kiocb *req,
+ 
+ 	ioucmd->sqe = sqe;
+ 	/* defer memcpy until we need it */
+-	if (unlikely(req->flags & REQ_F_FORCE_ASYNC))
++	if (unlikely(ctx->flags & IORING_SETUP_SQPOLL ||
++		     req->flags & SQE_COPY_FLAGS || link->head))
+ 		io_uring_cmd_cache_sqes(req);
+ 	return 0;
+ }
+
+-- 
+Jens Axboe
 
