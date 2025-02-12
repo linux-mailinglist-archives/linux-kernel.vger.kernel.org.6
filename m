@@ -1,219 +1,178 @@
-Return-Path: <linux-kernel+bounces-510936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34CA9A323CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:47:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC381A323D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:48:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43BB163CF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560FC16045B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B00209677;
-	Wed, 12 Feb 2025 10:47:29 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6F4209677;
+	Wed, 12 Feb 2025 10:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QvAfAW0f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365121FCFF2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1482AF19
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357249; cv=none; b=i8XF1apbYBi/ZDiGdywZ/p+hq7b2dLTOH/w0tz0pdwtwrcDoavarffvqu1PB84YEkbImtBsi22Gy2Uz0shI8s717uVk49uB2OULPvOB7bxxaC/izVvgP1CYC2myFWGkgoF3P/qKwb3KDgWCmpqVAu5Z0x5z+94Njnrlffxt7/7s=
+	t=1739357273; cv=none; b=dq4bSlxpLkxUsV9NJebqzfMZ2LEnxH6ju/gt2R0YTpwpvToGaBf72AwuEnQKGtnkGEjjBDUkWa/UxDtY1QgjBRwu1IErAzxNIXfleDe4Hb8S+UewMFsRzVN1GOA8ET/ceqkbAYNdW0fT4vaIg+VMGGrWI88YUMohgVM9yjGVXBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357249; c=relaxed/simple;
-	bh=lktNSrHADcrlJcpv1LVG3T/72KlRRffskbQB21l2VR4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kn9EGpdZy9pluryGW2xk2/fzFaG2CLITHxOIgbiilYfukW4xGltESvSs8cbdufBLaeTfjSUwbObbTaj+8tEyFj8YJpizQdkEpWXIGFua5yHNNforD8oKyQ9tjq55tkQfKkS4RbsmGMauRnTNglQrIjgkk8nU7oXNCFynKZzmU1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d054d79dacso112386335ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:47:26 -0800 (PST)
+	s=arc-20240116; t=1739357273; c=relaxed/simple;
+	bh=g8j4CilaLUVrCCWjDHpwjdDMGvZbQTRI6rlTr3qSGGY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EDCsCfI+sFo4hqpjpiooYZQMM9JaxAYM8tmzqVZKAqBT448ipCr8QVsbzoW+rekskWwD49EFA61zMipoB33FJ1AJ0khx+oZkwNsnrjiGg/eKqjjyCCMJTL/PFCL6lWPzKp0FiKSjx+/HY6n7SJbn5xvhaU8Qh8l/KS8EBEEHGkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QvAfAW0f; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739357270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mjdUa3EI6jjPQESFxZ7QAmDE55PpxL5gJTNRXqkiL/U=;
+	b=QvAfAW0faU2m2rDi34rBDczaeZ5v+Q9ZINe/YCvgeoNRMV5BY0DsfyqgUQQGtc5Pl5xbDX
+	dkt6v9x/NBe/RFoJIFfJIbDL1fOJUFDjJo4ms48SXMNUWHZK+VxLEaFDGX4SKqjNTWwqes
+	ffczT8Pc4z/BKROFZDTqPeENN4Ojkw0=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-K20bV3hCP8me-6-WGydC6g-1; Wed, 12 Feb 2025 05:47:49 -0500
+X-MC-Unique: K20bV3hCP8me-6-WGydC6g-1
+X-Mimecast-MFC-AGG-ID: K20bV3hCP8me-6-WGydC6g
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5de5005c0d6so4139119a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:47:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739357246; x=1739962046;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e1v6IWlc3XiSaFeDTotE3yjGY2oJ++LVh7lE4zelYMc=;
-        b=KRKfUn5TqIEwmty/EVXzJmsmd/oJZ0OsTKbVLlLOiWY1tDa3ESoucFhCCDaLhgl0+a
-         YBGjeuJB0ihRZU7UDPz+LafKwqUfbajJH2LcfFQvA81FV1ZsUX4zoVagrzddj92/Il4z
-         9f1bX7agKfA6wlPWPiEFQytKhDeF96kh17nCk0fnYHxH0/88z6+glW4ZysZsxPzF6pKz
-         7cvT5LwOVDb0dZx9pCLKRauTa9EtMD9Qvxe5MLzc/+cm1sWCj3GuOjZLZPYtdYc5oe/t
-         3hhfvlexqID2c7z6rbRbv2k8CosxhO8oGLCauOUEkve6asXKnu0NceXEVMk6RVtDXPwt
-         DnnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzlHJpFhyJgFPkaNBmFIrFR8lfyGx16lkCiK5Ug15uH3MEVB/+ysEeELPWUbKQQh0tldBoFKg+LxGyIeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ6dkNQsbknmRgUPa/IztyZKC8tvJMfKzUqwR/Cru8QcEKjszu
-	4uxGqVSELOfDL6Q1JTB+3Rc1VqKBu0ZM0U23djQYmv0kkP5aiUN427726DvEHV9LsFjaWd5J7pl
-	vcP/IPxWoxlQbdf233JN5TrI1mQpfxEYhsaN6EEWDkEQgrdWPaucQmUw=
-X-Google-Smtp-Source: AGHT+IHPlKtgX0CpACwGTYhnGnVAoCBHYrvZkoxo2Fhep0cNORjv2MZjQxTQCDoedwMSRClJ35xAvxQUFzwLndI55qqDtAGG386q
+        d=1e100.net; s=20230601; t=1739357268; x=1739962068;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mjdUa3EI6jjPQESFxZ7QAmDE55PpxL5gJTNRXqkiL/U=;
+        b=hr0sx66Ok0OJipyw63Dnz2q8Amgo2b3/RjedmLXYdgcTniU0k8Vhgzw0HVzo7YiKQM
+         a/iFEKYJTSKBXYw9GcP5VTv72mhHGM6YEPcvbBOP1nrd1N8dB7LHjt7/IsVYXF7b0Tqv
+         zlTTv7/oNXZP1ZdmlzVrnbb8Y2lJ8DKLWvYSkaIy4EOgU1YsGaq18jv3eInRZeVTkirP
+         chzT5KxQnCAXnl59eet4M5vIqzCkW4sAl6Ep2vEW8nff8ZcrBNyJUYcj/k2X5oL4EZJP
+         GGLLpKzMLMr8Zl31xHqXpFKOF2jXH9GbhcsVltwabxdskAsCyhmnWp9SDyZ31S1SPL++
+         UJuw==
+X-Forwarded-Encrypted: i=1; AJvYcCW62ys+PU/lwCvPp9ho8aAxxVH7u4KI0GvTwA8/JFkrw+P6a1NtRGz6qVFo3aIyqCtLbJc6ATrSC78015A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxllN7W7+QPpsxmtvH3vjO8VzfoReD7/QvlVKjFSx/6KkX2Ss/K
+	m6jp3vLTT7Seikh40AfOAbYRMrqjSz8P12w5AgIbbeV+ayfOicT0tyKsTPzbKEF5Eq/3/en/SJ2
+	a7BazgUSF702s5XZO92nqvYv4k5PMDuJP+pFamNiobE9+hAEidAZPfsH9JUfAOA==
+X-Gm-Gg: ASbGnctTSHsbsrvxKX+hlY52AOT4ve9IQb29EheHOuGMNU/UXK4Ttmbg/GD8nU6Fwah
+	YlxwHbOoWSGgHkSFOV4oVQXJqD7J/5MzIFMRD87qgCtaIGSvo8j6ej/UszoQFg/gO0WkAQQplDg
+	cksUArEjkKEole9Fd/bC1+b9kiXJSR/fkNGn8JK2Is1+5YjDm1wqO/pPp0TTsUEEAkR7uB8J9/R
+	EXDW7flyrXJMRjTgmZ6xNwqqV0Q7U29sZtQkmZdJSGmvIqdbRNdkMhcAUFSdY0dZCsi59lPDjz/
+	iERKrYqY8FJqTyc3cb/RFiwFQF8jy1gyAbKq+8q2CHbsehhdw1asWx4sIchvKCZmc2+ydqnk7z9
+	ExobHOAmiAOqZJ40DI3SDXiTegzuL+blWrpWQnYjUEMd+hg+d4P9cjvM=
+X-Received: by 2002:a05:6402:4024:b0:5d0:efaf:fb73 with SMTP id 4fb4d7f45d1cf-5deaddc10acmr2533482a12.15.1739357268045;
+        Wed, 12 Feb 2025 02:47:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF+cfN/r2H+5+T27gFwPIpiEUhEl9EoQtBpdey6qTwiUKTmPoUzMtEHwPD5XLyb0CzEKyhwIw==
+X-Received: by 2002:a05:6402:4024:b0:5d0:efaf:fb73 with SMTP id 4fb4d7f45d1cf-5deaddc10acmr2533451a12.15.1739357267633;
+        Wed, 12 Feb 2025 02:47:47 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de4f4f4daesm9370661a12.21.2025.02.12.02.47.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 02:47:46 -0800 (PST)
+Message-ID: <3572b4b0-5d32-4331-b241-567701c2cf7b@redhat.com>
+Date: Wed, 12 Feb 2025 11:47:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1445:b0:3a7:88f2:cfa9 with SMTP id
- e9e14a558f8ab-3d17d0aaff3mr16688825ab.11.1739357246368; Wed, 12 Feb 2025
- 02:47:26 -0800 (PST)
-Date: Wed, 12 Feb 2025 02:47:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ac7c3e.050a0220.110943.004b.GAE@google.com>
-Subject: [syzbot] [bcachefs?] WARNING in bch2_btree_node_mem_alloc
-From: syzbot <syzbot+64fe1897190293e35923@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] drm: panel-orientation-quirks: Add quirks for AYA
+ NEO Flip DS and KB
+To: John Edwards <uejji@uejji.net>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Andrew Wyatt <fewtarius@steamfork.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Paco Avelar <pacoavelar@hotmail.com>
+References: <20250124204648.56989-2-uejji@uejji.net>
+ <20250124204648.56989-6-uejji@uejji.net>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250124204648.56989-6-uejji@uejji.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+Thank you for your patches and sorry for being slow to respond.
 
-HEAD commit:    7ee983c850b4 Merge tag 'drm-fixes-2025-02-08' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1081cb18580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1909f2f0d8e641ce
-dashboard link: https://syzkaller.appspot.com/bug?extid=64fe1897190293e35923
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+On 24-Jan-25 9:46 PM, John Edwards wrote:
+> From: Andrew Wyatt <fewtarius@steamfork.org>
+> 
+> The AYA NEO Flip DS and KB both use a 1080x1920 portrait LCD panel.  The
+> Flip DS additionally uses a 640x960 portrait LCD panel as a second display.
+> 
+> Add DMI matches to correctly rotate these panels.
+> 
+> Signed-off-by: Andrew Wyatt <fewtarius@steamfork.org>
+> Co-developed-by: John Edwards <uejji@uejji.net>
+> Signed-off-by: John Edwards <uejji@uejji.net>
+> Tested-by: Paco Avelar <pacoavelar@hotmail.com>
+> ---
+>  drivers/gpu/drm/drm_panel_orientation_quirks.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> index f9c975338..c5acf2628 100644
+> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> @@ -93,6 +93,12 @@ static const struct drm_dmi_panel_orientation_data onegx1_pro = {
+>  	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
+>  };
+>  
+> +static const struct drm_dmi_panel_orientation_data lcd640x960_leftside_up = {
+> +	.width = 640,
+> +	.height = 960,
+> +	.orientation = DRM_MODE_PANEL_ORIENTATION_LEFT_UP,
+> +};
+> +
+>  static const struct drm_dmi_panel_orientation_data lcd720x1280_rightside_up = {
+>  	.width = 720,
+>  	.height = 1280,
+> @@ -202,6 +208,18 @@ static const struct dmi_system_id orientation_data[] = {
+>  		  DMI_MATCH(DMI_PRODUCT_NAME, "AIR"),
+>  		},
+>  		.driver_data = (void *)&lcd1080x1920_leftside_up,
+> +	}, {    /* AYA NEO Flip DS Bottom Screen */
+> +		.matches = {
+> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYANEO"),
+> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "FLIP DS"),
+> +	},
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Since this '}' is closing the .matches initializer it should be indented 2 tabs,
+note I think we can fix this up while merging things so no need for a v3
+(assuming Thomas agrees).
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-7ee983c8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f2f78699fc41/vmlinux-7ee983c8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ca55e6e8dd01/bzImage-7ee983c8.xz
+> +		.driver_data = (void *)&lcd640x960_leftside_up,
+> +	}, {    /* AYA NEO Flip KB/DS Top Screen */
+> +		.matches = {
+> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYANEO"),
+> +		  DMI_MATCH(DMI_PRODUCT_NAME, "FLIP"),
+> +	},
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+64fe1897190293e35923@syzkaller.appspotmail.com
+Since this '}' is closing the .matches initializer it should be indented 2 tabs
 
-error reading btree root btree=extents level=0: btree_node_read_error, fixing
-invalid bkey in btree_node btree=inodes level=0: u64s 16 type inode_v3 0:4096:4294967281 len 0 ver 0: (unpack error)
-  invalid variable length fields: delete?, fixing
-invalid bkey in btree_node btree=inodes level=0: u64s 18 type inode_v3 0:4098:U32_MAX len 0 ver 0: (unpack error)
-  invalid variable length fields: delete?, fixing
-bcachefs (loop0): error validating btree node on loop0 at btree subvolumes level 0/0
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 5b940 written 0 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0  
-  node offset 0/0: got wrong btree node: got
-  btree=subvolumes level=0 seq c0bef60d07ceb940 1
-  min: POS_MIN
-  max: SPOS_MAX
-bcachefs (loop0): flagging btree subvolumes lost data
-error reading btree root btree=subvolumes level=0: btree_node_read_error, fixing
-bcachefs (loop0): scan_for_btree_nodes...
-bcachefs (loop0): btree node scan found 2 nodes after overwrites
- done
-bcachefs (loop0): check_topology...
-bcachefs (loop0): btree root extents unreadable, must recover from scan
-no nodes found for btree extents, continuing
-bcachefs (loop0): btree root subvolumes unreadable, must recover from scan
-no nodes found for btree subvolumes, continuing
- done
-bcachefs (loop0): accounting_read... done
-bcachefs (loop0): alloc_read... done
-bcachefs (loop0): stripes_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): check_allocations...
-btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ac62141f8dc7e261 written 24 min_key POS_MIN durability: 1 ptr: 0:26:0 gen 0, fixing
-btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 7589ab5e0c11cc7a written 24 min_key POS_MIN durability: 1 ptr: 0:38:0 gen 0, fixing
-btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 9aa2895aefce4bdf written 24 min_key POS_MIN durability: 1 ptr: 0:41:0 gen 0, fixing
-btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ebb8d5a9e3463bdb written 16 min_key POS_MIN durability: 1 ptr: 0:32:0 gen 0, fixing
-btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq e81e1ed936acf3df written 32 min_key POS_MIN durability: 1 ptr: 0:29:0 gen 0, fixing
-bucket 0:10 gen 0 has wrong data_type: got free, should be journal, fixing
-bucket 0:10 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:27 gen 0 has wrong data_type: got btree, should be need_discard, fixing
-bucket 0:27 gen 0 data type need_discard has wrong dirty_sectors: got 256, should be 0, fixing
-bucket 0:34 gen 0 has wrong data_type: got user, should be need_discard, fixing
-bucket 0:34 gen 0 data type need_discard has wrong dirty_sectors: got 16, should be 0, fixing
-bucket 0:35 gen 0 has wrong data_type: got btree, should be need_discard, fixing
-bucket 0:35 gen 0 data type need_discard has wrong dirty_sectors: got 256, should be 0, fixing
- done
-bcachefs (loop0): going read-write
-bcachefs (loop0): journal_replay...
-------------[ cut here ]------------
-btree cache cannibalize failed
-WARNING: CPU: 0 PID: 5320 at fs/bcachefs/btree_cache.c:770 btree_node_cannibalize fs/bcachefs/btree_cache.c:770 [inline]
-WARNING: CPU: 0 PID: 5320 at fs/bcachefs/btree_cache.c:770 bch2_btree_node_mem_alloc+0xf66/0x16f0 fs/bcachefs/btree_cache.c:870
-Modules linked in:
-CPU: 0 UID: 0 PID: 5320 Comm: syz.0.0 Not tainted 6.14.0-rc1-syzkaller-00181-g7ee983c850b4 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btree_node_cannibalize fs/bcachefs/btree_cache.c:770 [inline]
-RIP: 0010:bch2_btree_node_mem_alloc+0xf66/0x16f0 fs/bcachefs/btree_cache.c:870
-Code: d2 e8 2e 47 53 fd 2e 2e 2e 31 c0 e9 a3 fe ff ff e8 0f 67 83 fd c6 05 e4 7c c9 0b 01 90 48 c7 c7 00 bc 51 8c e8 6b 12 44 fd 90 <0f> 0b 90 90 eb c3 e8 ef 66 83 fd eb 05 e8 e8 66 83 fd 48 8b 5c 24
-RSP: 0018:ffffc9000d425c48 EFLAGS: 00010246
-RAX: c8f2efa4a74c8f00 RBX: ffff888058901cd8 RCX: 0000000000100000
-RDX: ffffc9000edbb000 RSI: 00000000000fffff RDI: 0000000000100000
-RBP: ffff888058901cf8 R08: ffffffff81800c22 R09: 1ffff11003f8519a
-R10: dffffc0000000000 R11: ffffed1003f8519b R12: ffff88801f040000
-R13: ffff88805369e800 R14: ffff888058901cd0 R15: dffffc0000000000
-FS:  00007f80cf7176c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f80ce84cf70 CR3: 00000000437ba000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:304 [inline]
- bch2_btree_reserve_get+0x2df/0x1890 fs/bcachefs/btree_update_interior.c:532
- bch2_btree_update_start+0xe56/0x14e0 fs/bcachefs/btree_update_interior.c:1230
- bch2_btree_split_leaf+0x121/0x880 fs/bcachefs/btree_update_interior.c:1851
- bch2_trans_commit_error+0x212/0x1380 fs/bcachefs/btree_trans_commit.c:908
- __bch2_trans_commit+0x812b/0x97a0 fs/bcachefs/btree_trans_commit.c:1085
- wb_flush_one fs/bcachefs/btree_write_buffer.c:181 [inline]
- bch2_btree_write_buffer_flush_locked+0x2c8c/0x5b10 fs/bcachefs/btree_write_buffer.c:379
- btree_write_buffer_flush_seq+0x1c49/0x1e10 fs/bcachefs/btree_write_buffer.c:551
- bch2_btree_write_buffer_journal_flush+0xc7/0x150 fs/bcachefs/btree_write_buffer.c:567
- journal_flush_pins+0x649/0xbb0 fs/bcachefs/journal_reclaim.c:585
- journal_flush_pins_or_still_flushing+0x2f/0x390 fs/bcachefs/journal_reclaim.c:857
- journal_flush_done+0x8b/0x400 fs/bcachefs/journal_reclaim.c:872
- bch2_journal_flush_pins+0x225/0x3a0 fs/bcachefs/journal_reclaim.c:912
- bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
- bch2_journal_replay+0x2744/0x2a70 fs/bcachefs/recovery.c:442
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:226
- bch2_run_recovery_passes+0x2ad/0xa90 fs/bcachefs/recovery_passes.c:291
- bch2_fs_recovery+0x265a/0x3de0 fs/bcachefs/recovery.c:936
- bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1041
- bch2_fs_get_tree+0xd8d/0x1740 fs/bcachefs/fs.c:2203
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3560
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f80ce98e58a
-Code: Unable to access opcode bytes at 0x7f80ce98e560.
-RSP: 002b:00007f80cf716e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f80cf716ef0 RCX: 00007f80ce98e58a
-RDX: 0000400000000200 RSI: 0000400000005900 RDI: 00007f80cf716eb0
-RBP: 0000400000000200 R08: 00007f80cf716ef0 R09: 0000000001000081
-R10: 0000000001000081 R11: 0000000000000246 R12: 0000400000005900
-R13: 00007f80cf716eb0 R14: 0000000000005992 R15: 0000400000000000
- </TASK>
+> +		.driver_data = (void *)&lcd1080x1920_leftside_up,
+>  	}, {	/* AYA NEO Founder */
+>  		.matches = {
+>  		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYA NEO"),
+
+Regards,
+
+Hans
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
