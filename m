@@ -1,122 +1,114 @@
-Return-Path: <linux-kernel+bounces-511098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070AAA325D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:26:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9B2A325D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:26:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B44F11689A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6713A82C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D3D20766F;
-	Wed, 12 Feb 2025 12:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D8020B801;
+	Wed, 12 Feb 2025 12:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TyJcMOXB"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGQIzx0W"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA4D2046BD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3E32080E6;
+	Wed, 12 Feb 2025 12:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739363177; cv=none; b=ikFjAcur1NNoBa2ovEfzdHQoWE0ovyyxNyjwKcrK+VeUWRNIR7orrm4R8M9IPUGGABF80RC4/nCP1TXEFx0epFL44nrOIu64uLH+0I0QCWuVQUeaq+w/gTt38ipIYU6ASX06NTlXoWD92YzHLoMJOzqqNNOzHtTzdXY/ZPAOf3A=
+	t=1739363209; cv=none; b=T8qF7X6FbF/Fe7TmanDEpJ3C6Uz6gcuEGoSnZ0GxkTGSqln7PKwTD9rT8r1Bpr0uCNryaqSgSLsPTPHpPyaoLj6Wc9sw+kWF5RN3W7WJc+oQVZ+fm8dLgeE44qLZBF7jJI7CJXTVOMjs03EZvQYdcCRKBeE5IvFajs7VPt+kDhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739363177; c=relaxed/simple;
-	bh=nq8Gpy/+Xqn4Zptu93g/1bnbhcwcFsdUiUkBb+2IJ4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A7UDWUAZz7OHIuXWbAeVR4NiOjoeJ3n3Lcvgf2r8sUhbl2nMrKf8NCUAUzlPaf6BKdApKA+ARaiFA60QaZ0QRzkzQuzle+/XGQRw6JMbmBtY7uuXg+G6T96FhtUgN3CbOYhgPYv2bSgNPdo0SNtiLHFbuSVtD2MW7IJq4WSJ+gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TyJcMOXB; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6f6715734d9so59037047b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:26:15 -0800 (PST)
+	s=arc-20240116; t=1739363209; c=relaxed/simple;
+	bh=/5vDf73OeCA0N4T/7EoMUxHAuvnWQcA5e32GrqPx1nw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ofaWWxvIxGpiSH5AawjKczZjoEybu+pECUWN9iAd0uzJ7rAo28ug88mlZKMLfeuBoNo24fgx5u557ZmSq2tjBVf2RW1iYOY7zVNG8riEAuof/N+9cKfwjy48ul62TIOY9EV86JVVHBegyFk5uixPyK0WGwOXV1+3D52UTDGJjTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGQIzx0W; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-438a3216fc2so66509935e9.1;
+        Wed, 12 Feb 2025 04:26:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739363174; x=1739967974; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=46uMxi16ondgGccvYcEvXMpewkDX4CAYjnXalJ8+Fuk=;
-        b=TyJcMOXBXJR2W3Nhvs2n/KeKd3yemLN0MhVPlBFS2SWvTLp5Iv8W03Nt23rNh264Eg
-         LvA0T3TRW6V6iSGzzdDosabDxb6k6YyjAqi8csDztQOvNC1EfiyMbeN3B1OEOOyAdQv2
-         q5KQVg2cisCWMXktBXzpIIfovOIV+3AuNU4JKM/6lkQJ1fIOYiXfvZ27M2/gcpCbJm3j
-         +5z8FSERkk44ga3ad3cVlzyqNKiVKLuiRHAJmgPcDT5P8KfFkTp7s/EHxROyhIkAx+65
-         eBmNNtEiwUgrn7xw44TGV5kcbP6gkBY0zO4QuoYlpVzuIqfWJyOQTD4uNz+yQ3vYNLvE
-         +BxA==
+        d=gmail.com; s=20230601; t=1739363206; x=1739968006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sCu6b3woM+c5soUL+CL/3/8vzh19NcMbxFpr4cPyY0w=;
+        b=bGQIzx0WyT/RlXS21s7AcGhRr/Z1Zc77StHWOl2MBDclEwB9c1mVjSxANyRfGZAhgB
+         jhR5nKPWpF4zyWrHzr6XRxW/x7jJpJKrWzwBvGur46YSO+elfP6dtUzOEdh7fSIFUF/D
+         aSptQmzNDa7jxReezzUZGVS3950qrBdR2luqEzhQVk97+cnc7Lh3Mj7E3F5cRVkqEMb7
+         hYqLjAyc+E7r+jSIaHwMzhEtSO2Shbng5eO+z5Fyb08OUZ8+rOprlbebYkLsuRdEr4Fs
+         pQK1ZI5LHML/ptZt95N72w/GeOGJHvHdtwdcjS8qJav/R+tTOhBJnUPjqO1c9750l+UI
+         HoGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739363174; x=1739967974;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739363206; x=1739968006;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=46uMxi16ondgGccvYcEvXMpewkDX4CAYjnXalJ8+Fuk=;
-        b=JfG4AKzShmwF1zGy3Kcf+4pMaHYdzYgdd16ChRC/P/FTN0tgzXhgcDmG6sygJRPJEU
-         a05U0RUrM+++UWTd6vzowOXKKuiE2wJEJ9O1QYoSoU5HicRtwqYOfLi8w/xJGT+2W0dp
-         xNMD48L9J7XvJ+/rQEwmxPgqoHBAq1nO6RZUf0SHMp8+/UUHxz2YhBueOheOj4WnmxRk
-         P7WqMv7AZMuVvSY1CWeuogeATI3NLyd/5zmrN4nFuJdxcQ7hpVvYvTDbn1C5D5mQTt8v
-         wXTaxjmRgtnSodo1sYgSmrnxk4uVVAyra6YndRLIxUa83tA8iz86rTRYog+IKLv6ftji
-         eC2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXKCxXqofjbIM08+2KvJcqrYQ7pXnaIX8Hng9kH2vH6HvkqdrFGc5YzAW3xCf4b0zoENR6UL4622YsH3tk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxERDXYSV1Qjf/homxVUhf6kuRF+gFejmjcg9UXWk8/SakCe4vc
-	JdSKsBDeNMwqM9vUzLm8h4URQ23O0toYdDqCVTJTqWgtcoUaTXbIvp523sgKU0X7L0m6ILGT+ah
-	p55Irnt3Dy6zqmtsr9L/RZwTr3tum9Tw5P8EBCQ==
-X-Gm-Gg: ASbGncssrJbdNsXfgIA9w+WNWzlACnGI4jwYJwEg5zCtS7ME3CXRGE0uc8SbWCzKF5Q
-	E+OhpTXQ1Y4yLUT+G2H6ig4wkwL/M3YrDFb3YfWhcsQs8JREuQw4/jV/10fGatNKLwss0ghMhL8
-	SxKY8omVXH5/hhqO1MFSZLpa/yX2NL
-X-Google-Smtp-Source: AGHT+IFO8HryvH361AtBzukKXHNwFD8iGdVHudVfUR5kStssIhbXkwBCk3h98SYdV45gucw51GK8rpDo/H/XBl0oEtA=
-X-Received: by 2002:a05:690c:3687:b0:6f9:50ed:e6eb with SMTP id
- 00721157ae682-6fb1f27c541mr33742567b3.27.1739363174466; Wed, 12 Feb 2025
- 04:26:14 -0800 (PST)
+        bh=sCu6b3woM+c5soUL+CL/3/8vzh19NcMbxFpr4cPyY0w=;
+        b=nqEjEqXDiPFeU6/BaPsabgjN3KNHum188VFzDfSayfo9A3JRrKkCdAqarZwAecIGAK
+         xETRkzy4o+XdJ+xwfkN1DzOKl0EdMJt9uLmTE9Uwq7szb/+rR2CoWPMrVmQ9xOLR3Cw0
+         hmz7NjzojiKo8PKU/s20Ec1UmaAEqInJWGiW7wA3RcAyG0EXB56ZWjCZXPE4eZs1C5w7
+         P6dWsbjyBrznMjWnNpA4t97iyfXcAgeCCYu001EJ/bB1D98GadHj43tFfkJAFVGJShMi
+         Y7c733XD/cl0CxMUsD9P3lF60e0UHuwDo6mmOSE/teFxORQQWru/OMSk/Mj6CsyOaxEx
+         SNEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgKo177ecMZiP2NL2D5INer1Tp8/bjH+bjnrsEx/mP4smxCn37XZ8XhdTJVu5Xo911koQbFtEI8C6xTfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7QEJXuotkL6M+SKUqn680UQ/V9IE1bHXCLW7UOsjgaDeD7sLm
+	A9vVNXYm7ob8BG8eAhgj0brR3y8Bnr8rBqIyP33ZaA7EMw4F+nTu
+X-Gm-Gg: ASbGncvfOjZo3rVj0Lu8XH0rQ2007HCysZXut3SKFHq5muMRoYRY3TrL2ZPXfzyUPEq
+	Dl4nyx9Zl3V4CJTTf6iy18rQ5wDtW48Guq1kic3hxFUHgk4lzEs9ScTNOpu2/o2kHxyepuDZkGA
+	xdsBM0smHhgO+3FXhm0dGg7wo+Uc60D5W7pE0dQTfJJC6tD+7YZIO9E+HGvGvrtUhETPHghO/uO
+	4Li6fzS2GJZl0xvPX7c6szSOh8d2xMi1hHsH1mbrndy7zSp+1UhZwUPF8Bv5rCryyG+ZNg5MYuk
+	ZPd1aE1oYdGX8+9o
+X-Google-Smtp-Source: AGHT+IGmFNu24b1qS0VJTdN4xDOY35KObKCCcjvjGWIaPEwKxZczxmHjIMyVZoSknTa53QLxoZt9IQ==
+X-Received: by 2002:a05:600c:8706:b0:439:55a8:c61f with SMTP id 5b1f17b1804b1-439581ca4f1mr32824285e9.30.1739363206063;
+        Wed, 12 Feb 2025 04:26:46 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4395a06d22csm18674495e9.22.2025.02.12.04.26.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 04:26:45 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] staging: gpib: Fix spelling mistake "sucesfully" -> "successfully"
+Date: Wed, 12 Feb 2025 12:26:18 +0000
+Message-ID: <20250212122618.495963-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
- <20250212-mst_qcs8300-v1-1-38a8aa08394b@quicinc.com> <wyd7i47pkafa7n2yjohuvlh4btasxle4rw5xm55h4bhv24yvah@pfo224xz4xfl>
- <b4008932-ce56-4cc0-9b53-2253051514da@kernel.org>
-In-Reply-To: <b4008932-ce56-4cc0-9b53-2253051514da@kernel.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 12 Feb 2025 14:26:02 +0200
-X-Gm-Features: AWEUYZlVhAIT2AG6Qef-78nrtu6QQCvgOuZCQwLtZcDIi0z3rm5hNqs2iPwtYUM
-Message-ID: <CAA8EJpoowyKcwDQgbWy4xGHzngNQOcWt_z_Xc49GFB1qYjYO6A@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: display/msm: Redocument the
- dp-controller for QCS8300
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Yongxing Mou <quic_yongmou@quicinc.com>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 12 Feb 2025 at 12:54, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 12/02/2025 11:41, Dmitry Baryshkov wrote:
-> > On Wed, Feb 12, 2025 at 03:12:24PM +0800, Yongxing Mou wrote:
-> >> We need to enable mst for qcs8300, dp0 controller will support 2 streams
-> >> output. So not reuse sm8650 dp controller driver and will add a new driver
-> >> patch for qcs8300 mst feature. Modify the corresponding dt-bingding file
-> >> to compatible with the qcs8300-dp.
-> >
-> > NAK for a different reason: QCS8300 is still compatible with SM8650.
-> > Enable features instead of randomly reshuffle compats. In this case,
-> > enable MST for both architectures.
-> >
-> So the original patch was probably correct...
+There is a spelling mistake in a TTY_LOG message. Fix it.
 
-I have no idea. I'd let Yongxing Mou to comment on this. It would be
-nice  instead of getting a lengthy explanation of obvious items to get
-an answer to an actual question: is QCS8300 compatible with SM8650 or
-not. In other words whether they can support the same number of MST
-streams on each controller or not.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+index 85322af62c23..1c3e5dfcc9ec 100644
+--- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
++++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+@@ -542,7 +542,7 @@ static int usb_gpib_attach(gpib_board_t *board, const gpib_board_config_t *confi
+ 		return -EIO;
+ 
+ 	SHOW_STATUS(board);
+-	TTY_LOG("Module '%s' has been sucesfully configured\n", NAME);
++	TTY_LOG("Module '%s' has been successfully configured\n", NAME);
+ 	return 0;
+ }
+ 
 -- 
-With best wishes
-Dmitry
+2.47.2
+
 
