@@ -1,200 +1,136 @@
-Return-Path: <linux-kernel+bounces-512005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A18A3329F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:30:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5ACA3329B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6344188AF37
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:30:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E7D3A8B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583E826136B;
-	Wed, 12 Feb 2025 22:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A952425D52D;
+	Wed, 12 Feb 2025 22:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5R9GRrv"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvuWtecb"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAA725E44F;
-	Wed, 12 Feb 2025 22:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC24256C6A;
+	Wed, 12 Feb 2025 22:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739399391; cv=none; b=VzdvFYnwdaSQuON/M/PBQ+ncZu0IwgjtB/7wuWTR9U2dL+THcd802JjP98nXGrA1JJhff/uaobp+pUuT7EeiwWQwbMR/1xmcbkhyeDG81fghJVYNtdksmGCGOaPPLoGVWrtLaBPX7wNPs5AoWE61e2wRTdB/Wri3jdDpD9qZ9uA=
+	t=1739399388; cv=none; b=SeWwTLCPOfABDxJ8FDY4bwe60bMTm1bC2W89s6dCvrCu0yAL8zJx3kkSJ0BfmBXcGPPnf+8vZflg2fMM0v+I96JJCcRypSoKH/hBuIfwsLXKs2atDa7RY3RZV9cmo/RY8QTGhz5vIT+tnSGAoCKex6brjP4hd9jIFUN9hxUCo8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739399391; c=relaxed/simple;
-	bh=LhEw9QPpOdavL5WIkqJTDi4TOOtHKEvJtP0Vd84Qijg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OtrQw9DWQv6X74vR4JaWN4Tcfk0ZOj/TITU3HbJVkzicVt53S5LskVIlfv8ZDOnUFVeECp0ElC/VXphYG/jUzdc6FRPIz1a4UkqnKbhH1XKP/GWW+aY8ETp5e7qxBCBfjI2E2twfspA0nUtTNOh+ZhfwZEpk77GgxQxVlm8WHck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5R9GRrv; arc=none smtp.client-ip=209.85.222.174
+	s=arc-20240116; t=1739399388; c=relaxed/simple;
+	bh=BFRXywWhuF494EJYNCYLCR8TnlqDFSbUwgsOkRXCO4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oP5YwC4724YKClr1A8paN00Tck25Bnq4TAgPsimhjIAodQnDY+JmMcyrxUs2AptySCTKCwCQBiUuom2MjbfJ1XD6vvlxCBH1TFL4T0/qRcHWLPNHp7QCptSEPemPRRmISIfrY96hteloBcIukqtRH3IGUq5lIiKn5nXTNipnbvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BvuWtecb; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c077f732faso3277185a.1;
-        Wed, 12 Feb 2025 14:29:49 -0800 (PST)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2f2f5e91393so66678a91.0;
+        Wed, 12 Feb 2025 14:29:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739399389; x=1740004189; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LhEw9QPpOdavL5WIkqJTDi4TOOtHKEvJtP0Vd84Qijg=;
-        b=G5R9GRrvhz0geZwmb87PHGhRb93urTPAhdEz30Io+pWm0RaGoJFm8Hdoj5lrbPFqtQ
-         doQdUHdtkltKw7TGJPtQES/jHj+emO4zR434jomyxI8pCTtNb7klc6QaCqCtL4TywBvi
-         Vl3Lx4EB8vPYjEQwU3TaN5Dqbz4zdHY+UXdK6ymrt+BtUCv7QgaDkbz12ZESAYX/5Fpj
-         YAkDSaK8N/oLILaEBkCzAeUqxB1v2Jd3TFz3y75/jh0CnjAoLCuefz6YjDMbrTsmth/1
-         AW/GT/nOuc8boJ3Nf6JRp/MBkvYbNJo1Ps1vr3qjgeYH5el1KNlLTGxX0Ab9ot7SLA3u
-         75RA==
+        d=gmail.com; s=20230601; t=1739399386; x=1740004186; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BZ/n9bqBDmoNTEbi3+gOvCn9UNpfuZOs7Z4fB5U9DNQ=;
+        b=BvuWtecb6kwLy/tpZGDWBoCq27CwTWKSpev4f2IXb+08mpiJ52EQDKAOd2uNHR2SVc
+         fbU766Tr2ZuF6+yh9Ra3DuTJDc7vLdwpj2A7G0T0v1k+QruVBzidUkMaWuNzoDdApsSA
+         RojYGZu0URpuhlybIONfUU2qokDFd4aSnfzmO8klq9T2gbWUrptNAS/Ce60waMy8/nEh
+         zcFLf0XSwMHEWvx06KJF3pg47Pd4FERrtNxnFcoLdtk7Q3ZBGCUuxolyNsszn2ozU+xy
+         SfHaxD+KtCxVrX1o3KOqiWSLDpFUm0WBr4Ln+T6Kt/9m+VoOsxX/hzk6OZrTkRB0u1lu
+         gpnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739399389; x=1740004189;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LhEw9QPpOdavL5WIkqJTDi4TOOtHKEvJtP0Vd84Qijg=;
-        b=qYQ/c+fnjiU8HfFdeVpX+tzpPWdS7UBor4YxS2NYy7/nar1cgIMbciHR5PCklXXoU4
-         j8Ya/lqgxFKfip/UQThiipy+K86riHExilZ6px9F10SYGx3yF/12kR0n5B+7ZRk2eE36
-         H5Fd0gDdo2vstK51+0uvXpVXE9t4JloAi8mRPxuOtHSnPycBVJVpgnSNr/kqMho+Qvl5
-         7oHPVDb+v7rro41IkYZVysAcRqzJ1yKWyqOkzJrfbsOsOC4W1nk2zkacNIIm5YDNI8pr
-         uD3tpu/noC+1xzRn35UH2d2mForAokZ2ofWYD5CnqPWq/a3+A2FV8ZT3nU3ITGF7PFdo
-         Pngw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuNcdbRzLw31QrzIBZJHVqhz7KkyUwKOc08wQaD1A1XK3tHjJwgmMgfJcuGscy/elbMt9x3Z6h+IV/Rao=@vger.kernel.org, AJvYcCXWtj0rbJntKxXwDMXpfaaAE66aS8KsJromIC5JSXRQw1rUq5nI56JIDS7oKSsIbrHvyGpobaIjugStbv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx0FDRLvCMK/RjYpjVXK0+UoyhcFojhH+COgqRO7zqNDWFxcF+
-	elWoBY7j2WDtiDPWPn9RjkZmSWwNgr1McSbNTNVjkvYFdk4PS1QJ
-X-Gm-Gg: ASbGncuNgvvRz1tATiJaeZDXwslX3UWueRiauf0HlHbuBXO23NM5mZznQjhpD4JFqRl
-	SNEfLclui+Kb+33pbd7umj+eG9tm1ucPzlKGKDhhPm0h1hGTPr9gX3LYiul6lTjtzKedAEQ5141
-	OJVwWNdYio9i3OPz/M1AUuYKDfmFSRKFygfC07Y3tpHEDEDMaIU24TYA3Ro+jbLUk+n8lkyMaZl
-	mZ9yLqsqE6nTb7jTuLUtwddBcSNwZVprR0a4osFIhbRTeXsK+bhVwX7jLmimSeNTHJsTAzfcy1u
-	1cT8I474JjC6Vbnk7PzfAt1nZUHit44lyv6ISBJVfi6qnvnOgPiTYwe5ntLdc8tQmjgk
-X-Google-Smtp-Source: AGHT+IFTQkv4xr0P0x72xV0ZftDGC6yXqRNkIg/YxOLjoPFJ+/5r2iNCx1+FzXPPj42y5Uf0QsfNww==
-X-Received: by 2002:a05:620a:4725:b0:7b6:cb84:8132 with SMTP id af79cd13be357-7c06fcd5338mr271807885a.13.1739399388826;
-        Wed, 12 Feb 2025 14:29:48 -0800 (PST)
-Received: from ?IPv6:2600:1002:a012:94a2:c438:570:6155:5ffc? ([2600:1002:a012:94a2:c438:570:6155:5ffc])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c041ded0dcsm908737985a.9.2025.02.12.14.29.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 14:29:48 -0800 (PST)
-Message-ID: <91fbc8f06f4d57f5e3d25dfec99e2fdb76b0a4cb.camel@gmail.com>
-Subject: Re: [PATCH 1/2] media: dt-bindings: Add dt bindings for
- m2m-deinterlace device
-From: Matthew Majewski <mattwmajewski@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Hans Verkuil	
- <hverkuil@xs4all.nl>, "Dr. David Alan Gilbert" <linux@treblig.org>, Neil
- Armstrong <neil.armstrong@linaro.org>, Uwe Kleine-Konig
- <u.kleine-koenig@baylibre.com>, Andrzej Pietrasiewicz
- <andrzejtp2010@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 12 Feb 2025 17:29:26 -0500
-In-Reply-To: <5e9432d7-0be1-4d98-9a61-cd288e53e772@kernel.org>
-References: <20250212170901.3881838-1-mattwmajewski@gmail.com>
-	 <20250212170901.3881838-2-mattwmajewski@gmail.com>
-	 <5e9432d7-0be1-4d98-9a61-cd288e53e772@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (by Flathub.org) 
+        d=1e100.net; s=20230601; t=1739399386; x=1740004186;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BZ/n9bqBDmoNTEbi3+gOvCn9UNpfuZOs7Z4fB5U9DNQ=;
+        b=FdDAdYj6tFOq3yMPTtVzDC5WI+GgmtYfGbf2EPi1UqQ8GTWaeDN29pW81pmRObftWJ
+         p5pPDlHoGdUl+okl6mprIOWY1ZcpbrFqTaA1dDCOX+U2zLn5QBMMC4QjGzP4ffc6tnrw
+         CVKDwgdF7dZ7qqDQ95s5ycwV1VcP01A+fb9OoDAUPcocyE+i/Rmf9WAhrSw2iJEz1UPz
+         5v48iJuUo2XzX4y5XWebHr94ArkahVE9B8rPGvSYlaUh0oJBuiVleu4thRRXbLB2AV71
+         I5DWzge3rBpFONltDreAi3tUMUCZG1I7DRfxmwB1aEhQZc6vVFfjKwVGuyyncnWzY08/
+         KjeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcs3oYuL2NNMJLpDqcd8ojyjxgOq+uRT+5k7x4AcVp4nnpQ8Q5OR+z92XuWLTTTlZOswik3HICdw7d/Xw=@vger.kernel.org, AJvYcCW5cTiejgec5mOfy4TymQx8B6Ka0ENXpcn0A1yQSwH1CZhjWF4skJ88NzQwervemLX3AWxlPgu2@vger.kernel.org, AJvYcCWgrZVz6Fr1FSFyzhFnQm/EneNm/JQJX213pHdj097HgvML6UjNCK8PUR/74OgKNlyW5RXPCMCk97egXmc+HOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWAGpPY9aN5BnDS2m6tbEcXUmxh72lnmIf992BcVfWhPURuhKj
+	ogTRhV8+NCKRi2zVXnruP5ug4I8RRAminBNEVYlDBvcnCOu2Ywzbl6+zsxZZp+lz3C//ZWqt9jj
+	EEEhOrhPaJhIk/8zCyu56fTNmjrc=
+X-Gm-Gg: ASbGncv2Zy31GkdfGsdR0u9g5C01Jc955Sj1uAWb352lLX5dWM9GK15CpfwV4DVAjrF
+	lds6xchVM0Ewwj6aUtDSlhoWWA13iF2YBsJO2IxBZYkkcXuqFFshlgWHcJh7xEH6fT+j+3iYM
+X-Google-Smtp-Source: AGHT+IHadNrgevyrSkaQZhOhsxlrzLkSyiZy1ey/P41VMurfsqDNouU1k4AFyaXrZKXXjkyODVF3l1r5ZtwFJzNg/Tw=
+X-Received: by 2002:a17:90b:3b52:b0:2ee:acea:9ec4 with SMTP id
+ 98e67ed59e1d1-2fbf5c8b19amr2771748a91.3.1739399385115; Wed, 12 Feb 2025
+ 14:29:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250206232022.599998-1-ojeda@kernel.org>
+In-Reply-To: <20250206232022.599998-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 12 Feb 2025 23:29:32 +0100
+X-Gm-Features: AWEUYZnuk0VGL_AzcBee1c5Y4k5tHfvfuNR0sTon-_manIWBu0BxLrpeWaavqr4
+Message-ID: <CANiq72kCKgcp6f-K1gtKdq_O6UkkC0A8WmZ-vGGGepvQHT3zLA@mail.gmail.com>
+Subject: Re: [PATCH] rust: rbtree: fix overindented list item
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Yutaro Ohno <yutaro.ono.418@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof, thanks for the quick feedback.=20
+On Fri, Feb 7, 2025 at 12:20=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Starting with Rust 1.86.0 (to be released 2025-04-03), Clippy will have
+> a new lint, `doc_overindented_list_items` [1], which catches cases of
+> overindented list items.
+>
+> The lint has been added by Yutaro Ohno, based on feedback from the kernel
+> [2] on a patch that fixed a similar case -- commit 0c5928deada1 ("rust:
+> block: fix formatting in GenDisk doc").
+>
+> Clippy reports a single case in the kernel, apart from the one already
+> fixed in the commit above:
+>
+>     error: doc list item overindented
+>         --> rust/kernel/rbtree.rs:1152:5
+>          |
+>     1152 | ///     null, it is a pointer to the root of the [`RBTree`].
+>          |     ^^^^ help: try using `  ` (2 spaces)
+>          |
+>          =3D help: for further information visit https://rust-lang.github=
+.io/rust-clippy/master/index.html#doc_overindented_list_items
+>          =3D note: `-D clippy::doc-overindented-list-items` implied by `-=
+D warnings`
+>          =3D help: to override `-D warnings` add `#[allow(clippy::doc_ove=
+rindented_list_items)]`
+>
+> Thus clean it up.
+>
+> Cc: Yutaro Ohno <yutaro.ono.418@gmail.com>
+> Cc: <stable@vger.kernel.org> # Needed in 6.12.y and 6.13.y only (Rust is =
+pinned in older LTSs).
+> Fixes: a335e9591404 ("rust: rbtree: add `RBTree::entry`")
+> Link: https://github.com/rust-lang/rust-clippy/pull/13711 [1]
+> Link: https://github.com/rust-lang/rust-clippy/issues/13601 [2]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-On Wed, 2025-02-12 at 18:22 +0100, Krzysztof Kozlowski wrote:
-> On 12/02/2025 18:09, Matthew Majewski wrote:
-> > Create a new yaml schema file to describe the device tree bindings
-> > for
-> > the generic m2m-deinterlace driver.
->=20
->=20
-> Bindings are for hardware, not drivers, and usually not generic.
->=20
+Applied to `rust-fixes` -- thanks everyone!
 
-Ok, I'll change the wording from "driver" to "device" in V2.
+    [ There are a few other cases, so updated message. - Miguel ]
 
-> Please describe here exemplary devices.
-
-The m2m-deinterlace device can be used on any hardware that provides a
-MEM_TO_MEM and interleaved capable dma channel. I'll note that in the
-commit message for V2 as well.
-
-> >=20
-> > +description: |
-> > +=C2=A0 A generic memory2memory device for deinterlacing video
-> > +=C2=A0 using dmaengine.
->=20
-> And what is this generic device supposed to do? What fits to generic
-> device?
->=20
-
-The term "generic" was taken from the driver description. It's generic
-insofar as it only relies on the dmaengine API for processing (and
-hence is relatively platform agnostic).
-
-I will add more information about the device in the description for V2.
-I'll also mention that it's intended for converting between interlaced
-and non-interlaced formats by line-doubling.=20
-
-> > +
-> > +properties:
-> > +=C2=A0 compatible:
-> > +=C2=A0=C2=A0=C2=A0 const: m2m-deinterlace
-> > +
-> > +=C2=A0 dma-names:
-> > +=C2=A0=C2=A0=C2=A0 items:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: rxtx
-> > +
-> > +=C2=A0 dmas:
-> > +=C2=A0=C2=A0=C2=A0 items:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: mem-to-mem capable DMA c=
-hannel
-> > +
-> > +required:
-> > +=C2=A0 - compatible
-> > +=C2=A0 - dma-names
-> > +=C2=A0 - dmas
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +=C2=A0 - |
-> > +=C2=A0=C2=A0=C2=A0 m2m-deinterlace {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "m2m-deinter=
-lace";
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma-names =3D "rxtx";
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dmas =3D <&edma 20 0>;
->=20
->=20
-> This all looks rather like bindings for driver and not even quite
-> generic because looks quite simple. I guess media folks will provide
-> more input, but anyway it looks a bit not-DT-enough.
->=20
-> > +=C2=A0=C2=A0=C2=A0 };
-
-Yes, the bindings are much simpler than a typical media device, but
-that is because the m2m-deinterlace device only needs to be provided a
-handle to a dma channel to function properly. My reasoning for adding=20
-dt-bindings for this device is because it is a consumer of a dma-
-channel and the dt bindings are a platform-agnostic way to be able to
-provide a specific dma channel to the device.
-
-As an example, say on an embedded device I have a dma controller which
-provides multiple interleaved MEM_TO_MEM capable channels. I want the
-m2m-deinterlace device to consume one particular channel because it is
-higher-priority than the others. With these dt-bindings I can simply
-specify the correct dma channel that should be used. Without the
-device-tree bindings I would have to manually edit the driver to filter
-for the correct dma channel to be used, but then the device is no
-longer "generic".
-
-It would be helpful to hear what the media people have to say about it.
-The m2m-deinterlace device is a bit of an edge-case since it's not
-quite a "virtual" device since it relies on the presence of specific
-dma hardware. However, it doesn't follow the typical conventions of any
-other in-tree media driver that consumes a dma channel, which all seem
-to have dt-bindings.=20
-
-Best,
-Matthew
+Cheers,
+Miguel
 
