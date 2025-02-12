@@ -1,154 +1,124 @@
-Return-Path: <linux-kernel+bounces-510874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96334A32310
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:03:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2659A32311
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AC407A42ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:01:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388383A2C7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7F42080F6;
-	Wed, 12 Feb 2025 10:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0961A208978;
+	Wed, 12 Feb 2025 10:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ag+g7u1q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFknMvAY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3744209667
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4E12080F6;
+	Wed, 12 Feb 2025 10:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739354480; cv=none; b=rPNczF51AewFsCvMvfGKm31dhqqyJJbqvcjBngcXwCMPJ0TvnPhoJ9RfLMXjSKvaZAtPMsTgDKwubKApxPd9CZvAttvVVwo5nJC9+4mqBJ9VMFKKpLdZH8/ZA8nZhvUN/ATJtf9myTaf0TohAecPtbOuVo2ecO+0YvmMRyw3ucM=
+	t=1739354474; cv=none; b=fsDH8Mtd3CGj86o78dJ4AV6zfNZjNbWxF2K79YHSTUZs0ZK/Yc/GUA29NsI86w/v1RqQFE1g2dS/FO6/l1jh0NE57OwUHKzaKAAhFlDEse6o7+nVHfxMejTW9LHbtD/WcW7Janm9hARwXhTaG+l9daEroxy1qGYX6MPCAr/EUnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739354480; c=relaxed/simple;
-	bh=sLtMNl2PIK/GBgnQIKx/qPFCh0ea5y3KjwR+JGxQbxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aX5dK8dCm3VIH3iQRdI0gRvl3Vs3vxSjYUfH5zkFRSN3awD9CQ5cbv8hsoDyzziKFPSUzvur7IMuw9JW4eP3DpE0HbOTueBsEFJ8yWTn5aija8wKpqQ9RQFFvGPLuuWopZa6lfjckF/l2APhjD3B9LwIM5oYUr/DaTiCHVVVLEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ag+g7u1q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739354476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k10/aEW9kI4Fw7g7ICooPKDGPu1yctxg0l9c8ZseCIM=;
-	b=ag+g7u1qDtYw/QcwbCDCqqQ2lfEpfwLaab9xlmie5m+S8UTLb6pOvlZL//kQIwfKDAsq41
-	hQF8WUT9Y+3wRTNLBtPrAHgUTavzMtOQQvNnsWxor1X71VeZrrLKqKLoZxEp0BlwVzuuPd
-	BeV97o+4a1mGPPmBLrNX3nIVvTYb7uY=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-SwR-GNjfMVC7-J-gPafkNQ-1; Wed, 12 Feb 2025 05:01:14 -0500
-X-MC-Unique: SwR-GNjfMVC7-J-gPafkNQ-1
-X-Mimecast-MFC-AGG-ID: SwR-GNjfMVC7-J-gPafkNQ
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2f2a9f056a8so13104137a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:01:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739354473; x=1739959273;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k10/aEW9kI4Fw7g7ICooPKDGPu1yctxg0l9c8ZseCIM=;
-        b=si5d7hR2/MZPz1CfritT5WOkte+EJpWslGMsT5JxTOQBAhHUPrBR7vPKfUEmSjmRJg
-         lVcdV0kVP+hexulKeHMj1+gBrktL0gOiAIir6iIP/oeVFwZJFu3lEWCTLxTUMtU5N7HD
-         p4bw+UOIWcdP9aJj2vy5wHydB9rOLVhdUlg6hOgKNIuk4yz7hK4h1vjaAy3yZN503zTo
-         jpk9rCFARY/xDRWhCKoAD8IvvV0puPb0Q4trqmWKxKwscleQr5f/cIFdhpiF8zO1PuDA
-         8nlXOthvw2NxBGXvJGuTuiAoShjnQDxIRZi8AUmz2ER6khcmssRfd+KgKFa9qZ64CjTT
-         2v6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUX2vFZhZjAJDi4wEvkHhWp2p5Z2d4hfIHmVkzuz0b/YFTHX/hID6zLWVRl/erabi1b/Fn2kfLMdsO0Ig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWZV3IjaraLvcfdRUM13NGHLksM1Sl+TVCDgRKEWpvWSWFzapZ
-	rF1gnWAH0aJ6GmxVxxluJGOE8JrTVSkxsJJlWpMDllUZ3QMTxWneLOmzBxRsIem6ybVBp0y6H5O
-	qzs1IPXUOnK3y2KsScLPsE55NwLgwJqQyAVxyzRce1LtTCdNTt3R68J9PZ/RrKeJj02MMF1ugFv
-	4cKbfRqFE0Wc80f7Ip4qKvE2b0sc5jJla1ulqT
-X-Gm-Gg: ASbGnctcpTenhAV276f79R68LKTNhW2dlOmxNg96ZCHZB4fvN/fpgIPt1Ho4thTrTTS
-	K0ZZD1K9hhCZ9kmm5aVH8zRRKwfZQ392FQU7DV0hBherQowckYFyY3mBZ7w5a4ieRnE+oCfqzYK
-	KJ2aTOVqdfnWFWqb6e/gw=
-X-Received: by 2002:a17:90b:3a08:b0:2ee:db8a:2a01 with SMTP id 98e67ed59e1d1-2fbf5c6a05amr3885262a91.30.1739354473033;
-        Wed, 12 Feb 2025 02:01:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHapn9jYWGyKoK8rERdyukBRLyP6apd4I5Sp/cSU8BhLWDuyyGc2UAEQe4Lq75zmYbK/CB6jhRtH7HcRUIhM4Q=
-X-Received: by 2002:a17:90b:3a08:b0:2ee:db8a:2a01 with SMTP id
- 98e67ed59e1d1-2fbf5c6a05amr3885222a91.30.1739354472720; Wed, 12 Feb 2025
- 02:01:12 -0800 (PST)
+	s=arc-20240116; t=1739354474; c=relaxed/simple;
+	bh=woz7pk/+ngx1fAXXik33xpEwcwvHhgnlnzWIambURC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqbbygEtswuwWLAdOsBTKXOL5mps0yVibe9WZzhDnoB8uThGkh8bvCjfgCKSa+soPEM6jbkPuP8/Ph6vin1X4tCRUpZCvsx02Kv/WcnAxvsLyDXoriIw59tNjdT4ewehsIug7M7zKb8iaL5/444vL7AtIuKTXdknA0mnIr3GtbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFknMvAY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 373AEC4CEDF;
+	Wed, 12 Feb 2025 10:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739354473;
+	bh=woz7pk/+ngx1fAXXik33xpEwcwvHhgnlnzWIambURC4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JFknMvAYCwTyrVf3OxL2gYhdX1gCloKqAmyPXLmtzPDsbcRVkduTdz/DV5ooCn6B8
+	 4+t2DpEMJiVVr1HQy/UiPXnSvdRjYZe/W+HkI0ERWJH1/abm0dKszP95sM9O6UTc7F
+	 cLOzYQhgS2NJc9exC2em9aL/Mx1QYAwOIbY8AESaYkLTGqh4r4i4tds7+BKUhmiddw
+	 rV8PgQzg43sxTHsHorGuUbkQHjEZkYtDbHRc+gM3WRI8ALQ9y2UmKa7xUpmV7xI6eF
+	 3dF5FTcTfKWbuXXv91blHqqWPM6YquxAfS0ysnR7v22PRyei45Pal7UpfLtSsX8Q6B
+	 eI9d4Ema9btyQ==
+Date: Wed, 12 Feb 2025 11:01:11 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Florent Tomasin <florent.tomasin@arm.com>
+Cc: Nicolas Dufresne <nicolas@ndufresne.ca>, Vinod Koul <vkoul@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Yong Wu <yong.wu@mediatek.com>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, nd@arm.com, 
+	Akash Goel <akash.goel@arm.com>
+Subject: Re: [RFC PATCH 1/5] dt-bindings: dma: Add CMA Heap bindings
+Message-ID: <20250212-naughty-chipmunk-of-potency-7e0ced@houat>
+References: <cover.1738228114.git.florent.tomasin@arm.com>
+ <771534be8dfa2a3bdc3876502752f518224b9298.1738228114.git.florent.tomasin@arm.com>
+ <ats2unrml5a7vbpdrqrzowodrsfj44bnubpbujg2igk3imeklx@nrpmg5oeq3gz>
+ <be8e6b9f-c3c6-41d1-af9c-3dcd102f0fe3@arm.com>
+ <b02711c901e8acf2bc47926919de7673a0cb0b98.camel@ndufresne.ca>
+ <fae8df2a-3e47-4266-aace-392c5f37581f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
-In-Reply-To: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
-From: Eric Curtin <ecurtin@redhat.com>
-Date: Wed, 12 Feb 2025 10:00:36 +0000
-X-Gm-Features: AWEUYZn-hP_kxTTtLow8M16VioOce2ZF8-IggRFFQ_uJOeNCeNsgfNjbEVocXew
-Message-ID: <CAOgh=FzNk089VSrLbuAS=UA45dpY3mVFoebE2xg5ZGvTrtmVWg@mail.gmail.com>
-Subject: Re: [PATCH] soc: apple: rtkit: Fix use-after-free in apple_rtkit_crashlog_rx()
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	Janne Grunau <j@jannau.net>, Asahi Lina <lina@asahilina.net>, Jens Axboe <axboe@kernel.dk>, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org, 
-	kernel-janitors@vger.kernel.org, error27@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="uxrfo3idfywaw7zh"
+Content-Disposition: inline
+In-Reply-To: <fae8df2a-3e47-4266-aace-392c5f37581f@arm.com>
 
-On Wed, 12 Feb 2025 at 09:08, Harshit Mogalapalli
-<harshit.m.mogalapalli@oracle.com> wrote:
->
-> This code calls kfree(bfr); and then passes "bfr" to rtk->ops->crashed()
-> which is a use after free.  The ->crashed function pointer is implemented
-> by apple_nvme_rtkit_crashed() and it doesn't use the "bfr" pointer so
-> this doesn't cause a problem.  But it still looks sketchy as can be.
->
-> Fix this by moving kfree() after the last usage of bfr.
->
-> Fixes: c559645f343a ("soc: apple: rtkit: Pass the crashlog to the crashed() callback")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 
-Reviewed-by: Eric Curtin <ecurtin@redhat.com>
+--uxrfo3idfywaw7zh
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH 1/5] dt-bindings: dma: Add CMA Heap bindings
+MIME-Version: 1.0
 
-I wish we used the attribute cleanup stuff by default more in the
-kernel, it would prevent a lot of things like this, it does what we
-want it to do, most of the time.
+On Wed, Feb 12, 2025 at 09:49:56AM +0000, Florent Tomasin wrote:
+> Note that the CMA patches were initially shared to help reproduce my
+> environment of development, I can isolate them in a separate patch
+> series and include a reference or "base-commit:" tag to it in the
+> Panthor protected mode RFC, to help progress this review in another
+> thread. It will avoid overlapping these two topics:
+>=20
+> - Multiple standalone CMA heaps support
+> - Panthor protected mode handling
 
-Although I'm not sure it was introduced yet when the code was written.
+You keep insisting on using CMA here, but it's really not clear to me
+why you would need CMA in the first place.
 
-Is mise le meas/Regards,
+By CMA, do you mean the CMA allocator, and thus would provide buffers
+through the usual dma_alloc_* API, or would any allocator providing
+physically contiguous memory work?
 
-Eric Curtin
+In the latter case, would something like this work:
+https://lore.kernel.org/all/20240515-dma-buf-ecc-heap-v1-1-54cbbd049511@ker=
+nel.org/
 
-> ---
-> This is based on static analysis with smatch, only compile tested.
-> ---
->  drivers/soc/apple/rtkit.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/apple/rtkit.c b/drivers/soc/apple/rtkit.c
-> index 4b0783091a92..1ccec7ba640c 100644
-> --- a/drivers/soc/apple/rtkit.c
-> +++ b/drivers/soc/apple/rtkit.c
-> @@ -360,7 +360,6 @@ static void apple_rtkit_crashlog_rx(struct apple_rtkit *rtk, u64 msg)
->                 apple_rtkit_memcpy(rtk, bfr, &rtk->crashlog_buffer, 0,
->                                    rtk->crashlog_buffer.size);
->                 apple_rtkit_crashlog_dump(rtk, bfr, rtk->crashlog_buffer.size);
-> -               kfree(bfr);
->         } else {
->                 dev_err(rtk->dev,
->                         "RTKit: Couldn't allocate crashlog shadow buffer\n");
-> @@ -369,6 +368,8 @@ static void apple_rtkit_crashlog_rx(struct apple_rtkit *rtk, u64 msg)
->         rtk->crashed = true;
->         if (rtk->ops->crashed)
->                 rtk->ops->crashed(rtk->cookie, bfr, rtk->crashlog_buffer.size);
-> +
-> +       kfree(bfr);
->  }
->
->  static void apple_rtkit_ioreport_rx(struct apple_rtkit *rtk, u64 msg)
-> --
-> 2.39.3
->
->
+Maxime
 
+--uxrfo3idfywaw7zh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ6xxYgAKCRAnX84Zoj2+
+doOXAYCmJnHBgdesgUZVquuWr6GPMIwXNegsF2kF9WE8cUf8QZREQljZMta1yPl+
+Y3KyEfEBf2GAaLjFhJfdk0/CAvLXAP/kO5oVGERfJbRdGvpysS+9JiElAhrVFTWR
+1Zzqx2VRSg==
+=Jh+j
+-----END PGP SIGNATURE-----
+
+--uxrfo3idfywaw7zh--
 
