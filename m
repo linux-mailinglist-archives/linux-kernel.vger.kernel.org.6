@@ -1,156 +1,129 @@
-Return-Path: <linux-kernel+bounces-510783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FBCA321EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:19:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3236BA321FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80D101638D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:19:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08A761886914
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACC8205E21;
-	Wed, 12 Feb 2025 09:19:35 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A3A2063C7;
+	Wed, 12 Feb 2025 09:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="a8ND9QPI"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E45C205ADD;
-	Wed, 12 Feb 2025 09:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97120207A2C;
+	Wed, 12 Feb 2025 09:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739351974; cv=none; b=Lk9XKLNY0+nGAyw77aiHcrJJCpzxIu0HALM2WVdN8Blz9/+V6NWTPO7iUcX+jCRS7PETth5+u8+W3IoxuWJwWbXyveWIra0nFrLp5/OWGgi3l02/ePSTSoWILuoK8hpShd37UXy4bmFikr7lBm5WwuO3HRQRYZf5ErEc8TDhbcs=
+	t=1739352191; cv=none; b=GPL+ya6fN4PjRXPsGSBWEylHb0srRAD0w1ycTY4pPgvshRLFUeocawFd2GPOvE8R1JeGwhK+kNr2i7hB0oKV05pLVgYJHtxzyluFcDN6TdickVYwqbmsgDaGtyMoGwrCs1mM/1YQY/ESh1JiNNBIiSXFxcatNOQMx3J+GlHxP0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739351974; c=relaxed/simple;
-	bh=jpOWBulwYQ53gAr+Iy22IOavyE7bRa1HhEDDp3/WP9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HkwE9huEkTvVVuP+R2DLeX+M3SotXUtnm+01DbcORCEGL+OOmrQ8ifOOrd2CxKgFOJKHubESiOUh5j3gFgkordhOb1C89yIbSvuvSTPfTo/A03sa1aiwg/50NBGFnH0DCZlOKGKt8q4pKKB/u687duKtn1Qvi8OEdzr8pQsRzOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YtCRr4Vmlz4f3jqP;
-	Wed, 12 Feb 2025 17:19:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id AA0401A1527;
-	Wed, 12 Feb 2025 17:19:20 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgCH2cOUZ6xnMMlNDg--.39805S2;
-	Wed, 12 Feb 2025 17:19:18 +0800 (CST)
-Message-ID: <d264a73e-966f-4890-9e23-88d476f0fc81@huaweicloud.com>
-Date: Wed, 12 Feb 2025 17:19:16 +0800
+	s=arc-20240116; t=1739352191; c=relaxed/simple;
+	bh=xUs1bH+W/iCogz1hXGPiTgCgI6O4GmwLfBC8KJfbnv0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=b6OrRKdBP5hDg4JmrQ5DvLTpZthwP9rYtyARP3iq1beYzgMTkhNMsHQvTHyhMONY7/ElQuQEE01OPXzsp8jI7mOViJxlS6UXaymQu76Roj+/H2NwyITUfiHulVe5FL+wOgd85nGgvwbwrf4GkOm6k9svLcn0Z5uFKeyZXAthkvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=a8ND9QPI; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1739352189; x=1770888189;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=xUs1bH+W/iCogz1hXGPiTgCgI6O4GmwLfBC8KJfbnv0=;
+  b=a8ND9QPIVe/lKCXlnagKgVvA4D35TfYw+eXRhiE5JkqKwEFsvusxmuX0
+   sn0AvU9jpjwmWqsypeymtMvcbOEr7Zo1jTuhZCthRZxPtSByJwzIWBnGH
+   8KLaK9SioUYpeaYrM+/kUhsyEiMVYE+pj3RDOXV+rLlXnnsitYtX7lmca
+   XHWQ9Sd0B3r4/h5Z8f9j83MpK2Kh9qyWgkAxETR6+gRN6JM+BlpafjORV
+   bDGhPMFY1rU+4HlVy1SZA2VFTCbOBhsk6GD/QVAwM8PGakGjyw0xSYl2n
+   n5nRAPKUFlwmaUiMt2IAt8JPDnK3FvOtDbDz0pX1L1+7J5MXD26Klrut5
+   A==;
+X-CSE-ConnectionGUID: Im7caqcMRgeiMBKdbNTopA==
+X-CSE-MsgGUID: 14u+0lMYQ4mioTEP1VJ3lQ==
+X-IronPort-AV: E=Sophos;i="6.13,279,1732604400"; 
+   d="scan'208";a="37190261"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Feb 2025 02:23:02 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 12 Feb 2025 02:22:22 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 12 Feb 2025 02:22:17 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Subject: [PATCH v3 0/2] dt-bindings: mmc: Fix the mmc-slot and Convert
+ atmel,hsmci to json schema
+Date: Wed, 12 Feb 2025 14:52:09 +0530
+Message-ID: <20250212-mmc-slot-v3-0-2bf288207040@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/oom_kill: revert watchdog reset in global OOM process
-To: Michal Hocko <mhocko@suse.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yosryahmed@google.com,
- roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
- davidf@vimeo.com, vbabka@suse.cz, mkoutny@suse.com, paulmck@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- chenridong@huawei.com, wangweiyang2@huawei.com
-References: <20250212025707.67009-1-chenridong@huaweicloud.com>
- <Z6xig5sLNpFVFU2T@tiehlicka>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <Z6xig5sLNpFVFU2T@tiehlicka>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgCH2cOUZ6xnMMlNDg--.39805S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr4fKFWDXw4Uur1DCryDZFb_yoW8tFWDpF
-	WDC3WUKan8JF15Zw17ZryIvFy2q3yrZF48tF9rt34rZrs0qrn2krW0kr4Ygr95ZFWag3W0
-	vFs0gFn3JrWYq3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-B4-Tracking: v=1; b=H4sIAEForGcC/22MywrCMBQFf6VkbSS5SWjryv8QFzEPe8E0JSlBK
+ f1304Ig4nIOZ2Yh2SV0mZyahSRXMGMcK4hDQ8ygx7ujaCsTYCA58J6GYGh+xJky1cqu6612WpB
+ 6n5Lz+NxTl2vlAfMc02svF76tfyKFU06tN61stbDC384BTYpmwOloYiBbqMBHVgyY+pJhk7Uwy
+ gvmwPa/8rqub5w2t5LhAAAA
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+	<khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Dharma Balasubiramani
+	<dharma.b@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739352136; l=1427;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=xUs1bH+W/iCogz1hXGPiTgCgI6O4GmwLfBC8KJfbnv0=;
+ b=P8VjgomucORyCZ1TW0hO3s+2LkILloCeyETpd/3Lroit69beEjtEhR5Yj3qitz1mcZpRjMA24
+ S4U58N+vpuIBWU9xe2QtSHVd/I3qYYVcLGZyZvevU3GkdS/zf2XEufi
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
+This patch series modifies the property status of "compatible"
+(required/optional).
 
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+Changes in v3:
+- Add compatible as required property in meson binding.
+- Include the dependent patch that converts txt to yaml for clarity in patch series.
+- Refer the mmc-slot binding in the hsmci binding.
+- Explain "why" the property is made optional in commit description.
+- Link to v2: https://lore.kernel.org/r/20250205-mmc-slot-v2-1-da3c5f30e2d9@microchip.com
 
-On 2025/2/12 16:57, Michal Hocko wrote:
-> On Wed 12-02-25 02:57:07, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> Unlike memcg OOM, which is relatively common, global OOM events are rare
->> and typically indicate that the entire system is under severe memory
->> pressure. The commit ade81479c7dd ("memcg: fix soft lockup in the OOM
->> process") added the touch_softlockup_watchdog in the global OOM handler to
->> suppess the soft lockup issues. However, while this change can suppress
->> soft lockup warnings, it does not address RCU stalls, which can still be
->> detected and may cause unnecessary disturbances. Simply remove the
->> modification from the global OOM handler.
->>
->> Fixes: ade81479c7dd ("memcg: fix soft lockup in the OOM process")
-> 
-> But this is not really fixing anything, is it? While this doesn't
-> address a potential RCU stall it doesn't address any actual problem.
-> So why do we want to do this?
-> 
+Changes in v2:
+- Instead of moving the compatible string to the other binding, just make it
+  optional (remove from required list).
+- Link to v1: https://lore.kernel.org/r/20241219-mmc-slot-v1-1-dfc747a3d3fb@microchip.com
 
+---
+Dharma Balasubiramani (2):
+      dt-bindings: mmc: mmc-slot: Make compatible property optional
+      dt-bindings: mmc: atmel,hsmci: Convert to json schema
 
-[1]
-https://lore.kernel.org/cgroups/0d9ea655-5c1a-4ba9-9eeb-b45d74cc68d0@huaweicloud.com/
-
-As previously discussed, the work I have done on the global OOM is 'half
-of the job'. Based on our discussions, I thought that it would be best
-to abandon this approach for global OOM. Therefore, I am sending this
-patch to revert the changes.
-
-Or just leave it?
+ .../bindings/mmc/amlogic,meson-mx-sdio.yaml        |   3 +
+ .../devicetree/bindings/mmc/atmel,hsmci.yaml       | 106 +++++++++++++++++++++
+ .../devicetree/bindings/mmc/atmel-hsmci.txt        |  73 --------------
+ .../devicetree/bindings/mmc/mmc-slot.yaml          |   1 -
+ 4 files changed, 109 insertions(+), 74 deletions(-)
+---
+base-commit: c674aa7c289e51659e40dda0f954886ef7f80042
+change-id: 20241219-mmc-slot-0574889daea3
 
 Best regards,
-Ridong
-
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>  mm/oom_kill.c | 8 +-------
->>  1 file changed, 1 insertion(+), 7 deletions(-)
->>
->> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
->> index 25923cfec9c6..2d8b27604ef8 100644
->> --- a/mm/oom_kill.c
->> +++ b/mm/oom_kill.c
->> @@ -44,7 +44,6 @@
->>  #include <linux/init.h>
->>  #include <linux/mmu_notifier.h>
->>  #include <linux/cred.h>
->> -#include <linux/nmi.h>
->>  
->>  #include <asm/tlb.h>
->>  #include "internal.h"
->> @@ -431,15 +430,10 @@ static void dump_tasks(struct oom_control *oc)
->>  		mem_cgroup_scan_tasks(oc->memcg, dump_task, oc);
->>  	else {
->>  		struct task_struct *p;
->> -		int i = 0;
->>  
->>  		rcu_read_lock();
->> -		for_each_process(p) {
->> -			/* Avoid potential softlockup warning */
->> -			if ((++i & 1023) == 0)
->> -				touch_softlockup_watchdog();
->> +		for_each_process(p)
->>  			dump_task(p, oc);
->> -		}
->>  		rcu_read_unlock();
->>  	}
->>  }
->> -- 
->> 2.34.1
-> 
+-- 
+Dharma Balasubiramani <dharma.b@microchip.com>
 
 
