@@ -1,257 +1,162 @@
-Return-Path: <linux-kernel+bounces-511578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31A2A32CEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:07:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6253BA32CF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:08:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3009A169452
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:06:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0B83A4208
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A92E25EF89;
-	Wed, 12 Feb 2025 17:04:28 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E82820B1E5;
+	Wed, 12 Feb 2025 17:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hafMovTN"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92FE260A54;
-	Wed, 12 Feb 2025 17:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECAC2580D9;
+	Wed, 12 Feb 2025 17:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379867; cv=none; b=FMrE+w/1/SC/WFWfNP/ORX/A94lGHqNf+DPc/qZp7gQdmIoAtD1ecObDryRNpEYFk2lO5p5IY7afrD1O0TfAjqSL6merE4REq2p5/3srtPlkkg+P7UVhtA3m5lyz39ACaQkEVhS9YpJv9eLu6ffVhaW+zJhxuDIXxHSVbD4qudI=
+	t=1739379885; cv=none; b=VBckoaSQZgGddGbRdzndS+K+4bwxWme2Seo5OPXxpqwRiI24DgiUeY1YPJdNPxXKsUwhmpaCfgLeJKs8VUIqk/r8hOLNLXtHhOuEoNMH30U9qYQ+FQP3ng8VTKlwWYrOSYOYBumZR2yTxIbM7pNyAiavs0hJcFELWu/LmL/nJNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379867; c=relaxed/simple;
-	bh=13W5/30634OZAOEp8C34fhFNef/hkBvT0Qann9WW4zE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eLxTwwsTQHF1Iuc5Xj0T7zU3HSYC4C/BuX75y6CmuPe7DqwjYyzFxWiU05rSE9PBGUeaWHwPNCvTTs87ns0g9sTOWIhzjn7j0bUN9TQ9ACMs+sUyTxjmo29Enpt1MmVRQpfDuPiClflD1LZmsk6TNpBRT+fDIwTzDPXfsX1RNKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YtPj734z1z6L5JZ;
-	Thu, 13 Feb 2025 01:01:15 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D503140525;
-	Thu, 13 Feb 2025 01:04:16 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 12 Feb
- 2025 18:04:15 +0100
-Date: Wed, 12 Feb 2025 17:04:14 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
-	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
-	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
-	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
-	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
-Subject: Re: [PATCH v3 8/9] ACPI: APEI: EINJ: Enable EINJv2 error injections
-Message-ID: <20250212170414.000059c4@huawei.com>
-In-Reply-To: <20250210183705.1114624-9-zaidal@os.amperecomputing.com>
-References: <20250210183705.1114624-1-zaidal@os.amperecomputing.com>
-	<20250210183705.1114624-9-zaidal@os.amperecomputing.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739379885; c=relaxed/simple;
+	bh=Bfidi7anesqYs999M9Ik6ywb85mPeR+VxYEwuDAAFOU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1lmKtz/lGq0lJMUulqXCYcvnIvtXnhWqgCwV7cgFnOkLDn0laal988Vv+QzoEuNebFHWWFG7PYPGYAGO3kZbyu8JHgOkGsM59BFfG/PueEA0mK9bQEZvKUNI5YIcc2WTIbsspGuPUST0mDOfxkVa8jOFd+1HrJl5bTbb3vq4z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hafMovTN; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4362bae4d7dso47187005e9.1;
+        Wed, 12 Feb 2025 09:04:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739379882; x=1739984682; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+7x9dWz5+kt+yK4VtjE7r4PpL/wI+I4YOt5i78vMh+Y=;
+        b=hafMovTNwM6qiexAvRxMY6gjD6fSWxxxnj+6c5Do/tj5+CGqV0WvEv+Nag5S1PG3cx
+         N3qESwMa/XSgQXEpG9+vvqbSjh4oqvCO6kbHdJMJCr6HU5yduPLmYkoS9TZJD2Ss4Sgz
+         dhZ82TstaGvhry+MS9J+A+v4CnMjKFQB0Q+x9/AJ5hTKGVVaN4d6xJbpUetVLM+aYs2a
+         Id2N2MmqT6ysdE64ucSMhZj2jTVLnFVwYd4wxhlUP1rRZPmDhN9Ia+VNG3RUQfBV4rdI
+         NHbnPajouiQRhm6xm5EdepNfaWaJvrXbgi1+hxqHgZ74rfi0I36XRsxcfHzjqbrHBtGl
+         O/tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739379882; x=1739984682;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+7x9dWz5+kt+yK4VtjE7r4PpL/wI+I4YOt5i78vMh+Y=;
+        b=Ssc6G543a1Hx0MZYKQ268Tje1uOlvnOihBn/rsNj6FO2Kd1Zcp/XBF2aF9pwUrmtU4
+         bCdVIdujJIAMcWVP7FNP1CNdIxufyn7JKHg59cUPTM1QzjlRZLiR5ocAU/2OvpQ9gCJq
+         TRZKd+/1NW2fGndBICQYIH0wkQFfK8Uw9Nl0p/qzeACj+YWaawLKRdAXu4s+RGq/y9pW
+         vzdQHUdLCoFJhKAPiPRbhvcLxEICT9htDOLkohlNJOmvtCnp05j2UjuCxmVCdgrQ4Bxj
+         t0q6gKseYwoWpPiI42fIIoC3HrZAmRg+cEJqVbFk24jBwyrhzfm6EbfGBmWic6VtKtSf
+         1KaA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6UVZVDWkTckMRofvjL5VoGjLlTDCFDSGu/7oPzL2y5gZZGvnNS+arQ5/k7uMvcK1v8zST4zyeg1cx602Q@vger.kernel.org, AJvYcCW+jsk9xUNtsoomrDbKVwau0d7z98uu23qcwozFp0aCt5RH2lJskAc3X/i3q+/5pjnQPc+B0Xq3noKrksryDjHO@vger.kernel.org, AJvYcCX+eoT57ikk2gKU5OkJxBKsdLCL2BffpjEjT4sYzGcrEKJmhXt9Sf94x5PvNZ/AUjzJBsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEBqhPnrKgF6+qaRRpXjPDia3hqzw0xiYrEutSXZ3q7a9NwzgV
+	ZJB++O5/j3mQtjvhcru/DTpncDpRLE6ZByiUAy7rXLPkiTtH3l7n
+X-Gm-Gg: ASbGnct3wma8AD6jKDQUf6v48I27d2QGpXhesz9fNrchJugEHWPJ6ppG1R/1vXmBu8Y
+	ILxcMj58ePZbp/9iqBOPVjDaWATlbhdssDGqQr18S4323IiCBdnpdtzm42GUjO+WNlsF2VWlmki
+	xgAucshC1IZu86jbVjbz7oY7IJz3W/4nDU8i2/aejSKHabl0LCgAV4qD+3Ap7SupKVBtR6oIM7m
+	R1YdRjy52Qf0TqPldh8Wg1bFJJV8+bGIvXMbpm7y96Q0IcvGUH3THz0Vdur5RSP+SthtWP8jvpF
+	vsHXKHiESadzXxxMEJSRjfjcm9PAuEw=
+X-Google-Smtp-Source: AGHT+IFDrW6X+85TE5d3qfk8XGG1Z1AhG0IbM9mne5W129Zyv1eca0C1OKyE5SjomlKof7boeX4iEQ==
+X-Received: by 2002:a05:600c:6046:b0:439:5a7e:5c5e with SMTP id 5b1f17b1804b1-4395a7e5f79mr27622725e9.26.1739379881461;
+        Wed, 12 Feb 2025 09:04:41 -0800 (PST)
+Received: from krava (ip4-95-82-160-96.cust.nbox.cz. [95.82.160.96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dd2750829sm12883804f8f.7.2025.02.12.09.04.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 09:04:40 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 12 Feb 2025 18:04:38 +0100
+To: Yan Zhai <yan@cloudflare.com>
+Cc: Brian Vazquez <brianvv@google.com>, Jiri Olsa <olsajiri@gmail.com>,
+	bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@cloudflare.com,
+	Hou Tao <houtao@huaweicloud.com>
+Subject: Re: [PATCH v3 bpf 1/2] bpf: skip non exist keys in
+ generic_map_lookup_batch
+Message-ID: <Z6zUpt5Y4I1p0A3n@krava>
+References: <cover.1739171594.git.yan@cloudflare.com>
+ <85618439eea75930630685c467ccefeac0942e2b.1739171594.git.yan@cloudflare.com>
+ <Z6nEsGSbWqCSaVp3@krava>
+ <CAMzD94QZQjpwOA8Os3khG32d2zgH8i=Sy1VoudRCGqZudyHkag@mail.gmail.com>
+ <CAO3-Pbqa_oOm-u318mTwqPfuRJ2_kdk+ou99BOu53A3O_wEyZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO3-Pbqa_oOm-u318mTwqPfuRJ2_kdk+ou99BOu53A3O_wEyZg@mail.gmail.com>
 
-On Mon, 10 Feb 2025 10:37:04 -0800
-Zaid Alali <zaidal@os.amperecomputing.com> wrote:
-
-> Enable the driver to inject EINJv2 type errors. The component
-> array values are parsed from user_input and expected to contain
-> hex values for component id and syndrome separated by space,
-> and multiple components are separated by new line as follows:
+On Mon, Feb 10, 2025 at 10:21:38AM -0600, Yan Zhai wrote:
+> Hi Brian, Jiri
 > 
-> component_id1 component_syndrome1
-> component_id2 component_syndrome2
->  :
-> component_id(n) component_syndrome(n)
+> thanks for the comments.
 > 
-> for example:
-> 
-> $comp_arr="0x1 0x2
-> >0x1 0x4
-> >0x2 0x4"  
-> $cd /sys/kernel/debug/apei/einj/
-> $echo "$comp_arr" > einjv2_component_array
-> 
-> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
-> ---
->  drivers/acpi/apei/einj-core.c | 103 +++++++++++++++++++++++++++++-----
->  1 file changed, 89 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-> index 40ebdbc4961f..46359019ca03 100644
-> --- a/drivers/acpi/apei/einj-core.c
-> +++ b/drivers/acpi/apei/einj-core.c
-> @@ -87,6 +87,13 @@ enum {
->  	SETWA_FLAGS_APICID = 1,
->  	SETWA_FLAGS_MEM = 2,
->  	SETWA_FLAGS_PCIE_SBDF = 4,
-> +	SETWA_FLAGS_EINJV2 = 8,
-> +};
-> +
-> +enum {
-> +	EINJV2_PROCESSOR_ERROR = 0x1,
-> +	EINJV2_MEMORY_ERROR = 0x2,
-> +	EINJV2_PCIE_ERROR = 0x4,
->  };
->  
->  /*
-> @@ -111,6 +118,7 @@ static char vendor_dev[64];
->  static struct debugfs_blob_wrapper einjv2_component_arr;
->  static u64 component_count;
->  static void *user_input;
-> +static int nr_components;
->  static u32 available_error_type;
->  static u32 available_error_type_v2;
->  
-> @@ -181,6 +189,8 @@ static DEFINE_MUTEX(einj_mutex);
->  bool einj_initialized __ro_after_init;
->  
->  static void __iomem *einj_param;
-> +static u32 v5param_size;
-> +static bool is_V2;
->  
->  static void einj_exec_ctx_init(struct apei_exec_context *ctx)
->  {
-> @@ -288,11 +298,23 @@ static void *einj_get_parameter_address(void)
->  		struct set_error_type_with_address v5param;
->  		void __iomem *p;
->  
-> +		v5param_size = sizeof(v5param);
->  		p = acpi_os_map_iomem(pa_v5, sizeof(v5param));
->  		if (p) {
-> -			memcpy_fromio(&v5param, p, sizeof(v5param));
-> +			int offset, len;
-> +
-> +			memcpy_fromio(&v5param, p, v5param_size);
+> On Mon, Feb 10, 2025 at 8:47 AM Brian Vazquez <brianvv@google.com> wrote:
+> >
+> > On Mon, Feb 10, 2025 at 4:19 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> > >
+> > > On Sun, Feb 09, 2025 at 11:22:35PM -0800, Yan Zhai wrote:
+> > > > The generic_map_lookup_batch currently returns EINTR if it fails with
+> > > > ENOENT and retries several times on bpf_map_copy_value. The next batch
+> > > > would start from the same location, presuming it's a transient issue.
+> > > > This is incorrect if a map can actually have "holes", i.e.
+> > > > "get_next_key" can return a key that does not point to a valid value. At
+> > > > least the array of maps type may contain such holes legitly. Right now
+> > > > these holes show up, generic batch lookup cannot proceed any more. It
+> > > > will always fail with EINTR errors.
+> > > >
+> > > > Rather, do not retry in generic_map_lookup_batch. If it finds a non
+> > > > existing element, skip to the next key. This simple solution comes with
+> > > > a price that transient errors may not be recovered, and the iteration
+> > > > might cycle back to the first key under parallel deletion. For example,
+> > >
+> > > probably stupid question, but why not keep the retry logic and when
+> > > it fails then instead of returning EINTR just jump to the next key
+> > >
+> > > jirka
+> >
+> > +1, keeping the retry logic but moving to the next key on error sounds
+> > like a sensible approach.
+> >
+> I made the trade off since retry would consistently fail for the array
+> of maps, so it is merely wasting cycles to ever do so. It is already
+> pretty slow to read these maps today from userspace (for us we read
+> them for accounting/monitoring purposes), so it is nice to save a few
+> cycles especially for sparse maps. E.g. We use inner maps to store
+> protocol specific actions in an array of maps with 256 slots, but
+> usually only a few common protocols like TCP/UDP/ICMP are populated,
+> leaving most "holes". On the other hand, I personally feel it is
+> really "fragile" if users rely heavily on this logic to survive
+> concurrent lookup and deletion. Would it make more sense to provide
+> concurrency guarantee with map specific ops like hash map?
 
-Here you clear the first part, but not the extra elements.
+Brian, any details on the EINTR path? is that just to survive concurent
+batch-lookup and delete?
 
->  			acpi5 = 1;
->  			check_vendor_extension(pa_v5, &v5param);
-> +			if (available_error_type & ACPI65_EINJV2_SUPP) {
-> +				len = v5param.einjv2_struct.length;
-> +				offset = offsetof(struct einjv2_extension_struct, component_arr);
-> +				nr_components = (len - offset) / 32;
-> +				acpi_os_unmap_iomem(p, v5param_size);
-> +				v5param_size = sizeof(v5param) +
-> +					(nr_components * sizeof(struct syndrome_array));
+if that's important use case I guess the map specific function would be
+possible, because it's broken for maps with holes as you described
 
-struct_size()
-
-> +				p = acpi_os_map_iomem(pa_v5, v5param_size);
-> +			}
->  			return p;
->  		}
->  	}
-> @@ -486,8 +508,8 @@ static int __einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
->  	if (acpi5) {
->  		struct set_error_type_with_address *v5param;
->  
-> -		v5param = kmalloc(sizeof(*v5param), GFP_KERNEL);
-> -		memcpy_fromio(v5param, einj_param, sizeof(*v5param));
-> +		v5param = kmalloc(v5param_size, GFP_KERNEL);
-
-This patch is the point where kmalloc makes sense. I'd introduce it here
-rather than in earlier patch.
-
-> +		memcpy_fromio(v5param, einj_param, v5param_size);
->  		v5param->type = type;
->  		if (type & ACPI5_VENDOR_BIT) {
->  			switch (vendor_flags) {
-
-...
-
->  /* Inject the specified hardware error */
-> @@ -597,10 +663,15 @@ int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
->  	u64 base_addr, size;
->  
->  	/* If user manually set "flags", make sure it is legal */
-> -	if (flags && (flags &
-> -		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
-> +	if (flags && (flags & ~(SETWA_FLAGS_APICID | SETWA_FLAGS_MEM |
-> +		      SETWA_FLAGS_PCIE_SBDF | SETWA_FLAGS_EINJV2)))
->  		return -EINVAL;
->  
-> +	/* check if type is a valid EINJv2 error type */
-> +	if (is_V2) {
-> +		if (!(type & available_error_type_v2))
-> +			return -EINVAL;
-> +	}
->  	/*
->  	 * We need extra sanity checks for memory errors.
->  	 * Other types leap directly to injection.
-> @@ -750,7 +821,7 @@ int einj_validate_error_type(u64 type)
->  	if (tval & (tval - 1))
->  		return -EINVAL;
->  	if (!vendor)
-> -		if (!(type & available_error_type))
-> +		if (!(type & (available_error_type | available_error_type_v2)))
->  			return -EINVAL;
->  
->  	return 0;
-> @@ -763,12 +834,14 @@ static ssize_t error_type_set(struct file *file, const char __user *buf,
->  	u64 val;
->  
->  	memset(einj_buf, 0, BUFF_SIZE);
-> +	is_V2 = false;
->  	if (copy_from_user(einj_buf, buf, count))
->  		return -EFAULT;
->  
->  	if (strncmp(einj_buf, "V2_", 3) == 0) {
->  		if (!sscanf(einj_buf, "V2_%llx", &val))
->  			return -EINVAL;
-> +		is_V2 = true;
-
-Given you have an if / else here. Set is_V2 = false
-in the else rather that default and override in one leg of
-the if / else.
-
->  	} else
->  		if (!sscanf(einj_buf, "%llx", &val))
->  			return -EINVAL;
-> @@ -792,6 +865,9 @@ static int error_inject_set(void *data, u64 val)
->  	if (!error_type)
->  		return -EINVAL;
->  
-> +	if (is_V2)
-> +		error_flags |= SETWA_FLAGS_EINJV2;
-> +
->  	return einj_error_inject(error_type, error_flags, error_param1, error_param2,
->  				error_param3, error_param4);
->  }
-> @@ -944,11 +1020,10 @@ static void __exit einj_remove(struct platform_device *pdev)
->  	struct apei_exec_context ctx;
->  
->  	if (einj_param) {
-> -		acpi_size size = (acpi5) ?
-> -			sizeof(struct set_error_type_with_address) :
-> -			sizeof(struct einj_parameter);
-> -
-> -		acpi_os_unmap_iomem(einj_param, size);
-
-Unless strong reason to change I'd keep to existing style and just
-replace the true condition with v5param_size
-
-> +		if (acpi5)
-> +			acpi_os_unmap_iomem(einj_param, v5param_size);
-> +		else
-> +			acpi_os_unmap_iomem(einj_param,	sizeof(struct einj_parameter));
->  		if (vendor_errors.size)
->  			acpi_os_unmap_memory(vendor_errors.data, vendor_errors.size);
->  	}
-
+thanks,
+jirka
 
