@@ -1,498 +1,414 @@
-Return-Path: <linux-kernel+bounces-511714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24531A32EA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:24:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D3CA32EA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:27:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0023165757
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C7A188585F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F7225C6E7;
-	Wed, 12 Feb 2025 18:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4710425E474;
+	Wed, 12 Feb 2025 18:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Las1eu4L"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="f8rdbtVA"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010022.outbound.protection.outlook.com [52.101.229.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7994525D53F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739384663; cv=none; b=lT0K+ivCwEZXRaXfi4ZzcN4q6plRVa5wUsVskq8PwJXWtzFtt5Yr16mOUs/FWTwUA0otVk1YPZ0maob/xYABhpl2U/B/KRM7is6e1PuUzXLesU1vQUZlEK985kYqRD3XvlYILdySPdnArX1EWmUDoIoWe0xjwHOAJ3qKs1rQIlU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739384663; c=relaxed/simple;
-	bh=0uNIZ8azrN4SXlTTCOY6h5LukAXKY7QkwSwNdDhAG8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ArtQVbHYBTG5Ee4UEBv5r16xkMYapX3Sfg2cfjFyeQoK+UYKLT1lGU94gg1gWpPNCN0FNMCSrTaR0NWYFVgnxG/SYN14gafyrkjxDMmH049uIVAmPGqfxdb7/vkkW9TgcK2+ZEckpp82MWs/BNnuR0hAQiQF6i8HfAEArx5v03U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Las1eu4L; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21f6f18b474so65485455ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:24:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739384661; x=1739989461; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m2ElU3GctxRiMFYaVoj6vY+mOKEICVfyJ0GDO9SHjY0=;
-        b=Las1eu4LFFIYzybTCB3FKAtGkh3L4ToyDvTyfXhQU7OXt03x1x+JhgUora0vRe2Q24
-         0yWFd0FlF34nlUJHR0TufEOG2MWn0hnrgYbDgdGXLhKoP3PN8zbiR3uFibNC4cGUphOp
-         3tfb8ZJTMnDbn6JZHSta1aP2+9dPI8zfSK68Jhh6h5/SzWBbAyO6XkwxWAfv3wYTSmTn
-         FuaLFGcD5b9wiVFLQaPlWHqfN11jGeBPqxFgYLFjOMnJ8m+SgTL+PMbWb24iuVkrsizd
-         LJp4d+UsYsxYBAVjd9mWJYHOTw5xPHuAISF6daf7Hf/GmhGBNL0QzHr2ggcjkInQ+pwk
-         UCNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739384661; x=1739989461;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m2ElU3GctxRiMFYaVoj6vY+mOKEICVfyJ0GDO9SHjY0=;
-        b=svAjTZutNwvTt2opyTuS2EI2e8SUx7szgQnrbbU5ZZEG9QLa+yc9t4t/iTI1LkyHwX
-         SwAtSY9LvS8u15xpMu2jMoCAcEk4N6QkkjTik+tqklslq0JzGZiCfm39KtYFYhSHK2Na
-         1xoR61P2Q+TS4ENtShdJ6YlPV8tglywSvIq5x29/4C7zf7q3+WwhLvvUOvwgSZGYVwt0
-         br44KyijYQmWdsbjknZr3Jso7JmqidASZKomePNJ1E7DvV9KzlNlf2aIWO0U4nZq3KQ8
-         1hCS87PX7LPo5t1Jr/yRfvR7rvgItwWR31Y2YSUSS7+EKp1npKCCdKuhyewQv87xn2xS
-         CTzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhzFWlXlkteeQ7i4BXrgJTD00XfFU5A4jSo9ZaP/qh/nh/L1IBxsCFIsCUivkfqiWQQW0UtVzo6cUwJhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw59u29T4nKBMgX9Cs/1BIdmWWorVwSR5JVdYz2qDmZzxNqYquU
-	jju4R4YvpQTIng3wlJHgZAT10EtN+iNdXMndG7/2LYCfLOvENJP0eJmkS84m8/7DJcwx+c8whdq
-	g6d5ra9qnARVXJGI1pU4hEIxPjKSd3LyOI02M+Q==
-X-Gm-Gg: ASbGncs0MxoYgQSUuQwqzi5rZTP5Dk775fhD0fU2giD4XYpIfmu60CDlfXxukLiokGS
-	6fXRsVYPjb0H3tDIDzyzp97kvzxY2IDjZA6YU787DvCFIIwhZwuJXN2exVxfOc/QNplpSWc+mFq
-	86fQKNzX0h8SEze4afkeGDOcF5UePq
-X-Google-Smtp-Source: AGHT+IGJUsHyZSoKK5mSruQ5wxSVF6TWnc3F12WJLnpptzSxoOCChCB1xYH+gN32bgRak35HYjqMclfM6hSw0FjRwws=
-X-Received: by 2002:a05:6a21:6d9a:b0:1e1:9662:a6f2 with SMTP id
- adf61e73a8af0-1ee5c86dfd8mr8405109637.35.1739384660428; Wed, 12 Feb 2025
- 10:24:20 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D468320E02A;
+	Wed, 12 Feb 2025 18:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739384863; cv=fail; b=AoKmnmjs51qS0RQ1u9Jk8WgRx0C5ahj6fOQugcHXCFzPkg7w4ARnC9xg11/CcBY4AzDYXLTd9umMxaWcRcvEvVdITx1zTzikGhQcR+nHVQWB93zcSZlyGwaf6CLv2jJ1MI5YzFI18wWtZyQBUZw8zM0wbsIp6CQ+p3qCUIdP46s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739384863; c=relaxed/simple;
+	bh=SnEpQuBVUNUVmo9qnSX2ZOr33dLdvseDwFm3cItTLhw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=d0MAxVeWES1qSAFxjaqaDmKaOlurRbvamm0+o9dA+3nYroyofjPdGoMX7q7KrYoR/CHOIz6/RjsQeTO2v/6qicYSjg6DtTE8p54OhLZyUurRXAcYsOB9rJLbzTZUDuPo1YONijqlKpIyoQkAV881A4VlVYuaw+jwUqDRn04qsQw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=f8rdbtVA; arc=fail smtp.client-ip=52.101.229.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q7N+9g/lWEJqNMQVES/EDNhZ90ewLgo12wBswJ87vqScgHCr2C+0h6u1ZuvSUGuCwwhYCKj1YQ2P0IxqtSG+yJ8MR2c26595GNrnszAkjj+vTEcgkjolwHh1sp0XjD6Po/xoEAYsyvVNCy+zl3T+amfRSe7td3CxxEuAW7Gswfe8dRssp8KmzEX50FtwTc7CG+ORz2HNrEq88Jq1hUs7uKI7DA6imamJnuutAm/oblHyeYl/8f/F0hvWATAzT/tlr8P7ysNn6n1TDMaOcpMF+5664fU/azQXPBvBW5GYMKhxFIGahD4ajyEKUodmJmxYL/3dzOFAMc0TMe8FlvklKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7hP2u2auBMlm3eqP4MJLWxwM7QggdzuPEtEAGwBhZ1g=;
+ b=rSYbbLFXUX3bt9aKjlU9CKSUp6YJsM3Xbfu7UDRzFOyx3Yj5COMtvO6vxGpy83c2GOTvqkWYSX2lg9iqaJev2jqE0xH+IVqIRqQAF8HDF4pWp1VdnUGqckp6nuSj3PyuomMrug0gecHqOSF+SVaU7e6Mu5U911NbXYZ/VryW8L1YUReBCYxinnUB4qt/GAH/GG+WOQAxpIYtKzYzK1SiyFFvIIDzPtJHOENmE4OO0prj95RXB326wMnqEXS0KNB5mIQsBC/yHrofSfO1nfCjcw4we8ciYwM8k3RWBSOpgTWMqgiPKXIb0HWsS7QLFleer7p2QVyt6RFXAwFht2LiWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7hP2u2auBMlm3eqP4MJLWxwM7QggdzuPEtEAGwBhZ1g=;
+ b=f8rdbtVA/BeU5LwMyKS9qEdv3zCeWo7AlF4UOH7bPq7CrJ/nlnMNwDbP2Nz1fENHSw5DvUcwYbj8aIotcFfIcyGQpsZZDfhtjumI8G685kgID4Hd7uKHlgjj6llRSqgBn3eMZFsnYad2+j1RSkhLFDleYqgn59vh12FhHecONOY=
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
+ by TYYPR01MB7008.jpnprd01.prod.outlook.com (2603:1096:400:dc::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.12; Wed, 12 Feb
+ 2025 18:27:37 +0000
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::439:42dd:2bf:a430%6]) with mapi id 15.20.8445.011; Wed, 12 Feb 2025
+ 18:27:37 +0000
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Biju Das
+	<biju.das.jz@bp.renesas.com>, "dmaengine@vger.kernel.org"
+	<dmaengine@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P) family
+ of SoCs
+Thread-Topic: [PATCH 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P) family
+ of SoCs
+Thread-Index: AQHbeOL4JuBWbK7BE0C/S0vZ0m2kGbNCtjgAgAFN+4A=
+Date: Wed, 12 Feb 2025 18:27:37 +0000
+Message-ID:
+ <TYCPR01MB12093E77656EBB73EBD42D17AC2FC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+References: <20250206220308.76669-1-fabrizio.castro.jz@renesas.com>
+ <20250206220308.76669-4-fabrizio.castro.jz@renesas.com>
+ <20250211222630.GA1288508-robh@kernel.org>
+In-Reply-To: <20250211222630.GA1288508-robh@kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|TYYPR01MB7008:EE_
+x-ms-office365-filtering-correlation-id: 790f04fd-b388-4f83-bc00-08dd4b92ed24
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?AWEEkQ+RSqKbHBdDhvusRi42mR5o7kyUvh3nZgEuytVGD/K1xJVi/ZiKbYgq?=
+ =?us-ascii?Q?pnAuraSY581iP9skdfaSXj1Jz9bTduQy1eNSVZBH6FwtWLYmrBRJrsmFiVKX?=
+ =?us-ascii?Q?2iwsPkZO2ebhtBNSyOqIfJILpGNi5HsLeH0PSGuFmmbZfHYh7Bv/QvQKW17F?=
+ =?us-ascii?Q?cqJoPSsx1rbBXET0W9P0WCSpdyNlrBt4/4MRNtSt9srtz71lcXOcr+2/EykY?=
+ =?us-ascii?Q?acTFaChcQHCZBUehzsCzbErISKqWIB7ibjNjwHDA5QPbnbY5kZRiLnBPbHjZ?=
+ =?us-ascii?Q?q8uUGX/fO6Wttq6fPzxaozHu3DQDs1xDWecOJhLc7uBRwFGmrTAMe3n0TgNT?=
+ =?us-ascii?Q?RuC/x0pesm3cMpHv2OOk0vI+cdtS14zIxCoW/P9+4m+6M3sY5jIhV/vwJCjd?=
+ =?us-ascii?Q?SxJxgfo1Cwfna7vizSEkRzZiMuuesNTEbw7jKL8r6ptRv4rWbquyhCUSBAKK?=
+ =?us-ascii?Q?D93PIPaLfCwO9THuO/OOcjc+B+MEFkvoeZbAFsmxhllJjN7SAXfy1+oTdnvt?=
+ =?us-ascii?Q?Sdj5eHJGbU7fR0aa63xfP55VqyWn8Nll/W09LvYoDKs37t+eEQJtgn0EcMZs?=
+ =?us-ascii?Q?JFH7X66d/1K2TQwBSS0QurdHn9JtwougvHBrX7jSltderB5e3gaeY1INLzmi?=
+ =?us-ascii?Q?4NixL0HzsYJCZm20ZPUnLzIJsZ/VwVmRv9SGX9CjHWErxX7Mv5B5c19smw87?=
+ =?us-ascii?Q?yzRsO0dzFf5qVN6FutW8hXUuxLL5+a0O1topfaENEDGemwhUROIkfJMTNPbL?=
+ =?us-ascii?Q?7RYsOWJYZh18ZQVWIjiMln+6k1PI+twjvxUbW5dLBGeIhb4g12f2gUm5ZVt4?=
+ =?us-ascii?Q?N9rX4RKqJvAAYPbgm7BC0r+99hFOHpabQs4On332dBt20ayz1xmocea15ds2?=
+ =?us-ascii?Q?qiNFk1w+bCT4DYFn+PFhrlgrEomvMrbxdJ/ggovcnsOFDZPvUq5KSNqthhsr?=
+ =?us-ascii?Q?kIX71BxaevqGeArc27OWJMk6rL3DHWci9ipbiXtX91Z6twejYGOSffNV5J9F?=
+ =?us-ascii?Q?o6BY3yyCjJ3m9WDEqlpBMK7LUijww/Q4NQWqlu671+nCKEwhKtbMCad+UlB6?=
+ =?us-ascii?Q?gbSkt2nR+UjIMUlLLuzAi3cVzG4w0Zsr9SncHchHPLjt0pvy+8gCBwW6OsQc?=
+ =?us-ascii?Q?MRVZ+j+ecoBZqg2khmtPbkK0Q+8ESBltdIbFwWSj3u+kkzRbdbb19tZKxtPt?=
+ =?us-ascii?Q?oxRkjP/QmR+WjPcMpFeWunvlxqmcU5sfFIoRK37QZzCNH+NMoFxgZpgrpGBK?=
+ =?us-ascii?Q?D15e9pRCyEPyHvoC7d/VZtIEx1f+LIM4MpydFFhI3IyjzNDz7qFLh1Oj/MZL?=
+ =?us-ascii?Q?sqvA6n10r1XGdmQ+vtQsylCjugprCyi318XmAh5jw7N7eu1KbhFP1xdLLsdO?=
+ =?us-ascii?Q?KFqHJ31HtsPSpIXz7UmZntICtSslPt5EWSZr8MuVqlFZeMkE9DEUrzN93HBM?=
+ =?us-ascii?Q?eVxUKSgpeNee8WlPRX3aYdj+1liwFtif?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?6pb8dqhYmCEA/Uf3p9H0Nd4VgSyHFIyjJmVY7t10wUZZa5lUfRqb1lDcEju5?=
+ =?us-ascii?Q?rmQ3fULqz/BNYW8oIYdcN0MZ4Xpmc4HjRgsx3/9CdVcvqCkBeB01byW7pamp?=
+ =?us-ascii?Q?GmDV0wkITOUCVhLOYk5VIHCvJsg3EuFkFh9nF9Jpgp44zRRCP3OJ3tzI3aNV?=
+ =?us-ascii?Q?A194fSYVNA/qEXU6Ow9xPgNLEUusM1VtVPvpErxp8oRh2lvhXb1Jh5vNAqZN?=
+ =?us-ascii?Q?v1GnfW40pECspL4xzWuP52foLM2FQKaG2TqkDRn53JXzA3sFUJqASRBFOh6/?=
+ =?us-ascii?Q?cz/pmLwhfWLOxmiI9yACza3lGh0kqWwf1bY4emoZEnkhDKj97YgK+KM4Gv6d?=
+ =?us-ascii?Q?JXBT/uLCRCqP9yWYBk6Y3F4KRLf2Fd11i1Ud0O/uB6j5oi0b0DhmDOjB8PMP?=
+ =?us-ascii?Q?ZPCBpw4IBI861/6heWxx0pYaYG3qkzU4rl8FEHXcpsloGp3//CFWhTuTDs7n?=
+ =?us-ascii?Q?aw8gXXwujDXGu49zgl++2US4Tv8Mghw6MpMQu9zWSnr0PLRrava9sJIZ7Vef?=
+ =?us-ascii?Q?ZngMmvcPZZdQYJ3J7praqnVgn+AvGChZQNDf+/59YTrimRGwhYBYH9X7wsgg?=
+ =?us-ascii?Q?bDXBMPuXJ/TwJwdhOQNEWi/+dCgEYR/BH1adIhDSqCNc3TnYTGr1KTe4mv6m?=
+ =?us-ascii?Q?+Fa5FEpgAe6V3OvSQrr3m+OnW3Q4sQpPU8BxFTXJqldKwbc4h/A/2atheUtX?=
+ =?us-ascii?Q?rfpvRdkHxqi0sT85X/ObyJGfJ75oON8dim2XcRYnfSx66twoqBBVglVlfa5j?=
+ =?us-ascii?Q?O94lY6RGLIqXB5qTzDVMNlnfoyHt2JsunoWgtK6ClXJ5rabUwR53Ufes2E79?=
+ =?us-ascii?Q?kqXN1BaCR/quztP2Fah00tMPtxXmrdwmC4O/RgB+rD60qfrBm6J0ajI4nFQk?=
+ =?us-ascii?Q?vQAJ10niK016FmXtyS+Gs2pfT0+ORaDn3hJCQipOL9AwrPRmF+TvZhZovCtQ?=
+ =?us-ascii?Q?PPGpGcKsvhuWL0ogvQSKC1e/HWku0TT7cELrpTuxG2ky9X2GPixR041RK5kg?=
+ =?us-ascii?Q?XhXECwZdvPp26pC8CtEzlqEqWFCytKQR5/N34wvJDCJUmLQmK2sFBqy6BTC2?=
+ =?us-ascii?Q?/yaWXr1Zconv3cfXG1KrQ+e3z6u89Bxo9G33IgsOBlaeeJs/iqP1ZYldE6fV?=
+ =?us-ascii?Q?XzqUS8I4nrMgA9OwK3m2+0weNfLsFNh1RT6EdYsBeA4q/1fC0JO2oqMu3dK3?=
+ =?us-ascii?Q?6N9JNutbEQPXKQ/5rzkHUmu74fsEK+wYWMAdMZfQoWOCF3TFrLopOYEnkDdI?=
+ =?us-ascii?Q?quwd2UA4Zte9lC34z09sIHdxKOh5MWZRTajIK3Yx6bXCOAVdsMRsEuQqB/tw?=
+ =?us-ascii?Q?A5LkLfO9XBPOBF//ewYAyrORGkMGPFocENqZSvCwtso9vUrPPIUUbL7WSDkf?=
+ =?us-ascii?Q?Bssz+htxTrgmptEmPwsPFTd0cVrqdIFDN56XOwZwKaWlYbQf/AOxZluqZh8u?=
+ =?us-ascii?Q?xN9g6JcFfvD8oYsOul6rlDdTo/TPLc1NX1TpYkNb+x4Tf3p2WhjtZnl8LbFK?=
+ =?us-ascii?Q?/AM2b89iY7FbN30l366AMIVxmA1cs00G2uljG/QIQt0Vhy7iQ9nBL5kx38Am?=
+ =?us-ascii?Q?jSgFht3TaFuIxx4nK0xcaofuJmslv2uBYAeHbPaKtTt2b5MOZfsIwBDoS1TT?=
+ =?us-ascii?Q?9A=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211103945.967495-1-james.clark@linaro.org> <20250211103945.967495-6-james.clark@linaro.org>
-In-Reply-To: <20250211103945.967495-6-james.clark@linaro.org>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Wed, 12 Feb 2025 18:24:08 +0000
-X-Gm-Features: AWEUYZmvOWXiL_1p-coFMaJE37zBLrEvFWpIf8yOSB6Gps34OI_OmwL5PSCwH3E
-Message-ID: <CAJ9a7Visv1tbR06RFZH435Q1UNCdqz+Mh0wGbsPPoYmnkVOzgA@mail.gmail.com>
-Subject: Re: [PATCH 5/7] coresight: Clear self hosted claim tag on probe
-To: James Clark <james.clark@linaro.org>
-Cc: lcherian@marvell.com, coresight@lists.linaro.org, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 790f04fd-b388-4f83-bc00-08dd4b92ed24
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2025 18:27:37.2255
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CGv+Hb/0GIBNomJvJAorPjtDW1Nn66XCxa1YTO3P34wrLFchhA7PZ49B19TGpvLxQZya0ORUL8SMPntwpe9yiidbRbfHDpr3kcD7z6Gejxk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB7008
 
-Hi James,
+Hi Rob,
 
-On Tue, 11 Feb 2025 at 10:40, James Clark <james.clark@linaro.org> wrote:
->
-> This can be left behind from a crashed kernel after a kexec so clear it
-> when probing each device. Similarly to
-> coresight_disclaim_device_unlocked(), only clear it if it's already set
-> to avoid races with an external debugger.
->
-> We need a csdev_access struct in etm_init_arch_data() so just replace
-> the iomem pointer with a full csdev_access struct. This means all usages
-> need to be updated to go through csa->base.
->
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  drivers/hwtracing/coresight/coresight-catu.c  |  1 +
->  drivers/hwtracing/coresight/coresight-core.c  | 48 +++++++++++++++----
->  .../hwtracing/coresight/coresight-cti-core.c  |  2 +
->  drivers/hwtracing/coresight/coresight-etb10.c |  2 +
->  drivers/hwtracing/coresight/coresight-etm.h   |  6 +--
->  .../coresight/coresight-etm3x-core.c          | 28 +++++------
->  .../coresight/coresight-etm3x-sysfs.c         |  8 ++--
->  .../coresight/coresight-etm4x-core.c          |  2 +
->  .../hwtracing/coresight/coresight-funnel.c    |  2 +
->  .../coresight/coresight-replicator.c          |  1 +
->  .../hwtracing/coresight/coresight-tmc-core.c  |  1 +
->  include/linux/coresight.h                     |  3 ++
->  12 files changed, 73 insertions(+), 31 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-> index d9259c0b6e64..575c2d247a90 100644
-> --- a/drivers/hwtracing/coresight/coresight-catu.c
-> +++ b/drivers/hwtracing/coresight/coresight-catu.c
-> @@ -558,6 +558,7 @@ static int __catu_probe(struct device *dev, struct resource *res)
->         catu_desc.subtype.helper_subtype = CORESIGHT_DEV_SUBTYPE_HELPER_CATU;
->         catu_desc.ops = &catu_ops;
->
-> +       coresight_reset_claim(&catu_desc.access);
->         drvdata->csdev = coresight_register(&catu_desc);
->         if (IS_ERR(drvdata->csdev))
->                 ret = PTR_ERR(drvdata->csdev);
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index 7fe5d5d432c4..97f33ffad05e 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -212,20 +212,48 @@ int coresight_claim_device(struct coresight_device *csdev)
->  EXPORT_SYMBOL_GPL(coresight_claim_device);
->
->  /*
-> - * coresight_disclaim_device_unlocked : Clear the claim tag for the device.
-> + * Clear the claim tag for the device.
-> + * Returns an error if the device wasn't already claimed.
-> + */
-> +int coresight_reset_claim(struct csdev_access *csa)
+Thanks for your feedback!
 
-Given the iusue being fixed - i.e. previous sessions having residual
-claims - and the fact that this funtion is only ever called from
-device initialisation as far as I can tell,
-would this be better to be called coresight_init_claim() and return /
-log an error only if the device _was_ actually claimed.
+> From: Rob Herring <robh@kernel.org>
+> Sent: 11 February 2025 22:27
+> Subject: Re: [PATCH 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P) fa=
+mily of SoCs
+>=20
+> On Thu, Feb 06, 2025 at 10:03:04PM +0000, Fabrizio Castro wrote:
+> > Document the Renesas RZ/V2H(P) family of SoCs DMAC block.
+> > The Renesas RZ/V2H(P) DMAC is very similar to the one found on the
+> > Renesas RZ/G2L family of SoCs, but there are some differences:
+> > * It only uses one register area
+> > * It only uses one clock
+> > * It only uses one reset
+> > * Instead of using MID/IRD it uses REQ NO/ACK NO
+> > * It is connected to the Interrupt Control Unit (ICU)
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > ---
+> >  .../bindings/dma/renesas,rz-dmac.yaml         | 152 +++++++++++++++---
+> >  1 file changed, 127 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> > index 82de3b927479..d4dd22432e49 100644
+> > --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> > +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> > @@ -11,19 +11,23 @@ maintainers:
+> >
+> >  properties:
+> >    compatible:
+> > -    items:
+> > -      - enum:
+> > -          - renesas,r7s72100-dmac # RZ/A1H
+> > -          - renesas,r9a07g043-dmac # RZ/G2UL and RZ/Five
+> > -          - renesas,r9a07g044-dmac # RZ/G2{L,LC}
+> > -          - renesas,r9a07g054-dmac # RZ/V2L
+> > -          - renesas,r9a08g045-dmac # RZ/G3S
+> > -      - const: renesas,rz-dmac
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - renesas,r7s72100-dmac # RZ/A1H
+> > +              - renesas,r9a07g043-dmac # RZ/G2UL and RZ/Five
+> > +              - renesas,r9a07g044-dmac # RZ/G2{L,LC}
+> > +              - renesas,r9a07g054-dmac # RZ/V2L
+> > +              - renesas,r9a08g045-dmac # RZ/G3S
+> > +          - const: renesas,rz-dmac
+> > +
+> > +      - const: renesas,r9a09g057-dmac # RZ/V2H(P)
+> >
+> >    reg:
+> >      items:
+> >        - description: Control and channel register block
+> >        - description: DMA extended resource selector block
+> > +    minItems: 1
+> >
+> >    interrupts:
+> >      maxItems: 17
+> > @@ -52,6 +56,7 @@ properties:
+> >      items:
+> >        - description: DMA main clock
+> >        - description: DMA register access clock
+> > +    minItems: 1
+> >
+> >    clock-names:
+> >      items:
+> > @@ -61,14 +66,22 @@ properties:
+> >    '#dma-cells':
+> >      const: 1
+> >      description:
+> > -      The cell specifies the encoded MID/RID values of the DMAC port
+> > -      connected to the DMA client and the slave channel configuration
+> > -      parameters.
+> > +      For the RZ/A1H, RZ/Five, RZ/G2{L,LC,UL}, RZ/V2L, and RZ/G3S SoCs=
+, the cell
+> > +      specifies the encoded MID/RID values of the DMAC port connected =
+to the
+> > +      DMA client and the slave channel configuration parameters.
+> >        bits[0:9] - Specifies MID/RID value
+> >        bit[10] - Specifies DMA request high enable (HIEN)
+> >        bit[11] - Specifies DMA request detection type (LVL)
+> >        bits[12:14] - Specifies DMAACK output mode (AM)
+> >        bit[15] - Specifies Transfer Mode (TM)
+> > +      For the RZ/V2H(P) SoC the cell specifies the REQ NO, the ACK NO,=
+ and the
+> > +      slave channel configuration parameters.
+> > +      bits[0:9] - Specifies the REQ NO
+> > +      bits[10:16] - Specifies the ACK NO
+> > +      bit[17] - Specifies DMA request high enable (HIEN)
+> > +      bit[18] - Specifies DMA request detection type (LVL)
+> > +      bits[19:21] - Specifies DMAACK output mode (AM)
+> > +      bit[22] - Specifies Transfer Mode (TM)
+> >
+> >    dma-channels:
+> >      const: 16
+> > @@ -80,12 +93,29 @@ properties:
+> >      items:
+> >        - description: Reset for DMA ARESETN reset terminal
+> >        - description: Reset for DMA RST_ASYNC reset terminal
+> > +    minItems: 1
+> >
+> >    reset-names:
+> >      items:
+> >        - const: arst
+> >        - const: rst_async
+> >
+> > +  renesas,icu:
+> > +    description:
+> > +      On the RZ/V2H(P) SoC configures the ICU to which the DMAC is con=
+nected to.
+> > +      It must contain the phandle to the ICU, and the index of the DMA=
+C as seen
+> > +      from the ICU (e.g. parameter k from register ICU_DMkSELy).
+> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +    items:
+> > +      - items:
+> > +          - description: phandle to the ICU node.
+> > +          - description: The DMAC index.
+> > +              4 for DMAC0
+> > +              0 for DMAC1
+> > +              1 for DMAC2
+> > +              2 for DMAC3
+> > +              3 for DMAC4
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -98,27 +128,62 @@ allOf:
+> >    - $ref: dma-controller.yaml#
+> >
+> >    - if:
+> > -      not:
+> > -        properties:
+> > -          compatible:
+> > -            contains:
+> > -              enum:
+> > -                - renesas,r7s72100-dmac
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: renesas,r9a09g057-dmac
+> >      then:
+> > +      properties:
+> > +        reg:
+> > +          maxItems: 1
+> > +        clocks:
+> > +          maxItems: 1
+> > +        resets:
+> > +          maxItems: 1
+> > +
+> > +        clock-names: false
+> > +        reset-names: false
+> > +
+> >        required:
+> >          - clocks
+> > -        - clock-names
+> >          - power-domains
+> > +        - renesas,icu
+> >          - resets
+> > -        - reset-names
+> >
+> >      else:
+> > -      properties:
+> > -        clocks: false
+> > -        clock-names: false
+> > -        power-domains: false
+> > -        resets: false
+> > -        reset-names: false
+> > +      if:
+>=20
+> Please try to avoid nesting if/then/else. Not sure that's easy or not
+> here. This diff is hard to read.
 
-As it stands it seems to return an error if the device was not claimed
-- which on initialisation is the correct state!
+I think I can use 3 if statements as opposed to nesting them, and I'll have=
+ to
+explicitly list the platforms in order to cover all of the cases.
+It should be a lot more readable, and hopefully simpler to maintain.
+I'll send something across soon for you to look at.
 
-Since the retrun code is ignored by all of the callees, the rerun
-could be dropped and a warning issued withing this function if the
-claim needed clearing.
+>=20
+> > +        not:
+> > +          properties:
+> > +            compatible:
+> > +              contains:
+> > +                enum:
+> > +                  - renesas,r7s72100-dmac
+> > +      then:
+> > +        properties:
+> > +          reg:
+> > +            minItems: 2
+> > +          clocks:
+> > +            minItems: 2
+> > +          resets:
+> > +            minItems: 2
+> > +
+> > +          renesas,icu: false
+> > +
+> > +        required:
+> > +          - clocks
+> > +          - clock-names
+> > +          - power-domains
+> > +          - resets
+> > +          - reset-names
+> > +
+> > +      else:
+> > +        properties:
+> > +          clocks: false
+> > +          clock-names: false
+> > +          power-domains: false
+> > +          resets: false
+> > +          reset-names: false
+> > +          renesas,icu: false
+> >
+> >  additionalProperties: false
+> >
+> > @@ -164,3 +229,40 @@ examples:
+> >          #dma-cells =3D <1>;
+> >          dma-channels =3D <16>;
+> >      };
+> > +
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +    #include <dt-bindings/clock/renesas-cpg-mssr.h>
+> > +
+> > +    dmac0: dma-controller@11400000 {
+> > +        compatible =3D "renesas,r9a09g057-dmac";
+>=20
+> Is this example really different enough from the others to need it? I
+> would drop it.
 
-> +{
-> +       int ret;
-> +
-> +       CS_UNLOCK(csa->base);
-> +       ret = coresight_reset_claim_unlocked(csa);
-> +       CS_LOCK(csa->base);
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(coresight_reset_claim);
-> +
-> +/*
-> + * Clear the claim tag for the device. Called with CS_UNLOCKed for the component.
-> + * Returns an error if the device wasn't already claimed.
-> + */
-> +int coresight_reset_claim_unlocked(struct csdev_access *csa)
+I think the new example can be dropped in v2.
 
-Given the comment and the function - this could be named
-"coresight_clear_claim_unlocked()"
+Thank you.
 
+Cheers,
+Fab
 
-Regards
+>=20
+> Rob
 
-Mike
-
-> +{
-> +       if (coresight_read_claim_tags(csa) == CORESIGHT_CLAIM_SELF_HOSTED) {
-> +               coresight_clear_self_claim_tag(csa);
-> +               return 0;
-> +       }
-> +
-> +       return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(coresight_reset_claim_unlocked);
-> +
-> +/*
-> + * coresight_disclaim_device_unlocked : Clear the claim tag for the device
-> + * and warn if the device wasn't already claimed.
->   * Called with CS_UNLOCKed for the component.
->   */
->  void coresight_disclaim_device_unlocked(struct csdev_access *csa)
->  {
-> -       if (coresight_read_claim_tags(csa) == CORESIGHT_CLAIM_SELF_HOSTED)
-> -               coresight_clear_self_claim_tag(csa);
-> -       else
-> -               /*
-> -                * The external agent may have not honoured our claim
-> -                * and has manipulated it. Or something else has seriously
-> -                * gone wrong in our driver.
-> -                */
-> -               WARN_ON_ONCE(1);
-> +       /*
-> +        * Warn if the external agent hasn't honoured our claim
-> +        * and has manipulated it. Or something else has seriously
-> +        * gone wrong in our driver.
-> +        */
-> +       WARN_ON_ONCE(coresight_reset_claim_unlocked(csa));
->  }
->  EXPORT_SYMBOL_GPL(coresight_disclaim_device_unlocked);
->
-> diff --git a/drivers/hwtracing/coresight/coresight-cti-core.c b/drivers/hwtracing/coresight/coresight-cti-core.c
-> index 073f67a41af9..389a72362f0c 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti-core.c
-> @@ -931,6 +931,8 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
->         cti_desc.ops = &cti_ops;
->         cti_desc.groups = drvdata->ctidev.con_groups;
->         cti_desc.dev = dev;
-> +
-> +       coresight_reset_claim(&cti_desc.access);
->         drvdata->csdev = coresight_register(&cti_desc);
->         if (IS_ERR(drvdata->csdev)) {
->                 ret = PTR_ERR(drvdata->csdev);
-> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-> index d8bc3e776c88..b598b2c0c9bb 100644
-> --- a/drivers/hwtracing/coresight/coresight-etb10.c
-> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
-> @@ -772,6 +772,8 @@ static int etb_probe(struct amba_device *adev, const struct amba_id *id)
->         desc.pdata = pdata;
->         desc.dev = dev;
->         desc.groups = coresight_etb_groups;
-> +
-> +       coresight_reset_claim(&desc.access);
->         drvdata->csdev = coresight_register(&desc);
->         if (IS_ERR(drvdata->csdev))
->                 return PTR_ERR(drvdata->csdev);
-> diff --git a/drivers/hwtracing/coresight/coresight-etm.h b/drivers/hwtracing/coresight/coresight-etm.h
-> index e02c3ea972c9..a89736309c27 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm.h
-> +++ b/drivers/hwtracing/coresight/coresight-etm.h
-> @@ -229,7 +229,7 @@ struct etm_config {
->   * @config:    structure holding configuration parameters.
->   */
->  struct etm_drvdata {
-> -       void __iomem                    *base;
-> +       struct csdev_access             csa;
->         struct clk                      *atclk;
->         struct coresight_device         *csdev;
->         spinlock_t                      spinlock;
-> @@ -260,7 +260,7 @@ static inline void etm_writel(struct etm_drvdata *drvdata,
->                                 "invalid CP14 access to ETM reg: %#x", off);
->                 }
->         } else {
-> -               writel_relaxed(val, drvdata->base + off);
-> +               writel_relaxed(val, drvdata->csa.base + off);
->         }
->  }
->
-> @@ -274,7 +274,7 @@ static inline unsigned int etm_readl(struct etm_drvdata *drvdata, u32 off)
->                                 "invalid CP14 access to ETM reg: %#x", off);
->                 }
->         } else {
-> -               val = readl_relaxed(drvdata->base + off);
-> +               val = readl_relaxed(drvdata->csa.base + off);
->         }
->
->         return val;
-> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> index 509f53b69e42..0b010683b883 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> @@ -86,9 +86,9 @@ static void etm_set_pwrup(struct etm_drvdata *drvdata)
->  {
->         u32 etmpdcr;
->
-> -       etmpdcr = readl_relaxed(drvdata->base + ETMPDCR);
-> +       etmpdcr = readl_relaxed(drvdata->csa.base + ETMPDCR);
->         etmpdcr |= ETMPDCR_PWD_UP;
-> -       writel_relaxed(etmpdcr, drvdata->base + ETMPDCR);
-> +       writel_relaxed(etmpdcr, drvdata->csa.base + ETMPDCR);
->         /* Ensure pwrup completes before subsequent cp14 accesses */
->         mb();
->         isb();
-> @@ -101,9 +101,9 @@ static void etm_clr_pwrup(struct etm_drvdata *drvdata)
->         /* Ensure pending cp14 accesses complete before clearing pwrup */
->         mb();
->         isb();
-> -       etmpdcr = readl_relaxed(drvdata->base + ETMPDCR);
-> +       etmpdcr = readl_relaxed(drvdata->csa.base + ETMPDCR);
->         etmpdcr &= ~ETMPDCR_PWD_UP;
-> -       writel_relaxed(etmpdcr, drvdata->base + ETMPDCR);
-> +       writel_relaxed(etmpdcr, drvdata->csa.base + ETMPDCR);
->  }
->
->  /**
-> @@ -365,7 +365,7 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
->         struct etm_config *config = &drvdata->config;
->         struct coresight_device *csdev = drvdata->csdev;
->
-> -       CS_UNLOCK(drvdata->base);
-> +       CS_UNLOCK(drvdata->csa.base);
->
->         rc = coresight_claim_device_unlocked(csdev);
->         if (rc)
-> @@ -427,7 +427,7 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
->         etm_clr_prog(drvdata);
->
->  done:
-> -       CS_LOCK(drvdata->base);
-> +       CS_LOCK(drvdata->csa.base);
->
->         dev_dbg(&drvdata->csdev->dev, "cpu: %d enable smp call done: %d\n",
->                 drvdata->cpu, rc);
-> @@ -589,7 +589,7 @@ static void etm_disable_hw(void *info)
->         struct etm_config *config = &drvdata->config;
->         struct coresight_device *csdev = drvdata->csdev;
->
-> -       CS_UNLOCK(drvdata->base);
-> +       CS_UNLOCK(drvdata->csa.base);
->         etm_set_prog(drvdata);
->
->         /* Read back sequencer and counters for post trace analysis */
-> @@ -601,7 +601,7 @@ static void etm_disable_hw(void *info)
->         etm_set_pwrdwn(drvdata);
->         coresight_disclaim_device_unlocked(&csdev->access);
->
-> -       CS_LOCK(drvdata->base);
-> +       CS_LOCK(drvdata->csa.base);
->
->         dev_dbg(&drvdata->csdev->dev,
->                 "cpu: %d disable smp call done\n", drvdata->cpu);
-> @@ -614,7 +614,7 @@ static void etm_disable_perf(struct coresight_device *csdev)
->         if (WARN_ON_ONCE(drvdata->cpu != smp_processor_id()))
->                 return;
->
-> -       CS_UNLOCK(drvdata->base);
-> +       CS_UNLOCK(drvdata->csa.base);
->
->         /* Setting the prog bit disables tracing immediately */
->         etm_set_prog(drvdata);
-> @@ -626,7 +626,7 @@ static void etm_disable_perf(struct coresight_device *csdev)
->         etm_set_pwrdwn(drvdata);
->         coresight_disclaim_device_unlocked(&csdev->access);
->
-> -       CS_LOCK(drvdata->base);
-> +       CS_LOCK(drvdata->csa.base);
->
->         /*
->          * perf will release trace ids when _free_aux()
-> @@ -772,7 +772,7 @@ static void etm_init_arch_data(void *info)
->         /* Make sure all registers are accessible */
->         etm_os_unlock(drvdata);
->
-> -       CS_UNLOCK(drvdata->base);
-> +       CS_UNLOCK(drvdata->csa.base);
->
->         /* First dummy read */
->         (void)etm_readl(drvdata, ETMPDSR);
-> @@ -803,9 +803,10 @@ static void etm_init_arch_data(void *info)
->         drvdata->nr_ext_out = BMVAL(etmccr, 20, 22);
->         drvdata->nr_ctxid_cmp = BMVAL(etmccr, 24, 25);
->
-> +       coresight_reset_claim_unlocked(&drvdata->csa);
->         etm_set_pwrdwn(drvdata);
->         etm_clr_pwrup(drvdata);
-> -       CS_LOCK(drvdata->base);
-> +       CS_LOCK(drvdata->csa.base);
->  }
->
->  static int __init etm_hp_setup(void)
-> @@ -866,8 +867,7 @@ static int etm_probe(struct amba_device *adev, const struct amba_id *id)
->         if (IS_ERR(base))
->                 return PTR_ERR(base);
->
-> -       drvdata->base = base;
-> -       desc.access = CSDEV_ACCESS_IOMEM(base);
-> +       desc.access = drvdata->csa = CSDEV_ACCESS_IOMEM(base);
->
->         spin_lock_init(&drvdata->spinlock);
->
-> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c b/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c
-> index 68c644be9813..af566b62785c 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c
-> @@ -50,11 +50,11 @@ static ssize_t etmsr_show(struct device *dev,
->
->         pm_runtime_get_sync(dev->parent);
->         spin_lock_irqsave(&drvdata->spinlock, flags);
-> -       CS_UNLOCK(drvdata->base);
-> +       CS_UNLOCK(drvdata->csa.base);
->
->         val = etm_readl(drvdata, ETMSR);
->
-> -       CS_LOCK(drvdata->base);
-> +       CS_LOCK(drvdata->csa.base);
->         spin_unlock_irqrestore(&drvdata->spinlock, flags);
->         pm_runtime_put(dev->parent);
->
-> @@ -949,9 +949,9 @@ static ssize_t seq_curr_state_show(struct device *dev,
->         pm_runtime_get_sync(dev->parent);
->         spin_lock_irqsave(&drvdata->spinlock, flags);
->
-> -       CS_UNLOCK(drvdata->base);
-> +       CS_UNLOCK(drvdata->csa.base);
->         val = (etm_readl(drvdata, ETMSQR) & ETM_SQR_MASK);
-> -       CS_LOCK(drvdata->base);
-> +       CS_LOCK(drvdata->csa.base);
->
->         spin_unlock_irqrestore(&drvdata->spinlock, flags);
->         pm_runtime_put(dev->parent);
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 45b30a4b3eba..3609bb74c4ec 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -1337,6 +1337,8 @@ static void etm4_init_arch_data(void *info)
->         drvdata->nrseqstate = FIELD_GET(TRCIDR5_NUMSEQSTATE_MASK, etmidr5);
->         /* NUMCNTR, bits[30:28] number of counters available for tracing */
->         drvdata->nr_cntr = FIELD_GET(TRCIDR5_NUMCNTR_MASK, etmidr5);
-> +
-> +       coresight_reset_claim_unlocked(csa);
->         etm4_cs_lock(drvdata, csa);
->         cpu_detect_trace_filtering(drvdata);
->  }
-> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-> index e986922d555b..be2a47636ef3 100644
-> --- a/drivers/hwtracing/coresight/coresight-funnel.c
-> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
-> @@ -255,6 +255,7 @@ static int funnel_probe(struct device *dev, struct resource *res)
->                 drvdata->base = base;
->                 desc.groups = coresight_funnel_groups;
->                 desc.access = CSDEV_ACCESS_IOMEM(base);
-> +               coresight_reset_claim(&desc.access);
->         }
->
->         dev_set_drvdata(dev, drvdata);
-> @@ -272,6 +273,7 @@ static int funnel_probe(struct device *dev, struct resource *res)
->         desc.ops = &funnel_cs_ops;
->         desc.pdata = pdata;
->         desc.dev = dev;
-> +
->         drvdata->csdev = coresight_register(&desc);
->         if (IS_ERR(drvdata->csdev)) {
->                 ret = PTR_ERR(drvdata->csdev);
-> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-> index 5d42a9a8c460..679a36effbe8 100644
-> --- a/drivers/hwtracing/coresight/coresight-replicator.c
-> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
-> @@ -284,6 +284,7 @@ static int replicator_probe(struct device *dev, struct resource *res)
->         desc.pdata = dev->platform_data;
->         desc.dev = dev;
->
-> +       coresight_reset_claim(&desc.access);
->         drvdata->csdev = coresight_register(&desc);
->         if (IS_ERR(drvdata->csdev)) {
->                 ret = PTR_ERR(drvdata->csdev);
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> index e9876252a789..5ac4e3c706ac 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> @@ -558,6 +558,7 @@ static int __tmc_probe(struct device *dev, struct resource *res)
->         dev->platform_data = pdata;
->         desc.pdata = pdata;
->
-> +       coresight_reset_claim(&desc.access);
->         drvdata->csdev = coresight_register(&desc);
->         if (IS_ERR(drvdata->csdev)) {
->                 ret = PTR_ERR(drvdata->csdev);
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 937931d107e0..11808aee9d1d 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -655,6 +655,9 @@ extern int coresight_claim_device_unlocked(struct coresight_device *csdev);
->
->  extern void coresight_disclaim_device(struct csdev_access *csa);
->  extern void coresight_disclaim_device_unlocked(struct csdev_access *csa);
-> +int coresight_reset_claim_unlocked(struct csdev_access *csa);
-> +int coresight_reset_claim(struct csdev_access *csa);
-> +
->  extern char *coresight_alloc_device_name(struct coresight_dev_list *devs,
->                                          struct device *dev);
->
-> --
-> 2.34.1
->
-
-
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
 
