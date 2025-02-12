@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-510743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDF9A32161
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:43:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FAAA32130
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 976B37A2175
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:42:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F60F18859AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E5A205AA8;
-	Wed, 12 Feb 2025 08:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CEC205509;
+	Wed, 12 Feb 2025 08:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MmoFFkZO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwR92lBC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8671E9B3B;
-	Wed, 12 Feb 2025 08:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444C42B9BC;
+	Wed, 12 Feb 2025 08:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739349777; cv=none; b=rXmECmpoqd0JEC1xA0G88+qxkgyiwDLLsWXvhWP7Pm7iMMC8BhEaYbB1GUZskCFOJkjt8fFUWqYdmFZzyEcjaDss7E2OfDyAiZi3PCeoG+Muvj0jKcW5dymmTtwptBCPopAsZkVyG2Jrgl3oBBUgK/AJvbVtVCTMJYnOXHr1GS0=
+	t=1739349253; cv=none; b=LG3FB225nKaD+ePv64pOTUbZFQD9yfBZFPNXK8i4eSckDL7QBVjet/TIg1onRYNLBWRDYfaXlMOrRInrqglzF+U4MoYz6auYl2Oam8Yuw/SeMHGdMey8yVpTv5YIm3Frn4SDnTr3n41/gsihOJy7zjRFMxuTLW5o7vfQV3UMqtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739349777; c=relaxed/simple;
-	bh=fZ/2cWrlbcdeAC/InzvSZ8DjryDQHpUwgjaOl4okXco=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=PWfCK3eMHioSzfBSBjxxzZuAjOyoP35vOcesh0Eh3K2+LAKNIcyWqmxyrouThyXSqRtNdNCQgCUbWvu/JTMTjnl2nF1qwl5QAOs6+cZ2EOy3kKY8tWNbHFCyE3fw/yGzIQOVfp5VOlIuMS5TwiBGlIl4GV+tRnNMEgDGSupKf1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MmoFFkZO; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739349775; x=1770885775;
-  h=from:to:cc:subject:date:message-id;
-  bh=fZ/2cWrlbcdeAC/InzvSZ8DjryDQHpUwgjaOl4okXco=;
-  b=MmoFFkZOd3qaO+Le0kO5v8lLRiXprNv5eLKUtK+IZuhWhHqsdTEr2Q0j
-   BQcnoq+EEP3TZwwOzZctoQYNZZhIe5/B6u25xsc6sTYs74cnwKNeiVtkS
-   cpSU8gwg4qJG60VLuKAd72d/ae9FLw7ZfF5eO6YBSqLFUkzeHBOVj7tZj
-   IVn341n1esC4y0jg2uxz3buf/0XJufohWdz2OAKVMjNAAzBzcjM2pcxf5
-   o2tXbwGdymCRV3Rk0Z+vnvrJU1mg38t9q9H7g9MO3scHIyQU/187B9QzD
-   AipVaglKFQGHB3TS/1/3VKQa9Sc0jTfTo6mtCEZvcZZZOvdb5Ju/72lH9
-   g==;
-X-CSE-ConnectionGUID: zz/yQ7yaTSemo6UrM4dvdQ==
-X-CSE-MsgGUID: wmVXuMFDRiuB55VmwUaVcQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51425149"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="51425149"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 00:42:55 -0800
-X-CSE-ConnectionGUID: lI2/2gr7QW2fM3QIlbhRBw==
-X-CSE-MsgGUID: 6ZDyVIk3S7abahNGOdtVMg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="136026824"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 00:42:51 -0800
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Ramses <ramses@well-founded.dev>,
-	John <therealgraysky@proton.me>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] EDAC/igen6: Fix the flood of invalid error reports
-Date: Wed, 12 Feb 2025 16:33:54 +0800
-Message-Id: <20250212083354.31919-1-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1739349253; c=relaxed/simple;
+	bh=PEbY1hpoZAUMu77nswKwlCvM1KB4M7kPypmGaG3VT8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qpe1u8ixMYVjka1HRpp3quCMTNUPNr3sdRZqFcSPMFJo4mFU0dWJLbZvocXByA88DehDTXRihJqtr+joS0MavLKojuqKAHk+ez98ulCivcSbFmawzts95lWt4QDAH0OCu+TgrhEmRchAOGEca/+k9urd1ghI7wUDSKuaLNzJu+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwR92lBC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4EB1C4CEDF;
+	Wed, 12 Feb 2025 08:34:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739349252;
+	bh=PEbY1hpoZAUMu77nswKwlCvM1KB4M7kPypmGaG3VT8E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HwR92lBCZSGCArK8rhY9/iIh1acpnlsk/sEGmRhaoTvSVsFQkFD7cmXBQmpF0nNz9
+	 ysEDSQDHDqacQVgA4zICqBEN9sQ8AAlzJ+8WaDY1iYOHotxZc/0KD+qZ9n0fLT811s
+	 uLMx6pHhd4xIAZirq2yRvHUaueavGyNaDjcM9Qk76ZEl/ouUjOdaQMa51lFkGWodj5
+	 V+QVV2uPxmaIzc/Hvmq5yFY/ZKyO7vMLTA3TeSZZCMBGoqslrpMJsCrLGn6E35q77j
+	 CmKfH0SNmodGiO15ocbHKTDYUR9fdJzk0plo2kc+WUH+I+xuYO1KKtfQCesf2amv5u
+	 SH64k2x5psdbw==
+Message-ID: <6ff25e41-536c-4871-a047-8aec38f359c4@kernel.org>
+Date: Wed, 12 Feb 2025 09:34:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: display/msm: Add stream 1 pixel clock
+ for QCS8300
+To: Yongxing Mou <quic_yongmou@quicinc.com>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
+ <20250212-mst_qcs8300-v1-2-38a8aa08394b@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250212-mst_qcs8300-v1-2-38a8aa08394b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The ECC_ERROR_LOG register of certain SoCs may contain the invalid value
-~0, which results in a flood of invalid error reports in polling mode.
+On 12/02/2025 08:12, Yongxing Mou wrote:
+> Support mst for qcs8300 and add the stream 1 clock support in the mdss
+> dt-bindings.
+> 
+> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
 
-Fix the flood of invalid error reports by skipping the invalid ECC error
-log value ~0.
+Your patchset leads to warnings - it is non-bisectable.
 
-Fixes: e14232afa944 ("EDAC/igen6: Add polling support")
-Reported-by: Ramses <ramses@well-founded.dev>
-Closes: https://lore.kernel.org/all/OISL8Rv--F-9@well-founded.dev/
-Tested-by: Ramses <ramses@well-founded.dev>
-Reported-by: John <therealgraysky@proton.me>
-Closes: https://lore.kernel.org/all/p5YcxOE6M3Ncxpn2-Ia_wCt61EM4LwIiN3LroQvT_-G2jMrFDSOW5k2A9D8UUzD2toGpQBN1eI0sL5dSKnkO8iteZegLoQEj-DwQaMhGx4A=@proton.me/
-Tested-by: John <therealgraysky@proton.me>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
- drivers/edac/igen6_edac.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+Fix original code, don't post buggy patches just to fix them immediately.
 
-diff --git a/drivers/edac/igen6_edac.c b/drivers/edac/igen6_edac.c
-index fdf3a84fe698..595908af9e5c 100644
---- a/drivers/edac/igen6_edac.c
-+++ b/drivers/edac/igen6_edac.c
-@@ -785,13 +785,22 @@ static u64 ecclog_read_and_clear(struct igen6_imc *imc)
- {
- 	u64 ecclog = readq(imc->window + ECC_ERROR_LOG_OFFSET);
- 
--	if (ecclog & (ECC_ERROR_LOG_CE | ECC_ERROR_LOG_UE)) {
--		/* Clear CE/UE bits by writing 1s */
--		writeq(ecclog, imc->window + ECC_ERROR_LOG_OFFSET);
--		return ecclog;
--	}
-+	/*
-+	 * Quirk: The ECC_ERROR_LOG register of certain SoCs may contain
-+	 *        the invalid value ~0. This will result in a flood of invalid
-+	 *        error reports in polling mode. Skip it.
-+	 */
-+	if (ecclog == ~0)
-+		return 0;
- 
--	return 0;
-+	/* Neither a CE nor a UE. Skip it.*/
-+	if (!(ecclog & (ECC_ERROR_LOG_CE | ECC_ERROR_LOG_UE)))
-+		return 0;
-+
-+	/* Clear CE/UE bits by writing 1s */
-+	writeq(ecclog, imc->window + ECC_ERROR_LOG_OFFSET);
-+
-+	return ecclog;
- }
- 
- static void errsts_clear(struct igen6_imc *imc)
--- 
-2.17.1
+> 
 
+
+Best regards,
+Krzysztof
 
