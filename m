@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-511289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD51A328F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:45:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5ACEA328F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82679165318
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:45:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1AB03A21E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7B020F08C;
-	Wed, 12 Feb 2025 14:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wI5257yL"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DB4209681;
+	Wed, 12 Feb 2025 14:46:02 +0000 (UTC)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC10C18D65E;
-	Wed, 12 Feb 2025 14:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F861CBEAA;
+	Wed, 12 Feb 2025 14:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739371543; cv=none; b=TOER2Ta8/oyLOv3k0+JhlIWc/ABitC2XK7JkWjMWQAaNguja0eBH7AmnO15fhhDgARQ8VVCB9XmdWOV6/0I78mHMOIkN/hNHy8VA5vjxt6zUsn/djOwWYk3y5hKBStZvZvEl4+mIhfm0B0BADktLdycnW9Mz4zkfH0Bow1x9q5Y=
+	t=1739371561; cv=none; b=KV3HG2QjL+s9ACqdejolXtDX0xQQWizyRr4JulkCW7XnW/3PQpN3KnRHd4I0F3AST4x+tqXs7EYllrU6r/86ZIVGcJAyhVf+/OcbjVnJZ548E+Sb6AcC6BHIY6cetZ7ADdCJ0xKnDUZfRUXNg0Hv508CwOP9GRiG8RQyjOchb2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739371543; c=relaxed/simple;
-	bh=zPPPVDyPCQy/uHZXmtEqFziYEoLwnzvm/k6HokPTs8Y=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ReSfxEUqRdZDEV6vudAUHO7o0baFs/ro9DSJd/sZ6eahzcEQ3S3T7esCYkn0aMZS/x3rURn12OR+7+VpLT2RaN/ZOLVIWg35YCmVaYH5KxSHcGOQqTua34BOima48LNxr1lzwLMQqRBMNzc5ZmgDDPDioAMZ21DJQCyg+TeNG9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wI5257yL; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1739371528; x=1739976328; i=markus.elfring@web.de;
-	bh=zPPPVDyPCQy/uHZXmtEqFziYEoLwnzvm/k6HokPTs8Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=wI5257yL/FVTiY5mUkYGejkdhVaRmGYvugLmvPDMzLMngyHvByBwQQQknYe+C3lg
-	 840gW3JUYmvLT8Z51sOVUamRng+HvfbWhyC+KycDYSjHzhU4YNWpHZh7dghAeLKrW
-	 zv4D2yi+Atoemvj3brYS4dAVEjYl+q8KZRceYtUxCWTJ3Aj+dipeP2TbrdwZ13K3x
-	 XA5aw8S4hoAeTzRsoHu3ZzIxTHt9vPx20OBmZLSSORekQBrwtMGaB0XyQ6z52ox3d
-	 PUblNMwdNVJco5ntQ7U3hP1X841h7TiFErFa/pBfi028I4v1UH6JXswlTzb2Zymvn
-	 67iPkISqALY+GVOOpA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MGgJK-1teKFu0sgk-009tly; Wed, 12
- Feb 2025 15:45:28 +0100
-Message-ID: <f4757a63-c1f7-4b4f-854b-db533c8b70ad@web.de>
-Date: Wed, 12 Feb 2025 15:45:27 +0100
+	s=arc-20240116; t=1739371561; c=relaxed/simple;
+	bh=tiZcpPmsYdL9+5vGzhmxj9bRyY3C5O6wHKX2ZthcN38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jM3/fsrVNxrvmDYFX6sXK2jQAkvSDCkg26W4EDN3A7DeMPyKqyOdgf2nZW51kWOeFMJyuLJwxLEsq6lbnCvcdt2AHu/YOkY8/jtRKxyMdFG5DEGax69lHJfu15tKM2/eVIddgP60r1A/Jx2CaCoHUC3wdqGi0EvT/5SQykW3jVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-866f61c01e5so2060790241.2;
+        Wed, 12 Feb 2025 06:45:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739371558; x=1739976358;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QyWxNRTx4hkC36ShjYW3se4rNdifgReIBZrHPvWyHWk=;
+        b=U/8LAWBDVAIEq5q9HPX8CXsA2AErxUW/rFqKhkSVU+SBNkNrWFM1YBs+lc8LKBMTzs
+         QjwP4RiMf0p0P21MoyayfDPdnpAH4LCVJG140dEig7wUwkdUPaWuCdOpH3aXhz8s9JO1
+         kvOgH5uvUplwbuQzBkpDGgf7IqQy2GTBmLs+rD4C33MhlkuDFLJbtWJjKft0aeMsnzC9
+         bJN5yHgRDuVLgw3D/6LEHKKOaO7r8TrJFpzji7SVtMl7Cq3+CaFHB+mPWDw2jbOiscyI
+         aL4o7KnXp6eM58bS1I0eomsf+N/0UbxaqrlFYTtgFz6KBjdK50APjuNPXfHsjTUdQzUU
+         EYfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+TZXlCfhuLBISp/llbh2nH238ng24DpaE/kCJpRm/yfPqCVNduv1G59NKJJN99mmVX9S2u8Jrt8VGD3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1wEk2m4UOyuMr4isQcKOa1yT1yu7k+YlJvBrUFqn5W2tt5i0J
+	I4OLOOFVF64/RduQ/988A96wFiar0LmqXi2JEHT4kW/aU1ugCQzPpM+EJ4970Vg=
+X-Gm-Gg: ASbGnctwuwLafoDRDsTmYw38C2PgXWhd1Qarlp3Y9I62xbVjsFYy7B0ZKPZm6ENVsBD
+	uj19A9dnWSp9eM9+mvo9G16w/i1uqvfuCSi4K3PUKqMmCbwNY4Jdesw1IA/2hFMvXRBaF2gWN1x
+	uCxgxv3otefUtrT6gEX6Qkw4b0w/0aLlbCPVYTFSFvt2gdu82T6q9O6V4LVpQffn3ZqeeJBcTvJ
+	uulOPrNAsvnQQsXFghAAnD4q/iSf06xTwqwK0cTp8hTafoLcvxrTp4JcRD9jXOXRGYaKaWKXId8
+	KM0Awdmk7vTNl/a0vJqQs1scjXySq5loTxTWuX6ZP2o5rJfa/xug8g==
+X-Google-Smtp-Source: AGHT+IGpua3PBkOjgTXFxjvC5tjKNvm7fI3lnhrANGN/nkocQdIg7rk4hqlnvbdGiGBlkpKxU4Esgg==
+X-Received: by 2002:a05:6122:169b:b0:520:3536:feac with SMTP id 71dfb90a1353d-52067cdb8f9mr2682293e0c.11.1739371558136;
+        Wed, 12 Feb 2025 06:45:58 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51f22767030sm1871647e0c.19.2025.02.12.06.45.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 06:45:57 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4bbb91481deso1036913137.0;
+        Wed, 12 Feb 2025 06:45:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXg1xkdurdPuGEzmGxz0AvXhqYF9aKFOnEhMJYkTMeZXQdwBGRdKNKADh3oPLrrdLrKZVhf875nLT7bsG8=@vger.kernel.org
+X-Received: by 2002:a05:6102:8012:b0:4bb:dba6:99d4 with SMTP id
+ ada2fe7eead31-4bbf21b3a0dmr3392659137.7.1739371557786; Wed, 12 Feb 2025
+ 06:45:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-References: <20250211092017.562-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] clk: qcom: Fix missing error check for
- dev_pm_domain_attach()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250211092017.562-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9HptBoJr+kFWKWd/ACV89eXSi3Vqg5qVerrcCbM5ck8oPCJkGhW
- H11Szp+hF184Zyod+1e14zLL/BbnjEBwuS49kqycnWHR0DDAgK+9/WwanAUkts7SfXTlFkA
- s28hgN4rCw350nRlH2uI9aopBiBRaKTbrEIpMeLPnoFAl6+4h4+agoaC720zkQVBha04VTb
- QRHR53cyeO8df3y/5GiiA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Qjil/6/MEY8=;B6S1G8rplb9b1l6QX8AOpnucNI6
- dL/ZMmIeQJuyZU3DSZc/mQMrrp17/l7okkgDsGor1bbTU03dM3IjXTOd058vYbkunYfbNbxaw
- fpSdFytDXDJE7OZ4k3tz+u+0Ocbi0RvvScIGnZWk3d+wl4n6XF12t6QT8lPhxnLUL5k+pIWZn
- IjkwBMJ2uzlwLZ6et+cd7g1SrY7xVa10hsWE7Y4x8za6aSpchOCf7AalXz/EuKxwEVQ2NAFDn
- Om6SwG8tgfr6genhda7+Z8qZYn4Tog7Ed99RBSJh9rjkJl3COkIsgUK71w0M41e4ygfbAt2Z0
- 6WsZ3vHQqWTht8GH7lUWUJV7CGC4eXKLrNpdmhWc9ZhGvfGzwClJu8NnK3BeS4Q//z0U4tZ8E
- WCak4R/GNZJZSdp49QtgBondz2kyVmJa0nBpHhHMQDQEpt/QwG5G+8XaepORSzXR6MTGhJh5x
- uijktZ8jGBqHwUu8GSmzrwaMFPyaqO5MGLgGPp0XPuB8ONfEQJOIbVh1sPUrdr9PJSCgnAQy6
- grcj2NrtklCHw2R6WbZbQ/hp1hkC94MPvp9shLFgUyX0QFbwXlTeqE5NpTjEbiy3RsInLCVwe
- joAZkQpn+M3EEpRLrORHDC2+G/pdTcanjhgASpl226e8k9WHHvEWRXRQxeWUbgl6SJREMeY3Y
- orjhjr0BbyGmo5/rCoRqwHsOShcHMA1Y6Cpq4db1h878NMNVD3LV6YS4HNF4Vja23A8BR8jD6
- hbKpwsuGJcPxSPsWza/a2UaluKYM+aCnBD2Ke1NQ4S1oqU3KOBvy/oeksDtZpepNza9aMrJws
- LMKb5Uudq9338WBAS7qRKLFTiml6IHK4Y1CW80VcWbTR1zne8vEoE9G+m4OLUNqK3UD6IMc2m
- bjg2BudAoC6KUZuMJBQwgOgyWXnemQLPl04bmMFFx3d5nvZwXHB0axtiZOnsaDMXHcZ2ITlK9
- VjzsPUZroZBJ4efIhjL6kdGQETijEci3VYHNhYWcAsUuDOxSwhS637bYly0qLr9lc7iEXWVdE
- qv46FHaFt94pLc2l9mI9B6ZMz4LxmDi7t7InppklqN0fbDXJXMabLXLs4pclS3Ud5fKtPTPT7
- drLuXxXwgfZ1QY2Cm2dtaB1QxAKM9/VfndG8k5xD3gjQeu1LFiwj6LbuZhpr2kD4R4ACzsOX3
- dKtofWp5OrNcCP7aTNsAFOimsw5Gq0XiA1Vn8vFY5XjQBmWiF875sF0s2OHvmesHFoAo0By4c
- 1LWEGWXBf+abj2nqn0zu5nP5S+GBTDZ86Ag42hjizZrOjerzW91+2xAHJ+8ktHwc+SgjcwOeC
- 4b9+wL7PZ9BjgXYNp+h8wYW5ZW1K5UdalgKBweVjR/iK4FMwN1xwvOKBYUyPzKoQLeerLAyGq
- lh8kXmt9EaS11HrydZNMXHJLzi3bOeh+dHnHb7RP/e22bEtTStuB4lj8L4UfvarJqS6qET1EV
- u5EeQJQsc86cc4U4Kmz6MU91xEjg=
+References: <20250203031213.399914-1-koichiro.den@canonical.com> <20250203031213.399914-7-koichiro.den@canonical.com>
+In-Reply-To: <20250203031213.399914-7-koichiro.den@canonical.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Feb 2025 15:45:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXbqxYSt5YCRf2t0fSx54GpKo3SpS=LeDtCaJTYAC-V5g@mail.gmail.com>
+X-Gm-Features: AWEUYZkj4O2JpvIUD3fQDIqNckfN0wojaL5VDfengXpT4GVPUpddWw8AfYj5p74
+Message-ID: <CAMuHMdXbqxYSt5YCRf2t0fSx54GpKo3SpS=LeDtCaJTYAC-V5g@mail.gmail.com>
+Subject: Re: [PATCH v2 06/10] gpio: aggregator: rename 'name' to 'key' in aggr_parse()
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
+	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-=E2=80=A6
-> This patch adds a check for the return value =E2=80=A6
+On Mon, 3 Feb 2025 at 04:12, Koichiro Den <koichiro.den@canonical.com> wrote:
+> Rename the local variable 'name' in aggr_parse() to 'key' because struct
+> gpio_aggregator_line now uses the 'name' field for the custom line name
+> and the local variable actually represents a 'key'. This change prepares
+> for the next but one commit.
+>
+> No functional change.
+>
+> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n94
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n145
+                        Geert
 
-Regards,
-Markus
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
