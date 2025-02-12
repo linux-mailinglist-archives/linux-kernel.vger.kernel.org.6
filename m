@@ -1,128 +1,138 @@
-Return-Path: <linux-kernel+bounces-511718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4409A32EBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:33:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B61A32EBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:33:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47C4D162D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:33:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B6E1882DBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02CF25D558;
-	Wed, 12 Feb 2025 18:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0216A25E463;
+	Wed, 12 Feb 2025 18:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="az8W7Jtv"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnJsAKTn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46DB27180B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547FE21772B;
+	Wed, 12 Feb 2025 18:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739385180; cv=none; b=kMX2oKpn3Uah6bbw+Y8qXe4nRps1S0reGkiBVwkACiVVi04CGDUyqM0E6jGp2gI63DU1m2k+oCEMYOwHxfbMxdsX/K0SCDv8rQclFl8SOuI6m0npTVtYZTQ39uwcXkMBzcPQhqygGoUVjDli16EUcT3zDMqz4MO7hEsKkAbPYXg=
+	t=1739385213; cv=none; b=bMnPB36UqcwiXMuEV5er07BXZCJh0vc8zHcpZND7wz7ju43ZbL/Xozc01Qf1xlL7FLNTowFupdXqyxz4BrSDFRvoTrflqSyttmsC7q+Zw7ZkleDOjC84huqoAFh4oOFWwTQLfOX2Ldoi28UhyKJTOwszo/NjDHJA9IRZpHFY1jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739385180; c=relaxed/simple;
-	bh=DScHAAMLHvU4xu4O0WcfNhf84lXVnZDNRB2q3PdUj1M=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qE5/LqYKLCIgL/VToO3K4//YgyYsskZrMt1Fgh5KfDJ9yftkUYemQiV/HMEwDHWbzg0A8cPaHVlmLt8p2J9FN/tUzFS9BF5IjHAbvj+aXgxzHmaN70438zmE4LqS//o5D56tOy7F6KOcynM47jFBd0KHw5HTG0gHynCmT2C3z/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=az8W7Jtv; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21f90aec0fdso73688715ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:32:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739385178; x=1739989978; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iYmiCJ+R7Juy7BxO4gHWUFDYWab8Kg8RAmIlcH74Szk=;
-        b=az8W7Jtv/DJtnL1epuGG+ZQiIdarzAKDUm/H/k6smcA0DM/eJikQFF8dKqXotbugUx
-         p1VJyL0xYJgB460ioVaLlJfLER9wnHM7rTkBeBASXm5XQRLSF0ygGnTLp6ZxcYkz6VrH
-         dNaHwLjUmEliH9e01MGo4bh2x/T++GDUX5v1SFJUr/lU8cCQi/p87S8gXStATBw8XV6K
-         m3SgdgBQhuG3/MThSZgNLmo8ejN6sOimSBG6dgY61PejtzWjeGkUq/wZ2tUwDmn/4UK0
-         M+Ag6jjyltrn+34xhMgHirHOK8yJxtRMMdhxkzhaB5pFkGI42EQ07TnOtrnEb3+VUF52
-         dOyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739385178; x=1739989978;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iYmiCJ+R7Juy7BxO4gHWUFDYWab8Kg8RAmIlcH74Szk=;
-        b=IW2YSiIYiOz2Ed5m+hr6BpHhati1fhSSwY/u4e0+3frssE5RucPjH81YqS80Gh1xjg
-         ULtsqAZAxb1cLOIIamXTCHVKFNbbIbk2gBpoZGJOw4buWXSElom63wy5558vFhVTb6wH
-         XJK5aTw/HQXBgSZMqADX5kt/8VlMg3MrdDjiEkAc5HIrrWLQsH2GyjKoSF0rHUydO8gz
-         9wiFlCxOVWbY8e5N6USEJ5DoMo/RFsNu7S+rukDU7agVszHDfNPPgSrXtYIYfMO/h9Pf
-         iHlJCuIih13gEy0WaupyRKTLwlxWTroNTraW2C13x2HjqUVy+RqlsOHb46NW3UDempyA
-         SrtA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYeiqQpMkBzljrJ9ua+DTvfv5XInpkVmKMDwObokKRPnxKD3bqpvwU3E7pi+AUEUkdjkr/5fLSsjawfcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJAn0I1JaQ2gNPbYGMd+1dofRrQ6cmOjMEQL9qYGRrxiuRmtQ5
-	6o+qm69j773sjPhQ7LV25+2uqcBT1L0z+m4JtmThYIzWS8kfdJTjQ6nuWFEwBKAT59I6N6HS719
-	sdwSp7fjrguHsr/FHJrfpuFYPFQ==
-X-Google-Smtp-Source: AGHT+IECDfJK531HNRGV3syvC/DgBgcGWiTf33LlelsMxeULH9/uMoeKotioRlyy2DZQ3lTimCD19P4P0Lz7bGElf8A=
-X-Received: from plbmn14.prod.google.com ([2002:a17:903:a4e:b0:21f:44cd:af62])
- (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:ef52:b0:220:cd9f:a186 with SMTP id d9443c01a7336-220d1afdd64mr7208785ad.0.1739385178165;
- Wed, 12 Feb 2025 10:32:58 -0800 (PST)
-Date: Wed, 12 Feb 2025 10:32:52 -0800
+	s=arc-20240116; t=1739385213; c=relaxed/simple;
+	bh=4bOM/FIXiCKAaqtu0rcCrL4oIkDHbGqukW89B+sSCgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=faX3pABHVBvQzGMFa7oepO6tD8CTEydBcKQmb06PQ60a/oNMHYpbtP4AcYNw5Bw5uvNSa9bqnP7bygGkqsvXoeVZMBDDmcvmqltUhEBK4fYDt4/rDi/ZrMXDMiY8ov/4mASBTFCxLxIJY1kVcO5/CSjwLww1YmW+04jH1wi3dBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnJsAKTn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50441C4CEDF;
+	Wed, 12 Feb 2025 18:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739385212;
+	bh=4bOM/FIXiCKAaqtu0rcCrL4oIkDHbGqukW89B+sSCgs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZnJsAKTnr7BFRmGY4myKt1mjjTTdzUBZFxzsIr21Bl5GenPsBB4jyFpxPtarKAz/h
+	 JxsS1KymIOO3kmRvTRsxcnDyUZSe29xrjfagP2JICYCm7CGKrRS8+lcPBoj+dHyhww
+	 AWRmNG9iaAG8s+KmMYYJsiHban3KhOCDOakKonq288MCUGwaWqG82Gk6gGwP/p1mRK
+	 KTUQgH0nwfyEyqNDCGAM88xGEtoIdHVw4EP3hlr84JWXqHosQtBDqblbHSBBm0D+CN
+	 rMqX00OyvjCKlwN0oR1E1Nk0lUHNpCImv7pdKCm3xMjmDuthzkLBeh9+cIois7EtpN
+	 gSxJl6a3gqbew==
+Date: Wed, 12 Feb 2025 18:33:27 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Naresh Solanki <naresh.solanki@9elements.com>,
+	Guenter Roeck <linux@roeck-us.net>, broonie@kernel.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ir38060: Move & update dt binding
+Message-ID: <20250212-concierge-apricot-e5d3627afe93@spud>
+References: <20250207132806.3113268-1-naresh.solanki@9elements.com>
+ <20250212175713.GA4032715-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
-Message-ID: <20250212183253.509771-1-willmcvicker@google.com>
-Subject: [PATCH] clk: samsung: Fix UBSAN panic in samsung_clk_init()
-From: Will McVicker <willmcvicker@google.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Stephen Kitt <steve@sk2.org>, 
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="q86RRbylpu2fsoJR"
+Content-Disposition: inline
+In-Reply-To: <20250212175713.GA4032715-robh@kernel.org>
 
-With UBSAN_ARRAY_BOUNDS=y, I'm hitting the below panic due to
-dereferencing `ctx->clk_data.hws` before setting
-`ctx->clk_data.num = nr_clks`. Move that up to fix the crash.
 
-  UBSAN: array index out of bounds: 00000000f2005512 [#1] PREEMPT SMP
-  <snip>
-  Call trace:
-   samsung_clk_init+0x110/0x124 (P)
-   samsung_clk_init+0x48/0x124 (L)
-   samsung_cmu_register_one+0x3c/0xa0
-   exynos_arm64_register_cmu+0x54/0x64
-   __gs101_cmu_top_of_clk_init_declare+0x28/0x60
-   ...
+--q86RRbylpu2fsoJR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: e620a1e061c4 ("drivers/clk: convert VL struct to struct_size")
-Signed-off-by: Will McVicker <willmcvicker@google.com>
----
- drivers/clk/samsung/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Feb 12, 2025 at 11:57:13AM -0600, Rob Herring wrote:
+> On Fri, Feb 07, 2025 at 06:58:03PM +0530, Naresh Solanki wrote:
+> > Move dt binding under hwmon/pmbus & align accordingly.
+> >=20
+> > Previously the DT binding was invalid & wouldn't work with pmbus driver.
+> > Pmbus driver expects a regulator node & hence added the same.
+>=20
+> 2 out of 3 (schema, dts, driver) agree. Fix the driver.
+>=20
+> >=20
+> > Fixes: 1d333cd641fb ("ARM: dts: aspeed: sbp1: IBM sbp1 BMC board")
+> > Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+> > ---
+> > Changes in V2:
+> > 1. Update commit message
+> > 2. Add Fixes tags
+> > ---
+> >  .../hwmon/pmbus/infineon,ir38060.yaml         | 61 +++++++++++++++++++
+> >  .../bindings/regulator/infineon,ir38060.yaml  | 45 --------------
+> >  2 files changed, 61 insertions(+), 45 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/infin=
+eon,ir38060.yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/regulator/infineo=
+n,ir38060.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir3=
+8060.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.=
+yaml
+> > new file mode 100644
+> > index 000000000000..e1f683846a54
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.ya=
+ml
+> > @@ -0,0 +1,61 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/hwmon/pmbus/infineon,ir38060.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Infineon Buck Regulators with PMBUS interfaces
+> > +
+> > +maintainers:
+> > +  - Not Me.
+>=20
+> Nothing new here, but WTF. Expect a meta-schema change to warn on this.
 
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 283c523763e6..8d440cf56bd4 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -74,12 +74,12 @@ struct samsung_clk_provider * __init samsung_clk_init(struct device *dev,
- 	if (!ctx)
- 		panic("could not allocate clock provider context.\n");
- 
-+	ctx->clk_data.num = nr_clks;
- 	for (i = 0; i < nr_clks; ++i)
- 		ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
- 
- 	ctx->dev = dev;
- 	ctx->reg_base = base;
--	ctx->clk_data.num = nr_clks;
- 	spin_lock_init(&ctx->lock);
- 
- 	return ctx;
+And it was fucking me that did it, that's the best/worst part about it.
 
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
--- 
-2.48.1.502.g6dc24dfdaf-goog
+--q86RRbylpu2fsoJR
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ6zpdwAKCRB4tDGHoIJi
+0pPhAQDm9PaQGFUozl6rpFK+5IJJiMv1pvPRBjbcc9czvxlCZAD/S2UXhp/ZKU9c
+4DvwhwsglyEPYXtoKDMimf41Vc/x+AE=
+=i2Ft
+-----END PGP SIGNATURE-----
+
+--q86RRbylpu2fsoJR--
 
