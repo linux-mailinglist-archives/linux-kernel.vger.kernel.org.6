@@ -1,282 +1,258 @@
-Return-Path: <linux-kernel+bounces-511046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3693FA3251A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:36:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D182A32512
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63C8F7A3C01
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:32:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E534164AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6406820ADD5;
-	Wed, 12 Feb 2025 11:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B700220AF80;
+	Wed, 12 Feb 2025 11:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Ma3Vdv3v"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EhKzYmaF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD516205E16;
-	Wed, 12 Feb 2025 11:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C31E205E16;
+	Wed, 12 Feb 2025 11:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359970; cv=none; b=ndLByb+B96ScR6rgSqxu+92UJS912jGudzxnggsFOFniekQfWY4vJAUL1VsOpD8qsm7n46kfC7gs/xixz2OjORRfFj1UDwETPWetOZYY2RD89c/5i+L8QObf8kPedLlD15pfkCFW1ZXkNceDQSlUWw+kgLlNBHsSvqfktDPPSks=
+	t=1739360043; cv=none; b=ThSm9EqfcBj4ylG7BQeRgGd7ydfI1pyXv94onixVMD71KXDGnMH1i59SGafem8jJb8h+ioRxf5o7QwM+Z78HcuPb3MEaGEhJSGuW4X9JnY/C/n3GION82+40M+ANkPqCQpnpWxV+MGbU4F30tQ4l0jnHuiXuAPaa773tStqmXwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359970; c=relaxed/simple;
-	bh=EMpRj2ht/tEPGS4+J9CdUCbKV1v6QyKT+z1JosOvVTk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=A+8vfZCHHwnlbZkHRZIfsJoR2lpEmGbsTfg09/hU3sZpW252ZH39YBgDcNOfkl4mDRBm2seqOt+cgUroPbPA6rObsiccOKIZeA81IP7V2fqAJW4vR7TItrH45gOLl9jzjiWKyKIzAm6ohn3kE48QNPqaUlaR/rkjAUiephaJRBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Ma3Vdv3v; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=XDHy3FQtxkSqfqwPef2gf5CYBQiv+4aNXY+HG7ioErU=; b=Ma3Vdv3vd6YYrNB45BDBkv+nIZ
-	VfmdsQWf5vTDqfEBoivPGh7Iv4NYMkIWNs0rch2N2VKmEMjPe+fQpM7qqOqE1M4EJFVJwJmdpwZnu
-	77hDy4b/TTZLoKU+6SeoO4xuMa/UjOufLvcvX9XSAKq4nBEvdWsL+zoOT/mDy+aLRmMicMF/5aS/V
-	Zd2ZcSju7Y1gWNXqt3SLluRJq27OqHxbMt7sbarcWfAzY39K/tzzVHh/zgjlFDkeRIsJwjbCBR6yx
-	Un2M5j8fPBujDC/PrSgUw9A65+LAB5wzOmmhMfeAlwt+g2SE0/DGaXXW1u0LSaNy69Kct0FCgkwJj
-	h5nGRoGw==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tiAyo-008DNr-Vu; Wed, 12 Feb 2025 12:32:40 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Matt Harvey <mharvey@jumptrading.com>,
-  Bernd Schubert <bschubert@ddn.com>,  Joanne Koong
- <joannelkoong@gmail.com>
-Subject: Re: [PATCH v4] fuse: add new function to invalidate cache for all
- inodes
-In-Reply-To: <Z6u5dumvZHf_BDHM@dread.disaster.area> (Dave Chinner's message of
-	"Wed, 12 Feb 2025 07:56:22 +1100")
-References: <20250211092604.15160-1-luis@igalia.com>
-	<Z6u5dumvZHf_BDHM@dread.disaster.area>
-Date: Wed, 12 Feb 2025 11:32:40 +0000
-Message-ID: <875xlf4cvb.fsf@igalia.com>
+	s=arc-20240116; t=1739360043; c=relaxed/simple;
+	bh=Kl9uSHy1YsmOUXOxd5pp5qBC/nEeUs7ScD2erF+GgIM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Vca+Iur/3fOddBC6JI6NzDAooVetUw3v2NySDuEg19wQ207H1mvv+kgK9SRYNOzlH/AwY1Deq44VZLpqJ4eOM7OT916xRl0xUYVycIzF9LtcnMRpIl7G7FGS59+O5u3yls0FB5amNtDTM2O6H8W6DLeKkWTz1wKhFy0SZeNNWoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EhKzYmaF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C6721W006115;
+	Wed, 12 Feb 2025 11:33:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=U7vfdJrgpLXzf7IGPKeCWF
+	hsGLope4so7q/iE9mgwo0=; b=EhKzYmaFdr7/PYS/x5Os84VInET7VyXfJ+m1u4
+	B+oA3vE/V2gDRca+Fz/WfQIJhgTV+UR7kKiYMDEREoGRNEhMhrUdTGM2nw7373ct
+	HB+7C4RAnxd4+p1cMTmopglQXmu9AbQy9bWk/++WGH2XgiYfPvNvs8L+rBEbUgCp
+	x1ReAmXiJl4hAZu4jYZO6GMMFeZP9c25W/RHdDdkhR7KJzW80ZaGGIEK8q7RPOZi
+	lBu45tot8L2gu91wYXd00PjXdtFVz98SIJJ2vQjQo+HiJ+xX5TbxnQgKhn8wEr9J
+	jyWcOJM+DvBLv7/4C+xdQQ77fr7mlgqmRkeJNtiAeQPN8N5Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qe5myc1f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 11:33:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51CBXukk008772
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 11:33:56 GMT
+Received: from hu-kotarake-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Feb 2025 03:33:52 -0800
+From: Rakesh Kota <quic_kotarake@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <konrad.dybcio@oss.qualcomm.com>
+CC: <quic_kotarake@quicinc.com>, <quic_kamalw@quicinc.com>,
+        <quic_jprakash@quicinc.com>
+Subject: [PATCH V3] arm64: dts: qcs6490-rb3gen2: Add vadc and adc-tm channels
+Date: Wed, 12 Feb 2025 17:03:42 +0530
+Message-ID: <20250212113342.873086-1-quic_kotarake@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RNyJkEh9ne1EUIWDvGHUVim22sWU-xGT
+X-Proofpoint-ORIG-GUID: RNyJkEh9ne1EUIWDvGHUVim22sWU-xGT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ mlxlogscore=922 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2501170000 definitions=main-2502120089
 
-On Wed, Feb 12 2025, Dave Chinner wrote:
+Add support for vadc and adc-tm channels which are used for
+monitoring thermistors present on the platform.
 
-> [ FWIW: if the commit message directly references someone else's
-> related (and somewhat relevant) work, please directly CC those
-> people on the patch(set). I only noticed this by chance, not because
-> I read every FUSE related patch that goes by me. ]
+- Add the necessary includes for qcom,spmi-adc7-pm7325 and
+  qcom,spmi-adc7-pmk8350.
+- Add thermal zones for quiet-thermal, sdm-skin-thermal, and
+  xo-thermal, and define their polling delays and thermal sensors.
+- Configure the pm7325_temp_alarm node to use the pmk8350_vadc
+  channel for thermal monitoring.
+- Configure the pmk8350_adc_tm node to enable its thermal sensors
+  and define their registers and settings.
+- Configure the pmk8350_vadc node to define its channels and settings
 
-Point taken -- I should have included you on CC since the initial RFC.
+Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+---
+Changes from V2:
+ - As per Konrad Dybcio’s suggestion, removed all default polling values.
+Changes from V1:
+ - Update the Die temp name to Channel as per Documentation.
+ - As per Konrad Dybcio’s suggestion, I have sorted the pmk8350_adc_tm
+   channels by unit address instead of alphabetically.
+--- 
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 108 +++++++++++++++++++
+ 1 file changed, 108 insertions(+)
 
-> On Tue, Feb 11, 2025 at 09:26:04AM +0000, Luis Henriques wrote:
->> Currently userspace is able to notify the kernel to invalidate the cache
->> for an inode.  This means that, if all the inodes in a filesystem need to
->> be invalidated, then userspace needs to iterate through all of them and =
-do
->> this kernel notification separately.
->>=20
->> This patch adds a new option that allows userspace to invalidate all the
->> inodes with a single notification operation.  In addition to invalidate
->> all the inodes, it also shrinks the sb dcache.
->
-> That, IMO, seems like a bit naive - we generally don't allow user
-> controlled denial of service vectors to be added to the kernel. i.e.
-> this is the equivalent of allowing FUSE fs specific 'echo 1 >
-> /proc/sys/vm/drop_caches' via some fuse specific UAPI. We only allow
-> root access to /proc/sys/vm/drop_caches because it can otherwise be
-> easily abused to cause system wide performance issues.
->
-> It also strikes me as a somewhat dangerous precendent - invalidating
-> random VFS caches through user APIs hidden deep in random fs
-> implementations makes for poor visibility and difficult maintenance
-> of VFS level functionality...
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index 7a36c90ad4ec..fe2d14865a75 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -9,6 +9,8 @@
+ #define PM7250B_SID 8
+ #define PM7250B_SID1 9
+ 
++#include <dt-bindings/iio/qcom,spmi-adc7-pmk8350.h>
++#include <dt-bindings/iio/qcom,spmi-adc7-pm7325.h>
+ #include <dt-bindings/leds/common.h>
+ #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+@@ -212,6 +214,44 @@ pmic_glink_sbu_in: endpoint {
+ 		};
+ 	};
+ 
++	thermal-zones {
++		sdm-skin-thermal {
++			thermal-sensors = <&pmk8350_adc_tm 3>;
++
++			trips {
++				active-config0 {
++					temperature = <125000>;
++					hysteresis = <1000>;
++					type = "passive";
++				};
++			};
++		};
++
++		quiet-thermal {
++			thermal-sensors = <&pmk8350_adc_tm 1>;
++
++			trips {
++				active-config0 {
++					temperature = <125000>;
++					hysteresis = <1000>;
++					type = "passive";
++				};
++			};
++		};
++
++		xo-thermal {
++			thermal-sensors = <&pmk8350_adc_tm 0>;
++
++			trips {
++				active-config0 {
++					temperature = <125000>;
++					hysteresis = <1000>;
++					type = "passive";
++				};
++			};
++		};
++	};
++
+ 	vph_pwr: vph-pwr-regulator {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vph_pwr";
+@@ -745,6 +785,36 @@ kypd_vol_up_n: kypd-vol-up-n-state {
+ 	};
+ };
+ 
++&pm7325_temp_alarm {
++	io-channels = <&pmk8350_vadc PM7325_ADC7_DIE_TEMP>;
++	io-channel-names = "thermal";
++};
++
++&pmk8350_adc_tm {
++	status = "okay";
++
++	xo-therm@0 {
++		reg = <0>;
++		io-channels = <&pmk8350_vadc PMK8350_ADC7_AMUX_THM1_100K_PU>;
++		qcom,ratiometric;
++		qcom,hw-settle-time-us = <200>;
++	};
++
++	quiet-therm@1 {
++		reg = <1>;
++		io-channels = <&pmk8350_vadc PM7325_ADC7_AMUX_THM1_100K_PU>;
++		qcom,ratiometric;
++		qcom,hw-settle-time-us = <200>;
++	};
++
++	sdm-skin-therm@3 {
++		reg = <3>;
++		io-channels = <&pmk8350_vadc PM7325_ADC7_AMUX_THM3_100K_PU>;
++		qcom,ratiometric;
++		qcom,hw-settle-time-us = <200>;
++	};
++};
++
+ &pm8350c_pwm {
+ 	nvmem = <&pmk8350_sdam_21>,
+ 		<&pmk8350_sdam_22>;
+@@ -789,6 +859,44 @@ &pmk8350_rtc {
+ 	status = "okay";
+ };
+ 
++&pmk8350_vadc {
++	channel@3 {
++		reg = <PMK8350_ADC7_DIE_TEMP>;
++		label = "pmk8350_die_temp";
++		qcom,pre-scaling = <1 1>;
++	};
++
++	channel@44 {
++		reg = <PMK8350_ADC7_AMUX_THM1_100K_PU>;
++		label = "xo_therm";
++		qcom,hw-settle-time = <200>;
++		qcom,pre-scaling = <1 1>;
++		qcom,ratiometric;
++	};
++
++	channel@103 {
++		reg = <PM7325_ADC7_DIE_TEMP>;
++		label = "pm7325_die_temp";
++		qcom,pre-scaling = <1 1>;
++	};
++
++	channel@144 {
++		reg = <PM7325_ADC7_AMUX_THM1_100K_PU>;
++		qcom,ratiometric;
++		qcom,hw-settle-time = <200>;
++		qcom,pre-scaling = <1 1>;
++		label = "pm7325_quiet_therm";
++	};
++
++	channel@146 {
++		reg = <PM7325_ADC7_AMUX_THM3_100K_PU>;
++		qcom,ratiometric;
++		qcom,hw-settle-time = <200>;
++		qcom,pre-scaling = <1 1>;
++		label = "pm7325_sdm_skin_therm";
++	};
++};
++
+ &pon_pwrkey {
+ 	status = "okay";
+ };
+-- 
+2.34.1
 
-Hmm... OK, I understand the concern and your comment makes perfect sense.
-But would it be acceptable to move this API upper in the stack and make it
-visible at the VFS layer?  Something similar to the 'drop_caches' but with
-a superblock granularity.  I haven't spent any time thinking how could
-that be done, but it wouldn't be "hidden deep" anymore.
-
->> Signed-off-by: Luis Henriques <luis@igalia.com>
->> ---
->> * Changes since v3
->> - Added comments to clarify semantic changes in fuse_reverse_inval_inode=
-()
->>   when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
->> - Added comments to inodes iteration loop to clarify __iget/iput usage
->>   (suggested by Joanne)
->> - Dropped get_fuse_mount() call -- fuse_mount can be obtained from
->>   fuse_ilookup() directly (suggested by Joanne)
->>=20
->> (Also dropped the RFC from the subject.)
->>=20
->> * Changes since v2
->> - Use the new helper from fuse_reverse_inval_inode(), as suggested by Be=
-rnd.
->> - Also updated patch description as per checkpatch.pl suggestion.
->>=20
->> * Changes since v1
->> As suggested by Bernd, this patch v2 simply adds an helper function that
->> will make it easier to replace most of it's code by a call to function
->> super_iter_inodes() when Dave Chinner's patch[1] eventually gets merged.
->>=20
->> [1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.c=
-om
->
-> That doesn't make the functionality any more palatable.
->
-> Those iterators are the first step in removing the VFS inode list
-> and only maintaining it in filesystems that actually need this
-> functionality. We want this list to go away because maintaining it
-> is a general VFS cache scalability limitation.
->
-> i.e. if a filesystem has internal functionality that requires
-> iterating all instantiated inodes, the filesystem itself should
-> maintain that list in the most efficient manner for the filesystem's
-> iteration requirements not rely on the VFS to maintain this
-> information for it.
-
-Right, and in my use-case that's exactly what is currently being done: the
-FUSE API to invalidate individual inodes is being used.  This new
-functionality just tries to make life easier to userspace when *all* the
-inodes need to be invalidated. (For reference, the use-case is CVMFS, a
-read-only FS, where new generations of a filesystem snapshot may become
-available at some point and the previous one needs to be wiped from the
-cache.)
-
-> That's the point of the iterator methods the above patchset adds -
-> it allows the filesystem to provide the VFS with a method for
-> iterating all inodes in the filesystem whilst the transition period
-> where we rework the inode cache structure (i.e. per-sb hash tables
-> for inode lookup, inode LRU caching goes away, etc). Once that
-> rework gets done, there won't be a VFS inode cache to iterate.....
-
-And re-reading the cover-letter in that patchset helped understanding that
-that is indeed the goal.  My patch mentioned that iterator because we
-could eventually take advantage of it, but clearly no new users are
-expected/desired.
-
->>  fs/fuse/inode.c           | 83 +++++++++++++++++++++++++++++++++++----
->>  include/uapi/linux/fuse.h |  3 ++
->>  2 files changed, 79 insertions(+), 7 deletions(-)
->>=20
->> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->> index e9db2cb8c150..5aa49856731a 100644
->> --- a/fs/fuse/inode.c
->> +++ b/fs/fuse/inode.c
->> @@ -547,25 +547,94 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u=
-64 nodeid,
->>  	return NULL;
->>  }
->>=20=20
->> +static void inval_single_inode(struct inode *inode, struct fuse_conn *f=
-c)
->> +{
->> +	struct fuse_inode *fi;
->> +
->> +	fi =3D get_fuse_inode(inode);
->> +	spin_lock(&fi->lock);
->> +	fi->attr_version =3D atomic64_inc_return(&fc->attr_version);
->> +	spin_unlock(&fi->lock);
->> +	fuse_invalidate_attr(inode);
->> +	forget_all_cached_acls(inode);
->> +}
->> +
->> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
->> +{
->> +	struct fuse_mount *fm;
->> +	struct super_block *sb;
->> +	struct inode *inode, *old_inode =3D NULL;
->> +
->> +	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
->> +	if (!inode || !fm)
->> +		return -ENOENT;
->> +
->> +	iput(inode);
->> +	sb =3D fm->sb;
->> +
->> +	spin_lock(&sb->s_inode_list_lock);
->> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
->> +		spin_lock(&inode->i_lock);
->> +		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
->> +		    !atomic_read(&inode->i_count)) {
->> +			spin_unlock(&inode->i_lock);
->> +			continue;
->> +		}
->
-> This skips every inode that is unreferenced and cached on the
-> LRU. i.e. it only invalidates inodes that have a current reference
-> (e.g. dentry pins it, has an open file, etc).
->
-> What's the point of only invalidating actively referenced inodes?
->
->> +		/*
->> +		 * This __iget()/iput() dance is required so that we can release
->> +		 * the sb lock and continue the iteration on the previous
->> +		 * inode.  If we don't keep a ref to the old inode it could have
->> +		 * disappear.  This way we can safely call cond_resched() when
->> +		 * there's a huge amount of inodes to iterate.
->> +		 */
->
-> If there's a huge amount of inodes to iterate, then most of them are
-> going to be on the LRU and unreferenced, so this code won't even get
-> here to be able to run cond_resched().
-
-Sigh.  Looks like I got this wrong.  With capital 'W'.
-
->> +		__iget(inode);
->> +		spin_unlock(&inode->i_lock);
->> +		spin_unlock(&sb->s_inode_list_lock);
->> +		iput(old_inode);
->> +
->> +		inval_single_inode(inode, fc);
->> +
->> +		old_inode =3D inode;
->> +		cond_resched();
->> +		spin_lock(&sb->s_inode_list_lock);
->> +	}
->> +	spin_unlock(&sb->s_inode_list_lock);
->> +	iput(old_inode);
->> +
->> +	shrink_dcache_sb(sb);
->
-> Why drop all the referenced inodes held by the dentry cache -after-
-> inode invalidation? Doesn't this mean that racing operations are
-> going to see a valid dentries backed by an invalidated inode?  Why
-> aren't the dentries pruned from the cache first, and new lookups
-> blocked until the invalidation completes?
->
-> I'm left to ponder why the invalidation isn't simply:
->
-> 	/* Remove all possible active references to cached inodes */
-> 	shrink_dcache_sb();
->
-> 	/* Remove all unreferenced inodes from cache */
-> 	invalidate_inodes();
->
-> Which will result in far more of the inode cache for the filesystem
-> being invalidated than the above code....
-
-To be honest, my initial attempt to implement this feature actually used
-invalidate_inodes().  For some reason that I don't remember anymore why I
-decided to implement the iterator myself.  I'll go look at that code again
-and run some tests on this (much!) simplified version of the invalidation
-function your suggesting.
-
-Also, thanks a lot for your comments, Dave.  Much appreciated!  I'll make
-sure any other rev of this patch will include you ;-)
-
-Cheers,
---=20
-Lu=C3=ADs
 
