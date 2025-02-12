@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-510999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15110A324B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:20:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834B2A324B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:21:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFAB8165911
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4AF1886D3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD7B20A5CC;
-	Wed, 12 Feb 2025 11:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B492420A5F5;
+	Wed, 12 Feb 2025 11:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HuxGHPUH"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YDtHNWdJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A0B1B21AD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBB21B21AD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359207; cv=none; b=gbHXCT7ok7jCRxNexggSbZpYAlDanVX6iJp5MvfJEg/9X10roEbwdscgyDvCWW84c2XyrCP74DgOuB7xEb3o0AJcgkJ4R0LBmzJQKf58wElbKXLWf6CEZu6hQkKAfn6VLDJRh/fXgYP5xBJ1n7sCa2opexj3/dAz4ILYHnO+RHY=
+	t=1739359296; cv=none; b=lY2aU45lqrO48FxKXrq+je83pi3VSh4ETt6umJNZXOZKg1DeAnlOkSPDBF2tMxx/CCkYWcHZSvyPnbjU/CcuOwX53apBmoIp7Ff1HzQOTi80OTgcY3j2E9F1MIUQtGbSStHfKRN625OUD9XxK10UWICxkTO/dTHCWEnb6Ys2QLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359207; c=relaxed/simple;
-	bh=R7SXFF5xZBvaqgymZWePikKLlqhrCZfQBN+7ls2UueA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pd09L33JqYasXAGGAgEKPdRBMWqXc7hAn6b48dY1teYOLmSJDVTmjHrH3lGpn41oc5tTZKLT2yye8xpHo0W/jh+D4nDq5NzrhvkiiHP9tNN2IXdQK+L3aGINR1DmeMMU//AfExRzRe9huQmT5qPJ8U2AdKIHvzvDI0XmTN3z03I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HuxGHPUH; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30227c56b11so68253711fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:20:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739359204; x=1739964004; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MRZ92fMzGnVasOx4w5jeLJUvN4okvRK9mTCYHy/vUF8=;
-        b=HuxGHPUHG7FVF1JBwm2wZBN4A3EjeaD8njr+w7Tyfb5JYdhZnmoq5FSow5V2wJ9Cyr
-         OPT7Al3vkMufrZN0x436cb+HUmScHqyA5Ygd0Y1VipUfKaTSlDQLoHxlDruzpdBO55AY
-         Bu9iZS2P5d8GTDmtTsecqbEkKCVxNy3VKtqTAlos+wdJ61im37g+oFec+TRIDun07CJC
-         UNcl+o7gGQOZZJfEwK/fz7KFhLTrpPmKoUlnMHDPcaOCBNoQbw14aoSZCa7G/bqMmrFP
-         k72p7e7hS1EKAqgKypzuaUTU9pjV44PedTWbn2LHomYRAqD4XJ1xTqUFcsSgty81FMAq
-         PZ5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739359204; x=1739964004;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MRZ92fMzGnVasOx4w5jeLJUvN4okvRK9mTCYHy/vUF8=;
-        b=luce/UlrxwOez/SgFxxxgvRxy4JlQnwAfBzFriYm+ZvTNS8h3ztt+svLYauIbAaKt/
-         F/ygmtGCi28IEEFCNbDiyQzXL53tzE4lsx4DNhP0QOy37WAq6JUOheHqdue5oYxNr5lu
-         tQK4FE7QVbijD+ewa53iRVQGqtkuAIAcASROqvVCiMGQCpiQtHQHeV8ltw2OXhnPh5fA
-         0sEgbyJWzJlnjGFCB7AzmoyPSxL9lwKGQTRCABa9rujLCSuKRaa09qHqQkx8ZpnVwfh7
-         frgalljAdEkB+DbrKG3eWXC5+9TaenYqUKa/LYMWm0EfkrGRUXLhDQcuGFjO9H3QBGFO
-         gr8A==
-X-Forwarded-Encrypted: i=1; AJvYcCX4wOozKmZ4z4EbWk7CLr2otHHDjEsOrZL0ARMrXz/StXJIjHShb632IzNgl/mkCF5ytCOjwtPgrbXH7is=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxisUqETZycrZ9sE3ZolR4cXRvD/aP1JNhMKY9LouClojO0F+Kf
-	deZ70PtSjHvacSrifW3dIVvKzbjz6hKZ3cpHYV5CqB5ZggonifyDZ4MDQ8r0s6M=
-X-Gm-Gg: ASbGncvrMW+aZM4ebxb+KcHUQpxynty1Ojkhzj6qbAC30SSLjm0KeARz09Vqo8AWVGM
-	fTauW2deTjNmjNqDgxw4OLTlS4MKg8b32JQcBEonaA4LjY8MvP7E2M91Wx6oZ9gICRQ01Ht1sGw
-	PaZ0yjdlCTeW5XTJrXXMn83f/eej+Kov9Br+LEMhfwCealVjBBMJKODBIfj4Mn8SLrhvEhjcNiE
-	a+qUlvWuX8CAIzP13Xc1P+D3GXsKL9t+Gm9nR/S7D33HWUpP6i1/x6dT05CF5nvw9VgO8pe4KUc
-	0Ay+Fqf+NGwh5CNxk7yeWYUUeVrVpCKrl3BiTadNQJj6wklGJU/kWW3lASTOwgLllRwG3vM=
-X-Google-Smtp-Source: AGHT+IFJgGK8ZLouL/AWBGo/S7q0LDko4RL8Ud8msbJQTLEZRaJgYviwJwVP9yImY07L4CtWYdBbWw==
-X-Received: by 2002:a05:6512:39c8:b0:545:f9c:a81f with SMTP id 2adb3069b0e04-5451826ea22mr878271e87.6.1739359203971;
-        Wed, 12 Feb 2025 03:20:03 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5450e09e9dbsm823644e87.120.2025.02.12.03.20.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 03:20:03 -0800 (PST)
-Date: Wed, 12 Feb 2025 13:20:01 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: "James A. MacInnes" <james.a.macinnes@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
-	marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch
-Subject: Re: [PATCH 0/2] drm/msm/dp: Fix Type-C Timing
-Message-ID: <yle4tv3rhxkygvxvq56pls2u4muzmuxlzg5mp6ibckkyhbaycm@mv4hmom2e46c>
-References: <20250212034225.2565069-1-james.a.macinnes@gmail.com>
+	s=arc-20240116; t=1739359296; c=relaxed/simple;
+	bh=9zjcqeUtecmQeRWAWpi41Dkd2R98ynxq3ouQNuuU3ns=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=H69/g03KRiHSG1Ovvdc9oK4jvnOrgrk/hb3Ev+BJSw1bTEvzIs3/hRcvRFswiP9gHVnushvCN49hxTWSP/fYI9WSr1E+HmIrtTl6S152d6ySZ0VoMcMZDRJFyMbJZixSpnr66dOHaNJBoWMt1oDq94sUBd2nydiwleA0nKwraXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YDtHNWdJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739359293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NuZ2sxYlFvOf7TTka/ZiERQ0yfFGzXJI8jS/5gyfwX0=;
+	b=YDtHNWdJGcGCSJLme9Sf9rUhCvml/kqIz3dwnG99n+iXLMa9WkgZUdxvpZHOPLljTBP1x0
+	mChdcgx+k9Gzf8thtRrPQUJDDzwQZkKtnspXpnfpyIs1CYQDQsqyqs5jiutM/FoaXhvJUm
+	kJ7QdChUplO+sb3pe7g2InUWrrA6jkw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-307-X9bnpjtdOgy9mUdRJ-bm0w-1; Wed,
+ 12 Feb 2025 06:21:30 -0500
+X-MC-Unique: X9bnpjtdOgy9mUdRJ-bm0w-1
+X-Mimecast-MFC-AGG-ID: X9bnpjtdOgy9mUdRJ-bm0w
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76D941800983;
+	Wed, 12 Feb 2025 11:21:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8EE46180056F;
+	Wed, 12 Feb 2025 11:21:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S. Miller" <davem@davemloft.net>,
+    Chuck Lever <chuck.lever@oracle.com>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    Simon Horman <horms@kernel.org>, linux-afs@lists.infradead.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH net] rxrpc: Fix ipv6 path MTU discovery
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212034225.2565069-1-james.a.macinnes@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3517282.1739359284.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 12 Feb 2025 11:21:24 +0000
+Message-ID: <3517283.1739359284@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Feb 11, 2025 at 07:42:23PM -0800, James A. MacInnes wrote:
-> SDM845 DisplayPort output inop on DP Monitor and tears on HDMI.
-> 
-> Fixed
->  - SDM845 does not support wide mode.
->  - SDM845 does not need porch shift.
-> 
-> Verified functionality on SDM845.
+rxrpc path MTU discovery currently only makes use of ICMPv4, but not
+ICMPv6, which means that pmtud for IPv6 doesn't work correctly.  Fix it to
+check for ICMPv6 messages also.
 
-Please use ./scripts/get_maintainer.pl to get the To / Cc lists. Your
-messages missed several mailing lists and maybe some of maintainers.
+Fixes: eeaedc5449d9 ("rxrpc: Implement path-MTU probing using padded PING =
+ACKs (RFC8899)")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: Simon Horman <horms@kernel.org>
+cc: linux-afs@lists.infradead.org
+cc: netdev@vger.kernel.org
+---
+ net/rxrpc/peer_event.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> 
-> James A. MacInnes (2):
->   drm/msm/dp: Disable wide bus support for SDM845
->   drm/msm/disp: Correct porch timing for SDM845
-> 
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 8 ++++----
->  drivers/gpu/drm/msm/dp/dp_display.c                  | 7 ++++++-
->  2 files changed, 10 insertions(+), 5 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
+diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
+index e874c31fa901..bc283da9ee40 100644
+--- a/net/rxrpc/peer_event.c
++++ b/net/rxrpc/peer_event.c
+@@ -169,6 +169,13 @@ void rxrpc_input_error(struct rxrpc_local *local, str=
+uct sk_buff *skb)
+ 		goto out;
+ 	}
+ =
 
--- 
-With best wishes
-Dmitry
++	if ((serr->ee.ee_origin =3D=3D SO_EE_ORIGIN_ICMP6 &&
++	     serr->ee.ee_type =3D=3D ICMPV6_PKT_TOOBIG &&
++	     serr->ee.ee_code =3D=3D 0)) {
++		rxrpc_adjust_mtu(peer, serr->ee.ee_info);
++		goto out;
++	}
++
+ 	rxrpc_store_error(peer, skb);
+ out:
+ 	rxrpc_put_peer(peer, rxrpc_peer_put_input_error);
+
 
