@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-511966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD34A33223
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:10:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C255EA33225
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:10:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B9EA188B770
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E50C1682BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E5E2045A0;
-	Wed, 12 Feb 2025 22:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BB82040A3;
+	Wed, 12 Feb 2025 22:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gy6y09J1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXkDrrLj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C206020408C;
-	Wed, 12 Feb 2025 22:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839B520370D;
+	Wed, 12 Feb 2025 22:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739398196; cv=none; b=Xo+RXJd0Iap+V4xv5jgVbVr+xVUldiQvX8sL697p7DCsVFZpMgaLdmFLI72wmfUlUyCp9vCNhpFhzaeC2T++l5H0ZvDjxfZsR6AcA1xgY+scvveBt2A6jzAcoKbj5dX8Al4jdg9hfcjnx8HiBX2Z6Fy4Zhdxvf6Mt8tMCYDtxhQ=
+	t=1739398206; cv=none; b=cKnqbeihzk+9hGfIW9ExI99UbbFbE7Vgq70irKB16WBnM4ckfz4vxVaZkHsFWZsAlsImGZpfBtAp+TuP+MbgqqJOkcPD7j947ktyG10niw7mWUV8KywO4ow054fhbkZgk6jgL5Cr8bAEG1p236euUP9QUBRkrfhZ8REvnVBLKkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739398196; c=relaxed/simple;
-	bh=+AjfEdkaI/sPOZZaiIPwmh7CPh03gJLsar/MeSZ1gKc=;
+	s=arc-20240116; t=1739398206; c=relaxed/simple;
+	bh=+28k4TdfMZqihQFvAU2iFbLst+0jYM8o20C5cyRR1pI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dqeRKBMOn25JuCbjTacVfTQb34vfKHmQSvaQwBW+BAYuZwsRWLw6fu3YOy1TEFaxR4r+1JLvF7AYOVpLv6auQKimTCYYzHBJsytRntQEu2CXgPguEtbbkv3R5QxaghwQT2Hdqo0h+L8vSfipI0y3sBuTsedc26psfr+IMPDbakQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gy6y09J1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B56C4CEE4;
-	Wed, 12 Feb 2025 22:09:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fz7xoDPF2kdpUeTXiP1iDUY5ilW+Pb9xNOTE1Aca3+UETEXA7sSCb1M/MBc/bIN7vLn2UNsrYVDfj+aTgk/3wnOuRqAcbQwVaX/1DE2BV+RjfSGH+vR14m5eYe05sFPf5qdMQq/QT05+vyg98ZdAtxKE/KlAiOmNIGz5RIBxBeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXkDrrLj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15BD0C4CEDF;
+	Wed, 12 Feb 2025 22:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739398196;
-	bh=+AjfEdkaI/sPOZZaiIPwmh7CPh03gJLsar/MeSZ1gKc=;
+	s=k20201202; t=1739398206;
+	bh=+28k4TdfMZqihQFvAU2iFbLst+0jYM8o20C5cyRR1pI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gy6y09J1YcIWY5VxqVBxjK7CXJY5kKULyaEfm+15ktHCOJYb7XZxmb+mU8NVKW7KL
-	 glOwy8V/qgdogZjKZHYJ/kDFHvdCFe0NnSi1XHfx2YPUICLH69lfmOYbc+hHdQvStq
-	 PytaJo/qKPaCjtDlB6W8MCvmv8jcSSm09DX+8hkUqrl0j6fudzcLIs7f+P6IgcVXco
-	 yKKFO7h1gD81VQRgARUpSlWE6GWSZvSY1KAFWqUSozWGdWoeyESKdwt/89P4AnF7jK
-	 r62c8Xj5ZWMIFCW0FnpOXluNS0NZhkGn+nanAShnqpXMCjBFdyVCMi/2P45RRzO/ZL
-	 lZPML8dBf0oQA==
-Date: Wed, 12 Feb 2025 14:09:55 -0800
-From: Kees Cook <kees@kernel.org>
-To: David Gow <davidgow@google.com>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>,
-	Gabriel Krisman Bertazi <gabriel@krisman.be>,
-	Pedro Orlando <porlando@lkcamp.dev>,
-	Danilo Pereira <dpereira@lkcamp.dev>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	Gabriela Bittencourt <gbittencourt@lkcamp.dev>,
-	Linux kernel regressions list <regressions@lists.linux.dev>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] unicode: kunit: change tests filename and path
-Message-ID: <202502121409.864E362899@keescook>
-References: <20240928235825.96961-1-porlando@lkcamp.dev>
- <20240928235825.96961-3-porlando@lkcamp.dev>
- <87iku7u211.fsf@mailhost.krisman.be>
- <2c26c5e4-9cf3-4020-b0be-637dc826b4e9@leemhuis.info>
- <CABVgOS=36iRrpb+ND4M2awbZzgCKwudYxx5XNvEBEkgss+C-bw@mail.gmail.com>
+	b=XXkDrrLjxUF3bRerz0hGvj4t02fEtD7p97gMcA0kqz7OMgKmas+SvPEWNAnuGsFt6
+	 oKzDw3Ku/lKA6WpnNF81d1h3OXfQkmP8CL2/jfcLc3uc7Xs5bmP+iHeikQ4vLIhFzo
+	 9gMTEwt+fWLZS0RyuabeqhC8qiqj8dA5ZGkUdWPnfejHVRoMAbvqlridGv0E4jaPAC
+	 oqjtLSibNj+QXlUTxyMMkx7WTUbJVVJ0u7mPDcH7ql6IpOjVPa7cZG6vFDmzPlMAJN
+	 lqzE+iw0NZC7LGFyEoMzmYr/vuUNmixpJSpfV+fzoOmnNM8I3RUNPTEH1WZx0SkDza
+	 C1xhxEcZdXMZQ==
+Date: Wed, 12 Feb 2025 14:10:04 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Howard Chu <howardchu95@gmail.com>, Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] perf trace: Add --summary-mode option
+Message-ID: <Z60cPJyLRk5N3UxT@google.com>
+References: <20250205205443.1986408-1-namhyung@kernel.org>
+ <CAH0uvoinT1ZH3Cifj_skJOjfKrvQ8jdbU_3gFp21eD4PwGOwkQ@mail.gmail.com>
+ <Z6ztSE_yo2t28w45@google.com>
+ <Z60Lrs0U0gIF5oaW@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CABVgOS=36iRrpb+ND4M2awbZzgCKwudYxx5XNvEBEkgss+C-bw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z60Lrs0U0gIF5oaW@x1>
 
-On Wed, Feb 12, 2025 at 05:31:59PM +0800, David Gow wrote:
-> On Wed, 12 Feb 2025 at 14:45, Thorsten Leemhuis <linux@leemhuis.info> wrote:
-> >
-> > On 04.10.24 21:00, Gabriel Krisman Bertazi wrote:
-> > > Pedro Orlando <porlando@lkcamp.dev> writes:
-> > >> From: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
-> > >>
-> > >> Change utf8 kunit test filename and path to follow the style
-> > >> convention on Documentation/dev-tools/kunit/style.rst
-> > >>
-> > >> Co-developed-by: Pedro Orlando <porlando@lkcamp.dev>
-> > >> Signed-off-by: Pedro Orlando <porlando@lkcamp.dev>
-> > >> Co-developed-by: Danilo Pereira <dpereira@lkcamp.dev>
-> > >> Signed-off-by: Danilo Pereira <dpereira@lkcamp.dev>
-> > >> Signed-off-by: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
-> > >> ---
-> > >>  fs/unicode/Makefile                                | 2 +-
-> > >>  fs/unicode/{ => tests}/.kunitconfig                | 0
-> > >>  fs/unicode/{utf8-selftest.c => tests/utf8_kunit.c} | 0
-> > >>  3 files changed, 1 insertion(+), 1 deletion(-)
-> > >>  rename fs/unicode/{ => tests}/.kunitconfig (100%)
-> > >>  rename fs/unicode/{utf8-selftest.c => tests/utf8_kunit.c} (100%)
-> > >>
-> > >> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-> > >> index 37bbcbc628a1..d95be7fb9f6b 100644
-> > >> --- a/fs/unicode/Makefile
-> > >> +++ b/fs/unicode/Makefile
-> > >> @@ -4,7 +4,7 @@ ifneq ($(CONFIG_UNICODE),)
-> > >>  obj-y                       += unicode.o
-> > >>  endif
-> > >>  obj-$(CONFIG_UNICODE)       += utf8data.o
-> > >> -obj-$(CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST) += utf8-selftest.o
-> > >> +obj-$(CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST) += tests/utf8_kunit.o
-> > >
-> > > This breaks compilation for me.
-> > >
-> > > fs/unicode/tests/utf8_kunit.c:11:10: fatal error: utf8n.h: No such file or directory
-> > >    11 | #include "utf8n.h"
-> > >       |          ^~~~~~~~~
-> >
-> > I encountered the same error when building -next using the Fedora
-> > rawhide config today. Given that this patch landed in -next today I
-> > suspect it might be due to this change, but I'm on the road and unable
-> > to verify that right now.
-> >
-> > Log:
-> > https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-x86_64/08642966-next-next-all/builder-live.log.gz
-> >
-> > Cioa, Thorsten
-> >
+On Wed, Feb 12, 2025 at 09:59:26PM +0100, Arnaldo Carvalho de Melo wrote:
+> On Wed, Feb 12, 2025 at 10:49:44AM -0800, Namhyung Kim wrote:
+> > On Fri, Feb 07, 2025 at 09:25:02PM -0800, Howard Chu wrote:
+> > > Hello Namhyung,
+> > > 
+> > > On Wed, Feb 5, 2025 at 12:54 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > Hello,
+> > > >
+> > > > I've realized that perf trace shows system call summary at the end for
+> > > > each thread.  But sometimes users want to see the global whole system
+> > > > summary or statistics instead.
+> > > >
+> > > > So I've added --summary-mode option like below:
+> > > >
+> > > >     $ sudo ./perf trace -as --summary-mode=total sleep 1
+> > > >
+> > > >      Summary of events:
+> > > >
+> > > >      total, 21580 events
+> > > >
+> > > >        syscall            calls  errors  total       min       avg       max       stddev
+> > > >                                          (msec)    (msec)    (msec)    (msec)        (%)
+> > > >        --------------- --------  ------ -------- --------- --------- ---------     ------
+> > > >        epoll_wait          1305      0 14716.712     0.000    11.277   551.529      8.87%
+> > > >        futex               1256     89 13331.197     0.000    10.614   733.722     15.49%
+> > > >        poll                 669      0  6806.618     0.000    10.174   459.316     11.77%
+> > > >        ppoll                220      0  3968.797     0.000    18.040   516.775     25.35%
+> > > >        clock_nanosleep        1      0  1000.027  1000.027  1000.027  1000.027      0.00%
+> > > >        epoll_pwait           21      0   592.783     0.000    28.228   522.293     88.29%
+> > > >        nanosleep             16      0    60.515     0.000     3.782    10.123     33.33%
+> > > >        ioctl                510      0     4.284     0.001     0.008     0.182      8.84%
+> > > >        recvmsg             1434    775     3.497     0.001     0.002     0.174      6.37%
+> > > >        write               1393      0     2.854     0.001     0.002     0.017      1.79%
+> > > >        read                1063    100     2.236     0.000     0.002     0.083      5.11%
+> > > >        ...
+> > > >
+> > > > Also it changes internal data structure to hash table to track
+> > > > statistics of syscalls.  And removes the rb_resort code.
+> > > >
+> > > > v3 changes)
+> > > > * Add Acked-by from Howard
+> > > > * Update commit messages  (Ian)
+> > > 
+> > > Sorry for the delay.
+> > > 
+> > > Reviewed-by: Howard Chu <howardchu95@gmail.com>
+> > 
+> > Thanks for your review!
+> > 
+> > Arnaldo and Ian, are you ok with this?
 > 
-> Hmm... this definitely seems like a problem, but I haven't been able
-> to reproduce it here (either under x86_64 or UML, both as a module and
-> built-in). The suggested fix of changing the path to "../utf8n.h"
-> doesn't seem to have broken it, though.
+> I looked at it quickly, some minor nits, apart from that, for the
+> series:
+> 
+> Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Thanks for the reports! I've squashed this path correction into my tree
-and it should be fix in the next -next. :)
+Thanks, I'll update them.
+Namhyung
 
--Kees
-
--- 
-Kees Cook
 
