@@ -1,175 +1,95 @@
-Return-Path: <linux-kernel+bounces-510742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3138FA3215D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:41:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5270A32169
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7CFF3A2CE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:41:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBC007A24EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5766205AA3;
-	Wed, 12 Feb 2025 08:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84FA205AAB;
+	Wed, 12 Feb 2025 08:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KBWlrinD"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="uwUw8sPa"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364B5204C00
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14AB271828;
+	Wed, 12 Feb 2025 08:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739349669; cv=none; b=FgQXO8Cpt1BHBM7LXsZe0W04Kt3diiIutYT/j/TgpCHwQyKwzq4jOnKxmL/6l5BZQwnek4qNaLv2XdUbsUwZimoRfIdCmLguUT+e6OIg1Iu55zAa8D9vqwBhWx7M/9sAf2XqIadVkZ54fGS0fWoHAdzT9yPauwAwkc5YNl4AknY=
+	t=1739349961; cv=none; b=tQEtkKlYNbG2Hxju5q9bkszC2jTMnWo03JESaHH8XzlP3MVO2wlfohfA1Y2yHZt1ykePNIer+mNeaV2xdmAolf0WyDNKVo6dHDOijLAa7T7sbHVpHMZXTCIcyfM+ibsoLQLuwBtHjTDk8O+u4F0gxlPDgEFoNV090p1JA34CugY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739349669; c=relaxed/simple;
-	bh=f9ZCAVmq2gg3N2HN7ui17vIaD9Wt7j6KDCePUL9di18=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VMGrdYdsze/6t9e5u3U4jSZ0Vbt4CqNsPRIl7cAMhhHgFMZ0cde8AFHnNWuzL3vAQ5uBbO8p4HOKXUli1tVq0gSKpi1dV+JLJbfCwVZA7sCwM0CKqrQyp/BpUYtV4RMBZ7WxIX2WaIZkBykaFqf5byrsEw3CXbM6+FYWcCbNfnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KBWlrinD; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739349656; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=G2dzHAeJclCBBtVnMp2ixJo/1kvecabyqzECUSBfwNg=;
-	b=KBWlrinDY78UgNTay/Mgi4okpwsW/k32s8qj4aVjR2ES0HzYvqvI66JnkuEpFAFZYtc8ayigu+jpoedcs3JFFPDlYOm3go6vYv2n5dRHG+4G3AxJHUnMG7gdsZm5j2aHkpu9JEXdfTnGgM3D4lRiUXyqk6KxCXkNq1Q85NZ0+8U=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WPJWt4O_1739349655 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 12 Feb 2025 16:40:56 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Nikhil Dhama <nikhil.dhama@amd.com>
-Cc: <akpm@linux-foundation.org>,  <bharata@amd.com>,
-  <huang.ying.caritas@gmail.com>,  <linux-kernel@vger.kernel.org>,
-  <linux-mm@kvack.org>,  <mgorman@techsingularity.net>,
-  <raghavendra.kodsarathimmappa@amd.com>
-Subject: Re: [FIX PATCH] mm: pcp: fix pcp->free_count reduction on page
- allocation
-In-Reply-To: <20250212050403.17504-1-nikhil.dhama@amd.com> (Nikhil Dhama's
-	message of "Wed, 12 Feb 2025 10:34:03 +0530")
-References: <20250128203118.578a46182beea6a82dcd0b1d@linux-foundation.org>
-	<20250212050403.17504-1-nikhil.dhama@amd.com>
-Date: Wed, 12 Feb 2025 16:40:54 +0800
-Message-ID: <871pw33695.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1739349961; c=relaxed/simple;
+	bh=SP/+UeGY2ctHk9D8AJWeItEVLVTLyVkEN8JUn948NJ8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n5etVZAe0nVjMvifCwz1Bm1QWqmVSMAKBN1Y6BRSm9Okx6dJeztWNYP/kFjjEH2Uh7m+u2j0QRGOJp5y8kSieDG5xf2Lw4BJisuZc1lvF2GeQs3XeGVvfJliseWtPoo76Hfv0oW2AATyoIOM1xtAqPD3svrzkfGw4zG1N/lxzh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=uwUw8sPa; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739349959; x=1770885959;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=SP/+UeGY2ctHk9D8AJWeItEVLVTLyVkEN8JUn948NJ8=;
+  b=uwUw8sPaXh9R+l4zIFLY2XwPH1oh9l88fV9C2yR23b2SX8HBL85geYB3
+   du85wktevt6tvz3WLPlgUmzcgIrgc3/DL+Pabwqoe9hybAPOhplsTLWDA
+   IdDN6pXi0f/3epVFTMWlX14HO0yWB1gt5PKup23XiPloCTIKpYWQajVsA
+   I=;
+X-IronPort-AV: E=Sophos;i="6.13,279,1732579200"; 
+   d="scan'208";a="798132496"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:45:34 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:45084]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.32.208:2525] with esmtp (Farcaster)
+ id b0720d08-eebd-4a10-9586-a1e26bdbbb8e; Wed, 12 Feb 2025 08:45:34 +0000 (UTC)
+X-Farcaster-Flow-ID: b0720d08-eebd-4a10-9586-a1e26bdbbb8e
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Wed, 12 Feb 2025 08:45:34 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.118.243.86) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 12 Feb 2025 08:45:29 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <bastien.curutchet@bootlin.com>
+CC: <alexis.lothore@bootlin.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <horms@kernel.org>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <razor@blackwall.org>,
+	<stable@vger.kernel.org>, <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH net 1/2] rtnetlink: Fix rtnl_net_cmp_locks() when DEBUG is off
+Date: Wed, 12 Feb 2025 17:45:19 +0900
+Message-ID: <20250212084519.38648-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250212-rtnetlink_leak-v1-1-27bce9a3ac9a@bootlin.com>
+References: <20250212-rtnetlink_leak-v1-1-27bce9a3ac9a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D042UWA001.ant.amazon.com (10.13.139.92) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Nikhil Dhama <nikhil.dhama@amd.com> writes:
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Date: Wed, 12 Feb 2025 09:23:47 +0100
+> rtnl_net_cmp_locks() always returns -1 if CONFIG_DEBUG_NET_SMALL_RTNL is
+> disabled. However, if CONFIG_DEBUG_NET_SMALL_RTNL is enabled, it returns 0
+> when both inputs are equal. It is then used by rtnl_nets_add() to call
+> put_net() if the net to be added is already present in the struct
+> rtnl_nets. As a result, when rtnl_nets_add() is called on an already
+> present net, put_net() is called only if DEBUG is on.
 
-> On 1/29/2025 10:01 AM, Andrew Morton wrote:
->>
->> On Wed, 15 Jan 2025 19:19:02 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
->>
->>> Andrew Morton <akpm@linux-foundation.org> writes:
->>>
->>>> On Tue, 7 Jan 2025 14:47:24 +0530 Nikhil Dhama <nikhil.dhama@amd.com> wrote:
->>>>
->>>>> In current PCP auto-tuning desgin, free_count was introduced to track
->>>>> the consecutive page freeing with a counter, This counter is incremented
->>>>> by the exact amount of pages that are freed, but reduced by half on
->>>>> allocation. This is causing a 2-node iperf3 client to server's network
->>>>> bandwidth to drop by 30% if we scale number of client-server pairs from 32
->>>>> (where we achieved peak network bandwidth) to 64.
->>>>>
->>>>> To fix this issue, on allocation, reduce free_count by the exact number
->>>>> of pages that are allocated instead of halving it.
->>>> The present division by two appears to be somewhat randomly chosen.
->>>> And as far as I can tell, this patch proposes replacing that with
->>>> another somewhat random adjustment.
->>>>
->>>> What's the actual design here?  What are we attempting to do and why,
->>>> and why is the proposed design superior to the present one?
->>> Cc Mel for the original design.
->>>
->>> IIUC, pcp->free_count is used to identify the consecutive, pure, large
->>> number of page freeing pattern.  For that pattern, larger batch will be
->>> used to free pages from PCP to buddy to improve the performance.  Mixed
->>> free/allocation pattern should not make pcp->free_count large, even if
->>> the number of the pages freed is much larger than that of the pages
->>> allocated in the long run.  So, pcp->free_count decreases rapidly for
->>> the page allocation.
->>>
->>> Hi, Mel, please correct me if my understanding isn't correct.
->>>
->> hm, no Mel.
->>
->> Nikhil, please do continue to work on this - it seems that there will
->> be a significant benefit to retuning this.
->
->
-> Hi Andrew,
->
-> I have analyzed the performance of different memory-sensitive workloads for these
-> two different ways to decrement pcp->free_count. I compared the score amongst
-> v6.6 mainline, v6.7 mainline and v6.7 with our patch.
->
-> For all the benchmarks, I used a 2-socket AMD server with 382 logical CPUs.
->
-> Results I got are as follows:
-> All scores are normalized with respect to v6.6 (base).
->
->
-> For all the benchmarks below (iperf3, lmbench3 unix, netperf, redis, gups, xsbench),
-> a higher score is better.
->
->                     iperf3    lmbench3 Unix       1-node netperf       2-node netperf
->                                   (AF_UNIX)   (SCTP_STREAM_MANY)   (SCTP_STREAM_MANY)
->                    -------   --------------   ------------------   ------------------
-> v6.6 (base)            100              100                  100                  100
-> v6.7                    69            113.2                   99                98.59
-> v6.7 with my patch     100            112.1                100.3               101.16
->
->
->                   redis standard    redis core    redis L3 Heavy    Gups    xsbench
->                   --------------    ----------    --------------    ----    -------
-> v6.6 (base)                  100           100              100      100        100
-> v6.7                       99.45        101.66            99.47      100      98.14
-> v6.7 with my patch         99.76        101.12            99.75      100      99.56
->
->
-> and for graph500, hashjoin, pagerank and Kbuild, a lower score is better.
->
->                      graph500     hashjoin      hashjoin    pagerank     Kbuild
->                                (THP always)   (THP never)
->                     ---------  ------------   -----------   --------     ------
-> v6.6 (base)              100           100           100         100        100
-> v6.7                  101.08         101.3         101.9         100       98.8
-> v6.7 with my patch     99.73           100        101.66         100       99.6
->
-> from these result I can conclude that this patch is performing better
-> or as good as base v6.7 on almost all of these workloads.
-
-Sorry, this change doesn't make sense to me.
-
-For example, if a large size process exits on a CPU, pcp->free_count
-will increase on this CPU.  This is good, because the process can free
-pages quicker during exiting with the larger batching.  However, after
-that, pcp->free_count may be kept large for a long duration unless a
-large number of page allocation (without large number of page freeing)
-are done on the CPU.  So, the page freeing parameter may be influenced
-by some unrelated workload for long time.  That doesn't sound good.
-
-In effect, the larger pcp->free_count will increase page freeing batch
-size.  That will improve the page freeing throughput but hurt page
-freeing latency.  Please check the page freeing latency too.  If larger
-batch number helps performance without regressions, just increase batch
-number directly instead of playing with pcp->free_count.
-
-And, do you run network related workloads on one machine?  If so, please
-try to run them on two machines instead, with clients and servers run on
-different machines.  At least, please use different sockets for clients
-and servers.  Because larger pcp->free_count will make it easier to
-trigger free_high heuristics.  If that is the case, please try to
-optimize free_high heuristics directly too.
-
----
-Best Regards,
-Huang, Ying
+If CONFIG_DEBUG_NET_SMALL_RTNL is disabled, every duplicate net is
+added to rtnl_nets, so put_net() is expected to be called for each
+in rtnl_nets_destroy().
 
