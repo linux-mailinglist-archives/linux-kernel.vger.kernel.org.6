@@ -1,92 +1,276 @@
-Return-Path: <linux-kernel+bounces-511931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B8FA331A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:36:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DD6A331A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:37:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60886167C0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22583167B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F3D2036F9;
-	Wed, 12 Feb 2025 21:36:14 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCF52036E5;
-	Wed, 12 Feb 2025 21:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739396173; cv=none; b=Bd2+2V21JwYVeXs529JEbtxm231nJ2ZNLa/82ERMnVNA2RVs+Xen81n1ZEgUkGZGA6YkIiPHLqldV2zvqTR2CS0YPfPjaAZHn9PBWrk1FLZFu0XFDHf0Dd8aXfRsGn2EWsO2u1b7hJ/QIxfQKVcaAU1r8///+MLYqxjkngSDjGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739396173; c=relaxed/simple;
-	bh=UCmJJDY5Rq62iJEOLH3JSBKuEigi6Gbpj9yurOE3GEk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=uaTgij+7+0TMiKQmf+qMPb0vCcnhtC+qtLKEP1XIT1ESDHTfs3nZPwxgIMsBYUpYIm5hRHeZuGMhotb3o09B2au+T5GE0LFBMSUmUaOezlej8ZQIs4TnJ41SMiUD6gx4MnNjr2TzgO6uP+gSxF9VmX8ANAl2avb3hkA62ft9Uos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 6E1D192009C; Wed, 12 Feb 2025 22:36:02 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 671C492009B;
-	Wed, 12 Feb 2025 21:36:02 +0000 (GMT)
-Date: Wed, 12 Feb 2025 21:36:02 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: WangYuli <wangyuli@uniontech.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    masahiroy@kernel.org, jiaxun.yang@flygoat.com, zhanjun@uniontech.com, 
-    guanwentao@uniontech.com, Chen Linxuan <chenlinxuan@uniontech.com>
-Subject: Re: [PATCH 2/2] MIPS: Explicitly check KBUILD_SYM32=n
-In-Reply-To: <030FDC391902ED7E+d1a2171f-9a91-48eb-8520-a02ff7e786b4@uniontech.com>
-Message-ID: <alpine.DEB.2.21.2502122111330.65342@angie.orcam.me.uk>
-References: <41107E6D3A125047+20250211135616.1807966-1-wangyuli@uniontech.com> <D23DC9B8BD1C245D+20250211140740.1812778-2-wangyuli@uniontech.com> <alpine.DEB.2.21.2502120612000.65342@angie.orcam.me.uk>
- <030FDC391902ED7E+d1a2171f-9a91-48eb-8520-a02ff7e786b4@uniontech.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EF02036EC;
+	Wed, 12 Feb 2025 21:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yt4r2X1d"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B3A202F99;
+	Wed, 12 Feb 2025 21:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739396188; cv=fail; b=NZ5pF+mUgMJ9SjWc6a5ENTqTrd2jl+2U0d53P4OMCX1i9CI7Wkr3kcm+VJsIGXUuojvEsDyvqnfpxKPBckYkVjQw3CE9Hyb5CmG8E45r8hTrZQ9xsaOa/YpnyP+GOdfuA04hyqM6fbGjcCNXrmLV9zm98Cs7AXTyXzsG42gUSvA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739396188; c=relaxed/simple;
+	bh=2sEJFLT4jjhbd/+EVImBIQguhRGXBVnVluIV8UMlB/g=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Zhzp8l/et2BCpuE/jCcX6v/N1l7CI/D8X4hXNofF283S3QPLYelPmJWIgWAhb/pEEtB8FqquGBQHsMRBbYghr8Tgc8CSHhjrA6/EQniTfiK9bWWyg3VjE0EnJE7NeqAN59X7aElu2e9sX3g9Z/mDwSDRYfJ5TovAr2O03Dl860U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yt4r2X1d; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739396187; x=1770932187;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=2sEJFLT4jjhbd/+EVImBIQguhRGXBVnVluIV8UMlB/g=;
+  b=Yt4r2X1dFAmVsIbi8ePnsUVcHAWg3g8aHMyCowOPP5vMJd+CbVEuum8E
+   Yb3w7vinY4ueuNz+O+41JskNOe7feCrJnu+pFSx+R3YP4wwdi+2zYBZMo
+   0o6qXiHdVZWfNfZCP8zWxFa1M2BIH6qbGGbbM4s/pUZQJgluR+uzmie0x
+   uX/cifvE8xiRrvCV4eLBF+Cq7NXzFz4PHiLQslvyfrH0UinsGGUI4xAIL
+   pclN3PMID5rYeDDIiX8RD0NNq8Uc6nL5NSKGGC2Q0HO6o7zCz4iyyLIlz
+   9vStIcebJjdSurrHudZ0UDX6BCP5jCTONiHnd6DTlpXOBUv9vTAsx4xBj
+   g==;
+X-CSE-ConnectionGUID: 9Rl0da8ZQcKnRum+skYTOA==
+X-CSE-MsgGUID: gqXxpz7sTQiqt99jm9KFDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="57608265"
+X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
+   d="scan'208";a="57608265"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 13:36:26 -0800
+X-CSE-ConnectionGUID: G2K7wqfJRkKCGcktcs9JtA==
+X-CSE-MsgGUID: p0uhmByUR5CHNrtcq0RIJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="112797714"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 13:36:25 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Wed, 12 Feb 2025 13:36:25 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Wed, 12 Feb 2025 13:36:25 -0800
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 12 Feb 2025 13:36:23 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f8qCT8fRWLrwXcqvL7pgcUZ+NEYk1Yh9uVx2D9u5klmsjxMekMx0TyS3KH4wxCgEDquCiO6gXkmnJcXrybToek4+7cYZ0mKwnn2AplTH/CDOzA49hV7hD46EH0O3JpLZNqJg9EqhCs/tujSwu2Swv3MmhUB9oV4+Kbt+PKXtWC2q0yLAZWMnOJV9oHvlXCxZdY4rpNIfCKPo5fDmaLcn9GHRf5Q1GTycRuJcL0TPN7ZwzloXPG8LWR1liVY+ZhtUVDeumY7mRA++v1pM3glfzaVoUZMB1k5SPImO1d+1uYCcKQTRCmTj5ka4hwV87TU2ao6jjbs+b3ZLbD4pZ1RsRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sKwY+E528fk5X5TvKgCnfS7PmSAqxspbO/du1lHJjFk=;
+ b=lTW5mX9E+9y3O5Gex6nT7FGBFq51x1CUYOizJ09pYnfQAD7EvY0/RTllTpNC+l6jbDF5rMNEyw5V0LnZwszzDf7ujYkeKScJJtJlyz1vn0fsKsn2OvLLB4k7wozVor3rtpo53i5W50wmnYwV+c6OhNPs2sdgXfnyb0z1oV1ajO8Bd2rFgoFF0xAFa8euKaqFgXpdrmgVeRoL0/jA2JzqAnnnL6n7jheqEkdlgRGwibCmucBen6pIx/qbgqXvmMAMi+hB6c2ExaRzH1lNfQIW0ITZ9LZDeRgkOLVhWNIiYw2uxsxfdOvFrr32vMvcCcTb2vNHxRDE8IB0KSmIyUegng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL3PR11MB6435.namprd11.prod.outlook.com (2603:10b6:208:3bb::9)
+ by PH0PR11MB4870.namprd11.prod.outlook.com (2603:10b6:510:34::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.20; Wed, 12 Feb
+ 2025 21:36:21 +0000
+Received: from BL3PR11MB6435.namprd11.prod.outlook.com
+ ([fe80::23a7:1661:19d4:c1ab]) by BL3PR11MB6435.namprd11.prod.outlook.com
+ ([fe80::23a7:1661:19d4:c1ab%4]) with mapi id 15.20.8445.013; Wed, 12 Feb 2025
+ 21:36:21 +0000
+Message-ID: <a2828574-8b78-47a8-9ca3-a531f234a4c9@intel.com>
+Date: Wed, 12 Feb 2025 13:36:18 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v3 5/6] ice: support egress drop rules on PF
+To: Larysa Zaremba <larysa.zaremba@intel.com>,
+	<intel-wired-lan@lists.osuosl.org>
+CC: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Michal Swiatkowski
+	<michal.swiatkowski@linux.intel.com>, Mateusz Pacuszka
+	<mateuszx.pacuszka@intel.com>
+References: <20250208132251.1989365-1-larysa.zaremba@intel.com>
+ <20250208132251.1989365-6-larysa.zaremba@intel.com>
+Content-Language: en-US
+From: Tony Nguyen <anthony.l.nguyen@intel.com>
+In-Reply-To: <20250208132251.1989365-6-larysa.zaremba@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0134.namprd04.prod.outlook.com
+ (2603:10b6:303:84::19) To BL3PR11MB6435.namprd11.prod.outlook.com
+ (2603:10b6:208:3bb::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR11MB6435:EE_|PH0PR11MB4870:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8da64a80-2397-4483-052d-08dd4bad4ad2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?S0JMTTFMU0p4ak11cU9iRUgrS2RQTFRYbTJ3OFJhSHlVUkdwNUtDbnZjR0xY?=
+ =?utf-8?B?NUtmU3FINUcvbnBwS0twSXYwSEw5SEwrdjZjN2RORzl0aU56bkVXM2psSzlO?=
+ =?utf-8?B?cTIrb3F6YW1GMUN1VDYrV1YvV29mcUh5L282UXF6dUViVWFwSFdhNWd0SGc4?=
+ =?utf-8?B?UHRnQzVONGJBMXhlMEM4bmRzekdvTkVNTW5nL1hYb1h3MS9QL21wRnBVQllF?=
+ =?utf-8?B?cEpzdW9rWnEyNmxwRFlnUVg2YlRBQ3dsa1NBOWZ0ckJwZ0MzL2VnU0trTGhL?=
+ =?utf-8?B?TlJGQXJ2dlMxRmd1amNJM1o4dzFYUjFxM1BnWEJKL2RtV1F3Z1cwRFNaVEVQ?=
+ =?utf-8?B?K3JKZDV1d25pQXkxaEkvM2hBZGVaLzhHKy9XSDVXOXFwMnNLbm5NMjNKQjds?=
+ =?utf-8?B?dTRCM3R4MXRIN20rQVNGV0NIQS9uczltOGVJSk5EREFXdnl0cHdNTWpaenFl?=
+ =?utf-8?B?WXk4UkpUOUJ5S0VqUjVSK3h1OEpzTnpLZHU5UDdMcVRXaDN6cWkxQXZXNTJH?=
+ =?utf-8?B?RDBEWW50OXFYTU5kbW9WSVFJSnpoYjAybXhDWjIyaWw4ZWhRSkFJc0FjRnYz?=
+ =?utf-8?B?REw4dHNhbWZyRDUzTTJzMTBTUU1NUklIWFJHeW5OWEZZSDc2VnFneGVXam5C?=
+ =?utf-8?B?bmswNVhDN0doTVY3eTNuWTFJb0kwdVZtTXF3RTFOLy9vMnJyMUlrTytUZEpD?=
+ =?utf-8?B?MGRkWnVnTjVNMXU1cjRReFNNVUZERFltRzUvN2FaeHk4R1FaWWRtM1dySGU5?=
+ =?utf-8?B?cndFK1ZFWHEybHIvQ2ozWC9pcDNkOHMwb2Jjc2hiRElYNDJRcUYra2VqV1or?=
+ =?utf-8?B?Y3A4dkZxK01RdzhwQmw5NGJXMzBNVUNYbVdPSXZEOVBzempRVTRGcVMxaS9j?=
+ =?utf-8?B?K0VjTWQ4cldLMnAwaU1SWWxKdEYySC8yQ2NuUGVMTHlBV1BXZ2d0ckVhZ1NB?=
+ =?utf-8?B?YjdSNWFTTG80aFk5bnNWUXNXMzljRmkxVnQxcW04V1NZanFyeHFvdWpWaW1o?=
+ =?utf-8?B?UXJpUHArckRuKzhjUGtuVG1QMHBaUkk3L0ovZ2NXdnJjdGlITzloNHpKcndJ?=
+ =?utf-8?B?TjFFenNRUFRqaG1TTlpOYUVheXNRYnVOUzExRHlYMThSbGpYMkN0RnhONnJs?=
+ =?utf-8?B?WWdLNitYQWhWMWVnZzIwQ2UyNTEybGF2TGd2cVFEc3QvMjdNM1JxRmprSnhl?=
+ =?utf-8?B?clIwcWJqTldFbnFaWVA0SHkzMXdUNTNQRkJpV0NxQmlvQ2MwUWxtS2NpNmla?=
+ =?utf-8?B?RWlPZXcyQy96bTJaYkdWZ2JMU2srcVhWdVN2NW5ZbjhRRDZRZlllZG5obXFQ?=
+ =?utf-8?B?UHR3N29ZMjl6NEhjYW1LNWMwOVNKbllodkdqQnpvZTUzdk80WFFMWmVFbmw0?=
+ =?utf-8?B?Z3dHZTVXMzh6d3lwUGlTZGRjb0QzSmNaOUwwNnhBdTF4dXpwOTJENWlmRk11?=
+ =?utf-8?B?aU5JMk1TcXFwckUyR2tTejVoaGZkU0VDZ3dlUWFWbzV4SmtzcG5xa0VxWldY?=
+ =?utf-8?B?bWxSWEpyY2o1TklYQ1MzWTl1LzB4bG9OZkY1Sm1kODhJVW9EYXAyZUIva1Js?=
+ =?utf-8?B?VXlSQ0pqclhzMVBlbEo1djJURDlod1l4L3pXSDhlbkk4Z1BqNEZrUEJwb1BY?=
+ =?utf-8?B?bXBkeGlsNzFUL1UzUk9kb0dsc0dpSmJWUEZ2dzAwVmloWlVBY1lkK09aSVhp?=
+ =?utf-8?B?aXJqSFBHblVEbmNjZ296SHVVUXF6clNqSzNzalZqMWNZNHVhaTRPSGdoaGxa?=
+ =?utf-8?B?Z0p1Qi84ZXZwZW52dSthb3N3aWJtWDY0aXN4VElSY2NVZjdQbmJzeThsclEy?=
+ =?utf-8?B?UDRIQ3lVOW91YWFDbVRaNkFBMmFOaFJoV3FKVFdyZzJDbStOMTRzaHd5VUV3?=
+ =?utf-8?Q?B8h4QZPJipZLe?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6435.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R08zV2VkTXNSRkN4VnFiVHpOSTdFeDdabVB2Wm1ZaXhpaGMwcEZTT3hPOUxp?=
+ =?utf-8?B?eThjaUZvaXVBSDVEd0hqNGJ2eUo2USt2OEtnOUtzb0VWV2NsdnJEV3RscEVE?=
+ =?utf-8?B?TmF4TXo1U3NscGJ0eTY2clRDOWw4Q1FaclVXNDNRZm9xR3BiR3Ztc0xaV09D?=
+ =?utf-8?B?aEtMcmxtNlZJT01OYzlUYmJYN2tLakV6NXd6amViTXYwYWlrZWlzek51UGtI?=
+ =?utf-8?B?dTNZOFp6cWszVkFNYXJpTEhaMzBWRE9IS0p2S3VrUTFmV0l2dUlGTGp4SjV0?=
+ =?utf-8?B?YmRqVE8vUzc1MzlxK0UxYWtWeFIzTnE3S3Voc2FlV05YRUsvaEh4S1NBeDlU?=
+ =?utf-8?B?Z3gyMi9BdTU4Y3FPNmFhblVuaERhVUNOcG54QmxYNnY1Z2x3R0JpQjdkRkp2?=
+ =?utf-8?B?ZTFiclJ6WDJRNHNNbVNjbDF3aWo0TVRSV0lid29DdGN6bDdPQkZWTTc3a2xk?=
+ =?utf-8?B?SldEdTJzVEY2UWdrc1hLNDN1Q01tdm9rS3QvN0hqcUNhMjhEanlaUVVsdTM4?=
+ =?utf-8?B?UWNkemtHRzByWENLQnY1aGxLNno2L3pDMVdOcDJCRi81R1hoOTdtU0x1T1Rt?=
+ =?utf-8?B?MS9FRWFlenRyQVZ1ZWpPUjFyaytVWjJpQStMdjhxYm54a1V6MEpZOFhidWZV?=
+ =?utf-8?B?SklWUDFTalRVWkxHZDlnd1J0STRTdGloQkhtSFJGMzJSUG83aGxFdzhsdkkr?=
+ =?utf-8?B?UVFvdlBpMjZrVkczemxQcmVha0RGSEdiM2JYUnIwQmp4aGhVRGYwdjFpUlpF?=
+ =?utf-8?B?YmdWSzZHSUp3TDhubGEzT1QyRzlSNVZUb2NabWc0T1piQU0wSVVxMWpUNkVG?=
+ =?utf-8?B?aE04SUM0QTFaMFY3aDlQb2ZzRzJ5a2lUVDFrdEJtMXFMRkowWGo3UFRRMEdX?=
+ =?utf-8?B?SmRBTzFFTWxsODdNWVlHaXAvUmJBQmxLQVM3V2FTQ2sxRWozWWUxdG5SbHl5?=
+ =?utf-8?B?cnJJSWRkOEJlMXoyMTVXWE90dk5FLzNNV21UdUx0TklUM25TUml1d1RxUkgr?=
+ =?utf-8?B?OFZNdGZZYllTNUsvYVFCU3ZQUm9oZnRvQUVkNitlOW1JSEdPTnhXdCtxQWxC?=
+ =?utf-8?B?ekFvR3JGUXZ0N2hBYzR1NjlWQTkvWmF4OTVGTnQ0UkEyOVlNRjR0YUZkZzUv?=
+ =?utf-8?B?M0NwTXZEQzh4ZUR3RGdaWkcrOEI1U0RqVTFkOURqb2xTVisyb3FDRnQ0SGRn?=
+ =?utf-8?B?bjFBTkM2dnVBejFtUTNoVExwR0dDZldpWFdNRnRGRklnZktYQTZNdmR1aGYr?=
+ =?utf-8?B?dXdKL2ZaQ3d5bE8xVnJ3RXVzSXRHNS90SXNZbnFqTDZGSlp6SU5QM2ZTWUpV?=
+ =?utf-8?B?OHYxdnFDZ1RueDRqdldydHgzbXVUQWU2QmpvZGNxcjhkMHJmMXppWHliR3ZR?=
+ =?utf-8?B?T0dBSjhWbnVNOTQ1NU04N2xVY3FjY00rcjk3dE1VT0J4MU8za29sU21ERzJD?=
+ =?utf-8?B?US8rTVUyNnQ2WnY2RElNbWMzTTlOaTBzbE43V05NK0tYWVpRVVRVdWo4SUZW?=
+ =?utf-8?B?bE5maS9CSDBqNk4wMk4rT0tzVTV4b0NoV2Y0SlFneVdPVFBvQmtOcG9JT05X?=
+ =?utf-8?B?KzJ4UnUwaTV5bWpRaExzZC9SZFluZnY1ZjF3N0I5aGhRTzBlSTN1SzhHaTVv?=
+ =?utf-8?B?eHdNTkFNVFAvNmlFaU5MVlc2ZUsvUXRlMnBSVVJuV0o4M0dqN1M2WGIyWGJI?=
+ =?utf-8?B?R3AxQzMzUWdMNDVpZlJtNHdYdlJJYVkvRTJRZFE0dmd2cVZQZnl5NzMwYjVX?=
+ =?utf-8?B?TUdyU1ROZHNjR3VYVkhhejA1NkYxZ2JWUzcwVmxVYkhNSnJZTU9ybUxXdlJF?=
+ =?utf-8?B?NnVPTHlNd215TUZ4eDgxVS9zNTM5UDFCSm1oVjczWlFBZzJpZmlWWWFWcE1k?=
+ =?utf-8?B?Qy94ckJtcVNXWndPNkhpNGw5dXFJTlR4TDljY3FNcVBiS204aGEzU3M2S05B?=
+ =?utf-8?B?K1EwaTNTdTVLVVIvRFdVRDhyL2ZmT01yTzgvcFFIOEJadG5IaWxtZmZKV1VP?=
+ =?utf-8?B?TURHa0JldW5OVEpmMElSTnNhMFByTEhzNFFtSzU4eVFBcGZxZGZVbEVMUmhu?=
+ =?utf-8?B?M3hyWmxEOENKYjZwaVJsUlNDZ1JEMGIvWXdjMU80eWVrbytUMzdIOVo4dDIr?=
+ =?utf-8?B?U01Ebi9rVFlVb1V5SllnN0tZY2UzcWlaQTBDN3hHQ0xYeCtqRGFKb2RvUW1z?=
+ =?utf-8?B?MFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8da64a80-2397-4483-052d-08dd4bad4ad2
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6435.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 21:36:21.4121
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HSLhJHaVZBUl8Hh8P270HI1aO+B2xMJBWzj6iRIb+/74Lj/ygW1sHRlq5WPBdm2mIyu62aqG15o7xHaWLMW7SvboE6d3yvzU7YN5LhzvQcA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4870
+X-OriginatorOrg: intel.com
 
-On Wed, 12 Feb 2025, WangYuli wrote:
 
-> There are expression and spelling errors in my commit message and code
-> comments, necessitating a patch v2 for corrections, is that right?
 
- These are semantic errors, yes.
+On 2/8/2025 5:22 AM, Larysa Zaremba wrote:
 
- Also I find:
+...
 
-Fixes: 805b2e1d427a ("kbuild: include Makefile.compiler only when compiler is needed")
+> @@ -8393,20 +8395,42 @@ ice_setup_tc_cls_flower(struct ice_netdev_priv *np,
+>   }
+>   
+>   /**
+> - * ice_setup_tc_block_cb - callback handler registered for TC block
+> + * ice_setup_tc_block_cb_ingress - callback handler for ingress TC block
+>    * @type: TC SETUP type
+>    * @type_data: TC flower offload data that contains user input
+>    * @cb_priv: netdev private data
+>    */
+>   static int
+> -ice_setup_tc_block_cb(enum tc_setup_type type, void *type_data, void *cb_priv)
+> +ice_setup_tc_block_cb_ingress(enum tc_setup_type type, void *type_data,
+> +			      void *cb_priv)
 
-invalid here, as your change does not address an issue introduced with 
-said commit.  It does fix mine, when it comes to LLVM support, so I think 
-instead it has to be:
+Could you fix the kdocs on the ones that you modify? Most of them are 
+missing the Return:
 
-Fixes: a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS `modules_install' regression")
+>   {
+>   	struct ice_netdev_priv *np = cb_priv;
+>   
+>   	switch (type) {
+>   	case TC_SETUP_CLSFLOWER:
+>   		return ice_setup_tc_cls_flower(np, np->vsi->netdev,
+> -					       type_data);
+> +					       type_data, true);
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +/**
+> + * ice_setup_tc_block_cb_egress - callback handler for egress TC block
+> + * @type: TC SETUP type
+> + * @type_data: TC flower offload data that contains user input
+> + * @cb_priv: netdev private data
+> + */
+> +static int
+> +ice_setup_tc_block_cb_egress(enum tc_setup_type type, void *type_data,
+> +			     void *cb_priv)
 
-And if you want it backported, then you need to swap the order of the 
-changes or discard 1/2 altogether, as that is syntactic noise only and 
-clearly not a fix.
+And correct the ones that you're adding.
 
- Apologies not to point these issues out in the previous message.
+I believe there's issues of this or the previous in patches 2-5.
 
-> As for whether to check need-compiler or KBUILD_SYM32 in the code, the effect
-> is essentially the same, correct?
+Thanks,
+Tony
 
- No, code has to express intent and the intent here is not to fiddle with 
-the compilation flags when no compiler is going to be used.  And this 
-purpose is served by the `need-compiler' setting; anything else is code 
-obfuscation and a workaround at best.  And the very need to add a comment 
-has made it very obvious already: the best code is self-explanatory and 
-the use of `need-compiler' is a common idiom, obviating the need for a 
-comment here.
+> +{
+> +	struct ice_netdev_priv *np = cb_priv;
+> +
+> +	switch (type) {
+> +	case TC_SETUP_CLSFLOWER:
+> +		return ice_setup_tc_cls_flower(np, np->vsi->netdev,
+> +					       type_data, false);
+>   	default:
+>   		return -EOPNOTSUPP;
+>   	}
 
- Have I made myself clear here?
-
-  Maciej
 
