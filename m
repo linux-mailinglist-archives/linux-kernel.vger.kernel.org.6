@@ -1,86 +1,55 @@
-Return-Path: <linux-kernel+bounces-511108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED70A325F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:39:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E37A325FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72E64168AAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:39:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49A4B1888618
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7AC20C48B;
-	Wed, 12 Feb 2025 12:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1FJc2Zt"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A02F1F866A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8941420C497;
+	Wed, 12 Feb 2025 12:40:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74087F4FA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739363957; cv=none; b=gtoWvKlBmNwy9JXTfyNtdPKVmyylsGhVDhMfbIwy4qN4Q2rlWGbPfv/9YGFGoH0uwZhLx190aLHS3Sv5BqnvHHvtBLN9/sPTh1A2tNX1/5URt+BfgHlPqnWlTdxbcV9M/Sljb2mE5V/XcUT92aHwd9Gr10b61Wsa6LfQAS9THoQ=
+	t=1739364041; cv=none; b=lhTll7VA04ey7xQY1NzyAodqS/1MaUXMyYMv2d8vtEvaMrd1R3CYr+HGOpq9NVvOxSvKxA6lk2DcOzyHOZy2JJ3MpzXtfHnXjz8vl/TMwmiN11AtCX56zEbe9kxDHewdSqgDfXAFtHNh8N7UpxrST1foC+SwHrClngv2VcEZXxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739363957; c=relaxed/simple;
-	bh=cwXHPUhADcptkBat4qjbah2IpI4snMQDKRbV6TWNdRE=;
+	s=arc-20240116; t=1739364041; c=relaxed/simple;
+	bh=78lMWVU0GAo7qsBSJL48v+wFRMKDl7nuR/hlpATBW3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uI9pbfuIIq5Sn0I5IYA2KvV7SKjVkDVGqt5tutUuRW8gO7xQxoRJmvKNh/GKK59r/m0IyJ5WcEvq8RpZB+JH3eMRfPFjm7G6UV3VWf94hOGy6RwZ8e1OHwiaWqyAlTJz5ichfVJiWrNESCaeHjUpjeG4iAcaCtXj4xWMrYSyNQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1FJc2Zt; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21f818a980cso61968835ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:39:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739363955; x=1739968755; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wf5TM+EPqf0h+MA78sRvraMgyJZcMD1wBD5w/oXTdE4=;
-        b=I1FJc2Ztb9Pdi/ovRT0z3eql7gjB3M6FCCdvoELzGQY4Dl73CaRhFpfq1emti9awTK
-         vbOkg2/dqc1tqnQjIzLyPoKIVKfhvq/54ZUCaoWqQrIhlErl0Zxpt/ipcyruFlS5F1iW
-         KMviS+AOPHNxB4y5Tu75FAtQeWT/Kpzv9ThfrUcpT3Vyhkj3uRIhLrbLpZ3p/ydGpguD
-         xmZb84nTGrbCA8xDmS7yuPSAuZYL10bdGvL7vplIPpicmyWC9L5LdOl4O7T7hIgvk4Zg
-         2dF8HKNnEd7aIHO5fbwfTSip0/HZ+mX4rG8EIl3Ge50tpKW0ffTozy/aThSlLVqYicSE
-         9/oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739363955; x=1739968755;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wf5TM+EPqf0h+MA78sRvraMgyJZcMD1wBD5w/oXTdE4=;
-        b=MJY1M5HhCxlVIsNfHCHWiHxKdTEkrmXbWipKiR3UWVreDHDKOCUg0t4Ba4F2GwEqiY
-         C05lhn6G6CrJGhubL3JtKEXAGQqyAD5dyenf0mysPBh8NPH7TZ9ZesInuvQjdpUF49Za
-         sgxZM00I+PrF+GQrc3M1tS/64vDgFAh68ZuPt7c+bHEDYJyohl5PTKE+7S0c4M3SAxZ1
-         MU6OCVB+9AqBrWdcJDpKj5+60mSWquLBUI3IXrVTcKaBJS4zaq/ZEHXB8sw/i4iK+gVq
-         oqlveDwqeiu+CQLAGlQjFfpkBlWFVv5kJiucAhMTO+385j68SWeuelnezQ2mCAKLXHDs
-         U7ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWJOYv/4PQZ6TOkksYbTXY5VxHB9lOJ+nvVTZfGwOE3+JrnAHtyR+zeB3Gsy753Vb8Fgo5ezgDyQof1d/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8/IXi4Fc2ct1tQvK8EZdkxy/5ntVOMeVFniqgBraWC4ATHSQh
-	Qr3DAfds/xgjiDdaje3kJj88Fa7gujyQkCoiNClSvZovwSMhhyY+
-X-Gm-Gg: ASbGncscYqUmBilyx/nEUwPwado5hA/IRjUb8TECFVOU4HsFiYMx1vylvAlBMTz+2Zh
-	4Qaa+QuPDmbsy1j7h2og6l8EVV6VjGR0P4nXmPAg4OjMy2/7ZwSVL4Id0ZvbXVLDb8oaC9eM293
-	k/dqfaG5AYTxXaxyMDkCPCzAYcDZDi2+28vqZHuE/bTmlqe03lUtnqcwGRc+K0M+Y69xgNvMu83
-	LW/GFtFAEnIf4CPv6MudkxaLiwvg4snBD6qpcufVmwwSoskK38FR2lkOBnAXaVAjJm5jF7xLrSX
-	s2CP75BSaW7froAT5Zizsgxh248tY4c=
-X-Google-Smtp-Source: AGHT+IEwoFNH8vKEKheDsG5klOKCRWG3RJFrzMBtlqvl5q0+QcUeqDNFn0YkXm4q5LruJnoytlXUcA==
-X-Received: by 2002:a17:902:c94c:b0:21b:d105:26b9 with SMTP id d9443c01a7336-220bbad1319mr52418905ad.16.1739363954744;
-        Wed, 12 Feb 2025 04:39:14 -0800 (PST)
-Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:bc75:3c8b:62e:1d7d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220cb6aeefasm411265ad.63.2025.02.12.04.39.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 04:39:14 -0800 (PST)
-Date: Wed, 12 Feb 2025 20:39:09 +0800
-From: I Hsin Cheng <richard120310@gmail.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: yury.norov@gmail.com, anshuman.khandual@arm.com, arnd@arndb.de,
-	linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH 2/2] uapi: Refactor __GENMASK_ULL() for speed-up
-Message-ID: <Z6yWbROu5rREhw85@vaxr-BM6660-BM6360>
-References: <20250211162412.477655-1-richard120310@gmail.com>
- <20250211162412.477655-3-richard120310@gmail.com>
- <20250211223045.5c2b92a4@pumpkin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ol2XmWQL0LvYNdrCwBB1e/pSZJdNA92hWc0oKWgoFhvDZa0+M9HDsqN6X9lVArqFULthtdFuk+SC/eUZ4Ho21LPgz7A4B6Tc7XeFLbE0+KlpdDCNvswkWJM7zTsIa3Zm5XhwAtKFQknBSci10mELFmKKzsH1eoGllaXLSMxa0bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC907113E;
+	Wed, 12 Feb 2025 04:40:59 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D74B3F58B;
+	Wed, 12 Feb 2025 04:40:36 -0800 (PST)
+Date: Wed, 12 Feb 2025 12:40:33 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-rt-devel@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Brown <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: BUG: debug_exception_enter() disables preemption and may call
+ sleeping functions on aarch64 with RT
+Message-ID: <Z6yWwRcPvVGk2EyC@J2N7QTR9R3>
+References: <Z6YW_Kx4S2tmj2BP@uudg.org>
+ <Z6n16cK85JMyowDq@J2N7QTR9R3>
+ <Z6tf8iDhNriSGjeC@uudg.org>
+ <Z6vs3IWxUxhIDBBO@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,64 +58,153 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211223045.5c2b92a4@pumpkin>
+In-Reply-To: <Z6vs3IWxUxhIDBBO@uudg.org>
 
-On Tue, Feb 11, 2025 at 10:30:45PM +0000, David Laight wrote:
-> On Wed, 12 Feb 2025 00:24:12 +0800
-> I Hsin Cheng <richard120310@gmail.com> wrote:
+On Tue, Feb 11, 2025 at 09:35:40PM -0300, Luis Claudio R. Goncalves wrote:
+> On Tue, Feb 11, 2025 at 11:34:26AM -0300, Luis Claudio R. Goncalves wrote:
+> > On Mon, Feb 10, 2025 at 12:49:45PM +0000, Mark Rutland wrote:
+> > > On Fri, Feb 07, 2025 at 11:22:57AM -0300, Luis Claudio R. Goncalves wrote:
+> ...
+> > > I don't have an immediate suggestion; I'll need to go think about this
+> > > for a bit. Unfortunatealy, there are several nested cans of worms here.
+> > > :/
+> > > 
+> > > In theory, we can go split out the EL0 "debug exceptions" into separate
+> > > handlers, and wouldn't generally need to disable preemption for things
+> > > like BRK or single-step.
+> > 
+> > If this is an acceptable workaround, until we have the real solution,
+> > I can work on that :)
+> > 
+> > Luis
 > 
-> > The calculation of "((~_ULL(0)) - (_ULL(1) << (l)) + 1)" is to generate
-> > a bitmask with "l" trailing zeroes, which is equivalent to
-> > "(~_ULL(0) << (l))".
+> I tested the prototype below and it survived 6h of ssdd and the ptrace LTP
+> tests running simultaneously, in a tight loop. Would something along these
+> lines be an acceptable workaround?
+
+Sorry, no. This makes the code even more convoluted and less
+maintainable.
+
+If you want to fix single step specifically without bothering with the
+rest of the rework I mentioned, the right fix is to split that out from
+the other "debug exceptions", and handle that with the usual structure
+we have for other synchronous exceptions like FPAC/BTI/etc:
+
+* In arch/arm64/kernel/debug-monitors.c, add new do_el{1,0}_step()
+  functions which handle their corresponding stepping logic. These
+  should have the same rough shape as do_el{1,0}_fpac(), and should
+  handle all the default signalling logic that would otherwise be
+  handled by do_debug_exception().
+
+  The existing single_step_handler() should be removed, or at minimum
+  refactored and only called by those new do_el{1,0}_step() functions.
+
+  The existing hook_debug_fault_code() registration of
+  single_step_handler() should be removed.
+
+  I'm not sure whether do_el0_step() needs the
+  arm64_apply_bp_hardening() logic, but do_el1_step() does not.
+
+* In entry-common.c, add new el{1,0}_step() functions. Each of
+  el1h_64_sync_handler(), el0t_64_sync_handler(), and
+  el0t_32_sync_handler() should be updated to call those rather than
+  el{1,0}_dbg() for the corresponding EC values.
+
+  In el0_step() it shouldn't be necessary to disable preemption, and
+  that should be able to be:
+
+  | static void noinstr el0_step(struct pt_regs *regs, unsigned long esr)
+  | {
+  |         enter_from_user_mode(regs);
+  |         local_daif_restore(DAIF_PROCCTX);
+  |         do_el0_step(regs, esr);
+  |         exit_to_user_mode(regs);
+  | }
+
+  In el1_step(), I'm not *immediately sure* whether it's necessary to
+  disable preemption, nor whether we need to treat this and use
+  arm64_enter_el1_dbg() and arm64_exit_el1_dbg() rather than
+  entry_from_kenrel_mode() and exit_to_kernel_mode().
+
+  So we either need:
+
+  | static void noinstr el1_step(struct pt_regs *regs, unsigned long esr)
+  | {
+  |         arm64_enter_el1_dbg(regs);
+  |         do_el1_step(regs, esr);
+  |         arm64_exit_el1_dbg(regs);
+  | }
+
+  ... or:
+
+  | static void noinstr el1_step(struct pt_regs *regs, unsigned long esr)
+  | {
+  |         enter_from_kernel_mode(regs);
+  |         local_daif_inherit(regs);
+  |         do_el1_step(regs, esr);
+  |         local_daif_mask(regs);
+  |         exit_to_kernel_mode(regs);
+  | }
+
+With that, we're a step forward in the right direction.
+
+Mark.
+
 > 
-> Yes, and if you look through the commit history you'll see it was changed
-> to avoid a compiler warning about the shift losing significant bits.
-> So you are just reverting that change and the compiler warnings will
-> reappear.
 > 
-> For non-constants I suspect that (2ul << hi) - (1ul << lo) is the
-> best answer.
-> But the compiler (clang with some options?) will still complain
-> for constants when trying to set the high bit.
+> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> index 8b281cf308b30..eb3b54710024f 100644
+> --- a/arch/arm64/mm/fault.c
+> +++ b/arch/arm64/mm/fault.c
+> @@ -933,18 +933,20 @@ void __init hook_debug_fault_code(int nr,
+>   * accidentally schedule in exception context and it will force a warning
+>   * if we somehow manage to schedule by accident.
+>   */
+> -static void debug_exception_enter(struct pt_regs *regs)
+> +static void debug_exception_enter(struct pt_regs *regs, int touch_preemption)
+>  {
+> -	preempt_disable();
+> +	if (touch_preemption)
+> +		preempt_disable();
+>  
+>  	/* This code is a bit fragile.  Test it. */
+>  	RCU_LOCKDEP_WARN(!rcu_is_watching(), "exception_enter didn't work");
+>  }
+>  NOKPROBE_SYMBOL(debug_exception_enter);
+>  
+> -static void debug_exception_exit(struct pt_regs *regs)
+> +static void debug_exception_exit(struct pt_regs *regs, int touch_preemption)
+>  {
+> -	preempt_enable_no_resched();
+> +	if (touch_preemption)
+> +		preempt_enable_no_resched();
+>  }
+>  NOKPROBE_SYMBOL(debug_exception_exit);
+>  
+> @@ -953,8 +955,14 @@ void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
+>  {
+>  	const struct fault_info *inf = esr_to_debug_fault_info(esr);
+>  	unsigned long pc = instruction_pointer(regs);
+> +	unsigned long req = ESR_ELx_EC(esr);
+> +	int touch_preemption;
+>  
+> -	debug_exception_enter(regs);
+> +	touch_preemption = !(IS_ENABLED(CONFIG_PREEMPT_RT) &&
+> +		(req == ESR_ELx_EC_SOFTSTP_LOW || req == ESR_ELx_EC_BRK64
+> +		 || req == ESR_ELx_EC_BKPT32 || req == ESR_ELx_EC_SOFTSTP_CUR));
+> +
+> +	debug_exception_enter(regs, touch_preemption);
+>  
+>  	if (user_mode(regs) && !is_ttbr0_addr(pc))
+>  		arm64_apply_bp_hardening();
+> @@ -963,7 +971,7 @@ void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
+>  		arm64_notify_die(inf->name, regs, inf->sig, inf->code, pc, esr);
+>  	}
+>  
+> -	debug_exception_exit(regs);
+> +	debug_exception_exit(regs, touch_preemption);
+>  }
+>  NOKPROBE_SYMBOL(do_debug_exception);
+>  
 > 
-> That version also doesn't need BITS_PER_[U]LONG.
-> While that is valid for C, the _ULL() are there for the assembler
-> (when they are no-ops) so there is no way asm copies can be right
-> for both GENMASK() ans GENMASK_ULL().
-> 
-> 	David
-
-Hi David,
-
-Thanks for the review!
-
-> Yes, and if you look through the commit history you'll see it was changed
-> to avoid a compiler warning about the shift losing significant bits.
-
-I've browse through the commits of include/linux/bits.h , where
-GENMASK() was placed under. Though I didn't find specific commit of it,
-would you be so kind to paste the link of the commit?
-
-I assume you're talking about warnings like the following?
-warning: left shift count >= width of type [-Wshift-count-overflow]
-
-If this is the case then it happens for the current version as well, I
-mean from the perspective of operations, "(~_ULL(0) << (l))" and
-"(_ULL(1) << (1))" are basically the same, they all shift a constant
-left with an amount of "l". When "l" is large enough the compiler will
-complain about losing msb.
-
-> While that is valid for C, the _ULL() are there for the assembler
-> (when they are no-ops) so there is no way asm copies can be right
-> for both GENMASK() ans GENMASK_ULL().
-
-I don't understand this part sorry, if asm copies can't be right for
-"~_ULL(0) << (l)" , how can it be right for "(_ULL(1) << (l))" ?
-At least from my pespective these 2 ops only differs at the value of
-constant. Please let me know about it, I'm not familiar with assembler
-and would love to know more about it. Thanks.
-
-Best regards,
-I Hsin Cheng
-
 
