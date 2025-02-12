@@ -1,255 +1,232 @@
-Return-Path: <linux-kernel+bounces-510894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CA8A3234C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:14:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE90A32378
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:28:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A9A3A60E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F552188B1AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE852080D0;
-	Wed, 12 Feb 2025 10:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4073208961;
+	Wed, 12 Feb 2025 10:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nS7W/oll"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="XN/z+1b9"
+Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5902B9BC;
-	Wed, 12 Feb 2025 10:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2F41E500C;
+	Wed, 12 Feb 2025 10:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739355265; cv=none; b=r3xA+qTSqIJ5dqzdUqujUnfg5jliPRobaFdHsj5JtXBNEoHYcZxhGO7Qoo/302t7/sDTtQjnFB1NZSFmsF1C/Qb7E2Y+esH9BTOXt7xU/UI3VpN4jZZsgNe5VixJF0GUeFpiZmFVVfj1oS6BEBuvs+ywmhAGf+DqB8eV2DShpyw=
+	t=1739356104; cv=none; b=N5uGYNt9fRu2nDgwla9KHz+XB+4w3A38KBEP/tLrKtXiyQXjXtG9PR59WPO6R0+qbGRhT6D//JSjfSwvQlUgEQ9ydRTWi7I5ydu7RwTqefIcvhDz2Zd55v8MMkhEPzfZWRjGyugxhyXglOmd5kAZu6GGF9o4XzIngfOQkaii7RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739355265; c=relaxed/simple;
-	bh=JHNKxb98XDOz8TEqehyfk+PDgY3SUBP80cLK0hwdIQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVI0fTDUh/jNvm8DbXVEFydn4UreAGCjDoAEzbS2JSvipawO5svUqY36VmeQeGrqEBoCD1U1b6tEZVU0pBmg+/6+BP5TH0DXOqns5tRW+wBo39rphCdX+SNmhjUHtjKKi0bIf5TFHUxh2+JOImI6N2alG7nANFw642Wvq48Ecyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nS7W/oll; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53A44C4CEDF;
-	Wed, 12 Feb 2025 10:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739355264;
-	bh=JHNKxb98XDOz8TEqehyfk+PDgY3SUBP80cLK0hwdIQk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=nS7W/ollfsfNgz5863/V+Is7NkhpPGXXE3/L2wvlmfCfV+sYtjl5QEcEAhhVfCMLy
-	 hVAbC3X7Z+C04Xnli/IsWOA2i68x2Q1UEBI8nVLzrx/NclzQ9hBlBdOTcl6zDtp6aU
-	 yOPaVH1VbLrPo9xcDfnYVa4ykdZCkUup/VIXx953CF2ixNl3iUVUUvbW5p3sOWHAMZ
-	 vhfkyqU7sYQnCLCfr4SafsIDhcGhzv6CekYxlpLhFTrzz6q2E5VyY33MFWDXceRPuo
-	 1fZPu2kygmih8EoeBr2jw3r/ea7ATUFcs/vJs8Z+NXpyxd58TOtiLyEBzWD97xGFGj
-	 2yRTYxtpPhC8g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 95FBDCE0546; Wed, 12 Feb 2025 02:14:19 -0800 (PST)
-Date: Wed, 12 Feb 2025 02:14:19 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH RFC v2 rcu] Fix get_state_synchronize_rcu_full() GP-start
- detection
-Message-ID: <b9510edf-47ed-4eeb-9259-259445a1fe82@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <a18ec931-a7cb-408b-8707-f88068a13ba9@paulmck-laptop>
- <CAEXW_YReLoj+fofM9=fT-G0rz-E0z7vcwg_ANrbfCrPOX99tYA@mail.gmail.com>
- <CAEXW_YQaC+TYnXZca2MBcJQgf2EWD+pBp-Dih+b647RtpJ+LNQ@mail.gmail.com>
- <83f5a3ff-8f89-4994-844f-b7eb9e80b16d@paulmck-laptop>
- <CAEXW_YTiX2taVbg3keCR4RuxSdfpVA0fVPpCcDWXjF7rH7Kkdw@mail.gmail.com>
- <CAEXW_YTduDBJY2CbkStWc3-4MP06+bJVFmEbgvfayB6BQyyksw@mail.gmail.com>
- <76ea9e49-c8d9-4ddf-8dd5-65ba4096e242@paulmck-laptop>
- <CAEXW_YSxGb3ph-bBiWsOJS-C2XvW9FUuwtoM1eFVxPomMKUd5A@mail.gmail.com>
- <CAEXW_YS4wD1WJm3fGukyf_rUTZoe9Rmbs2rphLntmo2NbYG--A@mail.gmail.com>
- <CAEXW_YQkpiQeGat1WhUgMgd3qDWSTBnD6ivc-vdhUHK-6yaUAQ@mail.gmail.com>
+	s=arc-20240116; t=1739356104; c=relaxed/simple;
+	bh=Wz6iXmcsFrEVmG+EnId6NIbwPCBvteN3+pwH0yeRkCw=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=B8q3vvfaSFSXsC407dlqOWQeNOYOMTZzSuaBZl4biEDLJIuBRwhGbuZ+zVYnofHzauo7bXiuTTNwnad+68qPx6PG9Lwc38UKQ1uzaa9R7SAhpM0hy/n4o8mRV1i6mD+3f1p73Mcshi1zuPjDAtB8Qmvp/hponqGqwv8u9sW2GWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=XN/z+1b9; arc=none smtp.client-ip=203.205.221.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1739356098;
+	bh=oSSe/GgjHh0szYlaaSrh9h5S5lfXg+8ynEri0cdnafE=;
+	h=From:To:Cc:Subject:Date;
+	b=XN/z+1b9lnObCyfUBddYK18Quw9q3Oul84P+30onmtZ4zg0TFVI/GXfNNLFJB4FZ2
+	 +Q+umUnph7CR/RKXA7QxwPFg/bzWrvvmDcmC+BJHUkhDapnPleaIbcsmw8uVQqrE9K
+	 aRUG0LOrWCF0b+wVx6XarGl3RrBn7EhBrFzSQq+4=
+Received: from NUC10.. ([39.156.73.10])
+	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
+	id 3A13BEE0; Wed, 12 Feb 2025 18:14:33 +0800
+X-QQ-mid: xmsmtpt1739355273tjnp76cxp
+Message-ID: <tencent_515567355C0AA854BDA68C3A219A18040B0A@qq.com>
+X-QQ-XMAILINFO: OIJV+wUmQOUAFZpyS7yx/QaJJ5E7k2RZ6evFMt+32t2NM12PZiwQMFH+K4aC5f
+	 1Tf6QWtScoaM4kvdwK0TnyxmcOVNVR8SI5kQkD8d3tc1i2RzJYO2GEDa34Ikj16eoKMW3VMtV1Np
+	 uMtmNG5yBMXbkpjeJbXYz1lpYXfH6PIaB+5LJq+apOAIxvQTkCbcTlgZ1hY1eVOsfFHIE2A8KN5T
+	 KTlN7R3pB2CCX69SIK9WOOIt4oWkX/I4XaiMRrKhESZ5ljjlFicwDxzJt44Qo3JfEcZR5ojhcbSb
+	 Ao7q9gbQCRcVPLq7FYt6+0yqSddNNOYP3kwMO9f1TWqcQkaj2VBLPLA0tjHydeQrW+yDeExqjFKH
+	 SX9E/JjGZYX4JjNgibNL+NSJynrD7oSt4FDcZw9LMD+6H6uw+/ELlgNPkxkOlNSM12TcTr16ahT/
+	 EDuN+hhRoqFDOVZT9dxSeo9G7RliqLxwpf0OkVG0Ctq6bju/E1LAhyObswmEBQuTfK9tOx1oDdTl
+	 x4C03VQHDEQmjceejL3Y303Cepdk1Ci8keLeMHpuR80xWE90FkvnifoB+P2XuvlMrTrdmdDnMP/A
+	 fvnETyPayttdYyxFcejzyeiRujLomRERYX/k/ZCNfVl2+65y6fkTWFKBDJWkRvr/aEjq415jLSk8
+	 8RV7Q7l/tB6Vh4nF2k6n1Xd6BN1CVauNp/M10oC62WwDUZ2o2bI6Iumtkrltqc9d/qsHDIN0eLsf
+	 tu4hQ0fRbi3Tvu6mbdLG6V37dXVo3GKnxIvpGzqSbX4tsz5O6ujDuBFz0rzAgv4EMWG5OTnqnBPX
+	 0hWC6QRS3ayPrR3WLYV/PIXHUFwjAovFUNu9pyy2fw3HRRxsDGVFnFqE34XdjArdxoA1CfT1FcGW
+	 P+79qZri1+CHVlERhAS48DaFayKkKFwN/axoaTClp5AZEccO1cj6ppAq7MAIj6Jq/rOMMQ02S29b
+	 KH/fEvqWvjAO4Gz/CX/EsRQoS6iNR1LTeVFDr2PTIkKXVD9Ch7/LHiQlwy1Lw3
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Rong Tao <rtoax@foxmail.com>
+To: qmo@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org
+Cc: rongtao@cest.ccn,
+	rtoax@foxmail.com,
+	Rong Tao <rongtao@cestc.cn>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Tao Chen <chen.dylane@gmail.com>,
+	Mykyta Yatsenko <yatsenko@meta.com>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	bpf@vger.kernel.org (open list:BPF [TOOLING] (bpftool)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH bpf-next] bpftool: bash-completion: Add nopasswd sudo prefix for bpftool
+Date: Wed, 12 Feb 2025 18:14:30 +0800
+X-OQ-MSGID: <20250212101432.186343-1-rtoax@foxmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEXW_YQkpiQeGat1WhUgMgd3qDWSTBnD6ivc-vdhUHK-6yaUAQ@mail.gmail.com>
 
-On Mon, Feb 10, 2025 at 08:22:24PM -0500, Joel Fernandes wrote:
-> On Mon, Feb 10, 2025 at 7:28 PM Joel Fernandes <joel@joelfernandes.org> wrote:
-> > On Mon, Jan 27, 2025 at 1:45 PM Joel Fernandes <joel@joelfernandes.org> wrote:
-> > > On Mon, Jan 27, 2025 at 11:49 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > > On Sun, Jan 26, 2025 at 09:58:11PM -0500, Joel Fernandes wrote:
-> > > > > On Sun, Jan 26, 2025 at 9:55 PM Joel Fernandes <joel@joelfernandes.org> wrote:
-> > > > > > On Sun, Jan 26, 2025 at 9:03 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > > > > > On Sun, Jan 26, 2025 at 08:22:23PM -0500, Joel Fernandes wrote:
-> > > > > > > > On Sun, Jan 26, 2025 at 8:13 PM Joel Fernandes <joel@joelfernandes.org> wrote:
-> > > > > > > > > Hi, Paul and Frederic,
-> > > > > > > > >
-> > > > > > > > > [...]
-> > > > > > > > > > > > On Sat, Jan 25, 2025 at 12:03:58AM +0100, Frederic Weisbecker wrote:
-> > > > > > > > > > > > > Le Fri, Dec 13, 2024 at 11:49:49AM -0800, Paul E. McKenney a écrit :
-> > > > > > > > > > > > > > diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-> > > > > > > > > > > > > > index 2f9c9272cd486..d2a91f705a4ab 100644
-> > > > > > > > > > > > > > --- a/kernel/rcu/rcu.h
-> > > > > > > > > > > > > > +++ b/kernel/rcu/rcu.h
-> > > > > > > > > > > > > > @@ -162,7 +162,7 @@ static inline bool rcu_seq_done_exact(unsigned long *sp, unsigned long s)
-> > > > > > > > > > > > > >  {
-> > > > > > > > > > > > > >         unsigned long cur_s = READ_ONCE(*sp);
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > -       return ULONG_CMP_GE(cur_s, s) || ULONG_CMP_LT(cur_s, s - (2 * RCU_SEQ_STATE_MASK + 1));
-> > > > > > > > > > > > > > +       return ULONG_CMP_GE(cur_s, s) || ULONG_CMP_LT(cur_s, s - (3 * RCU_SEQ_STATE_MASK + 1));
-> > > > > > > > > > > > >
-> > > > > > > > > [...]
-> > > > > > > > > > > > > The way I understand it is that rcu_state.gp_seq might be seen started while
-> > > > > > > > > > > > > root_rnp->gp_seq is not. So rcu_seq_snap() on the started rcu_state.gp_seq
-> > > > > > > > > > > > > may return maximum 2 full GPs ahead of root_rnp->gp_seq. And therefore it takes below
-> > > > > > > > > > > > > 2 GPs to safely deduce we wrapped around.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Exactly!
-> > > > > > > > > > > >
-> > > > > > > > > > > > > Should it be ULONG_CMP_LT(cur_s, s - (2 * (RCU_SEQ_STATE_MASK + 1))) ?
-> > > > > > > > > > > >
-> > > > > > > > > > > > Quite possibly.  I freely admit that I allowed a bit of slop because
-> > > > > > > > > > > > time was of the essence (holidays and all that) and also it does not
-> > > > > > > > > > > > hurt much to lose a couple of counts out of a 2^32 cycle, to say nothing
-> > > > > > > > > > > > of the common-case 2^64 cycle.  It would not hurt to be exact, but it
-> > > > > > > > > > > > would be necessary to convince ourselves that we were not off by one in
-> > > > > > > > > > > > the wrong direction.
-> > > > > > > > > > > >
-> > > > > > > > > > > > I would be happy to see a patch, as long as it was sufficiently
-> > > > > > > > > > > > convincing.
-> > > > > > > > > > >
-> > > > > > > > > > > I'm not so much concerned about being exact but rather about making
-> > > > > > > > > > > sure we still understand what we did within one year. We can leave one
-> > > > > > > > > > > more grace period than what we expect out of paranoia but, the most
-> > > > > > > > > > > important is that we comment about what we expect and why. Let me
-> > > > > > > > > > > prepare a patch for that.
-> > > > > > > > > >
-> > > > > > > > > > Even better!
-> > > > > > > > >
-> > > > > > > > > Do we really have users who could pass such a huge delta wrapped
-> > > > > > > > > around value to poll() i.e > ULONG_MAX/2 ?  For 32-bit, that would be
-> > > > > > > > > 2 billion count since the get() (500 million GPs on 32-bit?). I am
-> > > > > > > > > curious if such a scenario should be a WARN() because also: If more
-> > > > > > > > > than ULONG_MAX/2 values are possible after get(), then a full or
-> > > > > > > > > multiple ULONG_MAX wraparound is also possible. This means then both
-> > > > > > > > > rcu_seq_done() and rcu_seq_done_exact() become unreliable anyway for
-> > > > > > > > > such stale get() values.
-> > > > > > > > >
-> > > > > > > > > I do agree with both your points on the side effect of the patch to
-> > > > > > > > > rcu_seq_done_exact(), but I am not fully convinced myself about
-> > > > > > > > > utility of rcu_seq_done_exact() versus the rcu_seq_done() but I could
-> > > > > > > > > be missing something.
-> > > > > > > >
-> > > > > > > > I want to modify my comment on reliability. rcu_seq_done_exact() is
-> > > > > > > > certainly more "reliable" than rcu_seq_done() for wraparound delta  >
-> > > > > > > > ULONG_MAX/2. Still with such a huge wrap around it is not fail proof
-> > > > > > > > if it lands within the "3 Grace period" window, so if it is not super
-> > > > > > > > reliable and if the user should not rely on it, then I wonder if it is
-> > > > > > > > better to not do it and instead warn the user they are playing with
-> > > > > > > > fire. But a counter-argument might be, landing within the 3 GP window
-> > > > > > > > is quite low probability...
-> > > > > > >
-> > > > > > > It is also a harmless false negative.  And another poll within a few
-> > > > > > > hundred milliseconds will set things straight.  In contrast, if we
-> > > > > > > used rcu_seq_done(), it would be a good long time before we got out of
-> > > > > > > false-negative territory.
-> > > > > >
-> > > > > > True!
-> > > > > >
-> > > > > > > On a 32-bit system, if there was an expedited grace period every 10
-> > > > > > > microseconds (just barely possible on small systems), then a 32-bit
-> > > > > > > counter would wrap in about 12 hours.  So there would be a six-hour
-> > > > > > > false-negative zone.
-> > > > > > >
-> > > > > > > So an expedited grace period every 10 microseconds combined with
-> > > > > > > a six-hour polling delay is unlikely, but not out of the realm of
-> > > > > > > possibility.
-> > > > > >
-> > > > > > Assuming that every 10 microsecond of the entire 6 hours is used for
-> > > > > > an expedited GP, but I agree with your point.
-> > > > > >
-> > > > > > > Please feel free to nominate a comment.
-> > > > > >
-> > > > > > Ok thanks, I'll see what Frederic comes up with and can take it from there.
-> > > > >
-> > > > > I forgot to ask is the reason for keeping rcu_seq_done_exact() to have
-> > > > > more complexity only when needed, or does it make sense to rename
-> > > > > rcu_seq_done_exact() as rcu_seq_done_done() and get rid of the old
-> > > > > rcu_seq_done()?
-> > > >
-> > > > We might well be able to use the rcu_seq_done_exact() algorithm for
-> > > > all the uses, but that will require very careful review and testing.
-> > > > Please keep in mind that there are quite a few uses, that the benefit
-> > > > is small, and I was lazy.  ;-)
-> > > >
-> > > > The difference with the polling APIs is that a user might well
-> > > > legitimately hang onto a cookie for six hours, for example, by having
-> > > > used it to tag a data structure in a block cache or similar.
-> > >
-> > > Thanks for clarification. I will work on a patch along these lines and
-> > > see if it is worth doing.
-> >
-> > Here I think there is a real issue:
-> >
-> > poll_state_synchronize_srcu() uses rcu_seq_done()
-> >
-> >     if (cookie != SRCU_GET_STATE_COMPLETED &&
-> >         !rcu_seq_done(&ssp->srcu_sup->srcu_gp_seq, cookie))
-> >         return false;
-> >
-> > where as poll_state_synchronize_rcu() uses rcu_seq_done_exact()
-> >
-> > bool poll_state_synchronize_rcu(unsigned long oldstate)
-> > {
-> >     if (oldstate == RCU_GET_STATE_COMPLETED ||
-> >         rcu_seq_done_exact(&rcu_state.gp_seq_polled, oldstate)) {
-> >
-> > I believe rcu_seq_done_exact() makes more sense for polling API, as
-> > there is a higher chance that there is a significant delay between the
-> > get_state..() and poll_state..() calls.
-> >
-> > I think I am pretty convinced now looking at all the call sites that
-> > rcu_seq_done_exact() should be used everywhere. I am vetting more
-> > callsites, but that's what I'm leaning towards. I think
-> > rcu_seq_done_exact() makes the code more robust to false-negatives
-> > (duration during which a false-negative is in effect)...
+From: Rong Tao <rongtao@cestc.cn>
 
-I don't recall anything needing the large region of false negativity,
-but there is much that I do not remember.  ;-)
+In the bpftool script of bash-completion, many bpftool commands require
+superuser privileges to execute. Otherwise, Operation not permission will
+be displayed. Here, we check whether ordinary users are exempt from
+entering the sudo password. If so, we need to add the sudo prefix to the
+bpftool command to be executed. In this way, we can obtain the correct
+command completion content instead of the wrong one.
 
-> I was wondering if this can go wonky a little bit (not bug, just
-> optimization issue):
-> 
-> __note_gp_changes() sees rdp->gpwrap is set.
-> 
-> rnp->gp_seq had overflown and so now < rdp->gp_seq when the
-> rcu_advance_cbs() is called.
+For example, when updating array_of_maps, the wrong 'hex' is completed:
 
-The rdp->gpwrap is set quite some time before overflow, and it is set
-by the grace-period kthread.  Which in theory prevents it from advancing
-while setting ->gpwrap.
+    $ sudo bpftool map update name arr_maps key 0 0 0 0 value [tab]
+    $ sudo bpftool map update name arr_maps key 0 0 0 0 value hex
 
-> rcu_advance_cbs() uses the rnp->gp_seq to do the advancing.
-> 
-> All the CBs that could be advanced don't move because their gp_seq is
-> > rnp->gp_seq due to the overflow.
+However, what we need is "id name pinned". Similarly, there is the same
+problem in getting the map 'name' and 'id':
 
-That would require a long delay in rcu_advance_cbs(), and isn't this delay
-(from the viewpoint of the "clock" embodied by the grace-period sequence
-number) prevented by the fact that the leaf rcu_node structure's ->lock
-is held?
+    $ sudo bpftool map show name [tab] < get nothing
+    $ sudo bpftool map show id [tab]   < get nothing
 
-> It is probably a slight delay in CB execution and not that big a deal.
-> I am not saying this is an issue but something I observed when reading
-> code.
-> 
-> I also got to go audit rcu_seq_completed_gp() to see the implications
-> of the ULONG_CMP_LT in it...
+This commit fixes the issue.
 
-Wouldn't we want this comparison to work the same way as that of
-rcu_seq_done()?  As in, if we change rcu_seq_done(), shouldn't we
-also change rcu_seq_completed_gp()?  (Not necessarily in the same
-patch, but at the same time.)
+    $ sudo bpftool map update name arr_maps key 0 0 0 0 value [tab]
+    id      name    pinned
 
-							Thanx, Paul
+    $ sudo bpftool map show name
+    arr_maps         cgroup_hash      inner_arr1       inner_arr2
+
+    $ sudo bpftool map show id
+    11    1383  4091  4096
+
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
+---
+ tools/bpf/bpftool/bash-completion/bpftool | 29 +++++++++++++++--------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
+
+diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
+index 1ce409a6cbd9..25fb859cdfa4 100644
+--- a/tools/bpf/bpftool/bash-completion/bpftool
++++ b/tools/bpf/bpftool/bash-completion/bpftool
+@@ -5,6 +5,15 @@
+ #
+ # Author: Quentin Monnet <quentin.monnet@netronome.com>
+ 
++# In the bpftool script of bash-completion, many bpftool commands require
++# superuser privileges to be executed. Otherwise, EPERM will occur. Here,
++# it is detected whether ordinary users are exempt from sudo passwords. If
++# so, it is necessary to add the "sudo" prefix to the required bpftool
++# command execution.
++if sudo --non-interactive true 2>/dev/null; then
++    _sudo=sudo
++fi
++
+ # Takes a list of words in argument; each one of them is added to COMPREPLY if
+ # it is not already present on the command line. Returns no value.
+ _bpftool_once_attr()
+@@ -46,7 +55,7 @@ _bpftool_one_of_list()
+ 
+ _bpftool_get_map_ids()
+ {
+-    COMPREPLY+=( $( compgen -W "$( bpftool -jp map  2>&1 | \
++    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp map  2>&1 | \
+         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
+ }
+ 
+@@ -54,14 +63,14 @@ _bpftool_get_map_ids()
+ _bpftool_get_map_ids_for_type()
+ {
+     local type="$1"
+-    COMPREPLY+=( $( compgen -W "$( bpftool -jp map  2>&1 | \
++    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp map  2>&1 | \
+         command grep -C2 "$type" | \
+         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
+ }
+ 
+ _bpftool_get_map_names()
+ {
+-    COMPREPLY+=( $( compgen -W "$( bpftool -jp map  2>&1 | \
++    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp map  2>&1 | \
+         command sed -n 's/.*"name": \(.*\),$/\1/p' )" -- "$cur" ) )
+ }
+ 
+@@ -69,38 +78,38 @@ _bpftool_get_map_names()
+ _bpftool_get_map_names_for_type()
+ {
+     local type="$1"
+-    COMPREPLY+=( $( compgen -W "$( bpftool -jp map  2>&1 | \
++    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp map  2>&1 | \
+         command grep -C2 "$type" | \
+         command sed -n 's/.*"name": \(.*\),$/\1/p' )" -- "$cur" ) )
+ }
+ 
+ _bpftool_get_prog_ids()
+ {
+-    COMPREPLY+=( $( compgen -W "$( bpftool -jp prog 2>&1 | \
++    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp prog 2>&1 | \
+         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
+ }
+ 
+ _bpftool_get_prog_tags()
+ {
+-    COMPREPLY+=( $( compgen -W "$( bpftool -jp prog 2>&1 | \
++    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp prog 2>&1 | \
+         command sed -n 's/.*"tag": "\(.*\)",$/\1/p' )" -- "$cur" ) )
+ }
+ 
+ _bpftool_get_prog_names()
+ {
+-    COMPREPLY+=( $( compgen -W "$( bpftool -jp prog 2>&1 | \
++    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp prog 2>&1 | \
+         command sed -n 's/.*"name": "\(.*\)",$/\1/p' )" -- "$cur" ) )
+ }
+ 
+ _bpftool_get_btf_ids()
+ {
+-    COMPREPLY+=( $( compgen -W "$( bpftool -jp btf 2>&1 | \
++    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp btf 2>&1 | \
+         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
+ }
+ 
+ _bpftool_get_link_ids()
+ {
+-    COMPREPLY+=( $( compgen -W "$( bpftool -jp link 2>&1 | \
++    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp link 2>&1 | \
+         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
+ }
+ 
+@@ -156,7 +165,7 @@ _bpftool_map_guess_map_type()
+     [[ -z $ref ]] && return 0
+ 
+     local type
+-    type=$(bpftool -jp map show $keyword $ref | \
++    type=$(${_sudo} bpftool -jp map show $keyword $ref | \
+         command sed -n 's/.*"type": "\(.*\)",$/\1/p')
+     [[ -n $type ]] && printf $type
+ }
+-- 
+2.48.1
+
 
