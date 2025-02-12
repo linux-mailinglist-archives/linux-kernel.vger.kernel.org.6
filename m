@@ -1,126 +1,192 @@
-Return-Path: <linux-kernel+bounces-510488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5931EA31DC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:13:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08917A31DC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B549E188A57E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:13:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C83797A2675
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A926F1D63FF;
-	Wed, 12 Feb 2025 05:13:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DE65474C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6DD1EEA2D;
+	Wed, 12 Feb 2025 05:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iVNOU5+9"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC8E38FA3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739337188; cv=none; b=M4l+2ZE05nK2//2uNMjxe8arifRUk9eQEd5TsXRtmkEoHKl0Nf8QVrA8seapSdNkyrlfJBWp5h3ekwLkmR5Dx7qMWEEYI4kAvJhpc948ngA5+yI+iOQRp8dNdjScr+uCwU/hq960/arJSlzWg0tIRwFr2kNl2CE5Dc3If9Jj26c=
+	t=1739337315; cv=none; b=lp/0SPAU0UznQ03ob8+j4sriHTK8PBC+oU+KQIm9Zhe+/qFVtGgKrDR4dQ3YmtBCxvHvrFrziwyy2CYc/yxPyqgPOi1FHmsh2QWBG4prbDv1YOXe4phg5tFsOYD1WNYYFaa62Kyg55ryV9iT/7iMHEMEJwCG9xSBRViRr9pP7d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739337188; c=relaxed/simple;
-	bh=apAY5igXLHo93QleIpsBztmO7BUOMH9zII/geat3C6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=phYHgLAuthRNNPSzF7I9Zy2uZuxeNdkTVcGWACH8l12oSxldJwmvm04muM70DaEmYJ1DOLb0ZG2mf3cQNH1F7tjro2jgz1TvkbU9xDKn0TNJS/DqBseyQY+BuExC1cOxRqcjvJTCVsHZ8pyOwjRrv+RqvkHQkheqTxncxJb+D8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DD8A13D5;
-	Tue, 11 Feb 2025 21:13:26 -0800 (PST)
-Received: from [10.162.43.26] (unknown [10.162.43.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CFCE3F58B;
-	Tue, 11 Feb 2025 21:13:03 -0800 (PST)
-Message-ID: <bd881d92-cf4f-4f5e-9c22-1f5f6a5c4f15@arm.com>
-Date: Wed, 12 Feb 2025 10:42:59 +0530
+	s=arc-20240116; t=1739337315; c=relaxed/simple;
+	bh=WlVpWlFqllmORDX45wwKbUaqqBa8fdbgYsRYUxKe4vU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 Cc:Content-Type; b=Mma/xznPP4xYlThW6uns0gdCTXlGxHi2zqGhlD5v5mHNyTc/KVLNfFh3Gak4HM/yTg8/WxuUi8WTWki6lzbR/j4DDqCA6wltEdH02CcrRhTSAfMXeZd3JA5oeq1+qchH5bCWvmPhM5fSaXxFoeKAO0GHhMXaHY4Jm2kOtPkw8aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iVNOU5+9; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5de63846e56so7355355a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:15:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739337311; x=1739942111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=by44FCaOVSwUNn2ppN1S+bcPDj+QJGdRf2SWLY8Rlvo=;
+        b=iVNOU5+9D210Csbiy+Bi6M0LRXoQpX3Yiqc2nWTn+rmHBRd9+Q7gOqE5xgh6+2m2Ly
+         TSkHgC/KCPb4k1gVjMO2z0NBivcn13ww/mQF2CUhi/HoiJYgYglM2U8cTZpSg2gPFpQI
+         79yQ0gvsrGcRaYzjr+s9kllLizzZCHwm2GsJUxMBu9NlnhCOIW/r5+Io9Hj6o8qUNjeQ
+         qJBVjALRdYPh7K2y8ELqpJmUg459C9naFCLT09p51OjP80Uai5ckWHtcHGsarExC7M+t
+         dheN51dAI2B8uK2rr7KOFQstmLvouB9rfVpmw3Fm+0FD+Gc0/3F9gGQ19nDAmcdZo61t
+         hZpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739337311; x=1739942111;
+        h=content-transfer-encoding:cc:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=by44FCaOVSwUNn2ppN1S+bcPDj+QJGdRf2SWLY8Rlvo=;
+        b=fbQHE0gk+HjorunxJn2z9sdsEk/EWXWi1oPmCf8CWV5NPNRd3WB6XwrFp6heaES2Ks
+         vbyg5XB4Niee5/XRYFjJy1gFs2I1XCjJFwWWalc5BCs2fuLHbtx/Fo8mlUSiwQPD2J+t
+         UINC2UIILn6ak/Tb7TZe8+q8q4zD5x0e4z+fTPyOQY8eOScL3mX1M/WptGrF9qroNXZe
+         LTlyxlwFClp6HxPbS+8Qq3Vcu82ZU63wnnLQdKopokS/lRyii3TanLRnNW6QGNJVPvUx
+         l3Ts+mMi4cZiBbnFbaiH6KsGyvyUMmaoX6zFXJbkji45gXYamP4nVdJ5ZhUuYKw1saUG
+         BEQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2EDOG+fbJbZImQncg37UMHqt5PxYFykFLzi9mV75B6V7WaGkxb70LOs+RhiPmbHdNGBkGVAKW21luniE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8j88saZeWMXaNM2iQyzT/21G6djOaI6mfzs3sICw/wqewI1ST
+	tEgYA+ViJu7jr2FO5SfrN41vsbehyVb9dkTAlg2dzJew3CmxcJYzOk59oJvDGMQCbbnelyRPrFP
+	3YaQ919E1M7T3U3qeHPJHp5QdwfcnnnKeYHQ=
+X-Gm-Gg: ASbGncu8lDETtHFT7n5AvUsxVRllsWO0Y3iuGZ0Jf5xF68mX4h/b5VqfwwWxQDCEAMP
+	K/1SUVuHiLO1iM8ac4cWJkncMxOIGXbhWMMyXX9punyicUuLHzUA9iPN196331hghUG1DHfaw
+X-Received: by 2002:a05:6402:4409:b0:5dc:89e0:8eb3 with SMTP id
+ 4fb4d7f45d1cf-5deb08810a7mt822057a12.11.1739337311279; Tue, 11 Feb 2025
+ 21:15:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm/mm.h: Write folio->_flags_1 & 0xff as a macro
- definition
-To: Liu Ye <liuye@kylinos.cn>, brauner@kernel.org, dhowells@redhat.com,
- akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250212025843.80283-1-liuye@kylinos.cn>
- <20250212025843.80283-3-liuye@kylinos.cn>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250212025843.80283-3-liuye@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250210060252.59424-1-zegao@tencent.com>
+In-Reply-To: <20250210060252.59424-1-zegao@tencent.com>
+From: Ze Gao <zegao2021@gmail.com>
+Date: Wed, 12 Feb 2025 13:15:00 +0800
+X-Gm-Features: AWEUYZkECkINKdDpeAaWDIXOxJkbqzgALmhirqnl_if-1ttNReBJrcUyOj7fYfw
+Message-ID: <CAD8CoPA84v7ZsoVsCewB64t5s2PJxvK3nywBHsPKK4nBZBxumQ@mail.gmail.com>
+Subject: Re: [PATCH] selftests/sched_ext: Fix false positives of
+ init_enable_count test
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ze Gao <zegao@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+I encountered this issue in the middle of backporting scx, which
+no longer exists since
+    a8532fac7b5d sched_ext: TASK_DEAD tasks must be switched into SCX
+on ops_enable
+    61eeb9a90522 sched_ext: TASK_DEAD tasks must be switched out of
+SCX on ops_disable
+cuz TASK_DEAD tasks also go through scx init/exit path.
 
+Thanks for your attention anyway:D
 
-On 12/02/25 8:28 am, Liu Ye wrote:
-> There are multiple locations in mm.h where (folio->_flags_1 & 0xff) is
-> used. Write it as a macro definition to improve the readability and
-> maintainability of the code.
-> 
-> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+Regards,
+Ze
+
+On Mon, Feb 10, 2025 at 2:02=E2=80=AFPM Ze Gao <zegao2021@gmail.com> wrote:
+>
+> Tests run in VM might be slow, so that children may exit before bpf
+> programs are loaded. SCX_GE(skel->bss->init_task_cnt, num_pre_forks)
+> would fail in this case.
+>
+> For tests working in any env, use signals to control the lifetime of
+> children beyond bpf prog loading deterministically to get expected
+> results.
+>
+> Signed-off-by: Ze Gao <zegao@tencent.com>
 > ---
->   include/linux/mm.h | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 7b1068ddcbb7..750e75f45557 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1098,6 +1098,8 @@ int vma_is_stack_for_current(struct vm_area_struct *vma);
->   struct mmu_gather;
->   struct inode;
->   
-> +#define FOLIO_ORDER(folio) ((folio)->_flags_1 & 0xff)
+>  .../selftests/sched_ext/init_enable_count.c   | 27 ++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/sched_ext/init_enable_count.c b/tool=
+s/testing/selftests/sched_ext/init_enable_count.c
+> index 97d45f1e5597..3b2c8ab8464f 100644
+> --- a/tools/testing/selftests/sched_ext/init_enable_count.c
+> +++ b/tools/testing/selftests/sched_ext/init_enable_count.c
+> @@ -31,6 +31,11 @@ open_load_prog(bool global)
+>         return skel;
+>  }
+>
+> +/* Signal handler for children */
+> +void sigusr1_handler(int sig)
+> +{
+> +}
 > +
->   /*
->    * compound_order() can be called without holding a reference, which means
->    * that niceties like page_folio() don't work.  These callers should be
-> @@ -1111,7 +1113,7 @@ static inline unsigned int compound_order(struct page *page)
->   
->   	if (!test_bit(PG_head, &folio->flags))
->   		return 0;
-> -	return folio->_flags_1 & 0xff;
-> +	return FOLIO_ORDER(folio);
->   }
->   
->   /**
-> @@ -1127,7 +1129,7 @@ static inline unsigned int folio_order(const struct folio *folio)
->   {
->   	if (!folio_test_large(folio))
->   		return 0;
-> -	return folio->_flags_1 & 0xff;
-> +	return FOLIO_ORDER(folio);
->   }
->   
->   #include <linux/huge_mm.h>
-> @@ -2061,7 +2063,7 @@ static inline long folio_nr_pages(const struct folio *folio)
->   #ifdef CONFIG_64BIT
->   	return folio->_folio_nr_pages;
->   #else
-> -	return 1L << (folio->_flags_1 & 0xff);
-> +	return 1L << FOLIO_ORDER(folio);
->   #endif
->   }
->   
-> @@ -2086,7 +2088,7 @@ static inline unsigned long compound_nr(struct page *page)
->   #ifdef CONFIG_64BIT
->   	return folio->_folio_nr_pages;
->   #else
-> -	return 1L << (folio->_flags_1 & 0xff);
-> +	return 1L << FOLIO_ORDER(folio);
->   #endif
->   }
->   
-
-Personally I do not think this is improving readability. You are 
-introducing one more macro for people to decipher instead of directly 
-seeing folio->_flags_1 & 0xff. This is similar to whether to write
-if (x) => do_stuff(), or if (x != 0) => do_stuff(). The former is more 
-"readable" by convention but the latter makes it easier and obvious to 
-understand.
-
+>  static enum scx_test_status run_test(bool global)
+>  {
+>         struct init_enable_count *skel;
+> @@ -39,9 +44,15 @@ static enum scx_test_status run_test(bool global)
+>         int ret, i, status;
+>         struct sched_param param =3D {};
+>         pid_t pids[num_pre_forks];
+> +       sigset_t blocked_set;
+>
+>         skel =3D open_load_prog(global);
+>
+> +       /* Block SIGUSR1 in parent, children will inherit this*/
+> +       sigemptyset(&blocked_set);
+> +       sigaddset(&blocked_set, SIGUSR1);
+> +       sigprocmask(SIG_BLOCK, &blocked_set, NULL);
+> +
+>         /*
+>          * Fork a bunch of children before we attach the scheduler so tha=
+t we
+>          * ensure (at least in practical terms) that there are more tasks=
+ that
+> @@ -52,7 +63,13 @@ static enum scx_test_status run_test(bool global)
+>                 pids[i] =3D fork();
+>                 SCX_FAIL_IF(pids[i] < 0, "Failed to fork child");
+>                 if (pids[i] =3D=3D 0) {
+> -                       sleep(1);
+> +                       signal(SIGUSR1, sigusr1_handler);
+> +                       sigprocmask(SIG_UNBLOCK, &blocked_set, NULL);
+> +                       /*
+> +                        * Wait indefinitely for signal, will be interrup=
+ted
+> +                        * by signal handler.
+> +                        */
+> +                       pause();
+>                         exit(0);
+>                 }
+>         }
+> @@ -60,6 +77,13 @@ static enum scx_test_status run_test(bool global)
+>         link =3D bpf_map__attach_struct_ops(skel->maps.init_enable_count_=
+ops);
+>         SCX_FAIL_IF(!link, "Failed to attach struct_ops");
+>
+> +       /* Give children time to set up handlers */
+> +       sleep(1);
+> +
+> +       /* Send SIGUSR1 to all children */
+> +       for (int i =3D 0; i < num_pre_forks; i++)
+> +               kill(pids[i], SIGUSR1);
+> +
+>         for (i =3D 0; i < num_pre_forks; i++) {
+>                 SCX_FAIL_IF(waitpid(pids[i], &status, 0) !=3D pids[i],
+>                             "Failed to wait for pre-forked child\n");
+> @@ -69,6 +93,7 @@ static enum scx_test_status run_test(bool global)
+>         }
+>
+>         bpf_link__destroy(link);
+> +       SCX_EQ(skel->bss->init_task_cnt, skel->bss->exit_task_cnt);
+>         SCX_GE(skel->bss->init_task_cnt, num_pre_forks);
+>         SCX_GE(skel->bss->exit_task_cnt, num_pre_forks);
+>
+> --
+> 2.41.1
+>
 
