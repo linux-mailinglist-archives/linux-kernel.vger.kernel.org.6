@@ -1,39 +1,86 @@
-Return-Path: <linux-kernel+bounces-512068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A82A333A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:47:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD8AA333A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7F143A889C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:47:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F521661D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403AA20AF66;
-	Wed, 12 Feb 2025 23:47:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5B32046B2;
-	Wed, 12 Feb 2025 23:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1438524C689;
+	Wed, 12 Feb 2025 23:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GtdO7FhI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E8D204587
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739404035; cv=none; b=tDjzh2rQZNVZsqu81NFyhBZSXYGuDRYSFuLxgfHUZUDLx5JwxqeTwVV/3O5qBMYJWT00KLe7YMJmdnrZ2STR5OdESw0he9YHZ2Z+MiV1Dbt9f62nTDA6eUFzzPtQOT6sMFu5wM6nX3JxwCUiPHdyE9+Sd95U7rePiVJRR9o+g4A=
+	t=1739404180; cv=none; b=YdWhKzUXuPIW4iSOQVUeMzkecKdh14nUw7pDjKWyuKcOfmdG5kU7Zj0Akhke0m+CfYHZlRh0ZwUqdiK2QsKOPUruS3mTt0yPCc8SZTG95yColz56h0sH30Ip8NdFB9Ufx4gNWkd5LZAVbVl5twWbWcrXGhJ1AZngxsnnipleT0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739404035; c=relaxed/simple;
-	bh=hHKR+zd/LcZnjzFpifORs+YQ+3C7tKWUmFGFiBtvG/U=;
+	s=arc-20240116; t=1739404180; c=relaxed/simple;
+	bh=JIhvWwRBh4muoqeGhHJ0zK2xjH3Tjt8L2DiUTwSOSTI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l9UIgICvZYKY9ysqutUZygZUpy+y1IVuLxle//dJDSikq+9ZP6WanccnLXrPv5oV6GSivVFhUjvXvrIHu8lQiY2q3xfIIeaMh9UO/moX8sHVCSQbxNTUSNB0/w60MijjIPgKy/47Uj7Joz73L1WLhE3Ky5VB5VoWJyOq48+PvJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF053106F;
-	Wed, 12 Feb 2025 15:47:32 -0800 (PST)
-Received: from [10.57.37.151] (unknown [10.57.37.151])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 415783F58B;
-	Wed, 12 Feb 2025 15:47:10 -0800 (PST)
-Message-ID: <96959ef4-2287-4601-85fb-2ce457c605d2@arm.com>
-Date: Wed, 12 Feb 2025 23:47:08 +0000
+	 In-Reply-To:Content-Type; b=RE+XOB8xXG9Qs7XZkTSfCngZ2FOe1dBbc5BuiV8VRRv7OVQo9pMa6bwt7EMBrlA9b+KxiXaRICqHSnwg0b2EB7StZit5oxdBiL2CQdPVpoQdajgckZhrzLemKM6/808vUtK4YQmefl3lamruGHe+ugjnORlVgXdWK5srLMGj7L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GtdO7FhI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CGEavb008278
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:49:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KKclV7RyRuQunpXF1JKN4EFzwZ611czWb+KOZap1Vjk=; b=GtdO7FhIeh/+VsnV
+	um5VrsNGTz+GnnXiXKtN2kULI8HI/zSkCozEsCzaKuganNg4s0LluLIJvKZWJ2ZV
+	/WDEfL63FHjnFx+tn78d/Yo5voSS46mO4QpTbbStE4Kg4NRZt0Bz3cDNXkp6pT8S
+	RCv8By29F5/raKbIYkRGIt1/+VK6qfp7OMqDbUoD86Fdc0H9zeWGeKAaY3KYjy50
+	C0YgCs2upGPV0KgesYxClJ0pTOMc018cuTAEFY6LeOqIw0e4Lv6UPmQ5fbe3yct8
+	3yo6ZtQjLojesiW7mux8Mufv1ZjfqZJMDd1Li/zAJUsa6OZsZV7QW+3ljDqF80dJ
+	9u6F8g==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qewh9241-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:49:37 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-471921f2436so63531cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:49:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739404177; x=1740008977;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KKclV7RyRuQunpXF1JKN4EFzwZ611czWb+KOZap1Vjk=;
+        b=oR0D/ohdhwVYqdgkMnQz9phz/TtI0oTtKPOc5QvTVrf73/OhqjQDXq4/tNMtos5czF
+         ZnKBHsvNtdE4e1DwNz75LYEjLxt4Gp2wJKpmMkWrbBUDP8DFHfVXNzUxgiHPPNicCANL
+         zSPD76NLBHbrlfDa8rDWIKiasF7OIA5CjOWNeZanX04ZrZ0mzsH2Wni6RDgAa/miSt0P
+         CT6zHlSJwyXzcFBG8rFrVsI1nXkYAz9dqtZFv99+qccJN6MpsxsOrxNLgW9NwgaQ6Mo8
+         DTntPWDPrMl0Pv+ODhVjuUVhD23Jz5skUJRbQeK+DjPrRcAPS/urcxKbe9Gavu4R8UYf
+         Yo+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUFejx2U/saizHJT1SZq5+NXmLhDhKxAuJxuJi9X/rgHxTbzqPg789rcXnO/fgHgcp1u+8xdQitQ6JYh30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa+MARpwsC3bM9zXgeR7GbmRUYDjc1lDkyn1XluMV6AC7qkFZ5
+	274n4gHwCJT+jt7ExvcCzeYCXSASfXS6TX92FJha9iy1Bs8WaZZAcm1wm1fokxBdrdyqv/WpM1n
+	IRlqut9zn7F9v3I1QvobvNVI7evIRcAxiuOR/1/na2xXLS3UNOmm0VWINw+8Y1dI=
+X-Gm-Gg: ASbGncuWcKMNz1I56tPNBBWBD8MdWMpKIE19q7THFKU9E+d9Q0Puo4SO1hHde781Mwx
+	rhBmNrl8hFxu8WkPCk5px83bs4Qi513IZ6Kkd7joMWPjuNVHs8IvZ7x/dhoqUxgUtdvPqMuZW2T
+	HXWaAuWRnb2Zsxd5kjSOB6PRaqvuHY40JdoieCfJxX/NBp2YjQhrSfTVymW5M72f9JnXMfh/vx5
+	51ormn70hPH1B5ZtaxJwNqP2EDheMr6SgunqwgOAXcIonxKMVY0AUo9LtxA27dF0xVHDwB9lsb+
+	ZD8gyX8TbvTQbRIOLWjtT2MHNksPuLYm/VUulcBtWGRh/+2R1my9P/vLIXE=
+X-Received: by 2002:a05:622a:9015:b0:471:b9e1:670e with SMTP id d75a77b69052e-471b9e16e17mr15312821cf.4.1739404176663;
+        Wed, 12 Feb 2025 15:49:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHgxK9FsuRe/oeuntjkcd+d5kRycbejmWWvE2jJR5QduMdyEFnA/03RDST0RqDTvW05TGkfyw==
+X-Received: by 2002:a05:622a:9015:b0:471:b9e1:670e with SMTP id d75a77b69052e-471b9e16e17mr15312711cf.4.1739404176226;
+        Wed, 12 Feb 2025 15:49:36 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532322dbsm16236866b.10.2025.02.12.15.49.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 15:49:35 -0800 (PST)
+Message-ID: <763d689b-35da-40db-8605-52e408728df0@oss.qualcomm.com>
+Date: Thu, 13 Feb 2025 00:49:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,185 +88,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] mmc: core: Handle undervoltage events and register
- regulator notifiers
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20250212132403.3978175-1-o.rempel@pengutronix.de>
+Subject: Re: [PATCH v4 6/6] arm64: dts: qcom: qrb2210-rb1: add Bluetooth
+ support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Rob Herring
+ <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+        Rocky Liao <quic_rjliao@quicinc.com>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250207-rb1-bt-v4-0-d810fc8c94a9@linaro.org>
+ <20250207-rb1-bt-v4-6-d810fc8c94a9@linaro.org>
+ <6e5bb2f7-a23b-4fab-914b-e67911eaf408@oss.qualcomm.com>
+ <CAA8EJpq504V48qqSX0mzxCffUkq_xpu_UE+qubB46A7zon=0iw@mail.gmail.com>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20250212132403.3978175-1-o.rempel@pengutronix.de>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CAA8EJpq504V48qqSX0mzxCffUkq_xpu_UE+qubB46A7zon=0iw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: oBHBumLxjPNn7x1EwGBGoqGQGcksHO0t
+X-Proofpoint-GUID: oBHBumLxjPNn7x1EwGBGoqGQGcksHO0t
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_07,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=999 phishscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120167
 
-On 2/12/25 13:24, Oleksij Rempel wrote:
-> Extend the MMC core to handle undervoltage events by implementing
-> infrastructure to notify the MMC bus about voltage drops.
+On 11.02.2025 10:19 PM, Dmitry Baryshkov wrote:
+> On Tue, 11 Feb 2025 at 16:52, Konrad Dybcio
+> <konrad.dybcio@oss.qualcomm.com> wrote:
+>>
+>> On 7.02.2025 9:41 PM, Dmitry Baryshkov wrote:
+>>> Add support for the onboard WCN3950 BT/WiFi chip. Corresponding firmware
+>>> has been merged to linux-firmware and should be available in the next
+>>> release.
+>>>
+>>> Bluetooth: hci0: setting up wcn399x
+>>> Bluetooth: hci0: QCA Product ID   :0x0000000f
+>>> Bluetooth: hci0: QCA SOC Version  :0x40070120
+>>> Bluetooth: hci0: QCA ROM Version  :0x00000102
+>>> Bluetooth: hci0: QCA Patch Version:0x00000001
+>>> Bluetooth: hci0: QCA controller version 0x01200102
+>>> Bluetooth: hci0: QCA Downloading qca/cmbtfw12.tlv
+>>> Bluetooth: hci0: QCA Downloading qca/cmnv12.bin
+>>> Bluetooth: hci0: QCA setup on UART is completed
+>>>
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>
+>> [...]
+>>
+>>> +&uart3 {
+>>> +     /delete-property/ interrupts;
+>>> +     interrupts-extended = <&intc GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                           <&tlmm 11 IRQ_TYPE_LEVEL_HIGH>;
+>>> +     pinctrl-0 = <&uart3_default>;
+>>> +     pinctrl-1 = <&uart3_sleep>;
+>>> +     pinctrl-names = "default", "sleep";
+>>> +
+>>> +     status = "okay";
+>>> +
+>>> +     bluetooth {
+>>> +             compatible = "qcom,wcn3950-bt";
+>>> +
+>>> +             vddio-supply = <&pm4125_l15>;
+>>> +             vddxo-supply = <&pm4125_l13>;
+>>> +             vddrf-supply = <&pm4125_l10>;
+>>> +             vddch0-supply = <&pm4125_l22>;
+>>> +             enable-gpios = <&tlmm 87 GPIO_ACTIVE_HIGH>;
+>>> +             max-speed = <3200000>;
+>>
+>> I suppose we don't need a power sequencer for this smaller,
+>> tightly-integrated-via-snoc chip?
 > 
-> Background & Decision at LPC24:
-> 
-> This solution was proposed and refined during LPC24 in the talk
-> "Graceful Under Pressure: Prioritizing Shutdown to Protect Your Data in
-> Embedded Systems" which aimed to address how Linux should handle power
-> fluctuations in embedded devices to prevent data corruption or storage
-> damage.
-> 
-> At the time, multiple possible solutions were considered:
-> 
-> 1. Triggering a system-wide suspend or shutdown: when undervoltage is
->    detected, with device-specific prioritization to ensure critical
->    components shut down first.
->    - This approach was disliked by Greg Kroah-Hartman, as it introduced
->      complexity and was not suitable for all use cases.
-> 
-> 2. Notifying relevant devices through the regulator framework: to allow
->    graceful per-device handling.
->    - This approach was agreed upon as the most acceptable: by participants
->      in the discussion, including Greg Kroah-Hartman, Mark Brown,
->      and Rafael J. Wysocki.
->    - This patch implements that decision by integrating undervoltage
->      handling into the MMC subsystem.
-> 
-> This patch was tested on iMX8MP based system with SDHCI controller.
+> We can (and should) have it in a longer term. Currently none of
+> wcm39xx chips have a powerseq implementation.
 
-Any details here? How long does it take from undervoltage to
-poweroff notification.
-Roughly how long of a heads up would that yield in realistic
-undervoltage scenarios?
+Alright, let's kick the can down the road.. hopefully not too far though
 
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  drivers/mmc/core/card.h      |  5 ++
->  drivers/mmc/core/core.c      | 29 ++++++++++++
->  drivers/mmc/core/core.h      |  2 +
->  drivers/mmc/core/mmc.c       |  6 +++
->  drivers/mmc/core/regulator.c | 90 ++++++++++++++++++++++++++++++++++++
->  include/linux/mmc/host.h     |  4 ++
->  6 files changed, 136 insertions(+)
-> 
-> diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h
-> index 3205feb1e8ff..f8341e1657f0 100644
-> --- a/drivers/mmc/core/card.h
-> +++ b/drivers/mmc/core/card.h
-> @@ -24,6 +24,9 @@
->  #define MMC_CARD_REMOVED	(1<<4)		/* card has been removed */
->  #define MMC_STATE_SUSPENDED	(1<<5)		/* card is suspended */
->  #define MMC_CARD_SDUC		(1<<6)		/* card is SDUC */
-> +#define MMC_CARD_UNDERVOLTAGE   (1<<7)		/* card is in undervoltage
-> +						 * condition
-> +						 */
->  
->  #define mmc_card_present(c)	((c)->state & MMC_STATE_PRESENT)
->  #define mmc_card_readonly(c)	((c)->state & MMC_STATE_READONLY)
-> @@ -32,6 +35,7 @@
->  #define mmc_card_removed(c)	((c) && ((c)->state & MMC_CARD_REMOVED))
->  #define mmc_card_suspended(c)	((c)->state & MMC_STATE_SUSPENDED)
->  #define mmc_card_ult_capacity(c) ((c)->state & MMC_CARD_SDUC)
-> +#define mmc_card_in_undervoltage(c) ((c)->state & MMC_CARD_UNDERVOLTAGE)
->  
->  #define mmc_card_set_present(c)	((c)->state |= MMC_STATE_PRESENT)
->  #define mmc_card_set_readonly(c) ((c)->state |= MMC_STATE_READONLY)
-> @@ -41,6 +45,7 @@
->  #define mmc_card_set_removed(c) ((c)->state |= MMC_CARD_REMOVED)
->  #define mmc_card_set_suspended(c) ((c)->state |= MMC_STATE_SUSPENDED)
->  #define mmc_card_clr_suspended(c) ((c)->state &= ~MMC_STATE_SUSPENDED)
-> +#define mmc_card_set_undervoltage(c) ((c)->state |= MMC_CARD_UNDERVOLTAGE)
->  
->  /*
->   * The world is not perfect and supplies us with broken mmc/sdio devices.
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index 5241528f8b90..4b94017d2600 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -1399,6 +1399,35 @@ void mmc_power_cycle(struct mmc_host *host, u32 ocr)
->  	mmc_power_up(host, ocr);
->  }
->  
-> +/**
-> + * mmc_handle_undervoltage - Handle an undervoltage event on the MMC bus
-> + * @host: The MMC host that detected the undervoltage condition
-> + *
-> + * This function is called when an undervoltage event is detected on one of
-> + * the MMC regulators.
-> + *
-> + * Returns: 0 on success or a negative error code on failure.
-> + */
-> +int mmc_handle_undervoltage(struct mmc_host *host)
-> +{
-> +	spin_lock(&host->lock);
-> +
-> +	if (!host->card || mmc_card_in_undervoltage(host->card)) {
-> +		spin_unlock(&host->lock);
-> +		return 0;
-> +	}
-> +
-> +	/* Mark the card as in undervoltage condition */
-> +	mmc_card_set_undervoltage(host->card);
-> +	spin_unlock(&host->lock);
-> +
-> +	/* Call bus-specific undervoltage handler if available */
-> +	if (host->bus_ops && host->bus_ops->handle_undervoltage)
-> +		return host->bus_ops->handle_undervoltage(host);
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * Assign a mmc bus handler to a host. Only one bus handler may control a
->   * host at any given time.
-> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
-> index fc9c066e6468..578c98e2f04d 100644
-> --- a/drivers/mmc/core/core.h
-> +++ b/drivers/mmc/core/core.h
-> @@ -31,6 +31,7 @@ struct mmc_bus_ops {
->  	int (*sw_reset)(struct mmc_host *);
->  	bool (*cache_enabled)(struct mmc_host *);
->  	int (*flush_cache)(struct mmc_host *);
-> +	int (*handle_undervoltage)(struct mmc_host *);
->  };
->  
->  void mmc_attach_bus(struct mmc_host *host, const struct mmc_bus_ops *ops);
-> @@ -59,6 +60,7 @@ void mmc_power_off(struct mmc_host *host);
->  void mmc_power_cycle(struct mmc_host *host, u32 ocr);
->  void mmc_set_initial_state(struct mmc_host *host);
->  u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
-> +int mmc_handle_undervoltage(struct mmc_host *host);
->  
->  static inline void mmc_delay(unsigned int ms)
->  {
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index 6a23be214543..c8b8e7a7b7d6 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -2273,6 +2273,11 @@ static int _mmc_hw_reset(struct mmc_host *host)
->  	return mmc_init_card(host, card->ocr, card);
->  }
->  
-> +static int _mmc_handle_undervoltage(struct mmc_host *host)
-> +{
-> +	return mmc_shutdown(host);
-> +}
-> +
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-The poweroff notification part I understand, because it polls for busy
-(i.e. hopefully until the card thinks it's done committing to flash).
-Poweroff isn't always available though, the other paths of
-_mmc_suspend() are:
-
-	else if (mmc_can_sleep(host->card))
-		err = mmc_sleep(host);
-	else if (!mmc_host_is_spi(host))
-		err = mmc_deselect_cards(host);
-
-	if (!err) {
-		mmc_power_off(host);
-
-So we may also just deselect, which AFAIR succeeds as a FSM (i.e.
-doesn't mean anything was committed to flash) and then we just
-poweroff.
-Is that what we want in an undervoltage scenario?
+Konrad
 
