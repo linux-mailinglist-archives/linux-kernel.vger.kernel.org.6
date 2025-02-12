@@ -1,151 +1,187 @@
-Return-Path: <linux-kernel+bounces-511128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555BCA3264D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:52:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83801A32625
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:47:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5A3E1887C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:52:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD023A8387
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B1420D4E8;
-	Wed, 12 Feb 2025 12:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFA120CCC2;
+	Wed, 12 Feb 2025 12:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="RnqjVrAS"
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="yZCqFt1D"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5102046B5;
-	Wed, 12 Feb 2025 12:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33587B673;
+	Wed, 12 Feb 2025 12:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364743; cv=none; b=hMWR0f7z0J+zKPwUN+UKMevUL9hZukRbKzvJ7+kGuaytHXkrheeie/70GnnyeYnDVz9OuOG0FHEdzLb6Qnejc3dnrGII5WIJM5xt3XkTTojtfOkLK47saeyLI/fcrHr5cIaSZo7nLCFvZZSj5HCkO2MsXPyZZL2wiurw0I+1Xxc=
+	t=1739364420; cv=none; b=HzqlnEl/AEBptXdAkbt1Kl/Ce20HJ5URIZpU9pJHuvAo+2WqIvAhU3uRAaSuvRFAlr+DsuOswEVPWpNdbLWZYDUi3J7d8IIhVz0T10FMx46Gi1BS/WHEJhJuTDS2/OyNX9i8JQMdcUt8jnSu3kkCjvP/OL0XwfiTWEgTPM3VWks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364743; c=relaxed/simple;
-	bh=0HUJCUu1wgMcgDDTi7Bg/sYak+QPi7iL6RR8eCGvuUM=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=iGGWjDV7quwpi3PELMdnY2thArirOPwwfvq8GfWCbZsQs66sLIUUXaTE4iR/7WA/07oQhKRpyuenH54cK8CBMxjg1W5AbaLY7Z73R0/iCLAqTZZ/8svtM62EjvpUXjlSXwhr+qwbn2tdnDJFqWFErKqDw+lYQJ7Q8+jA1QrAdGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=RnqjVrAS; arc=none smtp.client-ip=162.62.57.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1739364726;
-	bh=+XIDPqjGUvxmjKTI7q2+Nz1Yuu2Dud+hxdGsctS0pCM=;
-	h=From:To:Cc:Subject:Date;
-	b=RnqjVrAS5ToUAMZ4e/ATqtEkPmwTFWL50N/eICCOaGWR2nGcwxX+0Dz/JR2muHLqJ
-	 LxPI+vG6m7gSJzEHOJUzTi6scc8Imauk61Ud+KGSZ5eJahyDt6EqZmXg74pC++TGnq
-	 MsAUWPcpDxI27GAlsLkLOJL/SxTwdnZz/k6TbydY=
-Received: from f41.lan ([240e:305:1b95:d110:7285:c2ff:fe86:1af4])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id B758387A; Wed, 12 Feb 2025 20:45:53 +0800
-X-QQ-mid: xmsmtpt1739364353tcm46gffh
-Message-ID: <tencent_B44B3A95F0D7C2512DC40D831DA1FA2C9907@qq.com>
-X-QQ-XMAILINFO: N2bAIxLK0elnyafZvAS7NlnEeBNBU/rEwUIhb3bMQDt445BhsBLzRZX+Y/XPhu
-	 daivaUk+OV7owFM2QKnC/yqkalI6HNlPutLjgFrFWAsRYcNLdtuTSPkUKapeyd7z1yCKP6ehXYu2
-	 o+u86QgQd102TcsTdtIMD6ZtOU5V2dwYZaryuO5fKPT6BuLfdXzVKAyah7OrQ1fWoIAdsEBGmH4K
-	 bhJ819uxIIEhL+Tp3MJQqovaQGu0jAp/+gsM+bWtxVfcSY7qPAAHEn8cismo9SOTYh/DKwJrJyMd
-	 TofmE45VkmdLXh+S4wyedoXG3S/8zO3ojBDLuUQiz9ChX56OF5Oa/1Kf3uZg8S+Mpd4FkausBwDo
-	 AITFU2CAEOKGeQ4tbhq3Abo+YhwEGRW1GYvwJSEOzxCPYaloEDVXBzYcpKSmv4ScUra9CjxkZdZ3
-	 atyj0QTyhgKzo5SS8WGe4/8wgP5u9kQqDEqPSBrXYRMy9RgvWmkeP8jg6f6/tzoXIH6YeJuKiqL7
-	 qzTs0PxvqfycTokxh8CV2ZMBD4G18eyIb0rSlLtSESPMa/RbiRvrB64dtlHqVO3wa/+LsJCfneDa
-	 O2Som2NC9dHTis5Q/77BL9AjKkseuEmV6rRasW2txq1Z0s8+nB+iOIhcN1wtDLTPa3vgEftCW71B
-	 hxjI9jutCxvYCPBhmeob3KuMQ4PWjDpzMXh6R6QSpK5p64szp5Tf2cX5THaYu7TannLbv/yonjR3
-	 IgBsVG253+ccraaB+m9vK9nyM8Ktxf8itC4zGkIXlqe9nxu5cLSq2PHHs5E4lE8yqAgYPdcGzxrw
-	 9rdsH4Y5k0oaRWSY1xN6C/sloc43k0GnbH6d+rjl7l+DTWXAcD/LilkccLVmXDvakOxT34U5uz2Z
-	 7sBY6alEgm+BWvp/xAMA/TtyRieVZYVObBpsUklNEf0B9AS82UAKDVtmZaKHpEeDyppUTxTZZkH5
-	 TA1ZjMVOp02Ohzs9j2ctGEl0M6nxFHeqOxA/g+CTNp6BkByfVD6mmZOlFDAa4mEgyc5XMBEyw=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii@kernel.org,
-	qmo@kernel.org,
-	ast@kernel.org
-Cc: rongtao@cestc.cn,
-	rtoax@foxmail.com,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [TOOLING] (bpftool)),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH bpf-next v4] bpftool: Check map name length when map create
-Date: Wed, 12 Feb 2025 20:45:52 +0800
-X-OQ-MSGID: <20250212124552.9247-1-rtoax@foxmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739364420; c=relaxed/simple;
+	bh=abNS+SlQsH7zUv/rrq3F4u5WzmNh3AVn3E329/VKTRI=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fbp2Wg/DV293bfqVQkl2tGattU+S0sOdYKc497TJqo4p5eu6MO3x8PduAyC13zwtbuldYSwUPJiZXzbkFbL5EoeboV4PKz5ULmd6dSc1E2MgwUwBqUVmo2OXK9GPKMbLZDdcDPNzSluR78nJokiuxH1LGm37QyriCGlw7cq/eUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=yZCqFt1D; arc=none smtp.client-ip=91.244.183.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id 736191077FB9;
+	Wed, 12 Feb 2025 15:46:54 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 736191077FB9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1739364414; bh=gbwi/FK25uRXyNl2UyXm8Vw8PER/cVoK4GZhMFjqzPo=;
+	h=From:To:CC:Subject:Date:From;
+	b=yZCqFt1DuPdRAU7nD+lSWy929B5w/nSk9k6AZMw/CYmK/ipBDMk1NUa+gG56QAsmz
+	 92ubghJz4NPLkIbS0asZCOhBnSH43esIEkpFZIJ/SXN1+5iss2AI679lPt20y36sQj
+	 5KkotLJAMvWGGSEA1/no9ygdOztFMHvcBq/+GrIU=
+Received: from msk-exch-01.infotecs-nt (msk-exch-01.infotecs-nt [10.0.7.191])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 707423045337;
+	Wed, 12 Feb 2025 15:46:54 +0300 (MSK)
+From: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
+To: Neil Horman <nhorman@tuxdriver.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: [PATCH net] drop_monitor: fix incorrect initialization order
+Thread-Topic: [PATCH net] drop_monitor: fix incorrect initialization order
+Thread-Index: AQHbfUwxqBopjNb91026ifHBiYFNFQ==
+Date: Wed, 12 Feb 2025 12:46:54 +0000
+Message-ID: <20250212124653.297647-1-Ilia.Gavrilov@infotecs.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2025/02/12 10:45:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/02/12 10:17:00 #27183182
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-From: Rong Tao <rongtao@cestc.cn>
+Syzkaller reports the following bug:
 
-The size of struct bpf_map::name is BPF_OBJ_NAME_LEN (16).
+BUG: spinlock bad magic on CPU#1, syz-executor.0/7995
+ lock: 0xffff88805303f3e0, .magic: 00000000, .owner: <none>/-1, .owner_cpu:=
+ 0
+CPU: 1 PID: 7995 Comm: syz-executor.0 Tainted: G            E     5.10.209+=
+ #1
+Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference=
+ Platform, BIOS 6.00 11/12/2020
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x119/0x179 lib/dump_stack.c:118
+ debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
+ do_raw_spin_lock+0x1f6/0x270 kernel/locking/spinlock_debug.c:112
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:117 [inline]
+ _raw_spin_lock_irqsave+0x50/0x70 kernel/locking/spinlock.c:159
+ reset_per_cpu_data+0xe6/0x240 [drop_monitor]
+ net_dm_cmd_trace+0x43d/0x17a0 [drop_monitor]
+ genl_family_rcv_msg_doit+0x22f/0x330 net/netlink/genetlink.c:739
+ genl_family_rcv_msg net/netlink/genetlink.c:783 [inline]
+ genl_rcv_msg+0x341/0x5a0 net/netlink/genetlink.c:800
+ netlink_rcv_skb+0x14d/0x440 net/netlink/af_netlink.c:2497
+ genl_rcv+0x29/0x40 net/netlink/genetlink.c:811
+ netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
+ netlink_unicast+0x54b/0x800 net/netlink/af_netlink.c:1348
+ netlink_sendmsg+0x914/0xe00 net/netlink/af_netlink.c:1916
+ sock_sendmsg_nosec net/socket.c:651 [inline]
+ __sock_sendmsg+0x157/0x190 net/socket.c:663
+ ____sys_sendmsg+0x712/0x870 net/socket.c:2378
+ ___sys_sendmsg+0xf8/0x170 net/socket.c:2432
+ __sys_sendmsg+0xea/0x1b0 net/socket.c:2461
+ do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x62/0xc7
+RIP: 0033:0x7f3f9815aee9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 =
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff f=
+f 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3f972bf0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f3f9826d050 RCX: 00007f3f9815aee9
+RDX: 0000000020000000 RSI: 0000000020001300 RDI: 0000000000000007
+RBP: 00007f3f981b63bd R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f3f9826d050 R15: 00007ffe01ee6768
 
-bpf(2) {
-  map_create() {
-    bpf_obj_name_cpy(map->name, attr->map_name, sizeof(attr->map_name));
-  }
-}
+If drop_monitor is built as a kernel module, syzkaller may have time
+to send a netlink NET_DM_CMD_START message during the module loading.
+This will call the net_dm_monitor_start() function that uses
+a spinlock that has not yet been initialized.
 
-When specifying a map name using bpftool map create name, no error is
-reported if the name length is greater than 15.
+To fix this, let's place resource initialization above the registration
+of a generic netlink family.
 
-    $ sudo bpftool map create /sys/fs/bpf/12345678901234567890 \
-        type array key 4 value 4 entries 5 name 12345678901234567890
+Found by InfoTeCS on behalf of Linux Verification Center
+(linuxtesting.org) with SVACE.
 
-Users will think that 12345678901234567890 is legal, but this name cannot
-be used to index a map.
-
-    $ sudo bpftool map show name 12345678901234567890
-    Error: can't parse name
-
-    $ sudo bpftool map show
-    ...
-    1249: array  name 123456789012345  flags 0x0
-    	key 4B  value 4B  max_entries 5  memlock 304B
-
-    $ sudo bpftool map show name 123456789012345
-    1249: array  name 123456789012345  flags 0x0
-    	key 4B  value 4B  max_entries 5  memlock 304B
-
-The map name provided in the command line is truncated, but no warning is
-reported. This submission checks the length of the map name.
-
-Reviewed-by: Quentin Monnet <qmo@kernel.org>
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
+Fixes: 9a8afc8d3962 ("Network Drop Monitor: Adding drop monitor implementat=
+ion & Netlink protocol")
+Signed-off-by: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
 ---
-v3: https://lore.kernel.org/lkml/tencent_AF066A426F591F977D2A73AF00A34A883808@qq.com/
-v2: https://lore.kernel.org/lkml/tencent_26592A2BAF08A3A688A50600421559929708@qq.com/
-v1: https://lore.kernel.org/lkml/tencent_1C4444032C2188ACD04B4995B0D78F510607@qq.com/
----
- tools/bpf/bpftool/map.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ net/core/drop_monitor.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
-index ed4a9bd82931..81cc668b4b05 100644
---- a/tools/bpf/bpftool/map.c
-+++ b/tools/bpf/bpftool/map.c
-@@ -1270,6 +1270,10 @@ static int do_create(int argc, char **argv)
- 		} else if (is_prefix(*argv, "name")) {
- 			NEXT_ARG();
- 			map_name = GET_ARG();
-+			if (strlen(map_name) > BPF_OBJ_NAME_LEN - 1) {
-+				p_info("Warning: map name is longer than %u characters, it will be truncated.",
-+				      BPF_OBJ_NAME_LEN - 1);
-+			}
- 		} else if (is_prefix(*argv, "key")) {
- 			if (parse_u32_arg(&argc, &argv, &key_size,
- 					  "key size"))
--- 
-2.48.1
-
+diff --git a/net/core/drop_monitor.c b/net/core/drop_monitor.c
+index 6efd4cccc9dd..9755d2010e70 100644
+--- a/net/core/drop_monitor.c
++++ b/net/core/drop_monitor.c
+@@ -1734,6 +1734,11 @@ static int __init init_net_drop_monitor(void)
+ 		return -ENOSPC;
+ 	}
+=20
++	for_each_possible_cpu(cpu) {
++		net_dm_cpu_data_init(cpu);
++		net_dm_hw_cpu_data_init(cpu);
++	}
++
+ 	rc =3D genl_register_family(&net_drop_monitor_family);
+ 	if (rc) {
+ 		pr_err("Could not create drop monitor netlink family\n");
+@@ -1749,11 +1754,6 @@ static int __init init_net_drop_monitor(void)
+=20
+ 	rc =3D 0;
+=20
+-	for_each_possible_cpu(cpu) {
+-		net_dm_cpu_data_init(cpu);
+-		net_dm_hw_cpu_data_init(cpu);
+-	}
+-
+ 	goto out;
+=20
+ out_unreg:
+@@ -1772,13 +1772,12 @@ static void exit_net_drop_monitor(void)
+ 	 * Because of the module_get/put we do in the trace state change path
+ 	 * we are guaranteed not to have any current users when we get here
+ 	 */
++	BUG_ON(genl_unregister_family(&net_drop_monitor_family));
+=20
+ 	for_each_possible_cpu(cpu) {
+ 		net_dm_hw_cpu_data_fini(cpu);
+ 		net_dm_cpu_data_fini(cpu);
+ 	}
+-
+-	BUG_ON(genl_unregister_family(&net_drop_monitor_family));
+ }
+=20
+ module_init(init_net_drop_monitor);
+--=20
+2.39.5
 
