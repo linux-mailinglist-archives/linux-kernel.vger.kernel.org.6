@@ -1,211 +1,231 @@
-Return-Path: <linux-kernel+bounces-511651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072C9A32DC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:46:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D81FA32DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4D31883BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:46:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F0E163BAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D5525E44F;
-	Wed, 12 Feb 2025 17:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iihh7zap"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5C325D54D;
-	Wed, 12 Feb 2025 17:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6284625B69B;
+	Wed, 12 Feb 2025 17:46:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7C425A2D3;
+	Wed, 12 Feb 2025 17:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739382351; cv=none; b=sYGy69myGObZaJITxDY5Hsn3E1eaD2HlAOdjdHzhlMhbWVqbvLh3Zm6QlT20LjO6fwqQ/TTS8/BLXTxjH9syjxJPzLMoMnuxQ4EsH8qyq6QzwMsXP5FLGfxUNKMRaTjexAUqC+CKS0lrz2IO9K7Cp7LaclplomP2Fjo+7oW8ifo=
+	t=1739382375; cv=none; b=AVDYTOr1K1+1E4sUaa39HYcRQjZyYFsILIYH5vqVQFqHuNHD66+EcDOFxBh/G/W05HEKz8sAz86VoRpqxo81/BJx4eD0RfUxqTXv8U0DMcEz5YnyxPzrYznnItnuWgC1Xh6EsZ5h0TnCtnhq01DB+NShGlMkkpAACbus1jN1EdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739382351; c=relaxed/simple;
-	bh=Am3KdYIPQjJJqDySmLeo2AVr33lxdKgLJ8ZrAYJIfwE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Tr91xlNjLQspZ+26E/dSlUA8pS7HHmI50D+iT4Z8E6ljsBX/e9JAn5R6veSv2QvYY8ChvQ3yU4DkPlc1wrKpViRGzNVoKribB/helCkSuoZiZXmjzzDyFsKwnjukYJsPNMctvqfIxkRgE5NztxTPvdkd9xGxNI8PZcnvrw0gSW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iihh7zap; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E043C4CEE5;
-	Wed, 12 Feb 2025 17:45:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739382351;
-	bh=Am3KdYIPQjJJqDySmLeo2AVr33lxdKgLJ8ZrAYJIfwE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Iihh7zapczT7KxM5Vm3g/yb9+uPSB50XlzAuM/ZoQlE/5EuYk1NrXTxEN8WzE4vEd
-	 UypVyXnjfqXbtDsPro2pnKgJ93nwdPDsn8lkP+0Bh/OwBQIULiubjzbSzAV4AYYzsl
-	 WXdoYsEhJc52TSKIyoi8bvXruubS9li10FrChCFIa/WmAFblavJnYtwHVZfLKHE6tL
-	 fy43htODUYPox4RDzISQzzHxn1rOpNn352ZnGa/A1Lx+Uxrb/pPRfepwTAr07/y2RX
-	 j/m+yNQ04DRO+UeOKVJiHqQlAwBA4CSJDeIkyeowpS3ZvcU3LAA5Qsy1x8TyabvKfy
-	 FdzFdwFNiQoXg==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 12 Feb 2025 17:44:26 +0000
-Subject: [PATCH 2/2] selftests/mm: Allow tests to run with no huge pages
- support
+	s=arc-20240116; t=1739382375; c=relaxed/simple;
+	bh=jMD/H7uMUbc7ssjp65BmFcgJoR7L5VSSPfr1wMYg6X4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDm9MZwNkwOGITZH2obrOHmJ8Wxr+u8zVOrAR/s1aI9Bi8ZhBK0TV/HJ5jaCoyDu0wYzwiZe6LpJz/Hlz6H66Xz9YUWcuv1xjwfy4Mhx5tI2s6H9GyYqUOUsatF1qHxGkjbDq3aJpY/Lm4RPnC3q+YuEfJBJmLcFbDWq/NGSacs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F23DB12FC;
+	Wed, 12 Feb 2025 09:46:33 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54EAF3F5A1;
+	Wed, 12 Feb 2025 09:46:08 -0800 (PST)
+Date: Wed, 12 Feb 2025 17:46:05 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Babu Moger <babu.moger@amd.com>, peternewman@google.com
+Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	tony.luck@intel.com, fenghua.yu@intel.com, x86@kernel.org,
+	hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org,
+	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com,
+	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
+	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
+	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
+	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
+	mario.limonciello@amd.com, james.morse@arm.com,
+	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
+	eranian@google.com
+Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
+ Monitoring Counters (ABMC)
+Message-ID: <Z6zeXby8ajh0ax6i@e133380.arm.com>
+References: <cover.1737577229.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250212-kselftest-mm-no-hugepages-v1-2-44702f538522@kernel.org>
-References: <20250212-kselftest-mm-no-hugepages-v1-0-44702f538522@kernel.org>
-In-Reply-To: <20250212-kselftest-mm-no-hugepages-v1-0-44702f538522@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Nico Pache <npache@redhat.com>, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5034; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Am3KdYIPQjJJqDySmLeo2AVr33lxdKgLJ8ZrAYJIfwE=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnrN5Il20DD+VhUdR0ubKKm9DDL6E/oyYts5aGN3Za
- zrQz7T2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ6zeSAAKCRAk1otyXVSH0ICeB/
- 4w/FgxT9RwtA7DwrjwxGCHSfCWlO/iDd4knXJQInuAxqYW2IveU6Y2bvg280rXvcuN4+hctl0uLwQK
- fp3zw+bBota+Gl+ftZ9rN9GrTSuGG8XMipvbBAUDfziHGsExY7LkD/OXHe3S7ukFBu23gfzbzvEiAX
- ty4OiU5xMUOEnC6szMeeiUFUU72RdJaReiAHLcwhhr6Gsxyq0C6CDVXpwEYLHXcaDowJEireF4mGaq
- GkEP2n938y7ooIcmA08JVDrjKZfEUUzwH1laDNEgVoV7HMuNuAL0hHNUFKjjyseOQWq3OerBry8xHw
- 2xZq/jwpdRGaasWQYe1dBPPEgUHsJZ
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1737577229.git.babu.moger@amd.com>
 
-Currently the mm selftests refuse to run if huge pages are not available in
-the current system but this is an optional feature and not all the tests
-actually require them. Change the test during startup to be non-fatal and
-skip or omit tests which actually rely on having huge pages, allowing the
-other tests to be run.
+Hi there,
 
-The gup_test does support using madvise() to configure huge pages but it
-ignores the error code so we just let it run.
+On Wed, Jan 22, 2025 at 02:20:08PM -0600, Babu Moger wrote:
+> 
+> This series adds the support for Assignable Bandwidth Monitoring Counters
+> (ABMC). It is also called QoS RMID Pinning feature
+> 
+> Series is written such that it is easier to support other assignable
+> features supported from different vendors.
+> 
+> The feature details are documented in the  APM listed below [1].
+> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+> Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
+> Monitoring (ABMC). The documentation is available at
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+> 
+> The patches are based on top of commit
+> d361b84d51bfe (tip/master) Merge branch into tip/master: 'x86/tdx'
+> 
+> # Introduction
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/mm/run_vmtests.sh | 66 ++++++++++++++++++++-----------
- 1 file changed, 42 insertions(+), 24 deletions(-)
+[...]
 
-diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
-index da7e266681031d2772fb0c4139648904a18e0bf9..d3866b50a6e16a9ba08b6cf33d131edf2a9226be 100755
---- a/tools/testing/selftests/mm/run_vmtests.sh
-+++ b/tools/testing/selftests/mm/run_vmtests.sh
-@@ -187,9 +187,10 @@ if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
- 		printf "Not enough huge pages available (%d < %d)\n" \
- 		       "$freepgs" "$needpgs"
- 	fi
-+	HAVE_HUGEPAGES=1
- else
- 	echo "no hugetlbfs support in kernel?"
--	exit 1
-+	HAVE_HUGEPAGES=0
- fi
- 
- # filter 64bit architectures
-@@ -218,13 +219,20 @@ pretty_name() {
- # Usage: run_test [test binary] [arbitrary test arguments...]
- run_test() {
- 	if test_selected ${CATEGORY}; then
-+		local skip=0
-+
- 		# On memory constrainted systems some tests can fail to allocate hugepages.
- 		# perform some cleanup before the test for a higher success rate.
- 		if [ ${CATEGORY} == "thp" -o ${CATEGORY} == "hugetlb" ]; then
--			echo 3 > /proc/sys/vm/drop_caches
--			sleep 2
--			echo 1 > /proc/sys/vm/compact_memory
--			sleep 2
-+			if [ "${HAVE_HUGEPAGES}" = "1" ]; then
-+				echo 3 > /proc/sys/vm/drop_caches
-+				sleep 2
-+				echo 1 > /proc/sys/vm/compact_memory
-+				sleep 2
-+			else
-+				echo "hugepages not supported" | tap_prefix
-+				skip=1
-+			fi
- 		fi
- 
- 		local test=$(pretty_name "$*")
-@@ -232,8 +240,12 @@ run_test() {
- 		local sep=$(echo -n "$title" | tr "[:graph:][:space:]" -)
- 		printf "%s\n%s\n%s\n" "$sep" "$title" "$sep" | tap_prefix
- 
--		("$@" 2>&1) | tap_prefix
--		local ret=${PIPESTATUS[0]}
-+		if [ "${skip}" != "1" ]; then
-+			("$@" 2>&1) | tap_prefix
-+			local ret=${PIPESTATUS[0]}
-+		else
-+			local ret=$ksft_skip
-+		fi
- 		count_total=$(( count_total + 1 ))
- 		if [ $ret -eq 0 ]; then
- 			count_pass=$(( count_pass + 1 ))
-@@ -271,13 +283,15 @@ CATEGORY="hugetlb" run_test ./hugepage-vmemmap
- CATEGORY="hugetlb" run_test ./hugetlb-madvise
- CATEGORY="hugetlb" run_test ./hugetlb_dio
- 
--nr_hugepages_tmp=$(cat /proc/sys/vm/nr_hugepages)
--# For this test, we need one and just one huge page
--echo 1 > /proc/sys/vm/nr_hugepages
--CATEGORY="hugetlb" run_test ./hugetlb_fault_after_madv
--CATEGORY="hugetlb" run_test ./hugetlb_madv_vs_map
--# Restore the previous number of huge pages, since further tests rely on it
--echo "$nr_hugepages_tmp" > /proc/sys/vm/nr_hugepages
-+if [ "${HAVE_HUGEPAGES}" = "1" ]; then
-+	nr_hugepages_tmp=$(cat /proc/sys/vm/nr_hugepages)
-+	# For this test, we need one and just one huge page
-+	echo 1 > /proc/sys/vm/nr_hugepages
-+	CATEGORY="hugetlb" run_test ./hugetlb_fault_after_madv
-+	CATEGORY="hugetlb" run_test ./hugetlb_madv_vs_map
-+	# Restore the previous number of huge pages, since further tests rely on it
-+	echo "$nr_hugepages_tmp" > /proc/sys/vm/nr_hugepages
-+fi
- 
- if test_selected "hugetlb"; then
- 	echo "NOTE: These hugetlb tests provide minimal coverage.  Use"	  | tap_prefix
-@@ -391,7 +405,9 @@ CATEGORY="memfd_secret" run_test ./memfd_secret
- fi
- 
- # KSM KSM_MERGE_TIME_HUGE_PAGES test with size of 100
--CATEGORY="ksm" run_test ./ksm_tests -H -s 100
-+if [ "${HAVE_HUGEPAGES}" = "1" ]; then
-+	CATEGORY="ksm" run_test ./ksm_tests -H -s 100
-+fi
- # KSM KSM_MERGE_TIME test with size of 100
- CATEGORY="ksm" run_test ./ksm_tests -P -s 100
- # KSM MADV_MERGEABLE test with 10 identical pages
-@@ -440,15 +456,17 @@ CATEGORY="thp" run_test ./transhuge-stress -d 20
- 
- # Try to create XFS if not provided
- if [ -z "${SPLIT_HUGE_PAGE_TEST_XFS_PATH}" ]; then
--    if test_selected "thp"; then
--        if grep xfs /proc/filesystems &>/dev/null; then
--            XFS_IMG=$(mktemp /tmp/xfs_img_XXXXXX)
--            SPLIT_HUGE_PAGE_TEST_XFS_PATH=$(mktemp -d /tmp/xfs_dir_XXXXXX)
--            truncate -s 314572800 ${XFS_IMG}
--            mkfs.xfs -q ${XFS_IMG}
--            mount -o loop ${XFS_IMG} ${SPLIT_HUGE_PAGE_TEST_XFS_PATH}
--            MOUNTED_XFS=1
--        fi
-+    if [ "${HAVE_HUGEPAGES}" = "1" ]; then
-+	if test_selected "thp"; then
-+	    if grep xfs /proc/filesystems &>/dev/null; then
-+		XFS_IMG=$(mktemp /tmp/xfs_img_XXXXXX)
-+		SPLIT_HUGE_PAGE_TEST_XFS_PATH=$(mktemp -d /tmp/xfs_dir_XXXXXX)
-+		truncate -s 314572800 ${XFS_IMG}
-+		mkfs.xfs -q ${XFS_IMG}
-+		mount -o loop ${XFS_IMG} ${SPLIT_HUGE_PAGE_TEST_XFS_PATH}
-+		MOUNTED_XFS=1
-+	    fi
-+	fi
-     fi
- fi
- 
+> # Examples
+> 
+> a. Check if ABMC support is available
+> 	#mount -t resctrl resctrl /sys/fs/resctrl/
+> 
+> 	# cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
+> 	[mbm_cntr_assign]
+> 	default
 
--- 
-2.39.5
+(Nit: can this be called "mbm_counter_assign"?  The name is already
+long, so I wonder whether anything is gained by using a cryptic
+abbreviation for "counter".  Same with all the "cntrs" elsewhere.
+This is purely cosmetic, though -- the interface works either way.)
 
+> 	ABMC feature is detected and it is enabled.
+> 
+> b. Check how many ABMC counters are available. 
+> 
+> 	# cat /sys/fs/resctrl/info/L3_MON/num_mbm_cntrs 
+> 	32
+
+Is this file needed?
+
+With MPAM, it is more difficult to promise that the same number of
+counters will be available everywhere.
+
+Rather than lie, or report a "safe" value here that may waste some
+counters, can we just allow the number of counters to be be discovered
+per domain via available_mbm_cntrs?
+
+num_closids and num_rmids are already problematic for MPAM, so it would
+be good to avoid any more parameters of this sort from being reported
+to userspace unless there is a clear understanding of why they are
+needed.
+
+Reporting number of counters per monitoring domain is a more natural
+fit for MPAM, as below:
+
+> c. Check how many ABMC counters are available in each domain.
+> 
+> 	# cat /sys/fs/resctrl/info/L3_MON/available_mbm_cntrs 
+> 	0=30;1=30
+
+For MPAM, this seems supportable.  Each monitoring domain will have
+some counters, and a well-defined number of them will be available for
+allocation at any one time.
+
+> d. Create few resctrl groups.
+> 
+> 	# mkdir /sys/fs/resctrl/mon_groups/child_default_mon_grp
+> 	# mkdir /sys/fs/resctrl/non_default_ctrl_mon_grp
+> 	# mkdir /sys/fs/resctrl/non_default_ctrl_mon_grp/mon_groups/child_non_default_mon_grp
+> 
+> e. This series adds a new interface file /sys/fs/resctrl/info/L3_MON/mbm_assign_control
+>    to list and modify any group's monitoring states. File provides single place
+>    to list monitoring states of all the resctrl groups. It makes it easier for
+>    user space to learn about the used counters without needing to traverse all
+>    the groups thus reducing the number of file system calls.
+> 
+> 	The list follows the following format:
+> 
+> 	"<CTRL_MON group>/<MON group>/<domain_id>=<flags>"
+> 
+> 	Format for specific type of groups:
+> 
+> 	* Default CTRL_MON group:
+> 	 "//<domain_id>=<flags>"
+
+[...]
+
+>        Flags can be one of the following:
+> 
+>         t  MBM total event is enabled.
+>         l  MBM local event is enabled.
+>         tl Both total and local MBM events are enabled.
+>         _  None of the MBM events are enabled
+> 
+> 	Examples:
+
+[...]
+
+I think that this basically works for MPAM.
+
+The local/total distinction doesn't map in a consistent way onto MPAM,
+but this problem is not specific to ABMC.  It feels sensible for ABMC
+to be built around the same concepts that resctrl already has elsewhere
+in the interface.  MPAM will do its best to fit (as already).
+
+Regarding Peter's use case of assiging multiple counters to a
+monitoring group [1], I feel that it's probably good enough to make
+sure that the ABMC interface can be extended in future in a backwards
+compatible way so as to support this, without trying to support it
+immediately.
+
+[1] https://lore.kernel.org/lkml/CALPaoCjY-3f2tWvBjuaQPfoPhxveWxxCxHqQMn4BEaeBXBa0bA@mail.gmail.com/
+
+
+For example, if we added new generic "letters" -- say, "0" to "9",
+combined with new counter files in resctrlfs, that feels like a
+possible approach.  ABMC (as in this series) should just reject such
+such assignments, and the new counter files wouldn't exist.
+
+Availability of this feature could also be reported as a distinct mode
+in mbm_assign_mode, say "mbm_cntr_generic", or whatever.
+
+
+A _sketch_ of this follows.  This is NOT a proposal -- the key
+question is whether we are confident that we can extend the interface
+in this way in the future without breaking anything.
+
+If "yes", then the ABMC interface (as proposed by this series) works as
+a foundation to build on.
+
+--8<--
+
+[artists's impression]
+
+# cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
+ 	mbm_cntr_generic
+ 	[mbm_cntr_assign]
+ 	default
+
+# echo mbm_cntr_generic >/sys/fs/resctrl/info/L3_MON/mbm_assign_mode
+# echo '//0=01;1=23' >/sys/fs/resctrl/info/L3_MON/mbm_assign_control
+# echo t >/sys/fs/resctrl/info/L3_MON/mbm_counter0_bytes_type 
+# echo l >/sys/fs/resctrl/info/L3_MON/mbm_counter1_bytes_type 
+# echo t >/sys/fs/resctrl/info/L3_MON/mbm_counter2_bytes_type 
+# echo l >/sys/fs/resctrl/info/L3_MON/mbm_counter3_bytes_type 
+
+...
+
+# cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_counter1_bytes
+
+etc.
+
+-->8--
+
+Any thoughts on this, Peter?
+
+[...]
+
+Cheers
+---Dave
 
