@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-510358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C293AA31BA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:59:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C3BA31BAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:00:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E133A6D43
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:59:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C79FE167D9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1444C149C4D;
-	Wed, 12 Feb 2025 01:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAB51CAA80;
+	Wed, 12 Feb 2025 02:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vlExsrIx"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czNNuFjW"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C89013A3F7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C981C5F39;
+	Wed, 12 Feb 2025 02:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739325557; cv=none; b=Y1GXkqL8XCuI/EHe4hgfTeXeZFXoj+jyfoWBG00pnLxcJrEezSGgv3ynGsPXCG0ucImf5R9/Smk1zl2QqSGxMnlxKkl0QduHWhP38/yNvHpaXepVbEUwUXmYyv1CgIesKqMykM4+KixpFgKe8q1ZE70wXbwVZwSxWNYhoCusWUE=
+	t=1739325613; cv=none; b=PcGhxZfiOcccno6GpoNG9NjRcdjoDyYSzi9YYuyYozCiExMiUcMnhR+OChUaRA9V88wmukYXVPBQDY5k3SYRmkJwTsrAw7ASny9wE3ruCsFHuULkYyQ2Zxp/i57dTPa9HAyv2PZmfrtiBxxx+ebYEhpw0dicTsDisWjA4xae0IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739325557; c=relaxed/simple;
-	bh=8plav0HWTt+1h9QiCkNdNPq1o+Y+AMAFq2hfN8tZSs8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HMY8thVDYeA/DpHo1tdMDBYMpHWqEwqf0R+i9Pd+gzCBfvHeVyvnJSEgf3WemEIUz4GG1n6GdYEhE0G3hyBVc1uuBApH7qPxpKLslgGqrFkmcQsgPfKxI4D19LdoCR85wiKwMlgmByy1h1UTCc+6gdEuz/UYvXB9ZUrLJCk6tFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vlExsrIx; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2f81a0d0a18so13252077a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 17:59:15 -0800 (PST)
+	s=arc-20240116; t=1739325613; c=relaxed/simple;
+	bh=QEGOAOYXFEEhIZfm//ohY8nsq6IZgww9eBHAzdq0y1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N3KeO0rqm+YpkDew1nTnR21KxDYKuV8d3qjjG5HBbDMH/tVamEC/ABKHqz6sGGIHXA2oMM4KZO0KYy0TqiDJjDaycebnu3HkHO0w27zyYuDZ7kn8VTpuDHAzWq++8g+WgJwMPn6zNkei31gQM1Vxkn8ZIG+ADxwfazMM5yiFxxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czNNuFjW; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6dd01781b56so73291286d6.0;
+        Tue, 11 Feb 2025 18:00:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739325555; x=1739930355; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5TmAA7lrYyzPK7RPMr80QZDXqtaYCD1a8crOBimpM0Y=;
-        b=vlExsrIxEZEHfUvcBMDMBuSIUS84rCdt5tgck0XWeP5fT1rJXN6W4aIFWgxaUc0HVV
-         3U1c01nUZLMbTp6vhOuN1JirigMQxO/8MO68xZFck6rB3k4GGiMJBSWjZrfB65l3Cn/J
-         BkhT0QLKFHLN3/BLjvWvEF3yjs+zVlcMLAPLDD6D4o+6ZroiXI+uofTjewvFZuniZGdd
-         wN5W9mNzjvatxLtLDIwYONoDiViIqq/PC7m6YYkc5BD2ND/R8ewTABLzvK1x3V52RGTt
-         yiyRpaM8Hv3EFtizbHz0ol0SssVJzdHASqBarhGcfnuqbyJZIFdh3aQb5VfiRuIiUYa1
-         ydqg==
+        d=gmail.com; s=20230601; t=1739325610; x=1739930410; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7VHuRV3JLBd0sDXEd7hwkpdzgjJBnpcclim2XbGuwkA=;
+        b=czNNuFjWcAxC4qq9nVLmvzp8qoe+pRcIFzrTvVmekSwC47HBBnmM0I3k7xiBqWRR+i
+         XurWiIJTeZi0xp2YkAOOTzMN2uXeHmfndiDAp9To0wMlhT9xuDsXVlR6Q0h1n5CabFTb
+         EVRymxgnHk3uzm/ZV/axHqlEKUTgl1uVsybLrFUtyaY5aKIrtVT5uCwCk20Wu3lQ+/cI
+         /NDtp9dp/LEZuE/f2oUYC5lNuWlJQyeXYy1DKtwYyfqOBDdcZhmKEkuOoTRwAk+Gmqi2
+         RbNQ2BV3A8jAI9pzCN+qEIcKcNUtNjzBDM+3HRs7fEqi2o9IulH6qDt+nhCN2UchWGLI
+         0R1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739325555; x=1739930355;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5TmAA7lrYyzPK7RPMr80QZDXqtaYCD1a8crOBimpM0Y=;
-        b=OkOIai5Lbc7UJntG7SVHbAAPy+Jt8yqkeRTntmgegPqW6Yxrn+4LE4coWkzHYkio4i
-         YXqQN16BNqOUNZfVuBjStmIyl6TMGNlvuHT4DGU2XIFPxcXK8SD7S9euBWOzoEGFH/IB
-         Jqg84+xHamIUCxuJTYzhlo38e5OwroH/l8e36Kl/WN7+tVO+QddKPQLmO4mE+dtzfZgE
-         Dgncla/+J/a2TitBLEMLSsbihFSl5iQDdgSBIAPzMLKmlceSHWE4vNYsKSfl9+XwxN+J
-         1lpThNme+1myBThwoe9b704Nacm5ICdX9Ifo3llg/DMBwxGPHuKv47+AM3NsO8rYBLt6
-         FKKw==
-X-Gm-Message-State: AOJu0YwojnvZiEnYHQELU24hWj7p2e5+3mvvxm6fwEBaPK3TKWFuYQKt
-	0IfTUDh510vpV0M2+yS/vP1v5tAzQ1uZwn7sOw9u7AtyhzNJXieu+OudCy2JSBjJcK9ZyEkjKtO
-	8Rg==
-X-Google-Smtp-Source: AGHT+IGNXFHUFBAGO7+23DHP+xbhUNfnPfHgeiFc0IIY5LE7qIIGAVhpnh4dGAbimBx/4hI7qfnSlyKuElk=
-X-Received: from pjbpq16.prod.google.com ([2002:a17:90b:3d90:b0:2e9:38ea:ca0f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:53cf:b0:2ee:ab29:1a57
- with SMTP id 98e67ed59e1d1-2fbf5bb8fb4mr2372898a91.2.1739325555495; Tue, 11
- Feb 2025 17:59:15 -0800 (PST)
-Date: Tue, 11 Feb 2025 17:59:14 -0800
-In-Reply-To: <20250203223205.36121-5-prsampat@amd.com>
+        d=1e100.net; s=20230601; t=1739325610; x=1739930410;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7VHuRV3JLBd0sDXEd7hwkpdzgjJBnpcclim2XbGuwkA=;
+        b=IO/Q39a6Q4iWt9ZA3r7avWydnZNoxfm48eBbGu1C9Eq16Bs4fsvfzc5iKnwPgGBeo0
+         qUiZ6w+0M9x6PJKgMr+N+PRUpu7H4W4/lg/iZrrqlUFSBTGuXWTDbUOU5baIzWHuP1YX
+         3XDS/eZExZhWKhoYr2tWcwan5Qc9KMsy6PuQ0PblqdmqtdWiS7l7EOdlRPrcArSzJZML
+         Sxa/Dd2AobXGmPeZA9t3LKapxvlcTwx0D3dry6ycZ8rAi/Qok5Wpg1uswruMc7eApeQr
+         UHc1On290IxFnkG2EQ5odXEtGNW1AVXhBnIlJbDwlwfmp/KM3uP6WgdjscKfT1GAxZTc
+         xY7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVC8PwfzYksJZuXOxQHDcKM2h+qycEL7SsYoonyOLl48Sh/jw47/PZmEscTHqcqis6SMq7R4F6TAm0a@vger.kernel.org, AJvYcCWxMRjCFXxswZP5VEgJLSuVpVl9TZ8kEvR4/XLI/hmSp0bjuKSTKh4/IIlbb9LWrqwCEG5RMU5i0RxOL5ce@vger.kernel.org, AJvYcCWzaO1JB3oLNsljC5Nst5xhvStTsCXKdCYISzqdFQ9mRFySrSfF643ZWQuRqsbFzEIia7g6lNuGTcZ6spkEiA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcWlkvfRu8HAkvKTCPburANxDRvArVN3P7mkUWxxhdKJ416S80
+	R7tiX/Ck018hlzA5EjVi/Ipj04u6P/u4/Gxqtsz424T5FQcKRywXZg39QZGOkNxFVT+QSJRvsoi
+	LCuS4tPn4Fv8j9BJNSioVEGzfTNNptVlU9vM=
+X-Gm-Gg: ASbGncvzuFT76+l1M8Al5DjSiyVhVBM+7wuNqLde8tGY2l/C4Wo1aHsbKPztnxnFNHp
+	bt3efB4ag6G28RUKCdOXG5gZVNynIMSLVyfG50x7au4HbB14L+wBO4kZ5jqhypPWHXkYQMEm0H9
+	5mKb19jXdXwYvtXNc5Khfd73w0Blnghg==
+X-Google-Smtp-Source: AGHT+IEUFkdtr5qbMiziWtcWyrFIZMakMc2Xt3xf4SJA+jIVIoFYGC3/USIMiDCJSTNGxYXsJYbSafxf7lWIUQsjr3A=
+X-Received: by 2002:a05:6214:4019:b0:6d4:238e:35b0 with SMTP id
+ 6a1803df08f44-6e46ed7f4ccmr26252796d6.17.1739325610034; Tue, 11 Feb 2025
+ 18:00:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250203223205.36121-1-prsampat@amd.com> <20250203223205.36121-5-prsampat@amd.com>
-Message-ID: <Z6wAclXklofHtY__@google.com>
-Subject: Re: [PATCH v6 4/9] KVM: selftests: Add VMGEXIT helper
-From: Sean Christopherson <seanjc@google.com>
-To: "Pratik R. Sampat" <prsampat@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, shuah@kernel.org, 
-	pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com, pankaj.gupta@amd.com, 
-	michael.roth@amd.com, sraithal@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250209-expressatt-bam-v2-1-e6c01c5d8292@gmail.com> <e0ef29dd-afe4-4ad7-95db-d21326744c92@oss.qualcomm.com>
+In-Reply-To: <e0ef29dd-afe4-4ad7-95db-d21326744c92@oss.qualcomm.com>
+From: Rudraksha Gupta <guptarud@gmail.com>
+Date: Tue, 11 Feb 2025 17:59:33 -0800
+X-Gm-Features: AWEUYZms9PJNdelX24SfB9ouO82cZnB7LH--76l0J_cLW14Q56WNbDTJ3tWa0sI
+Message-ID: <CABhZbsXo69FL-xUfg3a20RybO_uRmsOKyMJ2w3qnpk+8pYyUqw@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: qcom: msm8960: Add BAM
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sam Day <me@samcday.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 03, 2025, Pratik R. Sampat wrote:
-> Abstract rep vmmcall coded into the VMGEXIT helper for the sev
-> library.
-> 
-> No functional change intended.
-> 
-> Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
-> Tested-by: Srikanth Aithal <sraithal@amd.com>
-> Signed-off-by: Pratik R. Sampat <prsampat@amd.com>
-> ---
-> v5..v6:
-> 
-> * Collected tags from Pankaj and Srikanth.
-> ---
->  tools/testing/selftests/kvm/include/x86/sev.h    | 2 ++
->  tools/testing/selftests/kvm/x86/sev_smoke_test.c | 2 +-
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/x86/sev.h b/tools/testing/selftests/kvm/include/x86/sev.h
-> index 82c11c81a956..e7df5d0987f6 100644
-> --- a/tools/testing/selftests/kvm/include/x86/sev.h
-> +++ b/tools/testing/selftests/kvm/include/x86/sev.h
-> @@ -27,6 +27,8 @@ enum sev_guest_state {
->  
->  #define GHCB_MSR_TERM_REQ	0x100
->  
-> +#define VMGEXIT()		{ __asm__ __volatile__("rep; vmmcall"); }
+> > +             sdcc3bam: dma-controller@12182000 {
+> > +                     compatible = "qcom,bam-v1.3.0";
+> > +                     reg = <0x12182000 0x2000>;
+>
+> The BAM controller is 0x4000-long
 
-Please make this a proper inline function, there's no reason to use a macro.
+
+Seems like my device splats with this requested change:
+
+Diff: https://pastebin.com/AwzHPCLG
+Log: https://pastebin.com/WQswkndX
+
+
+
+>
+> Otherwise, looks good
+>
+> Konrad
 
