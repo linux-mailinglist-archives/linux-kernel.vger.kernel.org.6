@@ -1,181 +1,148 @@
-Return-Path: <linux-kernel+bounces-511961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C95A33213
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:07:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D1EA33219
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 743F03A3149
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:07:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569A23A3925
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F97820409E;
-	Wed, 12 Feb 2025 22:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846A1204089;
+	Wed, 12 Feb 2025 22:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zqChrpn/"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVmN2rQO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2166620011E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D6C2036ED;
+	Wed, 12 Feb 2025 22:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739398023; cv=none; b=p0eaIsHhplJAc2SmkZeJhizlQPDt1YjyDV4rIy+XSxuNPS+aH3HXa26he+EcjE5ZUA6RuIq19N1IgJUO2XTNb+Bp8ADRLr4ZAJWDdE9W6l5RBZcidRIL1QDuhCCf8xsElyuYf7XWOrTP53i+ZYA9pcSWtZ1HePLEtVyPt5y7EWs=
+	t=1739398133; cv=none; b=H0nFVwKKoPn+cqdkTJJwyT2wJA0F5cpsTLuwC3b/WDA01W+6zP4IPTl4I6eoWyf+CU8BMKKQaBQ0clCFdgbGSSOLpnOj3BV0HGbvbeG0ifh39GuxgQQaAJFGAzwSAfJ5VxBye8l/1LcwKNVMNRm8psJ4Vzz3JwYvoUBN0678yV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739398023; c=relaxed/simple;
-	bh=W3EI/JwSNPCRO8AUPEByM5MP57IzTM5+fEGnsedN1Ts=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gaM6qeec6wgdr/ZTtQ0/+OD+AjGxebfLbLyHKXJqmgPosc3Vm+I0MOefVjoe6adwHua2W3MgVG5Sj25QxMSvkQDoFVcfE9Zg0O/+/s43pKTJlRF8Ap99eZqbDSsPDOq0LnNFTg861Tjd2SskKcF2/lq0M1VAKocLCw41cF1IAt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zqChrpn/; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fa57c42965so602769a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:07:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739398021; x=1740002821; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LGqR78gPCoFohz0E/LUFCYULs/zf/5PcEDAbIwIJG7o=;
-        b=zqChrpn/YmDKUa67UCS4deAYBjUWUZ6angJCX0/BPXWzrghuC0+p1cf/drWY5jl2Qd
-         PmIP2Ntr9elLU687zScTkpQv0hO+tqUM61C6cUG+pS5LYlC4rjAUwTl152S0CQHn+vMq
-         mIu4jvkCsBFobgxNq7Y/l9jjY9LL3I6r8Tc+VjD1TXhUNKD0a3gFNlg86HSaXA32M7GD
-         GIsgjbpV3NASsErTt0fWnvY5l2U5487RnKz+6pBunuCQzzl+g69X0mpWfKnEhy3SDAxu
-         /MKdf0trrqLVJznxNbOD0Rhhay4y0KQjEZ33kNwFpsd5sxTf1NNxswDFL5qFsGDZL280
-         qKHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739398021; x=1740002821;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LGqR78gPCoFohz0E/LUFCYULs/zf/5PcEDAbIwIJG7o=;
-        b=didIihkgPEKo3IFDV4XxTGyoAPXQGmHhlPHGWjSMD4o9954NoSlEM58v8yXjMz2BS1
-         cO14h31yV4/1fBngJuHlr0pdiMePcCt0/K7x4GZZWh+7/2luuUwEaHz9mB3LG2IfG2RS
-         hyuFCAicMTVlF+gZHh0hKjMtJTpjCnpHDDgutHokPol+xB9TK2GfXpIPHHw29yhjs8XP
-         8NOCTLFEoXWL0bo7/n/ZD1itx5ZwCOs714FRdo/o1gNIzOLLQ1rQDcgFZkXyqRsIpBoN
-         nsByNmsJFJg/hERP+qBydBReS7WaGj1FdxOM4Lm553ecwq11OY55IhwY0XGwpQKyPpDF
-         lY3A==
-X-Forwarded-Encrypted: i=1; AJvYcCX2D6Fz/GwZCWTZHd80ptlPnO2+cWiYjnuwHpIvlphzTc80nNSvlT/bNUsbbm+VykCNYAKfV7sWOf/3fwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9YRhJq0ZAfblThHua2enOx+121B0K79r1lHTDFcn38NfzLTCr
-	gxZn4C0k43nKGymP2NPYS4q81MnTbW8VxkmbRQg+YKdDQd3jmQ+0KFISkilmio/qOyDoAUFJcpn
-	JLg==
-X-Google-Smtp-Source: AGHT+IHKwOsGnli7OQRD04PJwE+8VS+SYu/aOMm+pcV1q2UPRiD3IUftLWbwfUqgVsLruaomYZD37oPEl7A=
-X-Received: from pjtd15.prod.google.com ([2002:a17:90b:4f:b0:2fa:1771:e276])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:280b:b0:2f8:2c47:fb36
- with SMTP id 98e67ed59e1d1-2fbf5c6ea65mr8404846a91.33.1739398021418; Wed, 12
- Feb 2025 14:07:01 -0800 (PST)
-Date: Wed, 12 Feb 2025 14:07:00 -0800
-In-Reply-To: <20250204004038.1680123-5-jthoughton@google.com>
+	s=arc-20240116; t=1739398133; c=relaxed/simple;
+	bh=kO4pmiuBXJVn23fh7yK0dMENTZZ3dsQpimEg4/VR7YM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=axy1ghdO+gXAO0z+eG7k2YwCrwUd6ceohDfYJZRBAFiHXVn0Qr/m5pna5yl5a+7nUs79HSI45WETAYyYJUVyNhoLBySG7d76dh8dbm6eiI3wn4OUi77z2r1q5yO717jFZwHxKCdEIAraBha2kYxW8GEDITWOFlWH9UebokNIrF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVmN2rQO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F40C4CEDF;
+	Wed, 12 Feb 2025 22:08:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739398133;
+	bh=kO4pmiuBXJVn23fh7yK0dMENTZZ3dsQpimEg4/VR7YM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=HVmN2rQOSlZupdEeZ+yet8gDn7h4Vr3AL/qb1wa4LPnK/06A+yCt1/Z7EPcWvr+f9
+	 LtWMAkjqOL1o28u1hhVnDwSNzwjGPAPnNuop/FE3ykGyICcAIBrtNNjpgo2Il36Koj
+	 uB8A5Gj66Q5MiOUwAU67m6PqAHMVndGgRt1HzEWW1lqspwlQ1etEvetSBFZ+/REvtJ
+	 VXJ8z8LTWt8/KegEtZjaBo9Nz4SEd5r4K/lyiIR+pdGhO/u5YA0rw7Gtipa2Is/qeK
+	 ELSmUOhzrC/MimV6FtMb5MmhrT971hi18tLIg4yxMRJqvt+UM1jNtWxNUjnm7XfdPK
+	 9dysLU353e4dA==
+Date: Wed, 12 Feb 2025 16:08:52 -0600
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250204004038.1680123-1-jthoughton@google.com> <20250204004038.1680123-5-jthoughton@google.com>
-Message-ID: <Z60bhK96JnKIgqZQ@google.com>
-Subject: Re: [PATCH v9 04/11] KVM: x86/mmu: Relax locking for
- kvm_test_age_gfn() and kvm_age_gfn()
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: jonathanh@nvidia.com, broonie@kernel.org, linux-spi@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ smangipudi@nvidia.com, skomatineni@nvidia.com, thierry.reding@gmail.com, 
+ ldewangan@nvidia.com, kyarlagadda@nvidia.com
+To: Vishwaroop A <va@nvidia.com>
+In-Reply-To: <20250212144651.2433086-1-va@nvidia.com>
+References: <s355cib7g6e3gmsy2663pnzx46swhfudpofv2s5tcaytjq4yuj@xqtvoa5p477n>
+ <20250212144651.2433086-1-va@nvidia.com>
+Message-Id: <173939808222.598724.14105549991547755635.robh@kernel.org>
+Subject: Re: [PATCH v2 0/6] Configure Clocks, Add Native Dma support.
 
-On Tue, Feb 04, 2025, James Houghton wrote:
-> diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
-> index 22551e2f1d00..e984b440c0f0 100644
-> --- a/arch/x86/kvm/mmu/spte.c
-> +++ b/arch/x86/kvm/mmu/spte.c
-> @@ -142,8 +142,14 @@ bool spte_has_volatile_bits(u64 spte)
->  		return true;
->  
->  	if (spte_ad_enabled(spte)) {
-> -		if (!(spte & shadow_accessed_mask) ||
-> -		    (is_writable_pte(spte) && !(spte & shadow_dirty_mask)))
-> +		/*
-> +		 * Do not check the Accessed bit. It can be set (by the CPU)
-> +		 * and cleared (by kvm_tdp_mmu_age_spte()) without holding
 
-When possible, don't reference functions by name in comments.  There are situations
-where it's unavoidable, e.g. when calling out memory barrier pairs, but for cases
-like this, it inevitably leads to stale code.
+On Wed, 12 Feb 2025 14:46:45 +0000, Vishwaroop A wrote:
+> This patch series configures qspi clocks, fixes combined sequence
+> programming and introduces native dma support.
+> 
+> Vishwaroop A (6):
+>   arm64: tegra: Configure QSPI clocks and add DMA
+>   spi: tegra210-quad: Update dummy sequence configuration
+>   spi: tegra210-quad: Fix X1_X2_X4 encoding and support x4 transfers
+>   spi: tegra210-quad: remove redundant error handling code
+>   spi: tegra210-quad: modify chip select (CS) deactivation
+>   spi: tegra210-quad: Introduce native DMA support
+> 
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi |  14 ++
+>  drivers/spi/spi-tegra210-quad.c          | 273 +++++++++++++----------
+>  2 files changed, 174 insertions(+), 113 deletions(-)
+> 
+> ---
+> v1 -> v2:
+> 	* Removed Change-IDs from the patches.
+>         * Addressed kernel test bot warnings.
+> ---
+> --
+> 2.17.1
+> 
+> 
+> 
 
-> +		 * the mmu_lock, but when clearing the Accessed bit, we do
-> +		 * not invalidate the TLB, so we can already miss Accessed bit
 
-No "we" in comments or changelog.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-> +		 * updates.
-> +		 */
-> +		if (is_writable_pte(spte) && !(spte & shadow_dirty_mask))
->  			return true;
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-This 100% belongs in a separate prepatory patch.  And if it's moved to a separate
-patch, then the rename can/should happen at the same time.
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-And with the Accessed check gone, and looking forward to the below change, I think
-this is the perfect opportunity to streamline the final check to:
+  pip3 install dtschema --upgrade
 
-	return spte_ad_enabled(spte) && is_writable_pte(spte) &&
-	       !(spte & shadow_dirty_mask);
 
-No need to send another version, I'll move things around when applying.
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250212144651.2433086-1-va@nvidia.com:
 
-Also, as discussed off-list I'm 99% certain that with the lockless aging, KVM
-must atomically update A/D-disabled SPTEs, as the SPTE can be access-tracked and
-restored outside of mmu_lock.  E.g. a task that holds mmu_lock and is clearing
-the writable bit needs to update it atomically to avoid its change from being
-lost.
+arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb: spi@3270000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dtb: spi@3270000: Unevaluated properties are not allowed ('dma-coherent', 'iommus' were unexpected)
+	from schema $id: http://devicetree.org/schemas/spi/nvidia,tegra210-quad.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dtb: spi@3270000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0008.dtb: spi@3270000: Unevaluated properties are not allowed ('dma-coherent', 'iommus' were unexpected)
+	from schema $id: http://devicetree.org/schemas/spi/nvidia,tegra210-quad.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0008.dtb: spi@3270000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dtb: spi@3300000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb: spi@3270000: Unevaluated properties are not allowed ('dma-coherent', 'iommus' were unexpected)
+	from schema $id: http://devicetree.org/schemas/spi/nvidia,tegra210-quad.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dtb: spi@3270000: Unevaluated properties are not allowed ('dma-coherent', 'iommus' were unexpected)
+	from schema $id: http://devicetree.org/schemas/spi/nvidia,tegra210-quad.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb: spi@3270000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dtb: spi@3270000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dtb: spi@3270000: Unevaluated properties are not allowed ('dma-coherent', 'iommus' were unexpected)
+	from schema $id: http://devicetree.org/schemas/spi/nvidia,tegra210-quad.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dtb: spi@3300000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dtb: spi@3270000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0008.dtb: spi@3300000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb: spi@3300000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dtb: spi@3300000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
+arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dtb: spi@3300000: 'dmas' is a dependency of 'dma-names'
+	from schema $id: http://devicetree.org/schemas/dma/dma.yaml#
 
-I'll slot this is in:
 
---
-From: Sean Christopherson <seanjc@google.com>
-Date: Wed, 12 Feb 2025 12:58:39 -0800
-Subject: [PATCH 03/10] KVM: x86/mmu: Always update A/D-disable SPTEs
- atomically
 
-In anticipation of aging SPTEs outside of mmu_lock, force A/D-disabled
-SPTEs to be updated atomically, as aging A/D-disabled SPTEs will mark them
-for access-tracking outside of mmu_lock.  Coupled with restoring access-
-tracked SPTEs in the fast page fault handler, the end result is that
-A/D-disable SPTEs will be volatile at all times.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/mmu/spte.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
-index 9663ba867178..0f9f47b4ab0e 100644
---- a/arch/x86/kvm/mmu/spte.c
-+++ b/arch/x86/kvm/mmu/spte.c
-@@ -141,8 +141,11 @@ bool spte_needs_atomic_update(u64 spte)
- 	if (!is_writable_pte(spte) && is_mmu_writable_spte(spte))
- 		return true;
- 
--	/* Access-tracked SPTEs can be restored by KVM's fast page fault handler. */
--	if (is_access_track_spte(spte))
-+	/*
-+	 * A/D-disabled SPTEs can be access-tracked by aging, and access-tracked
-+	 * SPTEs can be restored by KVM's fast page fault handler.
-+	 */
-+	if (!spte_ad_enabled(spte))
- 		return true;
- 
- 	/*
-@@ -151,8 +154,7 @@ bool spte_needs_atomic_update(u64 spte)
- 	 * invalidate TLBs when aging SPTEs, and so it's safe to clobber the
- 	 * Accessed bit (and rare in practice).
- 	 */
--	return spte_ad_enabled(spte) && is_writable_pte(spte) &&
--	       !(spte & shadow_dirty_mask);
-+	return is_writable_pte(spte) && !(spte & shadow_dirty_mask);
- }
- 
- bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
---
 
