@@ -1,140 +1,189 @@
-Return-Path: <linux-kernel+bounces-510826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B20A3228B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:40:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDE2A32298
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:41:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BF7F7A3FE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:39:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 908447A499F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6AA20896C;
-	Wed, 12 Feb 2025 09:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91486207A2C;
+	Wed, 12 Feb 2025 09:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQQpFous"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="M8II781s"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2062.outbound.protection.outlook.com [40.107.21.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0C12046BF;
-	Wed, 12 Feb 2025 09:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353048; cv=none; b=J2SJ+f3DpP/tR1D3s1bSo/8jfhb/jzKcXISFTqeqnm1KisEZq8GJDZiRP1o0cl+bVUgDd7ml9rnHg5KhgxOkoQJjBhmq83MYsueYEIlmGz73yf7qvVybGbkotfYOghQGB903pMtPOd7UNdpWSvh0sYUcpXFzkuAVtpSgCFYeNkI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353048; c=relaxed/simple;
-	bh=Sf9TKmSkzVueM1GHBhBchFQOzKBW36BR9sNxJqN89VI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xv2iBaF1XvpU/f41blimhilUWXFC4XPunpkMh4rIGMzA6hd3ejvjJ/q1G1hGJlhlIdXQWQ7HI1+sqhDZiyBFcFZfxcFiFos7imgp5aN6nUUortn3jlx4oUxX3TtgyIWwoX+Rso7lX05nWA9R5t6wFskuHdIQE3VCckPF0Zp5zvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQQpFous; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BBA1C4CEDF;
-	Wed, 12 Feb 2025 09:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739353048;
-	bh=Sf9TKmSkzVueM1GHBhBchFQOzKBW36BR9sNxJqN89VI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hQQpFousasWfqZDY4+6b2djjxTKiIwrHPS+SSGh1gn4skoX77dASovqUU3Q23JmjR
-	 UqH0fPhy0fA/dVP9wGCvcbGWp3dnP03pHup/wZXMsbT9G+sPVaQ6CMgLrUjDR/Mdpb
-	 YMEDMh/Vvs5j+Ig+tsZ6aYQFL5joW4DwUoB6vsM2ugzfu4pXNT3gEGTL0KotJqccRT
-	 Iyo9ZYrsUZ+giqMbM3h4zY0U1qywr+kyEc3vBVVJJAETCUdi2hzdbr9H6erqm/kE+D
-	 ZKjgH/L5S2PGAdqnMSSHGf0BgbR2ApBFGEW97KjVashyG+gwnuyiuYAq5dQuNW8gzp
-	 i+REHQZXqMvpQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1ti9BX-000000003Nw-2Eii;
-	Wed, 12 Feb 2025 10:37:35 +0100
-Date: Wed, 12 Feb 2025 10:37:35 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Saranya R <quic_sarar@quicinc.com>,
-	Frank Oltmanns <frank@oltmanns.dev>
-Subject: Re: [PATCH v2] soc: qcom: pdr: Fix the potential deadlock
-Message-ID: <Z6xr3ylNSC6iYf-C@hovoldconsulting.com>
-References: <20250129155544.1864854-1-mukesh.ojha@oss.qualcomm.com>
- <nqsuml3jcblwkp6mcriiekfiz5wlxjypooiygvgd5fjtmfnvdc@zfoaolcjecpl>
- <Z6nE0kxF2ipItB2r@hu-mojha-hyd.qualcomm.com>
- <Z6nKOz97Neb1zZOa@hovoldconsulting.com>
- <Z6uDv3c3DkmgumnM@hu-mojha-hyd.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4D6207667;
+	Wed, 12 Feb 2025 09:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739353172; cv=fail; b=st6MntKYTKkwqmIDSNtYaNWuCpbpKPFOQp1VujF6iabKNWVkpbyrcttSn8lPoSreN+bg2rbEl9O7NnZ3cKWh6B3+KeopbTW/MhRIWwcRPJlCt2cIa6pJaSgI2tyNs4YjSqpyqORX3yNiMsYmb2/Nf4ehHn8fqfjVolQSTlc5GQI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739353172; c=relaxed/simple;
+	bh=QK/u+FD9FGx45RM3Sv9oVhKCbeo3pB2qUkD4GCOSfC4=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=eqX8Ih5yAdZL0wZ2EtXFGEw0L21lTVlFmrt7rsmi/lT96TGDNuO1gT8l+Mq7YO/RSYMzvVSRkAh0nK4hlpWS2nqKX7M6ofr+/9gjfRk/vLkFGwfmdwI5sh1E3RFs2gCV6wW0zK7wj4aLP1PJft2eczkMMnowQbXilLH0uKG6lDM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=M8II781s; arc=fail smtp.client-ip=40.107.21.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LuyckVL9LoLvyc7KdYp8YfKG0b4TXaIHe9GDSQdqDGSsUNv5Z8+FOH494aSkOTIVan0rVtvmER6laK95UEk6E8iFGYm2AcdQ8kevegUuOCEyIAmk+AcXr/cD1zoBoZH8lclXk89f5l6fkOWefToAj/5eCifTavTydGG9dey9FvO+arFv7+pbiYAWHLM8jy8AgyuTJadH/0UfqecwC5fAZUFyVMs3+Gr3/uNabV7ZRf1dapT5QI+n3qNrRnv8fzq7DzPK0Cl+GmjI/a/mf5t7KAgP8rYDk6TTw7rbL/Lq46zi4m2TzjGtPV55iK2oZg7qITW9OOHHDeiVDxDqB4RrKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pvaYIrzqz8wezTsu86RLuHKnSa73YX3NzKyeBKRn+gE=;
+ b=gohZSAX06s+V289UQDsDW9i6pkZ8c9YoE3jbw22lc8blj68O99tzPhAjfHsbmlqja/VJCYOssjnpfWzgy13g5tMDAfJ2T8txjAksQSvSt/vCjG0TMnVMAsz1tte85WgddvG8VnzPNPzH87KzR3+JzmuDRDS64OpHSbsBGqEVG1s4WsDZ5xV00h51t2BCiG/WZhODVmb7tdajJNTYeTS+yF4iY8PslHNjmghhR1C61g73TJNpzohA1kBnNSIBK00gpq3qA/Za69QnQ/VUvi2h5hp7/W3HPbMgU4cx76nHk/JYZ2kLgbIMgH3IwhYJLRMdkQDZLo6QBJBlOovnVZ+iQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pvaYIrzqz8wezTsu86RLuHKnSa73YX3NzKyeBKRn+gE=;
+ b=M8II781sYWfJF5Ky00LhL+3a3Y9XMo9vgarooTjSKKK+9ZmO/HZvZkLeqs7ji378CCUjNebhkeFrqmT8rZBQvwY4sD9vaDD+IUWpfHnkKAIisOsRF0PMd+PQKocOXRaxYFn9rxPrVKmk6czYH9VeJvQe0EIRcpIlgFD1dY34kGT1cOCsaaADdo4YHjWaDiBnXCDNH8VSxOXKmZMnipec/yTDP9SEXhkLNKUd/BGSvPfnEUcY49tkGcw8dUjVzGN0u7Tn7UbiBdC18DbWLKSM2CtgUm1mzdPrTHTD2Vu0ihjfLF+Xm1rGxS96a/Pqo4z1lCOPtifeRxrhhwGeIZMCTw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by AM9PR04MB8649.eurprd04.prod.outlook.com (2603:10a6:20b:43c::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.19; Wed, 12 Feb
+ 2025 09:39:27 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891%3]) with mapi id 15.20.8445.011; Wed, 12 Feb 2025
+ 09:39:27 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: imx-audmix: release cpu_mclk clock at failure
+Date: Wed, 12 Feb 2025 17:38:16 +0800
+Message-Id: <20250212093816.1857188-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0054.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::13) To AM0PR04MB7044.eurprd04.prod.outlook.com
+ (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6uDv3c3DkmgumnM@hu-mojha-hyd.qualcomm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|AM9PR04MB8649:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f61e07a-54aa-46d0-ac0c-08dd4b492474
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|7416014|1800799024|376014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/LAM7Ef6zEV3d9gZzszfHlAUqwMEeOUDsQB046EZlqulEYorg51bOyYmpNgw?=
+ =?us-ascii?Q?l0ZAOWpdu/c0VYLODuoHENVdRHzHuqRNX1ftGKVFymtNvUrqo08MKOwE+ETX?=
+ =?us-ascii?Q?Qi5CqBgvhMw7fxR0jDa5Nd+GBImfjbGhyiouvHID6db9JgBjpIrqISdDBdeV?=
+ =?us-ascii?Q?MNEs4qIlQ4/vWkOkop2XZ+1jyCIta8WwVGofgkLROlllz4a0yoB3Bo3xIuXG?=
+ =?us-ascii?Q?qVfgocoPFj5MWZ/sSXsTvIHs4BfAuZ0pjo5mEuVYuVdralp/DCPUkGzkz4zZ?=
+ =?us-ascii?Q?NgFIpzRTADXv1fdsAC1/westeZJMQ27/gdGdZxfIrspOxoba/1TZ6UUBQ6jJ?=
+ =?us-ascii?Q?1Aue+mubpu/yH5Qm8Crct3SI66Mjk8MYNGbYmZFP1GzuNhgAHgkx532aq3Nk?=
+ =?us-ascii?Q?hAiKDSWfhboHveJkSyBt9Zpxyf7YF13sU4EW/fw9Ba0q7XGfUFfGK4YXAI2S?=
+ =?us-ascii?Q?Q+RTDzgrJxlKSj0PU87BE8uZwD+wMZD0z/uA0z8S6SaoGQ3EpyO6rzWxCpcw?=
+ =?us-ascii?Q?ciwP1A6pDxf9T92+FPuVw5eA52SQqGihGKb9IA4yiEJfLFryBCu9AQrGRFJ1?=
+ =?us-ascii?Q?85KyQMGlcSMjrtjYOd7nWT7vz0HS+kajhzLBrd5qpMtHw+pGxCaoh40AMfKV?=
+ =?us-ascii?Q?4YoSZtphVTvICfXKd6QuLaC7F9me7lsQZt+7fRRAagtvcaxECDyPPuNyfT47?=
+ =?us-ascii?Q?XVn4PngIzwRfxBIHeBBS7YikAifxgJblqSk85ReGYFDiWXlb8/LHbP3mIwg/?=
+ =?us-ascii?Q?OLYuOgR8dR6mJ+/e4OLf3VMZXlC6/5+mQqY5HuqeLFs5GPdzscMMS0rgdHR3?=
+ =?us-ascii?Q?6Buj+n9+fOg7jQ4xnplYzWjJQyUiTOdpATtcZtZ+nrCheDcQ2uomGd3QPR62?=
+ =?us-ascii?Q?k2no8ESvH+G4z2PcLR3E6FAFy1qt8QSB6EumV5kpsm8fZCRmuTe7qGt0KPyy?=
+ =?us-ascii?Q?pgD9gEiexAuRQ2JQ+DR9p+maGOWI6drmx3PoMQBvYYh0zrwAy8IWdvo2L9E0?=
+ =?us-ascii?Q?oyOE4QVIBL2KgC7X6Wug1/zu0gBLaP/FR326qIB5LxBzLoUXE4EEF+bmk9vp?=
+ =?us-ascii?Q?mm2ZNgldEfJpUMyPzIgNGdM6EdqGeOxW8H/w3Pf40k9HOILC/lvsVBOwp1Xe?=
+ =?us-ascii?Q?cRu6L7Qd4jAk/Un10ihj5W25Uacbl7H5mjNIYMjEVq2w48pTIB2sNV5a5Yid?=
+ =?us-ascii?Q?QY9sH6foGZBFK2inQagxYOPVv+c/oubLISO0JsiIZybm07Nib9Hocu4qH8xG?=
+ =?us-ascii?Q?VhaRdNmb/c+1HxCVK31utvi7Q7p7LN7wkzhM1qST/S/WM2RERn4zaDW/d+MY?=
+ =?us-ascii?Q?hC23ys0UpBsmif/xxRL/Hl95wXBdEsKP09og4otxXnAu+ZlzQTO0vnk9g0RD?=
+ =?us-ascii?Q?6d88GtIUOaGqAs+91hav4H69VovR56rEz26P+fzIEZ5qDuTk2eZ2V3tslNiX?=
+ =?us-ascii?Q?+5CheiAvrOR8Cnafo3iC1ripQNyPbRzNiyUQgyz5IuIkPRiXu116bQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(1800799024)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sZJCcynMgKfJ6r2ksRpyVTYTqF5AO1JNRZsgQhqOxv6y0E7dVFfpC0QKdpE3?=
+ =?us-ascii?Q?pDtvr7HxnLjxOa9FyG6dWZO8GBx576g7ROPMOyIZPs7S8LP8fdZw0rK8VqG1?=
+ =?us-ascii?Q?4jVQc1+hm1PwI8dZtpJnL5WX2pGXSDvgEJwQtgzA7STMi3aBVoszCn3bQluF?=
+ =?us-ascii?Q?RtO5CszQb3UDeqFZzw3Cb/sQOZcIe/YPOnnyDKipff1eNLzlrv2JwgPKuTDh?=
+ =?us-ascii?Q?HO6Dnm9cS3YXTe+moGA84XIz+2yPH0XuJbJnxt/Wr0PYC3y/h04/adkujyi5?=
+ =?us-ascii?Q?Vzb06hzfrX3f//CQ5tr/+ehbbWME7Te+d8CS4jdjXnpJrrJLQ/UBehbeA/MT?=
+ =?us-ascii?Q?MUPvfoeRUsEd82Ywhls1Lsy4LVZmj1OESXLjn67RzyH1TA7cK7hSQ+PQjusI?=
+ =?us-ascii?Q?fCtvHb7fS+OFUeW9h6nCe20xbQmrcFFZXBI8rHYBLiRponPN8fUuJnOu8X8k?=
+ =?us-ascii?Q?DMcVFg1IucsUaiVdLZeZczG4xwOy6w/pB5tl3lCnxj1vZ2u2cGFsZEgH6/xO?=
+ =?us-ascii?Q?WuGRghHiIts5Ar0fT+vUP2nB00GiGrjDSHLx4fG1Hk2b4ptxuh7KrYjgIory?=
+ =?us-ascii?Q?pwBP4wRlGu/Auoi6JYUgs7A+M/amxMhAOljxgz7YBUUiGkEkUeXRJ1HwyTdf?=
+ =?us-ascii?Q?y0txMrZDAK/Ko1nytrJFvOx0qUippEtna1oslgiUQy0tOPPeE6sjPb8TZ6ws?=
+ =?us-ascii?Q?BRpfOADSHTvkRQz9k3XCEWTPfpMpEJMmPCVx/YFccaN+WyL7o0TNYaWsiWOn?=
+ =?us-ascii?Q?z6Nt3wZoW9UY1ulQKjdUE+O6RTZDildQeeEOmk+KNova+rPii1V0BgUjR9UM?=
+ =?us-ascii?Q?HwqdEy8q/z43kc5pRgo/1kg/rPRpMv3zYxkI0X1XpuRft2a08SyejYTQIsQ7?=
+ =?us-ascii?Q?2zZxqhtwF5j1X6mmdrVkkcVSuXsUf2Nyunywvk92yQqXPtVyyJaRvTQBTfMj?=
+ =?us-ascii?Q?3CyOWJn5yDUnrZaOSXlz/fPgtFpecFmVYppYp7cQ2yfHFxlQvUXfkyuq3blZ?=
+ =?us-ascii?Q?1L8AToOqSr6Jst/CCkZsrwdlWmOCttARh8NmCqfQGgGpLGl5mrgPqAGBmsJC?=
+ =?us-ascii?Q?oz95HaN9dOpT0XzCzpUE3ehUx3HVRUXhvJAPAItR9/A8wBi8ZNGjuo5kPOMK?=
+ =?us-ascii?Q?f+DYtNMJtcq3Z7bB3KeTiDU/gLwOUXM3pYbcZAWktFEkYfj2QN/R3tof5+76?=
+ =?us-ascii?Q?RfK/mg8kUffJpS0Vh3g+G54CVBPv5oBp+AxfhLH2Lhq1rOI7b0zFruV+IW9f?=
+ =?us-ascii?Q?1Cn6qqFMgcgzalgrolU76+tO8ywSvwJPJBi2UIyPtKl5OIl68qzxQQTGwKr6?=
+ =?us-ascii?Q?rCd9af8AyfMGOGFMDKRf/11iBGkZBYZaqJXfQaiCk4G+PvfFfU9VqDPt7xev?=
+ =?us-ascii?Q?RGZTwLivj4LIlniMKBtlexZ+Kgkbg24DujihY+8uNHWnXUdgbCUMHI/1M0KJ?=
+ =?us-ascii?Q?r8SocGpFOl7IuZPsE7szNkADPbJr1GO+DofJph4c2PU5DLvrY9mVOAY+eBmx?=
+ =?us-ascii?Q?weCwCIKYfpIsa545FB0+275N+9I2tGF9IaaMHCFM2duS+hJveDFLySLj+n/n?=
+ =?us-ascii?Q?1tKWNBetKh8HLdOklFdCEpLgWRzHx/WgSAln01ad?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f61e07a-54aa-46d0-ac0c-08dd4b492474
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 09:39:27.6230
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yoXa77yp5bEXAei1wpiOoclGFxvy+ZfGMQh/Vb5v6nFhA7jtLyqU2FFN9MRoLPHURQEU3bv6B8786oE6+pnvNg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8649
 
-On Tue, Feb 11, 2025 at 10:37:11PM +0530, Mukesh Ojha wrote:
-> On Mon, Feb 10, 2025 at 10:43:23AM +0100, Johan Hovold wrote:
-> > On Mon, Feb 10, 2025 at 02:50:18PM +0530, Mukesh Ojha wrote:
-> > > On Thu, Feb 06, 2025 at 04:13:25PM -0600, Bjorn Andersson wrote:
+When defer probe happens, there may be below error:
 
-> > > > I came to the same patch while looking into the issue related to
-> > > > in-kernel pd-mapper reported here:
-> > > > https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/
-> > > > 
-> > > > So:
-> > > > Reviewed-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> > > > Tested-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> 
-> Should i add this in next version ?
+platform 59820000.sai: Resources present before probing
 
-Yes, if there is another revision.
+The cpu_mclk clock is from the cpu dai device, if it is
+not released, then the cpu dai device probe will fail
+for the second time.
 
-> > I was gonna ask if you have confirmed that this indeed fixes the audio
-> > regression with the in-kernel pd-mapper?
-> > 
-> > Is this how you discovered the issue as well, Mukesh and Saranya?
-> 
-> No, we are not using in kernel pd-mapper yet in downstream..
+Fixes: b86ef5367761 ("ASoC: fsl: Add Audio Mixer machine driver")
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ sound/soc/fsl/imx-audmix.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Ok, thanks for confirming.
+diff --git a/sound/soc/fsl/imx-audmix.c b/sound/soc/fsl/imx-audmix.c
+index 231400661c90..1b16470b2f7c 100644
+--- a/sound/soc/fsl/imx-audmix.c
++++ b/sound/soc/fsl/imx-audmix.c
+@@ -348,6 +348,7 @@ static int imx_audmix_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_snd_soc_register_card(&pdev->dev, &priv->card);
+ 	if (ret) {
++		devm_clk_put(&cpu_pdev->dev, priv->cpu_mclk);
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed\n");
+ 		return ret;
+ 	}
+-- 
+2.34.1
 
-> > If so, please mention that in the commit message, but in any case also
-> > include the corresponding error messages directly so that people running
-> > into this can find the fix more easily. (I see the pr_err now, but it's
-> > not as greppable).
-> 
-> Below is the sample log which got in downstream when we hit this issue
-> 
-> 13.799119:   PDR: tms/servreg get domain list txn wait failed: -110
-> 13.799146:   PDR: service lookup for msm/adsp/sensor_pd:tms/servreg failed: -110
-
-I think it would be good to include this (without the time stamp) as an
-example as it would make it easier to find this fix even if the failure
-happens for another service.
-
-> > A Link tag to my report would be good to have as well if this fixes the
-> > audio regression.
-> 
-> I see this is somehow matching the logs you have reported, but this deadlock
-> is there from the very first day of pdr_interface driver.
-> 
-> [   14.565059] PDR: avs/audio get domain list txn wait failed: -110
-> [   14.571943] PDR: service lookup for avs/audio failed: -110
-
-Yes, but using the in-kernel pd-mapper has exposed a number of existing
-bugs since it changes the timing of events enough to make it easier to
-hit them.
-
-The audio regression is a very real regression for users of Snapdragon
-based laptops like, for example, the Lenovo Yoga Slim 7x.
-
-If Bjorn has confirmed that this is the same issue (I can try to
-instrument the code based on your analysis to confirm this too), then I
-think it would be good to mention this in the commit message and link to
-the report, for example:
-
-	This specifically also fixes an audio regression when using the
-	in-kernel pd-mapper as that makes it easier to hit this race. [1]
-
-	Link: https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/ # [1]
-
-or similar.
-
-Johan
 
