@@ -1,123 +1,106 @@
-Return-Path: <linux-kernel+bounces-510855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BD5A322E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:54:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B622A322F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:57:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE8B21670C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57463A42C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089DA206F35;
-	Wed, 12 Feb 2025 09:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BEF207A07;
+	Wed, 12 Feb 2025 09:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rJNs5C6o"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KOCOECGc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88BA2063D6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B291F03C1;
+	Wed, 12 Feb 2025 09:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739354042; cv=none; b=dZRPc8iNGHbvuG2+OGt6VVxHrVUb1AKAv3myIA38I6AXY8CifY52uKqoLHpLSGfX0K7BRzgj73XWwUZNO2oBcQNrHMTntlxaQaDk6ZqN8FzafTE+xcU9I8gUkophPLV29ez1/jciaB6vOt1zSWdK3PSmCChE+aQsnqI/RJ+nxH0=
+	t=1739354267; cv=none; b=Sy6nPnrmL3/Mg5AR+AISeAlodtsffcqFFFs3XSDDPdfbjuPrfK3oqcjyWpbXvkaBRQUUqzSdBmmbV5bKZC/oA/ykus20uXomqYmGnuYbVuFFMJWchENGHpx+qNyZBJWZGFjNi2lVHNEdqMNgv7DPFpTzNrTCh+Gi6v6/zxzQqJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739354042; c=relaxed/simple;
-	bh=PZMdbK+5409eVJVCWqtfrQHw1QcFuT5g6apO0nOaPtc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lC/Ho+CKRjHVHrG3E6vtwMPdig+xqagu9oUDB4tdryzuuCCgomxtwDQgVGZ8u+dIIx8ZG9qC56SEG0jhfq4YIksW4hfKHBLSJzd0G0IG2EYQ1q8vkU9Y/qPOlbxYABwb3+AXFqN/tOfz+yN6qyZObS85gvvl5BHJrk59M8ZjgIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rJNs5C6o; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4394820123dso18771085e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:54:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739354039; x=1739958839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tIR7kxuCYlEHmDo3YVqs1C3HW9gsJqd1zOT7FkNeONI=;
-        b=rJNs5C6o1myS/dabDPlyvOgRNVMkwHsc3AftOwVes5E68Oqlul7ykNq/gZNJkTRBZx
-         Vx7SzN9uY4uSbn6ihsrFNgMDpzkKjH7HBv9qyaLSxfeaXfFcndkQ5MTy70IWc6hChzgV
-         b2dTbhPcO7qoGWCbI9fWU23Lmt3U/5VThnSYqV3CwGiuAliDbIQni5/Fjn6lm7Xibn/C
-         pSEJ+QGXP1uNk6tFBB7xWZf1ugfK5bK1H8aBaKIud6arS9XefFWZk0rkqPnnk6yzvS9Q
-         t1XbsO4YA9AzjWQ40G7DNrNvIzBv2Sk7VHwUYk1Ys8M2rfECKiywBfjtEM5Pc1rDpAhI
-         ND5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739354039; x=1739958839;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tIR7kxuCYlEHmDo3YVqs1C3HW9gsJqd1zOT7FkNeONI=;
-        b=iAxVn2kOPk/rTsrhmSwj6EpLe2pCfpEHABVdvcqYyVXXQD2CC2mbyZSxHf03VH5+Nb
-         ChqUaDTx5Ttuec1q6zfy4XU2SMDKZiOCizygm3sBl3ONASQuHZD6U4usEJJzgIpP6RLN
-         YupJiK4//MEKOkgvseLq0v81ft4X3Y4j63VXn19kp7Yfxij2UKKHx/fw/Y+OLqTAoSJx
-         B2veP1cHnuXEWBqBZiP9tZUMPyAc0YgmytdyZm/IXXjSt7VOOzhFyz7SA9KivoQ4j606
-         2uwIz4haPYmp+ndrdzGLgHpF+U+JQkSVROqUhLX2rWDX0LaU5lEvMySArA1rq5IS/A+h
-         my+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBd+lpooWGWrf4VP74lgjZk9Gh4n0FHyEB3onkEC4y8Ltd2ktKJPzHKoF07iJF3jQv+6FFbz4cxQ+7iHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu8DO8rcrkGyGLxNn9dYwvcmE2b2Df2jGZW33of+tSkhW64Bic
-	tit1R0guZ0VIH14Pz5ORfXhFN9dHo6qqYx2BBLbMTmWsqHgHHd0Dqjy248PjTN0=
-X-Gm-Gg: ASbGncut8YuLU7bJ4yKGyfAkD1R1pthN3M9mCqtzwnEVuyltEVza4kqER+0L83kcH32
-	5kmC2J1BFMTIGECfwlLZxI4Eg1v+N1xiueSSHzqTQD5VLhuEzKAuyvn6lG/02fdeMvFRR7XvJLD
-	f6Y1mI/pFxBcwJ8f2wGw90G9BrMGiLmxs+iqlOQGuWMhNlG7J1QG3GhmntUQcMxOcgDQbjSUVxl
-	nteGUvXuZOTICDovUygmT35T5DEjOa3V7nYEzRYoOYe9G9kew34qq7AZsF7mPG7CFWB/X/AAY+4
-	42uu6dw3t+vca9E=
-X-Google-Smtp-Source: AGHT+IE1AuIEYHupLeeT9Nxbe+qdld3vOkKKKz82MsP6O3GVbjl5NUVtbZU3jbI1vKhF91kVaT9XZA==
-X-Received: by 2002:a5d:6908:0:b0:38d:db8b:f505 with SMTP id ffacd0b85a97d-38dea262832mr1371554f8f.17.1739354039252;
-        Wed, 12 Feb 2025 01:53:59 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:521c:13af:4882:344c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38ec2d9b299sm842935f8f.56.2025.02.12.01.53.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 01:53:58 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Wentao Liang <vulab@iscas.ac.cn>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] gpio: stmpe: Check return value of stmpe_reg_read in stmpe_gpio_irq_sync_unlock
-Date: Wed, 12 Feb 2025 10:53:57 +0100
-Message-ID: <173935403447.13404.4893974637827879328.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250212021849.275-1-vulab@iscas.ac.cn>
-References: <20250212021849.275-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1739354267; c=relaxed/simple;
+	bh=RfajstfpTGLNdRrMN2hNwqxhrI3a/671OeateMPFz/E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ULPk6L+h9L8sAtlnRdmWpItX/OdBvqEhx6L2XNuDeptFM+nzwegnyc8LpD55y+bQcPaSSNWPPE59Inq/IzrXmrxUnE5JoLvF7zzoUjkxu9Dwj4WS4kBta0f4+aDjqKuTyYAFJXFc356QfuaquNxr/8TCLWr2c/v1eGM5gLQE6zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KOCOECGc; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739354266; x=1770890266;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RfajstfpTGLNdRrMN2hNwqxhrI3a/671OeateMPFz/E=;
+  b=KOCOECGcp6DTePYDYwhxSj7ABlEUoqxCAjgc8vFoFWqMP/KRl/nifIAD
+   QYX4IwAWim2PANdNazKM1JY61njvfq06UDaKpR0pKy19WntOuE88Pn/rK
+   9znpNrW7PRNDud7FMdcEoL07D3g7akjYtBV8a1fu4rJUChZutBGRNWrrd
+   cUqi8FjOeOWq/hILu3PEGmVHpb9qF4zqT+oCR0OORvi1WwN85/XxsDhVz
+   8lI4zAPWUYjgLQuf3MKW3J4fYTMPUVGXl9kIe57rpJ/0dpBvZZ3UO6wD4
+   Roq37q66WiImbE+TFTtOlyDnJNLzEYhiBsIvjTVCIUaDmMcLSMGKBdlXB
+   g==;
+X-CSE-ConnectionGUID: mkDEAnRiTeemPcnUklqKnw==
+X-CSE-MsgGUID: qaRMoVerTxSeESDK9ZqOxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50224532"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="50224532"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 01:57:45 -0800
+X-CSE-ConnectionGUID: 7qg0NH+vTo2+M9Vz4tKZOA==
+X-CSE-MsgGUID: wzou7DIlTqS+ykPjuGYoeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="112632043"
+Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
+  by orviesa010.jf.intel.com with ESMTP; 12 Feb 2025 01:57:41 -0800
+From: niravkumar.l.rabara@intel.com
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
+	nirav.rabara@altera.com,
+	devicetree@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] add clock-names property to nand node
+Date: Wed, 12 Feb 2025 17:54:05 +0800
+Message-Id: <20250212095407.2667743-1-niravkumar.l.rabara@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 
+1) Document the required clock-names property because the driver
+   requests the clock by name and not the index.
+2) Add required clock-names property to the nand node in device tree. 
 
-On Wed, 12 Feb 2025 10:18:49 +0800, Wentao Liang wrote:
-> The stmpe_reg_read function can fail, but its return value is not checked
-> in stmpe_gpio_irq_sync_unlock. This can lead to silent failures and
-> incorrect behavior if the hardware access fails.
-> 
-> This patch adds checks for the return value of stmpe_reg_read. If the
-> function fails, an error message is logged and the function returns
-> early to avoid further issues.
-> 
-> [...]
+Changes in v2:
+  * Document clock-names property for Cadence NAND controller.
 
-Applied, thanks!
+link to v1:
+- https://lore.kernel.org/all/20250107084955.2750154-1-niravkumar.l.rabara@intel.com/
 
-[1/1] gpio: stmpe: Check return value of stmpe_reg_read in stmpe_gpio_irq_sync_unlock
-      commit: b9644fbfbcab13da7f8b37bef7c51e5b8407d031
+Niravkumar L Rabara (2):
+  dt-bindings: mtd: cadence: document required clock-names
+  arm64: dts: socfpga: agilex5: add clock-names property to nand node
 
-Best regards,
+ Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml | 8 +++++++-
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi         | 1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.25.1
+
 
