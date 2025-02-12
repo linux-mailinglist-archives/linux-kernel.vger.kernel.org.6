@@ -1,86 +1,66 @@
-Return-Path: <linux-kernel+bounces-510669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5832BA32032
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:44:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8127CA3203A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE39516A370
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263D4160DFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B39204F73;
-	Wed, 12 Feb 2025 07:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA6320469B;
+	Wed, 12 Feb 2025 07:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4IPSicf"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="trSw1SIe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68624204682;
-	Wed, 12 Feb 2025 07:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1E11D86F2;
+	Wed, 12 Feb 2025 07:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739346198; cv=none; b=HQWBr6eYn3aj2npXoOsJNI+me8KObosUytqKuxMx6WGoA2LXg7seI0wk2pvZcgQ/fcq8s7tXQNMDQldYbNB8zn42RFNr/7SW5eAHobA2gCFG3lnF2qhUgZgNY2CN3CREToDqaASP+reL62fzNfqfAQtz+dxtrE+AVtfsYbzndcg=
+	t=1739346357; cv=none; b=lUCoKBFjEqxMUZPG5OdY6ODnOXUL8JUMfxYmLy41uIMpRAKirVCJ1bXgPt0NveBxYQzB67PEOpxJLmvwANJw2kKYmrahrWNvmkMJimJpQeFaCC7627QDajoqhEJDV0l3YFv1AsxcBTkGTpw906YowMzO8zonpi/8wo2KbhkJNR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739346198; c=relaxed/simple;
-	bh=uYeXJyn5UeUw6qcDYRDrfV4PFQBbTfNbcG3JQxPQTfc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VM0PshiYb5VNAv9yhYI9ORCfV3X3V/TF42v8pNSzMcR8zNFoKq+0rxi0jCkBex68aZq35xGrbNXVgC9D48VuQwGXkHVOGOFfCO4adXGduPmw0W2OOLSUZUofqtC/RmmhNa0E1glabfeIrHqh7FJvK9mABLDijw+hgbogsI9+CDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L4IPSicf; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43944c51e41so31537785e9.0;
-        Tue, 11 Feb 2025 23:43:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739346195; x=1739950995; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=faKuoffM1gAZWq51vkqkknQzyRKywd6R7upna9jS1Us=;
-        b=L4IPSicfRpclfoUch/v+ScJ5YMy7MzfNQ7WWHhArZRMXHvffmWfPQmacbBiHYyIxFQ
-         I+6/FNxANkt+pjydcyVGItxJ+sBfpUh7VrLP27bw8X9jCpyEylglVaJAhLpua3LaQ65P
-         FB/W6MpVCdkZ4OTb7CQHw2Bekp0bSVkhpklz9MEom0Xmuz7Ptb9pJsNXUOV538tgSCTM
-         CF8/O9eQbbDnaFQklAj1+pSUi1YQHd4N+9/T0hanSXBnUvCxg49naiCyLEPrxPSB9I/6
-         Hns7nf3dc49Vlqh5BEVlHJV0eXNDnke8Ad4to9ty/F/be+ifnGXWbId2lL7t4kvLIF/2
-         LRWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739346195; x=1739950995;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=faKuoffM1gAZWq51vkqkknQzyRKywd6R7upna9jS1Us=;
-        b=QeVKR91NzroWotR+IxTCJsgesNfYSY/pCp4rzu4W+jCHQaV17BH0U8Ejfc4sQYVsgE
-         HeUSgX4ZSNNyrJ6N2x2nhs3he1aoZ+JSQIPjc6S7Z7NV432PcRBRJ6lSImcwZ7W/OOIr
-         pAWZhmOrnCelM0LXznetQIlK2nEH078AEvXbh8JcECUpxcIfi/Q9OxcinOQtPWatmBsb
-         BQ+HGKFm4FN/vbQ8/CVu1RFBsNCwLCHCtxS03atYj2A8sae3359QU0XlMy0sp2uJkTE7
-         HuMNWA3qcfLe05c9ZqoG+ZIXFJZeTnNCv7DNGb9q5lKmU2sDK19B/rdBQ59tkcpQ+Nlj
-         lWPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0olTflW3u6B3XVg89SiW+nNyroTQNjUB4Hxn0JvUn/ZmA4SYDdBshgPRb9EEQ6C0MXvfw0D/5cavMIw==@vger.kernel.org, AJvYcCWJzMht2hwMF/x5u1amxgRGxBRD9lQexUFccFQXGtbxLnnpQdKA7ZGBVZUUvko7SA9SJhEMayLytI53qP2D@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIC1CUU/hNRwZEBivVdLPawFWIwrXgnkqGPgSUJoOP395zusp6
-	U6546C6+k3u4fPR1b76DykHKAcYj6BTLKunTj1DlUtAHcIy4TpP9hdzUzPf9fp4=
-X-Gm-Gg: ASbGncvZkCkygdLOdB1Snl+gyWIXJ/j7DcRdiyzh5ZzCwp0XQUdMjpKWdTS3kh2zviE
-	RCHQW3xP98oyHlpFd1LRxgtht3Cb8+ECKHpo4cgqHyI9WTcX3jEPglCcvOSX+bJgVmb6CwkohTQ
-	hXRRt+u85sufInGc8hmlYW53tF9WpWIYw9tdG/P3Ieo1qlBMk9hCBNNYFa49EFTJ66YcxW0A/8h
-	c2JAfrNMhQ7pEzbim/f4lzSAJmNcDWot8bqDVicEhJLsi4a+pSobQ0jwGSCf6o7tnp7HiqYHkBG
-	N18h2ortBVn43P/Djc5uf9TUgFHv6RAIFf98YeUDS8/kphir3zPLn2iOs7X9U4Ip0tjMull9LCm
-	ZZnFc0GN8
-X-Google-Smtp-Source: AGHT+IFLnB8Ymq1rlUTsAloZXjXNuyEHGglxk1LiY+nVnHMEX5ZdXYat3hHkscmmVysqmC10clk5kQ==
-X-Received: by 2002:a05:600c:510c:b0:439:45ce:15c0 with SMTP id 5b1f17b1804b1-439581bed06mr15039995e9.25.1739346194504;
-        Tue, 11 Feb 2025 23:43:14 -0800 (PST)
-Received: from michael-devbox (ec2-52-59-234-77.eu-central-1.compute.amazonaws.com. [52.59.234.77])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06d22csm11458725e9.22.2025.02.11.23.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 23:43:14 -0800 (PST)
-Date: Wed, 12 Feb 2025 07:43:13 +0000
-From: Michael Anckaert <michael.anckaert@gmail.com>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Teddy Wang <teddy.wang@siliconmotion.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"open list:STAGING - SILICON MOTION SM750 FRAME BUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
-	"open list:STAGING SUBSYSTEM" <linux-staging@lists.linux.dev>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH] staging: sm750fb: fix checkpatch warning architecture
- specific defines should be avoided
-Message-ID: <Z6xREbLLtexX4_uh@michael-devbox>
+	s=arc-20240116; t=1739346357; c=relaxed/simple;
+	bh=OmoTvEevAQxDxCl0q0yvSSDwzwButvvzNbkWvaAHaFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WWs7CSxppoGvVzFTGq1vvSuJfVou1plDQWOMY0R2XRpl3j+EF9rGV5rzulwgjpe+UngZJehNl0MfJLiGRWanT1lGKvcsF+z3RMooNTvQtgGf0xuVYiYIhnD05qtPhtVGgLnvnoj9G5xj3PyYBtkA6z9Txcuz/Aeup8/G+3bhL44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=trSw1SIe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18CADC4CEDF;
+	Wed, 12 Feb 2025 07:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739346356;
+	bh=OmoTvEevAQxDxCl0q0yvSSDwzwButvvzNbkWvaAHaFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=trSw1SIeK3vmV2kEJ6tqfLvLLIvSnPuuVQwT+X9SOv+YiUBYPZsKoO47ZA7HymFjX
+	 sJDFOCcD+Q+5jWjtAh6zdqwWrw+Os5D3i9r8Gsd0Z5b6czE0+YNpkDM2RMRh5WUAru
+	 mcNgFOm51cK2YRNB3b8vFxiUfebQkE+aSc8FK1Sw=
+Date: Wed, 12 Feb 2025 08:44:44 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Pathak, Asutosh" <asutosh.pathak@intel.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	=?utf-8?Q?=C5=81ukasz?= Bartosik <ukaszb@chromium.org>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Pavan Holla <pholla@chromium.org>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Jameson Thies <jthies@google.com>,
+	"Katiyar, Pooja" <pooja.katiyar@intel.com>,
+	"Jayaraman, Venkat" <venkat.jayaraman@intel.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/2] usb: typec: ucsi: Command mailbox interface for
+ the userspace
+Message-ID: <2025021227-married-stunned-759c@gregkh>
+References: <20250206141936.1117222-1-heikki.krogerus@linux.intel.com>
+ <20250206141936.1117222-2-heikki.krogerus@linux.intel.com>
+ <2025020643-federal-uneatable-5da4@gregkh>
+ <Z6YE4mJHx1zHNW8d@kuha.fi.intel.com>
+ <mpe6hgyqmw5eohrwulzy7ujdrlgccgqxwdjdjq7zmsdhsemzcd@b6q2hu5ezvqv>
+ <MN0PR11MB59852E3FEC3E729C9BED8AFA81FD2@MN0PR11MB5985.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,35 +69,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <MN0PR11MB59852E3FEC3E729C9BED8AFA81FD2@MN0PR11MB5985.namprd11.prod.outlook.com>
 
-Replace architecture-specific defines with CONFIG_X86 checks to improve
-portability and adhere to kernel coding standards.
+On Tue, Feb 11, 2025 at 09:21:28PM +0000, Pathak, Asutosh wrote:
+> On Tue, Feb 11, 2025 at 01:21:28PM -0700, Pathak Asutosh wrote: 
+> > On Fri, Feb 07, 2025 at 03:04:34PM +0200, Heikki Krogerus wrote:
+> > > On Thu, Feb 06, 2025 at 03:51:48PM +0100, Greg Kroah-Hartman wrote:
+> > > > On Thu, Feb 06, 2025 at 04:19:31PM +0200, Heikki Krogerus wrote:
+> > > > > Some of the UCSI commands can be used to configure the
+> > > > > entire Platform Policy Manager (PPM) instead of just
+> > > > > individual connectors. To allow the user space communicate
+> > > > > those commands with the PPM, adding a mailbox interface. The
+> > > > > interface is a single attribute file that represents the
+> > > > > main "OPM to PPM" UCSI data structure.
+> > > > >
+> > > > > The mailbox allows any UCSI command to be sent to the PPM so
+> > > > > it should be also useful for validation, testing and
+> > > > > debugging purposes.
+> > > >
+> > > > As it's for this type of thing, why not put it in debugfs instead?
+> 
+> The intend of this sysfs is not limited to validation, testing and
+> debugging purposes but rather providing interface for major user space
+> application developments.
 
-Fixes checkpatch warning:
-- CHECK: architecture specific defines should be avoided.
+But that's not what you are saying above.  sysfs is for attributes of a
+device, NOT for full device control.  Use a proper api for that that can
+be correctly mediated if needed.
 
-Changes made:
-- Using CONFIG_X86 instead of i386 and x86.
+> At present we are working on an application/ user space service which 
+> will be calling UCSI read/write power level commands. But in future
+> there would be more such applications which may require additional
+> UCSI commands to use. We wanted to have a common and 
+> generic solution - and hence thought of going with sysfs interface.
 
-Signed-off-by: Michael Anckaert <michael.anckaert@gmail.com>
----
- drivers/staging/sm750fb/ddk750_chip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We can't take new user/kernel apis without a real user, so please hold
+off on this series until you have a real user.  Otherwise it is
+guaranteed that you will have to change that api based on actually using
+it.
 
-diff --git a/drivers/staging/sm750fb/ddk750_chip.c b/drivers/staging/sm750fb/ddk750_chip.c
-index 02860d3ec365..67a2f60440ca 100644
---- a/drivers/staging/sm750fb/ddk750_chip.c
-+++ b/drivers/staging/sm750fb/ddk750_chip.c
-@@ -229,7 +229,7 @@ int ddk750_init_hw(struct initchip_param *p_init_param)
- 		reg |= (VGA_CONFIGURATION_PLL | VGA_CONFIGURATION_MODE);
- 		poke32(VGA_CONFIGURATION, reg);
- 	} else {
--#if defined(__i386__) || defined(__x86_64__)
-+#ifdef CONFIG_X86
- 		/* set graphic mode via IO method */
- 		outb_p(0x88, 0x3d4);
- 		outb_p(0x06, 0x3d5);
--- 
-2.39.5
+> Issue with debugfs is, it is default disabled in release kernels. User has 
+> to rebuild the kernel if the application is based on the debugfs interface.
+> This will become a bottleneck for wider use of such appliances.
 
+It is up to the distro to enable/disable debugfs, that's not our issue.
+debugfs is NOT for normal system operation, so if you want to make this
+a proper api for normal users, than no, don't use debugfs, make it a
+real api.  Which is probably NOT going to be sysfs.
+
+> > > > > +static ssize_t ucsi_write(struct file *filp, struct kobject *kobj,
+> > > > > +			  const struct bin_attribute *attr,
+> > > > > +			  char *buf, loff_t off, size_t count)
+> > > > > +{
+> > > > > +	struct ucsi_sysfs *sysfs = attr->private;
+> > > > > +	struct ucsi *ucsi = sysfs->ucsi;
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	u64 *control = (u64 *)&sysfs->mailbox[UCSI_CONTROL];
+> > > > > +	u32 *cci = (u32 *)&sysfs->mailbox[UCSI_CCI];
+> > > > > +	void *data = &sysfs->mailbox[UCSI_MESSAGE_IN];
+> > > > > +
+> > > > > +	/* TODO: MESSAGE_OUT. */
+> > > > > +	if (off != UCSI_CONTROL || count != sizeof(*control))
+> > > > > +		return -EFAULT;
+> > > > > +
+> > > > > +	mutex_lock(&sysfs->lock);
+> > > > > +
+> > > > > +	memset(data, 0, UCSI_MAX_DATA_LENGTH(ucsi));
+> > > > > +
+> > > > > +	/* PPM_RESET has to be handled separately. */
+> > > > > +	*control = get_unaligned_le64(buf);
+> > > > > +	if (UCSI_COMMAND(*control) == UCSI_PPM_RESET) {
+> > > > > +		ret = ucsi_reset_ppm(ucsi, cci);
+> > > > > +		goto out_unlock_sysfs;
+> > > > > +	}
+> > > > > +
+> > > > > +	mutex_lock(&ucsi->ppm_lock);
+> > > > > +
+> > > > > +	ret = ucsi->ops->sync_control(ucsi, *control, cci, NULL, 0);
+> > > > > +	if (ret)
+> > > > > +		goto out_unlock_ppm;
+> > > > > +
+> > > > > +	if (UCSI_CCI_LENGTH(*cci) && ucsi->ops->read_message_in(ucsi, data,
+> > UCSI_CCI_LENGTH(*cci)))
+> > > > > +		dev_err(ucsi->dev, "failed to read MESSAGE_IN\n");
+> > > > > +
+> > > > > +	ret = ucsi->ops->sync_control(ucsi, UCSI_ACK_CC_CI |
+> > UCSI_ACK_COMMAND_COMPLETE,
+> > > > > +				      NULL, NULL, 0);
+> > > > > +out_unlock_ppm:
+> > > > > +	mutex_unlock(&ucsi->ppm_lock);
+> > > > > +out_unlock_sysfs:
+> > > > > +	mutex_unlock(&sysfs->lock);
+> > > > > +
+> > > > > +	return ret ?: count;
+> > > > > +}
+> > > >
+> > > > This worries me, any userspace tool can now do this?  What other "bad"
+> > > > things can it to the connection?
+> > >
+> > > Although, there is actually only a limited number of things that you
+> > > can do to the connection using UCSI, that is definitely a concern.
+> > >
+> > > The PPM (which is the EC firmware in most cases) is expected to prevent
+> > > any harmful or "unauthorized" UCSI commands from being executed, but
+> > > I'm not sure there is any guarantees for that at the moment.
+> > >
+> Critical power setting related features and options are tightly controlled 
+> by PPM/LPM. In such cases, those UCSI command request by user space 
+> will be blocked by PPM/LPM and will eventually end of into DoS.
+
+What is "PPM/LPM"?  I don't see that here.
+
+> Moreover, to further mitigate the risk of any malicious attack our 
+> understanding is this sysfs interface will be accessible only with root or 
+> super user privilege. 
+
+Is it?  You really want normal users being forced to be root in order to
+talk to this device?
+
+Make this a real api please, don't try to just do "provide raw access to
+the hardware and we will hope any userspace program can get it right",
+that way lies madness :)
+
+> Can we still think of going ahead with sysfs interface and double make 
+> sure to make this accessible only with root/su privilege to minimize 
+> any potential risk of bad uses?
+
+Nope!  Get it right please, once you add it, you can't remove it.
+
+thanks,
+
+greg k-h
 
