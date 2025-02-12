@@ -1,155 +1,113 @@
-Return-Path: <linux-kernel+bounces-511997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F24FA3328E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:28:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6366CA33290
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E28188ABC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4703A89C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1432204594;
-	Wed, 12 Feb 2025 22:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E45A20408E;
+	Wed, 12 Feb 2025 22:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KkAMQcp1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WmxmVfbf"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC9B202F68;
-	Wed, 12 Feb 2025 22:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1949B203704
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739399292; cv=none; b=tdYXVE6F7L+qA3CtoeWUcVkx7HL0ZEXRilPMepZ1h2nPkd01nLTZLKaT9Say7ww86dCiX0DN7ChpNIJwuydxESti7+HXBVZRM3GDSkgR2wXs5LKwIxCQYvPkZqqz2afyeAb+r6rXQWDfSsnCtdpAmwanZtySCTvOosBsFfXMVgk=
+	t=1739399324; cv=none; b=l6bzhPPRMk6aWFN8I6F3YpKLzBPwRc0v3cBVAqMfInt2JNLooNEhirLQYQ2Ofka6dHFPI7sRwxwAuO2zhUZOkuvdK9NLTPQZf4BIUBFxIUbm4+oe0i1wyYjxXuPTm+/2EKf5Mkk+bNnrEC9o5vGHHJBLti7jMQ6yDbGhm613dSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739399292; c=relaxed/simple;
-	bh=/EyQTcmIM7aiXAGK890xTjnxKPcM/oracEWhG+HK8qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S43iU7XT0EET47JZ0YRXTaYxySNmzeSY8wgg5SnO37Mze2p7ODvJIykK2oqsZKIUwpnEFSg/dWRq6qDWQNRjCtmyQueeAInG87eZIqpgBaZPwnCQXRP8xzlY1vRrWD0epaSS4O5t6KC0TjCxvlsXsgMwbhPkLkVE12tDnMMsqhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KkAMQcp1; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739399291; x=1770935291;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/EyQTcmIM7aiXAGK890xTjnxKPcM/oracEWhG+HK8qk=;
-  b=KkAMQcp1qi9ifr//lD9PMJVBTXHjMPsin3vwpo9/m6oW6dloK2Euo/rP
-   q00oAr+Zuj3lNBUhDZuJ9XLmWsuouWWs7IwJG+fTFDCZ/DmaFUnY4OA//
-   8Kp6rZX2MX8Vu8x8JYGFjrlf6NRtKj4NoWR+v/5fpyQ03fTpunk5eNThZ
-   nkSlZGny1scAfPpscgoMGmh5s5gZH+39aw3/91W0D7w8Gu+Zf34Qzb6nX
-   crXGn8jEf57xBLXHlW4AmPdiOOCe72oy5mA+yAvJRLQ5gGsmCJkbYuFm0
-   V6p4Deznsz39dZ2O54DWGTuy2c1A+EYNwytuLPZCyNFb2M6g5pB8ViCjM
-   Q==;
-X-CSE-ConnectionGUID: o9VUieeiTzCvjU1svKiYlA==
-X-CSE-MsgGUID: s6Iud7FORD+WYCTWTxNRmA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="51067485"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="51067485"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 14:28:10 -0800
-X-CSE-ConnectionGUID: Lpbgfi5VQQWUwOqQ7obejw==
-X-CSE-MsgGUID: RuAFF4fXR1mSm99+ay6QGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="150125721"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.123])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 14:28:09 -0800
-Date: Wed, 12 Feb 2025 14:28:07 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	vishal.l.verma@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
-	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
-	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com,
-	lukas@wunner.de, ming.li@zohomail.com,
-	PradeepVineshReddy.Kodamati@amd.com
-Subject: Re: [PATCH v7 07/17] cxl/pci: Map CXL PCIe Root Port and Downstream
- Switch Port RAS registers
-Message-ID: <Z60gdyVGJQSLRER9@aschofie-mobl2.lan>
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
- <20250211192444.2292833-8-terry.bowman@amd.com>
+	s=arc-20240116; t=1739399324; c=relaxed/simple;
+	bh=8febaM/GGXzDc+Y+Kc9TY1ej+8QKvxOvC8LTylKrnHM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=J43GWlCZl/2xoBoxS5yQXl3ocvm8SuePUYL7K6imKO8dlr6aqlSN1fuwuXzPK6Dt8XZkt9igiMcqotSh8Sb6gNvhcda9iBTcDmUrv9TvF/EKg4ntcw1Z+mqzzo6J9zMMN7pqV+wwNwUvRfSWcPcY8Z1lhOPEQUC9xCSj+TVqGNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WmxmVfbf; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739399310;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0vGAzcBV6SusYZSOoty7cC3Cdm+q713JRVhMRrbwVIA=;
+	b=WmxmVfbfqTlhv0dTw/dTNw/BfigNpqJF7RxYqxCbUE/mQuheKTIo23+VV5rq89Oz/ysQl8
+	eY6gmkgMt/GDdMPcCFV2FkuR/jSW3MwHoCBFJKqedf9URI3Qdg17WoFWK2kO31SXgXFwuu
+	hXCaGq+5g0a9y1m0ZnBmLumrvK0mWjA=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211192444.2292833-8-terry.bowman@amd.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH] scsi: hpsa: Use min() to simplify code
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <7a39a882-4f00-483e-942d-36a7cff53954@acm.org>
+Date: Wed, 12 Feb 2025 23:28:17 +0100
+Cc: Don Brace <don.brace@microchip.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ storagedev@microchip.com,
+ linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <561C9EC8-8F5B-4415-B7B7-CBE2AB99A094@linux.dev>
+References: <20250212115557.111263-2-thorsten.blum@linux.dev>
+ <7a39a882-4f00-483e-942d-36a7cff53954@acm.org>
+To: Bart Van Assche <bvanassche@acm.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Feb 11, 2025 at 01:24:34PM -0600, Terry Bowman wrote:
-> The CXL mem driver (cxl_mem) currently maps and caches a pointer to RAS
-> registers for the endpoint's Root Port. The same needs to be done for
-> each of the CXL Downstream Switch Ports and CXL Root Ports found between
-> the endpoint and CXL Host Bridge.
+On 12. Feb 2025, at 19:48, Bart Van Assche wrote:
+> On 2/12/25 3:55 AM, Thorsten Blum wrote:
+>> Use min() to simplify the host_store_hp_ssd_smart_path_status() and
+>> host_store_raid_offload_debug() functions.
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>> ---
 > 
-> Introduce cxl_init_ep_ports_aer() to be called for each CXL Port in the
-> sub-topology between the endpoint and the CXL Host Bridge. This function
-> will determine if there are CXL Downstream Switch Ports or CXL Root Ports
-> associated with this Port. The same check will be added in the future for
-> upstream switch ports.
+> From Documentation/process/deprecated.rst:
 > 
-> Move the RAS register map logic from cxl_dport_map_ras() into
-> cxl_dport_init_ras_reporting(). This eliminates the need for the helper
-> function, cxl_dport_map_ras().
+> <quote>
+> strncpy() on NUL-terminated strings
+> -----------------------------------
+> Use of strncpy() does not guarantee that the destination buffer will
+> be NUL terminated. This can lead to various linear read overflows and
+> other misbehavior due to the missing termination. It also NUL-pads
+> the destination buffer if the source contents are shorter than the
+> destination buffer size, which may be a needless performance penalty
+> for callers using only NUL-terminated strings.
 > 
-> cxl_init_ep_ports_aer() calls cxl_dport_init_ras_reporting() to map
-> the RAS registers for CXL Downstream Switch Ports and CXL Root Ports.
+> When the destination is required to be NUL-terminated, the replacement is
+> strscpy(), though care must be given to any cases where the return value
+> of strncpy() was used, since strscpy() does not return a pointer to the
+> destination, but rather a count of non-NUL bytes copied (or negative
+> errno when it truncates). Any cases still needing NUL-padding should
+> instead use strscpy_pad().
 > 
-> cxl_dport_init_ras_reporting() must check for previously mapped registers
-> before mapping. This is required because multiple Endpoints under a CXL
-> switch may share an upstream CXL Root Port, CXL Downstream Switch Port,
-> or CXL Downstream Switch Port. Ensure the RAS registers are only mapped
-> once.
+> If a caller is using non-NUL-terminated strings, strtomem() should be
+> used, and the destinations should be marked with the `__nonstring
+> <https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html>`_
+> attribute to avoid future compiler warnings. For cases still needing
+> NUL-padding, strtomem_pad() can be used.
+> </quote>
+> 
+> Instead of only changing the calculation of 'len', please change the
+> strncpy() calls into strscpy() calls.
 
-snip
+Thank you for the suggestion.
 
-> @@ -788,22 +778,30 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
->  /**
->   * cxl_dport_init_ras_reporting - Setup CXL RAS report on this dport
->   * @dport: the cxl_dport that needs to be initialized
-> - * @host: host device for devm operations
->   */
-> -void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
-> +void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
->  {
+I just sent a new patch [1] essentially replacing this one.
 
-With this change an update to cxl-test is needed.
-This func was wrapped to make sure no mocked dports are sent to
-cxl_dport_init_ras_reporting(). 
+Best,
+Thorsten
 
-2c402bd2e85b ("cxl/test: Skip cxl_setup_parent_dport() for emulated dports")
-
-This works for me:
-diff --git a/tools/testing/cxl/test/mock.c b/tools/testing/cxl/test/mock.c
-index af2594e4f35d..1252165bffba 100644
---- a/tools/testing/cxl/test/mock.c
-+++ b/tools/testing/cxl/test/mock.c
-@@ -299,13 +299,13 @@ void __wrap_cxl_endpoint_parse_cdat(struct cxl_port *port)
- }
- EXPORT_SYMBOL_NS_GPL(__wrap_cxl_endpoint_parse_cdat, "CXL");
- 
--void __wrap_cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
-+void __wrap_cxl_dport_init_ras_reporting(struct cxl_dport *dport)
- {
- 	int index;
- 	struct cxl_mock_ops *ops = get_cxl_mock_ops(&index);
- 
- 	if (!ops || !ops->is_mock_port(dport->dport_dev))
--		cxl_dport_init_ras_reporting(dport, host);
-+		cxl_dport_init_ras_reporting(dport);
- 
- 	put_cxl_mock_ops(index);
- }
-
-
-
-snip to end
+[1] https://lore.kernel.org/r/20250212222214.86110-2-thorsten.blum@linux.dev/
 
