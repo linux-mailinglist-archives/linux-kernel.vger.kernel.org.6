@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-511112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6C6A32612
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:44:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3A3A32622
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00FE61688A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA107188C0D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A387120CCED;
-	Wed, 12 Feb 2025 12:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D980420DD5E;
+	Wed, 12 Feb 2025 12:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="KFDIojn1"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PJjHheBp"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4790D20A5D9;
-	Wed, 12 Feb 2025 12:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364279; cv=pass; b=ppSPniGyBTIN0hBlqMROCajTTQjgm9xBY3gH2eqp4zLe7YXEdI/GBpDKKkUnfY79Mpz61kCqG5B3H5gh2JiXx8WkyUlAMTCNCExSuTE0hnYzFXigrtGWxznEtgMwHhluPfOIOM4q/V/euX78oVSkdfoWGfsc9sMdZq/X+4vz58Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364279; c=relaxed/simple;
-	bh=JBdG7HNd/1tVUtH0BDCQnqqSS6Cy6BkptAat8oiEIUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=srYiachQ4oCLBCbfhgp370onGJH2pAdmh5FfiE/8YwJOmu1HVXwDxBHhT+Vp7e88qlrXmKvnqw3A7tvPWbj5llCbm47OEQJsQqrqIg+/mzLX5nq8T2NNWgG0qM+6SqPw5a4F0P5UWXK6aJnmDDAwdIfSev+E2b9KJoh66X3R9Pc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=KFDIojn1; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739364264; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mhTek3LMOXWwE7inMGdFBQrsJZznqdEbQDauKdZXlGwi+Z9MfxqqTNkuHAcqwwYCDxnV0OG+NVNWOmAJNe3ZTxx0FgUVdwAggVNMkDGmmTrTWv61fR9qzmbcuE2iSJ8837Uhmy+oBFxF/9JpQCQJlTsODE+Z0ubmulW2P0qxMBM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739364264; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=k0u7MCkVugkCYytrZIZnLSDOJ7P6+i9SZvRkCovv5zU=; 
-	b=ACA9jmkQalqYV3VPWJ07o8K0WZJpck8qONiPpOHlxLC9EQdGe+FwSaDn2g/7DmX9GLqCRFfkwlY6G2tUU/LycXHcUbjNxmisOKulgmG8/LCIKmcatAYvnyDlxhekL5/iyMarYWHVfjWSo455Zdb11lq6+qqBN1a/wHX0Y9wHDd4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739364263;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=k0u7MCkVugkCYytrZIZnLSDOJ7P6+i9SZvRkCovv5zU=;
-	b=KFDIojn1akvvSLIMtBtS1j/gY6cML0WKSgoRHfeomaqwixBDGRWuFchtvI/GL5aB
-	KFl2p63f+Y8wIG9/MErZmEYc1IbDoGL1bs/sXhr9Rx2Vb6+10JW4a3dM6uSV5ry2Nij
-	jOnTZh89SkxlPkYr/fKxBSsT1UfvNsyfdB4psLKo=
-Received: by mx.zohomail.com with SMTPS id 1739364260281358.8015360119805;
-	Wed, 12 Feb 2025 04:44:20 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: srinivas.kandagatla@linaro.org, linux-rockchip@lists.infradead.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, detlev.casanova@collabora.com,
- sebastian.reichel@collabora.com, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH RESEND v2 0/6] RK3576 OTP support
-Date: Wed, 12 Feb 2025 13:44:15 +0100
-Message-ID: <5943191.DvuYhMxLoT@workhorse>
-In-Reply-To: <20250210224510.1194963-1-heiko@sntech.de>
-References: <20250210224510.1194963-1-heiko@sntech.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B572046BE;
+	Wed, 12 Feb 2025 12:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739364330; cv=none; b=omiyqU4ZVyiB610Qe6zH+LLCSnivOw+W+YBsrJW0gIas7gaXt+6ysFQg8ZKb80acvn4g+bdkPamCtpTdi42TvEcSWOUjyr6bHo+tE2vjX2rJYqlGnkdNmrrIn8jlPFynkm9P6QE9IE6F+Jc9nvx2693TINqmZ9oGszenZ7CBXw8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739364330; c=relaxed/simple;
+	bh=4JRn5iL42MJEpQHlbzIijk4WcEtoHNrpGhgeTaJH47M=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=r2/JbVqMSDLPLHyGSqV9jXDstHlAd64rocxTlC0NLJOZQXFF1CB5oyy35kJDLg/eh+m88OtI8WMwdjU73+Qf0e4m8dj6FiW2LvvMbbSygEk47DGYhx+Zda7JRRyus9bRnY6MjcbbrpHhzvaJgKr+j8EGtrwt0xLV26ys04OcQF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PJjHheBp; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739364319; x=1739969119; i=markus.elfring@web.de;
+	bh=4JRn5iL42MJEpQHlbzIijk4WcEtoHNrpGhgeTaJH47M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PJjHheBpgdSXsx+Umol8T4yAdHWvj+q6JEM1R+fHcAJj4aShKG2t7Fbc7E8cHDVU
+	 U9AqmWFUcHLiRk9Cy3Vq9gNuajj1WxIbXcUhJwQUuLqpVEorfg06OS2NV+TSvlHdU
+	 pfb2kdngqIh0l6u3BCSNviBVtM1Q6dIG2coiN3FFz5dSxCSvzWmomdA31f/ldG50Z
+	 EAucS96Ngx7tWglfg8YWhsLnk9OhovsbTfUz4IfUIA5Wb/zJVgLnlwFquyttjDeQB
+	 zjjE9Ffof7JcnCS1f+8N97nHo+Vc05RqLxWx5IP3vbVbj6HpduET0hbrrfUxuN+3r
+	 6l8n5xq2K8M3dChoPA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5j5y-1tkvvo3XqM-00EmgE; Wed, 12
+ Feb 2025 13:45:18 +0100
+Message-ID: <93a7e08f-8a3b-42cc-8d36-f570f02087c8@web.de>
+Date: Wed, 12 Feb 2025 13:45:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+To: Chenyuan Yang <chenyuan0y@gmail.com>, linux-gpio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Zijie Zhao <zzjas98@gmail.com>
+References: <20250210232552.1545887-1-chenyuan0y@gmail.com>
+Subject: Re: [PATCH] pinctrl: Fix potential NULL pointer dereference
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250210232552.1545887-1-chenyuan0y@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rgoJ3QjOvQt09jtD0DLsUfO5e7MhvKcjufuUn6etTbSAzv4U3ac
+ mZO2uQndJA0ga8cEN0mJUO7oXcxaYpMFY4RDMlOyxT+a4HIL4TGFY4vQPnpx0TxVMaDme/N
+ 2oE4qiIj6hRvywCy1WMJoEMADsVbNlUwrGdl4la3Ogabz//TqoALd2fRq5spvNDS0GXlS9V
+ n8BGpZnWcfcJeldkOI+Bg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:D62wot44SxI=;8nMv1FZOUoEfbybwFK41pXY7feP
+ d/BWTy/ImuK4OscXNFI38Xsa90iI36mjKKyFNI0bPSN/TjPL5C519qpb3RVGa6zAIfrBmlmeJ
+ sUNCUJBtKWIS9jkIMMGW9vUBSnJf+OeUtmSUe292FVTiHLl57aDN1dK2AQ2KRzwhFuH9ALz8D
+ jaBb6kWanEwB6un6a8dvylEiAJL/4WExurSjoAPKbNWXaNr16dqTf1CGNRZix0YAhumzYMHYj
+ g2d/Y1sfDSxZJe22alEHkOfWfkghKY0mWmdo/1cphaUoRNDUij9QYbmOphuQIwP+kV9uz97cQ
+ ZzBPrSvGWlIseb2YFPW8Gk/LHpLiDRGwx6eGDae1oMezV7T1huDhSl8rEn4XvYGno74Qs009a
+ fJ8zYam0zHV8pwEj1nhm7njhdgUT5/F/jz+vgoamr1bKKagjb0a2oK8YvjGOU1HgHAXRkqj96
+ w5h2vg0ZprrCVqva+er7ymeDBteHG14HikBBHX38JMH+1ZMq8+G9eceRM/sGhXTSPtPOx8KSM
+ aX2Y4epXX+DE7i2nD45dHh5UwcMzsPlPjz1sUJcGgy5cuJTDdn6snivIrR8WrRZztEOHxgDRK
+ hf5pH8Xk3EqI8TnKGOPupUOUb1+mTbfsaf+2s8NFufajv7/5KjvMHcJLrD2aY4ha6uXAIQM9q
+ g1Xmm+aiZW2S8E50DbxYtH10UDdOX3v1ByxFj2RsYu/z2olaf7n27tth3pCc6pphLAH7xrjrM
+ hmj4NN9sKPyD/OVNIxk9IPWV2qCa4D58Odte99iRPUzv3mFdyPAfi32bZF1yp/BnW334i6hkY
+ 5LdKCxqHpLp1MPSNHBNARN6ZOJTm4C/7/k0HJWzwNgr6P8Z25jG5r56wkQ92hwspGUhxz2VXU
+ xoODn8+KDzgUxfcdoXRyXE4XUQVs73s56X2GdxqxjbKjPk7LSFRR9vbZHSPbrhfru0doStKj9
+ 0FcSNa274heNYQG317LjsmIrhvuai1WJffle1FiZ6R3bfo/3goHC8tStc+3zKO5IZ94FAENWD
+ hc9UW7SAXqZR5AUBHjmPiKVS4GLvRtFvKYhC1dA3fo/YoyVqPoEI6309ZlsicNVbHl91EoBZi
+ 4RrK9UmrpBmxbqMud1afkbfyMLHFSoW6H1tE6awMURL6Qf8oOy/zQkG+fVTN62C2fZyKCZnXT
+ 2ED5zeQZp7zHvHR6W2/50wp0f849FSAD0L6nYnwcpMM45d8tc3L61JGu3tu4yLJ5/X2X6kKm9
+ swn73UsGU6FDm62xdjYfbcgMpDEzyDIVN0x+1ondfl0VnnfHTJNYXssze6O4QT7AxKMxSx0d3
+ FHMwLtnTd+K80y45d0gRHNL/+umnxQCxX9HHBHnTghRAZdaIR987f/JYbhOevjhl9aYnnJlTi
+ EL79gWpvgOLe2Eh5TSbJJoHCuoo3Ci8cQBvJRdSYB7jiJ8oL5xTWbQs50srgYQvjtO4B4jhTS
+ xUzyDxw==
 
-On Monday, 10 February 2025 23:45:04 Central European Standard Time Heiko 
-Stuebner wrote:
-> This enables OTP support in the nvmem driver for rk3576.
-> 
-> I expect to pick the clock patch (patch1) and the arm64-dts patch (patch6)
-> myself, after the nvmem-driver and -binding patches have been applied
-> (patches 2-5).
-> 
-> But kept them together for people wanting to try this series.
-> 
-> changes in v2:
-> - fix register constant in clock definition (Diederik)
-> - add patch to set limits on variant-specific clock-names
-> - use correct limits for clocks + resets on rk3576 binding
-> 
-> 
-> RESEND, because I messed up my git-send-email which caused it to include
-> the list of patches 2 times, duplicating everything :-( .
-> 
-> Heiko Stuebner (6):
->   clk: rockchip: rk3576: define clk_otp_phy_g
->   nvmem: rockchip-otp: Move read-offset into variant-data
->   dt-bindings: nvmem: rockchip,otp: add missing limits for clock-names
->   dt-bindings: nvmem: rockchip,otp: Add compatible for RK3576
->   nvmem: rockchip-otp: add rk3576 variant data
->   arm64: dts: rockchip: add rk3576 otp node
-> 
->  .../bindings/nvmem/rockchip,otp.yaml          | 25 ++++++++++++
->  arch/arm64/boot/dts/rockchip/rk3576.dtsi      | 39 +++++++++++++++++++
->  drivers/clk/rockchip/clk-rk3576.c             |  2 +
->  drivers/nvmem/rockchip-otp.c                  | 17 +++++++-
->  4 files changed, 81 insertions(+), 2 deletions(-)
+> The `chip.label` could be NULL. Add missing check in the
+> rza2_gpio_register().
 
-Hi Heiko,
+Another wording suggestion:
+The data structure member =E2=80=9Cchip.label=E2=80=9D could become NULL
+after a failed devm_kasprintf() call in the implementation
+of the function =E2=80=9Crza2_gpio_register=E2=80=9D.
+Thus add a check for such a return value.
 
-for the entire series:
 
-Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n145
 
-OTPs show up on my Sige5 RK3576 board and read fine. Also compared the OTP 
-nodes to downstream and the values look consistent with that. The OTPs aren't 
-documented in the TRM I have, so unfortunately I can't cross-reference that.
 
-NB: patchwork's "Series" download for this series somehow lacks patch 2/6, 
-which tripped me up at first. Not sure if that's a problem with patchwork or 
-with how you sent the series out, but I thought I'd let others know who run 
-into this.
+Can a summary phrase like =E2=80=9CPrevent null pointer dereference in rza=
+2_gpio_register()=E2=80=9D
+be nicer?
+
+
+> This is similar to commit 3027e7b15b02
+> ("ice: Fix some null pointer dereference issues in ice_ptp.c").
+> Besides, mediatek_gpio_bank_probe() in drivers/gpio/gpio-mt7621.c also
+> has a very similar check.
+
+I find such auxiliary information not so relevant here.
 
 Regards,
-Nicolas Frattaroli
-
-
-
+Markus
 
