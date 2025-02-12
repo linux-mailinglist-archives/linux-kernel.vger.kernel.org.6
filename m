@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-510650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FF1A31FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:30:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E65A32007
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7068C7A1366
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:29:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E63577A4183
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73260204682;
-	Wed, 12 Feb 2025 07:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAB220468F;
+	Wed, 12 Feb 2025 07:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JESZux1A"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NUMBZw9v"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E451DACB1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1551FF1C8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739345428; cv=none; b=Aca+vGEHOfDZSsdu5ujSNP6Ax6W5oha6VnBAZT3hFVnGyLc+Xx+hM2QR6sMbkpZCYbCIo8UTgfE01C7S6TcrXQzJa/Iw8OtKkQZp8zUB+c4u9ZiJA0pUsCn595ercTrPD8F0x+BcehC7tqWEvQqqTPRRjAnCqHBoxk9ystK1oQI=
+	t=1739345607; cv=none; b=p1EblQyqPTiaWmuEeTp/wp6edxu5dTWgOUTVdbUEJjzIA7YXXUXTR7DO8xezSn06JxGR8vEEK6uvvgWHxpzEEDWUVNgsRaIYBB4FyUf6PEV5OC6Z7a8OWXmKK9G9lBTaVR3zHgcczvMYMLVh4MU99cj+Ai1G9BgK2tweYcAmvGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739345428; c=relaxed/simple;
-	bh=liUB+vQy91cPqvsQbsA0kidijtsiriBht+TngZlpY70=;
+	s=arc-20240116; t=1739345607; c=relaxed/simple;
+	bh=bIFAFWBKWpZ07y7ctOBZ70nTlK0JeLPnASpipllNb7c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nzazdyWqGs9uyqpRCAjg7PLihGdNCOA/r3oFWzUqVX3GHCWnGbGY+6ig+7tiAypPebhKYXnoWllkssENEpLCPpFA7iPjDK1zsyePWrhVo3D7TDa7TVRu8HIrkbCuG22kjuwLqfFRT8YZiUTJvSUPPO2fRZMdGpUq0Ca1oc15ANI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JESZux1A; arc=none smtp.client-ip=209.85.216.49
+	 In-Reply-To:Content-Type; b=sZwOhL7ZM6lkrTwRmKNL+S5JmTbx8yehD2FZHyHEXzXPzuMY/6M38DjF0uYHuRfKD78ffS3ouVESLV5nKEy/rrTcAlTbFMNqxH9Q/TugdVMkENDwX9DReskR034J3myE5z9OT1AJjGzhQTA5TTxVi50j8KnmxFPx8fra2mdNcaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NUMBZw9v; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fa0c039d47so9536885a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:30:26 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21f6d264221so49427905ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:33:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1739345426; x=1739950226; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UblfR+D8Nrr1xWGWMhXPdM3NZsuuKTqKkiEnqxIjVPk=;
-        b=JESZux1AgSGJtbWSsVsKU6hB7kMcXlgNOI9hzgTVGsknbEPA/qHMn8tD8dNUqnxalj
-         2fk64DMWWbCRT9cJY+0w7wW/cgok7B7h4KBR6ctmx4WykBLbqd/wJH66CcLrCLuiqrOO
-         PbUms/CBLI6EDYXLOhElx+vmAfNb13CskhWvjLKi02JjCza9gbYmPFk4CEd3nY7Lb0Xh
-         JkeYibbs6SC5I0zKuYFHXch64IW5WjmYqqbrRBU4eTny/FYtAtugRqBeSEymv3lJF2OU
-         YpLWbXYBrFENhe03gqtL5l98IQ0C4J3INTxqNWz7dgaXTLPiJ6Tu9mfM7DVdPU//OCyh
-         1ICg==
+        d=bytedance.com; s=google; t=1739345605; x=1739950405; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fkwC4yo/St1MU9GrbOiGWT5f1H9mKSQMNgvX57ikxsY=;
+        b=NUMBZw9vPlXuscejlvYcNB0QaLN/b5qskT0WdWzTG5nm7a9DkMYmYX46tFTHRn3KRF
+         mojBEaXe0ZgJdS5qHjlRPD6xSB1VWef1o7+MIIwwaiplQUyOSvR5DMqxAtrlWxLubQ6Z
+         dk91FQToMAeSOOLhC69avYWbQ/hVOYk/7bMdKKItrMX8rf1E4ZReor2B3iPNDnjOdtD4
+         Gla5JHdCywkWkdx1ll5twsM+h9Q3XaipD7qnK0cuAwqL9lJwydG5dVr7hFg4Ag5m9Y7w
+         8j6QuuJrDsOJwHozgdVcPvEzLw2qlcCfvn5ywL+dXldeMzAFmeJf2v8vyyJlKVjvS+yG
+         VXFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739345426; x=1739950226;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UblfR+D8Nrr1xWGWMhXPdM3NZsuuKTqKkiEnqxIjVPk=;
-        b=Th7x2WBGFGXt13H+zaLrA+dVSxYFyRq1Tkt1qNt/Jp3DssVFIbzAV1dxbY3o1e9szw
-         /0tbaoaRQ3A14hB9o1H8HLqLlLLs5P/HB9fN9ZqNlCbiHs37b1wUSMYYOaZ/PwVzD+s9
-         Ey/3n73GJpulJicHgFSJ6txqd2Zoyiwf35VD35aKaH4qhbZm4uX2JSMjJrEeQ+FbeNzA
-         KPc7XdO01spq85Xo0XFIm3+wT+x73n86cQzdh3wxzZRTLqArulVmjbtLree/oW3pzZLC
-         nBPmi4Mb7OyvkYr+ESpM1l9b0NvBu23lizgComW3VG4UfpIiIprRywAZlg/UROhkcp3y
-         guXw==
-X-Gm-Message-State: AOJu0YyeS7VwImRqjBzkfSlGkMY/3KN4A3ruSVF670rdz8XVeDpWILRB
-	huMFRAtBgPo3IgA0YWYLwf4i0xk4CZwmFyU8qGXp3yRBGi8Q8uiBz1hXz2wEwJo=
-X-Gm-Gg: ASbGncuoj3DGEJFByI0tJJ1v6P/Z+Ta26Fh1jxySLRLxofBOa4Lf/grGSrAU5DGUBjV
-	HXEd+En462U/e4o8I+fQDaQTHFmJMWVSiRGZOWd6A8mBqOmJuFIRANlVI8zBVHXhg5vHnBayzY/
-	A9Tgpypnvf3jyR0/zFrHMtUNhf4CjjSY5kVIjJmIS/qh55+Gc2L7wLnXgH9PqYE0Hwq6t7cBROa
-	HLcX1862VIMbG3F0jwAfumiGPxwl9bccmvEh8F27tVN27clWRn2ZpDEHKwEAt/FY20Kms+LkAOH
-	lPqqAbMKhVMvvUZI+RcEi3sGudGjecjAKBW7
-X-Google-Smtp-Source: AGHT+IHiMXIaeQkGDLmj4QLaxRdqosV2WjXomIBTbT6B3CFHOM3mBaT9LMJguECrLMcZrydqDGw60Q==
-X-Received: by 2002:a05:6a00:804:b0:730:91fc:f9c4 with SMTP id d2e1a72fcca58-7322c43a997mr3942114b3a.24.1739345425990;
-        Tue, 11 Feb 2025 23:30:25 -0800 (PST)
-Received: from [10.254.28.19] ([139.177.225.229])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73048bf144dsm10531324b3a.85.2025.02.11.23.30.23
+        d=1e100.net; s=20230601; t=1739345605; x=1739950405;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fkwC4yo/St1MU9GrbOiGWT5f1H9mKSQMNgvX57ikxsY=;
+        b=u/yhCY89gJaMGvOliCD6UplccRTU+318pdhdicsrFeyJ5Uhamv1lRFkVVFasMR9x4e
+         zL3fRcyflx3BYLnfHbRd5+0WH26NJXiTGovxcrx81IIbitpKaUgype0NwoAWTm8r6m+g
+         uuc0J8CuxIXn7RTORfmxXfW9cgMNrDdyt7yWP7UYQpVEgVLyDKcTzNQVxwMEsuEXYWLD
+         +JJS4+n6BRein2tb/0Tn4YUXq2caE7uGlkbRbO/6yqa8+f7DiYPr8dJjeE6PZ/bwEK9Z
+         gjO1gmZr3kEtIPYGws2e39YUWBIX2F6xzy3cMIT2PwauQda4gqb0cJDytjymTQKqILbv
+         lsCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyEo+uupa/Js+LGquijIYi5DLmmNNEuQCu9vEC8qTPW40Cn9tiMSvHXnn8pH8agCAaFMN2Rh65pOKo44Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyxD2wHqHvnzVr4lxMrb9ifEzi4MqtjsVxrlm4LYB48mgD72Kv
+	FSgDB5YijL1Sj3U/UDVVTDMU0pgVygi9IVCplkN/FUd59bS5Te7Y0Y4OZIE4AjA=
+X-Gm-Gg: ASbGncsBLaGAtNWW+PPzGead1F2277OuzzOiwg9Xl39r6sgP87cdiy6xebirwEV4lSI
+	JPk+miN7pnIk0d18HkzuJ4KFa0V6+grWDUiXWoCDBVcut7o2RXPR3fz/KwLars8eoEZ+cAjhDb9
+	X9yZSyFT75gABjW955DJE7eTCgQzcI98zz2gLRYJXE6zSOUuy8+y6zJe4JdL8BmvE9y9RBVwgqJ
+	cUBdIg3mA7nLYho02ZytAfLKeKVVsbmvbaqKV/0JvREpIrkBSdpCyA86BCBJ3T5F9vhlb+FQzhI
+	MTkyhVBjG1kNztkn0QKh6FmdA5kUBUgdkXLd0xIW+g==
+X-Google-Smtp-Source: AGHT+IGiuGc7iBWpCw3G4pXH50ZiqqPYc7UNNfOGWQ0h2PpQXVIqAav7BnmCxlwuHgBLLmHBduzIkw==
+X-Received: by 2002:a17:902:fc4f:b0:21f:7821:55b6 with SMTP id d9443c01a7336-220bbae2543mr35144095ad.13.1739345605349;
+        Tue, 11 Feb 2025 23:33:25 -0800 (PST)
+Received: from [10.84.150.121] ([203.208.167.153])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f3650ce0bsm106755595ad.21.2025.02.11.23.33.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2025 23:30:25 -0800 (PST)
-Message-ID: <9c9498a0-342f-4ade-8310-b5a9aaa485b0@bytedance.com>
-Date: Wed, 12 Feb 2025 15:30:20 +0800
+        Tue, 11 Feb 2025 23:33:24 -0800 (PST)
+Message-ID: <2e194c31-c177-496b-8e53-a20625e20a2b@bytedance.com>
+Date: Wed, 12 Feb 2025 15:32:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,65 +80,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched_ext: Fix the incorrect bpf_list kfunc API in
- common.bpf.h.
-To: tj@kernel.org, void@manifault.com, arighi@nvidia.com, changwoo@igalia.com
-Cc: linux-kernel@vger.kernel.org
-References: <20250212071936.1406029-1-zhouchuyi@bytedance.com>
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-In-Reply-To: <20250212071936.1406029-1-zhouchuyi@bytedance.com>
+Subject: Re: [PATCH] arm: pgtable: fix NULL pointer dereference issue
+Content-Language: en-US
+To: Ezra Buehler <ezra@easyb.ch>
+Cc: linux@armlinux.org.uk, david@redhat.com, hughd@google.com,
+ ryan.roberts@arm.com, akpm@linux-foundation.org, muchun.song@linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <be323425-2465-423a-a6f4-affbaa1efe09@bytedance.com>
+ <20250212064002.55598-1-zhengqi.arch@bytedance.com>
+ <CAM1KZSnWFivV-7nc55MBAEtdP1LXfW4eLKa-94HPZaTP0AOPrg@mail.gmail.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <CAM1KZSnWFivV-7nc55MBAEtdP1LXfW4eLKa-94HPZaTP0AOPrg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hi Ezra,
 
-
-在 2025/2/12 15:19, Chuyi Zhou 写道:
-> Now BPF only supports bpf_list_push_{front,back}_impl kfunc, not bpf_list_
-> push_{front,back}.
+On 2025/2/12 15:27, Ezra Buehler wrote:
+> Hi Qi,
 > 
-> This patch fix this issue. Without this patch, if we use bpf_list kfunc
-> in scx, the BPF verifier would complain:
-> 
-> libbpf: extern (func ksym) 'bpf_list_push_back': not found in kernel or
-> module BTFs
-> libbpf: failed to load object 'scx_foo'
-> libbpf: failed to load BPF skeleton 'scx_foo': -EINVAL
-> 
-> With this patch, the bpf list kfunc will work as expected.
-> 
+> Thanks for the fix. I will test it as well as I can.
 
-Sorry, I missed the Fixes tag.
+Thanks!
 
-Fixes: 2a52ca7c98960 ("sched_ext: Add scx_simple and scx_example_qmap 
-example schedulers")
-
-> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
-> ---
->   tools/sched_ext/include/scx/common.bpf.h | 12 ++++++++++--
->   1 file changed, 10 insertions(+), 2 deletions(-)
 > 
-> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-> index d72b60a0c582..7849405614b1 100644
-> --- a/tools/sched_ext/include/scx/common.bpf.h
-> +++ b/tools/sched_ext/include/scx/common.bpf.h
-> @@ -270,8 +270,16 @@ void bpf_obj_drop_impl(void *kptr, void *meta) __ksym;
->   #define bpf_obj_new(type) ((type *)bpf_obj_new_impl(bpf_core_type_id_local(type), NULL))
->   #define bpf_obj_drop(kptr) bpf_obj_drop_impl(kptr, NULL)
->   
-> -void bpf_list_push_front(struct bpf_list_head *head, struct bpf_list_node *node) __ksym;
-> -void bpf_list_push_back(struct bpf_list_head *head, struct bpf_list_node *node) __ksym;
-> +int bpf_list_push_front_impl(struct bpf_list_head *head,
-> +				    struct bpf_list_node *node,
-> +				    void *meta, __u64 off) __ksym;
-> +#define bpf_list_push_front(head, node) bpf_list_push_front_impl(head, node, NULL, 0)
-> +
-> +int bpf_list_push_back_impl(struct bpf_list_head *head,
-> +				   struct bpf_list_node *node,
-> +				   void *meta, __u64 off) __ksym;
-> +#define bpf_list_push_back(head, node) bpf_list_push_back_impl(head, node, NULL, 0)
-> +
->   struct bpf_list_node *bpf_list_pop_front(struct bpf_list_head *head) __ksym;
->   struct bpf_list_node *bpf_list_pop_back(struct bpf_list_head *head) __ksym;
->   struct bpf_rb_node *bpf_rbtree_remove(struct bpf_rb_root *root,
+> On Wed, Feb 12, 2025 at 7:41 AM Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+>>
+>> When update_mmu_cache_range() is called by update_mmu_cache(), the vmf
+>> parameter is NULL, which will cause a NULL pointer dereference issue in
+>> adjust_pte():
+>>
+>> Unable to handle kernel NULL pointer dereference at virtual address 00000030 when read
+>> Hardware name: Atmel AT91SAM9
+>> PC is at update_mmu_cache_range+0x1e0/0x278
+>> LR is at pte_offset_map_rw_nolock+0x18/0x2c
+>> Call trace:
+>>   update_mmu_cache_range from remove_migration_pte+0x29c/0x2ec
+>>   remove_migration_pte from rmap_walk_file+0xcc/0x130
+>>   rmap_walk_file from remove_migration_ptes+0x90/0xa4
+>>   remove_migration_ptes from migrate_pages_batch+0x6d4/0x858
+>>   migrate_pages_batch from migrate_pages+0x188/0x488
+>>   migrate_pages from compact_zone+0x56c/0x954
+>>   compact_zone from compact_node+0x90/0xf0
+>>   compact_node from kcompactd+0x1d4/0x204
+>>   kcompactd from kthread+0x120/0x12c
+>>   kthread from ret_from_fork+0x14/0x38
+>> Exception stack(0xc0d8bfb0 to 0xc0d8bff8)
+>>
+>> To fix it, do not rely on whether 'ptl' is equal to decide whether to hold
+>> the pte lock, but decide it by whether CONFIG_SPLIT_PTE_PTLOCKS is
+>> enabled. In addition, if two vmas map to the same PTE page, there is no
+>> need to hold the pte lock again, otherwise a deadlock will occur. Just add
+>> the need_lock parameter to let adjust_pte() know this information.
+>>
+>> Reported-by: Ezra Buehler <ezra@easyb.ch>
+> 
+> Perhaps a detail but, maybe better use "Ezra Buehler
+> <ezra.buehler@husqvarnagroup.com>" here.
 
+Got it. Will wait for your test results first.
+
+Thanks,
+Qi
+
+> 
+> Cheers,
+> Ezra.
 
