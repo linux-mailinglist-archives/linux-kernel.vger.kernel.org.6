@@ -1,132 +1,210 @@
-Return-Path: <linux-kernel+bounces-511874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC473A330E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:36:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51794A330EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614453A7900
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:36:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AD33A88D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE3B20103A;
-	Wed, 12 Feb 2025 20:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFBC20103A;
+	Wed, 12 Feb 2025 20:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXIudSIm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="Bhp3CiOD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gQFR/WS8"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8171FBC96;
-	Wed, 12 Feb 2025 20:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5A02010F6;
+	Wed, 12 Feb 2025 20:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739392584; cv=none; b=SkM36sGEKbj8PYD5Wnt3asamh7NBzQEaZBvizc5LdLOGj1dDlomQ439spy5irRu1NbSAcC470yNX/I2lRKtyxH/EZAAyexUVV2WRTmB4Iej1eZJpVk1aKIEPs0MSLYEfJd/RyjrtZ2fRMhJw15tegvzzBZh/6X0rhYGbSjWJpyQ=
+	t=1739392928; cv=none; b=fbgSvJZ6A06cKhFAxTz6mVbSExr8nCLNDXNkiWlZNugMRLvQutGJCDHS1UNF/PXjjvyfBYRch1h1izlo6FjuRlu80lzRtGiGX6Ox3oGDLxRJIeMCHbIcpuLptbTw5t/gvcUlgwBQJ1qs9EZWRV2myslXHPdzXThoeaup0tqUWWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739392584; c=relaxed/simple;
-	bh=v65vFOVTkj9bWxhDtiFbowfE5o/3g/K2Jrg6ERcJMLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CPkyLrLZjPqZ6JSOOtl0uh9BgqWQsirsMElRl0GMc3kV2n2n2mvExCHxmMQ89aPmqaO9rbkmF8HP5bS9amWGy2B2pbYj83mfw1OuMyneGGuuAmjqO5NRsBvEXK8TIpEnZVZOwo8TLKPTZxwxtDnS+2kZe4stODvrmoVAeIMolfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXIudSIm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6FD6C4CEE4;
-	Wed, 12 Feb 2025 20:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739392584;
-	bh=v65vFOVTkj9bWxhDtiFbowfE5o/3g/K2Jrg6ERcJMLY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=RXIudSImnh1il6AXEN/MLwIZ8n05NHOzG0si58q69yhuIyeq+UXDJLT8H/8pGoXFT
-	 i60GPzDmnMXXp7ESVsEJ2jnaZImplFiudpAOjoeK0NKNMQ2RdR/eIqrDtQchEjNpEd
-	 b52X4TOaxxm/96xp/QS/iIx1ikWQGkkIy9OLnyAV49ZJ3Pl8dEauAFIJU+XRhn0a88
-	 NuqqE6HOLxCNc1cJjA6xbcm1L31StFYQfZd9CDlKDUf5F8erlpRIhncbEAyl2npBOF
-	 TfG2DZvVRi2Rst480kOhYyIidPSdju4lunOoPNGm9qs+lN0DA4z/hdKMtvfL6NbT0V
-	 sv7aY8CR3q8eg==
-Message-ID: <bdd7b203-ccb3-453b-ae91-32f257fc909f@kernel.org>
-Date: Wed, 12 Feb 2025 21:36:17 +0100
+	s=arc-20240116; t=1739392928; c=relaxed/simple;
+	bh=L08+Uf6L/sH1zcaIZyXOJL0XdQ1wrqlMWrFkZKArxk8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=VCSmeryc2nnF4gunUWiNuvzUbi5WMTHRbjqfRgw6Spt/htOCwIID5jpeuWjxHuvHBe9H4gC2wf7/Y9yBr3JSK5SWFB+lKqKJ2ZVi2WuDuH9E4R+JDuFtVlIM5vkmc34ivJb1FoipigkCS6FFq9EXEdHri/5cedLTljeG3DQhtxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=Bhp3CiOD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gQFR/WS8; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 265801140109;
+	Wed, 12 Feb 2025 15:42:05 -0500 (EST)
+Received: from phl-imap-13 ([10.202.2.103])
+  by phl-compute-04.internal (MEProxy); Wed, 12 Feb 2025 15:42:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1739392925;
+	 x=1739479325; bh=t51aP4WhW/zTiyDc+WImCazriP69izX0SMtc5AkJXnE=; b=
+	Bhp3CiODAqSWps0/NavyftDi/CfgS28mgXK2vJHTXOLQzvooR/a300VvZgq/FILt
+	cIJQbv2/0wro9zHBgmpcQAe111dx6QUlfLYctDXghBT4beWJnBZEEOywhGr0MrEo
+	yspE9EZGTIG+1nbt+5w5bPaeX5re9fgUkaFchJbyUbyNtaxeIYs57cbTr00Ayaqr
+	3QuH+pAJe/F9Uq/3UgyfiBezfYUVevjqSi81PldfzIW21ifDvHQ5Dd0EdShuDVHy
+	/zRE+PdpCRxxBxXgj23Kf/VE1qYGAV4Obme7IJQ7+nsG2FM7JZ4wcH1psbM6V42n
+	TdEXmOZ+UWUDx4ToBP859g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739392925; x=
+	1739479325; bh=t51aP4WhW/zTiyDc+WImCazriP69izX0SMtc5AkJXnE=; b=g
+	QFR/WS8myEjMV6mLar7koiLZPJ55BgZ/LIRLmwAgMUz3cyQ1oNNnE/xf/TRM+ZJJ
+	11x7dRGlQFoL9ghUOITUbOj5NyoXors1J+bJpsWljdHt4OY5EEh4XFcvUueSNiGP
+	84Wi9WxrIIrZ1k9kKN+CYq0YorDqBnDI8uKbtaI4K1tJ3TFvtaJyYwSRCLzFsNvl
+	zvch7J9kFt0oG/hueu/UeuvRovNFx4eHPv1hon3rFsgCnj5IZAVjUsVzVU5cEgpz
+	9b4+PhqZ+1PYppwsuco/3S2FXib77Ixv8djBxWRj/efMSeqCDGISrbrJtBFxMApx
+	+c2ugL4mLCJWy/k8/m9Vg==
+X-ME-Sender: <xms:nAetZzVqUlBbE1FjYozA3NTwgMhU9PXfPO4UQT2lIrVxLOU2_J3RNA>
+    <xme:nAetZ7nyVGX3fmk6dl1O1APDnbLyk8KkBwiFcotlDFX7ODTdsohvZpxG2tdMRjb6g
+    uuwWlhqk0UZyzkgglk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggeekjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
+    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfeuvdehteeghedt
+    hedtveehuddvjeejgffgieejvdegkefhfeelheekhedvffehnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
+    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdp
+    rhgtphhtthhopehkuhhurhhtsgesghhmrghilhdrtghomhdprhgtphhtthhopehlvghnsg
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrd
+    gtohhmpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:nAetZ_bmKZ91P33jEJK0OEmb8NxLZoEx1rt0ONvSON3pypJxuPVw-g>
+    <xmx:nAetZ-XGA-71dUvVzsoyg2JDlcWUofucEHnbw0KZdn0kPVJ2WooKFA>
+    <xmx:nAetZ9kxrek14dr5pGMzn81mtTdoKmLDQXZzvPykJzIgs9ZzhCFTqw>
+    <xmx:nAetZ7fLebwniLh5VlBejqAaWOpteg6VzKi5xhRtKLPWSEK7at6Bcw>
+    <xmx:nQetZzWdtLKaUsXWOhdzjihwD04ubRSMQQ-SCqPdu8HWX45cQ8lb6uYP>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 458371F00077; Wed, 12 Feb 2025 15:42:04 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ARM: dts: nuvoton: Align GPIO hog name with bindings
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, openbmc@lists.ozlabs.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250116090047.87499-1-krzysztof.kozlowski@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250116090047.87499-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Date: Wed, 12 Feb 2025 15:41:44 -0500
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Kurt Borja" <kuurtb@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Len Brown" <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Limonciello, Mario" <mario.limonciello@amd.com>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+Message-Id: <bc0a60ef-bdf7-4f48-8215-891cb1efbdf5@app.fastmail.com>
+In-Reply-To: <20250212190308.21209-1-kuurtb@gmail.com>
+References: <20250212190308.21209-1-kuurtb@gmail.com>
+Subject: Re: [PATCH v2] ACPI: platform_profile: Improve platform_profile_unregister
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 16/01/2025 10:00, Krzysztof Kozlowski wrote:
-> Bindings expect GPIO hog names to end with 'hog' suffix, so correct it
-> to fix dtbs_check warnings like:
-> 
->   nuvoton-npcm750-runbmc-olympus.dtb: G1A_P0_0: $nodename:0: 'G1A_P0_0' does not match '^.+-hog(-[0-9]+)?$'
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+Hi Kurt
+
+On Wed, Feb 12, 2025, at 2:03 PM, Kurt Borja wrote:
+> Drivers usually call this method on error/exit paths and do not check
+> for it's return value, which is always 0 anyway, so make it void. This
+> is safe to do as currently all drivers use
+> devm_platform_profile_register().
+>
+I was worried I had mucked that up with the revert done in thinkpad_acpi? But it's not checking the return there so I think it's fine
+
+> While at it improve the style and make the function safer by checking
+> for IS_ERR_OR_NULL before dereferencing the device pointer.
+>
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 > ---
-> 
+> Hi all,
+>
+> I made a little modification that I forgot in the last version.
+>
+> Rafael, please tell me if you prefer different commits for this. Also
+> should we WARN_ON(IS_ERR_OR_NULL)?
+>
+> Based on the acpi branch of the linux-pm tree.
+>
+> ~ Kurt
+>
 > Changes in v2:
-> 1. Rename rest of the nodes I missed.
-> ---
->  .../boot/dts/nuvoton/nuvoton-npcm730-gbs.dts  |  12 +-
->  .../nuvoton-npcm750-runbmc-olympus.dts        | 120 +++++++++---------
->  2 files changed, 66 insertions(+), 66 deletions(-)
+>   - Get reference to pprof after checking for IS_ERR_OR_NULL(dev)
+>   - CC Mark Pearson (sorry!)
+>
+>  drivers/acpi/platform_profile.c  | 19 +++++++++----------
+>  include/linux/platform_profile.h |  2 +-
+>  2 files changed, 10 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index fc92e43d0fe9..ed9c0cc9ea9c 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -569,24 +569,23 @@ EXPORT_SYMBOL_GPL(platform_profile_register);
+>  /**
+>   * platform_profile_remove - Unregisters a platform profile class device
+>   * @dev: Class device
+> - *
+> - * Return: 0
+>   */
+> -int platform_profile_remove(struct device *dev)
+> +void platform_profile_remove(struct device *dev)
+>  {
+> -	struct platform_profile_handler *pprof = to_pprof_handler(dev);
+> -	int id;
+> +	struct platform_profile_handler *pprof;
+> +
+> +	if (IS_ERR_OR_NULL(dev))
+> +		return;
+> +
+> +	pprof = to_pprof_handler(dev);
+> +
+>  	guard(mutex)(&profile_lock);
 > 
+> -	id = pprof->minor;
+> +	ida_free(&platform_profile_ida, pprof->minor);
+>  	device_unregister(&pprof->dev);
+> -	ida_free(&platform_profile_ida, id);
+> 
+>  	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> -
+>  	sysfs_update_group(acpi_kobj, &platform_profile_group);
+> -
+> -	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(platform_profile_remove);
+> 
+> diff --git a/include/linux/platform_profile.h 
+> b/include/linux/platform_profile.h
+> index 8ab5b0e8eb2c..d5499eca9e1d 100644
+> --- a/include/linux/platform_profile.h
+> +++ b/include/linux/platform_profile.h
+> @@ -47,7 +47,7 @@ struct platform_profile_ops {
+>  struct device *platform_profile_register(struct device *dev, const 
+> char *name,
+>  					 void *drvdata,
+>  					 const struct platform_profile_ops *ops);
+> -int platform_profile_remove(struct device *dev);
+> +void platform_profile_remove(struct device *dev);
+>  struct device *devm_platform_profile_register(struct device *dev, 
+> const char *name,
+>  					      void *drvdata,
+>  					      const struct platform_profile_ops *ops);
+>
+> base-commit: 3e3e377dd1f300bbdd230533686ce9c9f4f8a90d
+> -- 
+> 2.48.1
+Looks good to me
+Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
 
-Any comments? Can this be merged?
-
-Best regards,
-Krzysztof
+Mark
 
