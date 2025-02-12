@@ -1,155 +1,168 @@
-Return-Path: <linux-kernel+bounces-511729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29608A32ED9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:46:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E858A32EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:48:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBCBA164874
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:46:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A558B3A3437
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100B125E47E;
-	Wed, 12 Feb 2025 18:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489B225EF8C;
+	Wed, 12 Feb 2025 18:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecgqAQQw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vu4I6prt"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7711FBC93;
-	Wed, 12 Feb 2025 18:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A411F76A5;
+	Wed, 12 Feb 2025 18:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739386007; cv=none; b=TlyTqQmOW0aC7ikSNddvjuB7684wG1GqfRyIt0BqrglqJKwXmqW8LoCfMVAsl/HnRCq6i7GgiozJNE489RmEPGIfHXCgUrn9YVOqXk8vut4tCPQZnZ/vU4qMcmWLNvewULT5sV0qSxbIVNtSRxcRu0vvLgUoC9cJgTDS7YpxklE=
+	t=1739386101; cv=none; b=n902lAVy6ssbToq+YWNkSga1yzem3wHUpuN4fvg0FJ7hvxvFaVYWIouQW8KeyvV6X+39CxcNO3K9qZ3dkvHNb/WyVCNgGDiAEjY2/29l2NWIWoxbWPOeDWeMSPh0CuXDH5u2D/FFvj5ZzLM5MxBSb7H8QCrC6ZpSRAtJh0I7nZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739386007; c=relaxed/simple;
-	bh=mXUx/Su0ni4gs9IkbRbwq74MoOPQS+NIqIcKQLmjdas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YPKwhpXWU9sA64RHPW1IE6ooOXCffUAqFjZySDVj5d7FheFBCr/TloBTmWqJXpw5DGWGTzwyoz2xEdtcPRS6VKDPLnfRNYzKr5l/9i/UFZCsYAOyfePuFUYT2Ao3G9foGsYtUjSZhwBH8ETN+gOKBJbTBtFoB9pLqK0//Kl57Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecgqAQQw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A8FFC4CEDF;
-	Wed, 12 Feb 2025 18:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739386006;
-	bh=mXUx/Su0ni4gs9IkbRbwq74MoOPQS+NIqIcKQLmjdas=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ecgqAQQwLEl4rB4SbIESqHg7i/JSNEcwxBLTC5FHSKnpbo6EkvQMZinHkcOxEtzmx
-	 Olx18momsCe+29R53kH5zLtp2uK0thPNaGxDzrvh6ap89fRGAmQa8iQatq0UqNBsYx
-	 6S7OoWKHIjzHn7rEWdyZJ8cfxI5iyfq+3+oU0sXSilV7/LblJRHC/905p3nRDnDWn4
-	 310NCzuMvGCLnMNksMZ5BkCVSWzo7Azxpdx0S5tAVN1tLKt+A3k8Az7CkmqdDWpEbL
-	 PlPa8D3UDOmf98Pw08bk1gLGYD7+VWmNStBSp8xwfq0m+8xSVQJ2EeBtZAmAqvpV8j
-	 8FEaR2O1q80Qw==
-Date: Wed, 12 Feb 2025 10:46:44 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Hao Ge <gehao@kylinos.cn>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Levi Yun <yeoreum.yun@arm.com>, Xu Yang <xu.yang_2@nxp.com>,
-	Tengda Wu <wutengda@huaweicloud.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 00/10] Move uid filtering to BPF filters
-Message-ID: <Z6zslLa8XM1ubwXj@google.com>
-References: <20250111190143.1029906-1-irogers@google.com>
- <Z6panMzNSm1op8Di@google.com>
- <CAP-5=fUY83gifsMZA0Q45kiQQbAKp2uJxkuwrwGtHK2hiUFRDA@mail.gmail.com>
- <Z6rAHhAIdlkAryGJ@google.com>
- <CAP-5=fXjmJ+Rr7ejL6fCMeu6PZSit7n84hQkjh=0jQhkr1on3Q@mail.gmail.com>
- <Z6uOGNO6p7i9Fese@google.com>
- <CAP-5=fVxFe4nMS_dHmO=6-ddA40XbVdvouPLuOxj5cenjUr8ng@mail.gmail.com>
- <Z6v-mPJq6m61pFA4@google.com>
- <CAP-5=fU+-4igQomO4Q41=7xo6YWyDdVqJdZd34dcMUS-Ua=N1Q@mail.gmail.com>
+	s=arc-20240116; t=1739386101; c=relaxed/simple;
+	bh=Eqpyg4hmNu9ocUQzEcAGhdpaBhKdg5oflZSaKCbqwL8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GsEK6N/LYl/SKaZhslMCBNHbxafUzAcxTicsIX5Ez896GJyWNyq4vr5MGpRXR/kb7yrAhV6IcJNC9xaT3+AHyl84O2dLuAMKyJsq5uxDcw79DSwEO/Vcju3+wJWf6ntlK4IDvrC5ZArpCjfRry/7sYzf2G4eok0slG+v209j694=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vu4I6prt; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471b049e273so11532051cf.2;
+        Wed, 12 Feb 2025 10:48:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739386099; x=1739990899; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZASkp6PCL8/WlHtTvN4bXlrF7OXxOuY1zeD3mdzMNtA=;
+        b=Vu4I6prtsL2jiHUbmtrD4s7CRlYY9LnQ5QkY6ze8Hv/+NmBH3P1R9lnNH5o++Ozdsu
+         WuKTxHBO2GQXvC5Ax+KkvjPKZwsOPGi2UvuqeJzOvrTpjB8F55n/LS7iyGTD70gLAG78
+         H+NY2wy5rKuXwszdaqnZtD9IwN9k1QdDlt1e410pmXGGP8XjZLVpG0eOw8998beMZ1ya
+         t91Fh07mlqCHt+ucxUP9flSsurTx5OtBb0kNMXWS3WmDNwRfPbevL+YP7Qa4KbkYQeaD
+         UnTkCkGOGqg1eHJ0IEPb9T6rOLxkKR2XUx1kUlfJakYQNVcPHvhM4O1DSbJAB3FbvqwQ
+         XqZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739386099; x=1739990899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZASkp6PCL8/WlHtTvN4bXlrF7OXxOuY1zeD3mdzMNtA=;
+        b=E9rE6iZZeQkS9c+5WfamHEmu9V5UOenYHtb1iGj/rmN5SNzk4sHzTLQA3SHY0wnCFW
+         J2sorZ5VjROVfR00bhzzSYlTwJzP5smOBEZhoUa582iyJzryq+iBmGoyNxTIMr2JknYb
+         rA/pbfZ10NIG6swn1updHtYqt7wNtHYJzx7WLPPvNJTitIHaFJwL0KP4+tzj7BDJGwTx
+         FCh7UcBqnRDSzVudbvRmCMpsrcRmHiAWEwltDp3YCIKaYfSJCwVIj1Ul5bBhDpIyCalX
+         kXyqV8K1ZcCiLW6kr4ssXG9YIyjoSQQuMltas4bWEJ1oWCpbjdSEc+ys451banPCKrfC
+         8TNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDjE+h02o0/gQ/2FDTJz9wlgz99PYad7eJVbWqYAjmmUIBSuLGWWp+1hE198L5g7j0f63m46WEBvOojawI@vger.kernel.org, AJvYcCWb5cfOL5VHo2aQdPeQg/utc91MX7OAJGrlst2KxB44AfCduc1mUi8SsHMoVGB3FClXJWDnL+0snw7iDARg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWMVCYv9WmIJ14TnXj8vywG0By0LdxcSqGnNxvYYIDzj9lxyqY
+	yPgFPYRlU6b9kjvwy6biiHzu61bmWdjFhOQp2lUw0Nd3V+vScB57DEf2uPjg2P8O2grhwY3q/0+
+	dbArp9HGXrTfGOEPWWj0vw0kICaENWMwJM9o=
+X-Gm-Gg: ASbGncu0q2JMfIrOvteKbk8S9JnGNNt+Mltq8wlIBNA8HHOIpRd/aWBUEjlhaTRgOWl
+	KAYul5aV8hKCA0Om1BksQUWr3Il4xqBKSbA6N+jZofTd5y+6mkPp8tawnUovhWRZhR4V27JAqY9
+	1zG1bx4hX93FI=
+X-Google-Smtp-Source: AGHT+IFlFkV7aYZs2utz/iZsBLLt0+a7zY/YwhAWQu45D2zt1uVzJM7iX/axNKQZ5Z6o1mUaT0iyZJqMYKvLu5Nm+Nc=
+X-Received: by 2002:ac8:5a0c:0:b0:461:646c:b8fc with SMTP id
+ d75a77b69052e-471afe505d8mr65715981cf.23.1739386098867; Wed, 12 Feb 2025
+ 10:48:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fU+-4igQomO4Q41=7xo6YWyDdVqJdZd34dcMUS-Ua=N1Q@mail.gmail.com>
+References: <2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu>
+ <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
+ <9cd88643-daa8-4379-be0a-bd31de277658@suse.cz> <20250207172917.GA2072771@perftesting>
+ <8f7333f2-1ba9-4df4-bc54-44fd768b3d5b@suse.cz> <CAJnrk1aNVMCfTjL0vo-Qki68-5t1W+6-bJHg+x67kHEo_-q0Eg@mail.gmail.com>
+ <Z6ct4bEdeZwmksxS@casper.infradead.org> <CAJnrk1aY0ZFcS4JvmJL=icigencsCD8g4qmZiTuoPWj2S2Y_LQ@mail.gmail.com>
+In-Reply-To: <CAJnrk1aY0ZFcS4JvmJL=icigencsCD8g4qmZiTuoPWj2S2Y_LQ@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 12 Feb 2025 10:48:07 -0800
+X-Gm-Features: AWEUYZk-0djWTKrtRmi8VrGFoz0pLfNoKipNM8dCPw51QEUcZp_d7Q09JdxuGyQ
+Message-ID: <CAJnrk1YB5c+wO0U=7aOiWAMaMwQCKUL1-FuvuPMjnB_gnjD28w@mail.gmail.com>
+Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for FUSE/Flatpak
+ related applications since v6.13
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Josef Bacik <josef@toxicpanda.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Christian Heusel <christian@heusel.eu>, 
+	Miklos Szeredi <mszeredi@redhat.com>, regressions@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, =?UTF-8?Q?Mantas_Mikul=C4=97nas?= <grawity@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 11, 2025 at 09:41:04PM -0800, Ian Rogers wrote:
-> On Tue, Feb 11, 2025 at 5:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > But you removed non-BPF and non-root (w/o pinning BPF) use cases.
-> 
-> I didn't think this was a hard series to understand. It moves the -u
-> options of perf top and perf record to using BPF filters. The many
-> reasons for this I already explained:
-> https://lore.kernel.org/lkml/CAP-5=fUY83gifsMZA0Q45kiQQbAKp2uJxkuwrwGtHK2hiUFRDA@mail.gmail.com/
-> 
-> Your case is a user that isn't exiting and starting processes and
-> wants to process themself or some other user they some how have
-> permissions for? They need to not be starting and exiting processes as
-> new processes are ignored and exiting processes cause the
-> perf_event_open to fail. What stops such a user passing the list of
-> processes they have that aren't starting and exiting as a -p option?
-> 
-> If you try something like:
-> $ perf top -p $(ps --no-headers -u $USER -o pid | awk '{printf "%s%s",
-> sep, $1; sep=","}')
-> this is exactly what you get. Does it work? No, the ps and awk
-> processes terminating but being in the list of processes causes the
-> perf_event_open for those pids to fail. This is exactly the same
-> problem as the -u option that you want to keep for this case. The
-> approach just doesn't work.
-> 
-> Why not make failing to add a -u option fallback on doing the /proc
-> scan and pretend the processes are a -p option? So now there's a
-> silent fallback to a broken behavior. New processes won't be profiled
-> and the data race between the scan and the perf_event_open will cause
-> failures with non-obvious causes/solutions - mainly, use sudo to run
-> as root. I'd say this isn't ideal.
-> 
-> This series fixes an option on two commands so that it works in the
-> sensible use-case, perf running with privileges trying to filter
-> samples belonging to a specific user. We can say the patch series
-> doesn't work for the case you give, I don't think anybody cares about
-> that case, they can get near identical behavior from -p, the behavior
-> from -p will be clearer than just having -u doing something similar,
-> namely failing to open for a process and terminate.
-> 
-> You may hate and ignore every point I make and still want to keep the
-> existing broken behavior. As I've already tried to make clear, you're
-> adding to the maintenance burden to everyone working in the code base
-> as the notion of target is fundamental and because you are insisting
-> on keeping a broken behavior you are also making it untestable. Given
-> the -u option doesn't work, I strongly suspect nobody uses it. Do I
-> worry about this series causing harm to the people who aren't using
-> the option? No I don't as there is a better opportunity in having an
-> option that (1) does work and (2) results in a simpler code base.
+On Sat, Feb 8, 2025 at 7:46=E2=80=AFAM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
+>
+> On Sat, Feb 8, 2025 at 2:11=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
+g> wrote:
+> >
+> > On Fri, Feb 07, 2025 at 04:22:56PM -0800, Joanne Koong wrote:
+> > > > Thanks, Josef. I guess we can at least try to confirm we're on the =
+right track.
+> > > > Can anyone affected see if this (only compile tested) patch fixes t=
+he issue?
+> > > > Created on top of 6.13.1.
+> > >
+> > > This fixes the crash for me on 6.14.0-rc1. I ran the repro using
+> > > Mantas's instructions for Obfuscate. I was able to trigger the crash
+> > > on a clean build and then with this patch, I'm not seeing the crash
+> > > anymore.
+> >
+> > Since this patch fixes the bug, we're looking for one call to folio_put=
+()
+> > too many.  Is it possibly in fuse_try_move_page()?  In particular, this
+> > one:
+> >
+> >         /* Drop ref for ap->pages[] array */
+> >         folio_put(oldfolio);
+> >
+> > I don't know fuse very well.  Maybe this isn't it.
+>
+> Yeah, this looks it to me. We don't grab a folio reference for the
+> ap->pages[] array for readahead and it tracks with Mantas's
+> fuse_dev_splice_write() dmesg. this patch fixed the crash for me when
+> I tested it yesterday:
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 7d92a5479998..172cab8e2caf 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -955,8 +955,10 @@ static void fuse_readpages_end(struct fuse_mount
+> *fm, struct fuse_args *args,
+>                 fuse_invalidate_atime(inode);
+>         }
+>
+> -       for (i =3D 0; i < ap->num_folios; i++)
+> +       for (i =3D 0; i < ap->num_folios; i++) {
+>                 folio_end_read(ap->folios[i], !err);
+> +               folio_put(ap->folios[i]);
+> +       }
+>         if (ia->ff)
+>                 fuse_file_put(ia->ff, false);
+>
+> @@ -1049,6 +1051,7 @@ static void fuse_readahead(struct readahead_control=
+ *rac)
+>
+>                 while (ap->num_folios < cur_pages) {
+>                         folio =3D readahead_folio(rac);
+> +                       folio_get(folio);
+>                         ap->folios[ap->num_folios] =3D folio;
+>                         ap->descs[ap->num_folios].length =3D folio_size(f=
+olio);
+>                         ap->num_folios++;
+>
+>
+> I reran it just now with a printk by that ref drop in
+> fuse_try_move_page() and I'm indeed seeing that path get hit.
+>
+> Not sure why fstests didn't pick this up though since splice is
+> enabled by default in passthrough_hp, i'll look into this next week.
 
-It's not completely broken and works sometimes.  And it seems we have an
-issue with BPF sideband events.  But it worked when you ran it as root.
-
-  $ sudo perf record -u $(id -u) --no-bpf-event -- sleep 1
-  WARNING: Ignored open failure for pid 404758
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 2.754 MB perf.data (3638 samples) ]
-
-  $ sudo perf report -s sym --stdio -q | head
-       1.43%  [k] audit_filter_rules.isra.0
-       1.33%  [.] pthread_mutex_lock@@GLIBC_2.2.5
-       1.06%  [k] __audit_filter_op
-       1.05%  [.] __vdso_clock_gettime
-       0.94%  [.] _dbus_type_reader_get_current_type
-       0.82%  [.] pthread_mutex_trylock@@GLIBC_2.34
-       0.76%  [k] __fdget
-       0.72%  [.] _dbus_first_type_in_signature
-       0.61%  [.] __GI___pthread_mutex_unlock_usercnt
-       0.56%  [k] native_sched_clock
-  
-Thanks,
-Namhyung
-
+This wasn't hit in fstests because passthrough_hp doesn't set
+SPLICE_F_MOVE. After adding that, I was able to trigger this crash by
+running generic/075. I'll send out a libfuse pr for this
 
