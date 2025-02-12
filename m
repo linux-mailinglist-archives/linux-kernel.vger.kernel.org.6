@@ -1,142 +1,153 @@
-Return-Path: <linux-kernel+bounces-511512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C892A32BFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:39:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7EDA32C08
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06B7B188C03A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:39:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53E5168B36
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41CE20E01D;
-	Wed, 12 Feb 2025 16:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20C22505B3;
+	Wed, 12 Feb 2025 16:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YUYlGpuP"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LwS+nkzE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B371212B31
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E812E21D59F;
+	Wed, 12 Feb 2025 16:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739378367; cv=none; b=aWPXqeg9DSt4NGaPkjlRpWvxvsoH3QI9lvDZnqaYsI7QTdkSlesCw82Wj4TBMQ3AmQI6fYGZba2b0jevpYJ1XheGAu5oEhTm4sXNTEMSb2jocN9yBq53qKZ37/i97eotGdtH3RWi4cI+i3atfftf1789VNRVSCYqcE4Dh/HMtXA=
+	t=1739378366; cv=none; b=or5tDALZtHDBHqvDTx2Hwqf1CpyS1Vg68idZsAE6qaC0jx60KcvauWZ/36zfgNUT1bfVoou9kGRj0CyKTjy7B0GSJB/rPqZKHCxc3hF/59nx8aXaZcrhs+MNZ6OEIRvL3oFKDCYj2aZYdxjyb3DqwxmM6RdkhKy+KFukjWSYkAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739378367; c=relaxed/simple;
-	bh=+eMDq7a1WASW1tK78E/Cqn+dmwMKWRI9Ii6VvIFaW+A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FmQqlKae+QYUafHunfzZqwZKIjW+Pq28HhvtKuXJmqhhDwObrmHCYE+Q5boKfiMvNVjfGkxmFo9Ci6sltX3/2904b4xhS7NAdtmKKcRCb/8BJA7l/29Wr9D8pRbt4WYsKTrozPvtDQ9ZWOK1eWe69S4kRhXoSc6FrEr4UFPATJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YUYlGpuP; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so27034205e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:39:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739378363; x=1739983163; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HuH5juQfbtVrRriQ2swAO0bGkJ18n/NWAw2oombbKL4=;
-        b=YUYlGpuPIZoMa36IxXhXz7EFjODz9mylITVi9/gj5QVb5wBPTUbpyfzwZ9T8lewvoW
-         ZSTY3ecZ71JOZID9OsE+SL3wybQ6yOnvAK8yhdp/d/OGTUQWDg38NMiDaIE0xZzlCVez
-         xQYaSJXSEtn8gPCtIqZsCh/apTIs0ldo0Tl90yHgO0yNxoEMFe/+HQUC3cJKVRle4Bpf
-         kRU2J1Ba4ik2w3UalQagxXj/wk32tW5gi/vbnDm7elWX8uWapcGHO0VGwS/xP0BLogGZ
-         RxZofNEnpjFL/PguH1MyqRrV5lb35ghT3ZuSI5LMcKFV3Wd0WeTGDvlIsQEJOPM3rx8m
-         yr8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739378363; x=1739983163;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HuH5juQfbtVrRriQ2swAO0bGkJ18n/NWAw2oombbKL4=;
-        b=OKe0mkK2Q1Tquc5bLoS2+Bu+wdekBstxwtRRo0ByzW54EC24AO4+8wgxd7wuv6Mn44
-         v+FcmdSRavWVlKWrgiPOGklbqjgnsD9ScIUug+BxcUfgFY+L0pMD1HYECWTr2KZZSIiS
-         uzSWylsHbPQZi11PHBhqLtZ1vi3cA8A9Ybr/wYNZSLIrKGFELt+3SWiiPqGLtDjXj1gK
-         CRse+tK0pEY939xPYQyfi+Id4r6dF/0IVdXFXoVFOSgUr6+gR9qkutWKVY9/T3R2joBb
-         rP2UGV5i5LxCcg2g0t09UDCWP8fkbTwDbmKbJjUehBV+zK2GOmhzTBuMVwrDAhrPh7Kx
-         Wplg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzBzX3Rlts+XqaWxEpwZ5+YfWY0xNPiqoezUbAlJyBrFLZaY4liO8s/wfIw96oBnuWagpjARzrJyAtRgA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRfsSvGdWwBJH0Ow2H5G/kXLIJ3drMIBrprTtyK8T+eT6eO+ev
-	ftNYYvguZ9QjRtCLi3nCFZxct2s5SiYCytFfjHQ+2ymU6zt/UZPt+SaDnjPUba4=
-X-Gm-Gg: ASbGncthPP3WiljUmz+7yS+rTLl8SlWX7VVJImW4QgLBTKIMoxvyzssNR0gQ/RF8jWi
-	YnlafaMBpkeG150JMo7KIJWm+eH2J4Wj/t1oK5l3GdsyLi4jfe/a++NNHtDyByfgz8xSuxJ4Syc
-	ms+QcGSJQDSupnDZedAIbgKnbBotdiTY4Vgnx/ByYGjOirhe5b+uUKfVbUpf7vFuP50D6deBTKp
-	OD0m2Zcoa5Ip95zgcEzpl8CXtuN3JKmyqhMhDPud6Du2FxxWV/mMbM7QizxtuHF1ji56SL2TlJF
-	NxKGUMz8McDMo6Y=
-X-Google-Smtp-Source: AGHT+IFQkNgSgj+b+OY+U68LNI2iDcNuJlSGY5kCTa6FX0VTYZQH0d+xekmaicVjKu0OmPPm3D2EZA==
-X-Received: by 2002:a05:600c:3b92:b0:439:35d2:ed1 with SMTP id 5b1f17b1804b1-43958173d7cmr41389945e9.7.1739378363549;
-        Wed, 12 Feb 2025 08:39:23 -0800 (PST)
-Received: from pop-os.. ([145.224.90.174])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a05392csm24519645e9.10.2025.02.12.08.39.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 08:39:23 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
+	s=arc-20240116; t=1739378366; c=relaxed/simple;
+	bh=zfEIpiTrcj/R2Ru79c+QdETWalY9N06YUbZ/uIkxoRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ouMkRc1IdQFW9foD5Jwj1kinCEjhoWbTyYoIv2Agkv1xv0FkbY1ocVKcpMjpRHyuZSpHGzl7Rueign0AOE0kFZYLWuaV7Ij4gQ4YnPsSM3ogWq+Lb03GK4unqlIkG6u0/ewYeGCcILqEmNb55pADrC4BFDrRTK39kyPzo3NNUPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LwS+nkzE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B45E0C4CEDF;
+	Wed, 12 Feb 2025 16:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739378365;
+	bh=zfEIpiTrcj/R2Ru79c+QdETWalY9N06YUbZ/uIkxoRU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LwS+nkzE62iYAWY6oMvTiOE2hZdqZW4je7lUt/Tn8svDT0aqJyRSG1Te50dWeoSK6
+	 yZO90wTxRzWvs64nxtq+JimjJqslPOcN7j/gDEv42ILOhCNdmCR6wWLQcePUqYZ0Yz
+	 uadqjYhtm/BeUJnOKtwxaC2USAWhcuMi9AeP4KLnjL50JLMhS7jyRHMJsejxavbVDh
+	 sV1QU2dtmz9BzlPJHJQTzkrOQXYWw8C3AzJ/mP1FzbO60nnOuds/LnOuA/bs/jEEl1
+	 +GgoenuPWq9nhK1ojBt2vq5J0TI5Wg9+EvPg0Lk5i7f20zfeNS5Qm+VHUuZdt6qoTp
+	 WjzuuOLLR6qTQ==
+Date: Wed, 12 Feb 2025 18:39:06 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
+	linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf tests: Fix Tool PMU test segfault
-Date: Wed, 12 Feb 2025 16:38:56 +0000
-Message-Id: <20250212163859.1489916-1-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	Paolo Bonzini <pbonzini@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pratyush Yadav <ptyadav@amazon.de>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Usama Arif <usama.arif@bytedance.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v4 05/14] kexec: Add Kexec HandOver (KHO) generation
+ helpers
+Message-ID: <Z6zOqtaLQwnIWl2E@kernel.org>
+References: <20250206132754.2596694-1-rppt@kernel.org>
+ <20250206132754.2596694-6-rppt@kernel.org>
+ <20250210202220.GC3765641@nvidia.com>
+ <CA+CK2bBBX+HgD0HLj-AyTScM59F2wXq11BEPgejPMHoEwqj+_Q@mail.gmail.com>
+ <20250211124943.GC3754072@nvidia.com>
+ <CA+CK2bAEnaPUJmd3LxFwCRa9xWrSJ478c4xisvD4pwvNMiTCgA@mail.gmail.com>
+ <20250211163720.GH3754072@nvidia.com>
+ <20250212152336.GA3848889@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212152336.GA3848889@nvidia.com>
 
-tool_pmu__event_to_str() now handles skipped events by returning NULL,
-so it's wrong to re-check for a skip on the resulting string. Calling
-tool_pmu__skip_event() with a NULL string results in a segfault so
-remove the unnecessary skip to fix it:
+Hi Jason,
 
-  $ perf test -vv "parsing with PMU name"
+On Wed, Feb 12, 2025 at 11:23:36AM -0400, Jason Gunthorpe wrote:
+> On Tue, Feb 11, 2025 at 12:37:20PM -0400, Jason Gunthorpe wrote:
+> 
+> > To do that you need to preserve folios as the basic primitive.
+> 
+> I made a small sketch of what I suggest.
+> 
+> I imagine the FDT schema for this would look something like this:
+> 
+> /dts-v1/;
+> / {
+>   compatible = "linux-kho,v1";
+>   phys-addr-size = 64;
+>   void-p-size = 64;
+>   preserved-folio-map = <phys_addr>;
+> 
+>   // The per "driver" storage
+>   instance@1 {..};
+>   instance@2 {..};
+> };
+> 
+> I think this is alot better than what is in this series. It uses much
+> less memory when there are alot of allocation, it supports any order
+> folios, it is efficient for 1G guestmemfd folios, and it only needs a
+> few bytes in the FDT. It could preserve and restore the high order
+> folio struct page folding (HVO).
+> 
+> The use cases I'm imagining for drivers would be pushing gigabytes of
+> memory into this preservation mechanism. It needs to be scalable!
+> 
+> This also illustrates my point that I don't think FDT is a good
+> representation to use exclusively. This in-memory structure is much
+> better and faster than trying to represent the same information
+> embedded directly into the FDT. I imagine this to be the general
+> pattern that drivers will want to use. A few bytes in the FDT pointing
+> at a scalable in-memory structure for the bulk of the data.
 
-  12.2: Parsing with PMU name:
-  ...
-  ---- unexpected signal (11) ----
-  12.2: Parsing with PMU name         : FAILED!
+As I've mentioned off-list earlier, KHO in its current form is the lowest
+level of abstraction for state preservation and it is by no means is
+intended to provide complex drivers with all the tools necessary.
 
-Fixes: ee8aef2d2321 ("perf tools: Add skip check in tool_pmu__event_to_str()")
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/tests/tool_pmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It's sole purpose is to allow preserving simple properties and ensure that
+memory ranges KHO clients need to preserve won't be overwritten.
 
-diff --git a/tools/perf/tests/tool_pmu.c b/tools/perf/tests/tool_pmu.c
-index 187942b749b7..1e900ef92e37 100644
---- a/tools/perf/tests/tool_pmu.c
-+++ b/tools/perf/tests/tool_pmu.c
-@@ -27,7 +27,7 @@ static int do_test(enum tool_pmu_event ev, bool with_pmu)
- 	parse_events_error__init(&err);
- 	ret = parse_events(evlist, str, &err);
- 	if (ret) {
--		if (tool_pmu__skip_event(tool_pmu__event_to_str(ev))) {
-+		if (!tool_pmu__event_to_str(ev)) {
- 			ret = TEST_OK;
- 			goto out;
- 		}
-@@ -59,7 +59,7 @@ static int do_test(enum tool_pmu_event ev, bool with_pmu)
- 		}
- 	}
- 
--	if (!found && !tool_pmu__skip_event(tool_pmu__event_to_str(ev))) {
-+	if (!found && tool_pmu__event_to_str(ev)) {
- 		pr_debug("FAILED %s:%d Didn't find tool event '%s' in parsed evsels\n",
- 			 __FILE__, __LINE__, str);
- 		ret = TEST_FAIL;
+What you propose is a great optimization for memory preservation mechanism,
+and additional and very useful abstraction layer on top of "basic KHO"!
+
+But I think it will be easier to start with something *very simple* and
+probably suboptimal and then extend it rather than to try to build complex
+comprehensive solution from day one.
+
 -- 
-2.34.1
-
+Sincerely yours,
+Mike.
 
