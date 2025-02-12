@@ -1,117 +1,142 @@
-Return-Path: <linux-kernel+bounces-511533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8C0A32C52
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:49:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32ABA32C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30A6A1883AA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2EDF3A5E2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338F3253332;
-	Wed, 12 Feb 2025 16:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E24D256C62;
+	Wed, 12 Feb 2025 16:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cDlK7Fi8"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QuDu2vOC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC2D1E7C19
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE7721D59F;
+	Wed, 12 Feb 2025 16:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739378965; cv=none; b=c9xL7ZXoA4WYEu9mLfKNlbq0RnLezUK31mJVrIzH3xpjNGsIpNje95vX8abao7qt5QIN4zPSm1Y4OC7SWlUsLa0BFoVtgcqSngvfVybiRhVIkhIML3aWaGDWrGwW1cvJ5PP8BzSGwZcUb1deakSPNspOWbUOeDkfyUFoH5D2IVE=
+	t=1739378972; cv=none; b=Xh2PB3XTc1Biu5IOawWh/FRcaZd5QClzwKasyI8SUk7lRpFyZSbz5EowdZ3Won7KfD7X05Ko2PFtXNoXA4iuC5E6h5KbmDzcVscrWSDIbJR+pW6IxXFn5chWxMe0z6zTAGYeQHDUtSsjC47WjZNuclDX4IsnKDA+B0tQUB6c63o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739378965; c=relaxed/simple;
-	bh=K9W3+ja3lk2X/pLiWNDDUjkQDh2hb6rMIAeT9C3cR6Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OChnsojEY/pwhpFC+awXPQCV92x/y1jFLbiuNJHtp8jqqB1nUd6CQ7qKtF31AdJ/IGWXf+sFwMdH2AIz2yI4jAgMOxJ2ircEGVlxLPYsV6C37OjIum3cY7HG1wsKA/EiBeuQqUF3xlDUkFc+cS6yArW4FyOSqybFGdH/I7QkM9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cDlK7Fi8; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-21f5ae4d62dso161972455ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:49:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739378963; x=1739983763; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kP37d1ws2n5F1FJZ8WLnY6NGYlL7GOZQPCCTeAYyrIs=;
-        b=cDlK7Fi8U7h9IFqYvvfDj2oFv0v+R9vTNaRm2swS0LVP4uTAVPmu0aOSS4fPFLdAL8
-         wldBsbHwjMlIN/cAixdPqga0L/dKSKMtXrg8/8Q6wN/4u9+n1yXMJKVIH95WklFHkEZZ
-         9lm91+4wEWDXNb4AnPn+XJTCnSHhtLi2OG6xaGDZo/f+cdWMVm+yNhU9wmIR7GQQHas1
-         0PyoaRwu62TjA72KvUbs3Kam6bxwn+ldy/kKIiTn5Qt+aibn+VPUeeOADQX11wAXneqs
-         Oj4WZttKu1OKJp/QOwhYKWctcOFcw+KWu9c5qIspcLQMZv6ao2db0msXPBdE0tYwXowe
-         4Iiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739378963; x=1739983763;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kP37d1ws2n5F1FJZ8WLnY6NGYlL7GOZQPCCTeAYyrIs=;
-        b=d/+DtbCeEA9yIJEdvck0o+cDQT6vK9yUC9JfNLtnWE2v2TB8B7RZ8ykOF61rJnPyPU
-         ENT3kWYMIvnBZzJZvEDZ4QA4tsEOn+8OFTt3aGIXNny8XCyoieqC3ukN08nJ8KSgAljS
-         fybqZWk2V18shw4q+w/TAihv3mH2hhi9sRFbaI6qhDsTEk3AnMxoBVmtvUEtSk2eoXkg
-         E5jh2tLVNj3QQpyFrDb83tGRSgKGddDDd3NPFR02iyXuotpYY05XG5LnSBK+ZgR4vWE9
-         LpSPVLxUIc7k8NhTu4LRIazVJDVhq2W31xQyqzB8jpx8I7X3yMzgoO1LIz+zUixhN+HW
-         6IgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPn5+RILhHP6eMPiVhhjm2ucXqe7KdVYehTDZOhJ7A8iCK+p+Ms9b1Q1byZPN9V/uQAxeFhG88udxTcgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcC4q8YFG5nWiL7TSrzyrZePRZ1vInqn1wdccTm9tlLI5N6YzT
-	/7pcZ8B1+GLj9is0DnjcfsI98z0jMMOJ9+vaeBPiEN0vhn97YELMTmAws2SeCEhNhM0D+Tpo6k0
-	80g==
-X-Google-Smtp-Source: AGHT+IH6wNrakUz012f78wqKjQH+4yjmg+SQ2QTSMhcyxLfWd0+FnYoV+nIIT5v8NeefU4cSRXFiCm4pEYo=
-X-Received: from pfiy22.prod.google.com ([2002:a05:6a00:1916:b0:730:9a11:69a3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1709:b0:730:99cb:7c2f
- with SMTP id d2e1a72fcca58-7322c383fb3mr5386724b3a.6.1739378963595; Wed, 12
- Feb 2025 08:49:23 -0800 (PST)
-Date: Wed, 12 Feb 2025 08:49:22 -0800
-In-Reply-To: <CALMp9eRB025OAi2fpdweKr+fOAovmOKfF7XPwvf8HJKbJSvmhg@mail.gmail.com>
+	s=arc-20240116; t=1739378972; c=relaxed/simple;
+	bh=oiJ709oCpEPB9kcfZlrUorygYDxTbmj70Ft/9Pu06Z4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tnzIOnl4SSU1ZyxR4sGibcBPvNUMBW8V0vW5WmVAYH6e9eG1OaDH4lydieYv3oF0DW7uN3StnqZEv/tHXy6LVRruk2dIlckvftLaMnTiuPvz2ifKtv5WB9Nll3Y7BZ63IGV7vcYz9F2CjjUal0p/g+BQgV5Jx+rtLpb1q5Rk1m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QuDu2vOC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63EE0C4CEE4;
+	Wed, 12 Feb 2025 16:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739378972;
+	bh=oiJ709oCpEPB9kcfZlrUorygYDxTbmj70Ft/9Pu06Z4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QuDu2vOCN8Og5PDN/o0qAWPIh5IehilQX3JPmZt/P8XUJRPwGzvG+wjStZngVMTSl
+	 umJEapzok9F3kB/cWAINOokS19IEqdZ4VAMW+lNASxIi7ZUkpsLkeBLpNfqIHQxwqr
+	 jQOsehRMEzKaQrXoacpV+ZncoACURmd0QTSZp+DIg6Nj+Op885ekt/X8EPckXWixSc
+	 V6p6FdIg12DzZ+hj4JL4SLyMpEwjHjaPwaqKSn+sf6iXvSk/MwbjPY3G7SCekrUnaM
+	 ccYZMeeb0OzvEj7ot1bPk/SWo+j2NO6fbcdgKASSH4bgl0a+Y+aAF78eGlKcDbSufA
+	 jQjkJDPK0NyKA==
+Message-ID: <822d6dca-b2c6-4439-ade5-219620ebc435@kernel.org>
+Date: Wed, 12 Feb 2025 17:49:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250113200150.487409-1-jmattson@google.com> <20250113200150.487409-3-jmattson@google.com>
- <CALMp9eRB025OAi2fpdweKr+fOAovmOKfF7XPwvf8HJKbJSvmhg@mail.gmail.com>
-Message-ID: <Z6zREu-pShh-ivK-@google.com>
-Subject: Re: [PATCH 2/2] KVM: x86: Clear pv_unhalted on all transitions to KVM_MP_STATE_RUNNABLE
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>, 
-	Gleb Natapov <gleb@redhat.com>, Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>, 
-	Suzuki Poulose <suzuki@in.ibm.com>, Srivatsa Vaddagiri <vatsa@linux.vnet.ibm.com>, 
-	Jan Kiszka <jan.kiszka@siemens.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: i3c: Add NXP P3H2x4x i3c-hub support
+To: Aman Kumar Pandey <aman.kumarpandey@nxp.com>,
+ linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org,
+ alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org
+Cc: vikash.bansal@nxp.com, priyanka.jain@nxp.com,
+ shashank.rebbapragada@nxp.com, Frank.Li@nxp.com
+References: <20250212132227.1348374-1-aman.kumarpandey@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250212132227.1348374-1-aman.kumarpandey@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 05, 2025, Jim Mattson wrote:
-> On Mon, Jan 13, 2025 at 12:02=E2=80=AFPM Jim Mattson <jmattson@google.com=
-> wrote:
-> >
-> > In kvm_set_mp_state(), ensure that vcpu->arch.pv.pv_unhalted is always
-> > cleared on a transition to KVM_MP_STATE_RUNNABLE, so that the next HLT
-> > instruction will be respected.
-> >
-> > The "fixes" list may be incomplete.
->=20
-> The only commit I'm not sure of is commit 1a65105a5aba ("KVM: x86/xen:
-> handle PV spinlocks slowpath"). That commit introduces an mp_state
-> transition to KVM_MP_STATE_RUNNABLE  without clearing pv_unhalted, so
-> perhaps it should be in the "fixes" list. OTOH, this seems to be an
-> independent implementation of PV spinlocks, so maybe it's not a
-> problem.
+On 12/02/2025 14:22, Aman Kumar Pandey wrote:
+> P3H2x4x (P3H2440/P3H2441/P3H2840/P3H2841) is multiport I3C hub
+> device which connects to a host CPU via I3C/I2C/SMBus bus on one
+> side and to multiple peripheral devices on the other side.
+> 
+> Signed-off-by: Aman Kumar Pandey <aman.kumarpandey@nxp.com>
+> Signed-off-by: Vikash Bansal <vikash.bansal@nxp.com>
+> ---
+>  .../bindings/i3c/p3h2x4x_i3c_hub.yaml         | 404 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 +
+>  2 files changed, 411 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/p3h2x4x_i3c_hub.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/i3c/p3h2x4x_i3c_hub.yaml b/Documentation/devicetree/bindings/i3c/p3h2x4x_i3c_hub.yaml
+> new file mode 100644
+> index 000000000000..33ea524e5432
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i3c/p3h2x4x_i3c_hub.yaml
 
-I'll add it to the list, and drop the "list may be incomplete" line.
-KVM_HC_KICK_CPU is unreachable if Xen hypercalls are enabled, but nothing w=
-ould
-prevent a clever guest from sending an virtual IPI with APIC_DM_REMRD.  Whe=
-ther
-or not that makes the Xen code a KVM bug is definitely debatable, but I can=
-'t
-imagine will care about Fixes being slightly overzealous.
+Nothing here looks like being even close to existing coding style. Look
+how other files are written, including file naming, blank lines, style
+of properties and entire layout.
+
+Your current code is not only unreadable but also incorrect. But due to
+unreadability, I won't waste time to review.
+
+You should have make internal review of all this.
+
+>  L:	linux-hwmon@vger.kernel.org
+
+
+Best regards,
+Krzysztof
 
