@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-511223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABC1A327F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:04:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10501A327F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:07:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D40E3A2FC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BA21885F8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A98220E71D;
-	Wed, 12 Feb 2025 14:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BZqz+PMT"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD6320AF62;
-	Wed, 12 Feb 2025 14:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7416220E71A;
+	Wed, 12 Feb 2025 14:05:13 +0000 (UTC)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7892E2AD2A;
+	Wed, 12 Feb 2025 14:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739369065; cv=none; b=tB+RWyxAgAfKamhORjJBd1GwV3/rUJ/+OUbrTE01omnHnIVny1ANH0nwIzPnLCfmaRiZdB0dH+Dc2wgwiN6mwi3NCCvjhNRi73wWsaCm9NUhzq7iLU3KXlBO1DPNJD2iUBF5O6i7eKu5hKhWVQWBxVZVGM/jgY9HxThNPRNqZjs=
+	t=1739369113; cv=none; b=YQcS8QEBVXgNnb8n1pOM8Ehg/AdNG/GxTbedH9QayJCyvixiC7EJr3x3mY/PKm3Qa9qPomp7PMQ7TYMPLoXfws6J/+0IfRgYaxO/I/4is+eQwdxKWppr1eximw4oOyshzeC/vSQ/psBJLt5L4y3EY/PfrK+707L77duEMCPN66Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739369065; c=relaxed/simple;
-	bh=kkHearOQsdIh49mchxJVzszhh4miLNu92TKqOARKaGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eo+rbETUKgJgxF21209fiJ77YzlgbB9qTNq7CNBWQ+2g9NQiogGyyLQmGCWHkfxC2Q+ZJ6oiPB2sxeBUUAYui0L3kCrCdMMlmJxJQmii5IVmEj4fWgCM8Kv1bknszcLbx93hzI1jtg81ZZoZBa6JmxDpog17javpmrYxIrDMYyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BZqz+PMT; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=3rPEv+OpCQsqOisf3ZwycCoUtkDWnaoLlzqXtadB8Fk=;
-	b=BZqz+PMTKBVNBY0iYeTWFQWo0ty9eAuj4tUirsuaGFfZtxE6BMR4llu+DcOW5F
-	0wSJl/ibzhpmtObkSEdiRWsVFrpTzVgUTfSOVNOD0yV9CYXdC/hwO9lmqlgmJnmE
-	/NH0GtajkUiO7ahmNlbNkbujCC65YMWzk7Lwaryc+yo1U=
-Received: from [192.168.243.52] (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wCXHlI4qqxnp2cGLQ--.10645S2;
-	Wed, 12 Feb 2025 22:03:38 +0800 (CST)
-Message-ID: <40c3d54b-677b-422d-b002-2155dc7ac66c@163.com>
-Date: Wed, 12 Feb 2025 22:03:43 +0800
+	s=arc-20240116; t=1739369113; c=relaxed/simple;
+	bh=ykSp/1zD9IjT/1oxpjNAL1ynWWgDup2h4+jeC5X7X4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h9D8HkVrjed1Lu3biPgaakivRCl/DcOlwVEyAoGr7ufiT/0LLkN9f3dVn68O2kqWxxJvjuW5fY5AQdcCHU7Ifo2gN4LLAbs9/t4CtLmlACvawTRw6D3J7iCZtMFqdEdwhd5Kohv2qMwOWN437SpHARGhkR3EK/ySdr6MrhkEfiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38dc73cc5acso616294f8f.0;
+        Wed, 12 Feb 2025 06:05:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739369110; x=1739973910;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mqr3NuXy3fLg1RLkI7ov94kJ2kVqv3qkeHEnaJAyHJ4=;
+        b=b+2hanQa7djIBW3hAisD27aoVBlCAailniRCuTjrTDAwkLEok9qyC5gmIOABS/hJTS
+         HDHDdH0wEErBFpD6qE1PBfEK4bOJxCpUwUEiwaEzXuJAZcNCKXV/QXQIm8/QvHF1DcJl
+         RKThXkEkYVMeirYS9+EV2GeWMlTDkP+uFIv9Kumk/+ilM4ve8cFNwXLJi46rNlh9lMTy
+         wn1PyJIRFUF6/75MhCJkvayG1g9g4MDROT9NeFz8efLH/rrZ9xMgksTssKfhuY6ZWhAB
+         HFvZN4sDbvdhbETxehZftN0wESUwFYQAczWEAIRHfXXkDJjOkudKQ0dU6JSk46Syr2C1
+         misQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQuS0u8Roae5As1m7PqFaprzwJ0lgXIRciOZpe+LizYIKh8kJT+NREImwM4SgW24Pt98dxJFOI59HfWsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7VyzQBs1xu+kUQR1hjIHnbImPB3dXAKtMDoKRCo2RxEn8wxi2
+	EU+JL0cKPT3naUVvZ2fexs71WNawFNOdFQ+YABx76WgpvwBIxRfMHhBmVQ==
+X-Gm-Gg: ASbGncsqZp+hkHNCNGqViyKRHMJ3hmxDjl7LwJAJsDD9uFNbFBVySSOAoW0DA/KIZ7M
+	BQ/6pRvN8+tWVkVYtQejla3lF/RlMA0RbGPihQoL+0q//la+5031NsVOvsQo1gw7Yf2qQkurX30
+	PyDgcxxNtYTui/hok24viAlKk4WJqIj0GTuPxKpNVahe8ozuHy7enf7IsiIjvXILRxGSz7JjJTk
+	lAqiNazQfoMEOnkHBtupuW1P9N/Ue2n1RKy6NGTAisdWl8mReiSWuYO4nVV7/2cLyqY8Oiq1vRz
+	22D8I99eKLoSGEu8fIeAFHo66Cmy0WvrLFDXCs0HjF+SaAkaHHeMDZdAMvF9xjKNYEwceBIkJA=
+	=
+X-Google-Smtp-Source: AGHT+IERulibgq1AYPC5iCgwg3Fm5O+QJN7ufKsGSXtSCuKtU3lTTV3aYRDRKJLXjK4yevia8Yb5ZA==
+X-Received: by 2002:a5d:47c2:0:b0:386:374b:e8bc with SMTP id ffacd0b85a97d-38de43a5bf1mr6282133f8f.15.1739369108763;
+        Wed, 12 Feb 2025 06:05:08 -0800 (PST)
+Received: from nuc.fritz.box (p200300f6f7229c00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f722:9c00:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a04cd53sm21169995e9.6.2025.02.12.06.05.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 06:05:08 -0800 (PST)
+From: Johannes Thumshirn <jth@kernel.org>
+To: linux-btrfs@vger.kernel.org
+Cc: Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] btrfs: zoned: exit btrfs_can_activate_zone if BTRFS_FS_NEED_ZONE_FINISH is set
+Date: Wed, 12 Feb 2025 15:05:00 +0100
+Message-ID: <f811034c9494b256f50a0675297f072a6b65076d.1739368972.git.jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] PCI: dwc: Add the debugfs property to provide the LTSSM
- status of the PCIe link
-To: Shradha Todi <shradha.t@samsung.com>, jingoohan1@gmail.com
-Cc: manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org, kw@linux.com,
- robh@kernel.org, bhelgaas@google.com, Frank.Li@nxp.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, rockswang7@gmail.com
-References: <CGME20250206151446epcas5p43a35270da73181b97deb628ff49f3ddd@epcas5p4.samsung.com>
- <20250206151343.26779-1-18255117159@163.com>
- <000001db7d42$d6b56fd0$84204f70$@samsung.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <000001db7d42$d6b56fd0$84204f70$@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wCXHlI4qqxnp2cGLQ--.10645S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Aryxtw43WrW8ZF4DZr1rCrg_yoW8WFyxpa
-	95Xw4Ykr48Arn5Wr1fuF4IvrySya95uF43AanFgw4Svw17tF12qF1YkayUAry3Gr1Ykr12
-	kF4Yqw1YvF1DXrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UBrWwUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiDxfxo2espdU8HwAAsS
+Content-Transfer-Encoding: 8bit
 
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
+If BTRFS_FS_NEED_ZONE_FINISH is already set for the whole filesystem, exit
+early in btrfs_can_activate_zone(). There's no need to check if
+BTRFS_FS_NEED_ZONE_FINISH needs to be set if it is already set.
 
-On 2025/2/12 19:39, Shradha Todi wrote:
->> @@ -463,6 +495,7 @@ struct dw_pcie {
->>   	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
->>   	struct gpio_desc		*pe_rst;
->>   	bool			suspended;
->> +	struct dentry		*debugfs;
-> 
-> This pointer to main directory dentry is already present as rasdes_dir in struct dwc_pcie_rasdes_info.
-> So struct dentry *debugfs is duplicating it.
-> 
-> We have a few options to solve this:
-> 1. Remove struct dentry *rasdes_dir from dwc_pcie_rasdes_info and continue to have 2 pointers exposed
-> in struct dw_pcie.
-> 
-> struct dwc_pcie_rasdes_info {
->          u32 ras_cap_offset;
->          struct mutex reg_lock;
-> };
-> struct dw_pcie {
->         .
->         .
->         struct dentry           *debugfs;
->          void                    *rasdes_info;
->   };
-> 
-> 2. Change rasdes_info to debugfs info:
-> 
-> struct dwc_pcie_rasdes_info {
->          u32 ras_cap_offset;
->          struct mutex reg_lock;
-> };
-> struct dwc_pcie_debugfs_info {
->          struct dwc_pcie_rasdes_info *rinfo;
->          struct dentry           *debugfs;
-> };
-> struct dw_pcie {
->         .
->         .
->          void                    *debugfs_info;
->   };
-> 
-> 3. Let ras related info get initialized to 0 even when rasdes cap is not present:
-> 
-> struct dwc_pcie_debugfs_info {
->          u32 ras_cap_offset;
->          struct mutex reg_lock;
->          struct dentry *debugfs;
-> };
-> struct dw_pcie {
->         .
->         .
->          void                    *debugfs_info;
->   };
-> 
-> I think option 2 would be the best, though it will need a bit of changes in my files. What do you suggest?
-> 
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ fs/btrfs/zoned.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I couldn't agree more. Can you build the debugfs framework? I or other 
-developers can add some other debugfs nodes to this framework, not only 
-dwc_pcie_rasdes_debugfs_init, but also dwc_pcie_debugfs_init.
-
-I will add my patch with your next version. Please CC email me.
-
-Best regards
-Hans
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index 73e0aa9fc08a..4956baf8220a 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -2325,6 +2325,9 @@ bool btrfs_can_activate_zone(struct btrfs_fs_devices *fs_devices, u64 flags)
+ 	if (!btrfs_is_zoned(fs_info))
+ 		return true;
+ 
++	if (test_bit(BTRFS_FS_NEED_ZONE_FINISH, &fs_info->flags))
++		return false;
++
+ 	/* Check if there is a device with active zones left */
+ 	mutex_lock(&fs_info->chunk_mutex);
+ 	spin_lock(&fs_info->zone_active_bgs_lock);
+-- 
+2.43.0
 
 
