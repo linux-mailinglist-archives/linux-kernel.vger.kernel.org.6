@@ -1,159 +1,265 @@
-Return-Path: <linux-kernel+bounces-512025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB656A332E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:50:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8FEA332E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:52:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1F31889F74
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:51:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313EE1889FEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F383B2045A1;
-	Wed, 12 Feb 2025 22:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4BD2063F4;
+	Wed, 12 Feb 2025 22:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wFEp7xgl"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="GFCZsfey"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BE41FF1D2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D461FF1D2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739400653; cv=none; b=QH1fCZfky4zmrCA9qafnVBqjGJ0p337vyAFtZyjmpJfzFNncgQ22S3J4m87u/npoa90SOSR/M9kQk2mbbjiab2tF6litZhroG7KDRoPwHRU5uwKSLN4CQxbiB901I/tRlAc9HT8NjESTW9/xjXRQfwEnYLEfTONbOItHCkpfuis=
+	t=1739400749; cv=none; b=CpFlSzEMRS5OG1S9GvaUMwYUL2JIZ61FCGDGkqbe+yx+6kR5ui07uWk9QxKR0+ayyp15Nwww98VL3VZnk5n+hx8xD4tytmisdyYQ9oyMTJctvgN6euSjeaV3MlXMe2c+9mO4LUmtckjiRRrDikg1Bvy2ZnSYGZ06G1czBp/n7fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739400653; c=relaxed/simple;
-	bh=uXm8uKmNjS20RmDk1SMqOD3I2J1mL4UkI1TzOjxtnkQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=u9CKoO4Q3qsCqpHrcqtXpHI0Agm+Dfw/8AredMv5zhjfVBJkALFdnvTKXpP/V940EbE4nesZ9x4vFEz1cwdkcTlg+FfYaqpLHL3IHAHm700ElYHjQO14fE2TgC49A8CIz9VergWyqjOvzcJ+mvJMhOTy3IusW4UmfTZFYJow3K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wFEp7xgl; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fa1c093f12so781635a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:50:51 -0800 (PST)
+	s=arc-20240116; t=1739400749; c=relaxed/simple;
+	bh=UtfN+GCGG125PSq00oIuJfcUPsgtgStzpiCDq0MDYUw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y+Is+hfX5WkTGBph+Jmr0xM01usXFNh5qO7dPfS7Vvhm5skHni/HWOhj35iiPms3TCx8bVUrkFK06pTjIXTlbHj1yVmo+BIyLy0r3fJj1ZwsC3oNCpweTjtry/xbnnprdopZI9y0CURWC23TjEOYPLZF7Y9G13dZmFOwiOnDZNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=GFCZsfey; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220d27fcdaaso537905ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:52:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739400651; x=1740005451; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7M7mwSZmFgIdf/jVcNpFyiHweXH73hNuBjTuWyoztw=;
-        b=wFEp7xgl0OVABYmzcnuN8JJWBU3n5vtSnjKDC5uRcaAlFC0StvVfPmaz81AgoAecA3
-         FQJ+WPi/Lk1q8pH++x8EQE2Td6E1Ug+453TTfL+cPFWHeAWeK6Qtyu5axET6rIiK9yPe
-         nmuGKLflrjoam6oEmYTVTaa3U2lPytuZxim+34czdxVr4PohG7eZPgGUC8ZkBS8Thv5p
-         /+iX6HmL663OXP1G2CuaFQRSv1/Ib1ADz70dXkhbssmnTjqvmg47ap4buTd8UHBMVZGQ
-         Ww4A5b/E8o2KD36r7bKZ7QGGnvuR+rI/77m/cKBNdVo/RKXTSpAJiNqJLJkU0qluyvJV
-         CEQA==
+        d=purestorage.com; s=google2022; t=1739400747; x=1740005547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FfwY93M55tUY7tiuafz/+lMvgbNBwGKfC4CdSZeSjms=;
+        b=GFCZsfey3LQIWyaxd/lzQ9LF9ptniBjwqPv3lIMv7nH0nOFD4cA+2DhjMtT/LGOWBf
+         KMMJ58tjGApbIwZc/5n/3dbXTGsmoyjsrYYEecYqpF6aFKMts/sCdy1gyZxAkq9Q9b+T
+         WcZ/qYWHa3Vc2l+c+NFcZQ6d2oeU+HviK1wIiDy8DoZdjdRIkOUeKv+YrTLEkX8Bwc9Y
+         auTepwLRD3Ze0e0mGbDhzeVXTgG6wQXLsVS9sK3pwpTsIcd/l1ge9H+UOUEvmMBpoBrD
+         N0vu6MWJ/FfkHSzGjavvXKjcm3j6E6879xhPntkv+pYooa9pahGk9SlhekT0lS7iaxWg
+         B8VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739400651; x=1740005451;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7M7mwSZmFgIdf/jVcNpFyiHweXH73hNuBjTuWyoztw=;
-        b=r+ft62rukGVnmo2Wpn/PyYywqiDy5kDmdLKqkgV6NpIro0R92ZlikuFgCONC7kxlnP
-         htzMna1eqlwxe4FYUJQnCc8sLZcqzhKNKjNhiA8L7/zKSTa+WwDhyxzgIIBod3QBK9ex
-         u348ynubL1OM7VB0m4SuSh5MvfzQkF65ZJz4XRqFVUclQFviJ8LFH38FVMlqRYPCxb2w
-         ii3ZWbbHd4MtDsQmR6ZnkFO1BMFmKYHBgi55e7L+TuNR4srVpeUzzeSqt/Jy0e93wTiP
-         rREFyLTAanvjBcAeL4g2N+e8uHATcg42nSf5ufIROIeY3AGCUAIj8YfmyEwLrc9pfePY
-         paQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgRpQa9ix7iuvaHkfJ9sG/lyhlWcbU0ifzF5njxz4I5NiEcAIRmx1GmNbgtEdjjicHB0IIpVsQKRP/bRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCSKO4ciFx5C2wlqFFgLt3jlivvlOU9lKLBPqw+y3Wpum2BTU6
-	t9IYm6L0kGxhk/3AqnqiDfbbXldEJtpbrBXijHovfjhgQ9keu130hHTIHqPh7yqVBHMC1dtOutT
-	m+A==
-X-Google-Smtp-Source: AGHT+IFVTTUUI1xszagrzillVwGnjrtr+PRt659s6KUyzEgsoiBKTxdBzhJcBaI8v4c/MK/Id5lMncRdTWE=
-X-Received: from pfblj12.prod.google.com ([2002:a05:6a00:71cc:b0:730:78e8:8e52])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2341:b0:730:97a6:f04
- with SMTP id d2e1a72fcca58-7322c38479emr6679600b3a.7.1739400651124; Wed, 12
- Feb 2025 14:50:51 -0800 (PST)
-Date: Wed, 12 Feb 2025 14:50:45 -0800
-In-Reply-To: <20250212221217.161222-1-jthoughton@google.com>
+        d=1e100.net; s=20230601; t=1739400747; x=1740005547;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FfwY93M55tUY7tiuafz/+lMvgbNBwGKfC4CdSZeSjms=;
+        b=KtaObutIw2fStqgBEgbLoVBZ4+vQqLLdWpDJsb+mTQgBCjlv9qSk0BeJkwC3ovLTiE
+         ZBTxIY1la88AfU9GBn1pxb5nKB3UE/XB1ZLYfNsk0Z1OuEqVy+7mV060HSuzsRttIYlg
+         p//RFRpZxbj8LNf/wy6U9b/rC7N6Hw+4dIMK3Gkv5SAFqajaJ/HMYe8xVLNHTbDvN9pa
+         btyGxF592NoOBdyHa2FO+LLPasU8pjX5enwJ1+nouAreQTbv4h9DsAwz1+KUs+MG7kDM
+         VxIUjXzCHNHjONwvcgbFstemSjrDEFzZGnPABhd43zRQq6A784wHx/aBG4A9G14cfVkt
+         XMuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCuAHYCNrCouNCYOcqjqMzKCB4TwHsuY/b1UQWFVU3OJFWKAZ3QiIN0qPhveykLvritlgI1xdhsbNmrLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjSzRcRjDLuijyWayimCdcDLVCnfGiIw/Ivv288ONxRtfJ0Baf
+	SbI+Y5aFNBKHM8VxZrtItllpI00JnpuiVTNlXcjBWU3QK0WBIM5WYN1erXo5K2NaGVtNoPwoX11
+	XG4NOjZEDxLA9PndHXCEn4hoX7SfBBG1dhq1nmA==
+X-Gm-Gg: ASbGncv6KAKdtL9JBNpNPUKfIG96a5iMgKYKFV5/fDE6zcDN5+q2D3nc68mP7r6Su1p
+	R99EBSQSlxoOnTfD+QaNRCDiFtV4irgFqfD14IAgBs3n1x3n+mpcQ07i0pDQ3mcvIZDWE/VI=
+X-Google-Smtp-Source: AGHT+IFtPx5mTyb/IuiGEIVxkvQ2pczO0DwFJngfOpyn2fty5YXDGA+Xdc9rjdurFCXleGpKfOEjBIeAqEBMrnf2lcQ=
+X-Received: by 2002:a17:903:2f8a:b0:215:9a73:6c4f with SMTP id
+ d9443c01a7336-220bbacbfcamr29770925ad.6.1739400746708; Wed, 12 Feb 2025
+ 14:52:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <67689c62.050a0220.2f3838.000d.GAE@google.com> <20250212221217.161222-1-jthoughton@google.com>
-Message-ID: <Z60lxSqV1r257yW8@google.com>
-Subject: Re: [syzbot] [kvm?] WARNING in vmx_handle_exit (2)
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: syzbot+ac0bc3a70282b4d586cc@syzkaller.appspotmail.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250212204546.3751645-1-csander@purestorage.com>
+ <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk> <50caa50c-5126-4072-8cfc-33b83b524489@kernel.dk>
+ <CADUfDZroLajE4sF6=oYopg=gNtv3Zko78ZcJv4eQ5SBxMxDOiw@mail.gmail.com> <e315e4f5-a3f0-48be-8400-05bfaf8714f8@kernel.dk>
+In-Reply-To: <e315e4f5-a3f0-48be-8400-05bfaf8714f8@kernel.dk>
+From: Caleb Sander <csander@purestorage.com>
+Date: Wed, 12 Feb 2025 14:52:14 -0800
+X-Gm-Features: AWEUYZn_dOyE6MdpmE0S0s6r4x5ROWMgWV_7dG45zZiiWa6VI79ZFLHKZuOeHGg
+Message-ID: <CADUfDZp5w_LuXn9suUnqNr5ePdvrUP1-f5UN3B_iVTtUn2kFbg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, Riley Thomasson <riley@purestorage.com>, 
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025, James Houghton wrote:
-> Here's what I think is going on (with the C repro anyway):
-> 
-> 1. KVM_RUN a nested VM, and eventually we end up with
->    nested_run_pending=1.
-> 2. Exit KVM_RUN with EINTR (or any reason really, but I see EINTR in
->    repro attempts).
-> 3. KVM_SET_REGS to set rflags to 0x1ac585, which has X86_EFLAGS_VM,
->    flipping it and setting vmx->emulation_required = true.
-> 3. KVM_RUN again. vmx->emulation_required will stop KVM from clearing
->    nested_run_pending, and then we hit the
->    KVM_BUG_ON(nested_run_pending) in __vmx_handle_exit().
-> 
-> So I guess the KVM_BUG_ON() is a little bit too conservative, but this
-> is nonsensical VMM behavior. So I'm not really sure what the best
-> solution is. Sean, any thoughts?
+On Wed, Feb 12, 2025 at 2:34=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 2/12/25 2:58 PM, Caleb Sander wrote:
+> > On Wed, Feb 12, 2025 at 1:02?PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 2/12/25 1:55 PM, Jens Axboe wrote:
+> >>> On 2/12/25 1:45 PM, Caleb Sander Mateos wrote:
+> >>>> In our application issuing NVMe passthru commands, we have observed
+> >>>> nvme_uring_cmd fields being corrupted between when userspace initial=
+izes
+> >>>> the io_uring SQE and when nvme_uring_cmd_io() processes it.
+> >>>>
+> >>>> We hypothesized that the uring_cmd's were executing asynchronously a=
+fter
+> >>>> the io_uring_enter() syscall returned, yet were still reading the SQ=
+E in
+> >>>> the userspace-mapped SQ. Since io_uring_enter() had already incremen=
+ted
+> >>>> the SQ head index, userspace reused the SQ slot for a new SQE once t=
+he
+> >>>> SQ wrapped around to it.
+> >>>>
+> >>>> We confirmed this hypothesis by "poisoning" all SQEs up to the SQ he=
+ad
+> >>>> index in userspace upon return from io_uring_enter(). By overwriting=
+ the
+> >>>> nvme_uring_cmd nsid field with a known garbage value, we were able t=
+o
+> >>>> trigger the err message in nvme_validate_passthru_nsid(), which logg=
+ed
+> >>>> the garbage nsid value.
+> >>>>
+> >>>> The issue is caused by commit 5eff57fa9f3a ("io_uring/uring_cmd: def=
+er
+> >>>> SQE copying until it's needed"). With this commit reverted, the pois=
+oned
+> >>>> values in the SQEs are no longer seen by nvme_uring_cmd_io().
+> >>>>
+> >>>> Prior to the commit, each uring_cmd SQE was unconditionally memcpy()=
+ed
+> >>>> to async_data at prep time. The commit moved this memcpy() to 2 case=
+s
+> >>>> when the request goes async:
+> >>>> - If REQ_F_FORCE_ASYNC is set to force the initial issue to go async
+> >>>> - If ->uring_cmd() returns -EAGAIN in the initial non-blocking issue
+> >>>>
+> >>>> This patch set fixes a bug in the EAGAIN case where the uring_cmd's =
+sqe
+> >>>> pointer is not updated to point to async_data after the memcpy(),
+> >>>> as it correctly is in the REQ_F_FORCE_ASYNC case.
+> >>>>
+> >>>> However, uring_cmd's can be issued async in other cases not enumerat=
+ed
+> >>>> by 5eff57fa9f3a, also leading to SQE corruption. These include reque=
+sts
+> >>>> besides the first in a linked chain, which are only issued once prio=
+r
+> >>>> requests complete. Requests waiting for a drain to complete would al=
+so
+> >>>> be initially issued async.
+> >>>>
+> >>>> While it's probably possible for io_uring_cmd_prep_setup() to check =
+for
+> >>>> each of these cases and avoid deferring the SQE memcpy(), we feel it
+> >>>> might be safer to revert 5eff57fa9f3a to avoid the corruption risk.
+> >>>> As discussed recently in regard to the ublk zero-copy patches[1], ne=
+w
+> >>>> async paths added in the future could break these delicate assumptio=
+ns.
+> >>>
+> >>> I don't think it's particularly delicate - did you manage to catch th=
+e
+> >>> case queueing a request for async execution where the sqe wasn't alre=
+ady
+> >>> copied? I did take a quick look after our out-of-band conversation, a=
+nd
+> >>> the only missing bit I immediately spotted is using SQPOLL. But I don=
+'t
+> >>> think you're using that, right? And in any case, lifetime of SQEs wit=
+h
+> >>> SQPOLL is the duration of the request anyway, so should not pose any
+> >>> risk of overwriting SQEs. But I do think the code should copy for tha=
+t
+> >>> case too, just to avoid it being a harder-to-use thing than it should
+> >>> be.
+> >>>
+> >>> The two patches here look good, I'll go ahead with those. That'll giv=
+e
+> >>> us a bit of time to figure out where this missing copy is.
+> >>
+> >> Can you try this on top of your 2 and see if you still hit anything od=
+d?
+> >>
+> >> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> >> index bcfca18395c4..15a8a67f556e 100644
+> >> --- a/io_uring/uring_cmd.c
+> >> +++ b/io_uring/uring_cmd.c
+> >> @@ -177,10 +177,13 @@ static void io_uring_cmd_cache_sqes(struct io_ki=
+ocb *req)
+> >>         ioucmd->sqe =3D cache->sqes;
+> >>  }
+> >>
+> >> +#define SQE_COPY_FLAGS (REQ_F_FORCE_ASYNC|REQ_F_LINK|REQ_F_HARDLINK|R=
+EQ_F_IO_DRAIN)
+> >
+> > I believe this still misses the last request in a linked chain, which
+> > won't have REQ_F_LINK/REQ_F_HARDLINK set?
+>
+> Yeah good point, I think we should just be looking at link->head instead
+> to see if the request is a link, or part of a linked submission. That
+> may overshoot a bit, but that should be fine - it'll be a false
+> positive. Alternatively, we can still check link flags and compare with
+> link->last instead...
 
-Heh, deja vu.  This is essentially the same thing that was fixed by commit
-fc4fad79fc3d ("KVM: VMX: Reject KVM_RUN if emulation is required with pending
-exception"), just with a different WARN.
+Yeah, checking link.head sounds good to me. I don't think it should
+catch any extra requests. link.head will still be NULL when ->prep()
+is called on the first request of the chain, since it is set in
+io_submit_sqe() after io_init_req() (which calls ->prep()).
 
-This should fix it.  Checking nested_run_pending in handle_invalid_guest_state()
-is overkill, but it can't possibly do any harm, and the weirdness can be addressed
-with a comment.
+>
+> But the whole thing still feels a bit iffy. The whole uring_cmd setup
+> with an SQE that's sometimes the actual SQE, and sometimes a copy when
+> needed, does not fill me with joy.
+>
+> > IOSQE_IO_DRAIN also causes subsequent operations to be issued async;
+> > is REQ_F_IO_DRAIN set on those operations too?
+>
+> The first 8 flags are directly set in the io_kiocb at init time. So if
+> IOSQE_IO_DRAIN is set, then REQ_F_IO_DRAIN will be set as they are one
+> and the same.
 
----
- arch/x86/kvm/vmx/vmx.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Sorry, I meant that a request marked IOSQE_IO_DRAIN/REQ_F_IO_DRAIN
+potentially causes both that request and any following requests to be
+submitted async. The first request waits for any outstanding requests
+to complete, and the following requests wait for the request marked
+IOSQE_IO_DRAIN to complete. I know REQ_F_IO_DRAIN =3D IOSQE_IO_DRAIN is
+already set on the first request, but will it also be set on any
+following requests that have to wait on that one?
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index f72835e85b6d..8c9428244cc6 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5869,11 +5869,17 @@ static int handle_nmi_window(struct kvm_vcpu *vcpu)
- 	return 1;
- }
- 
--static bool vmx_emulation_required_with_pending_exception(struct kvm_vcpu *vcpu)
-+static bool vmx_unhandleable_emulation_required(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 
--	return vmx->emulation_required && !vmx->rmode.vm86_active &&
-+	if (!vmx->emulation_required)
-+		return false;
-+
-+	if (vmx->nested.nested_run_pending)
-+		return true;
-+
-+	return !vmx->rmode.vm86_active &&
- 	       (kvm_is_exception_pending(vcpu) || vcpu->arch.exception.injected);
- }
- 
-@@ -5896,7 +5902,7 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
- 		if (!kvm_emulate_instruction(vcpu, 0))
- 			return 0;
- 
--		if (vmx_emulation_required_with_pending_exception(vcpu)) {
-+		if (vmx_unhandleable_emulation_required(vcpu)) {
- 			kvm_prepare_emulation_failure_exit(vcpu);
- 			return 0;
- 		}
-@@ -5920,7 +5926,7 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
- 
- int vmx_vcpu_pre_run(struct kvm_vcpu *vcpu)
- {
--	if (vmx_emulation_required_with_pending_exception(vcpu)) {
-+	if (vmx_unhandleable_emulation_required(vcpu)) {
- 		kvm_prepare_emulation_failure_exit(vcpu);
- 		return 0;
- 	}
-
-base-commit: b1da62b213ed5f01d7ead4d14e9d51b48b6256e4
--- 
+>
+> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> index bcfca18395c4..9e60b5bb5a60 100644
+> --- a/io_uring/uring_cmd.c
+> +++ b/io_uring/uring_cmd.c
+> @@ -177,10 +177,14 @@ static void io_uring_cmd_cache_sqes(struct io_kiocb=
+ *req)
+>         ioucmd->sqe =3D cache->sqes;
+>  }
+>
+> +#define SQE_COPY_FLAGS (REQ_F_FORCE_ASYNC|REQ_F_IO_DRAIN)
+> +
+>  static int io_uring_cmd_prep_setup(struct io_kiocb *req,
+>                                    const struct io_uring_sqe *sqe)
+>  {
+>         struct io_uring_cmd *ioucmd =3D io_kiocb_to_cmd(req, struct io_ur=
+ing_cmd);
+> +       struct io_ring_ctx *ctx =3D req->ctx;
+> +       struct io_submit_link *link =3D &ctx->submit_state.link;
+>         struct io_uring_cmd_data *cache;
+>
+>         cache =3D io_uring_alloc_async_data(&req->ctx->uring_cache, req);
+> @@ -190,7 +194,8 @@ static int io_uring_cmd_prep_setup(struct io_kiocb *r=
+eq,
+>
+>         ioucmd->sqe =3D sqe;
+>         /* defer memcpy until we need it */
+> -       if (unlikely(req->flags & REQ_F_FORCE_ASYNC))
+> +       if (unlikely(ctx->flags & IORING_SETUP_SQPOLL ||
+> +                    req->flags & SQE_COPY_FLAGS || link->head))
+>                 io_uring_cmd_cache_sqes(req);
+>         return 0;
+>  }
+>
+> --
+> Jens Axboe
 
