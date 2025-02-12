@@ -1,154 +1,105 @@
-Return-Path: <linux-kernel+bounces-511242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D872A3283E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:18:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE23CA32842
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:19:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EB577A319C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:17:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD77C161CC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0378020FA90;
-	Wed, 12 Feb 2025 14:17:50 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A9E20FAA3;
+	Wed, 12 Feb 2025 14:19:17 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D641A5AA;
-	Wed, 12 Feb 2025 14:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DEE1A5AA;
+	Wed, 12 Feb 2025 14:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739369869; cv=none; b=dZfbkx5wpWx6XNrooO/uRM4V67d9zP0p8NkpZxI2YNOc0qZSa0cwQYJkNPJDwqBkpVh5rLfyRFxpJFzbCvhTJCpjsGS6K3ulLb6BTrPisYkhM2F7e6a4clvoqhEEkzliAludlCEQl5D12kAup6kVzbmuvP94pTX8K4azk15Uoo4=
+	t=1739369956; cv=none; b=BZpJSeO0A+3zLNHS002kKx+xYGwh19YG/W+/JYWIeg7p4JVPQzrgR0U4Kgp5C+CYJuA1RxpZgxrFv3FRqaShHHsPIL3PX0KCS5d9uUp+2q2BRquJF6ety6Wrxbq617qjyDlQGPZ2vCoq5VwjcxHJB9xjaUK6QHWQR9owJVm7DMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739369869; c=relaxed/simple;
-	bh=mJxBysoRgZGhkya7SXolEV5gKdR7CjNvQTnBQE2fKxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V+D8e3EC/YVekVAapmr3owww6ipX+a8RO+gN/jzTqorLIR8/qBNKFyp1shGg61F/2o5Sm92ig/DSBO/eZ60kUVcE66C7S3uibav+43Z8B/ee1zzKcIy/28V6e9S7OWbRYWZzUdR/TZJimMkxVx0IFuI4Wjf3hqYKKoeWAo/qFso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.172.76.141])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 0BBAF343065;
-	Wed, 12 Feb 2025 14:17:46 +0000 (UTC)
-Date: Wed, 12 Feb 2025 14:17:41 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, spacemit@lists.linux.dev,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v2] pinctrl: spacemit: enable config option
-Message-ID: <20250212141741-GYA18065@gentoo>
-References: <20250212-k1-pinctrl-option-v2-1-bde7da0bc0d9@gentoo.org>
- <b67abe31-5647-4450-b025-2bbacee5fa72@riscstar.com>
+	s=arc-20240116; t=1739369956; c=relaxed/simple;
+	bh=hePOXBAyH+DtbFWymWK4E16ILxWpqBJfArdmWI3Upn0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bEdYn6KUX2jqD7IMGyWVtlalcq8GQOJsN2PEVYMPzKP46ulpKSjy24o6k0NIfWxrRIJHd1eYhdteCNI8TEpwSP8xYte+OsKub4z93blvk+udfzO2COZsz4MbRXBRWAIltpddYTN82y+x8SiHR3yEXsp9BkPtR4TTkHiDhe138CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAD3YMrEraxnexx3DA--.41351S2;
+	Wed, 12 Feb 2025 22:18:46 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: Steen.Hegelund@microchip.com,
+	daniel.machon@microchip.com
+Cc: UNGLinuxDriver@microchip.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] net: microchip: sparx5: Fix potential NULL pointer dereference
+Date: Wed, 12 Feb 2025 22:18:28 +0800
+Message-ID: <20250212141829.1214-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b67abe31-5647-4450-b025-2bbacee5fa72@riscstar.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAD3YMrEraxnexx3DA--.41351S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrZw4rAF47Zw4xWw13KrWDtwb_yoW8Jr13pa
+	1DuFy5Ww4kArsxG347Cw48Xry8Xan0gF93WrWrCwn5ZFnYqrZ3Xr1rCrWF9ryFqrZxGrnx
+	tF4Yva9IyF1qyrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwoLA2espowP7AABsG
 
-Hi Alex:
+Check the return value of vcap_keyfields() in
+vcap_debugfs_show_rule_keyset(). If vcap_keyfields()
+returns NULL, skip the keyfield to prevent a NULL pointer
+dereference when calling vcap_debugfs_show_rule_keyfield().
 
-On 07:50 Wed 12 Feb     , Alex Elder wrote:
-> On 2/12/25 2:27 AM, Yixun Lan wrote:
-> > Pinctrl is an essential driver for SpacemiT's SoC,
-> > so let's enable it by default for this SoC.
-> > 
-> > The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
-> > 'make defconfig' to select kernel configuration options.
-> > This result in a broken uart driver where fail at probe()
-> > stage due to no pins found.
-> > 
-> > Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
-> > Reported-by: Alex Elder <elder@kernel.org>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > Tested-by: Alex Elder <elder@riscstar.com>
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> 
-> I just tested this version of the patch.  By default
-> PINCTRL_SPACEMIT_K1 is "y".  But since it's tristate,
-> perhaps it should be default=m so it's not built in
-> for everyone.  Yixun I assume the K1 pinctrl driver
-> actually *works* as a kernel module.
-> 
-in theory, making it built as module, it should work fine if all drivers
-can handle "deferred probe" gracefully, but since pinctrl is an essential
- basic driver, I'd prefer to make it built-in ..
+Fixes: 610c32b2ce66 ("net: microchip: vcap: Add vcap_get_rule")
+Cc: stable@vger.kernel.org # 6.2+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I didn't bother to change this module from tristate to bool,
-as there is additional COMPILE_TEST option(maybe it want to test as module?)
-
-> Anyway, I suggest this change to be a module; Conor
-> should weigh in.  Either way is good for me, and I
-> have tested both.
-> 
-no, I don't think making it as module is a good idea,
-
-I can adjust this driver from tristate to bool if necessary,
-also adjust to builtin_platform_driver() in driver..
-
-let me know what you think
-
-> Reviewed-by: Alex Elder <elder@riscstar.com>
-> 
-> > ---
-> > This should fix problem that CONFIG_PINCTRL_SPACEMIT_K1 is not enabled
-> > when using make defconfig, thus fail to initilize uart driver which requst
-> > pins during probe stage.
-> > ---
-> > Changes in v2:
-> > - set default as y
-> > - Link to v1: https://lore.kernel.org/r/20250207-k1-pinctrl-option-v1-1-e8a7e4d8404f@gentoo.org
-> > ---
-> >   arch/riscv/Kconfig.socs          | 1 +
-> >   drivers/pinctrl/spacemit/Kconfig | 1 +
-> >   2 files changed, 2 insertions(+)
-> > 
-> > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> > index 1916cf7ba450ec9958265de2ca41dc504d4d2f7c..17606940bb5239d0fdfc6b5aefb50eeb982d14aa 100644
-> > --- a/arch/riscv/Kconfig.socs
-> > +++ b/arch/riscv/Kconfig.socs
-> > @@ -26,6 +26,7 @@ config ARCH_SOPHGO
-> >   
-> >   config ARCH_SPACEMIT
-> >   	bool "SpacemiT SoCs"
-> > +	select PINCTRL
-> >   	help
-> >   	  This enables support for SpacemiT SoC platform hardware.
-> >   
-> > diff --git a/drivers/pinctrl/spacemit/Kconfig b/drivers/pinctrl/spacemit/Kconfig
-> > index 168f8a5ffbb952cbeae3e3401c11149558e0a84b..c18d879274e72df251e0bc82a308603ce23738bd 100644
-> > --- a/drivers/pinctrl/spacemit/Kconfig
-> > +++ b/drivers/pinctrl/spacemit/Kconfig
-> > @@ -7,6 +7,7 @@ config PINCTRL_SPACEMIT_K1
-> >   	tristate "SpacemiT K1 SoC Pinctrl driver"
-> >   	depends on ARCH_SPACEMIT || COMPILE_TEST
-> >   	depends on OF
-> > +	default y
-> >   	select GENERIC_PINCTRL_GROUPS
-> >   	select GENERIC_PINMUX_FUNCTIONS
-> >   	select GENERIC_PINCONF
-> > 
-> > ---
-> > base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> > change-id: 20250207-k1-pinctrl-option-de5bdfd6b42e
-> > 
-> > Best regards,
-> 
-
+diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c b/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
+index 59bfbda29bb3..e9e2f7af9be3 100644
+--- a/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
++++ b/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
+@@ -202,6 +202,8 @@ static int vcap_debugfs_show_rule_keyset(struct vcap_rule_internal *ri,
+ 
+ 	list_for_each_entry(ckf, &ri->data.keyfields, ctrl.list) {
+ 		keyfield = vcap_keyfields(vctrl, admin->vtype, ri->data.keyset);
++		if (!keyfield)
++			continue;
+ 		vcap_debugfs_show_rule_keyfield(vctrl, out, ckf->ctrl.key,
+ 						keyfield, &ckf->data);
+ 	}
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+2.42.0.windows.2
+
 
