@@ -1,157 +1,235 @@
-Return-Path: <linux-kernel+bounces-511460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F91A32B54
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:17:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABECA32B76
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:21:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD5BB1655E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:17:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 202291886A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CE6212B05;
-	Wed, 12 Feb 2025 16:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8862505AB;
+	Wed, 12 Feb 2025 16:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TJI3DgFH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="O3oaqEA/"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6409C271838;
-	Wed, 12 Feb 2025 16:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0E51E766F;
+	Wed, 12 Feb 2025 16:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739377056; cv=none; b=W+2V1AG8dTS8Me6CfCbFBmFiKBAC/ENVkNoetLwAwt12OFZDERMJQeGi3OaikQcidet9JraoxXwXpQLc/F9GXyTS+gFzhYep/QuGq6QN3mMh0N8r7XR5/QDIFwaqLk2EMFCcL8F6dNX4/NnZtF5MyoJUlaw3Mo0oy0zlp2ERBes=
+	t=1739377287; cv=none; b=JfeDrXzMhujVEEWCuZ8tnNZ5cZsCbYDJHUbIrZmWCKC3uPDN/8MaQFX4gTUKW4cgoIXk8u+o8Dcr9hXC2UKQbd8uYqiA5+tVpY427wMCdiYaiPcvBe7XGbWK4ig8ZzrPdQEEXFEwuSgJre+LMR9UXC9q8VKFAcBSwWjHGMDCaeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739377056; c=relaxed/simple;
-	bh=Sx0gjwQ2xWYVGUEXYQCDsZtlY6q7k8a71QG8sWV01LE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rn2UzZS2elVqNF47nQg7t8cOROA4xOghPSXz3154nL7Mtcy4rM9GyP59moJSGLqY4Ww3eRVn8sLqypPzls2lbaUMAPSipncm64SA+zUR/EwaSoBLXnzccn6i9njT5U7ou4SeoPCiO6FyqX4eQelPdTA12ycllH7B7oQw1/61rDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TJI3DgFH; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739377055; x=1770913055;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Sx0gjwQ2xWYVGUEXYQCDsZtlY6q7k8a71QG8sWV01LE=;
-  b=TJI3DgFHWncYN37Bnt1RdspZwfQ/G/oBcFQ1gwzdcodFTcB9Mvn9V41N
-   8SZ5t6VHASbKWVNSXX6H3o4bfZRuxx8veEOfbjn1B5Of39cqwOBVXbol2
-   zwqXGeO5yMTeOGcD6jro1SVqCW3RoJuP7KKVSjXPGdnHEcS5Sq5Q9fYpg
-   ZZXkDbR4XZU3NM3sDZ1IlH9bI3qRzGadukPJ8yE21LeBudWKJN5UBQ0AB
-   KaJHdi9YItzD9Ij+fSC7qS+7I6EWJlX0PFNi+iVcttFM/tF7TxT/HagpE
-   E9ZM+HNt3/V+3Fs0z9CISw8y2Wx76fRItZy0+x4yQS/dqQSDwJ0MlYuSv
-   A==;
-X-CSE-ConnectionGUID: q3GkO22OStWlwBuEPOQmbw==
-X-CSE-MsgGUID: zHrETBkGSRy2gsO5VSU1Eg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="65401766"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="65401766"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:17:34 -0800
-X-CSE-ConnectionGUID: kjQ8+wilTqiuJDRQQb1Ggg==
-X-CSE-MsgGUID: s54xrSM0QgyEtfmNe8TMtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="112851499"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:17:30 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tiFQV-0000000At9E-0oX1;
-	Wed, 12 Feb 2025 18:17:27 +0200
-Date: Wed, 12 Feb 2025 18:17:26 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 4/7] gpio: max7360: Add MAX7360 gpio support
-Message-ID: <Z6zJljphfTuEhBTP@smile.fi.intel.com>
-References: <20250113-mdb-max7360-support-v3-0-9519b4acb0b1@bootlin.com>
- <20250113-mdb-max7360-support-v3-4-9519b4acb0b1@bootlin.com>
- <Z5eFGJspoGOINcG6@smile.fi.intel.com>
- <D7QHGB7D0VSG.X255SDU7DFOF@bootlin.com>
- <Z6y65SnrprvnpKEa@smile.fi.intel.com>
- <D7QLITNTXRUJ.3NA44E6PQMAUX@bootlin.com>
+	s=arc-20240116; t=1739377287; c=relaxed/simple;
+	bh=z4pD2fMb4hRFmdx5+gLlEVAWZjHiex8kRw5CMtBT0i4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RDUjQaMFkRW84t6PuX/ay4pXlDs3x2hQdFDqhCg1Q8HvhBqumm7NOv5S20UMbCX8bEa9qtjn0AwbAAe2B5ZjD//Oq+AdYUeZuG3QmWphHBPXWYPu9LBPrJl8X0smuzicnhIufuHa24Vt9g6D1mh0F7Z/wOon9kJ6ju8nmW9LXx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=O3oaqEA/; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CEZrrx028666;
+	Wed, 12 Feb 2025 17:21:04 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	jtTH0NF2OZaw1ZQ29k/edA3IlfDQAywZ7oVCTbLG9zs=; b=O3oaqEA/I/lcZQ2m
+	L4kKOKxdlg+mTI3oe8flHZaFC54+QBIP6ufNUw+9Vug4ge6cvCnybHkvS89vlbua
+	nPMOQAcCAmGy0FWs2dVlzwciSyJW4ajOKcbnNyM5Bpayc8byOg+D7owhSaWEG6RC
+	kx57t5x5X4/dM/3TTCcwrzvFERdR2KCqI7GqTYPOWcehTB8N0kz6Wry6T9z2SAqH
+	z5gKqsQ1izvugw4GN76xM64b52RzsyF9bkVwUKE6AL0igM6V1UAf4MbPsJpZtD4X
+	kU5IQJ5oGVFsZ7OE4QS2vHQNBZtMqG4kLlN5SKjBdZHW4yEgQOhNwyA8mUN4GV2a
+	3eSXdQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44rrfk295h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 17:21:04 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E769340045;
+	Wed, 12 Feb 2025 17:19:36 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D05BA2CBC8E;
+	Wed, 12 Feb 2025 17:17:56 +0100 (CET)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Feb
+ 2025 17:17:55 +0100
+Message-ID: <52e74ce3-8ad0-4b42-b959-66ab70ac8501@foss.st.com>
+Date: Wed, 12 Feb 2025 17:17:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D7QLITNTXRUJ.3NA44E6PQMAUX@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/8] memory: Add STM32 Octo Memory Manager driver
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC: <alexandre.torgue@foss.st.com>, <arnd@arndb.de>, <broonie@kernel.org>,
+        <catalin.marinas@arm.com>, <christophe.kerello@foss.st.com>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <krzk+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <mcoquelin.stm32@gmail.com>, <p.zabel@pengutronix.de>,
+        <robh@kernel.org>, <will@kernel.org>
+References: <20250210131826.220318-1-patrice.chotard@foss.st.com>
+ <20250210131826.220318-5-patrice.chotard@foss.st.com>
+ <a74c3202-7a64-483d-907e-9a562e9dcd03@wanadoo.fr>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <a74c3202-7a64-483d-907e-9a562e9dcd03@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
 
-On Wed, Feb 12, 2025 at 05:08:56PM +0100, Mathieu Dubois-Briand wrote:
-> On Wed Feb 12, 2025 at 4:14 PM CET, Andy Shevchenko wrote:
-> > On Wed, Feb 12, 2025 at 01:57:34PM +0100, Mathieu Dubois-Briand wrote:
-> > > On Mon Jan 27, 2025 at 2:07 PM CET, Andy Shevchenko wrote:
-> > > > On Mon, Jan 13, 2025 at 01:42:28PM +0100, Mathieu Dubois-Briand wrote:
 
-...
 
-> > > > > +	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios)) {
-> > > > > +		dev_err(&pdev->dev, "Missing ngpios OF property\n");
-> > > > > +		return -ENODEV;
-> > > > > +	}
-> > > >
-> > > > This is not needed, it is already done in GPIOLIB core.
-> > > 
-> > > I believe this is still needed:
-> > > - For gpos, we need the gpio count to correctly set the partition
-> > >   between gpo and keypad columns in max7360_set_gpos_count().
-> >
-> > Shouldn't be that done somewhere in the GPIO valid mask initialisation?
-> >
-> > > - For gpios, we need the gpio count to setup the IRQs.
-> >
-> > Doesn't GPIOLIB parse the property before initializing the IRQ valid mask
-> > and other init callbacks?
+On 2/11/25 19:16, Christophe JAILLET wrote:
+> Le 10/02/2025 à 14:18, patrice.chotard-rj0Iel/JR4NBDgjK7y7TUQ@public.gmane.org a écrit :
+>> From: Patrice Chotard <patrice.chotard-rj0Iel/JR4NBDgjK7y7TUQ@public.gmane.org>
+>>
+>> Octo Memory Manager driver (OMM) manages:
+>>    - the muxing between 2 OSPI busses and 2 output ports.
+>>      There are 4 possible muxing configurations:
+>>        - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
+>>          output is on port 2
+>>        - OSPI1 and OSPI2 are multiplexed over the same output port 1
+>>        - swapped mode (no multiplexing), OSPI1 output is on port 2,
+>>          OSPI2 output is on port 1
+>>        - OSPI1 and OSPI2 are multiplexed over the same output port 2
+>>    - the split of the memory area shared between the 2 OSPI instances.
+>>    - chip select selection override.
+>>    - the time between 2 transactions in multiplexed mode.
+>>    - check firewall access.
 > 
-> No, I believe I have to register the IRQ before registering the GPIO, so
-> I can get the IRQ domain.
+> ...
 > 
-> Right now I have something like:
+>> diff --git a/drivers/memory/stm32_omm.c b/drivers/memory/stm32_omm.c
+>> new file mode 100644
+>> index 000000000000..af69137bfba2
+>> --- /dev/null
+>> +++ b/drivers/memory/stm32_omm.c
+>> @@ -0,0 +1,520 @@
+>> +// SPDX-License-Identifier: GPL
 > 
-> irq_chip->num_irqs = ngpios;
-> devm_regmap_add_irq_chip_fwnode(dev, dev_fwnode(dev), max7360_gpio->regmap,
-> irq, flags, 0, irq_chip, &irq_chip_data);
-> gpio_config.irq_domain = regmap_irq_get_domain(irq_chip_data);
-> devm_gpio_regmap_register(dev, &gpio_config);
+> Not sure this SPDX-License-Identifier exists.
+
+Right, i will fix that.
+
 > 
-> Also, gpiolib will store ngpios in the gpio_chip structure, but while
-> using gpio-regmap, this structure is masked behind the opaque
-> gpio_regmap structure. So I believe there is no easy way to retrieve its
-> value.
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2024 - All Rights Reserved
 > 
-> This part of the code changed a lot, maybe it would be easier if I push
-> a new version of the series and we continue the discussion there?
+> ...
+> 
+>> +    pm_runtime_enable(dev);
+>> +
+>> +    /* check if OMM's resource access is granted */
+>> +    ret = stm32_omm_check_access(dev, dev->of_node);
+>> +    if (ret < 0 && ret != -EACCES)
+>> +        goto err_clk_release;
+> 
+> Should we call, here and below, pm_runtime_disable() in the error handling path, as done in the remove function?
 
-So, what seems need to be added is some flag to GPIO regmap configuration
-data structure and a code that is called after gpiochip_add_data() in
-gpio_regmap_register() to create a domain. This will solve the above issue
-and helps other drivers to get rid of potential duplication of
-devm_regmap_add_irq_chip_fwnode() calls.
+right, i will add it.
 
-Have you researched this path?
+> 
+>> +
+>> +    if (!ret && child_access_granted == OMM_CHILD_NB) {
+>> +        /* Ensure both OSPI instance are disabled before configuring OMM */
+>> +        ret = stm32_omm_disable_child(dev);
+>> +        if (ret)
+>> +            goto err_clk_release;
+>> +
+>> +        ret = stm32_omm_configure(dev);
+>> +        if (ret)
+>> +            goto err_clk_release;
+>> +    } else {
+>> +        dev_dbg(dev, "Octo Memory Manager resource's access not granted\n");
+>> +        /*
+>> +         * AMCR can't be set, so check if current value is coherent
+>> +         * with memory-map areas defined in DT
+>> +         */
+>> +        ret = stm32_omm_set_amcr(dev, false);
+>> +        if (ret)
+>> +            goto err_clk_release;
+>> +    }
+>> +
+>> +    /* for each child, if resource access is granted and status "okay", probe it */
+>> +    for (i = 0; i < omm->nb_child; i++) {
+>> +        if (!child_access[i] || !of_device_is_available(omm->child[i].node))
+>> +            continue;
+>> +
+>> +        vdev = of_platform_device_create(omm->child[i].node, NULL, NULL);
+>> +        if (!vdev) {
+>> +            dev_err(dev, "Failed to create Octo Memory Manager child\n");
+>> +            for (j = i; j > 0; --j) {
+>> +                if (omm->child[j].dev)
+>> +                    of_platform_device_destroy(omm->child[j].dev, NULL);
+>> +            }
+>> +
+>> +            ret = -EINVAL;
+>> +            goto err_clk_release;
+>> +        }
+>> +        omm->child[i].dev = &vdev->dev;
+>> +    }
+>> +
+>> +err_clk_release:
+>> +    for (i = 0; i < omm->nb_child; i++)
+>> +        clk_put(omm->child[i].clk);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static void stm32_omm_remove(struct platform_device *pdev)
+>> +{
+>> +    struct stm32_omm *omm = platform_get_drvdata(pdev);
+>> +    int i;
+>> +
+>> +    for (i = 0; i < omm->nb_child; i++)
+>> +        if (omm->child[i].dev)
+>> +            of_platform_device_destroy(omm->child[i].dev, NULL);
+>> +
+>> +    if (omm->cr & CR_MUXEN)
+>> +        stm32_omm_enable_child_clock(&pdev->dev, false);
+>> +
+>> +    pm_runtime_disable(&pdev->dev);
+> 
+> Should we have:
+>     for (i = 0; i < omm->nb_child; i++)
+>         clk_put(omm->child[i].clk);
+> as done in the error handling path of the probe?
 
--- 
-With Best Regards,
-Andy Shevchenko
+no need, as child's clock are always freed in stm32_omm_probe() in all cases.
 
+> 
+>> +}
+>> +
+>> +static const struct of_device_id stm32_omm_of_match[] = {
+>> +    { .compatible = "st,stm32mp25-omm", },
+>> +    {},
+> 
+> Nitpick: Unneeded , after a terminator.
 
+ok
+
+> 
+>> +};
+>> +MODULE_DEVICE_TABLE(of, stm32_omm_of_match);
+> 
+> ...
+> 
+> CJ
+> 
+> 
+> 
 
