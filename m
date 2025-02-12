@@ -1,139 +1,151 @@
-Return-Path: <linux-kernel+bounces-511800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B16A32FDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:36:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E03A32FDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A721C3A9B9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:36:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8E2B188AC11
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810451FF614;
-	Wed, 12 Feb 2025 19:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97771FF7AC;
+	Wed, 12 Feb 2025 19:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlbpXgJP"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCRsPeDi"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373E41F8BCA;
-	Wed, 12 Feb 2025 19:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ED61FECA2;
+	Wed, 12 Feb 2025 19:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739388985; cv=none; b=XsvqC96B4+O5i9S/9UovXYB/urkxyHpnvb5+Hhb2nQMPQvZyL6hayvfSFjK0cIOlpXo/n9TEeyhWQ0fMEKV2y+sHBZjjAS0Ff3/hFmFAiXtIZf8vFm21VujIzoZjGHqmJYRtvz4casKEGXr9BWuQp9rX9v2cif9BrIDIEFhdApE=
+	t=1739389000; cv=none; b=VtwkvdNjYsxanVscSPxU3ApmpQB4xCCZ+Es+79cQdzpGWgmlgiFWfb4fmU5pfxyPIQBxuJusfFffhshuTicWMxKnh46isQ8LR0oPWqFjycatLvWosALRvALeTybKTJJ0PEbTdax0UkKThSLOUa2RMaIdZzwOyohAuNWF6uEKALY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739388985; c=relaxed/simple;
-	bh=QO4/KNc9x4dzK3QBi705JZGrxHHJJZS+sDqwNV41osA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lVJMpmqEHMR8Fe0T+bDLb/b2vRqykxj6iL7e+OOwuUw+9iONj2NOdPsqioHKjM5zMRtwI7u9TIRMbxo08is9tcM+bAselakFLjH4yYtBDbpnvOqvQPGGRH6+/HALOwsYJpifg4Ahue6Z3uZJv7qMNhoAUIIiSsB+HvRG0JEY0lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlbpXgJP; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1739389000; c=relaxed/simple;
+	bh=//U/YEf4GTn80X/Yqah8NCCGVUUA/kgq9Vwzb7fid1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tLpkGR6nfiwpfllwcg+QG40gyHyGeCudUwD1fIqvUaO93QjqnJH3B7bYd5gLIA6vGOFIf/rLgLYt3246/Au/uKsMJDRVEFIAAn+V2Z73HS4Ve+K/ta5XAeCp5uvF5gFh5424vVrELVoIM1WCF5655coT73GAErJ4jiBLS/retvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCRsPeDi; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7c07e8b9bso28235866b.1;
-        Wed, 12 Feb 2025 11:36:23 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7d583d2afso223171666b.0;
+        Wed, 12 Feb 2025 11:36:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739388982; x=1739993782; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nj8WHZGsoOuauuYxbxbB7oKPr0MKW37ni43BF0NAcDg=;
-        b=MlbpXgJPjTDxVQl+8o1+S4FQLUDymcFGF/idWH1AHcpSpW22L1t6WRmY7kjnLYveMA
-         PTTRj3ao6M6hHJ/sQPN3S9ZJu49pJOq/YbOZ//KpIs89O2NdYzWoMU3DnbMjSZSwUHXT
-         R/wiEKuidHvtIISI+eyfS/BhS4aXoHq+S5kmDvkYBMFjhf7V2cxfRnX9571fyX56LJrD
-         EhnRC0TgblsMqPA/S7sOnM19JuGK/DreIDbcrggjOVCoWvzfvJqFIsULOZRn7zfdZWjN
-         1OiY65D9X6YloEXhb40WUGVs9qb/KKxr2LFF2G8/HK5L6S74OHPiC5n+6L00LC9qfYUs
-         pPdg==
+        d=gmail.com; s=20230601; t=1739388997; x=1739993797; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xrkhdUFQwi4/lCMpN9Y5pmHU3syxsdq4GG+NHqwz2EU=;
+        b=fCRsPeDidHSXbqfT9QA+RcXH+KwqJAso69utADADSTp9QNzyvASU+rdazj/J3j6uEb
+         E0xpDT1nWwpmgeyhmT/UPDQpnQRVS83/ydc7Pua5qspkKBXkR1bbInGupJrnBe6KMw8h
+         NPCnx1RLu3ygXm8ZggKAIFTeqT/LE+dmwtmdXrNEkMhZB+pZaoWimGLX5jPsQFO340Ku
+         oEtx8niqK+xfyV5BXldslLRKZkiLYJVIp/ec7hEBEskRhTkHMR74uUbowGiPkpqThjMU
+         oyGqDFrl6Ha9fHnkFV30jdDlcbtktE4ayhWG5qh5CXx/GWBAql/9bhswrTsuTOiUI0Az
+         FKpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739388982; x=1739993782;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nj8WHZGsoOuauuYxbxbB7oKPr0MKW37ni43BF0NAcDg=;
-        b=DmEnsX4ZEXEjQoFK7QyGEFydtngaxKFWcQuqNzhwvb9qUgxqnJlnUtmk1AwD+zC/zM
-         wwNiZcovKfDdu7iJDzLoKRFyEYh9ZOR+bb8hy7RLMT9DLccHHJTfWKBWdjKJEB3Edmkc
-         bmxgmCsInVNGgaxjyoLHHV2RqvbaK9+9LC+tefJ4EBig0sgWfn7NiSkwtDXs9oozwU9y
-         AOXyfm/aBLIRLzD3jdc2uAu5nWY0bXkOqYrHu4C6NS9EQzsYEWpporfsgOBvEIK34Eda
-         qrZadVDcNGP8S+h7G/4lX2aW6irH03ElyuZ4dOXdt/HUMrJtgTH1ce6jz/h6pOLGL3nX
-         wNqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUq0Ma7JQHlk9S3lF9IySoQxZWnEVeMt368hQxvuLcy4cgH7v1pwgvYPIyGNHHRi0xcXDQrxtO1zpw+mo=@vger.kernel.org, AJvYcCWfhMY3KNg1SYndXeWcWld1t0XTWXt9mAeTx80+8OowbdKFENci8coqaHWl/zRMFvsPHPlrF64tEBzwZMZV@vger.kernel.org, AJvYcCXwrf/HdyTFq7W0v/rU5/oFn1PfRvIUkPIKN7uxCA2gZNHy2r11AXNRN2uvB+KSH6LFCWTLkz6+jDis@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmEDPi44muMUy45cBn+mhK+182NPR8i203588oIxQ6QWNCX0V2
-	pumQ4Hkx3GrnlCILzwDFoJLdk02SR4n3umIfvOZov6PDXB+7epku/h7jq6U2
-X-Gm-Gg: ASbGncvNxwdXITrfPKJe+zi6AFCTWwmzjiCVUydOb7uc24XiE7y+9xtwv/l9GQ4anat
-	rTPwM2U7V0OzYxB8bIayihx0X0GmMiANc6cCa/TODn87pwfi7nAjsQIiHwgiJF/PAZIXZm3J0eJ
-	T6QrkZXs5ll8pfSkdyrl/cIaxzssLwoWTqWP0hQ/zF7zu+64pnVJzY1rukWWeRiijK/VEHIj/4e
-	5YsnKhI/fC+wy6UBoptysEZvQFNG1so5XTxLUxXNAuo/oX58vSAhHYjUpfGIa3CPiw0+Yb367PX
-	xvVL5h8d64ixU+hsHTBn2bBeNRpLcqkFlQ+mj4i364nl
-X-Google-Smtp-Source: AGHT+IGL83Kis97/b459m6UtdYpnAuiWRMSSg5OjvrrLppYn0/cJ+CJ1qwhXz6yKmy+MT4z9GaeW5g==
-X-Received: by 2002:a17:907:c1e:b0:ab7:9b86:598d with SMTP id a640c23a62f3a-ab7f33c1e0amr401910866b.17.1739388982053;
-        Wed, 12 Feb 2025 11:36:22 -0800 (PST)
-Received: from [192.168.1.130] ([82.79.237.175])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab772f49361sm1319997166b.33.2025.02.12.11.36.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 11:36:21 -0800 (PST)
-Message-ID: <e45411df-1b8b-4f21-878d-d52e1112e62d@gmail.com>
-Date: Wed, 12 Feb 2025 21:36:19 +0200
+        d=1e100.net; s=20230601; t=1739388997; x=1739993797;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xrkhdUFQwi4/lCMpN9Y5pmHU3syxsdq4GG+NHqwz2EU=;
+        b=lojY54psPx5zg2CWrpJxZxLVdZQq2VDAtx6n3j5lnYctPh22jx+7ua2UWvVe7DsoXb
+         vbSkJO+D8VgViokKFDTObL+L1TFRiHMaxSSyZnZrN2PlHrJjUk9iKXhj+Ly+XKrx3t+Z
+         xpTt3cZVXptridhTtI5TKInUTB6oq47+HjkD0+4WZiIjVlxg0qVUOTeRuCZkYiu+KR82
+         vU8iNK/VL/ECRNZKSgUCFS/1fmkQWK3xO47enJ1npJHySIIvdESTAuhyxhJfDLVMOckq
+         gJzGJX2jb9I4cyPxLgyxfyZeykQg646TnVksBRnCjzWOpH31B+2rVOCB8YFBpZzVILr6
+         ncVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAjf7CGE7GzyAIXTWIE9mvfU40iGYJ33sCXNVHhw4mU1wVIaWw+OinMLnBbm1unp8vulSJdY+11j6qe7MW@vger.kernel.org, AJvYcCVZ01jKD4d1npidL38+9+jetTLWoTQvXKUp3qWDBu50q2tlZJaYsG2JFz9IdcK1HMeepGDHXk6C1Lq8@vger.kernel.org, AJvYcCWi++cTvAtFABzNX1fWyViEN8QyO8MbW04yGJ9wwIZU3N9y0jDNsPHOFWy64kX1AW8pMG13xgiR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD/2XgYg908mJE7STdTDK5BI5NxvQXS1kLmdKT5wzrTdIuvTwP
+	VOWtZ6w+TwaavvmpiLKvvUwUY4b8FjBxh4lK2aJrRaVeXCg5tSBN
+X-Gm-Gg: ASbGncvbDol0OSjfzYguG8C/TUJPugWhguHjzyQlucEuIsFeRVZlD53yh6ZBWQLjFiv
+	YZEWsBlmKbIxr2CoXwZ8A5VARXVXkFuv10pBjzCVoRF3bd33eD7F3XdIQFXVevy674WXjrPJYML
+	jIqKHEDDXngQcqh9b6qDvK6Vvad7gWCOAygxbWidQqreIDGUh3vqv3hEGCUZI95lrjxMfSNjyuf
+	EvsQpG7ASHVyYRraiO88MZdVZD1rpP/zNIqsZihTGn03pVVmmfEuGwJamvmIH300ro5A/JejxWb
+	B4ZDeP5wXlo9
+X-Google-Smtp-Source: AGHT+IGhGb+HhZEKckwfH7aJO5Cb7saEPI0QiOmLhZBlsGU0FWR3LegRggw8s/DtIXNo0IZ0iXpWPg==
+X-Received: by 2002:a17:907:7f8c:b0:ab3:a18e:c8b6 with SMTP id a640c23a62f3a-aba5145d897mr12342666b.10.1739388996714;
+        Wed, 12 Feb 2025 11:36:36 -0800 (PST)
+Received: from debian ([2a00:79c0:659:fd00:45fb:7d1a:5e4d:9727])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7b9bfd2c4sm731681366b.43.2025.02.12.11.36.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 11:36:36 -0800 (PST)
+Date: Wed, 12 Feb 2025 20:36:32 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: dimitri.fedrau@liebherr.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4 2/3] net: phy: Add helper for getting tx
+ amplitude gain
+Message-ID: <20250212193632.GC4383@debian>
+References: <20250211-dp83822-tx-swing-v4-0-1e8ebd71ad54@liebherr.com>
+ <20250211-dp83822-tx-swing-v4-2-1e8ebd71ad54@liebherr.com>
+ <84b5b401-e48b-4328-84b2-f795c1404630@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] ASoC: dt-bindings: support imx95's CM7 core
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>, Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Marco Felsch <m.felsch@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, Pengutronix Kernel Team
- <kernel@pengutronix.de>, linux-arm-kernel@lists.infradead.org
-References: <20250211225808.3050-1-laurentiumihalcea111@gmail.com>
- <20250211225808.3050-2-laurentiumihalcea111@gmail.com>
- <20250212093610.x4ixrackmn3u2xrf@pengutronix.de>
- <CAEnQRZBeQdnC+K92+Udb5awTmom10YHHNt7Ld-pYK4A1i8sr3Q@mail.gmail.com>
- <d66996eb-f49b-448b-9743-d19a3c3eba52@sirena.org.uk>
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <d66996eb-f49b-448b-9743-d19a3c3eba52@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84b5b401-e48b-4328-84b2-f795c1404630@lunn.ch>
 
+Am Wed, Feb 12, 2025 at 02:15:08PM +0100 schrieb Andrew Lunn:
+> > @@ -3133,12 +3126,12 @@ static int phy_get_int_delay_property(struct device *dev, const char *name)
+> >  s32 phy_get_internal_delay(struct phy_device *phydev, struct device *dev,
+> >  			   const int *delay_values, int size, bool is_rx)
+> >  {
+> > -	s32 delay;
+> > -	int i;
+> > +	u32 delay;
+> > +	int i, ret;
+> 
+> Networking uses reverse christmass tree. So you need to sort these two
+> longest first.
+>
+Will fix it.
 
+> > +int phy_get_tx_amplitude_gain(struct phy_device *phydev, struct device *dev,
+> > +			      enum ethtool_link_mode_bit_indices linkmode,
+> > +			      u32 *val)
+> 
+> Since this is an exported symbol, it would be nice to have some
+> kerneldoc for it.
+>
+Yes.
 
-On 2/12/2025 2:38 PM, Mark Brown wrote:
-> On Wed, Feb 12, 2025 at 12:11:49PM +0200, Daniel Baluta wrote:
->> On Wed, Feb 12, 2025 at 11:38 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
->>> On 25-02-11, Laurentiu Mihalcea wrote:
->>>> +    const: fsl,imx95-cm7-sof
->>> Albeit Krzysztof already add his Reviewed-by, can I ask why we need to
->>> add the -sof suffix instead of -audio or so? SOF is a software project
->>> but you can clearly run different software on the audio-copro as well.
->> Sure you can run a different software project on the audio DSP but
->> you will need a way to distinguish between the different projects.
->> There might be different mailbox, memory configurations. So you will  need
->> to invent another suffix specific to the new project.
->> We can make  const: fsl,imx95-cm7-audio as the one used with SOF
->> and think about a different name later for when another project will
->> want to use the DSP.
-> I think the point here was that the DT should stay the same even if the
-> DSP firwmare changes, just as how changing the main OS shouldn't affect
-> the DT.
+> > +{
+> > +	switch (linkmode) {
+> > +	case ETHTOOL_LINK_MODE_100baseT_Full_BIT:
+> > +		return phy_get_u32_property(dev,
+> > +					    "tx-amplitude-100base-tx-percent",
+> > +					    val);
+> 
+> So no handling of the default value here. This would be the logical
+> place to have the 100 if the value is not in device tree.
+> 
+I will get rid of the default value.
 
-It's rather unfortunate but based on the experience from the 8 series
-(imx8qm, imx8qxp, imx8mp), the programming model can differ quite
-a bit (e.g: remoteproc vs SOF) even if the core is the same (i.e: DSP core).
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +}
+> > +EXPORT_SYMBOL(phy_get_tx_amplitude_gain);
+> 
+> I would prefer EXPORT_SYMBOL_GPL, but up to you.
+>
+Ok.
 
-The different programming models also required different DT configurations
-(e.g: dif. mboxes as Daniel mentioned, some extra properties (i.e: reg-names), etc...)
-
-The "-sof" suffix was chosen here instead of the more generic "-audio" (or whatever else
-alternative) because the DT configuration is specific to SOF's programming model. Other
-audio applications running on the same core may have dif. configurations (e.g: use
-DTCM/ITCM for memory instead of DDR, dif. mbox count, etc...). I suppose this kind of thing
-is bound to happen to some degree since the DT node doesn't just describe the CM7 core
-(but, rather, it also encompasses information on the memory, mboxes, etc. used)
-but perhaps I'm wrong?
-
+Best regards,
+Dimitri Fedrau
 
