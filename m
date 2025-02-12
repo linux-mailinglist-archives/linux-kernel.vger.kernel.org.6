@@ -1,95 +1,95 @@
-Return-Path: <linux-kernel+bounces-512022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46874A332CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:42:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BA4A332D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:45:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C253A4CF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0D1F1889BF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C83F20459F;
-	Wed, 12 Feb 2025 22:42:50 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7BC206F21;
+	Wed, 12 Feb 2025 22:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="exhtteN2"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93F4202C38;
-	Wed, 12 Feb 2025 22:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62678202F7E;
+	Wed, 12 Feb 2025 22:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739400169; cv=none; b=Kl6ZsNhcY72y1Nk8me5WGjWaGkVlT6+7S/I6lhNYHB6fh+mP2nmasX/mK7vsD+cpGbbUQ3ZFZDOPy6uFR5ESqY+A9NGXYyHWDiodk9U5jzY/P3ZcRQY2PSnLXEpX2AulL6nCwkulfCKIDa7GeAZniRCpepClOdruiB+xdJDB9tQ=
+	t=1739400294; cv=none; b=BE/21OY4zSzbEUKjL/mm/46XJW0cSqxQVMupb+Sf98Mlw1VUvsDSCkDafCA70Ydgk5S5QgvQN7rMc2Kso4Y2CvbUDCjt07jRwDCn99EZYfOdF1h7NrnmYG9GdR630svR9zB2DR29512xXqKhMkN77vjyhdMNBTWihUllD0J9n4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739400169; c=relaxed/simple;
-	bh=UJRNSg0xOknt2QjDapDb+m51hZY83jePbaMI05sIB00=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=qSvKFvUR8oZGG026JyyBJ7uLGSfeMvR4HQDnzk1fZKNeV3Mf2FxzjpoZFGo6GkVDVxwXNVTYtwTSmvBDwMeIEMoet7eCJzA+CNowEBiA4yWhmsLhEBsvF0jaHGCh1BZpy7jfWocYF9OaLWo1BJ/A8b9hkn7rY/ryBeWA+yjrOq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id A4D672E612C;
-	Wed, 12 Feb 2025 23:42:39 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id TsfXs2ZccM_K; Wed, 12 Feb 2025 23:42:39 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id EBC562E6143;
-	Wed, 12 Feb 2025 23:42:38 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id X0VATKV9FldJ; Wed, 12 Feb 2025 23:42:38 +0100 (CET)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id D19C42E612C;
-	Wed, 12 Feb 2025 23:42:38 +0100 (CET)
-Date: Wed, 12 Feb 2025 23:42:38 +0100 (CET)
-From: Richard Weinberger <richard@nod.at>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Message-ID: <2038149484.28376811.1739400158648.JavaMail.zimbra@nod.at>
-In-Reply-To: <20250213092427.4f149099@canb.auug.org.au>
-References: <20250213092427.4f149099@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commits in the uml-fixes
- tree
+	s=arc-20240116; t=1739400294; c=relaxed/simple;
+	bh=z9K2SNQtTIdcySZ/ULm/lkM2yh+FA5LHsXlyB61Kgnk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ty3IGJy/d7GTA5QNbz3qGesZeCCgCYUeg3IHWCqcbhYbmxrMi/UImSLm7RMAO2Vm5qMn36hksdmKNyNOt1heL1SjsyNWG0kVgkfHw5ABIoZAaA9xeX7JGOkgxwA54yvARK/E0UjyHOYnZjnreo8oaxqLnx9UoWe0pjjpk9ZaWF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=exhtteN2; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739400289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E/cxKPCvN17tUSvXSTT4NfZgXnCFHT0D3OhifJh6Y5M=;
+	b=exhtteN2rEMT63dC1GLSP/ATefmHrQFZ3zqoLIXAASHfg9XSlwjgpP6gY+xMpGK1s3jX1b
+	CEz1NViWMzjWTIJbke8phdr1clZ0ZISnSVuEdXdPb+TX6v2EZayYOj2A0Iz2wTmG5jzHGc
+	1cs4HxZ5jC0PwNIKI1xXEFRIrqBFToQ=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Don Brace <don.brace@microchip.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-hardening@vger.kernel.org,
+	storagedev@microchip.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: hpsa: Replace deprecated strncpy() with strscpy_pad()
+Date: Wed, 12 Feb 2025 23:43:53 +0100
+Message-ID: <20250212224352.86583-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF135 (Linux)/8.8.12_GA_3809)
-Thread-Topic: linux-next: Signed-off-by missing for commits in the uml-fixes tree
-Thread-Index: huwBEsz2g38tcL/ysH97Lyk86Phb5w==
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Stephen Rothwell" <sfr@canb.auug.org.au>
-> Hi all,
->=20
-> Commits
->=20
->  fb4cc5f19d36 ("um: convert irq_lock to raw spinlock")
->  4e9b8ce9f58f ("um: virtio_uml: use raw spinlock")
->  cafe54dc8e56 ("um: virt-pci: don't use kmalloc()")
->  acc4521e845b ("um: fix execve stub execution on old host OSs")
->  02fef369f75a ("um: properly align signal stack on x86_64")
->  cfaa0ff6e035 ("um: avoid copying FP state from init_task")
->  05c322fb75a4 ("um: add back support for FXSAVE registers")
->=20
-> are missing a Signed-off-by from their committer.
->=20
-> They appear to have all been rebased but not had SOB's for the new
-> commiter added.
+strncpy() is deprecated for NUL-terminated destination buffers [1].
 
-That was fast. :D
+Replace memset() and strncpy() with strscpy_pad() to copy the version
+string and fill the remaining bytes in the destination buffer with NUL
+bytes. This avoids zeroing the memory before copying the string.
 
-The branch was prepared by Johannes before the merge window and now
-I have rebased it to v6.14-rc2.
-So, I'll add my SOB too, ok?
+Compile-tested only.
 
-Thanks,
-//richard
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/scsi/hpsa.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 84d8de07b7ae..1334886b68d0 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -7238,8 +7238,7 @@ static int hpsa_controller_hard_reset(struct pci_dev *pdev,
+ 
+ static void init_driver_version(char *driver_version, int len)
+ {
+-	memset(driver_version, 0, len);
+-	strncpy(driver_version, HPSA " " HPSA_DRIVER_VERSION, len - 1);
++	strscpy_pad(driver_version, HPSA " " HPSA_DRIVER_VERSION, len - 1);
+ }
+ 
+ static int write_driver_ver_to_cfgtable(struct CfgTable __iomem *cfgtable)
+-- 
+2.48.1
+
 
