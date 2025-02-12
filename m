@@ -1,143 +1,221 @@
-Return-Path: <linux-kernel+bounces-510889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A216A32342
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:09:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A2CA32347
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4F618823CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:09:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856F9188976D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C002063C7;
-	Wed, 12 Feb 2025 10:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A8D207E04;
+	Wed, 12 Feb 2025 10:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oMm7YIZo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aDjCctPY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4607E2066C5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D64207A3B;
+	Wed, 12 Feb 2025 10:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739354932; cv=none; b=d2P5hU9GFOmuJeQK6cw+xJNUBD+OsNlSPNJAwt+JQnPssDcg3FeDFdFyLhelYhjopiFL/Bt8i/V+TPzgqYFbW6kLKXFjr1dcCurKVGU4/ct831wWUob7zlt4MvsfVmv9xeb/YsVXeWq8zFe6J0ROht8qhqggUsC0PNa+0WiR3s4=
+	t=1739355041; cv=none; b=pfewcaupKZdTKcdh3acbJ7q0WNaa/KXaLwouH7nURPnp4CBGXiY4wYndfepnGynk0BrIwXuUXr9GBcJCAwhuj94BbHjMiVXw3lCfYbFS6pZySmslTOYFiWzBP0VZsF0XNVqRI7D+UMGQHomhVDAhQVZaSB4tYcqciSds5Rb9gtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739354932; c=relaxed/simple;
-	bh=TCwfIE/pUasluVSwZTdHWUH2y9kGY+p5IU5lrrQ0aXU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hd0fhGcFqNn8oitgeeoAWQreV3sRsjWtGlSaoIjIZmQqTEW9Td2doAXycL68iiAxm/niYqHSSh58WUBxQ5seLcKTwaCjWZL1WYi82cejxZHSq0VGc1ZC05PhjCFe+f3lfm5rsVhWk/ii/tDVXxlS/tAlLvFC6t746h46Sl5L6pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oMm7YIZo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C3I7rx010187
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:08:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=B21EnyUYOIhZzIf5xVM2mRo1SahizWAydB+
-	PPvQassE=; b=oMm7YIZobwLDYtUoNSqzPIWZNhkDJkCirtGEzxbCSz8WKm4YUUU
-	rzYtbqDN9Zs+O6DnQCx8tK/28YOGM7xA4m2o72pbddvppru7lX/eYRFTxZ/JYfqo
-	Tv04T9FJutBmZeNFZtRZgcQm29ZxBzd92e8HNqKgZITmT/5bY9DdM/qGZTRh5oU3
-	ZX/T5eLDVZ+Z5sanm8QXPVTr41dp1tdLpcB9T2Y2RSAlNz/DoxdAWnHTGVGW1F7g
-	ScD0tVnUeiKctd+lHdmid3tP/M5C5jRZJ89W2fKzpy/MryMsd6Wt9PDqIoFB6iLI
-	g/fm5q1BKZNd7uao4ITlGuR0IC9uJnGpynw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qcs5fert-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:08:48 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-21f49f0bd8fso94750215ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:08:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739354927; x=1739959727;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B21EnyUYOIhZzIf5xVM2mRo1SahizWAydB+PPvQassE=;
-        b=Z1+Ev0VaxYxXhKUk5s+oTKr8L6DlyMX8x0LdeYP4/U9FtbDqaNQWtHlQXQXdJVyjr7
-         A46bNscRqmYSEK61JjHnv9FyR+g5AszIt+r5r5TFxyiMMlcuSzvOm0k/vxNggCb/QVVx
-         Cb9s6yq1x0eGdaOFb7H3aEMDGeIq6HVDPOI35y92MdCwo+oLkDKP1WbNKB8SXOOD6Wuk
-         jkEMLcZbmerTHW/IIIy3Kuiq7vDNw1CQjZOf1MgF5D6DY3o+3ZTOOc4QzewxK6t7r0Lw
-         OYF6lgoDMv1HIyo4AynZOy2q4VM5l3loe+ikz4Rrro/F1vcpeuYfEy/6aS753HO4P1Tv
-         6ptg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVTiz2beMHDz6ZC3AWk0qP0armIE5KWFOFHSBnNojfMxHBpxP30Hi6Y2jiun0ArepuPsnYiMHiCSl9CcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEIUYgS33jUzECywt9Kll8tWbjjGu+v2iijq5eKNPSbB3+woPM
-	0uTQpyXNcqc0lwLG+bPWYq0rIWACcta+UXc6+XPvTh9w0TdZGxO90BnvhgUNq7sfzIXSt7A4ulK
-	LEunldtU9vvGi44aFaO9DO8fCiB5IYbGHU1eaVZV7gts/WJGPWqbDOMKWVGM1fY8=
-X-Gm-Gg: ASbGnctOdTD8P1cc1Z72p1Nj4gP4Z0nUhdU2DSVeE60qJWWWJZ+ihSdIQQe3fcX4mgX
-	tkOwZlWl4/kY70ArZPI+2yPR5z7wjsH+oux4ZDRvqg3HxLpDdzP71Pci35vNFSnW5oZgjFCN56n
-	AZ2QaVdtXRyuNc0t1pyGiJOmSesywA9eihKrRRVX0n6zizDdCpSnafVP0ISjNjQHSOutqgz/jKv
-	eQamHThxZy3Xey/e6WOSMBqnBLOCQY6OaVA1u8dGMcWrC/OgUAS6H2KZul4kONziT1/4XHontfm
-	UEImHnKGA1xb8kj8d1RGWjhBtlJ16g3h1Q==
-X-Received: by 2002:a17:903:32c8:b0:21f:5638:2d8 with SMTP id d9443c01a7336-220bbdd906dmr49597975ad.53.1739354927473;
-        Wed, 12 Feb 2025 02:08:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE5QcjisXpRuziURHZeTlGA14PANI0hISRmK+4kzlfLZqi/cdkjxjyPK2eRmbaTegnFEn+qyw==
-X-Received: by 2002:a17:903:32c8:b0:21f:5638:2d8 with SMTP id d9443c01a7336-220bbdd906dmr49597525ad.53.1739354927105;
-        Wed, 12 Feb 2025 02:08:47 -0800 (PST)
-Received: from hu-prashk-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f365517desm109635795ad.86.2025.02.12.02.08.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 02:08:46 -0800 (PST)
-From: Prashanth K <prashanth.k@oss.qualcomm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ferry Toth <ftoth@exalondelft.nl>,
-        Ricardo B Marliere <ricardo@marliere.net>, Kees Cook <kees@kernel.org>
-Cc: linux-usb@vger.kernel.org, Elson Roy Serrao <quic_eserrao@quicinc.com>,
-        linux-kernel@vger.kernel.org,
-        Prashanth K <prashanth.k@oss.qualcomm.com>, stable@vger.kernel.org
-Subject: [PATCH] usb: gadget: u_ether: Set is_suspend flag if remote wakeup fails
-Date: Wed, 12 Feb 2025 15:38:40 +0530
-Message-Id: <20250212100840.3812153-1-prashanth.k@oss.qualcomm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739355041; c=relaxed/simple;
+	bh=zoGojL469+vPw8WceKniyvAXGWRSjVx/tx9MRSSHiCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jdqpSe1ulKg6pS7xHiDD4pYsVL+o8qFU/W5GnGJCtDsV4JsITqEr45lOSpcfYwIMffqunq7UvRN2aKhN1rOs1/45h8Wp2U8DmJ8JpWN4OOjNRm3t6UksCzEo8goTNeDtoffz4jdj+PDNBLNiDrXcs7CuWwDVoRQyq2R+VwbD2RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aDjCctPY; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739355041; x=1770891041;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zoGojL469+vPw8WceKniyvAXGWRSjVx/tx9MRSSHiCM=;
+  b=aDjCctPYIn6Lq5ZsQtCJO9et+PeKx9n/7mgJJ6hDpbFt1KEQDx4rp1pn
+   YQVrSGnodHu7g+1g2hqIlYiDpOhUvrD8ipzCUKdJY+Y/eqBjidDfBd+3l
+   jhQ/Y2T3zGIk0DD1Ry8TqcnMtNWNsoGuTiQuNY4h4MiOofcN6CHUH232X
+   7MRxr7TpaIkS1i1It1pEUbubQDySGbtA2ISvPjlE2lu+ojIbLLLlwcPhu
+   oczgImf5iqfYoyJnwuHeko65ARY6CciquLNE5nkRAluMNNBMDWSe1K3Yu
+   Hrth0/OPkf/a7WMJyeALVCbLGFCuyk2uFMvnyx4fJuCCgiZ0DSbUn69D7
+   A==;
+X-CSE-ConnectionGUID: G2IktijfRKioGjaJAAwmfA==
+X-CSE-MsgGUID: zhedCOCJRfi/972W6oY1nQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="40124620"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="40124620"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:10:40 -0800
+X-CSE-ConnectionGUID: aUcBvVW8S/uC+cxzptPycg==
+X-CSE-MsgGUID: yj2tFXxSTxu+2OzHrrGwEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="112728054"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 12 Feb 2025 02:10:37 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ti9hS-0015TX-0v;
+	Wed, 12 Feb 2025 10:10:34 +0000
+Date: Wed, 12 Feb 2025 18:09:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Arcari <darcari@redhat.com>, linux-pm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, David Arcari <darcari@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Len Brown <lenb@kernel.org>, Artem Bityutskiy <dedekind1@gmail.com>,
+	Prarit Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] intel_idle: introduce 'no_native' module parameter
+Message-ID: <202502121732.P7lZkbhm-lkp@intel.com>
+References: <20250211132741.99944-1-darcari@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: H1agqiKWQN5VOLDnF-WTHAo61ABkAXSi
-X-Proofpoint-GUID: H1agqiKWQN5VOLDnF-WTHAo61ABkAXSi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_03,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- mlxlogscore=781 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
- adultscore=0 clxscore=1015 mlxscore=0 priorityscore=1501 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502120077
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211132741.99944-1-darcari@redhat.com>
 
-Currently while UDC suspends, u_ether attempts to remote wakeup
-the host if there are any pending transfers. However, if remote
-wakeup fails, the UDC remains suspended but the is_suspend flag
-is not set. And since is_suspend flag isn't set, the subsequent
-eth_start_xmit() would queue USB requests to suspended UDC.
+Hi David,
 
-To fix this, bail out from gether_suspend() only if remote wakeup
-operation is successful.
+kernel test robot noticed the following build errors:
 
-Cc: stable@vger.kernel.org
-Fixes: 0a1af6dfa077 ("usb: gadget: f_ecm: Add suspend/resume and remote wakeup support")
-Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
----
- drivers/usb/gadget/function/u_ether.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[auto build test ERROR on acpi/next]
+[also build test ERROR on amd-pstate/linux-next amd-pstate/bleeding-edge linus/master v6.14-rc2 next-20250212]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-index 09e2838917e2..f58590bf5e02 100644
---- a/drivers/usb/gadget/function/u_ether.c
-+++ b/drivers/usb/gadget/function/u_ether.c
-@@ -1052,8 +1052,8 @@ void gether_suspend(struct gether *link)
- 		 * There is a transfer in progress. So we trigger a remote
- 		 * wakeup to inform the host.
- 		 */
--		ether_wakeup_host(dev->port_usb);
--		return;
-+		if (!ether_wakeup_host(dev->port_usb))
-+			return;
- 	}
- 	spin_lock_irqsave(&dev->lock, flags);
- 	link->is_suspend = true;
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Arcari/intel_idle-introduce-no_native-module-parameter/20250211-213031
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git next
+patch link:    https://lore.kernel.org/r/20250211132741.99944-1-darcari%40redhat.com
+patch subject: [PATCH v3] intel_idle: introduce 'no_native' module parameter
+config: i386-buildonly-randconfig-006-20250212 (https://download.01.org/0day-ci/archive/20250212/202502121732.P7lZkbhm-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502121732.P7lZkbhm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502121732.P7lZkbhm-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/idle/intel_idle.c: In function 'intel_idle_init':
+>> drivers/idle/intel_idle.c:2289:27: error: 'no_acpi' undeclared (first use in this function); did you mean 'no_action'?
+    2289 |         if (no_native && !no_acpi) {
+         |                           ^~~~~~~
+         |                           no_action
+   drivers/idle/intel_idle.c:2289:27: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +2289 drivers/idle/intel_idle.c
+
+  2248	
+  2249	static int __init intel_idle_init(void)
+  2250	{
+  2251		const struct x86_cpu_id *id;
+  2252		unsigned int eax, ebx, ecx;
+  2253		int retval;
+  2254	
+  2255		/* Do not load intel_idle at all for now if idle= is passed */
+  2256		if (boot_option_idle_override != IDLE_NO_OVERRIDE)
+  2257			return -ENODEV;
+  2258	
+  2259		if (max_cstate == 0) {
+  2260			pr_debug("disabled\n");
+  2261			return -EPERM;
+  2262		}
+  2263	
+  2264		id = x86_match_cpu(intel_idle_ids);
+  2265		if (id) {
+  2266			if (!boot_cpu_has(X86_FEATURE_MWAIT)) {
+  2267				pr_debug("Please enable MWAIT in BIOS SETUP\n");
+  2268				return -ENODEV;
+  2269			}
+  2270		} else {
+  2271			id = x86_match_cpu(intel_mwait_ids);
+  2272			if (!id)
+  2273				return -ENODEV;
+  2274		}
+  2275	
+  2276		if (boot_cpu_data.cpuid_level < CPUID_MWAIT_LEAF)
+  2277			return -ENODEV;
+  2278	
+  2279		cpuid(CPUID_MWAIT_LEAF, &eax, &ebx, &ecx, &mwait_substates);
+  2280	
+  2281		if (!(ecx & CPUID5_ECX_EXTENSIONS_SUPPORTED) ||
+  2282		    !(ecx & CPUID5_ECX_INTERRUPT_BREAK) ||
+  2283		    !mwait_substates)
+  2284				return -ENODEV;
+  2285	
+  2286		pr_debug("MWAIT substates: 0x%x\n", mwait_substates);
+  2287	
+  2288		icpu = (const struct idle_cpu *)id->driver_data;
+> 2289		if (no_native && !no_acpi) {
+  2290			if (icpu) {
+  2291				pr_debug("ignoring native cpu idle states\n");
+  2292				icpu = NULL;
+  2293			}
+  2294		}
+  2295		if (icpu) {
+  2296			if (icpu->state_table)
+  2297				cpuidle_state_table = icpu->state_table;
+  2298			else if (!intel_idle_acpi_cst_extract())
+  2299				return -ENODEV;
+  2300	
+  2301			auto_demotion_disable_flags = icpu->auto_demotion_disable_flags;
+  2302			if (icpu->disable_promotion_to_c1e)
+  2303				c1e_promotion = C1E_PROMOTION_DISABLE;
+  2304			if (icpu->use_acpi || force_use_acpi)
+  2305				intel_idle_acpi_cst_extract();
+  2306		} else if (!intel_idle_acpi_cst_extract()) {
+  2307			return -ENODEV;
+  2308		}
+  2309	
+  2310		pr_debug("v" INTEL_IDLE_VERSION " model 0x%X\n",
+  2311			 boot_cpu_data.x86_model);
+  2312	
+  2313		intel_idle_cpuidle_devices = alloc_percpu(struct cpuidle_device);
+  2314		if (!intel_idle_cpuidle_devices)
+  2315			return -ENOMEM;
+  2316	
+  2317		intel_idle_cpuidle_driver_init(&intel_idle_driver);
+  2318	
+  2319		retval = cpuidle_register_driver(&intel_idle_driver);
+  2320		if (retval) {
+  2321			struct cpuidle_driver *drv = cpuidle_get_driver();
+  2322			printk(KERN_DEBUG pr_fmt("intel_idle yielding to %s\n"),
+  2323			       drv ? drv->name : "none");
+  2324			goto init_driver_fail;
+  2325		}
+  2326	
+  2327		retval = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "idle/intel:online",
+  2328					   intel_idle_cpu_online, NULL);
+  2329		if (retval < 0)
+  2330			goto hp_setup_fail;
+  2331	
+  2332		pr_debug("Local APIC timer is reliable in %s\n",
+  2333			 boot_cpu_has(X86_FEATURE_ARAT) ? "all C-states" : "C1");
+  2334	
+  2335		return 0;
+  2336	
+  2337	hp_setup_fail:
+  2338		intel_idle_cpuidle_devices_uninit();
+  2339		cpuidle_unregister_driver(&intel_idle_driver);
+  2340	init_driver_fail:
+  2341		free_percpu(intel_idle_cpuidle_devices);
+  2342		return retval;
+  2343	
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
