@@ -1,54 +1,78 @@
-Return-Path: <linux-kernel+bounces-511249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A013A32852
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:24:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B83A32854
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:24:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543411678DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:24:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AEB31679F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AAD20FAB6;
-	Wed, 12 Feb 2025 14:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CC220FAAC;
+	Wed, 12 Feb 2025 14:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rh37m2c7"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNpujEEW"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66C720FA96;
-	Wed, 12 Feb 2025 14:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DA720FA8F;
+	Wed, 12 Feb 2025 14:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739370268; cv=none; b=S6psJb8lplJ1jomU3qs38Oh6wDtuyiJ5+wLUu69Di4Aq+o0oI0XBhGkbglJLTabBApbnH0u2CDKUMYHcoahb/lE34NoM9h7fCoKtVOozCsQLVV0KRF8yuTkSZlCyFqLcZhxbrPUeI4pjqu3UHhvnReSOA9zv/U/TZPnK9v4ZamQ=
+	t=1739370278; cv=none; b=jm/wI3BN9HWgCvb7r+LpKYuPMZ/FgutgRdaMmA6xDA+5AVLsI7tEWE0DGsZOxguhyskVnVKPjnTzrEvfVjkYt1+rg4TD/DPmfkmpijXJXvZqlbdsZkGqk8dis6m98MjUGxzeBQGMIq388m0gBGatf49zrVxPvHHIK0gyye2yUEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739370268; c=relaxed/simple;
-	bh=vEXjeWfHt/GnjwPBKS9nSHww3TcZql79tqxxT7vOdlI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=mjJEXPrQpPHSW7OiFX0C2/uqUEpaBbli9Mt9YOsxRYyFmQ3oaLoknIT6kMPEFTU4aGUCskuRHbJfEkbnj3PQJehLEM5KTM25WKAp04YA4dXEcAKlK6HTwIPDikcvZK1GqjAEcsoVep0xlw6YQmgs7UXMtjdEvsl7Ih3mN3ZiG+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rh37m2c7; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1739370258; x=1739975058; i=markus.elfring@web.de;
-	bh=vEXjeWfHt/GnjwPBKS9nSHww3TcZql79tqxxT7vOdlI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=rh37m2c7NxOjQJViUuhWpXDfpvC+pVFFu1iGko/x4MlPK0ooBBMDF1B+oZJ4sW08
-	 CBXUp+pLv1DiaHWWLn9Tm+EUR/WdU1RuK8TzKNAmiHIOse+66AJx5Ev5mqPWEEs4R
-	 t14XBRBbc2X6+Jle4XCYbIvG8XphauRNXoJZVS7hz3ASG2eWTNgt0kbf2hKrk7MFa
-	 +mDnBadP+aobBcujbF14LTgSIvHxRNiBX/8hd/lRug09Fb3qfT1WVNvwukWa7fIZ/
-	 L8gxdibR3Fs3a3rLtZQsFtZ7wpACSCgpmwcNPOLOytN5TArLRJO73sar6kvHyua46
-	 xQZ7t11BmD8ApLhbUA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MTfon-1to0yt2den-00XvFD; Wed, 12
- Feb 2025 15:24:18 +0100
-Message-ID: <ac6c3389-6f97-4aad-a6cd-f4e1322e608e@web.de>
-Date: Wed, 12 Feb 2025 15:24:15 +0100
+	s=arc-20240116; t=1739370278; c=relaxed/simple;
+	bh=cR9X5BupKAbq9ymgmU6c27WeLJYXqmjnqMN62pjhDeU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pIQlcQbDJ+XtiRG+eT8lcEJAtmX35kkcxt84KvzuR+XyNu0JxWBfpxmNzjSSlLbFlI8UB5flVXT6kob7gOkhohawludI/ZUrmq9cZ1jL233faZapb0XRwsEHjw4Z1HnycJLwrck0FQ3rO3DJ85nv69lTIi7cdDuOAggD6h67I0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GNpujEEW; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21f5268cf50so77244065ad.1;
+        Wed, 12 Feb 2025 06:24:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739370276; x=1739975076; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7MJlkv5BW+hkpm26jUOV2x9Tmovy8tBNUXrBN32ipwM=;
+        b=GNpujEEWHPzpqWSJ6NNHwtT6UjMRbaH7FVH3frD3LZcLEXQJ/A7pErtSHlA2zzyT9P
+         4J+rMWo147Y14cSK4nsy8y54gTjXWKhe3KQw6ocFmcUkP74j95nJmAGU1K/KWKL7dYpn
+         nsbXA9kQM+1bibLcsyuf43o2GnXrPw+iEZExn2+6NI8v5OZVVc3z6Oo8V+AKQNR8VJlB
+         zFOls3SbDg3FsLVs/hzu1pl98vgAjWJDyrTGmhXTmchYi/LplOUtphMo+DO0ixPqF/iF
+         QT2WG3Tgzi+uIvgCZ/4Pv4YBAKkSasWNKtT0UUexmJNsFpcN349hg3Mast/iewX9amms
+         8qUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739370276; x=1739975076;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7MJlkv5BW+hkpm26jUOV2x9Tmovy8tBNUXrBN32ipwM=;
+        b=vk7HOso6UvlbKcj4x83ygLNlWqo+nE7y0nPGPiaQE0JghNgMgIZInI9ii6y3wZ+K+z
+         R5oCJox5nMA6UGEPvhNJ0nnGfgqURoyhnKiNUDaI/X2V/9c5yYdnUgFTsWSJ9HlNzK6q
+         wLiHs2GeTPen40AgoVutCCZCJ5PnEShKOIGtSzSVf3hDWw6Tlsz3NsyMWA3DEWJ7QDv3
+         GZaD2a2Z9514RDkoxYX5Lvdz2L/Pys9rFUMACYV5EE5p8cDizZ0du+wC+b5+YAmtMhNj
+         EzpXJwJcOFkNGciaRUu/KKCmHcWbOWfTgfhJX/4flJW0/h4493E6vEeuCsgY+i3HJ7WN
+         0AeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUi7JpLKLSqOs8zjXHENqe6pSpDSbvWYWK4XTJmV5CJPinvDK6yq9YVYExexfDQrshVhjG+xglEpEGEulQ=@vger.kernel.org, AJvYcCVRNRC8f+KLoLpOZWMGdMCL7ze0QRnyTZyj1WJWTQsvAtqH3uMu8ojPqOWyEdKsWFtK6jRuA1Jm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0sNOP4GBDATp3ZLWTeCrB2bPMfBenHW5RQK5NrhigzPv+NIZO
+	T9M6mkfD36Df7WOvD4rFNHyrfmMepLkdsPhhQMzdhDf9ia/UmgwdaV3RDQ==
+X-Gm-Gg: ASbGnctqkyKI7UmWjsQUbVI2kvsaAyT7Q9R1IpChRpXYCx0J/FRbHS4EUN8yjx45OTu
+	b58LlXYSCTZiVAB4SL8CxiKTq3K87KgkZS/wTE+eXRswfibNnBsS0JKOyxCDIegH4b05cfAxwX2
+	IZmaKAPtMQsD+1O1vLdz9xzRd2BQ3TBN3FPVUlwXF2BdECfbio6XgeX11agZ7zbOdoEfFpM+rEB
+	afehqocmR9Mcsja/kx0xt+n+fF+do5AVC3vuek9pHo5IwBzDxp+4SEzPNZaohpG6uMv2tpUxDXK
+	tkv0ULyzkZIqUODDy+dLtMinJqM9PrJIlgPUjtfxWty1uWvIE3CASSeafNdihA==
+X-Google-Smtp-Source: AGHT+IFztfme4Du4DXZpf9oCTSfwAAjYVV0nbvMr6vquEQGAi6dv2b2oSXr1ORZCJwRUm5iEwxW+uA==
+X-Received: by 2002:a17:902:da87:b0:21f:6be1:97c4 with SMTP id d9443c01a7336-220bdf3d4a2mr41812335ad.26.1739370274894;
+        Wed, 12 Feb 2025 06:24:34 -0800 (PST)
+Received: from ?IPV6:2409:40c0:2e:ea4:a251:12db:9bc4:5019? ([2409:40c0:2e:ea4:a251:12db:9bc4:5019])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220c8982d79sm5589185ad.194.2025.02.12.06.24.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 06:24:34 -0800 (PST)
+Message-ID: <dbdcff01-3c46-47f2-b2db-54f16facc7db@gmail.com>
+Date: Wed, 12 Feb 2025 19:54:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,59 +80,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, GR-QLogic-Storage-Upstream@marvell.com,
- linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Manish Rangankar <mrangankar@marvell.com>,
- Nilesh Javali <njavali@marvell.com>
-References: <20250211133844.855-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] scsi: qla4xxx: Add missing is_qla4022 check in device
- initialization
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250211133844.855-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:O+hwUP0Y0HqQecPzNMnGXtnyW6PNtcwUlwae++ErRIwMYbct3x0
- glJ0kvJc3sc3duLGCtnG75+FpFXYdQLsIlotFeoIq01f6jL6PejD9e3l/9dCF44Th+ynGiU
- rfKdkeGXthKYaNrLpKZqrtxlX3oqynjuy3xPujm3vnMmYhsi8lBszp6sywEkn4Vcebd2Lq2
- YcjgqUgNX8/bVJS0dHQXw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3qdrEtRS+sY=;ZXQIFP669awB8d0+ydqtL6qFS6K
- Wl6sU+1SDAuREF9OUlca0meF8a8e17QwamgGCmEZwU2eOYcTMueWKD+T1cE/W1BL5jS4swblY
- a2TJvNLz/tj93Wid8xB2A3E6/JtuVWfT331TH2DnSSGg/4lglLa1WDTjj+PFAm3HzTJB2h+P2
- wAHSMHbPgmxmIRXM9FjorgtzjMqVN8Ek7N0gIDz8JYzqiCH+4zPY/r9oh3sWWg3rwwo1sV/Kt
- LU8HXPxo7MeH4m88mkQT9uH/b04BatACKU2Zksm3SwCaxI2IASAP2ZOXV8HnVGasTFZIDPO+e
- +x5aXYc0ZI9Iz/8tMp83TQFJ4fhq0NMNVyl1mEV8bsIjQNfy4ixrpa2ibpirPO/GuQmw3Es4R
- vqifdor8pHN4dqokQ1/3cCZGV+Zk61gBJihDFGKs7dLU7s5iZEYBlqSrxBM4LBQEAhq4404mK
- 90+m0aOeLWLBA+/xC8lyOlveKLZUQlJaVfDnnhzax50utICxjUj4Aa2S6i2L4Co++/PAmjaxD
- pBcxkPev9Da5/8A2BUP/HliWT1sjIDGEeHEAI1ThzDm3z0gT7hSxAxOiTD2ndA4heqv8Pe9hw
- CXzRwiP8zr6XSGaoHFldJ8P4g80/iWARzzBnU8kGfnv4sZcJOLC6s+4TqKyDOO81j692u1CEU
- yC68Q8XBvuR/Kf1Nq9J9FJShIIh/dfAY/SMCYtU2jK6C/T1k0vaK8RdS6krCAqXsFmemy8pkT
- OkLyTVofPATyeHJLXbZeUvgsWff/DhTO5893tRf9lvr09LIojfuFvuq1ExbHW8p+1Ez08w3Hw
- O39RIvfa6eelRwsq6GK0ng223SzKoSeqNdKIX/aR4DrOVhfu/Qggy1qCuNMGol3vViDtxKObA
- WEav8rf9RHsmV9O9J2OKwSRVgmcPF6f5DxXB2fzqjKSiiZn1i+6ndRZhU0FYvfGagU8pzrNlN
- KjPcxM0hDwvLTj3ZBaVTBVBLq8NIrmjnZhmMD0zpLMllduZA1EJoSdva70Mb1WpA9ywcyvzcJ
- wJ7xH8jYM9FJua+99X0o2Bt7Q0Izq6hj4noU3j8lUC5J/Q0B330spmJgU80XQ9PMncMOm8bNT
- RsD7wunQRS2hR8acuYhtFmUHZo6Ifxrt1afX34h2amLtSMn1Z0PpFxQvlhAZQlouXDSK0tbYv
- eokYkGHwsU0PhAitJwMygFNN9dTN7DmYjBDDquxiMnDHtP/0ie0t/JO5pk3LGKCXzaj7T46bB
- iTFgPhwON4anXh/k2a1dC8jyk8YDsjaUZIIY6c1qtXjIACmAy/AD2g/Zo/D44HpOnpkcet93N
- h1UdXorNoHKKm1PqVGwypzrYa31gdDweOzjkUPyv87FSXrWEii2qBYQwnnaNILuSXlXPHdrz3
- S4axwoSyBQWK0zBrnK1mHlHmMrY3uKoTIi770Pd0t22QCHbbgL2GP0WiABFV36B90oIb/+JoV
- 8FkGgmm2CV7vf4pV49T9wErwgFMY=
+Subject: Re: [PATCH net-next v2] af_unix: Fix undefined 'other' error
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ pabeni@redhat.com, skhan@linuxfoundation.org
+References: <20250210075006.9126-1-purvayeshi550@gmail.com>
+ <20250211003203.81463-1-kuniyu@amazon.com>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <20250211003203.81463-1-kuniyu@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> This patch adds the missing =E2=80=A6
+On 11/02/25 06:02, Kuniyuki Iwashima wrote:
+> From: Purva Yeshi <purvayeshi550@gmail.com>
+> Date: Mon, 10 Feb 2025 13:20:06 +0530
+>> Fix issue detected by smatch tool:
+>> An "undefined 'other'" error occur in __releases() annotation.
+>>
+>> Fix an undefined 'other' error in unix_wait_for_peer() caused by
+>> __releases(&unix_sk(other)->lock) being placed before 'other' is in
+>> scope. Since AF_UNIX does not use Sparse annotations, remove it to fix
+>> the issue.
+>>
+>> Eliminate the error without affecting functionality.
+> 
+> The 5 lines of the 3 sentences above have trailing double spaces.
+> You may want to configure your editor to highlight them.
+> 
+> e.g. for emacs
+> 
+> (setq-default show-trailing-whitespace t)
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n94
+Thank you for pointing that out. I will ensure to check for such
+issues before submitting future patches.
 
+> 
+> 
+>>
+>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+> 
+> Otherwise looks good.
+> 
+> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
-Would you like to append parentheses to any function names?
+Thank you.
 
-Regards,
-Markus
+Best regards,
+Purva Yeshi
 
