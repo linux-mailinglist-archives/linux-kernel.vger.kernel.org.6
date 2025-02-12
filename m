@@ -1,150 +1,154 @@
-Return-Path: <linux-kernel+bounces-511341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33DAA329A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:15:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5650DA329A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336EA3A43D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01BF1640D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7035B21171B;
-	Wed, 12 Feb 2025 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B40120B801;
+	Wed, 12 Feb 2025 15:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tqqb0g9h"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QtiL1o5f"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AE920F078
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6C82116F8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739373308; cv=none; b=BWdoBAWubeibVW5014RhB36LnKKHFmSvN6MwtHOfqVU2VFPQd0IAD3uWlv1VGlRq69jCsrlRrL/e52LV6t0Sr8tF2rVry3yCNxxDCkr1QuNlMynIvjhccZkTyGeoXZTnnVDFu0tFLl6Svb7PnWdGwDVeTo2Tr4cYU1InQ7r72rw=
+	t=1739373306; cv=none; b=WZr5dwMsSuaEYuf8iZIJt+TQbWUFGnMSY12t05+qm/KwkjO276pAAb0jQ+JnNQx20f86j+Gff+FoqXwRRfuGOBbiGqbX7wABLZic7G7qupMH5e9wFua0KQA4+G2SJmo23S3RugBzvf6DIlc918eC4EFGg4sapwecZsUANyMcr00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739373308; c=relaxed/simple;
-	bh=HzR0A/uGmbxhFBeAPx1D1BEakbEylPhwBWP9W3rkLGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B7cYTjfB7ICTZ/Icph+AF3RLkf0QiClEeRkSZAex4tarKm2dSQX/SyGqj0eU9KKB4ATgLmlYtkWwM17am4tldEFUqxDPFbCrUZ210bs+46uxTQV4d9s4aBQefEQ4yF8vbe0NkTaKMQYmBM06SKRYzuD8qD9hPLzXS0w5MRbiDQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Tqqb0g9h; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30795988ebeso69749921fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:15:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739373305; x=1739978105; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XbeFhgjlAz4HP0qajS/kFL0VJiSyjCShat9G6ecggLw=;
-        b=Tqqb0g9hgvQoJnlxioj10Qssnwq9rCDvgEEUV9zXpcu7EkslLTPan1mbV9jRveTxYL
-         zCn54VDVgIKOZWR40ioUyCf5WXVvYmsa1jZFh2Tp9rq6zDp5oXOZjErsH+vuwQJ6Uzud
-         49ON3Ec6d6nRmWIA4+JjX1d/6+iTV1FoPt6YA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739373305; x=1739978105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XbeFhgjlAz4HP0qajS/kFL0VJiSyjCShat9G6ecggLw=;
-        b=l28eI/1Mm3DLPIicu9fV4VSbcGLk8T6jHV/xSwvc07jIrm8gYlRVrVnEYFBkM+ia6J
-         PpGUcnAR1NtUaNa6qGWkXArnnXWJSnkCfa99Q8pyv60nUGn5yjJzsEYknWHAg3cD1BtJ
-         LdCB4q9KbizRna0XMcup58n4kb34AHKOUMzXhDHHAE8qYTvmxaaMJfBz0rhecIfuIg6R
-         iDtpmcwOBEck2nasOdZ0PqnIvg/3ajVHugktAiE0pdIPCmuWlS46Qz4+DfITS0rrqGmG
-         u5blyWYwxZMV5js+/JPXBmD8QGvzRm+4Igpy/wPZ7vVdu1qsLTKoCQFYp24ILCTC6TY3
-         mCXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzd1dp2JCAs1ooVPqlgqXY2gKmEfIuRmQxPYlIiQEDS6+ZFcDs+SFt5KipAgwWZFJsIE9n4lDYXeti474=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR21NtKtUelEz0Pz7pYkR5qs9yiq/Bo6OIpqTLNS4PD8a99UWI
-	tzFiIznLvvYgQJTKiAhrhzgPjX3xo0paNfo0DXALhdisancGLR/SfmsjNwroDQyfRV4uMN5TAHr
-	KieDd
-X-Gm-Gg: ASbGnct5FynCu85TR6A31FMedGiVCyxOfY7zZ57Ys7cwv8Xr+VpfsFDe1DugeSKFj+6
-	XGisWrILN3865cHsZcWA7gQNhNYzMR4gqT6aslzC1lvwlYemy5dBU7aJm/iBa2n2HcCubMVfEbr
-	lmlk9Ob5K3QJujOEFCImXPkbqCBfRsgJpf6iNpi6ToDzC5lXxA5rRPdQpcmD2S+o4XzU4ajv3dp
-	Xyd3LSBJ3GJKjf0n8QRA+YEGwXSB9ejP1SvOOTPTD2OEXks5mXfyIU2DAUcTDDsTND3Vj4PIYCK
-	gYvvjwQgJdo5GTH4Y+2HHupamBlE32lbnUwfak0nwBAoF90onUzROGU=
-X-Google-Smtp-Source: AGHT+IFD5qd/VAu4E46sMN+cXWyl/PNkmH0OZSxvmWFikLWBM5ZToXvjWtQj+OxsROSi3ud7PrXCfQ==
-X-Received: by 2002:a2e:be91:0:b0:308:eb58:6581 with SMTP id 38308e7fff4ca-309035c3d57mr13322381fa.0.1739373304831;
-        Wed, 12 Feb 2025 07:15:04 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-307de2ba9dcsm19648581fa.70.2025.02.12.07.15.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 07:15:04 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54505c79649so3861098e87.3
+	s=arc-20240116; t=1739373306; c=relaxed/simple;
+	bh=UKSI6EDytSdjdgykF5MQAulLMhQVp1al45tKOJnsdH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TPIceKOYpCMAM57V4nKuIrJlubkcqavnRNOyy82CAnFCgCqJu+w0q6X+TVcZjUqEt5TfzixGCEdpHcN1J4rp5VXplJkXeYzNPAwhr/uHe5c8L+O7fP6XBJGUb+kAMRT6tS2+xGG5zuEK4zf+PJYD4b4E0MXGpWJ3LCE8aAeqlqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QtiL1o5f; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220cd9959f6so364985ad.1
         for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:15:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU5Yu5jyiTHF6YQdkCdCA1xRtL73/JO3loNPzhBsllzfbqJijiHpW0jfQoKTzFOLHIjEwrbXK+jpYTqVjw=@vger.kernel.org
-X-Received: by 2002:a05:6512:3a82:b0:545:191:81db with SMTP id
- 2adb3069b0e04-5451816b6f5mr1124828e87.50.1739373303596; Wed, 12 Feb 2025
- 07:15:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1739373304; x=1739978104; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ljlNJ9UmDZpoTWF1Xq95Z534XH7s9JC+28dFI3VXtdY=;
+        b=QtiL1o5fqu/nFwGQkhRUAbMFBMr2j7j+IJMele+Y/ilWf46h53pfx/2CBq/OskzUEX
+         mDk6n4g+gG8XUFPYCcxRT1K2o9Tt/CYGha8v5RU6VBpL9CYt9fz4qh8ukfHgsYDvhpNs
+         YS1fhaAdnxzLPmWTsBQFwg/ZSn81YY2to/J1WyWxCbGLaUH+Ahl8wMbiE0DzMrgqMeD6
+         aGDWSgVhTcBppWgvKsa7a/T/vVXhVbI1OtDYMqDFXUKeMY2uSrtaNQjsucqOZgvS2l4j
+         GlQapwQ58YJRg1CGPhjMszqS0876cbX9GNA2HPgyzu/Hm+6E3/kZ5DrQ8Evu1RhZ5cgt
+         Ce5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739373304; x=1739978104;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ljlNJ9UmDZpoTWF1Xq95Z534XH7s9JC+28dFI3VXtdY=;
+        b=qXvtPtXZcJ+z5dXatXvpVvzjJAsd75vzYf5mi4nFY8XuERZP9Ad+R+R5qSChmFkrcp
+         r8ygOPLs5rP8hmocXdLI0wXa20esq9WeNBvqCKod55/VxGDXLd178obkaJrqt5OHHCqd
+         Aplm/qMgoSl2DJi6JWfxt4LReDK9QOWXkydy3ovjuREkKKhplK6PfZYcgAmJ1H8nO6tc
+         ZzO/0njjRHGYGB3T2pImpyeIM4hX+asi6ZI1Z2RyZApLgPZAbUXNStGt2Q1dWJf6lkYp
+         +BdwKA2kVtJdaJkF+mUmCaovNgJ6BAKH0rhVA9Za+SHfdDwq0TwdZ+E8dCATmaA2qXv+
+         BvjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCF7g5kKdImd1REdPvk9sX54EUMYdyucmkzBcQQRmfi3W7e/2oPlrYGFjN+PhH37E67lS2uOqmfJw5VH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz08QFDZH9631HQ6vi9Ahw2KLyU0ZDGv2sKimuc26mfj5su/lzn
+	zqMX5R5TigvRP03bL/aDW/q9xFQJ8cak+qvErhYjK+4horsMHNkMmKf5n715P5c=
+X-Gm-Gg: ASbGncsLaoluH5rnN5q+5LBmIgGoJy+xoIFaYK+bwSu7c/8TQTOk44mATjTADD1i49s
+	hSdpSbtXEFURfUcohK9ELyO5OyZap8rZy+ZB3bvWrFjswMTohvaxWsSXLoBa+PFsm8dg121WkUi
+	trujZiHkiV3bNrNWsSbThNGPbsqB2SgLJHm/6X+kuLnASpAM5IBeNtCR42FYVYW6dV7g7kKD4um
+	6ySNX/lN6zSNs+7JMuSN6hjxiJcxIoVWeKEGqpr7M9dGGptEWxJ3CYALaGBpGAK5pT/7kl0dcll
+	sTGmWKpwHHaTHNk1W5bBaOFMapBCtY8nu9hr
+X-Google-Smtp-Source: AGHT+IGMKZH7Pjm+B4qQMXXr8SYftdRnx3TSgwBf542/KSP2GU0FH9uQfkBy0KRoBLo407PBjmHRWg==
+X-Received: by 2002:a05:6a21:a46:b0:1ea:e7be:ff07 with SMTP id adf61e73a8af0-1ee5cd189aamr2473323637.6.1739373304086;
+        Wed, 12 Feb 2025 07:15:04 -0800 (PST)
+Received: from [10.4.234.23] ([139.177.225.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73048ad2809sm11229424b3a.58.2025.02.12.07.14.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 07:15:03 -0800 (PST)
+Message-ID: <b4ae80bf-36b4-4f31-96ad-6876372c91a2@bytedance.com>
+Date: Wed, 12 Feb 2025 23:14:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250204-bridge-connector-v2-0-35dd6c834e08@kernel.org>
- <20250204-bridge-connector-v2-35-35dd6c834e08@kernel.org> <CAD=FV=WXkqfWoAiqbsfWiJo259oQxMV0UrQsX=qD5nVH=Dmaqg@mail.gmail.com>
-In-Reply-To: <CAD=FV=WXkqfWoAiqbsfWiJo259oQxMV0UrQsX=qD5nVH=Dmaqg@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 12 Feb 2025 07:14:51 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UpiZxbeu9kF=bRfC=+YZmDj3qM+kSo5c7oRxaXTPDi6A@mail.gmail.com>
-X-Gm-Features: AWEUYZmCbXkwQXYOuxiuptXgxJouhwsR1MuVeaed67REZjmWnZsAiLDy0PQkoNY
-Message-ID: <CAD=FV=UpiZxbeu9kF=bRfC=+YZmDj3qM+kSo5c7oRxaXTPDi6A@mail.gmail.com>
-Subject: Re: [PATCH v2 35/35] drm/bridge: ti-sn65dsi86: Use bridge_state crtc pointer
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: [PATCH v2 3/3] cgroup/rstat: Add run_delay accounting for
+ cgroups
+Content-Language: en-US
+To: Tejun Heo <tj@kernel.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Yury Norov <yury.norov@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Bitao Hu
+ <yaoma@linux.alibaba.com>, Chen Ridong <chenridong@huawei.com>,
+ "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250125052521.19487-1-wuyun.abel@bytedance.com>
+ <20250125052521.19487-4-wuyun.abel@bytedance.com>
+ <3wqaz6jb74i2cdtvkv4isvhapiiqukyicuol76s66xwixlaz3c@qr6bva3wbxkx>
+ <9515c474-366d-4692-91a7-a4c1a5fc18db@bytedance.com>
+ <qt3qdbvmrqtbceeogo32bw2b7v5otc3q6gfh7vgsk4vrydcgix@33hepjadeyjb>
+ <Z6onPMIxS0ixXxj9@slm.duckdns.org>
+From: Abel Wu <wuyun.abel@bytedance.com>
+In-Reply-To: <Z6onPMIxS0ixXxj9@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 2/11/25 12:20 AM, Tejun Heo Wrote:
+> On Mon, Feb 10, 2025 at 04:38:56PM +0100, Michal Koutný wrote:
+> ...
+>> The challenge is with nr (assuming they're all runnable during Δt), that
+>> would need to be sampled from /sys/kernel/debug/sched/debug. But then
+>> you can get whatever load for individual cfs_rqs from there. Hm, does it
+>> even make sense to add up run_delays from different CPUs?
+> 
+> The difficulty in aggregating across CPUs is why some and full pressures are
+> defined the way they are. Ideally, we'd want full distribution of stall
+> states across CPUs but both aggregation and presentation become challenging,
+> so some/full provide the two extremes. Sum of all cpu_delay adds more
+> incomplete signal on top. I don't know how useful it'd be. At meta, we
+> depend on PSI a lot when investigating resource problems and we've never
+> felt the need for the sum time, so that's one data point with the caveat
+> that usually our focus is on mem and io pressures where some and full
+> pressure metrics usually seem to provide sufficient information.
 
-On Tue, Feb 11, 2025 at 2:16=E2=80=AFPM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Tue, Feb 4, 2025 at 7:01=E2=80=AFAM Maxime Ripard <mripard@kernel.org>=
- wrote:
-> >
-> > @@ -374,12 +377,15 @@ static int __maybe_unused ti_sn65dsi86_resume(str=
-uct device *dev)
-> >          * panel (including the aux channel) w/out any need for an inpu=
-t clock
-> >          * so we can do it in resume which lets us read the EDID before
-> >          * pre_enable(). Without a reference clock we need the MIPI ref=
-erence
-> >          * clock so reading early doesn't work.
-> >          */
-> > -       if (pdata->refclk)
-> > -               ti_sn65dsi86_enable_comms(pdata);
-> > +       if (pdata->refclk) {
-> > +               drm_modeset_lock(&pdata->bridge.base.lock, NULL);
-> > +               ti_sn65dsi86_enable_comms(pdata, drm_bridge_get_current=
-_state(&pdata->bridge));
-> > +               drm_modeset_unlock(&pdata->bridge.base.lock);
->
-> Oh. I haven't tested yet (my device is at home, but I think there is
-> an easy solution to my deadlock problems. Drop the modeset locks here
-> and just pass NULL for the state. We only end up here if
-> "pdata->refclk" is not NULL. Then we only use the passed state if
-> "pdata->refclk" _is_ NULL.
+It's interesting, as we also find that PSI is of great useful in memory
+and io and never thought of aggregating them across CPUs. With my limited
+knowledge, I guess it's because they have shared global bottleneck. F.e.
+a shortage of memory will put all the tasks of that memcg in same situation
+no matter which cpu they are running on. And the io issues are generally
+caused by legacy backends which have poor performance, that is lower speed
+or less hwqueues, so still contend with each other outside the scope of
+cpus. While the scheduling is different, some cpus can be much contended
+than others due to affinity constrains or something else, since different
+cpus have separated bandwidth.
 
-I can confirm this works. At the very least I was able to boot up both
-with a hardcoded panel and with "edp-panel" and both worked. Seems
-like a good solution for your patch.
+> 
+> As the picture provided by some and full metrics is incomplete, I can
+> imagine adding the sum being useful. That said, it'd help if Able can
+> provide more concrete examples on it being useful. Another thing to consider
+> is whether we should add this across resources monitored by PSI - cpu, mem
+> and io.
 
-Long term we should probably get rid of the support for working
-without a "refclk". It's theoretically possible to use the hardware
-that way and some super early prototypes I worked on used that. ...but
-it's a bad idea and I'm fairly certain nobody is _actually_ using it.
-That means that the code for handling it is likely not tested and may
-have bugs.
+Please check my last reply to see our usecase, and it would be appreciated
+if you can shed some light on it.
 
--Doug
+Thanks & Best Regards,
+	Abel
+
 
