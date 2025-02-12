@@ -1,98 +1,138 @@
-Return-Path: <linux-kernel+bounces-510720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE0DA32106
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:26:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96803A32114
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A1B164A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:26:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 844291889A8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C845205ADB;
-	Wed, 12 Feb 2025 08:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2HRA1Kd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C16E205504;
+	Wed, 12 Feb 2025 08:28:18 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13AF205AB4;
-	Wed, 12 Feb 2025 08:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9D41EE013;
+	Wed, 12 Feb 2025 08:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739348758; cv=none; b=b/TnC1u6CZzcX6R19122y8YQDkiE46QOrNuBQ2/q1aCZ5WYs4OCIhcq256ttXwsD1bNWMdjTsudI49FlUjvKPBqhwJyAq5eh7NadKDqvjR92nnich4jg0DNn1/JAAmSD220cK2IzZazwzcOi1JIG9XJ9dUDmLkrBMDCKwOmZdww=
+	t=1739348897; cv=none; b=ujDc5xyAXzk26tmbucVnNIOf89iYWoV3fK96DbNNoO5MmKe3MVRHX/U+BNaO0o+ZHatX3maRAGVUfmQqEKD4K1mmG10Usxud0NypBBho4qHfqkjS5tFH/+Tn+oaLwGw1ewt6JxncaUlUlEct6r1m32zxWwO3WfaJuldmF0hYNbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739348758; c=relaxed/simple;
-	bh=iaafHC+QOh7ucrb1jk1Wl/0MaPzchf6dt+Z+vfrMZSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O6P/u2lzxyclhNOhWzxu7+NA0jRyrFW8JgKI++CpqqNRLIRdC58xD8uSJUqTSsZ+N3xBnU9PP7+5wB/HTLd/wNKptqvuNZUNXEC5M7NEze00VKhKIGfboyY8bAj3LaAxrzcoBLOH8DxRu6TABQgZy4FrQ+asGvnThd0j005aymk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2HRA1Kd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0EBDC4CEE2;
-	Wed, 12 Feb 2025 08:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739348758;
-	bh=iaafHC+QOh7ucrb1jk1Wl/0MaPzchf6dt+Z+vfrMZSk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l2HRA1KdVAe3Z8QSCBXlJtH9TSQuJwWmnykKdsGFypNHwQIPhuMQ4Hkaj2dcsj6Jw
-	 Np5bWQusyHVgpzyR/qikYIGpyHtL+W4B7nimVjfOJKDd9Ftcnk8OZoBxhM46AN35gK
-	 1r+/F08DQbQngxiu+6En12NUuvU6F0/JimZZRgULPVC3bVGNlz78o4zAB6KX+Selil
-	 STerr/LkKym8W0DkKMs/FwjDl1jzBC/z41x13YUjsZuA55+Ke0/Lxzjfo33MkuqRjP
-	 SjkibqDzz7rjcSA0C1xXJZ7fBOI1ivsfI9UvEbCAKFjt7cnLX0BOnST1VlGjeLAZW1
-	 fSP8NHKE2+2GA==
-Date: Wed, 12 Feb 2025 09:25:54 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 0/2] pwm: Add support for pwm nexus node
-Message-ID: <ufl4kwrjyp4zid4muvghefevqc6hk3zyvxnsu72fxd4f46fzg6@hufkci2dzjid>
-References: <20250205095547.536083-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1739348897; c=relaxed/simple;
+	bh=IrKptbNyGnEsWszE5Znu38EPyhXvclhSWF3aK3/HD0Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=G8zNQBthMuMCqu311C+7QhkzA25nMDKiDuH/nFjQDUaRZtKKcTxISdjjg4SXMRLq7sb4eOiiEuyjkH8419eEN//Dfh2a/bBZtmg3mtkbTc1IlZC7e90cYnqUIuKAlvSJm9GznNBo+M6UT7poV2b4aHH4fV+Xm7tGNg4I+aNGmn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [180.172.76.141])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id B8DB13430A9;
+	Wed, 12 Feb 2025 08:28:11 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Date: Wed, 12 Feb 2025 16:27:28 +0800
+Subject: [PATCH v2] pinctrl: spacemit: enable config option
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wmjtzh42nhqulnry"
-Content-Disposition: inline
-In-Reply-To: <20250205095547.536083-1-herve.codina@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250212-k1-pinctrl-option-v2-1-bde7da0bc0d9@gentoo.org>
+X-B4-Tracking: v=1; b=H4sIAG9brGcC/32NQQ6DIBBFr2Jm3WmAYDVd9R7GhcqAkzZggJA2x
+ ruXeoAu38//7++QKDIluDc7RCqcOPgK6tLAsk7eEbKpDEqoVijR4VPixn7J8YVhy7WNhtrZWHO
+ btSKouy2S5ffpHMbKK6cc4ue8KPKX/rMViRKpnzrSptdC24cjn0O4huhgPI7jC8myJNOzAAAA
+X-Change-ID: 20250207-k1-pinctrl-option-de5bdfd6b42e
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Alex Elder <elder@kernel.org>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ spacemit@lists.linux.dev, Conor Dooley <conor.dooley@microchip.com>, 
+ Alex Elder <elder@riscstar.com>, Yixun Lan <dlan@gentoo.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2071; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=IrKptbNyGnEsWszE5Znu38EPyhXvclhSWF3aK3/HD0Q=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBnrFuXkQwvpdyu8m47lqJTTAGrb7SfOF2GrOSvL
+ UHu0Hsl9c6JApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZ6xbl18UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277dIvEACMYP9kQbngE6dUW3
+ h6H4LM3rRAFvEA0o5jKhCwlXKiw/S4Ck+DqnVKWYBYbtsc3v072HERc3R2mVk8MgGUaA+wyDo9+
+ ddkYXfXpkoCwxNwzgdweUJ87v0WCIFmKn+YbFmse7SRqNGtnmDnbE4hXI+mVLIFE4PcGWc1aCgs
+ fXyUPpYWCGU/ph2WxAsFD+LSQvoXM+ROD1hd72A1e0NbIFi4yoKKcc2UafSUwIb0rhBwHYv3lCu
+ zla1UUPCoVU7Hm0RNetJvncn91o2/DqnDxuhOS5+MTWEqG/TiVY5I5Bj178kt7snAPNw723PUeA
+ Zdze8qsl/11y392nC1bjnTgDFJx1za7Kx+bXY3PJIfvsYBifLI4J/UMQ+2OgMJ1Tz3XuwhCSjr3
+ lJVKBwN1f1P4uz8p4B8PQtRwJSP2jGTg12nmoctTsXn1P0HnQoCDxhmSriDxTM7/aSylC2wNn2k
+ g81X2tjJje+cI8qgoptLoS5JzUkuO3Aoj3Fb/KFGMVlotIaRUnsnCh5PHLIOgEwSimStmcQYooL
+ 7Zvsx5zCPiraRRvx+80oi3qfSQC8E93Ng+lQTdnbGnu1jIGd3W6dP1V3EytBEi12kGK33u3vg3T
+ 3MwEIcur1df6KTJk5W/VTy8cv+9y1D7O5TymH3Dmcu8k1DhV8e5DXQBQSjZIibcKNlWQ==
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
+Pinctrl is an essential driver for SpacemiT's SoC,
+so let's enable it by default for this SoC.
 
---wmjtzh42nhqulnry
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v3 0/2] pwm: Add support for pwm nexus node
-MIME-Version: 1.0
+The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
+'make defconfig' to select kernel configuration options.
+This result in a broken uart driver where fail at probe()
+stage due to no pins found.
 
-Hello,
+Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
+Reported-by: Alex Elder <elder@kernel.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Tested-by: Alex Elder <elder@riscstar.com>
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+This should fix problem that CONFIG_PINCTRL_SPACEMIT_K1 is not enabled
+when using make defconfig, thus fail to initilize uart driver which requst
+pins during probe stage.
+---
+Changes in v2:
+- set default as y
+- Link to v1: https://lore.kernel.org/r/20250207-k1-pinctrl-option-v1-1-e8a7e4d8404f@gentoo.org
+---
+ arch/riscv/Kconfig.socs          | 1 +
+ drivers/pinctrl/spacemit/Kconfig | 1 +
+ 2 files changed, 2 insertions(+)
 
-applied both patches to
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index 1916cf7ba450ec9958265de2ca41dc504d4d2f7c..17606940bb5239d0fdfc6b5aefb50eeb982d14aa 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -26,6 +26,7 @@ config ARCH_SOPHGO
+ 
+ config ARCH_SPACEMIT
+ 	bool "SpacemiT SoCs"
++	select PINCTRL
+ 	help
+ 	  This enables support for SpacemiT SoC platform hardware.
+ 
+diff --git a/drivers/pinctrl/spacemit/Kconfig b/drivers/pinctrl/spacemit/Kconfig
+index 168f8a5ffbb952cbeae3e3401c11149558e0a84b..c18d879274e72df251e0bc82a308603ce23738bd 100644
+--- a/drivers/pinctrl/spacemit/Kconfig
++++ b/drivers/pinctrl/spacemit/Kconfig
+@@ -7,6 +7,7 @@ config PINCTRL_SPACEMIT_K1
+ 	tristate "SpacemiT K1 SoC Pinctrl driver"
+ 	depends on ARCH_SPACEMIT || COMPILE_TEST
+ 	depends on OF
++	default y
+ 	select GENERIC_PINCTRL_GROUPS
+ 	select GENERIC_PINMUX_FUNCTIONS
+ 	select GENERIC_PINCONF
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-next
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250207-k1-pinctrl-option-de5bdfd6b42e
 
-with the fixup that Rob requested in the first patch. Thanks!
+Best regards,
+-- 
+Yixun Lan
 
-Best regards
-Uwe
-
---wmjtzh42nhqulnry
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmesWw8ACgkQj4D7WH0S
-/k7aFgf+PYpAgnm3DIYuICBhwNZsiuJqtDAJVnu1HZ63Zt6ZRDrVU9yiXL+1k65/
-aalVG3qBLXQs+vYLJWz+ibEPv/42ucmJHr1w2iFt8ipO57bEVjxU5kS69h8jixBs
-jrQn/WOLaAL9OL0ZBUHea7lh15jQ3cVDL35TsZrzDCl7uRKDIzgGMqQCHwpg2TCM
-3Wy9wGiixU0SImNMr6BMpYfV5XrEFM+764u+8jwRK2KSWVPpeCj9DtOLMGuwFH9Z
-WYxepE3l0AKWaBr69u164Um4ZR0BIQDvFTTWSRcEXcOyCyocKxBAKP/P8wQa840C
-MZp+NmRASHPsS86kCg277sgSqUk0dA==
-=L6H1
------END PGP SIGNATURE-----
-
---wmjtzh42nhqulnry--
 
