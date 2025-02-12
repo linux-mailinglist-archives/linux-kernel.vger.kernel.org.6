@@ -1,161 +1,242 @@
-Return-Path: <linux-kernel+bounces-510300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7067FA31AE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:56:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76FCA31AE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:57:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD713A5FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:56:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C763A7FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF5118C0C;
-	Wed, 12 Feb 2025 00:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1596911CA9;
+	Wed, 12 Feb 2025 00:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e7GeeOff"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rE4hAMbI"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2071.outbound.protection.outlook.com [40.107.223.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6932EA50
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739321784; cv=none; b=oVZ9aO//SSUUzFrmOQ+PsqjnNNz+z9GivUW0IijmjQsLMo2fBPOU00mOGV6AUrShUvt10elpYtCq7QjJ02RgwKGhCSPt7RzG1w8hv5mMfu/zU4uD6oBuiiEvGULRoiA/9mqbyqU99q2rU6++Lm3TVIZubw7z7LF2BZkhAT9Ibjw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739321784; c=relaxed/simple;
-	bh=e+BLwSgSHjy9yBuT4YO1wwabPYPHQNi+gOE3i7/aaBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkIw9UTKuAv3YiMsSXwMnOniY1yF6MRIL8MmcaVlfA84k5wOOY/Rn1YznWPHYAM5t1JbkhgUgQSaGqgZc8UNLkC0PTjy0Q90bblGeVgoIgXvvodvWYqvRhc8WS0+5cLyO4SWTEYNtUZQTSTMn2LiOE9CGbbXO7YltMD58NqlL90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e7GeeOff; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21f72fac367so63625ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:56:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739321783; x=1739926583; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ivh9AzheXIKHdwI+6JcoW6n5m0LCFzWHrb18akb3wpw=;
-        b=e7GeeOffPq4t/PQlu78TZoDjxoMl7eKQenwphDwRGK/YvbSq5kzDJyyJZlcEZwTlSF
-         Ap0taWoiPsKpEt+CX0unmR6+6Pg3G7GAJGiVDLrZf2dvAo7/JxeLrxBydCQqQCm04Plo
-         3xvIHcnfiphwrSK6mDAH6qZNKfW345fZp+tGr3sUpIeXJgcp/JvarLOpdQTb+7hGRByj
-         uGoTe5qaOoNZDAg/ZDy0EtHoGFE9adCoN0rU8khD7e/8AhbtoQgYO0na0CprvXKkhNTO
-         p68a6uDQ8TbIr6iJTmzPQuThqVWXiOl7iJeI04hcDSKmZLXpmX5X1qhCst/GH4BJmv5e
-         tzng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739321783; x=1739926583;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ivh9AzheXIKHdwI+6JcoW6n5m0LCFzWHrb18akb3wpw=;
-        b=OZoUsqRayzMKbD+U8PoY///whYx2sgiAtfS5Q+SAHYI+ofQw2HXpp/tLkB2w/U3qnw
-         jhavSRpPD5ozFT5cyD0vx6tBdO/hcEIEcCgDm4HVSX4wqGcL7l8ebEpRAipejFk3g0Cn
-         pjWDVnHjqNpotDvVdp7vYqk1GrOLC1/rryVwrXc8yE7AS6hapljdstQhwhfcdjKgFSWv
-         P+gXwMEWbitRuONg4jdX7bS9CLGm4HCGE3UvAoLH4TU76qIxTQjauuo2F5bITia5N2hP
-         2b0tFE/G8V9aFnd3DktcBoBEyOtHhgvZI5rDT+jjerLhLJAG2JJAVWvpokGi/T8ThcCR
-         7KLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYEEV4RlcuwZBgIA+fTNSyFwqFu2kiyWPuMJtmgmUg8iO2l250kwYHUPCpEqQen8ukqPjHEHXtKwp2h+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGPdlnSiPwZEYxF4ruXsytt0/tHSgXF9sFZpvPqLmrTDlb/rZ0
-	UisXTGKiMuk7pv1zv10jmHTgt8LnAYJ8IbFO6NlnnLzIl8BgxBUTc3u5ht1mJw==
-X-Gm-Gg: ASbGncsgSk7PrF6pSB6he7MjwqiXGkm09GFTxG1+3/uB9rxjTuIViovwftmn/w7Mf8b
-	owx/BQMmeM0fhVFxJVPV53n8s3+jSbJJNlQ3O2wVs93gx148u4s3irkvdWEl9sAy9y/3yHJsWej
-	n2At46ZQj67b9MLemicu/ElTV9RrvNeCQqqbrlbrUDb3EVPmkFr0IoiV6pea7ujrbxi6DwYiqEM
-	OjqEPPnsGFHlctmwoYVdwIIIzjtrmHLov6ZwV9VczsnB1EaI+FaaOgvLyk+Vr3rlwSdw4l9czdR
-	aZZS4Ijv6p+OPGr6Yj8P8eLFObPRH0tmvyClhzHYXta9kYFwcy3Rq9Ge8s6lTA==
-X-Google-Smtp-Source: AGHT+IE1AfJuJzaHf2oysXFlqioTFb+uK5152VMOgYK5OLbaKeSNVULBQuOJ5dxwdZzPVqNLcrYZHQ==
-X-Received: by 2002:a17:903:19e6:b0:216:2839:145 with SMTP id d9443c01a7336-220befcac4bmr648985ad.1.1739321782337;
-        Tue, 11 Feb 2025 16:56:22 -0800 (PST)
-Received: from google.com (154.164.227.35.bc.googleusercontent.com. [35.227.164.154])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98d0765sm187583a91.20.2025.02.11.16.56.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 16:56:21 -0800 (PST)
-Date: Wed, 12 Feb 2025 00:56:17 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: error: gendwarfksyms: process_module: dwarf_get_units failed: no
- debugging information?
-Message-ID: <20250212005617.GA1701202@google.com>
-References: <202502120752.U3fOKScQ-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADC217993;
+	Wed, 12 Feb 2025 00:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739321841; cv=fail; b=rcrSsJthkXJ0aRJ/NWmCWgfEvmIEeBciCkZMm2jPdtacRuAo6ZkAdYE4l9yxqT4kuixP+eeVlOGl5hGp52C6VND+U9+7UM8AHMD/JVhXSAofI3XwDi87alUr9PW7VptXutXg7C59dnQTz2/nqb8UJmTrAuHVvRD3BjL8snXQVms=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739321841; c=relaxed/simple;
+	bh=YBZ3CgZGPpVXyznQhDGyMHNftf+7084r2bWmSkCbPbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dBHRaOOSir3CdD8PyiSCGmf3kTmNW9tuF/NuYfb5GCq0Fx19TpDc4s4T6dmYUPJcnq7QLotDjcnu0enbLR7QncEM9f89JX39+gPwsWlY65i8eeibZpJVcuBXNg8S72fDXh43erdgAqbr52fbKyz9kpgJuqPXq+4Cx6sn7MBdPG0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rE4hAMbI; arc=fail smtp.client-ip=40.107.223.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nuph8pN7K26dL4uIY+UB8kYjYJPIHrvYXK9W5FWVlTcl+WeQPAKtI0G3Vh+mXh0MDqliCX2rE1w1mSzYLTzEojKJN1sDPaeu6PXMtngRD1FXAS4Td58fWh9DYWthOkcjaSLwjVjhGKV7Xv8SosNzC0YeGvx01FECA09w0lGDh4IRj1lWcx1JTffpsC6M751p6mx+mcXo77vxNyaOfttMTwxv5aLUwBfE1t1jbxgi1I+YueUif64gUs8AmdeG7JS+00BurKGDdYTdTHSLX7VibuaevHAI+AbOzI1ikGUEJjrzT37tbAurkTcJWF/tQ3R1SojRHAvBeLBsFLm16Zz2UA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IiOx7rM44Y55PHYqRJXFNrWgBHBsLyAKFBkpiLEgXdI=;
+ b=YKT/CqegmstG7V2EoKWALT5Ws8GAeadavLVNOTP/nLhpB/soiFDUxH3w/Uu9c9kcfIDMIy9VYEq2BF1IC86ZM9EMbLWQM0gUfCIRm+bAakqXfRps1Kj10563xQ30lJz5d7qnKfGA0luY/A4z1cHG/EhALjLfDGmmfTdag3ZccBdtvfhVGh+YkoF2WMHNGvqSuUjcm28tUdHIVwwceNQl2HmhGUYp4sXNoUQG/v7+wxsaIah95/GKb544sMZWzChnLIOs/jC93pN0NiepJgYKL/ckKQ/I3x0UBAxmZGSi9KxXInHCDVRtdzQkPYJzTAQr7suUQtQQv/vPleEh6Iri5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IiOx7rM44Y55PHYqRJXFNrWgBHBsLyAKFBkpiLEgXdI=;
+ b=rE4hAMbIUW0IXlGgz5BjWwJZfF8IfYDJd8dB/RSBYXMgJWf8w19atV6BnqMbhECTZPNEdxOZS9X5yArKF2AzQInt+j1xOTxQpgbGmdwUthFdpFlA1KnQKh6RnRyGoikgWnPIi5SeTBLjHq2jV/A3kFrvcXJj74RBUx6FeH9voCE5+JOxoeVeOheLh4Swq6IkwTtY7SYKOWqJraegJvkcAIyyOR+BYuCy7rRvJ+IlEPbKewANhiBMS/rq3brWnph6Gt34GNAvqnpkPq8koRsKOyUps7KovKVWrcQdQHVeXaOmHQsIttqrcyy6ZF4oq0JHxrUULCUHTUQq4Pjt5EE3wQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ DM4PR12MB5794.namprd12.prod.outlook.com (2603:10b6:8:61::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8422.16; Wed, 12 Feb 2025 00:57:16 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8422.015; Wed, 12 Feb 2025
+ 00:57:15 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>,
+ David Hildenbrand <david@redhat.com>, Yang Shi <yang@os.amperecomputing.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v7 1/8] xarray: add xas_try_split() to split a multi-index
+ entry.
+Date: Tue, 11 Feb 2025 19:57:09 -0500
+X-Mailer: MailMate (2.0r6222)
+Message-ID: <3BC99886-609B-4820-B65D-FCA2E11A02F3@nvidia.com>
+In-Reply-To: <20250211155034.268962-2-ziy@nvidia.com>
+References: <20250211155034.268962-1-ziy@nvidia.com>
+ <20250211155034.268962-2-ziy@nvidia.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0075.namprd03.prod.outlook.com
+ (2603:10b6:a03:331::20) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202502120752.U3fOKScQ-lkp@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DM4PR12MB5794:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62f85193-78c6-4130-c7a8-08dd4b003139
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GgQv2CjCn4kZJpsP4GPcWFUOMaNszhEsgL9MVSIUbO7RRq8Ldf1gZrgx/CG+?=
+ =?us-ascii?Q?1uBvT0KLQzW8Vm28qdgQEKZ7KhsKsDuXYhPM57p8MVZDDRLSTLcuGiPmDLnY?=
+ =?us-ascii?Q?gaVBsGt/FFDGj66v7F+Fg4mXYN8EZBWsRA3xQDFkrOjhQ87a9iPddKOToV3c?=
+ =?us-ascii?Q?bb8rQ6XV1YWTdgSl4GsbooyEcqPIX1sMy+5+E0ybwwi6S7ljfw4vst/UuOGz?=
+ =?us-ascii?Q?I475s9w55KRD5nOCipnk/c6w7P0LLdnIqjl/kUBH78Z32lFZIHehan7matjS?=
+ =?us-ascii?Q?Gk9YhESFBBvrZ5qjGlcQNYB3GYEhs4YVNZxXW2EKZyrbJvxIGcTivg3m1B0a?=
+ =?us-ascii?Q?MhjhvLHbFS9NkYfTbDcRCrXSzjKzeQP7RwSoBwmepQTiYgdsYSqVhPbSiztg?=
+ =?us-ascii?Q?ChIPhxcHxYYRHs0MkHV22LwgmtrH78m0Xo8kJ7gAf4FDHVjGZMyeELi7u+cm?=
+ =?us-ascii?Q?S/AAau0oQ0u1z30SH3l86lCAdDTpFuIERzH1/tWP+k7ADVj7GFMnUme/y0rd?=
+ =?us-ascii?Q?vV3ORgmLR4/P0Qai/PPeVCf8VVlwEAdbL15cwX2Vj1SQpF440v3EQClvHQV9?=
+ =?us-ascii?Q?dE+WpKOkEZMAx25tATsn7/jiQsya1CHmvgzvhtVhT0tzQy8zquQMvw/bvHJy?=
+ =?us-ascii?Q?PYSmPg3zMtyUryHcQLe0zLCHrQ6HvyEwYBDRvmR2/jPkTJIUlwNnCjAMxISf?=
+ =?us-ascii?Q?6NX1SGOEPh7oJ7/Aw7TQAQGfMsZAdNAtDk5X/vuhv/M5dltnsOrmkpT6oIwJ?=
+ =?us-ascii?Q?HmuekZsaZYZZ82QY/RJXgDe51OPehORVd2JrmH7L5NAzHERIhi/nzX634Y9r?=
+ =?us-ascii?Q?MmH3oqO9bhQbHdv5qbR82pBYhyOQqWWH6koyUDTcQdJ9p29ITvYVbKbGnsIF?=
+ =?us-ascii?Q?WMKI+RpgtM/WNOpZ3oFnx4VJ1/qeRn7kKIOclxG9unHfn9vzjqI8Zu8GufdQ?=
+ =?us-ascii?Q?8erXsQmFsOT9KvONzxavBPI2dwsWqK0eMfg6RlVpw4yCtSw+QeONKd7nH7ym?=
+ =?us-ascii?Q?zoy0dpn5yvo50tu0I9jOHm2oNYTOoCzgx8/aW/V0OrLg4WYHo3tul7qDsRw8?=
+ =?us-ascii?Q?aadyUMqvQQ3dQvwMtL79xC2AjAbZfdEBAvQg6vc/zjhq7dH20fF0Hq7/ixeI?=
+ =?us-ascii?Q?mBvujJZDL4QQt+/SM5+z4N5JRkgxks00kGeUvVGaVGcJDVxRXFJIIkpA9GSN?=
+ =?us-ascii?Q?B6Rp4hwJqZ6ptKQ4rEw8eBkdxzjKdjG9RkqJ3FU2o0Vv3lFEv8F63IPhjwNA?=
+ =?us-ascii?Q?nGyv9Ge36rhpq2d6AWJhmJ1xHxl284ck4BzLTVrCs00JlHz7pWRhn4BuV9N2?=
+ =?us-ascii?Q?DV57CRv/uGWeBQeU2qBH0nS2qE7VSmVhlgcnyi3QOSdH9NEdA/h+JS53Rv30?=
+ =?us-ascii?Q?gfbyt8ibBO5t0SI0LzQ6P4k5tRQ2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Hvz48XVzw3lXj9gx7cVo0UtWNV+sy0wMcU3koI156EhzDtWEdvoNGy0olIdb?=
+ =?us-ascii?Q?X4Wnw61OdfomJg4CSrm/RNZx3wTUZ0fSToEM+UY3dbkno3PT/0nONwHKGG0y?=
+ =?us-ascii?Q?6NFKOQqY/VkCmEijw6WBSmz82Ea8kwMMrrbpB/mgaicvPlol2S2HhGfFz2Qy?=
+ =?us-ascii?Q?U1Z5q/YAEqolzDXRCbC8JogRWyjcnMy0zR57mOAUG6Pb+WnquL8JYQfwz5qC?=
+ =?us-ascii?Q?N5dKP6vIWauOTl+/eniHLK5i4abqIaEu6k3mP/Z2S+oEBjshqpqMleBoPwbZ?=
+ =?us-ascii?Q?S5YoTXH9lgGxyXfwYQtq2qsYGpkSONmTQPhav6opao4+PtZDALWU1I58K826?=
+ =?us-ascii?Q?dcky6cjGT4dporNZcGge+Zf1zev2I/n7LL45BnogycmHeFf7PkyCZt+KflM8?=
+ =?us-ascii?Q?AJPf3w4ciKyxUMfUVHa+zwc31Klf9CXdn/dajQLTyy5VV1uJjG5bkJ+yZIgr?=
+ =?us-ascii?Q?BSEgPuutqEhVYhNQjYlITyw4F3m+2+UNP/bK+IskokO12ek9nma+eO9u/1p+?=
+ =?us-ascii?Q?gWP0vRuPKlbLZhMQujpi4dhll+GjqZr5UTiQYLj2aMigVAJH4r0Qj5fxhxcc?=
+ =?us-ascii?Q?0KOva0c7aXMf0nm2Xh/MTZ7jTtOPK0/joi//XVU7aWj7d/1ncmgd4I8NYfs1?=
+ =?us-ascii?Q?SdbPX1J79S7KWpIp78UFA/MkrBwOixTanGJbbzzVhrQlUlWcLpt+b5B/81Dw?=
+ =?us-ascii?Q?oeu1ZI4pT+BvKUnxORbthx/jmhsU53J8MssqbwrQBXsRCDg55VB6ju4/xamX?=
+ =?us-ascii?Q?7Us/KaNQrHS27RUOoMaF1ZaI1qifFnO2bO0zzKc+qfjNsYoiXBbPQYpGJQMv?=
+ =?us-ascii?Q?moYd/4cAzjl07WXLzxV7bn2btEDgE41cJmxiAnZJ27iTgLfoP4g43GXoQuuw?=
+ =?us-ascii?Q?FvP8ePuu1vFI3FHULK+NjFN82Q0Qa4MDasd1NxNJs1DZbCNJWSb88Vc34Imn?=
+ =?us-ascii?Q?UkhBOQsJtU234T/UpakiGiJRJ+gaf1LvWXNOT7AayB1GlIfjqBHTUafI0/47?=
+ =?us-ascii?Q?JJnpYQGO/9iHQ5JLaaLz4jx4sirm4rMkYjFzA22DdWYg89eN3hOvhBk+Wi5+?=
+ =?us-ascii?Q?3h4r1ifdqNoVwilfdcdH4mVRZmlljBPzs7X4QHCaTUd7NB9ZnALVGzvppfRT?=
+ =?us-ascii?Q?ywyvMqCxCnV1ZFBh9A+LddOCtLItnpW/MqSK+41o5O1If9kOTFaBQCmeOZhZ?=
+ =?us-ascii?Q?edTXgxQ6JHB0UZeh9MCi8wSSTEaz+zwb+76K6o6YUw9VJFkgkjolsuZ7DjRL?=
+ =?us-ascii?Q?KKNBeACSCCJHZ2IoOvVNOiuA/7K2k3fafJFvptaNmydw6cfLVmBkEmIA5ctl?=
+ =?us-ascii?Q?awveGUrX0gtlQ7zETP7RQ6LYxuYWqmbhLvbHRZBdOjwLxURsW+ToSui/aEoG?=
+ =?us-ascii?Q?BOIC2yCFFnQVQ6ZksXDHp8SvD/kM48jIbOXBTET6wFJc0cDcFnZVkgr/PPyP?=
+ =?us-ascii?Q?ZMrYLBxCciC4uBFtVo3ML62sfiLDuhWL8Jpv8CvNRzIsYQvSCebNK2O1xqEU?=
+ =?us-ascii?Q?vrMegrphh4K7yQjMC5pP12ASZEuU7VDD2aIN/Bi5y0yd4CKd9mfFw3npsFJI?=
+ =?us-ascii?Q?yhMwwybGK/FGjvbTxEuO2RZA8InA0l4+ee19mr9f?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62f85193-78c6-4130-c7a8-08dd4b003139
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 00:57:15.5415
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /rG0jkplEcSA3sqIzodItrRm4Y6ewRHNX3EVvzFPrxOapvvKJiDCfedrgkAerhEc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5794
 
-On Wed, Feb 12, 2025 at 07:55:45AM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   09fbf3d502050282bf47ab3babe1d4ed54dd1fd8
-> commit: 9c3681f9b9fd12cdbc4a542df599f1837512f3d5 kbuild: Add gendwarfksyms as an alternative to genksyms
-> date:   5 weeks ago
-> config: s390-randconfig-002-20250212 (https://download.01.org/0day-ci/archive/20250212/202502120752.U3fOKScQ-lkp@intel.com/config)
-> compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502120752.U3fOKScQ-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202502120752.U3fOKScQ-lkp@intel.com/
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
-> >> error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
-> --
->    In file included from <stdin>:3:
->    In file included from arch/s390/include/asm/asm-prototypes.h:4:
-> >> include/linux/kvm_host.h:1908:24: warning: field 'desc' with variable sized type 'struct kvm_stats_desc' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end]
->     1908 |         struct kvm_stats_desc desc;
->          |                               ^
->    1 warning generated.
-> >> error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
+On 11 Feb 2025, at 10:50, Zi Yan wrote:
 
-The issue appears to be that the files in arch/s390/purgatory are
-always built without debugging information, even though they include
-code that uses EXPORT_SYMBOL.
+> It is a preparation patch for non-uniform folio split, which always split
+> a folio into half iteratively, and minimal xarray entry split.
+>
+> Currently, xas_split_alloc() and xas_split() always split all slots from a
+> multi-index entry. They cost the same number of xa_node as the to-be-split
+> slots. For example, to split an order-9 entry, which takes 2^(9-6)=8
+> slots, assuming XA_CHUNK_SHIFT is 6 (!CONFIG_BASE_SMALL), 8 xa_node are
+> needed. Instead xas_try_split() is intended to be used iteratively to split
+> the order-9 entry into 2 order-8 entries, then split one order-8 entry,
+> based on the given index, to 2 order-7 entries, ..., and split one order-1
+> entry to 2 order-0 entries. When splitting the order-6 entry and a new
+> xa_node is needed, xas_try_split() will try to allocate one if possible.
+> As a result, xas_try_split() would only need one xa_node instead of 8.
+>
+> When a new xa_node is needed during the split, xas_try_split() can try to
+> allocate one but no more. -ENOMEM will be return if a node cannot be
+> allocated. -EINVAL will be return if a sibling node is split or
+> cascade split happens, where two or more new nodes are needed, and these
+> are not supported by xas_try_split().
+>
+> xas_split_alloc() and xas_split() split an order-9 to order-0:
+>
+>          ---------------------------------
+>          |   |   |   |   |   |   |   |   |
+>          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+>          |   |   |   |   |   |   |   |   |
+>          ---------------------------------
+>            |   |                   |   |
+>      -------   ---               ---   -------
+>      |           |     ...       |           |
+>      V           V               V           V
+> ----------- -----------     ----------- -----------
+> | xa_node | | xa_node | ... | xa_node | | xa_node |
+> ----------- -----------     ----------- -----------
+>
+> xas_try_split() splits an order-9 to order-0:
+>    ---------------------------------
+>    |   |   |   |   |   |   |   |   |
+>    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+>    |   |   |   |   |   |   |   |   |
+>    ---------------------------------
+>      |
+>      |
+>      V
+> -----------
+> | xa_node |
+> -----------
+>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>  Documentation/core-api/xarray.rst |  14 ++-
+>  include/linux/xarray.h            |   7 ++
+>  lib/test_xarray.c                 |  47 +++++++++++
+>  lib/xarray.c                      | 136 ++++++++++++++++++++++++++----
+>  tools/testing/radix-tree/Makefile |   1 +
+>  5 files changed, 188 insertions(+), 17 deletions(-)
 
-I suspect the correct solution here is to ignore the object files in
-this directory when calculating modversions. The quick patch below
-fixes the build issue for me. Masahiro, does this look reasonable to
-you?
+Hi Andrew,
 
-Sami
+Do you mind folding the diff below to this one? I changed the function
+name but forgot the one in the xarray test. Thanks.
+
+diff --git a/lib/test_xarray.c b/lib/test_xarray.c
+index 598ca38a2f5b..cc2dd325158f 100644
+--- a/lib/test_xarray.c
++++ b/lib/test_xarray.c
+@@ -1868,7 +1868,7 @@ static void check_split_2(struct xarray *xa, unsigned long index,
+ 	xa_set_mark(xa, index, XA_MARK_1);
+
+ 	xas_lock(&xas);
+-	xas_try_halve(&xas, xa, order, GFP_KERNEL);
++	xas_try_split(&xas, xa, order, GFP_KERNEL);
+ 	if (((new_order / XA_CHUNK_SHIFT) < (order / XA_CHUNK_SHIFT)) &&
+ 	    new_order < order - 1) {
+ 		XA_BUG_ON(xa, !xas_error(&xas) || xas_error(&xas) != -EINVAL);
 
 
-diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
-index bdcf2a3b6c41..bdcecc19441d 100644
---- a/arch/s390/purgatory/Makefile
-+++ b/arch/s390/purgatory/Makefile
-@@ -28,6 +28,8 @@ KBUILD_AFLAGS := $(filter-out -DCC_USING_EXPOLINE,$(KBUILD_AFLAGS))
- PURGATORY_LDFLAGS := -nostdlib -z nodefaultlib
- LDFLAGS_purgatory := -r $(PURGATORY_LDFLAGS) -T
- LDFLAGS_purgatory.chk := -e purgatory_start $(PURGATORY_LDFLAGS)
-+# Purgatory doesn't export symbols, so disable symbol versioning.
-+$(obj)/purgatory: skip_gendwarfksyms = 1
- $(obj)/purgatory: $(obj)/purgatory.lds $(PURGATORY_OBJS) FORCE
- 		$(call if_changed,ld)
- 
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 993708d11874..cfb4b57ff617 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -309,11 +309,11 @@ getasmexports =								\
-      $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
- 
- ifdef CONFIG_GENDWARFKSYMS
--cmd_gensymtypes_S =							\
-+cmd_gensymtypes_S = $(if $(skip_gendwarfksyms),,			\
- 	$(getasmexports) |						\
- 	$(CC) $(c_flags) -c -o $(@:.o=.gendwarfksyms.o) -xc -;		\
- 	$(call getexportsymbols,\1) |					\
--	$(gendwarfksyms) $(@:.o=.gendwarfksyms.o)
-+	$(gendwarfksyms) $(@:.o=.gendwarfksyms.o))
- else
- cmd_gensymtypes_S =							\
- 	$(getasmexports) |						\
+Best Regards,
+Yan, Zi
 
