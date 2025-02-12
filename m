@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-510948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15207A323F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:52:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB69A323F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:53:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 290BA7A35C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:51:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F993A7EF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB3D209F2E;
-	Wed, 12 Feb 2025 10:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04845209F41;
+	Wed, 12 Feb 2025 10:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKpin3d7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEmo6s20"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9E5208961;
-	Wed, 12 Feb 2025 10:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551FB209696;
+	Wed, 12 Feb 2025 10:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357560; cv=none; b=c5stCb0rTfFuf+uz01V1gDdyd3a+sAPWHyzhEDmBp7OZYsqZ0agO5OzaK2jKwSJC3oghFVPeTAoc+ZgqoxUUlt5X/OtGSy8496bpkETWMAnAVWlZl//EqVfHayG+y+1LXINnjlr9a6sDwc8mlzvp0AA7Wqjf5XDG7R6VjEXs5e8=
+	t=1739357577; cv=none; b=tzK326bzMMcOkVm06Q+5uiUlN9pyO7w1Bq0cNt1hrWP5494+poRpIkItq34vSW5/ZmknRk+UKusC/FDewz7l1qnDr7h9EnzrY4bi3KBmL5nMKPhgvoQaGyP5ZPOYJlmWqY49obLtA+BdiNyJKO8trHJ2kKWn5FPuZfXEkayX9hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357560; c=relaxed/simple;
-	bh=IbfikkpS+p2O//leAns4lsN3IqnEVJNnh28OTL/5oCE=;
+	s=arc-20240116; t=1739357577; c=relaxed/simple;
+	bh=LwGxdLg8+twqu4asAaRUA1ljgh9WeZCX/IZ9fHF1aC4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0zVyXC9K1W4/dFWbYkJkMIIU6nCi0cSM6TaL29HDRcWElEtbokqYTdQ7EjbApDb9TjOG98/kG42UyfocVnCTiIHd5ZCH76plGTW6pLOWjT31fN4StAF5/Igb/P9ClWlUv7z6kNrnkJd0l1s3M4fJEOf5LsG72fnqitAzoNnO+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKpin3d7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C581BC4CEDF;
-	Wed, 12 Feb 2025 10:52:36 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=OfVM6LstIqa1ukL96VeTrW3d9qEqxc/ZwDTGNvFXL76kT1i81SRxIAqv/zZ/LS9e+riCo8UYrDK6cMuAlZQnFa7/qiwvuQMC8BoYiCHRwg20aENhcW7zmPZCMDA78jqvcb3eUnyLr3zgSKHtqFPbWcZM9VM2fv1bGaFpvn0IG34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEmo6s20; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B154C4CEDF;
+	Wed, 12 Feb 2025 10:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739357560;
-	bh=IbfikkpS+p2O//leAns4lsN3IqnEVJNnh28OTL/5oCE=;
+	s=k20201202; t=1739357577;
+	bh=LwGxdLg8+twqu4asAaRUA1ljgh9WeZCX/IZ9fHF1aC4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QKpin3d7mTJ9/8tDU5r5d/CXdkMY+sCm1+TWFdR2IsvYCQw+9uaZDVEA0tzoIlknN
-	 vxTpcbddOjCE8kRJNjpm9f6rLrcM5Fo4fE8FlrRLEmeApKbJwP9csBz3Ezvkv+DiW7
-	 3PH6XPpim9iDxnE7lzVQ9CwBw3JeyC4WRmVgOTLCBNiiTYpXuttwlLOg4+OcFPWPvo
-	 znfwBcpg6oem5pcHpmmo8tumZASH5UvHBIh304kCoXpOGtpa95SD9DwsmEnH5+kFsn
-	 YyjTVShSN3ZabTH5+soelVavixul7mP2u1tzzyPgtr70/7p1hhU2On0eIhar845QGT
-	 DNkQSgdX/YeJg==
-Message-ID: <9797d470-346f-4244-ae8d-2db68ef071a6@kernel.org>
-Date: Wed, 12 Feb 2025 11:52:33 +0100
+	b=WEmo6s20JHNClvCl+c0CK9xEzviz+xJSm/CsmX3TNCM3EYVa9Tz28IqPTvXiQxXO4
+	 6Adf0zphG83OJknmRLj2EZ3fB3kt7j3KE58gIk+lSxhJO9W1qTUhrrrsFhYsvnyfeA
+	 Ie9Ba3JrKiZvg5OhxegVxuIF5DrrToqFyg/bXuaX2fBRkITYYQUDSrerTmQiwnOOjJ
+	 UfL6Dh0ittBVpKWvjh7QhvqdZWTDenyoKuKapb6UpuXFjAa7kSQsnbDMxQJhR/eetL
+	 MUvmu+mWEtYilUJx/Wq8v3/OY+AmuIVoSNPaLuKQC1tNdPAtbvxJSoixBun83mtPSn
+	 vqf+TIuVX47XQ==
+Message-ID: <8915b5a4-9f6d-4415-b4b6-85de9becee58@kernel.org>
+Date: Wed, 12 Feb 2025 11:52:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: mtd: cadence: document required
- clock-names
+Subject: Re: [PATCH v2 2/2] arm64: dts: socfpga: agilex5: add clock-names
+ property to nand node
 To: niravkumar.l.rabara@intel.com, Miquel Raynal <miquel.raynal@bootlin.com>,
  Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -58,7 +58,7 @@ To: niravkumar.l.rabara@intel.com, Miquel Raynal <miquel.raynal@bootlin.com>,
 Cc: nirav.rabara@altera.com, devicetree@vger.kernel.org,
  linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20250212095407.2667743-1-niravkumar.l.rabara@intel.com>
- <20250212095407.2667743-2-niravkumar.l.rabara@intel.com>
+ <20250212095407.2667743-3-niravkumar.l.rabara@intel.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,26 +104,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250212095407.2667743-2-niravkumar.l.rabara@intel.com>
+In-Reply-To: <20250212095407.2667743-3-niravkumar.l.rabara@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 12/02/2025 10:54, niravkumar.l.rabara@intel.com wrote:
 > From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 > 
-> The clock-names property is required because the driver requests
-> the clock by name and not the index.
-> Update the example to use &clk instead of &nf_clk for the clocks
-> property to avoid confusion with the clock-names property "nf_clk".
+> Add required clock-names property to the nand node.
 > 
 > Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-> ---
->  Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
 
-Please add fixes tag - probably the conversion, because original TXT
-binding mentioned "nf_clk" so it could be implied.
-
+Fixes tag please.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
