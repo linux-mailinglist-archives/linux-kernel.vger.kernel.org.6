@@ -1,93 +1,87 @@
-Return-Path: <linux-kernel+bounces-510236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9149AA31A1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:02:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA5AA31A25
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B2B07A22E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A86F3A7B29
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE3C4A3C;
-	Wed, 12 Feb 2025 00:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B498823A6;
+	Wed, 12 Feb 2025 00:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="dJUzPjTt"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="phcgS0Tn"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A06A31
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EF8360
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739318569; cv=none; b=lj3v9Y9BZOAVzWkcoAbmCOfG8ESBVevjRd0wBBLYvhHak8zDLfXLQW7JYJThXukI791ML0X/A18f0IotsvO7RUANfL2HrCE9LsoH+4JHxHr0EH6KUjQBvo+h9ecxkD+QBttv/ztZapLAEAU/colkTv23rIIs81NL+MVegnIEYL0=
+	t=1739318851; cv=none; b=KOeLxB2//bbv6v0rSkR2P7/gIqggouo3/uvDtybmFYf5dHpRlj4O6TcN0X0JWH+yFR2qVatkPqQNeg2xeRPSt4kSAcaRaTYke8410+QnujgCoagXF/Ai5m2KM7+6cdXvPzowhcYn0upm/oG0YmTMs3XLKffQ8pVRjVKFijT7TUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739318569; c=relaxed/simple;
-	bh=fMMFv+jSo7zzi7KLoGFNtsOVq+2ktkT4wQ9W9F6Rhc4=;
+	s=arc-20240116; t=1739318851; c=relaxed/simple;
+	bh=VWebKF0DiemAQq9Im6QLCJUBLm+i3WVGnbbbpbF+uyc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aSKIUAi3LoZqq722CKYPf9LRHUP93rfj1FELOBmo77ZxLjKG38HnsGMEMwBkW4BVbW/F4sDltrTxEdhWZnZiugcqUz4xDpulAnvNPcpeYXQ0XhwBppvX24rVgyLTPzza9s9UISq1dh5nTjXDxDAEmVVEi3yqvFSQZoOPytnBZFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=dJUzPjTt; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4718b128eafso12253451cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:02:46 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QpGU5RgjCpSOu2jhowTw6wxUVRwxckdwcm6o0bPFBy4Mg/36pMk4Q7ZpUbZvUQt9fX/Ie5TsMHdmdCGEx4nStK1g/NuMyVKyvnlESv1sL0+OI+82lLIZKpmghs2ad+6GXJLWEODB/SD9OKng3mB7gw/x7vz7KbjWOQRKqCsmg8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=phcgS0Tn; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5450b91da41so2618421e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:07:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1739318566; x=1739923366; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739318847; x=1739923647; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QmoPrNZsGcS3Reb5Ece6K60aasyBoOFla2DRA7O2TJQ=;
-        b=dJUzPjTtUztTCFH4SWClXrzf6ng8gwdoQ80K+RYd8xbJGpA5mzr1KTDitosZzfaOVe
-         kvZ7a6rL43cOjdJE4Sio4hTsK7iXvIicLkiv6G5n3BAWlngz8dQ+qK21KSn7hzjYBPtO
-         zuhdL2tlZKLhbzy+MbBE5kJEzcMRg95HfJtlxpoWXlUAoYf2tTeReedyA3lfaA1TJqw2
-         kQX7EtdDad+amajBBEUXhpTiQMLTabSH6bsduzgypgRZ8S/PyVm0+UEmwPH8+S8erECN
-         ij78Ic8eSgq7ZlLY3lMCi7cyp/MEqs8UHkUEsI3+wKkBj6uCBO8rzjEPxxT+y+4BP/lt
-         rXvA==
+        bh=rSvVq0Q4byuw3K4FZfEe4v2n2HhjFTVAI/WWeumGLwM=;
+        b=phcgS0Tncg8ycUqMgcRckbRcisrRPk8uIse4zhkKsL39M1KkIZ303ofg5JKkuQzN5N
+         BGCRV0S8OPy35D5UJORU2r/KqJ+KJL0OMGRscIP4HMWF/NScdkxpWlp2RlrgxIGIuPCL
+         gfYuAVRxIWP0G3rgvnVv8n9D/lnzLszeREiMBc+wGrqZ4oN6zU7J4rZeVWP44gAsXj5w
+         6cjACuPN04CIQBvgeBgXp1dsFlLvr/A3kt+zDNS0Le07xd0xGMUCzeqht3vioV+5xOqu
+         87CBkkFFfHgqpydiuWasYdhFShaq4mH6trchJ4eRLrCZKH2JAtsRrxY3VWATjri13Spl
+         U0CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739318566; x=1739923366;
+        d=1e100.net; s=20230601; t=1739318847; x=1739923647;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QmoPrNZsGcS3Reb5Ece6K60aasyBoOFla2DRA7O2TJQ=;
-        b=UGz1U/Y5VEv71ZBg23eyNTaUFBEG/y+jqwyMsE3aKJNBIOu8c2KArDz2O28kyL36Ou
-         BPD2zCj2J+cLH/Z5pL5X11WPC9zF/mtQ+52NxJqrRMBO2Iil93jCCGUiLKk8pQcZYXDC
-         jbwAl67F7v8p4McR+7AbEth1jl0c+c5q0lm/oQ7i/beaXShcJF37xCAVFt+SqgzkOsNG
-         JH/5V8LlbPuiHbEObIs1mNNeJ+s/45Ha5o4If1je50dtcJ/OX4g3MkQV1CeqFp2Ua9ds
-         tB0cGX3/EA/Dy66OJsk6XmRMmD+9ewji1iS4/o3m+tFjI2QL8jTwIbcgdgMShWs4yaPY
-         MtDg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1eJ7SzoLqSQv02E8zI/cir+Dy4Be+Qv4x2XxUHu6rfuXO49YULPS8tuNQoOl7VjpA8LqVffU+NqkfWd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXYTgVRKlrjAqy7QQblIZu/WrajDXaaadq8THBvvGGF4SwKO36
-	XyjW1W+dWeL4i7xZ+rOfwxWMBL/O+jswTR4GeGWc3uw04osD/V9PHbOgpbE1ekA=
-X-Gm-Gg: ASbGncsEr1b5x0XmRwEfOLRavcKs7fBBp8Pa4kAhP0Qj91h3HCGuNwbg6JId0LTtXXv
-	9iz7PVNVeHzea5ScRQ25v6zMMZwmE2kRv5a8N2Ch/PCUsiXC6cDJR8Yo1bNTu0cQYUCI4vM1q7b
-	B/XinMiN2rLSfGxlVy4rXg+SqsleoPqo0OYj8bI8LydsdptGqSIRmAndqWnRhW5sN14jvVnxRQ7
-	7UqpK2u9qI7JHNqJANWxFHXc+/jrd3/iu0bmuwEw4BwLZZjIugSK1baOF+lGUHqywYL0jH5XzjZ
-	XgQBtsvPB01jqIUtR8ghFHASb3qzbC73eZUHCO3x0I8nsnMdNRvjHxWYUrABal72Xp5K7BImOw=
-	=
-X-Google-Smtp-Source: AGHT+IEZ3bke8jjQfP0MZWNv6laQYll9viopbjSznSPRl/BmTopl9h8Rj2ahTL9C2o5Xhb2Twsk4aA==
-X-Received: by 2002:ac8:7d47:0:b0:46c:9f53:4a45 with SMTP id d75a77b69052e-471afef8df2mr20155001cf.43.1739318565725;
-        Tue, 11 Feb 2025 16:02:45 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47153bc6c85sm67018281cf.53.2025.02.11.16.02.44
+        bh=rSvVq0Q4byuw3K4FZfEe4v2n2HhjFTVAI/WWeumGLwM=;
+        b=XxBUsJdB1W+XBGQOuumXnSSPDSa6I6AR+sKNb8K4OjwhwOzfo/KEbxXC7bmaqsc162
+         3LSVaVUYGFTuspO+ayUECveKhbPoVcbfwwFu/uI3qeDKzRJe1a66y1jQcyMXfQLo20Ug
+         3udXISqfhkwB/ygJ+PQCoruJP8mIG/g/t6uBqcJG/ox2o4HcV3NCeFIqA2zN38g053Yu
+         f0+wmRxxZ7MAbprSA6pTCSaneZZNrhzwrnPEAAcrEWhRK1cqSetRau/6sSOyDennFcwz
+         11oz0sF2lxYkV3oL94+9evU5wahYV9T4KHZg+2CAjO6tfbQlOsHI2HfMDW4E1aCyoxTt
+         NoxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWecnI0P+NuQSZ9iEeR6qG61Oc2bUXJA0bKSsIdkzI/fuI9s0HMqQ4nISlJhNKrH6lK0VJbYDlFk/3CgSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRsmH2g5muLsSvTOxVEjg2DyxKPWyDCQlJUnquEhop0gVwm4Mh
+	NBuOVyjGubOnA6baa6k6jIdXq9+rZoqoSJdO5f6aM7EKQxrfZPceI6/lvlrHSHA=
+X-Gm-Gg: ASbGncug71elVezPK2keDoMnfEU7DpYBb39yTZDMLQov1LxcOSa0a4eWVgUvqLox5LB
+	X/9Ifgpc6LNqdVvgDWr6PDuJ4EyFCvpibBjvXyhI1V+VhPfoFxFW+EfgAcX9gOLE0F6Gj5xj6KZ
+	zuDXdsXO5DAIA6Uf8+jESPzSEfLmw76bItlgYRRL7/Tch0GITZdY4FeCe/thGqWdJsKmaDziMBg
+	w7BB/3AL/P7pqfVAZ+7RgEmDE2NjyBnzpL4Rifzj+otb7OMV1E29jdJm32AJS/8+nosfobXYFQe
+	MyzK7Wj4WvrCtZc637OiaSeU/yFE9W602qLbwdiycXOsmihGkJ/LxwsHzxP+WhuI2HvyqRk=
+X-Google-Smtp-Source: AGHT+IEYSYjM6e26W3BebaqVj9AEp0qCBuSkwbasndm6u40vD94b8fZ5bLT2RmF5vB9zoS1z8G6pdw==
+X-Received: by 2002:a05:6512:745:b0:545:c08:e193 with SMTP id 2adb3069b0e04-5451810fe44mr196032e87.27.1739318847359;
+        Tue, 11 Feb 2025 16:07:27 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5450bb646a5sm808177e87.146.2025.02.11.16.07.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 16:02:45 -0800 (PST)
-Date: Tue, 11 Feb 2025 19:02:42 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
-	ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
-	rrichter@amd.com, nathan.fontenot@amd.com,
-	Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
-	ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-Subject: Re: [PATCH v7 06/17] PCI/AER: Add CXL PCIe Port uncorrectable error
- recovery in AER service driver
-Message-ID: <Z6vlIhKFFqYKaivc@gourry-fedora-PF4VCD3F>
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
- <20250211192444.2292833-7-terry.bowman@amd.com>
+        Tue, 11 Feb 2025 16:07:26 -0800 (PST)
+Date: Wed, 12 Feb 2025 02:07:23 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dpu: Allocate the number of LMs based on
+ max_mixer_width to support 4 streams MST case
+Message-ID: <zri44j6baegrcxmnac3o7ujtrlm2ybhon4hq3ondvdbcqfhpa2@zjxcprel7zv7>
+References: <20250211-dp_lm-v1-1-deeca9ac9bd9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,15 +90,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211192444.2292833-7-terry.bowman@amd.com>
+In-Reply-To: <20250211-dp_lm-v1-1-deeca9ac9bd9@quicinc.com>
 
-On Tue, Feb 11, 2025 at 01:24:33PM -0600, Terry Bowman wrote:
-> cxl_do_recovery() uses the status from cxl_report_error_detected() to
-> determine how to proceed. Non-fatal CXL UCE errors will be treated as
-> fatal. If a UCE was present during handling then cxl_do_recovery()
-> will kernel panic.
+On Tue, Feb 11, 2025 at 06:37:43PM +0800, Yongxing Mou wrote:
+> In 2x2 mst case, each 2k monitor will use 2 lms, but dpu_8_4 only have
+> 6 lms, so let 2k only use one lm to support such case.
+
+DisplayPort MST is not supported. Please work with Abhinav to get it
+into his patch. Also it's LM and LMs.
+
 > 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
+This list of SoBs doesn't make sense.
+
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> index 5172ab4dea995a154cd88d05c3842d7425fc34ce..e8846bf8edc5f9b2b3b7f093e4d5aad75de53da1 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> @@ -677,7 +677,8 @@ static struct msm_display_topology dpu_encoder_get_topology(
+>  	else if (!dpu_kms->catalog->caps->has_3d_merge)
+>  		topology.num_lm = 1;
+>  	else
+> -		topology.num_lm = (mode->hdisplay > MAX_HDISPLAY_SPLIT) ? 2 : 1;
+> +		topology.num_lm = (mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width) ?
+> +				   2 : 1;
+
+Please extend commit message to describe how your change affects other
+platforms.
+
+>  
+>  	if (crtc_state->ctm)
+>  		topology.num_dspp = topology.num_lm;
+> 
+> ---
+> base-commit: df5d6180169ae06a2eac57e33b077ad6f6252440
+> change-id: 20250211-dp_lm-8f8ef15f5955
+> 
+> Best regards,
+> -- 
+> Yongxing Mou <quic_yongmou@quicinc.com>
+> 
+
+-- 
+With best wishes
+Dmitry
 
