@@ -1,111 +1,181 @@
-Return-Path: <linux-kernel+bounces-511045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0BFA32509
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:33:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E622A32510
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925A9167D26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 586E4188878F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D55020ADC7;
-	Wed, 12 Feb 2025 11:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E097620AF62;
+	Wed, 12 Feb 2025 11:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKRD1cYW"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/1wsRpW"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32202209F46;
-	Wed, 12 Feb 2025 11:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEBF2080F4;
+	Wed, 12 Feb 2025 11:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359945; cv=none; b=oYQaw3DFVGjOp0PQ3psNS+PDTBztSxjbMgOyjK+OSpJzFV7UV8zRw/nRZkvesyVVt1cD95NCVpAooK4TFa0VnYh73b94N9D97KeE1BF70qPb2yjJWImqHHRl9GcUE9j363C1/GW8ZCVBZ8KA0c4SGliA+K+YFKb6exO108Mym5k=
+	t=1739360059; cv=none; b=uq+q90qFXhiB+QD9J2SYVDFrwJ2c6b+9J0s/rcZlIZ/U7uqE2eUPBbSm93IwC+6esv/k1OX6ygNEdEI46LSOckunE6C5/FFNfBRpV498928aNpnIj+659NXF64D4yJOu0mEhqlU6GwDzNDdiPEka4/H1cOOUFj7NhMbihG/3v4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359945; c=relaxed/simple;
-	bh=s7hHeLHxalaGcIL8rwFO9IhAesCKLsnoNKCUDby/PEc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h2AmSzOH8iCxLK6g9ZU4vx9TguDm79DZgwZJlLKsXT02ZsU1S3iiYF2jsjU8DadsRlRyYchE8FpEV3uTP9LbRvBZdD+Cx5Tfbeyi6Vi/rT5Bjf0D4ugnqr4xkzuWVWe7F1RxocxQgF/wZI/s95qRy3+MYpPey+U7pCb8SnU9KlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKRD1cYW; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1739360059; c=relaxed/simple;
+	bh=jZjHZKZTK7fKc5GjpG+xIemr/MItrOAzPizGKwAJztE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Oa4mqOVXsAuZ7RZMezOiATe9dkY+GNySIjaQcvSgySmo0SQIKyTLjN/E6Lf7JVe0va8a//BZ+9Rhc76LVccNsPMmxzJ7a7PwhD57iw4HON9sWS8z6G8H6S6es0xR6cZezw8TZiBSuYxId08DRvsSpldbcwXUHzrJGh9wCDV5xRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/1wsRpW; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab7b80326cdso615358166b.3;
-        Wed, 12 Feb 2025 03:32:19 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f1e8efe84so233938f8f.1;
+        Wed, 12 Feb 2025 03:34:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739359938; x=1739964738; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:reply-to:from:subject:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s7hHeLHxalaGcIL8rwFO9IhAesCKLsnoNKCUDby/PEc=;
-        b=RKRD1cYW+YP7uV0z1t4mNQjcDt5fQt3vsyGsdmdBhoJFnFF43DdvSzARsJBQEa6cIj
-         Dy2nb+e/q4I4KD35o/QYpp4Zxrvb8LAIR96+w7yqD3wgHKEpCKG/zWEWy9w/Vffkqp3v
-         5pcqVhwqFKfP36l24YGA/h9D9uQhxm9KUZ/3tTiOGOnmRtUdU45QVhZWZBSb5rBGjFlN
-         89B9UdY25MRIiw0kIR3Sob89BZZmnZfqygCcE51sVgXwVNjEwetV/kPUmaWrXyePq9gP
-         hJhS/lfCGCAqK/Vc6YsUyzKpE5qZ7gCr8KRFvuvcKUBZI/lbFwxSkv2mgKjKMmOZdBhQ
-         dl5g==
+        d=gmail.com; s=20230601; t=1739360055; x=1739964855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TxYXr4CIt9/N3PViI2FAcH2d8Gj6tYN9ZRZ0yRJgtpc=;
+        b=Z/1wsRpW4smICWyOKngQm45Ete0OKDgtUZrCfPwMEVMaK53wnnI84gp9U3KzvMQCwW
+         UtI4JlEu0XDJ13qHTR+rK7seXFRN7r3t50shVvOAv58CCqHVc2KetKmRPT3md7O6WZYd
+         YfF3cRvWTzDBLWHeB72TNQ2V0oqii6bXBK2XUqiceRPayl0s1gxKJgAU4L8GfV2COmMQ
+         IP3bXHGC3/Np+dOiIa96gX8HpiO9nFk4UklwbtlHKlJwJ9xg1Uc4fTP8YGKLOFgFobzi
+         HQ9fmrC6fk8YlDuWZRRjYLXnBl+YFbcw64J1nx2y5FSJHgFTOoaq3AGHxYYX/418OA7C
+         Z7jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739359938; x=1739964738;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:reply-to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s7hHeLHxalaGcIL8rwFO9IhAesCKLsnoNKCUDby/PEc=;
-        b=cZUvSU+cAWyhPO/jGN4oC76mn4Uk9IbzAgqrH0Q038ySLvYKdFmrffOck8UIfffqRu
-         OTpknmU0h6MrX5rVybsne6HVWiN25SK3FSMXy5k79d5LqLBZ4meOT13nVitJ8cFrLyic
-         WwR9EtTqkvKip4dVVDj5/cIHV+nskUKnuuycsf0XG4Iwye702DfIgOcZJ/vBcEJrisf6
-         7RHlkT/rgReTuRSxgcVFvfutCdsqUhlksmC6kQUoL0z7AAXGxhWEbalTN48M43obm+qe
-         2fqyJ+jeCg1A+qduj3dM/LpTYYKPgEOqHVjrjPNa5mP31T5a2DnXb7YglMqCNF50GPFD
-         EK6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVTWhLyxqGdc0vg+N2bCBBDX7EEfwiKNcI0YFHWw7JutvY//9vhETSlwdgKZSav3eh3Be/tFSWMDyL0dZum@vger.kernel.org, AJvYcCWbA3uMpG8QinNgtw+b9ZSkLJhCj8xdxzbBeussmoz7OuUyfCoLz49LOZVtd0sr2IG45Y6LiPhNVLg=@vger.kernel.org, AJvYcCXC/yQApLiXPTfu2nHlJ/2AY9HysrTBAWBphufqHT78PGH1Vgy/QlZsDVqIKxof/iEghS/onwuWvzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5nGi4kQQDa6Q7o8T82Vz+h2Mc+XUqQ47Ur3oCwW4K5WB3iurA
-	fmqBr3qKlxMnK2nDJKEHuhDknInDTBTD8iegxMQAQNF+IxrWqB63
-X-Gm-Gg: ASbGnctGMt40TCNdJBk2jtCH65L3JfedSpW4C6WpTT2X9Vl326XhLpq/XZQ4lKGsNvS
-	yB+Y77ZtX1awA9RmmxToVHkVzYYKGARA5DzqvFC92OAWhs69nIyBF+O7MQEAs3Ah3RuzfP8JjyF
-	3tWatsz8jRpcj9KXr9XGFohAUn9+DligsVmz4bnIZD9V0Xyu13ar7UT6y4AFeXpymfVf5Yzd2Bj
-	sNjcsYAKKWIiahYMML97rIslChzmD6hn7ey+ZA+6Mx5jbs/StdWK7eeJI2laqTZDJL3kxbPzgEs
-	jAU3RfMhaoFI2ALXsA4bGz9YBbrVFbaPVpAqGn87GOnmAg==
-X-Google-Smtp-Source: AGHT+IGJJXndp5jBgYdH0F5LQVt/q3VMN6qyAAnLNn0OT4b42ec2KYia/IvE9C8PTwq0Y5hlfFGx6w==
-X-Received: by 2002:a17:907:d8b:b0:aa6:a87e:f2e1 with SMTP id a640c23a62f3a-ab7f34da843mr200509566b.56.1739359938215;
-        Wed, 12 Feb 2025 03:32:18 -0800 (PST)
-Received: from abityuts-desk1.ger.corp.intel.com ([134.191.196.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7bcd53bf5sm629950366b.87.2025.02.12.03.32.16
+        d=1e100.net; s=20230601; t=1739360055; x=1739964855;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TxYXr4CIt9/N3PViI2FAcH2d8Gj6tYN9ZRZ0yRJgtpc=;
+        b=LQ0yoQoQZeZi92VYCDV5v9yuSpEMokVjH3ngKBTwtHOQTk+++2/7GUOxL7hvmJeVcE
+         kkfFnoaHhurq7VRG0WXUCaLngESydr7SxTirqLQDSbm3K0SJfY5NEzMMMcgH/nJWCcYN
+         gBywpIKvSQFlLIKMi+7I2Si9I8Pejg51Br+SM0mvxcxGWFxqwS0sCrrnOEUaDXUwoFkZ
+         gXKa/YaZmmRVFWPLo2VAKw6rWzN04MhGTzbi6KFDmnNtFmCKlbhSocGQAuaWdgaIv7W0
+         jmjyWefCByAS+4qb3NI2b5aiiqfPwn9cujhuCaM25oYyrbrv++ikDfEdibMSEtQ3AG/v
+         F9iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4B9n7cydOGGdwWaaZ21Vkps4kH+ClGEwZsO1E3xg4M131urcfSk2ouIXgNFbQ/RIxeTOJYu7tn0/92xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZmt9EaIeSLnPXg2Kp9hwxOrp5qPU3golsQgSvPTrZCOMncflX
+	ZPEkXNrgZ9W4e5NiKfU24tWTY5GTEdp8ZdQZqwadrPTsMJsM7H2+kOPoc1sSUl0=
+X-Gm-Gg: ASbGncuz1rlVaDWI/pA+TXCJ+GLn31mD1wH3Hlpfxqgr1uoKrYNf6NkFgsFC8/KqDhr
+	TXhv/vTYoMFQokw3b8zmA9kIPK7L2lSvrw1bJi2oyXAceplDETz83Aquwfk2hMLQfDjg/GQ17vV
+	XBKidW1KGtZuKHKjBgTCT8b6o7thFV6GNAM/SkF0cJAjAlccIf8aJmeAZiwWNzLW+QNa8v0ciOs
+	TEjbrW1hShFS9WERjwBWx8nmxazNI3bkGRjfEL7VcMKIpMkSzLWUkZ6Ayj8jF8GMrumrEJUU3G2
+	AyjhZaokMJxiNuLboMiUSVHScxv/
+X-Google-Smtp-Source: AGHT+IEP2BdLBmTBCC0FpgjDnmPfSyM/uqgfom5XHjxbqTv/prkrItuAVfjhja04p7hdHtH069NJ0Q==
+X-Received: by 2002:a5d:6311:0:b0:38d:badf:9dec with SMTP id ffacd0b85a97d-38dea5f7077mr2329087f8f.38.1739360054420;
+        Wed, 12 Feb 2025 03:34:14 -0800 (PST)
+Received: from localhost.localdomain ([45.128.133.222])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dcd21fe18sm14124441f8f.91.2025.02.12.03.34.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 03:32:17 -0800 (PST)
-Message-ID: <21e66060c13c6a3cc33592f71cb08975711a6adb.camel@gmail.com>
-Subject: Re: [PATCH v3] intel_idle: introduce 'no_native' module parameter
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Reply-To: dedekind1@gmail.com
-To: kernel test robot <lkp@intel.com>, David Arcari <darcari@redhat.com>, 
-	linux-pm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jonathan Corbet <corbet@lwn.net>, Jacob
- Pan <jacob.jun.pan@linux.intel.com>, Len Brown <lenb@kernel.org>, Prarit
- Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Wed, 12 Feb 2025 13:32:14 +0200
-In-Reply-To: <202502121732.P7lZkbhm-lkp@intel.com>
-References: <20250211132741.99944-1-darcari@redhat.com>
-	 <202502121732.P7lZkbhm-lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        Wed, 12 Feb 2025 03:34:13 -0800 (PST)
+From: Oscar Maes <oscmaes92@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	viro@zeniv.linux.org.uk,
+	jiri@resnulli.us,
+	linux-kernel@vger.kernel.org,
+	security@kernel.org,
+	Oscar Maes <oscmaes92@gmail.com>,
+	syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
+Subject: [PATCH net] net: 802: enforce underlying device type for GARP and MRP
+Date: Wed, 12 Feb 2025 12:32:18 +0100
+Message-Id: <20250212113218.9859-1-oscmaes92@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-T24gV2VkLCAyMDI1LTAyLTEyIGF0IDE4OjA5ICswODAwLCBrZXJuZWwgdGVzdCByb2JvdCB3cm90
-ZToKPiDCoMKgIGRyaXZlcnMvaWRsZS9pbnRlbF9pZGxlLmM6IEluIGZ1bmN0aW9uICdpbnRlbF9p
-ZGxlX2luaXQnOgo+ID4gPiBkcml2ZXJzL2lkbGUvaW50ZWxfaWRsZS5jOjIyODk6Mjc6IGVycm9y
-OiAnbm9fYWNwaScgdW5kZWNsYXJlZCAoZmlyc3QgdXNlCj4gPiA+IGluIHRoaXMgZnVuY3Rpb24p
-OyBkaWQgeW91IG1lYW4gJ25vX2FjdGlvbic/Cj4gwqDCoMKgIDIyODkgfMKgwqDCoMKgwqDCoMKg
-wqAgaWYgKG5vX25hdGl2ZSAmJiAhbm9fYWNwaSkgewo+IMKgwqDCoMKgwqDCoMKgwqAgfMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXn5+fn5+fgo+
-IMKgwqDCoMKgwqDCoMKgwqAgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgbm9fYWN0aW9uCj4gwqDCoCBkcml2ZXJzL2lkbGUvaW50ZWxfaWRsZS5j
-OjIyODk6Mjc6IG5vdGU6IGVhY2ggdW5kZWNsYXJlZCBpZGVudGlmaWVyIGlzCj4gcmVwb3J0ZWQg
-b25seSBvbmNlIGZvciBlYWNoIGZ1bmN0aW9uIGl0IGFwcGVhcnMgaW4KCkRhdmlkLCB0aGlzIG11
-c3QgYmUgdGhlICFDT05GSUdfQUNQSV9QUk9DRVNTT1JfQ1NUQVRFIGNhc2UuCgpUaGFua3MhCg==
+When creating a VLAN device, we initialize GARP (garp_init_applicant)
+and MRP (mrp_init_applicant) for the underlying device.
+
+As part of the initialization process, we add the multicast address of
+each applicant to the underlying device, by calling dev_mc_add.
+
+__dev_mc_add uses dev->addr_len to determine the length of the new
+multicast address.
+
+This causes an out-of-bounds read if dev->addr_len is greater than 6,
+since the multicast addresses provided by GARP and MRP are only 6 bytes
+long.
+
+This behaviour can be reproduced using the following commands:
+
+ip tunnel add gretest mode ip6gre local ::1 remote ::2 dev lo
+ip l set up dev gretest
+ip link add link gretest name vlantest type vlan id 100
+
+Then, the following command will display the address of garp_pdu_rcv:
+
+ip maddr show | grep 01:80:c2:00:00:21
+
+Fix this by enforcing the type and address length of
+the underlying device during GARP and MRP initialization.
+
+Fixes: 22bedad3ce11 ("net: convert multicast list to list_head")
+Reported-by: syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
+Closes: https://lore.kernel.org/netdev/000000000000ca9a81061a01ec20@google.com/
+Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
+---
+ net/802/garp.c | 5 +++++
+ net/802/mrp.c  | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/net/802/garp.c b/net/802/garp.c
+index 27f0ab146..2f383ee73 100644
+--- a/net/802/garp.c
++++ b/net/802/garp.c
+@@ -9,6 +9,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
++#include <linux/if_arp.h>
+ #include <linux/rtnetlink.h>
+ #include <linux/llc.h>
+ #include <linux/slab.h>
+@@ -574,6 +575,10 @@ int garp_init_applicant(struct net_device *dev, struct garp_application *appl)
+ 
+ 	ASSERT_RTNL();
+ 
++	err = -EINVAL;
++	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
++		goto err1;
++
+ 	if (!rtnl_dereference(dev->garp_port)) {
+ 		err = garp_init_port(dev);
+ 		if (err < 0)
+diff --git a/net/802/mrp.c b/net/802/mrp.c
+index e0c96d0da..1efee0b39 100644
+--- a/net/802/mrp.c
++++ b/net/802/mrp.c
+@@ -12,6 +12,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
++#include <linux/if_arp.h>
+ #include <linux/rtnetlink.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+@@ -859,6 +860,10 @@ int mrp_init_applicant(struct net_device *dev, struct mrp_application *appl)
+ 
+ 	ASSERT_RTNL();
+ 
++	err = -EINVAL;
++	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
++		goto err1;
++
+ 	if (!rtnl_dereference(dev->mrp_port)) {
+ 		err = mrp_init_port(dev);
+ 		if (err < 0)
+-- 
+2.39.5
 
 
