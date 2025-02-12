@@ -1,141 +1,146 @@
-Return-Path: <linux-kernel+bounces-511676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C59BA32E28
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:09:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EDDA32E30
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:13:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E85B71885C5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:09:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612F118869B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434F225D537;
-	Wed, 12 Feb 2025 18:09:19 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0D925D531;
+	Wed, 12 Feb 2025 18:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FRvm6Zqu"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A06209663;
-	Wed, 12 Feb 2025 18:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA06209663
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739383758; cv=none; b=FphAR4IulH4eZORyaJyVXk+gKG6pCNqZH4bUpzPuSbRCC2WfeoR8zRXSNbiTL4/FMmow2ZUrQcV6hC90h5LgeVqg0lWWJ7YNdppYIAVP6YkrMfNiYMBWWtge2cntgqjPX/YivhMOviWRo01E1dWogCoACito8XPtQ2zzdPl/sto=
+	t=1739383999; cv=none; b=aYwEVWOF3AmQUKvMx8qvwvF/jwXJA6LeTigP3TRLeHmHkNjJUPV0mxKjBSBIOph5tlr2L9aF/W3iZdnyxS3kcHAJOO120vIuw1O00AvLJzjtjtnC1l/oGtlrqzRc8xmuEnhAvSIlYlG/0tVdicZoCGmPGNrEbZ++3oJI83Hfi0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739383758; c=relaxed/simple;
-	bh=TnLc9oxkAdA2FboTiWdFK5GZGeDnHLEhWMHibySxBo0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QyjYOd6sguThJ9KLIZj1jMCN3YjZiwrnnfQLTdsnKK7KhqJCHOpAe9pA8n+ULM57tePCg7BTczlCqn8S9me6DGMulFQ9Ty2pvjbsjJi0jwDOdeRe29sxKZuK9p02rZiI8mMbBb65VZHu/640m+BbFvuV+KSvV3f9UCZR8ekEI+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YtR840gqVz6L55G;
-	Thu, 13 Feb 2025 02:06:12 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id DE559140A90;
-	Thu, 13 Feb 2025 02:09:12 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 12 Feb
- 2025 19:09:12 +0100
-Date: Wed, 12 Feb 2025 18:09:10 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>
-Subject: Re: [PATCH v3 03/18] cxl/pci: cxl_hdm_decode_init: Move comment
-Message-ID: <20250212180910.00005839@huawei.com>
-In-Reply-To: <20250211095349.981096-4-rrichter@amd.com>
-References: <20250211095349.981096-1-rrichter@amd.com>
-	<20250211095349.981096-4-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739383999; c=relaxed/simple;
+	bh=4sXJG2YJbM1/CStfpqMsr2s3jCBVhr0rnW7eJJQV6W4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mM0hN2BhenqSdiyBV9shdCP7dorL+AEUdkLUvLSeEjfO+7CZwqUSehZWfJa5tY1Y3ri/Em9N0YOSUGoXXS9cI798lzj/deWxtX/oWZIqI3Eilrqw6wBQJdi5ii0v9z4ct+PiNUnjO8f4VjQAMhCbfAbeANBUBYu0w/RkGvz8wBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FRvm6Zqu; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5de5e3729ecso9427086a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:13:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739383996; x=1739988796; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=T8yCP6ozgYyslEm6VKJ5cng9WS1x0StC3pzg7YSBGx8=;
+        b=FRvm6ZquUjYg6PDj3iGEspV2BPLLEeffM27p2I4AtPtcfs0SsA8hAKpxD6nV0v8vqq
+         emj5EPET3VajjNLqLHATy4nwOsrwNexSRYSpjKeVDGFNfkprfyqAZxEnqpJaqV5HEIU8
+         vjKtcLivK1KU5cqhDcH866foJ0LLb0VaZEAHiO8RACMo26YpDrewpLgapGOxrAnHVzKM
+         isoYRN0M7uK1zv/5LXalu99mFBovrciMfXjNTVvFcyCSczzurCNVuE0WZYijl0CSWD7z
+         TohuIUo9x0KsNWnjlHBOm0leCKBiUUNmtbM9iUMC1WOcwvwRrHSkTOJduYUKUJVt+94P
+         b5BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739383996; x=1739988796;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T8yCP6ozgYyslEm6VKJ5cng9WS1x0StC3pzg7YSBGx8=;
+        b=Sbij1Cu1R3BURkwPomvvBDuKO1J/0fsCPNpGrAQlZQWErlzEm7ybqZYZWqS40v5npM
+         VUlBe9XkCS0XT/sM+9cf1UCaux4TpSBD9lM0WR3MomT46S98iJK0kYIfbpTcXakTgnaz
+         RZAUem9N4T62OS4R5B53wZ4ib1tYZ+bWNuKitKBWbnTiQNtozZmCMs0VwCoYSYGuyg0N
+         nfhs/JMLN/b3JOgs0d1/7dtbI6hdXr44qk4fgfqIuGYLNUv1ZszFlQANMRmbPvvvI6EF
+         XgfSBOc5UU3ijxvTl/tDzZ5TgQfqO+RvrRMvbe+cq13taZT7Ikvl9jjk4bh9/DhIyc0u
+         fryg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkhdbbKBJ2q8jfdP7JLlieqX0BIc7fyrECSNyjYa6NFM2r7pap7qwnHtwYsUqmneatl+QhSRVnaTude84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWy63BJGJRN/S5u6vJ1wmNesx3TmSvDwPLLQyYyBaR2T0wQgM3
+	YtgO3jGgeGTegzBUII0rFaJQiniig4S5zcq1ayil1aQNbxX3sbycQKCIZcxiyKI=
+X-Gm-Gg: ASbGncvPXQlgtbb6R/TK0nMxE5fFieXFqwHFOB/Y5QbVqbScBiRtHVNojNyleswWGDx
+	GlNj01lsuoVnNSKJeWDqHsYAHIbGIj1KeA/1fI/59WbTKEIKgWXeUXuPjXKIyapVjNLqNDuM/I8
+	kRtXZd56q20TqQ10gNL6EqQUsQSTQkhYGvZ+gzeVYnaDsM/VYyukSOGyBc56tPTbZJQaUNuWc8H
+	ygxbYf+IfItAJeN6yMY8/RALsAF66zLabEoijeBzyWEw/OSoR+aD4lT1Dfs/oJLTxcs0GYdtbgB
+	WRa8BaVJyX5Oze3okpmx
+X-Google-Smtp-Source: AGHT+IG2HpL+3tuCKjc/LoY0MW1A5tuWfeCaFrma02UBG8ZxcDcj01BZc9tF/YWR/ZTfEC32S+VCzw==
+X-Received: by 2002:a17:907:7b86:b0:ab7:e16:aab7 with SMTP id a640c23a62f3a-ab7f3761d0amr410202566b.13.1739383996339;
+        Wed, 12 Feb 2025 10:13:16 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab7b43ee08asm767846966b.88.2025.02.12.10.13.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 10:13:16 -0800 (PST)
+Date: Wed, 12 Feb 2025 21:13:12 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Frank van der Linden <fvdl@google.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] x86/mm: Fix uninitialized variable in
+ register_page_bootmem_memmap()
+Message-ID: <bde447d5-0a2f-4c65-97e3-5439b67ab2f2@stanley.mountain>
+References: <1aa70a33-2acd-49fb-8049-a20dae40ecba@stanley.mountain>
+ <CAPTztWahPK5MLTxMnGH8woe1emM=QA=3pjy1ZCBBG+D39aLGog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPTztWahPK5MLTxMnGH8woe1emM=QA=3pjy1ZCBBG+D39aLGog@mail.gmail.com>
 
-On Tue, 11 Feb 2025 10:53:33 +0100
-Robert Richter <rrichter@amd.com> wrote:
-
-> The comment applies to the check, move it there.
-
-I think I disagree. It was in the right place as far as I can tell.
-It is an odd place for comment, but it's kind of describing
-why it is not an error to get down there.
-
+On Wed, Feb 12, 2025 at 09:59:54AM -0800, Frank van der Linden wrote:
+> On Wed, Feb 12, 2025 at 7:21 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > Smatch complains that "next" could be uninitialized.  The "next"
+> > assignment was accidentally left out when we moved these lines to earlier
+> > in the function.
+> >
+> > Fixes: bdadaec1526d ("x86/mm: make register_page_bootmem_memmap handle PTE mappings")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > This goes through the -mm tree.
+> >
+> >  arch/x86/mm/init_64.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> > index e7572af639a4..6e8e4ef5312a 100644
+> > --- a/arch/x86/mm/init_64.c
+> > +++ b/arch/x86/mm/init_64.c
+> > @@ -1600,8 +1600,10 @@ void register_page_bootmem_memmap(unsigned long section_nr,
+> >                 get_page_bootmem(section_nr, pud_page(*pud), MIX_SECTION_INFO);
+> >
+> >                 pmd = pmd_offset(pud, addr);
+> > -               if (pmd_none(*pmd))
+> > +               if (pmd_none(*pmd)) {
+> > +                       next = (addr + PAGE_SIZE) & PAGE_MASK;
+> >                         continue;
+> > +               }
+> >
+> >                 if (!boot_cpu_has(X86_FEATURE_PSE) || !pmd_leaf(*pmd)) {
+> >                         next = (addr + PAGE_SIZE) & PAGE_MASK;
+> > --
+> > 2.47.2
+> >
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Tested-by: Gregory Price <gourry@gourry.net>
-> ---
->  drivers/cxl/core/pci.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index f8e22bc278c3..c49efc419285 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -419,6 +419,15 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
->  	if (!hdm)
->  		return -ENODEV;
->  
-> +	/*
-> +	 * Per CXL 2.0 Section 8.1.3.8.3 and 8.1.3.8.4 DVSEC CXL Range 1 Base
-> +	 * [High,Low] when HDM operation is enabled the range register values
-> +	 * are ignored by the device, but the spec also recommends matching the
-> +	 * DVSEC Range 1,2 to HDM Decoder Range 0,1. So, non-zero info->ranges
-> +	 * are expected even though Linux does not require or maintain that
-> +	 * match. If at least one DVSEC range is enabled and allowed, skip HDM
-> +	 * Decoder Capability Enable.
+> Thanks for catching that Dan. I believe Andrew took the series out of
+> mm-unstable because of some conflicts, and asked me to do a v4 for
+> mm-unstable. Would you mind if I just folded your change in to the v4
+> series?
 
-This check is about mem_enabled. Would be fine to add another comment here to
-say.
+Yeah, no problem.  -mm patches are always folded.
 
-	/*
-	 * If mem_enabled is not set prior configuration is irrelevant and we
-	 * can do what we like so enable HDM decoders and ignore DVSEC registers.
-	 */
-> +	 */
->  	if (!info->mem_enabled) {
->  		rc = devm_cxl_enable_hdm(&port->dev, cxlhdm);
->  		if (rc)
-> @@ -454,15 +463,6 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
->  		return -ENXIO;
->  	}
->  
-> -	/*
-> -	 * Per CXL 2.0 Section 8.1.3.8.3 and 8.1.3.8.4 DVSEC CXL Range 1 Base
-> -	 * [High,Low] when HDM operation is enabled the range register values
-> -	 * are ignored by the device, but the spec also recommends matching the
-> -	 * DVSEC Range 1,2 to HDM Decoder Range 0,1. So, non-zero info->ranges
-> -	 * are expected even though Linux does not require or maintain that
-> -	 * match. If at least one DVSEC range is enabled and allowed, skip HDM
-> -	 * Decoder Capability Enable.
-> -	 */
-
-This is the path the comment is talking about because only if we get to this
-return path are we 'skipping' the HDM decoder capability and not returning
-an error.  The path representing an HDM decoder equipped device that
-was configured by a BIOS that decided to use the DVSEC registers.
-
-I'm not sure why we care about how the hdm decoders are programmed inthis
-case though.
-
-I'm confused :(
-
->  	return 0;
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_hdm_decode_init, "CXL");
+regards,
+dan carpenter
 
 
