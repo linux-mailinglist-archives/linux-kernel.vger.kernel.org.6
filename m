@@ -1,173 +1,91 @@
-Return-Path: <linux-kernel+bounces-510643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3F6A31FEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:23:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C91B9A31FF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:26:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43373A2A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD8E3A27C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2674A204597;
-	Wed, 12 Feb 2025 07:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b2lg24Si";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4Vr7XAC/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b2lg24Si";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4Vr7XAC/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D713C2046AE;
+	Wed, 12 Feb 2025 07:25:58 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE2F1FECB3;
-	Wed, 12 Feb 2025 07:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218C72040A4;
+	Wed, 12 Feb 2025 07:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739345030; cv=none; b=KNC9mrowzY55sTrsQOwDGrQQuz4KL2RWzUzkzj/avsyCSDSP7GuOReq7VQANIjhUIL7JpPFiymZsHzKoIvXoJzHmRDgoZxBz0+p8wKAEyax9QfWiUao1TrIkZPjkSpgZFOrXo9mwf0r3uM01jug56RFoUJs1/v2Ek66m6CKoLIs=
+	t=1739345158; cv=none; b=quv62g3tcTVQsheCA+uBwTP8Ol8WKEAE+TYjn2c2KH/ZlB6+0T4j4Olx0THAS+W/gNZoRam6q0Sqa6Y45J5LikUXCleKSI174Wrtjrg7DQmsDWwmbgMziqQU/7bIkZNhU+GgVV51eogxgIPXqtnlhYVU6NuMP5NpE+e7+UmC43s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739345030; c=relaxed/simple;
-	bh=bl4xDoxT8z1IrzzVtup/QS7W9VFUalxmHdsH49LoM+w=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MCpKpGegHo9wiWlW1J3+Q+Amigf2fbsnhAYDGAqekk5EcwMPEV/LZlZTmD+WiUDBAyV2VDJe1O3uU8oJyTix14h3x2TBX31evIOXJzbzDXCvoqGpsqKmd3VRYAbQ5aF+SQaYMHwh7RhFsvGUTR1eYR+N/xOagXjLGPOYkKl2KuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b2lg24Si; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4Vr7XAC/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b2lg24Si; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4Vr7XAC/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1739345158; c=relaxed/simple;
+	bh=hE/lRA+vKo3tohwgY7RJ2axtqZHoYLC4u6gkjkRP7AI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFGaoVcD2yFeN7QHvXWohe/t2SUuI9gJqLMLIKZ4jjluqGKIkk/SXlavzxAhunQF6nyu4jw/3J2oDaco4AxT/AUQM/9YLII6WZATGKlJhVdJPXcrIwkcp2jDkQEBGFl6nRRn5RgJ+faDJ9rXEfcTQ3mBD8zKD9J9V2eVHwa6luQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.172.76.141])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D63341FF19;
-	Wed, 12 Feb 2025 07:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739345026; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvJSPQHcK5MFEXKW/OC96t6LwbJhmbrZ9DXW3TeMrsc=;
-	b=b2lg24Siii6BpuMpn5+WpHzhotOKiQN+8FqqOLUG9fYM0rv7Q0AiPAjQXjGkV6k7D1DEYt
-	0F1O31yZPc+haugUEKyukohnd8oy+D591u28y5MmhAuzjG6or63EedTYuG0N93n56RNgGW
-	PAyle7bcWpVVe2NpqHC5x6oNNoo4Xqc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739345026;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvJSPQHcK5MFEXKW/OC96t6LwbJhmbrZ9DXW3TeMrsc=;
-	b=4Vr7XAC/or0pMyv/HfeXxWxY6FXjoF85Z+/ALgZtL5mYp5m+awaWIHbmuS5MM9NJfaidA3
-	nd6p1u1pACF9P/BA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739345026; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvJSPQHcK5MFEXKW/OC96t6LwbJhmbrZ9DXW3TeMrsc=;
-	b=b2lg24Siii6BpuMpn5+WpHzhotOKiQN+8FqqOLUG9fYM0rv7Q0AiPAjQXjGkV6k7D1DEYt
-	0F1O31yZPc+haugUEKyukohnd8oy+D591u28y5MmhAuzjG6or63EedTYuG0N93n56RNgGW
-	PAyle7bcWpVVe2NpqHC5x6oNNoo4Xqc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739345026;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvJSPQHcK5MFEXKW/OC96t6LwbJhmbrZ9DXW3TeMrsc=;
-	b=4Vr7XAC/or0pMyv/HfeXxWxY6FXjoF85Z+/ALgZtL5mYp5m+awaWIHbmuS5MM9NJfaidA3
-	nd6p1u1pACF9P/BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA6A813AEF;
-	Wed, 12 Feb 2025 07:23:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YlNXKIJMrGcAGgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 12 Feb 2025 07:23:46 +0000
-Date: Wed, 12 Feb 2025 08:23:46 +0100
-Message-ID: <87h64zmxrx.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: jack Livingood <jacklivingood@comcast.net>
-Cc: sfr@canb.auug.org.au,
-	tiwai@suse.de,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org
-Subject: Re: [PATCH 1/4] sounds: firewire: isight: changed strcpy to strscpy
-In-Reply-To: <20250212012346.83516-1-jacklivingood@comcast.net>
-References: <20250212012346.83516-1-jacklivingood@comcast.net>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id EFDCC3430A6;
+	Wed, 12 Feb 2025 07:25:55 +0000 (UTC)
+Date: Wed, 12 Feb 2025 07:25:44 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH] pinctrl: spacemit: enable config option
+Message-ID: <20250212072544-GYA17416@gentoo>
+References: <20250207-k1-pinctrl-option-v1-1-e8a7e4d8404f@gentoo.org>
+ <20250207-promenade-hazily-d7900cbc127e@spud>
+ <20250207223705-GYA7567@gentoo>
+ <20250211-nature-kilt-9882e53e5a3f@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[comcast.net];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[comcast.net];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211-nature-kilt-9882e53e5a3f@spud>
 
-On Wed, 12 Feb 2025 02:23:46 +0100,
-jack Livingood wrote:
+On 16:03 Tue 11 Feb     , Conor Dooley wrote:
+> On Fri, Feb 07, 2025 at 10:37:05PM +0000, Yixun Lan wrote:
+> > On 16:49 Fri 07 Feb     , Conor Dooley wrote:
+> > > On Fri, Feb 07, 2025 at 08:11:42PM +0800, Yixun Lan wrote:
+> > > > diff --git a/drivers/pinctrl/spacemit/Kconfig b/drivers/pinctrl/spacemit/Kconfig
+> > > > index 168f8a5ffbb952cbeae3e3401c11149558e0a84b..aa3dea535def87ed75d86bc555b2b90643adbdea 100644
+> > > > --- a/drivers/pinctrl/spacemit/Kconfig
+> > > > +++ b/drivers/pinctrl/spacemit/Kconfig
+> > > > @@ -7,6 +7,7 @@ config PINCTRL_SPACEMIT_K1
+> > > >  	tristate "SpacemiT K1 SoC Pinctrl driver"
+> > > >  	depends on ARCH_SPACEMIT || COMPILE_TEST
+> > > >  	depends on OF
+> > > > +	default ARCH_SPACEMIT
+> > > 
+> > > This is effectively just "default y", since ARCH_SPACEMIT is a
+> > > dependency.
+> > > 
+> > right, this is the plan, it make sense to bundle this config to ARCH_SPACEMIT
 > 
-> From: Jack Livingood <jacklivingood@comcast.net>
-> 
-> fixed a spelling issue in the commit made previous
+> I don't think I was clear, I was trying to say that you should do
+> s/ARCH_SPACEMIT/y/ on this line.
 
-I already discarded your previous patch, so please give a full
-description.
+make sense, since we already have "depends on ARCH_SPACEMIT" here,
+it's kind of redundant to say ARCH_SPACEMIT again, will fix in v2
 
-
-Takashi
-
-> 
-> Signed-off-by: Jack Livingood <jacklivingood@comcast.net>
-> ---
->  sound/firewire/isight.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/firewire/isight.c b/sound/firewire/isight.c
-> index 806f82c9ceee..e9617fc0a532 100644
-> --- a/sound/firewire/isight.c
-> +++ b/sound/firewire/isight.c
-> @@ -637,13 +637,13 @@ static int isight_probe(struct fw_unit *unit,
->  
->  	card->private_free = isight_card_free;
->  
-> -	strcpy(card->driver, "iSight");
-> -	strcpy(card->shortname, "Apple iSight");
-> +	strscpy(card->driver, "iSight");
-> +	strscpy(card->shortname, "Apple iSight");
->  	snprintf(card->longname, sizeof(card->longname),
->  		 "Apple iSight (GUID %08x%08x) at %s, S%d",
->  		 fw_dev->config_rom[3], fw_dev->config_rom[4],
->  		 dev_name(&unit->device), 100 << fw_dev->max_speed);
-> -	strcpy(card->mixername, "iSight");
-> +	strscpy(card->mixername, "iSight");
->  
->  	err = isight_create_pcm(isight);
->  	if (err < 0)
-> -- 
-> 2.48.1
-> 
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
