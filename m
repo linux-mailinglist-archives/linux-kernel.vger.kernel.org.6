@@ -1,108 +1,107 @@
-Return-Path: <linux-kernel+bounces-510909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF1DA32380
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:31:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B47A32384
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:32:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B983A22FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:31:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD1B188B0E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9B6207A2C;
-	Wed, 12 Feb 2025 10:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E69420896A;
+	Wed, 12 Feb 2025 10:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JByLCcXF"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1LECqaT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F551F9A83
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697E41F9A83;
+	Wed, 12 Feb 2025 10:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739356307; cv=none; b=CmdpzoTh7Ec3dM2/cj6ZY9k3Yvgmnge5Dz3QuRgxBoZt3OhxVlnxzN5B/cdbTtKWNS1yqblTjG+KK8MW+MdwHKiwmjKI1YW85E2qK/wZPb2ojuhqZiZoH4X0TjLbMFxR0+3QUl7OYTeM1/yDxoktbYbpK0weDfk9p3etT/eWPxU=
+	t=1739356363; cv=none; b=MhBJnjz6kRo/HqSd9ibcbn213MalxJZ7B7oxqIdXFCo8FOiRwuMfyl6weXo5IzGIqVxgQnL6lpMgNsrzegnIr3UimoNeV0XtPCXZLyvuBeCnG6Dn4E6OTyBf7SWn3+1O9/kydZ9r/bAbeQJmyz5Aaozy3UBhjM5ugXZlyoZaVaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739356307; c=relaxed/simple;
-	bh=5W6BzPG2hRZ8COLZEvhH5hJcJ+5oLRg3oJ4rYZ6etPE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IWsj57/zBM4IoVIqRVKSEYrLvxg82v+fIVXgEO73bhIJxveLVNS267/jZKrvgHgCx9iHp4BuKmprHAWrRJqXeoSMHnw20hu2PjNf/QagcfPn55yneh8mvZnooqg5UREj7ZjMNiJpJMa9Uert3epl3Bk3R7WMub4Hzp3G8g+Y/EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JByLCcXF; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6D0E643296;
-	Wed, 12 Feb 2025 10:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739356297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cvbObNoOX6mAmPbRVuK/WviLnwkc1Ti/J+blEwh3B7Q=;
-	b=JByLCcXFoXuC/pzIL2lObRVhn65JJ2VnVJVzmHdNMcER2v7/skuD8QHDBylxZvCtgfdp5M
-	yRJM7xjkhWCLOtxfeb1y3Z72DfHKowZM0F6+bSM6EJFyyv7y8VW4tNco/dq65/oy9pCEYC
-	3nOc31POhniwRefqoZgHc91tysMkM4hPcT4LloQKqmXTA+Kfl7wpnvyIAVZw25OKBITNZh
-	f7ClcERhcUdO9zcbCY+Dd4YK79UejfKh41g+B5TUYcNTnN63S4JBb6mKWQeaixGW14fc8g
-	k9qKqIPhSyPuoN1g/pJ2i9qxTm5+gcRKlKCTNeZk0NstNieYZCIYu9RwPLzPDw==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 12 Feb 2025 11:31:34 +0100
-Subject: [PATCH] drivers: core: fix device leak in
- __fw_devlink_relax_cycles()
+	s=arc-20240116; t=1739356363; c=relaxed/simple;
+	bh=sedcMzGgzynwVSx2PMNV5XsP9/FbqRF4gvQt3ENTXFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOCauOBAP07PMpJKm1gvr/7fsDfdx+4gJapzC4rtd9Rd6xb/E2gj2iOKJy/q6+MrgTFSjNZIDGrohczwontR3x+ucw7FHu3Q5ThDQQu2u+szYWXA0UPxLaRqYqXY72uJ2D/U7/6Y60YQL4lS9UZmHPRZwcr1j7/HjRsMHvaqhwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1LECqaT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A1FBC4CEE7;
+	Wed, 12 Feb 2025 10:32:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739356362;
+	bh=sedcMzGgzynwVSx2PMNV5XsP9/FbqRF4gvQt3ENTXFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l1LECqaT0XrgFE/9ADMpysXjoQNy4yf3s8rfaVAsPxi5rkLSEog+21fU2BV2ts7FO
+	 Md1N5KkbjGuphksamJVPmlFGpGXjlmr/sazwEM+L9sUbhInNr8Q7esex1ICl3l53No
+	 1X8nFqEYX0BBwOwQV4Kaefx2kMPSbAwaXon+HbHiMz95BMidLFJZY3s1/tiYyaT0JA
+	 JEaGdXGwkTJhb4L6my8Rl74SRHc/bcEXQcF7ffgr+pgeVCHNUfmEmCjVgjp+MUHRoP
+	 E3UZ77odtmgcKJfkmBfvVvtiMl+hpBZDccmmC9TNP0dLBMfEQ6MzO2wUaSftts9oyv
+	 +UWWuITkV/5AA==
+Date: Wed, 12 Feb 2025 11:32:35 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Zicheng Qu <quzicheng@huawei.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, jlayton@kernel.org, axboe@kernel.dk, joel.granados@kernel.org, 
+	tglx@linutronix.de, hch@lst.de, len.brown@intel.com, pavel@ucw.cz, 
+	pengfei.xu@intel.com, rafael@kernel.org, tanghui20@huawei.com, zhangqiao22@huawei.com, 
+	judy.chenhui@huawei.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, linux-pm@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] acct: block access to kernel internal filesystems
+Message-ID: <20250212-summen-vergibt-6c6562c0b0bd@brauner>
+References: <20250211-work-acct-v1-0-1c16aecab8b3@kernel.org>
+ <20250211-work-acct-v1-2-1c16aecab8b3@kernel.org>
+ <20250211205418.GI1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250212-fix__fw_devlink_relax_cycles_missing_device_put-v1-1-41818c7d7722@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAIV4rGcC/x2N0QrCMAwAf2Xk2UJXNwR/RSSELJ3BWkejc2Ps3
- 60+Hgd3G5gUFYNzs0GRWU2fuUJ7aIBvlEdxOlSG4EPvQxtc1AUxfnCQOWm+Y5FEC/LKSQwfaqZ
- 5/Ellwen9cscTk/SxI2IPtToVqYn/8XLd9y91Oh9XgQAAAA==
-X-Change-ID: 20250212-fix__fw_devlink_relax_cycles_missing_device_put-37cae5f4aac0
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Saravana Kannan <saravanak@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeeigecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdeuleetffeutdfhvedvjeffuddtteejtdfhffdvhedvleevteekjeejgfejgfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdduudekngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprhgrfhgrv
- ghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250211205418.GI1977892@ZenIV>
 
-Commit bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize
-cycle detection logic") introduced a new struct device *con_dev and a
-get_dev_from_fwnode() call to get it, but without adding a corresponding
-put_device().
+On Tue, Feb 11, 2025 at 08:54:18PM +0000, Al Viro wrote:
+> On Tue, Feb 11, 2025 at 06:16:00PM +0100, Christian Brauner wrote:
+> > There's no point in allowing anything kernel internal nor procfs or
+> > sysfs.
+> 
+> > +	/* Exclude kernel kernel internal filesystems. */
+> > +	if (file_inode(file)->i_sb->s_flags & (SB_NOUSER | SB_KERNMOUNT)) {
+> > +		kfree(acct);
+> > +		filp_close(file, NULL);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Exclude procfs and sysfs. */
+> > +	if (file_inode(file)->i_sb->s_iflags & SB_I_USERNS_VISIBLE) {
+> > +		kfree(acct);
+> > +		filp_close(file, NULL);
+> > +		return -EINVAL;
+> > +	}
+> 
+> That looks like a really weird way to test it, especially the second
+> part...
 
-Link: https://lore.kernel.org/all/20241204124826.2e055091@booty/
-Fixes: bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize cycle detection logic")
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/base/core.c | 1 +
- 1 file changed, 1 insertion(+)
+SB_I_USERNS_VISIBLE has only ever applied to procfs and sysfs.
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 5a1f051981149dc5b5eee4fb69c0ab748a85956d..2fde698430dff98b5e30f7be7d43d310289c4217 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2079,6 +2079,7 @@ static bool __fw_devlink_relax_cycles(struct fwnode_handle *con_handle,
- out:
- 	sup_handle->flags &= ~FWNODE_FLAG_VISITED;
- 	put_device(sup_dev);
-+	put_device(con_dev);
- 	put_device(par_dev);
- 	return ret;
- }
+Granted, it's main purpose is to indicate that a caller in an
+unprivileged userns might have a restricted view of sysfs/procfs already
+so mounting it again must be prevented to not reveal any overmounted
+entities (A Strong candidate for the price of least transparent cause of
+EPERMs from the kernel imho.).
 
----
-base-commit: 09fbf3d502050282bf47ab3babe1d4ed54dd1fd8
-change-id: 20250212-fix__fw_devlink_relax_cycles_missing_device_put-37cae5f4aac0
+That flag could reasonably go and be replaced by explicit checks for
+procfs and sysfs in general because we haven't ever grown any additional
+candidates for that mess and it's unlikely that we ever will. But as
+long as we have this I don't mind using it. If it's important to you
+I'll happily change it. If you can live with the comment I added I'll
+leave it.
 
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-
+To be perfectly blunt: Imho, this api isn't worth massaging a single
+line of VFS code which is why this isn't going to win the price of
+prettiest fix of a NULL-deref.
 
