@@ -1,96 +1,109 @@
-Return-Path: <linux-kernel+bounces-511919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A94A3316F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:25:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030DDA33171
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048DA18893BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:25:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63F87A41D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC866202F8D;
-	Wed, 12 Feb 2025 21:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1946202F8D;
+	Wed, 12 Feb 2025 21:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VABRKGHm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HdUp/4EI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320A6202C23;
-	Wed, 12 Feb 2025 21:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A95202F61;
+	Wed, 12 Feb 2025 21:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739395510; cv=none; b=cZeBG1CVUswRvc8k51OTJjy2vre1mHdF6XlDdYRZfgP/UfxbfhFqV5ZFloco/IdCLePxhm//fWeyMARN+FLBEXKTW83HQHyDT7Zejxz8b/n71GlFrzZEs3/JVUoUrnQYRe7GMa+QjWu9gVyv4KmF8ZG2J/iaVatyTOU2xgqGoUU=
+	t=1739395535; cv=none; b=NKHYdvgzYDm+iqwnPy9CgwtIxmLeS7sqKAn0GL+S8SvBxVVKSVLgq++HkTigeA491ozKa9QYxmCj2vtXTxDOthCk+6er2r7CSOqO8bwLuvZAsGKw3O7XzebY3nnHfIadFFzFaE28P41Twtp7+zcBOVYor2dJhzAEno+Oil0Uro0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739395510; c=relaxed/simple;
-	bh=Mzi7QQnZdKicD04qd9DyYxXy0btE7+XlZGLov5JbUtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifV97LGk4hBmlCrUeNMasxQeqTKKBqHgDDCxEJvd6ShzghZ9e7JllC7MsQQw7R8Euhw43CL9YkKWEUz4ZzHDqb8mb4eV669U260c+GxSZ8l4CDtcgaZoHyAaXTickLQXbPI5H7ZVYU34GoTSBR8w5BzYAXpvxmzF5rNRXLD/kJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VABRKGHm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 181BDC4CEDF;
-	Wed, 12 Feb 2025 21:25:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739395509;
-	bh=Mzi7QQnZdKicD04qd9DyYxXy0btE7+XlZGLov5JbUtg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VABRKGHmZqwjTPNGbKY4Ng79xbRhgqjB5Y+n1+IySz1OxtZHS1c0DVtbnUI65LKj9
-	 1WTL3ipYfHMhRG1rV4X87P9HRlGrRsrDEWtgVu6xiguEu4WZW/iXQDFH+yhP3Q35sr
-	 qPqQ+azr4wx9w92+6v/nJQusKrD7hAIxYZpYdDL3ONrB3v6jUzK8004GROlSR01LBP
-	 5wbGBDbHya934lnI3577s1p0nL8gWYMZ0WjRmnRe1yKTHluJ9XGArADR1F6Fy3bGhk
-	 QpVcx+7ZOWCPlUgLFouZdreUjMywqUhGy7tyCSNB0J5sdCx4PxDgGBJu+qS2F0m3+h
-	 TJ1FNCDkRMsCw==
-Date: Wed, 12 Feb 2025 23:25:04 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Huang, Kai" <kai.huang@intel.com>,
-	Andrew Zaborowski <andrew.zaborowski@intel.com>, x86@kernel.org,
-	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, balrogg@gmail.com
-Subject: Re: [PATCH] x86: sgx: Don't track poisoned pages for reclaiming
-Message-ID: <Z60RsC1h94UdsjRb@kernel.org>
-References: <20250211150150.519006-1-andrew.zaborowski@intel.com>
- <3bd497be-54d7-43b8-a392-4bf82bf64679@intel.com>
- <Z6u7PEQKb-L8X4e6@kernel.org>
- <4a1c8b84-d8ee-414a-bd6d-a8633302dab4@intel.com>
- <7ed9b288-69a2-446c-9f7f-50ef6bc56673@intel.com>
+	s=arc-20240116; t=1739395535; c=relaxed/simple;
+	bh=03Z8biH18L9FZMMAmims/VOX32xtfmOa0W18ZbjpQ14=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FiRraLCAnceaeQom3ixU8F/9zEu2RP3mf7xR8BNXR/4XV3ZWHpyyUDxgYP/cwE7c7NRHY34jK2tqQGNgrMdxp6Kgy9tn34C+f7WYGPwwRc9Baccf7Rrgr5vGuKqsvSKERQlhmzo+MFearR+7HOtO42WG6yV73B8n+rsX0rvcxgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HdUp/4EI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739395523;
+	bh=AKh8X90vyF7JdBjv9k1Ghn3wvruHDrDm7vAtdLAepTk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HdUp/4EIsdNCc1Q+9XhAskORQ/4ETuLiePRae78qfO2nd8bAhxNO+QdT5Zq2bZmro
+	 d/DOYTPLf1L2ROZoOVlGD1lhlXApuodOCmfAq7jLIjAPaV4nxWcgm26d/6g9AqUqAE
+	 Lrbk61s1i4yXhX1MSVwhNVyPHOOzp8XWMb14JetOc6G/MOZJGfi/taLIFA5+hphc/6
+	 a5CbZo64snTuEtuLCrX95NQ/N+mabfs6HzEZsCctIYaCY3hacWaKU6JiKiVZBEOc2q
+	 wbtR84pelMNjiBbi0tlZj66tJF/mh/R7OEIz1txuZ5YQUAh0v/nI8Mjq/HBQp6oFEJ
+	 J3l+5RbVEkPQg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YtWYv1Cdsz4wy1;
+	Thu, 13 Feb 2025 08:25:23 +1100 (AEDT)
+Date: Thu, 13 Feb 2025 08:25:22 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the mediatek tree
+Message-ID: <20250213082522.52ca62e0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7ed9b288-69a2-446c-9f7f-50ef6bc56673@intel.com>
+Content-Type: multipart/signed; boundary="Sig_/UzWDtLHIZjBvcTWtpSiJtV9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Feb 11, 2025 at 03:31:54PM -0800, Dave Hansen wrote:
-> On 2/11/25 13:18, Huang, Kai wrote:
-> >>> This requires low-level SGX implementation knowledge to fully
-> >>> understand. Both what "ETRACK, EBLOCK and EWB" are in the first place,
-> >>> how they are involved in reclaim and also why EREMOVE doesn't lead to
-> >>> the same fate.
-> >>
-> >> Does it? [I'll dig up Intel SDM to check this]
-> >>
-> > I just did. 🙂
-> > 
-> > It seems EREMOVE only reads and updates the EPCM entry for the target
-> > EPC page but won't actually access that EPC page.
-> 
-> Actually, now that I think about it even more, why would ETRACK or
-> EBLOCK access the page itself? They seem superficially like they'd be
-> metadata-only too.
+--Sig_/UzWDtLHIZjBvcTWtpSiJtV9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Did a sanity check to SDM.
+Hi all,
 
-I think you're correct, and also there's zero rational reason them use
-anything but EPCM (no legit reason to access payload itself).
+In commit
 
-BR, Jarkko
+  c4d75a56d161 ("arm64: dts: mediatek: mt8188: Assign apll1 clock as parent=
+ to avoid hang")
+
+Fixes tag
+
+  Fixes: 4dbec3a59a71 ("arm64: dts: mediatek: mt8188: Add audio support")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: bd568ce198b8 ("arm64: dts: mediatek: mt8188: Add audio support")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/UzWDtLHIZjBvcTWtpSiJtV9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmetEcIACgkQAVBC80lX
+0GwCngf/bEWbHuQ/BDVW5O7ZwkMqdSXKt23miXuhZMibZiGo1brPnqCDzhQ1vir3
+u/J3HkMGo75mU3jzscmvmUaQNVy0oVX+tAwGKK8UcawMFZKQdzj01UW9BUOTeZdB
+OdKKCHKBx5NRm0StlCmcf7PKzjX15B4aN9eJPf2L/Z9qS602E0VpDglB+Y6pl7bG
+ETRLJ5EeB7J6X6F4Fr8CHxsibQXwAllVNegxCxDXBJFFebSEtjTrLHHaRiSoS8+S
+hbY0vg91sQHtfrqpTReq4dz5+zmMuz+D4cBluaTREjE1lXqZsllmsX4tQ1BNCMo0
+rZ7J6y4HpEPoy0OPFLqlpz9SfRnnzw==
+=gXty
+-----END PGP SIGNATURE-----
+
+--Sig_/UzWDtLHIZjBvcTWtpSiJtV9--
 
