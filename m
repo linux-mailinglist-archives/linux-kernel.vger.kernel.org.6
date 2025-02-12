@@ -1,165 +1,109 @@
-Return-Path: <linux-kernel+bounces-511035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88A4A324F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:31:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFF0A324FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:32:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48A11160150
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:30:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34C916A38D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E712520B7EE;
-	Wed, 12 Feb 2025 11:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DE520DD5C;
+	Wed, 12 Feb 2025 11:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUtBTPbt"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TYFUWEK1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B884A1F2365;
-	Wed, 12 Feb 2025 11:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD66C20B1F7;
+	Wed, 12 Feb 2025 11:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359521; cv=none; b=UIafIX2VXu7PXx69kZhAG56zm1mmMOi5qAEV+j+c/n8B6tDbfEOWB8Csc71DjfbB3sHYMT4rqu7f0IM/7bb7uEDPmXTyhH9OAq8bI1pBn9YjyRGMg2gjTEjtPai6i46dEf35bqo/tcjYybmerclx+SltnPdnXdEFi3cmZBNUIqY=
+	t=1739359756; cv=none; b=iLghZCiLDrMxsYvt9/uF3cykaZgWp4lnsn7+9E3enK1bqrrOJieHmUT+bpp+rwMoWYRyWzy0cH16t8O0rneEjxbnRSHHwSxchCROT2bcq9eZtRWxwSzGDYUPzlu/PJ1W0EVhTuJWQYNfWZVsXanfkwUMNvL7696/RIR7LFOB6ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359521; c=relaxed/simple;
-	bh=TgoLBoSdsmfmuqpXM5gofGXTPEUeyBBSV93lb6OMC7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AgusiZFa3QWIWOPbfFsmlV8vcAER7VtDXup7q+9pgaBMYt3a8KaGhC+Q3licMv+JXaetopFJkj3HDdhCz+SfRzdcBuKHR+WgnoHX5Gad1c4ZiD8OXAJcxlpy0dD39ELlWpPZuAfP6Ts5A6r0O4/WVojBxpOQaxiitZw9eQzdUcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUtBTPbt; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21f62cc4088so81832025ad.3;
-        Wed, 12 Feb 2025 03:25:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739359519; x=1739964319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TgoLBoSdsmfmuqpXM5gofGXTPEUeyBBSV93lb6OMC7Y=;
-        b=IUtBTPbtTp4ZNtJqA4BWixkMQ5MFlLMWUcYSFL7e31EDCCLw+0PXNgecSsNYF572kE
-         vSlQH9uWL/NL32ajvOo9IYeOstxZT4pn655W38HhCZgd9Gq5UGthqUqeos36pgfAYjNT
-         NZ8T4lzpQloN/lf6OJmlK4whpB0vw21vF8IE8c253qR82EO4BIcEczsnmRbbfijCNjw8
-         Z+MhwW6TNd3qCiKt2zuemY3sgulyJZOaEFlP+Ehy8c6vJlO/CVPsN1RFgthfaf7bokDT
-         I/CAVI4JYoCuocisBF0CM4LZgN93IGLGrvugb+hZRjVMtCr3HjdszGY91a7g6nSJ1d9U
-         NIrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739359519; x=1739964319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TgoLBoSdsmfmuqpXM5gofGXTPEUeyBBSV93lb6OMC7Y=;
-        b=DpiTK9XVBcT6I/LDyjlDBR3CMAeiaQL4xSZrXpww3kxnMmZGSbnCae4S9rWEp4L8TH
-         rZIhsmA3qm0xpxVG9dB6Heg3jfxJ0HGJt08PqrRNsmtGp0YnINq4vxGym+SkRUqbiTbE
-         k9nH6wbI+WLHtAtA4jC2BB+OF+YC8FEotTtKaOwqdZFDRL2pfiDnQuEBbNrUaVAtMedc
-         MP1xCjGixCDKcZ6TGfs1exLy860IKLM2KXsGqRPzG2iWANK6a6mUGsQcqYruI1+9GqSP
-         /bOkKDlr+1zOh5b1g/hwGtW+y0RDJgVulfgwq2o82XcR170VygIwoo2qLdW6iJNRqbi+
-         T6Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUfHznFPBNsLyhDRpH88qpVKrRxwCICc/ftZHKmEQ1a852YhCkBnyplKTW5W3y62rY+buMP2QBNj2xD@vger.kernel.org, AJvYcCVRXPKKNlC1FA6ZjA8mRpBx0gxGU4JyFvDIMBzcwI4wItXZvNUeB2V+8sYukXHmSb7PU6B1Pm3U@vger.kernel.org, AJvYcCVVU/wgTJ1V+acRbfHijP40zRxC4Te4SPDDmiURuh7LnVvc+cnEo+XS2l8UMn1f0RkthB5JscfRDSd6@vger.kernel.org, AJvYcCVqRZ9WTgJFR1Jy/VTSDjGwGTHHArUKmIW2TveBNUic/7wuJy9CVM8Ytay2wFrYdDpEnbHB0h12JhkToxs=@vger.kernel.org, AJvYcCWvqQd4MJyqcaoRmFECnTkrCrqmkPEUTTjLBFJCIq/u5NwTU466mPEOVTMVUQhrRvxo3AqWyXamTwOB@vger.kernel.org, AJvYcCXCEDxWS0F5hHhaBbrOtxFCiYiyFdOqS8yfmmjZsLCCKhC9G9JsjA853++6GclQhBN3+1A4GVjlV30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuLGGHWC1TDKgkMaNX4whlxuutlXKzN0YaaYxiiNHFgpQYB2/W
-	ZYTxiZaPBQCsZRuxM5M3iRBmKR8L+VW0yEjwfDxiU+wudLeE2CKh
-X-Gm-Gg: ASbGncucLx+5hqYlOeo4wkC4x81MHMVdGKJlXZ0ER3AY++J/LQ6+5vlE3+HsDZ+TW8G
-	Ox2mD6MM8QZuavsktlCoCZ/2GnuAfU0zFAS+JtCU+vIAB24CpwXRL5F0zgWW9NBrzCa4LCMy6mq
-	+xuGH+couv6dsi/iBlIUTPpwaCG4/hr+Kg12yTg/r2YWv+kayAVj2bTnZRHaBjqA0pZPZD/6J41
-	+tyEu5SQJMif5bnKd675CYDil+QYr5qsuU2aVKOjs5CHmKJx0dqj8XRXZHSyFTh74qEJqA+pv4D
-	it9gAIW32ZGHFXs=
-X-Google-Smtp-Source: AGHT+IGSXAu22CD7MFAjaX8B91j1oDJlyn+2ztCU9HVQMzNMzKgxATJmndOJK7sQ6+CxJ94W1Ao6xg==
-X-Received: by 2002:a05:6a21:3987:b0:1d9:6c9c:75ea with SMTP id adf61e73a8af0-1ee5c732ce4mr4676523637.5.1739359518743;
-        Wed, 12 Feb 2025 03:25:18 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7308cef0957sm5468012b3a.5.2025.02.12.03.25.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 03:25:17 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id EF2E541F5559; Wed, 12 Feb 2025 18:25:15 +0700 (WIB)
-Date: Wed, 12 Feb 2025 18:25:15 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Avadhut Naik <avadhut.naik@amd.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Hu Haowen <2023002089@link.tyut.edu.cn>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Paolo Abeni <pabeni@redhat.com>, Sean Young <sean@mess.org>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	James Morse <james.morse@arm.com>,
-	"Nysal Jan K.A" <nysal@linux.ibm.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Sourabh Jain <sourabhjain@linux.ibm.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org, workflows@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 0/9] Extend automarkup support for ABI symbols
-Message-ID: <Z6yFG_NntQfkwYli@archie.me>
-References: <cover.1739254867.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1739359756; c=relaxed/simple;
+	bh=OGDeLMpT+fqb5J1J1pcI9yoVGmhCRmyuCU214VJYRsA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sGj6Gm9l58WHoV3UGDRmrQI7ILdvnSm/ecOpqZGc9s2lRA2rYDNU64cahEM1BIWunE0AYnleZ0w3wfYX8yIsPKu/aFkC4jS0fDHZepsoZSr5HwQiv2yZVl0vmu+N7S1sDT9bZpnxvyzUoISOI+VHBSnB7QaNJUMPdwvAEbbIsHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TYFUWEK1; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739359752; x=1770895752;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OGDeLMpT+fqb5J1J1pcI9yoVGmhCRmyuCU214VJYRsA=;
+  b=TYFUWEK1nCy4c5ZltoEvpQytpRgUTExzs33eguwC9fiGXpmntqUDhkUO
+   3C2XdUMiOP8uBKfHmdkMWvVlAgdWNwwnstctFZX7jXQ2wLgR8xPiL12Tg
+   YnMrX2cIFgv8rQUlVmZ4Qek1hpJCyHv0wS1rXzVBUgvUgdp22ByiliEhx
+   OhgjYRJj9NuX1Jx4CczB5NFKR6W6TcHo5f0lDqgymMvRZ6kQYsehMh9ql
+   P333rrxbwhG9bW1/ggk+vktjO4AA7pIh+jLIprmdtiOnbFjDhu6OXntUX
+   iH5FxtpeSF+MLu/v6cumhDKmdaEGKjxxzis0h0U8olbjJ2ETWUqYIaW2I
+   g==;
+X-CSE-ConnectionGUID: TevCEXZWQHG7Id17J0jpQA==
+X-CSE-MsgGUID: QBg0jkuwRB6v1Rk9k0MBZg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39895736"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="39895736"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 03:29:11 -0800
+X-CSE-ConnectionGUID: pewzGhOxQimaQeUOAid23A==
+X-CSE-MsgGUID: JEyRhtHDSmGwRptfnxDjWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="112648499"
+Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
+  by orviesa010.jf.intel.com with ESMTP; 12 Feb 2025 03:29:08 -0800
+From: niravkumar.l.rabara@intel.com
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
+	nirav.rabara@altera.com,
+	devicetree@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] add clock-names property to nand node 
+Date: Wed, 12 Feb 2025 19:25:33 +0800
+Message-Id: <20250212112535.2674256-1-niravkumar.l.rabara@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/8yu6IEGS0ve/RxO"
-Content-Disposition: inline
-In-Reply-To: <cover.1739254867.git.mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 
---/8yu6IEGS0ve/RxO
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+1) Document the required clock-names property because the driver
+   requests the clock by name and not the index.
+2) Add required clock-names property to the nand node in device tree.
 
-On Tue, Feb 11, 2025 at 07:22:54AM +0100, Mauro Carvalho Chehab wrote:
-> Now that ABI creates a python dictionary, use automarkup to create cross
-> references for ABI symbols as well.=20
+Changes in v3:
+  * Include missing Fixes tag.
 
-I get three new warnings:
+Changes in v2:
+  * Document clock-names property for Cadence NAND controller.
 
-WARNING: /sys/devices/system/cpu/cpuX/topology/physical_package_id is defin=
-ed 2 times: /home/bagas/repo/linux-kernel/Documentation/ABI/stable/sysfs-de=
-vices-system-cpu:27; /home/bagas/repo/linux-kernel/Documentation/ABI/testin=
-g/sysfs-devices-system-cpu:70
-WARNING: /sys/devices/system/cpu/cpuX/topology/ppin is defined 2 times: /ho=
-me/bagas/repo/linux-kernel/Documentation/ABI/stable/sysfs-devices-system-cp=
-u:89; /home/bagas/repo/linux-kernel/Documentation/ABI/testing/sysfs-devices=
--system-cpu:70
-WARNING: Documentation/ABI/testing/sysfs-class-cxl not found
+link to v1:
+- https://lore.kernel.org/all/20250107084955.2750154-1-niravkumar.l.rabara@intel.com/
 
-Thanks.
+Niravkumar L Rabara (2):
+  dt-bindings: mtd: cadence: document required clock-names
+  arm64: dts: socfpga: agilex5: add clock-names property to nand node
 
---=20
-An old man doll... just what I always wanted! - Clara
+ Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml | 8 +++++++-
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi         | 1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
---/8yu6IEGS0ve/RxO
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.25.1
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ6yFGwAKCRD2uYlJVVFO
-o8lhAQCQ4fRHrhmP52Ie1GWpvmnThVAVajYhveINLTbggfy+8AEAmFJjGR9fv2Ph
-AlybXGGYbN21qaIJUDcQ8kIXnvwi2Q0=
-=z6el
------END PGP SIGNATURE-----
-
---/8yu6IEGS0ve/RxO--
 
