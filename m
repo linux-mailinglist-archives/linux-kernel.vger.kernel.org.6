@@ -1,123 +1,108 @@
-Return-Path: <linux-kernel+bounces-511482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF48EA32B96
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:30:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E45BA32B97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:30:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79AF8167AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:30:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91BD3167B88
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2834236A62;
-	Wed, 12 Feb 2025 16:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FE8253353;
+	Wed, 12 Feb 2025 16:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RRvi8RCj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TNUfQyu7"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281A1212B31;
-	Wed, 12 Feb 2025 16:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B46024C679
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739377806; cv=none; b=oxk/ppt3hEFsmAafhga5YNRHxrGYic1irzcPlyhpfqMVvG8whF/etmqz1npevLuBHzdEt4QjUEJEKduad06lNNQ1A/BAyMWTBhmG0/t2/zINf8nbN+jOxPtK3ChFtJE9JCSBrLBvvgwAXBate9wkDfJhzaWmW6ZjklbxYygWydE=
+	t=1739377808; cv=none; b=ANSFlxnBMD3dZo9hUAs/DAe67pdp2n7JyZcbFnaGj26ELsmbY85g6yDt1aONZHQnVPlltLl+EuI3OnyD3bwt9/8c0QMkTzgbJy7EOUM7/fkjYSWl5Ox9/XRgKPMSqzqZaoe0fBzLWBxFbAnipEppXMl2DUReKBtkumE0g9xDFZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739377806; c=relaxed/simple;
-	bh=iay9SaV00OpX9FTGUNAnx6gDTej3qK5HuPqkJKbVSfY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=s7stN+nRomANGFaEsGHYLHnjzivf+9uRtvftXsMkvxQoEGaQq5EjZVezVyCQtYgbr12ftoZYHUc80SbZ5POrEkyqqLoC94VSm+9bvDyC4XkoD5hkj7nk32ggkALNRRJh9IBzvYC5BDr7qwJTY9iM4BbHYSTcIlTM86vGSuWOWHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RRvi8RCj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E964EC4CEDF;
-	Wed, 12 Feb 2025 16:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739377805;
-	bh=iay9SaV00OpX9FTGUNAnx6gDTej3qK5HuPqkJKbVSfY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=RRvi8RCjTjUADi5pbqjuFUv9FyPvMIA98oLc7WfCgy+vlBtqFpSkz5I4XYIoQDFv3
-	 sBsIAwgjpYWtZn4MsBaqQNe84DMLW7FP9qrbF0OLeajIPwDTwjEo0ewHjttEm0s4Y7
-	 QN7ESMYbDqwetxchV/pGoIpQupq2STm6R1M0vaejaCXyws9umSDuKGu9Cw6JtSBqt2
-	 GzAw7u9dzY+u0mKauXsE5WtBsz5+wKM0kXtQbx80V0Cte8ySdZxfPFG7MWON7ENn9W
-	 8+5DwLyanmFEGiHmbu3s7AY809cqjnFIse0KmCvVEWke3EJqurkeFqpuHb4fI+Nqsb
-	 1lsvkF2alXb5w==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 12 Feb 2025 11:29:55 -0500
-Subject: [PATCH] nfsd: allow SC_STATUS_FREEABLE when searching via
- nfs4_lookup_stateid()
+	s=arc-20240116; t=1739377808; c=relaxed/simple;
+	bh=bKldBOW8xZeWh65oxIUWKxu4wpR/KiCESxmzhVx6VeU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BiUT1EHI7JIx7yAuUjQjMn8cFsIxlclbOU0j7FKPAO2+Cpr2c6B9TdKXQ7KNNweVlDpvyW+w8cQnDrhvY5aoe7mPYx5BzVlhmQayXhA/fWxuE3zOwVH9jQ2JurJ8PPTjq16X8bn8wgBq5cuirhsK3Fc8BBr6gtOwEjvtnxWCEI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TNUfQyu7; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fa6610fe70so7573684a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:30:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739377806; x=1739982606; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=INNJ0GLqmzDttrtzWAMgUkvo0ncHwsXlsbcG3hdIMeU=;
+        b=TNUfQyu7coqi8mDit+Yus/yKM8ckOV1t3K2NnANdSJ6iWQ62N76cTYzD6ur8zRzH7x
+         G2fCrAkrZ4CfofkBweA0pIkHiH07k+Zx5CTCM6Vd+IF5p9+oKZ9+8kjy7caR4OZmxopG
+         bcEUp5FqMy1t4/jsmXjjDYw1CfbK1gmXwBd1Cr9qNq155EN1BZK/q84yZ1oZLihfCbHA
+         YHFjSV1stHs5jtQe7DucPZypIISYp6Qa1UwAXw8hShmG6JEa01hmSWq7sX8kh8eXB5RR
+         bdvsWwcdqDYVDNwiFXUTRwxHbSL+sUFCLu/Vs9gm92taPmBOmkIrwzCD3Nuny2nIKb2X
+         U4tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739377806; x=1739982606;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=INNJ0GLqmzDttrtzWAMgUkvo0ncHwsXlsbcG3hdIMeU=;
+        b=JF5/I7laetdkL3jeKbCghQGxlflWjdyohEHxrhi6t4uosCT986lLz2hwe/eal3OYZQ
+         fVH+By+xG+5gqn9apJzW9oVvwPElh9JZXlmMKw51YP42mJHqg/WQpY+iZi0IlEu1smBW
+         nsqPg3sgZB04T2rCp65nALAht6r7igA6kshk9FVGUoSAZGyYuzoNIUVvRJzxE4bGOcs7
+         BFIUk/SndjFU6nf/x2UUyAVk2TiGodeqrlefwT4iLmNeTSSlEEaHtbvXziHrGv0upWwW
+         DLJtC8TjdL3IpCLuXjLKXFMpOh/O5QvY5KuAIvZn9KvsPpdZXSvm0bm+MzQIrdfhj3wd
+         FocQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyljlR2qsXLNZdoCr08dO48wNKyo62+N50STncP1dopxZ9mPlWEXSvvWxXvA3JtyKhmvrXVozvRVnhXgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiuNsmJXS4ZMznVFO23Ze+EmbdW1Iood7y4l2t0FApsv3T4eQZ
+	SBKHDN96CZfv5FX6pLA+njhU/c3h5+sDVebC6QLJtcW87eIGWkRuZqnQV6VUwLm4hZGp9EWqKna
+	3XA==
+X-Google-Smtp-Source: AGHT+IGEb06U+eVij7vX0poCySWtX2XI8K8BPd+Qt/prmv+voKNY99zmB70bJTwUUE97JgWYG6gZ1McIdFQ=
+X-Received: from pfiy10.prod.google.com ([2002:a05:6a00:190a:b0:730:83d2:d6a3])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:88f:b0:725:96f2:9e63
+ with SMTP id d2e1a72fcca58-7322c404660mr5950568b3a.24.1739377806556; Wed, 12
+ Feb 2025 08:30:06 -0800 (PST)
+Date: Wed, 12 Feb 2025 08:30:05 -0800
+In-Reply-To: <CA+i-1C0Sbgkyfan=srXL8dRrqaLoT1g1F5tZesC1rrh6v7L68w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250212-nfsd-fixes-v1-1-935e3a4919fc@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAILMrGcC/x2LQQqAIBAAvyJ7TtA1SfpKdJBcay8WLkQg/T3pO
- MxMA6HKJDCrBpVuFj5LBzso2I5YdtKcOgMa9AYt6pIl6cwPic4xmHEyAZ3z0Ier0i96v6zv+wF
- pc6sPXAAAAA==
-X-Change-ID: 20250212-nfsd-fixes-fa8047082335
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1390; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=iay9SaV00OpX9FTGUNAnx6gDTej3qK5HuPqkJKbVSfY=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnrMyICbQ7mrrJRdWHTUyPgxx60ScRPf5X55TYx
- +OCRX7zEo+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ6zMiAAKCRAADmhBGVaC
- FZ43EADF1YItS0gSPwRJY9vGpuLBvvZfeH5ZfWl8y2+IMQt3I/bKgTN7JccRTyPbkfcPWj0I4BZ
- jqThQ5cXqxSlEiLKBsZI9CCQSZjOH3DXHXKGH3pEOpvOLZxToBBHoeDhxxpiIWgvRPVrMWi492Z
- DFhBYJwOkO5yEw/J/h5mKFExdcHPaSySPOrQDV30BIXSgyvdH5GnhIYixQhslX1b2EId9rBRhR0
- CpxG8LerQ8MmbbH30vLxqYxL6PusOPBtA+YvR/h/4j8WFHiqDyIqDOkZRfudgl5HwK39tFb30eF
- pjPkBjYg2NRKgUwy+mFd8AQKJbhRy7m9WFWesW0DjFrYg+mYvTRDnUbf9VpYAq+wakHFcQ5qWAj
- IhqTUKXxAXu0vbt64Q2GGHIZKaHKR/6PhwEcMUNY3unV2PCE9Qm6Kjy1/ECc9WycunXjKVhvzZP
- 811nXwchP+6iZwiysvAUvIaL8PGKonFb28lvvqiMWy6BMaP+A4RFanYAjPawRD7goFc5k3metxO
- baaA8HWi8ngfiUqQxiHRW0a1L+D4nWKJkbLpNAEN6pksIpsphMLTfzx3qUrnGjIcfoI5oajJSp2
- G1jeAHs3yKdJTkipjRW7PzDkPS+NOxa2VHtUU0xY0FymoJXhcJZi6hejHTDbZ2BArnEavNRh0hC
- X1R7MMVTG0sOH2A==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Mime-Version: 1.0
+References: <20250211210823.242681-1-riel@surriel.com> <20250212102349.GE19118@noisy.programming.kicks-ass.net>
+ <CA+i-1C0Sbgkyfan=srXL8dRrqaLoT1g1F5tZesC1rrh6v7L68w@mail.gmail.com>
+Message-ID: <Z6zMjTyqTihpl9BI@google.com>
+Subject: Re: [PATCH v10 00/12] AMD broadcast TLB invalidation
+From: Sean Christopherson <seanjc@google.com>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@surriel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, bp@alien8.de, dave.hansen@linux.intel.com, 
+	zhengqi.arch@bytedance.com, nadav.amit@gmail.com, thomas.lendacky@amd.com, 
+	kernel-team@meta.com, linux-mm@kvack.org, akpm@linux-foundation.org, 
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com
+Content-Type: text/plain; charset="us-ascii"
 
-When a delegation is revoked, it's initially marked with
-SC_STATUS_REVOKED, or SC_STATUS_ADMIN_REVOKED and later, it's marked
-with the SC_STATUS_FREEABLE flag, which denotes that it is waiting for
-s FREE_STATEID call.
+On Wed, Feb 12, 2025, Brendan Jackman wrote:
+> They apply to 60675d4ca1ef0 ("Merge branch 'linus' into x86/mm, to
+> pick up fixes").
+> 
+> Rik, can I refer you to the BASE TREE INFORMATION section of man
+> git-format-patch. I haven't used that feature lately (b4 takes care of
+> this) but it looks like --base=auto will add the necessary info, or
+> IIRC there's a way to make that behaviour the default.
 
-nfs4_lookup_stateid() accepts a statusmask that includes the status
-flags that a found stateid is allowed to have. Currently, that mask
-never includes SC_STATUS_FREEABLE, which means that revoked delegations
-are (almost) never found.
+IMO, --base=auto is too easy to unintentionally misuse, e.g. it will do the wrong
+thing if your upstream branch is set to a personal repository.  --base itself is
+fantastic though.  I personally do:
 
-Add SC_STATUS_FREEABLE to the always-allowed status flags.
+  git format-patch --base=HEAD~$nr <bunch of other stuff> -$nr
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-This fixes the pynfs DELEG8 test.
----
- fs/nfsd/nfs4state.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 153eeea2c7c999d003cd1f36cecb0dd4f6e049b8..56bf07d623d085589823f3fba18afa62c0b3dbd2 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -7051,7 +7051,7 @@ nfsd4_lookup_stateid(struct nfsd4_compound_state *cstate,
- 		 */
- 		statusmask |= SC_STATUS_REVOKED;
- 
--	statusmask |= SC_STATUS_ADMIN_REVOKED;
-+	statusmask |= SC_STATUS_ADMIN_REVOKED | SC_STATUS_FREEABLE;
- 
- 	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid) ||
- 		CLOSE_STATEID(stateid))
-
----
-base-commit: 4990d098433db18c854e75fb0f90d941eb7d479e
-change-id: 20250212-nfsd-fixes-fa8047082335
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+where $nr is the number of patches in the series.  I.e. advertise the base as
+whatever the series of patches is based on, not what the branch is based on.  The
+only time it doesn't work is if your local branch has a commit that is not in the
+series, and is not publicly visible.  E.g. if the series depends on another in-flight
+series that you've applied locally.  But in that case, you should be explaining
+what's up in your cover letter no matter what.
 
