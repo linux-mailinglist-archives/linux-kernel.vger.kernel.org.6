@@ -1,154 +1,138 @@
-Return-Path: <linux-kernel+bounces-511111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0052A3260E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:42:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3541AA32618
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:45:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E03387A301A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:41:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C914188BFEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790E120CCC2;
-	Wed, 12 Feb 2025 12:42:33 +0000 (UTC)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B503720E001;
+	Wed, 12 Feb 2025 12:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bU3Rd2tJ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8535CF4FA;
-	Wed, 12 Feb 2025 12:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC9F20C487;
+	Wed, 12 Feb 2025 12:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364153; cv=none; b=fX0nz+g1RkE7qVSw45eJmLfMXd4X0+0ZOl4x3WjaXHsa7vARx355sJ593lyD066Gxbnv6CFOnbkZ49GFjo3UyRUhzIw57xeCPgAzrpSVqXeIpNl63QlaDzxEonKGjGnayZjofVE84sIeoKa4mA6a7KgXp4DtwbumY2S68FiOSRA=
+	t=1739364280; cv=none; b=eC1V6NbN2D+wZehPEJirz05q/pZ15BReOilCNivm5qtY+PYXnFSXkNR9Tqiz9orfJ7q1oDNJwSBDmPrUE+X+SOvLWRRQHvBPPBv+lU3gsBQ8UgjYNtHW8iUpJMiMltXaV+spXzqhoZPDQ+aK9N6/ZP0qsQBw7cwHrBNG+w8i89M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364153; c=relaxed/simple;
-	bh=gfnQfZvbBycEH6mze+hbX+x3Vkhgqjl25sZUdQySYsY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IAT62d6N34s9LhrQAVGVKPOVogtokYLfh+AGaHqeX25/3+/EJ/hpG+Oca7/7ShuL21tHJaMWjWG31AEZtBobJlIAJhW16ZHOWtt8MFxDEj+8jlgjWKtzQqZcbK/OzuFp4M6FcoUSw6OaA1XZq3ABLlgKRDkqUkXOpxhvNFTJKpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4bb0e7e6cceso992995137.1;
-        Wed, 12 Feb 2025 04:42:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739364148; x=1739968948;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FFJmWf9PLC2VPPWNEyS3sjZLQaSoXbf39gWYrpDNH+k=;
-        b=AAu0I1JFr5D4gqCjPl47rx3eCQcqm4Vck+WyJX93F8a1TDCz28J4R26yAPueOgGnMq
-         7EYo/OVLtXsU84IEClkMNTS4hDUzXyuvghFGaIgOrMhJz7cqB8khC9OEVOcVhd5K2qn/
-         aGTgjr/A+z6Z67heY6r9OODXMwiwpvugAMO9RR96BuJ4YjIsZY3i9qEwwojy9YGNhK4X
-         yEtH2shamBnJo3ucLOw/ED16os+4Osj2+JFFXaB7W36JMD8236IBxaO0fBi103Uyg2h8
-         X29nawIyrDmrYANLK8OcOjIfySYu2FCt/Y83H1QmubQQD1+OlHVbU9n+i9JkI7fsI3O7
-         G77g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFBq5r/cbK2ZWDEqSqVQXj5gxF2rip04OfwgvFKbIQWLoaD9PzeUkrwsGD5sFqoRMtwLvEwwFmWzYE@vger.kernel.org, AJvYcCXpX2eOQJ0l4o1DUeQGrL4uRGiFQcElZeObOuec/dFHtjt6Gr2RTQzddg6BFwInbWxiE/UxoQHgv2Csl28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5PGe4VNBlStlye+SmZVzqu2Vw/uJOBeQ9XlsKInuFLst0Yyku
-	etoCjZV7af/pk5g0cpKtT3Ex0XZot9C+jgtMBPRG835WHmR6YtukdH7WtZvt
-X-Gm-Gg: ASbGncs9OAGBm1uqgjE2ZNURyO8UW0V17XlvPxnQbvkZ13m9Q4NvH7117LkF5EMrttP
-	fn7F5/NWAEiP5r4p630jA22dfRva/C0jkiivHZeM9X3VTgFFd2qXef9CaWYHu0iuQL2KukDGOz8
-	n70/Qqfy8QeIzcZ1vjjeJDoJRi1pMHUDAUO5/ce4msYnpPJGAq+grrekD0ND4E19j4Wh/0thXXb
-	FnoiR8FSqy0bUI3l3yLhTcXfb6hZtJ+7kC5NUlPd13+k9Er9TVBT6fbiAfOqTjBbCEsQZmtMvIT
-	pWANDQIzbRU/oaRCf3oFPZmY+IrqPLqrq2VgU1MbAjR7+NnlZwPYVg==
-X-Google-Smtp-Source: AGHT+IF3YMgEuhS0qIlSgbLp0aZRkg+SNiu/6FAr+7c6EQpSMi02G1rz6Lhad4lFwNkQDPsQ1b389g==
-X-Received: by 2002:a05:6102:3f0a:b0:4af:c519:4e7f with SMTP id ada2fe7eead31-4bbf22e8233mr2563004137.18.1739364148443;
-        Wed, 12 Feb 2025 04:42:28 -0800 (PST)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4bbdcf078ccsm695506137.3.2025.02.12.04.42.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 04:42:28 -0800 (PST)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8671441a730so1237704241.0;
-        Wed, 12 Feb 2025 04:42:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU+7EAJ615qD4l6sMQhYEssrJqHaZkud7y7bB00KHwEOv4IzN6NbAsEcpIRcZEobAqTjmUrwLNmX/RhKtg=@vger.kernel.org, AJvYcCXxXe9k0nwxxlGIxpQMHi7DvlV/5SlWEntlPi7fNbM1pJdqBS1dTGgIj0BSnJwwVqXtn0IREQIddlRQ@vger.kernel.org
-X-Received: by 2002:a05:6102:418e:b0:4bb:d7f0:6e50 with SMTP id
- ada2fe7eead31-4bbf23288cemr2351909137.25.1739364147818; Wed, 12 Feb 2025
- 04:42:27 -0800 (PST)
+	s=arc-20240116; t=1739364280; c=relaxed/simple;
+	bh=+mhHkXqhc4VDwPi7MLWcNjZdhTc4zZo0gwq+T5cTOIY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qt0m9RiwmHpRLQ+XABRLF70jn5Z3s8Omob7SQxcEzofj9DsdXtgtXADQGaShYhHZ8Nzjt6U/VYRJA+MqLDmALy3uzGNLld4J3hmKFLToTVHkIFZefFDFRhKpoHc0QFLmC0CyoXPE1ncwS+jdmU4MIe0C4OfW7hVFgDo4meB9P3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bU3Rd2tJ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CBpiSd013640;
+	Wed, 12 Feb 2025 12:43:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=+mhHkX
+	qhc4VDwPi7MLWcNjZdhTc4zZo0gwq+T5cTOIY=; b=bU3Rd2tJlFFQqu5BV1YnSW
+	tkSX87Qk0oNHNsqBvOCKKjQZaMiiiZktgkFwm6RXdYLRIRz3064de3ZJXTpXluHu
+	jR03F9uRrZfaZigIPn78pnGDR9HygsJhvJ5DYCArhv2PG3aDrjD9XnfD+jBDYhlz
+	xI8W+J8GZ+nTiq+IF6s6C8efmO99g52z7VbIvRvo7u/PcEmBojze6dbCKo6XXUlL
+	j/3GiABLIEtJd6Ef0p7jqIKghjbxcTQr0y0HzxcxSdS0S7J5xaN+VGT0Pq9ntVu1
+	f6RR3BKMvXasb0aO6cNUobfx/7R+rEz600ZMWb7fDBrUlrWX8HgZMXek6yAfaF7A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rfpa3bm3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 12:43:04 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51CCK66g021894;
+	Wed, 12 Feb 2025 12:43:03 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rfpa3bky-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 12:43:03 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CCdn11028217;
+	Wed, 12 Feb 2025 12:43:02 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44phyygqa4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 12:43:02 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CCh1wq27132606
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Feb 2025 12:43:01 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A3245805F;
+	Wed, 12 Feb 2025 12:43:01 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3039258051;
+	Wed, 12 Feb 2025 12:43:00 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.169.88])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Feb 2025 12:43:00 +0000 (GMT)
+Message-ID: <6f7120f292a7863e7c69d3cb49f224efd12ee629.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v3 07/13] keys: Add ability to track intended usage
+ of the public key
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@kernel.org>,
+        Eric Snowberg
+	 <eric.snowberg@oracle.com>
+Cc: linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+        ardb@kernel.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+        mic@digikod.net, casey@schaufler-ca.com, stefanb@linux.ibm.com,
+        ebiggers@kernel.org, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Date: Wed, 12 Feb 2025 07:42:59 -0500
+In-Reply-To: <Z6UU7anXtW43AhNR@kernel.org>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+	 <20241017155516.2582369-8-eric.snowberg@oracle.com>
+	 <Z6UU7anXtW43AhNR@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203-b4-get_maintainer-v2-0-83ba008b491f@suse.cz>
- <20250203-b4-get_maintainer-v2-1-83ba008b491f@suse.cz> <66c2bf7a-9119-4850-b6b8-ac8f426966e1@suse.cz>
-In-Reply-To: <66c2bf7a-9119-4850-b6b8-ac8f426966e1@suse.cz>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Feb 2025 13:42:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWvTDO6wcLQs1DwrEjj3jDDav5uKU6E-5=TKFK9w1Nb-w@mail.gmail.com>
-X-Gm-Features: AWEUYZkJ3_m0j2FOFXfQoG21VRxPr1IQKZ7cn7WkguLKGKkl4S-XxfFtuRcefZU
-Message-ID: <CAMuHMdWvTDO6wcLQs1DwrEjj3jDDav5uKU6E-5=TKFK9w1Nb-w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] get_maintainer: add --substatus for reporting
- subsystem status
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	workflows@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Thorsten Leemhuis <linux@leemhuis.info>, 
-	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: WPOio9vJuKimRSeTX5erqwTICYwt3Uiv
+X-Proofpoint-ORIG-GUID: PANYEldy6s1JY0QEJs3RxZgvBxokQCaR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ mlxscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ mlxlogscore=923 clxscore=1011 phishscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502120097
 
-Hi Vlastimil,
+On Thu, 2025-02-06 at 22:13 +0200, Jarkko Sakkinen wrote:
+> On Thu, Oct 17, 2024 at 09:55:10AM -0600, Eric Snowberg wrote:
+> > Add two new fields in public_key_signature to track the intended usage =
+of
+> > the signature.=C2=A0 Also add a flag for the revocation pass.=C2=A0 Dur=
+ing signature
+> > validation, two verifications can take place for the same signature.=C2=
+=A0 One
+> > to see if it verifies against something on the .blacklist keyring and
+> > the other to see if it verifies against the supplied keyring. The flag
+> > is used to determine which stage the verification is in.
+> >=20
+> > Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+>=20
+> Mimi, was this the patch set you asked to look at while ago?</offtopic>
 
-On Tue, 11 Feb 2025 at 17:01, Vlastimil Babka <vbabka@suse.cz> wrote:
-> On 2/3/25 12:13, Vlastimil Babka wrote:
-> > The subsystem status is currently reported with --role(stats) by
-> > adjusting the maintainer role for any status different from Maintained.
-> > This has two downsides:
-> >
-> > - if a subsystem has only reviewers or mailing lists and no maintainers,
-> >   the status is not reported (i.e. typically, Orphan subsystems have no
-> >   maintainers)
-> >
-> > - the Supported status means that someone is paid for maintaining, but
-> >   it is reported as "supporter" for all the maintainers, which can be
-> >   incorrect. People have been also confused about what "supporter"
-> >   means.
-> >
-> > This patch introduces a new --substatus option and functionality aimed
-> > to report the subsystem status separately, without adjusting the
-> > reported maintainer role. After the e-mails are output, the status of
-> > subsystems will follow, for example:
-> >
-> > ...
-> > linux-kernel@vger.kernel.org (open list:LIBRARY CODE)
-> > LIBRARY CODE status: Supported
-> >
-> > In order to allow replacing the role rewriting seamlessly, the new
-> > option works as follows:
-> >
-> > - it is automatically enabled when --email and --role are enabled
-> >   (the defaults include --email and --rolestats which implies --role)
->
-> With the following fixup, the above changes to:
->
-> - it is automatically enabled when --email and --role are enabled and the
->   output is a terminal (the defaults include --email and --rolestats which
->   implies --role)
->
-> ----8<----
-> From f5523a85c742065fcb88a8aa26831f9dba9faf15 Mon Sep 17 00:00:00 2001
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Tue, 11 Feb 2025 16:16:11 +0100
-> Subject: [PATCH] get_maintainer: add --substatus for reporting subsystem
->  status - fix
->
-> The automatically enabled --substatus can break existing scripts that do
-> not disable --rolestats. Require that script output goes to a terminal
-> to enable it automatically.
->
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Yes, in particular please take a look at Paul's comment on 00/13.
 
-Thanks, that fixes the issue for me.
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Mimi
 
