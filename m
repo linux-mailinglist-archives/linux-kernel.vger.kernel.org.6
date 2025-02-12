@@ -1,355 +1,116 @@
-Return-Path: <linux-kernel+bounces-510858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4196A322F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:56:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B552A322F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:57:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBCF18895F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:56:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 510A87A1E86
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8AA207A07;
-	Wed, 12 Feb 2025 09:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E96206F3F;
+	Wed, 12 Feb 2025 09:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcn0QIVh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UXuAfugM"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7080D1F03C1;
-	Wed, 12 Feb 2025 09:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7931EF0A6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739354151; cv=none; b=Q1x1nxLPZXs5XB0BaQ/493z51np5iHzivKB7MhbtVLfsQEwD+FwXo5lmF4e4j5e8YMnIbtOtQf8FPUqZ37BXfg/kwZgAFx6aA9erzWuAA94hbYtaA8EwIsWh9o3i+4p3G5e/4H3luGGGV0ronO0fF7y1MBNPKivRHfDWdf7whXw=
+	t=1739354241; cv=none; b=UU5Pg3ZU6ln0TUqaTB/ut/wQCxZw5++XHPjA269CYOU6hTQVzLJCHdBBwQGDo369IuhEkQpz1mDMs2ixV3pirXvVAOG0uJrSVQ6pGWhdrr804j7cRuge7OgUdC7f5gz4xMDrTftkYHXS8tSeAJ0E2iuMXo/23gEvB+oCkKmbBu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739354151; c=relaxed/simple;
-	bh=Pk83kn2teBZ2nUxjqj95H4XUWAy6A4z+5DkiuCCdLbs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WsBttVy/gXu2DV9zBdEEDczAsycdodO41tH88D5jDfuTDk+j67ablc665l70Zo5ZTQdMz5D5HF1qTIvw2ldnfkWge9JFC58QiZbk9y1E/JA/T9XmIYy7kfnOLw8NAEQiE2Bcu2W3u0SvPGT1Emj1EGzB00mO0LSiuzV9CRnPgFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kcn0QIVh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4CAC4CEDF;
-	Wed, 12 Feb 2025 09:55:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739354150;
-	bh=Pk83kn2teBZ2nUxjqj95H4XUWAy6A4z+5DkiuCCdLbs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kcn0QIVhhG3T1NsM5GsfXjkCfGuI7mmr0ATo3z5ewxbQ2aBuEjTdjk1rl+8IVQPBC
-	 iLJhRmwJtcrBm+sY5GQijwlQkQrArKqXaSSMf8i96kr5GeQDINOUjltLP9ShxlNbj/
-	 +O14llRPdM2h4aLhjN1dpI2pCVLePzLB5SoYNluec9N9fQuv39x8cTPl3Y6hr/zqnD
-	 vOHErwKNiFJaR6A1JKH/Gpvl1yk9aAUzOvZ5afQ1Stak4wpMjI7RzZQRBBFWeUqhnb
-	 QNWWMOGCLMInrsm8U2IAhsRysKuVJcqSsZvJt9sv1ZUYkeFPtZ7JB6eTV9CTKCicA1
-	 pr95Q45AjYsvw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ti9TA-003IJh-04;
-	Wed, 12 Feb 2025 09:55:48 +0000
-Date: Wed, 12 Feb 2025 09:55:46 +0000
-Message-ID: <86y0ybsd0d.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Cc: Hector Martin <marcan@marcan.st>,	Sven Peter <sven@svenpeter.dev>,	Bjorn
- Helgaas <bhelgaas@google.com>,	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,	Manivannan
- Sadhasivam <manivannan.sadhasivam@linaro.org>,	Rob Herring
- <robh@kernel.org>,	Krzysztof Kozlowski <krzk+dt@kernel.org>,	Conor Dooley
- <conor+dt@kernel.org>,	Mark Kettenis <kettenis@openbsd.org>,	Stan Skowronek
- <stan@corellium.com>,	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] PCI: apple: Add T602x PCIe support
-In-Reply-To: <20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
-References: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io>
-	<20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1739354241; c=relaxed/simple;
+	bh=DbWnxZQj/QY2+PENDx3QARa/H9rHcPmmXzkYM1WueAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NkaMIUnv3AT+zUuA44xcQFEubbVFO8tgnGpWbe5WQ+tF8/yZkPsjMBJHs8KCW408wshLfK4vepD+/LeNH2JO/bjItMxL7M2VUnugYikaKxgn8/ojGrniMnQ5Z8dX6hAprIBB2LDIDWodGatJFWrrgMaay+DLxcrwdgsOxptnNPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UXuAfugM; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43934d6b155so3935825e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:57:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739354238; x=1739959038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I6vJyJgeQHsvu6Ff/y0C/JbFL7zNshY57B+aHRbXHVM=;
+        b=UXuAfugMmdiunwS5DAOP7Sb3521mL0MCbjGNacRvIShKBdA7YriBtylrCrtRtyHmYQ
+         SPjTxkQTw32WiX8iYfhH0JQMsR0yS5GBp+OORCgDXyEkvNtcWmHi7+Jk191cctQiouGD
+         UotovcVOB3KN2EbjrkDggJGd04wE3F0ISLIV16w1lzsAtXwgcdpTCouZo2VoGq/ntKOA
+         AncJ4p5VGKgu+NFwsIBOOe6y/+fmMcT8LDJ/sf1SU+2VtismrZvD0tGjNYPY4y53O6RT
+         P6BRIIyfrE+LKPL0h91iAwLTepZXfsuEOGlpY+nl+ty3gvf5KAOvIf7Cw2MDDvpvlpOn
+         dmzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739354238; x=1739959038;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I6vJyJgeQHsvu6Ff/y0C/JbFL7zNshY57B+aHRbXHVM=;
+        b=pm/mFOaKrCZEPwGMzzMqBM4AMT1sGJsZZco17vyGc/JHAx3jcJrpIW6V3jJPNQlFTv
+         Xv782PKleDSW2lPz2S6SYyiUPeqmbB4CQvoHR8xhvFBLbgDephmsOvN8uSNG4FMuQiln
+         9g8mVSuhHQ3Gkm3ELed59Ej+11lhNo6NEDv80LNg5sEF9kLiqIWxzMJtq463YowMerHJ
+         S21hLhaRHlDpojcGYjtgc8aafKosmvRj/nqqZw41z/R5F7Dva1Tnhz2K7rTC8S5Mcaey
+         bD0GHmeC+lmFx2/aIoIiMK2kBvMxZlqQxcBi3Yh9gggvrM3YDE//XBDCXb9hYqmQW8zI
+         cjxA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3+Kg/f5lW+3X+aT7NprLth9H30jObIrsu7a7Rw11k/B59Me5jeNEUOOg2SZqDI/6UANNNgJNsGTn+nE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbz3F7E1tV/b6DvXVxhk4IdhCd04HtK+gWyPTAFkwJofitnJvC
+	34YV3zY/dHXDQA9ZNEpaXfrc5omy8+h8v4sc846xSHk5Z1dFlKdnouDyQLQk3s8j1x/9uk2i3rK
+	KB7I=
+X-Gm-Gg: ASbGnctOKBVLN4JNZXTJ9sTzN/Rih7BzOwE2XJDWeMKfjEtwJLVLhStU/RLU9hDDxGF
+	RYt+PzyxgI8lDdePZvWeKVdQI8MoIIBaDwOVeTalBta6gMCMfbAKIUj5g+n9Ud+gjKy3wNSU7R+
+	0AmiBfz73Tiv+wggLHNg7EnpHccHvbeCvqj2S5aCI+S1lhtANYMDGR3uvBttXc22yGWO7euaW47
+	hMooCBjKElv1jur5wWJxZVNXgpLfO/QyQaH8iN20rflMTm+XTOCLtNmusY7JCkYEpcCzW2N4LjQ
+	AH8CZxx/stEs1f8=
+X-Google-Smtp-Source: AGHT+IHmNW/uEKKhVJH5d7jzvEsFDf7h41DfWWQR+7ySmCWdVvV8vJ3bcQAm3tRGaO+q01hevGkb7A==
+X-Received: by 2002:a05:600c:694:b0:439:5cf6:ec3 with SMTP id 5b1f17b1804b1-4395cf61043mr7945095e9.4.1739354238666;
+        Wed, 12 Feb 2025 01:57:18 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:521c:13af:4882:344c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dd511e626sm11255636f8f.74.2025.02.12.01.57.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 01:57:18 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 1/1] gpiolib: Deduplicate gpiod_direction_input_nonotify() call
+Date: Wed, 12 Feb 2025 10:57:16 +0100
+Message-ID: <173935420805.13771.5715845143153249360.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250204175646.150577-1-andriy.shevchenko@linux.intel.com>
+References: <20250204175646.150577-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: alyssa@rosenzweig.io, marcan@marcan.st, sven@svenpeter.dev, bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, kettenis@openbsd.org, stan@corellium.com, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Feb 2025 19:54:32 +0000,
-Alyssa Rosenzweig <alyssa@rosenzweig.io> wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Tue, 04 Feb 2025 19:56:46 +0200, Andy Shevchenko wrote:
+> Deduplicate gpiod_direction_input_nonotify() call in
+> gpiod_direction_output_nonotify() when emulating open-drain
+> or open-source behaviour. It also aligns the error check
+> approaches in set_output_value and set_output_flag labels.
 > 
-> From: Hector Martin <marcan@marcan.st>
 > 
-> This version of the hardware moved around a bunch of registers, so we
-> drop the old compatible for these and introduce register offset
-> structures to handle the differences.
-> 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> ---
->  drivers/pci/controller/pcie-apple.c | 125 ++++++++++++++++++++++++++++++------
->  1 file changed, 105 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-> index 7f4839fb0a5b15a9ca87337f53c14a1ce08301fc..7c598334427cb56ca066890ac61143ae1d3ed744 100644
-> --- a/drivers/pci/controller/pcie-apple.c
-> +++ b/drivers/pci/controller/pcie-apple.c
-> @@ -26,6 +26,7 @@
->  #include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/msi.h>
-> +#include <linux/of_device.h>
->  #include <linux/of_irq.h>
->  #include <linux/pci-ecam.h>
->  
-> @@ -104,7 +105,7 @@
->  #define   PORT_REFCLK_CGDIS		BIT(8)
->  #define PORT_PERST			0x00814
->  #define   PORT_PERST_OFF		BIT(0)
-> -#define PORT_RID2SID(i16)		(0x00828 + 4 * (i16))
-> +#define PORT_RID2SID			0x00828
->  #define   PORT_RID2SID_VALID		BIT(31)
->  #define   PORT_RID2SID_SID_SHIFT	16
->  #define   PORT_RID2SID_BUS_SHIFT	8
-> @@ -122,7 +123,7 @@
->  #define   PORT_TUNSTAT_PERST_ACK_PEND	BIT(1)
->  #define PORT_PREFMEM_ENABLE		0x00994
->  
-> -#define MAX_RID2SID			64
-> +#define MAX_RID2SID			512
->  
->  /*
->   * The doorbell address is set to 0xfffff000, which by convention
-> @@ -133,6 +134,57 @@
->   */
->  #define DOORBELL_ADDR		CONFIG_PCIE_APPLE_MSI_DOORBELL_ADDR
->  
-> +struct reg_info {
-> +	u32 phy_lane_ctl;
-> +	u32 port_msiaddr;
-> +	u32 port_msiaddr_hi;
-> +	u32 port_refclk;
-> +	u32 port_perst;
-> +	u32 port_rid2sid;
-> +	u32 port_msimap;
-> +	u32 max_rid2sid;
-> +	u32 max_msimap;
-> +};
-> +
-> +const struct reg_info t8103_hw = {
-> +	.phy_lane_ctl = PHY_LANE_CTL,
-> +	.port_msiaddr = PORT_MSIADDR,
-> +	.port_msiaddr_hi = 0,
-> +	.port_refclk = PORT_REFCLK,
-> +	.port_perst = PORT_PERST,
-> +	.port_rid2sid = PORT_RID2SID,
-> +	.port_msimap = 0,
-> +	.max_rid2sid = 64,
-> +	.max_msimap = 0,
-> +};
-> +
-> +#define PORT_T602X_MSIADDR		0x016c
-> +#define PORT_T602X_MSIADDR_HI		0x0170
-> +#define PORT_T602X_PERST		0x082c
-> +#define PORT_T602X_RID2SID		0x3000
-> +#define PORT_T602X_MSIMAP		0x3800
-> +
-> +#define PORT_MSIMAP_ENABLE		BIT(31)
-> +#define PORT_MSIMAP_TARGET		GENMASK(7, 0)
-> +
-> +const struct reg_info t602x_hw = {
-> +	.phy_lane_ctl = 0,
-> +	.port_msiaddr = PORT_T602X_MSIADDR,
-> +	.port_msiaddr_hi = PORT_T602X_MSIADDR_HI,
-> +	.port_refclk = 0,
-> +	.port_perst = PORT_T602X_PERST,
-> +	.port_rid2sid = PORT_T602X_RID2SID,
-> +	.port_msimap = PORT_T602X_MSIMAP,
-> +	.max_rid2sid = 512, /* 16 on t602x, guess for autodetect on future HW */
-> +	.max_msimap = 512, /* 96 on t602x, guess for autodetect on future HW */
 
-What is max_msimap for? It is never used.
+Meh, it's a bit of churn IMO but whatever.
 
-> +};
-> +
-> +static const struct of_device_id apple_pcie_of_match_hw[] = {
-> +	{ .compatible = "apple,t6020-pcie", .data = &t602x_hw },
-> +	{ .compatible = "apple,pcie", .data = &t8103_hw },
-> +	{ }
-> +};
-> +
->  struct apple_pcie {
->  	struct mutex		lock;
->  	struct device		*dev;
-> @@ -143,6 +195,7 @@ struct apple_pcie {
->  	struct completion	event;
->  	struct irq_fwspec	fwspec;
->  	u32			nvecs;
-> +	const struct reg_info	*hw;
->  };
->  
->  struct apple_pcie_port {
-> @@ -266,14 +319,14 @@ static void apple_port_irq_mask(struct irq_data *data)
->  {
->  	struct apple_pcie_port *port = irq_data_get_irq_chip_data(data);
->  
-> -	writel_relaxed(BIT(data->hwirq), port->base + PORT_INTMSKSET);
-> +	rmw_set(BIT(data->hwirq), port->base + PORT_INTMSK);
->  }
->  
->  static void apple_port_irq_unmask(struct irq_data *data)
->  {
->  	struct apple_pcie_port *port = irq_data_get_irq_chip_data(data);
->  
-> -	writel_relaxed(BIT(data->hwirq), port->base + PORT_INTMSKCLR);
-> +	rmw_clear(BIT(data->hwirq), port->base + PORT_INTMSK);
->  }
->  
->  static bool hwirq_is_intx(unsigned int hwirq)
-> @@ -377,6 +430,7 @@ static void apple_port_irq_handler(struct irq_desc *desc)
->  static int apple_pcie_port_setup_irq(struct apple_pcie_port *port)
->  {
->  	struct fwnode_handle *fwnode = &port->np->fwnode;
-> +	struct apple_pcie *pcie = port->pcie;
->  	unsigned int irq;
->  
->  	/* FIXME: consider moving each interrupt under each port */
-> @@ -392,19 +446,35 @@ static int apple_pcie_port_setup_irq(struct apple_pcie_port *port)
->  		return -ENOMEM;
->  
->  	/* Disable all interrupts */
-> -	writel_relaxed(~0, port->base + PORT_INTMSKSET);
-> +	writel_relaxed(~0, port->base + PORT_INTMSK);
->  	writel_relaxed(~0, port->base + PORT_INTSTAT);
-> +	writel_relaxed(~0, port->base + PORT_LINKCMDSTS);
+[1/1] gpiolib: Deduplicate gpiod_direction_input_nonotify() call
+      commit: 8beaf839018096cd20e427e68645b4fbecdcb1f0
 
-Can you elaborate on this change?
-
->  
->  	irq_set_chained_handler_and_data(irq, apple_port_irq_handler, port);
->  
->  	/* Configure MSI base address */
->  	BUILD_BUG_ON(upper_32_bits(DOORBELL_ADDR));
-> -	writel_relaxed(lower_32_bits(DOORBELL_ADDR), port->base + PORT_MSIADDR);
-> +	writel_relaxed(lower_32_bits(DOORBELL_ADDR),
-> +		       port->base + pcie->hw->port_msiaddr);
-> +	if (pcie->hw->port_msiaddr_hi)
-> +		writel_relaxed(0, port->base + pcie->hw->port_msiaddr_hi);
->  
->  	/* Enable MSIs, shared between all ports */
-> -	writel_relaxed(0, port->base + PORT_MSIBASE);
-> -	writel_relaxed((ilog2(port->pcie->nvecs) << PORT_MSICFG_L2MSINUM_SHIFT) |
-> -		       PORT_MSICFG_EN, port->base + PORT_MSICFG);
-> +	if (pcie->hw->port_msimap) {
-> +		int i;
-> +
-> +		for (i = 0; i < pcie->nvecs; i++) {
-> +			writel_relaxed(FIELD_PREP(PORT_MSIMAP_TARGET, i) |
-> +				       PORT_MSIMAP_ENABLE,
-> +				       port->base + pcie->hw->port_msimap + 4 * i);
-> +		}
-> +
-> +		writel_relaxed(PORT_MSICFG_EN, port->base + PORT_MSICFG);
-> +	} else {
-> +		writel_relaxed(0, port->base + PORT_MSIBASE);
-> +		writel_relaxed((ilog2(pcie->nvecs) << PORT_MSICFG_L2MSINUM_SHIFT) |
-> +			PORT_MSICFG_EN, port->base + PORT_MSICFG);
-> +	}
->  
->  	return 0;
->  }
-> @@ -472,7 +542,9 @@ static int apple_pcie_setup_refclk(struct apple_pcie *pcie,
->  	u32 stat;
->  	int res;
->  
-> -	rmw_set(PHY_LANE_CTL_CFGACC, port->phy + PHY_LANE_CTL);
-> +	if (pcie->hw->phy_lane_ctl)
-> +		rmw_set(PHY_LANE_CTL_CFGACC, port->phy + pcie->hw->phy_lane_ctl);
-> +
->  	rmw_set(PHY_LANE_CFG_REFCLK0REQ, port->phy + PHY_LANE_CFG);
->  
->  	res = readl_relaxed_poll_timeout(port->phy + PHY_LANE_CFG,
-> @@ -489,10 +561,13 @@ static int apple_pcie_setup_refclk(struct apple_pcie *pcie,
->  	if (res < 0)
->  		return res;
->  
-> -	rmw_clear(PHY_LANE_CTL_CFGACC, port->phy + PHY_LANE_CTL);
-> +	if (pcie->hw->phy_lane_ctl)
-> +		rmw_clear(PHY_LANE_CTL_CFGACC, port->phy + pcie->hw->phy_lane_ctl);
->  
->  	rmw_set(PHY_LANE_CFG_REFCLKEN, port->phy + PHY_LANE_CFG);
-> -	rmw_set(PORT_REFCLK_EN, port->base + PORT_REFCLK);
-> +
-> +	if (pcie->hw->port_refclk)
-> +		rmw_set(PORT_REFCLK_EN, port->base + pcie->hw->port_refclk);
->  
->  	return 0;
->  }
-> @@ -500,9 +575,9 @@ static int apple_pcie_setup_refclk(struct apple_pcie *pcie,
->  static u32 apple_pcie_rid2sid_write(struct apple_pcie_port *port,
->  				    int idx, u32 val)
->  {
-> -	writel_relaxed(val, port->base + PORT_RID2SID(idx));
-> +	writel_relaxed(val, port->base + port->pcie->hw->port_rid2sid + 4 * idx);
->  	/* Read back to ensure completion of the write */
-> -	return readl_relaxed(port->base + PORT_RID2SID(idx));
-> +	return readl_relaxed(port->base + port->pcie->hw->port_rid2sid + 4 * idx);
->  }
->  
->  static int apple_pcie_setup_port(struct apple_pcie *pcie,
-> @@ -563,7 +638,7 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
->  	usleep_range(100, 200);
->  
->  	/* Deassert PERST# */
-> -	rmw_set(PORT_PERST_OFF, port->base + PORT_PERST);
-> +	rmw_set(PORT_PERST_OFF, port->base + pcie->hw->port_perst);
->  	gpiod_set_value_cansleep(reset, 0);
->  
->  	/* Wait for 100ms after PERST# deassertion (PCIe r5.0, 6.6.1) */
-> @@ -576,15 +651,12 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
->  		return ret;
->  	}
->  
-> -	rmw_clear(PORT_REFCLK_CGDIS, port->base + PORT_REFCLK);
-> -	rmw_clear(PORT_APPCLK_CGDIS, port->base + PORT_APPCLK);
-> -
->  	ret = apple_pcie_port_setup_irq(port);
->  	if (ret)
->  		return ret;
->  
->  	/* Reset all RID/SID mappings, and check for RAZ/WI registers */
-> -	for (i = 0; i < MAX_RID2SID; i++) {
-> +	for (i = 0; i < pcie->hw->max_rid2sid; i++) {
->  		if (apple_pcie_rid2sid_write(port, i, 0xbad1d) != 0xbad1d)
->  			break;
->  		apple_pcie_rid2sid_write(port, i, 0);
-> @@ -608,6 +680,12 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
->  	if (!wait_for_completion_timeout(&pcie->event, HZ / 10))
->  		dev_warn(pcie->dev, "%pOF link didn't come up\n", np);
->  
-> +	if (pcie->hw->port_refclk)
-> +		rmw_clear(PORT_REFCLK_CGDIS, port->base + PORT_REFCLK);
-
-Shouldn't this be using the actual value for port_refclk?
-
-> +	else
-> +		rmw_set(PHY_LANE_CFG_REFCLKCGEN, port->phy + PHY_LANE_CFG);
-> +	rmw_clear(PORT_APPCLK_CGDIS, port->base + PORT_APPCLK);
-> +
-
-Can you elaborate on this particular change?
-
-I always assumed this was some clock-gating that needed to occur
-*before* the link training was started. This is now taking place after
-training, and the commit message doesn't say anything about it.
-
-Thanks,
-
-	M.
-
+Best regards,
 -- 
-Without deviation from the norm, progress is not possible.
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
