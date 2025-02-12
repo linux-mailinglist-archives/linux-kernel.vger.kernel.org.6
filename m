@@ -1,144 +1,126 @@
-Return-Path: <linux-kernel+bounces-510655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2C4A3200A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:34:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F93A32031
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB93A3A3C17
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:34:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA90816A1A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7261E1FF1C8;
-	Wed, 12 Feb 2025 07:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E946204C18;
+	Wed, 12 Feb 2025 07:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bWBKFMZn"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="H/hn7/sX"
+Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE762045A3
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F44204682;
+	Wed, 12 Feb 2025 07:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739345683; cv=none; b=pHh0UcYwo9WkaETcLsE37OTX0DWqjBZkJuo5NOLxRgKlzTXRBEKhmd62pjtA01IueXvJ8Xmp/geAUGxLnymmMMddWsz50f1CwFL4H6Cn23hA/kjatBEg82CK2iAygCWpScxYqgvN1qKwy+VFxj240JVeOruquv3T6THNh1MeQko=
+	t=1739346192; cv=none; b=ACTzo7eebXIHGfLwexrGzaE3YaXayztq0IM1rWYHHFmoSJ9b9Op2psQpL2EcQlmV9vxLyQbbquXQep3ahk5Drs1rVB98gD9TQ9adZ+bChm0B/Hfx6Y/1MteWeEq5+ifeLnZlooe+ighAN1JvjG6r1M4mP75OudwkNLjq375sluQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739345683; c=relaxed/simple;
-	bh=xKZQeC8QlmSbvkB9BK44DQ6sGPlxDTX+bVywm5YMmj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iGgQij64dzJQ6GLMRodLwxqaHIey44l+vZ9XrrW3LR4xNWVQ0zLEwqad+iq5T+xlPu2Sq/uCV2SqCn51dohslRUpgK7N6PIx4ju0pdndXSzuF0jo5oUBBpZiVVy7Wd7alElsIC2OFERLXtz4CtuufhlXLHXvAAlKALY7q5nVsH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bWBKFMZn; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220c665ef4cso469905ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:34:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739345681; x=1739950481; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gBZVQXzGj/Nj2dxnCyApeR+oIxTqVjbcwS+DUCxmMZo=;
-        b=bWBKFMZnmiLu5Jb+el07taK6pY24LrKMKt8GmUEH1zlq0+O5Jm954HK2CoZwHJN0YX
-         LuinVGVEwQKzztFmxSCjnnAmjkrp4kCcdg8KeVK75wW5dV4A3RiVh+UFv3U29qbu+v3o
-         7Gb1vXmyuODRDjzGPwpmT2/PyT5h131eJ19ABx3WE/+iF99iE9Nl7D9Pl7PCbSe0y+1n
-         udKH3ZbJCqzcc62GmiVtvVrsEzvM/qPKig09OeCbfPxFxvCEUkowak4Y2idYbYcoYZro
-         u2CDVyZ9b5KyUvnlHnpJtm1ZN/PUkltlxM0aqgxdxHbtfmPVuHdEdu7rw3YH3blPvn2E
-         3xOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739345681; x=1739950481;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gBZVQXzGj/Nj2dxnCyApeR+oIxTqVjbcwS+DUCxmMZo=;
-        b=BC2s784eyEeySWlqBTm+/9jXTsw/Mofa/XLX4HvZPEdRo4a6tsT9P3PN/FGnseIJpl
-         0g42BrGBty/dD5wqZ/7EpAk/xDmflHMC09lAUzbtis4SCL11ckymQnF1lW/urWc9E6aR
-         Cu5IYyMR9Ol4sdZ3n/e4okRGtZ6GosYZ+0MRtGY5BaxWHh+762/EbTDSmlQPQkooSrMh
-         jR3E53lkUiK0m7fHGvUd+T9wNfIHrwN9nZDzDP+ZK1z5Fw/Qz22hhZLAwxcHRQaSzdUM
-         AHRzNtLG3Wgf8pvuCR56RFZdsvKiYW5o83VFCCsvgWLLcIXFMQUN+t9/HiEFNlz1VFEm
-         8UoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7o+vGDPjKLE594YJKkxuPLTE/vjBKTVRjOyJG+qqIXBymI2i5P3GvlmpwItOBhLnGGUThkLbTRwJFCnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6ukxkS4QfBuohhUFd7LzkyWKBEu30biwtHkGMljQpesYcnHV6
-	rJbHJHeO/KHmMj2aWZz5z3US9EADIZE63XxJTHJUtU5HJzO6NymRfeRkXQr9Vk4=
-X-Gm-Gg: ASbGncvFKo9jovEePELEugMVvqL7fgcDab7id2op3XcjrN/vLfagfCuan+9mj2SSl3W
-	y7ArluZ8XdsTlXzLTGEudHzUWK/3FqS4J0OwH1ykAzrIu1ovFStYlYLQmOupZ6OY8ws57aKnDCk
-	aRlMmd7a3aNLiKv8RWu5lH16fbDewopNy8FqX0t+KIQ8fjMzbDIKw8evhnq43eUNJfYob9mjeIj
-	YEseXARlbpzlkYU3EpjA2LD0gfTwjsWroWj077InK2T2w2RguNZAuEgNR/ziN7IXGCngQg7RkPu
-	TVmsX2DZfr2jj27uPA==
-X-Google-Smtp-Source: AGHT+IG+5sMijvsVWogU7ykbigna0UHmysXJKLgwHilyqSb7VE5FnliyWRdOolJC+q6GU38VtdsVhw==
-X-Received: by 2002:a17:903:124e:b0:212:996:3536 with SMTP id d9443c01a7336-220bdedcf55mr32555755ad.10.1739345681224;
-        Tue, 11 Feb 2025 23:34:41 -0800 (PST)
-Received: from localhost ([122.172.84.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f36511846sm107668125ad.37.2025.02.11.23.34.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 23:34:40 -0800 (PST)
-Date: Wed, 12 Feb 2025 13:04:38 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V8 04/14] rust: Add cpumask helpers
-Message-ID: <20250212073438.bjhfgefz7t4dxobi@vireshk-i7>
-References: <cover.1738832118.git.viresh.kumar@linaro.org>
- <db0166341ce824c157d0c58c240b3efc6aec6f6e.1738832118.git.viresh.kumar@linaro.org>
- <Z6qTelPSqpFk439l@thinkpad>
- <20250211042908.nyftiw7gtxosfjwc@vireshk-i7>
- <Z6t51xodSV21ER4M@thinkpad>
+	s=arc-20240116; t=1739346192; c=relaxed/simple;
+	bh=dNEJPQCFXFXFYv8LsS8D1rVs3y39N2Beg7o2UW6ryMM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uA1ZTyCiwjJZqb+EwkUbx50hew3cNUGKhpUB+5nGxMJMGkLz3Oe1MYZSTJrloStLGWFtIW/leWkwaeR1/ZbrARyUOFQi9o/7tr0DhZaECE5DsCT+rgjyCb/3TFpUl3jaIw2xjt2FR2Q649w6m/AHm3KVCZSulDkd7Y3ftEBiTjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=H/hn7/sX; arc=none smtp.client-ip=109.230.236.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
+	t=1739345687; bh=dNEJPQCFXFXFYv8LsS8D1rVs3y39N2Beg7o2UW6ryMM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H/hn7/sX5xM/uw2kg30IfwLHDywFTYAajrHTQq3WN22+Jmf6LCU4Po3PR5oZVnBu6
+	 KDSBUlfksxwBNExOvWdUR3v9Wt3mNE5iQg56I3tYms3SM0yOIExAka4cfZ/ZSrx6gU
+	 NpSnAI3A7GGQgE2vW16DX7RsFEuqEmSF+XKvA7X4=
+Received: from [IPV6:2001:8e0:207e:3500:4ab6:48fe:df57:b084] (2001-8e0-207e-3500-4ab6-48fe-df57-b084.ewm.ftth.ip6.as8758.net [IPv6:2001:8e0:207e:3500:4ab6:48fe:df57:b084])
+	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 267B22050FE1;
+	Wed, 12 Feb 2025 08:34:47 +0100 (CET)
+Message-ID: <1cfca789-bbb9-4899-92e9-94ff78d07c50@ralfj.de>
+Date: Wed, 12 Feb 2025 08:34:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: rust: clean Rust 1.85.0 warning using softfloat
+ target
+To: Trevor Gross <tmgross@umich.edu>, Miguel Ojeda <ojeda@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev, stable@vger.kernel.org,
+ Matthew Maurer <mmaurer@google.com>, Jubilee Young <workingjubilee@gmail.com>
+References: <20250210163732.281786-1-ojeda@kernel.org>
+ <CALNs47uBcyTmBdTBAPXiBcAkE0-4tih9j=VAv1rRcTcf_c2yTg@mail.gmail.com>
+Content-Language: en-US, de-DE
+From: Ralf Jung <post@ralfj.de>
+In-Reply-To: <CALNs47uBcyTmBdTBAPXiBcAkE0-4tih9j=VAv1rRcTcf_c2yTg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z6t51xodSV21ER4M@thinkpad>
 
-On 11-02-25, 11:24, Yury Norov wrote:
-> To begin with, this is the 8th version of the same patch, but you
-> only now bothered to CC someone who is listed in MAINTAINERS. This is
-> not how the community works.
 
-Yes, this was my mistake. I assumed get_maintainers would Cc all
-relevant people, but I overlooked the fact that these are new files,
-so it didn’t include the maintainers. Unfortunately, the same issue
-occurred with the clk bindings. Miguel pointed it out at V7, and I
-corrected it immediately. There was no intention to bypass anyone.
 
-These bindings had been in my tree since earlier versions, but I
-hesitated to post them before V6 because I wasn’t confident in writing
-bindings for a framework I didn’t fully understand. I eventually
-shared them in V6 to unblock my series but inadvertently missed Cc’ing
-few, as mentioned above.
-
-> You also made it a patch bomb that touches multiple critical and very
-> sensitive subsystems. You link them to an experimental and unstable
-> project, and do it in a way that makes it really easy to slip through
-> maintainers' attention.
+On 11.02.25 12:10, Trevor Gross wrote:
+> On Mon, Feb 10, 2025 at 10:38 AM Miguel Ojeda <ojeda@kernel.org> wrote:
+>>
+>> Starting with Rust 1.85.0 (to be released 2025-02-20), `rustc` warns
+>> [1] about disabling neon in the aarch64 hardfloat target:
+>>
+>>      warning: target feature `neon` cannot be toggled with
+>>               `-Ctarget-feature`: unsound on hard-float targets
+>>               because it changes float ABI
+>>        |
+>>        = note: this was previously accepted by the compiler but
+>>                is being phased out; it will become a hard error
+>>                in a future release!
+>>        = note: for more information, see issue #116344
+>>                <https://github.com/rust-lang/rust/issues/116344>
+>>
+>> Thus, instead, use the softfloat target instead.
+>>
+>> While trying it out, I found that the kernel sanitizers were not enabled
+>> for that built-in target [2]. Upstream Rust agreed to backport
+>> the enablement for the current beta so that it is ready for
+>> the 1.85.0 release [3] -- thanks!
+>>
+>> However, that still means that before Rust 1.85.0, we cannot switch
+>> since sanitizers could be in use. Thus conditionally do so.
+>>
+>> Cc: <stable@vger.kernel.org> # Needed in 6.12.y and 6.13.y only (Rust is pinned in older LTSs).
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Matthew Maurer <mmaurer@google.com>
+>> Cc: Alice Ryhl <aliceryhl@google.com>
+>> Cc: Ralf Jung <post@ralfj.de>
+>> Cc: Jubilee Young <workingjubilee@gmail.com>
+>> Link: https://github.com/rust-lang/rust/pull/133417 [1]
+>> Link: https://rust-lang.zulipchat.com/#narrow/channel/131828-t-compiler/topic/arm64.20neon.20.60-Ctarget-feature.60.20warning/near/495358442 [2]
+>> Link: https://github.com/rust-lang/rust/pull/135905 [3]
+>> Link: https://github.com/rust-lang/rust/issues/116344
+>> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 > 
-> Not speaking for others, but please for cpumasks create a separate
-> series and start thorough discussion.
+> This is consistent with what has been discussed for a while on the Rust side.
+> 
+> Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
-Agree, its better to post these separately.
+I don't know the kernel side of this, but from a Rust compiler perspective using 
+the "-softfloat" target is definitely the right call here, at least for now 
+(where none of the crypto/compression code that needs SIMD is written in Rust).
 
--- 
-viresh
+Reviewed-by: Ralf Jung <post@ralfj.de>
+
+Kind regards,
+Ralf
+
 
