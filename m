@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-510255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6FFA31A56
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:19:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A508AA31A5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27A8166E06
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:19:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BCC0166EA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603E18489;
-	Wed, 12 Feb 2025 00:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BFF566A;
+	Wed, 12 Feb 2025 00:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T7QntYRl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cr6Uz/k+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5C817C2;
-	Wed, 12 Feb 2025 00:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D1B184F;
+	Wed, 12 Feb 2025 00:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739319551; cv=none; b=awrpWrqswDA51gFhdmfHpJAYfU78ARKmWbWJ/CNxf0HC5qurVZKEeAO4R2GshjlcN6IuZi+E0DcWvdkrHPmF04zUDV0fjhexMbUDH+98+gCWkn0G/R6NuMIcedegvbYjX1NW7KNZj3wKQFgMaUv7/aCWkfEcJOs0wg08afIYfgw=
+	t=1739319613; cv=none; b=XVZvz8PXw9s5eu7gULPZGRFZoNQNampUJ9z212TQV0Bbf9eMrwpUgHZJYQPg+Vh5QJLU9zd3Z9/8gOZ8Z5Ad3t3TL90gkQVQwqj7/WiGCt2PyPisN7XAdWWoe5hfNEo6cikMa1Sn0SuNg1BoUfjhBVy+yYuca3UsYVdB4hzCq5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739319551; c=relaxed/simple;
-	bh=UjO9HKRObCM9PjpIzYAIASQHdZcH49xZsv0gQ8NAzZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=Mmfyl+y8dIn7OhScZYyplMwQILgziPrwP94Li4Y4Vpe4usQwRtrLlbpYvfguQLQv9DrnZ0g8KcuWH0fi0a1Kb+Y+EGUzUViLlJULC5y/6O4371zQ3cCYDh6ps3DkD0hXtBzoFyGdcztpr22GWV90I7oY1wEL4GBRMdT63DnF8zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T7QntYRl; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739319549; x=1770855549;
-  h=message-id:date:mime-version:subject:from:to:references:
-   in-reply-to:content-transfer-encoding;
-  bh=UjO9HKRObCM9PjpIzYAIASQHdZcH49xZsv0gQ8NAzZ0=;
-  b=T7QntYRls8t7R1aWc+/jWzcfm5y4G3fpk9VNsdMFiyfkeA8gAKqWQ+2m
-   x6wVNIcyJnQ6X0jB8kcaN20StJTd0xWdTWTAEPiAXs7usCF2Yjgk1HUrV
-   Gtm80L7i7jwDr/gO2+Kf0fJklc5ZS4IQ7lOklJPrvGg9r7Cq2GrdSb9nQ
-   4SOsH5jSPqwvOo8JqAIAuEeiC1rXHeQx7yp/JfGltc0vu0Xa0u37excJo
-   L4QO2udYuMpCBveHCXC9aJjClmZTzN5LSmj8WQYBJGSZwpqat6wnapLSH
-   DGJk4++Bx8BSpcEKxVoP+G3oIWdXcCHykMP8ZGFDVHQVzlYP7BOJyjnxI
-   A==;
-X-CSE-ConnectionGUID: OIfSAtVJSAW1otZSYk9TzA==
-X-CSE-MsgGUID: GHbwX9rATJSb2S2G1PMmHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39981636"
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="39981636"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 16:19:09 -0800
-X-CSE-ConnectionGUID: oMAMxFIPQdGfzMaqmuyyWA==
-X-CSE-MsgGUID: 31FwFOphT6qier/iZbjVNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="143507181"
-Received: from agladkov-desk.ger.corp.intel.com (HELO [10.125.108.65]) ([10.125.108.65])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 16:19:07 -0800
-Message-ID: <94ab0ed6-753f-4415-87bf-4dd066ec02e1@intel.com>
-Date: Tue, 11 Feb 2025 17:19:05 -0700
+	s=arc-20240116; t=1739319613; c=relaxed/simple;
+	bh=uNhpK/uhZJl+vH2zILhptVnUBZWFzlkM2ddiuYDV5Is=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ITQU95y2NGvGga2niwb2Dbs4uB8HhcaiE7AteHpLOCJsEE6yVbn5K43UFfIvyH0Zt7TJUlzSTCpxAMEt+jigptynZ2/gElGW4USVlcDmLxgieTcCDLyUMWPkUnt8iAmkTOZWup2/bzWkcIdIVii5B2deGFUhXTj72d31iDZxqyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cr6Uz/k+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51BCFLqW030181;
+	Wed, 12 Feb 2025 00:19:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wQPD/tKrNf/RHAhrEicL4v/5nkiDZnaTEbOUl3FUsmo=; b=cr6Uz/k+JWTHcTS3
+	LgqX7+ScnW7TbED9ir5sKVPOuj6H2CAskBxuTzut8fI9d1JMI2UDSGMdFXFEb8ge
+	LdKFPa6CnlCSLvqP9Fv2thPxn5tAGQMl/KLzEc4BETEFr0EeVYBKjlkdZocjLRcj
+	AA2ixq6k0P1RcJsbdP1/jRPRSlfa4jY6RUDhd82+l+7qqFetbgLLXmWFWrPuELJ7
+	mSzBf5eibqj3jVDcTYT25TumpsR4BB6nTWfWI4naWVS4gJorI+x0DFfht9TGFclr
+	QtjaXyol5uQdMnoxR+scTFhK+enYr59YOwAGV71UGmtSZBh2tzm8D3irisYzGR30
+	3p7Yyw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qxg9k3tj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 00:19:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51C0JnfV015787
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 00:19:49 GMT
+Received: from [10.71.110.136] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Feb
+ 2025 16:19:49 -0800
+Message-ID: <22c97d77-5983-429b-ba0b-ce821a717a0e@quicinc.com>
+Date: Tue, 11 Feb 2025 16:19:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,155 +64,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 13/17] cxl/pci: Add trace logging for CXL PCIe Port RAS
- errors
-From: Dave Jiang <dave.jiang@intel.com>
-To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
- rrichter@amd.com, nathan.fontenot@amd.com,
- Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
- ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
- <20250211192444.2292833-14-terry.bowman@amd.com>
- <1ba44c00-26f4-4373-8726-2874d32b61d2@intel.com>
+Subject: Re: [PATCH v2] drm/msm/dpu: Fix uninitialized variable
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>
+CC: Ethan Carter Edwards <ethan@ethancedwards.com>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>
+References: <20250209-dpu-v2-1-114dfd4ebefd@ethancedwards.com>
+ <8e40c1bf-6da7-46b1-925c-53d1fa25f3ce@quicinc.com>
+ <zj7sqsg3ruev4akl5paedsg65qyh53iddqvssrye2pjtfofs3q@u4g3kevpl2jn>
+ <nllxmdfk4wwm2bbrg5jc4tt7la65rwqdtt4tqjp36j6dr4hgmx@ukszi5llldup>
 Content-Language: en-US
-In-Reply-To: <1ba44c00-26f4-4373-8726-2874d32b61d2@intel.com>
-Content-Type: text/plain; charset=UTF-8
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <nllxmdfk4wwm2bbrg5jc4tt7la65rwqdtt4tqjp36j6dr4hgmx@ukszi5llldup>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xJSFfhadew4fjGUkI5e_3eSgux2B9IeH
+X-Proofpoint-GUID: xJSFfhadew4fjGUkI5e_3eSgux2B9IeH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-11_10,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ mlxscore=0 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 phishscore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120001
 
 
 
-On 2/11/25 5:17 PM, Dave Jiang wrote:
-> 
-> 
-> On 2/11/25 12:24 PM, Terry Bowman wrote:
->> The CXL drivers use kernel trace functions for logging Endpoint and
->> Restricted CXL host (RCH) Downstream Port RAS errors. Similar functionality
->> is required for CXL Root Ports, CXL Downstream Switch Ports, and CXL
->> Upstream Switch Ports.
+On 2/11/2025 4:13 PM, Dmitry Baryshkov wrote:
+> On Tue, Feb 11, 2025 at 10:23:54AM +0100, Marijn Suijten wrote:
+>> On 2025-02-10 14:14:14, Abhinav Kumar wrote:
+>>>
+>>>
+>>> On 2/9/2025 7:51 PM, Ethan Carter Edwards wrote:
+>>>> There is a possibility for an uninitialized *ret* variable to be
+>>>> returned in some code paths.
+>>>>
+>>>> Fix this by initializing *ret* to 0.
+>>>>
+>>>> Addresses-Coverity-ID: 1642546 ("Uninitialized scalar variable")
+>>>> Fixes: 774bcfb731765d ("drm/msm/dpu: add support for virtual planes")
+>>>> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+>>>> ---
+>>>> Changes in v2:
+>>>> - Return explicit 0 when no error occurs
+>>>> - Add hardening mailing lists
+>>>> - Link to v1: https://lore.kernel.org/r/20250209-dpu-v1-1-0db666884f70@ethancedwards.com
+>>>> ---
+>>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 7 +++----
+>>>>    1 file changed, 3 insertions(+), 4 deletions(-)
+>>>>
+>>>
+>>> Thanks for your patch, this was addressed with
+>>>
+>>> https://patchwork.freedesktop.org/patch/631567/ but since this is better
+>>> I am fine with this, will pick this one up
 >>
->> Introduce trace logging functions for both RAS correctable and
->> uncorrectable errors specific to CXL PCIe Ports. Additionally, update
->> the CXL Port Protocol Error handlers to invoke these new trace functions.
+>> The `return 0;` in this patch should certainly fix this issue entirely and we
+>> don't need to inline the `int ret` for that, which I think is against mixed
+>> declaration rules anyway?
 >>
->> Examples of the output from these changes is below.
->>
->> Correctable error:
->> cxl_port_aer_correctable_error: device=port1 parent=root0 status='Received Error From Physical Layer'
+>> As far as I understand that's what Dmitry suggested in v1, but he r-b'd it in
+>> this form.  Dmitry, was that intended?
 > 
-> Is there any way to identify if the error comes from the USP or DSP? Specifically the PCI devname for the specific port?
+> I think it should be fine, if the gcc doesn't warn against it.
+> 
 
-Hah I spoke too soon. You addressed it in the next patch. :)
+Let me test out the compilation while applying and see if it throws any 
+errors. If it does, will report here and we can go with the other patch.
 
-DJ
-
 >>
->> Uncorrectable error:
->> cxl_port_aer_uncorrectable_error: device=port1 parent=root0 status: 'Memory Byte Enable Parity Error' first_error: 'Memory Byte Enable Parity Erro'
+>> - Marijn
 >>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->> Reviewed-by: Alejandro Lucero <alucerop@amd.com>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> 
->> ---
->>  drivers/cxl/core/pci.c   |  4 ++++
->>  drivers/cxl/core/trace.h | 47 ++++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 51 insertions(+)
->>
->> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
->> index 3f13d9dfb610..9a3090dae46a 100644
->> --- a/drivers/cxl/core/pci.c
->> +++ b/drivers/cxl/core/pci.c
->> @@ -671,6 +671,8 @@ static void __cxl_handle_cor_ras(struct device *dev,
->>  
->>  	if (is_cxl_memdev(dev))
->>  		trace_cxl_aer_correctable_error(to_cxl_memdev(dev), status);
->> +	else if (is_cxl_port(dev))
->> +		trace_cxl_port_aer_correctable_error(dev, status);
->>  }
->>  
->>  static void cxl_handle_endpoint_cor_ras(struct cxl_dev_state *cxlds)
->> @@ -730,6 +732,8 @@ static pci_ers_result_t __cxl_handle_ras(struct device *dev, void __iomem *ras_b
->>  	header_log_copy(ras_base, hl);
->>  	if (is_cxl_memdev(dev))
->>  		trace_cxl_aer_uncorrectable_error(to_cxl_memdev(dev), status, fe, hl);
->> +	else if (is_cxl_port(dev))
->> +		trace_cxl_port_aer_uncorrectable_error(dev, status, fe, hl);
->>  
->>  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
->>  
->> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
->> index cea706b683b5..b536233ac210 100644
->> --- a/drivers/cxl/core/trace.h
->> +++ b/drivers/cxl/core/trace.h
->> @@ -48,6 +48,34 @@
->>  	{ CXL_RAS_UC_IDE_RX_ERR, "IDE Rx Error" }			  \
->>  )
->>  
->> +TRACE_EVENT(cxl_port_aer_uncorrectable_error,
->> +	TP_PROTO(struct device *dev, u32 status, u32 fe, u32 *hl),
->> +	TP_ARGS(dev, status, fe, hl),
->> +	TP_STRUCT__entry(
->> +		__string(devname, dev_name(dev))
->> +		__string(parent, dev_name(dev->parent))
->> +		__field(u32, status)
->> +		__field(u32, first_error)
->> +		__array(u32, header_log, CXL_HEADERLOG_SIZE_U32)
->> +	),
->> +	TP_fast_assign(
->> +		__assign_str(devname);
->> +		__assign_str(parent);
->> +		__entry->status = status;
->> +		__entry->first_error = fe;
->> +		/*
->> +		 * Embed the 512B headerlog data for user app retrieval and
->> +		 * parsing, but no need to print this in the trace buffer.
->> +		 */
->> +		memcpy(__entry->header_log, hl, CXL_HEADERLOG_SIZE);
->> +	),
->> +	TP_printk("device=%s parent=%s status: '%s' first_error: '%s'",
->> +		__get_str(devname), __get_str(parent),
->> +		show_uc_errs(__entry->status),
->> +		show_uc_errs(__entry->first_error)
->> +	)
->> +);
->> +
->>  TRACE_EVENT(cxl_aer_uncorrectable_error,
->>  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status, u32 fe, u32 *hl),
->>  	TP_ARGS(cxlmd, status, fe, hl),
->> @@ -96,6 +124,25 @@ TRACE_EVENT(cxl_aer_uncorrectable_error,
->>  	{ CXL_RAS_CE_PHYS_LAYER_ERR, "Received Error From Physical Layer" }	\
->>  )
->>  
->> +TRACE_EVENT(cxl_port_aer_correctable_error,
->> +	TP_PROTO(struct device *dev, u32 status),
->> +	TP_ARGS(dev, status),
->> +	TP_STRUCT__entry(
->> +		__string(devname, dev_name(dev))
->> +		__string(parent, dev_name(dev->parent))
->> +		__field(u32, status)
->> +	),
->> +	TP_fast_assign(
->> +		__assign_str(devname);
->> +		__assign_str(parent);
->> +		__entry->status = status;
->> +	),
->> +	TP_printk("device=%s parent=%s status='%s'",
->> +		__get_str(devname), __get_str(parent),
->> +		show_ce_errs(__entry->status)
->> +	)
->> +);
->> +
->>  TRACE_EVENT(cxl_aer_correctable_error,
->>  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status),
->>  	TP_ARGS(cxlmd, status),
-> 
+>>> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>>
+>>>
+>>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+>>>> index 098abc2c0003cde90ce6219c97ee18fa055a92a5..af3e541f60c303eb5212524e877129359b5ca98c 100644
+>>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+>>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+>>>> @@ -1164,7 +1164,6 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+>>>>    			       unsigned int num_planes)
+>>>>    {
+>>>>    	unsigned int i;
+>>>> -	int ret;
+>>>>    
+>>>>    	for (i = 0; i < num_planes; i++) {
+>>>>    		struct drm_plane_state *plane_state = states[i];
+>>>> @@ -1173,13 +1172,13 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+>>>>    		    !plane_state->visible)
+>>>>    			continue;
+>>>>    
+>>>> -		ret = dpu_plane_virtual_assign_resources(crtc, global_state,
+>>>> +		int ret = dpu_plane_virtual_assign_resources(crtc, global_state,
+>>>>    							 state, plane_state);
+>>>>    		if (ret)
+>>>> -			break;
+>>>> +			return ret;
+>>>>    	}
+>>>>    
+>>>> -	return ret;
+>>>> +	return 0;
+>>>>    }
+>>>>    
+>>>>    static void dpu_plane_flush_csc(struct dpu_plane *pdpu, struct dpu_sw_pipe *pipe)
+>>>>
+>>>> ---
+>>>> base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+>>>> change-id: 20250209-dpu-c3fac78fc617
+>>>>
+>>>> Best regards,
+>>>
 > 
 
 
