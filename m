@@ -1,150 +1,152 @@
-Return-Path: <linux-kernel+bounces-510722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CBEA32112
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:28:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFD7A320DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:23:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17EF71882C1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:28:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4C02188974D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FEB205506;
-	Wed, 12 Feb 2025 08:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B54A2054E9;
+	Wed, 12 Feb 2025 08:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="R/GGP3VP"
-Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gSqaW9Dh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC1D1D86F2;
-	Wed, 12 Feb 2025 08:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B65427183A;
+	Wed, 12 Feb 2025 08:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739348885; cv=none; b=Sjt+8Cjl+Xhn+cxOn9gki6cYK37bzZqMUtvQRJunBr3luALZTLbWNt3Qz6nf2cIA1nwvxWKhP37eCXzpmEmmVzJ074WozEusph6t+7/URO1Emce9HQoRjRIKAnYM32JpAMRagoJrXZfwrCNFE9WXkwUFO+gn39WP46rLvQCjs3A=
+	t=1739348589; cv=none; b=AJdnOH9A6JCIC2GgjWNJjlbc2qWVufMPpwtEbHQxc/z5BR6KaGvISpzPDljz0ShX48tWIVJD+xjm6VLRtH3XZRo6VzcGg31se7bahaoUN3qFDy3WZ1n+ok/nJSc5vvXSXItyvpIvZaFSTbeOWbZYPMpZ4MT5hW3g6IZkkg1njjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739348885; c=relaxed/simple;
-	bh=1yEjyPyPd55xrfzDLQha4JqWN0HhYlvPPLP2kUZIZwM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=EUqbXXK154N1ux1tlDO/fQeq0oLAF+HIPczRWt2kjE8WP5pXDOyzbuPUEDNwqd4Z/hLlUaSYzXEq97pDyM565Ay2cHijH17RFJbSeYqd21DLN6BKNXerb47ruLlH6QjLC4yswc+g1IOodH82JP6jFCMdDCqPsT53EAc08hjC344=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=R/GGP3VP; arc=none smtp.client-ip=91.244.183.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
-Received: from mx0.infotecs-nt (localhost [127.0.0.1])
-	by mx0.infotecs.ru (Postfix) with ESMTP id DC74E10713A7;
-	Wed, 12 Feb 2025 11:21:25 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru DC74E10713A7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
-	t=1739348486; bh=xsDP1LEoMSu7HIkQ5w960VASY/onF6JaEzOXJrcEgEk=;
-	h=From:To:CC:Subject:Date:From;
-	b=R/GGP3VPFBshVBKCYNDVeuaRJ6ofhSHY3zwm4ngu5NYxJ7L7vv8ju9FGARhg+7WEN
-	 f78GERTrCAtF1Z5d2WvSwaPwJv7vp37wwIIBS2UCfhoNRIwQjmhODoqMYnh3ojjM2X
-	 afVVSfkkLMwS6RW6mUZelurZiuMFih5o190WIHBg=
-Received: from msk-exch-01.infotecs-nt (msk-exch-01.infotecs-nt [10.0.7.191])
-	by mx0.infotecs-nt (Postfix) with ESMTP id D937F3045BCA;
-	Wed, 12 Feb 2025 11:21:25 +0300 (MSK)
-From: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: Julan Hsu <julanhsu@google.com>, "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: [PATCH v4] wifi: mac80211: fix integer overflow in
- hwmp_route_info_get()
-Thread-Topic: [PATCH v4] wifi: mac80211: fix integer overflow in
- hwmp_route_info_get()
-Thread-Index: AQHbfScbaA7QH0ty/EqZGebnxR+Xlw==
-Date: Wed, 12 Feb 2025 08:21:25 +0000
-Message-ID: <20250212082124.4078236-1-Ilia.Gavrilov@infotecs.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1739348589; c=relaxed/simple;
+	bh=1J1LFJrNymifOsjL685GBaCbJBCdqY7eNcaIUkSjgvY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=pZ+awZlxiJi8OMe1KDlIBzNTkQKIAwhDD6UkiArOi8uaQ266I+BKqpLs5ucLjmPgBlulOgSS2lIviw7hkhj8w1aZymqPHhVfTW9Qfco6TDV8B7VfJDP1ry40HXGdbutyv4GNbRU7mzJ7M0CktY3Tr+9eUX4nxgFfmWkleQedC7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gSqaW9Dh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C8Jj3K007790;
+	Wed, 12 Feb 2025 08:23:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ZNkzGbWtTndysD8KUh9Oey
+	krMK/oG78PduktA8GsGxU=; b=gSqaW9DhUzeedgqp/I3imm3bO5/jMpxL2T2RuH
+	qMvQpsabqO6Jat76f82fTaRoI5BnR3smxCC4PPo1fO2H2vT927qUd7J9BOuY58xF
+	6YzZt5kuy7XO8rdR4+n0w1B+ojQMzG2FnjKSS+2A3sFN7tu6G52c2bLpQIgRQCAd
+	c7b64N2X4M7HzS3moMfqsYcbFejca7oTk9LzQBMehtgDOv++NvGR5QhouVBfG/9p
+	vFXCx7KjtWVHs/+RYU/SwTgR7TMCPbDQnH1ilCmSbJbEXlQfCI8FOvknzKEUffbk
+	yalgjcr2e7zZCjWUwfKQhTR5Sv3x04oSsKlzf0zAy28BeU7g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rr1qr0a2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 08:23:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51C8N39I010427
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 08:23:03 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Feb 2025 00:22:56 -0800
+From: Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v3 0/4] Update LPASS Audio clock driver for QCM6490 board
+Date: Wed, 12 Feb 2025 13:52:18 +0530
+Message-ID: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KLMS-Rule-ID: 5
-X-KLMS-Message-Action: clean
-X-KLMS-AntiSpam-Status: not scanned, disabled by settings
-X-KLMS-AntiSpam-Interceptor-Info: not scanned
-X-KLMS-AntiPhishing: Clean, bases: 2025/02/12 06:53:00
-X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/02/12 04:08:00 #27176921
-X-KLMS-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADtarGcC/x3M3QpAQBBA4VfRXNuaBhteRdK2BlN+dyQl725z+
+ V2c84ByEFaokwcCX6KyrRFZmoCf3DqykT4aCKlAQmvm3al2h19sXmEXWPlUQ5gPpbVErvAQ0z3
+ wIPe/bdr3/QAk17ZHZgAAAA==
+X-Change-ID: 20250206-lpass_qcm6490_resets-204f86622a5c
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XZlziayslC3kPOxfMATxAU-uh20kRY0J
+X-Proofpoint-ORIG-GUID: XZlziayslC3kPOxfMATxAU-uh20kRY0J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_02,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120064
 
-Since the new_metric and last_hop_metric variables can reach
-the MAX_METRIC(0xffffffff) value, an integer overflow may occur
-when multiplying them by 10/9. It can lead to incorrect behavior.
+This series updates the low pass audio clock controller driver for reset
+functionality. The patches are split from the below series.
+https://lore.kernel.org/all/20240318053555.20405-1-quic_tdas@quicinc.com/
 
-Found by InfoTeCS on behalf of Linux Verification Center
-(linuxtesting.org) with SVACE.
+The QCM6490 board requires only the reset functionality from the LPASS
+subsystem. Thus separate out the driver probe to provide the same on the
+QCM6490 boards.
 
-Fixes: a8d418d9ac25 ("mac80211: mesh: only switch path when new metric is a=
-t least 10% better")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+[v3]:
+Changes in [v3] compared to [v2]:
+- update to Documentation bindings adding constraints. [Krzysztof]
+- split the DT patch for "Update protected clocks list" for QCM6490 IDP
+https://lore.kernel.org/linux-devicetree/20250206-protected_clock_qcm6490-v1-1-5923e8c47ab5@quicinc.com/
+
+[v2]:
+Changes in [v2] compared to [v1]:
+ - Updated the lpass_audio_cc_sc7280 probe to get the match_data for both SC7280 and QCM6490.
+ - Separate regmap for resets [Konrad]
+ - Split the lpassaudiocc compatible and GCC protected clocks list changes. [Dmitry]
+ - Link to V1: https://lore.kernel.org/all/20240531102252.26061-1-quic_tdas@quicinc.com/T/
+
+[v1]
+  - Add a separate platform driver for QCM6490 resets.
+  - Add device tree changes for protected clocks for GCC and LPASS AudioCC
+    compatible update.
+
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 ---
-v2:
-- Remove 64-bit arithmetic according to https://lore.kernel.org/all/a6bd38c=
-58f2f7685eac53844f2336432503c328e.camel@sipsolutions.net/
-- Replace multiplication by 10/9 with a function that compares metrics by a=
-dding 10% without integer overflow
-v3:
-- Fix a typo (persent->percent)
-v4:
-- Simplify the is_metric_better() function
-- Remove 'inline', add a comment
- net/mac80211/mesh_hwmp.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Taniya Das (4):
+      dt-bindings: clock: qcom: Add compatible for QCM6490 boards
+      clk: qcom: lpassaudiocc-sc7280: Add support for LPASS resets for QCM6490
+      arm64: dts: qcom: qcm6490-idp: Update the LPASS audio node
+      arm64: dts: qcom: qcs6490-rb3gen2: Update the LPASS audio node
 
-diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
-index 4e9546e998b6..c94a9c7ca960 100644
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -367,6 +367,12 @@ u32 airtime_link_metric_get(struct ieee80211_local *lo=
-cal,
- 	return (u32)result;
- }
-=20
-+/* Check that the first metric is at least 10% better than the second one =
-*/
-+static bool is_metric_better(u32 x, u32 y)
-+{
-+	return (x < y) && (x < (y - x / 10));
-+}
-+
- /**
-  * hwmp_route_info_get - Update routing info to originator and transmitter
-  *
-@@ -458,8 +464,8 @@ static u32 hwmp_route_info_get(struct ieee80211_sub_if_=
-data *sdata,
- 				    (mpath->sn =3D=3D orig_sn &&
- 				     (rcu_access_pointer(mpath->next_hop) !=3D
- 						      sta ?
--					      mult_frac(new_metric, 10, 9) :
--					      new_metric) >=3D mpath->metric)) {
-+					      !is_metric_better(new_metric, mpath->metric) :
-+					      new_metric >=3D mpath->metric))) {
- 					process =3D false;
- 					fresh_info =3D false;
- 				}
-@@ -533,8 +539,8 @@ static u32 hwmp_route_info_get(struct ieee80211_sub_if_=
-data *sdata,
- 			if ((mpath->flags & MESH_PATH_FIXED) ||
- 			    ((mpath->flags & MESH_PATH_ACTIVE) &&
- 			     ((rcu_access_pointer(mpath->next_hop) !=3D sta ?
--				       mult_frac(last_hop_metric, 10, 9) :
--				       last_hop_metric) > mpath->metric)))
-+				      !is_metric_better(last_hop_metric, mpath->metric) :
-+				       last_hop_metric > mpath->metric))))
- 				fresh_info =3D false;
- 		} else {
- 			mpath =3D mesh_path_add(sdata, ta);
---=20
-2.39.5
+ .../bindings/clock/qcom,sc7280-lpasscorecc.yaml    | 14 +++++++++++++
+ arch/arm64/boot/dts/qcom/qcm6490-idp.dts           |  5 +++++
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       |  5 +++++
+ drivers/clk/qcom/lpassaudiocc-sc7280.c             | 23 ++++++++++++++++++----
+ 4 files changed, 43 insertions(+), 4 deletions(-)
+---
+base-commit: 808eb958781e4ebb6e9c0962af2e856767e20f45
+change-id: 20250206-lpass_qcm6490_resets-204f86622a5c
+
+Best regards,
+-- 
+Taniya Das <quic_tdas@quicinc.com>
+
 
