@@ -1,347 +1,561 @@
-Return-Path: <linux-kernel+bounces-511191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CA6A3276C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:45:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF519A32771
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 990243A8FD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F793A916F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D9420FA83;
-	Wed, 12 Feb 2025 13:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A05220E6F8;
+	Wed, 12 Feb 2025 13:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="AkBlLJSS"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="5CQbdboD"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4D024C673
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9548B20E6FE;
+	Wed, 12 Feb 2025 13:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739367733; cv=none; b=jgFyzpaWtZ70dhHys30no0Ir3SkybaiLQ1FEfHYw6sUekoz+dpcG5ovCdEKCHO+CtZG6pEExBcEKHhLz0HBJ+Y8+Gkcq/zHAxU4iU5Ymp5izjjv/Ti81bIErjqyxkDR0c76yo/7rpsn1j7vEcrBwo+AD7T94UfKoHqEvk00ciVA=
+	t=1739367839; cv=none; b=KGIyHyYuYKzgAq7XgmPV9JweBvw7JgotpwZ5J8K0RcC9Dyxrxp0oXYmzrgI4e/x57AAKZgXdIb4BYGRT1M9B6uEeKe+FoWhx1JQ0XZYpmK5mJwxXGNFlwtWq+wf+9XJKXeExkSEc8bnlaPUt7Rq63ksugXNT8b96GK2p+YuI5cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739367733; c=relaxed/simple;
-	bh=B/bkdcPECmOVVcvnmIyV3GZdC0bKkk+lmx8zg/q5iJ0=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rv8Dcw6RkoxoC9k0STQJ8nDReMP+zAfPZKOg2wwy8KzniCgOjNCvEUYort9Nf468nlEfM4DPE4hdyCX9vMLZFXy62Qqx7t5IIQEFg7EZeZ6VK4jrv7QiUex9TI8ZkD7CQ2uXd7hduTBGwYGEn83KshxgtGu/t+CsnEgIo+cZjK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=AkBlLJSS; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dccc90a52eso10951431a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:42:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1739367728; x=1739972528; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KT2qa2gDnH5KuN6tVrB0wVz27ZkqW61x9pQBjG+eFG0=;
-        b=AkBlLJSSnuaC+IR7xIfwmbKKPFbRjSTXUfVNrdNSoVVHpKGfqwGhO3w+m2Q3Z1g45z
-         eL78m7ZsFIzjhGkAGd7/DKO0BNSwTMdNgXCTNyunr3gO2dhdSkjclpFbSj3bl91DyTmy
-         uTU/0NrG5+YSgVgu7OO45twfbF4w9q6aBjvpw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739367728; x=1739972528;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KT2qa2gDnH5KuN6tVrB0wVz27ZkqW61x9pQBjG+eFG0=;
-        b=GOTHA6RHLEkefqihMVkTlIBOOMY9gk2Xx9dXGnNo86KKKLUJr3OJfJ/EwfpvftnmK7
-         vnhNFwSlrAm+02tzwM3dNuMQbXU1K1mire/RcAugdEut1ro29PY124EWs49rJSVHka2z
-         JqYhAJX+5S86Eap10vlM8uwbfLmh6g59dcN0nqpaUlopXOajqbXxiSC8PZLV0TtSgawQ
-         KsPGUaOFHrLC8CPovEfarMLzOHYT+E1jIi2PVhjXeXYXgSmLcehwotgNrpwjtH+o/j8o
-         vZpU1iztd8AYcNwAo4Xv0x6HKzyBVfzK5+/AvfZV9Jcbsf1lkUOHTd0qUnwDSYHxwSTK
-         jtxg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8k78+gNK9hoQ0lFnLJ8VDnxBNeyQyYdUwX2t8i/GNM/oer/fXH4JOPWDDY8Us+0SXg0MPTULtNbnSVj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaEiI1TJwGUocW6OnYovm9YitSXf/gOmWvo7DBITm7005k/go6
-	zKk+x2mFuBWO0lXfwH9c9WNi2q54W8xV3+C/yBApfYdR04kmhfjydDoIA8zpS45z03mV9QFfSHQ
-	/20lds7Jb89t5uz8ravgomLLV//EQWSJaJZb7Mw==
-X-Gm-Gg: ASbGncuJ4oYLKwCMMwolZ3QM51SWoKVcNnJjN7RmBQlSWWaalXuU7449F+V9PHn0QvH
-	82E7UpxVjlRMGDidTjGFM4jSt/H9VCXgF22bd0qWAN/ZaYnu39oJvHvXmnL4oowGd+gJZEwD7XA
-	oA486GicHccxhXLvnHb0AfCwln
-X-Google-Smtp-Source: AGHT+IGcoiTyC9NI+8g0zyxi1UmfPM3Bz4dg0MpmtDqpzepmOwmidA0CtfUy6XiKLngxQeySMMt41F8C2mERBcXGBdY=
-X-Received: by 2002:a17:907:2ce3:b0:ab7:c6a2:7a43 with SMTP id
- a640c23a62f3a-ab7f33d5286mr346061166b.31.1739367728435; Wed, 12 Feb 2025
- 05:42:08 -0800 (PST)
-Received: from 155257052529 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 12 Feb 2025 13:42:08 +0000
-From: Joe Damato <jdamato@fastly.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250212134148.388017-1-jdamato@fastly.com>
-References: <20250212134148.388017-1-jdamato@fastly.com>
+	s=arc-20240116; t=1739367839; c=relaxed/simple;
+	bh=0ZQKCKpfwk7lyL1CP2rW+/AYG6E5nVgbcqJ6JzfKiGY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oZSFA55oNbDmW8aqtrQ2W42JZ0zECQzwFpDA4sIvA3ZzHETQQn6DxhqlIzymTVT7iNQpcYyIkT741Y79SynN58VC1ZddeYU4bh6qC1BRHgW28lhmj4+c0rWzlb8f8WeIi88d5hP4gcgpRZ5xAqPWETMryjfvEuinwo5AKuFePNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=5CQbdboD; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CD5n1a028150;
+	Wed, 12 Feb 2025 14:43:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	XbsW/yWOpBwDNiKCVNzK6p6R2m2mUVLIwEHm2YkdcFo=; b=5CQbdboDm8cUYQX1
+	s3dt2acfUPsrkV7LrEhnU+kSFBxgTdQXuVWfMTzzMNHzu9AiRMD2QjBoevjMjB0o
+	mFR92VP0blLzt1HAIekFUkCrlwCrgJJM0QAQR24BGSl5ISBQzL4/YX4TL41/ePCB
+	9aERsB5iNB8EmKqDIpcH8ng+CaZmidxM7RXPOrxSCCJLDAsNbqGzy/tNjP5tGCpW
+	ZcxXYfxLHM9atppSuS5NwPcj14Nsfx3ewuKDdcyT1aqadhsQMMYbmafvydywkCm9
+	wnx+17YAjLoxyNZarzULAGuIX5gFEn7pmFY/Yq/CzX/tFiRuZbX5EaCBCpWH2Ufi
+	eeIgoA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44p0q00ysu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 14:43:36 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C8C9440044;
+	Wed, 12 Feb 2025 14:42:52 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DB6632B09C7;
+	Wed, 12 Feb 2025 14:42:29 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Feb
+ 2025 14:42:29 +0100
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Feb
+ 2025 14:42:29 +0100
+Message-ID: <e2e127a5-a451-486e-9978-7ddc13462da3@foss.st.com>
+Date: Wed, 12 Feb 2025 14:42:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 12 Feb 2025 13:42:08 +0000
-X-Gm-Features: AWEUYZlqLxnwzEvRUqnqijaR1s2qFB9SsPKuvj9xu0tqP7TJOdq69dB2yI1SHVU
-Message-ID: <CALALjgyE9BdZHLKWkYt61DKkAGOKqHEiba2biXA1mb-m-k9B+Q@mail.gmail.com>
-Subject: [PATCH net-next v7 3/3] selftests: drv-net: Test queue xsk attribute
-To: netdev@vger.kernel.org
-Cc: pabeni@redhat.com, stfomichev@gmail.com, horms@kernel.org, kuba@kernel.org, 
-	Joe Damato <jdamato@fastly.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 2/8] remoteproc: Add TEE support
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-3-arnaud.pouliquen@foss.st.com>
+ <6fufphs3ajlc7htj74qus6gifdd4yd64l5yjn2zyjrtdezoe4f@cqbbzg63acv4>
+ <93a0475f-c62f-4eab-b9c2-0306e24041bb@foss.st.com>
+ <zcr3zg3t3iwshyz3e5valrfluk4s4isrqfiz7y3naw53goemtq@ph2ctpemqile>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <zcr3zg3t3iwshyz3e5valrfluk4s4isrqfiz7y3naw53goemtq@ph2ctpemqile>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
 
-Test that queues which are used for AF_XDP have the xsk nest attribute.
-The attribute is currently empty, but its existence means the AF_XDP is
-being used for the queue. Enable CONFIG_XDP_SOCKETS for
-selftests/drivers/net tests, as well.
+Hello,
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
----
- v7:
-   - Added CONFIG_XDP_SOCKETS=y to selftests/drivers/net/config.
-   - Updated xdp_helper to return -1 on AF_XDP non-existence, 1 for
-     other failures.
-   - Updated queues.py to skip if AF_XDP does not not exist, fail
-     otherwise.
+On 2/12/25 04:18, Bjorn Andersson wrote:
+> On Tue, Dec 10, 2024 at 09:57:40AM +0100, Arnaud POULIQUEN wrote:
+>> Hello Bjorn,
+>>
+>> On 12/6/24 23:07, Bjorn Andersson wrote:
+>>> On Thu, Nov 28, 2024 at 09:42:09AM GMT, Arnaud Pouliquen wrote:
+>>>> Add a remoteproc TEE (Trusted Execution Environment) driver
+>>>> that will be probed by the TEE bus. If the associated Trusted
+>>>> application is supported on secure part this driver offers a client
+>>>> interface to load a firmware by the secure part.
+>>>
+>>> If...else?
+>>>
+>>>> This firmware could be authenticated by the secure trusted application.
+>>>>
+>>>
+>>> I would like for this to fully describe how this fits with the bus and
+>> Are you speaking about the OP-TEE bus?
+>>
+>> I assume that your attempt is that I provide more details on the live cycle
+>> sequence, right?
+>>
+> 
+> Right, there's a tee_client_driver and there's a remoteproc driver.
+> Let's document clearly how these interact.
+> 
+>>> how it is expected to be used by a specific remoteproc driver.
+>>>
+>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>> ---
+>>>> Updates vs version v13:
+>>>> - define REMOTEPROC_TEE as bool instead of tristate,
+>>>> - remove the load of the firmware in rproc_tee_parse_fw as we will ensure
+>>>>   that the firmware is loaded using the load_fw() operation.
+>>>> ---
+>>>>  drivers/remoteproc/Kconfig          |  10 +
+>>>>  drivers/remoteproc/Makefile         |   1 +
+>>>>  drivers/remoteproc/remoteproc_tee.c | 508 ++++++++++++++++++++++++++++
+>>>>  include/linux/remoteproc.h          |   4 +
+>>>>  include/linux/remoteproc_tee.h      | 105 ++++++
+>>>>  5 files changed, 628 insertions(+)
+>>>>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
+>>>>  create mode 100644 include/linux/remoteproc_tee.h
+>>>>
+>>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>>> index 955e4e38477e..f6335321d540 100644
+>>>> --- a/drivers/remoteproc/Kconfig
+>>>> +++ b/drivers/remoteproc/Kconfig
+>>>> @@ -23,6 +23,16 @@ config REMOTEPROC_CDEV
+>>>>  
+>>>>  	  It's safe to say N if you don't want to use this interface.
+>>>>  
+>>>> +config REMOTEPROC_TEE
+>>>> +	bool "Remoteproc support by a TEE application"
+>>>> +	depends on OPTEE
+>>>> +	help
+>>>> +	  Support a remote processor with a TEE application.
+>>>
+>>> Does the remote processor run TEE applications? (Rethorical question...)
+>>>
+>>>> 	  The Trusted
+>>>> +	  Execution Context is responsible for loading the trusted firmware
+>>>> +	  image and managing the remote processor's lifecycle.
+>>>> +
+>>>> +	  It's safe to say N if you don't want to use remoteproc TEE.
+>>>
+>>> It's not really about "wanting to use", it's a question whether your
+>>> device implements/provides the remoteproc TEE.
+>>>
+>>>> +
+>>>>  config IMX_REMOTEPROC
+>>>>  	tristate "i.MX remoteproc support"
+>>>>  	depends on ARCH_MXC
+>>>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>>>> index 5ff4e2fee4ab..f77e0abe8349 100644
+>>>> --- a/drivers/remoteproc/Makefile
+>>>> +++ b/drivers/remoteproc/Makefile
+>>>> @@ -11,6 +11,7 @@ remoteproc-y				+= remoteproc_sysfs.o
+>>>>  remoteproc-y				+= remoteproc_virtio.o
+>>>>  remoteproc-y				+= remoteproc_elf_loader.o
+>>>>  obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+>>>> +obj-$(CONFIG_REMOTEPROC_TEE)		+= remoteproc_tee.o
+>>>>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+>>>>  obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
+>>>>  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
+>>>> diff --git a/drivers/remoteproc/remoteproc_tee.c b/drivers/remoteproc/remoteproc_tee.c
+>>>> new file mode 100644
+>>>> index 000000000000..3fe3f31068f2
+>>>> --- /dev/null
+>>>> +++ b/drivers/remoteproc/remoteproc_tee.c
+>>>> @@ -0,0 +1,508 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>>>> +/*
+>>>> + * Copyright (C) STMicroelectronics 2024
+>>>> + * Author: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>> + */
+>>>> +
+>>>> +#include <linux/firmware.h>
+>>>> +#include <linux/io.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/remoteproc.h>
+>>>> +#include <linux/remoteproc_tee.h>
+>>>> +#include <linux/slab.h>
+>>>> +#include <linux/tee_drv.h>
+>>>> +
+>>>> +#define MAX_TEE_PARAM_ARRAY_MEMBER	4
+>>>> +
+>>>> +/*
+>>>> + * Authentication of the firmware and load in the remote processor memory
+>>>
+>>> Exactly what does this imply? Will the content of @memref be copied into
+>>> some other memory?
+>>
+>> The objective is to authenticate and load in one step. So, yes, the image is
+>> loaded into the remoteproc destination memory.
+>>
+> 
+> So, some separate device-memory, or some preallocated carveout which is
+> only accessible from secure world?
 
- v3:
-   - Change comment style of helper C program to avoid kdoc warnings as
-     suggested by Jakub. No other changes.
+No sure to understand the difference you do between eparate device-memory and
+preallocated carveout.
 
- v2:
-   - Updated the Python test after changes to patch 1 which expose an
-     empty nest
-   - Updated Python test with general Python coding feedback
+In OP-TEE, we use the same principle as in Linux. OP-TEE uses memory regions
+declared in its device tree to list memories usable for the coprocessor (with
+associated access rights). On load, it checks that the segments to load  are
+included in these memory regions.
 
- .../testing/selftests/drivers/net/.gitignore  |  2 +
- tools/testing/selftests/drivers/net/Makefile  |  3 +
- tools/testing/selftests/drivers/net/config    |  1 +
- tools/testing/selftests/drivers/net/queues.py | 42 +++++++-
- .../selftests/drivers/net/xdp_helper.c        | 98 +++++++++++++++++++
- 5 files changed, 143 insertions(+), 3 deletions(-)
- create mode 100644 tools/testing/selftests/drivers/net/.gitignore
- create mode 100644 tools/testing/selftests/drivers/net/xdp_helper.c
+Linux only declares the shared memory-regions in the device tree, for IPC.
 
-diff --git a/tools/testing/selftests/drivers/net/.gitignore
-b/tools/testing/selftests/drivers/net/.gitignore
-new file mode 100644
-index 000000000000..ec746f374e85
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/.gitignore
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+xdp_helper
-diff --git a/tools/testing/selftests/drivers/net/Makefile
-b/tools/testing/selftests/drivers/net/Makefile
-index 28b6d47f812d..68127c449c24 100644
---- a/tools/testing/selftests/drivers/net/Makefile
-+++ b/tools/testing/selftests/drivers/net/Makefile
-@@ -1,10 +1,13 @@
- # SPDX-License-Identifier: GPL-2.0
-+CFLAGS += $(KHDR_INCLUDES)
+> 
+> Does the OS need to retain @memref past this point?
 
- TEST_INCLUDES := $(wildcard lib/py/*.py) \
- 		 $(wildcard lib/sh/*.sh) \
- 		 ../../net/net_helper.sh \
- 		 ../../net/lib.sh \
+No need,and as the area contains the reult of request_firmware() that can be
+corrupted by Linux, OP-TEE considered this as a temporaray unsafe memory. After
+the load + authentication step this buffer is no more used.
+For detail, OPTEE make a copy of the header and TLV (metadata) in a secure
+memory. and load the firmware images in destination memories All these memories
+ are not accessible from the Linux.
 
-+TEST_GEN_PROGS := xdp_helper
-+
- TEST_PROGS := \
- 	netcons_basic.sh \
- 	netcons_fragmented_msg.sh \
-diff --git a/tools/testing/selftests/drivers/net/config
-b/tools/testing/selftests/drivers/net/config
-index a2d8af60876d..f27172ddee0a 100644
---- a/tools/testing/selftests/drivers/net/config
-+++ b/tools/testing/selftests/drivers/net/config
-@@ -4,3 +4,4 @@ CONFIG_CONFIGFS_FS=y
- CONFIG_NETCONSOLE=m
- CONFIG_NETCONSOLE_DYNAMIC=y
- CONFIG_NETCONSOLE_EXTENDED_LOG=y
-+CONFIG_XDP_SOCKETS=y
-diff --git a/tools/testing/selftests/drivers/net/queues.py
-b/tools/testing/selftests/drivers/net/queues.py
-index 38303da957ee..5fdfebc6415f 100755
---- a/tools/testing/selftests/drivers/net/queues.py
-+++ b/tools/testing/selftests/drivers/net/queues.py
-@@ -2,13 +2,16 @@
- # SPDX-License-Identifier: GPL-2.0
+> 
+>> On stm32mp1 we can not store the elf file in a temporary secure memory as
+>> the memory is encrypted by software (this would take to much time).
+>>
+>> For your information, in OP-TEE, the application code is split into a generic
+>> part and a platform adaptation layer. The generic application is mainly
+>> responsible for:
+>>
+>> - Copying the binary header and metadata into secure memory and authenticating them.
+>> - Parsing the ELF images and providing segments to load with associated
+>> authenticated hashes to the platform application.
+>> In the future, someone can add their own format if needed.
+>>
+>> But the generic part could be enhance to authenticate and load a non ELF binary.
+>> So I'm trying to be generic as possible here.
+>>
+> 
+> Generic might be okay, but I'd prefer this to be less vague.
+> Also worth noting is the Qualcomm implementation of TZ-backed
+> remoteproc, which is already in the tree. 
 
- from lib.py import ksft_disruptive, ksft_exit, ksft_run
--from lib.py import ksft_eq, ksft_raises, KsftSkipEx
-+from lib.py import ksft_eq, ksft_raises, KsftSkipEx, KsftFailEx
- from lib.py import EthtoolFamily, NetdevFamily, NlError
- from lib.py import NetDrvEnv
- from lib.py import cmd, defer, ip
- import errno
- import glob
--
-+import os
-+import socket
-+import struct
-+import subprocess
+Could you point me the code in Linux and your TEE, please?
 
- def sys_get_queues(ifname, qtype='rx') -> int:
-     folders = glob.glob(f'/sys/class/net/{ifname}/queues/{qtype}-*')
-@@ -21,6 +24,39 @@ def nl_get_queues(cfg, nl, qtype='rx'):
-         return len([q for q in queues if q['type'] == qtype])
-     return None
+> There the firmware is loaded
+> into carveouts, the certificates and hashes are validated. 
 
-+def check_xdp(cfg, nl, xdp_queue_id=0) -> None:
-+    test_dir = os.path.dirname(os.path.realpath(__file__))
-+    xdp = subprocess.Popen([f"{test_dir}/xdp_helper",
-f"{cfg.ifindex}", f"{xdp_queue_id}"],
-+                           stdin=subprocess.PIPE,
-stdout=subprocess.PIPE, bufsize=1,
-+                           text=True)
-+    defer(xdp.kill)
-+
-+    stdout, stderr = xdp.communicate(timeout=10)
-+    rx = tx = False
-+
-+    if xdp.returncode == 255:
-+        raise KsftSkipEx('AF_XDP unsupported')
-+    elif xdp.returncode > 0:
-+        raise KsftFailEx('unable to create AF_XDP socket')
-+
-+    queues = nl.queue_get({'ifindex': cfg.ifindex}, dump=True)
-+    if not queues:
-+        raise KsftSkipEx("Netlink reports no queues")
-+
-+    for q in queues:
-+        if q['id'] == 0:
-+            if q['type'] == 'rx':
-+                rx = True
-+            if q['type'] == 'tx':
-+                tx = True
-+
-+            ksft_eq(q['xsk'], {})
-+        else:
-+            if 'xsk' in q:
-+                _fail("Check failed: xsk attribute set.")
-+
-+    ksft_eq(rx, True)
-+    ksft_eq(tx, True)
+Seems to me that there is also a partial Authentication done during the load step.
 
- def get_queues(cfg, nl) -> None:
-     snl = NetdevFamily(recv_size=4096)
-@@ -81,7 +117,7 @@ def check_down(cfg, nl) -> None:
+> Lastly
+> the operation "authenticate and start" is invoked, which does that, and
+> locks the OS out of the given memory region - until "shutdown" is
+> invoked.
 
- def main() -> None:
-     with NetDrvEnv(__file__, queue_count=100) as cfg:
--        ksft_run([get_queues, addremove_queues, check_down],
-args=(cfg, NetdevFamily()))
-+        ksft_run([get_queues, addremove_queues, check_down,
-check_xdp], args=(cfg, NetdevFamily()))
-     ksft_exit()
+The differnce between the 2 implementations is the authentication method done in
+2 steps for Qualcomm implementation , in one step for OP-TEE.
+
+So here if I just remove the term 'authentication' in the command description
+does it ok for you?
+
+> 
+>>
+>>>
+>>>> + *
+>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>
+>>> Why not just "remote processor identifier"?
+>>>
+>>>> + * [in]	 params[1].memref:	buffer containing the image of the buffer
+>>>> + */
+>>>> +#define TA_RPROC_FW_CMD_LOAD_FW		1
+>>>> +
+>>>> +/*
+>>>> + * Start the remote processor
+>>>> + *
+>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>> + */
+>>>> +#define TA_RPROC_FW_CMD_START_FW	2
+>>>
+>>> Why is there two "FW" in this constant? Why isn't it just
+>>> "TA_RPROC_FW_CMD_START"?
+>>>
+>>> And why is it not TEE_PROC_FW_CMD_START?
+>>>
+>>>> +
+>>>> +/*
+>>>> + * Stop the remote processor
+>>>> + *
+>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>> + */
+>>>> +#define TA_RPROC_FW_CMD_STOP_FW		3
+>>>> +
+>>>> +/*
+>>>> + * Return the address of the resource table, or 0 if not found
+>>>> + * No check is done to verify that the address returned is accessible by
+>>>> + * the non secure context. If the resource table is loaded in a protected
+>>>> + * memory the access by the non secure context will lead to a data abort.
+>>>
+>>> These three lines describe a scenario that doesn't make any sense to me.
+>>> But if that's the case, you should be able to describe that the API
+>>> might give you a inaccessible pointer, by design.
+>>
+>> On STM32MP, we have a kind of firewall in OP-TEE that sets memory access rights
+>> from the device tree. So if the firmware image is not linked according to the
+>> firewall configuration, the pointer may not be accessible.
+>>
+>> I will update the comment as you propose.
+>>
+>>>
+>>>> + *
+>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>> + * [out]  params[1].value.a:	32bit LSB resource table memory address
+>>>> + * [out]  params[1].value.b:	32bit MSB resource table memory address
+>>>> + * [out]  params[2].value.a:	32bit LSB resource table memory size
+>>>> + * [out]  params[2].value.b:	32bit MSB resource table memory size
+>>>> + */
+>>>> +#define TA_RPROC_FW_CMD_GET_RSC_TABLE	4
+>>>> +
+>>>> +/*
+>>>> + * Return the address of the core dump
+>>>
+>>> What does this mean? What will I find at @memref after this call?
+>>
+>> I do not have a simple answer here as it depends on the OP-TEE strategy.
+>> It could be an obscure core dump with possible encryption.
+>>
+>> I will remove this as it is not yet implemented in OP-TEE.
+>>
+> 
+> Okay. But I would prefer that we define the semantics before it's
+> implemented...
+
+that seems fair, I notice that we will have to address this in a separate thread
+strating with a series in Linux.
 
 
-diff --git a/tools/testing/selftests/drivers/net/xdp_helper.c
-b/tools/testing/selftests/drivers/net/xdp_helper.c
-new file mode 100644
-index 000000000000..2a40cc35d800
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/xdp_helper.c
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <errno.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/mman.h>
-+#include <sys/socket.h>
-+#include <linux/if_xdp.h>
-+#include <linux/if_link.h>
-+#include <net/if.h>
-+#include <inttypes.h>
-+
-+#define UMEM_SZ (1U << 16)
-+#define NUM_DESC (UMEM_SZ / 2048)
-+
-+/* this is a simple helper program that creates an XDP socket and does the
-+ * minimum necessary to get bind() to succeed.
-+ *
-+ * this test program is not intended to actually process packets, but could be
-+ * extended in the future if that is actually needed.
-+ *
-+ * it is used by queues.py to ensure the xsk netlinux attribute is set
-+ * correctly.
-+ */
-+int main(int argc, char **argv)
-+{
-+	struct xdp_umem_reg umem_reg = { 0 };
-+	struct sockaddr_xdp sxdp = { 0 };
-+	int num_desc = NUM_DESC;
-+	void *umem_area;
-+	int ifindex;
-+	int sock_fd;
-+	int queue;
-+	char byte;
-+
-+	if (argc != 3) {
-+		fprintf(stderr, "Usage: %s ifindex queue_id", argv[0]);
-+		return 1;
-+	}
-+
-+	sock_fd = socket(AF_XDP, SOCK_RAW, 0);
-+	if (sock_fd < 0) {
-+		perror("socket creation failed");
-+		/* if the kernel doesnt support AF_XDP, let the test program
-+		 * know with -1. All other error paths return 1.
-+		 */
-+		if (errno == EAFNOSUPPORT)
-+			return -1;
-+		return 1;
-+	}
-+
-+	ifindex = atoi(argv[1]);
-+	queue = atoi(argv[2]);
-+
-+	umem_area = mmap(NULL, UMEM_SZ, PROT_READ | PROT_WRITE, MAP_PRIVATE |
-+			MAP_ANONYMOUS, -1, 0);
-+	if (umem_area == MAP_FAILED) {
-+		perror("mmap failed");
-+		return 1;
-+	}
-+
-+	umem_reg.addr = (uintptr_t)umem_area;
-+	umem_reg.len = UMEM_SZ;
-+	umem_reg.chunk_size = 2048;
-+	umem_reg.headroom = 0;
-+
-+	setsockopt(sock_fd, SOL_XDP, XDP_UMEM_REG, &umem_reg,
-+		   sizeof(umem_reg));
-+	setsockopt(sock_fd, SOL_XDP, XDP_UMEM_FILL_RING, &num_desc,
-+		   sizeof(num_desc));
-+	setsockopt(sock_fd, SOL_XDP, XDP_UMEM_COMPLETION_RING, &num_desc,
-+		   sizeof(num_desc));
-+	setsockopt(sock_fd, SOL_XDP, XDP_RX_RING, &num_desc, sizeof(num_desc));
-+
-+	sxdp.sxdp_family = AF_XDP;
-+	sxdp.sxdp_ifindex = ifindex;
-+	sxdp.sxdp_queue_id = queue;
-+	sxdp.sxdp_flags = 0;
-+
-+	if (bind(sock_fd, (struct sockaddr *)&sxdp, sizeof(sxdp)) != 0) {
-+		munmap(umem_area, UMEM_SZ);
-+		perror("bind failed");
-+		close(sock_fd);
-+		return 1;
-+	}
-+
-+	/* give the parent program some data when the socket is ready*/
-+	fprintf(stdout, "%d\n", sock_fd);
-+
-+	/* parent program will write a byte to stdin when its ready for this
-+	 * helper to exit
-+	 */
-+	read(STDIN_FILENO, &byte, 1);
-+
-+	close(sock_fd);
-+	return 0;
-+}
--- 
-2.43.0
+> 
+>> https://elixir.bootlin.com/op-tee/4.4.0/source/ta/remoteproc/src/remoteproc_core.c#L1131
+>>
+>>>
+>>>> + *
+>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>> + * [out] params[1].memref:	address of the core dump image if exist,
+>>>> + *				else return Null
+>>>
+>>> s/else return Null/or NULL/
+>>>
+>>>> + */
+>>>> +#define TA_RPROC_FW_CMD_GET_COREDUMP	5
+>>>> +
+>>>> +/*
+>>>> + * Release remote processor firmware images and associated resources.
+>>>
+>>> Exactly what does this mean for the caller?
+>>
+>> It is platform dependent. It can consist in cleaning the memory, but
+>> can be also something else such as firewall configuration.
+>> On stm323mp we clean all the memories region reserved for the remote processor.
+>>
+> 
+> We can't have an ABI which isn't well defined in intent. Your examples
+> would easily fall in the realm of a well defined interface, but this
+> ties into the question above - what does is actually mean in terms of
+> the memory carveouts and such.
+> 
+
+Regarding this comment and the one below, does following description would
+respond to your expectations? else do you have a suggestion?
+
+/*
+ * This command should be used in case an error occurs between the loading of
+ * the firmware images (TA_RPROC_CMD_LOAD_FW) and the starting of the remote
+ * processor (TA_RPROC_CMD_START_FW), or after stopping the remote processor
+ * (TA_RPROC_CMD_STOP_FW).
+ *
+ * This command is used to inform the TEE (Trusted Execution Environment) that
+ * resources associated with the remote processor can be released. After this
+ * command, the firmware is no longer present in the remote processor's memories
+ * and must be reloaded (TA_RPROC_FW_CMD_LOAD_FW) to restart the remote
+ * processor.
+ */
+
+Thanks;
+Arnaud
+
+
+>>>
+>>>> + * This command should be used in case an error occurs between the loading of
+>>>> + * the firmware images (TA_RPROC_CMD_LOAD_FW) and the starting of the remote
+>>>> + * processor (TA_RPROC_CMD_START_FW) or after stopping the remote processor
+>>>> + * to release associated resources (TA_RPROC_CMD_STOP_FW).
+>>>
+>>> This description belongs adjacent to LOAD_FW, and describe it in terms
+>>> of what state LOAD_FW leaves the buffers and remote processor in.
+>>
+>> Sorry, it is not clear to me what you are expecting here.
+>>
+> 
+> This describes the state LOAD_FW leaves things in and the action you
+> expect the caller to take. Right now I need to read all the
+> documentation in order to understand how LOAD_FW works.
+> 
+> Document this behavior in relation to LOAD_FW.
+> 
+>>>
+>>>> + *
+>>>> + * [in]  params[0].value.a: Unique 32-bit remote processor identifier
+>>>> + */
+>>>> +#define TA_RPROC_CMD_RELEASE_FW		6
+>>>> +
+>>>> +struct rproc_tee_context {
+>>>> +	struct list_head sessions;
+>>>> +	struct tee_context *tee_ctx;
+>>>> +	struct device *dev;
+>>>> +};
+>>>> +
+>>>> +static struct rproc_tee_context *rproc_tee_ctx;
+>>>> +
+>>>> +static void rproc_tee_prepare_args(struct rproc_tee *trproc, int cmd,
+>>>> +				   struct tee_ioctl_invoke_arg *arg,
+>>>> +				   struct tee_param *param,
+>>>> +				   unsigned int num_params)
+>>>> +{
+>>>> +	memset(arg, 0, sizeof(*arg));
+>>>> +	memset(param, 0, MAX_TEE_PARAM_ARRAY_MEMBER * sizeof(*param));
+>>>> +
+>>>> +	arg->func = cmd;
+>>>> +	arg->session = trproc->session_id;
+>>>> +	arg->num_params = num_params + 1;
+>>>> +
+>>>> +	param[0] = (struct tee_param) {
+>>>> +		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+>>>> +		.u.value.a = trproc->rproc_id,
+>>>> +	};
+>>>> +}
+>>>> +
+>>>
+>>> Provide kernel-doc for EXPORT_SYMBOL*() functions.
+>>
+>> Should it be in the remoteproc kernel doc or in a new doc file that
+>> provide an overview of the remoteproc_tee usage?
+>>
+> 
+> I'm referring to
+> https://docs.kernel.org/doc-guide/kernel-doc.html#function-documentation,
+> i.e. a /** func() ... */ comment above each such function.
+> 
+> This allow the caller to easily reach the documentation by using
+> mechanism such as "jump-to-definition" in their IDE.
+> 
+>>
+>>>
+>>>> +void rproc_tee_release_fw(struct rproc *rproc)
+>>>> +{
+>>>> +	struct tee_param param[MAX_TEE_PARAM_ARRAY_MEMBER];
+>>>> +	struct rproc_tee *trproc = rproc->rproc_tee_itf;
+>>>> +	struct tee_ioctl_invoke_arg arg;
+>>>> +	int ret;
+>>>> +
+>>>> +	if (!rproc) {
+>>>
+>>> How can this happen?
+>>>
+>>> This error will happen in two cases:
+>>>
+>>> 1) on your desk while you develop the client and you have to hunt
+>>> through the kernel log to figure out that the reason you can't start
+>>> your remoteproc is because 5 minutes ago there was a error log saying
+>>> that we didn't stop it last time.
+>>>
+>>> 2) in the customer device because of some obscure bug, where no one will
+>>> read the logs and the software will happily continue to execute with a
+>>> broken state.
+>>>
+>>>> +		ret = -EINVAL;
+>>>> +		goto out;
+>>>> +	}
+>>>> +
+>>>> +	/*
+>>>> +	 * If the remote processor state is RPROC_DETACHED, just ignore the
+>>>> +	 * request, as the remote processor is still running.
+>>>> +	 */
+>>>> +	if (rproc->state == RPROC_DETACHED)
+>>>> +		return;
+>>>> +
+>>>> +	if (rproc->state != RPROC_OFFLINE) {
+>>>> +		ret = -EBUSY;
+>>>
+>>> The function is void... Defensive coding is only useful when it saves
+>>> you from future mistakes, not when it hides problems from you.
+>>>
+>>>> +		goto out;
+>>>> +	}
+>>>> +
+>>>> +	rproc_tee_prepare_args(trproc, TA_RPROC_CMD_RELEASE_FW, &arg, param, 0);
+>>>> +
+>>>> +	ret = tee_client_invoke_func(rproc_tee_ctx->tee_ctx, &arg, param);
+>>>> +	if (ret < 0 || arg.ret != 0) {
+>>>> +		dev_err(rproc_tee_ctx->dev,
+>>>> +			"TA_RPROC_CMD_RELEASE_FW invoke failed TEE err: %x, ret:%x\n",
+>>>> +			arg.ret, ret);
+>>>
+>>> At least @ret will be base 10, so don't print that in base 16 without
+>>> indication that it's not base 10.
+>>>
+>>>
+>>> Also, this will result in two dev_err() prints, printing out two
+>>> different error codes.
+>>
+>> Here i copy /past error managing from other drivers [1][2].
+> 
+> No, both of these examples has a '#' between '%' and 'x', which will
+> make the number be prefixed with 0x - making the base clear to the
+> reader.
+> 
+>> Should I make it different and use 2 dev_err?
+>>
+> 
+> What I mean is that here you're telling the user that there was an
+> error, with one value of "ret". Then you continue below, will find ret
+> with -EIO and then you will print another message saying that it failed
+> and this time with -EIO.
+> 
+> Why two prints?
+> 
+>>
+>> [1]
+>> https://elixir.bootlin.com/linux/v6.12.1/source/drivers/firmware/arm_scmi/transports/optee.c#L244
+>>
+>> [2]
+>> https://elixir.bootlin.com/linux/v6.12.1/source/drivers/firmware/arm_scmi/transports/optee.c#L244
+>>
+>>>
+>>>> +		ret = -EIO;
+>>>> +	}
+>>>> +
+>>>> +out:
+>>>> +	if (ret)
+>>>> +		/* Unexpected state without solution to come back in a stable state */
+>>>> +		dev_err(rproc_tee_ctx->dev, "Failed to release TEE remoteproc firmware: %d\n", ret);
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(rproc_tee_release_fw);
+>>>> +
+> 
+> Regards,
+> Bjorn
 
