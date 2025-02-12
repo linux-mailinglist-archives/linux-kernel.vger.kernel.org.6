@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-510462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70966A31D37
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:05:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE0FA31D3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:06:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65E118882D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:05:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F5593A6732
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC481E7C0B;
-	Wed, 12 Feb 2025 04:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F991E7C19;
+	Wed, 12 Feb 2025 04:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPIDA6ro"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="QzaGPaoC"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8E3271835;
-	Wed, 12 Feb 2025 04:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA11271835;
+	Wed, 12 Feb 2025 04:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739333114; cv=none; b=MXVpASojqTRrP6WcSvSOW2NKpz4MVd+Ut6TS1kNko4hxEVg4H2ItT67o63wqpfpwiV0Xj/jlNrrv5+JAMNWXrKftja6RUVMVYNEtiPL1f1AJehZNGsjccwcEZuqam85TbX7MD0L7unyg6Mkbxifn4Pjwjt6zUseeIz9fCnhAK9U=
+	t=1739333176; cv=none; b=tEcP5/X2wwLkOZI55QumiQT+izxUUAwf0jQvpAzpNrJrOKfUXUJOSsK82gpa72y5JOzaJ7UL8WanOTbAXoxwWvXx9f4fvJKmTdPniFxE1TU6pSZkkhno79EfgtjV3p8oef382S76fE2p+MNVtFHj/bITsL4+rJMcGkAsdJIaKBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739333114; c=relaxed/simple;
-	bh=ybIygu13oOH3MI8QbIfsK7m4pRQxcHlQE2MUTFs9fjQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=m4ekgV5a1wuf7R7sz3Ssy50LIvyx2/gWOxwyEAAEuqInziP3zN2rkr76+4yFH4KmKnYiq5oTVC3NQYNFD1ZajckTWuABJrBX466SGnfZsrskMtHvVhVtOUUDZeS9dOglhnHX6MNdNSXCepiocDG8j/qy3KZH191Fxi9w8WaZMPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPIDA6ro; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3850C4CEDF;
-	Wed, 12 Feb 2025 04:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739333113;
-	bh=ybIygu13oOH3MI8QbIfsK7m4pRQxcHlQE2MUTFs9fjQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EPIDA6roMboDSVK9Hu+DMva2D4DI1vs1cARp6GDK4B2UlsWiJOvf6Cmrd/HY1pxcM
-	 XChqNqjTc1JLVAsyOyv6wrJja4l6ggvaFtGZxp900mpKsLQJBGMvH10kSEf8TMYzUI
-	 b7Hqhamm9WhTNgyMFNff6AflhioI1v3WAj0L0cGKrb/Qqn/29w0t+2u8gKv68lVdhv
-	 90ST5Aoxlkp8Y1K1aDxeiI0xd8WkpgB0qVrg48B13y3qVRUY3ExcYPVBJU9waGugCy
-	 LaiXh9hSos/9iZlc8XxztDvszX94Nc/lcPZQ6Oei/ql1wGUjIgYh36Dukq8nbv7kSM
-	 mwc4KLZHdWDCQ==
-Date: Wed, 12 Feb 2025 13:05:09 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andrii Nakryiko
- <andrii.nakryiko@gmail.com>, Jiri Olsa <jolsa@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>, Kees
- Cook <kees@kernel.org>, Eyal Birger <eyal.birger@gmail.com>, stable
- <stable@vger.kernel.org>, Jann Horn <jannh@google.com>, LKML
- <linux-kernel@vger.kernel.org>, linux-trace-kernel
- <linux-trace-kernel@vger.kernel.org>, Linux API
- <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, bpf
- <bpf@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>, Deepak Gupta
- <debug@rivosinc.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCHv2 perf/core] uprobes: Harden uretprobe syscall
- trampoline check
-Message-Id: <20250212130509.ce1987095c6b17b26d3ee40a@kernel.org>
-In-Reply-To: <20250211165940.GB9174@redhat.com>
-References: <20250211111559.2984778-1-jolsa@kernel.org>
-	<CAEf4BzYPmtUirnO3Bp+3F3d4++4ttL_MZAG+yGcTTKTRK2X2vw@mail.gmail.com>
-	<CAADnVQJ05xkXw+c_T1qB+ECUqO5sJxDVJ3bypjS3KSQCTJb-1g@mail.gmail.com>
-	<20250211165940.GB9174@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739333176; c=relaxed/simple;
+	bh=JM+2RzpGGdzRlzi8GJA5nrKgglQ+6GKEyswii8T2dSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a37ctJzAsV0aiUh6719hkwSLVPzKO3iiA8z6eHuw9DXq0uPspUpi6up8Cd08XH3Fzz7NqBlyeBLxwikfadgpKrRYzC92M6AAU7HWeMNqOUcvwl3UoOBleslWnz4JMpXO7T2jIrULqut8yO5SWG75arq3tz/VfvO+QkRqkTG1oTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=QzaGPaoC; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IldAkdjpaY8wZ4UG2q04xBYFqlX/tW0s9PDLPfifNio=; b=QzaGPaoCqnsidp2hTQ4bF1QNhT
+	/3aJ1NUZs5YtMjoiSzsJAhn1yC4tfcydwEe+aoTxge750jCH+igXb+emWxGt8xvb98R5tv6YFGUAb
+	XtuRWoFJmPxeO89z+E1/DZcmgEzj9XTdIfBQ+ZlxDxan+ibCC/m51Ys+mLRBbuZgEytJuOdlcBb9Y
+	4pSZodtkO3Zof7Lr+jG20UKC3rLz3thvw8OmlfTTEvIQaJ5sNoTt9Uf53wNfA5K/DOAv9+iLU7VGz
+	BQnDq8JgcgHotOKUK9S+poWwxZK59FvIn33z4PRn2KMVVWskAyj9pf4aedvprsTk9OHhfrCuFhPA4
+	6JAC1h4A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1ti40i-0000000BEOP-3YSN;
+	Wed, 12 Feb 2025 04:06:04 +0000
+Date: Wed, 12 Feb 2025 04:06:04 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <sfrench@samba.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>, Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	audit@vger.kernel.org
+Subject: Re: [PATCH 2/2] VFS: add common error checks to
+ lookup_one_qstr_excl()
+Message-ID: <20250212040604.GN1977892@ZenIV>
+References: <>
+ <20250212032505.GM1977892@ZenIV>
+ <173933190416.22054.5881139463496565922@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173933190416.22054.5881139463496565922@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, 11 Feb 2025 17:59:41 +0100
-Oleg Nesterov <oleg@redhat.com> wrote:
+On Wed, Feb 12, 2025 at 02:45:04PM +1100, NeilBrown wrote:
+> On Wed, 12 Feb 2025, Al Viro wrote:
 
-> On 02/11, Alexei Starovoitov wrote:
-> >
-> > > > +#define UPROBE_NO_TRAMPOLINE_VADDR ((unsigned long)-1)
-> >
-> > If you respin anyway maybe use ~0UL instead?
-> > In the above and in
-> > uprobe_get_trampoline_vaddr(),
-> > since
-> >
-> > unsigned long trampoline_vaddr = -1;
-> 
-> ... or -1ul in both cases.
-> 
-> I agree, UPROBE_NO_TRAMPOLINE_VADDR has a single user, looks
-> a bit strange...
+> I do see some value in the simplicity of this approach, though maybe not
+> as much value as you see.  But the above uses inode_lock_share(), rather
+> than the nested version, so lockdep will complain.
 
-I think both this function and uprobe_get_trampoline_vaddr()
-should use the same macro as a token.
-(and ~0UL is a bit more comfortable for me too :) )
-
-----
-unsigned long uprobe_get_trampoline_vaddr(void)
-{
-	struct xol_area *area;
-	unsigned long trampoline_vaddr = -1;
-----
-
-Thank you,
-
-> 
-> Oleg.
-> 
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+IDGI...  It doesn't grab any ->i_rwsem inside that one, so what's there to
+complain about?  And in that case it returns with no locks held, so...
 
