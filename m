@@ -1,106 +1,84 @@
-Return-Path: <linux-kernel+bounces-510299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268B3A31AE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:55:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7067FA31AE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBF9C168628
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD713A5FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BB217996;
-	Wed, 12 Feb 2025 00:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF5118C0C;
+	Wed, 12 Feb 2025 00:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+hasUA2"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e7GeeOff"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B765835944
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6932EA50
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739321718; cv=none; b=fPggkQQCLB+PbjgXUFCtHmHPtxfvnt/OG++ny15oeJeAZB892lPD3bFhJ1zH5w9ogw6KSNLa6NgutcBljDG6dFc+WYNV7zZRHQJ47zNaA3glaS6rAHKLsh1p/1237UQNt76NxSxeLl/7ZKxnbBmmJnvlKIYR2wNOs/v5+sPbT10=
+	t=1739321784; cv=none; b=oVZ9aO//SSUUzFrmOQ+PsqjnNNz+z9GivUW0IijmjQsLMo2fBPOU00mOGV6AUrShUvt10elpYtCq7QjJ02RgwKGhCSPt7RzG1w8hv5mMfu/zU4uD6oBuiiEvGULRoiA/9mqbyqU99q2rU6++Lm3TVIZubw7z7LF2BZkhAT9Ibjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739321718; c=relaxed/simple;
-	bh=jCIurlHM76zZcC+ag0j1ChJ979i5vOv3fvHyabZoXuQ=;
+	s=arc-20240116; t=1739321784; c=relaxed/simple;
+	bh=e+BLwSgSHjy9yBuT4YO1wwabPYPHQNi+gOE3i7/aaBI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NgJB4rEKPLD39zCcw43G4WXVJznkwpVdzq84I4UvParEOo928Jl6N9HTI4FtOt/hWbmpBiTyVkNkICOwmYgPeOrizA/maSkPkTFuDldnRNAqlBESz84AtVl6SntRz6kQHTZWCmhWFph5iOtRXH3jwYkQB+0sEFJgMojpoNu9ofM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+hasUA2; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-308edbc368cso28575921fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:55:16 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkIw9UTKuAv3YiMsSXwMnOniY1yF6MRIL8MmcaVlfA84k5wOOY/Rn1YznWPHYAM5t1JbkhgUgQSaGqgZc8UNLkC0PTjy0Q90bblGeVgoIgXvvodvWYqvRhc8WS0+5cLyO4SWTEYNtUZQTSTMn2LiOE9CGbbXO7YltMD58NqlL90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e7GeeOff; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21f72fac367so63625ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:56:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739321715; x=1739926515; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739321783; x=1739926583; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mUxNo4sdmWLVTWOH02xXE+iuTiw7pWWtDZzrPFzNKj4=;
-        b=A+hasUA2gaRDwPuRIfLYEVasUS4mPC9f7V3Netd8+6K0fvTjs7Xe4VxxVMoO3GFqUc
-         6GHkPO6sKyTYTD+5gPoXpq7uAU+Hk7sz0Irx5LNI6pKmfE4ONdBGwT4dry4usq0BSNH0
-         p8HS5rZCj3qtW+IvVqBWwJnX5JQfYBx9PGI66Z/e8jlt3783q8Vll/+KleQyU2afUztU
-         tDvXnLS88TGLBPeF1YbGfKiaTsMcODGkv8VzWLNG97g7M4tMW86gWOn96dB5f0rDUQlo
-         lIReBqmzqys3x9rTV0WdGjU14KyxMNkU1clOM+lsu2aL7xLf6H36f55ZT4FZZERjLL2o
-         /Xsw==
+        bh=Ivh9AzheXIKHdwI+6JcoW6n5m0LCFzWHrb18akb3wpw=;
+        b=e7GeeOffPq4t/PQlu78TZoDjxoMl7eKQenwphDwRGK/YvbSq5kzDJyyJZlcEZwTlSF
+         Ap0taWoiPsKpEt+CX0unmR6+6Pg3G7GAJGiVDLrZf2dvAo7/JxeLrxBydCQqQCm04Plo
+         3xvIHcnfiphwrSK6mDAH6qZNKfW345fZp+tGr3sUpIeXJgcp/JvarLOpdQTb+7hGRByj
+         uGoTe5qaOoNZDAg/ZDy0EtHoGFE9adCoN0rU8khD7e/8AhbtoQgYO0na0CprvXKkhNTO
+         p68a6uDQ8TbIr6iJTmzPQuThqVWXiOl7iJeI04hcDSKmZLXpmX5X1qhCst/GH4BJmv5e
+         tzng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739321715; x=1739926515;
+        d=1e100.net; s=20230601; t=1739321783; x=1739926583;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mUxNo4sdmWLVTWOH02xXE+iuTiw7pWWtDZzrPFzNKj4=;
-        b=aki2wBRIeWq05VLVbrC+QpmtPbcrOdcc4nOOAtncF+oAX+9m+dpRVvrPayMl0foL1w
-         DgMjWL+eyzMh6Jtoh4Pv/JJ6Hgz4Wx2yub5VlpFwhuAnxnl/tr/QQ27C8IZrTHIfY8Oi
-         Qoe1DXYJnVieXrJbvibF1AvipbqsdbmI4d1V+bzDnuCthUizFZbzZu/ksbeKGoNhnyDR
-         xWFdNdDALc3RKUpWCnJOnb2PeqBWP00h4nXYVgt6fjSD/v9Trbnzm3LDFeaYm/DPam/T
-         gg8rxIFQOC+gnIYfQiFZTT7th9RLwsBrJxRxEP8HfNaXU96mAUI9mnW1n6x4HeCDjuE6
-         MPog==
-X-Forwarded-Encrypted: i=1; AJvYcCU1SCWRxcqySxqipEGk4UsAyGyWeveJalg2vkLT2efrtqUjz/SWbV+THa4QhLXNHG0jsVj97cpg9a1MbDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+/BGZyJXRD0FVYAzsVPcX0zJzRMmVaKlRT8gx35z86hhgBZRm
-	XA+NhcP6C611FDFPMqsna2oiilb+t/O5ZRAlUFCi3Cp2+lawa9x8JpZWrN868sw=
-X-Gm-Gg: ASbGncvF4Q6ODmyiWWVAqfcS59FvHt1juBjzNsDe2u/jV7qZ8nOnkhpdPq6tDaqAeML
-	vTPO+kr6FQS+9HiKq2VFnVQur8oSNNsgO98Xpt9HHC2sbDI1pGCnfYfa4huaF1wcFSgfGncEy9c
-	azyNG/wlRfJmkPrzU1laIxaUrZzlQi5HMwbdjo3f5W0EferQZ0N7IKHxRDXC5ph0lOFMNsal6Ba
-	+QD3ViWul7syACBvi9hYme1V6CxByC4e59HiRYy5g+nBodj6ABptJ9FwfXNNSItrYPY1VCc6xh1
-	6UlZ2X91+1xau6FUXRncily+WUuWNa1IN7Atxuro0w4Jt0nTlWLYUIfPEW/vJbFvSzKtgx8=
-X-Google-Smtp-Source: AGHT+IGs0cV1u4iegcMKrjuoero2v6sW5UX43WNEwXp7nEN1CqXaDi6DN+1s0QUOAJhNgTLw4fuguQ==
-X-Received: by 2002:a2e:a985:0:b0:308:e54d:61a6 with SMTP id 38308e7fff4ca-309050be548mr1754521fa.34.1739321714727;
-        Tue, 11 Feb 2025 16:55:14 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-308e95f67f1sm9534311fa.48.2025.02.11.16.55.12
+        bh=Ivh9AzheXIKHdwI+6JcoW6n5m0LCFzWHrb18akb3wpw=;
+        b=OZoUsqRayzMKbD+U8PoY///whYx2sgiAtfS5Q+SAHYI+ofQw2HXpp/tLkB2w/U3qnw
+         jhavSRpPD5ozFT5cyD0vx6tBdO/hcEIEcCgDm4HVSX4wqGcL7l8ebEpRAipejFk3g0Cn
+         pjWDVnHjqNpotDvVdp7vYqk1GrOLC1/rryVwrXc8yE7AS6hapljdstQhwhfcdjKgFSWv
+         P+gXwMEWbitRuONg4jdX7bS9CLGm4HCGE3UvAoLH4TU76qIxTQjauuo2F5bITia5N2hP
+         2b0tFE/G8V9aFnd3DktcBoBEyOtHhgvZI5rDT+jjerLhLJAG2JJAVWvpokGi/T8ThcCR
+         7KLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYEEV4RlcuwZBgIA+fTNSyFwqFu2kiyWPuMJtmgmUg8iO2l250kwYHUPCpEqQen8ukqPjHEHXtKwp2h+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGPdlnSiPwZEYxF4ruXsytt0/tHSgXF9sFZpvPqLmrTDlb/rZ0
+	UisXTGKiMuk7pv1zv10jmHTgt8LnAYJ8IbFO6NlnnLzIl8BgxBUTc3u5ht1mJw==
+X-Gm-Gg: ASbGncsgSk7PrF6pSB6he7MjwqiXGkm09GFTxG1+3/uB9rxjTuIViovwftmn/w7Mf8b
+	owx/BQMmeM0fhVFxJVPV53n8s3+jSbJJNlQ3O2wVs93gx148u4s3irkvdWEl9sAy9y/3yHJsWej
+	n2At46ZQj67b9MLemicu/ElTV9RrvNeCQqqbrlbrUDb3EVPmkFr0IoiV6pea7ujrbxi6DwYiqEM
+	OjqEPPnsGFHlctmwoYVdwIIIzjtrmHLov6ZwV9VczsnB1EaI+FaaOgvLyk+Vr3rlwSdw4l9czdR
+	aZZS4Ijv6p+OPGr6Yj8P8eLFObPRH0tmvyClhzHYXta9kYFwcy3Rq9Ge8s6lTA==
+X-Google-Smtp-Source: AGHT+IE1AfJuJzaHf2oysXFlqioTFb+uK5152VMOgYK5OLbaKeSNVULBQuOJ5dxwdZzPVqNLcrYZHQ==
+X-Received: by 2002:a17:903:19e6:b0:216:2839:145 with SMTP id d9443c01a7336-220befcac4bmr648985ad.1.1739321782337;
+        Tue, 11 Feb 2025 16:56:22 -0800 (PST)
+Received: from google.com (154.164.227.35.bc.googleusercontent.com. [35.227.164.154])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98d0765sm187583a91.20.2025.02.11.16.56.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 16:55:13 -0800 (PST)
-Date: Wed, 12 Feb 2025 02:55:10 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Simona Vetter <simona@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Daniel Thompson <danielt@kernel.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Sam Ravnborg <sam@ravnborg.org>, Boris Brezillon <bbrezillon@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Paul Kocialkowski <contact@paulk.fr>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, =?utf-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v6 14/26] drm/bridge: add support for refcounted DRM
- bridges
-Message-ID: <i5q5zuymhn6sy4nou22zxbolztqbq6soef2cwrdq3ey63vfugj@z3rv7zh7xhle>
-References: <20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com>
- <20250206-hotplug-drm-bridge-v6-14-9d6f2c9c3058@bootlin.com>
- <20250207-ingenious-daffodil-dugong-51be57@houat>
- <ucttjaf3trkgtpvhnsj7xfsybhnoi4qqow5ucwghlggivbagy7@gngjhbtu73lb>
- <20250210181244.0e3e9189@booty>
- <qnuskv4mln32nqgbgvwi2qcdwfma6tqfbq7e6sqb3za6pmms2j@ir7pt5634dsh>
- <20250211-venomous-dragon-of-competition-d76bf9@houat>
+        Tue, 11 Feb 2025 16:56:21 -0800 (PST)
+Date: Wed, 12 Feb 2025 00:56:17 +0000
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: error: gendwarfksyms: process_module: dwarf_get_units failed: no
+ debugging information?
+Message-ID: <20250212005617.GA1701202@google.com>
+References: <202502120752.U3fOKScQ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,51 +87,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211-venomous-dragon-of-competition-d76bf9@houat>
+In-Reply-To: <202502120752.U3fOKScQ-lkp@intel.com>
 
-On Tue, Feb 11, 2025 at 09:48:31AM +0100, Maxime Ripard wrote:
-> On Tue, Feb 11, 2025 at 01:14:28AM +0200, Dmitry Baryshkov wrote:
-> > On Mon, Feb 10, 2025 at 06:12:44PM +0100, Luca Ceresoli wrote:
-> > > Hi Maxime, Dmitry
-> > > 
-> > > On Fri, 7 Feb 2025 21:54:06 +0200
-> > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> > > 
-> > > > > > +/* Internal function (for refcounted bridges) */
-> > > > > > +void __drm_bridge_free(struct kref *kref)
-> > > > > > +{
-> > > > > > +	struct drm_bridge *bridge = container_of(kref, struct drm_bridge, refcount);
-> > > > > > +	void *container = ((void *)bridge) - bridge->container_offset;
-> > > > > > +
-> > > > > > +	DRM_DEBUG("bridge=%p, container=%p FREE\n", bridge, container);  
-> > > > > 
-> > > > > Pointers are not really useful to track here, since they are obfuscated
-> > > > > most of the time. Using the bridge device name would probably be better
-> > > > > (or removing the SHOUTING DEBUG entirely :))  
-> > > > 
-> > > > bridge device name or bridge funcs (I opted for the latter for the
-> > > > debugfs file)
-> > > 
-> > > These DRM_DEBUG()s proved extremely useful exactly because of the
-> > > pointer. This is because when using hotplug one normally has the same
-> > > device added and removed multiple times, and so the device name or
-> > > bridge funcs is always the same, preventing from understanding which
-> > > instance is leaking, or being freed, get, put, etc.
-> > > 
-> > > Do you think this is a sufficient motivation to keep it?
-> > 
-> > Then it should be something like %px. I found that %p is mangled.
-> > What about having both device name _and_ a pointer?
+On Wed, Feb 12, 2025 at 07:55:45AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   09fbf3d502050282bf47ab3babe1d4ed54dd1fd8
+> commit: 9c3681f9b9fd12cdbc4a542df599f1837512f3d5 kbuild: Add gendwarfksyms as an alternative to genksyms
+> date:   5 weeks ago
+> config: s390-randconfig-002-20250212 (https://download.01.org/0day-ci/archive/20250212/202502120752.U3fOKScQ-lkp@intel.com/config)
+> compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502120752.U3fOKScQ-lkp@intel.com/reproduce)
 > 
-> No, %px must not be used there. %p is mangled but should be consistent
-> across calls. But yeah, it's kind of the reason I suggested to use the
-> bridge device name instead.
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202502120752.U3fOKScQ-lkp@intel.com/
+> 
+> All error/warnings (new ones prefixed by >>):
+> 
+> >> error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
+> --
+>    In file included from <stdin>:3:
+>    In file included from arch/s390/include/asm/asm-prototypes.h:4:
+> >> include/linux/kvm_host.h:1908:24: warning: field 'desc' with variable sized type 'struct kvm_stats_desc' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end]
+>     1908 |         struct kvm_stats_desc desc;
+>          |                               ^
+>    1 warning generated.
+> >> error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
 
-Then we need to extend struct drm_bridge with struct device *dev (which
-I would appreciate, it will solve whole hdmi_audio_dev / CEC device /
-etc story).
+The issue appears to be that the files in arch/s390/purgatory are
+always built without debugging information, even though they include
+code that uses EXPORT_SYMBOL.
 
--- 
-With best wishes
-Dmitry
+I suspect the correct solution here is to ignore the object files in
+this directory when calculating modversions. The quick patch below
+fixes the build issue for me. Masahiro, does this look reasonable to
+you?
+
+Sami
+
+
+diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
+index bdcf2a3b6c41..bdcecc19441d 100644
+--- a/arch/s390/purgatory/Makefile
++++ b/arch/s390/purgatory/Makefile
+@@ -28,6 +28,8 @@ KBUILD_AFLAGS := $(filter-out -DCC_USING_EXPOLINE,$(KBUILD_AFLAGS))
+ PURGATORY_LDFLAGS := -nostdlib -z nodefaultlib
+ LDFLAGS_purgatory := -r $(PURGATORY_LDFLAGS) -T
+ LDFLAGS_purgatory.chk := -e purgatory_start $(PURGATORY_LDFLAGS)
++# Purgatory doesn't export symbols, so disable symbol versioning.
++$(obj)/purgatory: skip_gendwarfksyms = 1
+ $(obj)/purgatory: $(obj)/purgatory.lds $(PURGATORY_OBJS) FORCE
+ 		$(call if_changed,ld)
+ 
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 993708d11874..cfb4b57ff617 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -309,11 +309,11 @@ getasmexports =								\
+      $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
+ 
+ ifdef CONFIG_GENDWARFKSYMS
+-cmd_gensymtypes_S =							\
++cmd_gensymtypes_S = $(if $(skip_gendwarfksyms),,			\
+ 	$(getasmexports) |						\
+ 	$(CC) $(c_flags) -c -o $(@:.o=.gendwarfksyms.o) -xc -;		\
+ 	$(call getexportsymbols,\1) |					\
+-	$(gendwarfksyms) $(@:.o=.gendwarfksyms.o)
++	$(gendwarfksyms) $(@:.o=.gendwarfksyms.o))
+ else
+ cmd_gensymtypes_S =							\
+ 	$(getasmexports) |						\
 
