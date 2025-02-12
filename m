@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-510949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB69A323F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:53:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D478A32401
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:54:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F993A7EF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:52:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81DA1884682
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04845209F41;
-	Wed, 12 Feb 2025 10:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84285209F41;
+	Wed, 12 Feb 2025 10:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEmo6s20"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqjcfeCI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551FB209696;
-	Wed, 12 Feb 2025 10:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F09209691;
+	Wed, 12 Feb 2025 10:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357577; cv=none; b=tzK326bzMMcOkVm06Q+5uiUlN9pyO7w1Bq0cNt1hrWP5494+poRpIkItq34vSW5/ZmknRk+UKusC/FDewz7l1qnDr7h9EnzrY4bi3KBmL5nMKPhgvoQaGyP5ZPOYJlmWqY49obLtA+BdiNyJKO8trHJ2kKWn5FPuZfXEkayX9hY=
+	t=1739357647; cv=none; b=AmBCeHAkJCJ6D6LhZ4I3P+6949MX66Q4Ub6FxEShI8D1u4s7++dtq9MspR7TnJklVH6Qg3MyT+fT3F8f3yxYEVmIaGAyk/YR7bZf8y0HagZsiOfbc70w7gLdiGtTX0NH2dqg96+uwVnYEbwEd1YbwAjhtpdZFRF3uYxo8YXbiEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357577; c=relaxed/simple;
-	bh=LwGxdLg8+twqu4asAaRUA1ljgh9WeZCX/IZ9fHF1aC4=;
+	s=arc-20240116; t=1739357647; c=relaxed/simple;
+	bh=e/kfwsCCIw5V2Sb4kP+ncGxmAOKE4BSh5v2cbFwpZMs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OfVM6LstIqa1ukL96VeTrW3d9qEqxc/ZwDTGNvFXL76kT1i81SRxIAqv/zZ/LS9e+riCo8UYrDK6cMuAlZQnFa7/qiwvuQMC8BoYiCHRwg20aENhcW7zmPZCMDA78jqvcb3eUnyLr3zgSKHtqFPbWcZM9VM2fv1bGaFpvn0IG34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEmo6s20; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B154C4CEDF;
-	Wed, 12 Feb 2025 10:52:52 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=AsLYf234BD39pHL3fC5BtmL6dxr+6T3I7Bk8Hu8JnZEj5a3zmSTt6zn7ZEM+xMUaK7++ZineVmrsGpGCHrX0emgrcIq0vMRsXageWrL+gh8S7LLCA1vG2pkFu9lmAIteVquem6VRjyGZHXB/OlmGEoa+vIeHUP9M9vIzsmNArEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqjcfeCI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A5AC4CEDF;
+	Wed, 12 Feb 2025 10:53:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739357577;
-	bh=LwGxdLg8+twqu4asAaRUA1ljgh9WeZCX/IZ9fHF1aC4=;
+	s=k20201202; t=1739357646;
+	bh=e/kfwsCCIw5V2Sb4kP+ncGxmAOKE4BSh5v2cbFwpZMs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WEmo6s20JHNClvCl+c0CK9xEzviz+xJSm/CsmX3TNCM3EYVa9Tz28IqPTvXiQxXO4
-	 6Adf0zphG83OJknmRLj2EZ3fB3kt7j3KE58gIk+lSxhJO9W1qTUhrrrsFhYsvnyfeA
-	 Ie9Ba3JrKiZvg5OhxegVxuIF5DrrToqFyg/bXuaX2fBRkITYYQUDSrerTmQiwnOOjJ
-	 UfL6Dh0ittBVpKWvjh7QhvqdZWTDenyoKuKapb6UpuXFjAa7kSQsnbDMxQJhR/eetL
-	 MUvmu+mWEtYilUJx/Wq8v3/OY+AmuIVoSNPaLuKQC1tNdPAtbvxJSoixBun83mtPSn
-	 vqf+TIuVX47XQ==
-Message-ID: <8915b5a4-9f6d-4415-b4b6-85de9becee58@kernel.org>
-Date: Wed, 12 Feb 2025 11:52:49 +0100
+	b=BqjcfeCI1sfUgJEvX3gpG8nmnkB33MWThpUpT9DWFnM6k/Z53EhaXo2Fwu1aHOBuS
+	 iClNIWdE/UC/UdJ3ygP6qN8iO5+wGFvMzlG0ZQ9W6lWrVh52OiCMXp1LmFY9K87gx5
+	 4Y9LKnkROaUlvybdyq6sTz/VFJMFi0wTOS7FpKpxs4WvqJFUIMGCay+m36Bzt8Wp0W
+	 ubl7pLt10BraY52PHUKIHpRCGeZqxBhLzjjtF29oqhxPHGhLm/SfPkNjmSqx55bABc
+	 V3wjWSOiLzovRjqdomXwP0sir8i59NMPGx5LRWfvB8PaHUmb7zD4C3poEcJQRBO7gB
+	 XbRc69wSSf37w==
+Message-ID: <b4008932-ce56-4cc0-9b53-2253051514da@kernel.org>
+Date: Wed, 12 Feb 2025 11:53:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: socfpga: agilex5: add clock-names
- property to nand node
-To: niravkumar.l.rabara@intel.com, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+Subject: Re: [PATCH 1/4] dt-bindings: display/msm: Redocument the
+ dp-controller for QCS8300
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: nirav.rabara@altera.com, devicetree@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250212095407.2667743-1-niravkumar.l.rabara@intel.com>
- <20250212095407.2667743-3-niravkumar.l.rabara@intel.com>
+ Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
+ <20250212-mst_qcs8300-v1-1-38a8aa08394b@quicinc.com>
+ <wyd7i47pkafa7n2yjohuvlh4btasxle4rw5xm55h4bhv24yvah@pfo224xz4xfl>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,20 +113,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250212095407.2667743-3-niravkumar.l.rabara@intel.com>
+In-Reply-To: <wyd7i47pkafa7n2yjohuvlh4btasxle4rw5xm55h4bhv24yvah@pfo224xz4xfl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/02/2025 10:54, niravkumar.l.rabara@intel.com wrote:
-> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+On 12/02/2025 11:41, Dmitry Baryshkov wrote:
+> On Wed, Feb 12, 2025 at 03:12:24PM +0800, Yongxing Mou wrote:
+>> We need to enable mst for qcs8300, dp0 controller will support 2 streams
+>> output. So not reuse sm8650 dp controller driver and will add a new driver
+>> patch for qcs8300 mst feature. Modify the corresponding dt-bingding file
+>> to compatible with the qcs8300-dp.
 > 
-> Add required clock-names property to the nand node.
+> NAK for a different reason: QCS8300 is still compatible with SM8650.
+> Enable features instead of randomly reshuffle compats. In this case,
+> enable MST for both architectures.
 > 
-> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-
-Fixes tag please.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+So the original patch was probably correct...
 
 Best regards,
 Krzysztof
