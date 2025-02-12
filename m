@@ -1,172 +1,125 @@
-Return-Path: <linux-kernel+bounces-510639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D38A31FE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:20:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C398AA31F5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:47:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AE90188BB41
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:20:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FF01689E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFAA204581;
-	Wed, 12 Feb 2025 07:20:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD2B2040A7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555A91FCF4F;
+	Wed, 12 Feb 2025 06:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QL4x2ZU4"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170C6146A68;
+	Wed, 12 Feb 2025 06:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739344806; cv=none; b=VzcvvF+ahNrQX1dOIK9VShkAkLZH+LFZdyZM6bUt7JhDe5RY6gXJU+/9GTstvAgMZ8MBJNuZn1saW2p07roonMcAEwT1jBpHhG8K/6wEmcnoBQzFtpMkypkIDqWRzF2v6l6XnICwjZ5pKstOuDx2gKoIk/jP2TtiVqerqhZLjuE=
+	t=1739342860; cv=none; b=RVWYM2AUosVTkHHaZmyfRGVRb7WL2X3G1rOGuV8HOx95pUihgXRq2vx/v33oiKbSifKGRcP0o8OvAsJiaJdfZkpuduEBG3m9AAc5yVCXfkiZ047ppX8FTY5UzzYeXTWejxTbcf65qzY5ZAFFy/nmOPuFuwA2A6nudeV0QsOHWss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739344806; c=relaxed/simple;
-	bh=p3TXOgPutER088kooOwsPkLRYDwyiVT6E7Bu0WF26Tg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RizpC8d/D2VwjjtI8GWzuqvKXba0bOcvdpNefruizige8jU13FbbCOWRPOOGCFqxfh5jgeYlNGk0h7Jf1Rtuxj8zYdJX5Ktuw8soh62xjva7E3zeq3Fk94vn71AU3UDlhoZcKBXCF/9Nkr/uUo1mm4MwH6Vj/rgv9+fHivyLuPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Yt83s13G2z9sPd;
-	Wed, 12 Feb 2025 07:46:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 83R2JPrA4XVg; Wed, 12 Feb 2025 07:46:33 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Yt83s02qzz9rvV;
-	Wed, 12 Feb 2025 07:46:33 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E858C8B770;
-	Wed, 12 Feb 2025 07:46:32 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id wzoTdwFsLGnb; Wed, 12 Feb 2025 07:46:32 +0100 (CET)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.138])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B98A08B763;
-	Wed, 12 Feb 2025 07:46:32 +0100 (CET)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	s=arc-20240116; t=1739342860; c=relaxed/simple;
+	bh=taHTvKoWTF7BQ5WW8HRGbtCKUPrDALj7zBFaw0w4D0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LteWL0GT7TR2YqJIqstkq0egkzKfzsYjAxeyn0vQeFi3d9tYNxa6ZuHOYD83cS+nXFBZHAIoSGpZ77gEIiGaTz34v840ru/kvhf6ghplkCJoVoJBkgMg8ealTnWDBGUBgVJmXrPXHCIWRT9qtOkJwqvd9oVtu5UdU8ewYWyhlF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QL4x2ZU4; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-543d8badc30so6685651e87.0;
+        Tue, 11 Feb 2025 22:47:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739342857; x=1739947657; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e2YsuTCPphVGemqecyPUG5geUpzSnDZxeT/5yx0AbGM=;
+        b=QL4x2ZU421cpVE5dhLjEZRpOoqwwDXvuEr8jKmbS6gQH6MRNBNNhfz0CgLyo8WNTIB
+         Aw2uJoDiX6e3TbwZj0oR3inlt2EVKYNr+UcCXlWXAbAWBEPdX30ZnktlsvJ0LoIeeuTd
+         25l7wNM5Kpw7PWdqwx9F8d31Yx9kMxQgAMibYp6tJi1d+BMx5DJ5FLW/cmU8WJURSswC
+         pIpnE7oBpONEWohLU8UqEoRRfhE2riGB4Nrq90XidICFylUHlrIjaeiq3VWIshfTLgoO
+         X83x1gTgv3tkKhgHvQb5fqi3h1QbmT4u5+npBWQ5dkZ+Uu0AWY9NdztgqB0IZNcdvdEf
+         qbmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739342857; x=1739947657;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e2YsuTCPphVGemqecyPUG5geUpzSnDZxeT/5yx0AbGM=;
+        b=Xy8YQOcxCkNaxpgtHKTGRgEEtkJnyv3ac/l5e4e+zKf6PYoCaf354612n08ncYOuiX
+         atkwLgQuAkDXIK2fmxunhv5a3FPjQV1wkDOxgY2y0nYMz2ssE9K9ju5P4GDFkbzYkoYH
+         GqyCYFw2y68QZNv75egXxcVF78Teb7RyPzUmFRZJvpb6gYyFIEA3Pccu3zyi0ZF+aLjH
+         RUBIwPAYc11Ac+9e/wp1sYwo1jbhYrQu+Kk9M6agyHwujRmCJ1Z/u3s17pG2SlCNMQRE
+         hRoIxTAI98ueJeAUiNztOX/a66QJcWWFQ8QAnJE1X7zjiDl3naN2EcZNO8Rl58fleEK+
+         AJrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVTznUh5H69xIpXpQHPpb3qG1DinyDxgdD1r3JaWYd3JepFGxoudGhUbMYtj7O1WE3+K23JdY+mW3FMfzj@vger.kernel.org, AJvYcCWVt1vM4YiUqyjcFQYKax8Ro+mNbnPXI4PGnB/TWBoNhq5g6nOtCRXqWMtygJNL+tiiUyIf7X717An8@vger.kernel.org, AJvYcCX2OpZKPumh7bYmLtcBd+yIGATkcfmWxJjrplSseLSnO0/TOidNTkiUCu9WJiplWEQjZJbddX/53GzH23o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg+q/wnbkd/UDZNmCDKxnXBO77p1TvjtJT6RnJ66rWGlSCE1Ka
+	+K6dnYq7HMzer0kd0AAL48kkXu08yXetX59UOka5nIp/+ro3C8+x
+X-Gm-Gg: ASbGncuIKgDPch2zOIIUDLMdY5XrIBDUpgpak+MUyAsycQKFpSMnOlEmLhCQRzqZtyy
+	koMl50vOld3dobQSYYcDkf4KezoE7fcww1643mKubVXCt93S4oKEdBlgFuN1ZvcXUi8iDmQYOIn
+	Azj4H2yJf4iOdRWwuHujaZg46fiai6bjj07kkm3u71j7AS7TGboQpqzdaMBONBggupI7FqlRm3+
+	IKXeUhdMpJGj9cFSgHdqePulvevVJYtcgPFOFaNSDbLkiQ3QZsUD7CnYm0NLatC00Rwdzrgdhsq
+	oIlyVSo=
+X-Google-Smtp-Source: AGHT+IHIgsC2KuIYoI+i/oR54Zj2+nWE2GIveGKb7lMgC3jlfrosajr8ytXqlJ6wSJwC6q17EXoyEg==
+X-Received: by 2002:a05:6512:2389:b0:545:bda:f10 with SMTP id 2adb3069b0e04-5451810fdecmr406848e87.21.1739342856798;
+        Tue, 11 Feb 2025 22:47:36 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5450e09e9dbsm748600e87.120.2025.02.11.22.47.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 22:47:36 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>
+Cc: linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Erhard Furtner <erhard_f@mailbox.org>
-Subject: [PATCH v2] powerpc/code-patching: Fix KASAN hit by not flagging text patching area as VM_ALLOC
-Date: Wed, 12 Feb 2025 07:46:28 +0100
-Message-ID: <06621423da339b374f48c0886e3a5db18e896be8.1739342693.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v1 0/3] iio: light: add al3000a als support
+Date: Wed, 12 Feb 2025 08:46:54 +0200
+Message-ID: <20250212064657.5683-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739342788; l=4545; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=p3TXOgPutER088kooOwsPkLRYDwyiVT6E7Bu0WF26Tg=; b=ZwrR/v049bSg+M2ge8wLUfGPpag6/zJhkrHc7AVgLBNOGC47fYkLb5AohC9JsPKexXtASgR05 oGd+skniHlgAONLFqL40qWBk9HF5i69maFApz6cE6U4n+X4JbAmaGfs
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-Erhard reported the following KASAN hit while booting his PowerMac G4
-with a KASAN-enabled kernel 6.13-rc6:
+AL3000a is an illuminance sensor found in ASUS TF101 tablet.
 
-  BUG: KASAN: vmalloc-out-of-bounds in copy_to_kernel_nofault+0xd8/0x1c8
-  Write of size 8 at addr f1000000 by task chronyd/1293
+Svyatoslav Ryhel (3):
+  dt-bindings: iio: light: al3010: add al3000a support
+  iio: light: Add support for AL3000a illuminance sensor
+  ARM: tegra: tf101: Add al3000a illuminance sensor node
 
-  CPU: 0 UID: 123 PID: 1293 Comm: chronyd Tainted: G        W          6.13.0-rc6-PMacG4 #2
-  Tainted: [W]=WARN
-  Hardware name: PowerMac3,6 7455 0x80010303 PowerMac
-  Call Trace:
-  [c2437590] [c1631a84] dump_stack_lvl+0x70/0x8c (unreliable)
-  [c24375b0] [c0504998] print_report+0xdc/0x504
-  [c2437610] [c050475c] kasan_report+0xf8/0x108
-  [c2437690] [c0505a3c] kasan_check_range+0x24/0x18c
-  [c24376a0] [c03fb5e4] copy_to_kernel_nofault+0xd8/0x1c8
-  [c24376c0] [c004c014] patch_instructions+0x15c/0x16c
-  [c2437710] [c00731a8] bpf_arch_text_copy+0x60/0x7c
-  [c2437730] [c0281168] bpf_jit_binary_pack_finalize+0x50/0xac
-  [c2437750] [c0073cf4] bpf_int_jit_compile+0xb30/0xdec
-  [c2437880] [c0280394] bpf_prog_select_runtime+0x15c/0x478
-  [c24378d0] [c1263428] bpf_prepare_filter+0xbf8/0xc14
-  [c2437990] [c12677ec] bpf_prog_create_from_user+0x258/0x2b4
-  [c24379d0] [c027111c] do_seccomp+0x3dc/0x1890
-  [c2437ac0] [c001d8e0] system_call_exception+0x2dc/0x420
-  [c2437f30] [c00281ac] ret_from_syscall+0x0/0x2c
-  --- interrupt: c00 at 0x5a1274
-  NIP:  005a1274 LR: 006a3b3c CTR: 005296c8
-  REGS: c2437f40 TRAP: 0c00   Tainted: G        W           (6.13.0-rc6-PMacG4)
-  MSR:  0200f932 <VEC,EE,PR,FP,ME,IR,DR,RI>  CR: 24004422  XER: 00000000
+ .../bindings/iio/light/dynaimage,al3010.yaml  |   6 +-
+ .../boot/dts/nvidia/tegra20-asus-tf101.dts    |  11 +
+ drivers/iio/light/Kconfig                     |  10 +
+ drivers/iio/light/Makefile                    |   1 +
+ drivers/iio/light/al3000a.c                   | 214 ++++++++++++++++++
+ 5 files changed, 240 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/iio/light/al3000a.c
 
-  GPR00: 00000166 af8f3fa0 a7ee3540 00000001 00000000 013b6500 005a5858 0200f932
-  GPR08: 00000000 00001fe9 013d5fc8 005296c8 2822244c 00b2fcd8 00000000 af8f4b57
-  GPR16: 00000000 00000001 00000000 00000000 00000000 00000001 00000000 00000002
-  GPR24: 00afdbb0 00000000 00000000 00000000 006e0004 013ce060 006e7c1c 00000001
-  NIP [005a1274] 0x5a1274
-  LR [006a3b3c] 0x6a3b3c
-  --- interrupt: c00
-
-  The buggy address belongs to the virtual mapping at
-   [f1000000, f1002000) created by:
-   text_area_cpu_up+0x20/0x190
-
-  The buggy address belongs to the physical page:
-  page: refcount:1 mapcount:0 mapping:00000000 index:0x0 pfn:0x76e30
-  flags: 0x80000000(zone=2)
-  raw: 80000000 00000000 00000122 00000000 00000000 00000000 ffffffff 00000001
-  raw: 00000000
-  page dumped because: kasan: bad access detected
-
-  Memory state around the buggy address:
-   f0ffff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-   f0ffff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  >f1000000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-             ^
-   f1000080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-   f1000100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-  ==================================================================
-
-f8 corresponds to KASAN_VMALLOC_INVALID which means the area is not
-initialised hence not supposed to be used yet.
-
-Powerpc text patching infrastructure allocates a virtual memory area
-using get_vm_area() and flags it as VM_ALLOC. But that flag is meant
-to be used for vmalloc() and vmalloc() allocated memory is not
-supposed to be used before a call to __vmalloc_node_range() which is
-never called for that area.
-
-That went undetected until commit e4137f08816b ("mm, kasan, kmsan:
-instrument copy_from/to_kernel_nofault")
-
-The area allocated by text_area_cpu_up() is not vmalloc memory, it is
-mapped directly on demand when needed by map_kernel_page(). There is
-no VM flag corresponding to such usage, so just pass no flag. That way
-the area will be unpoisonned and usable immediately.
-
-Reported-by: Erhard Furtner <erhard_f@mailbox.org>
-Closes: https://lore.kernel.org/all/20250112135832.57c92322@yea/
-Fixes: 37bc3e5fd764 ("powerpc/lib/code-patching: Use alternate map for patch_instruction()")
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-v2: Reformated commit message to avoid git dropping away everything after --- interrupt: c00
----
- arch/powerpc/lib/code-patching.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/lib/code-patching.c b/arch/powerpc/lib/code-patching.c
-index 81c0f673eb25..f84e0337cc02 100644
---- a/arch/powerpc/lib/code-patching.c
-+++ b/arch/powerpc/lib/code-patching.c
-@@ -108,7 +108,7 @@ static int text_area_cpu_up(unsigned int cpu)
- 	unsigned long addr;
- 	int err;
- 
--	area = get_vm_area(PAGE_SIZE, VM_ALLOC);
-+	area = get_vm_area(PAGE_SIZE, 0);
- 	if (!area) {
- 		WARN_ONCE(1, "Failed to create text area for cpu %d\n",
- 			cpu);
 -- 
-2.47.0
+2.43.0
 
 
