@@ -1,231 +1,150 @@
-Return-Path: <linux-kernel+bounces-511652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D81FA32DCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:46:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF53EA32DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:47:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F0E163BAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:46:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A53518864F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6284625B69B;
-	Wed, 12 Feb 2025 17:46:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7C425A2D3;
-	Wed, 12 Feb 2025 17:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A42025D522;
+	Wed, 12 Feb 2025 17:47:43 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEFF256C70;
+	Wed, 12 Feb 2025 17:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739382375; cv=none; b=AVDYTOr1K1+1E4sUaa39HYcRQjZyYFsILIYH5vqVQFqHuNHD66+EcDOFxBh/G/W05HEKz8sAz86VoRpqxo81/BJx4eD0RfUxqTXv8U0DMcEz5YnyxPzrYznnItnuWgC1Xh6EsZ5h0TnCtnhq01DB+NShGlMkkpAACbus1jN1EdY=
+	t=1739382462; cv=none; b=Zh0QigoPOJ2naod1w/DlRp/16GAdrgUeIp4JrgGFDWbXNiI+EMODk5pgjJoO4BAc3gzeiDOCD6LlnYlyB9Q+NFwwWRGxPCeQUAcj42VLFuRebt8iyx/NLQRQzaVEyDj1GTUpVSDmyjZIORncfw4p5yta0eKhNWZThpy8+ho4nUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739382375; c=relaxed/simple;
-	bh=jMD/H7uMUbc7ssjp65BmFcgJoR7L5VSSPfr1wMYg6X4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDm9MZwNkwOGITZH2obrOHmJ8Wxr+u8zVOrAR/s1aI9Bi8ZhBK0TV/HJ5jaCoyDu0wYzwiZe6LpJz/Hlz6H66Xz9YUWcuv1xjwfy4Mhx5tI2s6H9GyYqUOUsatF1qHxGkjbDq3aJpY/Lm4RPnC3q+YuEfJBJmLcFbDWq/NGSacs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F23DB12FC;
-	Wed, 12 Feb 2025 09:46:33 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54EAF3F5A1;
-	Wed, 12 Feb 2025 09:46:08 -0800 (PST)
-Date: Wed, 12 Feb 2025 17:46:05 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Babu Moger <babu.moger@amd.com>, peternewman@google.com
-Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	tony.luck@intel.com, fenghua.yu@intel.com, x86@kernel.org,
-	hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org,
-	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com,
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-Message-ID: <Z6zeXby8ajh0ax6i@e133380.arm.com>
-References: <cover.1737577229.git.babu.moger@amd.com>
+	s=arc-20240116; t=1739382462; c=relaxed/simple;
+	bh=ucsm6sBSBsAgH7j0WZaNAqkfAINXI0ndAlQASzkfYXw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bzJumYOiBNrpug5k94AySIlH9TXKqSuFXNOPmbsFKUjTTOcemkRS7lacWZ2i/CbUsuqwFnFNBnXmySOtAUYKd+KzAbzs45aGBIB96z2BK2WG8xLGguSPK6JFglCpYuXABp6kaBmIArZJu9LRP6pBV4MMKCmb1+k9gZDgoiW4py8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ab7e9254bb6so7293166b.1;
+        Wed, 12 Feb 2025 09:47:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739382458; x=1739987258;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b8R6SEYjUrW1in7V0EGXb9bOA/jMJDxBdUk3K+qnY1I=;
+        b=BLbsKTu0Vp6eeEMBV/CFuV6Xd4I1oGhf4ojuniOH0XNI4/cp/+2g0Xwt01D9bAJGom
+         zHw6Ww9573FuhvfVgC2HiM1+b2DKsvDzJFWln68j0ArSEQ/UDGPqwwm9U8uGSKVwaM3t
+         hE2n0Mqj8P5SPsBlMRXzH6WAt8MeHkunh/bwJ5W6wCm/A4nVu45P5L/VJtgztdsNEhVv
+         vYNpwPNje3Q4/jXYUdImr2AGHuvs2xcPnBZVgDxjSG+lbAy7pKAN3ROcGmJp+mK4Ae2x
+         t8PU6xqWQrg/I7EwVzB0ZxBfo/juMuhwulNhuGaQifPHBMgzU20nAp7qDn97j658k+/P
+         ogdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjyDmUvSB4z9B/orNVSRxDyY/HefCBY1/v/ZzcctqDZ7CpQnKpNDT4vvJ0HccalW1y+gDTie0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuvlB1UpiqWIvq4cgCFdylWO8hVbTGgE8R2wEyAoIC7bqaDJDb
+	bjEXKJkpCZwt5ZJkC7BqFMcLZCr7SPyoZYAoPRP/z/ORDmVk4Qux
+X-Gm-Gg: ASbGnctkALkLpeuA7TeM6RB8LBG3Gbqr/ykIioaM2EQVsBkFPrySzHNk7YYPRpgAg7w
+	prOT8roInLKgKFxuGUCUdnSGKgmdui6QrBAejjIv656hrxK6VXgd4pWLG4FGzp7KNvuTNFFxSMQ
+	SJ17072yKbE+UD/0sb3uh+1BbsSU9wu0uBHi6gQ5bqgsXw3kB7jioSpzny/bXkt8CwWR5fc2P1z
+	hzSb1hb0fmaCTU2oEfqspL4/8P8QKK8+75QDTyjRCS1LujsdMRgDYiIU5eH1TtJIB+095APEnmX
+	hSAvKg==
+X-Google-Smtp-Source: AGHT+IG9LHBsJ17Owfwx71M/3TSTvaJ19msX1xru9qKG8OHNDp4WJ8qLHyrzAIG6fuCZb/bjBfNQKw==
+X-Received: by 2002:a17:907:72d2:b0:ab2:ffcb:edb4 with SMTP id a640c23a62f3a-ab7f33d9d34mr337981066b.25.1739382458033;
+        Wed, 12 Feb 2025 09:47:38 -0800 (PST)
+Received: from localhost ([2a03:2880:30ff:9::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7c4a50e73sm633936366b.36.2025.02.12.09.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 09:47:37 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next v3 0/3] net: core: improvements to device lookup
+ by hardware address.
+Date: Wed, 12 Feb 2025 09:47:23 -0800
+Message-Id: <20250212-arm_fix_selftest-v3-0-72596cb77e44@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1737577229.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKzerGcC/4WOywqDMBQFfyXctSlJfEVX/Y9SJI+rDbSxJEEs4
+ r8XXVlo6fowM2eBiMFhhJYsEHBy0Y0eWpJnBMxN+QGps9ASEEyUTLCaqvDoejd3Ee99wpgoomi
+ sNnmuWAUZgWfA3s278gIeE/U4J7hmBG4upjG89tbE9/23duKUU2YrRM0K0TR4tqid8qcxDFvmD
+ 1nIuuTSit5ycyS3H5M4tDn7YhCUUa1koUttSmnkh2Fd1zdIKxTBNwEAAA==
+X-Change-ID: 20250207-arm_fix_selftest-ee29dbc33a06
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, David Ahern <dsahern@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Breno Leitao <leitao@debian.org>, kuniyu@amazon.co.jp, 
+ ushankar@purestorage.com, kernel-team@meta.com, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1821; i=leitao@debian.org;
+ h=from:subject:message-id; bh=ucsm6sBSBsAgH7j0WZaNAqkfAINXI0ndAlQASzkfYXw=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnrN647ffaRfYdvi93rNjAPSbQqJSAi5Ch7aN8/
+ lMtbtXAjpqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ6zeuAAKCRA1o5Of/Hh3
+ bTMgD/4mU845Zu9P5ShPRHE4FDDrN+aH7oVRrzz4ZApMqp/4ShbnaYQhnLEpNEUe0DdZM2e3b2Q
+ cA4+v9NjlFwvvMJIAedQOcJD6gvDfiZP4fziioyKZdYRiRndAESUaKCgDrfKnpbU21rxakVTBLX
+ pLiSyi+fn2U3y0xwgcuxYf6ctpQBT5PzBxFiUncxcpvFFlXg6HMVjDFjybCVIyCB+kNGEXuTi8t
+ pANftrg4P1MadiadMNuqvtXKWvF1WSIhe73crjNdOee/nm+qA6G/zFsZjIL9BJaPXhJSfjyfWpm
+ puhfeRs/zNBK6jaz8QRD4n8PewTamMTILnfQWJH62T0xTQxyaIZGY664N2nE8ntdeRBExDypVBw
+ MgmHU1eZGkiJ77eMXviZtWp9OPelqmBiX+QsFDMZeUK9BjUG8jUMR3iP/D2Hc5bqSDXdISSIPUF
+ OoyIw4V9Srul5rhBNGm/t978K4808Mvn1OdI1mZDKX5t8Yt3+cgHuZhC+TIh3vmoyn77k3ZS13C
+ ZAPxfsNSl4XZ2PdETvjqh38aQEuroKc6gRTSejJcnTvMl4pAeV/AH8kbUAuP2mpMpWpiHdMPiV8
+ FqJ2G72t7H2JAD3W1gwMhzio5ZOqxHj8kv3wJ6TEZImf5VZq4RjP7AgeIjiw51kcQLJSH/y+Cmj
+ zNkWEUR8pz+KHDg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Hi there,
+The first patch adds missing documentation for the return value of
+dev_getbyhwaddr_rcu(), fixing a warning reported by NIPA. The kdoc
+comment now properly specifies that the function returns either a
+pointer to net_device or NULL when no matching device is found.
 
-On Wed, Jan 22, 2025 at 02:20:08PM -0600, Babu Moger wrote:
-> 
-> This series adds the support for Assignable Bandwidth Monitoring Counters
-> (ABMC). It is also called QoS RMID Pinning feature
-> 
-> Series is written such that it is easier to support other assignable
-> features supported from different vendors.
-> 
-> The feature details are documented in the  APM listed below [1].
-> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
-> Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
-> Monitoring (ABMC). The documentation is available at
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
-> 
-> The patches are based on top of commit
-> d361b84d51bfe (tip/master) Merge branch into tip/master: 'x86/tdx'
-> 
-> # Introduction
+The second patch adds a new dev_getbyhwaddr() helper function for
+finding devices by hardware address when the RTNL lock is held. This
+prevents PROVE_LOCKING warnings that occurred when RTNL was held but the
+RCU read lock wasn't. The common address comparison logic is extracted
+into dev_comp_addr() to avoid code duplication.
 
-[...]
+The third part coverts arp_req_set_public() to the new helper.
 
-> # Examples
-> 
-> a. Check if ABMC support is available
-> 	#mount -t resctrl resctrl /sys/fs/resctrl/
-> 
-> 	# cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
-> 	[mbm_cntr_assign]
-> 	default
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v3:
+- Fixed the cover letter (Kuniyuki Iwashima)
+- Added a third patch converting arp_req_set_public() to the new helper
+  (Kuniyuki Iwashima)
+- Link to v2:
+  https://lore.kernel.org/r/20250210-arm_fix_selftest-v2-0-ba84b5bc58c8@debian.org
 
-(Nit: can this be called "mbm_counter_assign"?  The name is already
-long, so I wonder whether anything is gained by using a cryptic
-abbreviation for "counter".  Same with all the "cntrs" elsewhere.
-This is purely cosmetic, though -- the interface works either way.)
+Changes in v2:
+- Fixed the documentation (Jakub)
+- Renamed the function from dev_getbyhwaddr_rtnl() to dev_getbyhwaddr()
+  (Jakub)
+- Exported the function in the header (Jakub)
+- Link to v1: https://lore.kernel.org/r/20250207-arm_fix_selftest-v1-1-487518d2fd1c@debian.org
 
-> 	ABMC feature is detected and it is enabled.
-> 
-> b. Check how many ABMC counters are available. 
-> 
-> 	# cat /sys/fs/resctrl/info/L3_MON/num_mbm_cntrs 
-> 	32
+---
+Breno Leitao (3):
+      net: document return value of dev_getbyhwaddr_rcu()
+      net: Add dev_getbyhwaddr_rtnl() helper
+      arp: switch to dev_getbyhwaddr() in arp_req_set_public()
 
-Is this file needed?
+ include/linux/netdevice.h |  2 ++
+ net/core/dev.c            | 38 ++++++++++++++++++++++++++++++++++----
+ net/ipv4/arp.c            |  2 +-
+ 3 files changed, 37 insertions(+), 5 deletions(-)
+---
+base-commit: 4e41231249f4083a095085ff86e317e29313c2c3
+change-id: 20250207-arm_fix_selftest-ee29dbc33a06
 
-With MPAM, it is more difficult to promise that the same number of
-counters will be available everywhere.
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
 
-Rather than lie, or report a "safe" value here that may waste some
-counters, can we just allow the number of counters to be be discovered
-per domain via available_mbm_cntrs?
-
-num_closids and num_rmids are already problematic for MPAM, so it would
-be good to avoid any more parameters of this sort from being reported
-to userspace unless there is a clear understanding of why they are
-needed.
-
-Reporting number of counters per monitoring domain is a more natural
-fit for MPAM, as below:
-
-> c. Check how many ABMC counters are available in each domain.
-> 
-> 	# cat /sys/fs/resctrl/info/L3_MON/available_mbm_cntrs 
-> 	0=30;1=30
-
-For MPAM, this seems supportable.  Each monitoring domain will have
-some counters, and a well-defined number of them will be available for
-allocation at any one time.
-
-> d. Create few resctrl groups.
-> 
-> 	# mkdir /sys/fs/resctrl/mon_groups/child_default_mon_grp
-> 	# mkdir /sys/fs/resctrl/non_default_ctrl_mon_grp
-> 	# mkdir /sys/fs/resctrl/non_default_ctrl_mon_grp/mon_groups/child_non_default_mon_grp
-> 
-> e. This series adds a new interface file /sys/fs/resctrl/info/L3_MON/mbm_assign_control
->    to list and modify any group's monitoring states. File provides single place
->    to list monitoring states of all the resctrl groups. It makes it easier for
->    user space to learn about the used counters without needing to traverse all
->    the groups thus reducing the number of file system calls.
-> 
-> 	The list follows the following format:
-> 
-> 	"<CTRL_MON group>/<MON group>/<domain_id>=<flags>"
-> 
-> 	Format for specific type of groups:
-> 
-> 	* Default CTRL_MON group:
-> 	 "//<domain_id>=<flags>"
-
-[...]
-
->        Flags can be one of the following:
-> 
->         t  MBM total event is enabled.
->         l  MBM local event is enabled.
->         tl Both total and local MBM events are enabled.
->         _  None of the MBM events are enabled
-> 
-> 	Examples:
-
-[...]
-
-I think that this basically works for MPAM.
-
-The local/total distinction doesn't map in a consistent way onto MPAM,
-but this problem is not specific to ABMC.  It feels sensible for ABMC
-to be built around the same concepts that resctrl already has elsewhere
-in the interface.  MPAM will do its best to fit (as already).
-
-Regarding Peter's use case of assiging multiple counters to a
-monitoring group [1], I feel that it's probably good enough to make
-sure that the ABMC interface can be extended in future in a backwards
-compatible way so as to support this, without trying to support it
-immediately.
-
-[1] https://lore.kernel.org/lkml/CALPaoCjY-3f2tWvBjuaQPfoPhxveWxxCxHqQMn4BEaeBXBa0bA@mail.gmail.com/
-
-
-For example, if we added new generic "letters" -- say, "0" to "9",
-combined with new counter files in resctrlfs, that feels like a
-possible approach.  ABMC (as in this series) should just reject such
-such assignments, and the new counter files wouldn't exist.
-
-Availability of this feature could also be reported as a distinct mode
-in mbm_assign_mode, say "mbm_cntr_generic", or whatever.
-
-
-A _sketch_ of this follows.  This is NOT a proposal -- the key
-question is whether we are confident that we can extend the interface
-in this way in the future without breaking anything.
-
-If "yes", then the ABMC interface (as proposed by this series) works as
-a foundation to build on.
-
---8<--
-
-[artists's impression]
-
-# cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
- 	mbm_cntr_generic
- 	[mbm_cntr_assign]
- 	default
-
-# echo mbm_cntr_generic >/sys/fs/resctrl/info/L3_MON/mbm_assign_mode
-# echo '//0=01;1=23' >/sys/fs/resctrl/info/L3_MON/mbm_assign_control
-# echo t >/sys/fs/resctrl/info/L3_MON/mbm_counter0_bytes_type 
-# echo l >/sys/fs/resctrl/info/L3_MON/mbm_counter1_bytes_type 
-# echo t >/sys/fs/resctrl/info/L3_MON/mbm_counter2_bytes_type 
-# echo l >/sys/fs/resctrl/info/L3_MON/mbm_counter3_bytes_type 
-
-...
-
-# cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_counter1_bytes
-
-etc.
-
--->8--
-
-Any thoughts on this, Peter?
-
-[...]
-
-Cheers
----Dave
 
