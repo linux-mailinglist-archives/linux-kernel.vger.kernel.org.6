@@ -1,85 +1,79 @@
-Return-Path: <linux-kernel+bounces-510905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 735CAA32376
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:27:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0981A3237A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:28:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F3E3A4A89
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:26:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F2E163BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E56F2080EB;
-	Wed, 12 Feb 2025 10:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UlozL8XL"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E21A208962;
+	Wed, 12 Feb 2025 10:28:42 +0000 (UTC)
+Received: from bsdbackstore.eu (128-116-240-228.dyn.eolo.it [128.116.240.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0C71E500C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4BF207A2C;
+	Wed, 12 Feb 2025 10:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.116.240.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739356019; cv=none; b=Isa1bj9YudpKphQbgONmwCohasUwuJhIM505yPo4y47tjA9/0kXlyCBBqN1R5nRN+4yLt8hqVVWhqWy54hiGxm9fqtmeBpVQeQx65XtTTMNxzHdgI7++WUEZ45YCsnIxLL4pgTXvNhKcWMOJz52yZ6iWluJg4p3ixT3Q1ERG5i0=
+	t=1739356121; cv=none; b=i7GcD2BD89co7A9GSLKUsNsbhF99U543tXSEt4NJry1VrIJlXMucfjbFEum4+LkJPiGGw4+kH4IO7x49pBhrT1N7vD4QICopYoCj+c9nxCP5VkuVCHjjYl8eLv6AS7paEe9b5vcz7qgW57SFSFuy8g08dc0DTstN+Z4WfNnvq0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739356019; c=relaxed/simple;
-	bh=oi7lV/lrHT+EHF4OxEPCf+t4jtrbHvMpeUS9/w8MW9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mkWBBy1GopUnMbNdvaMEExCPldsqtOBfbuDHjR+HJibQaEzVql551VLqmE2V8hoNdemYiARieUfR3KmbjkHSWLCf0KNAh5L0wZ2RgHBHl7c8lQNknW7+WJ4+MqXZ5EM3mKHiaJtDq6mY1JapnMNVNRhYdXOqWeWmRTMs2oSNElY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UlozL8XL; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739356005;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hR+XlzJzGTiqSgbWiAdN0TiNYvqq5BOnYBxudITTpnY=;
-	b=UlozL8XL8bSRS0HEYxRsipM/hOx93t2pPf9FkFvd11a+LhwTy44t19ZnmimY8TQKY2SNo8
-	Y54nSQJ+1FZfAcEIG9YQea8ac8mfRkSzhNYiyM9Rs6JZ0A/8uSTSbNl5rIcgvDvvSKeOWk
-	A+bsl/1hXiYBpIKd1MBbwQb1jAiQ+Ek=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sbus: envctrl: Fix typo in comment
-Date: Wed, 12 Feb 2025 11:26:17 +0100
-Message-ID: <20250212102621.2741-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1739356121; c=relaxed/simple;
+	bh=mVjnLn9E3sfJKDIcyN7wAZ/FXjiM8y8O7MiQKQj5kCw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=djIu6mqyWF3sXDqrsTcqC8Rn9PbxAm2Sa8O9oaWFdhDBec8FxshRyglL6avnEsUpCCttfB5+WcjcFBvGu6Kk8hK9zLj4j8UuShtisTolmSTXgauBLiVK/+h8CWceY/h9zNCDzBXQQoTlVhiWVG6PAMGyxVTDfDqnp/sL9o+9f9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdbackstore.eu; spf=pass smtp.mailfrom=bsdbackstore.eu; arc=none smtp.client-ip=128.116.240.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdbackstore.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsdbackstore.eu
+Received: from localhost (25.205.forpsi.net [80.211.205.25])
+	by bsdbackstore.eu (OpenSMTPD) with ESMTPSA id e97734e8 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 12 Feb 2025 11:28:36 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 12 Feb 2025 11:28:34 +0100
+Message-Id: <D7QEA7XPBML4.1R0M64OD4BH43@bsdbackstore.eu>
+From: "Maurizio Lombardi" <mlombard@bsdbackstore.eu>
+To: "zhang.guanghui@cestc.cn" <zhang.guanghui@cestc.cn>, "chunguang.xu"
+ <chunguang.xu@shopee.com>
+Cc: "mgurtovoy" <mgurtovoy@nvidia.com>, "sagi" <sagi@grimberg.me>, "kbusch"
+ <kbusch@kernel.org>, "sashal" <sashal@kernel.org>, "linux-kernel"
+ <linux-kernel@vger.kernel.org>, "linux-nvme"
+ <linux-nvme@lists.infradead.org>, "linux-block"
+ <linux-block@vger.kernel.org>
+Subject: Re: nvme-tcp: fix a possible UAF when failing to send request
+X-Mailer: aerc
+References: <2025021015413817916143@cestc.cn>
+ <D7OOGIOAJRUH.9LOJ3X4IUKQV@bsdbackstore.eu>
+ <3f1f7ec3-cb49-4d66-b2b0-57276a6c62f0@nvidia.com>
+ <D7OWXONOUZ1Y.19KIRCQDVRTKN@bsdbackstore.eu>
+ <CAAO4dAWdsMjYMp9jdWXd_48aG0mTtVpRONqjJJ1scnc773tHzg@mail.gmail.com>
+ <202502111604342976121@cestc.cn>
+ <D7QBDBZMZTCI.1W40WVL5JJ3O7@bsdbackstore.eu>
+ <D7QC8AQ7J89A.32TNPSFWV1VNX@bsdbackstore.eu>
+ <202502121747455267343@cestc.cn>
+In-Reply-To: <202502121747455267343@cestc.cn>
 
-s/disinguish/distinguish/
+On Wed Feb 12, 2025 at 10:47 AM CET, zhang.guanghui@cestc.cn wrote:
+> =C2=A0=C2=A0=C2=A0=C2=A0Hi, Thanks.
+> =C2=A0=C2=A0=C2=A0=C2=A0I will test this patch, but I am worried whether =
+it will affect the performance.
+> Should we also consider null pointer protection?
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/sbus/char/envctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, it will likely affect the performance, just check if it works.
 
-diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
-index 81918aa67109..69e49da93b8b 100644
---- a/drivers/sbus/char/envctrl.c
-+++ b/drivers/sbus/char/envctrl.c
-@@ -734,7 +734,7 @@ static void envctrl_set_mon(struct i2c_child_t *pchild,
- {
- 	/* Firmware only has temperature type.  It does not distinguish
- 	 * different kinds of temperatures.  We use channel description
--	 * to disinguish them.
-+	 * to distinguish them.
- 	 */
- 	if (!(strcmp(chnl_desc,"temp,cpu")) ||
- 	    !(strcmp(chnl_desc,"temp,cpu0")) ||
--- 
-2.48.1
+Probably it could be optimized by just protecting
+nvme_tcp_fail_request(), which AFAICT is the only function in the
+nvme_tcp_try_send() code that calls nvme_complete_rq().
+
+Maurizio
 
 
