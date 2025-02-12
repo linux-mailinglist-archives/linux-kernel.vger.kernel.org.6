@@ -1,143 +1,95 @@
-Return-Path: <linux-kernel+bounces-510408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDCCA31C6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:58:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856D3A31C70
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:59:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6310B3A6DEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:58:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30502166C07
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C617F1D88B4;
-	Wed, 12 Feb 2025 02:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYaBA3Sf"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F041D79A0;
+	Wed, 12 Feb 2025 02:59:14 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5751D47AD;
-	Wed, 12 Feb 2025 02:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0A215383A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739329097; cv=none; b=uMi2jNaVNia4hq0IZm42dhYBd79zipAE/at5vkUfc2H2SimS40ApG7Tpex8xVvnpZCGL/wq9Am2FYvJboOlN3y3O3/6EMmyjMS3mkRUk7bPZZ65Cy3BCtqz+A9kXSsB/khbBjbdivULZ++zfqpfeIjFD+d1nqQJNcnPtLgVOlGQ=
+	t=1739329154; cv=none; b=c4NCFf1PEVUBcL4Fxo6HF9haor1g4X6VH67S7zPM+BzbPWx/x/V1+ZQ9moOU7MdPUM3aCPMRbDz24C+euwCMFUlGMSMEgyN6CIn51us/YqZPaGX9q7iMfK3hU0MOjKfnl5vbRXoEL4DeUfrtw09uZLDQ79D242hbXdPTgwvxMZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739329097; c=relaxed/simple;
-	bh=dpHXdTTTzOTlYDNw+0rMw4yjpufMEd7BmBsMD427saM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s0Nf6qSF1WvW4cnsJVt5TwA9W7SlJr1HRelRd7yU3zD2As7ICGxv8/iGoxsgH8k/og9/uJkBhFJVPoQCzs6ITGdWxzG0vJr2hWQzaXFAnlWtRyTFNsVKlyuu6DI+IFzAJeinJt8pR5kyq9uJTxY2EdUWPnBZLAvkaXcJuIDrWjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYaBA3Sf; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6fb0de4ecd4so14699287b3.3;
-        Tue, 11 Feb 2025 18:58:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739329094; x=1739933894; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ghF3Hq1lteYIWO1zRuLq/VRrfWBkqaOQHyBkZfebU1k=;
-        b=bYaBA3SfNjtGL9gkcmrtv4CBpdXg1cI0fIqfp30Hb2qo3q56P0TL1ZBigaza352i4d
-         W9zfdilbqrRgsUP01tUO97Vai0d0kIw/z48KYqXQg0ACrlBBG97YbOw7u4GQBMAIWSWz
-         hdRZ2yDNojYagyFp3q4l6FgF1c36pz6fcfEEOgK7fDFtUT+S9OnJUmHabtyG/U2NCVmh
-         vtTprTFqDyGg2xumfxYYkuN12YAjFRaT0AIea+PiYW7h1kobPjdQLLzM2P85+7Wzm/vd
-         mxZJjl9cgVlBuE8nkyurZ2aYIhACLiGw3LDS1HuGvH3lsqd9JjcWKCAtiOfqaeUaduXH
-         E8eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739329094; x=1739933894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ghF3Hq1lteYIWO1zRuLq/VRrfWBkqaOQHyBkZfebU1k=;
-        b=DYpX0gQ/JVeBjWj3ex1qvJbgVYkfvNLjxn5LvtYHnD+KJNrh6XN+Ix9QH8qJK1Ga1o
-         DOQ2uOZD83lu23+LHRsENIDXrrmYxpsDEJBM7dC9LdoMn8JEMTSfdQpeon4OoMRwYZ8W
-         lfPFIAFm02R6Iuwdwj/QbU7rDjpJNXIeeDgikoweygNSQC7lmG5lP8skP3P4rEubwsSb
-         JX0fnqnnExSFbYdD+LtUdtESqV+7VGZ8cnBSiKJmKFB1uQs3RAO0i/NvpiCqPtXSSVBl
-         utgWLdZsP+AoUF2MFYhad6vT+fJ3zucQMxewBeioNq1kNWPmZjUm/EpX91cgojb2MR6U
-         avrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEnkqKcPZ/N7yVEuQ+BNBfKu8QHpqdUnrQpcM/2uydJ6c5GuciVjEJLeinRQLsCNd6NzfYQbF3fkE=@vger.kernel.org, AJvYcCUyyQS/62mVfRls6sDQEIfyRxBIlMHljLeKI4gGflMMR0qLkql5YRfa/aCwj93cV1/jE5NBhzh2TMGLP8g=@vger.kernel.org, AJvYcCV4t6hW0RhRKFoV+bD4ri5oY3xsXVyaAeScqBAZRu9VfZwHopWgWkSOBeHPzQ1ZjXDh48xDBqCwVuUC@vger.kernel.org, AJvYcCVo57m2V7pmaEuhUIwqGWH+zVfmE1ixZxTkd5n5LaIWJvrDCypJo99c85/HM0pz6L8FzNLvhtfBGYt2@vger.kernel.org, AJvYcCVzy9RE4ltqfxzw7AbCOFAoBCmp2ssFeN2zRZtePhOKhdMk3bLona2jJHKwbF2Q6g6XninIUuBo0NxW@vger.kernel.org, AJvYcCWL0wYwokgjebxTwdRyXcIDAIYPIh08dfhXMfXdVZREFWl2uTx7fyH09jFHi94Ne1zw21fdAa8Yi4A7PK9f@vger.kernel.org, AJvYcCWs+sAsShu0dZnWBW9lwte2zKkvqYGiJwjhBtsju+waW3YrHX751yRcnvEW8Qg4zI43cRmVbrtxHZhoNw==@vger.kernel.org, AJvYcCX1vcRxBZdoj377Ct+t3DdQU/iNgN/4P8HYyTv0X6XF0i2YkfuIjl4Cm8PjlF/No0cTcAUVsJoHITPAts/+nLs=@vger.kernel.org, AJvYcCXG0O1emb2i9wsyoo8CzHLaefzT3K1DuEQqmcl5ArtSAx6CFg2e8lVtaee0nUF9mlIl2d8U4sGM@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe0WMxqoAgdtlo3+VCCO6rvbxwyW6t1Y3ljTtUXug9/Et+GK6b
-	1wRa4j9vpudkKdqY2wDb87feFayyod6e3PTCY3kH+bTAvKkjuUs+4/07M5n6zkG5pkcWmBwSzD+
-	eP5IkFmZPJH2fj6RWef+TbCKrhkE=
-X-Gm-Gg: ASbGnctdB/qLYFGbrcVAXjw3hfl5EgTxvMWFwAvBmQFCOfnmPuazzwNHwdRf0ahZwvf
-	j6/aJq5AoreWZYwPxyxFp3JVFZsqAhAFWQvMGnTYO2a29B63cJWf4WszJljFmtT9VXO9xniWe2c
-	AmmAhqdEXQpLMBYWGzM/2Ba1dAEdg+Z5E=
-X-Google-Smtp-Source: AGHT+IFKY9my2Mv2OyawicWmvsTiPPrg1FpdmnOOVsezjy/oHTQdlNbpQ9V/afgOZCXiHY1UWHQDp4ZlhYp2zbadPiA=
-X-Received: by 2002:a05:690c:892:b0:6ef:7370:96ee with SMTP id
- 00721157ae682-6fb21b00513mr11775887b3.12.1739329094572; Tue, 11 Feb 2025
- 18:58:14 -0800 (PST)
+	s=arc-20240116; t=1739329154; c=relaxed/simple;
+	bh=aV2zxs1DuXLn0uXmKEXW6ei0/UBj7F6dHgJy8bNrhPE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OW+4g3GYqA2HZPPZ1MbUIbgtLjCHikQalDF4xeA9vGnDTq2jmtPO7R8yHgo3xiV5Yz//8HaCG5eZlUT4E3+3tokYKeH1jXKXGa6sVs20dos8/WqJNR5UVyoh/HARu+JvBsuaaAblKdy10QwaqVdtMqX428w2YtIGoJbxEpvB5hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 4dcbfcc2e8ed11efa216b1d71e6e1362-20250212
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, DN_TRUSTED, SRC_TRUSTED, SA_TRUSTED, SA_EXISTED
+	SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
+	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
+	ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:4a1a4eba-68ca-4d38-bcc7-1e9b35235e0a,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:5
+X-CID-INFO: VERSION:1.1.45,REQID:4a1a4eba-68ca-4d38-bcc7-1e9b35235e0a,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:5
+X-CID-META: VersionHash:6493067,CLOUDID:d0f04b039f54a4c60a986d9a7cf6b178,BulkI
+	D:250212104650ZOX81WIR,BulkQuantity:2,Recheck:0,SF:17|19|25|38|45|66|78|10
+	2,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:41,QS:nil,BE
+	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 4dcbfcc2e8ed11efa216b1d71e6e1362-20250212
+X-User: liuye@kylinos.cn
+Received: from localhost.localdomain [(223.70.253.31)] by mailgw.kylinos.cn
+	(envelope-from <liuye@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 789715939; Wed, 12 Feb 2025 10:58:58 +0800
+From: Liu Ye <liuye@kylinos.cn>
+To: brauner@kernel.org,
+	dhowells@redhat.com,
+	akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Liu Ye <liuye@kylinos.cn>
+Subject: [PATCH 0/2] mm: Optimize folio_order.
+Date: Wed, 12 Feb 2025 10:58:41 +0800
+Message-Id: <20250212025843.80283-1-liuye@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250207074502.1055111-1-a0282524688@gmail.com>
- <20250207074502.1055111-5-a0282524688@gmail.com> <20250207-savvy-beaver-of-culture-45698d-mkl@pengutronix.de>
- <9a3f1242-794e-41f1-80a5-bc6d18ff6641@wanadoo.fr>
-In-Reply-To: <9a3f1242-794e-41f1-80a5-bc6d18ff6641@wanadoo.fr>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Wed, 12 Feb 2025 10:58:02 +0800
-X-Gm-Features: AWEUYZl54-xZLEN8OeOBxenzu1HA2sNuQj1p9av_bN6w1NsNLHVF_aDMJX4KeNI
-Message-ID: <CAOoeyxWF-B90NyinEQVzpU1hqGewGR-29+Q+1ADe_W8r7y5oQw@mail.gmail.com>
-Subject: Re: [PATCH v7 4/7] can: Add Nuvoton NCT6694 CANFD support
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, tmyu0@nuvoton.com, lee@kernel.org, 
-	linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Dear Vincent,
+Patches about folio_order.
+1. Delete __folio_order and use folio_order directly.
+2. Write folio->_flags_1 & 0xff as a macro definition.
 
-Thank you for reviewing,
-this part is as Marc mentioned.
+Liu Ye (2):
+  mm/folio_queue: Delete __folio_order and use folio_order directly
+  mm/mm.h: Write folio->_flags_1 & 0xff as a macro definition
 
+ include/linux/folio_queue.h | 12 +++---------
+ include/linux/mm.h          | 10 ++++++----
+ 2 files changed, 9 insertions(+), 13 deletions(-)
 
-Best regards,
-Ming
+-- 
+2.25.1
 
-Vincent Mailhol <mailhol.vincent@wanadoo.fr> =E6=96=BC 2025=E5=B9=B42=E6=9C=
-=887=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8811:01=E5=AF=AB=E9=81=93=
-=EF=BC=9A
->
-> On 07/02/2025 at 21:15, Marc Kleine-Budde wrote:
-> > On 07.02.2025 15:44:59, Ming Yu wrote:
->
-> (...)
->
-> >> +static netdev_tx_t nct6694_can_start_xmit(struct sk_buff *skb,
-> >> +                                      struct net_device *ndev)
-> >> +{
-> >> +    struct nct6694_can_priv *priv =3D netdev_priv(ndev);
-> >> +
-> >> +    if (can_dev_dropped_skb(ndev, skb))
-> >> +            return NETDEV_TX_OK;
-> >> +
-> >> +    netif_stop_queue(ndev);
-> >> +    can_put_echo_skb(skb, ndev, 0, 0);
-> >> +    queue_work(priv->wq, &priv->tx_work);
->
-> What is the reason to use a work queue here? xmit() is not a hard IRQ.
-> Also, the other USB CAN devices just directly send the USB message in
-> their xmit() without the need to rely on such worker.
->
-> Sorry if this was discussed in the past, I can not remember if this
-> question has already been raised.
->
-> >> +    return NETDEV_TX_OK;
-> >> +}
->
-> (...)
->
-> Yours sincerely,
-> Vincent Mailhol
->
 
