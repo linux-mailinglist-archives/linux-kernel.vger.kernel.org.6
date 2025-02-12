@@ -1,147 +1,122 @@
-Return-Path: <linux-kernel+bounces-511246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14F7A32849
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:21:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F04AA3284A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B6731888615
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3463A4D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201802101AB;
-	Wed, 12 Feb 2025 14:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF6320FAB3;
+	Wed, 12 Feb 2025 14:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C52sCF2i"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RvHdBGE7"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E87D20FA96;
-	Wed, 12 Feb 2025 14:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC5620ADE6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739370059; cv=none; b=sgnoPhhja8SPX3ZWjI5rsbkh+85b4D0CuUwEVTD7/wSTbme+UbtjqWxmpGjpLQNBG0zYQBDTSZjS6Wl92ezR8dsZIw9UphsyYFHna2LkQRqckKEotnuOWWB6MVY+O8wTQ/PtR6CRxkYGdt/c9aUCIL2c0Ntj1GEOLx+zAOoopVY=
+	t=1739370104; cv=none; b=evE7aaP8/1HhP3faLx6KVM0Zo1I5HfrTsvJ193L5mahmHhRuNtwi+3F0mNdldPwVFv8MRtKw+hpFzLMy11Ae4YtODh5dkoCYenQ68+SHbkmE6Zs++vh1o0LrYi3x0dbcFl6ii46ncFD/rq/1CQJ9jJuTzrkblWyHsKDgHIOWcio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739370059; c=relaxed/simple;
-	bh=PJPEdDn9ZCHCG+ipb6fYobAgNP+dJ76WARrj4izsSMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m4RPCV73QBBkiD+0zglr4e8kcNucCuJF19ZIh/ROc5vjr05X5Btg4eZvm9msNTJjCCTy14pUnxDTnQim8A69Y7ZnGPdRXzf1WzewNWC/CmVMlqk6vO1IpJfWZwitSkx075QoAfHPr7ImhHRX6WkZDm/xkacXygb98c2QIOekRN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C52sCF2i; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21f7f03d856so73273325ad.1;
-        Wed, 12 Feb 2025 06:20:57 -0800 (PST)
+	s=arc-20240116; t=1739370104; c=relaxed/simple;
+	bh=1xluZ/xn+znRDhXdajWvxqNWi62xirMRzK0zofqFzK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h4GT8f9MO/iyk72JlADpRveWpCHexmBUXr2I3sQWl+ql7QeRWlhTxqkPH6tlmf1VTvu1Roed+FmXIfIuc5Hg/KfoP8HFluLTea+6hGAez8lelTh2+floxGAdnFrBGzLYcC8WWot15Kb+KA5crD621bGwyNQUSFdMs43k/mMCNAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RvHdBGE7; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38dc9eba8a1so4519903f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:21:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739370057; x=1739974857; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jaIYJxkfq1FpQvIWfelFCHR6bgEv7q45G9WBNdGRrEU=;
-        b=C52sCF2ixlr7vEtt2T2GR69+mJTK2Y8fI6eEGpP4yMoLuA9xi6v3uJstRIQk9ezu7r
-         Gcif16ZhMpbW2Qxaj93/o+c+hNrtneXz3d8GisvsyNkU+Fi8f8sxgeIGMtCbpsud3WaQ
-         q5T+hFGPeKhjYMAlikXHw89gYdSv8kVcvsgp0nel6CLgDaWZMhjHib9JKWVpqdhCDjf9
-         WbnxBsX/BM7GpWeCToN1HrHG/a7VXjPD9/i6zIt76xjLOmSgsmWo9BAFAEWRh9OyCzi6
-         jPSsi2+q4ycfxhiOhVUozU68n9l5EvUjUhX4N4LKdum40gC9Ad6hSZfbVm/CY/YfOynh
-         rsPw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739370101; x=1739974901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o7XFcJrR0jVxIOhGAlDRu0SUXNyGMm70VS4UkzK/e5A=;
+        b=RvHdBGE7SIqjWw+rsPcB9Qo9bWG9+V4aFH/m/XuydBk3lLhcSNpY1Ege6hrBKi/CRx
+         r6ED8AXNrAXUA+SK+sNOJzoab8G5Mb8TDbtQjwdAr1tlc2SL3pEaMtg2vWx0l8Y2jLJt
+         qtnUb5RHYYo1HXh/zJPHVcsN/os9AqtJWpk8VU5reardknI4hndMYw5IRB9in1jne5K0
+         +ZB607AJNlpeBC8qEKQEQhlDmox7X/tY/y9jsPnl/iXMuzUSKrKU+zsv68OoOCiLkPmw
+         HvvmivxAkMnFJ5rUtRyPYFuxr9ryno2VneoWbEp3I8vILAL27eLGywaig3XrFr6hqU3a
+         iFTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739370057; x=1739974857;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jaIYJxkfq1FpQvIWfelFCHR6bgEv7q45G9WBNdGRrEU=;
-        b=oPOy5W4ekeBvri+QV7IC+UXZU7Kg80pHV/vLZzIDjrwJ24XOSLgPwakpVf4nZ9N3S5
-         BI6VH8QMLRcnWSLV/lRcxI81nkhzGKAa194HMWXotBKy3OERs1ICZp4Myd6QFpPExaB8
-         zZ34PgjSSnMkP0+5LZtUbH1Bf0OZelJn3bYxDyuI3iGnDu+nAC+9nZSQWfLHzm37EwTT
-         7/fMc2XoZ9ei0fN4r0itmewXMH3RhLGBeayBle9s6hOT6eQt+2BdPVL00MGhwKzEDXAE
-         z497EkJdIMdy6zIr/suEfjzzowv70+rS8sszm3RuSHWkT7mD2H9eMYAJMnoLdhpfPfZS
-         fzig==
-X-Forwarded-Encrypted: i=1; AJvYcCVh8aYCNXfClpglqRaZOkAPLqp563NIdLpvq4W87kmpkq93ddIP5vler3fbbenhi+upyEk0xql9PxKyDG/myTQ=@vger.kernel.org, AJvYcCXBuoK8QLtaON7vO9lyeNxrZXrhsfiSDmG40GJFMDUQmiywW/RVHczG+P1T0M6LuYjOf7ngcTooLSAe6324@vger.kernel.org
-X-Gm-Message-State: AOJu0YwalvpHa7HhFeb7ywCGryHZN1ZSRa4/aBMxbmRoICrQGFtWb6Qm
-	muvLk7Pgqv4jR8HuahxXHXJJ95aDTTgDHzTCLnA0cQX2uzx82z6k
-X-Gm-Gg: ASbGncvT5QmK61g7TAKxsemKPMpvrv0sbMkP61fGK2SRoHuY02twg0HU0vqieHR89fI
-	DWlCNaEp4SN8XrrVEfSv2f3FsYTYFyqNFpZOJoY7lnI6EeMhUXciEwMh+MLhqK4yu2Y3PVybTGs
-	WF5XISGlDVDxt8A/2j5EEV1zTLHR0Q5FZljIGx3A8YaJD8GOctoDRkOwRDoVNa+paSKCYVB72lO
-	SEXsLe9fMn6XY+syHMV9jwiE3PZXTYJ0G1TZ1ATiJi2LKm6kALNoqQ8qqHRTMFGOPX4YBL3Iv8m
-	mkBCmA==
-X-Google-Smtp-Source: AGHT+IELAEQ3Su7Uqr4OcDRN0pXjfLjCy12n0YoT9VXRC5Czs6XS2YZHik4XXoqANjmviTX4+vCgMg==
-X-Received: by 2002:a05:6a20:9145:b0:1e0:ae58:2945 with SMTP id adf61e73a8af0-1ee5c822982mr6803627637.31.1739370056948;
-        Wed, 12 Feb 2025 06:20:56 -0800 (PST)
-Received: from fedora ([1.245.180.67])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73048e20c32sm11487073b3a.170.2025.02.12.06.20.52
+        d=1e100.net; s=20230601; t=1739370101; x=1739974901;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o7XFcJrR0jVxIOhGAlDRu0SUXNyGMm70VS4UkzK/e5A=;
+        b=l/fO07fzdUSU6iWrdOpDQXNwAHBev897m+p5Iym+HuMBSbLqWOZ1/24WK7VCAYWrD6
+         MkTNOWplCsYSyBHcnOxXlWduJLCY+EmLW1wwYAOoGW91sBgvUMFnmX7hAQuJfxpJdrL9
+         0gOUbWSBoc65W/4TMNS6Se1YAhq52YDrwLmbXF8G4lwZyPKjDfAZE///312+z+xeRoFn
+         o8Rqz+n+bbrpSMKUZH85R5AwfkwFqkYat36m4KmZuKOuvTI8iIuST7qm2VdijZizKWy3
+         d+Bd3xgN7ndvIpR1IfVJsfQz4vLdh5mFRIUcbxqCP74y8s9jbc2SxSdjuOm1NRNC3Iju
+         5+cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9NBr7arQL84B4di1CL2ZuuaJ3fRB6pVYJEwXIpzp/4X7bmPifdMtZRGnk0CHDAEnQ3kYAuAXFcJFyzCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTo3X7RNWgd1lrAGc6SRrn7qnXKDP+HW156UktXpR5nhNKyMUK
+	hjIJzvD6B+D8/lsMNOFRzM3TKP6aldlt/JbEOu0BXccun9IqAqKoNQz1WtQO9Rk=
+X-Gm-Gg: ASbGncvrtDV2tHXnro1srwEUcwF/yn5wnin61v5TzBVBL8Y9y8VOJ0LWpNnF5yxjd5g
+	VdlybuQI8oQzqQwJR9x3+jjTLHNkDTAMtx1gXYQdnv8cEPOtYdQpg/wADvHDaDKjdkIifS1eJzu
+	rHjLxtKftIHe+TP6dT/pCZnkSmwxdooV3yPkuKKoFkCvWvUnVuCBqprx4PPgSzK7pDqG3JKgYRQ
+	ehSVnbXJHfkc+5Mx2ZIYhN/PHU3WU73tb8ZuIGpW51raIO6Z/l4YAXomgRrdgvsatiR8qax2Y37
+	KNxxn8wLf1RX/JE=
+X-Google-Smtp-Source: AGHT+IEUSlN9z8qlAkN8JoTBKW8p1CRSividrqsvgF0DeDdGA0bzCj1hm2FB/XOp81aha1n//r6Yrw==
+X-Received: by 2002:adf:eb83:0:b0:38d:d9bd:1897 with SMTP id ffacd0b85a97d-38dea271f65mr2421120f8f.22.1739370101302;
+        Wed, 12 Feb 2025 06:21:41 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:521c:13af:4882:344c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a071157sm20938305e9.27.2025.02.12.06.21.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 06:20:56 -0800 (PST)
-Date: Wed, 12 Feb 2025 23:20:48 +0900
-From: Harry Yoo <42.hyeyoo@gmail.com>
-To: GONG Ruiqi <gongruiqi1@huawei.com>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Kees Cook <kees@kernel.org>,
-	Tamas Koczka <poprdi@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-mm@kvack.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] Refine kmalloc caches randomization in kvmalloc
-Message-ID: <Z6yuQEYJbmWi8z23@fedora>
-References: <20250212081505.2025320-1-gongruiqi1@huawei.com>
+        Wed, 12 Feb 2025 06:21:41 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: (subset) [PATCH v2 0/3] gpiolib: refactor for_each_hwgpio()
+Date: Wed, 12 Feb 2025 15:21:39 +0100
+Message-ID: <173937006403.31129.5577338516228495218.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250207151149.2119765-1-andriy.shevchenko@linux.intel.com>
+References: <20250207151149.2119765-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250212081505.2025320-1-gongruiqi1@huawei.com>
 
-On Wed, Feb 12, 2025 at 04:15:03PM +0800, GONG Ruiqi wrote:
-> Hi,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Fri, 07 Feb 2025 17:07:33 +0200, Andy Shevchenko wrote:
+> Some of the for_each_*() macros use the very similar piece of code
+> that may be deduplicated (by introducing a new helper macro in patch 1).
+> On top of that the implementation of the low-level for_each_hwgpio_in_range()
+> looks too verbose. Try to simplify it (patches 2 and 3).
 > 
-> v3:
->   - move all the way from kmalloc_gfp_adjust to kvrealloc_noprof into
->     mm/slub.c
->   - some rewording for commit logs
-> v2: https://lore.kernel.org/all/20250208014723.1514049-1-gongruiqi1@huawei.com/
->   - change the implementation as Vlastimil suggested
-> v1: https://lore.kernel.org/all/20250122074817.991060-1-gongruiqi1@huawei.com/
+> Changelog v2:
+> - added kernel-doc for a new helper (Bart)
+> - added two more patches
 > 
-> Tamás reported [1] that kmalloc cache randomization doesn't actually
-> work for those kmalloc invoked via kvmalloc. For more details, see the
-> commit log of patch 2.
-> 
-> The current solution requires a direct call from __kvmalloc_node_noprof
-> to __do_kmalloc_node, a static function in a different .c file. As
-> suggested by Vlastimil [2], it's achieved by simply moving
-> __kvmalloc_node_noprof from mm/util.c to mm/slub.c, together with some
-> other functions of the same family.
+> [...]
 
-Hi, GONG!
-Sorry for my late review.
+I applied patches 1 and 2. Please revisit 3/3 in order to not duplicate
+the for_each_if() macro.
 
-This patch series looks good to me (with a nit),
-Reviewed-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+[1/3] gpiolib: Deduplicate some code in for_each_requested_gpio_in_range()
+      commit: 8893516000b247f91fa2cef34f2a77b609e661a4
+[2/3] gpiolib: Simplify implementation of for_each_hwgpio_in_range()
+      commit: 767412f092fc6e04147305acd70f15770ece47ec
 
-Also, I verified that the problem you described exists on slab/for-next,
-and the patch series fixes the problem. Please feel free to add,
-Tested-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-
-nit: Does it make sense to call __kvmalloc_node_track_caller_noprof()
-instead of __do_kmalloc_node() to avoid bloating the code size?
-
-My simple build test says it saves 1592 bytes:
-  $ ./scripts/bloat-o-meter slub.o.before slub.o.after
-  add/remove: 0/1 grow/shrink: 0/1 up/down: 0/-1592 (-1592)
-  Function                                     old     new   delta
-  __kvmalloc_node_noprof.cold                   39       -     -39
-  __kvmalloc_node_noprof                      1755     202   -1553
-  Total: Before=79723, After=78131, chg -2.00%
-
-> Link: https://github.com/google/security-research/blob/908d59b573960dc0b90adda6f16f7017aca08609/pocs/linux/kernelctf/CVE-2024-27397_mitigation/docs/exploit.md?plain=1#L259 [1]
-> Link: https://lore.kernel.org/all/62044279-0c56-4185-97f7-7afac65ff449@suse.cz/ [2]
-
+Best regards,
 -- 
-Harry
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
