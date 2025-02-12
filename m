@@ -1,432 +1,250 @@
-Return-Path: <linux-kernel+bounces-510897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C899A3235A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:18:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02239A3235E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A594188793E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:19:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48C91887649
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283201F03CC;
-	Wed, 12 Feb 2025 10:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1826208978;
+	Wed, 12 Feb 2025 10:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7dv0/Vh"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/7EsF+O"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4887A1E500C;
-	Wed, 12 Feb 2025 10:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739355529; cv=none; b=BHe8uegBFTtOyfwcaclKSV0nXIsXSj1Qx6kV3AwD4nTl+anQ6/aJBJmI/lYPIIFYluWvvItU02aoOJu9Hl1etOLHRejGaH5zv7oWTxdq6xMaVQhe3RZ35OPVSsHo22RztrtWqZgpGm1cvg7IjGvRZcw1a30inDKIGtL6zJhVWUc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739355529; c=relaxed/simple;
-	bh=JQ3hUkVizyyC5PrH498KuKklwrEwcMwv0zzmt6N8YDU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=S9F56l0Tba+9HJFX4tq8Y3pN1coTZwEJUhJY2M0KMtNtNesO6p4J7/WBUu6iwa62wNKuoIMM+TqQoAYhmAiLhnAnAkvQ/ABrt1mTGqnoQV6IWXrUeDnGUDQPit3v4nGVvNlHomLclvwfsPZNe0+pCrKAhD5nj3mNyhvjn/bg+zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7dv0/Vh; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7ca64da5dso131076866b.0;
-        Wed, 12 Feb 2025 02:18:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739355525; x=1739960325; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WWVlua/ySHVMeIr/pzJ7+6ofC41BpQURgsGblrbr2lM=;
-        b=Z7dv0/Vh3Y9hL8RiD7yi65+z0MxHANtGCHxSNoomJEGkm2/a7WgoTird8+3U8IZnlV
-         i5NxhsIUNsT6tKK7tdqt47W4TV6rvfbejgQYemsITkPyzi8qxBSwTzX6uKhtMR4cma/o
-         WqDzMlrgTrNmQRlypIn9ExK0BFOerW3mKAAf8k26BS8Z6JikRt1TmAtbTSSfeIdgChbv
-         x9zjzpgPQTL8UYYPjwhlYfvEy7kmou+sCDjO9qzYWpPODXudsH+dsg+NKL5n+d3cX+k8
-         CASyPWn62J7fXbZ0k4JNVFNggTplAhwnpUaroDT9W9yn7eCDSJVs6Dut80gIgTokm36e
-         CvGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739355525; x=1739960325;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WWVlua/ySHVMeIr/pzJ7+6ofC41BpQURgsGblrbr2lM=;
-        b=n02vTlATn/FooeeEnq+MxtQXxRACo7mvEpUf8tVqAo3c33jDXreq/OG30R5OSF+q1U
-         pZaZuzi5/mqYswBcGHWPvfL8zI+HYoO641B1ygSbCa7HHy3nYY1q9ze6gzVIHE0ylx/B
-         OuHJ2w3g0P/O+aXZz/xj0bjiZ0imJcSCTxDnS9hNVXnKmUwLMPhplAC8CHesasnZFg//
-         Ak1I2zMgzJvV8o/6dUQHKfaWjcSlibiuAA69Rq0TTRL6AqEtbmy64a4vi8vVkzng0N7c
-         b9inaDYUYqJO44cyYSfqxFR6eJMFIYUM/P072dtlSK/VpdN1CPYm7jGaBdYUDORpd1A+
-         7MNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoLOp31FR+/Y3SSuUZIGK6N2c8EDikHSQCpyZI2e9OS5qcFLMC2jkQOBZXCyuBiDT7E5mDApBMoxYN@vger.kernel.org, AJvYcCUpqnvC7Pto/p2DNoUWSz6FPBeINyOJ1qBMaSeH7rHviD/LEdeg6lhDf7ZdhlqDQ8TGPj2SfugRZyHu@vger.kernel.org, AJvYcCVt9RFN9jmy7UgBKdDnO6qQu2pGUAk9yjK+IlQsmlEN+EkJXQfrf7F8oMImS5hHeqmlMS4wbo/b4/y4bKB+@vger.kernel.org, AJvYcCWpsdsXcTm0cuQ/Cv+dODdn40GEE2QYF5bCMvwZU+N6FXe07nJxblPezKyrlQwE7t+rqsi5MKoK40k=@vger.kernel.org, AJvYcCXelilkWfO7WB9NRq3xm2mizSY21hRWClFvJw0qenutbvt/qo+ySulyTQ1xkjd2NyDNomlcZM65n+2diQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcpdrdWPUcn8lSEqg7TAUKlpn9DgCPcEqgcr2PAEHzlcbQIpKN
-	Bur4WJSiKJE9IXT1jRHg3Np4EhWGiXmrcLCGfhj7JnW9GZhy/OVp
-X-Gm-Gg: ASbGnctD/xrwzfjlLKWZniWmMJlgSy+f5oUgvC35jQS6/b3yvZm9iPdr0EBgIVUdkll
-	0CIMQfyCBQe9YJCOsVygHiyTnjZam6JYPG7NqosW/0pTdRLi0MsB++zAOXwEl+85I30Dp2KFccX
-	ViPBZDgUt9EVfuY/LWLHAmCM07Gv3WsNztr+a0K7pFHv49OL0mMvom8ytJq1uPS6hgvrkEGkuVh
-	WAqZjuL+hLcHTO0uA/ooU5n3z11+rYNcDUm0fKslxiycadiyGc8aXO8lVv28IftCj/AbEx7apc4
-	d6VlXoahFe+lbgq733n+zEqwS6Mvhc005uXmyVDSbfCarLnQS/UBsA==
-X-Google-Smtp-Source: AGHT+IHXhHYBhp/jwxugJOxSy8fbHAg4RaSJF+XHK6rh7pamhtjknOPXD7Wlf+ulQuEN06XXx7/uPg==
-X-Received: by 2002:a17:907:2cc5:b0:ab7:d1d0:1a84 with SMTP id a640c23a62f3a-ab7f2e8a301mr221194166b.4.1739355525335;
-        Wed, 12 Feb 2025 02:18:45 -0800 (PST)
-Received: from smtpclient.apple (185.174.17.62.zt.hu. [185.174.17.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7d6acd8f1sm381126966b.50.2025.02.12.02.18.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Feb 2025 02:18:44 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34B82080EB;
+	Wed, 12 Feb 2025 10:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739355556; cv=fail; b=Or1g2r+EVCnCWFYIGORAoRE/uCQIeuFgAZKHzSgpezmJwzQc4i1J105iM4Irmgsj+q2Ggi5PSFJIqwvUyOQDTj1WnmRrQBQTehdKBq209CiumjEeXN7OrgJC396Kxc6SgfjzxqDQk5xQINMIdth81VOb9GoN4LZOt95gdJBgLHM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739355556; c=relaxed/simple;
+	bh=JJB8GSlg8NI4OH0erF48OMXMDt4FSW1Sferz/MXwmBg=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PUAgEP/SGenFVeXiEKfFEmbvK7aJHgd6B4nYTWJ/iuEVeHgEr2PKX4lezQ1+0lan5tATLGxoozrb8Y50Th68I1xjlIz4j/8XKytaYR8vqXLjSjt9/+wFljYt6vCxoLX7UuRvWTOkox70zQT7Urpi1LQ4zZVtIqMFdqooz7wWqRc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/7EsF+O; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739355556; x=1770891556;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=JJB8GSlg8NI4OH0erF48OMXMDt4FSW1Sferz/MXwmBg=;
+  b=N/7EsF+OFb34gxUYc/jL7PUu8VeAtLBCbLE23/mHjrL2bq8v0Y5qB6Wa
+   0FVME87CiKYX6hsjRecSngMwr7WH4ZA7ncUFBD1k+ItqFqKyIOjnPkfyB
+   XjQk+SXWINMGPxyPitrg3y5fS3AHLan43UNOGlQ1ndjPjvWUGFIzfT4L/
+   t9M9fcsByzTizpEm5r6whVne9znDFoUsYf32MLUebWO34o+xj6iHhj8rD
+   C/4AGHZxGuxcFBZA2s3zlIHD82yq+X2QqpRkNiqQ8IfRROuvU3ACFN6wo
+   UMHhSnatnY3nBPtr+saJGQD3svmoe/OVAtOZm9mPAFDz9uypvnu0lmis7
+   A==;
+X-CSE-ConnectionGUID: bIY/GDWRQmqbvhIVGGgRgg==
+X-CSE-MsgGUID: 546tQ6/cQgyitasUe72UOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39866277"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="39866277"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:19:15 -0800
+X-CSE-ConnectionGUID: 5F0IMtVYSzK5DsCSxp0gWg==
+X-CSE-MsgGUID: ZERL/6yOSGqfeC2e85kmRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="143631978"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:19:14 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Wed, 12 Feb 2025 02:19:14 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Wed, 12 Feb 2025 02:19:14 -0800
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.42) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 12 Feb 2025 02:19:11 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MKUN0YEB4nbrIoKVCvOLMJmP+/LzM14QDYr6yR8tg+7/epV2y6rvdaYy6eC1Logk6zM2S9qc0gqHm19jibRkXtWC6fe5T6/ZefgPCbOr+wBL7kUWp0UPn8exRO8227KigQRbbwhfmbl6LijBn7izVzrbViYcBJdBnu/OAA/vUL1izPZIjfFat5gevX6P2N0zL3lPBdqIVijI7qo2FfBcO1bg5sn7P2G4/SGVVQ7Zx4dS9aevQSkSSN+kbIwQbqDzuE0pLtGkXoyiSBlgYIk12i2yAfnMdPdktq8aI34/mJY5eAtqnaxgfW2rskSI2CmKbMgmGb0fTvkgtyr7w7Mdpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IXyRt4GfWwyIdSBbI8VDIL7hId6xVUEx+1Y3etJ3Nmo=;
+ b=T2dFsurkl6gu3qtp6LD7kuSOgjGqV6Pm0jyM48yiyEyox0JA6KJeJe8qKBPSlCYL5ynJEdITIDtSOKlC/d58jN5qmj1MtsFaMaMZUsxk9/1iNWyj6ENm1Nhu1KG3xZ+9WKEUg5VgT2ZUeMRvQJ+qfk7C8GKkFmi8Gnf0pLYsA35v74oA9Uhb7lkG4VrP6MuERWKGElol0bVVfqfC7YhdE47iZo9OR1DvjE7dOYZLYK2mCCuWWntB+n/MkHx24Ti8ok5S4qx/PVnaE24pyuaPHL7KuJepg5yCeJr4s31UQnijs5Fcel5ToR0mghBxzdmCAVY9pomtNl0anVrTjeJi6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by PH7PR11MB7430.namprd11.prod.outlook.com (2603:10b6:510:274::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.14; Wed, 12 Feb
+ 2025 10:19:09 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%6]) with mapi id 15.20.8445.013; Wed, 12 Feb 2025
+ 10:19:09 +0000
+Message-ID: <1651ff88-7528-45d3-b051-0ea050446c7b@intel.com>
+Date: Wed, 12 Feb 2025 23:19:02 +1300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/17] KVM: TDX: Handle SMI request as !CONFIG_KVM_SMM
+To: Sean Christopherson <seanjc@google.com>, Binbin Wu
+	<binbin.wu@linux.intel.com>
+CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"Hunter, Adrian" <adrian.hunter@intel.com>, "Chatre, Reinette"
+	<reinette.chatre@intel.com>, "Li, Xiaoyao" <Xiaoyao.Li@intel.com>, "Lindgren,
+ Tony" <tony.lindgren@intel.com>, "Yamahata, Isaku"
+	<isaku.yamahata@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, "Gao, Chao"
+	<chao.gao@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+References: <20250211025828.3072076-1-binbin.wu@linux.intel.com>
+ <20250211025828.3072076-10-binbin.wu@linux.intel.com>
+ <Z6v9yjWLNTU6X90d@google.com>
+Content-Language: en-US
+From: "Huang, Kai" <kai.huang@intel.com>
+In-Reply-To: <Z6v9yjWLNTU6X90d@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0071.namprd04.prod.outlook.com
+ (2603:10b6:303:6b::16) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v2 03/10] dt-bindings: clock: sunxi-ng: add compatibles
- for V853
-From: =?utf-8?B?QW5kcsOhcyBTemVtesWR?= <szemzo.andras@gmail.com>
-In-Reply-To: <20250211210215.GA1160917-robh@kernel.org>
-Date: Wed, 12 Feb 2025 11:18:32 +0100
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maxime Ripard <mripard@kernel.org>,
- Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org,
- linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6B18CA59-65CE-4C7A-A9A6-769157BB73A9@gmail.com>
-References: <20250205125225.1152849-1-szemzo.andras@gmail.com>
- <20250205125225.1152849-4-szemzo.andras@gmail.com>
- <20250211210215.GA1160917-robh@kernel.org>
-To: Rob Herring <robh@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|PH7PR11MB7430:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6de93762-daeb-437c-2a84-08dd4b4eb00e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?S3RBNU1ZZUpJSWlHYldQc1BFZ1RsbUVEVlVYMjBXMjVYTDBDdE84WlFjOUly?=
+ =?utf-8?B?V1RIWkN1djdOS1RJang1SDhSQkJ3QWtVS3dJL0N4QUZGa3FCaDVMWG4zQU02?=
+ =?utf-8?B?dTZFRjRXYmV5emtZRi9mSjEzNVFaS1lGWUtJbkpyaVRFYWw1RWQ0dGtFRnUy?=
+ =?utf-8?B?Y1M3aTExMTlwNjVyWWUyMXFoWmpSN3ZVUS9vdmp1eVlEOEFiMXo2Y1BqWDFY?=
+ =?utf-8?B?Z29Rdi9KQS9IZHBJRktZK3lOL0psRU1vYUFwOS9NbkQ3Qi80N2xkOVo5V3lQ?=
+ =?utf-8?B?OXJlbkE4d3dqTjFuOEowcDJtaFFYQzh3ZlNrU3ZYWFc5LzJUcjZ1NFVObDVY?=
+ =?utf-8?B?VUNmRElEc3ppRFhTZDEyT3RIQmRhR0JWL3NkVWRtZncvVUR3ZTJ0cEpIaUNt?=
+ =?utf-8?B?cHRpRGdoQkt6M3JWalFWRXBBM2pFdE9iVmpOOTMrdmJWYUJNQmpJUjZrSlV2?=
+ =?utf-8?B?Rko0aTh1dE81YnBkMU5xVGRoT3BRY2NMOXpIMmhzUjM2YnNYY3dGdFpROFgy?=
+ =?utf-8?B?YWUyQSs1ajBEM1JmUlZVUEk5MXNEUlR6QkFuZk1xUlNUcTFoTk9RQ2FrN1Q2?=
+ =?utf-8?B?NjJUeVRNbDl2aTZXTmY1eWluTmkvU0N2OHBPMmU5dDRLSG1Kc1NrcHBpYXU1?=
+ =?utf-8?B?eGpYdGoyUmxPeHJxMFdRclZxQkVHbGw1REQxSmZ6b0o5Rlg0SStrUVdTbk1t?=
+ =?utf-8?B?Q0M0S0s2RVFjQUFMeFNCS0ZMdXlyeGppSysvbUVGUzUvM0ZEcXpoRllYM2Y4?=
+ =?utf-8?B?M0ZmTjhNenIzSEZBbFFwVWl2cTIrWExiM0FBWVR0ZzBwQVRsU2tVdGx5OG5C?=
+ =?utf-8?B?cG9MYWRNM2pkVU52Wm9LdmEyM2pPRFFqMU9hSTg3QXB1ajRuOTRDMWwydFRw?=
+ =?utf-8?B?V0ZFNHkvWG1abFlWWDkwN25SS0JsclhoUVBSWFZKZEZhWFEwRTJNY1FRTW0v?=
+ =?utf-8?B?Q251ejY4QnZqYWR6TGl5cjhKTUNXMEYxSzZmMy85dy9jdXFLbkhNdCt2bzh2?=
+ =?utf-8?B?ZjZqK0lxMVBkazFhOXNnais3TmZqTUZVVDhxbUpISDU1SThuM0ZBS0tWcXdT?=
+ =?utf-8?B?eVd2Q2YzK256R3FXZDhVZFpNdllGR3NOZ1dXenZZamZwRitVV1lrVGw5UWI0?=
+ =?utf-8?B?TFVnVXNLNzUxd0l6aVRGK0U0ZTJuYmJOU2pRUklLY2x2eUFiN1RjQkZyMXYz?=
+ =?utf-8?B?SUs1SmJEUFEvWGJ3WDZIeU1jVzVhOTJwR2licTJMQnY3RmJlQjkxTDRwNlhz?=
+ =?utf-8?B?cHRJb1NLYi8xRGNkRW9OT2pqM2xwTVJJb0hCNm1SVUgvemdWdnY2eFVjcndi?=
+ =?utf-8?B?RVk4dGpHblhKb2t0WUJpcEREeWpWUndPQ3JaWkR5d2lKTlRDSWNWRXBOTGRo?=
+ =?utf-8?B?d09JcWFJaGVJcXhaOEVEdG9XWStRc3pMSVJTRjFOSFFCU3hqSWRxSklOSHRR?=
+ =?utf-8?B?dllZOHNnZEV3MnozR24xQ01KS0ZmZFF5eVVuekNqeXY3SGFSbWpGV0QrWGRm?=
+ =?utf-8?B?WURqa2h5S0pmNnBRUExua3FENU5vNzM1OEQ1VGRNQ21GMjZSWjVObGRvV2Zy?=
+ =?utf-8?B?ekNwZHFHRTMwRnNvek5GTHVIZE1VcWRyUFJRUnViSklRTXlXRjdJdTVKR2hl?=
+ =?utf-8?B?K2tOOTRHWnJQNzNqMFRZZ2xmRC9sZlFiVlQ2a2dSTHZ6VGU3eElDN3pmOWhC?=
+ =?utf-8?B?RDZWcmxpcFZoMzVsOTJXT2pQUmtQZDk0dE42R05kSnJYKzdzaWtuM2N3eUE1?=
+ =?utf-8?B?cFR6UUE0Q2cvenVDRFdiVmlsdXArMkdpbGFlU1FYQnkzU3ZTcGpCS2Q5S0t3?=
+ =?utf-8?B?RjZTa2M3N1d2MHpaRHg3czNSZ05UNzFLYkNlSklDSGx3cDFpd2hRem44c0N3?=
+ =?utf-8?Q?XoXyc8dJib8En?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?a2xBemYvUDVvdGNOZU5yM2VCU0VxQnRsNWRKTGFVNmdzR2RpbGJkTi9NUWE4?=
+ =?utf-8?B?cW9jUzh4aWlzTUttUys5MlhtcnpsanVxc1hYUS9ZNVZpVHFUam5CZkZYWVJw?=
+ =?utf-8?B?bnh4UU12SmJRZWtoanZrZ3NGSnoxM3F6ZC9VUEpjaitGdjg5OU5nQjlVdXdW?=
+ =?utf-8?B?RzBkNzVPVVU2ejFpVFl4UmU2V0p4UmkwRjZEcUtPT2pyZ3VRT2QxaFZCR042?=
+ =?utf-8?B?Y1loS1R3OWFMVkhKd25jclV5MmxBMGJ3Vzdub2piWkdHdFpkMzJscmtycHZu?=
+ =?utf-8?B?R2lBRC9PSjRxandVbzc2MWc4TnZpZnZIUGh4WGNqOWVsOWJNbTkwUlFtZm13?=
+ =?utf-8?B?MEpIdjh0R1dNZll3MzZTdEhld05ZR0pDRklEM3AxWnVlT1Vhd01OUEl2VGxi?=
+ =?utf-8?B?bDhUQ2poSU9Rc3FjVUcvMXRiRkE1dDVNVWJFbThjWjlrR0I1R2lnZkhuQ3BB?=
+ =?utf-8?B?SExOVUxQelhSM0JEeVlubXZFMHdiNHRBajVJdkFETWRRMmdXZmNkeFlZQmlT?=
+ =?utf-8?B?azFkT2RMV05UTUlhQlFtMlhYYU5pa1NSS3RJajJGa2JoRlR4SEVWSEZXbVdt?=
+ =?utf-8?B?ZUNhZTI0OXRSVWZDaEg0U0VLQlgxVis1TnIvWWR4cjJCRk9wTHlodjN0WUhz?=
+ =?utf-8?B?NXdDak1LYVlFbFZNekdWV3RqVjY0bHVxK1dQbUhrckZmbHVrRzVDczh1UjhX?=
+ =?utf-8?B?bDlUMGNoUU0vZmlsdExWM0ZDK2JnaFQ5M3J3S3dMam5sL1VHVmNrL3ozNWV6?=
+ =?utf-8?B?VFp2NFgxS2pxOWpVR0xLTlhobnZOelRjRGpjUkpRRHRzWER6Tk1zSGtsN1Rs?=
+ =?utf-8?B?dlVwNWJ1MjM5MVA0b2JvSjY4RnAwQlJqLzRDQ1ByaU9aR0l5bFRtNi82c240?=
+ =?utf-8?B?RnJqUmNNSThTVnFmQkZ1SnpLZmg4cFlxaHRCQVM4YUlVeW0rbmVId0FXZTJ1?=
+ =?utf-8?B?UFIxUGxvQS9jQy9jWmZKUUR3QzJCaWRRbmJmNnhWT0M1YXFZaDlkdXJiYXVk?=
+ =?utf-8?B?NDBYdXpqZzlIbVByNVNVTTVNVkYra3NlRmZ2QVNpS0VtQnc2MVppdXVheWdW?=
+ =?utf-8?B?SmliNVM1Qm96L2dsakdpeG02M2hubURYMWR2NGVuaSswbXJncEtaSTgwaCtJ?=
+ =?utf-8?B?RnhGd3JQeXkxcTMzVEtqczF0dnJQK241ZnJDcFBoRFlDL2pSRW1vZEdLWWJG?=
+ =?utf-8?B?UUlLbG5lMWo4Snk5WU5BOE9Gams2SkdsWTBHalg2RFpUM1JTVXlHdU52Tk02?=
+ =?utf-8?B?OUdLU2x3VWZKT1NOVU9CRHpjMVNUWGJ2ZXYxcEtHS1VBcWJKTmZPNnJEbUFy?=
+ =?utf-8?B?a2NlQ2I1U0llMEQrSmNsdTBPbjQ0NmpmVmhJM2FrZ29WVUIxTHQxdWNZQVA0?=
+ =?utf-8?B?dU1GR2NuSmY5bW1RYjJSNDVJWmEvTlQ0aEptaDZaQ2s3NWg3eWdFL0hleGlp?=
+ =?utf-8?B?YmVJWlUxQUYwQ1BlckFTbW5aMkswTXhwNE5sSmtPdDAybFcxcDJxUHJlZnFB?=
+ =?utf-8?B?ekZicERvWlplMWt5bkhmQzFodWxOc3pCaTJBaUdFVlY0K3Nia2l5WDFNdEpZ?=
+ =?utf-8?B?ZXpuUm1leDZQSWNrZlB1a1YrUHdTbm5WU1hUWGdYVnowWUd6b29OS1NmZGhQ?=
+ =?utf-8?B?ZXRsQkRsNTY1UjdHV1BwOGJzdmNJQ3I5M1RyOTRMWGxqTGRaajhSdFdJZ2ZL?=
+ =?utf-8?B?SGZGVmlEQTZGZ3UwcmJ3czRNWFhJSEFqRGhjYm9LRUlGUDRHTXpQdmpWUm85?=
+ =?utf-8?B?M0ptTUVWYi9LamhHM3U2RXdUYkZtazAwQnRzT2VxZllIdTlBUnNjN0daWUk5?=
+ =?utf-8?B?T056R2NTZHJEdDNGRVBQWU0rNFozZUxWbUx3b2NtV24wNnBPaWVlRng1Q1ov?=
+ =?utf-8?B?UnZxcHl3QytjcTcwNnExTnBRWXN1VUxEOExCMm94TDA0QmhYa1BQQUJEYTFq?=
+ =?utf-8?B?Q01UL3h4bHJEdmZHbjdBbFhtT2NmQ1l3b3pQbDRhQk5lNndFOGxFWEVYeU9K?=
+ =?utf-8?B?QVNMcUJEUnpuODVmdXIzM3YrVWU1UFl4VWNZVi9YNHh6ZitxMnBZdWt3cGUw?=
+ =?utf-8?B?bEVUVW4zWkloSzdUOFZ0N2xBQS9kcW5vSkticXAwYXo0Wi92V0hmN2FyRjJP?=
+ =?utf-8?Q?vaeRAaClOZZ7zTYkcaGu4xIwf?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6de93762-daeb-437c-2a84-08dd4b4eb00e
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 10:19:09.1405
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NJrSPIpPkUXMpmuyOb0d3uXiH/4F6d6DbtohyYLF2xjdfzJ+CLyRdbFDzOHj7fNKox+RTY4T76Et61YhqLGpUw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7430
+X-OriginatorOrg: intel.com
 
-Thanks for your review, I=E2=80=99ll change and explain it better.
 
-> On 11 Feb 2025, at 22:02, Rob Herring <robh@kernel.org> wrote:
->=20
-> On Wed, Feb 05, 2025 at 01:52:18PM +0100, Andras Szemzo wrote:
->> V853 has 2 CCUs, add compatible strings for it.
->>=20
->> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
->> ---
->> .../clock/allwinner,sun4i-a10-ccu.yaml        |   3 +
->> .../clock/allwinner,sun8i-v853-ccu.h          | 132 =
-++++++++++++++++++
->> .../clock/allwinner,sun8i-v853-r-ccu.h        |  16 +++
->> .../reset/allwinner,sun8i-v853-ccu.h          |  60 ++++++++
->> .../reset/allwinner,sun8i-v853-r-ccu.h        |  14 ++
->> 5 files changed, 225 insertions(+)
->> create mode 100644 =
-include/dt-bindings/clock/allwinner,sun8i-v853-ccu.h
->> create mode 100644 =
-include/dt-bindings/clock/allwinner,sun8i-v853-r-ccu.h
->> create mode 100644 =
-include/dt-bindings/reset/allwinner,sun8i-v853-ccu.h
->> create mode 100644 =
-include/dt-bindings/reset/allwinner,sun8i-v853-r-ccu.h
->>=20
->> diff --git =
-a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml =
-b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
->> index 1690b9d99c3d..9369d62284ed 100644
->> --- =
-a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
->> +++ =
-b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
->> @@ -33,6 +33,8 @@ properties:
->>       - allwinner,sun8i-r40-ccu
->>       - allwinner,sun8i-v3-ccu
->>       - allwinner,sun8i-v3s-ccu
->> +      - allwinner,sun8i-v853-ccu
->> +      - allwinner,sun8i-v853-r-ccu
->=20
-> Please explain the difference between these in the commit message.
->=20
->>       - allwinner,sun9i-a80-ccu
->>       - allwinner,sun20i-d1-ccu
->>       - allwinner,sun20i-d1-r-ccu
->> @@ -103,6 +105,7 @@ else:
->>       compatible:
->>         enum:
->>           - allwinner,sun20i-d1-ccu
->> +          - allwinner,sun8i-v853-ccu
->>           - allwinner,sun50i-a100-ccu
->>           - allwinner,sun50i-h6-ccu
->>           - allwinner,sun50i-h616-ccu
->> diff --git a/include/dt-bindings/clock/allwinner,sun8i-v853-ccu.h =
-b/include/dt-bindings/clock/allwinner,sun8i-v853-ccu.h
->> new file mode 100644
->> index 000000000000..cf56c168e1cd
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/allwinner,sun8i-v853-ccu.h
->> @@ -0,0 +1,132 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->=20
-> Dual license.
->=20
->> +/*
->> + * Copyright (C) 2024 Andras Szemzo <szemzo.andras@gmail.com.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_ALLWINNER_SUN8I_V85X_CCU_H_
->> +#define _DT_BINDINGS_CLK_ALLWINNER_SUN8I_V85X_CCU_H_
->> +
->> +#define CLK_OSC12M		0
->> +#define CLK_PLL_CPU		1
->> +#define CLK_PLL_DDR		2
->> +#define CLK_PLL_PERIPH_4X	3
->> +#define CLK_PLL_PERIPH_2X	4
->> +#define CLK_PLL_PERIPH_800M	5
->> +#define CLK_PLL_PERIPH_480M	6
->> +#define CLK_PLL_PERIPH_600M	7
->> +#define CLK_PLL_PERIPH_400M	8
->> +#define CLK_PLL_PERIPH_300M	9
->> +#define CLK_PLL_PERIPH_200M	10
->> +#define CLK_PLL_PERIPH_160M	11
->> +#define CLK_PLL_PERIPH_150M	12
->> +#define CLK_PLL_VIDEO_4X	13
->> +#define CLK_PLL_VIDEO_2X	14
->> +#define CLK_PLL_VIDEO_1X	15
->> +#define CLK_PLL_CSI_4X		16
->> +#define CLK_PLL_AUDIO_DIV2	17
->> +#define CLK_PLL_AUDIO_DIV5	18
->> +#define CLK_PLL_AUDIO_4X	19
->> +#define CLK_PLL_AUDIO_1X	20
->> +#define CLK_PLL_NPU_4X		21
->> +#define CLK_CPU			22
->> +#define CLK_CPU_AXI		23
->> +#define CLK_CPU_APB		24
->> +#define CLK_AHB			25
->> +#define CLK_APB0		26
->> +#define CLK_APB1		27
->> +#define CLK_MBUS		28
->> +#define CLK_DE			29
->> +#define CLK_BUS_DE		30
->> +#define CLK_G2D			31
->> +#define CLK_BUS_G2D		32
->> +#define CLK_CE			33
->> +#define CLK_BUS_CE		34
->> +#define CLK_VE			35
->> +#define CLK_BUS_VE		36
->> +#define CLK_NPU			37
->> +#define CLK_BUS_NPU		38
->> +#define CLK_BUS_DMA		39
->> +#define CLK_BUS_MSGBOX0		40
->> +#define CLK_BUS_MSGBOX1		41
->> +#define CLK_BUS_SPINLOCK	42
->> +#define CLK_BUS_HSTIMER		43
->> +#define CLK_AVS			44
->> +#define CLK_BUS_DBG		45
->> +#define CLK_BUS_PWM		46
->> +#define CLK_BUS_IOMMU		47
->> +#define CLK_DRAM		48
->> +#define CLK_MBUS_DMA		49
->> +#define CLK_MBUS_VE		50
->> +#define CLK_MBUS_CE		51
->> +#define CLK_MBUS_CSI		52
->> +#define CLK_MBUS_ISP		53
->> +#define CLK_MBUS_G2D		54
->> +#define CLK_BUS_DRAM		55
->> +#define CLK_MMC0		56
->> +#define CLK_MMC1		57
->> +#define CLK_MMC2		58
->> +#define CLK_BUS_MMC0		59
->> +#define CLK_BUS_MMC1		60
->> +#define CLK_BUS_MMC2		61
->> +#define CLK_BUS_UART0		62
->> +#define CLK_BUS_UART1		63
->> +#define CLK_BUS_UART2		64
->> +#define CLK_BUS_UART3		65
->> +#define CLK_BUS_I2C0		66
->> +#define CLK_BUS_I2C1		67
->> +#define CLK_BUS_I2C2		68
->> +#define CLK_BUS_I2C3		69
->> +#define CLK_BUS_I2C4		70
->> +#define CLK_SPI0		71
->> +#define CLK_SPI1		72
->> +#define CLK_SPI2		73
->> +#define CLK_SPI3		74
->> +#define CLK_BUS_SPI0		75
->> +#define CLK_BUS_SPI1		76
->> +#define CLK_BUS_SPI2		77
->> +#define CLK_BUS_SPI3		78
->> +#define CLK_SPIF		79
->> +#define CLK_BUS_SPIF		80
->> +#define CLK_EMAC_25M		81
->> +#define CLK_BUS_EMAC		82
->> +#define CLK_BUS_GPADC		83
->> +#define CLK_BUS_THS		84
->> +#define CLK_I2S0		85
->> +#define CLK_I2S1		86
->> +#define CLK_BUS_I2S0		87
->> +#define CLK_BUS_I2S1		88
->> +#define CLK_DMIC		89
->> +#define CLK_BUS_DMIC		90
->> +#define CLK_AUDIO_CODEC_DAC	91
->> +#define CLK_AUDIO_CODEC_ADC	92
->> +#define CLK_BUS_AUDIO_CODEC	93
->> +#define CLK_USB_OHCI		94
->> +#define CLK_BUS_OHCI		95
->> +#define CLK_BUS_EHCI		96
->> +#define CLK_BUS_OTG		97
->> +#define CLK_BUS_DPSS_TOP	98
->> +#define CLK_MIPI_DSI		99
->> +#define CLK_BUS_MIPI_DSI	100
->> +#define CLK_TCON_LCD		101
->> +#define CLK_BUS_TCON_LCD	102
->> +#define CLK_CSI_TOP		103
->> +#define CLK_CSI_MCLK0		104
->> +#define CLK_CSI_MCLK1		105
->> +#define CLK_CSI_MCLK2		106
->> +#define CLK_BUS_CSI		107
->> +#define CLK_BUS_WIEGAND		108
->> +#define CLK_RISCV		109
->> +#define CLK_RISCV_AXI		110
->> +#define CLK_RISCV_CORE_GATE	111
->> +#define CLK_RISCV_CFG_GATE	112
->> +#define CLK_FANOUT_24M		113
->> +#define CLK_FANOUT_12M		114
->> +#define CLK_FANOUT_16M		115
->> +#define CLK_FANOUT_25M		116
->> +#define CLK_FANOUT_27M		117
->> +#define CLK_FANOUT_PCLK		118
->> +#define CLK_FANOUT0		119
->> +#define CLK_FANOUT1		120
->> +#define CLK_FANOUT2		121
->> +
->> +#endif
->> diff --git a/include/dt-bindings/clock/allwinner,sun8i-v853-r-ccu.h =
-b/include/dt-bindings/clock/allwinner,sun8i-v853-r-ccu.h
->> new file mode 100644
->> index 000000000000..48fe598b7bd8
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/allwinner,sun8i-v853-r-ccu.h
->> @@ -0,0 +1,16 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2025 Andras Szemzo <szemzo.andras@gmail.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_ALLWINNER_SUN8I_V853_R_CCU_H_
->> +#define _DT_BINDINGS_CLK_ALLWINNER_SUN8I_V853_R_CCU_H_
->> +
->> +#define CLK_R_AHB		0
->> +#define CLK_R_APB0		1
->> +#define CLK_BUS_R_TWD		2
->> +#define CLK_BUS_R_PPU		3
->> +#define CLK_BUS_R_RTC		4
->> +#define CLK_BUS_R_CPUCFG	5
->> +
->> +#endif
->> diff --git a/include/dt-bindings/reset/allwinner,sun8i-v853-ccu.h =
-b/include/dt-bindings/reset/allwinner,sun8i-v853-ccu.h
->> new file mode 100644
->> index 000000000000..e258117518aa
->> --- /dev/null
->> +++ b/include/dt-bindings/reset/allwinner,sun8i-v853-ccu.h
->> @@ -0,0 +1,60 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2024 Andras Szemzo <szemzo.andras@gmail.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_RST_ALLWINNER_SUN8I_V85X_CCU_H_
->> +#define _DT_BINDINGS_RST_ALLWINNER_SUN8I_V85X_CCU_H_
->> +
->> +#define RST_MBUS		0
->> +#define RST_BUS_DE		1
->> +#define RST_BUS_G2D		2
->> +#define RST_BUS_CE		3
->> +#define RST_BUS_VE		4
->> +#define RST_BUS_NPU		5
->> +#define RST_BUS_DMA		6
->> +#define RST_BUS_MSGBOX0		7
->> +#define RST_BUS_MSGBOX1		8
->> +#define RST_BUS_SPINLOCK	9
->> +#define RST_BUS_HSTIMER		10
->> +#define RST_BUS_DBG		11
->> +#define RST_BUS_PWM		12
->> +#define RST_BUS_DRAM		13
->> +#define RST_BUS_MMC0		14
->> +#define RST_BUS_MMC1		15
->> +#define RST_BUS_MMC2		16
->> +#define RST_BUS_UART0		17
->> +#define RST_BUS_UART1		18
->> +#define RST_BUS_UART2		19
->> +#define RST_BUS_UART3		20
->> +#define RST_BUS_I2C0		21
->> +#define RST_BUS_I2C1		22
->> +#define RST_BUS_I2C2		23
->> +#define RST_BUS_I2C3		24
->> +#define RST_BUS_I2C4		25
->> +#define RST_BUS_SPI0		26
->> +#define RST_BUS_SPI1		27
->> +#define RST_BUS_SPI2		28
->> +#define RST_BUS_SPI3		29
->> +#define RST_BUS_SPIF		30
->> +#define RST_BUS_EMAC		31
->> +#define RST_BUS_GPADC		32
->> +#define RST_BUS_THS		33
->> +#define RST_BUS_I2S0		34
->> +#define RST_BUS_I2S1		35
->> +#define RST_BUS_DMIC		36
->> +#define RST_BUS_AUDIO_CODEC	37
->> +#define RST_USB_PHY		38
->> +#define RST_BUS_OHCI		39
->> +#define RST_BUS_EHCI		40
->> +#define RST_BUS_OTG		41
->> +#define RST_BUS_DPSS_TOP	42
->> +#define RST_BUS_MIPI_DSI	43
->> +#define RST_BUS_TCON_LCD	44
->> +#define RST_BUS_CSI		45
->> +#define RST_BUS_WIEGAND		46
->> +#define RST_RISCV_SYS_APB	47
->> +#define RST_RISCV_SOFT		48
->> +#define RST_RISCV_CFG		49
->> +
->> +#endif
->> diff --git a/include/dt-bindings/reset/allwinner,sun8i-v853-r-ccu.h =
-b/include/dt-bindings/reset/allwinner,sun8i-v853-r-ccu.h
->> new file mode 100644
->> index 000000000000..57629d635115
->> --- /dev/null
->> +++ b/include/dt-bindings/reset/allwinner,sun8i-v853-r-ccu.h
->> @@ -0,0 +1,14 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2025 Andras Szemzo <szemzo.andras@gmail.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_RST_ALLWINNER_SUN8I_V853_R_CCU_H_
->> +#define _DT_BINDINGS_RST_ALLWINNER_SUN8I_V853_R_CCU_H_
->> +
->> +#define RST_BUS_R_TWD		0
->> +#define RST_BUS_R_PPU		1
->> +#define RST_BUS_R_RTC		2
->> +#define RST_BUS_R_CPUCFG	3
->> +
->> +#endif
->> --=20
->> 2.39.5
->>=20
 
+On 12/02/2025 2:47 pm, Sean Christopherson wrote:
+> On Tue, Feb 11, 2025, Binbin Wu wrote:
+>> +#ifdef CONFIG_KVM_SMM
+>> +static int vt_smi_allowed(struct kvm_vcpu *vcpu, bool for_injection)
+>> +{
+>> +	if (KVM_BUG_ON(is_td_vcpu(vcpu), vcpu->kvm))
+>> +		return false;
+> 
+> Nit, while the name suggests a boolean return, the actual return in -errno/0/1,
+> i.e. this should be '0', not "false".
+> 
+> A bit late to be asking this, but has anyone verified all the KVM_BUG_ON() calls
+> are fully optimized out when CONFIG_KVM_INTEL_TDX=n?
+> 
+> /me rummages around
+> 
+> Sort of.  The KVM_BUG_ON()s are all gone, but sadly a stub gets left behind.  Not
+> the end of the world since they're all tail calls, but it's still quite useless,
+> especially when using frame pointers.
+> 
+> Aha!  Finally!  An excuse to macrofy some of this!
+> 
+> Rather than have a metric ton of stubs for all of the TDX variants, simply omit
+> the wrappers when CONFIG_KVM_INTEL_TDX=n.  Quite nearly all of vmx/main.c can go
+> under a single #ifdef.  That eliminates all the silly trampolines in the generated
+> code, and almost all of the stubs.
+> 
+> Compile tested only, and needs to be chunked up. E.g. switching to the
+> right CONFIG_xxx needs to be done elsewhere, ditto for moving the "pre restore"
+> function to posted_intr.c.
+
+AFAICT, if we export kvm_ops_update(), or kvm_x86_ops directly to 
+kvm-intel then we can even take a further step to just set those 
+callbacks back to vmx_xx() again if KVM determines TDX cannot be 
+supported at module loading time.  And this can cover 
+!CONFIG_KVM_INTEL_TDX as well.
 
