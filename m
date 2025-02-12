@@ -1,172 +1,173 @@
-Return-Path: <linux-kernel+bounces-510478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B76A31D90
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:50:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F35A31D93
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:53:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8F21674D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:50:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 379CC3A8192
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539651E991A;
-	Wed, 12 Feb 2025 04:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C961F4168;
+	Wed, 12 Feb 2025 04:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xdlNUzqR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AhCGTOfs";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xdlNUzqR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AhCGTOfs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nQUp8o2e"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FC4271834;
-	Wed, 12 Feb 2025 04:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0E45474C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739335802; cv=none; b=tEcnW9nm4kwVuVS6qbpf2TeuXryCKwZM/S5WsHfPH0hkGyIhz87iv+Eg6T0CG1AkxhTxvqrkwPJ8HbLOjp+hrPVRML8eNOGXHKaiMQGbJCbHqDWQN6BEY6wt9GA1o1kDSAyoSkwcq5vC2hhaF7Upt9WWWhinD7SbeLV5R2nDs6Q=
+	t=1739335980; cv=none; b=ZMpyeHdiNGdfb8xdCU7ZT165AfLsSWZamTZi4ZXZJ9+E5Fs3Izvz4zcvwwrLGQtadcAAG/+rghWh2JIJz9y8e00ROwjQg4aooapyPhKpX1WwEaHl23e+tQlg4raZUX4OGVyNNJ6BPP/ayonvuTG6rUkDxUDwMu/vwqzChludrfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739335802; c=relaxed/simple;
-	bh=BGHOemmvt71/nTumpd3K985vBmmRHoA9QX0wKRp01H4=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=CNal3mAb5p5ZvrY16/c643Bi5PMB65cYqYmsXKD6MGyMOGg57aDHiV39n3A4HQPObYHYCP2gDDRIp8+YPJsNhrpY27+rKv4G0KdVb3fwNvhRgLiQJmnbT5xOKDo7+zEwFjZVaUE+rlEF/pDtXq2OpWct9g1iqMGjm/z0qVJJ7yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xdlNUzqR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AhCGTOfs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xdlNUzqR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AhCGTOfs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EFD3F1FD51;
-	Wed, 12 Feb 2025 04:49:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739335799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RfNk99z/BcyLeTgOjcg0CI6DLSs5tska4YouV/6NT/c=;
-	b=xdlNUzqR1RL6124TAyEniD5qAUYhq9DMi6O+ckxlN1L20UbUvDsMazSKSL91Ux/B+d0ERJ
-	e+R+Cgf4t33BXKPmoB1+XnIlKOTinDbU7I6gPCkY5YkpSufitTf4e3BbD9aSaVxv4H0D0G
-	AXHqqd+KbFwkr/ynC1j4Jl1Ty8h2Zrw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739335799;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RfNk99z/BcyLeTgOjcg0CI6DLSs5tska4YouV/6NT/c=;
-	b=AhCGTOfsehueZIMyWlBhU1AfWaaNwCBOXhUIgijaz1tKL07s7Agdh5tikyXofm4o831ud+
-	/nTFnySeHHNvbgBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xdlNUzqR;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AhCGTOfs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739335799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RfNk99z/BcyLeTgOjcg0CI6DLSs5tska4YouV/6NT/c=;
-	b=xdlNUzqR1RL6124TAyEniD5qAUYhq9DMi6O+ckxlN1L20UbUvDsMazSKSL91Ux/B+d0ERJ
-	e+R+Cgf4t33BXKPmoB1+XnIlKOTinDbU7I6gPCkY5YkpSufitTf4e3BbD9aSaVxv4H0D0G
-	AXHqqd+KbFwkr/ynC1j4Jl1Ty8h2Zrw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739335799;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RfNk99z/BcyLeTgOjcg0CI6DLSs5tska4YouV/6NT/c=;
-	b=AhCGTOfsehueZIMyWlBhU1AfWaaNwCBOXhUIgijaz1tKL07s7Agdh5tikyXofm4o831ud+
-	/nTFnySeHHNvbgBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D79E13874;
-	Wed, 12 Feb 2025 04:49:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DdP2AHQorGfcbgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 12 Feb 2025 04:49:56 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1739335980; c=relaxed/simple;
+	bh=wIrLq9LBkp3gDltsoDyAENzujaD3bK+4+HaitDCOaf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gmj2BV8bW1fsi8sdsa/7XyUKTkfEbe33l9m0j9WIOHO8kYchj5gHoASK2Il7I/R1J7j2s/Qsu/jy0JTDLFAL9wwx0nfKzxZJmgkv3lIcgRyZDn/xSEMugQl9uO1qEclialWGCYjWS1oLnidwpiM3YASFCgb67MNNdXyuEQAMoc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nQUp8o2e; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739335979; x=1770871979;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=wIrLq9LBkp3gDltsoDyAENzujaD3bK+4+HaitDCOaf0=;
+  b=nQUp8o2eAcMia3Oe6Mdt18WG0DO3osWWV+FayEORlx0CSyYyvt8suy1N
+   90MWMltqrna5Du9r4C70+3ZMfNlpjY7wYB/WVaYbEVoEiJONSNmxx/Uxh
+   uV0o3XV8O2eS+nOjpKLuu3otDdgR0/+HSyMwtkI96UjzP5mexuPRVxTDP
+   mD88H01yQGaV2y1874Ph9lX59iwsNdm9K12B99RA7mep59zNT59KgHC8w
+   cXUsftwy44rsPGFHow3mHL5+wGyo06qPxQDXFptB2MP2auuhNZX4rt538
+   1mG0Cw5XHcTnSm0h56YsIREkysxiwfRDSSNGKrrdTN2oUHTEEGAYumtnK
+   A==;
+X-CSE-ConnectionGUID: Xwjd29fCSxG1zZ87gZ34xQ==
+X-CSE-MsgGUID: QrebmSyoT7WroVRn7KILXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39211233"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="39211233"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 20:52:58 -0800
+X-CSE-ConnectionGUID: bTyhRcYARvCOX7hKwjKKuA==
+X-CSE-MsgGUID: zOL8wUXaTaWsHtny0CiM0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="112461835"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 11 Feb 2025 20:52:57 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ti4k2-00158H-0I;
+	Wed, 12 Feb 2025 04:52:54 +0000
+Date: Wed, 12 Feb 2025 12:52:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Deven Bowers <deven.desai@linux.microsoft.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>,
+	Fan Wu <wufan@linux.microsoft.com>
+Subject: security/ipe/hooks.c:52: warning: Function parameter or struct
+ member '__always_unused' not described in 'ipe_mmap_file'
+Message-ID: <202502121207.AtcCkAj0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Jeff Layton" <jlayton@kernel.org>, "Dave Chinner" <david@fromorbit.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/19] VFS: introduce lookup_and_lock() and friends
-In-reply-to: <20250207202235.GH1977892@ZenIV>
-References: <>, <20250207202235.GH1977892@ZenIV>
-Date: Wed, 12 Feb 2025 15:49:53 +1100
-Message-id: <173933579332.22054.11267140614769378076@noble.neil.brown.name>
-X-Rspamd-Queue-Id: EFD3F1FD51
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 08 Feb 2025, Al Viro wrote:
-> On Thu, Feb 06, 2025 at 04:42:45PM +1100, NeilBrown wrote:
-> > lookup_and_lock() combines locking the directory and performing a lookup
-> > prior to a change to the directory.
-> > Abstracting this prepares for changing the locking requirements.
-> > 
-> > done_lookup_and_lock() provides the inverse of putting the dentry and
-> > unlocking.
-> > 
-> > For "silly_rename" we will need to lookup_and_lock() in a directory that
-> > is already locked.  For this purpose we add LOOKUP_PARENT_LOCKED.
-> 
-> Ewww...  I do realize that such things might appear in intermediate
-> stages of locking massage, but they'd better be _GONE_ by the end of it.
-> Conditional locking of that sort is really asking for trouble.
-> 
-> If nothing else, better split the function in two variants and document
-> the differences; that kind of stuff really does not belong in arguments.
-> If you need it to exist through the series, that is - if not, you should
-> just leave lookup_one_qstr() for the "locked" case from the very beginning.
+Hi Deven,
 
-That's what I did at first, but then when I realised I had to pass the
-lookup flags around everywhere....  Will revert.
+FYI, the error/warning still remains.
 
-> 
-> > This functionality is exported as lookup_and_lock_one() which takes a
-> > name and len rather than a qstr.
-> 
-> ... for the sake of ...?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   09fbf3d502050282bf47ab3babe1d4ed54dd1fd8
+commit: 52443cb60c356707df494910fa134bbb0a8b1a66 ipe: add LSM hooks on execution and kernel read
+date:   6 months ago
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250212/202502121207.AtcCkAj0-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502121207.AtcCkAj0-lkp@intel.com/reproduce)
 
-nfsd.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502121207.AtcCkAj0-lkp@intel.com/
 
-Thanks,
-NeilBrown
+All warnings (new ones prefixed by >>):
+
+>> security/ipe/hooks.c:52: warning: Function parameter or struct member '__always_unused' not described in 'ipe_mmap_file'
+>> security/ipe/hooks.c:52: warning: Excess function parameter 'reqprot' description in 'ipe_mmap_file'
+>> security/ipe/hooks.c:80: warning: Function parameter or struct member '__always_unused' not described in 'ipe_file_mprotect'
+>> security/ipe/hooks.c:80: warning: Excess function parameter 'reqprot' description in 'ipe_file_mprotect'
+
+
+vim +52 security/ipe/hooks.c
+
+    34	
+    35	/**
+    36	 * ipe_mmap_file() - ipe security hook function for mmap check.
+    37	 * @f: File being mmap'd. Can be NULL in the case of anonymous memory.
+    38	 * @reqprot: The requested protection on the mmap, passed from usermode.
+    39	 * @prot: The effective protection on the mmap, resolved from reqprot and
+    40	 *	  system configuration.
+    41	 * @flags: Unused.
+    42	 *
+    43	 * This hook is called when a file is loaded through the mmap
+    44	 * family of system calls.
+    45	 *
+    46	 * Return:
+    47	 * * %0		- Success
+    48	 * * %-EACCES	- Did not pass IPE policy
+    49	 */
+    50	int ipe_mmap_file(struct file *f, unsigned long reqprot __always_unused,
+    51			  unsigned long prot, unsigned long flags)
+  > 52	{
+    53		struct ipe_eval_ctx ctx = IPE_EVAL_CTX_INIT;
+    54	
+    55		if (prot & PROT_EXEC) {
+    56			ipe_build_eval_ctx(&ctx, f, IPE_OP_EXEC);
+    57			return ipe_evaluate_event(&ctx);
+    58		}
+    59	
+    60		return 0;
+    61	}
+    62	
+    63	/**
+    64	 * ipe_file_mprotect() - ipe security hook function for mprotect check.
+    65	 * @vma: Existing virtual memory area created by mmap or similar.
+    66	 * @reqprot: The requested protection on the mmap, passed from usermode.
+    67	 * @prot: The effective protection on the mmap, resolved from reqprot and
+    68	 *	  system configuration.
+    69	 *
+    70	 * This LSM hook is called when a mmap'd region of memory is changing
+    71	 * its protections via mprotect.
+    72	 *
+    73	 * Return:
+    74	 * * %0		- Success
+    75	 * * %-EACCES	- Did not pass IPE policy
+    76	 */
+    77	int ipe_file_mprotect(struct vm_area_struct *vma,
+    78			      unsigned long reqprot __always_unused,
+    79			      unsigned long prot)
+  > 80	{
+    81		struct ipe_eval_ctx ctx = IPE_EVAL_CTX_INIT;
+    82	
+    83		/* Already Executable */
+    84		if (vma->vm_flags & VM_EXEC)
+    85			return 0;
+    86	
+    87		if (prot & PROT_EXEC) {
+    88			ipe_build_eval_ctx(&ctx, vma->vm_file, IPE_OP_EXEC);
+    89			return ipe_evaluate_event(&ctx);
+    90		}
+    91	
+    92		return 0;
+    93	}
+    94	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
