@@ -1,141 +1,117 @@
-Return-Path: <linux-kernel+bounces-511668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF550A32E0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:00:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06039A32E0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F2071886F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:00:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B002016865C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E9925D53C;
-	Wed, 12 Feb 2025 18:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4477E25E448;
+	Wed, 12 Feb 2025 18:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S0rHNUaU"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGtzyqkY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA73025B694
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A1F2BD10;
+	Wed, 12 Feb 2025 18:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739383209; cv=none; b=WebARcoTYfII48IqbV6mOXNvD+gx3z8ozStPhYIpshYUUiD5VZ6pzLo9XjlvSKZ2sOy3nimqISlEOGjfLW7QmS6jg9xpl2mIHVOOqhJ34+55d8Fpp3BacyLmrvYAKNcd8sTPzq6OxGSMUhIcMBF4uZSOjeGWAD3jX7ZyMB10yYY=
+	t=1739383217; cv=none; b=EMY7pfLKBrisadSyccNV7/VvFYdbStiF1uGQaJ9GHGPsO01j5BUWY/SJVhqvDNHqcmST2+IRc5CnBPtdi1SeLnXyGg/owP2eGWV/CDXKS3KktX4MINVke8rlP7+kjj1WS/5sI42juY3pr5aDjXpdx/bLkR33Des3ENg9irjHD+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739383209; c=relaxed/simple;
-	bh=nuBKaKKm6JzdYDuLhSMKTDpSPaXhX6oO85o3tYs4RLY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WF9XiL9yUyvw5pfqVd1AEFzD7XElabpV5QbAWUYpN6S5g6z2BJyHlLUUHhVfqIyVgoXEuQBBwBxvlYQn24cbZea/JjyGAE0NUQbWvH/Fm0WaYY1vXGk2pw0XzgFSh7PNiOHm7LQn38GMXtgDLQb9UdP3iEJATivI+EGVcm3mUN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S0rHNUaU; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4718e224eb1so223251cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:00:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739383206; x=1739988006; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mnxLzYWtl4fTdxDjuL6cUFX+003YtIZX0UUuj6CKe0s=;
-        b=S0rHNUaUSrjn4sfVoZsYOpeEQpMbJ9tIPxEEf2w6BY7Ag9VW/CUQhooV5hnHqum6Ve
-         Ar+Dk44JMndEe+s64ifAsEhPoliZFJn1dODeCTmhDYXyndESJ3UswKIyo6/M8yrxWeTl
-         12AE5J0N5THwk1hcb75W9yi0ti+y+ZyIwRD2MzY/qqQFeLwpFuVIr1Naraq83yTRp4xJ
-         75fKkIaWs/YD8lzSPtQj6aw+QVqCRKQxKmEoVEVDatFoxYdzKyNPCtPr7sWhefkgLJr6
-         EVfwo7orO2ccDPihj7i62t0sScpfeudvZLWQDiKZ5vS/NpSAE13WKFjk5ON92BtYL1Vt
-         t+vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739383206; x=1739988006;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mnxLzYWtl4fTdxDjuL6cUFX+003YtIZX0UUuj6CKe0s=;
-        b=J8fC2FkZpQQMtbM5A7bMk5AAb9LcRjY0TvghUOvKKPoeXeZFsOQfIff/XoFGjscq/5
-         mM1vShq4QlM5B77c/a6V872I778aZtgWLxxOMFcWyYRt7MchQYgoqub+AO2IRkRiCDif
-         heg9famLfjaF/a/A38twqRxYTxpSan4AyQFP7XODBTzy7lOPKapYDLpjh/YBEj2D6nOF
-         0SRnjBEAh0ZIelbuukIsI0gT7qgeJr9VSqk3IwuTXNjQWWpigg4pMHdmdpAumB6ocE5D
-         cIOl9c2B6ZgJYdTZJqmGfvVfc7MzACer9PD3Ng1wTPeGezxkZ9Za3ktk1iCTYmkufUsm
-         UAGw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4U947Q2KezcBc8dHiURZc6CZdVPHLD5tLMTZEg2cvpa+OcQonL9ofOi/BdMQB/yGQNSs5aSSERuZqpI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8WeRUnJRxnMvEdyhFfWVwCWhbOw8Hdyw5Q1wZeMCWiYlvPHfu
-	EtmZ8UK2kRZloSfA/OFlORzlsWyxhYluBQM9XvUkvtITIMPuAXUpW+O4pp6Ol7mYgVDIS/33Fqn
-	CTzohUOxAUwwmmxMHCuERIGOUmE+WPCl8v9sO
-X-Gm-Gg: ASbGncvggBL0Y1/Z6kHq0djCCViGGmkKvvEYSejvkuizYcl12bIPloocxjMjLpds+gm
-	ksW1jUBVvktLiSJkDBP0vJkJzzpDt3XNGOHH1mB4LkJczqo3Y9xc28Q3hJPurPz+qkLRc8A==
-X-Google-Smtp-Source: AGHT+IGSw4YKDtfh08bcjWht1M4/uuus9yui3/j9nrKRuQDs5q9mLrKwVQaTI4vhzkToVQHIrnyJG34qHvC4LRsr3hw=
-X-Received: by 2002:a05:622a:1b8c:b0:46c:9f17:12f6 with SMTP id
- d75a77b69052e-471b1e5afe4mr3975661cf.27.1739383206304; Wed, 12 Feb 2025
- 10:00:06 -0800 (PST)
+	s=arc-20240116; t=1739383217; c=relaxed/simple;
+	bh=hsK/ij+5FFV9WezWD6dLNN9TbHcCGeKOn7f2QjrIAkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Pl02uj4GgOyjzK2dF+i8GLzZN6P5Ygn7ojY0M61yoRt2fupri8uDR1dM1oGoEMspZou9D04mKgirP9zOMhYUYHgLWpbtATrEouPnaElN528kkeQuBKPMhLjM0Sfmft91qZi76bsVqJ5fzhZuUmIjv8TRB92bk9Vo2aPCwET6kUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGtzyqkY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10FEC4CEDF;
+	Wed, 12 Feb 2025 18:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739383217;
+	bh=hsK/ij+5FFV9WezWD6dLNN9TbHcCGeKOn7f2QjrIAkk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=AGtzyqkY5Co/VF4YcoGd4mbPW4K3DlF88Nn+KcbRZZYwfHbIAU/PtcmPqp6Lzi+pK
+	 BKmMjpBsoSlGwVNt9VUOF12rix04O9ZwrPNys5fomIAgHGX17hPA8EW+oLHFTdhxym
+	 uF61M3wy/GQIRASKaWWcjpknlJK96XSga60FsKG1t2FsPtqrABGF/oBpmvbUJkmlD5
+	 P6/Hr14Gh2j4Tsukl/XTN8qwfc32Lime8GfUzAb/90QZKvxOwg0odz6HvFp2mdxRzO
+	 nE+t2k/51g1ziUM5tfp/LQETQycXrI/fHtbTDnDbIt/nJoonjhY9QJyQGNUVP+PO7N
+	 JxGVUxvAcsJ/A==
+Date: Wed, 12 Feb 2025 12:00:09 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v5 -next 05/11] PCI: brcmstb: Expand inbound window size
+ up to 64GB
+Message-ID: <20250212180009.GA85559@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1aa70a33-2acd-49fb-8049-a20dae40ecba@stanley.mountain>
-In-Reply-To: <1aa70a33-2acd-49fb-8049-a20dae40ecba@stanley.mountain>
-From: Frank van der Linden <fvdl@google.com>
-Date: Wed, 12 Feb 2025 09:59:54 -0800
-X-Gm-Features: AWEUYZkACIoh4E5LCzP8OVY51LXm0pOowyPRO2n9q1lglrxQw_WVHe-hypVPcjI
-Message-ID: <CAPTztWahPK5MLTxMnGH8woe1emM=QA=3pjy1ZCBBG+D39aLGog@mail.gmail.com>
-Subject: Re: [PATCH next] x86/mm: Fix uninitialized variable in register_page_bootmem_memmap()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250120130119.671119-6-svarbanov@suse.de>
 
-On Wed, Feb 12, 2025 at 7:21=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> Smatch complains that "next" could be uninitialized.  The "next"
-> assignment was accidentally left out when we moved these lines to earlier
-> in the function.
->
-> Fixes: bdadaec1526d ("x86/mm: make register_page_bootmem_memmap handle PT=
-E mappings")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Mon, Jan 20, 2025 at 03:01:13PM +0200, Stanimir Varbanov wrote:
+> BCM2712 memory map can support up to 64GB of system memory, thus expand
+> the inbound window size in calculation helper function.
+> 
+> The change is save for the currently supported SoCs that has smaller
+> inbound window sizes.
+
+If you repost:
+
+s/save/safe/
+s/that has/that have/
+
+Otherwise we can fix these when merging.
+
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 > ---
-> This goes through the -mm tree.
->
->  arch/x86/mm/init_64.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index e7572af639a4..6e8e4ef5312a 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1600,8 +1600,10 @@ void register_page_bootmem_memmap(unsigned long se=
-ction_nr,
->                 get_page_bootmem(section_nr, pud_page(*pud), MIX_SECTION_=
-INFO);
->
->                 pmd =3D pmd_offset(pud, addr);
-> -               if (pmd_none(*pmd))
-> +               if (pmd_none(*pmd)) {
-> +                       next =3D (addr + PAGE_SIZE) & PAGE_MASK;
->                         continue;
-> +               }
->
->                 if (!boot_cpu_has(X86_FEATURE_PSE) || !pmd_leaf(*pmd)) {
->                         next =3D (addr + PAGE_SIZE) & PAGE_MASK;
-> --
-> 2.47.2
->
-
-Thanks for catching that Dan. I believe Andrew took the series out of
-mm-unstable because of some conflicts, and asked me to do a v4 for
-mm-unstable. Would you mind if I just folded your change in to the v4
-series?
-
-As an aside, it seems that this function could use some cleanup. It
-seems wrong to only advance by PAGE_SIZE when you encounter an
-unpopulated p4d/pgd/pud/pmd. It should advance to the end of that
-p4d/pgd/pud/pmd. I suppose that case won't happen in practice, though,
-which is also why this hasn't caused me any issues.
-
-- Frank
+> v4 -> v5:
+>  - No changes.
+> 
+>  drivers/pci/controller/pcie-brcmstb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 48b2747d8c98..59190d8be0fb 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -304,8 +304,8 @@ static int brcm_pcie_encode_ibar_size(u64 size)
+>  	if (log2_in >= 12 && log2_in <= 15)
+>  		/* Covers 4KB to 32KB (inclusive) */
+>  		return (log2_in - 12) + 0x1c;
+> -	else if (log2_in >= 16 && log2_in <= 35)
+> -		/* Covers 64KB to 32GB, (inclusive) */
+> +	else if (log2_in >= 16 && log2_in <= 36)
+> +		/* Covers 64KB to 64GB, (inclusive) */
+>  		return log2_in - 15;
+>  	/* Something is awry so disable */
+>  	return 0;
+> -- 
+> 2.47.0
+> 
 
