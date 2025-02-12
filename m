@@ -1,132 +1,293 @@
-Return-Path: <linux-kernel+bounces-511115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3A3A32622
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:45:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D435A3261E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA107188C0D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:45:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6E23A5827
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D980420DD5E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5E120C499;
 	Wed, 12 Feb 2025 12:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PJjHheBp"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="djKvlezk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B572046BE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB8620A5CB;
 	Wed, 12 Feb 2025 12:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364330; cv=none; b=omiyqU4ZVyiB610Qe6zH+LLCSnivOw+W+YBsrJW0gIas7gaXt+6ysFQg8ZKb80acvn4g+bdkPamCtpTdi42TvEcSWOUjyr6bHo+tE2vjX2rJYqlGnkdNmrrIn8jlPFynkm9P6QE9IE6F+Jc9nvx2693TINqmZ9oGszenZ7CBXw8=
+	t=1739364329; cv=none; b=pQm4Aq6aHlM2sIGmNlPYnYJ/wxKe3iH1H+d5PAsNGS6/lWrzph0EatgWj9aenCzw9L42buom6VonFeTWXBCichZM1lUdknqxh61uzGUJfYzgmCbMIgF0SOYRwr9EofSaDdJiz0kThhgOjPRlbBJ1tKF8t53NgaonF5py5EwtF6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364330; c=relaxed/simple;
-	bh=4JRn5iL42MJEpQHlbzIijk4WcEtoHNrpGhgeTaJH47M=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=r2/JbVqMSDLPLHyGSqV9jXDstHlAd64rocxTlC0NLJOZQXFF1CB5oyy35kJDLg/eh+m88OtI8WMwdjU73+Qf0e4m8dj6FiW2LvvMbbSygEk47DGYhx+Zda7JRRyus9bRnY6MjcbbrpHhzvaJgKr+j8EGtrwt0xLV26ys04OcQF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PJjHheBp; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1739364319; x=1739969119; i=markus.elfring@web.de;
-	bh=4JRn5iL42MJEpQHlbzIijk4WcEtoHNrpGhgeTaJH47M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=PJjHheBpgdSXsx+Umol8T4yAdHWvj+q6JEM1R+fHcAJj4aShKG2t7Fbc7E8cHDVU
-	 U9AqmWFUcHLiRk9Cy3Vq9gNuajj1WxIbXcUhJwQUuLqpVEorfg06OS2NV+TSvlHdU
-	 pfb2kdngqIh0l6u3BCSNviBVtM1Q6dIG2coiN3FFz5dSxCSvzWmomdA31f/ldG50Z
-	 EAucS96Ngx7tWglfg8YWhsLnk9OhovsbTfUz4IfUIA5Wb/zJVgLnlwFquyttjDeQB
-	 zjjE9Ffof7JcnCS1f+8N97nHo+Vc05RqLxWx5IP3vbVbj6HpduET0hbrrfUxuN+3r
-	 6l8n5xq2K8M3dChoPA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5j5y-1tkvvo3XqM-00EmgE; Wed, 12
- Feb 2025 13:45:18 +0100
-Message-ID: <93a7e08f-8a3b-42cc-8d36-f570f02087c8@web.de>
-Date: Wed, 12 Feb 2025 13:45:18 +0100
+	s=arc-20240116; t=1739364329; c=relaxed/simple;
+	bh=MDIGdUpcHxh2Tq0tkaXQrIbTYWLchEjnXq4ARo0biNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aG0nEXuXE0TihJXH2uY2cTnFN0Lbos/+z+ag/vwcDyXeGIErf1+a8WW9+yu6OHRg9uj659JNKYat0HKX1sXw0l31GjP80Er+qcNK0KpuU15TAUiSurx+F8XWNqVtFUM3Y0P6M9Qsak9JGNdKPay1v4ZGjhkvhaZRhNbAwhz2Sk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=djKvlezk; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739364327; x=1770900327;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MDIGdUpcHxh2Tq0tkaXQrIbTYWLchEjnXq4ARo0biNs=;
+  b=djKvlezkkEacmQ7wZECmRo+7siZzLEyak3tNt/KGUkCJ0DbAVMC4jwVy
+   XLl+F90uO3c8gv+LOylS8jenX/eEWVN0JhqqJ/lN/p8lVkbF87yhGFvf0
+   3B75BquuB1ZY9UIu40n5zYOKHEw7eONZmp/p58tsiKzWcCfSXne4FRLeL
+   cgzssCLNhnSuRrR0yGsUcfnsclgvj1E0ArBtHgEWgMXXpBBTSVfPcw+UT
+   Cm3eqSNyvah/gC+78VsteG5RbiqcMcPYZlqOTK8l3we8YGreg5BN6Sb4o
+   KSpE94LDs8OBuaVdmIX8RteiWpEDRRDKQVZtjYsfySNFin8D5hoWrE0Fl
+   g==;
+X-CSE-ConnectionGUID: egmROMrCSHq/p/MXulYM1A==
+X-CSE-MsgGUID: M+wMf4FjTPy2Wp9LohS1NA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="43946245"
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="43946245"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 04:45:26 -0800
+X-CSE-ConnectionGUID: TIQOYmLrRKalp6XvLfvCpA==
+X-CSE-MsgGUID: u892swVGRtaUF0rE0/uq8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="112666661"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 04:45:24 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id C39EA11F99E;
+	Wed, 12 Feb 2025 14:45:21 +0200 (EET)
+Date: Wed, 12 Feb 2025 12:45:21 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: shravan kumar <shravan.chippa@microchip.com>
+Cc: mchehab@kernel.org, kieran.bingham@ideasonboard.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	conor.dooley@microchip.com, valentina.fernandezalanis@microchip.com,
+	praveen.kumar@microchip.com
+Subject: Re: [PATCH V3] media: i2c: imx334: Add support for 1280x720 &
+ 640x480 resolutions
+Message-ID: <Z6yX4QQRLBZeEqlp@kekkonen.localdomain>
+References: <20241216043926.445001-1-shravan.chippa@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Chenyuan Yang <chenyuan0y@gmail.com>, linux-gpio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Linus Walleij <linus.walleij@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Zijie Zhao <zzjas98@gmail.com>
-References: <20250210232552.1545887-1-chenyuan0y@gmail.com>
-Subject: Re: [PATCH] pinctrl: Fix potential NULL pointer dereference
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250210232552.1545887-1-chenyuan0y@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rgoJ3QjOvQt09jtD0DLsUfO5e7MhvKcjufuUn6etTbSAzv4U3ac
- mZO2uQndJA0ga8cEN0mJUO7oXcxaYpMFY4RDMlOyxT+a4HIL4TGFY4vQPnpx0TxVMaDme/N
- 2oE4qiIj6hRvywCy1WMJoEMADsVbNlUwrGdl4la3Ogabz//TqoALd2fRq5spvNDS0GXlS9V
- n8BGpZnWcfcJeldkOI+Bg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:D62wot44SxI=;8nMv1FZOUoEfbybwFK41pXY7feP
- d/BWTy/ImuK4OscXNFI38Xsa90iI36mjKKyFNI0bPSN/TjPL5C519qpb3RVGa6zAIfrBmlmeJ
- sUNCUJBtKWIS9jkIMMGW9vUBSnJf+OeUtmSUe292FVTiHLl57aDN1dK2AQ2KRzwhFuH9ALz8D
- jaBb6kWanEwB6un6a8dvylEiAJL/4WExurSjoAPKbNWXaNr16dqTf1CGNRZix0YAhumzYMHYj
- g2d/Y1sfDSxZJe22alEHkOfWfkghKY0mWmdo/1cphaUoRNDUij9QYbmOphuQIwP+kV9uz97cQ
- ZzBPrSvGWlIseb2YFPW8Gk/LHpLiDRGwx6eGDae1oMezV7T1huDhSl8rEn4XvYGno74Qs009a
- fJ8zYam0zHV8pwEj1nhm7njhdgUT5/F/jz+vgoamr1bKKagjb0a2oK8YvjGOU1HgHAXRkqj96
- w5h2vg0ZprrCVqva+er7ymeDBteHG14HikBBHX38JMH+1ZMq8+G9eceRM/sGhXTSPtPOx8KSM
- aX2Y4epXX+DE7i2nD45dHh5UwcMzsPlPjz1sUJcGgy5cuJTDdn6snivIrR8WrRZztEOHxgDRK
- hf5pH8Xk3EqI8TnKGOPupUOUb1+mTbfsaf+2s8NFufajv7/5KjvMHcJLrD2aY4ha6uXAIQM9q
- g1Xmm+aiZW2S8E50DbxYtH10UDdOX3v1ByxFj2RsYu/z2olaf7n27tth3pCc6pphLAH7xrjrM
- hmj4NN9sKPyD/OVNIxk9IPWV2qCa4D58Odte99iRPUzv3mFdyPAfi32bZF1yp/BnW334i6hkY
- 5LdKCxqHpLp1MPSNHBNARN6ZOJTm4C/7/k0HJWzwNgr6P8Z25jG5r56wkQ92hwspGUhxz2VXU
- xoODn8+KDzgUxfcdoXRyXE4XUQVs73s56X2GdxqxjbKjPk7LSFRR9vbZHSPbrhfru0doStKj9
- 0FcSNa274heNYQG317LjsmIrhvuai1WJffle1FiZ6R3bfo/3goHC8tStc+3zKO5IZ94FAENWD
- hc9UW7SAXqZR5AUBHjmPiKVS4GLvRtFvKYhC1dA3fo/YoyVqPoEI6309ZlsicNVbHl91EoBZi
- 4RrK9UmrpBmxbqMud1afkbfyMLHFSoW6H1tE6awMURL6Qf8oOy/zQkG+fVTN62C2fZyKCZnXT
- 2ED5zeQZp7zHvHR6W2/50wp0f849FSAD0L6nYnwcpMM45d8tc3L61JGu3tu4yLJ5/X2X6kKm9
- swn73UsGU6FDm62xdjYfbcgMpDEzyDIVN0x+1ondfl0VnnfHTJNYXssze6O4QT7AxKMxSx0d3
- FHMwLtnTd+K80y45d0gRHNL/+umnxQCxX9HHBHnTghRAZdaIR987f/JYbhOevjhl9aYnnJlTi
- EL79gWpvgOLe2Eh5TSbJJoHCuoo3Ci8cQBvJRdSYB7jiJ8oL5xTWbQs50srgYQvjtO4B4jhTS
- xUzyDxw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216043926.445001-1-shravan.chippa@microchip.com>
 
-> The `chip.label` could be NULL. Add missing check in the
-> rza2_gpio_register().
+Hi Shravan,
 
-Another wording suggestion:
-The data structure member =E2=80=9Cchip.label=E2=80=9D could become NULL
-after a failed devm_kasprintf() call in the implementation
-of the function =E2=80=9Crza2_gpio_register=E2=80=9D.
-Thus add a check for such a return value.
+Apologies for the late review.
 
+On Mon, Dec 16, 2024 at 10:09:26AM +0530, shravan kumar wrote:
+> From: Shravan Chippa <shravan.chippa@microchip.com>
+> 
+> Add support for 1280x720@30 and 640x480@30 resolutions
+> optimized the resolution arrays by added common register
+> array
+> 
+> Updated 1920x1080@30 resolution register array with
+> common register array
+> 
+> Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
+> ---
+> 
+> changelog:
+> 
+> v2 -> v3
+> Removied blank lines reported by media CI robot 
+> 
+> v1 -> v2
+> Optimized the resolution arrays by added common register array
+> 
+> ---
+>  drivers/media/i2c/imx334.c | 119 ++++++++++++++++++++++++++++++-------
+>  1 file changed, 99 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
+> index a544fc3df39c..58ad67dbb331 100644
+> --- a/drivers/media/i2c/imx334.c
+> +++ b/drivers/media/i2c/imx334.c
+> @@ -167,8 +167,8 @@ static const s64 link_freq[] = {
+>  	IMX334_LINK_FREQ_445M,
+>  };
+>  
+> -/* Sensor mode registers for 1920x1080@30fps */
+> -static const struct imx334_reg mode_1920x1080_regs[] = {
+> +/* Sensor common mode registers for 445M link frequency */
+> +static const struct imx334_reg common_mode_regs_445m[] = {
+>  	{0x3000, 0x01},
+>  	{0x3018, 0x04},
+>  	{0x3030, 0xca},
+> @@ -176,26 +176,10 @@ static const struct imx334_reg mode_1920x1080_regs[] = {
+>  	{0x3032, 0x00},
+>  	{0x3034, 0x4c},
+>  	{0x3035, 0x04},
+> -	{0x302c, 0xf0},
+> -	{0x302d, 0x03},
+> -	{0x302e, 0x80},
+> -	{0x302f, 0x07},
+> -	{0x3074, 0xcc},
+> -	{0x3075, 0x02},
+> -	{0x308e, 0xcd},
+> -	{0x308f, 0x02},
+> -	{0x3076, 0x38},
+> -	{0x3077, 0x04},
+> -	{0x3090, 0x38},
+> -	{0x3091, 0x04},
+> -	{0x3308, 0x38},
+> -	{0x3309, 0x04},
+> -	{0x30C6, 0x00},
+> +	{0x30c6, 0x00},
+>  	{0x30c7, 0x00},
+>  	{0x30ce, 0x00},
+>  	{0x30cf, 0x00},
+> -	{0x30d8, 0x18},
+> -	{0x30d9, 0x0a},
+>  	{0x304c, 0x00},
+>  	{0x304e, 0x00},
+>  	{0x304f, 0x00},
+> @@ -210,7 +194,7 @@ static const struct imx334_reg mode_1920x1080_regs[] = {
+>  	{0x300d, 0x29},
+>  	{0x314c, 0x29},
+>  	{0x314d, 0x01},
+> -	{0x315a, 0x06},
+> +	{0x315a, 0x0a},
+>  	{0x3168, 0xa0},
+>  	{0x316a, 0x7e},
+>  	{0x319e, 0x02},
+> @@ -330,6 +314,66 @@ static const struct imx334_reg mode_1920x1080_regs[] = {
+>  	{0x3002, 0x00},
+>  };
+>  
+> +/* Sensor mode registers for 640x480@30fps */
+> +static const struct imx334_reg mode_640x480_regs[] = {
+> +	{0x302c, 0x70},
+> +	{0x302d, 0x06},
+> +	{0x302e, 0x80},
+> +	{0x302f, 0x02},
+> +	{0x3074, 0x48},
+> +	{0x3075, 0x07},
+> +	{0x308e, 0x49},
+> +	{0x308f, 0x07},
+> +	{0x3076, 0xe0},
+> +	{0x3077, 0x01},
+> +	{0x3090, 0xe0},
+> +	{0x3091, 0x01},
+> +	{0x3308, 0xe0},
+> +	{0x3309, 0x01},
+> +	{0x30d8, 0x30},
+> +	{0x30d9, 0x0b},
+> +};
+> +
+> +/* Sensor mode registers for 1280x720@30fps */
+> +static const struct imx334_reg mode_1280x720_regs[] = {
+> +	{0x302c, 0x30},
+> +	{0x302d, 0x05},
+> +	{0x302e, 0x00},
+> +	{0x302f, 0x05},
+> +	{0x3074, 0x84},
+> +	{0x3075, 0x03},
+> +	{0x308e, 0x85},
+> +	{0x308f, 0x03},
+> +	{0x3076, 0xd0},
+> +	{0x3077, 0x02},
+> +	{0x3090, 0xd0},
+> +	{0x3091, 0x02},
+> +	{0x3308, 0xd0},
+> +	{0x3309, 0x02},
+> +	{0x30d8, 0x30},
+> +	{0x30d9, 0x0b},
+> +};
+> +
+> +/* Sensor mode registers for 1920x1080@30fps */
+> +static const struct imx334_reg mode_1920x1080_regs[] = {
+> +	{0x302c, 0xf0},
+> +	{0x302d, 0x03},
+> +	{0x302e, 0x80},
+> +	{0x302f, 0x07},
+> +	{0x3074, 0xcc},
+> +	{0x3075, 0x02},
+> +	{0x308e, 0xcd},
+> +	{0x308f, 0x02},
+> +	{0x3076, 0x38},
+> +	{0x3077, 0x04},
+> +	{0x3090, 0x38},
+> +	{0x3091, 0x04},
+> +	{0x3308, 0x38},
+> +	{0x3309, 0x04},
+> +	{0x30d8, 0x18},
+> +	{0x30d9, 0x0a},
+> +};
+> +
+>  /* Sensor mode registers for 3840x2160@30fps */
+>  static const struct imx334_reg mode_3840x2160_regs[] = {
+>  	{0x3000, 0x01},
+> @@ -505,6 +549,32 @@ static const struct imx334_mode supported_modes[] = {
+>  			.num_of_regs = ARRAY_SIZE(mode_1920x1080_regs),
+>  			.regs = mode_1920x1080_regs,
+>  		},
+> +	}, {
+> +		.width = 1280,
+> +		.height = 720,
+> +		.hblank = 2480,
+> +		.vblank = 1170,
+> +		.vblank_min = 45,
+> +		.vblank_max = 132840,
+> +		.pclk = 297000000,
+> +		.link_freq_idx = 1,
+> +		.reg_list = {
+> +			.num_of_regs = ARRAY_SIZE(mode_1280x720_regs),
+> +			.regs = mode_1280x720_regs,
+> +		},
+> +	}, {
+> +		.width = 640,
+> +		.height = 480,
+> +		.hblank = 2480,
+> +		.vblank = 1170,
+> +		.vblank_min = 45,
+> +		.vblank_max = 132840,
+> +		.pclk = 297000000,
+> +		.link_freq_idx = 1,
+> +		.reg_list = {
+> +			.num_of_regs = ARRAY_SIZE(mode_640x480_regs),
+> +			.regs = mode_640x480_regs,
+> +		},
+>  	},
+>  };
+>  
+> @@ -989,6 +1059,15 @@ static int imx334_start_streaming(struct imx334 *imx334)
+>  	const struct imx334_reg_list *reg_list;
+>  	int ret;
+>  
+> +	if (link_freq[imx334->cur_mode->link_freq_idx] == IMX334_LINK_FREQ_445M) {
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n145
+Could you add a struct field for the common registers and the length of the
+list, instead of referring to the link frequency index?
 
+It'd be nice to have the same split done to the other frequency as well.
 
-Can a summary phrase like =E2=80=9CPrevent null pointer dereference in rza=
-2_gpio_register()=E2=80=9D
-be nicer?
+> +		ret = imx334_write_regs(imx334, common_mode_regs_445m,
+> +					ARRAY_SIZE(common_mode_regs_445m));
+> +		if (ret) {
+> +			dev_err(imx334->dev, "fail to write common registers");
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	/* Write sensor mode registers */
+>  	reg_list = &imx334->cur_mode->reg_list;
+>  	ret = imx334_write_regs(imx334, reg_list->regs,
 
+-- 
+Kind regards,
 
-> This is similar to commit 3027e7b15b02
-> ("ice: Fix some null pointer dereference issues in ice_ptp.c").
-> Besides, mediatek_gpio_bank_probe() in drivers/gpio/gpio-mt7621.c also
-> has a very similar check.
-
-I find such auxiliary information not so relevant here.
-
-Regards,
-Markus
+Sakari Ailus
 
