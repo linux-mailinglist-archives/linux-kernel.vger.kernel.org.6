@@ -1,314 +1,112 @@
-Return-Path: <linux-kernel+bounces-510731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA358A3212E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:33:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7DAA32128
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:32:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39DC71882B96
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:33:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922CF1882FC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91E12040B0;
-	Wed, 12 Feb 2025 08:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F0IZKocM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1302D20551F;
+	Wed, 12 Feb 2025 08:32:33 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3C92045B9;
-	Wed, 12 Feb 2025 08:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3D91DED5F;
+	Wed, 12 Feb 2025 08:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739349191; cv=none; b=BqcH7EaQcszmc9FkSgb+gnkZSHZk1a+Aj3qq3hHmAHGZTVevMufC/K/L8OQrUn5jeHxB6zKonBZKSCp9tD3BCAV7IRrYyuCcAm3j1QSpOfJ80m1DygwzVh9c7jkReZx75/K3hiUnc2TtReribpgR8HxDVoB1ZhnDK7oZ2GZnubA=
+	t=1739349152; cv=none; b=grSQeJZvJsLTGgbzBGcQrX47sWt33SZu0zfVBpgZcbNH8bnhQSyA/epFXlyJbUTvI0EuNiin2GnZmucWthaAY6Mkltzkxw2UYnjPSDqBmu9cEB8KoGAz/DCdDwN7vkW1h1JCkmcV7DyfNH01eSRrpBPnimSREQGOOL2aiDaoXEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739349191; c=relaxed/simple;
-	bh=9yHVMBx4ojj15Wfc9oceaYbFv0gVgYgP+47h1bfxz/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jdvSMMa4CpeNFMot+8tUDqmGeobF4H/8G10402yZEnf2bj09U7pd03R6v5+yu5e/4EFTd7GShtKk75OnKScGzsA/4P/zw9zOKyeI/fP1Je0N82IAcgltzG+IkjAXaei/Z39wDtCGWXEt7sPeZJyuVntar9DU6CBo1CxsQHRQ/HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F0IZKocM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51BM3TmD026076;
-	Wed, 12 Feb 2025 08:32:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sp3ettQufyz8fmNnrUB/Q6sDRcYWIb4zuygNYHdX4zs=; b=F0IZKocMv9XQQNvF
-	LIy5XE+eXIzzOmIHK9Yzaqb/qj3X6oKhy+QsAVu0Lj1HDhStzzvU/mX5/N00X5GC
-	sngDxlEGzyElY1q7JGWHrBF3hKnHE+pHijFdQ0WOcmkgsaE7oeUZRdRW0Wc75cmp
-	RAi3JwH1GC+rCweVMqqSQohpHhtuURBuZyndjniltChvEOw0ly0t0LKwfWHgyYqF
-	lgy21qVvDFtLbQ/XN1TylPuqvb2BpCIpIDMcds1hddKmZ9OzRBGsMsE67PJhstcX
-	L7LbNiTFWeDmjinAWkyjzes+W8Pgj7+PySPJo6BBlCunwjbnV1JPAapNFAdQ0/Xx
-	vuE4Jg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44r5j5b3k0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 08:32:58 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51C8WvCQ016286
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 08:32:57 GMT
-Received: from [10.239.28.138] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
- 2025 00:32:54 -0800
-Message-ID: <791fa29e-a2b5-d5f6-3cbc-0f499b463262@quicinc.com>
-Date: Wed, 12 Feb 2025 16:31:21 +0800
+	s=arc-20240116; t=1739349152; c=relaxed/simple;
+	bh=M6WO1IkI0Q7T3bIAJj97I6HVMTsXJ9vlKr3NrrCq6kM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q4GXorLIVfx9U7ey0u28jPyJ0BD76M6t5yN4izdOC8El/0eTd4mB0tSRrQz7FJtTEqZ6bi3OxqY9AwNMDRADaDFZwt70kT/WYbrk0C0ziEyf8CU1yjPyllhdT+HOd7/6XFkQgJaB5HMSLwz1ZZNxGU3GyXVv9r3qn0caavdXy6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAAnkMmUXKxnuhRoDA--.44357S2;
+	Wed, 12 Feb 2025 16:32:22 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: tj@kernel.org,
+	josef@toxicpanda.com,
+	axboe@kernel.dk
+Cc: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] block: Check blkg_to_lat return value to avoid NULL dereference
+Date: Wed, 12 Feb 2025 16:32:03 +0800
+Message-ID: <20250212083203.1030-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v2 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <p.zabel@pengutronix.de>,
-        <abel.vesa@linaro.org>, <quic_qianyu@quicinc.com>,
-        <neil.armstrong@linaro.org>, <manivannan.sadhasivam@linaro.org>,
-        <quic_devipriy@quicinc.com>, <konrad.dybcio@oss.qualcomm.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250211094231.1813558-1-quic_wenbyao@quicinc.com>
- <20250211094231.1813558-3-quic_wenbyao@quicinc.com>
- <7deghiadmomrz7w7vq3v7nkzq2kabq4xbhkouswjrexif7pip3@tvjlpvuulxvp>
-From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
-In-Reply-To: <7deghiadmomrz7w7vq3v7nkzq2kabq4xbhkouswjrexif7pip3@tvjlpvuulxvp>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Oz9zYtD84MGX6M3gK30-79RuA1LwV36M
-X-Proofpoint-GUID: Oz9zYtD84MGX6M3gK30-79RuA1LwV36M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- phishscore=0 adultscore=0 spamscore=0 clxscore=1015 impostorscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502120065
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAnkMmUXKxnuhRoDA--.44357S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZrWDZrykZry8JF4DXF1xGrg_yoW8XF1rpa
+	18urZFvay5Gw47XF18Ka1rCryrCr4UKFyUCFZ5Aa4FkF1IgF4rtF10vF10yFWrAFWUCrs8
+	Jr1UtFZYvr45C37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjMqcUUUUU
+	U==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAULA2esWj4JCwAAss
 
-On 2/12/2025 8:13 AM, Dmitry Baryshkov wrote:
-> On Tue, Feb 11, 2025 at 05:42:31PM +0800, Wenbin Yao wrote:
->> From: Qiang Yu <quic_qianyu@quicinc.com>
->>
->> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
->> whole PHY (hardware and register), no_csr reset only resets PHY hardware
->> but retains register values, which means PHY setting can be skipped during
->> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
->> after that.
->>
->> Hence, determine whether the PHY has been enabled in bootloader by
->> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
->> available, skip BCR reset and PHY register setting to establish the PCIe
->> link with bootloader - programmed PHY settings.
->>
->> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 91 +++++++++++++++---------
->>   1 file changed, 58 insertions(+), 33 deletions(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->> index ac42e4b01065..7f0802d09812 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->> @@ -2805,6 +2805,7 @@ struct qmp_pcie {
->>   
->>   	const struct qmp_phy_cfg *cfg;
->>   	bool tcsr_4ln_config;
->> +	bool phy_initialized;
->>   
->>   	void __iomem *serdes;
->>   	void __iomem *pcs;
->> @@ -3976,6 +3977,7 @@ static int qmp_pcie_init(struct phy *phy)
->>   {
->>   	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
->> +	void __iomem *pcs = qmp->pcs;
->>   	int ret;
->>   
->>   	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
->> @@ -3984,10 +3986,17 @@ static int qmp_pcie_init(struct phy *phy)
->>   		return ret;
->>   	}
->>   
->> -	ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> -	if (ret) {
->> -		dev_err(qmp->dev, "reset assert failed\n");
->> -		goto err_disable_regulators;
->> +	qmp->phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
->> +	/*
->> +	 * Toggle BCR reset for phy that doesn't support no_csr
->> +	 * reset or has not been initialized
->> +	 */
->> +	if (!qmp->nocsr_reset || !qmp->phy_initialized) {
-> Instead of having phy_initialized please add another boolean field,
-> qmp->skip_init = !!qmp->nocsr_reset && !!phy_initialized;
-> Use qmp->skip_init through the code.
+The function blkg_to_lat() may return NULL if the blkg is not associated
+with an iolatency group. In iolatency_set_min_lat_nsec() and
+iolatency_pd_init(), the return values are not checked, leading to
+potential NULL pointer dereferences.
 
-In qmp_pcie_power_off and qmp_pcie_exit, we only check qmp->nocsr_reset. It
+This patch adds checks for the return values of blkg_to_lat and let it
+returns early if it is NULL, preventing the NULL pointer dereference.
 
-seems unnecessary to combine qmp->nocsr_reset with phy_initialized.
+Fixes: d70675121546 ("block: introduce blk-iolatency io controller")
+Cc: stable@vger.kernel.org # 4.19+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ block/blk-iolatency.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
->
->> +		ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> +		if (ret) {
->> +			dev_err(qmp->dev, "reset assert failed\n");
->> +			goto err_disable_regulators;
->> +		}
->>   	}
->>   
->>   	ret = reset_control_assert(qmp->nocsr_reset);
->> @@ -3998,10 +4007,12 @@ static int qmp_pcie_init(struct phy *phy)
->>   
->>   	usleep_range(200, 300);
->>   
->> -	ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
->> -	if (ret) {
->> -		dev_err(qmp->dev, "reset deassert failed\n");
->> -		goto err_assert_reset;
->> +	if (!qmp->nocsr_reset || !qmp->phy_initialized) {
->> +		ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
->> +		if (ret) {
->> +			dev_err(qmp->dev, "reset deassert failed\n");
->> +			goto err_assert_reset;
->> +		}
->>   	}
->>   
->>   	ret = clk_bulk_prepare_enable(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
->> @@ -4011,7 +4022,8 @@ static int qmp_pcie_init(struct phy *phy)
->>   	return 0;
->>   
->>   err_assert_reset:
->> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> +	if (!qmp->nocsr_reset || !qmp->phy_initialized)
->> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->>   err_disable_regulators:
->>   	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
->>   
->> @@ -4023,7 +4035,10 @@ static int qmp_pcie_exit(struct phy *phy)
->>   	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
->>   
->> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> +	if (!qmp->nocsr_reset)
->> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> +	else
->> +		reset_control_assert(qmp->nocsr_reset);
->>   
->>   	clk_bulk_disable_unprepare(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
->>   
->> @@ -4042,16 +4057,22 @@ static int qmp_pcie_power_on(struct phy *phy)
->>   	unsigned int mask, val;
->>   	int ret;
->>   
->> -	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->> -			cfg->pwrdn_ctrl);
->> +	/*
->> +	 * Write CSR register for phy that doesn't support no_csr
-> what is CSR register?
-The registers of PHY.
->
->> +	 * reset or has not been initialized
->> +	 */
->> +	if (!qmp->nocsr_reset || !qmp->phy_initialized) {
->> +		qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->> +				cfg->pwrdn_ctrl);
->>   
->> -	if (qmp->mode == PHY_MODE_PCIE_RC)
->> -		mode_tbls = cfg->tbls_rc;
->> -	else
->> -		mode_tbls = cfg->tbls_ep;
->> +		if (qmp->mode == PHY_MODE_PCIE_RC)
->> +			mode_tbls = cfg->tbls_rc;
->> +		else
->> +			mode_tbls = cfg->tbls_ep;
->>   
->> -	qmp_pcie_init_registers(qmp, &cfg->tbls);
->> -	qmp_pcie_init_registers(qmp, mode_tbls);
->> +		qmp_pcie_init_registers(qmp, &cfg->tbls);
->> +		qmp_pcie_init_registers(qmp, mode_tbls);
->> +	}
->>   
->>   	ret = clk_bulk_prepare_enable(qmp->num_pipe_clks, qmp->pipe_clks);
->>   	if (ret)
->> @@ -4063,15 +4084,16 @@ static int qmp_pcie_power_on(struct phy *phy)
->>   		goto err_disable_pipe_clk;
->>   	}
->>   
->> -	/* Pull PHY out of reset state */
->> -	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->> +	if (!qmp->nocsr_reset || !qmp->phy_initialized) {
->> +		/* Pull PHY out of reset state */
->> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->>   
->> -	/* start SerDes and Phy-Coding-Sublayer */
->> -	qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
->> -
->> -	if (!cfg->skip_start_delay)
->> -		usleep_range(1000, 1200);
->> +		/* start SerDes and Phy-Coding-Sublayer */
->> +		qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
->>   
->> +		if (!cfg->skip_start_delay)
->> +			usleep_range(1000, 1200);
->> +	}
->>   	status = pcs + cfg->regs[QPHY_PCS_STATUS];
->>   	mask = cfg->phy_status;
->>   	ret = readl_poll_timeout(status, val, !(val & mask), 200,
->> @@ -4096,16 +4118,19 @@ static int qmp_pcie_power_off(struct phy *phy)
->>   
->>   	clk_bulk_disable_unprepare(qmp->num_pipe_clks, qmp->pipe_clks);
->>   
->> -	/* PHY reset */
->> -	qphy_setbits(qmp->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->>   
->> -	/* stop SerDes and Phy-Coding-Sublayer */
->> -	qphy_clrbits(qmp->pcs, cfg->regs[QPHY_START_CTRL],
->> -			SERDES_START | PCS_START);
->> +	if (!qmp->nocsr_reset) {
-> Why this one doesn't check for the qmp->phy_initialized?
-
-If a PHY supports no_csr reset but isn't enabled in the bootloader, we
-
-still need to program the phy settings only once so that we can reuse them
-
-during the D3cold -> D0 cycle. Therefore, we don't check
-
-qmp->phy_initialized here.
-
->
->> +		/* PHY reset */
->> +		qphy_setbits(qmp->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->>   
->> -	/* Put PHY into POWER DOWN state: active low */
->> -	qphy_clrbits(qmp->pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->> -			cfg->pwrdn_ctrl);
->> +		/* stop SerDes and Phy-Coding-Sublayer */
->> +		qphy_clrbits(qmp->pcs, cfg->regs[QPHY_START_CTRL],
->> +				SERDES_START | PCS_START);
->> +
->> +		/* Put PHY into POWER DOWN state: active low */
->> +		qphy_clrbits(qmp->pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->> +				cfg->pwrdn_ctrl);
->> +	}
->>   
->>   	return 0;
->>   }
->> -- 
->> 2.34.1
->>
+diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+index ebb522788d97..398f0a1747c4 100644
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -787,6 +787,8 @@ static int blk_iolatency_init(struct gendisk *disk)
+ static void iolatency_set_min_lat_nsec(struct blkcg_gq *blkg, u64 val)
+ {
+ 	struct iolatency_grp *iolat = blkg_to_lat(blkg);
++	if (!iolat)
++		return;
+ 	struct blk_iolatency *blkiolat = iolat->blkiolat;
+ 	u64 oldval = iolat->min_lat_nsec;
+ 
+@@ -1013,6 +1015,8 @@ static void iolatency_pd_init(struct blkg_policy_data *pd)
+ 	 */
+ 	if (blkg->parent && blkg_to_pd(blkg->parent, &blkcg_policy_iolatency)) {
+ 		struct iolatency_grp *parent = blkg_to_lat(blkg->parent);
++		if (!parent)
++			return;
+ 		atomic_set(&iolat->scale_cookie,
+ 			   atomic_read(&parent->child_lat.scale_cookie));
+ 	} else {
 -- 
-With best wishes
-Wenbin
+2.42.0.windows.2
+
 
