@@ -1,261 +1,197 @@
-Return-Path: <linux-kernel+bounces-511338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EAAA329A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:13:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C2AA3299B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:12:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E709188B237
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB241889AE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEB4211276;
-	Wed, 12 Feb 2025 15:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F7C205AD9;
+	Wed, 12 Feb 2025 15:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TH6sI0ze";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Fn0Un1gZ"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GNaEO2hi"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26113211A00;
-	Wed, 12 Feb 2025 15:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739373178; cv=fail; b=IlXcaDhqIOmquyKLLj9HNXSN6DsnhEUi7Q9lP+7B/xxzewfHwAFzFeEkHGCjXJQXJmvFnANRVUcVH4WiFsjZ7FHeoUx9Au7bT02HWphZljM/uGIlQZJVqzQlquNJ0fDDUixq4b6q9v9WZcd0JjQzxNJ14fL3bo+wouaDhHw33Y0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739373178; c=relaxed/simple;
-	bh=bGOHrySi4kgTanBAaEHJtEb5/C1LypSmkl2hd5kUmTo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FDQv9Zsv4ybH8SIdgAMWigZir3Hh+fNEdDPbRr/Pmpa2N7VuIyWFnegj4bCGAOzm06Xm3hscTPl5OrUnGNHX5XqHtlsXqhu2mTbAV3tz6vdUDAyGw6QFf0q5Ll9S47onNThxDhiAZME5gXgQ73PtU/JbgTpBJqeeI+H5VtkIY7Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TH6sI0ze; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Fn0Un1gZ; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CEtXr9002906;
-	Wed, 12 Feb 2025 15:12:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=D9UUUuHS+2yNjVERK7i0zf3kYCZSwVGTZtiRiJ9aJWw=; b=
-	TH6sI0zexRxAT5YU4WQqc6Z10hgUj9rpkfammXQNA+YB/PBA3F9W5cGvyAg1Ukmo
-	8vJqz5Uq4rVO3mas7+4eLF5o/uvvNPdwvEB6hbjJAgLcCkhvShTOC4DqjiTnnrqe
-	mLwdqbYc3WPlw8Fc/KRHkednmZE+xiMBN2UuOIXKRVgXL3G6M4+EnZ3C5Q/Np00H
-	FPKCwtH2hywxYIc05UevoZHE2BWkaRSiYxOOYj7LYncfL3FlO5+th43VPyVGbjBB
-	JQwijJogNeE/rknWhVAkYjtRvrwFNFxLDUEB0Nm7bxFs0t+zKWuhPS5MZqHA5/xw
-	SmGYSOBZjNiCqAizrEsXhw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44p0q2fkk0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 15:12:15 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51CDowhs002331;
-	Wed, 12 Feb 2025 15:12:14 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2176.outbound.protection.outlook.com [104.47.55.176])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44nwqgwqrd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 15:12:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j3UHg6r4UOnB1gvlN5cuQ45bzI2scl1RNw5rWSHUix7LUAQN/XsZB7TpxyyHQh9zDPH8Deo3zgrR1X4canEDli2J9VWtViHswRv6bcpJMTqdE9JfdEl+Nmt9yitgDDXEzFv2LAeZMShm2Uk/deHFI0YMpSPqEA7G9grVFGtZ440Qx7ZSN9xh90OTq49ycTnkva+1cJKA1F+8pmMJlCU2PtERKo0WmSW5zk0qq/ddhk/AN15V8rVs1PMT3QdLWtl5hVgjfCs4cVZoP9xhP2Kh76oSwT/TArFQhKSLBy+kN5I+tk09lqP4FKWKq42zXhjaI/TL/MbC3/QNGVTbCtbohg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D9UUUuHS+2yNjVERK7i0zf3kYCZSwVGTZtiRiJ9aJWw=;
- b=nkWBqfwXhiWNy6o6p8kj3jG2bjo5L8C0n/3UFoBBZHM8IBU8ZtjEqMIGGrT5lFFgAkvedub3K8tijYSfU2Z6AAd3aPze2nHctW0UHyy2qdj8n8GLLsRmlcfrMbQGK/ZJ3XN44pbiP6MvIuM0h5zMoQqW7RoHvnO8U0A3saWaBHvVdbKvWCCpg5vlmYK/LCW1dWoggjQjiv87PG/FmBV2gTzcyfOXorZiWJUCDRtmc9dJKn91D861tR4U2Q3KNW3E4dw/luDGsbCLRIt4Q1oy1QtdAAdjrkp+YvV7rYLcdLfEP6kXq3AWV3zz3Zye9FjonMl3i0uFaXtRMa7yRPlyWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35126271800
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739373163; cv=none; b=Mz1TuMxODB1W3RluvjXvcJD19J0gpPyJt27TsF+J25N0U6qO0gWHG/YlXZ6rC0lnL7baW9uA1ENwCHXUMhG5StQ1R4N4Hm2ILSwYWmRMWecIt5CJskam7Y9EqmAwcCHCPWox5ofFM9OnGzxL3VdXr2t6fUJD/lSMaqR3ihyEf9k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739373163; c=relaxed/simple;
+	bh=IHSbh6r5DGMhZN/8rWZQQsLrq0/FTXzKTkc6Gh9pAKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uitSN+g5JdduongrFYLAldoVVc0g0Dywkp5eMjsfP2ebC8bBdEw4NKeWHaSl0+w2Mq31j9xrWru92PeDN4Tu0yvuDBWD9ZKqhWcDClLTduZzOlqIkNYROUdJ0RMxOMWSGkM+c/lSVndc44GgxjpKswsLVx0+zbYNlGoqci+9Ug0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GNaEO2hi; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2166db59927so14380535ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:12:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D9UUUuHS+2yNjVERK7i0zf3kYCZSwVGTZtiRiJ9aJWw=;
- b=Fn0Un1gZ1t9aQu39cS0JapuX5yN1rOUu5mEAQrBr4iik1Q+1uK4zgx4mr5XbI9RIsLAKiX94WTrbXwBi9K/ogij2wEY/gY7qO4ZEXMidTcBDYMIyBNEBwV+W2i5iMsdTZ3Ehpdi3t6NliowQg9ptxvezy9IDFOZVAZrYYwtYqN8=
-Received: from DM4PR10MB6886.namprd10.prod.outlook.com (2603:10b6:8:102::10)
- by PH7PR10MB6604.namprd10.prod.outlook.com (2603:10b6:510:208::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Wed, 12 Feb
- 2025 15:12:11 +0000
-Received: from DM4PR10MB6886.namprd10.prod.outlook.com
- ([fe80::bdcc:98f5:ebd5:cd38]) by DM4PR10MB6886.namprd10.prod.outlook.com
- ([fe80::bdcc:98f5:ebd5:cd38%5]) with mapi id 15.20.8422.021; Wed, 12 Feb 2025
- 15:12:11 +0000
-Message-ID: <716f186d-924a-4f2c-828a-2080729abfe9@oracle.com>
-Date: Wed, 12 Feb 2025 20:42:01 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [6.1.y] Regression from b1e6e80a1b42 ("xen/swiotlb: add alignment
- check for dma buffers") when booting with Xen and mpt3sas_cm0 _scsih_probe
- failures
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Sasha Levin
- <sashal@kernel.org>,
-        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-        xen-devel@lists.xenproject.org, iommu@lists.linux.dev,
-        =?UTF-8?Q?Radoslav_Bod=C3=B3?= <radoslav.bodo@igalileo.cz>,
-        regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        Harshvardhan Jha <harshvardhan.j.jha@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <Z6d-l2nCO1mB4_wx@eldamar.lan>
- <fd650c88-9888-46bc-a448-9c1ddcf2b066@oracle.com>
- <Z6ukbNnyQVdw4kh0@eldamar.lan>
-Content-Language: en-US
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-In-Reply-To: <Z6ukbNnyQVdw4kh0@eldamar.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR01CA0181.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::13) To DM4PR10MB6886.namprd10.prod.outlook.com
- (2603:10b6:8:102::10)
+        d=bytedance.com; s=google; t=1739373160; x=1739977960; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YBs34c4qQHheJQVXIkvBxk26x9OYVq3E9NsfJIlzJr4=;
+        b=GNaEO2hiqCvKgE13oySLduw++pti1rY6qtZfFCVtKna3X9nOsT0MZcHTtX1rbYFz1g
+         s8/+qjWpNYHqnA7WTQd6tz+P76aJJu6EWr6hEIc+S4Dma80FiR3YpjlN0UnFoa7zQFI9
+         HjcWoNPD6V6PllPlX1BS1LhbLegf3PDlfcc5BVA1dZPkuX+I2UvP6pouQb/fieg8Ry9E
+         w2T3AEIPGD9NWK+OI5kx5MWsJXicfP+g3p5eN/u9576E8IKcQr6v/oQYk++fE5kkNwRb
+         6ThHVaNc9KDuJosFyimB2D7DlJkQoMVcBq6gjb6GB6CGpsH2y5kVzo01Ii37uitAZ84F
+         ZWWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739373160; x=1739977960;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YBs34c4qQHheJQVXIkvBxk26x9OYVq3E9NsfJIlzJr4=;
+        b=mBThYgMP57ykFn5aKQlSrL6YNRZ0eLK4MzCIcGXa2lHRv/6/uC6PXmgAopMtEg14RY
+         EF70Zbxbbo+STLu/p6GwqNzN4H9gXXKcRmOdavFVU6D1KwDX8O5gyLHwairUs4+6W9SA
+         QJjnpq+z/hna8IOcO8hTB96JHmMuueZTQdtE8mbcnV8B40rSIlkdNvrf0xfn2JWoBAxv
+         /UDZjelPVYWspWmCP8szdZrvirq/8w4uG/VavmhAso5ktf/YSlx193lqWAilITGHbPhN
+         s7YvAOSF6YjuZDjjdZ/8J/6WVIqf9e4irv54bNF6EywNZ30hJTTtneLH3p8jHVKsgHr5
+         JejQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6051KFkUtB24UeJqZW5s3fO8IM/E2DP/9w0676WFhO2az+h+emRBiuLLUNTjygTM1Zby+eVlxDfYpmVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYyedITLKktEtXTLefc2Qdfv39Gz3a96zrdOzqgnngUCStGB4I
+	oR9GLu5ZmnauVGITIiXgKD06TaIcJZoy9sByhzudo2N/go5rDJgAJcdYp6lF07c=
+X-Gm-Gg: ASbGncvW2ZoslyLtCZmjxIm5l6eYZyxLMuP0+UYnP4tZqUi5wZ1DKR0v/eLEZSxtoOu
+	C74eD4A9H5JhXtLs0n057lQp/291GcMAsxZwozWTQi7wN7C9tkXHlgYkatj6jrf9vAo1uA4lpoX
+	GA0+fw7HW5Aj4uh1w9ikrlpGFZx/5XBFVsOWIdQJsagzVRFSEaSaxrHDPpJk08vYFRUAmWxkOAk
+	hyWDtABxWfVaDaH++9sjxZjLydh9KZy+ak6twoqcO9g+gRc2+aJykeRJAhiDY+kgDZ7bb6HKTl/
+	elrkcqLamgzC0ZyGyyizbokEfzRJOiThr4a4
+X-Google-Smtp-Source: AGHT+IGouYzGmjROSox/PWnSlVRVChVYl2AaCCEc0qnqfNRunaVXv0XRlbBjS/AwWeQ6AnVHMD63tw==
+X-Received: by 2002:a17:902:d512:b0:20c:f648:e388 with SMTP id d9443c01a7336-220bbafb2b9mr22054375ad.7.1739373160274;
+        Wed, 12 Feb 2025 07:12:40 -0800 (PST)
+Received: from [10.4.234.23] ([139.177.225.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf9ab0233sm1613044a91.44.2025.02.12.07.12.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 07:12:39 -0800 (PST)
+Message-ID: <4c0f852e-bf79-4e59-be42-bdf11fb92f3b@bytedance.com>
+Date: Wed, 12 Feb 2025 23:12:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB6886:EE_|PH7PR10MB6604:EE_
-X-MS-Office365-Filtering-Correlation-Id: fbd2b20d-b014-424e-62a0-08dd4b779f90
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d0pBNnN3YVczK2o0UmlBeWV3QUR2WjNHaXYyYWFtblE0YTBKYUVDSzlCR1NU?=
- =?utf-8?B?citmVCtSTnhZUG04MVo5NGlFclI1S3Q4Z1EyTERzSEp1MVF6L0lBWkFHdU15?=
- =?utf-8?B?TG42M0hCYzNFR2c4aVZpcHRqWFRCS1BJZ0VsMTdjTDM5dkRxYVVMcUg4S2hS?=
- =?utf-8?B?ZGZjdVFYQkUvRVh4Q0RlMzRkVEZ1QkZ4WUFpdUM0djV1Q3p2alEza25CR0ZQ?=
- =?utf-8?B?VjhORWFrWUlxeGw2aDJWZWY1MnJ6VTNOUWhFZW9WaUdjY2RLbExXWFp1QTcv?=
- =?utf-8?B?VWNrTWlZeFlCOVJtbVlIUUMyWUovaXp5aEN6eWxXUlRoNGc1YWZ3NHdpTUxP?=
- =?utf-8?B?TEJYQkl3NFMvRHozMU1oWVY2c2VXeXRrTmcybXMwZ3d3cUI1c09vekV5a3Ay?=
- =?utf-8?B?NCtZd3VlRzY4MW1QTU0zRm1PQkpOVS90TnU5a0t0YVN5cFYybUF5d0ppYUVV?=
- =?utf-8?B?dUxSM25aeTF5WjBReGtJT3FuQW5YSUdzZnpDVDU4N1llZWJDeFVKcjhyTE0x?=
- =?utf-8?B?Y0laN1NLZVFUSExHaldQSW5LaHV6WmtRNERjaVl0MXY3U3VmS1VMbHJGMUwx?=
- =?utf-8?B?R3FKa2prSEk5eWdhVDc1R3JWeTJQZjF2Z3ZIMVBBdUlLS2NQRE93SDQzeVV1?=
- =?utf-8?B?SmZVellvbHVWYmhHeVNQZVF2ek5BMVBjZmd0NE1LMGNmVTVXOWJ6WHJFc3NJ?=
- =?utf-8?B?Z2pnUURCRCsyVHI0VTZyMEVrQWVOQmZsL0h0VCtEWXJQYUJXUlpZOXVnbnZX?=
- =?utf-8?B?ZmJJemNFQkpKeTN5eXdVRUVySG1jSnBkZjFJTmFTQzM0ZTZSQjRIYnFTNS9F?=
- =?utf-8?B?QXo1ZHIzRGJuWkNmUUUweUlUV0U3Qjh1dmo5RDdwV0xJTlM3SU8xTGU4Q2tZ?=
- =?utf-8?B?ckVBZytqRTlTSWttU2o0Zk1KMnZBK2lJNWpSY2tLTkF6VE5oZmtyNm9paVNp?=
- =?utf-8?B?c2VxNDdqazQxNEFCZVJIVnk2ekpTaXErczBKV3RPTXlhUnY4T2JMcXc1UFU5?=
- =?utf-8?B?TjJlZGhES1M0dWVWNGdFNFZhNXpIQW9HVzJ0dVk1UlMrWUJHQjRPTi92aEVl?=
- =?utf-8?B?eUk5bHpzVjNEc3hNc2d0dEZrZ3BGNWl1a0ZsZmFucTZzYWhYQ3hvRWR4aTVt?=
- =?utf-8?B?UGFzY0ZZaHo0MDI5ZUU3SFZvR0xFaTlrM1ZLZUtZNzRvM24vQk5EcS9KbWNr?=
- =?utf-8?B?MlFodUF0dXBjSU1ZWXBTVVRRQWhMNzRuczA0RjlkT3luUnRDNVNOYjcwWm16?=
- =?utf-8?B?TjFFb1BFSzBLcUFxaFN6eFJpTW92dCtTY2FiZDVhakliUzkvUVRlQ1hvMEVX?=
- =?utf-8?B?OVVXV2h1UUFBbllSaU5weCtTZGt4ZzFiK2pkMm5HWnkranpmUEtiRzRVUktn?=
- =?utf-8?B?RWVZNWhoQnN0b1BReGR5TFhQVTdkWGZRL2llRzBLZG9CUXdSMzlJd0tEbUlD?=
- =?utf-8?B?ZnNIMTRWMU81RUlsMkdaMVF2NStGRW82ZUdVeDhaRE44NnFqUm5BSXNQZ2pY?=
- =?utf-8?B?TDVoZVcyQTUrVkhxaS9ZaFRXL0JQSkY1K1dYcmNuVGNNM1IzTHRqU05vUUE0?=
- =?utf-8?B?VmdIcldYM3JNbnhQeHV2RGc5TXc0bTRiYTBrN0ZCcm03STF0TVc0bmVJSTJa?=
- =?utf-8?B?V2tkSlp1NGZ3clFQc0l6S2tId0llbmtWZlB4b2xWZUpseTQ1cnc0MmVVUzAv?=
- =?utf-8?B?bUdwMzAyUVgvKzFnc0dhWWRvME5GYkR4ZjlneVRGOVJadEEwNVNodG1TQytV?=
- =?utf-8?B?bFdQQTY1WU9xQ1VtVkFQWFdBUjNsRnZoWEJhNVNUa0pwREhPaUNmS2lodTJR?=
- =?utf-8?B?QjZVVDA5MVAvMFZvWlpHQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB6886.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UDRPQ2hlMUhUdlV0eEZRTzk2WnFoYU5oMzFtajBHL3kyU2xBOUpuNmM2UG1q?=
- =?utf-8?B?T2pjR3BuUVQ2NC9NWk9KTEc2MnFGVHhqWE1QUFRkYW40UXI3Z3BrOEVUNjNa?=
- =?utf-8?B?WHZ1TGYyTStWeTM3SG94YWtiNlFVVFZRbUltRmhoVXV1aitLc1BLZEVITzhI?=
- =?utf-8?B?TTFYOUE0VjBUdExYWnplL3p5ZTlNWk9YOXgzaFUvV2FtZFhjRFdqOVZUcEZ5?=
- =?utf-8?B?VTE2MDVDUmc2dnQrSnE5OHN6cEtucTdUZ1htc25qK1phUXZZQ05IUTdlcURt?=
- =?utf-8?B?OS9wWjB4RGZBL01ZZGVFRzc3bkU2clcydkhhYzRmdmhQaTgzVUhPNFNsNlYy?=
- =?utf-8?B?R200Y2daNUZINXZEMmR4LzdYS1E3NGtsS0pJSDgwL0NoM1NkNERVd1IvYU55?=
- =?utf-8?B?MmxLSkdWUVF0azIwVEtOejlnM2RqdlFPTlpHMkZBNUdJY0hKQ05XNlppWnY4?=
- =?utf-8?B?QzhpVmtKU2FlcE53U2V4c2NaSGNodHdKL3VGTUV3NzdEOUx4QnRFaVpPQ1FD?=
- =?utf-8?B?a3FSV1dWSForTFNrOWQwNFZHcWUvZTFDcURqR0pjbmlIQkdKNmNjVkhQQ2Rn?=
- =?utf-8?B?UHBnM2RFSVJqNzFxWjVjRnI4Yy9KV0hzdUtYNUY5eU42SG1Ua3BiYldwTklB?=
- =?utf-8?B?V3hrQXEvcm1qcXFaU1dZMzlHWitPTm90bU1sTXZtakVyV1ZRaUVkR0tCTU5l?=
- =?utf-8?B?Y0xDa3dsdytpbDRydDBIenNOQ2J0VzJFdnpYUEJjMFpxQjdhNW9TWS9KcHNr?=
- =?utf-8?B?OE91S2lCa0RpTU52NERBbFZGVElpaUgvYlVhemlNTmNJeEQ5U3VtUW5PY3RR?=
- =?utf-8?B?bUxuYXZCMVRPNW9aNFVtc2FSVDdTRm1IMG9RYXZqTU1SV2xIZ1VHOHRubGp4?=
- =?utf-8?B?cDFnMXlwcW1EODdwcmo3YWp6Wm1iWnl0RmRKT0pxVWxtTDFEd3I5VERtbCt4?=
- =?utf-8?B?dTBoSXlBMEtNQlIxUjdqTllBK1IrZXRTaEdSdyt1YXJRMFVGaFRRakhZQlRr?=
- =?utf-8?B?d2tRb2hWR1JRZm8wanMrUjZWZ0VoYmgrZWxiUnZEbWhtQ0UzN0Iwc2xzbk9I?=
- =?utf-8?B?L00wVldPOW5QNDhjMFVSWXB3VkhCUFB5cDNDNzRmT3RWNUpyeVBqSkZOS2hU?=
- =?utf-8?B?d25zWnVHSmRtU0dFUzluUy9xTFlQSmEwZG5BdXRSK3MydGhpMWZYOWpTNGUw?=
- =?utf-8?B?VlNlMVluQjVXTVFmcVY1czZjZ0NtWk5JMGZjbHJNU3FZRTlvZWc4aGh3Ykll?=
- =?utf-8?B?K2FjM1RnV2ppQTV6TW1CS1Q2c255bVgxb3B6bW1YRTVwNW9qL0NwelpoMnRN?=
- =?utf-8?B?WDJIZWZ1SEQ3OVNqT1ZDZnVuZ0doV3htRm0zSWRyL1RKZ1Exc0VnSjc2bUU3?=
- =?utf-8?B?WGJqVm85RFVqa0c2NXN3NFhkLzN5SGJqc291eEg3WUFEcjJJVkt3bkl6NjE4?=
- =?utf-8?B?MWovKzh6OXA0L0JGLzl4Mm5KNWtHZ1g5bDBhMUFDSUJSZkVhaHVvdC8vZXY1?=
- =?utf-8?B?Y0FlVEVvRUdyVk9vRDh4UStqcjdPS05qeHpNOHZlSUhFVEVCZ0RxNWVobGxP?=
- =?utf-8?B?M0NjV2RxNFpLZ1pldVZqaU9RQ2hGSElJUE0yTENLMmh6RDBtS2h2OEpZSFVz?=
- =?utf-8?B?MlNmRUhvR3FLRlhuMXZvQ0pVZkZ3RGJmUnBxdXhSV3ljRmI1YmE3ZWRhbUVO?=
- =?utf-8?B?LzZScHloUmZCM2JYNHd6SlovSGNWSG9nd1NMN2loWG81R2VyN3JhSHJCQUNK?=
- =?utf-8?B?QmVNN3djazlPYWVKakxZWWxrZUJnZ2VuM05lMnQ1YlVZa1BrV3ZCZ0VHLzNk?=
- =?utf-8?B?OGVDVmdXUktDSjM5OXlYZC9tRyt5ZzY4SFBZeHdya0NpWURBUFJ3d2FUMDVC?=
- =?utf-8?B?KzBGaXFWd0FMTDZVUkx5S09WVXVEVUF2K3pRQ0dhcUoxeDM1MDBlYXBHazZn?=
- =?utf-8?B?NkdFdDk1T2ErZ2lMcmRTMndkU2Rlc2xSdHZLdEVjTTFrcllZbE00ZzYwd2hz?=
- =?utf-8?B?Sjc0Mm5OL1Y4cEJGRVNWT25xTFBpYWgwa2V4ZlZTYWlmajNjWG15cXJWWUli?=
- =?utf-8?B?blhZUFRaMEJMYUVnNlNaTUovL3ArMWVRUGUvOXo3YWtZRXhoaEIyQWNzUGtq?=
- =?utf-8?B?YjdoUEJIWEd4OEhwbXNodmx0TEFGY1JjaFJVVW5pTUFRTVBkYm5wcEd6enBs?=
- =?utf-8?Q?BAFAceZ3dhtkhn4dT1oFhrM=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	scM0pTrFiPSGoA8L1QvsFLUNRwCbExGOP5QjFUIjPnS18WEy64tvjSTs/4Nza+uYD6Ljb06yZTjQg6pwC532x6vRvRPcH6gES6ZmBWeSU5m5oiv+sGZ9G1Z0pNUu0gF0993SdWAzBKmQmUFRwxC2OJ7XDxSqoMEX/WFhJEqb3vwvbnp6s0skDWMaY6tShlxJniAtGoeyEfimj6sY07/xr4JXp5X0jymm5Urjokf+fTvVLqG8+dzx9bFf0yGbcMEa3IPBMTEPFh9XAzB+mryB2IjTtPo6LpXfVw/W7gGaQnJLKVm0y0wa9w1Dk1c/XfLFbMWbHqnqKx3zJLypXcOaWwGGbz0uKeGRkWj+xawO2N5N0yXY1p1JEcaPJBTmzA1ocV0JXAjMfYO4ldWSi3ly0HHghVC3YEGByN7LyWkq04E6pCWO6zTOHPcnsFLj6k/3m/3QN+ultqJV87Wjl9Xz+jtrbYzlzAqcMz4zcLLqjVzVaCSrIcPlKnN3xGMjaRLyFDWQncr3IVghqf7CzXtPMKz0HfEXIy2K0eJfcVkULVNqmqNeregpA/5BQIRea8JQZXc3XtI5/n5GJCpoOW5MFaW5ZhsXkAGy5VaqhSMIDYU=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbd2b20d-b014-424e-62a0-08dd4b779f90
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB6886.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 15:12:11.0616
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kd29h0FmLzwX1OzRGlkqCh7BnewrsMDi+zIj28HCKVdq35tIX1UkMeEkLjHj5tiBqhF1FYVOQEBHsEThN2B/Y/lYf924SzH49/w5VEF5tsvto7PH17GYzzA8fUBP1j12
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6604
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
- phishscore=0 malwarescore=0 mlxscore=0 spamscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2501170000 definitions=main-2502120115
-X-Proofpoint-GUID: BRrKgAroNluYKY-CYSBagFBxBd3T33vM
-X-Proofpoint-ORIG-GUID: BRrKgAroNluYKY-CYSBagFBxBd3T33vM
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: [PATCH v2 3/3] cgroup/rstat: Add run_delay accounting for
+ cgroups
+Content-Language: en-US
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Yury Norov <yury.norov@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Bitao Hu
+ <yaoma@linux.alibaba.com>, Chen Ridong <chenridong@huawei.com>,
+ "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250125052521.19487-1-wuyun.abel@bytedance.com>
+ <20250125052521.19487-4-wuyun.abel@bytedance.com>
+ <3wqaz6jb74i2cdtvkv4isvhapiiqukyicuol76s66xwixlaz3c@qr6bva3wbxkx>
+ <9515c474-366d-4692-91a7-a4c1a5fc18db@bytedance.com>
+ <qt3qdbvmrqtbceeogo32bw2b7v5otc3q6gfh7vgsk4vrydcgix@33hepjadeyjb>
+From: Abel Wu <wuyun.abel@bytedance.com>
+In-Reply-To: <qt3qdbvmrqtbceeogo32bw2b7v5otc3q6gfh7vgsk4vrydcgix@33hepjadeyjb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Salvatore,
-
-On 12/02/25 00:56, Salvatore Bonaccorso wrote:
-> Hi Harshit,
+On 2/10/25 11:38 PM, Michal Koutný Wrote:
+> Hello Abel (sorry for my delay).
 > 
-> On Sun, Feb 09, 2025 at 01:45:38AM +0530, Harshit Mogalapalli wrote:
->> Hi Salvatore,
+> On Wed, Jan 29, 2025 at 12:48:09PM +0800, Abel Wu <wuyun.abel@bytedance.com> wrote:
+>> PSI tracks stall times for each cpu, and
 >>
->> On 08/02/25 21:26, Salvatore Bonaccorso wrote:
->>> Hi Juergen, hi all,
->>>
->>> Radoslav Bodó reported in Debian an issue after updating our kernel
->>> from 6.1.112 to 6.1.115. His report in full is at:
->>>
->>> https://bugs.debian.org/1088159
->>>
+>> 	tSOME[cpu] = time(nr_delayed_tasks[cpu] != 0)
 >>
->> Note:
->> We have seen this on 5.4.y kernel: More details here:
->> https://lore.kernel.org/all/9dd91f6e-1c66-4961-994e-dbda87d69dad@oracle.com/
+>> which turns nr_delayed_tasks[cpu] into boolean value, hence loses
+>> insight into how severely this task group is stalled on this cpu.
 > 
-> Thanks for the pointer, so looking at that thread I suspect the three
-> referenced bugs in Debian are in the end all releated. We have one as
-> well relating to the megasas_sas driver, this one for the mpt3sas
-> driver and one for the i40e driver).
+> Thanks for example. So the lost information is kind of a group load.
+
+Exactly.
+
+> What meaning it has when there is no group throttling?
+
+It means how severely this cgroup is interfered by co-located tasks.
+Both psi and run_delay are tracked in (part of) our fleet, and the
+spikes usually lead to poor SLI. But we do find circumstances that
+run_delay has a better correlation with SLI due to the abovementioned
+method of stall time accounting.
+
+They are treated as indicators of triggering throttling or evicting
+the co-located low priority jobs.
+
+In fact we also track per-cpu stats (cpu.stat.percpu) for cgroups,
+including run_delay which helped us to decide which job to be the
+victim, and also provided useful info when we diagnose issues.
+
 > 
-> AFAICS, there is not yet a patch which has landed upstream which I can
-> redirect to a affected user to test?
+> Honestly, I can't reason neither about PSI.some nor Σ run_delay wrt
+> feedback for resource control. What it is slightly bugging me is
+> introduction of another stats field before first one was explored :-)
 > 
+> But if there's information loss with PSI -- could cpu.pressure:some be
+> removed in favor of Σ run_delay? (The former could be calculated from
+> latter if you're right :-p)
 
-Konrad pointed me at this thread: 
-https://lore.kernel.org/all/20250211120432.29493-1-jgross@suse.com/
+It is not my intent to replacing cpu.pressure:some by run_delay. The
+former provides a normalized value that can be used to compare among
+different cgroups while the latter isn't able to.
 
-This has some fixes, but not landed upstream yet.
+> 
+> (I didn't like the before/after shuffling with enum cpu_usage_stat
+> NR_STATS but I saw v4 where you tackled that.)
+> 
+> Michal
+> 
+> 
+> More context form previous message, the difference is between a) and c),
+> or better equal lanes:
+> 
+> a')
+>     t1 |----|
+>     t2 |xx--|
+>     t3 |----|
+> 
+> c)
+>     t1 |----|
+>     t2 |xx--|
+>     t3 |xx--|
+> 
+>        <-Δt->
 
-Thanks,
-Harshit
+Yes, a) and c) have same cpu.pressure:some but make different progress.
 
-> Regards,
-> Salvatore
+> 
+> run_delay can be calculated indepently of cpu.pressure:some
+> because there is still difference between a') and c) in terms of total
+> cpu usage.
+> 
+> 	Δrun_delay = nr * Δt - Δusage
+> 
+> The challenge is with nr (assuming they're all runnable during Δt), that
+> would need to be sampled from /sys/kernel/debug/sched/debug. But then
+> you can get whatever load for individual cfs_rqs from there. Hm, does it
+> even make sense to add up run_delays from different CPUs?
+
+Very good question. In our case, this summed value is used as a general
+indicator to trigger strategy which further depends on raw per-cpu data
+provided by cpu.stat.percpu, which implies that what we actually want is
+the per-cpu data.
+
+Thanks & Best Regards,
+	Abel
 
 
