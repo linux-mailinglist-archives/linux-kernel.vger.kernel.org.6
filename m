@@ -1,210 +1,146 @@
-Return-Path: <linux-kernel+bounces-511127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02450A32649
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:51:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B968A32650
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A750188C579
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BBFA3A5BF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F1320CCF5;
-	Wed, 12 Feb 2025 12:51:21 +0000 (UTC)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0312046B5;
+	Wed, 12 Feb 2025 12:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RaqKmOUW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDD61E87B;
-	Wed, 12 Feb 2025 12:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60942271824
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364681; cv=none; b=T4H/bEdMQgLjiXwv4X1h77emZ5qeVHfxrXB9DKDCnwhjq+pkTcg2CJF2H1t2Gk45A0ELzFPoycuHftnj4251NRX4siyUFBw+wWPwRw5YYwzip4i2hpiBH6p3nJCH3D0q5vKpOMcRVkpPYsSiKylbcxGL//5GEIyNUk4LRGY0jC0=
+	t=1739364826; cv=none; b=FFAl4o9Y5xkHwJj2UEsk5Etpsq8kID4Jo8ltJVqL7zui7DB2zM5DAa0QqZ09uXDtfqVgMrTHQNiZ1adQyNxJQg6OOAmNAw1eoi1bEmWv7U5Y/VqrRQ+gb3ofk7kxUxxicibhby5q+7J9ZWPO0xGtz8X6ohWpETmcnGrzq7NriNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364681; c=relaxed/simple;
-	bh=h6XDo9MqX66TbKJn2C4oVwqfyTVywHALJIHo9IR9uYs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bYLgzrCUiv3UDuUBLcIjhz+AgHWIibiTO88xoHvtTdrEZHLIm5Fy6S1MNn/3qrHKKFcpdAIG5Ayp3P9flKNmxdJuCuFhu/D9ejBVk9F0zEI3uweNyDQNymkjD7I5J4WQSLm74oDE6wLocbOybVOTn5laBzwJpGvIgx1FF/QbOm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-86704887709so1598863241.3;
-        Wed, 12 Feb 2025 04:51:19 -0800 (PST)
+	s=arc-20240116; t=1739364826; c=relaxed/simple;
+	bh=W4vUf1/0kFjyw3Paou9TarghzObDE/bTqGE1At5j+8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JAXhoxJrR9n5ByCnsjSouAfWJVhavPnn1gvU9pECAfTtewO2jnAxLR5kCT2Y4VLAmDCUCC+IzffNjs2gJxhnUNxilsWcS/LiWJc+xNzBBeGZ9Xj1O2TEBlguJUiYPwuh/Nd/mDl71kr7F50WznOAS/jEpmcI7X3o1GTix3eIKSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RaqKmOUW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739364824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=knzBHB+xibELoM9METHHEBNydWfuqJFvfie23B+AtL0=;
+	b=RaqKmOUWFrLlx6d4v/DImjxPZE+9bOAJ3dbDx8fAIW0ue50ktyDiFU5XD6bhK95oLFekT6
+	wMIT0KHQ1rrJJo6FRNxmAgQl0Fhad+rq6GPf1UQ7IySdIfbWv9tcdGZ2bYJ2HUU16XWIOC
+	pD6CSHqLxnHS8fqzLieghZUJXB5++mY=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-138-3-RWW0F0NnevZDbM-YCCjA-1; Wed, 12 Feb 2025 07:53:42 -0500
+X-MC-Unique: 3-RWW0F0NnevZDbM-YCCjA-1
+X-Mimecast-MFC-AGG-ID: 3-RWW0F0NnevZDbM-YCCjA_1739364822
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c04e4c62a8so700907685a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:53:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739364677; x=1739969477;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MQ/1ab/AMMhwdUM5h+TBMpEY47u6kr9GW+SYGBdGrF8=;
-        b=JooYGfeAqsUex9YxZW2sKm2txxgYlfbwtBHvJ8dnDFrADej9SWbR2ZMn8GAu9BWjsM
-         p64lTBnZlgZgmFs2K27o+JxHq+MATUAgYsqZs3wp7lAkha1W4wNDX5AQF4Hyr2if3vKH
-         n/XKxf+O9eiPaU1ARAmI7sPBsZFliz1ZruE3PXt2Q4+JHG/aGdD1KjNuh815hlXas9u3
-         CMxHPCjihF+rwQme/Ju6/xYjWWrA3BfJeKANkfaKq3B4TJMxrlgeKb4yw/xQ6MD721+n
-         tUcY2WFW84pCkunUb4sjZDaUpwNVuSfcoq0oKV0nEEuJtaVwKPhpGyP6YPppgHae9tc4
-         hk3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVog7TNveicoGTh5cIYIUBT0b1vuCfZhqPu/Hnds0aI1LAX8S1ghsswReKmfiHuAD+CE+Fu6W6i+QzI@vger.kernel.org, AJvYcCXbm16oR6wfSmZM78ymJV1J+6lOz4kB83wLu1ErhlvwtCEax+q7+AaYUBYWw8ZIauI0fI+4tO5tJtGU27Oa@vger.kernel.org, AJvYcCXnFtw5EOnwp7Ikcrak9VML9EAJyGKZc+wLf8Q2zFRd0SZF0NcuAu6Gf2nEdQvkrfV5WnhdfUnHDVwO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqQmFP2NypAy/AStTtyAe6lCjNsmprwWD632eBVpRA6Sm26bJ5
-	wAbL0JOKnBBF2fMydb4RCkk65H8IwvsTrIuohwgc84wkKilvA4Qh0nrMSJnd
-X-Gm-Gg: ASbGncsLqG6fIbUojojvT79DV7ZBZh8F+/6alNJZYYhdX40ig6/FEeOqx6LqwlZ0LrE
-	CRqcmeS1RvbiCfpgzIu4rwFDo9n5d41EOr4A9KlW1apXcGH3cAiGKZnIZ9QuKmArkgpEWoiRofa
-	VqC7GZI0b9ssHvdeKInOlCeg/z8mxXwTKkjTuqKupj+RmNRaCTXOdsFV8E8zqMj0waknfvhUgt4
-	6v+ayWzqceULOZwZAVQIeXLXfPSgS5nllq2HhNGngRui++kQ4ogvqfZDWPBvz/Xg1JmlNibnbD2
-	nC3umpR13GO5hdk1lSGkNe4Q2vik9EcsZEbQM0ggj8/rNssTQgRatg==
-X-Google-Smtp-Source: AGHT+IGhjuojFyHJCG/QQ+Q42CBUu/uR/c7Ifr+gCc1PyAKmlLLAV94aP1MwThyHcebzPlywSVEvrw==
-X-Received: by 2002:a05:6122:32c6:b0:520:60c2:3fb with SMTP id 71dfb90a1353d-520678bd90cmr2363039e0c.0.1739364676701;
-        Wed, 12 Feb 2025 04:51:16 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5203a7d491fsm1016594e0c.0.2025.02.12.04.51.15
+        d=1e100.net; s=20230601; t=1739364822; x=1739969622;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=knzBHB+xibELoM9METHHEBNydWfuqJFvfie23B+AtL0=;
+        b=IKyTECw3KtJf1a3HGsB8pIqTn1Wb47mg/YfPMitXfkGlf3pWLZnxcd32AtL5HdFSHZ
+         FgAA2/j3aW+6q3pv+r9chq2t2NujcfpRZHM9eAZUYJgziAemTe5kduiPtiIWCMUgl32A
+         E6t0IzIkVJOQvYHvu+kznR69DGz56Ogpzqdkt7yLB+5xPvVEzd6aBVuJKMJeBTuyuNWv
+         yrh/LhWxNL8LxhaQ6u+SXxuyqlg8l6W84ieDnWtPey/i8ewJfiRDz+u2nwr/wKCPa7d3
+         n7kfjAIqp8zwlSrXsyz/e4kJaZLzmOfzxmD44gQ8p80ovolL55d7DGPkKcdtu7aJ6ofn
+         Hwkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJXe5Vm7/MnRvtM8gYMpLojkEX9cKfgFe5z/V9L/ATHP0mHTHESm925ET2ZXt5LVWb+3dCi3erd+tx6eM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCX0Xw11qHtGNL6HqftQxT8dX7TRZC1DnGLZjCSYu+Zt/53CNw
+	2q7iBJWu5sLaUNXhBUkBMQGqSDfFU/4lZkdc3HmKGW0cC06LIqQSnZuQwKVUVcCmAqoeExR23Vl
+	CU3p1J25zJclPTGtLcvb9dPYV0SUnTS2nEGxRy9ovpSWQ7HutaZH1vH4PSbZh4w==
+X-Gm-Gg: ASbGncsW8CdC1/IM9MfmMFlfKahNhCYjHW+mTf+mt4NAzeAXghAjoiGY56vMhzGJcjw
+	ECkt+tA5hXQ5QgLEDVggpgyROaqHZYRRe24qbsKzDjyHIkbNV47mEJlbuYBuR4J22k6P510QyTK
+	c9t9ubn4TupuqElmnhjjFetOes2thcCMZZxgxmWMzC+ZJwbNpRU9hqJe6VeOGq9lEUyq9jjdVHg
+	ceTCGn0qwALy8FLKyOClJWWII2v+fqPvHA7wpP03QOFRFiIEKOooD/8rWYbneJw9U527nhg1os7
+	BfSt
+X-Received: by 2002:a05:620a:3950:b0:7c0:589b:2f3e with SMTP id af79cd13be357-7c06fc88adcmr407301885a.29.1739364822208;
+        Wed, 12 Feb 2025 04:53:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE7FcO8kuy6Gfi4rIlvRUBrNcSfOrvcVLper0drGWk6xj15NOdU6I+CCP8OX2xjc19cBs0qPg==
+X-Received: by 2002:a05:620a:3950:b0:7c0:589b:2f3e with SMTP id af79cd13be357-7c06fc88adcmr407299085a.29.1739364821922;
+        Wed, 12 Feb 2025 04:53:41 -0800 (PST)
+Received: from [10.26.1.94] ([66.187.232.136])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c07518e80fsm66396585a.26.2025.02.12.04.53.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 04:51:15 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8671441a730so1239846241.0;
-        Wed, 12 Feb 2025 04:51:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWK87vtpMprU+iaPdS5uZgbJgOhAjzq40DBbE+0bPVxGwvuyu5GxwbK7g/0oT9Ad4HJRxLLrA2vGTnZ@vger.kernel.org, AJvYcCWTAPRrAADFLuoSvVqrNo0363zlx8/zqdkhOWShTfNERucyXRtb37FySZR4KDid4DnGZ/lGo68OmM27fy83@vger.kernel.org, AJvYcCWoc6Sv+fDUegp97iu/MXvRFjtM21qzmc3AHfe+ptaTscUtLhpNodEyoQCOaHrJNjipRpNjPLrbut9J@vger.kernel.org
-X-Received: by 2002:a05:6102:3709:b0:4bb:d394:46c5 with SMTP id
- ada2fe7eead31-4bbf21cdce8mr2389568137.9.1739364674977; Wed, 12 Feb 2025
- 04:51:14 -0800 (PST)
+        Wed, 12 Feb 2025 04:53:41 -0800 (PST)
+Message-ID: <1d2c943f-9521-4dc8-b798-06cbb84bb7dc@redhat.com>
+Date: Wed, 12 Feb 2025 07:53:40 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210131826.220318-1-patrice.chotard@foss.st.com> <20250210131826.220318-5-patrice.chotard@foss.st.com>
-In-Reply-To: <20250210131826.220318-5-patrice.chotard@foss.st.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Feb 2025 13:51:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVkFym-3byZkszsi9tRoZ6zNOMCT79c2EgQQjn5xd19ig@mail.gmail.com>
-X-Gm-Features: AWEUYZnzYg0ThTq4p4M8sQ0EhbXz6WBb20xXzFHLgeW2YGdd91BJTbWp42U4Smo
-Message-ID: <CAMuHMdVkFym-3byZkszsi9tRoZ6zNOMCT79c2EgQQjn5xd19ig@mail.gmail.com>
-Subject: Re: [PATCH v3 4/8] memory: Add STM32 Octo Memory Manager driver
-To: patrice.chotard@foss.st.com
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	christophe.kerello@foss.st.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] intel_idle: introduce 'no_native' module parameter
+To: dedekind1@gmail.com, kernel test robot <lkp@intel.com>,
+ linux-pm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Corbet <corbet@lwn.net>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>, Len Brown <lenb@kernel.org>,
+ Prarit Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250211132741.99944-1-darcari@redhat.com>
+ <202502121732.P7lZkbhm-lkp@intel.com>
+ <21e66060c13c6a3cc33592f71cb08975711a6adb.camel@gmail.com>
+ <9416ee48-a68a-465e-85be-89d5a53afcd8@redhat.com>
+ <b7ed8d0b07e82a637bfc8a3f4d592f0f15ba9688.camel@gmail.com>
+Content-Language: en-US
+From: David Arcari <darcari@redhat.com>
+In-Reply-To: <b7ed8d0b07e82a637bfc8a3f4d592f0f15ba9688.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Patrice,
 
-On Mon, 10 Feb 2025 at 14:21, <patrice.chotard@foss.st.com> wrote:
-> From: Patrice Chotard <patrice.chotard@foss.st.com>
->
-> Octo Memory Manager driver (OMM) manages:
->   - the muxing between 2 OSPI busses and 2 output ports.
->     There are 4 possible muxing configurations:
->       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
->         output is on port 2
->       - OSPI1 and OSPI2 are multiplexed over the same output port 1
->       - swapped mode (no multiplexing), OSPI1 output is on port 2,
->         OSPI2 output is on port 1
->       - OSPI1 and OSPI2 are multiplexed over the same output port 2
->   - the split of the memory area shared between the 2 OSPI instances.
->   - chip select selection override.
->   - the time between 2 transactions in multiplexed mode.
->   - check firewall access.
->
-> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
-> Signed-off-by: Christophe Kerello <christophe.kerello@foss.st.com>
 
-Thanks for your patch!
+On 2/12/25 7:46 AM, Artem Bityutskiy wrote:
+> On Wed, 2025-02-12 at 07:41 -0500, David Arcari wrote:
+>> - #ifdef the code that doesn't compile
+>> - default no_acpi=true in the !CONFIG_ACPI_PROCESSOR_CSTATE case
+>>
+>> I sort of like the second option better, but I worry about the
+>> documentation.  Specifically:
+>>
+>> "In the case that ACPI is not configured these flags have no impact
+>> +on functionality."
+>>
+>> I guess that is still true.
+>>
+>> Perhaps there is a better option.  What do you think?
+> 
+> I've not been involved into kernel that much for long time. In old days
+> sprinkling #ifdefs around was an anti-pattern. Most probably nowadays too. So
+> the second option sounds better to me.
 
-> --- a/drivers/memory/Kconfig
-> +++ b/drivers/memory/Kconfig
-> @@ -225,6 +225,23 @@ config STM32_FMC2_EBI
->           devices (like SRAM, ethernet adapters, FPGAs, LCD displays, ...) on
->           SOCs containing the FMC2 External Bus Interface.
->
-> +config STM32_OMM
-> +       tristate "STM32 Octo Memory Manager"
-> +       depends on SPI_STM32_OSPI || TEST_COMPILE
+Another option would be to change the offending code to a function call:
 
-COMPILE_TEST
+if (ignore_native()) {
 
-> +       help
-> +         This driver manages the muxing between the 2 OSPI busses and
-> +         the 2 output ports. There are 4 possible muxing configurations:
-> +         - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
-> +              output is on port 2
-> +         - OSPI1 and OSPI2 are multiplexed over the same output port 1
-> +         - swapped mode (no multiplexing), OSPI1 output is on port 2,
-> +              OSPI2 output is on port 1
-> +         - OSPI1 and OSPI2 are multiplexed over the same output port 2
-> +         It also manages :
-> +           - the split of the memory area shared between the 2 OSPI instances.
-> +           - chip select selection override.
-> +           - the time between 2 transactions in multiplexed mode.
-> +
->  source "drivers/memory/samsung/Kconfig"
->  source "drivers/memory/tegra/Kconfig"
+And have ignore_native() always return false when ACPI is not configured.
 
-> --- /dev/null
-> +++ b/drivers/memory/stm32_omm.c
+And yes I should have built and tested the kernel with ACPI disabled. 
+My apologies.
 
-> +static int stm32_omm_set_amcr(struct device *dev, bool set)
-> +{
-> +       struct stm32_omm *omm = dev_get_drvdata(dev);
-> +       struct regmap *syscfg_regmap;
-> +       struct device_node *node;
-> +       struct resource res, res1;
-> +       resource_size_t mm_ospi2_size = 0;
-> +       static const char * const mm_name[] = { "ospi1", "ospi2" };
-> +       u32 amcr_base, amcr_mask;
-> +       int ret, i, idx;
+I will do that for v4.
 
-unsigned int i
+-DA
 
-> +       unsigned int amcr, read_amcr;
-> +
-> +       for (i = 0; i < omm->nb_child; i++) {
-> +               idx = of_property_match_string(dev->of_node,
-> +                                              "memory-region-names",
-> +                                              mm_name[i]);
-> +               if (idx < 0)
-> +                       continue;
-> +
-> +               /* res1 only used on second loop iteration */
-> +               res1.start = res.start;
-> +               res1.end = res.end;
-> +
-> +               node = of_parse_phandle(dev->of_node, "memory-region", idx);
-> +               if (!node)
-> +                       continue;
-> +
-> +               ret = of_address_to_resource(node, 0, &res);
-> +               if (ret) {
-> +                       dev_err(dev, "unable to resolve memory region\n");
-> +                       return ret;
-> +               }
-> +
-> +               /* check that memory region fits inside OMM memory map area */
-> +               if (!resource_contains(omm->mm_res, &res)) {
-> +                       dev_err(dev, "%s doesn't fit inside OMM memory map area\n",
-> +                               mm_name[i]);
-> +                       dev_err(dev, "[0x%llx-0x%llx] doesn't fit inside [0x%llx-0x%llx]\n",
-> +                               res.start, res.end,
-> +                               omm->mm_res->start, omm->mm_res->end);
+> 
+> Artem.
+> 
 
-As reported by the kernel test robot, this fails to build when
-resource_size_t differs from unsigned long long.  However, you can
-easily print the full resource instead:
-
-    dev_err(dev, "%pR doesn't fit inside %pR\n", &res, omm->mm_res);
-
-https://elixir.bootlin.com/linux/v6.13.2/source/Documentation/core-api/printk-formats.rst#L206
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
