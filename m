@@ -1,89 +1,166 @@
-Return-Path: <linux-kernel+bounces-511082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A822A32590
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:05:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13242A3259D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2445B167420
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC03188BED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8258920B7F7;
-	Wed, 12 Feb 2025 12:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A5420C48F;
+	Wed, 12 Feb 2025 12:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="alNKQk4T"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e4YIH+px"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E442B9BC;
-	Wed, 12 Feb 2025 12:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BA82B9BC;
+	Wed, 12 Feb 2025 12:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739361907; cv=none; b=d7oka9I0wwkKEVK0L9DsyJINaPQO5+IS+fEBTdpXf5U77K1ShfHQhp8iQi8uhVsWy1R85SoRyzhB5DuVtqgoL+XL1nbk45fEDLFkTTKa0pB5grL0HMGYgFfNipfB4pEjrm3lMSTA/E+5XQiMqYpAWBFcYBf3ErcBa3XScB/qVDg=
+	t=1739361971; cv=none; b=MDtXFJEumVWqnVWBwmSpxMvvojlY2Q0Zyqxhr+/PETpekdDmmeVRlM109HC2j4muS71ZkcDowVUupUx+0lPqvmmTVtTaRpnmU/X0IpatP5Z6695UiqxfXGynkc4N9QagtCn6YNIE4KnbPrSMgEKOw9Ivr5gLKsKIrs/NHwVB2+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739361907; c=relaxed/simple;
-	bh=XGhA7ATTKTn2MI6J3q5zmjDzFLGnOtyqBJHip6KokaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQ6sxnJyH2LBbeyG/zPAneeRggToqNrGFLpBQo3NQmv30Qhus4KHH1Dg7rMRKTcBP+77XtsUlzeuz1qeEw3j0BC2L5rZDkyYOR94V5kLLBw7qU8vTaGno2sa3G+SBBCMfT65rGW6XJULMbe7FeW0CgP73dFL5UYpW+VEHse2KGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=alNKQk4T; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Lc6YTD7pcTYKpPT5lM/vEVBDGdiQ39oWsR1rgPSjnH0=; b=alNKQk4TsVKg4AtCiFsEdcsFow
-	hpqX5cbqfuWLIHoAiCdgqMJLACSNOGWMkomt+wDO35OWju/sbW3KLpJVnnN7OK48Xcc5ygE7IXruP
-	LuAJx60vIH8620zKMCei/Jfklsc5cdnUmziBQaavNliwhH6uLeLZiL9n9GHIW56EgQhioef/kiO6x
-	tVKaSDJ+rNREFenk5lnrR2VFljNvB9dy93e+Qu4ErhRXOx3okmN1uNSncagOoUAMIvIZDWXy0yrpd
-	PX0VowD6ljTdHaOPRots7sW3yZqCX9sd9XXgLAlsSK1buZesVPHntKUSijCg/mZn+Xooy8NnNc5YA
-	0EwYUafQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiBU3-0000000Bc07-3biR;
-	Wed, 12 Feb 2025 12:04:51 +0000
-Date: Wed, 12 Feb 2025 12:04:51 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	xu xin <xu.xin16@zte.com.cn>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Felix Moessbauer <felix.moessbauer@siemens.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc: Use str_yes_no() helper in proc_pid_ksm_stat()
-Message-ID: <20250212120451.GO1977892@ZenIV>
-References: <20250212115954.111652-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1739361971; c=relaxed/simple;
+	bh=5GPpJhmUBIfhYoB8yxu0DhjKWbmPWT7lDCwNC2s9RGc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XBkL9L+fYS/DeFhEI2JXyL0Hxns9Ppc+cnQ/AGDzl0lGESGD9oSW59bxYdH/sodpIKtDb7Eyz1cYOjNTQmUo7Ih1iUzyIBmZ2HXY/QapdToyvefhXYhkOnrU4ty/nAcH+jZwHSqmY6QmbemSRM28QgtQN3jHr85ezV2jIwCj9Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e4YIH+px; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C9YsYL011426;
+	Wed, 12 Feb 2025 12:06:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=nLz/GzCMRPuM71qBBVKXfuXubdgaybSk3JA4GxjpB9Q=; b=e4
+	YIH+pxIfUm1pcGGG0xAIgI4nozodDiieMrO0R6OIKqqFBDcegnr7wp1nLksxXevy
+	y/iAP7kYKzCivz3iv/ovgXnfBAYyG+FEEwUTHSgq9nBgU5sXKvzqA6CvHD9X0VPf
+	d1QkRPWOEBpnw16mbsa1jMu1OyNMBU/zsle3nzn1qF5F9iVyFXlGMuyYnVNLwo5E
+	e8T2SnMrtTb66s0aazI+kj20sTswNzJoN6q2xREjGLkgDtRxb+T5/+ckpmScOytA
+	4bfUgbyl+tYr+Mzh0eWL4ha8XEgVxNetZJKUPkv2wlr9Zrp3tHf+H0MZxQSYMJOy
+	Rdu49Pm38hrVI+IUmKGQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qxv3vts4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 12:06:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51CC60L6023599
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 12:06:00 GMT
+Received: from hu-jseerapu-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Feb 2025 04:05:56 -0800
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        "Sumit
+ Semwal" <sumit.semwal@linaro.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?=
+	<christian.koenig@amd.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>
+Subject: [PATCH v5 RESEND 0/2] Add Block event interrupt support for I2C protocol
+Date: Wed, 12 Feb 2025 17:35:34 +0530
+Message-ID: <20250212120536.28879-1-quic_jseerapu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212115954.111652-2-thorsten.blum@linux.dev>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XdFDB-ygidLDF8roYCoLfDjdx37Owqnb
+X-Proofpoint-ORIG-GUID: XdFDB-ygidLDF8roYCoLfDjdx37Owqnb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 adultscore=0 spamscore=0 mlxscore=0
+ bulkscore=0 impostorscore=0 clxscore=1015 lowpriorityscore=0
+ malwarescore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2501170000 definitions=main-2502120093
 
-On Wed, Feb 12, 2025 at 12:59:52PM +0100, Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_yes_no() helper function.
+The I2C driver gets an interrupt upon transfer completion.
+When handling multiple messages in a single transfer, this
+results in N interrupts for N messages, leading to significant
+software interrupt latency.
 
->  		seq_printf(m, "ksm_merge_any: %s\n",
-> -				test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? "yes" : "no");
-> +				str_yes_no(test_bit(MMF_VM_MERGE_ANY, &mm->flags)));
->  		ret = mmap_read_lock_killable(mm);
->  		if (ret) {
->  			mmput(mm);
->  			return ret;
->  		}
->  		seq_printf(m, "ksm_mergeable: %s\n",
-> -				ksm_process_mergeable(mm) ? "yes" : "no");
-> +				str_yes_no(ksm_process_mergeable(mm)));
+To mitigate this latency, utilize Block Event Interrupt (BEI)
+mechanism. Enabling BEI instructs the hardware to prevent interrupt
+generation and BEI is disabled when an interrupt is necessary.
 
-Is that any more readable?  If anything, that might be better off with something
-like a printf modifier...
+Large I2C transfer can be divided into chunks of 8 messages internally.
+Interrupts are not expected for the first 7 message completions, only
+the last message triggers an interrupt, indicating the completion of
+8 messages. This BEI mechanism enhances overall transfer efficiency.
+
+This optimization reduces transfer time from 168 ms to 48 ms for a
+series of 200 I2C write messages in a single transfer, with a
+clock frequency support of 100 kHz.
+
+BEI optimizations are currently implemented for I2C write transfers only,
+as there is no use case for multiple I2C read messages in a single transfer
+at this time.
+
+v4 -> v5:
+   -  BEI flag naming changed from flags to bei_flag.  
+   -  QCOM_GPI_BLOCK_EVENT_IRQ macro is removed from qcom-gpi-dma.h
+      file, and Block event support is checked with bei_flag.
+   -  Documentation added for "struct geni_i2c_dev".
+
+v3 -> v4:
+  - API's added for Block event interrupt with multi descriptor support is
+    moved from qcom-gpi-dma.h file to I2C geni qcom driver file.
+  - gpi_multi_xfer_timeout_handler function is moved from GPI driver to
+    I2C driver.
+  - geni_i2c_gpi_multi_desc_xfer structure is added as a member of
+    struct geni_i2c_dev.
+  - Removed the changes of making I2C driver is dependent on GPI driver.
+
+v2 -> v3:
+  - Updated commit description
+  - In I2C GENI driver, for i2c_gpi_cb_result moved the logic of
+    "!is_tx_multi_xfer" to else part.
+  - MIN_NUM_OF_MSGS_MULTI_DESC changed from 4 to 2
+  - Changes of I2C GENI driver to depend on the GPI driver moved
+    to patch3.
+  - Renamed gpi_multi_desc_process to gpi_multi_xfer_timeout_handler
+  - Added description for newly added changes in "qcom-gpi-dma.h" file.
+
+v1 -> v2:
+  - DT changes are reverted for adding dma channel size as a new arg of
+    dma-cells property.
+  - DT binding change reveted for dma channel size as a new arg of
+    dma-cells property.
+  - In GPI driver, reverted the changes to parse the channel TRE size
+    from device tree.
+  - Made the changes in QCOM I2C geni driver to support the BEI
+    functionality with the existing TRE size of 64.
+  - Made changes in QCOM I2C geni driver as per the review comments.
+  - Fixed Kernel test robot reported compiltion issues.
+
+
+Jyothi Kumar Seerapu (2):
+  dmaengine: qcom: gpi: Add GPI Block event interrupt support
+  i2c: i2c-qcom-geni: Add Block event interrupt support
+
+ drivers/dma/qcom/gpi.c             |   3 +
+ drivers/i2c/busses/i2c-qcom-geni.c | 304 ++++++++++++++++++++++++++---
+ include/linux/dma/qcom-gpi-dma.h   |   2 +
+ 3 files changed, 284 insertions(+), 25 deletions(-)
+
+-- 
+base-commit: 55bcd2e0d04c1171d382badef1def1fd04ef66c5
+2.17.1
+
 
