@@ -1,87 +1,51 @@
-Return-Path: <linux-kernel+bounces-511230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A50A32819
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:10:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3436CA3281B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:11:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F78E18869C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:10:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7A23A56CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C69A20F066;
-	Wed, 12 Feb 2025 14:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DB720F067;
+	Wed, 12 Feb 2025 14:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZC2Kg0h8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B1zSwnxC"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECFB20F084
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A820F063
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739369434; cv=none; b=NWDr3pCgZHOAHwHmK1WTfIbcChA/aioipPr/NHPs+dc7m5e8b+4Lrb4z2k+tJz++Lgw2MBs92EvwyPWiMZ4wgnhHQKW2ayoAXMuRJC/Jl53vzuj7eHjW0F/jYPTNjoqmfegL0OvLwLishmc315arlSI9F6RXGg7V3fHpehXAbS8=
+	t=1739369455; cv=none; b=KKtLuhP4XUnhs0rNssLcwFcLrD0a3kJeCIygbt2A/WwG+UfgoXU++lXmimjymcG3Gz/72XdS1Ed2Kx1Rnf9YZmeEdXq4ejESb7INo5b7szPBpqN+LAidBN7X/FNZa8/5nk00XubsvPIRtK5GejrzNCeMOkNoSt0nTlZ30F3j6Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739369434; c=relaxed/simple;
-	bh=P/vNrMUaz1jHHThzVkyhCQbgh6lpIub0ajM7DWOl6ao=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ptRCOPS4JIPJumlhld23LPogERWEMGz+sNmYkFCgrwfnrtdhruxxbSSrCTrt22v0JVWaD03A+/Nlx6qvZAGkBXMiVsbDQQadRMuUXC1PWUMNMxIQVYFJeDe/Eft+PwX2MeuVG9bFT+BarAkSVDcm12KIkXUv1qUZKqYcLUDympA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZC2Kg0h8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739369431;
+	s=arc-20240116; t=1739369455; c=relaxed/simple;
+	bh=mezFLrfYMviE1N2bg59Wmvqxlis6PcJxkdrk5sxXM/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m5m3rWicKp8dsv7oCzDkMerTayPyunbCnnOgY4E31MajLf4GHyB1EZ60cE0XyBmNyQtzcfOHjHlsiXCeCGnoO70g4i1Abw3jteQ6YwygECtMSOotxaoyoUu2hRCFhA7r6Du7XlFZBC1wpY7p0V58qT8NoXwZ3sU4K4AQuR6+sGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B1zSwnxC; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 594344429F;
+	Wed, 12 Feb 2025 14:10:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739369451;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f3xCL7oxgCvrGz6Ncj115FW+CHW40dQnECF6li9kzuU=;
-	b=ZC2Kg0h80gYpDA5w84iwOPCE4GkHtBvRGJyeiAj5PYWv8FlZxtJ6yPR8Wa50JGxXFDvITF
-	NyryzROT82nbc3jxxbFV02FFU4Xn5PnP5ugR17jv3ZI+e8agL+35yXc5JNPFIk/Kp8rOfn
-	JhnXYeC6fKr2VDiD094jS39Ct6oCPuU=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-53-FfMk5lgAN3mPfbKuoFBZTQ-1; Wed, 12 Feb 2025 09:10:30 -0500
-X-MC-Unique: FfMk5lgAN3mPfbKuoFBZTQ-1
-X-Mimecast-MFC-AGG-ID: FfMk5lgAN3mPfbKuoFBZTQ_1739369429
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c07249127bso115527285a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:10:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739369429; x=1739974229;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f3xCL7oxgCvrGz6Ncj115FW+CHW40dQnECF6li9kzuU=;
-        b=h8S6BXYn1tGD4Of+RbFkOsyAxWvPvI9PSCwi/Lt8/Eo9D4r7oAAktYC0xJg3riW7qZ
-         i4JaFB3EG7KyIvNyLtcfyUUV8wF/VuIs2KH2Jjec+cECTewABcGUogpJo68dx8J7rXq0
-         R1vQWmALpEoGSvTHTthcOe2yg3RXR0HKilTGb7H1EAhnXaizLnd1yfoDM0zG22ZLYLi4
-         wtIOPGMSdjXas/6gquoCeAmQg+AXePWexAyIoT+enWE0oWhG3a/OhpupEt9CpMAhw8Lt
-         N7re1tYfySKBX8POAPwfi/rpnyor1J2L0zx285kktqcmaLMBaG0B+pa6uinebzx6iexV
-         xC4A==
-X-Forwarded-Encrypted: i=1; AJvYcCX8Fn/++s/MobAxpzFkXpBzfD985DFLOFimU/ivimMyFeUMJdA5s39ivn9k0djWGrmjtqfN7GPiZVZWcR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCXuZ1qcAvvRl+Z3SJ17sYtOnU5exWhDTobKUdkLfXbw9bTXIa
-	e6Pyc6HrUFYXBCBSdHzuIc1cU0UrDzze2xwhr/u+JTMn/OFJlTNkgXnrGH48savQEsJEkW2m0Mj
-	vvkFlMJLhu6Uuz+Q+7mrJ5pFsknNrSd/oHPOF1HR8SDdWk6UltpgdU2k9ek3nYw==
-X-Gm-Gg: ASbGncvj8YlE2xZA6zYff0v2sh68GZsjEDZkf0LFFog2gDsRXKutBD5nTTZPx0e+fe6
-	el78+7bQZFqyFTL/4k/JzSNeH0CHR7lTbBspBddEB9Y3rUN0IsuAfYtj0Odle9rnN+IjMv+r1GD
-	INF54Q3iGlg5/Ekpcml6OWg+s4j0CjULa186oP0SIhAZG+yBb+xSggfUGsuZmTE0jbOxf0mPiDg
-	qLIG2IFnaCYcgCGy9xFJ81p80Rey7l9bq5gPOugkRPXRpiTPLDT6IHDV5t060ApJXJf03DQtzQ+
-	UZrcLBAoRkTcmfzzFLX0toRipVRPr4WAiOLGXesC05r38TnW
-X-Received: by 2002:a05:620a:4399:b0:7c0:55ee:b391 with SMTP id af79cd13be357-7c06fce2a29mr767402585a.54.1739369429620;
-        Wed, 12 Feb 2025 06:10:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFMJeLzoRLSrfSXokIx2dS2HcRzFwlNtLF/6j+doTDGOwIGoL21GGyKdh8Sd2fMP6RZDdLmQQ==
-X-Received: by 2002:a05:620a:4399:b0:7c0:55ee:b391 with SMTP id af79cd13be357-7c06fce2a29mr767398085a.54.1739369429265;
-        Wed, 12 Feb 2025 06:10:29 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c05a703d71sm515644485a.46.2025.02.12.06.10.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 06:10:28 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <5f518ef0-2dbc-4d14-82ce-ad310a780598@redhat.com>
-Date: Wed, 12 Feb 2025 09:10:25 -0500
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7KO9jUpYxi1t4t4/FEqpUIJN4ZPvH+UIm4Yv7jJ4s9c=;
+	b=B1zSwnxCW6zFBpa4erS1g/rR8UTgP/Kf1HLTA7hqIDUQbgO2/tRCFuYxcSrbxwlPPyO9MC
+	9xSvbjhkNRtW+8Is9JiRVTVjc/RGB6oNdM/ZZ/TRQel8HDs/m/NQQrOeJeRMD3BLhzg3Vt
+	R6z5XkDHrwwLELRQGHlihMPmliqQMfb+Ln3QDo0f7BHKroNv6UzTXC6sYXuyt9GZTBTEdn
+	YbNjMy+ZbStaeoVfH8DMarTVXDqZl5F41lizxzxbx1fsJIJGpAeXCleckZ951ydtKVrTWa
+	n+tPVt3tU1MPQt/64wsaydXtQmCZr1cFeH0J+MbSP3kt4KZxa9XWW+uPhljx9w==
+Message-ID: <b05831de-c67b-4ba9-8808-f049d97b3654@bootlin.com>
+Date: Wed, 12 Feb 2025 15:10:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,114 +53,336 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] locking/semaphore: Use wake_q to wake up processes
- outside lock critical section
-To: Boqun Feng <boqun.feng@gmail.com>, Waiman Long <llong@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-References: <20250127013127.3913153-1-longman@redhat.com>
- <3e45144d-d147-4431-91be-63d0817fa2ce@redhat.com> <Z6w1cvz29NkMZh9b@Mac.home>
+Subject: Re: [PATCH 09/13] drm/vkms: Allow to attach planes and CRTCs
+To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250129110059.12199-1-jose.exposito89@gmail.com>
+ <20250129110059.12199-10-jose.exposito89@gmail.com>
+ <Z5uDJd4iV9Vnrp9e@louis-chauvet-laptop> <Z6sq0h0lKxjmBcxk@fedora>
 Content-Language: en-US
-In-Reply-To: <Z6w1cvz29NkMZh9b@Mac.home>
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <Z6sq0h0lKxjmBcxk@fedora>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggedtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeeivedtfeegtdekheethedttddtfefhhfegjeeljeejleduvdfhudegvdekheevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehjohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepmhgvlhhishhsrgdrshhrfiesghhmrghilhdrtghomhdprhgtphhtthhopehmr
+ ggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhm
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 2/12/25 12:45 AM, Boqun Feng wrote:
-> On Tue, Feb 11, 2025 at 09:18:56PM -0500, Waiman Long wrote:
->> On 1/26/25 8:31 PM, Waiman Long wrote:
->>> A circular lock dependency splat has been seen involving down_trylock().
+
+
+Le 11/02/2025 à 11:47, José Expósito a écrit :
+> On Thu, Jan 30, 2025 at 02:48:21PM +0100, Louis Chauvet wrote:
+>> On 29/01/25 - 12:00, José Expósito wrote:
+>>> Add a list of possible CRTCs to the plane configuration and helpers to
+>>> attach, detach and get the primary and cursor planes attached to a CRTC.
 >>>
->>> [ 4011.795602] ======================================================
->>> [ 4011.795603] WARNING: possible circular locking dependency detected
->>> [ 4011.795607] 6.12.0-41.el10.s390x+debug
->>> [ 4011.795612] ------------------------------------------------------
->>> [ 4011.795613] dd/32479 is trying to acquire lock:
->>> [ 4011.795617] 0015a20accd0d4f8 ((console_sem).lock){-.-.}-{2:2}, at: down_trylock+0x26/0x90
->>> [ 4011.795636]
->>> [ 4011.795636] but task is already holding lock:
->>> [ 4011.795637] 000000017e461698 (&zone->lock){-.-.}-{2:2}, at: rmqueue_bulk+0xac/0x8f0
+>>> Now that the default configuration has its planes and CRTC correctly
+>>> attached, configure the output following the configuration.
 >>>
->>>     the existing dependency chain (in reverse order) is:
->>>     -> #4 (&zone->lock){-.-.}-{2:2}:
->>>     -> #3 (hrtimer_bases.lock){-.-.}-{2:2}:
->>>     -> #2 (&rq->__lock){-.-.}-{2:2}:
->>>     -> #1 (&p->pi_lock){-.-.}-{2:2}:
->>>     -> #0 ((console_sem).lock){-.-.}-{2:2}:
->>>
->>> The console_sem -> pi_lock dependency is due to calling try_to_wake_up()
->>> while holding the console.sem raw_spinlock. This dependency can be broken
->>> by using wake_q to do the wakeup instead of calling try_to_wake_up()
->>> under the console_sem lock. This will also make the semaphore's
->>> raw_spinlock become a terminal lock without taking any further locks
->>> underneath it.
->>>
->>> The hrtimer_bases.lock is a raw_spinlock while zone->lock is a
->>> spinlock. The hrtimer_bases.lock -> zone->lock dependency happens via
->>> the debug_objects_fill_pool() helper function in the debugobjects code.
->>>
->>> [ 4011.795646] -> #4 (&zone->lock){-.-.}-{2:2}:
->>> [ 4011.795650]        __lock_acquire+0xe86/0x1cc0
->>> [ 4011.795655]        lock_acquire.part.0+0x258/0x630
->>> [ 4011.795657]        lock_acquire+0xb8/0xe0
->>> [ 4011.795659]        _raw_spin_lock_irqsave+0xb4/0x120
->>> [ 4011.795663]        rmqueue_bulk+0xac/0x8f0
->>> [ 4011.795665]        __rmqueue_pcplist+0x580/0x830
->>> [ 4011.795667]        rmqueue_pcplist+0xfc/0x470
->>> [ 4011.795669]        rmqueue.isra.0+0xdec/0x11b0
->>> [ 4011.795671]        get_page_from_freelist+0x2ee/0xeb0
->>> [ 4011.795673]        __alloc_pages_noprof+0x2c2/0x520
->>> [ 4011.795676]        alloc_pages_mpol_noprof+0x1fc/0x4d0
->>> [ 4011.795681]        alloc_pages_noprof+0x8c/0xe0
->>> [ 4011.795684]        allocate_slab+0x320/0x460
->>> [ 4011.795686]        ___slab_alloc+0xa58/0x12b0
->>> [ 4011.795688]        __slab_alloc.isra.0+0x42/0x60
->>> [ 4011.795690]        kmem_cache_alloc_noprof+0x304/0x350
->>> [ 4011.795692]        fill_pool+0xf6/0x450
->>> [ 4011.795697]        debug_object_activate+0xfe/0x360
->>> [ 4011.795700]        enqueue_hrtimer+0x34/0x190
->>> [ 4011.795703]        __run_hrtimer+0x3c8/0x4c0
->>> [ 4011.795705]        __hrtimer_run_queues+0x1b2/0x260
->>> [ 4011.795707]        hrtimer_interrupt+0x316/0x760
->>> [ 4011.795709]        do_IRQ+0x9a/0xe0
->>> [ 4011.795712]        do_irq_async+0xf6/0x160
->>>
->>> Normally raw_spinlock to spinlock dependency is not legit
->>> and will be warned if PROVE_RAW_LOCK_NESTING is enabled,
->>> but debug_objects_fill_pool() is an exception as it explicitly
->>> allows this dependency for non-PREEMPT_RT kernel without causing
->>> PROVE_RAW_LOCK_NESTING lockdep splat. As a result, this dependency is
->>> legit and not a bug.
->>>
->>> Anyway, semaphore is the only locking primitive left that is still
->>> using try_to_wake_up() to do wakeup inside critical section, all the
->>> other locking primitives had been migrated to use wake_q to do wakeup
->>> outside of the critical section. It is also possible that there are
->>> other circular locking dependencies involving printk/console_sem or
->>> other existing/new semaphores lurking somewhere which may show up in
->>> the future. Let just do the migration now to wake_q to avoid headache
->>> like this.
->> I can also add the following as another instance where deadlock can happen.
+>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>>> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 >>
->> Reported-by:syzbot+ed801a886dfdbfe7136d@syzkaller.appspotmail.com
+>> Co-developped-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 >>
-> FWIW, I already queued in my lockdep-for-tip branch, will send it in a
-> PR to Peter in one or two weeks (in case he hasn't taken it before
-> then).
->
-> BTW, do we need a "Fixes" tag for stable kernels?
+>> [...]
+>>
+>>> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+>>
+>> [...]
+>>
+>>> -static bool valid_plane_type(struct vkms_config *config)
+>>> +static bool valid_plane_type(struct vkms_config *config,
+>>> +			     struct vkms_config_crtc *crtc_cfg)
+>>
+>> What do you think about renaming it to "valid_planes_for_crtc" to reflect
+>> the fact you tests if a CRTC is attached to a valid combination of planes?
+>>
+>>>   {
+>>>   	struct vkms_config_plane *plane_cfg;
+>>>   	bool has_primary_plane = false;
+>>>   	bool has_cursor_plane = false;
+>>>   
+>>>   	list_for_each_entry(plane_cfg, &config->planes, link) {
+>>> +		struct vkms_config_crtc *possible_crtc;
+>>> +		unsigned long idx = 0;
+>>>   		enum drm_plane_type type;
+>>>   
+>>>   		type = vkms_config_plane_get_type(plane_cfg);
+>>>   
+>>> -		if (type == DRM_PLANE_TYPE_PRIMARY) {
+>>> -			if (has_primary_plane) {
+>>> -				pr_err("Multiple primary planes\n");
+>>> -				return false;
+>>> -			}
+>>> +		xa_for_each(&plane_cfg->possible_crtcs, idx, possible_crtc) {
+>>> +			if (possible_crtc != crtc_cfg)
+>>> +				continue;
+>>>   
+>>> -			has_primary_plane = true;
+>>> -		} else if (type == DRM_PLANE_TYPE_CURSOR) {
+>>> -			if (has_cursor_plane) {
+>>> -				pr_err("Multiple cursor planes\n");
+>>> -				return false;
+>>> -			}
+>>> +			if (type == DRM_PLANE_TYPE_PRIMARY) {
+>>> +				if (has_primary_plane) {
+>>> +					pr_err("Multiple primary planes\n");
+>>> +					return false;
+>>> +				}
+>>>   
+>>> -			has_cursor_plane = true;
+>>> +				has_primary_plane = true;
+>>> +			} else if (type == DRM_PLANE_TYPE_CURSOR) {
+>>> +				if (has_cursor_plane) {
+>>> +					pr_err("Multiple cursor planes\n");
+>>> +					return false;
+>>> +				}
+>>> +
+>>> +				has_cursor_plane = true;
+>>> +			}
+>>>   		}
+>>>   	}
+>>
+>> [...]
+>>
+>>> +int __must_check vkms_config_plane_attach_crtc(struct vkms_config_plane *plane_cfg,
+>>> +					       struct vkms_config_crtc *crtc_cfg)
+>>> +{
+>>> +	struct vkms_config_crtc *possible_crtc;
+>>> +	unsigned long idx = 0;
+>>> +	u32 crtc_idx = 0;
+>>> +
+>>> +	xa_for_each(&plane_cfg->possible_crtcs, idx, possible_crtc) {
+>>> +		if (possible_crtc == crtc_cfg)
+>>> +			return -EINVAL;
+>>
+>> Is it really an error? After this call, we expect plane and crtc to be
+>> attached, so if the plane is already attached, I don't see any issue.
+> 
+> In my opinion, this could be either handled as an error or not. I think that
+> there are arguments for both approaches but, for our use case, I think that it
+> is better to return an error.
+> 
+> Since the main (and for the moment only) user of this function will be configfs,
+> it is very convenient to return an error to avoid creating 2 links between
+> plane <-> crtc.
+> 
+> If we allow to create multiple links, and the user deletes one of them, the
+> items would be still linked, which is a bit unexpected.
+> 
+> The same applies to the other vkms_config_*_attach_* functions.
 
-After some more thought, I realize that this patch doesn't really fix 
-the circular lock dependency problem, it just remove console_sem.lock 
-from it. The problem is that printk() can be called in any context. To 
-really solve the problem, we will need some kind of deferred wakeup 
-using workqueue, for instance. As printing to the console is inherently 
-slow, adding some more latency to the wakeup process shouldn't really be 
-a problem. This patch will be the first step, I will work on additional 
-patches to complete this deferred wakeup functionality. So I don't need 
-to add a Fixes tag for now. You can either take this patch out or just 
-leave it there.
+I see your reasoning, I did not think about this issue.
+We can keep the error, but can we use `EEXIST` to reflect better the status?
 
-Cheers,
-Longman
+And I just think about it, maybe we can add here the check "is the crtc 
+part of the same config as the plane" (and return EINVAL if not)? It 
+will remove the need to do the check in configFS + avoid errors for 
+future users of vkms_config.
+
+> For these reasons, I didn't change it in v2, let me know your opinion.
+> Jose
+> 
+>>> +	}
+>>> +
+>>> +	return xa_alloc(&plane_cfg->possible_crtcs, &crtc_idx, crtc_cfg,
+>>> +			xa_limit_32b, GFP_KERNEL);
+>>> +}
+>>> +
+>>
+>> [...]
+>>
+>>> +struct vkms_config_crtc **vkms_config_plane_get_possible_crtcs(struct vkms_config_plane *plane_cfg,
+>>> +							       size_t *out_length)
+>>> +{
+>>> +	struct vkms_config_crtc **array;
+>>> +	struct vkms_config_crtc *possible_crtc;
+>>> +	unsigned long idx;
+>>> +	size_t length = 0;
+>>> +	int n = 0;
+>>> +
+>>> +	xa_for_each(&plane_cfg->possible_crtcs, idx, possible_crtc)
+>>> +		length++;
+>>> +
+>>> +	if (length == 0) {
+>>> +		*out_length = length;
+>>> +		return NULL;
+>>> +	}
+>>> +
+>>> +	array = kmalloc_array(length, sizeof(*array), GFP_KERNEL);
+>>> +	if (!array)
+>>> +		return ERR_PTR(-ENOMEM);
+>>> +
+>>> +	xa_for_each(&plane_cfg->possible_crtcs, idx, possible_crtc) {
+>>> +		array[n] = possible_crtc;
+>>> +		n++;
+>>> +	}
+>>> +
+>>> +	*out_length = length;
+>>> +	return array;
+>>> +}
+>>
+>> Same as before, can we use an iterator?
+>>
+>>> +static struct vkms_config_plane *vkms_config_crtc_get_plane(const struct vkms_config *config,
+>>> +							    struct vkms_config_crtc *crtc_cfg,
+>>> +							    enum drm_plane_type type)
+>>
+>> Even if this is a private function, can we add a comment explaning that
+>> the returned value is only one of the available planes of this type?
+>>
+>> 	/**
+>> 	 * vkms_config_crtc_get_plane() - Get the first attached plane
+>>           * found of a specific type
+>> 	 * @config: configuration containing the crtc and the planes
+>> 	 * @crtc_cfg: Only find planes attached to this CRTC
+>> 	 * @type: Plane type to search
+>> 	 *
+>> 	 * Returns:
+>> 	 * The first plane found attached to @crtc_cfg with the type
+>> 	 * @type.
+>> 	 */
+>>
+>>> +{
+>>> +	struct vkms_config_plane *plane_cfg;
+>>> +	struct vkms_config_crtc *possible_crtc;
+>>> +	enum drm_plane_type current_type;
+>>> +	unsigned long idx;
+>>> +
+>>> +	list_for_each_entry(plane_cfg, &config->planes, link) {
+>>> +		current_type = vkms_config_plane_get_type(plane_cfg);
+>>> +
+>>> +		xa_for_each(&plane_cfg->possible_crtcs, idx, possible_crtc) {
+>>> +			if (possible_crtc == crtc_cfg && current_type == type)
+>>> +				return plane_cfg;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	return NULL;
+>>> +}
+>>
+>> [...]
+>>
+>>> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+>>
+>> [...]
+>>
+>>> +/**
+>>> + * vkms_config_crtc_primary_plane() - Return the primary plane for a CRTC
+>>> + * @config: Configuration containing the CRTC
+>>> + * @crtc_config: Target CRTC
+>>> + *
+>>> + * Returns:
+>>> + * The primary plane or NULL if none is assigned yet.
+>>> + */
+>>
+>> Same as above, can you speficy that it is one of the primary plane?
+>>
+>>> +struct vkms_config_plane *vkms_config_crtc_primary_plane(const struct vkms_config *config,
+>>> +							 struct vkms_config_crtc *crtc_cfg);
+>>> +
+>>> +/**
+>>> + * vkms_config_crtc_cursor_plane() - Return the cursor plane for a CRTC
+>>
+>> Ditto
+>>
+>> [...]
+>>
+>>> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+>>
+>> [...]
+>>
+>>> @@ -35,19 +41,54 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+>>>   			ret = PTR_ERR(plane_cfg->plane);
+>>>   			goto err_free;
+>>>   		}
+>>> +	}
+>>> +
+>>> +	for (n = 0; n < n_crtcs; n++) {
+>>> +		struct vkms_config_crtc *crtc_cfg;
+>>> +		struct vkms_config_plane *primary, *cursor;
+>>> +
+>>> +		crtc_cfg = crtc_cfgs[n];
+>>> +		primary = vkms_config_crtc_primary_plane(vkmsdev->config, crtc_cfg);
+>>> +		cursor = vkms_config_crtc_cursor_plane(vkmsdev->config, crtc_cfg);
+>>
+>> Linked with a previous comment: here we have no garantee that primary is a
+>> valid pointer, can we check it or call vkms_config_is_valid to ensure it?
+>>
+>>> +		crtc_cfg->crtc = vkms_crtc_init(dev, &primary->plane->base,
+>>> +						cursor ? &cursor->plane->base : NULL);
+>>> +		if (IS_ERR(crtc_cfg->crtc)) {
+>>> +			DRM_ERROR("Failed to allocate CRTC\n");
+>>> +			ret = PTR_ERR(crtc_cfg->crtc);
+>>> +			goto err_free;
+>>> +		}
+>>
+>> [...]
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
