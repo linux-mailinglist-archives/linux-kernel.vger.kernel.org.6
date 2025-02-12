@@ -1,167 +1,125 @@
-Return-Path: <linux-kernel+bounces-511140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82253A3267F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:04:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF65CA3267C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91CDC166169
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:04:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 626497A28B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D3F20E02A;
-	Wed, 12 Feb 2025 13:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEA420E006;
+	Wed, 12 Feb 2025 13:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JexrGaX+"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="ebOHMC8s";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="igHe+GkC"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDFA20E020;
-	Wed, 12 Feb 2025 13:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A48820CCF5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739365429; cv=none; b=oXSx7OEOLCB5TaqqJgVkLpI68312LMYJQIk7d4/gtDIlVsn8on4cTJk8nfNY9vBZ2f5uIQ2F89UWp7bZ9/+ssIiy+aoV+oAUFeniRAWhUNLtVTZ2h7Y1K6woSQx2PrBWmBhBc4Swgj08IxDUuD1fbZRrcxpCrNLorVuOAC1oLeM=
+	t=1739365421; cv=none; b=T02of+ChNUAR4Rc6rLfUgUeT4YQejdUWjvfx81/e7BdKK70wGx8GpB0aS3+huoalvugQxFVAYRvby909unSxCbgs2yyhMAS6Fui6O0QnWQdv+/JR4LrnXBlci9VVWPiP+EhMki9QnXj+VRoG2c+rlfCIgnP+iTWA8uCmJqkS73w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739365429; c=relaxed/simple;
-	bh=CH67KHtOFoFk6tLjTkF6ElKAoDA4yM8zT/sD1gHjNMs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TBcUj8/x+zeAKjyIwvrksgt60bQHBUEUoS5mnStbqn7JHUHdoU31ZcVfUt6HrACm0298zEHVKUchAOjDxm5hbWihxbeaCHWVCMADzT379SAf0gm9pgWMhd9ThpNf7Wrj2J/bRR52VVxEZVemcf9mUImZ/qTHMblixpgbHHhn1x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JexrGaX+; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CAxSbX013670;
-	Wed, 12 Feb 2025 13:03:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=krHBiN
-	5fDn9iL+VMLKCmrS+HPrhLWm4BXzABiQLQpLw=; b=JexrGaX++PInzP3zdCZjD3
-	KbkFtDaJsk3RVitxji+enBcU3Rt1JPEFclfW7tGURxY+sQK4uiv8/rP6fE5udfuD
-	etkhmGGIaCJmOgGPosuxlqotL8lgDmvzh/6e1qiXkRNnWvh9MCwprerHMA+q/cYm
-	apU79lmHhkus3D6Eb0vJ36I3RFGcwhZgJdnv7k1gj0sK3smFjjBkRx9wRdd7Bpe0
-	1eE2bSH+LxoDCH1q9U0sVX5bsqtWam7aTMCLgCMC9+gJiT04UioUvfWgM+/XoihA
-	0ivcaVGGv9ZM8kEXCy/Vnkjlyx+VsMe0pyMV+guTWlvFM6u0u7jpgsJtZmADWCVA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rjfytvs8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 13:03:20 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CCZBb4028197;
-	Wed, 12 Feb 2025 13:03:19 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44phyygsnt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 13:03:19 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CD3JrI27132602
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 13:03:19 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1505958077;
-	Wed, 12 Feb 2025 13:03:19 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A32E25806F;
-	Wed, 12 Feb 2025 13:03:17 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.169.88])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Feb 2025 13:03:17 +0000 (GMT)
-Message-ID: <b7dd78f21a9fa9dc3b6f90eae2668cfe5c7670c7.camel@linux.ibm.com>
-Subject: Re: [PATCH v7 2/7] kexec: define functions to map and unmap segments
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com
-Date: Wed, 12 Feb 2025 08:03:17 -0500
-In-Reply-To: <47565966-c735-4758-80a5-523fd93adc72@linux.microsoft.com>
-References: <20250203232033.64123-1-chenste@linux.microsoft.com>
-	 <20250203232033.64123-3-chenste@linux.microsoft.com>
-	 <6fd5510827a2ebb91aee8c72432e248e967fa5be.camel@linux.ibm.com>
-	 <47565966-c735-4758-80a5-523fd93adc72@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1739365421; c=relaxed/simple;
+	bh=5I+GoDOLPXwxaF/bdd/7zGEhpTleAA3217JXKvjhE4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JKAmruBCXzp958mvka/V1QpFi08LBjPHmcOssl18Zr0G66qnxSgt6gPDPI3wH+oEejajKvylmTHJgba4nkaF2PpyExmr0GAYAJAlM/xE2Y1SrUgWXVZ4Ns0APOk6E92keH/X3CYecd4QGreJjsNe+84liLQx0SfygNUOOILyZqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=ebOHMC8s; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=igHe+GkC; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 330B3114018F;
+	Wed, 12 Feb 2025 08:03:39 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Wed, 12 Feb 2025 08:03:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1739365419; x=
+	1739451819; bh=+Y6Ib/RSqKlmrUGsG+NEeNPWdjzf+UWt/aq1y+kKLoo=; b=e
+	bOHMC8smW1FFDE+T0YMtLUOKeN1+oIci9V47ehV5TsmcVSEDTaBnlfpFVtuV/HlM
+	tojgIXacFPQrNfJAfcXQlcX4vmyGyC62P5JC6z5c5Ti6FtQfK/RnB16QovbR2Vg4
+	yNQltaSxbohA9ce+GWU8Qiizp1UVyvzmaFDDpsY3o408CwbnJ8yzflHOJ+mcct7y
+	wVZbgsgxJWoOnV7fhDAcdnVrtq0CErG/z+UO/W7l60da8/ovSvhnQt5UWHs9D8It
+	bmdyMaxg7M2s81ka/lN6rUhLXCvMX38J9w/TNA8FSxCNGfZk6AxRY60uUr1OMhnX
+	wGP7aVQtDfEjsd8H4jKXw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1739365419; x=1739451819; bh=+Y6Ib/RSqKlmrUGsG+NEeNPWdjzf+UWt/aq
+	1y+kKLoo=; b=igHe+GkC+oO+sjhu6f82OnkmsCRSej4hthz39z6T7SI7A1V7USa
+	C0ChkJr3ZLxH6qdWrz0iVfixykXVIoxcvImA6SMKFZSSRF47ms91195Fgu3uW1dv
+	2G+1mltvF1P7v+1z9fOD0PAIlE3GECltkioTXLvFnAT7m6+nWfFK9XI1c9OlrUaa
+	LZJs4a0WZEjO1ozrr5irYYqs1H5DfjdOZxEfroqDVQ8YAsU7Av3V3tSI2DYi+3L7
+	aj/sdq5Ad12YeXY9YAsZBR4nKYTCV3LRfeVtF7KftgdkQonrQdHJH64RR5KkTIz9
+	oLM2kOSH3TFOr8xsQczzLHbGIzxbqGo7wpg==
+X-ME-Sender: <xms:KpysZ75bDcq_Dv4rOLfzrNvSYQobhozPKD00g9ykeYpNwm5N_OO9xA>
+    <xme:KpysZw7gOqfwR4FcUZAbcilF329sUpIO2-USYUVGeXm5e_SiyYyR1XjAUKSkIywmn
+    ciIIgF8ZJ2omaaXEmY>
+X-ME-Received: <xmr:KpysZydSpsHBuveNzQPtc7PVWNd3DsvmV4Fa4l29PPTXUEAzUVaA8DXV2lowNFBwd7TG4A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeelhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddv
+    necuhfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllh
+    esshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffh
+    ffevlefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhho
+    vhdrnhgrmhgvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepvhgrnhhnrghpuhhrvhgvsehgohhoghhlvgdrtghomhdprhgtphhtthhopeig
+    keeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
+    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehpsghonhiiihhnihesrhgvughh
+    rghtrdgtohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvgdrtghomhdprhgtph
+    htthhopegvrhguvghmrghkthgrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprggt
+    khgvrhhlvgihthhnghesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhigghgrohesgh
+    hoohhglhgvrdgtohhmpdhrtghpthhtohepshgrghhishesghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:KpysZ8Jwd7SmUdQWsB3CpA0XEQr-SHdSQ7jlFyvn9SUqaG9MJX2l2Q>
+    <xmx:K5ysZ_ISRZEj5D7uqBAOmfmWJnHizY5LxtmdRkS-1lCC5YHIcKva2A>
+    <xmx:K5ysZ1wZbb3pCgjaOIspFoZ9YvEIdtSY8arRyUhyuYA489Suyb1fBQ>
+    <xmx:K5ysZ7IFqkeMAZ9_wB3Ajs9IzHjgOEavHiMs4s7lUGJRVUTvFT7KlQ>
+    <xmx:K5ysZ467oL4q_Dc7qqNBCmU0GVPQk3MrvpHn2okmIPgDb2hS16BvFaq2>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Feb 2025 08:03:33 -0500 (EST)
+Date: Wed, 12 Feb 2025 15:03:30 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
+	seanjc@google.com, erdemaktas@google.com, ackerleytng@google.com, jxgao@google.com, 
+	sagis@google.com, oupton@google.com, pgonda@google.com, 
+	dave.hansen@linux.intel.com, linux-coco@lists.linux.dev, chao.p.peng@linux.intel.com, 
+	isaku.yamahata@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH V4 4/4] x86/tdx: Remove TDX specific idle routine
+Message-ID: <avodert2s5di3s4m3ays6z4qhskwfz6zxenoq3rsf7crpclkfz@jaq7ptkmco4o>
+References: <20250212000747.3403836-1-vannapurve@google.com>
+ <20250212000747.3403836-5-vannapurve@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Wb7pe2c-W48JJx9ojXknjIakieQe4wt2
-X-Proofpoint-ORIG-GUID: Wb7pe2c-W48JJx9ojXknjIakieQe4wt2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- mlxscore=0 suspectscore=0 adultscore=0 clxscore=1015 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502120101
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212000747.3403836-5-vannapurve@google.com>
 
-On Mon, 2025-02-10 at 09:06 -0800, steven chen wrote:
-> On 2/7/2025 11:15 AM, Mimi Zohar wrote:
-> > Hi Steven,
-> >=20
-> > On Mon, 2025-02-03 at 15:20 -0800, steven chen wrote:
-> > > Currently, the mechanism to map and unmap segments to the kimage
-> > > structure is not available to the subsystems outside of kexec.=C2=A0 =
-This
-> > > functionality is needed when IMA is allocating the memory segments
-> > > during kexec 'load' operation.=C2=A0 Implement functions to map and u=
-nmap
-> > > segments to kimage.
-> > >=20
-> > > Implement kimage_map_segment() to enable mapping of IMA buffer source
-> > > pages to the kimage structure post kexec 'load'.=C2=A0 This function,
-> > > accepting a kimage pointer, an address, and a size, will gather the
-> > > source pages within the specified address range, create an array of p=
-age
-> > > pointers, and map these to a contiguous virtual address range.=C2=A0 =
-The
-> > > function returns the start of this range if successful, or NULL if
-> > > unsuccessful.
-> > >=20
-> > > Implement kimage_unmap_segment() for unmapping segments
-> > > using vunmap().
-> > >=20
-> > > From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > > Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > I don't recall previously adding my "Reviewed-by" tag.
-> >=20
-> > Eric, I'd appreciate your reviewing this and the subsequent patch "[PAT=
-CH v7 3/7]
-> > ima: kexec: skip IMA segment validation after kexec soft reboot" in par=
-ticular.
-> Hi Eric, Could you help to review this patch as Mimi mentioned? Thanks!
-> >=20
-> > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+On Wed, Feb 12, 2025 at 12:07:47AM +0000, Vishal Annapurve wrote:
+> With explicit dependency on CONFIG_PARAVIRT and TDX specific
+> halt()/safe_halt() routines in place, default_idle() is safe to execute for
+> TDX VMs. Remove TDX specific idle routine override which is now
+> redundant.
 
-Steven, since these patches impact kdump, before re-posting the patch set, =
-please
-include the following tags before your Signed-off-by tag on the kexec patch=
-es.
+I am not convinced that it is good idea.
 
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Baoquan He <bhe@redhat.com>                                            =
-=20
-Cc: Vivek Goyal <vgoyal@redhat.com>                                        =
-=20
-Cc: Dave Young <dyoung@redhat.com>  =20
+It adds two needless flipping of IF in the hot path: first enabling
+interrupts in tdx_safe_halt() and disabling it back in default_idle().
 
-> > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
-
-thanks,
-
-Mimi
-
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
