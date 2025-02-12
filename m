@@ -1,165 +1,259 @@
-Return-Path: <linux-kernel+bounces-511811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27851A3300B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:48:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97706A33009
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:47:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6071889322
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C8043A85D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EE11FFC6A;
-	Wed, 12 Feb 2025 19:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355B51FF7B4;
+	Wed, 12 Feb 2025 19:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctIHaaUk"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="te7n+rBT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456411FF615;
-	Wed, 12 Feb 2025 19:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E3B1FCF62;
+	Wed, 12 Feb 2025 19:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739389683; cv=none; b=p0La7cCdAFF2ROsx+uW6in4jzOIi3MUxVInLVJ3Ph37dxHXH237do44V6MEVgo3StvWTNu4Uw1oepws5sMC6933jiJu2chUzk+9POQVQsMi6c/16S0PTxg5Y7x278ptp3yAuBkd28mkqy8YKy/cmSnCRITvIfqBmhbSlJj726yQ=
+	t=1739389648; cv=none; b=fWLR6iicfgyLDK2OvHoHgPfBoSChOcYFoYMgHAvaqdTiWZu3P5pf2ZzkYCGEIjvhTddCJUa7ucLJ6isgOmgQtUa0nLyX+pFNiwuBsXvLfMDFJn1026F958e+w6cfUTGIbLnWHx1D27IyIs/JN/eZJEGVDlOGEpjJGBy2ior4Lj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739389683; c=relaxed/simple;
-	bh=yTr21wjBOMkX8f7EXjuTZlsatgxFVgWBZKd62qEkpCQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qeuOJidX+/DI6lOBEGcRe7shmRqQYA078hxyXOlukf5pITfSQ4MSia79GAo0JXCiMvZCmicUcF58IlH2KS0w6K/Pslo6nMp6UyxoTAeJPD3EcqA889hcyN90OA1NHkajruisPP9XWDDspMLVGinuCwtyGnDQuKMQwfywmLQiayM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctIHaaUk; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-726fd9257f7so70445a34.2;
-        Wed, 12 Feb 2025 11:48:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739389680; x=1739994480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x/i6BbIu8Fi4H13JzAioH1AfyU9dkQktoEa5HnOpZ8Q=;
-        b=ctIHaaUkBLNVZ1+atyP9FqmzsazXN2d49hQYUdK6f/Ususj36jXtXcuV0HkZD4P6J8
-         wV3ADhViFxPDZv33hCXX7fNTRe5KD3i/Afje+8uAM0CuohlNTY9mB0F6b4AAw78O3yoY
-         M8CTMy2T99kMNab6hQTvrHnOF2wWZmc313F/rQeym9vv3TBSZUpt0yIFd6a0LRKOtIrm
-         7jJ5l/3KjmNJokxRoemnKrYK4V7P5fTdHNxYFAL+iOWwJJNHpE7/MPkFhMT02mcLB5d4
-         ++8oRJjaEBkMtJxagDweMGPCuCACDQc87gBYd2wAR3k+5RX7/BARvWmZP1Ryu/UrfEFf
-         LlKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739389680; x=1739994480;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x/i6BbIu8Fi4H13JzAioH1AfyU9dkQktoEa5HnOpZ8Q=;
-        b=d2Gsqn3VgD2B8zYR0pCCZ7tnKNc1KgneupnuO12ayq1vRv+9/tJVBMAT5k/011yuLa
-         Qno/ZYuD7QryB69JZ+waU++KSOt1q8KEjQDf2Dio+5gyrtbd/HpFQ7+eIPm22a6pqij8
-         A/Ro4Dbxr9pWRHj7RxR4vLYK6dyuKX+EfwONYj37vxD5JgG8M5uE1TfzHiz14scwfe+R
-         XbFnFoEY9HYkNKU8rb3LO4kV1bRmjytKdEy+ixi/y3owD/kW0ZQH1uX8+aT0S4Ekj3km
-         dyw/6zyVEklnwdRnLXxE5jX8mvQSFnmRrz/RCzwIan+i3kpXlzkifGo1lJdGTwua93ZU
-         9f+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUtoLZ8HTOod7lSoCx2hBnBaMJxA7dXmd2jXvJVHiJ191xVea1BDF52m7BVJchpOTVPkCdTApJx2XAAf5G5NU8=@vger.kernel.org, AJvYcCWSMmixhXyd9JvsQjmuHW080yAUYckNX37p5V0KPvwCeYfkJIWNOG5cSggx0es17gSK9528DrJ724p7TEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY6TefenA2iT4gHc20K7XH9KQwbP0Wm9nNwai84s03m8j4mBBq
-	nDBy1HM2Cae2fl9dQK1Lf3/F6Vn3EWm3kgNrIQ8SRRS3BHfLsbF5
-X-Gm-Gg: ASbGncuioEuE6bKvJ32xcG26wQKTuY0if6lcNwboq8ibfFymI7ceimHsa5ozxc71XFy
-	H0EPhCGIeh/NlXRsrzlEcB0EsdBr47Ra8v1Ud+IQ0CSEnqycR2V6MFoI9NTcokCvPnWmBnyTcgJ
-	6KTgOH9iQ2kGqyA00Yg4yPUg+edgmaxQCau63Pn7+Yi6YmcWv3TD2Ze/S9+U/yC4MmpfCrBwvlG
-	g4Q2PD8EsKJbruS/JVR+56iFBlXCJfQHiEW6Gesf5pY02vA1W6QSdimc5jH9xjAruGd829oUVji
-	2S7h2tHC1GPnsDojoM0FcQAa
-X-Google-Smtp-Source: AGHT+IEY2CRyGkzf4oZCm0CkRKv6HQSO1Njl5lblV4RJC+GkC5M/4Q+srFLvmA/T5mmLwe+uApCc6w==
-X-Received: by 2002:a05:6830:258e:b0:71d:f6d3:9fd2 with SMTP id 46e09a7af769-726f1d19019mr3622355a34.24.1739389680238;
-        Wed, 12 Feb 2025 11:48:00 -0800 (PST)
-Received: from linuxsimoes.. ([187.120.154.251])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-726f151c732sm1433485a34.14.2025.02.12.11.47.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 11:47:59 -0800 (PST)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	apw@canonical.com,
-	arnd@arndb.de,
-	aswinunni01@gmail.com,
-	axboe@kernel.dk,
-	benno.lossin@proton.me,
-	bhelgaas@google.com,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	dwaipayanray1@gmail.com,
-	ethan.twardy@gmail.com,
-	fujita.tomonori@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	joe@perches.com,
-	lukas.bulwahn@gmail.com,
-	ojeda@kernel.org,
-	pbonzini@redhat.com,
-	tmgross@umich.edu,
-	walmeida@microsoft.com
-Cc: trintaeoitogc@gmail.com,
-	rust-for-linux@vger.kernel.org,
+	s=arc-20240116; t=1739389648; c=relaxed/simple;
+	bh=n1Yrc133x+G4MJHEHEy4UdQHNvSunG07EFrM7aCNh68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gb3H0o8subMahO59CWFhYYHomXEFMU0ldEDEFFyoHu0qVw8lRBcwp5GFzGDWaQmlVTQ6W4hcId8JJRLgXRICcgiDHKirBAssQWhu15qECO9nMeD13uv/VeWVRT8Obym02oP/hR/wa6e3GJ9zbPtnRto11244Xfz705HSKh4gX6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=te7n+rBT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5593C4CEDF;
+	Wed, 12 Feb 2025 19:47:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739389647;
+	bh=n1Yrc133x+G4MJHEHEy4UdQHNvSunG07EFrM7aCNh68=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=te7n+rBTrapQNOXLuYFF7hD46kGbqAV57cVKVHoVxJkb54S3dX40me6KIyHrfnhLP
+	 mXfnmFskL17VgsuxiQ0evNISrgIS3xYII50GCvGmOsY2WPQ1/1320xbLP1rEfBzsiF
+	 4woAHExFgN8He553w1H7p5Oz1h3f+3/o6ViUhFva2DLPK+ObXr5YgSCrJfkD0DHq+x
+	 bRJfTulS9kzp3ZlT2L6euqIb3RdQZRJZ9MIMeaMN9ndBZ3rYhSoydD636jjKUJbqis
+	 ObZ8vVxT4niFK/UoUrvanmeEoM0voMncpkxIwD+N2kE5fSnBl/MNC+Ho96fbdwTAeo
+	 1LrTlliigkCYQ==
+Date: Wed, 12 Feb 2025 11:47:26 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: irogers@google.com, linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: [PATCH 1/3] rust: module: change author to be a array
-Date: Wed, 12 Feb 2025 16:47:15 -0300
-Message-Id: <20250212194717.191979-2-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250212194717.191979-1-trintaeoitogc@gmail.com>
-References: <20250212194717.191979-1-trintaeoitogc@gmail.com>
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH v5 6/8] perf report: Add --latency flag
+Message-ID: <Z6z6znWi3o-ewuNs@google.com>
+References: <cover.1738772628.git.dvyukov@google.com>
+ <eb32b9b13856b0d508836b61b3e8377aef9163a3.1738772628.git.dvyukov@google.com>
+ <Z6WBsruddcx0SFV5@google.com>
+ <CACT4Y+afC5WfTMaKGtg760PS5oXkkurzAyHVyKr9TsPs9RU2DQ@mail.gmail.com>
+ <Z6qhjFs0YOMTzk9W@google.com>
+ <CACT4Y+brgj5vRoxQtZ76hUVcHWUJJ2u_8n89EwuTAoyXXbGDCw@mail.gmail.com>
+ <Z6uMBAG0hePL9JV3@google.com>
+ <CACT4Y+YB_Ckfptkyu6yiF5Daa8q4MgGyf_1u7RPjoTsdQ3h=qw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YB_Ckfptkyu6yiF5Daa8q4MgGyf_1u7RPjoTsdQ3h=qw@mail.gmail.com>
 
-In the module! macro, the author field has a string type. Once that the
-modules can has more than one author, this is impossible in the current
-scenary.
-Change the author field for accept a array string type and enable module
-creations with more than one author.
+On Tue, Feb 11, 2025 at 09:23:30PM +0100, Dmitry Vyukov wrote:
+> On Tue, 11 Feb 2025 at 18:42, Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Tue, Feb 11, 2025 at 09:42:16AM +0100, Dmitry Vyukov wrote:
+> > > On Tue, 11 Feb 2025 at 02:02, Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > On Fri, Feb 07, 2025 at 08:23:58AM +0100, Dmitry Vyukov wrote:
+> > > > > On Fri, 7 Feb 2025 at 04:44, Namhyung Kim <namhyung@kernel.org> wrote:
+> > [SNIP]
+> > > > > > > @@ -3547,10 +3549,15 @@ static int __hpp_dimension__add_output(struct perf_hpp_list *list,
+> > > > > > >       return 0;
+> > > > > > >  }
+> > > > > > >
+> > > > > > > -int hpp_dimension__add_output(unsigned col)
+> > > > > > > +int hpp_dimension__add_output(unsigned col, bool implicit)
+> > > > > > >  {
+> > > > > > > +     struct hpp_dimension *hd;
+> > > > > > > +
+> > > > > > >       BUG_ON(col >= PERF_HPP__MAX_INDEX);
+> > > > > > > -     return __hpp_dimension__add_output(&perf_hpp_list, &hpp_sort_dimensions[col]);
+> > > > > > > +     hd = &hpp_sort_dimensions[col];
+> > > > > > > +     if (implicit && !hd->was_taken)
+> > > > > > > +             return 0;
+> > > > > >
+> > > > > > I don't think you need these implicit and was_taken things.
+> > > > > > Just removing from the sort list when it's unregistered seems to work.
+> > > > > >
+> > > > > > ---8<---
+> > > > > > @@ -685,6 +685,7 @@ void perf_hpp_list__prepend_sort_field(struct perf_hpp_list *list,
+> > > > > >  static void perf_hpp__column_unregister(struct perf_hpp_fmt *format)
+> > > > > >  {
+> > > > > >         list_del_init(&format->list);
+> > > > > > +       list_del_init(&format->sort_list);
+> > > > > >         fmt_free(format);
+> > > > > >  }
+> > > > > >
+> > > > > > ---8<---
+> > > > >
+> > > > > It merely suppresses the warning, but does not work the same way. See
+> > > > > this for details:
+> > > > > https://lore.kernel.org/all/CACT4Y+ZREdDL7a+DMKGFGae1ZjX1C8uNRwCGF0c8iUJtTTq0Lw@mail.gmail.com/
+> > > >
+> > > > But I think it's better to pass --latency option rather than adding it
+> > > > to -s option.  If you really want to have specific output fields, then
+> > > > please use -F latency,sym instead.
+> > > >
+> > > > Also I've realized that it should add one sort key in setup_overhead()
+> > > > to support hierarchy mode properly.  Something like this?
+> > > >
+> > > > Thanks,
+> > > > Namhyung
+> > > >
+> > > >
+> > > > ---8<---
+> > > > diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+> > > > index 2b6023de7a53ae2e..329c2e9bbc69a725 100644
+> > > > --- a/tools/perf/util/sort.c
+> > > > +++ b/tools/perf/util/sort.c
+> > > > @@ -3817,22 +3817,15 @@ static char *setup_overhead(char *keys)
+> > > >                 return keys;
+> > > >
+> > > >         if (symbol_conf.prefer_latency) {
+> > > > -               keys = prefix_if_not_in("overhead", keys);
+> > > > -               keys = prefix_if_not_in("latency", keys);
+> > > > -               if (symbol_conf.cumulate_callchain) {
+> > > > -                       keys = prefix_if_not_in("overhead_children", keys);
+> > > > +               if (symbol_conf.cumulate_callchain)
+> > > >                         keys = prefix_if_not_in("latency_children", keys);
+> > > > -               }
+> > > > -       } else if (!keys || (!strstr(keys, "overhead") &&
+> > > > -                       !strstr(keys, "latency"))) {
+> > > > -               if (symbol_conf.enable_latency)
+> > > > +               else
+> > > >                         keys = prefix_if_not_in("latency", keys);
+> > > > -               keys = prefix_if_not_in("overhead", keys);
+> > > > -               if (symbol_conf.cumulate_callchain) {
+> > > > -                       if (symbol_conf.enable_latency)
+> > > > -                               keys = prefix_if_not_in("latency_children", keys);
+> > > > +       } else {
+> > > > +               if (symbol_conf.cumulate_callchain)
+> > > >                         keys = prefix_if_not_in("overhead_children", keys);
+> > > > -               }
+> > > > +               else
+> > > > +                       keys = prefix_if_not_in("overhead", keys);
+> > > >         }
+> > > >
+> > > >         return keys;
+> > >
+> > >
+> > > Have I decoded the patch correctly?
+> > >
+> > >         if (symbol_conf.prefer_latency) {
+> > >                 if (symbol_conf.cumulate_callchain)
+> > >                         keys = prefix_if_not_in("latency_children", keys);
+> > >                 else
+> > >                         keys = prefix_if_not_in("latency", keys);
+> > >         } else {
+> > >                 if (symbol_conf.cumulate_callchain)
+> > >                         keys = prefix_if_not_in("overhead_children", keys);
+> > >                 else
+> > >                         keys = prefix_if_not_in("overhead", keys);
+> > >         }
+> > >
+> >
+> > Yep, that's correct.
+> >
+> >
+> > > If I decoded the patch correctly, it's not what we want.
+> > >
+> > > For the default prefer_latency case we also want to add overhead, that
+> > > was intentional for the --latency preset. It does not harm, and allows
+> > > to see/compare differences in latency and overhead.
+> > > Again, if a user wants something custom, there is no way to second
+> > > guess all possible intentions. For non-default cases, we just let the
+> > > user say what exactly they want, and we will follow that.
+> > >
+> > > "latency" should be added even if cumulate_callchain.
+> >
+> > Please note that it just sets the sort key - which column you want to
+> > order the result.  The output fields for overhead and children will be
+> > added in perf_hpp__init() if you remove the 'was_taken' logic.  So I
+> > think this change will have the same output with that.
+> 
+> Yes, but perf_hpp__init() does not have the logic that's currently
+> contained in setup_overhead().
+> 
+> If the user specified a "latency" field, and we don't want to add
+> "overhead" in that case, then _both_ setup_overhead() and
+> perf_hpp__init() must not add "overhead".
 
-Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Link: https://github.com/Rust-for-Linux/linux/issues/244
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
----
- rust/macros/module.rs | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Ok, I see your point.  But I think it'd be much easier if you allow the
+'overhead' column in that case too.
 
-diff --git a/rust/macros/module.rs b/rust/macros/module.rs
-index cdf94f4982df..09265d18b44d 100644
---- a/rust/macros/module.rs
-+++ b/rust/macros/module.rs
-@@ -94,7 +94,7 @@ struct ModuleInfo {
-     type_: String,
-     license: String,
-     name: String,
--    author: Option<String>,
-+    author: Option<Vec<String>>,
-     description: Option<String>,
-     alias: Option<Vec<String>>,
-     firmware: Option<Vec<String>>,
-@@ -135,7 +135,7 @@ fn parse(it: &mut token_stream::IntoIter) -> Self {
-             match key.as_str() {
-                 "type" => info.type_ = expect_ident(it),
-                 "name" => info.name = expect_string_ascii(it),
--                "author" => info.author = Some(expect_string(it)),
-+                "author" => info.author = Some(expect_string_array(it)),
-                 "description" => info.description = Some(expect_string(it)),
-                 "license" => info.license = expect_string_ascii(it),
-                 "alias" => info.alias = Some(expect_string_array(it)),
-@@ -184,7 +184,9 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
- 
-     let mut modinfo = ModInfoBuilder::new(info.name.as_ref());
-     if let Some(author) = info.author {
--        modinfo.emit("author", &author);
-+        for author in author {
-+            modinfo.emit("author", &author);
-+        }
-     }
-     if let Some(description) = info.description {
-         modinfo.emit("description", &description);
--- 
-2.34.1
+> 
+> If we do what you proposed, then perf_hpp__init() will still add
+> "overhead" and we go back to square 0.
+
+Right, but currently the default perf report and with --latency option,
+will show both overhead and latency columns.  That's why I thought you
+wanted to display them together.
+
+Actually I don't want to use -s option to describe output fields (like
+overhead and latency) but I cannot prevent people from doing that. :(
+Maybe you can skip the setup_overhead() if user gives either 'overhead'
+or 'latency' explicitly - oh, you have that in the !prefer_latency case.
+
+> 
+> I used was_taken to not duplicate this non-trivial logic in both
+> functions. As I mentioned in the previous replies, I tried that but it
+> was messier/more complex. was_taken is a simple way to not duplicate
+> logic and keep these functions consistent.
+
+Hmm.. ok.  Maybe we can update this part later.  Can you please add a
+comment in the perf_hpp__init() that says overhead and latency columns
+are added to the sort list in setup_overhead() so it's added implicitly
+here only if it's already taken?
+
+> 
+> 
+> > > For the !prefer_latency case, we don't want to mess with
+> > > overhead/latency fields if the user specified any of them explicitly.
+> > > Otherwise this convenience part gets in the user's way and does not
+> > > allow them to do what they want. User says "I want X" and perf says
+> > > "screw you, I will give you Y instead, and won't allow you to possibly
+> > > do X".
+> >
+> > That's what -F option does.  The -s option used to specify how to group
+> > the histogram entries and it will add 'overhead' (and/or 'latency') if
+> > it's not even requested.  So I think it's ok to add more output column
+> > when -s option is used.
+> >
+> > But unfortunately, using -F and -s together is confusing and change the
+> > meaning of -s option - it now says how it sort the result.
+> >
+> > >
+> > > And see above: -F does not work with --hierarchy, so this part is unskippable.
+> >
+> > Yep, but I mean it fixes --hierarchy and --latency.  I'm thinking of a
+> > way to support -F and --hierarchy in general.
+> 
+> I don't know why it was disabled. There are likely other things to
+> improve, but please let's not tie that to this change.
+
+Right, it's a separate issue.  I was afraid of mixing output fields and
+sort keys in an unexpected order.  But maybe we can support that if
+that's what user wants.
+
+Thanks,
+Namhyung
 
 
