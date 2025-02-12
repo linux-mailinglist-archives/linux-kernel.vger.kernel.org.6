@@ -1,153 +1,257 @@
-Return-Path: <linux-kernel+bounces-511570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E814BA32CCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:05:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A31A2A32CEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51DE4168A38
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:04:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3009A169452
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4527230D0E;
-	Wed, 12 Feb 2025 17:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Wh+nIwYr"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A92E25EF89;
+	Wed, 12 Feb 2025 17:04:28 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58141253F09;
-	Wed, 12 Feb 2025 17:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92FE260A54;
+	Wed, 12 Feb 2025 17:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379857; cv=none; b=uvod2HbXDW861B8L5xSxoyYq6VzmXiiSL9z7n1QVmrJpBeyhfeI1k/SNH4FQTvi4r7f4mH56LL5IcF4n8HiW0YU+1x9YJj96/frL4he7lziBzkWk047OKDDE78hkIsxc88TyXaT5rvNMjI+ldZ/ukVz5cW9xtwnrqYNBf5yAZi8=
+	t=1739379867; cv=none; b=FMrE+w/1/SC/WFWfNP/ORX/A94lGHqNf+DPc/qZp7gQdmIoAtD1ecObDryRNpEYFk2lO5p5IY7afrD1O0TfAjqSL6merE4REq2p5/3srtPlkkg+P7UVhtA3m5lyz39ACaQkEVhS9YpJv9eLu6ffVhaW+zJhxuDIXxHSVbD4qudI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379857; c=relaxed/simple;
-	bh=KtCtiu3HdxGB+elt6zIdrSwpsiFCDhpc2RS0AWHPdFI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZqzRPaj6M5azJwXfZtaUMp/ejQBZm8fJSwgoOT6efj0iGt2kjn9g0D/pdY6n2ZYZQ4WGycsS7ymCsn3DqmU6UYpkRUUgzKDWt0gdsYN0WckzkgpZbsId8pzlWwo7/yKEhclibfIvqrwbRpxp78mL0E/Z/keiykLOhRl2vjNTfXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Wh+nIwYr; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.244.162] (254C23D7.nat.pool.telekom.hu [37.76.35.215])
-	by mail.mainlining.org (Postfix) with ESMTPSA id BA7E6BB83A;
-	Wed, 12 Feb 2025 17:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1739379853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qSkfr6mNx85SD3B+tK98X+gwaurO564E0jqWeUP4rL8=;
-	b=Wh+nIwYrFM6tNM6qZ04n4yTdAJyNi80HGi8guNn/76DkKUgIUtHZDsGZvhlUtLw7iCrIda
-	eVRHf4w0u1BZbFAqRO0s07eMFJqbP4TUTkLNZOkKHt25d89oXRVxgeu3yf22Ntdcjtd0SS
-	LBaYu25U2jPBDBAcpIPVvZ4dmCOUyGmxA07UEajL85nwsGJPN2cHoab2s+8ddKABCIsNGY
-	eUkGd5TUV21o5OHBpYe+yvPQHY2Xu/fl0XruLCEyXisy92ZAhVoTc/8Jw5usYzFqFswWiT
-	d6A4tWpbN+5364BPzdTvsGtZbF/Q7DaqEq1J8HMDumWJ34IiuHTkZVW8CjlmIQ==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Wed, 12 Feb 2025 18:04:10 +0100
-Subject: [PATCH 2/2] clk: qcom: smd-rpm: Add clocks for SDM429
+	s=arc-20240116; t=1739379867; c=relaxed/simple;
+	bh=13W5/30634OZAOEp8C34fhFNef/hkBvT0Qann9WW4zE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eLxTwwsTQHF1Iuc5Xj0T7zU3HSYC4C/BuX75y6CmuPe7DqwjYyzFxWiU05rSE9PBGUeaWHwPNCvTTs87ns0g9sTOWIhzjn7j0bUN9TQ9ACMs+sUyTxjmo29Enpt1MmVRQpfDuPiClflD1LZmsk6TNpBRT+fDIwTzDPXfsX1RNKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YtPj734z1z6L5JZ;
+	Thu, 13 Feb 2025 01:01:15 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1D503140525;
+	Thu, 13 Feb 2025 01:04:16 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 12 Feb
+ 2025 18:04:15 +0100
+Date: Wed, 12 Feb 2025 17:04:14 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
+	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
+	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
+	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
+	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
+	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
+Subject: Re: [PATCH v3 8/9] ACPI: APEI: EINJ: Enable EINJv2 error injections
+Message-ID: <20250212170414.000059c4@huawei.com>
+In-Reply-To: <20250210183705.1114624-9-zaidal@os.amperecomputing.com>
+References: <20250210183705.1114624-1-zaidal@os.amperecomputing.com>
+	<20250210183705.1114624-9-zaidal@os.amperecomputing.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250212-sdm429-rpm-v1-2-0a24ac19a478@mainlining.org>
-References: <20250212-sdm429-rpm-v1-0-0a24ac19a478@mainlining.org>
-In-Reply-To: <20250212-sdm429-rpm-v1-0-0a24ac19a478@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Daniil Titov <daniilt971@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739379850; l=3273;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=fyggwXhk9oUXnNEQR7/yS+FGPmSxOG/fD7VIcXM5TRw=;
- b=+S6GYw5dJCjDduaMBbGNCl+5KorNoSqzFoc7zIOjILn2T4U4CHuAnP87bu9slQco6NyM89B3y
- p1CUAAMhSVlBWS/2YgbiZ5r76UdrN5S5KjqUHsoU+ONWvY0wZ0+THFV
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Daniil Titov <daniilt971@gmail.com>
+On Mon, 10 Feb 2025 10:37:04 -0800
+Zaid Alali <zaidal@os.amperecomputing.com> wrote:
 
-SDM429 has mostly the same rpm clocks as MSM8953, but lacks RF_CLK3 and
-IPA_CLK and additionally has the BB_CLK3.
+> Enable the driver to inject EINJv2 type errors. The component
+> array values are parsed from user_input and expected to contain
+> hex values for component id and syndrome separated by space,
+> and multiple components are separated by new line as follows:
+> 
+> component_id1 component_syndrome1
+> component_id2 component_syndrome2
+>  :
+> component_id(n) component_syndrome(n)
+> 
+> for example:
+> 
+> $comp_arr="0x1 0x2
+> >0x1 0x4
+> >0x2 0x4"  
+> $cd /sys/kernel/debug/apei/einj/
+> $echo "$comp_arr" > einjv2_component_array
+> 
+> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+> ---
+>  drivers/acpi/apei/einj-core.c | 103 +++++++++++++++++++++++++++++-----
+>  1 file changed, 89 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> index 40ebdbc4961f..46359019ca03 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -87,6 +87,13 @@ enum {
+>  	SETWA_FLAGS_APICID = 1,
+>  	SETWA_FLAGS_MEM = 2,
+>  	SETWA_FLAGS_PCIE_SBDF = 4,
+> +	SETWA_FLAGS_EINJV2 = 8,
+> +};
+> +
+> +enum {
+> +	EINJV2_PROCESSOR_ERROR = 0x1,
+> +	EINJV2_MEMORY_ERROR = 0x2,
+> +	EINJV2_PCIE_ERROR = 0x4,
+>  };
+>  
+>  /*
+> @@ -111,6 +118,7 @@ static char vendor_dev[64];
+>  static struct debugfs_blob_wrapper einjv2_component_arr;
+>  static u64 component_count;
+>  static void *user_input;
+> +static int nr_components;
+>  static u32 available_error_type;
+>  static u32 available_error_type_v2;
+>  
+> @@ -181,6 +189,8 @@ static DEFINE_MUTEX(einj_mutex);
+>  bool einj_initialized __ro_after_init;
+>  
+>  static void __iomem *einj_param;
+> +static u32 v5param_size;
+> +static bool is_V2;
+>  
+>  static void einj_exec_ctx_init(struct apei_exec_context *ctx)
+>  {
+> @@ -288,11 +298,23 @@ static void *einj_get_parameter_address(void)
+>  		struct set_error_type_with_address v5param;
+>  		void __iomem *p;
+>  
+> +		v5param_size = sizeof(v5param);
+>  		p = acpi_os_map_iomem(pa_v5, sizeof(v5param));
+>  		if (p) {
+> -			memcpy_fromio(&v5param, p, sizeof(v5param));
+> +			int offset, len;
+> +
+> +			memcpy_fromio(&v5param, p, v5param_size);
 
-Signed-off-by: Daniil Titov <daniilt971@gmail.com>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- drivers/clk/qcom/clk-smd-rpm.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Here you clear the first part, but not the extra elements.
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 29ef08a9d50b47fb71ac253c6f50f4c28f4d6519..3fbaa646286f284da12b902873b079863a2c0d77 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -486,6 +486,7 @@ DEFINE_CLK_SMD_RPM(qup, QCOM_SMD_RPM_QUP_CLK, 0);
- 
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(bb_clk1, 1, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(bb_clk2, 2, 19200000);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(bb_clk3, 3, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(ln_bb_clk1, 1, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(ln_bb_clk2, 2, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(ln_bb_clk3, 3, 19200000);
-@@ -1046,6 +1047,36 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
- 	.num_icc_clks = ARRAY_SIZE(msm8998_icc_clks),
- };
- 
-+static struct clk_smd_rpm *sdm429_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo_a,
-+	[RPM_SMD_QDSS_CLK]		= &clk_smd_rpm_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK]		= &clk_smd_rpm_qdss_a_clk,
-+	[RPM_SMD_BB_CLK1]		= &clk_smd_rpm_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A]		= &clk_smd_rpm_bb_clk1_a,
-+	[RPM_SMD_BB_CLK2]		= &clk_smd_rpm_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A]		= &clk_smd_rpm_bb_clk2_a,
-+	[RPM_SMD_BB_CLK3]		= &clk_smd_rpm_bb_clk3,
-+	[RPM_SMD_BB_CLK3_A]		= &clk_smd_rpm_bb_clk3_a,
-+	[RPM_SMD_RF_CLK2]		= &clk_smd_rpm_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A]		= &clk_smd_rpm_rf_clk2_a,
-+	[RPM_SMD_DIV_CLK2]		= &clk_smd_rpm_div_clk2,
-+	[RPM_SMD_DIV_A_CLK2]		= &clk_smd_rpm_div_clk2_a,
-+	[RPM_SMD_BB_CLK1_PIN]		= &clk_smd_rpm_bb_clk1_pin,
-+	[RPM_SMD_BB_CLK1_A_PIN]		= &clk_smd_rpm_bb_clk1_a_pin,
-+	[RPM_SMD_BB_CLK2_PIN]		= &clk_smd_rpm_bb_clk2_pin,
-+	[RPM_SMD_BB_CLK2_A_PIN]		= &clk_smd_rpm_bb_clk2_a_pin,
-+	[RPM_SMD_BB_CLK3_PIN]		= &clk_smd_rpm_bb_clk3_pin,
-+	[RPM_SMD_BB_CLK3_A_PIN]		= &clk_smd_rpm_bb_clk3_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_sdm429 = {
-+	.clks = sdm429_clks,
-+	.num_clks = ARRAY_SIZE(sdm429_clks),
-+	.icc_clks = bimc_pcnoc_snoc_smmnoc_icc_clks,
-+	.num_icc_clks = ARRAY_SIZE(bimc_pcnoc_snoc_smmnoc_icc_clks),
-+};
-+
- static struct clk_smd_rpm *sdm660_clks[] = {
- 	[RPM_SMD_XO_CLK_SRC] = &clk_smd_rpm_branch_bi_tcxo,
- 	[RPM_SMD_XO_A_CLK_SRC] = &clk_smd_rpm_branch_bi_tcxo_a,
-@@ -1276,6 +1307,7 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
- 	{ .compatible = "qcom,rpmcc-qcm2290", .data = &rpm_clk_qcm2290 },
- 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
-+	{ .compatible = "qcom,rpmcc-sdm429",  .data = &rpm_clk_sdm429  },
- 	{ .compatible = "qcom,rpmcc-sdm660",  .data = &rpm_clk_sdm660  },
- 	{ .compatible = "qcom,rpmcc-sm6115",  .data = &rpm_clk_sm6115  },
- 	{ .compatible = "qcom,rpmcc-sm6125",  .data = &rpm_clk_sm6125  },
+>  			acpi5 = 1;
+>  			check_vendor_extension(pa_v5, &v5param);
+> +			if (available_error_type & ACPI65_EINJV2_SUPP) {
+> +				len = v5param.einjv2_struct.length;
+> +				offset = offsetof(struct einjv2_extension_struct, component_arr);
+> +				nr_components = (len - offset) / 32;
+> +				acpi_os_unmap_iomem(p, v5param_size);
+> +				v5param_size = sizeof(v5param) +
+> +					(nr_components * sizeof(struct syndrome_array));
 
--- 
-2.48.1
+struct_size()
+
+> +				p = acpi_os_map_iomem(pa_v5, v5param_size);
+> +			}
+>  			return p;
+>  		}
+>  	}
+> @@ -486,8 +508,8 @@ static int __einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+>  	if (acpi5) {
+>  		struct set_error_type_with_address *v5param;
+>  
+> -		v5param = kmalloc(sizeof(*v5param), GFP_KERNEL);
+> -		memcpy_fromio(v5param, einj_param, sizeof(*v5param));
+> +		v5param = kmalloc(v5param_size, GFP_KERNEL);
+
+This patch is the point where kmalloc makes sense. I'd introduce it here
+rather than in earlier patch.
+
+> +		memcpy_fromio(v5param, einj_param, v5param_size);
+>  		v5param->type = type;
+>  		if (type & ACPI5_VENDOR_BIT) {
+>  			switch (vendor_flags) {
+
+...
+
+>  /* Inject the specified hardware error */
+> @@ -597,10 +663,15 @@ int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
+>  	u64 base_addr, size;
+>  
+>  	/* If user manually set "flags", make sure it is legal */
+> -	if (flags && (flags &
+> -		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
+> +	if (flags && (flags & ~(SETWA_FLAGS_APICID | SETWA_FLAGS_MEM |
+> +		      SETWA_FLAGS_PCIE_SBDF | SETWA_FLAGS_EINJV2)))
+>  		return -EINVAL;
+>  
+> +	/* check if type is a valid EINJv2 error type */
+> +	if (is_V2) {
+> +		if (!(type & available_error_type_v2))
+> +			return -EINVAL;
+> +	}
+>  	/*
+>  	 * We need extra sanity checks for memory errors.
+>  	 * Other types leap directly to injection.
+> @@ -750,7 +821,7 @@ int einj_validate_error_type(u64 type)
+>  	if (tval & (tval - 1))
+>  		return -EINVAL;
+>  	if (!vendor)
+> -		if (!(type & available_error_type))
+> +		if (!(type & (available_error_type | available_error_type_v2)))
+>  			return -EINVAL;
+>  
+>  	return 0;
+> @@ -763,12 +834,14 @@ static ssize_t error_type_set(struct file *file, const char __user *buf,
+>  	u64 val;
+>  
+>  	memset(einj_buf, 0, BUFF_SIZE);
+> +	is_V2 = false;
+>  	if (copy_from_user(einj_buf, buf, count))
+>  		return -EFAULT;
+>  
+>  	if (strncmp(einj_buf, "V2_", 3) == 0) {
+>  		if (!sscanf(einj_buf, "V2_%llx", &val))
+>  			return -EINVAL;
+> +		is_V2 = true;
+
+Given you have an if / else here. Set is_V2 = false
+in the else rather that default and override in one leg of
+the if / else.
+
+>  	} else
+>  		if (!sscanf(einj_buf, "%llx", &val))
+>  			return -EINVAL;
+> @@ -792,6 +865,9 @@ static int error_inject_set(void *data, u64 val)
+>  	if (!error_type)
+>  		return -EINVAL;
+>  
+> +	if (is_V2)
+> +		error_flags |= SETWA_FLAGS_EINJV2;
+> +
+>  	return einj_error_inject(error_type, error_flags, error_param1, error_param2,
+>  				error_param3, error_param4);
+>  }
+> @@ -944,11 +1020,10 @@ static void __exit einj_remove(struct platform_device *pdev)
+>  	struct apei_exec_context ctx;
+>  
+>  	if (einj_param) {
+> -		acpi_size size = (acpi5) ?
+> -			sizeof(struct set_error_type_with_address) :
+> -			sizeof(struct einj_parameter);
+> -
+> -		acpi_os_unmap_iomem(einj_param, size);
+
+Unless strong reason to change I'd keep to existing style and just
+replace the true condition with v5param_size
+
+> +		if (acpi5)
+> +			acpi_os_unmap_iomem(einj_param, v5param_size);
+> +		else
+> +			acpi_os_unmap_iomem(einj_param,	sizeof(struct einj_parameter));
+>  		if (vendor_errors.size)
+>  			acpi_os_unmap_memory(vendor_errors.data, vendor_errors.size);
+>  	}
 
 
