@@ -1,143 +1,250 @@
-Return-Path: <linux-kernel+bounces-510511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795D0A31E04
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:36:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1E8A31E06
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:37:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0C331888671
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379B51884639
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0451F9F60;
-	Wed, 12 Feb 2025 05:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F4D1F7561;
+	Wed, 12 Feb 2025 05:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uz0IJMSX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="WHhT0h5b"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB04C271837;
-	Wed, 12 Feb 2025 05:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F12BB67E;
+	Wed, 12 Feb 2025 05:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739338583; cv=none; b=SKOnHjvE7oloerWlMCqcVES0PF1bKoZ4iQvN+8iL+nBWQSPFP/ROsjAvNbM1CdT/3uClehCqUvdwOHk0GFNQ3GjmjsNp+HRWDDY21BVWYMAcXaFZETuCw8VasQP8EM6oyj4nOYkW2dUZqNPUnO3A74URi5tNzs10p19uS5Jb+DA=
+	t=1739338635; cv=none; b=UvnRPA9fpCk0GyaLHeq4SsX1J3aYVeqGhH7UQoKJzdN6f6j/EByjtG3P0BFEPfr/WE3ckU8kDTBgL61/IPNwz4YsLW34RfZnwsunhsqZ6uhG5LAmw/Mq5cbiD3Kme/QpL+uhYR8OFavY3P0QWaWjHLLpqHt0jdvrM40XdjbVDsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739338583; c=relaxed/simple;
-	bh=RBcuD/ENGFYSayznVyThEkO7GUD8HBS8E4dDcSHfPhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u+Z1l0RQ4KOk4ruZYn2JQqLvngH2feXm39GTHTQKwlD25bLYphpXQCxBxmIle4Uf3X+CGHb5lETmZ0T7XVdv5MlQJ3l6a03bEBmkDWTJytk3m6fl6jCwuWJLPrw/02/jTpwVqImO0rZmK6IBf4HX32aV0S7CdxGfd18wFgd1xMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uz0IJMSX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E96BC4CEDF;
-	Wed, 12 Feb 2025 05:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739338583;
-	bh=RBcuD/ENGFYSayznVyThEkO7GUD8HBS8E4dDcSHfPhU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uz0IJMSX3veX0py61eYQILomLlEgA+nyBPp3jvgs5PP0J3A2UN6ITne73WyLa1Eco
-	 bXFKsyKc/QBHHDhxLIFu+CEdKShyYAdMzYswx2y2L1wMtaakBYET4YYTUYyT2z+a3i
-	 wHpzPXgrVBS9PFnVaWNpcllu0UgMkWOXZUQ0+JfhcJyeX+MAsD8MJeUP6Rfi1G4ELH
-	 XyGcN/tRJNFD51Bak9p6j54FoOSnwIoZ47ZtZw0AcY4s/xS+waT7pe+kYu9TSuVgpu
-	 x98OXtUSJ80JbFe4FWeRsVYifT9UzZXhZ7uWauAhA+LQeS6A9lvIr09/svuetxvpgy
-	 8Oj1JBR1U4F2A==
-Message-ID: <1eca92c0-9dc8-42fd-8149-390fcb91f4f6@kernel.org>
-Date: Wed, 12 Feb 2025 06:36:16 +0100
+	s=arc-20240116; t=1739338635; c=relaxed/simple;
+	bh=Vq/sQyw4FHu+wn+41JCedKUlbPLVFsN3KR1dIt4xYOQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SkbJZ5gZQKWqQPuuar3JbnL0DZYC0IB/HBskjg4sD3hZCbgayKokm27OVn+a/Og5WAAE/R2cO34o7xJYPCRmfwDanB/Jwy9EFIkNyKzHPfm3PXLXlRATJZ4amfBlvUq+IbchbcO7aNG1Bm/x/GC726b1vIanehJabOQ8ESqFOUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=WHhT0h5b; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739338634; x=1770874634;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=N1ldq/teHo/QBZY6cIiNd8wg81nHlAQXLen7eInilfM=;
+  b=WHhT0h5b8/HqP3Pib/O2PCe4p4FyZrGxO8Cp2JIYGnRcIeebq5jTDBax
+   1X0RNE5u/oNCRMSK2EaAMnwBLuXYSiuWpcsFP35jT3v9XL+CbZxqgKoRp
+   FW/4bUQD4TzpuoVwvLMGXQSWj9wyq7t5TJ+WKaVpX4QX6ZAP+tx4MmIOW
+   4=;
+X-IronPort-AV: E=Sophos;i="6.13,279,1732579200"; 
+   d="scan'208";a="168935605"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 05:37:13 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:32783]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.25.59:2525] with esmtp (Farcaster)
+ id c69e62f5-4918-4895-af0d-a33eddd4d416; Wed, 12 Feb 2025 05:37:13 +0000 (UTC)
+X-Farcaster-Flow-ID: c69e62f5-4918-4895-af0d-a33eddd4d416
+Received: from EX19D016UWA004.ant.amazon.com (10.13.139.119) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Wed, 12 Feb 2025 05:37:13 +0000
+Received: from 88665a51a6b2.amazon.com (10.106.179.55) by
+ EX19D016UWA004.ant.amazon.com (10.13.139.119) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Wed, 12 Feb 2025 05:37:10 +0000
+From: Cristian Prundeanu <cpru@amazon.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: Cristian Prundeanu <cpru@amazon.com>, K Prateek Nayak
+	<kprateek.nayak@amd.com>, Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
+	"Ali Saidi" <alisaidi@amazon.com>, Benjamin Herrenschmidt
+	<benh@kernel.crashing.org>, Geoff Blake <blakgeof@amazon.com>, Csaba Csoma
+	<csabac@amazon.com>, Bjoern Doebel <doebel@amazon.com>, Gautham Shenoy
+	<gautham.shenoy@amd.com>, Joseph Salisbury <joseph.salisbury@oracle.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, Borislav Petkov
+	<bp@alien8.de>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tip-commits@vger.kernel.org>,
+	<x86@kernel.org>
+Subject: [PATCH v2] [tip: sched/core] sched: Move PLACE_LAG and RUN_TO_PARITY to sysctl
+Date: Tue, 11 Feb 2025 23:36:44 -0600
+Message-ID: <20250212053644.14787-1-cpru@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250128230926.11715-1-cpru@amazon.com>
+References: <20250119110410.GAZ4zcKkx5sCjD5XvH@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v8 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
- linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
- Rob Herring <robh@kernel.org>,
- Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Michal Simek <michal.simek@amd.com>, Peter Zijlstra <peterz@infradead.org>
-References: <20250211231646.GA58828@bhelgaas>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250211231646.GA58828@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D039UWB003.ant.amazon.com (10.13.138.93) To
+ EX19D016UWA004.ant.amazon.com (10.13.139.119)
 
-On 12/02/2025 00:16, Bjorn Helgaas wrote:
-> On Fri, Feb 07, 2025 at 07:39:03AM +0100, Markus Elfring wrote:
->>> I don't *really* like guard() anyway because it's kind of magic in
->>> that the unlock doesn't actually appear in the code, and it's kind of
->>> hard to unravel what guard() is and how it works.  But I guess that's
->>> mostly because it's just a new idiom that takes time to internalize.
->>
->> How will the circumstances evolve further for growing applications of
->> scope-based resource management?
-> 
-> I'm sure it will evolve to become the typical style.  Right now, it's
-> not quite there yet, as evidenced by the fact that the only reference
-> to them in Documentation/ is this somewhat ambivalent note:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/maintainer-netdev.rst?id=v6.13#n380
-> 
-> We do already have a few uses of guard() and scoped_guard() in
-> drivers/pci, and I don't really object to more, including in this
-> amd-mdb case.  Whatever we do, I *would* want to do it consistently
-> throughout the file.
+Replacing CFS with the EEVDF scheduler in kernel 6.6 introduced
+significant performance degradation in multiple database-oriented
+workloads. This degradation manifests in all kernel versions using EEVDF,
+across multiple Linux distributions, hardware architectures (x86_64,
+aarm64, amd64), and CPU generations.
 
+Testing combinations of available scheduler features showed that the
+largest improvement (short of disabling all EEVDF features) came from
+disabling both PLACE_LAG and RUN_TO_PARITY.
 
-Bjorn,
-There is little point in discussing anything with Markus. It's a person
-known to waste our time.
+Moving PLACE_LAG and RUN_TO_PARITY to sysctl will allow users to override
+their default values and persist them with established mechanisms.
 
-Best regards,
-Krzysztof
+Link: https://lore.kernel.org/20241017052000.99200-1-cpru@amazon.com
+Signed-off-by: Cristian Prundeanu <cpru@amazon.com>
+---
+v2: use latest sched/core; defer default value change to a follow-up patch
+
+ include/linux/sched/sysctl.h |  8 ++++++++
+ kernel/sched/core.c          | 13 +++++++++++++
+ kernel/sched/fair.c          |  7 ++++---
+ kernel/sched/features.h      | 10 ----------
+ kernel/sysctl.c              | 20 ++++++++++++++++++++
+ 5 files changed, 45 insertions(+), 13 deletions(-)
+
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index 5a64582b086b..a899398bc1c4 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -29,4 +29,12 @@ extern int sysctl_numa_balancing_mode;
+ #define sysctl_numa_balancing_mode	0
+ #endif
+ 
++#if defined(CONFIG_SCHED_DEBUG) && defined(CONFIG_SYSCTL)
++extern unsigned int sysctl_sched_place_lag_enabled;
++extern unsigned int sysctl_sched_run_to_parity_enabled;
++#else
++#define sysctl_sched_place_lag_enabled 1
++#define sysctl_sched_run_to_parity_enabled 1
++#endif
++
+ #endif /* _LINUX_SCHED_SYSCTL_H */
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 9142a0394d46..a379240628ea 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -134,6 +134,19 @@ const_debug unsigned int sysctl_sched_features =
+ 	0;
+ #undef SCHED_FEAT
+ 
++#ifdef CONFIG_SYSCTL
++/*
++ * Using the avg_vruntime, do the right thing and preserve lag across
++ * sleep+wake cycles. EEVDF placement strategy #1, #2 if disabled.
++ */
++__read_mostly unsigned int sysctl_sched_place_lag_enabled = 1;
++/*
++ * Inhibit (wakeup) preemption until the current task has either matched the
++ * 0-lag point or until it has exhausted its slice.
++ */
++__read_mostly unsigned int sysctl_sched_run_to_parity_enabled = 1;
++#endif
++
+ /*
+  * Print a warning if need_resched is set for the given duration (if
+  * LATENCY_WARN is enabled).
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 1e78caa21436..c87fd1accd54 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -923,7 +923,8 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
+ 	 * Once selected, run a task until it either becomes non-eligible or
+ 	 * until it gets a new slice. See the HACK in set_next_entity().
+ 	 */
+-	if (sched_feat(RUN_TO_PARITY) && curr && curr->vlag == curr->deadline)
++	if (sysctl_sched_run_to_parity_enabled && curr &&
++	    curr->vlag == curr->deadline)
+ 		return curr;
+ 
+ 	/* Pick the leftmost entity if it's eligible */
+@@ -5199,7 +5200,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	 *
+ 	 * EEVDF: placement strategy #1 / #2
+ 	 */
+-	if (sched_feat(PLACE_LAG) && cfs_rq->nr_queued && se->vlag) {
++	if (sysctl_sched_place_lag_enabled && cfs_rq->nr_queued && se->vlag) {
+ 		struct sched_entity *curr = cfs_rq->curr;
+ 		unsigned long load;
+ 
+@@ -9327,7 +9328,7 @@ static inline int task_is_ineligible_on_dst_cpu(struct task_struct *p, int dest_
+ #else
+ 	dst_cfs_rq = &cpu_rq(dest_cpu)->cfs;
+ #endif
+-	if (sched_feat(PLACE_LAG) && dst_cfs_rq->nr_queued &&
++	if (sysctl_sched_place_lag_enabled && dst_cfs_rq->nr_queued &&
+ 	    !entity_eligible(task_cfs_rq(p), &p->se))
+ 		return 1;
+ 
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 3c12d9f93331..b98ec31ef2c4 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -1,10 +1,5 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ 
+-/*
+- * Using the avg_vruntime, do the right thing and preserve lag across
+- * sleep+wake cycles. EEVDF placement strategy #1, #2 if disabled.
+- */
+-SCHED_FEAT(PLACE_LAG, true)
+ /*
+  * Give new tasks half a slice to ease into the competition.
+  */
+@@ -13,11 +8,6 @@ SCHED_FEAT(PLACE_DEADLINE_INITIAL, true)
+  * Preserve relative virtual deadline on 'migration'.
+  */
+ SCHED_FEAT(PLACE_REL_DEADLINE, true)
+-/*
+- * Inhibit (wakeup) preemption until the current task has either matched the
+- * 0-lag point or until is has exhausted it's slice.
+- */
+-SCHED_FEAT(RUN_TO_PARITY, true)
+ /*
+  * Allow wakeup of tasks with a shorter slice to cancel RUN_TO_PARITY for
+  * current.
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 7ae7a4136855..11651d87f6d4 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2019,6 +2019,26 @@ static struct ctl_table kern_table[] = {
+ 		.extra2		= SYSCTL_INT_MAX,
+ 	},
+ #endif
++#ifdef CONFIG_SCHED_DEBUG
++	{
++		.procname	= "sched_place_lag_enabled",
++		.data		= &sysctl_sched_place_lag_enabled,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
++	{
++		.procname	= "sched_run_to_parity_enabled",
++		.data		= &sysctl_sched_run_to_parity_enabled,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
++#endif
+ };
+ 
+ static struct ctl_table vm_table[] = {
+
+base-commit: 05dbaf8dd8bf537d4b4eb3115ab42a5fb40ff1f5
+-- 
+2.48.1
+
 
