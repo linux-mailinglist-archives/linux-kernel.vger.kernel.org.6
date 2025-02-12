@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-511791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E8DA32FBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:31:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9917DA32FA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:28:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576FC3A5DAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309553A2595
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F0C1FECC2;
-	Wed, 12 Feb 2025 19:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF4D262D30;
+	Wed, 12 Feb 2025 19:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RHV+S7FJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhkQCBab"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2FB1DC07D;
-	Wed, 12 Feb 2025 19:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604DD1DEFDD;
+	Wed, 12 Feb 2025 19:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739388685; cv=none; b=hCYxvoRkA6AF8nMeBHy1/gDLA+vRiSJmO/k/wdygJfvWqlgfXo6+ae9iqLI0tkz8SYMR9SUUQDe18yORRe0g1gYpXOZZ6FXBJc2RnMk8genuceknbcwtsF+ZZWEMKdRH8aaFAxCn8qbJ5qh5tLDIaJ4lwXZQUACLBVb9LT1Qs4k=
+	t=1739388515; cv=none; b=dlEkoes/Nrx13EVSxTtQOiPKWN33VAqLnH0/Gu4Lf2F3fekT/tch3GpkKH4u2fFBR/l8uIvc9loBoL18Wp8XkhC4X4lQaJ2D/3dLs//abNqPHL2Rx2YqR6+RUMrL55OS8jMRjz70Zyv5b5k0zBJfSARhor3awHB+o/y/mgKiasU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739388685; c=relaxed/simple;
-	bh=QWfCk6Z9kmUwiT/DGt2f/lMajzR81wKfnu7GN46kOys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iYz6VxkNP70FAIXQtSkset7utj5BENSeLTbnQivapyrnYxEKGJu9Oig2RdGAXiB3FqNBzn2uEykqANxlCjj9VseqM9Nq4xz4RcXPtQOHKPaNWXp2cla8/dLs42txXBd4SCkjJ/fRw3gFGWAuKSFe6NgV3FzcbCtSFGG2apQ4QCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RHV+S7FJ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739388684; x=1770924684;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=QWfCk6Z9kmUwiT/DGt2f/lMajzR81wKfnu7GN46kOys=;
-  b=RHV+S7FJEOX5oTeFqrx7iWPTcTnXKbQ8HuMCZsumt9lRVAabuttsCqC+
-   E6eXUKGhENQCLT323h0J3f4juLhH8v9atWgUK2TWUCWSlEXQfiw7OXtLz
-   jJFmnBXU3bYsqFfvItYLSQD1BfbgOrQu7QnZA02Sngnowxuc50qcvSGVk
-   MkrsrpF3xvedLXN5NDbvGs23v5QzeDWSHP0LjkxYscVoMHUIQaZ+MGLUy
-   xOgq7XZWA1Ub5tJfHUHMN2pIYKX9m2P+4dI3llY+67GpxaLU65RMBuSBk
-   jSimWopJ/fTNE2m/6RMbwPmM0RqRM+3tMnxoK7Z/+6QdYaOhnlf+3jUAA
-   A==;
-X-CSE-ConnectionGUID: abR/tZHXQaqBourjndWzFQ==
-X-CSE-MsgGUID: GlGls5kWSB2E8Bf3D3/Qng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="50714405"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="50714405"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 11:31:24 -0800
-X-CSE-ConnectionGUID: Oi6g4VVQRSWYiCtLZuw10A==
-X-CSE-MsgGUID: SalJIseoSXmw88IeDLGjrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="112880548"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 12 Feb 2025 11:31:21 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 7F3C531C; Wed, 12 Feb 2025 21:31:19 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ferry Toth <fntoth@gmail.com>
-Subject: [PATCH v3 4/4] usb: dwc3: gadget: Avoid using reserved endpoints on Intel Merrifield
-Date: Wed, 12 Feb 2025 21:28:04 +0200
-Message-ID: <20250212193116.2487289-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
-In-Reply-To: <20250212193116.2487289-1-andriy.shevchenko@linux.intel.com>
-References: <20250212193116.2487289-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1739388515; c=relaxed/simple;
+	bh=76ce+6c5pg+zeAsKc8pLYPMmWPnyMADHfy6sMwTw6l0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AYu77IYHHOiLZzQMEuyJVmriRcJMXPElVTjfVSg18ZHlB/+83tQKyqrlrci5jSogdAXvt42mBcehpB4+Eap4ndRtA+3PP78qprOgtkPpd9B3hN195GncammCqW913neTWSqNRxCkuD7y+BEGH9Vo0l8vvVIeWIXc5HS5kellCL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhkQCBab; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DC50C4CEDF;
+	Wed, 12 Feb 2025 19:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739388513;
+	bh=76ce+6c5pg+zeAsKc8pLYPMmWPnyMADHfy6sMwTw6l0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QhkQCBabbJyHrRez6eVn6H9jViqfl1LQnjvWik6Q6Syfn13yRrRydruG+FMf8cdTf
+	 c7aM4AaaHEE2Dl1OnG2eh4/HJu95zgzfjGVjkv7ULPHsVImrTwtNInk0JUjKCDsyWy
+	 Xi5pIXSQMDIjP8xUfIPnb+joQP8rNGTgqWyLRW1Jp+5IRMbGqej9/dBakdJbM6KDm4
+	 vaKfh5Taun/FY5uwLW1ehtzsewW6iDj9eAi1Cvmeg1TD6dAFGijlioQdK6gmJmmf+d
+	 RFnRktWtRXSkrPCZiFK1SHMb5WBm9arWEE6Y75xRDmdaBOt78YIYKlkYToUHhYA0oQ
+	 ghOtDl8z5iVpw==
+Message-ID: <912dc0d1-6236-43cf-b423-54368eeed2e7@kernel.org>
+Date: Wed, 12 Feb 2025 20:28:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/3] dt-bindings: media: cdns,csi2rx.yaml: Add
+ optional interrupts for cdns-csi2rx
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: mripard@kernel.org, mchehab@kernel.org, jai.luthra@linux.dev,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, devarsht@ti.com,
+ vaishnav.a@ti.com, r-donadkar@ti.com, u-kumar1@ti.com
+References: <20250212131244.1397722-1-y-abhilashchandra@ti.com>
+ <20250212131244.1397722-2-y-abhilashchandra@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250212131244.1397722-2-y-abhilashchandra@ti.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Intel Merrifield SoC uses these endpoints for tracing and they cannot
-be re-allocated if being used because the side band flow control signals
-are hard wired to certain endpoints:
+On 12/02/2025 14:12, Yemike Abhilash Chandra wrote:
+> The Cadence CSI2RX IP exposes 3 interrupts [0] 12.7 camera subsystem.
+> Enabling these interrupts will provide additional information about a CSI
+> packet or an individual frame. So, add support for optional interrupts
+> and interrupt-names properties.
+> 
+> [0]: http://www.ti.com/lit/pdf/spruil1
 
-• 1 High BW Bulk IN (IN#1) (RTIT)
-• 1 1KB BW Bulk IN (IN#8) + 1 1KB BW Bulk OUT (Run Control) (OUT#8)
 
-In device mode, since RTIT (EP#1) and EXI/RunControl (EP#8) uses
-External Buffer Control (EBC) mode, these endpoints are to be mapped to
-EBC mode (to be done by EXI target driver). Additionally TRB for RTIT
-and EXI are maintained in STM (System Trace Module) unit and the EXI
-target driver will as well configure the TRB location for EP #1 IN
-and EP#8 (IN and OUT). Since STM/PTI and EXI hardware blocks manage
-these endpoints and interface to OTG3 controller through EBC interface,
-there is no need to enable any events (such as XferComplete etc)
-for these end points.
+Why is this RFC?
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Ferry Toth <fntoth@gmail.com>
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
----
- drivers/usb/dwc3/dwc3-pci.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> 
+> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> ---
+>  .../devicetree/bindings/media/cdns,csi2rx.yaml        | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> index 2008a47c0580..a3acf4f861c2 100644
+> --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> @@ -24,6 +24,17 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 3
 
-diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
-index 052852f80146..54a4ee2b90b7 100644
---- a/drivers/usb/dwc3/dwc3-pci.c
-+++ b/drivers/usb/dwc3/dwc3-pci.c
-@@ -148,11 +148,21 @@ static const struct property_entry dwc3_pci_intel_byt_properties[] = {
- 	{}
- };
- 
-+/*
-+ * Intel Merrifield SoC uses these endpoints for tracing and they cannot
-+ * be re-allocated if being used because the side band flow control signals
-+ * are hard wired to certain endpoints:
-+ * - 1 High BW Bulk IN (IN#1) (RTIT)
-+ * - 1 1KB BW Bulk IN (IN#8) + 1 1KB BW Bulk OUT (Run Control) (OUT#8)
-+ */
-+static const u8 dwc3_pci_mrfld_reserved_endpoints[] = { 3, 16, 17 };
-+
- static const struct property_entry dwc3_pci_mrfld_properties[] = {
- 	PROPERTY_ENTRY_STRING("dr_mode", "otg"),
- 	PROPERTY_ENTRY_STRING("linux,extcon-name", "mrfld_bcove_pwrsrc"),
- 	PROPERTY_ENTRY_BOOL("snps,dis_u3_susphy_quirk"),
- 	PROPERTY_ENTRY_BOOL("snps,dis_u2_susphy_quirk"),
-+	PROPERTY_ENTRY_U8_ARRAY("snps,reserved-endpoints", dwc3_pci_mrfld_reserved_endpoints),
- 	PROPERTY_ENTRY_BOOL("snps,usb2-gadget-lpm-disable"),
- 	PROPERTY_ENTRY_BOOL("linux,sysdev_is_parent"),
- 	{}
--- 
-2.45.1.3035.g276e886db78b
+I understand interrupts might be unused by driver, but are you sure they
+are optionally connected one-by-one? IOW, why is this flexible?
 
+
+Best regards,
+Krzysztof
 
