@@ -1,90 +1,192 @@
-Return-Path: <linux-kernel+bounces-510635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A59FA31FD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:17:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC62AA31FDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:18:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2CD3A1C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:17:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39B9C1888B37
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FCE204593;
-	Wed, 12 Feb 2025 07:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48699204595;
+	Wed, 12 Feb 2025 07:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLrMKbRa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LKnHOvWc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1224202C26;
-	Wed, 12 Feb 2025 07:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233A720126A;
+	Wed, 12 Feb 2025 07:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739344662; cv=none; b=EW2XUaLBT813kEqTEWBXP1/WNGbdWFa7+WnzSjDpmqOVPAyn4YRTyzfAtzBv3kpLvoYHeyak5rp1cVMIfsgR7mK+oEQddkKviP5o1B3pAiwV0yhcs6lf3z5Xvqyk6BgybiUFjEhQRtdftVcmSZBiNCPZLyDxHe7J75OoyGmd1iU=
+	t=1739344705; cv=none; b=FFt9lgooDGm01zmR72ybShm/XVnCwJrar1EZAcvxFChyGHLfKORbChkWUrS1M4MjCrN9qk1VjQeMVNs0as5Wdm0tH9s4rY7xg/Fhvw1B76gqiwTGv1mi2Ugn5CEbHkbxP2NaX+RUajBYiRYF0CS6le1ignR7Ga26gXgEwPdMDpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739344662; c=relaxed/simple;
-	bh=M0TCl9ruWebYVpXDJMwU6dNYVy2BWrny5aV2GLhyWvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lizZsLjyQfepJp4aaE7ge6KAjDuTnl6DdW7bH8Vz/7oQ+2vICzKCjqfWHDBZytD5d/8hTRfS3XfFU+DXYVJA+J4FIZBERsdouBpLLRT1oRxKv9nCdm1rHcEafeNIgjoH9xW5pC//DpIBZq58+ytrNLvXxSUEzBsywXStMfLR9xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLrMKbRa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B07C4CEDF;
-	Wed, 12 Feb 2025 07:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739344661;
-	bh=M0TCl9ruWebYVpXDJMwU6dNYVy2BWrny5aV2GLhyWvQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kLrMKbRaETei6Rm9BsZLwh7ulvGsFzKWxATUwGYPGTTnUXOIJg9AUacaAhvNHypVe
-	 sA6alhnFUbx64MGolpEsPwgBhpIhXPzaVWgbPWwmvfcfSt1SyEz1OV8ah6Th396gLE
-	 NokReo+OcGmB+0NcRnfXBlSpuM1yAgIVdWZ3zr0gFJEih16NQTw82jxpAqJU5tkV9I
-	 lIi/RpbCez4+Z6WsKEAhzWQ6AT/VK9oSbhrQHayewwdiCt+R48ZOahTzHk2EaHG/fN
-	 nE6o6Ruj5ptLGZEY5xwIQlUvId7BDvWO9fWvEiM0fAeobSu7RA3Yw2optKRByDo+xL
-	 foTwh8QwdN7Dw==
-Date: Wed, 12 Feb 2025 08:17:37 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, jonath4nns@gmail.com, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v3 05/17] dt-bindings: iio: adc: ad7768-1: document
- regulator provider property
-Message-ID: <20250212-dazzling-glaring-shrimp-9530e6@krzk-bin>
-References: <20250211234717.1008325-1-Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1739344705; c=relaxed/simple;
+	bh=DshPxwgEYL8iGSuIvHVYFdDZ0KZxrDoiRepoHAvGNgY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=j0JrT8voWcOGNIUAxSXdZ1SM3AOyP5msVj8y3892bhVww/Q6+oYb7q+nHhpXLmaragcrTXa2Bi9r1hAPobP25cPBhsdM37Rxm30/tuAONkGplN5eheRKNCde2fCoa9JAc7bgm8qPLuoeN5wkYv1gT5bnLApi9Fp5LY8vq8tw7kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LKnHOvWc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51BLLxC7025705;
+	Wed, 12 Feb 2025 07:18:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mwUlC2aKZRSlNQSNnZwqh13wOODDDXjJ7+xJpiK0pCs=; b=LKnHOvWcwLX0zHP5
+	HeA0gKn+af0/wHtPubeyydNMuIQQTY/2C6+V4oWRtEgABMoSwxn54f+nxX7Sc7q1
+	PxylMqcub0u/AJsIq0msEjjWFTMRjSbJrQPgpkB5upzzcypxo6NiF4lWuC7LFOHM
+	T3MjZGVCH8A0y/2zTz3z4sL0o9a1dh0B4Cqq1fwYsrAdZJneDp/AUtOSqW3q4lnn
+	789SoCEFckTLWx2hTQa0CtvBk6aqBxKxLdQw7mKhkLfegqmelVxw5SfQPs7of86I
+	Hq75h4pQQ637312y2q8MJOXmn3pAIzgGG3z/8mBjgxbtbS+UOjirA8f2uyVV+183
+	Y5amrQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44r5j5avc3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 07:18:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51C7IBrb017512
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 07:18:11 GMT
+Received: from [10.216.10.188] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Feb
+ 2025 23:18:04 -0800
+Message-ID: <c80ef960-7dc6-42bf-89a1-79e43be2bce0@quicinc.com>
+Date: Wed, 12 Feb 2025 12:48:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250211234717.1008325-1-Jonathan.Santos@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: sa8775p-ride: Enable Adreno 663
+ GPU
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Connor Abbott <cwabbott0@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+References: <20241030-a663-gpu-support-v3-0-bdf1d9ce6021@quicinc.com>
+ <20241030-a663-gpu-support-v3-2-bdf1d9ce6021@quicinc.com>
+ <4cfd1ebc-1a95-43d4-b36a-8b183c6dfd16@quicinc.com>
+ <ah6nusoouth7ziu3iscxmafm6cxuwwebxt44ixsjmesp5adwc4@e5lnbztds2xd>
+ <271e7b4f-454c-426e-a3f6-dcb55389374e@quicinc.com>
+ <iymxe2hmjobctdimupp656xeyhctwd4yswbp2wobaneuzgxedu@cyhjb5ibkqmj>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <iymxe2hmjobctdimupp656xeyhctwd4yswbp2wobaneuzgxedu@cyhjb5ibkqmj>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: I2PG4Q58doEJGIEy3-24I5DTXcJ29dI8
+X-Proofpoint-GUID: I2PG4Q58doEJGIEy3-24I5DTXcJ29dI8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_02,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 adultscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120055
 
-On Tue, Feb 11, 2025 at 08:47:16PM -0300, Jonathan Santos wrote:
-> The AD7768-1 provides a buffered common-mode voltage output
-> on the VCM pin that can be used to bias analog input signals.
+On 2/12/2025 5:30 AM, Dmitry Baryshkov wrote:
+> On Tue, Feb 11, 2025 at 06:41:39PM +0530, Akhil P Oommen wrote:
+>> On 2/9/2025 9:59 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Nov 13, 2024 at 02:18:43AM +0530, Akhil P Oommen wrote:
+>>>> On 10/30/2024 12:32 PM, Akhil P Oommen wrote:
+>>>>> From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+>>>>>
+>>>>> Enable GPU for sa8775p-ride platform and provide path for zap
+>>>>> shader.
+>>>>>
+>>>>> Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+>>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>> ---
+>>>>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 8 ++++++++
+>>>>>  1 file changed, 8 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>>>>> index 0c1b21def4b6..4901163df8f3 100644
+>>>>> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>>>>> @@ -407,6 +407,14 @@ queue3 {
+>>>>>  	};
+>>>>>  };
+>>>>>  
+>>>>> +&gpu {
+>>>>> +	status = "okay";
+>>>>> +};
+>>>>> +
+>>>>> +&gpu_zap_shader {
+>>>>> +	firmware-name = "qcom/sa8775p/a663_zap.mbn";
+>>>>> +};
+>>>>> +
+>>>>>  &i2c11 {
+>>>>>  	clock-frequency = <400000>;
+>>>>>  	pinctrl-0 = <&qup_i2c11_default>;
+>>>>>
+>>>>
+>>>> Bjorn,
+>>>>
+>>>> Please ignore this patch for now. This is probably not the right
+>>>> platform dtsi file where gpu should be enabled. I am discussing about
+>>>> this internally. Will send a revision or a new patch based on the
+>>>> conclusion.
+>>>
+>>> Akhil, any updates on this?
+>>>
+>>
+>> I am still waiting for the discussion about QCS9075 board dts files [1]
+>> to conclude.
+>>
+>> [1]
+>> https://lore.kernel.org/lkml/Z3eMxl1Af8TOAQW%2F@hu-wasimn-hyd.qualcomm.com/T/
 > 
-> Add regulators property to enable the use of the VCM output,
-> referenced here as vcm_output, by any other device.
+> Why? We currently have several boards supported. We can enable GPU on
+> those as your patches are pretty fine. Then we can land Wasim's patches.
+> Not to mention that the discussion seems to be dead, last message was
+> sent almost a month ago.
 > 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
-> v3 Changes:
-> * VCM is now provided as a regulator within the device, instead of a 
->   custom property.
-> 
-> v2 Changes:
-> * New patch in v2.
 
-There is some mess in this posting. Nothing looks threaded and b4 does
-not see entire posting.
+sa8775p is an automotive-grade chipset which has a pretty different
+non-HLOS firmware. One of the major difference is that it has a SAFETY
+monitoring system (using SAIL IP block) which monitors different
+parameters like GPU frequency for eg and it takes control of the entire
+system when it detects an anomaly. That means we cannot use GPU DCVS,
+passive thermal mitigation etc there.
 
-Sorry, don't make it complicated to us. Send proper submission - see
-numorous guides or submitting-patches - so reviewing will be
-straightforward.
+QCS9075 uses the same SoC but has different NHLOS firmwares that has
+SAIL disabled to make it behave like our regular chipsets. I am aware of
+only QCS9075 boards' GPU spec at the moment. I don't know the complete
+details of the impact of SAIL/SAFE features on GPU and other specs yet,
+so I can't disturb sa8775p-ride/qcs9100-ride boards.
 
-Best regards,
-Krzysztof
+I can see that Wazim is still discussing about board DTS internally.
+Hopefully he will send out another revision of his series soon.
+
+-Akhil
 
 
