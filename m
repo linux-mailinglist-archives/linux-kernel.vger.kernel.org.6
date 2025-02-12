@@ -1,113 +1,173 @@
-Return-Path: <linux-kernel+bounces-510396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866E0A31C31
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:41:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F275A31C38
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:43:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07834188ABAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 656483A8107
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB371D516D;
-	Wed, 12 Feb 2025 02:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9521DC074;
+	Wed, 12 Feb 2025 02:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PBDRk/e2"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDvbkQHU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3432917996
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502C71D5176;
+	Wed, 12 Feb 2025 02:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739328104; cv=none; b=eAfPGWqz8zfngR5gs/8Hus9luHWeFHcqREtrnPZuOrI+RrGk1H0yJaGJspZEPajik5A/jrQhyCUdRMO4dUTq2+XVgAa1UZU+ZJTZT+tggJybklPkfwYQYDja9/lNhehrUiF/zxBVT7klY2jcb5LDzr0IrheXtfvIEwEX1NVJcLo=
+	t=1739328196; cv=none; b=fRRfvSoRu+V07/qn/FhBXngFEeFf/ETxtvGtfhxKC2zU10mA+D41AI47XMXP+iIJsf7FN4sc0IlJvMELVv2bC9QG1s1F62ZTdaRQRODbwZYI221la+whDB+WNZiDy14aN36qFKunGDrTz2A5Ne0DBylqt1YeUwkIeJPkY3wlxtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739328104; c=relaxed/simple;
-	bh=bZBx9CAU8LR0Xv0KMuavjoF4oWmvCyQ+7JvUPs86kFc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=jTOMyCypxbNBc8lxLVIHC1bqYz0+FK/uk1M+iJMipf2UivqKg64AhhdY0jlobAY/UskamsB/kxN2yZYMUUbIZePMKotGKwcNwK4AX6dgi0l2LwoEiahWwXYxoviKiKcgFGv0CruqULieoQlya5uG+hqwTXpsaKbGQSBensbofkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.corp-partner.google.com; spf=pass smtp.mailfrom=inventec.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PBDRk/e2; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.corp-partner.google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso1015912266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 18:41:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739328101; x=1739932901; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QlMN53vdSR0lP4XAuJiPTJ1FnZZbxWLYxjivwiQiLM4=;
-        b=PBDRk/e219zKDWAp3YSWryFWhX9/YOGX4+inDSG8kJiTdk83DArq51qxmTlofpO6JM
-         QuROjl+AVuzbaqBUYpuYhF32O9SXZqGXNx0V976qfBr4hwdzfcD2hBw2SrN2cDzoN8G8
-         MYSNTYrlJ1CNZpKATg+rnaI78evM90+7klu6WMLe5ummUpURhNvS5xSRRMCU0X+ZiYat
-         QCPHDo0pvQ9tVJmEpW3q4W0GEfORoj1jydPLpYvuOjU7Xsnw2qAzxnLX/orMRAIHn9aH
-         tY8PunIgjf+T03Slz0BHOH33QWi10WamAEvalKvoXN4eYr222ZkkECvnS3BrXkJjX3mW
-         9WwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739328101; x=1739932901;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QlMN53vdSR0lP4XAuJiPTJ1FnZZbxWLYxjivwiQiLM4=;
-        b=I16rb8xBMur1Mw48tf0QTdYVCSkBPbqB1PW7TsdJRdseepIvw22U5QOUryCGV3iSA1
-         PjCC1talhpyb3ymOeqpr0/uV74seYgTjHYuqR3JZbSdDTAZmRFh562bDQ8TtQja1sAez
-         //DCSufdRJ/G/HoaN5Xx+ovcsQvIW+SJOOMbERFwD944OESUR2LMsPpH3edD2EPc9iJw
-         /2h1/OCeuPhgPHaNiP8UJAYeTeT+UNPfEPxlJm0NhFy09LKj+9YNrb8i8huGcuGpZPbJ
-         ICc8GkM4h+2DJEf9nGYV9AL2wxoxXtm9vt/meB+s4zyjc2AKBb8Bc+oGLYsHkFj2cx5i
-         4iVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWh0MyUd0SvHfdkALeX1lThWPU9mBKbJGbTHC1XDjH+Rp6/4s6vlADelfyB6rv7N+Ui+KTITXDDpbAeuwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeQhpnf4LNL+fowKCvlDoQC99GEARx0TYjkRDQtccQWfvFNTVJ
-	1CIVOcwUbQs73Wpv0tBcA62q+JEz4gfXak/UdgA9uwfgDZvs9F1nwpuo99ML22Xy3REJe65Ob8k
-	CPRhAvsT3VRGTelZP5V1Gf+hCHsuabK/uUVm4BA==
-X-Gm-Gg: ASbGnctW/mEMnSf3rYyTxWhexkZeasY+Oz8noX0qtwg4T1fp3wKGDyK0qqYHMP2rrLo
-	bPd0FxiUvCFz9JIS1K3X/FimRJq9Jues0wYzyHH0AaAQBaUg2KBjquI702ZUSmkg/CN2ZZa4+DA
-	==
-X-Google-Smtp-Source: AGHT+IG4nQ1YBwxjUH+8FEZ2kuYPxDzK2xxJkRh7kmN4DD4wwtkcfnICDRGWz34gihKENw+iacq8x6K57iMkCNveEuQ=
-X-Received: by 2002:a17:907:1909:b0:ab7:8e0d:3d3c with SMTP id
- a640c23a62f3a-ab7f3473720mr117097466b.42.1739328101289; Tue, 11 Feb 2025
- 18:41:41 -0800 (PST)
+	s=arc-20240116; t=1739328196; c=relaxed/simple;
+	bh=ceYSAdXaY8pnXbbzOQibX6XNuK9H+yJSiYcYvOVf6J4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pa+1b9/0AWdsRr1HRDUz+NSvRkO4PGRXAyHltSg+C9HhvCN2duv6GVWdwCUB/PI6UaCnOGmZWEAd0wCjbn69xvBtHn/7VpZ59p7YufPcKWBcDvjoL3YTYrw7qYmDI3xlXfMVZPeh99ahcde+rxhJmVsk88GKXWlu88fwl/zsA7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDvbkQHU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E8EC4CEDD;
+	Wed, 12 Feb 2025 02:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739328194;
+	bh=ceYSAdXaY8pnXbbzOQibX6XNuK9H+yJSiYcYvOVf6J4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EDvbkQHU8bLjDhLIgumXDGYygG100855wmm0pTQw0rJDC5+hTGoBnHA/JzsJETCe8
+	 oQB8PszoSOGU3sz59GAV78xFje88v0B6ZCG448h6BsgjtLSeARXHnZ5JvKYc3i57e3
+	 Qq+Y4jFTQ7Fb9iCopSIJ/GvB0oX9IVnKzLK/GQRs4cpsW21PsyxmxI8W0eVLWcO0z8
+	 Wwd9eendZWy0Q66qGhVfeI7amh7SLwtJCO/pfpEFLv7bLkQKtJgzNqwe4/jKaVhZmU
+	 Wt4czAFmyxZVDvlVNcz6nT++jec14vv3udqMGWtDGBYEjCg4+MOnf99RzxQR9rpCHP
+	 09XrMMxnrvwrg==
+Date: Tue, 11 Feb 2025 20:43:12 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Vinod Koul <vkoul@kernel.org>, Md Sadre Alam <quic_mdalam@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Georgi Djakov <djakov@kernel.org>
+Subject: Re: [PATCH] dmaengine: qcom: bam_dma: Avoid accessing BAM_REVISION
+ on remote BAM
+Message-ID: <jzb4ccukx6u64ewtwyhik2ezhrmawc2in5eyktt5dnm2orr3jh@bwtgerefsukb>
+References: <20250207-bam-read-fix-v1-1-027975cf1a04@oss.qualcomm.com>
+ <Z6m8btwhJ9q4RjB6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Kerry Kang <kang.kerry@inventec.corp-partner.google.com>
-Date: Wed, 12 Feb 2025 10:41:30 +0800
-X-Gm-Features: AWEUYZkwT_8RKgmlbzkwxkUt_zGHP1ABdT6Q62gnQ1rqkOtio7ezLauP1_SImm8
-Message-ID: <CALNGHDAN6yvh+F07CuQW6Ru4pCCUeRt_fyRPf_254op8yq-N5A@mail.gmail.com>
-Subject: [PATCH] mtd: spi-nor: Add Winbond w25q512jvdtr
-To: llvm+subscribe@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6m8btwhJ9q4RjB6@linaro.org>
 
-Similar to the other ones, different size. The "JV-DTR" suffix is in
-the datasheet, I haven't seen mentions of a different one.
+On Mon, Feb 10, 2025 at 09:44:30AM +0100, Stephan Gerhold wrote:
+> On Fri, Feb 07, 2025 at 12:17:33PM -0800, Bjorn Andersson wrote:
+> > Commit '57a7138d0627 ("dmaengine: qcom: bam_dma: Avoid writing
+> > unavailable register")' made this read unconditional, in order to
+> > identify if the instance is BAM-NDP or BAM-Lite.
+> > But the BAM_REVISION register is not accessible on remotely managed BAM
+> > instances and attempts to access it causes the system to crash.
+> > 
+> > Move the access back to be conditional and expand the checks that was
+> > introduced to restore the old behavior when no revision information is
+> > available.
+> > 
+> > Fixes: 57a7138d0627 ("dmaengine: qcom: bam_dma: Avoid writing unavailable register")
+> > Reported-by: Georgi Djakov <djakov@kernel.org>
+> > Closes: https://lore.kernel.org/lkml/9ef3daa8-cdb1-49f2-8d19-a72d6210ff3a@kernel.org/
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> 
+> This patch fixes the most critical regression (the bus hang), but the
+> in_range(..., BAM_NDP) checks are also wrong. They do not consider the
+> plain "BAM" type where the register is apparently also available. The
+> check should be !in_range(..., BAM_LITE) instead to fix this.
+> 
 
-The  W25Q512JV-DTR datasheet indicates DUAL and QUAD are supported.
+Sorry, I must have not paid sufficient attention while browsing the
+replies; and just tried to restore the one case I thought the author
+didn't consider...
 
-Signed-off-by: Kang.Kerry <kang.kerry@inventec.corp-partner.google.com>
----
+Thanks for staying on top of it. Revert makes total sense.
 
-This modification is add BIOS W25Q512JV-DTR chip to winbond list
+Regards,
+Bjorn
 
----
- drivers/mtd/spi-nor/winbond.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-index 8d0a00d69e12..6ce5f70bc11a 100644
---- a/drivers/mtd/spi-nor/winbond.c
-+++ b/drivers/mtd/spi-nor/winbond.c
-@@ -146,6 +146,11 @@ static const struct flash_info winbond_nor_parts[] = {
-  .name = "w25q512jvq",
-  .size = SZ_64M,
-  .no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+ }, {
-+ .id = SNOR_ID(0xef, 0x70, 0x20),
-+ .name = "w25q512jvdtr",
-+ .szie = SZ_64M,
-+ .no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-  }, {
-  .id = SNOR_ID(0xef, 0x50, 0x12),
-  .name = "w25q20bw",
---
-2.43.0
+> I mentioned this twice to Md Sadre Alam [1, 2], but a fix was
+> unfortunately never sent for that part of the regression.
+> 
+> I think we should take Caleb's patch and revert the entire patch for the
+> 6.14 cycle. There are several incorrect assumptions in the original
+> patch, it will be easier to review a fixed version with the full diff,
+> rather than looking at incremental fixups.
+> 
+> On a somewhat related note, I'm working on a patch series for bam_dma to
+> clean up the handling of remotely controlled BAMs. It will make it more
+> clear when it's safe to access BAM registers and when not, and should
+> allow reading the revision also for remotely controlled BAMs. This would
+> avoid the need for all these if (!bdev->bam_revision) checks.
+> 
+> Thanks,
+> Stephan
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/Z4D2jQNNW94qGIlv@linaro.org/
+> [2]: https://lore.kernel.org/linux-arm-msm/Z4_U19_QyH2RJvKW@linaro.org/
+> 
+> > ---
+> >  drivers/dma/qcom/bam_dma.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+> > index c14557efd577..d42d913492a8 100644
+> > --- a/drivers/dma/qcom/bam_dma.c
+> > +++ b/drivers/dma/qcom/bam_dma.c
+> > @@ -445,8 +445,8 @@ static void bam_reset(struct bam_device *bdev)
+> >  	writel_relaxed(val, bam_addr(bdev, 0, BAM_CTRL));
+> >  
+> >  	/* set descriptor threshold, start with 4 bytes */
+> > -	if (in_range(bdev->bam_revision, BAM_NDP_REVISION_START,
+> > -		     BAM_NDP_REVISION_END))
+> > +	if (!bdev->bam_revision ||
+> > +	    in_range(bdev->bam_revision, BAM_NDP_REVISION_START, BAM_NDP_REVISION_END))
+> >  		writel_relaxed(DEFAULT_CNT_THRSHLD,
+> >  			       bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
+> >  
+> > @@ -1006,8 +1006,8 @@ static void bam_apply_new_config(struct bam_chan *bchan,
+> >  			maxburst = bchan->slave.src_maxburst;
+> >  		else
+> >  			maxburst = bchan->slave.dst_maxburst;
+> > -		if (in_range(bdev->bam_revision, BAM_NDP_REVISION_START,
+> > -			     BAM_NDP_REVISION_END))
+> > +		if (!bdev->bam_revision ||
+> > +		    in_range(bdev->bam_revision, BAM_NDP_REVISION_START, BAM_NDP_REVISION_END))
+> >  			writel_relaxed(maxburst,
+> >  				       bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
+> >  	}
+> > @@ -1199,11 +1199,12 @@ static int bam_init(struct bam_device *bdev)
+> >  	u32 val;
+> >  
+> >  	/* read revision and configuration information */
+> > -	val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
+> > -	if (!bdev->num_ees)
+> > +	if (!bdev->num_ees) {
+> > +		val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
+> >  		bdev->num_ees = (val >> NUM_EES_SHIFT) & NUM_EES_MASK;
+> >  
+> > -	bdev->bam_revision = val & REVISION_MASK;
+> > +		bdev->bam_revision = val & REVISION_MASK;
+> > +	}
+> >  
+> >  	/* check that configured EE is within range */
+> >  	if (bdev->ee >= bdev->num_ees)
+> > 
+> > ---
+> > base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> > change-id: 20250207-bam-read-fix-2b31297d3fa1
+> > 
+> > Best regards,
+> > -- 
+> > Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> > 
+> 
 
