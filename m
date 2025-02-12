@@ -1,154 +1,161 @@
-Return-Path: <linux-kernel+bounces-511558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD13A32C90
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:56:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C6BA32C9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:57:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795D31884023
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:56:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23FB6161F4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198FA253F0A;
-	Wed, 12 Feb 2025 16:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D929F253B63;
+	Wed, 12 Feb 2025 16:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KirEBxzG"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UNoeakOW"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDEA1F0E44;
-	Wed, 12 Feb 2025 16:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181011DEFDD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379375; cv=none; b=oBA8dy7o6Hnd4QQkqScj4g1aPm7LlqZnzS8b0gqBswAA4sTAR7kBtj/7+fBgkgIzRkdXGDpW92PDBus4XcNhejKFva3FJLU4q56PD7zynlDXDiOHnJWTiSHW/Cf2YqYreQ5EtyNbmSxVxdqo31+2ZveWhfYoJbS8QCp2UzRFbWk=
+	t=1739379429; cv=none; b=t76KUNO+bZ0N8OEQ5HOtN+gyy5bXNhCCIswIVRHfIWFol9J04J4VXxhuqLLSAI3Eq88yiacPK/viQtB7R3vAQDRM5uHHxv5Vufb9bomE0ZOV7oL5MtZ8SXgbdzcpy5KBNJ+FVj9HSFUjaeIESwvFbgCJZIf+zi2FA16OhSjwXq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379375; c=relaxed/simple;
-	bh=FWCZ1JPAUvy0QAltvWa7BCQdwDaOlKC3UpWaFsRIJMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P33dnJ7l08oldSyVa4wnDlhrvnkUpbiGh/XL3zXGva2IV3/3vJad3sKOApsXQzaCJ9M01szCwZPOL9kHVtbLQNgktqr8Ar4s/W4NCAgtvfxJjdpjTatBWGrrH4qLeC+U6rY1A8JwvLeCb+Wbwijj2RmFsoUEtxyNIr3O5QWmgqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KirEBxzG; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2f44353649aso11152a91.0;
-        Wed, 12 Feb 2025 08:56:13 -0800 (PST)
+	s=arc-20240116; t=1739379429; c=relaxed/simple;
+	bh=z/moxQQycRkyIrr2vHuWwr2DfpHrMqkr/yZdiQwGcwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ltd2Rc3mNjJVmWKU7/dQfI1X7lH/OIrhP0lu5Uvo7qjpqbzqyt4MHkIOi31vXk3S4qff7/C6nQciLgXi30xSWKxgkPKOeyuzIgm/nGof9K9YtZFanRinfHoHznZMwZb0A2Qb/gaq1OSM5/O1Tl9tNR7I3cp7b1m82LxrvleQ87s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UNoeakOW; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7fa1bc957so111910966b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:57:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739379373; x=1739984173; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b/YZ98QVY0hlmkitWAxaHzA85Cvt4+Gir/h9BCOLPtk=;
-        b=KirEBxzGtw4+k/qS7fYhicVPoI+UIOH3tO0t7I/UAEaT88zzUfzIUu4mlXMisj3rrM
-         q5RxQBI3il/Okj7Kf2oQNnCWrWoSrmvYWKdULc0PR6/YuBCiHAZ0LnOzPvw1+VZ2bsAm
-         D+SljfBq7YPp8gzXsNtaNsqUEtPwbYnavCSxhVAnO2ot4JlcW/NyOiu3e2jOx6hJrs5Q
-         RMvB4N44YTHsuohT2eFYQLzcodAIFC1ugjeqaMSysxR524olDTiuXQmcKc/icx3zO8q9
-         z2yGrJV+gEzO3/1OGoHEboNuA7K+hYFIRXAsHnV+AFwH6vK/skzIkaQdE3hSNdXeuiRM
-         gFHA==
+        d=suse.com; s=google; t=1739379425; x=1739984225; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JjsYFCJJEHZxSzckcIzfcbuaPZal5Jzp1D2k19Zbpnk=;
+        b=UNoeakOWzzzi3raW20R3L/FVC57nNrUfe3MIEivZX4appVWozAAJpebx0BoGAtj3xF
+         9hpUjBpiLnpTlQBxu9/46VONh8bvgAvmZlLR+j2YUtVl6Wq6M8EUS34/KQeZVujaQxkT
+         cQNKpgF8uUgudT6XNhuNHETrMjkDb7tqG9IisjeOJzZiDKLUOhLv94kGMRrAg/Jk6BNB
+         gw/QYwOV1DmdDQ3xqLFRHnk7hXrSeyNjig7A/i4eXX9N5zoi5Sulj4r+Tb76MnQaIoay
+         KTgAI1eC5A/Xrq0tizbH1dBhfbFuAYqSdDkMgve9tdpITdlL0k+DzwxaTu+vx83T6WOC
+         WukA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739379373; x=1739984173;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b/YZ98QVY0hlmkitWAxaHzA85Cvt4+Gir/h9BCOLPtk=;
-        b=GNVZqxSzVV3j/mVKS5x/OHmJT7TrTCKbjRa76+omkgqEbpZ8547uzgJXk5BRCtJzDW
-         Yel6JpRGrKe1klWXxo+s2NO1GiqzAiszdZTqc4JeT+kZPpvuSspteTAhzcA2aucn5YUm
-         jCYLrAxo5sI5MHRv5wNc3CbN20BOQ0SzhmulWPuzyAO63yunlabkmr51VGpbM0hFmFp2
-         EZ3Ukl9k1hNgNhujZQYnnzKd/IyG5tuOZl0oklnMSkjjdLizl1KDBSiCVxeC/jtGe90F
-         T3iu61JSQAF2QSG4WfDSYeHbuoJ4akuBOkcEwv5N/2R4ykQq+Vlywtq53lbJDjwJJDCM
-         fZUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUe0xTvmHnyIk3CKFTADfqIohLn+taG0ygWXroNSDptOQ8KZiqk8qc8GmU3ctZUvHbXJN8T9ofR9yQnrVZq@vger.kernel.org, AJvYcCVzJf9JfzZmgKwDTXiLBHnnZZ3KiPnPNDa/qzYApT1PSe/HUBw+AgHRyoLqpOA4CnrjTQogDeUzKHHH@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVbkPnrcbzTGLKRWDNMdN16EuS6UCNgFy8+fsmypXILN4OGsn5
-	kxC9KFAhlt5+dyDChemcGiMPNrYcu5BBVJ3CFRM6ndhM0tIeQa+R
-X-Gm-Gg: ASbGncvHMBjlc0ZGu3BZcBLuP6bKfRrfu/gzvpo4fEUt7zDIHhJAPy4OYCGJaHz2R44
-	0dNZzZVbsxHGT277itQyh8lDvr9aPnlKLiJBMTfOlaD5P6qSU/TZdLYS/1BwikCh/o6bhqIOAcN
-	NLaR7E20qC59gFb5x05semaKYmtqTYAPY5PGQf08IZNxR3IXnyrJabjrKnprsREwKpL1hdbB56f
-	2esXB9H+NgoVDbM7yAbdoAB/x9K5AXBKSVZEsRC1GG+NJ85qSkVNYc77mL03Vs/tq9FwSIov99U
-	AWG4QLL4rYXK+yxxktuGFZCZsoP97AVaqkABXPR3bg==
-X-Google-Smtp-Source: AGHT+IFWjUg6Fq+J8/whiRrLq4t/CKYPDxPB+hALsINmqV1z/5bZWA0vGFCVE7tQZk8zipwXETHxrw==
-X-Received: by 2002:a17:90b:258e:b0:2f8:34df:5652 with SMTP id 98e67ed59e1d1-2fbf9072b46mr4583696a91.21.1739379372724;
-        Wed, 12 Feb 2025 08:56:12 -0800 (PST)
-Received: from jamesmacinnes-VirtualBox ([66.119.214.127])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98f48eesm1727554a91.22.2025.02.12.08.56.11
+        d=1e100.net; s=20230601; t=1739379425; x=1739984225;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JjsYFCJJEHZxSzckcIzfcbuaPZal5Jzp1D2k19Zbpnk=;
+        b=i/Q6+liL4mfmMFCru+nLsCRBOwDdBhyy1oUYzY41R+Sg/O35jprsTVlxzQEzY8o+fO
+         ULFO+BLvDa4n8WxQzB0kacYTauSEkIzC2N22fZ2+Vp5gA/Cr6s3kBrGvWuZkcvkOqG4m
+         Ds9euHZPwPGk/f72oogbbasRqyyHqiWWbQJP7gYnAaImdMzegPcYY+pMeJfx9/kVCj86
+         funU/mOES+3W3xVuh4W1vyPZjab4ycX4Wm8Ea0XNBkQDsdSqwHTaFO4lXK1OB9x83IOZ
+         B5Jp8MjuAHbAsyzSfThhPu9fTysTsoPVaWG49FOKG+Uxsr2SkZ3DjcZVVVVH3o3uU5PJ
+         z4EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsuvIwj9S5U58yZEf57VneoFv/LI5hkEpjUyPNZZgMyLzNiMf44bdddfmG8m7kF+/1vOi9XbygxhCeUBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5JEImGSdIE1x1djQUP3MSnWmFIOlotl7bsJrCGyTOjhbFCCCp
+	hHp/Odcgu06tOZFaaK/uMNxfpxn5DyLY8yQnNHEc6s42hkvgI04Ld+uo57R7P34=
+X-Gm-Gg: ASbGncvrJxSeIQjWwI0jtuAwtygRiPjwuz/oAKyXxcrZwnucLAui4XR6QskQlkD32FK
+	IVdgEGmtpOqsW64megll1CxEFQ8193nzKRsJh4sT3E7FXjgm1jveBjcmXV0o0S3a9kDehuhwUks
+	1E48Q/DuJ9HTFloI1syQMfarI48fIkfUOArfOX5m1nocS+CyoAgsgltxMlRfvhviIQJPuAyzJ/M
+	sPpFH1ZMbJ7dAyt9yXoIHicGFW+ixCAvz9RGd3A42NeX2s2qwekflVrgBEJbPaiXqoIihjzr98Q
+	bqfD9BjEv/ZRIa6MuaNGIcmk1lpJ
+X-Google-Smtp-Source: AGHT+IH7LlfK74B8VvYBHknSdhrm92vGSyA95nxZa/qMjbiRpSunsF+OUjP8S86GVgK+ZMWNOar0ww==
+X-Received: by 2002:a17:907:1c14:b0:ab7:b30:42ed with SMTP id a640c23a62f3a-ab7f31944c1mr340818066b.0.1739379425293;
+        Wed, 12 Feb 2025 08:57:05 -0800 (PST)
+Received: from localhost (109-81-84-135.rct.o2.cz. [109.81.84.135])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab7f7ee8686sm137024766b.22.2025.02.12.08.57.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 08:56:12 -0800 (PST)
-Date: Wed, 12 Feb 2025 08:56:09 -0800
-From: "James A. MacInnes" <james.a.macinnes@gmail.com>
-To: Caleb Connolly <caleb.connolly@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, andersson@kernel.org, konradybcio@kernel.org,
- quic_wcheng@quicinc.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, lgirdwood@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 2/3] regulator: qcom_usb_vbus: Add support for PMI8998
- VBUS
-Message-ID: <20250212085609.06e0f949@jamesmacinnes-VirtualBox>
-In-Reply-To: <fcf907a5-9fb7-4988-a30a-a555740ca817@linaro.org>
-References: <20250212010744.2554574-1-james.a.macinnes@gmail.com>
-	<20250212010744.2554574-3-james.a.macinnes@gmail.com>
-	<fcf907a5-9fb7-4988-a30a-a555740ca817@linaro.org>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+        Wed, 12 Feb 2025 08:57:05 -0800 (PST)
+Date: Wed, 12 Feb 2025 17:57:04 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Dennis Zhou <dennis@kernel.org>, Filipe Manana <fdmanana@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, percpu: do not consider sleepable allocations atomic
+Message-ID: <Z6zS4Dtyway78Gif@tiehlicka>
+References: <20250206122633.167896-1-mhocko@kernel.org>
+ <Z6u5OJIQBw8QLGe_@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6u5OJIQBw8QLGe_@slm.duckdns.org>
 
-On Wed, 12 Feb 2025 15:29:54 +0000
-Caleb Connolly <caleb.connolly@linaro.org> wrote:
-
-
-Hi Caleb,
-
-> Hi James,
+On Tue 11-02-25 10:55:20, Tejun Heo wrote:
+> Hello, Michal.
 > 
-> On 2/12/25 01:07, James A. MacInnes wrote:
-> > This patch extends the Qualcomm USB VBUS regulator driver to support
-> > PMI8998 PMIC alongside the existing support for PM8150B.  
+> On Thu, Feb 06, 2025 at 01:26:33PM +0100, Michal Hocko wrote:
+> ...
+> > It has turned out that iscsid has worked around this by dropping
+> > PR_SET_IO_FLUSHER (https://github.com/open-iscsi/open-iscsi/pull/382)
+> > when scanning host. But we can do better in this case on the kernel side
 > 
-> Thanks for the patch!
+> FWIW, requiring GFP_KERNEL context for probing doesn't sound too crazy to
+> me.
+> 
+> > @@ -2204,7 +2204,12 @@ static void pcpu_balance_workfn(struct work_struct *work)
+> >  	 * to grow other chunks.  This then gives pcpu_reclaim_populated() time
+> >  	 * to move fully free chunks to the active list to be freed if
+> >  	 * appropriate.
+> > +	 *
+> > +	 * Enforce GFP_NOIO allocations because we have pcpu_alloc users
+> > +	 * constrained to GFP_NOIO/NOFS contexts and they could form lock
+> > +	 * dependency through pcpu_alloc_mutex
+> >  	 */
+> > +	unsigned int flags = memalloc_noio_save();
+> 
+> Just for context, the reason why the allocation mask support was limited to
+> GFP_KERNEL or not rather than supporting full range of GFP flags is because
+> percpu memory area expansion can involve page table allocations in the
+> vmalloc area which always uses GFP_KERNEL. memalloc_noio_save() masks IO
+> part out of that, right? It might be worthwhile to explain why we aren't
+> passing down GPF flags throughout and instead depending on masking.
 
-Happy to try and contribute. I know that the working Type-C port is
-going to be a misery after the relative simplicity of pushing the VBUS
-upstream.
-> > 
-> > Key changes:
-> > - Added current limit tables specific to PMI8998.  
-> 
-> I also played around with vbus on PMI8998 before for type-c support 
-> (unfortunately didn't make it's way to the lists yet...) and I needed 
-> some additional changes for this to work correctly. I found that it
-> was possible for the overcurrent protection to be hit if the type-c
-> port manager allowed the peripheral to pull current too early, and
-> it's necessary to allow 2.5ms enable time.
-> 
-> PM8150b doesn't have these limitations (and supports the instant
-> power role switch feature that's part of the type-c PD spec, allowing
-> the power role to be switched without either side losing power e.g.
-> when you unplug the power supply from a dock), hence it's only
-> necessary for PMI8998.
-> 
-> I would suggest implementing a proper .is_enabled op to poll the
-> status register for OTG_STATE_ENABLED and configuring 
-> qcom_usb_vbus_rdesc.enable_time = 250000;
-> 
-> Kind regards,
-> 
+I have gone with masking because that seemed easier to review and more
+robust solution. vmalloc does support NOFS/NOIO contexts these days (it
+will just uses scoped masking in those cases). Propagating the gfp
+throughout the worker code path is likely possible, but I haven't really
+explored that in detail to be sure. Would that be preferable even if the
+fix would be more involved?
 
-Technical question for you in regards to the VBUS overcurrent and
-timing for the PMI8998. I would like to try and reproduce what you have
-seen as my system hasn't had switching issues, but then again the TCPM
-system may be covering the exact bug you are mentioning. I also
-searched for some definite bit in the 4.9 Android driver and was left
-wanting. As of yet, I have not had issues with the overcurrent
-protecction.
+> Also, doesn't the above always prevent percpu allocations from doing fs/io
+> reclaims? 
 
-I will be all too happy to migrate to the PM8150B and its associated
-SoCs and leave the 845 platform to history.
+Yes it does. Probably worth mentioning in the changelog. These
+allocations should be rare so having a constrained reclaim didn't really
+seem problematic to me. There should be kswapd running in the background
+with the full reclaim power.
 
-Thank you for your feedback and I look forward to narrowing down this
-issue.
+> ie. Shouldn't the masking only be used if the passed in gfp
+> doesn't allow fs/io?
 
-Best wishes,
+This is a good question. I have to admit that my understanding might be
+incorrect but wouldn't it be possible that we could get the lock
+dependency chain if GFP_KERNEL and scoped NOFS alloc_pcp calls are
+competing? 
+
+					fs/io lock
+					pcpu_alloc_noprof(NOFS/NOIO)
+pcpu_alloc_noprof(GFP_KERNEL)
+  pcpu_schedule_balance_work
+    pcpu_alloc_mutex
+    					  pcpu_alloc_mutex
+      allocation_deadlock throgh fs/io lock
+
+This is currently not possible because constrained allocations only do
+trylock.
+
+Makes sense?
+-- 
+Michal Hocko
+SUSE Labs
 
