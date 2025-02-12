@@ -1,288 +1,164 @@
-Return-Path: <linux-kernel+bounces-511846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E24B9A33073
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:07:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D95A33074
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:07:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAB263A42CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0CCD1886FE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BE1202F88;
-	Wed, 12 Feb 2025 20:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE791201023;
+	Wed, 12 Feb 2025 20:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ynhjs+Yl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="D0ZZJaVx"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5925520103D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534301FFC66
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739390774; cv=none; b=uJPrYoJok9Xb5AMWAquFO2lhJ4dowXkB+qGGOMY6ptjygKrorkhmWWWvC0cU2/XUmZYJIsLyaBPVBKFL7ILYQdLCWF98P7jOVC0k6ogeRLOoyGC0BmXOvqnkNjVoVbU7nQ176ONsq9Ew2Lsi6IJ61hAbUQRI7G92VQPM9+Eltgg=
+	t=1739390841; cv=none; b=gbxOD33b/Bx2vpmwKih3Zfe9CK95opWFDtggUA+d6UyLjktEOotCZRh9xSufqSm6WHkbkuIxg8xkq4NjImysadSHPjD0ArmLPmWMiyN+cfB846tfHiNWJ3tfw2j+XBOkpwAbZ3aGTLfX00Ri5f7t85YSB9E5Y+/6WUPmrGdJRBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739390774; c=relaxed/simple;
-	bh=Gr626Pije9wvykEMTGa0ijTndejJ/ehjVeon9HAk+UU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Pkwm/ByCrgUfhHxjGSAQ39+ThtIxqua/0T+dri3IkTQ0oNgL+H4hFHjIgVVSZCkrAQzblo+LqVdt+efdPITjPNIaIO6IE0Au7jE4eEyzv4ewmacXc2peVk/Mdoc+xyjtKfsCEBHTN8uOFNXi7bPEwIkvlgtVnrcsahDxOPVNads=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ynhjs+Yl; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739390772; x=1770926772;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Gr626Pije9wvykEMTGa0ijTndejJ/ehjVeon9HAk+UU=;
-  b=Ynhjs+YlaJlX88RW2SUo26y1SWatVFhoux4nNIPoBMIC28LDK1ZycRl8
-   kaaOr113PLbArG8U6M9PgYLQ/VFgRNmI84rAsDGZ2AFyRZvMh2JkemWHP
-   lel8WeZJVnql06F0w5K0S87Hp4gKFK8ld265GZ4xVuI1BXqK4MVlbhS8D
-   YTjlwIXBOHtEWYZ7FeNPJuGBB+G82RPvNgMlwzi63rIfTTDJ46IxVyi2o
-   eV424p1LOltx8Sni9qOEnO3wswgOpMgHl5c4nbKW7jvO5FhdLAMFJUYyy
-   VFv6s4yxqacAm87ntruBi0Bgaw0xEnqOnRADxblz2jAWxk5Vg5vxkzHHx
-   g==;
-X-CSE-ConnectionGUID: 3RSetXYhRFS3sZ5ms1v1yw==
-X-CSE-MsgGUID: RcRVs/2aTGyZ9sLtngaNUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="50718509"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="50718509"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 12:06:08 -0800
-X-CSE-ConnectionGUID: nO6j/1LaSwKZdrcUYzdffQ==
-X-CSE-MsgGUID: TCOz3OYYR0y5qL07mSklIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="118010770"
-Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 12:06:08 -0800
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	dri-devel@lists.freedesktop.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lucas De Marchi <lucas.demarchi@intel.com>
-Subject: [PATCH 6/6] drm/xe: Drop remove callback support
-Date: Wed, 12 Feb 2025 12:05:42 -0800
-Message-ID: <20250212200542.515493-7-lucas.demarchi@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250212200542.515493-1-lucas.demarchi@intel.com>
-References: <20250212200542.515493-1-lucas.demarchi@intel.com>
+	s=arc-20240116; t=1739390841; c=relaxed/simple;
+	bh=cGC1rqqEGlY113Qnsbpy/9xYPW8DwQek7iDwMOerZxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eapSbqQGeYz27SjHG6ESM4xkIkeaHw7VswIhnLBuQRdr5A9ed6lgWPnGNBq2RR0XtGUAzwUeXrZAvKxQd3dcGJ4kGHRJqqonqg9SXJJAGwx/oe+4pVvOrYp+LVC8TMvRZGzrXDTudqvm0W1U+n7u+WCs3t/Y69Ps/rZJIwsC/uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=D0ZZJaVx; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3f3a6cb98a5so65695b6e.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:07:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1739390838; x=1739995638; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxGXdtfxhIi93S3Cb2J8z+v+OBi6ejm654vjeGIotlI=;
+        b=D0ZZJaVx5K8Nq9vb/gaPqnOutwSmmv8zs6aO/QfqMulq+LwdATGtoSYHAgeh+ETXJF
+         QYWHBCUNGbF6j7I+O7voRuN2g84kFsTS7DISKHOPmJ9fHdH/FgIZSoHr8DjPxxd16v8V
+         0AXkGGZZR2/fJrKMQRh3//00blc9WjGlRIP5s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739390838; x=1739995638;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZxGXdtfxhIi93S3Cb2J8z+v+OBi6ejm654vjeGIotlI=;
+        b=Ph0fDR5bQ8Q/4r4s5no/2fuXqYFGsHNy7DwXQqlqJLESqHiERO70IezWdivFI+rrLg
+         G/pcrZ77EQtgFHAj7J0t5zMILuJESgzKrOU9LsfHkhyYgT+CDEngPX3yU2/dGBY7Xhkl
+         wki5t6TQR6SxwVz9qqwcnxwaPEF7nEN672YEZw56ivh7XpQjDykMR8v4v1n1jCLxmbL7
+         TlT6zSMk/elQrBrHl3v+yraPnbrNifWx9CwOme1Ke0a85OHRAebDo/y6liMOfBUdpRsr
+         KWJz2jF8wMuCaoyfPq+pWda7kb2XbEtBhKYkN8wGdNOJnlHkdzkkc2Qlp8RR6B9y/wf7
+         Unyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgbdrU2MaIzqkB8jhyRRU9t2eUCnrjg7PK8yWup1svI+CGO+O337O/n9S+GtosNhZObg09cpAIWUpxid4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIhNlMLA49nSn/xvIYMhZ1prGzY8Su3h521Fh6s+iCv9rYfmt1
+	am8gBjUsUPm/EDtzLwMOh6UMIyns04DWjhI9pv6noMKZVCG8CvRtjVXzRfNj8w==
+X-Gm-Gg: ASbGncvKcCFLACBUl4MEG5wQ5VoaUJzZpS9dFucqeOpTpeco4SVrZkMO8aXW1k7DkPD
+	QowgstH7pBslfupShPlMEnDMa0DB1E+pv5SXZ45UWoTttvsgKtCELDmmRvNqgHNmVK3KcouslIZ
+	BF6+DSGCN5kfTpcy6+VfVUuYTN7rd07sIOIgIpPnPzLQ92zyT+pm756w3H0M45OJIj9bo9n+bYp
+	Es5yagxN6jXuZKUrDWXuREO0g7W39MosoiiCqXDlqMv2rFzttE3K+5dvk9n6ODOlFGPFpchybfV
+	Xe+Xx0E7YkzJU21uli7KVyrPF8vTgs59P7I19okVQyZ7o3+4tpdh3895sMCXTYjGWd0=
+X-Google-Smtp-Source: AGHT+IGYzk9T0MFCslT3GehXKMN1D4HHliXmrU5o4/Eiadc4Md49P45SLWZSibKaECMiJpTO58q0fA==
+X-Received: by 2002:a05:6870:1690:b0:29e:48d6:2e62 with SMTP id 586e51a60fabf-2b8d64fda20mr2929878fac.9.1739390838301;
+        Wed, 12 Feb 2025 12:07:18 -0800 (PST)
+Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b8abc164b7sm2784158fac.4.2025.02.12.12.07.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 12:07:16 -0800 (PST)
+Message-ID: <8d5ae153-24fb-44bf-89a9-e366e0f205f3@broadcom.com>
+Date: Wed, 12 Feb 2025 21:07:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: brcmfmac: keep power during suspend if board
+ requires it
+To: Matthias Proske <email@matthias-proske.de>, Kalle Valo
+ <kvalo@kernel.org>, Norbert van Bolhuis <nvbolhuis@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Ondrej Jirman <megi@xff.cz>, Erick Archer <erick.archer@outlook.com>,
+ Jacobe Zang <jacobe.zang@wesion.com>
+Cc: linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org
+References: <20250212185941.146958-2-email@matthias-proske.de>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ xsFNBGP96SABEACfErEjSRi7TA1ttHYaUM3GuirbgqrNvQ41UJs1ag1T0TeyINqG+s6aFuO8
+ evRHRnyAqTjMQoo4tkfy21XQX/OsBlgvMeNzfs6jnVwlCVrhqPkX5g5GaXJnO3c4AvXHyWik
+ SOd8nOIwt9MNfGn99tkRAmmsLaMiVLzYfg+n3kNDsqgylcSahbd+gVMq+32q8QA+L1B9tAkM
+ UccmSXuhilER70gFMJeM9ZQwD/WPOQ2jHpd0hDVoQsTbBxZZnr2GSjSNr7r5ilGV7a3uaRUU
+ HLWPOuGUngSktUTpjwgGYZ87Edp+BpxO62h0aKMyjzWNTkt6UVnMPOwvb70hNA2v58Pt4kHh
+ 8ApHky6IepI6SOCcMpUEHQuoKxTMw/pzmlb4A8PY//Xu/SJF8xpkpWPVcQxNTqkjbpazOUw3
+ 12u4EK1lzwH7wjnhM3Fs5aNBgyg+STS1VWIwoXJ7Q2Z51odh0XecsjL8EkHbp9qHdRvZQmMu
+ Ns8lBPBkzpS7y2Q6Sp7DcRvDfQQxPrE2sKxKLZVGcRYAD90r7NANryRA/i+785MSPUNSTWK3
+ MGZ3Xv3fY7phISvYAklVn/tYRh88Zthf6iDuq86m5mr+qOO8s1JnCz6uxd/SSWLVOWov9Gx3
+ uClOYpVsUSu3utTta3XVcKVMWG/M+dWkbdt2KES2cv4P5twxyQARAQABzS9BcmVuZCB2YW4g
+ U3ByaWVsIDxhcmVuZC52YW5zcHJpZWxAYnJvYWRjb20uY29tPsLBhwQTAQgAMRYhBLX1Z69w
+ T4l/vfdb0pZ6NOIYA/1RBQJj/ek9AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQlno04hgD/VGw
+ 8A//VEoGTamfCks+a12yFtT1d/GjDdf3i9agKMk3esn08JwjJ96x9OFFl2vFaQCSiefeXITR
+ K4T/yT+n/IXntVWT3pOBfb343cAPjpaZvBMh8p32z3CuV1H0Y+753HX7gdWTEojGWaWmKkZh
+ w3nGoRZQEeAcwcF3gMNwsM5Gemj7aInIhRLUeoKh/0yV85lNE1D7JkyNheQ+v91DWVj5/a9X
+ 7kiL18fH1iC9kvP3lq5VE54okpGqUj5KE5pmHNFBp7HZO3EXFAd3Zxm9ol5ic9tggY0oET28
+ ucARi1wXLD/oCf1R9sAoWfSTnvOcJjG+kUwK7T+ZHTF8YZ4GAT3k5EwZ2Mk3+Rt62R81gzRF
+ A6+zsewqdymbpwgyPDKcJ8YUHbqvspMQnPTmXNk+7p7fXReVPOYFtzzfBGSCByIkh1bB45jO
+ +TM5ZbMmhsUbqA0dFT5JMHjJIaGmcw21ocgBcLsJ730fbLP/L08udgWHywPoq7Ja7lj5W0io
+ ZDLz5uQ6CEER6wzD07vZwSl/NokljVexnOrwbR3wIhdr6B0Hc/0Bh7T8gpeM+QcK6EwJBG7A
+ xCHLEacOuKo4jinf94YQrOEMnOmvucuQRm9CIwZrQ69Mg6rLn32pA4cK4XWQN1N3wQXnRUnb
+ MTymLAoxE4MInhDVsZCtIDFxMVvBUgZiZZszN33OwU0EY/3pIgEQAN35Ii1Hn90ghm/qlvz/
+ L+wFi3PTQ90V6UKPv5Q5hq+1BtLA6aj2qmdFBO9lgO9AbzHo8Eizrgtxp41GkKTgHuYChijI
+ kdhTVPm+Pv44N/3uHUeFhN3wQ3sTs1ZT/0HhwXt8JvjqbhvtNmoGosZvpUCTwiyM1VBF/ICT
+ ltzFmXd5z7sEuDyZcz9Q1t1Bb2cmbhp3eIgLmVA4Lc9ZS3sK1UMgSDwaR4KYBhF0OKMC1OH8
+ M5jfcPHR8OLTLIM/Thw0YIUiYfj6lWwWkb82qa4IQvIEmz0LwvHkaLU1TCXbehO0pLWB9HnK
+ r3nofx5oMfhu+cMa5C6g3fBB8Z43mDi2m/xM6p5c3q/EybOxBzhujeKN7smBTlkvAdwQfvuD
+ jKr9lvrC2oKIjcsO+MxSGY4zRU0WKr4KD720PV2DCn54ZcOxOkOGR624d5bhDbjw1l2r+89V
+ WLRLirBZn7VmWHSdfq5Xl9CyHT1uY6X9FRr3sWde9kA/C7Z2tqy0MevXAz+MtavOJb9XDUlI
+ 7Bm0OPe5BTIuhtLvVZiW4ivT2LJOpkokLy2K852u32Z1QlOYjsbimf77avcrLBplvms0D7j6
+ OaKOq503UKfcSZo3lF70J5UtJfXy64noI4oyVNl1b+egkV2iSXifTGGzOjt50/efgm1bKNkX
+ iCVOYt9sGTrVhiX1ABEBAAHCwXYEGAEIACAWIQS19WevcE+Jf733W9KWejTiGAP9UQUCY/3p
+ PgIbDAAKCRCWejTiGAP9UaC/EACZvViKrMkFooyACGaukqIo/s94sGuqxj308NbZ4g5jgy/T
+ +lYBzlurnFmIbJESFOEq0MBZorozDGk+/p8pfAh4S868i1HFeLivVIujkcL6unG1UYEnnJI9
+ uSwUbEqgA8vwdUPEGewYkPH6AaQoh1DdYGOleQqDq1Mo62xu+bKstYHpArzT2islvLdrBtjD
+ MEzYThskDgDUk/aGPgtPlU9mB7IiBnQcqbS/V5f01ZicI1esy9ywnlWdZCHy36uTUfacshpz
+ LsTCSKICXRotA0p6ZiCQloW7uRH28JFDBEbIOgAcuXGojqYx5vSM6o+03W9UjKkBGYFCqjIy
+ Ku843p86Ky4JBs5dAXN7msLGLhAhtiVx8ymeoLGMoYoxqIoqVNaovvH9y1ZHGqS/IYXWf+jE
+ H4MX7ucv4N8RcsoMGzXyi4UbBjxgljAhTYs+c5YOkbXfkRqXQeECOuQ4prsc6/zxGJf7MlPy
+ NKowQLrlMBGXT4NnRNV0+yHmusXPOPIqQCKEtbWSx9s2slQxmXukPYvLnuRJqkPkvrTgjn5d
+ eSE0Dkhni4292/Nn/TnZf5mxCNWH1p3dz/vrT6EIYk2GSJgCLoTkCcqaM6+5E4IwgYOq3UYu
+ AAgeEbPV1QeTVAPrntrLb0t0U5vdwG7Xl40baV9OydTv7ghjYZU349w1d5mdxg==
+In-Reply-To: <20250212185941.146958-2-email@matthias-proske.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Now that devres supports component driver cleanup during driver removal
-cleanup, the xe custom support for removal callbacks is not needed
-anymore. Drop it.
+On 2/12/2025 7:59 PM, Matthias Proske wrote:
+> After commit 92cadedd9d5f ("brcmfmac: Avoid keeping power to SDIO card
+> unless WOWL is used"), the wifi adapter by default is turned off on
+> suspend and then re-probed on resume.
+> 
+> This conflicts with some embedded boards that require to remain powered.
+> They will fail on resume with:
+> 
+> brcmfmac: brcmf_sdio_bus_rxctl: resumed on timeout
+> ieee80211 phy1: brcmf_bus_started: failed: -110
+> ieee80211 phy1: brcmf_attach: dongle is not responding: err=-110
+> brcmfmac: brcmf_sdio_firmware_callback: brcmf_attach failed
+> 
+> This commit checks for the Device Tree property 'cap-power-off-cards'.
+> If this property is not set, it means that we do not have the capability
+> to power off and should therefore remain powered.
 
-Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
----
- drivers/gpu/drm/xe/xe_device.c       | 79 ----------------------------
- drivers/gpu/drm/xe/xe_device.h       |  4 --
- drivers/gpu/drm/xe/xe_device_types.h | 17 ------
- drivers/gpu/drm/xe/xe_pci.c          |  4 +-
- 4 files changed, 1 insertion(+), 103 deletions(-)
+Thanks! Looks good to me.
 
-diff --git a/drivers/gpu/drm/xe/xe_device.c b/drivers/gpu/drm/xe/xe_device.c
-index 4b4039cf29fd4..d83400bbff8b1 100644
---- a/drivers/gpu/drm/xe/xe_device.c
-+++ b/drivers/gpu/drm/xe/xe_device.c
-@@ -65,12 +65,6 @@
- 
- #include <generated/xe_wa_oob.h>
- 
--struct xe_device_remove_action {
--	struct list_head node;
--	xe_device_remove_action_t remove;
--	void *data;
--};
--
- static int xe_file_open(struct drm_device *dev, struct drm_file *file)
- {
- 	struct xe_device *xe = to_xe_device(dev);
-@@ -752,9 +746,6 @@ int xe_device_probe(struct xe_device *xe)
- 	int err;
- 	u8 id;
- 
--	xe->probing = true;
--	INIT_LIST_HEAD(&xe->remove_action_list);
--
- 	xe_pat_init_early(xe);
- 
- 	err = xe_sriov_init(xe);
-@@ -904,8 +895,6 @@ int xe_device_probe(struct xe_device *xe)
- 
- 	xe_vsec_init(xe);
- 
--	xe->probing = false;
--
- 	return devm_add_action_or_reset(xe->drm.dev, xe_device_sanitize, xe);
- 
- err_unregister_display:
-@@ -916,72 +905,6 @@ int xe_device_probe(struct xe_device *xe)
- 	return err;
- }
- 
--/**
-- * xe_device_call_remove_actions - Call the remove actions
-- * @xe: xe device instance
-- *
-- * This is only to be used by xe_pci and xe_device to call the remove actions
-- * while removing the driver or handling probe failures.
-- */
--void xe_device_call_remove_actions(struct xe_device *xe)
--{
--	struct xe_device_remove_action *ra, *tmp;
--
--	list_for_each_entry_safe(ra, tmp, &xe->remove_action_list, node) {
--		ra->remove(xe, ra->data);
--		list_del(&ra->node);
--		kfree(ra);
--	}
--
--	xe->probing = false;
--}
--
--/**
-- * xe_device_add_action_or_reset - Add an action to run on driver removal
-- * @xe: xe device instance
-- * @ra: pointer to the object embedded into the object to cleanup
-- * @remove: function to execute. The @ra is passed as argument
-- *
-- * Example:
-- *
-- * .. code-block:: c
-- *
-- *	static void foo_remove(struct xe_device_remove_action *ra)
-- *	{
-- *		struct xe_foo *foo = container_of(ra, struct xe_foo, remove_action);
-- *		...
-- *	}
-- *
-- *	int xe_foo_init(struct xe_foo *foo)
-- *	{
-- *		...
-- *		xe_device_add_remove_action(xe, &foo->remove_action, foo_remove);
-- *		...
-- *		return 0;
-- *	};
-- */
--int xe_device_add_action_or_reset(struct xe_device *xe,
--				  xe_device_remove_action_t action,
--				  void *data)
--{
--	struct xe_device_remove_action *ra;
--
--	drm_WARN_ON(&xe->drm, !xe->probing);
--
--	ra = kmalloc(sizeof(*ra), GFP_KERNEL);
--	if (!ra) {
--		action(xe, data);
--		return -ENOMEM;
--	}
--
--	INIT_LIST_HEAD(&ra->node);
--	ra->remove = action;
--	ra->data = data;
--	list_add(&ra->node, &xe->remove_action_list);
--
--	return 0;
--}
--
- void xe_device_remove(struct xe_device *xe)
- {
- 	xe_display_unregister(xe);
-@@ -991,8 +914,6 @@ void xe_device_remove(struct xe_device *xe)
- 	xe_display_driver_remove(xe);
- 
- 	xe_heci_gsc_fini(xe);
--
--	xe_device_call_remove_actions(xe);
- }
- 
- void xe_device_shutdown(struct xe_device *xe)
-diff --git a/drivers/gpu/drm/xe/xe_device.h b/drivers/gpu/drm/xe/xe_device.h
-index a6fedf1ef3c7b..0bc3bc8e68030 100644
---- a/drivers/gpu/drm/xe/xe_device.h
-+++ b/drivers/gpu/drm/xe/xe_device.h
-@@ -45,10 +45,6 @@ struct xe_device *xe_device_create(struct pci_dev *pdev,
- 				   const struct pci_device_id *ent);
- int xe_device_probe_early(struct xe_device *xe);
- int xe_device_probe(struct xe_device *xe);
--int xe_device_add_action_or_reset(struct xe_device *xe,
--				  xe_device_remove_action_t action,
--				  void *data);
--void xe_device_call_remove_actions(struct xe_device *xe);
- void xe_device_remove(struct xe_device *xe);
- void xe_device_shutdown(struct xe_device *xe);
- 
-diff --git a/drivers/gpu/drm/xe/xe_device_types.h b/drivers/gpu/drm/xe/xe_device_types.h
-index b322d49c83c77..833c29fed3a37 100644
---- a/drivers/gpu/drm/xe/xe_device_types.h
-+++ b/drivers/gpu/drm/xe/xe_device_types.h
-@@ -35,7 +35,6 @@
- #include "intel_display_device.h"
- #endif
- 
--struct xe_device;
- struct xe_ggtt;
- struct xe_pat_ops;
- struct xe_pxp;
-@@ -71,8 +70,6 @@ struct xe_pxp;
- 		 const struct xe_tile * : (const struct xe_device *)((tile__)->xe),	\
- 		 struct xe_tile * : (tile__)->xe)
- 
--typedef void (*xe_device_remove_action_t)(struct xe_device *xe, void *data);
--
- /**
-  * struct xe_vram_region - memory region structure
-  * This is used to describe a memory region in xe
-@@ -431,20 +428,6 @@ struct xe_device {
- 	/** @tiles: device tiles */
- 	struct xe_tile tiles[XE_MAX_TILES_PER_DEVICE];
- 
--	/**
--	 * @remove_action_list: list of actions to execute on device remove.
--	 * Use xe_device_add_remove_action() for that. Actions can only be added
--	 * during probe and are executed during the call from PCI subsystem to
--	 * remove the driver from the device.
--	 */
--	struct list_head remove_action_list;
--
--	/**
--	 * @probing: cover the section in which @remove_action_list can be used
--	 * to post cleaning actions
--	 */
--	bool probing;
--
- 	/**
- 	 * @mem_access: keep track of memory access in the device, possibly
- 	 * triggering additional actions when they occur.
-diff --git a/drivers/gpu/drm/xe/xe_pci.c b/drivers/gpu/drm/xe/xe_pci.c
-index 41ec6825b9bcc..447eacb355d7c 100644
---- a/drivers/gpu/drm/xe/xe_pci.c
-+++ b/drivers/gpu/drm/xe/xe_pci.c
-@@ -900,10 +900,8 @@ static int xe_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		return err;
- 
- 	err = xe_device_probe(xe);
--	if (err) {
--		xe_device_call_remove_actions(xe);
-+	if (err)
- 		return err;
--	}
- 
- 	err = xe_pm_init(xe);
- 	if (err)
--- 
-2.48.1
-
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Matthias Proske <email@matthias-proske.de>
+> ---
+>   .../broadcom/brcm80211/brcmfmac/bcmsdh.c      | 20 ++++++++++++-------
+>   1 file changed, 13 insertions(+), 7 deletions(-)
 
