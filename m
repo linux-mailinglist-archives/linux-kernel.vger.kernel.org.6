@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-511661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62163A32DF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:52:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A38A32DF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5EC1888590
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B1773A700B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCECB25C70E;
-	Wed, 12 Feb 2025 17:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8713725C70E;
+	Wed, 12 Feb 2025 17:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qs2UPlFZ"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cufW9tya"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7BE25C6EB
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBA0256C70
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739382768; cv=none; b=K/UDmpdiv8ii7arm2KMGvWeyI8kVch3ocvw6s92ZId/Gv1KGRoJexlCLINt+oLj57C88a2K1yJMRBze5Rm192ZGfkH4L3hGWwxw2rpuEP9rv3g38A4bm6FTSTSR9WNIuaXTmsO+euOZl9NL8Xph4AbIuMh/PH4Em+SkEdVKgQ+Y=
+	t=1739382850; cv=none; b=PAQ5mwiJNHlIrv4Q7zeUl1dh4GhNyYRzi3828mAH2QjTan/afsS8vssmnyrBwM2H0gekibwyr2kzXISeYvL4Qt9HCmJ7PyMWGcceKEL7Zqw8WUNYo/uXfxsQRrPfqxZU5TxruWLSJCInJIrwZfr+bDQuLHWQ7jWWZE3JZqnhMO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739382768; c=relaxed/simple;
-	bh=56WC7pYL8vor2Oapd7V3UkUIsRX1QwbakQlGQJWbKSA=;
+	s=arc-20240116; t=1739382850; c=relaxed/simple;
+	bh=WWpXpHggCcPdhs4VuTxxTZKC9R3iRUIwcK6EeIbV+QQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PACNO2V1D9wxu/Ss7VzC9zrrUm5eCE4DxJ77sXthru4QbFUOAOq1CKeXkeS2adI2c6IcWQvwhyeh51873BXx5dGyHPR/2BG+6F7A0DG7fTvUuPs/5ngPMO8hVCHpjnT6Cwlu6xnbGhDv/YxJGKadqVcYWAw8UNpRXJyrI8aEW18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qs2UPlFZ; arc=none smtp.client-ip=209.85.208.174
+	 In-Reply-To:Content-Type; b=lnFkD6lfCt4DkGu09lXESQkC85WQ8RctUwUA1S/aRkkvkfM2V7VfH0Xmdj/b8ky3i9vxmpLI2K+HqvDoco+fKVI5XDlVuoiiLzBNU4pzvyUp0LC1M1hvPt+ZTwop6iqWMUoI9hPOM7bJmvib3PG2fk9z23361ZKK/paC3BHPuOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cufW9tya; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-308e65891e4so4082541fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:52:45 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-545061c740aso625648e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:54:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739382764; x=1739987564; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739382847; x=1739987647; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=C/kS06FLerC2Af3s6b6Rf5nvMZaz+z4sBVLyAweX+ok=;
-        b=Qs2UPlFZN0AbUDb1s4TWl9mMJ3PITa04ZIcqLi1OqAo1wrq94byMvRQ5X2L1SriYRz
-         OJXQ0LYXMYkkSKztFUnzNO3mH0W6aFSbclWTdKqwZQxsZKNKiyVWEoCFrbq93Bxp7Nf4
-         S8AjdHxBfo6P3xgptVf3bfJjCwd9A/4gwRyYC4Q4rtyIP7S2jJkfBF/3/dD4pVCwc1ki
-         bg8Pt1LP1n+Jb4DG17MYTNKKIK0ZTjWPnRYjyMfS90yPgHtlt84vNqOFemhLooqiUOgb
-         br3lNa034ckP54hIcILvGq1430oaY1QRvp8KvueZ8YiAa9dnoZVsdnVoP6+PbkmjRh1a
-         NWjA==
+        bh=uuI5Z03zLDZiJXA9fnZE8eRXvdvS2QYxe0ggSv4hyho=;
+        b=cufW9tya5+G01jvzMpUPozLOVERFZKYniPjrQoWw/eUepIKLFfkl0bjOPdSRYHubLx
+         Gtx3AOqeN+1+tKYdfCF7R+FxDzQ6+pM3bdbu7jw13fWKhUzRjtio95aHno25P+/vOb5L
+         l/K+GdpIrR206ExRnQu3u3JBfO68adjp9aWzRjeT1xEOZCX8Yg4ig6TIfE3X2AWD9jOb
+         wrA8KbrFRrBz5dDMUHlhkfhbVTV6DSoatTBLTHyIwPkb6Eb5iEJt++MNpYkDEHh2V5pL
+         k2j+tVH4aaXH73TmyTKgiPOF9cFmwS7LdCNufx21BGx2QloKdFqsJViHDIyZgfEJqY+R
+         4B1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739382764; x=1739987564;
+        d=1e100.net; s=20230601; t=1739382847; x=1739987647;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C/kS06FLerC2Af3s6b6Rf5nvMZaz+z4sBVLyAweX+ok=;
-        b=lj734bxsbM4T3M8nsBBuS/dP/NQrU7y0I2Z9tDd8ABflalfd4kJO42XgyGMzKZk4+0
-         ZPeTTVgS7frzprrTsWVe9nc4Js2Wzw8xDqYENLARF+4PjvEvZ+QbfVqJEi/LtHyoVSjn
-         5qWGMp8j9dqChUt5MgA4nz2+9lHGAZgOcLtz5XHKZHBkyWieQcXd2COUTW1WOJqLvL1E
-         IDcIQ++eINBNfAbo68EeT97K4Tu1MJ8FaG2CFqlzKcnFk6XF8lhzlGoPMJgjQeivC8d+
-         ZrasDGpfyFF1rzvDrLmzlq6uEd34Z2JGvKIc5+3mrCWiu+ABSTcjKkbbGA6EKRGlvN1p
-         AQ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWZVh1cskJ0/EbcAJgNzj/HvwPeTjGv7u/3+7+AT7NjJuGaDGiDJbQqHe6oqtV/EDW7lD38X41Y6opKqgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbTgSo48nfe3eGbiw+f84KQOM1NPqZLq80cp7KbaPOZsFGgmZh
-	JziuG94TgTQJlLYeXVTt55OCPtJpK03bnGG2yAitY98WAiMiMSpE
-X-Gm-Gg: ASbGnculAcqRXEvwzUqp9ufNCqTqQEx7WnUqU11k1kEJLnDfiZ4SMenMlbXxOEWLFQf
-	HFTytt6F76SVSg+lkVBA9Ge2TLU9JI+2dIQwDvJXMwe73CRXgMUvd71uD+2cXf0vJik3jr93ou0
-	q+W+iiHKrg6hca4RrsNSM1Wm2TQgEdxqHchVRfPYt8q75Nm6vXn97VZg5vrFBd4ue/FgvhHSRP6
-	iJXKMVAMLHMW1wTeGv60ZQ4ke0J7L+Pl2I0p10nVuR3OMz0efBUfa/TFfiDeWM6cGV9fw0P3ZFg
-	C6w5fWf26QyUCDk6JoTOwA==
-X-Google-Smtp-Source: AGHT+IGhAf9G/ZHnuARYEZ7FvPVEQiQFkKF3QjpnfizbwNgmuLoZolSmQ9I1VNR6kpuAh/gwQv5YZQ==
-X-Received: by 2002:a05:651c:504:b0:302:3356:54e2 with SMTP id 38308e7fff4ca-30904664d33mr5547561fa.10.1739382763893;
-        Wed, 12 Feb 2025 09:52:43 -0800 (PST)
+        bh=uuI5Z03zLDZiJXA9fnZE8eRXvdvS2QYxe0ggSv4hyho=;
+        b=n9+zmMfpV7z5U5O/oi2aL5zevPp2K4H0hdWDJmq1JU6uVyllt5yWbPzR6em1iDc2z3
+         3Yeu7H5F2d3oUIxurfOyxht0oFdCgCOR3sPYUmKkpy7i9VlZ6h60Jr97NMMs6eMU/zlY
+         WKA2w5W7Cu0M5e1YPlwx+y5bulkKC8Z/uuuONv2jJbxF8VbqFbu9TYNzy+uGp6jZ99sS
+         tt+RtTHe6O5bZGDoy8LzQuVHhKPSZZ4db+uewRynFxzjoSvHKIEPA5DMX4HSAKFezH7G
+         WPjVn02CcyikFrMd5DaJL0qnrC9W1tXie21gBAhUmQB/JOOy9s1zRtFt/JXNrOc0XLFW
+         MO1w==
+X-Forwarded-Encrypted: i=1; AJvYcCW2L3ho4XAD7Iy0u1n23iPsjEW4L+T0PvV/zZFyCUtKxK+c/dnKVShuiPnZLJ1YPyim3pI1cVsEBsLoJAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbdLqu2w12KuwanMqX/3jicf7GjIrYIaLuKtVhtstmVZofvvgE
+	WKMnJBBCdbeIdLhReOlWsOumacHxlT9E56jwTY7vkjd9EmZkr3Xg
+X-Gm-Gg: ASbGncsiCKy9W251Ukbm1ZOJxvcAXnD2j5uzN9wAqJODoZ5R3bzMx9j0xiS77KoMLLE
+	OVg7hsOjnCV6sRv00tvvJKCBhBZ5YCQe6j0G65KJrTaI7ywR+GRIXv+9yYTPqHtzR9G0mNfqp3+
+	Pg5uPPjRpSlQ0hKL6/LY5gwx9mXbJBM+9F+ARfhmB2rG3/LmZMObqXUz0J7qsQxc7K1GsAt9J9u
+	tScPJYW7gTJqmpzWPQJTsyGD+ymNCrg1stS9FLkeEy9QbSHf3dBZwUhP6FDK7P7sot50160DaJZ
+	IiD100mfVYY7hGoi/P/uNA==
+X-Google-Smtp-Source: AGHT+IGTf6/o1ewcGEUKre1zdVC8k6x+Y98jsCPQ4p9R3TflTMIiLyianinhYrX/Lsh2+4Tk7SDv5A==
+X-Received: by 2002:a05:6512:124e:b0:545:8a1:536d with SMTP id 2adb3069b0e04-545180ddfadmr473410e87.2.1739382847092;
+        Wed, 12 Feb 2025 09:54:07 -0800 (PST)
 Received: from [10.214.35.248] ([80.93.240.68])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-308d9e1fdfcsm15669701fa.31.2025.02.12.09.52.42
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54410555a60sm1976613e87.87.2025.02.12.09.54.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 09:52:43 -0800 (PST)
-Message-ID: <ef785e05-f52e-4a88-9377-b51b81b228ce@gmail.com>
-Date: Wed, 12 Feb 2025 18:52:39 +0100
+        Wed, 12 Feb 2025 09:54:06 -0800 (PST)
+Message-ID: <d0d2c78d-9ea6-43c6-8413-97d21ff77bdd@gmail.com>
+Date: Wed, 12 Feb 2025 18:54:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,117 +80,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kasan: Don't call find_vm_area() in RT kernel
-To: Waiman Long <llong@redhat.com>
-Cc: Alexander Potapenko <glider@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+Subject: Re: [PATCH v2] kasan: Don't call find_vm_area() in RT kernel
+To: Waiman Long <longman@redhat.com>, Alexander Potapenko
+ <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>,
  Vincenzo Frascino <vincenzo.frascino@arm.com>,
  Andrew Morton <akpm@linux-foundation.org>,
  Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- kasan-dev@googlegroups.com, linux-mm@kvack.org,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: kasan-dev@googlegroups.com, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
  Nico Pache <npache@redhat.com>
-References: <20250211160750.1301353-1-longman@redhat.com>
- <CAPAsAGzk4h3B-LNQdedrk=2aRbPoOJeVv_tQF2QPgzwwUvirEw@mail.gmail.com>
- <cfe70f31-e650-4033-9281-baa4cdc40b96@redhat.com>
+References: <20250212162151.1599059-1-longman@redhat.com>
 Content-Language: en-US
 From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-In-Reply-To: <cfe70f31-e650-4033-9281-baa4cdc40b96@redhat.com>
+In-Reply-To: <20250212162151.1599059-1-longman@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 2/12/25 2:34 PM, Waiman Long wrote:
+On 2/12/25 5:21 PM, Waiman Long wrote:
+> The following bug report appeared with a test run in a RT debug kernel.
 > 
-> On 2/12/25 6:59 AM, Andrey Ryabinin wrote:
->> On Tue, Feb 11, 2025 at 5:08 PM Waiman Long <longman@redhat.com> wrote:
->>> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
->>> index 3fe77a360f1c..e1ee687966aa 100644
->>> --- a/mm/kasan/report.c
->>> +++ b/mm/kasan/report.c
->>> @@ -398,9 +398,20 @@ static void print_address_description(void *addr, u8 tag,
->>>                  pr_err("\n");
->>>          }
->>>
->>> -       if (is_vmalloc_addr(addr)) {
->>> -               struct vm_struct *va = find_vm_area(addr);
->>> +       if (!is_vmalloc_addr(addr))
->>> +               goto print_page;
->>>
->>> +       /*
->>> +        * RT kernel cannot call find_vm_area() in atomic context.
->>> +        * For !RT kernel, prevent spinlock_t inside raw_spinlock_t warning
->>> +        * by raising wait-type to WAIT_SLEEP.
->>> +        */
->>> +       if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
->>> +               static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEEP);
->>> +               struct vm_struct *va;
->>> +
->>> +               lock_map_acquire_try(&vmalloc_map);
->>> +               va = find_vm_area(addr);
->> Can we hide all this logic behind some function like
->> kasan_find_vm_area() which would return NULL for -rt?
-> Sure. We can certainly do that.
->>
->>>                  if (va) {
->>>                          pr_err("The buggy address belongs to the virtual mapping at\n"
->>>                                 " [%px, %px) created by:\n"
->>> @@ -410,8 +421,13 @@ static void print_address_description(void *addr, u8 tag,
->>>
->>>                          page = vmalloc_to_page(addr);
->> Or does vmalloc_to_page() secretly take  some lock somewhere so we
->> need to guard it with this 'vmalloc_map' too?
->> So my suggestion above wouldn't be enough, if that's the case.
+> [ 3359.353842] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> [ 3359.353848] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 140605, name: kunit_try_catch
+> [ 3359.353853] preempt_count: 1, expected: 0
+>   :
+> [ 3359.353933] Call trace:
+>   :
+> [ 3359.353955]  rt_spin_lock+0x70/0x140
+> [ 3359.353959]  find_vmap_area+0x84/0x168
+> [ 3359.353963]  find_vm_area+0x1c/0x50
+> [ 3359.353966]  print_address_description.constprop.0+0x2a0/0x320
+> [ 3359.353972]  print_report+0x108/0x1f8
+> [ 3359.353976]  kasan_report+0x90/0xc8
+> [ 3359.353980]  __asan_load1+0x60/0x70
 > 
-> AFAICS, vmalloc_to_page() doesn't seem to take any lock.  Even if it takes another spinlock, it will still be under the vmalloc_map protection until lock_map_release() is called.
+> Commit e30a0361b851 ("kasan: make report_lock a raw spinlock")
+> changes report_lock to a raw_spinlock_t to avoid a similar RT problem.
+> The print_address_description() function is called with report_lock
+> acquired and interrupt disabled.  However, the find_vm_area() function
+> still needs to acquire a spinlock_t which becomes a sleeping lock in
+> the RT kernel. IOW, we can't call find_vm_area() in a RT kernel and
+> changing report_lock to a raw_spinlock_t is not enough to completely
+> solve this RT kernel problem.
+> 
+> Fix this bug report by skipping the find_vm_area() call in this case
+> and just print out the address as is.
+> 
+> For !RT kernel, follow the example set in commit 0cce06ba859a
+> ("debugobjects,locking: Annotate debug_object_fill_pool() wait type
+> violation") and use DEFINE_WAIT_OVERRIDE_MAP() to avoid a spinlock_t
+> inside raw_spinlock_t warning.
+> 
+> Fixes: e30a0361b851 ("kasan: make report_lock a raw spinlock")
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  mm/kasan/report.c | 47 ++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 34 insertions(+), 13 deletions(-)
+> 
+>  [v2] Encapsulate the change into a new
+>       kasan_print_vmalloc_info_ret_page() helper
 > 
 
-I meant to do something like bellow, which would leave vmalloc_to_page() out of vmalloc_map scope.
-That's why I raised this question.
+Not exactly what I had i mind, but this way is fine too.
 
----
- mm/kasan/report.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index 3fe77a360f1c..f3683215f4ca 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -370,6 +370,20 @@ static inline bool init_task_stack_addr(const void *addr)
- 			sizeof(init_thread_union.stack));
- }
- 
-+static inline struct vm_struct *kasan_find_vm_area(void *addr)
-+{
-+	static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEEP);
-+	struct vm_struct *va;
-+
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT))
-+		return NULL;
-+
-+	lock_map_acquire_try(&vmalloc_map);
-+	va = find_vm_area(addr);
-+	lock_map_release(&vmalloc_map);
-+	return va;
-+}
-+
- static void print_address_description(void *addr, u8 tag,
- 				      struct kasan_report_info *info)
- {
-@@ -399,8 +413,7 @@ static void print_address_description(void *addr, u8 tag,
- 	}
- 
- 	if (is_vmalloc_addr(addr)) {
--		struct vm_struct *va = find_vm_area(addr);
--
-+		struct vm_area *va = kasan_find_vm_area(addr);
- 		if (va) {
- 			pr_err("The buggy address belongs to the virtual mapping at\n"
- 			       " [%px, %px) created by:\n"
--- 
-2.45.3
-
-
+Acked-by: Andrey Ryabinin <ryabinin.a.a@gmail.com>
 
