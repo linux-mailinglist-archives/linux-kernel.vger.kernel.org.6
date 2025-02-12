@@ -1,122 +1,144 @@
-Return-Path: <linux-kernel+bounces-511374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A5DA32A15
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:31:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8D5A32A19
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE2D87A122D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:30:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B45EB7A1190
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7645E211A02;
-	Wed, 12 Feb 2025 15:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F8621170B;
+	Wed, 12 Feb 2025 15:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hIkPJqgP"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gw4jw93h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA57211295
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E7020ADF0;
+	Wed, 12 Feb 2025 15:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739374306; cv=none; b=Om73J/+mT2+szBSwuI6TZFMM9n2Coa/biUb2BYhPxiQRZU5FM0S5f7fcXEpflfuk4F9+hiKIc6MKlH6UBEqjcycwJXvhmv2txnth0fJlEg9jYI3p61D2kLwOs9jl2VJQoqFHZYF/OWWsDAosa1O5Asdw1nhnaNw9ryGMajXA0MA=
+	t=1739374319; cv=none; b=JFaU4RFfeDarFygti9IgXCYdq1AEbIxoUDk59YK3TJ71f2xGVr1NobQ6MOKo24QQCrx0UAvQidDFBSOAzX4CcQ1Ix60T2UC1eBNTTr+nKjndvnZygBHy850Yiu+JOd2XAJIGmM6PM36afgmtKGcgHfyJz+9hW+jSMv6det6RcyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739374306; c=relaxed/simple;
-	bh=Kd+6DzKTiuHkjzGkdtLbyCkTyy0yaluQp17EPwunXIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XESDRZWSAAjh8qcWmgbKpdM/8j3F45Y3AudXZju+R/BdhSzgHsulegatTDbIg2ogY338DgA6Pet/sxHCI/orxvUGKgyJ9aq6DEcaoiobTK2owct6YDYeafLq2YUPPmbnyV7NUJefCxvPcgS/ns49NExzZUw6ANj2uBVcKqZ+WKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hIkPJqgP; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5dec817f453so106103a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:31:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739374302; x=1739979102; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YSq+cHNnWSDiFyg3hiZUKEZKM5fOb5ovEsLt9hQ8kFA=;
-        b=hIkPJqgPGbTqULf5gs3Rgx2UTz5aOKzJbJ9ZXALg8IrKNljYc1CqD0j+Zo1gNlV+BF
-         AekVcgRwwv4WAG5zUxATu3raVe/HGhEPHQCoOw9kv5lFMfByW+H00YBRs/YkIJQw727S
-         b0jOUoNtFsPOemdcidWNlj7YFsS8ZBOYv2lfJe2E5AE65fLi2aFYwaeCyyZCkHvmd5NA
-         +kZF1BPUZZ9g/dNd7g7k1SSUgBE2hGekdcF1kcqMSqBoN/GIqzVLi6xX6GSV7cPNNcaN
-         +0SOsQLtEZPLAbna3hjAA0fe4y8ojBrF5ZEVY6u/MzykFAqKcQPfOzdSPcMeWRSEXyYN
-         CXLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739374302; x=1739979102;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YSq+cHNnWSDiFyg3hiZUKEZKM5fOb5ovEsLt9hQ8kFA=;
-        b=U/mfXejB1MBI2GJHzKJL+jZ9qtI8j4QDMuF9jmNrVp9l6DNdQDjv//7Cecq6xANgKe
-         t/miz04dhPCHag6bsP1Hxsdz3WyibEMA7MwD4PancedsdkUFm6K0EkGR/7elGSUhlPgF
-         BioIZtaK7MohzJ9R2fb+cOCCGCgAumm9evXZcgDpP4GNJPldHTXbOHlsmnjjb1MZW3+i
-         CRTil12Lcssrekdk1nsC0IkpBsS2PUpVMSS0abtM2DXK3AxhUEuzbESFSkgRT+Da45Dx
-         XZyJTQb/Bz696WMFyTyscgnxBlfz+ZJ6OJaxjB/Ar8NOuRbdR3qYgyTaYlAv697q64E7
-         3eoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVA0f8DMzmJPFzKCy8CsB+x2pvVUD8E0AXxpojZ5D0GEwOxDBNdT2ByPIXqMlLuqobdfR2t8wFRg1yP0Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwupMr73+hIjLJN88AVt9zh77gMuXWVNwqNWTLEmLPypFNw5qYb
-	9q67bVWoRRS+f1beo6GNQCIbpb9Vd7SPe3UUigzZi/GZxKIQFMwP4/lUy6D3gHg=
-X-Gm-Gg: ASbGncsg77FjFkIMcWO+LvjPvFItayJArTtm+I+Hpzn2p7LCGMjb8BhPagQIvj4IZsz
-	1iZ175twZ/P1eCCvN4hqSkFO3A2Owp0knLixR/q1tk7ExcHZTB2qSnpt2QlrzcTvk4sf2SXQy4r
-	p/fh7Xzm7m6WKVtZC4yQ7ikkIJuwTs7kUoGRvo8uQvnWXLYIc7EfaNMu66NGNJU74HwEm3xSQxy
-	Tam4L7JSlgeIJHeYwzEAUSv0eyatZfzbnWUSJX55zdH02jem63tgvYXfvtPBGKbiOJJBpp4Hvts
-	IitKtNhvQxm/kvEFz+bP
-X-Google-Smtp-Source: AGHT+IEL4lA8s78vp0Gg7MOmptz86X5Vg+sujBASU2RfYgzLtUU6Y26AXdNXUW7VE46t0p06RX/ymQ==
-X-Received: by 2002:a17:907:60d6:b0:ab7:c426:f33 with SMTP id a640c23a62f3a-ab7f34a8230mr346620066b.56.1739374302011;
-        Wed, 12 Feb 2025 07:31:42 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab7b4aba036sm737804366b.45.2025.02.12.07.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 07:31:41 -0800 (PST)
-Date: Wed, 12 Feb 2025 18:31:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: oe-kbuild@lists.linux.dev, David Gow <davidgow@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] ww_mutex: convert self-test to KUnit
-Message-ID: <30998382-ee63-4a4e-8287-cd21c649b849@stanley.mountain>
-References: <20250210-ww_mutex-kunit-convert-v1-1-972f0201f71e@gmail.com>
- <3dabe058-2308-4990-8e5d-0af1efd27431@stanley.mountain>
- <CAJ-ks9=mKzgLhJW0dV-L8eFtkW-xt8v3GM51V4QF5Ef_ENKLvA@mail.gmail.com>
+	s=arc-20240116; t=1739374319; c=relaxed/simple;
+	bh=XsH3HWWDrUSvcCfXhVQ/ZqrxOEdGLkRvnHvQOp7yqMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pYhar02MySGTJMncmxHlylL4pMA9316Q7yIxkPTTBsQA2ezcELKNon4T5OjF6iGk3L8JHF77/i4QM7wxtq2g5HtcGyPiVuBdkmBps7mXMqv+VSGqslz2hCgyAtT+9x8qfcuG5bAt7WNtbxvxFlELee5JU4ckrIsgzJyQY91fcus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gw4jw93h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCBEBC4CEDF;
+	Wed, 12 Feb 2025 15:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739374318;
+	bh=XsH3HWWDrUSvcCfXhVQ/ZqrxOEdGLkRvnHvQOp7yqMw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gw4jw93hjsk61iaV+6pRp6GXQICRPGwoqua0opJ9gxGvMtBc9tQHMtjfzYuO7Rg0T
+	 QFeiKvcFPqn7hsajECaEI37cAHrynVhFV/mmBT5UrSEr4Am2vcOu34kjbRBDFsug7C
+	 XYpfAu1iceHWmHC1wTX7TPjXKx2Gq0eIr1NZyJQfGb0Oz0UIsZ5otot+VZ7QSOBoN1
+	 Ys2GbDXcArWUQwcLjltQlz+wpTvhKt3gt4JWIiERGoau9zupU2fqztJVWqUexNbcXs
+	 UMxbBiCp2JWliN1wh+oRdbtQZbzk/2YAewAhSeyPvj3HEO8WeZJvaULUj9Qm1E9gL+
+	 r1pWr/t23ploQ==
+Message-ID: <162eef45-3740-4197-adf4-8f20850b332c@kernel.org>
+Date: Wed, 12 Feb 2025 16:31:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJ-ks9=mKzgLhJW0dV-L8eFtkW-xt8v3GM51V4QF5Ef_ENKLvA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: socfpga: agilex5: fix gpio0 address
+To: niravkumar.l.rabara@intel.com, Dinh Nguyen <dinguyen@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, nirav.rabara@altera.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20250212100131.2668403-1-niravkumar.l.rabara@intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250212100131.2668403-1-niravkumar.l.rabara@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 09:33:46AM -0500, Tamir Duberstein wrote:
-> >
+On 12/02/2025 11:01, niravkumar.l.rabara@intel.com wrote:
+> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 > 
-> As an aside, how can I compile with the warning settings used by
-> kernel test robot?
+> Fix gpio0 controller address for Agilex5.
+
+How do you fix it exactly?
+
 > 
+> Fixes: 3f7c869e143a ("arm64: dts: socfpga: agilex5: Add gpio0 node and spi dma handshake id")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> ---
+>  arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> index 51c6e19e40b8..9e4ef24c8318 100644
+> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> @@ -222,7 +222,7 @@ i3c1: i3c@10da1000 {
+>  			status = "disabled";
+>  		};
+>  
+> -		gpio0: gpio@ffc03200 {
+> +		gpio0: gpio@10c03200 {
 
-This is a Smatch warning.
+I see now warning. Are you sure you tested it according to
+maintainer-soc-clean-dts profile?
 
-https://github.com/error27/smatch
-https://github.com/error27/smatch/blob/master/Documentation/smatch.rst
+>  			compatible = "snps,dw-apb-gpio";
+>  			reg = <0xffc03200 0x100>;
+>  			#address-cells = <1>;
 
-Run smatch/smatch_scripts/kchecker kernel/locking/ww_mutex_kunit.c
 
-regards,
-dan carpenter
-
+Best regards,
+Krzysztof
 
