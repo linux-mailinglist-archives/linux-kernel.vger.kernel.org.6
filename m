@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-511773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF30A32F7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:20:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63187A32F82
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:20:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F2E188A03D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:20:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15369165B77
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338742627F3;
-	Wed, 12 Feb 2025 19:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C95263C60;
+	Wed, 12 Feb 2025 19:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcT8gh8J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCOUI7cR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A731D5CCC;
-	Wed, 12 Feb 2025 19:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0945262819;
+	Wed, 12 Feb 2025 19:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739388007; cv=none; b=CaZY2ZzOUthzU8bnSIYCqlKVH47cIXcI7+amUB9wQhBYQTUBKpnPDp+RxdOhI9/BgRa7gUlmMASz295w+236oYVB+QSFyjk+A2ZfhiLCKgSstjKWIfT9fJzR0DuNKW6815hWZeieYSui27OjJ6tscnGrN/3WaKG/dcZyqaoyOX8=
+	t=1739388009; cv=none; b=kxjRm/1aK+O4xK8NEEUgIHALHvn4IM3O7wSXRvL4r9uybWCibeR4pGhSLuqLiDb7Zv3ebSOAsLUAoeQhLT3Wc31NcH17RfxVhMpwZvYMcWnbvD1NzEnUdkMocT3hR4vC6UYZWZEx0Njf8NdVyFCqGBTFEGyJM4FBuC5bWwXeBCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739388007; c=relaxed/simple;
-	bh=/+7+e/jvBGvPMsVtB+/kIZ1XYrpNImVdDnT7+1bEVHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XybMd9+1Jd7aC5mPiprEO5Tp1Jc4MOnmDL75BQIZHUSVu+dPIQ0YlW33yrvr/BC3Nb/VMNaGD/R7l5EObB3/6/jDjMUikb0ElDl/hiFkmgTj+9qvxgXUvT4YJvcVQx5Q0hzzmS92IC8MwIY/igPpwKNLBTpp0X/yDhYXQAxb/Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcT8gh8J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A7B9C4CEE5;
-	Wed, 12 Feb 2025 19:20:02 +0000 (UTC)
+	s=arc-20240116; t=1739388009; c=relaxed/simple;
+	bh=8oGQaUEp785Ksp9CMP5N4KASHqjUgTRlvpoOvmKilvk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=oXzuDQJSgh5bzVcacAw1gj3W9TZoHXLL34Ylz38J1cc2POocDTumGZyyuearzdF/sLOnc2hPLMW5Yb8D8F2FP7zfUJDkhPU83EbBGmWmh6nFn7EkVbHRDKKVUABYZFr0TtrWjJZRcr7P2Oi6vNMDfGSXPIA/XkBrjcVPmvl+vc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCOUI7cR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41EC1C4CEE7;
+	Wed, 12 Feb 2025 19:20:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739388007;
-	bh=/+7+e/jvBGvPMsVtB+/kIZ1XYrpNImVdDnT7+1bEVHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AcT8gh8JgwgRfEIT6E8hX/7mDnv7N5ycokXyJk/Avr1G+k7FYAHx+Bf7InCMzao56
-	 oUD8IEL9vI/Xdig1Zw6w9IaZn7aaNoYelFEhpwnZAMJAQdNG/K3ip1ZfYCX7ma6KVI
-	 TkiTlpnyy4pf5CJPS6+4NBzTVrzXE4E9usrirdFs84uq8mCToiDlNWQ66A8kMNLJey
-	 zg255T9kUGxREaqXFMYyAl6ggBIosvLWVK5G422fH3H+5KPLe5iVoSlmpnD9IK7LIY
-	 0v8Sogl7rHN7GIpn+pxNEaoGAaVu8/YWLhiTELLbHwTMkSQ6thhboAFPBm+O/hfhYK
-	 hQJnK29ZaFlnA==
-Date: Wed, 12 Feb 2025 19:20:00 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Emil Gedenryd <emil.gedenryd@axis.com>,
-	Arthur Becker <arthur.becker@sentec.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a
- support
-Message-ID: <20250212-unwritten-compile-7011777a11b3@spud>
-References: <20250212064657.5683-1-clamor95@gmail.com>
- <20250212064657.5683-2-clamor95@gmail.com>
+	s=k20201202; t=1739388009;
+	bh=8oGQaUEp785Ksp9CMP5N4KASHqjUgTRlvpoOvmKilvk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=HCOUI7cRvY4NdRxik3/fbJopYtRnJ6Ydm/qe5WEWRSnDsU/QzvdRmCySS4ofMjSqN
+	 62qN+9xacWZzon8rV9Qirpdwv14yK+TNGbcC8F4Uceli6NNhlBYJ4A/MN1hH6WIlTr
+	 9uxkKSzEVUzhNVVCpZcBlpd+C2etPEewcuojGjFYmTZvj3eLzLVQUxLV4GBRZKF8e9
+	 pllnVF3KBPCaK5UTKcygHGgNNlDNDAbLrNQX9Nb/GClNObngRgvsQWOzjYw5I+t6MW
+	 7+bEOOKKkuEsEo9RnKfismpWsMYs/e5OU6FrVdQKdx9pBK7bhdrwxX6wWj2IqB6C6+
+	 0YoWFYx+t+q5w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 72012380CED8;
+	Wed, 12 Feb 2025 19:20:39 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LbItYNKzTdw8M51m"
-Content-Disposition: inline
-In-Reply-To: <20250212064657.5683-2-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 00/15] Rate management on traffic classes + misc
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173938803799.632131.11441489448633366329.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Feb 2025 19:20:37 +0000
+References: <20250209101716.112774-1-tariqt@nvidia.com>
+In-Reply-To: <20250209101716.112774-1-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ edumazet@google.com, andrew+netdev@lunn.ch, netdev@vger.kernel.org,
+ saeedm@nvidia.com, gal@nvidia.com, leonro@nvidia.com, horms@kernel.org,
+ donald.hunter@gmail.com, jiri@resnulli.us, corbet@lwn.net, leon@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, richardcochran@gmail.com,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-rdma@vger.kernel.org, bpf@vger.kernel.org
+
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sun, 9 Feb 2025 12:17:01 +0200 you wrote:
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+> 
+> Hi,
+> 
+> This patchset consists of multiple features from the team to the mlx5
+> core and Eth drivers.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,01/15] devlink: Extend devlink rate API with traffic classes bandwidth management
+    (no matching commit)
+  - [net-next,02/15] net/mlx5: Add no-op implementation for setting tc-bw on rate objects
+    (no matching commit)
+  - [net-next,03/15] net/mlx5: Add support for setting tc-bw on nodes
+    (no matching commit)
+  - [net-next,04/15] net/mlx5: Add traffic class scheduling support for vport QoS
+    (no matching commit)
+  - [net-next,05/15] net/mlx5: Manage TC arbiter nodes and implement full support for tc-bw
+    (no matching commit)
+  - [net-next,06/15] net/mlx5e: reduce the max log mpwrq sz for ECPF and reps
+    https://git.kernel.org/netdev/net-next/c/e1d68ea58c7e
+  - [net-next,07/15] net/mlx5e: reduce rep rxq depth to 256 for ECPF
+    https://git.kernel.org/netdev/net-next/c/b9cc8f9d7008
+  - [net-next,08/15] net/mlx5e: set the tx_queue_len for pfifo_fast
+    https://git.kernel.org/netdev/net-next/c/a38cc5706fb9
+  - [net-next,09/15] net/mlx5: Rename and move mlx5_esw_query_vport_vhca_id
+    https://git.kernel.org/netdev/net-next/c/38b3d42e5afa
+  - [net-next,10/15] net/mlx5: Expose ICM consumption per function
+    https://git.kernel.org/netdev/net-next/c/b820864335c8
+  - [net-next,11/15] net/mlx5e: Move RQs diagnose to a dedicated function
+    https://git.kernel.org/netdev/net-next/c/913175b3f919
+  - [net-next,12/15] net/mlx5e: Add direct TIRs to devlink rx reporter diagnose
+    https://git.kernel.org/netdev/net-next/c/99c55284e85b
+  - [net-next,13/15] net/mlx5e: Expose RSS via devlink rx reporter diagnose
+    https://git.kernel.org/netdev/net-next/c/896c92aa7429
+  - [net-next,14/15] net/mlx5: Extend Ethtool loopback selftest to support non-linear SKB
+    https://git.kernel.org/netdev/net-next/c/95b9606b15bb
+  - [net-next,15/15] net/mlx5: XDP, Enable TX side XDP multi-buffer support
+    https://git.kernel.org/netdev/net-next/c/1a9304859b3a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---LbItYNKzTdw8M51m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
-> AL3000a is an ambient light sensor quite closely related to
-> exising AL3010 and can re-use exising schema for AL3010.
-
-Quite close you say, but the driver is entirely different it seems. How
-closely related is the hardware itself?
-
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010=
-=2Eyaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-> index a3a979553e32..6db4dfd5aa6c 100644
-> --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-> @@ -4,14 +4,16 @@
->  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> =20
-> -title: Dyna-Image AL3010 sensor
-> +title: Dyna-Image AL3000a/AL3010 sensor
-> =20
->  maintainers:
->    - David Heidelberg <david@ixit.cz>
-> =20
->  properties:
->    compatible:
-> -    const: dynaimage,al3010
-> +    enum:
-> +      - dynaimage,al3010
-> +      - dynaimage,al3000a
-> =20
->    reg:
->      maxItems: 1
-> --=20
-> 2.43.0
->=20
-
---LbItYNKzTdw8M51m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ6z0YAAKCRB4tDGHoIJi
-0j+dAP49r84HHxrbKXxQV5QNOkt9MHHKgzrCq9fZbRdxtpQLPwD/ZAuFVV674Yte
-IXcQmPTqkS6v/K0PKZEkMjblXoKiiQE=
-=2zvA
------END PGP SIGNATURE-----
-
---LbItYNKzTdw8M51m--
 
