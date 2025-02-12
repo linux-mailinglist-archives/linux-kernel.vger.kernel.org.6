@@ -1,94 +1,290 @@
-Return-Path: <linux-kernel+bounces-510364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8227CA31BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:10:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2566FA31BC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F158D18897FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:10:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50E93A94C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8085B154426;
-	Wed, 12 Feb 2025 02:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1702B126BF9;
+	Wed, 12 Feb 2025 02:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/QGEmyk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AdSt1dxU"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0753126BF9;
-	Wed, 12 Feb 2025 02:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED9D70809
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739326246; cv=none; b=VW3yYPlzeusbVU1e8WSeSgTppUP/eYWQlTPpJBDZClqqFRsacbOA9g5lmTxSUQti3jr5KZiWVtuXP8oSUCgjUDSzDUXqXG/LIY72OEUbklKWbonBnKJaIbp+tMZQKnS8ZrEiz0K+RXwjAkTNQDbs6utI1j0rLrI1gC5PPbkeZjY=
+	t=1739326348; cv=none; b=ZyF0B6WZA4N+EJFrfURnUUeaDVeoU/UlSNJhfaMzx9wetPwQCxY0lbDV+1vwPRYVNirsLnyl3yFSTrlPfwgBhN2gl2T5a17PThG2vVJo1jVsFBFLUmlkWbvACv1rEH6KeOcoMYLww7bbwa9MMaCA5RIOiflNF61QR6G2IhplPgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739326246; c=relaxed/simple;
-	bh=I/rZw4FowRhXgjGEoVDTnReTLRjQoga6pAUhWf0cJq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4s50Dw1oOy+dhS83TGP5TEm3ZvgBI1MqMZwlb3049/m893dA1wsFrqMyfMRR1/qW936xZmHH9Tm5Wm3mA7TPwW8LS88pp2hWQEz+RHBMMq3MwhrMkeoohYAUHr5ZOTmEkGmL/pMIpdt0qUY8bapfz0vzTwsPES1QuknAz+Tju0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/QGEmyk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB52C4CEDD;
-	Wed, 12 Feb 2025 02:10:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739326244;
-	bh=I/rZw4FowRhXgjGEoVDTnReTLRjQoga6pAUhWf0cJq8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k/QGEmyk7j2fk1Sqwd46EJnohFD9PdRSSiCZeeNc4n7sGaZ/nQGrL8Fv22MnV02K6
-	 eVOQjOKaE+8dh4CYT818VPzyxetScxBldyofoaKMtjZOggVlqDSH/3DJLNhYpBAKyr
-	 ITt2qA4PN/5A+migOyVNqScLjvAi2AZoS3TlzU9OJbfrqw0nsp6f75zuQFxqOOpVGG
-	 MIbyGBrIUSMu+xVp2N80zL1wYZGL+N3OMQyClJRWVpG5oICXn2rU/MIEpw0Y7+Z7/R
-	 KzwtcNXbzksLc30LC7sQnE9PywzSU+5RsXA55k9NQzC4tLIL7zLKGRcSiaPDIgWnCL
-	 L2axJutzH8Blg==
-Date: Tue, 11 Feb 2025 18:10:42 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>
-Cc: Ian Rogers <irogers@google.com>, acme@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: Improve startup time by reducing unnecessary
- stat() calls
-Message-ID: <Z6wDInRZ7VVVcaHb@google.com>
-References: <20250206113314.335376-2-krzysztof.m.lopatowski@gmail.com>
- <CAP-5=fXV6b2g9QxPe1EsSTcHZpSPq+EAR71jvpBGW7ehydN+Uw@mail.gmail.com>
- <CAOQCU64Fhoek2YEJjhtAsTqPa1Jt1X9z3_C4+pL+R-6hs-EdDg@mail.gmail.com>
+	s=arc-20240116; t=1739326348; c=relaxed/simple;
+	bh=TpFl7Lw89cIlAWzJ2lUWEh/odF3NtASxCZF9rw5Vknk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uERrUyksKQLpv5APuWMMVEzn0UdMi7NDWSlu4uhlyK8pQ7pIOc++A+pYR0mwzMCennNQ45g8vUv4Fu472CxB6teMg4c40oAG1iqMhNrkot9hgyr0OcA6DlR2dfln86MoxdMqod0Q26yQDijtsEbpSKHL2zd5HhjWGyX0Wt2BNt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AdSt1dxU; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21f6a47d5d7so114026925ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 18:12:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739326346; x=1739931146; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+p//+Ke3YywyxqGDeDFj8EHejeodR4QKYcWQKvVpodY=;
+        b=AdSt1dxUe0O5fwFE1m6awLBGWQYZDoxJxJ35XOfqx1tfrN5WDYSH7a3oqaIIMUHRFs
+         I2twNBX1gur5XBaO5ECEgOyaHGxzR4gVgPvzCD1W/7R5aTHC7NUe1q07an+/JTFnzJIm
+         WSWewyLBOJ0boNwnR6jph8xx9Sn2h4HHVCVStU7N0JgP4q6ifk64fFXS/7YkXvZ9EjCt
+         vOZWdoCPXUTHYPAKAQWSdGY9cOfCmKMQSkeknin/IS5tuDuL2UihSlyjJ6LcN73pOO+k
+         ASZoZLd0jIBfevG8DQRCm8dezSSdLWvGKYO19Is9yv2cY1fq+zHzBaiyze5E9MaoEvtO
+         S++g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739326346; x=1739931146;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+p//+Ke3YywyxqGDeDFj8EHejeodR4QKYcWQKvVpodY=;
+        b=k8P63M7JbPTNohtSHsxO7PdXRAnQqC1AgPIBgQdSYi6jJ4TUPziA9DJE+QleP2ebHR
+         Ijjz8cVy6Jixy9XdZrJPLR/5CvYnGaaCIkoEKyfBCkK6TEIbqSTzkTRPS6qeKt1/Clx/
+         uZpjWhrs6Z+xiwJGshffoSi7aBfFj2pKmrUmrjoUvDGat6MEU9s8vQpuh6JIL6XWWOql
+         bl6pXTMDhdbCNoULF7drfGy6dIyYUW2CmYQPKqtaWerAI6qbSsNbjOo+xNzV6rDIBCyl
+         wkTvABm0Fn7qb6KDy5nebeIB/BK/gU66lUFhedTGPjo9kR7gPRgAGt8iB9G8dDficLkb
+         dtug==
+X-Gm-Message-State: AOJu0Yx8PBRsIcE81Om9wnCIijhUYchRsdr44yZCnfiLF1RVEBCvkZRI
+	pYo4DDc6o1+8AiJFyblYMUJ5RNaiAeUJAvny/suYINSpJa2/rYdwqL3pjCHXEvePmB4aTr5lLIf
+	BYA==
+X-Google-Smtp-Source: AGHT+IEOguqaLTeuzE0nWBWnVdq6iXbh6cb+qBQ/IrNI0fqmcNWAQGhEjoP63UBJ/QUq7n9oW6ewroBHiM4=
+X-Received: from pjbpq16.prod.google.com ([2002:a17:90b:3d90:b0:2e9:38ea:ca0f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ea11:b0:216:46f4:7e3d
+ with SMTP id d9443c01a7336-220bbad6f94mr22294475ad.15.1739326345906; Tue, 11
+ Feb 2025 18:12:25 -0800 (PST)
+Date: Tue, 11 Feb 2025 18:12:24 -0800
+In-Reply-To: <20250203223205.36121-7-prsampat@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQCU64Fhoek2YEJjhtAsTqPa1Jt1X9z3_C4+pL+R-6hs-EdDg@mail.gmail.com>
+Mime-Version: 1.0
+References: <20250203223205.36121-1-prsampat@amd.com> <20250203223205.36121-7-prsampat@amd.com>
+Message-ID: <Z6wDiOGjSElatLBd@google.com>
+Subject: Re: [PATCH v6 6/9] KVM: selftests: Add library support for
+ interacting with SNP
+From: Sean Christopherson <seanjc@google.com>
+To: "Pratik R. Sampat" <prsampat@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, shuah@kernel.org, 
+	pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com, pankaj.gupta@amd.com, 
+	michael.roth@amd.com, sraithal@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-Hello,
-
-On Thu, Feb 06, 2025 at 10:45:02PM +0100, Krzysztof Łopatowski wrote:
-> Hi Ian,
-> Thank you for taking the time to look into this.
+On Mon, Feb 03, 2025, Pratik R. Sampat wrote:
+> Extend the SEV library to include support for SNP ioctl() wrappers,
+> which aid in launching and interacting with a SEV-SNP guest.
 > 
-> > I did a series and a new io_dir set of primitives.
-> > The last version of which is:
-> > https://lore.kernel.org/lkml/20231207050433.1426834-1-irogers@google.com/
-> > I mention this as I think that series may be a better route than this
-> > change as it solves a little bit more of the performance issue.
+> Tested-by: Srikanth Aithal <sraithal@amd.com>
+> Signed-off-by: Pratik R. Sampat <prsampat@amd.com>
+> ---
+> v5..v6:
 > 
-> I'd much prefer to have your solution merged, as it covers more instances
-> of the same directory exploration pattern and provides an explicit
-> approach to memory allocation.
+> * Collected tags from Srikanth.
+> ---
+>  tools/testing/selftests/kvm/include/x86/sev.h | 49 ++++++++++-
+>  tools/testing/selftests/kvm/lib/x86/sev.c     | 82 +++++++++++++++++--
+>  2 files changed, 125 insertions(+), 6 deletions(-)
 > 
-> > I stopped pursuing the series as the maintainers were complaining
-> > about unpopular libcs/platforms missing system call definitions
-> > (getdents) and the series breaking on those platforms.
-> 
-> Yeah, I agree. I also don't think doing an #undef because of muslc is a
-> good approach. Would you and Namhyung be open to bypassing libc and
-> calling SYS_getdents64 directly instead?
+> diff --git a/tools/testing/selftests/kvm/include/x86/sev.h b/tools/testing/selftests/kvm/include/x86/sev.h
+> index faed91435963..fd5d5261e10e 100644
+> --- a/tools/testing/selftests/kvm/include/x86/sev.h
+> +++ b/tools/testing/selftests/kvm/include/x86/sev.h
+> @@ -22,9 +22,20 @@ enum sev_guest_state {
+>  	SEV_GUEST_STATE_RUNNING,
+>  };
+>  
+> +/* Minimum firmware version required for the SEV-SNP support */
+> +#define SNP_MIN_API_MAJOR	1
+> +#define SNP_MIN_API_MINOR	51
 
-Yep, I'm ok with that.
+Dead code.  Selftests don't care about this.
 
-Thanks,
-Namhyung
+>  #define SEV_POLICY_NO_DBG	(1UL << 0)
+>  #define SEV_POLICY_ES		(1UL << 2)
+>  
+> +#define SNP_POLICY_SMT		(1ULL << 16)
+> +#define SNP_POLICY_RSVD_MBO	(1ULL << 17)
+> +#define SNP_POLICY_DBG		(1ULL << 19)
+> +
+> +#define SNP_FW_VER_MINOR(min)	((uint8_t)(min) << 0)
+> +#define SNP_FW_VER_MAJOR(maj)	((uint8_t)(maj) << 8)
 
+Also dead code.
+
+>  #define GHCB_MSR_TERM_REQ	0x100
+>  
+>  #define VMGEXIT()		{ __asm__ __volatile__("rep; vmmcall"); }
+> @@ -36,13 +47,35 @@ bool is_sev_snp_vm(struct kvm_vm *vm);
+>  void sev_vm_launch(struct kvm_vm *vm, uint32_t policy);
+>  void sev_vm_launch_measure(struct kvm_vm *vm, uint8_t *measurement);
+>  void sev_vm_launch_finish(struct kvm_vm *vm);
+> +void snp_vm_launch_start(struct kvm_vm *vm, uint64_t policy);
+> +void snp_vm_launch_update(struct kvm_vm *vm);
+> +void snp_vm_launch_finish(struct kvm_vm *vm);
+>  
+>  struct kvm_vm *vm_sev_create_with_one_vcpu(uint32_t type, void *guest_code,
+>  					   struct kvm_vcpu **cpu);
+> -void vm_sev_launch(struct kvm_vm *vm, uint32_t policy, uint8_t *measurement);
+> +void vm_sev_launch(struct kvm_vm *vm, uint64_t policy, uint8_t *measurement);
+>  
+>  kvm_static_assert(SEV_RET_SUCCESS == 0);
+>  
+> +/*
+> + * A SEV-SNP VM requires the policy reserved bit to always be set.
+> + * The SMT policy bit is also required to be set based on SMT being
+> + * available and active on the system.
+> + */
+> +static inline u64 snp_default_policy(void)
+> +{
+> +	bool smt_active = false;
+> +	FILE *f;
+> +
+> +	f = fopen("/sys/devices/system/cpu/smt/active", "r");
+
+Please add a helper to query if SMT is enabled.  I doubt there will ever be many
+users of this, but it doesn't seem like something that should buried in SNP code.
+
+Ha!  smt_possible() in tools/testing/selftests/kvm/x86/hyperv_cpuid.c is already
+guilty of burying a related helper, and it looks like it's a more robust version.
+
+> +	if (f) {
+> +		smt_active = fgetc(f) - '0';
+> +		fclose(f);
+> +	}
+> +
+> +	return SNP_POLICY_RSVD_MBO | (smt_active ? SNP_POLICY_SMT : 0);
+> +}
+> +
+>  /*
+>   * The KVM_MEMORY_ENCRYPT_OP uAPI is utter garbage and takes an "unsigned long"
+>   * instead of a proper struct.  The size of the parameter is embedded in the
+> @@ -76,6 +109,7 @@ kvm_static_assert(SEV_RET_SUCCESS == 0);
+>  
+>  void sev_vm_init(struct kvm_vm *vm);
+>  void sev_es_vm_init(struct kvm_vm *vm);
+> +void snp_vm_init(struct kvm_vm *vm);
+>  
+>  static inline void sev_register_encrypted_memory(struct kvm_vm *vm,
+>  						 struct userspace_mem_region *region)
+> @@ -99,4 +133,17 @@ static inline void sev_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
+>  	vm_sev_ioctl(vm, KVM_SEV_LAUNCH_UPDATE_DATA, &update_data);
+>  }
+>  
+> +static inline void snp_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
+> +					  uint64_t hva, uint64_t size, uint8_t type)
+> +{
+> +	struct kvm_sev_snp_launch_update update_data = {
+> +		.uaddr = hva,
+> +		.gfn_start = gpa >> PAGE_SHIFT,
+> +		.len = size,
+> +		.type = type,
+> +	};
+> +
+> +	vm_sev_ioctl(vm, KVM_SEV_SNP_LAUNCH_UPDATE, &update_data);
+> +}
+> +
+>  #endif /* SELFTEST_KVM_SEV_H */
+> diff --git a/tools/testing/selftests/kvm/lib/x86/sev.c b/tools/testing/selftests/kvm/lib/x86/sev.c
+> index 280ec42e281b..17d493e9907a 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/sev.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/sev.c
+> @@ -31,7 +31,8 @@ bool is_sev_vm(struct kvm_vm *vm)
+>   * and find the first range, but that's correct because the condition
+>   * expression would cause us to quit the loop.
+>   */
+> -static void encrypt_region(struct kvm_vm *vm, struct userspace_mem_region *region)
+> +static void encrypt_region(struct kvm_vm *vm, struct userspace_mem_region *region,
+> +			   uint8_t page_type)
+>  {
+>  	const struct sparsebit *protected_phy_pages = region->protected_phy_pages;
+>  	const vm_paddr_t gpa_base = region->region.guest_phys_addr;
+> @@ -41,13 +42,35 @@ static void encrypt_region(struct kvm_vm *vm, struct userspace_mem_region *regio
+>  	if (!sparsebit_any_set(protected_phy_pages))
+>  		return;
+>  
+> -	sev_register_encrypted_memory(vm, region);
+> +	if (!is_sev_snp_vm(vm))
+> +		sev_register_encrypted_memory(vm, region);
+>  
+>  	sparsebit_for_each_set_range(protected_phy_pages, i, j) {
+>  		const uint64_t size = (j - i + 1) * vm->page_size;
+>  		const uint64_t offset = (i - lowest_page_in_region) * vm->page_size;
+>  
+> -		sev_launch_update_data(vm, gpa_base + offset, size);
+> +		if (is_sev_snp_vm(vm)) {
+
+Curly braces are unnecessary.
+
+> +			snp_launch_update_data(vm, gpa_base + offset,
+> +					       (uint64_t)addr_gpa2hva(vm, gpa_base + offset),
+> +					       size, page_type);
+> +		} else {
+> +			sev_launch_update_data(vm, gpa_base + offset, size);
+> +		}
+> +	}
+> +}
+> +
+> +static void privatize_region(struct kvm_vm *vm, struct userspace_mem_region *region)
+
+Can't this just be a param to encrypt_region() that also says "make it private"?
+
+> +{
+> +	const struct sparsebit *protected_phy_pages = region->protected_phy_pages;
+> +	const vm_paddr_t gpa_base = region->region.guest_phys_addr;
+> +	const sparsebit_idx_t lowest_page_in_region = gpa_base >> vm->page_shift;
+> +	sparsebit_idx_t i, j;
+> +
+> +	sparsebit_for_each_set_range(protected_phy_pages, i, j) {
+> +		const uint64_t size = (j - i + 1) * vm->page_size;
+> +		const uint64_t offset = (i - lowest_page_in_region) * vm->page_size;
+> +
+> +		vm_mem_set_private(vm, gpa_base + offset, size);
+>  	}
+>  }
+>  
+> @@ -77,6 +100,14 @@ void sev_es_vm_init(struct kvm_vm *vm)
+>  	}
+>  }
+>  
+> +void snp_vm_init(struct kvm_vm *vm)
+> +{
+> +	struct kvm_sev_init init = { 0 };
+> +
+> +	assert(vm->type == KVM_X86_SNP_VM);
+
+Use TEST_ASSERT(), or do nothing, don't use assert().
+
+> +	vm_sev_ioctl(vm, KVM_SEV_INIT2, &init);
+> +}
+> +
+>  void sev_vm_launch(struct kvm_vm *vm, uint32_t policy)
+>  {
+>  	struct kvm_sev_launch_start launch_start = {
+> @@ -93,7 +124,7 @@ void sev_vm_launch(struct kvm_vm *vm, uint32_t policy)
+>  	TEST_ASSERT_EQ(status.state, SEV_GUEST_STATE_LAUNCH_UPDATE);
+>  
+>  	hash_for_each(vm->regions.slot_hash, ctr, region, slot_node)
+> -		encrypt_region(vm, region);
+> +		encrypt_region(vm, region, 0);
+
+Please add an enum/macro instead of open coding a literal '0'.  I gotta assume
+there's an appropriate name for page type '0'.
+
+>  
+>  	if (policy & SEV_POLICY_ES)
+>  		vm_sev_ioctl(vm, KVM_SEV_LAUNCH_UPDATE_VMSA, NULL);
 
