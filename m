@@ -1,274 +1,972 @@
-Return-Path: <linux-kernel+bounces-510967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B628A32436
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:04:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1427A3243E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C07516889D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44573A86E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61AA209F44;
-	Wed, 12 Feb 2025 11:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E9B209F4D;
+	Wed, 12 Feb 2025 11:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="F76rIGzT"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="RtbBqBQH"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C630C1F4299
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DCF20969A;
+	Wed, 12 Feb 2025 11:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739358269; cv=none; b=kEmXVLV+lg0n12N+5rsForNbyNegm1y68qYo895+77keediuqSa6HoqwA0W0nGGYo6lP8/0Vpe8ahmWPDnhPf+uqlQhh6e1DcC/uQmumuqjHKSLhPW0GOYaAWbyL3lFfZDhHfo02psRl8/c8QThW4LiZcVgvj/ryNTGXAnNciMY=
+	t=1739358315; cv=none; b=F74i6K3dm+ZgGtRxZhkJ+0jFfP9B4tZ7Jjsqq6gzm8EdJLvH+MFrbLBLfxRl69CqYZ6MvKS49mLnSnWWDaZvHXFxycTO3u+xZigt8wYrO4bGpmqUT1BkrK7R8ing0sd3fiXY3bvMM6I0+UBIkYEEQTJhZgSVz591MpdqAluJgSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739358269; c=relaxed/simple;
-	bh=W1dlGHxCQbRS0uYSerDMSpI2w1rSU1kndDeoEazJDww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X7rHh3lqVu925GemiMCYEClX67YJXnig1gpC5qmHvURdIGLgm1OcldSPXT08IZCodOXSh3DLTpiMwOHTthAK1CkhjWhwNldmiOqTY+3WgHyh1RIPFC6bZfTM6Iw88w0sfL78fbHYSg5pb35oYmI4Y/O37Mzgr6XWwIVIqhjuSws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=F76rIGzT; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38dd91c313bso2074658f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:04:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739358266; x=1739963066; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=W1dlGHxCQbRS0uYSerDMSpI2w1rSU1kndDeoEazJDww=;
-        b=F76rIGzTVhJYdzYKmUDxsHC6Sk6PdVfp+qQjQFq6IS+U40eV0VN5m/pgbfIWgVuBF0
-         w8eYhA12MnQi5+RNridBDj8Yn6VcKlYCw6a89VGAX4a1u+hCZDqjcRxevvJhsPt9adQc
-         yk4/SkCHrO9lRvaJgOmX6H5clb78Qh8XwyIHFizxQrUosvU/P4ZJQjFD3S2r67rIFPO2
-         MP+g+tlONWDb2pgILgjEc+B1p+NAoZmjfOVrrE6gIIjfndxoqTdQNNGnJCNotvVoRrag
-         XpWiLONl37mvCc4yZZMb+Qc5fGe0dPeJBB1N7+6t22C5ID470ZYn/RpPwFEvWQ5IAlA7
-         wvSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739358266; x=1739963066;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W1dlGHxCQbRS0uYSerDMSpI2w1rSU1kndDeoEazJDww=;
-        b=mWUavRSwd4r3ARDp4t7cTddldoKfL3A7tW8EnNaVgmJ1IUvUfoL/3YObhCeIsEJWV4
-         iQnuU5Iq9sI3u0r6gtzfBz36Km5DeWJQ51TYG6zaOMK5+eQxEmvbJBTZzPDWwSeA7L4v
-         fnzY2qjHCi/Z1vQWYmGJ3SinCRXIyz7Wvit/AhNEtSI+iBPPloQPY8k1C9aqAoXZ7TvS
-         YEjJjvubX1+Rf0+9bq+SWeX+8cHRnZcPVdcfY/DvCGTH1+FMMdn4b9Ie4/UH/H1ohN4t
-         Hs/JINUuG/Gh18E1oX6YSaTTq/4UUrpW0eoVozy/suK7FdIR8DnQmOI7iWlpiLYpsiJk
-         qJGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6fAR9I8Fw0DLZHy9p3LQnYfUSWD0kswkmYVs+WkvwBrb94aEZ2rjgR9ej8CkzTS2EiYEnE9mEmK+UyuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw+VpOkrGMi7mLcdVJ0/of9Gw/2DWvaIOS7Uvb0Zik89sx1gww
-	b795l3HJPCp0k88tNUfhp4n/0ePzlX7gE3zmmUEcW/bDL+zTjzY2/Aa08ZNDl48=
-X-Gm-Gg: ASbGncu4ALCiy4lGR9tJyqYnWP+5lavqAVfcQC+wLAYGYxQXWC7kla1nsuc0KE16+OK
-	HDrYtZ6NfgG5EaKUPZjuixHidEg8AHzjkHMzRyJOPfuZupmqUvcfCQtDgzkzc4KRDmVY3PTYmQx
-	Z9ItGxZrXLbauYc+oVoja3gzOfhrJCkAa4fb2+FNIdXC6hSN/7p8ruA9KkAZp0giWbVPQY2IvDK
-	RpGgmfSSfCcjVDpzN2wOfegxJgUXMhvJOkYC7Y1FM1ZiqikibZtSahiJsPMjkiGkEeZ3hNf5F3T
-	Kc+pmlWGRxrcA2glXwzB4vpovXeMH5fvqGkunCE6B1QY5QqknqnuVNHzfJUMRiHfhINsAuM/bTJ
-	mvTjgm3VnoNMrUjpR4HKXrrb/s8YQAIcr+dVABA==
-X-Google-Smtp-Source: AGHT+IEV3LceUhlJZevV3XSLTkc5PdO981bVL7+QH8DsCH7ZiHwizJ5uYyA7Coj7xe6Azd4NSjigzg==
-X-Received: by 2002:a5d:6da4:0:b0:385:e17a:ce61 with SMTP id ffacd0b85a97d-38dea605267mr2044963f8f.53.1739358265968;
-        Wed, 12 Feb 2025 03:04:25 -0800 (PST)
-Received: from ?IPV6:2003:e5:8714:500:2aea:6ec9:1d88:c1ef? (p200300e5871405002aea6ec91d88c1ef.dip0.t-ipconnect.de. [2003:e5:8714:500:2aea:6ec9:1d88:c1ef])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dbde1dfaesm17340834f8f.90.2025.02.12.03.04.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 03:04:25 -0800 (PST)
-Message-ID: <f6822b63-ebda-4134-b91e-b189006d072a@suse.com>
-Date: Wed, 12 Feb 2025 12:04:24 +0100
+	s=arc-20240116; t=1739358315; c=relaxed/simple;
+	bh=X30jzdTK08/rGJWQML18A/wRFsTfHLYnanuUvf4yB+k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tzN7yJN9c1iOQyykPvxilAM4qXMGOM8n6TzVuqbku5vRnEGw6vKMG1YoW6fU74dw7aOVmxRuVJZWBEzV8BsKOciChZ/qSHZ0iWTT5PUTeohwPGPkV5k2rcIyqr8QuV+QYL/sCFiAbUatHjVpp7RXFX23K5h6SstWmc+quLZYLME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=RtbBqBQH; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4YtFp70Nzkz9tC3;
+	Wed, 12 Feb 2025 12:05:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1739358303; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+n/GdP6EppMGHTS6u7anhwpTi7SfGPgvqwKvAyC1teM=;
+	b=RtbBqBQHmLdABObFG6hBcjMtFGlTiiqbIFn8TopC/3iwc6W/P99QXEO7PsJwKnnN1yo8Ij
+	uKHRFwTOLOJ+DRriXgA+pfseXt/Ir16Znw0SKZmaLMimrh3iyKG4ttyNQZXU98Euvc37M4
+	Vilr93mR5LWnQzY0tlrUilTjz8YTFWYTOupLzoeH52ACavB2ZZENWaMg4s84jRTOpJSEF8
+	GOmy5+JWxhwsun+n6qPmSgsaRvJotEt3F0g2Dc2v3mObA9Y2shBnyjGTYtFuOwPa6+RhMY
+	xLutxekAh31fu6M8EdNlTU0r1tI3BPTx8iEWQh5sC0kEm+xloy7h6RzutxQStA==
+Message-ID: <59c601f04990a702c77c0dfc692d4d1eeeb6494d.camel@mailbox.org>
+Subject: Re: [PATCH v4] drm/sched: Use struct for drm_sched_init() params
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Philipp Stanner <phasta@kernel.org>, Min Ma <min.ma@amd.com>, Lizhi Hou
+ <lizhi.hou@amd.com>, Oded Gabbay <ogabbay@kernel.org>, Alex Deucher
+ <alexander.deucher@amd.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Lucas Stach
+ <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
+ Christian Gmeiner <christian.gmeiner@gmail.com>, Frank Binns
+ <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Qiang Yu
+ <yuq825@gmail.com>,  Rob Clark <robdclark@gmail.com>, Sean Paul
+ <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,  Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Marijn Suijten
+ <marijn.suijten@somainline.org>, Karol Herbst <kherbst@redhat.com>, Lyude
+ Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>, Boris
+ Brezillon <boris.brezillon@collabora.com>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Matthew Brost <matthew.brost@intel.com>, Melissa Wen <mwen@igalia.com>, 
+ =?ISO-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>, Lucas De Marchi
+ <lucas.demarchi@intel.com>, Thomas =?ISO-8859-1?Q?Hellstr=F6m?=
+ <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Sunil Khatri <sunil.khatri@amd.com>,  Lijo Lazar <lijo.lazar@amd.com>,
+ Hawking Zhang <Hawking.Zhang@amd.com>, Mario Limonciello
+ <mario.limonciello@amd.com>, Ma Jun <Jun.Ma2@amd.com>, Yunxiang Li
+ <Yunxiang.Li@amd.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, 
+	lima@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, Christian Gmeiner <cgmeiner@igalia.com>, 
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Date: Wed, 12 Feb 2025 12:04:46 +0100
+In-Reply-To: <20250211111422.21235-2-phasta@kernel.org>
+References: <20250211111422.21235-2-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] xen/swiotlb: relax alignment requirements
-To: Jan Beulich <jbeulich@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- xen-devel@lists.xenproject.org, Jan Vejvalka <jan.vejvalka@lfmotol.cuni.cz>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250211120432.29493-1-jgross@suse.com>
- <20250211120432.29493-2-jgross@suse.com>
- <5255102c-de9f-4cd8-8311-5d5b5eb26832@suse.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <5255102c-de9f-4cd8-8311-5d5b5eb26832@suse.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------ZmYW6lsGiLacWZAkMhxxj0vd"
+X-MBO-RS-ID: 3ba7745a5f7525ca059
+X-MBO-RS-META: 3bu44jpkz7fgqnse158c1w364bu6x3au
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------ZmYW6lsGiLacWZAkMhxxj0vd
-Content-Type: multipart/mixed; boundary="------------7LxECW4oYiLRoqHgKD7xD2zq";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Jan Beulich <jbeulich@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- xen-devel@lists.xenproject.org, Jan Vejvalka <jan.vejvalka@lfmotol.cuni.cz>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Message-ID: <f6822b63-ebda-4134-b91e-b189006d072a@suse.com>
-Subject: Re: [PATCH 1/2] xen/swiotlb: relax alignment requirements
-References: <20250211120432.29493-1-jgross@suse.com>
- <20250211120432.29493-2-jgross@suse.com>
- <5255102c-de9f-4cd8-8311-5d5b5eb26832@suse.com>
-In-Reply-To: <5255102c-de9f-4cd8-8311-5d5b5eb26832@suse.com>
-Autocrypt-Gossip: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJ3BBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AAIQkQoDSui/t3IH4WIQQ+pJkfkcoLMCa4X6CgNK6L+3cgfgn7AJ9DmMd0SMJE
- ePbc7/m22D2v04iu7ACffXTdZQhNl557tJuDXZSBxDmW/tLOwU0EWTecRBAIAIK5OMKMU5R2
- Lk2bbjgX7vyQuCFFyKf9rC/4itNwhYWFSlKzVj3WJBDsoi2KvPm7AI+XB6NIkNAkshL5C0kd
- pcNd5Xo0jRR5/WE/bT7LyrJ0OJWS/qUit5eNNvsO+SxGAk28KRa1ieVLeZi9D03NL0+HIAtZ
- tecfqwgl3Y72UpLUyt+r7LQhcI/XR5IUUaD4C/chB4Vq2QkDKO7Q8+2HJOrFIjiVli4lU+Sf
- OBp64m//Y1xys++Z4ODoKh7tkh5DxiO3QBHG7bHK0CSQsJ6XUvPVYubAuy1XfSDzSeSBl//C
- v78Fclb+gi9GWidSTG/4hsEzd1fY5XwCZG/XJJY9M/sAAwUH/09Ar9W2U1Qm+DwZeP2ii3Ou
- 14Z9VlVVPhcEmR/AFykL9dw/OV2O/7cdi52+l00reUu6Nd4Dl8s4f5n8b1YFzmkVVIyhwjvU
- jxtPyUgDOt6DRa+RaDlXZZmxQyWcMv2anAgYWGVszeB8Myzsw8y7xhBEVV1S+1KloCzw4V8Z
- DSJrcsZlyMDoiTb7FyqxwQnM0f6qHxWbmOOnbzJmBqpNpFuDcz/4xNsymJylm6oXiucHQBAP
- Xb/cE1YNHpuaH4SRhIxwQilCYEznWowQphNAbJtEKOmcocY7EbSt8VjXTzmYENkIfkrHRyXQ
- dUm5AoL51XZljkCqNwrADGkTvkwsWSvCSQQYEQIACQUCWTecRAIbDAAKCRCgNK6L+3cgfuef
- AJ9wlZQNQUp0KwEf8Tl37RmcxCL4bQCcC5alCSMzUBJ5DBIcR4BY+CyQFAs=
+On Tue, 2025-02-11 at 12:14 +0100, Philipp Stanner wrote:
+> drm_sched_init() has a great many parameters and upcoming new
+> functionality for the scheduler might add even more. Generally, the
+> great number of parameters reduces readability and has already caused
+> one missnaming, addressed in:
+>=20
+> commit 6f1cacf4eba7 ("drm/nouveau: Improve variable name in
+> nouveau_sched_init()").
+>=20
+> Introduce a new struct for the scheduler init parameters and port all
+> users.
+>=20
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+> Acked-by: Matthew Brost <matthew.brost@intel.com> # for Xe
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com> # for
+> Panfrost and Panthor
+> Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com> # for Etnaviv
+> Reviewed-by: Frank Binns <frank.binns@imgtec.com> # for Imagination
+> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com> # for Sched
+> Reviewed-by: Ma=C3=ADra Canal <mcanal@igalia.com> # for v3d
 
---------------7LxECW4oYiLRoqHgKD7xD2zq
-Content-Type: multipart/mixed; boundary="------------nLntjFo3rp3bHtu0VCMr60Tz"
+Applied this one with the additional RBs to drm-misc-next
 
---------------nLntjFo3rp3bHtu0VCMr60Tz
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+P.
 
-T24gMTIuMDIuMjUgMDc6NTMsIEphbiBCZXVsaWNoIHdyb3RlOg0KPiBPbiAxMS4wMi4yMDI1
-IDEzOjA0LCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0KPj4gV2hlbiBtYXBwaW5nIGEgYnVmZmVy
-IGZvciBETUEgdmlhIC5tYXBfcGFnZSBvciAubWFwX3NnIERNQSBvcGVyYXRpb25zLA0KPj4g
-dGhlcmUgaXMgbm8gbmVlZCB0byBjaGVjayB0aGUgbWFjaGluZSBmcmFtZXMgdG8gYmUgYWxp
-Z25lZCBhY2NvcmRpbmcNCj4+IHRvIHRoZSBtYXBwZWQgYXJlYXMgc2l6ZS4gQWxsIHdoYXQg
-aXMgbmVlZGVkIGluIHRoZXNlIGNhc2VzIGlzIHRoYXQgdGhlDQo+PiBidWZmZXIgaXMgY29u
-dGlndW91cyBhdCBtYWNoaW5lIGxldmVsLg0KPiANCj4gSXMgdGhpcyByZWFsbHkgdHJ1ZSBp
-biBhbGwgY2FzZXM/IENhbid0IGUuZy4gY29tcG91bmQgcGFnZXMgbWFrZSBpdCBoZXJlLA0K
-PiB3aXRoIHRoZSBjYWxsZXIgdGhlbiBzdGlsbCBiZWluZyBwZXJtaXR0ZWQgdG8gYXNzdW1l
-IGhpZ2hlciB0aGFuIHBhZ2UNCj4gYWxpZ25tZW50PyBBbGlnbm1lbnQgY2hlY2tpbmcgaW4g
-eGVuX3N3aW90bGJfbWFwX3BhZ2UoKSB3b3VsZCBwZXJoYXBzDQo+IG5lZWQgZG9pbmcgd2l0
-aCB0aGUgYmFzZSBhZGRyZXNzIG9mIHRoZSBpbmNvbWluZyBwYWdlLCBpLmUuIGV4Y2x1ZGlu
-Zw0KPiB0aGUgaW5jb21pbmcgb2Zmc2V0Lg0KDQpUaGUgRE1BIGludGVyZmFjZXMgaW4gcXVl
-c3Rpb24gKC5tYXBfcGFnZSBhbmQgLm1hcF9zZykgYXJlIGV4cGxpY2l0bHkNCmRlc2lnbmVk
-IGZvciBETUEgc3RyZWFtaW5nIG1vZGUuIEkgZG9uJ3QgdGhpbmsgc3RyZWFtaW5nIG1vZGUg
-cmVxdWlyZXMgYQ0Kc3BlY2lhbCBwYWdlIGFsaWdubWVudC4NCg0KDQpKdWVyZ2VuDQo=
---------------nLntjFo3rp3bHtu0VCMr60Tz
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+> ---
+> Changes in v4:
+> =C2=A0 - Add forgotten driver accel/amdxdna. (Me)
+> =C2=A0 - Rephrase the "init to NULL" comments. (Tvrtko)
+> =C2=A0 - Apply RBs by Tvrtko and Maira.
+> =C2=A0 - Terminate the last struct members with a comma, so that future
+> =C2=A0=C2=A0=C2=A0 fields can be added with a minimal patch diff. (Me)
+>=20
+> Changes in v3:
+> =C2=A0 - Various formatting requirements.
+>=20
+> Changes in v2:
+> =C2=A0 - Point out that the hang-limit is deprecated. (Christian)
+> =C2=A0 - Initialize the structs to 0 at declaration. (Planet Earth)
+> =C2=A0 - Don't set stuff explicitly to 0 / NULL. (Tvrtko)
+> =C2=A0 - Make the structs const where possible. (Boris)
+> =C2=A0 - v3d: Use just 1, universal, function for sched-init. (Ma=C3=ADra=
+)
+> ---
+> =C2=A0drivers/accel/amdxdna/aie2_ctx.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 12 +++-
+> =C2=A0drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 18 ++++--
+> =C2=A0drivers/gpu/drm/etnaviv/etnaviv_sched.c=C2=A0=C2=A0=C2=A0 | 20 +++-=
+---
+> =C2=A0drivers/gpu/drm/imagination/pvr_queue.c=C2=A0=C2=A0=C2=A0 | 18 ++++=
+--
+> =C2=A0drivers/gpu/drm/lima/lima_sched.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 16 ++++--
+> =C2=A0drivers/gpu/drm/msm/msm_ringbuffer.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 17 +++---
+> =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.c=C2=A0=C2=A0=C2=A0 | 16 ++++=
+--
+> =C2=A0drivers/gpu/drm/panfrost/panfrost_job.c=C2=A0=C2=A0=C2=A0 | 20 ++++=
+---
+> =C2=A0drivers/gpu/drm/panthor/panthor_mmu.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 16 ++++--
+> =C2=A0drivers/gpu/drm/panthor/panthor_sched.c=C2=A0=C2=A0=C2=A0 | 28 ++++=
+++----
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c=C2=A0=C2=A0=C2=A0=C2=A0 | 50=
+ ++++++-----------
+> =C2=A0drivers/gpu/drm/v3d/v3d_sched.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 65 +++++++++-----------
+> --
+> =C2=A0drivers/gpu/drm/xe/xe_execlist.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 15 +++--
+> =C2=A0drivers/gpu/drm/xe/xe_gpu_scheduler.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 17 +++++-
+> =C2=A0include/drm/gpu_scheduler.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 36 ++++++++++--
+> =C2=A015 files changed, 210 insertions(+), 154 deletions(-)
+>=20
+> diff --git a/drivers/accel/amdxdna/aie2_ctx.c
+> b/drivers/accel/amdxdna/aie2_ctx.c
+> index 2799729801f6..8ac01bc2f0db 100644
+> --- a/drivers/accel/amdxdna/aie2_ctx.c
+> +++ b/drivers/accel/amdxdna/aie2_ctx.c
+> @@ -516,6 +516,14 @@ int aie2_hwctx_init(struct amdxdna_hwctx *hwctx)
+> =C2=A0{
+> =C2=A0	struct amdxdna_client *client =3D hwctx->client;
+> =C2=A0	struct amdxdna_dev *xdna =3D client->xdna;
+> +	const struct drm_sched_init_args args =3D {
+> +		.ops =3D &sched_ops,
+> +		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> +		.credit_limit =3D HWCTX_MAX_CMDS,
+> +		.timeout =3D msecs_to_jiffies(HWCTX_MAX_TIMEOUT),
+> +		.name =3D hwctx->name,
+> +		.dev =3D xdna->ddev.dev,
+> +	};
+> =C2=A0	struct drm_gpu_scheduler *sched;
+> =C2=A0	struct amdxdna_hwctx_priv *priv;
+> =C2=A0	struct amdxdna_gem_obj *heap;
+> @@ -573,9 +581,7 @@ int aie2_hwctx_init(struct amdxdna_hwctx *hwctx)
+> =C2=A0	might_lock(&priv->io_lock);
+> =C2=A0	fs_reclaim_release(GFP_KERNEL);
+> =C2=A0
+> -	ret =3D drm_sched_init(sched, &sched_ops, NULL,
+> DRM_SCHED_PRIORITY_COUNT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 HWCTX_MAX_CMDS, 0,
+> msecs_to_jiffies(HWCTX_MAX_TIMEOUT),
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NULL, NULL, hwctx->name, xdna-
+> >ddev.dev);
+> +	ret =3D drm_sched_init(sched, &args);
+> =C2=A0	if (ret) {
+> =C2=A0		XDNA_ERR(xdna, "Failed to init DRM scheduler. ret
+> %d", ret);
+> =C2=A0		goto free_cmd_bufs;
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> index 96316111300a..daa65971c503 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> @@ -2816,6 +2816,12 @@ static int amdgpu_device_fw_loading(struct
+> amdgpu_device *adev)
+> =C2=A0
+> =C2=A0static int amdgpu_device_init_schedulers(struct amdgpu_device *adev=
+)
+> =C2=A0{
+> +	struct drm_sched_init_args args =3D {
+> +		.ops =3D &amdgpu_sched_ops,
+> +		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> +		.timeout_wq =3D adev->reset_domain->wq,
+> +		.dev =3D adev->dev,
+> +	};
+> =C2=A0	long timeout;
+> =C2=A0	int r, i;
+> =C2=A0
+> @@ -2841,12 +2847,12 @@ static int
+> amdgpu_device_init_schedulers(struct amdgpu_device *adev)
+> =C2=A0			break;
+> =C2=A0		}
+> =C2=A0
+> -		r =3D drm_sched_init(&ring->sched, &amdgpu_sched_ops,
+> NULL,
+> -				=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -				=C2=A0=C2=A0 ring->num_hw_submission, 0,
+> -				=C2=A0=C2=A0 timeout, adev->reset_domain->wq,
+> -				=C2=A0=C2=A0 ring->sched_score, ring->name,
+> -				=C2=A0=C2=A0 adev->dev);
+> +		args.timeout =3D timeout;
+> +		args.credit_limit =3D ring->num_hw_submission;
+> +		args.score =3D ring->sched_score;
+> +		args.name =3D ring->name;
+> +
+> +		r =3D drm_sched_init(&ring->sched, &args);
+> =C2=A0		if (r) {
+> =C2=A0			DRM_ERROR("Failed to create scheduler on
+> ring %s.\n",
+> =C2=A0				=C2=A0 ring->name);
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_sched.c
+> b/drivers/gpu/drm/etnaviv/etnaviv_sched.c
+> index 5b67eda122db..76a3a3e517d8 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_sched.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_sched.c
+> @@ -144,17 +144,17 @@ int etnaviv_sched_push_job(struct
+> etnaviv_gem_submit *submit)
+> =C2=A0
+> =C2=A0int etnaviv_sched_init(struct etnaviv_gpu *gpu)
+> =C2=A0{
+> -	int ret;
+> +	const struct drm_sched_init_args args =3D {
+> +		.ops =3D &etnaviv_sched_ops,
+> +		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> +		.credit_limit =3D etnaviv_hw_jobs_limit,
+> +		.hang_limit =3D etnaviv_job_hang_limit,
+> +		.timeout =3D msecs_to_jiffies(500),
+> +		.name =3D dev_name(gpu->dev),
+> +		.dev =3D gpu->dev,
+> +	};
+> =C2=A0
+> -	ret =3D drm_sched_init(&gpu->sched, &etnaviv_sched_ops, NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 etnaviv_hw_jobs_limit,
+> etnaviv_job_hang_limit,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 msecs_to_jiffies(500), NULL, NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 dev_name(gpu->dev), gpu->dev);
+> -	if (ret)
+> -		return ret;
+> -
+> -	return 0;
+> +	return drm_sched_init(&gpu->sched, &args);
+> =C2=A0}
+> =C2=A0
+> =C2=A0void etnaviv_sched_fini(struct etnaviv_gpu *gpu)
+> diff --git a/drivers/gpu/drm/imagination/pvr_queue.c
+> b/drivers/gpu/drm/imagination/pvr_queue.c
+> index c4f08432882b..21c185d18bb2 100644
+> --- a/drivers/gpu/drm/imagination/pvr_queue.c
+> +++ b/drivers/gpu/drm/imagination/pvr_queue.c
+> @@ -1210,6 +1210,17 @@ struct pvr_queue *pvr_queue_create(struct
+> pvr_context *ctx,
+> =C2=A0		},
+> =C2=A0	};
+> =C2=A0	struct pvr_device *pvr_dev =3D ctx->pvr_dev;
+> +	const struct drm_sched_init_args sched_args =3D {
+> +		.ops =3D &pvr_queue_sched_ops,
+> +		.submit_wq =3D pvr_dev->sched_wq,
+> +		.num_rqs =3D 1,
+> +		.credit_limit =3D 64 * 1024,
+> +		.hang_limit =3D 1,
+> +		.timeout =3D msecs_to_jiffies(500),
+> +		.timeout_wq =3D pvr_dev->sched_wq,
+> +		.name =3D "pvr-queue",
+> +		.dev =3D pvr_dev->base.dev,
+> +	};
+> =C2=A0	struct drm_gpu_scheduler *sched;
+> =C2=A0	struct pvr_queue *queue;
+> =C2=A0	int ctx_state_size, err;
+> @@ -1282,12 +1293,7 @@ struct pvr_queue *pvr_queue_create(struct
+> pvr_context *ctx,
+> =C2=A0
+> =C2=A0	queue->timeline_ufo.value =3D cpu_map;
+> =C2=A0
+> -	err =3D drm_sched_init(&queue->scheduler,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 &pvr_queue_sched_ops,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 pvr_dev->sched_wq, 1, 64 * 1024, 1,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 msecs_to_jiffies(500),
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 pvr_dev->sched_wq, NULL, "pvr-queue",
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 pvr_dev->base.dev);
+> +	err =3D drm_sched_init(&queue->scheduler, &sched_args);
+> =C2=A0	if (err)
+> =C2=A0		goto err_release_ufo;
+> =C2=A0
+> diff --git a/drivers/gpu/drm/lima/lima_sched.c
+> b/drivers/gpu/drm/lima/lima_sched.c
+> index b40c90e97d7e..825135a26aa4 100644
+> --- a/drivers/gpu/drm/lima/lima_sched.c
+> +++ b/drivers/gpu/drm/lima/lima_sched.c
+> @@ -515,18 +515,22 @@ int lima_sched_pipe_init(struct lima_sched_pipe
+> *pipe, const char *name)
+> =C2=A0{
+> =C2=A0	unsigned int timeout =3D lima_sched_timeout_ms > 0 ?
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lima_sched_timeout_ms : 100=
+00;
+> +	const struct drm_sched_init_args args =3D {
+> +		.ops =3D &lima_sched_ops,
+> +		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> +		.credit_limit =3D 1,
+> +		.hang_limit =3D lima_job_hang_limit,
+> +		.timeout =3D msecs_to_jiffies(timeout),
+> +		.name =3D name,
+> +		.dev =3D pipe->ldev->dev,
+> +	};
+> =C2=A0
+> =C2=A0	pipe->fence_context =3D dma_fence_context_alloc(1);
+> =C2=A0	spin_lock_init(&pipe->fence_lock);
+> =C2=A0
+> =C2=A0	INIT_WORK(&pipe->recover_work, lima_sched_recover_work);
+> =C2=A0
+> -	return drm_sched_init(&pipe->base, &lima_sched_ops, NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lima_job_hang_limit,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 msecs_to_jiffies(timeout), NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL, name, pipe->ldev->dev);
+> +	return drm_sched_init(&pipe->base, &args);
+> =C2=A0}
+> =C2=A0
+> =C2=A0void lima_sched_pipe_fini(struct lima_sched_pipe *pipe)
+> diff --git a/drivers/gpu/drm/msm/msm_ringbuffer.c
+> b/drivers/gpu/drm/msm/msm_ringbuffer.c
+> index c803556a8f64..c5651c39ac2a 100644
+> --- a/drivers/gpu/drm/msm/msm_ringbuffer.c
+> +++ b/drivers/gpu/drm/msm/msm_ringbuffer.c
+> @@ -59,8 +59,14 @@ static const struct drm_sched_backend_ops
+> msm_sched_ops =3D {
+> =C2=A0struct msm_ringbuffer *msm_ringbuffer_new(struct msm_gpu *gpu, int
+> id,
+> =C2=A0		void *memptrs, uint64_t memptrs_iova)
+> =C2=A0{
+> +	struct drm_sched_init_args args =3D {
+> +		.ops =3D &msm_sched_ops,
+> +		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> +		.credit_limit =3D num_hw_submissions,
+> +		.timeout =3D MAX_SCHEDULE_TIMEOUT,
+> +		.dev =3D gpu->dev->dev,
+> +	};
+> =C2=A0	struct msm_ringbuffer *ring;
+> -	long sched_timeout;
+> =C2=A0	char name[32];
+> =C2=A0	int ret;
+> =C2=A0
+> @@ -87,6 +93,7 @@ struct msm_ringbuffer *msm_ringbuffer_new(struct
+> msm_gpu *gpu, int id,
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	msm_gem_object_set_name(ring->bo, "ring%d", id);
+> +	args.name =3D to_msm_bo(ring->bo)->name,
+> =C2=A0
+> =C2=A0	ring->end=C2=A0=C2=A0 =3D ring->start + (MSM_GPU_RINGBUFFER_SZ >> =
+2);
+> =C2=A0	ring->next=C2=A0 =3D ring->start;
+> @@ -95,13 +102,7 @@ struct msm_ringbuffer *msm_ringbuffer_new(struct
+> msm_gpu *gpu, int id,
+> =C2=A0	ring->memptrs =3D memptrs;
+> =C2=A0	ring->memptrs_iova =3D memptrs_iova;
+> =C2=A0
+> -	 /* currently managing hangcheck ourselves: */
+> -	sched_timeout =3D MAX_SCHEDULE_TIMEOUT;
+> -
+> -	ret =3D drm_sched_init(&ring->sched, &msm_sched_ops, NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 num_hw_submissions, 0, sched_timeout,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NULL, NULL, to_msm_bo(ring->bo)->name,
+> gpu->dev->dev);
+> +	ret =3D drm_sched_init(&ring->sched, &args);
+> =C2=A0	if (ret) {
+> =C2=A0		goto fail;
+> =C2=A0	}
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c
+> b/drivers/gpu/drm/nouveau/nouveau_sched.c
+> index 4412f2711fb5..d326e55d2d24 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+> @@ -404,7 +404,14 @@ nouveau_sched_init(struct nouveau_sched *sched,
+> struct nouveau_drm *drm,
+> =C2=A0{
+> =C2=A0	struct drm_gpu_scheduler *drm_sched =3D &sched->base;
+> =C2=A0	struct drm_sched_entity *entity =3D &sched->entity;
+> -	const long timeout =3D
+> msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS);
+> +	struct drm_sched_init_args args =3D {
+> +		.ops =3D &nouveau_sched_ops,
+> +		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> +		.credit_limit =3D credit_limit,
+> +		.timeout =3D
+> msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS),
+> +		.name =3D "nouveau_sched",
+> +		.dev =3D drm->dev->dev
+> +	};
+> =C2=A0	int ret;
+> =C2=A0
+> =C2=A0	if (!wq) {
+> @@ -416,10 +423,9 @@ nouveau_sched_init(struct nouveau_sched *sched,
+> struct nouveau_drm *drm,
+> =C2=A0		sched->wq =3D wq;
+> =C2=A0	}
+> =C2=A0
+> -	ret =3D drm_sched_init(drm_sched, &nouveau_sched_ops, wq,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NOUVEAU_SCHED_PRIORITY_COUNT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 credit_limit, 0, timeout,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NULL, NULL, "nouveau_sched", drm->dev-
+> >dev);
+> +	args.submit_wq =3D wq,
+> +
+> +	ret =3D drm_sched_init(drm_sched, &args);
+> =C2=A0	if (ret)
+> =C2=A0		goto fail_wq;
+> =C2=A0
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c
+> b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index 9b8e82fb8bc4..5657106c2f7d 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -836,8 +836,16 @@ static irqreturn_t panfrost_job_irq_handler(int
+> irq, void *data)
+> =C2=A0
+> =C2=A0int panfrost_job_init(struct panfrost_device *pfdev)
+> =C2=A0{
+> +	struct drm_sched_init_args args =3D {
+> +		.ops =3D &panfrost_sched_ops,
+> +		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> +		.credit_limit =3D 2,
+> +		.timeout =3D msecs_to_jiffies(JOB_TIMEOUT_MS),
+> +		.timeout_wq =3D pfdev->reset.wq,
+> +		.name =3D "pan_js",
+> +		.dev =3D pfdev->dev,
+> +	};
+> =C2=A0	struct panfrost_job_slot *js;
+> -	unsigned int nentries =3D 2;
+> =C2=A0	int ret, j;
+> =C2=A0
+> =C2=A0	/* All GPUs have two entries per queue, but without jobchain
+> @@ -845,7 +853,7 @@ int panfrost_job_init(struct panfrost_device
+> *pfdev)
+> =C2=A0	 * so let's just advertise one entry in that case.
+> =C2=A0	 */
+> =C2=A0	if (!panfrost_has_hw_feature(pfdev,
+> HW_FEATURE_JOBCHAIN_DISAMBIGUATION))
+> -		nentries =3D 1;
+> +		args.credit_limit =3D 1;
+> =C2=A0
+> =C2=A0	pfdev->js =3D js =3D devm_kzalloc(pfdev->dev, sizeof(*js),
+> GFP_KERNEL);
+> =C2=A0	if (!js)
+> @@ -875,13 +883,7 @@ int panfrost_job_init(struct panfrost_device
+> *pfdev)
+> =C2=A0	for (j =3D 0; j < NUM_JOB_SLOTS; j++) {
+> =C2=A0		js->queue[j].fence_context =3D
+> dma_fence_context_alloc(1);
+> =C2=A0
+> -		ret =3D drm_sched_init(&js->queue[j].sched,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 &panfrost_sched_ops, NULL,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 nentries, 0,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0
+> msecs_to_jiffies(JOB_TIMEOUT_MS),
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 pfdev->reset.wq,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 NULL, "pan_js", pfdev->dev);
+> +		ret =3D drm_sched_init(&js->queue[j].sched, &args);
+> =C2=A0		if (ret) {
+> =C2=A0			dev_err(pfdev->dev, "Failed to create
+> scheduler: %d.", ret);
+> =C2=A0			goto err_sched;
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c
+> b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index 5ce80e2532d5..f8efe07152a4 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -2278,6 +2278,16 @@ panthor_vm_create(struct panthor_device
+> *ptdev, bool for_mcu,
+> =C2=A0	u64 full_va_range =3D 1ull << va_bits;
+> =C2=A0	struct drm_gem_object *dummy_gem;
+> =C2=A0	struct drm_gpu_scheduler *sched;
+> +	const struct drm_sched_init_args sched_args =3D {
+> +		.ops =3D &panthor_vm_bind_ops,
+> +		.submit_wq =3D ptdev->mmu->vm.wq,
+> +		.num_rqs =3D 1,
+> +		.credit_limit =3D 1,
+> +		/* Bind operations are synchronous for now, no
+> timeout needed. */
+> +		.timeout =3D MAX_SCHEDULE_TIMEOUT,
+> +		.name =3D "panthor-vm-bind",
+> +		.dev =3D ptdev->base.dev,
+> +	};
+> =C2=A0	struct io_pgtable_cfg pgtbl_cfg;
+> =C2=A0	u64 mair, min_va, va_range;
+> =C2=A0	struct panthor_vm *vm;
+> @@ -2335,11 +2345,7 @@ panthor_vm_create(struct panthor_device
+> *ptdev, bool for_mcu,
+> =C2=A0		goto err_mm_takedown;
+> =C2=A0	}
+> =C2=A0
+> -	/* Bind operations are synchronous for now, no timeout
+> needed. */
+> -	ret =3D drm_sched_init(&vm->sched, &panthor_vm_bind_ops,
+> ptdev->mmu->vm.wq,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 1, 1, 0,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 MAX_SCHEDULE_TIMEOUT, NULL, NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 "panthor-vm-bind", ptdev->base.dev);
+> +	ret =3D drm_sched_init(&vm->sched, &sched_args);
+> =C2=A0	if (ret)
+> =C2=A0		goto err_free_io_pgtable;
+> =C2=A0
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c
+> b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 5844a7f639e0..f49e2dfcbc6c 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -3284,6 +3284,22 @@ static struct panthor_queue *
+> =C2=A0group_create_queue(struct panthor_group *group,
+> =C2=A0		=C2=A0=C2=A0 const struct drm_panthor_queue_create *args)
+> =C2=A0{
+> +	const struct drm_sched_init_args sched_args =3D {
+> +		.ops =3D &panthor_queue_sched_ops,
+> +		.submit_wq =3D group->ptdev->scheduler->wq,
+> +		.num_rqs =3D 1,
+> +		/*
+> +		 * The credit limit argument tells us the total
+> number of
+> +		 * instructions across all CS slots in the
+> ringbuffer, with
+> +		 * some jobs requiring twice as many as others,
+> depending on
+> +		 * their profiling status.
+> +		 */
+> +		.credit_limit =3D args->ringbuf_size / sizeof(u64),
+> +		.timeout =3D msecs_to_jiffies(JOB_TIMEOUT_MS),
+> +		.timeout_wq =3D group->ptdev->reset.wq,
+> +		.name =3D "panthor-queue",
+> +		.dev =3D group->ptdev->base.dev,
+> +	};
+> =C2=A0	struct drm_gpu_scheduler *drm_sched;
+> =C2=A0	struct panthor_queue *queue;
+> =C2=A0	int ret;
+> @@ -3354,17 +3370,7 @@ group_create_queue(struct panthor_group
+> *group,
+> =C2=A0	if (ret)
+> =C2=A0		goto err_free_queue;
+> =C2=A0
+> -	/*
+> -	 * Credit limit argument tells us the total number of
+> instructions
+> -	 * across all CS slots in the ringbuffer, with some jobs
+> requiring
+> -	 * twice as many as others, depending on their profiling
+> status.
+> -	 */
+> -	ret =3D drm_sched_init(&queue->scheduler,
+> &panthor_queue_sched_ops,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 group->ptdev->scheduler->wq, 1,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 args->ringbuf_size / sizeof(u64),
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 0, msecs_to_jiffies(JOB_TIMEOUT_MS),
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 group->ptdev->reset.wq,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NULL, "panthor-queue", group->ptdev-
+> >base.dev);
+> +	ret =3D drm_sched_init(&queue->scheduler, &sched_args);
+> =C2=A0	if (ret)
+> =C2=A0		goto err_free_queue;
+> =C2=A0
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+> b/drivers/gpu/drm/scheduler/sched_main.c
+> index a48be16ab84f..8c36a59afb72 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1244,40 +1244,24 @@ static void drm_sched_run_job_work(struct
+> work_struct *w)
+> =C2=A0 * drm_sched_init - Init a gpu scheduler instance
+> =C2=A0 *
+> =C2=A0 * @sched: scheduler instance
+> - * @ops: backend operations for this scheduler
+> - * @submit_wq: workqueue to use for submission. If NULL, an ordered
+> wq is
+> - *	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 allocated and used
+> - * @num_rqs: number of runqueues, one for each priority, up to
+> DRM_SCHED_PRIORITY_COUNT
+> - * @credit_limit: the number of credits this scheduler can hold from
+> all jobs
+> - * @hang_limit: number of times to allow a job to hang before
+> dropping it
+> - * @timeout: timeout value in jiffies for the scheduler
+> - * @timeout_wq: workqueue to use for timeout work. If NULL, the
+> system_wq is
+> - *		used
+> - * @score: optional score atomic shared with other schedulers
+> - * @name: name used for debugging
+> - * @dev: target &struct device
+> + * @args: scheduler initialization arguments
+> =C2=A0 *
+> =C2=A0 * Return 0 on success, otherwise error code.
+> =C2=A0 */
+> -int drm_sched_init(struct drm_gpu_scheduler *sched,
+> -		=C2=A0=C2=A0 const struct drm_sched_backend_ops *ops,
+> -		=C2=A0=C2=A0 struct workqueue_struct *submit_wq,
+> -		=C2=A0=C2=A0 u32 num_rqs, u32 credit_limit, unsigned int
+> hang_limit,
+> -		=C2=A0=C2=A0 long timeout, struct workqueue_struct
+> *timeout_wq,
+> -		=C2=A0=C2=A0 atomic_t *score, const char *name, struct device
+> *dev)
+> +int drm_sched_init(struct drm_gpu_scheduler *sched, const struct
+> drm_sched_init_args *args)
+> =C2=A0{
+> =C2=A0	int i;
+> =C2=A0
+> -	sched->ops =3D ops;
+> -	sched->credit_limit =3D credit_limit;
+> -	sched->name =3D name;
+> -	sched->timeout =3D timeout;
+> -	sched->timeout_wq =3D timeout_wq ? : system_wq;
+> -	sched->hang_limit =3D hang_limit;
+> -	sched->score =3D score ? score : &sched->_score;
+> -	sched->dev =3D dev;
+> +	sched->ops =3D args->ops;
+> +	sched->credit_limit =3D args->credit_limit;
+> +	sched->name =3D args->name;
+> +	sched->timeout =3D args->timeout;
+> +	sched->hang_limit =3D args->hang_limit;
+> +	sched->timeout_wq =3D args->timeout_wq ? args->timeout_wq :
+> system_wq;
+> +	sched->score =3D args->score ? args->score : &sched->_score;
+> +	sched->dev =3D args->dev;
+> =C2=A0
+> -	if (num_rqs > DRM_SCHED_PRIORITY_COUNT) {
+> +	if (args->num_rqs > DRM_SCHED_PRIORITY_COUNT) {
+> =C2=A0		/* This is a gross violation--tell drivers what the=C2=A0
+> problem is.
+> =C2=A0		 */
+> =C2=A0		drm_err(sched, "%s: num_rqs cannot be greater than
+> DRM_SCHED_PRIORITY_COUNT\n",
+> @@ -1292,16 +1276,16 @@ int drm_sched_init(struct drm_gpu_scheduler
+> *sched,
+> =C2=A0		return 0;
+> =C2=A0	}
+> =C2=A0
+> -	if (submit_wq) {
+> -		sched->submit_wq =3D submit_wq;
+> +	if (args->submit_wq) {
+> +		sched->submit_wq =3D args->submit_wq;
+> =C2=A0		sched->own_submit_wq =3D false;
+> =C2=A0	} else {
+> =C2=A0#ifdef CONFIG_LOCKDEP
+> -		sched->submit_wq =3D
+> alloc_ordered_workqueue_lockdep_map(name,
+> +		sched->submit_wq =3D
+> alloc_ordered_workqueue_lockdep_map(args->name,
+> =C2=A0								=C2=A0=C2=A0=C2=A0=C2=A0
+> =C2=A0=C2=A0 WQ_MEM_RECLAIM,
+> =C2=A0								=C2=A0=C2=A0=C2=A0=C2=A0
+> =C2=A0=C2=A0 &drm_sched_lockdep_map);
+> =C2=A0#else
+> -		sched->submit_wq =3D alloc_ordered_workqueue(name,
+> WQ_MEM_RECLAIM);
+> +		sched->submit_wq =3D alloc_ordered_workqueue(args-
+> >name, WQ_MEM_RECLAIM);
+> =C2=A0#endif
+> =C2=A0		if (!sched->submit_wq)
+> =C2=A0			return -ENOMEM;
+> @@ -1309,11 +1293,11 @@ int drm_sched_init(struct drm_gpu_scheduler
+> *sched,
+> =C2=A0		sched->own_submit_wq =3D true;
+> =C2=A0	}
+> =C2=A0
+> -	sched->sched_rq =3D kmalloc_array(num_rqs, sizeof(*sched-
+> >sched_rq),
+> +	sched->sched_rq =3D kmalloc_array(args->num_rqs,
+> sizeof(*sched->sched_rq),
+> =C2=A0					GFP_KERNEL | __GFP_ZERO);
+> =C2=A0	if (!sched->sched_rq)
+> =C2=A0		goto Out_check_own;
+> -	sched->num_rqs =3D num_rqs;
+> +	sched->num_rqs =3D args->num_rqs;
+> =C2=A0	for (i =3D DRM_SCHED_PRIORITY_KERNEL; i < sched->num_rqs; i++)
+> {
+> =C2=A0		sched->sched_rq[i] =3D kzalloc(sizeof(*sched-
+> >sched_rq[i]), GFP_KERNEL);
+> =C2=A0		if (!sched->sched_rq[i])
+> diff --git a/drivers/gpu/drm/v3d/v3d_sched.c
+> b/drivers/gpu/drm/v3d/v3d_sched.c
+> index 961465128d80..80466ce8c7df 100644
+> --- a/drivers/gpu/drm/v3d/v3d_sched.c
+> +++ b/drivers/gpu/drm/v3d/v3d_sched.c
+> @@ -820,67 +820,54 @@ static const struct drm_sched_backend_ops
+> v3d_cpu_sched_ops =3D {
+> =C2=A0	.free_job =3D v3d_cpu_job_free
+> =C2=A0};
+> =C2=A0
+> +static int
+> +v3d_queue_sched_init(struct v3d_dev *v3d, const struct
+> drm_sched_backend_ops *ops,
+> +		=C2=A0=C2=A0=C2=A0=C2=A0 enum v3d_queue queue, const char *name)
+> +{
+> +	struct drm_sched_init_args args =3D {
+> +		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> +		.credit_limit =3D 1,
+> +		.timeout =3D msecs_to_jiffies(500),
+> +		.dev =3D v3d->drm.dev,
+> +	};
+> +
+> +	args.ops =3D ops;
+> +	args.name =3D name;
+> +
+> +	return drm_sched_init(&v3d->queue[queue].sched, &args);
+> +}
+> +
+> =C2=A0int
+> =C2=A0v3d_sched_init(struct v3d_dev *v3d)
+> =C2=A0{
+> -	int hw_jobs_limit =3D 1;
+> -	int job_hang_limit =3D 0;
+> -	int hang_limit_ms =3D 500;
+> =C2=A0	int ret;
+> =C2=A0
+> -	ret =3D drm_sched_init(&v3d->queue[V3D_BIN].sched,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 &v3d_bin_sched_ops, NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 hw_jobs_limit, job_hang_limit,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 msecs_to_jiffies(hang_limit_ms), NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NULL, "v3d_bin", v3d->drm.dev);
+> +	ret =3D v3d_queue_sched_init(v3d, &v3d_bin_sched_ops, V3D_BIN,
+> "v3d_bin");
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> -	ret =3D drm_sched_init(&v3d->queue[V3D_RENDER].sched,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 &v3d_render_sched_ops, NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 hw_jobs_limit, job_hang_limit,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 msecs_to_jiffies(hang_limit_ms), NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NULL, "v3d_render", v3d->drm.dev);
+> +	ret =3D v3d_queue_sched_init(v3d, &v3d_render_sched_ops,
+> V3D_RENDER,
+> +				=C2=A0=C2=A0 "v3d_render");
+> =C2=A0	if (ret)
+> =C2=A0		goto fail;
+> =C2=A0
+> -	ret =3D drm_sched_init(&v3d->queue[V3D_TFU].sched,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 &v3d_tfu_sched_ops, NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 hw_jobs_limit, job_hang_limit,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 msecs_to_jiffies(hang_limit_ms), NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NULL, "v3d_tfu", v3d->drm.dev);
+> +	ret =3D v3d_queue_sched_init(v3d, &v3d_tfu_sched_ops, V3D_TFU,
+> "v3d_tfu");
+> =C2=A0	if (ret)
+> =C2=A0		goto fail;
+> =C2=A0
+> =C2=A0	if (v3d_has_csd(v3d)) {
+> -		ret =3D drm_sched_init(&v3d->queue[V3D_CSD].sched,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 &v3d_csd_sched_ops, NULL,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 hw_jobs_limit, job_hang_limit,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0
+> msecs_to_jiffies(hang_limit_ms), NULL,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 NULL, "v3d_csd", v3d->drm.dev);
+> +		ret =3D v3d_queue_sched_init(v3d, &v3d_csd_sched_ops,
+> V3D_CSD,
+> +					=C2=A0=C2=A0 "v3d_csd");
+> =C2=A0		if (ret)
+> =C2=A0			goto fail;
+> =C2=A0
+> -		ret =3D drm_sched_init(&v3d-
+> >queue[V3D_CACHE_CLEAN].sched,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 &v3d_cache_clean_sched_ops,
+> NULL,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 hw_jobs_limit, job_hang_limit,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0
+> msecs_to_jiffies(hang_limit_ms), NULL,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 NULL, "v3d_cache_clean", v3d-
+> >drm.dev);
+> +		ret =3D v3d_queue_sched_init(v3d,
+> &v3d_cache_clean_sched_ops,
+> +					=C2=A0=C2=A0 V3D_CACHE_CLEAN,
+> "v3d_cache_clean");
+> =C2=A0		if (ret)
+> =C2=A0			goto fail;
+> =C2=A0	}
+> =C2=A0
+> -	ret =3D drm_sched_init(&v3d->queue[V3D_CPU].sched,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 &v3d_cpu_sched_ops, NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 1, job_hang_limit,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 msecs_to_jiffies(hang_limit_ms), NULL,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NULL, "v3d_cpu", v3d->drm.dev);
+> +	ret =3D v3d_queue_sched_init(v3d, &v3d_cpu_sched_ops, V3D_CPU,
+> "v3d_cpu");
+> =C2=A0	if (ret)
+> =C2=A0		goto fail;
+> =C2=A0
+> diff --git a/drivers/gpu/drm/xe/xe_execlist.c
+> b/drivers/gpu/drm/xe/xe_execlist.c
+> index a8c416a48812..809aaba59561 100644
+> --- a/drivers/gpu/drm/xe/xe_execlist.c
+> +++ b/drivers/gpu/drm/xe/xe_execlist.c
+> @@ -332,6 +332,15 @@ static const struct drm_sched_backend_ops
+> drm_sched_ops =3D {
+> =C2=A0static int execlist_exec_queue_init(struct xe_exec_queue *q)
+> =C2=A0{
+> =C2=A0	struct drm_gpu_scheduler *sched;
+> +	const struct drm_sched_init_args args =3D {
+> +		.ops =3D &drm_sched_ops,
+> +		.num_rqs =3D 1,
+> +		.credit_limit =3D q->lrc[0]->ring.size /
+> MAX_JOB_SIZE_BYTES,
+> +		.hang_limit =3D XE_SCHED_HANG_LIMIT,
+> +		.timeout =3D XE_SCHED_JOB_TIMEOUT,
+> +		.name =3D q->hwe->name,
+> +		.dev =3D gt_to_xe(q->gt)->drm.dev,
+> +	};
+> =C2=A0	struct xe_execlist_exec_queue *exl;
+> =C2=A0	struct xe_device *xe =3D gt_to_xe(q->gt);
+> =C2=A0	int err;
+> @@ -346,11 +355,7 @@ static int execlist_exec_queue_init(struct
+> xe_exec_queue *q)
+> =C2=A0
+> =C2=A0	exl->q =3D q;
+> =C2=A0
+> -	err =3D drm_sched_init(&exl->sched, &drm_sched_ops, NULL, 1,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 q->lrc[0]->ring.size /
+> MAX_JOB_SIZE_BYTES,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 XE_SCHED_HANG_LIMIT,
+> XE_SCHED_JOB_TIMEOUT,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 NULL, NULL, q->hwe->name,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 gt_to_xe(q->gt)->drm.dev);
+> +	err =3D drm_sched_init(&exl->sched, &args);
+> =C2=A0	if (err)
+> =C2=A0		goto err_free;
+> =C2=A0
+> diff --git a/drivers/gpu/drm/xe/xe_gpu_scheduler.c
+> b/drivers/gpu/drm/xe/xe_gpu_scheduler.c
+> index 50361b4638f9..869b43a4151d 100644
+> --- a/drivers/gpu/drm/xe/xe_gpu_scheduler.c
+> +++ b/drivers/gpu/drm/xe/xe_gpu_scheduler.c
+> @@ -63,13 +63,24 @@ int xe_sched_init(struct xe_gpu_scheduler *sched,
+> =C2=A0		=C2=A0 atomic_t *score, const char *name,
+> =C2=A0		=C2=A0 struct device *dev)
+> =C2=A0{
+> +	const struct drm_sched_init_args args =3D {
+> +		.ops =3D ops,
+> +		.submit_wq =3D submit_wq,
+> +		.num_rqs =3D 1,
+> +		.credit_limit =3D hw_submission,
+> +		.hang_limit =3D hang_limit,
+> +		.timeout =3D timeout,
+> +		.timeout_wq =3D timeout_wq,
+> +		.score =3D score,
+> +		.name =3D name,
+> +		.dev =3D dev,
+> +	};
+> +
+> =C2=A0	sched->ops =3D xe_ops;
+> =C2=A0	INIT_LIST_HEAD(&sched->msgs);
+> =C2=A0	INIT_WORK(&sched->work_process_msg,
+> xe_sched_process_msg_work);
+> =C2=A0
+> -	return drm_sched_init(&sched->base, ops, submit_wq, 1,
+> hw_submission,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hang_limit, timeout, timeout_wq,
+> score, name,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev);
+> +	return drm_sched_init(&sched->base, &args);
+> =C2=A0}
+> =C2=A0
+> =C2=A0void xe_sched_fini(struct xe_gpu_scheduler *sched)
+> diff --git a/include/drm/gpu_scheduler.h
+> b/include/drm/gpu_scheduler.h
+> index a0ff08123f07..fcc071fc1543 100644
+> --- a/include/drm/gpu_scheduler.h
+> +++ b/include/drm/gpu_scheduler.h
+> @@ -540,12 +540,38 @@ struct drm_gpu_scheduler {
+> =C2=A0	struct device			*dev;
+> =C2=A0};
+> =C2=A0
+> +/**
+> + * struct drm_sched_init_args - parameters for initializing a DRM
+> GPU scheduler
+> + *
+> + * @ops: backend operations provided by the driver
+> + * @submit_wq: workqueue to use for submission. If NULL, an ordered
+> wq is
+> + *	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 allocated and used.
+> + * @num_rqs: Number of run-queues. This may be at most
+> DRM_SCHED_PRIORITY_COUNT,
+> + *	=C2=A0=C2=A0=C2=A0=C2=A0 as there's usually one run-queue per priorit=
+y, but may
+> be less.
+> + * @credit_limit: the number of credits this scheduler can hold from
+> all jobs
+> + * @hang_limit: number of times to allow a job to hang before
+> dropping it.
+> + *		This mechanism is DEPRECATED. Set it to 0.
+> + * @timeout: timeout value in jiffies for submitted jobs.
+> + * @timeout_wq: workqueue to use for timeout work. If NULL, the
+> system_wq is used.
+> + * @score: score atomic shared with other schedulers. May be NULL.
+> + * @name: name (typically the driver's name). Used for debugging
+> + * @dev: associated device. Used for debugging
+> + */
+> +struct drm_sched_init_args {
+> +	const struct drm_sched_backend_ops *ops;
+> +	struct workqueue_struct *submit_wq;
+> +	struct workqueue_struct *timeout_wq;
+> +	u32 num_rqs;
+> +	u32 credit_limit;
+> +	unsigned int hang_limit;
+> +	long timeout;
+> +	atomic_t *score;
+> +	const char *name;
+> +	struct device *dev;
+> +};
+> +
+> =C2=A0int drm_sched_init(struct drm_gpu_scheduler *sched,
+> -		=C2=A0=C2=A0 const struct drm_sched_backend_ops *ops,
+> -		=C2=A0=C2=A0 struct workqueue_struct *submit_wq,
+> -		=C2=A0=C2=A0 u32 num_rqs, u32 credit_limit, unsigned int
+> hang_limit,
+> -		=C2=A0=C2=A0 long timeout, struct workqueue_struct
+> *timeout_wq,
+> -		=C2=A0=C2=A0 atomic_t *score, const char *name, struct device
+> *dev);
+> +		=C2=A0=C2=A0 const struct drm_sched_init_args *args);
+> =C2=A0
+> =C2=A0void drm_sched_fini(struct drm_gpu_scheduler *sched);
+> =C2=A0int drm_sched_job_init(struct drm_sched_job *job,
 
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
-
---------------nLntjFo3rp3bHtu0VCMr60Tz--
-
---------------7LxECW4oYiLRoqHgKD7xD2zq--
-
---------------ZmYW6lsGiLacWZAkMhxxj0vd
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmesgDgFAwAAAAAACgkQsN6d1ii/Ey+z
-6Qf/UX+Bm2CFCmD/3J96Ci3ilP1XFLCKdppNTba/LrgPKLNdbEizBGI7gm4D/eVKzHFj7S1Mgy4D
-msUT7kaLdjoUyy1oE9K0BNCtJPEVx6ZV6iz20iA1oiri3z7RI1/FmH3BTORjzJ4q8698iwrWQ7IR
-GAr2BKkDb8XAgTbG0bmhoXbJoRorupWsa2mEegMUIlZL0d6bPRvlOnhH1+E8UjGFJtgJBDerCWtq
-r+XdVSHtFcqJeJhpk6I/9mmR9PuFTGdMllWvPEG92E8BCQzG5whvcAaTjciRTr0N1kkMIk/dwXXg
-UXt2PduePw/v9KXfe711fbg/heONqXlezKDk96naXQ==
-=5mP+
------END PGP SIGNATURE-----
-
---------------ZmYW6lsGiLacWZAkMhxxj0vd--
 
