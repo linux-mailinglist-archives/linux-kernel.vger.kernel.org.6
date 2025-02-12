@@ -1,276 +1,243 @@
-Return-Path: <linux-kernel+bounces-511932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DD6A331A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:37:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058E8A331AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22583167B6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6E41886684
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EF02036EC;
-	Wed, 12 Feb 2025 21:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DD72036E5;
+	Wed, 12 Feb 2025 21:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yt4r2X1d"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q8HlChAu"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B3A202F99;
-	Wed, 12 Feb 2025 21:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739396188; cv=fail; b=NZ5pF+mUgMJ9SjWc6a5ENTqTrd2jl+2U0d53P4OMCX1i9CI7Wkr3kcm+VJsIGXUuojvEsDyvqnfpxKPBckYkVjQw3CE9Hyb5CmG8E45r8hTrZQ9xsaOa/YpnyP+GOdfuA04hyqM6fbGjcCNXrmLV9zm98Cs7AXTyXzsG42gUSvA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739396188; c=relaxed/simple;
-	bh=2sEJFLT4jjhbd/+EVImBIQguhRGXBVnVluIV8UMlB/g=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Zhzp8l/et2BCpuE/jCcX6v/N1l7CI/D8X4hXNofF283S3QPLYelPmJWIgWAhb/pEEtB8FqquGBQHsMRBbYghr8Tgc8CSHhjrA6/EQniTfiK9bWWyg3VjE0EnJE7NeqAN59X7aElu2e9sX3g9Z/mDwSDRYfJ5TovAr2O03Dl860U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yt4r2X1d; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739396187; x=1770932187;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=2sEJFLT4jjhbd/+EVImBIQguhRGXBVnVluIV8UMlB/g=;
-  b=Yt4r2X1dFAmVsIbi8ePnsUVcHAWg3g8aHMyCowOPP5vMJd+CbVEuum8E
-   Yb3w7vinY4ueuNz+O+41JskNOe7feCrJnu+pFSx+R3YP4wwdi+2zYBZMo
-   0o6qXiHdVZWfNfZCP8zWxFa1M2BIH6qbGGbbM4s/pUZQJgluR+uzmie0x
-   uX/cifvE8xiRrvCV4eLBF+Cq7NXzFz4PHiLQslvyfrH0UinsGGUI4xAIL
-   pclN3PMID5rYeDDIiX8RD0NNq8Uc6nL5NSKGGC2Q0HO6o7zCz4iyyLIlz
-   9vStIcebJjdSurrHudZ0UDX6BCP5jCTONiHnd6DTlpXOBUv9vTAsx4xBj
-   g==;
-X-CSE-ConnectionGUID: 9Rl0da8ZQcKnRum+skYTOA==
-X-CSE-MsgGUID: gqXxpz7sTQiqt99jm9KFDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="57608265"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="57608265"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 13:36:26 -0800
-X-CSE-ConnectionGUID: G2K7wqfJRkKCGcktcs9JtA==
-X-CSE-MsgGUID: p0uhmByUR5CHNrtcq0RIJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="112797714"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 13:36:25 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Wed, 12 Feb 2025 13:36:25 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Wed, 12 Feb 2025 13:36:25 -0800
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 12 Feb 2025 13:36:23 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f8qCT8fRWLrwXcqvL7pgcUZ+NEYk1Yh9uVx2D9u5klmsjxMekMx0TyS3KH4wxCgEDquCiO6gXkmnJcXrybToek4+7cYZ0mKwnn2AplTH/CDOzA49hV7hD46EH0O3JpLZNqJg9EqhCs/tujSwu2Swv3MmhUB9oV4+Kbt+PKXtWC2q0yLAZWMnOJV9oHvlXCxZdY4rpNIfCKPo5fDmaLcn9GHRf5Q1GTycRuJcL0TPN7ZwzloXPG8LWR1liVY+ZhtUVDeumY7mRA++v1pM3glfzaVoUZMB1k5SPImO1d+1uYCcKQTRCmTj5ka4hwV87TU2ao6jjbs+b3ZLbD4pZ1RsRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sKwY+E528fk5X5TvKgCnfS7PmSAqxspbO/du1lHJjFk=;
- b=lTW5mX9E+9y3O5Gex6nT7FGBFq51x1CUYOizJ09pYnfQAD7EvY0/RTllTpNC+l6jbDF5rMNEyw5V0LnZwszzDf7ujYkeKScJJtJlyz1vn0fsKsn2OvLLB4k7wozVor3rtpo53i5W50wmnYwV+c6OhNPs2sdgXfnyb0z1oV1ajO8Bd2rFgoFF0xAFa8euKaqFgXpdrmgVeRoL0/jA2JzqAnnnL6n7jheqEkdlgRGwibCmucBen6pIx/qbgqXvmMAMi+hB6c2ExaRzH1lNfQIW0ITZ9LZDeRgkOLVhWNIiYw2uxsxfdOvFrr32vMvcCcTb2vNHxRDE8IB0KSmIyUegng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6435.namprd11.prod.outlook.com (2603:10b6:208:3bb::9)
- by PH0PR11MB4870.namprd11.prod.outlook.com (2603:10b6:510:34::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.20; Wed, 12 Feb
- 2025 21:36:21 +0000
-Received: from BL3PR11MB6435.namprd11.prod.outlook.com
- ([fe80::23a7:1661:19d4:c1ab]) by BL3PR11MB6435.namprd11.prod.outlook.com
- ([fe80::23a7:1661:19d4:c1ab%4]) with mapi id 15.20.8445.013; Wed, 12 Feb 2025
- 21:36:21 +0000
-Message-ID: <a2828574-8b78-47a8-9ca3-a531f234a4c9@intel.com>
-Date: Wed, 12 Feb 2025 13:36:18 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v3 5/6] ice: support egress drop rules on PF
-To: Larysa Zaremba <larysa.zaremba@intel.com>,
-	<intel-wired-lan@lists.osuosl.org>
-CC: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Michal Swiatkowski
-	<michal.swiatkowski@linux.intel.com>, Mateusz Pacuszka
-	<mateuszx.pacuszka@intel.com>
-References: <20250208132251.1989365-1-larysa.zaremba@intel.com>
- <20250208132251.1989365-6-larysa.zaremba@intel.com>
-Content-Language: en-US
-From: Tony Nguyen <anthony.l.nguyen@intel.com>
-In-Reply-To: <20250208132251.1989365-6-larysa.zaremba@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0134.namprd04.prod.outlook.com
- (2603:10b6:303:84::19) To BL3PR11MB6435.namprd11.prod.outlook.com
- (2603:10b6:208:3bb::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67BC1D5143
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 21:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739396308; cv=none; b=S2pQUKYeNfMwXF5x49amjwxnl1/8o7BL53Pxdrfg00sMuHhKYOJgperot6WLSypCKDwBiFUsVZrEOLf4736xy6BWx5HI7iyASoOueeNWLrYh4TAN+wzdtCUi4nfTM56n03CqiLhlChL0hd7hFwHbcNEvs0BaEmoIqtBB2iKI4uo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739396308; c=relaxed/simple;
+	bh=rs8N/GL1JM0sKBZY/muU+0DekJkqdnHQWij3XtDwrPs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XBhTKTEuaEhxtYkTSSttWh2HDnoLpUdcuwmaeuSdScK0L+76f8i93RmR/fEtSFSw6PZByb1S9VNL/2PlltZE4OEy/uKnsPo06p6ZRV80lNMhw0orXfIA7FJzuRNHQQv6TptreWQ1VubYd3j46ZsYpgKhJQmMFuvO1ToUjaiLkpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q8HlChAu; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d147331fb5so3715ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:38:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739396306; x=1740001106; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZYGd3wINgKYYi8KyuxMJe+1xZs2xd7jGE3Yssdq90MA=;
+        b=q8HlChAuCpMt9DJpLd1/8DlnCg/02XiRx/qHkHz+J+7Rll8Na6Szw9kb0DeJWG1pm0
+         y7sQlrR2anDBXpPNJ3r01ak6TtNmU9RwimCrwpFHu0m8yew1Pidk38Cm8kzvUMEh1Xab
+         Fnyos833x90+WktXGr+tIYc1Cd7dViHLD41dTcraXhXKLC5a5dc5dcC1gLhQ2+bUxGo9
+         mAFK71aUAbKZXqTgd0bmMYM2QWzL86Y84ZlrCdv9y4MKc5fNFQzU7s8cBE0W6Y/umjCO
+         znKpAWvMjoKlzSDmiAs/nw9hdLgDofLMYFtIbwC212Z/JN1fcXujT3FXRPyujdEQs04e
+         Lbng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739396306; x=1740001106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZYGd3wINgKYYi8KyuxMJe+1xZs2xd7jGE3Yssdq90MA=;
+        b=is84R7hYX0hbf9SyLFqza0yc7Qe3VGn+nKRNL9IVIcP913rgbHLR+qk48WkNj+kQbE
+         czJcyP2tYV/cGbfw184w14IBIJNMIfE7130msgtFha6su7xMFCK1XYh1Bn47QVu+ZJiy
+         MXUTeC3fvMYkxwyM94B7PrHTCNPdTSx/jJJoZVXNgmmfJj+40nEibZEcz3SqwKNUupyC
+         By784BoMZ2JBAlmyqpZl4vCIv1ce+7WUJ58XKOZWETVlYxH072WQUp9JlE6FrSrAS2m4
+         mo4Eaqy25Ki3jNLlTwZF9jwimBTzMUKtyEX2mwUcgBlj8VTEMNt+B49/bIPK0gUYJyji
+         UDTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+U6GVBci6RO5JvS3acV5x7VpQCKrL48PaxAuApXeQjhTdFAYTIJ6wPtIflSXCvhvx0A7aSzVvaBwYBkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIEb3Ki810V7MkKtHM5OlEETU9Q8Rq+btBa/iYgh9YbGe6POIT
+	Lr/MlzT6Mw/M6y+/6E9iYYPl6tzxUSRcUL/hVeKv3UdQOBXQEWsVumkV3/Oz19vSRS3DOag0qJi
+	CfB8abNnpqqZ6+jjiFuNSDzUEVxtAGoDqzzgf
+X-Gm-Gg: ASbGnctu0C6Lh+HcS4kxJN0gqwdVL9sREjpLyDCZl8eoe6cP6l5DpGHNq1bdnYQj0m6
+	UVFjt+BTBK3rzAQ83WtqOaAYHdg43MSn6f4LmDMlaE0rzA+1nDZt6pc5aW8slnX3Tilohn4Z9DC
+	TvWnmBTggUbvRmHy7bfKSPPl+o
+X-Google-Smtp-Source: AGHT+IFkHaAQcVKqOrFRwN4yJ80hrx+BfOBW/ZZbRDPmVrhiHFq3FEkfpIAv6+GvNshJQca9GKZuXQBZp2XpA5A94vM=
+X-Received: by 2002:a05:6e02:3b88:b0:3a7:683e:2fb0 with SMTP id
+ e9e14a558f8ab-3d18cc8b9e4mr906985ab.6.1739396305534; Wed, 12 Feb 2025
+ 13:38:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6435:EE_|PH0PR11MB4870:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8da64a80-2397-4483-052d-08dd4bad4ad2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?S0JMTTFMU0p4ak11cU9iRUgrS2RQTFRYbTJ3OFJhSHlVUkdwNUtDbnZjR0xY?=
- =?utf-8?B?NUtmU3FINUcvbnBwS0twSXYwSEw5SEwrdjZjN2RORzl0aU56bkVXM2psSzlO?=
- =?utf-8?B?cTIrb3F6YW1GMUN1VDYrV1YvV29mcUh5L282UXF6dUViVWFwSFdhNWd0SGc4?=
- =?utf-8?B?UHRnQzVONGJBMXhlMEM4bmRzekdvTkVNTW5nL1hYb1h3MS9QL21wRnBVQllF?=
- =?utf-8?B?cEpzdW9rWnEyNmxwRFlnUVg2YlRBQ3dsa1NBOWZ0ckJwZ0MzL2VnU0trTGhL?=
- =?utf-8?B?TlJGQXJ2dlMxRmd1amNJM1o4dzFYUjFxM1BnWEJKL2RtV1F3Z1cwRFNaVEVQ?=
- =?utf-8?B?K3JKZDV1d25pQXkxaEkvM2hBZGVaLzhHKy9XSDVXOXFwMnNLbm5NMjNKQjds?=
- =?utf-8?B?dTRCM3R4MXRIN20rQVNGV0NIQS9uczltOGVJSk5EREFXdnl0cHdNTWpaenFl?=
- =?utf-8?B?WXk4UkpUOUJ5S0VqUjVSK3h1OEpzTnpLZHU5UDdMcVRXaDN6cWkxQXZXNTJH?=
- =?utf-8?B?RDBEWW50OXFYTU5kbW9WSVFJSnpoYjAybXhDWjIyaWw4ZWhRSkFJc0FjRnYz?=
- =?utf-8?B?REw4dHNhbWZyRDUzTTJzMTBTUU1NUklIWFJHeW5OWEZZSDc2VnFneGVXam5C?=
- =?utf-8?B?bmswNVhDN0doTVY3eTNuWTFJb0kwdVZtTXF3RTFOLy9vMnJyMUlrTytUZEpD?=
- =?utf-8?B?MGRkWnVnTjVNMXU1cjRReFNNVUZERFltRzUvN2FaeHk4R1FaWWRtM1dySGU5?=
- =?utf-8?B?cndFK1ZFWHEybHIvQ2ozWC9pcDNkOHMwb2Jjc2hiRElYNDJRcUYra2VqV1or?=
- =?utf-8?B?Y3A4dkZxK01RdzhwQmw5NGJXMzBNVUNYbVdPSXZEOVBzempRVTRGcVMxaS9j?=
- =?utf-8?B?K0VjTWQ4cldLMnAwaU1SWWxKdEYySC8yQ2NuUGVMTHlBV1BXZ2d0ckVhZ1NB?=
- =?utf-8?B?YjdSNWFTTG80aFk5bnNWUXNXMzljRmkxVnQxcW04V1NZanFyeHFvdWpWaW1o?=
- =?utf-8?B?UXJpUHArckRuKzhjUGtuVG1QMHBaUkk3L0ovZ2NXdnJjdGlITzloNHpKcndJ?=
- =?utf-8?B?TjFFenNRUFRqaG1TTlpOYUVheXNRYnVOUzExRHlYMThSbGpYMkN0RnhONnJs?=
- =?utf-8?B?WWdLNitYQWhWMWVnZzIwQ2UyNTEybGF2TGd2cVFEc3QvMjdNM1JxRmprSnhl?=
- =?utf-8?B?clIwcWJqTldFbnFaWVA0SHkzMXdUNTNQRkJpV0NxQmlvQ2MwUWxtS2NpNmla?=
- =?utf-8?B?RWlPZXcyQy96bTJaYkdWZ2JMU2srcVhWdVN2NW5ZbjhRRDZRZlllZG5obXFQ?=
- =?utf-8?B?UHR3N29ZMjl6NEhjYW1LNWMwOVNKbllodkdqQnpvZTUzdk80WFFMWmVFbmw0?=
- =?utf-8?B?Z3dHZTVXMzh6d3lwUGlTZGRjb0QzSmNaOUwwNnhBdTF4dXpwOTJENWlmRk11?=
- =?utf-8?B?aU5JMk1TcXFwckUyR2tTejVoaGZkU0VDZ3dlUWFWbzV4SmtzcG5xa0VxWldY?=
- =?utf-8?B?bWxSWEpyY2o1TklYQ1MzWTl1LzB4bG9OZkY1Sm1kODhJVW9EYXAyZUIva1Js?=
- =?utf-8?B?VXlSQ0pqclhzMVBlbEo1djJURDlod1l4L3pXSDhlbkk4Z1BqNEZrUEJwb1BY?=
- =?utf-8?B?bXBkeGlsNzFUL1UzUk9kb0dsc0dpSmJWUEZ2dzAwVmloWlVBY1lkK09aSVhp?=
- =?utf-8?B?aXJqSFBHblVEbmNjZ296SHVVUXF6clNqSzNzalZqMWNZNHVhaTRPSGdoaGxa?=
- =?utf-8?B?Z0p1Qi84ZXZwZW52dSthb3N3aWJtWDY0aXN4VElSY2NVZjdQbmJzeThsclEy?=
- =?utf-8?B?UDRIQ3lVOW91YWFDbVRaNkFBMmFOaFJoV3FKVFdyZzJDbStOMTRzaHd5VUV3?=
- =?utf-8?Q?B8h4QZPJipZLe?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6435.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R08zV2VkTXNSRkN4VnFiVHpOSTdFeDdabVB2Wm1ZaXhpaGMwcEZTT3hPOUxp?=
- =?utf-8?B?eThjaUZvaXVBSDVEd0hqNGJ2eUo2USt2OEtnOUtzb0VWV2NsdnJEV3RscEVE?=
- =?utf-8?B?TmF4TXo1U3NscGJ0eTY2clRDOWw4Q1FaclVXNDNRZm9xR3BiR3Ztc0xaV09D?=
- =?utf-8?B?aEtMcmxtNlZJT01OYzlUYmJYN2tLakV6NXd6amViTXYwYWlrZWlzek51UGtI?=
- =?utf-8?B?dTNZOFp6cWszVkFNYXJpTEhaMzBWRE9IS0p2S3VrUTFmV0l2dUlGTGp4SjV0?=
- =?utf-8?B?YmRqVE8vUzc1MzlxK0UxYWtWeFIzTnE3S3Voc2FlV05YRUsvaEh4S1NBeDlU?=
- =?utf-8?B?Z3gyMi9BdTU4Y3FPNmFhblVuaERhVUNOcG54QmxYNnY1Z2x3R0JpQjdkRkp2?=
- =?utf-8?B?ZTFiclJ6WDJRNHNNbVNjbDF3aWo0TVRSV0lid29DdGN6bDdPQkZWTTc3a2xk?=
- =?utf-8?B?SldEdTJzVEY2UWdrc1hLNDN1Q01tdm9rS3QvN0hqcUNhMjhEanlaUVVsdTM4?=
- =?utf-8?B?UWNkemtHRzByWENLQnY1aGxLNno2L3pDMVdOcDJCRi81R1hoOTdtU0x1T1Rt?=
- =?utf-8?B?MS9FRWFlenRyQVZ1ZWpPUjFyaytVWjJpQStMdjhxYm54a1V6MEpZOFhidWZV?=
- =?utf-8?B?SklWUDFTalRVWkxHZDlnd1J0STRTdGloQkhtSFJGMzJSUG83aGxFdzhsdkkr?=
- =?utf-8?B?UVFvdlBpMjZrVkczemxQcmVha0RGSEdiM2JYUnIwQmp4aGhVRGYwdjFpUlpF?=
- =?utf-8?B?YmdWSzZHSUp3TDhubGEzT1QyRzlSNVZUb2NabWc0T1piQU0wSVVxMWpUNkVG?=
- =?utf-8?B?aE04SUM0QTFaMFY3aDlQb2ZzRzJ5a2lUVDFrdEJtMXFMRkowWGo3UFRRMEdX?=
- =?utf-8?B?SmRBTzFFTWxsODdNWVlHaXAvUmJBQmxLQVM3V2FTQ2sxRWozWWUxdG5SbHl5?=
- =?utf-8?B?cnJJSWRkOEJlMXoyMTVXWE90dk5FLzNNV21UdUx0TklUM25TUml1d1RxUkgr?=
- =?utf-8?B?OFZNdGZZYllTNUsvYVFCU3ZQUm9oZnRvQUVkNitlOW1JSEdPTnhXdCtxQWxC?=
- =?utf-8?B?ekFvR3JGUXZ0N2hBYzR1NjlWQTkvWmF4OTVGTnQ0UkEyOVlNRjR0YUZkZzUv?=
- =?utf-8?B?M0NwTXZEQzh4ZUR3RGdaWkcrOEI1U0RqVTFkOURqb2xTVisyb3FDRnQ0SGRn?=
- =?utf-8?B?bjFBTkM2dnVBejFtUTNoVExwR0dDZldpWFdNRnRGRklnZktYQTZNdmR1aGYr?=
- =?utf-8?B?dXdKL2ZaQ3d5bE8xVnJ3RXVzSXRHNS90SXNZbnFqTDZGSlp6SU5QM2ZTWUpV?=
- =?utf-8?B?OHYxdnFDZ1RueDRqdldydHgzbXVUQWU2QmpvZGNxcjhkMHJmMXppWHliR3ZR?=
- =?utf-8?B?T0dBSjhWbnVNOTQ1NU04N2xVY3FjY00rcjk3dE1VT0J4MU8za29sU21ERzJD?=
- =?utf-8?B?US8rTVUyNnQ2WnY2RElNbWMzTTlOaTBzbE43V05NK0tYWVpRVVRVdWo4SUZW?=
- =?utf-8?B?bE5maS9CSDBqNk4wMk4rT0tzVTV4b0NoV2Y0SlFneVdPVFBvQmtOcG9JT05X?=
- =?utf-8?B?KzJ4UnUwaTV5bWpRaExzZC9SZFluZnY1ZjF3N0I5aGhRTzBlSTN1SzhHaTVv?=
- =?utf-8?B?eHdNTkFNVFAvNmlFaU5MVlc2ZUsvUXRlMnBSVVJuV0o4M0dqN1M2WGIyWGJI?=
- =?utf-8?B?R3AxQzMzUWdMNDVpZlJtNHdYdlJJYVkvRTJRZFE0dmd2cVZQZnl5NzMwYjVX?=
- =?utf-8?B?TUdyU1ROZHNjR3VYVkhhejA1NkYxZ2JWUzcwVmxVYkhNSnJZTU9ybUxXdlJF?=
- =?utf-8?B?NnVPTHlNd215TUZ4eDgxVS9zNTM5UDFCSm1oVjczWlFBZzJpZmlWWWFWcE1k?=
- =?utf-8?B?Qy94ckJtcVNXWndPNkhpNGw5dXFJTlR4TDljY3FNcVBiS204aGEzU3M2S05B?=
- =?utf-8?B?K1EwaTNTdTVLVVIvRFdVRDhyL2ZmT01yTzgvcFFIOEJadG5IaWxtZmZKV1VP?=
- =?utf-8?B?TURHa0JldW5OVEpmMElSTnNhMFByTEhzNFFtSzU4eVFBcGZxZGZVbEVMUmhu?=
- =?utf-8?B?M3hyWmxEOENKYjZwaVJsUlNDZ1JEMGIvWXdjMU80eWVrbytUMzdIOVo4dDIr?=
- =?utf-8?B?U01Ebi9rVFlVb1V5SllnN0tZY2UzcWlaQTBDN3hHQ0xYeCtqRGFKb2RvUW1z?=
- =?utf-8?B?MFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8da64a80-2397-4483-052d-08dd4bad4ad2
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6435.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 21:36:21.4121
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HSLhJHaVZBUl8Hh8P270HI1aO+B2xMJBWzj6iRIb+/74Lj/ygW1sHRlq5WPBdm2mIyu62aqG15o7xHaWLMW7SvboE6d3yvzU7YN5LhzvQcA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4870
-X-OriginatorOrg: intel.com
+References: <20250212122413.1184503-1-james.clark@linaro.org> <CAP-5=fWywDB40-RgV8LaPqsoffOLdDcYkUB_LHoPvV=R8yas4w@mail.gmail.com>
+In-Reply-To: <CAP-5=fWywDB40-RgV8LaPqsoffOLdDcYkUB_LHoPvV=R8yas4w@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Feb 2025 13:38:14 -0800
+X-Gm-Features: AWEUYZkCGNrWwK4dINGEiwu4h9Rf93MQLYg3MnWB9UBrfxF84934Nh0HgkDPrEY
+Message-ID: <CAP-5=fV0rWEL-ewGpoDwaJ3rvbTPXSx0YTuF5p9=6+h5oUhsfg@mail.gmail.com>
+Subject: Re: [PATCH] perf stat: Fix non-uniquified hybrid legacy events
+To: James Clark <james.clark@linaro.org>
+Cc: linux-perf-users@vger.kernel.org, Robin.Murphy@arm.com, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Feb 12, 2025 at 9:48=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Wed, Feb 12, 2025 at 4:24=E2=80=AFAM James Clark <james.clark@linaro.o=
+rg> wrote:
+> >
+> > Legacy hybrid events have attr.type =3D=3D PERF_TYPE_HARDWARE, so they =
+look
+> > like plain legacy events if we only look at attr.type. But legacy event=
+s
+> > should still be uniquified if they were opened on a non-legacy PMU.
+> > Previously we looked at the PMU type to determine legacy vs hybrid
+> > events here so revert this particular check to how it was before the
+> > linked fixes commit.
+> >
+> > counter->pmu doesn't need to be null checked twice, in fact it is
+> > required for any kind of uniquification so make that a separate check.
+> >
+> > This restores PMU names on hybrid systems and also changes "perf stat
+> > metrics (shadow stat) test" from a FAIL back to a SKIP (on hybrid). The
+> > test was gated on "cycles" appearing alone which doesn't happen on
+> > here.
+> >
+> > Before:
+> >
+> >   $ perf stat -- true
+> >   ...
+> >      <not counted>      instructions:u                           (0.00%=
+)
+> >            162,536      instructions:u            # 0.58  insn per cycl=
+e
+> >   ...
+> >
+> > After:
+> >
+> >  $ perf stat -- true
+> >  ...
+> >      <not counted>      cpu_atom/instructions/u                  (0.00%=
+)
+> >            162,541      cpu_core/instructions/u   # 0.62  insn per cycl=
+e
+> >  ...
+> >
+> > Fixes: 357b965deba9 ("perf stat: Changes to event name uniquification")
+> > Signed-off-by: James Clark <james.clark@linaro.org>
+> > ---
+> >  tools/perf/util/stat-display.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-disp=
+lay.c
+> > index e65c7e9f15d1..eae34ba95f59 100644
+> > --- a/tools/perf/util/stat-display.c
+> > +++ b/tools/perf/util/stat-display.c
+> > @@ -1688,12 +1688,17 @@ static void evsel__set_needs_uniquify(struct ev=
+sel *counter, const struct perf_s
+> >                 return;
+> >         }
+> >
+> > -       if  (counter->core.attr.type < PERF_TYPE_MAX && counter->core.a=
+ttr.type !=3D PERF_TYPE_RAW) {
+> > +       if (!counter->pmu) {
+>
+> Thanks James, I wish I had a hybrid laptop so I didn't keep breaking
+> things like this. I'm uncomfortable using an evsel having/not-having a
+> PMU as an indication of whether uniquification is necessary. It is
+> kind of a side-effect of parsing whether the PMU variable is non-NULL,
+> it'd kind of be nice to stop things using `evsel->pmu` directly and
+> switch them to `evsel__find_pmu(evsel)`, in the future maybe legacy
+> events will get the core PMU, a tracepoint PMU, etc. so we'd never
+> expect this variable to be NULL.
+>
+> Your commit message gives me enough to think about what the issue is,
+> so let me give it some thought.
 
+I wonder we should just hoist the hybrid test earlier:
+```
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.=
+c
+index e65c7e9f15d1..e852ac0d9847 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -1688,6 +1688,12 @@ static void evsel__set_needs_uniquify(struct
+evsel *counter, const struct per
+f_s
+               return;
+       }
 
-On 2/8/2025 5:22 AM, Larysa Zaremba wrote:
++       if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
++               /* Unique hybrid counters necessary. */
++               counter->needs_uniquify =3D true;
++               return;
++       }
++
+       if  (counter->core.attr.type < PERF_TYPE_MAX &&
+counter->core.attr.type !=3D PERF_TYPE_RAW) {
+               /* Legacy event, don't uniquify. */
+               return;
+@@ -1705,12 +1711,6 @@ static void evsel__set_needs_uniquify(struct
+evsel *counter, const struct per
+f_s
+               return;
+       }
 
-...
+-       if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
+-               /* Unique hybrid counters necessary. */
+-               counter->needs_uniquify =3D true;
+-               return;
+-       }
+-
+       /*
+        * Do other non-merged events in the evlist have the same name? If s=
+o
+        * uniquify is necessary.
 
-> @@ -8393,20 +8395,42 @@ ice_setup_tc_cls_flower(struct ice_netdev_priv *np,
->   }
->   
->   /**
-> - * ice_setup_tc_block_cb - callback handler registered for TC block
-> + * ice_setup_tc_block_cb_ingress - callback handler for ingress TC block
->    * @type: TC SETUP type
->    * @type_data: TC flower offload data that contains user input
->    * @cb_priv: netdev private data
->    */
->   static int
-> -ice_setup_tc_block_cb(enum tc_setup_type type, void *type_data, void *cb_priv)
-> +ice_setup_tc_block_cb_ingress(enum tc_setup_type type, void *type_data,
-> +			      void *cb_priv)
+```
 
-Could you fix the kdocs on the ones that you modify? Most of them are 
-missing the Return:
+The hybrid test is unfortunately expensive at it needs to search for
+>1 core PMU, which means loading all sysfs PMUs. I think we're already
+paying the cost though.
 
->   {
->   	struct ice_netdev_priv *np = cb_priv;
->   
->   	switch (type) {
->   	case TC_SETUP_CLSFLOWER:
->   		return ice_setup_tc_cls_flower(np, np->vsi->netdev,
-> -					       type_data);
-> +					       type_data, true);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +/**
-> + * ice_setup_tc_block_cb_egress - callback handler for egress TC block
-> + * @type: TC SETUP type
-> + * @type_data: TC flower offload data that contains user input
-> + * @cb_priv: netdev private data
-> + */
-> +static int
-> +ice_setup_tc_block_cb_egress(enum tc_setup_type type, void *type_data,
-> +			     void *cb_priv)
-
-And correct the ones that you're adding.
-
-I believe there's issues of this or the previous in patches 2-5.
+Could you check this works James?
 
 Thanks,
-Tony
+Ian
 
-> +{
-> +	struct ice_netdev_priv *np = cb_priv;
-> +
-> +	switch (type) {
-> +	case TC_SETUP_CLSFLOWER:
-> +		return ice_setup_tc_cls_flower(np, np->vsi->netdev,
-> +					       type_data, false);
->   	default:
->   		return -EOPNOTSUPP;
->   	}
-
+> Thanks!
+> Ian
+>
+> > +               /* evsel__uniquify_counter() uses counter->pmu for the =
+name */
+> > +               return;
+> > +       }
+> > +
+> > +       if (counter->pmu->type < PERF_TYPE_MAX && counter->pmu->type !=
+=3D PERF_TYPE_RAW) {
+> >                 /* Legacy event, don't uniquify. */
+> >                 return;
+> >         }
+> >
+> > -       if (counter->pmu && counter->pmu->is_core &&
+> > +       if (counter->pmu->is_core &&
+> >             counter->alternate_hw_config !=3D PERF_COUNT_HW_MAX) {
+> >                 /* A sysfs or json event replacing a legacy event, don'=
+t uniquify. */
+> >                 return;
+> > --
+> > 2.34.1
+> >
 
