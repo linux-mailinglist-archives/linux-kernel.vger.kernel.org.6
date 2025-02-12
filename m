@@ -1,84 +1,87 @@
-Return-Path: <linux-kernel+bounces-511928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36AD7A33193
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:35:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7274FA3319D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:35:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923141885929
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:35:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07C8C3A84F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8732045AD;
-	Wed, 12 Feb 2025 21:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE721203706;
+	Wed, 12 Feb 2025 21:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nnUHyp3d"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChGwc1tA"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C625220371D;
-	Wed, 12 Feb 2025 21:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94BA202F71;
+	Wed, 12 Feb 2025 21:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739396081; cv=none; b=T6qyVjgfYi3enL2Mt9qqBODPSuTUSdQJXVcxpGP8tT9pB6dOQoLzb72a7iwZRzVA/dMDka1YYRe0gEAjIkQYx5m5Jeccf3a22cl7x5SOccVj00zEIh2rs0i/6MozrfyIBAXfZNjb+iPkQpP9Suvu4fXPwBeYXokvA06MW81DDM8=
+	t=1739396124; cv=none; b=hFhPWmSJonZIuQqU2wEogMFpMWl0lIDiDgFzq9ZALROCZsigTn8BL1ODJ8a1/Z6Wij6ht6aZGqfOotDlmy7EQlVyxPINmw7N0PWsGlLB69Effisi85oYc1+5TBn8NvqoUP189o+ZxOL53jcW9zLJvKeCIYaP0hW3QOKA0XZwO84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739396081; c=relaxed/simple;
-	bh=lVLVvKssvh23Wa1P5dfJrqLc+D1LxadSc52EeR3Ak7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nqUzSP1FTgn/9kcmzISo9UUQCScfo/Pnvl/xRXVCVJ4KUCqtYWpYnCxULp0SM9slsH59ihV1Fc60VUTo3OpPcLXbBL66SI0IqDwrOzEEq/w5UkisVijG4QBl5NKWPXu4sdUpH4LyNPqyLOX8vZx7NWsjpIms42uA/GTFC/0t9wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nnUHyp3d; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CKGFap011996;
-	Wed, 12 Feb 2025 21:34:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=jr1qt4yvIuAZDAiDh
-	a5koiFFri8NBXeUCFli7Bilgdw=; b=nnUHyp3da/+sGZLGOzqkRMxQVH0Om3Lzl
-	sCCLjpe8629vIGk6rGvNcrVAPUCfr5jRAWy93Xiiaqij0C8r8mYZhFy02S19WuSe
-	8zAF1s9ZEZ/nod4cXfuYm5o9lagcdKzn5DjsRAsC9/+el1iQv0P0VvkJm8biwMjR
-	GBn+RClZ9cXQkcLldirRVpEccVEbr4zIhs7j4k9+vOJKxsmG/NCRXnF3wOBcveuP
-	Jhge3QYEKj8A2qsGraVZ6h1fHkV5Bx1honrhkWZfrme+UqM7Pzxp8N9B8DAG/0ZB
-	Dksnoda9qz2978oiR/homNMLjF7P9axrDgzyUotHEpnp9PZsY2zmg==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rfpa67dy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 21:34:28 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CKsVIb029203;
-	Wed, 12 Feb 2025 21:34:27 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pma1tm0d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 21:34:27 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CLYP4235455560
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 21:34:25 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5377758060;
-	Wed, 12 Feb 2025 21:34:25 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3ADDC58056;
-	Wed, 12 Feb 2025 21:34:24 +0000 (GMT)
-Received: from li-2311da4c-2e09-11b2-a85c-c003041e9174.ibm.com.com (unknown [9.61.186.234])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Feb 2025 21:34:24 +0000 (GMT)
-From: Matthew Rosato <mjrosato@linux.ibm.com>
-To: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
-        gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
-Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        svens@linux.ibm.com, borntraeger@linux.ibm.com, farman@linux.ibm.com,
-        clegoate@redhat.com, jgg@nvidia.com, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: [PATCH v5 4/4] iommu/s390: implement iommu passthrough via identity domain
-Date: Wed, 12 Feb 2025 16:34:18 -0500
-Message-ID: <20250212213418.182902-5-mjrosato@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250212213418.182902-1-mjrosato@linux.ibm.com>
-References: <20250212213418.182902-1-mjrosato@linux.ibm.com>
+	s=arc-20240116; t=1739396124; c=relaxed/simple;
+	bh=n7vwAk+mGDnptXQYHkJZGBl0excGHMrDOseNSwoLavE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YtJxAaka6XTh+EsoEyPMJhP6ENNBmP96yXfDyy1XLA/HNqVG6D0jisaXiQ9KaMZ4QCnv/HwJETU3+jKZ2FWCgfbdr095RTklfRVCCVnK2Tk6LrJOvnSUdlhw0MmRUX4y20IcJr30qXHVX3rdtkmk9xoCOjPz8U7pqUINrAsGM4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChGwc1tA; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c05cce598dso3032185a.3;
+        Wed, 12 Feb 2025 13:35:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739396121; x=1740000921; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pc0F/lVzkzvL4J3GzIJyy7MBw6sqmJhjXpSaIwLTkG0=;
+        b=ChGwc1tAySyYtxkkx1EZ1EBxevRfaGzahwJf+TvfYN714abqo0u6gLHzdCkpI2hLgA
+         j6EUKZ1xA2Ei5A0Mg8JbJaWtHmaNMaQn/oPCg5hG/8YS37Z3xjlQkBrgOyfeMq2PLY2U
+         Bmjlo/vM+b/I8dMdkgPE2iKjV4m2kseTjdHLAZ5dWKXtzdLdadk1ONolCqZPrPz5dS9L
+         cZ6XML6IfmaRxY0Yp49pOnciCP+AgBZoU/YSH+tyoT9UTiiec4CH8FXDkxQEgso5m42e
+         FRuqIASZ++sfnagFcBfSX22IfpoXnQ6Yy1DM+nZpLlxAZSjLCP3uxImg0arB1+52/BzX
+         vE4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739396121; x=1740000921;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pc0F/lVzkzvL4J3GzIJyy7MBw6sqmJhjXpSaIwLTkG0=;
+        b=hNorXCT6cC8hko6TBhsgVRpexVEqnAGNNvTZ1WVCKBGF1cG+y4u3+xs1SiZyv+V23g
+         q6KwCkkNXtq1Ll74FSdJAxPcv6oetPS/Hu25Tu6QWm4wq+8bQL5pjzAwWgtWJrmwjDdS
+         V42J8oJ8KIQQfpCVCPkQK9aVGd0ojAB4vof/Rtw6XT563CDRT2aTI5s11yQs1Ad/nriJ
+         zehZeizxsOA82SoQL8TMgIn6hIg0JAig/tIfd1Yedp6gl1ksWg+gckdVnDWBZFyiMvs8
+         hqZgrYGKzKWbshcl+A0VY4qm6gXEejZO121euVFfDcn5FA/SnsBuwIwnkeCnWZpx+AI5
+         x+7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVPNo0CxmHZao1+tReDofI9G7oN77v2eweQTkJBaVqmn6lFHdeIag56OngBTVCkvFKkza8TLnET@vger.kernel.org, AJvYcCWJB4qjaMbgwQqhNZrdzwq2Fn6H9Rj05P6v+OGTS4XsS0YxVSVggA02SEjW+WvQiWP/OHki10Pz38kagHeWsr2a+Dw=@vger.kernel.org, AJvYcCXvgEEnD3BJMG1ATPw8+6Xm6PTYC1WKbNFIBPqgA2rc0RFX9ONlmxm0i0eN1aDVYnxVaJZ9Z2Rj/N4AZm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3kSUaAgI0dUbQbbSoiAqeabR/NLEuOrGMe3qUHUiUDSFU75Nt
+	LaoCKyyTZ+PC8nPgl/keSdI7rIPlaikk8p0rvG7G/8TpqvQyuiXckvCF
+X-Gm-Gg: ASbGncvEKbet69wq8k15UcX7JMbsa51MTnFZ3iDwmH5Fce4e1jpdeRlq/Grv6dRqEi2
+	tlqDJUGFQm4v31jj4Qo0/wbFVolBU9O31dHLsu492h8o0z0qcGQfcaabsdN6ZJlH11COQFl7c7v
+	LPeK4xtuNCA46UVCPrnaUvMDLyzSAl8g+ahwUDtxCv1X5VO8ViQ9kZ8sKXVGnfVlrwGpRUK9Pu+
+	AOeKH9fO+IccPtPUfCvfujIuKo0S2ClOKCy363lm2vEV2bE9SyjRT4JlHShFd3BWL3dow0FiL09
+	Z0uPpWwlMIEl
+X-Google-Smtp-Source: AGHT+IHMYVT7cXF1vDiX/RjUDK6KvUjj0T8L9QgUzk2mdCPDRHq6yQlf9pMqq1wIwsyxD4WnU7kb2Q==
+X-Received: by 2002:a05:622a:1aa2:b0:46e:12fc:6c83 with SMTP id d75a77b69052e-471afc434f9mr26501551cf.0.1739396121510;
+        Wed, 12 Feb 2025 13:35:21 -0800 (PST)
+Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4718911f3e6sm52249671cf.37.2025.02.12.13.35.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 13:35:21 -0800 (PST)
+From: Chenyuan Yang <chenyuan0y@gmail.com>
+To: krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	richardcochran@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Subject: [PATCH] soc: samsung: exynos-chipid: Add NULL pointer check in exynos_chipid_probe()
+Date: Wed, 12 Feb 2025 15:35:18 -0600
+Message-Id: <20250212213518.69432-1-chenyuan0y@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,165 +89,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: QZcHwOmbSWqWWFvDk7uWCZ4JBjAcDChX
-X-Proofpoint-ORIG-GUID: QZcHwOmbSWqWWFvDk7uWCZ4JBjAcDChX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_06,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- mlxlogscore=999 clxscore=1015 phishscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502120152
 
-Enabled via the kernel command-line 'iommu.passthrough=1' option.
+soc_dev_attr->revision could be NULL, thus,
+a pointer check is added to prevent potential NULL pointer dereference.
+This is similar to the fix in commit 3027e7b15b02
+("ice: Fix some null pointer dereference issues in ice_ptp.c").
 
-Introduce the concept of identity domains to s390-iommu, which relies on
-the bus_dma_region to offset identity mappings to the start of the DMA
-aperture advertized by CLP.
+This issue is found by our static analysis tool.
 
-Tested-by: Niklas Schnelle <schnelle@linux.ibm.com>
-Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
-Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
+Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
 ---
- drivers/iommu/s390-iommu.c | 95 +++++++++++++++++++++++++++++---------
- 1 file changed, 72 insertions(+), 23 deletions(-)
+ drivers/soc/samsung/exynos-chipid.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
-index 007ccfdad495..e1c76e0f9c2b 100644
---- a/drivers/iommu/s390-iommu.c
-+++ b/drivers/iommu/s390-iommu.c
-@@ -16,7 +16,7 @@
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index e37dde1fb588..95294462ff21 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -134,6 +134,8 @@ static int exynos_chipid_probe(struct platform_device *pdev)
  
- #include "dma-iommu.h"
- 
--static const struct iommu_ops s390_iommu_ops;
-+static const struct iommu_ops s390_iommu_ops, s390_iommu_rtr_ops;
- 
- static struct kmem_cache *dma_region_table_cache;
- static struct kmem_cache *dma_page_table_cache;
-@@ -432,9 +432,11 @@ static int blocking_domain_attach_device(struct iommu_domain *domain,
- 		return 0;
- 
- 	s390_domain = to_s390_domain(zdev->s390_domain);
--	spin_lock_irqsave(&s390_domain->list_lock, flags);
--	list_del_rcu(&zdev->iommu_list);
--	spin_unlock_irqrestore(&s390_domain->list_lock, flags);
-+	if (zdev->dma_table) {
-+		spin_lock_irqsave(&s390_domain->list_lock, flags);
-+		list_del_rcu(&zdev->iommu_list);
-+		spin_unlock_irqrestore(&s390_domain->list_lock, flags);
-+	}
- 
- 	zpci_unregister_ioat(zdev, 0);
- 	zdev->dma_table = NULL;
-@@ -762,7 +764,13 @@ int zpci_init_iommu(struct zpci_dev *zdev)
- 	if (rc)
- 		goto out_err;
- 
--	rc = iommu_device_register(&zdev->iommu_dev, &s390_iommu_ops, NULL);
-+	if (zdev->rtr_avail) {
-+		rc = iommu_device_register(&zdev->iommu_dev,
-+					   &s390_iommu_rtr_ops, NULL);
-+	} else {
-+		rc = iommu_device_register(&zdev->iommu_dev, &s390_iommu_ops,
-+					   NULL);
-+	}
- 	if (rc)
- 		goto out_sysfs;
- 
-@@ -826,6 +834,39 @@ static int __init s390_iommu_init(void)
- }
- subsys_initcall(s390_iommu_init);
- 
-+static int s390_attach_dev_identity(struct iommu_domain *domain,
-+				    struct device *dev)
-+{
-+	struct zpci_dev *zdev = to_zpci_dev(dev);
-+	u8 status;
-+	int cc;
-+
-+	blocking_domain_attach_device(&blocking_domain, dev);
-+
-+	/* If we fail now DMA remains blocked via blocking domain */
-+	cc = s390_iommu_domain_reg_ioat(zdev, domain, &status);
-+
-+	/*
-+	 * If the device is undergoing error recovery the reset code
-+	 * will re-establish the new domain.
-+	 */
-+	if (cc && status != ZPCI_PCI_ST_FUNC_NOT_AVAIL)
-+		return -EIO;
-+
-+	zdev_s390_domain_update(zdev, domain);
-+
-+	return 0;
-+}
-+
-+static const struct iommu_domain_ops s390_identity_ops = {
-+	.attach_dev = s390_attach_dev_identity,
-+};
-+
-+static struct iommu_domain s390_identity_domain = {
-+	.type = IOMMU_DOMAIN_IDENTITY,
-+	.ops = &s390_identity_ops,
-+};
-+
- static struct iommu_domain blocking_domain = {
- 	.type = IOMMU_DOMAIN_BLOCKED,
- 	.ops = &(const struct iommu_domain_ops) {
-@@ -833,23 +874,31 @@ static struct iommu_domain blocking_domain = {
- 	}
- };
- 
--static const struct iommu_ops s390_iommu_ops = {
--	.blocked_domain		= &blocking_domain,
--	.release_domain		= &blocking_domain,
--	.capable = s390_iommu_capable,
--	.domain_alloc_paging = s390_domain_alloc_paging,
--	.probe_device = s390_iommu_probe_device,
--	.device_group = generic_device_group,
--	.pgsize_bitmap = SZ_4K,
--	.get_resv_regions = s390_iommu_get_resv_regions,
--	.default_domain_ops = &(const struct iommu_domain_ops) {
--		.attach_dev	= s390_iommu_attach_device,
--		.map_pages	= s390_iommu_map_pages,
--		.unmap_pages	= s390_iommu_unmap_pages,
--		.flush_iotlb_all = s390_iommu_flush_iotlb_all,
--		.iotlb_sync      = s390_iommu_iotlb_sync,
--		.iotlb_sync_map  = s390_iommu_iotlb_sync_map,
--		.iova_to_phys	= s390_iommu_iova_to_phys,
--		.free		= s390_domain_free,
-+#define S390_IOMMU_COMMON_OPS() \
-+	.blocked_domain		= &blocking_domain, \
-+	.release_domain		= &blocking_domain, \
-+	.capable = s390_iommu_capable, \
-+	.domain_alloc_paging = s390_domain_alloc_paging, \
-+	.probe_device = s390_iommu_probe_device, \
-+	.device_group = generic_device_group, \
-+	.pgsize_bitmap = SZ_4K, \
-+	.get_resv_regions = s390_iommu_get_resv_regions, \
-+	.default_domain_ops = &(const struct iommu_domain_ops) { \
-+		.attach_dev	= s390_iommu_attach_device, \
-+		.map_pages	= s390_iommu_map_pages, \
-+		.unmap_pages	= s390_iommu_unmap_pages, \
-+		.flush_iotlb_all = s390_iommu_flush_iotlb_all, \
-+		.iotlb_sync      = s390_iommu_iotlb_sync, \
-+		.iotlb_sync_map  = s390_iommu_iotlb_sync_map, \
-+		.iova_to_phys	= s390_iommu_iova_to_phys, \
-+		.free		= s390_domain_free, \
- 	}
-+
-+static const struct iommu_ops s390_iommu_ops = {
-+	S390_IOMMU_COMMON_OPS()
-+};
-+
-+static const struct iommu_ops s390_iommu_rtr_ops = {
-+	.identity_domain	= &s390_identity_domain,
-+	S390_IOMMU_COMMON_OPS()
- };
+ 	soc_dev_attr->revision = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+ 						"%x", soc_info.revision);
++	if (!soc_dev_attr->revision)
++		return -ENOMEM;
+ 	soc_dev_attr->soc_id = product_id_to_soc_id(soc_info.product_id);
+ 	if (!soc_dev_attr->soc_id) {
+ 		pr_err("Unknown SoC\n");
 -- 
-2.48.1
+2.34.1
 
 
