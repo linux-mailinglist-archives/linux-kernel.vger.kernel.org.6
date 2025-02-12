@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-511995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE61DA33289
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:27:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4DDA33266
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691A81884E7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7713A3869
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D604020408D;
-	Wed, 12 Feb 2025 22:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343A6206F21;
+	Wed, 12 Feb 2025 22:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RKW3YlQz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJL1HxRA"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518C9202C45;
-	Wed, 12 Feb 2025 22:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D677720459F;
+	Wed, 12 Feb 2025 22:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739399221; cv=none; b=BNFl0lrFLuly0adzKksQZmn1DLp9uHu0nVzWmwQvkM0zT77qybEfj4Qf26XNBEdUpviapW0d5PiT0a6uoCbYxg+PmHpbfEDAtauz3wQC6pSrcJsqFFqyYHb2f1s8iiX7PYJ4XhC1CJS9/6Gn5pGfbbnWtgduDwYqxmjsUXxaQgs=
+	t=1739399038; cv=none; b=udcTUpnXRrZM9/SZsa1hPRhuOm3T0Cg/cUDyAK2sXCs53GXsDgKRnfdheQeGHI9vj6jfR+nlLCBmHBMliy4LAv/KCxY/oXTUSSRFI39kiqT/hk9Ma7qvc7ENndx2u2EgK+ze/l6ZgtmxQcs0Ap65LzWQR29oe6/Vw2r5i0eGhmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739399221; c=relaxed/simple;
-	bh=/3+mBVrE63/84GWfZK7OmV4Ny/tGhzzzgdhYFy/il4Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HJrTVU3mXSrGe+Tjz8ZEKWn3aYPKggD9HDwFKsgdBIx/rW6lFxT2kI8dR8VckEHoOxNxEF6ouHqEVdBHgFr1Svm+2bc7fcYnqOoDmgY+r+2ZT20EAo8hNbHm3u45Nl+WAZJyt0sWRIYJT+ptuxkp6eT8FXOZj1oQp4pfYlKXF+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RKW3YlQz; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739399219; x=1770935219;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=/3+mBVrE63/84GWfZK7OmV4Ny/tGhzzzgdhYFy/il4Q=;
-  b=RKW3YlQzhT+0w2VxLepW/buJ6YAtdng2+jL6vc00z+rqZv5b6xExmtxe
-   Srs42M9/G8s7ieTQf3F+/KMtpE5ae/8DGY3oQYtcAlAlmpi8g9WFq6E9+
-   RnS5oZ/GpZxRnpmUj5M9COoe1Hjd5ZGnnfWjodbVIFqDuqLSm7omPz3c5
-   97U4GW8swmFVNPIS/f2TGASHvAmnTxmgzXRvh/5t9xaQoZ6smX9Xdwd9p
-   4WMoJeNt/tpjJ75ep2GhhucpoEiBEzIXspmFgByKN/f6f2JimgsoISmZ7
-   0jnFNs1QSjaf7//el/BfYsFw47Yu2YP8md8hDWEd5ybjYtUMUwjIF9FEB
-   w==;
-X-CSE-ConnectionGUID: 7IBeE15jR/m/FEYqGMus/Q==
-X-CSE-MsgGUID: f0WXe2sMQDyRyx1ADL5Ehg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="42919934"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="42919934"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 14:26:58 -0800
-X-CSE-ConnectionGUID: 5gpj1kBGTU60agfsopnnIg==
-X-CSE-MsgGUID: H+oFrjRlRKCfbaGSO0YdUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="118038847"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Feb 2025 14:26:56 -0800
-From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
-To: Moritz Fischer <mdf@kernel.org>,
-	Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>,
-	kuhanh.murugasen.krishnan@altera.com
-Cc: Ang Tien Sung <tien.sung.ang@intel.com>
-Subject: [PATCH] fpga: altera-cvp: PCIex8x8 ports (#94)
-Date: Thu, 13 Feb 2025 06:23:21 +0800
-Message-Id: <20250212222321.2716639-1-kuhanh.murugasen.krishnan@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739399038; c=relaxed/simple;
+	bh=Zm3qk6IXfqOq9LBAuhVvYVET/2+DLHzMgdpfCT9oBiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eP8drDU0dMpK1uW1ENKW8vhQUNEzVHPmv+qc3DsICE/WWENZweDziYSuysbuoSLYRwbkZIJ/D+F3tq2E3PerkzVZHHRvAQgc/RcQWuBrejkVgt3XDbsxwGPxtCnOdIaK8mrOh41qte8TlPdiXV7QhuYoFApvvyN94KD3XEXvmJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJL1HxRA; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30795988ebeso2487701fa.3;
+        Wed, 12 Feb 2025 14:23:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739399035; x=1740003835; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WzPV8xI6x4DGWcbO/p/xTSDSebleAH+JJRzOXv+eWoo=;
+        b=PJL1HxRAyV2Hc1xNZNtbTgLJ7x1OENUpY3TtqsDwMpPvS+kS54MdE4AJs+5j179Uu0
+         Jo8AlKz+u6NSFT9pKF0bqJnrjB/wsFK5UHnrI8QW+lRESTy4CLJgKNHOSxYyDH7HGHIx
+         zE8GdK1v9ERASitVZJamPvzmK8pdT2Wl/hzKHPZuZcuVULWs5jx4cQoS70SoG5MuSvQf
+         YR9uCDKwpOyhO4tPmUGLp5aONF9+PlzQXrkJFZvwzmAMB0BIRotkaW5u/V/gF9TYaAns
+         SiIklT112qmGOFFYXGng6XYnQN9gmXs+ixCd/LGqCV8MtTopAJaRteG/Oy/1sWIyshUT
+         SQQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739399035; x=1740003835;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WzPV8xI6x4DGWcbO/p/xTSDSebleAH+JJRzOXv+eWoo=;
+        b=NQ0u2Km9pM7UAE5isBmoFNufE5PR6vSvpXaasYTkt8u/+2WjXMhcdEoyTSSOicnKaK
+         nOO32Fh1qnr5GWs6u9bxUkkMuO8Tq9iykKIjmg4AcqhiQCr6I9Z0TiyyVAwqjUsrA80i
+         ehdyNoZMVP6LOi3MACLykH1ecyKFSDCHYocyuf+7iw72Mn3rsMnORocaPqOtQ2m0q8Ww
+         lmgHhJ7/tmUAHha4ZYH5C2CyacotlTpWaA7r1d4wYGT5+jTGXgqMpTtIdP1nhf+W6GkI
+         QOXNSKghvUbM10bHjs0jrgZJDxd6n9TJ/vikY7rMfQ8OxuQpF0jBnblsOiZsNMAwavu9
+         7DQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEcr4WCIEKFSXn0d4fhnXiWYOTD3ANWkCz/Yn7OZ0WBU8tNKW3rjC+XABPCetb7alGnolcLXc2bi9jqtYj@vger.kernel.org, AJvYcCWNLGaV0BRbDKIAGUJigfZd7KU6u6CCUyrCiJP3WAzjGDKNcZ3GFhWb2A5mGouoYCI7UBtw1mVrCWwoNiSVCDlB@vger.kernel.org, AJvYcCXkmN3x2bkHJGo5NfqtO+CkmvL3bBahR7y6d63IRQSl7qiFJ29qeeGYrAEEVcHRgg9znyGJQMaMTDX6oI+Pf1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE0I+KTG3nTeKwV/FqYvlinsWVvn6cpzBNkDxtoatXd7izX0wV
+	frEt0gWk3ADJit7sPQyX/P+xvRZgGN6F4cLdgPeUFkPyoKcAX45gLO4CByY8IOeIO1NDdDTr6Vs
+	KoF0MzmOUCvzy8wWyDuUcvt70zUE=
+X-Gm-Gg: ASbGncviwVsysd1LXmEv6AUqIehjeCf0yKgYYwvd/PgFfzCx2dWQEdMFkhnzVTxi9Pk
+	7uDgURlBDnxeLyVj192KpKyKr1jRH8bOPwdlnqL9jK37ztfvZurZrofOTSTmKXZdywareSTX4mQ
+	==
+X-Google-Smtp-Source: AGHT+IFmIMz5/96ffXlGEO/PiEhxi13fP3EW28PYwfbuAOycQ5rgE8G7lU+aTSRRyZoN+hdXnQT+nm4OMAbTotZA8lg=
+X-Received: by 2002:a05:651c:1505:b0:308:f39c:96b3 with SMTP id
+ 38308e7fff4ca-3090ddbfc27mr4014081fa.30.1739399034719; Wed, 12 Feb 2025
+ 14:23:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <f9975604-6a65-4bcc-b532-15fcaa6da0e5@stanley.mountain>
+In-Reply-To: <f9975604-6a65-4bcc-b532-15fcaa6da0e5@stanley.mountain>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Wed, 12 Feb 2025 17:23:42 -0500
+X-Gm-Features: AWEUYZkcyIALuJteIaTDNLZmLlmdJ9IGNfHsTQ6eK0ZDLJ1s_Ft9EEtztmIkhXw
+Message-ID: <CABBYNZK-ibR-+ri_+FFiorLkEvT_1tD2YKSOeSuTsyoS4dM1CA@mail.gmail.com>
+Subject: Re: [PATCH next] Bluetooth: L2CAP: Fix NULL dereference in l2cap_recv_acldata()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enabling the possibility of supporting multiple
-PCIe devices from Intel Altera FPGA but with different
-device ids. The current driver registers itself
-to all device IDs which causes an incorrect driver
-association.
+Hi Dan,
 
-Signed-off-by: Ang Tien Sung <tien.sung.ang@intel.com>
-Signed-off-by: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
----
- drivers/fpga/altera-cvp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Feb 12, 2025 at 11:40=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> The "conn" pointer is NULL so this "goto drop;" will lead to a NULL
+> dereference when we call mutex_unlock(&conn->lock). Free the skb and
+> return directly instead.
+>
+> Fixes: dd6367916d2d ("Bluetooth: L2CAP: Fix corrupted list in hci_chan_de=
+l")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  net/bluetooth/l2cap_core.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+> index 6cdc1dc3a7f9..fec11e576f31 100644
+> --- a/net/bluetooth/l2cap_core.c
+> +++ b/net/bluetooth/l2cap_core.c
+> @@ -7456,8 +7456,10 @@ void l2cap_recv_acldata(struct hci_conn *hcon, str=
+uct sk_buff *skb, u16 flags)
+>
+>         hci_dev_unlock(hcon->hdev);
+>
+> -       if (!conn)
+> -               goto drop;
+> +       if (!conn) {
+> +               kfree_skb(skb);
+> +               return;
+> +       }
+>
+>         BT_DBG("conn %p len %u flags 0x%x", conn, skb->len, flags);
+>
+> --
+> 2.47.2
 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 5af0bd33890c..97e9d4d981ad 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- static void altera_cvp_remove(struct pci_dev *pdev);
- 
- static struct pci_device_id altera_cvp_id_tbl[] = {
--	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
-+	{ PCI_VDEVICE(ALTERA, 0x00) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
--- 
-2.25.1
+I went ahead and fixed this in place since it has not been sent to net
+yet, I did add your Signed-off-by though.
 
+--=20
+Luiz Augusto von Dentz
 
