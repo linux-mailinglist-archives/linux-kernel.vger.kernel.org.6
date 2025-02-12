@@ -1,130 +1,130 @@
-Return-Path: <linux-kernel+bounces-511212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FC9A327CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:58:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E4AA327EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:03:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6281670B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:58:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8378188CBE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB3B20E6FF;
-	Wed, 12 Feb 2025 13:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B92E20F061;
+	Wed, 12 Feb 2025 13:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nbyeaJX5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="foJGN7wR"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31EE20E315;
-	Wed, 12 Feb 2025 13:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2000220E326;
+	Wed, 12 Feb 2025 13:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739368682; cv=none; b=NzbEEXIEf15r1E20WxLglIYeehqObNxBLQYmksPU+WJLk/m585kji2Iy/LghesK+kqRJCoFgttEV5F8vq71gxBnBiYsVT8GOGJMnIwNiNdpaQnVKqRWxuoFe/NCQZLeHmJYNWAUFV0fI04MdD2ojJfsa40XWgw9bwuhzMoU8RF8=
+	t=1739368764; cv=none; b=WI0RSveKx6oOWLbbR1KewAlrpK0MUclQAcPW7R8kHkm9r2LQN1rMKdi8YPQX9RtEXbK/7e42/Y9Ht/Los9wVTUpbhFgTBoJR1URQOxFlo8ycAXeyl/zEdIueC2MK4aST9pDLJQl7Z/IbI6mRPmd+7rNkrtKj2/goE8AaRtU3BqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739368682; c=relaxed/simple;
-	bh=96pdxkWjw6GsLVtvNftdKd10yxyF39mB6biRnC42Ps4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MVbiQ3UKoGXp8AGQSAg+69N/jE2HBPF6J2RohyJ4yskPj9UgDa6yeV8E7R678FaOQIoijgNl6oTl6xq7m6JCFCftsHlN3SxiMVa33Rmvl5m1S8M5mKYhnTpa1et8OPx5XPJjFPKYcl33MRr1CFAcFULglGGGrX0a7qA/DfXTxfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nbyeaJX5; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739368681; x=1770904681;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=96pdxkWjw6GsLVtvNftdKd10yxyF39mB6biRnC42Ps4=;
-  b=nbyeaJX5ch9dNu3ABwc0Co7IgMmiTqMgnit9HXNCmb7ECkDzqiXuwwht
-   S6zpV9eLcMlcSzmKDRuVDF6kLxxbatnbWqK8aB04kFWcjrhGo/NZy42k2
-   tBV+eq72F0kxYWfwPeM+/jJMg8ie+sVXoREkGVTljaQqEc2m02xQqQpzb
-   EUSwfht2W8o289ceE9C+/zO/Y0g/d2XDGpdItXRK3rARMc3Tw4aUqcubz
-   jyu9vVeWVyersFVbW9DB5fepZIJSiOZcZ8YBi7UIZiZ6nM5dFcZmjWjse
-   0bG0ZXCxPXFJDwmUW5CBoIOFSz+1JZgR2vNtcU+JAncqijHQADGdZDHl/
-   w==;
-X-CSE-ConnectionGUID: vDt1JB/NRUay7pN6os1fWQ==
-X-CSE-MsgGUID: y+JegSPrTy6nMnhPyFQWTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40145853"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="40145853"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 05:58:00 -0800
-X-CSE-ConnectionGUID: RRVwHANLSeakNeJ9W2v9ow==
-X-CSE-MsgGUID: e1wjcWhhQPWqIcbWUmrUxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="112686345"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 12 Feb 2025 05:57:56 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiDFT-0015gJ-0T;
-	Wed, 12 Feb 2025 13:57:55 +0000
-Date: Wed, 12 Feb 2025 21:57:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Bamvor Jian Zhang <bamv2005@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Keerthy <j-keerthy@ti.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 01/14] gpiolib: make value setters have return values
-Message-ID: <202502122100.xnayNYRg-lkp@intel.com>
-References: <20250211-gpio-set-retval-v1-1-52d3d613d7d3@linaro.org>
+	s=arc-20240116; t=1739368764; c=relaxed/simple;
+	bh=UMusHU1t5zzmDkuA9Xf7Kq0KXr1+7v+GF+RicmDuKyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bgTxa2Hm2x/vTQffbU5MX2jjHvuTIpoLEf4ALstjjANlcQXuEzcg0yyJiJyNloG+wof//pG6r89bsxfOcAY0QQPVIakKfG5ODLue0x+9XZU8o8HBVwL89JAjQEq4blhy/hn9Jgdz+y5/SFgGSJK3/6DdUn59g+ydqOX2Ya/OrFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=foJGN7wR; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38dcb7122c1so4572215f8f.2;
+        Wed, 12 Feb 2025 05:59:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739368761; x=1739973561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A+ede4RrUjYL6rNcNJR8w+SRtlFFhYFYyooGZI9RRMA=;
+        b=foJGN7wRFOn6VD5JkJBT5YP9/BgO4pxIDislSwcPkemPIJIh214JQEfXuDn/KYKhBt
+         Sdt36uY2dC4iIIe40biz/UiHuDr3pqEwCDGV1blQw4lnPa0DBzwKz6blxNjkG86FN5hC
+         DmGUvokgRLcJa1h3W+lGUJPg7VunNB9ayxh/N9A5Lu4WnI1UCCycDw4ewIYnZa/tOLVe
+         b3jSSTsqu6kjRhPThzrGVImbOOCG5er56XMcKuLbEwlyRSKK+e7+TH0WD+/AUy7m6ZC9
+         UAxoUZQMhM+hSMMLogE4N5FEPMUNchOONwnoU+3TGfirrGdyCtCzj8hNQgeDpVYZbNHM
+         od7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739368761; x=1739973561;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A+ede4RrUjYL6rNcNJR8w+SRtlFFhYFYyooGZI9RRMA=;
+        b=SFgb0T73Ofvdf6UetX9vskfgPrLtW6ib5AHYTe0JecNwksWv8YIyzVXH26TqH+YZXq
+         hFQW0hCFrbD5fkDp2lZgdsU6HLCVfisaUzu2AwEDDwWxSE6y9OA/TAPU/dU+Q9byfw21
+         4O0sj0HlAvjYQIKDr18IFQbJds5gFA7Y4i2TUR5UNn4JVu3+aCnSZ9qe7TDfkvMTSdfB
+         AwZhw9SlMsR2FdFo9ymeUROXLHtO9+s+fZvYw8Yfz5/mXyUBzAd5RJ/g/VsNzt1wRwmS
+         HvMJmv4K6FMAE8gwamRuApGnFMPobQ2MV1riJHM9E3kc2noAet4KiZZUYh2Htx8AR9GX
+         qiZg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ulQHsBR4O8o1u0nUsxgf8wDKw7TU2+vnrqrrPw11vq/cw8NzjA7gnjfhExm1OyfW8eKAzaJi4WzNTCgzY0CQxQ==@vger.kernel.org, AJvYcCWfZfFseLlKIN3xh3/DwkOYiq6vmYzxbGJPh5UU1fKNNzayh/Sod7ZRXWXtNtN78gmQT21To1ytaXUbaWgV@vger.kernel.org, AJvYcCXrvHfWiaxUTrXotPy/ViS7Tsv+DavjLXYj0XZ0TQQnDLV33zn/fLY6HbdWLYBUDVZeWxNHoq0uHsC4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr4cl7JPz/I6rTgwxioLVZDdoZk0XMNtb3FUEmVV8eiohOMKqf
+	whzLexMzaN7mNurcHUrT+FkDwgtknJtkZThhwEHNdC3e44Uj8v0r
+X-Gm-Gg: ASbGncu0TWWEy22yZFTV6zCsAC7KYLj6xSspqCvGK6fhkBabUHheUCZMSsoxAFczEqW
+	xUw61vpTzr4igRcfXuDzJaNqKUs3i4rWQi4vRnvLTxIw+grmGC2FBzO9I1WzkmkBOx42WKv93u5
+	Jw35Je3Mr837NKiOaHlQtM6/OPYAWH+KL2j8tb7Zta/93/hO8GxU8HBWsi72+FQaj2i51iDKv7x
+	mXaKMocvcFN7nE2l/7uKL/RnoSahH4pnQGie3TwnvyVBOl/mvNgS/ezG087Xr3qzCgAqnqvx+zQ
+	lR50qphCh6qgaQQ3Y9jmDOO/0XGUdz0fQqQ1zaLNzxuMOat8cGKPeg==
+X-Google-Smtp-Source: AGHT+IEKCoDJGY1lmlxzGAZbmqw2zwD51cxjE08/BzvCDXeJUL1uvgupw74+KSMNg7LFxI/1rdLUpQ==
+X-Received: by 2002:a5d:64e2:0:b0:38f:21eb:5d02 with SMTP id ffacd0b85a97d-38f21eb5f2dmr1041208f8f.22.1739368761091;
+        Wed, 12 Feb 2025 05:59:21 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a058930sm20853795e9.17.2025.02.12.05.59.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 05:59:20 -0800 (PST)
+Date: Wed, 12 Feb 2025 13:59:19 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Ian Rogers" <irogers@google.com>, "Arnaldo Carvalho de Melo"
+ <acme@kernel.org>, "Howard Chu" <howardchu95@gmail.com>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>, "Namhyung Kim"
+ <namhyung@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>, "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>, "Jiri Olsa"
+ <jolsa@kernel.org>, "Adrian Hunter" <adrian.hunter@intel.com>, "Kan Liang"
+ <kan.liang@linux.intel.com>, "John Garry" <john.g.garry@oracle.com>, "Will
+ Deacon" <will@kernel.org>, "James Clark" <james.clark@linaro.org>, "Mike
+ Leach" <mike.leach@linaro.org>, "Leo Yan" <leo.yan@linux.dev>, guoren
+ <guoren@kernel.org>, "Paul Walmsley" <paul.walmsley@sifive.com>, "Palmer
+ Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Charlie Jenkins" <charlie@rivosinc.com>, "Bibo Mao" <maobibo@loongson.cn>,
+ "Huacai Chen" <chenhuacai@kernel.org>, "Catalin Marinas"
+ <catalin.marinas@arm.com>, "Jiri Slaby" <jirislaby@kernel.org>,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, "linux-csky@vger.kernel.org"
+ <linux-csky@vger.kernel.org>, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 5/7] perf trace beauty: Add syscalltbl.sh generating
+ all system call tables
+Message-ID: <20250212135919.4e7a26fd@pumpkin>
+In-Reply-To: <0195f9a0-5198-4ee0-b4ff-ea7126dc8299@app.fastmail.com>
+References: <20250210165108.95894-1-irogers@google.com>
+	<20250210165108.95894-6-irogers@google.com>
+	<d47c35dd-9c52-48e7-a00d-135572f11fbb@app.fastmail.com>
+	<CAP-5=fUi4RYebxCGYZVHVEt0BpWVmUA6+-vDQfbai25_KJRs7A@mail.gmail.com>
+	<0195f9a0-5198-4ee0-b4ff-ea7126dc8299@app.fastmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211-gpio-set-retval-v1-1-52d3d613d7d3@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Bartosz,
+On Tue, 11 Feb 2025 18:53:14 +0100
+"Arnd Bergmann" <arnd@arndb.de> wrote:
 
-kernel test robot noticed the following build errors:
+...
+> I think the way it actually works on mips is that all syscalls are
+> allowed in any task and the actual number identifies both the
+> ABI and the syscall. In some variant, the same is true on arm
+> (oabi/eabi) and x86-64 (64/x32), but oabi and x32 are both too
+> obsolete to put much work into them.
 
-[auto build test ERROR on df5d6180169ae06a2eac57e33b077ad6f6252440]
+IIRC x86-64 processes can also just make i386 system calls.
+Even switching to/from 64bit mode isn't privileged.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/gpiolib-make-value-setters-have-return-values/20250211-201426
-base:   df5d6180169ae06a2eac57e33b077ad6f6252440
-patch link:    https://lore.kernel.org/r/20250211-gpio-set-retval-v1-1-52d3d613d7d3%40linaro.org
-patch subject: [PATCH 01/14] gpiolib: make value setters have return values
-config: sparc-randconfig-002-20250212 (https://download.01.org/0day-ci/archive/20250212/202502122100.xnayNYRg-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502122100.xnayNYRg-lkp@intel.com/reproduce)
+	David
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502122100.xnayNYRg-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/leds/leds-aw200xx.c: In function 'aw200xx_disable':
->> drivers/leds/leds-aw200xx.c:382:16: error: 'return' with a value, in function returning void [-Wreturn-mismatch]
-     382 |         return gpiod_set_value_cansleep(chip->hwen, 0);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/leds/leds-aw200xx.c:380:13: note: declared here
-     380 | static void aw200xx_disable(const struct aw200xx *const chip)
-         |             ^~~~~~~~~~~~~~~
-
-
-vim +/return +382 drivers/leds/leds-aw200xx.c
-
-d882762f7950c3d Dmitry Rokosov 2023-11-25  379  
-d882762f7950c3d Dmitry Rokosov 2023-11-25  380  static void aw200xx_disable(const struct aw200xx *const chip)
-d882762f7950c3d Dmitry Rokosov 2023-11-25  381  {
-d882762f7950c3d Dmitry Rokosov 2023-11-25 @382  	return gpiod_set_value_cansleep(chip->hwen, 0);
-d882762f7950c3d Dmitry Rokosov 2023-11-25  383  }
-d882762f7950c3d Dmitry Rokosov 2023-11-25  384  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ 
 
