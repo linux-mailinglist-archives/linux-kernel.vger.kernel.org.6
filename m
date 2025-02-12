@@ -1,157 +1,188 @@
-Return-Path: <linux-kernel+bounces-510716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5540FA320FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:25:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9B9A320FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:26:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3ED4165D8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:25:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 315787A12DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9738D205E07;
-	Wed, 12 Feb 2025 08:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6787205509;
+	Wed, 12 Feb 2025 08:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HgmoXuog"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IHMcyV8h"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA7E205AAA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBB8204F73;
+	Wed, 12 Feb 2025 08:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739348664; cv=none; b=stgrcOxleiS1+S5DPbr/Fvvv9EUQOZODB3HUh2JbMhre0AzUzYSYItp2XUJ2wgrD5nM+ohHQoV9a52DEl85FnOX02dle/KZrifvk+nCBfkAzMjuFJtioIhgMG79Uk43UB3ckZQz3FmcLVHkccaJBOdYtGZDSoQCW73dhmw2JZ+0=
+	t=1739348747; cv=none; b=Yluvx4uRKnjnE2YDJVIuX3rvGwENJBHXERupJw8YzdNHOpxyjUni7MTVjSND6bXGDGO15LrHVMGMp+XUp7blYb+kDW41rUte2qRTiM8bbx/3aid5WvVJ58lH69ToCiSaD7uZs7GC8E18WI90iYFYNlNSqZkGJMv+fZky185BwaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739348664; c=relaxed/simple;
-	bh=vS+Ibsqqgchtay7JQEgCkpVTBAH3Qqa/q39iH91TsXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJdSCmQgBcAp0p6OLXXTsfLUOkH8J9IJPOKhhvYr9vHoFjcqzXm5L09z5f8SxheV8ELggHap+/6EGHDpSijqBhO93MYYosdCUtYgV9xdS/Izx7uTYTQHZu29WdGNxVtwvhjq34Jr3i9c4PI+rprLlmyfEgleEULR1jgi7+3VR6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HgmoXuog; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9776C4CEDF;
-	Wed, 12 Feb 2025 08:24:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739348664;
-	bh=vS+Ibsqqgchtay7JQEgCkpVTBAH3Qqa/q39iH91TsXI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HgmoXuogOEOPeVfCOBzROnw5BQ4hGdf52cd6lnL0RzJtiJtAgVIGrTLwmyIXeOeeM
-	 Jag9tN4Ma72LlvKOVr2uW94ph45zzAyfpbmymqzEaOqn8OIURuhWuTYvxsuOixYaOB
-	 E8YtPAk7LuQgf/Mbbypil1mPTo8X/N6EQSoAtrcczn/5xgqtZ3Xd+r2avxB+IqDDKr
-	 meh81fG6E9+W4w8EeBqWhhLax9AB6bOop0RIKoZHnd0u+n6o+31xAtA6mmNAqFV2LW
-	 EqfM50r5SlXtGpwkwQ6lzRjSfO5jXHRfeptQbWjDcjmZjICIgdfGmGpQGKQl/jjQ/5
-	 YhRuSmrK88L5Q==
-Date: Wed, 12 Feb 2025 09:24:21 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 34/35] drm/bridge: tc358768: Convert to atomic helpers
-Message-ID: <20250212-versatile-donkey-of-thunder-0894ec@houat>
-References: <20250204-bridge-connector-v2-0-35dd6c834e08@kernel.org>
- <20250204-bridge-connector-v2-34-35dd6c834e08@kernel.org>
- <nbghrrl74xsuzomp7d6qjfosxfiooezipppjhxkx2ibnlpi6rj@b6ovgosmpuhl>
- <20250211-solemn-meticulous-angelfish-85d1ce@houat>
- <btehhpvkv6iqd4pofumspqbxzr5gxwp6vs5oh7vflbcmzqj5wz@s6yem2ryw6vs>
+	s=arc-20240116; t=1739348747; c=relaxed/simple;
+	bh=ukrkJzE51VQLzsAENhN/N7LN/GMW+1t1gZXt+vPnv1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H0cz6MYbY+EJcGBNwQgMoNWPTpectjQ7m570rt4wbNfW2/eNfqo/DQsSkdGkGzgZL8vouf3g1DxgayYJoSU2LqLh7ZnOQDlR3x1wOKsDcBZhyL2QzyqG0nKjFQO2MGCTE+8Yi7umkMVi3jmjkim0V+xbTX0+hO9yqnwP6D4g3Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IHMcyV8h; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 05D781F764;
+	Wed, 12 Feb 2025 08:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739348736;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LIgUAEyu8qolGLYGKy5KFxfJEdAWp4C5nM5+ktv2GAc=;
+	b=IHMcyV8h5M35NbOnH2TZErLdEosb8U02k4tCGIImqJ6EV8fbbMmqTqCSKzDlZNQo8Wco1u
+	8uW+ROGU8eRUvgKrTKcurNmd2W10HGBEpwW0z9NF8d9FLXtU5HCfk7IUsYrohzGnKwDJH/
+	mvqcKl/1z/1VcISm8IA6+Uut6geE5JyF94KQeCR+MEcMgN4s3nIixUtJ8/odC9NJQoU2si
+	pcqia8BfBySgTwAGCzLxkT8sXSxSziBm85Yt5lwjY9SLKjyVbID5IbK8Pwil388Vr/AVaH
+	lCL0i74qj6/yahizFabye0IMDx90ma4miNOaUEi5xFbzbXHjSJFe/lMsUrjPBg==
+Date: Wed, 12 Feb 2025 09:25:26 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>
+Subject: Re: [PATCH net-next RFC v2 2/6] net: ethtool: Introduce
+ ETHTOOL_LINK_MEDIUM_* values
+Message-ID: <20250212092526.544fb80e@fedora.home>
+In-Reply-To: <20250211130830.25dbafb3@fedora.home>
+References: <20250122174252.82730-1-maxime.chevallier@bootlin.com>
+	<20250122174252.82730-3-maxime.chevallier@bootlin.com>
+	<20250123103534.1ca273af@kmaincent-XPS-13-7390>
+	<20250211130830.25dbafb3@fedora.home>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="7z47kinhio2ycy4k"
-Content-Disposition: inline
-In-Reply-To: <btehhpvkv6iqd4pofumspqbxzr5gxwp6vs5oh7vflbcmzqj5wz@s6yem2ryw6vs>
-
-
---7z47kinhio2ycy4k
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 34/35] drm/bridge: tc358768: Convert to atomic helpers
-MIME-Version: 1.0
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeeflecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeuhfefgffgtdfhgffhvdfhhffhteeutdektefghfetveehheejjefgudeiudehudenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedviedprhgtphhtthhopehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrn
+ hgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Wed, Feb 12, 2025 at 02:38:52AM +0200, Dmitry Baryshkov wrote:
-> On Tue, Feb 11, 2025 at 03:33:58PM +0100, Maxime Ripard wrote:
-> > On Sun, Feb 09, 2025 at 09:13:36AM +0200, Dmitry Baryshkov wrote:
-> > > On Tue, Feb 04, 2025 at 03:58:02PM +0100, Maxime Ripard wrote:
-> > > > The tc358768 driver follows the drm_encoder->crtc pointer that is
-> > > > deprecated and shouldn't be used by atomic drivers.
-> > > >=20
-> > > > This was due to the fact that we did't have any other alternative to
-> > > > retrieve the CRTC pointer. Fortunately, the crtc pointer is now pro=
-vided
-> > > > in the bridge state, so we can move to atomic callbacks and drop th=
-at
-> > > > deprecated pointer usage.
-> > > >=20
-> > > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > > > ---
-> > > >  drivers/gpu/drm/bridge/tc358768.c | 30 +++++++++++++++++++++++----=
----
-> > > >  1 file changed, 23 insertions(+), 7 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/bridge/tc358768.c b/drivers/gpu/drm/br=
-idge/tc358768.c
-> > > > index 6db18d1e8824dd7d387211d6d1e668645cf88bbe..6ff6b29e8075d7c6fa0=
-b74b4fec83c5230512d96 100644
-> > > > --- a/drivers/gpu/drm/bridge/tc358768.c
-> > > > +++ b/drivers/gpu/drm/bridge/tc358768.c
-> > > > @@ -601,17 +601,29 @@ static void tc358768_bridge_disable(struct dr=
-m_bridge *bridge)
-> > > >  	ret =3D tc358768_clear_error(priv);
-> > > >  	if (ret)
-> > > >  		dev_warn(priv->dev, "Software disable failed: %d\n", ret);
-> > > >  }
-> > > > =20
-> > > > +static void tc358768_bridge_atomic_disable(struct drm_bridge *brid=
-ge,
-> > > > +					   struct drm_atomic_state *state)
-> > > > +{
-> > > > +	tc358768_bridge_disable(bridge);
-> > > > +}
-> > > > +
-> > >=20
-> > > Please change corresponding functions into atomic_disable() and
-> > > atomic_post_disable(). Calling sites have access to the atomic state,=
- so
-> > > there is no need to have yet another wrapper.
-> >=20
-> > It's pretty hard to do (at least without the hardware), both
-> > tc358768_bridge_disable() and tc358768_bridge_post_disable() have
-> > multiple call sites in the driver, and passing a state enabling the
-> > bridge doesn't make sense for those.
+Hi again K=C3=B6ry,
+
+> Hi K=C3=B6ry,
 >=20
-> I think it makes sense. The function knows that the bridge needs to be
-> disabled. The state is totally unused (or it can be used to get
-> connectors / CRTC / etc).
+> On Thu, 23 Jan 2025 10:35:34 +0100
+> Kory Maincent <kory.maincent@bootlin.com> wrote:
+>=20
+> > On Wed, 22 Jan 2025 18:42:47 +0100
+> > Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+> >  =20
+> > > In an effort to have a better representation of Ethernet ports,
+> > > introduce enumeration values representing the various ethernet Medium=
+s.
+> > >=20
+> > > This is part of the 802.3 naming convention, for example :
+> > >=20
+> > > 1000 Base T 4
+> > >  |    |   | |
+> > >  |    |   | \_ lanes (4)
+> > >  |    |   \___ Medium (T =3D=3D Twisted Copper Pairs)
+> > >  |    \_______ Baseband transmission
+> > >  \____________ Speed
+> > >=20
+> > >  Other example :
+> > >=20
+> > > 10000 Base K X 4
+> > >            | | \_ lanes (4)
+> > >            | \___ encoding (BaseX is 8b/10b while BaseR is 66b/64b)
+> > >            \_____ Medium (K is backplane ethernet)
+> > >=20
+> > > In the case of representing a physical port, only the medium and numb=
+er
+> > > of lanes should be relevant. One exception would be 1000BaseX, which =
+is
+> > > currently also used as a medium in what appears to be any of
+> > > 1000BaseSX, 1000BaseFX, 1000BaseCX and 1000BaseLX.   =20
+> >=20
+> >=20
+> >  =20
+> > > -	__DEFINE_LINK_MODE_PARAMS(100, T, Half),
+> > > -	__DEFINE_LINK_MODE_PARAMS(100, T, Full),
+> > > -	__DEFINE_LINK_MODE_PARAMS(1000, T, Half),
+> > > -	__DEFINE_LINK_MODE_PARAMS(1000, T, Full),
+> > > +	__DEFINE_LINK_MODE_PARAMS_LANES(10, T, 2, 4, Half, T),
+> > > +	__DEFINE_LINK_MODE_PARAMS_LANES(10, T, 2, 4, Full, T),
+> > > +	__DEFINE_LINK_MODE_PARAMS_LANES(100, T, 2, 4, Half, T),
+> > > +	__DEFINE_LINK_MODE_PARAMS_LANES(100, T, 2, 4, Full, T),   =20
+> >=20
+> >  =20
+> > > -	__DEFINE_LINK_MODE_PARAMS(1000, KX, Full),
+> > > -	__DEFINE_LINK_MODE_PARAMS(10000, KX4, Full),
+> > > -	__DEFINE_LINK_MODE_PARAMS(10000, KR, Full),
+> > > +	__DEFINE_LINK_MODE_PARAMS(1000, KX, Full, K),
+> > > +	__DEFINE_LINK_MODE_PARAMS(10000, KX4, Full, K),
+> > > +	__DEFINE_LINK_MODE_PARAMS(10000, KR, Full, K),   =20
+> >=20
+> > The medium information is used twice.
+> > Maybe we could redefine the __DEFINE_LINK_MODE_PARAMS like this to avoid
+> > redundant information:
+> > #define __DEFINE_LINK_MODE_PARAMS(_speed, _medium, _encoding, _lanes, _=
+duplex)
+> >=20
+> > And something like this when the lanes are not a fix number:
+> > #define __DEFINE_LINK_MODE_PARAMS_LANES_RANGE(_speed, _medium, _encodin=
+g,
+> > _min_lanes, _max_lanes, _duplex)
+> >=20
+> > Then we can remove all the __LINK_MODE_LANES_XX defines which may be
+> > wrong as you have spotted in patch 1. =20
+>=20
+> I will give this a try, see hw this looks, so that we can separate the
+> encoding info from the medium info.
 
-That's the thing though, if we were to pass the state, it would be a
-state where the bridge is enabled, like, it would have an active CRTC.
-In a disable path, you wouldn't have it.
+So I did give it a go, but it turns out to be much more complex than
+expected... The _type information from definitions like :
 
-Another idea would be to just drop the call to disable the bridge, the
-assumption is that we can't fail in atomic_enable, so no driver actually
-tries to mitigate a failure. I'm not sure why this one would need to.
+__DEFINE_LINK_MODE_PARAMS(10000, KX4, Full, K),
+
+(here _type is KX4) can't really be split into the individual
+attributes <Medium, Encoding, Lanes> without having some complex macro
+logic. This type is used to convert to actual linkmodes that already
+exist in the kernel :
+
+#define ETHTOOL_LINK_MODE(speed, type, duplex) \
+	ETHTOOL_LINK_MODE_ ## speed ## base ## type ## _ ## duplex ## _BIT
+
+Say we want to generate the _type from <Medium, Encoding, Lanes> with a
+macro, we have to cover all the weird cases :
+
+1000BaseT =3D> No encoding, no lanes
+10000BaseKX4 =3D> K medium, X encoding, 4 lanes
+10000BeseKX =3D> K medium, X encding, no lanes (which means 1 lane)
+1000BaseX =3D> Just encoding
+100000BaseLR4_ER4 =3D> One link mode that applies for 2 mediums ?
+
+While doable, this will probably end-up more complex and hard to
+maintain than re-specifying the medium :(
 
 Maxime
-
---7z47kinhio2ycy4k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ6xasAAKCRAnX84Zoj2+
-dueAAX9SMGyDftCM0SYN9inRzMrGoyoVgFYZk5PzoXmuKQ+UYPCBoo8GDDVJZtyx
-PlBFR2cBgLoDsY265QHgxuKYGHvyxb/ClABRPEprT8Pe4CLpQIUvcheQUsXwhB74
-B+vnEfdpag==
-=fWeT
------END PGP SIGNATURE-----
-
---7z47kinhio2ycy4k--
 
