@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-510242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C663A31A2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:09:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02336A31A2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D47061653FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 032583A862E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F21C1DFED;
-	Wed, 12 Feb 2025 00:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6BC29405;
+	Wed, 12 Feb 2025 00:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TslQGlfy"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YvAFwhB6"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510C7FBF6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB841EB2F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739318902; cv=none; b=E30q0SG69d6CGM/ICslnX2Fe/xVyqL/HyCOCi3IDvjic5333PmqTq8GFJ/XXkAQ2I9Qj1Il2u7W6lNQN5O8roz6VlSIJEmx+/MLK3EBn2D6X1UyQ0dx4hQzMT2vmLM5uEYiH3Id5Q6Skn0mv+rgbPm+USJ17Uya+JhvUSL+7UVw=
+	t=1739318905; cv=none; b=mJtLUWrtD1EYaBGTgGI5cVVoTJJeqJO2JCJeYKPsoMvnGKnspLjZFwdgtMChVBdnu5xue33ozLofhniShz4Dq3uSPqjijKwQrNdBCbS9V5QN6xmS44Ol2zNewuWsUHwrXZo9ACg/TqTUsm0etlJCmUm1msHnbW52T29nNF2g5wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739318902; c=relaxed/simple;
-	bh=oLYsr5K/EnOE6Ps4r/pTLeznQ2IgY4c6G0iy2zWPqsM=;
+	s=arc-20240116; t=1739318905; c=relaxed/simple;
+	bh=Ry//zRj6xrQGvb+QLd5PGQ2AmxS5vbX9LInUxHl69YU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AXW3KQ3dxLk/eANSLo8r2ip92BZywk0Ixy4o+3ZsUtptSSqkAtsv0iFiBfZV7FVLcI4b8tQXbDjYvFBNBL+Nx3k/Y9mIFXvRdulmoR3wTES5QCCzcQzUMY3CIFxsfAl4zA4onF6G47DutOJVkiKo0BEVMsB2t8Ii6+l1u6KYJNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vannapurve.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TslQGlfy; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=fN+ToQf3trAZsf4PifNprMzZK+66+IVPi6F6UjlVfUGnAIXmKsn109bU6Sc7PyNYYYHNsiqioio8Sy3dzmfyZ6EGUBk84UwT0BOXNzr2Aor3qoc7Ehm4x5Q/4TdQJbRJcKhEfNPiQOE23cX6x92BKnL+8zBewHgW2u+vtrc+v2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vannapurve.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YvAFwhB6; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vannapurve.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fa34df4995so13318905a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:08:21 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fa3b466245so8116624a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:08:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739318900; x=1739923700; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739318903; x=1739923703; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h1XiCMBzc5zO/l6anZRBbtwTnK6rTlocvFZ6R2e8ekk=;
-        b=TslQGlfyCdtaTcXqVxnV0PEfi56qHRVm8n1Nk9GA4W4vHhj4DtUVVQlejw1SvnMaV1
-         5BnQqYpif3a9U5O+hoPK0UTXRyRNN/OqUsPmZLp9vWlpYofyigUvKw2Xh6LseKhXSzT4
-         ZKSHfSXBiVC4IRjBwkxzdySUcg+Jjua1lMVgKo1+PrmwFjs2kDNDiQ9hVv3iRTak6G6R
-         44mTPIGk4U3xydd7A1mbkhwwLluyMYwu8HLGEyT5Ca+rQhtUs82WCvYf11RVjPIQ6puk
-         UoA5hp+Bid4BMX4Sh9jGwyX7q5Y3VD/gNC/KTdLuNWYlADFPjOk/KHZClJuoSUWp1yIl
-         5gVw==
+        bh=qWVkozr8oT2oqbRq082DQxpQr7C1Te5FFbGPk2fd3qk=;
+        b=YvAFwhB64JA5wiZwsx8qNLS60M8Tox7r5/9iByoBX3t6JYCycU5FqQwhttL4ZxYiK8
+         FWz+hRs5Yccjg3xveJZVHKqaavqrEAuaRWPlDXG6oC19dWKlQreqNWr7nZLr1e0olaZd
+         9UXx70T0t//Jwf66ZjlLmzZasFxYiHkg0G9P3pS75oy8zCgu/geCguFO4Bg9F1glfmKg
+         Du7tSZ6n4Sh+Z0+e5/GL5Sdb/GfpwMUjIGg+tOQTtccsx5MQR78g9Yhcs5Nw/7AQGaPD
+         gfSAY7LhhQKVyHz2au9oWBjRlU4FwoVAxHuokiPRJVwvz+8F7uGflBsBv52fS/pilShp
+         ezaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739318900; x=1739923700;
+        d=1e100.net; s=20230601; t=1739318903; x=1739923703;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h1XiCMBzc5zO/l6anZRBbtwTnK6rTlocvFZ6R2e8ekk=;
-        b=N3nLzXUpSAxxjmAWQAzEnZJVJYOQMB4l3ToljxmXWdrb/OadMlTFmqPXyCpMBmbEaU
-         LAZu5xI1bJ3IDsaK6MVzaDgZHXUuuqkyDMJnguK8p2VOKEoWQtuTPim2BgF2+atLJjUm
-         zqfwL69vzdVRehYmbYDJ5rMHPzyytdhZqYfLC8cvNB59jiatLowb7gjC9bZVqBNX011O
-         npUufXx673Y08S6qR9wnZbWE5/u5p48Z+c4vo+t+9BLhkuhSKOTnxmlGR0DS4AePqGZv
-         96ZqOAw3Ib61M3H9+3TIXYFdWVxu2dq2YQZla+z5hv9fm0iyrDWR1o2frZsJBNNDnbmu
-         MAgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEr0YvOMsH75yULfSfFudMvc5z3Sya/FgiVRE2uNEr7elrwDsdpgQkENhNgNZYUA3Of4LbutNS+HGRZv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywly6H2BGkpMSTHpemB2952aO51vJd0BBvamgy3eJZz1AXu3zcQ
-	20s3DXpekAxEVG628RjCSgYBvBkaigtK5RQ0uaXOP+JgtMx7QvBYrJPDU8Kizk0M6MghJ7OD8W/
-	kFNBuNYyYCY+BTlYstA==
-X-Google-Smtp-Source: AGHT+IH4Aastc89G3lK7Kpren76shMv1ca6utCycZ+bUZsHekNg+thxZju67dX6Db0XVVQa0m/oRTqmDN+BLbf48
-X-Received: from pfbit9.prod.google.com ([2002:a05:6a00:4589:b0:730:8636:67d7])
+        bh=qWVkozr8oT2oqbRq082DQxpQr7C1Te5FFbGPk2fd3qk=;
+        b=YF8+lOJ9Yk/zDgNMblOMy2aTROWco7Zmm/Id87AN1DZ353JjPd/WPcWL2vRQbnJnjk
+         C0+M66bY3aNolB1wfmcWXixhY0Fh66J/RFik9bfWYs4bVTvLOz4lDaMttI+y9iDqJhXd
+         GRnMVkkdyrcLgg1VYgdNIcJJlo0qr6jwd8bmoNf7I9FmshGKoNh2jRtlQL1RAM18Emsp
+         /EyGKUHWxrNiVvMP0I1qqtEhLdSuugIo3vmwDaZJJ5mgfHH/oiHGnnPhDXuKIwgyaHC5
+         J4TkTVclSjQdjoqLk+wGK7Kcr0sV9qGtFdAZK+cngJ3chNP3uN4DQXiV8noBQKfkZb5z
+         EBQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9NaV04R1erXY5OHS/fYrF9sLo/z6JXnkX4QF9lNni6ulxSC01prAUudv93pI48Xmaw4fV5m17ycwmO34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBa2Q6BnF1F8G91pTsYB46RrjMEgDEpo5Fdj6YPJzhL/mLMYl2
+	oJRW3YRk3PAgntPs7l929bBCRtRb3kUBVdMWsqWKViZkgDhKxyydJkayoxmGi0K4Qvq2Iu4zgb6
+	wvPWhisD+jqV1ae7v3w==
+X-Google-Smtp-Source: AGHT+IEEYDooFC6yZwCAZXg+Qe55IRgCOFsgi1vdwniEiq9a0JjJhwh4h37DZWM3PfdySr35aQ8I4TeUG3Jg4tag
+X-Received: from pjbpv10.prod.google.com ([2002:a17:90b:3c8a:b0:2f2:ea3f:34c3])
  (user=vannapurve job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:1c8d:b0:730:9860:1240 with SMTP id d2e1a72fcca58-7322c39c33bmr1528792b3a.13.1739318900587;
- Tue, 11 Feb 2025 16:08:20 -0800 (PST)
-Date: Wed, 12 Feb 2025 00:07:46 +0000
+ 2002:a17:90b:51c6:b0:2f2:ab09:c256 with SMTP id 98e67ed59e1d1-2fbf5c6abf5mr1891723a91.33.1739318902913;
+ Tue, 11 Feb 2025 16:08:22 -0800 (PST)
+Date: Wed, 12 Feb 2025 00:07:47 +0000
 In-Reply-To: <20250212000747.3403836-1-vannapurve@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250212000747.3403836-1-vannapurve@google.com>
 X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
-Message-ID: <20250212000747.3403836-4-vannapurve@google.com>
-Subject: [PATCH V4 3/4] x86/tdx: Emit warning if IRQs are enabled during HLT
- #VE handling
+Message-ID: <20250212000747.3403836-5-vannapurve@google.com>
+Subject: [PATCH V4 4/4] x86/tdx: Remove TDX specific idle routine
 From: Vishal Annapurve <vannapurve@google.com>
 To: x86@kernel.org, linux-kernel@vger.kernel.org
 Cc: pbonzini@redhat.com, seanjc@google.com, erdemaktas@google.com, 
@@ -83,44 +82,61 @@ Cc: pbonzini@redhat.com, seanjc@google.com, erdemaktas@google.com,
 	pgonda@google.com, kirill@shutemov.name, dave.hansen@linux.intel.com, 
 	linux-coco@lists.linux.dev, chao.p.peng@linux.intel.com, 
 	isaku.yamahata@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com, 
-	Vishal Annapurve <vannapurve@google.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+	Vishal Annapurve <vannapurve@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Direct HLT instruction execution causes #VEs for TDX VMs which is routed
-to hypervisor via TDCALL. safe_halt() routines execute HLT in STI-shadow
-so IRQs need to remain disabled until the TDCALL to ensure that pending
-IRQs are correctly treated as wake events.
+With explicit dependency on CONFIG_PARAVIRT and TDX specific
+halt()/safe_halt() routines in place, default_idle() is safe to execute for
+TDX VMs. Remove TDX specific idle routine override which is now
+redundant.
 
-Emit warning and fail emulation if IRQs are enabled during HLT #VE handling
-to avoid running into scenarios where IRQ wake events are lost resulting in
-indefinite HLT execution times.
-
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Vishal Annapurve <vannapurve@google.com>
 ---
- arch/x86/coco/tdx/tdx.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/coco/tdx/tdx.c    | 2 +-
+ arch/x86/include/asm/tdx.h | 2 --
+ arch/x86/kernel/process.c  | 3 ---
+ 3 files changed, 1 insertion(+), 6 deletions(-)
 
 diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index ee67c1870e70..54baf93d9218 100644
+index 54baf93d9218..3578f7f7a502 100644
 --- a/arch/x86/coco/tdx/tdx.c
 +++ b/arch/x86/coco/tdx/tdx.c
-@@ -393,6 +393,14 @@ static int handle_halt(struct ve_info *ve)
+@@ -407,7 +407,7 @@ static int handle_halt(struct ve_info *ve)
+ 	return ve_instr_len(ve);
+ }
+ 
+-void __cpuidle tdx_halt(void)
++static void __cpuidle tdx_halt(void)
  {
- 	const bool irq_disabled = irqs_disabled();
+ 	const bool irq_disabled = false;
  
-+	/*
-+	 * HLT with IRQs enabled is unsafe, as an IRQ that is intended to be a
-+	 * wake event may be consumed before requesting HLT emulation, leaving
-+	 * the vCPU blocking indefinitely.
-+	 */
-+	if (WARN_ONCE(!irq_disabled, "HLT emulation with IRQs enabled"))
-+		return -EIO;
-+
- 	if (__halt(irq_disabled))
- 		return -EIO;
+diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+index 393ee2dfaab1..6769d1da4c80 100644
+--- a/arch/x86/include/asm/tdx.h
++++ b/arch/x86/include/asm/tdx.h
+@@ -58,8 +58,6 @@ void tdx_get_ve_info(struct ve_info *ve);
  
+ bool tdx_handle_virt_exception(struct pt_regs *regs, struct ve_info *ve);
+ 
+-void tdx_halt(void);
+-
+ bool tdx_early_handle_ve(struct pt_regs *regs);
+ 
+ int tdx_mcall_get_report0(u8 *reportdata, u8 *tdreport);
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index d11956a178df..9b21989c283b 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -932,9 +932,6 @@ void __init select_idle_routine(void)
+ 	if (prefer_mwait_c1_over_halt()) {
+ 		pr_info("using mwait in idle threads\n");
+ 		static_call_update(x86_idle, mwait_idle);
+-	} else if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST)) {
+-		pr_info("using TDX aware idle routine\n");
+-		static_call_update(x86_idle, tdx_halt);
+ 	} else {
+ 		static_call_update(x86_idle, default_idle);
+ 	}
 -- 
 2.48.1.502.g6dc24dfdaf-goog
 
