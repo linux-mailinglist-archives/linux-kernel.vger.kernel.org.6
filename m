@@ -1,78 +1,94 @@
-Return-Path: <linux-kernel+bounces-510374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF44A31BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:21:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8227CA31BBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:10:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A6AC16840F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:21:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F158D18897FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C022189F43;
-	Wed, 12 Feb 2025 02:21:44 +0000 (UTC)
-Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8085B154426;
+	Wed, 12 Feb 2025 02:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/QGEmyk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F433D3B8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0753126BF9;
+	Wed, 12 Feb 2025 02:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739326903; cv=none; b=aM/wvxVrujF/8fR13ZUZotQMnbvRUti3k/z/o+kmTIyJ2h82GzLXsEnxMUC/mA0zuXOsIV2PDn8wTiEAHfwfzmTbfWcHZGzpFDKHqrYw0S1M76o4pQ2xN77nUD2T7D/+Ld/vZCxRRmnS23BoOo1JQyxx9fCe+bEfoww6pM3voc4=
+	t=1739326246; cv=none; b=VW3yYPlzeusbVU1e8WSeSgTppUP/eYWQlTPpJBDZClqqFRsacbOA9g5lmTxSUQti3jr5KZiWVtuXP8oSUCgjUDSzDUXqXG/LIY72OEUbklKWbonBnKJaIbp+tMZQKnS8ZrEiz0K+RXwjAkTNQDbs6utI1j0rLrI1gC5PPbkeZjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739326903; c=relaxed/simple;
-	bh=UgwC4QNIm2wYd98Mrn0myQ1ps/3mn0ecSPsnhG0Dywk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Nsp9lZg1/X1HmUpWjFNFmdJex8Uvi4cNh2qrbnpM1pR9+ISf3frR5p6K+6JYcf2v70QgbsVfSXwGIA8qJmiuBFOi/tjJ2Hz8NbgnoLgb2dIbgY4GDmF+45HoyXOWnHrq5hdct2QwrjNVn8fZhV2wGGa4huH1v8MvoziKhtw0KHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-Received: from walle01-sz.amlogic.com (10.28.11.73) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.39; Wed, 12 Feb 2025
- 10:06:32 +0800
-From: Shengken Lin <shengken.lin@amlogic.com>
-To: <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Shengken Lin
-	<shengken.lin@amlogic.com>
-Subject: [PATCH] mm: Remove redundant PageMemcgKmem(page) call
-Date: Wed, 12 Feb 2025 10:06:27 +0800
-Message-ID: <20250212020627.3461237-1-shengken.lin@amlogic.com>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1739326246; c=relaxed/simple;
+	bh=I/rZw4FowRhXgjGEoVDTnReTLRjQoga6pAUhWf0cJq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s4s50Dw1oOy+dhS83TGP5TEm3ZvgBI1MqMZwlb3049/m893dA1wsFrqMyfMRR1/qW936xZmHH9Tm5Wm3mA7TPwW8LS88pp2hWQEz+RHBMMq3MwhrMkeoohYAUHr5ZOTmEkGmL/pMIpdt0qUY8bapfz0vzTwsPES1QuknAz+Tju0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/QGEmyk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB52C4CEDD;
+	Wed, 12 Feb 2025 02:10:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739326244;
+	bh=I/rZw4FowRhXgjGEoVDTnReTLRjQoga6pAUhWf0cJq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k/QGEmyk7j2fk1Sqwd46EJnohFD9PdRSSiCZeeNc4n7sGaZ/nQGrL8Fv22MnV02K6
+	 eVOQjOKaE+8dh4CYT818VPzyxetScxBldyofoaKMtjZOggVlqDSH/3DJLNhYpBAKyr
+	 ITt2qA4PN/5A+migOyVNqScLjvAi2AZoS3TlzU9OJbfrqw0nsp6f75zuQFxqOOpVGG
+	 MIbyGBrIUSMu+xVp2N80zL1wYZGL+N3OMQyClJRWVpG5oICXn2rU/MIEpw0Y7+Z7/R
+	 KzwtcNXbzksLc30LC7sQnE9PywzSU+5RsXA55k9NQzC4tLIL7zLKGRcSiaPDIgWnCL
+	 L2axJutzH8Blg==
+Date: Tue, 11 Feb 2025 18:10:42 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>
+Cc: Ian Rogers <irogers@google.com>, acme@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: Improve startup time by reducing unnecessary
+ stat() calls
+Message-ID: <Z6wDInRZ7VVVcaHb@google.com>
+References: <20250206113314.335376-2-krzysztof.m.lopatowski@gmail.com>
+ <CAP-5=fXV6b2g9QxPe1EsSTcHZpSPq+EAR71jvpBGW7ehydN+Uw@mail.gmail.com>
+ <CAOQCU64Fhoek2YEJjhtAsTqPa1Jt1X9z3_C4+pL+R-6hs-EdDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <CAOQCU64Fhoek2YEJjhtAsTqPa1Jt1X9z3_C4+pL+R-6hs-EdDg@mail.gmail.com>
 
-The function of PageMemcgKmem(page) is the same as that of
-folio_memcg_kmem(folio).
+Hello,
 
-Since __memcg_kmem_uncharge_page already uses folio_memcg_kmem to check
-if a folio has been uncharged, calling PageMemcgKmem(page) before
-__memcg_kmem_uncharge_page is redundant.
+On Thu, Feb 06, 2025 at 10:45:02PM +0100, Krzysztof Łopatowski wrote:
+> Hi Ian,
+> Thank you for taking the time to look into this.
+> 
+> > I did a series and a new io_dir set of primitives.
+> > The last version of which is:
+> > https://lore.kernel.org/lkml/20231207050433.1426834-1-irogers@google.com/
+> > I mention this as I think that series may be a better route than this
+> > change as it solves a little bit more of the performance issue.
+> 
+> I'd much prefer to have your solution merged, as it covers more instances
+> of the same directory exploration pattern and provides an explicit
+> approach to memory allocation.
+> 
+> > I stopped pursuing the series as the maintainers were complaining
+> > about unpopular libcs/platforms missing system call definitions
+> > (getdents) and the series breaking on those platforms.
+> 
+> Yeah, I agree. I also don't think doing an #undef because of muslc is a
+> good approach. Would you and Namhyung be open to bypassing libc and
+> calling SYS_getdents64 directly instead?
 
-Signed-off-by: Shengken Lin <shengken.lin@amlogic.com>
----
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yep, I'm ok with that.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 579789600a3c..5a76760de495 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1055,7 +1055,7 @@ __always_inline bool free_pages_prepare(struct page *page,
- 	trace_mm_page_free(page, order);
- 	kmsan_free_page(page, order);
-
--	if (memcg_kmem_online() && PageMemcgKmem(page))
-+	if (memcg_kmem_online())
- 		__memcg_kmem_uncharge_page(page, order);
-
- 	/*
---
-2.34.1
+Thanks,
+Namhyung
 
 
