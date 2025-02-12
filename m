@@ -1,229 +1,119 @@
-Return-Path: <linux-kernel+bounces-511161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6B4A326F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:26:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC9BA32718
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 246491650DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:26:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F5A3A7E5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CA820E310;
-	Wed, 12 Feb 2025 13:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1D20E317;
+	Wed, 12 Feb 2025 13:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xbK3uUYG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WR/LIYt1";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xbK3uUYG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WR/LIYt1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S5nJwnWs"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6F52066DB;
-	Wed, 12 Feb 2025 13:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2294120E03B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739366803; cv=none; b=j5Gs5UYawmz5gVa0jpp8suhnvW/DF0loC1uyFcJ9pNN7q3G71H03FGsy70r8rDla68XyUCRrFDYoEAwwczoruVqsZrj0jFgor2aLMjpE0Gy6ANE4ygV2NR4uQ1+hfS93AcRT4QwNfwLROU76wVEK66Njpznfl7UeDIIT18Q6RBc=
+	t=1739366943; cv=none; b=lpPnQX8zOJSQ2rYEtSY887n6zItYYsG7iMH07GVEcSSzxo3J3sfWH/UY0bNBYXOvfHkmpCW80TM6vrJqsSYZF+4B/1coUg6cdnzN5nC5PEGlpZqduG6LkuUd0vaIpMqBedbnLSM/qLHg6a4vw2tl/HHKLv/120ClB+Mw6wtgJZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739366803; c=relaxed/simple;
-	bh=ZbofgXvmNvRUBkkbrVGqbC7gAe6IQKSxoxA7LYuJHPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9N+XICsUer9FL/yptVq5EcKgPP//IL6ouc4rfTSenwXbWs59Dsqeql4vdkTWwAsThutszh68yc0G9JblnW/ChI6IUG9K9kw9jYSUU7FHUEcvQoJkzQmOicCyg4hxHfpFREUg6RwlhVtfitoqGaFB2d+OFJJJ8KnfZg7LRRgtWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xbK3uUYG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WR/LIYt1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xbK3uUYG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WR/LIYt1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9AA91336D5;
-	Wed, 12 Feb 2025 13:26:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739366799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x6vOJ00kVKwMqCcyI2pHuiwZPjgghnI2PCf03qDeFV0=;
-	b=xbK3uUYGZOUr9X4rrBMzd8lvPwueh8Dllk9v6AedZcLgK9pQkuX68ErQDMiYdjc1snWhOT
-	I03IdGJ2lBYcXiDjRgbSARqlqqhjFti68N9ubRbtNUT8qBupzJqbBthE/QKr4tgKWozbR5
-	cE1BZPwZf10fGLSLUypRd+oIHKhmasU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739366799;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x6vOJ00kVKwMqCcyI2pHuiwZPjgghnI2PCf03qDeFV0=;
-	b=WR/LIYt1xWQHov4T+B9gUVGhPEl1VyQTxYaGrcGQI+6ZtNja2R7Hy/a7CmqJy0rLYkT29e
-	bq++RYcYx843gYBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xbK3uUYG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="WR/LIYt1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739366799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x6vOJ00kVKwMqCcyI2pHuiwZPjgghnI2PCf03qDeFV0=;
-	b=xbK3uUYGZOUr9X4rrBMzd8lvPwueh8Dllk9v6AedZcLgK9pQkuX68ErQDMiYdjc1snWhOT
-	I03IdGJ2lBYcXiDjRgbSARqlqqhjFti68N9ubRbtNUT8qBupzJqbBthE/QKr4tgKWozbR5
-	cE1BZPwZf10fGLSLUypRd+oIHKhmasU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739366799;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x6vOJ00kVKwMqCcyI2pHuiwZPjgghnI2PCf03qDeFV0=;
-	b=WR/LIYt1xWQHov4T+B9gUVGhPEl1VyQTxYaGrcGQI+6ZtNja2R7Hy/a7CmqJy0rLYkT29e
-	bq++RYcYx843gYBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F25B13AEF;
-	Wed, 12 Feb 2025 13:26:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gonvIo+hrGeHGwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 12 Feb 2025 13:26:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4E956A095C; Wed, 12 Feb 2025 14:26:35 +0100 (CET)
-Date: Wed, 12 Feb 2025 14:26:35 +0100
-From: Jan Kara <jack@suse.cz>
-To: Qasim Ijaz <qasdev00@gmail.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzbot <syzbot+812641c6c3d7586a1613@syzkaller.appspotmail.com>
-Subject: Re: [PATCH] isofs: fix KMSAN uninit-value bug in do_isofs_readdir()
-Message-ID: <imwm3w6wa52hy3uqqyeeversty6uptuwo2mm3c5tac7mpdzorp@tws4i2ap6kzk>
-References: <20250211195900.42406-1-qasdev00@gmail.com>
+	s=arc-20240116; t=1739366943; c=relaxed/simple;
+	bh=dcPwOogXC38uVoyd6zrdXBJSymZEmEN1/uCRO1Visbg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KbNAjcoIXEAY62D9kph2Dq00Dksf2VebmkBkNDa9bx1A7ahHNS8LzJClHVoMMaddjCgO/5T8IOJtaLvgyHYUQyObcvuQwGIlM7GbGlvh9GB1vxjoh3TyvsBIihCEBkDqVGDFLRrtoume28VQCqPKzHk3E4CjHeq2UgshTfqR5YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S5nJwnWs; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47180c199ebso267631cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:29:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739366941; x=1739971741; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1oevKEhZpdcUgIPsqB5jXWn7er2+P5SxSWdzJyUQCGc=;
+        b=S5nJwnWsK0bSfeweEPKK4yCbogl6hej/8HoY9RlgHRaZHL5gk2YgNwTBz+gyJnjlBe
+         v8myqvuXkzVhY8o4Tkd+RLWXPUtAYdhznqziZXUI/BzwQugHiDNuYXAW0gIsGNyq93oD
+         WimKb8E1JrLzJRIRli/PdfYtuS56w+1HkW2EQKd3G2ug9kj3WlIQBBqxnkch5yCB3Tun
+         rRvKlQGPWoyzMHsCYVrM1GjYtMFEDLBj+GdcbmqGT6Zkw82w591JzVGxitV+6ASZSWay
+         lFjpoOImugKFbg/4UIk/5w3OfkeFdMlxMmU/C/oLmrSP8Y8LZtIx1MzjknpYpp3atD6K
+         jTIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739366941; x=1739971741;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1oevKEhZpdcUgIPsqB5jXWn7er2+P5SxSWdzJyUQCGc=;
+        b=Bx/94hh5703fVqbFWD2Qz49JL3PI9FYnD3df1YymEQSbTQnjDvawflahoKOLe8bxzU
+         IIweuASsjpCh9La6vV1ffsYE5gJ7D3V/kZbVXKRn0IFpv4vj4OEwDFzlq5+RNGuF+oMv
+         cDc9MgjhoNJKOTpKxoCSP3XhNgWlxz1pNRovDepuzc+AiWTd+J25Lhg1Fn3UY+jJVvfv
+         rpkpMsfkOAwhG5xqFbZBIJ5Ib/RUNCAVwZRNyHsyTVRo0UN2R1NbgNTDF0m+/EodkaY8
+         CwgB40zECn/TjYXLul7RtUtN2dlVhTSr3rMs5VkZlyQ3H5TG8HvS85KEmsQNddYcC9WC
+         pxGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtUEQDVqeiTH7ZvNazehDlcSnbzmUOCb8GUlPt37jj94N0J1M1kDZ+bpPWXqqESGojf3bygQBgzPkXAFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/NDVvw5IZOoLhVHMVQc6/GuEe1nX5FhRIVLqXF92DC01XJSPw
+	U41mYr10ul6SZSTh/o+YTMUPjQvPrgmAuVnB5JPM8i94V36F6BzzBiLxsZn28SXqorb2AxxIAH4
+	6n367hHm4U+ZYH6FLD/4d8G6436OBluvU4kBX
+X-Gm-Gg: ASbGncvpEFj+cOqlokjkA4CN6PCH2e0AEF5VKSW2wT8Ywhts9rSWRkbk9i+DlXx7HMI
+	WFn0eLnwUagyG8kwyDt6c49Ui79yse3Ar33P+zuXiI8d8teHg1xdG8nqXyQE1o4yBaMD7AVhicZ
+	cCEM4/Ann+ug7y6Uc8aI2FvZ/znpY=
+X-Google-Smtp-Source: AGHT+IFY7L/Myi794B1SK+3UlK21ZXz5RBVCl3KeIJna5/SZL0sEYBOmA5JkjmD5IfT9EtGDO2KAnqAmYbqEqpdLGX0=
+X-Received: by 2002:a05:622a:606:b0:46d:f29d:4173 with SMTP id
+ d75a77b69052e-471b0211422mr3517011cf.16.1739366940740; Wed, 12 Feb 2025
+ 05:29:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211195900.42406-1-qasdev00@gmail.com>
-X-Rspamd-Queue-Id: 9AA91336D5
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[812641c6c3d7586a1613];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
-X-Spam-Flag: NO
+References: <20250211210823.242681-1-riel@surriel.com> <20250211210823.242681-10-riel@surriel.com>
+In-Reply-To: <20250211210823.242681-10-riel@surriel.com>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Wed, 12 Feb 2025 14:28:49 +0100
+X-Gm-Features: AWEUYZn7d4B4bRC0FiC6VGjDHlL6JQqFPYLv5MVNharb2RHtWqjjfMY6zCfQF3A
+Message-ID: <CA+i-1C3-F-VAy_JccwKx_AcD1mXsVcGHGwUFvi_ruAiqusiXZQ@mail.gmail.com>
+Subject: Re: [PATCH v10 09/12] x86/mm: enable broadcast TLB invalidation for
+ multi-threaded processes
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
+	peterz@infradead.org, dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com, 
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com, 
+	mhklinux@outlook.com, andrew.cooper3@citrix.com, 
+	Manali Shukla <Manali.Shukla@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue 11-02-25 19:59:00, Qasim Ijaz wrote:
-> In do_isofs_readdir() when assigning the variable 
-> "struct iso_directory_record *de" the b_data field of the buffer_head 
-> is accessed and an offset is added to it, the size of b_data is 2048 
-> and the offset size is 2047, meaning 
-> "de = (struct iso_directory_record *) (bh->b_data + offset);" 
-> yields the final byte of the 2048 sized b_data block.
-> 
-> The first byte of the directory record (de_len) is then read and 
-> found to be 31, meaning the directory record size is 31 bytes long. 
-> The directory record is defined by the structure:
-> 
-> 	struct iso_directory_record {
-> 		__u8 length;                     // 1 byte 
-> 		__u8 ext_attr_length;            // 1 byte 
-> 		__u8 extent[8];                  // 8 bytes 
-> 		__u8 size[8];                    // 8 bytes 
-> 		__u8 date[7];                    // 7 bytes 
-> 		__u8 flags;                      // 1 byte 
-> 		__u8 file_unit_size;             // 1 byte 
-> 		__u8 interleave;                 // 1 byte 
-> 		__u8 volume_sequence_number[4];  // 4 bytes
-> 		__u8 name_len;                   // 1 byte
-> 		char name[];                     // variable size
-> 	} __attribute__((packed));
-> 
-> The fixed portion of this structure occupies 33 bytes. Therefore, a 
-> valid directory record must be at least 33 bytes long 
-> (even without considering the variable-length name field). 
-> Since de_len is only 31, it is insufficient to contain
-> the complete fixed header. 
-> 
-> The code later hits the following sanity check that 
-> compares de_len against the sum of de->name_len and 
-> sizeof(struct iso_directory_record):
-> 
-> 	if (de_len < de->name_len[0] + sizeof(struct iso_directory_record)) {
-> 		...
-> 	}
-> 
-> Since the fixed portion of the structure is 
-> 33 bytes (up to and including name_len member), 
-> a valid record should have de_len of at least 33 bytes; 
-> here, however, de_len is too short, and the field de->name_len 
-> (located at offset 32) is accessed even though it lies beyond 
-> the available 31 bytes. 
-> 
-> This access on the corrupted isofs data triggers a KASAN uninitialized 
-> memory warning. The fix would be to first verify that de_len is at least 
-> sizeof(struct iso_directory_record) before accessing any 
-> fields like de->name_len.
-> 
-> Reported-by: syzbot <syzbot+812641c6c3d7586a1613@syzkaller.appspotmail.com>
-> Tested-by: syzbot <syzbot+812641c6c3d7586a1613@syzkaller.appspotmail.com>
-> Closes: https://syzkaller.appspot.com/bug?extid=812641c6c3d7586a1613
-> Fixes: 2deb1acc653c ("isofs: fix access to unallocated memory when reading corrupted filesystem")
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+On Tue, 11 Feb 2025 at 22:09, Rik van Riel <riel@surriel.com> wrote:
+> +       /* Transition from global->local ASID does not currently happen. */
+> +       if (!global_asid && is_global_asid(prev_asid))
+> +               return true;
 
-Thanks. Added to my tree.
+What about a WARN_ON_ONCE? Then the code contains evidence that the
+comment is true. IIUC this isn't just a "not implemented feature",
+rather there is plenty of other code that would need to be updated to
+make it safe.
 
-								Honza
+> +static void use_global_asid(struct mm_struct *mm)
+> +{
+> +       u16 asid;
+> +
+> +       guard(raw_spinlock_irqsave)(&global_asid_lock);
+> +
+> +       /* This process is already using broadcast TLB invalidation. */
+> +       if (READ_ONCE(mm->context.global_asid))
+> +               return;
+> +
+> +       /* The last global ASID was consumed while waiting for the lock. */
+> +       if (!READ_ONCE(global_asid_available)) {
 
-> ---
->  fs/isofs/dir.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/isofs/dir.c b/fs/isofs/dir.c
-> index eb2f8273e6f1..366ac8b95330 100644
-> --- a/fs/isofs/dir.c
-> +++ b/fs/isofs/dir.c
-> @@ -147,7 +147,8 @@ static int do_isofs_readdir(struct inode *inode, struct file *file,
->  			de = tmpde;
->  		}
->  		/* Basic sanity check, whether name doesn't exceed dir entry */
-> -		if (de_len < de->name_len[0] +
-> +		if (de_len < sizeof(struct iso_directory_record) ||
-> +		    de_len < de->name_len[0] +
->  					sizeof(struct iso_directory_record)) {
->  			printk(KERN_NOTICE "iso9660: Corrupted directory entry"
->  			       " in block %lu of inode %lu\n", block,
-> -- 
-> 2.39.5
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I think the READ_ONCE is unnecessary while we have the spinlock, it's
+fine if this read gets split or whatever?
+
+Ditto for mm->context.global_asid, it's only modified with the lock held.
 
