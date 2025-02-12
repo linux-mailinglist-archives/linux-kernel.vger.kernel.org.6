@@ -1,86 +1,120 @@
-Return-Path: <linux-kernel+bounces-511822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C985CA33029
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:52:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CA1A3302D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02A227A28AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 518E13A1E63
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5F0201022;
-	Wed, 12 Feb 2025 19:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411C3200110;
+	Wed, 12 Feb 2025 19:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JY+xLVuf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B96uFBg0"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C50200BBC;
-	Wed, 12 Feb 2025 19:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977351FCF62;
+	Wed, 12 Feb 2025 19:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739389930; cv=none; b=sHQ8gzThkPjgzhOCgSli3liGQOzQ3n+F6KeBx1RFilAJH/hFz5PKy/rFPe3uLL0jXkxXFu/cGX+6FZo+jnvz856TEjkd1o20CBuWf8wTYJq7Zmomboun2gaFe2OD3nHqQJ1m40pCo4dY/tM277KzOeYCQsPIQlScyTa70WRFR+w=
+	t=1739390182; cv=none; b=nnlI0/fMhnzrh9Xxrx57pWUHlP1C5/Y2vL94sLlpXdBCWKaN9QXkK6/R/0M49SkEPZoJZCUuuSCHomXWeqvtgYETBOejT6p7HNjegiqAcPQaWjGhovGzGDSfLFwhTP36PxAMzy4ccCtGCzbSrSluOPuKcm+0vHdNfPzvvlLQOcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739389930; c=relaxed/simple;
-	bh=MirLEMBUS3CsZ4GfrxE0VRsF/YJXIM51BRXXjBFtms0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQeD5/e9PTODUqV5A3Xnug3YORCDOG+X17FmeZ/ShqwS8PZI+MeqyumdPHdcFgU39AZmS2m0MMK7PgVAqfEKXPfmZox44UQM6PdWYvyGNkgWSoCKZ30Di4ERI9+Y5XBgLPBOyX9lruuyFrq46wl5FE21aG4S0ATTkHxpws/9Clw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JY+xLVuf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F7D8C4CEDF;
-	Wed, 12 Feb 2025 19:52:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739389930;
-	bh=MirLEMBUS3CsZ4GfrxE0VRsF/YJXIM51BRXXjBFtms0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JY+xLVufez0k6fR6Q7DZTWkhD/tkqmn1ZSdVQuGm0SJiBCXXT7u9mRKJi5LdZh9g+
-	 1j/WnvF3nlLY2GZmdv4Gp6x9LzP19Izd5YOEGBYRjYfxPSio5rlxLj27g/HxG/ZtNy
-	 2rW1C1WXYxOjqtnfbDDDDV9Xxv+IqQn/cQ6eFgu/TgQvzZGQLPC4jUAHK+1O82+k+q
-	 4/ja/hr9jM12BqcyOGrIr4sv6XO5n96bDiup6lVZKMGxV7V7ofdhkuqfc83avPfKDx
-	 85LttHzAgol5RRUiCDxcSYV91onhVTTEbGWfo3zxFieG/3zkpJZ9wkoepfzvvFdbc5
-	 bMI1vq04B7GlA==
-Date: Wed, 12 Feb 2025 11:52:08 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Zhihang Shao <zhihang.shao.iscas@gmail.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, ardb@kernel.org
-Subject: Re: [PATCH v3] riscv: Optimize crct10dif with zbc extension
-Message-ID: <20250212195208.GA128826@sol.localdomain>
-References: <20250205065815.91132-1-zhihang.shao.iscas@gmail.com>
- <20250205163012.GB1474@sol.localdomain>
- <f827cbb0-f6ad-4397-9f30-ca43223c4853@gmail.com>
+	s=arc-20240116; t=1739390182; c=relaxed/simple;
+	bh=+sniyVR/B0Yb/z8XD0mdxMuslgA/Q7KL56k8Ile7nZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ERxltK2IYEaWd7ypKt6+HT07F4tdpaUj7hXBpIZTqr08orCwUKxH4fTOfxrM46MJ2Q7b66JBjZu5r9EgEzOLQJppNgSuVFmCDv7jC4BZQiMgohbnsiRuNx2DyKyr+iaODiYj8oghomzyD9/e3JLDFJ+OnG9nR7tbAW1TqOPUCD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B96uFBg0; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739390178;
+	bh=+sniyVR/B0Yb/z8XD0mdxMuslgA/Q7KL56k8Ile7nZw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=B96uFBg0BHhPOJvShbkADmFq5biDN9hj5Rox1Fr1rFqsdvJ3kl4eDTGXrogGQsFNX
+	 t3fltvwSsY/s66iEaMaBKFBMWWDMKmbXGslowtM/eaB0OELNOphCO2QLH1cdCcUdWt
+	 0GS8bs4kuAjQUTsZMBHwutDcZgq4LHED2RUrL7PhUNJNA8W/Py9+88KFCNDPiYxrch
+	 QftG37m17MTm2ZtlSRTTIO3QBUXrtqPI2dCyxQO3z3iWzKYeUB9NNmmrgV+qCJH1az
+	 eEohsKEBHzMlVlyuuXzRz4oNQSCpRbiWyr7Wq0FWa0U9kYQ1YN8nOy1UY5TyaMEIQi
+	 JGRsF58P2DDLw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B46F117E0E9E;
+	Wed, 12 Feb 2025 20:56:17 +0100 (CET)
+Date: Wed, 12 Feb 2025 20:56:13 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org,
+ Olivier Masse <olivier.masse@nxp.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
+ John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Sumit Garg
+ <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ azarrabi@qti.qualcomm.com, Florent Tomasin <florent.tomasin@arm.com>
+Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
+Message-ID: <20250212205613.4400a888@collabora.com>
+In-Reply-To: <20241217100809.3962439-1-jens.wiklander@linaro.org>
+References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f827cbb0-f6ad-4397-9f30-ca43223c4853@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 04:08:51PM +0800, Zhihang Shao wrote:
-> On 2025/2/6 0:30, Eric Biggers wrote:
-> 
-> > Maybe use 'const __be64 *' and 'const __be32 *' for the pointer, and use
-> > be64_to_cpu() and be32_to_cpu().  Then the __force cast won't be needed.
-> Maybe this problem seems dumb, but I have no idea to adapt both riscv32 and
-> riscv64. I have tried to use 'const __be64 *' and 'const __be32 *' pointer
-> in patch v4, but I forgot to test them in riscv32, and it turns out the code
-> failed to compile due to my mistake of defining 'const __be64 * p_ul' and of
-> course it wouldn't be work for riscv32. Maybe I need some inspiration for
-> this problem, or I still think it better to use 'unsigned long const *'
-> since it works fine in both riscv64 and riscv32.
-> 
-> Looking forward to your reply and guidance.
-> 
-> Yours,
-> 
-> Zhihang
-> 
++Florent, who's working on protected-mode support in Panthor.
 
-I'm working on this patch and am going to send out a cleaned-up version.
+Hi Jens,
 
-- Eric
+On Tue, 17 Dec 2024 11:07:36 +0100
+Jens Wiklander <jens.wiklander@linaro.org> wrote:
+
+> Hi,
+> 
+> This patch set allocates the restricted DMA-bufs via the TEE subsystem.
+
+We're currently working on protected-mode support for Panthor [1] and it
+looks like your series (and the OP-TEE implementation that goes with
+it) would allow us to have a fully upstream/open solution for the
+protected content use case we're trying to support. I need a bit more
+time to play with the implementation but this looks very promising
+(especially the lend rstmem feature, which might help us allocate our
+FW sections that are supposed to execute code accessing protected
+content).
+
+> 
+> The TEE subsystem handles the DMA-buf allocations since it is the TEE
+> (OP-TEE, AMD-TEE, TS-TEE, or perhaps a future QCOMTEE) which sets up the
+> restrictions for the memory used for the DMA-bufs.
+> 
+> I've added a new IOCTL, TEE_IOC_RSTMEM_ALLOC, to allocate the restricted
+> DMA-bufs. This IOCTL reaches the backend TEE driver, allowing it to choose
+> how to allocate the restricted physical memory.
+
+I'll probably have more questions soon, but here's one to start: any
+particular reason you didn't go for a dma-heap to expose restricted
+buffer allocation to userspace? I see you already have a cdev you can
+take ioctl()s from, but my understanding was that dma-heap was the
+standard solution for these device-agnostic/central allocators.
+
+Regards,
+
+Boris
+
+[1]https://lwn.net/ml/all/cover.1738228114.git.florent.tomasin@arm.com/#t
 
