@@ -1,274 +1,147 @@
-Return-Path: <linux-kernel+bounces-511802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6751EA32FE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:38:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CD9A32FEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F1E816889B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015503A17C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181381FF7D7;
-	Wed, 12 Feb 2025 19:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8B21FF7C1;
+	Wed, 12 Feb 2025 19:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQBWoZm9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bVcysn2w"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC721DC07D;
-	Wed, 12 Feb 2025 19:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974EC1FF1C2;
+	Wed, 12 Feb 2025 19:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739389098; cv=none; b=rmJXBazaqWiYx4T5EEn2sxpmSrZg73Js9fTC9dptS41gwQgezXwGAM/t+z2v7SP9vMe2AFgMzbABPzqs1vXiNz3pMcKbsE1gqEHTeuK+4BaLXleX1BdFL9GbIlKaArvUyC7E4tQb9R6Gz+4NYqqT0/z+n0SspH0q8IY4+Xxw5xU=
+	t=1739389161; cv=none; b=AJBDczdqgJROzWPnC35IZJevX91G2/1gcCrTfRgL93efVlvoOUJWakWM/nlyeU5DVIqz28hdaN/YLDSo2RM+ScVZvL9w33FQc2WJDrFGq+oRdenrc08up7qlkHqSOBY+vmZ6xs+rVG7tAKYMm2+47wCYX7eNOOLQHAYVXOfNJP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739389098; c=relaxed/simple;
-	bh=pq9uKQvjFYwDm1Q4B6BmedrGAyc5w91dQwDdbRZBMW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a3wvq3TdJxI6pIQTqXR8U20vG5ICcNADUXT5OT5jFkDun7vOjr9xT//SI/5Kj3g0DB9IvshgGNGOfcbdF42COKeXM4fe1rPeUKdQAO94aMvlCIUyU798V70m86XUhfm05IvlxtTZ9/lA1NxCielloy1941pSEhTQsXMdk0HEChY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQBWoZm9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642E5C4CEDF;
-	Wed, 12 Feb 2025 19:38:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739389096;
-	bh=pq9uKQvjFYwDm1Q4B6BmedrGAyc5w91dQwDdbRZBMW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mQBWoZm9pBkAJzBWRz85ZCMTj9IvaY3BA0rxBDDYNpPHMJZ17i09UNxwChFyw0hVZ
-	 mbBIuzakROKILvDV5vGDjyN1gMB2TYRWqQYBR/NF21saMN5npe5HC205R2hRIW+xEJ
-	 WNMFsM4kAklYkc3yn8/eKUkVaJUPLrYOT0ROBS+XvncYTfQTtAvKtOISkDXenE24NQ
-	 6wa3y+6po0NoVWWK2jUywFmF+27+PJBC6jKh0tBUWtlCctbBKKTKQ7EMqk3FyYliyM
-	 C7NHhBicFH74iUz86RYpL6uWHOkMzY1SyHEKxjDgogi/QjGlEPpfqSM/yW6mc8gl9J
-	 kGVNNVKgf+GQQ==
-Date: Wed, 12 Feb 2025 13:38:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
-	Scott Wood <oss@buserror.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 05/12] dt-bindings: dma: Convert fsl,elo*-dma to YAML
-Message-ID: <20250212193815.GA113049-robh@kernel.org>
-References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
- <20250207-ppcyaml-v2-5-8137b0c42526@posteo.net>
+	s=arc-20240116; t=1739389161; c=relaxed/simple;
+	bh=I8AOlYdmQKvdU1KNR6wPtF/+p1DRYAW7BVIpawuMeC4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CsU9hDw14i2gYehEBpS7Dzpw3sg3dQVffskKqcBH3oeOee28aV/qfuUyKruD4rO6sP1x0IjTYAqxLuCyrK4LWgj9qwRfzh0OYe3ImKJSZGvAuYatYDwz/OrWIoRYGnKqU5GpwhV2FvQvlZs6XpeJRK3Hpx/ZXdz9U3dAMlZ6oKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bVcysn2w; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso20506f8f.3;
+        Wed, 12 Feb 2025 11:39:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739389158; x=1739993958; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1h3W4S29L15K8XjwMbfKSxqUPRZDwJp04JYAl+GqVlk=;
+        b=bVcysn2wk986qtRQHaGkSSQ5PneHF8cUU2IHR/LH0fJABH55xC8yzRgIKGmg39nefP
+         BHIIxNFWdq4omAG8RxiBXR+ELLWJc8Gtq0XNeaSEo2k3M/2kf3GTrZCpCY6BkhfQVdpT
+         Z2unHmm/huMQEf9TBVvfbxmy3MFbhQY3u2M/Anm+yoR+KwUANTitGoLbhalocJfRe7pz
+         MgqQgv/eFuiyVocPc0QkrD9OwzaJkr6zXlF9qQZxSnF7AC3UTGOu5hruIMXTAE6oZESW
+         AlFOsi9dNXLVdzWnBIS6B0nnTlERZF1HOG9AH6oAcZnRIIIo7g0jzytRpNSuxCZWE+ii
+         Nlbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739389158; x=1739993958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1h3W4S29L15K8XjwMbfKSxqUPRZDwJp04JYAl+GqVlk=;
+        b=gXy/Oj4G0R2kMoW78PqV3VSSRHXskijtxknyPrq/W9+WeR8lzojFsRYG5tj/O3gLbR
+         ldzSVG3fm6hDjSqngiIhlog65dreEsky8vjYAeA8FJ09ZykKRs9Hh7jhXTY2MiEo6/VG
+         CeJV+wPcZ5D3mpqcbTD2QxXYpmPd4ph+ZwFUS5VE28yBP8E0As0MFrCpD8ya+WQmzPlI
+         Uy1GenK1IxZrjBPG6QpaMZKHsuSCCmo4KjNhR2Q8sM2tEYokOfwYaDG0qZ7N1POVtlUk
+         DYtb9xCIr60NfsTpcgTurwL+Xya0R5LoujMlmMczHKjPTu2dMcXtJR2S3Zkp+IZ/Se8k
+         qf3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVSXu2xBQFE8vPThOx5+1tC4l+fdoFz0tx6CuThRHzBfjg5C6/wvTowOLPZy9rgUlNtES/aqpfg01cJ@vger.kernel.org, AJvYcCVk4wxeiLSvPcOlPjOShMdxfV0sXCeHKsD8rle7N259/40TsyUHe7+hULdSXPuMhCplk2GGG5bF3apvZGBY@vger.kernel.org, AJvYcCWbcjtjU1f83RHD4HFfWaXIl8/lO6Glt+EiLtNJeuE6uFeyDbyfCkDXYCSkM41iHm84VU5fdlX3rh67d9c=@vger.kernel.org, AJvYcCWm2/Ks+UcSPxDwm5DkB97S2sI+WGD5rfA7UBXnKf65wVIvpj/tCg7VK1TaW1beFTbxfF4vnslSKTGD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpvKmS52aRnclwxdmNA73/HrSsSgYn9NuxGrj9nywaRzjbshUb
+	e99l0vyzNfMbwpbBVEraWe1YwnPg3rT9jiRAGeVDUpo2XbMEaNwrdsgO3UyT5Vuo1GLGJY0ZE2P
+	B7ttqaJi8sntsz+K0L4slRnF2KUeMNQ==
+X-Gm-Gg: ASbGncuP1OC7pwsFB1mf3DSjugdI7EpdLn1fIUDm7O/DB1bzl2RLOm5xI/9hnRcotAX
+	JfYxufLOc3EKpPXWm3XapPk41OPKshEjb6v0SNDd/GNjGT2WyFzqVL2IGfMg19+/mEDNud5OKkg
+	==
+X-Google-Smtp-Source: AGHT+IEjG1XPRvRNHEbKQo4iudN1perzPfRwChzed4m/qluB45urO9kTA7eaxqktr7sDSGCbI3mqKAo33n/TRwZ54kA=
+X-Received: by 2002:adf:f604:0:b0:38d:eb33:7f7e with SMTP id
+ ffacd0b85a97d-38f24512d7fmr536633f8f.36.1739389157641; Wed, 12 Feb 2025
+ 11:39:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250207-ppcyaml-v2-5-8137b0c42526@posteo.net>
+References: <20250212064657.5683-1-clamor95@gmail.com> <20250212064657.5683-2-clamor95@gmail.com>
+ <20250212-unwritten-compile-7011777a11b3@spud>
+In-Reply-To: <20250212-unwritten-compile-7011777a11b3@spud>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 12 Feb 2025 21:39:06 +0200
+X-Gm-Features: AWEUYZkzpsGK3aIyCXnWMUG5iedmUJrw1WifBjDI9f7kv_5fnGYIPROZWeLjNMQ
+Message-ID: <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a support
+To: Conor Dooley <conor@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Emil Gedenryd <emil.gedenryd@axis.com>, 
+	Arthur Becker <arthur.becker@sentec.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
+	Ivan Orlov <ivan.orlov0322@gmail.com>, David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 07, 2025 at 10:30:22PM +0100, J. Neuschäfer wrote:
-> The devicetree bindings for Freescale DMA engines have so far existed as
-> a text file. This patch converts them to YAML, and specifies all the
-> compatible strings currently in use in arch/powerpc/boot/dts.
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> ---
-> 
-> V2:
-> - remove unnecessary multiline markers
-> - fix additionalProperties to always be false
-> - add description/maxItems to interrupts
-> - add missing #address-cells/#size-cells properties
-> - convert "Note on DMA channel compatible properties" to YAML by listing
->   fsl,ssi-dma-channel as a valid compatible value
-> - fix property ordering in examples: compatible and reg come first
-> - add missing newlines in examples
-> - trim subject line (remove "bindings")
-> ---
->  .../devicetree/bindings/dma/fsl,elo-dma.yaml       | 140 ++++++++++++++
->  .../devicetree/bindings/dma/fsl,elo3-dma.yaml      | 123 +++++++++++++
->  .../devicetree/bindings/dma/fsl,eloplus-dma.yaml   | 134 ++++++++++++++
->  .../devicetree/bindings/powerpc/fsl/dma.txt        | 204 ---------------------
->  4 files changed, 397 insertions(+), 204 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/fsl,elo-dma.yaml b/Documentation/devicetree/bindings/dma/fsl,elo-dma.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..3d8be9973fb98891a73cb701c1f983a63f444837
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dma/fsl,elo-dma.yaml
-> @@ -0,0 +1,140 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dma/fsl,elo-dma.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale Elo DMA Controller
-> +
-> +maintainers:
-> +  - J. Neuschäfer <j.ne@posteo.net>
-> +
-> +description:
-> +  This is a little-endian 4-channel DMA controller, used in Freescale mpc83xx
-> +  series chips such as mpc8315, mpc8349, mpc8379 etc.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - fsl,mpc8313-dma
-> +          - fsl,mpc8315-dma
-> +          - fsl,mpc8323-dma
-> +          - fsl,mpc8347-dma
-> +          - fsl,mpc8349-dma
-> +          - fsl,mpc8360-dma
-> +          - fsl,mpc8377-dma
-> +          - fsl,mpc8378-dma
-> +          - fsl,mpc8379-dma
-> +      - const: fsl,elo-dma
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description:
-> +      DMA General Status Register, i.e. DGSR which contains status for
-> +      all the 4 DMA channels.
-> +
-> +  cell-index:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Controller index. 0 for controller @ 0x8100.
-> +
-> +  ranges: true
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: Controller interrupt.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +patternProperties:
-> +  "^dma-channel@.*$":
+=D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:20 Cono=
+r Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
+> > AL3000a is an ambient light sensor quite closely related to
+> > exising AL3010 and can re-use exising schema for AL3010.
+>
+> Quite close you say, but the driver is entirely different it seems. How
+> closely related is the hardware itself?
+>
 
-You need to define the unit-address format.
+Well, I can simply duplicate al3010 or al3320a schema if re-using
+schema is not allowed. AL3000a has no available datasheet online.
+Downstream code for al3000a and al3010 seems to have same principles,
+apart from light measurements.
 
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      compatible:
-> +        oneOf:
-> +          # native DMA channel
-> +          - items:
-> +              - enum:
-> +                  - fsl,mpc8315-dma-channel
-> +                  - fsl,mpc8323-dma-channel
-> +                  - fsl,mpc8347-dma-channel
-> +                  - fsl,mpc8349-dma-channel
-> +                  - fsl,mpc8360-dma-channel
-> +                  - fsl,mpc8377-dma-channel
-> +                  - fsl,mpc8378-dma-channel
-> +                  - fsl,mpc8379-dma-channel
-> +              - const: fsl,elo-dma-channel
-> +
-> +          # audio DMA channel, see fsl,ssi.yaml
-> +          - const: fsl,ssi-dma-channel
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      cell-index:
-> +        description: DMA channel index starts at 0.
-> +
-> +      interrupts:
-> +        maxItems: 1
-> +        description:
-> +          Per-channel interrupt. Only necessary if no controller interrupt has
-> +          been provided.
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    dma@82a8 {
-
-dma-controller@...
-
-> +        compatible = "fsl,mpc8349-dma", "fsl,elo-dma";
-> +        reg = <0x82a8 4>;
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0 0x8100 0x1a4>;
-> +        interrupt-parent = <&ipic>;
-
-Drop interrupt-parent everywhere.
-
-> +        interrupts = <71 8>;
-> +        cell-index = <0>;
-> +
-> +        dma-channel@0 {
-> +            compatible = "fsl,mpc8349-dma-channel", "fsl,elo-dma-channel";
-> +            reg = <0 0x80>;
-> +            cell-index = <0>;
-> +            interrupt-parent = <&ipic>;
-> +            interrupts = <71 8>;
-> +        };
-> +
-> +        dma-channel@80 {
-> +            compatible = "fsl,mpc8349-dma-channel", "fsl,elo-dma-channel";
-> +            reg = <0x80 0x80>;
-> +            cell-index = <1>;
-> +            interrupt-parent = <&ipic>;
-> +            interrupts = <71 8>;
-> +        };
-> +
-> +        dma-channel@100 {
-> +            compatible = "fsl,mpc8349-dma-channel", "fsl,elo-dma-channel";
-> +            reg = <0x100 0x80>;
-> +            cell-index = <2>;
-> +            interrupt-parent = <&ipic>;
-> +            interrupts = <71 8>;
-> +        };
-> +
-> +        dma-channel@180 {
-> +            compatible = "fsl,mpc8349-dma-channel", "fsl,elo-dma-channel";
-> +            reg = <0x180 0x80>;
-> +            cell-index = <3>;
-> +            interrupt-parent = <&ipic>;
-> +            interrupts = <71 8>;
-> +        };
-> +    };
-> +
-> +...
-
-Similar comments on the others.
-
-Rob
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al30=
+10.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> > index a3a979553e32..6db4dfd5aa6c 100644
+> > --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> > @@ -4,14 +4,16 @@
+> >  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml#
+> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >
+> > -title: Dyna-Image AL3010 sensor
+> > +title: Dyna-Image AL3000a/AL3010 sensor
+> >
+> >  maintainers:
+> >    - David Heidelberg <david@ixit.cz>
+> >
+> >  properties:
+> >    compatible:
+> > -    const: dynaimage,al3010
+> > +    enum:
+> > +      - dynaimage,al3010
+> > +      - dynaimage,al3000a
+> >
+> >    reg:
+> >      maxItems: 1
+> > --
+> > 2.43.0
+> >
 
