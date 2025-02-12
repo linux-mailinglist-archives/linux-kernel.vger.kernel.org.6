@@ -1,185 +1,216 @@
-Return-Path: <linux-kernel+bounces-510325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FF2A31B2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:28:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C658A31B2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:31:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E9AC3A8148
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:28:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7D071885702
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D3A2C1A2;
-	Wed, 12 Feb 2025 01:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD8C32C8E;
+	Wed, 12 Feb 2025 01:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nKdlkw6j"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2071.outbound.protection.outlook.com [40.107.93.71])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/lubwux"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2D117993
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739323693; cv=fail; b=nPY3FtBxVPCf0fklmzOiwKgkKjODSk8thuMO0zw/miKSaW1JCOJV3APBk/luwLY5Noyxynfs44Zkt+y/5n9djFUGASVHCRK+jyxbYpvxPebit5V3dN7i0LmwCaZU+GrDpD2UPXBWgBFAfTd7+eqhg7IejmhDbMWVA1VG0GDbeQ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739323693; c=relaxed/simple;
-	bh=vS6fbUA23rp+CpRZ1JjDS4N0suZJKdPcS2sh7Bt+L/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QPgEPfJi7AURCp1lWzELxv9pg198PFduegPdMBiciP5Q5KDBdi4HYq587UnEs+tbN4Vb3AGiUrd923dsTNAFplxWB6RjpfD0b3ujItJRcIAFWYitPGk9BlyjoyPaRVr6H0O/dCbRsQtPvSLEzf42yHJ+ozm+Na6TFZSZXTI2nyg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nKdlkw6j; arc=fail smtp.client-ip=40.107.93.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dkHbk3vWq/S2MrB3Ka/jeEdxAek41tM8VRqhXIF2HsgplBJMVINFEOyhcg5+13yWKe1euK/Lr/YyNgj5Cmzo/B51CnWvygyjHsoKY4DcjOwXZmcvq/glaDHXLQBvU5gouWPou/BqjPRco/ITKEfXVgeRpyvojzXncKEP/skNgwavlhmiuS0vvZaV9MkHPcYDFcCAJ6crQe2P8ImL0FxWhr5z+zx8PWK2Q4LUkOLNY/T1KNrFw6QnwL/dVSASDUQjX5DTuRusDKTje/hmZykfP3qd4uZYkU6ih6pd/yov1c9w+X9K6tDYjH1b3AGJw2s/5LDG2mqacpHpf4RrqFWXwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+LYk0XTjomOlJjlVweOsx89sctN4y8OfLcZppQxoPP4=;
- b=oc1ibA7VM2Rw1kAFlyiVmC3OiNU6ws1DtfQU8KA7CNv0gA2dEkurdiy/pYeba33TvJf0SwjZzoXZ9WPo+ATSDTbxLlDrOdXxJfZkdORRmBwbB2jhekwuCUbzs7R6Kbs+U8nPUg+Y9Es6gyBAnkbAMxVk93iu+k4LgCRl+UzCrtqqApvUml6lG1oTujlAoHOKl3qilHz3/qjrlw+GS4W6D1qXxH2UCenVHwiWmjQqSDSd/sXdsWDC0kTsMu38m2S+IFvRkP6+DZiGQ1j4urCJvoK6Ejg0zG/PPR6gzsLxUl8+6HVTyOfmqEqToIv0O27Bn6DYm+g9fNJWDgI0hLdKkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+LYk0XTjomOlJjlVweOsx89sctN4y8OfLcZppQxoPP4=;
- b=nKdlkw6jMM5SV6HnggGBwpau+CUP/rNeq5lm20GcjJQMr7VHbZYQBHdeldNwKjPFQgvhgaEa7eO7POHuepQwHY+9F90vhqOpeZ7oNDF1lswtYMdDGLvwbE3+rXl3xCMOENd3UQEaFv4oz6GlUWn5xIOt8U5ejtVK9xv+8Z29ksSC6PjTEQsJpahCeMrTmPaUVRxQMOSNjzh3zFdUWJ12RKdq6dDMhvNRLdNRCfjkDlXyL1M8IWdTCvJ4VEfQ5pCouGXlzMpUpykVKvatyovxq0XlgtCeJq9Fmhj+ROltgPgghxHwg05g/VWIdeViyKielrZzWhObcdIkpeF2hmV45Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- BN5PR12MB9509.namprd12.prod.outlook.com (2603:10b6:408:2a8::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.11; Wed, 12 Feb
- 2025 01:28:09 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%7]) with mapi id 15.20.8422.015; Wed, 12 Feb 2025
- 01:28:09 +0000
-Date: Wed, 12 Feb 2025 12:28:04 +1100
-From: Alistair Popple <apopple@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	nouveau@lists.freedesktop.org, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH v1 2/2] nouveau/svm: don't initialize ret in
- nouveau_atomic_range_fault()
-Message-ID: <4awlelarrasmkvpjdhnxabto3dr4j26yc2g5qk5cnqcvhrcdrt@sd3cpt7mo5kk>
-References: <20250124181524.3584236-1-david@redhat.com>
- <20250124181524.3584236-3-david@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250124181524.3584236-3-david@redhat.com>
-X-ClientProxiedBy: SY5P282CA0140.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:205::16) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A108CF9C1;
+	Wed, 12 Feb 2025 01:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739323853; cv=none; b=uF52nK5gqTb2UV8CtHa7Ugjr4lFM4qdZl2yoWjQovCKf+gnuX77qP424p2NkWTFNSiTGUNpJKVqi2xvA6ZKCGaOf54Dv1BeA6J/PpM3hDgwn3JxG8o0xsN8YrnehKiLv387lW+2m6kHaV+4nSPj3X8mjl21MuKREXlUehb93Y88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739323853; c=relaxed/simple;
+	bh=HQf8dfo48FofBSjJRGEQY2VVU3sygOXQ3hfOtk3uHOg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XhQVD3w1Xe77QRiyB9XMzvktghfMD76DIrBa9a+bTU4PODTokYchq9sdT9j29HIHxdYHdhv1nFof7/+o8wfjFSjKTxmCD5VmxdpllEjTKBdV4DPiSRLemf10oBiPv5iBBrq31IfIl1j48AS/SRZHIwZrziy8Bs+QU/qHz7dk3sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/lubwux; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AEBDC4CEDD;
+	Wed, 12 Feb 2025 01:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739323853;
+	bh=HQf8dfo48FofBSjJRGEQY2VVU3sygOXQ3hfOtk3uHOg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=L/lubwuxS/wZLQk3opIaTgjL/mZX8uoFYduxsrNuieo4LASvARhwT+6smdT0+hqBa
+	 Ttp0urx+Cro8mxexdMdMx0tjp2rySoP/byCO4rFx7JaDtaC+U0eJ1WYUqLEII1si5W
+	 LTUkQxi80e/mww5HPhqoYM9m4uP0gtLcar0M6MHq4kr6kW8uKuKcvtcWcBnG6YrVdY
+	 d7DG2e7zrIGhk9UgStpJxbegPrfC6gv0vpzGq4rIjFL+9Hle0PYsRwoMW5vJRGdRLH
+	 3Pbwr63WG1yQarX1QhvFrXYn839XLHBrihENQ4+tVsTp3EE2u78bYR/LnlPN+lCBSy
+	 ZIp0QVJtp6Paw==
+Date: Tue, 11 Feb 2025 17:30:50 -0800 (PST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
+To: Juergen Gross <jgross@suse.com>
+cc: linux-kernel@vger.kernel.org, x86@kernel.org, iommu@lists.linux.dev, 
+    Stefano Stabellini <sstabellini@kernel.org>, 
+    Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    "H. Peter Anvin" <hpa@zytor.com>, 
+    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
+    xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 2/2] xen/swiotlb: don't destroy contiguous region in all
+ cases
+In-Reply-To: <20250211120432.29493-3-jgross@suse.com>
+Message-ID: <alpine.DEB.2.22.394.2502111728560.619090@ubuntu-linux-20-04-desktop>
+References: <20250211120432.29493-1-jgross@suse.com> <20250211120432.29493-3-jgross@suse.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|BN5PR12MB9509:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1558211f-0d62-4e70-a603-08dd4b048221
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+GB5d1XBZmnBu6W5AIeV9O8NWIPAEDwm8AsAflh+HrTUQ9ijrnV9rWPsBztm?=
- =?us-ascii?Q?gbCC/Le+q2XrWVRxxHQ7MSgRQhnvchYnUi74UWU4a5f/v5jWb2msohN6eee6?=
- =?us-ascii?Q?kp/spynA3x6sUBuh1O3mj1QZGR5ZQ3gMOPswnYiTByvJPJn242xrqpYop1gz?=
- =?us-ascii?Q?J2Qf6aFxA/arGc4raCIiLfhblOwxSEbOo4MB1fwydgdE7Nf8jRijWt1ATHlF?=
- =?us-ascii?Q?q6WD9dsY94uGgLKaZCR7AP2Y3Qfo+XzgAPbgSy1Jt4uyhAwWUXw/b+i4RQ6B?=
- =?us-ascii?Q?o702Z5st1hYzqG35YODZhtXBVrm109xImSEz9n4jYW7+xfNxyO/YJ+OoPWM5?=
- =?us-ascii?Q?CKpKOu3kpygR5DXpD77tV/4ZU6dMM9NPsFJh0l1lijobrX3f0s1XChjHhCmN?=
- =?us-ascii?Q?6reTeF/ulUV9my2FpkRt/ZGawAKH2BpHSjiwnGjxU9YU7Y0ggKWo+l2JRWY+?=
- =?us-ascii?Q?fQxCt61W+mhuainUqCk2te4RY5i3oFDmGDPAxIzphFl2EQnHwT18iP4EB1Wi?=
- =?us-ascii?Q?Sx7WCe32799CmLGxGkyJ7cOQSp1K0jRotOyN64OQT6ofGpkYvH+X1qxx0JT2?=
- =?us-ascii?Q?x44oNRDLrqJagCAJml1n0vo8cNNnAR0smtflX1qapRFBi7tTZNJNILgegN//?=
- =?us-ascii?Q?r69HCSQeA2Wc15hpffbLiyHCHSaUJEnlmInvFhDbU0fngh0yCJK2M3FUBK9M?=
- =?us-ascii?Q?MNNWRY/Eg4p4/fve9vpN4FadbSPyuasBGMSNu3WwcbUsMi7Ia7GB/pMiTiCh?=
- =?us-ascii?Q?ljUACb/zFjAk2M6Rdm38tjgjEa8Tx0yrFa7aNiC5GepcwSC69TIO70PsgT0C?=
- =?us-ascii?Q?QlV3d0yv83hxLetAQtoaAwnxlgi6IMxOXncUjv7PGAyW477aoHzkIlMgE52R?=
- =?us-ascii?Q?TN0NvlqDNmzH060/8vRXLjJ0ffl145udCMhqAytj6Wpe4vC7juVCir35ycNv?=
- =?us-ascii?Q?mAD8uTqcgMT/2+Au7b12RN+Y3vnhn9UeP+PpnthBPizmhjQsNXQWTjv6nzaw?=
- =?us-ascii?Q?5kjqdTuBlpUcDV41WGyvoxaA1hXDng5G6ncRVMCuA3WkCYmoSpiVFStvHFH6?=
- =?us-ascii?Q?1LBAtTklA7SeX9AWKJzSF47/tugHKghoeFmtW+FQ/VgopTzYwhzoQ7hXADdZ?=
- =?us-ascii?Q?F9P02zn7C9qY3NuP+OoqHbQi+gaeT64jq9M76tYUZrICHWJnDuScenH/VGlz?=
- =?us-ascii?Q?C2uoRlXw5dMR7EPVE1HJdqpEPhDWHPLD6JyK7hRBo4Zdu39rTFwsT80GTdaC?=
- =?us-ascii?Q?ufjzfPL0X3Tt/ozoDPCregMq5E/ZjRrXUplbYI6f7sQnR26CRpfW6h1pXHID?=
- =?us-ascii?Q?qkZ7iHcHULuGq2YOLH/TKgLjPuU7XFaAApDbWc4DRnMeKaheluLJMyQfM99m?=
- =?us-ascii?Q?PG0cIYMLKxoGoo25hLynGwi6D/Zw?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZrD6QMoROEIKK9LVeHBDGAxTbNg4bfqqIKLKiIG8oS4ARefKsqlJghW62N+F?=
- =?us-ascii?Q?x1PqcocLbQH/jfmHQbJEwpH6fCl/zzVDUOv4iejf7T7tJanuYnp10zJ1jBfl?=
- =?us-ascii?Q?Go57rQrHta26gjdiDQsCzKkeMh2vMYoSBdgG2P8u6IA2d0gv8hqvl3s9OeCl?=
- =?us-ascii?Q?7Oxjd2QP58/8B61FEG77/m0ER9/GzJRu/TweSV1iRLlArnEledy8Tdx7hRyH?=
- =?us-ascii?Q?UOnMfVSy+4mRVva67oZPtnYDVstCUJ8MFd/1LcpnBo9N4TVB5uEGdR3VbJAU?=
- =?us-ascii?Q?HTmbgZCQJ4hTBu4so7xGc80JPxv8rgfR6RDMh2cVMCEoBpUc79rXRM4VuoC+?=
- =?us-ascii?Q?KLvQnFk/An49O4PflfZKAK9L6Svk2lX1gqPnYpW059a9swF/xHxeIzkMrx16?=
- =?us-ascii?Q?UMJnbFi3H3iHwh3J6ZFhv7KOOL0uQhYZH5dp921gpwNyM9qO41UB2/fzr6i5?=
- =?us-ascii?Q?Nl6xFC+jm/rlYhFGyGbmiN+zIaH65Fa2STu8qPG9eWwtG2HARVvM9UZJtffy?=
- =?us-ascii?Q?6MomBh4omyVcrGcPKiV91iJjC5fkpMgFzureDCBoNYO3q4LgTRYo5nYBOin+?=
- =?us-ascii?Q?DsQi6vPmMkFhZjRjbqMJkDIb2237B2qpqO8CamJDx1riPg7X+M0elTg1Lm8a?=
- =?us-ascii?Q?KC7mg+YJgOM9eAb/YpvQzC0Zvte1KHn5c0DxLwJR1VJ+35YMbLmwaogMVxje?=
- =?us-ascii?Q?nN7/Hb3M+Kv3sAG+w/dh0Y+mJBYvPGmLTBUR2fJ01b5UrdmNkq2wZLWtdX43?=
- =?us-ascii?Q?EJGKELu/s6OeFoJgagGrEFnC7BOL4ghQVQUJTLQepZnlVK0Zr985MZ6/+D/C?=
- =?us-ascii?Q?YozUzBsU/X1mOEvRhuoNDukbfuyz8fkpqetioQSUJPoNM9zvmkLzbR6tWh1h?=
- =?us-ascii?Q?Pozpo+Q4f18cTwl/i6el4NGkP32+48ywNc6vNXvbfnjmIGLwy/a/VaWyR7O7?=
- =?us-ascii?Q?7N3fJQzY7ueqT7Fo1ONNputNLuY7guhF6yZJEqgRozbKg7PJIyyez9fuQhNp?=
- =?us-ascii?Q?nPwxTIwA6mQ2rM2m1ZVeasoVMkkDGvXd8ubSQz5X+Pf1YMvLTNYzw+siHJ+e?=
- =?us-ascii?Q?VrmrAasW9+L1yEiJ87mgOOqpp6qv46ItsBxSdZ1NLEwsgjlalUsufdb59sIK?=
- =?us-ascii?Q?3ikaeYCveCPTtlGaNMVTwSV5mnx0qvp2bIfP4qYSAdQcjHzENb5Y7yPMh8hn?=
- =?us-ascii?Q?IO/dFo8G+m6vvB1RvXVj4feCCiXMhEdkd6wa4AEuxqqg9m70qcxlbfeRFbXq?=
- =?us-ascii?Q?6byDjo9XlThZ7rCbfaGi3Z8uadUYnfWOBbkRHWxmFAI3at96fvPWLhKaDC0S?=
- =?us-ascii?Q?qK8MNAnh25SoceboKZ2zUEL2JR85atBSFi+1Tn5qTr1HgrGFu7Wo1YHSbpBI?=
- =?us-ascii?Q?80QAyKOTKw4Z/SfDxS9SJ6QxhUw5BIFvwudJdEkf2akNpnmsxyEBLNuH10Q1?=
- =?us-ascii?Q?WVH5OBnVeefvqBcR2/iKG7BJ1BXcuZva4ufx3BfWXQ0viV0Xo3C2duFKrQ4f?=
- =?us-ascii?Q?hTbrwvCq8xU3zy94uaZDCm2AH+eRd38nOVg9NsOJFVGeQC88E1aItDNbjhmI?=
- =?us-ascii?Q?d4G1Bxh8l5C6H7PWsJ6g2ofZk8ENoDbUb6Eg9aUI?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1558211f-0d62-4e70-a603-08dd4b048221
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 01:28:09.2786
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Vu8bXmx5/CZMnEA5EqpZGMp5k3Uo7xRm190VPlsMRmBugfycUyXBivrjqPZR5/9SkmxT8gHRBsJrw0RasAAADQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9509
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Jan 24, 2025 at 07:15:24PM +0100, David Hildenbrand wrote:
-> ret will be modified immediately afterwards.
-
-Yep. Thanks for fixing.
-
-Reviewed-by: Alistair Popple <apopple@nvidia.com>
-
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  drivers/gpu/drm/nouveau/nouveau_svm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 11 Feb 2025, Juergen Gross wrote:
+> In case xen_swiotlb_alloc_coherent() needed to create a contiguous
+> region only for other reason than the memory not being compliant with
+> the device's DMA mask, there is no reason why this contiguous region
+> should be destroyed by xen_swiotlb_free_coherent() later. Destroying
+> this region should be done only, if the memory of the region was
+> allocated with more stringent placement requirements than the memory
+> it did replace.
 > 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
-> index 8ea98f06d39af..2f8b8b978fc08 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_svm.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
-> @@ -594,7 +594,7 @@ static int nouveau_atomic_range_fault(struct nouveau_svmm *svmm,
->  	struct page *page;
->  	unsigned long start = args->p.addr;
->  	unsigned long notifier_seq;
-> -	int ret = 0;
-> +	int ret;
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+>  arch/x86/include/asm/xen/swiotlb-xen.h |  5 +++--
+>  arch/x86/xen/mmu_pv.c                  | 18 ++++++++++++------
+>  drivers/xen/swiotlb-xen.c              | 11 +++++++----
+>  3 files changed, 22 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/xen/swiotlb-xen.h b/arch/x86/include/asm/xen/swiotlb-xen.h
+> index abde0f44df57..a353f20c7e79 100644
+> --- a/arch/x86/include/asm/xen/swiotlb-xen.h
+> +++ b/arch/x86/include/asm/xen/swiotlb-xen.h
+> @@ -4,8 +4,9 @@
 >  
->  	ret = mmu_interval_notifier_insert(&notifier->notifier, mm,
->  					args->p.addr, args->p.size,
+>  int xen_swiotlb_fixup(void *buf, unsigned long nslabs);
+>  int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
+> -				unsigned int address_bits,
+> -				dma_addr_t *dma_handle);
+> +				 unsigned int address_bits,
+> +				 dma_addr_t *dma_handle,
+> +				 unsigned int *address_bits_in);
+>  void xen_destroy_contiguous_region(phys_addr_t pstart, unsigned int order);
+>  
+>  #endif /* _ASM_X86_SWIOTLB_XEN_H */
+> diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+> index 2c70cd35e72c..fb586238f7c4 100644
+> --- a/arch/x86/xen/mmu_pv.c
+> +++ b/arch/x86/xen/mmu_pv.c
+> @@ -2208,19 +2208,22 @@ void __init xen_init_mmu_ops(void)
+>  static unsigned long discontig_frames[1<<MAX_CONTIG_ORDER];
+>  
+>  #define VOID_PTE (mfn_pte(0, __pgprot(0)))
+> -static void xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
+> -				unsigned long *in_frames,
+> -				unsigned long *out_frames)
+> +static int xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
+> +			     unsigned long *in_frames,
+> +			     unsigned long *out_frames)
+>  {
+>  	int i;
+> +	u64 address_bits = 0;
+>  	struct multicall_space mcs;
+>  
+>  	xen_mc_batch();
+>  	for (i = 0; i < (1UL<<order); i++, vaddr += PAGE_SIZE) {
+>  		mcs = __xen_mc_entry(0);
+>  
+> -		if (in_frames)
+> +		if (in_frames) {
+>  			in_frames[i] = virt_to_mfn((void *)vaddr);
+> +			address_bits |= in_frames[i] << PAGE_SHIFT;
+> +		}
+>  
+>  		MULTI_update_va_mapping(mcs.mc, vaddr, VOID_PTE, 0);
+>  		__set_phys_to_machine(virt_to_pfn((void *)vaddr), INVALID_P2M_ENTRY);
+> @@ -2229,6 +2232,8 @@ static void xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
+>  			out_frames[i] = virt_to_pfn((void *)vaddr);
+>  	}
+>  	xen_mc_issue(0);
+> +
+> +	return fls64(address_bits);
+>  }
+>  
+>  /*
+> @@ -2321,7 +2326,8 @@ static int xen_exchange_memory(unsigned long extents_in, unsigned int order_in,
+>  
+>  int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
+>  				 unsigned int address_bits,
+> -				 dma_addr_t *dma_handle)
+> +				 dma_addr_t *dma_handle,
+> +				 unsigned int *address_bits_in)
+>  {
+>  	unsigned long *in_frames = discontig_frames, out_frame;
+>  	unsigned long  flags;
+> @@ -2336,7 +2342,7 @@ int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
+>  	spin_lock_irqsave(&xen_reservation_lock, flags);
+>  
+>  	/* 1. Zap current PTEs, remembering MFNs. */
+> -	xen_zap_pfn_range(vstart, order, in_frames, NULL);
+> +	*address_bits_in = xen_zap_pfn_range(vstart, order, in_frames, NULL);
+>  
+>  	/* 2. Get a new contiguous memory extent. */
+>  	out_frame = virt_to_pfn((void *)vstart);
+> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> index 26c62e0d34e9..3f3724f53914 100644
+> --- a/drivers/xen/swiotlb-xen.c
+> +++ b/drivers/xen/swiotlb-xen.c
+> @@ -118,6 +118,7 @@ int xen_swiotlb_fixup(void *buf, unsigned long nslabs)
+>  	int rc;
+>  	unsigned int order = get_order(IO_TLB_SEGSIZE << IO_TLB_SHIFT);
+>  	unsigned int i, dma_bits = order + PAGE_SHIFT;
+> +	unsigned int dummy;
+>  	dma_addr_t dma_handle;
+>  	phys_addr_t p = virt_to_phys(buf);
+>  
+> @@ -129,7 +130,7 @@ int xen_swiotlb_fixup(void *buf, unsigned long nslabs)
+>  		do {
+>  			rc = xen_create_contiguous_region(
+>  				p + (i << IO_TLB_SHIFT), order,
+> -				dma_bits, &dma_handle);
+> +				dma_bits, &dma_handle, &dummy);
+>  		} while (rc && dma_bits++ < MAX_DMA_BITS);
+>  		if (rc)
+>  			return rc;
+> @@ -144,6 +145,7 @@ xen_swiotlb_alloc_coherent(struct device *dev, size_t size,
+>  		dma_addr_t *dma_handle, gfp_t flags, unsigned long attrs)
+>  {
+>  	u64 dma_mask = dev->coherent_dma_mask;
+> +	unsigned int address_bits = fls64(dma_mask), address_bits_in;
+>  	int order = get_order(size);
+>  	phys_addr_t phys;
+>  	void *ret;
+> @@ -160,10 +162,11 @@ xen_swiotlb_alloc_coherent(struct device *dev, size_t size,
+>  	if (*dma_handle + size - 1 > dma_mask ||
+>  	    range_straddles_page_boundary(phys, size) ||
+>  	    range_requires_alignment(phys, size)) {
+> -		if (xen_create_contiguous_region(phys, order, fls64(dma_mask),
+> -				dma_handle) != 0)
+> +		if (xen_create_contiguous_region(phys, order, address_bits,
+> +						 dma_handle, &address_bits_in))
+>  			goto out_free_pages;
+> -		SetPageXenRemapped(virt_to_page(ret));
+> +		if (address_bits_in > address_bits)
+> +			SetPageXenRemapped(virt_to_page(ret));
+
+This has the unfortunate side effect of making "PageXenRemapped"
+unreliable as an indicator of whether a page has been remapped. A page
+could still be remapped without the "PageXenRemapped" bit being set.  
+
+I recommend adding an in-code comment to clarify this behavior.
+
+
+
+>  	}
+>  
+>  	memset(ret, 0, size);
 > -- 
-> 2.47.1
+> 2.43.0
 > 
 
