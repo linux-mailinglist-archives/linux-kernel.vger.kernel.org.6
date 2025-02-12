@@ -1,142 +1,175 @@
-Return-Path: <linux-kernel+bounces-511766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C12FA32F62
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:14:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55937A32F64
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DED518875C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:14:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 433BF7A338A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28812627FE;
-	Wed, 12 Feb 2025 19:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B83D26139A;
+	Wed, 12 Feb 2025 19:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nc3EGtFJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZYEyaoSH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AC82505B3;
-	Wed, 12 Feb 2025 19:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BF9261566
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 19:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739387676; cv=none; b=QBc16hEfAYXtNFf84OxFAemnX/r0kqU9rjtL/hrUtci38oOEZ1/CCgK+WflQD7jf6s367MVq6fUipw51oy/9CU4Jl3jnog6J2X9YsMFu0F5gBi/h0ptli28d5mopZ4CspU+1GL/jHnVH9LZVUVW+BPgYKnXBtsRVLkgVUB8wq4Q=
+	t=1739387699; cv=none; b=lLtf/55is0ZoeqQWCcAus9SFoEl9otTYI8p1OnLlRacgs11jbyEAEK1mhsiKgrjr0Cb0LTEooBVc6cqrUTrAzdvoJ7IFd2zGmxTjNRpozEy+nBrzYgvADJLMVZJX+KwTWoLBePOQaZpbQ50zG9HIfaph1vlIgyIdJwBweWKVKT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739387676; c=relaxed/simple;
-	bh=mmXa4CSLqs9OFL2IL4tC3NZkiKo2CpyEZ1OGJE22XGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uShZ+ivzXKLUyTp28rI9OIrNJ7W7eDYVh8z+amu0mxwGjh6FnIE4haPMN9Wf1lkcs7BkaKHCZuZTbQI/w2jvTCK2sNZdlaXvUZQ8BNQoyHu2P/WrwGdsb8o0WzsKqDBGVZ07ZOQgJ6AlGu673NjdDZRN7n9RXHGY+083KC1zUgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nc3EGtFJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7077FC4CEDF;
-	Wed, 12 Feb 2025 19:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739387674;
-	bh=mmXa4CSLqs9OFL2IL4tC3NZkiKo2CpyEZ1OGJE22XGU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nc3EGtFJkIVzlt6VS0rDMB7lrWbePGEGz6bNMMQjVVDdEOltHQNeLRM6T1xxYCl6g
-	 KWC6MtbBFtLzxL506xs0kTCYOpnZlBjV9pwwXIGtqI7YHBWjUoZa8J8nVWc0dQPlVj
-	 y1wi3zx3p7kaX6ryv1QbfSBkkWlTDaky2V1vuhJcYA7vw+jrfnJzRd5AT3zQcd+hua
-	 6eTuR4O6GwGnByKuQgzIiSmW5mIaA2mjBhLllphMq1REc1moGo0bmDqSACFKoNl1q9
-	 Td1/Yygdsc5toBSImNqV0HTl5izJAa+LxOZzLfLZUL4DVGlA7Whjg+fA9yivSKJAZJ
-	 5Yci1aN5p0YEw==
-Date: Wed, 12 Feb 2025 19:14:30 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, festevam@gmail.com, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	m.felsch@pengutronix.de, bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH next v2 1/3] dt-bindings: usb: microchip,usb2514: add
- support for vdda
-Message-ID: <20250212-dullness-wreath-8d934b09576f@spud>
-References: <20250212135649.3431570-1-catalin.popescu@leica-geosystems.com>
+	s=arc-20240116; t=1739387699; c=relaxed/simple;
+	bh=rRq6PbosGwCh+S4uQAG0FbAB+DGiceJ9qM8veMJVZGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EN83hg3ClCrkSJ1IwGVzoqxP010EXLNnj9C2peByR2WiJdOL2Zq3LjFddjG67BTn+Uovtwl/QkIqxZWRC6bHx/KYreQ/q48ouiYMiO7XkBAbwBLpl0eCBkJslProM0qgPddQegXA57yvH6bzFhsKvSdV5NiMd+kzC9kPExdGusM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZYEyaoSH; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739387698; x=1770923698;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=rRq6PbosGwCh+S4uQAG0FbAB+DGiceJ9qM8veMJVZGc=;
+  b=ZYEyaoSH+9IYyGtqUJCYx4H54NDKJCgEXNXsWc9yYO9oAw7RA/2GlQcQ
+   3Vtxmllrsj7n5Quxu4Q9OGEFLI1bKdXP1x/oN7J6Hs4A2q3Hms1okNalA
+   Y4kGSblv98xTIVfmVUIN4X/PPsA9IdUbvluT3jDSXA+0oAQMxkOonyz+4
+   QZO6dpPwsauJRhbCjlFnkt3XQhpPuBfAddbio1pahPiHcrnHNscOO/8yO
+   RQ6TpSGi7Ugm2ogCaYy+DxUwD2FT7ENkRuRWQQnGuvVaeZ8luqW3e0Wqy
+   gF2MP/Mdf74wJIupVti3C90GpUv+BnHNmbL0FOoqxjHJfIDBMCDMMYILY
+   Q==;
+X-CSE-ConnectionGUID: 3Cw7d8ZdReGYESQaZmEDBg==
+X-CSE-MsgGUID: bG1lMX6CRHCKPLFJyU35sw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="27659203"
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="27659203"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 11:14:55 -0800
+X-CSE-ConnectionGUID: 4nC2yIOASvmJ+iivEluKMQ==
+X-CSE-MsgGUID: vXJ0XwToTgOXF7p3Isk9Vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="112903857"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.244.188]) ([10.245.244.188])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 11:14:53 -0800
+Message-ID: <7b0d8055-a58f-4c4c-adb2-c298b5df4f04@linux.intel.com>
+Date: Wed, 12 Feb 2025 20:14:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iw1sCEGjCNgsc9hl"
-Content-Disposition: inline
-In-Reply-To: <20250212135649.3431570-1-catalin.popescu@leica-geosystems.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Include ASPEED ast-drm 1.15.1 video driver in kernel tree
+To: Nicolas Baranger <nicolas.baranger@3xo.fr>,
+ dri-devel@lists.freedesktop.org
+Cc: Tzimmermann <tzimmermann@suse.de>, airlied@redhat.com,
+ Jocelyn Falempe <jfalempe@redhat.com>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+References: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
+ <194c4656963debcf074d87e89ab1a829@3xo.fr>
+Content-Language: en-US
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+In-Reply-To: <194c4656963debcf074d87e89ab1a829@3xo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hello Nicolas,
 
---iw1sCEGjCNgsc9hl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for taking a look at this. It would be nice to have an updated 
+driver. The best way to go forward is to chop the enhancements from the 
+version that you tested into small patches that can be applied to the 
+kernel tree.
 
-On Wed, Feb 12, 2025 at 02:56:47PM +0100, Catalin Popescu wrote:
-> Microchip hub USB2514 has one 3V3 digital power supply and one 3V3
-> analog power supply. Add support for analog power supply vdda.
->=20
-> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-> ---
-> v2:
-> - merge "if" with "allOf" and move the whole after patternProperties
->   section
-> ---
->  .../bindings/usb/microchip,usb2514.yaml       | 21 ++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml=
- b/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
-> index b14e6f37b298..aeffdf0362c2 100644
-> --- a/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
-> +++ b/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
-> @@ -9,9 +9,6 @@ title: Microchip USB2514 Hub Controller
->  maintainers:
->    - Fabio Estevam <festevam@gmail.com>
-> =20
-> -allOf:
-> -  - $ref: usb-device.yaml#
-> -
->  properties:
->    compatible:
->      enum:
-> @@ -28,6 +25,9 @@ properties:
->    vdd-supply:
->      description: 3.3V power supply.
-> =20
-> +  vdda-supply:
-> +    description: 3.3V analog power supply.
-> +
->    clocks:
->      description: External 24MHz clock connected to the CLKIN pin.
->      maxItems: 1
-> @@ -43,6 +43,20 @@ patternProperties:
->      $ref: /schemas/usb/usb-device.yaml
->      additionalProperties: true
-> =20
-> +allOf:
-> +  - $ref: usb-device.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: usb424,2514
-> +    then:
-> +      properties:
-> +        vdda-supply: true
-> +    else:
-> +      properties:
-> +        vdda-supply: false
+This way you get all the benefits from the updated driver, in a way that 
+it's suitable to maintain for us.
 
-Hmm, the then: here isn't needed, you can just invert the original if
-with a "not:". Sorry for not noticing that last time.
+Kind regards,
+Maarten Lankhorst
 
---iw1sCEGjCNgsc9hl
-Content-Type: application/pgp-signature; name="signature.asc"
+On 2025-02-12 19:58, Nicolas Baranger wrote:
+> Dear maintener
+> 
+> I did include ast-drm driver version 1.15.1 (in replacement of version 
+> 0.1.0) on the new mainline kernel too (6.14.0-rc2) and I issue a new 
+> dkms patch
+> 
+> Last DKMS patch had been sucessfully tested on mainline.
+> And last ast.ko version 1.15.1 included in linux tree had also been 
+> sucessfully tested
+> 
+> Online directory is updated with :
+> - new DKMS patch
+> - new DKMS srouces
+> - new DKMS debian package
+> - new tarball of mainline included ast_new ported in kernel tree
+> - new kernel debian package (mainline with ast_new)
+> 
+> 
+> NB: online directory is here: https://xba.soartist.net/ast- 
+> drm_nba_20250211/
+> 
+> Please let me know what I should do to see this change in linux-next
+> 
+> Thanks for help
+> 
+> Kind regards
+> Nicolas Baranger
+> 
+> 
+> Le 2025-02-11 19:15, Nicolas Baranger a écrit :
+> 
+>> Dear maintener
+>>
+>> For my own usage, I did make work the ASPEED ast-drm 1.15.1 video 
+>> driver on mainline kernel (6.13.0 + 6.13.1).
+>>
+>> ASPEED video driver is availiable here:
+>> https://www.aspeedtech.com/file/support/Linux_DRM_1.15.1_4.tar.gz
+>>
+>> But it only work for LTS kernel
+>> So I modify the DKMS package and I build a new Debian DKMS package 
+>> with the adapted  source.
+>> My patch can be find here :
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/astdiff.patch
+>> See the README:
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/README
+>>
+>> Using this new 'ast 1.15.1' driver, performance are amazing compared 
+>> to the 'ast' driver include in kernel tree, specially when using a 
+>> discrete GPU and offloading VULKAN / 3D on it but using AST VGA card 
+>> as the main video card and as the main and only video output (the 
+>> discrete GPU is used only for offloading 3D or for cuda/opencl)
+>>
+>> So to make things easier, I include the new 'ast 1.15.1' driver in 
+>> kernel tree as AST_NEW : linux-6.13.1-ast/drivers/gpu/drm/ast_new'
+>> It's working fine as you can see on this video :
+>> https://xba.soartist.net/ast-drm_nba_20250211/ 
+>> vulcan_nvidia_prime_render_offload_on_ast_vga_card.webm
+>>
+>> I upload all the work I've done here :
+>> https://xba.soartist.net/ast-drm_nba_20250211/
+>>
+>> See the global README :
+>> https://xba.soartist.net/ast-drm_nba_20250211/README
+>>
+>> and the README in nba-kernel sub-directory :
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-kernel/README
+>>
+>> I'm not a developer so please let me know if I made the things the 
+>> right way and if this new 'ast 1.15.1' driver can be ported to linux- 
+>> next or linux-? ?
+>> If you need more explanations, do not hesitate to contact me, I would 
+>> be happy to help
+>>
+>> Kind regards
+>> Nicolas Baranger
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ6zzFgAKCRB4tDGHoIJi
-0tx3AQCYwlidnU+dpYKm2CS9UgBGpqPUz+cfsEHZNbYm62SWmgEArgcsb+i0xZ9l
-14Bhc9qVma3uZu7iEZUxiH1+xAczpwU=
-=utub
------END PGP SIGNATURE-----
-
---iw1sCEGjCNgsc9hl--
 
