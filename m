@@ -1,102 +1,138 @@
-Return-Path: <linux-kernel+bounces-511851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B064A33081
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:11:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CA1A33085
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED8E9162A80
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:11:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFDF63A6ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BC4201023;
-	Wed, 12 Feb 2025 20:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2963520102F;
+	Wed, 12 Feb 2025 20:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="q45KTiG1"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqfQ+0mS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98CB1FF1C2;
-	Wed, 12 Feb 2025 20:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9B71FF1C2;
+	Wed, 12 Feb 2025 20:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739391097; cv=none; b=rwYtpjbs/iexbXsRF05q7/9Q1meBDmmXMMOdLG1y/C9u+mGWkDJ7YhQwQhZsvwrP4LlgR1uLx9WSrljXqjgOJhz45XXdEsqTV23W4pkTG0c9uJX2B5rz+PHwedDWr8lahaHUKvcuJvRJ7om0C5bKuHWoPKts89Gybelne2k6xAM=
+	t=1739391108; cv=none; b=DZmwlI7RolODl6CTO/TIhWdPbWs9r13kXKvpEc/Wz0FFnF6knxvgwE3aMT1BVrP46vBE868SjtwsD6wJo2fpH/no8Q/QNZxUjZBjSdAm2FD+fSyVRrFsnF5FHTj4vEcUzEHVCU0tJlCDU7+J/uBgq+6raJNOjP+DR1XZGIlke/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739391097; c=relaxed/simple;
-	bh=6qTcwCtpCr7+h/R22UJDEV16dSISZVvuXz2xJ6KAgxU=;
+	s=arc-20240116; t=1739391108; c=relaxed/simple;
+	bh=TYFAn0GjNtfs6GemvOBTR0+yVNV4Qawo3mDS4XiD+nU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSeobgvjc9j98sQqjtzzSJ1BwhEfClixtQvTgCIE0DbtdmSO+PnYHkoj9pjNStgTgfOpyFTSWjA1OvMRJHPjjiOod8nYybFHM2iYp7Q1iDUDZVCgWJ64iHrkdoH/wAlV+uQKH/xEm/vbvRX9MCtmCqXQ3dGDwYDCiU7v4f9mluQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=q45KTiG1; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7C2y2Gn8TQhW8qH+BWEcWH5Rkp+PROvP198Z5BPLt70=; b=q45KTiG1wXXLQA/HwRqL8+ksRr
-	J6kBGGd0ihv9sGWWVfs5VcpJy02cUJKx/3aQ4QPnMNLN9cDF0z5XLN31C6n6zezlq+ufvX5E7ChEK
-	mS47Myza5Yk55B1uNusUyf4SOIUXzcAxXj79EiY/cxBci54jbIN/VulfDlEt7rt7iPjFfF345PckK
-	R9N/4nJ5lzIswUSCQPE118OXbi0c5s9XaEeB3eg4cZJB6RSq/b5HkctY36v6cM1Weky+eIe1qoPwu
-	n/zXlm4VH+jMo6t+t+SLlhyK9O5x2CdTHZi8tKcUDB71W55WnQTe8x/KKpMVnJDqTpmCrNLleMD+e
-	AeQO6gYA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiJ52-0000000C4iO-2gZq;
-	Wed, 12 Feb 2025 20:11:32 +0000
-Date: Wed, 12 Feb 2025 20:11:32 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neilb@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/19] VFS: introduce lookup_and_lock() and friends
-Message-ID: <20250212201132.GR1977892@ZenIV>
-References: <>
- <20250208231819.GR1977892@ZenIV>
- <173933773664.22054.1727909798811618895@noble.neil.brown.name>
- <20250212155132.GQ1977892@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfNRidjTQrCBPXgoJHuW5bOr6HOzIXveMEpIsWuyFIySfCIRWXb28U58T31v+rwRv7MFlH+XrYI3FOtt0HQSELeOiqfGNtDnwhUNZsXzbyyIa6L43xEDjCpD3FdBL7BQeL/miXOPCDJbPz9kF6CL438F/WjyzdRoC1F6xVf/3oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqfQ+0mS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B900C4CEDF;
+	Wed, 12 Feb 2025 20:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739391108;
+	bh=TYFAn0GjNtfs6GemvOBTR0+yVNV4Qawo3mDS4XiD+nU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CqfQ+0mS9Zg1ixIFRAHqRE4ERBiPhWcrODe358e0hAfgFw652xbkbidE4Ro5Klwma
+	 0iOg1iGnUI+pORnnPIh1L3ik8FDRJ0W51hbx2hPvhbeyJslcbCOEvNyYohkCs70QBS
+	 B5bTi5XkG8aR2gZ1mzdh8G+2dJd1cnUYWn8NLN69brKCngDUg4JkBY6JSlTZ/e/vHs
+	 smHP0tSG4sYzhumv9vumR9pt9hNEfRnsEYjMU/K3Db8Jm5VqpNgpn3Vtt7LoxogD3h
+	 IHJ/R06itiI8Eng+PJcGrevuDyYNi4jn5tt7lVHb08dKmnevivhdGugZnieBpedkCD
+	 jtRfiYf3jFCbA==
+Date: Wed, 12 Feb 2025 20:11:44 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Julien Massot <julien.massot@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 3/5] dt-bindings: i2c: maxim,max96717: add new properties
+Message-ID: <20250212-policy-abdominal-052bf84a7d10@spud>
+References: <20250207112958.2571600-1-laurentiu.palcu@oss.nxp.com>
+ <20250207112958.2571600-4-laurentiu.palcu@oss.nxp.com>
+ <20250211-ecard-dallying-94ced9b29fd9@spud>
+ <20250212174209.GA3890372-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YbrQYOuJDAjTRr3o"
+Content-Disposition: inline
+In-Reply-To: <20250212174209.GA3890372-robh@kernel.org>
+
+
+--YbrQYOuJDAjTRr3o
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212155132.GQ1977892@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 03:51:32PM +0000, Al Viro wrote:
+On Wed, Feb 12, 2025 at 11:42:09AM -0600, Rob Herring wrote:
+> On Tue, Feb 11, 2025 at 06:46:10PM +0000, Conor Dooley wrote:
+> > On Fri, Feb 07, 2025 at 01:29:55PM +0200, Laurentiu Palcu wrote:
+> > > Add 'maxim,override-mode' property to allow the user to toggle the pin
+> > > configured chip operation mode and 'maxim,fsync-config' to configure =
+the
+> > > chip for relaying a frame synchronization signal, received from
+> > > deserializer, to the attached sensor. The latter is needed for
+> > > synchronizing the images in multi-sensor setups.
+> > >=20
+> > > Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> > > ---
+> > >  .../bindings/media/i2c/maxim,max96717.yaml    | 28 +++++++++++++++++=
+++
+> > >  1 file changed, 28 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max967=
+17.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> > > index d1e8ba6e368ec..fae578d55fd4d 100644
+> > > --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> > > +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> > > @@ -42,10 +42,35 @@ properties:
+> > >        number must be in range of [0, 10].
+> > > =20
+> > >    gpio-controller: true
+> > > +  gpio-reserved-ranges: true
+> > > =20
+> > >    '#clock-cells':
+> > >      const: 0
+> > > =20
+> > > +  maxim,override-mode:
+> > > +    description: Toggle the operation mode from the pin configured o=
+ne.
+> > > +    type: boolean
+> >=20
+> > type: flag
+>=20
+> Err, no.
+>=20
+> You can do as-is or:
+>=20
+> $ref: /schemas/types.yaml#/definitions/flag
 
-> And _that_ is really useful, provided that it's reliable.  What we
-> need to avoid is d_drop()/d_rehash() windows, when that "operated
-> upon" dentry ceases to be visible.
+Eh, that's sloppy. I must have been rushing or distracted. Sorry.
 
-... which is easier to do these days - NFS doesn't do it anymore
-(AFS still does, though).  There's also a bit of magical mystery shite
-in exfat_lookup()...
+> I am neutral as to which way. If I wasn't we'd make the meta-schema=20
+> enforce one way or the other.
 
-IIRC, we used to have something similar in VFAT as well, and it
-had been bloody bogus...
+I'm biased towards flag, since I've seen confusion about setting the
+boolean ones to false to disable them a bunch.
 
-Actually, this one is worse - this
-               /*
-                * Unhashed alias is able to exist because of revalidate()
-                * called by lookup_fast. You can easily make this status
-                * by calling create and lookup concurrently
-                * In such case, we reuse an alias instead of new dentry
-                */
-in there is utter nonsense - exfat_d_revalidate() never tells you to
-drop positive dentries, to start with.  Check for disconnected stuff
-is also bogus (reasoning in "vfat: simplify checks in vfat_lookup()"
-applies), d_drop(dentry) is pointless (->lookup() argument is not
-hashed), for directories we don't give a rat's arse whether it's
-hashed or not (d_splice_alias() will DTRT) and for non-directories
-the next case in there (d_move() and return alias) will work,
-hashed or unhashed.
+--YbrQYOuJDAjTRr3o
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Now, the case of alias dentry being locked is interesting (both for
-exfat and vfat)...
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ60AfwAKCRB4tDGHoIJi
+0geKAQDLe3eIQ6mumtyudUl9hWgBgJ29g3asPK2JaEz2v8uvHgEApYpSDxB4ig/C
+r+eMBlmm90OWTWRGOiJuspqXIYPu5gU=
+=6lir
+-----END PGP SIGNATURE-----
+
+--YbrQYOuJDAjTRr3o--
 
