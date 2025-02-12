@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-510417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B66A31C8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:08:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEDCCA31C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:58:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC87E3A696D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:07:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6310B3A6DEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED7D1D517E;
-	Wed, 12 Feb 2025 03:08:01 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C617F1D88B4;
+	Wed, 12 Feb 2025 02:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYaBA3Sf"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD3CC148;
-	Wed, 12 Feb 2025 03:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5751D47AD;
+	Wed, 12 Feb 2025 02:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739329680; cv=none; b=o108MTNVVFD10PQjgSkZMBuL6jScGae+AtOq6YRTM+KBQ+qzBsJJEeI6C7wW1sFQdSOcsghQLut37WMStV/01AkAMTj0E5l8D7E8n0ge/dUPeWrCPZyrrjE3NztcSQqV0KDwZAxoc8/GKrmTqxpz3+mH6jkW6GvNCXXEOGB2wFs=
+	t=1739329097; cv=none; b=uMi2jNaVNia4hq0IZm42dhYBd79zipAE/at5vkUfc2H2SimS40ApG7Tpex8xVvnpZCGL/wq9Am2FYvJboOlN3y3O3/6EMmyjMS3mkRUk7bPZZ65Cy3BCtqz+A9kXSsB/khbBjbdivULZ++zfqpfeIjFD+d1nqQJNcnPtLgVOlGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739329680; c=relaxed/simple;
-	bh=jaIYd7cshqR/G5ETbAdsuBDEMdOgq06VwWSRJQs5sBw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZXNTphVwl8lc7JzxTfEOvr7MYUFOkg0BfXlnS3wuMot1h2JYq7B7fghI1usMyq8HiNU34zLnCASj1SZmYQ5Qo3FoydJ3dIVHKK8ExVh/TM5KkDc7YmRxTarGPW5fd4zR28mzALGWbtciOPn3+hj94BQU31Rq9TVP/+PiOSTmhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Yt3CF69hCz4f3jqb;
-	Wed, 12 Feb 2025 11:07:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id E0AF01A0BD9;
-	Wed, 12 Feb 2025 11:07:53 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP3 (Coremail) with SMTP id _Ch0CgDXKcSBEKxnbyc1Dg--.7428S2;
-	Wed, 12 Feb 2025 11:07:53 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	mhocko@kernel.org,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	davidf@vimeo.com,
-	vbabka@suse.cz,
-	mkoutny@suse.com,
-	paulmck@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	chenridong@huawei.com,
-	wangweiyang2@huawei.com
-Subject: [PATCH] mm/oom_kill: revert watchdog reset in global OOM process
-Date: Wed, 12 Feb 2025 02:57:07 +0000
-Message-Id: <20250212025707.67009-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739329097; c=relaxed/simple;
+	bh=dpHXdTTTzOTlYDNw+0rMw4yjpufMEd7BmBsMD427saM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s0Nf6qSF1WvW4cnsJVt5TwA9W7SlJr1HRelRd7yU3zD2As7ICGxv8/iGoxsgH8k/og9/uJkBhFJVPoQCzs6ITGdWxzG0vJr2hWQzaXFAnlWtRyTFNsVKlyuu6DI+IFzAJeinJt8pR5kyq9uJTxY2EdUWPnBZLAvkaXcJuIDrWjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYaBA3Sf; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6fb0de4ecd4so14699287b3.3;
+        Tue, 11 Feb 2025 18:58:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739329094; x=1739933894; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ghF3Hq1lteYIWO1zRuLq/VRrfWBkqaOQHyBkZfebU1k=;
+        b=bYaBA3SfNjtGL9gkcmrtv4CBpdXg1cI0fIqfp30Hb2qo3q56P0TL1ZBigaza352i4d
+         W9zfdilbqrRgsUP01tUO97Vai0d0kIw/z48KYqXQg0ACrlBBG97YbOw7u4GQBMAIWSWz
+         hdRZ2yDNojYagyFp3q4l6FgF1c36pz6fcfEEOgK7fDFtUT+S9OnJUmHabtyG/U2NCVmh
+         vtTprTFqDyGg2xumfxYYkuN12YAjFRaT0AIea+PiYW7h1kobPjdQLLzM2P85+7Wzm/vd
+         mxZJjl9cgVlBuE8nkyurZ2aYIhACLiGw3LDS1HuGvH3lsqd9JjcWKCAtiOfqaeUaduXH
+         E8eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739329094; x=1739933894;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ghF3Hq1lteYIWO1zRuLq/VRrfWBkqaOQHyBkZfebU1k=;
+        b=DYpX0gQ/JVeBjWj3ex1qvJbgVYkfvNLjxn5LvtYHnD+KJNrh6XN+Ix9QH8qJK1Ga1o
+         DOQ2uOZD83lu23+LHRsENIDXrrmYxpsDEJBM7dC9LdoMn8JEMTSfdQpeon4OoMRwYZ8W
+         lfPFIAFm02R6Iuwdwj/QbU7rDjpJNXIeeDgikoweygNSQC7lmG5lP8skP3P4rEubwsSb
+         JX0fnqnnExSFbYdD+LtUdtESqV+7VGZ8cnBSiKJmKFB1uQs3RAO0i/NvpiCqPtXSSVBl
+         utgWLdZsP+AoUF2MFYhad6vT+fJ3zucQMxewBeioNq1kNWPmZjUm/EpX91cgojb2MR6U
+         avrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEnkqKcPZ/N7yVEuQ+BNBfKu8QHpqdUnrQpcM/2uydJ6c5GuciVjEJLeinRQLsCNd6NzfYQbF3fkE=@vger.kernel.org, AJvYcCUyyQS/62mVfRls6sDQEIfyRxBIlMHljLeKI4gGflMMR0qLkql5YRfa/aCwj93cV1/jE5NBhzh2TMGLP8g=@vger.kernel.org, AJvYcCV4t6hW0RhRKFoV+bD4ri5oY3xsXVyaAeScqBAZRu9VfZwHopWgWkSOBeHPzQ1ZjXDh48xDBqCwVuUC@vger.kernel.org, AJvYcCVo57m2V7pmaEuhUIwqGWH+zVfmE1ixZxTkd5n5LaIWJvrDCypJo99c85/HM0pz6L8FzNLvhtfBGYt2@vger.kernel.org, AJvYcCVzy9RE4ltqfxzw7AbCOFAoBCmp2ssFeN2zRZtePhOKhdMk3bLona2jJHKwbF2Q6g6XninIUuBo0NxW@vger.kernel.org, AJvYcCWL0wYwokgjebxTwdRyXcIDAIYPIh08dfhXMfXdVZREFWl2uTx7fyH09jFHi94Ne1zw21fdAa8Yi4A7PK9f@vger.kernel.org, AJvYcCWs+sAsShu0dZnWBW9lwte2zKkvqYGiJwjhBtsju+waW3YrHX751yRcnvEW8Qg4zI43cRmVbrtxHZhoNw==@vger.kernel.org, AJvYcCX1vcRxBZdoj377Ct+t3DdQU/iNgN/4P8HYyTv0X6XF0i2YkfuIjl4Cm8PjlF/No0cTcAUVsJoHITPAts/+nLs=@vger.kernel.org, AJvYcCXG0O1emb2i9wsyoo8CzHLaefzT3K1DuEQqmcl5ArtSAx6CFg2e8lVtaee0nUF9mlIl2d8U4sGM@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe0WMxqoAgdtlo3+VCCO6rvbxwyW6t1Y3ljTtUXug9/Et+GK6b
+	1wRa4j9vpudkKdqY2wDb87feFayyod6e3PTCY3kH+bTAvKkjuUs+4/07M5n6zkG5pkcWmBwSzD+
+	eP5IkFmZPJH2fj6RWef+TbCKrhkE=
+X-Gm-Gg: ASbGnctdB/qLYFGbrcVAXjw3hfl5EgTxvMWFwAvBmQFCOfnmPuazzwNHwdRf0ahZwvf
+	j6/aJq5AoreWZYwPxyxFp3JVFZsqAhAFWQvMGnTYO2a29B63cJWf4WszJljFmtT9VXO9xniWe2c
+	AmmAhqdEXQpLMBYWGzM/2Ba1dAEdg+Z5E=
+X-Google-Smtp-Source: AGHT+IFKY9my2Mv2OyawicWmvsTiPPrg1FpdmnOOVsezjy/oHTQdlNbpQ9V/afgOZCXiHY1UWHQDp4ZlhYp2zbadPiA=
+X-Received: by 2002:a05:690c:892:b0:6ef:7370:96ee with SMTP id
+ 00721157ae682-6fb21b00513mr11775887b3.12.1739329094572; Tue, 11 Feb 2025
+ 18:58:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgDXKcSBEKxnbyc1Dg--.7428S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFy8Kry3Ww48GryrJw1fWFg_yoW8XF48pa
-	98ua4UK398J3Z8ZF47Aa4IvF17J395ZFW8JF9rK34FvwsxtFn2yrWIyr1aqryrAFWS9a4Y
-	vFs8Kr1xJrWavw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
-	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IUbmii3UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <20250207074502.1055111-1-a0282524688@gmail.com>
+ <20250207074502.1055111-5-a0282524688@gmail.com> <20250207-savvy-beaver-of-culture-45698d-mkl@pengutronix.de>
+ <9a3f1242-794e-41f1-80a5-bc6d18ff6641@wanadoo.fr>
+In-Reply-To: <9a3f1242-794e-41f1-80a5-bc6d18ff6641@wanadoo.fr>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Wed, 12 Feb 2025 10:58:02 +0800
+X-Gm-Features: AWEUYZl54-xZLEN8OeOBxenzu1HA2sNuQj1p9av_bN6w1NsNLHVF_aDMJX4KeNI
+Message-ID: <CAOoeyxWF-B90NyinEQVzpU1hqGewGR-29+Q+1ADe_W8r7y5oQw@mail.gmail.com>
+Subject: Re: [PATCH v7 4/7] can: Add Nuvoton NCT6694 CANFD support
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, tmyu0@nuvoton.com, lee@kernel.org, 
+	linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen Ridong <chenridong@huawei.com>
+Dear Vincent,
 
-Unlike memcg OOM, which is relatively common, global OOM events are rare
-and typically indicate that the entire system is under severe memory
-pressure. The commit ade81479c7dd ("memcg: fix soft lockup in the OOM
-process") added the touch_softlockup_watchdog in the global OOM handler to
-suppess the soft lockup issues. However, while this change can suppress
-soft lockup warnings, it does not address RCU stalls, which can still be
-detected and may cause unnecessary disturbances. Simply remove the
-modification from the global OOM handler.
+Thank you for reviewing,
+this part is as Marc mentioned.
 
-Fixes: ade81479c7dd ("memcg: fix soft lockup in the OOM process")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- mm/oom_kill.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 25923cfec9c6..2d8b27604ef8 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -44,7 +44,6 @@
- #include <linux/init.h>
- #include <linux/mmu_notifier.h>
- #include <linux/cred.h>
--#include <linux/nmi.h>
- 
- #include <asm/tlb.h>
- #include "internal.h"
-@@ -431,15 +430,10 @@ static void dump_tasks(struct oom_control *oc)
- 		mem_cgroup_scan_tasks(oc->memcg, dump_task, oc);
- 	else {
- 		struct task_struct *p;
--		int i = 0;
- 
- 		rcu_read_lock();
--		for_each_process(p) {
--			/* Avoid potential softlockup warning */
--			if ((++i & 1023) == 0)
--				touch_softlockup_watchdog();
-+		for_each_process(p)
- 			dump_task(p, oc);
--		}
- 		rcu_read_unlock();
- 	}
- }
--- 
-2.34.1
+Best regards,
+Ming
 
+Vincent Mailhol <mailhol.vincent@wanadoo.fr> =E6=96=BC 2025=E5=B9=B42=E6=9C=
+=887=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8811:01=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+>
+> On 07/02/2025 at 21:15, Marc Kleine-Budde wrote:
+> > On 07.02.2025 15:44:59, Ming Yu wrote:
+>
+> (...)
+>
+> >> +static netdev_tx_t nct6694_can_start_xmit(struct sk_buff *skb,
+> >> +                                      struct net_device *ndev)
+> >> +{
+> >> +    struct nct6694_can_priv *priv =3D netdev_priv(ndev);
+> >> +
+> >> +    if (can_dev_dropped_skb(ndev, skb))
+> >> +            return NETDEV_TX_OK;
+> >> +
+> >> +    netif_stop_queue(ndev);
+> >> +    can_put_echo_skb(skb, ndev, 0, 0);
+> >> +    queue_work(priv->wq, &priv->tx_work);
+>
+> What is the reason to use a work queue here? xmit() is not a hard IRQ.
+> Also, the other USB CAN devices just directly send the USB message in
+> their xmit() without the need to rely on such worker.
+>
+> Sorry if this was discussed in the past, I can not remember if this
+> question has already been raised.
+>
+> >> +    return NETDEV_TX_OK;
+> >> +}
+>
+> (...)
+>
+> Yours sincerely,
+> Vincent Mailhol
+>
 
