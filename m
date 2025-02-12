@@ -1,114 +1,147 @@
-Return-Path: <linux-kernel+bounces-511245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AFB5A32848
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:21:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14F7A32849
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:21:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 518507A0699
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B6731888615
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F27020FA9D;
-	Wed, 12 Feb 2025 14:20:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A7720FA89
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201802101AB;
+	Wed, 12 Feb 2025 14:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C52sCF2i"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E87D20FA96;
+	Wed, 12 Feb 2025 14:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739370057; cv=none; b=Qqjli/KpQ7SvfRlB1mFvYJTSVJooMkY4W7lSepJIIWR7HSCU6yo+oGm9xPGe1bQwmSEj1/Vi/etKgOTGRaNqmEtuX6IwQrBjmDXfaprtzjwl62N6XQ0bROSu+PaKQrqHYwHMtk3pPl1ik45B5ByjiiPYWxsgkjt1O1/Qx3E748k=
+	t=1739370059; cv=none; b=sgnoPhhja8SPX3ZWjI5rsbkh+85b4D0CuUwEVTD7/wSTbme+UbtjqWxmpGjpLQNBG0zYQBDTSZjS6Wl92ezR8dsZIw9UphsyYFHna2LkQRqckKEotnuOWWB6MVY+O8wTQ/PtR6CRxkYGdt/c9aUCIL2c0Ntj1GEOLx+zAOoopVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739370057; c=relaxed/simple;
-	bh=9qZO5NGCeiACUAszVDHlEUNkGtIx33aa/KJAGZ3+cDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tIu/Uaj9WmJOSUkkFXCpAF8pGQEsfg1NehSXi1brc1ytGeeZrcilzB5mRAHPrsPbzBD63Umc/vXEdqZW87whXv67qYYGF4l5NWE5wAo4xytjlt1NUH4YmM4CLmXd7ZnFen5Y43pr+3ECYn+Y6RBRd2kOoWmUinbdGbfUUBYUv9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.156])
-	by gateway (Coremail) with SMTP id _____8DxC3JDrqxneS5zAA--.3833S3;
-	Wed, 12 Feb 2025 22:20:51 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.156])
-	by front1 (Coremail) with SMTP id qMiowMAxHsc_rqxnjPENAA--.3471S2;
-	Wed, 12 Feb 2025 22:20:50 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	loongson-kernel@lists.loongnix.cn,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH] LoongArch: Fix kernel_page_present() for KPRANGE/XKPRANGE
-Date: Wed, 12 Feb 2025 22:20:46 +0800
-Message-ID: <20250212142046.599757-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1739370059; c=relaxed/simple;
+	bh=PJPEdDn9ZCHCG+ipb6fYobAgNP+dJ76WARrj4izsSMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4RPCV73QBBkiD+0zglr4e8kcNucCuJF19ZIh/ROc5vjr05X5Btg4eZvm9msNTJjCCTy14pUnxDTnQim8A69Y7ZnGPdRXzf1WzewNWC/CmVMlqk6vO1IpJfWZwitSkx075QoAfHPr7ImhHRX6WkZDm/xkacXygb98c2QIOekRN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C52sCF2i; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21f7f03d856so73273325ad.1;
+        Wed, 12 Feb 2025 06:20:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739370057; x=1739974857; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jaIYJxkfq1FpQvIWfelFCHR6bgEv7q45G9WBNdGRrEU=;
+        b=C52sCF2ixlr7vEtt2T2GR69+mJTK2Y8fI6eEGpP4yMoLuA9xi6v3uJstRIQk9ezu7r
+         Gcif16ZhMpbW2Qxaj93/o+c+hNrtneXz3d8GisvsyNkU+Fi8f8sxgeIGMtCbpsud3WaQ
+         q5T+hFGPeKhjYMAlikXHw89gYdSv8kVcvsgp0nel6CLgDaWZMhjHib9JKWVpqdhCDjf9
+         WbnxBsX/BM7GpWeCToN1HrHG/a7VXjPD9/i6zIt76xjLOmSgsmWo9BAFAEWRh9OyCzi6
+         jPSsi2+q4ycfxhiOhVUozU68n9l5EvUjUhX4N4LKdum40gC9Ad6hSZfbVm/CY/YfOynh
+         rsPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739370057; x=1739974857;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jaIYJxkfq1FpQvIWfelFCHR6bgEv7q45G9WBNdGRrEU=;
+        b=oPOy5W4ekeBvri+QV7IC+UXZU7Kg80pHV/vLZzIDjrwJ24XOSLgPwakpVf4nZ9N3S5
+         BI6VH8QMLRcnWSLV/lRcxI81nkhzGKAa194HMWXotBKy3OERs1ICZp4Myd6QFpPExaB8
+         zZ34PgjSSnMkP0+5LZtUbH1Bf0OZelJn3bYxDyuI3iGnDu+nAC+9nZSQWfLHzm37EwTT
+         7/fMc2XoZ9ei0fN4r0itmewXMH3RhLGBeayBle9s6hOT6eQt+2BdPVL00MGhwKzEDXAE
+         z497EkJdIMdy6zIr/suEfjzzowv70+rS8sszm3RuSHWkT7mD2H9eMYAJMnoLdhpfPfZS
+         fzig==
+X-Forwarded-Encrypted: i=1; AJvYcCVh8aYCNXfClpglqRaZOkAPLqp563NIdLpvq4W87kmpkq93ddIP5vler3fbbenhi+upyEk0xql9PxKyDG/myTQ=@vger.kernel.org, AJvYcCXBuoK8QLtaON7vO9lyeNxrZXrhsfiSDmG40GJFMDUQmiywW/RVHczG+P1T0M6LuYjOf7ngcTooLSAe6324@vger.kernel.org
+X-Gm-Message-State: AOJu0YwalvpHa7HhFeb7ywCGryHZN1ZSRa4/aBMxbmRoICrQGFtWb6Qm
+	muvLk7Pgqv4jR8HuahxXHXJJ95aDTTgDHzTCLnA0cQX2uzx82z6k
+X-Gm-Gg: ASbGncvT5QmK61g7TAKxsemKPMpvrv0sbMkP61fGK2SRoHuY02twg0HU0vqieHR89fI
+	DWlCNaEp4SN8XrrVEfSv2f3FsYTYFyqNFpZOJoY7lnI6EeMhUXciEwMh+MLhqK4yu2Y3PVybTGs
+	WF5XISGlDVDxt8A/2j5EEV1zTLHR0Q5FZljIGx3A8YaJD8GOctoDRkOwRDoVNa+paSKCYVB72lO
+	SEXsLe9fMn6XY+syHMV9jwiE3PZXTYJ0G1TZ1ATiJi2LKm6kALNoqQ8qqHRTMFGOPX4YBL3Iv8m
+	mkBCmA==
+X-Google-Smtp-Source: AGHT+IELAEQ3Su7Uqr4OcDRN0pXjfLjCy12n0YoT9VXRC5Czs6XS2YZHik4XXoqANjmviTX4+vCgMg==
+X-Received: by 2002:a05:6a20:9145:b0:1e0:ae58:2945 with SMTP id adf61e73a8af0-1ee5c822982mr6803627637.31.1739370056948;
+        Wed, 12 Feb 2025 06:20:56 -0800 (PST)
+Received: from fedora ([1.245.180.67])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73048e20c32sm11487073b3a.170.2025.02.12.06.20.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 06:20:56 -0800 (PST)
+Date: Wed, 12 Feb 2025 23:20:48 +0900
+From: Harry Yoo <42.hyeyoo@gmail.com>
+To: GONG Ruiqi <gongruiqi1@huawei.com>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Kees Cook <kees@kernel.org>,
+	Tamas Koczka <poprdi@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Refine kmalloc caches randomization in kvmalloc
+Message-ID: <Z6yuQEYJbmWi8z23@fedora>
+References: <20250212081505.2025320-1-gongruiqi1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxHsc_rqxnjPENAA--.3471S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxJr1DuF1kZryDZw4DJw4xGrX_yoW8Jw45pa
-	97Aa1kXw4DKF1rJw4kAFnrur18Xas5KF4UXF1jvayjvF13uw4avry8Cr9FqFyjqr48JrWr
-	WFWak34rZF4DA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUxhiSDUUUU
+In-Reply-To: <20250212081505.2025320-1-gongruiqi1@huawei.com>
 
-Now kernel_page_present() always return true for KPRANGE/XKPRANGE
-addresses, this isn't correct because hibernation (ACPI S4) use it
-to distinguish whether a page is saveable. If all KPRANGE/XKPRANGE
-addresses are considered as saveable, then reserved memory such as
-EFI_RUNTIME_SERVICES_CODE / EFI_RUNTIME_SERVICES_DATA will also be
-saved and restored.
+On Wed, Feb 12, 2025 at 04:15:03PM +0800, GONG Ruiqi wrote:
+> Hi,
+> 
+> v3:
+>   - move all the way from kmalloc_gfp_adjust to kvrealloc_noprof into
+>     mm/slub.c
+>   - some rewording for commit logs
+> v2: https://lore.kernel.org/all/20250208014723.1514049-1-gongruiqi1@huawei.com/
+>   - change the implementation as Vlastimil suggested
+> v1: https://lore.kernel.org/all/20250122074817.991060-1-gongruiqi1@huawei.com/
+> 
+> Tamás reported [1] that kmalloc cache randomization doesn't actually
+> work for those kmalloc invoked via kvmalloc. For more details, see the
+> commit log of patch 2.
+> 
+> The current solution requires a direct call from __kvmalloc_node_noprof
+> to __do_kmalloc_node, a static function in a different .c file. As
+> suggested by Vlastimil [2], it's achieved by simply moving
+> __kvmalloc_node_noprof from mm/util.c to mm/slub.c, together with some
+> other functions of the same family.
 
-Fix this by returning true only if the KPRANGE/XKPRANGE address is in
-memblock.memory.
+Hi, GONG!
+Sorry for my late review.
 
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/mm/pageattr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This patch series looks good to me (with a nit),
+Reviewed-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 
-diff --git a/arch/loongarch/mm/pageattr.c b/arch/loongarch/mm/pageattr.c
-index bf8678248444..99165903908a 100644
---- a/arch/loongarch/mm/pageattr.c
-+++ b/arch/loongarch/mm/pageattr.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2024 Loongson Technology Corporation Limited
-  */
- 
-+#include <linux/memblock.h>
- #include <linux/pagewalk.h>
- #include <linux/pgtable.h>
- #include <asm/set_memory.h>
-@@ -167,7 +168,7 @@ bool kernel_page_present(struct page *page)
- 	unsigned long addr = (unsigned long)page_address(page);
- 
- 	if (addr < vm_map_base)
--		return true;
-+		return memblock_is_memory(__pa(addr));
- 
- 	pgd = pgd_offset_k(addr);
- 	if (pgd_none(pgdp_get(pgd)))
+Also, I verified that the problem you described exists on slab/for-next,
+and the patch series fixes the problem. Please feel free to add,
+Tested-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+
+nit: Does it make sense to call __kvmalloc_node_track_caller_noprof()
+instead of __do_kmalloc_node() to avoid bloating the code size?
+
+My simple build test says it saves 1592 bytes:
+  $ ./scripts/bloat-o-meter slub.o.before slub.o.after
+  add/remove: 0/1 grow/shrink: 0/1 up/down: 0/-1592 (-1592)
+  Function                                     old     new   delta
+  __kvmalloc_node_noprof.cold                   39       -     -39
+  __kvmalloc_node_noprof                      1755     202   -1553
+  Total: Before=79723, After=78131, chg -2.00%
+
+> Link: https://github.com/google/security-research/blob/908d59b573960dc0b90adda6f16f7017aca08609/pocs/linux/kernelctf/CVE-2024-27397_mitigation/docs/exploit.md?plain=1#L259 [1]
+> Link: https://lore.kernel.org/all/62044279-0c56-4185-97f7-7afac65ff449@suse.cz/ [2]
+
 -- 
-2.47.1
-
+Harry
 
