@@ -1,104 +1,111 @@
-Return-Path: <linux-kernel+bounces-511670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63970A32E12
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:01:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC733A32E15
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:02:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFBE13A7A1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B61318890D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4575C25B694;
-	Wed, 12 Feb 2025 18:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1F325D53C;
+	Wed, 12 Feb 2025 18:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="brZyZlR4"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gnECJf1c"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21D7271838;
-	Wed, 12 Feb 2025 18:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3293F20E02B;
+	Wed, 12 Feb 2025 18:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739383268; cv=none; b=gIis5mEV2eL4X/WOKoAkiWIgGi/qmkx0svyDSAthGaLJqegADriuINKBw6M9Ud3hoknF0hgQ6lYdGw3JJ65rZrSr4e3Fg5hwo0I1/zrp3sl6i4Qh8NDyj+lBUt4VqnlK++hLavzYlAy9Rkq7sjhpsPPPo/6wvRIfvKV85K8gJDg=
+	t=1739383318; cv=none; b=iUOXF4oG6fb2SAtD933hTWGAg1iDJ37yM1esmqYyA1xUD6TD9+Ke0T7b3rfe7qgVlYLbjUThABNPDSF0QFROgQh1yG4m4Lg2GSREbpRltre/CNKfUWCuHt6C/Ixbkfov82kXmu/t0Lo/st7UY354L/rZrI9M0a2xsZ98etPpc0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739383268; c=relaxed/simple;
-	bh=tAxQY0eKt3wmeEo9qIBpZoK5Itd60oQWZnzbi12wCkk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SwTMgvz7DUlTVx5oxvu1807J6b/H3zahPm3CQ4tXiw0HZ/Oi2kmhBBiOCgCtmU34GEPywTrI8jrka3HyH5CjQ164eLrfKCcbTnAvZfV7imUeAYWui2oCYm25Ih7Wq4yRYJV6cCUYxNyE312IqBJMBuOAUTPwsoEcZqvf4L3EiFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=brZyZlR4; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1739383264;
-	bh=tAxQY0eKt3wmeEo9qIBpZoK5Itd60oQWZnzbi12wCkk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=brZyZlR4TUNrd2NAuWjANL7iqDHqlvctb491o0VzVuE/9H62SRAD4Ltx3MXGb17zp
-	 gFP2NkPg1m/yMVL9iUlcLR80urQHzpqdh3hhuMtqQECIWOdMBxA9V8UBPsabkOFVEy
-	 iRRJ+1SOfoYxrM7w0em3ZUy7kMKLd3xqi1hUpJyo=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Wed, 12 Feb 2025 19:01:01 +0100
-Subject: [PATCH] selftests/nolibc: only run constructor tests on nolibc
+	s=arc-20240116; t=1739383318; c=relaxed/simple;
+	bh=ApVjZL7R4gIKkJK0P861NvcM7oao9TZoGvth5kdN1QI=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=hYS/kP78s72z5iiGB2Yw61bdZsW3BRo+olT7m+IpLrurmawAJud8zkubmkYCq2W+YYj8sgSYdepyaZ8Snnm6cW/hsNhZQrxphHyvSDXTZix7gONPEGVMkfafZgvorR+gh6Acym3YJ/GPO7DxylvvOsX0TE5z+Xfwb/w+4819ZwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gnECJf1c; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739383303;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xzDmp7n11SXDWq7ajSDnUq46FyfKrhpeHIHAWHCUuZw=;
+	b=gnECJf1cKJ5M5rm0NV6epIvN4swhWMvhk8bPz5Q9uS0EFIW2dkZiBTPUjQZ0NEcqzvBJOq
+	lfZQGt6LRxQMhPn63eFx7OnBzTUmwErFPiocGe/S79yjXcM7Zbq6Oxf3AAO6CT1fXcQGn0
+	zNpCUiqYtLRaoeUvCLbFpdv+c0cx1HY=
+Date: Wed, 12 Feb 2025 18:01:40 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250212-nolibc-test-constructor-v1-1-c963875b3da4@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIANzhrGcC/x3MQQqDQAxA0atI1gZMUIq9SulinEYbKDOSjFIQ7
- +7g8i3+P8DFVByezQEmu7rmVEFtA/Eb0iKon2rgjoeOiTHln04Ri3jBmJMX22LJhj33I03hQYF
- GqPVqMuv/Pr/e53kBLCA4uWkAAAA=
-X-Change-ID: 20250212-nolibc-test-constructor-42491ba71a19
-To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739383264; l=1873;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=tAxQY0eKt3wmeEo9qIBpZoK5Itd60oQWZnzbi12wCkk=;
- b=AzR36VL0Vrz/TfCVtLqV7MDcEZkm+7bEajuBkAhNWEWGhieuzRTM83D3psbu8BYkCKrdFWQl6
- Ol6Yufi4IosBr6SdDUandKn38N2BFOUI2VV/lsOGwCkx781FYlT6xl/
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Ihor Solodrai" <ihor.solodrai@linux.dev>
+Message-ID: <62dacb9480327bfececb60e956f18f6f1924745b@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH] netfs: Fix setting NETFS_RREQ_ALL_QUEUED to be after all
+ subreqs queued
+To: "David Howells" <dhowells@redhat.com>
+Cc: dhowells@redhat.com, "Marc Dionne" <marc.dionne@auristor.com>, "Steve 
+ French" <stfrench@microsoft.com>, "Eric Van Hensbergen"
+ <ericvh@kernel.org>, "Latchesar  Ionkov" <lucho@ionkov.net>, "Dominique
+ Martinet" <asmadeus@codewreck.org>, "Christian Schoenebeck"
+ <linux_oss@crudebyte.com>, "Paulo Alcantara" <pc@manguebit.com>, "Jeff
+ Layton" <jlayton@kernel.org>, "Christian Brauner" <brauner@kernel.org>,
+ v9fs@lists.linux.dev, linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ast@kernel.org, bpf@vger.kernel.org
+In-Reply-To: <3459755.1739353676@warthog.procyon.org.uk>
+References: <84a8e6737fca05dd3ec234760f1c77901d915ef9@linux.dev>
+ <8d8a5d5b00688ea553b106db690e8a01f15b1410@linux.dev>
+ <335ad811ae2cf5ebdfc494c185b9f02e9ca40c3e@linux.dev>
+ <3173328.1738024385@warthog.procyon.org.uk>
+ <3187377.1738056789@warthog.procyon.org.uk>
+ <2986469.1739185956@warthog.procyon.org.uk>
+ <3210864.1739229537@warthog.procyon.org.uk>
+ <3459755.1739353676@warthog.procyon.org.uk>
+X-Migadu-Flow: FLOW_OUT
 
-The nolibc testsuite can be run against other libcs to test for
-interoperability. Some aspects of the constructor execution are not
-standardized and musl does not provide all tested feature, for one it
-does not provide arguments to the constructors, anymore?
+On 2/12/25 1:47 AM, David Howells wrote:
+> Hi Ihor,
+>
+> Okay, the bug you're hitting appears to be a different one to the one I
+> thought first.  Can you try the attached patch?  I managed to reproduce=
+ it
+> with AFS by injecting a delay.
+>
+> [...]
+>
+> netfs: Fix setting NETFS_RREQ_ALL_QUEUED to be after all subreqs queued
+>
+> [...]
 
-Skip the constructor tests on non-nolibc configurations.
+Hi David.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- tools/testing/selftests/nolibc/nolibc-test.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I tried this patch locally, and then on BPF CI. It fixes the 9p hanging i=
+ssue.
+A couple of platforms and toolchains are tested there:
+https://github.com/kernel-patches/vmtest/actions/runs/13291034531
 
-diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-index 798fbdcd3ff8c36b514feb3fa1c7b8d7701cccd7..94db506eca906ff0ce8f518298dee34abf386484 100644
---- a/tools/testing/selftests/nolibc/nolibc-test.c
-+++ b/tools/testing/selftests/nolibc/nolibc-test.c
-@@ -738,9 +738,9 @@ int run_startup(int min, int max)
- 		CASE_TEST(environ_HOME);     EXPECT_PTRNZ(1, getenv("HOME")); break;
- 		CASE_TEST(auxv_addr);        EXPECT_PTRGT(test_auxv != (void *)-1, test_auxv, brk); break;
- 		CASE_TEST(auxv_AT_UID);      EXPECT_EQ(1, getauxval(AT_UID), getuid()); break;
--		CASE_TEST(constructor);      EXPECT_EQ(1, constructor_test_value, 2); break;
-+		CASE_TEST(constructor);      EXPECT_EQ(is_nolibc, constructor_test_value, 2); break;
- 		CASE_TEST(linkage_errno);    EXPECT_PTREQ(1, linkage_test_errno_addr(), &errno); break;
--		CASE_TEST(linkage_constr);   EXPECT_EQ(1, linkage_test_constructor_test_value, 6); break;
-+		CASE_TEST(linkage_constr);   EXPECT_EQ(is_nolibc, linkage_test_constructor_test_value, 6); break;
- 		case __LINE__:
- 			return ret; /* must be last */
- 		/* note: do not set any defaults so as to permit holes above */
+Tested-by: Ihor Solodrai <ihor.solodrai@linux.dev>
 
----
-base-commit: 16681bea9a80080765c98b545ad74c17de2d513c
-change-id: 20250212-nolibc-test-constructor-42491ba71a19
+Note that on CI the "netfs: Fix a number of read-retry hangs" patch [1]
+is *not* applied. Only this one.
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+Thank you!
 
+[1] https://lore.kernel.org/v9fs/3173328.1738024385@warthog.procyon.org.u=
+k/
+
+> [...]
 
