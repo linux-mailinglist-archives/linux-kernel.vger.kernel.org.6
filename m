@@ -1,87 +1,64 @@
-Return-Path: <linux-kernel+bounces-510252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88260A31A4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:16:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF83FA31A50
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:17:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D485F1883B14
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:16:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721DB166734
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFA24C81;
-	Wed, 12 Feb 2025 00:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D63566A;
+	Wed, 12 Feb 2025 00:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P70UUJ7Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WnZC+qzJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297842111
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DFA1876;
+	Wed, 12 Feb 2025 00:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739319403; cv=none; b=FAE71bGXhS9vOztkIJ221IrV0WNXtq5RlAFLXYzr3Y3H+itKs+fZQIp6oxOZe6pvCJjk6kS5laO9/AaNb2QL8ETd+SvNqn6kiFZ7eqs1MTuRO498AIieapa+U7jKzL5EPrUzllme0xXnRHLnu2qPypWE5+YLCCXs3ec5E+hFTek=
+	t=1739319457; cv=none; b=ndE21j+b1KooRdaITap3yns52Zks7V3VTwQvjZxAbs3I1u2UW+ts6N0NHlJYsDhrUndU/+RriJiHR/S+yWti6uf0sHU3+8zsVJ8J2TBP426Lb7HUBmwHzbj0D7H4ucBq/DYAkqU2zloGNnLnn4BqgveccHb08QjdaEouScKgZHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739319403; c=relaxed/simple;
-	bh=vF9sAsivftSRk9YysN+Elnzfq9dO+3SugGtK1Qgvf6M=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lr0TJY4jRi8ApUS9RUqw69uDMwHEvDszkfEBKfpJhNskE5DMZ6VKgANeFKvnjh6QzJ3k38X3BywKtp5SH1FDu6NTDBe1mr5WFOlJXZiyFWv9ojRmRu632/9Uh6iqHXKgv4RNPwnPjVtM4upBwgp/n5EFEAUiDTOwkeI9lBSnYK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P70UUJ7Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739319400;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Aw447gaPb7zNMocf3h4BtDlt/qfajgVcEdNoBnnrQDw=;
-	b=P70UUJ7YzwtZ/XhuDWdREn1g4QBcZaoZWIwK1d+tGNQSOj1jTQPMMDg1w+L4vQSKNiSSFK
-	vTKMJGngyA4qCABN6GVKzDnPW5evc8PwR0883L6XMixno0FWLcmu1CT4N6b64n9hSeRJFi
-	wVvpNeoKihW4KJ98uChPXjV/K+783HM=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-369-9SIXYdRQPbirwF52tzzjrw-1; Tue, 11 Feb 2025 19:16:38 -0500
-X-MC-Unique: 9SIXYdRQPbirwF52tzzjrw-1
-X-Mimecast-MFC-AGG-ID: 9SIXYdRQPbirwF52tzzjrw
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c067ec2de7so53430485a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:16:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739319398; x=1739924198;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Aw447gaPb7zNMocf3h4BtDlt/qfajgVcEdNoBnnrQDw=;
-        b=SyPE8IekWqx/3H76IjhqmmrNw3mKlnwRWip9YGZWNXCQb/zb/DiYaBhLqLEJBXX/8u
-         Jj01GRsnXwNbZ81TKWwGnZgPMo3EyLCLQRHjiEMWqXxcesIZztKm42k9kY3sMjpwLnaG
-         WRVLMcvXeSjWuNhxvENKEluk+o0FxXabtH69qbUL2Xn/ifqiJ0q5viwDTxRo5hHmyUdT
-         a3kY2U1Ffk//g4NV8ph6w1XJFYoAOrSTnfO8DllvDhTOyvhO1zBwSKITP2l/j0P5J9DV
-         QbyIWuagweEKsxj5rcMbUx1EE8j2x1TYRvFOqwJEI9K5g4ziaduEYi1gvy5sqOwXibsP
-         HOGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWDyPFtI6qC6tXA3bWDmH2dCXeRWpX5F054g3ZC4fFZrsYUYcPfDbBUpHZ/mu32ouUOyPw8vbmxwuDTwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgYmL4PdvK3jtpyNYbMqpEqY8NjaW14WP7nJl8D++F2/DGj0uO
-	T8WpIvOyOFGLPrqCeltYuLMsuolBAWhqW5EVaDHk4vHjIlZqH73dsjvr0x8N04MyBJ7NowobMRj
-	jdNcfL1Dcsz0rp6HGuXs13ssH9ai7qrsjhOp+myR+c2A6/FYIkuOKdqyBjWY5EA==
-X-Gm-Gg: ASbGncsogpDyZDzPfxANE+nM7ZGB9FkE7/CbvleRVb7mPHKlZhGnYHoVGvC7KtX+vgi
-	on9SepqV7wQDbsuiw/Qpt2TIqKKav+YFL6f5nwgIY/GC79OLBWg3CMqJuqSJm5TYBUdk6NU7WQC
-	z4TkFTLUB7CJW/2z1ZzRmEe0Lon8wHJKvRmUhSex2/7JQo8KaIWGjkfdUPaQBHbZJzNviDyZg0R
-	MKmxgBmRDLEYIhQgDGmlomyMZRu3lyEMvEfmvC3vEIGMZra3nmk6bUbC/uq1xtRdfip5ReD1R1T
-	jtUAaS9NgaKfM553dNGew9vrE621xA13xELHGnkC2b5c4m7P
-X-Received: by 2002:a05:620a:24d4:b0:7b6:fdb9:197e with SMTP id af79cd13be357-7c07025941dmr154537985a.8.1739319398120;
-        Tue, 11 Feb 2025 16:16:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IENzMVSe0weoS27WWCT7JtaiNjOl1Kw02kBUwi9+QkdbL5XSwYfk9EZa1PX4HVM1t7uIloPkw==
-X-Received: by 2002:a05:620a:24d4:b0:7b6:fdb9:197e with SMTP id af79cd13be357-7c07025941dmr154535485a.8.1739319397850;
-        Tue, 11 Feb 2025 16:16:37 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0728eb208sm3484785a.99.2025.02.11.16.16.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2025 16:16:36 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <6b6c1245-f6ee-4af7-b463-e8b6da60c661@redhat.com>
-Date: Tue, 11 Feb 2025 19:16:34 -0500
+	s=arc-20240116; t=1739319457; c=relaxed/simple;
+	bh=y14ABPZ9ibbWp0Lhe3/yhIefsonTjXeVcpZO5UM/Q0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=IelQRoWER8vufMTtz16akDzH97jT+ESCMTfVeY1sIbPDpy9Lm5f0q0rl7AHddbtVnivoKJ2u3rWytPvmjqRgVLy++BPiky4UTLMXPHc3giBs3Cwm/o+GdDmCphO119P/xiF0TcPBcfWJrl1r3JT6zC9ktYAIW7vnqeys71AybKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WnZC+qzJ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739319455; x=1770855455;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=y14ABPZ9ibbWp0Lhe3/yhIefsonTjXeVcpZO5UM/Q0I=;
+  b=WnZC+qzJ1sJjxvq1eQVaNEaj5+ODZnyN8UPJ3c4lbUr/BzcYDQFR7qom
+   pvpL48F9UPFn9Thtt+pGNYyxCaSG9pyAxzQgy+CC6oroNqtpn3NDtzNA1
+   CI59GuqbclFpU3pASQq/H4wG9qneFWicMeI+6RMqXEMV8HD/LOVw4RtTO
+   qJ5duNG/PMJdRdxboE03DOFOuyki6B+M9iFAII8YHKlsNWDT08TfYnytG
+   KbuHvGgEcu+0+mufZhGIcovIELB8xY9SwUyBD0PE2i6uYsHfsRGuSiftN
+   yQ03A9kapCge06T72fRu2+4E8s2ceWHSUVuFMg8e3rxJ1qyNSxreG5SGu
+   w==;
+X-CSE-ConnectionGUID: CvJueYZNSECUlMegNONhDg==
+X-CSE-MsgGUID: wlCcDu6WT4SLxPVkw1uQEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39981354"
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="39981354"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 16:17:35 -0800
+X-CSE-ConnectionGUID: +f8i6qa3TySOm9HAVnPL0Q==
+X-CSE-MsgGUID: X2f3OY/XTxeL9q283drL3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="143506749"
+Received: from agladkov-desk.ger.corp.intel.com (HELO [10.125.108.65]) ([10.125.108.65])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 16:17:33 -0800
+Message-ID: <1ba44c00-26f4-4373-8726-2874d32b61d2@intel.com>
+Date: Tue, 11 Feb 2025 17:17:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,79 +66,144 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kasan: Don't call find_vm_area() in RT kernel
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Alexander Potapenko <glider@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- kasan-dev@googlegroups.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- Nico Pache <npache@redhat.com>
-References: <20250211160750.1301353-1-longman@redhat.com>
- <20250211145730.5ff45281943b5b044208372c@linux-foundation.org>
+Subject: Re: [PATCH v7 13/17] cxl/pci: Add trace logging for CXL PCIe Port RAS
+ errors
+To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
+ ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
+References: <20250211192444.2292833-1-terry.bowman@amd.com>
+ <20250211192444.2292833-14-terry.bowman@amd.com>
 Content-Language: en-US
-In-Reply-To: <20250211145730.5ff45281943b5b044208372c@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250211192444.2292833-14-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
-On 2/11/25 5:57 PM, Andrew Morton wrote:
-> On Tue, 11 Feb 2025 11:07:50 -0500 Waiman Long <longman@redhat.com> wrote:
->
->> The following bug report appeared with a test run in a RT debug kernel.
->>
->> [ 3359.353842] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
->> [ 3359.353848] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 140605, name: kunit_try_catch
->> [ 3359.353853] preempt_count: 1, expected: 0
->>    :
->> [ 3359.353933] Call trace:
->>    :
->> [ 3359.353955]  rt_spin_lock+0x70/0x140
->> [ 3359.353959]  find_vmap_area+0x84/0x168
->> [ 3359.353963]  find_vm_area+0x1c/0x50
->> [ 3359.353966]  print_address_description.constprop.0+0x2a0/0x320
->> [ 3359.353972]  print_report+0x108/0x1f8
->> [ 3359.353976]  kasan_report+0x90/0xc8
->> [ 3359.353980]  __asan_load1+0x60/0x70
->>
->> The print_address_description() is run with a raw_spinlock_t acquired
->> and interrupt disabled. The find_vm_area() function needs to acquire
->> a spinlock_t which becomes a sleeping lock in the RT kernel. IOW,
->> we can't call find_vm_area() in a RT kernel. Fix this bug report
->> by skipping the find_vm_area() call in this case and just print out
->> the address as is.
->>
->> For !RT kernel, follow the example set in commit 0cce06ba859a
->> ("debugobjects,locking: Annotate debug_object_fill_pool() wait type
->> violation") and use DEFINE_WAIT_OVERRIDE_MAP() to avoid a spinlock_t
->> inside raw_spinlock_t warning.
->>
-> Thanks.  I added it and shall await review from the KASAN developers.
->
-> I'm thinking we add
->
-> Fixes: c056a364e954 ("kasan: print virtual mapping info in reports")
-> Cc: <stable@vger.kernel.org>
->
-> but c056a364e954 is 3 years old and I don't think we care about -rt in
-> such old kernels.  Thoughts?
 
-The KASAN report_lock was changed to a raw_spinlock_t in v6.13 kernel 
-with commit e30a0361b851 ("kasan: make report_lock a raw spinlock") to 
-fix a similar RT problem. The report_lock is acquired before calling 
-print_address_description(). Before commit e30a0361b851, this 
-find_vm_area() is a secondary issue. We may consider commit e30a0361b851 
-isn't complete and this is a fix for that.
+On 2/11/25 12:24 PM, Terry Bowman wrote:
+> The CXL drivers use kernel trace functions for logging Endpoint and
+> Restricted CXL host (RCH) Downstream Port RAS errors. Similar functionality
+> is required for CXL Root Ports, CXL Downstream Switch Ports, and CXL
+> Upstream Switch Ports.
+> 
+> Introduce trace logging functions for both RAS correctable and
+> uncorrectable errors specific to CXL PCIe Ports. Additionally, update
+> the CXL Port Protocol Error handlers to invoke these new trace functions.
+> 
+> Examples of the output from these changes is below.
+> 
+> Correctable error:
+> cxl_port_aer_correctable_error: device=port1 parent=root0 status='Received Error From Physical Layer'
 
-The DEFINE_WAIT_OVERRIDE_MAP() macro was introduced in v6.4. So this 
-patch cannot be backported to a version earlier than that unless commit 
-0cce06ba859a is there.
+Is there any way to identify if the error comes from the USP or DSP? Specifically the PCI devname for the specific port?
+> 
+> Uncorrectable error:
+> cxl_port_aer_uncorrectable_error: device=port1 parent=root0 status: 'Memory Byte Enable Parity Error' first_error: 'Memory Byte Enable Parity Erro'
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Alejandro Lucero <alucerop@amd.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Cheers,
-Longman
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
+> ---
+>  drivers/cxl/core/pci.c   |  4 ++++
+>  drivers/cxl/core/trace.h | 47 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 51 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index 3f13d9dfb610..9a3090dae46a 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -671,6 +671,8 @@ static void __cxl_handle_cor_ras(struct device *dev,
+>  
+>  	if (is_cxl_memdev(dev))
+>  		trace_cxl_aer_correctable_error(to_cxl_memdev(dev), status);
+> +	else if (is_cxl_port(dev))
+> +		trace_cxl_port_aer_correctable_error(dev, status);
+>  }
+>  
+>  static void cxl_handle_endpoint_cor_ras(struct cxl_dev_state *cxlds)
+> @@ -730,6 +732,8 @@ static pci_ers_result_t __cxl_handle_ras(struct device *dev, void __iomem *ras_b
+>  	header_log_copy(ras_base, hl);
+>  	if (is_cxl_memdev(dev))
+>  		trace_cxl_aer_uncorrectable_error(to_cxl_memdev(dev), status, fe, hl);
+> +	else if (is_cxl_port(dev))
+> +		trace_cxl_port_aer_uncorrectable_error(dev, status, fe, hl);
+>  
+>  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
+>  
+> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+> index cea706b683b5..b536233ac210 100644
+> --- a/drivers/cxl/core/trace.h
+> +++ b/drivers/cxl/core/trace.h
+> @@ -48,6 +48,34 @@
+>  	{ CXL_RAS_UC_IDE_RX_ERR, "IDE Rx Error" }			  \
+>  )
+>  
+> +TRACE_EVENT(cxl_port_aer_uncorrectable_error,
+> +	TP_PROTO(struct device *dev, u32 status, u32 fe, u32 *hl),
+> +	TP_ARGS(dev, status, fe, hl),
+> +	TP_STRUCT__entry(
+> +		__string(devname, dev_name(dev))
+> +		__string(parent, dev_name(dev->parent))
+> +		__field(u32, status)
+> +		__field(u32, first_error)
+> +		__array(u32, header_log, CXL_HEADERLOG_SIZE_U32)
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(devname);
+> +		__assign_str(parent);
+> +		__entry->status = status;
+> +		__entry->first_error = fe;
+> +		/*
+> +		 * Embed the 512B headerlog data for user app retrieval and
+> +		 * parsing, but no need to print this in the trace buffer.
+> +		 */
+> +		memcpy(__entry->header_log, hl, CXL_HEADERLOG_SIZE);
+> +	),
+> +	TP_printk("device=%s parent=%s status: '%s' first_error: '%s'",
+> +		__get_str(devname), __get_str(parent),
+> +		show_uc_errs(__entry->status),
+> +		show_uc_errs(__entry->first_error)
+> +	)
+> +);
+> +
+>  TRACE_EVENT(cxl_aer_uncorrectable_error,
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status, u32 fe, u32 *hl),
+>  	TP_ARGS(cxlmd, status, fe, hl),
+> @@ -96,6 +124,25 @@ TRACE_EVENT(cxl_aer_uncorrectable_error,
+>  	{ CXL_RAS_CE_PHYS_LAYER_ERR, "Received Error From Physical Layer" }	\
+>  )
+>  
+> +TRACE_EVENT(cxl_port_aer_correctable_error,
+> +	TP_PROTO(struct device *dev, u32 status),
+> +	TP_ARGS(dev, status),
+> +	TP_STRUCT__entry(
+> +		__string(devname, dev_name(dev))
+> +		__string(parent, dev_name(dev->parent))
+> +		__field(u32, status)
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(devname);
+> +		__assign_str(parent);
+> +		__entry->status = status;
+> +	),
+> +	TP_printk("device=%s parent=%s status='%s'",
+> +		__get_str(devname), __get_str(parent),
+> +		show_ce_errs(__entry->status)
+> +	)
+> +);
+> +
+>  TRACE_EVENT(cxl_aer_correctable_error,
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status),
+>  	TP_ARGS(cxlmd, status),
 
 
