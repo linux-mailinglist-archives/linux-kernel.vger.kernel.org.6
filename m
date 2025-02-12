@@ -1,337 +1,215 @@
-Return-Path: <linux-kernel+bounces-510695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778F0A320A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:11:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100FFA320AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D25A91888B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:12:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599B93A5D99
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FD1204F65;
-	Wed, 12 Feb 2025 08:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C93204F71;
+	Wed, 12 Feb 2025 08:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="FUJCafD5"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2061.outbound.protection.outlook.com [40.107.22.61])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KPx4wlWg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69292046BD;
-	Wed, 12 Feb 2025 08:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83D8204F62;
+	Wed, 12 Feb 2025 08:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739347909; cv=fail; b=pHrBNNEvw3kpZycuvGKHqZ5VVI/7nQuydPyTPkyKQ97uPxz5nGFOdyydFx8g4y4TqbsEZlZlTjuB4URdplDwRLrd0cXG6HJ40meneiigp5/02+aZ/drt2EL4v8uzT496Lk0XipyXs9IhJRuwHJijic+rt57eiDBfV3AsbzGHbmo=
+	t=1739348009; cv=fail; b=deKTOckCzJbF/CZXTP7f31CFlFUL0qqkoI7E+Lt2zEVVHmo8jYVt0khNTzUOWzv8YUaYb4Vb7/RJu9HrSXdLxBYcFJIU3X2NLxDcsEGKV+o0og690RtLltu9S1IP4CQdN868hysImBsZgZqYaGod8uzypSy8NV0DCijzJLiO42A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739347909; c=relaxed/simple;
-	bh=fqnA/80/X+A2GDubvIipe/uEXiE7fupEtFQFy8BsBDQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=i9Q2qSUAjEYF7llS+Atw9ZK5MUq3AArIXmK0oq8TruCVt9pGL0avlVXxS2AJ1ZCXDfU05iI49nLxz2GIEyEECtoJ5SIZ6Z0u65KIMD2ENju2Q3LCQmV5nzu5vz5B5o+5SqfA/J9kqh96jozJ1AeHZwxWQT2KOXBXd7FKLfoJ+Tk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=FUJCafD5; arc=fail smtp.client-ip=40.107.22.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1739348009; c=relaxed/simple;
+	bh=ClpsHf+X0Kry1IGYw6Exqlj/KO1yYxXqQwNkRdg6kqY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Aj827b9YtgtDQQjlBKVP7spj6PrqURL99hj6E9UlwAWpp5v5KrtzKPEAYDTVmKDyMP7+zYu+7lYKBko++gfU4u3d/w6v0IpMEipiFanHIjfcHkqTWFkqUZrcI97xBbhQ4tWE4px6Fg2HS/OTBCxi7+YkbvM1GMBHIAbziA9SW9o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KPx4wlWg; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739348007; x=1770884007;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=ClpsHf+X0Kry1IGYw6Exqlj/KO1yYxXqQwNkRdg6kqY=;
+  b=KPx4wlWggwNITESxYmS6bx65PX5U55mpKoXpPYh1zrp5aAou0RO/BEDy
+   qauGnSzpLu5HJjpBnEaIiL66ciIzNx+Z7Vr3WdzzWEZ6ddTkhmDwlLjeK
+   M+TndP1dxi+OFZTURzLbnmIQtflAWjXZHDXvX7bolpMtMSRUOoP/zovfh
+   h9w+q8lLEThLQmpicA7ku24eg/DaJlcf+S7qP3OrVwFA8cA4ijkaXY/Wu
+   tCU4eZAc17DhLCr2DjqsQjjW2QYJnlfMQKFu64/Q8ETIGu7Z79Hoaqu0r
+   mPRbAtmE/8GP4aoyt2l8zH2kr1q7bd/6w2+JjhY2xb+FH+iugQvww0uXI
+   g==;
+X-CSE-ConnectionGUID: 6IXHAoIRT1yG60PhpUUP0Q==
+X-CSE-MsgGUID: rbu55DLPSB6ITVRk/I5wLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="43646436"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="43646436"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 00:13:24 -0800
+X-CSE-ConnectionGUID: rCe6WSt0Rkmm2/Xa92RPRQ==
+X-CSE-MsgGUID: pJaSCJlNRYuaugkNHv6QWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117371293"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Feb 2025 00:13:20 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 12 Feb 2025 00:13:19 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Wed, 12 Feb 2025 00:13:19 -0800
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.42) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 12 Feb 2025 00:13:19 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K3p4VEDgTIdx19dmc8j4LJXe5rTygj/AUjCFDQtSRxAJrcW484gmpuKnMOZAl6/O//hW5YNhvelENPUoiN7x1nAwKb8E1bwhQT3WwPoYlAA5LspoHQAKpOOyx8o3oTeKf2uMncfdDk/INP+Pr0gXuDXKGeL7D/N9U9bhvyAj67oonLIaac7HlXuIoMdGNTL2DSAllTreTEA9hOHvNz3BH019lK3DpHSlDoVfJWndE+5JVGPwoioUehR03hLVfhxbWLNC1CTmEyoYdhzdjZwpOe4RsUZ+NCK12357znMrVjhy2J5fSg724c73HylRNoKneWLCT1vMmYoDhm0O3EHb9A==
+ b=O2fd6utTTVtZkT8bcqF6EhPDrgujK3p/CucqE5SjMx/f0ZaBiqGAnoT+bqJKmEjyPTWu1AMClpV6zuCJ5E56vLqaMRjAumIhLriNZ5yC6Y8AHIvM2oiwlJUtEZ2y0bj7sDwhFIjDv5GRwM5eCIHeFc7kGDH0Xuf2c1Hk1trnrPbsK1KDZR870ZRMiMP/uH3GMs4biJ28CFsbo56ff5zZirpKtbAHfaH+aul3ghyMUu+i/bONl585L+QxtW9bSoYZxc61XZ3aPsmi7q8nxldqQTLlWz19O6MGv7zW9mt/VMFLUuSxgPpN4dY4VWfrl8MgAHHJm4QEFxwwFtzPj98JAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pUZqhH6JDXYjioU/xrCvQnu+IrLP2cck7TKWst1Y0X0=;
- b=wjZ0ANybrqdUIn9k8w5DyLUoWNyJtxq0YDApjdd9NjsBjhrNYEJsUq88JuXgW9uki6UZbBhSpNSot9YvYznobnUybtXIFg38q5lgDi9Jz5PfWyEgz8YW8CLfaLyGspqiLy2e/4WLEIOiPgXWI6Rf8vmcUb2vQMATESlVk3WNEzHhimNt6hKCfGLB8zZxakI40E1XSpZMh53YZsTX0BuNv+3NdrAr8zT7sYzRgtf8Yk0FpLEVhqbaVXxfVc2Y2EzOaCg5P6yeVzg9B5Ia4IOKDj4+6NFE+Cm+umwFJXZNId8JNhLC2qlSx/KBROj6aNh1CgFBa2rGEZMeaPVcvepi/g==
+ bh=8srqXqVgDEWL5tePQpEumHrMQSYJHJoX6GatuFf1150=;
+ b=p+u4jyR7ZiEVbXhaUvHkfgC2tyfef4sHNs5DiTvxsGrGt4TdDfTZ4LjmAybdWNng+SgiijT+ZqRcdoYsHmfwTZ+Qi0hOY5yeO08fM+vjxw/Du2Ox5BmJl/7lWsxnVr36BgevcLu4hhEJomggSTfMgQZar6Dw25eeCZskpm/L+W3h7biIleA9Jf/S+eyPRMPu43FeN5raWvjhNm6fz9xgrM854cHVMy7JohcvkaxpDyqkPL3mxI+exkRmq45BY4sL6Ph2oCX4o8AzBwfbPr9zLJ2MCTWDBFfpPHjeGNxsCwjlhcU2fjl5NCWgz0Tmsscdm2y5+eqv9eknNywSkyuq+Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pUZqhH6JDXYjioU/xrCvQnu+IrLP2cck7TKWst1Y0X0=;
- b=FUJCafD5/OY1tytgm+tAuP3ZK0toQ++Xcicgro/hqTSv+RyqzW514nxs7Yek88J/w7JW3Z4qmk2xcLEV1OCkaygL1nT20V0pZBony4CIEunZt8s+x2gMu2b8d7Uv11YGOoB9RAZhhgj05rq12M0n2AnqAvS1VmFBGXifLybHqO81YCDUvS7U6D3J3u7dyHwlB1fnU3SDucTUBmCrszfXa+2WsA+Th+VZeZV/e33ypVkDvhA0FEojccCee0BI/z2EXjmp7k9UNlk9RjHx8PRpUc6qnPjcW8zXh32Xnnbmou4b8cMhgthX+ALlP+hHA6GwXJCjnN5tZXWJlHF41NorNQ==
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS1PR04MB9261.eurprd04.prod.outlook.com (2603:10a6:20b:4c7::13)
- by PAXPR04MB8974.eurprd04.prod.outlook.com (2603:10a6:102:20d::21) with
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SN7PR11MB8284.namprd11.prod.outlook.com (2603:10b6:806:268::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.12; Wed, 12 Feb
- 2025 08:11:40 +0000
-Received: from AS1PR04MB9261.eurprd04.prod.outlook.com
- ([fe80::7b16:7596:6bb4:c5fb]) by AS1PR04MB9261.eurprd04.prod.outlook.com
- ([fe80::7b16:7596:6bb4:c5fb%5]) with mapi id 15.20.8422.012; Wed, 12 Feb 2025
- 08:11:40 +0000
-Message-ID: <2e633e46-ac59-495d-9ecd-46c34d2d3242@oss.nxp.com>
-Date: Wed, 12 Feb 2025 10:11:35 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-To: Frank Li <Frank.li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- NXP S32 Linux <s32@nxp.com>, imx@lists.linux.dev,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>, Bogdan Hamciuc
- <bogdan.hamciuc@nxp.com>, Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-References: <20250207163808.1208552-1-ciprianmarian.costea@oss.nxp.com>
- <20250207163808.1208552-3-ciprianmarian.costea@oss.nxp.com>
- <Z6ZqGeswJDPTlzvo@lizhi-Precision-Tower-5810>
- <3cb2620c-46d0-4334-bd41-58b2720c2cca@oss.nxp.com>
- <Z6uDuL97EB9KqD4b@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-In-Reply-To: <Z6uDuL97EB9KqD4b@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR06CA0100.eurprd06.prod.outlook.com
- (2603:10a6:208:fa::41) To AS1PR04MB9261.eurprd04.prod.outlook.com
- (2603:10a6:20b:4c7::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Wed, 12 Feb
+ 2025 08:12:35 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.8422.015; Wed, 12 Feb 2025
+ 08:12:35 +0000
+Date: Wed, 12 Feb 2025 16:12:24 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+CC: <pbonzini@redhat.com>, <seanjc@google.com>, <kvm@vger.kernel.org>,
+	<rick.p.edgecombe@intel.com>, <kai.huang@intel.com>,
+	<adrian.hunter@intel.com>, <reinette.chatre@intel.com>,
+	<xiaoyao.li@intel.com>, <tony.lindgren@intel.com>,
+	<isaku.yamahata@intel.com>, <yan.y.zhao@intel.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 01/17] KVM: TDX: Add support for find pending IRQ in a
+ protected local APIC
+Message-ID: <Z6xX6PCjW0PZe59D@intel.com>
+References: <20250211025828.3072076-1-binbin.wu@linux.intel.com>
+ <20250211025828.3072076-2-binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250211025828.3072076-2-binbin.wu@linux.intel.com>
+X-ClientProxiedBy: KL1PR0401CA0005.apcprd04.prod.outlook.com
+ (2603:1096:820:f::10) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS1PR04MB9261:EE_|PAXPR04MB8974:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1c9f9d84-f59f-4780-69da-08dd4b3ce0a0
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SN7PR11MB8284:EE_
+X-MS-Office365-Filtering-Correlation-Id: 68c942f6-0ed7-4137-db28-08dd4b3d018f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dnBCNjUzQlZOamJRV1d0cmMyRzByNXNVbndXdnpYOTZWWng4aXMwWlZkU3lI?=
- =?utf-8?B?SW9pdi9PUXh5QzlqN0FKRWNXb0tlcHhVRW9xdGZrUjd2Si9RdW40OGQ1THln?=
- =?utf-8?B?VFBFRGZic0pna1JvdlMvNDdZRXoxTlNud3I1Tm9kaEhmY1pBU05qcUNPRjJR?=
- =?utf-8?B?WGFGUEl0dnpYSVVROEZzZk80NzJWSmF1UDRQRk9RL0xSdVRYTnlKaHF5eUFo?=
- =?utf-8?B?RDBjMUZDVG82RDRNOTZ5VkRqOWtzUGxEcE5ZNStENkxTME9QekdYQTB6aHpL?=
- =?utf-8?B?YWQwQ3RReGVVWWliTE5yVHlQRGo2QXVjWE9DQi8wNk9KRnE3M0xvM2xhWWhB?=
- =?utf-8?B?WGd1dHZObVA2aUt6dUZnM1duQ1BiR3Zod2pZRzJZNm5Zb3gxRFZ6RW1ESUtj?=
- =?utf-8?B?TytwZDFXMjN5czgyWnpiZ1dsTkNaR25rdEpHSFZqYVI1SVBuZWdXWCtiTlBV?=
- =?utf-8?B?THRPaTRNakR4WWd0QUZ5emZKbW5WT2RtVTR6ZEdreUFTQTcwd0FuR3IxK2wz?=
- =?utf-8?B?VWU4MUtoeU9OOW5UZkJWWkV2S2FPbTRtZWdkQUNJS0JYdzZUTGt0NzAxaUJG?=
- =?utf-8?B?M0lXdkdrTnQvL01mVzk0QnYxeGNCNjlITVZaT0xnWVBhQ2s1THNaNkVnWVJB?=
- =?utf-8?B?M1ByWEVaczVrcFh2WW9BU0kyQUk2TDhqU1RLNWt6OU9abENDeElqR09JUXlo?=
- =?utf-8?B?Wno2aGpWRFVxWi9PV214anVONFpzN1VnOE1ObUozd0hLVExleGYzYkdDdDVh?=
- =?utf-8?B?cTdvRGh1Z09pRG9UY00vc1R0cS85YXhnb28yTGlVMzF1bkRNVlFvOXRZRTdZ?=
- =?utf-8?B?bC9pV29pRG9TQVEzVFVseFlwVTE3aEIzdzAxeDBCZTZxRWp2RFBXQkY5WEVE?=
- =?utf-8?B?cGZhN1pLVFpNVU5mcUZXRW9URUJXL0N4ZTNlclBzWVZIaE5COGxGTUZuTmxC?=
- =?utf-8?B?YmZ1azdKZVFROWtMWXFMU0tIdGtBdjVPTm5wM2VLbDg1dTY0WnJtY0pTbDE3?=
- =?utf-8?B?dnlxL3ZZRXNkZVJIL2s0YnB5dWRhdzM4b1lGaHFoZWo0ZVdIb09YODlRMXhN?=
- =?utf-8?B?UVFNbzVwNGRtTk5FS3AySHFSNXdQL2JsSHdKN1lmK1ZxUUxLY2cxWXpiZXdl?=
- =?utf-8?B?SkgyS2NmNXowVmo3K3hVR0MxZUlTSWV3UjJCTi9nZCtWM3NVaklZMEM3Q1Bj?=
- =?utf-8?B?T2RoTW1GT0FPRjN3ZFU3cDUycElPbmVtL1ZQUElTTThJTEtObmNCbXQrL3A4?=
- =?utf-8?B?RzlKL25IUUMvSC9hUDd6Y0xHQzBNV2Z2MEdKT3VoR1J6REdoVW5oVThMUnF6?=
- =?utf-8?B?V2FScDFOSkJHMEdVSTVtTGxHWEZUcExFaVdlZkN0WDByMzY2NGlBUVhGYkl0?=
- =?utf-8?B?eTRHVDZEdVZNRVd0RzFZMkE3NWpwdjluWFJYT2NxQ0ZObjZJZXVod3F2MVNP?=
- =?utf-8?B?S3FMdlRONzJxR3VNMDFPQmVhUlh2VndRYkpNU25LOWNwSkhMTE9ISUJ4OE9F?=
- =?utf-8?B?cDlPMWFTbGx0SzdMalRZYnlia0lYbUIwbDhES2lCZk5QSG5nVWdFSXFjQVd0?=
- =?utf-8?B?Q0xVWkdSa282d1pLSjZ1NFJvdUc1a1VVT0U0aDlhTEtQY1VGZUFxR2FiY3Nk?=
- =?utf-8?B?SzFnK2R2TXkrU3VqY3ZodHhMZ0JDVFFQanRTNkZJeWs1czkxQ2tQRUNLY3Zo?=
- =?utf-8?B?WXIwUThCS2MwQi9ZZ2lWZG03SHFFTHhQdEtpZ3lOSTdPN2RkMGpqYXNkSTlO?=
- =?utf-8?B?L0VPUm5MYjVIOXdkaTM2elJveFNrbkZLQzNTb0pkb2ViVEwvaWs2aVpWbVJl?=
- =?utf-8?B?ZUxWZmd1WU5Hb3A1a0JibW94QTNnWXl5em5KMGJVYWlCeXNhOEI0eFZaTG5n?=
- =?utf-8?Q?5yvl5vUZSyI8c?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR04MB9261.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?hjRG6RHWO+kNO3uonqnA3yZfEC1/uULGGF9FTK/+9ZrOWTLX47Ug2RHVDZ23?=
+ =?us-ascii?Q?pMwDpIBeleU2ED0/2kGBb4od6TmJQX7EzGb2RKOyoVn6cC+AOZJL70+YFEth?=
+ =?us-ascii?Q?oZj+iOpGbgLFYCwjQy8PDq+rYp9mrhz8BAzTWmL2HrxDLgtakQRvXICviJWS?=
+ =?us-ascii?Q?FcyA1MPmwVPd6+bZlnjspJRw9cHZzddsAzNRSQiu/f9NXEhLA9rP1mBI/Z9H?=
+ =?us-ascii?Q?om+PFZfER9bM4G7E38w8BWlBSnqinhFJg/84txUQAcXfIHoyhKUu9YrBgT5A?=
+ =?us-ascii?Q?fFFqOIDjTy4IHemg4TLNXokUuJJuCHRwMlXKKASSpBTw352X0tywlrada1JI?=
+ =?us-ascii?Q?V6Srwc5iekbHhy1Na2v/JYf4lc5b9SmctANQp7cXxvGiFbGzfaxWCHpoTjRB?=
+ =?us-ascii?Q?W2nj8PBRTYNVoPR0YswKmHtr3UWIV7gaooLoyc29J3Ht24GzSgxQHM9bwxbS?=
+ =?us-ascii?Q?MWicZhDhMiPEjbJlozWgtK6gPf4VRpkNKQsuOTdqNgue7FIDthu27QCAoKUr?=
+ =?us-ascii?Q?nm+4ruL9Z4WKHYkyh13B4HJjQqmi+ewNyzJawQk5aR4/VRdxITQuBt9FGHSm?=
+ =?us-ascii?Q?vIrV0w9J8ZFD5fdltfSX6jzYw4IYQdKfbohhL8OyXNZH3R14hsUv8jBF5oJs?=
+ =?us-ascii?Q?bgHM9OxD4+KSluhxl4j4IKSkR5tEIefO6OZmK3mEIvuVCDDgKgSHmz745UGr?=
+ =?us-ascii?Q?kmtNqoXdQbEK67pkbngJf08IptgJT1+SYxljio+YSLR3Oa/Jd1L2ombhYij/?=
+ =?us-ascii?Q?IV80yt8yqdGMIShM1fDj3ZhrDBU3Eq+eOh5No2IdXt+6E8BO6ownMoP4TfKi?=
+ =?us-ascii?Q?JLBkmKVlJmDboa1caI5u6XfunqR4+48952aS8rsRGaVBfhDIhxjCv7HLOBRC?=
+ =?us-ascii?Q?LsfNST+T/rCYWqkcVhBluaJhrtJ5yxeU3qHpY1c1+4XEyzKUniMeBbTc4ZA4?=
+ =?us-ascii?Q?D6Y6ECJmaLMt1TxkjxFH5X1doc8o4baUto07XX+9HvnMRn5Z+sCyGMjPUexX?=
+ =?us-ascii?Q?bpnacBi7W0+SakfgpGKuYp5hmfCYh3/5XY+wyVo+JFJZGVEO8ENy+gT1mr9I?=
+ =?us-ascii?Q?s+YqHVSK6NWiSCkIMFPhiYP/3VMsXf5IsbGfHfizlAiXpzJWAnbPS9wajmVd?=
+ =?us-ascii?Q?LXq3NctisuvDqmwsAB9qFhKZ37NOj6ETQ9j0/3XOZJcXVnWe/oSyV4p/Tiy2?=
+ =?us-ascii?Q?eG50KhJhMDShIagTh9tLJSiu6H6AE2ZyUtR+6Dnbf/RtX7jLV2GORavDQD1U?=
+ =?us-ascii?Q?L7UzEK+MTVWmQ7WhhtZne0NNZtR+amM6HvPomvX0AvwdPaM/uStEcFpU8ecH?=
+ =?us-ascii?Q?6ZeesVGvNP9aFqvSEkBQCcubi2lCnqA9IMuFzRAyx0Fn6gn3mtz/HJINwa/e?=
+ =?us-ascii?Q?cDWR7NRLu4EQQCuZP4VBXIpdE4op?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bXZuZEdtOHRiaXRYdlpaT25XbUlCN200dEthTUhrMUo2ZHpzREJNeFRuOEdW?=
- =?utf-8?B?aVF2L21JQllPV2UwQitoZUlYRHk0b2c3M1AyOXZtdEtocW5BcllrTG1PQW1R?=
- =?utf-8?B?dXd6YkRMY01ka2JXRVMxNEI4QTljOUhDTGZrVUdTaCtuMk5XRllUYXprZFoz?=
- =?utf-8?B?ZldQRXVRdUJiemxIbDdEVEEvTFQ0UGNoZ2dxTzhjUEF2NUFDcVdFak9yOHBx?=
- =?utf-8?B?cjhZN2E5N0svVUpLZmhDNlBGL1crRFZTRy9MakR3VjAxQjB6RGIvVU91NG43?=
- =?utf-8?B?VDhOd0laNkNFVVduZDE1aTJNYXFLdFZBUU9lcWgwaFdCRWlPbzlVbThSTlFq?=
- =?utf-8?B?WjFRRzF2NlRHUDR0NnEzUUY5TlpwaGN4TlJaY1lKNjlJanplYjcxY0JiRDhY?=
- =?utf-8?B?VjlPcSt5emFsRG80eDVKYmZVVmIvKzRRWGVpVjcvQTZZS3dLcWZKSDJWalFM?=
- =?utf-8?B?UGlxUjIybS9QSDViMm9oMG4xSU45dW1DWVA3MVA5bHlxbkZxT0YzdzJlSm1Z?=
- =?utf-8?B?and5Y29rSy9oczg5cmhhZE9SOWJWNzk1RVlhOTUrTXBRY240cEtETVZKSTd2?=
- =?utf-8?B?dGJHcWRHTE1BaWFPZVVqQkQ5ektmbkpNRndCUnBKZUVVT2pSUldXK2Rac284?=
- =?utf-8?B?ZTVEa1RSZWpFRlpYZENTVVBIbGpKSEFvbks5RnNZQkhOcDdHTjErdS9lTzhk?=
- =?utf-8?B?eTFxa2lsOFBoaHJGbUYwWTZlV0JSNFVJWmNNK0ZsVENrT0lFSDFxdmF6RU9k?=
- =?utf-8?B?NC9mNVN3ckNHN0k1bGx6TlFrY01Nb291Z09TV2NKTHV3QXFNL0dNV09MN25K?=
- =?utf-8?B?YlRxZGxUZUZ0NUxIT3ZFaHJOU0ZsbFVkNXBKVmpObkpQWnZLcmFEOW1ReSty?=
- =?utf-8?B?NWM3L3VBYlNlT1p5L2huckliaHZ0dXY4LzExNk5QU0pUR0x5NkdHa0dkaG5L?=
- =?utf-8?B?NWs2QXRxSUt5MW9aMzB6SFhuWlRiQVFpM0lBWWttMytWZmNmbkd4ZE9JVXIx?=
- =?utf-8?B?Z2JVc1JjVlRJL2h0VjN1UDdxRG40eTZIUWkvUUhUS3JiRUJPVHV5Q3k2SldQ?=
- =?utf-8?B?NVVBOGEzRjZ5MG12S0x3YUI2aGpJYXBUdm5XbmE4Y2w5QndxRWduNy9UR2sy?=
- =?utf-8?B?TFBRN2xVZzFFYzRtTnBOTUhzUC9DM3ZSNTFQeHYzbXp6Y0oxemg2b2R4UWxO?=
- =?utf-8?B?T1J5NUpTOTNYSW5CS0srN3VWbEdob0w1QlFocTlTYVlqdlRHYWJLdFlTZm9J?=
- =?utf-8?B?d3djdXBlTWNTRkFXc253cUxtMDFqR3h5NEx5eEtVZUZYTkQxd2tBQSsvMjRW?=
- =?utf-8?B?Z3FOYWRtaTBQL0hxZ3BrZUUwMzc1RTRrQTBmZnE3OTJEenYxRS9EdlpaK3JT?=
- =?utf-8?B?UXJEelRjRmRUVis5MmVGMzFyeDhCVzF1UnprQWNvRGlnS2xhL01vS2xOU3ZQ?=
- =?utf-8?B?cEpyakY3Yi9TUkFjemhnWUNVR3lXNkZ1aXQ4dDB4QkZLcTAxQmhjZ0FVUXZZ?=
- =?utf-8?B?STdvZWpxUEdHeFNPQWNyNFJuMnRQSElPalZEbm5QVURaKzNnQzVUNmUrcDFt?=
- =?utf-8?B?Q3JzY1ZwR1NmNDloSk92VHRpYVJTK0lIdHlLNEFrbTlrbDdpdlJQWmlDeWZp?=
- =?utf-8?B?OElqR0t0SVNydHhORHhWbWRvOFZPNVlkYWdzWFFzY2JJdTU3alEzaHdac3Y1?=
- =?utf-8?B?alJlRElWU1pQZ0V4bGlvRG1Yb0JLczdNVmVBWUtZRS9RZllsdEZIUnR4MHIv?=
- =?utf-8?B?eGlXT2U1VC96blNxNFhSQXJDL3pBeGtuN2lJUG5IbFFxaVFYbzlPS1Z5Mit5?=
- =?utf-8?B?WjJHUURGd3ptVWl3dEplYUtnTnhuL1l0QzYxN2J6Q042eng5M0R5QVhUTkRC?=
- =?utf-8?B?TENIeEV1c1Q5YUczTVhLQitIYU5ETnF5Uk5aVkxmSGxIaExVc3VWL29WTVdO?=
- =?utf-8?B?M0tZSVRQdzFPQnZlWWZhbG1FS0lUYzVYUnY1dGpkZGhvQnFzSklEWEk1TVNX?=
- =?utf-8?B?ckNpWGtRbTFab2dHUTQrOVFNOTZUYUQ4SHA4eGR2N21EZWUraE9qUzNjbFpR?=
- =?utf-8?B?TFFJbE9VNWN1R1JManFWQk1MUGEyYS94RFUvd0d6ODJlQTBabFc2TUdOTXA4?=
- =?utf-8?B?czRlSS90cTBoOTdjVzBLQnVMcFpSOS9pRVRqeFgxVjhnaFBaTVFhWERXVGM0?=
- =?utf-8?Q?H6zUIFNuBh6mJDd8I7u++RY=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c9f9d84-f59f-4780-69da-08dd4b3ce0a0
-X-MS-Exchange-CrossTenant-AuthSource: AS1PR04MB9261.eurprd04.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?P+3oNUq+5N/x4mG8weouV71Oj8LOEB4RN4LhDLXvERxt3If7Ot+8qM/rEGcR?=
+ =?us-ascii?Q?rCPtTA+b2jqRfL4omnVB5n997pR11kfK9AgOqlQ+qN/fNEjmCyiB+19wpRV4?=
+ =?us-ascii?Q?hlOKAPX5cdnXf+2/SLEhWnoa872yL+PBXtXDYYR6BQegPI+sIyMyxi727PgQ?=
+ =?us-ascii?Q?cPM+T4yhYuIWFlbz2FBH/FJL1qR4o8PN9Ux/7bRkZeJ7SFWtaul2kuoB5o01?=
+ =?us-ascii?Q?Xx1Wfro4De7kxv19XuPkXQ+HPrID4C88ix1DZLqteZzuyI5U4vSorlfTd7QA?=
+ =?us-ascii?Q?i8jlvtRnk0Cu1kX0pLha7BMkA8N4bRNzajHP3VUhnzDXRHUesuRY9WNSM9a1?=
+ =?us-ascii?Q?Z7Gm8a/e6Dz6DTxE7oGSBIjYKnJB4bmwuOg12FWolNjBi9EnQTrKYYKF4jBP?=
+ =?us-ascii?Q?DF2NepCheHJzgyK05uLl4pQUXiswGe8cafi9pqhcyMPBcUVTc8Nt4Z/jU4u0?=
+ =?us-ascii?Q?5QQ1J5QnBqHkziSdSKrWqWYgDJRD7S2N85I+XUYtMc1ROLxg+Zd9J/QUF3Wm?=
+ =?us-ascii?Q?SjlLqxQK62l+Nqj/bNsSjvGs8jxefXidXnm4KCamNTW/Z2f/PZeD/pQhbbIL?=
+ =?us-ascii?Q?YkfWr9GnS+Ut6V/5Y5G11yq14z1iDYw30c21pv+Vkc/E8MB+jUh6gATZvvS1?=
+ =?us-ascii?Q?nS7w4iGZL0qqha+Me6KpJA0r8y+cBpE2q6cR8px2OL/W4Z876pm1t8iAQ1/u?=
+ =?us-ascii?Q?OKS1Kj4Iw1JLNT/f/1gKHfanaoL5m3CKxsBI2m/Mj63Ijs3bJX8AEGyLcSEj?=
+ =?us-ascii?Q?AsKgre2KyAY+3XTy0tROQlQtskc23lE9aLLb2HeTL6hUkXMM+fDWcgiwakwy?=
+ =?us-ascii?Q?Vz/atEHs85rwMH7F675RIVKW+I0xgtWq9mdyaxQnnlEgZWCeiAgtKA+JsBwt?=
+ =?us-ascii?Q?J+lVRuryRXA5NxUu+w2pBxPFxSV63906RcpZU2oYEvAIh/EFwlB83pk95Rif?=
+ =?us-ascii?Q?nq1iAk2iJksBI85AsW1qJVyMqmOjNrvYMCIUIR2LsrqK4ZuLcwckWKc0ZNv7?=
+ =?us-ascii?Q?JFhBsFGImHVIDnYeXY9i0dpFfxVv2DrtSHHHoRrr0G9n52+dZYrERylru7Or?=
+ =?us-ascii?Q?Qnsghvi3CQlIbcAOGM0i753mngecxS24prgTXIxLicCeseEWYsW9WiNX0nGR?=
+ =?us-ascii?Q?E24kBhNSOH7cwT16NWONcIDnPrURlhYmdPzDlOJnoQfdyhgIen7y87NllMzI?=
+ =?us-ascii?Q?MewjdESwu8bDJyOfEUzmhzraYykexXYAZxRpM8YtZ4aL8BRQdfziftqzKfuK?=
+ =?us-ascii?Q?x9VjOb+TSzwQacEyN4w/uPgEDiydtbbd3Ed5k8nQeuTgKBJFmx2zJ+zGnrMg?=
+ =?us-ascii?Q?IvDnDoIZc/GWS1yRZEGXAaTB75MRcdjD7Jn1OUfun6NY0MtZOv0QHc8gPUF5?=
+ =?us-ascii?Q?jae8Wxo83F3eVdjSEmXMnTDLLyWOMFeWuPjBs00vD1jvVEhVpxzCmWM4teko?=
+ =?us-ascii?Q?NMSAphfrPWPm2gn8DxngDALJAmxKwxzGhDfXhxFdy21hkyTaZmFTEHxmCxYP?=
+ =?us-ascii?Q?8WF2OtQKByItlw4qQ7hDCu8u6mNICawQt7W1Z9kPHN7MCsaFGIomODyxz8zl?=
+ =?us-ascii?Q?QK5n2/AXbJ/MdlhdYVHXeyogafBELhea8zY3wwY7?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68c942f6-0ed7-4137-db28-08dd4b3d018f
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 08:11:39.9339
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 08:12:35.2499
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6cvBUVa695ihuoAuEemvWzHiSfFGJOllhyN8qP2AgFiOM+lwtmyLoByHuK3VfnGvbSykC/Or4G1R22kV1hCrs2i63wp56FXbeGnqv4dnvSc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8974
+X-MS-Exchange-CrossTenant-UserPrincipalName: FjZaAUBsZP3yWUDw5y6JgumQCOpFHBClN/1lKb8LdktD6EL7/W31KZTyJ2xqKZiSNsddl8x/t1GRScZfLR3C5g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB8284
+X-OriginatorOrg: intel.com
 
-On 2/11/2025 7:07 PM, Frank Li wrote:
-> On Tue, Feb 11, 2025 at 01:25:38PM +0200, Ciprian Marian Costea wrote:
->> On 2/7/2025 10:16 PM, Frank Li wrote:
->>> On Fri, Feb 07, 2025 at 06:38:06PM +0200, Ciprian Costea wrote:
->>>> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->>>>
->>>> Add a RTC driver for NXP S32G2/S32G3 SoCs.
->>>>
->>>> RTC tracks clock time during system suspend. It can be a wakeup source
->>>> for the S32G2/S32G3 SoC based boards.
->>>>
->>>> The RTC module from S32G2/S32G3 is not battery-powered and it is not kept
->>>> alive during system reset.
->>>>
->>>> Co-developed-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
->>>> Signed-off-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
->>>> Co-developed-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
->>>> Signed-off-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
->>>> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->>>> ---
->>>>    drivers/rtc/Kconfig    |  11 ++
->>>>    drivers/rtc/Makefile   |   1 +
->>>>    drivers/rtc/rtc-s32g.c | 383 +++++++++++++++++++++++++++++++++++++++++
->>>>    3 files changed, 395 insertions(+)
->>>>    create mode 100644 drivers/rtc/rtc-s32g.c
->>>>
->>>> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
->>>> index 0bbbf778ecfa..510dc2db745d 100644
->>>> --- a/drivers/rtc/Kconfig
->>>> +++ b/drivers/rtc/Kconfig
->>>> @@ -2103,4 +2103,15 @@ config RTC_DRV_AMLOGIC_A4
->>>>    	  This driver can also be built as a module. If so, the module
->>>>    	  will be called "rtc-amlogic-a4".
->>>>
->>>> +config RTC_DRV_S32G
->>>> +	tristate "RTC driver for S32G2/S32G3 SoCs"
->>>> +	depends on ARCH_S32 || COMPILE_TEST
->>>> +	depends on COMMON_CLK
->>>> +	help
->>>> +	  Say yes to enable RTC driver for platforms based on the
->>>> +	  S32G2/S32G3 SoC family.
->>>> +
->>>> +	  This RTC module can be used as a wakeup source.
->>>> +	  Please note that it is not battery-powered.
->>>> +
->>>>    endif # RTC_CLASS
->>>> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
->>>> index 489b4ab07068..e4b616ecd5ce 100644
->>>> --- a/drivers/rtc/Makefile
->>>> +++ b/drivers/rtc/Makefile
->>>> @@ -161,6 +161,7 @@ obj-$(CONFIG_RTC_DRV_RX8111)	+= rtc-rx8111.o
->>>>    obj-$(CONFIG_RTC_DRV_RX8581)	+= rtc-rx8581.o
->>>>    obj-$(CONFIG_RTC_DRV_RZN1)	+= rtc-rzn1.o
->>>>    obj-$(CONFIG_RTC_DRV_RENESAS_RTCA3)	+= rtc-renesas-rtca3.o
->>>> +obj-$(CONFIG_RTC_DRV_S32G)	+= rtc-s32g.o
->>>>    obj-$(CONFIG_RTC_DRV_S35390A)	+= rtc-s35390a.o
->>>>    obj-$(CONFIG_RTC_DRV_S3C)	+= rtc-s3c.o
->>>>    obj-$(CONFIG_RTC_DRV_S5M)	+= rtc-s5m.o
->>>> diff --git a/drivers/rtc/rtc-s32g.c b/drivers/rtc/rtc-s32g.c
->>>> new file mode 100644
->>>> index 000000000000..3244b23c533e
->>>> --- /dev/null
->>>> +++ b/drivers/rtc/rtc-s32g.c
->>>
->>> ...
->>>
->>>> +
->>>> +static int s32g_rtc_suspend(struct device *dev)
->>>> +{
->>>> +	struct rtc_priv *priv = dev_get_drvdata(dev);
->>>> +	u32 apival = readl(priv->rtc_base + APIVAL_OFFSET);
->>>> +
->>>> +	/* RTC registers are being reset in suspend.
->>>> +	 * Thus store standby time.
->>>> +	 */
->>>> +	if (check_add_overflow(priv->sleep_sec, div64_u64(apival, priv->rtc_hz),
->>>> +			       &priv->sleep_sec)) {
->>>> +		dev_warn(dev, "Overflow on sleep cycles occurred. Resetting to 0.\n");
->>>> +		priv->sleep_sec = 0;
->>>> +	}
->>>
->>> Strange. If RTC register are reset in suspend. How do it wake up system?
->>>
->>> Frank
->>>
->>
->> Hello Frank,
->>
->> I believe the transition between resume to run is a reset event. This would
->> lead to the RTC registers being reset after resume from suspend (triggered
->> via Suspend to RAM).
+>diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+>index 7f1318c44040..2b1ea57a3a4e 100644
+>--- a/arch/x86/kvm/vmx/main.c
+>+++ b/arch/x86/kvm/vmx/main.c
+>@@ -62,6 +62,8 @@ static __init int vt_hardware_setup(void)
+> 		vt_x86_ops.set_external_spte = tdx_sept_set_private_spte;
+> 		vt_x86_ops.free_external_spt = tdx_sept_free_private_spt;
+> 		vt_x86_ops.remove_external_spte = tdx_sept_remove_private_spte;
+
+Nit: I think it would be more consistent to set up .protected_apic_has_interrupt
+if TDX is enabled (rather than clearing it if TDX is disabled).
+
+>+	} else {
+>+		vt_x86_ops.protected_apic_has_interrupt = NULL;
+> 	}
 > 
-> It is weird design. I suppose it should be design error. (any errata for
-> it).
+> 	return 0;
+>@@ -371,6 +373,7 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+> 	.sync_pir_to_irr = vmx_sync_pir_to_irr,
+> 	.deliver_interrupt = vmx_deliver_interrupt,
+> 	.dy_apicv_has_pending_interrupt = pi_has_pending_interrupt,
+>+	.protected_apic_has_interrupt = tdx_protected_apic_has_interrupt,
 > 
-> Frank
-> 
-
-Unfortunately I could not find any such errata. But this behaviour (RTC 
-registers being reset) is what I see when resuming from Suspend to RAM 
-operations.
-
-Regards,
-Ciprian
-
->>
->> On the other hand, the RTC is kept on during suspend for as long as its been
->> set up (for example via rtcwake -s), thus waking up the sistem via an API
->> interrupt.
->>
->> Regards,
->> Ciprian
->>
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int s32g_rtc_resume(struct device *dev)
->>>> +{
->>>> +	struct rtc_priv *priv = dev_get_drvdata(dev);
->>>> +
->>>> +	return rtc_clk_src_setup(priv);
->>>> +}
->>>> +
->>>> +static const struct of_device_id rtc_dt_ids[] = {
->>>> +	{ .compatible = "nxp,s32g2-rtc", .data = &rtc_s32g2_data},
->>>> +	{ /* sentinel */ },
->>>> +};
->>>> +
->>>> +static DEFINE_SIMPLE_DEV_PM_OPS(s32g_rtc_pm_ops,
->>>> +			 s32g_rtc_suspend, s32g_rtc_resume);
->>>> +
->>>> +static struct platform_driver s32g_rtc_driver = {
->>>> +	.driver		= {
->>>> +		.name			= "s32g-rtc",
->>>> +		.pm				= pm_sleep_ptr(&s32g_rtc_pm_ops),
->>>> +		.of_match_table = rtc_dt_ids,
->>>> +	},
->>>> +	.probe		= s32g_rtc_probe,
->>>> +};
->>>> +module_platform_driver(s32g_rtc_driver);
->>>> +
->>>> +MODULE_AUTHOR("NXP");
->>>> +MODULE_DESCRIPTION("NXP RTC driver for S32G2/S32G3");
->>>> +MODULE_LICENSE("GPL");
->>>> --
->>>> 2.45.2
->>>>
->>
-
+> 	.set_tss_addr = vmx_set_tss_addr,
+> 	.set_identity_map_addr = vmx_set_identity_map_addr,
 
