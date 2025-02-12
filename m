@@ -1,140 +1,225 @@
-Return-Path: <linux-kernel+bounces-511258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1EBA3286C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60EB1A3286F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6980F3A7C60
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:29:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C32F3A7DB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5D4210190;
-	Wed, 12 Feb 2025 14:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56A5210190;
+	Wed, 12 Feb 2025 14:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B/FGpSKB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CHli5STF"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA68620FAB6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACE420FAB7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739370558; cv=none; b=Bk1WmFqyNtg7kb3FZlfZiVUQASERX+ewGS8D6LOXd71xqQPT31fBvPkAR9RRL7grSe8SUKkDXh9h8lQ+Gi7gRJXO/qMUBFIWYdvjkdpB4773OTRegSexa+ExsBVSYTgt7KVzgzZeVfLkOerhL2OnL/rZGpdQxlRSCr5nH9IzJkA=
+	t=1739370568; cv=none; b=CyEg+qt/QDrXVXRlfbIIC+Nj9uTTPVa5cGRKvXuG7FeMWgqes0+lsbkgzoHhVlXdUYUQhZIibq8Jgik86wVgSJm2jO/4pvc1iyEgTCUZ0erhgSAYO1LOai/fXrATDcYdZ95/AV8XPOKcYcLepL0KNX7+kPC94bpuEcfp27ALNgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739370558; c=relaxed/simple;
-	bh=p9WPEvkBQpOGn0vTtNVqi/6VObHeGOYD3hDmy0J7hXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pv1e7053uDTRaH94hjJm/Cn7VT3vYyOQF4Kq319H7BMBTsZfXuQAuB7dEmkk4hv7H1aYkozbavGTV7Mj5OFCZ0wUkUec8Ncq1Y7Ih5QplppvkF5TzkS6h6T4yD4mKHU3xgpmaN45oEiWQuiAQqFs7z6xqWiYhz7bg91uryA1fcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B/FGpSKB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739370555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p9WPEvkBQpOGn0vTtNVqi/6VObHeGOYD3hDmy0J7hXM=;
-	b=B/FGpSKBjTvKvhXpsdIcpeUHumO0tmZO8M7KLfkzgfNeLujL5qsvFaRlEOYO5CxDaKAyi6
-	l61flJaNqX4P50ts1TtEPdxWNYKCKOIm498gUaGaxdaH095HrUEhQHhU9OUMJluDHFE4RH
-	7/nIlw+ViNK6lDC5y63NbpDDaHObqRY=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-138-0WqTa1QhPH6ojpZB5HWDaQ-1; Wed, 12 Feb 2025 09:29:14 -0500
-X-MC-Unique: 0WqTa1QhPH6ojpZB5HWDaQ-1
-X-Mimecast-MFC-AGG-ID: 0WqTa1QhPH6ojpZB5HWDaQ_1739370553
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5de363763ddso4234703a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:29:14 -0800 (PST)
+	s=arc-20240116; t=1739370568; c=relaxed/simple;
+	bh=OPY/ttXempJru6Ga1RV4xoldFBk00fifGauRa8nVjwg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=DMHbFnAT+q9y6kpeJzAAJm0evgYWAT7oEHpUzhLj3GYuZ92/g8FB/9Qa6TwPBO+6U3PwDCVWCgLv+G+AT6yF7yo7WoglNJWmB6bmmSZszQrFkbxmAIxiQE9rPRT9NYOTAuAx1RKj2ksr3Vt8rE5IokNlGTcyTiS/Xe1STgO87nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CHli5STF; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-866faa61728so3920614241.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:29:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739370566; x=1739975366; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IQXDe8fhhmSLuPbo2aVFP4x2A1nmLJfbRBStCyLpsCw=;
+        b=CHli5STFJNzAG2/RW+n9/8Hl40lXOJjNfT5uv+uL/QGGOz4JZENKVifvFz0DVricqU
+         avexO/hXOnQI8WO/zyP6qPVByJPlyUlR51dh3L4BUcg2at14QuWwswMnQCC8gjOb6mY/
+         a198v1UxAcCHRQaRwusUcNDPOQyME8gHl+rPHTAsp6NvYDX8EaMkmkDLSdKYngyLcRXJ
+         tl2Ncs8viO4F44JZCJ14HcugNKPhJLOVdHUYe4tejq2hTVxhXBrzNEJZfJdBR6HqQ13Q
+         J0lhzrpJpX/tKWkwUsq+Cav8vnmQNEpQmk3KuR/cIiyk+GizodeUBRQjvO2FJvfAP2VF
+         RJzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739370553; x=1739975353;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p9WPEvkBQpOGn0vTtNVqi/6VObHeGOYD3hDmy0J7hXM=;
-        b=WFFBMdDyzx8vCU2BeUDGWoFc5dJRzwmDJf8O6LUukIAAC3BL1aTpjFOFdrPZ5wbTum
-         dzEE0B3FUrsRVVJlc27UQqEXtr4TT/hRE0D8LlPJ4eQxXaPejWON1mh88kI7Fyv38dWN
-         cNw+pPrpBGD9nMz0evRh16BwZ0Qggi6p05frra7cyCBdsBd+5n3MwyQJu5JsGwECCHyt
-         aiEqizkgGU8kT/85LiUN4TZtZgHJnohRwF8fLNB+4qg3hj1uWZ9hDnOJ6t7yHNl9MOuF
-         R/itm0bFAkiUkwe7ecdCj4ucCXUxYbde6Uy62cauuDNxK6ize8r5PryjYXWeZGnE+Ebt
-         nZzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Rp5Gmu9zHWpr+P2iWptTHnnP4fLuVwB0I4sJ+OjX0ruTMuuvA/Gd5Whu5aQv4mDs8Yg4t8ZQXmSR2r8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws9KI60w4iKK/vCo3V+uK1+Hp8WP75nQT3Rq8cDNH+B8VE3TT/
-	whtc15VwZpMxXp2Hklrot3c0By90WEVWBDIvGnoVnjRwqRc/o0NW5QqvKmeZQ/jbQLt+9ggG1gx
-	Z2vImLmXtwcddHBTBH2DOAIwhxvEQ7FxOG3jecL350Z1HH3Te/U20SsXAm84CSAqRVxteYLdnP8
-	VX9Mfgq0v8iUaSCpNmv/wDUksvote+sYn+xvat
-X-Gm-Gg: ASbGncunDbKozmL9abt0e4smDNVZZ3EaIcynzlnCbR7LPcstE73v7GLAfmUAjStdooX
-	Z/NanarLfsEEXsGZqUeaSukup23rmwpPIKlCWnSiv5w15+n47/AQTDbJVHDL4Alo1BSC/xwzFmP
-	LzcOEp8nXErJKsEQa2bw==
-X-Received: by 2002:a05:6402:3510:b0:5dc:7374:261d with SMTP id 4fb4d7f45d1cf-5deadd71ae6mr7994592a12.7.1739370552927;
-        Wed, 12 Feb 2025 06:29:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFODMyc0mg69LtDY6AULrP8h8emzE8pmqlTP7h4KHBaL4p+FpoBPUfEFgNkycdGMlVSlAMSgfgepus94exDBMg=
-X-Received: by 2002:a05:6402:3510:b0:5dc:7374:261d with SMTP id
- 4fb4d7f45d1cf-5deadd71ae6mr7994548a12.7.1739370552594; Wed, 12 Feb 2025
- 06:29:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739370566; x=1739975366;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IQXDe8fhhmSLuPbo2aVFP4x2A1nmLJfbRBStCyLpsCw=;
+        b=SWCGp6LoE5ii6gjqO82+hEyx4Prc7PMkFwwVDKC60y9/2M1Zm80PRioIMxUTUrgdcA
+         ndt66gU+usEisC9ju4NFhx8hv37ysbiWy1qZwJrdTiFqJok+fLMuO7RJsCN6dUR7V241
+         tKmE9pHMQ4mTHerCyAyyoiKpEVdOPztJ1QZdAIKUq5XPs8ttbw9pz1TuzgUDzomtzTkk
+         dIu2SQft9xHtfKy24M0e3J6EU0tgmiBnUBZhpxdXtP9RvBANLmY6KSocEj50SANoOpqT
+         fbPFD7STh9uuvkyUC8HBKPLrXLsb3xIHTVDN8EIiDTMZeMQt1ArpbDzAwPkgalQtBsGJ
+         heZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuuJX/QiswycHLYfagW1+6q++/1RveVvduh66CwzfETfksaqluGPwuZZGXteVmjo54/dI7c6u910smVIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBkCM9eTgCtgtARZygdcoOJl6TyyVnfFUx86G6FTPpxlwnkpeu
+	dnd0+2fsctocfGSWd4D8JCp1sYUlhm/WRHcDzDdQiRlcUis4/zTkdSwSyyyJhazgv46s4FEbdzQ
+	Iwcpv/XW0vVPGhb0rqCYnRn4NI6CYBk/KT/t6MJ9PWKvcdLOpINc=
+X-Gm-Gg: ASbGncu19s43vLKvYRDxGnvKhza5mPCmgqmLjabqXexmXJVHabe1qDAWYIQgfhRtVz8
+	M7tFS8ly9sz1iuvEHFp7JwUkPqMschGPoUAcOq1v85FBufnXJHUvjJvV7wfMrzS4iyNf0cpynu1
+	8=
+X-Google-Smtp-Source: AGHT+IG4n0xqcfXhx3NvshSoCQo+PEUb+p7MDHm4sjc30wvs2Pt/IPzEMlAVsG0PTmhHo4D+KJWvgxKySnM4I46+mqM=
+X-Received: by 2002:a05:6122:16a2:b0:520:6773:e5ba with SMTP id
+ 71dfb90a1353d-52067b2abdemr3019034e0c.2.1739370565848; Wed, 12 Feb 2025
+ 06:29:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250206104300.416014-1-ryasuoka@redhat.com> <d8a453e9-c8ce-4a7d-8fb9-08a13c44d7f3@collabora.com>
- <3c0e06d4-b5b7-45cf-bc42-8f12b293b7da@redhat.com>
-In-Reply-To: <3c0e06d4-b5b7-45cf-bc42-8f12b293b7da@redhat.com>
-From: Ryosuke Yasuoka <ryasuoka@redhat.com>
-Date: Wed, 12 Feb 2025 23:29:00 +0900
-X-Gm-Features: AWEUYZlZPWJuA_vK95ztJ7A8EkKN1A4KF5b4RIqvSAABBcmQQ3uMF8dJqmXE2rg
-Message-ID: <CAHpthZqYGwXCqZYSXgrbZ8AT58kXS+qm8LRE=SWkrQvgx9CUHw@mail.gmail.com>
-Subject: Re: [PATCH v7] drm/virtio: Add drm_panic support
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>, Jocelyn Falempe <jfalempe@redhat.com>
-Cc: airlied@redhat.com, kraxel@redhat.com, gurchetansingh@chromium.org, 
-	olvaffe@gmail.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, daniel@ffwll.ch, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 12 Feb 2025 19:59:14 +0530
+X-Gm-Features: AWEUYZkKLpdZkyHVsSB2BWfSoOZsdInFc-eqp2yhtj3-lDliB8rWq5u4wrqEWBc
+Message-ID: <CA+G9fYuw3XJ3NcYGHT=Jt9mQP_si49GQNEa6sSNLeqDm9A6+Cw@mail.gmail.com>
+Subject: selftest/vDSO: vdso_test_abi tests with gcc-13 and pass with clang-19
+To: clang-built-linux <llvm@lists.linux.dev>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org
+Cc: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Shuah Khan <shuah@kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000b60a9b062df2c4e6"
+
+--000000000000b60a9b062df2c4e6
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 10, 2025 at 8:14=E2=80=AFPM Jocelyn Falempe <jfalempe@redhat.co=
-m> wrote:
->
-> On 09/02/2025 18:45, Dmitry Osipenko wrote:
-> > On 2/6/25 13:42, Ryosuke Yasuoka wrote:
-> >> Virtio gpu supports the drm_panic module, which displays a message to
-> >> the screen when a kernel panic occurs. It is supported where it has
-> >> vmapped shmem BO.
-> >>
-> >> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> >> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
-> >> ---
-> >
-> > Applied to misc-next, thanks!
-> >
-> > I've tested v7 with a different capsets, works well. For a non-VT FB th=
-e
-> > vmap indeed will be needed. Looking forward to the atomic vmap support.
-> > The rough idea of the atomic vmap helper is to make vmap code paths fai=
-l
-> > whenever hitting path that needs to sleep. Likely will be easy to imple=
-ment.
-> >
->
-> Thanks for your support.
->
-> I will see if we can do something for atomic vmap support for shmem.
->
-> Best regards,
->
-> --
->
-> Jocelyn
->
+The kselftest-vDSO/vdso_test_abi test encounters failures when built
+and executed using GCC-13 on armv7 architecture.
+The issue has been observed on both TI X15 devices and QEMU-armv7.
 
-Thank you for your kind support.
-I'll try to write the atomic vmap support patch soon.
+Interestingly, the same test passes without any issues when built using
+Clang-19.This failure is specific to GCC-13. but test case should have
+been failed on clang toolchain but it did not.
 
-Best regards,
-Ryosuke
+The Clang toolchain likely defaults to the traditional 32-bit time_t on
+32-bit Debian Trixie (except x86), leading to an ABI issue similar to
+older compilers. This is affecting compatibility.
 
+This is not a new regression,
+this report generated on Linux next but also seen on Linux stable tree.
+
+Test name: kselftest-vDSO/vdso_test_abi
+Fails: gcc-13
+pass: clang-19
+
+Arnd Bergmann investigated and proposed a patch which fixes the problem.
+
+Test regression: selftest-vDSO/vdso_test_abi:
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+# selftests: vDSO: vdso_test_abi
+# TAP version 13
+# 1..16
+# # [vDSO kselftest] VDSO_VERSION: LINUX_2.6
+# # The time is 184285885525887.-5268386858514840748
+# ok 1 __vdso_gettimeofday
+# # clock_id: CLOCK_REALTIME
+# # The time is 184287230099877759.-1225334784
+# ok 2 __vdso_clock_gettime CLOCK_REALTIME
+# # The vdso resolution is 4294967296 -1225335584
+# # The syscall resolution is 4294967296 -1225334784
+# not ok 3 __vdso_clock_getres CLOCK_REALTIME
+# # clock_id: CLOCK_BOOTTIME
+# # The time is 3253049749439251215.-1225334784
+# ok 4 __vdso_clock_gettime CLOCK_BOOTTIME
+# # The vdso resolution is 4294967296 -1225335584
+# # The syscall resolution is 4294967296 -1225334784
+# not ok 5 __vdso_clock_getres CLOCK_BOOTTIME
+# # clock_id: CLOCK_TAI
+# # The time is 184549377723756415.-1225334784
+# ok 6 __vdso_clock_gettime CLOCK_TAI
+# # The vdso resolution is 4294967296 -1225335584
+# # The syscall resolution is 4294967296 -1225334784
+# not ok 7 __vdso_clock_getres CLOCK_TAI
+# # clock_id: CLOCK_REALTIME_COARSE
+# # The time is 128974845965660031.-1225334784
+# ok 8 __vdso_clock_gettime CLOCK_REALTIME_COARSE
+# # The vdso resolution is 42949672960000000 -1225335584
+# # The syscall resolution is 42949672960000000 -1225334784
+# not ok 9 __vdso_clock_getres CLOCK_REALTIME_COARSE
+# # clock_id: CLOCK_MONOTONIC
+# # The time is 3253311892768162575.-1225334784
+# ok 10 __vdso_clock_gettime CLOCK_MONOTONIC
+# # The vdso resolution is 4294967296 -1225335584
+# # The syscall resolution is 4294967296 -1225334784
+# not ok 11 __vdso_clock_getres CLOCK_MONOTONIC
+# # clock_id: CLOCK_MONOTONIC_RAW
+# # The time is 3253442966580101903.-1225334784
+# ok 12 __vdso_clock_gettime CLOCK_MONOTONIC_RAW
+# # The vdso resolution is 4294967296 -1225335584
+# # The syscall resolution is 4294967296 -1225334784
+# not ok 13 __vdso_clock_getres CLOCK_MONOTONIC_RAW
+# # clock_id: CLOCK_MONOTONIC_COARSE
+# # The time is 3197606291493094159.-1225334784
+# ok 14 __vdso_clock_gettime CLOCK_MONOTONIC_COARSE
+# # The vdso resolution is 42949672960000000 -1225335584
+# # The syscall resolution is 42949672960000000 -1225334784
+# not ok 15 __vdso_clock_getres CLOCK_MONOTONIC_COARSE
+# # Couldn't find __vdso_time
+# ok 16 # SKIP __vdso_time
+# # 1 skipped test(s) detected. Consider enabling relevant config
+options to improve coverage.
+# # Totals: pass:8 fail:7 xfail:0 xpass:0 skip:1 error:0
+not ok 3 selftests: vDSO: vdso_test_abi # exit=1
+
+## Build
+* test log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241126/testrun/26062838/suite/kselftest-vDSO/test/vDSO_vdso_test_abi/log
+* TI x15 test log:
+https://lkft.validation.linaro.org/scheduler/job/8117196#L7091
+* build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2spp0E2mMNQq16RHsbzLSFAlxuM/
+
+## Source
+* git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+* git sha: df5d6180169ae06a2eac57e33b077ad6f6252440 (this not new issue)
+* architectures: armv7
+* toolchain: gcc-13 (13.3.0) - failed
+* toolchain: clang ( version: 19.1.7) - pass
+* devices: Armv7 TI beaglebone, qemu-armv7
+
+--
+Linaro LKFT
+https://lkft.linaro.org
+
+--000000000000b60a9b062df2c4e6
+Content-Type: application/x-patch; 
+	name="0001-selftests-vdso-debug-vdso_test_abi-__kernel_old_time.patch"
+Content-Disposition: attachment; 
+	filename="0001-selftests-vdso-debug-vdso_test_abi-__kernel_old_time.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m6z27dxf0>
+X-Attachment-Id: f_m6z27dxf0
+
+ZGlmZiAtLWdpdCBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL3ZEU08vdmRzb190ZXN0X2FiaS5j
+IGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvdkRTTy92ZHNvX3Rlc3RfYWJpLmMKaW5kZXggYTU0
+NDI0ZTIzMzZmNC4uMjU3NzhhN2Y4NDljZSAxMDA2NDQKLS0tIGEvdG9vbHMvdGVzdGluZy9zZWxm
+dGVzdHMvdkRTTy92ZHNvX3Rlc3RfYWJpLmMKKysrIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMv
+dkRTTy92ZHNvX3Rlc3RfYWJpLmMKQEAgLTE3LDYgKzE3LDcgQEAKICNkZWZpbmUgX0dOVV9TT1VS
+Q0UKICNpbmNsdWRlIDx1bmlzdGQuaD4KICNpbmNsdWRlIDxzeXMvc3lzY2FsbC5oPgorI2luY2x1
+ZGUgPGxpbnV4L3RpbWVfdHlwZXMuaD4KIAogI2luY2x1ZGUgIi4uL2tzZWxmdGVzdC5oIgogI2lu
+Y2x1ZGUgInZkc29fY29uZmlnLmgiCkBAIC0yNiw5ICsyNyw5IEBACiBzdGF0aWMgY29uc3QgY2hh
+ciAqdmVyc2lvbjsKIHN0YXRpYyBjb25zdCBjaGFyICoqbmFtZTsKIAotdHlwZWRlZiBsb25nICgq
+dmRzb19nZXR0aW1lb2ZkYXlfdCkoc3RydWN0IHRpbWV2YWwgKnR2LCBzdHJ1Y3QgdGltZXpvbmUg
+KnR6KTsKLXR5cGVkZWYgbG9uZyAoKnZkc29fY2xvY2tfZ2V0dGltZV90KShjbG9ja2lkX3QgY2xr
+X2lkLCBzdHJ1Y3QgdGltZXNwZWMgKnRzKTsKLXR5cGVkZWYgbG9uZyAoKnZkc29fY2xvY2tfZ2V0
+cmVzX3QpKGNsb2NraWRfdCBjbGtfaWQsIHN0cnVjdCB0aW1lc3BlYyAqdHMpOwordHlwZWRlZiBs
+b25nICgqdmRzb19nZXR0aW1lb2ZkYXlfdCkoc3RydWN0IF9fa2VybmVsX29sZF90aW1ldmFsICp0
+diwgc3RydWN0IHRpbWV6b25lICp0eik7Cit0eXBlZGVmIGxvbmcgKCp2ZHNvX2Nsb2NrX2dldHRp
+bWVfdCkoY2xvY2tpZF90IGNsa19pZCwgc3RydWN0IF9fa2VybmVsX29sZF90aW1lc3BlYyAqdHMp
+OwordHlwZWRlZiBsb25nICgqdmRzb19jbG9ja19nZXRyZXNfdCkoY2xvY2tpZF90IGNsa19pZCwg
+c3RydWN0IF9fa2VybmVsX29sZF90aW1lc3BlYyAqdHMpOwogdHlwZWRlZiB0aW1lX3QgKCp2ZHNv
+X3RpbWVfdCkodGltZV90ICp0KTsKIAogY29uc3QgY2hhciAqdmRzb19jbG9ja19uYW1lWzEyXSA9
+IHsKQEAgLTgzLDcgKzg0LDcgQEAgc3RhdGljIHZvaWQgdmRzb190ZXN0X2Nsb2NrX2dldHRpbWUo
+Y2xvY2tpZF90IGNsa19pZCkKIAkJcmV0dXJuOwogCX0KIAotCXN0cnVjdCB0aW1lc3BlYyB0czsK
+KwlzdHJ1Y3QgX19rZXJuZWxfb2xkX3RpbWVzcGVjIHRzOwogCWxvbmcgcmV0ID0gVkRTT19DQUxM
+KHZkc29fY2xvY2tfZ2V0dGltZSwgMiwgY2xrX2lkLCAmdHMpOwogCiAJaWYgKHJldCA9PSAwKSB7
+CkBAIC0xMzUsNyArMTM2LDcgQEAgc3RhdGljIHZvaWQgdmRzb190ZXN0X2Nsb2NrX2dldHJlcyhj
+bG9ja2lkX3QgY2xrX2lkKQogCQlyZXR1cm47CiAJfQogCi0Jc3RydWN0IHRpbWVzcGVjIHRzLCBz
+eXNfdHM7CisJc3RydWN0IF9fa2VybmVsX29sZF90aW1lc3BlYyB0cywgc3lzX3RzOwogCWxvbmcg
+cmV0ID0gVkRTT19DQUxMKHZkc29fY2xvY2tfZ2V0cmVzLCAyLCBjbGtfaWQsICZ0cyk7CiAKIAlp
+ZiAocmV0ID09IDApIHsKLS0gCjIuNDMuMAoK
+--000000000000b60a9b062df2c4e6--
 
