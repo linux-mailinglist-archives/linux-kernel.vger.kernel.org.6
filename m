@@ -1,141 +1,163 @@
-Return-Path: <linux-kernel+bounces-511869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A544BA330D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:29:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDD5A330D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:30:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69DD916801D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:29:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B88188A703
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62042201271;
-	Wed, 12 Feb 2025 20:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95B4201017;
+	Wed, 12 Feb 2025 20:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pZwKHqBt"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yOzo2QTi"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078C120103D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422F4134A8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739392168; cv=none; b=BlMh0uc1CZn7iSllmw+ykPu1AaXoSjIEmcwfePxB+QGtb/goIE7XIIptfDpeFsKzhVx5Ln05BaD23+1QYNQN+mTdLVF4OqaBoJ+h70p0MQflrKuXUTAAmTBETcFHf5S04nUb5/a+mzlMufwpXO0SAjABvmP+zMypkV7pXznh/yg=
+	t=1739392245; cv=none; b=Kin3ujiOY8MAsCBw48S3uccvTguY0QS5mZQ8nV3BQzWkNAlu0E61NSWqmxkD6gPNJFVg0bnMOwWIe3FNirhGmHTnJvKCv2Seg99/pcQRauGkvsMHvZbheiagwimJvMSizAGazOc91T7ww9SnSXbTgJSWVtPCNc+9jWFOqyNBeFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739392168; c=relaxed/simple;
-	bh=fMzZBQwz2zarejgNGL4Eghd7LeFJHEGwlkIQxCyakHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S+FoukvKGLfnh0YgXcN9Iy7RfnknvwF2GzVicYoXyNNXhy3/ks/0+ZTe2nMPayeQxjsletKHPFysR2HzLnvCmp7JBFx7PK/6hO28iNzURpbK2yoC8+QZRRBZZlFmoUmLH0gmUg3bHsj+JMZV25qSCyh85wDYTHvU6ykB69FC6Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pZwKHqBt; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1739392245; c=relaxed/simple;
+	bh=62XOCJaY/t66luJFF5h5rOCgBVw9Y8phtjVL6ga39Eo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Hb5oZuniQO3si/Qa1tBkjKIsZzvS8v9XS0V58NJbI/ZlYurdw8gSd7sHuyKzsxtGEZX64kZ8iObrSV0vA5n0ANMeR7rDUHJj2LtxohpRL3J3pNArezbaHxqoLFC4xUAVInQ3ZXN7A0Fq3E9cfd72UjX+qhVQpCO5DQcsL9cE+10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yOzo2QTi; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38dfeb84a39so14866f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:29:26 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7bf29883aso3484266b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:30:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739392165; x=1739996965; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=P4Xly9Z4ajTEnrRhuPY7JmSmoF3/UWXiSM6R6mhlLyA=;
-        b=pZwKHqBt58QGRlSwPZ1jlpmJZljAA1vRhplovav1qTgBp8PCam6l50AmQ4tvA+Z9Hi
-         3mR+IL3Ru8VBt4GrZJ/1tglzvEg1TksiefXvwt6zmZGP6+hZn1vYG9gvOzcpNjrSle+d
-         cW4xfKT7nX0N5PkQOZ/AxcP1/KCxQYf867RXtV0Y7qApyr/5plWm47TfRnfPyW16RxXv
-         jGLS2c2c+w91bk1+s3hPYn0160jxHqIZ305KLZLJLx3Fim9iPwxkvFl8VK0NOkWacjg/
-         J6e7tJtyQ2gdnezZtkjAtssgaqJJEcEthTSzaZ9zta+g0gFxPAEfm7wSRRkSR78+cWga
-         NTgA==
+        d=linaro.org; s=google; t=1739392242; x=1739997042; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cmRXcdjEFTtwWErLiczOTSh5GDvvFaZtrg8q8bv4gpA=;
+        b=yOzo2QTieNe9e85IT4nrDmnumISeOAf2Ae1ccHRMydfnrJ/lJ6kT71Ls5ukYy899ZC
+         /Nxj9MgWBbwzr95eYRC9ePjV90FAHRDy2nihBub85hroVX6encYP6v8RpKRKORIdnUeL
+         iVro+ehIrjueiGiol3DXP99Be1Y3/WlIS91hgKVqCuzIpBt/KRfL1+FaSU3li8+9cmEh
+         D3wZji0ihem+/swDNPetJGTr8GnJBOqzcAkrnQti1XivkvKsqjtcZjHjbg6oLuG2qb8t
+         uguuweL/7slcPG0anFKkyk0k7dKRNngy1GEgSwa+H/tF/8ZQy+isYk2w+AoI8gE1+XPv
+         lyyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739392165; x=1739996965;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P4Xly9Z4ajTEnrRhuPY7JmSmoF3/UWXiSM6R6mhlLyA=;
-        b=NfcZdpBejWm8mNb7CCOwmmY2qbK5lvfRQbePR4rAwncQ6qVgZ5Uod9IBBHKH2iffiw
-         B3LqVig4N95DhxSFirYPxW2vRLS2Wz6VZkLLdCUdDupJpAILDOzYj357KvlFUs/1w3Se
-         3ahcTl4p5iJ/A9DScKgBPUpJdA74u1kXM9lzHbKIkMerp2DL7ImZ/+HNDKbm4Emyt4Uy
-         rDr5GgnBQRNCOskUPJZy7MNkoT5EE63QumEMgphspVIES+3FeytkT8C8JL1SxEqTBukw
-         LDhRhktL6RB3UtRwrSct1e7QvpsQfcr9V3zNGhggeM85P4O5JdQGYDZKdT7XH16E3z/E
-         JWYg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3CH6uIklUbsWxwHFyUUMVT4cORwXsQnR3tR1qY8eOBDyz4kumiCxAIO7FTklVeq8WZ2Hcf6Piw7pRC4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvFmDYSsNKchkCmrzzUCFGmE6vaGuc3Zl7z8w/c2kmDpOLjTR0
-	YoUtqrnNpgy4M/jo6UPPiC03sS0Bkj9ZfQisIjpRRdyZUj41f0Xk9pdigc0my8k=
-X-Gm-Gg: ASbGncvWZZ+R60eSbwMOzb1ASyCS+q2vH7v9Myb2mvywTqOcgtsykxC9d3YT7jvV/zL
-	6UyBqSUVJi5qJAaHouyBec5vUGLXfVV04XZ63qy6UESnHNluFkKOUmfORe7z7MYX8e6vG6qiwyI
-	h8yy7HIngfUAIlnA3qK5RpKe5O0ulVAEacinQXySvOKoNxAiOfWh0tTjuEveC7Ccu03XzImjSD8
-	T9+IIDfxl/PyUUeer8sch/bDhjLN+XwgKzL7pXorH5pmH160ZXtCJ8F1FGqndCNZutO64cb0FIF
-	ZTK5Vhl1qC+7Vs8ByBoziKtMwT8Eeg==
-X-Google-Smtp-Source: AGHT+IEIX04KbEhnC59jF35sJIWxiziJxxlj7+Pxs6uWKXoNxjH3yyR8TvsCk1zSJHtc3g87I5swYA==
-X-Received: by 2002:a05:600c:3585:b0:439:6103:d2de with SMTP id 5b1f17b1804b1-4396103d503mr656295e9.7.1739392165041;
-        Wed, 12 Feb 2025 12:29:25 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f21ea3246sm1454554f8f.81.2025.02.12.12.29.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 12:29:23 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2] USB: dwc3: Use syscon_regmap_lookup_by_phandle_args
-Date: Wed, 12 Feb 2025 21:29:13 +0100
-Message-ID: <20250212202913.23443-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1739392242; x=1739997042;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cmRXcdjEFTtwWErLiczOTSh5GDvvFaZtrg8q8bv4gpA=;
+        b=wF58kujQYXcZ1bv5HnzoUF9wBdM86ql5zb7E7VfM5Hpy+1h2deDgjmBDuWrbUoeI2T
+         okdxu3AyU7BP//qcmp8UWCBAGiYFZUPHGaFN3UH++BXgGSvJrxzceVfyo/cwS5AvUBa1
+         Oaz9Z5G1/A6zTugQpAPFrvQs89RdHzUIU3aYbopWBU8wyFhq7gU99OphtQE1QlI9nKH7
+         XiNd228LujQNUBvV98YRjjvWR0cv6eUntwBy9k+s/qIpUndHGKaFYfMfOjB67F0+4CL1
+         FLa3ZILPIW6YLcaGq5YJzbeX4eLLjAJ5czIKkupedycMoaiAc/p6Kh5MnWXNHuuT6aaQ
+         NRJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYcke1BwMyTbVJFSIeJdGJRTWe1GmEk5HPkceK5REe1fnHQQDB2oPQTBfUNZlT+WPNxO6aPKOmIS9rwJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoNDrQynzcg7RhjaYKIDiXj5uOd4KQ+1CecypR269e155yj8op
+	hjjov1dcZWr+T+lENjCyN/2HgxdtQsRqDvGvGK4liLkoJVWPCbYYSyC7qAAByxg=
+X-Gm-Gg: ASbGnctj5CXjYy9Uaij62EaE4YZSCye0SePy+P/Pqys09Fp1PbXY4lmhUvZQ+1gTGa4
+	ltoJhg/6S5vpbTWJuOqA49JsW8A9+mBvtTMhzveI9ryfgtz6L51h4enJfcspASgevE4Cthd0q3V
+	y+snzvcbwecGf29psJ6TGqKuEaUTG+1E1PszPhoG02I7p63sVmKNPetDE9gTOCoi36pd8OmX9bL
+	q00pe05ABqTns0NHK2Z023JJW2kFDXG0ROE7SccmuMB4ERdHhMz6y/LwbgX6A/Vgs+T7KjW8TzB
+	SVQMs7U0Vw7NHc1iRoYuy0hhT8L1A6Nf0b4=
+X-Google-Smtp-Source: AGHT+IEy5MNFfUhE4KoXzS+0qnWcf+fR/v9TpWdLTk4yS/53co/Ga9Puko1DFJtx4WWKhW6Sl6TL2w==
+X-Received: by 2002:a17:907:da5:b0:ab6:6176:9dff with SMTP id a640c23a62f3a-ab7f31a654amr186338666b.0.1739392241639;
+        Wed, 12 Feb 2025 12:30:41 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7dd77c151sm418897366b.57.2025.02.12.12.30.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 12:30:40 -0800 (PST)
+Message-ID: <55aed776-ebee-4b0a-a6e0-17732fdd5191@linaro.org>
+Date: Wed, 12 Feb 2025 21:30:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] phy: stih407-usb: Use
+ syscon_regmap_lookup_by_phandle_args
+To: Patrice Chotard <patrice.chotard@foss.st.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250111185407.183855-1-krzysztof.kozlowski@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20250111185407.183855-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Use syscon_regmap_lookup_by_phandle_args() which is a wrapper over
-syscon_regmap_lookup_by_phandle() combined with getting the syscon
-argument.  Except simpler code this annotates within one line that given
-phandle has arguments, so grepping for code would be easier.
+On 11/01/2025 19:54, Krzysztof Kozlowski wrote:
+> Use syscon_regmap_lookup_by_phandle_args() which is a wrapper over
+> syscon_regmap_lookup_by_phandle() combined with getting the syscon
+> argument.  Except simpler code this annotates within one line that given
+> phandle has arguments, so grepping for code would be easier.
+> 
+> There is also no real benefit in printing errors on missing syscon
+> argument, because this is done just too late: runtime check on
+> static/build-time data.  Dtschema and Devicetree bindings offer the
+> static/build-time check for this already.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/phy/st/phy-stih407-usb.c | 24 +++++++-----------------
+>  1 file changed, 7 insertions(+), 17 deletions(-)
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Vinod, was this patch lost?
 
----
+There is review and patch should still apply. Let me know if you need
+resend.
 
-Changes in v2:
-1. Rebase (drop of_node_put)
----
- drivers/usb/dwc3/dwc3-am62.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-am62.c b/drivers/usb/dwc3/dwc3-am62.c
-index c158364bc03e..9db8f3ca493d 100644
---- a/drivers/usb/dwc3/dwc3-am62.c
-+++ b/drivers/usb/dwc3/dwc3-am62.c
-@@ -153,11 +153,11 @@ static int phy_syscon_pll_refclk(struct dwc3_am62 *am62)
- {
- 	struct device *dev = am62->dev;
- 	struct device_node *node = dev->of_node;
--	struct of_phandle_args args;
- 	struct regmap *syscon;
- 	int ret;
- 
--	syscon = syscon_regmap_lookup_by_phandle(node, "ti,syscon-phy-pll-refclk");
-+	syscon = syscon_regmap_lookup_by_phandle_args(node, "ti,syscon-phy-pll-refclk",
-+						      1, &am62->offset);
- 	if (IS_ERR(syscon)) {
- 		dev_err(dev, "unable to get ti,syscon-phy-pll-refclk regmap\n");
- 		return PTR_ERR(syscon);
-@@ -165,14 +165,6 @@ static int phy_syscon_pll_refclk(struct dwc3_am62 *am62)
- 
- 	am62->syscon = syscon;
- 
--	ret = of_parse_phandle_with_fixed_args(node, "ti,syscon-phy-pll-refclk", 1,
--					       0, &args);
--	if (ret)
--		return ret;
--
--	of_node_put(args.np);
--	am62->offset = args.args[0];
--
- 	/* Core voltage. PHY_CORE_VOLTAGE bit Recommended to be 0 always */
- 	ret = regmap_update_bits(am62->syscon, am62->offset, PHY_CORE_VOLTAGE_MASK, 0);
- 	if (ret) {
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
