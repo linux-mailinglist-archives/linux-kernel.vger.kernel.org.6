@@ -1,216 +1,210 @@
-Return-Path: <linux-kernel+bounces-510327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C658A31B2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5662AA31B31
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:31:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7D071885702
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:31:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19D51885702
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD8C32C8E;
-	Wed, 12 Feb 2025 01:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B3F5336E;
+	Wed, 12 Feb 2025 01:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/lubwux"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kfJS5Tkx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A108CF9C1;
-	Wed, 12 Feb 2025 01:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296E72868B;
+	Wed, 12 Feb 2025 01:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739323853; cv=none; b=uF52nK5gqTb2UV8CtHa7Ugjr4lFM4qdZl2yoWjQovCKf+gnuX77qP424p2NkWTFNSiTGUNpJKVqi2xvA6ZKCGaOf54Dv1BeA6J/PpM3hDgwn3JxG8o0xsN8YrnehKiLv387lW+2m6kHaV+4nSPj3X8mjl21MuKREXlUehb93Y88=
+	t=1739323897; cv=none; b=Dnh1sMM/hrqFxqnT4vXjndSXqV+sW5a6Q4BCpDpCwKhQQaapc/oRrvZ+GEwcIq/AXcOSKJesBE9jAhCpxyWDxQlyMWlgb0siTd1OKs0rMB2z2Vyfgmm09HilppvO9tT/Im0qA04/yx8dx+tDaWhGxesDl6aA2oK7Ixn898/c3Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739323853; c=relaxed/simple;
-	bh=HQf8dfo48FofBSjJRGEQY2VVU3sygOXQ3hfOtk3uHOg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XhQVD3w1Xe77QRiyB9XMzvktghfMD76DIrBa9a+bTU4PODTokYchq9sdT9j29HIHxdYHdhv1nFof7/+o8wfjFSjKTxmCD5VmxdpllEjTKBdV4DPiSRLemf10oBiPv5iBBrq31IfIl1j48AS/SRZHIwZrziy8Bs+QU/qHz7dk3sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/lubwux; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AEBDC4CEDD;
-	Wed, 12 Feb 2025 01:30:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739323853;
-	bh=HQf8dfo48FofBSjJRGEQY2VVU3sygOXQ3hfOtk3uHOg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=L/lubwuxS/wZLQk3opIaTgjL/mZX8uoFYduxsrNuieo4LASvARhwT+6smdT0+hqBa
-	 Ttp0urx+Cro8mxexdMdMx0tjp2rySoP/byCO4rFx7JaDtaC+U0eJ1WYUqLEII1si5W
-	 LTUkQxi80e/mww5HPhqoYM9m4uP0gtLcar0M6MHq4kr6kW8uKuKcvtcWcBnG6YrVdY
-	 d7DG2e7zrIGhk9UgStpJxbegPrfC6gv0vpzGq4rIjFL+9Hle0PYsRwoMW5vJRGdRLH
-	 3Pbwr63WG1yQarX1QhvFrXYn839XLHBrihENQ4+tVsTp3EE2u78bYR/LnlPN+lCBSy
-	 ZIp0QVJtp6Paw==
-Date: Tue, 11 Feb 2025 17:30:50 -0800 (PST)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Juergen Gross <jgross@suse.com>
-cc: linux-kernel@vger.kernel.org, x86@kernel.org, iommu@lists.linux.dev, 
-    Stefano Stabellini <sstabellini@kernel.org>, 
-    Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, 
-    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-    xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 2/2] xen/swiotlb: don't destroy contiguous region in all
- cases
-In-Reply-To: <20250211120432.29493-3-jgross@suse.com>
-Message-ID: <alpine.DEB.2.22.394.2502111728560.619090@ubuntu-linux-20-04-desktop>
-References: <20250211120432.29493-1-jgross@suse.com> <20250211120432.29493-3-jgross@suse.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1739323897; c=relaxed/simple;
+	bh=2P9OIohU3wD9oOGB9eNAVlkpx3MFF4NEtZDybI+Itwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f45XtH/QD5xs8qx7LDj2VvJPCcAPUnbv0eE0MqSkn6euPXwX4+wlv3qe+DJmDB5O27vYISpGj9fV4VXkLAALXd+O+c5SI++INjYd4dljl3PIvDjx1i7DIzBtGIxGMpIXZ7lYl4MECV8JKwI0jTJEfmO56Ui4MALOz3PpqmC5jAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kfJS5Tkx; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739323897; x=1770859897;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2P9OIohU3wD9oOGB9eNAVlkpx3MFF4NEtZDybI+Itwc=;
+  b=kfJS5TkxG3v8D9m/OauKAhwQXSlkZtMPqIvG8An47fdjz/02weK2CLNt
+   lFoErbt20fk7xQBj4wfQ4flKqIEbM+HfTIAtEngILSmWzEVoFr19HWzzr
+   FKIyV2HMFDvRGL4JiqxrxbSnv5K8ydtcaXtYP9llkEs930rldUbsmyF3F
+   99e+C7UfDuPsm9IcmGMUEU7czmVikb8H0eBaNXjlKA1lJyNtQpwru9slB
+   rghFHx8UTad933QTdBQCTJEZGOrnv9+iIBD4oul7MQSCZqPCxONHEIjqH
+   RlI1LHaSxMKeVQPmQsH2rqg+8fKqvqF4FowZ4kbFqWkJqsqzfr1EtpfAb
+   g==;
+X-CSE-ConnectionGUID: IgxNime7R4SQxeBOostMaQ==
+X-CSE-MsgGUID: LttPDhRDSdShjmIaS5Pm7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="57373635"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="57373635"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 17:31:36 -0800
+X-CSE-ConnectionGUID: NsmMaeFAR+qZuqttuSstfQ==
+X-CSE-MsgGUID: J6ybvcBxQWeW6pWDcUMKfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="112430138"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 11 Feb 2025 17:31:32 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ti1b7-0014wT-15;
+	Wed, 12 Feb 2025 01:31:29 +0000
+Date: Wed, 12 Feb 2025 09:31:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nas Chung <nas.chung@chipsnmedia.com>, mchehab@kernel.org,
+	hverkuil@xs4all.nl, sebastian.fricke@collabora.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org, jackson.lee@chipsnmedia.com,
+	lafley.kim@chipsnmedia.com, Nas Chung <nas.chung@chipsnmedia.com>
+Subject: Re: [PATCH 7/8] media: chips-media: wave6: Add Wave6 control driver
+Message-ID: <202502120928.wbtfGrUk-lkp@intel.com>
+References: <20250210090725.4580-8-nas.chung@chipsnmedia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250210090725.4580-8-nas.chung@chipsnmedia.com>
 
-On Tue, 11 Feb 2025, Juergen Gross wrote:
-> In case xen_swiotlb_alloc_coherent() needed to create a contiguous
-> region only for other reason than the memory not being compliant with
-> the device's DMA mask, there is no reason why this contiguous region
-> should be destroyed by xen_swiotlb_free_coherent() later. Destroying
-> this region should be done only, if the memory of the region was
-> allocated with more stringent placement requirements than the memory
-> it did replace.
-> 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  arch/x86/include/asm/xen/swiotlb-xen.h |  5 +++--
->  arch/x86/xen/mmu_pv.c                  | 18 ++++++++++++------
->  drivers/xen/swiotlb-xen.c              | 11 +++++++----
->  3 files changed, 22 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/xen/swiotlb-xen.h b/arch/x86/include/asm/xen/swiotlb-xen.h
-> index abde0f44df57..a353f20c7e79 100644
-> --- a/arch/x86/include/asm/xen/swiotlb-xen.h
-> +++ b/arch/x86/include/asm/xen/swiotlb-xen.h
-> @@ -4,8 +4,9 @@
->  
->  int xen_swiotlb_fixup(void *buf, unsigned long nslabs);
->  int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
-> -				unsigned int address_bits,
-> -				dma_addr_t *dma_handle);
-> +				 unsigned int address_bits,
-> +				 dma_addr_t *dma_handle,
-> +				 unsigned int *address_bits_in);
->  void xen_destroy_contiguous_region(phys_addr_t pstart, unsigned int order);
->  
->  #endif /* _ASM_X86_SWIOTLB_XEN_H */
-> diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-> index 2c70cd35e72c..fb586238f7c4 100644
-> --- a/arch/x86/xen/mmu_pv.c
-> +++ b/arch/x86/xen/mmu_pv.c
-> @@ -2208,19 +2208,22 @@ void __init xen_init_mmu_ops(void)
->  static unsigned long discontig_frames[1<<MAX_CONTIG_ORDER];
->  
->  #define VOID_PTE (mfn_pte(0, __pgprot(0)))
-> -static void xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
-> -				unsigned long *in_frames,
-> -				unsigned long *out_frames)
-> +static int xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
-> +			     unsigned long *in_frames,
-> +			     unsigned long *out_frames)
->  {
->  	int i;
-> +	u64 address_bits = 0;
->  	struct multicall_space mcs;
->  
->  	xen_mc_batch();
->  	for (i = 0; i < (1UL<<order); i++, vaddr += PAGE_SIZE) {
->  		mcs = __xen_mc_entry(0);
->  
-> -		if (in_frames)
-> +		if (in_frames) {
->  			in_frames[i] = virt_to_mfn((void *)vaddr);
-> +			address_bits |= in_frames[i] << PAGE_SHIFT;
-> +		}
->  
->  		MULTI_update_va_mapping(mcs.mc, vaddr, VOID_PTE, 0);
->  		__set_phys_to_machine(virt_to_pfn((void *)vaddr), INVALID_P2M_ENTRY);
-> @@ -2229,6 +2232,8 @@ static void xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
->  			out_frames[i] = virt_to_pfn((void *)vaddr);
->  	}
->  	xen_mc_issue(0);
-> +
-> +	return fls64(address_bits);
->  }
->  
->  /*
-> @@ -2321,7 +2326,8 @@ static int xen_exchange_memory(unsigned long extents_in, unsigned int order_in,
->  
->  int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
->  				 unsigned int address_bits,
-> -				 dma_addr_t *dma_handle)
-> +				 dma_addr_t *dma_handle,
-> +				 unsigned int *address_bits_in)
->  {
->  	unsigned long *in_frames = discontig_frames, out_frame;
->  	unsigned long  flags;
-> @@ -2336,7 +2342,7 @@ int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
->  	spin_lock_irqsave(&xen_reservation_lock, flags);
->  
->  	/* 1. Zap current PTEs, remembering MFNs. */
-> -	xen_zap_pfn_range(vstart, order, in_frames, NULL);
-> +	*address_bits_in = xen_zap_pfn_range(vstart, order, in_frames, NULL);
->  
->  	/* 2. Get a new contiguous memory extent. */
->  	out_frame = virt_to_pfn((void *)vstart);
-> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-> index 26c62e0d34e9..3f3724f53914 100644
-> --- a/drivers/xen/swiotlb-xen.c
-> +++ b/drivers/xen/swiotlb-xen.c
-> @@ -118,6 +118,7 @@ int xen_swiotlb_fixup(void *buf, unsigned long nslabs)
->  	int rc;
->  	unsigned int order = get_order(IO_TLB_SEGSIZE << IO_TLB_SHIFT);
->  	unsigned int i, dma_bits = order + PAGE_SHIFT;
-> +	unsigned int dummy;
->  	dma_addr_t dma_handle;
->  	phys_addr_t p = virt_to_phys(buf);
->  
-> @@ -129,7 +130,7 @@ int xen_swiotlb_fixup(void *buf, unsigned long nslabs)
->  		do {
->  			rc = xen_create_contiguous_region(
->  				p + (i << IO_TLB_SHIFT), order,
-> -				dma_bits, &dma_handle);
-> +				dma_bits, &dma_handle, &dummy);
->  		} while (rc && dma_bits++ < MAX_DMA_BITS);
->  		if (rc)
->  			return rc;
-> @@ -144,6 +145,7 @@ xen_swiotlb_alloc_coherent(struct device *dev, size_t size,
->  		dma_addr_t *dma_handle, gfp_t flags, unsigned long attrs)
->  {
->  	u64 dma_mask = dev->coherent_dma_mask;
-> +	unsigned int address_bits = fls64(dma_mask), address_bits_in;
->  	int order = get_order(size);
->  	phys_addr_t phys;
->  	void *ret;
-> @@ -160,10 +162,11 @@ xen_swiotlb_alloc_coherent(struct device *dev, size_t size,
->  	if (*dma_handle + size - 1 > dma_mask ||
->  	    range_straddles_page_boundary(phys, size) ||
->  	    range_requires_alignment(phys, size)) {
-> -		if (xen_create_contiguous_region(phys, order, fls64(dma_mask),
-> -				dma_handle) != 0)
-> +		if (xen_create_contiguous_region(phys, order, address_bits,
-> +						 dma_handle, &address_bits_in))
->  			goto out_free_pages;
-> -		SetPageXenRemapped(virt_to_page(ret));
-> +		if (address_bits_in > address_bits)
-> +			SetPageXenRemapped(virt_to_page(ret));
+Hi Nas,
 
-This has the unfortunate side effect of making "PageXenRemapped"
-unreliable as an indicator of whether a page has been remapped. A page
-could still be remapped without the "PageXenRemapped" bit being set.  
+kernel test robot noticed the following build warnings:
 
-I recommend adding an in-code comment to clarify this behavior.
+[auto build test WARNING on linuxtv-media-pending/master]
+[also build test WARNING on arm64/for-next/core robh/for-next linus/master v6.14-rc2 next-20250210]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Nas-Chung/media-platform-chips-media-wave5-Rename-Kconfig-parameter/20250210-171144
+base:   https://git.linuxtv.org/media-ci/media-pending.git master
+patch link:    https://lore.kernel.org/r/20250210090725.4580-8-nas.chung%40chipsnmedia.com
+patch subject: [PATCH 7/8] media: chips-media: wave6: Add Wave6 control driver
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250212/202502120928.wbtfGrUk-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 6807164500e9920638e2ab0cdb4bf8321d24f8eb)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502120928.wbtfGrUk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502120928.wbtfGrUk-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c:384:4: warning: format specifies type 'long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
+     383 |                 dev_err(ctrl->dev, "firmware size (%ld > %zd) is too big\n",
+         |                                                    ~~~
+         |                                                    %zu
+     384 |                         fw->size, ctrl->boot_mem.size);
+         |                         ^~~~~~~~
+   include/linux/dev_printk.h:154:65: note: expanded from macro 'dev_err'
+     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                                ~~~     ^~~~~~~~~~~
+   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                              ~~~    ^~~~~~~~~~~
+>> drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c:929:58: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
+     928 |                 dev_info(&pdev->dev, "sram 0x%pad, 0x%pad, size 0x%lx\n",
+         |                                                                   ~~~
+         |                                                                   %zx
+     929 |                          &ctrl->sram_buf.phys_addr, &ctrl->sram_buf.dma_addr, ctrl->sram_buf.size);
+         |                                                                               ^~~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:160:67: note: expanded from macro 'dev_info'
+     160 |         dev_printk_index_wrap(_dev_info, KERN_INFO, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                                  ~~~     ^~~~~~~~~~~
+   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                              ~~~    ^~~~~~~~~~~
+   2 warnings generated.
 
 
+vim +384 drivers/media/platform/chips-media/wave6/wave6-vpu-ctrl.c
 
->  	}
->  
->  	memset(ret, 0, size);
-> -- 
-> 2.43.0
-> 
+   357	
+   358	static void wave6_vpu_ctrl_load_firmware(const struct firmware *fw, void *context)
+   359	{
+   360		struct vpu_ctrl *ctrl = context;
+   361		struct wave6_vpu_entity *entity = ctrl->current_entity;
+   362		u32 product_code;
+   363		int ret;
+   364	
+   365		ret = pm_runtime_resume_and_get(ctrl->dev);
+   366		if (ret) {
+   367			dev_err(ctrl->dev, "pm runtime resume fail, ret = %d\n", ret);
+   368			mutex_lock(&ctrl->ctrl_lock);
+   369			wave6_vpu_ctrl_set_state(ctrl, WAVE6_VPU_STATE_OFF);
+   370			ctrl->current_entity = NULL;
+   371			mutex_unlock(&ctrl->ctrl_lock);
+   372			release_firmware(fw);
+   373			return;
+   374		}
+   375	
+   376		if (!fw || !fw->data) {
+   377			dev_err(ctrl->dev, "No firmware.\n");
+   378			ret = -EINVAL;
+   379			goto exit;
+   380		}
+   381	
+   382		if (fw->size + WAVE6_EXTRA_CODE_BUF_SIZE > wave6_vpu_ctrl_get_code_buf_size(ctrl)) {
+   383			dev_err(ctrl->dev, "firmware size (%ld > %zd) is too big\n",
+ > 384				fw->size, ctrl->boot_mem.size);
+   385			ret = -EINVAL;
+   386			goto exit;
+   387		}
+   388	
+   389		product_code = entity->read_reg(entity->dev, W6_VPU_RET_PRODUCT_VERSION);
+   390		if (!PRODUCT_CODE_W_SERIES(product_code)) {
+   391			dev_err(ctrl->dev, "unknown product : %08x\n", product_code);
+   392			ret = -EINVAL;
+   393			goto exit;
+   394		}
+   395	
+   396		memcpy(ctrl->boot_mem.vaddr, fw->data, fw->size);
+   397	
+   398	exit:
+   399		mutex_lock(&ctrl->ctrl_lock);
+   400		if (!ret && wave6_vpu_ctrl_find_entity(ctrl, ctrl->current_entity)) {
+   401			wave6_vpu_ctrl_remap_code_buffer(ctrl);
+   402			ret = wave6_vpu_ctrl_init_vpu(ctrl);
+   403		} else {
+   404			ret = -EINVAL;
+   405		}
+   406		mutex_unlock(&ctrl->ctrl_lock);
+   407	
+   408		pm_runtime_put_sync(ctrl->dev);
+   409		release_firmware(fw);
+   410	
+   411		mutex_lock(&ctrl->ctrl_lock);
+   412		ctrl->current_entity = NULL;
+   413		if (ret)
+   414			wave6_vpu_ctrl_set_state(ctrl, WAVE6_VPU_STATE_OFF);
+   415		else
+   416			wave6_vpu_ctrl_boot_done(ctrl, 0);
+   417		mutex_unlock(&ctrl->ctrl_lock);
+   418	
+   419		wake_up_interruptible_all(&ctrl->load_fw_wq);
+   420	}
+   421	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
