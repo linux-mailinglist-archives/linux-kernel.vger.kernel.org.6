@@ -1,135 +1,216 @@
-Return-Path: <linux-kernel+bounces-512072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2115DA333B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:56:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE21A333B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15A816699A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:56:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96AB1889894
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A921D24C689;
-	Wed, 12 Feb 2025 23:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27C325E44F;
+	Wed, 12 Feb 2025 23:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BWO+l8P/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F62A126C05;
-	Wed, 12 Feb 2025 23:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SXLJJ4OF"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A09126C05;
+	Wed, 12 Feb 2025 23:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739404584; cv=none; b=RVhFS/qmLjUkgCD9dpq5qlpOTSx+zvZKkLvzZx0LZ4mWjG1oooLTCDqWZ2r/7neQUNJvY6P2gMdv7Yu9aK9YkEckFxvrbAX/fOfmR7M/i3gvXdmizlxjOfzJ7hOReFC7EZtTUSLeHb808VkEthgE/14gaVEEhmFzFH6tACvI1KI=
+	t=1739404646; cv=none; b=jAVXgV6lcLsivtIzYFbFh1BB9HBxyZQi2uvgm3ai5NRVV+FKIEG/faE+ul+LrZ9c9kHCKjOplRjSj2QIwZpqpfagvQo8a0dneerW8LW239dBx5aslcJQqFiGAHvInZfPbKS2eoTpq1jgdEO9A/6k0WNyPR3bfe3k+DKLRkGiuM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739404584; c=relaxed/simple;
-	bh=gF8WUDA/YTJ+dykENAH//Nob6ceU5xpiAlV5FGXbhA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XKFQK7PKjV+VEibDLOClyD5cOygfOwtOktGE6SiDNwvitgxajP5EOd0kkjnsX+zT5+xYLxoiqXCTn3cBtlRrz5vS47B4cqCchBF89QjnBcZIhCFaehU2fsXBetFOriD2kMSMLzG7fRRcTZfyth1JM5Y411fAoJ8AFK+wVl3nW+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BWO+l8P/; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739404583; x=1770940583;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=gF8WUDA/YTJ+dykENAH//Nob6ceU5xpiAlV5FGXbhA0=;
-  b=BWO+l8P/dTRCR8bIrN+9hL0ajtJxOTV4HqJbKf9d+G0Ba0YSAoqISq7G
-   M18eMaSxK5uU2a6ceqjh8mfvmfT7WjeJwYq2Mmgqwl6hBB14pP3GkaY/2
-   9w2u9bPfCu7FuILiwqt5WdRXGN7iDEcE5uobvZL+/jVQ5xBEOHSa2CH+Y
-   2tjyfhlonhbWNPL5JoD0NTG/gV1U2IYMVEPhCjO37CEZpgTe3Xx44OFXL
-   YIUsnFX5Qp39JO2Hy6uzq9+wo+JrADLqeW/PmV8iaX3VrwtkktUmDyqdn
-   JfTig87/Xz8G1lCciMoagQh/cq3Iiy0mujRYoetvqdrwRgrz9wNaKrCQp
-   w==;
-X-CSE-ConnectionGUID: M5pW1xHtRwS6Iy5IVOWKBw==
-X-CSE-MsgGUID: XQG1v6fATZuOTZyjG14lFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39951904"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="39951904"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 15:56:18 -0800
-X-CSE-ConnectionGUID: WR4Y8srsTAiq00aeunFnKQ==
-X-CSE-MsgGUID: DJiOdrRmT3K6jnGzy0pS/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="113172598"
-Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
-  by fmviesa008.fm.intel.com with SMTP; 12 Feb 2025 15:56:12 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Thu, 13 Feb 2025 01:56:12 +0200
-Date: Thu, 13 Feb 2025 01:56:12 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH RFC 4/7] drm/display: dp-aux-dev: use new DCPD access
- helpers
-Message-ID: <Z601HHdh2Zn62skU@intel.com>
-References: <20250117-drm-rework-dpcd-access-v1-0-7fc020e04dbc@linaro.org>
- <20250117-drm-rework-dpcd-access-v1-4-7fc020e04dbc@linaro.org>
- <87tt9pn8uu.fsf@intel.com>
- <7unkxysvdn57fp6t7sjmgqsiacg5grbrk4lp3fbfdvaht3hq4o@gqshn45sa5ww>
+	s=arc-20240116; t=1739404646; c=relaxed/simple;
+	bh=bceuig7AHvs+8cF63nsWXxEM673ylyOTryzj6s+vkL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jCxHEYXXzIHFxYLB9/ZBRYxaxP3VkUxPN8RJTHrjZse8FBmKmW7KvMg8zC6oeaG9Q4yR3CAgwQyz5DppqTvb9Afg+JliVtKYOuliLwTU+I72bgla3wdLcJpLA098DxgcJk45il5OBPh43vEjCn4OWf6VJn7lvQVdqdapjpWyAgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SXLJJ4OF; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A3E52203F3C9;
+	Wed, 12 Feb 2025 15:57:23 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A3E52203F3C9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739404643;
+	bh=bF6ePzz3cN2y4GYtn1pyoRmQYzjv5ZNDww08RM/kA5w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SXLJJ4OFPJZkogD0StqTyUAgwfIJIPnY8/4TngSfN1c5mhPDJIm7aVYDdimj/oAnX
+	 Yd7w/OE1MVKPuIswlc5gyslqUL+d311wjoJ4MwCIU3B0b3BIqYgPZwXNs7GC9thVN3
+	 s91qYLYjt5mzVMS08XeoNubtxgKPcmd+OIFopIII=
+Message-ID: <bb863c8f-a92c-42d0-abc4-ff0b92f701c2@linux.microsoft.com>
+Date: Wed, 12 Feb 2025 15:57:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7unkxysvdn57fp6t7sjmgqsiacg5grbrk4lp3fbfdvaht3hq4o@gqshn45sa5ww>
-X-Patchwork-Hint: comment
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v4 4/6] dt-bindings: microsoft,vmbus: Add GIC
+ and DMA coherence to the example
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+ catalin.marinas@arm.com, conor+dt@kernel.org, dave.hansen@linux.intel.com,
+ decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
+ krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com, lpieralisi@kernel.org,
+ manivannan.sadhasivam@linaro.org, mingo@redhat.com, robh@kernel.org,
+ ssengar@linux.microsoft.com, tglx@linutronix.de, wei.liu@kernel.org,
+ will@kernel.org, devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
+ benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
+References: <20250212014321.1108840-1-romank@linux.microsoft.com>
+ <20250212014321.1108840-5-romank@linux.microsoft.com>
+ <20250212-rough-terrier-of-serendipity-68a0db@krzk-bin>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <20250212-rough-terrier-of-serendipity-68a0db@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 23, 2025 at 01:05:47PM +0200, Dmitry Baryshkov wrote:
-> On Thu, Jan 23, 2025 at 12:05:29PM +0200, Jani Nikula wrote:
-> > On Fri, 17 Jan 2025, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> > > Switch drm_dp_aux_dev.c to use new set of DPCD read / write helpers.
-> > 
-> > This might be one of the few places where the old functions and the old
-> > return value was used in a sensible manner.
+
+
+On 2/11/2025 10:42 PM, Krzysztof Kozlowski wrote:
+> On Tue, Feb 11, 2025 at 05:43:19PM -0800, Roman Kisel wrote:
+>> The existing example lacks the GIC interrupt controller property
+>> making it not possible to boot on ARM64, and it lacks the DMA
 > 
-> Well... Yes and no. What does it mean if we return less bytes? Is that
-> still a protocol error?
+> GIC controller is not relevant to this binding.
+> 
 
-AFAIK short AUX replies are perfectly legal accoding to the DP
-spec, but we've not really seen them happening in any real
-use cases I suppose (although I'm not sure we have sufficient
-logging to tell whether something failed completely or only
-partially), hence why we've never really handled them
-correctly.
+Will remove, thank you for pointing that out!
 
-For aux_dev it might matter more because the common use
-case is to just dump the entire DPCD, and some displays
-violate the spec by having black holes inside the DPCD.
-What I don't rembmer is whether those black holes actually
-result in short replies, or whether the entire AUX transfer
-gets rejected when it hits one even partially.
+>> coherence property making the kernel do more work on maintaining
+>> CPU caches on ARM64 although the VMBus trancations are cache-coherent.
+>>
+>> Add the GIC node, specify DMA coherence, and define interrupt-parent
+>> and interrupts properties in the example to provide a complete reference
+>> for platforms utilizing GIC-based interrupts, and add the DMA coherence
+>> property to not do extra work on the architectures where DMA defaults to
+>> non cache-coherent.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   .../devicetree/bindings/bus/microsoft,vmbus.yaml      | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+> 
+> Last time I said: not tested by automation.
+> Now: I see automation build failures, although I do not see anything
+> incorrect in the code, so that's a bit surprising. Please confirm that
+> binding was tested on latest dtschema.
 
-The other concern with not handling short replies correctly
-is that writes (and even some reads) can have side effects.
-So when a short reply arrives we may have already triggered 
-some side effects while still claiming that the access
-completely failed.
+They weren't for which I am sorry. Read through
 
-I suppose if someone was sufficiently motivated they could
-try to handle short replies more correctly and keep retrying
-the remaining bytes (assuming that is the correct way to
-handle them). Although with those black holes I guess
-you'd eventually have to give up anyway before having
-transferred all the bytes.
+https://www.kernel.org/doc/html/v6.14-rc2/devicetree/bindings/writing-schema.html
+
+and was able to see and fix the break by bringing the YAML to [1].
+Getting now this
+
+/Documentation/devicetree/bindings/bus/microsoft,vmbus.example.dtb: 
+vmbus@ff0000000: 'dma-coherent', 'interrupts' do not match any of the 
+regexes: 'pinctrl-[0-9]+'
+         from schema $id: 
+http://devicetree.org/schemas/bus/microsoft,vmbus.yaml#
+
+so maybe I need to add some more to the "requires" section. Will follow
+other examples as you suggested.
+
+> 
+>>
+>> diff --git a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+>> index a8d40c766dcd..5ec69226ab85 100644
+>> --- a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+>> +++ b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+>> @@ -44,11 +44,22 @@ examples:
+>>               #size-cells = <1>;
+>>               ranges;
+>>   
+>> +            gic: intc@fe200000 {
+>> +              compatible = "arm,gic-v3";
+>> +              reg = <0x0 0xfe200000 0x0 0x10000>,   /* GIC Dist */
+>> +                    <0x0 0xfe280000 0x0 0x200000>;  /* GICR */
+>> +              interrupt-controller;
+>> +              #interrupt-cells = <3>;
+>> +            }
+> 
+> I fail to see how this is relevant here. This is example only of vmbus.
+> Look how other bindings are done. Drop the example.
+
+The bus refers to the interrupt controller, and I didn't have it, so
+added it :) Now I in other examples that is not required, and the
+tooling generates fake intc's. Appreciate your advice very much!
+
+> 
+> 
+>> +
+>>               vmbus@ff0000000 {
+>>                   compatible = "microsoft,vmbus";
+>>                   #address-cells = <2>;
+>>                   #size-cells = <1>;
+>>                   ranges = <0x0f 0xf0000000 0x0f 0xf0000000 0x10000000>;
+>> +                dma-coherent;
+>> +                interrupt-parent = <&gic>;
+>> +                interrupts = <1 2 1>;
+> 
+> Use proper defines for known constants.
+
+Will do as in [1], thank you!
+
+> 
+
+[1]
+
+--- a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
++++ b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+@@ -28,6 +28,7 @@ properties:
+  required:
+    - compatible
+    - ranges
++  - interrupts
+    - '#address-cells'
+    - '#size-cells'
+
+@@ -35,6 +36,8 @@ additionalProperties: false
+
+  examples:
+    - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+      soc {
+          #address-cells = <2>;
+          #size-cells = <1>;
+@@ -44,14 +47,6 @@ examples:
+              #size-cells = <1>;
+              ranges;
+
+-            gic: intc@fe200000 {
+-              compatible = "arm,gic-v3";
+-              reg = <0x0 0xfe200000 0x0 0x10000>,   /* GIC Dist */
+-                    <0x0 0xfe280000 0x0 0x200000>;  /* GICR */
+-              interrupt-controller;
+-              #interrupt-cells = <3>;
+-            }
+-
+              vmbus@ff0000000 {
+                  compatible = "microsoft,vmbus";
+                  #address-cells = <2>;
+@@ -59,7 +54,7 @@ examples:
+                  ranges = <0x0f 0xf0000000 0x0f 0xf0000000 0x10000000>;
+                  dma-coherent;
+                  interrupt-parent = <&gic>;
+-                interrupts = <1 2 1>;
++                interrupts = <GIC_PPI 2 IRQ_TYPE_EDGE_RISING>;
+              };
+          };
+      };
+
+> Best regards,
+> Krzysztof
 
 -- 
-Ville Syrjälä
-Intel
+Thank you,
+Roman
+
 
