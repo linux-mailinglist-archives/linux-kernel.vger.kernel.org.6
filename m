@@ -1,136 +1,118 @@
-Return-Path: <linux-kernel+bounces-512066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA95A3339B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:45:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0AAFA3339F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:46:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 735FA3A80BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:45:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F89D188A957
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3067520ADEF;
-	Wed, 12 Feb 2025 23:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37FB20967E;
+	Wed, 12 Feb 2025 23:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XHN/72TF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Ldvvc3op"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0D825A2C2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A137E126C05
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739403914; cv=none; b=GYO9s3h+s7Q640AKBLGEmwDXy1MwcyRSmkL7bmB4f4BsGhO0SyVWQmo+FD/nEXFvPh31gFygzwXYemoC+zcuBLm1Af0yBvQofCUQ8ze5goo0RXi9hOB/0bu38Y5bLFkIxUVPVVXpus/7prwdZDkZzsCzf271ALD+r59MQGq3nsI=
+	t=1739404009; cv=none; b=LowK+ELfa18IgN9JWiRcbLvNxAuk9EiJw6LO3ubvtqJ82Kf3dSsAMqvLrU9H6TLHOOWaGI2+duxP7ZzVeTdGDZXB1SaovehQtMeSJ/ijBXy4CZTabzFBYlExqHDmIwmyd73oHgorNcD+9YoGyGrRRHpzoobq9VvyW88t6ma9Xm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739403914; c=relaxed/simple;
-	bh=pISEIH1Hgm1ebhPn1Af3Igag6b5WaEXZXIPkb7MG8Ik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CzRTyM6r7abSwapDucdXwrrqHxxesFazl1gFBi+M2vw/6L0tuXiBkvt5xpwomSkm7JufYT2kdZc1VCqbPDcSvBbueOzFWIZMW6robKeKLpUR8J4Sq0StxqISWmqsL9FsFZmCW741MfLhMRYy4ftF0WoxMuLh5VcHkb6Y+BRL8Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XHN/72TF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CHKKOd007790
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:45:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9hBUx02+DO2rqZGD8AyCtAGPZWGxGGVd2BFh1CEpmGE=; b=XHN/72TFUl760NPH
-	l2CtKPY1AiRfQGp83hKOghligpP8eL1YSeDQKuW7mky0WFrHVy2rtOCR21JGvINI
-	ddu+dZLlgYwSw2HLw8lTHMD1SKV1fu5piv0bBIl5CsdoUMQkVXR8VBRxBKNRm8Z4
-	L1Dd/QiOV2LQU5CuX8B1KLT4yHBZH82yZcvJRBWkH5gRsZScc3xQ95ViS5bYwWSL
-	xH5UnkFvrYKUHm0BP+JOGhJnWvMXLrmdzaccG2SSWXLNeEDUPDeso3zownIH08+v
-	o2s/yCX40KgCiNM0PA3BuTgQMQ8q+3qeg9fAYP8gH4o8zImIIGMcZ9rxQrDNucU7
-	2irhnA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rr1qt63g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:45:12 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-46e4842dbd0so391621cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:45:12 -0800 (PST)
+	s=arc-20240116; t=1739404009; c=relaxed/simple;
+	bh=o6FDtd+rlSa8IIiwz0tvMUjI0siD1ajnHXHA0qLGxTA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LJesRoUUMwMuqhWvU6zHkeJSZM7zm9wz4jkWR3mVcrfmEkvBMjAsj3OVZXSNZOzqT/1sSrbKU/U8NlYbMLpJ4zn2evQy75tagMCUR1diYdEmLsaVfF5QQ0EgFijMKoMGgNf4fzcwbno5P+nDhVAYKQtX4cQYZl2oGNGpq+vhCuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Ldvvc3op; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fbfe16cbf5so75478a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:46:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1739404007; x=1740008807; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o6FDtd+rlSa8IIiwz0tvMUjI0siD1ajnHXHA0qLGxTA=;
+        b=Ldvvc3opMEZidGkydWHylsEzqF9pl5POspaUypyrzogGSdVRg1k906P1tyBs39rV6t
+         qy+yFdjmO2ZkGbcTDRluUjoeSE5PsOQPpCOyb7OGh/luPH1HndqcbxcRbDM7h4DvrvEo
+         qu+JY9hte81bH/6nPOnO5PPauKr3HE9ayDeWI90gbiNwIjkg9frNRoZE689CXtKgiPve
+         9Jix32Joj9UpsVCdSnX8N1C51gnYybD+DVVVdnrqlLLyGhrKtN+D9qS1TrcyUPN6iFOT
+         i0mTugUbkQkd7NQKmDlDabXKFFJdPkqC9uncChgS9u3V3nJtlOT+DKuxAssJj27d/Lx3
+         HWZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739403911; x=1740008711;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9hBUx02+DO2rqZGD8AyCtAGPZWGxGGVd2BFh1CEpmGE=;
-        b=lOVk6mjInDlEyGw8K6mLMCAOdgIcuNXbr+Knwf3E2X3Ed44toXtkPSG/40bh4zylZQ
-         n/JZKy9UmdqVMlQ+juGxMwM94N52aZM+d1a8wIfm+LE8Itm6Gums0gX+4a2Fz6++8Wws
-         B4VtoQNijLQN/v45tSHN/2I0a7x7IlqIbQvvHwJMq77RnAsZmtFi3/LZypJEdytmqq0X
-         YSN7eLRoTR719bb3QMA9JFfiHyPNxf/R4OSSuF05mJnHSm/z8V8BKN5XFEbwqwwGzDXU
-         26fivpOtePPbbD0tTNF7BvHl+XcaqhpkV9S0y8FkdmrxM1LuZYc42Qgoa855DWE6IEWD
-         XCIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWf1798eJfTjkQWhsb9OFsbbZ0pxHg6mhQVZ1vp+ErleCAVBHTBpmSrKQx1SGArsTp11rO/AT0mWl2G4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwweQDJ8cPAeNgMl0i/qsDLC2MxAlTeWqj6eQc5lUAw1Y1cGBqG
-	+Jq/UJd/BEL8f2jmnN5jw8+u+ElEGLsh6+2PXHHe8n+U0+7u7BDkS/3IhOhvHGCWLgYW0oZO/+p
-	zrK7MpbzywkO3YZ8vw6m5Um+sN1RtHFO1t3LNNgp9iZztTWhuE8jBYfgylc2PqtI=
-X-Gm-Gg: ASbGnctLelV+1OckfdPrxmhT4lwfrALEH/te/QFdZWi3ylQJ8APpuTSJK+MJ7D86ZQo
-	a5LefeDmkeIOBbxmiDvVsVMFspXPtblFLikUG324141a7XI5b6oWqzicX+w+lQw51do1YCfllCT
-	1T7F+diIHkl1xlaCv3fRm4GQhin9adYVE5JFLQdE7ZmkN7CqhCAU6HAYF0UcKVpoETrYmDTxOs5
-	Ud+peQ5uzNJJsSU8XRlnmeEq3YVCQl5r2UY1v/izksj5JNYqaBrkLNn/hPkTvDl1OafBdVFSofN
-	XEFhSmzlxJSrOuU+uMiYY84uO+GSrgu2QRC3BWUFy7O0J3G6FoXNtbZStqc=
-X-Received: by 2002:ac8:7f86:0:b0:471:92fb:7b6f with SMTP id d75a77b69052e-471afe4e2d1mr29685431cf.8.1739403910843;
-        Wed, 12 Feb 2025 15:45:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHZBbAM9Rfat+qt0Iy9OnSiRwVlgMt4KfOiA9bSD+573lkKNBEBgs8o9+PItWL0wgmfwvh8MA==
-X-Received: by 2002:ac8:7f86:0:b0:471:92fb:7b6f with SMTP id d75a77b69052e-471afe4e2d1mr29685241cf.8.1739403910552;
-        Wed, 12 Feb 2025 15:45:10 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5339d94asm14393566b.143.2025.02.12.15.45.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 15:45:09 -0800 (PST)
-Message-ID: <e2b31450-c428-43c3-b25c-3ec130171011@oss.qualcomm.com>
-Date: Thu, 13 Feb 2025 00:45:07 +0100
+        d=1e100.net; s=20230601; t=1739404007; x=1740008807;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o6FDtd+rlSa8IIiwz0tvMUjI0siD1ajnHXHA0qLGxTA=;
+        b=XBFSAyLf9pnfNqhNtGdvjgRKXqairtr4FvBnm5C6QVqjDxWrnjta0ROnbIdCrkoNfY
+         mO+TUJpmriNChNEmIqNH1mELF5mzSzmnDeTda3ilivbWqZO16VvcNwBc6vIkUMEovcZ/
+         /MtKwXjvBuFQspf2it61C4HDIpvKC4s0y/Hwr9NSnW1C9W7969A4vl+Ke2AQngyLYBJn
+         rHun+pjdHnLESVjUclXYbqM+vzlF+D2sm0Ome/zc9ACY4sMo6/pfgtlXBb6kH5cOvSrI
+         1Sr98QdeQzNVniSssuFa7SzC+5sZqQxiUmCtM6qtoeMU0KXTecjIHgMiyBZs5BDQXYeh
+         zVWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEBHNoSRgLB2VRd1MpEj3lFz2CCeKKQ4nu3XHYw6j5PPCNS6jx0qWdylSzhF0j/Y+mfFvH4OJkh+qthcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu+iHyGCuGp4S6t9IfXFZJtU3BEkfrgZdGPBwGk2RY26o4fIPO
+	gr3loyJleouzrhuWCL0SrEUnba1bcsliVuvGQvGQgZIu4yHYA77Z2F7DOBf4pi6meSngm6H4gZ2
+	0r3lBaWzHFlod+NO68XysNUwK2mx918LXRvmeWQ==
+X-Gm-Gg: ASbGncvC1MP+PUo4Eef+7tsRCF5XtlenORgYg89X3s5kVwsWPjjmGG1/BsSRF0Q7TTt
+	kEZ1H2/BhzQgdGyHztVfqFL/h7USySyENwzrjkKGZnMko6cFnXTi2J72ek9K1tOGmpJBxOgU=
+X-Google-Smtp-Source: AGHT+IFUzD6F21FEiPi2oFeL5AqMhJ27H5M6NGdg1O+UC3vP8pRfnkjBXARokV8Obb0d2BBChyHfyOpmrmhnjIGPTY0=
+X-Received: by 2002:a17:90b:3845:b0:2ee:948b:72d3 with SMTP id
+ 98e67ed59e1d1-2fbf5bb8de3mr3010403a91.1.1739404006850; Wed, 12 Feb 2025
+ 15:46:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ARM: dts: qcom: msm8960: Add BAM
-To: Rudraksha Gupta <guptarud@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sam Day <me@samcday.com>
-References: <20250209-expressatt-bam-v2-1-e6c01c5d8292@gmail.com>
- <e0ef29dd-afe4-4ad7-95db-d21326744c92@oss.qualcomm.com>
- <CABhZbsXo69FL-xUfg3a20RybO_uRmsOKyMJ2w3qnpk+8pYyUqw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CABhZbsXo69FL-xUfg3a20RybO_uRmsOKyMJ2w3qnpk+8pYyUqw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Jbh0lzRgQHUPI9pUwFCRU-Fsy32Axn4l
-X-Proofpoint-ORIG-GUID: Jbh0lzRgQHUPI9pUwFCRU-Fsy32Axn4l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_07,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- mlxscore=0 impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 mlxlogscore=813 priorityscore=1501 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502120167
+References: <20250212204546.3751645-1-csander@purestorage.com>
+ <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk> <CADUfDZqK9+GLsRSdFVd47eZTsz863B3m16GtHc+Buiqdr7Jttg@mail.gmail.com>
+ <999d55a6-b039-4a76-b0f6-3d055e91fd48@kernel.dk> <CADUfDZrjDF+xH1F98mMdR6brnPMARZ64yomfTYZ=5NStFM5osQ@mail.gmail.com>
+ <Z60s3ryl5UotleV-@kbusch-mbp>
+In-Reply-To: <Z60s3ryl5UotleV-@kbusch-mbp>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 12 Feb 2025 15:46:34 -0800
+X-Gm-Features: AWEUYZnYCZGJbY6mpKpWZGNclaPT0GiXmiIEetwGyU1NF3JZsUGwzvo9IcWcJjg
+Message-ID: <CADUfDZqa5v7Rb-EXp-v_iMXAESts8u-DisMtjdBEu2+kK-ykeQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
+To: Keith Busch <kbusch@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Riley Thomasson <riley@purestorage.com>, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12.02.2025 2:59 AM, Rudraksha Gupta wrote:
->>> +             sdcc3bam: dma-controller@12182000 {
->>> +                     compatible = "qcom,bam-v1.3.0";
->>> +                     reg = <0x12182000 0x2000>;
->>
->> The BAM controller is 0x4000-long
-> 
-> 
-> Seems like my device splats with this requested change:
-> 
-> Diff: https://pastebin.com/AwzHPCLG
-> Log: https://pastebin.com/WQswkndX
+On Wed, Feb 12, 2025 at 3:21=E2=80=AFPM Keith Busch <kbusch@kernel.org> wro=
+te:
+>
+> On Wed, Feb 12, 2025 at 03:07:30PM -0800, Caleb Sander Mateos wrote:
+> >
+> > Yes, we completely agree. We are working on incorporating Keith's
+> > patchset now. It looks like there is still an open question about
+> > whether userspace will need to enforce ordering between the requests
+> > (either using linked operations or waiting for completions before
+> > submitting the subsequent operations).
+>
+> In its current form, my series depends on you *not* using linked
+> requests. I didn't think it would be a problem as it follows an existing
+> pattern from the IORING_OP_FILES_UPDATE operation. That has to complete
+> in its entirety before prepping any subsequent commands that reference
+> the index, and using links would get the wrong results.
 
-Did you keep your changes that shortened the sd controllers address space?
-
-Konrad
+As implementers of a ublk server, we would also prefer the current
+interface in your patch series! Having to explicitly order the
+requests would definitely make the interface more cumbersome and
+probably less performant. I was just saying that Ming and Pavel had
+raised some concerns about guaranteeing the order in which io_uring
+issues SQEs. IORING_OP_FILES_UPDATE is a good analogy. Do we have any
+examples of how applications use it? Are they waiting for a
+completion, linking it, or relying on io_uring to issue it
+synchronously?
 
