@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-511658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43CFA32DE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:50:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 197C3A32DE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDBB3A54AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:50:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABEFC3A2E73
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5453E25D520;
-	Wed, 12 Feb 2025 17:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1463125D52D;
+	Wed, 12 Feb 2025 17:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWa+OM52"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/Du+3LF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA23D256C70;
-	Wed, 12 Feb 2025 17:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6358A2116E0;
+	Wed, 12 Feb 2025 17:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739382625; cv=none; b=gLRcqFUvSoJxdiH3/Lkr6KHAplnwckZ1auUhFDATofXDUCa1rAjVRhr0xJAGuSgxSqlVFCXWw7kZWlDUuOMwTw+98Eb4YzvUlcW9CVBVxiLI7Gj4fj5XiNYo00WCm1JFAAejkG68OUp7lI62E+zuzhSP0wclbofs+E9I6Tfto4Q=
+	t=1739382664; cv=none; b=YGLy3wcb9juAQR7uwqUxENf2QW6ljVrgPGLu7mwuKu5EmV4HydbCKTktJs7535u52OPs0V86u1nFuF/u+kpg3UZfKk0etTKwilgPsM8xMgMO5xYKf/5ZHaOPOncC79uPvNSj5JK0j30iv7MIl4lsj9CuzAX/mjbM4jD+yDzJLGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739382625; c=relaxed/simple;
-	bh=xZvmmxew4CnhVqjM32U7p1D3znh9FIGOmHRpkoJl+O0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oey58aCzr9Y2oOU6t5AVymnNRThDn2I3N1JkBv4zgk+jBoY+v/YHRKSYjbAJ1dovwYlvgND4G8h+dQJOt/B4kOtmz6WLsVq7ZTg7TxfOQndi7WBHmiVhWKt5YRIeiOCsCBkenCUPeGn1XQMa/SMV+kYf7bVkIIwhvsLLgzzshYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWa+OM52; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 323D4C4CEDF;
-	Wed, 12 Feb 2025 17:50:25 +0000 (UTC)
+	s=arc-20240116; t=1739382664; c=relaxed/simple;
+	bh=am/bFZ5n+x/LiN4DKmDL+UQAHSZFP6LZFw/XXWZjeNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=NX94dwuez0Xqae8lmrBq6NjkSmqV3bzvozvjy5ZdZHOIpoyCVL3r0NaYtJpnam4p3RBY6wjKXkD4islwbhPALPSQ7h+lNkfht+xH+gl+/QkJKRsz/5P4Oa1TSXsGvOWr/aSdp/O3bpn21L1Ehm4PsDpCrqKkT07UGhilOi/CG3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/Du+3LF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC0FEC4CEDF;
+	Wed, 12 Feb 2025 17:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739382625;
-	bh=xZvmmxew4CnhVqjM32U7p1D3znh9FIGOmHRpkoJl+O0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WWa+OM52DiG+6GoAzl1LIYXjxX/CLkKVjY6vHemgp0d4lV5GJxy/g8VgMFLYWzLyt
-	 eHRpejIBOXOXD5o35m7QidDjGM4BQrUAScmMDVilQJtP0YkRij6WEdgapWB9l72OMU
-	 nga9wS8mQLfiQqG3566va5z+TV3He/FKXMokoTf2kJNxW83jA44FLo2cHYyaioeyfL
-	 gkatAg9EYsf8SD8DBxkRGPF133MyNrvPvpvKPAfKt8rVffm2dVIcB8PNnTAPUFMSIz
-	 v3vVIzKwRLg+46JuJgANUHlIAKvUvqv+W4a4/qa5ZCmmRwd/cJRGt1k4ePNfQFZ/z7
-	 sj8uqZXxsxohA==
-Date: Wed, 12 Feb 2025 09:50:23 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] compiler.h: Specify correct attribute for
- .rodata..c_jump_table
-Message-ID: <20250212175023.rsxsw7pno57gsxps@jpoimboe>
-References: <20240924062710.1243-1-yangtiezhu@loongson.cn>
+	s=k20201202; t=1739382663;
+	bh=am/bFZ5n+x/LiN4DKmDL+UQAHSZFP6LZFw/XXWZjeNA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=h/Du+3LFQEJrp5IxiAYoRoHP12C9WU8T37rPCFO1pTpEo5RCm579OH76aGlnFQ1hk
+	 r4oflm4TFXg4Wufml7sduTPiZVqAlEamBAdM6ktgngZ5iprNDYN0OVQPfAD8OBINEJ
+	 csS79ZbPcr6IUBpikpTnVW8qkhQ0Ov9rdaw4HxhT+WQqUTxly9n3F7g3vmJsks15k3
+	 SDbG8HSdj22ypg8ubci3oyMC4dgHtpzsxe+9mZulUcOZjIoBu3qvKRkZTudwyDtmKu
+	 pawZWdTejdb0VXwmF9flaWqmuyeak/oTjAL2X9YVlrjdvyQUyDZ9uV3tYz4/2rclqV
+	 JHeWh8NVNrUPg==
+Date: Wed, 12 Feb 2025 11:51:02 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Alexandra Winter <wintera@linux.ibm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Gerd Bayer <gbayer@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Thorsten Winkler <twinkler@linux.ibm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Julian Ruess <julianr@linux.ibm.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] PCI: s390: Support mmap() of BARs and replace
+ VFIO_PCI_MMAP by a device flag
+Message-ID: <20250212175102.GA85244@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240924062710.1243-1-yangtiezhu@loongson.cn>
+In-Reply-To: <20250212-vfio_pci_mmap-v5-2-633ca5e056da@linux.ibm.com>
 
-On Tue, Sep 24, 2024 at 02:27:10PM +0800, Tiezhu Yang wrote:
-> Currently, there is an assembler message when generating kernel/bpf/core.o
-> under CONFIG_OBJTOOL with LoongArch compiler toolchain:
+On Wed, Feb 12, 2025 at 04:28:32PM +0100, Niklas Schnelle wrote:
+> On s390 there is a virtual PCI device called ISM which has a few
+> peculiarities. For one, it presents a 256 TiB PCI BAR whose size leads
+> to any attempt to ioremap() the whole BAR failing. This is problematic
+> since mapping the whole BAR is the default behavior of for example
+> vfio-pci in combination with QEMU and VFIO_PCI_MMAP enabled.
 > 
->   Warning: setting incorrect section attributes for .rodata..c_jump_table
+> Even if one tried to map this BAR only partially, the mapping would not
+> be usable without extra precautions on systems with MIO support enabled.
+> This is because of another oddity, in that this virtual PCI device does
+> not support the newer memory I/O (MIO) PCI instructions and legacy PCI
+> instructions are not accessible through writeq()/readq() when MIO is in
+> use.
 > 
-> This is because the section ".rodata..c_jump_table" should be readonly,
-> but there is a "W" (writable) part of the flags:
+> In short the ISM device's BAR is not accessible through memory mappings.
+> Indicate this by introducing a new non_mappable_bars flag for the ISM
+> device and set it using a PCI quirk. Use this flag instead of the
+> VFIO_PCI_MMAP Kconfig option to block mapping with vfio-pci. This was
+> the only use of the Kconfig option so remove it. Note that there are no
+> PCI resource sysfs files on s390x already as HAVE_PCI_MMAP is currently
+> not set. If this were to be set in the future pdev->non_mappable_bars
+> can be used to prevent unusable resource files for ISM from being
+> created.
 > 
->   $ readelf -S kernel/bpf/core.o | grep -A 1 "rodata..c"
->   [34] .rodata..c_j[...] PROGBITS         0000000000000000  0000d2e0
->        0000000000000800  0000000000000000  WA       0     0     8
+> As s390x has no PCI quirk handling add basic support modeled after x86's
+> arch/x86/pci/fixup.c and move the ISM device's PCI ID to the common
+> header to make it accessible. Also enable CONFIG_PCI_QUIRKS whenever
+> CONFIG_PCI is enabled.
 > 
-> There is no above issue on x86 due to the generated section flag is only
-> "A" (allocatable). In order to silence the warning on LoongArch, specify
-> the attribute like ".rodata..c_jump_table,\"a\",@progbits #" explicitly,
-> then the section attribute of ".rodata..c_jump_table" must be readonly
-> in the kernel/bpf/core.o file.
-> 
-> Before:
-> 
->   $ objdump -h kernel/bpf/core.o | grep -A 1 "rodata..c"
->    21 .rodata..c_jump_table 00000800  0000000000000000  0000000000000000  0000d2e0  2**3
->                   CONTENTS, ALLOC, LOAD, RELOC, DATA
-> 
-> After:
-> 
->   $ objdump -h kernel/bpf/core.o | grep -A 1 "rodata..c"
->    21 .rodata..c_jump_table 00000800  0000000000000000  0000000000000000  0000d2e0  2**3
->                   CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
-> 
-> By the way, AFAICT, maybe the root cause is related with the different
-> compiler behavior of various archs, so to some extent this change is a
-> workaround for LoongArch, and also there is no effect for x86 which is
-> the only port supported by objtool before LoongArch with this patch.
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
-Right, this sounds like a bug in the GNU assembler.  It should default
-to the same section flags regardless of arch.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
+> +++ b/include/linux/pci_ids.h
+> @@ -518,6 +518,7 @@
+>  #define PCI_DEVICE_ID_IBM_ICOM_V2_ONE_PORT_RVX_ONE_PORT_MDM	0x0251
+>  #define PCI_DEVICE_ID_IBM_ICOM_V2_ONE_PORT_RVX_ONE_PORT_MDM_PCIE 0x0361
+>  #define PCI_DEVICE_ID_IBM_ICOM_FOUR_PORT_MODEL	0x252
+> +#define PCI_DEVICE_ID_IBM_ISM		0x04ED
+
+Use lower-case hex to match other entries.
+
+>  #define PCI_SUBVENDOR_ID_IBM		0x1014
+>  #define PCI_SUBDEVICE_ID_IBM_SATURN_SERIAL_ONE_PORT	0x03d4
 > 
-> Cc: stable@vger.kernel.org # 6.9+
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  include/linux/compiler.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> -- 
+> 2.45.2
 > 
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index ec55bcce4146..4d4e23b6e3e7 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -133,7 +133,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
->  #define annotate_unreachable() __annotate_unreachable(__COUNTER__)
->  
->  /* Annotate a C jump table to allow objtool to follow the code flow */
-> -#define __annotate_jump_table __section(".rodata..c_jump_table")
-> +#define __annotate_jump_table __section(".rodata..c_jump_table,\"a\",@progbits #")
-
-This caused a regression, this hack apparently doesn't work with Clang:
-
-  $ readelf -WS kernel/bpf/core.o | grep c_jump_table
-    [43] .rodata..c_jump_table,"a",@progbits # PROGBITS        0000000000000000 00d610 000800 00   A  0   0 16
-
-Notice the section name is literally:
-
-  .rodata..c_jump_table,"a",@progbits #
-
--- 
-Josh
 
