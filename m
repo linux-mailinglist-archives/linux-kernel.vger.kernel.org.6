@@ -1,168 +1,117 @@
-Return-Path: <linux-kernel+bounces-511633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A6DA32D87
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:32:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48A6A32D89
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:33:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2693518832D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:33:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1B3A7A2FCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B498425A630;
-	Wed, 12 Feb 2025 17:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA80125A331;
+	Wed, 12 Feb 2025 17:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d8IwQx5v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dRR/4lCA"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A54271829;
-	Wed, 12 Feb 2025 17:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0BD25A33C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739381570; cv=none; b=QHbfTZDt+vZiNrnf0eURwyGrO8j4b+AmKfCVRKfat6K3F5WoabL8uBNYJShgOcjXk1OrEXZeK5Lxm0HhLBjis0fULcznwhgSE4wpyKotUzk2HaaojeWPS1ZvZcR1xfVbpCABXPcL7e70F/0/3koHLk8JE5ivNcb83tPoZzwGMHM=
+	t=1739381598; cv=none; b=DNCnIU2z2995xu8XmRlbsyUW1mUlm+FPLsYD+Dg48oTve9BsZJp/leQWBONUTjgearqH7apTfo/VRANEaBCjz8yDHFI1NJzHOi0ZUQ5Z0ywNcG2zUrlIQ0bkXbNdjdJMkuBAndV0rU1RsVaIrGT+p+frQs0hs6ZnikkqL3gRTu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739381570; c=relaxed/simple;
-	bh=TsAUZDN7dw/ozl9tzhSbG2kUks+xD1sddY6H6S783ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bvhMnTF5WZfWfjKfxjQq8eoW0+9IVW+EI/RSOrzqGJP3Wj21r2WQTZ50FuCxXeWG+r/Di5WSh681WFzwCmlVQ/Amzh5cZYhIc7jbbYlLzIQjjf42sHoxXwGf7kqEtRFPx8VVDKVwGI3h2MTq+hLmUk6GBjDOO+GCAxvNbKEaSqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d8IwQx5v; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739381568; x=1770917568;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=TsAUZDN7dw/ozl9tzhSbG2kUks+xD1sddY6H6S783ic=;
-  b=d8IwQx5vYRSvj5olKnmWXaXg594i3QfA9NlT37OyIPcJKz7YLB2Qbwvz
-   sYq0QC9PIQTip3ST3lZxvAkMy7mrfK5O3nL2vILoTCDWhYvy8kfKY8o1y
-   FQg57HcSp6kxkEgdfYKCjIzm/CWQnhOdG6DkmrS3se/sL93SrHQUDC1Ld
-   x2ib3zqxNb4v0Sj6rCZncs1XB0hf8aN73E6veY4PELQcNwzzA8Zutm7y5
-   uX1veO3pU75HC5GlzmWNDNO/jaN7h3v2OChLLWSEijM/zyA/pUNJfU1dT
-   Q0J/7wp2LvspDl1muVgbX4wCiDmux6NpRWmRe8l+BpKEexKvjW7Bo9pBT
-   A==;
-X-CSE-ConnectionGUID: YjMzeyO3SQe4w7xWlUIykQ==
-X-CSE-MsgGUID: z8geW/MQR0ueqB9BarC9aA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="62520857"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="62520857"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 09:32:47 -0800
-X-CSE-ConnectionGUID: pBozJAGsQ2GYbDJd89JYmA==
-X-CSE-MsgGUID: SwvQ+c5+Tm6OzSEl8XKpdw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="117831698"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 09:32:42 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tiGbH-0000000AuIS-1VRs;
-	Wed, 12 Feb 2025 19:32:39 +0200
-Date: Wed, 12 Feb 2025 19:32:39 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Emil Gedenryd <emil.gedenryd@axis.com>,
-	Arthur Becker <arthur.becker@sentec.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-Message-ID: <Z6zbN4fjD1YUQlDI@smile.fi.intel.com>
-References: <20250212064657.5683-1-clamor95@gmail.com>
- <20250212064657.5683-3-clamor95@gmail.com>
- <Z6ywGgofzU1bvm0H@smile.fi.intel.com>
- <CAPVz0n1UuZPCb3Jdj_fK3Ut7WKBgtvj7aROqJ4YeYVMutuyv7A@mail.gmail.com>
- <Z6zIAGLot3YQLo9S@smile.fi.intel.com>
- <CAPVz0n1Mf02GvSBd_TOuNiuCVTTOx4-228qkdf-JL_eqGCh2MA@mail.gmail.com>
+	s=arc-20240116; t=1739381598; c=relaxed/simple;
+	bh=cxkJV60+sf4P/rsGTAfZtv+YvNaIelKydnRgfDpCgeE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BldqLK+ESL+FJbkC/9Ffpw3+30vXeKTOm5S0CVV3BNIcpBpMKu+w/RNUvh6KEz5xkRs/3IfIuP2AJRqFkfNI4+UJe8QrNB3nVhyDyaw6bpCMzWcqDHTOzYG+GvdvreDl9WZY9ELTqy0fwbC7Iau/xqgnFwAY/rADvVhpCWg9p1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dRR/4lCA; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2a01bcd0143so23805fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:33:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739381595; x=1739986395; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=72VD7sYVet7S5yqMk9w1SxSUJq1Pf2TFibod+5PMSRY=;
+        b=dRR/4lCAcRAvF5ihBCS+kSls+yD2ckF+RW60960b+erLM1IrJxtGg+kOOJpWsInU+F
+         pVGw9vJExXrVWQRqMD5VA6emyXo/1aHObqW4gaHIjC5DJq4on+rhBC0/K58/2+Na8FYQ
+         FiozRPAkM3SFdtWLYOWN3Z3aWwuu9ZVNk5HGzIEMIoJgk0WyHn1bXIEcby44DCKPTUOw
+         bEExR4HT1z6tQOOtLC7bnFEnmIXdhBla1pgUeoJEA0r467udnH+2dBsUDdV2MHZOk5Hs
+         FS84RV4pHFsJAR/kiTL3X9yyP0l0KX0u55N08mBJ4zpc50Wbmpgr2qjeK+oyEAaUPGW9
+         KEBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739381595; x=1739986395;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=72VD7sYVet7S5yqMk9w1SxSUJq1Pf2TFibod+5PMSRY=;
+        b=EMIAongl6euU/auEKkgr/rACR+wLX7rqVyCNwKbG1+jOks4S6Izurfo5MY3+R9Ikk1
+         N9mKtgwGye3/y/5IWrqJY1lI1zoXb+uA4DqTwhLBHG72/edLkYlMnoyra7DFjzaLyuet
+         c/dCPU7pCZMDE8jFSu6fmOEVF8R2ylw3FezxHzqN20p0tfYHa/8P+itRWVTx5PiMgbwa
+         z6TRQusczEUpTrAcGZ06bmL8HM3ZsZWoV1ncWouwEBNJGwKTTWPJ36yfr2+lWHa2RpSi
+         r5g259O1xYtlYCj1Q4jGU5lFlsvSrhz3TZcHm5SjR8DGuhiCe7ImuGohib32zHAo4zlp
+         npXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXNznHzxXyCW1bl0ZATl/f4StOJIu26s3Ro7QlqP4cV5gkTGejVDghcBAceZP9DGApEvVxHxPDmBbM8+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzb0yoPXtxk8euW76of5CJ2nhSH61CgD1P+1lntbKakt0QWUfP
+	id3gfeHYzeV6oeAkg9hHSR0AzA0ImXQi5E50/jXE0gU8nPsjEVDXtLxttrdFJCs=
+X-Gm-Gg: ASbGnctzeANZ8sgbkpV1zF5A1lAg2A3R8Vcw/OgAvp5SgMIv2D2rtcpYT20DXzRrchb
+	4hMBBPxLLUYFI70iUHYIFpqdQMy0iIRmcA9Qg/faY7s72bU2iApdPL5SnLDae/pPWfWMGMipXTz
+	yXPOsOZoKFiT0raUPAD+T7dKTuUxtALzj4w6e/CJMyzvyY7bCk2doBNL3RXXCaLU8dBgrtBJHbK
+	yCLCWCtE6XhFQ97WrmGxVpTGlXdVLcPmZ04Qz+QLFdKR9P1UdcR8TsXIeC8DBcYgwToPxmVxhGH
+	tsKEM7O0H7MFMntz+Cm7J8OlRegske+i5MByrcx3oq5snnk=
+X-Google-Smtp-Source: AGHT+IGhI9+IRcyp7FZ5+iDkPMiJLIwnW6dJrSCJVX4eRkYofW2SpR6cdFtktOHd3GXkZqqBRvfuNA==
+X-Received: by 2002:a05:6871:580a:b0:288:18a0:e169 with SMTP id 586e51a60fabf-2b8d658576fmr2419433fac.19.1739381595433;
+        Wed, 12 Feb 2025 09:33:15 -0800 (PST)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-726af9343c2sm4720190a34.20.2025.02.12.09.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 09:33:14 -0800 (PST)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/2] spi: offload: fixes
+Date: Wed, 12 Feb 2025 11:33:11 -0600
+Message-Id: <20250212-spi-offload-fixes-v1-0-e192c69e3bb3@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n1Mf02GvSBd_TOuNiuCVTTOx4-228qkdf-JL_eqGCh2MA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFfbrGcC/x3LTQqAIBBA4avIrBtIsx+6SrSwGmsgUhyIILx70
+ vLj8V4QSkwCo3oh0c3C4SrQlYL1cNdOyFsxmNq0tdEGJTIG78/gNvT8kGBj3eAW6qzuCcoXE/2
+ hbNOc8wfIPyH8YwAAAA==
+X-Change-ID: 20250212-spi-offload-fixes-34a8abe6417e
+To: Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Nuno Sa <nuno.sa@analog.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>, 
+ Stephen Rothwell <sfr@canb.auug.org.au>, kernel test robot <lkp@intel.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Wed, Feb 12, 2025 at 06:36:37PM +0200, Svyatoslav Ryhel wrote:
-> ср, 12 лют. 2025 р. о 18:10 Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> пише:
-> > On Wed, Feb 12, 2025 at 05:20:04PM +0200, Svyatoslav Ryhel wrote:
-> > > ср, 12 лют. 2025 р. о 16:28 Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> пише:
-> > > > On Wed, Feb 12, 2025 at 08:46:56AM +0200, Svyatoslav Ryhel wrote:
+Fix a couple of issues that were reported with the recently added SPI
+offload series.
 
-...
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+David Lechner (2):
+      spi: fix missing offload_flags doc
+      spi: offload: fix use after free
 
-> > > > > +#include <linux/i2c.h>
-> > > > > +#include <linux/module.h>
-> > > >
-> > > > > +#include <linux/of.h>
-> > > >
-> > > > No of*.h in the new code, please.
-> > > >
-> > > > > +#include <linux/regulator/consumer.h>
-> > > >
-> > > > Too small headers to be included. You use much more.
-> > >
-> > > Is there a check which determines the amount of headers I must include
-> > > and which headers are mandatory to be included and which are forbidden
-> > > to inclusion. Maybe at least a list? Thanks
-> >
-> > No check, there is IWYU principle.
-> >
-> > https://include-what-you-use.org/
-> >
-> > The tool is not (yet?) suitable for the Linux kernel project and Jonathan,
-> > who is the maintainer of IIO code, had even tried it for real some time ago.
-> 
-> So it is not adopted by the Linux kernel.
-> Lets return to this once it will be adopted.
+ drivers/spi/spi-offload.c | 13 ++++++++-----
+ include/linux/spi/spi.h   |  2 ++
+ 2 files changed, 10 insertions(+), 5 deletions(-)
+---
+base-commit: 6cc789bf76b1f414791c69227e6c21ec41115213
+change-id: 20250212-spi-offload-fixes-34a8abe6417e
 
-I understand you want to push your way, but here is the thing. This is a
-community of people and review is not something that comes for free. People,
-who are reviewing a code, want to make sure the code follows not only
-documented style, etc., but also common sense and the future maintenance.
-When a contributor comes and drops something into Linux Kernel project
-it adds a lot of work on maintainers' shoulders and other contributors
-who may be in progress of solving the other tasks. I specifically sent
-you a link where the tool and the principle is _explained_. So, it's not
-about the tool, it's about the whole project to become better and easier
-to maintain. You are a new guy in the development as you stated, so,
-please try to see how this all works.
-
-Of course, the last word here is Jonathan's as he is the maintainer of IIO,
-but I truly believe he will suggest you to follow my advice and not otherwise.
-
-> > > > > +#include <linux/iio/iio.h>
-> > > > > +#include <linux/iio/sysfs.h>
-
-...
-
-I assume the non-commented parts you are satisfied with and they will be
-addressed as suggested. Thank you!
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+David Lechner <dlechner@baylibre.com>
 
 
