@@ -1,124 +1,108 @@
-Return-Path: <linux-kernel+bounces-510873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2659A32311
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:03:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1336AA32328
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388383A2C7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:02:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DEE163C00
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0961A208978;
-	Wed, 12 Feb 2025 10:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3F7207E04;
+	Wed, 12 Feb 2025 10:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFknMvAY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WOCDolO0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4E12080F6;
-	Wed, 12 Feb 2025 10:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430AE2066FA;
+	Wed, 12 Feb 2025 10:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739354474; cv=none; b=fsDH8Mtd3CGj86o78dJ4AV6zfNZjNbWxF2K79YHSTUZs0ZK/Yc/GUA29NsI86w/v1RqQFE1g2dS/FO6/l1jh0NE57OwUHKzaKAAhFlDEse6o7+nVHfxMejTW9LHbtD/WcW7Janm9hARwXhTaG+l9daEroxy1qGYX6MPCAr/EUnI=
+	t=1739354714; cv=none; b=Coj5weQwgGhPe6FbwQY+0e1ysSABhiISHycGFQ/i8e9EYnjOv3jjLlYDYL0pq25/B3ntOZd7zuLvLHV6wL86N0mD3mxDeFlzG2LAHI2lOUBnJyV2eOHN1mpE03hQsLQuht8S1gfQdM4JG48KPomCH8RPdU5/XkopIhRN4VpxNnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739354474; c=relaxed/simple;
-	bh=woz7pk/+ngx1fAXXik33xpEwcwvHhgnlnzWIambURC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqbbygEtswuwWLAdOsBTKXOL5mps0yVibe9WZzhDnoB8uThGkh8bvCjfgCKSa+soPEM6jbkPuP8/Ph6vin1X4tCRUpZCvsx02Kv/WcnAxvsLyDXoriIw59tNjdT4ewehsIug7M7zKb8iaL5/444vL7AtIuKTXdknA0mnIr3GtbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFknMvAY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 373AEC4CEDF;
-	Wed, 12 Feb 2025 10:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739354473;
-	bh=woz7pk/+ngx1fAXXik33xpEwcwvHhgnlnzWIambURC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JFknMvAYCwTyrVf3OxL2gYhdX1gCloKqAmyPXLmtzPDsbcRVkduTdz/DV5ooCn6B8
-	 4+t2DpEMJiVVr1HQy/UiPXnSvdRjYZe/W+HkI0ERWJH1/abm0dKszP95sM9O6UTc7F
-	 cLOzYQhgS2NJc9exC2em9aL/Mx1QYAwOIbY8AESaYkLTGqh4r4i4tds7+BKUhmiddw
-	 rV8PgQzg43sxTHsHorGuUbkQHjEZkYtDbHRc+gM3WRI8ALQ9y2UmKa7xUpmV7xI6eF
-	 3dF5FTcTfKWbuXXv91blHqqWPM6YquxAfS0ysnR7v22PRyei45Pal7UpfLtSsX8Q6B
-	 eI9d4Ema9btyQ==
-Date: Wed, 12 Feb 2025 11:01:11 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Florent Tomasin <florent.tomasin@arm.com>
-Cc: Nicolas Dufresne <nicolas@ndufresne.ca>, Vinod Koul <vkoul@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
-	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Yong Wu <yong.wu@mediatek.com>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, nd@arm.com, 
-	Akash Goel <akash.goel@arm.com>
-Subject: Re: [RFC PATCH 1/5] dt-bindings: dma: Add CMA Heap bindings
-Message-ID: <20250212-naughty-chipmunk-of-potency-7e0ced@houat>
-References: <cover.1738228114.git.florent.tomasin@arm.com>
- <771534be8dfa2a3bdc3876502752f518224b9298.1738228114.git.florent.tomasin@arm.com>
- <ats2unrml5a7vbpdrqrzowodrsfj44bnubpbujg2igk3imeklx@nrpmg5oeq3gz>
- <be8e6b9f-c3c6-41d1-af9c-3dcd102f0fe3@arm.com>
- <b02711c901e8acf2bc47926919de7673a0cb0b98.camel@ndufresne.ca>
- <fae8df2a-3e47-4266-aace-392c5f37581f@arm.com>
+	s=arc-20240116; t=1739354714; c=relaxed/simple;
+	bh=E49MearhCWQAl0JeKNyAQ1d0vfOm7rpIo89lLibkdVM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dPvSBKNgG0MHGIUG2/StSp/AQLQXFGkBkenuDaWTvPBdC8wmYMczB9w74XdbiiXYTr7o/74ASMLAC+2SJ7a/9MeAx5ecK1lRzzhzN3QurmXRipp3tiJ6PVLoAkjnRAAZCwQQZPOTgwwJHthX6NC9UEnHdr+t3sh/1pO2cis2OJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WOCDolO0; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739354712; x=1770890712;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=E49MearhCWQAl0JeKNyAQ1d0vfOm7rpIo89lLibkdVM=;
+  b=WOCDolO0WeEfFC9G3aZGCcuNJE0p1TwM313t8N9K0CmzqOpjvsoiqHau
+   21xBLjlPk3J7oEOGlqxf/uj+BqJJ2MjvrQj1fQenHfjKpDvceJda6ZXXr
+   Mi69BgyBaxaqeCfDD4eTUSfI/qsstnOkfRUz8jgYk6fP+bsE6UcMpnOdk
+   WQXPaqE7f52OHTPEzkSSfAFxcqyB0cedDj82fqfaXPnMjgmCDaiAoHjeY
+   rhUcmDoBFZUb9UIPUnVQLrAFleYHpMoOpR3YVrK/Tm+5X3IF20X3y0irC
+   XnBCW78eSdslSdgO+c8sI1cGF2Bk4M2P9B8nA1sA3hBjKgNrZT9Qw8y5m
+   Q==;
+X-CSE-ConnectionGUID: fV9lWE25RA60aBh27YA/vQ==
+X-CSE-MsgGUID: LFYruDamR8WSQv8qtu/dEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="57537829"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="57537829"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:05:11 -0800
+X-CSE-ConnectionGUID: ng1uiUhoSru3NGd7NB4iQA==
+X-CSE-MsgGUID: zPR1TcnETaC+BG2XkiXj+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117957606"
+Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
+  by orviesa005.jf.intel.com with ESMTP; 12 Feb 2025 02:05:09 -0800
+From: niravkumar.l.rabara@intel.com
+To: Dinh Nguyen <dinguyen@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	niravkumar.l.rabara@intel.com,
+	nirav.rabara@altera.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH] arm64: dts: socfpga: agilex5: fix gpio0 address
+Date: Wed, 12 Feb 2025 18:01:31 +0800
+Message-Id: <20250212100131.2668403-1-niravkumar.l.rabara@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="uxrfo3idfywaw7zh"
-Content-Disposition: inline
-In-Reply-To: <fae8df2a-3e47-4266-aace-392c5f37581f@arm.com>
+Content-Transfer-Encoding: 8bit
 
+From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 
---uxrfo3idfywaw7zh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH 1/5] dt-bindings: dma: Add CMA Heap bindings
-MIME-Version: 1.0
+Fix gpio0 controller address for Agilex5.
 
-On Wed, Feb 12, 2025 at 09:49:56AM +0000, Florent Tomasin wrote:
-> Note that the CMA patches were initially shared to help reproduce my
-> environment of development, I can isolate them in a separate patch
-> series and include a reference or "base-commit:" tag to it in the
-> Panthor protected mode RFC, to help progress this review in another
-> thread. It will avoid overlapping these two topics:
->=20
-> - Multiple standalone CMA heaps support
-> - Panthor protected mode handling
+Fixes: 3f7c869e143a ("arm64: dts: socfpga: agilex5: Add gpio0 node and spi dma handshake id")
+Cc: stable@vger.kernel.org
+Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+---
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You keep insisting on using CMA here, but it's really not clear to me
-why you would need CMA in the first place.
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+index 51c6e19e40b8..9e4ef24c8318 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+@@ -222,7 +222,7 @@ i3c1: i3c@10da1000 {
+ 			status = "disabled";
+ 		};
+ 
+-		gpio0: gpio@ffc03200 {
++		gpio0: gpio@10c03200 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = <0xffc03200 0x100>;
+ 			#address-cells = <1>;
+-- 
+2.25.1
 
-By CMA, do you mean the CMA allocator, and thus would provide buffers
-through the usual dma_alloc_* API, or would any allocator providing
-physically contiguous memory work?
-
-In the latter case, would something like this work:
-https://lore.kernel.org/all/20240515-dma-buf-ecc-heap-v1-1-54cbbd049511@ker=
-nel.org/
-
-Maxime
-
---uxrfo3idfywaw7zh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ6xxYgAKCRAnX84Zoj2+
-doOXAYCmJnHBgdesgUZVquuWr6GPMIwXNegsF2kF9WE8cUf8QZREQljZMta1yPl+
-Y3KyEfEBf2GAaLjFhJfdk0/CAvLXAP/kO5oVGERfJbRdGvpysS+9JiElAhrVFTWR
-1Zzqx2VRSg==
-=Jh+j
------END PGP SIGNATURE-----
-
---uxrfo3idfywaw7zh--
 
