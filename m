@@ -1,179 +1,158 @@
-Return-Path: <linux-kernel+bounces-510626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE528A31FAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:12:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C96A31FBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 940951637B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:12:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E51A188BB1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928F3201249;
-	Wed, 12 Feb 2025 07:11:58 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF07204581;
+	Wed, 12 Feb 2025 07:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cMGiXXqB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C930F1E7C32
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4157C1DD9AD;
+	Wed, 12 Feb 2025 07:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739344318; cv=none; b=SifQxzccG8dfota7Q3RTt4+fFg9v4LaWoL+TM8xSR/ZWs2uuQGptI+6hGYMEp2/gDovDvVPS6H8dXCJ/BLQasKaICjfjDMEe1yEi8e958rrNclMrakDT901wizmTYTlzrlMtVv9/OiWJYKinUOwZBDmrovzVLNq9VZxhH2e1sTQ=
+	t=1739344558; cv=none; b=C4bNXNMBbi1yEnZ36RYTnfPsffLfGpHHXZGqiaoeOy3FvxV0iA8SRM0UOKvchgh13IkUGpDVPU4ZDxs+Y9r/hCI3hqq7v8pGWtvbO9hkhf1O6236PTD9kW+fXxmX7VhtrEVanCFr+aTGdVdN8N1UCCFaAVjiQ8Uj8oQcmhnYf/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739344318; c=relaxed/simple;
-	bh=GJPdY5itbmQGjcWc9TSzKmlbHCws3oJAUihXTwLsbIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=drnPK9pqUOYGFfKzy6evYxD37of+Qll6uX60uR+dYc+kAp/OsCUtmKnq17Zcc7ETcvMNzSfV/WXxl5zhFg6nZKTFBOYsWIv991ECRjuLgMXThcZkHgjxOC1Y8FX85D/+x06qI1lFTkNC7IxClUtlvKC+HVJXSmnVYm98drOInik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: a1774a2ae91011efa216b1d71e6e1362-20250212
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:638f534e-e92e-4ec0-86e3-0b026c1322ba,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-INFO: VERSION:1.1.45,REQID:638f534e-e92e-4ec0-86e3-0b026c1322ba,IP:0,URL
-	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:b2009f6d2ef2126a1645f1d817ca7c41,BulkI
-	D:250212131311UOV0929M,BulkQuantity:3,Recheck:0,SF:17|19|38|64|66|78|80|81
-	|82|83|102|841,TC:nil,Content:0|52,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bul
-	k:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,
-	BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: a1774a2ae91011efa216b1d71e6e1362-20250212
-X-User: liuye@kylinos.cn
-Received: from [172.30.70.73] [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <liuye@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 2105293162; Wed, 12 Feb 2025 15:11:50 +0800
-Message-ID: <ea27222c-1306-45d5-ad55-6d7780ada06b@kylinos.cn>
-Date: Wed, 12 Feb 2025 15:11:47 +0800
+	s=arc-20240116; t=1739344558; c=relaxed/simple;
+	bh=Jl/RExNC7L/CWPHfobcu6zP+lqJZmKi8R5mVEGE90Ws=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Cnf2Z9Q8YoViHFZgPm/EdxUoPBvdNKAl6jp6VfDHGFUirANd9BoH+DU89vRW1Q2h9+Fv/uvBIm5NhdcGC2jovj5U+AV3SvKrWAsHAbKRKMI2KHAT0fEnhp/eIpOFfdG5TVVSyDsmZWomchrOu89mlAHr6jZGQQbr9yRaH9bBrUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cMGiXXqB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C0Nsd1000355;
+	Wed, 12 Feb 2025 07:15:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=48VtbAEtHa9FVv7oX7/yR3
+	rNttch9ec7jgrW2MLFWqA=; b=cMGiXXqBFPyBDBTioXAtpLpsQd+XeS5e25NKqD
+	smy+qLh4QuW+Xr7HtqgQZy+culWRVLBih1MzNlqU9RwnvB+huXSNQL+nQlabvm4R
+	3ZV/e+P4mm1EdSBzLhqbhH/IB4XnfKTq4PQh0NXblssjKwIiqDPXoP3FT6hZAX1J
+	lC/mcgVp7wh0w5JeQWeNB/eKlP9U3a41WtpyxG9YShE9555UGfS4K/BFY6qPXUVH
+	flu3w8B8cOfYOJxmZ8AjGIWW87I+EueW1S4BeOe47m51BfKtU0R8XNsVzkiTOrtr
+	moJC7Ti7v/ATCjaJDb/fHiQQUzC1RGmb9f2/5Lof+/m8kMVA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qgtk6822-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 07:15:42 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51C7FfhG005106
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 07:15:41 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Feb 2025 23:15:35 -0800
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+Subject: [PATCH 0/4] Add MST support for qcs8300 platform
+Date: Wed, 12 Feb 2025 15:12:23 +0800
+Message-ID: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm/mm.h: Write folio->_flags_1 & 0xff as a macro
- definition
-To: Shivank Garg <shivankg@amd.com>, brauner@kernel.org, dhowells@redhat.com,
- akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250212025843.80283-1-liuye@kylinos.cn>
- <20250212025843.80283-3-liuye@kylinos.cn>
- <50f02ce2-85f8-4dda-b3c4-ad3f20f8b9a2@amd.com>
-Content-Language: en-US
-From: liuye <liuye@kylinos.cn>
-In-Reply-To: <50f02ce2-85f8-4dda-b3c4-ad3f20f8b9a2@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOBJrGcC/22OwW6DMAyGXwX5vFQ2JTHpae8xVVMwZs0BaBOGN
+ lW8e1N67fGz5O//7pA1Rc1wqu6QdI05zlMB+qhALmH6URP7wlBjbbEmMmNevm+S2yOiaYTaYIk
+ 9OQvl45p0iH+77ev84qS33yJdXkfoQlYj8zjG5VRxF3wnYtGjtU4QufeBqe2Z2Cl6HtQ2A3l4u
+ i4xL3P630NX2mVvm1YyaLwLR2WuG2e7zxIgcZJDmYXztm0PnA0Y6PQAAAA=
+X-Change-ID: 20250211-mst_qcs8300-4c18a5179165
+To: Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Yongxing Mou <quic_yongmou@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739344529; l=1827;
+ i=quic_yongmou@quicinc.com; s=20241121; h=from:subject:message-id;
+ bh=Jl/RExNC7L/CWPHfobcu6zP+lqJZmKi8R5mVEGE90Ws=;
+ b=TPyxPGWrK3pvuk+wl8LmqunqRUy4OuHYZoitd6OuRqhbktqFyRZtmAwZWCMqLtWqccEs7y6Rf
+ igITqw2rVRHDuuLqcq9swzQYIR71KkjtKk0MzHsP3vippE15DLjEsMy
+X-Developer-Key: i=quic_yongmou@quicinc.com; a=ed25519;
+ pk=zeCnFRUqtOQMeFvdwex2M5o0Yf67UHYfwCyBRQ3kFbU=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DzL6IFt04_o_IEetidlIpHe8dYBEAvBx
+X-Proofpoint-ORIG-GUID: DzL6IFt04_o_IEetidlIpHe8dYBEAvBx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_02,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0
+ adultscore=0 clxscore=1015 mlxscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=793 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2501170000 definitions=main-2502120055
 
+This series of patches introduces how to enable MST functionality on
+the qcs8300 platform. The qcs8300 platform uses dpu_8_4 hardware, which
+is the same as the sa8775p, but it only has one DPU. So it only has one
+DP0 controller, supporting 4-stream MST. This patch only enables 
+2-stream MST, using intf0 and intf3. The first and second patches are
+modifications to the correspond dt-bindings, third patch is the dp 
+controller driver after not reuse sm8650, fourth patch is the qcs8300
+dts modification which add the clk support for stream 1.
 
+Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+---
+This patch depends on following series:
+https://lore.kernel.org/all/20250120-mdssdt_qcs8300-v4-0-1687e7842125@quicinc.com/
+https://lore.kernel.org/all/20250114-dts_qcs8300-v3-0-d114cc5e4af9@quicinc.com/
+https://lore.kernel.org/all/20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com
+https://lore.kernel.org/all/20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com/
 
-在 2025/2/12 13:40, Shivank Garg 写道:
-> On 2/12/2025 8:28 AM, Liu Ye wrote:
->> There are multiple locations in mm.h where (folio->_flags_1 & 0xff) is
->> used. Write it as a macro definition to improve the readability and
->> maintainability of the code.
->>
->> Signed-off-by: Liu Ye <liuye@kylinos.cn>
->> ---
->>  include/linux/mm.h | 10 ++++++----
->>  1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index 7b1068ddcbb7..750e75f45557 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -1098,6 +1098,8 @@ int vma_is_stack_for_current(struct vm_area_struct *vma);
->>  struct mmu_gather;
->>  struct inode;
->>  
->> +#define FOLIO_ORDER(folio) ((folio)->_flags_1 & 0xff)
-> 
-> This folio order calculation is only valid for !large folios.
-> When it's a single page (not a large folio), the memory is interpreted as struct page.
-> 
-> struct folio {
-> ...
->         union {
->                 struct {
->                         unsigned long _flags_1;
->                         unsigned long _head_1;
->         /* public: */
->                         atomic_t _large_mapcount;
->                         atomic_t _entire_mapcount;
->                         atomic_t _nr_pages_mapped;
->                         atomic_t _pincount;
-> #ifdef CONFIG_64BIT
->                         unsigned int _folio_nr_pages;
-> #endif
->         /* private: the union with struct page is transitional */
->                 };
->                 struct page __page_1;
->         };
-> ...
-> }
-> 
-> I feel this to be risky, considering someone may directly use FOLIO_ORDER() macro
-> without folio_test_large() check.
-> 
-> Correct macro should look like:
-> 
-> #define FOLIO_ORDER(folio) (folio_test_large(folio) ? ((folio)->_flags_1 & 0xff) : 0)
-> 
+---
+Yongxing Mou (4):
+      dt-bindings: display/msm: Redocument the dp-controller for QCS8300
+      dt-bindings: display/msm: Add stream 1 pixel clock for QCS8300
+      drm/msm/dp: Populate the max_streams for qcs8300 mst controller
+      arm64: dts: qcom: qcs8300: Add support for stream 1 clk for DP MST
 
-Yes, this is safer.
-At present, the positions using FOLIO-ORDER have been checked using folio_test_1arge or
-test-bit (PG_cead,&folio ->flags), and these positions may need to be simplified.
+ .../devicetree/bindings/display/msm/dp-controller.yaml     |  5 +----
+ .../devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml | 14 ++++++++------
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi                      | 12 ++++++++----
+ drivers/gpu/drm/msm/dp/dp_display.c                        |  8 ++++++++
+ 4 files changed, 25 insertions(+), 14 deletions(-)
+---
+base-commit: 7ba9bcc5090556c007d9a718d7176e097fe54f19
+change-id: 20250211-mst_qcs8300-4c18a5179165
 
-> 
-> Thanks,
-> Shivank
->> +
->>  /*
->>   * compound_order() can be called without holding a reference, which means
->>   * that niceties like page_folio() don't work.  These callers should be
->> @@ -1111,7 +1113,7 @@ static inline unsigned int compound_order(struct page *page)
->>  
->>  	if (!test_bit(PG_head, &folio->flags))
->>  		return 0;
->> -	return folio->_flags_1 & 0xff;
->> +	return FOLIO_ORDER(folio);
->>  }
->>  
->>  /**
->> @@ -1127,7 +1129,7 @@ static inline unsigned int folio_order(const struct folio *folio)
->>  {
->>  	if (!folio_test_large(folio))
->>  		return 0;
->> -	return folio->_flags_1 & 0xff;
->> +	return FOLIO_ORDER(folio);
->>  }
->>  
->>  #include <linux/huge_mm.h>
->> @@ -2061,7 +2063,7 @@ static inline long folio_nr_pages(const struct folio *folio)
->>  #ifdef CONFIG_64BIT
->>  	return folio->_folio_nr_pages;
->>  #else
->> -	return 1L << (folio->_flags_1 & 0xff);
->> +	return 1L << FOLIO_ORDER(folio);
->>  #endif
->>  }
->>  
->> @@ -2086,7 +2088,7 @@ static inline unsigned long compound_nr(struct page *page)
->>  #ifdef CONFIG_64BIT
->>  	return folio->_folio_nr_pages;
->>  #else
->> -	return 1L << (folio->_flags_1 & 0xff);
->> +	return 1L << FOLIO_ORDER(folio);
->>  #endif
->>  }
->>  
-> 
+Best regards,
+-- 
+Yongxing Mou <quic_yongmou@quicinc.com>
+
 
