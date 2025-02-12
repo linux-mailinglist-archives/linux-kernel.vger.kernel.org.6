@@ -1,133 +1,253 @@
-Return-Path: <linux-kernel+bounces-510758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E25A32188
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:53:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D949AA3218C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:54:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C873A2690
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:53:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415231889179
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477FC205E28;
-	Wed, 12 Feb 2025 08:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AE6205AAC;
+	Wed, 12 Feb 2025 08:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="So5F81QA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P/2gG2wj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+sFnjW3g";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aovcrHW0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1YTt52yd"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955D3205AA6;
-	Wed, 12 Feb 2025 08:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF03A205AA9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739350361; cv=none; b=CSSKxPIgsGbN2Re7bE3fTcg9WeW798QZasq23dxIt0LMAl/BNWYFMwTsW45fLaS7LX0UMa3iP8J3ol7CWLiY6TupmvSImBjybuR20us3JrB+u2f3TseO+obd9SEdLvfoVIUqAEy9dPJuanHJqxrr/qoNFlpvNNppb9vud56yGYY=
+	t=1739350394; cv=none; b=fWneonnwhAx5Ka3UmN+XLDUvvFASG1dqidO5LbQpCak9zBKdhPT3m+3BDDDNUG9Sgkt0/G4bpJdQ9kA1RhMVzgQlnJo0ltX0yGt8Kg/+I9k0m/tmE95xx0Y3+wl9CSa8AANZcFTWcCFk503+fBmuP3PPpLaiazp7DrlXgeRkUq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739350361; c=relaxed/simple;
-	bh=bdK+VxiVV4KOUJRWDrAuxeH6gy5pVd6hYgPsv08gCJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AReMbIIRfhKyeON8boIX5yU0bXIbl7PpwwKnQk0NHL+Fkax7QWLIHS4RTx659udszn9JVlJhhsETxRrf5o7GrQa3HHKa+JhAfjR6sS41kqVQZjXNMxEAAXorSrrflZOZkgMDHNjSiv5D6ayUTWoRWWTktt14bzVEDn71gcR6hYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=So5F81QA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 612E6C4CEE6;
-	Wed, 12 Feb 2025 08:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739350359;
-	bh=bdK+VxiVV4KOUJRWDrAuxeH6gy5pVd6hYgPsv08gCJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=So5F81QAuwJ+1qRMtQ9WFciFLq9qfBrsXjuU+FwMIF/BMpbj4afsLcc5FeEIDgwA+
-	 j11Qsh+ENXn6+UWmBmVbGL6olFhQCS0zMmpgryrDMC5PlGFNOm8LSJc2r5sbU/EHer
-	 3pKOhgb+fygeaDpGivfoinzbivP8U2SqqvoonL0qxYe3ddiCXf5cd0c2mgxMRpRkw0
-	 jqDFmgKfNNHTqKgpbzojSGEgeivLKBGyy0s8gdq4HIc83Q/zoNLDwhDLHaFhmggUhs
-	 B5dkfCd8LvmR5EUaI2sfpB6qoDODu3NK2EMtrKMWkSPw9zgFaXzr0e/9K6D9V93YgE
-	 ySk+CO0MCAZ/g==
-Date: Wed, 12 Feb 2025 09:52:37 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Mark Brown <broonie@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>, 
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v8 01/17] spi: add basic support for SPI offloading
-Message-ID: <57swm23ik5kyzcjvnhkizctnemtlqf3duhrd5u3n6yelxkerxt@6akfoqmyqsup>
-References: <27d2a88c-b44a-4712-b066-b999e41774f0@baylibre.com>
- <b1dcbb19-190a-45e7-8e94-cb5ef65f1f1b@sirena.org.uk>
- <Z6pim_nLct33LzfN@smile.fi.intel.com>
- <b000d3fd-754a-43e8-ab10-82677eeee1d2@sirena.org.uk>
- <Z6tcwg7QgQwytoSb@smile.fi.intel.com>
- <Z6tezVXVxVCwXuds@smile.fi.intel.com>
- <Z6tfUfHilO2KLmxv@smile.fi.intel.com>
- <Z6tgNjH6Qq5pe9Gt@smile.fi.intel.com>
- <tnjsrq3trijh4agmbhrfnqeq4iojhwybtg45bwt5n7mg7qqgcx@s7gw7idjuxgd>
- <Z6uhHssgIvI2DJ4c@smile.fi.intel.com>
+	s=arc-20240116; t=1739350394; c=relaxed/simple;
+	bh=g4KeTskwrIdiR6JEokn2Se9tj+8T1FbCU6X7K/dG20M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KVB9n2Zg//UtgmrbOwshk68e0TDf5iVly9M4zp+/QeoHzXc/U/ljX+qc8HbQjGtimo3FTFGxpDTt/EDhmX7/MgrSNFptP/B2GaNR1W4PQzyDXmHRVMGgTGECpSNbVnKSYim2b/cCHKdVjfHjLGyxBhi5vvZoG9Yf/GLlfweyNMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=P/2gG2wj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+sFnjW3g; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aovcrHW0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1YTt52yd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D99B81FE2B;
+	Wed, 12 Feb 2025 08:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739350391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+P4OjubboN7qN6bZM/3PlacoCf6VfEnR89jxrL/sEak=;
+	b=P/2gG2wjaemcV0mLg8HhUfyqKLafOoDb07RNDKZAKtps296wt7UxvSIMz6KP7TVEZBlbcU
+	EfAVO2EsZPnu+CcqhI2yupw+SUD6J3zH3AIiYa7rvKNHe6wg/4Rv7n1WmFjJJYBQoL8GoK
+	ScNcG4QREgrLpu988He+wzjmDyxTHWo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739350391;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+P4OjubboN7qN6bZM/3PlacoCf6VfEnR89jxrL/sEak=;
+	b=+sFnjW3g4pKq8ylrlMKV6ysTl4Eb4vxU+Zea0uMFMRx/7wL2kojG+Kz8tkMxDhHcVmeUhz
+	2Ns50GX367Xcq8Dg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=aovcrHW0;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=1YTt52yd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739350390; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+P4OjubboN7qN6bZM/3PlacoCf6VfEnR89jxrL/sEak=;
+	b=aovcrHW0hqdew7zw8H5NK71AvGZYNg1Isz1Vr9PEPRf80ITU4IHoLftbD5+qX7zopbSTLd
+	wsje+dnp5JZ318Cdsk1fC88yghQyhTPPrgbyW3d5E3J8qyaOvouEoYgU/+H3XvGXXkkBdO
+	FQju5AeCFjaAbBSpwceLkJps5pTz0PQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739350390;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+P4OjubboN7qN6bZM/3PlacoCf6VfEnR89jxrL/sEak=;
+	b=1YTt52ydQ9pEy/YudpRIpdVKpAzn7XbTkhha7DI/uBC8NmYI/HLeruIXdZfaDw0ezqQtiU
+	5SHV7PFJ+qaVm9CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E1DB13874;
+	Wed, 12 Feb 2025 08:53:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GVZ/IXZhrGfnNgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 12 Feb 2025 08:53:10 +0000
+Message-ID: <bfc71d72-2f23-4c8c-b278-7e9aad3bf72d@suse.de>
+Date: Wed, 12 Feb 2025 09:53:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xdcwwos2kopmxeag"
-Content-Disposition: inline
-In-Reply-To: <Z6uhHssgIvI2DJ4c@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/vkms: Fix use after free and double free on init
+ error
+To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>,
+ louis.chauvet@bootlin.com
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ danvet.vetter@ffwl.ch, sylphrenadin@gmail.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250212084912.3196-1-jose.exposito89@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250212084912.3196-1-jose.exposito89@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: D99B81FE2B
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com,bootlin.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,ffwll.ch,linux.intel.com,kernel.org,ffwl.ch,lists.freedesktop.org,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
 
---xdcwwos2kopmxeag
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 01/17] spi: add basic support for SPI offloading
-MIME-Version: 1.0
 
-Hello Andy,
+Am 12.02.25 um 09:49 schrieb José Expósito:
+> If the driver initialization fails, the vkms_exit() function might
+> access an uninitialized or freed default_config pointer and it might
+> double free it.
+>
+> Fix both possible errors by initializing default_config only when the
+> driver initialization succeeded.
+>
+> Reported-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> Link: https://lore.kernel.org/all/Z5uDHcCmAwiTsGte@louis-chauvet-laptop/
+> Fixes: 2df7af93fdad ("drm/vkms: Add vkms_config type")
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 
-On Tue, Feb 11, 2025 at 09:12:30PM +0200, Andy Shevchenko wrote:
-> On Tue, Feb 11, 2025 at 07:45:30PM +0100, Uwe Kleine-K=F6nig wrote:
-> > I have no problem here. If the header becomes stale we will most
-> > probably notice that eventually and remove it.
->=20
-> Lol. Look at the header hell we have now. 98% code in the drivers/ just s=
-how
-> that the developers either don't care or do not understand C (in terms of
-> what headers are for and why it's important to follow IWYU principle).
+Reviewed-by: Thomas Zimmermann <tzimmremann@suse.de>
 
-Yeah, there is a problem. The source is that we have a metric ton of
-recursive includes (i.e. headers that include other headers that include
-still more headers). Even if you care, its sometimes hard to know which
-headers you actually need. One idea on my long-term list is to add a
-machine-parsable info to header files about the list of symbols that the
-given file is responsible for. With that in place we could create a
-linter that tells you that this source file doesn't use any symbols from
-<linux/of_irq.h> and it should #include <linux/of.h> directly instead to
-make use of symbols defined there.
-
-> > Maybe the unused namespace even makes it easier to spot that issue.
->=20
-> Do we have an existing tools for that?
-
-There is https://lore.kernel.org/all/20250123110951.370759-2-u.kleine-koeni=
-g@baylibre.com/
+Thanks for posting this patch separately.
 
 Best regards
-Uwe
+Thomas
 
---xdcwwos2kopmxeag
-Content-Type: application/pgp-signature; name="signature.asc"
+> ---
+>   drivers/gpu/drm/vkms/vkms_drv.c | 15 +++++++++------
+>   1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+> index 7c142bfc3bd9..b6de91134a22 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.c
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
+> @@ -235,17 +235,19 @@ static int __init vkms_init(void)
+>   	if (!config)
+>   		return -ENOMEM;
+>   
+> -	default_config = config;
+> -
+>   	config->cursor = enable_cursor;
+>   	config->writeback = enable_writeback;
+>   	config->overlay = enable_overlay;
+>   
+>   	ret = vkms_create(config);
+> -	if (ret)
+> +	if (ret) {
+>   		kfree(config);
+> +		return ret;
+> +	}
+>   
+> -	return ret;
+> +	default_config = config;
+> +
+> +	return 0;
+>   }
+>   
+>   static void vkms_destroy(struct vkms_config *config)
+> @@ -269,9 +271,10 @@ static void vkms_destroy(struct vkms_config *config)
+>   
+>   static void __exit vkms_exit(void)
+>   {
+> -	if (default_config->dev)
+> -		vkms_destroy(default_config);
+> +	if (!default_config)
+> +		return;
+>   
+> +	vkms_destroy(default_config);
+>   	kfree(default_config);
+>   }
+>   
 
------BEGIN PGP SIGNATURE-----
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmesYVIACgkQj4D7WH0S
-/k7IZwf/c6sadrN59CUeFwhx+1Vi2lm0uGLDw8ig3j9mjaUBxGEW+wvDO30U1Ft8
-fn2S/+cnpAbM2TEwvJD80kIky8yfXsR48Ui2StGSkBx/CYodyTmMMpNP/UO8lIpK
-ZYk7Stg/AfTXce6zpAE8zY/EuhrogJUftvIQQ+sFMW7CSB4H2znNyF75toykH2yy
-b0jkB16S8qUWsBpHLC9kJAC25e79lh04pwIoPcuZh6fVUrJSZtzEnF7i5D6vOROO
-MIZ+AWx9uNC7YsP3Fn+iIC22Kb86ee3ulW8P4q1IOyqMKwMnnTcZksEJJjKJsmsc
-P7uBKCJdzIdzWBneEgXT4JxfJexMLg==
-=nkBh
------END PGP SIGNATURE-----
-
---xdcwwos2kopmxeag--
 
