@@ -1,232 +1,183 @@
-Return-Path: <linux-kernel+bounces-511936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F07BA331BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:53:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92620A331C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E4F73A81BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:53:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE913A8272
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0996A2036E0;
-	Wed, 12 Feb 2025 21:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA792036EC;
+	Wed, 12 Feb 2025 21:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="q83duBVb"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2046.outbound.protection.outlook.com [40.107.96.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="EQGNIl1P"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602CB1FFC6B;
-	Wed, 12 Feb 2025 21:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739397185; cv=fail; b=l0Eg8qERysomh/deYDbwxVJTdCngjPDqseTy3gbSAyix7aPjthtgTu7OCs9bu3c4a59X3bSRVW9vZa/X/wQNQJPKoE16iNkfFZFxmy7Fshy6worAJkCWKpm5zS0ChgsuCFJeVxJVJ24vpb8iIHyQOfch7cle5sDs8hpcygBY1SM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739397185; c=relaxed/simple;
-	bh=Lgl/wqlwJrr10NfoijX+ID8Vpk8NftBO6DCimQpD0Mk=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=c5N2yT9tRI/VPp4jpAzOKugDldsFiZ2fYl7936xlzUe4DY9XJjnZa0vBC3UQ4AnX7dyrvFski8cr51T92zYdP4J7Bx+YJQ2JMEmahAVA8t33pxlClMz3Cki2P9AkbiO3jwfMtAtcsfvxL7lzLd97Qn4rCTl7A+IiKGhZf7Qz9PQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=q83duBVb; arc=fail smtp.client-ip=40.107.96.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WW3OeA4eJrE7MldR3wjjAwtIPkWck7OzxCnhWbVUvM486qQ2268iRiA39WWPU6+ZQ9gQ4dLU8WiUm8O8zuDSgZ6ALItngC+OL4ICs7OEmEu4NPCxwSOazcoYDZgpAtb1nHn8t6sSiNVL41fwWL7LNgUYZTUY/H/yDcvJcW67OrxAObFNx+Z/99wIV44GQpPAgDUcnqj1lREPvSdEdl9M4Tk9v1XlFNLx8GNLg9a7S2Bol2lABlBQLoTohVQe+Zt3FCwd/KCvIt3AUR6DHh4HbxNK0U/Xu449Wo1fwKHxvSli5Q168OuTDDJXMI0xoLOs/nnfH74zChpbLQtybLa0CQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DAXu/d5XosrabzpdkkPa6qi7pYX2xdygFFVUgG3mU34=;
- b=DAyFnYjmcTyKcHs0Gix0LvjOpVdVVSfgZ5T+HUCMNVAXOAJ4oMxpremJs3Wg4NurW2UjlgnxIZjA4rrZa68C6EmDIRt8xldh105zBwGX2eyBo9p356dE70emKS9Ob+euT13UORd+53BEtnZfdfcVjQly+fGyOTgLPafnkIZd/lwa9SZBK4YCP0G358hOWd2Iqe0Utg3v6brcU9IfbCf7mpJyZ9Ac3VQZzNSnH38F77yShVKZmAgMBJ+dvsEdua4K23nG5+tXPdH94Ug05x+R4kEZRTNL9Ac6jqYYp+6GUqERqSJG+EkjISu3HdWibEl6th0u2GMi3cBjYdswK8hZEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DAXu/d5XosrabzpdkkPa6qi7pYX2xdygFFVUgG3mU34=;
- b=q83duBVbVxsYbKy/O8vfsjyfo1EogBpHA0N7HgMJ3ma3Wdsu84OFAzVsxZXo/M8KnkrAu7CZKC2HnLXbGUo4QxTG9miJl8x8nc2tb91WOcqaVTGx5vQo2red6m8Q6nit+htIkgwCii1h0Amr19R/aXw78y2M6TGM6lomzVsv0uU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- SJ2PR12MB9210.namprd12.prod.outlook.com (2603:10b6:a03:561::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.19; Wed, 12 Feb
- 2025 21:52:57 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8422.010; Wed, 12 Feb 2025
- 21:52:57 +0000
-Message-ID: <765352bb-a8fd-4968-9ce4-c4a17d071fed@amd.com>
-Date: Wed, 12 Feb 2025 15:52:54 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 05/17] PCI/AER: Add CXL PCIe Port correctable error
- support in AER service driver
-To: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
- oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
- nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com,
- lukas@wunner.de, ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
- <20250211192444.2292833-6-terry.bowman@amd.com>
- <67abe412e153e_2d1e29469@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <67abe412e153e_2d1e29469@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR04CA0088.namprd04.prod.outlook.com
- (2603:10b6:805:f2::29) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4FC2010E2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 21:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739397258; cv=none; b=NZLTlVr4pXx2gN+C+p92FwYTwsazn5fwrQ7WfbGOq+Pa0McBT0wAIQ1Hb+iGFodkdNTXJsWrXuSTxuaP2+kvMdD8hnLspPSHa6iS3hxcX/kdz36L/fkwB7t8P41YgOavd+bCuUzBjsAV1nGBg/tos959utxlTlRIH4I3h4cNcyk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739397258; c=relaxed/simple;
+	bh=ge4KnJE9iF/Hb51/g1qMq1pqhpakVBP2W0kIbMPxNuI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oEHoBXciVqgHf9vW8Xh6b2qFlvUgWcIW+AKXKLMka11Ph7MluhWCJTRKxV3bl4lV9OEFwYz2ieb1unB6CV7W7g+IO7jpX5gNghr8I7Cq1fN6uBu5jyJ1Vk3g+p1Vyn+VGiAPKPFH2nx4w0m4MQhIMgDyV03nMTXokd/LqkXd3YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=EQGNIl1P; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f7d35de32dso54729a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:54:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1739397256; x=1740002056; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ge4KnJE9iF/Hb51/g1qMq1pqhpakVBP2W0kIbMPxNuI=;
+        b=EQGNIl1P++FY7kb7pZTgZbLlrejX0W20GP/taow66+5eneahHx/GQKFOHo/txN6QS3
+         Po9uOP6VWZmwxKwxrLWBY4mb7EE8KsAmwCzdaZdHlkKF4/MkTyK6uEaHvDGBfrAHzkej
+         xwN1N4OPicUNywvCetOAZRFIXytNA3MkSxNnuoxqBw7IhhTnb0Olm/ywkN3zbIvidOyh
+         ym+jCHqN0IVfGk4qMykBdPs+3BTwFhI5Q2yMGTOOrokXEpZTYhv0U8WiBPdoyZ2kmnkq
+         t8QkDPPzm++gFT77TWKNCC6EwBDZDRJ5HwJv4oKx1buzEOPCmJaqqWeuZnaCVdtfEIGE
+         Y9iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739397256; x=1740002056;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ge4KnJE9iF/Hb51/g1qMq1pqhpakVBP2W0kIbMPxNuI=;
+        b=CdNIPBaMu7355RNNi5qiqPoxWt/VuZWk6+vgqD8IfAeE/o37DCHMbPlgW78Hhj6OCn
+         tyzWjyuF2yAcTr5SLWBccjpAEO3WPx2eStelF7MlbpKkM27BdwTysxWyX2ixqn6qNnKu
+         VynKTaU3ec1ikKKA60CkptRhlS3Ni00yRm3kh8c7V7q0WWoSwH2QQHc6T9QJlejCUw0l
+         p9cG5dWEVE0NDOMb3hMoFqcaTM64xJ/B5PaxX4e0pfL81wfyFZcHfQngq73c/inm8VfF
+         ykzKBL/pFnQWZhVApWnqfsuVlk2AumqsDLKzXTSIymjMLDprsS5Y6jnlgMa12SFIKX16
+         RUVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRY71mzyzf1nyos8em5osIDkVu9S8KXeYIPw4CZ2gBy5vXQW3Llfjbb3kKm1YS7NGx9o6GnNZi1v81h9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXLQnTNKMvcKCCHEVUYCP+wfFIPuy8Yl7B7ZZzp5axcaGT3kbP
+	M1w8H2QSG5GTsJ1zVObuwgWNYI3ucyGeBG8yaKjlDkES1NaU6gc1DTofax3b0LmI3/4QHeFgXEj
+	uumWdFWD5OAEbTb+B/gN/oW8AJp3Cz5AUoZoEkQ==
+X-Gm-Gg: ASbGncv4isFiYyANmSIEmrR8aWdVaVMLexSm0zX3Sr0RqLeWJuKcF1e0SU9lwkrDu17
+	PLkLZfM5FcdEv5G62RutVy5/3DJOSog6GykiAw/4SYUJrjEUJRKrwuQuYsEGiruzY5armbVo=
+X-Google-Smtp-Source: AGHT+IFMPPrqn7iYY9wkKzTPFCyHNXNPaj9gPzkjTZXdJ0obkphwjRRUI8sA0P0Jhavsgh95Xj1lYdfCmXfewd6bbNM=
+X-Received: by 2002:a17:90b:4d10:b0:2ee:6563:20b5 with SMTP id
+ 98e67ed59e1d1-2fbf5ae2309mr2747947a91.0.1739397255602; Wed, 12 Feb 2025
+ 13:54:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|SJ2PR12MB9210:EE_
-X-MS-Office365-Filtering-Correlation-Id: fcde327f-86e6-40df-4afd-08dd4baf9c83
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?czhhbkNYMUhHY3Eya2h6WENieStOK0tBcmhmT0R3Slo3Y2ZEbmg5RkV5Z0Rq?=
- =?utf-8?B?R0hRZHMrSDl6SkYyaTZTTlRaSHpLZGREODdxS0p1RmlPc3REcm5XS2hVQXo5?=
- =?utf-8?B?eEhEbXEyYmw4bkJGZHFRTGpqc1QzZHYwR3htM2tNTHZZQlBGcE8yTW9RcE9v?=
- =?utf-8?B?Q2xxb255RFZNTTkvV1FtckVmcms3VWRvdU5xVmhpZlYxdG5SMzkybnRMOGdT?=
- =?utf-8?B?dkZVVjdOeFRXVmZmTEkzVXlPRWlvdTFUTHV5cjZUTWkxUnU4cnlTZC9NOEVO?=
- =?utf-8?B?am5WMzdCSStuSWVxYkprU25xdE1iL1g4WUNXRFhEVWxaYml3TnN1KzNEeWZv?=
- =?utf-8?B?c0E0R2M2dFpXRGVvbDB6TndiY2E5WnhHdXkyMmlsZlRZb2txaHZhOTVKYlFJ?=
- =?utf-8?B?VUY0OWx3ZVZUNFA5alUvdkJpcVFyK3U2SG9PVFVSYzY0T1IwZGd5RGdrUmoz?=
- =?utf-8?B?WlZoM0daN3ZOOG82RlBvb1hDNEh6ZXpFK3lxY1VpRVZLUkhJUjZ1U1hvRlVE?=
- =?utf-8?B?S0JSV3VIV211STRqWDgxVmVCY1RHNXc3cmNrYkhqYk1ZeXhlVkYxeGREaWQv?=
- =?utf-8?B?VVc5bUt1WU00WkVRK1htVTdzaXFNTEtjN2xlVFZqRU55NE5od1c0encwQ29x?=
- =?utf-8?B?RElGYVNlb21jb2J6Rk51OGtHZEwzeU9IVTNYZzFNb2RlY0Q0VThIWjFYbXlB?=
- =?utf-8?B?bzVEekNJT1VJbHloUzM3VUFtUVg0WlZoS3VNRkpWVEN3eW92cGE3TGlYd0ZO?=
- =?utf-8?B?L3lkVkRrcmgvbjE2THk1dXJPWVNtYTl4ZEJONU82MWptYzFLcnRaSlBjRGFF?=
- =?utf-8?B?R0UzTjV5ZUxqR2tVcEdScGovVzgvQmxPb2xGaVpGM21BanczY3VpZkNkczMz?=
- =?utf-8?B?SkxoM3RCbnpyTGl4UVlpUGt5NW9VZFRNalpyQ3loSE9HL0liNTNGaEhNUXg4?=
- =?utf-8?B?eXdKaFhCaENFRVBaWUJKa01vbzBnRnR3NE5MWnIwWlhVZHNsUUlrYzlnblZQ?=
- =?utf-8?B?SVAxdFUxamJxQ1hhY0ltWStVMVZtNzFhWG5qUDFWNzd1SDVRYXJNLzBiYXNx?=
- =?utf-8?B?eXB2SnRRQ1hwa1NjWndFOU0yaEZyOTkvOTJlNTBydUtNb29Wci8xMmlTY3dZ?=
- =?utf-8?B?WTBXUmlhZGRHcUxtNm5qbXFMSlkvMVMzaThHUy9DMFJYQ2RxRlQ1QitkMDhj?=
- =?utf-8?B?M250d3R6WDh2ODBqb2wyRHdYdllqZmVUaTk2RVF3WnM3RW51U2plSG40NHcz?=
- =?utf-8?B?NUdxWHlJWnErUzJzS0hHSXIyUk94UjVXZUtyenF6aEduVFIxdmVOa21Rc1pB?=
- =?utf-8?B?WktvOEZ4d2dYSVlnS2c5UWo0dCtnTmFoSkpTaVR5ZVE1QWZrZTMvNXdzSFpB?=
- =?utf-8?B?QlJVWDdyOS9scE81bFZUR2dWVUlWTlVKZFZwZEpwMXViNi9LK2gyVlVnZ1RX?=
- =?utf-8?B?aU41UEFZc20wR0hrTk9oc0NiUG1teGF2NUNsN2w4UldUVFBnOENDempNUnJS?=
- =?utf-8?B?bHR0VHIxaFZiQzUvcTRFRG5BelVISEJoUGdIbDQzZ09SelF3V1hGRGk5eS9J?=
- =?utf-8?B?OC9ScTVpQ2lnamJUdzFQa1BnVytVZXFpNHpsMDBrMWZNSmp2YjNROWRYN2Yz?=
- =?utf-8?B?YmEzdUFUd1p0cWFKR1BHcGE0OWpEd2hWMzhEMEJ0YmtTK25sbHRmZC9NQU1L?=
- =?utf-8?B?YTR6UU1YME82MFQvaVNHZVFyWjY5aC81L01tMUZ0RHlMMU5VOU1VaGZ3a0tH?=
- =?utf-8?B?VFBGV3dKTUREWUM4YWdybXRQSUhnRVVWb1JIOVgxZi93MUFjMjVKaXZ0MGt4?=
- =?utf-8?B?NGFNN1M3R2pKQkhHUDNtOHpoRlNFUENHSFRKRnBHN3hFN1JUYm0yY0JFQURL?=
- =?utf-8?B?WkJtMlVqblk1bmRVbVZIOHU0dkdTMEJOQjdFcG5iRGduemtXTklnL1ZXMldo?=
- =?utf-8?Q?nWDP3YTVhPg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aGR1eEVZVVk4c25tUlRlNnU3VFFZbUlDM3VXUmoxMFRVckJIMG1mZUdKV3Ni?=
- =?utf-8?B?bStoTXp5OTZyb1I5TlQwek5EbVVZdis5UE1RS1BDY2drcytCaTBVOTVIQUNw?=
- =?utf-8?B?MW9aRXRsWUlOakFNSHo3V3ZBQVNqVEp6RFlEU2xJb1p6SjJvdUQxUnFwaUZU?=
- =?utf-8?B?WHZKM0x0MnV5Kys2NzlsV3hwMWxMeUUwNFUwaCtIM29BSjZ2c0o0bGkyUVMw?=
- =?utf-8?B?VzRxRzA4NFVGbEJIMHhlVUFCbHJrampDMit5OE5UTVZ0ZFJpWk45Z0tlWlE5?=
- =?utf-8?B?czVYeGs4NU83QldOWnY5STNCY09YL1FWM0hvWW1XUHNERkZNVldFVlJwM1pZ?=
- =?utf-8?B?Y0ZRU25ENlFsV1htM3JWNEh2ODl1VnM5Lzk4bkp5VHdXeWtUcjRHZ3djMWxS?=
- =?utf-8?B?WVMya01CL2tjcnA0aGFmVEdQb2YxSkMyRmU0RHZHOFM3QnVLcUpacjluNE1q?=
- =?utf-8?B?RCtWVjFTT1l6aThHT29zbXY0WUFaTGdPeGFsOWZjMUxzU0Jta1FqMTltcVZH?=
- =?utf-8?B?MGFBZ2hDcGRxajFuQzU5dng4VW1NaWtyUnNCNHFrenF6R05obHIxLzZkZktX?=
- =?utf-8?B?SnEwU0hSU21MQkc1VGhXaGZoZHpvTHZndmRtVTZ3eGkweEtPNUNIL0g1Kzk4?=
- =?utf-8?B?WnJGUExHc0UwenVOYysrcE5hN0ZZTy9Lb3lHSkx3bzFhWVJtYnZvdDVLVkpF?=
- =?utf-8?B?WG9FSzQvNCtydEhITVlrZDBmdVpBM2huTCt2bkQxNVVBbk5wU2NjT3o1VU5B?=
- =?utf-8?B?dGI5ODlNMzA4YjRQQ2VvaEN1RjhvYmFjN0dROE1US2ZuRkU2bXRZMXRQU3ha?=
- =?utf-8?B?QXlJN25wZ2N5SDdsM0VPNE1FVzQ3c2ZuckJONUJ2WFNadTJiekNYTms1UjA4?=
- =?utf-8?B?VnpvNzBTZXM4SlM2VVA2cnViQ0t2NmpocFhtVHZEdk5DYTkxZ3FjTVB4T1FX?=
- =?utf-8?B?OTQ4TUJvaGZ5bDdnYVpGcHQrSm5UYWw5RTBYZGZkSU8xKy9XcEhSMzBWeU9s?=
- =?utf-8?B?WXZPVmRJdCsxaGJseVBEV1dKZXREcGN4d3NadEs3Q0h2RWdBL1diNmhlY2hD?=
- =?utf-8?B?dk5zZGRJZzAzNGNCakRkSHhsVm1MS3YrbzRUZW4zZ2svcFBnWHk1MVpldFpu?=
- =?utf-8?B?TUtSdE9lZjBWNHBrR3o5dFZKOCtMbnptdVJMeEYvNVFnQVVyOXlLaU9sbEUw?=
- =?utf-8?B?SnRsQmNKcmFtSER6VGFmY0RtTFJlQURmRVhkek9oN1Y4ZTBxcWZPSTVIOWlq?=
- =?utf-8?B?YS9vclJoZEQ2NCsxSERXYnl4YkpJT3JXWmNnakh1amRCdVpJb3dzQlZnS0lN?=
- =?utf-8?B?OURja3lyN0RrdjVpNGZwM1U0Z25ZMm9BbXJnczcxSjZ4Vll0L0FwTzhjUXp0?=
- =?utf-8?B?V2w4TjYvYmw2dXNPUTJ3bFk5Q2ppMUw4MlY0WkpDVVcvc2YzM3FTTzFieGV2?=
- =?utf-8?B?WGs0Q0VTZmNVanY3ZEdwSlJDNGVRZGRFU3J3Qzh4akFXaEVQdTByeFg4VTNH?=
- =?utf-8?B?c3lTTzQ5ZHZmY0tidkF3K0ZJOVF4RG4yZTBBbDVPTDF1UmZUcjBldGhNZEJw?=
- =?utf-8?B?WFpDUDNTd3dqKzdpZnNHamg3STZPeW9vbmRFRkxvcHBaWjV0UnVTbnBjSVpr?=
- =?utf-8?B?bXpLdlM5Ky9WZE5kTCsvT1Iya0Nic2tnemhYV1k3Y1gzdEpJZkl0VDVWNk9F?=
- =?utf-8?B?RkFyb3FSWlduSmVGVjJLM1lYY0I0N3BFcUNzSmpVdVdNK2lBNGF0NW42NEdR?=
- =?utf-8?B?MnVYYjNkUy9tRVJESVVpSVJZZStGb21tRk1XTHpUaFJ5a2xRamM2Tm1ESXNN?=
- =?utf-8?B?djFPWGhSYmwzdlZaK3FwSzlsN1JFNXpuWk51bzk1a2ROZXozUkhQVlE2NFhn?=
- =?utf-8?B?b3BTeGxYRy85S2NRR1Z5S2JMSFhGTkU1THY4MEJLaXlHK2I3Tks0MWE0ZWJN?=
- =?utf-8?B?RDMxRU9PbCtYY05OaDZCRVBVd3cxaXpEUVh4YlFVTU9mWjlyY21CODhFKzhh?=
- =?utf-8?B?VWEvM2JLYTRQQ003UVd2THNHZUd6K2h5V0k0aXppdkd0b0hmNnJubmZ5V1JY?=
- =?utf-8?B?YU5jdzJnUThlRWlXRFpkc1VvVzRiZUFxb0FjdGl5dEhYMXQ5UHRDWkFjU2h4?=
- =?utf-8?Q?OL2+FlqS+Rpjz6mdamJKeFV5o?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcde327f-86e6-40df-4afd-08dd4baf9c83
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 21:52:57.5506
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x5XPxbFHyykbvCxGrms5bO641PBK7I5/zF2kmXIqhRj2XCnglNdZ/cgrZSQ/pz1dhHuGuluAJkKusKMxE948Ww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9210
+References: <20250212204546.3751645-1-csander@purestorage.com> <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
+In-Reply-To: <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
+From: Caleb Sander <csander@purestorage.com>
+Date: Wed, 12 Feb 2025 13:54:03 -0800
+X-Gm-Features: AWEUYZnzoun66gvLZAA01wN8hsHo0qQJKTPwxuyLywzkWLXEd9UHZi-LzapCfiE
+Message-ID: <CADUfDZqK9+GLsRSdFVd47eZTsz863B3m16GtHc+Buiqdr7Jttg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, Riley Thomasson <riley@purestorage.com>, 
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 2/11/2025 5:58 PM, Dan Williams wrote:
-> Terry Bowman wrote:
->> The AER service driver supports handling Downstream Port Protocol Errors in
->> Restricted CXL host (RCH) mode also known as CXL1.1. It needs the same
->> functionality for CXL PCIe Ports operating in Virtual Hierarchy (VH)
->> mode.[1]
->>
->> CXL and PCIe Protocol Error handling have different requirements that
->> necessitate a separate handling path. The AER service driver may try to
->> recover PCIe uncorrectable non-fatal errors (UCE). The same recovery is not
->> suitable for CXL PCIe Port devices because of potential for system memory
->> corruption. Instead, CXL Protocol Error handling must use a kernel panic
->> in the case of a fatal or non-fatal UCE. The AER driver's PCIe Protocol
->> Error handling does not panic the kernel in response to a UCE.
->>
->> Introduce a separate path for CXL Protocol Error handling in the AER
->> service driver. This will allow CXL Protocol Errors to use CXL specific
->> handling instead of PCIe handling. Add the CXL specific changes without
->> affecting or adding functionality in the PCIe handling.
->>
->> Make this update alongside the existing Downstream Port RCH error handling
->> logic, extending support to CXL PCIe Ports in VH mode.
->>
->> Remove is_internal_error(). is_internal_error() was used to determine if
->> an AER error was a CXL error. Instead, now rely on pcie_is_cxl_port() to
->> indicate the error is a CXL error.
-> Wait, pcie_is_cxl_port() in isolation is insufficient, right? In other
-> words, I would expect that when the response may escalate to panic()
-> that the code should be reasonably certain that this *is* a CXL error.
-> At a minimum that is:
+On Wed, Feb 12, 2025 at 12:55=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
+:
 >
->    pcie_is_cxl_port() && is_internal_error()
+> On 2/12/25 1:45 PM, Caleb Sander Mateos wrote:
+> > In our application issuing NVMe passthru commands, we have observed
+> > nvme_uring_cmd fields being corrupted between when userspace initialize=
+s
+> > the io_uring SQE and when nvme_uring_cmd_io() processes it.
+> >
+> > We hypothesized that the uring_cmd's were executing asynchronously afte=
+r
+> > the io_uring_enter() syscall returned, yet were still reading the SQE i=
+n
+> > the userspace-mapped SQ. Since io_uring_enter() had already incremented
+> > the SQ head index, userspace reused the SQ slot for a new SQE once the
+> > SQ wrapped around to it.
+> >
+> > We confirmed this hypothesis by "poisoning" all SQEs up to the SQ head
+> > index in userspace upon return from io_uring_enter(). By overwriting th=
+e
+> > nvme_uring_cmd nsid field with a known garbage value, we were able to
+> > trigger the err message in nvme_validate_passthru_nsid(), which logged
+> > the garbage nsid value.
+> >
+> > The issue is caused by commit 5eff57fa9f3a ("io_uring/uring_cmd: defer
+> > SQE copying until it's needed"). With this commit reverted, the poisone=
+d
+> > values in the SQEs are no longer seen by nvme_uring_cmd_io().
+> >
+> > Prior to the commit, each uring_cmd SQE was unconditionally memcpy()ed
+> > to async_data at prep time. The commit moved this memcpy() to 2 cases
+> > when the request goes async:
+> > - If REQ_F_FORCE_ASYNC is set to force the initial issue to go async
+> > - If ->uring_cmd() returns -EAGAIN in the initial non-blocking issue
+> >
+> > This patch set fixes a bug in the EAGAIN case where the uring_cmd's sqe
+> > pointer is not updated to point to async_data after the memcpy(),
+> > as it correctly is in the REQ_F_FORCE_ASYNC case.
+> >
+> > However, uring_cmd's can be issued async in other cases not enumerated
+> > by 5eff57fa9f3a, also leading to SQE corruption. These include requests
+> > besides the first in a linked chain, which are only issued once prior
+> > requests complete. Requests waiting for a drain to complete would also
+> > be initially issued async.
+> >
+> > While it's probably possible for io_uring_cmd_prep_setup() to check for
+> > each of these cases and avoid deferring the SQE memcpy(), we feel it
+> > might be safer to revert 5eff57fa9f3a to avoid the corruption risk.
+> > As discussed recently in regard to the ublk zero-copy patches[1], new
+> > async paths added in the future could break these delicate assumptions.
 >
-> ...or am I missing something that it makes it unlikely that a standard
-> PCIe error or other internal error type will not be thrown by a
-> pcie_is_cxl_port() device?
-I thought it was sufficient. In the CXL path the AER is logged. The PCIe handlers are not
-called but then again the portbus driver doesn't implement a CE handler and the UCE
-handler only updates the return result. That applies to all port devices.
+> I don't think it's particularly delicate - did you manage to catch the
+> case queueing a request for async execution where the sqe wasn't already
+> copied? I did take a quick look after our out-of-band conversation, and
+> the only missing bit I immediately spotted is using SQPOLL. But I don't
+> think you're using that, right? And in any case, lifetime of SQEs with
+> SQPOLL is the duration of the request anyway, so should not pose any
+> risk of overwriting SQEs. But I do think the code should copy for that
+> case too, just to avoid it being a harder-to-use thing than it should
+> be.
 
-And obviously CXL RAS is logged in the CXL path. If the CXL device errors are
-handled in the PCIe path then CXL RAS will not be logged.
+Yes, even with the EAGAIN case fixed, nvme_validate_passthru_nsid() is
+still catching the poisoned nsids. However, the log lines now come
+from the application thread rather than the iou-wrk thread.
+Indeed, we are not using SQPOLL. But we are using IOSQE_SQE_GROUP from
+Ming's SQE group patch set[1]. Like IOSQE_IO_LINK, subsequent
+operations in a group are issued only once the first completes. The
+first operation in the group is a UBLK_IO_PROVIDE_IO_BUF from Ming's
+other patch set[2], which should complete synchronously. The
+completion should be processed in __io_submit_flush_completions() ->
+io_free_batch_list() and queue the remaining grouped operations to be
+issued in task work. And all the pending task work should be processed
+during io_uring_enter()'s return to userspace.
+But some NVMe passthru operations must be going async because they are
+observing the poisoned values the application thread writes into the
+io_uring SQEs after io_uring_enter() returns. We don't yet have an
+explanation for how they end up being issued async; ftrace shows that
+in the typical case, all the NVMe passthru operations in the group are
+issued during task work before io_uring_enter() returns to userspace.
+Perhaps a pending signal could short-circuit the task work processing?
 
-I have changed directions to implement what you want. I'm only replying here
-to explain why I implemented as I did.
+Best,
+Caleb
 
-Terry
+[1]: https://lore.kernel.org/io-uring/20240511001214.173711-2-ming.lei@redh=
+at.com/T/
+[2]: https://lore.kernel.org/linux-block/20241107110149.890530-1-ming.lei@r=
+edhat.com/T/
 
-
+>
+> The two patches here look good, I'll go ahead with those. That'll give
+> us a bit of time to figure out where this missing copy is.
+>
+> --
+> Jens Axboe
 
