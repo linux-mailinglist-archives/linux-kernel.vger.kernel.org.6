@@ -1,111 +1,169 @@
-Return-Path: <linux-kernel+bounces-511424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4FBA32AED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0957CA32AF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:59:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 529213A97F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00E973A4481
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6E7215050;
-	Wed, 12 Feb 2025 15:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N47xDpSd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9337423C38C;
+	Wed, 12 Feb 2025 15:55:43 +0000 (UTC)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19DE213241;
-	Wed, 12 Feb 2025 15:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088A7211719;
+	Wed, 12 Feb 2025 15:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739375717; cv=none; b=nr8v/YgVuCockFkeEuoM+TlQYsXiBywXYXpnpctgUnyqe/hV7dJulUChcPF6akDlkE8B8f6NsKQ+U4BuhygrGrIV7jhtUu+stpSsNAGhxjOvT5zA9LUY5mqJDt2jbMqpLpjNAEx1t0OctZaROlov3cCnMgvs/z/f3f5DdDiZKjc=
+	t=1739375743; cv=none; b=WIkNI60I5OCcNFgbpM7pzWjr0BIFA7ylqSRlYT8jlXsYZBzSqdgNy/c5Hdso67JAgCzrUNI4aKHMkEqpiPmoAwvTCFScg+a3c46cancC6/jOMrJ9961d7ncabX0iqlYyyj0Pf06BYCrFx/GBTOP+YumxbksalXqWb4KVhHa6nds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739375717; c=relaxed/simple;
-	bh=H3FeOfXF65RY+24bTevOXJFMpv+jr3D9QT2vk77sPcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWxGDhFyUwkdTHHXLeObFICzXgX7HG1F4Ei9QfizJw3DLuYNqoBDWmIgLaXSStom9+iHz51oJ6RpVvSUDd4vQvfbS58wIbTMoHY++FjpQL8/XXqYScWiM16goP901txc6ghw896volsxyHOyIkVQddiqZ0F3+zLmK8430m9UEWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N47xDpSd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDDEFC4CEDF;
-	Wed, 12 Feb 2025 15:55:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739375717;
-	bh=H3FeOfXF65RY+24bTevOXJFMpv+jr3D9QT2vk77sPcM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N47xDpSdCTMM07GniVZmfE0BC6cF31xRjuX2lCNkftCdqVhfA59U1HKhf8SWGijMU
-	 Z9AP3zCaghpwh5PYwn7ogHshDhxExSh79Bj72whAmKpLb4DpgNEkzwulJHwGNKK+TE
-	 RGDA5keYo/8nGR8mtYP4jn/RJzyIc9wnggyqinCKoeu0xhY+cnFf9Gw5cyIeuo0piq
-	 adr5qvmBwbRMPd8K/6Syo++KHucs16CHxD3FwWdhaIHXUAETRsidYVYs+dUKD83o3s
-	 YLePYAw1rYYiSs7NGZUKcOVtExpy++3puvwdT07bc5SW2v3H7q1B1QrZim/hLRM+gh
-	 NFkxaQVQ26JAw==
-Date: Wed, 12 Feb 2025 15:55:12 +0000
-From: Lee Jones <lee@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] leds: aw200xx: don't use return with gpiod_set_value()
- variants
-Message-ID: <20250212155512.GE2274105@google.com>
-References: <20250212085918.6902-1-brgl@bgdev.pl>
- <CAMRc=MdFwe2onYhwY__n-kAOSrXKKDWJ38hpbYb0711Nx60DHw@mail.gmail.com>
+	s=arc-20240116; t=1739375743; c=relaxed/simple;
+	bh=D5mD9IAXTnOb2cQ8W0aejURoCVrV8nKfuVaFTld4tz8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mgAmHj+8pn0V3YD3HlHXQQTc/Bb+M4Rw6c9P1LWu+Gae79It69uhpkXgIA8GityC/y0fP0Z0HFwz7lnkLkctjxORz9TIHWCD+/H4tOZX19ew8OogRYQUt948WL/mBKZkjKU8NOTiWRvvp0K8M/a6Ql7N3Y8lKkkOjqxjr2zsF18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86112ab1ad4so1964110241.1;
+        Wed, 12 Feb 2025 07:55:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739375738; x=1739980538;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bforJpo8vosER9QTAjbmU387xww9JghWz4rNWUdpIZ4=;
+        b=JB49GMiRWLgKinW+voJ5YVJ3IrudKPCboalgQmTHhvHWVsJriJQ8VYnsHv3q9XgvV5
+         cyiHcT8F0Hz6GszWzYD4qu45MhJ0kgbSvvTiPGXLmn2P5LyY6fhUf1NavAMxOX89SxBw
+         DsZ3StFQGWTMy1hyfmzfUcNYoHKNmxgXpoO8BLZ5K6wRVLZ/z328WL+JMCGvwVd8q5tp
+         Hp+IU3GrTjESGrtOSVoCRq09Cyb53osH7dHkkxv5Xys4WSbeXYnZlpxqlqfZgi+Vl7+B
+         v2WtaR/kUCj3ykwZplROrlUTwEXuPWYv/v7wsQakYWwljXwRd2UFEcbHWv6eWQpzcOAV
+         uAiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuaqNXMK+tajtK7Xu9p3KNdYS0ZHHlsnCa6hTi4XeDgoa1fkK9SekRmrjhtVX32H8kD2i5m0ePAtz9ahg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4DJSzfEFkLETWoP5HreGov6yPUIZNghwktNYoL6uR1Y7Z70qT
+	s2K5l3aZv92xqa5jDZkb0HYonISQ/GxOvoiRrdnuLELN1qR0xbwT75ffMW842Hc=
+X-Gm-Gg: ASbGncuD/BHMvKnaGgsgrTO5R4RyPWL8sYzTNdWlG7BrFh9/Ih4ui1YpkS+/1ozyOfX
+	e2rtM2WBjBJ5MGJEnhUmBmz+e1zScq+iEjhoMzoaYpOHOqqLtc3uHb3v6NtVqq/C0EG2AVLXU6N
+	D71zsZOiU6PFJKfUNA8mQF4qbBdIJTgJwtJd3ryWFbiHyDoUXI6cgmSX7kOs/ZBBLaOGnwYRTtA
+	oyTgGrcl95zWSfaIHpSqkvePOTNYjA+yAgahBTief4vx66U3twStbMSzELP9JsdzsTx1oiJr76f
+	I+GlYitYoitoGuDE+XFnYw+D3jroCov+Z/qBsLjJ/H8R5m8+44z8Lw==
+X-Google-Smtp-Source: AGHT+IFm9tScj+pnf9kdtSHkANerT5orm3eLABTSwYPJVLx6ZwUzplqv6qD1qkUguUFGYfzyzNBuzA==
+X-Received: by 2002:a05:6102:f85:b0:4bb:d962:61f with SMTP id ada2fe7eead31-4bbf225f4famr4281077137.24.1739375738515;
+        Wed, 12 Feb 2025 07:55:38 -0800 (PST)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4ba772d7239sm2320166137.19.2025.02.12.07.55.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 07:55:36 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4bbf29bb21eso271885137.1;
+        Wed, 12 Feb 2025 07:55:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV8xw2+02UyVGL3JhEDjWxfEi4eCxlGZ+mQgmzI/B4OETNVl2wr0TdecQcbNAtEmgD9Z9/ABJHCIkE4FD0=@vger.kernel.org
+X-Received: by 2002:a05:6102:c89:b0:4bb:d062:44e with SMTP id
+ ada2fe7eead31-4bbf207f1a2mr3569901137.1.1739375736177; Wed, 12 Feb 2025
+ 07:55:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdFwe2onYhwY__n-kAOSrXKKDWJ38hpbYb0711Nx60DHw@mail.gmail.com>
+References: <20250203031213.399914-1-koichiro.den@canonical.com> <20250203031213.399914-11-koichiro.den@canonical.com>
+In-Reply-To: <20250203031213.399914-11-koichiro.den@canonical.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Feb 2025 16:55:24 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXBJhpWht4eo569h0kdY+evi=JTgMQtccUxf2X+tX-QPQ@mail.gmail.com>
+X-Gm-Features: AWEUYZkaMMoOeL3i8ya-GXV6XGIRzVwgfwwPhpIvHpWNBuMghWvHqLgDmA99Lnc
+Message-ID: <CAMuHMdXBJhpWht4eo569h0kdY+evi=JTgMQtccUxf2X+tX-QPQ@mail.gmail.com>
+Subject: Re: [PATCH v2 10/10] Documentation: gpio: document configfs interface
+ for gpio-aggregator
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
+	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 12 Feb 2025, Bartosz Golaszewski wrote:
+Hi Den-san.
 
-> On Wed, Feb 12, 2025 at 9:59 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > While it now returns void, it will soon be converted to return an
-> > integer instead. Don't do `return gpiod_set...`.
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202502121512.CmoMg9Q7-lkp@intel.com/
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  drivers/leds/leds-aw200xx.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
-> > index 08cca128458c..fe223d363a5d 100644
-> > --- a/drivers/leds/leds-aw200xx.c
-> > +++ b/drivers/leds/leds-aw200xx.c
-> > @@ -379,7 +379,7 @@ static void aw200xx_enable(const struct aw200xx *const chip)
-> >
-> >  static void aw200xx_disable(const struct aw200xx *const chip)
-> >  {
-> > -       return gpiod_set_value_cansleep(chip->hwen, 0);
-> > +       gpiod_set_value_cansleep(chip->hwen, 0);
-> >  }
-> >
-> >  static int aw200xx_probe_get_display_rows(struct device *dev,
-> > --
-> > 2.45.2
-> >
-> 
-> Lee, Pavel:
-> 
-> If this is OK for you, can you please provide me with an immutable
-> branch so that I can pull it into the GPIO tree? It seems it's the
-> only such use-case in the tree apart from the gpio.h header that I can
-> fix locally. Alternatively you can just Ack this and let me take it
-> through the GPIO tree.
+On Mon, 3 Feb 2025 at 04:14, Koichiro Den <koichiro.den@canonical.com> wrote:
+> Add documentation for the newly added configfs-based interface for GPIO
+> aggregator.
+>
+> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
 
-I'm okay with it, but why do you need it?
+Thanks for your patch!
+
+> --- a/Documentation/admin-guide/gpio/gpio-aggregator.rst
+> +++ b/Documentation/admin-guide/gpio/gpio-aggregator.rst
+> @@ -69,6 +69,99 @@ write-only attribute files in sysfs.
+>                     $ echo gpio-aggregator.0 > delete_device
+>
+>
+> +Aggregating GPIOs using Configfs
+> +--------------------------------
+> +
+> +**Group:** ``/config/gpio-aggregator``
+> +
+> +    This is the root directory of the gpio-aggregator configfs tree.
+> +
+> +**Group:** ``/config/gpio-aggregator/<example-name>``
+> +
+> +    This directory represents a GPIO aggregator device. You can assign any
+> +    name to ``<example-name>`` (e.g., ``agg0``), except names starting with
+> +    ``_auto`` prefix, which are reserved for auto-generated configfs
+> +    entries corresponding to devices created via Sysfs.
+> +
+> +**Attribute:** ``/config/gpio-aggregator/<example-name>/live``
+> +
+> +    The ``live`` attribute allows to trigger the actual creation of the device
+> +    once it's fully configured. The accepted values are: ``1`` to enable the
+> +    virtual device and ``0`` to disable and tear it down.
+
+As the code uses kstrtobool(), it accepts variants of
+yes/true/on/no/false/off, too.
+
+> +
+> +**Attribute:** ``/config/gpio-aggregator/<example-name>/dev_name``
+> +
+> +    The read-only ``dev_name`` attribute exposes the name of the device as it
+> +    will appear in the system on the platform bus (e.g. ``gpio-aggregator.0``).
+> +    This is useful for identifying a character device for the newly created
+> +    aggregator. If it's ``gpio-aggregator.0``,
+> +    ``/sys/devices/platform/gpio-aggregator.0/gpiochipX`` path tells you that the
+> +    GPIO device id is ``X``.
+> +
+> +You must create subdirectories for each virtual line you want to
+> +instantiate, named exactly as ``line0``, ``line1``, ..., ``lineY``, when
+> +you want to instantiate ``Y+1`` (Y >= 0) lines.  Configure all lines before
+> +activating the device by setting ``live`` to 1.
+> +
+> +**Group:** ``/config/gpio-aggregator/<example-name>/<lineY>/``
+> +
+> +    This directory represents a GPIO line to include in the aggregator.
+> +
+> +**Attribute:** ``/config/gpio-aggregator/<example-name>/<lineY>/key``
+> +
+> +**Attribute:** ``/config/gpio-aggregator/<example-name>/<lineY>/offset``
+> +
+> +    If ``offset`` is >= 0:
+> +        * ``key`` specifies the name of the chip this GPIO belongs to
+> +        * ``offset`` specifies the line offset within that chip.
+> +    If ``offset`` is <0:
+
+Missing space before 0.
+Please add "(default)", so the user knows he can skip writing to this
+file when specifying a GPIO line name.
+
+> +        * ``key`` needs to specify the GPIO line name.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
