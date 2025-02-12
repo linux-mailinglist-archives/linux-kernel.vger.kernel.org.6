@@ -1,230 +1,230 @@
-Return-Path: <linux-kernel+bounces-511901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC35A33139
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:04:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0157A3313A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8B87163E06
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654943A2C15
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA5A202C5C;
-	Wed, 12 Feb 2025 21:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9A3202C5D;
+	Wed, 12 Feb 2025 21:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MPAE7zpW"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2060.outbound.protection.outlook.com [40.107.95.60])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnyaDuyZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7343A201018;
-	Wed, 12 Feb 2025 21:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739394288; cv=fail; b=fMNXGtbSVz8Oz+v5LJtpnlrWYKqaY6YpMMIyww1AjC9ezmBUH7eyPfdtzxmCPQQMoa7wB7j1t+EQ/VzCRC1g4XnQIato+MnUJn2D/KyMBb/nV2ui575IT8ghLQ8smnvX8LWIYo7jkKZahOLbmmwhKll/jV9eM+CykVDdjTmLwX0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739394288; c=relaxed/simple;
-	bh=zvnIAft2kZRV0wjBtGS5gw4OB7rj7yXrDFkRcO28XOQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WeUVeP/zZ8o6omc89Fw7CDN1Cu0IWkB0AvIq6HAIXk2a1HViHOrgX1WVYEoamAkFFX4VB9Se5gzf7bne7QO7gmSksT80xvEgL3/pKOaLBF5dVzw7xMZWnwzDNx+HDpDtRD7RTR9VXZvrPWzAODMa962Ipj5Lq+lDEnhj7Kk566g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MPAE7zpW; arc=fail smtp.client-ip=40.107.95.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CphTrzSbAqth1JvmV//uHrzb3IkS9thB/nYysSYPbny+fwPYdnx0oS704b1LudEb3xKjfrIeeN5bqXPt5Ihe9aPgMCDLa7M5aXI1PVmUXCeJRU4NY+4ZV3LdRnBPiujC8+o1u8ykvplJtYkVpHkgzwATuZnzVcC+1XDuLlcNcksYWORO/ZXl76FfOwHxrSHS+Pn4tGGNf/Sr5ShauqFrI7xRBqONtAiceI6rFK0QP6qkRYawNWhSdQ3OREx6wvVN/rJ9SLoOhAnLwx2dw1aGCu5nLIvdE3ci0lZwkqo1Nzc0151MTiBHnnBeMCjl/HZXa4rU6lTi080mQRk78PFN8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LAzGgRlWQrZ+0RujCnQwLk6OeLt/LcR72TfIcvhw544=;
- b=gBWkkqWMukZTpTiDKOTjuzYSj25d336lu9dWkissIytoAcWvPvTm9Sajv9JNB/xMfawge2vmCr0v/3Nbl74rebTjA4EDAxHB02yA4nzAXXMbx+rsLr1L7jnGwBb1QasULrbumifm5QY3/1NkafgMvWQWPuc/XjvR9LxnX1R/oGV+CiAp8k0Via3fCVbt2IiYEoOuoudzbAbZqtek4F5dSZhWK2zP59dBj/XAWhchnbyWkGPl6ktKQOmcN4qZun9iPBFw397Lsu3l2mnXj41ywVVaIcsJNQL01MpgNb3GQxgoM4W69ktzAkHXt/SioL0cj0uZNW4qacVdQR5A3ozBxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LAzGgRlWQrZ+0RujCnQwLk6OeLt/LcR72TfIcvhw544=;
- b=MPAE7zpWeZtgLMa7uW3Q6kbd2rfpo1EMiIH7zoaadXZUQ4UHSkgeXiyI5LxKc6AihAViU8sMaqIeHcf/Mz7Een/VUBvnWfWe4eQDEEI3pZ5oACT8PH+sVlNQmy9uv8ra5XcSjYp30F0ZzxyMrbmWTfmsBLuv02bjMpW2RgcsY58=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com (2603:10b6:303:220::6)
- by CH3PR12MB9220.namprd12.prod.outlook.com (2603:10b6:610:198::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Wed, 12 Feb
- 2025 21:04:42 +0000
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3]) by MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3%4]) with mapi id 15.20.8422.015; Wed, 12 Feb 2025
- 21:04:42 +0000
-Message-ID: <ab7d50b3-4125-4449-bfd2-eb04e76b0010@amd.com>
-Date: Wed, 12 Feb 2025 13:04:39 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/6] acpi/ghes, cxl/pci: Process CXL CPER Protocol
- Errors
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Terry Bowman <terry.bowman@amd.com>
-References: <20250123084421.127697-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250123084421.127697-6-Smita.KoralahalliChannabasappa@amd.com>
- <Z6ES_MZy2FuRsfjF@agluck-desk3>
-Content-Language: en-US
-From: "Koralahalli Channabasappa, Smita"
- <Smita.KoralahalliChannabasappa@amd.com>
-In-Reply-To: <Z6ES_MZy2FuRsfjF@agluck-desk3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR01CA0068.prod.exchangelabs.com (2603:10b6:a03:94::45)
- To MW4PR12MB7142.namprd12.prod.outlook.com (2603:10b6:303:220::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3979520103D;
+	Wed, 12 Feb 2025 21:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739394328; cv=none; b=e+1ZWqM+K5xrcYGQ/rxtk/NT2ksbYzqFVYqTJkfMwSwCk4dY61mrQ7lXGzlSSkrfC/NqWKzkAgFoo/lvdTRaCsO9U1b9Gd6VZHDXERBaV7xYj4497Zvy4N/3qLetDUfL/ae5BgzYyRtBqXVXlTgzFp1I+v4iifQaj3NflJI49is=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739394328; c=relaxed/simple;
+	bh=rL7TUlmSRX70EhZ0iEizH9XJp7ESxgFJhna1vEGCHBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ROuNJmmzq1Hok5/XIaY8xEksCnSu40wsRIj6btDZv30wVmNovohZDa73Wewb0pTMhiBLk6WZi5b4Kyb++9VzzykSONG4Kui+d7Srwagca1qjwxgiNbAapqLCR+D3OLBadvbUp1rSrMHDupaDN15HbmWdzX+30HU+kQ7VHm43EwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnyaDuyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CCAC4CEDF;
+	Wed, 12 Feb 2025 21:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739394327;
+	bh=rL7TUlmSRX70EhZ0iEizH9XJp7ESxgFJhna1vEGCHBc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KnyaDuyZIIOLvz4y78Ap5M3n2l0VYwRwxXHRSzhnr9adPQllPBnGjLK8gTyh1/U4X
+	 tjSiPNVb2k9N8y3LYZ2kuLInrp/SG4w55BRqVBSG65JMXsLdQ4e6OkqIAdmaGGZRVm
+	 8iKgZaFTXnepJnmB90VFT1eaYSYypJ+Clsc+RLn2F1C7BcuKBvRm4Tt0TXJqfSxRFK
+	 jOvct2Vy7HU0MigIgRg+Nmf23su2FRe16m1A7ts6MnNFwQ7UauTEHaUjb3TOZkAkQ1
+	 15j0eC+OeMjRqd+KNTOzHlybzUiEeLHY2+dAZv9+hxPPq9UKB7dM4Ubh5Uoa+4vair
+	 hTWMp2AClduxw==
+Date: Wed, 12 Feb 2025 22:05:24 +0100
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf report: Add 'tgid' sort key
+Message-ID: <Z60NFEAf2C8cL8Xh@x1>
+References: <20250206000137.2026034-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB7142:EE_|CH3PR12MB9220:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc7a2619-0baf-467a-7b42-08dd4ba8dea9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Rmtoc0lwWCs0eWYzTGUwV1M2MmRNVVpSbGUwRHhpQy9mVGdxbUs5WmFTN3Bo?=
- =?utf-8?B?SWtmS0FVMVJGWFErWVB1ZzQrNjFQWG80ZzQvc1IvMFRjcWNSMEhYVWpGOG5C?=
- =?utf-8?B?VkFNVlFIY3BIV1lHZmhSTlJiVkJXNFNmZjVzQ0tiSThTUXNHMXF5M2xoQXNa?=
- =?utf-8?B?TWx6TTUzQi81NHlZaXVhc1YyalB3alJrNVJ3MTYrTmxheDlaRmduT2EySjVC?=
- =?utf-8?B?R2xocTFRSEJ4azBMVkx2ZWlMeHg0d2xvRkRkTlBjdE5Fa01jRE43cEFTSm9Y?=
- =?utf-8?B?RVZ1UEJ2RWNyWDZaVmREYVU0VU9pY0MyOWtURXphVkVzTWFsRkNNOWZoWmFC?=
- =?utf-8?B?ZlB5T3dwVmJMYjBYakJ6cElKYUhKVFVWakFGa09Tc1VYZUdTdlk0VEZrMkEz?=
- =?utf-8?B?OHNKeFVnQm1lNHkzbnJ2VDVCM2VxVW1SZTFiZ25TeDhuVzcva3M3QnBpY0Fk?=
- =?utf-8?B?Q1RDcDkrN2piZEo5SXhaRkgxYXduWGxuQmhRaTNMQkxFcDBKanJ0eGdWSDZj?=
- =?utf-8?B?K0VzK1libWd1VHd4d2pVVEkwL2toM0hmbkc1Tkl2dHo3ZG1HTGF3NnJrclU1?=
- =?utf-8?B?a1VrZjB1YnAzSVNPeGkzcWJ4d2o3MUIvSjJyQ0VKeUtLT2xDTmo5NjE0dGh1?=
- =?utf-8?B?YnFUTDVYNExsb1lpcjFlOWtoMXpVcWZKQ05lM1NGQUc2dEpSWDJwZ1RlbWFB?=
- =?utf-8?B?TkR4VmRYSk5LeXpSVTB1M2JLcEVDb0lLZW5xbXdEcEVhNGwvYmNka2h6VXRa?=
- =?utf-8?B?K3VkZGhOQWFDVGN6K2l0NVowWnhOQUVGQjlFTVVGZkJscGFZUjdJc2Q1Mnow?=
- =?utf-8?B?QXB5WlNLTXJSZHVJcVU1U2NQZEdtNWNVY1ZHbHd5S3hlZVVLVmNWa21tZXZ0?=
- =?utf-8?B?WDRVVmVHUEsyUk54VVZMN2paRWNCSDBQYmluSU1RZmtlMFIrdFNZL25IR1Rq?=
- =?utf-8?B?YVNyNkpoaytwRDFNaWtDcEd4Z0w3V08vQnV1WElCamptcHRuUi9KUDI5WHdX?=
- =?utf-8?B?Qmt1ZVNHTElhYUJqTGNjUnhodytKRTdTcERCK3UzNUhoWm1HOTJrNzRFQzBS?=
- =?utf-8?B?VFA0NGxqMkZ0VDFrRm9oN1QxWmZPWm9rbXIzRmF4ZC9mN05NcC9UaTB1S1U4?=
- =?utf-8?B?ZFIvQ016Z3owN3k1T1ZZK25QaGtxd3N3SFgzSUhIUVU3K2wweDQ2NzAzdndD?=
- =?utf-8?B?RTMxT0hONis1bWJiMWZia3VUNzJkREJ1dDZYSVV3Mm9nRDJwT05jZnNjQzky?=
- =?utf-8?B?LzVHd3RHNHhpNHcwL3lhNVBMM2U4MDRIUG9scDVuc1A5WXU3emFWZ0dNaVRU?=
- =?utf-8?B?ei9ESXZ5ZUlOcjV5ei9yWk03Yk1zU2tMOG1KUTYyMXl2WlRya3ArVkU1S3Rq?=
- =?utf-8?B?RG8zZXZKV0pMRmFYZGRvS0FKOTQ5YmhYVHJHU2Jna1ZUL0RmWnRMVWdIUzIz?=
- =?utf-8?B?NDgxSi9OY3NES1ZlNnZxTlYvbUprbjFVT0FHeStIaE1wVWl2NnpEVTd0YzBI?=
- =?utf-8?B?RlZMR0F3RE5zaXJUdHE4b0ptWEREcDBoQlY0ZWs3RU5Wd0paeC9yRW10cDMy?=
- =?utf-8?B?NXZpWktjNnR0Tm9ZY25lSGlLZ25VekZlWSsySC9ZMGtHQnB6VFJMdkF0NHJT?=
- =?utf-8?B?RnlFUVlpVkwyaGN5Ky9rZHNUblR1QlhTaER5RlRsSzBRSDBOUkhrc0lYeTJZ?=
- =?utf-8?B?ZXVORTRhUVhQeHlDNmF2VnZ5OGR3MWRMVkp0Z0FKUDIyN3VlUGcwMGRadURr?=
- =?utf-8?B?NW92TzNDK0srZXNaRUk5MFVyUGZSZUFpWFZ3dDZTWG5oRDRlRWRmY2FybDlY?=
- =?utf-8?B?RXNRN2cwWkoxN2l6ZHlnamh3aVNNdStMT3FpM1NGYlpGWlRraGdZeUwzSTVQ?=
- =?utf-8?Q?wbHla4BFqr1qL?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB7142.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MnUwRGF1QXFXaml5UnJRTDlBcUZIKzBESWpXM3lZaXl5MUdRQ0MrYUVtNmZD?=
- =?utf-8?B?bEhmMnpmemNYZWJ0eEpiVVJQeEhjSFk2L1FtdmNKYW11MXhLZlJHWW96K3l4?=
- =?utf-8?B?Mi9zT28rTUg2YUt3N2pCNkU2cnZqZCtrd2FMb1RxTWd3emxhTlpWMFFsUk56?=
- =?utf-8?B?K0ZIRnMwUE1BN2hzWnBGWUVyci81S1RhTy9GSXN2VFlqZk1HY0hZUzc2V2M5?=
- =?utf-8?B?SHRJWVlVY2s1TWdveGtEM0VObDZoODlKdVd3eHg4Sytib1BTRlhhNXNHSjJZ?=
- =?utf-8?B?L0tCekx2b0ZRVklEMHg3UmhNaytIY3BYQzdlUmEzK1cvVm5wWHVQZWFzSjFo?=
- =?utf-8?B?aXhxbWoxZVRJOGRERGVtaDRpMHJCeDc3M1h5aEg3VThDVUE0WmpTZnp1eUdO?=
- =?utf-8?B?ZlQza2R1V0VDbkUvbnNEOUtDZmZRck5OaHdrbHdyNkJtWk9ZNEQwNmp1TkE1?=
- =?utf-8?B?akFOQUJRQXR1UkdUajJiSnVxVjcvV1dlQ0RXOUlCaXBHNUdHTDM0VVdia0dP?=
- =?utf-8?B?UENJRE1jWitaNmp2b2dHVnFCQnVDZ2N6SnVSTlNQMGtXVU5PZnhKOXgxZ2ov?=
- =?utf-8?B?WlF2aWVLb2dPTUhZS2xvUTBSeEErUkE0OVFicy9PZmdBQ3B4MEdDWDV5OThR?=
- =?utf-8?B?MXEybmVQRi9lWUZsbWlTWFhxTzB3bUFVODBKMU1XbEFqTU5vdWVvUW5EaFp6?=
- =?utf-8?B?MnlsTStEUFBSdlRPV0JlT0dTTnhlbktWaWF1TTF4bElWY1FBOVpZWlp5cHcx?=
- =?utf-8?B?bmVvZnFRdHdSR05sV3dxNzAvNERyc1pqdGhMTFp2SVZaYit6emJmVDNtQm5O?=
- =?utf-8?B?ZHlzaGJFRS9jWEN1bWlXTEhzd3JqaW42N2VOaVRaTHJKNGFOeGp2d2RMbjcx?=
- =?utf-8?B?RkR5TFMxV1NuMTdsY0FPTjhsMVRvcXIvZW9FajZHQUdoc0d3d0ZQbHljTHV3?=
- =?utf-8?B?a295WmVGN01kTmhrUTRyYXVzM0M1WDB2SzlZaTB5WnlGK0N0OWNWN3YzTmow?=
- =?utf-8?B?S1Q0bWJ6ZmgyeFo1ZkRMeWhkYllWSmlNdVZmWitmTGJmK0Y3YVRtbzBwS3Fp?=
- =?utf-8?B?ZVh3UGI0TWpzWGJwckRGL3Izc2NPdStHN05NR0N4L2JucDhocTZkalkzSGR0?=
- =?utf-8?B?eVRrdnNwVzJwUTZNdXpOMkx1QTljd0orODROVy9GRGdYVExsaWdqSjgzVVJV?=
- =?utf-8?B?VGVvQ1hKMjdRdXAxdnhyeDk0QXdqRDIyQ3lPN3E0cituY3gzdnJlT2x4ek4v?=
- =?utf-8?B?WXg4emVhenhEQ3BWaDB5YktQZWRNREhIbi9ibVhyM2E5NGdSWGxpMXFBTWUw?=
- =?utf-8?B?SVN4MXRHWVgxOWFUb1UyRkNER1BITUhpZWN4OVBmZWVGblRoSWgzVHRMVm8v?=
- =?utf-8?B?cDNZQ2wvVUd2YUF1VndBMEt2d0NHcjh1bzlWdCtTTTQ2T3VVMEpoQ28xYlJs?=
- =?utf-8?B?SUMvR1ZkK2l5OEEvTHluUmR4ZlVmZWx1eU5sNGVETnFKK2RlNGI0QlYrWklN?=
- =?utf-8?B?M3p1M2o2aDZ3RWdHREN3UzBiSFRkOXZPOGZvNStiYmhjRkpCVHF1WXVOZC92?=
- =?utf-8?B?QXFramU4WWRad3l5NlZMMzVteUVub3NPYWZmb0VRYWkwZUsyUUxkdy9WUEtE?=
- =?utf-8?B?eUVVaUlIMnl1WGJzOXBHM245NURsQWg4L3R3S1kyVmMyMEMzSnphdlVHYW84?=
- =?utf-8?B?Q05mdTliZXp3WW04RWJlOGxBc21PeDlDUlJTR3VtZU4rS2QrSDJIanlUTGtC?=
- =?utf-8?B?bkRXRFVwVGhBaTh6eFRYU0s4VnVVTTd4RWhZb0Z2LzhEWjlhdTlERXJyaHBk?=
- =?utf-8?B?SWh6NE1henJ2ZkswKzBQVzkrQmZyL1pIWVVRUGZDR0p0U1Zqc2VHWGpsdmo2?=
- =?utf-8?B?OUtwTDVDbStqRUFLYU5PSGE4SGRIaldXdm9kdDRUdGFFc0VlTGZJUHY2aVNT?=
- =?utf-8?B?K1RjaDQveUI1M1dQT21kZWdYMEhPTi9wNEVPdkVaSlM3bDNLRWNNSjZZcXJw?=
- =?utf-8?B?WnJkSnJqT1RXS0sxTUFpby8xeVRvODdEV3doUGVNYkM2d01acUJYZFJ2TXAz?=
- =?utf-8?B?RFMxaWZEdEgwK3E4a1dGemFYY3RUZUgzSitIU2VwMlhhR0tZSDY2c3JCOHZq?=
- =?utf-8?Q?VFypEP+xnqRLQ4xGCpV9q/GCg?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc7a2619-0baf-467a-7b42-08dd4ba8dea9
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7142.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 21:04:42.0012
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8evr7wAUzhQwcp1TWFFygWmkALRLcO5PQFTL5ywx+wNJHc/TkD4S/HPlNh+b27npAcFquxQ7wkCo0SqoUHJwuA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9220
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250206000137.2026034-1-namhyung@kernel.org>
 
-On 2/3/2025 11:03 AM, Luck, Tony wrote:
-> On Thu, Jan 23, 2025 at 08:44:20AM +0000, Smita Koralahalli wrote:
->> When PCIe AER is in FW-First, OS should process CXL Protocol errors from
->> CPER records. Introduce support for handling and logging CXL Protocol
->> errors.
->>
->> The defined trace events cxl_aer_uncorrectable_error and
->> cxl_aer_correctable_error trace native CXL AER endpoint errors. Reuse them
->> to trace FW-First Protocol errors.
->>
->> Since the CXL code is required to be called from process context and
->> GHES is in interrupt context, use workqueues for processing.
->>
->> Similar to CXL CPER event handling, use kfifo to handle errors as it
->> simplifies queue processing by providing lock free fifo operations.
->>
->> Add the ability for the CXL sub-system to register a workqueue to
->> process CXL CPER protocol errors.
->>
->> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
->> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
->> ---
->>   drivers/acpi/apei/ghes.c | 49 ++++++++++++++++++++++++++++++++++++++++
->>   drivers/cxl/core/pci.c   | 36 +++++++++++++++++++++++++++++
->>   drivers/cxl/cxlpci.h     |  5 ++++
->>   drivers/cxl/pci.c        | 46 ++++++++++++++++++++++++++++++++++++-
->>   include/cxl/event.h      | 15 ++++++++++++
->>   5 files changed, 150 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
->> index 4d725d988c43..289e365f84b2 100644
->> --- a/drivers/acpi/apei/ghes.c
->> +++ b/drivers/acpi/apei/ghes.c
->> @@ -674,6 +674,15 @@ static void ghes_defer_non_standard_event(struct acpi_hest_generic_data *gdata,
->>   	schedule_work(&entry->work);
->>   }
->>   
->> +/* Room for 8 entries */
+On Wed, Feb 05, 2025 at 04:01:37PM -0800, Namhyung Kim wrote:
+> Sometimes we need to analyze the data in process level but current sort
+> keys only work on thread level.  Let's add 'tgid' sort key for that as
+> 'pid' is already taken for thread.
 > 
-> Any science behind the choice of "8" here? This comment is merely
-> stating what the #define is used for, not why 8 was chosen.
+> This will look mostly the same, but it only uses tgid instead of tid.
+> Here's an example of a process with two threads (thloop).
 > 
+>   $ perf record -- perf test -w thloop
 
-The choice of "8" was arbitrary and not based on a specific rationale. 
-If there are better heuristics or considerations for determining the 
-optimal number of entries, I’d appreciate any suggestions.
+Unrelated, but when building perf with DEBUG=1 and trying to test the
+above I noticed:
 
-Thanks
-Smita
+root@number:~# perf record -- perf test -w thloop
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.404 MB perf.data (7968 samples) ]
+perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
+Aborted (core dumped)
+root@number:~# perf record -- perf test -w offcpu
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.040 MB perf.data (23 samples) ]
+perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
+Aborted (core dumped)
+root@number:~#
+
+I have:
+
+⬢ [acme@toolbox perf-tools-next]$ git log --oneline perf-tools-next/perf-tools-next..
+9de1ed6fa3b73cb1 (HEAD -> perf-tools-next) perf report: Add 'tgid' sort key
+23e98ede2a353530 perf trace: Add --summary-mode option
+e6d6104625a3790b perf tools: Get rid of now-unused rb_resort.h
+173ec14e72ef4ed7 perf trace: Convert syscall_stats to hashmap
+66edfb5d404e743d perf trace: Allocate syscall stats only if summary is on
+ca6637e1ea08e6f4 perf parse-events filter: Use evsel__find_pmu()
+bd1ac4a678f7f2c8 perf bench evlist-open-close: Reduce scope of 2 variables
+cd59081880e89df8 perf test: Add direct off-cpu test
+56cbd794c0c46ba9 perf record --off-cpu: Add --off-cpu-thresh option
+28d9b19c5455556f perf record --off-cpu: Dump the remaining samples in BPF's stack trace map
+2bc05b02743b50a7 perf script: Display off-cpu samples correctly
+bfa457a621596947 perf record --off-cpu: Disable perf_event's callchain collection
+eca732cc42d20266 perf evsel: Assemble offcpu samples
+74ce50e40c569e90 perf record --off-cpu: Dump off-cpu samples in BPF
+e75f8ce63bfa6cb9 perf record --off-cpu: Preparation of off-cpu BPF program
+0ffab9d26971c91c perf record --off-cpu: Parse off-cpu event
+efc3fe2070853b7d perf evsel: Expose evsel__is_offcpu_event() for future use
+⬢ [acme@toolbox perf-tools-next]$
+
+locally, that is the stuff I've been testing lately, doubt it is related
+to these patches, I'll investigate later, have to go AFK, so FWIW as a
+heads up.
+
+- Arnaldo
+
+>   $ perf report --stdio -s tgid,pid -H
+>   ...
+>   #
+>   #    Overhead  Tgid:Command / Pid:Command
+>   # ...........  ..........................
+>   #
+>      100.00%     2018407:perf
+>          50.34%     2018407:perf
+>          49.66%     2018409:perf
+> 
+> Suggested-by: Stephane Eranian <eranian@google.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/Documentation/perf-report.txt |  1 +
+>  tools/perf/util/hist.h                   |  1 +
+>  tools/perf/util/sort.c                   | 35 ++++++++++++++++++++++++
+>  tools/perf/util/sort.h                   |  1 +
+>  4 files changed, 38 insertions(+)
+> 
+> diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+> index 87f86451940623f3..4050ec4038425bf0 100644
+> --- a/tools/perf/Documentation/perf-report.txt
+> +++ b/tools/perf/Documentation/perf-report.txt
+> @@ -79,6 +79,7 @@ OPTIONS
+>  
+>  	- comm: command (name) of the task which can be read via /proc/<pid>/comm
+>  	- pid: command and tid of the task
+> +	- tgid: command and tgid of the task
+>  	- dso: name of library or module executed at the time of sample
+>  	- dso_size: size of library or module executed at the time of sample
+>  	- symbol: name of function executed at the time of sample
+> diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+> index 46c8373e314657fa..c164e178e0a48a8e 100644
+> --- a/tools/perf/util/hist.h
+> +++ b/tools/perf/util/hist.h
+> @@ -38,6 +38,7 @@ enum hist_column {
+>  	HISTC_TIME,
+>  	HISTC_DSO,
+>  	HISTC_THREAD,
+> +	HISTC_TGID,
+>  	HISTC_COMM,
+>  	HISTC_CGROUP_ID,
+>  	HISTC_CGROUP,
+> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+> index 3dd33721823f365d..5987438174967fd6 100644
+> --- a/tools/perf/util/sort.c
+> +++ b/tools/perf/util/sort.c
+> @@ -141,6 +141,40 @@ struct sort_entry sort_thread = {
+>  	.se_width_idx	= HISTC_THREAD,
+>  };
+>  
+> +/* --sort tgid */
+> +
+> +static int64_t
+> +sort__tgid_cmp(struct hist_entry *left, struct hist_entry *right)
+> +{
+> +	return thread__pid(right->thread) - thread__pid(left->thread);
+> +}
+> +
+> +static int hist_entry__tgid_snprintf(struct hist_entry *he, char *bf,
+> +				       size_t size, unsigned int width)
+> +{
+> +	int tgid = thread__pid(he->thread);
+> +	const char *comm = NULL;
+> +
+> +	if (thread__pid(he->thread) == thread__tid(he->thread)) {
+> +		comm = thread__comm_str(he->thread);
+> +	} else {
+> +		struct maps *maps = thread__maps(he->thread);
+> +		struct thread *leader = machine__find_thread(maps__machine(maps),
+> +							     tgid, tgid);
+> +		if (leader)
+> +			comm = thread__comm_str(leader);
+> +	}
+> +	width = max(7U, width) - 8;
+> +	return repsep_snprintf(bf, size, "%7d:%-*.*s", tgid, width, width, comm ?: "");
+> +}
+> +
+> +struct sort_entry sort_tgid = {
+> +	.se_header	= "   Tgid:Command",
+> +	.se_cmp		= sort__tgid_cmp,
+> +	.se_snprintf	= hist_entry__tgid_snprintf,
+> +	.se_width_idx	= HISTC_TGID,
+> +};
+> +
+>  /* --sort simd */
+>  
+>  static int64_t
+> @@ -2501,6 +2535,7 @@ static void sort_dimension_add_dynamic_header(struct sort_dimension *sd)
+>  
+>  static struct sort_dimension common_sort_dimensions[] = {
+>  	DIM(SORT_PID, "pid", sort_thread),
+> +	DIM(SORT_TGID, "tgid", sort_tgid),
+>  	DIM(SORT_COMM, "comm", sort_comm),
+>  	DIM(SORT_DSO, "dso", sort_dso),
+>  	DIM(SORT_SYM, "symbol", sort_sym),
+> diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+> index a8572574e1686be6..6044eb1d61447c0d 100644
+> --- a/tools/perf/util/sort.h
+> +++ b/tools/perf/util/sort.h
+> @@ -72,6 +72,7 @@ enum sort_type {
+>  	SORT_ANNOTATE_DATA_TYPE_OFFSET,
+>  	SORT_SYM_OFFSET,
+>  	SORT_ANNOTATE_DATA_TYPE_CACHELINE,
+> +	SORT_TGID,
+>  
+>  	/* branch stack specific sort keys */
+>  	__SORT_BRANCH_STACK,
+> -- 
+> 2.48.1.502.g6dc24dfdaf-goog
 
