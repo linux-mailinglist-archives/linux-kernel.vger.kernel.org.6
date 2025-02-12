@@ -1,67 +1,88 @@
-Return-Path: <linux-kernel+bounces-511100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1D4A325DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:29:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082D1A325DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:29:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9326A3A7133
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:29:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6ACE7A273A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC00D20B803;
-	Wed, 12 Feb 2025 12:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A4920ADF9;
+	Wed, 12 Feb 2025 12:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="RPqGCMmK"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TiusG7P9"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE71271829;
-	Wed, 12 Feb 2025 12:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C9820A5F5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739363355; cv=none; b=ZQaPEblryaVYYUWYf9zfo8x5RT9A6WgnkQcBeMpPDxQ8PuglN5brH/xENX19ess8OjB+kTQN0WM/oAyBF7LX3Wwves97/RHeUFYlj9AleekYV+Z9ERuVo92XdVoyqzFhd/PrBGxjNoG7/XPL/dlzHPiLYM/qcwjQna7nt0hVjWQ=
+	t=1739363387; cv=none; b=dn5XV12fAC0uHdGKkGIqe95AHBhSivIGM9VY/SzEdJ4bqEK1RLfI261Wx7uTLBU14T8t0yN1gn6z18kq4QAvKkqzC4YgeTuseVv7ogZ5iiXAfSxrXkwB8Wbtkc/DC64Jqp/Hv7dFehGhFUoQuXyavqKbruU75wfi2wHNCE/fYW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739363355; c=relaxed/simple;
-	bh=CQ3SUXjx0/f8m1n41c4a7SuLTF0PmDTDTSkoGsVR/Bc=;
+	s=arc-20240116; t=1739363387; c=relaxed/simple;
+	bh=klcvtj5BIX1jNEGfVgrvouNoJNkNeQukZ9Tk5xe+N2U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDlhU8aPefd/R4BxP6lPHKhc/Fi86Nz8WVgu7bDcCPM2sxrm/3K6Oqc4e2NjwAt/IQCHD9dtZHfh4KTvNuct4ViOoNYO3l27vkM2HIXsaAc8b6GH3jRYBSeIuJOVFd5aOtnR8d+rF809eQL7HX5JIoW5+GyLgA2BUv5QEB78aFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=RPqGCMmK; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1739363341;
-	bh=CQ3SUXjx0/f8m1n41c4a7SuLTF0PmDTDTSkoGsVR/Bc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RPqGCMmKw9maDfoACsq5XCW1kNFM6USyJeTgaD0ZKnBDjJTzkCAXYBi0J0p/zs+gW
-	 CqjmKFSFDdJ1G1DqeLIdoAIUzFk59nzTIK1L5fU/sV+967mEPcUqwhoHA45Q4Y6o++
-	 DEc57IMn3o42I47CfAucVGa1HdoUC+cRjFDTaZ2E=
-Date: Wed, 12 Feb 2025 13:29:00 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Anthony Yznaga <anthony.yznaga@oracle.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Ashish Kalra <ashish.kalra@amd.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
-	Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Ingo Molnar <mingo@redhat.com>, 
-	James Gowans <jgowans@amazon.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Pratyush Yadav <ptyadav@amazon.de>, Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Usama Arif <usama.arif@bytedance.com>, 
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, kexec@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 05/14] kexec: Add Kexec HandOver (KHO) generation
- helpers
-Message-ID: <ae80c1b9-bafb-401c-9789-37a774c702c0@t-8ch.de>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <20250206132754.2596694-6-rppt@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vg14Anvnm6Lo5PxrzCMXko9TYXUm2sMMyN/WjThXz7YC1vqIlDYgSLZ76tPikR2UYFs7Ws0BjQzIQQk9tQEvmFC6Snescu09JnytPGW7d4H5X3OTmzpoumDFPTOtx78HhnXWTvEovRkFX3vU9nWsudJgpiTtQQHvQtO0BYUcm08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TiusG7P9; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab7f76aeedbso68778966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:29:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1739363383; x=1739968183; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vr6oIvSs+XCjr5qePwjy5kfImsugy3esjsokrnn9SBY=;
+        b=TiusG7P9jXl/s0SzsafIA0uOMn6bN5u+zc4EcOLD+R6Plk8Mn8PFuVXICH9rGSJfFz
+         Qu7zLVW5SOTCppBLqHsIuLrpt4QrHEs+U7K/9BSPNPtwq4G4f/h/hMziypEBZNhBvJHG
+         6VGFrDYVQogyD9Lqd2i22UbBYNINGop1Jb4zuIdoJNLCZTiDKnadBXCzA8ZDcYlI75gf
+         x52BsAa4mcJdwakTo5hYZlWI72koNvPglb8g52uSbX9eTIt3ELsAGwLO69qGYLbp3vw6
+         aO7AYgx2ZUDKCkJLN6Iaar5xwiRhy466d/BBc1NPywSG+8FXDGN6hyZ6ZMwsgzF8/qBE
+         yHNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739363383; x=1739968183;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vr6oIvSs+XCjr5qePwjy5kfImsugy3esjsokrnn9SBY=;
+        b=nqtrM9LS47CY86sQNsIDn80pUmsQNgIbKNWT9oJR3U1ifkMuJzSYs6cMXI1QMDXVpB
+         VeVOtxlSToOHNkRcdhnJQlzZq7hz2or/Ku4eBM9hATQM3i5jw4CDaw12XAkyB0Pj0DXX
+         EZZjkgymbC+fT2p5AQaMKaqS/SGsJH4Nfkin1BWnSlWAqwuyPPhhLSlU7NSshTLdbgLW
+         ivQsUDvLoFymNMcnrOJn2sTxzQe7rmKziJ8k2EwTJF/LKOoN6ANBkgb/eaM6X/KnhQnL
+         oM+tzSNh7U30sS2IZiL9VDLuKZ3tH22RezJ3R2dhf9gGWWbNoFA7DhkSuNcmBsEAiFJf
+         gX3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWCnffRoq77XHsqexIaKpaSX4L0AD0zAxIN98wH4iEnDgaaW3FRuro/fgY1/CTuKmdwdXBK6zyeWpUma1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+s2t/8cQ8KwkTdItt4XVk1fJNRasJ9TFcHrASJZgGrKS9dB8v
+	qIPV5MJQYWdZrrDuvX/U+8Hkq61t2OC4AjKXPVQ17t75btVQkixCtlAtJV9tiqQ=
+X-Gm-Gg: ASbGncudeWEeaeo1j4kmLkaXDFcfgN86QRVNbqJr0WOpXOU/uXzSdkPI7zcpdRmSlV0
+	ObbX/x0X0eD98jwtpQgg/jX8LRe1HVIjYCzC3wosn7JfUXdq1Jq2ODzozoRY1RJ1cKRFVaSxmk/
+	PsScOX9SIZKA5WFBA6Whcj9Vue0PByG/0k2WA20teVH3alC17EKh7yo875CEMUdZqREZK3WxR5y
+	ogb51UNkgHo6PYF0Dta735ufHTGvtFu+7+npOIdjfQDRR3Aqv56+Y2g2BiddnD29AG+cMKpS2Mn
+	EcR1xqAV8vvQ0FiR9w==
+X-Google-Smtp-Source: AGHT+IFiJksn0FZBzGyNmLEKzgNnfIXTLfX3R9U7t/b5/vjCUd4i3HoRbqnGLqwGJIFflz/QzbD3pQ==
+X-Received: by 2002:a05:6402:26d3:b0:5dc:80ba:dda1 with SMTP id 4fb4d7f45d1cf-5deadd7d3e1mr5862834a12.9.1739363383447;
+        Wed, 12 Feb 2025 04:29:43 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7c2dfa658sm595851866b.156.2025.02.12.04.29.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 04:29:42 -0800 (PST)
+Date: Wed, 12 Feb 2025 13:29:41 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: I Hsin Cheng <richard120310@gmail.com>, rostedt@goodmis.org,
+	linux@rasmusvillemoes.dk, senozhatsky@chromium.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	jserv@ccns.ncku.edu.tw, shuah@kernel.org
+Subject: Re: [PATCH] vsprintf: Drop unused assignment of fmt.state
+Message-ID: <Z6yUNc9h7T1gxrxp@pathway.suse.cz>
+References: <20250205172508.55358-1-richard120310@gmail.com>
+ <Z6TWEHvBF0HOxKsY@smile.fi.intel.com>
+ <Z6n6iWwnpA6wuUMD@pathway.suse.cz>
+ <Z6oWaZl7DRoW0tDK@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,86 +91,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250206132754.2596694-6-rppt@kernel.org>
+In-Reply-To: <Z6oWaZl7DRoW0tDK@smile.fi.intel.com>
 
-On 2025-02-06 15:27:45+0200, Mike Rapoport wrote:
-> From: Alexander Graf <graf@amazon.com>
+On Mon 2025-02-10 17:08:25, Andy Shevchenko wrote:
+> On Mon, Feb 10, 2025 at 02:09:53PM +0100, Petr Mladek wrote:
+> > On Thu 2025-02-06 17:32:32, Andy Shevchenko wrote:
+> > > On Thu, Feb 06, 2025 at 01:25:07AM +0800, I Hsin Cheng wrote:
+> > > > Remove unused assignment of "fmt.state", in both cases the value of
+> > > > "fmt.state" will be overwritten by either "FORMAT_STATE_PRECISION" or
+> > > > "FORMAT_STATE_NUM", the value "FORMAT_STATE_NONE" isn't going to be used
+> > > > after the assignment.
 > 
-> This patch adds the core infrastructure to generate Kexec HandOver
-> metadata. Kexec HandOver is a mechanism that allows Linux to preserve
-> state - arbitrary properties as well as memory locations - across kexec.
+> ...
 > 
-> It does so using 2 concepts:
+> > > > struct fmt format_decode(struct fmt fmt, struct printf_spec *spec)
+> > > 
+> > > >  			spec->field_width = -spec->field_width;
+> > > >  			spec->flags |= LEFT;
+> > > >  		}
+> > > > -		fmt.state = FORMAT_STATE_NONE;
+> > > > +
+> > > >  		goto precision;
+> > > >  	}
+> > > >  
+> > > 
+> > > While both are kinda redundant, this is not obvious what's stated in the commit
+> > > message. Yes, `goto qualifier;` is straightforward, but not `goto precision;`.
+> > > Which makes me think that these assignments can make code robust against
+> > > potential future changes to allow to catch up the wrong code paths.
+> > 
+> > I fully agree with Andy here.
+> > 
+> > That said, I see the following right below the two conditions modified
+> > in this patch:
+> > 
+> > 	/* By default */
+> > 	fmt.state = FORMAT_STATE_NONE;
+> > 
+> > A good solution would be to move it up. It will be then obvious
+> > that we could remove these two initializations. I mean
+> > to do the following:
 > 
->   1) Device Tree - Every KHO kexec carries a KHO specific flattened
->      device tree blob that describes the state of the system. Device
->      drivers can register to KHO to serialize their state before kexec.
-> 
->   2) Scratch Regions - CMA regions that we allocate in the first kernel.
->      CMA gives us the guarantee that no handover pages land in those
->      regions, because handover pages must be at a static physical memory
->      location. We use these regions as the place to load future kexec
->      images so that they won't collide with any handover data.
-> 
-> Signed-off-by: Alexander Graf <graf@amazon.com>
-> Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  Documentation/ABI/testing/sysfs-kernel-kho    |  53 +++
->  .../admin-guide/kernel-parameters.txt         |  24 +
->  MAINTAINERS                                   |   1 +
->  include/linux/cma.h                           |   2 +
->  include/linux/kexec.h                         |  18 +
->  include/linux/kexec_handover.h                |  10 +
->  kernel/Makefile                               |   1 +
->  kernel/kexec_handover.c                       | 450 ++++++++++++++++++
->  mm/internal.h                                 |   3 -
->  mm/mm_init.c                                  |   8 +
->  10 files changed, 567 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-kho
->  create mode 100644 include/linux/kexec_handover.h
->  create mode 100644 kernel/kexec_handover.c
+> Which can't be performed (one need to check the old value first somehow) :-)
 
-<snip>
+Grr, humph /o\
 
-> --- /dev/null
-> +++ b/include/linux/kexec_handover.h
-> @@ -0,0 +1,10 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef LINUX_KEXEC_HANDOVER_H
-> +#define LINUX_KEXEC_HANDOVER_H
+OK, I would personally keep the code as it is now. I do not see any
+big benefit in removing the duplicity assignment.
 
-#include <linux/types.h>
+IMHO, the assignment make the code more robust for future changes.
+Let the compiler to optimize it out.
 
-> +
-> +struct kho_mem {
-> +	phys_addr_t addr;
-> +	phys_addr_t size;
-> +};
-> +
-> +#endif /* LINUX_KEXEC_HANDOVER_H */
-
-<snip>
-
-> +static ssize_t dt_read(struct file *file, struct kobject *kobj,
-> +		       struct bin_attribute *attr, char *buf,
-
-Please make the bin_attribute argument const. Currently both work, but
-the non-const variant will go away.
-This way I can test my stuff on linux-next.
-
-> +		       loff_t pos, size_t count)
-> +{
-> +	mutex_lock(&kho_out.lock);
-> +	memcpy(buf, attr->private + pos, count);
-> +	mutex_unlock(&kho_out.lock);
-> +
-> +	return count;
-> +}
-> +
-> +struct bin_attribute bin_attr_dt_kern = __BIN_ATTR(dt, 0400, dt_read, NULL, 0);
-
-The new __BIN_ATTR_ADMIN_RO() could make this slightly shorter.
-
-<snip>
+Best Regards,
+Petr
 
