@@ -1,103 +1,84 @@
-Return-Path: <linux-kernel+bounces-511092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6E8A325B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:16:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDDAA325BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:19:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B87188BC51
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A951167717
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C88271831;
-	Wed, 12 Feb 2025 12:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E42205AA2;
+	Wed, 12 Feb 2025 12:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IOFGbOKP"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2H8y0xk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AB627181D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC9127181D;
+	Wed, 12 Feb 2025 12:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739362581; cv=none; b=dlsZSJUoZpLVUJTX4DZjV0DQk4KSh6PXf7aVjk/yv84o+kGsoV4goHx1lu1IpSQ4psGHGNg2giwuo5VPfUGbYwbqhTNEpTG8EO4la/3qZHmrMusslpov8hEEC1mQJJ+EEucvj3zKmRFH0HDkVhxIdb+k9LUedqx+24WImEKtIXQ=
+	t=1739362766; cv=none; b=iptfH2NxHC85T67VzFuiO6QA6/5Vr2jc1MDKsfXLN14K8/QLUHS12oC3CFBe/+/xbtZAglLoQEX0/B7Fwb14a8sNzOEkIAQ5W2E9fGPY8Xj0KdUjS3r1i/cybi1DucJHbYmJQPMaA+QltgEfbds/pDJSX9U5UafIS+bhsvutVdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739362581; c=relaxed/simple;
-	bh=IN8Pt7VpLQIzvHLgaBpXpGJky2YGCtWwMLRj2mJiMwI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DH8tgw/NhNO+P9blGXuqRkS5cRuj8ncR5B7zYjrl9KTM9NdZHhWb+xIOzpTjcT3Icgee01dgttsAVZMbRrEGda+UOVibXufHBOigEFiNtHg8ZdNKG8arLW3Yrzj9Ie9mhGciilswaT5w9zKeh6oNlYazGR7xky2Q9eNoBi6etRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IOFGbOKP; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739362577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=w8v+W5qKG0FRQRTW2H8mBvyW6V4jA7wqbBco7O0n7Y4=;
-	b=IOFGbOKPZsiMPsodyoVt34DWKU8aFpw9cXqo+zzYGqb2BdCaUwwso4qm1+CL71isMzFC8A
-	P2Q0yK7oDK5PYMbSZDQ/BBHdEDwJCyQaBRuXw521t9o1jekLSBiuJOpnfk8zmMtSQXuicQ
-	NuXiQJKNKGnQwYYHJhk0zG/FH+oeM6Y=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <sfrench@samba.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ksmbd: Use str_read_write() and str_true_false() helpers
-Date: Wed, 12 Feb 2025 13:15:16 +0100
-Message-ID: <20250212121515.112430-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1739362766; c=relaxed/simple;
+	bh=M+Xlt2XcjgUNFYP2qssnoRDZSeAmp3wXi6EiLpgW0K8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W2glPMRJfb20+Y1o/AP0lr+YjmgLJ9Nf2GXDigzWp5FnT6XzI8lHezTOdkSqidsKzGbUwPF6VP2cpzCPZRuedz2X7yK5d9JYoNkM+3usvhq07dcga9mxOIxjrf2WIcpuD7CCR7dyUUghrQPweYKropk0IHcbG6/lWONVqYaiHUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2H8y0xk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3357C4CEDF;
+	Wed, 12 Feb 2025 12:19:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739362766;
+	bh=M+Xlt2XcjgUNFYP2qssnoRDZSeAmp3wXi6EiLpgW0K8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=j2H8y0xkUj5igOMzvMQlxJ/MmBzBhTfF4OZoCCuLNvflIzvm61v6+/BXUwYjHxdMc
+	 UA2E0xD0Kc38PfSdLStL67Ne2hcmwVx71KQAjGlfZOLNbM6ZziRu3wB2jjZzqP5oDW
+	 6Cv6R/MM/1iH4yeqikRtYqMFZn/H5AUGGlSkg9RA0eB/XaW9dBax+8mSh/HoRSbY0I
+	 qU1TOJRSyAhw3nh7oxQw74rBTz8uozdYhYiNlmk6e9BetD+ucPW8lSWtFZU4vDMeG4
+	 BXpRlkXMeAIQWEIkn3GLEzEu/ZLMW9xmi2IRIx/L6SflxA2c4b/09kNtNR+mgR0Cq1
+	 cGyj2NrlH0XQg==
+Message-ID: <60d61b5bf637370f0eeda0e331b9da2c29fbf2b4.camel@kernel.org>
+Subject: Re: [PATCH v1 1/1] virtio_console: Get rid of unneeded temporary
+ variable
+From: Amit Shah <amit@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>
+Date: Wed, 12 Feb 2025 13:19:23 +0100
+In-Reply-To: <20250210095946.4122771-1-andriy.shevchenko@linux.intel.com>
+References: <20250210095946.4122771-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Remove hard-coded strings by using the str_read_write() and
-str_true_false() helpers.
+On Mon, 2025-02-10 at 11:59 +0200, Andy Shevchenko wrote:
+> When compiling a kernel with GCC using `make W=3D1` with
+> CONFIG_WERROR=3Dy
+> (which is default nowadays), the build fails:
+>=20
+> drivers/char/virtio_console.c:1427:9: note: =E2=80=98snprintf=E2=80=99 ou=
+tput between
+> 9 and 27 bytes into a destination of size 16
+>=20
+> Indeed, GCC can't see the limits of the variables that are in use.
+> Fix this by using dev_name() of the newly created device that is
+> luckily the same as the string used for the DebugFS node name.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> =C2=A0drivers/char/virtio_console.c | 5 +----
+> =C2=A01 file changed, 1 insertion(+), 4 deletions(-)
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- fs/smb/server/transport_rdma.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/smb/server/transport_rdma.c b/fs/smb/server/transport_rdma.c
-index c3785a5434f9..1b9f3aee8b4b 100644
---- a/fs/smb/server/transport_rdma.c
-+++ b/fs/smb/server/transport_rdma.c
-@@ -14,6 +14,7 @@
- #include <linux/mempool.h>
- #include <linux/highmem.h>
- #include <linux/scatterlist.h>
-+#include <linux/string_choices.h>
- #include <rdma/ib_verbs.h>
- #include <rdma/rdma_cm.h>
- #include <rdma/rw.h>
-@@ -1396,7 +1397,7 @@ static int smb_direct_rdma_xmit(struct smb_direct_transport *t,
- 	}
- 
- 	ksmbd_debug(RDMA, "RDMA %s, len %#x, needed credits %#x\n",
--		    is_read ? "read" : "write", buf_len, credits_needed);
-+		    str_read_write(is_read), buf_len, credits_needed);
- 
- 	ret = wait_for_rw_credits(t, credits_needed);
- 	if (ret < 0)
-@@ -2289,7 +2290,7 @@ bool ksmbd_rdma_capable_netdev(struct net_device *netdev)
- 	}
- 
- 	ksmbd_debug(RDMA, "netdev(%s) rdma capable : %s\n",
--		    netdev->name, rdma_capable ? "true" : "false");
-+		    netdev->name, str_true_false(rdma_capable));
- 
- 	return rdma_capable;
- }
--- 
-2.48.1
+Reviewed-by: Amit Shah <amit@kernel.org>
 
 
