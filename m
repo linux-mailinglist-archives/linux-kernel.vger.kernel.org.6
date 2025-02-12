@@ -1,250 +1,138 @@
-Return-Path: <linux-kernel+bounces-510512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1E8A31E06
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:37:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5000A31E07
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379B51884639
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:37:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0CD1884EA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F4D1F7561;
-	Wed, 12 Feb 2025 05:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651FB1FAC40;
+	Wed, 12 Feb 2025 05:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="WHhT0h5b"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b5m6tyOJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F12BB67E;
-	Wed, 12 Feb 2025 05:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCD11F9F64;
+	Wed, 12 Feb 2025 05:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739338635; cv=none; b=UvnRPA9fpCk0GyaLHeq4SsX1J3aYVeqGhH7UQoKJzdN6f6j/EByjtG3P0BFEPfr/WE3ckU8kDTBgL61/IPNwz4YsLW34RfZnwsunhsqZ6uhG5LAmw/Mq5cbiD3Kme/QpL+uhYR8OFavY3P0QWaWjHLLpqHt0jdvrM40XdjbVDsM=
+	t=1739338640; cv=none; b=q71fvyfpOfT/HrHxTrdhohMLE+nNxt67lw+Y3TsV0uPS1JVXl+JA8dVURb12OGGu/vo5f4cuRiFV3vKwXCuPYVFzaVoU2PkA61dZDKm3zlXUGbvAgI9U/hP/rNTVT9GcUDW1iaDY0tY5aY32HPOYxYLIHnaADsCrQ8xO3uDEVj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739338635; c=relaxed/simple;
-	bh=Vq/sQyw4FHu+wn+41JCedKUlbPLVFsN3KR1dIt4xYOQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SkbJZ5gZQKWqQPuuar3JbnL0DZYC0IB/HBskjg4sD3hZCbgayKokm27OVn+a/Og5WAAE/R2cO34o7xJYPCRmfwDanB/Jwy9EFIkNyKzHPfm3PXLXlRATJZ4amfBlvUq+IbchbcO7aNG1Bm/x/GC726b1vIanehJabOQ8ESqFOUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=WHhT0h5b; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1739338634; x=1770874634;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=N1ldq/teHo/QBZY6cIiNd8wg81nHlAQXLen7eInilfM=;
-  b=WHhT0h5b8/HqP3Pib/O2PCe4p4FyZrGxO8Cp2JIYGnRcIeebq5jTDBax
-   1X0RNE5u/oNCRMSK2EaAMnwBLuXYSiuWpcsFP35jT3v9XL+CbZxqgKoRp
-   FW/4bUQD4TzpuoVwvLMGXQSWj9wyq7t5TJ+WKaVpX4QX6ZAP+tx4MmIOW
-   4=;
-X-IronPort-AV: E=Sophos;i="6.13,279,1732579200"; 
-   d="scan'208";a="168935605"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 05:37:13 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:32783]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.25.59:2525] with esmtp (Farcaster)
- id c69e62f5-4918-4895-af0d-a33eddd4d416; Wed, 12 Feb 2025 05:37:13 +0000 (UTC)
-X-Farcaster-Flow-ID: c69e62f5-4918-4895-af0d-a33eddd4d416
-Received: from EX19D016UWA004.ant.amazon.com (10.13.139.119) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Wed, 12 Feb 2025 05:37:13 +0000
-Received: from 88665a51a6b2.amazon.com (10.106.179.55) by
- EX19D016UWA004.ant.amazon.com (10.13.139.119) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Wed, 12 Feb 2025 05:37:10 +0000
-From: Cristian Prundeanu <cpru@amazon.com>
-To: Peter Zijlstra <peterz@infradead.org>
-CC: Cristian Prundeanu <cpru@amazon.com>, K Prateek Nayak
-	<kprateek.nayak@amd.com>, Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
-	"Ali Saidi" <alisaidi@amazon.com>, Benjamin Herrenschmidt
-	<benh@kernel.crashing.org>, Geoff Blake <blakgeof@amazon.com>, Csaba Csoma
-	<csabac@amazon.com>, Bjoern Doebel <doebel@amazon.com>, Gautham Shenoy
-	<gautham.shenoy@amd.com>, Joseph Salisbury <joseph.salisbury@oracle.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Borislav Petkov
-	<bp@alien8.de>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-tip-commits@vger.kernel.org>,
-	<x86@kernel.org>
-Subject: [PATCH v2] [tip: sched/core] sched: Move PLACE_LAG and RUN_TO_PARITY to sysctl
-Date: Tue, 11 Feb 2025 23:36:44 -0600
-Message-ID: <20250212053644.14787-1-cpru@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250128230926.11715-1-cpru@amazon.com>
-References: <20250119110410.GAZ4zcKkx5sCjD5XvH@fat_crate.local>
+	s=arc-20240116; t=1739338640; c=relaxed/simple;
+	bh=tpdtplCxwD9o20O/r7cKITmzzmBLuF+M6Z2a5ZkB4GA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e+hepjALjPc8Z6HzL93ZFzR0XzsX6MMHE/FfPIYmdrWps5IlrAf4BP+NRFlCiZP40mb17NXJP7Z5qAotcARQba/YZBPv8F3KHyZwRTZOXe12VJpbMT+DH1Z3AjahOH0BRko0AwI7neitgbVafLLPsC4EKnqcay4M8ytTinfMCiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b5m6tyOJ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739338640; x=1770874640;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tpdtplCxwD9o20O/r7cKITmzzmBLuF+M6Z2a5ZkB4GA=;
+  b=b5m6tyOJpUpsskdbLomeUjKsh/R+GIyZPGkr//2sr/dluOYbdGdQTBM5
+   ooqydX/Wc2qCTmVon1k3ioIa1Aqe4wOuqRz3T7fsZoyNDjJyqn+Rk4ckd
+   H22vvZ9t0SA0FRYaSKLeG2dpvcnyLvDNnQY0KhYqB3dgoQzmzyffAzWPb
+   guVnhH0Kge9Kum5ZfE4thoBsa0TRxPuEVr33tn3Tjdhh9fpSRxoUcYMCR
+   1ccGR5tQdKp3xGmFQYoHVo1oAdiHYCfaQVFZaYJ4jtHnPu8ozp9JrGRDx
+   bpsI4KpaIwHmpFkU6OxJAeOLJtZIAbqKCmW6fBSsrlNQodsmpLTiItipz
+   g==;
+X-CSE-ConnectionGUID: jF1BPO3KTL+iUtMfqXm4sw==
+X-CSE-MsgGUID: uq9SznljQ/W7KBQBIhnpYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="43633178"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="43633178"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 21:37:19 -0800
+X-CSE-ConnectionGUID: KMDW/hEDThe6WjOWgPWGXA==
+X-CSE-MsgGUID: 6ZsTFlwDT02qdsj5KQJ2Ig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="112675074"
+Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 21:37:15 -0800
+Message-ID: <4b23f7c7-b5e6-41c9-bcae-bd1686b801a6@linux.intel.com>
+Date: Wed, 12 Feb 2025 13:37:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D039UWB003.ant.amazon.com (10.13.138.93) To
- EX19D016UWA004.ant.amazon.com (10.13.139.119)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/8] KVM: TDX: Handle TDG.VP.VMCALL<ReportFatalError>
+To: Sean Christopherson <seanjc@google.com>, xiaoyao.li@intel.com
+Cc: pbonzini@redhat.com, kvm@vger.kernel.org, rick.p.edgecombe@intel.com,
+ kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com,
+ tony.lindgren@intel.com, isaku.yamahata@intel.com, yan.y.zhao@intel.com,
+ chao.gao@intel.com, linux-kernel@vger.kernel.org
+References: <20250211025442.3071607-1-binbin.wu@linux.intel.com>
+ <20250211025442.3071607-7-binbin.wu@linux.intel.com>
+ <Z6vo5sRyXTbtYSev@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <Z6vo5sRyXTbtYSev@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Replacing CFS with the EEVDF scheduler in kernel 6.6 introduced
-significant performance degradation in multiple database-oriented
-workloads. This degradation manifests in all kernel versions using EEVDF,
-across multiple Linux distributions, hardware architectures (x86_64,
-aarm64, amd64), and CPU generations.
 
-Testing combinations of available scheduler features showed that the
-largest improvement (short of disabling all EEVDF features) came from
-disabling both PLACE_LAG and RUN_TO_PARITY.
 
-Moving PLACE_LAG and RUN_TO_PARITY to sysctl will allow users to override
-their default values and persist them with established mechanisms.
+On 2/12/2025 8:18 AM, Sean Christopherson wrote:
+> On Tue, Feb 11, 2025, Binbin Wu wrote:
+>> +static int tdx_report_fatal_error(struct kvm_vcpu *vcpu)
+>> +{
+>> +	struct vcpu_tdx *tdx = to_tdx(vcpu);
+>> +	u64 reg_mask = tdx->vp_enter_args.rcx;
+>> +	u64 *opt_regs;
+>> +
+>> +	/*
+>> +	 * Skip sanity checks and let userspace decide what to do if sanity
+>> +	 * checks fail.
+>> +	 */
+>> +	vcpu->run->exit_reason = KVM_EXIT_SYSTEM_EVENT;
+>> +	vcpu->run->system_event.type = KVM_SYSTEM_EVENT_TDX_FATAL;
+>> +	/* Error codes. */
+>> +	vcpu->run->system_event.data[0] = tdx->vp_enter_args.r12;
+>> +	/* GPA of additional information page. */
+>> +	vcpu->run->system_event.data[1] = tdx->vp_enter_args.r13;
+>> +	/* Information passed via registers (up to 64 bytes). */
+>> +	opt_regs = &vcpu->run->system_event.data[2];
+>> +
+>> +#define COPY_REG(REG, MASK)						\
+>> +	do {								\
+>> +		if (reg_mask & MASK) {					\
+> Based on past experience with conditionally filling kvm_run fields, I think KVM
+> should copy all registers and let userspace sort out the reg_mask.  Unless the
+> guest passes an ASCII byte stream exactly as the GHCI suggests,
+Yea, GHCI doesn't enforce it to be ASCII byte stream.
 
-Link: https://lore.kernel.org/20241017052000.99200-1-cpru@amazon.com
-Signed-off-by: Cristian Prundeanu <cpru@amazon.com>
----
-v2: use latest sched/core; defer default value change to a follow-up patch
+> the information
+> is quite useless because userspace doesn't have reg_mask and so can't know what's
+> in data[4], data[5], etc...  And I won't be the least bit surprised if guests
+> deviate from the GHCI.
 
- include/linux/sched/sysctl.h |  8 ++++++++
- kernel/sched/core.c          | 13 +++++++++++++
- kernel/sched/fair.c          |  7 ++++---
- kernel/sched/features.h      | 10 ----------
- kernel/sysctl.c              | 20 ++++++++++++++++++++
- 5 files changed, 45 insertions(+), 13 deletions(-)
+But it also confuses userspace if guests uses special protocol to pass
+information other than ASCII byte stream.
 
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index 5a64582b086b..a899398bc1c4 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -29,4 +29,12 @@ extern int sysctl_numa_balancing_mode;
- #define sysctl_numa_balancing_mode	0
- #endif
- 
-+#if defined(CONFIG_SCHED_DEBUG) && defined(CONFIG_SYSCTL)
-+extern unsigned int sysctl_sched_place_lag_enabled;
-+extern unsigned int sysctl_sched_run_to_parity_enabled;
-+#else
-+#define sysctl_sched_place_lag_enabled 1
-+#define sysctl_sched_run_to_parity_enabled 1
-+#endif
-+
- #endif /* _LINUX_SCHED_SYSCTL_H */
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 9142a0394d46..a379240628ea 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -134,6 +134,19 @@ const_debug unsigned int sysctl_sched_features =
- 	0;
- #undef SCHED_FEAT
- 
-+#ifdef CONFIG_SYSCTL
-+/*
-+ * Using the avg_vruntime, do the right thing and preserve lag across
-+ * sleep+wake cycles. EEVDF placement strategy #1, #2 if disabled.
-+ */
-+__read_mostly unsigned int sysctl_sched_place_lag_enabled = 1;
-+/*
-+ * Inhibit (wakeup) preemption until the current task has either matched the
-+ * 0-lag point or until it has exhausted its slice.
-+ */
-+__read_mostly unsigned int sysctl_sched_run_to_parity_enabled = 1;
-+#endif
-+
- /*
-  * Print a warning if need_resched is set for the given duration (if
-  * LATENCY_WARN is enabled).
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1e78caa21436..c87fd1accd54 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -923,7 +923,8 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
- 	 * Once selected, run a task until it either becomes non-eligible or
- 	 * until it gets a new slice. See the HACK in set_next_entity().
- 	 */
--	if (sched_feat(RUN_TO_PARITY) && curr && curr->vlag == curr->deadline)
-+	if (sysctl_sched_run_to_parity_enabled && curr &&
-+	    curr->vlag == curr->deadline)
- 		return curr;
- 
- 	/* Pick the leftmost entity if it's eligible */
-@@ -5199,7 +5200,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	 *
- 	 * EEVDF: placement strategy #1 / #2
- 	 */
--	if (sched_feat(PLACE_LAG) && cfs_rq->nr_queued && se->vlag) {
-+	if (sysctl_sched_place_lag_enabled && cfs_rq->nr_queued && se->vlag) {
- 		struct sched_entity *curr = cfs_rq->curr;
- 		unsigned long load;
- 
-@@ -9327,7 +9328,7 @@ static inline int task_is_ineligible_on_dst_cpu(struct task_struct *p, int dest_
- #else
- 	dst_cfs_rq = &cpu_rq(dest_cpu)->cfs;
- #endif
--	if (sched_feat(PLACE_LAG) && dst_cfs_rq->nr_queued &&
-+	if (sysctl_sched_place_lag_enabled && dst_cfs_rq->nr_queued &&
- 	    !entity_eligible(task_cfs_rq(p), &p->se))
- 		return 1;
- 
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 3c12d9f93331..b98ec31ef2c4 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -1,10 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- 
--/*
-- * Using the avg_vruntime, do the right thing and preserve lag across
-- * sleep+wake cycles. EEVDF placement strategy #1, #2 if disabled.
-- */
--SCHED_FEAT(PLACE_LAG, true)
- /*
-  * Give new tasks half a slice to ease into the competition.
-  */
-@@ -13,11 +8,6 @@ SCHED_FEAT(PLACE_DEADLINE_INITIAL, true)
-  * Preserve relative virtual deadline on 'migration'.
-  */
- SCHED_FEAT(PLACE_REL_DEADLINE, true)
--/*
-- * Inhibit (wakeup) preemption until the current task has either matched the
-- * 0-lag point or until is has exhausted it's slice.
-- */
--SCHED_FEAT(RUN_TO_PARITY, true)
- /*
-  * Allow wakeup of tasks with a shorter slice to cancel RUN_TO_PARITY for
-  * current.
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 7ae7a4136855..11651d87f6d4 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2019,6 +2019,26 @@ static struct ctl_table kern_table[] = {
- 		.extra2		= SYSCTL_INT_MAX,
- 	},
- #endif
-+#ifdef CONFIG_SCHED_DEBUG
-+	{
-+		.procname	= "sched_place_lag_enabled",
-+		.data		= &sysctl_sched_place_lag_enabled,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{
-+		.procname	= "sched_run_to_parity_enabled",
-+		.data		= &sysctl_sched_run_to_parity_enabled,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+#endif
- };
- 
- static struct ctl_table vm_table[] = {
+Anyway, dumping all registers to userspace and let userspace to have all
+the information passed from guest for parsing is definitely workable.
 
-base-commit: 05dbaf8dd8bf537d4b4eb3115ab42a5fb40ff1f5
--- 
-2.48.1
+>
+>> +			*opt_regs = tdx->vp_enter_args.REG;		\
+>> +			opt_regs++;					\
+>> +		}							\
+>> +	} while (0)
+>> +
+>> +	/* The order is defined in GHCI. */
+> Assuming I haven't missed something, to hell with the GCHI, just dump *all*
+> registers, sorted by their index (ascending).  Including RAX (TDCALL), RBP, and
+> RSP.
+>
 
 
