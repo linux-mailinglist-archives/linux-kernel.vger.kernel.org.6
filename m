@@ -1,119 +1,152 @@
-Return-Path: <linux-kernel+bounces-510958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87342A3241A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:58:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2872AA3241C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883381671A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:58:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09811632D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB99209F46;
-	Wed, 12 Feb 2025 10:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845D8209F44;
+	Wed, 12 Feb 2025 10:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JQXah5wi"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+i7e48A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C5E209F32
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8303206F2C;
+	Wed, 12 Feb 2025 10:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357899; cv=none; b=koY1cwcPLicUFVqOGj3TWBAp8diPawLQoFkCAQfr1Yt1uQ742JzHuO6K9v1jYWI9KjSkYTQizZmE/KWGiIDqE2Y8MU4AOhSQwdS/QnQPNiZEcq1trWm1J7KdBOja4CNGpmGmPY7sDRhwlKM2IyeQujrHQACYvNJerHN9Eg5xoN8=
+	t=1739357953; cv=none; b=jL6jQqoMswfCvYF9IEFQ7r3AuhbXVwHyANMM3Lb+MXqPUgHVW9Ea5Vgw57ulIwvQUocHrDLduO/C8Pd3s1a//3qoQN4Xh32z4Cob6raKaSkpfyyo2GvQGlIzMmgR8Ve5XwqP3QGWVQc6ua28WJ42nGjhAbTPaQiZbRq1ntNXPJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357899; c=relaxed/simple;
-	bh=6AQTxLpjLpfJiPBrHtlhZPTmpePFJrZOq4BwSa0DNQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dy81dNWHen+wzo4LJQ96L6jM1ORmUPsj7WNMOS3Pyn/NJBYoUBWRj1b+aGstSyoQT7Ida7gpw3pZCOUbsTGGctP7ehg8A9bvF6sNrK3gRK1DFKyfAu/zg2kwRHuOObcRIv2N0BSK+5jU8SHGvRBRiRZQZiSjb4oX/wK83l1gmus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JQXah5wi; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54504f5cfe9so762113e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:58:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739357896; x=1739962696; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tFCRTI+uxekbKaB7VjoVJZp4kloQ9ULA619mLaD9fcs=;
-        b=JQXah5wisDpIwJNCFWQrFcTVbbyiT0pdrUkOXWeRcJiEAgc/jaVOm5rt1z1D0wuJe4
-         Na5WRBIPEcFfkUduZMu5Z0ZWp3K8VNLxQh4i1z2NKPAPwF27UpzZxtqHZhTV/5d3qZmV
-         YswJCoLt6EJGHk7h8y0eoRHJ0aa016IRQyJz2Z97TzYNQjMHx/WxxC7VQ95nAaZ3Wh7l
-         1DKgzZy8Q8qchM3fJXJICst70A+aq/I2rarz7LSpkRiI4YVvhRZBlfcZejQjUeIyoZfI
-         wuL8GxfEqv/VYVQd+SMbqiCr2PeIZOG+damJ7jwuN31eSZSfFCGE5Vg5dT95nFaXu3qU
-         SWOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739357896; x=1739962696;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tFCRTI+uxekbKaB7VjoVJZp4kloQ9ULA619mLaD9fcs=;
-        b=Wrl7daWPOtZLJou3VpYKRX9jJCETqws6pbq3z+CS8bcsmdpJKuA1B4glLnGLvY8wVH
-         nM0QIFTAUEt3LoXHwRbkFsY7HYMY9e5Uo/9Q2kaxuGqSm9Ro3ebMy/s58XZL6iFno7sW
-         oud3PRuTI4C8XeNsCLkrtoo6Gt7zmwuHT5nbPVOMCRh9z16ENBWsiGq6uzUBB5T40gkh
-         /isnD0CUPQNJIvGIh4uRiTQfC0/MybjqB1OCNUyCg+aOBydtIC78GGIKGmi3HfCPOrfX
-         +hxJRec1ozgx/dWEMInayeCOWj9GzCfeW83e66JBZDhnp/4RRtQ63HIbKV4KYyYuX1gW
-         CK6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXX5ikPAXWRTHCdcKYXxLW/q2NbQgp1SwNMV/i82/+oJwic64TV4VF2ghq30k/dYJ+PYqvQHsVYrTZQQd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgmrvdCeFF7PZwnkpJY2oZrV6R+VEP0+3mxe76wxF3qipJVa/j
-	aXie1X4OV5pbc44YiSuJbtWK0NVo0nzM2UoLgX4TH9sidqU/jKO7Tzt0Eej4iIc=
-X-Gm-Gg: ASbGncsTtfAkNmPfT1YrJ46o/FVy664dxX/JOegBxd6a3jeXIP2dBZdbcdYcifgJ91s
-	zBLyWGjK8Hu9flaw9yn6Q6JgjlNdUK7PkMjakbS2lr+JE26o05Q9yEC3Rua1G4yJANvA3g9We/3
-	9XBfCJkKzWPQQAyilGj1wMgevjX0VqmDfy2HiLCXIz7qY5UEB+NC2pT8TQFhMTbhXvhfHht/2Da
-	eCI60nalbcwRAYGqTva9prdr4qvJsQ/BP5/xNEcnd8ANenx+EyHjbWUIm/oQAHp4CU8D9Esr+gJ
-	ObGZm9JiBr+HFnvg9mwz0ZaVGCjdKTOtaTJe2mh3hFUgGKL6ePsSHtDCxbY4JUv+S5G6Lo8=
-X-Google-Smtp-Source: AGHT+IGUpJ0IHuG1bctt41bVvHPQ/W3w8vStlenWEjKpIntH94rgVWmcXj9gpbKua89+PLGTI1w42A==
-X-Received: by 2002:a05:6512:b08:b0:545:240:55ba with SMTP id 2adb3069b0e04-5451809a3bamr822239e87.26.1739357895751;
-        Wed, 12 Feb 2025 02:58:15 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5450cfff106sm894926e87.99.2025.02.12.02.58.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 02:58:15 -0800 (PST)
-Date: Wed, 12 Feb 2025 12:58:13 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, quic_abhinavk@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: Disable dither in phys encoder cleanup
-Message-ID: <hb42tamaguzgoxbsqxqyvhwvsegcbqxwtcmdwlnrx4hqcityfj@dqa2seg5bt2a>
-References: <20250211-dither-disable-v1-1-ac2cb455f6b9@quicinc.com>
+	s=arc-20240116; t=1739357953; c=relaxed/simple;
+	bh=6ynvjwiirw9pMPqaFmUszoi8riMDvjaa43Q0OnomhyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IQRdRiV6JS/5RZEPsPtEqjjwiDLmur2pQJMOMKAkIA2RCzd+aTB8QRygs65DpY24+GNS/n34sG/4Yf0qGdkCOqj93b8W3llIRvHRkPV5Yz2d7q3ECEZwVpipe6V30ZjqeMsoDEfWX1WGgH1d72lUv4B3+UCqnLERFmfJaEfknnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+i7e48A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AEC8C4CEDF;
+	Wed, 12 Feb 2025 10:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739357953;
+	bh=6ynvjwiirw9pMPqaFmUszoi8riMDvjaa43Q0OnomhyY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=I+i7e48A18OPZ7QAL7RlpiB+2HBjm7fKAEJG2P4o4hm10eY1DB/8aLTIL59Q848cq
+	 wQOhwOR6Vym90bja0VZT9/TeyZxpuXyxG5tM4nXGFqdJqBJ1f1IPN0+4a+J50+cqAD
+	 e1DqC0XHa02wH8JgMvGDGKAz2yEZqm0PQKhOYdlnPf6Jp+/kpnYC4Fqh5ZSvLmNWyu
+	 rDXTniMapqot6GwsVx8hSHql+lihgCNPPVN7OXGTdg1o7/7f1xW3ymsuHWcNsUuMLN
+	 OYpnF2r+UMjQTWwzVO9I2CjPhXITvsgnGwchcw4e3lU0APuyST7sv7wrVrykB1r2V8
+	 sYU15cHoLTTig==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-29fe83208a4so432052fac.0;
+        Wed, 12 Feb 2025 02:59:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV7DOdLTX2hdF/E/6OfJnGczaoFP7UrhGijBeZkf8dZq9lEYG4o63Ynl7nr+bIMv6GFHX2LhMqNIJI=@vger.kernel.org, AJvYcCX2dNVhtsmm94MsI5Z/HyXnOneobiXKtr7yoaka4prlzRjc5rb8ingRwxebrPRv7lRynY5gAvnKTqO+Kac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIwR/hnRf2KssHv5/yRkcwfuamQyjpiw/R8w63aqFLGAoTmJB4
+	SjQAIyW++Xo9eGy4laRZVRNqSQckF13xh32b6EG0P50sHW6VsaJAA0BoI93S3rZMmilre6kLk2W
+	ZlTQvMAGDHgZ7HJyizJY+EM0G/Mk=
+X-Google-Smtp-Source: AGHT+IG8QKAMUrvf7UKtROR6aDoc2C+w6x3rW2FjrqQKNmgcv5Enubi24yKLLGjLSma4ad+RujMSCIDPV2yBLz/vRGs=
+X-Received: by 2002:a05:6870:9a21:b0:2b8:a5a9:c615 with SMTP id
+ 586e51a60fabf-2b8b6d5f653mr4471213fac.3.1739357952589; Wed, 12 Feb 2025
+ 02:59:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211-dither-disable-v1-1-ac2cb455f6b9@quicinc.com>
+References: <2314745.iZASKD2KPV@rjwysocki.net> <CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQGwNWeteJWqpW29BojhQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQGwNWeteJWqpW29BojhQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 12 Feb 2025 11:59:01 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0h44Yxp95pHW+75gk5yWKviLO1_YK_cZNFKaGnid7nx9A@mail.gmail.com>
+X-Gm-Features: AWEUYZnUZ89kR8nnk8jl2vFBp3d8Lo9uDbYIeRM2O4NyovM9vBRPbcJB9RpaZBU
+Message-ID: <CAJZ5v0h44Yxp95pHW+75gk5yWKviLO1_YK_cZNFKaGnid7nx9A@mail.gmail.com>
+Subject: Re: [PATCH v1 00/10] PM: Make the core and pm_runtime_force_suspend/resume()
+ agree more
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 11, 2025 at 07:59:19PM -0800, Jessica Zhang wrote:
-> Disable pingpong dither in dpu_encoder_helper_phys_cleanup().
-> 
-> This avoids the issue where an encoder unknowingly uses dither after
-> reserving a pingpong block that was previously bound to an encoder that
-> had enabled dither.
-> 
-> Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Closes: https://lore.kernel.org/all/jr7zbj5w7iq4apg3gofuvcwf4r2swzqjk7sshwcdjll4mn6ctt@l2n3qfpujg3q/
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
-> This was tested on SC7180 Trogdor by pulling in the concurrent writeback
-> series [1] and running the IGT kms_writeback@writeback_check_output
-> subtest.
-> 
-> [1] https://patchwork.freedesktop.org/series/144083/
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+On Wed, Feb 12, 2025 at 10:12=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.or=
+g> wrote:
+>
+> On Tue, 11 Feb 2025 at 22:25, Rafael J. Wysocki <rjw@rjwysocki.net> wrote=
+:
+> >
+> > Hi Everyone,
+> >
+> > This series is a result of the discussion on a recently reported issue
+> > with device runtime PM status propagation during system resume and
+> > the resulting patches:
+> >
+> > https://lore.kernel.org/linux-pm/12619233.O9o76ZdvQC@rjwysocki.net/
+> > https://lore.kernel.org/linux-pm/6137505.lOV4Wx5bFT@rjwysocki.net/
+> >
+> > Overall, due to restrictions related to pm_runtime_force_suspend() and
+> > pm_runtime_force_resume(), it was necessary to limit the RPM_ACTIVE
+> > setting propagation to the parent of the first device in a dependency
+> > chain that turned out to have to be resumed during system resume even
+> > though it was runtime-suspended before system suspend.
+> >
+> > Those restrictions are that (1) pm_runtime_force_suspend() attempts to
+> > suspend devices that have never had runtime PM enabled if their runtime
+> > PM status is currently RPM_ACTIVE and (2) pm_runtime_force_resume()
+> > will skip device whose runtime PM status is currently RPM_ACTIVE.
+> >
+> > The purpose of this series is to eliminate the above restrictions and
+> > get pm_runtime_force_suspend() and pm_runtime_force_resume() to agree
+> > more with what the core does.
+>
+> For my understanding, would you mind elaborating a bit more around the
+> end-goal with this?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+The end goal is, of course, full integration of runtime PM with system
+sleep for all devices.  Eventually.
 
--- 
-With best wishes
-Dmitry
+And it is necessary to make the core and
+pm_runtime_force_suspend|resume() work together better for this
+purpose.
+
+> Are you trying to make adaptations for
+> pm_runtime_force_suspend|resume() and the PM core, such that drivers
+> that uses pm_runtime_force_suspend|resume() should be able to cope
+> with other drivers for child-devices that make use of
+> DPM_FLAG_SMART_SUSPEND?
+
+Yes.
+
+This is a more general case, though, when a device that was
+runtime-suspended before system suspend and is left in suspend during
+it, needs to be resumed during the system resume that follows.
+
+Currently, DPM_FLAG_SMART_SUSPEND can lead to this sometimes and it
+cannot happen otherwise, but I think that it is a generally valid
+case.
+
+> If we can make this work, it would enable the propagation of
+> RPM_ACTIVE in the PM core for more devices, but still not for all,
+> right?
+
+It is all until there is a known case in which it isn't.  So either
+you know a specific case in which it doesn't work, or I don't see a
+reason for avoiding it.
+
+ATM the only specific case in which it doesn't work is when
+pm_runtime_force_suspend|resume() are used.
+
+> The point is, the other bigger issue that I pointed out in our earlier
+> discussions; all those devices where their drivers/buses don't cope
+> with the behaviour of the DPM_FLAG_SMART_SUSPEND flag, will prevent
+> the PM core from *unconditionally* propagating the RPM_ACTIVE to
+> parents. I guess this is the best we can do then?
+
+OK, what are they?
+
+You keep saying that they exist without giving any examples.
 
