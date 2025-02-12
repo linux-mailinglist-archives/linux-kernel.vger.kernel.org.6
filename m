@@ -1,123 +1,359 @@
-Return-Path: <linux-kernel+bounces-510356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D90EA31BA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:58:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAD8A31BA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:59:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FCD13A6E0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:58:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F7C3A6E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241A5150980;
-	Wed, 12 Feb 2025 01:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3259155C96;
+	Wed, 12 Feb 2025 01:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ARZ3Bj9j"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Vc758I9Z"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2B578F5E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D6713C81B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739325496; cv=none; b=Ij42qsu8oXEmKefnfQzX7oeZozyCXj7estschUAVqJNV6DPgJxBOt8V4nMQ9ardP4vxbOiAQfxdjKgYdy97v/z7QMRUyAv9r5xVDS7TbNWGdI8qiI2IJCbhRbBjpRmker/iKQXAdvsG3GUude64q4WuqxObzKmymHbJoN76bop8=
+	t=1739325547; cv=none; b=Anlp1c1RStF0U8HgcY1ZzjAjv2ijb33WO/HSBkVcQyraxuZvIqFg2v/Nuat7XZEug/Cq/qZ9C1Op/6R54N1Jw4cghPfZmyLtC0V9Ncdkdzbdaj+nGg4Eyd9AmZOx5WPfc0FgxSrkTivfCP9sR/ALyEPs1/c2dqAlfV5eP0hFY1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739325496; c=relaxed/simple;
-	bh=XIMgkskMxn1nn+KR+UHsoIEJpOMWNgBuJYgmSHFKAZE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=deXngBWwWxY+/cFAO0B4CjXSIY6UwSXtZuY2WwtLi9z+8LzjD+XH/C32m+jxDD3EDo2U1bA+u3dmszKxzIv5lt5rL+BVquN/9Byxsf+Y00vK/l82QHkzL5MwRMoMKe0zFgRMSBTpP7e672tnPqDtQhc3/XsH7YrRj1c3FMczXFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ARZ3Bj9j; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2f5538a2356so13255105a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 17:58:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739325494; x=1739930294; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JBmexDJauWUVMueSQTYcfoS5XgO5mBN+j+WiBcxqz+0=;
-        b=ARZ3Bj9jl8OJMYGMS/FPbwXsuvkeWZCEBkmkkQPAuzEX0G8LLGHWejhHH91mOuIVmp
-         iKCdZ5CpvKM/rTywAtOLVVAfSorMPO5fdt5KsGv7jvO5IGnr0DOxQ7ry7AGiKT/rvfEp
-         vbe9avvOFcFkew9HcMm63VUF2T1lwehR35KRC/kgEUyOX91hh5Kk8EuEBSd2tkTuksHW
-         gDt6R7R8dZYSndtUuU+z8vkgY4hULZMe6aZOvcvSLq92dsjkVF49uyUAq/TYME2vChY7
-         f0HUqz/LSEUAOUe1qN1GMe+/pYoGoJKbqRKfkCIYXtmqvMmOWdp7g32DL6sv2+oXPLOR
-         Dd3Q==
+	s=arc-20240116; t=1739325547; c=relaxed/simple;
+	bh=TgTFzIfKCXEPT/O7ObTgjTQk9DcHKZ5vxqv1bmZnltI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fGBqoPtNGKWGPefFfeEMyFgWo2hvn3oZ01FcyoG+qSboSfpOTi72mJs8V+7YiuZaVdItuczdnpsvxkeEj1r92O28RHQEgzIv9iqHNanIcPZxEiTHWFeQUxUT7uvKSqsPu3Uy1dpnjOlTqSDNboo4MGAzVWDyr3rOLcxL7PdJ07A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Vc758I9Z; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51BGlBhN006114
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:59:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	awv0rGxstM311fFi4Sv24BEaC0+mwddjoTpetAR3/s4=; b=Vc758I9ZNeYjWDTN
+	b8yxc7Os7WRcFZt7zsZAAiVHzTCLuno8/YYdiJwQM5/SSdBgxQtc+Kl9jObDLRah
+	KrWwiyO37+5viWIJyMOCB5qJUiIFWdJjHnhaQ2nnoJhlFTJW5kGhh2nnQcXpIDfr
+	08wS/bKMX9c1DWHzbRDHjn7RYuPUSvfRoLgL8jpWXZtjAYOgWFgH0Fh2yde3abms
+	q+sn50VIuHwThLKAPIMsScI50Aef6zOsBYvYcBzISlKwVWT9zm00URsLhze9j0RM
+	Hyqsme00ExNKBE0ruyNFgoISmthPmVPFJ4aYChmPKMIw6XCPfBSgqd7cs52Rm0E1
+	J3pHNw==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qe5mwxfs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:59:03 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2fa440e16ddso8232945a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 17:59:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739325494; x=1739930294;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JBmexDJauWUVMueSQTYcfoS5XgO5mBN+j+WiBcxqz+0=;
-        b=GMyaN5GObWHwpPvc+lKI5k2XSfcsVJNlXJoUr0NtzRgXtxUCqB3ssU7ZmY43HAcbzP
-         D4mWAoDyH17pYpTTJpaRSBiY+umeWM2MFuFXoP0ku6ETUopemkRjWXEHFMswvQHOo8uB
-         9DUbLhb2OQIYNRwv2UNAOkM5RPD5T6ugs3xYhrJ19EhcmGCLwYcB7bA2yU35kVvxOht8
-         gLs2pBLiB5G4zrohdGEAqMjKJG+THoN5RSG7XT8Jhcq4YtJMDrmnLUed4/BDdpJCU4lq
-         KqTAnegagzYS5b9AfzOdx31v5jEDaoA7NJ41EngeFA4VbVMm5jsh6uwhUxyB14UopnD0
-         LUGQ==
-X-Gm-Message-State: AOJu0YyvTNPAdyCX4xfS5CEUhse3dyW1Bmb/22HcUtOOgpMJFXOC/4Ct
-	KeD1Smtj8+cSryPyamdk4n0TXjtfjaGWUXzh4R+55V2wvmFm/rDEMgwekIIpvkmzpF852dqAE1k
-	fFQ==
-X-Google-Smtp-Source: AGHT+IG8gNhDei/WwBHZVkG78nqd1F8fT+XYoWcLtzAPMmJRfa8+UGmH6QlGzlgYGpwOFsPEKl6pyd8osao=
-X-Received: from pji8.prod.google.com ([2002:a17:90b:3fc8:b0:2fa:1fac:269c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2712:b0:2ee:741c:e9f4
- with SMTP id 98e67ed59e1d1-2fbf5be0da2mr2064880a91.11.1739325493702; Tue, 11
- Feb 2025 17:58:13 -0800 (PST)
-Date: Tue, 11 Feb 2025 17:58:12 -0800
-In-Reply-To: <20250203223205.36121-3-prsampat@amd.com>
+        d=1e100.net; s=20230601; t=1739325542; x=1739930342;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=awv0rGxstM311fFi4Sv24BEaC0+mwddjoTpetAR3/s4=;
+        b=YaCaDW6Bvy6FylnQ9mhFTWpCMBmA9x2caX+Um+9xPRphKtYsznfWM0BDf7PxavQqJn
+         2hn0BF+SF/zZJ/ANd0TCD8faJOQXnXGLjYVdX5vUQA8mj36d3zZXgXPbZmpPQUXKASUt
+         VqiMQy5iYYSDkhMI5um8cUiPgTh3MuoygtjuyQq/hOOBub7UGtgB3yE24epOoFviS9MT
+         uUzSB4ug8rhHE1AOUN2LYGUCSb0I6rDj1NEIe0Tds7T9Jzy/g3E3PTkoBNP7QDfaZNQI
+         fxqxVqGVMHoTywHrJiW3cOMgd2887CIBMhH1Zrf+9lX6T8HkC4VGZwkHE+6HduBYUS6H
+         Jo6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXIFD9tRdOPkaWDG6HuOjSZswAdX04YGC/VVEu6gppz9bQDygSyVAP24YdhnVGGSYtIaPRS/6xeFpelYAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznkOEYk45B+AkKG57Q3r9nHzSHfcSnbdbI2t3y6XXMIDTVLMr+
+	BB1xQdcSSpnLb7cJHcHc/9kHE7t17dhnvmHYKZwcVoxZKW5e/GtXw4tXvCGXqMfaJGTxK4oZiVM
+	XxeTGniPdxLfnd+cVWytVpZsXNDQlS4zVMWPljzWccrsyo+OZK4dDPLTtX+HUsCU=
+X-Gm-Gg: ASbGncuTwJkBI6Fm6Qik0yS1wvVAHjdI87qTACzTWFVz11HfhwQ+ioILGSOWs9xSe53
+	13p1k/E+fIDd8SPna7EbIB5rB8DCzHV3WYImv1axowyfolcXaMjvrLEC2CvH8j6so2xPHV41rwl
+	uvV6DrnI8ms6uq3uNwas7Ko6oechQUVzIhfF1D4UJ28cs2yydyC/72ophVdwj2AX236nh5ugQej
+	8kldZXZHvDpbtSJafOOwiWmveu+ASECSf+UyufpcqY+pQg1eg6e3g+jiRGJtPhG7LzB8VzfA+cq
+	l3czqOxIYVAoJt5Dgwb9+PhjERFJxvyWYuXZ0UwpIweDVJXEp8A4u3WJW3HNDDiy
+X-Received: by 2002:a05:6a20:918e:b0:1ee:49ca:759a with SMTP id adf61e73a8af0-1ee5c73340amr3109474637.2.1739325542295;
+        Tue, 11 Feb 2025 17:59:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG9Ozamvj+FZMPdOC0mLlHyPulDXC1bHtTkbyAiVj5wsepcMbBLe+J/zsOKEgvKiq2TwNTNew==
+X-Received: by 2002:a05:6a20:918e:b0:1ee:49ca:759a with SMTP id adf61e73a8af0-1ee5c73340amr3109438637.2.1739325541866;
+        Tue, 11 Feb 2025 17:59:01 -0800 (PST)
+Received: from [10.133.33.12] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73087d8dc08sm4990517b3a.128.2025.02.11.17.58.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Feb 2025 17:59:01 -0800 (PST)
+Message-ID: <1882f5dd-4e46-40b9-977d-dc3570975738@oss.qualcomm.com>
+Date: Wed, 12 Feb 2025 09:58:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250203223205.36121-1-prsampat@amd.com> <20250203223205.36121-3-prsampat@amd.com>
-Message-ID: <Z6wANGkZb7_HK8ay@google.com>
-Subject: Re: [PATCH v6 2/9] KVM: SEV: Disable SEV on platform init failure
-From: Sean Christopherson <seanjc@google.com>
-To: "Pratik R. Sampat" <prsampat@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, shuah@kernel.org, 
-	pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com, pankaj.gupta@amd.com, 
-	michael.roth@amd.com, sraithal@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 03/14] net: ethernet: qualcomm: Add PPE driver
+ for IPQ9574 SoC
+To: Jie Luo <quic_luoj@quicinc.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
+        Suruchi Agarwal <quic_suruchia@quicinc.com>,
+        Pavithra R <quic_pavir@quicinc.com>, Simon Horman <horms@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+        srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org,
+        john@phrozen.org
+References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
+ <20250209-qcom_ipq_ppe-v3-3-453ea18d3271@quicinc.com>
+ <58e05149-abc2-4cf4-a6e8-35380823d94a@oss.qualcomm.com>
+ <63f1d25c-087a-46dd-9053-60334a0095d5@quicinc.com>
+Content-Language: en-US
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+In-Reply-To: <63f1d25c-087a-46dd-9053-60334a0095d5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: NYcG-uvMLnrQpZ41CnZTVuLejuQ4LDof
+X-Proofpoint-ORIG-GUID: NYcG-uvMLnrQpZ41CnZTVuLejuQ4LDof
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-11_10,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2501170000 definitions=main-2502120013
 
-On Mon, Feb 03, 2025, Pratik R. Sampat wrote:
-> If the platform initialization sev_platform_init() fails, SEV cannot be
-> set up and a secure VM cannot be spawned. Therefore, in this case,
-> ensure that KVM does not set up, nor advertise support for SEV, SEV-ES,
-> and SEV-SNP.
-> 
-> Suggested-by: Nikunj A Dadhania <nikunj@amd.com>
-> Tested-by: Srikanth Aithal <sraithal@amd.com>
-> Signed-off-by: Pratik R. Sampat <prsampat@amd.com>
-> ---
-> v5..v6:
-> 
-> * Rename is_sev_platform_init to sev_fw_initialized (Nikunj)
-> * Collected tags from Srikanth.
-> ---
->  arch/x86/kvm/svm/sev.c       |  2 +-
->  drivers/crypto/ccp/sev-dev.c | 10 ++++++++++
->  include/linux/psp-sev.h      |  3 +++
->  3 files changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index b709c2f0945c..42d1309f8a54 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -2957,7 +2957,7 @@ void __init sev_hardware_setup(void)
->  	bool sev_es_supported = false;
->  	bool sev_supported = false;
->  
-> -	if (!sev_enabled || !npt_enabled || !nrips)
-> +	if (!sev_fw_initialized() || !sev_enabled || !npt_enabled || !nrips)
->  		goto out;
 
-Me thinks this wasn't tested with KVM_AMD built-in[1].  I'm pretty sure Ashish's
-fix[2] solves all of this?
 
-[1] https://lore.kernel.org/all/d6d08c6b-9602-4f3d-92c2-8db6d50a1b92@amd.com
-[2] https://lore.kernel.org/all/f78ddb64087df27e7bcb1ae0ab53f55aa0804fab.1739226950.git.ashish.kalra@amd.com
+On 2/11/2025 9:58 PM, Jie Luo wrote:
+> 
+> 
+> On 2/10/2025 10:12 AM, Jie Gan wrote:
+>>> +static int ppe_clock_init_and_reset(struct ppe_device *ppe_dev)
+>>> +{
+>>> +    unsigned long ppe_rate = ppe_dev->clk_rate;
+>>> +    struct device *dev = ppe_dev->dev;
+>>> +    struct reset_control *rstc;
+>>> +    struct clk_bulk_data *clks;
+>>> +    struct clk *clk;
+>>> +    int ret, i;
+>>> +
+>>> +    for (i = 0; i < ppe_dev->num_icc_paths; i++) {
+>>> +        ppe_dev->icc_paths[i].name = ppe_icc_data[i].name;
+>>> +        ppe_dev->icc_paths[i].avg_bw = ppe_icc_data[i].avg_bw ? :
+>>> +                           Bps_to_icc(ppe_rate);
+>> it's ppe_dev->icc_paths[i].avg_bw = ppe_icc_data[i].avg_bw ? 
+>> ppe_icc_data[i].avg_bw : Bps_to_icc(ppe_rate);  ?
+> 
+> I feel the above used notation is also fine for readability, and is
+> shorter and simpler.
+> 
+>>
+>>
+>>> +        ppe_dev->icc_paths[i].peak_bw = ppe_icc_data[i].peak_bw ? :
+>>> +                        Bps_to_icc(ppe_rate);
+>> Same with previous one?
+> 
+> Same response as for the previous comment is applicable here as well.
+> 
+>>
+>>> +    }
+>>> +
+>>> +    ret = devm_of_icc_bulk_get(dev, ppe_dev->num_icc_paths,
+>>> +                   ppe_dev->icc_paths);
+>>> +    if (ret)
+>>> +        return ret;
+>>> +
+>>> +    ret = icc_bulk_set_bw(ppe_dev->num_icc_paths, ppe_dev->icc_paths);
+>>> +    if (ret)
+>>> +        return ret;
+>>> +
+>>> +    /* The PPE clocks have a common parent clock. Setting the clock
+>> Should be:
+>> /*
+>>   * The PPE clocks have a common parent clock. Setting the clock
+>>   * rate of "ppe" ensures the clock rate of all PPE clocks is
+>>   * configured to the same rate.
+>>   */
+>>
+> 
+> I think for drivers/net, the above format follows the recommended
+> commenting style. Pls see: https://www.kernel.org/doc/html/v6.10/
+> process/coding-style.html
+> 
+> For files in net/ and drivers/net/ the preferred style for long
+> (multi-line) comments is a little different.
+> 
+>> BTW, it's better wrapped with ~75 characters per line.
+> 
+> Yes, the comments should be wrapped to ~75 characters.
+> 
+>>
+>>> +     * rate of "ppe" ensures the clock rate of all PPE clocks is
+>>> +     * configured to the same rate.
+>>> +     */
+>>> +    clk = devm_clk_get(dev, "ppe");
+>>> +    if (IS_ERR(clk))
+>>> +        return PTR_ERR(clk);
+>>> +
+>>> +    ret = clk_set_rate(clk, ppe_rate);
+>>> +    if (ret)
+>>> +        return ret;
+>>> +
+>>> +    ret = devm_clk_bulk_get_all_enabled(dev, &clks);
+>>> +    if (ret < 0)
+>>> +        return ret;
+>>> +
+>>> +    /* Reset the PPE. */
+>>> +    rstc = devm_reset_control_get_exclusive(dev, NULL);
+>>> +    if (IS_ERR(rstc))
+>>> +        return PTR_ERR(rstc);
+>>> +
+>>> +    ret = reset_control_assert(rstc);
+>>> +    if (ret)
+>>> +        return ret;
+>>> +
+>>> +    /* The delay 10 ms of assert is necessary for resetting PPE. */
+>>> +    usleep_range(10000, 11000);
+>>> +
+>>> +    return reset_control_deassert(rstc);
+>>> +}
+>>> +
+>>> +static int qcom_ppe_probe(struct platform_device *pdev)
+>>> +{
+>>> +    struct device *dev = &pdev->dev;
+>>> +    struct ppe_device *ppe_dev;
+>>> +    void __iomem *base;
+>>> +    int ret, num_icc;
+>> I think it's better with:
+>>      int num_icc = ARRAY_SIZE(ppe_icc_data);
+> 
+> This will impact the “reverse xmas tree” rule for local variable
+> definitions. Also, the num_icc will vary as per the different SoC,
+> so we will need to initialize the num_icc in a separate statement.
+> 
+> (Note: This driver will be extended to support different SoC in
+> the future.)
+> 
+Got your point here. So there may have multiple definitions like 
+ppe_icc_data here, right? But the num_icc here is hardcoded.
+Maybe it would be better defined within the ppe_icc_data, if possible?
+Then just directly use ppe_icc_data->num_icc?
+
+Never mind, that's just my thought on the flexibility.
+
+Jie
+>>
+>>> +
+>>> +    num_icc = ARRAY_SIZE(ppe_icc_data);
+>>> +    ppe_dev = devm_kzalloc(dev, struct_size(ppe_dev, icc_paths, 
+>>> num_icc),
+>>> +                   GFP_KERNEL);
+>>> +    if (!ppe_dev)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    base = devm_platform_ioremap_resource(pdev, 0);
+>>> +    if (IS_ERR(base))
+>>> +        return dev_err_probe(dev, PTR_ERR(base), "PPE ioremap 
+>>> failed\n");
+>>> +
+>>> +    ppe_dev->regmap = devm_regmap_init_mmio(dev, base, 
+>>> &regmap_config_ipq9574);
+>>> +    if (IS_ERR(ppe_dev->regmap))
+>>> +        return dev_err_probe(dev, PTR_ERR(ppe_dev->regmap),
+>>> +                     "PPE initialize regmap failed\n");
+>>> +    ppe_dev->dev = dev;
+>>> +    ppe_dev->clk_rate = PPE_CLK_RATE;
+>>> +    ppe_dev->num_ports = PPE_PORT_MAX;
+>>> +    ppe_dev->num_icc_paths = num_icc;
+>>> +
+>>> +    ret = ppe_clock_init_and_reset(ppe_dev);
+>>> +    if (ret)
+>>> +        return dev_err_probe(dev, ret, "PPE clock config failed\n");
+>>> +
+>>> +    platform_set_drvdata(pdev, ppe_dev);
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static const struct of_device_id qcom_ppe_of_match[] = {
+>>> +    { .compatible = "qcom,ipq9574-ppe" },
+>>> +    {}
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, qcom_ppe_of_match);
+>>> +
+>>> +static struct platform_driver qcom_ppe_driver = {
+>>> +    .driver = {
+>>> +        .name = "qcom_ppe",
+>>> +        .of_match_table = qcom_ppe_of_match,
+>>> +    },
+>>> +    .probe    = qcom_ppe_probe,
+>>> +};
+>>> +module_platform_driver(qcom_ppe_driver);
+>>> +
+>>> +MODULE_LICENSE("GPL");
+>>> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. IPQ PPE driver");
+>>> diff --git a/drivers/net/ethernet/qualcomm/ppe/ppe.h b/drivers/net/ 
+>>> ethernet/qualcomm/ppe/ppe.h
+>>> new file mode 100644
+>>> index 000000000000..cc6767b7c2b8
+>>> --- /dev/null
+>>> +++ b/drivers/net/ethernet/qualcomm/ppe/ppe.h
+>>> @@ -0,0 +1,36 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0-only
+>>> + *
+>>> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights 
+>>> reserved.
+>>> + */
+>>> +
+>>> +#ifndef __PPE_H__
+>>> +#define __PPE_H__
+>>> +
+>>> +#include <linux/compiler.h>
+>>> +#include <linux/interconnect.h>
+>>> +
+>>> +struct device;
+>> #include <linux/device.h> ?
+>>
+>>> +struct regmap;
+>> Same with previous one, include it's header file?
+> 
+> The driver only need to reference these structures but don't
+> need their full definitions. So it should be fine to declare
+> the existence of these structures here.
+> 
+>>
+>>> +
+>>> +/**
+>>> + * struct ppe_device - PPE device private data.
+>>> + * @dev: PPE device structure.
+>>> + * @regmap: PPE register map.
+>>> + * @clk_rate: PPE clock rate.
+>>> + * @num_ports: Number of PPE ports.
+>>> + * @num_icc_paths: Number of interconnect paths.
+>>> + * @icc_paths: Interconnect path array.
+>>> + *
+>>> + * PPE device is the instance of PPE hardware, which is used to
+>>> + * configure PPE packet process modules such as BM (buffer management),
+>>> + * QM (queue management), and scheduler.
+>>> + */
+>>> +struct ppe_device {
+>>> +    struct device *dev;
+>>> +    struct regmap *regmap;
+>>> +    unsigned long clk_rate;
+>>> +    unsigned int num_ports;
+>>> +    unsigned int num_icc_paths;
+>>> +    struct icc_bulk_data icc_paths[] __counted_by(num_icc_paths);
+>>> +};
+>>> +#endif
+>>>
+>>
+>> Thanks,
+>> Jie
+> 
+
 
