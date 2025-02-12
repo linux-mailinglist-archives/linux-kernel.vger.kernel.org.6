@@ -1,142 +1,226 @@
-Return-Path: <linux-kernel+bounces-511130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E6DA32652
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:54:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7795DA32656
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 803F8188898A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:54:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3543D1888839
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F04C20D515;
-	Wed, 12 Feb 2025 12:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02C820CCD3;
+	Wed, 12 Feb 2025 12:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="UFpZapta";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NkdljSwn"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I+I5eKY3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A98271824;
-	Wed, 12 Feb 2025 12:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B52C2046BE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364871; cv=none; b=fuxAWhMlNA+79ReFLliHJcuYXRKN5GFq4O/U77LXy5wRle0IIJMlnCqxxrOGAIZ84A1u+QfdHBdW69SFOkLvVZybwnH2oQWl9pKc9a6NjHfX4Ggsv+86behb1CFO5JFmIRaDa7rKVBjgHWbRlibz+1T/nQ5NFTPrtcafRjpwjwE=
+	t=1739364966; cv=none; b=N9zpDPonXf0ZqtpSg1wrCY04q9NzNKzpmO9Ci8Ovljyap/JkndUAw0/DLe6cGxi3al58EelUr38Jb+PbMB3uT/3UpRzTVFCbFHvGO77BOtQdbvFz9HQFL7oWpaE4+w9RmBmh7lgdcVh2s5cAowusDOfyO9UeWwb/BnYhK3whhPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364871; c=relaxed/simple;
-	bh=dUzLri7HLBnLUNXHtV56R2oFbTGzCCUoFmmjbezeFMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMQiumxD1mheP4k37IGqq/rFT4b6gzkYHM8bysOFaHdzC0Ng06OJkaeV+yUBnmc21Xf+WQRJG2KAoiFh5xiyU3Cn0X5ucGHsb1VTUmygPb0ya091/8NGwDKIKJuFLO4v3lWOnc3BZWR39VzdS30cjrvp4OV2AhgYkEoQPq1LySY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=UFpZapta; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NkdljSwn; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 467641380830;
-	Wed, 12 Feb 2025 07:54:27 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Wed, 12 Feb 2025 07:54:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1739364867; x=
-	1739451267; bh=B8CxILEVEpjQ5H2ChvReMTw8ajG4/Nhh8qC+Fiy/HAc=; b=U
-	FpZaptaQZTevoe0cySA3pPZRz7aLIwl0WmrLjfHqB5tQKE4T1hXWY1nfrPGtXVZd
-	nM5lLH9iiI11DEabnPWSkd5Vs9oa6zUx2CnOyRXkGwqWHZznsEgGnLlqI7V3eQK/
-	92eGQ5bolSmIVQ5OOSHkDhKnBQCQ/JYrBZ4eU9zxW/mRgdPCZB9a1aQhzP7lC/CF
-	1J8Y3qi2C4TpX12jOgMcISUeStbUwGVkwC/dLpabhdrBkwf3gGe6oNzQuXGXUMz9
-	ZavnZXt36Z7JT5aiokfllnBR42ou1+B9ioqH9gKPEVGrFxfa7w1i/SDGN4oFgvPG
-	I0dNq7tYlMzkKpiugcA6w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1739364867; x=1739451267; bh=B8CxILEVEpjQ5H2ChvReMTw8ajG4/Nhh8qC
-	+Fiy/HAc=; b=NkdljSwnPaOcgW0ruMTJgTYj+egMstPs93iS9lb/cdE0Zf++1zC
-	Q+2n1uxqsnfWOuSB41UoLA9cpjKHlEQ+NRU+10neTM1BL+MPlynKh4vQFdCAaMmY
-	aE8UGymw7SLeSOYBkYdO2E9Uf/PsFx+hSiS0ah9lcW2Uv6pZZkke2x0TZyNJ5Rn+
-	wYvRB2KT2FAC4+o6AY7kuJxQI4XBmhdv8sKLUX98W1jUkL/EcEeCYAUlHMl/zvKl
-	Wh9s2WjmjviEOujM17XdT+BAukcYMPnAYI8+tA04oqi9Fd3G/RW4cWjETkNQ+Q1l
-	EXQwDS1pNfG/DVi8YT6zisA6egalr6mPa1w==
-X-ME-Sender: <xms:A5qsZwFfftWnxLKO6VEGGYykTExInmqUGCVHfIm60tKHBomTukzBiQ>
-    <xme:A5qsZ5V1Cysan1OEF7T3q8C0u--XYOveiBFa9runYPz5BvJ2Htzjc3mJgMqRIsqq2
-    i6WOwIOup1XZzhpT9Q>
-X-ME-Received: <xmr:A5qsZ6JGQTKbTQppU40zBoPJBB60aFrO9Ht9NjM3pmtmEV_7A2P9bhECg0f-lTaizoXXmQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeelfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddv
-    necuhfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllh
-    esshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffh
-    ffevlefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhho
-    vhdrnhgrmhgvpdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepvhgrnhhnrghpuhhrvhgvsehgohhoghhlvgdrtghomhdprhgtphhtthhopeig
-    keeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehpsghonhiiihhnihesrhgvughh
-    rghtrdgtohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvgdrtghomhdprhgtph
-    htthhopegvrhguvghmrghkthgrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprggt
-    khgvrhhlvgihthhnghesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhigghgrohesgh
-    hoohhglhgvrdgtohhmpdhrtghpthhtohepshgrghhishesghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:A5qsZyELfOkik5Aw0VjABfX6_-CkUI8hrvVUaWqAyH0abqxsoBUVqg>
-    <xmx:A5qsZ2UngPg7AvIvi-g81a65Nlso9hxbl5MDri9HYTV_rk8wgxKGOA>
-    <xmx:A5qsZ1Mg-FmwM8dJGVhQ9avw3ohaazEB9jZul-D0tirmGmPdLHKTpg>
-    <xmx:A5qsZ93m0XRzGOMaqXzjhdDAiyogMy9f1YhtwXpRA_DM3bmvILZcyA>
-    <xmx:A5qsZ0ayS2upXBHUmye1FPk7dK90iimRTe2aHt76QKeRyBesncV9rvoA>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Feb 2025 07:54:21 -0500 (EST)
-Date: Wed, 12 Feb 2025 14:54:17 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
-	seanjc@google.com, erdemaktas@google.com, ackerleytng@google.com, jxgao@google.com, 
-	sagis@google.com, oupton@google.com, pgonda@google.com, 
-	dave.hansen@linux.intel.com, linux-coco@lists.linux.dev, chao.p.peng@linux.intel.com, 
-	isaku.yamahata@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH V4 2/4] x86/tdx: Route safe halt execution via
- tdx_safe_halt()
-Message-ID: <ljdzupgyl2am4qgvirwpdonwuzwjaysemu43icrzxjt5olr3yx@dldbi5tqwhjh>
-References: <20250212000747.3403836-1-vannapurve@google.com>
- <20250212000747.3403836-3-vannapurve@google.com>
+	s=arc-20240116; t=1739364966; c=relaxed/simple;
+	bh=khCDu6D+a72YvB4zT8c20mSv6D4DLmYGwUIHI1U3gCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z7mFPsA7b/F0OQWtbdKQUUF/ZIjkdWtaEsCgJXeYyICnPXId046p3u0e02uSPsqmEHD2vHdiIo4u3G4BK4qCWRTijfsLr1VHYqP/e391/zpLxRbIgH9p/53xsWHIE0rTuEm740GPozZ+BOHCAtoG3xu+cocUYaZ1jV0JAKf/q7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I+I5eKY3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C92kb5031920
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:56:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5Xcp6yRYRlRMXuclTG7bgL1rCb1qEu5Tl7xJL9ykhdw=; b=I+I5eKY34w5X3xIr
+	bcw9ze8TendL06csh9gdmSYr6dFFEY+vdaYXj+FeknlFqplBbiV6RwPZ/XBa+0Qx
+	Y9ritnvoRhEXuk1zijJuwzuN7xzUgTNhYDQQD+ufWuOJcFdgtjDl3HWvVdHxHkOY
+	uBDqoQlO5Ev2SjTULEm4+9YNW+YZQn+d+Dfr9VNaja3XvrCpf8ipMj/qbBjSMCwy
+	N2hYPrevgqfbwkGu4L95US84uZFjrtk8/7QbTfJpoFJMIQpOlaUugdEj+yEfWmOI
+	rpMlE0yvx7BTOg5FHuRTKn4844egT5j4pRD9VLo1lcZUCcrHDihKlBaxYyOmqYW4
+	EysJFA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qgtk75mm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:56:03 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-471ad2e69d6so1837831cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:56:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739364962; x=1739969762;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Xcp6yRYRlRMXuclTG7bgL1rCb1qEu5Tl7xJL9ykhdw=;
+        b=f8+k3N+xDWpS5oRargTT+nzSdffEkTJJN3SptzIS9SLsJ4RA9f12oDMnL15189gEDj
+         G1wXT3CF4+PRJHYmYOFTB9IHFW7XvkI2iM6hCRClAHeDtpUV3rk35yQIZxMu9SQoQ680
+         UId5CUa8jiaM24OzEyjH3nYsST9wtFJvGdSs6b+9noU9KgXB5cwKcUEyHKOTwnyxxLFY
+         FA46FHlt6y0nH4KcWY5GiHc/qz6g/MKdjxKPiy21brWBJkzx3wzJMJXMeSLGgEPxExns
+         XWUCNIRg71rdfOF+tz/z8NPvfJsSI0XhISMoFH9V4rpjBf+P07BdmRpBtL0M2k6mrBXO
+         2GeQ==
+X-Gm-Message-State: AOJu0YyJ6jguvELGX98oaQmPrWiC/MtQ5FhPs57CLWHayWszxJG6TFcN
+	VkWu6IfK19v7MLcU0r0L9bAKym4/MT5kNuOPWgYRMbJDA1hWgUnCQEGA2bi4MMM2wbM3MhwUDC8
+	N4zugqMbWGMcGY9xV/CTgBvA4DUbeumnvSARx27IBXxhBCcv0X0B+4YBiwsRNH1M=
+X-Gm-Gg: ASbGncsWd+aVGCvezUsWQHSCYX+hFVNVpk9bKgRZg1u/hSItng4t4Ld+7s4kQpbfPxa
+	WZz+kbNZ2Rcf8RNCUuPq3Ks6jqQEW2QcBqXdQVGqpE60d05r4SzBalRioMzRzTGgZt/SygdUpBm
+	ifWvmbwd9EhTXGOFS4R0y/0Ttur0ynXd/iubcdsUYeR//nzWqLjRG1TruORAIqcwqM0cNv1KzfP
+	YSP3oMYIoavPHkJ6GXrbyTN5eyVs1GYYYy9SuLQYqloVqL+h2P2EOvx/wiRAlYYzaNdFAlcCAfg
+	taBpaQy/aPm2H6H0EhY+HT5Iu0APOCWh5vPXh7dL5JS/gN5L0nFLROGG5yQ=
+X-Received: by 2002:a05:622a:1342:b0:462:b46b:8bf8 with SMTP id d75a77b69052e-471afef4f1amr16212351cf.14.1739364962403;
+        Wed, 12 Feb 2025 04:56:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGJufyNHqGlxGr0Oi3YE2cGBUYy45V8eQFPpZVSPoCst+6BP0eWRtHg1bm7zUcq8OPj0Cjl9w==
+X-Received: by 2002:a05:622a:1342:b0:462:b46b:8bf8 with SMTP id d75a77b69052e-471afef4f1amr16212161cf.14.1739364962036;
+        Wed, 12 Feb 2025 04:56:02 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7dae77599sm362172466b.30.2025.02.12.04.56.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 04:56:01 -0800 (PST)
+Message-ID: <f4a15f6d-1c2c-484b-9a81-6e5e138b3fdb@oss.qualcomm.com>
+Date: Wed, 12 Feb 2025 13:55:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212000747.3403836-3-vannapurve@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] regulator: qcom_usb_vbus: Add support for PMI8998
+ VBUS
+To: "James A. MacInnes" <james.a.macinnes@gmail.com>,
+        linux-arm-msm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        andersson@kernel.org, konradybcio@kernel.org, quic_wcheng@quicinc.com,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        lgirdwood@gmail.com, broonie@kernel.org
+References: <20250212010744.2554574-1-james.a.macinnes@gmail.com>
+ <20250212010744.2554574-3-james.a.macinnes@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250212010744.2554574-3-james.a.macinnes@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 7F-jfCfqSjvyEclq3DgLiHIQsamRP7oh
+X-Proofpoint-ORIG-GUID: 7F-jfCfqSjvyEclq3DgLiHIQsamRP7oh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0
+ adultscore=0 clxscore=1015 mlxscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2501170000 definitions=main-2502120100
 
-On Wed, Feb 12, 2025 at 12:07:45AM +0000, Vishal Annapurve wrote:
-> Direct HLT instruction execution causes #VEs for TDX VMs which is routed
-> to hypervisor via TDCALL. safe_halt() routines execute HLT in STI-shadow
-> so IRQs need to remain disabled until the TDCALL to ensure that pending
-> IRQs are correctly treated as wake events. So "sti;hlt" sequence needs to
-> be replaced with "TDCALL; raw_local_irq_enable()" for TDX VMs.
-
-The last sentence is somewhat confusing.
-
-Maybe drop it and add explanation that #VE handler doesn't have info about
-STI shadow, enables interrupts before TDCALL which can lead to missed
-wakeup events.
-
-> @@ -409,6 +410,12 @@ void __cpuidle tdx_safe_halt(void)
->  		WARN_ONCE(1, "HLT instruction emulation failed\n");
->  }
+On 12.02.2025 2:07 AM, James A. MacInnes wrote:
+> This patch extends the Qualcomm USB VBUS regulator driver to support
+> PMI8998 PMIC alongside the existing support for PM8150B.
+> 
+> Key changes:
+> - Added current limit tables specific to PMI8998.
+> - Dynamically configure the VBUS regulator based on the PMIC type.
+> - Updated debug messages to reflect successful initialization for
+>   supported PMICs.
+> - Changed registration log message
+> 
+> These changes ensure proper VBUS current limit configuration and
+> compatibility across multiple Qualcomm PMICs.
+> 
+> Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
+> ---
+>  drivers/regulator/qcom_usb_vbus-regulator.c | 38 ++++++++++++++++++---
+>  1 file changed, 33 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/regulator/qcom_usb_vbus-regulator.c b/drivers/regulator/qcom_usb_vbus-regulator.c
+> index cd94ed67621f..804dd1a9e057 100644
+> --- a/drivers/regulator/qcom_usb_vbus-regulator.c
+> +++ b/drivers/regulator/qcom_usb_vbus-regulator.c
+> @@ -20,10 +20,30 @@
+>  #define OTG_CFG				0x53
+>  #define OTG_EN_SRC_CFG			BIT(1)
 >  
-> +static void __cpuidle tdx_safe_halt(void)
-> +{
-> +	tdx_halt();
-> +	raw_local_irq_enable();
+> -static const unsigned int curr_table[] = {
+> +struct msm_vbus_desc {
+> +	const unsigned int *curr_table;
+> +	unsigned int n_current_limits;
+> +};
+> +
+> +static const unsigned int curr_table_pm8150b[] = {
+>  	500000, 1000000, 1500000, 2000000, 2500000, 3000000,
+>  };
+>  
+> +static const unsigned int curr_table_pmi8998[] = {
+> +	250000, 500000, 750000, 1000000,
+> +	1250000, 1500000, 1750000, 2000000,
+> +};
 
-What is justification for raw_? Why local_irq_enable() is not enough?
+To the best of my understanding these numbers are correct
 
-To very least, it has to be explained.
+> +
+> +static const struct msm_vbus_desc msm_vbus_desc_pm8150b = {
+> +	.curr_table = curr_table_pm8150b,
+> +	.n_current_limits = ARRAY_SIZE(curr_table_pm8150b),
+> +};
+> +
+> +static const struct msm_vbus_desc msm_vbus_desc_pmi8998 = {
+> +	.curr_table = curr_table_pmi8998,
+> +	.n_current_limits = ARRAY_SIZE(curr_table_pmi8998),
+> +};
+> +
+>  static const struct regulator_ops qcom_usb_vbus_reg_ops = {
+>  	.enable = regulator_enable_regmap,
+>  	.disable = regulator_disable_regmap,
+> @@ -37,8 +57,6 @@ static struct regulator_desc qcom_usb_vbus_rdesc = {
+>  	.ops = &qcom_usb_vbus_reg_ops,
+>  	.owner = THIS_MODULE,
+>  	.type = REGULATOR_VOLTAGE,
+> -	.curr_table = curr_table,
+> -	.n_current_limits = ARRAY_SIZE(curr_table),
+>  };
+>  
+>  static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
+> @@ -48,6 +66,7 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
+>  	struct regmap *regmap;
+>  	struct regulator_config config = { };
+>  	struct regulator_init_data *init_data;
+> +	const struct msm_vbus_desc *quirks;
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+'quirks' is one way to put it ;) I'd call it 'desc' or 'data' but it's
+totally a potayto/potahto discussion
+
+>  	int ret;
+>  	u32 base;
+>  
+> @@ -68,6 +87,12 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
+>  	if (!init_data)
+>  		return -ENOMEM;
+>  
+> +	quirks = of_device_get_match_data(dev);
+> +	if (!quirks)
+> +		return -ENODEV;
+> +
+> +	qcom_usb_vbus_rdesc.curr_table = quirks->curr_table;
+> +	qcom_usb_vbus_rdesc.n_current_limits = quirks->n_current_limits;
+>  	qcom_usb_vbus_rdesc.enable_reg = base + CMD_OTG;
+>  	qcom_usb_vbus_rdesc.enable_mask = OTG_EN;
+>  	qcom_usb_vbus_rdesc.csel_reg = base + OTG_CURRENT_LIMIT_CFG;
+> @@ -80,18 +105,21 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
+>  	rdev = devm_regulator_register(dev, &qcom_usb_vbus_rdesc, &config);
+>  	if (IS_ERR(rdev)) {
+>  		ret = PTR_ERR(rdev);
+> -		dev_err(dev, "not able to register vbus reg %d\n", ret);
+> +		dev_err(dev, "Failed to register vbus reg %d\n", ret);
+>  		return ret;
+>  	}
+>  
+>  	/* Disable HW logic for VBUS enable */
+>  	regmap_update_bits(regmap, base + OTG_CFG, OTG_EN_SRC_CFG, 0);
+>  
+> +	dev_dbg(dev, "Registered QCOM VBUS regulator\n");
+
+Not sure how useful this is given the previous call creates a sysfs entry
+on success, but sure
+
+Konrad
 
