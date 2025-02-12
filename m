@@ -1,108 +1,157 @@
-Return-Path: <linux-kernel+bounces-510715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9388A320F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:24:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5540FA320FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:25:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A4983A667A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:24:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3ED4165D8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF94D205AD7;
-	Wed, 12 Feb 2025 08:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9738D205E07;
+	Wed, 12 Feb 2025 08:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SzsOk28V"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HgmoXuog"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01E927183A;
-	Wed, 12 Feb 2025 08:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA7E205AAA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739348642; cv=none; b=mLgy3F2Wjit/6l/pzL1pqmWY5WSpWiZbRdw66DVjLYtPLHmwqX0o80JExSh+t0i7ctPIQBYw3fCShXQ/8WT1xbZfEddUjIISpAK3z9lS1YitDD5+Gfe0kLupdmD+H7uz15uL10990o7SIJiBeCcL7SKZpvzhAB6oHYSfXJTxC04=
+	t=1739348664; cv=none; b=stgrcOxleiS1+S5DPbr/Fvvv9EUQOZODB3HUh2JbMhre0AzUzYSYItp2XUJ2wgrD5nM+ohHQoV9a52DEl85FnOX02dle/KZrifvk+nCBfkAzMjuFJtioIhgMG79Uk43UB3ckZQz3FmcLVHkccaJBOdYtGZDSoQCW73dhmw2JZ+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739348642; c=relaxed/simple;
-	bh=d0rMPfnONv/9V88xXXShYjjqNokK2s86RyuUEgMmcI0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZIEol5acXlp+umQC4dBNBCR9nC19bDULZsODwt1khU4U1TrgmlL07b5Jb3HY4AE2Cp4irEBjegQqiDmGubnvcGODy2P6m+WM3smhepkoOVMQgMgsAqb+MJu4TpKmlnNP7fg5wpfMyWKnhBA2augPYvmW7s1j9ERT8QN1Ggw6llg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SzsOk28V; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7E51D4328E;
-	Wed, 12 Feb 2025 08:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739348632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RR2/+YTVmAUHPpKBQsKq78NYGWJcAyMxsNjAeG/knP4=;
-	b=SzsOk28V8Ypgm0NnAD52AU2GxIBtbWOEXyQS/dJYPFwn9LVPqnA8XfXFsJtAUcBCAkPsp5
-	KKnZ8itnI5uvJHTxKK7w2+IUAywMcCyy7IS/mZI7Yhe4snIoB+4MkDdBd9pTWg+B1szRPJ
-	tGyxtKzwFSr7FceHFyn3HidLDqIlFZAyOHK+27ZFrYJm1qydnw45m4ayCDfdXDc27PT9U6
-	j7nnddQxUX8QX09nfrFDC6HRuudDVpDLw+55mQzbbGvPjOpKC7fl8bUBos39qcsXRySOzk
-	RHP1sVBGYgJmnqBfbjn/ZkIJNQG6Jclh8b7pKwiZKi8KVn1/oeEVo+/I4ZkGkw==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Wed, 12 Feb 2025 09:23:48 +0100
-Subject: [PATCH net 2/2] rtnetlink: Release nets when leaving
- rtnl_setlink()
+	s=arc-20240116; t=1739348664; c=relaxed/simple;
+	bh=vS+Ibsqqgchtay7JQEgCkpVTBAH3Qqa/q39iH91TsXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YJdSCmQgBcAp0p6OLXXTsfLUOkH8J9IJPOKhhvYr9vHoFjcqzXm5L09z5f8SxheV8ELggHap+/6EGHDpSijqBhO93MYYosdCUtYgV9xdS/Izx7uTYTQHZu29WdGNxVtwvhjq34Jr3i9c4PI+rprLlmyfEgleEULR1jgi7+3VR6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HgmoXuog; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9776C4CEDF;
+	Wed, 12 Feb 2025 08:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739348664;
+	bh=vS+Ibsqqgchtay7JQEgCkpVTBAH3Qqa/q39iH91TsXI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HgmoXuogOEOPeVfCOBzROnw5BQ4hGdf52cd6lnL0RzJtiJtAgVIGrTLwmyIXeOeeM
+	 Jag9tN4Ma72LlvKOVr2uW94ph45zzAyfpbmymqzEaOqn8OIURuhWuTYvxsuOixYaOB
+	 E8YtPAk7LuQgf/Mbbypil1mPTo8X/N6EQSoAtrcczn/5xgqtZ3Xd+r2avxB+IqDDKr
+	 meh81fG6E9+W4w8EeBqWhhLax9AB6bOop0RIKoZHnd0u+n6o+31xAtA6mmNAqFV2LW
+	 EqfM50r5SlXtGpwkwQ6lzRjSfO5jXHRfeptQbWjDcjmZjICIgdfGmGpQGKQl/jjQ/5
+	 YhRuSmrK88L5Q==
+Date: Wed, 12 Feb 2025 09:24:21 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 34/35] drm/bridge: tc358768: Convert to atomic helpers
+Message-ID: <20250212-versatile-donkey-of-thunder-0894ec@houat>
+References: <20250204-bridge-connector-v2-0-35dd6c834e08@kernel.org>
+ <20250204-bridge-connector-v2-34-35dd6c834e08@kernel.org>
+ <nbghrrl74xsuzomp7d6qjfosxfiooezipppjhxkx2ibnlpi6rj@b6ovgosmpuhl>
+ <20250211-solemn-meticulous-angelfish-85d1ce@houat>
+ <btehhpvkv6iqd4pofumspqbxzr5gxwp6vs5oh7vflbcmzqj5wz@s6yem2ryw6vs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250212-rtnetlink_leak-v1-2-27bce9a3ac9a@bootlin.com>
-References: <20250212-rtnetlink_leak-v1-0-27bce9a3ac9a@bootlin.com>
-In-Reply-To: <20250212-rtnetlink_leak-v1-0-27bce9a3ac9a@bootlin.com>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Nikolay Aleksandrov <razor@blackwall.org>, 
- Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Alexis Lothore <alexis.lothore@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeeflecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeefudfhuedttdeiffetffeljeffkeevveeiuddtgeejleeftdejgedtjedttdfhnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdehgegnpdhmrghilhhfrhhomhepsggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhunhhihihusegrmhgriihonhdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepsggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhin
- hdrtghomhdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
-X-GND-Sasl: bastien.curutchet@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="7z47kinhio2ycy4k"
+Content-Disposition: inline
+In-Reply-To: <btehhpvkv6iqd4pofumspqbxzr5gxwp6vs5oh7vflbcmzqj5wz@s6yem2ryw6vs>
 
-rtnl_setlink() uses the rtnl_nets_* helpers but never calls the
-rtnl_nets_destroy(). It leads to small memory leaks.
 
-Call rtnl_nets_destroy() before exiting to properly decrement the nets'
-reference counters.
+--7z47kinhio2ycy4k
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 34/35] drm/bridge: tc358768: Convert to atomic helpers
+MIME-Version: 1.0
 
-Fixes: 636af13f213b ("rtnetlink: Register rtnl_dellink() and rtnl_setlink() with RTNL_FLAG_DOIT_PERNET_WIP.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+On Wed, Feb 12, 2025 at 02:38:52AM +0200, Dmitry Baryshkov wrote:
+> On Tue, Feb 11, 2025 at 03:33:58PM +0100, Maxime Ripard wrote:
+> > On Sun, Feb 09, 2025 at 09:13:36AM +0200, Dmitry Baryshkov wrote:
+> > > On Tue, Feb 04, 2025 at 03:58:02PM +0100, Maxime Ripard wrote:
+> > > > The tc358768 driver follows the drm_encoder->crtc pointer that is
+> > > > deprecated and shouldn't be used by atomic drivers.
+> > > >=20
+> > > > This was due to the fact that we did't have any other alternative to
+> > > > retrieve the CRTC pointer. Fortunately, the crtc pointer is now pro=
+vided
+> > > > in the bridge state, so we can move to atomic callbacks and drop th=
+at
+> > > > deprecated pointer usage.
+> > > >=20
+> > > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > > > ---
+> > > >  drivers/gpu/drm/bridge/tc358768.c | 30 +++++++++++++++++++++++----=
 ---
- net/core/rtnetlink.c | 1 +
- 1 file changed, 1 insertion(+)
+> > > >  1 file changed, 23 insertions(+), 7 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/bridge/tc358768.c b/drivers/gpu/drm/br=
+idge/tc358768.c
+> > > > index 6db18d1e8824dd7d387211d6d1e668645cf88bbe..6ff6b29e8075d7c6fa0=
+b74b4fec83c5230512d96 100644
+> > > > --- a/drivers/gpu/drm/bridge/tc358768.c
+> > > > +++ b/drivers/gpu/drm/bridge/tc358768.c
+> > > > @@ -601,17 +601,29 @@ static void tc358768_bridge_disable(struct dr=
+m_bridge *bridge)
+> > > >  	ret =3D tc358768_clear_error(priv);
+> > > >  	if (ret)
+> > > >  		dev_warn(priv->dev, "Software disable failed: %d\n", ret);
+> > > >  }
+> > > > =20
+> > > > +static void tc358768_bridge_atomic_disable(struct drm_bridge *brid=
+ge,
+> > > > +					   struct drm_atomic_state *state)
+> > > > +{
+> > > > +	tc358768_bridge_disable(bridge);
+> > > > +}
+> > > > +
+> > >=20
+> > > Please change corresponding functions into atomic_disable() and
+> > > atomic_post_disable(). Calling sites have access to the atomic state,=
+ so
+> > > there is no need to have yet another wrapper.
+> >=20
+> > It's pretty hard to do (at least without the hardware), both
+> > tc358768_bridge_disable() and tc358768_bridge_post_disable() have
+> > multiple call sites in the driver, and passing a state enabling the
+> > bridge doesn't make sense for those.
+>=20
+> I think it makes sense. The function knows that the bridge needs to be
+> disabled. The state is totally unused (or it can be used to get
+> connectors / CRTC / etc).
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 94111d3383788566f2296039e68549e2b40d5a4a..e4ac14c081a48e36f5381e025a3991c90827c2bf 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -3441,6 +3441,7 @@ static int rtnl_setlink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 
- 	rtnl_nets_unlock(&rtnl_nets);
- errout:
-+	rtnl_nets_destroy(&rtnl_nets);
- 	return err;
- }
- 
+That's the thing though, if we were to pass the state, it would be a
+state where the bridge is enabled, like, it would have an active CRTC.
+In a disable path, you wouldn't have it.
 
--- 
-2.48.1
+Another idea would be to just drop the call to disable the bridge, the
+assumption is that we can't fail in atomic_enable, so no driver actually
+tries to mitigate a failure. I'm not sure why this one would need to.
 
+Maxime
+
+--7z47kinhio2ycy4k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ6xasAAKCRAnX84Zoj2+
+dueAAX9SMGyDftCM0SYN9inRzMrGoyoVgFYZk5PzoXmuKQ+UYPCBoo8GDDVJZtyx
+PlBFR2cBgLoDsY265QHgxuKYGHvyxb/ClABRPEprT8Pe4CLpQIUvcheQUsXwhB74
+B+vnEfdpag==
+=fWeT
+-----END PGP SIGNATURE-----
+
+--7z47kinhio2ycy4k--
 
