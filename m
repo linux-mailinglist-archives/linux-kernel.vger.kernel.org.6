@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-510868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12116A32302
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:01:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0263CA32305
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA193162E41
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D48188A5EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B3B20969B;
-	Wed, 12 Feb 2025 10:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FA6209F4F;
+	Wed, 12 Feb 2025 10:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Hh0YKGzr"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kzZH5fRn"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF992063C7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBB92080E7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739354424; cv=none; b=cbRkYfX298qW5ScfS8QXw7fAhEw9TgiiRWilxIkL22dWta6Cgk34NEfNQWMDkpMadgqVs/I9MJc0LEaOM5Ogr/DrXQXyE+y0hX/fCxlkN6EJlBjLq9/vHS+VgWfgkNKD31ObH09kv/M0jHN9Z2riw2aH612erAzzN8P9LH/IY/A=
+	t=1739354426; cv=none; b=Pvs5VYH6YDreas9vdshrFkyU/yFQyez8Y+wTwWPdW5535kd/v+MqrVzjTY9kzyb2DoZdn6s/ISG1JJzBT3VEWIpK1HyNoC19tYm2pL5j6WIJ4ek9TPQL6Rv+r+6ZmWrL9WTzK0NqudSxFZgE8f3+xwPihUvfogN0Q52OniK158w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739354424; c=relaxed/simple;
-	bh=d5JGq0sUdyIIpGFlmDy/NrRn+DMMIEoFQE/gdpvPLIA=;
+	s=arc-20240116; t=1739354426; c=relaxed/simple;
+	bh=5t1pOw/RmPVLN0/9D4JVG3zITCY2l9s7W0UVjdfG4SQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cQ6Qbu1/7jUgroa2zbIwC7ph5nv1rOyLsKYjuasNWxbgqfHOWo/h7Plxs5+YYzH8469rCaxtO5Vwl5e3T+soYzWGjLUSjZ0XfyXiBugAiDFlrGVm3YbEWszvjjpG67/n46q5bhISW7KX/I+GM8a+9MK/QT4+M42g0KgSzD9RG4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Hh0YKGzr; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=okyMQhPphF45hhtCkr4teYCymAXKEEDtBkCQR+JxQIvnlIly/GQxs5AmNGMieh6IkefyA+IYD5QXjwNPsNWSPR6ZL9P6Dmc7g4YzFtcr5ZqNHJ9bWWAtHn74lt/xHcq35yvRMx29165UtKjXtoG5pwmolMZprgl1u3sdt8oMY5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kzZH5fRn; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739354420;
-	bh=d5JGq0sUdyIIpGFlmDy/NrRn+DMMIEoFQE/gdpvPLIA=;
+	s=mail; t=1739354421;
+	bh=5t1pOw/RmPVLN0/9D4JVG3zITCY2l9s7W0UVjdfG4SQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Hh0YKGzrLkM03n/WuJ+WvxtxJ9D5LNSsEjkiB1EvozeoTz0neSip9ecPXqVS+lntC
-	 ur43Oi0PKu/rI8xjtbz4P19ICdo873hxSuPbQ5Tv205QR9BdwTBor7P1kQzVLsiqRV
-	 Q0HO+DXxjO7edoajnGd9ANe2FTKmKvkHKlBs/cNQgu7mlatV+gpr22HDAWdLDlKgAC
-	 vwCaFnqBLe3InFvhpPYtp7E7ueHQ9uXCQGxUP9uUGXolHiYr0BsvG20w4s+fdNGq6s
-	 g/92Xal6ZF6T0OkQRjTLVwdHr99pHwHKPjEXhndUt3YyYxdr9lb9QIKWFrudpCqtpE
-	 wrT9RMuq8KqWA==
+	b=kzZH5fRnZEcY/UbfOJWkpOi5EP9/KoZ5qpY9+K0h+siPziefb1DRSiana9Ji1TGB0
+	 UoJ/ObmR5IFAOE7u22m8gEN9d+aeyM84XPGDV5yfSNzo1b4YGV6pH3NEs45XzI1MzH
+	 Yu8tHcjmfVSwDRg4d13UWkEe9kA7RJExTGLZZxhQHBL49YWorXCxbQwNfQp5Y2GpBW
+	 PZSvkgHiLGAtDcgHGaDaP5tvZMrx5QBF7c23j/cE/Xe4rlMNuY5iNGakBV8hL+6RJe
+	 t9SPA+IzmUb3a1ydiW1hrSbMlomW3mz1Z4LR5jiAs6p/5Alhu5zp+w6XPzQgm7K0wu
+	 JAnMN6nt6b7Rw==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5FF0817E1551;
-	Wed, 12 Feb 2025 11:00:20 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 18C7517E1558;
+	Wed, 12 Feb 2025 11:00:21 +0100 (CET)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: matthias.bgg@gmail.com
 Cc: angelogioacchino.delregno@collabora.com,
@@ -57,9 +57,9 @@ Cc: angelogioacchino.delregno@collabora.com,
 	linux-mediatek@lists.infradead.org,
 	pablo.sun@mediatek.com,
 	kernel@collabora.com
-Subject: [PATCH v1 4/8] soc: mediatek: mt8188-mmsys: Migrate to MMSYS_ROUTE() macro
-Date: Wed, 12 Feb 2025 11:00:08 +0100
-Message-ID: <20250212100012.33001-5-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v1 5/8] soc: mediatek: mt8167-mmsys: Fix missing regval in all entries
+Date: Wed, 12 Feb 2025 11:00:09 +0100
+Message-ID: <20250212100012.33001-6-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250212100012.33001-1-angelogioacchino.delregno@collabora.com>
 References: <20250212100012.33001-1-angelogioacchino.delregno@collabora.com>
@@ -71,287 +71,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Change the initialization data in the arrays of structure
-mtk_mmsys_routes to make use of the MMSYS_ROUTE() macro:
-this will make sure that each array entry's SEL value fits
-in its corresponding register mask with a compile time check.
+The mmsys routing table for this SoC was effectively missing
+initialization of the val variable of struct mtk_mmsys_routes:
+this means that `val` was incorrectly initialized to zero,
+hence the registers were wrongly initialized.
 
+Add the required regval to all of the entries of the routing
+table for this SoC to fix display controller functionality.
+
+Fixes: 060f7875bd23 ("soc: mediatek: mmsys: Add support for MT8167 SoC")
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/soc/mediatek/mt8188-mmsys.h | 257 ++++++++++++----------------
- 1 file changed, 108 insertions(+), 149 deletions(-)
+ drivers/soc/mediatek/mt8167-mmsys.h | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/mediatek/mt8188-mmsys.h b/drivers/soc/mediatek/mt8188-mmsys.h
-index a1d63be0a73d..befd293e86c3 100644
---- a/drivers/soc/mediatek/mt8188-mmsys.h
-+++ b/drivers/soc/mediatek/mt8188-mmsys.h
-@@ -202,158 +202,117 @@ static const u8 mmsys_mt8188_vdo1_rst_tb[] = {
+diff --git a/drivers/soc/mediatek/mt8167-mmsys.h b/drivers/soc/mediatek/mt8167-mmsys.h
+index f7a35b3656bb..655ef962abe9 100644
+--- a/drivers/soc/mediatek/mt8167-mmsys.h
++++ b/drivers/soc/mediatek/mt8167-mmsys.h
+@@ -17,18 +17,23 @@ static const struct mtk_mmsys_routes mt8167_mmsys_routing_table[] = {
+ 	{
+ 		DDP_COMPONENT_OVL0, DDP_COMPONENT_COLOR0,
+ 		MT8167_DISP_REG_CONFIG_DISP_OVL0_MOUT_EN, OVL0_MOUT_EN_COLOR0,
++		OVL0_MOUT_EN_COLOR0
+ 	}, {
+ 		DDP_COMPONENT_DITHER0, DDP_COMPONENT_RDMA0,
+-		MT8167_DISP_REG_CONFIG_DISP_DITHER_MOUT_EN, MT8167_DITHER_MOUT_EN_RDMA0
++		MT8167_DISP_REG_CONFIG_DISP_DITHER_MOUT_EN, MT8167_DITHER_MOUT_EN_RDMA0,
++		MT8167_DITHER_MOUT_EN_RDMA0
+ 	}, {
+ 		DDP_COMPONENT_OVL0, DDP_COMPONENT_COLOR0,
+-		MT8167_DISP_REG_CONFIG_DISP_COLOR0_SEL_IN, COLOR0_SEL_IN_OVL0
++		MT8167_DISP_REG_CONFIG_DISP_COLOR0_SEL_IN, COLOR0_SEL_IN_OVL0,
++		COLOR0_SEL_IN_OVL0
+ 	}, {
+ 		DDP_COMPONENT_RDMA0, DDP_COMPONENT_DSI0,
+-		MT8167_DISP_REG_CONFIG_DISP_DSI0_SEL_IN, MT8167_DSI0_SEL_IN_RDMA0
++		MT8167_DISP_REG_CONFIG_DISP_DSI0_SEL_IN, MT8167_DSI0_SEL_IN_RDMA0,
++		MT8167_DSI0_SEL_IN_RDMA0
+ 	}, {
+ 		DDP_COMPONENT_RDMA0, DDP_COMPONENT_DSI0,
+-		MT8167_DISP_REG_CONFIG_DISP_RDMA0_SOUT_SEL_IN, MT8167_RDMA0_SOUT_DSI0
++		MT8167_DISP_REG_CONFIG_DISP_RDMA0_SOUT_SEL_IN, MT8167_RDMA0_SOUT_DSI0,
++		MT8167_RDMA0_SOUT_DSI0
+ 	},
  };
  
- static const struct mtk_mmsys_routes mmsys_mt8188_routing_table[] = {
--	{
--		DDP_COMPONENT_OVL0, DDP_COMPONENT_RDMA0,
--		MT8188_VDO0_OVL_MOUT_EN, MT8188_MOUT_DISP_OVL0_TO_DISP_RDMA0,
--		MT8188_MOUT_DISP_OVL0_TO_DISP_RDMA0
--	}, {
--		DDP_COMPONENT_OVL0, DDP_COMPONENT_WDMA0,
--		MT8188_VDO0_OVL_MOUT_EN, MT8188_MOUT_DISP_OVL0_TO_DISP_WDMA0,
--		MT8188_MOUT_DISP_OVL0_TO_DISP_WDMA0
--	}, {
--		DDP_COMPONENT_OVL0, DDP_COMPONENT_RDMA0,
--		MT8188_VDO0_DISP_RDMA_SEL, MT8188_SEL_IN_DISP_RDMA0_FROM_MASK,
--		MT8188_SEL_IN_DISP_RDMA0_FROM_DISP_OVL0
--	}, {
--		DDP_COMPONENT_DITHER0, DDP_COMPONENT_DSI0,
--		MT8188_VDO0_DSI0_SEL_IN, MT8188_SEL_IN_DSI0_FROM_MASK,
--		MT8188_SEL_IN_DSI0_FROM_DISP_DITHER0
--	}, {
--		DDP_COMPONENT_DITHER0, DDP_COMPONENT_MERGE0,
--		MT8188_VDO0_VPP_MERGE_SEL, MT8188_SEL_IN_VPP_MERGE_FROM_MASK,
--		MT8188_SEL_IN_VPP_MERGE_FROM_DITHER0_OUT
--	}, {
--		DDP_COMPONENT_DITHER0, DDP_COMPONENT_DSC0,
--		MT8188_VDO0_DSC_WARP_SEL,
--		MT8188_SEL_IN_DSC_WRAP0C0_IN_FROM_MASK,
--		MT8188_SEL_IN_DSC_WRAP0C0_IN_FROM_DISP_DITHER0
--	}, {
--		DDP_COMPONENT_DITHER0, DDP_COMPONENT_DP_INTF0,
--		MT8188_VDO0_DP_INTF0_SEL_IN, MT8188_SEL_IN_DP_INTF0_FROM_MASK,
--		MT8188_SEL_IN_DP_INTF0_FROM_DISP_DITHER0
--	}, {
--		DDP_COMPONENT_DSC0, DDP_COMPONENT_MERGE0,
--		MT8188_VDO0_VPP_MERGE_SEL, MT8188_SEL_IN_VPP_MERGE_FROM_MASK,
--		MT8188_SEL_IN_VPP_MERGE_FROM_DSC_WRAP0_OUT
--	}, {
--		DDP_COMPONENT_DSC0, DDP_COMPONENT_DSI0,
--		MT8188_VDO0_DSI0_SEL_IN, MT8188_SEL_IN_DSI0_FROM_MASK,
--		MT8188_SEL_IN_DSI0_FROM_DSC_WRAP0_OUT
--	}, {
--		DDP_COMPONENT_RDMA0, DDP_COMPONENT_COLOR0,
--		MT8188_VDO0_DISP_RDMA_SEL, MT8188_SOUT_DISP_RDMA0_TO_MASK,
--		MT8188_SOUT_DISP_RDMA0_TO_DISP_COLOR0
--	},  {
--		DDP_COMPONENT_DITHER0, DDP_COMPONENT_DSI0,
--		MT8188_VDO0_DISP_DITHER0_SEL_OUT,
--		MT8188_SOUT_DISP_DITHER0_TO_MASK,
--		MT8188_SOUT_DISP_DITHER0_TO_DSI0
--	},  {
--		DDP_COMPONENT_DITHER0, DDP_COMPONENT_DP_INTF0,
--		MT8188_VDO0_DISP_DITHER0_SEL_OUT,
--		MT8188_SOUT_DISP_DITHER0_TO_MASK,
--		MT8188_SOUT_DISP_DITHER0_TO_DP_INTF0
--	}, {
--		DDP_COMPONENT_MERGE0, DDP_COMPONENT_DP_INTF0,
--		MT8188_VDO0_VPP_MERGE_SEL, MT8188_SOUT_VPP_MERGE_TO_MASK,
--		MT8188_SOUT_VPP_MERGE_TO_DP_INTF0
--	}, {
--		DDP_COMPONENT_MERGE0, DDP_COMPONENT_DPI0,
--		MT8188_VDO0_VPP_MERGE_SEL, MT8188_SOUT_VPP_MERGE_TO_MASK,
--		MT8188_SOUT_VPP_MERGE_TO_SINA_VIRTUAL0
--	}, {
--		DDP_COMPONENT_MERGE0, DDP_COMPONENT_WDMA0,
--		MT8188_VDO0_VPP_MERGE_SEL, MT8188_SOUT_VPP_MERGE_TO_MASK,
--		MT8188_SOUT_VPP_MERGE_TO_DISP_WDMA0
--	}, {
--		DDP_COMPONENT_MERGE0, DDP_COMPONENT_DSC0,
--		MT8188_VDO0_VPP_MERGE_SEL, MT8188_SOUT_VPP_MERGE_TO_MASK,
--		MT8188_SOUT_VPP_MERGE_TO_DSC_WRAP0_IN
--	}, {
--		DDP_COMPONENT_DSC0, DDP_COMPONENT_DSI0,
--		MT8188_VDO0_DSC_WARP_SEL, MT8188_SOUT_DSC_WRAP0_OUT_TO_MASK,
--		MT8188_SOUT_DSC_WRAP0_OUT_TO_DSI0
--	}, {
--		DDP_COMPONENT_DSC0, DDP_COMPONENT_MERGE0,
--		MT8188_VDO0_DSC_WARP_SEL, MT8188_SOUT_DSC_WRAP0_OUT_TO_MASK,
--		MT8188_SOUT_DSC_WRAP0_OUT_TO_VPP_MERGE
--	},
-+	MMSYS_ROUTE(OVL0, RDMA0,
-+		    MT8188_VDO0_OVL_MOUT_EN, MT8188_MOUT_DISP_OVL0_TO_DISP_RDMA0,
-+		    MT8188_MOUT_DISP_OVL0_TO_DISP_RDMA0),
-+	MMSYS_ROUTE(OVL0, WDMA0,
-+		    MT8188_VDO0_OVL_MOUT_EN, MT8188_MOUT_DISP_OVL0_TO_DISP_WDMA0,
-+		    MT8188_MOUT_DISP_OVL0_TO_DISP_WDMA0),
-+	MMSYS_ROUTE(OVL0, RDMA0,
-+		    MT8188_VDO0_DISP_RDMA_SEL, MT8188_SEL_IN_DISP_RDMA0_FROM_MASK,
-+		    MT8188_SEL_IN_DISP_RDMA0_FROM_DISP_OVL0),
-+	MMSYS_ROUTE(DITHER0, DSI0,
-+		    MT8188_VDO0_DSI0_SEL_IN, MT8188_SEL_IN_DSI0_FROM_MASK,
-+		    MT8188_SEL_IN_DSI0_FROM_DISP_DITHER0),
-+	MMSYS_ROUTE(DITHER0, MERGE0,
-+		    MT8188_VDO0_VPP_MERGE_SEL, MT8188_SEL_IN_VPP_MERGE_FROM_MASK,
-+		    MT8188_SEL_IN_DP_INTF0_FROM_DISP_DITHER0),
-+	MMSYS_ROUTE(DITHER0, DSC0,
-+		    MT8188_VDO0_DSC_WARP_SEL, MT8188_SEL_IN_DSC_WRAP0C0_IN_FROM_MASK,
-+		    MT8188_SEL_IN_DSC_WRAP0C0_IN_FROM_DISP_DITHER0),
-+	MMSYS_ROUTE(DITHER0, DP_INTF0,
-+		    MT8188_VDO0_DP_INTF0_SEL_IN, MT8188_SEL_IN_DP_INTF0_FROM_MASK,
-+		    MT8188_SEL_IN_DP_INTF0_FROM_DISP_DITHER0),
-+	MMSYS_ROUTE(DSC0, MERGE0,
-+		    MT8188_VDO0_VPP_MERGE_SEL, MT8188_SEL_IN_VPP_MERGE_FROM_MASK,
-+		    MT8188_SEL_IN_VPP_MERGE_FROM_DSC_WRAP0_OUT),
-+	MMSYS_ROUTE(DSC0, DSI0,
-+		    MT8188_VDO0_DSI0_SEL_IN, MT8188_SEL_IN_DSI0_FROM_MASK,
-+		    MT8188_SEL_IN_DSI0_FROM_DSC_WRAP0_OUT),
-+	MMSYS_ROUTE(RDMA0, COLOR0,
-+		    MT8188_VDO0_DISP_RDMA_SEL, GENMASK(1, 0),
-+		    MT8188_SOUT_DISP_RDMA0_TO_DISP_COLOR0),
-+	MMSYS_ROUTE(DITHER0, DSI0,
-+		    MT8188_VDO0_DISP_DITHER0_SEL_OUT, MT8188_SOUT_DISP_DITHER0_TO_MASK,
-+		    MT8188_SOUT_DISP_DITHER0_TO_DSI0),
-+	MMSYS_ROUTE(DITHER0, DP_INTF0,
-+		    MT8188_VDO0_DISP_DITHER0_SEL_OUT, MT8188_SOUT_DISP_DITHER0_TO_MASK,
-+		    MT8188_SOUT_DISP_DITHER0_TO_DP_INTF0),
-+	MMSYS_ROUTE(MERGE0, DP_INTF0,
-+		    MT8188_VDO0_VPP_MERGE_SEL, MT8188_SOUT_VPP_MERGE_TO_MASK,
-+		    MT8188_SOUT_VPP_MERGE_TO_DP_INTF0),
-+	MMSYS_ROUTE(MERGE0, DPI0,
-+		    MT8188_VDO0_VPP_MERGE_SEL, MT8188_SOUT_VPP_MERGE_TO_MASK,
-+		    MT8188_SOUT_VPP_MERGE_TO_SINA_VIRTUAL0),
-+	MMSYS_ROUTE(MERGE0, WDMA0,
-+		    MT8188_VDO0_VPP_MERGE_SEL, MT8188_SOUT_VPP_MERGE_TO_MASK,
-+		    MT8188_SOUT_VPP_MERGE_TO_DISP_WDMA0),
-+	MMSYS_ROUTE(MERGE0, DSC0,
-+		    MT8188_VDO0_VPP_MERGE_SEL, MT8188_SOUT_VPP_MERGE_TO_MASK,
-+		    MT8188_SOUT_VPP_MERGE_TO_DSC_WRAP0_IN),
-+	MMSYS_ROUTE(DSC0, DSI0,
-+		    MT8188_VDO0_DSC_WARP_SEL, MT8188_SOUT_DSC_WRAP0_OUT_TO_MASK,
-+		    MT8188_SOUT_DSC_WRAP0_OUT_TO_DSI0),
-+	MMSYS_ROUTE(DSC0, MERGE0,
-+		    MT8188_VDO0_DSC_WARP_SEL, MT8188_SOUT_DSC_WRAP0_OUT_TO_MASK,
-+		    MT8188_SOUT_DSC_WRAP0_OUT_TO_VPP_MERGE),
- };
- 
- static const struct mtk_mmsys_routes mmsys_mt8188_vdo1_routing_table[] = {
--	{
--		DDP_COMPONENT_MDP_RDMA0, DDP_COMPONENT_MERGE1,
--		MT8188_VDO1_VPP_MERGE0_P0_SEL_IN, GENMASK(0, 0),
--		MT8188_VPP_MERGE0_P0_SEL_IN_FROM_MDP_RDMA0
--	}, {
--		DDP_COMPONENT_MDP_RDMA1, DDP_COMPONENT_MERGE1,
--		MT8188_VDO1_VPP_MERGE0_P1_SEL_IN, GENMASK(0, 0),
--		MT8188_VPP_MERGE0_P1_SEL_IN_FROM_MDP_RDMA1
--	}, {
--		DDP_COMPONENT_MDP_RDMA2, DDP_COMPONENT_MERGE2,
--		MT8188_VDO1_VPP_MERGE1_P0_SEL_IN, GENMASK(0, 0),
--		MT8188_VPP_MERGE1_P0_SEL_IN_FROM_MDP_RDMA2
--	}, {
--		DDP_COMPONENT_MERGE1, DDP_COMPONENT_ETHDR_MIXER,
--		MT8188_VDO1_MERGE0_ASYNC_SOUT_SEL, GENMASK(1, 0),
--		MT8188_SOUT_TO_MIXER_IN1_SEL
--	}, {
--		DDP_COMPONENT_MERGE2, DDP_COMPONENT_ETHDR_MIXER,
--		MT8188_VDO1_MERGE1_ASYNC_SOUT_SEL, GENMASK(1, 0),
--		MT8188_SOUT_TO_MIXER_IN2_SEL
--	}, {
--		DDP_COMPONENT_MERGE3, DDP_COMPONENT_ETHDR_MIXER,
--		MT8188_VDO1_MERGE2_ASYNC_SOUT_SEL, GENMASK(1, 0),
--		MT8188_SOUT_TO_MIXER_IN3_SEL
--	}, {
--		DDP_COMPONENT_MERGE4, DDP_COMPONENT_ETHDR_MIXER,
--		MT8188_VDO1_MERGE3_ASYNC_SOUT_SEL, GENMASK(1, 0),
--		MT8188_SOUT_TO_MIXER_IN4_SEL
--	}, {
--		DDP_COMPONENT_ETHDR_MIXER, DDP_COMPONENT_MERGE5,
--		MT8188_VDO1_MIXER_OUT_SOUT_SEL, GENMASK(0, 0),
--		MT8188_MIXER_SOUT_TO_MERGE4_ASYNC_SEL
--	}, {
--		DDP_COMPONENT_MERGE1, DDP_COMPONENT_ETHDR_MIXER,
--		MT8188_VDO1_MIXER_IN1_SEL_IN, GENMASK(0, 0),
--		MT8188_MIXER_IN1_SEL_IN_FROM_MERGE0_ASYNC_SOUT
--	}, {
--		DDP_COMPONENT_MERGE2, DDP_COMPONENT_ETHDR_MIXER,
--		MT8188_VDO1_MIXER_IN2_SEL_IN, GENMASK(0, 0),
--		MT8188_MIXER_IN2_SEL_IN_FROM_MERGE1_ASYNC_SOUT
--	}, {
--		DDP_COMPONENT_MERGE3, DDP_COMPONENT_ETHDR_MIXER,
--		MT8188_VDO1_MIXER_IN3_SEL_IN, GENMASK(0, 0),
--		MT8188_MIXER_IN3_SEL_IN_FROM_MERGE2_ASYNC_SOUT
--	}, {
--		DDP_COMPONENT_MERGE4, DDP_COMPONENT_ETHDR_MIXER,
--		MT8188_VDO1_MIXER_IN4_SEL_IN, GENMASK(0, 0),
--		MT8188_MIXER_IN4_SEL_IN_FROM_MERGE3_ASYNC_SOUT
--	}, {
--		DDP_COMPONENT_ETHDR_MIXER, DDP_COMPONENT_MERGE5,
--		MT8188_VDO1_MIXER_SOUT_SEL_IN, GENMASK(2, 0),
--		MT8188_MIXER_SOUT_SEL_IN_FROM_DISP_MIXER
--	}, {
--		DDP_COMPONENT_ETHDR_MIXER, DDP_COMPONENT_MERGE5,
--		MT8188_VDO1_MERGE4_ASYNC_SEL_IN, GENMASK(2, 0),
--		MT8188_MERGE4_ASYNC_SEL_IN_FROM_MIXER_OUT_SOUT
--	}, {
--		DDP_COMPONENT_MERGE5, DDP_COMPONENT_DPI1,
--		MT8188_VDO1_DISP_DPI1_SEL_IN, GENMASK(1, 0),
--		MT8188_DISP_DPI1_SEL_IN_FROM_VPP_MERGE4_MOUT
--	}, {
--		DDP_COMPONENT_MERGE5, DDP_COMPONENT_DPI1,
--		MT8188_VDO1_MERGE4_SOUT_SEL, GENMASK(3, 0),
--		MT8188_MERGE4_SOUT_TO_DPI1_SEL
--	}, {
--		DDP_COMPONENT_MERGE5, DDP_COMPONENT_DP_INTF1,
--		MT8188_VDO1_DISP_DP_INTF0_SEL_IN, GENMASK(1, 0),
--		MT8188_DISP_DP_INTF0_SEL_IN_FROM_VPP_MERGE4_MOUT
--	}, {
--		DDP_COMPONENT_MERGE5, DDP_COMPONENT_DP_INTF1,
--		MT8188_VDO1_MERGE4_SOUT_SEL, GENMASK(3, 0),
--		MT8188_MERGE4_SOUT_TO_DP_INTF0_SEL
--	}
-+	MMSYS_ROUTE(MDP_RDMA0, MERGE1,
-+		    MT8188_VDO1_VPP_MERGE0_P0_SEL_IN, GENMASK(0, 0),
-+		    MT8188_VPP_MERGE0_P0_SEL_IN_FROM_MDP_RDMA0),
-+	MMSYS_ROUTE(MDP_RDMA1, MERGE1,
-+		    MT8188_VDO1_VPP_MERGE0_P1_SEL_IN, GENMASK(0, 0),
-+		    MT8188_VPP_MERGE0_P1_SEL_IN_FROM_MDP_RDMA1),
-+	MMSYS_ROUTE(MDP_RDMA2, MERGE2,
-+		    MT8188_VDO1_VPP_MERGE1_P0_SEL_IN, GENMASK(0, 0),
-+		    MT8188_VPP_MERGE1_P0_SEL_IN_FROM_MDP_RDMA2),
-+	MMSYS_ROUTE(MERGE1, ETHDR_MIXER,
-+		    MT8188_VDO1_MERGE0_ASYNC_SOUT_SEL, GENMASK(1, 0),
-+		    MT8188_SOUT_TO_MIXER_IN1_SEL),
-+	MMSYS_ROUTE(MERGE2, ETHDR_MIXER,
-+		    MT8188_VDO1_MERGE1_ASYNC_SOUT_SEL, GENMASK(1, 0),
-+		    MT8188_SOUT_TO_MIXER_IN2_SEL),
-+	MMSYS_ROUTE(MERGE3, ETHDR_MIXER,
-+		    MT8188_VDO1_MERGE2_ASYNC_SOUT_SEL, GENMASK(1, 0),
-+		    MT8188_SOUT_TO_MIXER_IN3_SEL),
-+	MMSYS_ROUTE(MERGE4, ETHDR_MIXER,
-+		    MT8188_VDO1_MERGE3_ASYNC_SOUT_SEL, GENMASK(1, 0),
-+		    MT8188_SOUT_TO_MIXER_IN4_SEL),
-+	MMSYS_ROUTE(ETHDR_MIXER, MERGE5,
-+		    MT8188_VDO1_MIXER_OUT_SOUT_SEL, GENMASK(0, 0),
-+		    MT8188_MIXER_SOUT_TO_MERGE4_ASYNC_SEL),
-+	MMSYS_ROUTE(MERGE1, ETHDR_MIXER,
-+		    MT8188_VDO1_MIXER_IN1_SEL_IN, GENMASK(0, 0),
-+		    MT8188_MIXER_IN1_SEL_IN_FROM_MERGE0_ASYNC_SOUT),
-+	MMSYS_ROUTE(MERGE2, ETHDR_MIXER,
-+		    MT8188_VDO1_MIXER_IN2_SEL_IN, GENMASK(0, 0),
-+		    MT8188_MIXER_IN2_SEL_IN_FROM_MERGE1_ASYNC_SOUT),
-+	MMSYS_ROUTE(MERGE3, ETHDR_MIXER,
-+		    MT8188_VDO1_MIXER_IN3_SEL_IN, GENMASK(0, 0),
-+		    MT8188_MIXER_IN3_SEL_IN_FROM_MERGE2_ASYNC_SOUT),
-+	MMSYS_ROUTE(MERGE4, ETHDR_MIXER,
-+		    MT8188_VDO1_MIXER_IN4_SEL_IN, GENMASK(0, 0),
-+		    MT8188_MIXER_IN4_SEL_IN_FROM_MERGE3_ASYNC_SOUT),
-+	MMSYS_ROUTE(ETHDR_MIXER, MERGE5,
-+		    MT8188_VDO1_MIXER_SOUT_SEL_IN, GENMASK(2, 0),
-+		    MT8188_MIXER_SOUT_SEL_IN_FROM_DISP_MIXER),
-+	MMSYS_ROUTE(ETHDR_MIXER, MERGE5,
-+		    MT8188_VDO1_MERGE4_ASYNC_SEL_IN, GENMASK(2, 0),
-+		    MT8188_MERGE4_ASYNC_SEL_IN_FROM_MIXER_OUT_SOUT),
-+	MMSYS_ROUTE(MERGE5, DPI1,
-+		    MT8188_VDO1_DISP_DPI1_SEL_IN, GENMASK(1, 0),
-+		    MT8188_DISP_DPI1_SEL_IN_FROM_VPP_MERGE4_MOUT),
-+	MMSYS_ROUTE(MERGE5, DPI1,
-+		    MT8188_VDO1_MERGE4_SOUT_SEL, GENMASK(3, 0),
-+		    MT8188_MERGE4_SOUT_TO_DPI1_SEL),
-+	MMSYS_ROUTE(MERGE5, DP_INTF1,
-+		    MT8188_VDO1_DISP_DP_INTF0_SEL_IN, GENMASK(1, 0),
-+		    MT8188_DISP_DP_INTF0_SEL_IN_FROM_VPP_MERGE4_MOUT),
-+	MMSYS_ROUTE(MERGE5, DP_INTF1,
-+		    MT8188_VDO1_MERGE4_SOUT_SEL, GENMASK(3, 0),
-+		    MT8188_MERGE4_SOUT_TO_DP_INTF0_SEL),
- };
- 
- #endif /* __SOC_MEDIATEK_MT8188_MMSYS_H */
 -- 
 2.48.1
 
