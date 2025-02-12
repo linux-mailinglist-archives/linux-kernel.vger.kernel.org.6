@@ -1,144 +1,120 @@
-Return-Path: <linux-kernel+bounces-511353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E2DA329DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:24:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C193A329E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A57B17A1521
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:23:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E4483A6831
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244BF211A2F;
-	Wed, 12 Feb 2025 15:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011DC21149C;
+	Wed, 12 Feb 2025 15:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WBP/b0tG"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O8YRSq6Q"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FAC211480;
-	Wed, 12 Feb 2025 15:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0659211480
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739373849; cv=none; b=hiF9ixrzmODgxtu2IDr6UCjqeBEt/kBO2GBCFvEf3rtk8vKGEpjBc3BM5c31dHoEcpeEdMZAxbNsSgfsyFRFHYeWKbglnRPb4gar3tPHRKnaWBXt4YgUHs0n5/H/o5u+idgQHDhhv4eYQsWPqihVngSnFjMFotdKzY0oEGB7w2o=
+	t=1739373858; cv=none; b=T+hptDa29Tbd0T6ShylwbiR6+I8rg+BGq+2dWECLdTx3kPdJIytx+RauWkzh0e22V0oYSJinGCFvPTAPnPGSeKA6KDXz9RFI2c3mdCjSDqlkbKfm84UFTZjYCXXdubumrEWF7GhsvMtePXacCNkc7Met2dDNU8d3F4tbmO3PyYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739373849; c=relaxed/simple;
-	bh=RCNasFOBWQdGcjt6I78d1HAUwbrAr0AhbWDhXUsNQLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kc56fprr+5A86MuaLjQkEj30h3fhKNAuB7ZXvs54X3lsEDceSOkHMuk1C3ZW/Vh23UFf3OuYnj4HCt2+W6hgBvyzE0IPaSVZbEd2z1qf7jwRyS4YoXlrs489cwZEt1JjPh1bYAsstdrqQxaiSPfBW+/ZYObBGIJbuPX6p3sTXPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WBP/b0tG; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CB5PM7012786;
-	Wed, 12 Feb 2025 15:23:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=8G1joY
-	ERfx7D6bF3vPUyhFVX43JehX7/H4QKhp6aWr0=; b=WBP/b0tGOB6yvpgDM4WOPk
-	/MWvq4xsI9h8QIy3g5ZrowkhgnhGlBUNIs+/H+ErfF4IrHxfG8s1g6CR+R6TZakM
-	Jh2CW3E4IljWsv6Yl2qMtWg3PIkUai7Z36IJX5BzFrx4UTEHFYaNMp9auBX24zrc
-	/5g66DlSwf7N820Na16143QK6DgYQS3+WfJyHExhpJvPwScVBwlcXWHyoteBnrNT
-	8LHGR/GsAmXIRyFkBHV3XGxI18lBBmvAHP6ywUhLjvtaLzlEyZQkbUotCk98XDbY
-	CrFwPYjUUzRwmLxsHrMkDR47WjMab/FislTNbS7DpNk60/6DOfFJiYN3oiLKOT2g
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rfpa4ct7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 15:23:55 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CFBSXS028197;
-	Wed, 12 Feb 2025 15:23:53 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44phyyhmb7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 15:23:53 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CFNq3f24445500
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 15:23:52 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5DF1F5805E;
-	Wed, 12 Feb 2025 15:23:52 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9562F58045;
-	Wed, 12 Feb 2025 15:23:50 +0000 (GMT)
-Received: from [9.61.186.234] (unknown [9.61.186.234])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Feb 2025 15:23:50 +0000 (GMT)
-Message-ID: <52a8f09c-4a59-4439-9738-58f040fed0a5@linux.ibm.com>
-Date: Wed, 12 Feb 2025 10:23:50 -0500
+	s=arc-20240116; t=1739373858; c=relaxed/simple;
+	bh=bfhirtH+13nY6B5i7ITAi7el5FlfqSgmoiQ/NTQ5BQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ikSaGYKQTblAAIcw5OXPNkpVyaJaYz99XkfnkT3/vAFP3aAhgSmUwSlwwZmdFZpPgunIN2gaiZ4jEG3t1x6z4G/30h7et3KFvTnYQQwak5zZ9l5ZdSfsO9cTj1R1fJrFXuTef5MMaxDrQvXFCG28k4T+fbBOJU/40GdvyDD0UXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O8YRSq6Q; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5de74599749so5677814a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:24:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739373853; x=1739978653; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PPKru0l0aVU3WKEJ1///OpkRf3iWaCUXDAkjzEyzYT8=;
+        b=O8YRSq6QE0txsM1ZtzklnUvHNx2VaU+U0YgadD6FT+3Q+WMVcoY9jgjW0WEpEeTzZ0
+         CMAWDRlSGrUTLja/Pj3eIMn0dwLAAv6MbA8Bxe3HCyZBfNYGRgRWmAHCFpBnaBk2Aak9
+         BoYfKX+zbL4pnHE9ESaJpy3zcACWdUba+Ut5T58T3yhl5lIcIJFvmOTnER1VCxClfkTY
+         kpvVomQD9unSIAUz9DF3sVU8ek7bDOtQN6Y/suTnTA1EBOzo7SS62+CzEVcQWXBBWKdh
+         iJGFqbAE0N9EKqPCgVBnoEv50cknz1hhQPgtbIg2q51mSsbUykriqy2rXWWExf1R96ad
+         X5pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739373853; x=1739978653;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PPKru0l0aVU3WKEJ1///OpkRf3iWaCUXDAkjzEyzYT8=;
+        b=IAsEur+98M3oONZIsKVcfiwoo2jZ1/3LsBG5pbmXE7jAWcUsfLLJiCfy6/0cu1B80A
+         BoYE9ab9pVEcXqwxI7WSFTH/LnfHw1y1xnVKvMC14l8wXO+Ex8C0VVQVrc6jBi9/471b
+         XmS3m9HiJH2Azpa2OwndgUzFAAiBz+1yQHxDimhBApSuYRUM56gM8A0AaHqRAmrl324S
+         lZvp732Ct3Ba0yIDNYUzOsgj1Xs56azh7qNX+MuFXxElxbebXN6p6Zpsyu0j+KAg0b2i
+         4y5Snm/4gnB4Y1A5xwP097M+H6bdgKTeqgyhg168O9xgJ90FdmLy7DwhpVewM3rWc2Z7
+         +6eA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNlVFpUjMNPvPa5agNqxmI3yrNJKXIWvbAVKd00s4k4LqVgFE/f/x7oXT9notJiL6OQO/eMtvCINs2EwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvfVBnSm3EC02/JpSqzhthkGUHDZqn/dqoDDyo0T1iMR90iylK
+	UpiqrNjrRHJwlK3TEvBxfD68kpJQL2aHrVJZjg8aac1YwalvYbP03gg5yg2JPNY=
+X-Gm-Gg: ASbGncvFzGnRPJPbmpww0Dtf7Q4IEwZaTSfI07inIMVxJzws41c1JTFV/bIFzHA6Djj
+	Kh51tbjTZk2xKGLtq8gd0+acq6WhjmR/zhF/ydsvIdDbudKZOyQoNv4IggWQTKGFWEicbbgRp7j
+	szAsb+OQX6uNscMuxp/eRFUMyLfv38ydUcoJ5CaRgCgpru4zMrfOpmLu2UkWhk48E4xQvXbmkNt
+	hVSIu1/KQNx3M8Mqv9A+5sbCd++wVHQ0dII5h6xIdDsLgYlFK2u+3ChvQze+OICZWJI6nly7IHW
+	MuaP8y8GFtf/E0dbs5ev
+X-Google-Smtp-Source: AGHT+IFjmw0Zgy4ifMz5CBDov7HZwLscmnRL30CFaXtX/9ilCY9ZxRB02Ln3oI9dpncAe8X2WxdR1Q==
+X-Received: by 2002:a17:907:9490:b0:ab6:9d92:6d6 with SMTP id a640c23a62f3a-ab7f33d1036mr294868366b.26.1739373852788;
+        Wed, 12 Feb 2025 07:24:12 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab7eaeb8596sm269915866b.138.2025.02.12.07.24.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 07:24:12 -0800 (PST)
+Date: Wed, 12 Feb 2025 18:24:09 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/tests: Fix a test in drm_test_check_valid_clones()
+Message-ID: <c50f11c7-932c-47dc-b40f-4ada8b9b6679@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] s390/pci: store DMA offset in bus_dma_region
-To: Niklas Schnelle <schnelle@linux.ibm.com>, joro@8bytes.org, will@kernel.org,
-        robin.murphy@arm.com, gerald.schaefer@linux.ibm.com
-Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        svens@linux.ibm.com, borntraeger@linux.ibm.com, farman@linux.ibm.com,
-        clegoate@redhat.com, jgg@nvidia.com, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Halil Pasic <pasic@linux.ibm.com>
-References: <20250207205335.473946-1-mjrosato@linux.ibm.com>
- <20250207205335.473946-3-mjrosato@linux.ibm.com>
- <8380fe8052c9b972a8350394cb6655f6a9683d29.camel@linux.ibm.com>
-Content-Language: en-US
-From: Matthew Rosato <mjrosato@linux.ibm.com>
-In-Reply-To: <8380fe8052c9b972a8350394cb6655f6a9683d29.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: g6NXWJHWIR4QEE_Sby7jnx0AU6CaX6Nn
-X-Proofpoint-ORIG-GUID: g6NXWJHWIR4QEE_Sby7jnx0AU6CaX6Nn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- mlxlogscore=611 clxscore=1015 phishscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502120114
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+The drm_atomic_get_crtc_state() function returns error pointers and not
+NULL.  Update the check to check for error pointers as well as NULL.
 
->> +static void pci_dma_range_setup(struct pci_dev *pdev)
->> +{
->> +	struct zpci_dev *zdev = to_zpci(pdev);
->> +	struct bus_dma_region *map;
->> +
->> +	map = kzalloc(sizeof(*map), GFP_KERNEL);
->> +	if (!map)
->> +		return;
->> +
->> +	map->cpu_start = 0;
->> +	map->dma_start = PAGE_ALIGN(zdev->start_dma);
->> +	map->size = max(PAGE_ALIGN_DOWN(zdev->end_dma + 1) - map->dma_start, 0);
-> 
-> Ugh, this is my fault as I suggested it, but this max() doesn't work
-> here. The zdev->end_dma is unsigned and so is map->dma_start so if the
-> former is smaller underflow will occur and the max() won't save us.
-> It's largely a theoretical issue since zdev->end_dma + 1 should always
-> be larger than zdev->start_dma, but now the max() looks like we thought
-> of that, but then it doesn't work.
-> 
-> If we handle it maybe just go with:
-> 
-> aligned_end = PAGE_ALIGN_DOWN(zdev->end_dma + 1);
-> if (aligned_end >= map->dma_start)
->      map->size = aligned_end - map->dma_start;
-> else
->      map->size = 0;
-> 
+Fixes: 88849f24e2ab ("drm/tests: Add test for drm_atomic_helper_check_modeset()")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/tests/drm_atomic_state_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Given that it's not really something that's supposed to happen, would it make sense then to add a 
-
-WARN_ON_ONCE(map->size == 0);
-
-At the end of this?
+diff --git a/drivers/gpu/drm/tests/drm_atomic_state_test.c b/drivers/gpu/drm/tests/drm_atomic_state_test.c
+index 0ab5d9ec4a75..5945c3298901 100644
+--- a/drivers/gpu/drm/tests/drm_atomic_state_test.c
++++ b/drivers/gpu/drm/tests/drm_atomic_state_test.c
+@@ -283,7 +283,7 @@ static void drm_test_check_valid_clones(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+ 	crtc_state = drm_atomic_get_crtc_state(state, priv->crtc);
+-	KUNIT_ASSERT_NOT_NULL(test, crtc_state);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
+ 
+ 	crtc_state->encoder_mask = param->encoder_mask;
+ 
+-- 
+2.47.2
 
 
