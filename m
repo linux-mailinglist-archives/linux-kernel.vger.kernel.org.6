@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-511742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B3FA32F01
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:57:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E200AA32F3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 959593A7141
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94C301631F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EEB260A5D;
-	Wed, 12 Feb 2025 18:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3566626136C;
+	Wed, 12 Feb 2025 19:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v2fJVk6w"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="AUaFuro2"
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE03825E44A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33028260A5D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 19:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739386614; cv=none; b=hp+3q70S+WxCxxUsx/8hVWuM50Aq1rR6bCtobC1SzHjcUF0EHk3PcvrxJAOA4gc9nF7bwdz13pYa0y6Li+8KhXFy0Ao+w1KdQE2YlMP39jicoMPtTQjN14zUR8kJ74u/WWutrAQeONWbc1txBmlFbwEY4mF1MSU84guys63w8k0=
+	t=1739387323; cv=none; b=FqOpK+JZS85v+H6Kp/A+1TufkBNZZ0Dmk5AHghqbw/F+8L3lI6BGPR35dOVDzLGzMmPvVDMI2Ti7d6/7QHzuLV6gffiz+158U13a/cmKTer7CUYebZDhypNFV/VgzXD6QAzeAcd+QEkcZ3YFLytzEOkzBwC0u8HfBhoS4J72LTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739386614; c=relaxed/simple;
-	bh=gXAMwaNKe/OFLTTd0ChTLjmEKcH0pYoE4A5hVxE8oiA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Mo3TsYOxtyiGiZG2f7Zm3fLQPJmvay4sS+f4jlrVdF0zaNkc5IYvXjD31MOx47ruHbc8PHyz6zc3mueGFK7af1eQ+WthBl3U0HOxsFFV8n7HPtyOLsWKPJZEC6VC3u83/Rr3Lpd/Od1SfUTJEmEL6uhoVgE3zYfYxJTNqhzh71Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v2fJVk6w; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fa166cf693so316209a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:56:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739386612; x=1739991412; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBZPcffr4UmrLT0Oe+KhK2m9rvtxlhltkwaD4SGVEyY=;
-        b=v2fJVk6w2SriRpB7KmyR0AmeVR0wAMskfeT+MfyVwO+lOkLSXYsFY0og6aC9RSTV3s
-         BTRO4PihiUshyZB8n8pESO0u/q8kdPPOamNuhIlauE9zwvdGWXVWVf5Hal+4xHD0DJAg
-         bVtAMa8eQA3FA+2Jpw6U+WLW5xqDc+kEbT7GyQn9Sq2i7FMlf0MULRlPiU+1ghLTRUeE
-         37Ef+a2O5vI1g/eC86pftT5tlbQCS3mh74NxIo0vUSnjYBDVuJp2Hwogtg7lqTtjK9/h
-         dA5zxPIyFlgvxl+gVU4ptuhohBgxxGLMyd3RoJb1YGIPIzSwTWFci8hV2w3fSnCi2nrV
-         XyMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739386612; x=1739991412;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBZPcffr4UmrLT0Oe+KhK2m9rvtxlhltkwaD4SGVEyY=;
-        b=U9xjcjHP/BVSJfCti9UxJ322+wcLVAQyK7KCs1kOQboYO1dEpSsshs9sqwJodaAE8Z
-         /vipVAoVCX5u34piDsqKesDFZsTvf1AhhuBvVyOBfJy098qeHcfoAPFQBIjv/lKwuL68
-         2G0j2ahHpg6jwohTPVuo7VU+cRrMOaY8QfoRBLSFLHeQ2HiQS6LjT7GpPK5M6hYtjDAE
-         0sjcZMJZVYpeADugA9HRq9fwQ9AIxJhpEyEcGp5eyh0r+Tl7g73Fs4iF71z61sg6xwAN
-         2KgZm7kWTvFNVbPxe+lF+K+S3XGFUEpumnj4MxlZQlF+q6kkH1R3T5DzOXyrfdtOWSBZ
-         TZZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlni2absP4YT6mGxkmH6CW0E9kwjE0ZSXTsNJGobx2JWTNGLsEpFVurLB09jCNIbgpuwlMw/7L5DJlD/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+fcMmmUE876LJde7MW6+ubj971RhQY9K44Ec6OudZN1mP3UcU
-	Mn2az16RtPCV2D26eang3zAH3LWBbmvklK3L33PN2jJZ4s1KvIeGA5+hrEugmm2HT26OfkGSELx
-	bNQ==
-X-Google-Smtp-Source: AGHT+IHnI9eCIwY5iLdUaBHbR0QxmyULog1J24FtVK82My0OyHeYlaWf/Ktl3IeQRpNhpz4LwNTd6/yAvkc=
-X-Received: from pfbig13.prod.google.com ([2002:a05:6a00:8b8d:b0:730:96d1:c213])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:a1f:b0:730:91fc:f9c9
- with SMTP id d2e1a72fcca58-7323c1c8055mr239487b3a.16.1739386612053; Wed, 12
- Feb 2025 10:56:52 -0800 (PST)
-Date: Wed, 12 Feb 2025 10:56:50 -0800
-In-Reply-To: <3033f048-6aa8-483a-b2dc-37e8dfb237d5@linux.intel.com>
+	s=arc-20240116; t=1739387323; c=relaxed/simple;
+	bh=ygo3vadibOXlUuW78yWaAK6i/jYiA6MP6/h9do9iXUE=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Iv64KUTjY/6ROG2BfPEyRPeIvcjP7iq/5n9eQWX5jBx6SYQzHFkMyoRpinvRjoj9IcSJ1yzb1GVr9oxr+QMm96a4hgVimeNtv7scVUSV832z3bGtDtLm+S2wGw6GnWjKRfxaDl2ANpp3f//XVpzEGq0l4/9GGo79yIixse6WAsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=AUaFuro2; arc=none smtp.client-ip=212.129.21.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
+Received: from localhost (mail.3xo.fr [212.129.21.66])
+	by mail.3xo.fr (Postfix) with ESMTP id F2B9E8D;
+	Wed, 12 Feb 2025 19:58:55 +0100 (CET)
+X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
+Received: from mail.3xo.fr ([212.129.21.66])
+ by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
+ id Wuqj2Y-kLiOt; Wed, 12 Feb 2025 19:58:50 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr B08D38C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
+	t=1739386730; bh=GB5Q5dVh6WIWw7tyjYIIkZAzZvIRXGmIq8KJH9bTdEg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AUaFuro2VqAo3RmR3W7fPbFRxB9GQYCq8/EXyd0WckR5rwHBXmtEXkwrmZsHggJVj
+	 QfARJtC4jAacOj58BbW4Qwz6VHpxYqJ0RPP2RGOYICZyFvvF8I8WhrbsC8nnLh5Uxa
+	 vsvdwtFV5dewixWw3nUdS9cqT4Rouy08noJFuEcimg96oW9NPqt7lK1nigl6KUJywJ
+	 FN4n74vGyPa4MDQzw6Xfgi8XhSdiORbfutmYgjK3TlLEiJIpGaUZWDS08HQCLfZHsn
+	 hn7RccQJ3zRJ2WqqiFXzTS5SsJwbUhJtIaE3pexhvBF7Wbimea/pMiq0RVPGolUmzT
+	 X3IjXNC5LjZ/A==
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3xo.fr (Postfix) with ESMTPSA id B08D38C;
+	Wed, 12 Feb 2025 19:58:50 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250211025442.3071607-1-binbin.wu@linux.intel.com>
- <20250211025442.3071607-6-binbin.wu@linux.intel.com> <Z6r0Q/zzjrDaHfXi@yzhao56-desk.sh.intel.com>
- <926a035f-e375-4164-bcd8-736e65a1c0f7@linux.intel.com> <Z6sReszzi8jL97TP@intel.com>
- <Z6vvgGFngGjQHwps@google.com> <3033f048-6aa8-483a-b2dc-37e8dfb237d5@linux.intel.com>
-Message-ID: <Z6zu8liLTKAKmPwV@google.com>
-Subject: Re: [PATCH v2 5/8] KVM: TDX: Handle TDG.VP.VMCALL<MapGPA>
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Chao Gao <chao.gao@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, 
-	kvm@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
-	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
-	tony.lindgren@intel.com, isaku.yamahata@intel.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Date: Wed, 12 Feb 2025 19:58:50 +0100
+From: Nicolas Baranger <nicolas.baranger@3xo.fr>
+To: dri-devel@lists.freedesktop.org
+Cc: Tzimmermann <tzimmermann@suse.de>, airlied@redhat.com, Jocelyn Falempe
+ <jfalempe@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Include ASPEED ast-drm 1.15.1 video driver in kernel tree
+In-Reply-To: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
+References: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
+Message-ID: <194c4656963debcf074d87e89ab1a829@3xo.fr>
+X-Sender: nicolas.baranger@3xo.fr
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 12, 2025, Binbin Wu wrote:
-> On 2/12/2025 8:46 AM, Sean Christopherson wrote:
-> > I am completely comfortable saying that KVM doesn't care about STI/SS shadows
-> > outside of the HALTED case, and so unless I'm missing something, I think it makes
-> > sense for tdx_protected_apic_has_interrupt() to not check RVI outside of the HALTED
-> > case, because it's impossible to know if the interrupt is actually unmasked, and
-> > statistically it's far, far more likely that it _is_ masked.
-> OK. Will update tdx_protected_apic_has_interrupt() in "TDX interrupts" part.
-> And use kvm_vcpu_has_events() to replace the open code in this patch.
+Dear maintener
 
-Something to keep an eye on: kvm_vcpu_has_events() returns true if pv_unhalted
-is set, and pv_unhalted is only cleared on transitions KVM_MP_STATE_RUNNABLE.
-If the guest initiates a spurious wakeup, pv_unhalted could be left set in
-perpetuity.
+I did include ast-drm driver version 1.15.1 (in replacement of version 
+0.1.0) on the new mainline kernel too (6.14.0-rc2) and I issue a new 
+dkms patch 
 
-I _think_ this would work and is generally desirable?
+Last DKMS patch had been sucessfully tested on mainline.
+And last ast.ko version 1.15.1 included in linux tree had also been 
+sucessfully tested 
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 8e77e61d4fbd..435ca2782c3c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -11114,9 +11114,6 @@ static bool kvm_vcpu_has_events(struct kvm_vcpu *vcpu)
-            kvm_apic_init_sipi_allowed(vcpu))
-                return true;
- 
--       if (vcpu->arch.pv.pv_unhalted)
--               return true;
--
-        if (kvm_is_exception_pending(vcpu))
-                return true;
- 
-@@ -11157,7 +11154,8 @@ static bool kvm_vcpu_has_events(struct kvm_vcpu *vcpu)
- 
- int kvm_arch_vcpu_runnable(struct kvm_vcpu *vcpu)
- {
--       return kvm_vcpu_running(vcpu) || kvm_vcpu_has_events(vcpu);
-+       return kvm_vcpu_running(vcpu) || vcpu->arch.pv.pv_unhalted ||
-+              kvm_vcpu_has_events(vcpu);
- }
- 
- /* Called within kvm->srcu read side.  */
-@@ -11293,7 +11291,7 @@ static int __kvm_emulate_halt(struct kvm_vcpu *vcpu, int state, int reason)
-         */
-        ++vcpu->stat.halt_exits;
-        if (lapic_in_kernel(vcpu)) {
--               if (kvm_vcpu_has_events(vcpu))
-+               if (kvm_vcpu_has_events(vcpu) || vcpu->arch.pv.pv_unhalted)
-                        vcpu->arch.pv.pv_unhalted = false;
-                else
-                        vcpu->arch.mp_state = state;
+Online directory is updated with :
+- new DKMS patch
+- new DKMS srouces
+- new DKMS debian package
+- new tarball of mainline included ast_new ported in kernel tree
+- new kernel debian package (mainline with ast_new)
 
+
+NB: online directory is here: 
+https://xba.soartist.net/ast-drm_nba_20250211/
+
+Please let me know what I should do to see this change in linux-next
+
+Thanks for help
+
+Kind regards
+Nicolas Baranger
+
+
+Le 2025-02-11 19:15, Nicolas Baranger a écrit :
+
+> Dear maintener
+> 
+> For my own usage, I did make work the ASPEED ast-drm 1.15.1 video 
+> driver on mainline kernel (6.13.0 + 6.13.1).
+> 
+> ASPEED video driver is availiable here:
+> https://www.aspeedtech.com/file/support/Linux_DRM_1.15.1_4.tar.gz
+> 
+> But it only work for LTS kernel
+> So I modify the DKMS package and I build a new Debian DKMS package with 
+> the adapted  source.
+> My patch can be find here :
+> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/astdiff.patch
+> See the README:
+> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/README
+> 
+> Using this new 'ast 1.15.1' driver, performance are amazing compared to 
+> the 'ast' driver include in kernel tree, specially when using a 
+> discrete GPU and offloading VULKAN / 3D on it but using AST VGA card as 
+> the main video card and as the main and only video output (the discrete 
+> GPU is used only for offloading 3D or for cuda/opencl)
+> 
+> So to make things easier, I include the new 'ast 1.15.1' driver in 
+> kernel tree as AST_NEW : linux-6.13.1-ast/drivers/gpu/drm/ast_new'
+> It's working fine as you can see on this video :
+> https://xba.soartist.net/ast-drm_nba_20250211/vulcan_nvidia_prime_render_offload_on_ast_vga_card.webm
+> 
+> I upload all the work I've done here :
+> https://xba.soartist.net/ast-drm_nba_20250211/
+> 
+> See the global README :
+> https://xba.soartist.net/ast-drm_nba_20250211/README
+> 
+> and the README in nba-kernel sub-directory :
+> https://xba.soartist.net/ast-drm_nba_20250211/nba-kernel/README
+> 
+> I'm not a developer so please let me know if I made the things the 
+> right way and if this new 'ast 1.15.1' driver can be ported to 
+> linux-next or linux-? ?
+> If you need more explanations, do not hesitate to contact me, I would 
+> be happy to help
+> 
+> Kind regards
+> Nicolas Baranger
 
