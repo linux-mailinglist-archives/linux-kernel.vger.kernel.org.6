@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-511306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B72A32924
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:51:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22CDA32922
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:51:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F229116099F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97028188199D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2A721146D;
-	Wed, 12 Feb 2025 14:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1462101BE;
+	Wed, 12 Feb 2025 14:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="U6fKO9ZN"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uty14UuS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0FB21127E;
-	Wed, 12 Feb 2025 14:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664E51CBEAA;
+	Wed, 12 Feb 2025 14:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739371901; cv=none; b=qKiBz0MvvRhovXqAqtVd4UXgvx/Lr2+/3e/nHt7jklOYriuL2fjeb4pyT2S9rHoueLajj8stfSa6mvK5DO67TI6ZjebObUlGD02IFMzljRAmlAN+js7SVRF/b9HMTQa2Bb7dYlIBvnqI3QNpAIp8+AloGSM3cukNIRihe/We09o=
+	t=1739371897; cv=none; b=lt8xYCDjsf82x68LwO5xm6TbyJAIAbV3yUmU/RbxAwnAV6f4j16tlSGjjyZFy9DyHjRKUMrJqRo2YANAIQ32yYjyZyPKX70849S95v9EgVMlixmElsGCGBp8IOs/vHEapmYuGRf88bdRmZUleGZk6eAJmq9QlnpD1B+M+KF457s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739371901; c=relaxed/simple;
-	bh=3D5jTxu4ZxbcqJgUxTp0ZDvRAq7lWG2tJ7vUZuiqwlE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=h13OXknQ+195vF+1pzTld8yQH7P8hvUsRU3I5DBywtiP5ycl4KUxIqfAIzs5TdNnlg2qGOpADD7pzNM0pMxlzGNNqwoamRlJ4bA5Q3VHqiI5sGfzr6FI//CsWTxL7rDorudgdc/P6yg60++t01jt993g/3SsrTHnW4LWnVUgy/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=U6fKO9ZN; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id ED301443C0;
-	Wed, 12 Feb 2025 14:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739371896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/S4xKTURHeontyYyIzF3UhaW4swbeEI4cyVPn5z26I=;
-	b=U6fKO9ZNbkAvP9nETMzRxyvHoJnDJ7jaL/OauAXgoJPMATOp1FY+sVOfPlMNUxnUwPF6wg
-	ZlD1LL6+ruLQa/f/nipAbKXCBiyDhkoBKm2hg3F5q7eMNluI30OaarujKUXId0RW8W2poo
-	L15MihjxtV2AhfLqaM/Nye/6p/7KfLRJ/D9ueWjthDftoiak+mzn6bkQ3jbOXG+earg0Lq
-	WGBujDNU7bu/gcKYQ2Hxd4lTxNlnY6rDVTSn0P+pNXRyze2oUjfbPKHWCtplhtHE82U6rD
-	3PmD9mHPj6cZqFOqmcE0bWszE+WUhefQydOPqfYL4e1fb+XBR9TNAukWimuPvQ==
+	s=arc-20240116; t=1739371897; c=relaxed/simple;
+	bh=DT2qpYod79A56zkvTm8XrJXSJkU7xXsoFoZuVDVtqaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZUGe3uNUESXGdooAmoNE/i+cHT3iqqG/6wC4aKSE8qsSr9fUpqT1pCqW7GOMxJ3fGiMfW8wJxxNdACI9yuNKdE10mjItjeKaE4Mpq4eLqes1rpjAG6GpzNWIXhhBapGokPis28LjyqMw1o4upy1tENKCTRkyAd84VdM6lS8nJa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uty14UuS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2D9C4CEDF;
+	Wed, 12 Feb 2025 14:51:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739371896;
+	bh=DT2qpYod79A56zkvTm8XrJXSJkU7xXsoFoZuVDVtqaw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uty14UuS0zwxjVzwWFRh+KOcjOV/jzkoOriK2AjGx39nKzNvZHtW0ygiOK7wv8+Rp
+	 Z3a9+l6NzB102nTvbADrhpCJ5EgVQeHY0TpMOm9E5QRC0ciK19zy6QU+v3ItzC1FCL
+	 u4bTLDWwWt8qxx1XzXvUaDDEpUacgJkt50GW14hoOhZRcV0j400E+GlWGtbxxaN6GD
+	 JeqAbheX8EW9+nFZFuJ6H8EBfXKlGU0JXFbOomYmmB/0ML9L5iXae+1KkPUmvsCi+P
+	 Ms7twnKr1XMD+dv5nxXHYk9eQrA3hegi8jMIBiyW08FpSrBGeU7nYsMpyIvdYa49O/
+	 uT7LJ9RtyE2ug==
+Date: Wed, 12 Feb 2025 15:51:33 +0100
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Hao Ge <gehao@kylinos.cn>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Levi Yun <yeoreum.yun@arm.com>, Xu Yang <xu.yang_2@nxp.com>,
+	Tengda Wu <wutengda@huaweicloud.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 02/10] perf parse-events filter: Use evsel__find_pmu
+Message-ID: <Z6y1dbyF1xY1FvsB@x1>
+References: <20250111190143.1029906-1-irogers@google.com>
+ <20250111190143.1029906-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 12 Feb 2025 15:51:32 +0100
-Message-Id: <D7QJVKCWO1C0.2GIZNZ9FUF96I@bootlin.com>
-Subject: Re: [PATCH v3 5/7] clk: eyeq: use the auxiliary device creation
- helper
-Cc: <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- <dri-devel@lists.freedesktop.org>, <platform-driver-x86@vger.kernel.org>,
- <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-amlogic@lists.infradead.org>, "Philipp Zabel"
- <p.zabel@pengutronix.de>
-To: "Jerome Brunet" <jbrunet@baylibre.com>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Dave Ertman" <david.m.ertman@intel.com>,
- "Ira Weiny" <ira.weiny@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Stephen Boyd" <sboyd@kernel.org>, "Arnd Bergmann" <arnd@arndb.de>, "Danilo
- Krummrich" <dakr@kernel.org>, "Conor Dooley" <conor.dooley@microchip.com>,
- "Daire McNamara" <daire.mcnamara@microchip.com>, "Philipp Zabel"
- <p.zabel@pengutronix.de>, "Douglas Anderson" <dianders@chromium.org>,
- "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Hans de
- Goede" <hdegoede@redhat.com>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "Bryan O'Donoghue"
- <bryan.odonoghue@linaro.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>, "Michael Turquette"
- <mturquette@baylibre.com>, "Abel Vesa" <abelvesa@kernel.org>, "Peng Fan"
- <peng.fan@nxp.com>, "Shawn Guo" <shawnguo@kernel.org>, "Sascha Hauer"
- <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Kevin
- Hilman" <khilman@baylibre.com>, "Martin Blumenstingl"
- <martin.blumenstingl@googlemail.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com> <20250211-aux-device-create-helper-v3-5-7edb50524909@baylibre.com>
-In-Reply-To: <20250211-aux-device-create-helper-v3-5-7edb50524909@baylibre.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggedujecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefvhffofhgjsehtqhertdertdejnecuhfhrohhmpefvhhorohcunfgvsghruhhnuceothhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudetledtveejvdekleeujefhvdelieeutedvgfevffffkeeugefhhfeiudeljeevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemieeigegsmehftdhffhemfhgvuddtmeelvghfugenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemieeigegsmehftdhffhemfhgvuddtmeelvghfugdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgeeipdhrtghpthhtohepjhgsrhhunhgvthessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugdrmhdrvghrthhmrghnsehin
- hhtvghlrdgtohhmpdhrtghpthhtohepihhrrgdrfigvihhnhiesihhnthgvlhdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250111190143.1029906-3-irogers@google.com>
 
-Hello Jerome,
+On Sat, Jan 11, 2025 at 11:01:35AM -0800, Ian Rogers wrote:
+> Rather than manually scanning PMUs, use evsel__find_pmu that can use
+> the PMU set during event parsing.
 
-On Tue Feb 11, 2025 at 6:28 PM CET, Jerome Brunet wrote:
-> The auxiliary device creation of this driver is simple enough to
-> use the available auxiliary device creation helper.
->
-> Use it and remove some boilerplate code.
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Right, and then evsel__find_pmu() also does some extra checks to call
+pmu_read_sysfs() more selectively, right?
 
-Tested the series, it works. However:
- - The newly introduced helper does a
-   device_set_of_node_from_dev(child_device, parent_device) call which
-   used to be done by our reset-eyeq child.
- - reset-eyeq also did a WARN_ON(dev->of_node) to validate it didn't
-   have an OF node at probe (checking its assumptions).
- - We can remove both. See patch that got sent as a reply.
-
-With that additional patch:
-
-Tested-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>  # On Mobileye EyeQ5
-
-Note: Philipp Zabel has been CCed on the patch and this email as the
-reset maintainer.
-
-Thanks,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+- Arnaldo
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/parse-events.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index 1e23faa364b1..f147e13a7017 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -2406,9 +2406,8 @@ foreach_evsel_in_last_glob(struct evlist *evlist,
+>  static int set_filter(struct evsel *evsel, const void *arg)
+>  {
+>  	const char *str = arg;
+> -	bool found = false;
+>  	int nr_addr_filters = 0;
+> -	struct perf_pmu *pmu = NULL;
+> +	struct perf_pmu *pmu;
+>  
+>  	if (evsel == NULL) {
+>  		fprintf(stderr,
+> @@ -2426,16 +2425,11 @@ static int set_filter(struct evsel *evsel, const void *arg)
+>  		return 0;
+>  	}
+>  
+> -	while ((pmu = perf_pmus__scan(pmu)) != NULL)
+> -		if (pmu->type == evsel->core.attr.type) {
+> -			found = true;
+> -			break;
+> -		}
+> -
+> -	if (found)
+> +	pmu = evsel__find_pmu(evsel);
+> +	if (pmu) {
+>  		perf_pmu__scan_file(pmu, "nr_addr_filters",
+>  				    "%d", &nr_addr_filters);
+> -
+> +	}
+>  	if (!nr_addr_filters)
+>  		return perf_bpf_filter__parse(&evsel->bpf_filters, str);
+>  
+> -- 
+> 2.47.1.613.gc27f4b7a9f-goog
 
