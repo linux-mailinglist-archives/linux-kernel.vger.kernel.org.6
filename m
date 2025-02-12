@@ -1,226 +1,190 @@
-Return-Path: <linux-kernel+bounces-510775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5205BA321CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:09:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F92A321D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:11:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3CF2162E8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D0563A1E70
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2FC205E06;
-	Wed, 12 Feb 2025 09:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="dOKGjYSs"
-Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020116.outbound.protection.outlook.com [52.101.196.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D27205E08;
+	Wed, 12 Feb 2025 09:11:36 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E7B1D63C0;
-	Wed, 12 Feb 2025 09:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739351363; cv=fail; b=gdi/0L3f2Of6s2RWc9wIphAZokLDNxlCclUfqoIFIRgrbK9UnaeEALBZwd4pmXtELlKV1nHaUeHAnH/+fMMV/uOw6j3fz18HWv0Dnh3fGZRu1skhOXi1bMwvjgLaNbYGgt7dIfLSN9XQtPBLlcUO2n5smZscIiaKNfGQ7F4OlW0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739351363; c=relaxed/simple;
-	bh=tqXEwncox18h+mzT14Q6JsnUGrNZuylKzR2pSBgOX8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZmqRI/xa1gjJSntQWZ2UQdIiWw0cDwlo0mJrad0gQA7w/zOoN/PAEG2pikUKwy8mQZJchdQALdyXpwzjZNw2zYkuyPJNhWlW4aIBCnDV0/20qe37Ev5xl3u7erZuGnLeQXd2QSAGalsGyYoeUieDCeoDf7XncRonbM78SLi1Ho4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=dOKGjYSs; arc=fail smtp.client-ip=52.101.196.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mDGppGesip8W8YGelfdEW/rzlKEVFz8y35hUP+Q5rb9b1eSm7oJuWXxJB+KLmSMEchsGPE2eoao+4Oy5OLxenHMMXnOkkywtuIvsDoWgv32zSax+esN8DAOFSnxA56bjySUlH+JPg6Ex4DbJU4sZm/QE7PwwBSDLb4olYbz0E2SQHZ86Hb4bNGf98C+Bb4CNdD9oZS0CYlGnNr3ukPpcsWFOwyMJensQViO9oWZ0tQG4Z6WwgnSSAUOYb64RxZpAGBALgvWo0+GQz6GkaMqQdOLqO5W6RgmKrmbw8dgVI1WA92Ls8Otd+vt7bEPEozNMDmg3Q/JTPrQRka7rxL8SMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c8w6ykNgMgbDA17qshGJ9/28qimeZaVKJeepfwK6ZAs=;
- b=YhRDeoYuqqKeCZDKuEdAAFoQY6XMMUJ4zqc85DGyNLcECuZ+86jGVd2yNVs/NU/x/vk2AyhhnIuv6d6Zn3a53oluHrncXTPaAl8wABVbQLfsamFqidB/CkQgl/y3OmeAGBanRKVYnBc0EzYhOZyh0dUnCbO1qprDPu3B002lVrVI4UGbGViKjpaNNd1ocAZmS2CGL4zeuZ3Jf9ftDff99nr+OoCBI0PvyssSmvCu2IcAsc0rOm/pJwaUQUFEp48c1laUybvnkB+n1YXsTbVrjNcWzPrQ4Fhmv7jEVJmn+cr3E9r3wyPyg8T8VJ6YBTcrvKBAHMwXirTksshQyv6KEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c8w6ykNgMgbDA17qshGJ9/28qimeZaVKJeepfwK6ZAs=;
- b=dOKGjYSsAHFiOGniSTjE/9/sU2A6fOlvwxg0jlFkPTTbWULtwhqYGPhKDOqYANtcmBHydQeHswy9tAMd2bG9D4Sj/aox4HoHdE3/zMARQeGbWNHQb1ER8XbNTfqJSMQhdcf5tYqCXUT/rYeQVqHqgHviD17NU3dwLMOtgsAjhCY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from CWLP265MB5186.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:15f::14)
- by LO3P265MB2139.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:bc::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.12; Wed, 12 Feb
- 2025 09:09:18 +0000
-Received: from CWLP265MB5186.GBRP265.PROD.OUTLOOK.COM
- ([fe80::4038:9891:8ad7:aa8a]) by CWLP265MB5186.GBRP265.PROD.OUTLOOK.COM
- ([fe80::4038:9891:8ad7:aa8a%7]) with mapi id 15.20.8445.013; Wed, 12 Feb 2025
- 09:09:18 +0000
-Date: Wed, 12 Feb 2025 09:09:14 +0000
-From: Gary Guo <gary@garyguo.net>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Alice Ryhl" <aliceryhl@google.com>, "Masahiro
- Yamada" <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
- "Nicolas Schier" <nicolas@fjasle.eu>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Trevor Gross" <tmgross@umich.edu>, "Adam
- Bratschi-Kaye" <ark.email@gmail.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-kbuild@vger.kernel.org>, "Petr
- Pavlu" <petr.pavlu@suse.com>, "Sami Tolvanen" <samitolvanen@google.com>,
- "Daniel Gomez" <da.gomez@samsung.com>, "Simona Vetter"
- <simona.vetter@ffwll.ch>, "Greg KH" <gregkh@linuxfoundation.org>,
- <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v6 2/6] rust: str: implement `Index` for `BStr`
-Message-ID: <20250212090914.6ef7e83b@eugeo>
-In-Reply-To: <87lduc44c3.fsf@kernel.org>
-References: <20250211-module-params-v3-v6-0-24b297ddc43d@kernel.org>
-	<20250211-module-params-v3-v6-2-24b297ddc43d@kernel.org>
-	<kW0CDyK5M8DuLPr_1HwIXcnVP4x8evlFoq0BOjldchTZqkGiqzNJ-dtpV7s5QHLbbmm6cW529GeDTo_GoDKfdQ==@protonmail.internalid>
-	<20250211164004.6de768c3@eugeo>
-	<87lduc44c3.fsf@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0646.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:296::15) To CWLP265MB5186.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:400:15f::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17844205AD1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739351495; cv=none; b=lZmWixdVavLa3el8wSrCtGOfqVEyclq9UQDV9AmUmYbmuIyUf1FiBN+Ti9NI23UjTjkm4vyvGJlMLHg3Kxc28lbWXy+PA9Cjn2NlHxEevG2/+mzwOQWqy70cM2morV5051ay2mMCJN8psuHsMVNKZP+EnZTl3iea+kdwRbHn7WM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739351495; c=relaxed/simple;
+	bh=mRFr9dHoNaZOTzl2wK/QQQdK0Bksa5htD9RvTKZTVV0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XHb0PE8EBGPhT7+bumnllw53qlSQybAN+4Xv4cGFr6ZEhV4DIKpLvC9u5VSeyMnd13RAjDhTK6yd+Ls1LfNIQBCtTY4bAeVCrtFZx72zs8WO9uaY60opJ+S8fhdsgF8yO5ki/tISxH8IgQ09zwLkWPKPuAM6T17QU1fsWJEADn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-851fda72550so1327647539f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:11:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739351493; x=1739956293;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tX8ICBEA9DhqP5/OE0dzRIYxBJhxkdbhRUL3n3qp3N0=;
+        b=qDP8yiSnajygyq75YOUlGFKMZbWYFwkFALgoHP3X8bigr5U6wys8h7xZE6HXJejuGm
+         qOFoggRL0j3BUTM/HgUXWwPcpu8i0cbOTr+Pu4KCy6W320uao69alJMmkPZtKnga+JGT
+         qAa6Kx3DfjFXXXQaUo8n7bLBWVl0unvh3NaQGEQRVjRCdIozN+XqYkGe1jpwSgjEfmZ/
+         uMlMZcloq+JGMKhuaRGh6NC/uzVONOuivhYTyQVAuRKs4DBYtgcXtff6JhZc8MC57W8Q
+         hv/LSG/3SCQUQuoF0dtexzN1rO7rekgifzRLq7M1n/RJtYr9iHm3nXOeqOS5myM3UuRA
+         ClKQ==
+X-Gm-Message-State: AOJu0YwUyuwEO72HsD801fkQhzCni+ySkshlaYDXm9P+XXQH7kvP6ZXA
+	DAPKsdGBy0766rEBosc1JYwJ5A7WNOhPCqODhdjLec40xG4NxwMkg4Iwtj3ZQql9n3IPb69sw6e
+	qA+iiswyWY69mDSz+Q94iGj0xZB5BMwUPC4iCMYyp6liBv1ZVWo7K62s03g==
+X-Google-Smtp-Source: AGHT+IFJrZpM07QzXjdHerSi56dF+sYefPJzcOy/S9CxIdfsBdd1UhGeJOZcjullwHrQSYTGGWCS/8VLFBsgTVMjQqR0xAsqwb7l
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP265MB5186:EE_|LO3P265MB2139:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf2719e6-b489-414d-7903-08dd4b44edc4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jMuE3le8D4zNCUAs2PxDeaTGYZO6fLJqHfkDn5KuiGU73UFChvKMgDpscBRk?=
- =?us-ascii?Q?2yqL+nLbXMhRYXic4ySI9FBO5Vwdn/e/ArdDE0H2Han+iP5u40sg3G7o/9qW?=
- =?us-ascii?Q?q2LcSUffLUwfZcjQ3YdDySCo2FOXPaiEe5d1WLAorEnJcgblAKAknxFKX8P7?=
- =?us-ascii?Q?V3ntgNgDR60kinDeU2ZWSuRT3PMDuW5c96EeBjOAQ0dDKlJfFUj7cCrBarKa?=
- =?us-ascii?Q?xNKHKx0wksOvhDUwFcU7kfeQ2zCB4zC4VSeqksP3IGYAmHzfJD/Hy9LEGS8b?=
- =?us-ascii?Q?jK1IC95G3cmwYGBwfDYakhK4GXrSiRqWJv7+UF3Jh+ClC5bO6+MRr9a0GxeG?=
- =?us-ascii?Q?TzBD14XbTc9Tqsz6T+988fpHYirvg0kMrL/88uJfmsXgtwCGboiL4B9wXwOI?=
- =?us-ascii?Q?XhXKh88UNOFAKSs23jXNF2954uE7TyDLJszLSO/IuhnBr5uKJ9PHdQors+sx?=
- =?us-ascii?Q?dcKvtU9cJNFOkwJ9cYK2pntHSabopW4C88L7mv6fHYr66yjN/KMTB+7rwhId?=
- =?us-ascii?Q?sRKFyzuv2/k0qJNEwhrPXp9JNBR6afoRLYX6r4aP6YSdj31jj00ykBuzVdXc?=
- =?us-ascii?Q?uWNa1WXHeQ+HgZU+NyRn/AK6dWizrD8SJQhdPAT+Ofb+hhsYQ19C6B/W+zU5?=
- =?us-ascii?Q?z19chrqWc+JxLq//hSECswyJKbPIJ1pgHSo31K0+s0NH79FZhw+rEyp8ppiT?=
- =?us-ascii?Q?tRlrvJF6CfmDMUBlz2LLEL4qvH5Knkbr4zjXGpNS8N1g3MEqPO7ygsPgX0Os?=
- =?us-ascii?Q?Y8Nz3qR5w2mSxmu9NMJmYs6VeHr1B67V7XbsMIGSdnFuHY2v0CaJYyKSZKh0?=
- =?us-ascii?Q?KT34jgfXO9KGn3OdkqyfxpOPUVPTVdMucIrLCOU2tXQMT/yqDDA08g6Ez50P?=
- =?us-ascii?Q?ai1xssK6uynLjVspILZLXtCE97Hah+CEkrCcvBJkB1JdhixjgtGHUAxr5MSQ?=
- =?us-ascii?Q?qUF7QTHRFAMWH9HB2JWNUg2FurByfNF24f+QfZxZhbjrchX6fJHBGfR04NN4?=
- =?us-ascii?Q?UkQRLYO45tAiN4dpxOHAZewe/RdHdpRyQ78aG9CfzgWKwbIuPpmY48ugGkL/?=
- =?us-ascii?Q?oz2YBHUcXVoucptx2UMsNqHhxUkYYFpN6pnnCuTTjxycAdrCz/rR3n9lpO/K?=
- =?us-ascii?Q?LKspEzM+xzWDGFRx3l6j4p2lWpoMJBrZyJ8oSfO18fiDdfIK6MOjpUDGCwCF?=
- =?us-ascii?Q?X+oIZjKXlXf+plUINk1uyNk5Sy5LPtjLJd9Y2bB/4rH82Ygpc2HXQicmXjSV?=
- =?us-ascii?Q?E6nGyZN0CJqbcMUQG3WWhOgcDcHNXCgmFUYr11l5loGL21De3YtDsuPxBoo4?=
- =?us-ascii?Q?ihgObkPFLgDoMoqzMH3VddgRc3NFssaEA+g6p9B2fnTIOIXVNZyU/qNShCQf?=
- =?us-ascii?Q?C8d1yn0tKLlntuqNs1L86wsOrJOH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP265MB5186.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3qmwMWA1oHH7PfLFcR1dfiCjgJGyTHJNpSnTkhQhl1rPZzFalqEdQvOn/DMv?=
- =?us-ascii?Q?kdPE+WHqcXZrB5f4YVWHJTMWTZHE9Lo0m9XQI2eFZVbfTJnNuDI89Zpyv39f?=
- =?us-ascii?Q?whJwlx3ZUdGNbgRS/o/ltZiFeaPhL7Uj5yH6XvOdr+6qQTBHWyINwWTweoqE?=
- =?us-ascii?Q?VrVvDd+QMyD5cIWn9n0p55U8/LSitRV9DGTKW8Ha9PzbCnEds4pyex5v+6kP?=
- =?us-ascii?Q?YhDasqiEwZ+t57uptwNnYxiAEgdl5gVrd8lk7qIuXbpqR5pF7O1FYoTZtlBt?=
- =?us-ascii?Q?ms8bn52ch9pKE4nFPSf9RrkC9hEYXkj5KVEyvZAqq4UCXQTQTpyYiRROfkwg?=
- =?us-ascii?Q?8Vw+B8/I6uk27P+aheszRGgOYM3OeDgHJbVAoFIG46+PEk8uNiZkcDaQU7PX?=
- =?us-ascii?Q?gcLGc5z+mGCPBrUT+5CExW1s9RIcM8sGJusnxBmpsD4GKPL6W+0cSvdzqmz8?=
- =?us-ascii?Q?rzhM5kRSzafLxfNJ9+sjgaCojEofS3MpmyIU6CePLl5Sp5JUjeqoDsnHhEIv?=
- =?us-ascii?Q?BEwYwbwuB2pK/YBP5q/qq2Ncd+MszcKDoBCMiQIsp7D2SmgYmgQVmAbozdtD?=
- =?us-ascii?Q?V+CgWpT0wlZqcciekthGYi0aGHOwoIvmqYu5l3w2r4TPm0XBLapc1JVlFaDi?=
- =?us-ascii?Q?rtUCDTI0f1GfZN2knWdT3Nha4+oKmwOzKrYv2caxuGLHJwpuKe6M266Zy1q+?=
- =?us-ascii?Q?loAKUUXS4aKLJV6bTeZhZ1c9iuW9RIy4OrZFmnsE16Vr8lgpoPPQqERC1QCc?=
- =?us-ascii?Q?DR1JjKHxOMbLDaTHmITRjLdihrmeC9IWV7/2JxWsC9oM0ALuq1C1ZZz1qVk1?=
- =?us-ascii?Q?SVotwCqcaYUEyRxgd3ZfU0a77/DEEhrn1k9+lcdYYSJdJTBQ4t8cOFENweWk?=
- =?us-ascii?Q?5pzMKIrR4Z4bjrLgpMlRJKwNcbrgLc30yX00iSzq3ALjzsUwy56hC2wBcYAH?=
- =?us-ascii?Q?JRZvSe1uqLR1oZYHLuYzzSOL11FguUhwyilmAeBv3tY39J669M69sLRpJwA5?=
- =?us-ascii?Q?FiVOCuvaSwTdIwCjKjmNiZYcYjcfNT0ISJ3iF3V9coCaOeVedVRWjz35b7O0?=
- =?us-ascii?Q?w1875PnB+/zR/24JtIIiqbcfF8MUmXHQgpTZFl1YIneVQ1pZOKi5+GgC8sDq?=
- =?us-ascii?Q?qxuPBxd3OG6Rnb764tpBYxLAPnWchTAI5ocuixHxhRYN/hJA/tomPSRxKg+q?=
- =?us-ascii?Q?1ZilQM8R8P9Q4F4yQnW8n2F6BtUAkFEmEZJBryfyu3513SvQ4s7XC5wZpPxN?=
- =?us-ascii?Q?ylnO0p+S20a+NePBT88my9dKErAsLCS6uuN6fqhDyA3HXKTvqXG8vpcO9j79?=
- =?us-ascii?Q?muh0cyq5d+FRVfgLKLWvz29sQMP9KbJoIfqOatbSbuCAjjj7zEUk629gAVl4?=
- =?us-ascii?Q?5PgQifSKCQUYrmMiz16XHvLPk/eZmo767Q0asazMBd8Nf/Y9yGj3HX3y7M2d?=
- =?us-ascii?Q?4MeWXo1IffaI/eGsxZSHW0JjDT9GpIlF4G007dCCVHs9bYmnfMru+d/UxO7V?=
- =?us-ascii?Q?CBKGmKqixdnib46k0369N0kEEDYvGYIo1+Rbfcjh2foEXLr2uXSvVTi57WWs?=
- =?us-ascii?Q?JwDav3biFRv/iwU9oS6UalwoFkuljh0fQvquc8+gENCvJDpjxK2SjHVo7JTs?=
- =?us-ascii?Q?akyNXqZ5gZQwi82EqaVLBVSRxhH0tL4jcoJtPtTILU4u?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf2719e6-b489-414d-7903-08dd4b44edc4
-X-MS-Exchange-CrossTenant-AuthSource: CWLP265MB5186.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 09:09:18.1309
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ilKmr2fP8hc8ytr0JfnY5CPPnyMt+XeEKjpzVoG/vPrNqZjidnJhbIp03Pqiw120JxkJ8h7+R2QPakmJG1ogtw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO3P265MB2139
+X-Received: by 2002:a05:6e02:1888:b0:3cf:f9e0:f4ae with SMTP id
+ e9e14a558f8ab-3d17be272e3mr21380595ab.6.1739351493127; Wed, 12 Feb 2025
+ 01:11:33 -0800 (PST)
+Date: Wed, 12 Feb 2025 01:11:33 -0800
+In-Reply-To: <000000000000c34595061d6db440@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ac65c5.050a0220.3d72c.0132.GAE@google.com>
+Subject: Re: [syzbot] [media?] KASAN: vmalloc-out-of-bounds Write in
+ tpg_fill_plane_buffer (3)
+From: syzbot <syzbot+365005005522b70a36f2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	mchehab@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 11 Feb 2025 21:24:44 +0100
-Andreas Hindborg <a.hindborg@kernel.org> wrote:
+syzbot has found a reproducer for the following issue on:
 
-> "Gary Guo" <gary@garyguo.net> writes:
-> 
-> > On Tue, 11 Feb 2025 16:57:36 +0100
-> > Andreas Hindborg <a.hindborg@kernel.org> wrote:
-> >  
-> >> The `Index` implementation on `BStr` was lost when we switched `BStr` from
-> >> a type alias of `[u8]` to a newtype. This patch adds back `Index` by
-> >> implementing `Index` for `BStr` when `Index` would be implemented for
-> >> `[u8]`.
-> >>
-> >> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> >> ---
-> >>  rust/kernel/str.rs | 11 +++++++++++
-> >>  1 file changed, 11 insertions(+)
-> >>
-> >> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> >> index 002dcddf7c768..1eb945bed77d6 100644
-> >> --- a/rust/kernel/str.rs
-> >> +++ b/rust/kernel/str.rs
-> >> @@ -114,6 +114,17 @@ fn eq(&self, other: &Self) -> bool {
-> >>      }
-> >>  }
-> >>
-> >> +impl<Idx> Index<Idx> for BStr
-> >> +where
-> >> +    Idx: core::slice::SliceIndex<[u8], Output = [u8]>,  
-> >
-> > I think I'd prefer
-> >
-> > 	[T]: Index<Idx>,  
-> 
-> Is that equivalent?
+HEAD commit:    09fbf3d50205 Merge tag 'tomoyo-pr-20250211' of git://git.c..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=167e4718580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c2347dd6174fbe2
+dashboard link: https://syzkaller.appspot.com/bug?extid=365005005522b70a36f2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d28aa4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1493a3f8580000
 
-Sorry, I meant `[u8]: Index<Idx>`. This makes more semantic sense that
-"what ever can index a byte slice, it can also index BStr". This is
-also how our CStr and the array primitive type implements its Index
-operation.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-09fbf3d5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/835b3d29c46c/vmlinux-09fbf3d5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ff4bfd8a5d42/bzImage-09fbf3d5.xz
 
-They should be equivalent as libcore does
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+365005005522b70a36f2@syzkaller.appspotmail.com
 
-	impl<T, I> Index<I> for [T] where I: SliceIndex<[T]> { ... }
+==================================================================
+BUG: KASAN: vmalloc-out-of-bounds in tpg_fill_plane_pattern drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:2608 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in tpg_fill_plane_buffer+0x1a9c/0x5af0 drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:2705
+Write of size 1440 at addr ffffc9000d0ffda0 by task vivid-000-vid-c/5304
 
-Best,
-Gary
+CPU: 0 UID: 0 PID: 5304 Comm: vivid-000-vid-c Not tainted 6.14.0-rc2-syzkaller-00039-g09fbf3d50205 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:489
+ kasan_report+0x143/0x180 mm/kasan/report.c:602
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+ tpg_fill_plane_pattern drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:2608 [inline]
+ tpg_fill_plane_buffer+0x1a9c/0x5af0 drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:2705
+ vivid_fillbuff drivers/media/test-drivers/vivid/vivid-kthread-cap.c:470 [inline]
+ vivid_thread_vid_cap_tick+0xf8e/0x60d0 drivers/media/test-drivers/vivid/vivid-kthread-cap.c:629
+ vivid_thread_vid_cap+0x8aa/0xf30 drivers/media/test-drivers/vivid/vivid-kthread-cap.c:767
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-> 
-> 
-> Best regards,
-> Andreas Hindborg
-> 
-> 
+The buggy address belongs to the virtual mapping at
+ [ffffc9000d0e9000, ffffc9000d101000) created by:
+ vb2_vmalloc_alloc+0xf2/0x340 drivers/media/common/videobuf2/videobuf2-vmalloc.c:47
 
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x43e47
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN|__GFP_ZERO), pid 5303, tgid 5303 (syz-executor881), ts 69776556067, free_ts 68046210271
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1551
+ prep_new_page mm/page_alloc.c:1559 [inline]
+ get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3477
+ __alloc_frozen_pages_noprof+0x292/0x710 mm/page_alloc.c:4739
+ alloc_pages_mpol+0x311/0x660 mm/mempolicy.c:2270
+ alloc_frozen_pages_noprof mm/mempolicy.c:2341 [inline]
+ alloc_pages_noprof+0x121/0x190 mm/mempolicy.c:2361
+ vm_area_alloc_pages mm/vmalloc.c:3591 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3669 [inline]
+ __vmalloc_node_range_noprof+0x9c6/0x1380 mm/vmalloc.c:3846
+ vmalloc_user_noprof+0x74/0x80 mm/vmalloc.c:4000
+ vb2_vmalloc_alloc+0xf2/0x340 drivers/media/common/videobuf2/videobuf2-vmalloc.c:47
+ __vb2_buf_mem_alloc drivers/media/common/videobuf2/videobuf2-core.c:242 [inline]
+ __vb2_queue_alloc+0xa0b/0x16f0 drivers/media/common/videobuf2/videobuf2-core.c:523
+ vb2_core_reqbufs+0xd2e/0x17c0 drivers/media/common/videobuf2/videobuf2-core.c:964
+ __vb2_init_fileio+0x319/0xf90 drivers/media/common/videobuf2/videobuf2-core.c:2895
+ __vb2_perform_fileio+0x31a/0x17b0 drivers/media/common/videobuf2/videobuf2-core.c:3041
+ vb2_fop_read+0x247/0x330 drivers/media/common/videobuf2/videobuf2-v4l2.c:1215
+ v4l2_read+0x1a4/0x2c0 drivers/media/v4l2-core/v4l2-dev.c:316
+ vfs_read+0x1f8/0xb40 fs/read_write.c:563
+ ksys_read+0x18f/0x2b0 fs/read_write.c:708
+page last free pid 5290 tgid 5290 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_frozen_pages+0xe0d/0x10e0 mm/page_alloc.c:2660
+ discard_slab mm/slub.c:2684 [inline]
+ __put_partials+0x160/0x1c0 mm/slub.c:3153
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3228
+ __slab_free+0x290/0x380 mm/slub.c:4479
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4115 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4171
+ vm_area_dup+0x27/0x290 kernel/fork.c:487
+ __split_vma+0x1cb/0xc50 mm/vma.c:466
+ vms_gather_munmap_vmas+0x2e6/0x1600 mm/vma.c:1268
+ do_vmi_align_munmap+0x3ff/0x6f0 mm/vma.c:1436
+ do_vmi_munmap+0x24e/0x2d0 mm/vma.c:1493
+ __vm_munmap+0x372/0x510 mm/vma.c:2951
+ __do_sys_munmap mm/mmap.c:1084 [inline]
+ __se_sys_munmap mm/mmap.c:1081 [inline]
+ __x64_sys_munmap+0x60/0x70 mm/mmap.c:1081
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+
+Memory state around the buggy address:
+ ffffc9000d0fff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc9000d0fff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc9000d100000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+                   ^
+ ffffc9000d100080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+ ffffc9000d100100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+==================================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
