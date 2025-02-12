@@ -1,143 +1,119 @@
-Return-Path: <linux-kernel+bounces-511600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955A3A32D26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:14:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63AAA32D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D75D116A520
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:12:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F0AA3A77D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0BA2580CF;
-	Wed, 12 Feb 2025 17:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAPj7Eph"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8143B211A2F;
-	Wed, 12 Feb 2025 17:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45FC255E42;
+	Wed, 12 Feb 2025 17:14:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366A3271838
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739380363; cv=none; b=H5RYUr/ou6+Hi/dp4DJwZd2o/peU69+VZOwnCzVVbGb0vXJ1zVc8poSBpjAnzWjXlK/QrzL6dKDZYpqcpdfM/MdOAf6CRu+njwQDRn/4r8NSwJwFSVlQvXgQvhB9zuZXIjt/F+CVrmKViSlXVzlmQ50j3XVv4WPhdcPP8+3QdPc=
+	t=1739380479; cv=none; b=TiwdSY/LdGRtga/PN/By6Ln68mcjNn/qje4yCEXiPrykj2a6E5t6xKqOvdoTBcvUTiop/i2q67WGP2h+yk+ot/GvnaimBEp+mYt5ssthkiRbkv/Lj6LgK0ROxXqym3WH+oArFS4WhDbbCHu37/zYnoWjds+DNjMyp/pJtGcT/84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739380363; c=relaxed/simple;
-	bh=NEROpmptD5XXqtltotIa/faA7aFztFJiZvv2mKC2DWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mB+ylvnQa8Da2H8GZ9ty8yzyILUHybnyPHGD8HUlRKHu8h1x9Sg5UzAxO4EkTVvXltubjUXnsTa+Ockd6EKIQ2mQ63pogTB8sUUDJVRMyB59mxdr/ngwZ6Wkeng8x+LM/vE5g49OkBaGFckIHVNveSIZ+T72u4KEiq8iIWekcCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAPj7Eph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BEF3C4CEE7;
-	Wed, 12 Feb 2025 17:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739380363;
-	bh=NEROpmptD5XXqtltotIa/faA7aFztFJiZvv2mKC2DWA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KAPj7EphsmhdQtzSSus/RPCxjskeGJIW1G8qzSgfAJQtXeW0zO39HxSXnc8sTgmmM
-	 aYo/kt//JWkhT8+wO9HSU/6a2IQHizeSWZ+tgE4bKDvUrOfBV+KmKt+G82j/6PVpNH
-	 O+s0hkL+beff7nsdZFV3VIXVkg/oLHiImHzV1uMrKH4rXtD+x3U8re2/9/phGRzbSw
-	 x4Hf/N/d+bO87orSUvkao7r1kNDMnzXATSrEkj9DBww8CTSifsW43t+cEwx7/R3Fzw
-	 zwbbHbwHHST+NRIGnzMl7OILuQTZOGl5ApRmDeaiczbdgyc9mgM5pf9b6rLjt+xWXc
-	 IIan1H4664iFg==
-Message-ID: <f9891a79-7ecb-4492-b526-d5d736d90698@kernel.org>
-Date: Wed, 12 Feb 2025 18:12:32 +0100
+	s=arc-20240116; t=1739380479; c=relaxed/simple;
+	bh=OYAbwmAHuFGes2BMrOgIi9tDNTdjmXIYwJOOO2WevAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cz3lK5c1ikMwkHEeIRy+2j6fDmhSYWeVVHaisQnwMV0TU3lmaci4imtQ1mYP52wy15TWe7p58WFw6VzFq3XuCtOQ5svAE0Hqd5+JiyG1GV3kNuNVbzJBh3Gcm9mVgMbLO7/Elf/a+VZA1dNHbfJp/+WyIbos+akrSwo2XYRqKBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3981A12FC;
+	Wed, 12 Feb 2025 09:14:57 -0800 (PST)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A45F53F5A1;
+	Wed, 12 Feb 2025 09:14:34 -0800 (PST)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: will@kernel.org,
+	maz@kernel.org,
+	catalin.marinas@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	aneesh.kumar@kernel.org,
+	steven.price@arm.com,
+	suzuki.poulose@arm.com,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Subject: [PATCH 0/1] arm64: realm: Fix DMA address for devices
+Date: Wed, 12 Feb 2025 17:14:10 +0000
+Message-ID: <20250212171411.951874-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] dt-bindings: display/msm: Document MDSS on QCS8300
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Yongxing Mou <quic_yongmou@quicinc.com>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org
-References: <20250120-mdssdt_qcs8300-v4-0-1687e7842125@quicinc.com>
- <20250120-mdssdt_qcs8300-v4-3-1687e7842125@quicinc.com>
- <e620e80d-afeb-4ce1-9798-2f5cdd92b3b1@kernel.org>
- <emfd4gqstixawba64mywtsitbek5srrekoute3hjudi6xhfjhl@7ndrv3ua7uei>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <emfd4gqstixawba64mywtsitbek5srrekoute3hjudi6xhfjhl@7ndrv3ua7uei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/02/2025 11:05, Dmitry Baryshkov wrote:
-> On Wed, Feb 12, 2025 at 09:38:07AM +0100, Krzysztof Kozlowski wrote:
->> On 20/01/2025 04:49, Yongxing Mou wrote:
->>> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
->>> QCS8300 use the same DPU hardware version as SA8775P, so we reuse it's
->>> driver. But QCS8300 only have one DP controller, and offset is same with
->>> sm8650, so dp controller reuse the sm8650's driver.
->>>
->>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->>> ---
->>>  .../bindings/display/msm/qcom,qcs8300-mdss.yaml    | 244 +++++++++++++++++++++
->>>  1 file changed, 244 insertions(+)
->>
->> Also wrong compatibles used.
-> 
-> Which compatibles are wrong here?
+Linux can be run as a Confidential Guest in Arm CCA from Linux v6.13. The address
+space (GPA or IPA) of a Realm VM is split into two halves, with private bottom
+half and shared top half. In Linux we treat the "top" bit of the IPA space as
+an attribute, to indicate whether it is shared or not (MSB == 1 implies shared).
+Stage2 (GPA to PA) translations used by the CPU accesses, cover the full IPA space,
+and are managed by RMM. The "top" bit as attribute is only a software construct.
 
-According to new patchset, the DP compatibles were different.
+At present any device passed through to a Realm is treated as untrusted and the
+Realm uses bounce buffering for any DMA, using the "decrypted" (shared) DMA
+buffers (i.e., IPA with top bit set). In Linux, we only send the "DMA" address
+masking the "top" bit. In Arm CCA, SMMU for untrusted devices are managed by the
+non-secure Host and thus it can be confusing for the host/device when an unmasked
+address is provided. Given there could be other hypervisors than Linux/KVM
+running Arm CCA guests, the Realm Guest must adhere to a single convention for
+the DMA address. This gets further complicated when we add support for trusted
+devices, which can DMA into the full Realm memory space, once accepted. Thus,
+a DMA masked address (with "top" bit lost) will prevent a trusted device from
+accessing a shared buffer.
 
-Best regards,
-Krzysztof
+Thus Arm has decided to standardise the DMA address used by the Realm to include
+the full IPA address bits (including the "top" bit, which Linux uses as as attribute).
+
+This patch implements this in Linux by hooking into the phys_to_dma and vice versa
+for providing the appropriate address. This also implies that the VMMs must
+take care to :
+ 1. Create the S2-SMMU mappings for VFIO at the "unprotected" alias.
+ 2. Always mask the "top" bit off any IPA it receives from the Realm for DMA.
+
+KVM is not affected. A kvmtool branch with the changes above is available here [1].
+There are two patches [2] & [3], that are really required on top of the Arm CCA
+support. 
+
+Ideally it would be good to get this backported to stable kernel releases to make
+sure that they are compliant.
+
+[1] git@git.gitlab.arm.com:linux-arm/kvmtool-cca.git cca/guest-dma-alias/v1
+[2] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/ea37a6eb968abe4c75be4a8a90808714657c2ef7
+[3] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/8afd0d5e6a7ee444dd0c1565fe94ecd831054a29
+
+Cc: Will Deacon <will@kernel.org>
+Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Steven Price <steven.price@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+
+Suzuki K Poulose (1):
+  arm64: realm: Use aliased addresses for device DMA to shared buffers
+
+ arch/arm64/Kconfig                  |  1 +
+ arch/arm64/include/asm/dma-direct.h | 38 +++++++++++++++++++++++++++++
+ include/linux/dma-direct.h          | 35 +++++++++++++++++---------
+ 3 files changed, 62 insertions(+), 12 deletions(-)
+ create mode 100644 arch/arm64/include/asm/dma-direct.h
+
+-- 
+2.43.0
+
 
