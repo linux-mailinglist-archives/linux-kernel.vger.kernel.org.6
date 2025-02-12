@@ -1,210 +1,144 @@
-Return-Path: <linux-kernel+bounces-511109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E37A325FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:40:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F71EA32603
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49A4B1888618
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7E713A59B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8941420C497;
-	Wed, 12 Feb 2025 12:40:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74087F4FA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFD320CCDA;
+	Wed, 12 Feb 2025 12:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IMc9ov/k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33E8F4FA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364041; cv=none; b=lhTll7VA04ey7xQY1NzyAodqS/1MaUXMyYMv2d8vtEvaMrd1R3CYr+HGOpq9NVvOxSvKxA6lk2DcOzyHOZy2JJ3MpzXtfHnXjz8vl/TMwmiN11AtCX56zEbe9kxDHewdSqgDfXAFtHNh8N7UpxrST1foC+SwHrClngv2VcEZXxk=
+	t=1739364079; cv=none; b=GT+U9/Hm/1/kYnUmzrWMrGpLEcjT33rXZV5iRPCwSYnJYR9oAmCG29yRtrfxkybbKnXAPg4VmsTJFmbLLTNm3B3eGbaXLhQadadLwzYq25IMKwqhZDt/psWkVOdj1P6mLqUAnEcYTI9uWNMDGAjrKUMLc3ur82wp0TKWmKdREOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364041; c=relaxed/simple;
-	bh=78lMWVU0GAo7qsBSJL48v+wFRMKDl7nuR/hlpATBW3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ol2XmWQL0LvYNdrCwBB1e/pSZJdNA92hWc0oKWgoFhvDZa0+M9HDsqN6X9lVArqFULthtdFuk+SC/eUZ4Ho21LPgz7A4B6Tc7XeFLbE0+KlpdDCNvswkWJM7zTsIa3Zm5XhwAtKFQknBSci10mELFmKKzsH1eoGllaXLSMxa0bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC907113E;
-	Wed, 12 Feb 2025 04:40:59 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D74B3F58B;
-	Wed, 12 Feb 2025 04:40:36 -0800 (PST)
-Date: Wed, 12 Feb 2025 12:40:33 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-rt-devel@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Mark Brown <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: BUG: debug_exception_enter() disables preemption and may call
- sleeping functions on aarch64 with RT
-Message-ID: <Z6yWwRcPvVGk2EyC@J2N7QTR9R3>
-References: <Z6YW_Kx4S2tmj2BP@uudg.org>
- <Z6n16cK85JMyowDq@J2N7QTR9R3>
- <Z6tf8iDhNriSGjeC@uudg.org>
- <Z6vs3IWxUxhIDBBO@uudg.org>
+	s=arc-20240116; t=1739364079; c=relaxed/simple;
+	bh=ME5xsF3un+RPwTZSAF0pplXPAeDr4ydnwfVUmHp8McU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lgyXa9ptBEAQk5h5Lt0eJuTlFy3gJfymWYFrMsgzPRDZ4mvotX+Y3w2f8zHtw3vsuelfynV5BRf+UOg6KyrKRsLwTtnCV18y+Frwx0EI2VjQO/VNBvigtNv0U9TKurJ3Uov7RLvfQexjh7fNxWwAW/yHx8O/ptD8q5L5fepYqZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IMc9ov/k; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739364076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IcCcfwfQhYUa1+LUaKcJqa7S3yY7KgRC7fJ6fRDLjdI=;
+	b=IMc9ov/kOTB3KB2ZzP/HhuOryZgvCns/3RNzCHQab0SYLIZZxI+Ri09Bv2jul3VS2oI5H/
+	sWwbNteHZEj1nQJkHZA6qUTIrxukBB8C/211Tm45f2RXRT5YbF+tjctaVfmYZ8YKX7mf7b
+	kTZYLORrWxdQoKHMmDJ5q1IdZGbfbQw=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-9NK1DAV0N_agS60nmcohTw-1; Wed, 12 Feb 2025 07:41:15 -0500
+X-MC-Unique: 9NK1DAV0N_agS60nmcohTw-1
+X-Mimecast-MFC-AGG-ID: 9NK1DAV0N_agS60nmcohTw
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-47189f95eb0so16074801cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:41:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739364075; x=1739968875;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IcCcfwfQhYUa1+LUaKcJqa7S3yY7KgRC7fJ6fRDLjdI=;
+        b=saQ4qlICXgmN2lv06mDU/NeoLECINYw33j3RZ+mFvwaM4ALCCjhDJ5WxOCsP0JQR5b
+         uIj9Q4XmCoB9CeOS8TIBrIs2CBNZyUjvPutOkvYsgQil2kPGXbU9GRz/DX5/4Lo6BdDL
+         qzHFG57VOe+++GJUw04h6pZs9fjljvj8YXtzsZnRg2l56ML23MpLl3nmR8D1Gtf9ec2i
+         H33d3bKSGO0+70HUxaVIZi+UeGH9DZEUHemqKcGKnvmq7gLubVbcWgSX3wDaGLr9yQ77
+         1I7qleiy2P1zQBqh78M5WUoeVeNumA/n5IbKwjO4V9M9sgUebvVVFIrNuvZ4EDk2HOfo
+         1RBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmx2cCkZKQZvSpgHNVV6mnCkhrNpOPirylvuXhalN9bVxzfqGSTUrq0JdesCnIMzUVNmrarO9KeKNBPTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1goX3/S/Qgi1rmfdl9QEH8O6p1KNK+0l+TY+uLyBWYDZnEAqB
+	wJnK4jnMw2YgYrxsJ9MbHuidcEprZLTuOT4y0xr7kOyd1aIP+7T8f48HmxjE11gqQ/WrXp0XGBy
+	8AiPtciO0gaQTvim/h6iJdSsI15ztthnfjmRkcNPY7S/igtYdAZGMOa+r7Xk6eA==
+X-Gm-Gg: ASbGncsLnQg6EGbIUIHpDLqh0Ognvz2D3CgvZRKI2IPTeCdrd2cZ7ONQjwwMZyt/P5O
+	9jyNxCmYGp6iQExQxlaSuuBmYkeOc08jnncAWp3Cf+KPnDnyu4CKRHKr8R6KdDK/v/DDlazwelO
+	OSePWA17EfQw9rs3YpssxrlCZgcSQOkFCOHm7T75lVu39UeOllO1aaWoQQ2LkhW3G3Acq7gaNzU
+	tU54AI4WIMAEewKEV4rlfXQP8lebNlUXx0pMMbHTZkaBxKIatVgBp/CQ6kajy6aVOCJIYYg4/OW
+	bd/p
+X-Received: by 2002:ac8:7e90:0:b0:46e:2d0b:e1bf with SMTP id d75a77b69052e-471a1285b1dmr107223591cf.11.1739364074941;
+        Wed, 12 Feb 2025 04:41:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEc/5GZoYwqTghTlMDfKo+W14Qj3PAyNsgnM8EOKyze88sNfy/x51BtROYbXMZUOJtzdRgkfg==
+X-Received: by 2002:ac8:7e90:0:b0:46e:2d0b:e1bf with SMTP id d75a77b69052e-471a1285b1dmr107223131cf.11.1739364074559;
+        Wed, 12 Feb 2025 04:41:14 -0800 (PST)
+Received: from [10.26.1.94] ([66.187.232.136])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47180b1ca44sm51284181cf.76.2025.02.12.04.41.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 04:41:14 -0800 (PST)
+Message-ID: <9416ee48-a68a-465e-85be-89d5a53afcd8@redhat.com>
+Date: Wed, 12 Feb 2025 07:41:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6vs3IWxUxhIDBBO@uudg.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] intel_idle: introduce 'no_native' module parameter
+To: dedekind1@gmail.com, kernel test robot <lkp@intel.com>,
+ linux-pm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Corbet <corbet@lwn.net>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>, Len Brown <lenb@kernel.org>,
+ Prarit Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250211132741.99944-1-darcari@redhat.com>
+ <202502121732.P7lZkbhm-lkp@intel.com>
+ <21e66060c13c6a3cc33592f71cb08975711a6adb.camel@gmail.com>
+Content-Language: en-US
+From: David Arcari <darcari@redhat.com>
+In-Reply-To: <21e66060c13c6a3cc33592f71cb08975711a6adb.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 11, 2025 at 09:35:40PM -0300, Luis Claudio R. Goncalves wrote:
-> On Tue, Feb 11, 2025 at 11:34:26AM -0300, Luis Claudio R. Goncalves wrote:
-> > On Mon, Feb 10, 2025 at 12:49:45PM +0000, Mark Rutland wrote:
-> > > On Fri, Feb 07, 2025 at 11:22:57AM -0300, Luis Claudio R. Goncalves wrote:
-> ...
-> > > I don't have an immediate suggestion; I'll need to go think about this
-> > > for a bit. Unfortunatealy, there are several nested cans of worms here.
-> > > :/
-> > > 
-> > > In theory, we can go split out the EL0 "debug exceptions" into separate
-> > > handlers, and wouldn't generally need to disable preemption for things
-> > > like BRK or single-step.
-> > 
-> > If this is an acceptable workaround, until we have the real solution,
-> > I can work on that :)
-> > 
-> > Luis
+
+Hi Artem,
+
+On 2/12/25 6:32 AM, Artem Bityutskiy wrote:
+> On Wed, 2025-02-12 at 18:09 +0800, kernel test robot wrote:
+>>     drivers/idle/intel_idle.c: In function 'intel_idle_init':
+>>>> drivers/idle/intel_idle.c:2289:27: error: 'no_acpi' undeclared (first use
+>>>> in this function); did you mean 'no_action'?
+>>      2289 |         if (no_native && !no_acpi) {
+>>           |                           ^~~~~~~
+>>           |                           no_action
+>>     drivers/idle/intel_idle.c:2289:27: note: each undeclared identifier is
+>> reported only once for each function it appears in
 > 
-> I tested the prototype below and it survived 6h of ssdd and the ptrace LTP
-> tests running simultaneously, in a tight loop. Would something along these
-> lines be an acceptable workaround?
-
-Sorry, no. This makes the code even more convoluted and less
-maintainable.
-
-If you want to fix single step specifically without bothering with the
-rest of the rework I mentioned, the right fix is to split that out from
-the other "debug exceptions", and handle that with the usual structure
-we have for other synchronous exceptions like FPAC/BTI/etc:
-
-* In arch/arm64/kernel/debug-monitors.c, add new do_el{1,0}_step()
-  functions which handle their corresponding stepping logic. These
-  should have the same rough shape as do_el{1,0}_fpac(), and should
-  handle all the default signalling logic that would otherwise be
-  handled by do_debug_exception().
-
-  The existing single_step_handler() should be removed, or at minimum
-  refactored and only called by those new do_el{1,0}_step() functions.
-
-  The existing hook_debug_fault_code() registration of
-  single_step_handler() should be removed.
-
-  I'm not sure whether do_el0_step() needs the
-  arm64_apply_bp_hardening() logic, but do_el1_step() does not.
-
-* In entry-common.c, add new el{1,0}_step() functions. Each of
-  el1h_64_sync_handler(), el0t_64_sync_handler(), and
-  el0t_32_sync_handler() should be updated to call those rather than
-  el{1,0}_dbg() for the corresponding EC values.
-
-  In el0_step() it shouldn't be necessary to disable preemption, and
-  that should be able to be:
-
-  | static void noinstr el0_step(struct pt_regs *regs, unsigned long esr)
-  | {
-  |         enter_from_user_mode(regs);
-  |         local_daif_restore(DAIF_PROCCTX);
-  |         do_el0_step(regs, esr);
-  |         exit_to_user_mode(regs);
-  | }
-
-  In el1_step(), I'm not *immediately sure* whether it's necessary to
-  disable preemption, nor whether we need to treat this and use
-  arm64_enter_el1_dbg() and arm64_exit_el1_dbg() rather than
-  entry_from_kenrel_mode() and exit_to_kernel_mode().
-
-  So we either need:
-
-  | static void noinstr el1_step(struct pt_regs *regs, unsigned long esr)
-  | {
-  |         arm64_enter_el1_dbg(regs);
-  |         do_el1_step(regs, esr);
-  |         arm64_exit_el1_dbg(regs);
-  | }
-
-  ... or:
-
-  | static void noinstr el1_step(struct pt_regs *regs, unsigned long esr)
-  | {
-  |         enter_from_kernel_mode(regs);
-  |         local_daif_inherit(regs);
-  |         do_el1_step(regs, esr);
-  |         local_daif_mask(regs);
-  |         exit_to_kernel_mode(regs);
-  | }
-
-With that, we're a step forward in the right direction.
-
-Mark.
-
+> David, this must be the !CONFIG_ACPI_PROCESSOR_CSTATE case.
 > 
-> 
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index 8b281cf308b30..eb3b54710024f 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -933,18 +933,20 @@ void __init hook_debug_fault_code(int nr,
->   * accidentally schedule in exception context and it will force a warning
->   * if we somehow manage to schedule by accident.
->   */
-> -static void debug_exception_enter(struct pt_regs *regs)
-> +static void debug_exception_enter(struct pt_regs *regs, int touch_preemption)
->  {
-> -	preempt_disable();
-> +	if (touch_preemption)
-> +		preempt_disable();
->  
->  	/* This code is a bit fragile.  Test it. */
->  	RCU_LOCKDEP_WARN(!rcu_is_watching(), "exception_enter didn't work");
->  }
->  NOKPROBE_SYMBOL(debug_exception_enter);
->  
-> -static void debug_exception_exit(struct pt_regs *regs)
-> +static void debug_exception_exit(struct pt_regs *regs, int touch_preemption)
->  {
-> -	preempt_enable_no_resched();
-> +	if (touch_preemption)
-> +		preempt_enable_no_resched();
->  }
->  NOKPROBE_SYMBOL(debug_exception_exit);
->  
-> @@ -953,8 +955,14 @@ void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
->  {
->  	const struct fault_info *inf = esr_to_debug_fault_info(esr);
->  	unsigned long pc = instruction_pointer(regs);
-> +	unsigned long req = ESR_ELx_EC(esr);
-> +	int touch_preemption;
->  
-> -	debug_exception_enter(regs);
-> +	touch_preemption = !(IS_ENABLED(CONFIG_PREEMPT_RT) &&
-> +		(req == ESR_ELx_EC_SOFTSTP_LOW || req == ESR_ELx_EC_BRK64
-> +		 || req == ESR_ELx_EC_BKPT32 || req == ESR_ELx_EC_SOFTSTP_CUR));
-> +
-> +	debug_exception_enter(regs, touch_preemption);
->  
->  	if (user_mode(regs) && !is_ttbr0_addr(pc))
->  		arm64_apply_bp_hardening();
-> @@ -963,7 +971,7 @@ void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
->  		arm64_notify_die(inf->name, regs, inf->sig, inf->code, pc, esr);
->  	}
->  
-> -	debug_exception_exit(regs);
-> +	debug_exception_exit(regs, touch_preemption);
->  }
->  NOKPROBE_SYMBOL(do_debug_exception);
->  
-> 
+> Thanks!
+
+Oh - I see the problem.
+
+After a quick look I see two options:
+
+- #ifdef the code that doesn't compile
+- default no_acpi=true in the !CONFIG_ACPI_PROCESSOR_CSTATE case
+
+I sort of like the second option better, but I worry about the 
+documentation.  Specifically:
+
+"In the case that ACPI is not configured these flags have no impact
++on functionality."
+
+I guess that is still true.
+
+Perhaps there is a better option.  What do you think?
+
+Thanks,
+-DA
+
 
