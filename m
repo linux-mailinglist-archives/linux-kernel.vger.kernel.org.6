@@ -1,192 +1,123 @@
-Return-Path: <linux-kernel+bounces-510854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85157A322E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:52:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30BD5A322E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:54:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12CDC1881CB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:52:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE8B21670C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D027A207A04;
-	Wed, 12 Feb 2025 09:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089DA206F35;
+	Wed, 12 Feb 2025 09:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="EIzFg06C"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rJNs5C6o"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B57420767D;
-	Wed, 12 Feb 2025 09:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88BA2063D6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353940; cv=none; b=N0OC/lucj+WogWx5m8iJpXFoAxoTPMEw3Rz7GUhFBAUaK8brrOQ3Mbn54nvBcw9gosUnvGg3qqlSQ5KHZKD+sYdAp80W0e/6qecqJvoZRRA3/rU8BMJp0y2JGgBBtWIs6BquBtrSZSEw+ZpI6cq1X8Odoe03O8yllkK7c6iwgRo=
+	t=1739354042; cv=none; b=dZRPc8iNGHbvuG2+OGt6VVxHrVUb1AKAv3myIA38I6AXY8CifY52uKqoLHpLSGfX0K7BRzgj73XWwUZNO2oBcQNrHMTntlxaQaDk6ZqN8FzafTE+xcU9I8gUkophPLV29ez1/jciaB6vOt1zSWdK3PSmCChE+aQsnqI/RJ+nxH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353940; c=relaxed/simple;
-	bh=GYQfA97F+Re9ZSkw6o6abl4T4nrI0L3AvS4GjFqwQJY=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=B22eaB8E/L3jEZ0/gcexIhBV0SM4aLvanLvDfA+Pq0N3bsmbmWCW3YjuKrzr/tzJqq1T+ttwhgU/SWUwRBbEfh8olbCgK7y2Gw+abbdGA2YdufwgQgt0jvpMzdXZ1B2JK6jal3cd5OZSJx5My31mg6HIq6849mVlOeq8cBtN4s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=EIzFg06C; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 52AC6100006;
-	Wed, 12 Feb 2025 12:52:05 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 52AC6100006
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1739353925;
-	bh=sW1PCcHZUuvl1DQ9fYsmBNqcActrE1fmpcmadXgurpg=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
-	b=EIzFg06Cp93s+nhZ5t7GRsS+4vXPSufXqzwY2squSDJhVXqKtva5juG5A3C0hGOay
-	 OA9u0ybAZfVWwst49X7vAUN8isxFhlLXLbG7hL2QH07sUPf2Vp3HNAtZDSplrsEjv7
-	 hIIup/c0bSLPLhGjnmedZd2B/PqhEDPXlH/vHsWm4icqlIjj9TpyS9K9F61hfPXtuk
-	 ochDzRa8jl/MJ5Ak2k0h/2eCGZqKf2/oG7iznlzwIQdmXQOpsPF95VVeouEq19pgN9
-	 KjDLfsGB0HLIOB2korDkoHDyPtk95sfLfcw+Z/DuGk0h2F1kykzPhIS8YBZKwajIOh
-	 6L/9oq5AZGYYg==
-Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 12 Feb 2025 12:52:04 +0300 (MSK)
-Message-ID: <490d0026-2561-76b0-c11b-495b3e967e35@salutedevices.com>
-Date: Wed, 12 Feb 2025 12:52:04 +0300
+	s=arc-20240116; t=1739354042; c=relaxed/simple;
+	bh=PZMdbK+5409eVJVCWqtfrQHw1QcFuT5g6apO0nOaPtc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lC/Ho+CKRjHVHrG3E6vtwMPdig+xqagu9oUDB4tdryzuuCCgomxtwDQgVGZ8u+dIIx8ZG9qC56SEG0jhfq4YIksW4hfKHBLSJzd0G0IG2EYQ1q8vkU9Y/qPOlbxYABwb3+AXFqN/tOfz+yN6qyZObS85gvvl5BHJrk59M8ZjgIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rJNs5C6o; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4394820123dso18771085e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:54:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739354039; x=1739958839; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tIR7kxuCYlEHmDo3YVqs1C3HW9gsJqd1zOT7FkNeONI=;
+        b=rJNs5C6o1myS/dabDPlyvOgRNVMkwHsc3AftOwVes5E68Oqlul7ykNq/gZNJkTRBZx
+         Vx7SzN9uY4uSbn6ihsrFNgMDpzkKjH7HBv9qyaLSxfeaXfFcndkQ5MTy70IWc6hChzgV
+         b2dTbhPcO7qoGWCbI9fWU23Lmt3U/5VThnSYqV3CwGiuAliDbIQni5/Fjn6lm7Xibn/C
+         pSEJ+QGXP1uNk6tFBB7xWZf1ugfK5bK1H8aBaKIud6arS9XefFWZk0rkqPnnk6yzvS9Q
+         t1XbsO4YA9AzjWQ40G7DNrNvIzBv2Sk7VHwUYk1Ys8M2rfECKiywBfjtEM5Pc1rDpAhI
+         ND5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739354039; x=1739958839;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tIR7kxuCYlEHmDo3YVqs1C3HW9gsJqd1zOT7FkNeONI=;
+        b=iAxVn2kOPk/rTsrhmSwj6EpLe2pCfpEHABVdvcqYyVXXQD2CC2mbyZSxHf03VH5+Nb
+         ChqUaDTx5Ttuec1q6zfy4XU2SMDKZiOCizygm3sBl3ONASQuHZD6U4usEJJzgIpP6RLN
+         YupJiK4//MEKOkgvseLq0v81ft4X3Y4j63VXn19kp7Yfxij2UKKHx/fw/Y+OLqTAoSJx
+         B2veP1cHnuXEWBqBZiP9tZUMPyAc0YgmytdyZm/IXXjSt7VOOzhFyz7SA9KivoQ4j606
+         2uwIz4haPYmp+ndrdzGLgHpF+U+JQkSVROqUhLX2rWDX0LaU5lEvMySArA1rq5IS/A+h
+         my+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVBd+lpooWGWrf4VP74lgjZk9Gh4n0FHyEB3onkEC4y8Ltd2ktKJPzHKoF07iJF3jQv+6FFbz4cxQ+7iHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu8DO8rcrkGyGLxNn9dYwvcmE2b2Df2jGZW33of+tSkhW64Bic
+	tit1R0guZ0VIH14Pz5ORfXhFN9dHo6qqYx2BBLbMTmWsqHgHHd0Dqjy248PjTN0=
+X-Gm-Gg: ASbGncut8YuLU7bJ4yKGyfAkD1R1pthN3M9mCqtzwnEVuyltEVza4kqER+0L83kcH32
+	5kmC2J1BFMTIGECfwlLZxI4Eg1v+N1xiueSSHzqTQD5VLhuEzKAuyvn6lG/02fdeMvFRR7XvJLD
+	f6Y1mI/pFxBcwJ8f2wGw90G9BrMGiLmxs+iqlOQGuWMhNlG7J1QG3GhmntUQcMxOcgDQbjSUVxl
+	nteGUvXuZOTICDovUygmT35T5DEjOa3V7nYEzRYoOYe9G9kew34qq7AZsF7mPG7CFWB/X/AAY+4
+	42uu6dw3t+vca9E=
+X-Google-Smtp-Source: AGHT+IE1AuIEYHupLeeT9Nxbe+qdld3vOkKKKz82MsP6O3GVbjl5NUVtbZU3jbI1vKhF91kVaT9XZA==
+X-Received: by 2002:a5d:6908:0:b0:38d:db8b:f505 with SMTP id ffacd0b85a97d-38dea262832mr1371554f8f.17.1739354039252;
+        Wed, 12 Feb 2025 01:53:59 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:521c:13af:4882:344c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38ec2d9b299sm842935f8f.56.2025.02.12.01.53.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 01:53:58 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Wentao Liang <vulab@iscas.ac.cn>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] gpio: stmpe: Check return value of stmpe_reg_read in stmpe_gpio_irq_sync_unlock
+Date: Wed, 12 Feb 2025 10:53:57 +0100
+Message-ID: <173935403447.13404.4893974637827879328.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250212021849.275-1-vulab@iscas.ac.cn>
+References: <20250212021849.275-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Content-Language: en-US
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <oxffffaa@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<linux-bluetooth@vger.kernel.org>, <kernel@salutedevices.com>
-From: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Subject: [PATCH v1] Bluetooth: hci_uart: fix race during initialization
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-exch-cas-a-m1.sberdevices.ru (172.24.201.216)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 190962 [Feb 12 2025]
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;lore.kernel.org:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2025/02/12 09:00:00
-X-KSMG-LinksScanning: Clean, bases: 2025/02/12 08:59:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2025/02/12 05:46:00 #27170303
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Do not set 'HCI_UART_PROTO_READY' before call 'hci_uart_register_dev()'.
-Possible race is when someone calls 'hci_tty_uart_close()' after this bit
-is set, but 'hci_uart_register_dev()' wasn't done. This leads to access
-to uninitialized fields. To fix it let's set this bit after device was
-registered (as before patch c411c62cc133) and to fix previous problem let's
-add one more bit in addition to 'HCI_UART_PROTO_READY' which allows to
-perform power up without original bit set (pls see commit c411c62cc133).
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Reported-by: syzbot+683f8cb11b94b1824c77@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-bluetooth/d159c57f-8490-4c26-79da-6ad3612c4a14@salutedevices.com/
-Fixes: c411c62cc133 ("Bluetooth: hci_uart: fix race during initialization")
----
- drivers/bluetooth/hci_ldisc.c | 20 ++++++++++++++------
- drivers/bluetooth/hci_uart.h  |  1 +
- 2 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-index 2651e2e33f2a1..2f322f890b81f 100644
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -102,7 +102,8 @@ static inline struct sk_buff *hci_uart_dequeue(struct hci_uart *hu)
- 	if (!skb) {
- 		percpu_down_read(&hu->proto_lock);
- 
--		if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
-+		if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
-+		    test_bit(HCI_UART_PROTO_INIT, &hu->flags))
- 			skb = hu->proto->dequeue(hu);
- 
- 		percpu_up_read(&hu->proto_lock);
-@@ -124,7 +125,8 @@ int hci_uart_tx_wakeup(struct hci_uart *hu)
- 	if (!percpu_down_read_trylock(&hu->proto_lock))
- 		return 0;
- 
--	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
-+	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-+	    !test_bit(HCI_UART_PROTO_INIT, &hu->flags))
- 		goto no_schedule;
- 
- 	set_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
-@@ -278,7 +280,8 @@ static int hci_uart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
- 
- 	percpu_down_read(&hu->proto_lock);
- 
--	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
-+	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-+	    !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
- 		percpu_up_read(&hu->proto_lock);
- 		return -EUNATCH;
- 	}
-@@ -585,7 +588,8 @@ static void hci_uart_tty_wakeup(struct tty_struct *tty)
- 	if (tty != hu->tty)
- 		return;
- 
--	if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
-+	if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
-+	    test_bit(HCI_UART_PROTO_INIT, &hu->flags))
- 		hci_uart_tx_wakeup(hu);
- }
- 
-@@ -611,7 +615,8 @@ static void hci_uart_tty_receive(struct tty_struct *tty, const u8 *data,
- 
- 	percpu_down_read(&hu->proto_lock);
- 
--	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
-+	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-+	    !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
- 		percpu_up_read(&hu->proto_lock);
- 		return;
- 	}
-@@ -707,13 +712,16 @@ static int hci_uart_set_proto(struct hci_uart *hu, int id)
- 
- 	hu->proto = p;
- 
--	set_bit(HCI_UART_PROTO_READY, &hu->flags);
-+	set_bit(HCI_UART_PROTO_INIT, &hu->flags);
- 
- 	err = hci_uart_register_dev(hu);
- 	if (err) {
- 		return err;
- 	}
- 
-+	set_bit(HCI_UART_PROTO_READY, &hu->flags);
-+	clear_bit(HCI_UART_PROTO_INIT, &hu->flags);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
-index fbf3079b92a53..5ea5dd80e297c 100644
---- a/drivers/bluetooth/hci_uart.h
-+++ b/drivers/bluetooth/hci_uart.h
-@@ -90,6 +90,7 @@ struct hci_uart {
- #define HCI_UART_REGISTERED		1
- #define HCI_UART_PROTO_READY		2
- #define HCI_UART_NO_SUSPEND_NOTIFIER	3
-+#define HCI_UART_PROTO_INIT		4
- 
- /* TX states  */
- #define HCI_UART_SENDING	1
+On Wed, 12 Feb 2025 10:18:49 +0800, Wentao Liang wrote:
+> The stmpe_reg_read function can fail, but its return value is not checked
+> in stmpe_gpio_irq_sync_unlock. This can lead to silent failures and
+> incorrect behavior if the hardware access fails.
+> 
+> This patch adds checks for the return value of stmpe_reg_read. If the
+> function fails, an error message is logged and the function returns
+> early to avoid further issues.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] gpio: stmpe: Check return value of stmpe_reg_read in stmpe_gpio_irq_sync_unlock
+      commit: b9644fbfbcab13da7f8b37bef7c51e5b8407d031
+
+Best regards,
 -- 
-2.30.1
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
