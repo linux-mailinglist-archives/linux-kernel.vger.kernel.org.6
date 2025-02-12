@@ -1,139 +1,112 @@
-Return-Path: <linux-kernel+bounces-511119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD5EA3262E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:48:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF305A32634
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:49:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76B8F1888079
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC70318876F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FA520B811;
-	Wed, 12 Feb 2025 12:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D5620CCF5;
+	Wed, 12 Feb 2025 12:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="j5pBgvZC"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zt5JZ0sm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SHoi6ODK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A439427183F;
-	Wed, 12 Feb 2025 12:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFAF27183F;
+	Wed, 12 Feb 2025 12:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364515; cv=none; b=aqLsTOc5jlCTf8236aouWhuZQj8QFFjN7W5D2kvT0SwAH7sbVZwz9uOP6bduYRZw9WSXMiDlc4rT5fKi/3yfWdPDFNxWikNjhSrOXm3XO3heZyaSPViJbpZt5DaqK+8xb6IPSkegPwtqazELhN03FENCWO36rX69fTmBFVqkYjA=
+	t=1739364561; cv=none; b=VqQx2f16Ge6WMvdCgFMqoRQKR93Mb6OZkXpUrtCfZ17WdAkQo8UhOfuTZ3XY0BqMa6NXHFoZK0gBAfu3SCd3/AgyFCB1TqQrAOnaRbvlh2rCc/pMqr/hZNtT3reOnKsNDeiCAMzUVG1BuQPWBIZU/CTKbIZwNB/s0LOUsMlJcfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364515; c=relaxed/simple;
-	bh=EDhW1xwyL7isb9C2EmKd1PTwPrB+uBSZBAvwvbLxlsU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=arm3UrtdgEMUT2TFdTvDG1ZjwYbNgGUjzXldhxxMLGWId3sSb/xbSsxVm07h/B46K/AqRQU8sfMhU+3IxekS11a/gpGsCqj47pYOjHq7SPmlzZ2UFrYQBdU45UiA99p/ad41A1wCTdm2L7DNRM1DMMM24dUBS1EVWvL9ADY5oqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=j5pBgvZC; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4YtJ5T3Wp4z9sS2;
-	Wed, 12 Feb 2025 13:48:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1739364509; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EDhW1xwyL7isb9C2EmKd1PTwPrB+uBSZBAvwvbLxlsU=;
-	b=j5pBgvZCJxV57HJTeE5y2LPp56nXHIwxZvfgLlKWmkys1ydTVzWJfzON5zgpGilZdlArp3
-	rM3s/1WXQZAXcYlZftjqV2NmRMyPXh5OYim9lkb7Rhv9458jFeas8V/s7iemMO2jdZLyBD
-	iZwg4EoadKFcSWldNTTmJPYn8A3kv7CIcgg8onJ8o/yGo1k2WivmsqZa7tJt757sCLfhQ7
-	T+tGLnR3bPcwtPVD+mCVbNPaMYtQ0+lFxpVbZcp6/VZNTXa2UqZEjdblIvom6SG88kdB9d
-	8sgUYqjBQjLJogg9rQSJP5u7/aVvZKNudWR0SqneomklpOur0COijAj1kSwbcQ==
-Message-ID: <25ea7d23e7b778a0c2372cc2bbc87fc2b3742dca.camel@mailbox.org>
-Subject: Re: [PATCH v3 0/3] drm/sched: Documentation and refcount
- improvements
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Philipp Stanner <phasta@kernel.org>, Matthew Brost
- <matthew.brost@intel.com>,  Danilo Krummrich <dakr@kernel.org>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Date: Wed, 12 Feb 2025 13:48:25 +0100
-In-Reply-To: <20250207123652.27677-2-phasta@kernel.org>
-References: <20250207123652.27677-2-phasta@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1739364561; c=relaxed/simple;
+	bh=NL58RGQUo5cvDWALIIvtJzK3eZ89+YFSNsS/E+/xOYM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=je30RYmSAnJDoqiUeJrw+fgYTaMYnjZ3ycru2eZ1ojW84+ZKlo6qvkkQf1bkVoCPtTOmPwFYIfNNQtuMEO0GNzlAAjv5TmGTZuxoVr1bHKDR73PhvRV1jQTGp555cjF9qSXW/Uvh0LEQbvFn5oV8XOy+z+5YID/ZdeA4JalNviM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zt5JZ0sm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SHoi6ODK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739364557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qSE35Z9rhydIaSHAG0noyN8q9MSMVAvkn+jqzXgS5LM=;
+	b=Zt5JZ0smQy+kxK5j8Za0NvLqHkdAgq9fUF7i0kyqT4Rv2cRchDrMt4yf5qLSOCIZW8ieRq
+	CRebHDkgksGNt56pb54GfoHYKGXeZuZa6QrJAhVC6NMpXB/VSqBVJzBF7Vq58hFZawdmxN
+	RZwDMUQlU8ZgQOKV79oBy8/GP5A4DPPcYD/pfXjTBAFWq6WQNirySlBVTJi8hu0mR3k3r1
+	kung3dabubcvUP7KXWLPf4f4UH+mrNOggx/eo34NKc0C1gnNisT4nugRaLFGuvnDCV/6xc
+	wO80uot+XmN85WWr17n25TeT0S7vhsptaGpzpVc564AHciYPirqQggOi1UEkVw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739364557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qSE35Z9rhydIaSHAG0noyN8q9MSMVAvkn+jqzXgS5LM=;
+	b=SHoi6ODK2ZAoWeX9WaCSBK4N/zB034ZJLd2+0fheADeJjwSaQlQf1ISynPa/EFkEX6MTp/
+	+d0hfQhAHUpYdSDw==
+Subject: [PATCH 0/2] kunit: qemu_configs: Add MIPS configurations
+Date: Wed, 12 Feb 2025 13:49:11 +0100
+Message-Id: <20250212-kunit-mips-v1-0-eb49c9d76615@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: hthkmhf8qheg5okcazx6mxy5af9jigei
-X-MBO-RS-ID: ed3e673e6865dc3df69
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMeYrGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0MT3ezSvMwS3dzMgmLdVJO0VMNkIzPT1BRzJaCGgqLUtMwKsGHRsbW
+ 1AATm1e5cAAAA
+X-Change-ID: 20241014-kunit-mips-e4fe1c265ed7
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Paul Burton <paulburton@kernel.org>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Mike Rapoport <rppt@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+ linux-mm@kvack.org
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739364553; l=1084;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=NL58RGQUo5cvDWALIIvtJzK3eZ89+YFSNsS/E+/xOYM=;
+ b=4nBWBlSDRkDFl9aNAg9lYya2vuBvns3smhtBT5YJTUfvVRJn4kmC7gvUq6Avu/AhXSk7o61jh
+ gv4wkUyQtREA7MCgkkswzkEAq2o1IRaLMREW5MHLcxUIxksebhndKQr
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On Fri, 2025-02-07 at 13:36 +0100, Philipp Stanner wrote:
-> Changes in v3:
-> =C2=A0 - timedout_job(): various docu wording improvements. (Danilo)
-> =C2=A0 - Use the term "ring" consistently. (Danilo)
-> =C2=A0 - Add fully fledged docu for enum drm_gpu_sched_stat. (Danilo)
->=20
-> Changes in v2:
-> =C2=A0 - Document what run_job() is allowed to return. (Tvrtko)
-> =C2=A0 - Delete confusing comment about putting the fence. (Danilo)
-> =C2=A0 - Apply Danilo's RB to patch 1.
-> =C2=A0 - Delete info about job recovery for entities in patch 3. (Danilo,
-> me)
-> =C2=A0 - Set the term "ring" as fix term for both HW rings and FW rings. =
-A
-> =C2=A0=C2=A0=C2=A0 ring shall always be the thingy on the CPU ;) (Danilo)
-> =C2=A0 - Many (all) other comments improvements in patch 3. (Danilo)
->=20
-> This is as series succeeding my previous patch [1].
->=20
-> I recognized that we are still referring to a non-existing function
-> and
-> a deprecated one in the callback docu. We should probably also point
-> out
-> the important distinction between hardware and firmware schedulers
-> more
-> cleanly.
->=20
-> Please give me feedback, especially on the RFC comments in patch3.
->=20
-> (This series still fires docu-build-warnings. I want to gather
-> feedback
-> on the opion questions first and will solve them in v2.)
->=20
-> Thank you,
-> Philipp
->=20
-> [1]
-> https://lore.kernel.org/all/20241220124515.93169-2-phasta@kernel.org/
->=20
-> Philipp Stanner (3):
-> =C2=A0 drm/sched: Document run_job() refcount hazard
-> =C2=A0 drm/sched: Adjust outdated docu for run_job()
-> =C2=A0 drm/sched: Update timedout_job()'s documentation
+Add basic support to run various MIPS variants via kunit_tool using the
+virtualized malta platform.
+Various kunit tests from drivers/firmware/cirrus/ are failing on MIPS.
+They are fixed in [0].
 
-I would like to pull this in soonish, since I think pushback is
-unlikely?
+[0] https://lore.kernel.org/lkml/20250211-cs_dsp-kunit-strings-v1-1-d9bc2035d154@linutronix.de/
 
-RBs for the last two patches by someone would be nice, though.
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Thomas Weißschuh (2):
+      MIPS: mm: Avoid blocking DMA zone with memory map memblock allocation
+      kunit: qemu_configs: Add MIPS configurations
 
-P.
+ arch/mips/mm/init.c                          |  2 ++
+ tools/testing/kunit/qemu_configs/mips.py     | 18 ++++++++++++++++++
+ tools/testing/kunit/qemu_configs/mips64.py   | 19 +++++++++++++++++++
+ tools/testing/kunit/qemu_configs/mips64el.py | 19 +++++++++++++++++++
+ tools/testing/kunit/qemu_configs/mipsel.py   | 18 ++++++++++++++++++
+ 5 files changed, 76 insertions(+)
+---
+base-commit: 6e24361511062dba8c5f7e59d51b29cdfa859523
+change-id: 20241014-kunit-mips-e4fe1c265ed7
 
-
->=20
-> =C2=A0drivers/gpu/drm/scheduler/sched_main.c |=C2=A0=C2=A0 5 +-
-> =C2=A0include/drm/gpu_scheduler.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 109 ++++++++++++++++-------
-> --
-> =C2=A02 files changed, 74 insertions(+), 40 deletions(-)
->=20
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
