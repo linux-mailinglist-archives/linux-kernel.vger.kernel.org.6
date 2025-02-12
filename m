@@ -1,173 +1,188 @@
-Return-Path: <linux-kernel+bounces-511177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA41A3274B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:42:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2D5A3276D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3998F3A7BFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:41:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE711888157
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F38220E719;
-	Wed, 12 Feb 2025 13:41:34 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A4520D512;
+	Wed, 12 Feb 2025 13:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="AwiZsHXW"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA91920E6F3
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03BB20E6FB;
+	Wed, 12 Feb 2025 13:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739367693; cv=none; b=jUkIH2c6hZPsUFs72xZZeaLmRe+/+nLrF3xf9jPewT92tN+eVrsS5EmOpOap6/K8r3HAMEKqmE3MF/0ifFeIiFAa/IODiUWka2ko1mOpzdGZuhxYUsiaNfXfegiaA2W6FeAj+/W8fOTxF58vhYbuhIEixMmcADKcloG+nP6O710=
+	t=1739367716; cv=none; b=OfX7dXvp8eAAoFFMan2KOEKbmI42ng5J7ZdRBGQJNG2DUtJDvBAhIdiU9GPiQhX6nWzAD2Muvpn2V05Uh6CEtwdwV5UOxZ40WkAUyDBLZrhVXo9snWU7/EycHr6OE23K4Onr2J1aPDvYyvmnYGHbIBC2UTU/9RFwpKxTLlrovQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739367693; c=relaxed/simple;
-	bh=C4JDa3AZTszAFhsNnMRmmsyUBVeHeyukFwGTm4lt7qs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=S7kmEkg/D4VRaMKEUnWukqFbxD2/N6+OWoKNNmZkxQttDJrLR5bTKNTTHZKTa5Jqul/kcbuS+pEzjNcShw+FYjsEOg7c+8VmDCxXdhoETNuYdEe0B6jl3iZ9Y7ngdFpH7PTUYnPTEw34HxxEmeoJO6PiaQZ4eW89yzurBbEWaiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ce7a0ec1easo47830215ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:41:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739367691; x=1739972491;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qV2iVCe9A8aeE8PpOX+/swpsuolgCunvj4bgg81YYHY=;
-        b=WJDu1+TNSBDU0jMBJvN4xWrLLMZKVc+qG8x48vQmaCHgCF4XlHdWgAo+tJ57vw+vhZ
-         53NmET1vcIzoJFo1pd9mQdwpfQOTSvuKopP4f2h4Lsd2Ae0Qb5TNsEq0B3c2Qjasr1Uu
-         GHVhX1Hb2PsbrzxWVcw+MZNXVxHqgAXedCsf3uEQKtB/vVJLGDEJusdAqf5CBgbsj6vF
-         3vGgWboLk9kBY+EposQEWx/ni4GTG1KOsXgNuoWs6XVYXYmIfJpD/8EcVO1hZNT4sM+/
-         xRo0MtC8eYpFnZvsAKXSdyMwIT8yqlPjiyoX1Jdkt/bgz3SHNxTripuArOpfZSxe+pKV
-         N1eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEu8OILP2nW5cHC9E2VDjQQHeqjg2fBbYwGvwujtBUfQ2U6KgkBD5EAUOU7MciEsjdIZsHLGNyrlyswsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqtLvUBif02o2t0Eo3UAAuyMfB1FHOwpwiIDeoJhC2gZX/gomS
-	tIcVlLRjOUII6Rbs5yWVMlKXBHWx/o5t4LCpv1vWLqVmKU49XfBoSL+KXFcDly/FLtQc8vlBULu
-	llCbuP5icFuI2mcMLiBq2S/STTkYBfXi8spAdoiSK8cOC6x5Fcz1AsQQ=
-X-Google-Smtp-Source: AGHT+IFw3OwkQX0l9K11/EE02bzq89ChU/ndRTGJbtmCcixzlNNvSJVmNCfHLvpjXYJ3PorwatpdzZmdR15fb4b635QsM7hVtVGQ
+	s=arc-20240116; t=1739367716; c=relaxed/simple;
+	bh=TZT5R2eitdFgRj0GA9fKVPD0Pm3cWU0d9sQiyh5DmcU=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dzstz3F7NsmIk0uS31fNhZYMBC3EpmV3tqMly+afrxQsYFSqPER06jvnNL2InGMlltJeAC1DiMLPiaMgzOHLvwrYzFtOA4/zlFplx1frvj/p9ARYLLfks17hdrzaf03rKMw/3afZG07M8kf7gZvflmJBNhe3gAz/GzJDjBp8J3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=AwiZsHXW; arc=none smtp.client-ip=91.244.183.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id BF277106B922;
+	Wed, 12 Feb 2025 16:41:51 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru BF277106B922
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1739367712; bh=/bAj5hq2MsJG0KFKRNkqn4MOUfRTT/Tgyz72UhKpIzY=;
+	h=From:To:CC:Subject:Date:From;
+	b=AwiZsHXW3oUF2F6fQeYVPMLgvMEe3uGZFTzDOThcF81u6/gPijzZV4P/6UtBqVZ68
+	 Z5YWZDaojQbEFi7aKRzgFOKDTOVja4KjkvKuB0ORxUUmR3E/QmaexJB5985wXl2o5I
+	 /kxVWkj2sAI5Gnoyftube5izbWK0enSJuN78GbkY=
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+	by mx0.infotecs-nt (Postfix) with ESMTP id BBE233063333;
+	Wed, 12 Feb 2025 16:41:51 +0300 (MSK)
+From: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
+To: Neil Horman <nhorman@tuxdriver.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH net] drop_monitor: fix incorrect initialization order
+Thread-Topic: [PATCH net] drop_monitor: fix incorrect initialization order
+Thread-Index: AQHbfVPeGhCgtX+tO0OFhEPE/MmNpQ==
+Date: Wed, 12 Feb 2025 13:41:51 +0000
+Message-ID: <20250212134150.377169-1-Ilia.Gavrilov@infotecs.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:138f:b0:3a7:820c:180a with SMTP id
- e9e14a558f8ab-3d17c108f15mr28738875ab.19.1739367690996; Wed, 12 Feb 2025
- 05:41:30 -0800 (PST)
-Date: Wed, 12 Feb 2025 05:41:30 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67aca50a.050a0220.110943.004e.GAE@google.com>
-Subject: [syzbot] [modules?] KMSAN: uninit-value in __request_module (6)
-From: syzbot <syzbot+1fcd957a82e3a1baa94d@syzkaller.appspotmail.com>
-To: da.gomez@samsung.com, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, mcgrof@kernel.org, petr.pavlu@suse.com, 
-	samitolvanen@google.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2025/02/12 10:45:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/02/12 10:17:00 #27183182
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-Hello,
+Syzkaller reports the following bug:
 
-syzbot found the following issue on:
-
-HEAD commit:    febbc555cf0f Merge tag 'nfsd-6.14-1' of git://git.kernel.o..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=137a78e4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48f90cac5eea091a
-dashboard link: https://syzkaller.appspot.com/bug?extid=1fcd957a82e3a1baa94d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177a78e4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16adc3f8580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f90f94285615/disk-febbc555.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b8a8bb66806c/vmlinux-febbc555.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c8af6c511559/bzImage-febbc555.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1fcd957a82e3a1baa94d@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in string_nocheck lib/vsprintf.c:633 [inline]
-BUG: KMSAN: uninit-value in string+0x3ec/0x5f0 lib/vsprintf.c:714
- string_nocheck lib/vsprintf.c:633 [inline]
- string+0x3ec/0x5f0 lib/vsprintf.c:714
- vsnprintf+0xa5d/0x1960 lib/vsprintf.c:2843
- __request_module+0x252/0x9f0 kernel/module/kmod.c:149
- team_mode_get drivers/net/team/team_core.c:480 [inline]
- team_change_mode drivers/net/team/team_core.c:607 [inline]
- team_mode_option_set+0x437/0x970 drivers/net/team/team_core.c:1401
- team_option_set drivers/net/team/team_core.c:375 [inline]
- team_nl_options_set_doit+0x1339/0x1f90 drivers/net/team/team_core.c:2661
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x1214/0x12c0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2543
- genl_rcv+0x40/0x60 net/netlink/genetlink.c:1219
+BUG: spinlock bad magic on CPU#1, syz-executor.0/7995
+ lock: 0xffff88805303f3e0, .magic: 00000000, .owner: <none>/-1, .owner_cpu:=
+ 0
+CPU: 1 PID: 7995 Comm: syz-executor.0 Tainted: G            E     5.10.209+=
+ #1
+Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference=
+ Platform, BIOS 6.00 11/12/2020
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x119/0x179 lib/dump_stack.c:118
+ debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
+ do_raw_spin_lock+0x1f6/0x270 kernel/locking/spinlock_debug.c:112
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:117 [inline]
+ _raw_spin_lock_irqsave+0x50/0x70 kernel/locking/spinlock.c:159
+ reset_per_cpu_data+0xe6/0x240 [drop_monitor]
+ net_dm_cmd_trace+0x43d/0x17a0 [drop_monitor]
+ genl_family_rcv_msg_doit+0x22f/0x330 net/netlink/genetlink.c:739
+ genl_family_rcv_msg net/netlink/genetlink.c:783 [inline]
+ genl_rcv_msg+0x341/0x5a0 net/netlink/genetlink.c:800
+ netlink_rcv_skb+0x14d/0x440 net/netlink/af_netlink.c:2497
+ genl_rcv+0x29/0x40 net/netlink/genetlink.c:811
  netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
- netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1348
- netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1892
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:733
- ____sys_sendmsg+0x877/0xb60 net/socket.c:2573
- ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2627
- __sys_sendmsg net/socket.c:2659 [inline]
- __do_sys_sendmsg net/socket.c:2664 [inline]
- __se_sys_sendmsg net/socket.c:2662 [inline]
- __x64_sys_sendmsg+0x212/0x3c0 net/socket.c:2662
- x64_sys_call+0x2ed6/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:47
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ netlink_unicast+0x54b/0x800 net/netlink/af_netlink.c:1348
+ netlink_sendmsg+0x914/0xe00 net/netlink/af_netlink.c:1916
+ sock_sendmsg_nosec net/socket.c:651 [inline]
+ __sock_sendmsg+0x157/0x190 net/socket.c:663
+ ____sys_sendmsg+0x712/0x870 net/socket.c:2378
+ ___sys_sendmsg+0xf8/0x170 net/socket.c:2432
+ __sys_sendmsg+0xea/0x1b0 net/socket.c:2461
+ do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x62/0xc7
+RIP: 0033:0x7f3f9815aee9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 =
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff f=
+f 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3f972bf0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f3f9826d050 RCX: 00007f3f9815aee9
+RDX: 0000000020000000 RSI: 0000000020001300 RDI: 0000000000000007
+RBP: 00007f3f981b63bd R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f3f9826d050 R15: 00007ffe01ee6768
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4121 [inline]
- slab_alloc_node mm/slub.c:4164 [inline]
- kmem_cache_alloc_node_noprof+0x907/0xe00 mm/slub.c:4216
- kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
- __alloc_skb+0x363/0x7b0 net/core/skbuff.c:678
- alloc_skb include/linux/skbuff.h:1331 [inline]
- netlink_alloc_large_skb+0x1b4/0x280 net/netlink/af_netlink.c:1196
- netlink_sendmsg+0xa96/0x11e0 net/netlink/af_netlink.c:1867
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:733
- ____sys_sendmsg+0x877/0xb60 net/socket.c:2573
- ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2627
- __sys_sendmsg net/socket.c:2659 [inline]
- __do_sys_sendmsg net/socket.c:2664 [inline]
- __se_sys_sendmsg net/socket.c:2662 [inline]
- __x64_sys_sendmsg+0x212/0x3c0 net/socket.c:2662
- x64_sys_call+0x2ed6/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:47
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+If drop_monitor is built as a kernel module, syzkaller may have time
+to send a netlink NET_DM_CMD_START message during the module loading.
+This will call the net_dm_monitor_start() function that uses
+a spinlock that has not yet been initialized.
 
-CPU: 0 UID: 0 PID: 5814 Comm: syz-executor989 Not tainted 6.14.0-rc2-syzkaller-00034-gfebbc555cf0f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-=====================================================
+To fix this, let's place resource initialization above the registration
+of a generic netlink family.
 
+Found by InfoTeCS on behalf of Linux Verification Center
+(linuxtesting.org) with SVACE.
 
+Fixes: 9a8afc8d3962 ("Network Drop Monitor: Adding drop monitor implementat=
+ion & Netlink protocol")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ net/core/drop_monitor.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/net/core/drop_monitor.c b/net/core/drop_monitor.c
+index 6efd4cccc9dd..9755d2010e70 100644
+--- a/net/core/drop_monitor.c
++++ b/net/core/drop_monitor.c
+@@ -1734,6 +1734,11 @@ static int __init init_net_drop_monitor(void)
+ 		return -ENOSPC;
+ 	}
+=20
++	for_each_possible_cpu(cpu) {
++		net_dm_cpu_data_init(cpu);
++		net_dm_hw_cpu_data_init(cpu);
++	}
++
+ 	rc =3D genl_register_family(&net_drop_monitor_family);
+ 	if (rc) {
+ 		pr_err("Could not create drop monitor netlink family\n");
+@@ -1749,11 +1754,6 @@ static int __init init_net_drop_monitor(void)
+=20
+ 	rc =3D 0;
+=20
+-	for_each_possible_cpu(cpu) {
+-		net_dm_cpu_data_init(cpu);
+-		net_dm_hw_cpu_data_init(cpu);
+-	}
+-
+ 	goto out;
+=20
+ out_unreg:
+@@ -1772,13 +1772,12 @@ static void exit_net_drop_monitor(void)
+ 	 * Because of the module_get/put we do in the trace state change path
+ 	 * we are guaranteed not to have any current users when we get here
+ 	 */
++	BUG_ON(genl_unregister_family(&net_drop_monitor_family));
+=20
+ 	for_each_possible_cpu(cpu) {
+ 		net_dm_hw_cpu_data_fini(cpu);
+ 		net_dm_cpu_data_fini(cpu);
+ 	}
+-
+-	BUG_ON(genl_unregister_family(&net_drop_monitor_family));
+ }
+=20
+ module_init(init_net_drop_monitor);
+--=20
+2.39.5
 
