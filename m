@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-512028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE798A332F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:55:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB31A332F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:56:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5E17A2EC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC223A5FEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D2821129D;
-	Wed, 12 Feb 2025 22:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580AD1FFC62;
+	Wed, 12 Feb 2025 22:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0+oa/YGN"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LqkU3JYR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76E22036E2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85622045A1;
+	Wed, 12 Feb 2025 22:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739400944; cv=none; b=saX+B4IfMc84tYCZ00n1Ycx0MpwfEtpTO0uSAXYi4oFzykfwQjMvhTBEnliSLKRJhzcVsgfkZ0SgP3l+4wLKgDhBrBS+UYzaa3xaTBnA/VMy59Qhme4K1XkXgqCsueVoi9XR9uSZh+3opBHNjdSW5hPrZSqbAtN/EZhKE5tOSAU=
+	t=1739400967; cv=none; b=D3Clkz0cVICx2GPz2STiW9zE9vXhOqWNiNLoIuE4rm72hDoAupMGe+kuHBpxRPBWfE1iOaEKRvD0TJvTNDzbn8npPP7Ls/wVc6wRUEOb6acpNrH/8VhcUCvQqRGnjv3BZvmi0TKvid64MvboToiXEl1jv9NE6lOv1SotXZbDSiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739400944; c=relaxed/simple;
-	bh=M/JEAtm/aKqZQpUcIkbOx1V5MbhNPluJ7A9OR2+JsF8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=O0tj4trzwKlFwT5YsZV3sjHzRY/nfNqk665saiv+a0+h7Bby6xqy+C+fllEjt4km1Jgyu1SYp3Qh0U9Y/6vKgOd9BcgknhKye6Q/n2W/b+mv9ekK3P5DwxNWu6STYhGdK1vg3NkdnbZFx6+2lgBjcEd/gjZJl1k3ARG9kiRo80s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0+oa/YGN; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21f022fc6a3so5009065ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:55:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739400942; x=1740005742; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G4pJwe4WBZK7j0Qn81lTWodsKOqME7mNPJqkDCUIDvw=;
-        b=0+oa/YGNFhfNfAvc1DakAtTUGsb5fIjUlQ8FgLTRkg4g1oQyavX/X3Goe3VKnShPef
-         sathwRfPc14c/SS/26TodPkSpcyzfl3XYEr9eD3+NKhZ05MA8IpZOeWBer9yGZdhkcZg
-         vYzPXJsuWtL36f/RQOOZ6ZGR0NpUaTqI7oN/qOUKlOn8bvDfB5QLFBFv0wQAHb7EYZZh
-         kMeayyeRT8PqJE3MHyteMkdaI14XvZfIVt0dUvMYtIEAGznLN65J37HiJGuZe3Ih2/nK
-         SaRuIN8GhT2SwQG9cLxEL2bY5wKx/5x8+sumghXwYfj0es1OJMTZcsxVPzpCpT8g64ko
-         5HHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739400942; x=1740005742;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G4pJwe4WBZK7j0Qn81lTWodsKOqME7mNPJqkDCUIDvw=;
-        b=V5uztmNRM1LxwAaQcWFKczPH14P37k+pRx1cIzACdkJkR8l8yuTLHqOhq1+I0KQ1CL
-         cAf2YvTMrGuTw9yXdfKVwUv7i/mjg2/qtqbx+hnrmSck99DzvRXEswESkHbTS1V/ps5F
-         tkLOtL6f3sfxCMSimH68XqE7naJzuCLCw6Hr9gtnUxIADNgrKVSRy+n0uNAzjjtZYDOu
-         WbX+S/Tzceo0EZ1u1KHED9WbPbQgsacU/UllGLE//5pgL1j+0nuggrnkvxNDgOkE6uZT
-         VqYCV1FGGdGmEqgibhSrvxS+6/fG9CswLioz4bCz8F4wUddKnwyZt7P0iel6ot7ldPlM
-         Egbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPCtVO6Y+3P6VePeRTR4fE4g5h26nGMdRVv53Aa1bq+hIU1O4CvUpPPjNzIKZQnpehycK1FYuk938Lp5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiK50NV5ZsUva7ZAXY5RCWCmH3LwXVtJ1DDwKRoSneCa8kT+MJ
-	9oCquf1LH9cxQ8Xv7wog16vTvm1mnI9+4po6yT5uTFuRYYeTMLBZAXcMr2ClP7cjmz+Lizh/ZNH
-	dBg==
-X-Google-Smtp-Source: AGHT+IFCvprC2FVz2MYwofAu+gOZ+t6GzfO0x6W16EewccF+NjWJufThiJaaDpuXjWvbsRckLewQnEmSOUI=
-X-Received: from plbb4.prod.google.com ([2002:a17:903:c04:b0:21f:14cc:68b0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c94e:b0:220:c2bf:e8ba
- with SMTP id d9443c01a7336-220d3528cc9mr11030295ad.14.1739400941927; Wed, 12
- Feb 2025 14:55:41 -0800 (PST)
-Date: Wed, 12 Feb 2025 14:55:36 -0800
-In-Reply-To: <SN6PR02MB4157DBAF1E3BB0E4FFD2C92DD4FC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1739400967; c=relaxed/simple;
+	bh=/ixeuw+sP1h2HlhY+xFvfHUHI7nevOOg8s37LSTC0tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mzx8OfbDn1nB8e6BhYala7hfzWt2ayNLGZlFt5lMoSJssgVvKX+Oq8wFd8q5ICHyZYFlshGixq9L/CtLYvRSjljOnatk98DQKTHh3Dq0mNgfm+yT4CDB3wwFY4HidkaYz3fCvzEus3ZTXBdNyEtA2lFJjkPB5U0q+67BVI0bdLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LqkU3JYR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B7AC4CEDF;
+	Wed, 12 Feb 2025 22:56:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739400967;
+	bh=/ixeuw+sP1h2HlhY+xFvfHUHI7nevOOg8s37LSTC0tI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LqkU3JYRAbcPqbKej9sprTUJgj/cBZNUa+KqErDX9CnNGplxQ60VrA2ly+wwcOfk/
+	 bMaIPZkIHYSe5FOoV09z1pbFnTX5s+ix+V75AYrZIBSd2bvm1QtGIqDwThZ9MyLN0r
+	 SKs3d1HXw1teBKyx9XGACfic1E36RQjOhn7qTgPWvtE6WeiH3mBh3TvwHoUc1kehFa
+	 itecSmpwrGQw+dijYNvt7/6HmlOuNYh4mvIE74NmNkkyxhx3RMSVG6SkUxmUVHebI2
+	 LL4lh0GCvrxIEzOqPUR58mnO2nZaIocA6zUQUU5JZuV0NRKDGg2DxEdDyndf1GBXuv
+	 UCCQt81cDqKrw==
+Date: Wed, 12 Feb 2025 14:56:05 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Hao Ge <gehao@kylinos.cn>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Levi Yun <yeoreum.yun@arm.com>, Xu Yang <xu.yang_2@nxp.com>,
+	Tengda Wu <wutengda@huaweicloud.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 00/10] Move uid filtering to BPF filters
+Message-ID: <Z60nBQCetMzhRg5b@google.com>
+References: <Z6panMzNSm1op8Di@google.com>
+ <CAP-5=fUY83gifsMZA0Q45kiQQbAKp2uJxkuwrwGtHK2hiUFRDA@mail.gmail.com>
+ <Z6rAHhAIdlkAryGJ@google.com>
+ <CAP-5=fXjmJ+Rr7ejL6fCMeu6PZSit7n84hQkjh=0jQhkr1on3Q@mail.gmail.com>
+ <Z6uOGNO6p7i9Fese@google.com>
+ <CAP-5=fVxFe4nMS_dHmO=6-ddA40XbVdvouPLuOxj5cenjUr8ng@mail.gmail.com>
+ <Z6v-mPJq6m61pFA4@google.com>
+ <CAP-5=fU+-4igQomO4Q41=7xo6YWyDdVqJdZd34dcMUS-Ua=N1Q@mail.gmail.com>
+ <Z6zslLa8XM1ubwXj@google.com>
+ <CAP-5=fUrzPvV3sD1_wMzQ7dF8xk3hL9_nkdS6toFjt7L+SRsgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250201021718.699411-1-seanjc@google.com> <20250201021718.699411-17-seanjc@google.com>
- <Z6ZBjNdoULymGgxz@google.com> <SN6PR02MB4157A85EC0B1B2D45CB611FAD4F02@SN6PR02MB4157.namprd02.prod.outlook.com>
- <Z6onnUthSBUVAklf@google.com> <SN6PR02MB4157DBAF1E3BB0E4FFD2C92DD4FC2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Message-ID: <Z60m6NiOlCmy4-q0@google.com>
-Subject: Re: [PATCH 16/16] x86/kvmclock: Use TSC for sched_clock if it's
- constant and non-stop
-From: Sean Christopherson <seanjc@google.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Juergen Gross <jgross@suse.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Ajay Kaher <ajay.kaher@broadcom.com>, 
-	Jan Kiszka <jan.kiszka@siemens.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, Nikunj A Dadhania <nikunj@amd.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUrzPvV3sD1_wMzQ7dF8xk3hL9_nkdS6toFjt7L+SRsgg@mail.gmail.com>
 
-On Wed, Feb 12, 2025, Michael Kelley wrote:
-> From: Sean Christopherson <seanjc@google.com> Sent: Monday, February 10, 2025 8:22 AM
-> > On Sat, Feb 08, 2025, Michael Kelley wrote:
-> > > But I would be good with some restructuring so that setting the sched clock
-> > > save/restore hooks is more closely tied to the sched clock choice,
-> > 
-> > Yeah, this is the intent of my ranting.  After the dust settles, the code can
-> > look like this.
+On Wed, Feb 12, 2025 at 12:00:42PM -0800, Ian Rogers wrote:
+> On Wed, Feb 12, 2025 at 10:46 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > It's not completely broken and works sometimes.
 > 
-> I'm good with what you are proposing. And if you want, there's no real need
-> for hv_ref_counter_at_suspend and hv_save/restore_sched_clock_state()
-> to be in the #ifdef sequence since the code has no architecture dependencies.
+> No this is the definition of completely broken. If it only works
+> sometimes then you can't use it, we can't put a test on it, there is
+> no point in it. Even when it doesn't fail on perf_event_open, does it
+> work for processes that start after /proc is scanned? No, it is
+> completely broken.
 
-Right, but because they will be local/static and there are no users outside of
-x86, the compiler will complain about unused variables/functions on other
-architectures.
+Ok, we have a different definition for it.  Let's ignore the imaginary
+users of the broken features.  Have you added a test for this change?
+
+Anyway I've tested your change and found some issues:
+
+1. It silently exited when BPF-skel is not built.  Better to put some
+   messages at least.
+
+  $ sudo ./perf record -u $(id -u) -- sleep 1
+
+2. Even with BPF-skel, perf record doesn't work well.  It did something
+   but failed to get sample data for some reason.
+
+  $ sudo ./perf record -u $(id -u) -- sleep 1
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.045 MB perf.data ]
+   
+   Oh, I think you now need to pass -a because it now works in
+   system-wide mode and drops samples for other users.
+
+3. With BPF-skel, non-root users will see this.
+
+  $ ./perf record -u $(id -u) -- sleep 1
+  cannot get fd for 'filters' map
+  failed to set filter "BPF" on event cycles:P with 13 (Permission denied)
+
+   I think it's confusing and better to tell user that you need to run 
+   'perf record --setup-filter pin' as root first.  But maybe due to the
+   issue #2, you still need to run it as root.
+
+Thanks,
+Namhyung
+
 
