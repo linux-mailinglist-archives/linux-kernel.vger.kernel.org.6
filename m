@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-510576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05861A31F08
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:35:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE58A31F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:41:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D524D188AA10
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC8D3A2988
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330C62010E3;
-	Wed, 12 Feb 2025 06:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lBou2fQP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fqkrGnDx"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5401FCF4F;
+	Wed, 12 Feb 2025 06:41:48 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72091FF1A6;
-	Wed, 12 Feb 2025 06:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECCE1EEA32;
+	Wed, 12 Feb 2025 06:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739341974; cv=none; b=khfQ2KJovA+9qOzjGpbB+g0D36qgb7c0GMEU1+OSEnikOfraOIrcvUA1VYC7Y+zjAIN4BCPhSR6X25AvvoXB+ySQmdhUfuC+chRNRyFENPHGEuFUqJvdHo+N/q+Ym6n3Rbvwad8jjqQltpErHtAjl2hJdJzEx8wWdGPCkzjNLwY=
+	t=1739342508; cv=none; b=q1w1PHvBgJaVnvUPt5FTZ8V93skoAaTJUUjwjgXeCY99xT9uBLgOZdtfiI/TB9Ofe7A7fkOc9FolUUA3wGjX8PnIPUbOAQXHDhX7ZsxJsdT49JI8G3DW5am2KnDVeR7gis3TbkP8BILuiUYiSNEqrPgFwaD5ZjAs1eNxZ0a0mmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739341974; c=relaxed/simple;
-	bh=d1MFYpO1khpcTJ8tD41CEzxUpyAuaVGNE4yTQWgzgWQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=EwwVKultv6V44+OUQRBar39WZwhicByTM603dbKSGYftyYfRWjhPBv74sykDo6qFk9aj6CZPTpRt3E38IWEu/vwdPxaYD17RA4iKPfSs8Ga33WFwJmjsbZuMn13s47vPcnbIR9b0JkTM8I8FBPwMeomGLdQUwceswMX8miWpbDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lBou2fQP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fqkrGnDx; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 65D181140160;
-	Wed, 12 Feb 2025 01:32:50 -0500 (EST)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-10.internal (MEProxy); Wed, 12 Feb 2025 01:32:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1739341970;
-	 x=1739428370; bh=d1MFYpO1khpcTJ8tD41CEzxUpyAuaVGNE4yTQWgzgWQ=; b=
-	lBou2fQPHZqkGHZUlw84+FBqQmhbL74C9wNs9fnTMdvmz/UwLSNYDBxPI1B8nPGw
-	HG+xmqyuEJSQ+wTqodoG6a6QPGnn/QhUo5upWDaTvY0XPFMCm5C/clDz2fUIi47Q
-	vb/qNuWSOwmKzQTWTm/op6M4w/40v0rWZPNoxUtR9MF2RVwhJuzOyGxZTJueCe0T
-	BhGTqvXPO4BmNAGNjizuHOuqYi7w8L5TQXGjRf46zeDUIBHyC/9btoKtIpRiydBr
-	xdgS4UvJu+Spgbi97D7DYNjXU4yL6OqL1ul9Sksd/PJ3XsfF/xtHOzaczA9Hnemy
-	l2uWkaSWp9IYfwFh6qEw8Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739341970; x=
-	1739428370; bh=d1MFYpO1khpcTJ8tD41CEzxUpyAuaVGNE4yTQWgzgWQ=; b=f
-	qkrGnDx+JQerBv4lAOHKIYxXkp3TtfM1/wO5p6vle6QXA4fh2t6MYt/WBYQvMTF/
-	80WmX5ys0q/cWddSKcfsLbHjAnMcRzegnAxPQIXPxSGrpRweGBhIRVFfeVQ/cfdv
-	w7gdpm4hOsmVLqgTjF6nh+KPhzErVtimlcR0wW4koaFZlMd8EU1+nmlD1sl6e947
-	Qw9TIPCrquTMm90NnHGFBvWROkIEvoKR/p5Zj6sYkvxCBgdM8/tm/5i44OhB/+2F
-	y+Bd10Oc61F+sW4IP81S/8YgJ+WGZD/NG+zkqC1S5InlZvltmpgdIRhAs7PfmqdG
-	KlOdiT2utIdt4tl/53AUA==
-X-ME-Sender: <xms:kUCsZ2Ia-wYU-Nq1Z2MEKURXaiwbf2GFbN9aXePZz2584YrKmknUtw>
-    <xme:kUCsZ-Jj7Ch08Z7gYuZNYG_BpNB4Yd3F3A-KkQqiaDTrmmAVRiII9Uom-a030_EEA
-    SJ_Xj6v5c5KWGJoIdc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfedujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughmihhtrhihrdhtohhrohhkhh
-    hovhesghhmrghilhdrtghomhdprhgtphhtthhopehprhiivghmhihslhgrfidrkhhithhs
-    iigvlhesihhnthgvlhdrtghomhdprhgtphhtthhopehrrggrghdrjhgruggrvhesihhnth
-    gvlhdrtghomhdprhgtphhtthhopehjihgtvdefsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfi
-    grlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprghnughrihihrdhshhgv
-    vhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmihhkrg
-    drfigvshhtvghrsggvrhhgsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohep
-    ghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:kUCsZ2vrG9bMr04h7DWCKGXnNTA2JhM5Wlsh_g80mpcpHNN4Aw3l-w>
-    <xmx:kUCsZ7bK7FRi2EZpe5N7RtGFOSErxpfOlDGU5e6S2RPo62LMHSk7qg>
-    <xmx:kUCsZ9aX_dYxaphYNKUVDPQduyv5BBH4QMLpdwwU_bKAEYT7EMg9Ug>
-    <xmx:kUCsZ3CGkm7ldlrm0plXQnR7uPgcR4a98wgZD9_KydrHMd-ony_8Fw>
-    <xmx:kkCsZxSpZ1seMJ4zX1WU1mU_17f8NVCGWixuE1CCAx35sevIjB5BNMGw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 96F191C20067; Wed, 12 Feb 2025 01:32:49 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739342508; c=relaxed/simple;
+	bh=6YO1Gy3y+qoZz8zIN+vjvk3mQBBe30aQCHwAFSrGcFI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cu5CyvaZCl+95M4JkgSE0vJqFJibDpXR0NjDqb8VQtiPbSch9REEyVLeFb2PMXPdkD81x2+89rSVZ9TzV45x5WIjvCF4295Jj8MopWu4wnpoW72Bl2fVIwpIW+jARUkpFa9jzJZyfFPXV5/VcU+6l2jMgbP1tDJDldLIEqOEshs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Yt7tw64kzz22mtb;
+	Wed, 12 Feb 2025 14:38:48 +0800 (CST)
+Received: from dggpemf200009.china.huawei.com (unknown [7.185.36.246])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7DDC0140138;
+	Wed, 12 Feb 2025 14:41:41 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ dggpemf200009.china.huawei.com (7.185.36.246) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 12 Feb 2025 14:41:41 +0800
+From: Xiaofei Tan <tanxiaofei@huawei.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<jonathan.cameron@huawei.com>, <mchehab+huawei@kernel.org>,
+	<roberto.sassu@huawei.com>, <shiju.jose@huawei.com>,
+	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>, Xiaofei Tan
+	<tanxiaofei@huawei.com>
+Subject: [PATCH v4] ACPI: HED: Always initialize before evged
+Date: Wed, 12 Feb 2025 14:34:08 +0800
+Message-ID: <20250212063408.927666-1-tanxiaofei@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 12 Feb 2025 07:32:29 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Raag Jadav" <raag.jadav@intel.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Mika Westerberg" <mika.westerberg@linux.intel.com>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Jonathan Cameron" <jic23@kernel.org>,
- "Przemek Kitszel" <przemyslaw.kitszel@intel.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
- linux-iio@vger.kernel.org
-Message-Id: <40de787e-db78-4af9-bf30-f3714e71fd42@app.fastmail.com>
-In-Reply-To: <20250212062513.2254767-2-raag.jadav@intel.com>
-References: <20250212062513.2254767-1-raag.jadav@intel.com>
- <20250212062513.2254767-2-raag.jadav@intel.com>
-Subject: Re: [PATCH v5 01/12] err.h: move IOMEM_ERR_PTR() to err.h
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200009.china.huawei.com (7.185.36.246)
 
-On Wed, Feb 12, 2025, at 07:25, Raag Jadav wrote:
-> Since IOMEM_ERR_PTR() macro deals with an error pointer, a better place
-> for it is err.h. This helps avoid dependency on io.h for the users that
-> don't need it.
->
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+When the module HED is built-in, the module HED init is behind EVGED
+as the driver are in the same initcall level, then the order is determined
+by Makefile order. That order violates expectations. Because RAS records
+can't be handled in the special time window that EVGED has initialized
+while HED not.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+If the number of such RAS records is more than the APEI HEST error source
+number, the HEST resources could be occupied all, and then could affect
+subsequent RAS error reporting.
+
+Change the initcall level of HED to subsys_init to fix the issue. If build
+HED as a module, the problem remains. To solve this problem completely,
+change the ACPI_HED from tristate to bool.
+
+Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+---
+ -v4: Fix register HED device twice issue found by Nathan, and change
+patch name following Rafael's advice.
+---
+ drivers/acpi/Kconfig | 2 +-
+ drivers/acpi/hed.c   | 7 ++++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+index d81b55f5068c..7f10aa38269d 100644
+--- a/drivers/acpi/Kconfig
++++ b/drivers/acpi/Kconfig
+@@ -452,7 +452,7 @@ config ACPI_SBS
+ 	  the modules will be called sbs and sbshc.
+ 
+ config ACPI_HED
+-	tristate "Hardware Error Device"
++	bool "Hardware Error Device"
+ 	help
+ 	  This driver supports the Hardware Error Device (PNP0C33),
+ 	  which is used to report some hardware errors notified via
+diff --git a/drivers/acpi/hed.c b/drivers/acpi/hed.c
+index 7652515a6be1..3499f86c411e 100644
+--- a/drivers/acpi/hed.c
++++ b/drivers/acpi/hed.c
+@@ -80,7 +80,12 @@ static struct acpi_driver acpi_hed_driver = {
+ 		.remove = acpi_hed_remove,
+ 	},
+ };
+-module_acpi_driver(acpi_hed_driver);
++
++static int __init acpi_hed_driver_init(void)
++{
++	return acpi_bus_register_driver(&acpi_hed_driver);
++}
++subsys_initcall(acpi_hed_driver_init);
+ 
+ MODULE_AUTHOR("Huang Ying");
+ MODULE_DESCRIPTION("ACPI Hardware Error Device Driver");
+-- 
+2.33.0
+
 
