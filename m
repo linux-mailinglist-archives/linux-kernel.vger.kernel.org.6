@@ -1,161 +1,243 @@
-Return-Path: <linux-kernel+bounces-511311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA76A3293D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:55:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806C7A32944
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:56:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E09E3A13FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E389C1883056
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09C1210F6D;
-	Wed, 12 Feb 2025 14:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C05A210190;
+	Wed, 12 Feb 2025 14:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mNbYHnKc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VauEEstV"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA03B20DD4E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A86920F06B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739372150; cv=none; b=bVv9KWBP+XiGvZxLqtcXHNKpBGpwIC18bR0sdKpDHPGzrzSK976UKfWdlHwBw2qDDNgjZuRmsVxejE/8dS9d/e/27eJU5MC7Fqq7LTfKuzfHAWVpfnBC/EWjj1gWjXiKxptlXrGrvxNQ9wPdQgpjL86gnzUeVYMnpG8Ffba1XJ8=
+	t=1739372213; cv=none; b=jusxNIMOuJMYLCBC8CtRdmzYGu1VzTchhjvEQ371Az0Ocnl6mFoyz3AAa582A28DwwHZydwIZNlYJygqDc6cmWyIrGbIdvZsDNEeCSrPGWiYTt1/FKekcvKBuahp0p4HQa9NCsNWJB1Fo/WoGIdTqjCQAEaE+2GyrTxwROXLw5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739372150; c=relaxed/simple;
-	bh=sSNGGMrE8T93VSmrATsF+z40Eu00MXY5OytJCnZR0Bs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hCOhA8WXievZ7gzIMyi2s48q2wC05EtdYQGHpT0N/4kkssuq4yQkRDPSITvpgluqtCWFVURa9zz+XfaM5idTFKoIsuGoURb8ULpls9bp0K12HhJ20a1S2llNG8y8iGjHytt3nT2P4ShqxLa3296wc9Kcg7AwftadN5PD+OIUhF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mNbYHnKc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C92U2u002612
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:55:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	916SG1gUix3A397XCQBzpFRlo+xOPFmr9pt67nE8rRw=; b=mNbYHnKcBEapiMyo
-	OgQ00QSK00iEYIFe1gA9+kkY4g+oBVPCAeKMN1AY6x2CkFUdyV1LpYOIe2oz9DXB
-	VWLERufiieWfXEEwjAGVRPF7u64DZRcYii/+7nPXreSwXmT2VG5z0H0We4ZLSCgQ
-	X62zBeiwXvOGsakEJZHrX89TeKKQmskTdsSleL0HUKb35q3eDr5xORgaVs/sqe5b
-	17eLhrY6LlwhzEskYeEPxzTviaHOyDCvPZkhknRugy10EAuxHXAtJOwKbuS7Xq+g
-	sPn5cTF4KhOmtgzovuUlqyrHup/sjJ3kpegxgOn+86wMm4RDPPMxS99DNKbo7l3R
-	Al8U7g==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rrnfrwqe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:55:47 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-471921f2436so4193231cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:55:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739372146; x=1739976946;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=916SG1gUix3A397XCQBzpFRlo+xOPFmr9pt67nE8rRw=;
-        b=PdeYeBWaPPb/5xMKyxNECBxuFHziXbmbczPNuYVvaloc5X1zk160QTadOzoMVjsFQU
-         PWwLh7Cd6bBELuNg+SownWidFWvnx2VxKj7GyDohWAfKKr4NyuKFYZG/98VZBRZWAs4L
-         yWJlSVd0JhB078yHbsgCbDirSxPWZGz2/QWZuxtEhp+hDXsj3EZ4jCv8P3rPQzyGRyY2
-         NUW/faMaepWPffkws/5zmwrFnXwbu/UyKs8j/BvRWzOgJDXnP+2mMCsNTzBNFHJ21QO2
-         Y+fsPYCtv8sh/yaf7yYb6I+/a6meCsWE3LumjRSQtIMAaCIeG3lydsF9W7d6kjl9LRxv
-         20DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0rpOAAVsIdxV55M1v6JyMwsLQ2ullppAQxi/lg4xPp3GXXshTgK30r772MR0oKbRvwva4WKqHxOb/0eQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/CGBm7JHL6S0Dm/xHVv15nZCC0yH3RSchRtPhPU5637kr8NaO
-	HgY2DUTz6H25gtrrbnq5cs/sRZU+w65pvmwrdG/3NqLsXe3So4cBGG27FBVfLdJXxxrzymJjPss
-	/OkfwAzUSQmlUqqMRIVVJG70wLHhgtVx++XT2JqerQ9MhRFtbuY0DBTVOW7T51aM=
-X-Gm-Gg: ASbGncuMckxZp8LvwkyaK3jHYTKtqCfjmx4aORu31zNK5UYjR3pDpmqZDDreXU6TDhW
-	eogvxQBkTKchaXhyzHI7sAbfvQoenDD5SVSE/x0rwoEES8AnCph9+B8/GP5tYzpMStaneVHmBKl
-	ufzjx5c3ImO9k0aUXsGUmQx+bvYoHlvvYFT2Dlauh9yCr+D8uLOuQOzy/4oq7S7LwwyM6eIhyB0
-	lEVcYhLqkMayu4c/NGs2yJKWteK7NZAuHA3R/NLpN+Acl8ULafhOTpPO/3rNbJ6JdV8fsXaoH+s
-	ld05XEG+w5bXduy5s743yMZHoHHVwMFP9AAqVB0UVPGTo7tGKkIIGW/fDOI=
-X-Received: by 2002:ac8:5dd2:0:b0:467:5d7f:c684 with SMTP id d75a77b69052e-471afed5648mr18796651cf.12.1739372146452;
-        Wed, 12 Feb 2025 06:55:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGzLBeiKZSyJ9lZh2Y7PO+RFQ3dmGp7ZGFUJgrbKrEQTQdh86uIFfhpBmJIWx0PHK0HA9YHAg==
-X-Received: by 2002:ac8:5dd2:0:b0:467:5d7f:c684 with SMTP id d75a77b69052e-471afed5648mr18796541cf.12.1739372146109;
-        Wed, 12 Feb 2025 06:55:46 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab772f49361sm1279167166b.33.2025.02.12.06.55.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 06:55:45 -0800 (PST)
-Message-ID: <f7a220d5-6866-4770-93a0-66e6d7b49491@oss.qualcomm.com>
-Date: Wed, 12 Feb 2025 15:55:43 +0100
+	s=arc-20240116; t=1739372213; c=relaxed/simple;
+	bh=IARuWv5q41i1jF/n5oRcxWGvOepjwqWn366nRpA9NGc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Tlwfedf+GV2OiOnP0Sngpqb1Wl1z9X6PP9YkE1MCSKooGoWgbRQ0Imo9a0EfKFBhCPR9zXtzPoaXcb5KTM4aWBQi+5j2uVNXbB7muQZIHlWt6juiwI1JXEcLvHsIzlAcEoIhmqNQyduednsVBrqZxayOSyD1GE2BJvtN6tPOJcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VauEEstV; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 34DD3778;
+	Wed, 12 Feb 2025 15:55:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739372127;
+	bh=IARuWv5q41i1jF/n5oRcxWGvOepjwqWn366nRpA9NGc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=VauEEstVlYcHP7Q92P3kEmmYqkQI9l7BlPAIpd51or/Tm80bjYNLSC5ft8V1gykUV
+	 oIx2QlUKORFVlaGEcBHF1rzNHBfz0M/Y6I+xRZhUCf57ODwp19qiqAT4kcCTfS75u5
+	 RTkLmXhUoj8QXuM2Ktxo0NNvEWVBXcKkM6jgKw8w=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v3 00/11] drm: Add new pixel formats for Xilinx Zynqmp
+Date: Wed, 12 Feb 2025 16:56:04 +0200
+Message-Id: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, p.zabel@pengutronix.de,
-        abel.vesa@linaro.org, quic_qianyu@quicinc.com,
-        neil.armstrong@linaro.org, manivannan.sadhasivam@linaro.org,
-        quic_devipriy@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250211094231.1813558-1-quic_wenbyao@quicinc.com>
- <20250211094231.1813558-3-quic_wenbyao@quicinc.com>
- <7deghiadmomrz7w7vq3v7nkzq2kabq4xbhkouswjrexif7pip3@tvjlpvuulxvp>
- <791fa29e-a2b5-d5f6-3cbc-0f499b463262@quicinc.com>
- <fwfxhy535nm7227wzlwlojxyxrr3ond5hmc3njqbcje3usfh5t@hqrnbpmdqweg>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <fwfxhy535nm7227wzlwlojxyxrr3ond5hmc3njqbcje3usfh5t@hqrnbpmdqweg>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: LtXFC3Ocr57xobosk7yJXlJCuIeg1iAf
-X-Proofpoint-ORIG-GUID: LtXFC3Ocr57xobosk7yJXlJCuIeg1iAf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- bulkscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
- suspectscore=0 adultscore=0 mlxscore=0 spamscore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502120113
+X-B4-Tracking: v=1; b=H4sIAIW2rGcC/23MQQ6CMBCF4auQrq3pTCmoK+9hXJS2yCRCTUsaD
+ OHuFowbdfm/5H0ziy6Qi+xUzCy4RJH8kEPuCmY6PdwcJ5ubocASAAWf6E7DxFsfej1G3tZwFFA
+ hHKRk+fQIrqVpAy/X3B3F0Yfn5idY1zeFovymEnDBRdOiUVDWtoEzWaejHxqvg90b37NVTPhRl
+ ABQPwpmBSohsTa6Uqj/KMuyvAAv0o3Y+QAAAA==
+To: Vishal Sagar <vishal.sagar@amd.com>, 
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Michal Simek <michal.simek@amd.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6161;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=IARuWv5q41i1jF/n5oRcxWGvOepjwqWn366nRpA9NGc=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnrLaije6yZUs92MxGzGxpJE/HKXYX1MER8neox
+ 6GlUInFcZKJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ6y2ogAKCRD6PaqMvJYe
+ 9b/iD/4h3m93HpFzPpZomvCMncvu6lbCfnKjdFy79Fano2vP0xkES2L9w0Efy5ETWj3m/0jmBbq
+ kUfII4XduBb6npzaGG44Rq5diw69x/DywDy2+s/ugn0bnWZLtFxyMrUCDxXGsu5wsBwKhbJKpzA
+ 1hoiloaahOzXVSIXn8xyGnv1yVvRXq3gkYRF36OtgOFGXCDzYqFzgk5w6wr7QXlh5e+rZZAE3+U
+ M922iBlNCfGKmPo0OLZ+x2I5WXwo/dpCVij5UeWPvibElUc2rHusAbSo+42asfHULWm0gaNyC/8
+ xrFYujraWjmE1qT1F9TiZWElUBnSlzaYgfkZ7CVbGD8tuVd/FEiK8EQJB6LgCb1Sadph6AUtYBp
+ QsBcJOdniHo6U1C8IzDjMm70ehw+u4yBLWdpVlnZw46ypNLZNRQo4FUrkUrAK1U1tRlo9l/pRM5
+ BSAJcC8RikZfsSDmH6Roknzz9quTR4TA/85bV/8ZkQK550QMVInchFSWPVGhqTyW9K5V7N5iMwV
+ PrI53sp+E0i8ztsdryHlXRzIOeVHIWvZa9R2Rbr8AMKKrJMl6Aui0t9XLDIKXCUODJ6uvECoQyl
+ cfpg03pJglMmTdvTQ6BoWul39Yg9EcL3zP5cnhbHr0XmxZgfu/BdeYR54uRPnQ5LBGw4yzwiUig
+ VVRJ3DwGs25ZEqw==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On 12.02.2025 12:07 PM, Dmitry Baryshkov wrote:
-> On Wed, Feb 12, 2025 at 04:31:21PM +0800, Wenbin Yao (Consultant) wrote:
->> On 2/12/2025 8:13 AM, Dmitry Baryshkov wrote:
->>> On Tue, Feb 11, 2025 at 05:42:31PM +0800, Wenbin Yao wrote:
->>>> From: Qiang Yu <quic_qianyu@quicinc.com>
->>>>
->>>> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
->>>> whole PHY (hardware and register), no_csr reset only resets PHY hardware
->>>> but retains register values, which means PHY setting can be skipped during
->>>> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
->>>> after that.
->>>>
->>>> Hence, determine whether the PHY has been enabled in bootloader by
->>>> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
->>>> available, skip BCR reset and PHY register setting to establish the PCIe
->>>> link with bootloader - programmed PHY settings.
->>>>
->>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->>>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
->>>> ---
->>>>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 91 +++++++++++++++---------
->>>>   1 file changed, 58 insertions(+), 33 deletions(-)
->>>>
-> 
->>>> @@ -4042,16 +4057,22 @@ static int qmp_pcie_power_on(struct phy *phy)
->>>>   	unsigned int mask, val;
->>>>   	int ret;
->>>> -	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->>>> -			cfg->pwrdn_ctrl);
->>>> +	/*
->>>> +	 * Write CSR register for phy that doesn't support no_csr
->>> what is CSR register?
->> The registers of PHY.
-> 
-> So 'CSR registers for phy' means 'registers of PHY for phy'? that seems
-> incorrect.
+Add new DRM pixel formats and add support for those in the Xilinx zynqmp
+display driver.
 
-"Control and Status Registers"
+All other formats except XVUY2101010 are already supported in upstream
+gstreamer, but gstreamer's kmssink does not have the support yet, as it
+obviously cannot support the formats without kernel having the formats.
 
-Konrad
+Xilinx has support for these formats in their BSP kernel, and Xilinx has
+a branch here, adding the support to gstreamer kmssink:
+
+https://github.com/Xilinx/gst-plugins-bad.git xlnx-rebase-v1.18.5
+
+New formats added:
+
+DRM_FORMAT_Y8
+- 8-bit Y-only
+- fourcc: "GREY"
+- gstreamer: GRAY8
+
+DRM_FORMAT_Y10_P32
+- 10-bit Y-only, three pixels packed into 32-bits
+- fourcc: "YPA4"
+- gstreamer: GRAY10_LE32
+
+DRM_FORMAT_XV15
+- Like NV12, but with 10-bit components
+- fourcc: "XV15"
+- gstreamer: NV12_10LE32
+
+DRM_FORMAT_XV20
+- Like NV16, but with 10-bit components
+- fourcc: "XV20"
+- gstreamer: NV16_10LE32
+
+DRM_FORMAT_X403
+- 10-bit planar 4:4:4, with three samples packed into 32-bits
+- fourcc: "X403"
+- gstreamer: Y444_10LE32
+
+XVUY2101010
+- 10-bit 4:4:4, one pixel in 32 bits
+- fourcc: "XY30"
+
+Some notes:
+
+I know the 8-bit greyscale format has been discussed before, and the
+guidance was to use DRM_FORMAT_R8. While I'm not totally against that, I
+would argue that adding DRM_FORMAT_Y8 makes sense, as:
+
+1) We can mark it as 'is_yuv' in the drm_format_info, and this can help
+   the drivers handle e.g. full/limited range. Probably some hardware
+   handles grayscale as a value used for all RGB components, in which case
+   R8 makes sense, but at least for Xilinx hardware it is YUV, just
+   Y-only, not RGB.
+
+2) We can have the same fourcc as in v4l2. While not strictly necessary,
+   it's a constant source of confusion when the fourccs differ.
+
+3) It (possibly) makes more sense for the user to use Y8/GREY format
+   instead of R8, as, in my experience, the documentation usually refers
+   to gray(scale) format or Y-only format.
+
+As we add new Y-only formats, it makes sense to have similar terms, so
+we need to adjust the Y10_P32 format name accordingly.
+
+I have made some adjustments to the formats compared to the Xilinx's
+branch. E.g. The DRM_FORMAT_Y10_P32 format in Xilinx's kmssink uses
+fourcc "Y10 ", and DRM_FORMAT_Y10. I didn't like those, as the format is
+a packed format, three 10-bit pixels in a 32-bit container, and I think
+Y10 means a 10-bit pixel in a 16-bit container.
+
+Generally speaking, if someone has good ideas for the format define
+names or fourccs, speak up, as it's not easy to invent good names =).
+That said, keeping them the same as in the Xilinx trees will, of course,
+be slightly easier for the users of Xilinx platforms.
+
+I made WIP additions to modetest to support most of these formats,
+partially based on Xilinx's code:
+
+https://github.com/tomba/libdrm.git xilinx
+
+A few thoughts about that:
+
+modetest uses bo_create_dumb(), and as highlighted in recent discussions
+in the kernel list [1], dumb buffers are only for RGB formats. They may
+work for non-RGB formats, but that's platform specific. None of the
+formats I add here are RGB formats. Do we want to go this way with
+modetest?
+
+I also feel that the current structure of modetest is not well suited to
+more complicated formats. Both the buffer allocation is a bit more
+difficult (see "Add virtual_width and pixels_per_container"), and the
+drawing is complicated (see, e.g., "Add support for DRM_FORMAT_XV15 &
+DRM_FORMAT_XV20").
+
+I have recently added support for these Xilinx formats to both kms++ [2] and
+pykms/pixutils [3][4] (WIP), and it's not been easy... But I have to say I
+think I like the template based version in kms++. That won't work in
+modetest, of course, but a non-templated version might be implementable,
+but probably much slower.
+
+In any case, I slighly feel it's not worth merging the modetest patches
+I have for these formats: they complicate the code quite a bit, break
+the RGB-only rule, and I'm not sure if there really are (m)any users. If
+we want to add support to modetest, I think a bigger rewrite of the test
+pattern code might be in order.
+
+[1] https://lore.kernel.org/all/20250109150310.219442-26-tzimmermann%40suse.de/
+[2] git@github.com:tomba/kmsxx.git xilinx
+[3] git@github.com:tomba/pykms.git xilinx
+[4] git@github.com:tomba/pixutils.git xilinx
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+Changes in v3:
+- Drop "drm: xlnx: zynqmp: Fix max dma segment size". It is already
+  pushed.
+- Add XVUY2101010 format.
+- Rename DRM_FORMAT_Y10_LE32 to DRM_FORMAT_Y10_P32.
+- Link to v2: https://lore.kernel.org/r/20250115-xilinx-formats-v2-0-160327ca652a@ideasonboard.com
+
+Changes in v2:
+- I noticed V4L2 already has fourcc Y10P, referring to MIPI-style packed
+  Y10 format. So I changed Y10_LE32 fourcc to YPA4. If logic has any
+  relevance here, P means packed, A means 10, 4 means "in 4 bytes".
+- Added tags to "Fix max dma segment size" patch
+- Updated description for "Add warning for bad bpp"
+- Link to v1: https://lore.kernel.org/r/20241204-xilinx-formats-v1-0-0bf2c5147db1@ideasonboard.com
+
+---
+Tomi Valkeinen (11):
+      drm/fourcc: Add warning for bad bpp
+      drm/fourcc: Add DRM_FORMAT_XV15/XV20
+      drm/fourcc: Add DRM_FORMAT_Y8
+      drm/fourcc: Add DRM_FORMAT_Y10_P32
+      drm/fourcc: Add DRM_FORMAT_X403
+      drm/fourcc: Add DRM_FORMAT_XVUY2101010
+      drm: xlnx: zynqmp: Use drm helpers when calculating buffer sizes
+      drm: xlnx: zynqmp: Add support for XV15 & XV20
+      drm: xlnx: zynqmp: Add support for Y8 and Y10_LE32
+      drm: xlnx: zynqmp: Add support for X403
+      drm: xlnx: zynqmp: Add support for XVUY2101010
+
+ drivers/gpu/drm/drm_fourcc.c       | 25 ++++++++++++++++++
+ drivers/gpu/drm/xlnx/zynqmp_disp.c | 54 +++++++++++++++++++++++++++++++++++---
+ include/uapi/drm/drm_fourcc.h      | 21 +++++++++++++++
+ 3 files changed, 96 insertions(+), 4 deletions(-)
+---
+base-commit: f7d07bcd0651b90dda8a6962057eb5fb1807a089
+change-id: 20241120-xilinx-formats-f71901621833
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
