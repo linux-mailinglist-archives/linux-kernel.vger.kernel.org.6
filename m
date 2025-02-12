@@ -1,113 +1,142 @@
-Return-Path: <linux-kernel+bounces-510939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA5BA323D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:48:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83886A323D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D31C188905E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:48:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFA18161B15
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE35C20896E;
-	Wed, 12 Feb 2025 10:48:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46AE208978;
-	Wed, 12 Feb 2025 10:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C102A209F26;
+	Wed, 12 Feb 2025 10:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsCk99ec"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D9D2AF19;
+	Wed, 12 Feb 2025 10:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357304; cv=none; b=LlLXyddMUNuiFGbKTfDeJDpkY0lfkDIFQfsDLpechVXNNeOwPKClxQ8X3lZ8+Am/nxINIAWtLYiJwCBZFY+fEFhYFBxyRKfOkcxPt7LzHUp9qDkYqbPcK7Ow+AeitqOZgoWepE+W7HCKPn8VsCEpxnE9a/VxAs4n/uKmb0/IDH8=
+	t=1739357377; cv=none; b=f364/g94c7WFYrTgkCyQjaYjOnC/+6xbx8C0R2ccajUHL1U0cBzC4SPb2hMAgp4uxSPmAYHhtD9FFQem9K1nBQIBJxSzZctW8IeZvCSXC5+nWBoYjXzCX0bRT6AUgGn8Rewirf2/j/i7aLKJ99l+yzN1ycY8YE1u/haGMVeAJzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357304; c=relaxed/simple;
-	bh=9IF2oBk6bHBAt4J0R6POr79YolbpRn/EuqK+TJfK6W4=;
+	s=arc-20240116; t=1739357377; c=relaxed/simple;
+	bh=SrZ7q3UddXW1p49/GdRvgpUzejtlAUiY6e9x0tcKinE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIsivXhUKDGrhZzVhhAChcSRDqgPyQx8/99YfKnUwRtSDc3P9d4iUhSjnmLTpJINXJ825yb1StdO3vC3IcaKq2zJ/CDRcGOkq9WqaOeBEc6iHQOPhK2o9nun2oazDbjKXKivru9aodYUljChL7hGA+i40gR+9vzBV5jqCskBApY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DC6512FC;
-	Wed, 12 Feb 2025 02:48:43 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 714193F6A8;
-	Wed, 12 Feb 2025 02:48:19 -0800 (PST)
-Date: Wed, 12 Feb 2025 10:48:16 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>, <arm-scmi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<imx@lists.linux.dev>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting fwnode for
- scmi cpufreq
-Message-ID: <Z6x8cNyDt8rJ73_B@bogus>
-References: <20241225-scmi-fwdevlink-v1-0-e9a3a5341362@nxp.com>
- <20241225-scmi-fwdevlink-v1-1-e9a3a5341362@nxp.com>
- <Z6uFMW94QNpFxQLK@bogus>
- <20250212070120.GD15796@localhost.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D+q4+hvyrftlj3ARhQAJrH9LRybl7B2WkTVVkrl0lqNlUYuB+40DyVMGzt7FYHfzCbiXeNhrdLPpBdZ4zrpzmx00xXe7350ll34veVmDadslLsc21ZEJSi6G7AFYxjvAI/nH/lT+lo9C7s4VaHIp1z66COBE+J1LEPHONsRNLpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fsCk99ec; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01860C4CEDF;
+	Wed, 12 Feb 2025 10:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739357376;
+	bh=SrZ7q3UddXW1p49/GdRvgpUzejtlAUiY6e9x0tcKinE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fsCk99ecgG1X1H4oCmDUZgnbAUfRIvj8fWtdlwdoQ07gzWE7fmKGgOCFbXT8zxU8z
+	 E17uZ/CKSWTiBSsXf6Z6vZWKYpqlNlcKGIyrhcObTMnI1Vs8SOuMqX9285cpyLhl3h
+	 i4BACZrSu2IrhvuCBWekSlYRZzO3qid0P9Ajy4xYJi/PyBLZ+A2HVA8MjrFX049Kga
+	 aC8profD5qguMrsDfEYi5k14CfG/ZS5ZwDrn1/hjq/RJX6KfdiM3+g5V+nuBxEflNE
+	 BuOxNawNPtWooUTQhU4pS84J5mQd1EBbum7ylQPZiEkomLW6MNCo51OZTDyrBZ+Ri7
+	 Mh4FqItv9flOg==
+Date: Wed, 12 Feb 2025 11:49:34 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Florent Tomasin <florent.tomasin@arm.com>
+Cc: Nicolas Dufresne <nicolas@ndufresne.ca>, Vinod Koul <vkoul@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Yong Wu <yong.wu@mediatek.com>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, nd@arm.com, 
+	Akash Goel <akash.goel@arm.com>
+Subject: Re: [RFC PATCH 1/5] dt-bindings: dma: Add CMA Heap bindings
+Message-ID: <20250212-sweet-nano-penguin-e85e7d@houat>
+References: <cover.1738228114.git.florent.tomasin@arm.com>
+ <771534be8dfa2a3bdc3876502752f518224b9298.1738228114.git.florent.tomasin@arm.com>
+ <ats2unrml5a7vbpdrqrzowodrsfj44bnubpbujg2igk3imeklx@nrpmg5oeq3gz>
+ <be8e6b9f-c3c6-41d1-af9c-3dcd102f0fe3@arm.com>
+ <b02711c901e8acf2bc47926919de7673a0cb0b98.camel@ndufresne.ca>
+ <fae8df2a-3e47-4266-aace-392c5f37581f@arm.com>
+ <20250212-naughty-chipmunk-of-potency-7e0ced@houat>
+ <8ee8e684-0164-4e70-b42e-3827c7885685@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="hofcel2epznouj7x"
 Content-Disposition: inline
-In-Reply-To: <20250212070120.GD15796@localhost.localdomain>
+In-Reply-To: <8ee8e684-0164-4e70-b42e-3827c7885685@arm.com>
 
-On Wed, Feb 12, 2025 at 03:01:20PM +0800, Peng Fan wrote:
-> On Tue, Feb 11, 2025 at 05:13:21PM +0000, Sudeep Holla wrote:
-> >On Wed, Dec 25, 2024 at 04:20:44PM +0800, Peng Fan (OSS) wrote:
-> >> From: Peng Fan <peng.fan@nxp.com>
-> >> 
-> >> Two drivers scmi_cpufreq.c and scmi_perf_domain.c both use
-> >> SCMI_PROTCOL_PERF protocol, but with different name, so two scmi devices
-> >> will be created. But the fwnode->dev could only point to one device.
-> >> 
-> >> If scmi cpufreq device created earlier, the fwnode->dev will point to
-> >> the scmi cpufreq device. Then the fw_devlink will link performance
-> >> domain user device(consumer) to the scmi cpufreq device(supplier).
-> >> But actually the performance domain user device, such as GPU, should use
-> >> the scmi perf device as supplier. Also if 'cpufreq.off=1' in bootargs,
-> >> the GPU driver will defer probe always, because of the scmi cpufreq
-> >> device not ready.
-> >> 
-> >> Because for cpufreq, no need use fw_devlink. So bypass setting fwnode
-> >> for scmi cpufreq device.
+
+--hofcel2epznouj7x
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH 1/5] dt-bindings: dma: Add CMA Heap bindings
+MIME-Version: 1.0
+
+On Wed, Feb 12, 2025 at 10:29:32AM +0000, Florent Tomasin wrote:
+>=20
+>=20
+> On 12/02/2025 10:01, Maxime Ripard wrote:
+> > On Wed, Feb 12, 2025 at 09:49:56AM +0000, Florent Tomasin wrote:
+> >> Note that the CMA patches were initially shared to help reproduce my
+> >> environment of development, I can isolate them in a separate patch
+> >> series and include a reference or "base-commit:" tag to it in the
+> >> Panthor protected mode RFC, to help progress this review in another
+> >> thread. It will avoid overlapping these two topics:
 > >>
-> >
-> >Not 100% sure if above is correct. See:
-> >
-> >Commit 8410e7f3b31e ("cpufreq: scmi: Fix OPP addition failure with a dummy clock provider")
-> >
-> >Am I missing something ?
-> 
-> Could we update juno-scmi.dtsi to use ?
-> 
->  &A53_0 {
-> -       clocks = <&scmi_dvfs 1>;
-> +       power-domains = <&scmi_perf x>;
-> +       power-domain-names = "perf";
->  };
->
+> >> - Multiple standalone CMA heaps support
+> >> - Panthor protected mode handling
+> >=20
+> > You keep insisting on using CMA here, but it's really not clear to me
+> > why you would need CMA in the first place.
+> >=20
+> > By CMA, do you mean the CMA allocator, and thus would provide buffers
+> > through the usual dma_alloc_* API, or would any allocator providing
+> > physically contiguous memory work?
+>=20
+> You are correct only the CMA allocator is relevant. I needed a way to
+> sub-allocate from a carved-out memory.
 
-We can, but I retained it so that the clocks property support can be still
-validated until it is removed. I think there are few downstream users of
-it. It is not just the DTS files you need to look at when dealing with
-such things. It is the bindings that matter. Until bindings are not
-deprecated and made obsolete, support must exist even if you modify the
-only user in the upstream DT.
+I'm still confused, sorry. You're saying that you require CMA but...
 
---
-Regards,
-Sudeep
+> > In the latter case, would something like this work:
+> > https://lore.kernel.org/all/20240515-dma-buf-ecc-heap-v1-1-54cbbd049511=
+@kernel.org/
+>=20
+> Thanks for sharing this link, I was not aware previous work was done
+> on this aspect. The new carveout heap introduced in the series could
+> probably be a good alternative. I will play-around with it and share
+> some updates.
+
+=2E.. you seem to be ok with a driver that doesn't use it?
+
+Maxime
+
+--hofcel2epznouj7x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ6x8uQAKCRAnX84Zoj2+
+dhpNAX9dpZ7jCHWS9XEKQqdeu+k8bL1z43DeFaKsONHamJEssyPacY4cU20LNyHZ
+dE3EP2gBfigcyv0UGOHYi7iyKQFw7lfvXnKfZ2/xUjJoWzSqoXVjjOm3bVKTr4WT
+bTbtf2LYNw==
+=IIBH
+-----END PGP SIGNATURE-----
+
+--hofcel2epznouj7x--
 
