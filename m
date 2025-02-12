@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-510393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F07A31C26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:37:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D8DA31C2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FB7E1882E9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:37:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9A70165558
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6621D5173;
-	Wed, 12 Feb 2025 02:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79911D54F7;
+	Wed, 12 Feb 2025 02:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5AD6OPj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H8x+T+/U"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91211CAA87;
-	Wed, 12 Feb 2025 02:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20E617996;
+	Wed, 12 Feb 2025 02:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739327828; cv=none; b=Ydo7eAPCs9lWTmxhpdfRddmIwa/KjGlwWyLS2WCuFYY7jOrSqyCHgeDzmNY4TRwha+S8EbcLXhQO3zZ1tbWsYJHDGVbePUGc0dZTB/QxPeh4vpTXzmMF+aZDVlxC558SjtrSj2yASr5YMDVhDOySZjrEPMtqrPWhtW/U8nonX3Q=
+	t=1739328003; cv=none; b=kBwIy+Wazpu4eWeOy813aKv9H81qpskH9b+XkRnliwJZAxW8VotdSIqg8XH5H/0KiOYfoqKO/cDTQg8nWj/17RiPSiD/ZzZKOoj0ZFerxyTxsDaTeyAkbUr1VkHsQOn+lK5k3z0PNVJxCxNdNrEFCoqNrB/N15yULWuWBJKPy78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739327828; c=relaxed/simple;
-	bh=YaAR5QiuZynmHcyvLV6BKRsvj5JY5bABea9gGeDWeFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iUafXH21OI30uj1QEBDbimBSznFPeQQ8v1jha3kt9gVi6IveY0T5uToABJcQtkq0G5oFIjRevVZ3sSgBD/EiFIx53DKLoxVF7brCu6z+EvSdGuojNNdD+fpySQrXaF8nzv2YF/VqfmLH4NIEVievp1Vs1L+YdEt+j+xWWKNmmh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5AD6OPj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6255DC4CEDD;
-	Wed, 12 Feb 2025 02:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739327828;
-	bh=YaAR5QiuZynmHcyvLV6BKRsvj5JY5bABea9gGeDWeFY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=N5AD6OPj27Wkl3Luv+2FQWbuMklKx+34Rn1CtdQ7zsG0l3BSPFpgbnfhOv049+xE3
-	 9IGOPTvYzEW72lzsJFiv4Mkj9ZD4yK2lEADua433cG9lJtFl1MStAzbNaqvdOzvz1U
-	 BQWV5tkZeD3kF8BKP1x2l9IjHq0hj4w7zSJWn8hpzebjQdp52kcVYL9Lu6VhhkvRjk
-	 juBJIrur3mliULP8YoLOx6fB5NDfc6+BmRUTR9DTHudrkd/6whs+4GtlZRVagu0Tpz
-	 n1r/gk1+3jHIg9XDqmtU97wUfq86b0Wm4nyj2scSKQCaiLO463n+M27lcwDEk6W0mN
-	 FfonvHT/opiAA==
-Date: Tue, 11 Feb 2025 18:37:06 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: Joe Damato <jdamato@fastly.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, horms@kernel.org, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>, Alexei
- Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
- <john.fastabend@gmail.com>, open list <linux-kernel@vger.kernel.org>, "open
- list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, "open
- list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)"
- <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v6 3/3] selftests: drv-net: Test queue xsk
- attribute
-Message-ID: <20250211183706.5b53ee5e@kernel.org>
-In-Reply-To: <Z6vY_LXp3LTp7qWV@mini-arch>
-References: <20250210193903.16235-1-jdamato@fastly.com>
-	<20250210193903.16235-4-jdamato@fastly.com>
-	<13afab27-2066-4912-b8f6-15ee4846e802@redhat.com>
-	<Z6uM1IDP9JgvGvev@LQ3V64L9R2>
-	<Z6urp3d41nvBoSbG@LQ3V64L9R2>
-	<Z6usZlrFJShn67su@mini-arch>
-	<Z6vRD0agypHWDGkG@LQ3V64L9R2>
-	<Z6vY_LXp3LTp7qWV@mini-arch>
+	s=arc-20240116; t=1739328003; c=relaxed/simple;
+	bh=VSxaYJSp4WgI/pL55ynDVo4C2Xt2d0ehnWxBDBjl1w8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hx5kKYZ5rq9QJgF9IqVLSic6x+TlnZmqe2PtMZ5BEIi828L5fFqW1xnrDPov8KpKOhXNpZkpxtIF0eFisTemnJkCRKKIaAV0hln2QsKF+u7H/441ectFQJeXSsUeckIYtA3WT2Q64lmT614hG/pTly0M9dtSq3aBwnRyZ3DG51E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H8x+T+/U; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739328002; x=1770864002;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=VSxaYJSp4WgI/pL55ynDVo4C2Xt2d0ehnWxBDBjl1w8=;
+  b=H8x+T+/UGCTN09DigQlxZ3zijC/fI3lyi6BVEOVi/yN5YP0TRfQuauYE
+   49zqazs4Me5Hxuk27qdcJJn3l/NwMgr8VKU+7i2k7rx4UQB7yyfXjqA3l
+   b3lQrW41lb/uLa63aZ7wG4xhnhJEyBKdRZ4s9kzUJ1MddyIb6cJvMbXPj
+   zfPqZcU55A6NiM3h4iAHOCJ9eUxSKJwWo4ni7ooRHFmidWSJX04wJPN7Z
+   nm+at/3MiCtRoI/B0Ow6OOouyFmVKgMKcb0qJm4ELNxQTzKChI0Pevj3S
+   VHVCGm7auJwiwHlSSnyXzYpxbjbNI5HimH5CgxK7hpP8j9XK12J0GzN13
+   Q==;
+X-CSE-ConnectionGUID: UD16/daKQwe0SXGFVUn5/A==
+X-CSE-MsgGUID: p6I/j/HiQCeATR5xshAKNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40091534"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="40091534"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 18:40:01 -0800
+X-CSE-ConnectionGUID: rvjKxpzgRb+OyCdLiZPFyw==
+X-CSE-MsgGUID: JQkgZWi9SbCInrbIucRWhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="112549842"
+Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 18:39:58 -0800
+Message-ID: <fd496d85-b24f-4c6f-a6c9-3c0bd6784a1d@linux.intel.com>
+Date: Wed, 12 Feb 2025 10:39:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] KVM: TDX: Handle TDX PV MMIO hypercall
+To: Chao Gao <chao.gao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com, tony.lindgren@intel.com,
+ isaku.yamahata@intel.com, yan.y.zhao@intel.com, linux-kernel@vger.kernel.org
+References: <20250211025442.3071607-1-binbin.wu@linux.intel.com>
+ <20250211025442.3071607-9-binbin.wu@linux.intel.com>
+ <Z6wHZdQ3YtVhmrZs@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <Z6wHZdQ3YtVhmrZs@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Feb 2025 15:10:52 -0800 Stanislav Fomichev wrote:
-> > I can't comment on NIPA because I have no idea how it works. Maybe
-> > there is a kernel with some options enabled and other kernels with
-> > various options disabled?  
-> 
-> Sorry, should've been more clear. My suggestion is to add 
-> CONFIG_XDP_SOCKETS to tools/testing/selftests/drivers/net/config
-> to make your new testcase run in a proper environment with XSKs enabled.
 
-+1 this we need for sure
 
-> > I wonder if that's a separate issue though?
-> >
-> > In other words: maybe writing the test as I've mentioned above so it
-> > works regardless of whether CONFIG_XDP_SOCKETS is set or not is a
-> > good idea just on its own?
-> > 
-> > I'm just not sure if there's some other pattern I should be
-> > following other than what I proposed above. I'm hesitant to re-spin
-> > until I get feedback on the proposed approach.  
-> 
-> I'd keep your test as is (fail hard if XSK is not there), but 
-> let's see if Paolo/Jakub have any other suggestions.
+On 2/12/2025 10:28 AM, Chao Gao wrote:
+>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+>> index f13da28dd4a2..8f3147c6e602 100644
+>> --- a/arch/x86/kvm/vmx/tdx.c
+>> +++ b/arch/x86/kvm/vmx/tdx.c
+>> @@ -849,8 +849,12 @@ static __always_inline u32 tdx_to_vmx_exit_reason(struct kvm_vcpu *vcpu)
+>> 		if (tdvmcall_exit_type(vcpu))
+>> 			return EXIT_REASON_VMCALL;
+>>
+>> -		if (tdvmcall_leaf(vcpu) < 0x10000)
+>> +		if (tdvmcall_leaf(vcpu) < 0x10000) {
+>> +			if (tdvmcall_leaf(vcpu) == EXIT_REASON_EPT_VIOLATION)
+>> +				return EXIT_REASON_EPT_MISCONFIG;
+> IIRC, a TD-exit may occur due to an EPT MISCONFIG. Do you need to distinguish
+> between a genuine EPT MISCONFIG and a morphed one, and handle them differently?
+It will be handled separately, which will be in the last section of the KVM
+basic support.  But the v2 of "the rest" section is on hold because there is
+a discussion related to MTRR MSR handling:
+https://lore.kernel.org/all/20250201005048.657470-1-seanjc@google.com/
+Want to send the v2 of "the rest" section after the MTRR discussion is
+finalized.
 
-No strong preference. Stan is right that validating the environment 
-is definitely a non-goal for the upstream tests. But if you already
-added and tested the checks Joe you can keep them, up to you.
+For the genuine EPT misconfig handling, you can refer to the patch on the
+full KVM branch:
+https://github.com/intel/tdx/commit/e576682ac586f994bf54eb11b357f3e835d3c042
+
+
+
 
