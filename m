@@ -1,162 +1,150 @@
-Return-Path: <linux-kernel+bounces-511344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F5BA329B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:15:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33DAA329A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:15:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136891652AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:15:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336EA3A43D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A64B213E89;
-	Wed, 12 Feb 2025 15:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7035B21171B;
+	Wed, 12 Feb 2025 15:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPkye97P"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tqqb0g9h"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7808A20E038;
-	Wed, 12 Feb 2025 15:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AE920F078
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739373320; cv=none; b=fTTTdwcpUhKFNLzh/nseyxDIrkZK5q6qUJN41921RvWtMM8YpvZl1n5wQ3huaM6hHuE9EZD9zaKLTPRZMmxGYb+Dq9kHLMpzRnubVRzLAWShNRUf4JU0tT3znmfcjzcAiiEyOd/GRwW9FKn86w3iF5HKOYEkmcgTcgnTqdzqoOA=
+	t=1739373308; cv=none; b=BWdoBAWubeibVW5014RhB36LnKKHFmSvN6MwtHOfqVU2VFPQd0IAD3uWlv1VGlRq69jCsrlRrL/e52LV6t0Sr8tF2rVry3yCNxxDCkr1QuNlMynIvjhccZkTyGeoXZTnnVDFu0tFLl6Svb7PnWdGwDVeTo2Tr4cYU1InQ7r72rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739373320; c=relaxed/simple;
-	bh=36xnraS+6CjRXGXyxx9IPLW3xTJ9QTHCIwLdimGlQi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpjOxHfCFq5hqT8jbMKhkEJ5HDRXLoRGz2BeLn4vRb7sI2RwbSvqYqd7h56ofSA41jdJcsocOmH4TbXZ2Nien/fWHdeHJYfaSzSkkawy39sIffmiLMgD/KLoEfcbOWTxvycLXK8DDwSN/aYuxC5kHI4RuIXcrsvVQP7KAbsM9sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPkye97P; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739373319; x=1770909319;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=36xnraS+6CjRXGXyxx9IPLW3xTJ9QTHCIwLdimGlQi0=;
-  b=MPkye97PwPbC3QXTuif17NJuoVr4Vyw7ScO/3X2sh/YBvmltSmymMEtD
-   hCyHjF3/Yk5sSGTb2BAM3au0/TqDwfJvf+w6dbTyyQbC+xsWMfMLuvG3j
-   QlupUwRJyQpMTNbF1z06OSHtcpcMFmzrZll4qV63wtkkByc4gZlJoMIJt
-   5djCmUHQYfP8zaWoJ/C9JEHnmapI4wfc8Ddet02Kzz8zo8swZLkHixptk
-   BdWh5n6/mvPh8R1GF5DlnfPLtlHW8SjLL+ZptOgiwnoHqFufwCV1r4fxc
-   YExmobPsXaZHTp6cDC0O5imwyt9Nq/AxsjamKWlyLYWYOFzwBugDAWf/x
-   g==;
-X-CSE-ConnectionGUID: COuVtPhUT7yfw/4vq/uVIg==
-X-CSE-MsgGUID: CSsubyjKQ4SDfUiTTTFAsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="40183840"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="40183840"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 07:14:54 -0800
-X-CSE-ConnectionGUID: NvtxVxtuSYmAOoy7n70nOA==
-X-CSE-MsgGUID: ZyAwoJg4Qj+b8TMPaP18dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="112621912"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 07:14:49 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tiERq-0000000As7i-0VFM;
-	Wed, 12 Feb 2025 17:14:46 +0200
-Date: Wed, 12 Feb 2025 17:14:45 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 4/7] gpio: max7360: Add MAX7360 gpio support
-Message-ID: <Z6y65SnrprvnpKEa@smile.fi.intel.com>
-References: <20250113-mdb-max7360-support-v3-0-9519b4acb0b1@bootlin.com>
- <20250113-mdb-max7360-support-v3-4-9519b4acb0b1@bootlin.com>
- <Z5eFGJspoGOINcG6@smile.fi.intel.com>
- <D7QHGB7D0VSG.X255SDU7DFOF@bootlin.com>
+	s=arc-20240116; t=1739373308; c=relaxed/simple;
+	bh=HzR0A/uGmbxhFBeAPx1D1BEakbEylPhwBWP9W3rkLGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B7cYTjfB7ICTZ/Icph+AF3RLkf0QiClEeRkSZAex4tarKm2dSQX/SyGqj0eU9KKB4ATgLmlYtkWwM17am4tldEFUqxDPFbCrUZ210bs+46uxTQV4d9s4aBQefEQ4yF8vbe0NkTaKMQYmBM06SKRYzuD8qD9hPLzXS0w5MRbiDQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Tqqb0g9h; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30795988ebeso69749921fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:15:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1739373305; x=1739978105; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XbeFhgjlAz4HP0qajS/kFL0VJiSyjCShat9G6ecggLw=;
+        b=Tqqb0g9hgvQoJnlxioj10Qssnwq9rCDvgEEUV9zXpcu7EkslLTPan1mbV9jRveTxYL
+         zCn54VDVgIKOZWR40ioUyCf5WXVvYmsa1jZFh2Tp9rq6zDp5oXOZjErsH+vuwQJ6Uzud
+         49ON3Ec6d6nRmWIA4+JjX1d/6+iTV1FoPt6YA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739373305; x=1739978105;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XbeFhgjlAz4HP0qajS/kFL0VJiSyjCShat9G6ecggLw=;
+        b=l28eI/1Mm3DLPIicu9fV4VSbcGLk8T6jHV/xSwvc07jIrm8gYlRVrVnEYFBkM+ia6J
+         PpGUcnAR1NtUaNa6qGWkXArnnXWJSnkCfa99Q8pyv60nUGn5yjJzsEYknWHAg3cD1BtJ
+         LdCB4q9KbizRna0XMcup58n4kb34AHKOUMzXhDHHAE8qYTvmxaaMJfBz0rhecIfuIg6R
+         iDtpmcwOBEck2nasOdZ0PqnIvg/3ajVHugktAiE0pdIPCmuWlS46Qz4+DfITS0rrqGmG
+         u5blyWYwxZMV5js+/JPXBmD8QGvzRm+4Igpy/wPZ7vVdu1qsLTKoCQFYp24ILCTC6TY3
+         mCXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzd1dp2JCAs1ooVPqlgqXY2gKmEfIuRmQxPYlIiQEDS6+ZFcDs+SFt5KipAgwWZFJsIE9n4lDYXeti474=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR21NtKtUelEz0Pz7pYkR5qs9yiq/Bo6OIpqTLNS4PD8a99UWI
+	tzFiIznLvvYgQJTKiAhrhzgPjX3xo0paNfo0DXALhdisancGLR/SfmsjNwroDQyfRV4uMN5TAHr
+	KieDd
+X-Gm-Gg: ASbGnct5FynCu85TR6A31FMedGiVCyxOfY7zZ57Ys7cwv8Xr+VpfsFDe1DugeSKFj+6
+	XGisWrILN3865cHsZcWA7gQNhNYzMR4gqT6aslzC1lvwlYemy5dBU7aJm/iBa2n2HcCubMVfEbr
+	lmlk9Ob5K3QJujOEFCImXPkbqCBfRsgJpf6iNpi6ToDzC5lXxA5rRPdQpcmD2S+o4XzU4ajv3dp
+	Xyd3LSBJ3GJKjf0n8QRA+YEGwXSB9ejP1SvOOTPTD2OEXks5mXfyIU2DAUcTDDsTND3Vj4PIYCK
+	gYvvjwQgJdo5GTH4Y+2HHupamBlE32lbnUwfak0nwBAoF90onUzROGU=
+X-Google-Smtp-Source: AGHT+IFD5qd/VAu4E46sMN+cXWyl/PNkmH0OZSxvmWFikLWBM5ZToXvjWtQj+OxsROSi3ud7PrXCfQ==
+X-Received: by 2002:a2e:be91:0:b0:308:eb58:6581 with SMTP id 38308e7fff4ca-309035c3d57mr13322381fa.0.1739373304831;
+        Wed, 12 Feb 2025 07:15:04 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-307de2ba9dcsm19648581fa.70.2025.02.12.07.15.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 07:15:04 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54505c79649so3861098e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:15:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU5Yu5jyiTHF6YQdkCdCA1xRtL73/JO3loNPzhBsllzfbqJijiHpW0jfQoKTzFOLHIjEwrbXK+jpYTqVjw=@vger.kernel.org
+X-Received: by 2002:a05:6512:3a82:b0:545:191:81db with SMTP id
+ 2adb3069b0e04-5451816b6f5mr1124828e87.50.1739373303596; Wed, 12 Feb 2025
+ 07:15:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D7QHGB7D0VSG.X255SDU7DFOF@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250204-bridge-connector-v2-0-35dd6c834e08@kernel.org>
+ <20250204-bridge-connector-v2-35-35dd6c834e08@kernel.org> <CAD=FV=WXkqfWoAiqbsfWiJo259oQxMV0UrQsX=qD5nVH=Dmaqg@mail.gmail.com>
+In-Reply-To: <CAD=FV=WXkqfWoAiqbsfWiJo259oQxMV0UrQsX=qD5nVH=Dmaqg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 12 Feb 2025 07:14:51 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UpiZxbeu9kF=bRfC=+YZmDj3qM+kSo5c7oRxaXTPDi6A@mail.gmail.com>
+X-Gm-Features: AWEUYZmCbXkwQXYOuxiuptXgxJouhwsR1MuVeaed67REZjmWnZsAiLDy0PQkoNY
+Message-ID: <CAD=FV=UpiZxbeu9kF=bRfC=+YZmDj3qM+kSo5c7oRxaXTPDi6A@mail.gmail.com>
+Subject: Re: [PATCH v2 35/35] drm/bridge: ti-sn65dsi86: Use bridge_state crtc pointer
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Stephen Boyd <swboyd@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 01:57:34PM +0100, Mathieu Dubois-Briand wrote:
-> On Mon Jan 27, 2025 at 2:07 PM CET, Andy Shevchenko wrote:
-> > On Mon, Jan 13, 2025 at 01:42:28PM +0100, Mathieu Dubois-Briand wrote:
+Hi,
 
-...
-
-> > > +	parent = to_platform_device(pdev->dev.parent);
+On Tue, Feb 11, 2025 at 2:16=E2=80=AFPM Doug Anderson <dianders@chromium.or=
+g> wrote:
+>
+> Hi,
+>
+> On Tue, Feb 4, 2025 at 7:01=E2=80=AFAM Maxime Ripard <mripard@kernel.org>=
+ wrote:
 > >
-> > Why do you need this? Can't the fwnode be propagated to the children and then
-> > the respective APIs to be used?
-> 
-> I'm not sure to understand this correctly, what do you mean by
-> propagating the fwnode to the children?
-> 
-> Just a quick summary of the situation and what I try to do. The device
-> tree looks like this, only keeping the interesting properties:
-> 
-> io-expander@38 {
->   ...
->   interrupts = <23 IRQ_TYPE_LEVEL_LOW>,
->                <24 IRQ_TYPE_LEVEL_LOW>;
->   interrupt-names = "inti", "intk";
-> 
->   max7360_gpio: gpio {
->     ...
->   };
-> 
->   max7360_gpo: gpo {
->     ...
->   };
-> };
-> 
-> Our pdev fwnode points either to the "gpio" or "gpo" nodes, the one from
-> our parent device points to "io-expander@38". Here we need to get the
-> "inti" interrupt from the parent node. What would be the correct way to
-> do it?
+> > @@ -374,12 +377,15 @@ static int __maybe_unused ti_sn65dsi86_resume(str=
+uct device *dev)
+> >          * panel (including the aux channel) w/out any need for an inpu=
+t clock
+> >          * so we can do it in resume which lets us read the EDID before
+> >          * pre_enable(). Without a reference clock we need the MIPI ref=
+erence
+> >          * clock so reading early doesn't work.
+> >          */
+> > -       if (pdata->refclk)
+> > -               ti_sn65dsi86_enable_comms(pdata);
+> > +       if (pdata->refclk) {
+> > +               drm_modeset_lock(&pdata->bridge.base.lock, NULL);
+> > +               ti_sn65dsi86_enable_comms(pdata, drm_bridge_get_current=
+_state(&pdata->bridge));
+> > +               drm_modeset_unlock(&pdata->bridge.base.lock);
+>
+> Oh. I haven't tested yet (my device is at home, but I think there is
+> an easy solution to my deadlock problems. Drop the modeset locks here
+> and just pass NULL for the state. We only end up here if
+> "pdata->refclk" is not NULL. Then we only use the passed state if
+> "pdata->refclk" _is_ NULL.
 
-Ah, I see now. This is being used only for IRQs, but don't you want to call
-actually fwnode_irq_get_byname()? It will makes the intention clearer.
+I can confirm this works. At the very least I was able to boot up both
+with a hardcoded panel and with "edp-panel" and both worked. Seems
+like a good solution for your patch.
 
-...
+Long term we should probably get rid of the support for working
+without a "refclk". It's theoretically possible to use the hardware
+that way and some super early prototypes I worked on used that. ...but
+it's a bad idea and I'm fairly certain nobody is _actually_ using it.
+That means that the code for handling it is likely not tested and may
+have bugs.
 
-> > > +	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios)) {
-> > > +		dev_err(&pdev->dev, "Missing ngpios OF property\n");
-> > > +		return -ENODEV;
-> > > +	}
-> >
-> > This is not needed, it is already done in GPIOLIB core.
-> 
-> I believe this is still needed:
-> - For gpos, we need the gpio count to correctly set the partition
->   between gpo and keypad columns in max7360_set_gpos_count().
-
-Shouldn't be that done somewhere in the GPIO valid mask initialisation?
-
-> - For gpios, we need the gpio count to setup the IRQs.
-
-Doesn't GPIOLIB parse the property before initializing the IRQ valid mask
-and other init callbacks?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-Doug
 
