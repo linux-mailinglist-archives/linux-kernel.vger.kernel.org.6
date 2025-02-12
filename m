@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-510915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A713A3238E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:36:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 543D0A32392
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:37:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC27A188B56C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:36:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDE27188B518
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8774A20896B;
-	Wed, 12 Feb 2025 10:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD3D20896C;
+	Wed, 12 Feb 2025 10:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pIezP+wv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R+JyVdlL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I8pUmckE"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBFA2080EC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BED1F9A83;
+	Wed, 12 Feb 2025 10:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739356594; cv=none; b=AQ1yuSrLYdUeQxn7kzIoKni+kyq28N30QyFk78F4ra+NEtorRa1Ny1Osdcj30y0aggVMJ/2YgcW6RKTo3K/CEjbaddyq104Y0bH7EW2TcE/uYlkZ35m6Z9AmkmRcKwsSE1LocMlQ7KqmKiagfTVCmYtewAX86PczqQWujt9BpQE=
+	t=1739356661; cv=none; b=cwpIwmXlVMixuInCaKcJQH0q7mG2i+FHDsC52BQgZQU6ya106gOMbzYdp6jSJ8ZuPlOt7Bw3gHmKCqD/6sV0C2+RfikNEJGizT+iqz/3peRoSOixEG8rhnSlANmxL7sfU58mnRfbrWtke0y46LCNyjb8S8Ggndpvb5f7i3NeG2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739356594; c=relaxed/simple;
-	bh=mkHccYxFpw6IWV8gVpwa1KPT8Brq/wgiFwIOvtIyvfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bpsomf3OeKh7CCQcZ52EFBdPnpTRcQgW3/OMNmRlj7KEqKNTA8SwnxVeggp7VP6g1knsp32HATNvtjg+1cM29NPOB/BzkW5wrbbMff6HlapX82HQzDcm2RBeK3aFbdYpfk4G0Sy3OvG86wpj8GwR2XrQ6+foHeyiEvrWMmO2+BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pIezP+wv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R+JyVdlL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739356584;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v0V4Zx3GTmtiiX2SMw1wyrim82M3wrqb99wqyWJPfww=;
-	b=pIezP+wvklkZjMk1CtsSIWcvWsuIXOBKqxeEE68+fNSSdpiASieVoRqsdNCKk8V5MuQXSt
-	GER6KRSmMvTuZoh6VF0vLTTloxJdFO8FYWrlHtvW/TlLWUSAIHah/6F7LnQyGXyGeXbkpK
-	H9Ya75zGtfqAg9zlHPoBINOVEmNQI5MS+W8TzSnq9Ir3Ix+7QLfVS1h/3nw2Q4q6YH0sK/
-	knxbekKw66Q8fxLpBGtNF66vFJwfxiRA5MN4boOuBwSEeXpd9W3TB2mybP5VeTaG97wBe1
-	qdS8gJSPr03ExrnCmbU1Vrtxs4cCD6wgytqIPGHR9GODZ2p7zMzGw5CPosNHVQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739356584;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v0V4Zx3GTmtiiX2SMw1wyrim82M3wrqb99wqyWJPfww=;
-	b=R+JyVdlLpdD39g2mXfGR+1tv5aFKF6PkzC84ug5lSbXE5rn6AnRmJHaTzz4svb0XNUM0Iz
-	hCrVOeeIyjb58BCw==
-To: linux-rt-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 2/2] lockdep: Remove disable_irq_lockdep().
-Date: Wed, 12 Feb 2025 11:36:19 +0100
-Message-ID: <20250212103619.2560503-3-bigeasy@linutronix.de>
-In-Reply-To: <20250212103619.2560503-1-bigeasy@linutronix.de>
-References: <760e34f9-6034-40e0-82a5-ee9becd24438@roeck-us.net>
- <20250212103619.2560503-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1739356661; c=relaxed/simple;
+	bh=k/xHaZw9Tz6lmoCuwwVAm04oRGKiqCf1wbcqAMZmcVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fRXwIGzLenElNQGqoTOAmD/1i5ZwijKLBbBjszGLP02mCcZrfetJ+D38CYP4atttEDyg5UTne83QANCLxtWhMMQ2quyraNv/HUKOw00DlHU4KcZo/VyA0c0ZGjrL+NCXNZJY3nRMRAa6aSDZ+0hzt/dyH8zvM0NJ4VC4Tl6I0Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I8pUmckE; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739356657;
+	bh=k/xHaZw9Tz6lmoCuwwVAm04oRGKiqCf1wbcqAMZmcVE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I8pUmckE/VrhFzGJrHFb8l3kffAS9Zu0hipC0goSWw9N174CY9irmhDzjVC4TY7pp
+	 7QS1MRIpLIqM6he/PPxwBd6rdKs7sD9DbphMcyFyPHrTris+QRjVVNHp2uoatKBd9L
+	 IwC713km8Xc7Uk4I293gmxlW6j7GYXlnnw6jN3DHeRtnnwZdu/wfqZBaBOIBp+dPSE
+	 ZcgECT8w3mJf95orzRzXdXH0Q9IWM+CY38j0sUFMqpBseuLHw2Y5KhyWdonIYeMGj6
+	 SU6zA9IHHfo8Wv6xXP2aNRrVrpgUa/M2ip3fAaexclT0ekzgymM1yf75g9X/5VFQa3
+	 v1rjIVI0lhntQ==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9FF5A17E0ECF;
+	Wed, 12 Feb 2025 11:37:36 +0100 (CET)
+Date: Wed, 12 Feb 2025 11:37:15 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Florent Tomasin <florent.tomasin@arm.com>, Nicolas Dufresne
+ <nicolas@ndufresne.ca>, Vinod Koul <vkoul@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Steven Price <steven.price@arm.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, Benjamin
+ Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey
+ <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, "T . J .
+ Mercier" <tjmercier@google.com>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Yong
+ Wu <yong.wu@mediatek.com>, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, nd@arm.com, Akash Goel
+ <akash.goel@arm.com>
+Subject: Re: [RFC PATCH 1/5] dt-bindings: dma: Add CMA Heap bindings
+Message-ID: <20250212113715.166def88@collabora.com>
+In-Reply-To: <20250212-naughty-chipmunk-of-potency-7e0ced@houat>
+References: <cover.1738228114.git.florent.tomasin@arm.com>
+	<771534be8dfa2a3bdc3876502752f518224b9298.1738228114.git.florent.tomasin@arm.com>
+	<ats2unrml5a7vbpdrqrzowodrsfj44bnubpbujg2igk3imeklx@nrpmg5oeq3gz>
+	<be8e6b9f-c3c6-41d1-af9c-3dcd102f0fe3@arm.com>
+	<b02711c901e8acf2bc47926919de7673a0cb0b98.camel@ndufresne.ca>
+	<fae8df2a-3e47-4266-aace-392c5f37581f@arm.com>
+	<20250212-naughty-chipmunk-of-potency-7e0ced@houat>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-disable_irq_lockdep() has no users, last one was probabaly removed in
-   0b7c874348ea1 ("forcedeth: fix unilateral interrupt disabling in netpoll=
- path")
+On Wed, 12 Feb 2025 11:01:11 +0100
+Maxime Ripard <mripard@kernel.org> wrote:
 
-Remove disable_irq_lockdep().
+> On Wed, Feb 12, 2025 at 09:49:56AM +0000, Florent Tomasin wrote:
+> > Note that the CMA patches were initially shared to help reproduce my
+> > environment of development, I can isolate them in a separate patch
+> > series and include a reference or "base-commit:" tag to it in the
+> > Panthor protected mode RFC, to help progress this review in another
+> > thread. It will avoid overlapping these two topics:
+> > 
+> > - Multiple standalone CMA heaps support
+> > - Panthor protected mode handling  
+> 
+> You keep insisting on using CMA here, but it's really not clear to me
+> why you would need CMA in the first place.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/interrupt.h | 8 --------
- 1 file changed, 8 deletions(-)
+CMA is certainly not the solution. As Florent said, it's just here to
+help people test the panthor protected-mode feature without having to
+pull Mediatek's protected heap implementation, which currently
+lives in some vendor tree and is thus quite painful to integrate to a
+vanilla kernel.
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index a1b1be9bf73b2..c782a74d2a304 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -461,14 +461,6 @@ static inline void disable_irq_nosync_lockdep_irqsave(=
-unsigned int irq, unsigned
- #endif
- }
-=20
--static inline void disable_irq_lockdep(unsigned int irq)
--{
--	disable_irq(irq);
--#ifdef CONFIG_LOCKDEP
--	local_irq_disable();
--#endif
--}
--
- static inline void enable_irq_lockdep(unsigned int irq)
- {
- #if defined(CONFIG_LOCKDEP) && !defined(CONFIG_PREEMPT_RT)
---=20
-2.47.2
+I would suggest keeping those patches in a public tree we can point to,
+and dropping them from v2, to avoid the confusion.
+
+> 
+> By CMA, do you mean the CMA allocator, and thus would provide buffers
+> through the usual dma_alloc_* API, or would any allocator providing
+> physically contiguous memory work?
+
+Panthor can work with the system heap too AFAICT (I've done my testing
+with the system heap, and it seems to work fine). It gets tricky when
+you want to allocate protected scanout buffers and import them in the
+KMS device though. But as said above, we shouldn't really bother
+exposing custom CMA heaps, because that's not what we want to use
+ultimately. What we'll want is some ATF implementation for protected
+memory, that we can rely on to implement a standard protected dma-heap
+implementation, I guess.
+
+> 
+> In the latter case, would something like this work:
+> https://lore.kernel.org/all/20240515-dma-buf-ecc-heap-v1-1-54cbbd049511@kernel.org/
+> 
+> Maxime
 
 
