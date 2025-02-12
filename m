@@ -1,193 +1,115 @@
-Return-Path: <linux-kernel+bounces-511288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221CFA328EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:45:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD51A328F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:45:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86A003A2872
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82679165318
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F026D20E315;
-	Wed, 12 Feb 2025 14:45:02 +0000 (UTC)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7B020F08C;
+	Wed, 12 Feb 2025 14:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wI5257yL"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED702101AD;
-	Wed, 12 Feb 2025 14:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC10C18D65E;
+	Wed, 12 Feb 2025 14:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739371502; cv=none; b=j7gYa445l5bmKN96YpGbzjJeR7vy3Hgc/c2stckRye3WQkzBAHrz9wT1Mu1caZ9VNz1jjZKQsP7XvtkKaJ9MkuxyXPeWaZM4il+BwyoUbOe5KrDpvkXuX5sZ/NzNBDgtajUBbiecIhwM/zqAQbYBATXmnAWu6xZUrtNz1rHGCgo=
+	t=1739371543; cv=none; b=TOER2Ta8/oyLOv3k0+JhlIWc/ABitC2XK7JkWjMWQAaNguja0eBH7AmnO15fhhDgARQ8VVCB9XmdWOV6/0I78mHMOIkN/hNHy8VA5vjxt6zUsn/djOwWYk3y5hKBStZvZvEl4+mIhfm0B0BADktLdycnW9Mz4zkfH0Bow1x9q5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739371502; c=relaxed/simple;
-	bh=jdrJz5pOk6kZyQ3eI5McSaQ4BYx0Q5MoCJhd+esFO1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZQNK5VXwTNaNnaLg/HWkPvUSWojnNpgn9dbalR1fXjl1WiqLL1Bb2ZgX4o1oXwVZX8EKMn8acOnRl28mWSfv0ayOrZWLMB4JBg6q283V6tm9Rn10NGBoh03CEw1Upr+sDG8FyaOOCN2Z02jaMSthTsTX69UQZGAHrukXwW+h6DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52067a2ca31so540975e0c.0;
-        Wed, 12 Feb 2025 06:45:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739371498; x=1739976298;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KEDxnqf6oWr6fziB6l6K3WllpKY4awxVDsvWozfR/s8=;
-        b=NiK+yghJYrzELdMlqkuTV6+DN9vSnz8pW4iEAQu53lNeJ/ff87zO7m1HxuWol1L27r
-         ZOiSxt3ko2RvBscdWmiCPiaua8lGdXtmaqqPUs1/9uUWInAUY6k/oQLhugy0FaLM1XlQ
-         IXVg4PXBJLVSirhg3m7nAL+auOlT4LcJW+HBS1jdwuqO1+hskHJtBOxZg5NfgrOlvbHc
-         edk9zBAcCeMsGFoVcjMC6Wx7AiJhXl7KWnqgrCEO4FEXWAadbRhVW/KPqxhfuWUvF6H4
-         8NgDzw0FKVgHIVq9dlqujsgUYmlUYMbu+O62gkWaUzPLYqns/l+aQroRiX1rnlTfkvGL
-         kxhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXo0LjOI+qBAcz5hYe1BjXOxypwKqLRAaaXPNI8iIxzakEEjRmovkp2uWXlcfVR1ouAG2/fDeOC+SMVNik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaP8IahekOS2qnZe09nCyvN4aVkTvpIcvAyMrqblaraXitxb79
-	Fs9iDenxNus2pobmbx7t5gqkQPbAKJ/+7JhYt4/OJpHyxL4CS5OZrxiAXXK/RYI=
-X-Gm-Gg: ASbGnct1VquOHMIEeMyCl8Mu4xHuea64KnaHiiVPfkOsmC2XqVjUzkSIJtj/tqMWbr3
-	CwCTdsAp0eAxrtFuoQKt/ApKWroGbppS0eonoJCKYKL5mxEw/x1QUWoaZlNZRYLIAvl6YNne9vg
-	bEctzwiVHH1g9GHmnsXEQ2e1iSeVmd7PCucWDPyEeIfWlKYbpv5QnwbwfASEkhIu3TRRlyCsM/g
-	3Rzngvwe8xaQpUx+ID2kwzRb9AuuoLNidpsKjHqh7sIXgPW1z/mamSMkANRv7kJ3pTOFo7EUUi9
-	+e9I1Pc4aPI5S9rbnJMqGLp4RDAQMx7mmqKqwFkes/4lAjB3QB1VHQ==
-X-Google-Smtp-Source: AGHT+IGIdWhHWJaVcigYKKC4si81fU7TMHtupMErlYWzlNIyeyFBbbQ7nGJqeCgczt1082vxyqA6KQ==
-X-Received: by 2002:a05:6122:16a2:b0:520:6773:e5ba with SMTP id 71dfb90a1353d-52067b2abdemr3147759e0c.2.1739371498319;
-        Wed, 12 Feb 2025 06:44:58 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5204e43616esm670120e0c.21.2025.02.12.06.44.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 06:44:58 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-866faa61728so3927669241.2;
-        Wed, 12 Feb 2025 06:44:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX+2o7/pj5UF+cI67vtth/0HiwtiJlm6VvU+GobBgGxr2grQKH1N8MPZiiXmqARjUTLbx6yfKRsNJ+e14c=@vger.kernel.org
-X-Received: by 2002:a05:6102:c12:b0:4bb:eb4a:f9f0 with SMTP id
- ada2fe7eead31-4bbf2248e10mr3088946137.24.1739371497811; Wed, 12 Feb 2025
- 06:44:57 -0800 (PST)
+	s=arc-20240116; t=1739371543; c=relaxed/simple;
+	bh=zPPPVDyPCQy/uHZXmtEqFziYEoLwnzvm/k6HokPTs8Y=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ReSfxEUqRdZDEV6vudAUHO7o0baFs/ro9DSJd/sZ6eahzcEQ3S3T7esCYkn0aMZS/x3rURn12OR+7+VpLT2RaN/ZOLVIWg35YCmVaYH5KxSHcGOQqTua34BOima48LNxr1lzwLMQqRBMNzc5ZmgDDPDioAMZ21DJQCyg+TeNG9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wI5257yL; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739371528; x=1739976328; i=markus.elfring@web.de;
+	bh=zPPPVDyPCQy/uHZXmtEqFziYEoLwnzvm/k6HokPTs8Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wI5257yL/FVTiY5mUkYGejkdhVaRmGYvugLmvPDMzLMngyHvByBwQQQknYe+C3lg
+	 840gW3JUYmvLT8Z51sOVUamRng+HvfbWhyC+KycDYSjHzhU4YNWpHZh7dghAeLKrW
+	 zv4D2yi+Atoemvj3brYS4dAVEjYl+q8KZRceYtUxCWTJ3Aj+dipeP2TbrdwZ13K3x
+	 XA5aw8S4hoAeTzRsoHu3ZzIxTHt9vPx20OBmZLSSORekQBrwtMGaB0XyQ6z52ox3d
+	 PUblNMwdNVJco5ntQ7U3hP1X841h7TiFErFa/pBfi028I4v1UH6JXswlTzb2Zymvn
+	 67iPkISqALY+GVOOpA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MGgJK-1teKFu0sgk-009tly; Wed, 12
+ Feb 2025 15:45:28 +0100
+Message-ID: <f4757a63-c1f7-4b4f-854b-db533c8b70ad@web.de>
+Date: Wed, 12 Feb 2025 15:45:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203031213.399914-1-koichiro.den@canonical.com> <20250203031213.399914-6-koichiro.den@canonical.com>
-In-Reply-To: <20250203031213.399914-6-koichiro.den@canonical.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Feb 2025 15:44:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVAiuvxD4ydtsWfWXBhHLDJz66Ay8w15WHr278OnB=ZKg@mail.gmail.com>
-X-Gm-Features: AWEUYZlBC_E2Mdx31xtuJpc0ys2cVZM7Oz-8acpKE4ZjaN81UYXjQ-HLSzxFpFE
-Message-ID: <CAMuHMdVAiuvxD4ydtsWfWXBhHLDJz66Ay8w15WHr278OnB=ZKg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] gpio: aggregator: expose custom line names to
- forwarder gpio_chip
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
-	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+References: <20250211092017.562-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] clk: qcom: Fix missing error check for
+ dev_pm_domain_attach()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250211092017.562-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9HptBoJr+kFWKWd/ACV89eXSi3Vqg5qVerrcCbM5ck8oPCJkGhW
+ H11Szp+hF184Zyod+1e14zLL/BbnjEBwuS49kqycnWHR0DDAgK+9/WwanAUkts7SfXTlFkA
+ s28hgN4rCw350nRlH2uI9aopBiBRaKTbrEIpMeLPnoFAl6+4h4+agoaC720zkQVBha04VTb
+ QRHR53cyeO8df3y/5GiiA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Qjil/6/MEY8=;B6S1G8rplb9b1l6QX8AOpnucNI6
+ dL/ZMmIeQJuyZU3DSZc/mQMrrp17/l7okkgDsGor1bbTU03dM3IjXTOd058vYbkunYfbNbxaw
+ fpSdFytDXDJE7OZ4k3tz+u+0Ocbi0RvvScIGnZWk3d+wl4n6XF12t6QT8lPhxnLUL5k+pIWZn
+ IjkwBMJ2uzlwLZ6et+cd7g1SrY7xVa10hsWE7Y4x8za6aSpchOCf7AalXz/EuKxwEVQ2NAFDn
+ Om6SwG8tgfr6genhda7+Z8qZYn4Tog7Ed99RBSJh9rjkJl3COkIsgUK71w0M41e4ygfbAt2Z0
+ 6WsZ3vHQqWTht8GH7lUWUJV7CGC4eXKLrNpdmhWc9ZhGvfGzwClJu8NnK3BeS4Q//z0U4tZ8E
+ WCak4R/GNZJZSdp49QtgBondz2kyVmJa0nBpHhHMQDQEpt/QwG5G+8XaepORSzXR6MTGhJh5x
+ uijktZ8jGBqHwUu8GSmzrwaMFPyaqO5MGLgGPp0XPuB8ONfEQJOIbVh1sPUrdr9PJSCgnAQy6
+ grcj2NrtklCHw2R6WbZbQ/hp1hkC94MPvp9shLFgUyX0QFbwXlTeqE5NpTjEbiy3RsInLCVwe
+ joAZkQpn+M3EEpRLrORHDC2+G/pdTcanjhgASpl226e8k9WHHvEWRXRQxeWUbgl6SJREMeY3Y
+ orjhjr0BbyGmo5/rCoRqwHsOShcHMA1Y6Cpq4db1h878NMNVD3LV6YS4HNF4Vja23A8BR8jD6
+ hbKpwsuGJcPxSPsWza/a2UaluKYM+aCnBD2Ke1NQ4S1oqU3KOBvy/oeksDtZpepNza9aMrJws
+ LMKb5Uudq9338WBAS7qRKLFTiml6IHK4Y1CW80VcWbTR1zne8vEoE9G+m4OLUNqK3UD6IMc2m
+ bjg2BudAoC6KUZuMJBQwgOgyWXnemQLPl04bmMFFx3d5nvZwXHB0axtiZOnsaDMXHcZ2ITlK9
+ VjzsPUZroZBJ4efIhjL6kdGQETijEci3VYHNhYWcAsUuDOxSwhS637bYly0qLr9lc7iEXWVdE
+ qv46FHaFt94pLc2l9mI9B6ZMz4LxmDi7t7InppklqN0fbDXJXMabLXLs4pclS3Ud5fKtPTPT7
+ drLuXxXwgfZ1QY2Cm2dtaB1QxAKM9/VfndG8k5xD3gjQeu1LFiwj6LbuZhpr2kD4R4ACzsOX3
+ dKtofWp5OrNcCP7aTNsAFOimsw5Gq0XiA1Vn8vFY5XjQBmWiF875sF0s2OHvmesHFoAo0By4c
+ 1LWEGWXBf+abj2nqn0zu5nP5S+GBTDZ86Ag42hjizZrOjerzW91+2xAHJ+8ktHwc+SgjcwOeC
+ 4b9+wL7PZ9BjgXYNp+h8wYW5ZW1K5UdalgKBweVjR/iK4FMwN1xwvOKBYUyPzKoQLeerLAyGq
+ lh8kXmt9EaS11HrydZNMXHJLzi3bOeh+dHnHb7RP/e22bEtTStuB4lj8L4UfvarJqS6qET1EV
+ u5EeQJQsc86cc4U4Kmz6MU91xEjg=
 
-Hi Den-san,
+=E2=80=A6
+> This patch adds a check for the return value =E2=80=A6
 
-Thanks for your patch!
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n94
 
-On Mon, 3 Feb 2025 at 04:12, Koichiro Den <koichiro.den@canonical.com> wrote:
-> Previously, GPIO lines in the aggregator had empty names. Now that the
 
-That is only true for aggregators created through the sysfs interface,
-right?  When created from DT, gpio-line-names is already supported:
-https://elixir.bootlin.com/linux/v6.13.2/source/Documentation/admin-guide/gpio/gpio-aggregator.rst#L72
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n145
 
-> configfs interface supports custom names, update the GPIO forwarder to
-> use them.
->
-> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-
-> --- a/drivers/gpio/gpio-aggregator.c
-> +++ b/drivers/gpio/gpio-aggregator.c
-> @@ -425,6 +425,20 @@ static int gpiochip_fwd_setup_delay_line(struct device *dev, struct gpio_chip *c
->  }
->  #endif /* !CONFIG_OF_GPIO */
->
-> +static int gpiochip_fwd_line_names(struct device *dev, const char **names, int len)
-> +{
-> +       int num = device_property_string_array_count(dev, "gpio-line-names");
-> +       if (!num)
-> +               return 0;
-> +       if (num > len) {
-> +               pr_warn("gpio-line-names contains %d lines while %d expected",
-> +                       num, len);
-> +               num = len;
-> +       }
-> +       return device_property_read_string_array(dev, "gpio-line-names",
-> +                                                names, num);
-> +}
-> +
->  /**
->   * gpiochip_fwd_create() - Create a new GPIO forwarder
->   * @dev: Parent device pointer
-> @@ -447,6 +461,7 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
->  {
->         const char *label = dev_name(dev);
->         struct gpiochip_fwd *fwd;
-> +       const char **line_names;
->         struct gpio_chip *chip;
->         unsigned int i;
->         int error;
-> @@ -458,6 +473,16 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
->
->         chip = &fwd->chip;
->
-> +       if (!dev_of_node(dev)) {
-> +               line_names = devm_kcalloc(dev, sizeof(*line_names), ngpios, GFP_KERNEL);
-
-So this is always allocated, even when no names are specified?
-
-> +               if (!line_names)
-> +                       return ERR_PTR(-ENOMEM);
-> +
-> +               error = gpiochip_fwd_line_names(dev, line_names, ngpios);
-> +               if (error < 0)
-> +                       return ERR_PTR(-ENOMEM);
-> +       }
-> +
->         /*
->          * If any of the GPIO lines are sleeping, then the entire forwarder
->          * will be sleeping.
-> @@ -491,6 +516,9 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
->         chip->ngpio = ngpios;
->         fwd->descs = descs;
->
-> +       if (!dev_of_node(dev))
-> +               chip->names = line_names;
-> +
-
-Do you actually need to collect the names yourself?
-Below, the driver does:
-
-     error = devm_gpiochip_add_data(dev, chip, fwd);
-
-and gpiochip_add_data_with_key() already calls gpiochip_set_names()
-to retrieve the names from the gpio-line-names property.
-What is missing to make that work?
-
->         if (chip->can_sleep)
->                 mutex_init(&fwd->mlock);
->         else
-> @@ -530,10 +558,40 @@ to_gpio_aggregator_line(struct config_item *item)
->         return container_of(group, struct gpio_aggregator_line, group);
->  }
->
-> +static struct fwnode_handle *aggr_make_device_swnode(struct gpio_aggregator *aggr)
-> +{
-> +       char **line_names __free(kfree) = NULL;
-
-const (needed when gpio_aggregator_line.name becomes const)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Markus
 
