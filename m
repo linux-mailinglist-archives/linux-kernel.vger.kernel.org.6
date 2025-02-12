@@ -1,150 +1,105 @@
-Return-Path: <linux-kernel+bounces-510933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D109A323C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:44:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD33A323C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3495188C2B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:44:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F7B1883125
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B04209F30;
-	Wed, 12 Feb 2025 10:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C77C20896E;
+	Wed, 12 Feb 2025 10:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FmtZQn1B"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B6V0oH4N"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E89209674;
-	Wed, 12 Feb 2025 10:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127E3208964
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357032; cv=none; b=YRD/9hnXsrDL7wvAOznziDPrFARwNL9TFmLTDDqmgk64zSiRAUYXMkCaD24sy891dqXlgwUjKCT2sTG3tto5HEMGrIrn/4YVTw9mBfUcOfjA2TAvwB0Ccz4rSkjjifR36hRprw/lFwzeWPTr4VcD6DdTyaUhpvI4KXZbpXhV5IQ=
+	t=1739357055; cv=none; b=tHFPOpmzn3AVsadDZdL2TcWjSkjk3zk3j8o0UAraVV/xLMLHJEPjzABv9Lt8nGArOJ1LtlvxUEYbuqmC6gj4GaJTUEXJTUov4S2Gf0CmC+S9SJswCW0vvL3KQF+upL2gykvsrQOJzsj1BZVpCHgLRsWPBVj/cKGI9Fs/+Z5awJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357032; c=relaxed/simple;
-	bh=X2eltLRhw1w4UIkkJvn+viee4/SqEPKwaFrktrUEYQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MW0LomOY+MkvwLS0dZMI6HibLpf+dF/xpbrvRDjffGFpxkl/Fw7hZrxwb0oKwLZRNXdNFUjT8n+P1z/2OzuRxIy+F58xjFoO222CFR7MDidpmVxpzJa0PsDxtcRbJlykpDUtFpbxVmZZr1XWMGjDoY2njbgyqvgt0o17FFGzKAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FmtZQn1B; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739357031; x=1770893031;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X2eltLRhw1w4UIkkJvn+viee4/SqEPKwaFrktrUEYQ0=;
-  b=FmtZQn1BLzus6bNFcNKWSJtoVzBdQSBws7WBsJqo/epOY77IAtFfcg5L
-   3H3B5YYjPRd3KHfOJmo0v+59CrbWMXHEVOPEjRrjB2adDHipBKWjAws1j
-   A3/o48xZrW8roOxpgtSSq4fjiMdOqiUbxreKsZyF20vS7QpdjHI2lrBwP
-   xyxh7tVRml6njGbXjIY2nfsR3nkFatRP+gnKrwDwC4IHvBlmn6yKFsJMg
-   HMiCxx3Gcg1tuNc+b3fZYM0xFsxk118egeULleh/7s751RlaDtLaMnGWQ
-   s2S0pmBcihFwKtpZJvZiy4Nvqmj18hwdwyPKs7lwyGHJ4EQV1zhga6Uhd
-   Q==;
-X-CSE-ConnectionGUID: MF+EgDxRSRGhAXdkTPap3A==
-X-CSE-MsgGUID: VR1FiWZFRj6YdwqvQD9Vew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="40032078"
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="40032078"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:43:51 -0800
-X-CSE-ConnectionGUID: 9ogGZln/SR2AoJP2f85ftg==
-X-CSE-MsgGUID: 082GvNeQSUKxR8PlBtUqjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="112998158"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:43:46 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tiADW-0000000Ao56-16Qk;
-	Wed, 12 Feb 2025 12:43:42 +0200
-Date: Wed, 12 Feb 2025 12:43:42 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Aren Moynihan <aren@peacevolution.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
-	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
-	Julien Stephan <jstephan@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, Ondrej Jirman <megi@xff.cz>,
-	Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v5 6/8] iio: light: stk3310: use dev_err_probe where
- possible
-Message-ID: <Z6x7XgtGr8Thx08Z@smile.fi.intel.com>
-References: <20250208211325.992280-2-aren@peacevolution.org>
- <20250208211325.992280-8-aren@peacevolution.org>
- <Z6jAEEU2dqn_FJVp@smile.fi.intel.com>
- <20250211194311.5255f25b@jic23-huawei>
+	s=arc-20240116; t=1739357055; c=relaxed/simple;
+	bh=znGATIqYnfIj5Omip9XqassNFw23hr0mEndIXqqLOBk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EiP6p9U5oAZoHkSlbNqZa3OnTHNWGGrCUrRB4PM5wTt/4JJppHkkjyePdwqMfCMXOhuGcopAev9psX79HOdIGbcHRI+7VJgbg6G9AlX4WJ1GaZACsA8G0KkhsAQ0X1P4q2TdwReeuUBHhSztcrSTrgEAfeLsQ5i9UvO00+JsB9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B6V0oH4N; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-47190a013d4so165831cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:44:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739357053; x=1739961853; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=znGATIqYnfIj5Omip9XqassNFw23hr0mEndIXqqLOBk=;
+        b=B6V0oH4NXyhd9IjMAE3gbpq8pNyZeNLQr60fPKr7GoFeKODAlJIBfo1kNT1hRUwprq
+         mRFzp8NGFaASqrgl3xXxKkJ6kYU54tUZ7h1/g9IP2mhGC6ufnoGwUHVB0rzapawK4P17
+         /Hoei5pyIX2hZEi4EMkiDAvowtSV85/EaRSlv8qLKfsB8we3mqsiUinVM8ipHVtYilFY
+         I5z/Zudbude5yS4mSa3NBHRHIRdaaeSORWpDgmF7hEc2+iT+xZ7riYyOD+AoqZolk6mr
+         wid75Nui+lcjoWFym4nNxWu9r1kZIKRLspsHfFWd0NFfWwgUZzFyEAnysHXm0WvUOsWt
+         S0CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739357053; x=1739961853;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=znGATIqYnfIj5Omip9XqassNFw23hr0mEndIXqqLOBk=;
+        b=DtpxgMV3S1seWy9+Bo/Ac4SZw+nEA/QF1aqXoHIAbTxk2slgEaWMI1ptl8oOysgwiK
+         RMn7Xj5P9DTzf256NHi+F3XeI5hvin4ivwAsIjuj11beNmMO943v1OJ9hdbQhxL7DKZx
+         fTaFksLEzcc8VCgsOIWRh0c0neJOgMEDdDecA7d8J1UU96TtdHjTl3feKC0sJMVx9VL9
+         MRAh4IO2aZTnVR2mhth/8jFkxpkVnkjFy/EkOaSigJjktyyO9wk6zfIG00DKngBCvxZQ
+         x9y7koMK+YCS5xuSp+n2cdg9MnmQ+3cEDfa4G4yEkIwIpXalk+jZRNi07YBN0ByrNYVE
+         +aXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpwge0GgQWi9d5Ztj6X3rmQZgHHxn6a976sL3RgpheyWRNvZ7agcyngdPGxoZlq2CgEf7Wk2lyM1NJrxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLU/GfAfLun5F42SSqST9/Beg+lNy5ahfRDJA0Xz47ZNQOMKfj
+	ZCmI7nSeeP08LfK9/wOJlSf/HEchhU7OnrpIrif7g8cIzEs/kSRiVBcafLPWlOPtGfmwBKlUSsL
+	v6IE9kTNT99HTdAtxjxyDov5C3S6va3S3m3xk
+X-Gm-Gg: ASbGnctAZBfVdmLx1Q6itD4rafraICSYQ/qPt44Xc6MTZAqq4zPakf7/XSEUa2bR9T4
+	F+gPd59rt/QgZ3l42hEJy6Hpr0atXXmOvJkdRQZBudxr2uvaKy284pLiy9jAh1e0BQpQ/lqHtvu
+	ZpEyOyMVDbQ2xQBYFH5lwPmCFN+8A=
+X-Google-Smtp-Source: AGHT+IEyV+a8/XTwlzGcDuCm+W2LAprsvor8l9fKfMKMWxmtMT4HwfT9w5s6Znn+Li6TACjdRksJpfoU0lunLPdoPjg=
+X-Received: by 2002:a05:622a:5908:b0:471:83af:c8d1 with SMTP id
+ d75a77b69052e-471b01db5a0mr3303281cf.10.1739357052664; Wed, 12 Feb 2025
+ 02:44:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211194311.5255f25b@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250211210823.242681-1-riel@surriel.com> <20250212102349.GE19118@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250212102349.GE19118@noisy.programming.kicks-ass.net>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Wed, 12 Feb 2025 11:44:01 +0100
+X-Gm-Features: AWEUYZkHDY9-oWjBv2GAM02r8jxQT_sHCXNZi518ZRTzQtvPclq6CRF6k4zSfKw
+Message-ID: <CA+i-1C0Sbgkyfan=srXL8dRrqaLoT1g1F5tZesC1rrh6v7L68w@mail.gmail.com>
+Subject: Re: [PATCH v10 00/12] AMD broadcast TLB invalidation
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	bp@alien8.de, dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com, 
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com, 
+	mhklinux@outlook.com, andrew.cooper3@citrix.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 11, 2025 at 07:43:11PM +0000, Jonathan Cameron wrote:
-> On Sun, 9 Feb 2025 16:47:44 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Sat, Feb 08, 2025 at 04:13:24PM -0500, Aren Moynihan wrote:
-> > > Using dev_err_probe instead of dev_err and return makes the errors  
-> > 
-> > Use dev_err_probe()
-> > dev_err()
-> > 
-> > > easier to understand by including the error name, and saves a little
-> > > code.  
-> > 
-> > I believe this patch will make more sense before switching to local 'dev'
-> > variable. Then the previous one will have an additional justification as
-> > the "struct device *dev = ...;" lines in some cases will be added already
-> > by this patch.
-> 
-> I'm not sure I follow this one comment.
-> The only line that has struct device *dev =  added in this patch is
-> replacing an existing client->dev lookup that could have been pushed
-> to previous patch if this patch ordering was maintained.
-> 
-> For dev_err() to dev_err_probe() the number of references to dev
-> is the same after all. The only additional justification this patch
-> makes is some longer lines that using a local dev pointer shortens
-> again.
+They apply to 60675d4ca1ef0 ("Merge branch 'linus' into x86/mm, to
+pick up fixes").
 
-When converting to dev_err_probe() in some cases it makes sense to add a
-temporary variable at the same time.
+Rik, can I refer you to the BASE TREE INFORMATION section of man
+git-format-patch. I haven't used that feature lately (b4 takes care of
+this) but it looks like --base=auto will add the necessary info, or
+IIRC there's a way to make that behaviour the default.
 
-	if (ret) {
-		dev_err(&pdev->dev, ...);
-		return ...;
-	}
-
-===>
-
-	struct device *dev = &pdev->dev;
-	...
-	if (ret)
-		return dev_err_probe(dev, ...);
-
-which reduces automatically the churn in the patch that wants to (re)use that
-temporary variable and also adds to the justification as "we already have that
-variable, just want to use it".
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+On Wed, 12 Feb 2025 at 11:23, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Feb 11, 2025 at 04:07:55PM -0500, Rik van Riel wrote:
+> > Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
+>
+> What tree are these patches against? I can't seem to cleanly apply them
+> to anything much :/
 
