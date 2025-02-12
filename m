@@ -1,181 +1,396 @@
-Return-Path: <linux-kernel+bounces-511286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E4B7A328E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:43:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DEEA328EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:44:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3658E7A3D9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:42:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C02C63A1DEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8169211267;
-	Wed, 12 Feb 2025 14:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRx9AJQu"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F8820967D;
-	Wed, 12 Feb 2025 14:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63067210F7A;
+	Wed, 12 Feb 2025 14:44:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7BC20E314;
+	Wed, 12 Feb 2025 14:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739371389; cv=none; b=MV1YhxWxFm2rHmLGj7EqHDbjt6TQn+t3Nr6+pj2WS6mRJHzfIkTNqB5dod5qOzSPS0uqeaWlWZTLhuVgPnWsZsDJOVuBlTaF8r3Hs0NQR699EdqXBUAWDz1jEhr5n3n6h3eG2xoUiAkjtaKKz5Lf4h4Bg1oIOH/PfJlUkrxynpg=
+	t=1739371490; cv=none; b=c5XUbi6rCfNrlr5MHorhAlB59SMXUlcBITETu89qjYqSiPOxqL0Aq0WuNS8tdjO4AZOzml8UTL5CfW0p/AsWU5fZR2Cfw+La1sl2XuNLHf3LnjeGAExeODqaxP5QfHsxK/lMV//lEnZTsR9bepTWjNZmp7JqVTcZxDNhcgrx5c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739371389; c=relaxed/simple;
-	bh=V4mU0GjkjWbEkL/INC2a+sJpha9ZmCGaZJr78NjeBY8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KKoR6F1GOZROKQZ/M1B8ltuN62towZrrOnjO2jH+vu5xaKKLVJB+s8sWxTSMfUzEwvbHdOdyeSEcWOQjTGav1hP/cRheAu9jyysKEp+hdCkmhMbd2hI5RudgIpR2ngnGnGK/xI6zorq0cn86E2aLk9fGG817rnWdkqQ77xXHZkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRx9AJQu; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e46269d2c2so40843636d6.3;
-        Wed, 12 Feb 2025 06:43:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739371386; x=1739976186; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gGpyZWwaIydNu+RxVjlhMHpFk5vW0QiePFraEUdR7ws=;
-        b=bRx9AJQuRCip/0zWvCMCifd7LTIUCIUSpmb/GsMcgcNLOzUaCiRK/AjNDM1KyulYAz
-         rlVmUQ2OpCBAdFOMa2fCLd9XmZTlKnZo0J5Ou05zn+iwh68Dudt9e0VYpxJWWMukGsgT
-         ewjteisk0WVy6M1ANAZuNKc3sokLk94bUmCxu8Kb7Mw1bNoG685+7W9X3gY+YmBRXBuS
-         e1jy7XMylS7T9MsTiHAq/n7YUy/vangIFXxIKgIesNuH9Mdqyx6ehYvRE3ub///7LPCC
-         9MtfR4r4YJCJJ8Qf2JAQ6rP2n8jyebnavxgpXp+3gnKtoiZXR/jTqBFYXRuxd7t3BYi7
-         XgYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739371386; x=1739976186;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gGpyZWwaIydNu+RxVjlhMHpFk5vW0QiePFraEUdR7ws=;
-        b=t/VKuIHxvW0p7Tup5aUKlpRyyPwl2IqjRQvTBf9z9wnf8vumQk3EolWRKugCX+/Qj0
-         qr27xN9JsSNxiQOngvOGJ0KdNC+Exti9p3wBa+xifgcHYDeQUeGp6N1HrMna6tYdYT6N
-         jlPCK2QVG0txTYXQWK9v5+SeqqMGftU/Qk7mXAKM8rCbDFHSTb7vI/1TDXi4fX6/YySX
-         +CTT7FEkTXrVF6vQYZ9nM1Y/gykmtFPccxAelG4l5jEAVLtWaMEUE8M7X/cOSNvnpXUA
-         TgFoeWw1iqgdC74NtgPwJodBQtlCDAXS9UV5iRbG4UdHsyTlRbIIfVS8pnXUP/T+B7Wo
-         imxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFsRgJ0sH16p2BJ2YVDe2iC7mpzLW6TPrCUiqlT2qjg0ckJO95QlhnQM14QxSFyuDkEDIlGIpJozjKgyc=@vger.kernel.org, AJvYcCXa3bP6dGIeGgj3+yaMK7sUkM37GZc3LqCMesuFz+xCLhiRtXRNct7NclnrO3soXdiisxJedPz3nEr2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoLNqScrMQ3gB4UN2jJ2heryAIlZLh76L/9cmO7TVElU9grKwC
-	KMd0XPfPPQb6ZMB+IWZSpKXh44EY4qxbNgm3Ha4XMHkCU013OcQT
-X-Gm-Gg: ASbGncuIYD7zZk/M+AWK52y0fWglit/Gy5a9q5WpviuK7QUYHep9wV1Ew5MQDh9+X83
-	b1A9kfbUZqZveym2+lorf2j2UUcsMq8458JWKeJdpOufXDaiLxW3Gng5NFejp6QdGZvUedoZchj
-	jOvujBfmakKKTkGrZkBrV92WwvztPP6XRT+xIdgZQcP+Rsc8ifoRWXlbXTAE+n6q87zfphlMoiD
-	MPpxo5XEE43DzgDkMc+b1724g4XIHJcC52POlZZnM/prKEqIrvpo3nk8QOj4CHbaNMhHvTLcWQL
-	kbZ87/giDSwCCp4SnnGQgN3BoIPGKno+GF+2NBNdM2hPCH26q2Xx4DDLACrz/Z+KVzvBXRawQgv
-	w85Elrbq/59xEJ2DTkSoA8YaK
-X-Google-Smtp-Source: AGHT+IF9seDh6AWQtalF752Q0jhtPu9m93pQFxRunT/I8QcmdFHIUexk3E9l9PKkC9TOV9kt0lknzg==
-X-Received: by 2002:a0c:e884:0:b0:6e4:6ee2:1a0d with SMTP id 6a1803df08f44-6e46ee21a93mr48589516d6.18.1739371386093;
-        Wed, 12 Feb 2025 06:43:06 -0800 (PST)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:1968])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e445c50a10sm70366836d6.91.2025.02.12.06.43.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 06:43:05 -0800 (PST)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 12 Feb 2025 09:43:02 -0500
-Subject: [PATCH v5] rust: alloc: satisfy POSIX alignment requirement
+	s=arc-20240116; t=1739371490; c=relaxed/simple;
+	bh=XfitAFqPDqbf+t1RDk+0+jtBp+nPKjIX31JflvdkYZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=J8bv/yS4/017bJrb+SYxjo6bBkw9oxih32k+81H20Pz2P9+NNZaCoUEB/21BonoLxMI0yT7vorFkfh/UVmuYGUVG1nI2BaFGzeM3gGgKe4fJQRbQCEe7R1SGzuF36G2gHkJRVuQ8bnzxRekqQVZfVXI9jBkJZeLhc70LtrSxdMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 748B512FC;
+	Wed, 12 Feb 2025 06:45:07 -0800 (PST)
+Received: from [10.57.81.93] (unknown [10.57.81.93])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B62FD3F6A8;
+	Wed, 12 Feb 2025 06:44:43 -0800 (PST)
+Message-ID: <deeb5864-449c-419e-9b45-abf8003b7b6a@arm.com>
+Date: Wed, 12 Feb 2025 14:44:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 02/16] arm64: hugetlb: Fix huge_ptep_get_and_clear()
+ for non-present ptes
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250205151003.88959-1-ryan.roberts@arm.com>
+ <20250205151003.88959-3-ryan.roberts@arm.com>
+ <83103cbb-e2b8-4177-aeaf-c3b6e6b08008@arm.com>
+ <25155f6e-8a62-405e-852d-c07a55be0ac5@arm.com>
+In-Reply-To: <25155f6e-8a62-405e-852d-c07a55be0ac5@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAHWzrGcC/3XMQQrCMBCF4atI1kYmM020rryHuEgmSRuorbRSF
- OndjV2VgKvhDXz/R0xhTGES591HjGFOUxr6PPR+J7i1fRNk8nkLBNSAoKTtUtMHn283sHQa2SF
- p4hOKbB5jiOm19q63vNs0PYfxveZn9fv+K81KKsl1bY8UiZ2vLs3dpu7Aw138SjNuNZYas9Y2g
- tPR+8rEUtNWm1JT1sCOwTogML7U1UYrKHWVtYGayZoYFNVbvSzLF1C5j4BkAQAA
-X-Change-ID: 20250201-aligned-alloc-b52cb2353c82
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- DJ Delorie <dj@redhat.com>, Eric Blake <eblake@redhat.com>, 
- Paul Eggert <eggert@cs.ucla.edu>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: rust-for-linux@vger.kernel.org, linux-man@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
 
-ISO C's `aligned_alloc` is partially implementation-defined; on some
-systems it inherits stricter requirements from POSIX's `posix_memalign`.
+On 06/02/2025 12:55, Ryan Roberts wrote:
+> On 06/02/2025 06:15, Anshuman Khandual wrote:
+>> On 2/5/25 20:39, Ryan Roberts wrote:
+>>> arm64 supports multiple huge_pte sizes. Some of the sizes are covered by
+>>> a single pte entry at a particular level (PMD_SIZE, PUD_SIZE), and some
+>>> are covered by multiple ptes at a particular level (CONT_PTE_SIZE,
+>>> CONT_PMD_SIZE). So the function has to figure out the size from the
+>>> huge_pte pointer. This was previously done by walking the pgtable to
+>>> determine the level, then using the PTE_CONT bit to determine the number
+>>> of ptes.
+>>
+>> Actually PTE_CONT gets used to determine if the entry is normal i.e
+>> PMD/PUD based huge page or cont PTE/PMD based huge page just to call
+>> into standard __ptep_get_and_clear() or specific get_clear_contig(),
+>> after determining find_num_contig() by walking the page table.
+>>
+>> PTE_CONT presence is only used to determine the switch above but not
+>> to determine the number of ptes for the mapping as mentioned earlier.
+> 
+> Sorry I don't really follow your distinction; PTE_CONT is used to decide whether
+> we are operating on a single entry (pte_cont()==false) or on multiple entires
+> (pte_cont()==true). For the multiple entry case, the level tells you the exact
+> number.
+> 
+> I can certainly tidy up this description a bit, but I think we both agree that
+> the value of PTE_CONT is one of the inputs into deciding how many entries need
+> to be operated on?
+> 
+>>
+>> There are two similar functions which determines the 
+>>
+>> static int find_num_contig(struct mm_struct *mm, unsigned long addr,
+>>                            pte_t *ptep, size_t *pgsize)
+>> {
+>>         pgd_t *pgdp = pgd_offset(mm, addr);
+>>         p4d_t *p4dp;
+>>         pud_t *pudp;
+>>         pmd_t *pmdp;
+>>
+>>         *pgsize = PAGE_SIZE;
+>>         p4dp = p4d_offset(pgdp, addr);
+>>         pudp = pud_offset(p4dp, addr);
+>>         pmdp = pmd_offset(pudp, addr);
+>>         if ((pte_t *)pmdp == ptep) {
+>>                 *pgsize = PMD_SIZE;
+>>                 return CONT_PMDS;
+>>         }
+>>         return CONT_PTES;
+>> }
+>>
+>> find_num_contig() already assumes that the entry is contig huge page and
+>> it just finds whether it is PMD or PTE based one. This always requires a
+>> prior PTE_CONT bit being set determination via pte_cont() before calling
+>> find_num_contig() in each instance.
+> 
+> Agreed.
+> 
+>>
+>> But num_contig_ptes() can get the same information without walking the
+>> page table and thus without predetermining if PTE_CONT is set or not.
+>> size can be derived from VMA argument when present.
+> 
+> Also agreed. But VMA is not provided to this function. And because we want to
+> use it for kernel space mappings, I think it's a bad idea to pass VMA.
+> 
+>>
+>> static inline int num_contig_ptes(unsigned long size, size_t *pgsize)
+>> {
+>>         int contig_ptes = 0;
+>>
+>>         *pgsize = size;
+>>
+>>         switch (size) {
+>> #ifndef __PAGETABLE_PMD_FOLDED
+>>         case PUD_SIZE:
+>>                 if (pud_sect_supported())
+>>                         contig_ptes = 1;
+>>                 break;
+>> #endif
+>>         case PMD_SIZE:
+>>                 contig_ptes = 1;
+>>                 break;
+>>         case CONT_PMD_SIZE:
+>>                 *pgsize = PMD_SIZE;
+>>                 contig_ptes = CONT_PMDS;
+>>                 break;
+>>         case CONT_PTE_SIZE:
+>>                 *pgsize = PAGE_SIZE;
+>>                 contig_ptes = CONT_PTES;
+>>                 break;
+>>         }
+>>
+>>         return contig_ptes;
+>> }
+>>
+>> On a side note, why cannot num_contig_ptes() be used all the time and
+>> find_num_contig() be dropped ? OR am I missing something here.
+> 
+> There are 2 remaining users of find_num_contig() after my series:
+> huge_ptep_set_access_flags() and huge_ptep_set_wrprotect(). Both of them can
+> only be legitimately called for present ptes (so its safe to check pte_cont()).
+> huge_ptep_set_access_flags() already has the VMA so it would be easy to convert
+> to num_contig_ptes(). huge_ptep_set_wrprotect() doesn't have the VMA but I guess
+> you could do the trick where you take the size of the folio that the pte points to?
+> 
+> So yes, I think we could drop find_num_contig() and I agree it would be an
+> improvement.
+> 
+> But to be honest, grabbing the folio size also feels like a hack to me (we do
+> this in other places too). While today, the folio size is guarranteed to be be
+> the same size as the huge pte in practice, I'm not sure there is any spec that
+> mandates that?
+> 
+> Perhaps the most robust thing is to just have a PTE_CONT bit for the swap-pte so
+> we can tell the size of both present and non-present ptes, then do the table
+> walk trick to find the level. Shrug.
+> 
+>>
+>>>
+>>> But the PTE_CONT bit is only valid when the pte is present. For
+>>> non-present pte values (e.g. markers, migration entries), the previous
+>>> implementation was therefore erroniously determining the size. There is
+>>> at least one known caller in core-mm, move_huge_pte(), which may call
+>>> huge_ptep_get_and_clear() for a non-present pte. So we must be robust to
+>>> this case. Additionally the "regular" ptep_get_and_clear() is robust to
+>>> being called for non-present ptes so it makes sense to follow the
+>>> behaviour.
+>>
+>> With VMA argument and num_contig_ptes() dependency on PTE_CONT being set
+>> and the entry being mapped might not be required.
+>>>>
+>>> Fix this by using the new sz parameter which is now provided to the
+>>> function. Additionally when clearing each pte in a contig range, don't
+>>> gather the access and dirty bits if the pte is not present.
+>>
+>> Makes sense.
+>>
+>>>
+>>> An alternative approach that would not require API changes would be to
+>>> store the PTE_CONT bit in a spare bit in the swap entry pte. But it felt
+>>> cleaner to follow other APIs' lead and just pass in the size.
+>>
+>> Right, changing the arguments in the API will help solve this problem.
+>>
+>>>
+>>> While we are at it, add some debug warnings in functions that require
+>>> the pte is present.
+>>>
+>>> As an aside, PTE_CONT is bit 52, which corresponds to bit 40 in the swap
+>>> entry offset field (layout of non-present pte). Since hugetlb is never
+>>> swapped to disk, this field will only be populated for markers, which
+>>> always set this bit to 0 and hwpoison swap entries, which set the offset
+>>> field to a PFN; So it would only ever be 1 for a 52-bit PVA system where
+>>> memory in that high half was poisoned (I think!). So in practice, this
+>>> bit would almost always be zero for non-present ptes and we would only
+>>> clear the first entry if it was actually a contiguous block. That's
+>>> probably a less severe symptom than if it was always interpretted as 1
+>>> and cleared out potentially-present neighboring PTEs.
+>>>
+>>> Cc: <stable@vger.kernel.org>
+>>> Fixes: 66b3923a1a0f ("arm64: hugetlb: add support for PTE contiguous bit")
+>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>> ---
+>>>  arch/arm64/mm/hugetlbpage.c | 54 ++++++++++++++++++++-----------------
+>>>  1 file changed, 29 insertions(+), 25 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+>>> index 06db4649af91..328eec4bfe55 100644
+>>> --- a/arch/arm64/mm/hugetlbpage.c
+>>> +++ b/arch/arm64/mm/hugetlbpage.c
+>>> @@ -163,24 +163,23 @@ static pte_t get_clear_contig(struct mm_struct *mm,
+>>>  			     unsigned long pgsize,
+>>>  			     unsigned long ncontig)
+>>>  {
+>>> -	pte_t orig_pte = __ptep_get(ptep);
+>>> -	unsigned long i;
+>>> -
+>>> -	for (i = 0; i < ncontig; i++, addr += pgsize, ptep++) {
+>>> -		pte_t pte = __ptep_get_and_clear(mm, addr, ptep);
+>>> -
+>>> -		/*
+>>> -		 * If HW_AFDBM is enabled, then the HW could turn on
+>>> -		 * the dirty or accessed bit for any page in the set,
+>>> -		 * so check them all.
+>>> -		 */
+>>> -		if (pte_dirty(pte))
+>>> -			orig_pte = pte_mkdirty(orig_pte);
+>>> -
+>>> -		if (pte_young(pte))
+>>> -			orig_pte = pte_mkyoung(orig_pte);
+>>> +	pte_t pte, tmp_pte;
+>>> +	bool present;
+>>> +
+>>> +	pte = __ptep_get_and_clear(mm, addr, ptep);
+>>> +	present = pte_present(pte);
+>>> +	while (--ncontig) {
+>>
+>> Although this does the right thing by calling __ptep_get_and_clear() once
+>> for non-contig huge pages but wondering if cont/non-cont separation should
+>> be maintained in the caller huge_ptep_get_and_clear(), keeping the current
+>> logical bifurcation intact.
+> 
+> To what benefit?
+> 
+>>
+>>> +		ptep++;
+>>> +		addr += pgsize;
+>>> +		tmp_pte = __ptep_get_and_clear(mm, addr, ptep);
+>>> +		if (present) {
+>>
+>> Checking for present entries makes sense here.
+>>
+>>> +			if (pte_dirty(tmp_pte))
+>>> +				pte = pte_mkdirty(pte);
+>>> +			if (pte_young(tmp_pte))
+>>> +				pte = pte_mkyoung(pte);
+>>> +		}
+>>>  	}
+>>> -	return orig_pte;
+>>> +	return pte;
+>>>  }
+>>>  
+>>>  static pte_t get_clear_contig_flush(struct mm_struct *mm,
+>>> @@ -401,13 +400,8 @@ pte_t huge_ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
+>>>  {
+>>>  	int ncontig;
+>>>  	size_t pgsize;
+>>> -	pte_t orig_pte = __ptep_get(ptep);
+>>> -
+>>> -	if (!pte_cont(orig_pte))
+>>> -		return __ptep_get_and_clear(mm, addr, ptep);
+>>> -
+>>> -	ncontig = find_num_contig(mm, addr, ptep, &pgsize);
+>>>  
+>>> +	ncontig = num_contig_ptes(sz, &pgsize);
+>>
+>> __ptep_get_and_clear() can still be called here if 'ncontig' is
+>> returned as 0 indicating a normal non-contig huge page thus
+>> keeping get_clear_contig() unchanged just to handle contig huge
+>> pages.
+> 
+> I think you're describing the case where num_contig_ptes() returns 0? The
+> intention, from my reading of the function, is that num_contig_ptes() returns
+> the number of ptes that need to be operated on (e.g. 1 for a single entry or N
+> for a contig block). It will only return 0 if called with an invalid huge size.
+> I don't believe it will ever "return 0 indicating a normal non-contig huge page".
+> 
+> Perhaps the right solution is to add a warning if returning 0?
+> 
+>>
+>>>  	return get_clear_contig(mm, addr, ptep, pgsize, ncontig);
+>>>  }
+>>>  
+>>> @@ -451,6 +445,8 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>>>  	pgprot_t hugeprot;
+>>>  	pte_t orig_pte;
+>>>  
+>>> +	VM_WARN_ON(!pte_present(pte));
+>>> +
+>>>  	if (!pte_cont(pte))
+>>>  		return __ptep_set_access_flags(vma, addr, ptep, pte, dirty);
+>>>  
+>>> @@ -461,6 +457,7 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>>>  		return 0;
+>>>  
+>>>  	orig_pte = get_clear_contig_flush(mm, addr, ptep, pgsize, ncontig);
+>>> +	VM_WARN_ON(!pte_present(orig_pte));
+>>>  
+>>>  	/* Make sure we don't lose the dirty or young state */
+>>>  	if (pte_dirty(orig_pte))
+>>> @@ -485,7 +482,10 @@ void huge_ptep_set_wrprotect(struct mm_struct *mm,
+>>>  	size_t pgsize;
+>>>  	pte_t pte;
+>>>  
+>>> -	if (!pte_cont(__ptep_get(ptep))) {
+>>> +	pte = __ptep_get(ptep);
+>>> +	VM_WARN_ON(!pte_present(pte));
+>>> +
+>>> +	if (!pte_cont(pte)) {
+>>>  		__ptep_set_wrprotect(mm, addr, ptep);
+>>>  		return;
+>>>  	}
+>>> @@ -509,8 +509,12 @@ pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
+>>>  	struct mm_struct *mm = vma->vm_mm;
+>>>  	size_t pgsize;
+>>>  	int ncontig;
+>>> +	pte_t pte;
+>>>  
+>>> -	if (!pte_cont(__ptep_get(ptep)))
+>>> +	pte = __ptep_get(ptep);
+>>> +	VM_WARN_ON(!pte_present(pte));
+>>> +
+>>> +	if (!pte_cont(pte))
+>>>  		return ptep_clear_flush(vma, addr, ptep);
+>>>  
+>>>  	ncontig = find_num_contig(mm, addr, ptep, &pgsize);
+>>
+>> In all the above instances should not num_contig_ptes() be called to determine
+>> if a given entry is non-contig or contig huge page, thus dropping the need for
+>> pte_cont() and pte_present() tests as proposed here.
+> 
+> Yeah maybe. But as per above, we have options for how to do that. I'm not sure
+> which is preferable at the moment. What do you think? Regardless, I think that
+> cleanup would be a separate patch (which I'm happy to add for v2). For this bug
+> fix, I was trying to do the minimum.
 
-This causes the call added in commit dd09538fb409 ("rust: alloc:
-implement `Cmalloc` in module allocator_test") to fail on macOS because
-it doesn't meet the requirements of `posix_memalign`.
+I took another look at this; I concluded that we should switch from
+find_num_contig() to num_contig_ptes() for the 2 cases where we have the vma and
+can therefore directly get the huge_ptep size.
 
-Adjust the call to meet the POSIX requirement and add a comment. This
-fixes failures in `make rusttest` on macOS.
+That leaves one callsite in huge_ptep_set_wrprotect(), which doesn't have the
+vma. One approach would be to grab the folio out of the pte and use the size of
+the folio. That's already done in huge_ptep_get(). But actually I think that's a
+very brittle approach because there is nothing stoping the size of the folio
+from changing in future (you could have a folio twice the size mapped by 2
+huge_ptes for example). So I'm actually proposing to keep find_num_contig() and
+use it additionally in huge_ptep_get(). That will mean we end up with 2
+callsites for find_num_contig(), and 0 places that infer the huge_pte size from
+the folio size. I think that's much cleaner personally. I'll do this for v2.
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
-Fixes: dd09538fb409 ("rust: alloc: implement `Cmalloc` in module allocator_test")
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
-Changes in v5:
-- Remove errant newline in commit message. (Miguel Ojeda)
-- Use more succinct expression. (Gary Guo)
-- Drop and then add Danilo's Acked-by again.
-- Link to v4: https://lore.kernel.org/r/20250210-aligned-alloc-v4-1-609c3a6fe139@gmail.com
+Thanks,
+Ryan
 
-Changes in v4:
-- Revert to `aligned_alloc` and correct rationale. (Miguel Ojeda)
-- Apply Danilo's Acked-by from v2.
-- Rebase on v6.14-rc2.
-- Link to v3: https://lore.kernel.org/r/20250206-aligned-alloc-v3-1-0cbc0ab0306d@gmail.com
-
-Changes in v3:
-- Replace `aligned_alloc` with `posix_memalign` for portability.
-- Link to v2: https://lore.kernel.org/r/20250202-aligned-alloc-v2-1-5af0b5fdd46f@gmail.com
-
-Changes in v2:
-- Shorten some variable names. (Danilo Krummrich)
-- Replace shadowing alignment variable with a second call to
-  Layout::align. (Danilo Krummrich)
-- Link to v1: https://lore.kernel.org/r/20250201-aligned-alloc-v1-1-c99a73f3cbd4@gmail.com
----
- rust/kernel/alloc/allocator_test.rs | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-index e3240d16040b..17a475380253 100644
---- a/rust/kernel/alloc/allocator_test.rs
-+++ b/rust/kernel/alloc/allocator_test.rs
-@@ -62,6 +62,26 @@ unsafe fn realloc(
-             ));
-         }
- 
-+        // ISO C (ISO/IEC 9899:2011) defines `aligned_alloc`:
-+        //
-+        // > The value of alignment shall be a valid alignment supported by the implementation
-+        // [...].
-+        //
-+        // As an example of the "supported by the implementation" requirement, POSIX.1-2001 (IEEE
-+        // 1003.1-2001) defines `posix_memalign`:
-+        //
-+        // > The value of alignment shall be a power of two multiple of sizeof (void *).
-+        //
-+        // and POSIX-based implementations of `aligned_alloc` inherit this requirement. At the time
-+        // of writing, this is known to be the case on macOS (but not in glibc).
-+        //
-+        // Satisfy the stricter requirement to avoid spurious test failures on some platforms.
-+        let min_align = core::mem::size_of::<*const crate::ffi::c_void>();
-+        let layout = layout.align_to(min_align).unwrap_or_else(|_err| {
-+            crate::build_error!("invalid alignment")
-+        });
-+        let layout = layout.pad_to_align();
-+
-         // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
-         // exceeds the given size and alignment requirements.
-         let dst = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
-
----
-base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
-change-id: 20250201-aligned-alloc-b52cb2353c82
-
-Best regards,
--- 
-Tamir Duberstein <tamird@gmail.com>
+> 
+> Thanks,
+> Ryan
+> 
+> 
 
 
