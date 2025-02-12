@@ -1,216 +1,167 @@
-Return-Path: <linux-kernel+bounces-511452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BADA32B39
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:10:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A32A32B3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:11:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29B571651FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:10:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0DF1883610
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC87A2135A1;
-	Wed, 12 Feb 2025 16:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FF9212B06;
+	Wed, 12 Feb 2025 16:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RJ7U+0wt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pskOkgaG"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D531B21AD;
-	Wed, 12 Feb 2025 16:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD051D89E4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739376651; cv=none; b=izL0CXY2hdnrcm/s4ZSk//xn/13X1oZ5vXziOfsPYBB3d9BmWUAkwUV8AEnRKyxrwmiiPZYwOzZ04/tRgUyEH+AwEKzp9/+mxj/YbomZwV7ta5/QOYdiDifoEVlClP5cW29tdq3ISVklZA6WWzSIWVjtZGeHdQThCb19ZlpK/jI=
+	t=1739376686; cv=none; b=PqjEcpRove0YmMQDmY1T/S9/p0Hio0M+a6zIyTRqVXDt8msfQweZptI+Vxw4WAindO4TH2LXm/NNiBrs6ukCJGzbZuBylCjarcfN3VVy9kCqBBoU0GM8OP76YLyoZjTSFp1u+KMTIrJwVQ3784643HE69/ZWQl3aBeiD3gFjKFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739376651; c=relaxed/simple;
-	bh=ARGKeV1embwkeSEmwa7d0u/VvHoPmhoca3LzkXk9Fuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPofwwi5VHWhUIm7ZaNzcbVUt2ucH4SDjX9Lu3CATcgNH/vQ6WIEoulvAVmHAo2InX2A6wVkcUWRMyFqZqV/mzM4pEWbt3gVsOEnRbfpKobSmAf3qLWyi7OiuL7oSE0UDUEgMZ//d0+eCgtMSG5lkUoIxl995tgQiCoEmWsn7j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RJ7U+0wt; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739376650; x=1770912650;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ARGKeV1embwkeSEmwa7d0u/VvHoPmhoca3LzkXk9Fuo=;
-  b=RJ7U+0wtywJKfx96EcDj3SFrr+qo3iuSVi2CAkDShD6GI7Nx0bb4+m/B
-   lUmWgPS03MQgPgUlx+WSl2arhhdE4tgklc3rVjV1pOqN/hgrl4VWWI4TB
-   Tnt2Xvfx0xuxev2FQhNHHfVmSHccZfyKAtSbYXkdzPduV0JCxQFatrp6G
-   cqnFGEKOzIMl7utIl9WFBebaxRKKLJnO+TtZjRTMNIVLZd2h70759jHLi
-   D9/3vobhxyqR92/54gWFOb82XxSYPb8PzE3MYzZVBQ4xvDHBoMYneQaMe
-   neBNWc4sNPhYbEwIiKhQjvObpn3bvCGwivFvCFwesTinKr3/Nm5jLZZlk
-   Q==;
-X-CSE-ConnectionGUID: UzMLV5NxSceKUcVAtrMQOg==
-X-CSE-MsgGUID: aKUhLuTdTvWv+e+7kJhdrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39744865"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="39744865"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:10:49 -0800
-X-CSE-ConnectionGUID: pXka0SYVRLCX4jjNwFzZQA==
-X-CSE-MsgGUID: h0CdDmYITay347p06L1vTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117496172"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:10:44 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tiFJw-0000000At2Z-2uU4;
-	Wed, 12 Feb 2025 18:10:40 +0200
-Date: Wed, 12 Feb 2025 18:10:40 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Emil Gedenryd <emil.gedenryd@axis.com>,
-	Arthur Becker <arthur.becker@sentec.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-Message-ID: <Z6zIAGLot3YQLo9S@smile.fi.intel.com>
-References: <20250212064657.5683-1-clamor95@gmail.com>
- <20250212064657.5683-3-clamor95@gmail.com>
- <Z6ywGgofzU1bvm0H@smile.fi.intel.com>
- <CAPVz0n1UuZPCb3Jdj_fK3Ut7WKBgtvj7aROqJ4YeYVMutuyv7A@mail.gmail.com>
+	s=arc-20240116; t=1739376686; c=relaxed/simple;
+	bh=GVhqG056Vdq+Mz9grygtQVwiNYixaIhJsOQkOECDgcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MO1IDbZxo0RvEQ3JsDWNewpwVmQwZgJpPcAYNHrHoNAKpM5mYVbXSedAeDVFmQDG3genvby3TmC8oE/HPx562ok6D9XmUTTEuZSTHvvoMgXfPSyJpi7l+7yWYMwxpeLj0HwdA0wED501NyXt02MjoiB7+x9A03f6YFHcGFzH65Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pskOkgaG; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d05815e89dso151875ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:11:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739376684; x=1739981484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pCQ/+n928Vn9gelcfMvT1zVQa+ndVs/P/rMELGvCBhg=;
+        b=pskOkgaG8SXvBpishnZLWtCdK1H26atq9OZQoK/W+LTyPeq9XkQgZ4n+K0TjJDgkn2
+         isBgQpH/vsP8m4XUevEFoXN9ozuoCEkG10jLAEN4HW48PEdA7LlUAHZm6FhAmBXN6Bnk
+         lsubN7NVdj9ggg5RvaTosj3N386QY2ZRCiM2vsYtH9UBcaKe4meAQ8lr/TdgQGDWK+vu
+         9aFnt2u705vAg86UONUgBfE6a5Av7BiyeHagK5YMqHKTVnX52V0IvwvXM4bJfsmP1juN
+         UjcpDON6PUOkpKu8wxx8qWcOqTfWL5klXNdJOnqC69jRC9ze92wA366y4BpkXPg18nNs
+         xLzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739376684; x=1739981484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pCQ/+n928Vn9gelcfMvT1zVQa+ndVs/P/rMELGvCBhg=;
+        b=ZLzNcmHOUuohj68HemmnQ8HXl5l5Gm8/Ej0I8LLglHhDNKnYL5rpSbvob9a3pLAbRe
+         XLWWIF8v8UrHKdcbf8J8ZeEFlB85cV/auiFhEFjpv3VJrZWCKj9QTMU8/+RAZzBgF/Sd
+         uTdE9ZGFmVuFYaCLsLbe1e1ysIvQJBmQMKk03IYvbfOaWkkPglbMiSe0x/iuN7tfqpEy
+         2UEAbxZ1EZjg0j9IrOyzg5e66irc+mgWlNnyiW4iFN2hFgCg/v9iaquD7fPyiwOAfxM3
+         eX0tc2DppfIWkCskDSSFhb176InDfRrUGb+dshK7oO0V1WQhQxptBSAVxxiMBZBrVCzm
+         J/XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbz2NjQjP+J/UqrFWQZ1zsXFPKu5DnE0P6CUt5HOJVXv7ZgnPj3dKLQOCwO2Ur6q5zuexDcHwOZFHm2g4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytdlQH7yCjDKYlDNBl4bdW7H55siobvpBSh5jm8fjZXwbeBsMv
+	ti1n2pxw/ZrS1gx6sA/HpI91OP3DBRo6LUXf9XApMKTA/RkWHi/sTH2jDkB6ixw5lCw9X2vE0Ho
+	IDBEMM96Sm5RkJ7OjohzY2VAviq/7CzAJKH/M
+X-Gm-Gg: ASbGncuVdrqc9Z2x+gsyiLm5lsflDStulKAjQeVePbyJ1ghP0+OHDS7iXJIjXJMa+tQ
+	8n+FMV0gJZML+Jn3tBdc1tCvRCaQ0RdtpcIEojpALORhmEPhMJWYhwdMMQACt8rZJn/PuQzPL6P
+	KydCJUJ3eI7Q2C6svHGXcFRA3D
+X-Google-Smtp-Source: AGHT+IFbq+WY9VzcU/yaimb94wProbxrL7HzQLktm4Pmb2CdI2atD7lBQuYnHsdbEEr4mZ8tSA1x+0qt0b1VDHmXxnY=
+X-Received: by 2002:a92:cd8c:0:b0:3cf:c98a:ceba with SMTP id
+ e9e14a558f8ab-3d17cdf6363mr3712565ab.22.1739376684010; Wed, 12 Feb 2025
+ 08:11:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n1UuZPCb3Jdj_fK3Ut7WKBgtvj7aROqJ4YeYVMutuyv7A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250111190143.1029906-1-irogers@google.com> <20250111190143.1029906-3-irogers@google.com>
+ <Z6y1dbyF1xY1FvsB@x1>
+In-Reply-To: <Z6y1dbyF1xY1FvsB@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Feb 2025 08:11:12 -0800
+X-Gm-Features: AWEUYZmDXNPKvmaOfmRkYwGw5dkZIh-KEw8TBRIDz2ERpDrvTLeKvTz6iinFF40
+Message-ID: <CAP-5=fVrB8hRc0-K6D001xBNr6M-xjYMOet+-tafei101achig@mail.gmail.com>
+Subject: Re: [PATCH v1 02/10] perf parse-events filter: Use evsel__find_pmu
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Hao Ge <gehao@kylinos.cn>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Levi Yun <yeoreum.yun@arm.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	Tengda Wu <wutengda@huaweicloud.com>, Yang Jihong <yangjihong1@huawei.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 05:20:04PM +0200, Svyatoslav Ryhel wrote:
-> ср, 12 лют. 2025 р. о 16:28 Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> пише:
-> > On Wed, Feb 12, 2025 at 08:46:56AM +0200, Svyatoslav Ryhel wrote:
+On Wed, Feb 12, 2025 at 6:51=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Sat, Jan 11, 2025 at 11:01:35AM -0800, Ian Rogers wrote:
+> > Rather than manually scanning PMUs, use evsel__find_pmu that can use
+> > the PMU set during event parsing.
+>
+> Right, and then evsel__find_pmu() also does some extra checks to call
+> pmu_read_sysfs() more selectively, right?
 
-...
+Right, but the pmu should already be initialized by parse_events so no
+scanning should be necessary:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/pmus.c?h=3Dperf-tools-next#n759
+You are right that the fall back to perf_pmus__find_by_type is more
+selective in what it scans:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/pmus.c?h=3Dperf-tools-next#n302
+First seeing if the PMU is already loaded then just loading the PMUs
+relevant to the type number.
 
-> > > +/*
-> > > + * AL3000a - Dyna Image Ambient Light Sensor
-> > > + */
+Thanks,
+Ian
+
+> - Arnaldo
+>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/util/parse-events.c | 14 ++++----------
+> >  1 file changed, 4 insertions(+), 10 deletions(-)
 > >
-> > Can be on a single line.
-> 
-> Patch checking script did not catch this as warning or style issue. If
-> such commenting is discouraged than please add this to patch checking
-> script. Comments are stripped on compilation anyway, they do not
-> affect size.
-
-First of all, it uses verb 'can' for a reason (it's not anyhow big deal).
-Second, not all stuff should be documented or scripted, we called it
-a "common sense". The common sense rule in the code is: "Do not introduce
-lines that are not needed or do not add a value". I see these 3 LoCs can
-be replaced without any downsides to 1 LoC and make it even more readable,
-less consumable of the resources, and more informative as opening the
-first page in the editor will give me more code than mostly unrelated
-comments.
-
-...
-
-> > > +#include <linux/bitfield.h>
-> > > +#include <linux/i2c.h>
-> > > +#include <linux/module.h>
+> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-eve=
+nts.c
+> > index 1e23faa364b1..f147e13a7017 100644
+> > --- a/tools/perf/util/parse-events.c
+> > +++ b/tools/perf/util/parse-events.c
+> > @@ -2406,9 +2406,8 @@ foreach_evsel_in_last_glob(struct evlist *evlist,
+> >  static int set_filter(struct evsel *evsel, const void *arg)
+> >  {
+> >       const char *str =3D arg;
+> > -     bool found =3D false;
+> >       int nr_addr_filters =3D 0;
+> > -     struct perf_pmu *pmu =3D NULL;
+> > +     struct perf_pmu *pmu;
 > >
-> > > +#include <linux/of.h>
+> >       if (evsel =3D=3D NULL) {
+> >               fprintf(stderr,
+> > @@ -2426,16 +2425,11 @@ static int set_filter(struct evsel *evsel, cons=
+t void *arg)
+> >               return 0;
+> >       }
 > >
-> > No of*.h in the new code, please.
+> > -     while ((pmu =3D perf_pmus__scan(pmu)) !=3D NULL)
+> > -             if (pmu->type =3D=3D evsel->core.attr.type) {
+> > -                     found =3D true;
+> > -                     break;
+> > -             }
+> > -
+> > -     if (found)
+> > +     pmu =3D evsel__find_pmu(evsel);
+> > +     if (pmu) {
+> >               perf_pmu__scan_file(pmu, "nr_addr_filters",
+> >                                   "%d", &nr_addr_filters);
+> > -
+> > +     }
+> >       if (!nr_addr_filters)
+> >               return perf_bpf_filter__parse(&evsel->bpf_filters, str);
 > >
-> > > +#include <linux/regulator/consumer.h>
-> >
-> > Too small headers to be included. You use much more.
-> 
-> Is there a check which determines the amount of headers I must include
-> and which headers are mandatory to be included and which are forbidden
-> to inclusion. Maybe at least a list? Thanks
-
-No check, there is IWYU principle.
-
-https://include-what-you-use.org/
-
-The tool is not (yet?) suitable for the Linux kernel project and Jonathan,
-who is the maintainer of IIO code, had even tried it for real some time ago.
-
-> > > +#include <linux/iio/iio.h>
-> > > +#include <linux/iio/sysfs.h>
-
-...
-
-> > > +static const u32 lux_table[64] = {
-> >
-> > I think you don't need 64 to be there, but okay, I understand the intention.
-> >
-> > > +     1, 1, 1, 2, 2, 2, 3, 4, 4, 5, 6, 7, 9, 11, 13, 16,
-> >
-> > For the better readability and maintenance put pow-of-2 amount of values per
-> > line, like 8, and add the respective comment:
-> >
-> >         1, 1, 1, 2, 2, 2, 3, 4,                                 /*  0 -  7 */
-> >         4, 5, 6, 7, 9, 11, 13, 16,                              /*  8 - 15 */
-> >
-> > > +     19, 22, 27, 32, 39, 46, 56, 67, 80, 96, 116, 139,
-> > > +     167, 200, 240, 289, 347, 416, 499, 600, 720, 864,
-> > > +     1037, 1245, 1495, 1795, 2155, 2587, 3105, 3728, 4475,
-> > > +     5373, 6450, 7743, 9296, 11160, 13397, 16084, 19309,
-> > > +     23180, 27828, 33408, 40107, 48148, 57803, 69393,
-> > > +     83306, 100000
-> >
-> > Leave trailing comma, it's not a terminated list generally speaking
-> > (in the future it might grow).
-> 
-> No, this list will not grow since the bit field seems to be 0x3f
-> (datasheet is not available, code is adaptation of downstream driver).
-
-You never know. Sometimes driver is getting reused to support other compatible
-HW. Telling you from the experience.
-
-> > > +};
-
-...
-
-> > > +     ret = i2c_smbus_write_byte_data(data->client, AL3000A_REG_SYSTEM, val);
-> >
-> > Why not using regmap I涎 APIs?
-> 
-> This adaptation was written quite a long time ago, patch check did not
-> complained about using of i2c smbus. Is use of regmap mandatory now?
-> Is it somewhere specified? Thanks
-
-It adds a value to the code (in particular debugfs for free and
-many nice helper APIs). It's recommended and many maintainers would like
-to have it. It's rare that some of the generic framework or library committed
-into the kernel just left to become rotten there.
-
-> I am not a full time linux contributor and may not be familiar with
-> the recent rules.
-
-Many are not the rules so far, but recommendations and/or preferences by
-certain maintainer(s).
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> > --
+> > 2.47.1.613.gc27f4b7a9f-goog
 
