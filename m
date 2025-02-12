@@ -1,124 +1,150 @@
-Return-Path: <linux-kernel+bounces-510822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7635DA3228D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:40:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5DFA32268
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:37:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D9D3A8FBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:39:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4CB8188AD14
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1431C207DF8;
-	Wed, 12 Feb 2025 09:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED8C20969A;
+	Wed, 12 Feb 2025 09:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="okQKh0iU"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B72207A20;
-	Wed, 12 Feb 2025 09:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QrIgjLpE"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8BC2080F0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353013; cv=none; b=YdXmR9Dnib2WtiJA8dc+SLrdViItCEuyO7I0Wn2kiecINiezabB8ye4G2rlu9Yrq177m//IVsmGUkAp+b9ecxr1G5kVSuxOhR7R8OeFz8PSpokgMSlPK7henBmYe6Nt1fd9BDfdKQVDLYllG8TEfNWFSiWOSOWjTcdx5KZJ18H0=
+	t=1739352989; cv=none; b=Nl2D0Ra1NX5nDGG8ssxx6/WE3DjQtVeAhuP9nCr+WjybSdgo2aOm/EXaGOAdYEmZ7EA2OU9HzEIqnwW0Y7AIKe9Z6kszF5AJctRPbIQ7EBoUloPk4p+4bRZD+8XCJs/Ig9LVUFpzgnAed3hjqcbrGFf4g6hdMUJp+y88GFXYuLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353013; c=relaxed/simple;
-	bh=djWsWjg0S9oMhoI7aouvBl77d3FEFDIiyx3E6y9FBcY=;
+	s=arc-20240116; t=1739352989; c=relaxed/simple;
+	bh=I7CFgTkt0jzyGzG4M7RjYnnbGhlCBrEk+jlNQ3TAQts=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aRabZSK5Xja6MrZPaAG72Fy8DF5+m0qta4h+wAiSOUc7DC+5vdT7/xonSLrQt38xiegIbRs0FHHItj6Gjc8iJcfDYDZuTesjkAaTWgGqwTdAb5GjWxnGqflLjnbS/RKc6cYQvU4pomRU4NYL+Wr54spqHqZYkjw26CMf12wuJBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=okQKh0iU; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=x5wpq
-	KJUmSg4bQV96jwM4c9cPSXvq7N01GUYeXUKlfk=; b=okQKh0iUdQ64yIaPM7a99
-	ar3uuLYT3C/HzkwQg6KkU2k8fCAs6ZdJaVh0VU7ua7cQ5XwN6Ja/bxUTJSGyIQNN
-	zm30Rq9gxGIU6p5kURX/GPghC5NO5Nxha0P/0RvORO0HPPqjAVF43d8NZqOmNu2Y
-	xLB0t8dgwxlGX/3sSMFT04=
-Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wBn8FORa6xniPPgLA--.46093S2;
-	Wed, 12 Feb 2025 17:36:20 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	krzk+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
+	 MIME-Version:Content-Type; b=GzJQ0wCoeXAioPkZkdsO5eC4mlU3gDVlExq2FW2UDFGELKuh2AmLZMMtaQYZb20KRD+F2pMmM+4Y4pz/GoZPRUIieJkpQrQUkvtjat+PFAdmiHDBnab637xpcc2P1ZFbBysIIOceUuLpyoV668xAt025ROZcbZ6AilJ2KM2xTqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QrIgjLpE; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43934d6b155so3790225e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:36:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739352986; x=1739957786; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SrbuHpRRCn2ojY6FY2MTuNNVYvVFb7ykFJzn4YLtY68=;
+        b=QrIgjLpEkIg4TvIfUDn3FaU9UtGn68UJuWXMMFjnw4pJIp7q01+sRhx2F0VZ4ntyrb
+         DTrq8sVzdwrJu4TaGKOY7n4aBTY3xdvnVEV6RW6DqZIv/2RDmCOBhHwewUPWzzIrta00
+         6z6P91/vFUQ0zF8LZCpJr9M3F5EY9/g8LjPGBEhOfymyTWlJxA4VzKyVrx12AKeSF+YZ
+         N7DVbbx7q2oHHAL1uMEw6zDoSO2LbkqwINA0HKNuZ2PGQp0DLiZj+skDYbmiuEAiXFsf
+         A0t/Z66W3OLN9cEEH23FX16CE5d+yhQDNxfHJo+KiM/hL2ihtEeKhNQeTCl+gYpINcHO
+         cFfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739352986; x=1739957786;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SrbuHpRRCn2ojY6FY2MTuNNVYvVFb7ykFJzn4YLtY68=;
+        b=cHQ+EotKgJdVSx1hGDB0uXhcZ+AGvQ12GBJm3i04dOcWn4vKXrF774Lq5c36ySRxhk
+         IYpLtla3pJfosX9/k95+tmNTVq5asA3Lola3DjFhXd0y7K70fXDsUlwH8fPGT+nQLk7K
+         EbAcNlGNcBL1KKEx7ze0b92YcIh3uJZfhUz7HW6uJAyXEYBMics5Zh1jK9TZnE9sJWCp
+         krqVlAr+i7D6uXs7EkejigF8H1ZeQGgBwOoVyqJkWTZc1JGR9E0m+PF6PeBgEtyUm7Tn
+         BHOyMFDajzSzOZ3c4MtY/QgdTfK9ZxaSvqnh5avnCkZwvQdJsiu3Ip/UQJN8G3TGRSMf
+         zZuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEwRu4K9OUdzeuvkk0PKFebUiPQzZAQoGTwHyq3B2XSQWYcNT80Q6AkYZIEb4KLv1ZJ43NEeiX4rlpKVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRfrNZHc5F8eWk54suPOnAgmB0n2uQkbeIFVoN3m734kBe/B8N
+	3mzRjD1av8bCYXEpZlvIdTbSIj8GMs57B5FVMSe+6auAmKCZ1Wx/Y9cR4qXbNMQSo334k0zBwRy
+	w/6Y=
+X-Gm-Gg: ASbGncvMTbhqOlCawqy+HILbGt/OR3CcIRr54NeVHanAd9nVd6iAH+SBRI63ORX4oWm
+	XZM0UB2xLl/LWEUeb/DlLGtk+VTQQS/iIFo76GrUKzLLkvi2wUwsFN+2CiHYXXKhZt0UampLTGJ
+	A8UKkjLsCN9mnuasok5WRWYwZRqSY3DqSd8Pk455y+eGZrrE1yBPcNkFXtkLed/IdmmJKk1l5ZL
+	rTyXU7kRsBW4aFp7+1BKhhUiu698sJ1fZTOXJJAa5nBbOdrPp9I/4xQAUhmozr9RMFfQVVaANXQ
+	RkjxDFWCPztbbFo=
+X-Google-Smtp-Source: AGHT+IFudfgBGV0+IDygsdoLTA/5igyJSZtMJXjbCQPeBSc7oN4L55kdXKAZLq0JA2599sk+IrdqDA==
+X-Received: by 2002:a05:600c:3ac4:b0:434:f9ad:7222 with SMTP id 5b1f17b1804b1-439583b4e03mr18452935e9.7.1739352985575;
+        Wed, 12 Feb 2025 01:36:25 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:521c:13af:4882:344c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dd8dee385sm9918965f8f.61.2025.02.12.01.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 01:36:25 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Peter Rosin <peda@axentia.se>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	David Lechner <dlechner@baylibre.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	derek.foreman@collabora.com,
-	detlev.casanova@collabora.com,
-	daniel@fooishbar.org,
-	robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v14 11/13] dt-bindings: display: vop2: Add missing rockchip,grf property for rk3566/8
-Date: Wed, 12 Feb 2025 17:36:13 +0800
-Message-ID: <20250212093615.53023-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250212093530.52961-1-andyshrk@163.com>
-References: <20250212093530.52961-1-andyshrk@163.com>
+	linux-iio@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-sound@vger.kernel.org,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: (subset) [PATCH v3 00/15] gpiolib: add gpiod_multi_set_value_cansleep
+Date: Wed, 12 Feb 2025 10:36:23 +0100
+Message-ID: <173935297467.10817.9536577313319553775.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
+References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBn8FORa6xniPPgLA--.46093S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tF4fZw43KFWxury3JF43KFg_yoW8Gr43pa
-	93CFWDWay0gr12qw1DtFn5Cr4v9F97Ca1UJFs3G3WIywnIgFn8Ka4agrn8XF4UGF4xZFWf
-	ua1Ygry5trs2vr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnhL8UUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqRrxXmesZ5VM2gAAsz
 
-From: Andy Yan <andy.yan@rock-chips.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The clock polarity of RGB signal output is controlled by GRF, this
-property is already being used in the current device tree, but
-forgot to describe it as a required property in the binding file.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Mon, 10 Feb 2025 16:33:26 -0600, David Lechner wrote:
+> This series was inspired by some minor annoyance I have experienced a
+> few times in recent reviews.
+> 
+> Calling gpiod_set_array_value_cansleep() can be quite verbose due to
+> having so many parameters. In most cases, we already have a struct
+> gpio_descs that contains the first 3 parameters so we end up with 3 (or
+> often even 6) pointer indirections at each call site. Also, people have
+> a tendency to want to hard-code the first argument instead of using
+> struct gpio_descs.ndescs, often without checking that ndescs >= the
+> hard-coded value.
+> 
+> [...]
 
----
+Applied, thanks!
 
-(no changes since v13)
+[01/15] gpiolib: add gpiod_multi_set_value_cansleep()
+        commit: 91931af18bd22437e08e2471f5484d6fbdd8ab93
 
-Changes in v13:
-- typo fix
-- Explain the function of this property.
-
-Changes in v12:
-- Split from patch 10/13
-
- .../devicetree/bindings/display/rockchip/rockchip-vop2.yaml   | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-index a5771edd83b5..083eadcf0588 100644
---- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-+++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-@@ -146,6 +146,9 @@ allOf:
-         rockchip,vop-grf: false
-         rockchip,pmu: false
- 
-+      required:
-+        - rockchip,grf
-+
-   - if:
-       properties:
-         compatible:
-@@ -200,6 +203,7 @@ examples:
-                               "dclk_vp1",
-                               "dclk_vp2";
-                 power-domains = <&power RK3568_PD_VO>;
-+                rockchip,grf = <&grf>;
-                 iommus = <&vop_mmu>;
-                 vop_out: ports {
-                     #address-cells = <1>;
+Best regards,
 -- 
-2.34.1
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
