@@ -1,148 +1,121 @@
-Return-Path: <linux-kernel+bounces-512056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B27CA3336F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:35:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA7CFA3337E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904EE164396
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:35:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B59816638C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBF321480C;
-	Wed, 12 Feb 2025 23:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531ED25D52B;
+	Wed, 12 Feb 2025 23:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="YkDwFj7z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qT5MUOAP"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4eTPRx3"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589D82080F1;
-	Wed, 12 Feb 2025 23:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE45207650;
+	Wed, 12 Feb 2025 23:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739403305; cv=none; b=FC3C+BXGVOai+DKawF1QzFTmKuL9ulB1BoBNsUTLI/BIgD7Ut9I5EuLM0Et/C8XK8CCQM7+hwMDdt6VQI7xHMbIUP5rEt1JmwceCFsSHj74VcfaWfotoTdLy8J0pH/QljzmS5ZtaZsk/8eN5opHstv3EpcgGY8CsfHvh0JHA/qk=
+	t=1739403651; cv=none; b=kO9Gb3RPHK9n/nQknj/NhY8GiODySq/oTs/XtJKwPsKqaLzrZueG3QIhO7VocgB/k7/42nLDeKrbCnibu5BKfTyAix4sjlMRgoRMCoe4Yj6jbhWjTeu1i6oYVSPyWaj7UdueA9W8aEC1UlIYMW4UcdSdAJgUP3yiPCUo63pxhUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739403305; c=relaxed/simple;
-	bh=K1wrqzeYi3Gta2Ad6p0k5kVGf+FW8XSmOwVIKl5mEw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxd26eu7LPNGkHRRxCuMUrnwMlMKDQxwDJDp9D9TRXEPR2jZz1pAhwzeViSu4EeBeRuvE5rL0XlMZK4ZvkhX7h9E3hxaqVRbcAKoww09VWNj7wFLJZFrZx7pHX+7NTzbETmMhYEZ1MaFStz9psWqj7Te/dNZ2FH5bCN9P7z/gAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=YkDwFj7z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qT5MUOAP; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B4019254022D;
-	Wed, 12 Feb 2025 18:35:00 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 12 Feb 2025 18:35:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1739403300; x=
-	1739489700; bh=PbkKzlIY/ac5i1RLKAU/cKM5GEAJQeB9Gs1wNfgY110=; b=Y
-	kDwFj7zDOgOhJTQFpugxdpcPQFHKHbzX6YwSyo8tGDHlg7aZ5TKFwnE5ZGR7b/em
-	CnUBnRa19erEZ9Gz7ZniXw9RbAIr0YlzzP+8uMVEkiYEhnI1U6lvkI6BO8y6lt6A
-	cJRv1XuJZwyO9+FbdK9zhOq5JmL3VjCmzO6QrDR07eNFpGSg1SRYA+jpoF9OeF01
-	xfStUlw+s6O/3oYD+keo/k56154K3AE6d5pCSpecfj1T7Cgu84vZyPSXnqlfGeVK
-	dgGpOOkcfAMEtUwbpszuEffgeJ2TVmsr2x+vacdQIUyyr6zKzBsN1Gz15BZrNvlV
-	OK/WZOo68d8+XtXHX6wKw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1739403300; x=1739489700; bh=PbkKzlIY/ac5i1RLKAU/cKM5GEAJQeB9Gs1
-	wNfgY110=; b=qT5MUOAPcxTwVPQ2gsPzH9lGcMAVGzGVzhmrnhon1wWgfiW6I35
-	90uz9BBikjS1wlqIqRjbzVKxmMUv/Nl77nPS1B737Ob0cTaCc8bQNqCV3B/mcAQ8
-	dl8menE2+CvYJgSb1xFx3+mrZ/tW8afkSA9eNDHLTuKAFvHRlR5QBlUOX1sfq8xn
-	iZZsj7Y8ElbJDXxJyniowY0S5dQZHzlKJS/ubzjQX8LeM9XoHFq8Zu8UdWh9LSXt
-	/OrjCc//60aPJjEHcONj8EebbogEeg90HmLy8oBDpUl6qd5CZqN1plSJp4TEvxsD
-	b2g9V6WDRSBcfFp9jJanZzHh8y/5El0evoQ==
-X-ME-Sender: <xms:IzCtZw3rqAx5rxHLwLT_fNIyuLJY-DVAlwc2NkK_Qn3FDfwBavATUQ>
-    <xme:IzCtZ7HeC2XUhIzmdKUa3Hm05r8VuL_jy5ffthEXTI3f3egEb--QjLlvuZdn8ogvJ
-    _ldaiLtkGtg6OA-owU>
-X-ME-Received: <xmr:IzCtZ44vrXCedy-qe1NA6HW21k3xZXkZ4z2i7BxJvCB7JpXbU1gT13FzlG6K>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeghedvvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
-    necuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnh
-    grihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefh
-    keegteehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgs
-    pghrtghpthhtohepvddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtoh
-    hnihhosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtg
-    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgr
-    sggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvg
-    hrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpth
-    htoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
-X-ME-Proxy: <xmx:IzCtZ50_QtK3CAKotBK-DA6sOj-b2v79EAxn8aIJ8LR2LojkyqH4kA>
-    <xmx:IzCtZzHoWxLJ69zRYhF0maXuwsDOHqzACoyLF_iluDLFKHPBmwrkbg>
-    <xmx:IzCtZy9_0G9mC0KlOpuRSqC0ZieO-XHc0WCvUu78XjHWOMQdq1wGAg>
-    <xmx:IzCtZ4ny-2GZQZ46RSCsaa8mKlmatb5CgPjhWY33R1tID2B0snakbA>
-    <xmx:JDCtZ-lX_51eQsIxJ9_Hg7G61JuYSd0Ir82mhK42uWg0W_wg62IZXgtP>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Feb 2025 18:34:59 -0500 (EST)
-Date: Thu, 13 Feb 2025 00:34:57 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
-	steffen.klassert@secunet.com, antony.antony@secunet.com,
-	willemdebruijn.kernel@gmail.com, David Ahern <dsahern@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH net-next v19 00/26] Introducing OpenVPN Data Channel
- Offload
-Message-ID: <Z60wIRjw5Id1VTal@hog>
-References: <20250211-b4-ovpn-v19-0-86d5daf2a47a@openvpn.net>
+	s=arc-20240116; t=1739403651; c=relaxed/simple;
+	bh=Pd/0rcMHZmDuc0o2E82MEQ+3uXllhZO5CarU5miQgOQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TclvknqVwfrq3JlNbV+tte5jh+/RE28udumKdSwwWFAU04pjdpDf0b4cPQzxl6fnAaKQabqeXtcdB7lhc7LLxq0YCxxr8UwTg576aukLtBirLgAD9LOXVPIfkXsY4AcjheZmzhwlRvpYFaxBtDEcESE8tkMsDCYymn0IM2v7is8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4eTPRx3; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220d601886fso486965ad.1;
+        Wed, 12 Feb 2025 15:40:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739403649; x=1740008449; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CVcFsp2axQVfidtPs1ObjaNf4Nt0uTp1iDy8yRGKHwk=;
+        b=m4eTPRx3Fyd3hb1mTfro6AcQqlRKBMOH1lXRy8Gx2lfRy5FesPk4PRU/qq66WBzPZu
+         QmGH9CGi2xms38jlKf3daMwwnzRsDK8GKpnQsGeW5daJmS2xnpky9CYwgOCKZkUb2e/V
+         t6V2xbUa+mJWxfQiUTFh/EMh/0cPgq7saaGTQudkStRndt1Ih9ZdwmcsFL2UbgkyIf2R
+         34OSzQVw9h6ZaPC0b+7QI2RAK7eGhKlJ+GCZJGGRUDQRQlSwwa/XaF8hINyNouVvWwYg
+         lV/38ylaizPtqQy/cQplH6WQ+i1j+0rt76ZD8oFvHWIybhmKFybaco7xHszhdSz2IExl
+         Chug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739403649; x=1740008449;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CVcFsp2axQVfidtPs1ObjaNf4Nt0uTp1iDy8yRGKHwk=;
+        b=s7nRMJR8WEwdNA17nmRB2v2iJsjJMbkGpysz9QUz7foBnL5qC6/TxPR/l5NFp631af
+         I3GR3eZPRWj9f1aeKss2l95sMqJTjfZg63+uU0ouRTBClA1nZkS+fK//3NqqcVBQTP24
+         oLH5haHFEtuyrjLQNBdmPEalB7t6IYaL71s4BBiO9Ax0yGBP9yX8EDAO4fru9tSh/HHO
+         MGjJDed8SZH2VTT9MVDXDFGHVqxEham1QirT/PF1rpNuYXMf+VvMk1DxdKRrWbKfTGHO
+         +ePYhGJDbBy9assbTKdJSJqU76NUW2B2HTPUNGly3y3gVCgnKcG59wIK08C5LQ+Vvvga
+         ub8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVpCZV7Fc+zn5NqnpYOghEQFlb1V2pydXrckxur9oksKHbogc1wnNkKt/nyPVbYobeSbbAl0LgU0yq8@vger.kernel.org, AJvYcCVwzJcjujFtGBgARdVMj46Ib3v9SiKygbvGSG89jnUgap8BlJS9JzFKCj6kAD1YlhEicQPNIKhQAx3uzA+8@vger.kernel.org, AJvYcCWmrsTvaMOts/7iWXXvXYNf04LS48cRF/PtHcBeYao/FHIdgCtHw5JoQYcLcqYHElOW3UD0H1l4vcZzrVPQ@vger.kernel.org, AJvYcCXzZCVDPOW6a7QCuCMySMnkkunjr0nCTV0RdaA3L8mux8If2/V9yGLm50clI0bCE/5/v43Eyti5SaKlLpdsNb9aJeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI1Dtk5Q8cpdTR7bRPjhGV4H+rEv5pFh8Y5J7nNUF3cLy99SBR
+	jeNMIfKFJniaXRYmCG0DzGwUlD41DtPJDKo9T04UqhuW5uN7ak1b
+X-Gm-Gg: ASbGncv5/3gJ5NvSSWng4Ir/r5FMp/TLTGaEP3Sip4e4thBjCYBWIkpLviVIewZiMD0
+	Oovfu96+Q2oOiH9xK4/hZbQxFoDKebUAn7OGbB9YNuMCTvJ+J67Y3ar40cgOn0cF19uVJc4avHE
+	lVnCerCc0uqQ6LZ+QWsfzZXXNbkJzqWvmi65mGvR5nVTnBS56ZeKuhRNJkjXRJNMnw8IC1YMTKX
+	TDJchFbTJRHjSezQIFcm74+AKYCLdnUGlN6xjBM9yGXm8M9/GToO2VENPpS/VW7TNkJuOnT1CN7
+	aZ/MuJzULkiwo65WEwTbrT+lN9i+Nh3e8iS68DTbAO5kBz7ybC62jpGot3VUdD+YT1j+LaxLuIY
+	kzQ==
+X-Google-Smtp-Source: AGHT+IH/zoQ0cDlj82q0vi/Ewd3EwjOZ35/p6rjGR2yDCOP9SHDBIMXEqqGWFjjKaJ5OGXOOAn+nFw==
+X-Received: by 2002:a17:902:e74d:b0:220:c94b:83a7 with SMTP id d9443c01a7336-220d20e9098mr14481345ad.29.1739403649333;
+        Wed, 12 Feb 2025 15:40:49 -0800 (PST)
+Received: from localhost.localdomain ([38.44.237.182])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d021sm964155ad.157.2025.02.12.15.40.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 15:40:49 -0800 (PST)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	alim.akhtar@samsung.com,
+	semen.protsenko@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: Denzeel Oliva <wachiturroxd150@gmail.com>
+Subject: [PATCH v1 0/3] arm64: dts: exynos990: define all PERIC0/1 USI nodes
+Date: Wed, 12 Feb 2025 23:40:31 +0000
+Message-Id: <20250212234034.284-1-wachiturroxd150@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250211-b4-ovpn-v19-0-86d5daf2a47a@openvpn.net>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This series adds device tree bindings and nodes for the
+Universal Serial Interface (USI) and UART controllers on
+Samsung Exynos990 SoC.
 
-2025-02-11, 01:39:53 +0100, Antonio Quartulli wrote:
-> All minor and major reported problems have been finally addressed.
-> Big thanks to Sabrina, who took the time to guide me through
-> converting the peer socket to an RCU pointer.
+The Exynos990 USI block supports multiple protocols (UART, SPI, I2C)
+through shared hardware resources.
 
-Something is off (not sure if it's new to this version): if I use
-test-tcp.sh to setup a set of interfaces and peers (I stop the test
-just after setup to keep the environment alive), then remove all netns
-with "ip -all netns delete", I expect all devices to go away, but they
-don't. With debug messages enabled I'm seeing some activity from the
-module ("tun0: sending keepalive to peer 3" and so on), and
-ovpn_net_uninit/ovpn_priv_free never got called.
+And also add dt-schema for USI and UART compatibility.
 
-[...]
-> So there is NO risk of deadlock (and indeed nothing hangs), but I
-> couldn't find a way to make the warning go away.
+Denzeel Oliva (3):
+  dt-bindings: samsung: usi: add exynos990-usi compatible
+  dt-bindings: serial: samsung: add Exynos990 compatible
+  arm64: dts: exynos990: define all PERIC USI nodes
 
-I've spotted another splat on strparser cleanup that looked like an
-actual deadlock, but it's not very reproducible. Still looking into
-it, but I'm not convinced it's ok to call strp_done (as is done from
-ovpn_tcp_socket_detach) while under lock_sock, because AFAIU
-cancel_work_sync(&strp->work) may be waiting for a work that needs to
-lock the socket (cb.lock in do_strp_work). I guess tcp_tx_work would
-have the same problem.
+ .../bindings/serial/samsung_uart.yaml         |    6 +
+ .../bindings/soc/samsung/exynos-usi.yaml      |    1 +
+ arch/arm64/boot/dts/exynos/exynos990.dtsi     | 1693 +++++++++++++++++
+ 3 files changed, 1700 insertions(+)
 
 -- 
-Sabrina
+2.48.1
+
 
