@@ -1,130 +1,130 @@
-Return-Path: <linux-kernel+bounces-511219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E4AA327EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:03:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924CBA327E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:00:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8378188CBE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:00:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E34F1624AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B92E20F061;
-	Wed, 12 Feb 2025 13:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A27B20E70A;
+	Wed, 12 Feb 2025 14:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="foJGN7wR"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VE8ttz/g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2000220E326;
-	Wed, 12 Feb 2025 13:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCE52063CD;
+	Wed, 12 Feb 2025 14:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739368764; cv=none; b=WI0RSveKx6oOWLbbR1KewAlrpK0MUclQAcPW7R8kHkm9r2LQN1rMKdi8YPQX9RtEXbK/7e42/Y9Ht/Los9wVTUpbhFgTBoJR1URQOxFlo8ycAXeyl/zEdIueC2MK4aST9pDLJQl7Z/IbI6mRPmd+7rNkrtKj2/goE8AaRtU3BqM=
+	t=1739368834; cv=none; b=VKvuspOxHk7rBx/koowNAH7/AK3MezBBycrpZ8ZQXwjd3f7umjuJJGX3uv9MNcHuekrrGPLU5EpD4NGGD/kt9hHzvzOoLZBol1ssOxKtzjOc7HhEHndrUhQ1TLYP5GZfoHOB9tmj8PTfywJsfOV/zi1n3bPHdYYgzgCrTKEXUSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739368764; c=relaxed/simple;
-	bh=UMusHU1t5zzmDkuA9Xf7Kq0KXr1+7v+GF+RicmDuKyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bgTxa2Hm2x/vTQffbU5MX2jjHvuTIpoLEf4ALstjjANlcQXuEzcg0yyJiJyNloG+wof//pG6r89bsxfOcAY0QQPVIakKfG5ODLue0x+9XZU8o8HBVwL89JAjQEq4blhy/hn9Jgdz+y5/SFgGSJK3/6DdUn59g+ydqOX2Ya/OrFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=foJGN7wR; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38dcb7122c1so4572215f8f.2;
-        Wed, 12 Feb 2025 05:59:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739368761; x=1739973561; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A+ede4RrUjYL6rNcNJR8w+SRtlFFhYFYyooGZI9RRMA=;
-        b=foJGN7wRFOn6VD5JkJBT5YP9/BgO4pxIDislSwcPkemPIJIh214JQEfXuDn/KYKhBt
-         Sdt36uY2dC4iIIe40biz/UiHuDr3pqEwCDGV1blQw4lnPa0DBzwKz6blxNjkG86FN5hC
-         DmGUvokgRLcJa1h3W+lGUJPg7VunNB9ayxh/N9A5Lu4WnI1UCCycDw4ewIYnZa/tOLVe
-         b3jSSTsqu6kjRhPThzrGVImbOOCG5er56XMcKuLbEwlyRSKK+e7+TH0WD+/AUy7m6ZC9
-         UAxoUZQMhM+hSMMLogE4N5FEPMUNchOONwnoU+3TGfirrGdyCtCzj8hNQgeDpVYZbNHM
-         od7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739368761; x=1739973561;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A+ede4RrUjYL6rNcNJR8w+SRtlFFhYFYyooGZI9RRMA=;
-        b=SFgb0T73Ofvdf6UetX9vskfgPrLtW6ib5AHYTe0JecNwksWv8YIyzVXH26TqH+YZXq
-         hFQW0hCFrbD5fkDp2lZgdsU6HLCVfisaUzu2AwEDDwWxSE6y9OA/TAPU/dU+Q9byfw21
-         4O0sj0HlAvjYQIKDr18IFQbJds5gFA7Y4i2TUR5UNn4JVu3+aCnSZ9qe7TDfkvMTSdfB
-         AwZhw9SlMsR2FdFo9ymeUROXLHtO9+s+fZvYw8Yfz5/mXyUBzAd5RJ/g/VsNzt1wRwmS
-         HvMJmv4K6FMAE8gwamRuApGnFMPobQ2MV1riJHM9E3kc2noAet4KiZZUYh2Htx8AR9GX
-         qiZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8ulQHsBR4O8o1u0nUsxgf8wDKw7TU2+vnrqrrPw11vq/cw8NzjA7gnjfhExm1OyfW8eKAzaJi4WzNTCgzY0CQxQ==@vger.kernel.org, AJvYcCWfZfFseLlKIN3xh3/DwkOYiq6vmYzxbGJPh5UU1fKNNzayh/Sod7ZRXWXtNtN78gmQT21To1ytaXUbaWgV@vger.kernel.org, AJvYcCXrvHfWiaxUTrXotPy/ViS7Tsv+DavjLXYj0XZ0TQQnDLV33zn/fLY6HbdWLYBUDVZeWxNHoq0uHsC4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr4cl7JPz/I6rTgwxioLVZDdoZk0XMNtb3FUEmVV8eiohOMKqf
-	whzLexMzaN7mNurcHUrT+FkDwgtknJtkZThhwEHNdC3e44Uj8v0r
-X-Gm-Gg: ASbGncu0TWWEy22yZFTV6zCsAC7KYLj6xSspqCvGK6fhkBabUHheUCZMSsoxAFczEqW
-	xUw61vpTzr4igRcfXuDzJaNqKUs3i4rWQi4vRnvLTxIw+grmGC2FBzO9I1WzkmkBOx42WKv93u5
-	Jw35Je3Mr837NKiOaHlQtM6/OPYAWH+KL2j8tb7Zta/93/hO8GxU8HBWsi72+FQaj2i51iDKv7x
-	mXaKMocvcFN7nE2l/7uKL/RnoSahH4pnQGie3TwnvyVBOl/mvNgS/ezG087Xr3qzCgAqnqvx+zQ
-	lR50qphCh6qgaQQ3Y9jmDOO/0XGUdz0fQqQ1zaLNzxuMOat8cGKPeg==
-X-Google-Smtp-Source: AGHT+IEKCoDJGY1lmlxzGAZbmqw2zwD51cxjE08/BzvCDXeJUL1uvgupw74+KSMNg7LFxI/1rdLUpQ==
-X-Received: by 2002:a5d:64e2:0:b0:38f:21eb:5d02 with SMTP id ffacd0b85a97d-38f21eb5f2dmr1041208f8f.22.1739368761091;
-        Wed, 12 Feb 2025 05:59:21 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a058930sm20853795e9.17.2025.02.12.05.59.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 05:59:20 -0800 (PST)
-Date: Wed, 12 Feb 2025 13:59:19 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Ian Rogers" <irogers@google.com>, "Arnaldo Carvalho de Melo"
- <acme@kernel.org>, "Howard Chu" <howardchu95@gmail.com>, "Peter Zijlstra"
- <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>, "Namhyung Kim"
- <namhyung@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>, "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>, "Jiri Olsa"
- <jolsa@kernel.org>, "Adrian Hunter" <adrian.hunter@intel.com>, "Kan Liang"
- <kan.liang@linux.intel.com>, "John Garry" <john.g.garry@oracle.com>, "Will
- Deacon" <will@kernel.org>, "James Clark" <james.clark@linaro.org>, "Mike
- Leach" <mike.leach@linaro.org>, "Leo Yan" <leo.yan@linux.dev>, guoren
- <guoren@kernel.org>, "Paul Walmsley" <paul.walmsley@sifive.com>, "Palmer
- Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
- "Charlie Jenkins" <charlie@rivosinc.com>, "Bibo Mao" <maobibo@loongson.cn>,
- "Huacai Chen" <chenhuacai@kernel.org>, "Catalin Marinas"
- <catalin.marinas@arm.com>, "Jiri Slaby" <jirislaby@kernel.org>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, "linux-csky@vger.kernel.org"
- <linux-csky@vger.kernel.org>, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 5/7] perf trace beauty: Add syscalltbl.sh generating
- all system call tables
-Message-ID: <20250212135919.4e7a26fd@pumpkin>
-In-Reply-To: <0195f9a0-5198-4ee0-b4ff-ea7126dc8299@app.fastmail.com>
-References: <20250210165108.95894-1-irogers@google.com>
-	<20250210165108.95894-6-irogers@google.com>
-	<d47c35dd-9c52-48e7-a00d-135572f11fbb@app.fastmail.com>
-	<CAP-5=fUi4RYebxCGYZVHVEt0BpWVmUA6+-vDQfbai25_KJRs7A@mail.gmail.com>
-	<0195f9a0-5198-4ee0-b4ff-ea7126dc8299@app.fastmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1739368834; c=relaxed/simple;
+	bh=ldu5Hug0iWK7d3nKUXsHU/BLDd11OVchE/dle+jdsu0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dY3MUuqI6cF8th4lrcgtd3w0cj21GzTg5NtrjsiPheYHzEjb3+VLT0SrGtX3w5huulWtjDKCVXVKUB6imaMNnu73OXhPIRLTvLkreuktaKKORn9RdZBpuGCrs3CTYr1H4Rqeq3Ih53Uvn0RwInwxCC9kwqTpcUKw40rKBw4xH5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VE8ttz/g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57979C4CEDF;
+	Wed, 12 Feb 2025 14:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739368833;
+	bh=ldu5Hug0iWK7d3nKUXsHU/BLDd11OVchE/dle+jdsu0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VE8ttz/g5kqAa2Z3NE9FsT/CQeN6jTNDvS0YE/U/ohrpJ/oI9ufmW6iJ1f42i7aEU
+	 RlaeIxfNXa+SOQ3E3f0zhZAzmg0yRIcxEDqZTVTvGEt3zfuFhHzT0qJPkbnf/YQBQs
+	 b2bIZ4w1lvO/YN7lVdI9zneqaVqCxYCYQTuhD/2NZ15b+iv5lbv8Hq0s5FGyrpweQ5
+	 +2eSsy5j1atKS1s2mhQpLvomkuaEw9syJaTZrjDU4A10dzRaPLjrCJQ6krnDNI+XaA
+	 Audgze1EnkQvkcNTFLtKRFCOha9zAA5rJRWTwRMnWlyAKscP01LZuPDFjuEtfUuvkr
+	 oSj7PK5uUaXOw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tiDHy-003MNw-UQ;
+	Wed, 12 Feb 2025 14:00:31 +0000
+Date: Wed, 12 Feb 2025 14:00:30 +0000
+Message-ID: <86wmdvs1oh.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	kvmarm@lists.linux.dev,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	virtualization@lists.linux.dev,
+	Mark Brown <broonie@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
+Subject: Re: kvm: nVHE hyp panic at: __kvm_nvhe_kvm_hyp_handle_sysre
+In-Reply-To: <3902208d-8814-46fe-ba98-3db833b9a886@stanley.mountain>
+References: <CA+G9fYt6Cuu6=OO9w80yhJbZB77Q0qf7nzYdvjbgDbgAw6t1jw@mail.gmail.com>
+	<8634gku30g.wl-maz@kernel.org>
+	<3902208d-8814-46fe-ba98-3db833b9a886@stanley.mountain>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: dan.carpenter@linaro.org, naresh.kamboju@linaro.org, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, broonie@kernel.org, catalin.marinas@arm.com, arnd@arndb.de, anders.roxell@linaro.org, Aishwarya.TCV@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, 11 Feb 2025 18:53:14 +0100
-"Arnd Bergmann" <arnd@arndb.de> wrote:
+On Wed, 12 Feb 2025 11:41:38 +0000,
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> 
+> On Tue, Feb 11, 2025 at 11:36:31AM +0000, Marc Zyngier wrote:
+> > For the crash at hand, which clearly shows nVHE, can you report
+> > whether the following hack fixes it for you?
+> > 
+> > 	M.
+> 
+> No luck, I'm afraid.  It still crashes the same way.
 
-...
-> I think the way it actually works on mips is that all syscalls are
-> allowed in any task and the actual number identifies both the
-> ABI and the syscall. In some variant, the same is true on arm
-> (oabi/eabi) and x86-64 (64/x32), but oabi and x32 are both too
-> obsolete to put much work into them.
+Right. It was one level deeper. The following change fixes it for
+me. YMMV.
 
-IIRC x86-64 processes can also just make i386 system calls.
-Even switching to/from 64bit mode isn't privileged.
+	M.
 
-	David
-
+diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
+index f838a45665f26..b899d815d272f 100644
+--- a/arch/arm64/kvm/hyp/include/hyp/switch.h
++++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+@@ -501,9 +501,22 @@ static inline bool handle_tx2_tvm(struct kvm_vcpu *vcpu)
+ 	return true;
+ }
  
++/* Open-coded version of timer_get_offset() to allow for kern_hyp_va() */
++static inline u64 hyp_timer_get_offset(struct arch_timer_context *ctxt)
++{
++	u64 offset = 0;
++
++	if (ctxt->offset.vm_offset)
++		offset += *kern_hyp_va(ctxt->offset.vm_offset);
++	if (ctxt->offset.vcpu_offset)
++		offset += *kern_hyp_va(ctxt->offset.vcpu_offset);
++
++	return offset;
++}
++
+ static inline u64 compute_counter_value(struct arch_timer_context *ctxt)
+ {
+-	return arch_timer_read_cntpct_el0() - timer_get_offset(ctxt);
++	return arch_timer_read_cntpct_el0() - hyp_timer_get_offset(ctxt);
+ }
+ 
+ static bool kvm_handle_cntxct(struct kvm_vcpu *vcpu)
+
+-- 
+Without deviation from the norm, progress is not possible.
 
