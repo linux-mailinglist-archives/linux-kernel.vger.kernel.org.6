@@ -1,144 +1,135 @@
-Return-Path: <linux-kernel+bounces-510646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CA0A31FF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:27:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E27A31FF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:28:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B05577A139B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:26:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 935FA1889182
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F76E2045A3;
-	Wed, 12 Feb 2025 07:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891B72040A7;
+	Wed, 12 Feb 2025 07:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XBlGN8Xo"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=easyb-ch.20230601.gappssmtp.com header.i=@easyb-ch.20230601.gappssmtp.com header.b="P5kN9xDp"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791532040A4
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A39220458B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739345218; cv=none; b=Np2TRtV+wU5vYnF7TV3Zj/k3q90+nW6+0DJkDHgInuHsIpVxI/ZM7EVoRGepvMddE1LxnClTM5eAfJx/mVniJuHnekrOksRE8+nr1sNBRZFPcKN2UxYxt0/a7lvckDSWUCVFg5B53zDV7NR0XAe2gVE2XRdj/Mp8GdvrWu0SWCs=
+	t=1739345272; cv=none; b=q0/KtQqNwhXYTrPo3H1nhwBK9pL4WqU/m0R8Q/Vx9hSQErn/KGLuW8diNkVlSrK1wcUprykoGQ45T+GZUTy3QEEo2OPj1KtOIiir03L3Fo30A1HsKmQSoUU477bCdGhwf1RIlCMgfNxh7YChEZ9x5/s41+kak6c2XbQH/73KTiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739345218; c=relaxed/simple;
-	bh=Stf0Jb6AOQt3UW45VdcZWRKlmtA1GKvuSfA1nYZiAmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=j8kpW2AThVwmzINM8Q5AOYCykMwXG/ON8xBkmNJuSUjelSav433I+p7QBcfeCYjmyrolt/iklx4HkINX+vfIZqSqgFxRqJiKoRHrvzQuJENavGOtWjp8xeSUTJt6UBh670uw79PWDFIXol6hyp24Ub5ugBXVVJTiKg9nnkQr+HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XBlGN8Xo; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5de6e26d4e4so6911012a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:26:55 -0800 (PST)
+	s=arc-20240116; t=1739345272; c=relaxed/simple;
+	bh=X0SMSmIWGyTCxNlqPUgOBXqGts6xSo3Ri9D6KFMif6U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pZKOIUbCsZTBAUeXoU/ZMzNPCxUgIXwlC1/entJ4ifHQwos6ZmuaedtfCTKvh7hCIxreZDUPSn2cdirzTe7RS3XUwnxHH31kDc9hovsUkX22einHDtM74Q0g1dcDyTXnkK2meBZC+/gAB5l5QarEjJa0FfPtcAy3SGt5200ErtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=easyb.ch; spf=none smtp.mailfrom=easyb.ch; dkim=pass (2048-bit key) header.d=easyb-ch.20230601.gappssmtp.com header.i=@easyb-ch.20230601.gappssmtp.com header.b=P5kN9xDp; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=easyb.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=easyb.ch
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-545074b88aaso3779818e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:27:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739345214; x=1739950014; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AJTh/3LX42S4U+/p3ueXWIJVVkrm4MNl6nXiRtJNaS8=;
-        b=XBlGN8XoOR7fKimt5pYv1E+aNatzro369+HeMQlqryuCTVlpagNeWfibvVO2N3m1KM
-         zE02oJMTCOJY6fiUV4Y3A1/bllMzFFgA7o5CTz3nAu1pJJlQoQz+DgfDPOxbA/hMDtN4
-         pXRHpVutdYoUcqE50BLQ75mT8bYZ++k61yXVIshCWjRZz4NF+W84f/o+u7SF1gyQP0wI
-         7g4IburJBZNtitVZKbd0k0RofVCPT5nKYugLVT9AAy4e4+R8C8vxlE4bKioDUwFEH/hU
-         xAqhs22tLSJez8TvvWraUZ7AjmBZxEWfbzlQPCuLFZo8AiDUNtCDToxGzxNWaY3qD1Zd
-         YsFg==
+        d=easyb-ch.20230601.gappssmtp.com; s=20230601; t=1739345268; x=1739950068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NkpApLmuMSuoEXBLQRnWWTTZmdzVTlEP/UbOXT6BIvI=;
+        b=P5kN9xDpAPBYnVsqi0HbJdYhP1qaDDNrTzkA/mFqH0Xv4A8rS2bWLG7dfLJLEPacbo
+         O+tt0u8y2dvRLiQPtFpurnroOzJ9aCSL4+SG+KkNQHLgCX0FBWX5nOF1w2XiVtp6JWtX
+         HIBxUNtlyRWC5N4i4bhOkVKJ0+oDDXDOxCmPUotjmEZQkoKNnwL8NwXLuj1zC7d3xaBo
+         TGb1HaFNT1mXJP1/PZhadMyVroPqESvFc+Z01Xsb9NM63O3vWlq/K/EGj/z5x5Gg/8yk
+         R+Qe+P9TIBPEoXXZmTxcTbbOhD8cMPf/k8Xcl6/U40r63zO97VQaAf47FmfJzgtAm5zM
+         BHKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739345214; x=1739950014;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AJTh/3LX42S4U+/p3ueXWIJVVkrm4MNl6nXiRtJNaS8=;
-        b=M1KIVWC0ZKNI43TuuZcN6KRtO61JmO3CduRSsPhCw74kiwwq1ZkkkbwfXMjt3jI2+l
-         09Ek5zlM6om8aK5GnTbiH9wrmIYsWzYxGCJBe2iTBb8EMnfRqDvMU2+jdaL+WMqodpdY
-         oOnwemKuWRtfgq3wINcqlQN2aSb6KXpt1L+6OLEmMwoZ8aBy9n8/1Vx1mfB6idpX1ujF
-         GPdFLxgR/5yP/Lp2KSyuysqoTLLb8yD9L6TBGg6KtSNsIIUDpHf4ZqfPg/UKrq3XJhaT
-         GIdiSeRfcXjCvN/l9qqQHdhkqfDdgmoKG/3dDNslbEdZSHQd/J2sxiWa4Wdl6WcGp61V
-         /moQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEf7uJgyUsDpXnM2lbdM5i1Umy5vFUqf5lmZhg6i3pKYk3GqbGHAyrE1BC9Vr/W9ozHLtW7d2cvcmZiJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3/CEsIb1L7T93tcZwa4dLUfQTjIDr1nmvjsY4IcvIh6+msKOu
-	sha/0M3Li1qT5VLHC43KgwOkZbRXvvwEhG6EjLfr6rL+x62s3K5WU7gnY2rHglM=
-X-Gm-Gg: ASbGncucvZpF/uvQsvurO147J2L9YR4FgM7wnp7S0gVAyudmDkQb10paBd4w/4dzMKL
-	v7cMsvU21vg+iBWSueyS96jzPhUiGbHimo7Mbh6bofUewNYtKYc7Xb7CKrLr3J40kdNOOSk+7n8
-	HbcFvhtDVFuZSZxPYxGPNvQwkXELhqOkqYcs9p+/Qxyl3VO6cAJxzTozoF4PEjbS3RcJ1vUIzdc
-	m/jOaPljNLUCOy7udm9eDoMTcZ31Df0AzmB1wdkP2BSZ7nzNxyb5nIDFecNs3nGufZuqe1BjV5C
-	6lhZpc6AMQftN7eoxxID
-X-Google-Smtp-Source: AGHT+IFEIukrsfK6bZlW7MrqvUc4H7nNhVSu1KFPTEnyStLzMs/D5F7VfW3cbMd6Iv6A4IGV/jSXWQ==
-X-Received: by 2002:a05:6402:3553:b0:5d1:1f1:a283 with SMTP id 4fb4d7f45d1cf-5deadd7bc87mr1609569a12.4.1739345213733;
-        Tue, 11 Feb 2025 23:26:53 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5de5a2fc79esm7995187a12.10.2025.02.11.23.26.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 23:26:53 -0800 (PST)
-Date: Wed, 12 Feb 2025 10:26:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Jerome Brunet <jbrunet@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Jerome Brunet <jbrunet@baylibre.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] clk: clk-imx8mp-audiomix: use the auxiliary
- device creation helper
-Message-ID: <7bb0b7ea-8ca4-4ea1-a7ec-d56646240e59@stanley.mountain>
+        d=1e100.net; s=20230601; t=1739345268; x=1739950068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NkpApLmuMSuoEXBLQRnWWTTZmdzVTlEP/UbOXT6BIvI=;
+        b=Gf9ccZtdRTKyVLxltQxpNSuS84cRKOz7vO5BDWzu4W00DarWh5p7bkwpqY9NBQddf2
+         EFkVQy2u5+fd1iOcgP13lxqEopMC7Dy51teHog5urNUMOgxu5AC7VCEg0pXuSroA2C9A
+         a1WUiZg4eGA6z/tJYdHiG4BGGgQoVoY3NelFemzbT3d4ovMqet4uRkc1zHJHmMmo4fGd
+         DiSs7cqfIDpQx7LihPm6+Yq4Krr1uPoD451SetSODQJc8l3hU97rjTv1t9R2k1swWvQe
+         T8xnXtJxyNELNTH5RGdfG2xOtwWxe1Lv07MNWPbdBdqyz+MFobHkRl7+vJ+KgomdJWYD
+         OEaA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Wi/PPdaGN+97/j+exEm3v2FRKNGapH+gGsM6SWqL2fek6ZXDeEb2H2TrobaVeOBZhV5vNrZzDQKit5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLL4bE2pmk7PJyx/3I8bXkHd/ZnW1HpXhiSkG+KuDqPbGf4sqC
+	K6zP05Gjscm4I1D/nTgmlCzCi0uO8NYvT+hSEo9MBIynTVgcuz8sOYZMxp6hGUHI0bsfrGwY8cw
+	i0oaPjRmnGDSc/xRIeux6N/phg8Z/HMtjRwem7kr5Zj0w+Bqb9po=
+X-Gm-Gg: ASbGncv07R1qqs+nxMFla3l4frAxiH9H55mL4KuCsgK/g5aJ1i/d7+xV7QLUyQdbV/v
+	HIiLEPQjr+7b15eHYGui5qzk6wYkY+pHefzDvKRB84RhLuQLrGOxj7NUKHtxyWK3J4vfXtH46tl
+	V2r2bz9UasGmjEUoPRIi7auu2HpCg=
+X-Google-Smtp-Source: AGHT+IHBuOV1u76P+sliG1ZLyRYbTKiqx9yn/XwZRRCZd7FDQnrrgDlhR9/jciNljT0bWlE6m70c+Cc75Sta0/soFRE=
+X-Received: by 2002:a05:6512:3a8a:b0:545:c7d:178d with SMTP id
+ 2adb3069b0e04-5451810906emr456277e87.12.1739345267946; Tue, 11 Feb 2025
+ 23:27:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250206-aux-device-create-helper-v2-6-fa6a0f326527@baylibre.com>
+References: <be323425-2465-423a-a6f4-affbaa1efe09@bytedance.com> <20250212064002.55598-1-zhengqi.arch@bytedance.com>
+In-Reply-To: <20250212064002.55598-1-zhengqi.arch@bytedance.com>
+From: Ezra Buehler <ezra@easyb.ch>
+Date: Wed, 12 Feb 2025 08:27:11 +0100
+X-Gm-Features: AWEUYZmZw_dR7xZ0V1G7gpsQgXY4quV-0zHZqZHrTMP56-HGWMQZHyZg-iRxnUM
+Message-ID: <CAM1KZSnWFivV-7nc55MBAEtdP1LXfW4eLKa-94HPZaTP0AOPrg@mail.gmail.com>
+Subject: Re: [PATCH] arm: pgtable: fix NULL pointer dereference issue
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: linux@armlinux.org.uk, david@redhat.com, hughd@google.com, 
+	ryan.roberts@arm.com, akpm@linux-foundation.org, muchun.song@linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jerome,
+Hi Qi,
 
-kernel test robot noticed the following build warnings:
+Thanks for the fix. I will test it as well as I can.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/driver-core-auxiliary-bus-add-device-creation-helper/20250207-023433
-base:   2014c95afecee3e76ca4a56956a936e23283f05b
-patch link:    https://lore.kernel.org/r/20250206-aux-device-create-helper-v2-6-fa6a0f326527%40baylibre.com
-patch subject: [PATCH v2 6/7] clk: clk-imx8mp-audiomix: use the auxiliary device creation helper
-config: xtensa-randconfig-r071-20250208 (https://download.01.org/0day-ci/archive/20250208/202502081655.FlCrxpYN-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 14.2.0
+On Wed, Feb 12, 2025 at 7:41=E2=80=AFAM Qi Zheng <zhengqi.arch@bytedance.co=
+m> wrote:
+>
+> When update_mmu_cache_range() is called by update_mmu_cache(), the vmf
+> parameter is NULL, which will cause a NULL pointer dereference issue in
+> adjust_pte():
+>
+> Unable to handle kernel NULL pointer dereference at virtual address 00000=
+030 when read
+> Hardware name: Atmel AT91SAM9
+> PC is at update_mmu_cache_range+0x1e0/0x278
+> LR is at pte_offset_map_rw_nolock+0x18/0x2c
+> Call trace:
+>  update_mmu_cache_range from remove_migration_pte+0x29c/0x2ec
+>  remove_migration_pte from rmap_walk_file+0xcc/0x130
+>  rmap_walk_file from remove_migration_ptes+0x90/0xa4
+>  remove_migration_ptes from migrate_pages_batch+0x6d4/0x858
+>  migrate_pages_batch from migrate_pages+0x188/0x488
+>  migrate_pages from compact_zone+0x56c/0x954
+>  compact_zone from compact_node+0x90/0xf0
+>  compact_node from kcompactd+0x1d4/0x204
+>  kcompactd from kthread+0x120/0x12c
+>  kthread from ret_from_fork+0x14/0x38
+> Exception stack(0xc0d8bfb0 to 0xc0d8bff8)
+>
+> To fix it, do not rely on whether 'ptl' is equal to decide whether to hol=
+d
+> the pte lock, but decide it by whether CONFIG_SPLIT_PTE_PTLOCKS is
+> enabled. In addition, if two vmas map to the same PTE page, there is no
+> need to hold the pte lock again, otherwise a deadlock will occur. Just ad=
+d
+> the need_lock parameter to let adjust_pte() know this information.
+>
+> Reported-by: Ezra Buehler <ezra@easyb.ch>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202502081655.FlCrxpYN-lkp@intel.com/
+Perhaps a detail but, maybe better use "Ezra Buehler
+<ezra.buehler@husqvarnagroup.com>" here.
 
-smatch warnings:
-drivers/clk/imx/clk-imx8mp-audiomix.c:241 clk_imx8mp_audiomix_reset_controller_register() warn: passing zero to 'PTR_ERR'
-
-vim +/PTR_ERR +241 drivers/clk/imx/clk-imx8mp-audiomix.c
-
-c350f4c434316c Jerome Brunet 2025-02-06  231  static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev)
-6f0e817175c5b2 Shengjiu Wang 2024-06-14  232  {
-c350f4c434316c Jerome Brunet 2025-02-06  233  	struct auxiliary_device *adev;
-6f0e817175c5b2 Shengjiu Wang 2024-06-14  234  
-6f0e817175c5b2 Shengjiu Wang 2024-06-14  235  	if (!of_property_present(dev->of_node, "#reset-cells"))
-6f0e817175c5b2 Shengjiu Wang 2024-06-14  236  		return 0;
-6f0e817175c5b2 Shengjiu Wang 2024-06-14  237  
-c350f4c434316c Jerome Brunet 2025-02-06  238  	adev = devm_auxiliary_device_create(dev, KBUILD_MODNAME,
-c350f4c434316c Jerome Brunet 2025-02-06  239  					    "reset", NULL, 0);
-c350f4c434316c Jerome Brunet 2025-02-06  240  	if (IS_ERR_OR_NULL(adev))
-c350f4c434316c Jerome Brunet 2025-02-06 @241  		return PTR_ERR(adev);
-
-If devm_auxiliary_device_create() could return NULL then that would count
-as success.  But devm_auxiliary_device_create() can't return NULL.  It
-only makes sense to return NULL if the auxiliary device is optional.
-
-https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
-
-6f0e817175c5b2 Shengjiu Wang 2024-06-14  242  
-6f0e817175c5b2 Shengjiu Wang 2024-06-14  243  	return 0;
-6f0e817175c5b2 Shengjiu Wang 2024-06-14  244  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Cheers,
+Ezra.
 
