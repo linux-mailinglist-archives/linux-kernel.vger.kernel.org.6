@@ -1,347 +1,161 @@
-Return-Path: <linux-kernel+bounces-511333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7934A32990
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:10:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82CFA32997
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 741043A6788
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:09:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08BF11887604
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E9F211466;
-	Wed, 12 Feb 2025 15:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE7E211470;
+	Wed, 12 Feb 2025 15:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4ESI5nM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="imuTfGHs"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E51211276;
-	Wed, 12 Feb 2025 15:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C302A271800;
+	Wed, 12 Feb 2025 15:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739372998; cv=none; b=rw2shQa+oFloqsqcM1X8Njz8vDe2z+662FxvOUN4x7P8uV/Kl53EenixDUcbifjyn1QsfqgqXyNUraaU8BM4KhAzZoLBUEXr7slDgcYlxa2Ga5adMJUMMBbk5edMd9wk+k6epuMBkDYJikZpLUl71smYIHyD+ZjNt9ehRws6htw=
+	t=1739373116; cv=none; b=Y8N4I/r/YMg3xVX/7UfawLD6oByj3rWx0VgIdf6iYah2PFtf/AWyERwIeWDB4wue1JDgcbV7PiRjubignpcp1YHcJGxpZ0HA/VecvjQZBMsWlK0CebxXlll82Zs6CvaiH5h9QIzFyITWoQ8PuwS4mUarI20s3brCt4smpbnkwrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739372998; c=relaxed/simple;
-	bh=V9cYHTBHlxp0mj0yzBd78kjLBKIcJazGxvhjpg7B2Ec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UoAuPR9/srMy149Y/r5g9PTSmUFYYpEtIaajgl087iW6YnUKBxcnXqLCA02c+p8z8oSr+UsC1CqGWx6tQ1pLIJaeFC/7qGgcCxgKEYIoRfkVjm8qquDMc0ZlPEvxTXBeWThbw1VuOR42/1Wpc20t4nFh9t+bbXOSTPki4S2V3os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4ESI5nM; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739372997; x=1770908997;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=V9cYHTBHlxp0mj0yzBd78kjLBKIcJazGxvhjpg7B2Ec=;
-  b=l4ESI5nMavKgIHWFsxG7T3hsRYppOx1ocAdOOK1+Q7Qy43W48iKXyt4k
-   WybTncKLmG6f2xyH93oIzW81ivVlfKGbxcZh8Tc4/cJR66oEh+ci+Xyia
-   MQ7mtzbvH4C8L7HDtrZHN8nn4wP5rfbvDbTMupyPsBd+rrZx6oZDl6NTO
-   ebI4nfrQEcQe2JB1OCxSSeLElsvDMSDOu+10FIlZEyb/uPht/DxFzmhCX
-   lWnFE7RtCHBD8yfxL4c85yoJwXMPNPtG3TwgBwtLoe1/2BP/3hIyiW0uf
-   dtZaSu0TYWK5LDEjbs0SbxDfgwLSMi1IDgeCHdaqnOq6VyzEo4nbbzGvF
-   A==;
-X-CSE-ConnectionGUID: GbdIhUefRZCfKgSHu/lLIw==
-X-CSE-MsgGUID: +3QNuzJYQnq+iDbsXZXGJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="51428116"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="51428116"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 07:09:56 -0800
-X-CSE-ConnectionGUID: hHmx6jl3SBS3vZ7cUSkE2w==
-X-CSE-MsgGUID: rT9bbs6LQzKvmJ6cgaz9iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="116970329"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 07:09:52 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tiEN3-0000000As2N-35AY;
-	Wed, 12 Feb 2025 17:09:49 +0200
-Date: Wed, 12 Feb 2025 17:09:49 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kartik Rajput <kkartik@nvidia.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, hvilleneuve@dimonoff.com, arnd@kernel.org,
-	geert+renesas@glider.be, robert.marko@sartura.hr,
-	schnelle@linux.ibm.com, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] serial: tegra-utc: Add driver for Tegra UART
- Trace Controller (UTC)
-Message-ID: <Z6y5vRGyouZsQWyj@smile.fi.intel.com>
-References: <20250212104132.61060-1-kkartik@nvidia.com>
- <20250212104132.61060-3-kkartik@nvidia.com>
+	s=arc-20240116; t=1739373116; c=relaxed/simple;
+	bh=99arZH731iDZzfa8ZZPAfBQWn0acSMZBM8u1cuqUXuo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HfEl+3/rLsWjFeqfpcHn4mJ9q/FWMLTUjktaGQPUAlSNg1fUvN4FjQFX1MvcVIf8UlJL56bLoEFrTJGjwL2J/uOknA2mIK3zd3trdNSyeh8xI0e/ZU2xJy/zlYJZ1AYzPMseE/AggvYufSLWBQfZi8PVSMkpOs2p2O1MVqBtNRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=imuTfGHs; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C6u2Y2016943;
+	Wed, 12 Feb 2025 09:10:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=gaOUuX7MQMuia9McaDE2MM2EVmIcLDAQ3K7abX1j5EI=; b=
+	imuTfGHsfbgtQ94PMHcxX8dKsZW+Oc0j6LC0gyMYNSvSxqzXnaTaNlWMlRasdXb8
+	Nvpn0HrIn7DtIobeHILQes4oMoaNlG73Y8wm7zusuXTIV6LoUIk3ST5faNQWzKj7
+	2XJD6A9hHaGH09OdY5nTy3QSOpzWbQYodSyX3CAwKuhjM2+KS9YZc3YNNmmV8m25
+	D9i01azVLWhpnnkJTPvSjBepXblKH+VJ8YY/c8ZMwcYO3NAnwIbcl3MiiiWby1mp
+	TT9kYkZsv9tR2sHEUE1gVttwJMs81xJPVCfBthzNAaJGreCY6mhx/w0flyThJr4r
+	+d2ehwWTAzHOVJUxjx+Tfw==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44rpsv8nss-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 09:10:58 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 12 Feb
+ 2025 15:10:56 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Wed, 12 Feb 2025 15:10:51 +0000
+Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 1F10582025A;
+	Wed, 12 Feb 2025 15:10:51 +0000 (UTC)
+Message-ID: <c92f8f5b-e6f4-41bb-86c1-dc45b80cd49b@opensource.cirrus.com>
+Date: Wed, 12 Feb 2025 15:10:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212104132.61060-3-kkartik@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 5/7] mfd: cs40l26: Add support for CS40L26 core
+ driver
+To: Fred Treven <ftreven@opensource.cirrus.com>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Simon Trimmer <simont@opensource.cirrus.com>,
+        Charles Keepax
+	<ckeepax@opensource.cirrus.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        James Ogletree <jogletre@opensource.cirrus.com>,
+        Ben Bright
+	<ben.bright@cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Jeff LaBundy
+	<jeff@labundy.com>, Heiko Stuebner <heiko@sntech.de>,
+        Karel Balej
+	<balejk@matfyz.cz>,
+        Igor Prusov <ivprusov@salutedevices.com>,
+        Jack Yu
+	<jack.yu@realtek.com>,
+        Weidong Wang <wangweidong.a@awinic.com>,
+        Binbin Zhou
+	<zhoubinbin@loongson.cn>,
+        Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
+        "Paul
+ Handrigan" <paulha@opensource.cirrus.com>,
+        Masahiro Yamada
+	<masahiroy@kernel.org>, Nuno Sa <nuno.sa@analog.com>
+CC: <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-sound@vger.kernel.org>
+References: <20250204231835.2000457-1-ftreven@opensource.cirrus.com>
+ <20250204231835.2000457-6-ftreven@opensource.cirrus.com>
+ <4e5f0194-22bc-4e17-85f4-6dbc145a936b@kernel.org>
+ <3bff0ff8-7397-414d-a701-011d5b5a41f4@opensource.cirrus.com>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <3bff0ff8-7397-414d-a701-011d5b5a41f4@opensource.cirrus.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=O73DvA9W c=1 sm=1 tr=0 ts=67acba02 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=_SCIqTSYrM5XDuVbtgUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: dGfg_TWu3AP67jc1rHjLAyjt-XIXdm3d
+X-Proofpoint-GUID: dGfg_TWu3AP67jc1rHjLAyjt-XIXdm3d
+X-Proofpoint-Spam-Reason: safe
 
-On Wed, Feb 12, 2025 at 04:11:32PM +0530, Kartik Rajput wrote:
-> The Tegra264 SoC supports the UART Trace Controller (UTC), which allows
-> multiple firmware clients (up to 16) to share a single physical UART.
-> Each client is provided with its own interrupt and has access to a
-> 128-character wide FIFO for both transmit (TX) and receive (RX)
-> operations.
+On 11/02/2025 9:16 pm, Fred Treven wrote:
+> On 2/5/25 04:34, Krzysztof Kozlowski wrote:
+>> On 05/02/2025 00:18, Fred Treven wrote:
+>>> Introduce support for Cirrus Logic Device CS40L26:
+>>> A boosted haptic driver with integrated DSP and
+>>> waveform memory with advanced closed loop algorithms
+>>> and LRA protection.
+>>>
+
+<SNIP>
+
+>>> +static const struct spi_device_id cs40l26_id_spi[] = {
+>>> +    { "cs40l26a", 0 },
+>>> +    { "cs40l27b", 1 },
+>>
+>> What are these 0 and 1?
 > 
-> Add tegra-utc driver to support Tegra UART Trace Controller (UTC)
-> client.
+> I will make it clear that these are enumerating the different possible
+> device variants.
+> 
+> 
+>>
+>>> +    {}
+>>> +};
+>>> +MODULE_DEVICE_TABLE(spi, cs40l26_id_spi);
+>>> +
+>>> +static const struct of_device_id cs40l26_of_match[] = {
+>>> +    { .compatible = "cirrus,cs40l26a" },
+>>> +    { .compatible = "cirrus,cs40l27b" },
+>>
+>> So devices are compatible? Or rather this is unsynced with other ID 
+>> table.
+> I'm not sure what you mean by this.
+> 
 
-...
-
-> +/*
-> + * NVIDIA Tegra UTC (UART Trace Controller) driver.
-> + */
-
-Can be a single line.
-
-...
-
-> +#include <linux/bits.h>
-> +#include <linux/console.h>
-> +#include <linux/container_of.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-
-iopoll.h guarantees to include io.h in case you want to have less lines here.
-(yeah, I know that the header guarantees is a tribal knowledge, it's undocumented)
-
-> +#include <linux/kfifo.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-
-> +#include <linux/of.h>
-
-Is this being used now?
-
-> +#include <linux/property.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/serial.h>
-> +#include <linux/serial_core.h>
-> +#include <linux/slab.h>
-> +#include <linux/tty.h>
-> +#include <linux/tty_flip.h>
-> +#include <linux/types.h>
-
-...
-
-> +#define UART_NR					16
-
-Bad naming, calling for collisions. Move it to the driver's namespace.
-
-...
-
-> +static void tegra_utc_init_tx(struct tegra_utc_port *tup)
-> +{
-> +	/* Disable TX. */
-> +	tegra_utc_tx_writel(tup, 0x0, TEGRA_UTC_ENABLE);
-> +
-> +	/* Update the FIFO Threshold. */
-> +	tegra_utc_tx_writel(tup, tup->tx_threshold, TEGRA_UTC_FIFO_THRESHOLD);
-> +
-> +	/* Clear and mask all the interrupts. */
-> +	tegra_utc_tx_writel(tup, TEGRA_UTC_INTR_REQ | TEGRA_UTC_INTR_FULL | TEGRA_UTC_INTR_EMPTY,
-> +			    TEGRA_UTC_INTR_CLEAR);
-
-Here...
-
-> +	tegra_utc_disable_tx_irq(tup);
-> +
-> +	/* Enable TX. */
-> +	tegra_utc_tx_writel(tup, TEGRA_UTC_ENABLE_CLIENT_ENABLE, TEGRA_UTC_ENABLE);
-> +}
-> +
-> +static void tegra_utc_init_rx(struct tegra_utc_port *tup)
-> +{
-> +	tup->rx_irqmask = TEGRA_UTC_INTR_REQ | TEGRA_UTC_INTR_TIMEOUT;
-> +
-> +	tegra_utc_rx_writel(tup, TEGRA_UTC_COMMAND_RESET, TEGRA_UTC_COMMAND);
-> +	tegra_utc_rx_writel(tup, tup->rx_threshold, TEGRA_UTC_FIFO_THRESHOLD);
-> +
-> +	/* Clear all the pending interrupts. */
-> +	tegra_utc_rx_writel(tup, TEGRA_UTC_INTR_TIMEOUT | TEGRA_UTC_INTR_OVERFLOW |
-> +			    TEGRA_UTC_INTR_REQ | TEGRA_UTC_INTR_FULL |
-> +			    TEGRA_UTC_INTR_EMPTY, TEGRA_UTC_INTR_CLEAR);
-
-...and here the potential of deduplication by introducing an additional constant:
-
-#define TEGRA_UTC_INTR_COMMON	\
-	(...)
-
-(choose better name)
-
-> +	tegra_utc_rx_writel(tup, tup->rx_irqmask, TEGRA_UTC_INTR_MASK);
-> +	tegra_utc_rx_writel(tup, tup->rx_irqmask, TEGRA_UTC_INTR_SET);
-> +
-> +	/* Enable RX. */
-> +	tegra_utc_rx_writel(tup, TEGRA_UTC_ENABLE_CLIENT_ENABLE, TEGRA_UTC_ENABLE);
-> +}
-
-...
-
-> +static bool tegra_utc_tx_chars(struct tegra_utc_port *tup)
-> +{
-> +	struct uart_port *port = &tup->port;
-> +	unsigned int pending;
-> +	u8 c;
-> +
-> +	pending = uart_port_tx(port, c,
-> +		     !(tegra_utc_tx_readl(tup, TEGRA_UTC_FIFO_STATUS) & TEGRA_UTC_FIFO_FULL),
-> +		     tegra_utc_tx_writel(tup, c, TEGRA_UTC_DATA));
-
-Make the last two to reside in temporary variables with self-explanatory names.
-
-> +
-
-Redundant blank line.
-
-> +	if (pending)
-> +		return true;
-> +
-> +	return false;
-
-	return pending;
-
-> +}
-
-...
-
-> +static int tegra_utc_startup(struct uart_port *port)
-> +{
-> +	struct tegra_utc_port *tup = container_of(port, struct tegra_utc_port, port);
-> +	int ret;
-> +
-> +	tegra_utc_hw_init(tup);
-> +
-> +	ret = request_irq(port->irq, tegra_utc_isr, 0, dev_name(port->dev), tup);
-
-Seems the same Q stands about sharing, perhaps a comment why it's expected to
-be always exclusive?
-
-> +	if (ret < 0)
-> +		dev_err(port->dev, "failed to register interrupt handler\n");
-> +
-> +	return ret;
-> +}
-
-...
-
-> +	for (i = 0; i < len; i++) {
-> +		if (!nbcon_enter_unsafe(wctxt))
-> +			break;
-> +
-> +		read_poll_timeout_atomic(tegra_utc_tx_readl, val, !(val & TEGRA_UTC_FIFO_FULL),
-> +					 0, USEC_PER_SEC, false, tup, TEGRA_UTC_FIFO_STATUS);
-
-No error check?
-
-> +		uart_console_write(&tup->port, wctxt->outbuf + i, 1, tegra_utc_console_putchar);
-> +
-> +		if (!nbcon_exit_unsafe(wctxt))
-> +			break;
-> +	}
-
-> +
-
-Unneeded blank line.
-
-> +}
-
-...
-
-> +static int tegra_utc_probe(struct platform_device *pdev)
-> +{
-> +	const unsigned int *soc_fifosize;
-> +	struct device *dev = &pdev->dev;
-> +	struct tegra_utc_port *tup;
-> +	int ret;
-> +
-> +	tup = devm_kzalloc(&pdev->dev, sizeof(*tup), GFP_KERNEL);
-> +	if (!tup)
-> +		return -ENOMEM;
-> +
-> +	ret = device_property_read_u32(dev, "tx-threshold", &tup->tx_threshold);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "missing tx-threshold device-tree property\n");
-
-' device-tree' is redundant part.
-
-> +	ret = device_property_read_u32(dev, "rx-threshold", &tup->rx_threshold);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "missing rx-threshold device-tree property\n");
-
-Ditto.
-
-Also in a form of
-
-		return dev_err_probe(dev, ret, "missing %s property\n", "rx-threshold");
-
-in both cases the size of the object file will be smaller by a couple of dozens
-of bytes.
-
-> +	soc_fifosize = device_get_match_data(&pdev->dev);
-> +	tup->fifosize = *soc_fifosize;
-> +
-> +	tup->tx_base = devm_platform_ioremap_resource_byname(pdev, "tx");
-> +	if (IS_ERR(tup->tx_base))
-> +		return PTR_ERR(tup->tx_base);
-> +
-> +	tup->rx_base = devm_platform_ioremap_resource_byname(pdev, "rx");
-> +	if (IS_ERR(tup->rx_base))
-> +		return PTR_ERR(tup->rx_base);
-> +
-> +	ret = tegra_utc_setup_port(&pdev->dev, tup);
-> +	if (ret)
-> +		dev_err_probe(dev, ret, "failed to setup uart port\n");
-> +
-> +	platform_set_drvdata(pdev, tup);
-> +
-> +	return tegra_utc_register_port(tup);
-> +}
-
-...
-
-> +static int __init tegra_utc_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = uart_register_driver(&tegra_utc_driver);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = platform_driver_register(&tegra_utc_platform_driver);
-> +	if (ret) {
-> +		uart_unregister_driver(&tegra_utc_driver);
-
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-
-Just
-
-	return ret;
-
-will be good instead of the above 4 LoCs.
-
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
+cs40l26_id_spi[] has the 0/1 cookie values to indicate which part
+variant is being instantiated. But cs40l26_of_match[] doesn't have
+these cookie values to indicate which part ID was matched.
 
 
 
