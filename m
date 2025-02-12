@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-510918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A5EA32396
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:38:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A967BA32397
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:39:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4203A052E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CC43161D82
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E77E2080EC;
-	Wed, 12 Feb 2025 10:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C70208961;
+	Wed, 12 Feb 2025 10:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4tp6urpp"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qp9j5r7s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD9B1F9A83
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2129C1EE7B9;
+	Wed, 12 Feb 2025 10:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739356732; cv=none; b=SsBG/nE9WTp+meH1zOFP1CLysx0tZER0j11ITTWhFrD0CEl8fXYUSRD/Brt4AC8UnDC3tHJcXaoMBZI69dpOqIFldjqjojbaPV8zmej334b2Q+EV1roEGpCvEqOjUY522JxFDGyEzFkIQm2lz7jvvZndtSvxliyAC7mobhfCkfw=
+	t=1739356758; cv=none; b=M1NrUwmzF/r9DMZHOZl2YZaWP3ZYCKlPm1z32cy8eYT8XG5a+CggNT+s51a9wwhmapIcnjcRRxSOP/n6bURiLYEEPR1Jb9VzAuciYSmiWAzZujnVKGN921XgKvX8IWi2UEu1AtaKKaywLdqn1Hzd4HybUl23jCzOhAFY+ejn0rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739356732; c=relaxed/simple;
-	bh=0wgmTsr10OPshSJjg/RI4bOCyUwctdiqcc0r0Tpeesk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nEdhwWJYHxHcZs71I11C4hYSaBJslFGYLokejpe53p7Am+yhRio2bAP4+5olBHxdGja7FKN5RxrGdGW8U6a8JySAgcn7BLFlm4SX3KmMdSx8oipQRENWbvMhf2076yr54QPtewaI23hArmHx05/kfQiJunw8X8v2Cx+KUG89i6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4tp6urpp; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47180c199ebso232741cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:38:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739356730; x=1739961530; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZypuT5krcMP4SFZDITfjouL/pSMfKVuh0e51cR4PXw=;
-        b=4tp6urpppnKzp0mavBq9PlRdKsYBHWCcgBlWSUVtWQDS9KCsKnErkyoSFtfzgily3N
-         6Cd6gplO7+QxaFVj+XcadJVYelyJHOJuH/umnYcYE9hcoCUnNP07y87p7BeCAjXUyzCE
-         HYqHgpbRTxtjPHM/B6Se5lEx/i3++iY9Yz0o1Sysl/3HLkNfdulwlPezQWgXJAePXcwH
-         7Ui6aWX++sTXNioFIa5JXpbIuPmiTm0Hu6xZ8IhMhAVI94YpXxsIsklhAzEFiXLw3r1o
-         wS2RFkoEj94427tHqcR35p8E6qZbD0nUJ37wvoxzSARU/lvcCXBAu+EWdQp4VP2YSTJ6
-         FNOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739356730; x=1739961530;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SZypuT5krcMP4SFZDITfjouL/pSMfKVuh0e51cR4PXw=;
-        b=tQrKFICIzoPAmOm/IKm+yJJ7hptinGvN6mtpXUdVQP77VcdAZpuifck/7LSZxzdYcQ
-         mK4DfJ4El1vHTCZ0JthVpN2bqpmMevOwc2mjykuAp2gOTfMNAnFd4vMBXJ7kzrxP1AEu
-         +1vvR0HspGBTJjudfQISLfiIErCmEdrQaLaIWLbOcuB+YOkr21nq1nnYbSdUWR3rDRUV
-         M5IsYETbQqec96LHYiE49W+vEgtgH/GU+ZknQopyqj0ThqhqKQC+4X3XSlHHc917VmDO
-         10SvO+QogVmn44cezoKazJA9w5KiGY/L77fc7W3VLJkXbWfAidWqOLjjdBcg9AL36EHM
-         XdQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVf0YLOJHkLKlRoDkNaD4GxbB4HbexvPbj1/2nOOmF0q8mo3UmWBgXNMGcthvHfHtC9kqfSFhHNG/+cnKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTe0R1liA3RLIHhmixwVk0n6iVsk1kxBsMMk7MzjKFL53B1ob0
-	Qo+1Cxpexe69EsOzTgePNMPGgBTQeaz7XX1BkVExiUaCKx8SRXsq21iGP636O6T2806O/aaNF9E
-	cGWTs7chjvvDWXH7NA+SOYJVB87/n6ufvioeF
-X-Gm-Gg: ASbGnctZkqF0n7YCmAsHjHg3Orta4tITNmNA6BmOazmlaHIAiBjVdxCG3Fl9KQ1UglW
-	iqMv43L8s/KMxMNlXGzmBPl1piPySGlT7GwvgiLCKMKahF/eRrjhLAev3uF9luxc++mr0TMBZZh
-	w0QJwLP1rkqmKZMgPRtr2v7aEnwnw=
-X-Google-Smtp-Source: AGHT+IElrirA3T7jJtl/cF/qJPO6MJFdNGdFKOFef6rccKK84LMIwNutRdXvIl2RlySmjN1aEpZkNiDKbr1f4jbgcCo=
-X-Received: by 2002:a05:622a:59c5:b0:466:8c7c:3663 with SMTP id
- d75a77b69052e-471b1c02099mr2335441cf.5.1739356729767; Wed, 12 Feb 2025
- 02:38:49 -0800 (PST)
+	s=arc-20240116; t=1739356758; c=relaxed/simple;
+	bh=mo4RkyeLh2Xh0RWL2XK03sVdlqglMlpDCb8sBGwirw8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IBhiZM9HjIv8/Q+sJih8ZikaerK4NyyyoWYrkoLgWBrRuD61IGSl2Bj6nOvdSI+ezoYZO6YGNPSmg6YvZjCFaShNthJLX+IM0+NWTfjZMbLxoZ9JRqRlq0NprlHCeyvkE11r0XLsfmrdFV67VpXr5I2gE+QKNpzYXIqrYSzH5Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qp9j5r7s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91823C4CEDF;
+	Wed, 12 Feb 2025 10:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739356757;
+	bh=mo4RkyeLh2Xh0RWL2XK03sVdlqglMlpDCb8sBGwirw8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Qp9j5r7sFBt7v8WVfEvoz4rLvpt3nkD+nRfPnVshPWzn5hrVXxQ63Zgq5igAG+4Yo
+	 OdQH7rmscO++V4lE3wIiGSVi+uuAqlpKEYP4IoxarKKmfms1MWqUFutWkKMZo8JgLO
+	 LmgDlhfLqHQ5aXaC+0B/A8v1QSUZnhEOwFTHaa0gqg9qWcnH6WIO0qjPvsel3BGSkB
+	 bL1IYa1kfBXEga+0Er8mUHCM226G6WYwROcFPo16laeHXzI4MNpmmoakUZpukJbU1+
+	 bv7F4HZMOxmtMXWeewUUL5EvZbcxruwpf3rX/ZKDxxTTEsS8tqo2cnjhdb9Vc+cJ9L
+	 lFu7B/ANN9dAg==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tiA9D-00000009T9u-2uyV;
+	Wed, 12 Feb 2025 11:39:15 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <mchehab+huawei@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH RFC 0/1] Implement kernel-doc in python
+Date: Wed, 12 Feb 2025 11:39:00 +0100
+Message-ID: <cover.1739355534.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250206044346.3810242-1-riel@surriel.com> <20250206044346.3810242-11-riel@surriel.com>
- <CA+i-1C2zuctxx6oPVVu0zBJ=Q=Hs73mgrWs5jsp8obARNcUS9g@mail.gmail.com>
- <2d20c333400b890f4983cf799576435abf1d8824.camel@surriel.com>
- <CA+i-1C16x5u-1qAqDPSONgs+pGWrfUTO1zq2r6Rrvq=q48NHpw@mail.gmail.com> <e8a156d4c8f5db07cf03b55fb81c75d523cac680.camel@surriel.com>
-In-Reply-To: <e8a156d4c8f5db07cf03b55fb81c75d523cac680.camel@surriel.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Wed, 12 Feb 2025 11:38:38 +0100
-X-Gm-Features: AWEUYZnnptWZviVi5t3DfNQp_oZ7iOddvpSL765Hw78lYEAmJd91yLLtDHAOK_E
-Message-ID: <CA+i-1C2CcQmrbdv0wLUJFD6m85D7LekejU=VdgMxnqZW=DRPxA@mail.gmail.com>
-Subject: Re: [PATCH v9 10/12] x86/mm: do targeted broadcast flushing from
- tlbbatch code
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
-	peterz@infradead.org, dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com, 
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com, 
-	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com, 
-	mhklinux@outlook.com, andrew.cooper3@citrix.com, 
-	Manali Shukla <Manali.Shukla@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Tue, 11 Feb 2025 at 21:21, Rik van Riel <riel@surriel.com> wrote:
->
-> On Tue, 2025-02-11 at 11:02 +0100, Brendan Jackman wrote:
-> >
-> > So I think here we're encoding the assumption that context_switch()
-> > always calls either enter_lazy_tlb() or switch_mm_irqs_off(), which
-> > is
-> > a little awkward, plus the job of these functions is already kinda
-> > hazy and this makes it even hazier. What about doing it in
-> > arch_start_context_switch() instead?
-> >
-> > That would mean a bit of plumbing since we'd still wanna have the
-> > tlbsync() in tlb.c, but that seems worth it to me. Plus, having it in
-> > one place would give us a spot to add a comment. Now that you point
-> > it
-> > out it does indeed seem obvious but it didn't seem so yesterday.
-> >
-> While that would be a little bit cleaner to maintain,
-> in theory, I'm not convinced that adding an extra
-> function call to the context switch path is worthwhile
-> for that small maintenance benefit.
+Hi Jon,
 
-I don't see why it has to introduce a function call, can't we just
-have something like:
+As promised, this RFC provides a kernel-doc tool rewriten in Python, as
+a heads-up.
 
-static inline void arch_start_context_switch(struct task_struct *prev)
-{
-    arch_paravirt_start_context_switch(prev);
-    tlb_start_context_switch(prev);
-}
+I tried to stay as close as possible of the original perl implementation, as it
+helps to double check if each function was properly translated to Python.
+This have been helpful debugging troubles that happened during the
+conversion.
 
-The paravirt one would disappear when !CONFIG_PARAVIRT (as the current
-arch_start_context_switch() does) and the tlb one would disappear when
-!CONFIG_X86_BROADCAST_TLB_FLUSH. The whole thing should be inlinable.
+Once we get this merged, we can work on simplifying or reimplementing
+some things. One particular cleanup is to use collections OrderedDict.
+Right now, the script use some lists to ensure the right order of functions
+and structure arguments, just like the original script. I opted to preserve
+it on this version because it makes easier to compare both scripts.
+
+There are still some pending work before reaching a version that would be 
+ready fore submission:
+
+- on this RFC, the output doesn't match yet the same output of  kernel-doc
+  for lots of files. Once I finish implementing all features, I'll focus on making
+  the output identical (except for whitespaces/blank lines). The main focus 
+  has been to port the  script, but some tweaks  and fixes are still needed;
+
+- this version also lacks support for -W<filter> parameters:  it will just
+  output all warnings. This is the next item on my TODO list.
+
+- on the final patchset, I intend to split classes on multiple files;
+
+- for the final version, I'll add a patch that converts prints at the output
+  classes to return strings instead, just like we did for get_abi.py, as it
+  helps Sphins kernel-doc class, but for now let's do the changes
+  step-by-step;
+
+- as I'm still comparing the results with kernel-doc, I'm not adding yet a
+  patch to remove the old tool;
+
+- I didn't change yet the Sphinx kernel-doc extension.
+
+Btw, perhaps instead of preserving the extension as .py, at the final
+series, it is probably better to rename kernel-doc to kernel-doc.pl,
+then add this one as kernel-doc, and finally remove kernel-doc.pl.
+
+This way, it would be more or less transparent for people that use to
+type kernel-doc at the command line.
+
+On this implementation, I got one idea from Markus previous work of
+having a class to encapsulate re.compile(). This allowed to simplify the
+port while ensuring that almost all regular expressions are compiled
+and cached, hopefully improving its performance.
+
+Comments?
+
+Mauro Carvalho Chehab (1):
+  scripts/kernel-doc.py: add a Python parser
+
+ scripts/kernel-doc.py | 2674 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 2674 insertions(+)
+ create mode 100755 scripts/kernel-doc.py
+
+-- 
+2.48.1
+
+
 
