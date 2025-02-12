@@ -1,254 +1,226 @@
-Return-Path: <linux-kernel+bounces-510484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6B7A31DAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:00:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E96A31DB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:07:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F0E2188933C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEF17188A5B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07FE1D63FF;
-	Wed, 12 Feb 2025 05:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797A613C9B3;
+	Wed, 12 Feb 2025 05:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UsrhwCwj"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="N04RWCI0"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2081.outbound.protection.outlook.com [40.107.243.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E312BD10
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739336434; cv=none; b=XjOP24n5pV1kJZmhApWzGZobYVb0vhuDWu5f4o1VLosIgV3QZsNNNE5jx08/AYbak9Mlb52aI21/iSTfFvetnCuxYWk9cfRlY5UMcPKa6qjZKGzd7zOMv7RI1iy8R08BxWk30iByQk/tNFUTkOOUuW+9qN5eBg9DU0/vYhj81Ho=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739336434; c=relaxed/simple;
-	bh=ZP5D/oHP96LnR5zP+8dZ30i1RJ6C6PhVP3KhLKLFnUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESpflYnfAtiTHWC9J4GEKDXFbfxI6PpFrkbAiZuWTj1JabcrTKXX3f0otOLS+jS9jt/oMmFqXOJ9O2R37S51MwJiKa1QC6oPbEp04a+DXG02h75mIAfLVYBTO3w5OSm8jME/ciCcghUdLnl2fe7hZj6hExxc2brph2kjkeVaSiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UsrhwCwj; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21f62cc4088so77047215ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:00:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739336432; x=1739941232; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xx6medSIFAlWqB4xUGRMh4uFzhVHBmlr9g0JApEp0uo=;
-        b=UsrhwCwjtsoiLzC6pnTvwXtW2H8nLGJhqnAtoJ4mD62PJkWFQrvvb9ERlBQ8ExHxRT
-         oJf4d4VFTNXfaZ9mJEVQ3JDNnojd5JNhE/bA8+PDcMQ1kx4QWOKTJvtUMz+UiXTBJPvq
-         obx0pQLyqLdgns/6+PMaOgbCXL0c9n3SyIp9U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739336432; x=1739941232;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xx6medSIFAlWqB4xUGRMh4uFzhVHBmlr9g0JApEp0uo=;
-        b=e1YK0ucfyS4thikDzbfIIA0vya2xqPGJt7RoD4K0E3lUPCYTfA/L1OYgs5Tb0NrhwM
-         nXRlhh0ciEdEEPXFIhUaPm58tUE/gSHm7uc856q2678hS/tWWagF2gfr7eZUEDPeZHmf
-         hAEURUXIpnkqSuTY2u5b/LD49xzUvrzLUAc/SvXIrSTluRNksYG9iBVYvygt149hQy9q
-         gnsDWYnWGX/TqiEurwDgypFUWdMVz7JcDz0X830X4xUKFrJJIaQEPnx1xpRa0CjAtfiz
-         Cwcw1dXv8j9GyRZslqP3XU7kUMSnW/fEtcZi/uk1r/qdEPd1dvmdxy3UugZAQznSJ0E3
-         YweA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcGbC/Kwse7qurFaxeEP/0EBk6SxoVeW0mDebw7vsslslS+VjcrtldQ54VjX+XjBbw1VuIaERom8oUBQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7Dxhx8wFQx071LT8E7L6Xv+SCXZT97KVHZYRT3hJ5cRFtVctt
-	pINVRh2TALS8FXiDUZRdSd1MietXVuZz/U79wjyjLsWpFwvOJe808w8O1AJeDw==
-X-Gm-Gg: ASbGnctkyyDoYAmI2ALrAtUoogTsEeRLtlJgVGabI0F1yuEWA5sPyQZRjciNZbQWnNe
-	mPp+HAmgsJmpMAGwu0QT7nf4qSdtMlR3dyOnY+8/HS46/Jfsbe2TluJZY2fE7FYcY8KXoxENDdp
-	kS16/GtBDIyOYYNNqz6oPRjWjxu16CrayEzklbfX+TCYMI8xzGzdQpJt60IIFNwPAjnM+sHnwvB
-	gCaAeYr0ok4nTzApyC01+JQaNSEoLscKBQWi/q8Bf+7EdJkm9Rl9CZtnORW51vqiBX8pIT7sEXB
-	7xurwb9qjOyPfxsA+ys=
-X-Google-Smtp-Source: AGHT+IFtmnHkdgwo8UNs3E38g+A1KbQ6WymZKSOuDHiv+zO0BBh4XxO5wIPWlcYITZL/prJHN123pw==
-X-Received: by 2002:a05:6a21:a46:b0:1e1:ae4a:1d42 with SMTP id adf61e73a8af0-1ee5c83e0a4mr4271360637.31.1739336432558;
-        Tue, 11 Feb 2025 21:00:32 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:69f5:6852:451e:8142])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73092eb8726sm4361440b3a.175.2025.02.11.21.00.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 21:00:31 -0800 (PST)
-Date: Wed, 12 Feb 2025 14:00:26 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Kairui Song <ryncsn@gmail.com>
-Subject: Re: [PATCHv4 14/17] zsmalloc: make zspage lock preemptible
-Message-ID: <droaoze6w4atf7guiv6t4imhcmkpteyvoaigdnw5p3vdg75ebx@m56xi2y527i4>
-References: <ecuos7w7m35fvzz7xvmvdvfxn7adzdahuulwn2j42mvjoqmlwi@ucel4kqetxg6>
- <Z6Ew9AWNHacRIfhA@google.com>
- <lxottj72e7jcqw634qwudpsyqckfrvpmlhra43en4zlrlz4cip@erufv6w4n5j6>
- <Z6JMIKlO9U5P-5gE@google.com>
- <6vtpamir4bvn3snlj36tfmnmpcbd6ks6m3sdn7ewmoles7jhau@nbezqbnoukzv>
- <Z6O2oPP7lyRGXer_@google.com>
- <6uhsj4bckhursiblkxe54azfgyqal6tq2de3lpkxw6omkised6@uylodcjruuei>
- <Z6ThGFt6wyNpx9xi@google.com>
- <wnffho5jguo24wfy3qv5tvovoargezbu4kcvpk43ludrhyfo6i@6ogtvk5ivfjc>
- <Z6Z2l9uovxAiED6q@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0902D600
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739336822; cv=fail; b=e1BRvdx+FbN8RVnT0ykS1TJRmM8uSWFnPRkWqedapTlXJu0tHVlOjxzNrl+BYlL7T/9pryUKzuBEcNMrh+3TxjPYPfLZuq4IH5QZC2+nAKgnIqw3DLBmk3v/LDdJT71jBojD2p0XTE08GtbygBDYPPdibvjJD1hsn6eEh2ryNAc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739336822; c=relaxed/simple;
+	bh=iJp2JqYfvz112r3gF+5yTVpgvLLhd29Z5hUYPUsUr3I=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MrYtEIZnsBPbLfF68zbcwjbO6NBSB11E17waglp5aiFrwtvIDzhuws0091zGTKOEB0t9FVx0HrxCNlERkyIKnq3VcwzfW+383k9V2cw6AseSB50MfD5ubNyw7faSJOldln0qFXNFbFGWeHi+APldZKm0+Lbt+MBUaedgusIuuRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=N04RWCI0; arc=fail smtp.client-ip=40.107.243.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VLp32P0id/Beb0sedpZHQiNPzx1u0i11WMEWTkgOQwJcpxU1QLOeDDrmGgVgmHYNn2gqNG2cKoNw+3pUy7mc/T8N3LG7LZND8lY6wDJMKRej37eIjCmwkO4NEdYmjVqPgbm+j5L5RerpoJKrH4peuufO4n6KRbdoKhylXbto5yXplr8eZ3wRwBcxcUxRR2xNwewBEGRbMM3LFC+QRQvguR9DWUAOw5o9ZmRXQa9z4QG25gKCPmBVTwcvG4RKZ5l097QsT4ACOaryOEJiHKt85TfLCL+eExhVSL+h5mwsUzjHn28Gz6UsYEWf1hGf8Q7wwW++N7tassFNJoE/ipy2Mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dN8jbZyFVNduMkvFYCOcG3rUaT9KM2Pt4n6mpoCTmt8=;
+ b=RhRLHUtQMrcjDmS4URiIw65LPjrcGh0loO+xt5KxpGY5IZpHnByXSvEGhxh1TudRLSQyhG1kiP7+958v+lbCgPZlnTilXFFsa5ZVEH+Z5iB1YKkaZvDjySCQAN0sYuAxOZKVA4th3FDk2mObq9W7gJigWzogJtKtnUBrtrDTOV0vsKDLLFuryVDgTlq+aPXd3eWshOm9cpHV97LMwL6Ut8Kj3K+JzYDLZCoBYA32r/NIzLpM9BRBLxWKOw8HQ5QhgFWjbq5IrNLAwLXAlNtU47kNVkkeHFzX9PPuzw67ozC5yXQKbuLaR6n2t2dU2PmHFw2lzJPqTqT1CR3ytJ4e8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dN8jbZyFVNduMkvFYCOcG3rUaT9KM2Pt4n6mpoCTmt8=;
+ b=N04RWCI08UK5Ae7p/iIDnzMEDZQ94KfPR1ZWCM1kLNVk2Hex2EfpzhylEwWXLaH76LCLxncSaal/07RkEcQ4cN8WWE32SLyMpoMYmqwOITmuo4+JwyDwJFsBunMjQz4rxUXznhpZVi1GZfIBmc6RhafTMAAMo9qSJEXv/ECOK7w=
+Received: from SJ0PR05CA0132.namprd05.prod.outlook.com (2603:10b6:a03:33d::17)
+ by SN7PR12MB8026.namprd12.prod.outlook.com (2603:10b6:806:34b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.19; Wed, 12 Feb
+ 2025 05:06:58 +0000
+Received: from SJ1PEPF00002323.namprd03.prod.outlook.com
+ (2603:10b6:a03:33d:cafe::bb) by SJ0PR05CA0132.outlook.office365.com
+ (2603:10b6:a03:33d::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.10 via Frontend Transport; Wed,
+ 12 Feb 2025 05:06:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00002323.mail.protection.outlook.com (10.167.242.85) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8445.10 via Frontend Transport; Wed, 12 Feb 2025 05:06:57 +0000
+Received: from spgblr-titan-01.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 11 Feb
+ 2025 23:04:53 -0600
+From: Nikhil Dhama <nikhil.dhama@amd.com>
+To: <akpm@linux-foundation.org>
+CC: <bharata@amd.com>, <huang.ying.caritas@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<mgorman@techsingularity.net>, <nikhil.dhama@amd.com>,
+	<raghavendra.kodsarathimmappa@amd.com>, <ying.huang@linux.alibaba.com>
+Subject: Re: [FIX PATCH] mm: pcp: fix pcp->free_count reduction on page allocation
+Date: Wed, 12 Feb 2025 10:34:03 +0530
+Message-ID: <20250212050403.17504-1-nikhil.dhama@amd.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250128203118.578a46182beea6a82dcd0b1d@linux-foundation.org>
+References: <20250128203118.578a46182beea6a82dcd0b1d@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6Z2l9uovxAiED6q@google.com>
-
-On (25/02/07 21:09), Yosry Ahmed wrote:
-> Can we do some perf testing to make sure this custom locking is not
-> regressing performance (selfishly I'd like some zswap testing too)?
-
-So for zsmalloc I (usually) write some simple testing code which is
-triggered via sysfs (device attr) and that is completely reproducible,
-so that I compares apples to apples.  In this particular case I just
-have a loop that creates objects (we don't need to compress or decompress
-anything, zsmalloc doesn't really care)
-
--	echo 1 > /sys/ ... / test_prepare
-
-	for (sz = 32; sz < PAGE_SIZE; sz += 64) {
-		for (i = 0; i < 4096; i++) {
-			ent->handle = zs_malloc(zram->mem_pool, sz)
-			list_add(ent)
-		}
-	}
-
-
-And now I just `perf stat` writes:
-
--	perf stat echo 1 > /sys/ ... / test_exec_old
-
-	list_for_each_entry
-		zs_map_object(ent->handle, ZS_MM_RO);
-		zs_unmap_object(ent->handle)
-
-	list_for_each_entry
-		dst = zs_map_object(ent->handle, ZS_MM_WO);
-		memcpy(dst, tmpbuf, ent->sz)
-		zs_unmap_object(ent->handle)
-
-
-
--	perf stat echo 1 > /sys/ ... / test_exec_new
-
-	list_for_each_entry
-		dst = zs_obj_read_begin(ent->handle, loc);
-		zs_obj_read_end(ent->handle, dst);
-
-	list_for_each_entry
-		zs_obj_write(ent->handle, tmpbuf, ent->sz);
-
-
--	echo 1 > /sys/ ... / test_finish
-
-	free all handles and ent-s
-
-
-The nice part is that we don't depend on any of the upper layers, we
-don't even need to compress/decompress anything; we allocate objects
-of required sizes and memcpy static data there (zsmalloc doesn't have
-any opinion on that) and that's pretty much it.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002323:EE_|SN7PR12MB8026:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61105f2d-9cd9-4cf7-8fc4-08dd4b231355
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ajc+cVFj7C9Q1S0LNw0a0TOFpfiOQpO8FutpwarHl69HrPWHcyb5ERr38pXZ?=
+ =?us-ascii?Q?ydqiV7aIKwsT6UZrYbw8eNuZUbco9qeOvCksLwBwPudN9tQqqGfWP4w79uhZ?=
+ =?us-ascii?Q?xfmi0UHSWMtd/WhJdho6ZTg2T4K+AuHnnt94ual8gOr1sVQSMuHXqU///3Ln?=
+ =?us-ascii?Q?2ldcR5annYreT1axehAdCU3ZLJRtCl2YvBw6Apsv7Opb0GRPf4qGWTsbt+eB?=
+ =?us-ascii?Q?pVwvv4hCg56cs5Y2ZWnJDoUrR48EZM1AACr3QMU4F1++ZkZu2hkvS0vI/jU2?=
+ =?us-ascii?Q?UZrEzGJQIdar6zxgyzQ1DRu8CzC/R2VZwoHefnqPxROs37EMZZdFLdlP/+zY?=
+ =?us-ascii?Q?B9povv+LgcGT/i7WRV2x2H/R4O1nP0LSzTRFVZEkwbckdDkq+73qQeuLMhwm?=
+ =?us-ascii?Q?fBIr/0o2E0OEakfo0v7IUg3XViKXsqDixMXLVeYCqvhDHDwS7H39dn6s1tYT?=
+ =?us-ascii?Q?O5KR/GT2XIJ6n7uK17G7bJhsZzW/GhWpEQ+9MySAuTVJL/dGGfXcLQUlquPO?=
+ =?us-ascii?Q?R9zADooN1V9lZdNayuw5QrYvJUJ71/1xUo+6L/RRxuULgKbB/Ckb8NhdI7V9?=
+ =?us-ascii?Q?TVVX5voX13haV2Yberi+uJq6Kf2NgG8fo4xMMRF4kUsPRhUd+VcDe9Xok9jA?=
+ =?us-ascii?Q?RhA4J9IZNT7U/rlDOCpdsAfljXm38a7Qhc7vMMM5jRvzYpb/u/g3phSR1loL?=
+ =?us-ascii?Q?/Nw1+YZGBCwDTe8mBK1NzLV6gvKON0GHAV6xI4ErW7YYN0ujJGSfnoJVIucs?=
+ =?us-ascii?Q?Ka9Gra7CglT08G6EIFGRDbzv5Fz1FPm7E4SZTVqjiazxs5cUrdPtuFIXC34L?=
+ =?us-ascii?Q?2fRWZvNNFZa5+WRBRj8DvFthqtAzJRI+Kv1JJQpJ8PlrNRTJzeQdupFATVT3?=
+ =?us-ascii?Q?M7neXc683BIuNdRuMprc7TMTR6fABfSM6otrpz/ZqXN/nFavYMNBQZy9uTN8?=
+ =?us-ascii?Q?P3aRX2ZxMlNKF6xh1IXSpJ7ac0vX0hTSytPFgXg5DJ/AtYUINgazu6xULdXq?=
+ =?us-ascii?Q?eqR0lpd5nWuoW8r9dOmp4IIBD9XH3Nzi4Lpm4iCXW0FGlMmTiM5ghTW6fXfF?=
+ =?us-ascii?Q?/evjRtGgtjZ+yBtUB81xospv7iV+pmSTHU21yzJjBgnhzPaykQOXQlfHTK/w?=
+ =?us-ascii?Q?KuzCpiDPaEwBcXNq3lijR9bpf0+b1/sf+7lm7lrllkY20MlF4V3CmVi3Xwz3?=
+ =?us-ascii?Q?mSzGwalyx8M1qLOHPj6nUi0daxrM/GJczj1b+vwrsitfZF+QP2oS+legdLjL?=
+ =?us-ascii?Q?JJ96a9R/bCGGUsTJD8rEZBtZFy1I5Md0ohgNyf1txb1fHO63imAB2s5GdnxF?=
+ =?us-ascii?Q?PE6GBzGDQemARf49pp3D+HbLwaCggEWwe+nTEqVOW3dHunR2FvIrQ1TwOJGM?=
+ =?us-ascii?Q?OcR47Xnp6bwPnU0GpSfDAsLnRBwz5YsaBSh3FSP67YzzOxkkcWCtjUGcWdqK?=
+ =?us-ascii?Q?WNP6hArfJOhWR6hKUetfTZxIME/QTSZKGqif3KV0Uzr5zdtQrXS2Pz6zkebW?=
+ =?us-ascii?Q?XCFQKaCRpB6yr0Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 05:06:57.5228
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61105f2d-9cd9-4cf7-8fc4-08dd4b231355
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002323.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8026
 
 
-OLD API
-=======
-
-10 runs
-
-       369,205,778      instructions                     #    0.80  insn per cycle            
-        40,467,926      branches                         #  113.732 M/sec                     
-
-       369,002,122      instructions                     #    0.62  insn per cycle            
-        40,426,145      branches                         #  189.361 M/sec                     
-
-       369,051,170      instructions                     #    0.45  insn per cycle            
-        40,434,677      branches                         #  157.574 M/sec                     
-
-       369,014,522      instructions                     #    0.63  insn per cycle            
-        40,427,754      branches                         #  201.464 M/sec                     
-
-       369,019,179      instructions                     #    0.64  insn per cycle            
-        40,429,327      branches                         #  198.321 M/sec                     
-
-       368,973,095      instructions                     #    0.64  insn per cycle            
-        40,419,245      branches                         #  234.210 M/sec                     
-
-       368,950,705      instructions                     #    0.64  insn per cycle            
-        40,414,305      branches                         #  231.460 M/sec                     
-
-       369,041,288      instructions                     #    0.46  insn per cycle            
-        40,432,599      branches                         #  155.576 M/sec                     
-
-       368,964,080      instructions                     #    0.67  insn per cycle            
-        40,417,025      branches                         #  245.665 M/sec                     
-
-       369,036,706      instructions                     #    0.63  insn per cycle            
-        40,430,860      branches                         #  204.105 M/sec                     
-
-
-NEW API
-=======
-
-10 runs
-
-       265,799,293      instructions                     #    0.51  insn per cycle            
-        29,834,567      branches                         #  170.281 M/sec                     
-
-       265,765,970      instructions                     #    0.55  insn per cycle            
-        29,829,019      branches                         #  161.602 M/sec                     
-
-       265,764,702      instructions                     #    0.51  insn per cycle            
-        29,828,015      branches                         #  189.677 M/sec                     
-
-       265,836,506      instructions                     #    0.38  insn per cycle            
-        29,840,650      branches                         #  124.237 M/sec                     
-
-       265,836,061      instructions                     #    0.36  insn per cycle            
-        29,842,285      branches                         #  137.670 M/sec                     
-
-       265,887,080      instructions                     #    0.37  insn per cycle            
-        29,852,881      branches                         #  126.060 M/sec                     
-
-       265,769,869      instructions                     #    0.57  insn per cycle            
-        29,829,873      branches                         #  210.157 M/sec                     
-
-       265,803,732      instructions                     #    0.58  insn per cycle            
-        29,835,391      branches                         #  186.940 M/sec                     
-
-       265,766,624      instructions                     #    0.58  insn per cycle            
-        29,827,537      branches                         #  212.609 M/sec                     
-
-       265,843,597      instructions                     #    0.57  insn per cycle            
-        29,843,650      branches                         #  171.877 M/sec                     
+On 1/29/2025 10:01 AM, Andrew Morton wrote:
+>
+> On Wed, 15 Jan 2025 19:19:02 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
+>
+>> Andrew Morton <akpm@linux-foundation.org> writes:
+>>
+>>> On Tue, 7 Jan 2025 14:47:24 +0530 Nikhil Dhama <nikhil.dhama@amd.com> wrote:
+>>>
+>>>> In current PCP auto-tuning desgin, free_count was introduced to track
+>>>> the consecutive page freeing with a counter, This counter is incremented
+>>>> by the exact amount of pages that are freed, but reduced by half on
+>>>> allocation. This is causing a 2-node iperf3 client to server's network
+>>>> bandwidth to drop by 30% if we scale number of client-server pairs from 32
+>>>> (where we achieved peak network bandwidth) to 64.
+>>>>
+>>>> To fix this issue, on allocation, reduce free_count by the exact number
+>>>> of pages that are allocated instead of halving it.
+>>> The present division by two appears to be somewhat randomly chosen.
+>>> And as far as I can tell, this patch proposes replacing that with
+>>> another somewhat random adjustment.
+>>>
+>>> What's the actual design here?  What are we attempting to do and why,
+>>> and why is the proposed design superior to the present one?
+>> Cc Mel for the original design.
+>>
+>> IIUC, pcp->free_count is used to identify the consecutive, pure, large
+>> number of page freeing pattern.  For that pattern, larger batch will be
+>> used to free pages from PCP to buddy to improve the performance.  Mixed
+>> free/allocation pattern should not make pcp->free_count large, even if
+>> the number of the pages freed is much larger than that of the pages
+>> allocated in the long run.  So, pcp->free_count decreases rapidly for
+>> the page allocation.
+>>
+>> Hi, Mel, please correct me if my understanding isn't correct.
+>>
+> hm, no Mel.
+>
+> Nikhil, please do continue to work on this - it seems that there will
+> be a significant benefit to retuning this.
 
 
-x old-api-insn
-+ new-api-insn
-+-------------------------------------------------------------------------------------+
-|+                                                                                   x|
-|+                                                                                   x|
-|+                                                                                   x|
-|+                                                                                   x|
-|+                                                                                   x|
-|+                                                                                   x|
-|+                                                                                   x|
-|+                                                                                   x|
-|+                                                                                   x|
-|+                                                                                   x|
-|A                                                                                   A|
-+-------------------------------------------------------------------------------------+
-    N           Min           Max        Median           Avg        Stddev
-x  10  3.689507e+08 3.6920578e+08 3.6901918e+08 3.6902586e+08     71765.519
-+  10  2.657647e+08 2.6588708e+08 2.6580373e+08 2.6580734e+08     42187.024
-Difference at 95.0% confidence
-	-1.03219e+08 +/- 55308.7
-	-27.9705% +/- 0.0149878%
-	(Student's t, pooled s = 58864.4)
+Hi Andrew,
+
+I have analyzed the performance of different memory-sensitive workloads for these
+two different ways to decrement pcp->free_count. I compared the score amongst
+v6.6 mainline, v6.7 mainline and v6.7 with our patch.
+
+For all the benchmarks, I used a 2-socket AMD server with 382 logical CPUs.
+
+Results I got are as follows:
+All scores are normalized with respect to v6.6 (base).
 
 
-> Perhaps Kairui can help with that since he was already testing this
-> series.
+For all the benchmarks below (iperf3, lmbench3 unix, netperf, redis, gups, xsbench),
+a higher score is better.
 
-Yeah, would be great.
+                    iperf3    lmbench3 Unix       1-node netperf       2-node netperf
+                                  (AF_UNIX)   (SCTP_STREAM_MANY)   (SCTP_STREAM_MANY)
+                   -------   --------------   ------------------   ------------------
+v6.6 (base)            100              100                  100                  100
+v6.7                    69            113.2                   99                98.59
+v6.7 with my patch     100            112.1                100.3               101.16
+
+
+                  redis standard    redis core    redis L3 Heavy    Gups    xsbench
+                  --------------    ----------    --------------    ----    -------
+v6.6 (base)                  100           100              100      100        100
+v6.7                       99.45        101.66            99.47      100      98.14
+v6.7 with my patch         99.76        101.12            99.75      100      99.56
+
+
+and for graph500, hashjoin, pagerank and Kbuild, a lower score is better.
+
+                     graph500     hashjoin      hashjoin    pagerank     Kbuild
+                               (THP always)   (THP never)
+                    ---------  ------------   -----------   --------     ------
+v6.6 (base)              100           100           100         100        100
+v6.7                  101.08         101.3         101.9         100       98.8
+v6.7 with my patch     99.73           100        101.66         100       99.6
+
+from these result I can conclude that this patch is performing better
+or as good as base v6.7 on almost all of these workloads.
 
