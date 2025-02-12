@@ -1,155 +1,127 @@
-Return-Path: <linux-kernel+bounces-511166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8906A32723
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:31:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A40FA32724
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 367171883B26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:30:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757733A3622
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2FE20E70F;
-	Wed, 12 Feb 2025 13:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D2720D512;
+	Wed, 12 Feb 2025 13:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="bI9eezHu"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J3iQopJ6"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DDC20C486
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9217205AA7;
+	Wed, 12 Feb 2025 13:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739367031; cv=none; b=ZdEypC6q5KYYoiYT2ohvD+gIFF141otKCfFZomQ+k3ul/soss6ZX+/OoquyQRI3Un/JijFl1L49pZZ+kHrF2C9zFPM6FD1geAByUgdsNyvovbBjsaHBjDeAL1Lsoao2XTHxk6qjBTb1B/AlXqKR/McKKV49tJ9XqI6hzP4M0Kf8=
+	t=1739367067; cv=none; b=JXBlhE/1I7gi3/+7BHVASUGz/z+9nRzX/3EqXA5CsEGBMigVoTtCj3r0/WSN/6x9ad0XH7a3FJJKOW4F+fH6sdbDnFTlpM5zh/nB00uzHIguUlx1sTAxp14dhXQ96WKQMvrAAWaNooZKlXo2ajhsV09RWb8WTdhwLtCE3KkQ1Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739367031; c=relaxed/simple;
-	bh=cppRDKTH5X7+PhdoGd1D1mSrJYsVfO2+TtgwU+r5HiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dtsgRoP8V0v9pLIb2uJMBN9gUgLjRwkoVSR6pzGBTieBY3HXtKfhx+vOaPRUQ6ovPR0t++ajr4gHK6srxS0lHxT5I51xgs3GxOkYSkcE8RHT02bKzbv/psFpggjm/x0O1IUbPHpxXhaet7KrqLc1FDPkTMfYJ09t5Cr0riw9r2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=bI9eezHu; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21f4af4f9ddso80949485ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:30:30 -0800 (PST)
+	s=arc-20240116; t=1739367067; c=relaxed/simple;
+	bh=kApJtCtd/6G9vbdy3Zw6CPfIH0zwHzv1yg41rvrFPns=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JGdreEQdvouCvpYnL9ucvUtI+5kMjsYokhxesWIDUbOp+v03eRQO/APBWl9FMocI3Jmjs8XpliybTo0j4KZzxm5tX+uGKtvwW9Qx8LotKRjZSwFDt9N1TzcOPxEFOD+ANkWEfgz5KzGyWOsw6WP74kqq0yVG3HqkXzk2nEp8MT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J3iQopJ6; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab7ee6f5535so22924866b.1;
+        Wed, 12 Feb 2025 05:31:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1739367029; x=1739971829; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bq7SdSXo+JhFwWwHQa7/twUcE0+PVputBf+G7gcfT+Q=;
-        b=bI9eezHuZ1YRlXLL26JDblxdtNGRFf09dr3q1mu7Lynz47ayzTiLJjJhKXhTy/9k+B
-         0D4ITt6y8zAWEjZ/FVrGl4QY3nS95UcnG7ba0x7HqugSdeMpRZFhqv9YE4C5N+qjDbQe
-         LoFfdGwBDdNyt6mq/GpTEhAdKGpI+BpwLuogA=
+        d=gmail.com; s=20230601; t=1739367064; x=1739971864; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding
+         :disposition-notification-to:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=p7geNC4E1J+sp/PMxn2+gCYJ+qwFRG86MbpqHzD7gu4=;
+        b=J3iQopJ6i7Ft8Puhcaa8wKMV6cdpQjUCjIOIyP+EsKRgwGvFqnIBl0tzaJtDic1leX
+         2ejb7QyCaVHlLGIKFyB0xJdYdHEIaYsfJofPu1702PEdRVemxp0AtaUvZd9iFvoi1A2b
+         ag6YmQeUsd8ApAIKmv2sbCgaw9TJwmUuUcN4nfSTrGjZ9PEt8/q3Wyx5RfOVjnwTXIxU
+         ZZy8u9AENDrU1sfusG3dcXHkeOonBEkChACWanV8ssU4xeU4YCEECVSbo2L7bgYms2TG
+         5o25GUtf6B2WGqVwa/w9ta6CRhv+uBk3hGrffwUVWJhQLCFopU0vKYiytM4mAacRbQWV
+         Y94g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739367029; x=1739971829;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bq7SdSXo+JhFwWwHQa7/twUcE0+PVputBf+G7gcfT+Q=;
-        b=LbIFbO1I2wwNbdtLO+1G7H7nNTiqAffFv57+MmIlgl/8slvQpXdIACd9AHBZBLYOSe
-         erbYO5wgFblg0B+BCsuuXK6vWl0/qtLLDLKktArwNKi2a3nObrM8vcmRuZIqTqbVWURI
-         Ntw/qmX9C/QXjNnXdL9ifh3Rf87N20JvitZ5yvRZtJf4CziY0FMBELF0r/ER1nHKjEvn
-         AG0JXuITr6x5FOrCMY01h33homD1x93s8K6Q+8oKSVGwGX7R4c+TZrjgk1Jjuc/guiFZ
-         OvAd75m+fEWEraswRjpYgMib7yXyXJH3QBHQPXbAGQ5I3PzGXCV5F48KfUXh/rWMoHex
-         RODg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNIzxr89kSK3sZJrB+84o61g5gWXgIXuW3eDTQDR6dAeSRNbGL51C/FSIeAYEOL/CxMWr/Vpg/kgKoZ9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj5ZCRAYC7KpFaS0AA+sGnamJgAbFT8r11h3UpN33lAZg3kWJk
-	Sv2VuVV3CzGnhUTZUwf3wJFPNTaofJ84LFL3Gf8giaj/cThwKT2SgPCsurTAY7k=
-X-Gm-Gg: ASbGnctQinMQGxohcxJABt+bXsvTliHRf7zhk3eYtGQoaQH+zo0QNOIROBRL2h2D5FJ
-	fDick2nxUHgKGdeLIZkMpv+EBip0b8L1gtn+GSlw8Ep/FsGorrD4zxuTBRq5zOnPIs0BrVYQbjo
-	6Vv5HZ5px+KF6qnwpDr4I4jnPisn5xlpxQb1kw2TKVU26khNbHHOUVhpZA0SWXmqSNZEIGy/j7W
-	RIwPy7JQqsiDAUmogyjHa5/OXVjr+5eEtJt5j+W+WKzDPcZFdbFLYhpmoVvjNsFzcwEeP9yaPJM
-	kyzUoc+AVIBOOlgso69Dbvo7KgPmixAo1WZ5t2035CpTZXZNh8zfRlFkSg==
-X-Google-Smtp-Source: AGHT+IE/UeUsPjMO1gpNMj4yctOpDIpP/4atL2aTr+WokGGBV4mZ/QiJjiwEjLs7hX6m+RhsVtK1Fg==
-X-Received: by 2002:a17:90a:fc46:b0:2fa:1a23:c01d with SMTP id 98e67ed59e1d1-2fbf5c10491mr4674200a91.21.1739367029580;
-        Wed, 12 Feb 2025 05:30:29 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98b4c52sm1448513a91.4.2025.02.12.05.30.27
+        d=1e100.net; s=20230601; t=1739367064; x=1739971864;
+        h=mime-version:user-agent:content-transfer-encoding
+         :disposition-notification-to:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p7geNC4E1J+sp/PMxn2+gCYJ+qwFRG86MbpqHzD7gu4=;
+        b=Dv7nBbzo9c8IdWss+AsRinM1HjLeg5IcT3FAKLnkPckWP6nc3USzcFEquA+ZIpVJM6
+         fx4QIDGebTIPZE2xhu0M/scMI7wf9TL2jtt6pBeA6CPQUCuXKPOx1bFXGqIe/iwUrKZ9
+         5iet3QH/ZEEWsw9zw6dar0unL04YO7dj4YVz/xAHDRPWQnwrbaOcafrT705yW3H6nEa1
+         Csfm4t8iAg9woRUWNYVADqcOhbQgQ4j02fCJbgqaUzXFLOkQOEw9PY6yn3ieS4RTxSg9
+         wcHwEl85+w5PW0PLTfxjiDrxly5QrjHFVXKv0mfLK5H173lLJII1pHGsc5hkQxxVpDcy
+         /w5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWgokanpSa9ziRioT863VO84/JDkIp+7W2fdH9Uqm2R6Q6s81PcEFI35W9aJ/QENuCVB62G4sMDeB0Ndjtz@vger.kernel.org, AJvYcCXN4Bde3M5lcE3hLfC4S/SCKd2k8IJdeJDVdW8z3j9V4isSowHJZVwKcuQpSL3sTjbX2F9FyKL585+R0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm2m6HvOdsXFzMuajSPoJ1EkrqWeO42d5BWVopAe4Gkf7Dofq6
+	DsoiwSDq2ZCrxy/1clpKOGIFnmtoomBwzXTT1lM6HwalhJ0jdU/iy7kyAM7fiWg=
+X-Gm-Gg: ASbGncvAbWdDNwFvWZbsRnsTaU5TupBI9mloyp71p0n9qjQWpOjfHhWVusDweN136UM
+	3E0VTHiOVh6nBUT6BFnhBEEOLDFIuNysBT2XhQ9z8QGdM1/J+QQ6XhLgURYvIghnbQlruGoYoQ7
+	oVwy3yIAfvUn2LnfyEprX1aclHT50fXgfvYBFSq2ZO9mNiyuCYq6qS+EC/yXnsIUZrMnRR0lkDC
+	d31KmDAt1dtT0ENJ2NGqSUGgeHDg+L8TftMdhOskpHvLEKfWwDcJWdLrYlmDqE122mMQWmCOCtp
+	AU+oAHYXAZ790VtUuO0xKarCs+keivy7AZWx9tp8jId/Djb1R0aUSo3CygYQxuccinzZ
+X-Google-Smtp-Source: AGHT+IEN7Gw4tjxbHiTzd1DSth8yZsaKN7tAsBzYwtGanlUBLMUh52Y9e7IE8/BmexnJ5tZh/Q4JFA==
+X-Received: by 2002:a17:907:9495:b0:ab3:2719:ca30 with SMTP id a640c23a62f3a-ab7f347056amr119748566b.10.1739367063966;
+        Wed, 12 Feb 2025 05:31:03 -0800 (PST)
+Received: from [192.168.1.239] (89-64-31-140.dynamic.chello.pl. [89.64.31.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7b2adcd58sm761858666b.112.2025.02.12.05.31.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 05:30:29 -0800 (PST)
-Date: Wed, 12 Feb 2025 05:30:26 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <stfomichev@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	horms@kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v6 3/3] selftests: drv-net: Test queue xsk
- attribute
-Message-ID: <Z6yiciovTsNpIAJA@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Stanislav Fomichev <stfomichev@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	horms@kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-References: <20250210193903.16235-1-jdamato@fastly.com>
- <20250210193903.16235-4-jdamato@fastly.com>
- <13afab27-2066-4912-b8f6-15ee4846e802@redhat.com>
- <Z6uM1IDP9JgvGvev@LQ3V64L9R2>
- <Z6urp3d41nvBoSbG@LQ3V64L9R2>
- <Z6usZlrFJShn67su@mini-arch>
- <Z6vRD0agypHWDGkG@LQ3V64L9R2>
- <Z6vY_LXp3LTp7qWV@mini-arch>
- <20250211183706.5b53ee5e@kernel.org>
+        Wed, 12 Feb 2025 05:31:03 -0800 (PST)
+Message-ID: <067382bbfaa4bf9729a8d8ba1a7afb387ba04bd4.camel@gmail.com>
+Subject: Re: [PATCH][next] HID: hid-universal-pidff: Fix spelling mistake
+ "sucessfully" -> "successfully"
+From: Tomasz =?UTF-8?Q?Paku=C5=82a?= <tomasz.pakula.oficjalny@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>, Oleg Makarenko
+ <oleg@makarenk.ooo>,  Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
+ <bentiss@kernel.org>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 12 Feb 2025 14:30:59 +0100
+In-Reply-To: <20250212122347.495701-1-colin.i.king@gmail.com>
+References: <20250212122347.495701-1-colin.i.king@gmail.com>
+Disposition-Notification-To: tomasz.pakula.oficjalny@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211183706.5b53ee5e@kernel.org>
 
-On Tue, Feb 11, 2025 at 06:37:06PM -0800, Jakub Kicinski wrote:
-> On Tue, 11 Feb 2025 15:10:52 -0800 Stanislav Fomichev wrote:
-> > > I can't comment on NIPA because I have no idea how it works. Maybe
-> > > there is a kernel with some options enabled and other kernels with
-> > > various options disabled?  
-> > 
-> > Sorry, should've been more clear. My suggestion is to add 
-> > CONFIG_XDP_SOCKETS to tools/testing/selftests/drivers/net/config
-> > to make your new testcase run in a proper environment with XSKs enabled.
-> 
-> +1 this we need for sure
+On Wed, 2025-02-12 at 12:23 +0000, Colin Ian King wrote:
+> There is a spelling mistake in a hid_info message. Fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/hid/hid-universal-pidff.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/hid/hid-universal-pidff.c b/drivers/hid/hid-universa=
+l-pidff.c
+> index 5b89ec7b5c26..001a0f5efb9d 100644
+> --- a/drivers/hid/hid-universal-pidff.c
+> +++ b/drivers/hid/hid-universal-pidff.c
+> @@ -104,7 +104,7 @@ static int universal_pidff_probe(struct hid_device *h=
+dev,
+>  		goto err;
+>  	}
+> =20
+> -	hid_info(hdev, "Universal pidff driver loaded sucessfully!");
+> +	hid_info(hdev, "Universal pidff driver loaded successfully!");
+> =20
+>  	return 0;
+>  err:
 
-OK will do.
- 
-> > > I wonder if that's a separate issue though?
-> > >
-> > > In other words: maybe writing the test as I've mentioned above so it
-> > > works regardless of whether CONFIG_XDP_SOCKETS is set or not is a
-> > > good idea just on its own?
-> > > 
-> > > I'm just not sure if there's some other pattern I should be
-> > > following other than what I proposed above. I'm hesitant to re-spin
-> > > until I get feedback on the proposed approach.  
-> > 
-> > I'd keep your test as is (fail hard if XSK is not there), but 
-> > let's see if Paolo/Jakub have any other suggestions.
-> 
-> No strong preference. Stan is right that validating the environment 
-> is definitely a non-goal for the upstream tests. But if you already
-> added and tested the checks Joe you can keep them, up to you.
+Huh, I actually "fixed" that word recently but only added one missing
+'s'. It's a tricky word for sure :)
 
-OK. I guess I'll just leave them? They are as described earlier in
-the thread.
+Applies cleanly on top of hid.git#for-6.15/pidff
+
+Acked-by: Tomasz Paku=C5=82a <tomasz.pakula.oficjalny@gmail.com>
 
