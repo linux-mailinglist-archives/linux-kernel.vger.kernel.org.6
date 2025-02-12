@@ -1,129 +1,148 @@
-Return-Path: <linux-kernel+bounces-511001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AADEA324B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:22:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF96A32514
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:34:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B84923A2D66
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:21:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26CC51881FBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBE220A5C8;
-	Wed, 12 Feb 2025 11:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1575D20ADDC;
+	Wed, 12 Feb 2025 11:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ceDbVx9a";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0+RSrdlo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="YwG/L8Zm"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F990209674
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AE420ADD5;
+	Wed, 12 Feb 2025 11:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359309; cv=none; b=ad4fDf4MwvMQa5xpirngGrSS2FcoerC+KI2rCyUWlIJepISitvGS2town6aZkeRWkrD2/C+1NMQpLJOzzVK7QHORRSmP/JHcM4UH5ZCvSaGl0Anl2vXRVs9c90R8LTOGo2JXdi1sTpKAOqs6ycPye0bM2U8THuMHc2WriL3C1y0=
+	t=1739360087; cv=none; b=siCYMA1n51Em8JpuTHk/OPKf+2BJQdKTqKV+hgtcj05uF626BKLGq0Sc1B7URS1s8B01G3rtKb3hMBRtXbxdvA5J+boVTj0OL/8+iBFpDhwSHdn95WSYZMZDOS4sQG+FpYJ65mM41o276ax9pPmTgNUBqD/GwYruCWZfCI7Sv0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359309; c=relaxed/simple;
-	bh=FtRxwNwB1LGh/EUQt2O9V51fIz3IQ4+TChBDHh9Ey7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ucRrSAo6ixZMFcUciLEQALN/x3qCUk8+wi+m+F6jQ0C2gvuvOUOx7SVQcp+jD6swKSoTfSj6/PjMNsSolqk5EEpWmQoeeRlHeMdPpeNPU7pE6qCIK0uC2yhKY+y3Xzh9icJK79BKgC7OOGzBONIkQPhlG1hL9lDzT7v3Jl/asyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ceDbVx9a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0+RSrdlo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 12 Feb 2025 12:21:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739359306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l1K7nMbUzi/PBxssXxktE8rcuXI/mW+uKt+5ZI9cf20=;
-	b=ceDbVx9a2RdBxVvts79Y9Gu/Vc6V5J0JakVP5pAar2t8o7SYF6ep8YmxQi972w4iw8ktZS
-	vV2u71gzCU3z9HnHr6lwdwBL9EL5n09HtBSe+UvCh9RQ9xKzhEF4ThiP6UOCOmRmTQlmhw
-	ypC9G/dB0Tt5OHvR65sKcOgGpVYb02pl0tMyQ2WJTAmp570Oj182j1pklg89PNkVh3fa7n
-	uCoND4zNtV3ejqmK0hX+z0C4fjIWHVz7kGs2X9fTC7q/gJNRT3X4bVppjmHDj0ZUOAEUp9
-	HrKsDwgBmAksl+EzatchVRqx6xBgN1C1Hxdgq5g4npJpa+Lqp8smPMVDMfjXmw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739359306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l1K7nMbUzi/PBxssXxktE8rcuXI/mW+uKt+5ZI9cf20=;
-	b=0+RSrdlobtGST3Ru+CGHZnGHLgeRoFN6Vz2ndbWWeKkku0DmygER63VRVMNX1meUQCqR2z
-	+1R4wD164XpXF3DA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rt-devel@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Mark Brown <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: BUG: debug_exception_enter() disables preemption and may call
- sleeping functions on aarch64 with RT
-Message-ID: <20250212112145.BIE8_6T2@linutronix.de>
-References: <Z6YW_Kx4S2tmj2BP@uudg.org>
- <Z6n16cK85JMyowDq@J2N7QTR9R3>
- <20250210140657.UAsRw4k8@linutronix.de>
- <Z6vvyKZ5eoAS435b@uudg.org>
+	s=arc-20240116; t=1739360087; c=relaxed/simple;
+	bh=qs5Wg9SnP8mEJT2fiF2C/Eoai2zy1zMKwiASuaSkzfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qvCwskpvMqggmlIlgyZoQSQVV/y69QBAjFBp0NQWbhF8+YWXkNqwk9YzRZNWi1NVvN9F9WAH573oIz3qJwEGJjSVbjpU88vVdoCXDBTLYeRx4hfeK5KRR8k6f1TR7eEaUZDcQ8tG0/dsnkpe0toDzSW3H6oDwxnqBGg+JgVwtBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=YwG/L8Zm; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1739360073;
+	bh=nwRHhE+bRUftoQ1/jLksgCEVYIY2pDq9KLzXdnmSp3U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=YwG/L8ZmeCT1ABjP14ZLErvxv4AVAr54R1I5ErwTsbPguAwKy86WG5Mo6tntX/t/c
+	 HvOjHwRvVTg0nRyubK4lSuH3XBdtlYI2sPXr+sAF1r2yuLtYjKmmcckH9+1tuO+hYZ
+	 hpARMqCKZV41+RYyWXLoYmuHWalWizgl74QzaXR8=
+Received: from [10.56.52.9] ([39.156.73.10])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 57BBE49D; Wed, 12 Feb 2025 19:21:59 +0800
+X-QQ-mid: xmsmtpt1739359319t3ljxopxl
+Message-ID: <tencent_1256C865894AC1EBCFA804628181A1105A06@qq.com>
+X-QQ-XMAILINFO: NEq0i4SycP3baJ3pc8FIBFkmo5DKSXBnhJ8IAkxguBuES4K9CeJ8ynh7lxBtj4
+	 tdOwlx9sX6oq5tHvYLDd/ES6Pt4C9UDhlczptCubyPfaFoTzc4Eg0Pbla4UQLdPpYi6uRDFmzC6Z
+	 I5lFtBu0LsMURqpGTUHRJ9WX7PtFFrGe5iPRgAGglw3NEST+8Fc1t9ww6HZ5rALAlfMZaeqEe5Rd
+	 /yJzlYAY6P8p+ABuYOcMCU5Qu/EnpY1VTjI+3qevPj/Knr4oMEV8I2rW0rCIrPQsR48c6LozFKc7
+	 gPImMSd8FcbT/k1gCFV1L+5ucilrzovCWg7lYz8bIiol2MxAYHohw7Hto7agYCxfnnRLDtOMxpPP
+	 J3tJU0IR4yo7RomTzSRlR3usmUnupnwzsvk4XprcZS9wvWMPwXna5p5rw+J7lb2q9dKp8XfkKT5X
+	 lOE6dKpPQqOzd0+B8XQ1X7tAqiaSp+mtsx9JYmr6sOqi/xgegv3pyEP2w9tN09OFG943XBQym/Xw
+	 LFCNLs5umM5CtHEdHhfa4HsmCLmsXfepDm5eYXs7xE6rMqeCa7lxm0+T6OZ1+MzuWMlJhmA/Fc/b
+	 74046CBWl/ZFQwiWaSC4iMP9BCbdcsT/zBp8Ez2UV8Ga10T6Jg+56AqsTTiNw/FqnydWYpuZJwyh
+	 2MaI7s7Km9r4fmgia7Rh3qnfFpAZeki81pheJMYIFAl2ElxdU3me8RSJ0vulFc12wqpNeifHKW7s
+	 frp6x0mx0edY4H9Aedm39D6ibdbhm2tq2OPKs9f+fM9qU7W9IlmwZxKy4KG5uHhvVqulNnqqEVaQ
+	 W+r80A+4QZfdNKAJgU1jVnjOx+hUO8kfCdQNAX2bogMtoVUwTA7iu1siVOVzkhijVoUgu10/5Uyc
+	 XdXq7kUNDaa4wJ8i6R/KtEVzfuV52ohHH3IMSbnHX3xWj9/Mecqfo86W/I3RfLwz7u6phfVZp8Cl
+	 HCzHCuhxo=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-OQ-MSGID: <0ee5dea2-591d-4a3f-b785-e2ebf21802a2@foxmail.com>
+Date: Wed, 12 Feb 2025 19:21:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z6vvyKZ5eoAS435b@uudg.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpftool: bash-completion: Add nopasswd sudo
+ prefix for bpftool
+To: Quentin Monnet <qmo@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org
+Cc: rongtao@cestc.cn, Rong Tao <rongtao@cestc.cn>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Tao Chen <chen.dylane@gmail.com>,
+ Mykyta Yatsenko <yatsenko@meta.com>, Daniel Xu <dxu@dxuuu.xyz>,
+ "open list:BPF [TOOLING] (bpftool)" <bpf@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <tencent_515567355C0AA854BDA68C3A219A18040B0A@qq.com>
+ <97fd1bbb-1261-4af5-9321-27353547dbf7@kernel.org>
+Content-Language: en-US
+From: Rong Tao <rtoax@foxmail.com>
+In-Reply-To: <97fd1bbb-1261-4af5-9321-27353547dbf7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025-02-11 21:48:08 [-0300], Luis Claudio R. Goncalves wrote:
-> > Couldn't you delay sending signals until after the preempt-disable
-> > section? 
-> 
-> Looking at do_debug_exception,
-> 
-> void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
-> 			struct pt_regs *regs)
-> {
-> 	const struct fault_info *inf = esr_to_debug_fault_info(esr);
-> 	unsigned long pc = instruction_pointer(regs);
-> 
-> 	debug_exception_enter(regs);
-> 
-> 	if (user_mode(regs) && !is_ttbr0_addr(pc))
-> 		arm64_apply_bp_hardening();
-> 
-> 	if (inf->fn(addr_if_watchpoint, esr, regs)) {
-> 		arm64_notify_die(inf->name, regs, inf->sig, inf->code, pc, esr);
-> 	}
-> 
-> 	debug_exception_exit(regs);
-> }
-> NOKPROBE_SYMBOL(do_debug_exception);
-> 
-> 
-> Do you mean executing the
-> 
-> 	arm64_notify_die(inf->name, regs, inf->sig, inf->code, pc, esr);
-> 
-> after re-enabling the preemption or do you mean something more
-> sophisticated?
 
-single_step_handler() and brk_handler() can both send signals. If
-inf->fn returns != 0 (which seems to be only be possible for
-brk_handler() out of the possible four callbacks) this this
-arm64_notify_die() sends a signal.
-So we have three potential signal delivers. It shouldn't matter if the
-signal is sent within the preempt-disable section or outside because the
-signal will be queued for current and delivered on the return to
-userland. So would just need to save the details and do it outside. Now
-that I actually looked at the code, this might lead to a bit of a mess
-so splitting out the signal part and avoiding the preempt-off part might
-better which would be the rework that Mark was talking about.
+On 2/12/25 19:00, Quentin Monnet wrote:
+> 2025-02-12 18:14 UTC+0800 ~ Rong Tao <rtoax@foxmail.com>
+>> From: Rong Tao <rongtao@cestc.cn>
+>>
+>> In the bpftool script of bash-completion, many bpftool commands require
+>> superuser privileges to execute. Otherwise, Operation not permission will
+>> be displayed. Here, we check whether ordinary users are exempt from
+>> entering the sudo password. If so, we need to add the sudo prefix to the
+>> bpftool command to be executed. In this way, we can obtain the correct
+>> command completion content instead of the wrong one.
+>>
+>> For example, when updating array_of_maps, the wrong 'hex' is completed:
+>>
+>>      $ sudo bpftool map update name arr_maps key 0 0 0 0 value [tab]
+>>      $ sudo bpftool map update name arr_maps key 0 0 0 0 value hex
+>>
+>> However, what we need is "id name pinned". Similarly, there is the same
+>> problem in getting the map 'name' and 'id':
+>>
+>>      $ sudo bpftool map show name [tab] < get nothing
+>>      $ sudo bpftool map show id [tab]   < get nothing
+>>
+>> This commit fixes the issue.
+>>
+>>      $ sudo bpftool map update name arr_maps key 0 0 0 0 value [tab]
+>>      id      name    pinned
+>>
+>>      $ sudo bpftool map show name
+>>      arr_maps         cgroup_hash      inner_arr1       inner_arr2
+>>
+>>      $ sudo bpftool map show id
+>>      11    1383  4091  4096
+>>
+>> Signed-off-by: Rong Tao <rongtao@cestc.cn>
+> Hi, thanks for the patch.
+>
+> I agree it's annoying to have a partially-working completion for
+> non-root users, however, I don't feel very comfortable introducing calls
+> to "sudo" in bash completion, without the user noticing. For what it's
+> worth, I searched other bash completion files (from
+> https://github.com/scop/bash-completion/) and I can't find any of them
+> running sudo to help complete commands, so it doesn't seem to be
+> something usual in completion. I think I'd rather keep the current state
+> (or fix the first example to have the right keywords displayed but
+> without running sudo).
 
-> Luis
+Thanks for the reply.
 
-Sebastian
+Using sudo to perform bash-completion is indeed not a perfect solution. 
+However, using "bpftool map show" to obtain map information may be the 
+only way, and this operation requires CAP_ADMIN, which may be a 
+compromise. There is no other way.
+
+Rong Tao
+
+
 
