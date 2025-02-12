@@ -1,148 +1,145 @@
-Return-Path: <linux-kernel+bounces-510620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193F9A31FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:05:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1765A31FA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB003A9811
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 231B7188729B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E231FF1BD;
-	Wed, 12 Feb 2025 07:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lWqQJu8/"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE9D1FF1B7;
+	Wed, 12 Feb 2025 07:07:23 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82D91F8BCA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CBA1E9B04
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739343927; cv=none; b=Ubpii8bN/eL3gHq6jSU42m6Ti5eEyi5B60WkkW2944+glCOB0G9tRlQlNq9qy7tiaVh7UIdIja90xc1jpiaySfGjbSAcFDd6OR+KrPfKQLwz4FzBRMiV79U3H0X+AEsz7ipiqAwlXGomEgBfgd5GIij/9IyxVn3PtONORCe9rJY=
+	t=1739344043; cv=none; b=TufnykzcWmujPj6zRmSIYVRC28wQhVOLWMNTsO9C9AmizrO1QnkJdjDe+BYLf5m19oxuCE7/w7JBwN6IVAEU+ZhsIpZAMJXkwaarY0Yg+rMH0SYh96b7Xx1U+iSADEFkSr1JxLTTjKU1NUR7gyVXo4wPxm3KF5GXBo0XvEpRbPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739343927; c=relaxed/simple;
-	bh=zXcsr3pYSv/96sSEGUCA4EAQ0xqtIRVkV7ZrcBxxVWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0QQtH2P1cKhfSLnBNI0cpSWCLw5++FxEDIhpnwrDr2ruUUzXlKFpG158YRJG80CIJ+Owu8VN3bYarAxweH/3gjXRDbBqsTIRK4e/rn9ib095VLXLQ2pwLxh937McEYevMtk5Dg+XuYFgekVfN1oU0NSRZ1VQatE2jg4J4dz/Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lWqQJu8/; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5de5e3729ecso7918791a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:05:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739343924; x=1739948724; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=euETd8cRVjpfUqZLd/hQWqqaZoYqUqUdjkzivEPa4lo=;
-        b=lWqQJu8/85KpusyJbq8egp/daKG/AjZjEeGwOMlnF+AT6kdSJ9SEUfWc/ddnd08G7O
-         xzDm+gYrwEbIcVVuvwfUEnrarU8mBhclQ+eML7/uOwa9bSx2JMha5IGCabsAXRsXDvNm
-         JthCxSDhM0P9To4zbzZL73/nXVp/XXsZUnKIm3ZNPG8LPEzaWI+E+9PpD3QDl7HdY89q
-         wTp/uhhTIcvRuG2lCvX7UiybzdRSzSRelq52AhDLbCZ+XsjvxvzswG4jPmpvDr58eY4O
-         hgCDRnMvSFhEQCTEzyg6nCgQ4wu+rdkCpdTUyfvxO6zP22V59uiaPnx7/9nw2EcXFuP9
-         kECQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739343924; x=1739948724;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=euETd8cRVjpfUqZLd/hQWqqaZoYqUqUdjkzivEPa4lo=;
-        b=sPDY4/ZOopUmcH9+k6vbjt0RTrlScW2AloGAzf4E1fqgIThdij5q7gm0R3hysHIq00
-         UcriXy6NCvnsEgJJIAWvcgWScTBnglk9Xvq7D6dB0inrlGSO1BT0m72zNIm/D6ac6CN6
-         HF/y8brFH8tFyQy7p7rimpC03wOhczK6jaz3ofSSInCa9fexLo+rFf3m54CATuFcaMQx
-         hIiG8ENsUG4jLuWIR/4e86TYMTCeebzszcU17Zy7jEeE062s40pqzWAxRkVs898+E8Gj
-         Xc9b5c5+KS4Rg14+cFXnYYKd4sg6VeFyFP/yh2Xg23etV+YYIbSb2rCxxffWy47sl8d5
-         /arA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWXTjBgOxnSgn5aVsjgfyG85aji9tmuvH3lpjOtrl8K+8o4x9ReK494T9saa+fANpfejFfcaSKXd9aTwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtA9NsJ9JD8eDRPkafWU5ExVy6XdGHSvpbj9is342pbSTGSr1J
-	9H9mjsYZimcdVNrrArsvfP9Vr4Fif+FLDLM5B0G5bnz2t1VAu9KYmmuxUUXALXo=
-X-Gm-Gg: ASbGncuWCMZC/xSdCVP8h3i1xZPr39ogDuDo9TmYoSrF7dLMpGqewz+gaV138MSeJ0P
-	p/KnCz3SuuUsiEYpK5S9emGhu4Oi/wFpqMHaBno1O7FPFPOeRzVm1794thCDsTj4iiwolRYcT0z
-	TW9bAJK3s9gulLFNBVziwiKQpx2mRwDKxK4hewB6dY+gwlWVi2zZgP9+s5Ai3or3QVwoLTxuxlk
-	J4Wm9oJ6sxq6JsyoGm2aihYT1L8ALkhmuEw1sBBlte293wAWtt7I+uXSd5pshFjgwAf+QyAtCoV
-	vLMDh3Ub900OJadFp+ZX
-X-Google-Smtp-Source: AGHT+IEm2y8yicAGvHFY6cOVVOaorfYDtm2HfwUzjHmoNrYmYq8SoNb0GQoTipxLHQvOSBL85AXRNw==
-X-Received: by 2002:a17:907:2ce1:b0:ab7:be81:892a with SMTP id a640c23a62f3a-ab7f3714cf7mr129434666b.12.1739343924046;
-        Tue, 11 Feb 2025 23:05:24 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab7832a02fcsm1116402966b.94.2025.02.11.23.05.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 23:05:23 -0800 (PST)
-Date: Wed, 12 Feb 2025 10:05:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: gregkh@linuxfoundation.org, dpenkler@gmail.com,
-	~lkcamp/patches@lists.sr.ht, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: gpib: change return type of t1_delay
- function to report errors
-Message-ID: <90c2bfc7-9a76-483c-8cb6-4dfd358d586f@stanley.mountain>
-References: <20250212024247.176572-1-rodrigo.gobbi.7@gmail.com>
- <20250212024247.176572-2-rodrigo.gobbi.7@gmail.com>
+	s=arc-20240116; t=1739344043; c=relaxed/simple;
+	bh=QBinI3ZpmHPFKNWbZhPbEIoTL33xTki5lhOCx7pFcgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=amSTZDKHj6HiY2MZwimKja3B3arX2NOAemB8HkybwNgDIo8ZQfRnIrlqXKO6mxcx/C1THg+vScQp42e4eTzY7CsKZidVUgcrYaZ2qr4EJSal3WVruujhC3hCIdqcs3pGFnCzL5f4B8iCAbwhkoAtyKKIhpQkvgit3Duwr3QJdL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: fac2f86ee90f11efa216b1d71e6e1362-20250212
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:e3dd149b-2576-4b37-9dea-e55243a52ccc,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-3
+X-CID-INFO: VERSION:1.1.45,REQID:e3dd149b-2576-4b37-9dea-e55243a52ccc,IP:0,URL
+	:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:-3
+X-CID-META: VersionHash:6493067,CLOUDID:91b523715575d846567a18ed804d03fa,BulkI
+	D:250212131311UOV0929M,BulkQuantity:2,Recheck:0,SF:17|19|38|64|66|78|80|81
+	|82|83|100|101|102|841,TC:nil,Content:0|52,EDM:-3,IP:nil,URL:0,File:nil,RT
+	:nil,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:
+	0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: fac2f86ee90f11efa216b1d71e6e1362-20250212
+X-User: liuye@kylinos.cn
+Received: from [172.30.70.73] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <liuye@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 232799130; Wed, 12 Feb 2025 15:07:11 +0800
+Message-ID: <52fcd6b2-bbe1-4de7-85d1-1e5968f87e0d@kylinos.cn>
+Date: Wed, 12 Feb 2025 15:07:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212024247.176572-2-rodrigo.gobbi.7@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm/mm.h: Write folio->_flags_1 & 0xff as a macro
+ definition
+To: Dev Jain <dev.jain@arm.com>, brauner@kernel.org, dhowells@redhat.com,
+ akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250212025843.80283-1-liuye@kylinos.cn>
+ <20250212025843.80283-3-liuye@kylinos.cn>
+ <1739340112672653.3.seg@mailgw.kylinos.cn>
+Content-Language: en-US
+From: liuye <liuye@kylinos.cn>
+In-Reply-To: <1739340112672653.3.seg@mailgw.kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 11, 2025 at 11:35:36PM -0300, Rodrigo Gobbi wrote:
-> Propagate t1 delay configuration error to userspace
+
+
+在 2025/2/12 13:12, Dev Jain 写道:
 > 
+> 
+> On 12/02/25 8:28 am, Liu Ye wrote:
+>> There are multiple locations in mm.h where (folio->_flags_1 & 0xff) is
+>> used. Write it as a macro definition to improve the readability and
+>> maintainability of the code.
+>>
+>> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+>> ---
+>>   include/linux/mm.h | 10 ++++++----
+>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index 7b1068ddcbb7..750e75f45557 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -1098,6 +1098,8 @@ int vma_is_stack_for_current(struct vm_area_struct *vma);
+>>   struct mmu_gather;
+>>   struct inode;
+>>   +#define FOLIO_ORDER(folio) ((folio)->_flags_1 & 0xff)
+>> +
+>>   /*
+>>    * compound_order() can be called without holding a reference, which means
+>>    * that niceties like page_folio() don't work.  These callers should be
+>> @@ -1111,7 +1113,7 @@ static inline unsigned int compound_order(struct page *page)
+>>         if (!test_bit(PG_head, &folio->flags))
+>>           return 0;
+>> -    return folio->_flags_1 & 0xff;
+>> +    return FOLIO_ORDER(folio);
+>>   }
+>>     /**
+>> @@ -1127,7 +1129,7 @@ static inline unsigned int folio_order(const struct folio *folio)
+>>   {
+>>       if (!folio_test_large(folio))
+>>           return 0;
+>> -    return folio->_flags_1 & 0xff;
+>> +    return FOLIO_ORDER(folio);
+>>   }
+>>     #include <linux/huge_mm.h>
+>> @@ -2061,7 +2063,7 @@ static inline long folio_nr_pages(const struct folio *folio)
+>>   #ifdef CONFIG_64BIT
+>>       return folio->_folio_nr_pages;
+>>   #else
+>> -    return 1L << (folio->_flags_1 & 0xff);
+>> +    return 1L << FOLIO_ORDER(folio);
+>>   #endif
+>>   }
+>>   @@ -2086,7 +2088,7 @@ static inline unsigned long compound_nr(struct page *page)
+>>   #ifdef CONFIG_64BIT
+>>       return folio->_folio_nr_pages;
+>>   #else
+>> -    return 1L << (folio->_flags_1 & 0xff);
+>> +    return 1L << FOLIO_ORDER(folio);
+>>   #endif
+>>   }
+>>   
+> 
+> Personally I do not think this is improving readability. You are introducing one more macro for people to decipher instead of directly seeing folio->_flags_1 & 0xff. This is similar to whether to write
+> if (x) => do_stuff(), or if (x != 0) => do_stuff(). The former is more "readable" by convention but the latter makes it easier and obvious to understand.
+> 
+Or simply for maintenance purposes, if the meaning of a bit changes, only the macro definition needs to be modified.
 
-Better to spell out the problem a bit more.  What is the effect in terms
-of what the user experiences and explain why what you are doing is safe.
-
-  The current code returns "unsigned int" and it doesn't handle errors
-  correctly.
-
-  The ni_usb_t1_delay() is the only function which returned an error (-1).
-  The caller, t1_delay_ioctl() doesn't check for errors and sets
-  board->t1_nano_sec to -1 and returns success.  The board->t1_nano_sec
-  value is used in ni_usb_setup_t1_delay() and a value of -1 is treated as
-  being above 1100ns.  It may or may not have a noticeable effect, but
-  it's obviously not right.
-
-  Typical delays are in the 200-2000 range, but definitely not more
-  than INT_MAX so we can fix this code by changing the return type to int
-  and adding a check for errors.  While we're at it, lets change the error
-  code in ni_usb_t1_delay() from -1 and instead propagate the error from
-  ni_usb_write_registers().
-
-You should add a Fixes tag.
+Thanks，
+Liu Ye
 
 
-> diff --git a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> index d0656dc520f5..cb8840f2a461 100644
-> --- a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> +++ b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> @@ -1591,7 +1591,7 @@ static int ni_usb_setup_t1_delay(struct ni_usb_register *reg, unsigned int nano_
->  	return i;
->  }
->  
-> -static unsigned int ni_usb_t1_delay(gpib_board_t *board, unsigned int nano_sec)
-> +static int ni_usb_t1_delay(gpib_board_t *board, unsigned int nano_sec)
->  {
->  	int retval;
->  	struct ni_usb_priv *ni_priv = board->private_data;
-> @@ -1605,7 +1605,7 @@ static unsigned int ni_usb_t1_delay(gpib_board_t *board, unsigned int nano_sec)
->  	retval = ni_usb_write_registers(ni_priv, writes, i, &ibsta);
->  	if (retval < 0) {
->  		dev_err(&usb_dev->dev, "%s: register write failed, retval=%i\n", __func__, retval);
-> -		return -1;	//FIXME should change return type to int for error reporting
-> +		return -EIO;
-
-Better to "return retval;"
-
->  	}
->  	board->t1_nano_sec = actual_ns;
->  	ni_usb_soft_update_status(board, ibsta, 0);
-
-regards,
-dan carpenter
 
