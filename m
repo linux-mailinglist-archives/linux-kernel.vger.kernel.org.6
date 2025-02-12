@@ -1,151 +1,84 @@
-Return-Path: <linux-kernel+bounces-511817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F07A3301F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:50:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE84A33020
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:50:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D5317A3345
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:49:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16094162185
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B934920011F;
-	Wed, 12 Feb 2025 19:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1837C20102A;
+	Wed, 12 Feb 2025 19:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bQHsgIEZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVoxhRzt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFC71FF7A9;
-	Wed, 12 Feb 2025 19:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA8320013A;
+	Wed, 12 Feb 2025 19:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739389796; cv=none; b=WXh+JOJJu3n/kTZJEexpCJ1eeqHk6akd0PmuCmSLNOoay2eBWvlODbkiUDCgrgRHYUS44NbtyULdHtD2lTrfRM//e+JH7UIvQS3mfVYhCynWRpJp1lRgraawrpVi0sfEzUvdP9aGfk2XXnBaDLD3EloUzFfoKD2gm631wG0P6yc=
+	t=1739389801; cv=none; b=P8j9f2lC1qFY/Tqp1juPcsFeS979Yr9McT2PzHq6rnbeZE8IlZN1/knrgaRrjwERi+71Dr67abdge+FWizNl3reFnQeitUmkU7EvSCGtRVxnuvBJgSdRWS2qJYShilSB7D4vegtJiJjThvQBo9puEFhoFAZtdzeEwOu1TZQeaWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739389796; c=relaxed/simple;
-	bh=S4kGXBmLAhT8tNvdMSHew5y3YrPfqe/6Eg7HJUaGSI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hHo8pD6B6pE2wPhZ/+9/kktjZogW8rIeJ5M9gvBkzaejHpGskxxznMPikt7D2XHs9BvXS2sJcRCo0rNjZ2V5DfZN+hXRuwdOJre+16SGqFyPn75EceIJQugYkJDSXngPzLuDuDlmp3F5XjaOVX2nQrS1eKmaiBnPJF5AvsE7LnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bQHsgIEZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C9nHt5014145;
-	Wed, 12 Feb 2025 19:49:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DrmOzWfmrqIIZFBnsku6PH47bHCleybsQ70S0i2f8Jw=; b=bQHsgIEZdwEhdNs/
-	0AHCqMrNnXKp3TLG38wXe7m9AzF/ZadQw1xWKjUC5rzoLw0056uhVDfHPUP3u5FX
-	6A1KZFc53JTn2q/GOYYJteOMxgeACsP28X5SV2Qye7dJPk6ZuzFtXxWgm/Ubnr2P
-	XEpvH/Qat77Uf9Avow8BM0DybvLTFjlsge13FfgWN6U2g0EmZGS8nPmvBaLQrIJ5
-	pOcnCEoqLlz8xotZEST1e/3St6ef6q5wbIXrCjyepVErGRNtmX5ZwPVvRTLvoepE
-	QmJVjsXiLRNaNGwNICFulkM7BD8rZmeqSiICfKa01Qo7EPTJZa/YFs+n7xwlcqDA
-	oq1BYQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qxv3wxpt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 19:49:47 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51CJnkbx008705
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 19:49:46 GMT
-Received: from [10.216.10.30] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
- 2025 11:49:42 -0800
-Message-ID: <37954fc4-27cc-4e5f-a8ef-0e7f4ac0e041@quicinc.com>
-Date: Thu, 13 Feb 2025 01:19:38 +0530
+	s=arc-20240116; t=1739389801; c=relaxed/simple;
+	bh=qRczGa8mUmvt/RUG4HaVJ427lqSU37GvFDIl21GUKq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lg52cMk+heXnq5EHE7X0cTW0d0mcOhJ3HQxtqOWT1N5236Kcd19mp6CvhBoB/6nF1+PFujQvhxR1c8WSITSpULdzk91/UinCIhokrQ9XOcfS3TMZz8dqjoc5ZfFBzngxpTfgMK0PLUoR0M28WiDS8PyMVU8TDNDm9HBKMCcsE5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVoxhRzt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA3D8C4CEDF;
+	Wed, 12 Feb 2025 19:50:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739389800;
+	bh=qRczGa8mUmvt/RUG4HaVJ427lqSU37GvFDIl21GUKq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fVoxhRztG/7//AGN49krym+TNi1s+LJrQAM3HqpwsIdS7G6ZU4qfY0pkU/3oTB/Mm
+	 q1WSheZPe1Xux3gDHC6gsAIwhfN2DXhCTgs6//19+ebMgvfeR7GAZ9I944iXdWsyRk
+	 BlfrQZPoevzWpmdXoNKaVESbxF2UwOxar+x4foMyZrJU+kadCPnvJwOmnCZ98HaFem
+	 bBIlKBSvgcMIeYJHzmQW0Rvkqv+M7fC1iTHjb228tDM/90y7751VxV+u6ceuAEwjSV
+	 uIQXjug9OhPMZAZtnIfNW0WHwDLp7k6GveCam1JjAb1t3eZ0XahFNxIXUvh/gpjxm3
+	 6/Q9CWb5cqVKg==
+Date: Wed, 12 Feb 2025 13:49:59 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Jisheng Zhang <jszhang@kernel.org>, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Longbin Li <looong.bin@gmail.com>,
+	Chen Wang <unicorn_wang@outlook.com>, Yixun Lan <dlan@gentoo.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: reset: sophgo: Add CV1800B support
+Message-ID: <173938979936.135912.2099635079026768337.robh@kernel.org>
+References: <20250209122936.2338821-1-inochiama@gmail.com>
+ <20250209122936.2338821-2-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] i3c: master: Add Qualcomm I3C master controller
- driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
-CC: <alexandre.belloni@bootlin.com>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <jarkko.nikula@linux.intel.com>,
-        <linux-i3c@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250205143109.2955321-1-quic_msavaliy@quicinc.com>
- <20250205143109.2955321-3-quic_msavaliy@quicinc.com>
- <fec85cd8-4c56-4b48-a15f-e7ae08352cc2@kernel.org>
- <e5cad9d0-e602-442f-b216-2f655a9526e3@quicinc.com>
- <1e3a103d-d468-40c6-b03c-723427d7bb41@kernel.org>
- <e5dcc2f0-df6d-46ed-b341-46de513c0728@quicinc.com>
- <20250211214128.GB1215572-robh@kernel.org>
- <b873c744-6b38-4ea0-a5de-2cc7dd0e4501@quicinc.com>
- <5ae2fc10-c5fe-4400-8f15-de1fb7ef7144@kernel.org>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <5ae2fc10-c5fe-4400-8f15-de1fb7ef7144@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QeskENwyDzHbaTTBMiHtPPqyhSpBm00y
-X-Proofpoint-ORIG-GUID: QeskENwyDzHbaTTBMiHtPPqyhSpBm00y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_06,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- suspectscore=0 phishscore=0 adultscore=0 spamscore=0 mlxscore=0
- bulkscore=0 impostorscore=0 clxscore=1015 lowpriorityscore=0
- malwarescore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2501170000 definitions=main-2502120141
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250209122936.2338821-2-inochiama@gmail.com>
 
 
-
-On 2/13/2025 1:09 AM, Krzysztof Kozlowski wrote:
-> On 12/02/2025 20:29, Mukesh Kumar Savaliya wrote:
->> Thanks a lot Rob ! sorry, i was late to respond on this while waiting
->> for other comments agreements.
->>
->> On 2/12/2025 3:11 AM, Rob Herring wrote:
->>> On Mon, Feb 10, 2025 at 09:41:28PM +0530, Mukesh Kumar Savaliya wrote:
->>>> Thanks Krzysztof !
->>>>
->>>> On 2/9/2025 5:10 PM, Krzysztof Kozlowski wrote:
->>>>> On 07/02/2025 13:03, Mukesh Kumar Savaliya wrote:
->>>>>>>> +	gi3c->se.clk = devm_clk_get(&pdev->dev, "se-clk");
->>>>>>>> +	if (IS_ERR(gi3c->se.clk)) {
->>>>>>>> +		ret = PTR_ERR(gi3c->se.clk);
->>>>>>>> +		dev_err(&pdev->dev, "Error getting SE Core clk %d\n", ret);
->>>>>>>> +		return ret;
->>>>>>>> +	}
->>>>>>>> +
->>>>>>>> +	ret = device_property_read_u32(&pdev->dev, "se-clock-frequency", &gi3c->clk_src_freq);
->>>>>>>
->>>>>>> You never tested your DTS or this code... Drop
->>>>>>>
->>>>>> I have tested on SM8550 MTP only. Below entry in my internal/local DTSI.
->>>>>
->>>>>
->>>>> And how is it supposed to work? Are you going to send us your local
->>>>> internal DTSI? Is it going to pass any checks?
->>>> was saying about code was testing with MTP. DTS was tested using dt-bindings
->>>> check.
->>>
->>> make dtbs_check is how you test.
->> Sure, we are running "make dt_binding_check
->> DT_SCHEMA_FILES=qcom,i3c-master.yaml"
+On Sun, 09 Feb 2025 20:29:32 +0800, Inochi Amaoto wrote:
+> Add bindings for the reset generator on the SOPHGO CV1800B
+> RISC-V SoC.
 > 
-> Hm? Please read it again. You anyway have it documented in your company
-> guidebook, so I expect you follow that one *very* carefully because
-> reviewers repeating the same as your company book and then repeating
-> themselves three times is just too much.
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  .../devicetree/bindings/reset/sophgo,sg2042-reset.yaml        | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-sorry, i will run what Rob has pointed "make dtbs_check" as it's giving 
-me exact clarity what to do. I just mentioned what i was doing.
-And as you pointed, will follow complete internal guide too if it's 
-missing dtbs check. Thanks !
-> Best regards,
-> Krzysztof
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
