@@ -1,164 +1,263 @@
-Return-Path: <linux-kernel+bounces-511847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D95A33074
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:07:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A46A33075
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0CCD1886FE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 140D51644EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE791201023;
-	Wed, 12 Feb 2025 20:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1721F201015;
+	Wed, 12 Feb 2025 20:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="D0ZZJaVx"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RS6Ka6ro"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534301FFC66
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7F31FFC66;
+	Wed, 12 Feb 2025 20:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739390841; cv=none; b=gbxOD33b/Bx2vpmwKih3Zfe9CK95opWFDtggUA+d6UyLjktEOotCZRh9xSufqSm6WHkbkuIxg8xkq4NjImysadSHPjD0ArmLPmWMiyN+cfB846tfHiNWJ3tfw2j+XBOkpwAbZ3aGTLfX00Ri5f7t85YSB9E5Y+/6WUPmrGdJRBg=
+	t=1739390879; cv=none; b=LNj5soKi5sr3sS9GaOvmNtDcFDF05VQsyBZPh3Z6iVJYmIH1S+Mg/Lmqi2hC91OJjbGiqyxbI+wdfSxy6GPxx6GK6ucM0N5nCHKPAfqfavzZ73Z4vIJ0knjEjvCPpWtmZR467RQNl9jVCqGDsU7Na2HO7wkRBx8q5LtWPyNdHAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739390841; c=relaxed/simple;
-	bh=cGC1rqqEGlY113Qnsbpy/9xYPW8DwQek7iDwMOerZxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eapSbqQGeYz27SjHG6ESM4xkIkeaHw7VswIhnLBuQRdr5A9ed6lgWPnGNBq2RR0XtGUAzwUeXrZAvKxQd3dcGJ4kGHRJqqonqg9SXJJAGwx/oe+4pVvOrYp+LVC8TMvRZGzrXDTudqvm0W1U+n7u+WCs3t/Y69Ps/rZJIwsC/uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=D0ZZJaVx; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3f3a6cb98a5so65695b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:07:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1739390838; x=1739995638; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxGXdtfxhIi93S3Cb2J8z+v+OBi6ejm654vjeGIotlI=;
-        b=D0ZZJaVx5K8Nq9vb/gaPqnOutwSmmv8zs6aO/QfqMulq+LwdATGtoSYHAgeh+ETXJF
-         QYWHBCUNGbF6j7I+O7voRuN2g84kFsTS7DISKHOPmJ9fHdH/FgIZSoHr8DjPxxd16v8V
-         0AXkGGZZR2/fJrKMQRh3//00blc9WjGlRIP5s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739390838; x=1739995638;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZxGXdtfxhIi93S3Cb2J8z+v+OBi6ejm654vjeGIotlI=;
-        b=Ph0fDR5bQ8Q/4r4s5no/2fuXqYFGsHNy7DwXQqlqJLESqHiERO70IezWdivFI+rrLg
-         G/pcrZ77EQtgFHAj7J0t5zMILuJESgzKrOU9LsfHkhyYgT+CDEngPX3yU2/dGBY7Xhkl
-         wki5t6TQR6SxwVz9qqwcnxwaPEF7nEN672YEZw56ivh7XpQjDykMR8v4v1n1jCLxmbL7
-         TlT6zSMk/elQrBrHl3v+yraPnbrNifWx9CwOme1Ke0a85OHRAebDo/y6liMOfBUdpRsr
-         KWJz2jF8wMuCaoyfPq+pWda7kb2XbEtBhKYkN8wGdNOJnlHkdzkkc2Qlp8RR6B9y/wf7
-         Unyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgbdrU2MaIzqkB8jhyRRU9t2eUCnrjg7PK8yWup1svI+CGO+O337O/n9S+GtosNhZObg09cpAIWUpxid4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIhNlMLA49nSn/xvIYMhZ1prGzY8Su3h521Fh6s+iCv9rYfmt1
-	am8gBjUsUPm/EDtzLwMOh6UMIyns04DWjhI9pv6noMKZVCG8CvRtjVXzRfNj8w==
-X-Gm-Gg: ASbGncvKcCFLACBUl4MEG5wQ5VoaUJzZpS9dFucqeOpTpeco4SVrZkMO8aXW1k7DkPD
-	QowgstH7pBslfupShPlMEnDMa0DB1E+pv5SXZ45UWoTttvsgKtCELDmmRvNqgHNmVK3KcouslIZ
-	BF6+DSGCN5kfTpcy6+VfVUuYTN7rd07sIOIgIpPnPzLQ92zyT+pm756w3H0M45OJIj9bo9n+bYp
-	Es5yagxN6jXuZKUrDWXuREO0g7W39MosoiiCqXDlqMv2rFzttE3K+5dvk9n6ODOlFGPFpchybfV
-	Xe+Xx0E7YkzJU21uli7KVyrPF8vTgs59P7I19okVQyZ7o3+4tpdh3895sMCXTYjGWd0=
-X-Google-Smtp-Source: AGHT+IGYzk9T0MFCslT3GehXKMN1D4HHliXmrU5o4/Eiadc4Md49P45SLWZSibKaECMiJpTO58q0fA==
-X-Received: by 2002:a05:6870:1690:b0:29e:48d6:2e62 with SMTP id 586e51a60fabf-2b8d64fda20mr2929878fac.9.1739390838301;
-        Wed, 12 Feb 2025 12:07:18 -0800 (PST)
-Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b8abc164b7sm2784158fac.4.2025.02.12.12.07.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 12:07:16 -0800 (PST)
-Message-ID: <8d5ae153-24fb-44bf-89a9-e366e0f205f3@broadcom.com>
-Date: Wed, 12 Feb 2025 21:07:10 +0100
+	s=arc-20240116; t=1739390879; c=relaxed/simple;
+	bh=7WTBunG74iXFuhyRtRY1W4TFzmye6XaIp6Qz/sWn+CU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=It/6lMQl08S2NiW5pe5YR7TLV+6yPQ+A52tEiEE/iG01zD2b2dZZoURP5vanNIZkpo9j4wkOERYBEAkmvcLGNbkmxoXMxqj2w83eV0gB75crydtZUX2cvLXiKfE28gzeyspXVlpSJYFKUjbjpItDm+r7spetfGTka7Y2eBeYrWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RS6Ka6ro; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EDABC4CEDF;
+	Wed, 12 Feb 2025 20:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739390878;
+	bh=7WTBunG74iXFuhyRtRY1W4TFzmye6XaIp6Qz/sWn+CU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RS6Ka6roX53jJJY8YlRZNoSO8UMfs9WbxUSjnqE3pZ/kRLlnqEfbkg+8jo9wvavmS
+	 Im1JudxYFQkGrzL8RQYIr7kymvEK+wGoPOSw2q1+BwijzcJVM/7tR3yWgxXFLF442n
+	 oGfdjb6waJJ7qKhAksot8f3NmDsPucI5XTzzRLsCJxphORvtff5mxPNMWye7zCv0d5
+	 Lf7g10WNH0WPGtlGVY2b7Mhg/dhG0/aC+VTZ94sD/xAB6ycKlHDvuPyN4YruKCFGwL
+	 5imKsz1uxNIE2X5e96j8JjfZp0GxJCitmAaRXb2IMy85D7dvQ8UTIAie//UirrIRft
+	 FQHMgpc8RDpmA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v4] riscv/crc-t10dif: Optimize crct10dif with zbc extension
+Date: Wed, 12 Feb 2025 12:07:23 -0800
+Message-ID: <20250212200723.135894-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: brcmfmac: keep power during suspend if board
- requires it
-To: Matthias Proske <email@matthias-proske.de>, Kalle Valo
- <kvalo@kernel.org>, Norbert van Bolhuis <nvbolhuis@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Ondrej Jirman <megi@xff.cz>, Erick Archer <erick.archer@outlook.com>,
- Jacobe Zang <jacobe.zang@wesion.com>
-Cc: linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org
-References: <20250212185941.146958-2-email@matthias-proske.de>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- xsFNBGP96SABEACfErEjSRi7TA1ttHYaUM3GuirbgqrNvQ41UJs1ag1T0TeyINqG+s6aFuO8
- evRHRnyAqTjMQoo4tkfy21XQX/OsBlgvMeNzfs6jnVwlCVrhqPkX5g5GaXJnO3c4AvXHyWik
- SOd8nOIwt9MNfGn99tkRAmmsLaMiVLzYfg+n3kNDsqgylcSahbd+gVMq+32q8QA+L1B9tAkM
- UccmSXuhilER70gFMJeM9ZQwD/WPOQ2jHpd0hDVoQsTbBxZZnr2GSjSNr7r5ilGV7a3uaRUU
- HLWPOuGUngSktUTpjwgGYZ87Edp+BpxO62h0aKMyjzWNTkt6UVnMPOwvb70hNA2v58Pt4kHh
- 8ApHky6IepI6SOCcMpUEHQuoKxTMw/pzmlb4A8PY//Xu/SJF8xpkpWPVcQxNTqkjbpazOUw3
- 12u4EK1lzwH7wjnhM3Fs5aNBgyg+STS1VWIwoXJ7Q2Z51odh0XecsjL8EkHbp9qHdRvZQmMu
- Ns8lBPBkzpS7y2Q6Sp7DcRvDfQQxPrE2sKxKLZVGcRYAD90r7NANryRA/i+785MSPUNSTWK3
- MGZ3Xv3fY7phISvYAklVn/tYRh88Zthf6iDuq86m5mr+qOO8s1JnCz6uxd/SSWLVOWov9Gx3
- uClOYpVsUSu3utTta3XVcKVMWG/M+dWkbdt2KES2cv4P5twxyQARAQABzS9BcmVuZCB2YW4g
- U3ByaWVsIDxhcmVuZC52YW5zcHJpZWxAYnJvYWRjb20uY29tPsLBhwQTAQgAMRYhBLX1Z69w
- T4l/vfdb0pZ6NOIYA/1RBQJj/ek9AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQlno04hgD/VGw
- 8A//VEoGTamfCks+a12yFtT1d/GjDdf3i9agKMk3esn08JwjJ96x9OFFl2vFaQCSiefeXITR
- K4T/yT+n/IXntVWT3pOBfb343cAPjpaZvBMh8p32z3CuV1H0Y+753HX7gdWTEojGWaWmKkZh
- w3nGoRZQEeAcwcF3gMNwsM5Gemj7aInIhRLUeoKh/0yV85lNE1D7JkyNheQ+v91DWVj5/a9X
- 7kiL18fH1iC9kvP3lq5VE54okpGqUj5KE5pmHNFBp7HZO3EXFAd3Zxm9ol5ic9tggY0oET28
- ucARi1wXLD/oCf1R9sAoWfSTnvOcJjG+kUwK7T+ZHTF8YZ4GAT3k5EwZ2Mk3+Rt62R81gzRF
- A6+zsewqdymbpwgyPDKcJ8YUHbqvspMQnPTmXNk+7p7fXReVPOYFtzzfBGSCByIkh1bB45jO
- +TM5ZbMmhsUbqA0dFT5JMHjJIaGmcw21ocgBcLsJ730fbLP/L08udgWHywPoq7Ja7lj5W0io
- ZDLz5uQ6CEER6wzD07vZwSl/NokljVexnOrwbR3wIhdr6B0Hc/0Bh7T8gpeM+QcK6EwJBG7A
- xCHLEacOuKo4jinf94YQrOEMnOmvucuQRm9CIwZrQ69Mg6rLn32pA4cK4XWQN1N3wQXnRUnb
- MTymLAoxE4MInhDVsZCtIDFxMVvBUgZiZZszN33OwU0EY/3pIgEQAN35Ii1Hn90ghm/qlvz/
- L+wFi3PTQ90V6UKPv5Q5hq+1BtLA6aj2qmdFBO9lgO9AbzHo8Eizrgtxp41GkKTgHuYChijI
- kdhTVPm+Pv44N/3uHUeFhN3wQ3sTs1ZT/0HhwXt8JvjqbhvtNmoGosZvpUCTwiyM1VBF/ICT
- ltzFmXd5z7sEuDyZcz9Q1t1Bb2cmbhp3eIgLmVA4Lc9ZS3sK1UMgSDwaR4KYBhF0OKMC1OH8
- M5jfcPHR8OLTLIM/Thw0YIUiYfj6lWwWkb82qa4IQvIEmz0LwvHkaLU1TCXbehO0pLWB9HnK
- r3nofx5oMfhu+cMa5C6g3fBB8Z43mDi2m/xM6p5c3q/EybOxBzhujeKN7smBTlkvAdwQfvuD
- jKr9lvrC2oKIjcsO+MxSGY4zRU0WKr4KD720PV2DCn54ZcOxOkOGR624d5bhDbjw1l2r+89V
- WLRLirBZn7VmWHSdfq5Xl9CyHT1uY6X9FRr3sWde9kA/C7Z2tqy0MevXAz+MtavOJb9XDUlI
- 7Bm0OPe5BTIuhtLvVZiW4ivT2LJOpkokLy2K852u32Z1QlOYjsbimf77avcrLBplvms0D7j6
- OaKOq503UKfcSZo3lF70J5UtJfXy64noI4oyVNl1b+egkV2iSXifTGGzOjt50/efgm1bKNkX
- iCVOYt9sGTrVhiX1ABEBAAHCwXYEGAEIACAWIQS19WevcE+Jf733W9KWejTiGAP9UQUCY/3p
- PgIbDAAKCRCWejTiGAP9UaC/EACZvViKrMkFooyACGaukqIo/s94sGuqxj308NbZ4g5jgy/T
- +lYBzlurnFmIbJESFOEq0MBZorozDGk+/p8pfAh4S868i1HFeLivVIujkcL6unG1UYEnnJI9
- uSwUbEqgA8vwdUPEGewYkPH6AaQoh1DdYGOleQqDq1Mo62xu+bKstYHpArzT2islvLdrBtjD
- MEzYThskDgDUk/aGPgtPlU9mB7IiBnQcqbS/V5f01ZicI1esy9ywnlWdZCHy36uTUfacshpz
- LsTCSKICXRotA0p6ZiCQloW7uRH28JFDBEbIOgAcuXGojqYx5vSM6o+03W9UjKkBGYFCqjIy
- Ku843p86Ky4JBs5dAXN7msLGLhAhtiVx8ymeoLGMoYoxqIoqVNaovvH9y1ZHGqS/IYXWf+jE
- H4MX7ucv4N8RcsoMGzXyi4UbBjxgljAhTYs+c5YOkbXfkRqXQeECOuQ4prsc6/zxGJf7MlPy
- NKowQLrlMBGXT4NnRNV0+yHmusXPOPIqQCKEtbWSx9s2slQxmXukPYvLnuRJqkPkvrTgjn5d
- eSE0Dkhni4292/Nn/TnZf5mxCNWH1p3dz/vrT6EIYk2GSJgCLoTkCcqaM6+5E4IwgYOq3UYu
- AAgeEbPV1QeTVAPrntrLb0t0U5vdwG7Xl40baV9OydTv7ghjYZU349w1d5mdxg==
-In-Reply-To: <20250212185941.146958-2-email@matthias-proske.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/12/2025 7:59 PM, Matthias Proske wrote:
-> After commit 92cadedd9d5f ("brcmfmac: Avoid keeping power to SDIO card
-> unless WOWL is used"), the wifi adapter by default is turned off on
-> suspend and then re-probed on resume.
-> 
-> This conflicts with some embedded boards that require to remain powered.
-> They will fail on resume with:
-> 
-> brcmfmac: brcmf_sdio_bus_rxctl: resumed on timeout
-> ieee80211 phy1: brcmf_bus_started: failed: -110
-> ieee80211 phy1: brcmf_attach: dongle is not responding: err=-110
-> brcmfmac: brcmf_sdio_firmware_callback: brcmf_attach failed
-> 
-> This commit checks for the Device Tree property 'cap-power-off-cards'.
-> If this property is not set, it means that we do not have the capability
-> to power off and should therefore remain powered.
+From: Zhihang Shao <zhihang.shao.iscas@gmail.com>
 
-Thanks! Looks good to me.
+The current CRC-T10DIF algorithm on RISC-V platform is based on
+table-lookup optimization.  Given the previous work on optimizing crc32
+calculations with zbc extension, it is believed that this will be
+equally effective for accelerating crc-t10dif.
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Matthias Proske <email@matthias-proske.de>
-> ---
->   .../broadcom/brcm80211/brcmfmac/bcmsdh.c      | 20 ++++++++++++-------
->   1 file changed, 13 insertions(+), 7 deletions(-)
+Therefore this patch adds an implementation of crc-t10dif using zbc
+extension. It detects whether the current runtime environment supports
+zbc feature and, if so, uses it to accelerate crc-t10dif calculations.
+
+This patch is updated due to the patchset of updating kernel's
+CRC-T10DIF library in 6.14, which is finished by Eric Biggers.  Also, I
+used crc_kunit.c to test the performance of crc-t10dif optimized by crc
+extension.
+
+Signed-off-by: Zhihang Shao <zhihang.shao.iscas@gmail.com>
+[EB: fixed 32-bit build, added comments that explain the algorithm used,
+     and various other cleanups]
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+
+This patch applies to 
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next
+
+ arch/riscv/Kconfig                |   1 +
+ arch/riscv/lib/Makefile           |   1 +
+ arch/riscv/lib/crc-t10dif-riscv.c | 131 ++++++++++++++++++++++++++++++
+ 3 files changed, 133 insertions(+)
+ create mode 100644 arch/riscv/lib/crc-t10dif-riscv.c
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 7612c52e9b1e3..db1cf9666dfdd 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -23,10 +23,11 @@ config RISCV
+ 	select ARCH_ENABLE_MEMORY_HOTREMOVE if MEMORY_HOTPLUG
+ 	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
+ 	select ARCH_ENABLE_THP_MIGRATION if TRANSPARENT_HUGEPAGE
+ 	select ARCH_HAS_BINFMT_FLAT
+ 	select ARCH_HAS_CRC32 if RISCV_ISA_ZBC
++	select ARCH_HAS_CRC_T10DIF if RISCV_ISA_ZBC
+ 	select ARCH_HAS_CURRENT_STACK_POINTER
+ 	select ARCH_HAS_DEBUG_VIRTUAL if MMU
+ 	select ARCH_HAS_DEBUG_VM_PGTABLE
+ 	select ARCH_HAS_DEBUG_WX
+ 	select ARCH_HAS_FAST_MULTIPLIER
+diff --git a/arch/riscv/lib/Makefile b/arch/riscv/lib/Makefile
+index 79368a895feed..d1d1f3d880e32 100644
+--- a/arch/riscv/lib/Makefile
++++ b/arch/riscv/lib/Makefile
+@@ -14,8 +14,9 @@ lib-$(CONFIG_RISCV_ISA_V)	+= uaccess_vector.o
+ endif
+ lib-$(CONFIG_MMU)	+= uaccess.o
+ lib-$(CONFIG_64BIT)	+= tishift.o
+ lib-$(CONFIG_RISCV_ISA_ZICBOZ)	+= clear_page.o
+ obj-$(CONFIG_CRC32_ARCH)	+= crc32-riscv.o
++obj-$(CONFIG_CRC_T10DIF_ARCH)	+= crc-t10dif-riscv.o
+ obj-$(CONFIG_FUNCTION_ERROR_INJECTION) += error-inject.o
+ lib-$(CONFIG_RISCV_ISA_V)	+= xor.o
+ lib-$(CONFIG_RISCV_ISA_V)	+= riscv_v_helpers.o
+diff --git a/arch/riscv/lib/crc-t10dif-riscv.c b/arch/riscv/lib/crc-t10dif-riscv.c
+new file mode 100644
+index 0000000000000..2e9c3dcba8a0e
+--- /dev/null
++++ b/arch/riscv/lib/crc-t10dif-riscv.c
+@@ -0,0 +1,131 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Accelerated CRC-T10DIF implementation with RISC-V Zbc extension.
++ *
++ * Copyright (C) 2024 Institute of Software, CAS.
++ */
++
++#include <asm/alternative-macros.h>
++#include <asm/byteorder.h>
++#include <asm/hwcap.h>
++
++#include <linux/crc-t10dif.h>
++#include <linux/module.h>
++
++/*
++ * CRC-T10DIF is a 16-bit CRC that uses most-significant-bit-first bit order,
++ * i.e. bit i contains the coefficient of x^i (not reflected).
++ */
++
++#define CRCT10DIF_POLY		0x18bb7 /* The generator polynomial G */
++
++#if __riscv_xlen == 64
++#define CRCT10DIF_QUOTIENT_POLY	0xf65a57f81d33a48a /* floor(x^80 / G) - x^64 */
++#define load_be_long(x)		be64_to_cpup(x)
++#elif __riscv_xlen == 32
++#define CRCT10DIF_QUOTIENT_POLY	0xf65a57f8	   /* floor(x^48 / G) - x^32 */
++#define load_be_long(x)		be32_to_cpup(x)
++#else
++#error "Unsupported __riscv_xlen"
++#endif
++
++/*
++ * Multiply the XLEN-bit message polynomial @m by x^16 and reduce it modulo the
++ * generator polynomial G.  This gives the CRC of the message polynomial @m.
++ */
++static inline u16 crct10dif_zbc(unsigned long m)
++{
++	u16 crc;
++
++	asm volatile(".option push\n"
++		     ".option arch,+zbc\n"
++		     /*
++		      * First step of Barrett reduction with integrated
++		      * multiplication by x^16:
++		      *
++		      *    %0 := floor((m * floor(x^(XLEN+16) / G)) / x^XLEN)
++		      *
++		      * The resulting value is equal to floor((m * x^16) / G).
++		      *
++		      * The constant floor(x^(XLEN+16) / G) has degree x^XLEN,
++		      * i.e. it has XLEN+1 bits.  The clmulh instruction
++		      * multiplies m by the x^0 through x^(XLEN-1) terms of this
++		      * constant and does the floored division by x^XLEN.  The
++		      * xor instruction handles the x^XLEN term of the constant
++		      * by adding an additional (m * x^XLEN) / x^XLEN = m.
++		      */
++		     "clmulh %0, %1, %2\n"
++		     "xor    %0, %0, %1\n"
++		     /*
++		      * Second step of Barrett reduction:
++		      *
++		      *    crc := (m * x^16) + (G * floor((m * x^16) / G))
++		      *
++		      * This reduces (m * x^16) modulo G by adding the
++		      * appropriate multiple of G to it.  The result uses only
++		      * the x^0 through x^15 terms.  HOWEVER, since the
++		      * unreduced value (m * x^16) is zero in those terms in the
++		      * first place, it is more efficient to do the equivalent:
++		      *
++		      *    crc := (G * floor((m * x^16) / G)) mod x^16
++		      */
++		     "clmul  %0, %0, %3\n"
++		     ".option pop\n"
++		     : "=&r" (crc)
++		     : "r" (m),
++		     "r" (CRCT10DIF_QUOTIENT_POLY),
++		     "r" (CRCT10DIF_POLY));
++	return crc;
++}
++
++static inline u16 crct10dif_unaligned(u16 crc, const u8 *p, size_t len)
++{
++	unsigned long m;
++	size_t i;
++
++	if (len == 1)
++		return crct10dif_zbc(p[0] ^ (crc >> 8)) ^ (crc << 8);
++
++	/* assuming len >= 2 here */
++	m = crc ^ (p[0] << 8) ^ p[1];
++	for (i = 2; i < len; i++)
++		m = (m << 8) ^ p[i];
++	return crct10dif_zbc(m);
++}
++
++u16 crc_t10dif_arch(u16 crc, const u8 *p, size_t len)
++{
++	size_t align;
++	unsigned long m;
++
++	asm goto(ALTERNATIVE("j %l[fallback]", "nop", 0,
++			     RISCV_ISA_EXT_ZBC, 1) : : : : fallback);
++
++	align = -(unsigned long)p % sizeof(unsigned long);
++	if (align && len) {
++		align = min(align, len);
++		crc = crct10dif_unaligned(crc, p, align);
++		p += align;
++		len -= align;
++	}
++
++	while (len >= sizeof(unsigned long)) {
++		m = ((unsigned long)crc << (8 * sizeof(unsigned long) - 16)) ^
++		    load_be_long((const void *)p);
++		crc = crct10dif_zbc(m);
++		p += sizeof(unsigned long);
++		len -= sizeof(unsigned long);
++	}
++
++	if (len)
++		crc = crct10dif_unaligned(crc, p, len);
++
++	return crc;
++
++fallback:
++	return crc_t10dif_generic(crc, p, len);
++}
++EXPORT_SYMBOL(crc_t10dif_arch);
++
++MODULE_DESCRIPTION("CRC-T10DIF using RISC-V ZBC Extension");
++MODULE_LICENSE("GPL");
+
+base-commit: 4ffd50862d41e5aaf2e749efa354afaa1317c309
+-- 
+2.48.1
+
 
