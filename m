@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-510835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B30AA322A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:45:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBA4A322A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BB5A3A34B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76FAE3A34B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBDA206F02;
-	Wed, 12 Feb 2025 09:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41F51FECB4;
+	Wed, 12 Feb 2025 09:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tT16+Yui"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="x6BFk/1X"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9A32063D6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B41271828
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353505; cv=none; b=fKenogqcXVWOfJYgtzvSmyWLVgOX1Ifsr8k/M5ts4/GPGBmni0Lh0xBTBC/aT0jUcCbwO+4KaEJ7heua0HUFIYiiLW703Zqw6SDlF2Fl6NdX0gp5xC8KxMLEgzMVLx7RW2zhmRfHhNO6tSwTvurcJ7Z4J8e5gm0E5DlAvwXoNgQ=
+	t=1739353517; cv=none; b=aknUe/2LvVQhI18XSjUXqsn0nSOLKaNvAPoI3vh5O4I2xvuVdyyjW6qNTQeLAWUgirrGCV3vgrZAQ+5nJ2tZXG4RbYTC6uQkcdH0mAMlA/N5hHrjTfcCV4ghZlo2ZPRG2ivIGXm4k+YGo+g3KFs9An8jCiUDwNCPFVo3dTEUcEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353505; c=relaxed/simple;
-	bh=Sa8bPFHTaj9aW+dktFBUNt2YyId16vwK369IXtQxnwo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IZEWjq7aswuZmp+0b2z+bTGgMSoq9kiA1hx7+Kxl6ItuNyY5G36fEogGRwbAxlAnKnNz63bE10ifNRNhqUrhm7mutco2Cg6N86uEjh/vsKvhH1VMC0zazPtxYJ6klq/KJLUusVpbGhCmm3WILHBVe/l1fn7m006tv9bkg2+OEyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tT16+Yui; arc=none smtp.client-ip=68.232.154.123
+	s=arc-20240116; t=1739353517; c=relaxed/simple;
+	bh=1NSB5qjI3HdwTQRBQBnjuqJ4TpcqIKiTpLxKV/W6NhQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q2FHzZUMjjeto0nM3D928maSyjJIfU9uh6ux4T6PGvh8+NEV9WfzmQBQKjXz7y0/JizyXCybXLT1Tlgovf+67uAR5TV/5HCB0+66vYNc7ueZy9qf29WXxI+7uVzMlVHzmIE9+mrp6Xtqn2frdWUVTXqoMxyT/4KDosoNKZA58DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=x6BFk/1X; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1739353504; x=1770889504;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Sa8bPFHTaj9aW+dktFBUNt2YyId16vwK369IXtQxnwo=;
-  b=tT16+YuiFYjNEgtSRGy4URKPusCEq2iZzb/lUjIzVuwLhKONAL3CLWMk
-   eF+7u64aPn5F8JCOzU98yAIQ3lJx3Uj6NYRY7eqPEMnOnhokKiWicpX+A
-   qGYgrzrPwWRvaAMweTDBH2xpLFdAy5HX1BCEDYlU4SkEjE67bB0qaAYRv
-   MPtFqqZiau9KIhTvHbo7YZfqK9SLe2UECAnUTKtZ+JH/O1juUScX9nqjD
-   aOImANhO13+aXLd0Yand4LokxsigXalLS37/z2kGiltsdzmBTplxRJlH7
-   l1/7iOEmZE5QQQoAu9j8GUhLyB8on/vqDm2pA9YCgokEOAfcdA/cUDGLX
+  t=1739353515; x=1770889515;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1NSB5qjI3HdwTQRBQBnjuqJ4TpcqIKiTpLxKV/W6NhQ=;
+  b=x6BFk/1XGcUB3R2pmxS3C67vjeJYpR2FmAfF4Qr966PZO4QWRbyjft7h
+   U6ekL5nnGhbkO2Y/aJh9at9P8YxvDlq1hIZYtVAZCEE6+31VnCocj5htp
+   CF2elUdksoApVaDP3Nm+jiESYreuAVHgpS7chZuM5+SrwjH1WqKkfkOZ2
+   CcxRERMLfsjos8ExeuVOnIJgkvXlIfxUKRTPtQSl4cvRKkWNQ887tYzbM
+   AVENRefYOSBUkwySa4/9DU2pjdy1UtDvXQiayGfYfD9H9nb/iLYS7VkFJ
+   H0qebCaWFzSGcokoi8ZcmJGEXPq8JRBkyu0kS2m5x1x30+CAN7Er/0N4A
    g==;
-X-CSE-ConnectionGUID: hX8HeKjRTlCEQQ9RkVLg4A==
-X-CSE-MsgGUID: BJci5WDbS2KJ5oBT4WqMpQ==
+X-CSE-ConnectionGUID: qkANol4LQQKG05F3y7BElw==
+X-CSE-MsgGUID: P7uX/GQ0TOmWM4WVOBVmyA==
 X-IronPort-AV: E=Sophos;i="6.13,279,1732604400"; 
-   d="scan'208";a="38002164"
+   d="scan'208";a="37191058"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Feb 2025 02:45:03 -0700
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Feb 2025 02:45:13 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 12 Feb 2025 02:45:01 -0700
+ 15.1.2507.35; Wed, 12 Feb 2025 02:45:08 -0700
 Received: from che-lt-i67131.microchip.com (10.10.85.11) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 12 Feb 2025 02:44:55 -0700
+ 15.1.2507.35 via Frontend Transport; Wed, 12 Feb 2025 02:45:01 -0700
 From: Manikandan Muralidharan <manikandan.m@microchip.com>
 To: <sam@ravnborg.org>, <bbrezillon@kernel.org>,
 	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
@@ -64,12 +65,14 @@ To: <sam@ravnborg.org>, <bbrezillon@kernel.org>,
 	<claudiu.beznea@tuxon.dev>, <lee@kernel.org>,
 	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>
-CC: Dharma Balasubiramani <dharma.b@microchip.com>, Manikandan Muralidharan
-	<manikandan.m@microchip.com>
-Subject: [PATCH v2 1/3] drm: atmel-hlcdc: add support for LVDS encoder type
-Date: Wed, 12 Feb 2025 15:14:47 +0530
-Message-ID: <20250212094449.109622-1-manikandan.m@microchip.com>
+CC: Manikandan Muralidharan <manikandan.m@microchip.com>, "Dharma
+ Balasubiramani" <dharma.b@microchip.com>
+Subject: [PATCH v2 2/3] mfd: atmel-hlcdc: fetch LVDS PLL clock for LVDS display
+Date: Wed, 12 Feb 2025 15:14:48 +0530
+Message-ID: <20250212094449.109622-2-manikandan.m@microchip.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250212094449.109622-1-manikandan.m@microchip.com>
+References: <20250212094449.109622-1-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,79 +82,68 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-From: Dharma Balasubiramani <dharma.b@microchip.com>
+The XLCDC IP supports parallel RGB, MIPI DSI and LVDS Display.
+The LCD Generic clock (sys_clk) is used for Parallel RGB and MIPI
+displays, while the LVDS PLL clock (lvds_pll_clk) is used for LVDS
+displays.Since both the clocks cannot co-exist together in the DT
+for a given display, this patch first attempts to retrieve sys_clk
+If that fails,it then tries to acquire lvds_pll_clk.
 
-Add support for encoder type "DRM_MODE_ENCODER_LVDS" with the following
-bus formats:
-	- RGB888_1X7X4_SPWG
-	- RGB888_1X7X4_JEIDA
-	- RGB666_1X7X3_SPWG
-	- RGB666_1X18
-
-Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-[manikandan.m@microchip.com: move modifications inside the
-atmel_xlcdc_connector_output_lvds fn]
 Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
 ---
- .../gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c    | 38 +++++++++++++++++++
- 1 file changed, 38 insertions(+)
+changes in v2:
+- Rephrase the comments, commit message and err logs
+- Replace dev_err wwith dev_warn
+- Remove Initializing sys_clk and lvds_pll_clk to NULL post
+devm_kzalloc() call
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-index 0f7ffb3ced20..0e709047369a 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-@@ -356,6 +356,42 @@ static int atmel_xlcdc_connector_output_dsi(struct drm_encoder *encoder,
- 	return supported_fmts;
- }
+---
+ drivers/mfd/atmel-hlcdc.c       | 16 ++++++++++++++--
+ include/linux/mfd/atmel-hlcdc.h |  1 +
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mfd/atmel-hlcdc.c b/drivers/mfd/atmel-hlcdc.c
+index 4c4e35d404f3..f680392b01ba 100644
+--- a/drivers/mfd/atmel-hlcdc.c
++++ b/drivers/mfd/atmel-hlcdc.c
+@@ -108,10 +108,22 @@ static int atmel_hlcdc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(hlcdc->periph_clk);
+ 	}
  
-+static int atmel_xlcdc_connector_output_lvds(struct drm_encoder *encoder,
-+					     struct drm_display_info *info)
-+{
-+	int j;
-+	unsigned int supported_fmts = 0;
++	/*
++	 * Retrieve any one of the Main clk required by the LCD to operate:
++	 *
++	 * LCDC Generic Clock (sys_clk) - Parallel RGB and MIPI displays,
++	 * LVDS PLL (lvds_pll_clk)      - LVDS display
++	 */
+ 	hlcdc->sys_clk = devm_clk_get(dev, "sys_clk");
+ 	if (IS_ERR(hlcdc->sys_clk)) {
+-		dev_err(dev, "failed to get system clock\n");
+-		return PTR_ERR(hlcdc->sys_clk);
++		dev_warn(dev,
++			 "failed to get LCDC generic clock, trying for LVDS PLL clock instead\n");
 +
-+	switch (atmel_hlcdc_encoder_get_bus_fmt(encoder)) {
-+	case 0:
-+		break;
-+	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
-+	case MEDIA_BUS_FMT_RGB666_1X18:
-+		return ATMEL_HLCDC_RGB666_OUTPUT;
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
-+		return ATMEL_HLCDC_RGB888_OUTPUT;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	for (j = 0; j < info->num_bus_formats; j++) {
-+		switch (info->bus_formats[j]) {
-+		case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
-+		case MEDIA_BUS_FMT_RGB666_1X18:
-+			supported_fmts |= ATMEL_HLCDC_RGB666_OUTPUT;
-+			break;
-+		case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
-+		case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
-+			supported_fmts |= ATMEL_HLCDC_RGB888_OUTPUT;
-+			break;
-+		default:
-+			break;
++		hlcdc->lvds_pll_clk = devm_clk_get(dev, "lvds_pll_clk");
++		if (IS_ERR(hlcdc->lvds_pll_clk)) {
++			dev_err(dev, "failed to get LVDS PLL clock\n");
++			return PTR_ERR(hlcdc->lvds_pll_clk);
 +		}
-+	}
-+	return supported_fmts;
-+}
-+
- static int atmel_hlcdc_connector_output_mode(struct drm_connector_state *state)
- {
- 	struct drm_connector *connector = state->connector;
-@@ -374,6 +410,8 @@ static int atmel_hlcdc_connector_output_mode(struct drm_connector_state *state)
- 	 */
- 	if (encoder->encoder_type == DRM_MODE_ENCODER_DSI)
- 		return atmel_xlcdc_connector_output_dsi(encoder, info);
-+	else if (encoder->encoder_type == DRM_MODE_ENCODER_LVDS)
-+		return atmel_xlcdc_connector_output_lvds(encoder, info);
+ 	}
  
- 	switch (atmel_hlcdc_encoder_get_bus_fmt(encoder)) {
- 	case 0:
+ 	hlcdc->slow_clk = devm_clk_get(dev, "slow_clk");
+diff --git a/include/linux/mfd/atmel-hlcdc.h b/include/linux/mfd/atmel-hlcdc.h
+index 80d675a03b39..07c2081867fd 100644
+--- a/include/linux/mfd/atmel-hlcdc.h
++++ b/include/linux/mfd/atmel-hlcdc.h
+@@ -75,6 +75,7 @@
+  */
+ struct atmel_hlcdc {
+ 	struct regmap *regmap;
++	struct clk *lvds_pll_clk;
+ 	struct clk *periph_clk;
+ 	struct clk *sys_clk;
+ 	struct clk *slow_clk;
 -- 
 2.25.1
 
