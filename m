@@ -1,267 +1,190 @@
-Return-Path: <linux-kernel+bounces-511905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7DBA33142
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:07:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B50CA33145
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 874A8188AAF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D88B188B0CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD93F202F62;
-	Wed, 12 Feb 2025 21:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F04E202C51;
+	Wed, 12 Feb 2025 21:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLDTVdpf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLwLiaks"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75C0201269;
-	Wed, 12 Feb 2025 21:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D0E202C4F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 21:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739394426; cv=none; b=IhHOtgOzfY9Ye6TW/T5WYuf+wbDPKL8jjq7NTQQ3bE1xESxIUciEi4FVlisLNW7gGFCCkVYH/IyP8jSbNKWwCYyoH/pMaLUEtq3TxrnBfWQ9etMm5/AhPyxj0JeNv0pc3J6B0eUyajRhc/COxp8ftWwnkTXnSArvk73MeOQvFdI=
+	t=1739394444; cv=none; b=blhjNsFRdCB4pcF8UfNS7vomaoi5GuoF1wHXsYr2a5y3esCFuUOIpFLy0Dtlg6cwlcNbH+dxiEQfrTO9+9hbv7bBJuDVjZdRh70fBYw+wYiBq0k0sEeTbzmgc6WuFcGxJExbuJKDDDkKu+0Yiy8QWWzwxm6W4IIf2ToSW5p5LU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739394426; c=relaxed/simple;
-	bh=wocYZo5gW+t7bu0YpWlDKB7vx4UV/EHEFSUdsgZuovw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HubW/E0QHvT4On2M3xIUntG6mEW5pGFE0iIbE3b+nksgFnJVfouQ4xMh7kt0hApWb9jJr2pNTyXzjT7+43lU1xw81mSV1LJ1qr9qfIv/dp5ndq8b0zHTVeNnIz7/qwn5Gva9Y776wolgyTQcJ1BtF3XB8DKPfo0yvD4MWrN75nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLDTVdpf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F48C4CEDF;
-	Wed, 12 Feb 2025 21:07:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739394425;
-	bh=wocYZo5gW+t7bu0YpWlDKB7vx4UV/EHEFSUdsgZuovw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CLDTVdpfedNnAB5ZoigALcQgb1ycOUeCaratiDCaa6pPZKTLri3qgZIPZIXUvHXet
-	 m7d54WRJYjrTKOo1sxK+lvl2KECi/xF1TiMN4hNd57xADkL8aqgI+pgrhWbIFlOzmZ
-	 pOoxdeN6FG8Ib+ReuYGt5NML7tFifhvjRAf07qADr8gHxuMJt+SoZHheVDOU5/OmW8
-	 s745Hj2eaU1KlxoSP9YORkPJCcgEEdnw5WFXYByr28Rvsgd4b4xf5ww8clsjXhuuUC
-	 wHVfy77e9fyOEYFkwuur8qvxLheT9nl7oHTfnwx6soIzgw1Go1A5JjmUqzSzVYeMvL
-	 xeUdVZD/DWqvA==
-Date: Wed, 12 Feb 2025 22:07:02 +0100
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf report: Add 'tgid' sort key
-Message-ID: <Z60Ndm8VVI4Ao31U@x1>
-References: <20250206000137.2026034-1-namhyung@kernel.org>
- <Z60NFEAf2C8cL8Xh@x1>
+	s=arc-20240116; t=1739394444; c=relaxed/simple;
+	bh=kRaMIVwqGc8Xd49sSQZRLuGh6bNy3XlVKUPtAyzoRVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YNHDd89bQYl8LVdGjr5926IkOtRY8jhjJS/Nazl22WepKRusR/SD8EVct08wnHCcgctfKUe7wOs71nqCucDhDLa8TXLOIe4qMgHRmsfwNgNKz7P96dKMc4ew1xD6cNbF44gR5RKTM3F4xz9TtVLkneeuYFuLtDTN/TXtsaYJG20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eLwLiaks; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3cfc79a8a95so407515ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:07:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739394442; x=1739999242; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7m2BC0PlpLZ3PvBNk1lJNnbfheS8gB4DKKdxAHYzcP4=;
+        b=eLwLiakslBrdjeumddGlIRnwZvzfbBG1ZKjRpUQ3+6/nDbD8hc0kx71TQGFt1aVgui
+         8Fc8mx6v22mloJy1SLDEQlBLs8KamqlFwo+tOYCxJv7NJR9qjbCDMUZDMbyhf+JWyQGb
+         2oDHIkXA6VLOpGtmyZK/PDHI67D/WOkL4fe5l9iRMnG660XeUfxsTGNR58SXHkWzHjwl
+         u1hwJJ9gtzNimWR9AjlK85bBoIqWbKZRDVEX0l41b3jiHIst7fVUcpxzOkkAWib3a6sc
+         vhX69g8Twmr9dxztcv3BjjgfOvKTD/XZ8FkEoQT8QsN89c8G6H5YvmdPTCtyC2sLsi0+
+         vLyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739394442; x=1739999242;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7m2BC0PlpLZ3PvBNk1lJNnbfheS8gB4DKKdxAHYzcP4=;
+        b=j8yDMhfZERZcP1DOiXbpQ/ckflED/Z57BpYpWpwfDFI3/GL7enb/ArfThuxIrEVlEh
+         Ln+UNi0vOhYVgiRcuw8YB6IxnvUSWx4ZsGIlDhpKxMJCVBkUSoHAxC3FPMX0XcONsvvL
+         2DhqU8CW5giTWV4Lnt0kF29zqZ+yEFV1VTYYtAcJKkeLN53uFz85R9Nc1/1rmXKb/7sW
+         LshdnoUYKLyvSpaYqtZR9EGCuma/szrXtN2mq/+fufujwcmsiXvkgfZGIYnV/T71ycJZ
+         PKNanAoMTbVcJaqY0xFZ14ZGLt1kiHEuSpFzj3+NTSKZyaZgvOAa5kiRKErZGgh+QPji
+         R+mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXl6kHTJvMBGeyY/rIXXnTBzUo8iWZEVFoX4TWpDZdW8CLd7XceRhoh7vEwJf2RRv5H7lJbife/athIf9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6MSrm1wFqXPSdlPwnevuA7egLmVSGsYc4eqVEtBQ0Dka3pGRs
+	3iS1gkaN7er/M7ewY9Z1uOAuepIJSndqqegU8iyCCPBoKx7FJsxsiOLs8eRnZuOvvb/zu15Lp1W
+	CCuyBoaUpC0qbSGZwNrCe2QkUefQ=
+X-Gm-Gg: ASbGnctpAkThVYra1fpBTVONnnlHhZA/ufjggaTuxNYnGVwCZwNn4Jc2CJgj1ZqDRSz
+	dH/17tlHzb4Q8YmOCQtjdgohzJVlvQwQMiqZqOKafDdjg/2bQRZ+r5t0AVRJfoQ2dqESnAAkoMu
+	xc3CBxdt3kNCw87JHfKw4CxGmrTos=
+X-Google-Smtp-Source: AGHT+IEto3QwYzrpOOb39TT9wusT7oiYBviqDLiw7Xnxk0Go+s385w1whVmNsbgrd9myoMThLMp+uZwQjNnH/c18b1A=
+X-Received: by 2002:a05:6e02:338a:b0:3d0:4a82:3f40 with SMTP id
+ e9e14a558f8ab-3d17be2216fmr45576995ab.7.1739394441825; Wed, 12 Feb 2025
+ 13:07:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z60NFEAf2C8cL8Xh@x1>
+References: <20250124-virtgpu-mixed-page-size-v1-1-480403790bac@gmail.com> <a55eecdc-76cc-432e-a4b3-90e8753088ac@collabora.com>
+In-Reply-To: <a55eecdc-76cc-432e-a4b3-90e8753088ac@collabora.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 12 Feb 2025 13:07:10 -0800
+X-Gm-Features: AWEUYZlK-LtIBTV8i2bVwjobA09sMmKqOYCs2aSwHvvwvdiGzeqpfq-QqFvpdEU
+Message-ID: <CAF6AEGuGWNj7dcC4DouWckaP9fOKgLyqw8iPBwKxrnr9GYXpPg@mail.gmail.com>
+Subject: Re: [PATCH RESEND] drm/virtio: Align host mapping request to maximum
+ platform page size
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: fnkl.kernel@gmail.com, David Airlie <airlied@redhat.com>, 
+	Gerd Hoffmann <kraxel@redhat.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
+	Chia-I Wu <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Simona Vetter <simona@ffwll.ch>, Sergio Lopez <slp@redhat.com>, dri-devel@lists.freedesktop.org, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	asahi@lists.linux.dev, Rob Clark <robdclark@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 10:05:27PM +0100, Arnaldo Carvalho de Melo wrote:
-> On Wed, Feb 05, 2025 at 04:01:37PM -0800, Namhyung Kim wrote:
-> > Sometimes we need to analyze the data in process level but current sort
-> > keys only work on thread level.  Let's add 'tgid' sort key for that as
-> > 'pid' is already taken for thread.
-> > 
-> > This will look mostly the same, but it only uses tgid instead of tid.
-> > Here's an example of a process with two threads (thloop).
-> > 
-> >   $ perf record -- perf test -w thloop
-> 
-> Unrelated, but when building perf with DEBUG=1 and trying to test the
-> above I noticed:
-> 
-> root@number:~# perf record -- perf test -w thloop
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.404 MB perf.data (7968 samples) ]
-> perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
-> Aborted (core dumped)
-> root@number:~# perf record -- perf test -w offcpu
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.040 MB perf.data (23 samples) ]
-> perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
-> Aborted (core dumped)
-> root@number:~#
-> 
-> I have:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ git log --oneline perf-tools-next/perf-tools-next..
-> 9de1ed6fa3b73cb1 (HEAD -> perf-tools-next) perf report: Add 'tgid' sort key
-> 23e98ede2a353530 perf trace: Add --summary-mode option
-> e6d6104625a3790b perf tools: Get rid of now-unused rb_resort.h
-> 173ec14e72ef4ed7 perf trace: Convert syscall_stats to hashmap
-> 66edfb5d404e743d perf trace: Allocate syscall stats only if summary is on
-> ca6637e1ea08e6f4 perf parse-events filter: Use evsel__find_pmu()
-> bd1ac4a678f7f2c8 perf bench evlist-open-close: Reduce scope of 2 variables
-> cd59081880e89df8 perf test: Add direct off-cpu test
-> 56cbd794c0c46ba9 perf record --off-cpu: Add --off-cpu-thresh option
-> 28d9b19c5455556f perf record --off-cpu: Dump the remaining samples in BPF's stack trace map
-> 2bc05b02743b50a7 perf script: Display off-cpu samples correctly
-> bfa457a621596947 perf record --off-cpu: Disable perf_event's callchain collection
-> eca732cc42d20266 perf evsel: Assemble offcpu samples
-> 74ce50e40c569e90 perf record --off-cpu: Dump off-cpu samples in BPF
-> e75f8ce63bfa6cb9 perf record --off-cpu: Preparation of off-cpu BPF program
-> 0ffab9d26971c91c perf record --off-cpu: Parse off-cpu event
-> efc3fe2070853b7d perf evsel: Expose evsel__is_offcpu_event() for future use
-> ⬢ [acme@toolbox perf-tools-next]$
-> 
-> locally, that is the stuff I've been testing lately, doubt it is related
-> to these patches, I'll investigate later, have to go AFK, so FWIW as a
-> heads up.
-
-Had time to extract this, now going really AFK:
-
-[New Thread 0x7fffdf24c6c0 (LWP 580622)]
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.403 MB perf.data (7948 samples) ]
-[Thread 0x7fffdf24c6c0 (LWP 580622) exited]
-perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
-
-Thread 1 "perf" received signal SIGABRT, Aborted.
-Downloading 4.06 K source file /usr/src/debug/glibc-2.39-37.fc40.x86_64/nptl/pthread_kill.c
-__pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44                                                                      
-44	      return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCALL_ERRNO (ret) : 0;
-(gdb) bt
-#0  __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44
-#1  0x00007ffff6ea80a3 in __pthread_kill_internal (threadid=<optimized out>, signo=6) at pthread_kill.c:78
-#2  0x00007ffff6e4ef1e in __GI_raise (sig=sig@entry=6) at ../sysdeps/posix/raise.c:26
-#3  0x00007ffff6e36902 in __GI_abort () at abort.c:79
-#4  0x00007ffff6e3681e in __assert_fail_base (fmt=0x7ffff6fc3bb8 "%s%s%s:%u: %s%sAssertion `%s' failed.\n%n", assertion=assertion@entry=0x7bef08 "map__end(prev) <= map__end(map)", 
-    file=file@entry=0x7bedf8 "util/maps.c", line=line@entry=95, function=function@entry=0x7bf1c0 <__PRETTY_FUNCTION__.6> "check_invariants") at assert.c:96
-#5  0x00007ffff6e47047 in __assert_fail (assertion=0x7bef08 "map__end(prev) <= map__end(map)", file=0x7bedf8 "util/maps.c", line=95, 
-    function=0x7bf1c0 <__PRETTY_FUNCTION__.6> "check_invariants") at assert.c:105
-#6  0x00000000006347a1 in check_invariants (maps=0xf987e0) at util/maps.c:95
-#7  0x0000000000635ae2 in maps__remove (maps=0xf987e0, map=0xf98a80) at util/maps.c:538
-#8  0x000000000062afd2 in machine__destroy_kernel_maps (machine=0xf98178) at util/machine.c:1176
-#9  0x000000000062b32b in machines__destroy_kernel_maps (machines=0xf98178) at util/machine.c:1238
-#10 0x00000000006388af in perf_session__destroy_kernel_maps (session=0xf97f60) at util/session.c:105
-#11 0x0000000000638df0 in perf_session__delete (session=0xf97f60) at util/session.c:248
-#12 0x0000000000431f18 in __cmd_record (rec=0xecace0 <record>, argc=4, argv=0x7fffffffde60) at builtin-record.c:2888
-#13 0x00000000004351fb in cmd_record (argc=4, argv=0x7fffffffde60) at builtin-record.c:4286
-#14 0x00000000004bd4d4 in run_builtin (p=0xecddc0 <commands+288>, argc=6, argv=0x7fffffffde60) at perf.c:351
-#15 0x00000000004bd77b in handle_internal_command (argc=6, argv=0x7fffffffde60) at perf.c:404
-#16 0x00000000004bd8d4 in run_argv (argcp=0x7fffffffdc4c, argv=0x7fffffffdc40) at perf.c:448
-#17 0x00000000004bdc1d in main (argc=6, argv=0x7fffffffde60) at perf.c:556
-(gdb)
- 
-> - Arnaldo
-> 
-> >   $ perf report --stdio -s tgid,pid -H
-> >   ...
-> >   #
-> >   #    Overhead  Tgid:Command / Pid:Command
-> >   # ...........  ..........................
-> >   #
-> >      100.00%     2018407:perf
-> >          50.34%     2018407:perf
-> >          49.66%     2018409:perf
-> > 
-> > Suggested-by: Stephane Eranian <eranian@google.com>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+On Fri, Jan 24, 2025 at 2:52=E2=80=AFPM Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
+>
+> On 1/25/25 01:01, Sasha Finkelstein via B4 Relay wrote:
+> > From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> >
+> > This allows running different page sizes between host and guest on
+> > platforms that support mixed page sizes.
+> >
+> > Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
 > > ---
-> >  tools/perf/Documentation/perf-report.txt |  1 +
-> >  tools/perf/util/hist.h                   |  1 +
-> >  tools/perf/util/sort.c                   | 35 ++++++++++++++++++++++++
-> >  tools/perf/util/sort.h                   |  1 +
-> >  4 files changed, 38 insertions(+)
-> > 
-> > diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-> > index 87f86451940623f3..4050ec4038425bf0 100644
-> > --- a/tools/perf/Documentation/perf-report.txt
-> > +++ b/tools/perf/Documentation/perf-report.txt
-> > @@ -79,6 +79,7 @@ OPTIONS
-> >  
-> >  	- comm: command (name) of the task which can be read via /proc/<pid>/comm
-> >  	- pid: command and tid of the task
-> > +	- tgid: command and tgid of the task
-> >  	- dso: name of library or module executed at the time of sample
-> >  	- dso_size: size of library or module executed at the time of sample
-> >  	- symbol: name of function executed at the time of sample
-> > diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-> > index 46c8373e314657fa..c164e178e0a48a8e 100644
-> > --- a/tools/perf/util/hist.h
-> > +++ b/tools/perf/util/hist.h
-> > @@ -38,6 +38,7 @@ enum hist_column {
-> >  	HISTC_TIME,
-> >  	HISTC_DSO,
-> >  	HISTC_THREAD,
-> > +	HISTC_TGID,
-> >  	HISTC_COMM,
-> >  	HISTC_CGROUP_ID,
-> >  	HISTC_CGROUP,
-> > diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-> > index 3dd33721823f365d..5987438174967fd6 100644
-> > --- a/tools/perf/util/sort.c
-> > +++ b/tools/perf/util/sort.c
-> > @@ -141,6 +141,40 @@ struct sort_entry sort_thread = {
-> >  	.se_width_idx	= HISTC_THREAD,
-> >  };
-> >  
-> > +/* --sort tgid */
+> >  drivers/gpu/drm/virtio/virtgpu_vram.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/virtio/virtgpu_vram.c b/drivers/gpu/drm/vi=
+rtio/virtgpu_vram.c
+> > index 25df81c027837c248a746e41856b5aa7e216b8d5..8a0577c2170ec9c12cad12b=
+e57f9a41c14f04660 100644
+> > --- a/drivers/gpu/drm/virtio/virtgpu_vram.c
+> > +++ b/drivers/gpu/drm/virtio/virtgpu_vram.c
+> > @@ -138,6 +138,12 @@ bool virtio_gpu_is_vram(struct virtio_gpu_object *=
+bo)
+> >       return bo->base.base.funcs =3D=3D &virtio_gpu_vram_funcs;
+> >  }
+> >
+> > +#if defined(__powerpc64__) || defined(__aarch64__) || defined(__mips__=
+) || defined(__loongarch__)
+> > +#define MAX_PAGE_SIZE 65536
+>
+> #define MAX_PAGE_SIZE SZ_64K
+>
+> for improved readability
+>
+> > +#else
+> > +#define MAX_PAGE_SIZE PAGE_SIZE
+> > +#endif
 > > +
-> > +static int64_t
-> > +sort__tgid_cmp(struct hist_entry *left, struct hist_entry *right)
-> > +{
-> > +	return thread__pid(right->thread) - thread__pid(left->thread);
-> > +}
-> > +
-> > +static int hist_entry__tgid_snprintf(struct hist_entry *he, char *bf,
-> > +				       size_t size, unsigned int width)
-> > +{
-> > +	int tgid = thread__pid(he->thread);
-> > +	const char *comm = NULL;
-> > +
-> > +	if (thread__pid(he->thread) == thread__tid(he->thread)) {
-> > +		comm = thread__comm_str(he->thread);
-> > +	} else {
-> > +		struct maps *maps = thread__maps(he->thread);
-> > +		struct thread *leader = machine__find_thread(maps__machine(maps),
-> > +							     tgid, tgid);
-> > +		if (leader)
-> > +			comm = thread__comm_str(leader);
-> > +	}
-> > +	width = max(7U, width) - 8;
-> > +	return repsep_snprintf(bf, size, "%7d:%-*.*s", tgid, width, width, comm ?: "");
-> > +}
-> > +
-> > +struct sort_entry sort_tgid = {
-> > +	.se_header	= "   Tgid:Command",
-> > +	.se_cmp		= sort__tgid_cmp,
-> > +	.se_snprintf	= hist_entry__tgid_snprintf,
-> > +	.se_width_idx	= HISTC_TGID,
-> > +};
-> > +
-> >  /* --sort simd */
-> >  
-> >  static int64_t
-> > @@ -2501,6 +2535,7 @@ static void sort_dimension_add_dynamic_header(struct sort_dimension *sd)
-> >  
-> >  static struct sort_dimension common_sort_dimensions[] = {
-> >  	DIM(SORT_PID, "pid", sort_thread),
-> > +	DIM(SORT_TGID, "tgid", sort_tgid),
-> >  	DIM(SORT_COMM, "comm", sort_comm),
-> >  	DIM(SORT_DSO, "dso", sort_dso),
-> >  	DIM(SORT_SYM, "symbol", sort_sym),
-> > diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-> > index a8572574e1686be6..6044eb1d61447c0d 100644
-> > --- a/tools/perf/util/sort.h
-> > +++ b/tools/perf/util/sort.h
-> > @@ -72,6 +72,7 @@ enum sort_type {
-> >  	SORT_ANNOTATE_DATA_TYPE_OFFSET,
-> >  	SORT_SYM_OFFSET,
-> >  	SORT_ANNOTATE_DATA_TYPE_CACHELINE,
-> > +	SORT_TGID,
-> >  
-> >  	/* branch stack specific sort keys */
-> >  	__SORT_BRANCH_STACK,
-> > -- 
-> > 2.48.1.502.g6dc24dfdaf-goog
+> >  static int virtio_gpu_vram_map(struct virtio_gpu_object *bo)
+> >  {
+> >       int ret;
+> > @@ -150,8 +156,8 @@ static int virtio_gpu_vram_map(struct virtio_gpu_ob=
+ject *bo)
+> >               return -EINVAL;
+> >
+> >       spin_lock(&vgdev->host_visible_lock);
+> > -     ret =3D drm_mm_insert_node(&vgdev->host_visible_mm, &vram->vram_n=
+ode,
+> > -                              bo->base.base.size);
+> > +     ret =3D drm_mm_insert_node_generic(&vgdev->host_visible_mm, &vram=
+->vram_node,
+> > +                                      bo->base.base.size, MAX_PAGE_SIZ=
+E, 0, 0);
+>
+> This change only reserves extra space in the memory allocator, but
+> doesn't change actual size of allocated BO. Instead, you likely need to
+> replace all ALIGN(size, PAGE_SIZE) occurrences in the driver code with
+> ALIGN(args->size, MAX_PAGE_SIZE)
+>
+> >       spin_unlock(&vgdev->host_visible_lock);
+> >
+> >       if (ret)
+>
+> Note, previously a new virtio-gpu parameter was proposed to expose
+> host's page size to guest [1], if you haven't seen it.
+>
+> [1] https://lore.kernel.org/dri-devel/20240723114914.53677-1-slp@redhat.c=
+om/
+>
+> Aligning GEM's size to 64K indeed could be a good enough immediate
+> solution. Don't see any obvious problems with that, other than the
+> potential size overhead for a small BOs.
+>
+> We have been running into cases where a DXVK game allocates enormous
+> amounts of small BOs to the point that amount reaches max number of
+> mappings on QEMU with amdgpu native context. On the other hand, it
+> showed that adding internal sub-allocator to RADV might be a worthwhile
+> effort. We won't change alignment on x86 with this patch and on non-x86
+> likely the increased size won't be noticeable, hence the proposed change
+> might be acceptable.
+>
+> Curious what Rob Clark thinks about it. Rob, WDYT?
+
+I think userspace needs to know the minimum "gpu" page size (ie. the
+host page size) for other reasons, such as sparse binding.  As Sergio
+proposes, we should add this to the virtgpu protocol
+
+BR,
+-R
+
+
+>
+> --
+> Best regards,
+> Dmitry
+>
 
