@@ -1,104 +1,157 @@
-Return-Path: <linux-kernel+bounces-510465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BE0A31D41
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:09:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFBC5A31D44
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C567B18872DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:09:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83BE5166D5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0761E5707;
-	Wed, 12 Feb 2025 04:09:00 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A961D1E0DB3;
+	Wed, 12 Feb 2025 04:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ncbyeifZ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687E21DF751
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59369271835;
+	Wed, 12 Feb 2025 04:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739333340; cv=none; b=SX5r0IxRF44cICfMbZ0EUUQSrd5qw6ywnQUQLeaqilOWn/54j2hVjN+xYTmt7lrq/29HUU8JZSyt3Qm3YvmElLzJjuxYOB+sDpvHxYt6U7Kf8ClV5+bg1PhZ+rf7Bwl1svaDec6yy3I62R9BT1SGBjXPXTuQj1xJU7pvbnEzFoM=
+	t=1739333390; cv=none; b=JFE9FVRcJxMHkIqvLpJqeA5z2n2js9Xj5/EnRpaVG+DMoiTDowsrmyTdF5kc6aFj5Pb/MjdkB3G7NM4Obnal3QVztkTvd//bUc2HnGNYyPHI9rsO/dDqgna9JPHKs5gVZshJT0Hhz9CNIAPouMlu/8ap4RsXZnrTF5st2S/8VN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739333340; c=relaxed/simple;
-	bh=ubLQslBYGLfJx/VC49hgVO2y8uIfkqmRmJt2hbbLVPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LQOZX1voZDF7RzhgxzJd5QUIFPgGcpev60L5yZwizzTPrqRopGbCs9m1sZksen+VrLr0c0+IgZDgOycfnt0ve7LIAfGf8Os7Ii+Td0ZZN5BKJM1WWMEXx+MBPD/xF43uVPg/P/O3FVl7rdCtkZ+442uyp/T7ZhiZbvFjb/e2lCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Yt4X774BQzpTR1;
-	Wed, 12 Feb 2025 12:07:19 +0800 (CST)
-Received: from dggpemf100016.china.huawei.com (unknown [7.185.36.236])
-	by mail.maildlp.com (Postfix) with ESMTPS id D693F14022E;
-	Wed, 12 Feb 2025 12:08:54 +0800 (CST)
-Received: from [10.67.120.139] (10.67.120.139) by
- dggpemf100016.china.huawei.com (7.185.36.236) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Feb 2025 12:08:54 +0800
-Message-ID: <21a3726f-63d0-4c33-84a2-9e11b99f9e9c@huawei.com>
-Date: Wed, 12 Feb 2025 12:08:51 +0800
+	s=arc-20240116; t=1739333390; c=relaxed/simple;
+	bh=tthhte5WpPBlPegC7zlEGximMq20wrabTaYfJhauCsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A462Ghb8oQHE8pLx+9iDQsMzMh9Q8wu8oYIAkFu/Hc5XiNuqWs6hpY+gQq0kZKXU8CqpS4nECc39XYxdB89sBXh/qEdV2k7rmlWrbNO3Ic7onEhvEZS7MosMR+dZ/M5zMI4zmTkJHa04zvD5mpNUd3UxBuZeLecnWZCPUsisdiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ncbyeifZ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739333382;
+	bh=n4SLNZo+HWxGDF2NoR0UK+a6b8buuttTIBSMqkgcwlE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ncbyeifZUl7BNpOIJOpVGMnQ8L7gHWIJG/58yGPlTVo8OfF793g0L215vh+rpxlOo
+	 jPJddWm0OW8ae/Y/V/gXFWvDEKW5mvjwo/pUMa6cu+Z4iy3NQ307r30kelWxYguDkQ
+	 zX1eXHpIzs8WSx5EsBNe4nnAXz+oQ5w7B+g5FURe17WGIs+wq84Bl3Vm+ewv/JHMxi
+	 H3OE6+XHdMQxXv4R341iQP1mvrcyoV3RdbBgEID3NGSvsZaOqx66lSjtoR7izP/YVG
+	 tK+F8SCR2kZ+qni37ZYNJmBWEC8oVDYKB1DHfn8pH3wlPDHdSfP/H/MrGHCO43HXL8
+	 WuRKHpPK0oeZQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yt4Zs6TRlz4wcj;
+	Wed, 12 Feb 2025 15:09:41 +1100 (AEDT)
+Date: Wed, 12 Feb 2025 15:09:41 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Vlastimil Babka <vbabka@suse.cz>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Neeraj
+ Upadhyay <neeraj.upadhyay@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Uladzislau Rezki <urezki@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the slab tree with the rcu tree
+Message-ID: <20250212150941.5e4fa1c9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] soc cache: Add support for HiSilicon L3 cache
-To: <xuwei5@hisilicon.com>, <yangyicong@hisilicon.com>,
-	<Jonathan.Cameron@huawei.com>, <wangjie125@huawei.com>,
-	<wanghuiqiang@huawei.com>, <christophe.jaillet@wanadoo.fr>
-CC: <prime.zeng@hisilicon.com>, <fanghao11@huawei.com>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20250122065803.3363926-1-wangyushan12@huawei.com>
-Content-Language: en-US
-From: wangyushan <wangyushan12@huawei.com>
-In-Reply-To: <20250122065803.3363926-1-wangyushan12@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf100016.china.huawei.com (7.185.36.236)
+Content-Type: multipart/signed; boundary="Sig_/IWehAMvErheNh3tvHouwiBl";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Gentle ping on this patch.
+--Sig_/IWehAMvErheNh3tvHouwiBl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/1/22 14:58, Yushan Wang wrote:
-> This series adds support for HiSilicon SoC cache lockdown and cache
-> maintenance operations.
->
-> Cache lockdown feature prevents cache entries from being evicted from L3
-> cache for better performance.  It can be enabled by calling mmap
-> function to the file (`/dev/hisi_soc_cache_mgmt`).  This feature is
-> implemented in the driver hisi_soc_l3c.
->
-> L3 cache and L3 cache PMU share the same memory resource, which makes
-> one fails to probe while another is on board.  Since both devices
-> rely on distinct information exported by ACPI, their probing functions
-> should be unrelated.  Workaround the resource conflict check by
-> replacing devm_ioremap_resource() to devm_ioremap() instead.
->
-> Changes in v2:
->    - Save unnecessary iterations when performing cache lock. (Christophe)
->    - Other minor style changes. (Christophe)
->    - Link to v1: https://lore.kernel.org/all/20250107132907.3521574-1-wangyushan12@huawei.com
->
-> Jie Wang (1):
->    soc cache: Add framework driver for HiSilicon SoC cache
->
-> Yushan Wang (1):
->    soc cache: L3 cache lockdown support for HiSilicon SoC
->
->   drivers/soc/hisilicon/Kconfig                 |  22 +
->   drivers/soc/hisilicon/Makefile                |   2 +
->   .../soc/hisilicon/hisi_soc_cache_framework.c  | 534 ++++++++++++++++++
->   .../soc/hisilicon/hisi_soc_cache_framework.h  |  77 +++
->   drivers/soc/hisilicon/hisi_soc_l3c.c          | 527 +++++++++++++++++
->   5 files changed, 1162 insertions(+)
->   create mode 100644 drivers/soc/hisilicon/hisi_soc_cache_framework.c
->   create mode 100644 drivers/soc/hisilicon/hisi_soc_cache_framework.h
->   create mode 100644 drivers/soc/hisilicon/hisi_soc_l3c.c
->
+Hi all,
 
+Today's linux-next merge of the slab tree got a conflict in:
+
+  kernel/rcu/tiny.c
+
+between commits:
+
+  84ae91018af5 ("rcutorture: Include grace-period sequence numbers in failu=
+re/close-call")
+  2db7ab8c1086 ("rcutorture: Expand failure/close-call grace-period output")
+  7acc2d90151f ("rcutorture: Make cur_ops->format_gp_seqs take buffer lengt=
+h")
+
+from the rcu tree and commit:
+
+  b14ff274e8aa ("slab, rcu: move TINY_RCU variant of kvfree_rcu() to SLAB")
+
+from the slab tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/rcu/tiny.c
+index 8a52aca686a5,7a34a99d4664..000000000000
+--- a/kernel/rcu/tiny.c
++++ b/kernel/rcu/tiny.c
+@@@ -246,31 -232,6 +232,20 @@@ bool poll_state_synchronize_rcu(unsigne
+  }
+  EXPORT_SYMBOL_GPL(poll_state_synchronize_rcu);
+ =20
+- #ifdef CONFIG_KASAN_GENERIC
+- void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+- {
+- 	if (head)
+- 		kasan_record_aux_stack(ptr);
+-=20
+- 	__kvfree_call_rcu(head, ptr);
+- }
+- EXPORT_SYMBOL_GPL(kvfree_call_rcu);
+- #endif
+-=20
+ +#if IS_ENABLED(CONFIG_RCU_TORTURE_TEST)
+ +unsigned long long rcutorture_gather_gp_seqs(void)
+ +{
+ +	return READ_ONCE(rcu_ctrlblk.gp_seq) & 0xffffULL;
+ +}
+ +EXPORT_SYMBOL_GPL(rcutorture_gather_gp_seqs);
+ +
+ +void rcutorture_format_gp_seqs(unsigned long long seqs, char *cp, size_t =
+len)
+ +{
+ +	snprintf(cp, len, "g%04llx", seqs & 0xffffULL);
+ +}
+ +EXPORT_SYMBOL_GPL(rcutorture_format_gp_seqs);
+ +#endif
+ +
+  void __init rcu_init(void)
+  {
+  	open_softirq(RCU_SOFTIRQ, rcu_process_callbacks);
+
+--Sig_/IWehAMvErheNh3tvHouwiBl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmesHwUACgkQAVBC80lX
+0GxS5wf7BbSgzHps7mfyUWYTO4TIdMd1hxLeX2llH1x5pMJ4IZQWD+mswes1MFzj
+hc0IalEAiQX0x/3BAeujd4h/NdicoO8QHNTp5C/Ilu+bB42NPFxcm/K2CPyWo//Q
+ACDhG40WI8rzbFQujfZPj+uK8MYnwWJsps4wcUIY9rqjTe5NdjC7RBHAro+66n1n
+QRG74TgXFvQjvX7YClb1aC52JHR2l/PE+pLn0jBFV6i3tAGU6H5TeaW2rx7012NS
+YB3kYcCJpu5NHz6wCXiSHVHbL4wMqPP1frbfLZ0d55qBrUcm2llb7Bp7wqM0P35E
+xAPZERM4FOEvJgbx5xYhzjanR6LcvA==
+=Eaos
+-----END PGP SIGNATURE-----
+
+--Sig_/IWehAMvErheNh3tvHouwiBl--
 
