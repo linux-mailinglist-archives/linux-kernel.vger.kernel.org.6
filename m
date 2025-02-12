@@ -1,67 +1,53 @@
-Return-Path: <linux-kernel+bounces-511241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF33A3283B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:17:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D872A3283E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:18:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D98C7A06D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:16:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EB577A319C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0830820FA89;
-	Wed, 12 Feb 2025 14:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmWiEwQO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0378020FA90;
+	Wed, 12 Feb 2025 14:17:50 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D0D1A5AA;
-	Wed, 12 Feb 2025 14:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D641A5AA;
+	Wed, 12 Feb 2025 14:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739369861; cv=none; b=AlD5GoF1n7pDYRG3+y5PqJsun3eNspPbkjkhJUrr+nwsIBybYVi0TrCdj8b73HfsgDSYZDnswOJfH1dNHC/Lh3RbI3IgjeXRyOt5ZJ8CHn403hoZ59saLiuSxZviX/wxvhbFXT5cwgaN4JKxQso2OzgJapIKexfFMhK+bB84Fwk=
+	t=1739369869; cv=none; b=dZfbkx5wpWx6XNrooO/uRM4V67d9zP0p8NkpZxI2YNOc0qZSa0cwQYJkNPJDwqBkpVh5rLfyRFxpJFzbCvhTJCpjsGS6K3ulLb6BTrPisYkhM2F7e6a4clvoqhEEkzliAludlCEQl5D12kAup6kVzbmuvP94pTX8K4azk15Uoo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739369861; c=relaxed/simple;
-	bh=6WAvBJBHdVzn+myfwRDMnLWtYz9ymtVmvd7tzc8LxD0=;
+	s=arc-20240116; t=1739369869; c=relaxed/simple;
+	bh=mJxBysoRgZGhkya7SXolEV5gKdR7CjNvQTnBQE2fKxQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fEyyZQ/d9uIcqWsDSmRbeh9cHjmwSxzOLmtOhX3TaAkN51UuYB/ZDUVcfrG5YW/MqS0oI/cQRcJAUjEwXB9PgfctY1QkzDAJ0xLf41+rhx1Sms7RK17968Knmnj5uNtl78jjXFYwMO6sHlCQfOEDt6viy0vxjgggPcNJBRueTr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmWiEwQO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B5E8C4CEDF;
-	Wed, 12 Feb 2025 14:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739369859;
-	bh=6WAvBJBHdVzn+myfwRDMnLWtYz9ymtVmvd7tzc8LxD0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rmWiEwQO0Zi4JldM+xfFQxXB0k8MeS1mtTD2dy04YRB3u+qlMq6mjHoo886TnBnNU
-	 RO7+Qi42NLTegVL2HCJdO8q7Y+hckRrXKAYH5y3uezIDGsQBhyCvCZTyS7/+KtPBAR
-	 PSlsC4ry/Fmm1Tg0nDuZaOio2+FtHsSxJl31ci5FbR9Kjr+4HT4BDKElqWSR43TO/n
-	 jUT5LIK1aZ1eRBDyVNIaw5FXz+0GzvNPvjcdv6G5OilGwsJ69t38pbtyFcosVb93Lj
-	 qlkEL4k8DU/O6z10fXbGK3bihRrSS+jW4RTsjdoFamNXkfE/A+b/mAk50A0ZEsxN7n
-	 YrYma0+swJNVA==
-Date: Wed, 12 Feb 2025 15:17:36 +0100
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Hao Ge <gehao@kylinos.cn>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Levi Yun <yeoreum.yun@arm.com>, Xu Yang <xu.yang_2@nxp.com>,
-	Tengda Wu <wutengda@huaweicloud.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 01/10] perf bench evlist-open-close: Reduce scope of 2
- variables
-Message-ID: <Z6ytgCGkdl07DewQ@x1>
-References: <20250111190143.1029906-1-irogers@google.com>
- <20250111190143.1029906-2-irogers@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V+D8e3EC/YVekVAapmr3owww6ipX+a8RO+gN/jzTqorLIR8/qBNKFyp1shGg61F/2o5Sm92ig/DSBO/eZ60kUVcE66C7S3uibav+43Z8B/ee1zzKcIy/28V6e9S7OWbRYWZzUdR/TZJimMkxVx0IFuI4Wjf3hqYKKoeWAo/qFso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.172.76.141])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 0BBAF343065;
+	Wed, 12 Feb 2025 14:17:46 +0000 (UTC)
+Date: Wed, 12 Feb 2025 14:17:41 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, spacemit@lists.linux.dev,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v2] pinctrl: spacemit: enable config option
+Message-ID: <20250212141741-GYA18065@gentoo>
+References: <20250212-k1-pinctrl-option-v2-1-bde7da0bc0d9@gentoo.org>
+ <b67abe31-5647-4450-b025-2bbacee5fa72@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,128 +56,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250111190143.1029906-2-irogers@google.com>
+In-Reply-To: <b67abe31-5647-4450-b025-2bbacee5fa72@riscstar.com>
 
-On Sat, Jan 11, 2025 at 11:01:34AM -0800, Ian Rogers wrote:
-> Make 2 global variables local. Reduces ELF binary size by removing
-> relocations. For a no flags build, the perf binary size is reduced by
-> 4,144 bytes on x86-64.
+Hi Alex:
 
-I'm trying to reproduce your results:
-
-  $ gcc --version | head -1
-  gcc (GCC) 14.2.1 20240912 (Red Hat 14.2.1-3)
-  $
-  $ rm -rf /tmp/build/$(basename $PWD)/ ; mkdir -p /tmp/build/$(basename $PWD)/  
-  $ make -k O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin
-
-Without your patch:
-
-  $ ls -la ~/bin/perf
-  -rwxr-xr-x. 2 acme acme 11411680 Feb 12 10:57 /home/acme/bin/perf
-  $ size ~/bin/perf
-      text     data     bss       dec     hex  filename
-  10071297   302496   34540  10408333  9ed18d  /home/acme/bin/perf
-  $
-
-Then, with your patch:
-
-  $ git log --oneline -1
-  abd904389b3f0807 (HEAD -> perf-tools-next) perf bench evlist-open-close: Reduce scope of 2 variables
-  $ perf -v
-  perf version 6.13.rc2.gabd904389b3f
-  $ size ~/bin/perf
-      text     data     bss       dec     hex  filename
-  10072001   301568   34540  10408109  9ed0ad  /home/acme/bin/perf
-  $
-  $ ls -la ~/bin/perf
-  -rwxr-xr-x. 2 acme acme 11411632 Feb 12 11:02 /home/acme/bin/perf
-  $
-
-So a more modest 224 bytes reduction in the perf binary size.
-
-In the distant past several of these moves from global to local were
-made, for instance:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d20deb64e0490ee9442b5181bc08a62d2cadcb90
-
-I tried but didn't find the before/after effects on binary size...
-
-Anyways,
-
-Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-Thanks,
-
-- Arnaldo
- 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/bench/evlist-open-close.c | 42 +++++++++++++++-------------
->  1 file changed, 23 insertions(+), 19 deletions(-)
+On 07:50 Wed 12 Feb     , Alex Elder wrote:
+> On 2/12/25 2:27 AM, Yixun Lan wrote:
+> > Pinctrl is an essential driver for SpacemiT's SoC,
+> > so let's enable it by default for this SoC.
+> > 
+> > The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
+> > 'make defconfig' to select kernel configuration options.
+> > This result in a broken uart driver where fail at probe()
+> > stage due to no pins found.
+> > 
+> > Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
+> > Reported-by: Alex Elder <elder@kernel.org>
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > Tested-by: Alex Elder <elder@riscstar.com>
+> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
 > 
-> diff --git a/tools/perf/bench/evlist-open-close.c b/tools/perf/bench/evlist-open-close.c
-> index 5a27691469ed..79cedcf94a39 100644
-> --- a/tools/perf/bench/evlist-open-close.c
-> +++ b/tools/perf/bench/evlist-open-close.c
-> @@ -46,25 +46,6 @@ static struct record_opts opts = {
->  	.ctl_fd_ack          = -1,
->  };
->  
-> -static const struct option options[] = {
-> -	OPT_STRING('e', "event", &event_string, "event", "event selector. use 'perf list' to list available events"),
-> -	OPT_INTEGER('n', "nr-events", &nr_events,
-> -		     "number of dummy events to create (default 1). If used with -e, it clones those events n times (1 = no change)"),
-> -	OPT_INTEGER('i', "iterations", &iterations, "Number of iterations used to compute average (default=100)"),
-> -	OPT_BOOLEAN('a', "all-cpus", &opts.target.system_wide, "system-wide collection from all CPUs"),
-> -	OPT_STRING('C', "cpu", &opts.target.cpu_list, "cpu", "list of cpus where to open events"),
-> -	OPT_STRING('p', "pid", &opts.target.pid, "pid", "record events on existing process id"),
-> -	OPT_STRING('t', "tid", &opts.target.tid, "tid", "record events on existing thread id"),
-> -	OPT_STRING('u', "uid", &opts.target.uid_str, "user", "user to profile"),
-> -	OPT_BOOLEAN(0, "per-thread", &opts.target.per_thread, "use per-thread mmaps"),
-> -	OPT_END()
-> -};
-> -
-> -static const char *const bench_usage[] = {
-> -	"perf bench internals evlist-open-close <options>",
-> -	NULL
-> -};
-> -
->  static int evlist__count_evsel_fds(struct evlist *evlist)
->  {
->  	struct evsel *evsel;
-> @@ -225,6 +206,29 @@ static char *bench__repeat_event_string(const char *evstr, int n)
->  
->  int bench_evlist_open_close(int argc, const char **argv)
->  {
-> +	const struct option options[] = {
-> +		OPT_STRING('e', "event", &event_string, "event",
-> +			   "event selector. use 'perf list' to list available events"),
-> +		OPT_INTEGER('n', "nr-events", &nr_events,
-> +			    "number of dummy events to create (default 1). If used with -e, it clones those events n times (1 = no change)"),
-> +		OPT_INTEGER('i', "iterations", &iterations,
-> +			    "Number of iterations used to compute average (default=100)"),
-> +		OPT_BOOLEAN('a', "all-cpus", &opts.target.system_wide,
-> +			    "system-wide collection from all CPUs"),
-> +		OPT_STRING('C', "cpu", &opts.target.cpu_list, "cpu",
-> +			   "list of cpus where to open events"),
-> +		OPT_STRING('p', "pid", &opts.target.pid, "pid",
-> +			   "record events on existing process id"),
-> +		OPT_STRING('t', "tid", &opts.target.tid, "tid",
-> +			   "record events on existing thread id"),
-> +		OPT_STRING('u', "uid", &opts.target.uid_str, "user", "user to profile"),
-> +		OPT_BOOLEAN(0, "per-thread", &opts.target.per_thread, "use per-thread mmaps"),
-> +		OPT_END()
-> +	};
-> +	const char *const bench_usage[] = {
-> +		"perf bench internals evlist-open-close <options>",
-> +		NULL
-> +	};
->  	char *evstr, errbuf[BUFSIZ];
->  	int err;
->  
-> -- 
-> 2.47.1.613.gc27f4b7a9f-goog
+> I just tested this version of the patch.  By default
+> PINCTRL_SPACEMIT_K1 is "y".  But since it's tristate,
+> perhaps it should be default=m so it's not built in
+> for everyone.  Yixun I assume the K1 pinctrl driver
+> actually *works* as a kernel module.
 > 
+in theory, making it built as module, it should work fine if all drivers
+can handle "deferred probe" gracefully, but since pinctrl is an essential
+ basic driver, I'd prefer to make it built-in ..
+
+I didn't bother to change this module from tristate to bool,
+as there is additional COMPILE_TEST option(maybe it want to test as module?)
+
+> Anyway, I suggest this change to be a module; Conor
+> should weigh in.  Either way is good for me, and I
+> have tested both.
+> 
+no, I don't think making it as module is a good idea,
+
+I can adjust this driver from tristate to bool if necessary,
+also adjust to builtin_platform_driver() in driver..
+
+let me know what you think
+
+> Reviewed-by: Alex Elder <elder@riscstar.com>
+> 
+> > ---
+> > This should fix problem that CONFIG_PINCTRL_SPACEMIT_K1 is not enabled
+> > when using make defconfig, thus fail to initilize uart driver which requst
+> > pins during probe stage.
+> > ---
+> > Changes in v2:
+> > - set default as y
+> > - Link to v1: https://lore.kernel.org/r/20250207-k1-pinctrl-option-v1-1-e8a7e4d8404f@gentoo.org
+> > ---
+> >   arch/riscv/Kconfig.socs          | 1 +
+> >   drivers/pinctrl/spacemit/Kconfig | 1 +
+> >   2 files changed, 2 insertions(+)
+> > 
+> > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> > index 1916cf7ba450ec9958265de2ca41dc504d4d2f7c..17606940bb5239d0fdfc6b5aefb50eeb982d14aa 100644
+> > --- a/arch/riscv/Kconfig.socs
+> > +++ b/arch/riscv/Kconfig.socs
+> > @@ -26,6 +26,7 @@ config ARCH_SOPHGO
+> >   
+> >   config ARCH_SPACEMIT
+> >   	bool "SpacemiT SoCs"
+> > +	select PINCTRL
+> >   	help
+> >   	  This enables support for SpacemiT SoC platform hardware.
+> >   
+> > diff --git a/drivers/pinctrl/spacemit/Kconfig b/drivers/pinctrl/spacemit/Kconfig
+> > index 168f8a5ffbb952cbeae3e3401c11149558e0a84b..c18d879274e72df251e0bc82a308603ce23738bd 100644
+> > --- a/drivers/pinctrl/spacemit/Kconfig
+> > +++ b/drivers/pinctrl/spacemit/Kconfig
+> > @@ -7,6 +7,7 @@ config PINCTRL_SPACEMIT_K1
+> >   	tristate "SpacemiT K1 SoC Pinctrl driver"
+> >   	depends on ARCH_SPACEMIT || COMPILE_TEST
+> >   	depends on OF
+> > +	default y
+> >   	select GENERIC_PINCTRL_GROUPS
+> >   	select GENERIC_PINMUX_FUNCTIONS
+> >   	select GENERIC_PINCONF
+> > 
+> > ---
+> > base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> > change-id: 20250207-k1-pinctrl-option-de5bdfd6b42e
+> > 
+> > Best regards,
+> 
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
