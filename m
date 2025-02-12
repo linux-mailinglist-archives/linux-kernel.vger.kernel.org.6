@@ -1,305 +1,127 @@
-Return-Path: <linux-kernel+bounces-511420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253C6A32ADF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:57:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36D7A32AE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:57:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2327C3A960F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C8E169A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01E1257422;
-	Wed, 12 Feb 2025 15:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D67F207667;
+	Wed, 12 Feb 2025 15:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URfurnxK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qZFm/zSV"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8D0271814;
-	Wed, 12 Feb 2025 15:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5164E211A2C;
+	Wed, 12 Feb 2025 15:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739375459; cv=none; b=T9LgARlIKrfU3PSzsQ1hQvq5KG3mzYwQJBHtIOF2uTkSUhlKnryQY1oPgux/IEyRMdh5YQolJfps+g9lC6yAr/WtXhFtpxhq/LisxLb7FzG8egaCOGpbrMSMVMEmqFoN6brIBKfeZ1fUWplfjXTf7QZoFCTfyDGRzqh+gdMM9i8=
+	t=1739375498; cv=none; b=gTZhEopTy1znjfLT+Sa6VNL29Rj5FI5FMx/XIDslzKWNj86rbYbQf3QrSkuQCcLpA8EQ33hiyk9/VZbbrudVniTtj9MkEaU9etn3AyAr5iMeRPJZYYdPHk6cgRevV0AznUvePCrfj890o1xJ6+dHBI/V5ay/U4/1+aZuFZn0/8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739375459; c=relaxed/simple;
-	bh=veRJ1seuG5meNk+CJnoyOMvxRECby9IaNKYibL9rsv8=;
+	s=arc-20240116; t=1739375498; c=relaxed/simple;
+	bh=3Elp7Du8dvj8VL6H/WKoQqrGeu2o20YDyZQHxgN5FAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OFRVFVSwSNkDQ/YIrxQISq4Mm6F9vdHA9cyzRd/ONocitJTiMzYRR5VXolP6oFpKuwJur0z4XanksTdJHSjDhstvVOORwNdzpkSvXXQucLvtRsTDxtEUZli8XAxhfMrgN3a4/3jygRIi7yfsk8Or15x4UnNFoKVvR/1zfnaEMK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URfurnxK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6EE5C4AF0B;
-	Wed, 12 Feb 2025 15:50:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739375458;
-	bh=veRJ1seuG5meNk+CJnoyOMvxRECby9IaNKYibL9rsv8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=URfurnxKnHDqT67NaXeF+MY87//DBPNEdgtMNSbHJuEcs2WqelZJAMtNB2a7ExU3R
-	 qNYbQaQH4EXETek/dstSEgt8j8HVHlX3VGNiv3f55CHQM6nvHpMKqdnZiZr39oPXUj
-	 okfs6CO8CLUMyPiPLBzo+rU8ouluHvfaJdBM/aun3YMNEorHsyDPUVk9OTp1nVv+s5
-	 hnIkBcqy8Ljx+z7bcLIDvwwE+jdBqmB4lu9wYSXb6GU+2pv6d3fhKh1eG34RodGRV0
-	 V2acr5V1TiHFPzw0sCLhkCcpaxrDduHi7b6jaq1dcs3B6TK2Quh+5YEqLvXQiXzlOl
-	 2Dmt7EuKcWo4g==
-Date: Wed, 12 Feb 2025 15:50:50 +0000
-From: Lee Jones <lee@kernel.org>
-To: Fred Treven <ftreven@opensource.cirrus.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Simon Trimmer <simont@opensource.cirrus.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	James Ogletree <jogletre@opensource.cirrus.com>,
-	Ben Bright <ben.bright@cirrus.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Jeff LaBundy <jeff@labundy.com>, Heiko Stuebner <heiko@sntech.de>,
-	Karel Balej <balejk@matfyz.cz>,
-	Igor Prusov <ivprusov@salutedevices.com>,
-	Jack Yu <jack.yu@realtek.com>,
-	Weidong Wang <wangweidong.a@awinic.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
-	Paul Handrigan <paulha@opensource.cirrus.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nuno Sa <nuno.sa@analog.com>, alsa-devel@alsa-project.org,
-	patches@opensource.cirrus.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH RESEND 5/7] mfd: cs40l26: Add support for CS40L26 core
- driver
-Message-ID: <20250212155050.GC2274105@google.com>
-References: <20250204231835.2000457-1-ftreven@opensource.cirrus.com>
- <20250204231835.2000457-6-ftreven@opensource.cirrus.com>
- <4e5f0194-22bc-4e17-85f4-6dbc145a936b@kernel.org>
- <3bff0ff8-7397-414d-a701-011d5b5a41f4@opensource.cirrus.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Btzewv/N8it+QaAl+dPLtHTnnefNtWkLTOBQeCjFJM5BWh4/yeMaAn+jjcXqfJYvjcYm/BsT8A2em1zcusgbHhhbSpU3BB/besD+xjzxXHkK4DlQHP0Y4TTGSqn/zliv7CJjEaUUff01IunFdcfo2NhYrt1cQ7JwX+xL0OZlZTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qZFm/zSV; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZJ8yWD/bsXA52HjsSAj+1eQUzVgGh8hI50BViS2oWb8=; b=qZFm/zSVGEGD4sJc6jQwefzOiw
+	dxo5mq4gwYYgScpNb5/A93EBCeN6ENM6sHDw4wz/EsllDTwptIHrrC4t4FKgpFn1g0zChWkzuzA8Z
+	nKqdWL3ZiZZH4Wd7BsELqNsvq3o/YuwZfDreAZac/YLCjFtykAdvH+7wCeVKhpQJuuXASUTmujekO
+	K//FGuZOrboUKbj+u1ECwaDEfAiXNiZ6BAuWJTRrWWDHVB63OuwD1HSBWoW/y/1lpjj82sQNULS8k
+	M6BqRAXX80eYANdwHU4iyR3qs70mWHvZE2zN03vEgiKrRQBYN/pMPI8orlb4o9Mm/TAj4nUwMF5Ht
+	md+/f6Jw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tiF1Q-0000000Bp8E-2B5g;
+	Wed, 12 Feb 2025 15:51:32 +0000
+Date: Wed, 12 Feb 2025 15:51:32 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/19] VFS: introduce lookup_and_lock() and friends
+Message-ID: <20250212155132.GQ1977892@ZenIV>
+References: <>
+ <20250208231819.GR1977892@ZenIV>
+ <173933773664.22054.1727909798811618895@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3bff0ff8-7397-414d-a701-011d5b5a41f4@opensource.cirrus.com>
+In-Reply-To: <173933773664.22054.1727909798811618895@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, 11 Feb 2025, Fred Treven wrote:
+On Wed, Feb 12, 2025 at 04:22:16PM +1100, NeilBrown wrote:
 
-> On 2/5/25 04:34, Krzysztof Kozlowski wrote:
-> > On 05/02/2025 00:18, Fred Treven wrote:
-> > > Introduce support for Cirrus Logic Device CS40L26:
-> > > A boosted haptic driver with integrated DSP and
-> > > waveform memory with advanced closed loop algorithms
-> > > and LRA protection.
-> > > 
-> > Please wrap commit message according to Linux coding style / submission
-> > process (neither too early nor over the limit):
-> > https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-> > 
-> > 
-> > > +
-> > > +#include <linux/cleanup.h>
-> > > +#include <linux/mfd/core.h>
-> > > +#include <linux/mfd/cs40l26.h>
-> > > +#include <linux/property.h>
-> > > +#include <linux/regulator/consumer.h>
-> > > +
-> > > +static const struct mfd_cell cs40l26_devs[] = {
-> > > +	{ .name = "cs40l26-codec", },
-> > > +	{ .name = "cs40l26-vibra", },
-> > > +};
-> > > +
-> > > +const struct regmap_config cs40l26_regmap = {
-> > > +	.reg_bits = 32,
-> > > +	.val_bits = 32,
-> > > +	.reg_stride = 4,
-> > > +	.reg_format_endian = REGMAP_ENDIAN_BIG,
-> > > +	.val_format_endian = REGMAP_ENDIAN_BIG,
-> > > +	.max_register = CS40L26_LASTREG,
-> > > +	.cache_type = REGCACHE_NONE,
-> > > +};
-> > > +EXPORT_SYMBOL_GPL(cs40l26_regmap);
-> > > +
-> > > +static const char *const cs40l26_supplies[] = {
-> > > +	"va", "vp",
-> > > +};
-> > > +
-> > > +inline void cs40l26_pm_exit(struct device *dev)
-> > 
-> > Exported function and inlined? This feels odd. Anyway, don't use any
-> > inline keywords in C units.
-> > 
-> > > +{
-> > > +	pm_runtime_mark_last_busy(dev);
-> > > +	pm_runtime_put_autosuspend(dev);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(cs40l26_pm_exit);
-> > > +
-> > > +static int cs40l26_fw_write_raw(struct cs_dsp *dsp, const char *const name,
-> > > +				const unsigned int algo_id, const u32 offset_words,
-> > > +				const size_t len_words, u32 *buf)
-> > > +{
-> > > +	struct cs_dsp_coeff_ctl *ctl;
-> > > +	__be32 *val;
-> > > +	int i, ret;
-> > > +
-> > > +	ctl = cs_dsp_get_ctl(dsp, name, WMFW_ADSP2_XM, algo_id);
-> > > +	if (!ctl) {
-> > > +		dev_err(dsp->dev, "Failed to find FW control %s\n", name);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	val = kzalloc(len_words * sizeof(u32), GFP_KERNEL);
-> > 
-> > Looks like an array, so kcalloc
-> > 
-> > > +	if (!val)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	for (i = 0; i < len_words; i++)
-> > > +		val[i] = cpu_to_be32(buf[i]);
-> > > +
-> > > +	ret = cs_dsp_coeff_write_ctrl(ctl, offset_words, val, len_words * sizeof(u32));
-> > > +	if (ret < 0)
-> > > +		dev_err(dsp->dev, "Failed to write FW control %s\n", name);
-> > > +
-> > > +	kfree(val);
-> > > +
-> > > +	return (ret < 0) ? ret : 0;
-> > > +}
-> > > +
-> > > +inline int cs40l26_fw_write(struct cs_dsp *dsp, const char *const name, const unsigned int algo_id,
-> > > +			    u32 val)
-> > > +{
-> > > +	return cs40l26_fw_write_raw(dsp, name, algo_id, 0, 1, &val);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(cs40l26_fw_write);
-> > > +
-> > > +static int cs40l26_fw_read_raw(struct cs_dsp *dsp, const char *const name,
-> > > +			       const unsigned int algo_id, const unsigned int offset_words,
-> > > +			       const size_t len_words, u32 *buf)
-> > > +{
-> > > +	struct cs_dsp_coeff_ctl *ctl;
-> > > +	int i, ret;
-> > > +
-> > > +	ctl = cs_dsp_get_ctl(dsp, name, WMFW_ADSP2_XM, algo_id);
-> > > +	if (!ctl) {
-> > > +		dev_err(dsp->dev, "Failed to find FW control %s\n", name);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	ret = cs_dsp_coeff_read_ctrl(ctl, offset_words, buf, len_words * sizeof(u32));
-> > > +	if (ret) {
-> > > +		dev_err(dsp->dev, "Failed to read FW control %s\n", name);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	for (i = 0; i < len_words; i++)
-> > > +		buf[i] = be32_to_cpu(buf[i]);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +inline int cs40l26_fw_read(struct cs_dsp *dsp, const char *const name, const unsigned int algo_id,
-> > 
-> > All your exported functions should have kerneldoc.
+> lookup_for_removal() etc would only be temporarily needed.  Eventually
+> (I hope) we would get to a place where all filesystems support all
+> operations with only a shared lock.  When we get there,
+> lookup_for_remove() and lookup_for_create() would be identical again.
 > 
-> I'm happy to add this, but I don't know where this directive comes from.
-> Could you share where in the kernel style guide (or elsewhere) this is stated?
-> There are also hundreds of examples in MFD in which exported functions
-> do not have kerneldoc which is why I'm curious.
+> And the difference wouldn't be that one takes a shared lock and the
+> other takes an exclusive lock.  It would be that one takes a shared or
+> exclusive lock based on flag X stored somewhere (inode, inode_operations,
+> ...) while the other takes a shared or exclusive lock based on flag Y.
 > 
-> > 
-> > > +			   u32 *buf)
-> > > +{
-> > > +	return cs40l26_fw_read_raw(dsp, name, algo_id, 0, 1, buf);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(cs40l26_fw_read);
-> > > +
-> > > +static struct cs40l26_irq *cs40l26_get_irq(struct cs40l26 *cs40l26, const int num, const int bit);
-> > > +
-> > > +static int cs40l26_gpio1_rise_irq(void *data)
-> > > +{
-> > > +	struct cs40l26 *cs40l26 = data;
-> > > +
-> > > +	if (cs40l26->wksrc_sts & CS40L26_WKSRC_STS_EN)
-> > > +		dev_dbg(cs40l26->dev, "GPIO1 Rising Edge Detected\n");
-> > > +
-> > > +	cs40l26->wksrc_sts |= CS40L26_WKSRC_STS_EN;
-> > > +
-> > > +	return 0;
-> > > +}
-> > 
-> > 
-> > ...
-> > 
-> > > +err:
-> > > +	dev_err(cs40l26->dev, "Invalid revision 0x%02X for device 0x%06X\n", cs40l26->revid,
-> > > +		cs40l26->devid);
-> > > +	return -EINVAL;
-> > > +}
-> > > +
-> > > +int cs40l26_set_pll_loop(struct cs40l26 *cs40l26, const u32 pll_loop)
-> > > +{
-> > > +	int i;
-> > > +
-> > > +	/* Retry in case DSP is hibernating */
-> > > +	for (i = 0; i < CS40L26_PLL_NUM_SET_ATTEMPTS; i++) {
-> > > +		if (!regmap_update_bits(cs40l26->regmap, CS40L26_REFCLK_INPUT,
-> > > +					CS40L26_PLL_REFCLK_LOOP_MASK,
-> > > +					pll_loop << CS40L26_PLL_REFCLK_LOOP_SHIFT))
-> > > +			break;
-> > > +	}
-> > > +
-> > > +	if (i == CS40L26_PLL_NUM_SET_ATTEMPTS) {
-> > > +		dev_err(cs40l26->dev, "Failed to configure PLL\n");
-> > > +		return -ETIMEDOUT;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(cs40l26_set_pll_loop);
-> > > +
-> > 
-> > This looks way past simple MFD driver. Not only this - entire file. You
-> > configure there quite a lot and for example setting PLLs is not job for
-> > MFD. This should be placed in appropriate subsystem.
-> > 
-> I disagree here because the configuration being done in this file
-> is essential to the core operation of the part. For instance,
-> setting the PLL to open-loop here is required to prevent any
-> external interference (e.g. GPIO events) from interrupting
-> the part while loading firmware.
+> It would be nice to be able to accelerate that and push the locking down
+> into the filesystems call at once as Linus suggested last time:
 > 
-> The other hardware configuration being done here is required for
-> both the Input and ASoC operations of the part.
+> https://lore.kernel.org/all/CAHk-=whz69y=98udgGB5ujH6bapYuapwfHS2esWaFrKEoi9-Ow@mail.gmail.com/
 > 
-> Lastly, these need to be done in order and independently of which
-> child driver (ASoC or input) the user adds. If this is moved
-> to cs40l26-vibra.c (the input driver), for instance,
-> and that module is then not added, it will disturb the
-> required setup for use by the ASoC driver.
-> 
-> I would really like to get Lee's opinion here because it does not
-> make sense to me why this is inappropriate when the configuration
-> done in the core MFD driver is required for use by all of its
-> children.
+> That would require either adding a new rwsem to each inode, possibly in
+> the filesystem-private part of the inode, or changing VFS to not lock
+> the inode at all.  The first would be unwelcome by fs developers I
+> expect, the second would be a serious challenge.  I started thinking
+> about and quickly decided I had enough challenges already.
 
-FWIW, I agree with Krzysztof.
+I think it's the wrong way to go.
 
-There's a bunch of functionality in here that should be exported out to
-leaf drivers which should reside in their associated subsystems.  From
-just a quick glance that looks to include, but not necessary limited
-to; IRQs, GPIOs and PLLs (Clocks).
+Your "in-update" state does make sense, but it doesn't go far enough
+and it's not really about parallel anything - it's simply "this
+dentry is nailed down <here> with <this> name for now".
 
-MFD has been used for a dumping ground under the premise of "core
-functionality" before.  Tolerance for those arguments are now fairly
-low.
+And _that_ is really useful, provided that it's reliable.  What we
+need to avoid is d_drop()/d_rehash() windows, when that "operated
+upon" dentry ceases to be visible.
 
--- 
-Lee Jones [李琼斯]
+Currently we can do that, provided that parent is held exclusive.
+Any lookup will hit dcache miss and proceed to lookup_slow()
+path, which will block on attempt to get the parent shared.
+
+As soon as you switch to holding parent shared, that pattern becomes
+a source of problems.
+
+And if we deal with that, there's not much reason to nest this
+dentry lock inside ->i_rwsem.  Then ->i_rwsem would become easy
+to push inside the methods.
+
+Right now the fundamental problem with your locking is that you
+get dentry locks sandwiched between ->i_rwsem on parents and that
+on children.  We can try to be clever with how we acquire them
+(have ->d_parent rechecked before going to sleep, etc.), but
+that's rather brittle.
+
+_IF_ we push them outside of ->i_rwsem, the role of ->i_rwsem
+would shrink to protecting (1) the directory internal representation,
+(2) emptiness checks and (3) link counts.
+
+What goes away is "we are holding it exclusive, so anything that
+comes here with dcache miss won't get around to doing anything
+until we unlock".
 
