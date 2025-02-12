@@ -1,327 +1,209 @@
-Return-Path: <linux-kernel+bounces-510259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B395A31A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:21:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076A9A31A66
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 381FD3A3149
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BEB41885A55
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7A75CB8;
-	Wed, 12 Feb 2025 00:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ISounDlG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39773C2F;
+	Wed, 12 Feb 2025 00:22:29 +0000 (UTC)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA868184F;
-	Wed, 12 Feb 2025 00:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE7B15A8;
+	Wed, 12 Feb 2025 00:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739319671; cv=none; b=qyd9+/b6iFJbTboHC5KKOFb2lYMSEcOYXGMMTC94T/SylWkSCC69omMOi2V/WDkJCLDCIgs0w/Y3VUA8n4RGGUy56CIaFtnCUXzoc5KhSFSZkOBawhPocCVfH9p/ln3qx5Cf2gcyRtkefYk04feBU1kHYq9ZmC4hxLOsVoIs/VA=
+	t=1739319749; cv=none; b=LqPGeccZtDr8ZHdTobW3J7Oir4zYYSaldPEan80DPrsmz49DTj5PGonds+qhlKh4J8VOM9Y4sSNRKJk7vemx9G+tvjl08bRJF//OS865DdaTjKEL7jrHmTsuIpkab8tl7cdeo8fKtsXWzRieIib//04M4XXY8due2LbqMDNnw+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739319671; c=relaxed/simple;
-	bh=/CEXSrTmZdPl+/S4+AGhkhg8flAiL0XXWEFHbXDGdm0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ice10kF8wbbk1FEZAyw8JszqkKgPIYKAW3z5UhWu7PpZSpN/VaI5Cbcgk3/Ytg1bvt+oLTuS0cBXBPQntR5IzsehioNK6JFWzOWto3T4yJB0MDIO0wfa/Fp+oUoWGps8Qfiuf1qPROsS9cpGx7EzG3gf8ogC9zbQ058wRVLdIfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ISounDlG; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739319670; x=1770855670;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=/CEXSrTmZdPl+/S4+AGhkhg8flAiL0XXWEFHbXDGdm0=;
-  b=ISounDlG5nDnOpWtw17DMeN12MbLkS7lY73STCER33yEByr5DdmdRzuV
-   jVKXICqmntpwujGlSplZo1IuECb18rMTIaQsrNNGnlGAbu+r/g5cREJzR
-   A1h3WcW3TjwZ9mkN1Y8PpHtCGaBFPzIuw9cRjo8lw8fdPBUGQXPbcjBvt
-   uLmjsqIZaL3Fz+uOUyCCXrn0mD88gQric/eWm7CMnZ/E5ZEr/3dxzN+Vq
-   9fnFDl9s3yuHyebrpM0tibKXrG81H2a/0hil2kdDtVbXHr3QrfuMi+ygz
-   bQW3TrThvAEntWex6rquhI98YvJfY2kgbjGZFliSVqxSkIvWkFFHKm/q/
-   g==;
-X-CSE-ConnectionGUID: eibws3IOTeSRs3JF14SXHg==
-X-CSE-MsgGUID: gNjDZJoNRg6NR4RetBsp8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50946496"
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="50946496"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 16:21:09 -0800
-X-CSE-ConnectionGUID: oZPxr2i+QMeDf29dIurdpw==
-X-CSE-MsgGUID: 6zCyBx5LRjO7QHisyheGyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
-   d="scan'208";a="112652781"
-Received: from agladkov-desk.ger.corp.intel.com (HELO [10.125.108.65]) ([10.125.108.65])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 16:21:07 -0800
-Message-ID: <0f8f7891-5d2a-4470-8427-6282f7bc3351@intel.com>
-Date: Tue, 11 Feb 2025 17:21:04 -0700
+	s=arc-20240116; t=1739319749; c=relaxed/simple;
+	bh=YW7cK/oM31vkHrVJh4iKIJ9ZXmUt4M/kqA4TQLnCnf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hWLxtSlMZCH0kslukk2rlIg0VUCCscvaISFxm9Tb+9qVDlGza7NgBbbUicVpF/O09oDacqhCQ5beho7yeSS/31kSB+xGjF0y6vPQE4hdcxW+P7yZrKv2tZK8sMG0SgSj6mF2rtUKV1vVzBfmLEIdeRL+Qh/NM1WN7nY1uRpObW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-308f71d5efcso20462991fa.3;
+        Tue, 11 Feb 2025 16:22:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739319745; x=1739924545;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xrJwy1vi51bKwxVHXs7ZVxiaOa6/rQ1XDuL5HIdbTL0=;
+        b=ewdm52j49daEDCEJgJ7NGk5kaSIGUfrKiDYVUQaKK4hb1cnjzgV1akniXbj/6JSGm7
+         iLrPcECPpJc3qc2BbSaSewDzkSosYxg00ewYtA5hRWVmtU87kVRzjhFGJCxSADzHnxQf
+         RTlfHG63MYD1/OKUmfZyv2KdqECT1PyfY8B7NxRsua6BIOUh3nOoCSNOfHZw/erMZooL
+         RUFYagtcWsKttJa0A/7kPlJaVP9sKQXZ9+ZtxbodCdQAoeXpdsHSTrRYpQhXVTZKtTLf
+         +4++1Kkli2a4lRFyVMZ2dhJS6auUPaz90HYVJYYeVyyPEU/yl1qXzt5HNZCn4yXJpo6D
+         iPpg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0vXvQOtawH1UZC41zm6irrkvmHiykrtDYz1PTamJu4Q1Xt+u4UFQgWDVxsNiVTXAMnDJSkc0GMXAW@vger.kernel.org, AJvYcCWwG7nVNk68pWJGoI27Mz7i1JkIY2oZAZrMpOcCOpU6DLk/Le6TffLVKgNR8fhxWtJYo2hbpu9NopGmHd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygJoaWBADOy8s1F/GUkPNTN4M9a+LNTRn7Tc428fIMCmn7cXiP
+	Vnop99YoZhDF67u1NjB+9+KkpEQEcL/jq7Y4G2EXQo/slGps9k1fM8mhnMBkKrZtWA==
+X-Gm-Gg: ASbGncsMPdNh9b0rttUFuAzUSpj6Q6d9J9o/ovoGUVrUIsH2easbiaUit8PckfgOytM
+	i6zKvwAkTyRpcZVTX7eV4ERU3GYJGOoMRFxiEF4fouok6j/DCgtf8KkMqJWlGmc+u52K77p8On6
+	L0GcvEF5888O6YANP9n4yoc4c8ipPva5zXx4ry6NUu321n282fZqqDpQ0la4Wg0qDmoGzgdSuZr
+	ud7yzMZikbCNNxU1smuhCAXtdVwHhtN1FSPglbPG2b4LRioOKzZERF6ucdrbO4DYwDzfDLHBO6A
+	xbSYf/4CRc4aNqUCkDqPplKbjgc3iefPtP9dfOaqh878zpYd+VwdU5Fls7wCHqe1WnA=
+X-Google-Smtp-Source: AGHT+IHJTqVfcenXj3ToNQa1hEEGFMAIDPwpCySH64VgAilCDE4QPk0JKPZYkbgrTtJuSB290gU8EA==
+X-Received: by 2002:a05:6512:2394:b0:545:ea9:1a21 with SMTP id 2adb3069b0e04-545180e9275mr194115e87.11.1739319744863;
+        Tue, 11 Feb 2025 16:22:24 -0800 (PST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545064a48e8sm1088608e87.232.2025.02.11.16.22.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Feb 2025 16:22:24 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-308f71d5efcso20462811fa.3;
+        Tue, 11 Feb 2025 16:22:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXRsVhPbeVTJSdfdLXzHZCBa16gaEfSfQWWL+l3UbJLgOBU1o/nYDtNXnc0GVIRd90ssFw6gO6bGXMt@vger.kernel.org, AJvYcCXuDuwk1gtlPPq7Q3w4xywLS0xcZpM/4qxFADi9tbs7vOunHvjCh7QGj54Cn/GnWfcjRElu6OMO7AVLPXA=@vger.kernel.org
+X-Received: by 2002:a2e:a805:0:b0:300:3a15:8f22 with SMTP id
+ 38308e7fff4ca-309037d6f62mr5053141fa.21.1739319744487; Tue, 11 Feb 2025
+ 16:22:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 14/17] cxl/pci: Update CXL Port RAS logging to also
- display PCIe SBDF
-To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
- rrichter@amd.com, nathan.fontenot@amd.com,
- Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
- ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
- <20250211192444.2292833-15-terry.bowman@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250211192444.2292833-15-terry.bowman@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250211150150.519006-1-andrew.zaborowski@intel.com> <3bd497be-54d7-43b8-a392-4bf82bf64679@intel.com>
+In-Reply-To: <3bd497be-54d7-43b8-a392-4bf82bf64679@intel.com>
+From: Andrew Zaborowski <andrew.zaborowski@intel.com>
+Date: Wed, 12 Feb 2025 01:22:13 +0100
+X-Gmail-Original-Message-ID: <CAOq732KJ658+mRTZV+SdMRVTdKBUARzWz2WCoTyHqtF98fkdWA@mail.gmail.com>
+X-Gm-Features: AWEUYZm0pK47I6I99gyff23lgrIXF-lWEIjWjwb17mqecH7HoHis7I16BOzs44c
+Message-ID: <CAOq732KJ658+mRTZV+SdMRVTdKBUARzWz2WCoTyHqtF98fkdWA@mail.gmail.com>
+Subject: Re: [PATCH] x86: sgx: Don't track poisoned pages for reclaiming
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: x86@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 11 Feb 2025 at 17:25, Dave Hansen <dave.hansen@intel.com> wrote:
+>         git log arch/x86/kernel/cpu/sgx/
+>
+> That usually works for every little nook and cranny of the kernel and
+> will show you what the subject rules are.
+>
+> Could you do that for this patch for v2, please?
 
+My bad, I'll use x86/sgx: ...
 
-On 2/11/25 12:24 PM, Terry Bowman wrote:
-> CXL RAS errors are currently logged using the associated CXL port's name
-> returned from devname(). They are typically named with 'port1', 'port2',
-> etc. to indicate the hierarchial location in the CXL topology. But, this
-> doesn't clearly indicate the CXL card or slot reporting the error.
-> 
-> Update the logging to also log the corresponding PCIe devname. This will
-> give a PCIe SBDF or ACPI object name (in case of CXL HB). This will provide
-> details helping users understand which physical slot and card has the
-> error.
-> 
-> Below is example output after making these changes.
-> 
-> Correctable error example output:
-> cxl_port_aer_correctable_error: device=port1 (0000:0c:00.0) parent=root0 (pci0000:0c) status='Received Error From Physical Layer'
-> 
-> Uncorrectable error example output:
-> cxl_port_aer_uncorrectable_error: device=port1 (0000:0c:00.0) parent=root0 (pci0000:0c) status: 'Memory Byte Enable Parity Error' first_error: 'Memory Byte Enable Parity Error'
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>
+> Also, this isn't about _tracking_ pages per se. It's avoiding SGX page
+> reclaim, don't you think?
 
-I wonder if there's any benefit in identifying if the PCIe device is USP or DSP...
+Ok, the goal is to avoid the crash so I'll update the subject line.
+That said clearing SGX_EPC_PAGE_RECLAIMER_TRACKED for a page that
+cannot be reclaimed seems reasonable on its own.
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/cxl/core/pci.c   | 39 +++++++++++++++++++------------------
->  drivers/cxl/core/trace.h | 42 +++++++++++++++++++++++++---------------
->  2 files changed, 46 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index 9a3090dae46a..f154dcf6dfda 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -652,14 +652,14 @@ void read_cdat_data(struct cxl_port *port)
->  }
->  EXPORT_SYMBOL_NS_GPL(read_cdat_data, "CXL");
->  
-> -static void __cxl_handle_cor_ras(struct device *dev,
-> +static void __cxl_handle_cor_ras(struct device *cxl_dev, struct device *pcie_dev,
->  				 void __iomem *ras_base)
->  {
->  	void __iomem *addr;
->  	u32 status;
->  
->  	if (!ras_base) {
-> -		dev_warn_once(dev, "CXL RAS register block is not mapped");
-> +		dev_warn_once(cxl_dev, "CXL RAS register block is not mapped");
->  		return;
->  	}
->  
-> @@ -669,15 +669,15 @@ static void __cxl_handle_cor_ras(struct device *dev,
->  		return;
->  	writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
->  
-> -	if (is_cxl_memdev(dev))
-> -		trace_cxl_aer_correctable_error(to_cxl_memdev(dev), status);
-> -	else if (is_cxl_port(dev))
-> -		trace_cxl_port_aer_correctable_error(dev, status);
-> +	if (is_cxl_memdev(cxl_dev))
-> +		trace_cxl_aer_correctable_error(to_cxl_memdev(cxl_dev), status);
-> +	else if (is_cxl_port(cxl_dev))
-> +		trace_cxl_port_aer_correctable_error(cxl_dev, pcie_dev, status);
->  }
->  
->  static void cxl_handle_endpoint_cor_ras(struct cxl_dev_state *cxlds)
->  {
-> -	return __cxl_handle_cor_ras(&cxlds->cxlmd->dev, cxlds->regs.ras);
-> +	return __cxl_handle_cor_ras(&cxlds->cxlmd->dev, NULL, cxlds->regs.ras);
->  }
->  
->  /* CXL spec rev3.0 8.2.4.16.1 */
-> @@ -701,7 +701,8 @@ static void header_log_copy(void __iomem *ras_base, u32 *log)
->   * Log the state of the RAS status registers and prepare them to log the
->   * next error status. Return 1 if reset needed.
->   */
-> -static pci_ers_result_t __cxl_handle_ras(struct device *dev, void __iomem *ras_base)
-> +static pci_ers_result_t __cxl_handle_ras(struct device *cxl_dev, struct device *pcie_dev,
-> +					 void __iomem *ras_base)
->  {
->  	u32 hl[CXL_HEADERLOG_SIZE_U32];
->  	void __iomem *addr;
-> @@ -709,7 +710,7 @@ static pci_ers_result_t __cxl_handle_ras(struct device *dev, void __iomem *ras_b
->  	u32 fe;
->  
->  	if (!ras_base) {
-> -		dev_warn_once(dev, "CXL RAS register block is not mapped");
-> +		dev_warn_once(cxl_dev, "CXL RAS register block is not mapped");
->  		return PCI_ERS_RESULT_NONE;
->  	}
->  
-> @@ -730,10 +731,10 @@ static pci_ers_result_t __cxl_handle_ras(struct device *dev, void __iomem *ras_b
->  	}
->  
->  	header_log_copy(ras_base, hl);
-> -	if (is_cxl_memdev(dev))
-> -		trace_cxl_aer_uncorrectable_error(to_cxl_memdev(dev), status, fe, hl);
-> -	else if (is_cxl_port(dev))
-> -		trace_cxl_port_aer_uncorrectable_error(dev, status, fe, hl);
-> +	if (is_cxl_memdev(cxl_dev))
-> +		trace_cxl_aer_uncorrectable_error(to_cxl_memdev(cxl_dev), status, fe, hl);
-> +	else if (is_cxl_port(cxl_dev))
-> +		trace_cxl_port_aer_uncorrectable_error(cxl_dev, pcie_dev, status, fe, hl);
->  
->  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
->  
-> @@ -742,7 +743,7 @@ static pci_ers_result_t __cxl_handle_ras(struct device *dev, void __iomem *ras_b
->  
->  static bool cxl_handle_endpoint_ras(struct cxl_dev_state *cxlds)
->  {
-> -	return __cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->regs.ras);
-> +	return __cxl_handle_ras(&cxlds->cxlmd->dev, NULL, cxlds->regs.ras);
->  }
->  
->  #ifdef CONFIG_PCIEAER_CXL
-> @@ -814,7 +815,7 @@ static void __iomem *cxl_pci_port_ras(struct pci_dev *pdev, struct device **dev)
->  		struct cxl_dport *dport = NULL;
->  
->  		port = find_cxl_port(&pdev->dev, &dport);
-> -		if (!port) {
-> +		if (!port || !is_cxl_port(&port->dev)) {
->  			pci_err(pdev, "Failed to find root/dport in CXL topology\n");
->  			return NULL;
->  		}
-> @@ -848,7 +849,7 @@ static void cxl_port_cor_error_detected(struct pci_dev *pdev)
->  	struct device *dev;
->  	void __iomem *ras_base = cxl_pci_port_ras(pdev, &dev);
->  
-> -	__cxl_handle_cor_ras(dev, ras_base);
-> +	__cxl_handle_cor_ras(dev, &pdev->dev, ras_base);
->  }
->  
->  static pci_ers_result_t cxl_port_error_detected(struct pci_dev *pdev)
-> @@ -856,7 +857,7 @@ static pci_ers_result_t cxl_port_error_detected(struct pci_dev *pdev)
->  	struct device *dev;
->  	void __iomem *ras_base = cxl_pci_port_ras(pdev, &dev);
->  
-> -	return __cxl_handle_ras(dev, ras_base);
-> +	return __cxl_handle_ras(dev, &pdev->dev, ras_base);
->  }
->  
->  void cxl_uport_init_ras_reporting(struct cxl_port *port)
-> @@ -909,13 +910,13 @@ EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
->  static void cxl_handle_rdport_cor_ras(struct cxl_dev_state *cxlds,
->  					  struct cxl_dport *dport)
->  {
-> -	return __cxl_handle_cor_ras(&cxlds->cxlmd->dev, dport->regs.ras);
-> +	return __cxl_handle_cor_ras(&cxlds->cxlmd->dev, NULL, dport->regs.ras);
->  }
->  
->  static bool cxl_handle_rdport_ras(struct cxl_dev_state *cxlds,
->  				       struct cxl_dport *dport)
->  {
-> -	return __cxl_handle_ras(&cxlds->cxlmd->dev, dport->regs.ras);
-> +	return __cxl_handle_ras(&cxlds->cxlmd->dev, NULL, dport->regs.ras);
->  }
->  
->  /*
-> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> index b536233ac210..a74803f4aa22 100644
-> --- a/drivers/cxl/core/trace.h
-> +++ b/drivers/cxl/core/trace.h
-> @@ -49,18 +49,22 @@
->  )
->  
->  TRACE_EVENT(cxl_port_aer_uncorrectable_error,
-> -	TP_PROTO(struct device *dev, u32 status, u32 fe, u32 *hl),
-> -	TP_ARGS(dev, status, fe, hl),
-> +	TP_PROTO(struct device *cxl_dev, struct device *pcie_dev, u32 status, u32 fe, u32 *hl),
-> +	TP_ARGS(cxl_dev, pcie_dev, status, fe, hl),
->  	TP_STRUCT__entry(
-> -		__string(devname, dev_name(dev))
-> -		__string(parent, dev_name(dev->parent))
-> +		__string(cxl_name, dev_name(cxl_dev))
-> +		__string(cxl_parent_name, dev_name(cxl_dev->parent))
-> +		__string(pcie_name, dev_name(pcie_dev))
-> +		__string(pcie_parent_name, dev_name(pcie_dev->parent))
->  		__field(u32, status)
->  		__field(u32, first_error)
->  		__array(u32, header_log, CXL_HEADERLOG_SIZE_U32)
->  	),
->  	TP_fast_assign(
-> -		__assign_str(devname);
-> -		__assign_str(parent);
-> +		__assign_str(cxl_name);
-> +		__assign_str(cxl_parent_name);
-> +		__assign_str(pcie_name);
-> +		__assign_str(pcie_parent_name);
->  		__entry->status = status;
->  		__entry->first_error = fe;
->  		/*
-> @@ -69,8 +73,9 @@ TRACE_EVENT(cxl_port_aer_uncorrectable_error,
->  		 */
->  		memcpy(__entry->header_log, hl, CXL_HEADERLOG_SIZE);
->  	),
-> -	TP_printk("device=%s parent=%s status: '%s' first_error: '%s'",
-> -		__get_str(devname), __get_str(parent),
-> +	TP_printk("device=%s (%s) parent=%s (%s) status: '%s' first_error: '%s'",
-> +		__get_str(cxl_name), __get_str(pcie_name),
-> +		__get_str(cxl_parent_name), __get_str(pcie_parent_name),
->  		show_uc_errs(__entry->status),
->  		show_uc_errs(__entry->first_error)
->  	)
-> @@ -125,20 +130,25 @@ TRACE_EVENT(cxl_aer_uncorrectable_error,
->  )
->  
->  TRACE_EVENT(cxl_port_aer_correctable_error,
-> -	TP_PROTO(struct device *dev, u32 status),
-> -	TP_ARGS(dev, status),
-> +	TP_PROTO(struct device *cxl_dev, struct device *pcie_dev, u32 status),
-> +	TP_ARGS(cxl_dev, pcie_dev, status),
->  	TP_STRUCT__entry(
-> -		__string(devname, dev_name(dev))
-> -		__string(parent, dev_name(dev->parent))
-> +		__string(cxl_name, dev_name(cxl_dev))
-> +		__string(cxl_parent_name, dev_name(cxl_dev->parent))
-> +		__string(pcie_name, dev_name(pcie_dev))
-> +		__string(pcie_parent_name, dev_name(pcie_dev->parent))
->  		__field(u32, status)
->  	),
->  	TP_fast_assign(
-> -		__assign_str(devname);
-> -		__assign_str(parent);
-> +		__assign_str(cxl_name);
-> +		__assign_str(cxl_parent_name);
-> +		__assign_str(pcie_name);
-> +		__assign_str(pcie_parent_name);
->  		__entry->status = status;
->  	),
-> -	TP_printk("device=%s parent=%s status='%s'",
-> -		__get_str(devname), __get_str(parent),
-> +	TP_printk("device=%s (%s) parent=%s (%s) status='%s'",
-> +		__get_str(cxl_name), __get_str(pcie_name),
-> +		__get_str(cxl_parent_name), __get_str(pcie_parent_name),
->  		show_ce_errs(__entry->status)
->  	)
->  );
+>
+> On 2/11/25 07:01, Andrew Zaborowski wrote:
+> > Pages used by an enclave only get page->poison set in
+>
+> Could we please call these "epc_page" instead of "page"?
 
+Ok, makes sense.
+
+>
+> > arch_memory_failure() but stay on sgx_active_page_list.
+> > page->poison is not checked in the reclaimer logic meaning that a page could be
+> > reclaimed and go through ETRACK, EBLOCK and EWB.  This can lead to the
+> > firmware receiving and MCE in one of those operations and going into
+> > "unbreakable shutdown" and triggering a kernel panic on remaining cores.
+>
+> This requires low-level SGX implementation knowledge to fully
+> understand. Both what "ETRACK, EBLOCK and EWB" are in the first place,
+> how they are involved in reclaim and also why EREMOVE doesn't lead to
+> the same fate.
+>
+> Can it be written in a more approachable way?
+>
+> During SGX reclaim, the CPU actually touches the SGX data page,
+> encrypting and writing its contents out to normal memory. These "EWB"
+> writeback operations are implemented in what are effectively big,
+> complicated chunks of microcode. Any machine checks encountered during
+> this writeback operation are usually fatal to the entire system.
+>
+> If an epc_page has poison, reclaiming it is highly likely to bring the
+> whole system down. The SGX reclaim code does not currently check for poison.
+
+Ok, I agree part of this explanation is fit for the commit message.
+In a busy area of code I don't think every commit touching it should
+explain what the code does but here it makes sense.
+
+As a side note with a set of enclaves fighting badly enough for the
+EPC memory the probability of an MCE happening inside one of the EWB
+operations can become considerable because of the sheer amount of time
+spent in them and I don't think anything can be done about it.
+
+>
+> --
+>
+> > Remove the affected page from sgx_active_page_list but don't add it
+> > immediately to &node->sgx_poison_page_list to keep most of the current
+> > semantics.
+>
+> What semantics are being kept? Are they important?
+
+That's a good question.  An epc_page can be on one of 3 or 4 lists, or
+none, so the logic is already complicated.  My guess is that moving
+the page to &node->sgx_poison_page_list only after EREMOVE is done
+adds some order, because functionally it doesn't change anything.
+(But __sgx_sanitize_pages skips the EREMOVE for poisoned pages)
+
+So epc_page->poison is used temporarily while the page is mapped into
+an enclave.  Once the enclave is released a poisoned page is moved to
+sgx_poison_page_list.  The current semantics ensure that by that time
+the epc_page is not referenced by an encl_page and is not on any other
+list so for all purposes it's forgotten.
+
+>
+> > Tested with CONFIG_PROVE_LOCKING as suggested by Tony Luck.
+>
+> "I tested it with lockdep and it didn't blow up" is definitely better
+> than "I booted this and it didn't blow up" or not testing it at all.
+>
+> But even better would be demonstrating in the changelog that the locking
+> rules were understood and respected in this patch.
+>
+> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > index 671c26513..7076464d4 100644
+> > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > @@ -719,6 +719,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
+> >               goto out;
+> >       }
+> >
+> > +     sgx_unmark_page_reclaimable(page);
+> > +
+> >       /*
+> >        * TBD: Add additional plumbing to enable pre-emptive
+> >        * action for asynchronous poison notification. Until
+>
+> I'll 100% buy that this is the most expeditious fix.
+>
+> But is it the _best_ one?
+>
+> In the end, this patch has the semantics of avoiding SGX reclaim on
+> poisoned pages. Wouldn't it be most straightforward to implement that in
+> the SGX *reclaim* code?
+
+I don't know.  If we know we cannot reclaim a page should we force the
+reclaimer to still look at its flags?
+
+I'm sure we don't want to have to check epc_page->poison multiple
+times if we can remove it from a relevant list once. Perhaps it's not
+great that my patch adds a period when the epc_page is not on *any*
+list, everywhere else this is done only for very short times.  I'm not
+sure what it would take to eremove the page earlier so it can be added
+to sgx_poison_page_list, I think the "TBD" comment in
+arch_memory_failure() refers to that and I hoped to leave it as a TBD.
+
+Best regards
 
