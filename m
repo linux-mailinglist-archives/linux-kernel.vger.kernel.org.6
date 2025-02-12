@@ -1,124 +1,129 @@
-Return-Path: <linux-kernel+bounces-511000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834B2A324B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:21:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AADEA324B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4AF1886D3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B84923A2D66
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B492420A5F5;
-	Wed, 12 Feb 2025 11:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBE220A5C8;
+	Wed, 12 Feb 2025 11:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YDtHNWdJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ceDbVx9a";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0+RSrdlo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBB21B21AD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F990209674
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359296; cv=none; b=lY2aU45lqrO48FxKXrq+je83pi3VSh4ETt6umJNZXOZKg1DeAnlOkSPDBF2tMxx/CCkYWcHZSvyPnbjU/CcuOwX53apBmoIp7Ff1HzQOTi80OTgcY3j2E9F1MIUQtGbSStHfKRN625OUD9XxK10UWICxkTO/dTHCWEnb6Ys2QLQ=
+	t=1739359309; cv=none; b=ad4fDf4MwvMQa5xpirngGrSS2FcoerC+KI2rCyUWlIJepISitvGS2town6aZkeRWkrD2/C+1NMQpLJOzzVK7QHORRSmP/JHcM4UH5ZCvSaGl0Anl2vXRVs9c90R8LTOGo2JXdi1sTpKAOqs6ycPye0bM2U8THuMHc2WriL3C1y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359296; c=relaxed/simple;
-	bh=9zjcqeUtecmQeRWAWpi41Dkd2R98ynxq3ouQNuuU3ns=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=H69/g03KRiHSG1Ovvdc9oK4jvnOrgrk/hb3Ev+BJSw1bTEvzIs3/hRcvRFswiP9gHVnushvCN49hxTWSP/fYI9WSr1E+HmIrtTl6S152d6ySZ0VoMcMZDRJFyMbJZixSpnr66dOHaNJBoWMt1oDq94sUBd2nydiwleA0nKwraXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YDtHNWdJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739359293;
+	s=arc-20240116; t=1739359309; c=relaxed/simple;
+	bh=FtRxwNwB1LGh/EUQt2O9V51fIz3IQ4+TChBDHh9Ey7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ucRrSAo6ixZMFcUciLEQALN/x3qCUk8+wi+m+F6jQ0C2gvuvOUOx7SVQcp+jD6swKSoTfSj6/PjMNsSolqk5EEpWmQoeeRlHeMdPpeNPU7pE6qCIK0uC2yhKY+y3Xzh9icJK79BKgC7OOGzBONIkQPhlG1hL9lDzT7v3Jl/asyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ceDbVx9a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0+RSrdlo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 12 Feb 2025 12:21:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739359306;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NuZ2sxYlFvOf7TTka/ZiERQ0yfFGzXJI8jS/5gyfwX0=;
-	b=YDtHNWdJGcGCSJLme9Sf9rUhCvml/kqIz3dwnG99n+iXLMa9WkgZUdxvpZHOPLljTBP1x0
-	mChdcgx+k9Gzf8thtRrPQUJDDzwQZkKtnspXpnfpyIs1CYQDQsqyqs5jiutM/FoaXhvJUm
-	kJ7QdChUplO+sb3pe7g2InUWrrA6jkw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-307-X9bnpjtdOgy9mUdRJ-bm0w-1; Wed,
- 12 Feb 2025 06:21:30 -0500
-X-MC-Unique: X9bnpjtdOgy9mUdRJ-bm0w-1
-X-Mimecast-MFC-AGG-ID: X9bnpjtdOgy9mUdRJ-bm0w
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76D941800983;
-	Wed, 12 Feb 2025 11:21:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8EE46180056F;
-	Wed, 12 Feb 2025 11:21:25 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    Jakub Kicinski <kuba@kernel.org>,
-    "David S. Miller" <davem@davemloft.net>,
-    Chuck Lever <chuck.lever@oracle.com>,
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-    Simon Horman <horms@kernel.org>, linux-afs@lists.infradead.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH net] rxrpc: Fix ipv6 path MTU discovery
+	 in-reply-to:in-reply-to:references:references;
+	bh=l1K7nMbUzi/PBxssXxktE8rcuXI/mW+uKt+5ZI9cf20=;
+	b=ceDbVx9a2RdBxVvts79Y9Gu/Vc6V5J0JakVP5pAar2t8o7SYF6ep8YmxQi972w4iw8ktZS
+	vV2u71gzCU3z9HnHr6lwdwBL9EL5n09HtBSe+UvCh9RQ9xKzhEF4ThiP6UOCOmRmTQlmhw
+	ypC9G/dB0Tt5OHvR65sKcOgGpVYb02pl0tMyQ2WJTAmp570Oj182j1pklg89PNkVh3fa7n
+	uCoND4zNtV3ejqmK0hX+z0C4fjIWHVz7kGs2X9fTC7q/gJNRT3X4bVppjmHDj0ZUOAEUp9
+	HrKsDwgBmAksl+EzatchVRqx6xBgN1C1Hxdgq5g4npJpa+Lqp8smPMVDMfjXmw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739359306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l1K7nMbUzi/PBxssXxktE8rcuXI/mW+uKt+5ZI9cf20=;
+	b=0+RSrdlobtGST3Ru+CGHZnGHLgeRoFN6Vz2ndbWWeKkku0DmygER63VRVMNX1meUQCqR2z
+	+1R4wD164XpXF3DA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rt-devel@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Brown <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: BUG: debug_exception_enter() disables preemption and may call
+ sleeping functions on aarch64 with RT
+Message-ID: <20250212112145.BIE8_6T2@linutronix.de>
+References: <Z6YW_Kx4S2tmj2BP@uudg.org>
+ <Z6n16cK85JMyowDq@J2N7QTR9R3>
+ <20250210140657.UAsRw4k8@linutronix.de>
+ <Z6vvyKZ5eoAS435b@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3517282.1739359284.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 12 Feb 2025 11:21:24 +0000
-Message-ID: <3517283.1739359284@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z6vvyKZ5eoAS435b@uudg.org>
 
-rxrpc path MTU discovery currently only makes use of ICMPv4, but not
-ICMPv6, which means that pmtud for IPv6 doesn't work correctly.  Fix it to
-check for ICMPv6 messages also.
+On 2025-02-11 21:48:08 [-0300], Luis Claudio R. Goncalves wrote:
+> > Couldn't you delay sending signals until after the preempt-disable
+> > section? 
+> 
+> Looking at do_debug_exception,
+> 
+> void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
+> 			struct pt_regs *regs)
+> {
+> 	const struct fault_info *inf = esr_to_debug_fault_info(esr);
+> 	unsigned long pc = instruction_pointer(regs);
+> 
+> 	debug_exception_enter(regs);
+> 
+> 	if (user_mode(regs) && !is_ttbr0_addr(pc))
+> 		arm64_apply_bp_hardening();
+> 
+> 	if (inf->fn(addr_if_watchpoint, esr, regs)) {
+> 		arm64_notify_die(inf->name, regs, inf->sig, inf->code, pc, esr);
+> 	}
+> 
+> 	debug_exception_exit(regs);
+> }
+> NOKPROBE_SYMBOL(do_debug_exception);
+> 
+> 
+> Do you mean executing the
+> 
+> 	arm64_notify_die(inf->name, regs, inf->sig, inf->code, pc, esr);
+> 
+> after re-enabling the preemption or do you mean something more
+> sophisticated?
 
-Fixes: eeaedc5449d9 ("rxrpc: Implement path-MTU probing using padded PING =
-ACKs (RFC8899)")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
----
- net/rxrpc/peer_event.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+single_step_handler() and brk_handler() can both send signals. If
+inf->fn returns != 0 (which seems to be only be possible for
+brk_handler() out of the possible four callbacks) this this
+arm64_notify_die() sends a signal.
+So we have three potential signal delivers. It shouldn't matter if the
+signal is sent within the preempt-disable section or outside because the
+signal will be queued for current and delivered on the return to
+userland. So would just need to save the details and do it outside. Now
+that I actually looked at the code, this might lead to a bit of a mess
+so splitting out the signal part and avoiding the preempt-off part might
+better which would be the rework that Mark was talking about.
 
-diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
-index e874c31fa901..bc283da9ee40 100644
---- a/net/rxrpc/peer_event.c
-+++ b/net/rxrpc/peer_event.c
-@@ -169,6 +169,13 @@ void rxrpc_input_error(struct rxrpc_local *local, str=
-uct sk_buff *skb)
- 		goto out;
- 	}
- =
+> Luis
 
-+	if ((serr->ee.ee_origin =3D=3D SO_EE_ORIGIN_ICMP6 &&
-+	     serr->ee.ee_type =3D=3D ICMPV6_PKT_TOOBIG &&
-+	     serr->ee.ee_code =3D=3D 0)) {
-+		rxrpc_adjust_mtu(peer, serr->ee.ee_info);
-+		goto out;
-+	}
-+
- 	rxrpc_store_error(peer, skb);
- out:
- 	rxrpc_put_peer(peer, rxrpc_peer_put_input_error);
-
+Sebastian
 
