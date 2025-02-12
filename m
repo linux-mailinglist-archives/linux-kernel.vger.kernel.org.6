@@ -1,229 +1,142 @@
-Return-Path: <linux-kernel+bounces-511525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1553BA32C41
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:47:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5481A32C44
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:47:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A148B3A6327
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3080C3A7D45
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F8824C68E;
-	Wed, 12 Feb 2025 16:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF473253332;
+	Wed, 12 Feb 2025 16:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOR6ZRFg"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ct/YiBkV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DE4253B6A;
-	Wed, 12 Feb 2025 16:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398D424C68E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739378825; cv=none; b=M+8tC/xkFndVpLb6Sl1gfTZ/fTIeC+u6ZklaCQla8Gm7bV2AD40SGIUi2yGNGkFEzYxCDhxGezYA2DA1s+xKsZ3/5v9nJw6pJXC+VWYg2xQhnhdGNRBf/wU2ddqA6oKEsyh1SapErKGnkepWP87wX8yTb0bleiF8t1jDF6D+Y5k=
+	t=1739378853; cv=none; b=N26PjK2jfp6OZ8wqjkYIIn0vD/zw28LpfyJYuijatLuWq1O4PDQQLRCPuN7UllcMCv0VzhmOCOXd/6R3Nj+12XTA8IbKT4k4pQZJeFZnLxl+fO4q8Rzn6C027boWMwAbLckh2rxOzeUO3nsyQJZMLwR+nTIbaZA9DFc316+LndM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739378825; c=relaxed/simple;
-	bh=AxbqplLjvLiGIpCkppb7rOx2QEyb+sThces8qpsbMCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aixR4Tbrj1LT2wPHfifV+WiXTdkm1/MVRCCyP5XPPupmhkfUis4oewY0jHgD64E0xoSudFZFDFSu45c2OB1+ESUBbp1P5YV/YKxtgZnqZE1vtCN8DpkliFDluaafMSrQ6pVqyd82hOiLmIRJfReB4sPOs3rEg+nTRErUwzMv2ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOR6ZRFg; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-220ca204d04so7247585ad.0;
-        Wed, 12 Feb 2025 08:47:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739378823; x=1739983623; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mDVzRfCwBh1mYoJ2qxS4TbDOigyo6o/RrhqIM36xUOA=;
-        b=QOR6ZRFgo6vlCX5RBNbwEQQMhH71HFFV5dlQGwtwqDl6Pko14Eq3XEksR/n7Fp9IXt
-         TjOxq4tBhyyFUrp1vZH7gR7YkDOm//WA2UVJm2Fk9QjqCSII27sX+bCoLtSrBd27xCm8
-         q2zkyFQaVTFvFXzxuOaQEnZSlGbgHBFx6VmERg0GrlSPO2+3+CuIZGGxoGCjA4U5dZeP
-         eTkAEV7emvEn/OxxoiRiemod6BtCm/ovmwLhVR4k93CtSw5PhMuhxA9hPgYewW9ZJFhJ
-         2BtBSu812FgEBZMncskEIbxhCp0vOi/gj5prupoPfXwQzflCoCSQrCeUad0VtTFJ+Pzt
-         dN2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739378823; x=1739983623;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mDVzRfCwBh1mYoJ2qxS4TbDOigyo6o/RrhqIM36xUOA=;
-        b=nP6hAfZMxAG6wAGQI3oawO0TEaOOM1IYiMIDv1WNXWCkBvd+S9cJnEH1kximcqfRp5
-         HygZCq91pfZC4K+5E710LVehXeaHRHyu1kw13qGkyOtCN6Z2vDbEyPOc/D33Bn9wjFz7
-         BYNH8tXXfamOwvaQEL0oWcraRUYBDy4sBHyCLqqXI8PK914zdHnkNi5Ymdzuh1HNn1fy
-         CHHD3Sr5YeP6UwUlNNqg4OpFwB0mR9hoX9deRyw5lXgLx9B/prDEmGWKjBNGD0t24BSR
-         TUU+kKyjrdJRbd99VZBPVGtBdw3QDLZvwE8LQlrrc/iSkCtqhpXnFUsraSnvzb6FJ+iv
-         VZcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDkZ1r8bvoM/uOZmcWyUeD48xmLyNyrigaKGjvcaWe13ZO/G2QDM1KwJNod3ijkSLu+YWZKJYAtIPo@vger.kernel.org, AJvYcCVXdzGL9UeMFwhRKxjbWM9kiQ9LhiM2GiAaHCu7xbdVBf/jwOK8Y107c0qrmu7/zjlT7O4NjV9QAjo4G8pt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0Y6yQgV701WAPbGm1wMIU2HyhdhkxnTZvx2FDido9pffvSjF2
-	yxn/q3bga/D+O1ev6lPym3O+UGj1GyKIc9/wmxlCPZGHVYO4DzWJ
-X-Gm-Gg: ASbGncvFRHZPaBHX5pf5b5RvFewoA/RNumTHGZ0vVlF7FX+bvyO2E8sXFsno3LfR3se
-	NBpFN4xHXLAsAQZquZ8X76PaoAqtqu65Uh526GXkKEU8d1FZUjoOTqXSk4/Fscm+Cm4PXTz4KX8
-	UO9m0g4sq2/b2/gqU1LR2fs1UiQ+YQT1S5a5p0WQjv4ShKZA45HDP0gYmVvAz45UEYuYtjrkxog
-	bjq9GcrXhkXbU5tqjRdEePH8d7rmEHd3dHUjdLn2UAzg5+XpbFIovxYU3R6Mb+xxY8hkeeLHRWF
-	1S9EzHRzg5KpUZqqCEGf0FniZ5u0oYm8AvJ1mQlkGw==
-X-Google-Smtp-Source: AGHT+IE2CcZuyc9ctvMGoGdHrpg/H7Hpn/fcbaXpofrnJbeOrrvyTTBnIkCgcIZwnR0ssBQq5iBTIQ==
-X-Received: by 2002:a05:6a21:81:b0:1ee:6032:b1e8 with SMTP id adf61e73a8af0-1ee6032be02mr4157409637.18.1739378822875;
-        Wed, 12 Feb 2025 08:47:02 -0800 (PST)
-Received: from jamesmacinnes-VirtualBox ([66.119.214.127])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7307d1e80e5sm7467266b3a.15.2025.02.12.08.47.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 08:47:02 -0800 (PST)
-Date: Wed, 12 Feb 2025 08:46:59 -0800
-From: "James A. MacInnes" <james.a.macinnes@gmail.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, andersson@kernel.org, konradybcio@kernel.org,
- quic_wcheng@quicinc.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, lgirdwood@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 2/3] regulator: qcom_usb_vbus: Add support for PMI8998
- VBUS
-Message-ID: <20250212084659.572c0408@jamesmacinnes-VirtualBox>
-In-Reply-To: <f4a15f6d-1c2c-484b-9a81-6e5e138b3fdb@oss.qualcomm.com>
-References: <20250212010744.2554574-1-james.a.macinnes@gmail.com>
-	<20250212010744.2554574-3-james.a.macinnes@gmail.com>
-	<f4a15f6d-1c2c-484b-9a81-6e5e138b3fdb@oss.qualcomm.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739378853; c=relaxed/simple;
+	bh=l49aKGECHlQJL+5gadj9OfHegUDAV/GXDkNvlccDNUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kqebyYTpPuOu8FrQfNyex0UDBHB1TDt83ffWuSXnv6m8W/qwddSGe7ROE9qEW0JMQP0zjz85vIn3pCeEyYZMea4Io2NtrqnPHcEXo3h7Zj+jgJbzEIqBBiDkvXIuGBOgxShBe5DM9ZzhyQQYCnv+YOUvYugejgDpIZdq4oGGLK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ct/YiBkV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD895C4CEDF;
+	Wed, 12 Feb 2025 16:47:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739378853;
+	bh=l49aKGECHlQJL+5gadj9OfHegUDAV/GXDkNvlccDNUs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ct/YiBkVj/1vprGdL50t6+tZ3aG+ajLJswfKlgU/6eAGNwlyaDIyRSYBf/INefrZ1
+	 7JpaxOf5/XOZGMmA7XrVJhPuc8ADt/r/W+ONiwSiZYVpKS2UUKvuP8LExJYrV/i+Cz
+	 1EErM067bDYnFD8+ddMlm7UFaKiU9UTWnxGxgqmOSVc6hVTr/Bh1r7h+HmqTbID41Y
+	 sYDQD2DNG9NwACjfkyyzC4xYDufLXJZ0rl55jFIN3Q+xBBSWINodFmr++kj0cTn0KO
+	 mo/Z8qRGKRBbF7Ot+FMipeblXWVrmDj6fj9oCuXf4qO45Sm01DpmVH7m+h5hhmhdYO
+	 cwJXaM1AQQ1HQ==
+Date: Wed, 12 Feb 2025 16:47:31 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	Leo Stone <leocstone@gmail.com>,
+	syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
+Subject: Re: [PATCH v4] f2fs: add check for deleted inode
+Message-ID: <Z6zQoyNp5td-Wgd1@google.com>
+References: <20250212072742.977248-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212072742.977248-1-chao@kernel.org>
 
-On Wed, 12 Feb 2025 13:55:59 +0100
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
-
-> On 12.02.2025 2:07 AM, James A. MacInnes wrote:
-> > This patch extends the Qualcomm USB VBUS regulator driver to support
-> > PMI8998 PMIC alongside the existing support for PM8150B.
-> > 
-> > Key changes:
-> > - Added current limit tables specific to PMI8998.
-> > - Dynamically configure the VBUS regulator based on the PMIC type.
-> > - Updated debug messages to reflect successful initialization for
-> >   supported PMICs.
-> > - Changed registration log message
-> > 
-> > These changes ensure proper VBUS current limit configuration and
-> > compatibility across multiple Qualcomm PMICs.
-> > 
-> > Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
-> > ---
-> >  drivers/regulator/qcom_usb_vbus-regulator.c | 38
-> > ++++++++++++++++++--- 1 file changed, 33 insertions(+), 5
-> > deletions(-)
-> > 
-> > diff --git a/drivers/regulator/qcom_usb_vbus-regulator.c
-> > b/drivers/regulator/qcom_usb_vbus-regulator.c index
-> > cd94ed67621f..804dd1a9e057 100644 ---
-> > a/drivers/regulator/qcom_usb_vbus-regulator.c +++
-> > b/drivers/regulator/qcom_usb_vbus-regulator.c @@ -20,10 +20,30 @@
-> >  #define OTG_CFG				0x53
-> >  #define OTG_EN_SRC_CFG			BIT(1)
-> >  
-> > -static const unsigned int curr_table[] = {
-> > +struct msm_vbus_desc {
-> > +	const unsigned int *curr_table;
-> > +	unsigned int n_current_limits;
-> > +};
-> > +
-> > +static const unsigned int curr_table_pm8150b[] = {
-> >  	500000, 1000000, 1500000, 2000000, 2500000, 3000000,
-> >  };
-> >  
-> > +static const unsigned int curr_table_pmi8998[] = {
-> > +	250000, 500000, 750000, 1000000,
-> > +	1250000, 1500000, 1750000, 2000000,
-> > +};  
+On 02/12, Chao Yu wrote:
+> From: Leo Stone <leocstone@gmail.com>
 > 
-> To the best of my understanding these numbers are correct
+> The syzbot reproducer mounts a f2fs image, then tries to unlink an
+> existing file. However, the unlinked file already has a link count of 0
+> when it is read for the first time in do_read_inode().
 > 
-
-Hopefully it is all correct. I pulled the numbers from the datasheet,
-but they are known to lie.
-
-> > +
-> > +static const struct msm_vbus_desc msm_vbus_desc_pm8150b = {
-> > +	.curr_table = curr_table_pm8150b,
-> > +	.n_current_limits = ARRAY_SIZE(curr_table_pm8150b),
-> > +};
-> > +
-> > +static const struct msm_vbus_desc msm_vbus_desc_pmi8998 = {
-> > +	.curr_table = curr_table_pmi8998,
-> > +	.n_current_limits = ARRAY_SIZE(curr_table_pmi8998),
-> > +};
-> > +
-> >  static const struct regulator_ops qcom_usb_vbus_reg_ops = {
-> >  	.enable = regulator_enable_regmap,
-> >  	.disable = regulator_disable_regmap,
-> > @@ -37,8 +57,6 @@ static struct regulator_desc qcom_usb_vbus_rdesc
-> > = { .ops = &qcom_usb_vbus_reg_ops,
-> >  	.owner = THIS_MODULE,
-> >  	.type = REGULATOR_VOLTAGE,
-> > -	.curr_table = curr_table,
-> > -	.n_current_limits = ARRAY_SIZE(curr_table),
-> >  };
-> >  
-> >  static int qcom_usb_vbus_regulator_probe(struct platform_device
-> > *pdev) @@ -48,6 +66,7 @@ static int
-> > qcom_usb_vbus_regulator_probe(struct platform_device *pdev) struct
-> > regmap *regmap; struct regulator_config config = { };
-> >  	struct regulator_init_data *init_data;
-> > +	const struct msm_vbus_desc *quirks;  
+> Add a check to sanity_check_inode() for i_nlink == 0.
 > 
-> 'quirks' is one way to put it ;) I'd call it 'desc' or 'data' but it's
-> totally a potayto/potahto discussion
+> [Chao Yu: rebase the code and fix orphan inode recovery issue]
+> Reported-by: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
+> Fixes: 39a53e0ce0df ("f2fs: add superblock and major in-memory structure")
+> Signed-off-by: Leo Stone <leocstone@gmail.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c | 4 ++++
+>  fs/f2fs/f2fs.h       | 1 +
+>  fs/f2fs/inode.c      | 6 ++++++
+>  3 files changed, 11 insertions(+)
 > 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index bd890738b94d..ada2c548645c 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -751,6 +751,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+>  	if (is_sbi_flag_set(sbi, SBI_IS_WRITABLE))
+>  		f2fs_info(sbi, "orphan cleanup on readonly fs");
+>  
+> +	set_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
 
-Is there a reasonable name for that? I suspect that later chips may add
-more to the structure. I am happy to change it as there is at least one
-more revision for this series.
+What about using SBI_POR_DOING?
 
-> >  	int ret;
-> >  	u32 base;
-> >  
-> > @@ -68,6 +87,12 @@ static int qcom_usb_vbus_regulator_probe(struct
-> > platform_device *pdev) if (!init_data)
-> >  		return -ENOMEM;
-> >  
-> > +	quirks = of_device_get_match_data(dev);
-> > +	if (!quirks)
-> > +		return -ENODEV;
-> > +
-> > +	qcom_usb_vbus_rdesc.curr_table = quirks->curr_table;
-> > +	qcom_usb_vbus_rdesc.n_current_limits =
-> > quirks->n_current_limits; qcom_usb_vbus_rdesc.enable_reg = base +
-> > CMD_OTG; qcom_usb_vbus_rdesc.enable_mask = OTG_EN;
-> >  	qcom_usb_vbus_rdesc.csel_reg = base +
-> > OTG_CURRENT_LIMIT_CFG; @@ -80,18 +105,21 @@ static int
-> > qcom_usb_vbus_regulator_probe(struct platform_device *pdev) rdev =
-> > devm_regulator_register(dev, &qcom_usb_vbus_rdesc, &config); if
-> > (IS_ERR(rdev)) { ret = PTR_ERR(rdev);
-> > -		dev_err(dev, "not able to register vbus reg %d\n",
-> > ret);
-> > +		dev_err(dev, "Failed to register vbus reg %d\n",
-> > ret); return ret;
-> >  	}
-> >  
-> >  	/* Disable HW logic for VBUS enable */
-> >  	regmap_update_bits(regmap, base + OTG_CFG, OTG_EN_SRC_CFG,
-> > 0); 
-> > +	dev_dbg(dev, "Registered QCOM VBUS regulator\n");  
-> 
-> Not sure how useful this is given the previous call creates a sysfs
-> entry on success, but sure
-> 
-> Konrad
-
-I like having a "I'm here" message so I can see when something is
-loaded and to know where in the boot log it happened. Happy to remove it
-if that is the standard.
-
-James
-
+> +
+>  	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
+>  	orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
+>  
+> @@ -778,9 +780,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+>  		}
+>  		f2fs_put_page(page, 1);
+>  	}
+> +
+>  	/* clear Orphan Flag */
+>  	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
+>  out:
+> +	clear_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
+>  	set_sbi_flag(sbi, SBI_IS_RECOVERED);
+>  
+>  	return err;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 05879c6dc4d6..1c75081c0c14 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1322,6 +1322,7 @@ enum {
+>  	SBI_IS_CLOSE,				/* specify unmounting */
+>  	SBI_NEED_FSCK,				/* need fsck.f2fs to fix */
+>  	SBI_POR_DOING,				/* recovery is doing or not */
+> +	SBI_ORPHAN_RECOVERY,			/* orphan inodes recovery is doing */
+>  	SBI_NEED_SB_WRITE,			/* need to recover superblock */
+>  	SBI_NEED_CP,				/* need to checkpoint */
+>  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index d6ad7810df69..02f1b69d03d8 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -386,6 +386,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+>  		}
+>  	}
+>  
+> +	if (inode->i_nlink == 0 && !is_sbi_flag_set(sbi, SBI_ORPHAN_RECOVERY)) {
+> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
+> +			  __func__, inode->i_ino);
+> +		return false;
+> +	}
+> +
+>  	return true;
+>  }
+>  
+> -- 
+> 2.48.1.502.g6dc24dfdaf-goog
 
