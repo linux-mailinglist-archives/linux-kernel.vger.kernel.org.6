@@ -1,99 +1,55 @@
-Return-Path: <linux-kernel+bounces-511454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F05DA32B3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:13:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DAD6A32B42
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:14:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B04C8164732
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623BC1884D82
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59F621127F;
-	Wed, 12 Feb 2025 16:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC66212FB3;
+	Wed, 12 Feb 2025 16:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SgZcGpe9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ssiqaj8b"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9466A1B21AD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE1D1D89E4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739376816; cv=none; b=hITBjddQropTPZmXk5YtLAoIYXX07o4NenFprsKFQSiISCfilaaI3l8VDaVrL+2a6YWnVLs49+dqzZ51muhKxLHG8AhPP+MeC4ANmovS5xfjHdtv9L8W6U8eWfIVtZSd2y7AK8wOCdoCRGppk07ORnZGR4yG6xp6aerngFv612E=
+	t=1739376834; cv=none; b=lmkGgrmPtODwtRM07xBYB3sNQN6pc0Qsjh6ogKW0XLNMJlEH/Gf3kpuHNJW9UPFoEQS85nSkGOBBColfhPMbsGcsD1n+dtpLmVoTN7R9X+xjpk6uYt40Avg6QKllI2Cc2Cw5QkohAlLBuzG0mpCq1bLkY6PzBADDBzg2xuJmVfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739376816; c=relaxed/simple;
-	bh=80ekF0izsJI++qv/1xH74L7dJLq+6w8MrPpsyjQMmOc=;
+	s=arc-20240116; t=1739376834; c=relaxed/simple;
+	bh=eaqQ1KPDcaSO3s+GkFMNZ4xLOMCSPwH/klSMD0aEMDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJNIRO03W68kDe1TJAYhhTluSlohAqHriL+lgj71mLWifey/HqEcA6lomGRcEry5UTFnnw1JiLMUaGKvFTfSwc41BMBizfKoBOvjmYQ4xGTMdyyg/ga2zR47gyIsEVcgF3xIA1t4HefCZLfirlF9FdO8BE6yG6S7ECvWhj3Bnvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SgZcGpe9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C9YpuB015782
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:13:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=m6Zh2vn1ljsfh172oD9RbBFC
-	E7vn6VZybrnfut1DXnw=; b=SgZcGpe9OU5Tp8C7tQhPBW32rgA6otFDUSaDaaoV
-	2HIeUUIf1rZPt0JlwutaztR3Zk/LZUhzeBej2X5S24o0LgqfZd1a5uIqU+u9zPhA
-	YAtgU8kdEsw0CSmraOVsttw73Fa+pUpfClZoAzlnYBKdTTQVqHAL+TWULSbVMT/a
-	kr/+PHCwdpEMoywHRxMiO0dC+TVbY/X05h1TCBZ+LDXzNBQbq8KKgl55lwtHA/8d
-	f9queqkVj4UCdRa+yrlQAnYWnJkosIjJCLVWkf+b2dDldFc51Q/+H3+xG/fvTwIz
-	CIN4SR3K+5wxB0xzVvujWKxAHv3E5YV/BgPMQDRkFfUTVw==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rgpgjbys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:13:33 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fbfa786aa4so1817716a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:13:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739376813; x=1739981613;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m6Zh2vn1ljsfh172oD9RbBFCE7vn6VZybrnfut1DXnw=;
-        b=jUIbsMvpzHUMIPOIxSWeTueDRerqxdDGplF1eYaOZdgmXdivBXDcvsEiXjTNKm+xaE
-         yYohPocXFuR7f85Q2Yk1/+TAgEm8SpDoE1b1jVN/4Y0W4Y5AM4UeSaNt+Y4A0WExx4Iu
-         czULp3NH/qTr342ToJKrsoxYTTI7bZq5QK3G3BygGEeg2U0SUOyftCVNn86xhdMC6jaC
-         k8QJr8d3jnvx9h8ZGD9t8FFsnwZW1ijzZxCu/ZylpFw+UQyuzH9umaUHilxn4ZCFkGBg
-         6iICTfw2RZsz/Hot6utatZM5DL41KYHZ71AUnu6Bs8OiOtO6OoZGMC3OtbqdEGiB1um2
-         XRmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGh1ychKEKaocr7oIvYEultMV7CuTEvMcdabzyE0D1TJxUDJGbJSWIlWVbPa48pQ+qfmOtx9IM4z9/nls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjxvY9gzRaM8YLHzRB/SNzqNkgsFk+sO9Vf+ntXqkKIsPVDQ4m
-	WBTOVCLfOEAz1PnTQASq2+npnCF5phrTftg9hXsDazi0NjLKJD0zuELks/yBJTZ2yBkskKXtjKl
-	BkzbXo9L429dnnH+OQ3QrELkrFKW/cSc4r8g0rMF03mqd7fpTj+w0d3ajj0Fnvu0=
-X-Gm-Gg: ASbGncunHjTCbAOPO/nR8bb26fTTc57qLa2cmHfOeRRbuEs3bK64uo7MZd+aWLnhUwO
-	oiofOnX0Y6Z7px4sCnlDLlahPKd4GMSrVTTXbWqVqrGUr4m4aac/DFkCAJLC3LK/CtWXHFLIJA/
-	nrywGDX4/T1yXw9gKVWWO/dN/JUsmbEG1A7JnJvtIirlGBLwPXvLZHnSHT+A2uypWYD8bN3xPEJ
-	3yoHqlQ3wu8XWR2zQUExrioA69n9851tWV7wsdsB74UHWIhSdjhgzOBXmq67EmReSrgQ09oAX7I
-	IS+3+zgU/JQ+cnd4+Q58MP15WMagaCeK
-X-Received: by 2002:a17:90b:1f81:b0:2fa:4926:d18d with SMTP id 98e67ed59e1d1-2faa0982d50mr13003889a91.13.1739376812666;
-        Wed, 12 Feb 2025 08:13:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHXS9GeexUtgjKmnddattp7uEgbRq+tXnjW66DhGPRPBEcNWpdaDXy+oRX9gNRBnjFd6OU6fA==
-X-Received: by 2002:a17:90b:1f81:b0:2fa:4926:d18d with SMTP id 98e67ed59e1d1-2faa0982d50mr13003843a91.13.1739376812212;
-        Wed, 12 Feb 2025 08:13:32 -0800 (PST)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2faa4aeb7cbsm2264432a91.0.2025.02.12.08.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 08:13:28 -0800 (PST)
-Date: Wed, 12 Feb 2025 21:43:11 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Saranya R <quic_sarar@quicinc.com>,
-        Frank Oltmanns <frank@oltmanns.dev>
-Subject: Re: [PATCH v2] soc: qcom: pdr: Fix the potential deadlock
-Message-ID: <Z6zIl/6s2XfSvm71@hu-mojha-hyd.qualcomm.com>
-References: <20250129155544.1864854-1-mukesh.ojha@oss.qualcomm.com>
- <nqsuml3jcblwkp6mcriiekfiz5wlxjypooiygvgd5fjtmfnvdc@zfoaolcjecpl>
- <Z6nE0kxF2ipItB2r@hu-mojha-hyd.qualcomm.com>
- <Z6nKOz97Neb1zZOa@hovoldconsulting.com>
- <Z6uDv3c3DkmgumnM@hu-mojha-hyd.qualcomm.com>
- <Z6xr3ylNSC6iYf-C@hovoldconsulting.com>
- <Z6x_GJg92ddzoRwQ@hovoldconsulting.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1f6v3UVWnWG+KE0UAeWy4W/bbfYLex8jCt+Yv9ODTaUgrVCICWQEwjmd5oBhM8xteIXTLjl2mOcW5PpiyYJeaYkZVBRL/5bN0/7nV7VAu6iDpwp0vieBaIwF2z6y36c5Lggjv3jJZp61d+KlKe9UQDC+y+o0zHfjfIwSy189G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ssiqaj8b; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 12 Feb 2025 16:13:44 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739376829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uQjPm/FYeJonJ+z609Qz/2KCORZ2hGgk5RPersdsl3o=;
+	b=ssiqaj8bx4Ch1HBsrZI8yA5xQdbQkDNsLfTdGX3yPmgCupk3UOsCaw/C2n/0gvVfVwJVlZ
+	bwcgHov4uaQeFVvDfcA1haSFA0r00hzbX74WUnc5cXAGNsX01EcgV5xUa9LYxwnZZt/TmU
+	tP+9+dhmPMdKDUhJZnmEVrBp5FZW9yA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 03/18] zram: remove crypto include
+Message-ID: <Z6zIuC0Dv2pcwSDy@google.com>
+References: <20250212063153.179231-1-senozhatsky@chromium.org>
+ <20250212063153.179231-4-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,91 +58,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z6x_GJg92ddzoRwQ@hovoldconsulting.com>
-X-Proofpoint-ORIG-GUID: FnsOO70BrlmyBFe0bSa-mRKknuca1K_m
-X-Proofpoint-GUID: FnsOO70BrlmyBFe0bSa-mRKknuca1K_m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
- priorityscore=1501 mlxscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502120120
+In-Reply-To: <20250212063153.179231-4-senozhatsky@chromium.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Feb 12, 2025 at 11:59:36AM +0100, Johan Hovold wrote:
-> On Wed, Feb 12, 2025 at 10:37:35AM +0100, Johan Hovold wrote:
-> > On Tue, Feb 11, 2025 at 10:37:11PM +0530, Mukesh Ojha wrote:
-> > > On Mon, Feb 10, 2025 at 10:43:23AM +0100, Johan Hovold wrote:
-> 
-> > > > A Link tag to my report would be good to have as well if this fixes the
-> > > > audio regression.
-> > > 
-> > > I see this is somehow matching the logs you have reported, but this deadlock
-> > > is there from the very first day of pdr_interface driver.
-> > > 
-> > > [   14.565059] PDR: avs/audio get domain list txn wait failed: -110
-> > > [   14.571943] PDR: service lookup for avs/audio failed: -110
-> > 
-> > Yes, but using the in-kernel pd-mapper has exposed a number of existing
-> > bugs since it changes the timing of events enough to make it easier to
-> > hit them.
-> > 
-> > The audio regression is a very real regression for users of Snapdragon
-> > based laptops like, for example, the Lenovo Yoga Slim 7x.
-> > 
-> > If Bjorn has confirmed that this is the same issue (I can try to
-> > instrument the code based on your analysis to confirm this too), then I
-> > think it would be good to mention this in the commit message and link to
-> > the report, for example:
-> > 
-> > 	This specifically also fixes an audio regression when using the
-> > 	in-kernel pd-mapper as that makes it easier to hit this race. [1]
-> > 
-> > 	Link: https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/ # [1]
-> > 
-> > or similar.
-> 
-> I can confirm that audio regression with the in-kernel pd-mapper appears
-> to be caused by the race that this patch fixes.
-> 
-> If I insert a short (100-200 ms) sleep before taking the list lock in
-> pdr_locator_new_server() to increase the race window, I see the audio
-> service failing to register on both the X1E CRD and Lenovo ThinkPad
-> X13s:
-> 
-> [   11.118557] pdr_add_lookup - tms/servreg / msm/adsp/charger_pd
-> [   11.443632] pdr_locator_new_server
-> [   11.558122] pdr_locator_new_server - taking list lock
-> [   11.563939] pdr_locator_new_server - releasing list lock
-> [   11.582178] pdr_locator_work - taking list lock
-> [   11.594468] pdr_locator_work - releasing list lock
-> [   11.992018] pdr_add_lookup - avs/audio / msm/adsp/audio_pd
-> [   11.992034] pdr_add_lookup - avs/audio / msm/adsp/audio_pd
-> [   11.992224] pdr_locator_new_server
->     < 100 ms sleep inserted before taking lock in pdr_locator_new_server() >
-> [   11.997937] pdr_locator_work - taking list lock
-> [   12.093984] pdr_locator_new_server - taking list lock
-> [   17.120169] PDR: avs/audio get domain list txn wait failed: -110
-> [   17.127066] PDR: service lookup for avs/audio failed: -110
-> [   17.132893] pdr_locator_work - releasing list lock
-> [   17.139885] pdr_locator_new_server - releasing list lock
-> 
-> [ On the X13s, where I have not hit this issue with the in-kernel
->   pd-mapper, I had to make sure to insert the sleep only on the second
->   call, possibly because of interaction with the charger_pd registration
->   which happened closer to the audio registration. ]
-> 
-> Please add a comment and link to the audio regression report as I
-> suggested above, and feel free to include my:
-> 
-> 	Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> 
-> Thanks for fixing this!
+On Wed, Feb 12, 2025 at 03:27:01PM +0900, Sergey Senozhatsky wrote:
+> Remove a leftover crypto header include.
 
-Thanks for putting extra effort in reproducing the issue and testing.
+The subject and log is not very descriptive imo. We stop using
+CRYPTO_MAX_ALG_NAME and define our own limit in zram, and removing the
+include is just an artifact of that.
 
--Mukesh
 > 
-> Johan
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> ---
+>  drivers/block/zram/zcomp.c    | 1 -
+>  drivers/block/zram/zram_drv.c | 4 +++-
+>  drivers/block/zram/zram_drv.h | 1 -
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
+> index e83dd9a80a81..c393243eeb5c 100644
+> --- a/drivers/block/zram/zcomp.c
+> +++ b/drivers/block/zram/zcomp.c
+> @@ -8,7 +8,6 @@
+>  #include <linux/sched.h>
+>  #include <linux/cpu.h>
+>  #include <linux/cpuhotplug.h>
+> -#include <linux/crypto.h>
+>  #include <linux/vmalloc.h>
+>  
+>  #include "zcomp.h"
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index 43f460a45e3e..12fb260e3355 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -44,6 +44,8 @@ static DEFINE_MUTEX(zram_index_mutex);
+>  static int zram_major;
+>  static const char *default_compressor = CONFIG_ZRAM_DEF_COMP;
+>  
+> +#define ZRAM_MAX_ALGO_NAME_SZ	64
+> +
+>  /* Module params (documentation at end) */
+>  static unsigned int num_devices = 1;
+>  /*
+> @@ -1149,7 +1151,7 @@ static int __comp_algorithm_store(struct zram *zram, u32 prio, const char *buf)
+>  	size_t sz;
+>  
+>  	sz = strlen(buf);
+> -	if (sz >= CRYPTO_MAX_ALG_NAME)
+> +	if (sz >= ZRAM_MAX_ALGO_NAME_SZ)
+>  		return -E2BIG;
+>  
+>  	compressor = kstrdup(buf, GFP_KERNEL);
+> diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
+> index 63b933059cb6..97c98fa07954 100644
+> --- a/drivers/block/zram/zram_drv.h
+> +++ b/drivers/block/zram/zram_drv.h
+> @@ -17,7 +17,6 @@
+>  
+>  #include <linux/rwsem.h>
+>  #include <linux/zsmalloc.h>
+> -#include <linux/crypto.h>
+>  
+>  #include "zcomp.h"
+>  
+> -- 
+> 2.48.1.502.g6dc24dfdaf-goog
+> 
 
