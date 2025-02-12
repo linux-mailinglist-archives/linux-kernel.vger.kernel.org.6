@@ -1,277 +1,81 @@
-Return-Path: <linux-kernel+bounces-511849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCD0A33078
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:08:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A33A3307D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E7E1685E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:08:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 817943A2294
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220CD201013;
-	Wed, 12 Feb 2025 20:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66098201022;
+	Wed, 12 Feb 2025 20:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nOx3ZAuy"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkdxz7t/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E07A20103D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8A71FF7D7;
+	Wed, 12 Feb 2025 20:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739390886; cv=none; b=jUPM6MLeH/xx6bYKspZ/ggRT+3Wf0rC/dWtu46Fm8mUCitS5h15oc8WY38LTRU6LhAHQrq6UHoM296AZBOvpX++zjQ8v1kzcXkX4ZF/1CaRwlFQzFPgBXwGtG0jzhRSyqfhZnysLXr50ZVK3idh6Mq2DetpXtHiu1C32hbunteo=
+	t=1739391024; cv=none; b=SIee9Nb4DY9JIMrhNe2gqjoD7B2URn1NH60AyJQrULqdiJDH3eVIxPdwMwRY7n8oaVpw23tWSYFh8QdzRq/4+HMqX+mvSNePARHqeIc/49YIp3FdK1Q9WQn0xX7V447aBBXBxV+Xcd/0VAZWSg4TVlA2lirIZp0hOGgrRXml0K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739390886; c=relaxed/simple;
-	bh=khSDGr/HZLTO+nneeIVjM+UO5LunJkeAXO6VcsfdNmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BiP8Zyylyx0rXdhv7YyP4rNgo5BHnixQpVVZhZSJX5lDTEddNHg44X48wvrQ9083O6Rsf8wcnl4u8pwV1OjkFTfc9MQ4MUXbqkgwU4YRel8P0NEfowgVVkGEDIvqbTA4348vtQkGIh/nm2H45VDqoe5V7VP+SspA40YN2ZfrAdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nOx3ZAuy; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab7ee6f5535so3071466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:08:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739390882; x=1739995682; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iu/7BkGsGBE91wCLd243z0DyD6Dxurxs3l5CaDlz+Xg=;
-        b=nOx3ZAuyrVPg+boOfaZepRm5Se9iANC+ddRiLCglXx3jqlFkex5K7qWKMgjAxibS9L
-         GTz2C4j9UXc5yNCTmD2qJ0a6Y1X3NnENUsF7VGuZH95zwCsA3OEXatmynKu502cQA0Ww
-         LBQyZ0VGu9CjS/pl7fMcqNvEfL1saenGzhS8RfoKuaMjGBWHsP5FrVagdGY9Q9VPr6a5
-         irc8OMKXJE2PgWtQEaz+HeeF5AbqXCZUHHbUKDhTt5UR3umPB1bNirXORymTUFqQbcoC
-         arkKrmL8uqlSSv5tXLIjgSv9gp433TkrZgTnWlIDqjgXg4titxEQtCy76m/BMM1FLMUi
-         XceA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739390882; x=1739995682;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iu/7BkGsGBE91wCLd243z0DyD6Dxurxs3l5CaDlz+Xg=;
-        b=lO8HY12w7Sek01BYf5vjgyIlLjUT/tVT8pCu5StkffUBbooDG8eMDh2YblwEaZ53jt
-         s06y0L/iaVCWEqI7l4JXdXjdrChuubwT8oiTtHK3ErAjlQnLsz6bkMj24/GUgdGum171
-         WKVf87MWkpI1AMv3uD9cT5t3cxRVf0jnpxrkdXcMwbJy7Dl+bubV/G19S3iqYsRLPLWH
-         mY6bgEgfvyansci3MzbrTSg5xrfV1tLx/NKy2ZHVNFmcpmVKaHHMhhcWibLQtDImAM17
-         h2gBlzAUbjHCFcQw774mBzGCPN3Ir4ygUPj3CAGpptpRCnWtj/Jpz+MRMQsq/QKUg4Eb
-         d+HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjZW0A+9G3d13n7t+m4hbu4dyChrib7XdShXOlXYuJv7iek3X+fAuyZyjWbNJ1+PNQgHpgU5N8Oic27yg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiBn5UkrKNZrltNjVPxnpGfWuWA77AbOPcarx+cBcEnGeKwObG
-	Q5k8dnjhYVm7qicPM75SvDT5XyammgvJeHOyyAwWEx3CmKyDMc0kxEBtIFHmY5U=
-X-Gm-Gg: ASbGncvZ4O3FJsf2FpJK1C/FIo0Iw3zQYV3jRjGck7+K3JzNvTOAsGGVMst51I7J8OX
-	3JysSU9ZTWm8HApaj7YVrqcOYO3i1zmC4UUR94HINoAOaFgY64VqCI7fa3sOtcmQ0cDnPDoAi+9
-	gqu9+AonpdVLPrG4DhyPSebL29BClfmUbmSBrETxsgcg24MoW+OUTnro5hObgYS6sKD5WJ50Vgo
-	jc5+aqw88SVYPsh7JUkA3sO3vx2XL+v6dpcknRguKQOQFA29Yn9tg+m7l/+LwNle+zR8W4FQrpg
-	AEF2yxfE62xKJmKsqckTtyVvCiKQurjeEu4=
-X-Google-Smtp-Source: AGHT+IGJXdMoTs2hWEXInTR+ltJbHmJj8H/ju9vPMe3A99qcrdj0eyslJQbPiSzl9wG+clAd5ieZpw==
-X-Received: by 2002:a17:907:3da5:b0:aae:b259:ef5c with SMTP id a640c23a62f3a-ab7f31906bdmr184163766b.0.1739390880917;
-        Wed, 12 Feb 2025 12:08:00 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7cf46bf57sm539299666b.165.2025.02.12.12.07.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 12:08:00 -0800 (PST)
-Message-ID: <ab2394be-fe1c-46c1-9940-53b4ee1afc5b@linaro.org>
-Date: Wed, 12 Feb 2025 21:07:57 +0100
+	s=arc-20240116; t=1739391024; c=relaxed/simple;
+	bh=MnKhK0zOJBzcyNRgjiIUC2lRoRSPV9C2Ro3ePenE6bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QdpOYYEe5E9R3b4hJcjbL3oESTObo0+b/PYPSUT4d9qgZ7WI6Zq9qgUW3G7ll3kVAXu/OBdKedtgswPKbGXc87zu+FMefN+sdvrZ6X8Ym2oDtk8cEoUcszfI5s8/4Y0MuJOImzxsa/gyagmi59JdjYqtDUwwBpJMGlgeFxhmdbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkdxz7t/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0038AC4CEDF;
+	Wed, 12 Feb 2025 20:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739391024;
+	bh=MnKhK0zOJBzcyNRgjiIUC2lRoRSPV9C2Ro3ePenE6bk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mkdxz7t/rLARM5ml+gzAnpeA3F/KcTQ2v9DqvEEdbHyf72+3F6QaGzDtjo+Uxg/px
+	 WGL4Rq+XIAhOJXJg+J3pD6BGhPlP40EDpiWpLe+0XXrDfxQOGW+2yXrXzqkGK6blhn
+	 vG4/7sKVlOMo+1uTmM4pd8snhgt9lXmiBQG6W9+MIgFMtppikqxJOmAp/+3FLYFBzm
+	 mCvFsmWBqvqCM2oxfnNYyymaCkvrcACrTfzFc9a7/T5y5HfqtAFvlR/shNPx/g5219
+	 3+wcDwGV5xLSQkPdh3NF0zDCtvrU1naDMKPCc5ItvCPMvWWsJTHw8jNgSDaxNf7Y48
+	 /LUdELGo1ageQ==
+Date: Wed, 12 Feb 2025 12:10:22 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	x86@kernel.org
+Subject: Re: [PATCH] x86/crc32: improve crc32c_arch() code generation with
+ clang
+Message-ID: <20250212201022.GB128826@sol.localdomain>
+References: <20250210210741.471725-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] media: dt-bindings: Add Sony IMX728
-To: Sebastian LaVine <slavine@d3embedded.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Abel Vesa <abel.vesa@linaro.org>, Achath Vaishnav <vaishnav.a@ti.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Bjorn Andersson <quic_bjorande@quicinc.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
- Fabio Estevam <festevam@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Hans Verkuil <hverkuil@xs4all.nl>,
- Javier Carrasco <javier.carrasco@wolfvision.net>, Jianzhong Xu <xuj@ti.com>,
- Julien Massot <julien.massot@collabora.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Kory Maincent <kory.maincent@bootlin.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mikhail Rudenko <mike.rudenko@gmail.com>, Nishanth Menon <nm@ti.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Stuart Burtner <sburtner@d3embedded.com>, Tero Kristo <kristo@kernel.org>,
- Thakkar Devarsh <devarsht@ti.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Umang Jain <umang.jain@ideasonboard.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, Will Deacon <will@kernel.org>,
- Zhi Mao <zhi.mao@mediatek.com>
-References: <20250212195656.69528-1-slavine@d3embedded.com>
- <20250212195656.69528-2-slavine@d3embedded.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20250212195656.69528-2-slavine@d3embedded.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250210210741.471725-1-ebiggers@kernel.org>
 
-On 12/02/2025 20:56, Sebastian LaVine wrote:
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description:
-> +      Specifier for the GPIO connected to the XCLR (System Reset) pin.
-
-s/Specifier for the GPIO connected to the//
-But you could say that it is active low, for example.
-
-> +
-> +  error0-gpios:
-> +    maxItems: 1
-> +    description:
-> +      Specifier for the GPIO connected to the XWRN pin.
-
-The same.
-
-> +
-> +  error1-gpios:
-> +    maxItems: 1
-> +    description:
-> +      Specifier for the GPIO connected to the XERR pin.
-> +
-> +  port:
-> +    $ref: /schemas/graph.yaml#/properties/port
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      endpoint:
-> +        $ref: ../video-interfaces.yaml#
-> +        unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - port
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +        clock-frequency = <400000>;
-
-Drop, not really relevant.
-
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        camera@1a {
-> +            compatible = "sony,imx728";
-> +            reg = <0x1a>;
-> +
-> +            clocks = <&fixed_clock>;
-> +            clock-names = "inck";
-> +
-> +            reset-gpios = <&gpio4 17 GPIO_ACTIVE_LOW>;
-> +            error0-gpios = <&sens_exp 1 GPIO_ACTIVE_HIGH>;
-> +            error1-gpios = <&sens_exp 2 GPIO_ACTIVE_HIGH>;
-> +
-> +            port {
-> +                camera1: endpoint {
-> +                    remote-endpoint = <&vin1a_ep>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 575f0e6f0532..50bff3558d7d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21885,6 +21885,12 @@ T:     git git://linuxtv.org/media.git
->  F:     Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml
->  F:     drivers/media/i2c/imx415.c
+On Mon, Feb 10, 2025 at 01:07:41PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> +SONY IMX728 SENSOR DRIVER
-> +M:     Stuart Burtner <sburtner@d3embedded.com>
-> +L:     linux-media@vger.kernel.org
-> +S:     Odd Fixes
-
-
-Hm, why only odd fixes? If you don't care about driver, we also kind of
-might not care and remove it soon.
-
-
-> +F:     Documentation/devicetree/bindings/media/i2c/sony,imx728.yaml
-> +
->  SONY MEMORYSTICK SUBSYSTEM
->  M:     Maxim Levitsky <maximlevitsky@gmail.com>
->  M:     Alex Dubov <oakad@yahoo.com>
-> --
-> 2.34.1
+> crc32c_arch() is affected by
+> https://github.com/llvm/llvm-project/issues/20571 where clang
+> unnecessarily spills the inputs to "rm"-constrained operands to the
+> stack.  Replace "rm" with ASM_INPUT_RM which partially works around this
+> by expanding to "r" when the compiler is clang.  This results in better
+> code generation with clang, though still not optimal.
 > 
-> Please be aware that this email includes email addresses outside of the organization.
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> This applies to
+> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next
 
+Applied to crc-next.
 
-Obviously. Please drop it. You can use b4 relay if you need to escape
-corporate junk.
-
-Best regards,
-Krzysztof
+- Eric
 
