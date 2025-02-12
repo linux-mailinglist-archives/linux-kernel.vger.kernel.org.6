@@ -1,179 +1,143 @@
-Return-Path: <linux-kernel+bounces-511747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8B6A32F2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:03:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5CEA32F31
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42DBA16833E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6353A2064
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57092260A5E;
-	Wed, 12 Feb 2025 19:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C7B260A5D;
+	Wed, 12 Feb 2025 19:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KTV9kS5R"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CxO6A8hC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2904C1FC0FD;
-	Wed, 12 Feb 2025 19:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B491FC0FD;
+	Wed, 12 Feb 2025 19:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739387005; cv=none; b=ZMkJdv7vssrtCKVD+bj28/55NKvMhzbAxrvx59YVvZtF4fMBj0PTNSVU6KXIDOBuPcU+hDMxj5DTk7tA+zLGaSJcOcC3MYiUG0Zf4J703ESQUX+CPkcD9WbKgvQyRS/Tubq7fgAgvDZ2Qo4zHwryR4gTGZMPk/WkE5CLkJK0Ayw=
+	t=1739387059; cv=none; b=f2R3HcD4WrUDEdesLoUSKMcuJtGvYQm8A1ybILDH8wKOmu0ZIS0WJRKdzkpm9GwdfARwg0XOEoStlYHiURZ2eO86kl+GRCNqZWzDs9bORZYe1tkc4MWX5fGr3PDdOmhfiii/P14BwQymhpIQtXwmDf4VWnf8c41o+HmzPcGuCmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739387005; c=relaxed/simple;
-	bh=Q5WCinM78joO19bz4ipSZN2nHA4SwWHLZZzByfpdgQc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n2I9FxBrowEzjs1gWRuqbUwAMLCQdkc0EgsnvJWEVLNyGQuh9RK2JZAnnYseHHEClQfTyBgISwdTc3KstMISM92iZN1k2NFGwl9O6mlCh0m2k0egUGWUJG2HSAQIdmyXHccsphzm+jE9vq/VEMJJbYj8DJ6ns2QldGRrEY6EafQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KTV9kS5R; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f9b1bc594dso993507b3.0;
-        Wed, 12 Feb 2025 11:03:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739387003; x=1739991803; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Li3QvOn0MBSxnCwMnn2tzHDETkUA5jkI5FjmbsImGcQ=;
-        b=KTV9kS5R8OKlNHn2R1jC0iGD+eRoplLYj64luTaGCdehBT4oLY64tZJ3ugq/PXvDQp
-         fIrH4Vhr+WQma2OPaJBxDy6ug3rem9Fzh03jhHkaFLtwP5Mx/f7r4GACiX8KyoZQgSB7
-         3jI5RtUsirAoaGn2x8GXk0uN8klbBCy/deC5A13QRZVY+g8i10TkAKr+qut1i7EnqYUP
-         DLNqhmfKBJNwqpyVFDpO9PSZ5drBXAc/v0LqbHASBNbjc07BT33qUAJ0F8OcRBFKVcIc
-         o+8bPxOydcPnEx/qHUJw+D/jwWG1Jf2ljwGRQbqcqdOyFmt3eypZnAcaUthpQMX9G/NI
-         8L3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739387003; x=1739991803;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Li3QvOn0MBSxnCwMnn2tzHDETkUA5jkI5FjmbsImGcQ=;
-        b=h56Q/7yKSDSEIJt9UoS9U2CzzqOi38VFkTV39Cg3+BgCu/7p7SnkBxiqSOIs734uiX
-         n/yJAAk4DEU8r9n/xBnuILpu6OA6SbE6vCH2Oh6IT7aAXugB9H1BEne2ToPqFkmmdl2h
-         o+5bgC2SmAvKlpX2E/MgpxoFmBuElXrSGAVCPlvL7gYmhw4iO7hFuvzz7XE0c7qhXbEY
-         K/uuhhVmYbhjLAWLwWQpFv2Rpzpq+pXY1rO37qMfO9qUGnmpzQT8tQ6LRcWI6JbEfVsi
-         VezCQS83sdy9hgM4IHPGQNL3ulgGygH+4bN3UJU5rbzUUMSzXOZeoPKYqjjtYK0FxrqL
-         KaSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfd4P8Cy+DaTTrnqQqkeWb2WRf/jqcR9siIqmofD7by3vn5uu8DZT+YlmRa0ZnJNKeFJkJw5OmTOiPPZo+djBIRj/C1g==@vger.kernel.org, AJvYcCUoS8iMw4WCBdOvmDKOONveVGkwQhf9axBZX3qV+RJoz2tKYLMVc/cUS9sDoteAC72A/Xpzp5jLJfZmtLBs@vger.kernel.org, AJvYcCWJ7ezWQMjdGISNEyQmN4X1ykXiaqZpKJsQxTceHxBseYUO/7HdJkrfEbmhf190Du6q2VTxI1QWiKxM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVIZIn1VVSeFwzTCFd5yCsmdhEkCJsZyA8cNniEM5Sc/qejGaS
-	UjW/2yyI++cLTvT1Qxj2TAGlCexRwiYmRtX8NvHIJydX2U9hrwjC
-X-Gm-Gg: ASbGncv2XKTzl5uPPHMvNraFOSm1g8xE9+DwfbUXLX4zU4+qScMz7UpjadLfJ/eYvGA
-	X5tJ9gHFSc0i1rZUjbeJrH3TLyYfyjDazMofGUa+WoU0z0HqyAuC5mZ1273Owlgnn3Z0LNOcHLY
-	qYj65WsT/chP4o/kI6u08lDqCw9nk8u+5NlYqKrcVYJKAClhNKLUC+sKC6L4SywLZsB6qOAxBMG
-	7sUCwxXGq06HpGRpUCO/qRKki8/fVmLudGvcmc12HI5ne79Osv+t7i+qpJwhUnDr/6h9AmyUPGL
-	pAKFsIGpaOT5/Ra/gPvc0UORFw==
-X-Google-Smtp-Source: AGHT+IEMDcy30J1r8ZQyPcNj7CY5wjrIU4TXGEmAeo+IbTY5sT7ecfDSaE3/dnVTG5EvzP2vpW4mRA==
-X-Received: by 2002:a05:690c:6988:b0:6f6:cad6:6b5a with SMTP id 00721157ae682-6fb1f19ba28mr57684867b3.13.1739387002932;
-        Wed, 12 Feb 2025 11:03:22 -0800 (PST)
-Received: from localhost.localdomain ([2800:bf0:179:113e:f067:4e25:4298:6451])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f99fce16d1sm28059507b3.23.2025.02.12.11.03.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 11:03:22 -0800 (PST)
-From: Kurt Borja <kuurtb@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Len Brown" <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Mario Limonciello" <mario.limonciello@amd.com>,
-	platform-driver-x86@vger.kernel.org,
-	"Kurt Borja" <kuurtb@gmail.com>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>
-Subject: [PATCH v2] ACPI: platform_profile: Improve platform_profile_unregister
-Date: Wed, 12 Feb 2025 14:03:08 -0500
-Message-ID: <20250212190308.21209-1-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739387059; c=relaxed/simple;
+	bh=BxoXSqBhEvRgMwVZ/Lsu4gBKNSrjVQ6Vg0s/Z8jm2bw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MJxvkHLYIiGDvxi8vUzNikZMZBdjf6aRYsbPSfHnbvCm0EadJLujXf8SIO6Uabard/Io1NBMZh0BqdDuBiDZztdW32A7dkAMFRAiDZdvsvYEii9aLGNL9XHrS7tLoISqhQlTCx1S1/LtmcnV8KWfy7bRv0sj1aUzMEjZ8K2zX18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CxO6A8hC; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739387058; x=1770923058;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BxoXSqBhEvRgMwVZ/Lsu4gBKNSrjVQ6Vg0s/Z8jm2bw=;
+  b=CxO6A8hCMTmkhSJ3aM9SdEJ8LWAXcUY0qB8do8LRpH/ikX6Gy4C0VEcz
+   RmqTeGo1C8ZJeeQAPvuvUlazNmXQxUFAtIq29iAjoYNRmqbTlYIuENwxd
+   TmDsEkSU3gV6pTycoAOQUan/doRdl8EFEcd7ipdjl7KGooo7S0SE7J9kq
+   2OvyIiKuFlSiqsCA/UGEvDRCJKeNP0pP3wBhmVH1Hc/ngPDTR9NgP+Y8s
+   Iu8LiwJJ2ZAYSnv4oS09emJ7H3OJMZMbQxkteHdI+viU2rDQ3xkvK1RLK
+   RWWf8dPoDDkx5rks3aY7zA0aXU939CXKbPoxWBJ/dIBzCYiW2Eyvw4wra
+   w==;
+X-CSE-ConnectionGUID: p8MfJOqtQ5um4A6er36/Uw==
+X-CSE-MsgGUID: OyUx1EqySwWo7RiNi6m/8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="50692888"
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="50692888"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 11:04:18 -0800
+X-CSE-ConnectionGUID: 9fa88icUR72valktVDhKhw==
+X-CSE-MsgGUID: Di7M1Du7RpyTDVR3QRe60Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="117915659"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 11:04:13 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tiI1p-0000000Avre-3MI0;
+	Wed, 12 Feb 2025 21:04:09 +0200
+Date: Wed, 12 Feb 2025 21:04:09 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v1 1/8] i2c: Introduce i2c_10bit_addr_from_msg()
+Message-ID: <Z6zwqbzd5evG0H2z@smile.fi.intel.com>
+References: <20250212163359.2407327-1-andriy.shevchenko@linux.intel.com>
+ <20250212163359.2407327-2-andriy.shevchenko@linux.intel.com>
+ <CAMuHMdW1wxQ0cddeE72D+Sii4HkT4bJfeTWX4-8FfHiFr+=3DA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW1wxQ0cddeE72D+Sii4HkT4bJfeTWX4-8FfHiFr+=3DA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Drivers usually call this method on error/exit paths and do not check
-for it's return value, which is always 0 anyway, so make it void. This
-is safe to do as currently all drivers use
-devm_platform_profile_register().
+On Wed, Feb 12, 2025 at 07:36:46PM +0100, Geert Uytterhoeven wrote:
+> On Wed, 12 Feb 2025 at 17:35, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > There are already a lot of drivers that have been using
+> > i2c_8bit_addr_from_msg() for 7-bit addresses, now it's time
+> > to have the similar for 10-bit addresses.
 
-While at it improve the style and make the function safer by checking
-for IS_ERR_OR_NULL before dereferencing the device pointer.
+...
 
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
-Hi all,
+> > +static inline u8 i2c_10bit_addr_from_msg(const struct i2c_msg *msg)
+> 
+> Having never used 10-bit addressing myself, or even looked into it,
+> it took me a while to understand what this helper really does...
+> So this returns the high byte of the artificial 16-bit address that
+> must be used to address a target that uses 10-bit addressing?
+> Hence I think this should be renamed, to better match its purpose.
 
-I made a little modification that I forgot in the last version.
+Since you are giving a constructive feedback, please, propose the name.
 
-Rafael, please tell me if you prefer different commits for this. Also
-should we WARN_ON(IS_ERR_OR_NULL)?
+> > +{
+> > +       /*
+> > +        * 10-bit address
+> > +        *   addr_1: 5'b11110 | addr[9:8] | (R/nW)
+> > +        *   addr_2: addr[7:0]
+> 
+> I think the second comment line does not belong here, as this function
+> doesn't care about that part.
 
-Based on the acpi branch of the linux-pm tree.
+I think the comment is okay to stay. It explains the full picture which is
+helpful. It may be extended to say that the function returns only addr_1.
 
-~ Kurt
+> > +        */
+> > +       return 0xf0 | ((msg->addr & GENMASK(9, 8)) >> 7) | (msg->flags & I2C_M_RD);
+> > +}
+> 
+> Probably you also want to add a similar but much simpler helper to
+> return the low byte?
 
-Changes in v2:
-  - Get reference to pprof after checking for IS_ERR_OR_NULL(dev)
-  - CC Mark Pearson (sorry!)
+Wouldn't it be too much?
 
- drivers/acpi/platform_profile.c  | 19 +++++++++----------
- include/linux/platform_profile.h |  2 +-
- 2 files changed, 10 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-index fc92e43d0fe9..ed9c0cc9ea9c 100644
---- a/drivers/acpi/platform_profile.c
-+++ b/drivers/acpi/platform_profile.c
-@@ -569,24 +569,23 @@ EXPORT_SYMBOL_GPL(platform_profile_register);
- /**
-  * platform_profile_remove - Unregisters a platform profile class device
-  * @dev: Class device
-- *
-- * Return: 0
-  */
--int platform_profile_remove(struct device *dev)
-+void platform_profile_remove(struct device *dev)
- {
--	struct platform_profile_handler *pprof = to_pprof_handler(dev);
--	int id;
-+	struct platform_profile_handler *pprof;
-+
-+	if (IS_ERR_OR_NULL(dev))
-+		return;
-+
-+	pprof = to_pprof_handler(dev);
-+
- 	guard(mutex)(&profile_lock);
- 
--	id = pprof->minor;
-+	ida_free(&platform_profile_ida, pprof->minor);
- 	device_unregister(&pprof->dev);
--	ida_free(&platform_profile_ida, id);
- 
- 	sysfs_notify(acpi_kobj, NULL, "platform_profile");
--
- 	sysfs_update_group(acpi_kobj, &platform_profile_group);
--
--	return 0;
- }
- EXPORT_SYMBOL_GPL(platform_profile_remove);
- 
-diff --git a/include/linux/platform_profile.h b/include/linux/platform_profile.h
-index 8ab5b0e8eb2c..d5499eca9e1d 100644
---- a/include/linux/platform_profile.h
-+++ b/include/linux/platform_profile.h
-@@ -47,7 +47,7 @@ struct platform_profile_ops {
- struct device *platform_profile_register(struct device *dev, const char *name,
- 					 void *drvdata,
- 					 const struct platform_profile_ops *ops);
--int platform_profile_remove(struct device *dev);
-+void platform_profile_remove(struct device *dev);
- struct device *devm_platform_profile_register(struct device *dev, const char *name,
- 					      void *drvdata,
- 					      const struct platform_profile_ops *ops);
-
-base-commit: 3e3e377dd1f300bbdd230533686ce9c9f4f8a90d
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
