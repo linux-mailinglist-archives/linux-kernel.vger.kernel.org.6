@@ -1,157 +1,97 @@
-Return-Path: <linux-kernel+bounces-510466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBC5A31D44
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:09:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56235A31D47
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83BE5166D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:09:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D807E188A785
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A961D1E0DB3;
-	Wed, 12 Feb 2025 04:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4E11DB124;
+	Wed, 12 Feb 2025 04:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ncbyeifZ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoijgSAC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59369271835;
-	Wed, 12 Feb 2025 04:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED2C1DE4D5;
+	Wed, 12 Feb 2025 04:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739333390; cv=none; b=JFE9FVRcJxMHkIqvLpJqeA5z2n2js9Xj5/EnRpaVG+DMoiTDowsrmyTdF5kc6aFj5Pb/MjdkB3G7NM4Obnal3QVztkTvd//bUc2HnGNYyPHI9rsO/dDqgna9JPHKs5gVZshJT0Hhz9CNIAPouMlu/8ap4RsXZnrTF5st2S/8VN4=
+	t=1739333406; cv=none; b=ic67Mbe7d4Vwj5Ej2cL3s42BldNo/TlmAnIxaqKwelWMhKNjjoVSB7RoIKYfHlgXcZuMSW1sUbxaIpfTkL5t2nAAvbpOzIsxfmmq5dXM88eT91TZ2eizzFTO8iweMTOgDikMbsW/M4JLKArknT/DO2BXBQ0P62s1iikjqmn8EQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739333390; c=relaxed/simple;
-	bh=tthhte5WpPBlPegC7zlEGximMq20wrabTaYfJhauCsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A462Ghb8oQHE8pLx+9iDQsMzMh9Q8wu8oYIAkFu/Hc5XiNuqWs6hpY+gQq0kZKXU8CqpS4nECc39XYxdB89sBXh/qEdV2k7rmlWrbNO3Ic7onEhvEZS7MosMR+dZ/M5zMI4zmTkJHa04zvD5mpNUd3UxBuZeLecnWZCPUsisdiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ncbyeifZ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1739333382;
-	bh=n4SLNZo+HWxGDF2NoR0UK+a6b8buuttTIBSMqkgcwlE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ncbyeifZUl7BNpOIJOpVGMnQ8L7gHWIJG/58yGPlTVo8OfF793g0L215vh+rpxlOo
-	 jPJddWm0OW8ae/Y/V/gXFWvDEKW5mvjwo/pUMa6cu+Z4iy3NQ307r30kelWxYguDkQ
-	 zX1eXHpIzs8WSx5EsBNe4nnAXz+oQ5w7B+g5FURe17WGIs+wq84Bl3Vm+ewv/JHMxi
-	 H3OE6+XHdMQxXv4R341iQP1mvrcyoV3RdbBgEID3NGSvsZaOqx66lSjtoR7izP/YVG
-	 tK+F8SCR2kZ+qni37ZYNJmBWEC8oVDYKB1DHfn8pH3wlPDHdSfP/H/MrGHCO43HXL8
-	 WuRKHpPK0oeZQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yt4Zs6TRlz4wcj;
-	Wed, 12 Feb 2025 15:09:41 +1100 (AEDT)
-Date: Wed, 12 Feb 2025 15:09:41 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vlastimil Babka <vbabka@suse.cz>, "Paul E. McKenney"
- <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Neeraj
- Upadhyay <neeraj.upadhyay@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the slab tree with the rcu tree
-Message-ID: <20250212150941.5e4fa1c9@canb.auug.org.au>
+	s=arc-20240116; t=1739333406; c=relaxed/simple;
+	bh=LfTqYMNqbDCdif5LqgS5/zDpDtXkvNu0iQqDL0rZSm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Axuc36JyWNvfDOBXwhXgSXlgntXMNeOXnQB4YQfmKGUdHDSFQwHd+XMKEzu1h3EbgO0Q5mOedjs5fMRP7e745oTvTgY4IgW/j5D/TLsxEUFq0OnZcx+VaAU7oxzqrubk8qjVE7bOf4HYkSSSLFTjyC2T3CJceCSYuwQseRXYJ2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoijgSAC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D29CC4CEDF;
+	Wed, 12 Feb 2025 04:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739333405;
+	bh=LfTqYMNqbDCdif5LqgS5/zDpDtXkvNu0iQqDL0rZSm8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XoijgSACpeHYNmrRqkpsja2L/mnGksF3YPY3mmltqefrFF0vhrkYuuIUYu2ay4+x3
+	 Z2Mq1AjdX6kpP1Yk40Owq3AU0CVRB9idFQOJ/WV8uUouC0wwhQsIwhor1bjP0MlAa4
+	 FJVnaJBdd7pC+a9aM41fOiQi4oFjlECLOtNxTdd3D9d9/zBVTFUMWoM1Ky48Vb6Bl1
+	 U7E7LZH38fvax6FN5Ir1FvWN0Ct8poE51V78ev9G5P+lfxZUC3Iz+o+uz02u6wLsaO
+	 Yp17Rev7jXMu9NXhoCAng59TtEB+XeIVAOs6BqUTkx1Q76qrVi5SayoRVg93th2LIu
+	 yqDnvZhs7XfCQ==
+Date: Wed, 12 Feb 2025 04:10:04 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	wei.liu@kernel.org, mhklinux@outlook.com, kys@microsoft.com,
+	haiyangz@microsoft.com, decui@microsoft.com,
+	catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, arnd@arndb.de,
+	jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+	skinsburskii@linux.microsoft.com, mukeshrathor@microsoft.com
+Subject: Re: [PATCH v3 0/2] hyperv: Move some features to common code
+Message-ID: <Z6wfHOPNUL2KcSG8@liuwe-devbox-debian-v2>
+References: <1738955002-20821-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IWehAMvErheNh3tvHouwiBl";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1738955002-20821-1-git-send-email-nunodasneves@linux.microsoft.com>
 
---Sig_/IWehAMvErheNh3tvHouwiBl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 07, 2025 at 11:03:20AM -0800, Nuno Das Neves wrote:
+> There are several bits of Hyper-V-related code that today live in
+> arch/x86 but are not really specific to x86_64 and will work on arm64
+> too.
+> 
+> Some of these will be needed in the upcoming mshv driver code (for
+> Linux as root partition on Hyper-V). So this is a good time to move
+> them to drivers/hv.
+> 
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+> Changes in v3:
+> * Just use percpu input page for the hypercall [Michael Kelley]
+> * Move the calls to hv_get_partition_id() back to arch code [Michael Kelley]
+> * Rename struct hv_get_partition_id to hv_output_get_partition_id
+>   [Michael Kelley]
+> 
+> Changes in v2:
+> * Fix dependence on percpu output page by using a stack variable for the
+>   hypercall output [Michael Kelley]
+> * Remove unnecessary WARN()s [Michael Kelley]
+> * Define hv_current_partition_id in hv_common.c [Michael Kelley]
+> * Move entire hv_proc.c to drivers/hv [Michael Kelley]
+> 
+> Nuno Das Neves (2):
+>   hyperv: Move hv_current_partition_id to arch-generic code
+>   hyperv: Move arch/x86/hyperv/hv_proc.c to drivers/hv
 
-Hi all,
-
-Today's linux-next merge of the slab tree got a conflict in:
-
-  kernel/rcu/tiny.c
-
-between commits:
-
-  84ae91018af5 ("rcutorture: Include grace-period sequence numbers in failu=
-re/close-call")
-  2db7ab8c1086 ("rcutorture: Expand failure/close-call grace-period output")
-  7acc2d90151f ("rcutorture: Make cur_ops->format_gp_seqs take buffer lengt=
-h")
-
-from the rcu tree and commit:
-
-  b14ff274e8aa ("slab, rcu: move TINY_RCU variant of kvfree_rcu() to SLAB")
-
-from the slab tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/rcu/tiny.c
-index 8a52aca686a5,7a34a99d4664..000000000000
---- a/kernel/rcu/tiny.c
-+++ b/kernel/rcu/tiny.c
-@@@ -246,31 -232,6 +232,20 @@@ bool poll_state_synchronize_rcu(unsigne
-  }
-  EXPORT_SYMBOL_GPL(poll_state_synchronize_rcu);
- =20
-- #ifdef CONFIG_KASAN_GENERIC
-- void kvfree_call_rcu(struct rcu_head *head, void *ptr)
-- {
-- 	if (head)
-- 		kasan_record_aux_stack(ptr);
--=20
-- 	__kvfree_call_rcu(head, ptr);
-- }
-- EXPORT_SYMBOL_GPL(kvfree_call_rcu);
-- #endif
--=20
- +#if IS_ENABLED(CONFIG_RCU_TORTURE_TEST)
- +unsigned long long rcutorture_gather_gp_seqs(void)
- +{
- +	return READ_ONCE(rcu_ctrlblk.gp_seq) & 0xffffULL;
- +}
- +EXPORT_SYMBOL_GPL(rcutorture_gather_gp_seqs);
- +
- +void rcutorture_format_gp_seqs(unsigned long long seqs, char *cp, size_t =
-len)
- +{
- +	snprintf(cp, len, "g%04llx", seqs & 0xffffULL);
- +}
- +EXPORT_SYMBOL_GPL(rcutorture_format_gp_seqs);
- +#endif
- +
-  void __init rcu_init(void)
-  {
-  	open_softirq(RCU_SOFTIRQ, rcu_process_callbacks);
-
---Sig_/IWehAMvErheNh3tvHouwiBl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmesHwUACgkQAVBC80lX
-0GxS5wf7BbSgzHps7mfyUWYTO4TIdMd1hxLeX2llH1x5pMJ4IZQWD+mswes1MFzj
-hc0IalEAiQX0x/3BAeujd4h/NdicoO8QHNTp5C/Ilu+bB42NPFxcm/K2CPyWo//Q
-ACDhG40WI8rzbFQujfZPj+uK8MYnwWJsps4wcUIY9rqjTe5NdjC7RBHAro+66n1n
-QRG74TgXFvQjvX7YClb1aC52JHR2l/PE+pLn0jBFV6i3tAGU6H5TeaW2rx7012NS
-YB3kYcCJpu5NHz6wCXiSHVHbL4wMqPP1frbfLZ0d55qBrUcm2llb7Bp7wqM0P35E
-xAPZERM4FOEvJgbx5xYhzjanR6LcvA==
-=Eaos
------END PGP SIGNATURE-----
-
---Sig_/IWehAMvErheNh3tvHouwiBl--
+Applied to hyperv-next. Thanks.
 
