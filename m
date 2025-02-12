@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-511716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8373BA32EAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:28:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1838A32EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:29:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB9A3A7A21
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:28:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F1303A7985
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A652425D55D;
-	Wed, 12 Feb 2025 18:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F0D25EFA6;
+	Wed, 12 Feb 2025 18:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eF44JGYY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCC525E446;
-	Wed, 12 Feb 2025 18:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8942E2116E0;
+	Wed, 12 Feb 2025 18:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739384926; cv=none; b=oETWMoq28JmpP5nDad7+5vY70HgQSNextQn7emqITd6CLFF6Ead3G9VVajY1y/qwXB4TQGG/PWK9sqTDzSF/DYZViDd90xf24As0F8R4n0rfDV8OiLFspKV+6iufs/L/JRaGs8ags6aOxXrAJRS5btIkE0+of6Pk6PmOPJaL08I=
+	t=1739384978; cv=none; b=rKvJqCOzJGX8JLKP8kGYGcmPIQ/js1dx16KhOERP8cnASiZVkKKsQ2anFOfCdtvulQC3PxhOwdi1vKIrBMgEDIjshHabrcm3pF3eUMiuByYaEFGFeSveTxDIwYWq47fk61+/i0Sq2d6v547j/FhIGw2begL2JO77YEkO7IjVOBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739384926; c=relaxed/simple;
-	bh=MEkWB4ja2rW/5DxYBYUfS8Zpe+WMG31MnhY7TpmVYNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BAlUqLsRKv19v5rQEzWU0ebjTw471rd6s9+dYfeYTzzDuEtzocyuyWfsiPagsP0EdOheCTUkJzrWSaj0CIAdsCU9Rzyw5QHW7GeYHFyzTJS1fTixvfrhvBzcVFGaFjXRKVJdtn68WKUCPUmn9OlT57mxgTixTGkU+vaRRzQjAJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD73C4CEDF;
-	Wed, 12 Feb 2025 18:28:42 +0000 (UTC)
-Date: Wed, 12 Feb 2025 18:28:40 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-Cc: anshuman.khandual@arm.com, will@kernel.org, ardb@kernel.org,
-	ryan.roberts@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
-	dave.hansen@linux.intel.com, akpm@linux-foundation.org,
-	chenfeiyang@loongson.cn, chenhuacai@kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	quic_tingweiz@quicinc.com, stable@vger.kernel.org
-Subject: Re: [PATCH v5] arm64: mm: Populate vmemmap/linear at the page level
- for hotplugged sections
-Message-ID: <Z6zoWMejCDlN2YF9@arm.com>
-References: <20250109093824.452925-1-quic_zhenhuah@quicinc.com>
+	s=arc-20240116; t=1739384978; c=relaxed/simple;
+	bh=/sWCr49y4RKiGymT+GIb+7irPIxq1eSs9+acjXDs/Sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ArrCe2dfCe9MM4Dcz4I1QisX4tgM1BCQfZW26yrSVdhY9ogxciD5WIiQXBnQzqZPTVA94TaUKxaqO+26eivRuVG+Ndne1VaJ+XdTx/gruH/Yh7ss1b8BaqAXKTb9bLREZksxqCSahmZqFqgmkpkjEaBGJJtb3aqKoerTXCv63zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eF44JGYY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61BF9C4CEDF;
+	Wed, 12 Feb 2025 18:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739384978;
+	bh=/sWCr49y4RKiGymT+GIb+7irPIxq1eSs9+acjXDs/Sk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eF44JGYYDXc5yymVFpeGzq0PrSiCXOlTo/i9DbrI2F/C//8gq+ZsXqdp5uKKoJCen
+	 MQYu05o3kXklsCW1AvkGPoFYi6UPN2JlGWEpgh94QLtTzRrQp6G+Hln0zlwlT7W35L
+	 GSZJ8NPCdQA6w2sYxDGz9/8ELHKDdb2k6oa3otqXOgF1L9+uT5zxKEEixT4PQdK9M3
+	 1Wrm4Iiim0Kj6j4rJ5IINbqvPCwfJRuiHwWtkQ3ex0C3p70q7KXpf18hGZdqAhN2Ic
+	 XuEQ5W/0HH5MsGrlDdOerdd2TOb3g44uU9T63hDCXo1W2HjBK22meNUZSmACH5igLy
+	 f/7IYXHsTgM4g==
+Date: Wed, 12 Feb 2025 10:29:36 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Eric Dumazet <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ "Andrii Nakryiko" <andrii@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?=
+ <toke@kernel.org>, "Jesper Dangaard Brouer" <hawk@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, <netdev@vger.kernel.org>,
+ <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v4 0/8] bpf: cpumap: enable GRO for XDP_PASS
+ frames
+Message-ID: <20250212102936.23617f03@kernel.org>
+In-Reply-To: <1dd14ece-578b-4fe6-8ef1-557b0f5d3144@intel.com>
+References: <20250205163609.3208829-1-aleksander.lobakin@intel.com>
+	<79d05c4b-bcfb-4dd3-84d9-b44e64eb4e66@intel.com>
+	<CANn89iLpDW5GK5WJcKezFY17hENaC2EeUW7BkkbJZuzJc5r5bw@mail.gmail.com>
+	<7003bc18-bbff-4edd-9db5-dd1c17a88cc0@intel.com>
+	<20250210163529.1ba7360a@kernel.org>
+	<0a8aac38-a221-4046-8c8a-a019602e25dc@intel.com>
+	<1dd14ece-578b-4fe6-8ef1-557b0f5d3144@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250109093824.452925-1-quic_zhenhuah@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 09, 2025 at 05:38:24PM +0800, Zhenhua Huang wrote:
-> On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is set
-> to 27, making one section 128M. The related page struct which vmemmap
-> points to is 2M then.
-> Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
-> vmemmap to populate at the PMD section level which was suitable
-> initially since hot plug granule is always one section(128M). However,
-> commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
-> existing arm64 assumptions.
+On Wed, 12 Feb 2025 16:55:52 +0100 Alexander Lobakin wrote:
+> > You mean to cache napi_id in gro_node?
+> > 
+> > Then we get +8 bytes to sizeof(napi_struct) for little reason...
+
+Right but I think the expectation would be that we don't ever touch
+that on the fast path, right? The "real" napi_id would basically
+go down below:
+
+	/* control-path-only fields follow */
+
+8B of cold data doesn't matter at all. But I haven't checked if
+we need the napi->napi_id access anywhere hot, do we?
+
+> > Dunno, if you really prefer, I can do it that way.  
 > 
-> Considering the vmemmap_free -> unmap_hotplug_pmd_range path, when
-> pmd_sect() is true, the entire PMD section is cleared, even if there is
-> other effective subsection. For example page_struct_map1 and
-> page_strcut_map2 are part of a single PMD entry and they are hot-added
-> sequentially. Then page_struct_map1 is removed, vmemmap_free() will clear
-> the entire PMD entry freeing the struct page map for the whole section,
-> even though page_struct_map2 is still active. Similar problem exists
-> with linear mapping as well, for 16K base page(PMD size = 32M) or 64K
-> base page(PMD = 512M), their block mappings exceed SUBSECTION_SIZE.
-> Tearing down the entire PMD mapping too will leave other subsections
-> unmapped in the linear mapping.
+> Alternative to avoid +8 bytes:
 > 
-> To address the issue, we need to prevent PMD/PUD/CONT mappings for both
-> linear and vmemmap for non-boot sections if corresponding size on the
-> given base page exceeds SUBSECTION_SIZE(2MB now).
+> struct napi_struct {
+> 	...
 > 
-> Cc: stable@vger.kernel.org # v5.4+
-> Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-> ---
-> Hi Catalin and Anshuman,
-> I have addressed comments so far, please help review.
-> One outstanding point which not finalized is in vmemmap_populate(): how to judge hotplug
-> section. Currently I am using system_state, discussion:
-> https://lore.kernel.org/linux-mm/1515dae4-cb53-4645-8c72-d33b27ede7eb@quicinc.com/
-
-The patch looks fine to me, apart from one nit and a question below:
-
-> @@ -1339,9 +1349,27 @@ int arch_add_memory(int nid, u64 start, u64 size,
->  		    struct mhp_params *params)
->  {
->  	int ret, flags = NO_EXEC_MAPPINGS;
-> +	unsigned long start_pfn = PFN_DOWN(start);
-> +	struct mem_section *ms = __pfn_to_section(start_pfn);
->  
->  	VM_BUG_ON(!mhp_range_allowed(start, size, true));
->  
-> +	/* should not be invoked by early section */
-> +	WARN_ON(early_section(ms));
-
-I don't remember the discussion, do we still need this warning here if
-the sections are not marked as early? I guess we can keep it if one does
-an arch_add_memory() on an early section.
-
-I think I suggested to use a WARN_ON_ONCE(!present_section()) but I
-completely forgot the memory hotplug code paths.
-
-> +
-> +	/*
-> +	 * Disallow BlOCK/CONT mappings if the corresponding size exceeds
-
-Nit: capital L in BlOCK.
-
-Either way,
-
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> 	union {
+> 		struct gro_node	gro;
+> 		struct {
+> 			u8 pad[offsetof(struct gro_node, napi_id)];
+> 			u32 napi_id;
+> 		};
+> 	};
+> 
+> This is effectively the same what struct_group() does, just more ugly.
+> But allows to declare gro_node separately.
 
