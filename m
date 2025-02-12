@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-510265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A345A31A74
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:25:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72771A31A78
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3541886730
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2135F166DB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0815CB8;
-	Wed, 12 Feb 2025 00:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86FC4C85;
+	Wed, 12 Feb 2025 00:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nhVdtfnr"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cLrGgEw7"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E866217C2;
-	Wed, 12 Feb 2025 00:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901F315A8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739319949; cv=none; b=VqoxsPj/6mDnqSkMEuTTKm7GQrp2aa1wiF3CGoCKZt7zGAVZTz9Uk0BgqQnopdsrHQ/l859yilBM8gxQpu9gdGvAD+Jx+FTwwaUk2DcRLLbI0ayj1j3vIRrJA8gxttPOeZbh5BsVGgj/PjYBwwmarQSy1pyTLtVWjOzxt7aTIKw=
+	t=1739320184; cv=none; b=QKfEpsqYTzRI83ebHT2NgTwvsvcDtw5pKGWxYG3cwKPFtQKHx62XISmzKo5OLCuOpUr8gerqF8r4P6/w8PmQw3LwC17UapPCpViH6LoS4qaUKVg43ckKEmd6gtCQWJtzTSB19RWnBS6g/Qkk/wkvtTsMSZLt4bSlUwMBR1Mkp34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739319949; c=relaxed/simple;
-	bh=Ay6QUoAXXrDtPWLO5gu+ky7Sm0KS7dsK1lsFw0HF+B4=;
+	s=arc-20240116; t=1739320184; c=relaxed/simple;
+	bh=jq7uTPn+Iv4Xm5aVRvpQt4SSgigZZlT+HInGRWEapas=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BNkHA43X+2qIa5WGTaWZeDIsXXmWpvtIOV+iCc1AhSQKrwvT8VbMOB9wyMgABUCIxQR6UspAcwSJi8jSd8cMdKs5Fvfu1z8zkmifNjpOYh+l42BwRUrLCgUyyM7xMxxIM4PjNowkpCRsaHh924fQNkuEcN2Z6g0pJyEkNLHV5Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nhVdtfnr; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=t8/7DuXDouBDy/VQB/4cT4iqHz/xTxDjJ3G/IBr61uE=; b=nhVdtfnrn2akVp8p16S9N3k01v
-	lw86jqwgQ2P4I/8Tah42BFliLuxfrx0wgzt1HIX4N+eBFeWN9txv2oAJN/oVvEOsy63FwEFEz4GSi
-	Ax0EQkcV4khOJGrp/458QBxfezjFFJPOAtrpB++jubO8BUw34UhVOQeAWuaD8P/M9PL6paQ8MQBfr
-	W1hxRU/vGK+7YoNDs3YLVpai+1zHwK2dKEC+lVlvQd1jHP/wmT8aEup81GIBfjknK+noiUzIdHjsk
-	sv8QIX59epO8tsHTGkReKWaLY/ksvpEer5c0F0qsCG0mkzSoSw/xQYZIW9CYwL6o0m+S8H4dvn+kh
-	q+Sv/ZoQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1ti0ZT-0000000B6xk-2b4T;
-	Wed, 12 Feb 2025 00:25:43 +0000
-Date: Wed, 12 Feb 2025 00:25:43 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neilb@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/19] VFS: use global wait-queue table for
- d_alloc_parallel()
-Message-ID: <20250212002543.GK1977892@ZenIV>
-References: <>
- <20250210051553.GY1977892@ZenIV>
- <173931694193.22054.5515495694621442391@noble.neil.brown.name>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7MMfWX1yFKMW4Tw7D/DnPgmbLTbV4jCCTRoJE2ajxr5My53+tlfSF9YLZwxOctT/8z7RsjQmwfV6IDS1+XxHMfL74flEPQVmTn1oGa8AmKzWospKj+hnTlHAlEEGj7ipOFuQUi0ymw0Lzya3M9Xrf/8QmXES1YPHW0oPL/nOmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cLrGgEw7; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 11 Feb 2025 16:29:32 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739320179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Qe89LtFFrDTAdD/f3HzKX0QL5OVcJ2KZ0CqRO/I52o=;
+	b=cLrGgEw7xHtISE4cNFN/zCLSIMPAt5jzelKswaFPczelMde5Uo+XWDR7Exry0QwvQXjcV3
+	nHjysNULme+ssxC2SLiQcQKkCxXBhfNn8MzYpBYV0H/zAh2/XI+BvrroJz0j4VXxqfkxCn
+	66BMWHAM4YyW+Dr7LVCFSW4zKIg8IVA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Chen Ridong <chenridong@huaweicloud.com>, hannes@cmpxchg.org, 
+	roman.gushchin@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
+	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	chenridong@huawei.com, wangweiyang2@huawei.com
+Subject: Re: [PATCH] memcg: avoid dead loop when setting memory.max
+Message-ID: <24u7qp3ln2qaenzsdf6y4wimj4cbsylgs37ppex2jbq2hnonnv@m5hnbr7bz2t3>
+References: <20250211081819.33307-1-chenridong@huaweicloud.com>
+ <gf5pqage6o7azhzdlp56q6fvlfg52gbi47d43ro7r6n2hys54i@aux77hoig5j2>
+ <Z6u0o_xr9Lo7nwh-@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,58 +60,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <173931694193.22054.5515495694621442391@noble.neil.brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <Z6u0o_xr9Lo7nwh-@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Feb 12, 2025 at 10:35:41AM +1100, NeilBrown wrote:
-
-> Without lockdep making the dentry extra large, struct dentry is 192
-> bytes, exactly 3 cache lines.  There are 16 entries per 4K slab.
-> Now exactly 1/4 of possible indices are used.
-> For every group of 16 possible indices, only 0, 4, 8, 12 are used.
-> slabinfo says the object size is 256 which explains some of the spread. 
-
-Interesting...
-
-root@cannonball:~# grep -w dentry /proc/slabinfo
-dentry            1370665 1410864    192   21    1 : tunables    0    0    0 : slabdata  67184  67184      0
-
-Where does that 256 come from?  The above is on amd64, with 6.1-based debian
-kernel and I see the same object size on other boxen (with local configs).
-
-> I don't think there is a good case here for selecting bits from the
-> middle of the dentry address.
+On Tue, Feb 11, 2025 at 09:35:47PM +0100, Michal Hocko wrote:
+> On Tue 11-02-25 11:04:21, Shakeel Butt wrote:
+> > On Tue, Feb 11, 2025 at 08:18:19AM +0000, Chen Ridong wrote:
+> [...]
+> > Wouldn't it be more robust if we put an upper bound on the else case of
+> > above condition i.e. fix number of retries? As you have discovered there
+> > is a hidden dependency on the forward progress of oom_reaper and this
+> > check/code-path which I think is not needed. 
 > 
-> If I use hash_ptr(dentry, 8) I get a more uniform distribution.  64000
-> entries would hope for 250 per bucket.  Median is 248.  Range is 186 to
-> 324 so +/- 25%.
-> 
-> Maybe that is the better choice.
+> Any OOM path has a dependency on oom_reaper or task exiting.
 
-That's really interesting, considering the implications for m_hash() and mp_hash()
-(see fs/namespace.c)...
+Personally I would say any allocation (or charge) has a dependency on
+oom_reaper making progress (but not arguing on this point).
 
-> > > > 3) the dance with conditional __wake_up() is worth a helper, IMO.
-> > 
-> > I mean an inlined helper function.
-> 
-> Yes.. Of course...
-> 
-> Maybe we should put
-> 
-> static inline void wake_up_key(struct wait_queue_head *wq, void *key)
-> {
-> 	__wake_up(wq, TASK_NORMAL, 0, key);
-> }
-> 
-> in include/linux/wait.h to avoid the __wake_up() "internal" name, and
-> then use
-> 	wake_up_key(d_wait, dentry);
-> in the two places in dcache.c, or did you want something
-> dcache-specific?
+> Is there
+> any reason why this path should be any special? With cond_resched we can
+> look for a day where this will be just removed and the code will still
+> work. With a number of retries we will have a non-deterministic time
+> dependent behavior because number of retries rather than fwd progress
+> would define the failure mode.
 
-More like
-	if (wq)
-		__wake_up(wq, TASK_NORMAL, 0, key);
-probably...
+I am not against adding cond_resched() which might/will be removed in
+future. To me it is just that we are leaving our fate to cpu scheduler
+here which maybe is ok as we (MM) do it all over the place. Anyways no
+objection from me.
 
