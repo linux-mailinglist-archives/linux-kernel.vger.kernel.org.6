@@ -1,101 +1,76 @@
-Return-Path: <linux-kernel+bounces-510671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D10A32043
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:49:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C26A3204A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F083A95B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ECA3165560
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852482046A4;
-	Wed, 12 Feb 2025 07:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M3ExI9lE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443A32046AD;
+	Wed, 12 Feb 2025 07:52:36 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80C51E47B4;
-	Wed, 12 Feb 2025 07:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABA51DACB1;
+	Wed, 12 Feb 2025 07:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739346586; cv=none; b=QwgML91EjDC0tyYP2cVENf2rGjK7jJwO/GVW/0R/mjc0OAFp2Kxr+oibu7LuA5cEpO5vFpTl7AsuntFAoHfJwm/ArufAiVmen8Q3dveJ6azFd7bz5AvBssclmFZ6jBBf7LM45BV8TihE9RyR6z6sDpMRL1IIxwC04Hl9rgIXhDc=
+	t=1739346755; cv=none; b=XBds7OBMCx67Z8s1NfsDWrhwKU3ylEZ+0CJ4cu3gYwXppp0uAdqcbtGKoNLRdogDg92qzd/CNOrFrcMareEIaJPJ/QUxzjrqHune90BYkrs5559569/NWsE4lmCDVr53uSJFFrT7kuA1LZm+SEXKm2TqWBykRVfYg2LYY5YXFnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739346586; c=relaxed/simple;
-	bh=8w9Hl06CLUYgviD29yBA21KUXubpdXVQiG1IHZKXkeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9a5ownmfuzfqTdGm9zBVKut1o1XGoPELdKY0zcuLyjpMkRzvnbNOGl4CVJzgeKttYz0o1F7AL8KKWHkwlge22tS+X0A7p2/TuBOLT/WeqxcaBTFyLwjGfP52zVsFN96CYEr5BBGsOgyxt3rpDWVGCGk2QxbGpBSk/1Kx70eKZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M3ExI9lE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE33CC4CEDF;
-	Wed, 12 Feb 2025 07:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739346585;
-	bh=8w9Hl06CLUYgviD29yBA21KUXubpdXVQiG1IHZKXkeU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M3ExI9lEP6kCp7MpcbrMay2usPSFkRdmWF/MUCMp8sGF9f3fWOZnXOWGMhLG7Af0D
-	 XJhz7PicapucY+881T6fDxdoL4ZPfITHzynpULuGGN5btzaVwT1fvAax4+yQPlOEtS
-	 Jyo/nfqLV6EFHfklhlDcJvLylHlhg8IH70C8Y1Z4=
-Date: Wed, 12 Feb 2025 08:48:41 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Moore, Robert" <robert.moore@intel.com>,
-	"Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-	Len Brown <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/4] ACPI/MRRM: Add "node" symlink to
- /sys/devices/system/memory/rangeX
-Message-ID: <2025021231-panhandle-stonewall-ba3e@gregkh>
-References: <20250210211223.6139-1-tony.luck@intel.com>
- <20250210211223.6139-4-tony.luck@intel.com>
- <2025021111-deepen-landing-4252@gregkh>
- <SJ1PR11MB6083BF8F07A18FEF581DAAF2FCFD2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1739346755; c=relaxed/simple;
+	bh=ZLRCtk6QuTg28WDZKjj3yQQ96rGnHIlwZKVRG6phBAU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Iqmota2+8Jmh+v0d1BpakuUizWeChvSxhHEJEdl/WWeahbnUZkM05Y+fso7zD1fbDcVeN8nuuX3Brm4Ag0cruKzlqCl1wR6vEdSGEGWhJ1O+d1iNQzHI/P8QWlds3PacYtC3cN39lWY0bPe0I0lMXG8uo0d/nkR9g7OAHYyTyHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from ssh248.corpemail.net
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id JZM00123;
+        Wed, 12 Feb 2025 15:52:23 +0800
+Received: from localhost.localdomain (10.94.15.56) by
+ jtjnmail201609.home.langchao.com (10.100.2.9) with Microsoft SMTP Server id
+ 15.1.2507.39; Wed, 12 Feb 2025 15:52:24 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <dan@dlrobertson.com>, <jic23@kernel.org>
+CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [PATCH 0/4] iio: accel: convert to use maple tree register cache
+Date: Wed, 12 Feb 2025 02:52:19 -0500
+Message-ID: <20250212075223.4164-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6083BF8F07A18FEF581DAAF2FCFD2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain
+tUid: 20252121552231e45a39ed07fbbfc6041159b89807240
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Tue, Feb 11, 2025 at 05:02:11PM +0000, Luck, Tony wrote:
-> >> +	if (node)
-> >> +		ret = sysfs_create_link(&entry->dev.kobj, &node->dev.kobj, "node");
-> >
-> > What is going to remove this symlink if the memory goes away?  Or do
-> > these never get removed?
-> 
-> There's currently no method for runtime changes to these memory ranges. They
-> are described by a static ACPI table.  I need to poke the folks that came up
-> with this to ask how memory hotplug will be handled (since CXL seems to be
-> making that fashionable again).
+The maple tree register cache is based on a much more modern data structure
+than the rbtree cache and makes optimisation choices which are probably
+more appropriate for modern systems than those made by the rbtree cache.
 
-ACPI should be supporting memory hotplug today, at the very least
-"memory add", so surely you have some old boxes to test this with?
+Bo Liu (4):
+  iio: accel: msa311: convert to use maple tree register cache
+  iio: accel: bma400: convert to use maple tree register cache
+  iio: accel: bmi088: convert to use maple tree register cache
+  iio: accel: kx022a: convert to use maple tree register cache
 
-> > symlinks in sysfs created like this always worry me.  What is going to
-> > use it?
-> 
-> <hand waves>User space tools that want to understand what the "per-region"
-> monitoring and control features are actually operating on.</hand waves>
+ drivers/iio/accel/bma400_core.c       | 2 +-
+ drivers/iio/accel/bmi088-accel-core.c | 2 +-
+ drivers/iio/accel/kionix-kx022a.c     | 4 ++--
+ drivers/iio/accel/msa311.c            | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-If you don't have a real user today, please don't include it now.  Wait
-until it is actually needed.
+-- 
+2.31.1
 
-thanks,
-
-greg k-h
 
