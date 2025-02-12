@@ -1,92 +1,170 @@
-Return-Path: <linux-kernel+bounces-510294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276C3A31AD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:50:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B48A31AD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC936168470
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:50:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF331888D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDB218651;
-	Wed, 12 Feb 2025 00:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A76156CA;
+	Wed, 12 Feb 2025 00:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QPJCiV0x"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3YOQvw5"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6140AFBF6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E635FBF6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739321449; cv=none; b=ck2V7VMTAIEATc8TqDLiG6NjX+o81WqjhFzMpyeVsh7aGusHjG+mYHaNadmc8mBn6ZKivTRMyWropRzkcx7wlucTAoCjuZHgdxEqo8cke0u34WgE39gfYUkrpWOzDsX5fKMvgjwbrCDmnV4fw+xma8Fzp+i4ucmYFbpn8ZmspuE=
+	t=1739321473; cv=none; b=E5t7fFzH7qD2+PhdZQO4YDC8loe/SkaEZBemSvm13hJSKhxFZoRAEGpwEI5sJRS6xUHyCJ5HLU7hd4XaiaDz4Rux3unFnhlsJLTS6AQSbNQI5l1XMNSqVIwXXW9T0Fb+rQDrPdr3uG7WnCFRcjsELWpJ0TXxnXKnZNoPWMgFoLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739321449; c=relaxed/simple;
-	bh=n7CqHuFFZQ8afu+pSBOd4jMSThSswJ5fMlHS0DKB38U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oaDXv9WnZpFH+Pry/K8HqVTDsBI0FhwQkVPGVbTqDZeo3AyyQKVFn0Ig5+qOHUXLl0Lk3gU4ismzPizCdWnQVoLeeOwI17U3LYG9YsBJ3qVhBiTUUJ3+ds0AB2aT6nAU3niAEUTtJhP2bAqtGrM+yb9sS0dzBozO3RMYy0Yol9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QPJCiV0x; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21a7cbe3b56so88955405ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:50:48 -0800 (PST)
+	s=arc-20240116; t=1739321473; c=relaxed/simple;
+	bh=iDgfw7D06BV6DpvWC/SBKtipHT37O7eJVNt47iRLts0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nrLvpm2fjpVRUey0xFhqtjf9AP8T85Jx0K67Xvz3SH8f1yu22Cef1SGb7P3XA/hmci4ujBhBhFEN8Xy/hcipKKdHO11j4GpO18l3aUsYZNw+FZ2OKEL/AkL3cVYn3sdQDtSpuSQGY/FIN5j8/8xf/nNTfVwrUo9Cr2pDbQNvv8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r3YOQvw5; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30795988ebeso62616821fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:51:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739321448; x=1739926248; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Q04QbfQicFM4y75hWxHLLd0YYIdGidwmS0pxxw3Lsc=;
-        b=QPJCiV0xDPapSJ7g+OxDZCRRULlwPgYWajOlCi0Ds5Ipk+ro6e8MstysvHU5i2PkjG
-         Nj7jN/xKSgfXLej7ui5StmoMqLsp6/kv0CpQNMyZLoTVANkUL099iCenOpuaJdcSfg2t
-         ntZ1ce92zuTxO2NKeylabcrg40CxMN35TtKlUS8gP/sbbW9uvIkoZfLuIHFyMbPGyqnb
-         Rvk4Y1OXeSb0XKYCioHQWFw4VOYpcKwrkmTRO5xw/b1oupHg5DPvPMi0vBKo5i6am+a9
-         I1xbURVbycMud7ONdA+P6OJANyZ5sXFwkzUMTcR920W0Mfly95uiskNr4uk1QUHdQqrc
-         igXg==
+        d=linaro.org; s=google; t=1739321468; x=1739926268; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+nLci9veCthHDubqv0cSUycI42m1FuOueczGHBi1MmQ=;
+        b=r3YOQvw5PMymzjvzLqy7ImTV938P580U8SxuDuL/RlppJNgh6IyaiRCSx3uZWh6+nc
+         cRA4NuzA22uYDwEbA6pO8oA676xZY+rmmEUOm5CV0AaN76O0+ct0UfZT0ez+FJmSqlpj
+         v+H77lUfJrzzqqNgpn6R4slYutPBfFY4MHSYDqke2PGvcGPQdYYEEzajbaniIuqdRML/
+         R3dEjYJMX97nYSSCtwxs/qP+Xx1c0CWX7+QipUpc8SK4X4pmC5frdzLxJt8RrZooLKFr
+         cWoTjJGbDKnUBgLKFxNmG5J+tVRCT7rukgqB/5HsGd9xNB3J4ixWp+cm5/TyfTthceg+
+         Wcow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739321448; x=1739926248;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Q04QbfQicFM4y75hWxHLLd0YYIdGidwmS0pxxw3Lsc=;
-        b=XR7nY5yyu1aWNvN8Y9T2ToMeWBkVzV8melkw1qFpF8fPwmWxYKY3kIaHSoQMNkKK8D
-         vVA7koFTtxYiS68jskrZpmTHB9zrC1dgqZwhCoQ9ipfbKX8Ve+Hdq22M05EvUjg/f3H7
-         KZg4bdvSuSZCpGF8RV02iE8OvbqsYFCapoY0EsmTOhuNVE9DU9XVw7+sIPvY0yYgXOqZ
-         inuHmE4Nr92lOLcbeK9QdXltWLM2M/TUx4t69dcr/9uswDoz1ReVt6rFXVr4q4LbglmE
-         QBxFwFiskpGjrSe0tN3ROLwuge2E2P1eEhQ5C1r7FApxu1Vb0J+WxWrH2ZB5K2XIkzlL
-         8x7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXdvX6cwu70HXId/8cH9fX2haR7nBhZ+2Cc+kLDAZRtfIwT2P5ZSRsiUu8hsdTkfFwX0zZhFHls91Pqfw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0frk1EM7XOxXD2dGH7KHNl4jBF3ML8lQ3HtCkDXUDInVyXZ4P
-	y9SpI/uOpbbLbnplf1djqSSgjj4vg46HfDuMa49QyboU4AdkVrnqy95EMhc2xfc8fhK1xNe1kT4
-	3fA==
-X-Google-Smtp-Source: AGHT+IHIfpcFcenWfDWwwbzufWY+DREdE282nCSmNYgV1FntJ/Yo5mvEkgosXQd56+1kM3WiXT9iDdhEUCE=
-X-Received: from pler19.prod.google.com ([2002:a17:902:e3d3:b0:21f:179:601a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:11cc:b0:216:2bd7:1c27
- with SMTP id d9443c01a7336-220bdfee64emr12985535ad.33.1739321447751; Tue, 11
- Feb 2025 16:50:47 -0800 (PST)
-Date: Tue, 11 Feb 2025 16:50:46 -0800
-In-Reply-To: <20250211025828.3072076-17-binbin.wu@linux.intel.com>
+        d=1e100.net; s=20230601; t=1739321468; x=1739926268;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+nLci9veCthHDubqv0cSUycI42m1FuOueczGHBi1MmQ=;
+        b=gFzRbbGf/Z6I/NCXA9xaTKdv6HR6d9N9f9qZgrmGa/TvTvxEPvrdjqAUtL2/1Al9Yw
+         HDvrrVZjTRAijjc17S9VuTH3oVLS5Lo/92OMwU0FXj8blY2RdBwfmQvwrCH/wVgC0iQm
+         pMHUXZvKcvkapyskcmdHaxGHZ1XgHVYZNeIx8xsfAhiDLVQqXKe8kJz8WJJpAfqbwe1Q
+         oWq2jSrVKW8p6dXbePMEE9Fxu53Zr8rHV0zueyV3RySO7FUb8KUlq9OtW8tLO2bFJT7v
+         juUyUTByOwEL8hwnXY/xuHvvR+2VEUUMgadwp8Ujvw6Brb2IOxoIp+FPJ42CtN9IBpMa
+         nyHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcB8Sr+hd8TRAXxTPdfSeMWKU7RX970b/XuTwlxODMJDKYxqZhOPXSxn/hrCyRlG7JZQqweNiqAqUiWaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm5qT9DKqfn8+NcrfNxNGTBiDqhRwvNzFF9tYsyX2RnzTclnl4
+	+XrftO7XCOn+dXr5WM8Ga6g6AFZeR+T1QHqBw/LVEH8LZ6gzm8MBeqFZmVjcObllg3vrnQ8Kw9N
+	eYqY=
+X-Gm-Gg: ASbGnctAsQYaNl/bI/Qm4TeufGOkQzut3T8yb9r/kFUorvx1U+GTmQnn2LN+WN/VAPG
+	z6QiVrhTOtaBlcztcaptcrkDAwOeulbimT3K6rYSVYEpTMpTj0khwQqb9zFF4cPIYDo8ZZATFHC
+	AEmj6Z7KagVqrWUaxqRJXHfxXuzsVOTqJGukevvccGfy4euk5FfRqa3yRMLAx0BgSIXB+x6LkCL
+	78m2spVWFRTjZMoL3wpwdcOi+zke9618LUzh+BRUrlgjzMh7NIDtFc5vTurEOIV72bUe3vTEEnJ
+	4X5kZxRD7ktcZEKjhAi3MAYkfmt63C58cevx8wZIQAeetcAHBqk7H08WZhqLdBdBpAovXqg=
+X-Google-Smtp-Source: AGHT+IHrEVCtROhIx+YyYA4QRU91GByT1IhN/KKKBcdE8BrWoX2fAT7zlZDzAxjgWmcLyL1wGBtxPg==
+X-Received: by 2002:a05:6512:33c9:b0:545:6fa:bf60 with SMTP id 2adb3069b0e04-545180ef5famr301216e87.19.1739321468152;
+        Tue, 11 Feb 2025 16:51:08 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545067a7576sm1079063e87.198.2025.02.11.16.51.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 16:51:06 -0800 (PST)
+Date: Wed, 12 Feb 2025 02:51:04 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: [PATCH v2 00/35] drm/bridge: Various quality of life improvements
+Message-ID: <b5og5jvjq4jnq5rogyro5rtahayvsbroq4z3yrplioyb4itbak@3cepdouqxyny>
+References: <20250204-bridge-connector-v2-0-35dd6c834e08@kernel.org>
+ <yudkovtipwtnofr3o2qwqrmriwxlczrwploieh5i4ke3sx5zhk@5ktlrew7o6k2>
+ <20250211-peculiar-misty-moose-639556@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250211025828.3072076-1-binbin.wu@linux.intel.com> <20250211025828.3072076-17-binbin.wu@linux.intel.com>
-Message-ID: <Z6vwZtnxIX292KLH@google.com>
-Subject: Re: [PATCH v2 16/17] KVM: TDX: Handle EXCEPTION_NMI and EXTERNAL_INTERRUPT
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, rick.p.edgecombe@intel.com, 
-	kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com, 
-	xiaoyao.li@intel.com, tony.lindgren@intel.com, isaku.yamahata@intel.com, 
-	yan.y.zhao@intel.com, chao.gao@intel.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211-peculiar-misty-moose-639556@houat>
 
-On Tue, Feb 11, 2025, Binbin Wu wrote:
-> +	kvm_pr_unimpl("unexpected exception 0x%x(exit_reason 0x%x qual 0x%lx)\n",
-> +		intr_info, vmx_get_exit_reason(vcpu).full, vmx_get_exit_qual(vcpu));
+On Tue, Feb 11, 2025 at 02:17:30PM +0100, Maxime Ripard wrote:
+> On Sun, Feb 09, 2025 at 05:27:01AM +0200, Dmitry Baryshkov wrote:
+> > On Tue, Feb 04, 2025 at 03:57:28PM +0100, Maxime Ripard wrote:
+> > > Hi,
+> > > 
+> > > Here's a series of changes after to the KMS helpers and bridge API
+> > > following a bunch of reviews I did.
+> > > 
+> > > It's mostly centered across providing an easier time to deal with bridge
+> > > states, and a somewhat consistent with the other entities API.
+> > > 
+> > > It's build tested only, with arm64 allmodconfig.
+> > > 
+> > > Maxime
+> > > 
+> > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > > ---
+> > > Changes in v2:
+> > > - Pass the full atomic state to bridge atomic hooks
+> > > - Make attach take the encoder as a parameter
+> > > - Mark bridge->encoder as deprecated
+> > > - Rework the logic to detect if a bridge uses a state or not at
+> > >   atomic_check time
+> > > - Add lockdep assertion to drm_bridge_get_current_state()
+> > > - Link to v1: https://lore.kernel.org/r/20250115-bridge-connector-v1-0-9a2fecd886a6@kernel.org
+> > > 
+> > > ---
+> > > Maxime Ripard (35):
+> > >       drm/atomic: Document history of drm_atomic_state
+> > >       drm/bridge: Pass full state to atomic_pre_enable
+> > >       drm/bridge: Pass full state to atomic_enable
+> > >       drm/bridge: Pass full state to atomic_disable
+> > >       drm/bridge: Pass full state to atomic_post_disable
+> > >       drm/atomic-helper: Fix commit_tail state variable name
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_wait_for_dependencies()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_tail()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_tail_rpm()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_modeset_disables()
+> > >       drm/atomic-helper: Change parameter name of disable_outputs()
+> > >       drm/bridge: Change parameter name of drm_atomic_bridge_chain_disable()
+> > >       drm/bridge: Change parameter name of drm_atomic_bridge_chain_post_disable()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_update_legacy_modeset_state()
+> > >       drm/atomic-helper: Change parameter name of crtc_set_mode()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_planes()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_modeset_enables()
+> > >       drm/bridge: Change parameter name of drm_atomic_bridge_chain_pre_enable()
+> > >       drm/bridge: Change parameter name of drm_atomic_bridge_chain_enable()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_writebacks()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_fake_vblank()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_hw_done()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_wait_for_vblanks()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_cleanup_planes()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_cleanup_done()
+> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_wait_for_flip_done()
+> > 
+> > I agree that use of the old_state can be confusing (and it has been
+> > confusing to me for some time). The main question is, do we loose useful
+> > memo 'this is the state after swap'. Most likely it is useless now, just
+> > wanted to give it a second thought.
+> 
+> The drm_atomic_state doesn't change after a swap, only the
+> plane/crtc/connector/private_obj (and their state) state pointer do. And
+> if you meant that old_state mentions that the states have been swapped,
+> it's still a terrible name and we should change it still :)
 
-This should be vcpu_unimpl().  But I vote to omit it entirely.  Ratelimited
-printks are notoriously unhelpful, and KVM is already providing a useful exit
-to userspace.
+Ack, sounds good.
+
+-- 
+With best wishes
+Dmitry
 
