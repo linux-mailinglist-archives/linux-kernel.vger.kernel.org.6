@@ -1,109 +1,227 @@
-Return-Path: <linux-kernel+bounces-510324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D0DA31B27
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:27:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FE0A31B25
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E9E57A34A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:26:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 567917A3408
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374A86F305;
-	Wed, 12 Feb 2025 01:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD732B9CD;
+	Wed, 12 Feb 2025 01:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=comcast.net header.i=@comcast.net header.b="M/bEGU3g"
-Received: from resqmta-a2p-658785.sys.comcast.net (resqmta-a2p-658785.sys.comcast.net [96.103.146.58])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Km6JNCFP"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2079.outbound.protection.outlook.com [40.107.94.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125884502F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.103.146.58
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739323659; cv=none; b=EQml4BRESBqMyvsyJNcjWJNAEcvgnLjrwO3+ewdImzM+53Gg3EaJQVe1CecdEB+zlnV+v/zKlwfscMEoX430rgKLmswEhKciamMBElX4z7dkBMegN3mTnoL29XwaQTDxFvspumCQX3qeUJGabiFIiPfMrQstSdr9vjPQe3G7Vm4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739323659; c=relaxed/simple;
-	bh=huMXU5PkK5OaSxJhp+YkycjSdx7SpClR99y4NMzsgPU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FaSe6tJ6ONtc77MpbxyRUArTATwRr/tW4OYeOPVqtHdsW8hpCv/unJmRY1MsfHK1a4Zs85LUOY8iG26Ry6nNIbg2+KhCl6wJmgd4itd3jEqbEzErZVJQNETgnuxFXeVKby2cLJSPlc9KxDXOsowBGsSunomLtxfIUQIYgUV9odo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=comcast.net; spf=pass smtp.mailfrom=comcast.net; dkim=pass (2048-bit key) header.d=comcast.net header.i=@comcast.net header.b=M/bEGU3g; arc=none smtp.client-ip=96.103.146.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=comcast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=comcast.net
-Received: from resomta-a2p-647975.sys.comcast.net ([96.103.145.232])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 256/256 bits)
-	(Client did not present a certificate)
-	by resqmta-a2p-658785.sys.comcast.net with ESMTPS
-	id i0pFt4uRjjNM1i1UqtxDhO; Wed, 12 Feb 2025 01:25:00 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=comcast.net;
-	s=20190202a; t=1739323500;
-	bh=sqsQOneILkPAi5s6Ecy2iy5+xQ+mWTe+ZD3pipY5ZnU=;
-	h=Received:Received:From:To:Subject:Date:Message-ID:MIME-Version:
-	 Xfinity-Spam-Result;
-	b=M/bEGU3gsdbzzBWZcoFOVI0BSALeeFj3Dsqi4qbSH1TcoZzU2fW9JW3qzJ9VS/LRT
-	 IQTfWlcc50cj6DBEOhuL4wfkp82BpePA7fXPEO4G5OEsU800SAM0IOwvM141WMp8ks
-	 Nljs8Wl8IyTCM7iebDbdEAK8HEG3Ssako5G+pXQWh3uJ+m/CegRBGyJQJU/CkMOQ+g
-	 u5QPg7L4MQYLWO4koRt+KcA9wErTC1D7cI2ng42DvbW8NsC38X9D8Pu83Q4itzWCkF
-	 ufW7AV/4eVpXIgd7oQkaKgSU1GT4kK5erOZiu8kpWGpP2wO230wvMLuUWfI9x0vr08
-	 O1BcUCFe0xLkg==
-Received: from jack-livingood.hsd1.ca.comcast.net
- ([IPv6:2601:647:4d81:b870::c894])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 256/256 bits)
-	(Client did not present a certificate)
-	by resomta-a2p-647975.sys.comcast.net with ESMTPSA
-	id i1UftMnGEnjISi1Uktf2bR; Wed, 12 Feb 2025 01:24:57 +0000
-From: jack Livingood <jacklivingood@comcast.net>
-To: sfr@canb.auug.org.au
-Cc: tiwai@suse.de,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	Jack Livingood <jacklivingood@comcast.net>
-Subject: [PATCH 1/4] sounds: firewire: isight: changed strcpy to strscpy
-Date: Tue, 11 Feb 2025 17:23:46 -0800
-Message-ID: <20250212012346.83516-1-jacklivingood@comcast.net>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E866917991
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739323653; cv=fail; b=A07u6I25J9MGLrXIFCvQefpq9E5JZiFuG21GOyGRaR5n7r+jyNk1Z8jULrbVMO0Z+aunA2VwWCDskVbXKDyWWPc9egomN0cVZCrIRvbSnZfqiyW6gjyaP8LodroACeKWrd87E7OfURdEQurOaau9GOB81TTGGXo5q99WACXY9+Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739323653; c=relaxed/simple;
+	bh=YXWGVE+RqNMTCf3a096Yyq7izFq+aEZ9s98pBrFwtOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PUMPiaI044M4N7SPTzW/gyAY16yJTS3RaOg257kPGCWkJQKcjzZ6p7Ut/RVIssILQrthj2maGSZkjNc2lGUXNuhBZeLs5zKL2bBnHVeZo+mvTxFQcw7SHlWU3ZlUwZ7pTEFihEFxziT/Cky1y5IfvJe/G4zhJwpT3IfVszaHoSQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Km6JNCFP; arc=fail smtp.client-ip=40.107.94.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y7qLIVf3QOGu7NRU5txkWAwxmQF3zGeOJSjpfO3BSqF8sx/sE/pSFdiO7ZWeGZGk+L5dnFByxq4a6rlffyS6+U/qsCTzBYCFNmdvsTjjXIl7IgtPIvM+iOZe17r/7/xsqrmd5gZpg8qeNA7SDUzqh8///p1TasMyE65gEO/toPaBKyGZv2cM7j/raafJRnK8Zs0IMzvdZbKm1Pyi+Z/HYOfGyMZB9o2WIDKgXi5vbkoRSfnOAdIJbzCs/ptS80L5oRY/No/v+2jX4/5LiWHpNJS90DnvtQvH0m2t52n1A1fvbX/TZ73v6LlE7K0bb3cJMsL0tj5czFJbKiztnKhZmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eqHBRyYDetmLJVPN0u/jsYFLU4S0aRijkdz117xG0QY=;
+ b=E4N2ozfJyyCSHRYyQkbBK1FV59gTFDgA9eCDOFvFNGHgdyOk3NGtFAu/0b10675WqtP7iwxViPwgMz+ih3rGxVNkMzIw3+k0sl0frVteJd9hO+6Z1LKErhy0ZQzQp5dC7diYGeCzRIf8osWdbzfklmI/ueirySStHnoKxGFLHK/yZkuSPXnvO3FjR/+/2DIUqoIDfNKDd2bK+R+MxQAk33cjtgtj1ftSyPA2D92pisGZJsXLSCqJnkd72A13+h/ZNVbtjHqXVjqooTNbYnrzFS4VpqfaFiSn+rpCS7Pc/iaIWJbZqjz+bmrh2j+NZJRiejQlk5qp0B0LlUJLGjCW1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eqHBRyYDetmLJVPN0u/jsYFLU4S0aRijkdz117xG0QY=;
+ b=Km6JNCFPw2+mprr/HphK8EfykhsPBeM41Anzq8wHh1pPIpsq1UWmRrSsPr5s/nkF7AoYDfzzcu78ro7ztPyULaXaze5sIJ3Zy1XruEo7ZJLpjK3Pk1VftZyOcplZ4mS5/v5xNxDDRBL4Y68zkUORRY7KDNeLRjzN2T/1a4s3I7y+WDX+jkyWMLdfX6yblv0GDSeKz4VadGmeK4c0XRbfcrVhzPOimLmbUPkpDbnNu7qE+FJwqnVfO6mx4wHoaRdc+489w/QJjE1toca2D/xPc/2l542mZtFODTkfWPGmNC4TeA2TmCWudcebJZdvsUcMHIzuYX0xoZjwqdxFB33k/Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ BN5PR12MB9509.namprd12.prod.outlook.com (2603:10b6:408:2a8::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.11; Wed, 12 Feb
+ 2025 01:27:29 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%7]) with mapi id 15.20.8422.015; Wed, 12 Feb 2025
+ 01:27:29 +0000
+Date: Wed, 12 Feb 2025 12:27:24 +1100
+From: Alistair Popple <apopple@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	nouveau@lists.freedesktop.org, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH v1 1/2] nouveau/svm: fix missing folio unlock + put after
+ make_device_exclusive_range()
+Message-ID: <oy3q6xbgqfzk53bitgtefaycsya4wwcxt5gp46mhnwh4qpl7fh@74yluy6whpb3>
+References: <20250124181524.3584236-1-david@redhat.com>
+ <20250124181524.3584236-2-david@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250124181524.3584236-2-david@redhat.com>
+X-ClientProxiedBy: SYBPR01CA0033.ausprd01.prod.outlook.com
+ (2603:10c6:10:4::21) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfHAiJ30Wmtx29GpTwxjkHtaV2oqyinE5N36XH0KTPLa0/Vl93uTAar6MbtN8PmQ+0Ju2JbZd/uGT951ivvrvEg2y+Eo0bkZoSDFNlZ0k7wHcVy/vX7qR
- 22ilMV4o4Md4T6iHXlC7v4UgCGLX+c1SpZe10h+QVmEofQ+9eUL3IoqziY+xlhInIV0rdJgy3zhIYJQbrGuLZDLOXY0iqO7CbuSKtfD61pwKCfFsGVEEH+hn
- yiha/LRQ7ZhxRAsti0NzRljNwL8KHVGszK8ORpa+s6MYIEWIk5sPvBvarGBwvoq3GvFttBc5lDpq2HF9sV7OtvuFcVu+U+chVpDCUpOZ9UBPkClPtXrsr6RX
- XgHuCXyRF8spZ4dkKC2nVRN+VBoF5FfpAxwiF66YBAAa//XrGnE=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|BN5PR12MB9509:EE_
+X-MS-Office365-Filtering-Correlation-Id: e88d9e83-340d-4728-f6d6-08dd4b046a53
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RqRvPjsfAr0R1TfKs8NYsCbWd2k8xBHIZUULJY3J7SabWK/Tm3hkeMkWg7ef?=
+ =?us-ascii?Q?GEp7UqQM4fC+tQZh46n5JyaVBsnRqBWjUSZPTIxXK12IDB5VeIsZNl7oQe1t?=
+ =?us-ascii?Q?7xU9W4AimEICg3aYjnwVmEFyH9RC1tC5TrzY4tyB2g4OSUSF+pKkTSX+Dt3z?=
+ =?us-ascii?Q?SG3LAIryWy2hbV3OtW3XGmIxTrVPyzvbvKfyLXq3uexS7KrkzRxGUt8VGCcN?=
+ =?us-ascii?Q?C+mpjNnKHVVgMoUgWjh2hV1qInSYSQPTEIMeye7uSlTwyTAVvDw1crs7kkdn?=
+ =?us-ascii?Q?KJWHl+9SuDILjwDBiKTxnN7vsHYornE7HJn97p2wlcsojmVg8NazIGgSbayq?=
+ =?us-ascii?Q?uFiKQdN6td3a8drKNkBtTyaeYDsAlzkoMsxRD5y4Pvy66pMXdkjOfa7ePzVR?=
+ =?us-ascii?Q?ImO228DrwfpM0Eh3X5DuP3T6P0lXNIqpL6ht1jvNferoWB+3OwtXFrGJ6KMS?=
+ =?us-ascii?Q?Wkrz9cEBz6We19T5NsTmjhy8kMOkgqBB1UmvLtI57zS8KwvasGr1NuFfteDH?=
+ =?us-ascii?Q?2/EXGs3NyULdKoEtndHYizT6ok2Wp5idhHvvoos/5Dpi25jdVVmM4q7OO1S6?=
+ =?us-ascii?Q?BNf4nrNFLrxzaOor4BW82g47NGXBAmZSSdcHcArubqp/tx1ilGhJ0FWRNwec?=
+ =?us-ascii?Q?g6uYbLF6wtw+X99xUMh72EHSEnFmx2R/2HA0feo8zD1dq1OUNS1SZkeqei1k?=
+ =?us-ascii?Q?ZSSV9Ms3nWBT4XTuh7pVV6FsKJ7mMRlZo9nvNqZgk5r4bTYaAodbGvreTHqL?=
+ =?us-ascii?Q?yKj6QtcaSkJsZsebOoQYk02DtvLeFMn5K42tG8fdEmDIuT+yhOIXowC4xbUf?=
+ =?us-ascii?Q?hSYjP0271adr3BYxkhwSd2y4WXogQrY9iQ53ulAResOTAiurqVICyht2xp4O?=
+ =?us-ascii?Q?I2T4pexgRkzz1wrs9r1FROxPZlNfOHrngKngVPqXWHbbQgyavkW7IhwMVY2k?=
+ =?us-ascii?Q?OjgI4n9v/qNxsspwDb3R5jZq5Y4senrf7CRA9lVa6oVM9rGapZE3zGFIErHg?=
+ =?us-ascii?Q?c52I9+Yp8Whi2GU6SzfSdGij/0ItHaYPbntDIb55f05Lu4pSSOGEC35qER/W?=
+ =?us-ascii?Q?04fLfKC3TArnF7zeRrfQZRKKA3GFuHGlKOaGW3P7/2dspslZfovE6p4St6Tq?=
+ =?us-ascii?Q?J6BJoO71PK9ocyrskLd6vxjK2gqNRPId3ABPtStQaxczEKlHVMHgYX2MEgZ0?=
+ =?us-ascii?Q?I9pYBMd4cfLBXRS8+eEaEP6F4m6e2JbQyB5DAM9I0wRe5mkF8p2lBp/gsyNV?=
+ =?us-ascii?Q?XqWwsoDUQ4aSbc5khcsfspP5redVL/pgJ6n651W0CyNP7g97XdJADhEpF1ZN?=
+ =?us-ascii?Q?ewQm22CnelZJii5ROHeNNfuBj4n75XtRA7yEwk/CSEO5Qozw+h0JbSIX55cj?=
+ =?us-ascii?Q?KROFXq1MFZf+JmR+hKvKDioyZjc7?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VUp/Y0jPKjnRVSmqtdF/b2jJYpoZOWVuTvI6rkrLN36hCRl2CTgAQ0ltwWnq?=
+ =?us-ascii?Q?DO9/CR0cH4epISw9W+78P4NPEJfOD1ooGkDpVIzYmxp/gKqjXzVFRnWLqXTB?=
+ =?us-ascii?Q?rDX7P5DadLiQ+ybMCOAtdr8NO1d+agaLr/eJur8sFBrYyvcRfV9LhdVrWBZT?=
+ =?us-ascii?Q?M9kGDjUn+vTq9Znrp3PKexFQfdWOxlomcV48XrqWZE0yzMThNaGWP7/7c8Aw?=
+ =?us-ascii?Q?MVoe1cxJ0+BfmQroscyAwlQI19GlcbzfiIvBoQ4ydFIJlgoON3AHJ4xPCZFK?=
+ =?us-ascii?Q?zA8zWHxz3DWsh4jeTIq2kQs50uN2zjSNU9GjElUFUn90GQAvd8FnVK8qZpcJ?=
+ =?us-ascii?Q?WGUILa+y6AScqQZIgX9S7r7Z7xaDHcLOgILbvsIdMlxJl+s/LhoMkepWkOnY?=
+ =?us-ascii?Q?L0v1w7YfbomRHNby0CbCeHi8qY1iL6wuP2piMStrlHaLwYzGtbtx3fwvnQy3?=
+ =?us-ascii?Q?fUlqFsn4JFVQ3KaIxASWUg4gy9Bl/ZvePwYxFBXXu3V2OCDzO+jHuhVGdF68?=
+ =?us-ascii?Q?7waCPFdN0BhfgqvD52GbAFU9+Gp836awwC8HkhyNuBuxjWfq3j9Z8buqBiMe?=
+ =?us-ascii?Q?W8A8is0Kxl5aAw5oeU5J9I4HZ5jEDSQSJprHoKvqRloPzKy1xnsvAKGe1vuE?=
+ =?us-ascii?Q?i8MXkpyBg1TCopyYdjkj2u8hF6GWiWL6pugc19qMSKVCh3quQvAP1E5qxRIs?=
+ =?us-ascii?Q?CfjSqcRN3AeTCo36Px8g47CUP41u873rHS6cQDRRl8Opvp5kzkr3sVB9Tyxe?=
+ =?us-ascii?Q?YCXmCavCJArP3dWPPlj3Px3HKy7EQ7d/bV6I2VGJfqT7NwdODA54xSO3zQt/?=
+ =?us-ascii?Q?j1MDVxIxgAz3DTCOOCltxymDZxisMAzpG/O1M6IQAuOfGONTyVca4uVGEiZk?=
+ =?us-ascii?Q?61WundxcIFkRGTQXVScH/HXfQ4qdt4T5OyHlJnaUEX4BlxTFEYhO2H6nKWRR?=
+ =?us-ascii?Q?LUd32CnbT9T2VsVwNKRqda8cz3nmJ5FYl0KqZ8Tk8dXaM/7YQeCNdQ4vbTmn?=
+ =?us-ascii?Q?EtAwp6EiP5sOMQSEGd8gMLhiN1qR0TtvlGK0MavwNhHCdV2AJQUsTair6V1t?=
+ =?us-ascii?Q?R0n9O6P7jrVXFGaANYYLBYwPjd9gUSMl+27cym0n8xwQCOQDaXkcRcu0ziCn?=
+ =?us-ascii?Q?Kep9KNiivn8jIpHZWyXaBdhjZeUUZBkhfcVdaS3lesXZWcdPKz20AtJO8Wi3?=
+ =?us-ascii?Q?Jx9wGhB0LRcd+5fz2P+O72snFr11/NnM4bnruo5eW0Ogd7qBP4O47O9V+4s2?=
+ =?us-ascii?Q?mR3xlvkj1AkL4ICa7yLmIonaKuM5aUr65BBcv246ouMj8Ur5QWtnqVptotyc?=
+ =?us-ascii?Q?k0QPFzUTn6TikCuNc6RHUwMWYIofrnvGcpOuCJmrMnkqdtRBcLjo38Mq2jdS?=
+ =?us-ascii?Q?bjjdmrTH+ibsLNjLWFK1U1Y05XjI/A6QtTd8gyaoXzV9VTL2iWMShMG2FKZb?=
+ =?us-ascii?Q?nT9Z0aTWtnLlo48gGr+LyfzoYrnTZ5g042nGkebJ2Tl/s85eCU9kljvwKR0j?=
+ =?us-ascii?Q?fdYzk9gMPvoX6tQueqkIlOsd3uhEFYMQGSecvQD2MeFJ71wXGtN4KnMpqRCr?=
+ =?us-ascii?Q?BzDDSa5a2qytvemiQUxTe7rMslHbXJfK4uqu+SL5?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e88d9e83-340d-4728-f6d6-08dd4b046a53
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 01:27:29.3849
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V3/eo8ilb8YAu3BUN+RMUuQgN5eO2rNFMu8XXNOXT+moDpwxeDVCDAZ1cGQghqOSpsqmriia8M3F8kk9wayObg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9509
 
-From: Jack Livingood <jacklivingood@comcast.net>
+On Fri, Jan 24, 2025 at 07:15:23PM +0100, David Hildenbrand wrote:
+> In case we have to retry the loop, we are missing to unlock+put the
+> folio. In that case, we will keep failing make_device_exclusive_range()
+> because we cannot grab the folio lock, and even return from the function
+> with the folio locked and referenced, effectively never succeeding the
+> make_device_exclusive_range().
+> 
+> While at it, convert the other unlock+put to use a folio as well.
+> 
+> This was found by code inspection.
 
-fixed a spelling issue in the commit made previous
+I couldn't (easily at least) trigger this condition from userspace, probably
+because the window is pretty tight between mmu_interval_read_begin() and
+mmu_interval_read_retry(). But I tested it by manually forcing at least one
+retry and it fixes the issue observed via inspection. There's no reason to think
+it would be entirely impossible to hit either, and the change looks good so
+please add:
 
-Signed-off-by: Jack Livingood <jacklivingood@comcast.net>
----
- sound/firewire/isight.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Alistair Popple <apopple@nvidia.com>
+Tested-by: Alistair Popple <apopple@nvidia.com>
 
-diff --git a/sound/firewire/isight.c b/sound/firewire/isight.c
-index 806f82c9ceee..e9617fc0a532 100644
---- a/sound/firewire/isight.c
-+++ b/sound/firewire/isight.c
-@@ -637,13 +637,13 @@ static int isight_probe(struct fw_unit *unit,
- 
- 	card->private_free = isight_card_free;
- 
--	strcpy(card->driver, "iSight");
--	strcpy(card->shortname, "Apple iSight");
-+	strscpy(card->driver, "iSight");
-+	strscpy(card->shortname, "Apple iSight");
- 	snprintf(card->longname, sizeof(card->longname),
- 		 "Apple iSight (GUID %08x%08x) at %s, S%d",
- 		 fw_dev->config_rom[3], fw_dev->config_rom[4],
- 		 dev_name(&unit->device), 100 << fw_dev->max_speed);
--	strcpy(card->mixername, "iSight");
-+	strscpy(card->mixername, "iSight");
- 
- 	err = isight_create_pcm(isight);
- 	if (err < 0)
--- 
-2.48.1
-
+> Fixes: 8f187163eb89 ("nouveau/svm: implement atomic SVM access")
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_svm.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
+> index b4da82ddbb6b2..8ea98f06d39af 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_svm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
+> @@ -590,6 +590,7 @@ static int nouveau_atomic_range_fault(struct nouveau_svmm *svmm,
+>  	unsigned long timeout =
+>  		jiffies + msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
+>  	struct mm_struct *mm = svmm->notifier.mm;
+> +	struct folio *folio;
+>  	struct page *page;
+>  	unsigned long start = args->p.addr;
+>  	unsigned long notifier_seq;
+> @@ -616,12 +617,16 @@ static int nouveau_atomic_range_fault(struct nouveau_svmm *svmm,
+>  			ret = -EINVAL;
+>  			goto out;
+>  		}
+> +		folio = page_folio(page);
+>  
+>  		mutex_lock(&svmm->mutex);
+>  		if (!mmu_interval_read_retry(&notifier->notifier,
+>  					     notifier_seq))
+>  			break;
+>  		mutex_unlock(&svmm->mutex);
+> +
+> +		folio_unlock(folio);
+> +		folio_put(folio);
+>  	}
+>  
+>  	/* Map the page on the GPU. */
+> @@ -637,8 +642,8 @@ static int nouveau_atomic_range_fault(struct nouveau_svmm *svmm,
+>  	ret = nvif_object_ioctl(&svmm->vmm->vmm.object, args, size, NULL);
+>  	mutex_unlock(&svmm->mutex);
+>  
+> -	unlock_page(page);
+> -	put_page(page);
+> +	folio_unlock(folio);
+> +	folio_put(folio);
+>  
+>  out:
+>  	mmu_interval_notifier_remove(&notifier->notifier);
+> -- 
+> 2.47.1
+> 
 
