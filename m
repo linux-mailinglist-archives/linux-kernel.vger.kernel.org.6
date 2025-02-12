@@ -1,81 +1,109 @@
-Return-Path: <linux-kernel+bounces-512016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB11DA332BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:35:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0865A332C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:39:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8623A452F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:35:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2EE33A3E5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B707520459F;
-	Wed, 12 Feb 2025 22:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADA12045B5;
+	Wed, 12 Feb 2025 22:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIqk93VE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dwXaJWXz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1951FFC59;
-	Wed, 12 Feb 2025 22:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21B2204591;
+	Wed, 12 Feb 2025 22:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739399730; cv=none; b=ktgH7801GHjYWw9CXLCdgg347291F5SlOOj56WBjUNraMGApAjIx/7FwWqh/T6U7RH3SVnPuuGnfHaY17D9KlNNYMAbJyggiYLZFyUj7SjNRb46eNpRqdGW+kiqduihIT0wP3Kn+igJjKb6htSAAXSDWAuUOiUfy7xo3eIwSNYw=
+	t=1739399970; cv=none; b=gh3C+RHn0xkreWm56Is+oV62rkMayrRTrKxKORHe1DQ0RLOlZRTe83zlz15/vUHG3XIP2wJ4nMvf1i/21cMRLp9bYZQ/xSpX85zlgNqZM6vv5a/JL8J6mAm7flU2oFsbwaYrBcQzPiOyf8A7ZoIyaqywKgS3pJXSz7kkpZ4A/vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739399730; c=relaxed/simple;
-	bh=Omv5DdAWNjzgRSiC5L9T9P0dpymHPO4GdwUT8TmTR/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=fXKurvEkir8pJVRWuBgyxYB25ohRSo/JkyzTU35/pm+dqkxg+/VykMCBoiFYpVBa+iyfrBFKPfzhvn734QaYKODO0waYH/FcgkG1vdAUpXUyF/hmYcVLViXrBwOc4L7mpMfjAxmt58k3OPFxyvnSYXKavR+qwb+gEhSJoEenj2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIqk93VE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C39CC4CEE7;
-	Wed, 12 Feb 2025 22:35:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739399729;
-	bh=Omv5DdAWNjzgRSiC5L9T9P0dpymHPO4GdwUT8TmTR/U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=TIqk93VE/YVBGyP614G7w6KfCZ1Jc5DfnSuWmrm/me0HJQPUbWQ9R5ioZzMHfhFXg
-	 rEfpPdrF2rLyxp+yESE4l/Ujle+XnzEwfFXrLxs8acLaWLx7xM+AluwRhk2iytNbtM
-	 ayGq8tD+p2/Or67xTwBahhgseatlTWdiFE2O0/trVJRaqbrjoKZ881CLtUAt8+XsGS
-	 PzHPWySfoYJdZGBe4XOsEeL5MjY0jX6n3WJkvGJ3RF2nej+F/K5tJkdx25lZak2FRy
-	 2FDjoGdiZttkCVemDPzT5t5qxcg/vuGLsyYorOYdiIG9hSruaebJT6uCeimBS9itrc
-	 iSmdlj0Ssitpw==
-Date: Wed, 12 Feb 2025 16:35:27 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Alex Williamson <alex.williamson@redhat.com>,
-	Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 0/2] PCI: Avoid capability searches in save/restore state
-Message-ID: <20250212223527.GA94495@bhelgaas>
+	s=arc-20240116; t=1739399970; c=relaxed/simple;
+	bh=/3+mBVrE63/84GWfZK7OmV4Ny/tGhzzzgdhYFy/il4Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BgP2DKrqMRVbiwz95H5E6MEnEh/RQJMaPLremhR1eP5wMFnXOcKUkje1W+HbPZdeuuhRUrU6+bOIL02nwGZjveXDArN6pitQTSgXrPJBDkKNwcial61eYbzzjiIS+2MzBUoQR1jr2HuiIPY/Vxg2oOiSof42lLJ+7ey/+ERr47s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dwXaJWXz; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739399969; x=1770935969;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/3+mBVrE63/84GWfZK7OmV4Ny/tGhzzzgdhYFy/il4Q=;
+  b=dwXaJWXzEIkMh7yZx0JP65Wx1J1Xf/DHbb05opzTrmJuAZK6QlE0qHg7
+   wOoEbyclup0k4GWcpeJnX940Lem8dEbnIq6FNrE/x2mQRGbC/h1ErvnkQ
+   u6OnWi7hC0KmILtx98DM0CfTKShee3mvIB/dhlYh9Rm38CGyH66x3PzfF
+   nggLg4aEohrC2rmO6H4W3tbuhlLsAHoFXjIs3RTI8ljTVyjbYoc0dVUL4
+   eMYZVk6eSqQA1WwXV4EHDdwuGKpZiMMd4SL9Bw7+rTISbwq0BPM0H6Wcd
+   TzTOVAMwrBfWttWXJXTQXJBN+Dta1jljaaeE0fl7u6JCJNhSGdEQCfY3R
+   g==;
+X-CSE-ConnectionGUID: DFK5Dgk+RVq6teKzbf/C/A==
+X-CSE-MsgGUID: R8ly/kwhQ9OQOOV6VyIb+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="51477510"
+X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
+   d="scan'208";a="51477510"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 14:39:29 -0800
+X-CSE-ConnectionGUID: 05zNa/znTkyUTxknDH1uZw==
+X-CSE-MsgGUID: vC9d2BQfQe6i8Hbd2elhPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117581233"
+Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
+  by fmviesa005.fm.intel.com with ESMTP; 12 Feb 2025 14:39:25 -0800
+From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
+To: Moritz Fischer <mdf@kernel.org>,
+	Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>,
+	kuhanh.murugasen.krishnan@altera.com
+Cc: Ang Tien Sung <tien.sung.ang@intel.com>
+Subject: [PATCH] fpga: altera-cvp: PCIex8x8 ports
+Date: Thu, 13 Feb 2025 06:35:53 +0800
+Message-Id: <20250212223553.2717304-1-kuhanh.murugasen.krishnan@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250208050329.1092214-1-helgaas@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 07, 2025 at 11:03:27PM -0600, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Reduce the number of times we search config space for PCI capabilities when
-> saving and restoring device state.
-> 
-> Bjorn Helgaas (2):
->   PCI: Avoid pointless capability searches
->   PCI: Cache offset of Resizable BAR capability
-> 
->  drivers/pci/pci.c       | 36 +++++++++++++++++++++---------------
->  drivers/pci/pci.h       |  1 +
->  drivers/pci/pcie/aspm.c | 15 ++++++++-------
->  drivers/pci/probe.c     |  1 +
->  drivers/pci/vc.c        | 22 +++++++++++-----------
->  include/linux/pci.h     |  1 +
->  6 files changed, 43 insertions(+), 33 deletions(-)
+Enabling the possibility of supporting multiple
+PCIe devices from Intel Altera FPGA but with different
+device ids. The current driver registers itself
+to all device IDs which causes an incorrect driver
+association.
 
-Applied to pci/enumeration for v6.15, please speak up if you see a
-problem.
+Signed-off-by: Ang Tien Sung <tien.sung.ang@intel.com>
+Signed-off-by: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
+---
+ drivers/fpga/altera-cvp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 5af0bd33890c..97e9d4d981ad 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ static void altera_cvp_remove(struct pci_dev *pdev);
+ 
+ static struct pci_device_id altera_cvp_id_tbl[] = {
+-	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
++	{ PCI_VDEVICE(ALTERA, 0x00) },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
+-- 
+2.25.1
+
 
