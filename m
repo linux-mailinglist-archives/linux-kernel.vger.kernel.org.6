@@ -1,118 +1,94 @@
-Return-Path: <linux-kernel+bounces-510503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D435A31DED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:25:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 891E0A31DF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0FA188BA31
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:25:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EBA188B996
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC151F5424;
-	Wed, 12 Feb 2025 05:25:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F3C1F4295
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958441F4275;
+	Wed, 12 Feb 2025 05:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="VRYKAEcQ"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746A31DB12C;
+	Wed, 12 Feb 2025 05:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739337925; cv=none; b=rjQyZj6NRZMusZ7+wRrRTqnP12ywSxHXiUt+ATEKsufMst74H1vW9wWIz6d+xL12/5wpUpXEBAe/6Wzk6hJdTyXDOUDlzpwXiXFe6pFaGQzK6aTf1hXv8U20YJGWFMiRhFa67eBlywQJSKiUobytxAyDsErWgpLaVHYKVXYph44=
+	t=1739338163; cv=none; b=Sh6xP7AitRgYhsOdxkgbxh4ue/pqvBjd+rPFaaFa/S5tsFz6lr9L/67KWiICI9aSpc5BkC/DMrxlaJGwPCDL3HAUN+ySsJqUoxzdKAiPEKDoZpMAAfd4DqOdaRnV51FlGRViRk7tlyeqCkp2gg0dBZtm+9fwk/cXBG8SxtamPGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739337925; c=relaxed/simple;
-	bh=e68gMHBciE17ql8Pzu7LlCsE41pQ5QWryFkhO1ze4CQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WjDb/+dfga8a43K1HVtzKxpxFlzIeqh+rVnWBk81sdfph0U9urnnCx/MRkb1DXSjrxzYQF4oujklVYHo2jiO8jvxdWAbsr4EdPRo6sEvw7v4A8fjoNhbCXnTUvE0iQtz35FmghjFbP262AinNSpHmcwoFR+2Xk2oTwbSYlPYBfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5EEF13D5;
-	Tue, 11 Feb 2025 21:25:43 -0800 (PST)
-Received: from [10.162.43.26] (K4MQJ0H1H2.blr.arm.com [10.162.43.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 914C03F58B;
-	Tue, 11 Feb 2025 21:25:20 -0800 (PST)
-Message-ID: <df25775e-9c78-44f3-b058-1c8e8de32288@arm.com>
-Date: Wed, 12 Feb 2025 10:55:17 +0530
+	s=arc-20240116; t=1739338163; c=relaxed/simple;
+	bh=uHt5b0GqbNG1UkOEMtB9etZTVhbcO1v3CJE/EQlRy20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LT/RoRX3TnYegvBQ4W3MyrhktURrLbnFbbkUEnZUv1WtrrsjSeLnQ9Bv5MoULAjvoXG03t8bfl6SIH+NC2gC916NXjCHaiIwK6FU6VJKsFCiZmYC6GXR52KD9j0gOy46T+TYtfmFjTTb1u4vhf7FPxjQQmYJjECB/UCaguZ/Z1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=VRYKAEcQ; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YwQu72M7gw/MHwCE/46tLUOeyJYtz49nwSEpIt3H+kM=; b=VRYKAEcQjKVI1Fs9OjVQhq+HSM
+	oUCMqUaiR9L8nCQ+D9avvGX6vk2BSKTzMyYTss49GfVMS9Obq2mAzElLyqQoySFcYYf2QhOAkFkjY
+	w9PQ9ptefaMm/iDlJSP4VQxlgxKjsU1EA68nzsQBlG4NrCsiIRNA20mPQyVCNBgIVTvRMKOdWytWp
+	NZ339RiY8iVoh2Pg6mT1IVDueltQpIwcG9wqJC+DUAIppcfXauxVw/Fnmtfw1Im5LzCUvVqe89WsF
+	5eB0lfV0oEconYOO5vUt8E86RxDFlTabfen1zJYKjmU+6uhdzinS9/uLUKcgeThvXLUPofyqmryOn
+	vf3ScslQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1ti56E-00HEDZ-1P;
+	Wed, 12 Feb 2025 13:29:12 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 12 Feb 2025 13:29:11 +0800
+Date: Wed, 12 Feb 2025 13:29:11 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, Danny Tsen <dtsen@linux.ibm.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH] crypto: lib/Kconfig - Fix lib built-in failure when arch
+ is modular
+Message-ID: <Z6wxp7UE9MAht4pc@gondor.apana.org.au>
+References: <202501230223.ikroNDr1-lkp@intel.com>
+ <Z6woN4vgdaywOZxm@gondor.apana.org.au>
+ <20250212050936.GB2010357@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/folio_queue: Delete __folio_order and use
- folio_order directly
-To: Liu Ye <liuye@kylinos.cn>, brauner@kernel.org, dhowells@redhat.com,
- akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250212025843.80283-1-liuye@kylinos.cn>
- <20250212025843.80283-2-liuye@kylinos.cn>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250212025843.80283-2-liuye@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212050936.GB2010357@google.com>
 
-
-
-On 12/02/25 8:28 am, Liu Ye wrote:
-> __folio_order is the same as folio_order, remove __folio_order and then
-> just include mm.h and use folio_order directly.
+On Wed, Feb 12, 2025 at 05:09:36AM +0000, Eric Biggers wrote:
+>
+> Please name these like ARCH_HAS_CURVE25519 and CRYPTO_LIB_CURVE25519_ARCH to be
+> consistent with the CRC library, the many other ARCH_HAS_* options, and
+> CRYPTO_LIB_CURVE25519_GENERIC.  Nothing uses names that contain "MAY_HAVE",
+> which is ambiguous.
 > 
-> Signed-off-by: Liu Ye <liuye@kylinos.cn>
-> ---
->   include/linux/folio_queue.h | 12 +++---------
->   1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/folio_queue.h b/include/linux/folio_queue.h
-> index 4d3f8074c137..45ad2408a80c 100644
-> --- a/include/linux/folio_queue.h
-> +++ b/include/linux/folio_queue.h
-> @@ -15,6 +15,7 @@
->   #define _LINUX_FOLIO_QUEUE_H
->   
->   #include <linux/pagevec.h>
-> +#include <linux/mm.h>
->   
->   /*
->    * Segment in a queue of running buffers.  Each segment can hold a number of
-> @@ -216,13 +217,6 @@ static inline void folioq_unmark3(struct folio_queue *folioq, unsigned int slot)
->   	clear_bit(slot, &folioq->marks3);
->   }
->   
-> -static inline unsigned int __folio_order(struct folio *folio)
-> -{
-> -	if (!folio_test_large(folio))
-> -		return 0;
-> -	return folio->_flags_1 & 0xff;
-> -}
-> -
->   /**
->    * folioq_append: Add a folio to a folio queue segment
->    * @folioq: The segment to add to
-> @@ -241,7 +235,7 @@ static inline unsigned int folioq_append(struct folio_queue *folioq, struct foli
->   	unsigned int slot = folioq->vec.nr++;
->   
->   	folioq->vec.folios[slot] = folio;
-> -	folioq->orders[slot] = __folio_order(folio);
-> +	folioq->orders[slot] = folio_order(folio);
->   	return slot;
->   }
->   
-> @@ -263,7 +257,7 @@ static inline unsigned int folioq_append_mark(struct folio_queue *folioq, struct
->   	unsigned int slot = folioq->vec.nr++;
->   
->   	folioq->vec.folios[slot] = folio;
-> -	folioq->orders[slot] = __folio_order(folio);
-> +	folioq->orders[slot] = folio_order(folio);
->   	folioq_mark(folioq, slot);
->   	return slot;
->   }
+> FWIW, at some point the arch optimized crypto algorithms also need to just be
+> enabled by default.  The fact that they're not is a longstanding bug that is
+> really harmful to users and needs to be fixed.
 
-This looks like a reasonable change to make, since it avoids code 
-duplication. Please consider:
+I'm simply responding to an lkp report.  While your suggestions
+may have merit, I don't have the time to pursue them.
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
+Feel free to send patches if you wish.
 
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
