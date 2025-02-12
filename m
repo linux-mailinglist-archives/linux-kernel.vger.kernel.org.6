@@ -1,149 +1,104 @@
-Return-Path: <linux-kernel+bounces-510375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD40A31BE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:22:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F750A31BE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:21:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E016B188A483
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B111889ED1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2665C1AD3E1;
-	Wed, 12 Feb 2025 02:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FC6189F43;
+	Wed, 12 Feb 2025 02:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bpQu2C9+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTMWDyOA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E5F8F77;
-	Wed, 12 Feb 2025 02:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8A71CD1F;
+	Wed, 12 Feb 2025 02:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739326928; cv=none; b=NGt9smh8t/jpjqLYXkJgPJimwsf9rzylznWsVQ9FP5wHQti3+M5TNfA8POAvPxRbPf/PFZBdvWsFiaKNOMXwiNkzxw4ByaT2vVIlZnaQ1TOAiETx0dPO6j69O+i2d1fPgyC7WwLDv1MOhDuOb/Ly54sAAcMxza7R96/09EVmo0E=
+	t=1739326880; cv=none; b=jZTphlKtnQmQncCrTdVtiHJKasLrNRiCgoE3k2a6wdB61qUzjkjHGi2xfeLBcu4QU78WUS5/04bDcIcdjJhRMw8mhEmZBpZoDIPcBjxGEMFk8WCrU9nM0KO4FCpnvseWHLWfGz090yPam/yExhQNqxJvRHcyBsgbegIHctbF8HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739326928; c=relaxed/simple;
-	bh=PNtMqBcAsc1rDrfqAyOraDXzsZcTf5BbU8fLA+q2i7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iT2D/uOGs0zXAs4ni56n/kpggfCYZxNdGoqsxMy0DjsH18tzFTIbrucUwTOUK4O94QVNiAxIKo18/T1WVOagk6ChHKcjAcpc5UlxUoZwPhZt7ffOodGZJG1ZWPPVKn7Dd9YdCXEOM+lduBwKghTSGNfsfE5TWO7gMBs+802Be1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bpQu2C9+; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739326927; x=1770862927;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PNtMqBcAsc1rDrfqAyOraDXzsZcTf5BbU8fLA+q2i7I=;
-  b=bpQu2C9+DCjm9gCG8VGUkL3LzJASwPjF77xCDlhAnrcl8dLYcptYVmg6
-   c2W9N0wwMYapS5R3WbqV426fFFSx2V46BcNf0Vf7gSDXk8VFULXuMH26z
-   sFD18y3jlV5IhwyOAzQzqOap+hhUAc3bx/tsx0XbLeiqcybONBron4ZVK
-   EQkCUMKCJpiZhI/lYygnc+kkCpIPq+D1nVcasonoSWhAwNnn/Xo+l/W9/
-   nAIOTt6I7NiugHE7kJVBJXl/PbEqQtRm9zlrUOnm+qRKGkGxkhsehXFxs
-   Ar8sj969KpUvBAl3hZivPjsHRDvcw+VbHinyS38O0XpdIcTP5Zu13bax7
-   g==;
-X-CSE-ConnectionGUID: Pb7ZV8plQD2Kyj0P5mi6Zw==
-X-CSE-MsgGUID: JsRFjdw+RMuheJ5nKzzkUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51398364"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="51398364"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 18:22:06 -0800
-X-CSE-ConnectionGUID: 8DVA/s8dSbKfdbiRiKO8ZQ==
-X-CSE-MsgGUID: QtzzeT3pQBeAccp+Z1BFtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="149866516"
-Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 18:21:16 -0800
-Message-ID: <a771f116-d70e-4f52-ada3-8422e1f45acf@linux.intel.com>
-Date: Wed, 12 Feb 2025 10:21:14 +0800
+	s=arc-20240116; t=1739326880; c=relaxed/simple;
+	bh=IyLvP91pfGYRHCXqlRx/ClwzflNIe5Yh0J8AVLNN12Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uqg55o8KK9teSGjuOh3/9TIWD11Rp/Mjw6iBw5jeo/0TGOFC+4R4cDmTCKbtejEVzESdhWUHc+hGub4sgHnFCKjTGs0zNndw5OyVOLI3luk0v2BE0zvNRGqjcxtWr4LKCLJp0GAqu7gRWUZd10FH/h21AnZCUsIU/iln7x+fIzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lTMWDyOA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99ABEC4CEE4;
+	Wed, 12 Feb 2025 02:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739326879;
+	bh=IyLvP91pfGYRHCXqlRx/ClwzflNIe5Yh0J8AVLNN12Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lTMWDyOAyrZVTk0RkOOT1gPJt1AI4FCh107H0lJJ+YKfe9DYu7MtgZZMFdIs8ESso
+	 Rkv66JTBZOZc6fxrTFn5GOSJAWT8ebdmxqQhvjoHRi2m8K0KoRrqLdpzsBYgK6avmY
+	 8v16oFX0lxzGEL+7Ix0lOtJQgdiSo7XU7DWJn15evfvurFOjyiBJgbbW12pLJMzJid
+	 AiKoCNVZ9qtXAm5CVFefyRPCUIIwAmCLE+GKL7oyPMxLvlVY25yPJIpdUwarc1GZXJ
+	 6WML7Tij8w4ZZ/m5qU8gTjIRw9z14NXwCnLtf86vBBLfPLIMTLas43Yvev16eA0fKU
+	 NWPH++9FGpjoA==
+Date: Wed, 12 Feb 2025 02:21:18 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, decui@microsoft.com,
+	haiyangz@microsoft.com, hpa@zytor.com, kys@microsoft.com,
+	mingo@redhat.com, ssengar@linux.microsoft.com, tglx@linutronix.de,
+	wei.liu@kernel.org, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
+	benhill@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
+Subject: Re: [PATCH hyperv-next 0/2] x86/hyperv: VTL mode reboot fixes
+Message-ID: <Z6wFnoK-X7i1bd9x@liuwe-devbox-debian-v2>
+References: <20250117210702.1529580-1-romank@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] KVM: TDX: Add a place holder for handler of TDX
- hypercalls (TDG.VP.VMCALL)
-To: Sean Christopherson <seanjc@google.com>, Chao Gao <chao.gao@intel.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, rick.p.edgecombe@intel.com,
- kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com,
- xiaoyao.li@intel.com, tony.lindgren@intel.com, isaku.yamahata@intel.com,
- yan.y.zhao@intel.com, linux-kernel@vger.kernel.org
-References: <20250211025442.3071607-1-binbin.wu@linux.intel.com>
- <20250211025442.3071607-4-binbin.wu@linux.intel.com>
- <Z6sNVHulm4Lovz2T@intel.com> <Z6vhTGHKIC_hK5z4@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <Z6vhTGHKIC_hK5z4@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250117210702.1529580-1-romank@linux.microsoft.com>
 
+On Fri, Jan 17, 2025 at 01:07:00PM -0800, Roman Kisel wrote:
+> The first patch defines a specialized machine emergency restart
+> callback not to write to the physical address of 0x472 which is
+> what the native_machine_emergency_restart() does unconditionally.
+> 
+> I first wanted to tweak that function[1], and in the course of
+> the discussion it looked as the risks of doing that would
+> outweigh the benefit: the bare-metal systems have likely adopted
+> that behavior as a standard although I could not find any mentions
+> of that magic address in the UEFI+ACPI specification.
+> 
+> The second patch removes the need to always supply "reboot=t"
+> to the kernel command line in the OpenHCL bootloader [2]. There is
+> no other option at the moment; when/if it appears the newly added
+> callback's code can be adjusted as required.
+> 
+> It would be great to apply this to the stable tree if no concerns,
+> should apply cleanly.
+> 
+> [1] https://lore.kernel.org/all/20250109204352.1720337-1-romank@linux.microsoft.com/
+> [2] https://github.com/microsoft/openvmm/blob/7a9d0e0a00461be6e5f3267af9ea54cc7157c900/openhcl/openhcl_boot/src/main.rs#L139
+> 
+> Roman Kisel (2):
+>   x86/hyperv: VTL mode emergency restart callback
+>   x86/hyperv: VTL mode callback for restarting the system
 
+Saurabh please review these patches. Thanks.
 
-On 2/12/2025 7:46 AM, Sean Christopherson wrote:
-> On Tue, Feb 11, 2025, Chao Gao wrote:
->>> @@ -810,6 +829,7 @@ static bool tdx_guest_state_is_invalid(struct kvm_vcpu *vcpu)
->>> static __always_inline u32 tdx_to_vmx_exit_reason(struct kvm_vcpu *vcpu)
->>> {
->>> 	struct vcpu_tdx *tdx = to_tdx(vcpu);
->>> +	u32 exit_reason;
->>>
->>> 	switch (tdx->vp_enter_ret & TDX_SEAMCALL_STATUS_MASK) {
->>> 	case TDX_SUCCESS:
->>> @@ -822,7 +842,21 @@ static __always_inline u32 tdx_to_vmx_exit_reason(struct kvm_vcpu *vcpu)
->>> 		return -1u;
->>> 	}
->>>
->>> -	return tdx->vp_enter_ret;
->>> +	exit_reason = tdx->vp_enter_ret;
->>> +
->>> +	switch (exit_reason) {
->>> +	case EXIT_REASON_TDCALL:
->>> +		if (tdvmcall_exit_type(vcpu))
->>> +			return EXIT_REASON_VMCALL;
->>> +
->>> +		if (tdvmcall_leaf(vcpu) < 0x10000)
->> Can you add a comment for the hard-coded 0x10000?
-> Or better yet, a #define of some kind (with a comment ;-) ).
+I don't have a strong opinion on them.
 
-As Chao pointed out, we should convert the leaves defined in the GHCI spec
-and supported in KVM only.  Specific leaf numbers will be used instead of
-comparing to 0x10000.
-
-I plan to change it to:
-
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 2b24f50ad0ee..af8276402212 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -920,11 +920,17 @@ static __always_inline u32 tdx_to_vmx_exit_reason(struct kvm_vcpu *vcpu)
-                 if (tdvmcall_exit_type(vcpu))
-                         return EXIT_REASON_VMCALL;
-
--               if (tdvmcall_leaf(vcpu) < 0x10000) {
--                       if (tdvmcall_leaf(vcpu) == EXIT_REASON_EPT_VIOLATION)
-+               switch(tdvmcall_leaf(vcpu)) {
-+                       case EXIT_REASON_EPT_VIOLATION:
-                                 return EXIT_REASON_EPT_MISCONFIG;
--
--                       return tdvmcall_leaf(vcpu);
-+                       case EXIT_REASON_CPUID:
-+                       case EXIT_REASON_HLT:
-+                       case EXIT_REASON_IO_INSTRUCTION:
-+                       case EXIT_REASON_MSR_READ:
-+                       case EXIT_REASON_MSR_WRITE:
-+                               return tdvmcall_leaf(vcpu);
-+                       default:
-+                               break;
-                 }
-                 break;
-         case EXIT_REASON_EPT_MISCONFIG:
-
-
-
-
+> 
+>  arch/x86/hyperv/hv_vtl.c | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> 
+> base-commit: 2e03358be78b65d28b66e17aca9e0c8700b0df78
+> -- 
+> 2.34.1
+> 
 
