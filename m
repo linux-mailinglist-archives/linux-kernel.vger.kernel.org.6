@@ -1,117 +1,92 @@
-Return-Path: <linux-kernel+bounces-510416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59168A31C85
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:01:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDF1A31C7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9986166F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A07166A2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70B71D798E;
-	Wed, 12 Feb 2025 03:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE391D6DDC;
+	Wed, 12 Feb 2025 03:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NnBU2WbU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4R6BsEs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B367E107;
-	Wed, 12 Feb 2025 03:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F152AC148
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739329283; cv=none; b=XEltmEOoEqgM24tsB/kv/KxRckDU6YVcXQwraj+Uy30lTcNmP8e1eHZQ/O+/CdqCyDP+7Tsaqi6BkhIsnYU7JOFJDUe7LVu2IP4H/b2aXcCBIIbekcxLucGGSBgqIFBDkGavIaJ13kPR9WW44x9+zX84JGLoregwR7hzmMbayZg=
+	t=1739329211; cv=none; b=rtKghY9Lua5oGRrzsxUNyLAF7vtXqcO8/YdUdqJLzEgGQiVYuEjLzlgfM/aSgHriozE+r2OImvR/HaBKbyqwNmbyWYfNgym3yKkNUh18MBH48tk7c7YwUQbBhUl8gh/+bQeJZNSswxr8BRGskyBdFw5/8Odppbts5le0XHBxrDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739329283; c=relaxed/simple;
-	bh=TzeWfyllWEcDqZhvK8KDksLxOw4vt7BAikh95Vs5JlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=k+dh2DVYCzBLlEW3ybCD3g/bGO63RzZbWVzLi8RTLBukAoPsVJfRzzJ28tsGra+t6ZFQpPDitWZAO2pyZ1Q9zdRj1DRveqvhifevhiF9+wB0A71L/NVo93IQVEfsEJSkdqWDUFkmyNR8rEWuklftn4N9ujdct6i8GvWEUazro4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NnBU2WbU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1739329274;
-	bh=JSDlELcyG88ZzzYYBK4LOkJaFlLkawCNJ4tb0QJ74Gc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NnBU2WbUKxXBea4i0gQC5gxyLMq3pwogplOC6WQGIFbD88xL/mnaB/EzhswRTu+Qd
-	 f2ui4a+Xqd8x2CjawmmIiM7xdCGnTKLfOmz/EoYoA38178Ws8OFDwHZ8dBYcBxaUuE
-	 ApO9xMXY72t/gFvtKVgfrgQplWwEoDwIv6qhV5kCMvr/8k3RTKZok3WAOR4QMDAYEw
-	 vp186dxWKZIsB8Yab0dLwGcxEjsr8rwibBuWvnd8/jD1H0k5BOW0aD03E5YbT+2Vqk
-	 lLZKRs5tcbbkiLHZnBWRxbLn43yO6dypkL5+l5W94a2FrS5BdFDYmxVTHGnRGutas4
-	 ZA2RCQHdHle4A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yt33t5mH5z4wyh;
-	Wed, 12 Feb 2025 14:01:14 +1100 (AEDT)
-Date: Wed, 12 Feb 2025 14:00:36 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Liam
- Girdwood <lgirdwood@gmail.com>
-Cc: Andrei Simion <andrei.simion@microchip.com>, Charan Pedumuru
- <charan.pedumuru@microchip.com>, Durai Manickam KR
- <durai.manickamkr@microchip.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the dmaengine tree with the sound-asoc
- tree
-Message-ID: <20250212140036.6c66be97@canb.auug.org.au>
+	s=arc-20240116; t=1739329211; c=relaxed/simple;
+	bh=s51PwjYiXgxoVGujUd7KagMqrOmjYUloowPDYEhHEn8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=gt0UAZn5A8u/dvHrLut4VPbKVEo5TkwwP0aH4L5u8+BUplkVX7pfXYw3ubUJGs1W3aU4sYulXzTHP/Roo47bYOfEb1SP502nQG5H3wKHuDNzNbui44ZHxf+2MC2EhWTQJWPZ5GWNM2RyQof4dslHmgHI02cHzIMzan2I7LaWgKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4R6BsEs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A75BC4CEDD;
+	Wed, 12 Feb 2025 03:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739329210;
+	bh=s51PwjYiXgxoVGujUd7KagMqrOmjYUloowPDYEhHEn8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=J4R6BsEsFngMhxMHInJf6ec0sVv19DPhPjwg0Wt2PslFHmUB6Haf2TvsznD/oZCnO
+	 FNoGw8X4V1yPGnLY4T4RiGjvHaDvUf/ac+VIwUhNhySEulK0S3jtm+L/UK3L9uWStJ
+	 kqHvAH8Yt/g3YNPc4uZ5u6Cw27ykbTqM3CzID6/g+t7bS8k7T3XomW4IDOdRoWhDyX
+	 OPtZtvQDheUf7qJsNaWIoGYUxadrLbY3uKOR5RcEdojt9iomd9KcP3DqKPHsfD633O
+	 qXSkNF3ffbPEzR0l5VGrTHUWYTI5bZzwy7xcC8EGkzcoT/I50cMDpQvzbwRrbQM41n
+	 cGbDBfI7xG+PQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710FB380AAFF;
+	Wed, 12 Feb 2025 03:00:40 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/iW2pTCg=Dr_TNO6ecs9kRM+";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH v3 RESEND] f2fs: add check for deleted inode
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <173932923927.82998.635511827116437277.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Feb 2025 03:00:39 +0000
+References: <20250211071725.457343-1-chao@kernel.org>
+In-Reply-To: <20250211071725.457343-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, leocstone@gmail.com,
+ linux-f2fs-devel@lists.sourceforge.net
 
---Sig_/iW2pTCg=Dr_TNO6ecs9kRM+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello:
 
-Hi all,
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Today's linux-next merge of the dmaengine tree got a conflict in:
+On Tue, 11 Feb 2025 15:17:25 +0800 you wrote:
+> From: Leo Stone <leocstone@gmail.com>
+> 
+> The syzbot reproducer mounts a f2fs image, then tries to unlink an
+> existing file. However, the unlinked file already has a link count of 0
+> when it is read for the first time in do_read_inode().
+> 
+> Add a check to sanity_check_inode() for i_nlink == 0.
+> 
+> [...]
 
-  Documentation/devicetree/bindings/misc/atmel-ssc.txt
+Here is the summary with links:
+  - [f2fs-dev,v3,RESEND] f2fs: add check for deleted inode
+    https://git.kernel.org/jaegeuk/f2fs/c/6e3019906688
 
-between commit:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-  6603c5133daa ("ASoC: dt-bindings: atmel,at91-ssc: Convert to YAML format")
 
-from the sound-asoc tree and commit:
-
-  a54ec770396c ("dt-bindings: dma: convert atmel-dma.txt to YAML")
-
-from the dmaengine tree.
-
-I fixed it up (I just deleted the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/iW2pTCg=Dr_TNO6ecs9kRM+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmesDtQACgkQAVBC80lX
-0Gy0rAf/b1NaTJL57Op69+cXEBMrHevTWdW46IzRqbZb+oPFY0q5xVGRO6v4cl/S
-lcGxvVSwRkNUzFT7mqHImcSiwWafPHtWIZv1nhc+kCOFown0BeRZhc1RQ5Zakg/1
-oGRsOKoXmSzZmTAETWN4iAWZ6Gji5bwdUqaCb6REIVzmAWJNsemna1Vpq6ULIqxQ
-54rxCjCmxdl41vJ1+1QuuhOrmloiHNh+canVvWmLCI/teN/FxJIXg79Lry2k8odM
-91mPlF2vTjx5I2NuDw1Avg3LQ53QryDSTwJTv0arnqmk0zLElzEwhqKaElOU6AgP
-4S9bqgwNphPItNRK6J8XMa63Gmz8SA==
-=TP1T
------END PGP SIGNATURE-----
-
---Sig_/iW2pTCg=Dr_TNO6ecs9kRM+--
 
