@@ -1,93 +1,65 @@
-Return-Path: <linux-kernel+bounces-510928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD34A323BA
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27777A323B9
 	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:43:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3EA3163968
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DD9188B83E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9B7209F55;
-	Wed, 12 Feb 2025 10:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C14720896C;
+	Wed, 12 Feb 2025 10:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UvMRwah7"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PrCf//X2"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA028209F3C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A497820551D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739356954; cv=none; b=DxqCDWOwwgRleLnV0Zwifvf+BCLJhU3/qzWPzvMH8/meP8yQ+QAbBilSy9Qzyb2GSUDz+Pyy2M76uXHWCxLB1oyZG70iyqqMn6cxuOfQQsa6+d3mXZLNluAjgz46sqZMIoLJTIOkbP/YpMCLXkGYLUtIq8RSAb+ITHkRTITCzN0=
+	t=1739356979; cv=none; b=Uzd9pnyZy6xAKE5mw4fTQRoAZvXVL3EsjmL00iKr8UrYbuji/tyIqfewGl4hz+vwaTvo2tA7bE8sWy/BrbTIQKzUNH3e/y3tQgQdfINyS6XsFy2gamz7Uipt4bJ5arffrV7PPXgK2WlOAGgR77mHw0XEkmKeZjFisEd/wcE5/a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739356954; c=relaxed/simple;
-	bh=zKemnO3M4vvKr/b+LEy5t/9tGLoJbtiRSG+p5f9+Kws=;
+	s=arc-20240116; t=1739356979; c=relaxed/simple;
+	bh=rLZME83wY2OLb007OzaDaS2udh4wzEqf9p1nh2pGUTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTBhz5Z4So3FwBihPuCK7W3its577P0fXFHi6PlCldgLTXIsq/RGWsIETCz5GmrJ3ADBK9u+SD4X1bLCMlLq68xHWqoPoIqwRxdBhe87foaiTn2prD9AVBGmZoSh6URiT/4ryCIG/6gnLC+R5RyTrelEFejpSR6MyDhJRB+LW/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UvMRwah7; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5450681b606so3970832e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:42:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739356951; x=1739961751; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ld1TfC5Cdjw/PoVC0iP097r1SbIYfGgfFoLiWX4Zz3g=;
-        b=UvMRwah7YSQfTrvxsptY1ehUFhktfrovYmj0W1SWPW95ehDdJPtGEmZsPk6zj04XCV
-         smPSGuigSJlCGwwM8YDg2dvDdSipSMD1yAA3+4obCI1cAeR82bWcvTRHjE4jNns2OOBm
-         D+DCSO56POEUuVhoQrlAxricsU1YQtfBJFhR/VsYvzbKmwZ+vEx34CqiqNwCZhBGfFBj
-         6KTDOwcn0q8qDaJKQuywUl4nkzLvkG6Qy1nFyE8iRFnO5jEv9FjE5/ChbnmDwanVCL6R
-         xi9TOGN9sHj7SidZbm4zsi3bootmzuTB/PYUxVBa79yDVVkLlx9tSLSOE6uKfww1koqJ
-         Jd4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739356951; x=1739961751;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ld1TfC5Cdjw/PoVC0iP097r1SbIYfGgfFoLiWX4Zz3g=;
-        b=m/5lNMKeC6ipKwEk471WuJ1bgnuRX1qsu7bYMVk/wOW+Je9PWwORcrrO47eVmULUr4
-         D377Ad8vCmOtyCjQsHsZzsdoEWaaZyI01C4OzrEXINOE8Ugc/bk9CXbJn/x8QI+Jh5R0
-         zgJT1CPLUQKS/39IivJhMU4n+ZBQtaSlhLZsr50eeDGbH2UHszUKp97M7ONqtLJe9BIk
-         T7U/xwuDpIebSWK4Ho6Is/f+yXLKPhE+6urO4vN1ObYOGF5YHoGgf0jZNnHYEPDCShoy
-         fUwb01dXz6iahsJ6nQbXmGQUSOvNIqXAXkgHbN+JmYzPOObtO6arZpfhlBNER4ewi9QG
-         e7hw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1f1m7AXyqVDckpAKG9J0bSRIsxXH8sZHAIjZUFt7qPWJUwHsRLx2U5o8lh8joDoD/i9f+1DFZLQxUkfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7yJiqDz0rFrFN51NfwifOuyMQ4hHaFnCcBFjzoM+jqDuRPx5x
-	23dEOB8p8n7wB7X9m1z6YALzV7p3yj+JXOnZT4lE0cSHI0WFZhpx9Wb7wQB7NeE=
-X-Gm-Gg: ASbGncsGY6S1eRbiJQNdtC6RZUea+PWjT/RWtWsxDnRW1jAvmmk7xBBITPJbGo+KuBj
-	rihzGtNNTRcbtDh68KaHFo615lFasyuaGWPhUq00z020X82ae9S6nOHv3vxGginx07NP+SMLk8a
-	wWhCGystD0UC3Rv9TVdzFPvWuO+WBKjXXgxKCvEjoG3RXCNZD4fn15BoqcVw2ypPWbUNYF9LT9H
-	UAZCPf/aaBPwoD5Dm5nCCYWmzW26b3Pij4MPgZYOLo1VcUfdEiIZn7Bucg6J0b6r+obQd/348Lv
-	stPoIZ6pfJvdeUqISgN1e5totvfdQmVjWz/3fM0DaX0kdKdWwTrcCozjRYLA5v0BvYuDq1M=
-X-Google-Smtp-Source: AGHT+IF+1GUoRD9HhqBh1RL9sJOAG4t7Xk0SYLrZn9lbwf1SpooHUxeWe02/GIT06t3TK4EotARjyA==
-X-Received: by 2002:a05:6512:39cf:b0:545:17d:f96b with SMTP id 2adb3069b0e04-545180eb5f9mr737259e87.14.1739356950858;
-        Wed, 12 Feb 2025 02:42:30 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54504e344a7sm1328754e87.5.2025.02.12.02.42.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 02:42:30 -0800 (PST)
-Date: Wed, 12 Feb 2025 12:42:28 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yongxing Mou <quic_yongmou@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: display/msm: Redocument the
- dp-controller for QCS8300
-Message-ID: <brm43v5kzsum6hc6ahs3lqzgww55kczjzwzxsmx5a6alw3xxvh@3mdqqjvo2b5k>
-References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
- <20250212-mst_qcs8300-v1-1-38a8aa08394b@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsHbFqWULZaW9SgQZEpoTJ/yG+dvbDxfKsNp5qwnA2FaEwf/ZI20CFDCHb1sGgSGZ4bvN3GziKtuoLNPwQ8xLB6VEwFMJsesW3kjTKccIwAZpdyHdeNTeduKL0La/Ee75EVH57p6zKfgbXlWaX8NF8ouCbAcEzfMtaGuVKuF9oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PrCf//X2; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hdmOA94aYPO0cffYrOTR0RQRrJJb4YA7G2s/PyumSjA=; b=PrCf//X2aAucNNXGSkE5cD/eM9
+	eKJZ2W0EsKkwJaInHDdTo5u1inOmKjZGyM/7DF/2sTslyaKYO3AaC0lE7fA8KFgIpdJMeO9W1dRs8
+	5t5UrgBXN8MyiOO0E/UOgtHo0on2YQFwGsglYhKCGzB9q6SmfZ+WKl32uUkJ/Vcj/P54My0Q0qAkI
+	1tPFDJbZuwokmBxILJBAtnbkz1q0fxCF61gDVHEDLgz8wKzZR0SuCWqrLC+qmxOH8phozveTAcQmx
+	ArIObh3Aru4xcPzWeEkVRE1t3ZNq6YtoxaqaxvFmvdUD0sipEyYzyePC7rAfMCONV2iCPCPHjOn+H
+	fIQ/TH4w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tiACX-00000004Fym-0ocZ;
+	Wed, 12 Feb 2025 10:42:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AF6CB300134; Wed, 12 Feb 2025 11:42:39 +0100 (CET)
+Date: Wed, 12 Feb 2025 11:42:39 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali Shukla <Manali.Shukla@amd.com>
+Subject: Re: [PATCH v10 09/12] x86/mm: enable broadcast TLB invalidation for
+ multi-threaded processes
+Message-ID: <20250212104239.GF19118@noisy.programming.kicks-ass.net>
+References: <20250211210823.242681-1-riel@surriel.com>
+ <20250211210823.242681-10-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,26 +68,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212-mst_qcs8300-v1-1-38a8aa08394b@quicinc.com>
+In-Reply-To: <20250211210823.242681-10-riel@surriel.com>
 
-On Wed, Feb 12, 2025 at 03:12:24PM +0800, Yongxing Mou wrote:
-> We need to enable mst for qcs8300, dp0 controller will support 2 streams
-> output. So not reuse sm8650 dp controller driver and will add a new driver
-> patch for qcs8300 mst feature. Modify the corresponding dt-bingding file
-> to compatible with the qcs8300-dp.
+On Tue, Feb 11, 2025 at 04:08:04PM -0500, Rik van Riel wrote:
 
-Forgot to mention that in the quick response: please fix usage of
-capital or lowercase letters in the commit message. If you are unusure,
-'git log' will help you.
+I poked around at this function a little, and ended up with the below.
 
-> 
-> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
+As to your question if any INVLPGB capable hardware needs PTI; the
+answer is no. No AMD machine needs PTI; but it should still work, just
+in case someone needs to test something.
 
--- 
-With best wishes
-Dmitry
+static void broadcast_tlb_flush(struct flush_tlb_info *info)
+{
+	unsigned long asid = info->mm->context.global_asid;
+	bool pmd = info->stride_shift == PMD_SHIFT;
+	unsigned long addr = info->start;
+
+	/*
+	 * TLB flushes with INVLPGB are kicked off asynchronously.
+	 * The inc_mm_tlb_gen() guarantees page table updates are done
+	 * before these TLB flushes happen.
+	 */
+	if (info->end == TLB_FLUSH_ALL) {
+		invlpgb_flush_single_pcid_nosync(kern_pcid(asid));
+		if (static_cpu_has(X86_FEATURE_PTI))
+			invlpgb_flush_single_pcid_nosync(user_pcid(asid));
+
+	} else do {
+		unsigned long nr = 1;
+
+		if (info->stride_shift <= PMD_SHIFT) {
+			/*
+			 * Calculate how many pages can be flushed at once; if the
+			 * remainder of the range is less than one page, flush one.
+			 */
+			nr = (info->end - addr) >> info->stride_shift);
+			nr = clamp_val(nr, 1, invlpgb_count_max);
+		}
+
+		invlpgb_flush_user_nr_nosync(kern_pcid(asid), addr, nr, pmd);
+		if (static_cpu_has(X86_FEATURE_PTI))
+			invlpgb_flush_user_nr_nosync(user_pcid(asid), addr, nr, pmd);
+
+		addr += nr << info->stride_shift;
+	} while (addr < info->end);
+
+	finish_asid_transition(info);
+
+	/* Wait for the INVLPGBs kicked off above to finish. */
+	tlbsync();
+}
+
 
