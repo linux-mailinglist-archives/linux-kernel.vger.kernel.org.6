@@ -1,162 +1,137 @@
-Return-Path: <linux-kernel+bounces-510951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B940A32403
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:55:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FEEBA32408
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3827163BB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBEE91884555
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C936209F3C;
-	Wed, 12 Feb 2025 10:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6AE209F44;
+	Wed, 12 Feb 2025 10:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qFv6IwAc"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BjI8xcfI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40383206F2C;
-	Wed, 12 Feb 2025 10:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCF0209691;
+	Wed, 12 Feb 2025 10:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357735; cv=none; b=GgisVumj29jcXZs2BzlHAVyGC8HKSGMYbvGXkQDOXM91IJT7oUxO1yM6fJH1/5pn+/zO0gMtHGaNObPYFrT9zkStaVOcx0Xrjk2JC3MGp7mk3P5Q92nnWN8xPNwSRCG8R9J5KjVIWJQWoSvfxgrOV4vjvG8OSrL7hFBCECKErDE=
+	t=1739357768; cv=none; b=f71TnFG+yHEQrCzeEXgpn7xowyr6ltx1Sw8TdyxP9GsWFqxoa7q7C2cVU8Tjl3SzjSDKhpuEL1hJrNDEMaBk3Tdf74uOn9ZHm3wTj1gGTzPhmVyFsuIXYClzWTwK5QNoOAZXfrq61T+8Dsel/F9UWqOQIIBaskCsMmgMLQOeCY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357735; c=relaxed/simple;
-	bh=YDUw1jwbWOCs7kM+qnqYD6rz2Rv/Ove2R3hjhj9wfy0=;
+	s=arc-20240116; t=1739357768; c=relaxed/simple;
+	bh=2r6FCD9tYnKCQgTgvsOVi2Kr4w/PAVQ+9aVyTlNzHHo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omb/1wQEcdnmKHf+UZlLhNkSQ7FQJ6zw2DVbfcyKYCAN74XOc3+rk8S4rpZKW1YwRKTWzgMkcFDIuPM+XkyQ9RgevOxyOvqStHubDupbVCBXzHTiYwLSWCSYjcCWL0c1EiSpsETTVQ0UYmTs/Yw0dq6hGSVfc2wzqDY3cFXB3Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qFv6IwAc; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C5OOsD003168;
-	Wed, 12 Feb 2025 10:55:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=76M3I/
-	Nc/8XmmC/SMhr1RgaBDyLEl3IK3DLNAMMdyNI=; b=qFv6IwAcKyJUOs5NQiHwUz
-	WgNZSG4w9inXXryzWQRxFQTaC29PglujalbfHX670LGAHhSsicEgIiF7vsEyU48a
-	ZEt0JcJEL6kyMEHc2g0wzvwl5HhJNxr3xq/grLUZ1iNRG/YotaMBX2nCk8rZ4pk+
-	EUG5IvQCTSCL2gv7F6cSfwsqQIkRALk6KnbHET1LzZ+2V8y2nGH27RXXTOWxcscN
-	g2AnmyHZ2R/Wj4B1li+fwkZNameLn73tk+UQVpay4Cje742FT5+Ujo5oyRBGrv4L
-	RJZqeMIva2KFu055VnRWdIECbqiKBB+Ne53hSe896kJOl7C62u3PVwnuW5zql52Q
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rnf89f6f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 10:55:31 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51C9dw5c001358;
-	Wed, 12 Feb 2025 10:55:30 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pjkn84q3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 10:55:30 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CAtQbl13763026
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 10:55:26 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 351E620040;
-	Wed, 12 Feb 2025 10:55:26 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6834320043;
-	Wed, 12 Feb 2025 10:55:25 +0000 (GMT)
-Received: from localhost (unknown [9.171.83.73])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 12 Feb 2025 10:55:25 +0000 (GMT)
-Date: Wed, 12 Feb 2025 11:55:19 +0100
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Anthony Krowiak <akrowiak@linux.ibm.com>
-Cc: Rorie Reyes <rreyes@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        borntraeger@de.ibm.com, pasic@linux.ibm.com, jjherne@linux.ibm.com,
-        alex.williamson@redhat.com
-Subject: Re: [PATCH v1] s390/vfio-ap: Signal eventfd when guest AP
- configuration is changed
-Message-ID: <your-ad-here.call-01739357719-ext-1861@work.hours>
-References: <20250107183645.90082-1-rreyes@linux.ibm.com>
- <Z4U6iu5JidJUxDgX@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <f69bba4b-a97e-4166-9ce1-c8a2ad634696@linux.ibm.com>
- <f1af50b3-f966-445d-ab89-3d213f55b93a@linux.ibm.com>
- <Z6RnfwawWop0v1CW@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <02675184-0ce5-4f08-9d5d-f42987b77b5b@linux.ibm.com>
- <Z6sDKeA6WzAgagiZ@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <e5ca9a2c-ec7d-4e0e-ad06-2d312b511b90@linux.ibm.com>
- <8767c6ce-28cf-4e23-baf8-e6c9ec854c60@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I0B8xE+ngTxs5lyaJj+Z8TcKWjH7HnyMNII5XJ3mLv79FhjVEq2+Q9KbgnTgA4GdvoZIaATAj8AzmwmZgq8IPBVdfsYcNeOk6y22pedHneICKM6gERRxo/G9Vty4S1Yh3Utlio7W4BvJEs6wzwBlUFWy0TiULxjwufbxHMS6x14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BjI8xcfI; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739357767; x=1770893767;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=2r6FCD9tYnKCQgTgvsOVi2Kr4w/PAVQ+9aVyTlNzHHo=;
+  b=BjI8xcfIym1W51kz7DWHmTiVxv4AEVv6q+hFwZyb5lm/c5CynLzc8gw0
+   MVUy4SZeEMLFHg+po/uml6XhyqLp57jhqPA4nedKwMGXygofIYZ6dBU5k
+   8LlHI+bsdNpvEF06GZv0LpW27Q8nk135KNr0AAo7fHBLrXgn8/tpfuigI
+   CVUbDqkMWMwvnpdmy45goj2xedk4naW8MdWAKxu1/xap05AnnuhwJ25JR
+   Lc0eKSmlzCOmBPEp3ssyCHg6n4QXxyu4RKqfVdwxJG9HMM5b3Emfq/39q
+   SU+53Rengy2jNonryNIGCmZP1i71llxeJjWbvTvGfS79RUe5JxCVFBuBC
+   g==;
+X-CSE-ConnectionGUID: qL2HY3TVRu+YW8UhrYn1EQ==
+X-CSE-MsgGUID: DQcIkJkHTGOAW0JjlmePDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39932018"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="39932018"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:56:06 -0800
+X-CSE-ConnectionGUID: /G4BxvpUQfCcCLUxRAdjrA==
+X-CSE-MsgGUID: IkewcdcZTYuh3nm6eRM76g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="117802484"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:56:01 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tiAPO-0000000AoJz-0anG;
+	Wed, 12 Feb 2025 12:55:58 +0200
+Date: Wed, 12 Feb 2025 12:55:57 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v8 01/17] spi: add basic support for SPI offloading
+Message-ID: <Z6x-PVheAMz8dA6l@smile.fi.intel.com>
+References: <b1dcbb19-190a-45e7-8e94-cb5ef65f1f1b@sirena.org.uk>
+ <Z6pim_nLct33LzfN@smile.fi.intel.com>
+ <b000d3fd-754a-43e8-ab10-82677eeee1d2@sirena.org.uk>
+ <Z6tcwg7QgQwytoSb@smile.fi.intel.com>
+ <Z6tezVXVxVCwXuds@smile.fi.intel.com>
+ <Z6tfUfHilO2KLmxv@smile.fi.intel.com>
+ <Z6tgNjH6Qq5pe9Gt@smile.fi.intel.com>
+ <tnjsrq3trijh4agmbhrfnqeq4iojhwybtg45bwt5n7mg7qqgcx@s7gw7idjuxgd>
+ <Z6uhHssgIvI2DJ4c@smile.fi.intel.com>
+ <57swm23ik5kyzcjvnhkizctnemtlqf3duhrd5u3n6yelxkerxt@6akfoqmyqsup>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8767c6ce-28cf-4e23-baf8-e6c9ec854c60@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: w8EkwTQy5rQ8urYUuHVDmhH98dk6ODc_
-X-Proofpoint-GUID: w8EkwTQy5rQ8urYUuHVDmhH98dk6ODc_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_03,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0 phishscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502120081
+In-Reply-To: <57swm23ik5kyzcjvnhkizctnemtlqf3duhrd5u3n6yelxkerxt@6akfoqmyqsup>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Feb 11, 2025 at 03:24:05PM -0500, Anthony Krowiak wrote:
-> 
-> 
-> 
-> On 2/11/25 10:02 AM, Rorie Reyes wrote:
+On Wed, Feb 12, 2025 at 09:52:37AM +0100, Uwe Kleine-König wrote:
+> On Tue, Feb 11, 2025 at 09:12:30PM +0200, Andy Shevchenko wrote:
+> > On Tue, Feb 11, 2025 at 07:45:30PM +0100, Uwe Kleine-König wrote:
+> > > I have no problem here. If the header becomes stale we will most
+> > > probably notice that eventually and remove it.
 > > 
-> > On 2/11/25 2:58 AM, Alexander Gordeev wrote:
-> > > On Thu, Feb 06, 2025 at 09:12:27AM -0500, Rorie Reyes wrote:
-> > > 
-> > > Hi Rorie,
-> > > 
-> > > > On 2/6/25 2:40 AM, Alexander Gordeev wrote:
-> > > > > On Wed, Feb 05, 2025 at 12:47:55PM -0500, Anthony Krowiak wrote:
-> > > > > > > > How this patch is synchronized with the mentioned QEMU series?
-> > > > > > > > What is the series status, especially with the comment from CÃ©dric
-> > > > > > > > Le Goater [1]?
-> > > > > > > > 
-> > > > > > > > 1. https://lore.kernel.org/all/20250107184354.91079-1-rreyes@linux.ibm.com/T/#mb0d37909c5f69bdff96289094ac0bad0922a7cce
-> > > ...
-> > > > > > I don't think that is what Alex was asking. I believe he
-> > > > > > is asking how the
-> > > > > > QEMU and kernel patch series are going to be synchronized.
-> > > > > > Given the kernel series changes a value in vfio.h which
-> > > > > > is used by QEMU, the
-> > > > > > two series need to be coordinated since the vfio.h file
-> > > > > > used by QEMU can not be updated until the kernel code is
-> > > > > > available. So these
-> > > > > > two sets of code have
-> > > > > > to be merged upstream during a merge window. which is
-> > > > > > different for the
-> > > > > > kernel and QEMU. At least I think that is what Alex is asking.
-> > > > > Correct.
-> > > > > Thanks for the clarification, Anthony!
-> > > > Tony, thank you for the back up!
-> > > > 
-> > > > Alexander, is there anything else you need from my end for
-> > > > clarification?
-> > > The original question still stays - is it safe to pull this patch now,
-> > > before the corresponding QEMU change is integrated?
+> > Lol. Look at the header hell we have now. 98% code in the drivers/ just show
+> > that the developers either don't care or do not understand C (in terms of
+> > what headers are for and why it's important to follow IWYU principle).
 > 
-> This patch has to be pulled before the QEMU patches are integrated. The
-> change to the
-> include/uapi/linux/vfio.h file needs to be merged before the QEMU version of
-> that file
-> can be generated for a QEMU build. I have given my r-b for this patch, so I
-> think it is
-> safe to pull it now.
+> Yeah, there is a problem. The source is that we have a metric ton of
+> recursive includes (i.e. headers that include other headers that include
+> still more headers). Even if you care, its sometimes hard to know which
+> headers you actually need. One idea on my long-term list is to add a
+> machine-parsable info to header files about the list of symbols that the
+> given file is responsible for. With that in place we could create a
+> linter that tells you that this source file doesn't use any symbols from
+> <linux/of_irq.h> and it should #include <linux/of.h> directly instead to
+> make use of symbols defined there.
+> 
+> > > Maybe the unused namespace even makes it easier to spot that issue.
+> > 
+> > Do we have an existing tools for that?
+> 
+> There is https://lore.kernel.org/all/20250123110951.370759-2-u.kleine-koenig@baylibre.com/
 
-Ok, applied, thank you!
+But it was rejected.  So, the answer is "we currently do not have tools".
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
