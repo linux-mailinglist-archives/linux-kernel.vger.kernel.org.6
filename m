@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-510487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E020DA31DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:09:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5931EA31DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85CCD3A5054
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:09:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B549E188A57E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7480C1E7C0E;
-	Wed, 12 Feb 2025 05:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pn5tCHJr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5972D600;
-	Wed, 12 Feb 2025 05:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A926F1D63FF;
+	Wed, 12 Feb 2025 05:13:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DE65474C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739336978; cv=none; b=X0uT45wjZiNAG8n+GFv2Elq3Q7Ct7s/IomQ1NEuxEe1YfG9+Np0Gs1liGp9fuoqbyWmmWSOfAGawSFAjHtIWbBSMXQCqJUn9NXgVWmIEYUIjp8m89MfR9DT4y/AbdDTFIAUlEF7wh1yydISFRaaoSEptKMA6hWgJdOW/AZdjL+E=
+	t=1739337188; cv=none; b=M4l+2ZE05nK2//2uNMjxe8arifRUk9eQEd5TsXRtmkEoHKl0Nf8QVrA8seapSdNkyrlfJBWp5h3ekwLkmR5Dx7qMWEEYI4kAvJhpc948ngA5+yI+iOQRp8dNdjScr+uCwU/hq960/arJSlzWg0tIRwFr2kNl2CE5Dc3If9Jj26c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739336978; c=relaxed/simple;
-	bh=rTwWzK2R5eDHPwNZlzEPgv/sFPzyIQ5iAEXmdHJPvLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YpDVndHBDmiIcUqEvZZHe1Ct/cNLheXsnZDq/GDnFzih8weMpal/pqRDc1fP1ys5KxKjY5jucDXFL54BX4iOvHbbzbzwEdr8qosU03/b2xplsByj7MpubHHB0hMDhMxGwQmggFLvssdPj9+5C0nmfWHM3cmysjqfzz2YLbcWvb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pn5tCHJr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF04C4CEDF;
-	Wed, 12 Feb 2025 05:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739336978;
-	bh=rTwWzK2R5eDHPwNZlzEPgv/sFPzyIQ5iAEXmdHJPvLU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pn5tCHJrzTM3ToHa89t1YtbsX3sakR38xaIZQmVhye3ZeCDtfB/OM2NIPy+p6YsvX
-	 w27WDsufZQbzUwe08sthFVmMjPZjbtAecz45Tw4IG1nV38qsQqRCmpggxsZEaOZUmv
-	 tyO+CFqxNtohfD7gd3hMovkjbsyNZj9/xjMdmEjsHHiIbbOBcoAw/gndw6rJL/l1YE
-	 xHuYGY5CRpPiNmT5D514pwHCNHhlko4NnIdxmYrtww9jaP090NRZBXOt2AlcQ93UCy
-	 gxBQO6UdJP86APaf8wU748uYhGO5rPFHGraLkckcl6wbxHPp7qx8S+2gv6JZ6/ap6m
-	 gySGaiE04PWXg==
-Date: Wed, 12 Feb 2025 05:09:36 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: kernel test robot <lkp@intel.com>, Danny Tsen <dtsen@linux.ibm.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [PATCH] crypto: lib/Kconfig - Fix lib built-in failure when arch
- is modular
-Message-ID: <20250212050936.GB2010357@google.com>
-References: <202501230223.ikroNDr1-lkp@intel.com>
- <Z6woN4vgdaywOZxm@gondor.apana.org.au>
+	s=arc-20240116; t=1739337188; c=relaxed/simple;
+	bh=apAY5igXLHo93QleIpsBztmO7BUOMH9zII/geat3C6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=phYHgLAuthRNNPSzF7I9Zy2uZuxeNdkTVcGWACH8l12oSxldJwmvm04muM70DaEmYJ1DOLb0ZG2mf3cQNH1F7tjro2jgz1TvkbU9xDKn0TNJS/DqBseyQY+BuExC1cOxRqcjvJTCVsHZ8pyOwjRrv+RqvkHQkheqTxncxJb+D8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DD8A13D5;
+	Tue, 11 Feb 2025 21:13:26 -0800 (PST)
+Received: from [10.162.43.26] (unknown [10.162.43.26])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CFCE3F58B;
+	Tue, 11 Feb 2025 21:13:03 -0800 (PST)
+Message-ID: <bd881d92-cf4f-4f5e-9c22-1f5f6a5c4f15@arm.com>
+Date: Wed, 12 Feb 2025 10:42:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6woN4vgdaywOZxm@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm/mm.h: Write folio->_flags_1 & 0xff as a macro
+ definition
+To: Liu Ye <liuye@kylinos.cn>, brauner@kernel.org, dhowells@redhat.com,
+ akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250212025843.80283-1-liuye@kylinos.cn>
+ <20250212025843.80283-3-liuye@kylinos.cn>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20250212025843.80283-3-liuye@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 12:48:55PM +0800, Herbert Xu wrote:
-> On Thu, Jan 23, 2025 at 02:18:27AM +0800, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > head:   c4b9570cfb63501638db720f3bee9f6dfd044b82
-> > commit: b42519dbba838c928e82b55f32712fbe3eed2c45 crypto: ppc/curve25519 - Update Kconfig and Makefile for ppc64le
-> > date:   8 months ago
-> > config: powerpc64-randconfig-r111-20250122 (https://download.01.org/0day-ci/archive/20250123/202501230223.ikroNDr1-lkp@intel.com/config)
-> > compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-> > reproduce: (https://download.01.org/0day-ci/archive/20250123/202501230223.ikroNDr1-lkp@intel.com/reproduce)
-> 
-> Thanks for the report.  This is the old built-in vs. modular Kconfig
-> problem.  This patch should fix it:
-> 
-> ---8<---
-> The HAVE_ARCH Kconfig options in lib/crypto try to solve the
-> modular versus built-in problem, but it still fails when the
-> the LIB option (e.g., CRYPTO_LIB_CURVE25519) is selected externally.
-> 
-> Fix this by introducing a level of indirection with ARCH_MAY_HAVE
-> Kconfig options, these then go on to select the ARCH_HAVE options
-> if the ARCH Kconfig options matches that of the LIB option.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202501230223.ikroNDr1-lkp@intel.com/
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-> 
-> diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
-> index 32650c8431d9..47d9cc59f254 100644
-> --- a/arch/arm/crypto/Kconfig
-> +++ b/arch/arm/crypto/Kconfig
-> @@ -6,7 +6,7 @@ config CRYPTO_CURVE25519_NEON
->  	tristate "Public key crypto: Curve25519 (NEON)"
->  	depends on KERNEL_MODE_NEON
->  	select CRYPTO_LIB_CURVE25519_GENERIC
-> -	select CRYPTO_ARCH_HAVE_LIB_CURVE25519
-> +	select CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519
->  	help
->  	  Curve25519 algorithm
 
-Please name these like ARCH_HAS_CURVE25519 and CRYPTO_LIB_CURVE25519_ARCH to be
-consistent with the CRC library, the many other ARCH_HAS_* options, and
-CRYPTO_LIB_CURVE25519_GENERIC.  Nothing uses names that contain "MAY_HAVE",
-which is ambiguous.
 
-FWIW, at some point the arch optimized crypto algorithms also need to just be
-enabled by default.  The fact that they're not is a longstanding bug that is
-really harmful to users and needs to be fixed.
+On 12/02/25 8:28 am, Liu Ye wrote:
+> There are multiple locations in mm.h where (folio->_flags_1 & 0xff) is
+> used. Write it as a macro definition to improve the readability and
+> maintainability of the code.
+> 
+> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+> ---
+>   include/linux/mm.h | 10 ++++++----
+>   1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 7b1068ddcbb7..750e75f45557 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1098,6 +1098,8 @@ int vma_is_stack_for_current(struct vm_area_struct *vma);
+>   struct mmu_gather;
+>   struct inode;
+>   
+> +#define FOLIO_ORDER(folio) ((folio)->_flags_1 & 0xff)
+> +
+>   /*
+>    * compound_order() can be called without holding a reference, which means
+>    * that niceties like page_folio() don't work.  These callers should be
+> @@ -1111,7 +1113,7 @@ static inline unsigned int compound_order(struct page *page)
+>   
+>   	if (!test_bit(PG_head, &folio->flags))
+>   		return 0;
+> -	return folio->_flags_1 & 0xff;
+> +	return FOLIO_ORDER(folio);
+>   }
+>   
+>   /**
+> @@ -1127,7 +1129,7 @@ static inline unsigned int folio_order(const struct folio *folio)
+>   {
+>   	if (!folio_test_large(folio))
+>   		return 0;
+> -	return folio->_flags_1 & 0xff;
+> +	return FOLIO_ORDER(folio);
+>   }
+>   
+>   #include <linux/huge_mm.h>
+> @@ -2061,7 +2063,7 @@ static inline long folio_nr_pages(const struct folio *folio)
+>   #ifdef CONFIG_64BIT
+>   	return folio->_folio_nr_pages;
+>   #else
+> -	return 1L << (folio->_flags_1 & 0xff);
+> +	return 1L << FOLIO_ORDER(folio);
+>   #endif
+>   }
+>   
+> @@ -2086,7 +2088,7 @@ static inline unsigned long compound_nr(struct page *page)
+>   #ifdef CONFIG_64BIT
+>   	return folio->_folio_nr_pages;
+>   #else
+> -	return 1L << (folio->_flags_1 & 0xff);
+> +	return 1L << FOLIO_ORDER(folio);
+>   #endif
+>   }
+>   
 
-- Eric
+Personally I do not think this is improving readability. You are 
+introducing one more macro for people to decipher instead of directly 
+seeing folio->_flags_1 & 0xff. This is similar to whether to write
+if (x) => do_stuff(), or if (x != 0) => do_stuff(). The former is more 
+"readable" by convention but the latter makes it easier and obvious to 
+understand.
+
 
