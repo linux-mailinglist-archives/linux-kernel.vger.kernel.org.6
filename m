@@ -1,109 +1,136 @@
-Return-Path: <linux-kernel+bounces-512021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0865A332C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:39:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2391A332BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:37:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2EE33A3E5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94413165A25
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADA12045B5;
-	Wed, 12 Feb 2025 22:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859662045B5;
+	Wed, 12 Feb 2025 22:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dwXaJWXz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="jAr2bHxl"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21B2204591;
-	Wed, 12 Feb 2025 22:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5FC1FFC59;
+	Wed, 12 Feb 2025 22:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739399970; cv=none; b=gh3C+RHn0xkreWm56Is+oV62rkMayrRTrKxKORHe1DQ0RLOlZRTe83zlz15/vUHG3XIP2wJ4nMvf1i/21cMRLp9bYZQ/xSpX85zlgNqZM6vv5a/JL8J6mAm7flU2oFsbwaYrBcQzPiOyf8A7ZoIyaqywKgS3pJXSz7kkpZ4A/vk=
+	t=1739399822; cv=none; b=RQSEwZRWacFKrqgym1SFItRPtkiQcS/HmvzDXhvkijgMcSnTn3Iuf3Epj/AQ0J5YWz0xOdZwq8GV+Wsaes7EK5SiMmklw3un6Qe9EZ5LAmIoeptasQsXV0OdEXRrznhn+aDppHHGlbqb1mphtjq0bZv4NtxvqyPHSNeY1f37nm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739399970; c=relaxed/simple;
-	bh=/3+mBVrE63/84GWfZK7OmV4Ny/tGhzzzgdhYFy/il4Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BgP2DKrqMRVbiwz95H5E6MEnEh/RQJMaPLremhR1eP5wMFnXOcKUkje1W+HbPZdeuuhRUrU6+bOIL02nwGZjveXDArN6pitQTSgXrPJBDkKNwcial61eYbzzjiIS+2MzBUoQR1jr2HuiIPY/Vxg2oOiSof42lLJ+7ey/+ERr47s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dwXaJWXz; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739399969; x=1770935969;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=/3+mBVrE63/84GWfZK7OmV4Ny/tGhzzzgdhYFy/il4Q=;
-  b=dwXaJWXzEIkMh7yZx0JP65Wx1J1Xf/DHbb05opzTrmJuAZK6QlE0qHg7
-   wOoEbyclup0k4GWcpeJnX940Lem8dEbnIq6FNrE/x2mQRGbC/h1ErvnkQ
-   u6OnWi7hC0KmILtx98DM0CfTKShee3mvIB/dhlYh9Rm38CGyH66x3PzfF
-   nggLg4aEohrC2rmO6H4W3tbuhlLsAHoFXjIs3RTI8ljTVyjbYoc0dVUL4
-   eMYZVk6eSqQA1WwXV4EHDdwuGKpZiMMd4SL9Bw7+rTISbwq0BPM0H6Wcd
-   TzTOVAMwrBfWttWXJXTQXJBN+Dta1jljaaeE0fl7u6JCJNhSGdEQCfY3R
-   g==;
-X-CSE-ConnectionGUID: DFK5Dgk+RVq6teKzbf/C/A==
-X-CSE-MsgGUID: R8ly/kwhQ9OQOOV6VyIb+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="51477510"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="51477510"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 14:39:29 -0800
-X-CSE-ConnectionGUID: 05zNa/znTkyUTxknDH1uZw==
-X-CSE-MsgGUID: vC9d2BQfQe6i8Hbd2elhPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117581233"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by fmviesa005.fm.intel.com with ESMTP; 12 Feb 2025 14:39:25 -0800
-From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
-To: Moritz Fischer <mdf@kernel.org>,
-	Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>,
-	kuhanh.murugasen.krishnan@altera.com
-Cc: Ang Tien Sung <tien.sung.ang@intel.com>
-Subject: [PATCH] fpga: altera-cvp: PCIex8x8 ports
-Date: Thu, 13 Feb 2025 06:35:53 +0800
-Message-Id: <20250212223553.2717304-1-kuhanh.murugasen.krishnan@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739399822; c=relaxed/simple;
+	bh=cKI6iOzIMfA0rNKfSsAF/i1GDPKMHGcEWOZBDuLpg1E=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=tMF8KTBKsDfBEQQUHzw7Fibih1AAUjY1Pi46Ap+1WFXIAFBGHvFaue9gly1MkygnzCBXf31SMy4tompxzTlWsvxx+9BLzkYxoxfPtE0Ya6xUpzamCxSaRko4J6ulS1BjELpw5md75a+c2D+ty9EMlz+c1WoVNdxGUFHXzEku4LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=jAr2bHxl; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (web.docker-mailserver_default [172.18.0.2])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 2708ABB837;
+	Wed, 12 Feb 2025 22:36:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1739399818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qdqWEqbVFWgWcKXIBp4Jh3qH6ciNVBQ+WPGChrj19ng=;
+	b=jAr2bHxlTPJfEM6bh9gMeU82GrEWeDCkUhhgvCUW440q+y0BOUa5zYboG/sSG8v1BZhZBy
+	PLAPA8kdfj/205uv5zL1kZ5y9aTJfPb0ya+aIMDz4Hd7Lg202g2l7RTuSwQnpH95qoGvPz
+	HVA3IZzZ8DHo4d5Nn9fPua946BWtzPFppy5L2/wt6J438qdH4IL0FWhvfbJ67ohKxdx7AB
+	RaBeTai6RtvrICBrtFFl9yuEl7g7fYOLTlOdokZX/vO2ZtqGeAsehM1o7S7xeZKcJyasDb
+	/1rpywX/wFUsT/oYkNKX2it1mbLx43Y4W4/xV0HVu3Tb+lkVRYEK2CC+rljNwg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Wed, 12 Feb 2025 23:36:58 +0100
+From: barnabas.czeman@mainlining.org
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
+ <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: msm8917-xiaomi-riva: Add display
+ backlight
+In-Reply-To: <0d540105-1da7-459b-a812-dbc13097520e@oss.qualcomm.com>
+References: <20250212-pm8937-pwm-v1-0-a900a779b4ad@mainlining.org>
+ <20250212-pm8937-pwm-v1-2-a900a779b4ad@mainlining.org>
+ <0d540105-1da7-459b-a812-dbc13097520e@oss.qualcomm.com>
+Message-ID: <c299f30205b602031905ed972fc6ea9f@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
 
-Enabling the possibility of supporting multiple
-PCIe devices from Intel Altera FPGA but with different
-device ids. The current driver registers itself
-to all device IDs which causes an incorrect driver
-association.
+On 2025-02-12 23:31, Konrad Dybcio wrote:
+> On 12.02.2025 11:21 PM, Barnabás Czémán wrote:
+>> Redmi 5A display uses pwm backlight, add support for it.
+>> 
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts | 25 
+>> ++++++++++++++++++++++++
+>>  1 file changed, 25 insertions(+)
+>> 
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts 
+>> b/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
+>> index 
+>> f1d22535fedd94467ba3f0a88b2110ce5360e7e1..8808306c989f54116052667887f9bf36b63c4c64 
+>> 100644
+>> --- a/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
+>> +++ b/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
+>> @@ -20,6 +20,14 @@ / {
+>>  	qcom,msm-id = <QCOM_ID_MSM8917 0>;
+>>  	qcom,board-id = <0x1000b 2>, <0x2000b 2>;
+>> 
+>> +	pwm_backlight: backlight {
+>> +		compatible = "pwm-backlight";
+>> +		pwms = <&pm8937_pwm 0 100000>;
+>> +		brightness-levels = <0 255>;
+>> +		num-interpolated-steps = <255>;
+>> +		default-brightness-level = <128>;
+>> +	};
+>> +
+>>  	battery: battery {
+>>  		compatible = "simple-battery";
+>>  		charge-full-design-microamp-hours = <3000000>;
+>> @@ -131,6 +139,23 @@ bq25601@6b{
+>>  	};
+>>  };
+>> 
+>> +&pm8937_gpios {
+>> +	pwm_enable_default: pwm-enable-default-state {
+>> +		pins = "gpio8";
+>> +		function = "dtest2";
+> 
+> Are you sure?
+Yes, 
+https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-msm8937/blob/dts/mi8937/4.9/master/wingtech/msm8917/common/pm8937.dtsi#L24-L31
+>> +		output-low;
+>> +		bias-disable;
+>> +		qcom,drive-strength = <2>;
+>> +	};
+>> +};
+>> +
+>> +&pm8937_pwm {
+>> +	pinctrl-0 = <&pwm_enable_default>;
+>> +	pinctrl-names = "default";
+> 
+> We normally put this under the backlight node, but I'm not sure which
+> one is more correct.. it may be that this one is, given we're
+> controlling the pin that the PWM signal is sent through
 
-Signed-off-by: Ang Tien Sung <tien.sung.ang@intel.com>
-Signed-off-by: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
----
- drivers/fpga/altera-cvp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 5af0bd33890c..97e9d4d981ad 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- static void altera_cvp_remove(struct pci_dev *pdev);
- 
- static struct pci_device_id altera_cvp_id_tbl[] = {
--	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
-+	{ PCI_VDEVICE(ALTERA, 0x00) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
--- 
-2.25.1
-
+It is for enabling pwm and not backlight,
+it should be placed here otherwise backlight will not work correctly.
+> 
+> Konrad
 
