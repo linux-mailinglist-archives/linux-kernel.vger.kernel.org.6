@@ -1,133 +1,207 @@
-Return-Path: <linux-kernel+bounces-511740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DBB4A32EFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:55:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29660A32F00
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93163A66FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA628188A214
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C97D261364;
-	Wed, 12 Feb 2025 18:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14B4260A5E;
+	Wed, 12 Feb 2025 18:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mojI/bFq"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uq0bUH3b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABDE260A29
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F22625EFA6;
+	Wed, 12 Feb 2025 18:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739386549; cv=none; b=MuKtyDoah4G+I1/fKbtjGWFjJ6y53s9RpytPrOgPuPxAGA/H6URbVwImKYg7/Ejw2FD9DYRD9qTb4cqWwrVsO8rSp0bpaTcEVjgIDNTwWqhwb3EVjyPLg/S0TwLhcii2iulr9iPLhcU7VZlEI85Pt4JGtIzxIH54VjRBnfBhwYM=
+	t=1739386582; cv=none; b=pBmRfs02H1o8Wi4BGp1WxPcTXqz1FwXgqSSDfrpSkh6AL5BD/9sSbFnOIZ8+nao98UoRf0O5Hk8oqk25Dxp4EfJwA5bv3BLaTCPOobdHLq+tymIKzQhuREeSX6VmbcsTojyuj+SeDEhMUxGUzwV1zqPdQ5PtrC5pWtCMXljc3SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739386549; c=relaxed/simple;
-	bh=CVMGdoYDL8T1fr+KrjJAoYlnGkxM8XNvTPZrejVoMJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R11pmYSgkeUdfF8Z5X0//Tp3KmR5QHlMApH51jM3rcBpImzNWlLaRbRWcpSExCOQnBh/ekwX/pWagM3fwPOkI5C0BFQbCoH+HBD9OxoyjJVsYR/LJpv5J3b4aYQPjJHIgWGlyLHEhXGox/XKp1u+fmHFIbOjsCNcm8g0LIK0ynw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mojI/bFq; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so10270292a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:55:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739386545; x=1739991345; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zx+Z2zXkUwVDnPf100xV5wq4Riv7VP7gTaMh3dudvK8=;
-        b=mojI/bFq64VDLGVn4okoRdSh1uOirl93u3OgiJu2w/yPT9Sdo+70AwCom7n519LHPY
-         Z0P5if1rCC++SzpOWaKjswutjKgD+ZZ0a98JuyVLC6DWC/3bo5RS18kg1U4eVCnasrh7
-         R5faWFOj1U3gIzlVDMfAfOAnTy9piqC3MApX6ZfndQd8PuA71d/8i32ILePJ0R+Wnxzc
-         Pe21mE1TPgKnFm9UNehLL94eCpZEAM3shNPdDTrhPvI4wnQ2ig61EsWOTz2kBWo5MCBl
-         UtV8BT8DzIozU41MBcOv8hrklTQ2ooLuR3psH+d8oiFzAnsFhHXjU2Pew0GcolBViwEt
-         lKSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739386545; x=1739991345;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zx+Z2zXkUwVDnPf100xV5wq4Riv7VP7gTaMh3dudvK8=;
-        b=JQv+QGr1WcSWSg1i75Y/1Lukj1WevYxUVbkT50rjsj9jkGRez7QtiGnCmotEItSH03
-         RSbZxQt5iO/irOArBwBYBPFdJ12ghQOQpKdVTxu2NTRBPt25c7VrvXoDW048M1DKlwSv
-         4lQfFrqnHrhK02m/sM4yD4p417J6fVtAUj2bdbrGys63cBC9mK3p60lVPTDV+aUdw1WB
-         iL5sUD5HUUeq5Kqk9qGUN2Z9gqIFqubZPJ6Eb6vz2/ZibJI6Sqc0dZZGF/l8guC0FoD/
-         qLIk5H/iPQpHocgOv9Z4T3GD6xuAHCItUZ24QlSuUCZ4eaUbkuLtRF8z/u3IYbG1iu7B
-         Hatw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnl6A3YlQj3weUHDJ16qqttGlHhY93LDkBH8KI4SOQtgCrsCWfGwqGTj0VLQTjFdzThFR9ot1HpzwjLi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN3ilSZ3VoxkMh+clPRyl/Jq9BNhS/R0PGrUxmYCvJeATx1e+N
-	aJSfF39KzOH6hHETNnLNipmaFG3lBPm9Dlgk5Y4feTxfKQ7WmWGVEnIOgDrxtlcSpXycKiOOtDG
-	L3PraJBqZ4HzQVW0uugehXwx6RakpF79JYk6D
-X-Gm-Gg: ASbGncttkdh4Il/SWbWt+0wKcJALzffcox9TAPW+K7Bs83c2kOf8jG5cLsoZKyOJkqb
-	FDCtumBGFSc8Az+3hVW/A2NUKogS8+FtPwlRAJYtXesBNaHxXib6kVD4u1IIjIDCBBN15CIx9Pw
-	==
-X-Google-Smtp-Source: AGHT+IG55X34wS789mMJieuUREdopLjA3B44FyJjV3/cSlysBfK2oTbNjkWAOTqEn89wiamATCHt8vdoRDXvCYynFHo=
-X-Received: by 2002:a05:6402:913:b0:5db:d9ac:b302 with SMTP id
- 4fb4d7f45d1cf-5deca0122e2mr249031a12.32.1739386544998; Wed, 12 Feb 2025
- 10:55:44 -0800 (PST)
+	s=arc-20240116; t=1739386582; c=relaxed/simple;
+	bh=9nADrqvmSd+RkR3Vu2+WkunRUqakk0t+t3TBqV79ouw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hISl+kW7LOv4geOZn5BHEjTfFNtljc7GAnGFQM8pFi0Az9wDuWFS+IF4HsWh5NVWxWAo2VjMwRud9SsGGBq0E+iHPEA0ECMTn1rI5pPVq+OgsFq963jBIuPFk2aEYwtEe37QUdCt3StGL4UqP+LKLlg3mwx0TFUb5lRWZpK9nGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uq0bUH3b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C11C4CEDF;
+	Wed, 12 Feb 2025 18:56:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739386581;
+	bh=9nADrqvmSd+RkR3Vu2+WkunRUqakk0t+t3TBqV79ouw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Uq0bUH3bmbJGBLRXLDHsBUanxoeiEjGF10s//SwSMGTEo3PAV0hRcgYrd+QL5joA/
+	 nGX8ANYZNYyaQ5yHOqPWVtiKVUl6cAe51pDXBze/OHnt0MKJqRNwZJczGtN/8itEog
+	 44wJBdHVRdJDliIEA8XhojiK+GOd/YSz8Fwayev1xRQzcSOjTy+E/M7ls2GVSQywFO
+	 lmH4pG5W2WH7cwrFpczq44aEuK6QYEb/s613UYIXHIptsG4RsSdJUpjhWFRdKViz7Z
+	 R7l1td34zJS6YVq68/rGVFlcOlU7fqcfEw1s7Zt2ptog6vsTdW3zWwvk5TMQjQKhTU
+	 mV8PqmUTcITmQ==
+Date: Wed, 12 Feb 2025 18:56:16 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Naresh Solanki <naresh.solanki@9elements.com>,
+	Guenter Roeck <linux@roeck-us.net>, broonie@kernel.org,
+	Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ir38060: Move & update dt binding
+Message-ID: <20250212-estate-tapeless-08fcdf5b5ca5@spud>
+References: <20250204180306.2755444-1-naresh.solanki@9elements.com>
+ <20250204-mulled-evaluate-8a690cdfbd4d@spud>
+ <CABqG17jHKfwJEfZxto_YA4opS8=QwqTqfNdkku8kcEv2_iW+XA@mail.gmail.com>
+ <20250205-purge-debating-21273d3b0f40@spud>
+ <CABqG17j4tKXnMZ5=vcjBvfe6JwCLQ6NbkQmJC9ySK_bmGEv=iQ@mail.gmail.com>
+ <20250206-camera-mashed-48cf0cf1715f@spud>
+ <4619661d7375c71710a22520f6ebbf353a5aff59.camel@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-netdevsim-v1-1-20ece94daae8@debian.org>
-In-Reply-To: <20250212-netdevsim-v1-1-20ece94daae8@debian.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 12 Feb 2025 19:55:32 +0100
-X-Gm-Features: AWEUYZleq88KnF_kE4nPNRYzraS7tQ5dHAAtHxK4ii3MnHWveDWf1gwFIVTqsms
-Message-ID: <CANn89iKnqeDCrEsa4=vf1XV4N6+FUbfB8S6tXG6n8V+LKGfBEg@mail.gmail.com>
-Subject: Re: [PATCH net] netdevsim: disable local BH when scheduling NAPI
-To: Breno Leitao <leitao@debian.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, David Wei <dw@davidwei.uk>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, paulmck@kernel.org, 
-	kernel-team@meta.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Goqo5Z76kPyfbM/h"
+Content-Disposition: inline
+In-Reply-To: <4619661d7375c71710a22520f6ebbf353a5aff59.camel@codeconstruct.com.au>
+
+
+--Goqo5Z76kPyfbM/h
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 7:34=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
-ote:
->
-> The netdevsim driver was getting NOHZ tick-stop errors during packet
-> transmission due to pending softirq work when calling napi_schedule().
->
-> This is showing the following message when running netconsole selftest.
->
->         NOHZ tick-stop error: local softirq work is pending, handler #08!=
-!!
->
-> Add local_bh_disable()/enable() around the napi_schedule() call to
-> prevent softirqs from being handled during this xmit.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 3762ec05a9fb ("netdevsim: add NAPI support")
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  drivers/net/netdevsim/netdev.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netde=
-v.c
-> index 42f247cbdceecbadf27f7090c030aa5bd240c18a..6aeb081b06da226ab91c49f53=
-d08f465570877ae 100644
-> --- a/drivers/net/netdevsim/netdev.c
-> +++ b/drivers/net/netdevsim/netdev.c
-> @@ -87,7 +87,9 @@ static netdev_tx_t nsim_start_xmit(struct sk_buff *skb,=
- struct net_device *dev)
->         if (unlikely(nsim_forward_skb(peer_dev, skb, rq) =3D=3D NET_RX_DR=
-OP))
->                 goto out_drop_cnt;
->
-> +       local_bh_disable();
->         napi_schedule(&rq->napi);
-> +       local_bh_enable();
->
+On Wed, Feb 12, 2025 at 09:13:11PM +1030, Andrew Jeffery wrote:
+> On Thu, 2025-02-06 at 18:09 +0000, Conor Dooley wrote:
+> > On Thu, Feb 06, 2025 at 09:23:03PM +0530, Naresh Solanki wrote:
+> > > On Thu, 6 Feb 2025 at 01:43, Conor Dooley <conor@kernel.org> wrote:
+> > > > On Wed, Feb 05, 2025 at 03:51:25PM +0530, Naresh Solanki wrote:
+> > > > > On Wed, 5 Feb 2025 at 00:52, Conor Dooley <conor@kernel.org>
+> > > > > wrote:
+> > > > > > On Tue, Feb 04, 2025 at 11:33:03PM +0530, Naresh Solanki
+> > > > > > wrote:
+> > > > > > > +=A0 regulators:
+> > > > > > > +=A0=A0=A0 type: object
+> > > > > > > +=A0=A0=A0 description:
+> > > > > > > +=A0=A0=A0=A0=A0 list of regulators provided by this controll=
+er.
+> > > > > >=20
+> > > > > > Can you explain why this change is justified? Your commit
+> > > > > > message is
+> > > > > > explaining what you're doing but not why it's okay to do.
+> > > >=20
+> > > > > This is based on other similar dt-bindings under hwmon/pmbus.
+> > > >=20
+> > > > Okay, but what I am looking for is an explanation of why it is
+> > > > okay to
+> > > > change the node from
+> > > >=20
+> > > > > regulator@34 {
+> > > > > =A0 compatible =3D "infineon,ir38060";
+> > > > > =A0 reg =3D <0x34>;
+> > > > >=20
+> > > > > =A0 regulator-min-microvolt =3D <437500>;
+> > > > > =A0 regulator-max-microvolt =3D <1387500>;
+> > > > > };
+> > > As I have understood the driver, this isn't supported.
+> > > >=20
+> > > > to
+> > > >=20
+> > > > > regulator@34 {
+> > > > > =A0=A0=A0 compatible =3D "infineon,ir38060";
+> > > > > =A0=A0=A0 reg =3D <0x34>;
+> > > > >=20
+> > > > > =A0=A0=A0 regulators {
+> > > > > =A0=A0=A0=A0=A0=A0=A0 vout {
+> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 regulator-name =3D "p5v_aux";
+> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 regulator-min-microvolt =3D <43=
+7500>;
+> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 regulator-max-microvolt =3D <13=
+87500>;
+> > > > > =A0=A0=A0=A0=A0=A0=A0 };
+> > > > > =A0=A0=A0 };
+> > > Above is the typical approach in other pmbus dt bindings.
+> > > Even pmbus driver expects this approach.
+> > > >=20
+> > > > ?
+> > > >=20
+> > > > Will the driver handle both of these identically? Is backwards
+> > > > compatibility with the old format maintained? Was the original
+> > > > format
+> > > > wrong and does not work? Why is a list of regulators needed when
+> > > > the
+> > > > device only provides one?
+> > > Driver doesn't support both.
+> > > Based on the pmbus driver original format was wrong.
+> > > pmbus driver looks for a regulator node to start with.
+> > >=20
+> > > Reference:
+> > > https://github.com/torvalds/linux/blob/master/drivers/hwmon/pmbus/pmb=
+us.h#L515
+> >=20
+> > Then all of the in-tree users are all just broken? They're in aspeed
+> > bmcs, so I would not be surprised at all if that were the case.
+>=20
+> Can you unpack the intent of this remark for me a little?
+>=20
+> The history of the problem from what I can see looks like:
+>=20
+>    1. pmbus regulator support exploiting "regulators" as an OF child
+>       node was merged for 3.19[1]
+>    2. The infineon driver support was merged with trivial bindings[2]
+>       and released in v5.17
+>    3. A patch was proposed that extracted the Infineon regulator
+>       compatibles and provided a dedicated binding[3], however it
+>       lacked the "regulators" object property=20
+>    4. The patch in 3 was merged as [4] with relevant tags, and was
+>       released in v6.9
+>    5. The system1 devicetree was merged and released in v6.10, and sbp1
+>       is merged in v6.14-rc1 for release in v6.14. Both devicetrees, as
+>       far as I'm aware, conform to the binding as written.
+>=20
+> In addition to keeping an eye out for Rob's bot, I check all Aspeed-
+> related devicetree patches against the bindings using the usual tooling
+> while applying them. I would like to avoid diving into driver
+> implementations as a blocker to applying devicetree patches where
+> possible - the formalised bindings and tooling should exist to separate
+> us from having to do that.
+>=20
+> If the complaint is that people submitting Aspeed devicetree patches
+> are regularly not testing them to make sure they behave correctly on
+> hardware, then sure, that's something to complain about. Otherwise, I'm
+> well aware of the (Aspeed) bindings and warnings situation; we've
+> spoken about it previously. If there's something I should change in my
+> process (beyond eventually addressing all the warnings) please let me
+> know, but I don't see that there is in this specific instance.
 
-I thought all ndo_start_xmit() were done under local_bh_disable()
+Ye, it's not a jab at aspeed maintainership, it's about the bmc stuff in
+particular. I saw far too many warnings from Rob's bot on series with a
+version number where the submitter should know better, so the idea that
+it had not been tested in other ways wasn't exactly a stretch.
 
-Could you give more details ?
+I made a mistake how I pulled these devices out of trivial-devices.yaml,
+given the existing driver didn't work with that binding, but I don't
+really see why there's a requirement for a regulator child here in the
+first place. I get it for something like the lm25066 that is a monitor
+IC that you connect a regulator to, as the regulator is a distinct
+device - but the ir38060 is a regulator that has a pmbus interface so
+both describe the same device.
+
+--Goqo5Z76kPyfbM/h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ6zu0AAKCRB4tDGHoIJi
+0g5gAP9XawTv8CeajYNDtlFLghvuq9+6wI71Nn8SIJaxFGjF/QD+NL5Y8YL3A0/q
+aWbx+PzMnYTfBOtgcwsjm5/rq9cexg8=
+=u98b
+-----END PGP SIGNATURE-----
+
+--Goqo5Z76kPyfbM/h--
 
