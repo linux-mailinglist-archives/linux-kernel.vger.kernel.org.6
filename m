@@ -1,259 +1,208 @@
-Return-Path: <linux-kernel+bounces-510350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FF0A31B8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:51:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8A2A31B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:51:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D52218875AD
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2D03A548A
 	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD0D78F54;
-	Wed, 12 Feb 2025 01:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC1084D2B;
+	Wed, 12 Feb 2025 01:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fsxVHp+8"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2043.outbound.protection.outlook.com [40.107.95.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoyxaFos"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34054A50;
-	Wed, 12 Feb 2025 01:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739325073; cv=fail; b=UOCnF02+ZbCY024ExDWyvGuqcBSK6ooq2+IFn11pp6kOA6I+rb3cpi53dBjkgvTq+58WmiYsNsiVmZJIijtaSjEQusJKSHJ/g8nY7bfLKiW1oehj63Q30RGqY2ddlro1tBACA5kLh72DrHDWGkCqbVfP1j7uP0t6KV4ayk6GcMM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739325073; c=relaxed/simple;
-	bh=lw1Qhc653DDc5gAVf78JvweMJTvQWp4uBM9zV6uR9Qw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ugrm0tjCt11GjFAqBfXkNzpc3YGCnsH4/EmhwQDiEor8ND+i6xZb5OPS6Q19aPNmfb+FeNgPfR0xo6KgMny9DppX3SUJF1iD7M303L3a8IhPMgqN1qWg0LuD1xVOYI91nU7x4KFSWcpf+aA0XK+UVo37MZkuf5+IML7v7/FoOR8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fsxVHp+8; arc=fail smtp.client-ip=40.107.95.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NWlgLO0sjBij4Z7/AK8CFGx2vOAGrNAh2aPWoP3HwJ7B9jzSU4ayiFiwoTK9C9TA29eby7IjpI8jQWSOYuBzQ8MhtLAUd7ENnmbrWQIV7IZuvLxiTrtRHNzeK4389/4GOaeoPHGCGwjPmpcDLUaroOGwQ62a35V3K6ukZIm3bboXrxLIJkJOBLqjcbg6LPu0Ka4gN7eKuWMgl5iDAFKum6YY/8wGhBhykp2A1hk0RQR9lvFc1zaWtALKaGnjMpVNindjNhmHhynKsw3QQzBh9229vVTat0vdsTAnd21iMOiAsLJxlCnGoebFJJnkEr6NhwNrtFrKi3m9cvK7SWrrdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=icOTs3gNug4s4nxkcIWmdMC0o5IgkqJlddzs6K99jLw=;
- b=xjs0MoDA9lebDtun7naXaJysrKn7RHAc4XPVaAGkvihZSQTaNTXj5GMMGytil0GsXv9gpQWweBaF+rOwqZt+i750KY24eaiLqyyO72zm3NMyqe+2n8VxyqUDZPIGAtexYXSgPZbDQpbp7UwKId+R5ei+zx2z8z5P1HpygrUyzKzLn9ivg04N1awOKbpw4ROA0KlPFeBUOxkpttNSo9lDgjzLgM2FY5UZ9cjpf6Pp/6GY4F11vnnx6xVXmDduUKUEJjFHNxl0IgyHW9Lk0Zk7+gQYb5A4pY8a0ABefl6jW62001cyADewu51Ef6IfHu3gO+YRyTZKcDV689xD8Cw//w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=icOTs3gNug4s4nxkcIWmdMC0o5IgkqJlddzs6K99jLw=;
- b=fsxVHp+8DRl3IP9ze1ZpvVTfl6xQCA2vSw+QJM7AP7c3keN/mshQNS2fQzg+z9LI420pK6xvgn8KCB48m7Z6tBIl4eCxmUcswmfv2UA6Ti0+3dKDpg3LJiF0FP+a5rovOf7thpn3+7j1atc6fldmwZWvpTl4POuDnlntpExNaVvQApvIR8DcKltnn1mhguzy6d3kYTn5jGYWEmnAKLJTGVmC75kRj3fuE07wCVKybE61z4KLGKw4UD9SWE5H/e/OevKlbvTUtRDDJi39xWs22qvwUudBWXJS+2ZhdpB6J+aJZxYcpbUlmPvJBhNjzNWvtXfIPe4Xzsl/enwq/oHdgA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- SJ0PR12MB6928.namprd12.prod.outlook.com (2603:10b6:a03:47a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.12; Wed, 12 Feb
- 2025 01:51:09 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8422.015; Wed, 12 Feb 2025
- 01:51:09 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>,
- David Hildenbrand <david@redhat.com>, Yang Shi <yang@os.amperecomputing.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v7 1/8] xarray: add xas_try_split() to split a multi-index
- entry.
-Date: Tue, 11 Feb 2025 20:51:06 -0500
-X-Mailer: MailMate (2.0r6222)
-Message-ID: <32DDC973-FAF8-48A8-831E-01E2ABA2966B@nvidia.com>
-In-Reply-To: <3BC99886-609B-4820-B65D-FCA2E11A02F3@nvidia.com>
-References: <20250211155034.268962-1-ziy@nvidia.com>
- <20250211155034.268962-2-ziy@nvidia.com>
- <3BC99886-609B-4820-B65D-FCA2E11A02F3@nvidia.com>
-Content-Type: text/plain
-X-ClientProxiedBy: BL1PR13CA0105.namprd13.prod.outlook.com
- (2603:10b6:208:2b9::20) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930F678F5D;
+	Wed, 12 Feb 2025 01:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739325083; cv=none; b=DpbO3VvsCe55p9LO2ZUDrwgw19BDtbgSw3MH+A58CHQoj16OnhumFxG4k3qY/2oama88g4BONHksHadPx/vtoQbeoGouMZQ1DJvN9M6yjq++CMMdaOj2GmOAmZO/B9Qbi1RtiOkjifsOJpY+M0CsIsqrp5dcEkQZfNTZf/8lYZc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739325083; c=relaxed/simple;
+	bh=GhTU/A3t4aRQSNSXfTGplWZFHI0A5ro2NMW9IN42y0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYMCSrA2rKGrLE0PUHm5L6L9hslBO82G12fTkPZs5143AlzX3Ts4f1KTidZwCtH3x2TA6f5IcHXg194A8kvoYscpP4y7zPCBMVfFpwC/MOAcODheqbxlNqWZUXMSBwlUy1qBtsek9PHm+92bBhC7JfVOQyBueYuHycKO1pYoI8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoyxaFos; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE54C4CEDD;
+	Wed, 12 Feb 2025 01:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739325083;
+	bh=GhTU/A3t4aRQSNSXfTGplWZFHI0A5ro2NMW9IN42y0c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CoyxaFos3LI6Lvcyb/axYkL2dorYw+fJniBQ3NoEAwq2nflkU3zFoA3QamQ32FujB
+	 8VaHEWAC1VLQ/QnjqGVlXtfQAk3jsk/uraK3wrW6Ydvx1VSnfEqbdFuJ0D1VfN99Dl
+	 vKLlXehCUdluwa1TxNSHAap1g5wKvZyHwQMyxtN7Cyrj8c+/65IbSElKAK+BTKlfy6
+	 eYYwU9Q01fYIS2C0OQFALjEtYTVdpqklRG9stEEpKdQBb2+tHmzKGsJdWfFtWpDE3G
+	 hj/hkCLE27YOjyALxmJYdvCWaTi0UT44xriAJm8LayotnEjPXX2reKhKtKaXj5XWd3
+	 D1aFzEU9x3Spw==
+Date: Tue, 11 Feb 2025 17:51:20 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Hao Ge <gehao@kylinos.cn>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Levi Yun <yeoreum.yun@arm.com>, Xu Yang <xu.yang_2@nxp.com>,
+	Tengda Wu <wutengda@huaweicloud.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 00/10] Move uid filtering to BPF filters
+Message-ID: <Z6v-mPJq6m61pFA4@google.com>
+References: <20250111190143.1029906-1-irogers@google.com>
+ <Z6panMzNSm1op8Di@google.com>
+ <CAP-5=fUY83gifsMZA0Q45kiQQbAKp2uJxkuwrwGtHK2hiUFRDA@mail.gmail.com>
+ <Z6rAHhAIdlkAryGJ@google.com>
+ <CAP-5=fXjmJ+Rr7ejL6fCMeu6PZSit7n84hQkjh=0jQhkr1on3Q@mail.gmail.com>
+ <Z6uOGNO6p7i9Fese@google.com>
+ <CAP-5=fVxFe4nMS_dHmO=6-ddA40XbVdvouPLuOxj5cenjUr8ng@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SJ0PR12MB6928:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ad300b5-fc55-418f-6072-08dd4b07b894
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+ZHqDO8e6cBsVD1PV3SVc4PPTMFpA0pgZG4p85oLSG3d6SMnKrAXWcwmbKkF?=
- =?us-ascii?Q?Sw78Z7xyEDy2eN+JE/aIf0XsNz2RYpSIPrbpC00dUY+DQuQeG1WZdESPdEJd?=
- =?us-ascii?Q?54SQifDHUCQugQqpTpsYY0ZZJA0NMcgLbY1SuJUr0g9stpBqRgYoj97SNLgi?=
- =?us-ascii?Q?DVQ61NWiTvaiUC2E+oHKKpXrypsPROx6RDj/KcqV9sEnezwrA3Hyunyu1mOc?=
- =?us-ascii?Q?RfWBfsPDdRvb11OCfB8t9nuCnp6trxL6FoLcXPUFbpTEpmuicuapKZUV6QI0?=
- =?us-ascii?Q?R07AFjaUTTGqv2ptos0n2Km7QU8gokBF4UeSBq8etfImK/wQE3Or8NNNY07j?=
- =?us-ascii?Q?OjZM8zILrCw2fteiI44sFFmxEuBoD/XSZkLK28XPyuEXQd/EDndpv+uiQpwH?=
- =?us-ascii?Q?TCBZ5cVp06I77HSPH9KhZYQI/VnvZVSwXHbC+mMT5WLZHC1z1vW/9cYojbdo?=
- =?us-ascii?Q?qNgDajJBq/ZJkuwbOrZEaNGnCO+aiKFsyEZoygCv54xOp57z9qgvTwBl+cy4?=
- =?us-ascii?Q?oEC+zoYuWtOGNLSZSTNy18ySEEICiDIGlkx+psV+L69XqVWGT/MuGwwPDn/V?=
- =?us-ascii?Q?9yveVKdMm2WE8bprc/ZOrVXUndqIDmOXTbU32Gtc4OhPnwsErQePIGvGDJb2?=
- =?us-ascii?Q?iUhgUHZ8nVzOYPnnXcyIr+AGTM2oV0OoiNhTmlqiC8C07m3scbHoIXGiFCVF?=
- =?us-ascii?Q?/yADejPqF/CP9P3yoYuSsAfmkrcmot92Y0kDOaibQq7VX1Z88VWJ8FKmTjBl?=
- =?us-ascii?Q?3Me0+0AW/8Cv7mmh8Ym4xtnV1pF2+jGfyQudhVALk+GwtxgiKgaCf0mo40sk?=
- =?us-ascii?Q?ZDZUI+sKKR0li48RwA16nD0dgcdem+Za8JTFD2mSLsY4Jc83eRvsdkmzxlkC?=
- =?us-ascii?Q?/SFxfF17/OrJ7QttxwlGaa8HEHs6EABJiDESlGGf+3zjk+8FYEXkTIH4qOUX?=
- =?us-ascii?Q?73IOzcrCK9t8P+qzlbR4evfuSUu1dGKowwPlZx/UJcuhsU4TTb/qV31aYPNv?=
- =?us-ascii?Q?itoBDR9ewVBM7ZOvo/5mAjxAl/xBXbI9Haa3nUXbt25MCtAiKZsIrBrAMBs5?=
- =?us-ascii?Q?BeMleDEKqBdYvBLkug99gMmuwkoijo2I709qgT/ccJH4PvQweGWCF2hMFmeb?=
- =?us-ascii?Q?3MEJ1I7gsKal4WY9t698wbwc7TnvCngY3qGOFkLXETdZimOVasi2XrhlL9IP?=
- =?us-ascii?Q?OOG+bB5UJJl195JRTNO7MAOI+/mGvMzATsu9+ZLUcQ7enJVpH41vcZ+WZd3n?=
- =?us-ascii?Q?NsQvslyuaJH4OqpuyPSxELzuYkIIDsigZS/b275w/e5WG4Adkm19kkx7Gkoq?=
- =?us-ascii?Q?HtiGIAM5+HunT84Qj96WwA6mLUxdyaNPZWMkQ1qiwrV52EkCEtwP6640DGK9?=
- =?us-ascii?Q?QAqddOI8g1Na3c475ycdsTvK80Hr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?LE8e5OT+YNK7CF1KApXNWSR6pxw1RJ1LN+X1aMrYSLx8n8tl4CFwjIj7YtWz?=
- =?us-ascii?Q?pqajFdRfZMnABVoDk0NOzwrdfMVdHCJwi72tYcWxjjpAmil/jmKUoJoMkEKG?=
- =?us-ascii?Q?R57/b14zCk9sCJ4hC4n/mzv5/88nNAO/c0wcL9h8Wn++koj2h52w5cnrewoz?=
- =?us-ascii?Q?jlSCq4Xg4lt13DdJiidkZOqcaydutGLUYaoJMSs2bkd1EkjJDrFmnG9t/fy6?=
- =?us-ascii?Q?MjeVssUq6tJ6uSLOHvaHBxzSJoAO18KTSSOQumN2MyrqCVfzwM4c2TwpPMAM?=
- =?us-ascii?Q?ftywE7d7DP0UoGPgxuvfRcJ/LrWWtevycct1uZHPuAjYLmAozbionvOS8nA9?=
- =?us-ascii?Q?UmLZ1ljln0bZqBlOqPUZQAzmkagrC0/SfC2mjHjz1hoL8Ykl9l6GpnWQftD7?=
- =?us-ascii?Q?yK+pDAMdQQ5U99w6LwAMrViILpPWZbn29QJA5p/Bjr64jYyZ3d3x5+coVVav?=
- =?us-ascii?Q?TucePNbL1/PZs6WNF/xmjvHEh1AVW+FhuVGntFF87AxU/poBfeq+rqc8nel2?=
- =?us-ascii?Q?5vNC6ynzhxSt+bs32KoeygHUa3pFo2vCvhnv7JQunUe4jo8mvWePV5htQVN+?=
- =?us-ascii?Q?ILkBtY229HzEQ2blkwOV4J7hwwh2WrBQOYWbVEiXGFz0q1wok77HOOPHWQzy?=
- =?us-ascii?Q?cXUlXiqnKrwbx+0YXP+dAbyg2GcFRnxWjwJI7leabN3sobk1U6qGHACH6yRB?=
- =?us-ascii?Q?2fiRMjbLEA+zchXPNRU6mvcbxVra5xC5skT0ZArm5NUDEi408hF8stuiZufH?=
- =?us-ascii?Q?8s6vIzwHpJzMMVsBrMY/7sjvdMd6bKKoOXuWCuFGHao1W1VoHryVnFfNLaA6?=
- =?us-ascii?Q?14ECTRkOn07cho4TvYV/uk/lQ9+zf92VYXtEAHaMTACQKUDivtgqImR0JetD?=
- =?us-ascii?Q?VcIpt7h1YMpg8x002gFGnnuQe1oIXDHzIhxjiDqbhDWfeYGhRq2XYDnUEdVl?=
- =?us-ascii?Q?gjJU7atQnPHB6LD30udZzQga7gPS9KIPqzqGAs2f452h25sodWSVYP2cq7SM?=
- =?us-ascii?Q?LaUUZnq6cZONEaskCyQGiXxolTG31ioy0SYjbM0VQOilWSLVG/b7WiwlVwaM?=
- =?us-ascii?Q?6tdXMbqz1CT78xcezNEeLdbWqqblU6BroCQAgNbZw/Qf+X6e6/YaWdvQejeV?=
- =?us-ascii?Q?iejuZHND0Fla5ETBDZe2ZrTzqDEs6EDrpidGhFV6TL6TC34qBZR1WFEfRJku?=
- =?us-ascii?Q?6nbMINsQAq5XXbl3HjS6repGaBE7ou11Rt0CdH186oR40yIchQC3qLCze+L8?=
- =?us-ascii?Q?PKZfXEPFSAVW5Pc0QjTuTZDjj8YXPC2uZ5u9F/mqP3oDCEFW76yNm37+vqZE?=
- =?us-ascii?Q?rqYvMSR2DUj52FVDOtrijRnFGbRKhU1HHGwLuYdNcgEIXB9cWadX1lkmksnD?=
- =?us-ascii?Q?BHY9j58fNvfkq21Di93/e9086SwfesC1kPHdvPFKpyGSvECm1g/FN9AXgjwp?=
- =?us-ascii?Q?pTzUa12+9ln1xQUzk7cTvWaQB1uZ8l2qnE8vVrEjIJN3/zMQJU7dRNRUqF1C?=
- =?us-ascii?Q?uuPwz9iCo0BtD5riSdYPsx11go1Cw8NUp4eWqfqidxPC9BdgmLZqS97XSwXn?=
- =?us-ascii?Q?8fmsIiCXNi8QIe2sdXF0q54MsDWmgRAE3vkaoKpl?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ad300b5-fc55-418f-6072-08dd4b07b894
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 01:51:09.1401
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T95A1LYYV6lQxbuggTRKQ4vLYZPszRId8brs0EFr+LNYWTf5pZQafIEub9/Iv2Ur
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6928
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVxFe4nMS_dHmO=6-ddA40XbVdvouPLuOxj5cenjUr8ng@mail.gmail.com>
 
-On 11 Feb 2025, at 19:57, Zi Yan wrote:
+On Tue, Feb 11, 2025 at 10:06:34AM -0800, Ian Rogers wrote:
+> On Tue, Feb 11, 2025 at 9:51 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Mon, Feb 10, 2025 at 08:40:01PM -0800, Ian Rogers wrote:
+> > > On Mon, Feb 10, 2025 at 7:12 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > On Mon, Feb 10, 2025 at 02:06:18PM -0800, Ian Rogers wrote:
+> > > > > On Mon, Feb 10, 2025 at 11:59 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > >
+> > > > > > On Sat, Jan 11, 2025 at 11:01:33AM -0800, Ian Rogers wrote:
+> > > > > > > Rather than scanning /proc and skipping PIDs based on their UIDs, use
+> > > > > > > BPF filters for uid filtering. The /proc scanning in thread_map is
+> > > > > > > racy as the PID may exit before the perf_event_open causing perf to
+> > > > > > > abort. BPF UID filters are more robust as they avoid the race. Add a
+> > > > > > > helper for commands that support UID filtering and wire up. Remove the
+> > > > > > > non-BPF UID filtering support.
+> > > > > >
+> > > > > > Hmm.. then non-BPF build cannot use the UID filtering anymore, right?
+> > > > > > Also non-root users will be limited unless it pinned the BPF program in
+> > > > > > advance.
+> > > > > >
+> > > > > > I think you can keep the original behavior and convert to BPF only when
+> > > > > > it's available.
+> > > > >
+> > > > > Using BPF when available would be limited progress. The issues I have
+> > > > > with not removing the existing approach are:
+> > > > >
+> > > > > 1) It is broken
+> > > > > Scanning /proc for pids and then doing perf_event_open means that any
+> > > > > time a process exits the perf_event_open fails.
+> > > > > Steps to reproduce:
+> > > > > This bug reproduces easily but if your machine is lightly loaded in
+> > > > > one terminal run `perf test`, in another terminal run `sudo perf top
+> > > > > -u $(id -u)` the perf top command will exit with:
+> > > > > ```
+> > > > > Error:
+> > > > > The sys_perf_event_open() syscall returned with 3 (No such process)
+> > > > > for event (cycles:P).
+> > > > > /bin/dmesg | grep -i perf may provide additional information.
+> > > > > ```
+> > > > >
+> > > > > 2) It is a work in progress that isn't progressing. Scanning /proc
+> > > > > will only tell you about started processes; it won't tell you about
+> > > > > processes that start during the profiling run, whether it be perf top
+> > > > > or perf record. Extra work would be necessary to make this most basic
+> > > > > of use-cases work, perhaps you could use tracepoints to capture
+> > > > > starting processes and then enable user profiling on those processes.
+> > > > > It would be horribly complicated, suffer from delays between observing
+> > > > > things happen and doing the perf_event_open, biases in the samples,
+> > > > > etc. I don't expect anyone to do it, especially when BPF filtering
+> > > > > already solves the problem better. There have been 13 years that
+> > > > > someone could have fixed it.
+> > > > >
+> > > > > 3) it adds significant useless complexity to the code base. Having
+> > > > > 'user' in the target makes it look like perf_event_open can work on a
+> > > > > pid, system wide or user basis. The user basis doesn't exist so the
+> > > > > majority of the code base is just ignoring it - search for users of
+> > > > > uid_str on target. Those that do run into problems (1) and (2).
+> > > > >
+> > > > > 4) It is redundant and leads to confusion with BPF filtering. Having
+> > > > > the BPF filter on evsels is non-zero cost in terms of the code base
+> > > > > complexity, but it is something broadly useful. As user filtering has
+> > > > > never worked (see above) it isn't broadly used but is adding
+> > > > > complexity. If both approaches were wanted then it is unclear what the
+> > > > > code should be doing, presumably the mish-mash of BPF filtering and
+> > > > > /proc scanning that happens today and will be broken due to (1) and
+> > > > > (2). Putting everything into the BPF filter makes sense as you can
+> > > > > combine a BPF filter with an additional BPF filter on user.
+> > > > >
+> > > > > 5) It is untested and adding a test leads to an always broken test due
+> > > > > to testing being an example of where things break, see point 1 and its
+> > > > > example.
+> > > > >
+> > > > > 6) Nobody wants the non-BPF approach. As it was broken nobody used the
+> > > > > previous feature, maintaining it for no users is overhead. Let me know
+> > > > > if someone is using this option (I doubt it given points 1 and 2) and
+> > > > > they wouldn't be better served by BPF. People building perf today have
+> > > > > to explicitly opt-out of wanting BPF in their tooling. I posted this
+> > > > > change a month ago and nobody has jumped up saying please don't remove
+> > > > > the old approach.
+> > > > >
+> > > > > 7) The interaction with this feature and changes in behavior, say
+> > > > > ignoring events that fail to open, is non-obvious and not testable as
+> > > > > testing would be broken as the functionality itself is broken. Having
+> > > > > the broken feature hanging around and being untestable means that we
+> > > > > slow progress on new features, testing and other improvements.
+> > > > >
+> > > > > Yes, we could try to fix all of that but why? Nobody has cared or
+> > > > > tried in 13 years and I would like the tech debt off our plate with a
+> > > > > better approach in its place.
+> > > >
+> > > > Thanks for writing this up.  I agree BPF approach is better but it has
+> > > > its own limitation - basically it requires root.  And I know a few of
+> > > > people who don't use BPF. :)  And maybe we need to check if user passes
+> > > > filters to the event already.
+> > >
+> > > I thought you were working on making the BPF filters pin-able? So root
+> > > could enable the filter but then users have access to it.
+> >
+> > Right, 'perf record --setup-filter pin' would do the job.  But it has to
+> > be run in advance.
+> >
+> > > You have to be root to be looking at other users in any case.
+> >
+> > That's true.  But at least you can profile your processes. :)
+> >
+> > >
+> > > > Also, I admit that I don't know who actually uses this.  But I can say
+> > > > sometimes people uses tools in a creative way.  Anyway, I can imagine
+> > > > an use case that system is in a steady state and each user has dedicated
+> > > > jobs.  Then scanning /proc would work well.
+> > >
+> > > Another one for Google's tree then.
+> >
+> > Any chance you update the patchset to retain the old behavior and use
+> > BPF only if available?
+> 
+> The point of the series is:
+> 1) get rid of unnecessary notions of target, the uid_str, it is extra
+> complexity and doesn't make sense;
+> 2) switch the two users of if to BPF.
+> You are focussing on the thing that isn't the main point of the series.
 
-> On 11 Feb 2025, at 10:50, Zi Yan wrote:
->
->> It is a preparation patch for non-uniform folio split, which always split
->> a folio into half iteratively, and minimal xarray entry split.
->>
->> Currently, xas_split_alloc() and xas_split() always split all slots from a
->> multi-index entry. They cost the same number of xa_node as the to-be-split
->> slots. For example, to split an order-9 entry, which takes 2^(9-6)=8
->> slots, assuming XA_CHUNK_SHIFT is 6 (!CONFIG_BASE_SMALL), 8 xa_node are
->> needed. Instead xas_try_split() is intended to be used iteratively to split
->> the order-9 entry into 2 order-8 entries, then split one order-8 entry,
->> based on the given index, to 2 order-7 entries, ..., and split one order-1
->> entry to 2 order-0 entries. When splitting the order-6 entry and a new
->> xa_node is needed, xas_try_split() will try to allocate one if possible.
->> As a result, xas_try_split() would only need one xa_node instead of 8.
->>
->> When a new xa_node is needed during the split, xas_try_split() can try to
->> allocate one but no more. -ENOMEM will be return if a node cannot be
->> allocated. -EINVAL will be return if a sibling node is split or
->> cascade split happens, where two or more new nodes are needed, and these
->> are not supported by xas_try_split().
->>
->> xas_split_alloc() and xas_split() split an order-9 to order-0:
->>
->>          ---------------------------------
->>          |   |   |   |   |   |   |   |   |
->>          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
->>          |   |   |   |   |   |   |   |   |
->>          ---------------------------------
->>            |   |                   |   |
->>      -------   ---               ---   -------
->>      |           |     ...       |           |
->>      V           V               V           V
->> ----------- -----------     ----------- -----------
->> | xa_node | | xa_node | ... | xa_node | | xa_node |
->> ----------- -----------     ----------- -----------
->>
->> xas_try_split() splits an order-9 to order-0:
->>    ---------------------------------
->>    |   |   |   |   |   |   |   |   |
->>    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
->>    |   |   |   |   |   |   |   |   |
->>    ---------------------------------
->>      |
->>      |
->>      V
->> -----------
->> | xa_node |
->> -----------
->>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->> ---
->>  Documentation/core-api/xarray.rst |  14 ++-
->>  include/linux/xarray.h            |   7 ++
->>  lib/test_xarray.c                 |  47 +++++++++++
->>  lib/xarray.c                      | 136 ++++++++++++++++++++++++++----
->>  tools/testing/radix-tree/Makefile |   1 +
->>  5 files changed, 188 insertions(+), 17 deletions(-)
->
-> Hi Andrew,
->
-> Do you mind folding the diff below to this one? I changed the function
-> name but forgot the one in the xarray test. Thanks.
+But you removed non-BPF and non-root (w/o pinning BPF) use cases.
 
-From bdf3b10f2ebcd09898ba7a277ac7107c25b8c71b Mon Sep 17 00:00:00 2001
-From: Zi Yan <ziy@nvidia.com>
-Date: Tue, 11 Feb 2025 20:48:55 -0500
-Subject: [PATCH] correct the function name.
+Thanks,
+Namhyung
 
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- lib/test_xarray.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index 598ca38a2f5b..cc2dd325158f 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -1868,7 +1868,7 @@ static void check_split_2(struct xarray *xa, unsigned long index,
- 	xa_set_mark(xa, index, XA_MARK_1);
-
- 	xas_lock(&xas);
--	xas_try_halve(&xas, xa, order, GFP_KERNEL);
-+	xas_try_split(&xas, xa, order, GFP_KERNEL);
- 	if (((new_order / XA_CHUNK_SHIFT) < (order / XA_CHUNK_SHIFT)) &&
- 	    new_order < order - 1) {
- 		XA_BUG_ON(xa, !xas_error(&xas) || xas_error(&xas) != -EINVAL);
--- 
-2.47.2
-
-
-
-Best Regards,
-Yan, Zi
 
