@@ -1,290 +1,564 @@
-Return-Path: <linux-kernel+bounces-510365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2566FA31BC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:12:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30622A31BCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:14:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50E93A94C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5871D18897B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1702B126BF9;
-	Wed, 12 Feb 2025 02:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C781581F8;
+	Wed, 12 Feb 2025 02:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AdSt1dxU"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gPm0nScM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED9D70809
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B2470809
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739326348; cv=none; b=ZyF0B6WZA4N+EJFrfURnUUeaDVeoU/UlSNJhfaMzx9wetPwQCxY0lbDV+1vwPRYVNirsLnyl3yFSTrlPfwgBhN2gl2T5a17PThG2vVJo1jVsFBFLUmlkWbvACv1rEH6KeOcoMYLww7bbwa9MMaCA5RIOiflNF61QR6G2IhplPgc=
+	t=1739326463; cv=none; b=ZvC7UlEo5B1qP/FaYeXI/R5Y6uw9WZIvfkuWqINFL22lqRKsWsG3JowxHIsZtZtw650C8Z+2hdWI+BzJs1zV48Zr+6YYJjiGsTnth3OJQgCwwxMIusxXmigZ7wXT2bqn8u4aAu5w8YfElSVGJKmOcnlvVxkPdMaE5FYdPtmMCXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739326348; c=relaxed/simple;
-	bh=TpFl7Lw89cIlAWzJ2lUWEh/odF3NtASxCZF9rw5Vknk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uERrUyksKQLpv5APuWMMVEzn0UdMi7NDWSlu4uhlyK8pQ7pIOc++A+pYR0mwzMCennNQ45g8vUv4Fu472CxB6teMg4c40oAG1iqMhNrkot9hgyr0OcA6DlR2dfln86MoxdMqod0Q26yQDijtsEbpSKHL2zd5HhjWGyX0Wt2BNt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AdSt1dxU; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21f6a47d5d7so114026925ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 18:12:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739326346; x=1739931146; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+p//+Ke3YywyxqGDeDFj8EHejeodR4QKYcWQKvVpodY=;
-        b=AdSt1dxUe0O5fwFE1m6awLBGWQYZDoxJxJ35XOfqx1tfrN5WDYSH7a3oqaIIMUHRFs
-         I2twNBX1gur5XBaO5ECEgOyaHGxzR4gVgPvzCD1W/7R5aTHC7NUe1q07an+/JTFnzJIm
-         WSWewyLBOJ0boNwnR6jph8xx9Sn2h4HHVCVStU7N0JgP4q6ifk64fFXS/7YkXvZ9EjCt
-         vOZWdoCPXUTHYPAKAQWSdGY9cOfCmKMQSkeknin/IS5tuDuL2UihSlyjJ6LcN73pOO+k
-         ASZoZLd0jIBfevG8DQRCm8dezSSdLWvGKYO19Is9yv2cY1fq+zHzBaiyze5E9MaoEvtO
-         S++g==
+	s=arc-20240116; t=1739326463; c=relaxed/simple;
+	bh=RcD8DsSM+FpOB/QhYs/0ESD2aACoTngsaFKLhQSnfK8=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
+	 In-Reply-To:Content-Type; b=YHmb8NtoDjxoZRLpo5i65RdSrQjZLIn/0A5blKHG/zYFq2r8Jm2K9XhcJYHUxm4LQTwwmZQvoQ9lDWhrBwpradtppJQCsV2x9bucYGy0EkcNhVqC8wezyoj5qOYSdF2CGMIODrfFWtwqUJ/IUg6g3eWVWDcJOlvn7EHKAUuoAAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gPm0nScM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739326458;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GQsT86nw6J0y0hU9e/qtpe62kmf9JB7Dbs8l0ytMX34=;
+	b=gPm0nScMW0ZcLekqqisT0974uGBXEn7NI8oFndkmmMXjXEeMdBGnIZJnDBdfTXbUPgje7F
+	IPhy74Gyo2f7EeAh2MyFlJHBlEwEj0TutJj+AV3fwEv57r8AoJpzptYlJUzIhHnZevzFfv
+	ugeVDi2FGQyI6fVxnMIpicz1veCSiV0=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-205-JYQ7ft1DN16KOywFa5RWGQ-1; Tue, 11 Feb 2025 21:14:16 -0500
+X-MC-Unique: JYQ7ft1DN16KOywFa5RWGQ-1
+X-Mimecast-MFC-AGG-ID: JYQ7ft1DN16KOywFa5RWGQ
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e4492f14a4so128416236d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 18:14:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739326346; x=1739931146;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+p//+Ke3YywyxqGDeDFj8EHejeodR4QKYcWQKvVpodY=;
-        b=k8P63M7JbPTNohtSHsxO7PdXRAnQqC1AgPIBgQdSYi6jJ4TUPziA9DJE+QleP2ebHR
-         Ijjz8cVy6Jixy9XdZrJPLR/5CvYnGaaCIkoEKyfBCkK6TEIbqSTzkTRPS6qeKt1/Clx/
-         uZpjWhrs6Z+xiwJGshffoSi7aBfFj2pKmrUmrjoUvDGat6MEU9s8vQpuh6JIL6XWWOql
-         bl6pXTMDhdbCNoULF7drfGy6dIyYUW2CmYQPKqtaWerAI6qbSsNbjOo+xNzV6rDIBCyl
-         wkTvABm0Fn7qb6KDy5nebeIB/BK/gU66lUFhedTGPjo9kR7gPRgAGt8iB9G8dDficLkb
-         dtug==
-X-Gm-Message-State: AOJu0Yx8PBRsIcE81Om9wnCIijhUYchRsdr44yZCnfiLF1RVEBCvkZRI
-	pYo4DDc6o1+8AiJFyblYMUJ5RNaiAeUJAvny/suYINSpJa2/rYdwqL3pjCHXEvePmB4aTr5lLIf
-	BYA==
-X-Google-Smtp-Source: AGHT+IEOguqaLTeuzE0nWBWnVdq6iXbh6cb+qBQ/IrNI0fqmcNWAQGhEjoP63UBJ/QUq7n9oW6ewroBHiM4=
-X-Received: from pjbpq16.prod.google.com ([2002:a17:90b:3d90:b0:2e9:38ea:ca0f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ea11:b0:216:46f4:7e3d
- with SMTP id d9443c01a7336-220bbad6f94mr22294475ad.15.1739326345906; Tue, 11
- Feb 2025 18:12:25 -0800 (PST)
-Date: Tue, 11 Feb 2025 18:12:24 -0800
-In-Reply-To: <20250203223205.36121-7-prsampat@amd.com>
+        d=1e100.net; s=20230601; t=1739326455; x=1739931255;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GQsT86nw6J0y0hU9e/qtpe62kmf9JB7Dbs8l0ytMX34=;
+        b=J3KrVRcv/G8zHq9e+f/ksD7p4kB9mVxIhRR8YNkCzKg4M+P4IjX3aG6Bh91E4240Yd
+         KGZGki1is4wZn5y1bx7qSIU+ACFf49F5w+kxCwoXfkQkSIGu3QxwCr0ePQhgMTxiR1YZ
+         hZQx9xSva2msf7ymQzL98T80BZDtApalPtewjR51gSCXEGO6LzbbhrUXJsLnMPzOOn7R
+         lO6eco4d3Rf9dkEDAMBay6nEsSvBZGRfQPYMWkIOIX88TkVpCEOr8VNlb3WbYeJxD/zd
+         +4I6tp5JiaDDBsXaqPH+X6eEAROqz7dMa3SrqimgLz2gb7khvnzVJGh/QzU08gMXVvq6
+         W2MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsIP4bSEyWGmvHVzLhP2InrQOMIAj4zjd2xCH0jf7BRDvulB0ZAwsXj9e2TwJf411//1CquVpxDYUPrf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylHOW9lUH0qapnP946iOnwpQA+8LarnGSbO9rRvHzEHgBbD7Fy
+	zIDPP3G0+gcOTvkvdwuip1FcVOMLH68RObyWhi4YjrQOUNrCsPhpyjBwTqLvisMUaTZ1AXWn39P
+	DMGDS7sxpkjtnMqT0e14fLY7LPSCOwxqGl0swCSK+9bohSsGk32WCi3qAvFeaUCxqgoUI32gw
+X-Gm-Gg: ASbGncsM5pBOn78M9DCz6cNpc2KISTS6h57Yoo+WDcwDl60+RlJDWL7hTiDyrDcHB0D
+	PdpXnha5lG4LxnmkoGSOhaWA+aL5D/hSF9kOvCi9A3H51cPAqiCQm+WD7iKp51RRU8YDip8xomw
+	rIQYonPEp6DvnztYMlkZlmCcSAZXbctowbHAVl6iRo6Qr0psqcULZ2E/LWsDjRsxhBldaST5Erx
+	PkqBwi7ssEDKDkJEHSlVtA64/rNJs/kXHEHVPltR2u+SzO0QhvwB+XLR1bbrsi7rID1GdrGIeaM
+	a+3Co90JfoKCBtoFWcM7WO2VHR3fsLeu7CJnrMdSqKXUbezg
+X-Received: by 2002:a05:6214:130d:b0:6d8:8390:15db with SMTP id 6a1803df08f44-6e46ed77495mr23442706d6.6.1739326455456;
+        Tue, 11 Feb 2025 18:14:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGKrTfBpC21ve6KFe3s+/5yfTZpdfEiwYZCxopB0fyewRFFM7IEWMrVhWSVWWB6J5b0NauIaA==
+X-Received: by 2002:a05:6214:130d:b0:6d8:8390:15db with SMTP id 6a1803df08f44-6e46ed77495mr23442486d6.6.1739326455032;
+        Tue, 11 Feb 2025 18:14:15 -0800 (PST)
+Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e4532f9ce9sm48774926d6.65.2025.02.11.18.14.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Feb 2025 18:14:14 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <2aaa1663-fa9c-43ce-9421-60019899bac1@redhat.com>
+Date: Tue, 11 Feb 2025 21:14:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250203223205.36121-1-prsampat@amd.com> <20250203223205.36121-7-prsampat@amd.com>
-Message-ID: <Z6wDiOGjSElatLBd@google.com>
-Subject: Re: [PATCH v6 6/9] KVM: selftests: Add library support for
- interacting with SNP
-From: Sean Christopherson <seanjc@google.com>
-To: "Pratik R. Sampat" <prsampat@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, shuah@kernel.org, 
-	pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com, pankaj.gupta@amd.com, 
-	michael.roth@amd.com, sraithal@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [cgroups?] possible deadlock in __run_timer_base (2)
+To: syzbot <syzbot+ed801a886dfdbfe7136d@syzkaller.appspotmail.com>,
+ cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+ mkoutny@suse.com, syzkaller-bugs@googlegroups.com, tj@kernel.org,
+ Peter Zijlstra <peterz@infradead.org>
+References: <67a9136a.050a0220.110943.001e.GAE@google.com>
+Content-Language: en-US
+In-Reply-To: <67a9136a.050a0220.110943.001e.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 03, 2025, Pratik R. Sampat wrote:
-> Extend the SEV library to include support for SNP ioctl() wrappers,
-> which aid in launching and interacting with a SEV-SNP guest.
-> 
-> Tested-by: Srikanth Aithal <sraithal@amd.com>
-> Signed-off-by: Pratik R. Sampat <prsampat@amd.com>
+On 2/9/25 3:43 PM, syzbot wrote:
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    92514ef226f5 Merge tag 'for-6.14-rc1-tag' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=179453df980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1909f2f0d8e641ce
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ed801a886dfdbfe7136d
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-92514ef2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c4d8b91f8769/vmlinux-92514ef2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c24ec4365966/bzImage-92514ef2.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+ed801a886dfdbfe7136d@syzkaller.appspotmail.com
+
+This problem should be fixed by the following upstream patch once it is 
+merged into mainline.
+
+https://lore.kernel.org/lkml/20250127013127.3913153-1-longman@redhat.com/
+
+Peter, are you planning to merge this patch? This is another instance 
+where the old way of calling wake_up_process() inside the lock critical 
+region can lead to deadlock.
+
+Cheers,
+Longman
+
+
+>
+> ------------[ cut here ]------------
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.14.0-rc1-syzkaller-00034-g92514ef226f5 #0 Not tainted
+> ------------------------------------------------------
+> syz.0.0/5328 is trying to acquire lock:
+> ffffffff8e814418 ((console_sem).lock){-.-.}-{2:2}, at: down_trylock+0x20/0xa0 kernel/locking/semaphore.c:139
+>
+> but task is already holding lock:
+> ffff88801fc2a398 (&base->lock){-.-.}-{2:2}, at: expire_timers kernel/time/timer.c:1836 [inline]
+> ffff88801fc2a398 (&base->lock){-.-.}-{2:2}, at: __run_timers kernel/time/timer.c:2414 [inline]
+> ffff88801fc2a398 (&base->lock){-.-.}-{2:2}, at: __run_timer_base+0x69d/0x8e0 kernel/time/timer.c:2426
+>
+> which lock already depends on the new lock.
+>
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #3 (&base->lock){-.-.}-{2:2}:
+>         lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>         __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>         _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+>         lock_timer_base kernel/time/timer.c:1046 [inline]
+>         __mod_timer+0x24a/0x10e0 kernel/time/timer.c:1127
+>         queue_delayed_work_on+0x1ca/0x390 kernel/workqueue.c:2559
+>         psi_task_change+0xed/0x270 kernel/sched/psi.c:912
+>         psi_enqueue kernel/sched/stats.h:166 [inline]
+>         enqueue_task+0x306/0x3d0 kernel/sched/core.c:2076
+>         activate_task kernel/sched/core.c:2116 [inline]
+>         wake_up_new_task+0x576/0xc70 kernel/sched/core.c:4878
+>         kernel_clone+0x4ee/0x8e0 kernel/fork.c:2846
+>         user_mode_thread+0x132/0x1a0 kernel/fork.c:2893
+>         rest_init+0x23/0x300 init/main.c:708
+>         start_kernel+0x484/0x510 init/main.c:1099
+>         x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:515
+>         x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:496
+>         common_startup_64+0x13e/0x147
+>
+> -> #2 (&rq->__lock){-.-.}-{2:2}:
+>         lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>         _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+>         raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:598
+>         raw_spin_rq_lock kernel/sched/sched.h:1521 [inline]
+>         task_rq_lock+0xc6/0x360 kernel/sched/core.c:700
+>         cgroup_move_task+0x9b/0x5a0 kernel/sched/psi.c:1161
+>         css_set_move_task+0x72e/0x950 kernel/cgroup/cgroup.c:898
+>         cgroup_post_fork+0x256/0x880 kernel/cgroup/cgroup.c:6691
+>         copy_process+0x39e9/0x3d50 kernel/fork.c:2629
+>         kernel_clone+0x226/0x8e0 kernel/fork.c:2815
+>         user_mode_thread+0x132/0x1a0 kernel/fork.c:2893
+>         rest_init+0x23/0x300 init/main.c:708
+>         start_kernel+0x484/0x510 init/main.c:1099
+>         x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:515
+>         x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:496
+>         common_startup_64+0x13e/0x147
+>
+> -> #1 (&p->pi_lock){-.-.}-{2:2}:
+>         lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>         __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>         _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+>         class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
+>         try_to_wake_up+0xc2/0x1470 kernel/sched/core.c:4213
+>         up+0x72/0x90 kernel/locking/semaphore.c:191
+>         __up_console_sem kernel/printk/printk.c:343 [inline]
+>         __console_unlock+0x123/0x1f0 kernel/printk/printk.c:2869
+>         __console_flush_and_unlock kernel/printk/printk.c:3271 [inline]
+>         console_unlock+0x18f/0x3b0 kernel/printk/printk.c:3309
+>         vga_remove_vgacon+0xbe/0xd0 drivers/pci/vgaarb.c:186
+>         virtio_gpu_pci_quirk drivers/gpu/drm/virtio/virtgpu_drv.c:62 [inline]
+>         virtio_gpu_probe+0x33f/0x3c0 drivers/gpu/drm/virtio/virtgpu_drv.c:93
+>         virtio_dev_probe+0x931/0xc80 drivers/virtio/virtio.c:341
+>         really_probe+0x2b9/0xad0 drivers/base/dd.c:658
+>         __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+>         driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+>         __driver_attach+0x45f/0x710 drivers/base/dd.c:1216
+>         bus_for_each_dev+0x239/0x2b0 drivers/base/bus.c:370
+>         bus_add_driver+0x346/0x670 drivers/base/bus.c:678
+>         driver_register+0x23a/0x320 drivers/base/driver.c:249
+>         do_one_initcall+0x248/0x870 init/main.c:1257
+>         do_initcall_level+0x157/0x210 init/main.c:1319
+>         do_initcalls+0x3f/0x80 init/main.c:1335
+>         kernel_init_freeable+0x435/0x5d0 init/main.c:1568
+>         kernel_init+0x1d/0x2b0 init/main.c:1457
+>         ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+>         ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> -> #0 ((console_sem).lock){-.-.}-{2:2}:
+>         check_prev_add kernel/locking/lockdep.c:3163 [inline]
+>         check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+>         validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
+>         __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
+>         lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>         __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>         _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+>         down_trylock+0x20/0xa0 kernel/locking/semaphore.c:139
+>         __down_trylock_console_sem+0x109/0x250 kernel/printk/printk.c:326
+>         console_trylock kernel/printk/printk.c:2852 [inline]
+>         console_trylock_spinning kernel/printk/printk.c:2009 [inline]
+>         vprintk_emit+0x3d7/0xa10 kernel/printk/printk.c:2431
+>         _printk+0xd5/0x120 kernel/printk/printk.c:2457
+>         __report_bug lib/bug.c:195 [inline]
+>         report_bug+0x346/0x500 lib/bug.c:219
+>         handle_bug+0x60/0x90 arch/x86/kernel/traps.c:285
+>         exc_invalid_op+0x1a/0x50 arch/x86/kernel/traps.c:309
+>         asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
+>         expire_timers kernel/time/timer.c:1827 [inline]
+>         __run_timers kernel/time/timer.c:2414 [inline]
+>         __run_timer_base+0x6f4/0x8e0 kernel/time/timer.c:2426
+>         run_timer_base kernel/time/timer.c:2435 [inline]
+>         run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2445
+>         handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
+>         __do_softirq kernel/softirq.c:595 [inline]
+>         invoke_softirq kernel/softirq.c:435 [inline]
+>         __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
+>         irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
+>         instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+>         sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+>         asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+>         get_stack_info+0x4/0xf0 arch/x86/kernel/dumpstack_64.c:193
+>         __unwind_start+0x434/0x740 arch/x86/kernel/unwind_orc.c:729
+>         unwind_start arch/x86/include/asm/unwind.h:64 [inline]
+>         arch_stack_walk+0xe5/0x150 arch/x86/kernel/stacktrace.c:24
+>         stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+>         kasan_save_stack mm/kasan/common.c:47 [inline]
+>         kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>         kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+>         poison_slab_object mm/kasan/common.c:247 [inline]
+>         __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+>         kasan_slab_free include/linux/kasan.h:233 [inline]
+>         slab_free_hook mm/slub.c:2353 [inline]
+>         slab_free mm/slub.c:4609 [inline]
+>         kfree+0x196/0x430 mm/slub.c:4757
+>         bch2_printbuf_exit+0x6d/0xa0 fs/bcachefs/printbuf.c:219
+>         __bch2_fsck_err+0x11a0/0x1420 fs/bcachefs/error.c:458
+>         bch2_alloc_write_key fs/bcachefs/btree_gc.c:860 [inline]
+>         bch2_gc_alloc_done fs/bcachefs/btree_gc.c:894 [inline]
+>         bch2_check_allocations+0x47ad/0x6aa0 fs/bcachefs/btree_gc.c:1044
+>         bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:226
+>         bch2_run_recovery_passes+0x2ad/0xa90 fs/bcachefs/recovery_passes.c:291
+>         bch2_fs_recovery+0x265a/0x3de0 fs/bcachefs/recovery.c:936
+>         bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1030
+>         bch2_fs_get_tree+0xd8d/0x1740 fs/bcachefs/fs.c:2203
+>         vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+>         do_new_mount+0x2be/0xb40 fs/namespace.c:3560
+>         do_mount fs/namespace.c:3900 [inline]
+>         __do_sys_mount fs/namespace.c:4111 [inline]
+>         __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+>         do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>         do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>         entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>    (console_sem).lock --> &rq->__lock --> &base->lock
+>
+>   Possible unsafe locking scenario:
+>
+>         CPU0                    CPU1
+>         ----                    ----
+>    lock(&base->lock);
+>                                 lock(&rq->__lock);
+>                                 lock(&base->lock);
+>    lock((console_sem).lock);
+>
+>   *** DEADLOCK ***
+>
+> 5 locks held by syz.0.0/5328:
+>   #0: ffff888052b80278 (&c->state_lock){+.+.}-{4:4}, at: bch2_fs_start+0x45/0x610 fs/bcachefs/super.c:999
+>   #1: ffff888052ba66d0 (&c->gc_lock){+.+.}-{4:4}, at: bch2_check_allocations+0x1df/0x6aa0 fs/bcachefs/btree_gc.c:1020
+>   #2: ffff888052b84378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:164 [inline]
+>   #2: ffff888052b84378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:256 [inline]
+>   #2: ffff888052b84378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0x9a/0x1a0 fs/bcachefs/btree_iter.c:3202
+>   #3: ffff888052368140 (bcachefs_btree){+.+.}-{0:0}, at: trans_set_locked fs/bcachefs/btree_locking.h:198 [inline]
+>   #3: ffff888052368140 (bcachefs_btree){+.+.}-{0:0}, at: bch2_trans_begin+0x9ca/0x1d90 fs/bcachefs/btree_iter.c:3274
+>   #4: ffff88801fc2a398 (&base->lock){-.-.}-{2:2}, at: expire_timers kernel/time/timer.c:1836 [inline]
+>   #4: ffff88801fc2a398 (&base->lock){-.-.}-{2:2}, at: __run_timers kernel/time/timer.c:2414 [inline]
+>   #4: ffff88801fc2a398 (&base->lock){-.-.}-{2:2}, at: __run_timer_base+0x69d/0x8e0 kernel/time/timer.c:2426
+>
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 5328 Comm: syz.0.0 Not tainted 6.14.0-rc1-syzkaller-00034-g92514ef226f5 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>   <IRQ>
+>   __dump_stack lib/dump_stack.c:94 [inline]
+>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>   print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2076
+>   check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2208
+>   check_prev_add kernel/locking/lockdep.c:3163 [inline]
+>   check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+>   validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
+>   __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
+>   lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>   _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+>   down_trylock+0x20/0xa0 kernel/locking/semaphore.c:139
+>   __down_trylock_console_sem+0x109/0x250 kernel/printk/printk.c:326
+>   console_trylock kernel/printk/printk.c:2852 [inline]
+>   console_trylock_spinning kernel/printk/printk.c:2009 [inline]
+>   vprintk_emit+0x3d7/0xa10 kernel/printk/printk.c:2431
+>   _printk+0xd5/0x120 kernel/printk/printk.c:2457
+>   __report_bug lib/bug.c:195 [inline]
+>   report_bug+0x346/0x500 lib/bug.c:219
+>   handle_bug+0x60/0x90 arch/x86/kernel/traps.c:285
+>   exc_invalid_op+0x1a/0x50 arch/x86/kernel/traps.c:309
+>   asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
+> RIP: 0010:expire_timers kernel/time/timer.c:1827 [inline]
+> RIP: 0010:__run_timers kernel/time/timer.c:2414 [inline]
+> RIP: 0010:__run_timer_base+0x6f4/0x8e0 kernel/time/timer.c:2426
+> Code: 24 38 42 80 3c 30 00 74 08 4c 89 ef e8 a5 c4 79 00 4d 8b 7d 00 4d 85 ff 74 33 e8 27 2c 13 00 e9 dd fe ff ff e8 1d 2c 13 00 90 <0f> 0b 90 eb ae 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 25 ff ff ff
+> RSP: 0018:ffffc90000007ca0 EFLAGS: 00010046
+> RAX: ffffffff81ac3203 RBX: ffff888044012cf0 RCX: ffff888000cc2440
+> RDX: 0000000000000100 RSI: ffffffff8c6089e0 RDI: ffffffff8c6089a0
+> RBP: ffffc90000007df0 R08: ffffffff81ac6c04 R09: 1ffffffff2036a2e
+> R10: dffffc0000000000 R11: fffffbfff2036a2f R12: 0000000000000000
+> R13: ffffc90000007d48 R14: dffffc0000000000 R15: ffff888044012cd8
+>   run_timer_base kernel/time/timer.c:2435 [inline]
+>   run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2445
+>   handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
+>   __do_softirq kernel/softirq.c:595 [inline]
+>   invoke_softirq kernel/softirq.c:435 [inline]
+>   __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
+>   irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
+>   instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+>   sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+>   </IRQ>
+>   <TASK>
+>   asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> RIP: 0010:get_stack_info+0x4/0xf0 arch/x86/kernel/dumpstack_64.c:193
+> Code: c5 c0 23 05 8c c3 cc cc cc cc 31 c0 c3 cc cc cc cc 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 <55> 41 57 41 56 41 55 41 54 53 49 89 ce 48 89 d3 48 89 f5 48 85 f6
+> RSP: 0018:ffffc9000d486358 EFLAGS: 00000246
+> RAX: 1ffff92001a90c7f RBX: ffffc9000d486360 RCX: ffffc9000d4863e0
+> RDX: ffffc9000d4863c0 RSI: ffff888000cc2440 RDI: ffffc9000d486360
+> RBP: ffffc9000d486401 R08: ffffc9000d48641f R09: 0000000000000000
+> R10: ffffc9000d4863c0 R11: fffff52001a90c84 R12: ffffc9000d4863e0
+> R13: ffffc9000d4863e8 R14: ffffc9000d4863c0 R15: 1ffff92001a90c7d
+>   __unwind_start+0x434/0x740 arch/x86/kernel/unwind_orc.c:729
+>   unwind_start arch/x86/include/asm/unwind.h:64 [inline]
+>   arch_stack_walk+0xe5/0x150 arch/x86/kernel/stacktrace.c:24
+>   stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+>   kasan_save_stack mm/kasan/common.c:47 [inline]
+>   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>   kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+>   poison_slab_object mm/kasan/common.c:247 [inline]
+>   __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+>   kasan_slab_free include/linux/kasan.h:233 [inline]
+>   slab_free_hook mm/slub.c:2353 [inline]
+>   slab_free mm/slub.c:4609 [inline]
+>   kfree+0x196/0x430 mm/slub.c:4757
+>   bch2_printbuf_exit+0x6d/0xa0 fs/bcachefs/printbuf.c:219
+>   __bch2_fsck_err+0x11a0/0x1420 fs/bcachefs/error.c:458
+>   bch2_alloc_write_key fs/bcachefs/btree_gc.c:860 [inline]
+>   bch2_gc_alloc_done fs/bcachefs/btree_gc.c:894 [inline]
+>   bch2_check_allocations+0x47ad/0x6aa0 fs/bcachefs/btree_gc.c:1044
+>   bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:226
+>   bch2_run_recovery_passes+0x2ad/0xa90 fs/bcachefs/recovery_passes.c:291
+>   bch2_fs_recovery+0x265a/0x3de0 fs/bcachefs/recovery.c:936
+>   bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1030
+>   bch2_fs_get_tree+0xd8d/0x1740 fs/bcachefs/fs.c:2203
+>   vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+>   do_new_mount+0x2be/0xb40 fs/namespace.c:3560
+>   do_mount fs/namespace.c:3900 [inline]
+>   __do_sys_mount fs/namespace.c:4111 [inline]
+>   __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f903af8e58a
+> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f903bd70e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007f903bd70ef0 RCX: 00007f903af8e58a
+> RDX: 0000200000000000 RSI: 0000200000000040 RDI: 00007f903bd70eb0
+> RBP: 0000200000000000 R08: 00007f903bd70ef0 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000200000000040
+> R13: 00007f903bd70eb0 R14: 000000000000593f R15: 0000200000000380
+>   </TASK>
+> WARNING: CPU: 0 PID: 5328 at kernel/time/timer.c:1827 expire_timers kernel/time/timer.c:1827 [inline]
+> WARNING: CPU: 0 PID: 5328 at kernel/time/timer.c:1827 __run_timers kernel/time/timer.c:2414 [inline]
+> WARNING: CPU: 0 PID: 5328 at kernel/time/timer.c:1827 __run_timer_base+0x6f4/0x8e0 kernel/time/timer.c:2426
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5328 Comm: syz.0.0 Not tainted 6.14.0-rc1-syzkaller-00034-g92514ef226f5 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:expire_timers kernel/time/timer.c:1827 [inline]
+> RIP: 0010:__run_timers kernel/time/timer.c:2414 [inline]
+> RIP: 0010:__run_timer_base+0x6f4/0x8e0 kernel/time/timer.c:2426
+> Code: 24 38 42 80 3c 30 00 74 08 4c 89 ef e8 a5 c4 79 00 4d 8b 7d 00 4d 85 ff 74 33 e8 27 2c 13 00 e9 dd fe ff ff e8 1d 2c 13 00 90 <0f> 0b 90 eb ae 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 25 ff ff ff
+> RSP: 0018:ffffc90000007ca0 EFLAGS: 00010046
+> RAX: ffffffff81ac3203 RBX: ffff888044012cf0 RCX: ffff888000cc2440
+> RDX: 0000000000000100 RSI: ffffffff8c6089e0 RDI: ffffffff8c6089a0
+> RBP: ffffc90000007df0 R08: ffffffff81ac6c04 R09: 1ffffffff2036a2e
+> R10: dffffc0000000000 R11: fffffbfff2036a2f R12: 0000000000000000
+> R13: ffffc90000007d48 R14: dffffc0000000000 R15: ffff888044012cd8
+> FS:  00007f903bd716c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000056372c09c0c8 CR3: 000000003bc66000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <IRQ>
+>   run_timer_base kernel/time/timer.c:2435 [inline]
+>   run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2445
+>   handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
+>   __do_softirq kernel/softirq.c:595 [inline]
+>   invoke_softirq kernel/softirq.c:435 [inline]
+>   __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
+>   irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
+>   instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+>   sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+>   </IRQ>
+>   <TASK>
+>   asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> RIP: 0010:get_stack_info+0x4/0xf0 arch/x86/kernel/dumpstack_64.c:193
+> Code: c5 c0 23 05 8c c3 cc cc cc cc 31 c0 c3 cc cc cc cc 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 <55> 41 57 41 56 41 55 41 54 53 49 89 ce 48 89 d3 48 89 f5 48 85 f6
+> RSP: 0018:ffffc9000d486358 EFLAGS: 00000246
+> RAX: 1ffff92001a90c7f RBX: ffffc9000d486360 RCX: ffffc9000d4863e0
+> RDX: ffffc9000d4863c0 RSI: ffff888000cc2440 RDI: ffffc9000d486360
+> RBP: ffffc9000d486401 R08: ffffc9000d48641f R09: 0000000000000000
+> R10: ffffc9000d4863c0 R11: fffff52001a90c84 R12: ffffc9000d4863e0
+> R13: ffffc9000d4863e8 R14: ffffc9000d4863c0 R15: 1ffff92001a90c7d
+>   __unwind_start+0x434/0x740 arch/x86/kernel/unwind_orc.c:729
+>   unwind_start arch/x86/include/asm/unwind.h:64 [inline]
+>   arch_stack_walk+0xe5/0x150 arch/x86/kernel/stacktrace.c:24
+>   stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+>   kasan_save_stack mm/kasan/common.c:47 [inline]
+>   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>   kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+>   poison_slab_object mm/kasan/common.c:247 [inline]
+>   __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+>   kasan_slab_free include/linux/kasan.h:233 [inline]
+>   slab_free_hook mm/slub.c:2353 [inline]
+>   slab_free mm/slub.c:4609 [inline]
+>   kfree+0x196/0x430 mm/slub.c:4757
+>   bch2_printbuf_exit+0x6d/0xa0 fs/bcachefs/printbuf.c:219
+>   __bch2_fsck_err+0x11a0/0x1420 fs/bcachefs/error.c:458
+>   bch2_alloc_write_key fs/bcachefs/btree_gc.c:860 [inline]
+>   bch2_gc_alloc_done fs/bcachefs/btree_gc.c:894 [inline]
+>   bch2_check_allocations+0x47ad/0x6aa0 fs/bcachefs/btree_gc.c:1044
+>   bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:226
+>   bch2_run_recovery_passes+0x2ad/0xa90 fs/bcachefs/recovery_passes.c:291
+>   bch2_fs_recovery+0x265a/0x3de0 fs/bcachefs/recovery.c:936
+>   bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1030
+>   bch2_fs_get_tree+0xd8d/0x1740 fs/bcachefs/fs.c:2203
+>   vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+>   do_new_mount+0x2be/0xb40 fs/namespace.c:3560
+>   do_mount fs/namespace.c:3900 [inline]
+>   __do_sys_mount fs/namespace.c:4111 [inline]
+>   __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f903af8e58a
+> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f903bd70e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007f903bd70ef0 RCX: 00007f903af8e58a
+> RDX: 0000200000000000 RSI: 0000200000000040 RDI: 00007f903bd70eb0
+> RBP: 0000200000000000 R08: 00007f903bd70ef0 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000200000000040
+> R13: 00007f903bd70eb0 R14: 000000000000593f R15: 0000200000000380
+>   </TASK>
+> ----------------
+> Code disassembly (best guess), 1 bytes skipped:
+>     0:	c0 23 05             	shlb   $0x5,(%rbx)
+>     3:	8c c3                	mov    %es,%ebx
+>     5:	cc                   	int3
+>     6:	cc                   	int3
+>     7:	cc                   	int3
+>     8:	cc                   	int3
+>     9:	31 c0                	xor    %eax,%eax
+>     b:	c3                   	ret
+>     c:	cc                   	int3
+>     d:	cc                   	int3
+>     e:	cc                   	int3
+>     f:	cc                   	int3
+>    10:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+>    15:	90                   	nop
+>    16:	90                   	nop
+>    17:	90                   	nop
+>    18:	90                   	nop
+>    19:	90                   	nop
+>    1a:	90                   	nop
+>    1b:	90                   	nop
+>    1c:	90                   	nop
+>    1d:	90                   	nop
+>    1e:	90                   	nop
+>    1f:	90                   	nop
+>    20:	90                   	nop
+>    21:	90                   	nop
+>    22:	90                   	nop
+>    23:	90                   	nop
+>    24:	90                   	nop
+>    25:	66 0f 1f 00          	nopw   (%rax)
+> * 29:	55                   	push   %rbp <-- trapping instruction
+>    2a:	41 57                	push   %r15
+>    2c:	41 56                	push   %r14
+>    2e:	41 55                	push   %r13
+>    30:	41 54                	push   %r12
+>    32:	53                   	push   %rbx
+>    33:	49 89 ce             	mov    %rcx,%r14
+>    36:	48 89 d3             	mov    %rdx,%rbx
+>    39:	48 89 f5             	mov    %rsi,%rbp
+>    3c:	48 85 f6             	test   %rsi,%rsi
+>
+>
 > ---
-> v5..v6:
-> 
-> * Collected tags from Srikanth.
-> ---
->  tools/testing/selftests/kvm/include/x86/sev.h | 49 ++++++++++-
->  tools/testing/selftests/kvm/lib/x86/sev.c     | 82 +++++++++++++++++--
->  2 files changed, 125 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/x86/sev.h b/tools/testing/selftests/kvm/include/x86/sev.h
-> index faed91435963..fd5d5261e10e 100644
-> --- a/tools/testing/selftests/kvm/include/x86/sev.h
-> +++ b/tools/testing/selftests/kvm/include/x86/sev.h
-> @@ -22,9 +22,20 @@ enum sev_guest_state {
->  	SEV_GUEST_STATE_RUNNING,
->  };
->  
-> +/* Minimum firmware version required for the SEV-SNP support */
-> +#define SNP_MIN_API_MAJOR	1
-> +#define SNP_MIN_API_MINOR	51
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
 
-Dead code.  Selftests don't care about this.
-
->  #define SEV_POLICY_NO_DBG	(1UL << 0)
->  #define SEV_POLICY_ES		(1UL << 2)
->  
-> +#define SNP_POLICY_SMT		(1ULL << 16)
-> +#define SNP_POLICY_RSVD_MBO	(1ULL << 17)
-> +#define SNP_POLICY_DBG		(1ULL << 19)
-> +
-> +#define SNP_FW_VER_MINOR(min)	((uint8_t)(min) << 0)
-> +#define SNP_FW_VER_MAJOR(maj)	((uint8_t)(maj) << 8)
-
-Also dead code.
-
->  #define GHCB_MSR_TERM_REQ	0x100
->  
->  #define VMGEXIT()		{ __asm__ __volatile__("rep; vmmcall"); }
-> @@ -36,13 +47,35 @@ bool is_sev_snp_vm(struct kvm_vm *vm);
->  void sev_vm_launch(struct kvm_vm *vm, uint32_t policy);
->  void sev_vm_launch_measure(struct kvm_vm *vm, uint8_t *measurement);
->  void sev_vm_launch_finish(struct kvm_vm *vm);
-> +void snp_vm_launch_start(struct kvm_vm *vm, uint64_t policy);
-> +void snp_vm_launch_update(struct kvm_vm *vm);
-> +void snp_vm_launch_finish(struct kvm_vm *vm);
->  
->  struct kvm_vm *vm_sev_create_with_one_vcpu(uint32_t type, void *guest_code,
->  					   struct kvm_vcpu **cpu);
-> -void vm_sev_launch(struct kvm_vm *vm, uint32_t policy, uint8_t *measurement);
-> +void vm_sev_launch(struct kvm_vm *vm, uint64_t policy, uint8_t *measurement);
->  
->  kvm_static_assert(SEV_RET_SUCCESS == 0);
->  
-> +/*
-> + * A SEV-SNP VM requires the policy reserved bit to always be set.
-> + * The SMT policy bit is also required to be set based on SMT being
-> + * available and active on the system.
-> + */
-> +static inline u64 snp_default_policy(void)
-> +{
-> +	bool smt_active = false;
-> +	FILE *f;
-> +
-> +	f = fopen("/sys/devices/system/cpu/smt/active", "r");
-
-Please add a helper to query if SMT is enabled.  I doubt there will ever be many
-users of this, but it doesn't seem like something that should buried in SNP code.
-
-Ha!  smt_possible() in tools/testing/selftests/kvm/x86/hyperv_cpuid.c is already
-guilty of burying a related helper, and it looks like it's a more robust version.
-
-> +	if (f) {
-> +		smt_active = fgetc(f) - '0';
-> +		fclose(f);
-> +	}
-> +
-> +	return SNP_POLICY_RSVD_MBO | (smt_active ? SNP_POLICY_SMT : 0);
-> +}
-> +
->  /*
->   * The KVM_MEMORY_ENCRYPT_OP uAPI is utter garbage and takes an "unsigned long"
->   * instead of a proper struct.  The size of the parameter is embedded in the
-> @@ -76,6 +109,7 @@ kvm_static_assert(SEV_RET_SUCCESS == 0);
->  
->  void sev_vm_init(struct kvm_vm *vm);
->  void sev_es_vm_init(struct kvm_vm *vm);
-> +void snp_vm_init(struct kvm_vm *vm);
->  
->  static inline void sev_register_encrypted_memory(struct kvm_vm *vm,
->  						 struct userspace_mem_region *region)
-> @@ -99,4 +133,17 @@ static inline void sev_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
->  	vm_sev_ioctl(vm, KVM_SEV_LAUNCH_UPDATE_DATA, &update_data);
->  }
->  
-> +static inline void snp_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
-> +					  uint64_t hva, uint64_t size, uint8_t type)
-> +{
-> +	struct kvm_sev_snp_launch_update update_data = {
-> +		.uaddr = hva,
-> +		.gfn_start = gpa >> PAGE_SHIFT,
-> +		.len = size,
-> +		.type = type,
-> +	};
-> +
-> +	vm_sev_ioctl(vm, KVM_SEV_SNP_LAUNCH_UPDATE, &update_data);
-> +}
-> +
->  #endif /* SELFTEST_KVM_SEV_H */
-> diff --git a/tools/testing/selftests/kvm/lib/x86/sev.c b/tools/testing/selftests/kvm/lib/x86/sev.c
-> index 280ec42e281b..17d493e9907a 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/sev.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/sev.c
-> @@ -31,7 +31,8 @@ bool is_sev_vm(struct kvm_vm *vm)
->   * and find the first range, but that's correct because the condition
->   * expression would cause us to quit the loop.
->   */
-> -static void encrypt_region(struct kvm_vm *vm, struct userspace_mem_region *region)
-> +static void encrypt_region(struct kvm_vm *vm, struct userspace_mem_region *region,
-> +			   uint8_t page_type)
->  {
->  	const struct sparsebit *protected_phy_pages = region->protected_phy_pages;
->  	const vm_paddr_t gpa_base = region->region.guest_phys_addr;
-> @@ -41,13 +42,35 @@ static void encrypt_region(struct kvm_vm *vm, struct userspace_mem_region *regio
->  	if (!sparsebit_any_set(protected_phy_pages))
->  		return;
->  
-> -	sev_register_encrypted_memory(vm, region);
-> +	if (!is_sev_snp_vm(vm))
-> +		sev_register_encrypted_memory(vm, region);
->  
->  	sparsebit_for_each_set_range(protected_phy_pages, i, j) {
->  		const uint64_t size = (j - i + 1) * vm->page_size;
->  		const uint64_t offset = (i - lowest_page_in_region) * vm->page_size;
->  
-> -		sev_launch_update_data(vm, gpa_base + offset, size);
-> +		if (is_sev_snp_vm(vm)) {
-
-Curly braces are unnecessary.
-
-> +			snp_launch_update_data(vm, gpa_base + offset,
-> +					       (uint64_t)addr_gpa2hva(vm, gpa_base + offset),
-> +					       size, page_type);
-> +		} else {
-> +			sev_launch_update_data(vm, gpa_base + offset, size);
-> +		}
-> +	}
-> +}
-> +
-> +static void privatize_region(struct kvm_vm *vm, struct userspace_mem_region *region)
-
-Can't this just be a param to encrypt_region() that also says "make it private"?
-
-> +{
-> +	const struct sparsebit *protected_phy_pages = region->protected_phy_pages;
-> +	const vm_paddr_t gpa_base = region->region.guest_phys_addr;
-> +	const sparsebit_idx_t lowest_page_in_region = gpa_base >> vm->page_shift;
-> +	sparsebit_idx_t i, j;
-> +
-> +	sparsebit_for_each_set_range(protected_phy_pages, i, j) {
-> +		const uint64_t size = (j - i + 1) * vm->page_size;
-> +		const uint64_t offset = (i - lowest_page_in_region) * vm->page_size;
-> +
-> +		vm_mem_set_private(vm, gpa_base + offset, size);
->  	}
->  }
->  
-> @@ -77,6 +100,14 @@ void sev_es_vm_init(struct kvm_vm *vm)
->  	}
->  }
->  
-> +void snp_vm_init(struct kvm_vm *vm)
-> +{
-> +	struct kvm_sev_init init = { 0 };
-> +
-> +	assert(vm->type == KVM_X86_SNP_VM);
-
-Use TEST_ASSERT(), or do nothing, don't use assert().
-
-> +	vm_sev_ioctl(vm, KVM_SEV_INIT2, &init);
-> +}
-> +
->  void sev_vm_launch(struct kvm_vm *vm, uint32_t policy)
->  {
->  	struct kvm_sev_launch_start launch_start = {
-> @@ -93,7 +124,7 @@ void sev_vm_launch(struct kvm_vm *vm, uint32_t policy)
->  	TEST_ASSERT_EQ(status.state, SEV_GUEST_STATE_LAUNCH_UPDATE);
->  
->  	hash_for_each(vm->regions.slot_hash, ctr, region, slot_node)
-> -		encrypt_region(vm, region);
-> +		encrypt_region(vm, region, 0);
-
-Please add an enum/macro instead of open coding a literal '0'.  I gotta assume
-there's an appropriate name for page type '0'.
-
->  
->  	if (policy & SEV_POLICY_ES)
->  		vm_sev_ioctl(vm, KVM_SEV_LAUNCH_UPDATE_VMSA, NULL);
 
