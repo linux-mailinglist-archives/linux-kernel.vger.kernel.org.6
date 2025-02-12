@@ -1,78 +1,52 @@
-Return-Path: <linux-kernel+bounces-510725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1124EA3211A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:29:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD946A32123
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:31:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9444B18829E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05A043A51DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F03C205507;
-	Wed, 12 Feb 2025 08:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FE8205AB1;
+	Wed, 12 Feb 2025 08:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="VPllBvtC"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="MDr0TNRs"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7222054FC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC34E1DED5F;
+	Wed, 12 Feb 2025 08:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739348936; cv=none; b=sLK/Nlbro0vP9b5q3g7Ec3EpJM+h7Hl8fnk5HtBpQ+yQe6Lt2QEMbWbkX1fQ2CRKmv6bO7O2tkXr2MtVrSLz+tjQCeVW1+DCCD3s4X04rJ8JsX0tmuesXA9m1cMS6ifEwakZD3UewNs+rpuP+PXQbsX0mK10G1ldQGQ55JXTC6M=
+	t=1739349101; cv=none; b=hGsFQEpGh/DvtD1E+Mw54mpPAQJXbsLnLHDXbfwsUMso0SC/k5naDkC1ZbUuWDo1Xdtnl+CJjwqjwxLeLStEoQpMEEDpVDkC84f/DHOH8vTeoqOXeP6QuNjSMbah8LvVVAMDVdz/8VPxXxQfCl1uBxa00Ijyz/i5gaom15njfn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739348936; c=relaxed/simple;
-	bh=3rvb4R31pOJPM6kPOEXa54Gw9ZSCN3adegC963dSIn4=;
+	s=arc-20240116; t=1739349101; c=relaxed/simple;
+	bh=jKmnbO01U7PB1ktXnak6Z7V9ixmJZFoi1KmEdzP/atQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tVcil0V+z1p4LVS+HwV7yT/nN3KKpcbsoca1Whsk8l62wldm8yYrX4jA7VFFcziBezGKzAqfm3P/SYyrmKhlvlEoKI9F8D63NxnbPgzPpQX+aS0vwbj2vQpJ4aDjMSEY7jzJVmamqF/pYhwpU4a9SUtbRIt6ZHcHJYGNTkfFMX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=VPllBvtC; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21f818a980cso58663455ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:28:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1739348933; x=1739953733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=612jIvxL1e9qxD4qIQOZLpI6wF7davzI0ud5ar8CQG0=;
-        b=VPllBvtCuVo0lxl7HlgesPeZo93hk4bRA1VR0pnSN1zQT8PByVxiD1enHrk7Bou28T
-         3/s9SEm2UZCkoP5B7s885JUmICvv6tj+yPBiCs4e5/IR/n65QJJl0RzVIzNDvKwp8/gi
-         7iNueJjVHlfjmL+M0hQ32141UT76SGIx+c53Uy76+jkqzMSeXkLBrKHpofnBO04nRhVF
-         UHIqha8iMcpFdk+rFP1ZwKFRClAo9PUX8ZQoOuHeJtYzoZLvNQfu5fpLjuiNllExEn4K
-         WDfj4odUOxmECh/4+JNlED2U3aRqS2DLDse1hDPFUC3qOVSt0y4i3/El9fIHjn/EYFiH
-         3RDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739348933; x=1739953733;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=612jIvxL1e9qxD4qIQOZLpI6wF7davzI0ud5ar8CQG0=;
-        b=Jv3ABWKjwiswCJrhP9CoEZjqWK6R0/GwKUQe5jVXVu6nfQpIWJkImAFuiE7m+zL5N5
-         2dgyC24mWj8GNmZ2w86JekcQtagwR0f3o26IdiZaWszqQflOLHUMZ/fIZwy2OVzDOoNo
-         wTtK//LqQ7dU7dYeTou1oJ8IIZI1Biq+Iep+JaELNLT0GIwubKAyGJ1AOrfSGEeEa4GI
-         DFxmExy96bimzRSkkAMeT5+6XtncpERvUyH7KRznI28QCM/2udNKZMF4tufmUSa/D+31
-         ao4lram3XSM5Rx86za+Y4Goi6u0PzGOsXPAmeNqmvvMwSDhFXLlRu2JTBwzm2XJvrpmh
-         rW/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUaA9kdSV7aWg2oseVP/OhYNhLSLLXaZ6rtKfr3rAypA9SDy8Ti3O8gVWDo7io1qDTNNkTbUB+keFQiyA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl/kxjpS71e5jzbOaDbmhBrJEaL4XoZJEyCnA+ZAYtWhXu/Ldc
-	59g8ZGUnnjD9YKmwaKwKqSdrqYgj+MSfXOweqTXe6oKRPiS+EUCAExQ1JwMyFJA=
-X-Gm-Gg: ASbGncucXRfPsj2t0Q593NTiT/kb4ZeHb3n1/UyZwrEMN6TL5/DhCiYI1vbAbXARAfX
-	7kzW1X0+A16VVrWPYTeRLCw1tCrYyCcRmv++2OKq8SM6DrjIDm11N2DwTn8jzEEX85XVFiAiXcb
-	sLnJjoFuMxSu73jnObd2J59GwF5qlKEIzXzcmyoX6t4/pl+UP37HOU0z5cfWW01bXNtV6XLBAVH
-	/1lIG5Limci2btWIq7cbJciO4HrdZv2RlZrg6Hn3LbM4hTp3czgPEH2DnhfrTyWqIhLD9tOcc9Z
-	62BfGVqKpdZbQnxa73gHPkjJPmNfx3k2uz/8gtQB1g==
-X-Google-Smtp-Source: AGHT+IHo8yGkr5oWd5KwlTZvIww/CgYd/mju7TZBIcFxDlPlQYOvlk0NqYOCKf+nhwBq6H3RsyfUFg==
-X-Received: by 2002:a05:6a21:7a4c:b0:1db:f68a:d943 with SMTP id adf61e73a8af0-1ee5c74731bmr3748745637.17.1739348932670;
-        Wed, 12 Feb 2025 00:28:52 -0800 (PST)
-Received: from [10.84.150.121] ([203.208.167.154])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ad51aeccfc5sm10700388a12.17.2025.02.12.00.28.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 00:28:52 -0800 (PST)
-Message-ID: <54c30b02-c19e-4e51-8faf-7d6c5560ef6f@bytedance.com>
-Date: Wed, 12 Feb 2025 16:28:46 +0800
+	 In-Reply-To:Content-Type; b=NpzhXfnu5ozenwwLzqe93DdYanU8JHTO3baT1EtdmwFLXfuGlpXeMRZroHsd5wiZcgLiBD4mvdZPtgZPQy+KRD/H7kPasoFvKb+Z43nN152R8zUQjNvjpufsKxLCbReZAaEJlGcodhtvY89BZyDmyUaUJLRo4Scswgp+YSw9xG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=MDr0TNRs; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739349044;
+	bh=jKmnbO01U7PB1ktXnak6Z7V9ixmJZFoi1KmEdzP/atQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=MDr0TNRsoaKrZaTsSZrz0IQk9fjlhL+GfDKybLppuAjCVsGP6at3besprbK4FJF09
+	 Z2FxPYXjlVJFixr/5hD/Zglb2IMdi+MZLNRScis14vTBhLzldFnULnmc/UCVcki9mI
+	 F7oJZm+dWkvg6uwH89g+uYS2ntw9C4XtvFVamRyo=
+X-QQ-mid: bizesmtpip2t1739349011tbs791d
+X-QQ-Originating-IP: +hRE0UJYdhCLplKuLNaNXFDgVUeA7iaIbJVTl434Lns=
+Received: from [IPV6:240e:668:120a::206:15b] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 12 Feb 2025 16:30:09 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 8806388869146915300
+Message-ID: <030FDC391902ED7E+d1a2171f-9a91-48eb-8520-a02ff7e786b4@uniontech.com>
+Date: Wed, 12 Feb 2025 16:30:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,195 +54,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm: pgtable: fix NULL pointer dereference issue
+Subject: Re: [PATCH 2/2] MIPS: Explicitly check KBUILD_SYM32=n
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+ masahiroy@kernel.org, jiaxun.yang@flygoat.com, zhanjun@uniontech.com,
+ guanwentao@uniontech.com, Chen Linxuan <chenlinxuan@uniontech.com>
+References: <41107E6D3A125047+20250211135616.1807966-1-wangyuli@uniontech.com>
+ <D23DC9B8BD1C245D+20250211140740.1812778-2-wangyuli@uniontech.com>
+ <alpine.DEB.2.21.2502120612000.65342@angie.orcam.me.uk>
 Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: linux@armlinux.org.uk, ezra@easyb.ch, hughd@google.com,
- ryan.roberts@arm.com, akpm@linux-foundation.org, muchun.song@linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <be323425-2465-423a-a6f4-affbaa1efe09@bytedance.com>
- <20250212064002.55598-1-zhengqi.arch@bytedance.com>
- <d5bba68b-1dba-4367-8d4f-103348b80229@redhat.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <d5bba68b-1dba-4367-8d4f-103348b80229@redhat.com>
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <alpine.DEB.2.21.2502120612000.65342@angie.orcam.me.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------fb0TDSB84pRB0hFv1UzjXwFZ"
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MINkqr8Ftjsm4CeG/ZL0D56a+kaKAZFGb+KwOdoMKyId9/CJILnpL8Id
+	pT/93hT4PCDuVVSCA+VEAo78IWB26JL8m+KNyTMal0+0lrVUOMEFCi744kFTo85XuzQ+kJV
+	cnS8bBnf7kOjcmA0SE7C7otdJ9d30EyAdyTNgpl6FdHxSc7xhHq58yGRJ437H9+G1vmNe2i
+	BMVCqol7m9OhT1+xNkf7l1UKJqZJMqXs9j3/0hajf3nb/d15INYdU75lPkman33YgXCiz+/
+	s02BOWvoy7HnigdB1FO1pjaqU5sQT+xIvO6dSnLRaAk2aPn2ybYr7zH259JwjTF2WRY32rM
+	Zwe0MwzhWIS4gPsg45D6L3OBvFO6jxMUbQW6meKfsohuwgTP2TkX/JjCLh67O8k2Ppo40uY
+	rS374NM+yKRl5yqai8ZnpcwjO9rmxBGWd1kkUAsoWn9a/dzV/spvoy+ciNDA2d1Vr9w6CSJ
+	EqwFTjZNwKvbYk7Igfgs+1epXsOfcg/MatTeCMv5oz3oEiBjdRmoB+JrmbPyCLPdSBdNBMS
+	U+RiiC6af0z+7VmdsujZOTC+vaE6zPzX6YWjv+WsuYnzRdIfskV5bCTasSIZTX9NydO9WzJ
+	qLngAjcwam9Y7/RdTZOrcNK80h30OhLay8/+TwWNLycBbmCFL13VINydCT5Cqd7ZJy5ZEy3
+	CR0vqpsKpb01V+nLmtRkiUdJl3iXWwH1xwJf5cDzyAgfeI1QFIw9h6lfDiQntwCWPFtOVqH
+	cTWdS0KyT7N5XFEiHU3r8ps2j7zexi+CnDtrHuWG/XsknsMmjvVH1/9bavYFVMBqPI7/eAb
+	LRotXfQU1+rhIoNnw0OK9FwZWUZbpnO6WvGIp+a+jFiR0EkVDSinziUyQAMNQ0i8YSPMPu5
+	iF6xspPpJXm2toTZn5uUEH07Vqe4mVJD0bM3ai4M1xZw11t9fa7ZGx4UpWsSOLrblG/Joz2
+	9PnhTXQtPdiLZTPZ6y0yaDQkvenp7ISdhl9VXlK1Jl4vnRKzmBNv+1EmsBtSLaeStYS9vSv
+	qciufknWc4++gzALRO5lJFT/qOPqisfGy2k1hcDkohy5RtiJcTEw27w2cwsdg=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------fb0TDSB84pRB0hFv1UzjXwFZ
+Content-Type: multipart/mixed; boundary="------------0JYSzbnNmAlGqpICg0m9kdWN";
+ protected-headers="v1"
+From: WangYuli <wangyuli@uniontech.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+ masahiroy@kernel.org, jiaxun.yang@flygoat.com, zhanjun@uniontech.com,
+ guanwentao@uniontech.com, Chen Linxuan <chenlinxuan@uniontech.com>
+Message-ID: <d1a2171f-9a91-48eb-8520-a02ff7e786b4@uniontech.com>
+Subject: Re: [PATCH 2/2] MIPS: Explicitly check KBUILD_SYM32=n
+References: <41107E6D3A125047+20250211135616.1807966-1-wangyuli@uniontech.com>
+ <D23DC9B8BD1C245D+20250211140740.1812778-2-wangyuli@uniontech.com>
+ <alpine.DEB.2.21.2502120612000.65342@angie.orcam.me.uk>
+In-Reply-To: <alpine.DEB.2.21.2502120612000.65342@angie.orcam.me.uk>
+
+--------------0JYSzbnNmAlGqpICg0m9kdWN
+Content-Type: multipart/mixed; boundary="------------vxlzmYTZu00HKN3nLVM2Qejw"
+
+--------------vxlzmYTZu00HKN3nLVM2Qejw
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: base64
 
+SGkgTWFjaWVqLA0KDQpZb3VyIHJlcGx5IGlzIGEgbGl0dGxlIGJpdCBjb25mdXNpbmcsIHNv
+IGxldCBtZSByZXBocmFzZSB0byBtYWtlIHN1cmUgSSANCmdvdCB0aGlzIHJpZ2h0Og0KDQpU
+aGVyZSBhcmUgZXhwcmVzc2lvbiBhbmQgc3BlbGxpbmcgZXJyb3JzIGluIG15IGNvbW1pdCBt
+ZXNzYWdlIGFuZCBjb2RlIA0KY29tbWVudHMsIG5lY2Vzc2l0YXRpbmcgYSBwYXRjaCB2MiBm
+b3IgY29ycmVjdGlvbnMsIGlzIHRoYXQgcmlnaHQ/DQoNCkFzIGZvciB3aGV0aGVyIHRvIGNo
+ZWNrIG5lZWQtY29tcGlsZXIgb3IgS0JVSUxEX1NZTTMyIGluIHRoZSBjb2RlLCB0aGUgDQpl
+ZmZlY3QgaXMgZXNzZW50aWFsbHkgdGhlIHNhbWUsIGNvcnJlY3Q/DQoNClRoYW5rcywNCg0K
+LS0NCg0KV2FuZ1l1bGkNCg0K
+--------------vxlzmYTZu00HKN3nLVM2Qejw
+Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-On 2025/2/12 16:20, David Hildenbrand wrote:
-> On 12.02.25 07:40, Qi Zheng wrote:
->> When update_mmu_cache_range() is called by update_mmu_cache(), the vmf
->> parameter is NULL, which will cause a NULL pointer dereference issue in
->> adjust_pte():
->>
->> Unable to handle kernel NULL pointer dereference at virtual address 
->> 00000030 when read
->> Hardware name: Atmel AT91SAM9
->> PC is at update_mmu_cache_range+0x1e0/0x278
->> LR is at pte_offset_map_rw_nolock+0x18/0x2c
->> Call trace:
->>   update_mmu_cache_range from remove_migration_pte+0x29c/0x2ec
->>   remove_migration_pte from rmap_walk_file+0xcc/0x130
->>   rmap_walk_file from remove_migration_ptes+0x90/0xa4
->>   remove_migration_ptes from migrate_pages_batch+0x6d4/0x858
->>   migrate_pages_batch from migrate_pages+0x188/0x488
->>   migrate_pages from compact_zone+0x56c/0x954
->>   compact_zone from compact_node+0x90/0xf0
->>   compact_node from kcompactd+0x1d4/0x204
->>   kcompactd from kthread+0x120/0x12c
->>   kthread from ret_from_fork+0x14/0x38
->> Exception stack(0xc0d8bfb0 to 0xc0d8bff8)
->>
->> To fix it, do not rely on whether 'ptl' is equal to decide whether to 
->> hold
->> the pte lock, but decide it by whether CONFIG_SPLIT_PTE_PTLOCKS is
->> enabled. In addition, if two vmas map to the same PTE page, there is no
->> need to hold the pte lock again, otherwise a deadlock will occur. Just 
->> add
->> the need_lock parameter to let adjust_pte() know this information.
->>
->> Reported-by: Ezra Buehler <ezra@easyb.ch>
->> Closes: 
->> https://lore.kernel.org/lkml/CAM1KZSmZ2T_riHvay+7cKEFxoPgeVpHkVFTzVVEQ1BO0cLkHEQ@mail.gmail.com/
->> Fixes: fc9c45b71f43 ("arm: adjust_pte() use pte_offset_map_rw_nolock()")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->> ---
->>   arch/arm/mm/fault-armv.c | 40 ++++++++++++++++++++++++++++------------
->>   1 file changed, 28 insertions(+), 12 deletions(-)
->>
->> diff --git a/arch/arm/mm/fault-armv.c b/arch/arm/mm/fault-armv.c
->> index 2bec87c3327d2..3627bf0957c75 100644
->> --- a/arch/arm/mm/fault-armv.c
->> +++ b/arch/arm/mm/fault-armv.c
->> @@ -62,7 +62,7 @@ static int do_adjust_pte(struct vm_area_struct *vma, 
->> unsigned long address,
->>   }
->>   static int adjust_pte(struct vm_area_struct *vma, unsigned long 
->> address,
->> -              unsigned long pfn, struct vm_fault *vmf)
->> +              unsigned long pfn, bool need_lock)
->>   {
->>       spinlock_t *ptl;
->>       pgd_t *pgd;
->> @@ -99,12 +99,11 @@ static int adjust_pte(struct vm_area_struct *vma, 
->> unsigned long address,
->>       if (!pte)
->>           return 0;
->> -    /*
->> -     * If we are using split PTE locks, then we need to take the page
->> -     * lock here.  Otherwise we are using shared mm->page_table_lock
->> -     * which is already locked, thus cannot take it.
->> -     */
->> -    if (ptl != vmf->ptl) {
->> +    if (need_lock) {
->> +        /*
->> +         * Use nested version here to indicate that we are already
->> +         * holding one similar spinlock.
->> +         */
->>           spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
->>           if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
->>               pte_unmap_unlock(pte, ptl);
->> @@ -114,7 +113,7 @@ static int adjust_pte(struct vm_area_struct *vma, 
->> unsigned long address,
->>       ret = do_adjust_pte(vma, address, pfn, pte);
->> -    if (ptl != vmf->ptl)
->> +    if (need_lock)
->>           spin_unlock(ptl);
->>       pte_unmap(pte);
->> @@ -123,16 +122,17 @@ static int adjust_pte(struct vm_area_struct 
->> *vma, unsigned long address,
->>   static void
->>   make_coherent(struct address_space *mapping, struct vm_area_struct 
->> *vma,
->> -          unsigned long addr, pte_t *ptep, unsigned long pfn,
->> -          struct vm_fault *vmf)
->> +          unsigned long addr, pte_t *ptep, unsigned long pfn)
->>   {
->>       struct mm_struct *mm = vma->vm_mm;
->>       struct vm_area_struct *mpnt;
->>       unsigned long offset;
->> +    unsigned long start;
->>       pgoff_t pgoff;
->>       int aliases = 0;
->>       pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
->> +    start = ALIGN_DOWN(addr, PMD_SIZE);
-> 
-> I assume you can come up with a better name than "start" :)
-> 
-> aligned_addr ... pmd_start_addr ...
-> 
-> Maybe simply
-> 
-> pmd_start_addr = ALIGN_DOWN(addr, PMD_SIZE);
-> pmd_end_addr = addr + PMD_SIZE;
+xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
+P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
+FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
+AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
+bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
+AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
+GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
+7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
+/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
+=3DBlkq
+-----END PGP PUBLIC KEY BLOCK-----
 
-you mean:
+--------------vxlzmYTZu00HKN3nLVM2Qejw--
 
-pmd_end_addr = pmd_start_addr + PMD_SIZE;
+--------------0JYSzbnNmAlGqpICg0m9kdWN--
 
-Right?
+--------------fb0TDSB84pRB0hFv1UzjXwFZ
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-> 
-> Then the comparison below also becomes easier to read.
-> 
->>       /*
->>        * If we have any shared mappings that are in the same mm
->> @@ -141,6 +141,14 @@ make_coherent(struct address_space *mapping, 
->> struct vm_area_struct *vma,
->>        */
->>       flush_dcache_mmap_lock(mapping);
->>       vma_interval_tree_foreach(mpnt, &mapping->i_mmap, pgoff, pgoff) {
->> +        unsigned long mpnt_addr;
->> +        /*
->> +         * If we are using split PTE locks, then we need to take the pte
->> +         * lock. Otherwise we are using shared mm->page_table_lock which
->> +         * is already locked, thus cannot take it.
->> +         */
->> +        bool need_lock = IS_ENABLED(CONFIG_SPLIT_PTE_PTLOCKS);
-> 
-> Nit: move "unsigned long mpnt_addr;" below this longer variable+init.
+-----BEGIN PGP SIGNATURE-----
 
-OK, will do.
+wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ6xcEQUDAAAAAAAKCRDF2h8wRvQL7q2y
+AP9Eidu3oPeJ87oNZZhy4+daHyKf+S+4GHZdhzKT1bahzQEAydFuZi2/FDAim4aN01H0/hDEf6as
+xBdKkqIaLy7CRwk=
+=pmho
+-----END PGP SIGNATURE-----
 
-> 
->> +
->>           /*
->>            * If this VMA is not in our MM, we can ignore it.
->>            * Note that we intentionally mask out the VMA
->> @@ -151,7 +159,15 @@ make_coherent(struct address_space *mapping, 
->> struct vm_area_struct *vma,
->>           if (!(mpnt->vm_flags & VM_MAYSHARE))
->>               continue;
->>           offset = (pgoff - mpnt->vm_pgoff) << PAGE_SHIFT;
->> -        aliases += adjust_pte(mpnt, mpnt->vm_start + offset, pfn, vmf);
->> +        mpnt_addr = mpnt->vm_start + offset;
->> +        /*
->> +         * If mpnt_addr and addr are mapped to the same PTE page, there
->> +         * is no need to hold the pte lock again, otherwise a deadlock
->> +         * will occur.
-> 
-> /*
->   * Avoid deadlocks by not grabbing the PTE lock if we already hold the
->   * PTE lock of this PTE table in the caller.
->   */
+--------------fb0TDSB84pRB0hFv1UzjXwFZ--
 
-Maybe just:
-
-/* Avoid deadlocks by not grabbing the same PTE lock again. */
-
-Thanks,
-Qi
-
-> 
-> ?
-> 
->> +         */
->> +        if (mpnt_addr >= start && mpnt_addr - start < PMD_SIZE)
->> +            need_lock = false;
-> 
-> 
-> 
 
