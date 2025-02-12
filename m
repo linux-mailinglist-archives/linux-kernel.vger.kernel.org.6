@@ -1,101 +1,113 @@
-Return-Path: <linux-kernel+bounces-511969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B84A3322B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:12:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0127A3324E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11648188AF31
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E507188C2E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAEE20408C;
-	Wed, 12 Feb 2025 22:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86956202C2E;
+	Wed, 12 Feb 2025 22:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tCn2ND7d"
-Received: from mail-vk1-f201.google.com (mail-vk1-f201.google.com [209.85.221.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RuYw5nad"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ADA20011E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3104F190470;
+	Wed, 12 Feb 2025 22:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739398341; cv=none; b=EVSwrL3pJ5cTUbVDE6FzV2AfSsw6Ov7PwilwzE8IL3Cs1lh/KS+nNSzQ1+aS4QqWO437Q3JlR2/EhsKP5misHwqHqcuI8kazFD5ruojBZeJwBd3pQ+mTZB5VDTEEBmPN+AYL7bRkQXQJwWeyup9egbYz4jdhtXX7na7ovcFIyNc=
+	t=1739398594; cv=none; b=EgbdC8vHnueL+CfqF4imaSyMCQwFSMDT8Kthgi+MKvOEfVNlYDK7BFU6MNzKzcg9W75s0mgkUTkoFUoyHGEX2skMDcUf9+WOeHrDpKbi99GQ6tVVsKF1uIuRgKwAKlEriM0jUVFmNuHoWzQ0HNXmqmqT9Os3Ec6xelstD2LLyHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739398341; c=relaxed/simple;
-	bh=72BRB4+RNJC3IxMpQSiVR5uCpdxzxA9q4DdgCLLMVOA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=A4yj9JmG+R5dIYD9kSiMof6PhOrNjFQnQffrtjsHb3hJLMhE+6qth9GxJaNhUc/a/eZoo4QIaQkxKMxPb73lUUIySRO2GnK83YBgQgwbsLQ9nmdekdd3P2o0ldwQwxOE84FUydtIyqbcknazw7eMuIK8JieoaucIxZCzXT3yhf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tCn2ND7d; arc=none smtp.client-ip=209.85.221.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-vk1-f201.google.com with SMTP id 71dfb90a1353d-52033e9d966so64313e0c.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:12:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739398339; x=1740003139; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rPLBgoltQaYwjDPjqOcGlSgPBBFDomQ2kNGZA5ULopE=;
-        b=tCn2ND7d4AHM2YnVqbqW/eNlAGmGoLgbfxxvW/M7NAd5BXv+xYYP3cKDEsObXfVAWa
-         GlE6GrAiOiKWFJFhvewHZDQ/ZiYgfRCPDBqeBGYo2B6gIKfFfG5aMRwJinQMZd7Y3sJX
-         NnmNHQtCE7zFYOMn6yIi0YlmrWJ2vtlVnKt2SbG5aJ+9hgi2brkhDhS44gcRZeontn/h
-         zm4TwwzP1Jo9ZyIXsjBrHwwoWHyW+9bOpgMp1KorPGoH1XdNeMX/x6uRrAYQndU5GpqT
-         f3nArrglhj9s1OrthC8A4Xnd++9BT/GbRTauYB18OPorIozRDLHwx27ixRMAgCJ1wRmo
-         oAjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739398339; x=1740003139;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rPLBgoltQaYwjDPjqOcGlSgPBBFDomQ2kNGZA5ULopE=;
-        b=X7ZBsM5zjlkwzkQr9mfgzYYh9r/BOZ6ZJQ3FDxtlegMJK6wqWqHqfVIUqYsuBZrPPG
-         dx+7OZf8lrYYL2Y+XPLnN6+KBxnrOTROaiIcTaDgxBHqh9LB9hjOm+ngog/n0vGWUS3x
-         V97IbWHmq4hGIJ9u6nytIKOjYvFgc60MSvhrHmxnUROeuAQ/9cclZA9qUXPQ+tj1BPKb
-         V+PO8pkIaKFSD/GXLuhITs7w2Bh9duB0Sy+OoEB1ysAo7L9sHkon1xxZ87WOnRHmzIK5
-         chMz9Eqcs3+j8bjKWeXY/9KNbII+SqfRklTwlK9UZBhFOBB/2ReHFLmxOHsT+J+i3HeZ
-         iviw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8espONLMcpwaG1Qt+/MfwbWZYuTTzk7EykBotBQRDVPPF3TB/ifgDpGUnG4sbaBkeZVmLnoIwUbY5EQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+cQAXMyslcd4XBKpirSpWVx0LMOIpPdOCGkkoGPysIwZsghE2
-	fjH6BzMf4ix8JEVZYtYOOXeW1fhQg/HjJW6UXqmgDHuBnsHkogL5Q8HLVDGludxEHC+q6D8UB4F
-	BgJg8LsHtylvXx47cDg==
-X-Google-Smtp-Source: AGHT+IEtUpEazFlR8DuFjBjejock4b6zp0iXGyWQLKsGbi8i9EbV7tkmLjIdkO9tXjUnHK+cNjgzk6K82Wv1WvOS
-X-Received: from vkbel2.prod.google.com ([2002:a05:6122:2782:b0:520:5c18:7901])
- (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6122:4684:b0:520:43e0:8ea0 with SMTP id 71dfb90a1353d-52069e1c67emr4630587e0c.11.1739398339282;
- Wed, 12 Feb 2025 14:12:19 -0800 (PST)
-Date: Wed, 12 Feb 2025 22:12:17 +0000
-In-Reply-To: <67689c62.050a0220.2f3838.000d.GAE@google.com>
+	s=arc-20240116; t=1739398594; c=relaxed/simple;
+	bh=kNDG/gEhiX5P6/7ND6hRtddzOBz2ryqMmMGUppU/+Fs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DLFTWxOBeVPFslLwfYMZ03osgonrBH+Q9ylUudNdSYqiWmspkrne4Wc5k6JPjmsNez2dnaq54lkrmcXbQu5mHgCUoQDsqOFjYxG7a0grxfzlej77ENZpNn5KigG20uYtlUdV+dXik5x0/5ibAlAXALBnjswn9Vzx62nJpa7uJH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RuYw5nad; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739398592; x=1770934592;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=kNDG/gEhiX5P6/7ND6hRtddzOBz2ryqMmMGUppU/+Fs=;
+  b=RuYw5nadeTrNlUZD4udC+PgBvETILiA9ow7QCho22iu0OOjTdzRzS3I9
+   UokC3E3bW8pOUlVWYni4YXtgwUX6mo/OOEMGKxR2gJxYyOku63Mj4m3Dv
+   wJVPNZY0Nrucl492PkXJfiQqbV1lAdQkfxVzyEqdJnOBNQfLK/O6MHbeL
+   xhOOLUWCyKlDHbUuCpsmu+lQ0IRb9dObynNVswm8K1/JeVpLcAFLm+eH8
+   U+bkltvV/X2QmWoWvwDaRgUuc0BFzvpynnENw67N3MXaBziHRUEqBh3JQ
+   zR7a7SuQ0dzVgFahxFz6fG3zi4NooQGLknEEhFm1AJ9LXXduPeFya2X++
+   A==;
+X-CSE-ConnectionGUID: bfFxhWuESvC4SFRK0g+Jxw==
+X-CSE-MsgGUID: h+lgoIbpSfq6Afe4NFWcRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="51066689"
+X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
+   d="scan'208";a="51066689"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 14:16:32 -0800
+X-CSE-ConnectionGUID: 96gXPdYgRO2hb2f6hjraLw==
+X-CSE-MsgGUID: AkjgMlqmQduJcg5E8fOQcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="150123862"
+Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
+  by orviesa001.jf.intel.com with ESMTP; 12 Feb 2025 14:16:29 -0800
+From: tien.sung.ang@intel.com
+To: Moritz Fischer <mdf@kernel.org>,
+	Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kuhanh.murugasen.krishnan@intel.com,
+	kuhanh.murugasen.krishnan@altera.com
+Cc: Ang Tien Sung <tien.sung.ang@intel.com>
+Subject: [PATCH] fpga: altera-cvp: Increase credit timeout
+Date: Thu, 13 Feb 2025 06:12:49 +0800
+Message-Id: <20250212221249.2715929-1-tien.sung.ang@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <67689c62.050a0220.2f3838.000d.GAE@google.com>
-X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
-Message-ID: <20250212221217.161222-1-jthoughton@google.com>
-Subject: Re: [syzbot] [kvm?] WARNING in vmx_handle_exit (2)
-From: James Houghton <jthoughton@google.com>
-To: syzbot+ac0bc3a70282b4d586cc@syzkaller.appspotmail.com, seanjc@google.com
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	pbonzini@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Here's what I think is going on (with the C repro anyway):
+From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
 
-1. KVM_RUN a nested VM, and eventually we end up with
-   nested_run_pending=1.
-2. Exit KVM_RUN with EINTR (or any reason really, but I see EINTR in
-   repro attempts).
-3. KVM_SET_REGS to set rflags to 0x1ac585, which has X86_EFLAGS_VM,
-   flipping it and setting vmx->emulation_required = true.
-3. KVM_RUN again. vmx->emulation_required will stop KVM from clearing
-   nested_run_pending, and then we hit the
-   KVM_BUG_ON(nested_run_pending) in __vmx_handle_exit().
+Increase the timeout for SDM (Secure device manager) data credits from
+20ms to 40ms. Internal stress tests running at 500 loops failed with the
+current timeout of 20ms. At the start of a FPGA configuration, the CVP
+host driver reads the transmit credits from SDM. It then sends bitstream
+FPGA data to SDM based on the total credits. Each credit allows the
+CVP host driver to send 4kBytes of data. There are situations whereby,
+the SDM did not respond in time during testing.
 
-So I guess the KVM_BUG_ON() is a little bit too conservative, but this
-is nonsensical VMM behavior. So I'm not really sure what the best
-solution is. Sean, any thoughts?
+Signed-off-by: Ang Tien Sung <tien.sung.ang@intel.com>
+Signed-off-by: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
+---
+ drivers/fpga/altera-cvp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 6b0914432445..5af0bd33890c 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -52,7 +52,7 @@
+ /* V2 Defines */
+ #define VSE_CVP_TX_CREDITS		0x49	/* 8bit */
+ 
+-#define V2_CREDIT_TIMEOUT_US		20000
++#define V2_CREDIT_TIMEOUT_US		40000
+ #define V2_CHECK_CREDIT_US		10
+ #define V2_POLL_TIMEOUT_US		1000000
+ #define V2_USER_TIMEOUT_US		500000
+-- 
+2.25.1
+
 
