@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-510584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FE0A31F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:36:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E58A31F0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38AAF1883FA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:36:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 988721689B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50381FF7D4;
-	Wed, 12 Feb 2025 06:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AA7203704;
+	Wed, 12 Feb 2025 06:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PUevrnX6"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bMMR/Bpn"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5801FCF4F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80AE81FBC8C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739342009; cv=none; b=l96VZ6KWNATcOMa5h9htTJ7W6scefAPwJPpskK497kP6QlSYlRBCO5AixvdTEwJiH2VVQb6cvt1wFUrJTa2jxhzaa86bbLuR6vSl0S9jwmc6u19Be72Fi7PBx3lPvsDQ2GbBOur6x4intwJTgHVPLB50326u96ZetHL6//hQVck=
+	t=1739342017; cv=none; b=iBE2wmwuq6lgVDHL660i0gNxeugN9Cs7vPWEGw2XzD/3R49EGmvqeXq2eDrFimgsZf11gb6E02565srC9lkCazaFTRLs025v04oz6nJ11AqCW7G7HBHa+ZpgDA3eih3H9ffcc0fR+FwUk7jWYahNWJih+Kpjmnu7yHfv9gOYH10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739342009; c=relaxed/simple;
-	bh=Axm24glkz+ptvP6aGlVEW9BVP4weLfzYaUzPtrth5jM=;
+	s=arc-20240116; t=1739342017; c=relaxed/simple;
+	bh=Ju/AXldQ4LXY+lfPObz58y+sBiIJtoWIokAHacy3FF8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AqNyhMD9DL5c6smJ2NvR6QIa9Wz/yS43cbMMDV3EbyYDDMHYsi9hKhrKGq2rEQmzeROWsR5igDfcVYFEW9y37+r1ifkEYlBj+k+ShD4t9jguTva2lAT+0Qfm+cslEKyylonhCXRi0+1+wWgaQUBWRhGg5tBNSLBAGgsU0tbp8Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PUevrnX6; arc=none smtp.client-ip=209.85.216.52
+	 MIME-Version; b=QT7yXYB2PB3yH6SLhly79yZY0DO6eWmua/OVWYSoX8iR6QsJBpLNbcTJSH+vM1ZXUG0bLuMfBc84kbuimuAjT6MMRrbhXtuKOGLH21acjFQESxkW8bKbpSGzIonOkwGQRHQs2NxCmY+dCbXa9U85gZrCmoWtf33ByxjcX0WS5o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bMMR/Bpn; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f44353649aso9490939a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 22:33:27 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21f50895565so73732025ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 22:33:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739342007; x=1739946807; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1739342013; x=1739946813; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a8HQ6KKZTY10gG1FVyTeRkLW7p1KkTSFkDVXwYemgoI=;
-        b=PUevrnX6/eVrPtzTPOcEdWP6ZrbDNroSBhI6Q6IE+Lmpul95SMtpgPkJnL2Mg3tfwh
-         TvY1EKtH64Fwcrddn+IwNLW2LV9CWK6Z4T6PVmgp5qJSzNI7EFrzN3ChZUMRHBqpWsKX
-         t4yCYGvnfGov0PwsxzZy6PvyQJNRljc1+sits=
+        bh=tBUgKAKzM6MxWLflFY2zWKudIzejP2AyvCz3ga5cMyM=;
+        b=bMMR/BpnRmSel7rAAQNWTk4hXuR1wX4iTxJmtogsRU3FcPZn0Enc+VPExmK1kaMRNn
+         7WpkkkcDTch/1bQ6Ta9J7mSJP/SbC9YmXIeBBRL4xTURGxLYQoa1FLiG5/9yUDxPj1y1
+         VZlhcMfgS1UAX9M5gOBMusJYdSBI+UcBk1glI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739342007; x=1739946807;
+        d=1e100.net; s=20230601; t=1739342013; x=1739946813;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a8HQ6KKZTY10gG1FVyTeRkLW7p1KkTSFkDVXwYemgoI=;
-        b=dTFZzmo3ynstd4X0QA70WVhS09SNgb2aDA06siVrECkgDZxkjzptWYF0FSqDbjM8yE
-         /3Mb9YSCOOd05WZVtDnN5wAicZgb/0s/HAUjJmTPrC1DrVWxnt+jLfefuIKUuyThOLSd
-         X2kiq+WP62AC8mcKycVWlRU0C7rsGUAeY+kTLraTAn1q/8izRoHfplWCia6rsVyKFCew
-         lpj4bxMCeVHsf9tzysXBRpuY8zD1jrC/Z86h9UdpzkB8LGFsATnwdzW9apqhGVLcEY/4
-         RbiDDHLrPCmWxBjxR9K0mfXu9ZloqpCV7aSht4kDMYFbw7hHqpA3ALmmiYFOcOsRgITw
-         rjqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVks2OeamlZ3TBMbbpfToud4B2kyN+VotbC0pAHTE4GfoQF6wU7+xxMGoqxc81QtArm4WCm8d7HspTEnfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6uzTS409+u8O3LciiiVy0E4tIOdMc9w3vHgfVOxgt8DjxfKvc
-	gQ1N82JyO9+Lwh0af91015HCqjzWlKa7EYSOYSEZfrgZE2NVr66CkRbFdEPIoQ==
-X-Gm-Gg: ASbGnctxaDmQo7lwFzf/dxxM9U9CFrnpCQ/3Td9Lz9FRqL35TvzvQVvvtIsvkdpyiM/
-	FpXn0t3rMeR0JdnOU0p3blmqnZsFLtFmLn5YN56NMqS98Km0y2srSudhFSIDia2b0eSiyz1xHQx
-	HID/VmBoUERyPoAueGUcirk15hD7sJhyfjqUmxh2Q02g3TI8IXl1SCRCNx+4kpWiKHL8Mehs6me
-	8x6nBkXu9VbKOXET9SYb/PfNu/mf7QhrtyRQ82Rog0n2xdGbbokKEWbrK9exQDzf8cxc9Fmnj01
-	XMA/T1adVA3Mwk5TVQ==
-X-Google-Smtp-Source: AGHT+IEQRw5PJmq7wTBgXFBNQOsAEHuqWdKMzAKbQj8udw0upyNAtfwplObq30KxfZI8V98xY/jwVA==
-X-Received: by 2002:a05:6a00:22d3:b0:730:8e97:bd76 with SMTP id d2e1a72fcca58-7322c591b87mr2706438b3a.9.1739342007145;
-        Tue, 11 Feb 2025 22:33:27 -0800 (PST)
+        bh=tBUgKAKzM6MxWLflFY2zWKudIzejP2AyvCz3ga5cMyM=;
+        b=hrCXRTUjQyrHh7EHYrHdk+vplgvrFWehkh4iYzyzFLwwocK1T/Xu8iWpoYJPKOTuk2
+         87Q9q9MfakQbHzn2CmwwwD2poj1ExWr9Pqw5YWqyzN+GlKbmSdRBvke6EjNv9VUVGz64
+         srTvUb8KI9l8j5G2veUX6rc8X4TnAfWU2jVy2urnPW5P8pznrzmvet0X0Tce0cD0RWvQ
+         eAS00P2Fc/1/aSDY2L/8L05WSdY3JIPjZueFLZl+Fnpc+zAoydwPdbT00sh2CMa0f+jO
+         4qFeyPvlaVzmZJl/xS9Yb1vboFi1WeLy+43OVwqPgeuyzZpartApfaHy5/7Gmn5rc+nr
+         AEew==
+X-Forwarded-Encrypted: i=1; AJvYcCX+XktmhKBrWxZqE6u5hcNuOf+qias1aUf0teWTOzhEYQSv94oXvVn3xK/TDKY14wXqJNtdChgls0bkFfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAhcPJ0fHbYJ2s/8NJY+Ibdt8I4MNvw4IEC7xIS4U4uSId12cT
+	tYf2M515YJUAye8YY7qAcIkIwwv6wQFM77WUU5hYWAi9fTg1t5J5ZmStI064og==
+X-Gm-Gg: ASbGnctoU92pVpdfYZFNttc2/qokkbTWqJvyXuAlTA5K0M4rjDyr3pfSDu1m3PqH7l3
+	SgLPyPyLcNdDkDC7/3I54fiJAZWm9Ti3IORoqJwMuBs7uHdgo8GiPaYXU0VzS8QFc4K1Vw4Vi/O
+	c/N14OWOF8Vx3pbBeVhF3MxRsxG4zqNY55YDluMAe/uLvRmdF524SN7Dpkol2so6atVt5ulTrQH
+	4r9hdFtAb5uI7has+JKHO8BGlxSjBJRs86KL2diXfdk1Jj7O2xzPk0Ecuh/81gdvCDk6M0MRQAB
+	oD0Z+X9Sdkyr2apeqw==
+X-Google-Smtp-Source: AGHT+IFlFIHAdO/k5TBM9JhT/XTZlmlIvZZXfAUmXRCed2AuW1r8OudMsiWeuA3jTbNKnlIXBGxP7A==
+X-Received: by 2002:a05:6a21:3996:b0:1e1:afa9:d39b with SMTP id adf61e73a8af0-1ee5e530b58mr3670243637.7.1739342012925;
+        Tue, 11 Feb 2025 22:33:32 -0800 (PST)
 Received: from localhost ([2401:fa00:8f:203:69f5:6852:451e:8142])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-730851fa25bsm5556237b3a.180.2025.02.11.22.33.25
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73083999abasm5932358b3a.10.2025.02.11.22.33.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2025 22:33:26 -0800 (PST)
+        Tue, 11 Feb 2025 22:33:32 -0800 (PST)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
@@ -76,9 +76,9 @@ Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v5 17/18] zram: do not leak page on writeback_store error path
-Date: Wed, 12 Feb 2025 15:27:15 +0900
-Message-ID: <20250212063153.179231-18-senozhatsky@chromium.org>
+Subject: [PATCH v5 18/18] zram: add might_sleep to zcomp API
+Date: Wed, 12 Feb 2025 15:27:16 +0900
+Message-ID: <20250212063153.179231-19-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
 In-Reply-To: <20250212063153.179231-1-senozhatsky@chromium.org>
 References: <20250212063153.179231-1-senozhatsky@chromium.org>
@@ -90,40 +90,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Ensure the page used for local object data is freed
-on error out path.
+Explicitly state that zcomp compress/decompress must be
+called from non-atomic context.
 
-Fixes: 330edc2bc059 (zram: rework writeback target selection strategy)
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/zram_drv.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/block/zram/zcomp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index f4644c29f74e..10239aea5ce0 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -787,7 +787,7 @@ static ssize_t writeback_store(struct device *dev,
- 	unsigned long index = 0;
- 	struct bio bio;
- 	struct bio_vec bio_vec;
--	struct page *page;
-+	struct page *page = NULL;
- 	ssize_t ret = len;
- 	int mode, err;
- 	unsigned long blk_idx = 0;
-@@ -929,8 +929,10 @@ static ssize_t writeback_store(struct device *dev,
+diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
+index 61a9c3ed6f7a..217a77e09dc7 100644
+--- a/drivers/block/zram/zcomp.c
++++ b/drivers/block/zram/zcomp.c
+@@ -148,6 +148,7 @@ int zcomp_compress(struct zcomp *comp, struct zcomp_strm *zstrm,
+ 	};
+ 	int ret;
  
- 	if (blk_idx)
- 		free_block_bdev(zram, blk_idx);
--	__free_page(page);
-+
- release_init_lock:
-+	if (page)
-+		__free_page(page);
- 	release_pp_ctl(zram, ctl);
- 	atomic_set(&zram->pp_in_progress, 0);
- 	up_read(&zram->init_lock);
++	might_sleep();
+ 	ret = comp->ops->compress(comp->params, &zstrm->ctx, &req);
+ 	if (!ret)
+ 		*dst_len = req.dst_len;
+@@ -164,6 +165,7 @@ int zcomp_decompress(struct zcomp *comp, struct zcomp_strm *zstrm,
+ 		.dst_len = PAGE_SIZE,
+ 	};
+ 
++	might_sleep();
+ 	return comp->ops->decompress(comp->params, &zstrm->ctx, &req);
+ }
+ 
 -- 
 2.48.1.502.g6dc24dfdaf-goog
 
