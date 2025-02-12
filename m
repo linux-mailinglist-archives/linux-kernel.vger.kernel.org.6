@@ -1,197 +1,112 @@
-Return-Path: <linux-kernel+bounces-511122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3A6A32638
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:49:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB48CA3263B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 601057A0FAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:48:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 661303A4B49
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D0B20E01D;
-	Wed, 12 Feb 2025 12:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA0A20E31E;
+	Wed, 12 Feb 2025 12:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cl+rNPKR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PTK+ISsi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/aI0ou3"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E7A20A5CB;
-	Wed, 12 Feb 2025 12:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61F420B811;
+	Wed, 12 Feb 2025 12:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364562; cv=none; b=dffI+l33cqBWErXT/05uLKGWxom+RKRPGohCNziweTz1Lgd9gO0erYBZ/uwDyOPeOFjo4ld3fli/VzpemIsy+cBopEVzN1qbHyW0MsNXuppKRLj+y7QV4PFjBjZS0FjSTDuB5UBud6zSe8IsVaUrqODxZKOg7bgItu6JlT48ufc=
+	t=1739364575; cv=none; b=WwaQyAj+czfq+5jTqpscqCm3++025Sz1MRynHAql0snqeyPSBKHF+4W/xJXMT7udLp08XgYzoJWyAEAmTb3AsP+sLG3/7sERHdnZABp+FIpBozm9YcA44vHdUZGxe0TM6bA9mTGI//B/b2/GCliHtcLk2GwZGOJ3Vr4yX1uioU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364562; c=relaxed/simple;
-	bh=Ki0geKqiotb7MNz6x+v8X77O0WmfIbS8RbGuA4eQZjo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dns9b55exvIgBnedUvcXPt3enMiY2GHN8wh/NUSnRqS8tA544FuHuROZWpmIXFrzsy7hWVxyVQ20grx9tyeyCJz2fxVeJp2RPHAh3drnEJ3g+3TYD4qKBQYvFwtpjaon/BLZkr4AFbWxw38t5Wv4gB9sOX3Otwfv3dHflKNWd/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cl+rNPKR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PTK+ISsi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739364558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VfBrN75f8h+uEuGhED42HwCyXiiO8jFgRTxqPcj2O+Q=;
-	b=cl+rNPKRaaTBh62w7oiiSM1M3DNpYR0LUo4dwEVn+QhuzRBGhiGg9wC4Mycqs+s6zUDrW6
-	sh4hxBqjKg4Jtnf3azYthU4vWgbLFsQHQ0Ku0ZlXx3coGXNTnJ2EUCAs/0rY2G1MHDkxi9
-	pMtGS5wXIl+NNGeHH0BFnyA+zFCKqLtg8TcbavQPabXU1MhMARD1JiibqgUZ1FnowN/RsN
-	HW6oCsA8k96p0alan3oTXMZ5xXR9crGpCCc8tepfl0IIc4Jir8iERcSElJ7h5RyItdJ4Kj
-	7dKfpGMVp/Ss/f6UlwhvhhgpwFqygi3i8ZiJnU2tZvmqamFshdlwBwGtF4syXw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739364558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VfBrN75f8h+uEuGhED42HwCyXiiO8jFgRTxqPcj2O+Q=;
-	b=PTK+ISsi6zORO6UZMD23AevzyGYLcw2wB0UCxsEGFJ7csQJhsAPbhQbjCjbYpnjgxMU++Z
-	O5Yk3xUuL8pg1WCQ==
-Date: Wed, 12 Feb 2025 13:49:13 +0100
-Subject: [PATCH 2/2] kunit: qemu_configs: Add MIPS configurations
+	s=arc-20240116; t=1739364575; c=relaxed/simple;
+	bh=VW6/4SSPyMS8p+Z4LCMrj3Xot8dO86al4y2tfmsilwE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aEINLaV0jB/ek3ABkZVu/SeTR2pW/6noVHWtHnaoSqOQYGNlyjHDc3Fakbgj4U4f58Nah+jQBZ/K5J9/c980WLVnciryZXxoDual1zaC3yZJk4pky9HCTeM7u4RhpTr2qQx5J1q59rAFhjQgz30iNW0tU7Ea03xwlItHBsrBJBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/aI0ou3; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab7f860a9c6so94580366b.0;
+        Wed, 12 Feb 2025 04:49:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739364572; x=1739969372; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:reply-to:from:subject:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VW6/4SSPyMS8p+Z4LCMrj3Xot8dO86al4y2tfmsilwE=;
+        b=M/aI0ou3GMo8pCozWpLaOMoY10Rq8c6MwdRNpUHHkqSMtpj9q//4wlMrT2r0zGMpOR
+         INL7Q9BOwyDZ483H4+XX/x09L8cewoeicD5CAUA5JwNvUBEmctUonoZNSXURn04n0y4S
+         KhbWvzC3orguOxZmY05QC85InyQ4Y91D9rTuZqTS8x1XOnGpmVQ0TSXpAE9iPWpB4fhF
+         zzNGFwY3Sf27nHI3Xa2NFFR3UGqYSEbbFa/1z9j1V0p0Q0vt9qmkPaz2MCPxHB12Q4nm
+         bJJS8Xc/mJ+xf6y8Yrju1lOz3LMXZdlBbK4TT+D0d5CGLNELmFC/WQ18rVLtgJIKPp8D
+         Yu5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739364572; x=1739969372;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:reply-to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VW6/4SSPyMS8p+Z4LCMrj3Xot8dO86al4y2tfmsilwE=;
+        b=FwN2pjnLv9i8SSkrhTsi7r2GZXuUkdmvOowgHMIouWQFQTerpYyK8tL53M0hZ6EXjS
+         fWZ54SFrlhyeWsWKGjvYeDwnMGuZ7H0A6FNx1pFmILzIigKZkQw6oep1S94crKPs1DRo
+         QvxUxeOpBQZMklJjN9c1btTkpVE3C5X7FxC1gfPRvxHXun+uOK7Rz5Azz5ncv6e90iGi
+         TsynmMKh/fkE75WJcmLdFUmACuVTUTw/+Z8QdLKen4/sc78JW80pITuzHq2o27TaW5gt
+         hL3U/HIvnXzTwB07kxdpcxmgRA+MT+BPK82upewwpqYlovX3p1qCOloKBRNftU4PzpGA
+         SA+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCVWPtwXn3b0CEWKZ3Wf+DE5WZXNeV1D99vIjGBbfgpjButvB92jqARX5Dmw5pVPxI/LhupnzibDc=@vger.kernel.org, AJvYcCUX/R45KN4xfLJDsfMh24MyEXrX2jQqcW89GRJodzFl00yrhdywo7U/7pfNMsC5ZnRxAK4GS+GEcLA=@vger.kernel.org, AJvYcCXe8t7Nor0UoTi83ZYXcVDfxTUF1caDFRsg0n4KV+O0rQful2hlG1/ZGl+WpmgWrDCTOacasRyN8HbKh57l@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmHj205mR9qFMzbPA1i6K2GBtNTv5w/j5+owUazB6yJOz9vBwH
+	ex6q9C03Qn81l14280sTQXRTpPuV61FYVkYiJaQreE7wMD0sHhZ6
+X-Gm-Gg: ASbGncuacY4anStOHsd1og00HVhtIxvhe4qUOZ+C56YdJhHiKjKkC6+0f4I16fXZmd2
+	uHxyN3TqDuei+zz+iirA37hM0JplgY43Yms5FI0TOJnHdLnqmJMuA8UlK7zIYGeZliyhFhq6huW
+	aSWnrOdTxfNZ18Vc3ofFurUG3nG40Xwk7B+g2cg14gZ+/dAKWfUbpaoUFhz11uZt4euamZxK7TO
+	zCN6RnaZKry0u2Ay7fZ5PHC5B1VEyBiT/cbrJkGF07JjA9rI/phfU7xHELzatH3/7oJICZdDZEO
+	HVohKG1xblrTkHKx8aqRojuYjdE/RjVGqhQO3pcSu0sC/A==
+X-Google-Smtp-Source: AGHT+IGciLXRAMb8IklxQt1qty8/NJhkxRO9Bik+gJhazg+83ZCzyCcKAnHH+OicOMzD4U/tmZgrIg==
+X-Received: by 2002:a17:907:6d29:b0:aae:c3c1:1361 with SMTP id a640c23a62f3a-ab7f34a0d1fmr302302366b.44.1739364570890;
+        Wed, 12 Feb 2025 04:49:30 -0800 (PST)
+Received: from abityuts-desk1.ger.corp.intel.com ([134.191.196.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7cd7ffaa8sm499724566b.132.2025.02.12.04.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 04:49:30 -0800 (PST)
+Message-ID: <e1877881efdf56490650f564e9d218abd0673893.camel@gmail.com>
+Subject: Re: [PATCH v3] intel_idle: introduce 'no_native' module parameter
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Reply-To: dedekind1@gmail.com
+To: David Arcari <darcari@redhat.com>, kernel test robot <lkp@intel.com>, 
+	linux-pm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Corbet <corbet@lwn.net>, Jacob
+ Pan <jacob.jun.pan@linux.intel.com>, Len Brown <lenb@kernel.org>, Prarit
+ Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Wed, 12 Feb 2025 14:49:27 +0200
+In-Reply-To: <9416ee48-a68a-465e-85be-89d5a53afcd8@redhat.com>
+References: <20250211132741.99944-1-darcari@redhat.com>
+	 <202502121732.P7lZkbhm-lkp@intel.com>
+	 <21e66060c13c6a3cc33592f71cb08975711a6adb.camel@gmail.com>
+	 <9416ee48-a68a-465e-85be-89d5a53afcd8@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250212-kunit-mips-v1-2-eb49c9d76615@linutronix.de>
-References: <20250212-kunit-mips-v1-0-eb49c9d76615@linutronix.de>
-In-Reply-To: <20250212-kunit-mips-v1-0-eb49c9d76615@linutronix.de>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Paul Burton <paulburton@kernel.org>, 
- Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739364553; l=4132;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=Ki0geKqiotb7MNz6x+v8X77O0WmfIbS8RbGuA4eQZjo=;
- b=Ar6njH5ZwFpZSFlfL1oDpY8zPN35HzEyLXIMywlPj1uWAZiUPpdn6ZZLsvvohpPE78uwrRv5R
- Fno8E8H5e5uAAlSMTnyfTO/B4NXkcQ+rnzg8iezaz7YPkfn1SMMgjaL
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Add basic support to run various MIPS variants via kunit_tool using the
-virtualized malta platform.
+On Wed, 2025-02-12 at 07:41 -0500, David Arcari wrote:
+> - #ifdef the code that doesn't compile
+> - default no_acpi=3Dtrue in the !CONFIG_ACPI_PROCESSOR_CSTATE case
+>=20
+> I sort of like the second option better, but I worry about the=20
+> documentation.=C2=A0 Specifically:
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/testing/kunit/qemu_configs/mips.py     | 18 ++++++++++++++++++
- tools/testing/kunit/qemu_configs/mips64.py   | 19 +++++++++++++++++++
- tools/testing/kunit/qemu_configs/mips64el.py | 19 +++++++++++++++++++
- tools/testing/kunit/qemu_configs/mipsel.py   | 18 ++++++++++++++++++
- 4 files changed, 74 insertions(+)
+The most important part is build !CONFIG_ACPI_PROCESSOR_CSTATE, run and tes=
+t
+that it works.
 
-diff --git a/tools/testing/kunit/qemu_configs/mips.py b/tools/testing/kunit/qemu_configs/mips.py
-new file mode 100644
-index 0000000000000000000000000000000000000000..8899ac157b30bd2ee847eacd5b90fe6ad4e5fb04
---- /dev/null
-+++ b/tools/testing/kunit/qemu_configs/mips.py
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+from ..qemu_config import QemuArchParams
-+
-+QEMU_ARCH = QemuArchParams(linux_arch='mips',
-+                           kconfig='''
-+CONFIG_32BIT=y
-+CONFIG_CPU_BIG_ENDIAN=y
-+CONFIG_MIPS_MALTA=y
-+CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_SYSCON=y
-+''',
-+                           qemu_arch='mips',
-+                           kernel_path='vmlinuz',
-+                           kernel_command_line='console=ttyS0',
-+                           extra_qemu_params=['-M', 'malta'])
-diff --git a/tools/testing/kunit/qemu_configs/mips64.py b/tools/testing/kunit/qemu_configs/mips64.py
-new file mode 100644
-index 0000000000000000000000000000000000000000..1478aed05b94da4914f34c6a8affdcfe34eb88ea
---- /dev/null
-+++ b/tools/testing/kunit/qemu_configs/mips64.py
-@@ -0,0 +1,19 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+from ..qemu_config import QemuArchParams
-+
-+QEMU_ARCH = QemuArchParams(linux_arch='mips',
-+                           kconfig='''
-+CONFIG_CPU_MIPS64_R2=y
-+CONFIG_64BIT=y
-+CONFIG_CPU_BIG_ENDIAN=y
-+CONFIG_MIPS_MALTA=y
-+CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_SYSCON=y
-+''',
-+                           qemu_arch='mips64',
-+                           kernel_path='vmlinuz',
-+                           kernel_command_line='console=ttyS0',
-+                           extra_qemu_params=['-M', 'malta', '-cpu', '5KEc'])
-diff --git a/tools/testing/kunit/qemu_configs/mips64el.py b/tools/testing/kunit/qemu_configs/mips64el.py
-new file mode 100644
-index 0000000000000000000000000000000000000000..300c711d7a82500b2ebcb4cf1467b6f72b5c17aa
---- /dev/null
-+++ b/tools/testing/kunit/qemu_configs/mips64el.py
-@@ -0,0 +1,19 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+from ..qemu_config import QemuArchParams
-+
-+QEMU_ARCH = QemuArchParams(linux_arch='mips',
-+                           kconfig='''
-+CONFIG_CPU_MIPS64_R2=y
-+CONFIG_64BIT=y
-+CONFIG_CPU_LITTLE_ENDIAN=y
-+CONFIG_MIPS_MALTA=y
-+CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_SYSCON=y
-+''',
-+                           qemu_arch='mips64el',
-+                           kernel_path='vmlinuz',
-+                           kernel_command_line='console=ttyS0',
-+                           extra_qemu_params=['-M', 'malta', '-cpu', '5KEc'])
-diff --git a/tools/testing/kunit/qemu_configs/mipsel.py b/tools/testing/kunit/qemu_configs/mipsel.py
-new file mode 100644
-index 0000000000000000000000000000000000000000..3d3543315b45776d0e77fb5c00c8c0a89eafdffd
---- /dev/null
-+++ b/tools/testing/kunit/qemu_configs/mipsel.py
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+from ..qemu_config import QemuArchParams
-+
-+QEMU_ARCH = QemuArchParams(linux_arch='mips',
-+                           kconfig='''
-+CONFIG_32BIT=y
-+CONFIG_CPU_LITTLE_ENDIAN=y
-+CONFIG_MIPS_MALTA=y
-+CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_SYSCON=y
-+''',
-+                           qemu_arch='mipsel',
-+                           kernel_path='vmlinuz',
-+                           kernel_command_line='console=ttyS0',
-+                           extra_qemu_params=['-M', 'malta'])
-
--- 
-2.48.1
-
+Thanks!
 
