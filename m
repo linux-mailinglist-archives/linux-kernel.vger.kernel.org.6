@@ -1,129 +1,85 @@
-Return-Path: <linux-kernel+bounces-510308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1D7A31AFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:09:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 693FBA31AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:08:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88DEE3A8D63
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5EF188A792
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E77154457;
-	Wed, 12 Feb 2025 01:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961731CF96;
+	Wed, 12 Feb 2025 01:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTCfZdJa"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KpMJj+CC"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B8913A3F7;
-	Wed, 12 Feb 2025 01:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FA66136
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739322507; cv=none; b=eE3uaEcnU9+MmEXe9m0ovWH3HY9modu4Hek8TjEOkVHjrL3jv5ziu5aNcxt3d7EV3smfkUV/vck6Z7+ISqQpmbHDqbIZwwguUVT7pbWXS7Bea0COF689goZunH79YbeZ93wk7P4YuqcJKEHsuepgJihNs5vTbaOgD0OHyEOMM+M=
+	t=1739322501; cv=none; b=ErpRucmoIuvZkb6esW2y2GsHA0ZxrrWMv/G1lLp3NdlTSHD3mw6BsnaK7qk58rZZu2SSGFyO7AgFZH14d7v7ykNqx1OAp+ROC8ebOPN6aqaY+TSDTPg6TWbsemeFkxSDEjPT1ilwDHQfJ/sgfTHbnSl6JOwAYQrnmEAs44M/5FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739322507; c=relaxed/simple;
-	bh=NUawghqRrh3rkXopa/GiGWcV8jI6vPFr2NrVSrScqAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gikW1PpNMuHoaXDk85lDyMmh6+VhZP9j+1bhoQbBqXQ7MdJ9NPYCPeRBkJIWPG2wx76Tj3CLCegxUd6CAsc/EwrV+UmootP8DhN79T7rvu/ZNvh2Uwtnifg9S16qIQfR+wTB3uZQ90w3lTPH6OEWpDP6rwbi3iEREgj6zq13IlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XTCfZdJa; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2fa19e1d027so8256713a91.0;
-        Tue, 11 Feb 2025 17:08:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739322505; x=1739927305; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KI67GBxmYGSpIszVmrGo2aY8dYvHueOBqThLy2Ev9T4=;
-        b=XTCfZdJaTbYm7cjRleFYfG7FE2q6EQLqMU6rk8hcrFiZMykuF0m8HocEZSwjHq463I
-         x6vbRVtS163r02SyXuihrOw7wjl+7AtUFCzJ1A3qfDrZyhChcTycPCRr/+R0YiuYaaQ+
-         gLTmQQqIZWIAcL3/3A7kPIbrhvpVSAExsA+MQxeXBIlBft7ZXW+Tdb1z8Xs7yoJ19Dpo
-         tsudu2VaptzXCidsVc+4gnpgUnWOe0+rTe9rlHeEbZeC/1uHgOI2kA/R+pawYz7dIJwg
-         K1ESLZS5oG1Sskc7MrP3w0mfP5sOSvMlCVgmMsiqM2f+Hfo1Sqj014ZZOfdUDlHl2O++
-         27lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739322505; x=1739927305;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KI67GBxmYGSpIszVmrGo2aY8dYvHueOBqThLy2Ev9T4=;
-        b=Fha9MJZ6uDF/g9jGfw5KFnRHgTUvQHu3mfQdynmc7pbVIGFxs1XeTiJS4LXAJA+BsQ
-         qx8iQVuBK5WiNJ/5W9V6a1Z3JVOCdgWtOs8Dw9g7s54z9xxqbuVWULoLi1MGZfLPz14F
-         +OQ5cmBiEc9KFrSAgqXbRxBF/kzqTLOllGwxmsfeK94UMa46sZ279gGYk5inYZI/ndeA
-         6gp4dfGMpBlxRszslDD5irTjlPFpfsdD/iOZbr3jvmhwLC/EkcUlxcuamJCvIcSNFz10
-         1P40zmp7C7GfercqAF7WRRZkxCPEqZ/sHfb/uq/MQ7582cAb2Z/btObK4vajpn0xiq9d
-         yXFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnZ4FGVnREB2W0rD8qCa6o3QhxQuaODBmvFgFhQiq3vCUirY9KoqANw+44/d7un+Nmug/bSvw/qviz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk/xuwi7kWYwXyj6Rq3T0bnBtjPUK/KT+vt6yflepmZt0z2Vn3
-	m9epYuCO8tls5P8D3TOV9ke60xrvOQnh7rciZOZGJr6stBr3HkATRdMQFlu1
-X-Gm-Gg: ASbGncvfUMOXKflIkT4RiONh4QrE2A6WuQG7IFiasS0m/yHjKa0UOxIciOJGhIirtlc
-	IbtpqJD661+eIxUN2LaZOKBDHm9nhLIcL6kGMp+gzs54/tSlSapIPfvuKtBSg0kFAtHNfWsh6mv
-	ub6dZ7sGHrBbQUQ5kvJHRmIyaFXp9rQcqO94t6YkavAVzGxIOqXMz3HIrTFPOdAysERE+8U5Xwv
-	XgDHLeTwbHyH78GXeom37u/tzHmBq5V0rplaF7ZNUnua4tpnlmt+tiMjSQuvzjdCzKzW9uvnE28
-	mU+3QQ0nGg8zTvEkx/hFFzhjHAMCkjCceJHPuA==
-X-Google-Smtp-Source: AGHT+IHaZVLdC2TCgPqZ7423xb/aLsEO171JW1YtxGA9PbbUY5S5Zm9fmDlBz3GqZR+5EsVUjP+l+g==
-X-Received: by 2002:a17:90a:d00e:b0:2ee:7c65:ae8e with SMTP id 98e67ed59e1d1-2fbf5bf4948mr1895144a91.11.1739322504689;
-        Tue, 11 Feb 2025 17:08:24 -0800 (PST)
-Received: from localhost.localdomain ([66.119.214.127])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98d3d16sm190408a91.13.2025.02.11.17.08.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 17:08:24 -0800 (PST)
-From: "James A. MacInnes" <james.a.macinnes@gmail.com>
-To: linux-arm-msm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	andersson@kernel.org,
-	konradybcio@kernel.org,
-	quic_wcheng@quicinc.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	"James A. MacInnes" <james.a.macinnes@gmail.com>
-Subject: [PATCH 3/3] arm64: boot: dts: pmi8998.dtsi: Add VBUS regulator node
-Date: Tue, 11 Feb 2025 17:07:44 -0800
-Message-ID: <20250212010744.2554574-4-james.a.macinnes@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250212010744.2554574-1-james.a.macinnes@gmail.com>
-References: <20250212010744.2554574-1-james.a.macinnes@gmail.com>
+	s=arc-20240116; t=1739322501; c=relaxed/simple;
+	bh=2rJJ7HfL5LNYfbuvkH9bco/27aob0ttoKR1Oc5+4vjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f1zbMPsn027g9Dq9Qeqp8QRHSoGWw6Eativ5tiXepQNkHqGrIotoLeKEQdCirquD9ImLpDcIxejPS7nEOkoHrovtiXkag5XtnxmOCMYAbAx4wQF71bhwQfX1e/F557fxV7t03YMAqFsn+qFDpZ6y2CmcZg01FsKgHWVRyIk/bUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KpMJj+CC; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 11 Feb 2025 17:08:03 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739322486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RY6F2Jk4IS2djWCEuxsfNU6S62Bb19qyazUJLPUX6Fk=;
+	b=KpMJj+CCYiRUftmezhybDgQxVgOdlBuJMz7VWmLJk3sYRCZ/cPc5p8Qwydppuy57w8Uc9Q
+	wd+ur4mot2ZuuiIB9isrfL9H4t3QUt6ZBQszrxEgh+zW2tAFgJ8I5BGins7XTkRGR7A60g
+	4DtFkfJgJ9rcwInRLhbixOS4P3eMcYc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, "T.J. Mercier" <tjmercier@google.com>, Tejun Heo <tj@kernel.org>, 
+	Michal Hocko <mhocko@kernel.org>, Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: add hierarchical effective limits for v2
+Message-ID: <bg5bq2jakwamok6phasdzyn7uckq6cno2asm3mgwxwbes6odae@vu3ngtcibqpo>
+References: <20250205222029.2979048-1-shakeel.butt@linux.dev>
+ <mshcu3puv5zjsnendao73nxnvb2yiprml7aqgndc37d7k4f2em@vqq2l6dj7pxh>
+ <ctuqkowzqhxvpgij762dcuf24i57exuhjjhuh243qhngxi5ymg@lazsczjvy4yd>
+ <5jwdklebrnbym6c7ynd5y53t3wq453lg2iup6rj4yux5i72own@ay52cqthg3hy>
+ <20250210225234.GB2484@cmpxchg.org>
+ <Z6rYReNBVNyYq-Sg@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6rYReNBVNyYq-Sg@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-In order to enable USB Type-C VBUS support on the SDM845 platform add
-device node for the USB Vbus regulator to the PMI8998 PMIC device tree.
+On Tue, Feb 11, 2025 at 04:55:33AM +0000, Roman Gushchin wrote:
+[...]
+> 
+> Maybe I'm missing something, but somehow it wasn't a problem for many years.
+> Nothing really changed here.
+> 
+> So maybe someone can come up with a better explanation of a specific problem
+> we're trying to solve here?
 
-Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
----
- arch/arm64/boot/dts/qcom/pmi8998.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/pmi8998.dtsi b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-index cd3f0790fd42..8cb1d851b5a3 100644
---- a/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-@@ -29,6 +29,12 @@ pmi8998_charger: charger@1000 {
- 			status = "disabled";
- 		};
- 
-+		pmi8998_vbus: usb-vbus-regulator@1100 {
-+			compatible = "qcom,pmi8998-vbus-reg";
-+			status = "disabled";
-+			reg = <0x1100>;
-+		};
-+
- 		pmi8998_gpios: gpio@c000 {
- 			compatible = "qcom,pmi8998-gpio", "qcom,spmi-gpio";
- 			reg = <0xc000>;
--- 
-2.43.0
-
+The most simple explanation is visibility. Workloads that used to run
+solo are being moved to a multi-tenant but non-overcommited environment
+and they need to know their capacity which they used to get from system
+metrics. Now they have to get from cgroup limit files but usage of
+cgroup namespace limits those workloads to extract the needed
+information.
 
