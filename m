@@ -1,153 +1,150 @@
-Return-Path: <linux-kernel+bounces-510517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB034A31E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:41:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D618A31E12
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1173A8E2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:41:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 015D1188AF14
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B631F8ADB;
-	Wed, 12 Feb 2025 05:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4582C1F8AC5;
+	Wed, 12 Feb 2025 05:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vrQuzSUd"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="nRMcv++z"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A8E1F5428
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDF8271837;
+	Wed, 12 Feb 2025 05:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739338879; cv=none; b=MJ008kqNCkbDT3Advt8vWhVlp0evoefIP0qqQPCGk/vQxRpHV5BASOerlpjn+rsn6mymP/tYkh7EWOYFcPsMNOMpbJTp0Hb7DMKooL2KFw7bcTvZC8QqMgX+2DSLCXJ+YKfTd+gmMoZ+NqTiZzJ9GAzxu2Xxhi1fIL0pKuRn8Kk=
+	t=1739338888; cv=none; b=HORa0KjBr5UrC52Ln22hcIkG2Ii6eQGVfnfGhakpifzWO/XGTkEpCQsird5lCVyr2tw6Jx1ffh7bSsQQ04oaCw/9XOMFoSdRE3zs119Ol8fx4P2YxwL5nv4z1GkrjqUMLLOiUcANsdVVHxhSJj/ot9/titLd5IUc/+hpN+9jjTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739338879; c=relaxed/simple;
-	bh=lrCwj0QWTxYw5GCNQQjDASwerqlc8xsiCplpiYbfymk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BxQySyea3m5qReaE5UWhjROjfk+Ix3omrRTAd85BgJ95SeRWA+Qc2RkI7znc0RggEYCEa1MLiNP7NxQDl8neePY66f9FgETTer4NcoNH2zmmKMKUksM8rRgA9IPGbY9g0CGLOMIsfbXAPliYhNqxT4u2H4gLwM6L0B/r1nDmcy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vrQuzSUd; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3d146357fb2so74265ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 21:41:17 -0800 (PST)
+	s=arc-20240116; t=1739338888; c=relaxed/simple;
+	bh=BY6O1lds2KXPM53lXWsGjPx720G7GVvSCm3lm6ZoEbQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U7IWb870Ot0kJMDOHgD+TB8OVxEhxEC3p3bon0w7bBO0unw2x3RD+0KcKjUB3xvGmmMt6IC5t6TcbUrQmMy1vFx9r0sX9viTXy4G3DnaOKF1nkbzudycfuj5je1vlM7WWzXlgng/L2HBsky6nhhLuXHhuFFLzz9zVrBLoFXWiMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=nRMcv++z; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739338876; x=1739943676; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lrCwj0QWTxYw5GCNQQjDASwerqlc8xsiCplpiYbfymk=;
-        b=vrQuzSUd27ySGX9HlZNsVn2jN8fCnMin3WbePKeGbrSxu6iT8CUuQS/O+GQ0s7+fTO
-         EMuZnvfzpXQOvFF9Fz8Qp3T74OsS3DeMDvCg32U+FiHL2FxFJ1+osieo306yYEvrlsYy
-         EpiTwvwin5SX93eifE2tCNTRKmBOfkrR5CONn0Ss4o7J2Wda9tVFC2nMUNzppD+QakQC
-         0FK8LNyRIwwH+uSZYnvp8hw/H5kJ+eMcRlFKeHGPeQO3UQkzG+WOc7XKAMEDgqtlJQ6v
-         nxFZfx/vPwT79LKm3hNOB2Ag69s8ptaA/twit6c81V7OCVy1nCTII+OwyFyoYHNFvkxA
-         eZ2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739338876; x=1739943676;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lrCwj0QWTxYw5GCNQQjDASwerqlc8xsiCplpiYbfymk=;
-        b=YIF6iBg9oCev1qIwMv2OqTjjFcxj0ZuOKZ4YSi2Jpik1QdD9FYJsjCLBObF086rFJt
-         Oc0YBjsy8VjtW9bVpfYmaBGi72ArRPEkY1+9V9usy3kljLwAPPy2rB5pLowWVZsWo3MB
-         VhmVfsV0/fSOu9gcxVnvm8JVAJngSeJ7Hlv5xiFW6QuHev9eF/MIEClKyMXBFZ2v3l3c
-         Jg/890783PRoLkKTShdEzuO0ZEcG2LwqKfFUM3cT9H62viJnMCFZ2+2AXFZbfTb20aWx
-         6LI5OcMR+Qi2bybXHshxJx90ybq+PU4Q86iZS4eS5h78i/l7FfdvaUep86gkfypO72oJ
-         TUUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpKOsEHOzeOwMXwhu1DDwP2wlD4cSKMpYZcLUyZTClsSq6oNbzF803hblwz/oTBRtA/TtCoIGvoPZOeas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwffW9YVQxxEUc6s4DweQrem9l11uzWt0QPsxiU/ch4Io+g+XE
-	vQbW9PR00Qg7EUGv32JRhYtP8TortFqUCQ6P7yG4qP0KOXZQKgfZMbptfoK6DQgw7D1FAlSMVyi
-	9C+HayWePGlRkd8qojDz4ZOK3PFwixvg6XrQv
-X-Gm-Gg: ASbGncsgrQ2cZPUSl1azzvUuXsLdKn/3M6wrI9kOmUO52JaOagWH905BM9jsuVbMYDp
-	bxLbtReDbO9pP6tIxQ/o3HeKXoUYmRvYzBebIti7OTsnCZlA6czmPxFQdS8S2p4fwZmsQF4fbHQ
-	==
-X-Google-Smtp-Source: AGHT+IHjBddbNj8rwPgLIvjundfD0Allw+yhluJmXHnEBBiuIX94ZBN9EITNF/Snf/FzMt5hrjbEdc3HXy9ombKdv4I=
-X-Received: by 2002:a05:6e02:1a8a:b0:3d0:5855:85a3 with SMTP id
- e9e14a558f8ab-3d17cd685bfmr2368595ab.8.1739338876426; Tue, 11 Feb 2025
- 21:41:16 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739338887; x=1770874887;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=9gfE2X9xP7erlqI3KPIjHQxBkm4SGTEH7VMOREGQ43I=;
+  b=nRMcv++zPruedIS4oAEeORY9b+d7hC0G4+/wZmgGGMklBgJ8z4ucpxRA
+   KyNdskKKF7RqPAGQh5B8UaS5TD1cNhuNDUDJwu4hJWAN7zAPvGLvb/ijr
+   UnrsN0Kfn9hmBotoqOU9iRxEUOBAgI5Ig1boSM6A8Onaz3rJ6g90ZOJ/R
+   U=;
+X-IronPort-AV: E=Sophos;i="6.13,279,1732579200"; 
+   d="scan'208";a="798097614"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 05:41:26 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:25574]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.23.246:2525] with esmtp (Farcaster)
+ id b73d078c-8489-43c2-8a48-97d423604b5d; Wed, 12 Feb 2025 05:41:25 +0000 (UTC)
+X-Farcaster-Flow-ID: b73d078c-8489-43c2-8a48-97d423604b5d
+Received: from EX19D016UWA004.ant.amazon.com (10.13.139.119) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Wed, 12 Feb 2025 05:41:25 +0000
+Received: from 88665a51a6b2.amazon.com (10.106.179.55) by
+ EX19D016UWA004.ant.amazon.com (10.13.139.119) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Wed, 12 Feb 2025 05:41:23 +0000
+From: Cristian Prundeanu <cpru@amazon.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+CC: Cristian Prundeanu <cpru@amazon.com>, Hazem Mohamed Abuelfotoh
+	<abuehaze@amazon.com>, Ali Saidi <alisaidi@amazon.com>, "Benjamin
+ Herrenschmidt" <benh@kernel.crashing.org>, Geoff Blake <blakgeof@amazon.com>,
+	Csaba Csoma <csabac@amazon.com>, Bjoern Doebel <doebel@amazon.com>, "Gautham
+ Shenoy" <gautham.shenoy@amd.com>, Joseph Salisbury
+	<joseph.salisbury@oracle.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, "Linus
+ Torvalds" <torvalds@linux-foundation.org>, Borislav Petkov <bp@alien8.de>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tip-commits@vger.kernel.org>, <x86@kernel.org>
+Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and RUN_TO_PARITY and move them to sysctl
+Date: Tue, 11 Feb 2025 23:41:13 -0600
+Message-ID: <20250212054113.19938-1-cpru@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <feb31b6e-6457-454c-a4f3-ce8ad96bf8de@amd.com>
+References: <20250119110410.GAZ4zcKkx5sCjD5XvH@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250111190143.1029906-1-irogers@google.com> <Z6panMzNSm1op8Di@google.com>
- <CAP-5=fUY83gifsMZA0Q45kiQQbAKp2uJxkuwrwGtHK2hiUFRDA@mail.gmail.com>
- <Z6rAHhAIdlkAryGJ@google.com> <CAP-5=fXjmJ+Rr7ejL6fCMeu6PZSit7n84hQkjh=0jQhkr1on3Q@mail.gmail.com>
- <Z6uOGNO6p7i9Fese@google.com> <CAP-5=fVxFe4nMS_dHmO=6-ddA40XbVdvouPLuOxj5cenjUr8ng@mail.gmail.com>
- <Z6v-mPJq6m61pFA4@google.com>
-In-Reply-To: <Z6v-mPJq6m61pFA4@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 11 Feb 2025 21:41:04 -0800
-X-Gm-Features: AWEUYZlVN_WAQbADyA3JgKBtpSLHRYp2ex5YFJwhA3tIc-ZpokdAvkaWqSomYTs
-Message-ID: <CAP-5=fU+-4igQomO4Q41=7xo6YWyDdVqJdZd34dcMUS-Ua=N1Q@mail.gmail.com>
-Subject: Re: [PATCH v1 00/10] Move uid filtering to BPF filters
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Hao Ge <gehao@kylinos.cn>, James Clark <james.clark@linaro.org>, 
-	Howard Chu <howardchu95@gmail.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Levi Yun <yeoreum.yun@arm.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Tengda Wu <wutengda@huaweicloud.com>, Yang Jihong <yangjihong1@huawei.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D046UWB003.ant.amazon.com (10.13.139.174) To
+ EX19D016UWA004.ant.amazon.com (10.13.139.119)
 
-On Tue, Feb 11, 2025 at 5:51=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
-> But you removed non-BPF and non-root (w/o pinning BPF) use cases.
+Hi Prateek,
 
-I didn't think this was a hard series to understand. It moves the -u
-options of perf top and perf record to using BPF filters. The many
-reasons for this I already explained:
-https://lore.kernel.org/lkml/CAP-5=3DfUY83gifsMZA0Q45kiQQbAKp2uJxkuwrwGtHK2=
-hiUFRDA@mail.gmail.com/
+Thank you for the analysis details!
 
-Your case is a user that isn't exiting and starting processes and
-wants to process themself or some other user they some how have
-permissions for? They need to not be starting and exiting processes as
-new processes are ignored and exiting processes cause the
-perf_event_open to fail. What stops such a user passing the list of
-processes they have that aren't starting and exiting as a -p option?
+> Thank you for the reproducer. I haven't tried it yet (in part due
+> to the slightly scary "Assumptions" section)
 
-If you try something like:
-$ perf top -p $(ps --no-headers -u $USER -o pid | awk '{printf "%s%s",
-sep, $1; sep=3D","}')
-this is exactly what you get. Does it work? No, the ps and awk
-processes terminating but being in the list of processes causes the
-perf_event_open for those pids to fail. This is exactly the same
-problem as the -u option that you want to keep for this case. The
-approach just doesn't work.
+It wasn't meant to be scary, my apologies. It is meant to say that the 
+reproducer will only perform testing-related tasks (which you'd normally 
+do manually), without touching the infrastructure (firewall, networking, 
+instance mangement, etc). As long as you set all that up the same way you 
+do when you test manually, you will be fine. I'll clarify the README.
 
-Why not make failing to add a -u option fallback on doing the /proc
-scan and pretend the processes are a -p option? So now there's a
-silent fallback to a broken behavior. New processes won't be profiled
-and the data race between the scan and the perf_event_open will cause
-failures with non-obvious causes/solutions - mainly, use sudo to run
-as root. I'd say this isn't ideal.
+Should you run into any questions, please do not hesitate to contact me 
+directly, and I'll help clear the path.
 
-This series fixes an option on two commands so that it works in the
-sensible use-case, perf running with privileges trying to filter
-samples belonging to a specific user. We can say the patch series
-doesn't work for the case you give, I don't think anybody cares about
-that case, they can get near identical behavior from -p, the behavior
-from -p will be clearer than just having -u doing something similar,
-namely failing to open for a process and terminate.
+> v6.14-rc1                   baseline
+> v6.5.0 (pre-EEVDF)          -0.95%
+> v6.14-rc1 + NO_PL + NO_RTP  +6.06%
 
-You may hate and ignore every point I make and still want to keep the
-existing broken behavior. As I've already tried to make clear, you're
-adding to the maintenance burden to everyone working in the code base
-as the notion of target is fundamental and because you are insisting
-on keeping a broken behavior you are also making it untestable. Given
-the -u option doesn't work, I strongly suspect nobody uses it. Do I
-worry about this series causing harm to the people who aren't using
-the option? No I don't as there is a better opportunity in having an
-option that (1) does work and (2) results in a simpler code base.
+This is interesting. While you do reproduce the benefits of NO_PL+NO_RTP, 
+your result shows no regression compared to the baseline CFS. I'm only 
+speculating, but running both SUT and loadgen on the same machine is a 
+large variation of the test setup, and can lead to result differences like 
+this one.
 
-Thanks,
-Ian
+> Digging through the scripts, I found that SCHED_BATCH setting is done
+> via systemd in [3] via the "CPUSchedulingPolicy" parameter.
+> [3] https://github.com/aws/repro-collection/blob/main/workloads/mysql/files/mysqld.service.tmpl
+
+That is correct, the reproducer uses systemd to set the scheduler policy 
+for mysqld.
+
+> interestingly, if I do (version 1): [...]
+> I more or less get the same results as baseline v6.14-rc1 (Weird!)
+> But then if I do (version 2): [...]
+> I see the performance reach to the same level as that with NO_PL +
+> NO_RTP.
+
+That's a good find. I will compare on my setup if performance changes when 
+manually setting all mysqld tasks to SCHED_BATCH. And I haven't yet run 
+perf sched stats on the reproducer, but it may hold useful insight. 
+I'll follow up with more details as I gather them.
+
+Your find also helps to point out that even when it works, SCHED_BATCH is 
+a more complex and error prone mitigation than just disabling PL and RTP. 
+The same reproducer setup that uses systemd to set SCHED_BATCH does show 
+improvement in 6.12, but not in 6.13+. There may not even be a single 
+approach that works well on both.
+
+Conversely, setting NO_PLACE_LAG + NO_RUN_TO_PARITY is simply done at boot 
+time, and does not require further user effort. It's even simpler if those 
+two features are exposed via sysctl, making it trivial to pesist and query 
+with standard Linux commands as needed. 
+
+Peter, I've renewed my initial patch so it applies to the current 
+sched/core, and removed the dependency on changing the default values 
+first. I'd appreciate you considering it for merging [1].
+
+[1] https://lore.kernel.org/20250212053644.14787-1-cpru@amazon.com
+
+-Cristian
 
