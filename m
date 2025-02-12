@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-510514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F17A31E0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:38:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA17A31E0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 861AF7A3887
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56EA5163AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6379A1F8F04;
-	Wed, 12 Feb 2025 05:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4FC1F8AC5;
+	Wed, 12 Feb 2025 05:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgYXQukt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1T1XwiE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75BCB67E;
-	Wed, 12 Feb 2025 05:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5E6271837;
+	Wed, 12 Feb 2025 05:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739338678; cv=none; b=jkrTqBqkWoijTdbgiwVeVAGkwN2+J+AxgvB9KhNZyYe5OePw8Eoy+1kiAIFE4VsVPMhc8M7XvrRwlKTvoEqUX4sC9lrLuUsqkakl5fWWE4VG5xwtju4JyXqkf84DlmTpwWqNWLTMry8XJ3fKtLb6AbUv7LxSA69DRQupqrnYu2k=
+	t=1739338824; cv=none; b=nLJndUEIZDXuZkzjnz3ZUhkIcQ/rkjrrqVn36pSQB1IuNN/63ZXoZQZ6eoh7gBtcs3tMY88iuxxrDPTMAFI5Jq+ru+/1DJpEXgzCDYjfEYwqoyX0oHjcST8RkuPnt9Pq3zSfLbbG/66lSmp54og/PgEukBivZGqqcaPfPsFdz9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739338678; c=relaxed/simple;
-	bh=/FoIxowu82Uq0ekKDPxc3Ge0hB+OhxoBukVa7JbIRgg=;
+	s=arc-20240116; t=1739338824; c=relaxed/simple;
+	bh=KEhGUrXE1fCsrHtoX6tuVRiuAmt3qPnhL+sQJHMcJbY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nPt8atnJNAT/1eHl5XcalmfywJj/qXVMwKQeZ+kXDhpEan2GQMHpG+W7yAarrMWwWVG8RdikoKUScUhsvrk/U8UhwxbExgNmXOdIf+5Tmxwp1RQtZjWQjcfepEsJE6ta3VMt/7CvubKh6ImzOuSdiP/PsvB2rT8KaFup7+aiTdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgYXQukt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E8FAC4CEDF;
-	Wed, 12 Feb 2025 05:37:53 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ODS7vDRljsyVve4QTUey0JxhB5nMRP59pcjf76GofW6idOS6TpIwNTw4p5v23gub9aOumyZ+YrH3Uoa46GcX5IGjKFos3oVbDLHMfK4lPH3GkSzmYRPb8DjgmZ7H9B6AS9IuGnrtF1QWcD28gZ0ReWbOrDHnDsVADNvkI/fA4Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1T1XwiE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A75B9C4CEDF;
+	Wed, 12 Feb 2025 05:40:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739338678;
-	bh=/FoIxowu82Uq0ekKDPxc3Ge0hB+OhxoBukVa7JbIRgg=;
+	s=k20201202; t=1739338824;
+	bh=KEhGUrXE1fCsrHtoX6tuVRiuAmt3qPnhL+sQJHMcJbY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sgYXQuktcJybLgslFBB5cgnyRREDDC4dHe8hfP5RvfXwxe104eOnp4gdzc7jGT9Tx
-	 b5aRoXD3SDquih/nZjNBZiOQ3Xc2kNLJsNX6TeJbE2jnRaeAMOdN+JluwL8E77LWQQ
-	 B4yrtlp83DfXKvm+iWuXVOE+8DdRY0SEc/RYdvO3K6LmhTFi8DXyTJuQIf/bPH3HbY
-	 Rb6CWJOvej9QmXXl6i9bZA+Zltpluoh/JL/Sh43E7ILqhCpLH3OTDebRkuRmQr00Xr
-	 9rmEtbMHuXUizGMuj/7a4WaP5XaLIzjYO3qwkELzl139H+LQNHcq7n25SeNdlhs7t+
-	 QpOWtjZrJsUzQ==
-Message-ID: <09922fcf-f667-490b-bbd2-e5fc19c3f958@kernel.org>
-Date: Wed, 12 Feb 2025 06:37:50 +0100
+	b=m1T1XwiE3mJ1Dl9M93DQxeJgCK+aRKaXbdNoC2gW3nC6pc9u7bOwo+tMKDEFBFf8y
+	 sVk8KYAzZjl3CI1TV4xAutadSkOO174jbZ3M84Bq3ygGH70sImlWzTmC5OvoVcLd0q
+	 z0sOocHYTY4H2GE4AEIacR2pWG6G1QSrHFbXecrazs/JC7R1DtKo83UHIDJbX/MgaS
+	 KHD5/DW/hKo0kvfm1XRohMc8XToQAAMgMyj4526aCZaKljpZIhPp48qzHjs0DqDZEs
+	 UeYzB9LheGzeWjnO+PFCF3TcnN0/r6ftamc2xetFuIMvcVAVVBBtFJRHqVDw1ZKkqJ
+	 oZcjhSqGe59lQ==
+Message-ID: <91428aa7-5b96-480d-8f0d-c742ed25f327@kernel.org>
+Date: Wed, 12 Feb 2025 06:40:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] arm64: dts: qcom: qcs8300: Add device node for
- gfx_smmu
-To: Pratyush Brahma <quic_pbrahma@quicinc.com>, Will Deacon
- <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20250211-b4-branch-gfx-smmu-v5-0-ff0bcb6a3c51@quicinc.com>
- <20250211-b4-branch-gfx-smmu-v5-2-ff0bcb6a3c51@quicinc.com>
- <3158e911-c771-4186-b287-50d2395b8c94@kernel.org>
- <138b1c42-9580-41f4-9079-87740568b79c@quicinc.com>
- <075588ff-77e5-4b01-8c67-8fc30e51b8a9@quicinc.com>
+Subject: Re: [PATCH 03/12] dt-bindings: display: mediatek: add EXDMA yaml for
+ MT8196
+To: =?UTF-8?B?UGF1bC1wbCBDaGVuICjpmbPmn4/pnJYp?= <Paul-pl.Chen@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: =?UTF-8?B?U3VubnkgU2hlbiAo5rKI5aeN5aeNKQ==?= <Sunny.Shen@mediatek.com>,
+ =?UTF-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
+ =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
+ =?UTF-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?=
+ <Xiandong.Wang@mediatek.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "fshao@chromium.org" <fshao@chromium.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "treapking@chromium.org" <treapking@chromium.org>
+References: <20250110123835.2719824-1-paul-pl.chen@mediatek.com>
+ <20250110123835.2719824-4-paul-pl.chen@mediatek.com>
+ <abadfae8-56f7-499c-83ff-7d79e3fe1f52@kernel.org>
+ <c1440608060e4b2fabf07ff5ac0a7fe49201ba9d.camel@mediatek.com>
+ <cc043dcd-b46e-4b4b-9b80-0450efde86eb@kernel.org>
+ <d1f64020a9fa819a7928ea96a2608e4021b325a8.camel@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,34 +126,83 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <075588ff-77e5-4b01-8c67-8fc30e51b8a9@quicinc.com>
+In-Reply-To: <d1f64020a9fa819a7928ea96a2608e4021b325a8.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/02/2025 06:19, Pratyush Brahma wrote:
+On 11/02/2025 09:23, Paul-pl Chen (陳柏霖) wrote:
+> On Sat, 2025-01-18 at 09:37 +0100, Krzysztof Kozlowski wrote:
+>>
+>>>
+>>> (2)Primary Task of EXDMA:
+>>> The main function of EXDMA is to transfer buffers allocated by GEM
+>>> to
+>>> the subsequent display pipeline.
+>>> EXDMA serves as a bridge between memory allocated by GEM and the
+>>> display components, rather than acting as a general-purpose DMA
+>>> engine.
+>>> Based on the points above, we have decided to place the EXDMA
+>>> driver
+>>> under the DRM display subsystem rather than under the DMA
+>>> subsystem.
+>>
+>>
+>> I don't care if it uses GEM or kernel allocator or even 3rd party
+>> allocator. The question is: what is this device? If it is performing
+>> DMA, then it should be placed in "dma" directory. The rdma was placed
+>> differently but as you can easily check: it was never acked/reviewed,
+>> so
+>> don't use it as an example.
+>>
+>> Of course if it does not perform DMA, then it should not be in dma,
+>> but
+>> then I don't agree on using dma-cells here and anything like that in
+>> the
+>> driver.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>>
 > 
-> On 2/12/2025 10:09 AM, Pratyush Brahma wrote:
->>
->>
->> On 2/11/2025 8:45 PM, Krzysztof Kozlowski wrote:
->>> On 11/02/2025 05:45, Pratyush Brahma wrote:
->>>> Add the device node for gfx smmu that is required for gpu
->>>> specific address translations.
->>>>
->>>> Signed-off-by: Pratyush Brahma<quic_pbrahma@quicinc.com>
->>>> ---
->>>>   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 39 +++++++++++++++++++++++++++++++++++
->>>>   1 file changed, 39 insertions(+)
->>> As pointed out by Rob, this wasn't ever tested. One more example of work
->>> where you have the binding in the same patch but refuse to use it.
-> No, I had tested these patches against the dt_bindings_check and didn't 
-> see these errors.
-> It seems I need to upgrade my dtschema as Rob pointed out, reorder the 
-> clocks and resend.
+> Hi KK,
+> 
+> Sorry, I just found this email was not send. 
+> 
+> This email is discuss about the EXDMA under the display subsystem
+> 
+> The current placement of EXDMA under the display subsystem in
+> Mediatek's architecture is primarily due to its functional role as a
+> sub-device within the display pipeline.
+>  
+> In MT8196 hardware design, the sub-devices in display pipeline follow a
+> sequence of: EXDMA -> BLENDER -> OUTPROC -> PQ -> DVO.
+>  
+> In MT8195 hardware design, the sub-devices in display pipeline follow a
+> sequence of: OVL -> PQ ->DSI.
+>  
+> As we see, OVL has been divided into three new hardware IPs in MT8196.
+> OVL and EXDMA both have the ability to fetch data directly from DRAM
+> and can be regarded as DMA controller.
+>  
+> I also have confirmed with the hardware designer that EXDMA is a kind
+> of DMA, but it is specially designed to handle the graphical layer, and
+> has better performance than ordinary DMA.
 
-The reported errors are not relevant at all to upgraded or not upgraded
-dtschema. This just wasn't tested.
+To me the decisive factor is that you use dma-cells here, so it is a DMA
+controller. DMA controllers should placed in a directory of their
+maintainer, so they can review it.
 
+>  
+> Therefore, I think that moving EXDMA and OVL from the display folder to
+> the DMA folder, or only kepping them in the display folder is decided
+> by the two different views of DMA ability or display sub-device.
+>  
+> We will follow your instructions to put EXDMA on the place you decided.
+> 
+> 
+> Best, Paul 
 > 
 
 
