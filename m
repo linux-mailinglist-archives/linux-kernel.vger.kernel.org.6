@@ -1,155 +1,139 @@
-Return-Path: <linux-kernel+bounces-510839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED805A322B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:46:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84113A322AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:46:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161F13A51E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052CD188480F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8E41EF0B2;
-	Wed, 12 Feb 2025 09:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261C020551D;
+	Wed, 12 Feb 2025 09:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="f8XvIlzS"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mHammSSf"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83331EF0A6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B79271828;
+	Wed, 12 Feb 2025 09:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353565; cv=none; b=AdvfRjNIAdDr50Ow8xlIH3gEl+VpJTNf20fXb4hnIcqKZu2nV0spVtzYPm/kUTXgnTDFk7HHepqZwtG4V9nCMNptqiLVnYlDGoAhKVHt45NsjuSny35IGoxgBYZ58vEJcPwT0A4xNsTWgoMSTAkP21pqe2GmXhynJh45iVAxeTE=
+	t=1739353556; cv=none; b=CEkGGI5aPGZi88bAA2lCby4q9oIGdf3Dx5bPs7QT94KJz5TBWHeIRM4dpcfqYydGZ+1DMx0kOgwaQrpmKBF/4KyXLYfIyj3AAIS7YcRqH9VjR3sBULvN1NT9cQQJaI1J/W2IOeDKXsoshsxgmqU0rIKxQOzqvV9fGCcnhBQUvAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353565; c=relaxed/simple;
-	bh=1plww5LSeApsiHW+Lk50lqZF27WN3poyYwcPpo1ejyY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zv7CqJPkCYjYT06hNcAaybZHv2mGTirs4pFojLqMajoLBdpRxQ6iQqnc3IJkkXo4GM8J5wiW132LiIr4yLwP3bafkO2MyMBmh4u2UWpMCwyI+QHoAb6PzeCpfnYdl4AH4MwyI/F0JnT29Qc9gyMNH+FVlOlrYNxWTW3D0aMcpvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=f8XvIlzS; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so3404340f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:46:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739353561; x=1739958361; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8zuOOH+cqbW5sfzyGH9UF9miBvxPH8Nl8TrZbDwlVwE=;
-        b=f8XvIlzSqlNwV37zfu9VVoyFvwkNSd30CNr796GaOfiSzvXgRoHTy0Vuz/PfJ6oYR0
-         QyYknjoFGQiqkwECId/aVTjIVDakLdrTHSKbeMUkUr4jpG4TqyIZ83cQ0MBg8MV73tqH
-         hIU+eX+s4vueddkrU6+t6QnMFPMIDMIOgAZCqx1qd4kRs/wBaLoEXZYEPVRI3hZHOLIS
-         M8UWS5QysJ+yAWqqxY0wZ9bPRJUZBp4/Ju7l/XuRzelIF9miKiKjx6mDR8gjd892cdHm
-         WBq3XPd4uln11qSwaveFpWGWLDnYbAPC3VlKqZUhVcSN9gKV5dMUIpf92tJMaS/VMX/n
-         WK6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739353561; x=1739958361;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8zuOOH+cqbW5sfzyGH9UF9miBvxPH8Nl8TrZbDwlVwE=;
-        b=NF2jQ4P8qcsQEhxOZxXtmGWCT18/Heo3EI2YM9AVGa9Ey7uTehFNAmzoF1Ziwc0GHo
-         3MqLK60cHHqHI1wJAkbWsg6y3c3cAb7I+iDmtU/6tlvNjgMc0HzolPc6YvVdWR6vY0wv
-         FdsCNwAypa2wy4zm5dJpvNAkkgnSaoHxO8xrYlVmShwb1edlSXoLhx/XhV9bEhCN14+3
-         xm3szXA/UBrVEsyaWEBAm9LdHK7vmQxxN+jcZV5zX0tnjsIUoWnebEG4+iI9WT9Sqvg8
-         r9OvQS0yPRG5NqD1SnqRW/p+3ci6UWFgrTsPdL5BMzuUU/WPVmvQhJ1F/haDCr+5b81R
-         /+QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMyzSA4TCkyfMFL8fo40WC8paF6JeVggB6aalRJQ55t/WarWGknpNqcHMqa1vYCfufD7nJ+uj/9VFi6PE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy65l3xM1SdUw4dyyBTbbYYWDs1frdRW+fDL4AZyw+xKd4qupwi
-	BOQnrKqIHcQivu+Ne1kr6/Aa5aWIakVOS7tuyCb1IWIUWZjjCFsQdc+h8Gy7J8M=
-X-Gm-Gg: ASbGnctQ4z7XRjh3dsb5im9DaKJyJd6q4oDiYhsnYBusXVJbevWfiml1QkQfiZKsDxF
-	K9qNelssCfGxmjAW87sXv/iyVCLzZ2WBnl+9ZLyltD0BNLheFY42PdqljHELYuEloRAWsODT3ur
-	8zzRVx8ac3yfx8NvOs6zcZy+48WzsGCCSDCobuavoPGnzpAiV6VjQzr8+2Yq60pcwBLZQ79xBnp
-	ydviXlc8W/H/DAofhrBBaZ055mxp+F4wEw75lLjYgOf/y0g2AdBRBJSQmbeyReMsVX+rtQy7QQh
-	LZlGfux9fwAWRRA=
-X-Google-Smtp-Source: AGHT+IFpt/tGI0C0Llxj6yqwoW6+UDGvasbspWqNSw5lXAH/EOQlfLcMUFUUZtUM6+ncdDrcGoubYA==
-X-Received: by 2002:a5d:47a4:0:b0:38f:2065:3f20 with SMTP id ffacd0b85a97d-38f20653f83mr612508f8f.17.1739353560896;
-        Wed, 12 Feb 2025 01:46:00 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:521c:13af:4882:344c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a076496sm14262795e9.32.2025.02.12.01.45.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 01:46:00 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Peter Rosin <peda@axentia.se>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	David Lechner <dlechner@baylibre.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [GIT PULL] gpio: immutable tag containing gpiod_multi_set_value_cansleep()
-Date: Wed, 12 Feb 2025 10:45:46 +0100
-Message-ID: <20250212094546.11895-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1739353556; c=relaxed/simple;
+	bh=kAK1JNEXBVI90rtvbzvhelzR8j2Kk8vnxGVJn1p7bBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MkvZ842eExKM+/dwU4NVFHBH6MRwW/HezjwdRPzcWTj9AoSKEZItvVZ8Y0gC3+yczqg6S8845YiSdiiOWmMhAeAdGn/C5JaDdUOgUdksuWDbVcmW35grOAF5x5hO5bo93LFwL69NbvQspKkoJJ/KwUHgPwpqgV0tmcVS69gemCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mHammSSf; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E398A432FA;
+	Wed, 12 Feb 2025 09:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739353551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CfitNOlVMCBM5pFcbQFIlvndtGb2TiK3zUMFNWZwgDY=;
+	b=mHammSSfAxD36lSKrqFlgQ0FxjGr0GSfooYA6WuHOPvHq9JQbumFr0Ho3U1Q8tbb9rmgj8
+	tzyPK6jPpwkd3G3gLk3e1NimGOsnqsuAFerXeIsRKeyGNl/6qLEg3wHBjMGJoqCzuNpIlu
+	gG5mm//6DtYFd517rnZxUZIplJuyLTrwTsT9S9iFmFmODq2DPfQlcrRjAFf7c3H6SKPIQo
+	cRNPcLf/EXG4VWiBv8ryfwFbhp9vR61Su+ehl48mzUydz6bja2p044wqlsDs8IPX5fY0d3
+	3VQ0BUcWlu/pehPCt64yUHk1WP1jizH/rz1hkKhC60ggLigUfumfX2WaRsFFZw==
+Date: Wed, 12 Feb 2025 10:45:49 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [RFC PATCH 3/3] i2c: i2c-core-of: Handle i2c bus extensions
+Message-ID: <20250212104549.6b1d8781@bootlin.com>
+In-Reply-To: <71468d78-07aa-49b1-8b6d-3d98c6fc9893@kernel.org>
+References: <20250205173918.600037-1-herve.codina@bootlin.com>
+	<20250205173918.600037-4-herve.codina@bootlin.com>
+	<71468d78-07aa-49b1-8b6d-3d98c6fc9893@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeehhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedtvdefvefgiedvtedvgedvgeelhfejkeejgefgvdfguedtudeiiedtieejffduhfenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnv
+ ghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: herve.codina@bootlin.com
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Krzysztof,
 
-Hi!
+On Wed, 12 Feb 2025 06:54:19 +0100
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-This concerns the patch series from David Lechner[1].
+> On 05/02/2025 18:39, Herve Codina wrote:
+> >  
+> >  	dev_dbg(&adap->dev, "of_i2c: walking child nodes from %pOF\n", bus);
+> >  
+> > -	/* Register device directly attached to this bus */
+> > +	/*
+> > +	 * Register device directly described in this bus node before looking
+> > +	 * at extensions.
+> > +	 */
+> >  	for_each_available_child_of_node(bus, node) {
+> > +		/* Filter out extension node */
+> > +		if (of_node_name_eq(node, "i2c-bus-extension"))  
+> 
+> Where is the ABI documented?
+> 
+> > +			continue;
+> > +
+> >  		if (of_node_test_and_set_flag(node, OF_POPULATED))
+> >  			continue;
+> >  
+> > @@ -103,6 +110,23 @@ static void of_i2c_register_children(struct i2c_adapter *adap,
+> >  			of_node_clear_flag(node, OF_POPULATED);
+> >  		}
+> >  	}
+> > +
+> > +	/* Look at extensions */
+> > +	for_each_available_child_of_node(bus, node) {
+> > +		if (!of_node_name_eq(node, "i2c-bus-extension"))
+> > +			continue;
+> > +
+> > +		extension = of_parse_phandle(node, "i2c-bus", 0);  
+> 
+> And this?
+> 
+> > +		if (!extension)
+> > +			continue;
+> > +  
 
-I applied the patch adding gpiod_multi_set_value_cansleep() to the GPIO
-tree. Here's an immutable tag that maintainers of all other trees affected
-by this series can pull in so that the entire series can land for v6.15.
+I know the binding is not present in this RFC series.
 
-Please pull.
-Bartosz
+As I mentioned in my cover letter, the binding that needs to be updated is
+available in dt-schema repo [0].
 
-[1] https://lore.kernel.org/linux-gpio/20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com/
+When the binding is be accepted in dt-schema repo, I will not be able to
+change it and because two repos are involved, I cannot send the binding and
+the implementation in the same series.
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+Before sending a patch to update the binding in dt-schema repo, I would
+like first to discuss the proposed i2c bus extension idea in terms of:
+  1) DT properties naming and purpose
+  2) implementation
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+[0] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-set-array-helper-v6.15-rc1
-
-for you to fetch changes up to 91931af18bd22437e08e2471f5484d6fbdd8ab93:
-
-  gpiolib: add gpiod_multi_set_value_cansleep() (2025-02-12 10:29:27 +0100)
-
-----------------------------------------------------------------
-add gpiod_multi_set_value_cansleep() to GPIO core
-
-----------------------------------------------------------------
-David Lechner (1):
-      gpiolib: add gpiod_multi_set_value_cansleep()
-
- include/linux/gpio/consumer.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Best regards,
+Hervé
 
