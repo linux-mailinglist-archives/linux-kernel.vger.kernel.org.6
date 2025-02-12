@@ -1,87 +1,59 @@
-Return-Path: <linux-kernel+bounces-511891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BEA4A33110
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:53:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2E8A33112
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:54:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0550A168215
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:53:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8691E168286
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0728202C32;
-	Wed, 12 Feb 2025 20:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637EB202C3D;
+	Wed, 12 Feb 2025 20:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="b3r02f8m"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5GnrLvI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309A71EEA4A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941641EEA4A;
+	Wed, 12 Feb 2025 20:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739393605; cv=none; b=QzFVBtQrlqsFOfAaX+EjZW8cgKH/zlPodIYt5RAei2jZdvcbUJ1ZIQTRsXqPXVQhATsGpxFuwC2r1usFtYZ/U+KAcw+qlk/Wr2qfwgCB4walMQr4G0TT2jOyt4APvzuMsZ/hBRWAK/lHt27YFBCHh8M5ZTwn+cmGb58iGboYwMQ=
+	t=1739393686; cv=none; b=lGGTy1jN0TbNjQazJkXzI/omjJjXzTiolOuReB1aA3Otih0Zh36qQRNZlPJz6o48lxiynAtUDohRFMjTXyHihiG1VtMJbQ1qtW6PP9TD0u5wYSUdh9M6b/wbIJ6eIjqN0FXzqAMjmgUncJ86mu126x+Mm/VRSxuhA2iRLjQ4ZPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739393605; c=relaxed/simple;
-	bh=84UHxDBoYdA+kY+/UU1t3xkrj9quRKIGeHEFgRYRu8M=;
+	s=arc-20240116; t=1739393686; c=relaxed/simple;
+	bh=jDt9WdgsU+OP0v1Z7vmEmGbnVIM1hDHWxND7/5d+FJY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlCpPMK0tYf9t6/utRzQJ+AuqAmkt6voDelUgNqz/vdlnFBZ4dIdSnY4NMVBgGgcv+gDQCZQOWXPVzQixt3oKC+0AiTlQE+pbNra86yYYRsJmbB2qIsKQV4g22Qew4dPY7Zr5oUUvznWZgfN4j/a6UEdJHsjxpy4MnhbRDpw0aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=b3r02f8m; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5de64873d18so198644a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:53:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739393601; x=1739998401; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BI8Hs29AlJApHYUeKxAiymuqiMcyKQBfc27ErxehKn8=;
-        b=b3r02f8mUKODtf4xML2E6jpc/1URXMT5iatYsNjNYKn7v2eier36eyU91/36+etefO
-         3awqoAG+89X6p6kLeAy08o1R4D0ob/SP8wxnrtyUS5moHgvTF6qQ94tg+jXXp4zlLUDw
-         PxXhcXoFCYki32QYnhTFV5bRAYFU8nd0uBRsj1wjYY4cIpzUCB4wBHHaqIMgPHbxuZdv
-         h04icCOG0P/5Q3CKUHSFxHr2A9/1D0zNFoPZ8q7pn1jGQZQjheUAhbBt/fku7s5JLlbU
-         k+eqBRBY19pkFGwwzdqsxpIORfgFamwS9h1oURitrGhWSpIlIfxiolNVHZJfkZfN5pgs
-         7LJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739393601; x=1739998401;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BI8Hs29AlJApHYUeKxAiymuqiMcyKQBfc27ErxehKn8=;
-        b=fcq8BIUbdyiV9dEUO9sAyretmk8sK2GjtpxYUOQM+cgUHmUAyPXzyGwzyfDJ7oQ3Dr
-         nu3iOBDxfrZfZyws3ihIPHUf3h1N1aboLKxoUer0RaAVKOSG40Efjz2qrMJbj4cTSB6g
-         XvTzVHfsynl8CBqerv88KZTzKc/dNfUPZqaiWxCl6RAuFq8g19e074YJU2iGXZ6Rs3oE
-         RFMWdgDrdTWaBM/3A9b8xMM+5F8JI8MMjGUQd8NS7AZB26H+m7aRWbFOtgmJ1mMVTBON
-         xqXEM6tZYDQIDvj6IwKWDAUN5i6LCwGXVnGzdcSO2iZW/R3IsPy7gQR0iCzJ/W4cllVK
-         uKTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWoJfusqRUuINT/cjzyOsG2XtlPFsMJsAZYSsYwEudWmwsa0QBvgXu9VJKOHKkZyGF7b8dcgOumpgFs6+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEE0B7Xg8ciUR9Qmam/E94M5TRbA3WeXNeDQ7BPYVlpB/AUEE7
-	Whq6Y5Au50vhIQXqbfFEWDehwwJNQSB6zhb2+1hvfOFl1MLKizV+v/prvZZbd1s=
-X-Gm-Gg: ASbGncvV3eoYRvcYd/O5JLPQ4NGD2Faym3cp5JLVV7yPbOsytfoEpkR4PGv+hJuYQ+L
-	0Jmb8luVhGeBrbfcqlW3Qm2N+gt9eliToOEMN0yPqjGoT338+quX65MNb0HcJMnvW3Eb3/SQSvm
-	IlRYFQLBWrOQJjta/yBB2HAW+AXBaO50iEvhhyimucyDAXeVwM2JfXjw7y94acG9EgXPDERcjef
-	SmwWmRdlOC69bmlH+NNpJEATS0hpUHk4ONB7LDiq1pfk9ixhzmQzA3GFGpFr22eTUuPQ3ojiI2i
-	ssq/VSKjSr/Sx0x/J7txGRwe8dee
-X-Google-Smtp-Source: AGHT+IEKdM0BPU6QxdXKNjigkoD51P8a49+kUcF9KZW04xn8FPIS+yrnI8fi3qoqlEXMlCEeuaY6oQ==
-X-Received: by 2002:a17:907:971e:b0:aa6:5eae:7ece with SMTP id a640c23a62f3a-aba5018d567mr53227966b.43.1739393601385;
-        Wed, 12 Feb 2025 12:53:21 -0800 (PST)
-Received: from localhost (109-81-84-135.rct.o2.cz. [109.81.84.135])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab7d855b61fsm452250766b.124.2025.02.12.12.53.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 12:53:21 -0800 (PST)
-Date: Wed, 12 Feb 2025 21:53:20 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Dennis Zhou <dennis@kernel.org>, Filipe Manana <fdmanana@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm, percpu: do not consider sleepable allocations atomic
-Message-ID: <Z60KQCuPCueqRwzc@tiehlicka>
-References: <20250206122633.167896-1-mhocko@kernel.org>
- <Z6u5OJIQBw8QLGe_@slm.duckdns.org>
- <Z6zS4Dtyway78Gif@tiehlicka>
- <Z6zlC3juT46dLHr9@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLYna6KsiXXBhHn9gptb59A1Txi5O6mt/aHCQ9dASTyV4iUK8YqKra5Wv9VPORFZY1wTSLlPM+xZhw8HiCDL24dnoFUUNOFLHLsoGHKxGyu6InP+3xW1n+Zvy18rEjPdOAxNMnKyhdqwrF8kiVBF3mfmTfQ/iD0yECNDE2eIaNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5GnrLvI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D77DC4CEDF;
+	Wed, 12 Feb 2025 20:54:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739393685;
+	bh=jDt9WdgsU+OP0v1Z7vmEmGbnVIM1hDHWxND7/5d+FJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J5GnrLvI8AxYEQmlrVDctsAljBNROUKjmBlGdJUGEAhiWjkFiFRNus/paSJK8Jc0y
+	 2H3B803Dn7XlN33n+7PfL16N4KqatdybST8LmcQTy5UIoA+wYCsAHXmIRLf9JVR/5i
+	 +JyarpQN28ld0u+FCOXb0yfu+0LZchMEMWGZDdzEJ0Dy3sd7NeBzToUXwLigbHstxm
+	 QnWvuZJRAkCttC02rhbiKRE3P8GnJ/kOgtl1hG9Qw+K1JV0b6oU7c4eIR/0n7TflOF
+	 vnWwQ1jgSUP7draoyr0PqAklNEckqq7G/iN5hpi4aw78E4bloWS89YyGqwZTCml4s4
+	 3zVuL7Ch2v1yQ==
+Date: Wed, 12 Feb 2025 21:54:41 +0100
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: Re: [PATCH v3 2/4] perf trace: Convert syscall_stats to hashmap
+Message-ID: <Z60KkdjzX0P1UqTk@x1>
+References: <20250205205443.1986408-1-namhyung@kernel.org>
+ <20250205205443.1986408-3-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,61 +62,245 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z6zlC3juT46dLHr9@slm.duckdns.org>
+In-Reply-To: <20250205205443.1986408-3-namhyung@kernel.org>
 
-On Wed 12-02-25 08:14:35, Tejun Heo wrote:
-> Hello,
+On Wed, Feb 05, 2025 at 12:54:41PM -0800, Namhyung Kim wrote:
+> It was using a RBtree-based int-list as a hash and a custom resort
+> logic for that.  As we have hashmap, let's convert to it and add a
+> custom sort function for the hashmap entries using an array.  It
+> should be faster and more light-weighted.  It's also to prepare
+> supporting system-wide syscall stats.
 > 
-> On Wed, Feb 12, 2025 at 05:57:04PM +0100, Michal Hocko wrote:
-> ...
-> > I have gone with masking because that seemed easier to review and more
-> > robust solution. vmalloc does support NOFS/NOIO contexts these days (it
-> > will just uses scoped masking in those cases). Propagating the gfp
+> No functional changes intended.
 > 
-> I see. Nice.
+> Acked-by: Howard Chu <howardchu95@gmail.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/builtin-trace.c | 117 ++++++++++++++++++++++++++++---------
+>  1 file changed, 88 insertions(+), 29 deletions(-)
 > 
-> > throughout the worker code path is likely possible, but I haven't really
-> > explored that in detail to be sure. Would that be preferable even if the
-> > fix would be more involved?
-> 
-> Longer term, yeah, I think so.
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 7e0324a2e9182088..5e37f05737b75a14 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -39,6 +39,7 @@
+>  #include "util/synthetic-events.h"
+>  #include "util/evlist.h"
+>  #include "util/evswitch.h"
+> +#include "util/hashmap.h"
+>  #include "util/mmap.h"
+>  #include <subcmd/pager.h>
+>  #include <subcmd/exec-cmd.h>
+> @@ -63,7 +64,6 @@
+>  #include "print_binary.h"
+>  #include "string2.h"
+>  #include "syscalltbl.h"
+> -#include "rb_resort.h"
+>  #include "../perf.h"
+>  #include "trace_augment.h"
+>  
+> @@ -1519,17 +1519,50 @@ struct thread_trace {
+>  		struct file   *table;
+>  	} files;
+>  
+> -	struct intlist *syscall_stats;
+> +	struct hashmap *syscall_stats;
+>  };
+>  
+> +static size_t syscall_id_hash(long key, void *ctx __maybe_unused)
+> +{
+> +	return key;
+> +}
+> +
+> +static bool syscall_id_equal(long key1, long key2, void *ctx __maybe_unused)
+> +{
+> +	return key1 == key2;
+> +}
+> +
+> +static struct hashmap *alloc_syscall_stats(void)
+> +{
+> +	return hashmap__new(syscall_id_hash, syscall_id_equal, NULL);
+> +}
+> +
+> +static void delete_syscall_stats(struct hashmap *syscall_stats)
+> +{
+> +	struct hashmap_entry *pos;
+> +	size_t bkt;
+> +
+> +	if (syscall_stats == NULL)
+> +		return;
+> +
+> +	hashmap__for_each_entry(syscall_stats, pos, bkt)
+> +		free(pos->pvalue);
 
-I can invest more time into that direction if this is really preferred
-way. Not my call but I would argue that the scope interface is actually a
-good fit in the current implementation because it clearly defines the
-scope of all allocation context at a single place. Ideally with a good
-explanation on why is that (I guess I owe in that regards).
+nit:
 
-> > > Also, doesn't the above always prevent percpu allocations from doing fs/io
-> > > reclaims? 
-> > 
-> > Yes it does. Probably worth mentioning in the changelog. These
-> > allocations should be rare so having a constrained reclaim didn't really
-> > seem problematic to me. There should be kswapd running in the background
-> > with the full reclaim power.
-> 
-> Hmm... you'd a better judge on whether that'd be okay or not but it does
-> bother me that we might be increasing the chance of allocation failures for
-> GFP_KERNEL users at least under memory pressure.
+zfree(&pos->pvalue);
 
-Nope, this will not change the allocation failure mode. Reclaim
-constrains do not change the failure mode they just change how much the
-allocation might struggle to reclaim to succeed. 
+> +	hashmap__free(syscall_stats);
+> +}
+> +
+>  static struct thread_trace *thread_trace__new(struct trace *trace)
+>  {
+>  	struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
+>  
+>  	if (ttrace) {
+>  		ttrace->files.max = -1;
+> -		if (trace->summary)
+> -			ttrace->syscall_stats = intlist__new(NULL);
+> +		if (trace->summary) {
+> +			ttrace->syscall_stats = alloc_syscall_stats();
+> +			if (IS_ERR(ttrace->syscall_stats)) {
+> +				free(ttrace);
+> +				ttrace = NULL;
 
-My undocumented assumption (another dept on my end) is that pcp
-allocations are no hot paths. So the worst case is that GFP_KERNEL
-pcp_allocation could have been satisfied _easier_ (i.e. faster) because
-it could have reclaimed fs/io caches and now it needs to rely on kswapd
-to do that on memory tight situations. On the other hand we have a
-situation when NOIO/FS allocations fail prematurely so there is
-certainly some pros and cons.
+nit: zfree(&ttrace);
 
-As I've said I am no pcp allocator expert so I cannot really make proper
-judgment calls. I can improve the changelog or move from scope to
-specific gfp flags but I do not feel like I am positioned to make deeper
-changes to the subsystem.
-
--- 
-Michal Hocko
-SUSE Labs
+> +			}
+> +		}
+>  	}
+>  
+>  	return ttrace;
+> @@ -1544,7 +1577,7 @@ static void thread_trace__delete(void *pttrace)
+>  	if (!ttrace)
+>  		return;
+>  
+> -	intlist__delete(ttrace->syscall_stats);
+> +	delete_syscall_stats(ttrace->syscall_stats);
+>  	ttrace->syscall_stats = NULL;
+>  	thread_trace__free_files(ttrace);
+>  	zfree(&ttrace->entry_str);
+> @@ -2463,22 +2496,19 @@ struct syscall_stats {
+>  static void thread__update_stats(struct thread *thread, struct thread_trace *ttrace,
+>  				 int id, struct perf_sample *sample, long err, bool errno_summary)
+>  {
+> -	struct int_node *inode;
+> -	struct syscall_stats *stats;
+> +	struct syscall_stats *stats = NULL;
+>  	u64 duration = 0;
+>  
+> -	inode = intlist__findnew(ttrace->syscall_stats, id);
+> -	if (inode == NULL)
+> -		return;
+> -
+> -	stats = inode->priv;
+> -	if (stats == NULL) {
+> +	if (!hashmap__find(ttrace->syscall_stats, id, &stats)) {
+>  		stats = zalloc(sizeof(*stats));
+>  		if (stats == NULL)
+>  			return;
+>  
+>  		init_stats(&stats->stats);
+> -		inode->priv = stats;
+> +		if (hashmap__add(ttrace->syscall_stats, id, stats) < 0) {
+> +			free(stats);
+> +			return;
+> +		}
+>  	}
+>  
+>  	if (ttrace->entry_time && sample->time > ttrace->entry_time)
+> @@ -4617,18 +4647,45 @@ static size_t trace__fprintf_threads_header(FILE *fp)
+>  	return printed;
+>  }
+>  
+> -DEFINE_RESORT_RB(syscall_stats, a->msecs > b->msecs,
+> +struct syscall_entry {
+>  	struct syscall_stats *stats;
+>  	double		     msecs;
+>  	int		     syscall;
+> -)
+> +};
+> +
+> +static int entry_cmp(const void *e1, const void *e2)
+> +{
+> +	const struct syscall_entry *entry1 = e1;
+> +	const struct syscall_entry *entry2 = e2;
+> +
+> +	return entry1->msecs > entry2->msecs ? -1 : 1;
+> +}
+> +
+> +static struct syscall_entry *thread__sort_stats(struct thread_trace *ttrace)
+>  {
+> -	struct int_node *source = rb_entry(nd, struct int_node, rb_node);
+> -	struct syscall_stats *stats = source->priv;
+> +	struct syscall_entry *entry;
+> +	struct hashmap_entry *pos;
+> +	unsigned bkt, i, nr;
+> +
+> +	nr = ttrace->syscall_stats->sz;
+> +	entry = malloc(nr * sizeof(*entry));
+> +	if (entry == NULL)
+> +		return NULL;
+> +
+> +	i = 0;
+> +	hashmap__for_each_entry(ttrace->syscall_stats, pos, bkt) {
+> +		struct syscall_stats *ss = pos->pvalue;
+> +		struct stats *st = &ss->stats;
+>  
+> -	entry->syscall = source->i;
+> -	entry->stats   = stats;
+> -	entry->msecs   = stats ? (u64)stats->stats.n * (avg_stats(&stats->stats) / NSEC_PER_MSEC) : 0;
+> +		entry[i].stats = ss;
+> +		entry[i].msecs = (u64)st->n * (avg_stats(st) / NSEC_PER_MSEC);
+> +		entry[i].syscall = pos->key;
+> +		i++;
+> +	}
+> +	assert(i == nr);
+> +
+> +	qsort(entry, nr, sizeof(*entry), entry_cmp);
+> +	return entry;
+>  }
+>  
+>  static size_t thread__dump_stats(struct thread_trace *ttrace,
+> @@ -4636,10 +4693,10 @@ static size_t thread__dump_stats(struct thread_trace *ttrace,
+>  {
+>  	size_t printed = 0;
+>  	struct syscall *sc;
+> -	struct rb_node *nd;
+> -	DECLARE_RESORT_RB_INTLIST(syscall_stats, ttrace->syscall_stats);
+> +	struct syscall_entry *entries;
+>  
+> -	if (syscall_stats == NULL)
+> +	entries = thread__sort_stats(ttrace);
+> +	if (entries == NULL)
+>  		return 0;
+>  
+>  	printed += fprintf(fp, "\n");
+> @@ -4648,8 +4705,10 @@ static size_t thread__dump_stats(struct thread_trace *ttrace,
+>  	printed += fprintf(fp, "                                     (msec)    (msec)    (msec)    (msec)        (%%)\n");
+>  	printed += fprintf(fp, "   --------------- --------  ------ -------- --------- --------- ---------     ------\n");
+>  
+> -	resort_rb__for_each_entry(nd, syscall_stats) {
+> -		struct syscall_stats *stats = syscall_stats_entry->stats;
+> +	for (size_t i = 0; i < ttrace->syscall_stats->sz; i++) {
+> +		struct syscall_entry *entry = &entries[i];
+> +		struct syscall_stats *stats = entry->stats;
+> +
+>  		if (stats) {
+>  			double min = (double)(stats->stats.min) / NSEC_PER_MSEC;
+>  			double max = (double)(stats->stats.max) / NSEC_PER_MSEC;
+> @@ -4660,10 +4719,10 @@ static size_t thread__dump_stats(struct thread_trace *ttrace,
+>  			pct = avg ? 100.0 * stddev_stats(&stats->stats) / avg : 0.0;
+>  			avg /= NSEC_PER_MSEC;
+>  
+> -			sc = &trace->syscalls.table[syscall_stats_entry->syscall];
+> +			sc = &trace->syscalls.table[entry->syscall];
+>  			printed += fprintf(fp, "   %-15s", sc->name);
+>  			printed += fprintf(fp, " %8" PRIu64 " %6" PRIu64 " %9.3f %9.3f %9.3f",
+> -					   n, stats->nr_failures, syscall_stats_entry->msecs, min, avg);
+> +					   n, stats->nr_failures, entry->msecs, min, avg);
+>  			printed += fprintf(fp, " %9.3f %9.2f%%\n", max, pct);
+>  
+>  			if (trace->errno_summary && stats->nr_failures) {
+> @@ -4677,7 +4736,7 @@ static size_t thread__dump_stats(struct thread_trace *ttrace,
+>  		}
+>  	}
+>  
+> -	resort_rb__delete(syscall_stats);
+> +	free(entries);
+>  	printed += fprintf(fp, "\n\n");
+>  
+>  	return printed;
+> -- 
+> 2.48.1.502.g6dc24dfdaf-goog
 
