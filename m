@@ -1,54 +1,51 @@
-Return-Path: <linux-kernel+bounces-511605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01472A32D31
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:17:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B6EA32D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:16:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0995169D2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:15:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6EA3A1E10
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5882F257AD0;
-	Wed, 12 Feb 2025 17:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEN6PE5K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB08256C67;
+	Wed, 12 Feb 2025 17:16:06 +0000 (UTC)
+Received: from relay01.th.seeweb.it (relay01.th.seeweb.it [5.144.164.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B241C2046BD;
-	Wed, 12 Feb 2025 17:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38372254AFB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739380514; cv=none; b=eig6JP16AHFkSBeF9+hutQkNepH1e9pYOchpmc2hqPGb8RFQdlDIKKpdTorz2QfKkXRLsHL4w3O9VY/sEV24XaCRVQQpLtwOsu1yHShTYfaoiKpC8V/6U+iN+lNbyfVd0czEaVVUOFXzNgYb6S11FCTxi47bC1744wkYKWIp588=
+	t=1739380565; cv=none; b=PLy+rEWGXBFvh7qMR84WqAmx+KYLrCYVtmzh87TZNa/e3+AbCW/GKG+/aw4EZvISSo3GpCsLarV/O6T7YwfDBX6S5ZCwiKEEfTfx2KqNO/xYVpZkotyNBU3im5ArgcfMhOxXsKHGkIIedhSahMujfxIU0ZQawANSxP8EEgtMXr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739380514; c=relaxed/simple;
-	bh=cKWGt8kgtTf7K+sXX7rpMB7u5WU0srtUtr1HTI1JiQE=;
+	s=arc-20240116; t=1739380565; c=relaxed/simple;
+	bh=TrCwhG4Ecrz+hxqBnhqwYXX3fOtazBP9ufWetBAOYaA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y9arJDEIOnR6oEZYj2AryuaEkbZ3DydX4RC7FXSCB5fp4Evid9FJuBxGr9qZtMlvPnS1lRiwkGMMuvfoo0C0MyrO1F0iL4/dy/859kS9Y5lrHmKV+Gj8FckAurvMuruewfdwodufQ7rQTZDzmbfah44c7EABzuf2HTbE+pf/Q9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEN6PE5K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88979C4CEE7;
-	Wed, 12 Feb 2025 17:15:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739380514;
-	bh=cKWGt8kgtTf7K+sXX7rpMB7u5WU0srtUtr1HTI1JiQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tEN6PE5K/XgVeMyrUnpj9X/H4P4nEZLgld/QYdv1IyzLUACjHKR/kD/WGyQwpFhWz
-	 bGg4aSEytJiKgZBmHjwLoRR0bFwQaL++lCLzfoWdIIZqOtTlsFkuGVMOub0bIiHRRv
-	 qVrbyxNbGOh+lsOWNZgKy+0gpWSMJrfKduSjZPAxfiKz9+Yx1p/5LfIoUEmzwoPI3l
-	 Pjhja6Sd8fWGfbEUlnI+P/ngNfRvVxuE2CAvDCPVu161hlb9LnHCyWHCPlNNG3+ety
-	 voxxcgAbHP80D+47CejQi0Mwsn7VI3zieKQTMy01iDcwZ154fPXz0yCr3ZNNuQdYmC
-	 n6TyiFqqxtuiw==
-Date: Wed, 12 Feb 2025 18:15:07 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Vitalii Mordan <mordan@ispras.ru>
-Cc: Russell King <rmk@dyn-67.arm.linux.org.uk>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Fedor Pchelkin <pchelkin@ispras.ru>, 
-	Alexey Khoroshilov <khoroshilov@ispras.ru>, Vadim Mutilin <mutilin@ispras.ru>, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] i2c: pxa: fix call balance of i2c->clk handling routines
-Message-ID: <3vpserpv2pzslwefiqxgyzg6ttjtvb73n3wnkq7k2wotszj2tl@hgxp7yh4umwc>
-References: <20250211145321.1137001-1-mordan@ispras.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=asH96R9sjONFYEneD8wIyk64jr1EUgePj2+6Upr5NVCyt1tMcvuNHqheeKitwb9KXtZtrrPMUSSdNe/k3kF4eY5r/KKbdzZXEdwO06VdKHqvDgYblwqp6bOsKdQAwgBP+ih6MoM5Pfp9EXEwdBmZ86SCxvD2HQmkOLc/x3DOtDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 3D32120163;
+	Wed, 12 Feb 2025 18:15:53 +0100 (CET)
+Date: Wed, 12 Feb 2025 18:15:51 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: "James A. MacInnes" <james.a.macinnes@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	robdclark@gmail.com, quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, 
+	sean@poorly.run, airlied@gmail.com, simona@ffwll.ch
+Subject: Re: [PATCH 2/2] drm/msm/disp: Correct porch timing for SDM845
+Message-ID: <ythh7pwdr4g6ih5phkhmsmkpghigfrxieka4lkcqivckvw77j3@jscdxwdloqus>
+References: <20250212034225.2565069-1-james.a.macinnes@gmail.com>
+ <20250212034225.2565069-3-james.a.macinnes@gmail.com>
+ <v4lpt45c7miwt45ld4sfinixnpje6tb73dhqmahl6kin4i7wyj@6ss563kvk63v>
+ <20250212082303.7c37f8fc@jamesmacinnes-VirtualBox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,50 +54,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211145321.1137001-1-mordan@ispras.ru>
+In-Reply-To: <20250212082303.7c37f8fc@jamesmacinnes-VirtualBox>
 
-Hi Vitalii,
-
-On Tue, Feb 11, 2025 at 05:53:21PM +0300, Vitalii Mordan wrote:
-> If the clock i2c->clk was not enabled in i2c_pxa_probe(), it should not be
-> disabled in any path.
+On 2025-02-12 08:23:03, James A. MacInnes wrote:
+> On Wed, 12 Feb 2025 11:13:24 +0100
+> Marijn Suijten <marijn.suijten@somainline.org> wrote:
 > 
-> Found by Linux Verification Center (linuxtesting.org) with Klever.
+> > On 2025-02-11 19:42:25, James A. MacInnes wrote:
+> > > Type-C DisplayPort inop due to incorrect settings.
+> > > 
+> > > SDM845 (DPU 4.0) lacks wide_bus support; porch shift removed.
+> > 
+> > Same comment on "inop", elaborating the meaning of "incorrect
+> > settings" and describing relevance to DPU 4.0 from patch 1/2.
+> > 
 > 
-> Fixes: c3cef3f3c07b ("[ARM] pxa: update pxa i2c driver to use clk support")
-
-I'm not sure the Fixes tag is really needed here. It's not a real
-bug, just a check on the return value.
-
-> Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
-> ---
->  drivers/i2c/busses/i2c-pxa.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> Again, happy to use more words.
 > 
-> diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.c
-> index cb6988482673..4144b0ae195e 100644
-> --- a/drivers/i2c/busses/i2c-pxa.c
-> +++ b/drivers/i2c/busses/i2c-pxa.c
-> @@ -1503,7 +1503,11 @@ static int i2c_pxa_probe(struct platform_device *dev)
->  				i2c->adap.name);
->  	}
->  
-> -	clk_prepare_enable(i2c->clk);
-> +	ret = clk_prepare_enable(i2c->clk);
-> +	if (ret) {
-> +		dev_err(&dev->dev, "failed to enable clock\n");
-> +		return ret;
+> > > 
+> > > Fixes: c943b4948b58 ("drm/msm/dp: add displayPort driver support")
+> > 
+> > This commit came long before wide bus support, are you sure this is
+> > the right Fixes tag?
+> > 
+> 
+> Yes, I went back to the Android 4.9 driver (that was working) and found
+> that the porch shift was not there. After experimenting with removing
+> the porch shift code, I had fully working video. As the SDM845 is the
+> only chip that doesn't use wide_bus, the pair are not related, but each
+> one contributes to no/poor video output.
 
-can you please use dev_err_probe() here?
+Ack: such information is exactly critical to have in the patch description.
+Looking forward to seeing it in v2 :).  It's not something I have been able to
+deduce from "SDM845 lacks wide_bus support; porch shift removed".
 
-Thanks,
-Andi
+> > > 
+> > 
+> > Drop empty line between tags.
+> > 
+> > > Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 8 ++++----
+> > >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+> > > b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c index
+> > > abd6600046cb..3e0fef0955ce 100644 ---
+> > > a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c +++
+> > > b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c @@ -94,17
+> > > +94,17 @@ static void drm_mode_to_intf_timing_params(
+> > > timing->vsync_polarity = 0; }
+> > >  
+> > > +	timing->wide_bus_en =
+> > > dpu_encoder_is_widebus_enabled(phys_enc->parent);
+> > > +	timing->compression_en =
+> > > dpu_encoder_is_dsc_enabled(phys_enc->parent); +
+> > >  	/* for DP/EDP, Shift timings to align it to bottom right */
+> > > -	if (phys_enc->hw_intf->cap->type == INTF_DP) {
+> > > +	if (phys_enc->hw_intf->cap->type == INTF_DP &&
+> > > timing->wide_bus_en) {
+> > 
+> > This code existed long before widebus: are you sure this is correct?
+> > 
+> > Note that an identical `if` condtion exists right below, under the
+> > "for DP, divide the horizonal parameters by 2 when widebus is
+> > enabled" comment.  If this "Shift timings to align it to bottom
+> > right" should really only happen when widebus is enabled, move the
+> > code into that instead.
+> > 
+> > - Marijn
+> > 
+> 
+> Happy to condense it. I left it in two sections for clear review at
+> this point. As stated above, I reused the wide_bus parameter as the
+> SDM845 appears to be the only affected chip.
 
-> +	}
->  
->  	if (i2c->use_pio) {
->  		i2c->adap.algo = &i2c_pxa_pio_algorithm;
-> -- 
-> 2.25.1
+If you plan on reusing the wide_bus_en feature to "detect" SDM845, such a thing
+should be very clearly described in both commit and comment description.  Though
+I'm certain such behaviour is buggy, this'll be set to false on other SoCs if
+the output format is yuv420 for example.
+
+Without looking at the code too much, you should be able to get access to the
+current DPU version through some of these structures which I'd recommend.
+
+At the same time we should analyze _when_ downstream added this exception
+for other SoCs, perhaps there's a hint or clearer conditional in one of their
+patches or descriptions or code comments?
+
+- Marijn
+
+> > >  		timing->h_back_porch += timing->h_front_porch;
+> > >  		timing->h_front_porch = 0;
+> > >  		timing->v_back_porch += timing->v_front_porch;
+> > >  		timing->v_front_porch = 0;
+> > >  	}
+> > >  
+> > > -	timing->wide_bus_en =
+> > > dpu_encoder_is_widebus_enabled(phys_enc->parent);
+> > > -	timing->compression_en =
+> > > dpu_encoder_is_dsc_enabled(phys_enc->parent); -
+> > >  	/*
+> > >  	 * for DP, divide the horizonal parameters by 2 when
+> > >  	 * widebus is enabled
+> > > -- 
+> > > 2.43.0
+> > > 
 > 
 
