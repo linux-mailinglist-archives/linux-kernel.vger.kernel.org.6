@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-511443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066EAA32B19
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:05:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53813A32B22
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77DB13A0527
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996F81883675
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D46211A02;
-	Wed, 12 Feb 2025 16:05:37 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B5E210F59;
+	Wed, 12 Feb 2025 16:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTrhUs0y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC6C21129F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985F1EC011;
+	Wed, 12 Feb 2025 16:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739376337; cv=none; b=SGZTMXVBSw/6xOPB6aRs+IcoPvj2YaXVGYi+XUMeuJr1YgSbtSxdJ17XLgcRPx9ZOJP1uvf72RwH4Hep+4FB59dY4KOMS8bQkzk6+7m2X8H6NQjTKSGYXhtXI9TLbCgd7WzcFxwPbnP0F5e9RNU4KbxJ1JETCvkEvq6ipNv62T8=
+	t=1739376421; cv=none; b=TRbCNRicRyeuYk/TslxbS8EIz//QUaGe9YIcokbXpySKLFHZDkdei8lp9rY9LuHJMs5pCF+HaCihoLgAj906gAmsVN+cbM53oMQfkGNVaz/J2XMD+OxB8maPzWQCzoWmtUeEfrhwV9djM4FOIMh6zw1EvE+A6VOkk8uAF2qF1L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739376337; c=relaxed/simple;
-	bh=rx5mvoX4y8oy4sk/zEBipIx4lBSs3LPqJBzxWuPp6RY=;
+	s=arc-20240116; t=1739376421; c=relaxed/simple;
+	bh=DtovoddXJ18poDRZ4vbP7OjpbXwDBro1r4lUquhEprQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aq6zmSO2xISgbwbsJfbcMlHolUMAHribao1mHP9+xillOjl1XUkBSd4PHNxMsICMimpL54/UaLake/XdnY82RLuNAO7QlzGG9iceIFO1zWGocpEuwbwCS/qsHUFvKCf9Q8A6rd0HbYommGCCWB1J4ip8bE7bUtG9d2s1dohSU88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-82-224.bstnma.fios.verizon.net [173.48.82.224])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 51CG4pER014922
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 11:04:52 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id A276915C018E; Wed, 12 Feb 2025 11:04:51 -0500 (EST)
-Date: Wed, 12 Feb 2025 11:04:51 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-        Christian Brauner <brauner@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Adrian Ratiu <adrian.ratiu@collabora.com>,
-        xu xin <xu.xin16@zte.com.cn>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Felix Moessbauer <felix.moessbauer@siemens.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc: Use str_yes_no() helper in proc_pid_ksm_stat()
-Message-ID: <20250212160451.GB106698@mit.edu>
-References: <20250212115954.111652-2-thorsten.blum@linux.dev>
- <20250212120451.GO1977892@ZenIV>
- <220DFA78-0A12-4F46-B778-B331A7F2841A@linux.dev>
- <20250212123609.GP1977892@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cHUOG7ohTKaqsldRRaHGp6MmAAb/47iVhkMnlDR5DFmAsV8A7+VGI2lAqLM8b396SqvsWhv03pNOkVjGzOVR5M0/A9aCait0MHVc12vMsDBZ1AjSl1w4a9bmKV+X1glbMlHIN7OyDOtRj5OFG0+LU3OYi7PanL9DaqIxl/JYxDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTrhUs0y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E7F8C4CEDF;
+	Wed, 12 Feb 2025 16:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739376420;
+	bh=DtovoddXJ18poDRZ4vbP7OjpbXwDBro1r4lUquhEprQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TTrhUs0yFCO8s6nTGOWuKDRgvVsSeU/uokg+mhSj3yP0lbJlJuG+nXNyjlZA85rca
+	 QHns45dGnZTjymwwTfONn2w6RfUCjxkpw4YEkGadzfzFAl9OuDAEw+BckrE1ixOu5L
+	 aF6h7ha3q4tZvQ/+BLtlrPyVHINGBiOf61oBok+D9FNEUuv/o5D/WBO5oqwhWdZ4Ag
+	 mbmN7wArkjTc/wWwCw9OtnT3PpdlHv5l/69iWVO8KY6B7SmeXfVHbFtSxHsde6iFiI
+	 mGYtaqNEjcaIwYCb/oD7plsL3TayoYssJSP5mdVQ49zZ40/TUhkuEfO7Djkbnwliob
+	 XOtFNqW5JX02g==
+Date: Wed, 12 Feb 2025 10:06:59 -0600
+From: Rob Herring <robh@kernel.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>, richard@nod.at,
+	vigneshr@ti.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, git@amd.com, amitrkcian2002@gmail.com
+Subject: Re: [PATCH v12 1/3] dt-bindings: mtd: Describe MTD partitions
+ concatenation
+Message-ID: <20250212160659.GA3883406-robh@kernel.org>
+References: <20250205133730.273985-1-amit.kumar-mahapatra@amd.com>
+ <20250205133730.273985-2-amit.kumar-mahapatra@amd.com>
+ <20250211212928.GA1188800-robh@kernel.org>
+ <87r043r2lq.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,51 +62,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212123609.GP1977892@ZenIV>
+In-Reply-To: <87r043r2lq.fsf@bootlin.com>
 
-On Wed, Feb 12, 2025 at 12:36:09PM +0000, Al Viro wrote:
-> On Wed, Feb 12, 2025 at 01:11:08PM +0100, Thorsten Blum wrote:
-> > /*
-> >  * Here provide a series of helpers in the str_$TRUE_$FALSE format (you can
-> >  * also expand some helpers as needed), where $TRUE and $FALSE are their
-> >  * corresponding literal strings. These helpers can be used in the printing
-> >  * and also in other places where constant strings are required. Using these
-> >  * helpers offers the following benefits:
-> >  *  1) Reducing the hardcoding of strings, which makes the code more elegant
-> >  *     through these simple literal-meaning helpers.
-> >  *  2) Unifying the output, which prevents the same string from being printed
-> >  *     in various forms, such as enable/disable, enabled/disabled, en/dis.
-> >  *  3) Deduping by the linker, which results in a smaller binary file.
-> >  */
+On Wed, Feb 12, 2025 at 09:25:53AM +0100, Miquel Raynal wrote:
+> Hi,
 > 
-> Printf modifiers would've covered all of that, though...
+> >> The partitions that gets created are
+> >> part0_0
+> >> part1_1
+> >> part0_1-part1_0-concat
+> >
+> > 'part-concat' doesn't work if you have multiple sets of partitions you 
+> > want to concatenate.
+> >
+> > I think you need something like 'prev-partition' or 'next-partition' in 
+> > the partition nodes to create a linked list of partitions. Hopefully, 
+> > you don't need both properties, but you do have to scan everything to 
+> > figure out which ones are concatenated or not. For example, no property 
+> > can mean not concatenated or last partition if you use 'next-partition'. 
 > 
-> The thing is, <expr> ? "yes" : "no" is visually easier to distinguish than
-> str_yes_no(<expr>), especially when expression itself is a function call, etc.
-> So I'd question elegance, actually...
+> Out of curiosity, would the chosen node be eligible as a central place
+> where to look at?
 
-Yeah, personally I think str_yes_no() is a bit of a toss-up from an
-elegance perspective.  It's a fewer number of characters, sure, but
-it's a bit more cognitive load where the people reading the code need
-to map str_yes_no() to semantic meaning.  For someone who is doing
-wholesale conversions, they probably don't notice it, but for someone
-who isn't dealing with it every day, it's One More Thing that they
-have to track.
+Why would you need that?
 
-Using printf modifiers would probably actually save more bytes from a
-"size of the binary" perspective, at the cost of forcing the code
-reader to deal with some line-noise perl- or Rust-like construction
-(e.g., if %pcy is str_yes_no, %pco is str_on_off, %pct is
-str_true_false, etc. is the increased cognitive load worth it?)
-
-Bottom line, I don't *hate* the string choices, but I really don't
-think it's an obvious improvement.  Thorsten, this is why I hadn't
-processed your ext4 patch yet.  I was super busy over the holidays,
-and from a prioritization perspective, I didn't consider it high
-priority.  Thinking about it now, to be honest, I'm feeling really
-ambivilent about string_choices.h
-
-Cheers,
-
-					- Ted
+Rob
 
