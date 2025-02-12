@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-511785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B4AA32FA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:28:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CBE6A32FB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E3C2167108
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110FD165445
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28444263C8A;
-	Wed, 12 Feb 2025 19:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF581FF7C8;
+	Wed, 12 Feb 2025 19:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkrwTntz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IjGzuLHY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C93725D553;
-	Wed, 12 Feb 2025 19:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50D1271813;
+	Wed, 12 Feb 2025 19:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739388418; cv=none; b=r/u878BENVSf9mWVvETxVDdji8nQeecgfR4P5ZT6bgqOsGGCYFDRqdMplDhIf7p20AmIePSCidHgRtdoLi5npj4k1MAtQ/ZyLGZEc6W/bqGyBPUyg5Y5Yvj8zquCbzEpujGDFihCY4LbMaX05pQV9cveK97Nr0TelBpMlYvX1oA=
+	t=1739388685; cv=none; b=X00wPuXJch/RElv9kGptGtnz7s0oc1BbV/wOczdZMfhNQHlNf7bFbjr0iUIRbcgwTmOeEysiv5v6ujMMRK+JNX35LX2+0htaIVDmIxFLVOWHGFuzXvwUTt3606DM7B+eTnGF+aipAFbF+pRHmke4VTSyoHLtZIT7+7iO5vFFhrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739388418; c=relaxed/simple;
-	bh=qheZOutIWKdBvuT8/LvT+TN4/VsqMfhKb87TvdQ6DnA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Y5ezoaJ2iLyYMfkfNBgm0APthHLXpe6ijPp2xu6OS+3UH9YD7GBti9Tfc1Ix+7C6Lane3jvDtpksC8sKg8G0er/TS237mBGPImFtgMnV2Ep40Lvuzr3lcHkHgv878Ez9+tezaQnl2NNMlwLBbYvqY7EAzdodZvl2c74go+Cyxm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkrwTntz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C592EC4CEDF;
-	Wed, 12 Feb 2025 19:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739388418;
-	bh=qheZOutIWKdBvuT8/LvT+TN4/VsqMfhKb87TvdQ6DnA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=YkrwTntzRAje2eUBjd/HK8wMnW35ginLdxJ3Amm8raytWeeWSymc6SAB4izQBQK+J
-	 4oIVzdlEswTWGiESut9OjT0pAzbumnT8h1BxhZMP1erYS7I1uv0rm8ZMf7v5we/cMh
-	 /box+XGhvdljzUAtmN5u8OIEs0QhBimTrkiDn2DToEJ8mvmjHn8cjytpGyGUJM7C+W
-	 X/iGKoAZ1wKBIPiejgjuJ+SQyWLERh08h3S5qcFJDuKf0V16M+j4AobzNfJrQhf9Ub
-	 aZ+RuWxhuIJGewYgwSuxgWoh4GBImspnSoMEFodoJfTmpIDwBHDlJKmVdoo7rebpGZ
-	 Olr4Wqzi6Cgcw==
-Date: Wed, 12 Feb 2025 13:26:56 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1739388685; c=relaxed/simple;
+	bh=ogjElKZkP71ejQJYT0hwP3uHhRqvyb4B8WNqvdEWaog=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PgL0HqDP1enqVJgNvsy0Cv6h3UWSfWlqz1NtzNsALN2iFps+yGTRFQvSxit4ru6ioOSIP71qvId6R2nyjwYOQDXceVJZzVceAMzZsK/KpmQhySvlGF/6B42cKG1I/Ni3WdlvRv00Ow1Ffd7j7ngui/uD1YfjUQgSZ2+rk9aWriU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IjGzuLHY; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739388684; x=1770924684;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ogjElKZkP71ejQJYT0hwP3uHhRqvyb4B8WNqvdEWaog=;
+  b=IjGzuLHYasEgLq+YzohumRpuKshVWSErsJphSYvR7S2aFleeoTxJja3f
+   N67iTveLVqdtHuyV+fgSFhh/WdX0R2rNSU6CkY3xJ/vE1RHMcXZ6VMNHJ
+   wBkbtCpcNu1sbCoT7GHITSkkr7QdHJNeXd7Wd7nrpwvOP9MuNudydKi/x
+   KLs5CPsyusE+YiXZK+sLrl3ptvGr0ghUSHWVVUimaG2tvNsJUAQXfpmnO
+   esXOJiGWRrqo51ODfpv1SgcdIQslndcVm+PV8XMBmiWN18B9j3PXZ/0CJ
+   gXN9CnP1+ovEDhNc05dC6DiQbzBkQqyAcrG5z2YjGarNp6kd8eE7fjGEB
+   Q==;
+X-CSE-ConnectionGUID: dbuSkH5STyCes+FDll1E0g==
+X-CSE-MsgGUID: eWUY/nRAQH+Lk1TIymQfng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40183655"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="40183655"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 11:31:23 -0800
+X-CSE-ConnectionGUID: tC83V0vbQ9mAzWQWQQ43FQ==
+X-CSE-MsgGUID: c1U2mCFeTuuJzZZwviugoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117542533"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 12 Feb 2025 11:31:20 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 4623011E; Wed, 12 Feb 2025 21:31:19 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 0/4] usb: dwc3: Avoid using reserved EPs
+Date: Wed, 12 Feb 2025 21:28:00 +0200
+Message-ID: <20250212193116.2487289-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- "Dr. David Alan Gilbert" <linux@treblig.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, devicetree@vger.kernel.org, 
- Hans Verkuil <hverkuil@xs4all.nl>
-To: Matthew Majewski <mattwmajewski@gmail.com>
-In-Reply-To: <20250212170901.3881838-2-mattwmajewski@gmail.com>
-References: <20250212170901.3881838-1-mattwmajewski@gmail.com>
- <20250212170901.3881838-2-mattwmajewski@gmail.com>
-Message-Id: <173938841678.103791.15257194096562741977.robh@kernel.org>
-Subject: Re: [PATCH 1/2] media: dt-bindings: Add dt bindings for
- m2m-deinterlace device
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On some platforms (Intel-based and AFAIK ARM-based) the EPs in the gadget
+(USB Device Controller mode) may be reserved for some special means, such as
+tracing. This series extends DT schema and driver to avoid using those.
+Without this the USB gadget mode won't work properly (those devices that
+"luckily" allocated the reserved EPs).
 
-On Wed, 12 Feb 2025 12:09:00 -0500, Matthew Majewski wrote:
-> Create a new yaml schema file to describe the device tree bindings for
-> the generic m2m-deinterlace driver.
-> 
-> Signed-off-by: Matthew Majewski <mattwmajewski@gmail.com>
-> ---
->  .../bindings/media/m2m-deinterlace.yaml       | 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/m2m-deinterlace.yaml
-> 
+Changelog v3:
+- split refactoring as preparatory change (Thinh)
+- renamed variable and function (Thinh)
+- added a warning in one place (Thinh)
+- gathered tags (Ferry, Rob, Thinh)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Changelog v2:
+- added minItems to the schema (Rob)
+- revisited code and add NULL check to avoid crashes (Thinh)
+- rewrote helper function to return error to the user if parsing fails
+- elaborated in the commit message why we need this quirk (Thinh)
+- addressed miscellaneous style issues (Thinh)
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/media/m2m-deinterlace.yaml:10:2: [warning] wrong indentation: expected 2 but found 1 (indentation)
+Andy Shevchenko (4):
+  dt-bindings: usb: dwc3: Add a property to reserve endpoints
+  usb: dwc3: gadget: Refactor loop to avoid NULL endpoints
+  usb: dwc3: gadget: Add support for snps,reserved-endpoints property
+  usb: dwc3: gadget: Avoid using reserved endpoints on Intel Merrifield
 
-dtschema/dtc warnings/errors:
+ .../bindings/usb/snps,dwc3-common.yaml        | 11 ++++
+ drivers/usb/dwc3/dwc3-pci.c                   | 10 +++
+ drivers/usb/dwc3/gadget.c                     | 63 +++++++++++++++++--
+ 3 files changed, 79 insertions(+), 5 deletions(-)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250212170901.3881838-2-mattwmajewski@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.45.1.3035.g276e886db78b
 
 
