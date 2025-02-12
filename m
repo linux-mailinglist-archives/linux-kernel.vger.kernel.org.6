@@ -1,156 +1,80 @@
-Return-Path: <linux-kernel+bounces-511704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02DC3A32E85
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:21:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E81ACA32E89
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA523A1C37
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:21:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7F29188B512
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F91263F2E;
-	Wed, 12 Feb 2025 18:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LgIPFhmr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AF6260A3F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A33261378;
+	Wed, 12 Feb 2025 18:20:48 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3405D25E47A;
+	Wed, 12 Feb 2025 18:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739384396; cv=none; b=lNMj4e22oLn0jW5gXUEQq4GOOc+4bvX6uls+djztoWcAwf3X+qf3gNL1Jts8YqnDe02lA3cL9hAT38gBEo1vrLUadfMrCALh+8cwv8HFxugzydM41qYagUuWa9C246th2sRObZq3+loMVhELtlJ8Dfbo54pk4H0ky1Z/bNbl4Hg=
+	t=1739384448; cv=none; b=MKA3FZDFJpubImj0bAnaM9v8877/I/JF3RJyxJbewPeTRCzczP/F8rx3VX+8DB1j9jNQn3+1bRTZAe6PXscr9+L57wkWMqw14KtooAIyX+JzHdoBiLMkUfsvFYESdGrXRk4dFCQWgBbLaTPS2e/UUy+oIRRXOSVT4t46mrNczy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739384396; c=relaxed/simple;
-	bh=qFOWa4pauo4Iuu6WGgcIEz+h/qWRaq8iwgw9wmS1RWQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TvIS14M0y0LwsuXmh9bplwuspyHiw8LlvhSzUWben9OZMWKZHyZ1DzrkU4Rdpmts0MPrMGNi+x7kcrqz5XnXy+DeO5Ku0DeMH2/lVq5YDx9+q0ZrG2edb6PaJGPMzKp1kb5kwKseItycb1Ykqu9bLFUaikefdY0wAjKfdQlCyUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LgIPFhmr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739384393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gZh4AjieEBhVpChkY/ZbfZf/JCY7uSfZ7yn1oUrifN0=;
-	b=LgIPFhmrS9cYHg9EA2O/K/WqLKdZN2dSV9fmIeQxOuRJDFASFjmzFanFw0OGWDL7yvmqgp
-	JMhrEIwBOMDaF6/WojjPu1+/xC6YeqP28oDZeV5E7jcOL02U/PBV6ky7GlXrWYJtdkUy7N
-	4ttlisIzFAJjoG5MQZBDjU3vA2Gl6tw=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-612-MsReOXULN5aEKtzhqnLypw-1; Wed, 12 Feb 2025 13:19:50 -0500
-X-MC-Unique: MsReOXULN5aEKtzhqnLypw-1
-X-Mimecast-MFC-AGG-ID: MsReOXULN5aEKtzhqnLypw
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5da0b47115aso6852196a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:19:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739384389; x=1739989189;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gZh4AjieEBhVpChkY/ZbfZf/JCY7uSfZ7yn1oUrifN0=;
-        b=f0jcGr3ErPLq9HHpcINzIuffRDlQaKI6IxjUZX9B4wOAVzCpsTFJq6phcKMGdca12m
-         XILotMPhlqSfX6398WBLpmuFU2qSn6WrMdoO/2VlTtQfXd9SlwhnkKpapolvHYPzZweg
-         ZXLA2UrvKM3cAFXojS/mW7g1ajjja4Ypg9JI0bkm0IVIpsDYehL5o5gxCfergARDV7R+
-         1Od1Ovjabjc0KZqxIhzn5X+wTzwG8bH6LJikBbrHlLB0jsZ3UH05SC1jbTcKweEplHNO
-         WWANdPK8I3XyM3YmESAQYKNAe14ht/Hfxtie7bDGxOQ5pacG4wLQINJHLTBEup91WssE
-         JmdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXD2HRelFT/vwQ0ewmNilrHnL/9x626+7j5NAFdPisgVPZ42Ctvg55iD4EJhpeCBHxFvbuIXpKS2Cdd8c4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmonkcvBq26TcOaV3LyCgCznoAqCgKVrOeK4bGywUBJF8Eb/0H
-	Eh3it+ouWzpV/uyS74HCSv63UVCZMsjo6VLbFmMmnKdtTfhM9MxtDx+JlYxo4nyATRIvLmx2Zr3
-	zKbQsERkGshW6rNTD+sib2Fm2d54wXB2VpA/KPQXa8abYcGhfpmDH+l7XGf2haw==
-X-Gm-Gg: ASbGncvWJ8FLdXYSjY5UPOtNb1Dub1oWU0fSq5aB2o9vqnicJMHMRLIS5vF1L9Bam2h
-	2dzPdOXitYe9Xrbs8PxiJ0tj3L1nMLWs6xgZv/DO1oEjzxfMFGEJnGIJgjJdlOqlgulDgnbDqUJ
-	UvjyhYGGVGLnnI1t56sHig/H8Jnj/CQGS/JId3gHz/ktYOhd6xkSg+J24+71lTX3nwP54WE0Eus
-	uap5sfl7vtVj/neLcdrZ9uj6SLzydTWDX90tg0uNhRuVCrLGeyIKsVmn+BYLGre88FG4zyqDPCm
-	PuDQLYFg98IPkkVmupPpFlqv/X6CND6DPmwfiOzFbc5TJMo5/q579l8SCdH7nppmJ0GcfUHRL6c
-	6yxHq39VNAwWDkTpZtpH6cyadWz84tp+c5A==
-X-Received: by 2002:a05:6402:4605:b0:5dc:8f03:bb5c with SMTP id 4fb4d7f45d1cf-5deadd9217bmr3909060a12.11.1739384389359;
-        Wed, 12 Feb 2025 10:19:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IESGQAXDzed7Fmi16ciLszJ4Ey0xkXA+j06UKHlLqfUdrmcANPKem5IWP/WHHNGNcVUN6LRhQ==
-X-Received: by 2002:a05:6402:4605:b0:5dc:8f03:bb5c with SMTP id 4fb4d7f45d1cf-5deadd9217bmr3909028a12.11.1739384389013;
-        Wed, 12 Feb 2025 10:19:49 -0800 (PST)
-Received: from ?IPv6:2001:16b8:2d24:c00:803c:5b80:8fe:19d4? (200116b82d240c00803c5b8008fe19d4.dip.versatel-1u1.de. [2001:16b8:2d24:c00:803c:5b80:8fe:19d4])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de4d250084sm10090241a12.16.2025.02.12.10.19.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 10:19:48 -0800 (PST)
-Message-ID: <dfbc4edd2670fc102ba4959d99bb2c5d6bd1d626.camel@redhat.com>
-Subject: Re: [PATCH] stmmac: Replace deprecated PCI functions
-From: Philipp Stanner <pstanner@redhat.com>
-To: Andrew Lunn <andrew@lunn.ch>, Philipp Stanner <phasta@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,  Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Serge Semin <fancer.lancer@gmail.com>,
- Huacai Chen <chenhuacai@kernel.org>, Yinggang Gu <guyinggang@loongson.cn>,
- Yanteng Si <si.yanteng@linux.dev>,  netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Wed, 12 Feb 2025 19:19:47 +0100
-In-Reply-To: <885058ae-605b-46e6-989b-3ff52908e6fd@lunn.ch>
-References: <20250212145831.101719-2-phasta@kernel.org>
-	 <885058ae-605b-46e6-989b-3ff52908e6fd@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1739384448; c=relaxed/simple;
+	bh=Bg8qyr/Ngr0/Q8CwMD22iZ5uwd/eL8hK9Xg2pMelyDU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GyOYu66kK0Y70B0c4F+nNFCjj/hgg1xynKwq1iSH4ZUdsk8I3V0yypGKbzn0HmAFz0A4gn7oYB034sdlwVshXFoXJs8Y6KrCQhxYAIcoUShaMekFE8/VF1Q9oQ+oTkUeYUOGoG1OOehIzYDhhIfCEEk9t9YJAvFP79zMt+Y7nfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: ZpAlej24QzqFRoZAngVN7Q==
+X-CSE-MsgGUID: TZcLhU/nRP609n5QSbJ9Jg==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 13 Feb 2025 03:20:42 +0900
+Received: from mulinux.example.org (unknown [10.226.93.8])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id EC8AE4019C63;
+	Thu, 13 Feb 2025 03:20:39 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/6] Improvements for the RZ/G2L IRQC driver
+Date: Wed, 12 Feb 2025 18:20:28 +0000
+Message-Id: <20250212182034.366167-1-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-02-12 at 19:13 +0100, Andrew Lunn wrote:
-> > =C2=A0	/* Get the base address of device */
-> > -	for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
-> > -		if (pci_resource_len(pdev, i) =3D=3D 0)
-> > -			continue;
-> > -		ret =3D pcim_iomap_regions(pdev, BIT(0),
-> > pci_name(pdev));
-> > -		if (ret)
-> > -			goto err_disable_device;
-> > -		break;
-> > -	}
-> > -
-> > -	memset(&res, 0, sizeof(res));
-> > -	res.addr =3D pcim_iomap_table(pdev)[0];
-> > +	res.addr =3D pcim_iomap_region(pdev, 0, DRIVER_NAME);
->=20
-> I don't know too much about PCI, but this change does not look
-> obviously correct to me. Maybe the commit message needs expanding to
-> explain why the loop can be thrown away? Also, is that BIT(0)
-> actually
-> wrong, it should of been BIT(i)? Is that why the loop is pointless
-> and
-> can be removed? If so, we should be asking the developer of this code
-> what are the implications of the bug. Should the loop be kept?
+Dear All,
 
-Yes, the reason why the loop is pointless is that it calls BIT(0) for
-all runs, instead of BIT(i). This would have caused an error btw if it
-weren't for pci_resource_len(=E2=80=A6) =3D=3D 0, which I assume prevents t=
-rying to
-request BAR0 more than once, which s hould fail.
+Just a few patches to improve rzg2l_irqc_common_init() from the Renesas
+RZ/G2L IRQC driver.
 
-The commit message should mention this, agreed.
+Cheers,
+Fab
 
-I assume this is not a bug, but the code was just copied from the other
-part (also touched in this patch) where a loop was necessary. Argument
-being that if the above were a bug, it would definitely have been
-noticed because the BARs other than 0 are not being mapped, so trying
-to access them should result in faults.
+Fabrizio Castro (6):
+  irqchip/renesas-rzg2l: Use local dev pointer in
+    rzg2l_irqc_common_init()
+  irqchip/renesas-rzg2l: Use
+    devm_reset_control_get_exclusive_deasserted()
+  irqchip/renesas-rzg2l: Use devm_pm_runtime_enable()
+  irqchip/renesas-rzg2l: Remove pm_put label
+  irqchip/renesas-rzg2l: Switch to using dev_err_probe()
+  irqchip/renesas-rzg2l: Simplify checks in rzg2l_irqc_common_init()
 
-Although a confirmation by the respective developer would indeed be
-nice.
+ drivers/irqchip/irq-renesas-rzg2l.c | 50 ++++++++++-------------------
+ 1 file changed, 17 insertions(+), 33 deletions(-)
 
-P.
-
->=20
-> 	Andrew
+-- 
+2.34.1
 
 
