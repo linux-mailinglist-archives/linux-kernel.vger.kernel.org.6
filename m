@@ -1,88 +1,124 @@
-Return-Path: <linux-kernel+bounces-511737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CB3A32EF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:53:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32FB5A32EF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:54:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FCD53A64A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5435167947
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBFA260A5D;
-	Wed, 12 Feb 2025 18:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0780260A33;
+	Wed, 12 Feb 2025 18:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RQsJzdIo"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c6fDmPWf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F0D25D558;
-	Wed, 12 Feb 2025 18:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9743225D558
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739386427; cv=none; b=lceoWFLwHKmyyu6UA/Izs2K62msy/d4wEhzPjASGXsUhIg5LuH0C1JLWHmzWLa5qkX5UAGvkY4aeGTp9ETmcfwUeAgq1dsHKsapLo+49ix9b7n1YFXTTwqtKDkznEjPwf91cZ+RJn8x5KtB3JXNZ80JqxeyQVHFMRR0cfM3RM0g=
+	t=1739386442; cv=none; b=cpjBO7i53rof6wKYRvB2vnYN9MhbsdBLp3WfDkXyaSAws5EKU9lMSHmWHzhI9jwfyqsToMovp6TeEtBsw8xe0TlyTdkqjS0PpVF04xtAKU759vc55XtKufkkPCvzd9CibB63WIzwp1U4TtYNNGOa1UpOX7bJH11J368EA4X67Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739386427; c=relaxed/simple;
-	bh=5tJWQW682yVJHOELemxqrvB3V23kM6i2rx1d75/VJ70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ryngTr32FwviBEiGkWtW4PkILev51JlYQVx6NkFta+MFD6MZLr5bgie1jk5/sQ+4Rysbg2tVC+z2OPrurT7xPCzQYMxEvQBTit2RmtnmQHidsxUULTlcF5lYbQ56qg9A/9ltvxQPxCNJpJsEr4CERARq/zZq7jSYRnRk2RMzfY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RQsJzdIo; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oUOokMrKASXdzZOA3VRoZ7fdfSIasrczhgZC+ARdsyE=; b=RQsJzdIo4sjdvkb3W0fwkdFRaa
-	O57YRtnEq+Dfi18rN1QQwUuBy8dYpnMr5IQlIOiChqEyQR5T5MXOqbangz7v/EBYWW/HkX+P8uxVd
-	idVVcsVuC1PGXaAK7beZ2GFCmN9Y3Y8pSbs17s98gPhCfsWxM/EmI7xjeGTmmG7zZ3FYar1vcZ1GW
-	h55laSfKYbPWaVvzr2P1udrViDnu1von3OwcqpmZgx3g3jQPH5tdQFFtQN3ZwqwAF5L+Oug9GX7y+
-	ZjNB66u0s3SGCr440I3G2m1FDfd3d+xBpNUtfFXpL6XIDVSPSq0qiSv8tjXfWua6lN4yAYuGQBmSo
-	eK0Oz+Zw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiHrZ-00000005dDY-05Hq;
-	Wed, 12 Feb 2025 18:53:33 +0000
-Date: Wed, 12 Feb 2025 18:53:32 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-	zhangkun09@huawei.com, liuyonglong@huawei.com,
-	fanghaiqing@huawei.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Alexander Duyck <alexander.duyck@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	IOMMU <iommu@lists.linux.dev>, MM <linux-mm@kvack.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next v9 0/4] fix the DMA API misuse problem for
- page_pool
-Message-ID: <Z6zuLJU7o_gRsQRu@casper.infradead.org>
-References: <20250212092552.1779679-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1739386442; c=relaxed/simple;
+	bh=88U6LkkyjwbgU3fwElzt9RyVjJumxgt5JSaA4PqEjSE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZhTKhXOygPtly5vGcAhkDM+8QRD9C6Po2YOVKjs0qDKFa1BWruzFX6EthzCgEQvB1riSF+qTQCyilcNpodw58AwoFxEXXGUFpqAR8a1jQQmfomlUIfC4woxX8MIXb+qH3n09cVUqtZJZthbtkHdOq3FgIAUDxzIqsTxh8GLW56M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c6fDmPWf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739386439;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8Pk1/OrFBXHG51Uy+54VqQQAZpp/Rcxfrj0+oCV3QUE=;
+	b=c6fDmPWfLHugi26Fv1svcTp4FPcKf8bii8Anu5sk52Nh3L6zAm9EcEK/UWeDAMAipqIT9N
+	t/7IG4BIksjowT9OOw/9CRjfUUM6e4CxDVbxlCDcFCy9Vhizt51heVSO+0Qn7hHwqycVSm
+	JPG9mHdRGgnCSnzf50RuffNqcaq/IPA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-657--a0L9dtiOOiU_a_5OBq_GA-1; Wed,
+ 12 Feb 2025 13:53:58 -0500
+X-MC-Unique: -a0L9dtiOOiU_a_5OBq_GA-1
+X-Mimecast-MFC-AGG-ID: -a0L9dtiOOiU_a_5OBq_GA
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A488719560A7;
+	Wed, 12 Feb 2025 18:53:56 +0000 (UTC)
+Received: from omen.home.shazbot.org (unknown [10.22.88.77])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3C6B21800876;
+	Wed, 12 Feb 2025 18:53:54 +0000 (UTC)
+From: Alex Williamson <alex.williamson@redhat.com>
+To: bhelgaas@google.com
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mitchell.augustin@canonical.com,
+	ilpo.jarvinen@linux.intel.com,
+	david.laight.linux@gmail.com,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v2] PCI: Fix BUILD_BUG_ON usage for old gcc
+Date: Wed, 12 Feb 2025 11:53:32 -0700
+Message-ID: <20250212185337.293023-1-alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212092552.1779679-1-linyunsheng@huawei.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, Feb 12, 2025 at 05:25:47PM +0800, Yunsheng Lin wrote:
-> This patchset fix the dma API misuse problem as mentioned in [1].
-> 
-> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
+As reported in the below link, it seems older versions of gcc cannot
+determine that the howmany variable is known for all callers.  Include
+a test so that newer compilers can enforce this sanity check and older
+compilers can still work.  Add __always_inline attribute to give the
+compiler an even better chance to know the inputs.
 
-That's a very long and complicated thread.  I gave up.  You need to
-provide a proper description of the problem.
+Fixes: 4453f360862e ("PCI: Batch BAR sizing operations")
+Link: https://lore.kernel.org/all/20250209154512.GA18688@redhat.com
+Reported-by: Oleg Nesterov <oleg@redhat.com>
+Tested-by: Oleg Nesterov <oleg@redhat.com>
+Tested-by: Mitchell Augustin <mitchell.augustin@canonical.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+---
+
+v2:
+ - Switch to statically_true (David Laight)
+ - Add __always_inline (David Laight)
+ - Included Tested-by reports
+
+ drivers/pci/probe.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b6536ed599c3..246744d8d268 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -339,13 +339,14 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
+ 	return (res->flags & IORESOURCE_MEM_64) ? 1 : 0;
+ }
+ 
+-static void pci_read_bases(struct pci_dev *dev, unsigned int howmany, int rom)
++static __always_inline void pci_read_bases(struct pci_dev *dev,
++					   unsigned int howmany, int rom)
+ {
+ 	u32 rombar, stdbars[PCI_STD_NUM_BARS];
+ 	unsigned int pos, reg;
+ 	u16 orig_cmd;
+ 
+-	BUILD_BUG_ON(howmany > PCI_STD_NUM_BARS);
++	BUILD_BUG_ON(statically_true(howmany > PCI_STD_NUM_BARS));
+ 
+ 	if (dev->non_compliant_bars)
+ 		return;
+-- 
+2.48.1
+
 
