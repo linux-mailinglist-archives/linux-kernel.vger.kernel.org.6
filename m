@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-511929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7274FA3319D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:35:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 961D3A3319E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:35:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07C8C3A84F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:35:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30F303A8033
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE721203706;
-	Wed, 12 Feb 2025 21:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCCC2040B9;
+	Wed, 12 Feb 2025 21:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChGwc1tA"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leX7nYyM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94BA202F71;
-	Wed, 12 Feb 2025 21:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9282040A9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 21:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739396124; cv=none; b=hFhPWmSJonZIuQqU2wEogMFpMWl0lIDiDgFzq9ZALROCZsigTn8BL1ODJ8a1/Z6Wij6ht6aZGqfOotDlmy7EQlVyxPINmw7N0PWsGlLB69Effisi85oYc1+5TBn8NvqoUP189o+ZxOL53jcW9zLJvKeCIYaP0hW3QOKA0XZwO84=
+	t=1739396129; cv=none; b=KfXj9vMVzZLSEEVpRQe46B6zg7KGBm6HZkNSsunS8hJZAfbUSmVLo/lX4P2Msv+6pCWmOyKsb0H1Jxqj1IveaF/nitRzR8T8G75XKKY4FhQ8ZXPpPEUC1GFaVRcp4h2FUgcPv7bzWkYP+Udp1KjTB6AyW7p0plIWxEsTagnG4R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739396124; c=relaxed/simple;
-	bh=n7vwAk+mGDnptXQYHkJZGBl0excGHMrDOseNSwoLavE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YtJxAaka6XTh+EsoEyPMJhP6ENNBmP96yXfDyy1XLA/HNqVG6D0jisaXiQ9KaMZ4QCnv/HwJETU3+jKZ2FWCgfbdr095RTklfRVCCVnK2Tk6LrJOvnSUdlhw0MmRUX4y20IcJr30qXHVX3rdtkmk9xoCOjPz8U7pqUINrAsGM4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChGwc1tA; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c05cce598dso3032185a.3;
-        Wed, 12 Feb 2025 13:35:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739396121; x=1740000921; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pc0F/lVzkzvL4J3GzIJyy7MBw6sqmJhjXpSaIwLTkG0=;
-        b=ChGwc1tAySyYtxkkx1EZ1EBxevRfaGzahwJf+TvfYN714abqo0u6gLHzdCkpI2hLgA
-         j6EUKZ1xA2Ei5A0Mg8JbJaWtHmaNMaQn/oPCg5hG/8YS37Z3xjlQkBrgOyfeMq2PLY2U
-         Bmjlo/vM+b/I8dMdkgPE2iKjV4m2kseTjdHLAZ5dWKXtzdLdadk1ONolCqZPrPz5dS9L
-         cZ6XML6IfmaRxY0Yp49pOnciCP+AgBZoU/YSH+tyoT9UTiiec4CH8FXDkxQEgso5m42e
-         FRuqIASZ++sfnagFcBfSX22IfpoXnQ6Yy1DM+nZpLlxAZSjLCP3uxImg0arB1+52/BzX
-         vE4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739396121; x=1740000921;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pc0F/lVzkzvL4J3GzIJyy7MBw6sqmJhjXpSaIwLTkG0=;
-        b=hNorXCT6cC8hko6TBhsgVRpexVEqnAGNNvTZ1WVCKBGF1cG+y4u3+xs1SiZyv+V23g
-         q6KwCkkNXtq1Ll74FSdJAxPcv6oetPS/Hu25Tu6QWm4wq+8bQL5pjzAwWgtWJrmwjDdS
-         V42J8oJ8KIQQfpCVCPkQK9aVGd0ojAB4vof/Rtw6XT563CDRT2aTI5s11yQs1Ad/nriJ
-         zehZeizxsOA82SoQL8TMgIn6hIg0JAig/tIfd1Yedp6gl1ksWg+gckdVnDWBZFyiMvs8
-         hqZgrYGKzKWbshcl+A0VY4qm6gXEejZO121euVFfDcn5FA/SnsBuwIwnkeCnWZpx+AI5
-         x+7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVPNo0CxmHZao1+tReDofI9G7oN77v2eweQTkJBaVqmn6lFHdeIag56OngBTVCkvFKkza8TLnET@vger.kernel.org, AJvYcCWJB4qjaMbgwQqhNZrdzwq2Fn6H9Rj05P6v+OGTS4XsS0YxVSVggA02SEjW+WvQiWP/OHki10Pz38kagHeWsr2a+Dw=@vger.kernel.org, AJvYcCXvgEEnD3BJMG1ATPw8+6Xm6PTYC1WKbNFIBPqgA2rc0RFX9ONlmxm0i0eN1aDVYnxVaJZ9Z2Rj/N4AZm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3kSUaAgI0dUbQbbSoiAqeabR/NLEuOrGMe3qUHUiUDSFU75Nt
-	LaoCKyyTZ+PC8nPgl/keSdI7rIPlaikk8p0rvG7G/8TpqvQyuiXckvCF
-X-Gm-Gg: ASbGncvEKbet69wq8k15UcX7JMbsa51MTnFZ3iDwmH5Fce4e1jpdeRlq/Grv6dRqEi2
-	tlqDJUGFQm4v31jj4Qo0/wbFVolBU9O31dHLsu492h8o0z0qcGQfcaabsdN6ZJlH11COQFl7c7v
-	LPeK4xtuNCA46UVCPrnaUvMDLyzSAl8g+ahwUDtxCv1X5VO8ViQ9kZ8sKXVGnfVlrwGpRUK9Pu+
-	AOeKH9fO+IccPtPUfCvfujIuKo0S2ClOKCy363lm2vEV2bE9SyjRT4JlHShFd3BWL3dow0FiL09
-	Z0uPpWwlMIEl
-X-Google-Smtp-Source: AGHT+IHMYVT7cXF1vDiX/RjUDK6KvUjj0T8L9QgUzk2mdCPDRHq6yQlf9pMqq1wIwsyxD4WnU7kb2Q==
-X-Received: by 2002:a05:622a:1aa2:b0:46e:12fc:6c83 with SMTP id d75a77b69052e-471afc434f9mr26501551cf.0.1739396121510;
-        Wed, 12 Feb 2025 13:35:21 -0800 (PST)
-Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4718911f3e6sm52249671cf.37.2025.02.12.13.35.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 13:35:21 -0800 (PST)
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-To: krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	richardcochran@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: [PATCH] soc: samsung: exynos-chipid: Add NULL pointer check in exynos_chipid_probe()
-Date: Wed, 12 Feb 2025 15:35:18 -0600
-Message-Id: <20250212213518.69432-1-chenyuan0y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739396129; c=relaxed/simple;
+	bh=dPr+vnBrIM9oQBt9wlCIsEQp6wnBtrVvN0kf7GZNHGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hYQT+og/4RXZTCNJQWi+lurg4C1Ei7vD9PPwhwZdk46eQ7/4v4HxpOUvOWm3hAYp3917MRycFsNoEbZMo//JmQiF4Y5ZRAfvhi3FHG8v1BNrW7CuSPdG8lL5sC4zpJwB/fwawE7z3Wl8g7K5U9e5nvbL+yPJBgFEwldonqmejOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leX7nYyM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FD0C4CEDF;
+	Wed, 12 Feb 2025 21:35:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739396128;
+	bh=dPr+vnBrIM9oQBt9wlCIsEQp6wnBtrVvN0kf7GZNHGg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=leX7nYyMfwkEI/YzNJhoLDthSV3QCZxkapgpaptBqxjaq/ATdfM+h0SiEeVzCtoDG
+	 1mNhu3zsUOecDQSjXSoFsRKrrnCTFE6n1Bmr1ZqLA7FSmFc+4TxcW35zTSBuMEkP0X
+	 FK4shXPY1etjckJ9ugz/G5maK9PbO4KBWRKrm+DcxYfcHCtQOHz88FhnQX/qHzujBx
+	 nW9oMsGEWhCLeZcTJ+Cct/WjY4wauaVT8aDTtAu2eWCVHUp+Asj4rOY7n2TuNkoauc
+	 xDzpXW3JpY53V5Tvgm3dao65k2Seu3V44imvunHfcs0m6PLTUyXIh7RFT4IX80BcxZ
+	 K1WH9XL9BQEqg==
+Date: Wed, 12 Feb 2025 13:35:26 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 13/35] x86/bugs: Restructure spectre_v2_user mitigation
+Message-ID: <20250212213526.2ztowz3z4r3lxplk@jpoimboe>
+References: <20250108202515.385902-1-david.kaplan@amd.com>
+ <20250108202515.385902-14-david.kaplan@amd.com>
+ <20250211005338.dqj5sg5sj7repdu6@jpoimboe>
+ <LV3PR12MB9265E26EEEA0670ABF7E9ABE94FC2@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB9265E26EEEA0670ABF7E9ABE94FC2@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-soc_dev_attr->revision could be NULL, thus,
-a pointer check is added to prevent potential NULL pointer dereference.
-This is similar to the fix in commit 3027e7b15b02
-("ice: Fix some null pointer dereference issues in ice_ptp.c").
+On Wed, Feb 12, 2025 at 03:59:39PM +0000, Kaplan, David wrote:
+> > On Wed, Jan 08, 2025 at 02:24:53PM -0600, David Kaplan wrote:
+> > > -     if (retbleed_mitigation == RETBLEED_MITIGATION_UNRET ||
+> > > -         retbleed_mitigation == RETBLEED_MITIGATION_IBPB) {
+> > > -             if (mode != SPECTRE_V2_USER_STRICT &&
+> > > -                 mode != SPECTRE_V2_USER_STRICT_PREFERRED)
+> > > +     if (spectre_v2_user_stibp != SPECTRE_V2_USER_NONE &&
+> > > +         (retbleed_mitigation == RETBLEED_MITIGATION_UNRET ||
+> > > +         retbleed_mitigation == RETBLEED_MITIGATION_IBPB)) {
+> >
+> > This adds a hidden dependency on retbleed_update_mitigation()?
+> 
+> Yeah I guess it does.  I'm not sure of a way to cleanly avoid this if
+> the logic is kept as-is, do you think it's ok just to document this
+> dependency explicitly?
 
-This issue is found by our static analysis tool.
+Yeah, if the dependencies can't be cleanly unwound, at least they should
+be explicitly documented with comments at the call sites, similar to
+what we attempt to do today.
 
-Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
----
- drivers/soc/samsung/exynos-chipid.c | 2 ++
- 1 file changed, 2 insertions(+)
+> The only case I think where this matters is if 'stuff' is selected for
+> retbleed, and then retbleed_update_mitigation decides you can't do
+> that and it has to re-select and may end up with unret or ibpb.  That
+> case doesn't even make much sense since 'retbleed=stuff' isn't a
+> mitigation for AMD.
 
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-index e37dde1fb588..95294462ff21 100644
---- a/drivers/soc/samsung/exynos-chipid.c
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -134,6 +134,8 @@ static int exynos_chipid_probe(struct platform_device *pdev)
- 
- 	soc_dev_attr->revision = devm_kasprintf(&pdev->dev, GFP_KERNEL,
- 						"%x", soc_info.revision);
-+	if (!soc_dev_attr->revision)
-+		return -ENOMEM;
- 	soc_dev_attr->soc_id = product_id_to_soc_id(soc_info.product_id);
- 	if (!soc_dev_attr->soc_id) {
- 		pr_err("Unknown SoC\n");
+True, though generally we should treat such things as hard dependencies.
+
+It would be really easy for a future person to come along and introduce
+a bug when they see the 'retbleed_mitigation' reference and assume the
+dependency has already been handled.
+
+So basically any "update" function which references the output of
+another "update" function should be treated as a dependency.  Because
+even it's not technically a dependency, that could easily change in the
+future without being noticed, with a patch to *either* of the functions.
+
+> One idea, which would involve changing the logic vs upstream, is that
+> 'retbleed=stuff' should only be allowed on Intel and it should be
+> converted to AUTO on AMD.  If that's the case, then there isn't really
+> a hidden dependency anymore since the retbleed mitigation will never
+> change to unret/ibpb during retbleed_update_mitigation().  Thoughts?
+
+Yeah, I'm strongly in favor of any such simplification.  We spend *way*
+too much maintenance effort on all these weird options and combinations
+which don't make sense.
+
 -- 
-2.34.1
-
+Josh
 
