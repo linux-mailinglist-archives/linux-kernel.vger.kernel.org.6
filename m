@@ -1,228 +1,123 @@
-Return-Path: <linux-kernel+bounces-510617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C62A31F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:03:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86441A3253C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED67D7A2BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:02:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA16F188A0A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEDE1FF1D6;
-	Wed, 12 Feb 2025 07:03:37 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D6520A5EE;
+	Wed, 12 Feb 2025 11:47:55 +0000 (UTC)
+Received: from sub0000529476.hmk-temp.com (mail.btob-mail.work [180.222.184.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5771FF1C8;
-	Wed, 12 Feb 2025 07:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BAA1DDA1B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.222.184.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739343817; cv=none; b=TOM0xJRC5lPNiGn2NN0iaoezkJYDJM0s9A5JBewynRxMamoOooosZJPdtFnKmgB/IHPNeDN6nmR4JQBC46HJVDNVxDTpm0QRRIx9k/SXMmxMR+ehYNaI63xKLH7svptoc+k8IrYGWn0BW5cIBWBZ44SWfYxOT5u5w6lzBcZOwOk=
+	t=1739360874; cv=none; b=b3ucCpkXLZJw7yh2K2KnsbVvlBeuA4YEuPrdtwSRU/zAAlCrFqcTQwIkXGJXyctjrPADLcTnsYYURWubDIJqaJejhk5f4hI01l7yS0p97HdrB1q4gY2RjmdWlR3YEmOuDO6Xwlozu+ai/sop0O5jjDayC+ya74KiovPykubjktA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739343817; c=relaxed/simple;
-	bh=Hjjh5CZxpHBr3a17is6d8bIBWnOgwJ0mtloGTX3Bkjo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fI0UDPFf8OAdpbyaUtCsY4xAeW74lzwdUFpDRUs3050FIvXWsN7a2SNeQwt0nY6GtQWoBNHeWdZC87CWeCCv2sekIdLd9sL41NykRsbANHhTWmWHbLhUWI2jLAAWPQSV+NEbKT7oRLOX+P73OTSTvrZ0++nrR4HO+KDDXkF6QKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAAXHW24R6xnvvadDA--.50898S2;
-	Wed, 12 Feb 2025 15:03:25 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	YiPeng.Chai@amd.com,
-	tao.zhou1@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: Remove redundant return value checks for amdgpu_ras_error_data_init
-Date: Wed, 12 Feb 2025 15:03:02 +0800
-Message-ID: <20250212070302.806-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1739360874; c=relaxed/simple;
+	bh=s5RkDWMsPAAnwYzVTws6XjcFf+hcblKo4FwS7fr7Sis=;
+	h=From:To:Subject:Content-Type:Date:Message-ID; b=Xi0/+Vbkmxm+y20pEGr590x99p76qZDb/pL2tla+7ZW3NRizeRIAcufmA35o1NHz7+0Z1BMjQdiF63Yj4P9I5xBNuPwKsr8HECrE0xr/+viedv89Ggjzh3XfHX2CyJhbeyCEPU7h3pKt+wLSVROth8tL6mY7IMdi4qx6ElMVofA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=saiyo-shien.biz; spf=fail smtp.mailfrom=saiyo-shien.biz; arc=none smtp.client-ip=180.222.184.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=saiyo-shien.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=saiyo-shien.biz
+Received: (qmail 377 invoked from network); 12 Feb 2025 15:10:16 +0900
+Received: from ai126146095188.53.access-internet.ne.jp (HELO DESKTOP-K0R8I4G) (126.146.95.188)
+  by mail.btob-mail.work with ESMTPSA (DHE-RSA-AES256-GCM-SHA384 encrypted, authenticated); 12 Feb 2025 15:10:16 +0900
+From: =?iso-2022-jp?B?V2l6Qml6GyRCM3Q8MDJxPFIbKEI=?= <info@saiyo-shien.biz>
+To: linux-kernel@vger.kernel.org
+Subject: =?iso-2022-jp?B?GyRCNDE4eEQjJCw1LjxSPiY6YCRyR2MkJCReJDkbKEI=?=
+X-Mailer: Mail Magic Professional Version 16
+Content-Type: text/plain;
+	charset=iso-2022-jp
+Date: Wed, 12 Feb 2025 16:03:55 +0900
+Message-ID: <202502121603550840.61AC5E50E9B44E719672592F716E3705@btob-mail.work>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAXHW24R6xnvvadDA--.50898S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuw17Xw4UZrW7Xw4fXrW3Awb_yoWxJrW7pF
-	WrJw1DZryUZFnrJrykAFyDuasIyw1SvFy8KF40ya4I93W5CrW5XF1rtw40q3ZrKr4DCwsI
-	vrWDW3yUWF1qvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeJ5rDUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ8LA2esAO-aZgAAsW
 
-The function amdgpu_ras_error_data_init() always returns 0, making its
-return value checks redundant. This patch changes its return type to
-void and removes all unnecessary checks in the callers.
+お世話になっております。
+WizBiz株式会社でございます。
 
-This simplifies the code and avoids confusion about the function's
-behavior. Additionally, this change keeps the usage consistent with
-amdgpu_ras_do_page_retirement(), which also does not check the return
-value.
+さまざまな経営のお役に立つ情報をお届けしております。
 
-Fixes: 5b1270beb380 ("drm/amdgpu: add ras_err_info to identify RAS error source")
-Cc: stable@vger.kernel.org # 6.7+
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 19 +++++--------------
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c |  8 ++------
- drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c  |  3 +--
- drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c  |  3 +--
- 5 files changed, 10 insertions(+), 25 deletions(-)
+国（＝官公庁）が中小企業との取引に使う費用として
+予算化している金額は、約5兆6,000億円（令和5年度）。
+実際に国と取引をしている企業は全体の「15%」しかありません、
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-index 4c9fa24dd972..aef1b2b713a2 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-@@ -182,9 +182,7 @@ static int amdgpu_reserve_page_direct(struct amdgpu_device *adev, uint64_t addre
- 		return 0;
- 	}
- 
--	ret = amdgpu_ras_error_data_init(&err_data);
--	if (ret)
--		return ret;
-+	amdgpu_ras_error_data_init(&err_data);
- 
- 	memset(&err_rec, 0x0, sizeof(struct eeprom_table_record));
- 	err_data.err_addr = &err_rec;
-@@ -687,8 +685,7 @@ static struct ras_manager *amdgpu_ras_create_obj(struct amdgpu_device *adev,
- 	if (alive_obj(obj))
- 		return NULL;
- 
--	if (amdgpu_ras_error_data_init(&obj->err_data))
--		return NULL;
-+	amdgpu_ras_error_data_init(&obj->err_data)
- 
- 	obj->head = *head;
- 	obj->adev = adev;
-@@ -1428,9 +1425,7 @@ static int amdgpu_ras_query_error_status_with_event(struct amdgpu_device *adev,
- 	if (!obj)
- 		return -EINVAL;
- 
--	ret = amdgpu_ras_error_data_init(&err_data);
--	if (ret)
--		return ret;
-+	amdgpu_ras_error_data_init(&err_data);
- 
- 	if (!amdgpu_ras_get_error_query_mode(adev, &error_query_mode))
- 		return -EINVAL;
-@@ -2255,9 +2250,7 @@ static void amdgpu_ras_interrupt_umc_handler(struct ras_manager *obj,
- 	if (!data->cb)
- 		return;
- 
--	ret = amdgpu_ras_error_data_init(&err_data);
--	if (ret)
--		return;
-+	amdgpu_ras_error_data_init(&err_data);
- 
- 	/* Let IP handle its data, maybe we need get the output
- 	 * from the callback to update the error type/count, etc
-@@ -4623,13 +4616,11 @@ void amdgpu_ras_inst_reset_ras_error_count(struct amdgpu_device *adev,
- 	}
- }
- 
--int amdgpu_ras_error_data_init(struct ras_err_data *err_data)
-+void amdgpu_ras_error_data_init(struct ras_err_data *err_data)
- {
- 	memset(err_data, 0, sizeof(*err_data));
- 
- 	INIT_LIST_HEAD(&err_data->err_node_list);
--
--	return 0;
- }
- 
- static void amdgpu_ras_error_node_release(struct ras_err_node *err_node)
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h
-index 6db772ecfee4..5f88e70fbf5c 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h
-@@ -931,7 +931,7 @@ void amdgpu_ras_inst_reset_ras_error_count(struct amdgpu_device *adev,
- 					   uint32_t reg_list_size,
- 					   uint32_t instance);
- 
--int amdgpu_ras_error_data_init(struct ras_err_data *err_data);
-+void amdgpu_ras_error_data_init(struct ras_err_data *err_data);
- void amdgpu_ras_error_data_fini(struct ras_err_data *err_data);
- int amdgpu_ras_error_statistic_ce_count(struct ras_err_data *err_data,
- 					struct amdgpu_smuio_mcm_config_info *mcm_info,
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c
-index 896f3609b0ee..5de6e332c2cd 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c
-@@ -52,9 +52,7 @@ int amdgpu_umc_page_retirement_mca(struct amdgpu_device *adev,
- 	struct ras_err_data err_data;
- 	int ret;
- 
--	ret = amdgpu_ras_error_data_init(&err_data);
--	if (ret)
--		return ret;
-+	amdgpu_ras_error_data_init(&err_data);
- 
- 	err_data.err_addr =
- 		kcalloc(adev->umc.max_ras_err_cnt_per_query,
-@@ -230,9 +228,7 @@ int amdgpu_umc_pasid_poison_handler(struct amdgpu_device *adev,
- 			};
- 			struct ras_manager *obj = amdgpu_ras_find_obj(adev, &head);
- 
--			ret = amdgpu_ras_error_data_init(&err_data);
--			if (ret)
--				return ret;
-+			amdgpu_ras_error_data_init(&err_data);
- 
- 			ret = amdgpu_umc_do_page_retirement(adev, &err_data, NULL, reset);
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c b/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
-index a26a9be58eac..d4bdfe280c88 100644
---- a/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
-+++ b/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
-@@ -364,8 +364,7 @@ static void nbio_v7_4_handle_ras_controller_intr_no_bifring(struct amdgpu_device
- 	struct ras_err_data err_data;
- 	struct amdgpu_ras *ras = amdgpu_ras_get_context(adev);
- 
--	if (amdgpu_ras_error_data_init(&err_data))
--		return;
-+	amdgpu_ras_error_data_init(&err_data);
- 
- 	if (adev->asic_type == CHIP_ALDEBARAN)
- 		bif_doorbell_intr_cntl = RREG32_SOC15(NBIO, 0, mmBIF_DOORBELL_INT_CNTL_ALDE);
-diff --git a/drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c b/drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c
-index 8a0a63ac88d2..c79ed1adf681 100644
---- a/drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c
-+++ b/drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c
-@@ -537,8 +537,7 @@ static void nbio_v7_9_handle_ras_controller_intr_no_bifring(struct amdgpu_device
- 	struct ras_err_data err_data;
- 	struct amdgpu_ras *ras = amdgpu_ras_get_context(adev);
- 
--	if (amdgpu_ras_error_data_init(&err_data))
--		return;
-+	amdgpu_ras_error_data_init(&err_data);
- 
- 	bif_doorbell_intr_cntl = RREG32_SOC15(NBIO, 0, regBIF_BX0_BIF_DOORBELL_INT_CNTL);
- 
--- 
-2.42.0.windows.2
+これだけ大きな予算＝マーケットをいかに攻略すれば良いのか？
+そんな疑問を55分で解消する無料セミナーを開催致します。
 
+◆オンラインセミナーの詳細・お申込みはこちら（無料）
+https://wizbiz.jp/seminar/40384/
+
+国＝官公庁といっても、営業ターゲットになるのは、霞が関の中央省庁だけではありません。
+全国各地にターゲットはあります。全国にどれくらい官公庁があるのかを調べてみました。
+
+〜北海道・東北地方〜 1017先
+北海道、青森、岩手、宮城、秋田、山形、福島の７道県
+
+〜関東地方〜 1297先
+群馬、栃木、茨城、埼玉、千葉、東京、神奈川、山梨の８都県
+
+〜中部地方〜 755先
+静岡、愛知、岐阜、三重、福井、石川、富山、新潟、長野の９県
+
+〜近畿地方〜 534先
+滋賀、京都、奈良、和歌山、大阪、兵庫の６府県
+
+〜中国・四国地方、九州・沖縄地方〜 1,328先
+岡山、広島、山口、鳥取、島根、香川、愛媛、徳島、高知、福岡、佐賀、長崎、大分、熊本、宮崎、鹿児島、沖縄の17県
+（順不同）
+
+各地にこれだけの官公庁＝国の行政機関があります。（WizBiz株式会社調べ）
+
+実は、皆さんの地元にあるこれら国の行政機関が、
+新規開拓にはうってつけなのです。 その理由は・・・
+
+★国の行政機関は地元の中小企業と取引しなければならないという法律がある
+★そのための年間予算は、５兆６千億円を超える（令和5年度実績）
+★入札以外にも国と取引する方法があるのに、そんなことを知っている経営者はほとんどいない
+★実際に、国と取引している中小企業はわずか15％しかいない
+★つまり全国の15％の企業で５兆６千億円が独り占めされており、85％の企業は蚊帳の外にいる
+
+つまり国は、地元中小企業と取引するために準備万端なのに、
+中小企業側がアプローチしていないのです。
+
+この事実に、もったいないと感じた経営者様、
+ぜひ一度セミナーをお聞きになり、国との取引にチャレンジしてみませんか？
+
+◆セミナーの詳細・お申込みはこちら（無料）
+https://wizbiz.jp/seminar/40384/
+
+【セミナーで解説する内容を一部ご紹介！】
+
+◎国は中小企業と取引しなければないらない、という「法律」
+◎売上アップ以外にも存在する大きなメリット
+◎どうやって国と新規取引をすればいいのか？
+◎実際に発注を受けた中小企業が国から貰っている金額
+
+マイク、カメラ不要の無料セミナーとなっております。
+お気軽にご参加ください。
+
+◆セミナーの詳細・お申込みはこちら（無料）
+https://wizbiz.jp/seminar/40384/
+
+===================================
+メールの配信停止をご希望の方はお手数をお掛けしますが、
+以下よりお手続きをお願い致します。
+https://form.os7.biz/f/ed730f94/
+===================================
+運営会社：WizBiz株式会社
+住所：東京都港区芝5-16-7　芝ビル3F
+電話：03-6809-3845
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
