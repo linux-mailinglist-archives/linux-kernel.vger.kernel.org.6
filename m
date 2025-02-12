@@ -1,164 +1,81 @@
-Return-Path: <linux-kernel+bounces-511505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75295A32BFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:39:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51B6A32BFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8972C3AB738
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:37:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60600167B6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB98254B0F;
-	Wed, 12 Feb 2025 16:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cka/+aPn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CE4256C74;
+	Wed, 12 Feb 2025 16:37:21 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052CD1E7C19;
-	Wed, 12 Feb 2025 16:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF03D1E7C19;
+	Wed, 12 Feb 2025 16:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739378228; cv=none; b=YpPcnFefLipAtIfbk9PyaknaYwmCEvV5gW8MXAcbEYyJD1L1/DVCVJzbMUDujfoJTAoK9s8+MqPe/O7WSVv+6ZG3slD0JIHK+B3dUW5IOPNctvnfkN1EI+cQt66kw8ELeXnr/NaMIM3tZw+SX/lAcKMMp4TOAh1PDJDmpdmkMBA=
+	t=1739378240; cv=none; b=r/mSqIFpkZGA74OtmO3MSRd1l06lf8Q1JOENUcVVxXs+qID51V5cLovyPZClHLsHjcSx4xwO382z4K4kSxuHfPk3jdkZpZ+N0V/KICYDvpuqhe0r4bGS8np3Y/vIG936JQUAoOoq4k2FeUCCXnejztMXp6LzASF0uIb9b54tpAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739378228; c=relaxed/simple;
-	bh=P6aII8ilsDybwTSbYzyPmA7MsJN4GMm9OftXYL5dhUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oXcsyZJpXD4Dh2S4BI6zC/4Fawh2RBMUwM9z7DlSuGTqdOTU7KrRUtFbev9fDp0XjYHBxiufqUzjQ1JUuemOEvt3Qbm+6ttZD8CFadzVCGFmMYvrxwUgEbKnUlBRrB7+6wbMRltcbyzHOsytI3vlQt3/X+TvPWUASkAdWRoNTZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cka/+aPn; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739378227; x=1770914227;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=P6aII8ilsDybwTSbYzyPmA7MsJN4GMm9OftXYL5dhUw=;
-  b=Cka/+aPnwHuCXHJ6omvU7q6vxq95iyWJEqdX0AbT8u/dnq1fw+YTaSVT
-   Tab4lu562ffNcwtNKclNUY1sUMdvnqj6aLXiRjew63yyt/7ZbgUJa5Asq
-   bJ1PzeRZBxEbhUxi4jzBMJ6eicZf8O+F5w+CtyGY4UdpK8VrvBAqY6T84
-   nE78ppJQ3wl9/E4Zt/+fMXAWV0CoAAYi+4QCvzgbW+83j2jScngKgelf1
-   PtoCc/uXNOWLJnjahNTkE23StufXLvadKc1NjYK86dOp1VlDF+3wVeGHG
-   Hz/dfRl9E9gATCFdeW4aX/46k0gW3uZURBH82hBc+20QIfcgSnZyKAWo7
-   A==;
-X-CSE-ConnectionGUID: qgZOSIjgThCNAUa1i+G+8Q==
-X-CSE-MsgGUID: Kk9VdGl/QgqnTu2AGs7Apw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39280410"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="39280410"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:37:05 -0800
-X-CSE-ConnectionGUID: BHLNabmMSCuW5RGaffta8w==
-X-CSE-MsgGUID: Jni5FjuLTdKM4CS9pQzuWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="112643531"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 12 Feb 2025 08:37:04 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 7A1D911E; Wed, 12 Feb 2025 18:37:02 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] i2c: core: Propagate all possible errors when requesting recovery GPIOs
-Date: Wed, 12 Feb 2025 18:37:01 +0200
-Message-ID: <20250212163701.2407540-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
+	s=arc-20240116; t=1739378240; c=relaxed/simple;
+	bh=Kw8B3dUBG9Eghh1JxxFzYc5q2wSxP2wh0YJV67MTC6s=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OpydowEciQjNNsJG0VfV6kmNnMT/TeUrj9GYIIA8r5JqEkEhr+ip6lbp8kakbxxKJKdRpWN77s0ybCjwZiJPpwvixqozgj1fdns93Hw4Ldm38X/7pIhaxLVa6NfDja5wTE1MR744b6Xm0B53uWw6h6luJKTb2Ds6YbGefepxO70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YtP6g0hPbz6H7TG;
+	Thu, 13 Feb 2025 00:34:51 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 93583140136;
+	Thu, 13 Feb 2025 00:37:16 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 12 Feb
+ 2025 17:37:15 +0100
+Date: Wed, 12 Feb 2025 16:37:14 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
+	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
+	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
+	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
+	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
+	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
+Subject: Re: [PATCH v3 4/9] ACPI: APEI: EINJ: Remove redundant calls to
+ einj_get_available_error_type
+Message-ID: <20250212163714.00002433@huawei.com>
+In-Reply-To: <20250210183705.1114624-5-zaidal@os.amperecomputing.com>
+References: <20250210183705.1114624-1-zaidal@os.amperecomputing.com>
+	<20250210183705.1114624-5-zaidal@os.amperecomputing.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-If GPIO is available but we can't get it by some other, than deferred probe,
-reason, propagate it to the caller.
+On Mon, 10 Feb 2025 10:37:00 -0800
+Zaid Alali <zaidal@os.amperecomputing.com> wrote:
 
-No functional change since i2c_register_adapter() still cares only about
-deferred probe.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/i2c/i2c-core-base.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 35a221e2c11c..8c0d8793a2c2 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -374,19 +374,20 @@ static int i2c_gpio_init_generic_recovery(struct i2c_adapter *adap)
- 	 * GPIO recovery is available
- 	 */
- 	if (!bri->scl_gpiod) {
--		gpiod = devm_gpiod_get(dev, "scl", GPIOD_OUT_HIGH_OPEN_DRAIN);
--		if (PTR_ERR(gpiod) == -EPROBE_DEFER) {
--			ret  = -EPROBE_DEFER;
-+		gpiod = devm_gpiod_get_optional(dev, "scl", GPIOD_OUT_HIGH_OPEN_DRAIN);
-+		if (IS_ERR(gpiod)) {
-+			ret = PTR_ERR(gpiod);
- 			goto cleanup_pinctrl_state;
- 		}
--		if (!IS_ERR(gpiod)) {
-+
-+		if (gpiod) {
- 			bri->scl_gpiod = gpiod;
- 			bri->recover_bus = i2c_generic_scl_recovery;
- 			dev_info(dev, "using generic GPIOs for recovery\n");
- 		}
- 	}
- 
--	/* SDA GPIOD line is optional, so we care about DEFER only */
-+	/* SDA GPIO line is optional */
- 	if (!bri->sda_gpiod) {
- 		/*
- 		 * We have SCL. Pull SCL low and wait a bit so that SDA glitches
-@@ -394,18 +395,19 @@ static int i2c_gpio_init_generic_recovery(struct i2c_adapter *adap)
- 		 */
- 		gpiod_direction_output(bri->scl_gpiod, 0);
- 		udelay(10);
--		gpiod = devm_gpiod_get(dev, "sda", GPIOD_IN);
-+
-+		gpiod = devm_gpiod_get_optional(dev, "sda", GPIOD_IN);
- 
- 		/* Wait a bit in case of a SDA glitch, and then release SCL. */
- 		udelay(10);
- 		gpiod_direction_output(bri->scl_gpiod, 1);
- 
--		if (PTR_ERR(gpiod) == -EPROBE_DEFER) {
--			ret = -EPROBE_DEFER;
-+		if (IS_ERR(gpiod)) {
-+			ret = PTR_ERR(gpiod);
- 			goto cleanup_pinctrl_state;
- 		}
--		if (!IS_ERR(gpiod))
--			bri->sda_gpiod = gpiod;
-+
-+		bri->sda_gpiod = gpiod;
- 	}
- 
- cleanup_pinctrl_state:
-@@ -427,12 +429,14 @@ static int i2c_init_recovery(struct i2c_adapter *adap)
- 	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
- 	bool is_error_level = true;
- 	char *err_str;
-+	int ret;
- 
- 	if (!bri)
- 		return 0;
- 
--	if (i2c_gpio_init_recovery(adap) == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	ret = i2c_gpio_init_recovery(adap);
-+	if (ret)
-+		return ret;
- 
- 	if (!bri->recover_bus) {
- 		err_str = "no suitable method provided";
--- 
-2.45.1.3035.g276e886db78b
-
+> A single call to einj_get_available_error_type in init function is
+> sufficient to save the return value in a global variable to be used
+> later in various places in the code. This commit does not introduce
+> any functional changes, but only removing unnecessary redundant
+> function calls.
+> 
+> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+Seems reasonable to me.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
