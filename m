@@ -1,235 +1,257 @@
-Return-Path: <linux-kernel+bounces-511470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABECA32B76
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:21:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE50A32B57
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 202291886A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801EE3A3EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8862505AB;
-	Wed, 12 Feb 2025 16:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E40320F08B;
+	Wed, 12 Feb 2025 16:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="O3oaqEA/"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NJDcyJht"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0E51E766F;
-	Wed, 12 Feb 2025 16:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC31271838
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739377287; cv=none; b=JfeDrXzMhujVEEWCuZ8tnNZ5cZsCbYDJHUbIrZmWCKC3uPDN/8MaQFX4gTUKW4cgoIXk8u+o8Dcr9hXC2UKQbd8uYqiA5+tVpY427wMCdiYaiPcvBe7XGbWK4ig8ZzrPdQEEXFEwuSgJre+LMR9UXC9q8VKFAcBSwWjHGMDCaeU=
+	t=1739377103; cv=none; b=juNRlMRpVOqRZhmwfm5mlRPfiV69pp3IF8AWCBuPrDC2ccLiKiN8y4az3emWczYPvY+u+ogKU14dCudDc5bi+Er5DK1e+eR+6Scb7Xy0nVJDHcQ+gM9NVHx0dEsv1WVm0EwzmaeCQ6vv8DDTBu8odTkbICUVS4uoA5sH/kyRQHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739377287; c=relaxed/simple;
-	bh=z4pD2fMb4hRFmdx5+gLlEVAWZjHiex8kRw5CMtBT0i4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RDUjQaMFkRW84t6PuX/ay4pXlDs3x2hQdFDqhCg1Q8HvhBqumm7NOv5S20UMbCX8bEa9qtjn0AwbAAe2B5ZjD//Oq+AdYUeZuG3QmWphHBPXWYPu9LBPrJl8X0smuzicnhIufuHa24Vt9g6D1mh0F7Z/wOon9kJ6ju8nmW9LXx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=O3oaqEA/; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CEZrrx028666;
-	Wed, 12 Feb 2025 17:21:04 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	jtTH0NF2OZaw1ZQ29k/edA3IlfDQAywZ7oVCTbLG9zs=; b=O3oaqEA/I/lcZQ2m
-	L4kKOKxdlg+mTI3oe8flHZaFC54+QBIP6ufNUw+9Vug4ge6cvCnybHkvS89vlbua
-	nPMOQAcCAmGy0FWs2dVlzwciSyJW4ajOKcbnNyM5Bpayc8byOg+D7owhSaWEG6RC
-	kx57t5x5X4/dM/3TTCcwrzvFERdR2KCqI7GqTYPOWcehTB8N0kz6Wry6T9z2SAqH
-	z5gKqsQ1izvugw4GN76xM64b52RzsyF9bkVwUKE6AL0igM6V1UAf4MbPsJpZtD4X
-	kU5IQJ5oGVFsZ7OE4QS2vHQNBZtMqG4kLlN5SKjBdZHW4yEgQOhNwyA8mUN4GV2a
-	3eSXdQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44rrfk295h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 17:21:04 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E769340045;
-	Wed, 12 Feb 2025 17:19:36 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D05BA2CBC8E;
-	Wed, 12 Feb 2025 17:17:56 +0100 (CET)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Feb
- 2025 17:17:55 +0100
-Message-ID: <52e74ce3-8ad0-4b42-b959-66ab70ac8501@foss.st.com>
-Date: Wed, 12 Feb 2025 17:17:55 +0100
+	s=arc-20240116; t=1739377103; c=relaxed/simple;
+	bh=FqD0mJejr8NNmIXd9wk8XEQVYpTrD0Yl9WNLvbJBuys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sc/Jx77TBbWXlmnDwwjanaFK6jyXMu5fqUFJNDJuHulWdMc4EQ5Jk7gu2rbY7VIzHbhtM7BrBEdKWA/Hqb34gw4IWZD97uu7hVsZNNMT2F20sc0YGDIFJacHupL5R+dFrxRWbVvcAW2AKVV/jA+03HwBL/NDXSgXF4xnncxpr0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NJDcyJht; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 12 Feb 2025 16:18:14 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739377099;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8sbZGIrU5ceW1xiKOedooUcjCQRIvPjuNItFFd09wtg=;
+	b=NJDcyJht7AeI00TfUWJEpc2hJhV354L8qmqv/6HzUweMk/x7EIPRjW3crYfABZYrwsLjpQ
+	67Lx5lBG53DcezBuXvk6LKLVIvMFqWPi7OtIh/t8Z6no1UtUZ3CrPDsmAqkK8EA7HxIRkB
+	8NQC68RVipcjk2EDOVuni+N93c8vVvA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 10/18] zsmalloc: factor out pool locking helpers
+Message-ID: <Z6zJxvLbRQ6pKtue@google.com>
+References: <20250212063153.179231-1-senozhatsky@chromium.org>
+ <20250212063153.179231-11-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/8] memory: Add STM32 Octo Memory Manager driver
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC: <alexandre.torgue@foss.st.com>, <arnd@arndb.de>, <broonie@kernel.org>,
-        <catalin.marinas@arm.com>, <christophe.kerello@foss.st.com>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <krzk+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <mcoquelin.stm32@gmail.com>, <p.zabel@pengutronix.de>,
-        <robh@kernel.org>, <will@kernel.org>
-References: <20250210131826.220318-1-patrice.chotard@foss.st.com>
- <20250210131826.220318-5-patrice.chotard@foss.st.com>
- <a74c3202-7a64-483d-907e-9a562e9dcd03@wanadoo.fr>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <a74c3202-7a64-483d-907e-9a562e9dcd03@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212063153.179231-11-senozhatsky@chromium.org>
+X-Migadu-Flow: FLOW_OUT
 
+On Wed, Feb 12, 2025 at 03:27:08PM +0900, Sergey Senozhatsky wrote:
+> We currently have a mix of migrate_{read,write}_lock() helpers
+> that lock zspages, but it's zs_pool that actually has a ->migrate_lock
+> access to which is opene-coded.  Factor out pool migrate locking
+> into helpers, zspage migration locking API will be renamed to
+> reduce confusion.
+> 
+> It's worth mentioning that zsmalloc locks sync not only migration,
+> but also compaction.
+> 
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
+FWIW I don't see a lot of value in the helpers (renaming the lock is
+useful tho). We open-code other locks like the class lock anyway, and
+the helpers obscure the underlying lock type without adding much value
+in terms of readability/conciseness.
 
-On 2/11/25 19:16, Christophe JAILLET wrote:
-> Le 10/02/2025 à 14:18, patrice.chotard-rj0Iel/JR4NBDgjK7y7TUQ@public.gmane.org a écrit :
->> From: Patrice Chotard <patrice.chotard-rj0Iel/JR4NBDgjK7y7TUQ@public.gmane.org>
->>
->> Octo Memory Manager driver (OMM) manages:
->>    - the muxing between 2 OSPI busses and 2 output ports.
->>      There are 4 possible muxing configurations:
->>        - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
->>          output is on port 2
->>        - OSPI1 and OSPI2 are multiplexed over the same output port 1
->>        - swapped mode (no multiplexing), OSPI1 output is on port 2,
->>          OSPI2 output is on port 1
->>        - OSPI1 and OSPI2 are multiplexed over the same output port 2
->>    - the split of the memory area shared between the 2 OSPI instances.
->>    - chip select selection override.
->>    - the time between 2 transactions in multiplexed mode.
->>    - check firewall access.
+> ---
+>  mm/zsmalloc.c | 63 +++++++++++++++++++++++++++++++++++----------------
+>  1 file changed, 44 insertions(+), 19 deletions(-)
 > 
-> ...
-> 
->> diff --git a/drivers/memory/stm32_omm.c b/drivers/memory/stm32_omm.c
->> new file mode 100644
->> index 000000000000..af69137bfba2
->> --- /dev/null
->> +++ b/drivers/memory/stm32_omm.c
->> @@ -0,0 +1,520 @@
->> +// SPDX-License-Identifier: GPL
-> 
-> Not sure this SPDX-License-Identifier exists.
-
-Right, i will fix that.
-
-> 
->> +/*
->> + * Copyright (C) STMicroelectronics 2024 - All Rights Reserved
-> 
-> ...
-> 
->> +    pm_runtime_enable(dev);
->> +
->> +    /* check if OMM's resource access is granted */
->> +    ret = stm32_omm_check_access(dev, dev->of_node);
->> +    if (ret < 0 && ret != -EACCES)
->> +        goto err_clk_release;
-> 
-> Should we call, here and below, pm_runtime_disable() in the error handling path, as done in the remove function?
-
-right, i will add it.
-
-> 
->> +
->> +    if (!ret && child_access_granted == OMM_CHILD_NB) {
->> +        /* Ensure both OSPI instance are disabled before configuring OMM */
->> +        ret = stm32_omm_disable_child(dev);
->> +        if (ret)
->> +            goto err_clk_release;
->> +
->> +        ret = stm32_omm_configure(dev);
->> +        if (ret)
->> +            goto err_clk_release;
->> +    } else {
->> +        dev_dbg(dev, "Octo Memory Manager resource's access not granted\n");
->> +        /*
->> +         * AMCR can't be set, so check if current value is coherent
->> +         * with memory-map areas defined in DT
->> +         */
->> +        ret = stm32_omm_set_amcr(dev, false);
->> +        if (ret)
->> +            goto err_clk_release;
->> +    }
->> +
->> +    /* for each child, if resource access is granted and status "okay", probe it */
->> +    for (i = 0; i < omm->nb_child; i++) {
->> +        if (!child_access[i] || !of_device_is_available(omm->child[i].node))
->> +            continue;
->> +
->> +        vdev = of_platform_device_create(omm->child[i].node, NULL, NULL);
->> +        if (!vdev) {
->> +            dev_err(dev, "Failed to create Octo Memory Manager child\n");
->> +            for (j = i; j > 0; --j) {
->> +                if (omm->child[j].dev)
->> +                    of_platform_device_destroy(omm->child[j].dev, NULL);
->> +            }
->> +
->> +            ret = -EINVAL;
->> +            goto err_clk_release;
->> +        }
->> +        omm->child[i].dev = &vdev->dev;
->> +    }
->> +
->> +err_clk_release:
->> +    for (i = 0; i < omm->nb_child; i++)
->> +        clk_put(omm->child[i].clk);
->> +
->> +    return ret;
->> +}
->> +
->> +static void stm32_omm_remove(struct platform_device *pdev)
->> +{
->> +    struct stm32_omm *omm = platform_get_drvdata(pdev);
->> +    int i;
->> +
->> +    for (i = 0; i < omm->nb_child; i++)
->> +        if (omm->child[i].dev)
->> +            of_platform_device_destroy(omm->child[i].dev, NULL);
->> +
->> +    if (omm->cr & CR_MUXEN)
->> +        stm32_omm_enable_child_clock(&pdev->dev, false);
->> +
->> +    pm_runtime_disable(&pdev->dev);
-> 
-> Should we have:
->     for (i = 0; i < omm->nb_child; i++)
->         clk_put(omm->child[i].clk);
-> as done in the error handling path of the probe?
-
-no need, as child's clock are always freed in stm32_omm_probe() in all cases.
-
-> 
->> +}
->> +
->> +static const struct of_device_id stm32_omm_of_match[] = {
->> +    { .compatible = "st,stm32mp25-omm", },
->> +    {},
-> 
-> Nitpick: Unneeded , after a terminator.
-
-ok
-
-> 
->> +};
->> +MODULE_DEVICE_TABLE(of, stm32_omm_of_match);
-> 
-> ...
-> 
-> CJ
-> 
-> 
+> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+> index 6d0e47f7ae33..47c638df47c5 100644
+> --- a/mm/zsmalloc.c
+> +++ b/mm/zsmalloc.c
+> @@ -18,7 +18,7 @@
+>  /*
+>   * lock ordering:
+>   *	page_lock
+> - *	pool->migrate_lock
+> + *	pool->lock
+>   *	class->lock
+>   *	zspage->lock
+>   */
+> @@ -224,10 +224,35 @@ struct zs_pool {
+>  	struct work_struct free_work;
+>  #endif
+>  	/* protect page/zspage migration */
+> -	rwlock_t migrate_lock;
+> +	rwlock_t lock;
+>  	atomic_t compaction_in_progress;
+>  };
+>  
+> +static void pool_write_unlock(struct zs_pool *pool)
+> +{
+> +	write_unlock(&pool->lock);
+> +}
+> +
+> +static void pool_write_lock(struct zs_pool *pool)
+> +{
+> +	write_lock(&pool->lock);
+> +}
+> +
+> +static void pool_read_unlock(struct zs_pool *pool)
+> +{
+> +	read_unlock(&pool->lock);
+> +}
+> +
+> +static void pool_read_lock(struct zs_pool *pool)
+> +{
+> +	read_lock(&pool->lock);
+> +}
+> +
+> +static bool pool_lock_is_contended(struct zs_pool *pool)
+> +{
+> +	return rwlock_is_contended(&pool->lock);
+> +}
+> +
+>  static inline void zpdesc_set_first(struct zpdesc *zpdesc)
+>  {
+>  	SetPagePrivate(zpdesc_page(zpdesc));
+> @@ -1206,7 +1231,7 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
+>  	BUG_ON(in_interrupt());
+>  
+>  	/* It guarantees it can get zspage from handle safely */
+> -	read_lock(&pool->migrate_lock);
+> +	pool_read_lock(pool);
+>  	obj = handle_to_obj(handle);
+>  	obj_to_location(obj, &zpdesc, &obj_idx);
+>  	zspage = get_zspage(zpdesc);
+> @@ -1218,7 +1243,7 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
+>  	 * which is smaller granularity.
+>  	 */
+>  	migrate_read_lock(zspage);
+> -	read_unlock(&pool->migrate_lock);
+> +	pool_read_unlock(pool);
+>  
+>  	class = zspage_class(pool, zspage);
+>  	off = offset_in_page(class->size * obj_idx);
+> @@ -1450,16 +1475,16 @@ void zs_free(struct zs_pool *pool, unsigned long handle)
+>  		return;
+>  
+>  	/*
+> -	 * The pool->migrate_lock protects the race with zpage's migration
+> +	 * The pool->lock protects the race with zpage's migration
+>  	 * so it's safe to get the page from handle.
+>  	 */
+> -	read_lock(&pool->migrate_lock);
+> +	pool_read_lock(pool);
+>  	obj = handle_to_obj(handle);
+>  	obj_to_zpdesc(obj, &f_zpdesc);
+>  	zspage = get_zspage(f_zpdesc);
+>  	class = zspage_class(pool, zspage);
+>  	spin_lock(&class->lock);
+> -	read_unlock(&pool->migrate_lock);
+> +	pool_read_unlock(pool);
+>  
+>  	class_stat_sub(class, ZS_OBJS_INUSE, 1);
+>  	obj_free(class->size, obj);
+> @@ -1793,10 +1818,10 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+>  	pool = zspage->pool;
+>  
+>  	/*
+> -	 * The pool migrate_lock protects the race between zpage migration
+> +	 * The pool lock protects the race between zpage migration
+>  	 * and zs_free.
+>  	 */
+> -	write_lock(&pool->migrate_lock);
+> +	pool_write_lock(pool);
+>  	class = zspage_class(pool, zspage);
+>  
+>  	/*
+> @@ -1833,7 +1858,7 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+>  	 * Since we complete the data copy and set up new zspage structure,
+>  	 * it's okay to release migration_lock.
+>  	 */
+> -	write_unlock(&pool->migrate_lock);
+> +	pool_write_unlock(pool);
+>  	spin_unlock(&class->lock);
+>  	migrate_write_unlock(zspage);
+>  
+> @@ -1956,7 +1981,7 @@ static unsigned long __zs_compact(struct zs_pool *pool,
+>  	 * protect the race between zpage migration and zs_free
+>  	 * as well as zpage allocation/free
+>  	 */
+> -	write_lock(&pool->migrate_lock);
+> +	pool_write_lock(pool);
+>  	spin_lock(&class->lock);
+>  	while (zs_can_compact(class)) {
+>  		int fg;
+> @@ -1983,14 +2008,14 @@ static unsigned long __zs_compact(struct zs_pool *pool,
+>  		src_zspage = NULL;
+>  
+>  		if (get_fullness_group(class, dst_zspage) == ZS_INUSE_RATIO_100
+> -		    || rwlock_is_contended(&pool->migrate_lock)) {
+> +		    || pool_lock_is_contended(pool)) {
+>  			putback_zspage(class, dst_zspage);
+>  			dst_zspage = NULL;
+>  
+>  			spin_unlock(&class->lock);
+> -			write_unlock(&pool->migrate_lock);
+> +			pool_write_unlock(pool);
+>  			cond_resched();
+> -			write_lock(&pool->migrate_lock);
+> +			pool_write_lock(pool);
+>  			spin_lock(&class->lock);
+>  		}
+>  	}
+> @@ -2002,7 +2027,7 @@ static unsigned long __zs_compact(struct zs_pool *pool,
+>  		putback_zspage(class, dst_zspage);
+>  
+>  	spin_unlock(&class->lock);
+> -	write_unlock(&pool->migrate_lock);
+> +	pool_write_unlock(pool);
+>  
+>  	return pages_freed;
+>  }
+> @@ -2014,10 +2039,10 @@ unsigned long zs_compact(struct zs_pool *pool)
+>  	unsigned long pages_freed = 0;
+>  
+>  	/*
+> -	 * Pool compaction is performed under pool->migrate_lock so it is basically
+> +	 * Pool compaction is performed under pool->lock so it is basically
+>  	 * single-threaded. Having more than one thread in __zs_compact()
+> -	 * will increase pool->migrate_lock contention, which will impact other
+> -	 * zsmalloc operations that need pool->migrate_lock.
+> +	 * will increase pool->lock contention, which will impact other
+> +	 * zsmalloc operations that need pool->lock.
+>  	 */
+>  	if (atomic_xchg(&pool->compaction_in_progress, 1))
+>  		return 0;
+> @@ -2139,7 +2164,7 @@ struct zs_pool *zs_create_pool(const char *name)
+>  		return NULL;
+>  
+>  	init_deferred_free(pool);
+> -	rwlock_init(&pool->migrate_lock);
+> +	rwlock_init(&pool->lock);
+>  	atomic_set(&pool->compaction_in_progress, 0);
+>  
+>  	pool->name = kstrdup(name, GFP_KERNEL);
+> -- 
+> 2.48.1.502.g6dc24dfdaf-goog
 > 
 
