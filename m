@@ -1,226 +1,136 @@
-Return-Path: <linux-kernel+bounces-511131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7795DA32656
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:56:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D30A32659
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3543D1888839
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08B5188910F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02C820CCD3;
-	Wed, 12 Feb 2025 12:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B66320DD5C;
+	Wed, 12 Feb 2025 12:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I+I5eKY3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="bNQmCJ/E"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B52C2046BE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60855271824;
+	Wed, 12 Feb 2025 12:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364966; cv=none; b=N9zpDPonXf0ZqtpSg1wrCY04q9NzNKzpmO9Ci8Ovljyap/JkndUAw0/DLe6cGxi3al58EelUr38Jb+PbMB3uT/3UpRzTVFCbFHvGO77BOtQdbvFz9HQFL7oWpaE4+w9RmBmh7lgdcVh2s5cAowusDOfyO9UeWwb/BnYhK3whhPk=
+	t=1739364996; cv=none; b=Hpzv8qiMu0Bq6mpbFzxiGO1ztSEO9b+Bvhsxzwa52ZMlOFxtLV4bfMVbGMUSi77THcFR4bngtDrI959wcLboYXhsKVuIgMSBIbJ9LkNDpafg5l2S5RC9ZUcQA6ItpN2II2BBkqeC8ijrhWkyD3AyMQC7j9R+z1Yz60WXJNrc8dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364966; c=relaxed/simple;
-	bh=khCDu6D+a72YvB4zT8c20mSv6D4DLmYGwUIHI1U3gCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z7mFPsA7b/F0OQWtbdKQUUF/ZIjkdWtaEsCgJXeYyICnPXId046p3u0e02uSPsqmEHD2vHdiIo4u3G4BK4qCWRTijfsLr1VHYqP/e391/zpLxRbIgH9p/53xsWHIE0rTuEm740GPozZ+BOHCAtoG3xu+cocUYaZ1jV0JAKf/q7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I+I5eKY3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C92kb5031920
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:56:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5Xcp6yRYRlRMXuclTG7bgL1rCb1qEu5Tl7xJL9ykhdw=; b=I+I5eKY34w5X3xIr
-	bcw9ze8TendL06csh9gdmSYr6dFFEY+vdaYXj+FeknlFqplBbiV6RwPZ/XBa+0Qx
-	Y9ritnvoRhEXuk1zijJuwzuN7xzUgTNhYDQQD+ufWuOJcFdgtjDl3HWvVdHxHkOY
-	uBDqoQlO5Ev2SjTULEm4+9YNW+YZQn+d+Dfr9VNaja3XvrCpf8ipMj/qbBjSMCwy
-	N2hYPrevgqfbwkGu4L95US84uZFjrtk8/7QbTfJpoFJMIQpOlaUugdEj+yEfWmOI
-	rpMlE0yvx7BTOg5FHuRTKn4844egT5j4pRD9VLo1lcZUCcrHDihKlBaxYyOmqYW4
-	EysJFA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qgtk75mm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:56:03 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-471ad2e69d6so1837831cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:56:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739364962; x=1739969762;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Xcp6yRYRlRMXuclTG7bgL1rCb1qEu5Tl7xJL9ykhdw=;
-        b=f8+k3N+xDWpS5oRargTT+nzSdffEkTJJN3SptzIS9SLsJ4RA9f12oDMnL15189gEDj
-         G1wXT3CF4+PRJHYmYOFTB9IHFW7XvkI2iM6hCRClAHeDtpUV3rk35yQIZxMu9SQoQ680
-         UId5CUa8jiaM24OzEyjH3nYsST9wtFJvGdSs6b+9noU9KgXB5cwKcUEyHKOTwnyxxLFY
-         FA46FHlt6y0nH4KcWY5GiHc/qz6g/MKdjxKPiy21brWBJkzx3wzJMJXMeSLGgEPxExns
-         XWUCNIRg71rdfOF+tz/z8NPvfJsSI0XhISMoFH9V4rpjBf+P07BdmRpBtL0M2k6mrBXO
-         2GeQ==
-X-Gm-Message-State: AOJu0YyJ6jguvELGX98oaQmPrWiC/MtQ5FhPs57CLWHayWszxJG6TFcN
-	VkWu6IfK19v7MLcU0r0L9bAKym4/MT5kNuOPWgYRMbJDA1hWgUnCQEGA2bi4MMM2wbM3MhwUDC8
-	N4zugqMbWGMcGY9xV/CTgBvA4DUbeumnvSARx27IBXxhBCcv0X0B+4YBiwsRNH1M=
-X-Gm-Gg: ASbGncsWd+aVGCvezUsWQHSCYX+hFVNVpk9bKgRZg1u/hSItng4t4Ld+7s4kQpbfPxa
-	WZz+kbNZ2Rcf8RNCUuPq3Ks6jqQEW2QcBqXdQVGqpE60d05r4SzBalRioMzRzTGgZt/SygdUpBm
-	ifWvmbwd9EhTXGOFS4R0y/0Ttur0ynXd/iubcdsUYeR//nzWqLjRG1TruORAIqcwqM0cNv1KzfP
-	YSP3oMYIoavPHkJ6GXrbyTN5eyVs1GYYYy9SuLQYqloVqL+h2P2EOvx/wiRAlYYzaNdFAlcCAfg
-	taBpaQy/aPm2H6H0EhY+HT5Iu0APOCWh5vPXh7dL5JS/gN5L0nFLROGG5yQ=
-X-Received: by 2002:a05:622a:1342:b0:462:b46b:8bf8 with SMTP id d75a77b69052e-471afef4f1amr16212351cf.14.1739364962403;
-        Wed, 12 Feb 2025 04:56:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGJufyNHqGlxGr0Oi3YE2cGBUYy45V8eQFPpZVSPoCst+6BP0eWRtHg1bm7zUcq8OPj0Cjl9w==
-X-Received: by 2002:a05:622a:1342:b0:462:b46b:8bf8 with SMTP id d75a77b69052e-471afef4f1amr16212161cf.14.1739364962036;
-        Wed, 12 Feb 2025 04:56:02 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7dae77599sm362172466b.30.2025.02.12.04.56.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 04:56:01 -0800 (PST)
-Message-ID: <f4a15f6d-1c2c-484b-9a81-6e5e138b3fdb@oss.qualcomm.com>
-Date: Wed, 12 Feb 2025 13:55:59 +0100
+	s=arc-20240116; t=1739364996; c=relaxed/simple;
+	bh=z8cG5NpqhAGB5dmpzplqKZTanH2XS01ETPIpQyDG6Zs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lYoijHGqarYknyvhsOTET6XJ3iSRCOPNnZgTeN8NmrVt7IMoC01Tf5d/jCkF5j2sSB5kYlMeyvJKcquA22ncYOcnCB3NR+pr3IRpbxjNxOghrDUW/dqq9EBWgF4pouky+NCN4LVZL+6cvwgVsv8lkqvGFTzFgm7u3lFKZHwYsb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=bNQmCJ/E; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=P6iyi8LYf2Q9nhUpNA4gW7Tp0oyXZ3Nz5g0u6VN9kfw=; b=bNQmCJ/EraMnyAIhwDcPnCGe+1
+	V/g+yJrQjMHOKoLvOHESl16Zg6JPZ+yzVFSaiJMfZFL0JfsZNrjKR5Ud9fTeRUmu4e4FypJ/c8OEe
+	abmtxosmPCFTN+WXsOuEK4I0A6ZPOm/Xgk6ggqNTFk9UlVDCgt2FCrXdsu6hL7el7N0kG4jGr8vzU
+	4gGFR5ylsgbPJ/i6Xb4YHiOKqIrPJk4O9PX+mOTqPG81mTYjxuX4FCeVqOnGI3YjSxCWu9EreX6Qd
+	MwRW3HM7sdXqD18e9d4Qt/JPLycBKn0G3wOyiRkuKQ4wocm9BT01jZHE4ZZO+gEMzk0L9rEUeTDnu
+	MTMUVunA==;
+Received: from i53875bc0.versanet.de ([83.135.91.192] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tiCHz-0004Kn-Va; Wed, 12 Feb 2025 13:56:28 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: srinivas.kandagatla@linaro.org, linux-rockchip@lists.infradead.org,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, detlev.casanova@collabora.com,
+ sebastian.reichel@collabora.com
+Subject: Re: [PATCH RESEND v2 0/6] RK3576 OTP support
+Date: Wed, 12 Feb 2025 13:56:27 +0100
+Message-ID: <2965867.ZfL8zNpBrT@diego>
+In-Reply-To: <5943191.DvuYhMxLoT@workhorse>
+References:
+ <20250210224510.1194963-1-heiko@sntech.de> <5943191.DvuYhMxLoT@workhorse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] regulator: qcom_usb_vbus: Add support for PMI8998
- VBUS
-To: "James A. MacInnes" <james.a.macinnes@gmail.com>,
-        linux-arm-msm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org, quic_wcheng@quicinc.com,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        lgirdwood@gmail.com, broonie@kernel.org
-References: <20250212010744.2554574-1-james.a.macinnes@gmail.com>
- <20250212010744.2554574-3-james.a.macinnes@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250212010744.2554574-3-james.a.macinnes@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 7F-jfCfqSjvyEclq3DgLiHIQsamRP7oh
-X-Proofpoint-ORIG-GUID: 7F-jfCfqSjvyEclq3DgLiHIQsamRP7oh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0
- adultscore=0 clxscore=1015 mlxscore=0 malwarescore=0 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2501170000 definitions=main-2502120100
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On 12.02.2025 2:07 AM, James A. MacInnes wrote:
-> This patch extends the Qualcomm USB VBUS regulator driver to support
-> PMI8998 PMIC alongside the existing support for PM8150B.
+Am Mittwoch, 12. Februar 2025, 13:44:15 MEZ schrieb Nicolas Frattaroli:
+> On Monday, 10 February 2025 23:45:04 Central European Standard Time Heiko 
+> Stuebner wrote:
+> > This enables OTP support in the nvmem driver for rk3576.
+> > 
+> > I expect to pick the clock patch (patch1) and the arm64-dts patch (patch6)
+> > myself, after the nvmem-driver and -binding patches have been applied
+> > (patches 2-5).
+> > 
+> > But kept them together for people wanting to try this series.
+> > 
+> > changes in v2:
+> > - fix register constant in clock definition (Diederik)
+> > - add patch to set limits on variant-specific clock-names
+> > - use correct limits for clocks + resets on rk3576 binding
+> > 
+> > 
+> > RESEND, because I messed up my git-send-email which caused it to include
+> > the list of patches 2 times, duplicating everything :-( .
+> > 
+> > Heiko Stuebner (6):
+> >   clk: rockchip: rk3576: define clk_otp_phy_g
+> >   nvmem: rockchip-otp: Move read-offset into variant-data
+> >   dt-bindings: nvmem: rockchip,otp: add missing limits for clock-names
+> >   dt-bindings: nvmem: rockchip,otp: Add compatible for RK3576
+> >   nvmem: rockchip-otp: add rk3576 variant data
+> >   arm64: dts: rockchip: add rk3576 otp node
+> > 
+> >  .../bindings/nvmem/rockchip,otp.yaml          | 25 ++++++++++++
+> >  arch/arm64/boot/dts/rockchip/rk3576.dtsi      | 39 +++++++++++++++++++
+> >  drivers/clk/rockchip/clk-rk3576.c             |  2 +
+> >  drivers/nvmem/rockchip-otp.c                  | 17 +++++++-
+> >  4 files changed, 81 insertions(+), 2 deletions(-)
 > 
-> Key changes:
-> - Added current limit tables specific to PMI8998.
-> - Dynamically configure the VBUS regulator based on the PMIC type.
-> - Updated debug messages to reflect successful initialization for
->   supported PMICs.
-> - Changed registration log message
+> Hi Heiko,
 > 
-> These changes ensure proper VBUS current limit configuration and
-> compatibility across multiple Qualcomm PMICs.
+> for the entire series:
 > 
-> Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
-> ---
->  drivers/regulator/qcom_usb_vbus-regulator.c | 38 ++++++++++++++++++---
->  1 file changed, 33 insertions(+), 5 deletions(-)
+> Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 > 
-> diff --git a/drivers/regulator/qcom_usb_vbus-regulator.c b/drivers/regulator/qcom_usb_vbus-regulator.c
-> index cd94ed67621f..804dd1a9e057 100644
-> --- a/drivers/regulator/qcom_usb_vbus-regulator.c
-> +++ b/drivers/regulator/qcom_usb_vbus-regulator.c
-> @@ -20,10 +20,30 @@
->  #define OTG_CFG				0x53
->  #define OTG_EN_SRC_CFG			BIT(1)
->  
-> -static const unsigned int curr_table[] = {
-> +struct msm_vbus_desc {
-> +	const unsigned int *curr_table;
-> +	unsigned int n_current_limits;
-> +};
-> +
-> +static const unsigned int curr_table_pm8150b[] = {
->  	500000, 1000000, 1500000, 2000000, 2500000, 3000000,
->  };
->  
-> +static const unsigned int curr_table_pmi8998[] = {
-> +	250000, 500000, 750000, 1000000,
-> +	1250000, 1500000, 1750000, 2000000,
-> +};
+> OTPs show up on my Sige5 RK3576 board and read fine. Also compared the OTP 
+> nodes to downstream and the values look consistent with that. The OTPs aren't 
+> documented in the TRM I have, so unfortunately I can't cross-reference that.
 
-To the best of my understanding these numbers are correct
+thanks a lot for the testing :-)
 
-> +
-> +static const struct msm_vbus_desc msm_vbus_desc_pm8150b = {
-> +	.curr_table = curr_table_pm8150b,
-> +	.n_current_limits = ARRAY_SIZE(curr_table_pm8150b),
-> +};
-> +
-> +static const struct msm_vbus_desc msm_vbus_desc_pmi8998 = {
-> +	.curr_table = curr_table_pmi8998,
-> +	.n_current_limits = ARRAY_SIZE(curr_table_pmi8998),
-> +};
-> +
->  static const struct regulator_ops qcom_usb_vbus_reg_ops = {
->  	.enable = regulator_enable_regmap,
->  	.disable = regulator_disable_regmap,
-> @@ -37,8 +57,6 @@ static struct regulator_desc qcom_usb_vbus_rdesc = {
->  	.ops = &qcom_usb_vbus_reg_ops,
->  	.owner = THIS_MODULE,
->  	.type = REGULATOR_VOLTAGE,
-> -	.curr_table = curr_table,
-> -	.n_current_limits = ARRAY_SIZE(curr_table),
->  };
->  
->  static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
-> @@ -48,6 +66,7 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
->  	struct regmap *regmap;
->  	struct regulator_config config = { };
->  	struct regulator_init_data *init_data;
-> +	const struct msm_vbus_desc *quirks;
+> NB: patchwork's "Series" download for this series somehow lacks patch 2/6, 
+> which tripped me up at first. Not sure if that's a problem with patchwork or 
+> with how you sent the series out, but I thought I'd let others know who run 
+> into this.
 
-'quirks' is one way to put it ;) I'd call it 'desc' or 'data' but it's
-totally a potayto/potahto discussion
+It looks like patchwork had a bigger hickup with my series.
+Looking at the cover-letter in the Rockchip area of patchwork, it is
+missing _all_ patches attached to it [0].
 
->  	int ret;
->  	u32 base;
->  
-> @@ -68,6 +87,12 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
->  	if (!init_data)
->  		return -ENOMEM;
->  
-> +	quirks = of_device_get_match_data(dev);
-> +	if (!quirks)
-> +		return -ENODEV;
-> +
-> +	qcom_usb_vbus_rdesc.curr_table = quirks->curr_table;
-> +	qcom_usb_vbus_rdesc.n_current_limits = quirks->n_current_limits;
->  	qcom_usb_vbus_rdesc.enable_reg = base + CMD_OTG;
->  	qcom_usb_vbus_rdesc.enable_mask = OTG_EN;
->  	qcom_usb_vbus_rdesc.csel_reg = base + OTG_CURRENT_LIMIT_CFG;
-> @@ -80,18 +105,21 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
->  	rdev = devm_regulator_register(dev, &qcom_usb_vbus_rdesc, &config);
->  	if (IS_ERR(rdev)) {
->  		ret = PTR_ERR(rdev);
-> -		dev_err(dev, "not able to register vbus reg %d\n", ret);
-> +		dev_err(dev, "Failed to register vbus reg %d\n", ret);
->  		return ret;
->  	}
->  
->  	/* Disable HW logic for VBUS enable */
->  	regmap_update_bits(regmap, base + OTG_CFG, OTG_EN_SRC_CFG, 0);
->  
-> +	dev_dbg(dev, "Registered QCOM VBUS regulator\n");
+At least on the mainling list, everything seems to have arrived ok [1],
+so would assume that's a patchwork thing.
 
-Not sure how useful this is given the previous call creates a sysfs entry
-on success, but sure
 
-Konrad
+[0] https://patchwork.kernel.org/project/linux-rockchip/cover/20250210224510.1194963-1-heiko@sntech.de/
+[1] https://lore.kernel.org/all/20250210224510.1194963-1-heiko@sntech.de/
+
+
 
