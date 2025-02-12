@@ -1,120 +1,228 @@
-Return-Path: <linux-kernel+bounces-511117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBB7A32627
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:47:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B33A3262B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0940168E7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0629D188C4E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1B320E01A;
-	Wed, 12 Feb 2025 12:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGGi62R6"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B547E20A5CB;
+	Wed, 12 Feb 2025 12:47:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9837120E00E;
-	Wed, 12 Feb 2025 12:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3EA1E87B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364426; cv=none; b=t4Zt0nxR2XvW6URXrh6DnWHGLrYpH5OlrfnjmZIlS6cF5sOMp3cwjenFy0S2U2gZxQ8BgaJo26bWItXuQUGvR6/SiYHPr4OmNKGGEW7b+I+H/rKSIU/cKWoOxbCIy4Hq7wYcIIPHuD8JS0Z26b1mKz6FmoW/TgMdI9c/9Aa0bsg=
+	t=1739364464; cv=none; b=MeHjoeRXECKBENnstSVhsRG5GP/fJRXMM/eCJ2TMsYrXMkumH6F6zqlrN0ItrVcEx9QZY4QsdGZaPWoVpNbAAENwx9Kp9QmxEqE9CRSUpLT/wMCL0giXiig9iPwKOeuroyouWLuJ0OHnncaL72zryGD0kf3vb4Y/3vPtS5sLXjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364426; c=relaxed/simple;
-	bh=tY5gwz0K1pH9LPERb3scr9O6bcGKY6gXL50Bkc8UiRQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Cs4Q7SdWKidilHr7thOlYW3U0zBRsqsj6FBqolU1tW3/3qxuqZIWz68pLrbHi34iuHj/xZQL4loY/y81JVQIGZYnD5znTMDw+kSTiK3NFKuqKjozDSWTOB1uBCIH1lmYrxvgnUyHhgt9I9HvD+UqZXQaa4b4TM9OTfDStzLPvXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGGi62R6; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab7e1286126so342366266b.0;
-        Wed, 12 Feb 2025 04:47:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739364423; x=1739969223; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:reply-to:from:subject:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tY5gwz0K1pH9LPERb3scr9O6bcGKY6gXL50Bkc8UiRQ=;
-        b=dGGi62R6f2iDm2xxUxeY/6JPjFYD+6f3zOk0lF6cO7VUX3bOjqxrPjH/rzmNv9og5E
-         A7FNAyfU96MOdR+u+hQslYDruesPHPmG7XhXnOC1OdMBM8ILthRN614PEP/v9LwUgsfG
-         I6gYOZaB2dQeXFj6zHUj3dD9+7mx3zF7Yt620KgaqZr4Kae1U4oHmpHSDJ9eNnhp2FPj
-         S9j0AMYCJdPgB9odFHkUrHMrwsFZP9Z56GakzkddJXCXzZV+UdLH8RaE5OwsF2zylgnm
-         xH6/lGXovOpFPoy+wKe8FDUotSNk+FA4vufFSMV+OhmVIhAYo6YvkgZYZG7qVjfT3j0X
-         Ha9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739364423; x=1739969223;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:reply-to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tY5gwz0K1pH9LPERb3scr9O6bcGKY6gXL50Bkc8UiRQ=;
-        b=Pm0MeMCQeikH9/2DhdyyU3rzHmeNKQTgTezmZhLDDBmuh4GCsWQD28dohwjyFRmD1c
-         HnUYCMhsknXl6CGlEFFtvum/Mr1i5ubvGXGXxrSm5K4LlnaDGC2hocn40bRG44aaTBLt
-         KXfqquzjUcixTuNSifJUi952ROIOC/dRtS1D0Ptaa2IqUqAn9PHGYl/uS676u1DLrZTO
-         8lftKISQ1pDNgaGsxbucIZk6uzLS1g434/Bmwj18LngGMypjWMM1iiEoDMIoT18CaGEu
-         WnbbY9w3b2CYu+EbXg/3CjrV35jl8e0DjOFkcqJmgbxIGzBqG00NRkC9FPOytmxg8XPY
-         5BGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPHIYb7x+SpuVTQ/wNVXSnXiW/fW2ez82a98Rn+whyPbLPmG8johYxPkjNrV5vsLCo5tEiq+ORM8A=@vger.kernel.org, AJvYcCVdVjx5X28c3fw3rb9BkZTzx0yswTNNRIc2h328bnqGxB5jZ9J2fl9k9Od184J1wcU+JTKefgiZi9w=@vger.kernel.org, AJvYcCWffrIuAPbe0TtLKA+qU/1SslpHJzCOwvA4FX81HZIvzMh1pmhpHKM/ghGP4ITmhEQ41ImEUUqSsYkDPAoj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi4T5mGkUco51EoqODYcjVHv8P7Y0OdqLi7OavJR5nmIZT5wFw
-	JXeXWnmhkwzjUZOZqOPq+Chx0bwTkElq2WcfWDndw+LcmJyCwyUZ
-X-Gm-Gg: ASbGncvDh/axSGdXRamdyiQG/THYnDe41le5nCl7oepAOtXAA4xfLWqsUADzyqOZim0
-	FXC4ngFcuS+aULvOWJZ8T3OWMTnJf8iaFtqIYnZWq9sIbK4hoXFOWQiJA3o7wqZmk6C1C4xrGyB
-	csDn5MF8houheDlIBksck+w+qFprYYTX1xWis41ZMAHu8VLIHkA60CbBpB56JXiTOa+Ms2Pc68Q
-	1ZLKHpuhf6V55G3wGahJbr42ZzAYkiA6bwPIqXRqLKzCvgRseMGXUWGFSWH297/joYeHy9GaA+3
-	8G8nbORv3dEUuisv/J4wm4Mdy+ujvMMTjyTUMQzRL9WaaA==
-X-Google-Smtp-Source: AGHT+IEfERvoHB4iH1mmp4qy1uXP3e8Z6S8KEgHPkgkozaQ5CERnYM7uDu5mG84oDMZpogQPQ7Cmag==
-X-Received: by 2002:a17:907:2d12:b0:ab7:a39:db4 with SMTP id a640c23a62f3a-ab7f34ac985mr255168666b.57.1739364422581;
-        Wed, 12 Feb 2025 04:47:02 -0800 (PST)
-Received: from abityuts-desk1.ger.corp.intel.com ([134.191.196.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de6e5880b6sm6685818a12.37.2025.02.12.04.47.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 04:47:02 -0800 (PST)
-Message-ID: <b7ed8d0b07e82a637bfc8a3f4d592f0f15ba9688.camel@gmail.com>
-Subject: Re: [PATCH v3] intel_idle: introduce 'no_native' module parameter
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Reply-To: dedekind1@gmail.com
-To: David Arcari <darcari@redhat.com>, kernel test robot <lkp@intel.com>, 
-	linux-pm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jonathan Corbet <corbet@lwn.net>, Jacob
- Pan <jacob.jun.pan@linux.intel.com>, Len Brown <lenb@kernel.org>, Prarit
- Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Wed, 12 Feb 2025 14:46:58 +0200
-In-Reply-To: <9416ee48-a68a-465e-85be-89d5a53afcd8@redhat.com>
-References: <20250211132741.99944-1-darcari@redhat.com>
-	 <202502121732.P7lZkbhm-lkp@intel.com>
-	 <21e66060c13c6a3cc33592f71cb08975711a6adb.camel@gmail.com>
-	 <9416ee48-a68a-465e-85be-89d5a53afcd8@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1739364464; c=relaxed/simple;
+	bh=qf2XVtjD2O8QbZySrsW6MiFYSaLsYYB8piB3kroBKGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=seUMpQ3ZqjqkhHDVZp3BsYCvKI58pt9Z3Zz/RKbGkdksdk5M4awB4HdYoOs3QLAIvl/I7zFh6qZfU1r6N2/pa+xJgM/rQM3RAZJN6Rr8YjvQd89D6T6yqoiqck++qn7ltaqgULMGdAvHNx1Fu0L6n4LZI2WNXC50iQmUYS89cD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0126C4CEDF;
+	Wed, 12 Feb 2025 12:47:42 +0000 (UTC)
+Message-ID: <32193858-3ca9-4192-a4cb-f35eea22819e@linux-m68k.org>
+Date: Wed, 12 Feb 2025 22:47:40 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] m68k: coldfire: Prevent spurious interrupts when masking
+ IMR
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+References: <20250204-coldfire-spurious-irq-v1-1-b8f28855f690@yoseli.org>
+ <CAMuHMdXkq57WjUPeg3kTsgi-YSw23qV-gK4gVxymOSKGGTDuQQ@mail.gmail.com>
+ <770e02b6-d9c5-4a2c-8516-63e08bdc4358@yoseli.org>
+ <CAMuHMdXtzGFr2iE7py2fQPMegJTnfKe_NtW25g=h+sohfEhmAA@mail.gmail.com>
+ <f13b40d7-4a67-4de8-8d25-1a56be164dbe@yoseli.org>
+Content-Language: en-US
+From: Greg Ungerer <gerg@linux-m68k.org>
+In-Reply-To: <f13b40d7-4a67-4de8-8d25-1a56be164dbe@yoseli.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-02-12 at 07:41 -0500, David Arcari wrote:
-> - #ifdef the code that doesn't compile
-> - default no_acpi=3Dtrue in the !CONFIG_ACPI_PROCESSOR_CSTATE case
->=20
-> I sort of like the second option better, but I worry about the=20
-> documentation.=C2=A0 Specifically:
->=20
-> "In the case that ACPI is not configured these flags have no impact
-> +on functionality."
->=20
-> I guess that is still true.
->=20
-> Perhaps there is a better option.=C2=A0 What do you think?
+Hi JM,
 
-I've not been involved into kernel that much for long time. In old days
-sprinkling #ifdefs around was an anti-pattern. Most probably nowadays too. =
-So
-the second option sounds better to me.
+On 5/2/25 21:26, Jean-Michel Hautbois wrote:
+> Hi Geert,
+> 
+> On 05/02/2025 09:14, Geert Uytterhoeven wrote:
+>> Hi Jean-Michel,
+>>
+>> On Wed, 5 Feb 2025 at 08:07, Jean-Michel Hautbois
+>> <jeanmichel.hautbois@yoseli.org> wrote:
+>>> On 04/02/2025 20:27, Geert Uytterhoeven wrote:
+>>>> On Tue, 4 Feb 2025 at 19:38, Jean-Michel Hautbois
+>>>> <jeanmichel.hautbois@yoseli.org> wrote:
+>>>>> The ColdFire interrupt controller can generate spurious interrupts if an
+>>>>> interrupt source is masked in the IMR while the CPU interrupt priority
+>>>>> mask (SR[I]) is set lower than the interrupt level.
+>>>>>
+>>>>> The reference manual states:
+>>>>>
+>>>>> To avoid this situation for interrupts sources with levels 1-6, first
+>>>>> write a higher level interrupt mask to the status register, before
+>>>>> setting the mask in the IMR or the module’s interrupt mask register.
+>>>>> After the mask is set, return the interrupt mask in the status register
+>>>>> to its previous value.
+>>>>>
+>>>>> It can be tested like this:
+>>>>> - Prepare a iperf3 server on the coldfire target (iperf3 -s -D)
+>>>>> - Start a high priority cyclictest:
+>>>>>       cyclictest --secaligned -m -p 99 -i 2500 -q
+>>>>> - Start iperf3 -c $COLDFIRE_IP -t 0
+>>>>>
+>>>>> After a few seconds the dmesg may display:
+>>>>> [   84.784301] irq 24, desc: dbc502da, depth: 1, count: 0, unhandled: 0
+>>>>> [   84.784455] ->handle_irq():  0ba0aca3, handle_bad_irq+0x0/0x1e0
+>>>>> [   84.784610] ->irq_data.chip(): c6779d4f, 0x41652544
+>>>>> [   84.784719] ->action(): 00000000
+>>>>> [   84.784770] unexpected IRQ trap at vector 18
+>>>>>
+>>>>> With this patch, I never saw it in a few hours testing.
+>>>>>
+>>>>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+>>>>
+>>>> Thanks for your patch!
+>>>>
+>>>>> --- a/arch/m68k/coldfire/intc-simr.c
+>>>>> +++ b/arch/m68k/coldfire/intc-simr.c
+>>>>> @@ -58,6 +58,14 @@ static inline unsigned int irq2ebit(unsigned int irq)
+>>>>>
+>>>>>    #endif
+>>>>>
+>>>>> +static inline void intc_irq_setlevel(unsigned long level)
+>>>>> +{
+>>>>> +       asm volatile ("move.w %0,%%sr"
+>>>>> +                     : /* no outputs */
+>>>>> +                     : "d" (0x2000 | ((level) << 8))
+>>>>> +                     : "memory");
+>>>>> +}
+>>>>> +
+>>>>>    /*
+>>>>>     *     There maybe one, two or three interrupt control units, each has 64
+>>>>>     *     interrupts. If there is no second or third unit then MCFINTC1_* or
+>>>>> @@ -67,13 +75,17 @@ static inline unsigned int irq2ebit(unsigned int irq)
+>>>>>    static void intc_irq_mask(struct irq_data *d)
+>>>>>    {
+>>>>>           unsigned int irq = d->irq - MCFINT_VECBASE;
+>>>>> +       unsigned long flags = arch_local_save_flags();
+>>>>>
+>>>>> +       intc_irq_setlevel(7);
+>>>>
+>>>> Can't all of the above just be replaced by
+>>>>
+>>>>       unsigned long flags = arch_local_irq_save();
+>>>
+>>> The only change is the Supervisor bit in SR which is not changed in
+>>> arch_local_irq_disable() while it is forced to 1 in my function (setting
+>>> it to 0x2700 AFAICT).
 
-Artem.
+I would expect that it will always be set here - since we must be running
+in kernel mode to be executing this code.
+
+
+>>> But I can confirm I couldn't see the issue with this code, while using
+>>> the existing arch_local_irq_save() it still appears (less frequently
+>>> than without it at all, but still).
+>>>
+>>> Any suggestion :-) ?
+>>
+>> There are other differences: your version clears all other bits, incl.
+>> condition codes and master/interrupt state.
+
+Clearing of the interrupt mask seems like it might be an important
+difference here. I don't see any of the CCR bits having an effect here.
+
+It is surprising that the existing arch_local_irq_disable() code doesn't
+satisfy the Reference Manual description of the spurious interrupt
+problem. It is exactly raising the IRQ level to 7.
+
+
+>> Can you save the flags above in a global, and print it in the
+>> unexpected IRQ handler, to see which other bits are set when
+>> it happens?
+> 
+> An interesting side effect is... that only saving the flags makes it *a lot* harder to reproduce -_-.
+> Which is coherent with a race condition though :p.
+> 
+> Each time I got the message, the flags saved where 0x2711.
+
+Couple of further suggestions.
+
+It might be worth putting an actual comment in the code about the issue.
+It will probably not be obvious in the future why this is needed here.
+Just something brief about stopping spurious interrupts should be good enough.
+
+With a couple of tweaks to the code I could get tighter asm code generated.
+I dunno, maybe it is not worth it.
+
+Regards
+Greg
+
+
+
+
+diff --git a/arch/m68k/coldfire/intc-simr.c b/arch/m68k/coldfire/intc-simr.c
+index f7c2c41b3156..11deeb6f1048 100644
+--- a/arch/m68k/coldfire/intc-simr.c
++++ b/arch/m68k/coldfire/intc-simr.c
+@@ -58,6 +58,20 @@ static inline unsigned int irq2ebit(unsigned int irq)
+  
+  #endif
+  
++/*
++ * Avoid spurious interrupts by raising level before modifying mask.
++ */
++static inline unsigned long intc_irq_save_and_mask(void)
++{
++       unsigned long flags;
++       asm volatile ("move.w %%sr,%0\n\t"
++                     "move.w %1,%%sr"
++                     : "=&d" (flags)
++                     : "d" (0x2700)
++                     : "memory");
++       return flags;
++}
++
+  /*
+   *     There maybe one, two or three interrupt control units, each has 64
+   *     interrupts. If there is no second or third unit then MCFINTC1_* or
+@@ -66,14 +80,20 @@ static inline unsigned int irq2ebit(unsigned int irq)
+  
+  static void intc_irq_mask(struct irq_data *d)
+  {
+-       unsigned int irq = d->irq - MCFINT_VECBASE;
++       unsigned long flags;
++       unsigned int irq;
+  
++       flags = intc_irq_save_and_mask();
++
++       irq = d->irq - MCFINT_VECBASE;
+         if (MCFINTC2_SIMR && (irq > 127))
+                 __raw_writeb(irq - 128, MCFINTC2_SIMR);
+         else if (MCFINTC1_SIMR && (irq > 63))
+                 __raw_writeb(irq - 64, MCFINTC1_SIMR);
+         else
+                 __raw_writeb(irq, MCFINTC0_SIMR);
++
++       arch_local_irq_restore(flags);
+  }
+  
+  static void intc_irq_unmask(struct irq_data *d)
+
+
+
 
