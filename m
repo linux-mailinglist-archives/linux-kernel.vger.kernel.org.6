@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-510513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5000A31E07
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:37:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F17A31E0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:38:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0CD1884EA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:37:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 861AF7A3887
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651FB1FAC40;
-	Wed, 12 Feb 2025 05:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6379A1F8F04;
+	Wed, 12 Feb 2025 05:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b5m6tyOJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgYXQukt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCD11F9F64;
-	Wed, 12 Feb 2025 05:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75BCB67E;
+	Wed, 12 Feb 2025 05:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739338640; cv=none; b=q71fvyfpOfT/HrHxTrdhohMLE+nNxt67lw+Y3TsV0uPS1JVXl+JA8dVURb12OGGu/vo5f4cuRiFV3vKwXCuPYVFzaVoU2PkA61dZDKm3zlXUGbvAgI9U/hP/rNTVT9GcUDW1iaDY0tY5aY32HPOYxYLIHnaADsCrQ8xO3uDEVj8=
+	t=1739338678; cv=none; b=jkrTqBqkWoijTdbgiwVeVAGkwN2+J+AxgvB9KhNZyYe5OePw8Eoy+1kiAIFE4VsVPMhc8M7XvrRwlKTvoEqUX4sC9lrLuUsqkakl5fWWE4VG5xwtju4JyXqkf84DlmTpwWqNWLTMry8XJ3fKtLb6AbUv7LxSA69DRQupqrnYu2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739338640; c=relaxed/simple;
-	bh=tpdtplCxwD9o20O/r7cKITmzzmBLuF+M6Z2a5ZkB4GA=;
+	s=arc-20240116; t=1739338678; c=relaxed/simple;
+	bh=/FoIxowu82Uq0ekKDPxc3Ge0hB+OhxoBukVa7JbIRgg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e+hepjALjPc8Z6HzL93ZFzR0XzsX6MMHE/FfPIYmdrWps5IlrAf4BP+NRFlCiZP40mb17NXJP7Z5qAotcARQba/YZBPv8F3KHyZwRTZOXe12VJpbMT+DH1Z3AjahOH0BRko0AwI7neitgbVafLLPsC4EKnqcay4M8ytTinfMCiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b5m6tyOJ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739338640; x=1770874640;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=tpdtplCxwD9o20O/r7cKITmzzmBLuF+M6Z2a5ZkB4GA=;
-  b=b5m6tyOJpUpsskdbLomeUjKsh/R+GIyZPGkr//2sr/dluOYbdGdQTBM5
-   ooqydX/Wc2qCTmVon1k3ioIa1Aqe4wOuqRz3T7fsZoyNDjJyqn+Rk4ckd
-   H22vvZ9t0SA0FRYaSKLeG2dpvcnyLvDNnQY0KhYqB3dgoQzmzyffAzWPb
-   guVnhH0Kge9Kum5ZfE4thoBsa0TRxPuEVr33tn3Tjdhh9fpSRxoUcYMCR
-   1ccGR5tQdKp3xGmFQYoHVo1oAdiHYCfaQVFZaYJ4jtHnPu8ozp9JrGRDx
-   bpsI4KpaIwHmpFkU6OxJAeOLJtZIAbqKCmW6fBSsrlNQodsmpLTiItipz
-   g==;
-X-CSE-ConnectionGUID: jF1BPO3KTL+iUtMfqXm4sw==
-X-CSE-MsgGUID: uq9SznljQ/W7KBQBIhnpYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="43633178"
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="43633178"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 21:37:19 -0800
-X-CSE-ConnectionGUID: KMDW/hEDThe6WjOWgPWGXA==
-X-CSE-MsgGUID: 6ZsTFlwDT02qdsj5KQJ2Ig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="112675074"
-Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 21:37:15 -0800
-Message-ID: <4b23f7c7-b5e6-41c9-bcae-bd1686b801a6@linux.intel.com>
-Date: Wed, 12 Feb 2025 13:37:13 +0800
+	 In-Reply-To:Content-Type; b=nPt8atnJNAT/1eHl5XcalmfywJj/qXVMwKQeZ+kXDhpEan2GQMHpG+W7yAarrMWwWVG8RdikoKUScUhsvrk/U8UhwxbExgNmXOdIf+5Tmxwp1RQtZjWQjcfepEsJE6ta3VMt/7CvubKh6ImzOuSdiP/PsvB2rT8KaFup7+aiTdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgYXQukt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E8FAC4CEDF;
+	Wed, 12 Feb 2025 05:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739338678;
+	bh=/FoIxowu82Uq0ekKDPxc3Ge0hB+OhxoBukVa7JbIRgg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sgYXQuktcJybLgslFBB5cgnyRREDDC4dHe8hfP5RvfXwxe104eOnp4gdzc7jGT9Tx
+	 b5aRoXD3SDquih/nZjNBZiOQ3Xc2kNLJsNX6TeJbE2jnRaeAMOdN+JluwL8E77LWQQ
+	 B4yrtlp83DfXKvm+iWuXVOE+8DdRY0SEc/RYdvO3K6LmhTFi8DXyTJuQIf/bPH3HbY
+	 Rb6CWJOvej9QmXXl6i9bZA+Zltpluoh/JL/Sh43E7ILqhCpLH3OTDebRkuRmQr00Xr
+	 9rmEtbMHuXUizGMuj/7a4WaP5XaLIzjYO3qwkELzl139H+LQNHcq7n25SeNdlhs7t+
+	 QpOWtjZrJsUzQ==
+Message-ID: <09922fcf-f667-490b-bbd2-e5fc19c3f958@kernel.org>
+Date: Wed, 12 Feb 2025 06:37:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,73 +49,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] KVM: TDX: Handle TDG.VP.VMCALL<ReportFatalError>
-To: Sean Christopherson <seanjc@google.com>, xiaoyao.li@intel.com
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, rick.p.edgecombe@intel.com,
- kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com,
- tony.lindgren@intel.com, isaku.yamahata@intel.com, yan.y.zhao@intel.com,
- chao.gao@intel.com, linux-kernel@vger.kernel.org
-References: <20250211025442.3071607-1-binbin.wu@linux.intel.com>
- <20250211025442.3071607-7-binbin.wu@linux.intel.com>
- <Z6vo5sRyXTbtYSev@google.com>
+Subject: Re: [PATCH v5 2/2] arm64: dts: qcom: qcs8300: Add device node for
+ gfx_smmu
+To: Pratyush Brahma <quic_pbrahma@quicinc.com>, Will Deacon
+ <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250211-b4-branch-gfx-smmu-v5-0-ff0bcb6a3c51@quicinc.com>
+ <20250211-b4-branch-gfx-smmu-v5-2-ff0bcb6a3c51@quicinc.com>
+ <3158e911-c771-4186-b287-50d2395b8c94@kernel.org>
+ <138b1c42-9580-41f4-9079-87740568b79c@quicinc.com>
+ <075588ff-77e5-4b01-8c67-8fc30e51b8a9@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <Z6vo5sRyXTbtYSev@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <075588ff-77e5-4b01-8c67-8fc30e51b8a9@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 12/02/2025 06:19, Pratyush Brahma wrote:
+> 
+> On 2/12/2025 10:09 AM, Pratyush Brahma wrote:
+>>
+>>
+>> On 2/11/2025 8:45 PM, Krzysztof Kozlowski wrote:
+>>> On 11/02/2025 05:45, Pratyush Brahma wrote:
+>>>> Add the device node for gfx smmu that is required for gpu
+>>>> specific address translations.
+>>>>
+>>>> Signed-off-by: Pratyush Brahma<quic_pbrahma@quicinc.com>
+>>>> ---
+>>>>   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 39 +++++++++++++++++++++++++++++++++++
+>>>>   1 file changed, 39 insertions(+)
+>>> As pointed out by Rob, this wasn't ever tested. One more example of work
+>>> where you have the binding in the same patch but refuse to use it.
+> No, I had tested these patches against the dt_bindings_check and didn't 
+> see these errors.
+> It seems I need to upgrade my dtschema as Rob pointed out, reorder the 
+> clocks and resend.
+
+The reported errors are not relevant at all to upgraded or not upgraded
+dtschema. This just wasn't tested.
+
+> 
 
 
-On 2/12/2025 8:18 AM, Sean Christopherson wrote:
-> On Tue, Feb 11, 2025, Binbin Wu wrote:
->> +static int tdx_report_fatal_error(struct kvm_vcpu *vcpu)
->> +{
->> +	struct vcpu_tdx *tdx = to_tdx(vcpu);
->> +	u64 reg_mask = tdx->vp_enter_args.rcx;
->> +	u64 *opt_regs;
->> +
->> +	/*
->> +	 * Skip sanity checks and let userspace decide what to do if sanity
->> +	 * checks fail.
->> +	 */
->> +	vcpu->run->exit_reason = KVM_EXIT_SYSTEM_EVENT;
->> +	vcpu->run->system_event.type = KVM_SYSTEM_EVENT_TDX_FATAL;
->> +	/* Error codes. */
->> +	vcpu->run->system_event.data[0] = tdx->vp_enter_args.r12;
->> +	/* GPA of additional information page. */
->> +	vcpu->run->system_event.data[1] = tdx->vp_enter_args.r13;
->> +	/* Information passed via registers (up to 64 bytes). */
->> +	opt_regs = &vcpu->run->system_event.data[2];
->> +
->> +#define COPY_REG(REG, MASK)						\
->> +	do {								\
->> +		if (reg_mask & MASK) {					\
-> Based on past experience with conditionally filling kvm_run fields, I think KVM
-> should copy all registers and let userspace sort out the reg_mask.  Unless the
-> guest passes an ASCII byte stream exactly as the GHCI suggests,
-Yea, GHCI doesn't enforce it to be ASCII byte stream.
-
-> the information
-> is quite useless because userspace doesn't have reg_mask and so can't know what's
-> in data[4], data[5], etc...  And I won't be the least bit surprised if guests
-> deviate from the GHCI.
-
-But it also confuses userspace if guests uses special protocol to pass
-information other than ASCII byte stream.
-
-Anyway, dumping all registers to userspace and let userspace to have all
-the information passed from guest for parsing is definitely workable.
-
->
->> +			*opt_regs = tdx->vp_enter_args.REG;		\
->> +			opt_regs++;					\
->> +		}							\
->> +	} while (0)
->> +
->> +	/* The order is defined in GHCI. */
-> Assuming I haven't missed something, to hell with the GCHI, just dump *all*
-> registers, sorted by their index (ascending).  Including RAX (TDCALL), RBP, and
-> RSP.
->
-
+Best regards,
+Krzysztof
 
