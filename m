@@ -1,224 +1,108 @@
-Return-Path: <linux-kernel+bounces-511326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95BA5A32961
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:00:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA92A32964
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:00:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BEA5164FE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701EE1880A54
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A014A211285;
-	Wed, 12 Feb 2025 14:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DAB211492;
+	Wed, 12 Feb 2025 14:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHVQnH6C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKCazHFO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3AC2101BE;
-	Wed, 12 Feb 2025 14:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E883211473;
+	Wed, 12 Feb 2025 14:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739372355; cv=none; b=R0fce9w41+EoZN/ezLJ8u+5VsXxiqHY/KBf1udVWm0rdoRtsrvHszIwj79d/JzI5rfOj9FANex6RrAxiRM+d3/4UJGLia4MqagpB1OvVkL4uLHO5P80hcKMqgRzLFrs+wQWbdIEDdaO76NAQPUiK+Ad7EZ/ObfJnsFU988SOlwY=
+	t=1739372331; cv=none; b=K2T4VhWL6K6C2f/z5ZIEYBOutajdZDqze2ZIYLViC1/0Hq3Aj1/oGwCptNQMF/rYiBgNahuPXZwNrT54lee0I6K0LspU6Hmoarfh83h7/33ZZrYzJNbHpzeuVYJ83O6WPqouMjpLY1oiha0NE3naxbXuf2KTNI1gIUP+JqRAwqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739372355; c=relaxed/simple;
-	bh=oCvq9gSavJWl2kDBTfPs3YD8zX+/lohqwlywSoG+xkQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jO4NIOQyHvW0a0d+SkT1qKmNMeCyyybUjYxL8tVK3wBYebU6t9xfRdHiW2Fz0gToWac0BTW+Ctuk4mi5h9Xeu7Osa0rnBK5UGHm7F2t4qp/1IsrIjCPAJo/zFH3oKHuBCQQ8EvEZzBVuGtn9mwoU77Nkeq91ScJhOMBarxbX+EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHVQnH6C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C524C4CEDF;
-	Wed, 12 Feb 2025 14:59:09 +0000 (UTC)
+	s=arc-20240116; t=1739372331; c=relaxed/simple;
+	bh=VfPCsV6WWIedIQpMHbXE7Twk3RA4OVR/ycnIBsYi/5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qg8PY/sUa6I+Kq1gD4p/soyasVm3UH6Ec0pUJje2zr8u94QS3ZwcrOjaOid/5auETGFP6vPACr5g4wRa+X+/dxPa1aLq5+C1hzm7Jn7738q6ss3A46zjBOqBFcGiweq/NjGrrSg40+Rmip8YT/qCOjriGpF9+u62bKYE/U+C+cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKCazHFO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ABD8C4CEDF;
+	Wed, 12 Feb 2025 14:58:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739372353;
-	bh=oCvq9gSavJWl2kDBTfPs3YD8zX+/lohqwlywSoG+xkQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hHVQnH6CNr1DzWYc7ti8auIZ/FJHzitoE4i/mpGQgFTAleKGfwLoybhM9Pyoop3SW
-	 qEwgOvKAQvnZm1sJliTrLgmB74tMM1OGMmzzm/+KuOfYCjKCHFMZBkC49DPz5eoC7o
-	 3q6hox23kgW2BrozBC5dt0lXhATKjuMUwfnkR0utm9dwqq5hPKRxlaHXKMAPGCzzWc
-	 d/5D1MW5Vf+NBRv7b2xL0TQs2Ib7FRaJhrWTQhV0Jkrq34z9bNgUYWy7MPdeN//8qa
-	 sMprTgrL6hVlfF50Ut2YlltyO+xk0b2JZyZoclBGdPliHjbfAVGWTelTS8U+GbGLgU
-	 T1DYxD/Orn1PA==
-From: Philipp Stanner <phasta@kernel.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Yinggang Gu <guyinggang@loongson.cn>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Philipp Stanner <pstanner@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] stmmac: Replace deprecated PCI functions
-Date: Wed, 12 Feb 2025 15:58:32 +0100
-Message-ID: <20250212145831.101719-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.47.1
+	s=k20201202; t=1739372330;
+	bh=VfPCsV6WWIedIQpMHbXE7Twk3RA4OVR/ycnIBsYi/5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vKCazHFOn2V5aNKha56y6oXj8E3nQcQFhDCe7vTDA6PTEFuURoB42/DkJS1CYL+sq
+	 e+f9mX+XUIP4zwMpyjcVwPJTneK1nqUJSwyt3X2M7Guu0ZPB5QWjYu/G5RuxARTXrg
+	 SKX++juExqFMlzI9bU0+SaOTvn2UtCu8X81f9/tNE2hICBtd/PAJSi/npE/+ZWNcO3
+	 nWR+H9WwO1HcLvwYGsKzdc9sfpk+HL3sL2b14Yn4b+tnpOiR1aDl+SQT9+Wr4cghc8
+	 pKhpA5DHRA0yeinKGgWg7kUNWGKCt356sgaGG6suJfPzeC/F0KEZEk8OShe6AHM8D1
+	 ylcVRVJAA9aZA==
+Date: Wed, 12 Feb 2025 14:58:45 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com,
+	nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz,
+	tiwai@suse.com, linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: imx-audmix: release cpu_mclk clock at failure
+Message-ID: <7e37e951-17ad-4cac-a855-33c48ae0a283@sirena.org.uk>
+References: <20250212093816.1857188-1-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fAwhL1alp7d3aLFt"
+Content-Disposition: inline
+In-Reply-To: <20250212093816.1857188-1-shengjiu.wang@nxp.com>
+X-Cookie: Reality does not exist -- yet.
 
-From: Philipp Stanner <pstanner@redhat.com>
 
-The PCI functions
-  - pcim_iomap_regions()
-  - pcim_iomap_table() and
-  - pcim_iounmap_regions()
-have been deprecated.
+--fAwhL1alp7d3aLFt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The usage of pcim_* cleanup functions in the driver detach path (remove
-callback) is actually not necessary, since they perform that cleanup
-automatically.
+On Wed, Feb 12, 2025 at 05:38:16PM +0800, Shengjiu Wang wrote:
+> When defer probe happens, there may be below error:
+>=20
+> platform 59820000.sai: Resources present before probing
+>=20
+> The cpu_mclk clock is from the cpu dai device, if it is
+> not released, then the cpu dai device probe will fail
+> for the second time.
 
-Replace them with pcim_iomap_region().
+>  	ret =3D devm_snd_soc_register_card(&pdev->dev, &priv->card);
+>  	if (ret) {
+> +		devm_clk_put(&cpu_pdev->dev, priv->cpu_mclk);
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- .../ethernet/stmicro/stmmac/dwmac-loongson.c  | 28 ++++++-------------
- .../net/ethernet/stmicro/stmmac/stmmac_pci.c  | 24 ++++------------
- 2 files changed, 14 insertions(+), 38 deletions(-)
+The driver shouldn't be using another driver's device to do devm_
+requests (or really to look anything up), that's just going to lead to
+trouble like this - if it's got to look up another device's clocks it
+should do a regular clk_get().  There will also potentially be problems
+if the other device unregisters first and frees our clock underneath us,
+and this will request multiple copies of the clock if we unbind and
+rebind the imx-audmix driver.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-index bfe6e2d631bd..19b16df864dd 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-@@ -11,6 +11,8 @@
- #include "dwmac_dma.h"
- #include "dwmac1000.h"
- 
-+#define DRIVER_NAME "dwmac-loongson-pci"
-+
- /* Normal Loongson Tx Summary */
- #define DMA_INTR_ENA_NIE_TX_LOONGSON	0x00040000
- /* Normal Loongson Rx Summary */
-@@ -520,7 +522,7 @@ static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_device_id
- {
- 	struct plat_stmmacenet_data *plat;
- 	struct stmmac_pci_info *info;
--	struct stmmac_resources res;
-+	struct stmmac_resources res = {};
- 	struct loongson_data *ld;
- 	int ret, i;
- 
-@@ -552,17 +554,10 @@ static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_device_id
- 	pci_set_master(pdev);
- 
- 	/* Get the base address of device */
--	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
--		if (pci_resource_len(pdev, i) == 0)
--			continue;
--		ret = pcim_iomap_regions(pdev, BIT(0), pci_name(pdev));
--		if (ret)
--			goto err_disable_device;
--		break;
--	}
--
--	memset(&res, 0, sizeof(res));
--	res.addr = pcim_iomap_table(pdev)[0];
-+	res.addr = pcim_iomap_region(pdev, 0, DRIVER_NAME);
-+	ret = PTR_ERR_OR_ZERO(res.addr);
-+	if (ret)
-+		goto err_disable_device;
- 
- 	plat->bsp_priv = ld;
- 	plat->setup = loongson_dwmac_setup;
-@@ -617,13 +612,6 @@ static void loongson_dwmac_remove(struct pci_dev *pdev)
- 	if (ld->loongson_id == DWMAC_CORE_LS_MULTICHAN)
- 		loongson_dwmac_msi_clear(pdev);
- 
--	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
--		if (pci_resource_len(pdev, i) == 0)
--			continue;
--		pcim_iounmap_regions(pdev, BIT(i));
--		break;
--	}
--
- 	pci_disable_device(pdev);
- }
- 
-@@ -673,7 +661,7 @@ static const struct pci_device_id loongson_dwmac_id_table[] = {
- MODULE_DEVICE_TABLE(pci, loongson_dwmac_id_table);
- 
- static struct pci_driver loongson_dwmac_driver = {
--	.name = "dwmac-loongson-pci",
-+	.name = DRIVER_NAME,
- 	.id_table = loongson_dwmac_id_table,
- 	.probe = loongson_dwmac_probe,
- 	.remove = loongson_dwmac_remove,
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index 352b01678c22..f3279c4387c5 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -155,7 +155,7 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- {
- 	struct stmmac_pci_info *info = (struct stmmac_pci_info *)id->driver_data;
- 	struct plat_stmmacenet_data *plat;
--	struct stmmac_resources res;
-+	struct stmmac_resources res = {};
- 	int i;
- 	int ret;
- 
-@@ -188,13 +188,13 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- 		return ret;
- 	}
- 
--	/* Get the base address of device */
-+	/* The first BAR > 0 is the base IO addr of our device. */
- 	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
- 		if (pci_resource_len(pdev, i) == 0)
- 			continue;
--		ret = pcim_iomap_regions(pdev, BIT(i), pci_name(pdev));
--		if (ret)
--			return ret;
-+		res.addr = pcim_iomap_region(pdev, i, STMMAC_RESOURCE_NAME);
-+		if (IS_ERR(res.addr))
-+			return PTR_ERR(res.addr)
- 		break;
- 	}
- 
-@@ -204,8 +204,6 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- 	if (ret)
- 		return ret;
- 
--	memset(&res, 0, sizeof(res));
--	res.addr = pcim_iomap_table(pdev)[i];
- 	res.wol_irq = pdev->irq;
- 	res.irq = pdev->irq;
- 
-@@ -226,21 +224,11 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
-  * stmmac_pci_remove
-  *
-  * @pdev: platform device pointer
-- * Description: this function calls the main to free the net resources
-- * and releases the PCI resources.
-+ * Description: Main driver resource release function
-  */
- static void stmmac_pci_remove(struct pci_dev *pdev)
- {
--	int i;
--
- 	stmmac_dvr_remove(&pdev->dev);
--
--	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
--		if (pci_resource_len(pdev, i) == 0)
--			continue;
--		pcim_iounmap_regions(pdev, BIT(i));
--		break;
--	}
- }
- 
- static int __maybe_unused stmmac_pci_suspend(struct device *dev)
--- 
-2.47.1
+--fAwhL1alp7d3aLFt
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmestyQACgkQJNaLcl1U
+h9Bjngf/WfuwuKGeK2nB+kS9poygpKCLuG9wbqSJbBo3TWSTk4l/5HcDoYFMf3Qd
+DMjzt+C6i1ZKZ3aL7+jm4sQvxWUHX8ciF0FQqarOjN7ZVbCRNQggndMqphCuaNpJ
+TMeIlSrKjSEDiajGNLjt0cbusl/CLP6nsHzfp+HCc2WSe6b12QSqndtJCB+seG9c
+jVdR6dNZc2yePUIUVP+MeafpbWpru2KS0N+Fg3Fle0VNhs1TJ1+W3qKsLfUQQStR
+Xr9JQdSzrjdIw3Vr2jDyKcWGVTh05G0BsZ+OLCAQo3PuaoFg2/lrs4HP7t7KGfnK
+i4hrFK/hPV7ZZkWL0NxgTSGVeRjJ3g==
+=Of57
+-----END PGP SIGNATURE-----
+
+--fAwhL1alp7d3aLFt--
 
