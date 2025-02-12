@@ -1,300 +1,277 @@
-Return-Path: <linux-kernel+bounces-512119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DAC1A3344D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:54:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C6ECA31D8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:49:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C02D21886723
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75EE618869D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33AD80034;
-	Thu, 13 Feb 2025 00:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E511EA7EE;
+	Wed, 12 Feb 2025 04:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Uvxanwg7"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="jesQSFU5"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752EE7081A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67010208A7;
+	Wed, 12 Feb 2025 04:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739408069; cv=none; b=PSm3Te1GCxlwwEXSS95EGAPdy7UY79bK+dGUXevICTJnXpTcXX02WEu0XgELlX/UQM76hxdLiPvEb8Q14C6RpfuiPn1jq5/opruFlsRxUK01cp9vaMy3YDDxtJvJV3VOZGelCFDfa2uPqV2N1LKWPLCv3wTpiTwXFYG4V9ndrqY=
+	t=1739335751; cv=none; b=bPq67FqzHtJkE50NCBFsS+OH3Vthff4JGcFbGfzEwmfm/6DXAPcG3jPJLJWXpx645D4HzIVHvU4nINg2dm6NyYlVSvUOFCHtI0nvcIsVP0t+SSZ30qblVENKO0SJjMdGsLKHbLIcNqfZ/VJKNnTikjAUzGcpkgOByWC6aR78kRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739408069; c=relaxed/simple;
-	bh=kgUFriaHckAX/UICIIOkdTeA5rYC2/8rEcYmDesObJk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=qGsVrvgLi2BnotmsnndiFXGZsU4bLsoWUSBybx0bv/RVTjIZk8WtXStQsobnzxwCMIbDb8XwWfrdipgsqnhZ2a9wFezdryz/BC/9UYChqjTMJPd97dl+yNSijLQcIDxUAz4rngleFqy3VRGo32CDtDfZ/7FYgJ4ehCJVdyzgxWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Uvxanwg7; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250213005425epoutp023d157102b8d156ebf4d5384e3c4ac715~jnmttBjaM3039630396epoutp02V
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:54:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250213005425epoutp023d157102b8d156ebf4d5384e3c4ac715~jnmttBjaM3039630396epoutp02V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1739408065;
-	bh=Udyyr3+c9lIf9GcZ3IJILI+Ye26O93De7LR99Gj/9uc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Uvxanwg7NRlXF3/LAqEPBmNQxfQKwWQTNuq3QQg+rrtyjYCFLgw3z6p5v9iY/je0g
-	 T+nNlhqiFysq5JLSebtUWq59BzafjePjr6PJ6tQUIdT4ajL7zx0LWwON741h7k8H/l
-	 6dKx77lOfcq33nbwfG3hL6k+n6qrrduMRhrFPbiU=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20250213005424epcas5p4f032cb96bade799d688f14d852cd760a~jnms77Sy70467304673epcas5p4q;
-	Thu, 13 Feb 2025 00:54:24 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4YtcC30nT0z4x9Q0; Thu, 13 Feb
-	2025 00:54:23 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CC.65.19710.EB24DA76; Thu, 13 Feb 2025 09:54:23 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250212044758epcas5p244c3add904f0ee06f669cd4c53a9e594~jXJWfa6WE0590205902epcas5p2Y;
-	Wed, 12 Feb 2025 04:47:58 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250212044758epsmtrp2eb9ed694647f7cc135ec78bea36e710b~jXJWeRLdi1049510495epsmtrp2D;
-	Wed, 12 Feb 2025 04:47:58 +0000 (GMT)
-X-AuditID: b6c32a44-36bdd70000004cfe-12-67ad42be62a3
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	14.8B.18949.EF72CA76; Wed, 12 Feb 2025 13:47:58 +0900 (KST)
-Received: from asg29.. (unknown [109.105.129.29]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250212044756epsmtip25c699e119d66b569633d23b44a6db2b9~jXJUAOdwh2400724007epsmtip2d;
-	Wed, 12 Feb 2025 04:47:55 +0000 (GMT)
-From: Junnan Wu <junnan01.wu@samsung.com>
-To: sgarzare@redhat.com
-Cc: davem@davemloft.net, edumazet@google.com, eperezma@redhat.com,
-	horms@kernel.org, jasowang@redhat.com, junnan01.wu@samsung.com,
-	kuba@kernel.org, kvm@vger.kernel.org, lei19.wang@samsung.com,
-	linux-kernel@vger.kernel.org, mst@redhat.com, netdev@vger.kernel.org,
-	pabeni@redhat.com, q1.huang@samsung.com, stefanha@redhat.com,
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com,
-	ying01.gao@samsung.com, ying123.xu@samsung.com
-Subject: RE: Re: [PATCH 2/2] vsock/virtio: Don't reset the created SOCKET
- during s2r
-Date: Wed, 12 Feb 2025 12:48:43 +0800
-Message-Id: <20250212044843.254862-1-junnan01.wu@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <iv6oalr6yuwsfkoxnorp4t77fdjheteyojauwf2phshucdxatf@ominy3hfcpxb>
+	s=arc-20240116; t=1739335751; c=relaxed/simple;
+	bh=SZHbFT5hPcDSmpSzZXIPq92JgekFc7wyIuw+QzgaAJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a5aY15b/csWpEsumEMTzeHaOuv0Zdnedq5Sa1C88sXQ7a8+hK8l+a1mkvM56bGAO5ik8f/7NuSIV209gXr1FndaU5GK50NZ3dZc9nlXnOYjjWyurFTRhOpLv1Le3UH6hhIaxuLy0gTcrjPIwBWWwZy77sqTBcebtOIPjYVeNJuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=jesQSFU5; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=q5G5BQZ/AdEoSNHs040ekLzH6kmkOaqYgMRUB269QUg=; b=jesQSFU5EzbhRAfZ5zYF7YSu6J
+	QvsxSvRBdX8rjqU6mWBN3O8kQ8o/ExqO11DXK79XfntUUrV0COcMZJ5m5IwH6I3lMLytckw9pDhsy
+	2gWRFdoZHTRYPpRhDPufZvSiDRv/+bkgSZB2WAAWs0ssBTNwCxEKjd92JdyFv5TwbpLEvQ4A78M40
+	DK5UvKTRarZOQjmoa8zRipwrxyWrOWGY2FoBQaFeNIrbyP/TboQ/uMPQb0C96dqMNwTr7MjHDJ2Ko
+	vLVOJJ+yVX9W2i+4JHBQO0K9jwtis8o+rJ+xoGaFTJX9e1hv6wr1eehvNblDmvIs3J7H/aUnVjzPQ
+	XRZ/2jfw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1ti4TG-00HDt4-35;
+	Wed, 12 Feb 2025 12:48:56 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 12 Feb 2025 12:48:55 +0800
+Date: Wed, 12 Feb 2025 12:48:55 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: kernel test robot <lkp@intel.com>
+Cc: Danny Tsen <dtsen@linux.ibm.com>, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [PATCH] crypto: lib/Kconfig - Fix lib built-in failure when arch is
+ modular
+Message-ID: <Z6woN4vgdaywOZxm@gondor.apana.org.au>
+References: <202501230223.ikroNDr1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxbVRjGc3p7LxeS4h0gnGHYmm6okACto+zggOAks9kIIX4whkGs9K4l
-	hbb2Y26oWRnNkM+xZSWCyNCB0u7D0XUbhSGCljFIpRtjjCWgIF0ICt3EMC0KttxO99/vfc/z
-	vk+ec+4lsRAXEUkWKbS0WiEu5hFB7Kvfx7wY17f7gpRf9gkLNY8a2Mg1OBuAfvncFIBmTwwR
-	6Kvbyyw0dfc15Lxah6Nm4/voeNcYjsa6mwl0p60mAK17FnA02BqOVkZ+A6h90YEhR/1DHI02
-	r2Po11PrOLJfM+Ho7jGEnD94t/bNNuLp4SKraZIlarXoRBZzJSGyzSSL5i83ApH723FCVGc1
-	A9GyZUs2mSdPkdFiCa3m0opCpaRIIU3l7Xuj4NUCYRJfECdIRjt5XIW4hE7lZWRmx+0pKvZG
-	43EPiYt13la2WKPhJaSlqJU6Lc2VKTXaVB6tkhSrElXxGnGJRqeQxito7csCPv8loVf4rly2
-	draPUJ2KO3zruB7XA8v2KhBIQioRNtqmsSoQRIZQPQCev1GDM8XvAK48NAOmWAGwfs2FPxkp
-	tzv8B70ATrhbWUzxAMDZOWuAT0VQMXDoegfh4zAqAjpb2gifCKN6MPhzZ+XGQSiVAydOTm6s
-	ZVPR8NJCNeZjDpUK9cfOAcZuK+zrd2z0A6ks+M/9Lhaj2QRvNs6xfYx5NeVXPttIAal5EjrO
-	tbOY4QxYZpgKYDgULtyw+jkSLi/1EgzLYa3d42ctrF667c+5C45erPAuJb0GMfCb7gSmHQWN
-	wxdZjG8wrF2d81txYFeLj0kvR0N3/UdM+zloslj8riL4o76ZYC7rCwDvD7bj9YDb9FScpqfi
-	NP3v3AowM9hMqzQlUrpQqBIo6A/+e+ZCZYkFbHzvsRld4N6ZtfgBwCLBAIAkxgvjwIbz0hCO
-	RHyklFYrC9S6YlozAITe+z6JRT5bqPT+MAptgSAxmZ+YlJSUmLwjScCL4JTbDNIQSirW0nKa
-	VtHqJ3MsMjBSz2oav1yXy27xDN88ayoKx8d60r90cBI+NQ1o8lDQ4pnqnFtlpy2bdY3vDVfF
-	2F43NTRMjw3Nr/65C7e5RLbdWSORVvnWtbaftn0YU7ov2iqrlLf0O9dnOkdd3/W0ddSmGRzP
-	bDmYxXdL00wTb01nXsmX/LXjQQ7nRM3H1W+rBW+mXR+hJ2fyQ43JgS/slMxGVBy2h6s7Fkzu
-	o+/kdQvMj6XWImOULGw/hAdjdXLD0rb9XwdfKxUULkeluKZ6azcden5xadWdf+9vZ+c4WMg8
-	uufIKyvcx3srh7T2itwWt+5S997gvkcXPAeEi8P9EfSjO1V/6D0HjOVT6fr+uIztuflZPLZG
-	JhbEYmqN+F9x3znjeAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsWy7bCSvO4/9TXpBru7NC3mnG9hsXh67BG7
-	xeO5K9ktHvWfYLNYdukzk8Xda+4WF7b1sVrMmVpo0bbjMqvF5V1z2CyuLOlht/j/6xWrxbEF
-	YhbfTr9htFj69iyzxdkJH1gtzs/5z2zxetJ/Vouj21eyWlxrsrC4cARo6v5HM1kdxDy2rLzJ
-	5LFgU6nHplWdbB47H1p6vNg8k9Hj/b6rbB59W1YxenzeJBfAEcVlk5Kak1mWWqRvl8CV8W/x
-	fraCSboVF9saWBsYN6l0MXJySAiYSDQfPcvYxcjFISSwm1FiyvMjTBAJaYmu323MELawxMp/
-	z9lBbCGBJ4wS+14ogNhsApoSJ/asYAOxRQTEJS7MW8IGMohZ4DKzxLmfd8AahAVCJHr/bgcr
-	YhFQldjwqhtsKK+ArURD02pGiAXyEvsPngWLcwr4Sfy9tYMJYpmvRM+X44wQ9YISJ2c+YQGx
-	mYHqm7fOZp7AKDALSWoWktQCRqZVjJKpBcW56bnFhgVGeanlesWJucWleel6yfm5mxjB8ael
-	tYNxz6oPeocYmTgYDzFKcDArifCaLFyRLsSbklhZlVqUH19UmpNafIhRmoNFSZz32+veFCGB
-	9MSS1OzU1ILUIpgsEwenVAPTgdJjFd9fnzm4O2u2m23JhV+1VonaklfOHX/7hvNuVMmE3+b1
-	3FYsPwO6wk2nd75c3lRin8MT+lnd6THH/9jDCsovds+es1plf1Nt5DRVtzMeF9a+Dr3RaLwm
-	0d32lHRj5N2N35v8+bz8trOc2OR94FF1VtP9BXKep184XXs07bPI8ZPvLis87snf/Phi/e3k
-	2TPrnJev3PJM2njNeoe+5svnrugv4thoL7r/x5SPt24J2DaIL3m7t2q5mZJhjaT1v/zt3f0J
-	W0TfXk+9HPXwSW334pkmsUIHDb7KuJXvMzfYMiVB6fC97F/m2xPXq254qXtP/ci9eu1Zi+c9
-	3568Yu6rayeTnXM4k85NE0m/+UCJpTgj0VCLuag4EQALXMThLgMAAA==
-X-CMS-MailID: 20250212044758epcas5p244c3add904f0ee06f669cd4c53a9e594
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250212044758epcas5p244c3add904f0ee06f669cd4c53a9e594
-References: <iv6oalr6yuwsfkoxnorp4t77fdjheteyojauwf2phshucdxatf@ominy3hfcpxb>
-	<CGME20250212044758epcas5p244c3add904f0ee06f669cd4c53a9e594@epcas5p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202501230223.ikroNDr1-lkp@intel.com>
 
->On Mon, Feb 10, 2025 at 12:48:03PM +0100, leonardi@redhat.com wrote:
->>Like for the other patch, some maintainers have not been CCd.
->
->Yes, please use `scripts/get_maintainer.pl`.
->
+On Thu, Jan 23, 2025 at 02:18:27AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   c4b9570cfb63501638db720f3bee9f6dfd044b82
+> commit: b42519dbba838c928e82b55f32712fbe3eed2c45 crypto: ppc/curve25519 - Update Kconfig and Makefile for ppc64le
+> date:   8 months ago
+> config: powerpc64-randconfig-r111-20250122 (https://download.01.org/0day-ci/archive/20250123/202501230223.ikroNDr1-lkp@intel.com/config)
+> compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+> reproduce: (https://download.01.org/0day-ci/archive/20250123/202501230223.ikroNDr1-lkp@intel.com/reproduce)
 
-Ok, I will add other maintainers by this script in next push.
+Thanks for the report.  This is the old built-in vs. modular Kconfig
+problem.  This patch should fix it:
+
+---8<---
+The HAVE_ARCH Kconfig options in lib/crypto try to solve the
+modular versus built-in problem, but it still fails when the
+the LIB option (e.g., CRYPTO_LIB_CURVE25519) is selected externally.
+
+Fix this by introducing a level of indirection with ARCH_MAY_HAVE
+Kconfig options, these then go on to select the ARCH_HAVE options
+if the ARCH Kconfig options matches that of the LIB option.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202501230223.ikroNDr1-lkp@intel.com/
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
+index 32650c8431d9..47d9cc59f254 100644
+--- a/arch/arm/crypto/Kconfig
++++ b/arch/arm/crypto/Kconfig
+@@ -6,7 +6,7 @@ config CRYPTO_CURVE25519_NEON
+ 	tristate "Public key crypto: Curve25519 (NEON)"
+ 	depends on KERNEL_MODE_NEON
+ 	select CRYPTO_LIB_CURVE25519_GENERIC
+-	select CRYPTO_ARCH_HAVE_LIB_CURVE25519
++	select CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519
+ 	help
+ 	  Curve25519 algorithm
  
->>
->>On Fri, Feb 07, 2025 at 01:20:33PM +0800, Junnan Wu wrote:
->>>From: Ying Gao <ying01.gao@samsung.com>
->>>
->>>If suspend is executed during vsock communication and the
->>>socket is reset, the original socket will be unusable after resume.
->
->Why? (I mean for a good commit description)
->
->>>
->>>Judge the value of vdev->priv in function virtio_vsock_vqs_del,
->>>only when the function is invoked by virtio_vsock_remove,
->>>all vsock connections will be reset.
->>>
->>The second part of the commit message is not that clear, do you mind 
->>rephrasing it?
->
->+1 on that
->
-
-Well, I will rephrase it in next version.
-
->Also in this case, why checking `vdev->priv` fixes the issue?
->
->>
->>>Signed-off-by: Ying Gao <ying01.gao@samsung.com>
->>Missing Co-developed-by?
->>>Signed-off-by: Junnan Wu <junnan01.wu@samsung.com>
->>
->>
->>>---
->>>net/vmw_vsock/virtio_transport.c | 6 ++++--
->>>1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>>diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
->>>index 9eefd0fba92b..9df609581755 100644
->>>--- a/net/vmw_vsock/virtio_transport.c
->>>+++ b/net/vmw_vsock/virtio_transport.c
->>>@@ -717,8 +717,10 @@ static void virtio_vsock_vqs_del(struct virtio_vsock *vsock)
->>>	struct sk_buff *skb;
->>>
->>>	/* Reset all connected sockets when the VQs disappear */
->>>-	vsock_for_each_connected_socket(&virtio_transport.transport,
->>>-					virtio_vsock_reset_sock);
->>I would add a comment explaining why you are adding this check.
->
->Yes, please.
->
-
-Ok, I left a comment here in next version
-
->>>+	if (!vdev->priv) {
->>>+		vsock_for_each_connected_socket(&virtio_transport.transport,
->>>+						virtio_vsock_reset_sock);
->>>+	}
->
->Okay, after looking at the code I understood why, but please write it 
->into the commit next time!
->
->virtio_vsock_vqs_del() is called in 2 cases:
->1 - in virtio_vsock_remove() after setting `vdev->priv` to null since
->     the drive is about to be unloaded because the device is for example
->     removed (hot-unplug)
->
->2 - in virtio_vsock_freeze() when suspending, but in this case
->     `vdev->priv` is not touched.
->
->I don't think is a good idea using that because in the future it could 
->change. So better to add a parameter to virtio_vsock_vqs_del() to 
->differentiate the 2 use cases.
->
->
->That said, I think this patch is wrong:
->
->We are deallocating virtqueues, so all packets that are "in flight" will 
->be completely discarded. Our transport (virtqueues) has no mechanism to 
->retransmit them, so those packets would be lost forever. So we cannot 
->guarantee the reliability of SOCK_STREAM sockets for example.
->
->In any case, after a suspension, many connections will be expired in the 
->host anyway, so does it make sense to keep them open in the guest?
->
-
-If host still holds vsock connection during suspend,
-I think guest should keep them open at this case.
-
-Because we find a scenario that when we do freeze at the time that vsock
-connection is communicating, and after restore, upper application
-is trying to continue sending msg via vsock, then error `ENOTCONN`
-returned in function `vsock_connectible_sendmsg`. But host does not realize
-this thing and still waiting to receive msg with old connect.
-If host doesn't close old connection, it will cause that guest
-can never connect to host via vsock because of error `EPIPE` returned.
-
-If we freeze vsock after sending and receiving data operation completed,
-this error will not happen, and guest can still connect to host after resume.
-
-For example:
-In suitaion 1), if we do following steps
-    step 1) Host start a vsock server
-    step 2) Guest start a vsock client which will no-limited sending data
-    step 3) Guest freeze and resume
-Then vsock connection will be broken and guest can never connect to host via
-vsock untill Host reset vsock server.
-
-And in suitaion 2), if we do following steps
-    step1) Host start a vsock server
-    step2) Guest start a vsock client and send some data
-    step3) After client completed transmit, Guest freeze and resume
-    step4) Guest start a new vsock client and send some data
-In this suitaion, host server don't need to reset, and guest client works well
-after resume.
-
->If you want to support this use case, you must first provide a way to 
->keep those packets somewhere (e.g. avoiding to remove the virtqueues?), 
->but I honestly don't understand the use case.
->
-
-In cases guest sending no-reply-required packet via vsock,
-when guest suspend, the sending action will also suspend
-and no packets will loss after resume.
-
-And when host is sending packet via vsock when guest suspend and Vq disapper,
-like you mentioned, those packets will loss.
-But I think those packets should be keep in host device side,
-and promise that once guest resume,
-get them in host device and continue sending.
-
-Thanks,
-Junnan Wu
-
->To be clear, this behavior is intended, and it's for example the same as 
->when suspending the VM is the hypervisor directly, which after that, it 
->sends an event to the guest, just to close all connections because it's 
->complicated to keep them active.
->
->Thanks,
->Stefano
->
->
->
->>>
->>>	/* Stop all work handlers to make sure no one is accessing the device,
->>>	 * so we can safely call virtio_reset_device().
->>>-- 
->>>2.34.1
->>>
->>
->>I am not familiar with freeze/resume, but I don't see any problems 
->>with this patch.
->>
->>Thank you,
->>Luigi
->>
+@@ -47,7 +47,7 @@ config CRYPTO_NHPOLY1305_NEON
+ config CRYPTO_POLY1305_ARM
+ 	tristate "Hash functions: Poly1305 (NEON)"
+ 	select CRYPTO_HASH
+-	select CRYPTO_ARCH_HAVE_LIB_POLY1305
++	select CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305
+ 	help
+ 	  Poly1305 authenticator algorithm (RFC7539)
+ 
+@@ -214,7 +214,7 @@ config CRYPTO_AES_ARM_CE
+ config CRYPTO_CHACHA20_NEON
+ 	tristate "Ciphers: ChaCha20, XChaCha20, XChaCha12 (NEON)"
+ 	select CRYPTO_SKCIPHER
+-	select CRYPTO_ARCH_HAVE_LIB_CHACHA
++	select CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
+ 	help
+ 	  Length-preserving ciphers: ChaCha20, XChaCha20, and XChaCha12
+ 	  stream cipher algorithms
+diff --git a/arch/powerpc/crypto/Kconfig b/arch/powerpc/crypto/Kconfig
+index 5b315e9756b3..e453cb0c82d2 100644
+--- a/arch/powerpc/crypto/Kconfig
++++ b/arch/powerpc/crypto/Kconfig
+@@ -6,7 +6,7 @@ config CRYPTO_CURVE25519_PPC64
+ 	tristate "Public key crypto: Curve25519 (PowerPC64)"
+ 	depends on PPC64 && CPU_LITTLE_ENDIAN
+ 	select CRYPTO_LIB_CURVE25519_GENERIC
+-	select CRYPTO_ARCH_HAVE_LIB_CURVE25519
++	select CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519
+ 	help
+ 	  Curve25519 algorithm
+ 
+@@ -95,7 +95,7 @@ config CRYPTO_CHACHA20_P10
+ 	depends on PPC64 && CPU_LITTLE_ENDIAN && VSX
+ 	select CRYPTO_SKCIPHER
+ 	select CRYPTO_LIB_CHACHA_GENERIC
+-	select CRYPTO_ARCH_HAVE_LIB_CHACHA
++	select CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
+ 	help
+ 	  Length-preserving ciphers: ChaCha20, XChaCha20, and XChaCha12
+ 	  stream cipher algorithms
+diff --git a/arch/x86/crypto/Kconfig b/arch/x86/crypto/Kconfig
+index 4757bf922075..c189dad0969b 100644
+--- a/arch/x86/crypto/Kconfig
++++ b/arch/x86/crypto/Kconfig
+@@ -6,7 +6,7 @@ config CRYPTO_CURVE25519_X86
+ 	tristate "Public key crypto: Curve25519 (ADX)"
+ 	depends on X86 && 64BIT
+ 	select CRYPTO_LIB_CURVE25519_GENERIC
+-	select CRYPTO_ARCH_HAVE_LIB_CURVE25519
++	select CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519
+ 	help
+ 	  Curve25519 algorithm
+ 
+@@ -352,7 +352,7 @@ config CRYPTO_CHACHA20_X86_64
+ 	depends on X86 && 64BIT
+ 	select CRYPTO_SKCIPHER
+ 	select CRYPTO_LIB_CHACHA_GENERIC
+-	select CRYPTO_ARCH_HAVE_LIB_CHACHA
++	select CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
+ 	help
+ 	  Length-preserving ciphers: ChaCha20, XChaCha20, and XChaCha12
+ 	  stream cipher algorithms
+@@ -420,7 +420,7 @@ config CRYPTO_POLY1305_X86_64
+ 	tristate "Hash functions: Poly1305 (SSE2/AVX2)"
+ 	depends on X86 && 64BIT
+ 	select CRYPTO_LIB_POLY1305_GENERIC
+-	select CRYPTO_ARCH_HAVE_LIB_POLY1305
++	select CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305
+ 	help
+ 	  Poly1305 authenticator algorithm (RFC7539)
+ 
+diff --git a/lib/crypto/Kconfig b/lib/crypto/Kconfig
+index b01253cac70a..c542ef1d64d0 100644
+--- a/lib/crypto/Kconfig
++++ b/lib/crypto/Kconfig
+@@ -42,12 +42,17 @@ config CRYPTO_LIB_BLAKE2S_GENERIC
+ 	  of CRYPTO_LIB_BLAKE2S.
+ 
+ config CRYPTO_ARCH_HAVE_LIB_CHACHA
+-	tristate
++	bool
+ 	help
+ 	  Declares whether the architecture provides an arch-specific
+ 	  accelerated implementation of the ChaCha library interface,
+ 	  either builtin or as a module.
+ 
++config CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
++	tristate
++	select CRYPTO_ARCH_HAVE_LIB_CHACHA if CRYPTO_LIB_CHACHA=m
++	select CRYPTO_ARCH_HAVE_LIB_CHACHA if CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA=y
++
+ config CRYPTO_LIB_CHACHA_GENERIC
+ 	tristate
+ 	select CRYPTO_LIB_UTILS
+@@ -60,7 +65,6 @@ config CRYPTO_LIB_CHACHA_GENERIC
+ 
+ config CRYPTO_LIB_CHACHA
+ 	tristate "ChaCha library interface"
+-	depends on CRYPTO_ARCH_HAVE_LIB_CHACHA || !CRYPTO_ARCH_HAVE_LIB_CHACHA
+ 	select CRYPTO_LIB_CHACHA_GENERIC if CRYPTO_ARCH_HAVE_LIB_CHACHA=n
+ 	help
+ 	  Enable the ChaCha library interface. This interface may be fulfilled
+@@ -68,12 +72,17 @@ config CRYPTO_LIB_CHACHA
+ 	  is available and enabled.
+ 
+ config CRYPTO_ARCH_HAVE_LIB_CURVE25519
+-	tristate
++	bool
+ 	help
+ 	  Declares whether the architecture provides an arch-specific
+ 	  accelerated implementation of the Curve25519 library interface,
+ 	  either builtin or as a module.
+ 
++config CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519
++	tristate
++	select CRYPTO_ARCH_HAVE_LIB_CURVE25519 if CRYPTO_LIB_CURVE25519=m
++	select CRYPTO_ARCH_HAVE_LIB_CURVE25519 if CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519=y
++
+ config CRYPTO_LIB_CURVE25519_GENERIC
+ 	tristate
+ 	help
+@@ -85,7 +94,6 @@ config CRYPTO_LIB_CURVE25519_GENERIC
+ 
+ config CRYPTO_LIB_CURVE25519
+ 	tristate "Curve25519 scalar multiplication library"
+-	depends on CRYPTO_ARCH_HAVE_LIB_CURVE25519 || !CRYPTO_ARCH_HAVE_LIB_CURVE25519
+ 	select CRYPTO_LIB_CURVE25519_GENERIC if CRYPTO_ARCH_HAVE_LIB_CURVE25519=n
+ 	select CRYPTO_LIB_UTILS
+ 	help
+@@ -104,12 +112,17 @@ config CRYPTO_LIB_POLY1305_RSIZE
+ 	default 1
+ 
+ config CRYPTO_ARCH_HAVE_LIB_POLY1305
+-	tristate
++	bool
+ 	help
+ 	  Declares whether the architecture provides an arch-specific
+ 	  accelerated implementation of the Poly1305 library interface,
+ 	  either builtin or as a module.
+ 
++config CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305
++	tristate
++	select CRYPTO_ARCH_HAVE_LIB_POLY1305 if CRYPTO_LIB_POLY1305=m
++	select CRYPTO_ARCH_HAVE_LIB_POLY1305 if CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305=y
++
+ config CRYPTO_LIB_POLY1305_GENERIC
+ 	tristate
+ 	help
+@@ -121,7 +134,6 @@ config CRYPTO_LIB_POLY1305_GENERIC
+ 
+ config CRYPTO_LIB_POLY1305
+ 	tristate "Poly1305 library interface"
+-	depends on CRYPTO_ARCH_HAVE_LIB_POLY1305 || !CRYPTO_ARCH_HAVE_LIB_POLY1305
+ 	select CRYPTO_LIB_POLY1305_GENERIC if CRYPTO_ARCH_HAVE_LIB_POLY1305=n
+ 	help
+ 	  Enable the Poly1305 library interface. This interface may be fulfilled
+@@ -130,8 +142,6 @@ config CRYPTO_LIB_POLY1305
+ 
+ config CRYPTO_LIB_CHACHA20POLY1305
+ 	tristate "ChaCha20-Poly1305 AEAD support (8-byte nonce library version)"
+-	depends on CRYPTO_ARCH_HAVE_LIB_CHACHA || !CRYPTO_ARCH_HAVE_LIB_CHACHA
+-	depends on CRYPTO_ARCH_HAVE_LIB_POLY1305 || !CRYPTO_ARCH_HAVE_LIB_POLY1305
+ 	depends on CRYPTO
+ 	select CRYPTO_LIB_CHACHA
+ 	select CRYPTO_LIB_POLY1305
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
