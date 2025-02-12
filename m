@@ -1,109 +1,134 @@
-Return-Path: <linux-kernel+bounces-511174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F2DA3273F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:38:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D208A32746
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1308E3A7940
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:38:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDAFF3A7995
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59C220E6E0;
-	Wed, 12 Feb 2025 13:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40A220E329;
+	Wed, 12 Feb 2025 13:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Rb5JAqXu"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C3GM9MDW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yxseFPLp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1078120B7F4;
-	Wed, 12 Feb 2025 13:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17C720B7F4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739367523; cv=none; b=Zo2dXz0W3mrhCjlH1hWNUqDwHIuJdvRBKzvibtlF8RHPsd68FJfUPj4Xlxq0dKh8gOzDvcKw5/6jfWUVYf9vYwxVDSQA1ZNWhdwPES0xSopf3zNQZEUHjwV5F/5CjYb7ekbDoYTHJMDbCkuyomf9FtTwCikYo8dp5tkpWCAVslQ=
+	t=1739367690; cv=none; b=hVJyVm+zsBkbUrJqt9rG5+57w0/hqUz5f4Mb54EbLOa8m36mc18PVLxxh9/5yIj8f/jjgOc4g9hY5x2GBHG4LBXUyNWutqZdiIg+/3AcDds+Rax24SmCXJf5C546220erDjoUCIInevzQ7O9PwksNfDr230FFUs4H+cDDuPKkJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739367523; c=relaxed/simple;
-	bh=KgcoiEkTt6cHBFU6+0AYeRw+2sU3rQ2mobXhCmsB1aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGQ+CIvtP4dk5RPwRV/AGpDe5Yq9R6pz3ana3T6YYnPsO4DBobOvRIugJsJpyx4j0bmzcG/K4TmaSuDqxvO/ojNme19Ul91Kk9hZQBlgccjPCN4VRGjJ+0ogiijg6GVFoXz54BC99P4lczgk84Uig5qxWg+rCVm9cyLfWiE3wDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Rb5JAqXu; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FfHTHmD48ap4AAuhHkzDDEmp5+Gy2+Bv7iyUjekfXBI=; b=Rb5JAqXuomlg6Nrl+bnm37EGOF
-	pVh7Vxtci1L7tHaUnbXZEtzz1zNrOuYZlaiQUHZdYWPCodQw8HhLtHbZTLgHPDcAM/vfbfSG1zHn4
-	7krDExbRGq0mlIslvFyzKoKr4Y07hxIvC1Ehdf59l0juxt8vDNZdkyn0JnKzY9dkppuv95/RDxhWc
-	4kVrxHTZ9dgBMsxqBw7ido/wpiheV3O1yCAY2yGHVphsC1dU696nviDfGWpuYa9BcX/JhJwYLStcY
-	s71hnB+5h1bpLSkdiW6LItdU2IBZVJ5YpD79SLfWPS/+7cRXpH9LLDHBrLBrExHPSqAMFKqxtaMQn
-	KoolO6lw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52138)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tiCwT-00064G-3B;
-	Wed, 12 Feb 2025 13:38:18 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tiCwP-00019n-10;
-	Wed, 12 Feb 2025 13:38:13 +0000
-Date: Wed, 12 Feb 2025 13:38:13 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: dimitri.fedrau@liebherr.com
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH net-next v4 1/3] dt-bindings: net: ethernet-phy: add
- property tx-amplitude-100base-tx-percent
-Message-ID: <Z6ykRRBXo4tac6XQ@shell.armlinux.org.uk>
-References: <20250211-dp83822-tx-swing-v4-0-1e8ebd71ad54@liebherr.com>
- <20250211-dp83822-tx-swing-v4-1-1e8ebd71ad54@liebherr.com>
+	s=arc-20240116; t=1739367690; c=relaxed/simple;
+	bh=Qc9diUGiRv23AkB8zI1xmq2M46jMyn8ZxWRk7S2HU4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EKfU05qtLBC+cE5xq8mjM5WJU9U2C68aIjHgcRDpAwKlQm40pGe74jNtbEl/FcC/xcyWkG68C9CtnBK7q8rRDpPQT8wYCDgskYdJrd/x2DPmAC+zOzvOobaoYc0B5FAO8t5/mMWQqsWr2uQT1UdbNQSy7cqeEN+haeN3odIFzt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C3GM9MDW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yxseFPLp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739367687;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/4jVEtoPGT8Y3vSH6xG148Zl04rwufFJa2uW/0ATsB0=;
+	b=C3GM9MDWBwCjuKXWogvf3udMnNOoyBec4zXvtTYjEvMbH7aNDoRkQGWE8A7d8JjUFmDZmZ
+	pcZBJacDCdtzd0LVTurDMAVi6dCH7hY3s3Idg+JpKD9kut1pvdEwE+aqt85ZCrZA4vZ5Be
+	Zhs3sWw+kLP9WR/6NzYK2rr/Puyj5h5M/cFUwr2tUcAe3QJQoCNg3EDbJ9jr8sAKY9FyE8
+	HGdxH/HdVcVug4VDJW7nnMQFQO8sbGu1ntTLnmE4Po/JgkwZWPgnnmEO66fMjj9R8oAU0P
+	9yh61MNWnXOWUKhoSKJwf+YSnlrB88PfB1EWbd/R5jFzgkO4K0x4HBtbO0HYnA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739367687;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/4jVEtoPGT8Y3vSH6xG148Zl04rwufFJa2uW/0ATsB0=;
+	b=yxseFPLpKxSwWsCzgJRrGHYXyYJhPEC9+H53IVBJEXTITC09Wv1E8HkDuKnPz6gJRFjgVT
+	TKq8mTGc60Fp6NDg==
+To: linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Cc: Ben Segall <bsegall@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Will Deacon <will@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v3 0/9] preempt: Add a generic function to return the preemption string.
+Date: Wed, 12 Feb 2025 14:41:06 +0100
+Message-ID: <20250212134115.2583667-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211-dp83822-tx-swing-v4-1-1e8ebd71ad54@liebherr.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 11, 2025 at 09:33:47AM +0100, Dimitri Fedrau via B4 Relay wrote:
-> @@ -232,6 +232,12 @@ properties:
->        PHY's that have configurable TX internal delays. If this property is
->        present then the PHY applies the TX delay.
->  
-> +  tx-amplitude-100base-tx-percent:
-> +    description:
-> +      Transmit amplitude gain applied for 100BASE-TX. When omitted, the PHYs
-> +      default will be left as is.
-> +    default: 100
-> +
+The individual architectures often add the preemption model to the begin
+of the backtrace. This is the case on X86 or ARM64 for the "die" case
+but not for regular warning. With the addition of DYNAMIC_PREEMPT for
+PREEMPT_RT we end up with CONFIG_PREEMPT and CONFIG_PREEMPT_RT set
+simultaneously. That means that everyone who tried to add that piece of
+information gets it wrong for PREEMPT_RT because PREEMPT is checked
+first.
 
-This should mention what the reference is - so 100% is 100% of what (it
-would be the 802.3 specified 100BASE-TX level, but it should make that
-clear.)
+This series adds a generic helper which is used by
+dump_stack_print_info() and other architectures which don't use the
+function and provide this information on their own.
 
-I'm having a hard time trying to find its specification in 802.3, so
-maybe a reference to where it can be found would be useful, otherwise
-it's unclear what one gets for "100%".
+I collected ACKs for all architectures but x86.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+v2=E2=80=A6v3 https://lore.kernel.org/all/20250203141632.440554-1-bigeasy@l=
+inutronix.de/
+  - powerpc/ s390 and xtensa had the preemption string twice. Removed
+    from the arch code.
+  - Keeping the same printk() invocation, avoiding adding any level.
+  - #1 has now a table showing which strings are possible.
+
+RFC=E2=80=A6v2 https://lore.kernel.org/all/20241206113431.Q-VXMlru@linutron=
+ix.de/
+  - Split into individual patches.
+  - Implement preempt_model_str() based on feedback by Peter Zijlstra
+    and Steven Rostedt.
+
+Sebastian Andrzej Siewior (9):
+  sched: Add a generic function to return the preemption string.
+  lib/dump_stack: Use preempt_model_str().
+  arm: Rely on generic printing of preemption model.
+  arm64: Rely on generic printing of preemption model.
+  powerpc: Rely on generic printing of preemption model.
+  s390: Rely on generic printing of preemption model.
+  x86: Rely on generic printing of preemption model.
+  xtensa: Rely on generic printing of preemption model.
+  tracing: Use preempt_model_str().
+
+ arch/arm/kernel/traps.c      | 11 ++-------
+ arch/arm64/kernel/traps.c    | 10 +-------
+ arch/powerpc/kernel/traps.c  |  3 +--
+ arch/s390/kernel/dumpstack.c |  7 +-----
+ arch/x86/kernel/dumpstack.c  |  9 ++-----
+ arch/xtensa/kernel/traps.c   |  6 +----
+ include/linux/preempt.h      |  2 ++
+ kernel/sched/core.c          | 47 ++++++++++++++++++++++++++++++++++++
+ kernel/sched/debug.c         | 10 +++++---
+ kernel/sched/sched.h         |  1 +
+ kernel/trace/trace.c         |  7 +-----
+ lib/dump_stack.c             |  4 +--
+ 12 files changed, 67 insertions(+), 50 deletions(-)
+
+Sebastian
 
