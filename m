@@ -1,120 +1,156 @@
-Return-Path: <linux-kernel+bounces-510840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BB0A322B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:47:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F87A322BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:48:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA533A6B1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:47:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA7C1882F2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD87D205E15;
-	Wed, 12 Feb 2025 09:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C165205AC8;
+	Wed, 12 Feb 2025 09:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zOD+Ake8"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="aj6cE34x"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82701E282D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA220207A0A;
+	Wed, 12 Feb 2025 09:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353643; cv=none; b=kjMlp1zqfwfE+eooXcvHU5Gh4Zev5xObQ1NP43YNvSctxhCqE0E1++kdlUS6n1VW1H4mTVNmZuTRSx9Wdqe6Rv8kTGFPpi3/ra3blU437x5YnTCI03IFnyCZY3H0Bg0A3Di6Q+7Pxy515uaIspobEf62hDJDKmJbh45VMC2c4t8=
+	t=1739353697; cv=none; b=Ds43K5Md2RSxnnuspT7L4pd516lMqgznhoJ4ll7LezJXhoJePjWC7fg+RB6qO+DPwTsx5KLnUAmHOpwOc8zepDn8eInHpr313yKArbclqjxgOFE+PlWeaJ8UGPL7M41M3wbRJckl+i8kTbnHba2ycGPTt9sJ0143XlBEjqQAaKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353643; c=relaxed/simple;
-	bh=TKqcICL6TXKPxSRegpy9J7XyX60nER860Jd1kslHKlk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NyomYi9fyhLoaOHvbeY/i/Zaabd30OuE/RMFd8S8Rs6M109tUtVqIDzqeCQ9lx6Zm6DCt+fQme5249zxVUz99qneTP0t6QA6ZVjOH4niS/bGGMUpFLtycIlxEfq3kPzML/8+PExQD+y+W/7S9+GqlpkGlPnZRRx6jBM2X825iZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zOD+Ake8; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab2b29dfc65so996959966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:47:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739353640; x=1739958440; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TKqcICL6TXKPxSRegpy9J7XyX60nER860Jd1kslHKlk=;
-        b=zOD+Ake8DyXjX6p5UpYt0dkTWSVP3hII4Pb9TTAmi7P/ajGoE4D/QRXJGStq9zuwAK
-         HpJkdDOGnMbcMTGhjKbkKkAIhUq8e4qYeYJiE1u5IE2xT3HqRlJopjmz+dZZ4fjJO9LH
-         bPHYWpCDdOAM/tjO0y+YCTAVi22GmUBBtPN7+oS4WzxmAckeGO8ph9yfQLE+VWbAhw7a
-         2LTnj7H4ZimyzY+zbL7Pto4STZt2bMxo7JDT2gO8hMDz+owHV2GymQqjmEZfe2Wz88gC
-         qd9Kel9Izes7JmuxIXoUAg07SgUvo3JQo7OIHIi+XnkNPnEybnNB3FZ10DLMUU3hPIsZ
-         xm+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739353640; x=1739958440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TKqcICL6TXKPxSRegpy9J7XyX60nER860Jd1kslHKlk=;
-        b=HWWNwNxJFVrOhYXl+lrlJFaoU738cfDxtweb6NSWfXuaSLreJ2prNe5BQfME0kyaip
-         +Os1elcam0cgaH1od0EwH6rhfGobJUSCRKmP0+to8vPlwLCfHrm9qXuaugZ50iR+uWFk
-         MOCfwUmkrCedcCk1FJXzZVvqXFauRN9ByQ+OoMRErUZ0cceVo5lryoOpBq7u+dZanRRS
-         e3ErbGRkqXaMRGlf/UtgYkiNXnJ4X8g1w1URupWf1ex20KrS8PNdTy5tolbLiAkbcewC
-         igWTErF5jnA59vn5POV0vZBo405V2wMXmJ1BMhjllzEMrEdlKELB865Xxu7DkXQLB8ta
-         IEWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXz3vA/azxSSXU2s7kWBWxcT8Yha1hsSmMC/inQ3z/pTEcqfp1S1U14KkGtSpOpyWRd7JOMKOT6zWm+W+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/C/bFtVUWzuzcTOrlAQZ9mEQ+QN9sILXuZrFv5yBTgGewSNrZ
-	SNxKd90dU5BYBTlnRzfQwf6RVna+oRo5ecNXSB/76nAMAk0K+3qm/mjIKmHnaNuLBQImkdiIght
-	2BTrmwYk2k/MYB1UOUMMB3s5WVClzaY7PBc6s
-X-Gm-Gg: ASbGncu6Qh1/uKBlFWJrgDQMZnSU1j0n4S//1fq181PoR9ind0AZuURYjlhDklQ9++0
-	AQJQIIYBWAWCyvOyjg7a9WdqSEo7mtza4tfro+tBnJCsagQnvpX1UHZ6EPYcZ7U4bAo6ht6d5it
-	N3sTELb0nnXEcYn5dx55wQkWk/IE09JQ==
-X-Google-Smtp-Source: AGHT+IGQtYtV8hB9z4cqfu+GD6xWt9yKHzH3Tmh6TBoqYNAt+cogJqa1226aKLwvMy8OQDTzT4ej9do/nT4u8m18J2A=
-X-Received: by 2002:a17:907:3f8d:b0:ab7:dc1d:7d7d with SMTP id
- a640c23a62f3a-ab7f33c578dmr199546266b.25.1739353639819; Wed, 12 Feb 2025
- 01:47:19 -0800 (PST)
+	s=arc-20240116; t=1739353697; c=relaxed/simple;
+	bh=HBBqqi+x0G8qDpmtHU+9cA14OLmLrDmPMXDs7u256ZM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OyozCBbu8zLWsb3nDx4RrhVYcn1hCYiPMpIYo3//+0bA5DQnN6im7V+38WGq4B0phulilNmfxG7yKQM5hlokV1lcOChA6fNZDB/3HyZkdBANM4lX9Tpo5iFkXGBcpM8ow3HRMnIZetD/ohQsOiNhTm815fwN30SGJZs6locsmbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=aj6cE34x; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C40bZs000360;
+	Wed, 12 Feb 2025 01:47:48 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=Wufsjz4xcZASzpC++jwn8Zg
+	FIphgLQj/6xicRGnRsws=; b=aj6cE34xjlIlN3RXdqv4KGHZfcpsqCs5j47DR/Y
+	ktkz52lq0+/Nb/vCwaqlUKUkh4kSv/1zZ+rWSWAzftIGVWiwOPk60uhA+oYgAZqQ
+	xzikfJUeQWdmXUDgNIq5TfUmu8aItfqwly5L3L6xa+gcgNmP1uXpKL2jGXd/OV4u
+	mwiOl9XXfbScTnzGxyK4PqT2GZ+d6StAglMIUwrHMgLhWZNyXJ2PKHO25t6V/424
+	d5dpGpZF/I+tCeaS+rjdBbzCyc8CrYzfcEZKlScoOOflQnu78dexxAaJYx1PQ0JG
+	3b2IimYZMSA31QuNrqzjdb3xKK7xeypM/sdgWRgCd1aWiOw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 44rm878k9c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 01:47:47 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 12 Feb 2025 01:47:47 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 12 Feb 2025 01:47:46 -0800
+Received: from localhost.localdomain (unknown [10.28.36.166])
+	by maili.marvell.com (Postfix) with ESMTP id 0FCF33F708A;
+	Wed, 12 Feb 2025 01:47:40 -0800 (PST)
+From: Suman Ghosh <sumang@marvell.com>
+To: <horms@kernel.org>, <sgoutham@marvell.com>, <gakula@marvell.com>,
+        <sbhatta@marvell.com>, <hkelam@marvell.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lcherian@marvell.com>, <jerinj@marvell.com>,
+        <john.fastabend@gmail.com>, <bbhushan2@marvell.com>, <hawk@kernel.org>,
+        <andrew+netdev@lunn.ch>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <bpf@vger.kernel.org>, <larysa.zaremba@intel.com>
+CC: Suman Ghosh <sumang@marvell.com>
+Subject: [net-next PATCH v6 0/6] Add af_xdp support for cn10k
+Date: Wed, 12 Feb 2025 15:17:32 +0530
+Message-ID: <20250212094738.2671725-1-sumang@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <SY8P300MB04210D3E18CFEA27AE9E9338A1FC2@SY8P300MB0421.AUSP300.PROD.OUTLOOK.COM>
-In-Reply-To: <SY8P300MB04210D3E18CFEA27AE9E9338A1FC2@SY8P300MB0421.AUSP300.PROD.OUTLOOK.COM>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 12 Feb 2025 10:47:08 +0100
-X-Gm-Features: AWEUYZmVcw8L3xAI6H_huoGpEXCmHBOAY8OxIyVRj6KAvbkKDGsIbSCp832MFn8
-Message-ID: <CANn89iKxw4=29p_Ys3H0=mDQFOfZYbqxaTuLsRYK2X2tJCuwHQ@mail.gmail.com>
-Subject: Re: BUG: corrupted list in neigh_destroy [with reproducer]
-To: YAN KANG <kangyan91@outlook.com>
-Cc: Joel Granados <joel.granados@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, 
-	"j.granados@samsung.com" <j.granados@samsung.com>, "linux@weissschuh.net" <linux@weissschuh.net>, 
-	"judyhsiao@chromium.org" <judyhsiao@chromium.org>, "James.Z.Li@dell.com" <James.Z.Li@dell.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: Zsva1KXy29AZ6UK5sNqUgAVq23kBkLFA
+X-Proofpoint-ORIG-GUID: Zsva1KXy29AZ6UK5sNqUgAVq23kBkLFA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_03,2025-02-11_01,2024-11-22_01
 
-On Wed, Feb 12, 2025 at 10:18=E2=80=AFAM YAN KANG <kangyan91@outlook.com> w=
-rote:
->
-> Hi:
->
-> I found a kernel bug titiled "BUG: corrupted list in neigh_destroy " whil=
-e using modified syzkaller fuzzing tool. I Itested it on the latest Linux u=
-pstream version (6.13.0-rc7), and it was able to be triggered. I found earl=
-y report has no repro. I have a reproducer that can stable trigger this bug=
- .
->
-> early report: https://lore.kernel.org/netdev/20241007202240.bsqczev75yzdg=
-n3g@joelS2.panther.com/
->
-> The bug info is:
->
-> kernel revision: v6.13-rc7
-> OOPS message: BUG: corrupted list in neigh_destroy
-> reproducer:YES
-> subsystem: NETWORKING
+This patchset includes changes to support AF_XDP for cn10k chipsets. Both
+non-zero copy and zero copy will be supported after these changes. Also,
+the RSS will be reconfigured once a particular receive queue is
+added/removed to/from AF_XDP support.
 
-FYI, there are already many public reports using bcachefs to trigger
-'bugs' in networking or other layers.
+Patch #1: octeontx2-pf: use xdp_return_frame() to free xdp buffers
 
-Do not send other reports, or make sure your repro is _only_ using
-networking stuff.
+Patch #2: octeontx2-pf: Add AF_XDP non-zero copy support
+
+Patch #3: octeontx2-pf: AF_XDP zero copy receive support
+
+Patch #4: octeontx2-pf: Reconfigure RSS table after enabling AF_XDP
+zerocopy on rx queue
+
+Patch #5: octeontx2-pf: Prepare for AF_XDP transmit
+
+Patch #6: octeontx2-pf: AF_XDP zero copy transmit support
+
+Geetha sowjanya (1):
+  octeontx2-pf: use xdp_return_frame() to free xdp buffers
+
+Hariprasad Kelam (2):
+  octeontx2-pf: Prepare for AF_XDP
+  octeontx2-pf: AF_XDP zero copy transmit support
+
+Suman Ghosh (3):
+  octeontx2-pf: Add AF_XDP non-zero copy support
+  octeontx2-pf: AF_XDP zero copy receive support
+  octeontx2-pf: Reconfigure RSS table after enabling AF_XDP zerocopy on
+    rx queue
+
+v6 changes:
+- Updated patch #1,#3,#5 and #6 to address review comments
+  from Simon for some code re-arrangement
+
+v5 changes:
+- Updated patch #1 to use xdp_return_frame 
+- Updated patch #6 to use xdp_return_frame
+
+v4 changes:
+- Addressed minor comments from Paolo regarding adding fixes tag in patch#2
+  and removed one unnecessary NULL check from patch#3
+
+v3 changes:
+- Rearrenged patch ordering to fix individual patch compilation issue
+- Fixed un-initialized variable declaration and reverse x-mas tree issue
+  pointed by Simon
+
+v2 changes:
+- Addressed minor review comments from Simon regrading smatch warnings
+
+ .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.c    |   7 +-
+ .../marvell/octeontx2/nic/otx2_common.c       | 122 +++++++---
+ .../marvell/octeontx2/nic/otx2_common.h       |  17 +-
+ .../marvell/octeontx2/nic/otx2_ethtool.c      |   6 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  |  32 +--
+ .../marvell/octeontx2/nic/otx2_txrx.c         | 188 +++++++++++----
+ .../marvell/octeontx2/nic/otx2_txrx.h         |   9 +
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  12 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_xsk.c | 225 ++++++++++++++++++
+ .../ethernet/marvell/octeontx2/nic/otx2_xsk.h |  24 ++
+ .../ethernet/marvell/octeontx2/nic/qos_sq.c   |   2 +-
+ 12 files changed, 554 insertions(+), 92 deletions(-)
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/otx2_xsk.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/otx2_xsk.h
+
+-- 
+2.25.1
+
 
