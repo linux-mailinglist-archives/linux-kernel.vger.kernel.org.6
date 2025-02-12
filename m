@@ -1,138 +1,127 @@
-Return-Path: <linux-kernel+bounces-511113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3541AA32618
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:45:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6C6A32612
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C914188BFEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00FE61688A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B503720E001;
-	Wed, 12 Feb 2025 12:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A387120CCED;
+	Wed, 12 Feb 2025 12:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bU3Rd2tJ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="KFDIojn1"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC9F20C487;
-	Wed, 12 Feb 2025 12:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739364280; cv=none; b=eC1V6NbN2D+wZehPEJirz05q/pZ15BReOilCNivm5qtY+PYXnFSXkNR9Tqiz9orfJ7q1oDNJwSBDmPrUE+X+SOvLWRRQHvBPPBv+lU3gsBQ8UgjYNtHW8iUpJMiMltXaV+spXzqhoZPDQ+aK9N6/ZP0qsQBw7cwHrBNG+w8i89M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739364280; c=relaxed/simple;
-	bh=+mhHkXqhc4VDwPi7MLWcNjZdhTc4zZo0gwq+T5cTOIY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qt0m9RiwmHpRLQ+XABRLF70jn5Z3s8Omob7SQxcEzofj9DsdXtgtXADQGaShYhHZ8Nzjt6U/VYRJA+MqLDmALy3uzGNLld4J3hmKFLToTVHkIFZefFDFRhKpoHc0QFLmC0CyoXPE1ncwS+jdmU4MIe0C4OfW7hVFgDo4meB9P3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bU3Rd2tJ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CBpiSd013640;
-	Wed, 12 Feb 2025 12:43:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=+mhHkX
-	qhc4VDwPi7MLWcNjZdhTc4zZo0gwq+T5cTOIY=; b=bU3Rd2tJlFFQqu5BV1YnSW
-	tkSX87Qk0oNHNsqBvOCKKjQZaMiiiZktgkFwm6RXdYLRIRz3064de3ZJXTpXluHu
-	jR03F9uRrZfaZigIPn78pnGDR9HygsJhvJ5DYCArhv2PG3aDrjD9XnfD+jBDYhlz
-	xI8W+J8GZ+nTiq+IF6s6C8efmO99g52z7VbIvRvo7u/PcEmBojze6dbCKo6XXUlL
-	j/3GiABLIEtJd6Ef0p7jqIKghjbxcTQr0y0HzxcxSdS0S7J5xaN+VGT0Pq9ntVu1
-	f6RR3BKMvXasb0aO6cNUobfx/7R+rEz600ZMWb7fDBrUlrWX8HgZMXek6yAfaF7A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rfpa3bm3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 12:43:04 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51CCK66g021894;
-	Wed, 12 Feb 2025 12:43:03 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rfpa3bky-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 12:43:03 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CCdn11028217;
-	Wed, 12 Feb 2025 12:43:02 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44phyygqa4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 12:43:02 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CCh1wq27132606
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 12:43:01 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A3245805F;
-	Wed, 12 Feb 2025 12:43:01 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3039258051;
-	Wed, 12 Feb 2025 12:43:00 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.169.88])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Feb 2025 12:43:00 +0000 (GMT)
-Message-ID: <6f7120f292a7863e7c69d3cb49f224efd12ee629.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v3 07/13] keys: Add ability to track intended usage
- of the public key
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@kernel.org>,
-        Eric Snowberg
-	 <eric.snowberg@oracle.com>
-Cc: linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        dwmw2@infradead.org, herbert@gondor.apana.org.au, davem@davemloft.net,
-        ardb@kernel.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-        mic@digikod.net, casey@schaufler-ca.com, stefanb@linux.ibm.com,
-        ebiggers@kernel.org, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Date: Wed, 12 Feb 2025 07:42:59 -0500
-In-Reply-To: <Z6UU7anXtW43AhNR@kernel.org>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
-	 <20241017155516.2582369-8-eric.snowberg@oracle.com>
-	 <Z6UU7anXtW43AhNR@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4790D20A5D9;
+	Wed, 12 Feb 2025 12:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739364279; cv=pass; b=ppSPniGyBTIN0hBlqMROCajTTQjgm9xBY3gH2eqp4zLe7YXEdI/GBpDKKkUnfY79Mpz61kCqG5B3H5gh2JiXx8WkyUlAMTCNCExSuTE0hnYzFXigrtGWxznEtgMwHhluPfOIOM4q/V/euX78oVSkdfoWGfsc9sMdZq/X+4vz58Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739364279; c=relaxed/simple;
+	bh=JBdG7HNd/1tVUtH0BDCQnqqSS6Cy6BkptAat8oiEIUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=srYiachQ4oCLBCbfhgp370onGJH2pAdmh5FfiE/8YwJOmu1HVXwDxBHhT+Vp7e88qlrXmKvnqw3A7tvPWbj5llCbm47OEQJsQqrqIg+/mzLX5nq8T2NNWgG0qM+6SqPw5a4F0P5UWXK6aJnmDDAwdIfSev+E2b9KJoh66X3R9Pc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=KFDIojn1; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739364264; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mhTek3LMOXWwE7inMGdFBQrsJZznqdEbQDauKdZXlGwi+Z9MfxqqTNkuHAcqwwYCDxnV0OG+NVNWOmAJNe3ZTxx0FgUVdwAggVNMkDGmmTrTWv61fR9qzmbcuE2iSJ8837Uhmy+oBFxF/9JpQCQJlTsODE+Z0ubmulW2P0qxMBM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739364264; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=k0u7MCkVugkCYytrZIZnLSDOJ7P6+i9SZvRkCovv5zU=; 
+	b=ACA9jmkQalqYV3VPWJ07o8K0WZJpck8qONiPpOHlxLC9EQdGe+FwSaDn2g/7DmX9GLqCRFfkwlY6G2tUU/LycXHcUbjNxmisOKulgmG8/LCIKmcatAYvnyDlxhekL5/iyMarYWHVfjWSo455Zdb11lq6+qqBN1a/wHX0Y9wHDd4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739364263;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=k0u7MCkVugkCYytrZIZnLSDOJ7P6+i9SZvRkCovv5zU=;
+	b=KFDIojn1akvvSLIMtBtS1j/gY6cML0WKSgoRHfeomaqwixBDGRWuFchtvI/GL5aB
+	KFl2p63f+Y8wIG9/MErZmEYc1IbDoGL1bs/sXhr9Rx2Vb6+10JW4a3dM6uSV5ry2Nij
+	jOnTZh89SkxlPkYr/fKxBSsT1UfvNsyfdB4psLKo=
+Received: by mx.zohomail.com with SMTPS id 1739364260281358.8015360119805;
+	Wed, 12 Feb 2025 04:44:20 -0800 (PST)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: srinivas.kandagatla@linaro.org, linux-rockchip@lists.infradead.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, detlev.casanova@collabora.com,
+ sebastian.reichel@collabora.com, Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH RESEND v2 0/6] RK3576 OTP support
+Date: Wed, 12 Feb 2025 13:44:15 +0100
+Message-ID: <5943191.DvuYhMxLoT@workhorse>
+In-Reply-To: <20250210224510.1194963-1-heiko@sntech.de>
+References: <20250210224510.1194963-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: WPOio9vJuKimRSeTX5erqwTICYwt3Uiv
-X-Proofpoint-ORIG-GUID: PANYEldy6s1JY0QEJs3RxZgvBxokQCaR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- mlxlogscore=923 clxscore=1011 phishscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502120097
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, 2025-02-06 at 22:13 +0200, Jarkko Sakkinen wrote:
-> On Thu, Oct 17, 2024 at 09:55:10AM -0600, Eric Snowberg wrote:
-> > Add two new fields in public_key_signature to track the intended usage =
-of
-> > the signature.=C2=A0 Also add a flag for the revocation pass.=C2=A0 Dur=
-ing signature
-> > validation, two verifications can take place for the same signature.=C2=
-=A0 One
-> > to see if it verifies against something on the .blacklist keyring and
-> > the other to see if it verifies against the supplied keyring. The flag
-> > is used to determine which stage the verification is in.
-> >=20
-> > Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
->=20
-> Mimi, was this the patch set you asked to look at while ago?</offtopic>
+On Monday, 10 February 2025 23:45:04 Central European Standard Time Heiko 
+Stuebner wrote:
+> This enables OTP support in the nvmem driver for rk3576.
+> 
+> I expect to pick the clock patch (patch1) and the arm64-dts patch (patch6)
+> myself, after the nvmem-driver and -binding patches have been applied
+> (patches 2-5).
+> 
+> But kept them together for people wanting to try this series.
+> 
+> changes in v2:
+> - fix register constant in clock definition (Diederik)
+> - add patch to set limits on variant-specific clock-names
+> - use correct limits for clocks + resets on rk3576 binding
+> 
+> 
+> RESEND, because I messed up my git-send-email which caused it to include
+> the list of patches 2 times, duplicating everything :-( .
+> 
+> Heiko Stuebner (6):
+>   clk: rockchip: rk3576: define clk_otp_phy_g
+>   nvmem: rockchip-otp: Move read-offset into variant-data
+>   dt-bindings: nvmem: rockchip,otp: add missing limits for clock-names
+>   dt-bindings: nvmem: rockchip,otp: Add compatible for RK3576
+>   nvmem: rockchip-otp: add rk3576 variant data
+>   arm64: dts: rockchip: add rk3576 otp node
+> 
+>  .../bindings/nvmem/rockchip,otp.yaml          | 25 ++++++++++++
+>  arch/arm64/boot/dts/rockchip/rk3576.dtsi      | 39 +++++++++++++++++++
+>  drivers/clk/rockchip/clk-rk3576.c             |  2 +
+>  drivers/nvmem/rockchip-otp.c                  | 17 +++++++-
+>  4 files changed, 81 insertions(+), 2 deletions(-)
 
-Yes, in particular please take a look at Paul's comment on 00/13.
+Hi Heiko,
 
-Mimi
+for the entire series:
+
+Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
+OTPs show up on my Sige5 RK3576 board and read fine. Also compared the OTP 
+nodes to downstream and the values look consistent with that. The OTPs aren't 
+documented in the TRM I have, so unfortunately I can't cross-reference that.
+
+NB: patchwork's "Series" download for this series somehow lacks patch 2/6, 
+which tripped me up at first. Not sure if that's a problem with patchwork or 
+with how you sent the series out, but I thought I'd let others know who run 
+into this.
+
+Regards,
+Nicolas Frattaroli
+
+
+
 
