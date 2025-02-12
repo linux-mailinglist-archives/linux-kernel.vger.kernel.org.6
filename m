@@ -1,163 +1,148 @@
-Return-Path: <linux-kernel+bounces-510473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625CAA31D82
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:40:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF95FA31D84
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A69A7A3CA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:39:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B9A3162EBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A26C1EEA28;
-	Wed, 12 Feb 2025 04:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC511E9905;
+	Wed, 12 Feb 2025 04:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KEvSEq5h";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="21TmhMUl";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KEvSEq5h";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="21TmhMUl"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HP79/2+R"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1A227183B;
-	Wed, 12 Feb 2025 04:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2A227183B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739335238; cv=none; b=a6F7DS5a4EhYGRIvma1573JoFrYt9/uoCu2YC7dtsvQMss6QLTeqCxnp8UDd5fiy4gcygbOF5feV1DTGTa1wU6z9EqN/4nzxqj+D15LFo7eq/y63Yn+6s9sUG6tCIZxqK8N0+a84X9WWdEm82dW0FJCeeP+Ax5DwVnMGrLPsOpc=
+	t=1739335380; cv=none; b=rc6TBzeyvpwQi2IGvO8m9XgXiOeWjCakmisFiFpGbjUy0hI4Y18U+fsa/POFtzecWecEWCdDw8wZK2XhsxwSmoxf+fNSNINEGlrh1BqxaQZBrR/eHC8S3VFJkseIQHR6hFivpalf7jiGWYgobW4dulsGSWPwdw//DS3OcQBcWBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739335238; c=relaxed/simple;
-	bh=nqFYJV2uNsxJEeayoxxsALSEgrHp+g4jfbsRm2VecSY=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=PjXmFXK3FInnbtoyiAD+/v5A/GWz6iYgwSPWhPRg59gqobjgW77BhyOvgOqLqSN3T6oY1tjem9STKX6RQHPRWsTYMQZCCdwZZiGc6KTS6iOBn6F2lGusSi+mPvTAW7ErCJXsq6dZyFnU5Ij8f/dnIp6LCrOuyFQstK1XQUMK7mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KEvSEq5h; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=21TmhMUl; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KEvSEq5h; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=21TmhMUl; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 991B63377E;
-	Wed, 12 Feb 2025 04:40:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739335234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=51CME5rXo/EmOI0Q/jLXEbBiWw/2N/e9MU+fM+sd0Ws=;
-	b=KEvSEq5hfKAxRvI2jzl1QLluvoRTgAZ6/9sc9VSW6eij64nK2G64GLNWFMO499/9O5rttP
-	5SdzTdxPh3/tnlRQ6nC8Jm4dPMZifvAPutct+LatJMhgfWaSUx/brLc6ruKbeXFZrq/a93
-	fKPotJwhhI730BVNRe7nIt+2tNFYnpo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739335234;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=51CME5rXo/EmOI0Q/jLXEbBiWw/2N/e9MU+fM+sd0Ws=;
-	b=21TmhMUltmR5TsytQf7ZnKJ4RWJyfgrZyF8NqVPk+NcTsTbsVIK8SQUmkvNge9A97v6NG8
-	Lr+Mqd1vK/gyQUCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KEvSEq5h;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=21TmhMUl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739335234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=51CME5rXo/EmOI0Q/jLXEbBiWw/2N/e9MU+fM+sd0Ws=;
-	b=KEvSEq5hfKAxRvI2jzl1QLluvoRTgAZ6/9sc9VSW6eij64nK2G64GLNWFMO499/9O5rttP
-	5SdzTdxPh3/tnlRQ6nC8Jm4dPMZifvAPutct+LatJMhgfWaSUx/brLc6ruKbeXFZrq/a93
-	fKPotJwhhI730BVNRe7nIt+2tNFYnpo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739335234;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=51CME5rXo/EmOI0Q/jLXEbBiWw/2N/e9MU+fM+sd0Ws=;
-	b=21TmhMUltmR5TsytQf7ZnKJ4RWJyfgrZyF8NqVPk+NcTsTbsVIK8SQUmkvNge9A97v6NG8
-	Lr+Mqd1vK/gyQUCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F2CEA13874;
-	Wed, 12 Feb 2025 04:40:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id W452KTsmrGdzbAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 12 Feb 2025 04:40:27 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1739335380; c=relaxed/simple;
+	bh=GDeaeZH8t1+gAb6VATABMMpqtAd9Qc/3ExpSoq+Sxjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=J4SVJsQSJACuQqTHIBHvXRrAJAUA4wjvVLTHuHlMybSwH+iZXVE1KeLwz2Y+BMrv73trKpuCgQqqmhhvNLB5kGZt6rBjc9e2r+9zY5y9XYb1ZjClXSGGCPaOtvJmC1hGMxWZGmnZd0TfmeAcj7cYMT0M9gDb3u69j0XGB4nV31A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HP79/2+R; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739335378; x=1770871378;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=GDeaeZH8t1+gAb6VATABMMpqtAd9Qc/3ExpSoq+Sxjg=;
+  b=HP79/2+Rr9kTIGR/+tlUqDtk2dSod1pd5aisuS+y8Jm6jgRBmYvIm1yi
+   awY16TTlXaPkHuGQlyLq98ONb6gnx1/gshnRX53Vdhhd/928dmSuBFiRI
+   qojxZcblrSqe9AVf49yG5eHFBOyTXTv+EUghkiU4wYZz6ZAQAniehK7W7
+   Fxbkv+8o9kjNtvLxFuhhrhULTg3ZoFGZNzZyM9zCCROG1J7RF6wVgSATU
+   btshOjtBhkPDY9XjczT1OW7+SWOkg/E/pgaun0I5oL10jsp4RAjwlThyn
+   pbsJ0OQ6VuD2Z/WBmzGFEmv1UOEETw14B/8sa3JWdWkLnWG1ElkrVmeEB
+   Q==;
+X-CSE-ConnectionGUID: DmygjJ9dQ2Kzcdji0ImbEw==
+X-CSE-MsgGUID: xl9OnznLQwqy4MLvvoVGyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39839671"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="39839671"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 20:42:57 -0800
+X-CSE-ConnectionGUID: dVf7tGExRnOCLoDSzXIIaQ==
+X-CSE-MsgGUID: uu+oYehYR5SsWIhcyuV4oQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="117792148"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 11 Feb 2025 20:42:55 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ti4aL-00157n-0U;
+	Wed, 12 Feb 2025 04:42:53 +0000
+Date: Wed, 12 Feb 2025 12:41:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.de>
+Subject: drivers/most/most_snd.c:58: warning: Excess struct member 'opened'
+ description in 'channel'
+Message-ID: <202502121231.jdgxuPA7-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- "Kent Overstreet" <kent.overstreet@linux.dev>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Namjae Jeon" <linkinjeon@kernel.org>, "Steve French" <sfrench@samba.org>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Tom Talpey" <tom@talpey.com>, "Paul Moore" <paul@paul-moore.com>,
- "Eric Paris" <eparis@redhat.com>, linux-kernel@vger.kernel.org,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, audit@vger.kernel.org
-Subject:
- Re: [PATCH 2/2] VFS: add common error checks to lookup_one_qstr_excl()
-In-reply-to: <20250212040604.GN1977892@ZenIV>
-References: <>, <20250212040604.GN1977892@ZenIV>
-Date: Wed, 12 Feb 2025 15:40:24 +1100
-Message-id: <173933522466.22054.10492497527270412453@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 991B63377E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 12 Feb 2025, Al Viro wrote:
-> On Wed, Feb 12, 2025 at 02:45:04PM +1100, NeilBrown wrote:
-> > On Wed, 12 Feb 2025, Al Viro wrote:
-> 
-> > I do see some value in the simplicity of this approach, though maybe not
-> > as much value as you see.  But the above uses inode_lock_share(), rather
-> > than the nested version, so lockdep will complain.
-> 
-> IDGI...  It doesn't grab any ->i_rwsem inside that one, so what's there to
-> complain about?  And in that case it returns with no locks held, so...
-> 
+Hi Mark,
 
-Sorry - my bad.  I saw the difference in nesting and jumped the wrong
-way.
+FYI, the error/warning still remains.
 
-NeilBrown
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   09fbf3d502050282bf47ab3babe1d4ed54dd1fd8
+commit: 512d092d78823f9813f4af38090b33c454137a4c ALSA: Enable build with UML
+date:   1 year, 7 months ago
+config: um-randconfig-001-20240624 (https://download.01.org/0day-ci/archive/20250212/202502121231.jdgxuPA7-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502121231.jdgxuPA7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502121231.jdgxuPA7-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/most/most_snd.c:58: warning: Excess struct member 'opened' description in 'channel'
+
+
+vim +58 drivers/most/most_snd.c
+
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  26  
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  27  /**
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  28   * struct channel - private structure to keep channel specific data
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  29   * @substream: stores the substream structure
+fba3993e86cc44 drivers/most/most_snd.c                Randy Dunlap    2023-01-12  30   * @pcm_hardware: low-level hardware description
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  31   * @iface: interface for which the channel belongs to
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  32   * @cfg: channel configuration
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  33   * @card: registered sound card
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  34   * @list: list for private use
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  35   * @id: channel index
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  36   * @period_pos: current period position (ring buffer)
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  37   * @buffer_pos: current buffer position (ring buffer)
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  38   * @is_stream_running: identifies whether a stream is running or not
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  39   * @opened: set when the stream is opened
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  40   * @playback_task: playback thread
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  41   * @playback_waitq: waitq used by playback thread
+fba3993e86cc44 drivers/most/most_snd.c                Randy Dunlap    2023-01-12  42   * @copy_fn: copy function for PCM-specific format and width
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  43   */
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  44  struct channel {
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  45  	struct snd_pcm_substream *substream;
+d801887248312f drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-09-28  46  	struct snd_pcm_hardware pcm_hardware;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  47  	struct most_interface *iface;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  48  	struct most_channel_config *cfg;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  49  	struct snd_card *card;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  50  	struct list_head list;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  51  	int id;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  52  	unsigned int period_pos;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  53  	unsigned int buffer_pos;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  54  	bool is_stream_running;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  55  	struct task_struct *playback_task;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  56  	wait_queue_head_t playback_waitq;
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  57  	void (*copy_fn)(void *alsa, void *most, unsigned int bytes);
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24 @58  };
+54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  59  
+
+:::::: The code at line 58 was first introduced by commit
+:::::: 54b4856fb3624609dd5d9ed013bfec7d67083622 Staging: most: add MOST driver's aim-sound module
+
+:::::: TO: Christian Gromm <christian.gromm@microchip.com>
+:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
