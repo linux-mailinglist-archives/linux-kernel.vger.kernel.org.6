@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-510594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE58A31F36
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:41:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112B3A31F1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC8D3A2988
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B148A3A281F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5401FCF4F;
-	Wed, 12 Feb 2025 06:41:48 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467311FDE04;
+	Wed, 12 Feb 2025 06:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jt5ulpJU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECCE1EEA32;
-	Wed, 12 Feb 2025 06:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8980D1FBCB4;
+	Wed, 12 Feb 2025 06:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739342508; cv=none; b=q1w1PHvBgJaVnvUPt5FTZ8V93skoAaTJUUjwjgXeCY99xT9uBLgOZdtfiI/TB9Ofe7A7fkOc9FolUUA3wGjX8PnIPUbOAQXHDhX7ZsxJsdT49JI8G3DW5am2KnDVeR7gis3TbkP8BILuiUYiSNEqrPgFwaD5ZjAs1eNxZ0a0mmw=
+	t=1739342055; cv=none; b=BTkyIksCiL9bHcMFxpqJDLKFAtCEOStnEANhDc99CAIoDBDyLGxvhFn71Svx0BIsJnBn3CUONhjcRKSqoVEQgyfC9O6oSufuwxxOmJOwHeidWWFHzviF7X54OM/GtTEf3c4zl/9JVw8qyJRZYMh7QkrmzeCrANhFPVKdm8nxvcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739342508; c=relaxed/simple;
-	bh=6YO1Gy3y+qoZz8zIN+vjvk3mQBBe30aQCHwAFSrGcFI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cu5CyvaZCl+95M4JkgSE0vJqFJibDpXR0NjDqb8VQtiPbSch9REEyVLeFb2PMXPdkD81x2+89rSVZ9TzV45x5WIjvCF4295Jj8MopWu4wnpoW72Bl2fVIwpIW+jARUkpFa9jzJZyfFPXV5/VcU+6l2jMgbP1tDJDldLIEqOEshs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Yt7tw64kzz22mtb;
-	Wed, 12 Feb 2025 14:38:48 +0800 (CST)
-Received: from dggpemf200009.china.huawei.com (unknown [7.185.36.246])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7DDC0140138;
-	Wed, 12 Feb 2025 14:41:41 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- dggpemf200009.china.huawei.com (7.185.36.246) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Feb 2025 14:41:41 +0800
-From: Xiaofei Tan <tanxiaofei@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<jonathan.cameron@huawei.com>, <mchehab+huawei@kernel.org>,
-	<roberto.sassu@huawei.com>, <shiju.jose@huawei.com>,
-	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>, Xiaofei Tan
-	<tanxiaofei@huawei.com>
-Subject: [PATCH v4] ACPI: HED: Always initialize before evged
-Date: Wed, 12 Feb 2025 14:34:08 +0800
-Message-ID: <20250212063408.927666-1-tanxiaofei@huawei.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1739342055; c=relaxed/simple;
+	bh=mqpBTZRZBclHq/4daUShfVh6RyFuAyq8yu2I/Tc1JVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fF4RznAo4VYq+y+dRmKsOZcruCsS4WeJdtg2fJIYEGjfJ+tSyELPBaBH8h8hY0D+FM0K4LPvMQdfU0B1RTQDMhbWjckSXTXXyzhYy/YGA2NTJkMmvlQMK456gP36RMZ1L2IMsi5nPeGSUB+uzftiTHmWxsArhl7uMSR3XnYpRpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jt5ulpJU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22285C4CEDF;
+	Wed, 12 Feb 2025 06:34:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739342055;
+	bh=mqpBTZRZBclHq/4daUShfVh6RyFuAyq8yu2I/Tc1JVc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jt5ulpJUHHa5n5o4SmEaip/l+hB25Ktvp2pdKF+mvBeChYObCZYD/dp0bUUppqnd8
+	 iyWgo1ewT+acLL84entMCR3f911i5/7QaBpZsHc+VwOqYQOsuadr2bPbRdQmOZ/T/e
+	 8Twgl6e9o4A6jcALSTdGOXnA+1ky9AKf895jEbFfEHQF2kihkWMxyD5p8dIniPkiTq
+	 ReH0S4VAIX0BaDs+ZPCBm3OnDOXvUAkRBtp4GgXB+Iih462NMrFx2aFmmuO9X91Z8H
+	 2+5Qu28fLBd8oU4LWY5ZjywZi93XNS40nNJ5m/x3j5U7D3IxChKElNi8TNKPRexskI
+	 S0hPdGNUe1qwg==
+Date: Wed, 12 Feb 2025 07:34:11 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephan Gerhold <stephan@gerhold.net>, Otto =?utf-8?Q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+	Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+	Daniil Titov <daniilt971@gmail.com>
+Subject: Re: [PATCH 01/10] dt-bindings: clock: gcc-msm8917: Split to separate
+ schema
+Message-ID: <20250212-uppish-stimulating-swine-4e605e@krzk-bin>
+References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
+ <20250211-msm8937-v1-1-7d27ed67f708@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf200009.china.huawei.com (7.185.36.246)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250211-msm8937-v1-1-7d27ed67f708@mainlining.org>
 
-When the module HED is built-in, the module HED init is behind EVGED
-as the driver are in the same initcall level, then the order is determined
-by Makefile order. That order violates expectations. Because RAS records
-can't be handled in the special time window that EVGED has initialized
-while HED not.
+On Tue, Feb 11, 2025 at 11:37:45PM +0100, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wr=
+ote:
+> +maintainers:
+> +  - Otto Pfl=C3=BCger <otto.pflueger@abscue.de>
+> +
+> +description: |
+> +  Qualcomm global clock control module provides the clocks, resets and p=
+ower
+> +  domains on MSM8917 or QM215.
+> +
+> +  See also:: include/dt-bindings/clock/qcom,gcc-msm8917.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,gcc-msm8917
+> +      - qcom,gcc-qm215
+> +
+> +  clocks:
+> +    items:
+> +      - description: XO source
+> +      - description: Sleep clock source
+> +      - description: DSI phy instance 0 dsi clock
+> +      - description: DSI phy instance 0 byte clock
 
-If the number of such RAS records is more than the APEI HEST error source
-number, the HEST resources could be occupied all, and then could affect
-subsequent RAS error reporting.
 
-Change the initcall level of HED to subsys_init to fix the issue. If build
-HED as a module, the problem remains. To solve this problem completely,
-change the ACPI_HED from tristate to bool.
+I do not understand. It is exactly the same as old (before split).
 
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
----
- -v4: Fix register HED device twice issue found by Nathan, and change
-patch name following Rafael's advice.
----
- drivers/acpi/Kconfig | 2 +-
- drivers/acpi/hed.c   | 7 ++++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-index d81b55f5068c..7f10aa38269d 100644
---- a/drivers/acpi/Kconfig
-+++ b/drivers/acpi/Kconfig
-@@ -452,7 +452,7 @@ config ACPI_SBS
- 	  the modules will be called sbs and sbshc.
- 
- config ACPI_HED
--	tristate "Hardware Error Device"
-+	bool "Hardware Error Device"
- 	help
- 	  This driver supports the Hardware Error Device (PNP0C33),
- 	  which is used to report some hardware errors notified via
-diff --git a/drivers/acpi/hed.c b/drivers/acpi/hed.c
-index 7652515a6be1..3499f86c411e 100644
---- a/drivers/acpi/hed.c
-+++ b/drivers/acpi/hed.c
-@@ -80,7 +80,12 @@ static struct acpi_driver acpi_hed_driver = {
- 		.remove = acpi_hed_remove,
- 	},
- };
--module_acpi_driver(acpi_hed_driver);
-+
-+static int __init acpi_hed_driver_init(void)
-+{
-+	return acpi_bus_register_driver(&acpi_hed_driver);
-+}
-+subsys_initcall(acpi_hed_driver_init);
- 
- MODULE_AUTHOR("Huang Ying");
- MODULE_DESCRIPTION("ACPI Hardware Error Device Driver");
--- 
-2.33.0
+Best regards,
+Krzysztof
 
 
