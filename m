@@ -1,131 +1,178 @@
-Return-Path: <linux-kernel+bounces-510658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2A4A32015
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:40:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4051BA32012
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C54188923C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE12D164FCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20342046A5;
-	Wed, 12 Feb 2025 07:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98552045B9;
+	Wed, 12 Feb 2025 07:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="czuCKK9M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sbF05qRL"
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C573D1DACB1;
-	Wed, 12 Feb 2025 07:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D541FF1C8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739346017; cv=none; b=pUTMNR1hVltnDNd00bBYH4Fnbsv4/pt5nuvN332FquKYBsPBNe6Oo4wYCtew4TQduvfrT1fdd1Lg5FkTjZy8qOsq1xCD5U0Af17nyA2omnTZYKXR1BXNBbZdIe6KCMCTg35Vocgb1FP8MrwRXoPaaw0z8qgLUr6lfiwrmFHqnwE=
+	t=1739345977; cv=none; b=Dpe9Q5EN8HIZJyudFv4mwMd40tI5hWLXzxY+yhd300keRPFqOXT3N++DkPHORYDCU28tx8uuND0JlRxoVIver8Wu/78c0e2aWPnOmPQA+OXfysqlA4R3HH6WQNmJvbT6mWWJscPCoZqsCUIa6AwQsSB8fyAf8oFzot7WWhOhM64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739346017; c=relaxed/simple;
-	bh=JTl7E5auMjAWSwtkSkJOr08cyWlGJ4CniI1B/9Pp0D0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gYDwcbwDMAoJ3X0EfvGtwiYmExIs2iygJmHti34TPpnwx3LGhfe7t8w1p0LT2r5DrqVdKe6t+Gu7Lmwxau0NFysMPcBH6vrbhY4V1vsd5em/edDfSvOuv3WOCygIGOXQbxpGbJTbqEzgyRAKGjGpyda/BbO8I3LcMDGJTtA05zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=czuCKK9M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF738C4CEE5;
-	Wed, 12 Feb 2025 07:40:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739346016;
-	bh=JTl7E5auMjAWSwtkSkJOr08cyWlGJ4CniI1B/9Pp0D0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=czuCKK9MIeKkqWcEuk0XXFX7fJRj4gL/oh6h1kIllbYWYJOhO2EpLVVDKNfmfAWQZ
-	 cne9HkIu6bPoBMPBtH7f8wFnB7X7qfg89z9jl5yo5jOz/ZWYs13piMApQfLUQFfrD5
-	 P40yv4UULUoCq28dfsNQZE5jUPRZlybWTMTMLT00=
-Date: Wed, 12 Feb 2025 08:39:12 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Kurt Borja <kuurtb@gmail.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org,
-	Lyude Paul <lyude@redhat.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Lukas Wunner <lukas@wunner.de>,
-	Mark Brown <broonie@kernel.org>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Zijun Hu <quic_zijuhu@quicinc.com>, linux-usb@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Subject: Re: [PATCH v4 1/9] driver core: add a faux bus for use when a simple
- device/bus is needed
-Message-ID: <2025021209-ultimate-dazzler-0e81@gregkh>
-References: <2025021023-sandstorm-precise-9f5d@gregkh>
- <2025021026-atlantic-gibberish-3f0c@gregkh>
- <D7OU5VOXCS8M.39YEYRWFL1MPW@gmail.com>
- <116e9983-6c5f-45f3-a933-dcded223f6d7@icloud.com>
- <D7PQHGGX4WPC.26F52356ISZU8@gmail.com>
+	s=arc-20240116; t=1739345977; c=relaxed/simple;
+	bh=DDn3QJZLeVNQkdyCgloIeeFY8QjFE6nRBdjKBqMF2U4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hjmQhJERxQMu0dyl6JbaJpG94UIfKQINR5Z4ySzU5pUFb9XNbz4dg22kpSm/3HQMiUdjJ9iHh+qTbo/YK7+K9ildUiGV0j9PLvjh5lj10hFgDPC6HhWTjyszJt0M1soBKT5oVHlyGAzbDIxiqkDXjEBW1NvvwN16MxTvVyzEHcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sbF05qRL; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8641bc78952so1478458241.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:39:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739345974; x=1739950774; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rPFpWXPkHcbJC5yJ8SZuPQTMyeFGoz+jsHD5hgwmaI4=;
+        b=sbF05qRLTtCQvHLSrnkjcYb+0GaC8jUlgt51zDLxksWJR386CmQukuFfoCVB3BhTsU
+         FsM0gYExpxCN0JkU+5HqpM+CLo7YShB2jXtO8dhrqRlYPAisjUM37hDJzmkE3aL5tOB1
+         GaS7SH046cMmfjXqG9JyguZ6qUkQY2MtO13BI5H/zDw3gPzapO3z+HCuUMFtsFdYO53K
+         3xR3qlli8Gr4dbtfybOh2B+HxXiMqtp++z6a30sU+ZncXU2PxIzxpgSpikhr3RksFD4m
+         3jL8p5kLNtvVSnwT0hl2u/AesT3mOtTXNt0bgMrwALleMnJFYE/dfo9ysG2O/k0uxZKD
+         s4DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739345974; x=1739950774;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rPFpWXPkHcbJC5yJ8SZuPQTMyeFGoz+jsHD5hgwmaI4=;
+        b=gI7DG1djHN5DF2iUSXR6UgwrRxCHjeeYAhjPr7q19pyRz0S1L+JQYCmeVy89KhrKWv
+         1PtTdAICjpZeN13GAymy9qEMqWBnOVywZ0JZiDNOjqBBMnZ1X7X9254oK+vCu8/Pacqn
+         WnzDLT8fLkWKIO66801E63tazgzEzfHF0cSRlocsPYhnWVhAtdsEmfOTPj+XKrneKf8b
+         3gNPFA9wA5+PWWf1SD2SxL9NVPcyBk3WtU7q4AN50QLcExqEXpr8h5YJStoGPDvJTdnS
+         avF6ku9zoVYWKeHwbMUKcuEetYgKRLchF2VBjaZf+zAGZc9QRZjEeGcFMg95olBTBXVQ
+         2RfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDPEmJalO20AoSNa9rZHLLURXICBxXBdllcABfJPh8GoYNWfpZsivwpG4r+bloN0TalhpgHoj1MkDfPSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyh60uauJhiCDbLIuRXf73vIU7n5h/jluvTG4gzjua5aZ8vqrt
+	TQQxQyfuxac4ajJ5iSQSGKll+nO5MrleptDajJYrMGTvzZQwUGsbegl6mmyp7N/oDCE6batKR20
+	ZuEZJFAotzRdem4OnmjSVxs2u1NXVqHblYREeBQ==
+X-Gm-Gg: ASbGncuwioXaNL9LT+iFUJqE2gzmpcKXg+VU/nL6VV9VZrYY4rupGIkw0NEhCCUNbJm
+	3vkJUCUSerFXqzqd+VGJnoQsXatP7TKxxxzoyWOrnJEhnMiNMctIv36M3g09ySHpp0uHg//9NTv
+	8=
+X-Google-Smtp-Source: AGHT+IEMiel5s93FgOos2qqIpI//PpocZKIctdEX1cnUApU9jZKvSlLfCRn+pBXhNYid3bsEMoD6l+ZBxkgMxzRoTOk=
+X-Received: by 2002:a05:6102:a4c:b0:4bb:d394:46cc with SMTP id
+ ada2fe7eead31-4bbf54922d5mr859998137.2.1739345974277; Tue, 11 Feb 2025
+ 23:39:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D7PQHGGX4WPC.26F52356ISZU8@gmail.com>
+References: <20250210232227.97761-1-stuart.yoder@arm.com> <CAFA6WYM7K4_toy5_n1arW4po4SOX0R9624rCgO=_MvcMeySwUA@mail.gmail.com>
+ <4bb3cefa-b843-45ca-82c5-d96b13454baa@arm.com>
+In-Reply-To: <4bb3cefa-b843-45ca-82c5-d96b13454baa@arm.com>
+From: Sumit Garg <sumit.garg@linaro.org>
+Date: Wed, 12 Feb 2025 13:09:23 +0530
+X-Gm-Features: AWEUYZnA0hBKgdYHZkgK2av9Y3l6uKPbO9mL8_cp-1GkP_zm5MsWMPppld1Av2g
+Message-ID: <CAFA6WYM3UA9+TE8L2U5Qd8FZfaGZnbba=QzWU7fEu3LKQVm-tw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Add support for the TPM FF-A start method
+To: Stuart Yoder <stuart.yoder@arm.com>
+Cc: linux-integrity@vger.kernel.org, jarkko@kernel.org, peterhuewe@gmx.de, 
+	jgg@ziepe.ca, sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jens Wiklander <jens.wiklander@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 11, 2025 at 10:49:34AM -0500, Kurt Borja wrote:
-> On Tue Feb 11, 2025 at 10:29 AM -05, Zijun Hu wrote:
-> > On 2025/2/10 22:29, Kurt Borja wrote:
-> >>> +
-> >>> +	ret = device_add(dev);
-> >>> +	if (ret) {
-> >>> +		pr_err("%s: device_add for faux device '%s' failed with %d\n",
-> >>> +		       __func__, name, ret);
-> >>> +		put_device(dev);
-> >>> +		return NULL;
-> >>> +	}
-> >> Now that the probe is synchronous, what do you think about returning
-> >> -ENODEV if the device failed to bind to the driver?
-> >> 
+On Tue, 11 Feb 2025 at 21:39, Stuart Yoder <stuart.yoder@arm.com> wrote:
+>
+> Hi Sumit,
+>
+> On 2/11/25 12:45 AM, Sumit Garg wrote:
+> > + Jens
 > >
-> > Result of device registering @ret is not, should not be, effected by
-> > "device binding driver (probe result)"
+> > Hi Stuart,
 > >
-> > if device binging driver failed, you may return -ENODEV in
-> > faux_ops->probe(). not here.
-> 
-> After thinking about this discussion, I understand why this might be the
-> expected behavior. I'm thinking about very simple modules that would
-> remain loaded even if the probe fails. But of course this may cause
-> problems to other modules.
-> 
-> In the end, this is just my opinion so it would be up to Greg to decide.
-> However, there is still an issue with the groups added to the device,
-> which a user might expect they are tied to an "attached" device
-> lifetime and this currently not the case.
-
-I agree with you here, this could be confusing and cause problems, and
-we should be creating apis that "work properly and simply".  Having a
-probe callback is good to add device data like you mention, so that you
-can properly add the information before the sysfs files are accessed,
-removing that race condition.
-
-> >> This would be useful for modules that may want to unload if the probe
-> >> fails.
+> > On Tue, 11 Feb 2025 at 04:52, Stuart Yoder <stuart.yoder@arm.com> wrote:
+> >>
+> >> These patches add support for the CRB FF-A start method defined
+> >> in the TCG ACPI specification v1.4 and the FF-A ABI defined
+> >> in the Arm TPM Service CRB over FF-A (DEN0138) specification.
+> >> (https://developer.arm.com/documentation/den0138/latest/)
 > >
-> > may need to root cause if probe failure happens.
+> > Nice to have a specification standardizing interface to TPM
+> > managed/implemented by the firmware. Care to add corresponding kernel
+> > documentation under Documentation/security/tpm/.
+>
+> Yes, I can add some documentation there.
+>
+> > BTW, we already have drivers/char/tpm/tpm_ftpm_tee.c, so do you see
+> > possibilities for an abstraction layer on top of communication channel
+> > based on either FF-A or TEE or platform bus?
+>
+> I think the CRB and OP-TEE based messaging approaches for interacting
+> with a TZ-based TPM are fundamentally different and I don't see how
+> to harmonize them through some abstraction.
+>
+> The OP-TEE TPM protocol copies the TPM command into a temp shared memory
+> buffer and sends a message to the TPM referencing that buffer.
+>
+> The CRB uses a permanently shared memory carve-out that in addition
+> to the command/response data has other fields for locality control,
+> command control, status, TPM idle, etc. The only 'message' needed is
+> something to signal 'start'.  Any OS that is FF-A aware and has a
+> CRB driver can simply add a new start method, which is what this
+> patch series does.
+
+Okay, I see how the CRB driver is closely tied to the ACPI based
+systems. I was expecting the FF-A based TPM interface to be
+independent of ACPI or DT such that it's not constrained by the
+hardware description a platform chooses to use. I suppose there will
+be a different TPM FF-A driver or spec when someone wants to deploy it
+on DT based systems, right?
+
+>
+> >>
+> >> FF-A is a messaging framework for Arm-based systems and in the
+> >> context of the TPM driver is used to signal 'start' to a CRB-based
+> >> TPM service which is hosted in an FF-A secure partition running in
+> >> TrustZone.
 > >
-> > how to unload module automatically if probe() failure ?
-> 
-> If we check for !dev->driver, a module might propagate an error to the
-> module_init, thus making it fail to load.
+> > Is there any open source implementation for such a secure partition
+> > managing the TPM?
+>
+> Nothing yet, but something I am working towards.
+>
+> > Also, is that really a discrete TPM or firmware TPM
+> > managed by the firmware?
+>
+> It could be either. It doesn't matter from the point of view of
+> the OS CRB driver. For testing this patch series I used an
+> internal proof-of-concept fTPM with a CRB interface.
 
-Agreed.  Thanks so much for your review comments, they are greatly
-appreciated.  When I get time next week I'll make these changes and send
-out some patches.
+Okay I see, having a real firmware managed TPM implementation will
+really unlock the adoption of this specification.
 
-thanks,
+>
+> > If it supports firmware TPM, I would be interested to see how you plan
+> > to handle cases related to secure storage.
+>
+> Yes, this is a challenge and there are various ways it could be
+> implemented. For example, RPMB or if you have an internal root of
+> trust with secure storage like an RSE that could play a role.
+>
 
-greg k-h
+The RPMB kernel routing is what we have for the OP-TEE based fTPM but
+I agree there are numerous ways to implement it given the platform's
+capability.
+
+-Sumit
+
+> Thanks,
+> Stuart
+>
+>
 
