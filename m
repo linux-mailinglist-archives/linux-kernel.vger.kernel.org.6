@@ -1,205 +1,348 @@
-Return-Path: <linux-kernel+bounces-511942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B0DA331D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:59:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71308A331D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:59:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893731889C0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:59:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E98916827A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1DC2036EC;
-	Wed, 12 Feb 2025 21:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F9E202F99;
+	Wed, 12 Feb 2025 21:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="glTpOYId"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HQkjjQ41"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2333A202F8C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 21:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F5202F8C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 21:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739397534; cv=none; b=NRu78TLpPuqSM3RtWQKaPHCFDKLzM98ou8mJH0A6NmVplLmk1MB5ESsbA+WLSuzu7CyFDHksWz7bmzOUuiNfv1AnlzSQhhedHh1rGlkmc38FWpatIajiePWqUhf5cCRAhCChNjNFo/c/EfG7VnCYKLL6MvuOFG1QkhbCQOmV3hM=
+	t=1739397586; cv=none; b=dRUDf0nC3bjx+eeWRGHXN9Ap4b27QB4U33hR6UQGPGYxAJ2GQtCek0sX6WFxekQkBByrmB75rt4CKXbXUp26pao+J5MYBsCqUGNoo31df6uLX8pNdnYvjHnd12lKYFYD7rbXaI6XLcUlVgNjp10T89VFoWrGqZI8bPhZA50mKFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739397534; c=relaxed/simple;
-	bh=ZeJV606HhNOYcrFNa/6JlfrCAbfQCMj5yvznSZgG+FA=;
+	s=arc-20240116; t=1739397586; c=relaxed/simple;
+	bh=FXZ75gQAbAoYm7eFGD2xjaDZq2cYcuFnJFkdgoTSZiQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nNrsPnd3kHYIf65XB/yuAOo6wGKfP9X/Uf1Lh6Dia38Bo8AN8xzZdJwE4ViYlZmNCG8yM6pLsv2+3AT5LB6lirGB2El+qMKreAlQkY+7wWexnA8mRW5jt63YisyQWSPlVwABr8xNyGhfyAOY4RjYiNcOvrjYQ1nN+6h1Tyk8Svc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=glTpOYId; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-21f8f3bd828so301045ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:58:52 -0800 (PST)
+	 To:Cc:Content-Type; b=UDNwbnCBDFE9zM/Dd13TPFONUfVIsxZaYxMEuuPjoNMxRTApmAXTePPpj5RlYGxvTBFCwOXnmf7rivXWmlKCOlCyPlp9rM/8s1S/6WliYjSF3dvv0qGmrHg81RVG2LN2pzorOKfgGwExrfsxqPD7hRPepySIC6E1uevF66gbmRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HQkjjQ41; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d146357fb2so5255ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:59:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1739397532; x=1740002332; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739397584; x=1740002384; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7vkMubqrMNCA+P8txMR+PCY+IaB0s5pHKten9Sx9268=;
-        b=glTpOYIdb+kLz1ZRA1Vnu9O39TWSqAIQbKMXCHSA5K5/yEOA34LVq8knQGuWLcaLW8
-         muAB65UZp60B2GpGIyJVd3IH5y2OC3i/3+Xa3czqbi1bSY53icUXS04KPBEqNsx2JPJx
-         HKRBTGjMCuakuyPhgAX92/Buf+CeIRbpv4nphr+n3v6u3dCHM7ld7T5gwuTxh+kaSXOE
-         euk6Gkv4tW8FC5WqMR6G2ez8kYMSJkAU0j1+6K8wgrfRKU2t2DvyN4IXNYrMCN/LvKw/
-         rYavhUU+x7l/74NMxWNwzqgrTqmG3zUOz9dQv8/thtMBWghLndsA8yBkWNvLR5GWp5yJ
-         oBTA==
+        bh=3JZMa2DPbbfY/4c9jk36eAz74gJF4kgqpbfI/labaKY=;
+        b=HQkjjQ41ieBANK/0OZev0gwLPNPpVpV9bgEkgwOSmX9cW7NxSE5QOjEQrihQ9lSZ+f
+         T6ZPDfL/tqpYns3wBK18hSTWiX1AlZ8h6pmVETS083aHXOxWzH86tR+jz8RTnmVL0ZQs
+         4r4tKKbrp5LunLox1NszXFww0Zh5g8tpKz+iD8paONRYqbPgj8eYXDQ1LAaBqNC3bEx8
+         yGau7CG/Q02OKPt+pqLRk9QUL9DlOk2Wdz7mHw2MRFCY7nfm1aQUhVZEMZm7xk++P9fm
+         e+e0gTvCm5U0fGxvYtbZ9sp2U7UYfdY66asze9Awhj02xeAa12M9MAGGsGDMxwA/YX5s
+         W+EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739397532; x=1740002332;
+        d=1e100.net; s=20230601; t=1739397584; x=1740002384;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7vkMubqrMNCA+P8txMR+PCY+IaB0s5pHKten9Sx9268=;
-        b=hnHSYeOl6KkyPqHBf4CI69alzr5b3EFGsL6Xgt/HPLplaj/QV5j1O2hOCYPdFFjZxo
-         YUx8WWSm5Ej6CGTX18+oy7AsAYLEeAhYf/rj92nhFnlRO27bVwxnK/R6ESnH+kxK3SOn
-         tzrPG6KXyK/lNW+ly5Fz+8bIBYLnb4NLayvB+e/8+pID2zt/SDUDA+rZEOlRQlsmL3Nf
-         l0Vx8yr1BV7ASylQO5+LRHbbWX+f+Xzkfkith3IgFb7XSkzDyvC3ORDSnXGH7SnIRyOx
-         1YPyySpnFxR7uwn2YHb1yYGpi9IdwGdBVANoeKtAjVlVdecgSRjUbf6E/giG4C9LfA7r
-         LINA==
-X-Forwarded-Encrypted: i=1; AJvYcCXV1cXgw5adlnv0j9ru21Lna1IvkPHRbF5d9qPqPA2fxw4kvXOECFwd8UWx3thJaneywgPMERYOfY1vr88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE096gy0qI8xyEmMdaH3m0FM60y/iw+YynRZTJsr24eMS+6sb8
-	am1m6qPwwPzua2BMDuW8gKVLatSngBV+sjaJrzyIfe42bCpKwmV7lVErPESjYOYD9uCO9ox4neF
-	MpnXS/BJHNVyDLf41LtfyeAnkTwPYfUO6IbSw4w==
-X-Gm-Gg: ASbGncumAtNdAFgsz1HBlzh6cbfTE3bXYw498i5V3mtQDJdkMBXpSvCpG0BGVznGD+M
-	OKMwkSGEgGnUx9YSPgRLzmDrBBGmiIq0KKdOIlW7Jsjz+T8cDTzU1oHw4693H7mLAMy5+KU0=
-X-Google-Smtp-Source: AGHT+IGv1A+woJLlJgl63xhuiKMFHTiUoQ/G0lh4kY82QXapUXwlp/DT66Lo83612m9rkYmfcT+rnuzNCLEgGSvUxoE=
-X-Received: by 2002:a17:902:ea01:b0:20c:5da8:47b8 with SMTP id
- d9443c01a7336-220bbf3284amr30377295ad.5.1739397532283; Wed, 12 Feb 2025
- 13:58:52 -0800 (PST)
+        bh=3JZMa2DPbbfY/4c9jk36eAz74gJF4kgqpbfI/labaKY=;
+        b=IoWURZz8hUHG+jyVl67Ss0Qmo+kEWSsUcg+EMHiqQQ7+aT7sJCW/VCaPXOhjI6LCzP
+         TIoShObCaWNCBzv7HauL8mjrSXK7uKTbflCHIY5A4hyMi8jUS8NNAoylAnylM0J9t0nm
+         tl6g9whwruvARrTnY4uyrTIW+J7s6Ik8vAbRfikfpCaKSSwFovNrnXlOiMzXQKyNn4xg
+         QtkxFdr/J+V3IcfT6g0p9trd7iul1UsSNf5fz923ziX7O4ZlKLE5ahtyJU9IMmEPOR2z
+         gjNkzZTwr4rrwPUOsWWXXmwYSc1K7tMWjO/aLQgiZQVPdi0197TxRi+dRio8pom7saCF
+         OXAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVngTCafDu45ChNng2T8R8ZUxfF7plyZ8XiwYHezZTuVMI8jw4hz5jZB9qo2fJIK02bIj94Chp8gzzIgrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOUcupxexKxlSXiH5Wi5JyXNivb88sgRKnnLJA1cbilu0ovm5R
+	PiY1Wq9P5V98YVJmSduugsZIDtHCNkptozJORFiEZxdtoXgZFZclFwZthUcX5l3MAWWpa0Mw9f+
+	VJ85NBiAG96RAM1g0AmQ32MjM6XDdLAqin4BP
+X-Gm-Gg: ASbGnctzMDZtuxKVRWfVeIFoPd31GiWGwrxLIJIjUbLfLdsqadmxRAwY1deZQ9yt6h+
+	K/Mr2WoS/pdWZ8nFdEju2jCByhburpRrWO6cDrgUxXgm0TniFk4AhV7/YDn7t+V+Xok1mwXtLCT
+	IfdjT7FTuZhJkPJl+pYlT8Nvcy
+X-Google-Smtp-Source: AGHT+IED4Y7f8C6VvTj6nAikiQAxXPJ2t+21cF1FToxySHRijw62LX1KNb6kQP0zZVCXUPVEBM3KrQrq8ZNtVKTxfrs=
+X-Received: by 2002:a05:6e02:13a6:b0:3d0:5693:d730 with SMTP id
+ e9e14a558f8ab-3d18cc98567mr746125ab.6.1739397583548; Wed, 12 Feb 2025
+ 13:59:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212204546.3751645-1-csander@purestorage.com>
- <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk> <50caa50c-5126-4072-8cfc-33b83b524489@kernel.dk>
-In-Reply-To: <50caa50c-5126-4072-8cfc-33b83b524489@kernel.dk>
-From: Caleb Sander <csander@purestorage.com>
-Date: Wed, 12 Feb 2025 13:58:41 -0800
-X-Gm-Features: AWEUYZmI7u_8qzPpg7HXGKAXEj_umodoVjsh9_-byPg-wdS94gn-N9p1Mvu9XyA
-Message-ID: <CADUfDZroLajE4sF6=oYopg=gNtv3Zko78ZcJv4eQ5SBxMxDOiw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Riley Thomasson <riley@purestorage.com>, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250206000137.2026034-1-namhyung@kernel.org> <Z60NFEAf2C8cL8Xh@x1>
+ <Z60Ndm8VVI4Ao31U@x1>
+In-Reply-To: <Z60Ndm8VVI4Ao31U@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Feb 2025 13:59:32 -0800
+X-Gm-Features: AWEUYZlUGjnLqOIpbHdwhRX-cDZuJoIKldBPXLPmqJduJ-_5SrNos6ZeERSB9Lo
+Message-ID: <CAP-5=fXw09MM5XyozJMM3FjMANJei1aNVmBghSEQFiCKAtJmXw@mail.gmail.com>
+Subject: Re: [PATCH] perf report: Add 'tgid' sort key
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Stephane Eranian <eranian@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 1:02=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+On Wed, Feb 12, 2025 at 1:07=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
 >
-> On 2/12/25 1:55 PM, Jens Axboe wrote:
-> > On 2/12/25 1:45 PM, Caleb Sander Mateos wrote:
-> >> In our application issuing NVMe passthru commands, we have observed
-> >> nvme_uring_cmd fields being corrupted between when userspace initializ=
-es
-> >> the io_uring SQE and when nvme_uring_cmd_io() processes it.
-> >>
-> >> We hypothesized that the uring_cmd's were executing asynchronously aft=
-er
-> >> the io_uring_enter() syscall returned, yet were still reading the SQE =
-in
-> >> the userspace-mapped SQ. Since io_uring_enter() had already incremente=
-d
-> >> the SQ head index, userspace reused the SQ slot for a new SQE once the
-> >> SQ wrapped around to it.
-> >>
-> >> We confirmed this hypothesis by "poisoning" all SQEs up to the SQ head
-> >> index in userspace upon return from io_uring_enter(). By overwriting t=
-he
-> >> nvme_uring_cmd nsid field with a known garbage value, we were able to
-> >> trigger the err message in nvme_validate_passthru_nsid(), which logged
-> >> the garbage nsid value.
-> >>
-> >> The issue is caused by commit 5eff57fa9f3a ("io_uring/uring_cmd: defer
-> >> SQE copying until it's needed"). With this commit reverted, the poison=
-ed
-> >> values in the SQEs are no longer seen by nvme_uring_cmd_io().
-> >>
-> >> Prior to the commit, each uring_cmd SQE was unconditionally memcpy()ed
-> >> to async_data at prep time. The commit moved this memcpy() to 2 cases
-> >> when the request goes async:
-> >> - If REQ_F_FORCE_ASYNC is set to force the initial issue to go async
-> >> - If ->uring_cmd() returns -EAGAIN in the initial non-blocking issue
-> >>
-> >> This patch set fixes a bug in the EAGAIN case where the uring_cmd's sq=
-e
-> >> pointer is not updated to point to async_data after the memcpy(),
-> >> as it correctly is in the REQ_F_FORCE_ASYNC case.
-> >>
-> >> However, uring_cmd's can be issued async in other cases not enumerated
-> >> by 5eff57fa9f3a, also leading to SQE corruption. These include request=
+> On Wed, Feb 12, 2025 at 10:05:27PM +0100, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Feb 05, 2025 at 04:01:37PM -0800, Namhyung Kim wrote:
+> > > Sometimes we need to analyze the data in process level but current so=
+rt
+> > > keys only work on thread level.  Let's add 'tgid' sort key for that a=
 s
-> >> besides the first in a linked chain, which are only issued once prior
-> >> requests complete. Requests waiting for a drain to complete would also
-> >> be initially issued async.
-> >>
-> >> While it's probably possible for io_uring_cmd_prep_setup() to check fo=
-r
-> >> each of these cases and avoid deferring the SQE memcpy(), we feel it
-> >> might be safer to revert 5eff57fa9f3a to avoid the corruption risk.
-> >> As discussed recently in regard to the ublk zero-copy patches[1], new
-> >> async paths added in the future could break these delicate assumptions=
-.
+> > > 'pid' is already taken for thread.
+> > >
+> > > This will look mostly the same, but it only uses tgid instead of tid.
+> > > Here's an example of a process with two threads (thloop).
+> > >
+> > >   $ perf record -- perf test -w thloop
 > >
-> > I don't think it's particularly delicate - did you manage to catch the
-> > case queueing a request for async execution where the sqe wasn't alread=
-y
-> > copied? I did take a quick look after our out-of-band conversation, and
-> > the only missing bit I immediately spotted is using SQPOLL. But I don't
-> > think you're using that, right? And in any case, lifetime of SQEs with
-> > SQPOLL is the duration of the request anyway, so should not pose any
-> > risk of overwriting SQEs. But I do think the code should copy for that
-> > case too, just to avoid it being a harder-to-use thing than it should
-> > be.
+> > Unrelated, but when building perf with DEBUG=3D1 and trying to test the
+> > above I noticed:
 > >
-> > The two patches here look good, I'll go ahead with those. That'll give
-> > us a bit of time to figure out where this missing copy is.
+> > root@number:~# perf record -- perf test -w thloop
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.404 MB perf.data (7968 samples) ]
+> > perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <=3D =
+map__end(map)' failed.
+> > Aborted (core dumped)
+> > root@number:~# perf record -- perf test -w offcpu
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.040 MB perf.data (23 samples) ]
+> > perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <=3D =
+map__end(map)' failed.
+> > Aborted (core dumped)
+> > root@number:~#
+> >
+> > I have:
+> >
+> > =E2=AC=A2 [acme@toolbox perf-tools-next]$ git log --oneline perf-tools-=
+next/perf-tools-next..
+> > 9de1ed6fa3b73cb1 (HEAD -> perf-tools-next) perf report: Add 'tgid' sort=
+ key
+> > 23e98ede2a353530 perf trace: Add --summary-mode option
+> > e6d6104625a3790b perf tools: Get rid of now-unused rb_resort.h
+> > 173ec14e72ef4ed7 perf trace: Convert syscall_stats to hashmap
+> > 66edfb5d404e743d perf trace: Allocate syscall stats only if summary is =
+on
+> > ca6637e1ea08e6f4 perf parse-events filter: Use evsel__find_pmu()
+> > bd1ac4a678f7f2c8 perf bench evlist-open-close: Reduce scope of 2 variab=
+les
+> > cd59081880e89df8 perf test: Add direct off-cpu test
+> > 56cbd794c0c46ba9 perf record --off-cpu: Add --off-cpu-thresh option
+> > 28d9b19c5455556f perf record --off-cpu: Dump the remaining samples in B=
+PF's stack trace map
+> > 2bc05b02743b50a7 perf script: Display off-cpu samples correctly
+> > bfa457a621596947 perf record --off-cpu: Disable perf_event's callchain =
+collection
+> > eca732cc42d20266 perf evsel: Assemble offcpu samples
+> > 74ce50e40c569e90 perf record --off-cpu: Dump off-cpu samples in BPF
+> > e75f8ce63bfa6cb9 perf record --off-cpu: Preparation of off-cpu BPF prog=
+ram
+> > 0ffab9d26971c91c perf record --off-cpu: Parse off-cpu event
+> > efc3fe2070853b7d perf evsel: Expose evsel__is_offcpu_event() for future=
+ use
+> > =E2=AC=A2 [acme@toolbox perf-tools-next]$
+> >
+> > locally, that is the stuff I've been testing lately, doubt it is relate=
+d
+> > to these patches, I'll investigate later, have to go AFK, so FWIW as a
+> > heads up.
 >
-> Can you try this on top of your 2 and see if you still hit anything odd?
+> Had time to extract this, now going really AFK:
 >
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index bcfca18395c4..15a8a67f556e 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -177,10 +177,13 @@ static void io_uring_cmd_cache_sqes(struct io_kiocb=
- *req)
->         ioucmd->sqe =3D cache->sqes;
->  }
+> [New Thread 0x7fffdf24c6c0 (LWP 580622)]
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.403 MB perf.data (7948 samples) ]
+> [Thread 0x7fffdf24c6c0 (LWP 580622) exited]
+> perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <=3D ma=
+p__end(map)' failed.
 >
-> +#define SQE_COPY_FLAGS (REQ_F_FORCE_ASYNC|REQ_F_LINK|REQ_F_HARDLINK|REQ_=
-F_IO_DRAIN)
+> Thread 1 "perf" received signal SIGABRT, Aborted.
+> Downloading 4.06 K source file /usr/src/debug/glibc-2.39-37.fc40.x86_64/n=
+ptl/pthread_kill.c
+> __pthread_kill_implementation (threadid=3D<optimized out>, signo=3Dsigno@=
+entry=3D6, no_tid=3Dno_tid@entry=3D0) at pthread_kill.c:44
+> 44            return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCALL_ER=
+RNO (ret) : 0;
+> (gdb) bt
+> #0  __pthread_kill_implementation (threadid=3D<optimized out>, signo=3Dsi=
+gno@entry=3D6, no_tid=3Dno_tid@entry=3D0) at pthread_kill.c:44
+> #1  0x00007ffff6ea80a3 in __pthread_kill_internal (threadid=3D<optimized =
+out>, signo=3D6) at pthread_kill.c:78
+> #2  0x00007ffff6e4ef1e in __GI_raise (sig=3Dsig@entry=3D6) at ../sysdeps/=
+posix/raise.c:26
+> #3  0x00007ffff6e36902 in __GI_abort () at abort.c:79
+> #4  0x00007ffff6e3681e in __assert_fail_base (fmt=3D0x7ffff6fc3bb8 "%s%s%=
+s:%u: %s%sAssertion `%s' failed.\n%n", assertion=3Dassertion@entry=3D0x7bef=
+08 "map__end(prev) <=3D map__end(map)",
+>     file=3Dfile@entry=3D0x7bedf8 "util/maps.c", line=3Dline@entry=3D95, f=
+unction=3Dfunction@entry=3D0x7bf1c0 <__PRETTY_FUNCTION__.6> "check_invarian=
+ts") at assert.c:96
+> #5  0x00007ffff6e47047 in __assert_fail (assertion=3D0x7bef08 "map__end(p=
+rev) <=3D map__end(map)", file=3D0x7bedf8 "util/maps.c", line=3D95,
+>     function=3D0x7bf1c0 <__PRETTY_FUNCTION__.6> "check_invariants") at as=
+sert.c:105
+> #6  0x00000000006347a1 in check_invariants (maps=3D0xf987e0) at util/maps=
+.c:95
+> #7  0x0000000000635ae2 in maps__remove (maps=3D0xf987e0, map=3D0xf98a80) =
+at util/maps.c:538
+> #8  0x000000000062afd2 in machine__destroy_kernel_maps (machine=3D0xf9817=
+8) at util/machine.c:1176
+> #9  0x000000000062b32b in machines__destroy_kernel_maps (machines=3D0xf98=
+178) at util/machine.c:1238
+> #10 0x00000000006388af in perf_session__destroy_kernel_maps (session=3D0x=
+f97f60) at util/session.c:105
+> #11 0x0000000000638df0 in perf_session__delete (session=3D0xf97f60) at ut=
+il/session.c:248
+> #12 0x0000000000431f18 in __cmd_record (rec=3D0xecace0 <record>, argc=3D4=
+, argv=3D0x7fffffffde60) at builtin-record.c:2888
+> #13 0x00000000004351fb in cmd_record (argc=3D4, argv=3D0x7fffffffde60) at=
+ builtin-record.c:4286
+> #14 0x00000000004bd4d4 in run_builtin (p=3D0xecddc0 <commands+288>, argc=
+=3D6, argv=3D0x7fffffffde60) at perf.c:351
+> #15 0x00000000004bd77b in handle_internal_command (argc=3D6, argv=3D0x7ff=
+fffffde60) at perf.c:404
+> #16 0x00000000004bd8d4 in run_argv (argcp=3D0x7fffffffdc4c, argv=3D0x7fff=
+ffffdc40) at perf.c:448
+> #17 0x00000000004bdc1d in main (argc=3D6, argv=3D0x7fffffffde60) at perf.=
+c:556
+> (gdb)
 
-I believe this still misses the last request in a linked chain, which
-won't have REQ_F_LINK/REQ_F_HARDLINK set?
-IOSQE_IO_DRAIN also causes subsequent operations to be issued async;
-is REQ_F_IO_DRAIN set on those operations too?
+So my guess would be that something modified a map and broke the
+invariants of the maps_by_addresss/maps_by_name. It should be possible
+to add more check_invariants to work out where this happens.
 
 Thanks,
-Caleb
+Ian
 
-> +
->  static int io_uring_cmd_prep_setup(struct io_kiocb *req,
->                                    const struct io_uring_sqe *sqe)
->  {
->         struct io_uring_cmd *ioucmd =3D io_kiocb_to_cmd(req, struct io_ur=
-ing_cmd);
-> +       struct io_ring_ctx *ctx =3D req->ctx;
->         struct io_uring_cmd_data *cache;
->
->         cache =3D io_uring_alloc_async_data(&req->ctx->uring_cache, req);
-> @@ -190,7 +193,7 @@ static int io_uring_cmd_prep_setup(struct io_kiocb *r=
-eq,
->
->         ioucmd->sqe =3D sqe;
->         /* defer memcpy until we need it */
-> -       if (unlikely(req->flags & REQ_F_FORCE_ASYNC))
-> +       if (unlikely(ctx->flags & IORING_SETUP_SQPOLL || req->flags & SQE=
-_COPY_FLAGS))
->                 io_uring_cmd_cache_sqes(req);
->         return 0;
->  }
->
-> --
-> Jens Axboe
+> > - Arnaldo
+> >
+> > >   $ perf report --stdio -s tgid,pid -H
+> > >   ...
+> > >   #
+> > >   #    Overhead  Tgid:Command / Pid:Command
+> > >   # ...........  ..........................
+> > >   #
+> > >      100.00%     2018407:perf
+> > >          50.34%     2018407:perf
+> > >          49.66%     2018409:perf
+> > >
+> > > Suggested-by: Stephane Eranian <eranian@google.com>
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > ---
+> > >  tools/perf/Documentation/perf-report.txt |  1 +
+> > >  tools/perf/util/hist.h                   |  1 +
+> > >  tools/perf/util/sort.c                   | 35 ++++++++++++++++++++++=
+++
+> > >  tools/perf/util/sort.h                   |  1 +
+> > >  4 files changed, 38 insertions(+)
+> > >
+> > > diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Do=
+cumentation/perf-report.txt
+> > > index 87f86451940623f3..4050ec4038425bf0 100644
+> > > --- a/tools/perf/Documentation/perf-report.txt
+> > > +++ b/tools/perf/Documentation/perf-report.txt
+> > > @@ -79,6 +79,7 @@ OPTIONS
+> > >
+> > >     - comm: command (name) of the task which can be read via /proc/<p=
+id>/comm
+> > >     - pid: command and tid of the task
+> > > +   - tgid: command and tgid of the task
+> > >     - dso: name of library or module executed at the time of sample
+> > >     - dso_size: size of library or module executed at the time of sam=
+ple
+> > >     - symbol: name of function executed at the time of sample
+> > > diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+> > > index 46c8373e314657fa..c164e178e0a48a8e 100644
+> > > --- a/tools/perf/util/hist.h
+> > > +++ b/tools/perf/util/hist.h
+> > > @@ -38,6 +38,7 @@ enum hist_column {
+> > >     HISTC_TIME,
+> > >     HISTC_DSO,
+> > >     HISTC_THREAD,
+> > > +   HISTC_TGID,
+> > >     HISTC_COMM,
+> > >     HISTC_CGROUP_ID,
+> > >     HISTC_CGROUP,
+> > > diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+> > > index 3dd33721823f365d..5987438174967fd6 100644
+> > > --- a/tools/perf/util/sort.c
+> > > +++ b/tools/perf/util/sort.c
+> > > @@ -141,6 +141,40 @@ struct sort_entry sort_thread =3D {
+> > >     .se_width_idx   =3D HISTC_THREAD,
+> > >  };
+> > >
+> > > +/* --sort tgid */
+> > > +
+> > > +static int64_t
+> > > +sort__tgid_cmp(struct hist_entry *left, struct hist_entry *right)
+> > > +{
+> > > +   return thread__pid(right->thread) - thread__pid(left->thread);
+> > > +}
+> > > +
+> > > +static int hist_entry__tgid_snprintf(struct hist_entry *he, char *bf=
+,
+> > > +                                  size_t size, unsigned int width)
+> > > +{
+> > > +   int tgid =3D thread__pid(he->thread);
+> > > +   const char *comm =3D NULL;
+> > > +
+> > > +   if (thread__pid(he->thread) =3D=3D thread__tid(he->thread)) {
+> > > +           comm =3D thread__comm_str(he->thread);
+> > > +   } else {
+> > > +           struct maps *maps =3D thread__maps(he->thread);
+> > > +           struct thread *leader =3D machine__find_thread(maps__mach=
+ine(maps),
+> > > +                                                        tgid, tgid);
+> > > +           if (leader)
+> > > +                   comm =3D thread__comm_str(leader);
+> > > +   }
+> > > +   width =3D max(7U, width) - 8;
+> > > +   return repsep_snprintf(bf, size, "%7d:%-*.*s", tgid, width, width=
+, comm ?: "");
+> > > +}
+> > > +
+> > > +struct sort_entry sort_tgid =3D {
+> > > +   .se_header      =3D "   Tgid:Command",
+> > > +   .se_cmp         =3D sort__tgid_cmp,
+> > > +   .se_snprintf    =3D hist_entry__tgid_snprintf,
+> > > +   .se_width_idx   =3D HISTC_TGID,
+> > > +};
+> > > +
+> > >  /* --sort simd */
+> > >
+> > >  static int64_t
+> > > @@ -2501,6 +2535,7 @@ static void sort_dimension_add_dynamic_header(s=
+truct sort_dimension *sd)
+> > >
+> > >  static struct sort_dimension common_sort_dimensions[] =3D {
+> > >     DIM(SORT_PID, "pid", sort_thread),
+> > > +   DIM(SORT_TGID, "tgid", sort_tgid),
+> > >     DIM(SORT_COMM, "comm", sort_comm),
+> > >     DIM(SORT_DSO, "dso", sort_dso),
+> > >     DIM(SORT_SYM, "symbol", sort_sym),
+> > > diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+> > > index a8572574e1686be6..6044eb1d61447c0d 100644
+> > > --- a/tools/perf/util/sort.h
+> > > +++ b/tools/perf/util/sort.h
+> > > @@ -72,6 +72,7 @@ enum sort_type {
+> > >     SORT_ANNOTATE_DATA_TYPE_OFFSET,
+> > >     SORT_SYM_OFFSET,
+> > >     SORT_ANNOTATE_DATA_TYPE_CACHELINE,
+> > > +   SORT_TGID,
+> > >
+> > >     /* branch stack specific sort keys */
+> > >     __SORT_BRANCH_STACK,
+> > > --
+> > > 2.48.1.502.g6dc24dfdaf-goog
 
