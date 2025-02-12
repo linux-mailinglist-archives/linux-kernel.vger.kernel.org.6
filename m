@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-511391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B8CA32A53
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:43:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3631CA32A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:43:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D701882B47
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4DA018841C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EC9230276;
-	Wed, 12 Feb 2025 15:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlzXXs60"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6DB212FB3;
+	Wed, 12 Feb 2025 15:42:28 +0000 (UTC)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB6121E097;
-	Wed, 12 Feb 2025 15:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E87427180B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739374844; cv=none; b=jyzxPWLQJQBeJojfij5QC10+HuE8aYMd1iwFN5EUN5zFpJHE4qQuQq800Sxam7y2hIKW8Gy40076sXUyx/dbIAbJY0b0R/jU7cSo99TGIgnI5TNhUX1199jJgAnwbPnzGVuPDJouEX5/bWiU30rItjNUISNiQCpSHjJTBJzo4ww=
+	t=1739374947; cv=none; b=Qpf0OsyX3NxCzCm7JeuxDx4xilpjWrVWac/2GGAtJa0KgmIK5cOfHIpinHI/Ew5mI50vc9K/rW3Q9REs17RqJ9MR8c88vCM+gmcqjgHyKvZJhMu8cCT67RxNta+EhNb+vs2x+WNjn3+JbfB2lGrPwDIuVMJJ7g0UwDwvjzOkMQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739374844; c=relaxed/simple;
-	bh=zriqMxxivzJ+e+SRUhbYjcGx6tySbbLJ8Jprrig86VM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogya9S0/mVQVHs04h8BDwFvWyjslLyN+Wa8slcst/RUKcgzfHEjyMnrjy9WUzWiZvQ5nnhQXdndzVKJV0MO9lf9VY9Jtnip+wfY2Xgf9TixcdFhTQzeqLViZnQziXBtcOG3WU/HVo5fn5QWdEskfIT8Xf51r2ew/kV2mq//URsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlzXXs60; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A04A2C4CEDF;
-	Wed, 12 Feb 2025 15:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739374844;
-	bh=zriqMxxivzJ+e+SRUhbYjcGx6tySbbLJ8Jprrig86VM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NlzXXs60MAUomwoBgs1NCPoADrVw0Ssbfuk0Xy9+tnfyQifq3TUvT8ghgxN7Zt5Vg
-	 q88KvhPsjWtGhfHC5ISbe/9ky9Hy10O/MpsywIdrh9ADdWJqCyui/mgEbhh1civiBF
-	 I8DnC5nO17K2h9fTGf91THDhI+paJr7nBYSEIklyVbv7sKvNA8/DuGjOOhPhmK5qQ7
-	 FShFV7TdJrkJa7wWJH4rYjYjjWj+tC3oF4l+CFeBn6MjBK5NayzpYU6jHpXUt5loTe
-	 OD/CrQftFVgXqT2Kudxa3rl2MvZK7cOEcGNF4XZCep25n91LlW/92WiuF9ogVfQKHr
-	 bl3kN9ysNohBg==
-Date: Wed, 12 Feb 2025 16:40:37 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, DJ Delorie <dj@redhat.com>,
-	Eric Blake <eblake@redhat.com>, Paul Eggert <eggert@cs.ucla.edu>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-man@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] rust: alloc: satisfy POSIX alignment requirement
-Message-ID: <Z6zA9UNm_UckccRm@pollux>
-References: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
+	s=arc-20240116; t=1739374947; c=relaxed/simple;
+	bh=CVqII1S4rZjar1numyYt6ePWthTCjPSKc/XcmKsEYpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YMwK7+1nP84qFyGN+G5/aLK9WkSa7IIUIx5Y39iCLC4R2CUZmp9w85WEHD5pp3c7/thge+zeEP3gMdb6nCzzVnjwztDyw/cJV53pzVo1TMKDp7HIOvZPGbQ9olK1+grtkoboFznSqy6+umR9D0teIVoxOFIJVU/795MyyVcv8eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7b80326cdso666493166b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:42:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739374943; x=1739979743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l9Gpp6exxOAKgR4+qfssuhnpHihI75y6MvQ08e29riQ=;
+        b=ARpraRx0nB7oALQ+EnmLA+/TUdO4NPNkr9HYIF3A3sIixxtm2gBfvc+eOLfvc1VFJ2
+         b5Wyrf9fvYE0OFRNqW7+Wuzt/puOb9ROUp7Fhb8uZ44+RC/EUWrEzPGJVu/h+z3Xc8Ba
+         gDouv+3c1350YTSja+MKVY1hxiwm1W7UwS0aMrEGV+T7B2pfW6UBwtEhQcEc+I6qAyJ+
+         4YIvTJTrKO8ZDj6KDY5271hL5oKfWd/XOXpXeM2mYp1/eyIg03yQ/dkGzFhSV4oMQxwI
+         Nv1ZLBpRQF/CF4+uZp/MQW9Tyb36UWonuw3z8USDCmVzK8egVdcKp29WZ0EUdgDP1CEF
+         mNaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmaRqHJ43ojO3wBmqHlDUA4RpjIxWIf+iwlpe2bhtEu2jWIdGFvGkoPmWNpRKiGaGiS0u2r3u84+uu26U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtTsrQm/JbOrgyzkQUP2DF6XrtErLd8y0E1MEJU99ZVTZdu+Nl
+	/XDC3kpujrCXDEN9fpFMdW6o6BqI34fQtdgCJYA0DOfhQME/LvaPNzaQ75sQ
+X-Gm-Gg: ASbGncvt81ety/4pXMW6VjzLJB4h9/bX+BB7hJY1FZ+rWntvEHxO7SUYEzf6wnfQTyT
+	IVZioXLxo0ZbObK6AO7jn05NYm/dfhMNJUVedpsLCkqNjYCZ/B8BFwe8te21lHXMwmF/DLll+bK
+	RdaTh7eiKKMbKGp7C+O3JnuJlQLxt87VLXfIxPQ8Vjee7oFmQMX7NSndJZPGC5zC1ufbwpGuECr
+	wwknfhQM3zhj1fusYVlxv8NgrMdvYrNuflhvrJ1vBEgkE8xZcHVy37MQqsxG+ySU71W53Wpz7eN
+	hhlcG2GrQOI0l7wbKqT7msZaY9DbtkIHCT63lF21nZybjg==
+X-Google-Smtp-Source: AGHT+IHnd/38fiict9Z4R0buYYkwbjY3FI99zVEdHd9f85QT23KaewbDSnYX8TPEWm56OYn1mmvlGA==
+X-Received: by 2002:a17:906:da81:b0:ab7:4632:e3df with SMTP id a640c23a62f3a-ab7f33d851cmr384854466b.31.1739374943149;
+        Wed, 12 Feb 2025 07:42:23 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7d18e006csm483291466b.52.2025.02.12.07.42.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 07:42:22 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5de3c29e9b3so10019821a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:42:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXX7Ek/w3mYGD3PU8Wfdj1jxcmrTQe+LJt9IEX4jynKZhPpChdacdAuPVqxu1X0xwKrqf5GAwQftA+WLNg=@vger.kernel.org
+X-Received: by 2002:a17:907:d8f:b0:ab7:be81:8940 with SMTP id
+ a640c23a62f3a-ab7f3365c62mr272181066b.10.1739374942419; Wed, 12 Feb 2025
+ 07:42:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
+References: <20250211-nvme-fixes-v1-0-6958b3aa49fe@rosenzweig.io>
+In-Reply-To: <20250211-nvme-fixes-v1-0-6958b3aa49fe@rosenzweig.io>
+From: Neal Gompa <neal@gompa.dev>
+Date: Wed, 12 Feb 2025 10:41:45 -0500
+X-Gmail-Original-Message-ID: <CAEg-Je9cagWShwMbSqdrW9iqV+kiwJMdJBfjUru6kjXvoZ9rmg@mail.gmail.com>
+X-Gm-Features: AWEUYZmWQeHLZ0J8NFYXZ_GuzgNgnx9jWhxS5Mn1NK7iDLLdbRqxrj4qVt0xYjc
+Message-ID: <CAEg-Je9cagWShwMbSqdrW9iqV+kiwJMdJBfjUru6kjXvoZ9rmg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] apple-nvme: bug and perf fixes
+To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, Philipp Zabel <p.zabel@pengutronix.de>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 09:43:02AM -0500, Tamir Duberstein wrote:
-> diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-> index e3240d16040b..17a475380253 100644
-> --- a/rust/kernel/alloc/allocator_test.rs
-> +++ b/rust/kernel/alloc/allocator_test.rs
-> @@ -62,6 +62,26 @@ unsafe fn realloc(
->              ));
->          }
->  
-> +        // ISO C (ISO/IEC 9899:2011) defines `aligned_alloc`:
-> +        //
-> +        // > The value of alignment shall be a valid alignment supported by the implementation
-> +        // [...].
-> +        //
-> +        // As an example of the "supported by the implementation" requirement, POSIX.1-2001 (IEEE
-> +        // 1003.1-2001) defines `posix_memalign`:
-> +        //
-> +        // > The value of alignment shall be a power of two multiple of sizeof (void *).
-> +        //
-> +        // and POSIX-based implementations of `aligned_alloc` inherit this requirement. At the time
-> +        // of writing, this is known to be the case on macOS (but not in glibc).
-> +        //
-> +        // Satisfy the stricter requirement to avoid spurious test failures on some platforms.
-> +        let min_align = core::mem::size_of::<*const crate::ffi::c_void>();
-> +        let layout = layout.align_to(min_align).unwrap_or_else(|_err| {
-> +            crate::build_error!("invalid alignment")
+On Tue, Feb 11, 2025 at 1:26=E2=80=AFPM Alyssa Rosenzweig <alyssa@rosenzwei=
+g.io> wrote:
+>
+> This small series fixes three unrelated issues with the Apple NVMe
+> driver.
+>
+> * fix NVMe on firmware/machine
+> * fix a power domain leak
+> * fix pathological driver performance with random writes
+>
+> The first two are strict bug fixes, the last is technically an
+> optimization but given the measured 200x performance difference I do
+> consider to be a fix ;-)
+>
+> Given the early stage of mainlining for these SoCs, none of this needs
+> to be backported.
+>
+> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+> ---
+> Hector Martin (2):
+>       apple-nvme: Support coprocessors left idle
+>       apple-nvme: Release power domains when probe fails
+>
+> Jens Axboe (1):
+>       apple-nvme: defer cache flushes by a specified amount
+>
+>  drivers/nvme/host/apple.c | 124 +++++++++++++++++++++++++++++++++++++++-=
+------
+>  1 file changed, 107 insertions(+), 17 deletions(-)
+> ---
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> change-id: 20250211-nvme-fixes-29c409c2553f
+>
+> Best regards,
+> --
+> Alyssa Rosenzweig <alyssa@rosenzweig.io>
+>
+>
 
-That's not what I thought this patch will look like. I thought you'll directly
-follow Gary's proposal, which is why I said you can keep the ACK.
+Series LGTM.
 
-build_error!() doesn't work here, there is no guarantee that this can be
-evaluated at compile time.
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
-I think this should just be:
 
-let layout = layout.align_to(min_align).map_err(|_| AllocError)?.pad_to_align();
-
-- Danilo
-
-> +        });
-> +        let layout = layout.pad_to_align();
-> +
->          // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
->          // exceeds the given size and alignment requirements.
->          let dst = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
