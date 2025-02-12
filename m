@@ -1,238 +1,162 @@
-Return-Path: <linux-kernel+bounces-511342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D9FA329AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:15:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F5BA329B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A881B1650DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136891652AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01350211299;
-	Wed, 12 Feb 2025 15:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A64B213E89;
+	Wed, 12 Feb 2025 15:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L2EJUvXk"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPkye97P"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E2427183C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7808A20E038;
+	Wed, 12 Feb 2025 15:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739373319; cv=none; b=cYn3lc6OzSmX0AxBZdoI622qt89jPAsNlv14356jC+ATBQ12uGltl4nwuqju0tbgUnZSVP1J/LvPntgZbUpqU0XtoYHKhhIevq0LbICKCAmb6KVzADjAgMBREptjIq2+TemsKprY6mmP2nAFU1u4iN5oYP8EjJxHCdnNemTChOU=
+	t=1739373320; cv=none; b=fTTTdwcpUhKFNLzh/nseyxDIrkZK5q6qUJN41921RvWtMM8YpvZl1n5wQ3huaM6hHuE9EZD9zaKLTPRZMmxGYb+Dq9kHLMpzRnubVRzLAWShNRUf4JU0tT3znmfcjzcAiiEyOd/GRwW9FKn86w3iF5HKOYEkmcgTcgnTqdzqoOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739373319; c=relaxed/simple;
-	bh=BUm2Zap/RF2/JfmCsYLH9p4o0ufnU8QKAPpBKlTTB4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uze6onoSKKGOPlNR1mbviofQfGxlj7i24pzF0tABqMmP3Qa7mwNj7/+sfWO1k/vkocg18NnqD9ja6+07n9UZYRmNqoXz4MuA4UBG8hk++q2qDRvZE9f/5+g0DWIBKaEhqhB1o7cPrOnp4xrXGGcTxZz/pcIme7yv6QEUqQbs2TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L2EJUvXk; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e5b4d615267so4289930276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:15:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739373316; x=1739978116; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/YIpGBtMZitl6oEYph0lTTw+LZiGhyRXcVjUuyB+Xm8=;
-        b=L2EJUvXkBTT+ctHaIzM9viXy8QlMvAidV4w9Ud99CO9BzVALKe2L0nKKHMmyRlZMhi
-         KnSWix78rwsGvUJVSwW3O2JsFP5P+sT4Pj7mPq8rzs/Wli9gADjwUX9nLjjyocHXIjU4
-         vCxHaTpk0CUMdtqddEKEm5cjmmtVQS0nMpE80rdkV1/k3wgCrpVC+IZBhnca15P9sVQQ
-         npVGBHPZYcOW0A3R4eMDs/++GqxWSW1N6kcfgItn9RlD8YT7zG3Bd6PM48LJdtfH1jo6
-         xD7MWEpjr3Jh69/qADa78J5wwdEksGetm4x2Byog1Ji92jsaEJpMtN0qFQtgocSHaW35
-         4e0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739373316; x=1739978116;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/YIpGBtMZitl6oEYph0lTTw+LZiGhyRXcVjUuyB+Xm8=;
-        b=jBLHg6hevzWlLzWdc3wqrS3u+Sj8OlieiY3TQzS6PrOxjMgp3RZEtTKQ7166AOL0Gt
-         og8r3LAPYjHQ1/KKZwuqOsW5M3tpyIPFpegyHaWydMECFegluWCEBAl+C07hve6Mqkpy
-         FqWApasn8+rGdqIQtq4PFP4Yf8k0djmq52zhPp2vfIse11682VPggGIsBAj969Qd0eEm
-         2Gx1RBed/3pDGR725WUu4Ma5p1Dhxop86l+Dca1Y5tulMhRaqkmFviLUeTWnZwJKH4yz
-         r4+6U+0fwGh98/RBo4bnQJn8FEZjkBySKIjpffJu0z4bGVH/xT9uZRrEzkZpCHPPB55K
-         JWQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIkNpls9UZz3sQ08zSVHGpq8tJqsochrz0hsBKbJbCqM1288gjNboftaemz+74M6FUBQNz2OsHus2tvUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOI5ypUhtRQ6qDeANoia15wFauFR8R4MspIfseKdG4e8kEghsb
-	u9eApiXwx2/3XvVlc0vI5Myac6cK2Vasqe8KxBbu4og7UAY9IB2AJJ+EtSgujdrOXHIVRt5XMdA
-	ed3UxtAYfYLlxQJuztzlqoefOIbfcy1x7/N/nAQ==
-X-Gm-Gg: ASbGnctDef410jDa0egxgLs25CJQ+CCHvFWSfSiC4eKak56OZKooCTnvpohmViH6WLC
-	oxze4p20ZgHlKhrflXf4vWzZLTgcmbtKHrBBi2lOhTCPkDrRVQHPiA+O7+3OOrcoYWtyGrLGohA
-	==
-X-Google-Smtp-Source: AGHT+IHxai81f2SI+SV8N7Os/hKhKDSmwdp/r4ugFj0WWmqweXF4GapOJBoqeJMP8fHbTzBUc17iRvJUfAPGDckBgaA=
-X-Received: by 2002:a05:6902:2d06:b0:e5b:158c:56cf with SMTP id
- 3f1490d57ef6-e5d9f0ccc00mr3383951276.5.1739373315992; Wed, 12 Feb 2025
- 07:15:15 -0800 (PST)
+	s=arc-20240116; t=1739373320; c=relaxed/simple;
+	bh=36xnraS+6CjRXGXyxx9IPLW3xTJ9QTHCIwLdimGlQi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpjOxHfCFq5hqT8jbMKhkEJ5HDRXLoRGz2BeLn4vRb7sI2RwbSvqYqd7h56ofSA41jdJcsocOmH4TbXZ2Nien/fWHdeHJYfaSzSkkawy39sIffmiLMgD/KLoEfcbOWTxvycLXK8DDwSN/aYuxC5kHI4RuIXcrsvVQP7KAbsM9sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPkye97P; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739373319; x=1770909319;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=36xnraS+6CjRXGXyxx9IPLW3xTJ9QTHCIwLdimGlQi0=;
+  b=MPkye97PwPbC3QXTuif17NJuoVr4Vyw7ScO/3X2sh/YBvmltSmymMEtD
+   hCyHjF3/Yk5sSGTb2BAM3au0/TqDwfJvf+w6dbTyyQbC+xsWMfMLuvG3j
+   QlupUwRJyQpMTNbF1z06OSHtcpcMFmzrZll4qV63wtkkByc4gZlJoMIJt
+   5djCmUHQYfP8zaWoJ/C9JEHnmapI4wfc8Ddet02Kzz8zo8swZLkHixptk
+   BdWh5n6/mvPh8R1GF5DlnfPLtlHW8SjLL+ZptOgiwnoHqFufwCV1r4fxc
+   YExmobPsXaZHTp6cDC0O5imwyt9Nq/AxsjamKWlyLYWYOFzwBugDAWf/x
+   g==;
+X-CSE-ConnectionGUID: COuVtPhUT7yfw/4vq/uVIg==
+X-CSE-MsgGUID: CSsubyjKQ4SDfUiTTTFAsQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="40183840"
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="40183840"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 07:14:54 -0800
+X-CSE-ConnectionGUID: NvtxVxtuSYmAOoy7n70nOA==
+X-CSE-MsgGUID: ZyAwoJg4Qj+b8TMPaP18dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="112621912"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 07:14:49 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tiERq-0000000As7i-0VFM;
+	Wed, 12 Feb 2025 17:14:46 +0200
+Date: Wed, 12 Feb 2025 17:14:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 4/7] gpio: max7360: Add MAX7360 gpio support
+Message-ID: <Z6y65SnrprvnpKEa@smile.fi.intel.com>
+References: <20250113-mdb-max7360-support-v3-0-9519b4acb0b1@bootlin.com>
+ <20250113-mdb-max7360-support-v3-4-9519b4acb0b1@bootlin.com>
+ <Z5eFGJspoGOINcG6@smile.fi.intel.com>
+ <D7QHGB7D0VSG.X255SDU7DFOF@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2314745.iZASKD2KPV@rjwysocki.net> <CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQGwNWeteJWqpW29BojhQ@mail.gmail.com>
- <CAJZ5v0h44Yxp95pHW+75gk5yWKviLO1_YK_cZNFKaGnid7nx9A@mail.gmail.com> <CAJZ5v0iMZ=6YgKR3ZZuiv7DF4=vfoFRonSoXO_zV65oZH2rOgA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iMZ=6YgKR3ZZuiv7DF4=vfoFRonSoXO_zV65oZH2rOgA@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 12 Feb 2025 16:14:40 +0100
-X-Gm-Features: AWEUYZmkxKfHuLhmdUsElz1kuhgiphYNGOZu1DQbUnebvjnBTU-cy8NFBu0JkAY
-Message-ID: <CAPDyKFq91JnCFhEuitOJPZtq78-Y3CUy4p0bNE1wK+eYCste6g@mail.gmail.com>
-Subject: Re: [PATCH v1 00/10] PM: Make the core and pm_runtime_force_suspend/resume()
- agree more
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Jon Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D7QHGB7D0VSG.X255SDU7DFOF@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 12 Feb 2025 at 12:33, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Feb 12, 2025 at 11:59=E2=80=AFAM Rafael J. Wysocki <rafael@kernel=
-.org> wrote:
-> >
-> > On Wed, Feb 12, 2025 at 10:12=E2=80=AFAM Ulf Hansson <ulf.hansson@linar=
-o.org> wrote:
-> > >
-> > > On Tue, 11 Feb 2025 at 22:25, Rafael J. Wysocki <rjw@rjwysocki.net> w=
-rote:
-> > > >
-> > > > Hi Everyone,
-> > > >
-> > > > This series is a result of the discussion on a recently reported is=
-sue
-> > > > with device runtime PM status propagation during system resume and
-> > > > the resulting patches:
-> > > >
-> > > > https://lore.kernel.org/linux-pm/12619233.O9o76ZdvQC@rjwysocki.net/
-> > > > https://lore.kernel.org/linux-pm/6137505.lOV4Wx5bFT@rjwysocki.net/
-> > > >
-> > > > Overall, due to restrictions related to pm_runtime_force_suspend() =
-and
-> > > > pm_runtime_force_resume(), it was necessary to limit the RPM_ACTIVE
-> > > > setting propagation to the parent of the first device in a dependen=
-cy
-> > > > chain that turned out to have to be resumed during system resume ev=
-en
-> > > > though it was runtime-suspended before system suspend.
-> > > >
-> > > > Those restrictions are that (1) pm_runtime_force_suspend() attempts=
- to
-> > > > suspend devices that have never had runtime PM enabled if their run=
-time
-> > > > PM status is currently RPM_ACTIVE and (2) pm_runtime_force_resume()
-> > > > will skip device whose runtime PM status is currently RPM_ACTIVE.
-> > > >
-> > > > The purpose of this series is to eliminate the above restrictions a=
-nd
-> > > > get pm_runtime_force_suspend() and pm_runtime_force_resume() to agr=
-ee
-> > > > more with what the core does.
-> > >
-> > > For my understanding, would you mind elaborating a bit more around th=
-e
-> > > end-goal with this?
-> >
-> > The end goal is, of course, full integration of runtime PM with system
-> > sleep for all devices.  Eventually.
-> >
-> > And it is necessary to make the core and
-> > pm_runtime_force_suspend|resume() work together better for this
-> > purpose.
-> >
-> > > Are you trying to make adaptations for
-> > > pm_runtime_force_suspend|resume() and the PM core, such that drivers
-> > > that uses pm_runtime_force_suspend|resume() should be able to cope
-> > > with other drivers for child-devices that make use of
-> > > DPM_FLAG_SMART_SUSPEND?
-> >
-> > Yes.
-> >
-> > This is a more general case, though, when a device that was
-> > runtime-suspended before system suspend and is left in suspend during
-> > it, needs to be resumed during the system resume that follows.
-> >
-> > Currently, DPM_FLAG_SMART_SUSPEND can lead to this sometimes and it
-> > cannot happen otherwise, but I think that it is a generally valid
-> > case.
-> >
-> > > If we can make this work, it would enable the propagation of
-> > > RPM_ACTIVE in the PM core for more devices, but still not for all,
-> > > right?
-> >
-> > It is all until there is a known case in which it isn't.  So either
-> > you know a specific case in which it doesn't work, or I don't see a
-> > reason for avoiding it.
-> >
-> > ATM the only specific case in which it doesn't work is when
-> > pm_runtime_force_suspend|resume() are used.
-> >
-> > > The point is, the other bigger issue that I pointed out in our earlie=
-r
-> > > discussions; all those devices where their drivers/buses don't cope
-> > > with the behaviour of the DPM_FLAG_SMART_SUSPEND flag, will prevent
-> > > the PM core from *unconditionally* propagating the RPM_ACTIVE to
-> > > parents. I guess this is the best we can do then?
-> >
-> > OK, what are they?
-> >
-> > You keep saying that they exist without giving any examples.
->
-> To put it more bluntly, I'm not aware of any place other than
-> pm_runtime_force_suspend|resume() that can be confused by changing the
-> runtime PM status of a device with runtime PM disabled (either
-> permanently, or transiently during a system suspend-resume cycle) to
-> RPM_ACTIVE, so if there are any such places, I would appreciate
-> letting me know what they are.
+On Wed, Feb 12, 2025 at 01:57:34PM +0100, Mathieu Dubois-Briand wrote:
+> On Mon Jan 27, 2025 at 2:07 PM CET, Andy Shevchenko wrote:
+> > On Mon, Jan 13, 2025 at 01:42:28PM +0100, Mathieu Dubois-Briand wrote:
 
-Well, sorry I thought you were aware. Anyway, I believe you need to do
-your own investigation as it's simply too time consuming for me to
-find them all. The problem is that it's not just a simple pattern to
-search for, so we would need some clever scripting to move forward to
-find them.
+...
 
-To start with, we should look for drivers that enable runtime PM, by
-calling pm_runtime_enable().
+> > > +	parent = to_platform_device(pdev->dev.parent);
+> >
+> > Why do you need this? Can't the fwnode be propagated to the children and then
+> > the respective APIs to be used?
+> 
+> I'm not sure to understand this correctly, what do you mean by
+> propagating the fwnode to the children?
+> 
+> Just a quick summary of the situation and what I try to do. The device
+> tree looks like this, only keeping the interesting properties:
+> 
+> io-expander@38 {
+>   ...
+>   interrupts = <23 IRQ_TYPE_LEVEL_LOW>,
+>                <24 IRQ_TYPE_LEVEL_LOW>;
+>   interrupt-names = "inti", "intk";
+> 
+>   max7360_gpio: gpio {
+>     ...
+>   };
+> 
+>   max7360_gpo: gpo {
+>     ...
+>   };
+> };
+> 
+> Our pdev fwnode points either to the "gpio" or "gpo" nodes, the one from
+> our parent device points to "io-expander@38". Here we need to get the
+> "inti" interrupt from the parent node. What would be the correct way to
+> do it?
 
-Additionally, in their system suspend callback they should typically
-*not* use pm_runtime_suspended(), pm_runtime_status_suspended() or
-pm_runtime_active() as that is usually (but no always) indicating that
-they got it right. Then there are those that don't have system
-suspend/resume callbacks assigned at all (or uses some other subsystem
-specific callback for this), but only uses runtime PM.
+Ah, I see now. This is being used only for IRQs, but don't you want to call
+actually fwnode_irq_get_byname()? It will makes the intention clearer.
 
-On top of that, drivers that makes use of
-pm_runtime_force_suspend|resume() should be disregarded, which has
-reached beyond 300 as this point.
+...
 
-Anyway, here is just one example that I found from a quick search.
-drivers/i2c/busses/i2c-qcom-geni.c
+> > > +	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios)) {
+> > > +		dev_err(&pdev->dev, "Missing ngpios OF property\n");
+> > > +		return -ENODEV;
+> > > +	}
+> >
+> > This is not needed, it is already done in GPIOLIB core.
+> 
+> I believe this is still needed:
+> - For gpos, we need the gpio count to correctly set the partition
+>   between gpo and keypad columns in max7360_set_gpos_count().
 
->
-> Note that rpm_active() could start producing confusing results if the
-> runtime PM status of a device with runtime PM disabled is changed from
-> RPM_ACTIVE to RPM_SUSPENDED because it will then start to return
-> -EACCES instead of 1, but changing the status to RPM_ACTIVE will not
-> confuse it the same way.
+Shouldn't be that done somewhere in the GPIO valid mask initialisation?
 
-Trust me, it will cause problems.
+> - For gpios, we need the gpio count to setup the IRQs.
 
-Drivers may call pm_runtime_get_sync() to turn on the resources for
-the device after the system has resumed, when runtime PM has been
-re-enabled for the device by the PM core.
+Doesn't GPIOLIB parse the property before initializing the IRQ valid mask
+and other init callbacks?
 
-Those calls to pm_runtime_get_sync() will then not end up invoking any
-if ->runtime_resume() callbacks for the device since its state is
-already RPM_ACTIVE. Hence, the device will remain in a low power state
-even if the driver believes it has been powered on. In many cases,
-accessing the device (like reading/writing a register) will often just
-just hang in these cases, but in worst cases we could end up getting
-even more difficult bugs to debug.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Kind regards
-Uffe
+
 
