@@ -1,160 +1,82 @@
-Return-Path: <linux-kernel+bounces-511755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B507A32F3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:10:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FEBA32F27
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7EF3A75C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:10:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0832D7A383B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A88126139A;
-	Wed, 12 Feb 2025 19:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="JgLa8KsE"
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C551260A4E;
-	Wed, 12 Feb 2025 19:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7132A25EFA6;
+	Wed, 12 Feb 2025 19:00:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987AE1FC0FD;
+	Wed, 12 Feb 2025 19:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739387405; cv=none; b=oIks1yYWcUOYLTVJpxAtgr29u6ISMU7TR77NxCk1+uUdYfn1UAYoWk0ttKw0RngOgLhD553eGCaRolu1DEMW08S/oIme4b79UYBo2AKGQh3ddxnNbbR2MXGu3NBEjN2Z8bjvZ2puOJ+nkDmoq4uXOufgEVJS5SWx3U3JrxbjDBA=
+	t=1739386810; cv=none; b=hbaEnf+RJ8zFaoYFi1mDcD9yhd1vRmWKvIALj1TWk6+ME/VgyONoafVbrAlAQwk+5aCODT6uVGS2RUNRdNz/v4xz6CWZv2SR/hBZQkYgEVd2ed9mOcS1zc9LULg+a79+DRTxBYET8C1Ct4f4mJmNb4Gma8WLQ9T+iC2Ko1fvQxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739387405; c=relaxed/simple;
-	bh=3YhrClgMV1aKi0S4z5olXFmU2m1U1F09UvqrHJPICx4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FswYNfS33tenJuIWYHgv4E12hll3fktjHqeIB7GUBf/L/RxAURngDNAwVlowWeOfXOK41meySj24ym7yancoXoLrRpMk0twQUdpsJXeJyZAL+E8OmAf1Kt4hafsbhNjSMOZa7sGMoLeiIx8jFc72r/cXrqSbHKq5yihuDLAkopg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-proske.de; spf=pass smtp.mailfrom=matthias-proske.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=JgLa8KsE; arc=none smtp.client-ip=134.0.28.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-proske.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matthias-proske.de
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout2.routing.net (Postfix) with ESMTP id 93B07601DA;
-	Wed, 12 Feb 2025 19:01:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1739386880;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=q+TDqPY/j9LuymxqoSxnd/KR0pzmWLDlKhqHng4rETU=;
-	b=JgLa8KsEvxf83OU/YJW3Jxvkg79AMmbPexqGyMa1YFE3lWzQ9K24njhnA1T2zFciGesa60
-	cq295GydBWSzqjYKdViddtlnAJj5hun6/0rZUe3lZekuVJSPtJVwUdeGdKepT5u0L2GTZP
-	260a6iSPy9Sh9uTweqcOIfsFZmXhgDQ=
-Received: from localhost.localdomain (unknown [217.26.232.248])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 8CC40360077;
-	Wed, 12 Feb 2025 19:01:19 +0000 (UTC)
-From: Matthias Proske <email@matthias-proske.de>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Norbert van Bolhuis <nvbolhuis@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Ondrej Jirman <megi@xff.cz>,
-	Erick Archer <erick.archer@outlook.com>,
-	Matthias Proske <email@matthias-proske.de>,
-	Jacobe Zang <jacobe.zang@wesion.com>
-Cc: linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] wifi: brcmfmac: keep power during suspend if board requires it
-Date: Wed, 12 Feb 2025 19:59:35 +0100
-Message-ID: <20250212185941.146958-2-email@matthias-proske.de>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739386810; c=relaxed/simple;
+	bh=jbZyenDy1ie9/HpamaTs6p37iRE24HZQMtK8SCh2RNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nU6asJx4cxXUtCC4ZYyKi26YDUhdSiAuNvwdczsYqsmWykKnI28CPLeMdoO6Lphuz6sc+SfFIPC5sD8EWpYN7OInU4lh/vIaFB6OwgSKxLW/nKRv7gua8rkUiXaxBzlMKtWczqFcoIdK5wA94Z9YR+5xgwc/aYzZev4MuWti1ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3CD812FC;
+	Wed, 12 Feb 2025 11:00:28 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 732B63F58B;
+	Wed, 12 Feb 2025 11:00:07 -0800 (PST)
+Date: Wed, 12 Feb 2025 19:00:05 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v19 11/11] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+Message-ID: <20250212190005.GD235556@e132581.arm.com>
+References: <20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org>
+ <20250202-arm-brbe-v19-v19-11-1c1300802385@kernel.org>
+ <20250212185227.GC235556@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: 87371727-d5df-497f-88f1-efc5d1639e48
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212185227.GC235556@e132581.arm.com>
 
-After commit 92cadedd9d5f ("brcmfmac: Avoid keeping power to SDIO card
-unless WOWL is used"), the wifi adapter by default is turned off on
-suspend and then re-probed on resume.
+On Wed, Feb 12, 2025 at 06:52:27PM +0000, Leo Yan wrote:
 
-This conflicts with some embedded boards that require to remain powered.
-They will fail on resume with:
+[...]
 
-brcmfmac: brcmf_sdio_bus_rxctl: resumed on timeout
-ieee80211 phy1: brcmf_bus_started: failed: -110
-ieee80211 phy1: brcmf_attach: dongle is not responding: err=-110
-brcmfmac: brcmf_sdio_firmware_callback: brcmf_attach failed
+> > +static int brbinf_get_mispredict(u64 brbinf)
+> > +{
+> > +       return FIELD_GET(BRBINFx_EL1_MPRED_MASK, brbinf);
+> > +}
+> 
+> I would expect the naming of brbinf_get_mispredict() will cause
+> confusion.  When the function returns 1, it means "Branch was
+> incorrectly predicted".
+> 
+> Maybe consider to use '!FIELD_GET(...)' for a reversed value?
 
-This commit checks for the Device Tree property 'cap-power-off-cards'.
-If this property is not set, it means that we do not have the capability
-to power off and should therefore remain powered.
-
-Signed-off-by: Matthias Proske <email@matthias-proske.de>
----
- .../broadcom/brcm80211/brcmfmac/bcmsdh.c      | 20 ++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-index 60eb95fc19a5..6bc107476a2a 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-@@ -1172,6 +1172,7 @@ static int brcmf_ops_sdio_suspend(struct device *dev)
- 	struct brcmf_bus *bus_if;
- 	struct brcmf_sdio_dev *sdiodev;
- 	mmc_pm_flag_t sdio_flags;
-+	bool cap_power_off;
- 	int ret = 0;
- 
- 	func = container_of(dev, struct sdio_func, dev);
-@@ -1179,19 +1180,23 @@ static int brcmf_ops_sdio_suspend(struct device *dev)
- 	if (func->num != 1)
- 		return 0;
- 
-+	cap_power_off = !!(func->card->host->caps & MMC_CAP_POWER_OFF_CARD);
- 
- 	bus_if = dev_get_drvdata(dev);
- 	sdiodev = bus_if->bus_priv.sdio;
- 
--	if (sdiodev->wowl_enabled) {
-+	if (sdiodev->wowl_enabled || !cap_power_off) {
- 		brcmf_sdiod_freezer_on(sdiodev);
- 		brcmf_sdio_wd_timer(sdiodev->bus, 0);
- 
- 		sdio_flags = MMC_PM_KEEP_POWER;
--		if (sdiodev->settings->bus.sdio.oob_irq_supported)
--			enable_irq_wake(sdiodev->settings->bus.sdio.oob_irq_nr);
--		else
--			sdio_flags |= MMC_PM_WAKE_SDIO_IRQ;
-+
-+		if (sdiodev->wowl_enabled) {
-+			if (sdiodev->settings->bus.sdio.oob_irq_supported)
-+				enable_irq_wake(sdiodev->settings->bus.sdio.oob_irq_nr);
-+			else
-+				sdio_flags |= MMC_PM_WAKE_SDIO_IRQ;
-+		}
- 
- 		if (sdio_set_host_pm_flags(sdiodev->func1, sdio_flags))
- 			brcmf_err("Failed to set pm_flags %x\n", sdio_flags);
-@@ -1213,18 +1218,19 @@ static int brcmf_ops_sdio_resume(struct device *dev)
- 	struct brcmf_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
- 	struct sdio_func *func = container_of(dev, struct sdio_func, dev);
- 	int ret = 0;
-+	bool cap_power_off = !!(func->card->host->caps & MMC_CAP_POWER_OFF_CARD);
- 
- 	brcmf_dbg(SDIO, "Enter: F%d\n", func->num);
- 	if (func->num != 2)
- 		return 0;
- 
--	if (!sdiodev->wowl_enabled) {
-+	if (!sdiodev->wowl_enabled && cap_power_off) {
- 		/* bus was powered off and device removed, probe again */
- 		ret = brcmf_sdiod_probe(sdiodev);
- 		if (ret)
- 			brcmf_err("Failed to probe device on resume\n");
- 	} else {
--		if (sdiodev->settings->bus.sdio.oob_irq_supported)
-+		if (sdiodev->wowl_enabled && sdiodev->settings->bus.sdio.oob_irq_supported)
- 			disable_irq_wake(sdiodev->settings->bus.sdio.oob_irq_nr);
- 
- 		brcmf_sdiod_freezer_off(sdiodev);
--- 
-2.48.1
-
+Please ignore this comment. Sorry for my misreading and noise.
 
