@@ -1,190 +1,240 @@
-Return-Path: <linux-kernel+bounces-511882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC45AA330FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:46:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09CA5A33102
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 512083A8C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:46:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1993AA49D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C77202C4F;
-	Wed, 12 Feb 2025 20:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335CB202C33;
+	Wed, 12 Feb 2025 20:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="SsQzcMpj"
-Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com [209.85.216.98])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8DjhsTr"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7506820103A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9931327183B;
+	Wed, 12 Feb 2025 20:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739393169; cv=none; b=Heudl4y/AiDhwrgxEW2MVQXcKY8uxSpTLH0w8z99THXnWA4yXEJWmL7FnA4h8O3BqCq5xCUReW162J2gs7WM/b4EJA9JMz4hutXFOhVUN+ZM7M+zCa9bqTW5oCXxfWhUOU7NS4BDjTe18L8zXVjglPaqUleF+L4xkY+eJo9/JrA=
+	t=1739393271; cv=none; b=XB6GAZjgaNQuVXAJOnjzvQbbc6Fng3vob+8nOVwRAuSJCfmeQauZstBTUkY+by9oq7inOCzSFOGTQR3MSVBaH2MB++WZhBSiR8H8tbFQIcDgteTbwL4AxRlyAhlh0qwsP63gL7QQZEmeniu113vezO5UEUWDODkHkHp15JyPc9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739393169; c=relaxed/simple;
-	bh=eeT59URkB8BtNx633XNrD7bxhoHpewE+65P5H0rT0oE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EKH+cKh+NJq7wSNtUJqaVnxRXm0dDAGIkg5wF+or/hc3ybr9bGakV8uTcnE8RmRQNwmFlGUpYZF4+L9MpxletF0a6n41A2a3exZgNwQVsHbZoKUBYo3iLXfu/POndkHw4BhaDEv8A10nY3auYPOmYGvXqL4jCWtWA7EG1/1zr2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=SsQzcMpj; arc=none smtp.client-ip=209.85.216.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f98.google.com with SMTP id 98e67ed59e1d1-2fbfa7100b0so49460a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:46:07 -0800 (PST)
+	s=arc-20240116; t=1739393271; c=relaxed/simple;
+	bh=f2OndY0N/HJlsXG3BXz07x+0iiADisddaDnDG3DL41I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VArudTlgF0M2bRANInkg1pGpnOYIPuEqN16cqABPSl3n5Eigl3RKIU+mTcqAy7/PP53wVKvKgEVGaaPjJe3rJ9BHLAlPfZsYwF/JlF4UsuVcxMhBdySCH+RWLV4Fxht6w9gCJD1JhfGsXcR7Hp8sZZ9j5YNuY+1r/mWo6XQq4m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8DjhsTr; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-545097ff67cso62817e87.2;
+        Wed, 12 Feb 2025 12:47:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1739393167; x=1739997967; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1739393268; x=1739998068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oPNijH5Sc3nr2XmbysFEspzjbNv2CMnY8sx3nT5qMWI=;
-        b=SsQzcMpjTCck10euX3vb1V7WFAcLvIwA/86YqNu4EYBIId1d3ZNcw7RA4IJYtbIlI4
-         wnklpCs7tYZSOktTP2PCcqzIvIKfzBclgMue+2a3OT75zjcbCrXys2/BUfvSF2Pl+LaS
-         cB2/K2q5U9Y/J15B7yeCOHO4RHZaC2LpY9VFvIXTdbPnuo7upeEBzb9DZvfVOgzyik1q
-         TEVCWL0t6Fd8sbAydgFcZIoMBzVCNMy7nFvtAwDRrUR0KKpFA5Ye+7HMyUvampJi0GJt
-         JWf5TFsKk/car9IsSZGXKIERs6MSaXYSUkC0Z0x9OCCdY5L3KJO5/br9ao8Xay3i/lpz
-         5zYA==
+        bh=qyp/t36cikfJ5qwnOCdgeR4xTyyQ9dQqxD0dEw365zA=;
+        b=D8DjhsTrHTsDV2X3zDXa16xlsSNaYpeoVznQ1mTKpoYoWKwGAZ/est6eG40/3z6qFT
+         NxJxt6KOQmgYhRCGAVKuMU8v+RRf0e95jvnsSA5EeKO4HYSkdmbyj3eZfc9jyayemtng
+         eNgN5crca0E40D8t+GuErjuZ4pogdzrEFUarL2ka/gpJkcbANujdvOLS5HXdsjidcqhd
+         gSSQuVqa9AQIltm2vSEaOd8yiV1PGnXro5sJrRoeeWxemRk13DOIMaoLn3IwzJpWlCzS
+         okmCwUq/DBFrXn7uGtRWGPg/bqHjD5TkSU92ktwoqlnoH50mriOFSptfpGGcfz/GU78f
+         KFjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739393167; x=1739997967;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1739393268; x=1739998068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oPNijH5Sc3nr2XmbysFEspzjbNv2CMnY8sx3nT5qMWI=;
-        b=iTe+aI2pIkjaskBxXa5yJQCadMWVzQdGOcwDzC2KoRChBwAn2PbbeJhZe3kD7p3fO9
-         lrB/DefCbHA6iq+DmNwasF+NVdXLeVT9UoFrcmuTo07T2eI9ogDZduhj6IZbbZhBi5Ax
-         bfWb3oNP4kQj40aJHjceFVST1u8+I48RGBhEz0A3s7DsTXo9nPeCTSZ5mv9G1WfvjJ99
-         cYJfK7k+Pikylelg5HADfUNK+c2+rDuz8wHlHx8ugdsFoZ5Gy08FNTZOce5rN/Ql5h48
-         K7fSdY15Bck3PDVh9XUhIFo/hkue7y4eyl7p3cT3qa7vA1zLTbTLexebVIeCaPEC1Oz/
-         CRcA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Wm+OU7lxzlgiwrshEqqUXKhzu1Zn3p/iY7Gh5eG4vfsaZlmpBgQ1UA/RFmHrWHACWDeaSpYwcXFo2cA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy/aljyz8z0DA0AEWbbXStkJJRDZsYM4UQG1Tas8myVBfVoQsL
-	sxGiemIlQvAij774nbDERdfxYY09YCA9Q6RPrY9FjSOaw++FSXFtJuEaaeNSFjIrNMLck95XByG
-	mx1hZOY1e/BxHuk+Xxt6jTt25A1ccvtrQ
-X-Gm-Gg: ASbGncumBBltA4maMtSa9BNzyJzkZV8uJYIVrUmcQLWF+Hei4T5UJAZpRSNMdw4eX8x
-	T9M1IPJyWX94z//hbafrjzKxmsqH7OJL/6isuVik2EHxJaZZypTy/62YnrLC9EueTYGq9PKtTSi
-	pjClsp+Ava7ND22arsDr4EWVb4ebcCrffvpg+44E4F676GmqOZGgtKuWER33bfDuR8t7XtjvYFL
-	obflG3TZiDPxYx9ZGI0iEp6MyXryXSpGiFfXKMEtA6fJzmvopw5XLRvpEz9y5rabo35N4PSe0PX
-	9UBNnRqf8PAUBSaaheyuY85gjnsd2ahnXy+17g==
-X-Google-Smtp-Source: AGHT+IEGGGYFBXQjVOXTA9A01ACW598Eb6VOLJN33xDmsi02G3BvTVlhYf6Ii7mAGdq/sBr0KLz9S/+1QQxO
-X-Received: by 2002:a17:90b:1807:b0:2ee:a558:b6bf with SMTP id 98e67ed59e1d1-2fbf5c79d4emr2804484a91.8.1739393166677;
-        Wed, 12 Feb 2025 12:46:06 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id 98e67ed59e1d1-2fbf98b9449sm129276a91.4.2025.02.12.12.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 12:46:06 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E55423401A2;
-	Wed, 12 Feb 2025 13:46:05 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id E1AFDE419A0; Wed, 12 Feb 2025 13:46:05 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Riley Thomasson <riley@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH 2/2] io_uring/uring_cmd: switch sqe to async_data on EAGAIN
-Date: Wed, 12 Feb 2025 13:45:46 -0700
-Message-ID: <20250212204546.3751645-3-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250212204546.3751645-1-csander@purestorage.com>
-References: <20250212204546.3751645-1-csander@purestorage.com>
+        bh=qyp/t36cikfJ5qwnOCdgeR4xTyyQ9dQqxD0dEw365zA=;
+        b=D60gXGY3vzNRqhKJa1sUfkSQ6FVgBAOF8mrt3Xnxch9yIG1I1/v/9g8xQ1rcfq9WCS
+         /R5X7UFeBxf9D7cHBdKZnauh9e/Us8Af/tXFSy1MAfeMjSLyxh8hyLgOB5CNQJaZ39sI
+         Pn77isSc6WJKRswgLulZZ5Qaej5fR7dZqnRpb0fq4k5CpvPQ28DZfBYtpj34KMTURhQ2
+         D7cDg/uEQ2WTm067rvRqCUUWV9xsh88cEHRVJd5vMeTvWaDG37bZwhmDodZSsAzqnUgp
+         8cuCl/2P7lGEMjfiCLfUm6w5YLQu2RcOIRruoaD4viHakv2GQaIgBNLpy+4itYsCn1qi
+         nXDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWAmiL7cDT/V0Tpaem7JsEj6mOdEX24jzZBNiLMpkVKMfAQAkAl27I8Y4KXZdqp6X/0Ts074t5LhZc+3c=@vger.kernel.org, AJvYcCVqlSk24ClQyH6w2QNBwNUnmFkwoOjZ0lwgTHuY5pf/f/RQwQIGzTnUeGGB2xpH3vqk/j4oqTWJMgRv@vger.kernel.org, AJvYcCWXUCKzxJElBO+7yDiPbJzuH7SzwFGNI7MqkYjD6yLgTZooGN4cvqYX7MrU1V6c7GcsxGRO5u7G4aVKRo74Tws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZJMuj6aZPeeizoheWPtY59qkHxe/aOyr1ycsfgabl3UIS9Dbf
+	JuUkO+weHXjods0JE8C72Q0Y83imbuM+YhGcHx9ObXnGOFO+wJXBuhHe2IFOhyy41Cq7cFd+8lm
+	xNzWGAwGl+uDPofl7M7596Ena0aCD3xHT1Ek=
+X-Gm-Gg: ASbGncu2L7cA5N6ZAx9smybKUbYx25Bt0UEwm+MmAHd9434VODggaAyq5IukhEVdkX/
+	aAUcgrOd11ik019QP0kby8ztMUyOCVq7Q1qimkYlOGu4IBSbzoYnjdA2/yCGJlpLoRBUaEQ+FcX
+	rQcWRNQ+ckvMiz
+X-Google-Smtp-Source: AGHT+IH3KzU+wmVTdNvjjfgFfcmvbkDy8bo3qZPe4hvm3sn4wwrtriNxfCwQJzbqFFZrtqtK5dsvOK/oumibGAF5NDk=
+X-Received: by 2002:a05:6512:e81:b0:545:ae6:d740 with SMTP id
+ 2adb3069b0e04-545184a2e67mr1218019e87.41.1739393267369; Wed, 12 Feb 2025
+ 12:47:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
+ <Z6zA9UNm_UckccRm@pollux> <20250212163848.22e8dcff@eugeo> <Z6zT6mZuxonewQ9z@pollux>
+ <CAJ-ks9=-kP5jBGQ_A88VPU_HW9VkF=OCqcGufqrJobhJu8dhww@mail.gmail.com> <Z6z-FlEUk9OfeJCV@cassiopeiae>
+In-Reply-To: <Z6z-FlEUk9OfeJCV@cassiopeiae>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 12 Feb 2025 15:47:11 -0500
+X-Gm-Features: AWEUYZlY0QbbhrC10VNd2x8jWaAJGFYDZASGwDMbYLF62Nd3FDQRBPtaViQLiIE
+Message-ID: <CAJ-ks9=-ZQpmhJRs3YstZBGb9UvLwRQJ7od+dsc_sYZtwUhF2A@mail.gmail.com>
+Subject: Re: [PATCH v5] rust: alloc: satisfy POSIX alignment requirement
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, DJ Delorie <dj@redhat.com>, 
+	Eric Blake <eblake@redhat.com>, Paul Eggert <eggert@cs.ucla.edu>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-5eff57fa9f3a ("io_uring/uring_cmd: defer SQE copying until it's needed")
-moved the unconditional memcpy() of the uring_cmd SQE to async_data
-to 2 cases when the request goes async:
-- If REQ_F_FORCE_ASYNC is set to force the initial issue to go async
-- If ->uring_cmd() returns -EAGAIN in the initial non-blocking issue
+On Wed, Feb 12, 2025 at 3:01=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Wed, Feb 12, 2025 at 01:44:45PM -0500, Tamir Duberstein wrote:
+> > On Wed, Feb 12, 2025 at 12:01=E2=80=AFPM Danilo Krummrich <dakr@kernel.=
+org> wrote:
+> > >
+> > > On Wed, Feb 12, 2025 at 04:38:48PM +0000, Gary Guo wrote:
+> > > > On Wed, 12 Feb 2025 16:40:37 +0100
+> > > > Danilo Krummrich <dakr@kernel.org> wrote:
+> > > >
+> > > > > On Wed, Feb 12, 2025 at 09:43:02AM -0500, Tamir Duberstein wrote:
+> > > > > > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/=
+alloc/allocator_test.rs
+> > > > > > index e3240d16040b..17a475380253 100644
+> > > > > > --- a/rust/kernel/alloc/allocator_test.rs
+> > > > > > +++ b/rust/kernel/alloc/allocator_test.rs
+> > > > > > @@ -62,6 +62,26 @@ unsafe fn realloc(
+> > > > > >              ));
+> > > > > >          }
+> > > > > >
+> > > > > > +        // ISO C (ISO/IEC 9899:2011) defines `aligned_alloc`:
+> > > > > > +        //
+> > > > > > +        // > The value of alignment shall be a valid alignment=
+ supported by the implementation
+> > > > > > +        // [...].
+> > > > > > +        //
+> > > > > > +        // As an example of the "supported by the implementati=
+on" requirement, POSIX.1-2001 (IEEE
+> > > > > > +        // 1003.1-2001) defines `posix_memalign`:
+> > > > > > +        //
+> > > > > > +        // > The value of alignment shall be a power of two mu=
+ltiple of sizeof (void *).
+> > > > > > +        //
+> > > > > > +        // and POSIX-based implementations of `aligned_alloc` =
+inherit this requirement. At the time
+> > > > > > +        // of writing, this is known to be the case on macOS (=
+but not in glibc).
+> > > > > > +        //
+> > > > > > +        // Satisfy the stricter requirement to avoid spurious =
+test failures on some platforms.
+> > > > > > +        let min_align =3D core::mem::size_of::<*const crate::f=
+fi::c_void>();
+> > > > > > +        let layout =3D layout.align_to(min_align).unwrap_or_el=
+se(|_err| {
+> > > > > > +            crate::build_error!("invalid alignment")
+> > > > >
+> > > > > That's not what I thought this patch will look like. I thought yo=
+u'll directly
+> > > > > follow Gary's proposal, which is why I said you can keep the ACK.
+> > > > >
+> > > > > build_error!() doesn't work here, there is no guarantee that this=
+ can be
+> > > > > evaluated at compile time.
+> > > >
+> > > > `align_to` will only fail if `min_align` is not a valid alignment (=
+i.e.
+> > > > not power of two), which the compiler should be easy to notice that=
+ the
+> > > > size of pointer is indeed power of 2.
+> > >
+> > > From the documentation of align_to():
+> > >
+> > > "Returns an error if the combination of self.size() and the given ali=
+gn violates
+> > > the conditions listed in Layout::from_size_align."
+> > >
+> > > Formally self.size() may still be unknown at compile time.
+> > >
+> > > Do I miss anything?
+> >
+> > Formally, I agree. I tried testing (in allocator_test.rs):
+> >
+> > #[cfg(test)]
+> > mod tests {
+> >     use super::*;
+> >
+> >     #[test]
+> >     fn test_allocate() {
+> >         #[inline(never)]
+> >         fn non_const_usize() -> usize {
+> >             let x =3D 0;
+> >             &x as *const _ as usize
+> >         }
+> >
+> >         let layout =3D Layout::array::<bool>(non_const_usize()).unwrap(=
+);
+> >         let ptr =3D Cmalloc::alloc(layout, GFP_KERNEL).unwrap();
+> >         let ptr =3D ptr.cast();
+> >         // SAFETY:
+> >         // - `ptr` was previously allocated with `Cmalloc`.
+> >         // - `layout` is equal to the `Layout=C2=B4 `ptr` was allocated=
+ with.
+> >         unsafe { Cmalloc::free(ptr, layout) };
+> >     }
+> > }
+> >
+> > and it compiled (and passed).
+>
+> I suggest to try the following.
+>
+> Move non_const_usize() into allocator_test.rs and within realloc(), try [=
+1];
+> then try [2].
+>
+> Besides that, I still think build_error!() can't be used here correctly, =
+since
+> layout.size() might not be known at compile time. Please change things to=
+ what I
+> did suggest previously.
+>
+> --
+>
+> [1]
+> ```
+> if non_const_usize() < 0x42 {
+>    crate::build_error!();
+> }
+> ```
+>
+> [2]
+> ```
+> if non_const_usize() >=3D 0x42 {
+>    crate::build_error!();
+> }
+> ```
 
-Unlike the REQ_F_FORCE_ASYNC case, in the EAGAIN case, io_uring_cmd()
-copies the SQE to async_data but neglects to update the io_uring_cmd's
-sqe field to point to async_data. As a result, sqe still points to the
-slot in the userspace-mapped SQ. At the end of io_submit_sqes(), the
-kernel advances the SQ head index, allowing userspace to reuse the slot
-for a new SQE. If userspace reuses the slot before the io_uring worker
-reissues the original SQE, the io_uring_cmd's SQE will be corrupted.
+Quite a good experiment, thanks for suggesting it. The result is that
+one of these just panics at run-time. This means that it's trivially
+easy to hold `build_{assert,error}!()` incorrectly! It only does the
+right thing in a constant context (and the docs do say this) but it's
+very easy to use in _any_ context. Looks like I wasn't the only one to
+fall into the trap (rust/kernel/io.rs):
 
-Introduce a helper io_uring_cmd_cache_sqes() to copy the original SQE to
-the io_uring_cmd's async_data and point sqe there. Use it for both the
-REQ_F_FORCE_ASYNC and EAGAIN cases. This ensures the uring_cmd doesn't
-read from the SQ slot after it has been returned to userspace.
+    #[inline]
+    const fn io_addr_assert<U>(&self, offset: usize) -> usize {
+        build_assert!(Self::offset_valid::<U>(offset, SIZE));
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-Fixes: 5eff57fa9f3a ("io_uring/uring_cmd: defer SQE copying until it's needed")
----
- io_uring/uring_cmd.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+        self.addr() + offset
+    }
 
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index cfb22e1de0e7..bcfca18395c4 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -166,10 +166,19 @@ void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, u64 res2,
- 		io_req_task_work_add(req);
- 	}
- }
- EXPORT_SYMBOL_GPL(io_uring_cmd_done);
- 
-+static void io_uring_cmd_cache_sqes(struct io_kiocb *req)
-+{
-+	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
-+	struct io_uring_cmd_data *cache = req->async_data;
-+
-+	memcpy(cache->sqes, ioucmd->sqe, uring_sqe_size(req->ctx));
-+	ioucmd->sqe = cache->sqes;
-+}
-+
- static int io_uring_cmd_prep_setup(struct io_kiocb *req,
- 				   const struct io_uring_sqe *sqe)
- {
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
- 	struct io_uring_cmd_data *cache;
-@@ -177,18 +186,14 @@ static int io_uring_cmd_prep_setup(struct io_kiocb *req,
- 	cache = io_uring_alloc_async_data(&req->ctx->uring_cache, req);
- 	if (!cache)
- 		return -ENOMEM;
- 	cache->op_data = NULL;
- 
--	if (!(req->flags & REQ_F_FORCE_ASYNC)) {
--		/* defer memcpy until we need it */
--		ioucmd->sqe = sqe;
--		return 0;
--	}
--
--	memcpy(cache->sqes, sqe, uring_sqe_size(req->ctx));
--	ioucmd->sqe = cache->sqes;
-+	ioucmd->sqe = sqe;
-+	/* defer memcpy until we need it */
-+	if (unlikely(req->flags & REQ_F_FORCE_ASYNC))
-+		io_uring_cmd_cache_sqes(req);
- 	return 0;
- }
- 
- int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
-@@ -251,11 +256,11 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
- 	ret = file->f_op->uring_cmd(ioucmd, issue_flags);
- 	if (ret == -EAGAIN) {
- 		struct io_uring_cmd_data *cache = req->async_data;
- 
- 		if (ioucmd->sqe != cache->sqes)
--			memcpy(cache->sqes, ioucmd->sqe, uring_sqe_size(req->ctx));
-+			io_uring_cmd_cache_sqes(req);
- 		return -EAGAIN;
- 	} else if (ret == -EIOCBQUEUED) {
- 		return -EIOCBQUEUED;
- 	}
- 
--- 
-2.45.2
+since offset isn't known at compile time, this can easily be misused?
 
+I'll change this to map_err. Thanks for your scrutiny.
 
