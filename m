@@ -1,217 +1,163 @@
-Return-Path: <linux-kernel+bounces-511588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF12A32CFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:10:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505EEA32D05
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:11:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B925188514A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408DB168FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F5F25EFA6;
-	Wed, 12 Feb 2025 17:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D884C26136A;
+	Wed, 12 Feb 2025 17:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="Iy6ClrZd"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010042.outbound.protection.outlook.com [52.101.228.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m8rJ8RXE"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4113B257439;
-	Wed, 12 Feb 2025 17:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739380018; cv=fail; b=d8FTh3hveomVcvYJGp9cK386CjyOcL9R50NeZkyUBrtzL2Tv087YUd16yb9ecrAb8OyCBPj3PygIxOOZ+dWLW9rzImsy/2DV0Nb+o9c4n6bAi+1hO2UpcsH1VmLe1Rqw/oXFW8PVC/PT9BYdDh4VfwwZRohrrJprBXf/VNzToSU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739380018; c=relaxed/simple;
-	bh=JpwFfQziB/X3s8hbM3xYgMnSDv43INsRHRfS420n4Xw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DkuLbPSQiric0WjSQoKkiaiUOLemPWbtkt2dt9gOdfX9RHSj8vI2CjPF8W+21VpNZFEQNRIEaoQTxG4sto8DgmNSORju3Xsglh0GWyosXfj53TgD2m2DizLFK8vELb7b2ee9c3duk8omgtEQImjfiI/o1IfVbHJMZ3GLPqxsb1s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=Iy6ClrZd; arc=fail smtp.client-ip=52.101.228.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kAdR1K5su63SoEA7x6sVLlahvZuCpbzFeaciCpC8CSXI0pLHDDxZGwiEH7f56x75eUC9/upfGHZrZkfwejQrwMJSQO7ALnB/CNIUV3d5vWa/OiYu5+9K+jmleGihp6kceSVDVUnddavnjwWJFyE17kxs6HprVQzK6xnML0xNzEgXT0s48IogrYb7bCoue7378I+OYF0dsXcKWVLTBYV+86XUAjLNyNnpvM6fd1rQJzaFp9S2nj3i/PFyFGli4gikJPF6eiEM+QCSLoRL18gTQwdQVXa2QfjgrBO/TOIJ7DVkNpjnFu8B6HnIo5yTgF4OChdZPS/DuSfkM+WQxSZlTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dF0IhOAKGM9CUj221RJIq1dZ/D1wUtUnFz8kCsvnWCk=;
- b=kxWnulaD1LgvYaYW7Tp/8J41g2b6bCRyJlG/VdGP7730epJJF3CJCRMPso40pr8x1vBEnEYQZZJq3nXg3JTVfMfMXkpwfJVsn2KN3QO1cBc54SABnFscRi+iuW+bHeOO5M6hHoNpGeOlI628iGbxxoIlq3tNnsJcIxEKYEl+vqj4bJD5RntCL5yYbRVxod3AfgPv5Hsvkq+EZ8w6CHuYHGdV+MNPCFkOv+uGOWuFYGytgj7RG0Ogv3P3tDda4fmtRQDgAcYZxUtOTEFhOETTdmwgq04Vl7HSOm4ncteB0j9e/oMPTw7xyVa82ORk+TK1ILALCvx+enmOF23nR0M3Kg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dF0IhOAKGM9CUj221RJIq1dZ/D1wUtUnFz8kCsvnWCk=;
- b=Iy6ClrZdcvQPZXLpixhGQspNky/zUT2NG/XkojXXYHSRP0XLYlTEyMLJY+N2C3LM/ltm1CJExpm/UrQiP3CoyEMuU158miOJ4GpFEs61jXnzYzG/ZnJr9qINdIGcTAUkLWSHICeEBEiVIN0VxgkJ3zilflb4zVUwRTFVs7T2hFc=
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
- by TYWPR01MB11829.jpnprd01.prod.outlook.com (2603:1096:400:400::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.12; Wed, 12 Feb
- 2025 17:06:52 +0000
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430%6]) with mapi id 15.20.8445.011; Wed, 12 Feb 2025
- 17:06:52 +0000
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andi Shyti
-	<andi.shyti@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-mediatek@lists.infradead.org"
-	<linux-mediatek@lists.infradead.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-CC: Krzysztof Adamski <krzysztof.adamski@nokia.com>, Florian Fainelli
-	<florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>, Stefan Roese <sr@denx.de>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Gregory CLEMENT
-	<gregory.clement@bootlin.com>
-Subject: RE: [PATCH v1 1/8] i2c: Introduce i2c_10bit_addr_from_msg()
-Thread-Topic: [PATCH v1 1/8] i2c: Introduce i2c_10bit_addr_from_msg()
-Thread-Index: AQHbfWv1ZOXd26SOMk69BpdYimUxfLND5csg
-Date: Wed, 12 Feb 2025 17:06:52 +0000
-Message-ID:
- <TYCPR01MB1209313670D2A1C634E7E45CFC2FC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-References: <20250212163359.2407327-1-andriy.shevchenko@linux.intel.com>
- <20250212163359.2407327-2-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20250212163359.2407327-2-andriy.shevchenko@linux.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|TYWPR01MB11829:EE_
-x-ms-office365-filtering-correlation-id: 0fc0317b-bf89-45bc-98a6-08dd4b87a54e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?AF2BmB6MTx0aFmCqiwi6zs/XXOFv+NEiLadiDABSL3zlnVCDQH04ylIkzixH?=
- =?us-ascii?Q?ToQdg+ysrKZgXK6ZfKlh8MCzz2U1ISuF9AFfmwspVitLvFPG63TLFeHb3qsT?=
- =?us-ascii?Q?i5KwhxV3d4ANyTuY0zNEMVW1u74ANoF/uy98bhZfjHsgv8c2E7iHSwHWf3Vv?=
- =?us-ascii?Q?/n/h3aZpZX4w3Ufb8+z6YC5WDC4nY4tG20ed/wIA1yEwT+jnhl4jd4RSXupa?=
- =?us-ascii?Q?gGkLfEozAOQYylO9cBSCGaOQHcoXq7KaUCHfRFzvYznmgy50Le/AELHXG3Bm?=
- =?us-ascii?Q?uaqrvqve6Mi+3kVJqIeosqBUQE6dl0tWt8rrYei/1868rgvhfWd7ddyym4/A?=
- =?us-ascii?Q?8ydTD9kLu8CFuJJ5jFU6Yw1sBqOnLSxwOhN8gAx0gwx7qnqKxBcUnbRXwEy/?=
- =?us-ascii?Q?8t/2zrq88g5utNLg4BVUHgUseHAM6RxXIvO/x5RbJF0kK83+Al7b/siG5vKp?=
- =?us-ascii?Q?ZUih1sNaplcdeYhajmmB78t130+Skq81RPKt/NSl7vAHoyIOs0dOrrbljaWj?=
- =?us-ascii?Q?0y4qJPbTn0vV1JYCFP50kcQRE5GAtIdlui6rS2Wx3JRotaukvY4fv9vdi9i+?=
- =?us-ascii?Q?/emYlwN8yaCbWp34bcJg5rEJUR555/QM5Lz9c5SRcT8E3mrlKu+L5k0YcE/i?=
- =?us-ascii?Q?O9ER8Bq9YLxrJPD9pVx5JJIIWcB/uNzHTKeVkWVipNOO1E22QI5EivwdaqI9?=
- =?us-ascii?Q?Y5cjT+yYm5GKnMSCUYtVf4lQcIUUSU2l7cQvmTbITxZiyswGdHH3G8KKf5tv?=
- =?us-ascii?Q?IeBHc5by/TTCOGgBPcTFUIGOXoXKQjqukeO7Qxr96ayEEGWSQDCokF/62DvB?=
- =?us-ascii?Q?gfjv0tZO8ThQw8EMtXs6Tfd9JH+vRMdevf3/rBJRsl2v7iNVS3EkoEPLmy1v?=
- =?us-ascii?Q?ihSU9JRlGOcDmTdfZHS6vbuxWIW7pE+bbeENShnSqmTrKCu0P9nL5/BHSw62?=
- =?us-ascii?Q?FTt3CeHemMGjPp3BaQabVbCCvNtZ3d1hCp55JkXiZbbZaHzcfMUlQWBgRhl/?=
- =?us-ascii?Q?s5zCf2t4XqESS8RTt0RO+lg4wlupetOeuBZ0jwWkf2Hp9Hb2ppZ2tlB6v42P?=
- =?us-ascii?Q?CekPkYyyb02FMKrCEJ/K6EHCUQQXWyzDOy+XPOGNFqijn6DKRAF3Koeb+fyH?=
- =?us-ascii?Q?oQlBomj3b6P4VEWevo4gn6t+9aZyq5KLNO7Li/kpDKH2c8bjSE5LOo3nS8sz?=
- =?us-ascii?Q?Tl1XIF5RdKXhRtW53AlJNecaryLRTWhraL/2e3XRBEUFdpxk3NyBd6zf0KrG?=
- =?us-ascii?Q?SUd4YfrRNJYJFt60S97XwgXYjSyUIqq9/KAlHgTB3KtfOzI3+HiD8wtkhMep?=
- =?us-ascii?Q?2xO06OAzA9OaKQn/roaKJpyhPrAzujKujGnxplVixq4IJyQQvMFZKgYaLB2U?=
- =?us-ascii?Q?VKvbBaziT1YQKbAq0Vg2e32LY2VasTuFOwgd3SZqYF1TTjFI29kkRcXil2Zj?=
- =?us-ascii?Q?+h+Es5oWxPmSXKqfANlnH/QIYGtC4DdW?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?fKBOit86f1e4pQrQzlrPYD8ftXfAFAeRKyt9LlT6QSGEvGINPlc3fLQaQ+k1?=
- =?us-ascii?Q?nwZM0VosUIxurB6AQ2vC04b7AHekTLfX4JMxPtE686/Mt1KDzvoCTeKPd4Pj?=
- =?us-ascii?Q?TkNY4e2yS36l7KEmbZSj3wFJFaM5TlSprhe/Ffvqr1TIUEs81tcJB4f9Ri0t?=
- =?us-ascii?Q?mA8c+KpQCzMGswRHGDaTLa/WTC5Qn7f/epxOFnOky6pYtb1aK2q0d6FaJnuo?=
- =?us-ascii?Q?+vsTJQ8xeXraSWxMGh+kaf4HWSB9vZ97TgGGlVg/xuo1hOjD2Q0xS/vlpwLw?=
- =?us-ascii?Q?64rX6crkp+SmmDTQqNiXMjwx6YrZPDVZFoFUQSh2DTl8pjFEMNYg30Lvdt+j?=
- =?us-ascii?Q?3y+lL39pE2vTdovDIYuy906LfBhwzZm6wCzkOxPzIDiOo582Ic5TbJLOvefq?=
- =?us-ascii?Q?Z6CDKl+JoEUSyiXnIJSSyWq8ZfuteYOswPqChEn2ULMaYP7+HaDJiifcZ6os?=
- =?us-ascii?Q?ZAlYyeTlPBCCOXdSX3O0T//8QVj7Gejr44EcDKnQp6NQVelvbP02n9UyyfHz?=
- =?us-ascii?Q?OEmE5Wlso/EDVZs55hJ/Ucvwx+1A0s3/h3ADktEHF7WdNHYo3ikscy1yeY/s?=
- =?us-ascii?Q?nPxF4C01vxK4WD5MWOdXisR+YYRcMzlOxZOa5FkXkw4ElRQ5NuuiYzFp1Z3i?=
- =?us-ascii?Q?1zoJKwdcvh+KG3hY0eUC0dfwARodQ9XCberVDY1AtdDIVbj/5Nz3RAa/10G0?=
- =?us-ascii?Q?nJADpW0qukDC0Hs75FGpHqr0AShHIzdxreEhUdZHOpPDcCy4WOjUU8pMmRh/?=
- =?us-ascii?Q?+aIAXIzLicadsp5G91YJAHaeSJqP5mjPY9PUjDFA+qcqU/6tithDxSto92rz?=
- =?us-ascii?Q?TVMSHllH7YW/pRS5u/9zG40Su48JQZje7WXy3W+GUAWIr52CL++wvYiHGf/+?=
- =?us-ascii?Q?HC2h+jKrYlNqvu8uTek2jAc9QxT+wrI4OgJTyfpM63Z7PjjVsFfY1YIgjg1I?=
- =?us-ascii?Q?yFjDq2I23XggrWmHfekVtcCCqkOjy3ujverLSmhQu0HNOzl1r2tpdwq1umPS?=
- =?us-ascii?Q?aiXPgcIPmLRBFwbpiOnkEaaUtXaYk1YUDEqeE2rTnGOZYkfCHiRscY9Y1iOE?=
- =?us-ascii?Q?tragsA9HBGUJLoL8GvoubFlrmOo8tU8tVvfXWgAPkEfvGbDC2zXgIlcudrfh?=
- =?us-ascii?Q?axkNxS3PhBkAp648sonY2ojugoAFzmCtatrk8V46T8vAKrAWeVoPrFW4FVga?=
- =?us-ascii?Q?rvkiW0jpcDYAVilmn8+uDTJgiDt3q46Uy1ZNJ/Pfx4US3Jt/4NR4Tk73A1i+?=
- =?us-ascii?Q?N9Ey48hY9YlcUZGXSa3vIqcV83IoUU1oi46EoA4i01m1pUZKbXgfhLkluVz6?=
- =?us-ascii?Q?J+PBXrTFxq5/0Bcbc6TM3IH/86KaJ+P3H6Dn8e6JtFAokUWWXDjdUJMQFw8h?=
- =?us-ascii?Q?3ZhBsDLZDVzicIE6yqOCIH3ax5cIhsAydVsaXDcZFW+yAxE5K3hj3OTOV6i0?=
- =?us-ascii?Q?CECGF0gGnAk6TMBgcEScDbh4c82P6lhdOsutvl9piy/Ynkcyo0IWydVX/Nb0?=
- =?us-ascii?Q?Re1OHYi09i58I1Ln2J4zLswMnnKK0Rj5Pcc58aCOq9SHbL3ekpLd8JYDSkty?=
- =?us-ascii?Q?b2rRDUv/FMJB11pkclDHLJKE+OzAxFwvx2qYmri5d+NbN/T2yvfuSkP0b/M+?=
- =?us-ascii?Q?+g=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800B0260A5D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739380024; cv=none; b=uYdxTXaNQaj3xAEstNwyS+FSsyomoODH1ASDt7DZqriclvFUwtKZeRyz19GvBownFnAQxZTvknWvM0FXL5FZ6dKhwveOix13LIJcCpKXYxM4YhfT8AHfzVn/vlqWACsJCPIyLK6EXHAgXNCAqIQuzmCMv5ZbYqMiLMUYc+LSVyI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739380024; c=relaxed/simple;
+	bh=lteTsHAofWcNmBaXCw2mHJ/LxVM4Lx/RZ4wOuwiWnt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjGPlYSEtDEPzKyKFUu9kAL2ydpRlcffeL47tNSc32ySnsmpsjwCWBS8d2cwbmlKieYDacHRRCfgGfeOtaXiZaTdfqFK+ULiE32cQbc6GWAFo8kRDO5hPqUmHQtWQQyha1rFI5qyJlCia7tyBk92CW0kqScH6HS3tX5wVKRcxtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m8rJ8RXE; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21f818a980cso69078255ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739380022; x=1739984822; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iMfbhD6wkX6MaCnkRWtypNgtVIrRM7/Oh0qieWzgO1w=;
+        b=m8rJ8RXEs4UMpNHdBa39t96D3WvuE4TNCtkDZmPZ+FXgkNVhySzfuP4FoZSHVVHsY5
+         VROK/DnL3I78r7VOieozX25g/HV02dEfYFOXoj8EXaCDl0Nb7RzkGynag8G3V7PyAO2K
+         aIOlw6XEMPO96/xEvTbC95y+0BowXQyfxrKU3LXloyBjwHQu4K4MfkAA44zkm80PWIz0
+         Sko7nltWJ2HpOHeID8GggZucdfpACSfRUF3VcpHG0YHmePCSviroqsnjX69sflSsTL1Q
+         PkT3PgUHFW0X5lbsqB8yntRo9boV7swCJeRlZvrntaaTgQSki/vRzmYyOFxpN2RLBcJ1
+         Yn/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739380022; x=1739984822;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iMfbhD6wkX6MaCnkRWtypNgtVIrRM7/Oh0qieWzgO1w=;
+        b=CsQxx5OBsWJ0CK7uFda78/z3pVTGp99Muy32OZsm8LKE6/HvSgi4TvIMRYsoNGc2eg
+         J7qoxHpvZQ2LNgcezu7O0bQFKwbe+aOh16K2cVhn4M5J9HWwnQpY5XX5UFvEneY+zRGC
+         xoTUOE1W2/0KnEJdqfHGVWraz0ob+Th36c1Z+SPtc+f13llezyjAAjrwkRKdmR7EWncl
+         ibtSZAHtEpNkGm10wR83qKNizl4QAVPzSN3HlXXWkuOjaiq0YZExOxZoRtXFCWMUIaHm
+         5kAp0QZbSg1QGPItBlPCL/Xyz+A0PqBeCTTGl97HKcU2JVqywfaOBvfzhkOMIJNxF/h5
+         vhBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJspS/E4/bg+STsJoecUMW8fq06s9aREiw7c1QmGBQSCHzare8CVkmMxcvzaI20QLe1LY7Ihhr8N/aZtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCWQl8MAfaT31svvK/IeYPOoC9++5G1wqfZ/6bJHhhOWbKeGLS
+	PBHgnQBiKwBA1bgCEJuZmxPEn66aUyNQw7A2zqR8gdqmgYME4Md843rj9u0KOA==
+X-Gm-Gg: ASbGnctxv4fBF5zpKDSFUX3i0UnISQ1bg8NV/4QDZ+yHa+kCAYU0wJFaUD8TTDrDxEW
+	GKwuFqpEqB1aKzwpSbFFLzlUjDeRa/WzwEYDuDkmoP1nnTJFEFkakwh2pjyUr/afN6j1GIKhOUi
+	J7iH2MGDEGSrY5nb7ifHDy3wycvCi2f/mlDR16XsI+xZR0AfxjLDewfENXLP0HyDP0ryozlCKKG
+	ZnfL4XuH0A9N7SBV5nyddIMk+5edgKKVD5umC+7LwQ92+3j0AO/5oHMjd9Kpqug5Cmfn77aT3MR
+	MMzfa1pg8VPjhKF+YoCUhDxiyy/3qWI=
+X-Google-Smtp-Source: AGHT+IF2luvrqC0ykZO6VitJHSJWVQ71T5mlJNsMYUeoTgA9VEadsV/+zYxhfiPIyZqZHXO7crIAtA==
+X-Received: by 2002:a17:902:cccc:b0:21f:5b1e:11ef with SMTP id d9443c01a7336-220bbc64587mr79261985ad.32.1739380021744;
+        Wed, 12 Feb 2025 09:07:01 -0800 (PST)
+Received: from thinkpad ([2409:40f4:3012:d471:d5a7:bf83:76ba:b479])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ad5434dc097sm7690741a12.7.2025.02.12.09.06.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 09:07:01 -0800 (PST)
+Date: Wed, 12 Feb 2025 22:36:54 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Loic Poulain <loic.poulain@linaro.org>,
+	Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
+Subject: Re: [PATCH net-next] net: wwan: mhi_wwan_mbim: Silence sequence
+ number glitch errors
+Message-ID: <20250212170654.tmynyd62szap6n47@thinkpad>
+References: <20250212-mhi-wwan-mbim-sequence-glitch-v1-1-503735977cbd@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0fc0317b-bf89-45bc-98a6-08dd4b87a54e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2025 17:06:52.2459
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KanATX3Lx023ImvPczuXekn/UQ9HDZSoEeHTf6/2Uvx4waYEGXncXlyYo37bbuq6uZGUdzUNUErCqImAjkxv/zwjYk9EeVDh17QoW+VqH8k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11829
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250212-mhi-wwan-mbim-sequence-glitch-v1-1-503735977cbd@linaro.org>
 
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Sent: 12 February 2025 16:32
-> Subject: [PATCH v1 1/8] i2c: Introduce i2c_10bit_addr_from_msg()
->=20
-> There are already a lot of drivers that have been using
-> i2c_8bit_addr_from_msg() for 7-bit addresses, now it's time
-> to have the similar for 10-bit addresses.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Wed, Feb 12, 2025 at 12:15:35PM +0100, Stephan Gerhold wrote:
+> When using the Qualcomm X55 modem on the ThinkPad X13s, the kernel log is
+> constantly being filled with errors related to a "sequence number glitch",
+> e.g.:
+> 
+> 	[ 1903.284538] sequence number glitch prev=16 curr=0
+> 	[ 1913.812205] sequence number glitch prev=50 curr=0
+> 	[ 1923.698219] sequence number glitch prev=142 curr=0
+> 	[ 2029.248276] sequence number glitch prev=1555 curr=0
+> 	[ 2046.333059] sequence number glitch prev=70 curr=0
+> 	[ 2076.520067] sequence number glitch prev=272 curr=0
+> 	[ 2158.704202] sequence number glitch prev=2655 curr=0
+> 	[ 2218.530776] sequence number glitch prev=2349 curr=0
+> 	[ 2225.579092] sequence number glitch prev=6 curr=0
+> 
+> Internet connectivity is working fine, so this error seems harmless. It
+> looks like modem does not preserve the sequence number when entering low
+> power state; the amount of errors depends on how actively the modem is
+> being used.
+> 
+> A similar issue has also been seen on USB-based MBIM modems [1]. However,
+> in cdc_ncm.c the "sequence number glitch" message is a debug message
+> instead of an error. Apply the same to the mhi_wwan_mbim.c driver to
+> silence these errors when using the modem.
+> 
+> [1]: https://lists.freedesktop.org/archives/libmbim-devel/2016-November/000781.html
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 
-Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
 
 > ---
->  include/linux/i2c.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-> index 997e80649889..4d281ff5582b 100644
-> --- a/include/linux/i2c.h
-> +++ b/include/linux/i2c.h
-> @@ -952,6 +952,16 @@ static inline u8 i2c_8bit_addr_from_msg(const struct=
- i2c_msg *msg)
->  	return (msg->addr << 1) | (msg->flags & I2C_M_RD);
->  }
->=20
-> +static inline u8 i2c_10bit_addr_from_msg(const struct i2c_msg *msg)
-> +{
-> +	/*
-> +	 * 10-bit address
-> +	 *   addr_1: 5'b11110 | addr[9:8] | (R/nW)
-> +	 *   addr_2: addr[7:0]
-> +	 */
-> +	return 0xf0 | ((msg->addr & GENMASK(9, 8)) >> 7) | (msg->flags & I2C_M_=
-RD);
-> +}
-> +
->  u8 *i2c_get_dma_safe_msg_buf(struct i2c_msg *msg, unsigned int threshold=
-);
->  void i2c_put_dma_safe_msg_buf(u8 *buf, struct i2c_msg *msg, bool xferred=
-);
->=20
-> --
-> 2.45.1.3035.g276e886db78b
+>  drivers/net/wwan/mhi_wwan_mbim.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wwan/mhi_wwan_mbim.c b/drivers/net/wwan/mhi_wwan_mbim.c
+> index d5a9360323d29df4b6665bef0949e017c90876a4..8755c5e6a65b302c9ba2fe463e9eac58d956eaff 100644
+> --- a/drivers/net/wwan/mhi_wwan_mbim.c
+> +++ b/drivers/net/wwan/mhi_wwan_mbim.c
+> @@ -220,7 +220,7 @@ static int mbim_rx_verify_nth16(struct mhi_mbim_context *mbim, struct sk_buff *s
+>  	if (mbim->rx_seq + 1 != le16_to_cpu(nth16->wSequence) &&
+>  	    (mbim->rx_seq || le16_to_cpu(nth16->wSequence)) &&
+>  	    !(mbim->rx_seq == 0xffff && !le16_to_cpu(nth16->wSequence))) {
+> -		net_err_ratelimited("sequence number glitch prev=%d curr=%d\n",
+> +		net_dbg_ratelimited("sequence number glitch prev=%d curr=%d\n",
+>  				    mbim->rx_seq, le16_to_cpu(nth16->wSequence));
+>  	}
+>  	mbim->rx_seq = le16_to_cpu(nth16->wSequence);
+> 
+> ---
+> base-commit: 4e41231249f4083a095085ff86e317e29313c2c3
+> change-id: 20250206-mhi-wwan-mbim-sequence-glitch-cdbd2db5b3bb
+> 
+> Best regards,
+> -- 
+> Stephan Gerhold <stephan.gerhold@linaro.org>
+> 
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
