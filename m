@@ -1,114 +1,194 @@
-Return-Path: <linux-kernel+bounces-511910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA137A33150
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:13:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931C0A33152
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:13:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BAF43AA203
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D061884320
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1E8202F72;
-	Wed, 12 Feb 2025 21:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB68202F62;
+	Wed, 12 Feb 2025 21:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="inJruE/z"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zmy49Fzg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZVdNe2Bc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zmy49Fzg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZVdNe2Bc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB9D200B95;
-	Wed, 12 Feb 2025 21:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A88200B95;
+	Wed, 12 Feb 2025 21:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739394790; cv=none; b=OVB302x1fEEAUNf2+aCLXlpzPodv7Hvt0FD1bp/ly9nXnomPtsfFqyWpONDdz7ug1qbK4g9GEH83dDyeSDg5UMRWTg998LC0m3hLujTBJPqB7n3dj7mK1Vb2I9+/xistTd58NwPO9hwEavG0PK7/4inUyJgaYyr8m+X5WDWWc1o=
+	t=1739394812; cv=none; b=pP2hGVj9E6jpme0NXpZb8QhHjq958S+8mnGhWqHPUnHNoLTgy4DBCOjl2r7a/OY88k4Met67WWisSInolshlVEjZ/oIU1eGNglgHa7zueGajX2hkYfOtUnLBTiY4ru4d7k00q2i0C429vq/MrUcLEW/4zdE+heEUSNk4nvUr7kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739394790; c=relaxed/simple;
-	bh=S2zA+V93rzV22fzbSTDU7gIlGOraXu55Diwx5MBdt/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FM85/bBlveR8Z3htEq+vmVWWR8/VaWaekHRt4GNZQ+8wrXjCrr6Duoog0s8+DgxL00lHC3s5Bj/Yl2f2dvAVAVQVrKgKK439o/w9FwNoFWTYW0assBAilF+3NcEFiGyq66QAVgNqzmNEVduFR/NXdY3788TFmU2md2Nm1aSKKi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=inJruE/z; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51CLCiHO3875956
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 15:12:44 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739394764;
-	bh=4z6w0bnAWvx2g2n+JlxwFqtCphZzu2LQDSbTYizfo20=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=inJruE/z/Cz3CUtyCgUvZXb6YZVumt7HRyJ4Xe0Qp8XRpk1ZD1nISbJI2m5gmy47N
-	 TGOcTxNOdxTYsWfxZjB/hB7bp1SzTLR1Trucqj4gAxCgKniohCK5S9Vltfo/pQErEU
-	 uGqK3rRsO5Zfvrt6zyjGdYBfWoRyh+RWsQuOAHX8=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51CLCigr006188
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Feb 2025 15:12:44 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Feb 2025 15:12:43 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Feb 2025 15:12:43 -0600
-Received: from [128.247.29.251] (dmz007xyy.dhcp.ti.com [128.247.29.251])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51CLChvK105055;
-	Wed, 12 Feb 2025 15:12:43 -0600
-Message-ID: <065cdaca-cc37-4b1e-9c1e-e2dedbb2ffd5@ti.com>
-Date: Wed, 12 Feb 2025 15:12:43 -0600
+	s=arc-20240116; t=1739394812; c=relaxed/simple;
+	bh=5VKrW0LTf0NyUdyU/YBbpCwS7UtHhXGmwfKBGVR0NbU=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=cR3B8ZoHbVDB/uk5XEl9UIFB5RL1JeN6pfsD9pOzo6TEEGY/oz0luJvNT+onieIno2PcMEqD48OwwdHdXWxDgx2oBXx5g/MD7WBA0wLyUExfx74UBRHyDBe2Im4mUVkfl4i93Y0LqH18gR23oe2iQNnNnkOqThng02JdykZqNqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zmy49Fzg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZVdNe2Bc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zmy49Fzg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZVdNe2Bc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 21C7F337B1;
+	Wed, 12 Feb 2025 21:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739394808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vYE4/MKpIJGNFpjPVzpVcoZZ+uRyGZs06Or74T5dZ5U=;
+	b=Zmy49FzgUVm4dxuiEdyN91Tjly0NEBzu62phMQAe2IHR0UDNNygcShb2NxKdcTUiq696XQ
+	grclxkbfAAD7javWR6L78ykNwUNs4K2BuF4Z7D986odXCjJ3WYSp99/8qUq50GI/135unT
+	6CPD0fux+R10LgsalEwAprVMXfiPAe4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739394808;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vYE4/MKpIJGNFpjPVzpVcoZZ+uRyGZs06Or74T5dZ5U=;
+	b=ZVdNe2BckdPnIklk8JVSFs6d7iCQaLimEJoGcbW47U+YOD2U015Xd+FfW+IS9Ugq1eVcBC
+	hU7y9rnIkFXYmDBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739394808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vYE4/MKpIJGNFpjPVzpVcoZZ+uRyGZs06Or74T5dZ5U=;
+	b=Zmy49FzgUVm4dxuiEdyN91Tjly0NEBzu62phMQAe2IHR0UDNNygcShb2NxKdcTUiq696XQ
+	grclxkbfAAD7javWR6L78ykNwUNs4K2BuF4Z7D986odXCjJ3WYSp99/8qUq50GI/135unT
+	6CPD0fux+R10LgsalEwAprVMXfiPAe4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739394808;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vYE4/MKpIJGNFpjPVzpVcoZZ+uRyGZs06Or74T5dZ5U=;
+	b=ZVdNe2BckdPnIklk8JVSFs6d7iCQaLimEJoGcbW47U+YOD2U015Xd+FfW+IS9Ugq1eVcBC
+	hU7y9rnIkFXYmDBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BF3E813874;
+	Wed, 12 Feb 2025 21:13:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KV9pHfUOrWe/NQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 12 Feb 2025 21:13:25 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Add TI TPS65215 PMIC GPIO Support
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
-        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <m-leonard@ti.com>, <praneeth@ti.com>,
-        <christophe.jaillet@wanadoo.fr>
-References: <20250113225530.124213-1-s-ramamoorthy@ti.com>
- <CAMRc=Meqjy+cqfueM_dQE8uP32zS0ib41qE+OPPWFkhoVTGc2w@mail.gmail.com>
-Content-Language: en-US
-From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-Organization: PMIC
-In-Reply-To: <CAMRc=Meqjy+cqfueM_dQE8uP32zS0ib41qE+OPPWFkhoVTGc2w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+From: "NeilBrown" <neilb@suse.de>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
+Subject: Re: [PATCH] nfsd: allow SC_STATUS_FREEABLE when searching via
+ nfs4_lookup_stateid()
+In-reply-to: <20250212-nfsd-fixes-v1-1-935e3a4919fc@kernel.org>
+References: <20250212-nfsd-fixes-v1-1-935e3a4919fc@kernel.org>
+Date: Thu, 13 Feb 2025 08:13:13 +1100
+Message-id: <173939479366.22054.8896171620747680077@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi,
+On Thu, 13 Feb 2025, Jeff Layton wrote:
+> When a delegation is revoked, it's initially marked with
+> SC_STATUS_REVOKED, or SC_STATUS_ADMIN_REVOKED and later, it's marked
+> with the SC_STATUS_FREEABLE flag, which denotes that it is waiting for
+> s FREE_STATEID call.
+>=20
+> nfs4_lookup_stateid() accepts a statusmask that includes the status
+> flags that a found stateid is allowed to have. Currently, that mask
+> never includes SC_STATUS_FREEABLE, which means that revoked delegations
+> are (almost) never found.
+>=20
+> Add SC_STATUS_FREEABLE to the always-allowed status flags.
+
+There are 4 calls to nfsd4_lookup_stateid().  One already has
+SC_STATUS_FREEABLE passed.  Which of the others need it?
+If all of them, then this patch is sensible but should also remove the
+flag in the one place it is already passed.
+If only one other call needs it, then maybe we should just pass it
+there?
+
+Could you at least include in the description some detail of what
+request is failing and which particular nfsd4_lookup_stateid() call is
+relevant in that case?
+
+Thanks,
+NeilBrown
 
 
-On 2/7/25 2:53 AM, Bartosz Golaszewski wrote:
-> On Mon, Jan 13, 2025 at 11:55 PM Shree Ramamoorthy <s-ramamoorthy@ti.com> wrote:
->> TPS65215 is a Power Management Integrated Circuit (PMIC) that has
->> significant register map overlap with TPS65219. The series introduces
->> TPS65215 and restructures the existing driver to support multiple devices.
->>
->> This follow-up series is dependent on:
->> Commit f84464ec8190 ("regulator: dt-bindings: Add TI TPS65215 PMIC bindings")
->> Commit 8206c20f4c82 ("mfd: tps65215: Add support for TI TPS65215 PMIC")
->> Commit 0e0b7f00c111 ("mfd: tps65215: Remove regmap_read check")
->>
-> Did these go into v6.14?
->
-> Bart
-
-The dependencies listed in the cover letter were just applied by Lee Jones:
-https://lore.kernel.org/all/173928615760.2233464.12306998726512431222.b4-ty@kernel.org/
-
-The rest of this series still applies without a need for code modifications.
-
-
--- 
-Best,
-Shree Ramamoorthy
-PMIC Software Engineer
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> This fixes the pynfs DELEG8 test.
+> ---
+>  fs/nfsd/nfs4state.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 153eeea2c7c999d003cd1f36cecb0dd4f6e049b8..56bf07d623d085589823f3fba18=
+afa62c0b3dbd2 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -7051,7 +7051,7 @@ nfsd4_lookup_stateid(struct nfsd4_compound_state *cst=
+ate,
+>  		 */
+>  		statusmask |=3D SC_STATUS_REVOKED;
+> =20
+> -	statusmask |=3D SC_STATUS_ADMIN_REVOKED;
+> +	statusmask |=3D SC_STATUS_ADMIN_REVOKED | SC_STATUS_FREEABLE;
+> =20
+>  	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid) ||
+>  		CLOSE_STATEID(stateid))
+>=20
+> ---
+> base-commit: 4990d098433db18c854e75fb0f90d941eb7d479e
+> change-id: 20250212-nfsd-fixes-fa8047082335
+>=20
+> Best regards,
+> --=20
+> Jeff Layton <jlayton@kernel.org>
+>=20
+>=20
 
 
