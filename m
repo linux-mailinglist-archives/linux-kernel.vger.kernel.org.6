@@ -1,84 +1,75 @@
-Return-Path: <linux-kernel+bounces-511665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41553A32E00
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:57:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59C2A32E03
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:58:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 371803A736D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:57:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC1B16854B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BB225D521;
-	Wed, 12 Feb 2025 17:57:25 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735C525D522;
+	Wed, 12 Feb 2025 17:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="LDw2stgV"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEEC2586C6;
-	Wed, 12 Feb 2025 17:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A75825A622;
+	Wed, 12 Feb 2025 17:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739383044; cv=none; b=dE+l8gAz5CAFo3Ey/XbvbW3SLE+ShrjsgGFbXUJUiHzUYC6ROuxcTV8dxUvUY9TsMBnEm5ZA9+EaAPYOpKpwK5oBSBdoVcGDOmILjDQ7X7mm8VbYO9dxDpBfebK1ST+VW/5pnW9q/tPV99Q2GIDixGI6ZJLIgV0dYf7U7YtEkec=
+	t=1739383111; cv=none; b=rOkEyf3Y8xlqn6C11a9OFlGSeyedLtW4irfAZHBFwXE9h4tGLyNlkmi29ZubqNlv17wrvN0UdDzAEJa0FvXT3XnnKU9bXMi7DnkVSQzW0jGY8w2diqp/Wdc+q7jvm4AyHYvgBaKnq0YA+45ERuK9o4swr1W6iI9Lfjw+ibjzv4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739383044; c=relaxed/simple;
-	bh=QYKLL1qzNvw6KN1nd4cSObmkdI1Vpn9ZYQHNZMmDPEI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m/fNDPAMXucasVnsCl9HzmV6+6/J4/9cEID5CB8nL/5bWt5Ao76uK4K4hL4kcnMKlcoxsetLou1+CSEvrOoRli8BdjdjuSFe07/GRXQZcSdePs4jbaZ8KYJdqQfW8LJQvnvla5W2bzQDKoty7/8TwfekoG9jMY6MpCw6ZTNCpQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YtQtM2q3Yz6L5K2;
-	Thu, 13 Feb 2025 01:54:19 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2D7C2140136;
-	Thu, 13 Feb 2025 01:57:20 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 12 Feb
- 2025 18:57:19 +0100
-Date: Wed, 12 Feb 2025 17:57:18 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>
-Subject: Re: [PATCH v3 02/18] cxl/pci: Moving code in cxl_hdm_decode_init()
-Message-ID: <20250212175718.00006a53@huawei.com>
-In-Reply-To: <20250211095349.981096-3-rrichter@amd.com>
-References: <20250211095349.981096-1-rrichter@amd.com>
-	<20250211095349.981096-3-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739383111; c=relaxed/simple;
+	bh=2bU8A6tid3BsI3raiGM96czITAPynVyTDtnRQKgP/9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sWl5nKB+GAKJJllt+ZDoZYtr7a1/tY6urc09D4exNqvs9SZfelBCniYWVklgoRjI2IE89j9Gg+8y+CpnNIpctCZmvV2AMd+IKgYo9CBj06jmkJwrU8bi6O6rcLZyMCwYxZ8Y3mOeH2fnF+GhC9rSlV0XTwZI5UBN9vHvZky8aeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=LDw2stgV; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1739383104;
+	bh=2bU8A6tid3BsI3raiGM96czITAPynVyTDtnRQKgP/9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LDw2stgV2keEOnny0RCUsswevWb+ToitUFUo5SPX+e9oJFERZKSCsquL91gxMGdep
+	 KV4KylvaSixTK0RVHY+O3lXTGgcxM5K+1LhGfBLm9B8/qBKOEYY25SEraVdjIfgQhn
+	 G1q1VGN9sNKHDckk9aIJ8qr+CcsAX9iQFZYtz4Lw=
+Date: Wed, 12 Feb 2025 18:58:24 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/nolibc: split up architecture list in
+ run-tests.sh
+Message-ID: <a1c291a0-fe8a-4005-a85e-eb0e2450a7e9@t-8ch.de>
+References: <20250211-nolibc-test-archs-v1-1-8e55aa3369cf@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250211-nolibc-test-archs-v1-1-8e55aa3369cf@weissschuh.net>
 
-On Tue, 11 Feb 2025 10:53:32 +0100
-Robert Richter <rrichter@amd.com> wrote:
+FYI Willy,
 
-> Commit 3f9e07531778 ("cxl/pci: simplify the check of mem_enabled in
-> cxl_hdm_decode_init()") changed the code flow in this function. The
-> root port is determined before a check to leave the function. Since
-> the root port is not used by the check it can be moved to run the
-> check first. This improves code readability and avoids unnesessary
-> code execution.
+On 2025-02-11 12:03:52+0100, Thomas Weißschuh wrote:
+> The list is getting overly long and any modifications introduce a lot of
+> noise and are prone to conflicts. Split the string into a bash array
+> and break that into multiple lines.
+
+I picked up this trivial change already.
+
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-> Tested-by: Gregory Price <gourry@gourry.net>
-Seems reasonable.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>  tools/testing/selftests/nolibc/run-tests.sh | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+
+<snip>
 
