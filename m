@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-511880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2669A330F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:45:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC3AA330FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:46:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740321888640
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E5B8188B1B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED40B202C27;
-	Wed, 12 Feb 2025 20:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189A11EEA4A;
+	Wed, 12 Feb 2025 20:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRRCdYmS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="asumzZjL"
+Received: from mail-il1-f227.google.com (mail-il1-f227.google.com [209.85.166.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431D61FF5EF;
-	Wed, 12 Feb 2025 20:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B590E27183B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739393134; cv=none; b=HLgQM/s31ymNJ8fcTHFH9wHmw92SvP/Xle7TUEaBBLh4ePf17TdNO5g1l/ct45NJT24kGJZPcno0LQMIOtbdQMUF0hAhMcH474KIjA/yx6gcziKGaAUEd+CGJ61q63p73iep+yPfbJ9b4cilT5J4J3N6AEPjkD6pQ2fsa0iXp+c=
+	t=1739393195; cv=none; b=SQuvaruD4COHLfWKwKKSsAKywht+UsdFg0O/RP6eMIjwIMa5PK2Y8z+zlIVoob+RUZYa12xEUUTIUJsu2i6HC6yhN1FTluOsSE91IE6xWq7bIkq9zbpbZSqWnBvWOYh8tJaOcSvkooP2wJraAcF+FNvdFeX+NYmsDd89PlvKNvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739393134; c=relaxed/simple;
-	bh=qZM+6jwTsggYV6BzJ7IASXE6LIyvqp+bdxz0nezDjoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=n25f8vFy7888E/UEz8pymR2puyvwjvPjCWJBHPxslbVT6nj19KX8hxUw0gRmuTJ9bJPqIM8nWI/7ZUuGBIr6tW0HFdDugc1vki0NYbgW7zs7gYmHriMAtR3ZT3p34YIprUGvtZwwMLXA51sy6+uQzuYA2IFLRzrYpuAmhQthbxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRRCdYmS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 241A7C4CEDF;
-	Wed, 12 Feb 2025 20:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739393133;
-	bh=qZM+6jwTsggYV6BzJ7IASXE6LIyvqp+bdxz0nezDjoU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=GRRCdYmSeVB/zY+Vn4lyjfTiyh3W1a27K6qQVoGH7+2ed09ZHAa+b+UZIt82EkyCz
-	 9XO/Ylcw7l6uA+iiqVkdQHztEy3cRpP1t20WzPxQG9GrglBJaDwDEOw5Bt6WDfd+aQ
-	 jTK96e6pMV10yc7+e54XV81Foh4yBRVvgrJ0KqmDaoljYd2QdtJyCMWLBx0W95Vvek
-	 hPEUAWYLCxulY2yl899hNA6Fgx9eOnyGr0roII4J3537oJ3ap2Pz4YpOO+AahWop8W
-	 BfhgP4D3k+Jh5Zz8npFkOWdKxrClvOWH7jnwgyo15NLYzViDwFOe1TDJpqKW0iBv4W
-	 QzFq1D3p8dRfQ==
-Message-ID: <d80fb4f9-af82-484e-bde2-571805dce3eb@kernel.org>
-Date: Wed, 12 Feb 2025 21:45:29 +0100
+	s=arc-20240116; t=1739393195; c=relaxed/simple;
+	bh=WEbvghG5qG37wCBWMvGFFRMd/IgFtSFjI1yWwCpYjpU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hydJmHqzryVSO++//0mPkZ4DTbeWHjhspszBtLLviJt0DQpKARcSLJWjdBrTsOCRRYiJe27e5z1Dc+B/xvfO5owlFekSRbdsX+3UD5ej/S2CrrZUbSlOZJPnS5pfKWE2BFTw78RIvESNxTqDIyCaNVg12jzA1AKncI/yw490dc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=asumzZjL; arc=none smtp.client-ip=209.85.166.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-il1-f227.google.com with SMTP id e9e14a558f8ab-3cfb77a7e21so16955ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:46:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1739393193; x=1739997993; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C1Szppuqbw+roNwcR7rWxy0Q8IaoVRiOv/Zo+HVKhVU=;
+        b=asumzZjLUxObP7y+oqQwbEjVQA+59XA5DlnkgYtifN56VpeXFrMNRI7bJlNvuicXGm
+         DoPlYrM8h6VE4rCwTCzd+OWrtneeDiLywZVXs1qRmm8w0beO1CcRz1h+kmp6pz+WB7Xz
+         Wxz5inMa8FW9G2PyRrnMnySQAkvelgYkxm24z+DAVnmQOPtDpGjphcx7xk1xMyqp4RX/
+         ViUuR6Ucegb2lySKR1KoeK7yVzeGQD9EZsI5Vtcx61rFfM5j9bHjq8ESYJR6ZRSuTqB0
+         y8n9RyuLSL2HXpFgL1fU4Wcxt9cLz5Jn87QGURc9Ae7ZjHYClVgVqGbscfix4ZBP2Esn
+         jWVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739393193; x=1739997993;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C1Szppuqbw+roNwcR7rWxy0Q8IaoVRiOv/Zo+HVKhVU=;
+        b=Qp0EaYlF4dEs849OrEKlNWsN7G+XD7PsrJmdwP+xuLjat0m/4H3dLfesQR30hshL/W
+         YpqVm4EWCejAd5t5tgwPsM7hd2MImDc3o5S4n7yNiYzf19BMepkC9e0eI9QgL6/Bnymg
+         MGmvj1OK0kAVSD40OgL3VklAS6qkLssjxX6q02ERGdSQo5y5Ix8SKz5DFHx8f9lGOudK
+         Hd4cWheHFFAbgcJHLydjZUUZxbqw3msmwg21uaTOdFbat2TiDcn+6n2A/ciQWWUXsNVW
+         OEMAWtWkiD671yAMhSbdZ6MSa5E9YX1J9TaNhwoiBiVSqu+J6oITXRYMqd9W9Fwsf28m
+         BpKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAXvYp18dBtxYDAMvoSnSOIaJZmTJZ8Bj/WTCxWxAXhgUB0A/H+uYMibsc40pSNMHGfWsCk5R6YrRAieI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHaNUTx/xtsItzBvR5pGzVPpxCMbYAG7lkTrVLMea0BHiTrpXF
+	ksgnRxnDB/oyUNX64aWx2FHHME7Xv+dRNQWuFGqdeQGEopn9xogVghpHC5gsAfOtOeuMPKHGfxX
+	2kpqF2HsQd+pL7N7GxCwjDgiYBx+j85U2+80Vw0pH0iOWyZM4
+X-Gm-Gg: ASbGncucj8zImKnnX/HodMIfPukjOVQDAPumNU5Z1CytLF+zGwL2JpbPKYViqyFPbhV
+	cpd8BwHjtpEX9sPvNBgECqlFCngzZ6eAGycxbafO9D9xNLBs8W6E0fotQdho0Wrtdxh4J3Otsk7
+	0eue28XEvF0H9Odptv+Dh3UzL5Zxkd4rKHgZUa2yEE8R1oRn+oGT5uEqCMmqAIiIedRDfcBDAnn
+	3VFYFhHNOcjmB03PkC0ro/F+2LJaNtW8G7UUO6mc75u4bZOEVXxNV75Jt2MsG0x41Ys0OPEalsy
+	ISqkj276s1JULz/XnlAOpWU=
+X-Google-Smtp-Source: AGHT+IERRFz28hVonQcVW2NGKlN7rUa7EdvNtmcD5oahOamuqm8rs+l1MW3XjQINiNLg48cf22LBeVh8KsUC
+X-Received: by 2002:a05:6e02:3208:b0:3ce:7ac0:64c2 with SMTP id e9e14a558f8ab-3d17d0725efmr8768165ab.1.1739393192833;
+        Wed, 12 Feb 2025 12:46:32 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d05e8d8fa9sm8855715ab.11.2025.02.12.12.46.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 12:46:32 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id A78583401A2;
+	Wed, 12 Feb 2025 13:46:31 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 9D155E41973; Wed, 12 Feb 2025 13:46:01 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Riley Thomasson <riley@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: [PATCH 0/2] uring_cmd SQE corruptions
+Date: Wed, 12 Feb 2025 13:45:44 -0700
+Message-ID: <20250212204546.3751645-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: tegra: tegra210-p2894: Align GPIO hog node name
- with preferred style
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250115204603.136997-1-krzysztof.kozlowski@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250115204603.136997-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 15/01/2025 21:46, Krzysztof Kozlowski wrote:
-> GPIO hogs device node names can use 'hog' prefix or suffix, but the
-> suffix is preferred.  The pattern in DT schema might narrow in the
-> future, so adjust the DTS now.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Reference: https://lore.kernel.org/all/20250115142457.GA3859772-robh@kernel.org/
-> ---
+In our application issuing NVMe passthru commands, we have observed
+nvme_uring_cmd fields being corrupted between when userspace initializes
+the io_uring SQE and when nvme_uring_cmd_io() processes it.
 
-Any comments on the patch?
+We hypothesized that the uring_cmd's were executing asynchronously after
+the io_uring_enter() syscall returned, yet were still reading the SQE in
+the userspace-mapped SQ. Since io_uring_enter() had already incremented
+the SQ head index, userspace reused the SQ slot for a new SQE once the
+SQ wrapped around to it.
 
-Best regards,
-Krzysztof
+We confirmed this hypothesis by "poisoning" all SQEs up to the SQ head
+index in userspace upon return from io_uring_enter(). By overwriting the
+nvme_uring_cmd nsid field with a known garbage value, we were able to
+trigger the err message in nvme_validate_passthru_nsid(), which logged
+the garbage nsid value.
+
+The issue is caused by commit 5eff57fa9f3a ("io_uring/uring_cmd: defer
+SQE copying until it's needed"). With this commit reverted, the poisoned
+values in the SQEs are no longer seen by nvme_uring_cmd_io().
+
+Prior to the commit, each uring_cmd SQE was unconditionally memcpy()ed
+to async_data at prep time. The commit moved this memcpy() to 2 cases
+when the request goes async:
+- If REQ_F_FORCE_ASYNC is set to force the initial issue to go async
+- If ->uring_cmd() returns -EAGAIN in the initial non-blocking issue
+
+This patch set fixes a bug in the EAGAIN case where the uring_cmd's sqe
+pointer is not updated to point to async_data after the memcpy(),
+as it correctly is in the REQ_F_FORCE_ASYNC case.
+
+However, uring_cmd's can be issued async in other cases not enumerated
+by 5eff57fa9f3a, also leading to SQE corruption. These include requests
+besides the first in a linked chain, which are only issued once prior
+requests complete. Requests waiting for a drain to complete would also
+be initially issued async.
+
+While it's probably possible for io_uring_cmd_prep_setup() to check for
+each of these cases and avoid deferring the SQE memcpy(), we feel it
+might be safer to revert 5eff57fa9f3a to avoid the corruption risk.
+As discussed recently in regard to the ublk zero-copy patches[1], new
+async paths added in the future could break these delicate assumptions.
+
+Thoughts?
+
+[1]: https://lore.kernel.org/io-uring/7c2c2668-4f23-41d9-9cdf-c8ddd1f13f7c@gmail.com/
+
+Caleb Sander Mateos (2):
+  io_uring/uring_cmd: don't assume io_uring_cmd_data layout
+  io_uring/uring_cmd: switch sqe to async_data on EAGAIN
+
+ io_uring/uring_cmd.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
+-- 
+2.45.2
+
 
