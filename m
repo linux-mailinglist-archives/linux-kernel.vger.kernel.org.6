@@ -1,102 +1,75 @@
-Return-Path: <linux-kernel+bounces-510359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B8BA31BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:00:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBECA31BB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9423167D32
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874D93A7CC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6213713C3C2;
-	Wed, 12 Feb 2025 02:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA62B12F399;
+	Wed, 12 Feb 2025 02:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJArGJoe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5/sPWAB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA26E13DB9F;
-	Wed, 12 Feb 2025 02:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A04827183E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739325606; cv=none; b=peJXYF7MxV5SMSmxnT+k3Y4lRXmzIGrq/CIrxE0XOxU0e7GgrwcIjSSVft8Zl4D1v/ENlZa+eqqfeWW/E3mKQAGJRbJHTjBkj3rXFpnaxtyXfM4OCUpR2SrUgyBz56lKRsxZU8fgz++opXMVi5qMMC3AGWkpoHGrPEZNBiwu5yI=
+	t=1739325800; cv=none; b=LqfMjxdbTpqLOj8IfBvMtjw3RF3MKLofdCRYpdcLng8WTtRrE/Vfdre4oACWkxrwZOZrktd4gxUMxxlgYy6nWqJoq76mqsjVFbrLxmqHz8/lgol9OXCeq709PjfXBge5LO/wDgAnTMJZed2ATLsk+Xaao/28yCYfDwGEMFbXQDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739325606; c=relaxed/simple;
-	bh=oilJiX+VeDtt6XMyhc6T4ILKvqJAoN3URIWrJE3VgHU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=QVqZ8tp629dv7GAAZCe4KJ5tFaSGvTVaquBZCUbOi7hNYPEEtorZ3i8l4nkgQquiqmXS1XZEWo4WgAVTFzYN6ITyUZeG/sSMfu8q1oX/3j2NGVCup2uxprzv55bRpTzFllKET8zCNQKc4XL5iELO/noaFzngIIifP3abXfys4xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJArGJoe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A86C4CEDD;
-	Wed, 12 Feb 2025 02:00:06 +0000 (UTC)
+	s=arc-20240116; t=1739325800; c=relaxed/simple;
+	bh=H40AZ9St58pE3b+FYLNyeQqlvH5wg17OrK+0QrcEalg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uoVAxXH3/InwbqWZZURrD3jzNw5dA+P+9RSVHT3rMs3w0AKPh6NwpqhzPctMIZlwL8AXEgnILIgEo6By/OfEOi99L/zeJ2/gqTrRnF1CXLgXE9qvmyFhTpXmwTjJU2PjtkUVZiFwSiR78eNMRmEWpY7H378MOPHlpFZfBhKQdWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5/sPWAB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F89C4CEDD;
+	Wed, 12 Feb 2025 02:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739325606;
-	bh=oilJiX+VeDtt6XMyhc6T4ILKvqJAoN3URIWrJE3VgHU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=gJArGJoeKrymHt+AHoegfgrxkW/c84h3HcxZgUROZHEyIDEdkCyqsoRJ083JvkSSE
-	 d8GJs/1LNq1y9wjtcIbxMctRYIv41LmGXGZA+8ZIm7oLoY2USWfsEMh//El9wgt5LD
-	 dBqRgJjKIh3zn18XULsttCm8xMU4nCR0FT4wS+OYkynFdHO1AjiPfJI6fNwiVEH0yf
-	 GNg+nKkxdBW+jHGcNfyJfgmUC+ORjzdizUAf7Aj5zVndsKWALUnvY7bOfcTLj289Mc
-	 +AxR3pqfG9D2TqB1gj7OJ4w1et01N6hCQ9nzsES0lFKiUag3inbe9qE5JoeZbVArPg
-	 stj/h8xFDhlzA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34084380AAFF;
-	Wed, 12 Feb 2025 02:00:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1739325799;
+	bh=H40AZ9St58pE3b+FYLNyeQqlvH5wg17OrK+0QrcEalg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Z5/sPWAByxa+E8wE8oMZN0PWZ0nUbrRA1xmZDxsua6h1yQsY8+YmMaV7/KF9DQ9G/
+	 5UxIA5FfnwTgXCHsOlivfxv/K44O0oYqDwT8GYBjrpUosCybBuOTRPXqR53YXQdwRn
+	 cGut28cgQXXiHtFE1CgOXfXacUVwFIesF4B3ogM5qNziHN1DoSC6HH+Fkc7bDtLIln
+	 jrfpkZU3QKKs3D6i9emBA36DZoI7WVq3tHSO0MnsCbM354vIKPB7aU3dAJfuxA+UtB
+	 YCJn3qvjbBxzSN/vFf41fOgrD7gmVKFN25pujh98lVYKoDuCo9CwErVgruCNmU3Tpy
+	 JISu88TKtuJVw==
+Date: Tue, 11 Feb 2025 18:03:18 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Marco Elver <elver@google.com>, Nick
+ Desaulniers <ndesaulniers@google.com>, Nathan Chancellor
+ <nathan@kernel.org>, Kees Cook <kees@kernel.org>, Jann Horn
+ <jannh@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 27/33] iavf: Fix a locking bug in an error path
+Message-ID: <20250211180318.5148d56a@kernel.org>
+In-Reply-To: <20250206175114.1974171-28-bvanassche@acm.org>
+References: <20250206175114.1974171-1-bvanassche@acm.org>
+	<20250206175114.1974171-28-bvanassche@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/5] Use HWMON_CHANNEL_INFO macro to simplify code
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173932563500.69529.13441437064879744393.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Feb 2025 02:00:35 +0000
-References: <20250210054710.12855-1-lihuisong@huawei.com>
-In-Reply-To: <20250210054710.12855-1-lihuisong@huawei.com>
-To: Huisong Li <lihuisong@huawei.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- oss-drivers@corigine.com, irusskikh@marvell.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- louis.peens@corigine.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
- kabel@kernel.org, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com,
- liuyonglong@huawei.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 10 Feb 2025 13:47:05 +0800 you wrote:
-> The HWMON_CHANNEL_INFO macro is provided by hwmon.h and used widely by many
-> other drivers. This series use HWMON_CHANNEL_INFO macro to simplify code
-> in net subsystem.
+On Thu,  6 Feb 2025 09:51:08 -0800 Bart Van Assche wrote:
+> If the netdev lock has been obtained, unlock it before returning.
+> This bug has been detected by the Clang thread-safety analyzer.
 > 
-> Note: These patches do not depend on each other. Put them togeter just for
-> belonging to the same subsystem.
-> 
-> [...]
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Fixes: afc664987ab3 ("eth: iavf: extend the netdev_lock usage")
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 
-Here is the summary with links:
-  - [v2,1/5] net: aquantia: Use HWMON_CHANNEL_INFO macro to simplify code
-    https://git.kernel.org/netdev/net-next/c/43a0d7f26ad7
-  - [v2,2/5] net: nfp: Use HWMON_CHANNEL_INFO macro to simplify code
-    https://git.kernel.org/netdev/net-next/c/e05427c4d138
-  - [v2,3/5] net: phy: marvell: Use HWMON_CHANNEL_INFO macro to simplify code
-    https://git.kernel.org/netdev/net-next/c/0cb595e80edc
-  - [v2,4/5] net: phy: marvell10g: Use HWMON_CHANNEL_INFO macro to simplify code
-    https://git.kernel.org/netdev/net-next/c/4798f4834b2e
-  - [v2,5/5] net: phy: aquantia: Use HWMON_CHANNEL_INFO macro to simplify code
-    https://git.kernel.org/netdev/net-next/c/d6085a23b3b4
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Applied to net, thanks!
 
