@@ -1,134 +1,119 @@
-Return-Path: <linux-kernel+bounces-510377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA52A31BF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:25:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF5DA31BFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:27:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FB9E1889DBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE799168398
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809241CDFC1;
-	Wed, 12 Feb 2025 02:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+Fd1o0+"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614221C8FB5;
+	Wed, 12 Feb 2025 02:27:07 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB42199236;
-	Wed, 12 Feb 2025 02:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3391C2AE90;
+	Wed, 12 Feb 2025 02:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739327130; cv=none; b=Yr8vR3VmoVurvQ9R4AqiGPPkd29iocMbxSMJCmy1NiqT6f4HHosJT0QqJ5TFcT4DUnQdMwKYiu2A7JplHwvMnj+zELHQ5uyxVGNvCB0nB0ObAfwkY/AR9mmFu3dEfEBDrp0c0Q3tc8Ao9UYPhVpAIWxZjBSXanStvYSYF6ZynCU=
+	t=1739327227; cv=none; b=VZ5p3mtR/q6nwzhJQhr6N7Wz4RdVf786aGruayX2G5kSo8tBPI//EKD6s4CehgxLEl32VAQR28bNyEncAowzXoht9U06dcJxenk5lcNU05uNd/H9lnP22x++bcfDVapX+qnYasqetIyP5tvHk5EoWucaPnGfLndbxiDtRQx9rbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739327130; c=relaxed/simple;
-	bh=/D4oLXD6LukOuRDzE7hhtI/PhDeHQ4JgeRu/msm7Lyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nra7CQbGTIom6rqTKYsuuO5mJXAstBQVcUcDrH2P7mgLt60RPUXSoga/RrviTj7emv+ybFPNAaRdqyVvrQTsvADgItdnRD6zSHPWNjLDSmQzlnDY1E79bDHah6rvcANKSUIQjWPAI0AV+/4HwjF5m7aV95CF6J/GGx2dZaGmAjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+Fd1o0+; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ef60e500d7so52243277b3.0;
-        Tue, 11 Feb 2025 18:25:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739327128; x=1739931928; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KqrwQ+AdMSSLFwzy2Bp4Gf8n4XSBGfuqabnYZ/GVUcU=;
-        b=b+Fd1o0+2UTPqgYM3ryDr+fuySM0tN4vnZXJJATXnFYd63ZrvOfxFJCELr3Fx7BY+U
-         +/fiM/APG1nYdO+TFJz//OEpUUfUh/gkbL2/dHxaDLUv/eX5ftH51KzAw8/xEDYBh8Vp
-         Q2Z9omVkS5EIrLIeHRsntZ/XB3y4zmSxG2ThaMcXpDw0u3WOBaWkabbAPNHcWa0IdCJH
-         Vg3R7Jdywsd+fusevCyKjKjr8WFRGErozpF+bIsRPl8PA0RK4D21M6LinrJqfcPCOWIy
-         6M94EtBntovlx6x+8AXEaNE/veJfPUCBwhZSfLTMz0U7iQsQmJZvdt5Fdwgt6TdfJ1iH
-         vGRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739327128; x=1739931928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KqrwQ+AdMSSLFwzy2Bp4Gf8n4XSBGfuqabnYZ/GVUcU=;
-        b=Pc8eBUMSx7wgzaZFTFijL80KKQwMb2bZyWT1AkWKijz9xilyhjO7fe4zqjwqwSY79H
-         db8VVcJ3dJib3oQrQ7A5zxjoBzdfwJf9BDewhRQfjXTpByTbXfUc4IO2bT/C7yvYDy6H
-         /21qLsXmj0m/xWddNdm3y70Wc3VzLKtUIsrebXIREN9EXfA5e3eeSfsjMwsoZ19FUoJc
-         Wo9kcH0SmE5N6NvSVwTizv2LRMvq9eqXVo5q1vrdvptdxBXLxAk/BjDJ5wrsPJH8g5SK
-         Mgm7/3oAKK1A5MBkeubCyoLfswax1iqPfV9zqFK6AOQh6+N1ikLdAGgkuCs60YemQ4Nn
-         V9fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYJTtvlD5xkFCCWTj/6vQpQgZyV5YQzUBv/oFLg8Ob5Fh+E0JlSHrNunry67uUoxrM8EBLLdHj/4k+@vger.kernel.org, AJvYcCUiVw5/5mbMVHuVQ4ZBuGVsLNWZl6dtmQQRS4J3VuTnupsISB8ZtQ3qgaXmq9Sg4DzwOjwTxItWI0VPcxY=@vger.kernel.org, AJvYcCVQa7h/kIXsAcKCnK1Yb91I39oae//A7q+3ifNYi3ImeQwyaa13m2pFOfOx69sZizVhAEsWSBLmiaHPGbiBcYY=@vger.kernel.org, AJvYcCVyNDbxxVupHmDne3AyXzTnsd6F0KgchzOTRGdwFSCEk+F6iY4Hjz9e7l+C+2KOXMYppVta3Vges1BNt7QF@vger.kernel.org, AJvYcCWEMVANJ/i2VYxoRFh+wNf7i2PyMH3ALOvEHgcAJrJ3lokQYIDGWNfM0lbS29NeBjtJn2s95c6diag=@vger.kernel.org, AJvYcCX3ioplJpsJPpMcmQIVxkHVRYWYzgXSFqE3HcxiIFWbWwlIu+nUlV3PEdzvDI+Y5rm8yl/ihEuh@vger.kernel.org, AJvYcCX7lGTiEVVOCg1GFrJp/cZWiTPWP8U/v3zka2yBlKNXLMDCfXgv5rJfVsJKqm7n9qckryPswYcYkbSG@vger.kernel.org, AJvYcCXduaqkfuIsPZe4aVu4ijOcQyiBkZqRHOicT+k0O0dI9sfux09XWvd/LucIc+XNmToId4p2MutKnQkC+w==@vger.kernel.org, AJvYcCXswE/O4V1ozUS00dB7Yed7oYSFZVQCdbKaeCyKJW+yAuQzbuIVhiO2zFX2RBJ+5xoy1GU4rozILaIA@vger.kernel.org
-X-Gm-Message-State: AOJu0YycIroLFybI+CP7u7nznDKUioPK9Ckr7/KVoWfE9zK2Pu+xU4uQ
-	e0QVfEElG9QeQkrSZUbdJ1+CoX+NpUkcprGNEMFP5yIPVJ2AJX7giSeUi8Y9quEgfXQ8cspqcXF
-	Aeogn2Vtyn466hXvvj2/KbCB9oFM=
-X-Gm-Gg: ASbGncv395GYe3stp/SHGDuW7AVF9oq9mK5DUKcYpDTzTxe6nhrtRHxEFt++mrn4ghF
-	qQ5HgoA94komxqYzyyyy0ZHj9wyPths97llfQOveBsxYWSUvZupH97c/nrMRApdnj4Rp7W62VYu
-	M3N3cj/ZelWGlCTLs4UvCAnACVQGJgDs4=
-X-Google-Smtp-Source: AGHT+IEMT6jC3otOLY2+jOJPHXOzFROO3YopZvE8lHCSsXNWFhoxDLbOAPOO9nvDAukMRHd2MGxHoMAvgrjIuvXD2LY=
-X-Received: by 2002:a05:690c:7002:b0:6f9:b12b:8953 with SMTP id
- 00721157ae682-6fb1f5f54d2mr19732747b3.20.1739327128394; Tue, 11 Feb 2025
- 18:25:28 -0800 (PST)
+	s=arc-20240116; t=1739327227; c=relaxed/simple;
+	bh=QlyyhPqk6m3sIo6BvD/9VbX1f3j/d2XmefZRXi1VrAs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pytDnjg+MFX/6bcxypM0qp0HHqow40fdNTyhCjBrOc6s9RFRDuQcSOs6jb79YoHOO/eGXuApFMblbClGTeR7OD1TDJTO5gI5koI4O+n9alQcwFHzomkJx4mtssKDdKPqd8cdEPBwxTLfebZXG1PItsUqIfdImixRY1LPQ5HqLgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Yt2Hs099Yz4f3js7;
+	Wed, 12 Feb 2025 10:26:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 556341A058E;
+	Wed, 12 Feb 2025 10:26:54 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBHrGDsBqxnXJBlDg--.62273S3;
+	Wed, 12 Feb 2025 10:26:54 +0800 (CST)
+Subject: Re: [PATCH] blk-cgroup: validate alloc/free function pairs at the
+ start of blkcg_policy_register()
+To: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+ Chen Linxuan <chenlinxuan@uniontech.com>
+Cc: Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+ Jens Axboe <axboe@kernel.dk>, Wen Tao <wentao@uniontech.com>,
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <EE1CE61DFCF2C98F+20250210031827.25557-1-chenlinxuan@uniontech.com>
+ <i6owvzwb4pjg27tex5utdzcoyeeawqejegvc2byz6tnfn2flmh@2ggun5qyokvs>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <29be6f4e-fc0b-8134-fee6-7b3170f0d806@huaweicloud.com>
+Date: Wed, 12 Feb 2025 10:26:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250207074502.1055111-1-a0282524688@gmail.com>
- <20250207074502.1055111-4-a0282524688@gmail.com> <01801937-6257-4381-bf18-90badf795da8@wanadoo.fr>
-In-Reply-To: <01801937-6257-4381-bf18-90badf795da8@wanadoo.fr>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Wed, 12 Feb 2025 10:25:17 +0800
-X-Gm-Features: AWEUYZm7YgqpjIvBT60mCR7Y2j4SJyw5Ijy4sGaZXuVGNju1fwDvfHQWVzOsSR4
-Message-ID: <CAOoeyxUsoqtieRQVYr4DWPKOV4kTgcib1c3-tbz7KayTnshaig@mail.gmail.com>
-Subject: Re: [PATCH v7 3/7] i2c: Add Nuvoton NCT6694 I2C support
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <i6owvzwb4pjg27tex5utdzcoyeeawqejegvc2byz6tnfn2flmh@2ggun5qyokvs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHrGDsBqxnXJBlDg--.62273S3
+X-Coremail-Antispam: 1UD129KBjvJXoWrZF47JF15Cw47GF4DCFW3ZFb_yoW8JryfpF
+	ZIya4rAFy0krWxWanxKaySvr1rWa1kGw47JF90q34fu343AFyrtr4jyan5WF97ZFyIyFya
+	vFyYqaySk3WDA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Dear Christophe,
+Hi,
 
-Thank you for reviewing,
+在 2025/02/11 21:57, Michal Koutný 写道:
+> Hello Linxuan.
+> 
+> On Mon, Feb 10, 2025 at 11:18:27AM +0800, Chen Linxuan <chenlinxuan@uniontech.com> wrote:
+>> Move the validation check for cpd/pd_alloc_fn and cpd/pd_free_fn function
+>> pairs to the start of blkcg_policy_register(). This ensures we immediately
+>> return -EINVAL if the function pairs are not correctly provided, rather
+>> than returning -ENOSPC after locking and unlocking mutexes unnecessarily.
+>>
+>> Co-authored-by: Wen Tao <wentao@uniontech.com>
+>> Signed-off-by: Wen Tao <wentao@uniontech.com>
+>> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+> 
+> If you consider those locks contention a problem (policy registrations
+> are "only" boot time, possibly module load time), then it's good to refer
+> 
+> Fixes: e84010732225c ("blkcg: add sanity check for blkcg policy operations")
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> =E6=96=BC 2025=E5=B9=B42=
-=E6=9C=888=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=883:06=E5=AF=AB=E9=
-=81=93=EF=BC=9A
->
-> Le 07/02/2025 =C3=A0 08:44, Ming Yu a =C3=A9crit :
-> > This driver supports I2C adapter functionality for NCT6694 MFD
-> > device based on USB interface, each I2C controller use default
-> > baudrate(100K).
->
-> ...
->
-> > +static int nct6694_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs=
-, int num)
-> > +{
-> > +     struct nct6694_i2c_data *data =3D adap->algo_data;
-> > +     struct nct6694_i2c_deliver *deliver =3D &data->deliver;
-> > +     static const struct nct6694_cmd_header cmd_hd =3D {
-> > +             .mod =3D NCT6694_I2C_MOD,
-> > +             .cmd =3D NCT6694_I2C_DELIVER,
-> > +             .sel =3D NCT6694_I2C_DELIVER_SEL,
-> > +             .len =3D cpu_to_le16(sizeof(*deliver))
-> > +     };
-> > +     int ret, i;
-> > +
-> > +     for (i =3D 0; i < num ; i++) {
->
-> Tiny tiny nitpick: unneeded extra space after num
->
-Okay, I will fix it in the next patch.
+This is super cold path, so I don't think it's a problem.
+> 
+>> ---
+>>   block/blk-cgroup.c | 16 ++++++++--------
+>>   1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> But it's correct,
+> Reviewed-by: Michal Koutný <mkoutny@suse.com>
+> 
 
+Since we're here, can you also change the return value to -ENOMEM from
+error path err_free_cpds?
 
-Best regards,
-Ming
+Thanks,
+Kuai
+
 
