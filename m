@@ -1,124 +1,114 @@
-Return-Path: <linux-kernel+bounces-511251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DECA32858
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 794C4A32860
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BA8E3A74B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B30E63A743E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E40A20FABB;
-	Wed, 12 Feb 2025 14:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF7221018D;
+	Wed, 12 Feb 2025 14:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vtn/DO64"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OQolyUlq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8D120ADE6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6736207667;
+	Wed, 12 Feb 2025 14:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739370360; cv=none; b=OhIJJr3vNr5P5j6EKpX3EUNzKPNW/K/Fhiaxo5DT10JypwOu5IxZNQNFiS+PfzC8qcWQfsqj7U/0c54P5/j/oXi2LJnFaJf0A+79qFhSiTgB3l1rg34loqpceRXq33bijiY8o9VakKgCyJqUlOP1UO8z2HqcayiNG2qaJpUakzc=
+	t=1739370474; cv=none; b=M51P38mrq3bR94CCcAwG5C7iRWy+eYl/lwDNtOji5D96tXF7zC2xtDwTjGWow9D506qjC5XemlEbKQEs7JdGcSoyoto6Gp5YJC843dR7SxXg9I/LHb++oWaPHfKciuBrE6EEI2u84HMpdzIFMEt3L6zlnmRMEIeLoPxbZKMGXSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739370360; c=relaxed/simple;
-	bh=zcXWaRkaJjCIPGBiscSo1i7xmvlzhcHiUj4mQZlyTs8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H4WUyzNhUtu10L6eR4lTxdYBL72iNFRon5yDhmnW4/r8BDuQqXT6iSw/D4K9I+m9R3II635TfD+Ntl+UgciA9y/srPB3uFuW9VkwckQ3EthWZA24/KOApvhXTd6Bot8gw90r09Ryxrq159DgNh74khTtPHnTWXz+J3864ZhH77E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vtn/DO64; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2b85131e68dso2989485fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:25:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739370358; x=1739975158; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hK7UnJXH2AprjpvtJDB1m2Emp+3eQ1LxgiiYwfIphg=;
-        b=Vtn/DO64WhC+TTtZ0ExQ03Rc7Pg+W/ys7IXSxP+SSI3nFvBfEBM66FS6ke3wHqfUc5
-         Z/UDOIzzu8FzfF2dzLFNDK837Rq3x4PVz2C0km8wytw35F71qmJgUAPOYnaSWR1RPBpa
-         ZA0cfyAPfHGb5ZVZFZ7r9ZHqduW9zsBCKdR+FXSoHjN/biQvNNBTnj0XHq/JgJQZma70
-         qQ5PR6CXDm/JZgw29vKnJIaT7olsm9jPic2NAp2IcdsMIKwXEoZVELEeOGgNWbVRAXmx
-         iyzgtpHRSvAMVRsI0JzZ1QYlsVlvc16S87gapN92LGJHMlR+UxEvPy1rf3kKCW3gJ1i/
-         2Q7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739370358; x=1739975158;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2hK7UnJXH2AprjpvtJDB1m2Emp+3eQ1LxgiiYwfIphg=;
-        b=GTwUIIXDJj+lNDiZ5rgPRsoyTkkaSgVlMKJf3Y80juYHb06eA0de4RPiMUvOLmgUe+
-         aD/C+Mzdvb2ZDMj8JoavpA0bsQfqb3U12fCdJWA8JA+5DyvKkqM4/Atnq0d1+u7sjxMr
-         sRFJvFTgdHaxOYvKi725990NVV7ZmGRoXDB4Jkd5YJNYwYC61xUzaLlPNxsfyoQSFNhN
-         vf8D6koyg4CdZnRx7zPmLKSHqqLrlNqU9Qw8BI9y5GHe1dE4Ik3VFJ8hgXzB2f6TcQiF
-         gM5zwRRt5sbojwkGxFeUiFcryz+vbP5Z/Idcs/BWdaM4U0Q0ZcLnUck7TxBk4X08DD3a
-         TwKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjPw3IDZVY195TiypMnKPPhfQrHN6bNb2aY+nlTCLCRbJ4Ux2OLocKmzuUbTLLGbOxZyWxbbG3kk3FKRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfe/9eEVidpwk8tDqBm3F/mOEDeJ0uO9ohH/He5M6e2ugWmWy5
-	XFSxnVeNUZkjDXvV6cbxNfPfdZfjtHHdViFFA1FJbeXtUfnQ5iXckIMC8kSEdoZ8L9BTpOgNfRh
-	Go5+E7sCzRbgV2zRA+cA0Z652e4FP9jSSDP6yjw==
-X-Gm-Gg: ASbGncsA2XxSkV3cGUimHgbquDt8FmKkHoBE9yGaRGI/BgJyjDEJXudbA6BPJC4vnnA
-	RkQUUfRKPw25N+iJS7ZKEkaSfx135oAyeFWFN6S2x4qNpeWUM60rvf2tMNQl8GnDySY7HmrWFX/
-	n8G3lO/9S5fxu/IG838e/Oen1+gQA=
-X-Google-Smtp-Source: AGHT+IFuyxlXlPs2e+IscY2DSB/6uY0nP0Wzf+ASbJ4AIZ/oWACpaja7G9+Khx0xEQd/fq0SR42vVSonovhGGFkMhb4=
-X-Received: by 2002:a05:6870:330a:b0:29e:5aa6:2bb3 with SMTP id
- 586e51a60fabf-2b8d646fb44mr2246018fac.1.1739370358095; Wed, 12 Feb 2025
- 06:25:58 -0800 (PST)
+	s=arc-20240116; t=1739370474; c=relaxed/simple;
+	bh=7Onv8wCoFp82DoYKMFeqXuc971OxNeF9sQrYOQ5F6d8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c76r6y2qa8yp1i6g9ODFcM0I7sq7MAl48HBGlM0ibBM+czWj9c/+2yP7W5/TcoiWy8R41VjYrnVq077kyj546cHaVV0sc9AlI9ECmJAP5KzhDaz/qLYG6LJwzA78+0+Zg6oXqqYMLMjR8IXzS3ME0tIdj9UUT0M7r3i7+OkCHuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OQolyUlq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D00C4CEDF;
+	Wed, 12 Feb 2025 14:27:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739370474;
+	bh=7Onv8wCoFp82DoYKMFeqXuc971OxNeF9sQrYOQ5F6d8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OQolyUlqhdEcuF3NefxpXApUDXd3HRyCLlnyI1Cj5pDMBl6d9gATlzXF8sc40ShH3
+	 H9/1Mg0uLn6fo2NmW+Rjsgny/IIQII0lqmZZPs4sGBiZo4hX05Zf9MBPD4D/gbxQ7c
+	 qzb6UdhK2ITEYw8oiqpZspToqWF+GKrC6fMQGj6I=
+Date: Wed, 12 Feb 2025 15:26:49 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: mathias.nyman@intel.com, WeitaoWang-oc@zhaoxin.com,
+	Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
+	h10.kim@samsung.com, eomji.oh@samsung.com, alim.akhtar@samsung.com,
+	thiagu.r@samsung.com, muhammed.ali@samsung.com,
+	pritam.sutar@samsung.com, cpgs@samsung.com
+Subject: Re: [PATCH 0/2] Fix unassigned variables in xhci driver
+Message-ID: <2025021234-reaction-womankind-1c0b@gregkh>
+References: <CGME20250211115704epcas5p4140a490572fb9c4ac71a82abcb61f291@epcas5p4.samsung.com>
+ <1296674576.21739322602698.JavaMail.epsvc@epcpadp1new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-mhi-wwan-mbim-sequence-glitch-v1-1-503735977cbd@linaro.org>
-In-Reply-To: <20250212-mhi-wwan-mbim-sequence-glitch-v1-1-503735977cbd@linaro.org>
-From: Loic Poulain <loic.poulain@linaro.org>
-Date: Wed, 12 Feb 2025 15:25:21 +0100
-X-Gm-Features: AWEUYZn5XLF6zTakIKin9eoC74sCw4in5MQ3He_rxkMU8G3y_yrGsz2-CkgeaTQ
-Message-ID: <CAMZdPi8pybqtKQq9irxwGwvW9y3EC=g9XkbZ4hthBkXQRUxUDQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: wwan: mhi_wwan_mbim: Silence sequence
- number glitch errors
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Sergey Ryazanov <ryazanov.s.a@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Johan Hovold <johan@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1296674576.21739322602698.JavaMail.epsvc@epcpadp1new>
 
-On Wed, 12 Feb 2025 at 12:15, Stephan Gerhold
-<stephan.gerhold@linaro.org> wrote:
->
-> When using the Qualcomm X55 modem on the ThinkPad X13s, the kernel log is
-> constantly being filled with errors related to a "sequence number glitch",
-> e.g.:
->
->         [ 1903.284538] sequence number glitch prev=16 curr=0
->         [ 1913.812205] sequence number glitch prev=50 curr=0
->         [ 1923.698219] sequence number glitch prev=142 curr=0
->         [ 2029.248276] sequence number glitch prev=1555 curr=0
->         [ 2046.333059] sequence number glitch prev=70 curr=0
->         [ 2076.520067] sequence number glitch prev=272 curr=0
->         [ 2158.704202] sequence number glitch prev=2655 curr=0
->         [ 2218.530776] sequence number glitch prev=2349 curr=0
->         [ 2225.579092] sequence number glitch prev=6 curr=0
->
-> Internet connectivity is working fine, so this error seems harmless. It
-> looks like modem does not preserve the sequence number when entering low
-> power state; the amount of errors depends on how actively the modem is
-> being used.
->
-> A similar issue has also been seen on USB-based MBIM modems [1]. However,
-> in cdc_ncm.c the "sequence number glitch" message is a debug message
-> instead of an error. Apply the same to the mhi_wwan_mbim.c driver to
-> silence these errors when using the modem.
->
-> [1]: https://lists.freedesktop.org/archives/libmbim-devel/2016-November/000781.html
->
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+On Tue, Feb 11, 2025 at 05:26:28PM +0530, Selvarasu Ganesan wrote:
+> This series of patches to fix the following smatch errors from
+> xhci driver:
+> 
+> drivers/usb/host/xhci-mem.c:2060 xhci_add_in_port() error: unassigned variable 'tmp_minor_revision'
+> drivers/usb/host/xhci-hub.c:71 xhci_create_usb3x_bos_desc() error: unassigned variable 'bcdUSB'
+> 
+> ---
+> Selvarasu Ganesan (2):
+>   usb: xhci: Fix unassigned variable 'tmp_minor_revision' in
+>     xhci_add_in_port()
+>   usb: xhci: Fix unassigned variable 'bcdUSB' in
+>     xhci_create_usb3x_bos_desc()
+> 
+>  drivers/usb/host/xhci-hub.c | 2 +-
+>  drivers/usb/host/xhci-mem.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
+> 
 
-Reviewed-by: Loic Poulain <loic.poulain@linaro.org>
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
