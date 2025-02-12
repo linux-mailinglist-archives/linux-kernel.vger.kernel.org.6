@@ -1,161 +1,196 @@
-Return-Path: <linux-kernel+bounces-511559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C6BA32C9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:57:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07507A32C9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23FB6161F4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF981882CC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D929F253B63;
-	Wed, 12 Feb 2025 16:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D79205AAF;
+	Wed, 12 Feb 2025 16:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UNoeakOW"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="chqsZ11b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181011DEFDD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DDE256C83;
+	Wed, 12 Feb 2025 16:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379429; cv=none; b=t76KUNO+bZ0N8OEQ5HOtN+gyy5bXNhCCIswIVRHfIWFol9J04J4VXxhuqLLSAI3Eq88yiacPK/viQtB7R3vAQDRM5uHHxv5Vufb9bomE0ZOV7oL5MtZ8SXgbdzcpy5KBNJ+FVj9HSFUjaeIESwvFbgCJZIf+zi2FA16OhSjwXq0=
+	t=1739379434; cv=none; b=HYbFN/R38v5PxTSFoRDkzk4m7SpZAyQiS/gjWHWzrkFAkA9o+fYdsG0ZUnPyRqpx3LRpKSRbXl96S4W5X0BRr7YkrFQO3LQ12U5XibU0RymgzQemMh49ZiYodQEn1e3RfgG1P4Up+ZboGwhX/yJii5JXiRK2L+KpSOLmCcekbLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379429; c=relaxed/simple;
-	bh=z/moxQQycRkyIrr2vHuWwr2DfpHrMqkr/yZdiQwGcwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ltd2Rc3mNjJVmWKU7/dQfI1X7lH/OIrhP0lu5Uvo7qjpqbzqyt4MHkIOi31vXk3S4qff7/C6nQciLgXi30xSWKxgkPKOeyuzIgm/nGof9K9YtZFanRinfHoHznZMwZb0A2Qb/gaq1OSM5/O1Tl9tNR7I3cp7b1m82LxrvleQ87s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UNoeakOW; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7fa1bc957so111910966b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:57:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739379425; x=1739984225; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JjsYFCJJEHZxSzckcIzfcbuaPZal5Jzp1D2k19Zbpnk=;
-        b=UNoeakOWzzzi3raW20R3L/FVC57nNrUfe3MIEivZX4appVWozAAJpebx0BoGAtj3xF
-         9hpUjBpiLnpTlQBxu9/46VONh8bvgAvmZlLR+j2YUtVl6Wq6M8EUS34/KQeZVujaQxkT
-         cQNKpgF8uUgudT6XNhuNHETrMjkDb7tqG9IisjeOJzZiDKLUOhLv94kGMRrAg/Jk6BNB
-         gw/QYwOV1DmdDQ3xqLFRHnk7hXrSeyNjig7A/i4eXX9N5zoi5Sulj4r+Tb76MnQaIoay
-         KTgAI1eC5A/Xrq0tizbH1dBhfbFuAYqSdDkMgve9tdpITdlL0k+DzwxaTu+vx83T6WOC
-         WukA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739379425; x=1739984225;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JjsYFCJJEHZxSzckcIzfcbuaPZal5Jzp1D2k19Zbpnk=;
-        b=i/Q6+liL4mfmMFCru+nLsCRBOwDdBhyy1oUYzY41R+Sg/O35jprsTVlxzQEzY8o+fO
-         ULFO+BLvDa4n8WxQzB0kacYTauSEkIzC2N22fZ2+Vp5gA/Cr6s3kBrGvWuZkcvkOqG4m
-         Ds9euHZPwPGk/f72oogbbasRqyyHqiWWbQJP7gYnAaImdMzegPcYY+pMeJfx9/kVCj86
-         funU/mOES+3W3xVuh4W1vyPZjab4ycX4Wm8Ea0XNBkQDsdSqwHTaFO4lXK1OB9x83IOZ
-         B5Jp8MjuAHbAsyzSfThhPu9fTysTsoPVaWG49FOKG+Uxsr2SkZ3DjcZVVVVH3o3uU5PJ
-         z4EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsuvIwj9S5U58yZEf57VneoFv/LI5hkEpjUyPNZZgMyLzNiMf44bdddfmG8m7kF+/1vOi9XbygxhCeUBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5JEImGSdIE1x1djQUP3MSnWmFIOlotl7bsJrCGyTOjhbFCCCp
-	hHp/Odcgu06tOZFaaK/uMNxfpxn5DyLY8yQnNHEc6s42hkvgI04Ld+uo57R7P34=
-X-Gm-Gg: ASbGncvrJxSeIQjWwI0jtuAwtygRiPjwuz/oAKyXxcrZwnucLAui4XR6QskQlkD32FK
-	IVdgEGmtpOqsW64megll1CxEFQ8193nzKRsJh4sT3E7FXjgm1jveBjcmXV0o0S3a9kDehuhwUks
-	1E48Q/DuJ9HTFloI1syQMfarI48fIkfUOArfOX5m1nocS+CyoAgsgltxMlRfvhviIQJPuAyzJ/M
-	sPpFH1ZMbJ7dAyt9yXoIHicGFW+ixCAvz9RGd3A42NeX2s2qwekflVrgBEJbPaiXqoIihjzr98Q
-	bqfD9BjEv/ZRIa6MuaNGIcmk1lpJ
-X-Google-Smtp-Source: AGHT+IH7LlfK74B8VvYBHknSdhrm92vGSyA95nxZa/qMjbiRpSunsF+OUjP8S86GVgK+ZMWNOar0ww==
-X-Received: by 2002:a17:907:1c14:b0:ab7:b30:42ed with SMTP id a640c23a62f3a-ab7f31944c1mr340818066b.0.1739379425293;
-        Wed, 12 Feb 2025 08:57:05 -0800 (PST)
-Received: from localhost (109-81-84-135.rct.o2.cz. [109.81.84.135])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab7f7ee8686sm137024766b.22.2025.02.12.08.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 08:57:05 -0800 (PST)
-Date: Wed, 12 Feb 2025 17:57:04 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Dennis Zhou <dennis@kernel.org>, Filipe Manana <fdmanana@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm, percpu: do not consider sleepable allocations atomic
-Message-ID: <Z6zS4Dtyway78Gif@tiehlicka>
-References: <20250206122633.167896-1-mhocko@kernel.org>
- <Z6u5OJIQBw8QLGe_@slm.duckdns.org>
+	s=arc-20240116; t=1739379434; c=relaxed/simple;
+	bh=fR1t7CeXF+FlrrMDmgJROQWMLPPn+T4BEP4V6XerrzI=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=rCF7i24J8nEvlnxKUgJaBeqIRZ01BvdmRD5If5DVM1m1pCe1FoUxGl2f6Kk6V+E0ooXTQPFZp1JA0RH+S3OC3MJw6bQIkN6hjBgxEx11f1NOqmPbz33H53kKErcV3PN5scrjJCErkQ2EQpdcoTON0n61Fn646icXzG7o/Fpk3Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=chqsZ11b; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739379434; x=1770915434;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to;
+  bh=fR1t7CeXF+FlrrMDmgJROQWMLPPn+T4BEP4V6XerrzI=;
+  b=chqsZ11bhTkhdtxwEJNUlkTNluoZc8uoUp/bvrWSd6GquNkOWc/jWphq
+   v4BfupRtNnffaNNTSZk1/CJsb1v3bpMUtECZ/cLExAOelhVkLa1dvO79c
+   xLcHbTuMv1S9xUoRwvVLnmyiRDHf3TBuHBxvx1jbLtRw2yrhqaQQeoXzv
+   nxVui7DPK6Dyj/thM3g3hhq2BCEQmSiKh6VN3s/lL8qkDoBqEoxS4ilcm
+   7MIytNuiUCT5uPdI9cOlRpSz0I5l9Y7aIhTLZlUOHd3Sx9Sjus7A5srFH
+   y/LY0UCOK2PUyb7+dHoty1zm2PdZP3COwWw6FLM9uZHEX+MdagGNx34Nn
+   A==;
+X-CSE-ConnectionGUID: YTcLGtYzRIOKlykPv6nVAw==
+X-CSE-MsgGUID: RI/aYVYQTCGuZpHot3Tqag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39972455"
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="39972455"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:57:13 -0800
+X-CSE-ConnectionGUID: Mq53iWY3QyWA26KfNoVz4g==
+X-CSE-MsgGUID: rRQCDfuRSi6MbbZZMdw9OQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="117882904"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.108.131]) ([10.125.108.131])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:57:12 -0800
+Content-Type: multipart/mixed; boundary="------------BhJCh6KKkL052rdWpL6DiAAA"
+Message-ID: <78895061-6f1e-4d3b-9481-95f47f97ab96@intel.com>
+Date: Wed, 12 Feb 2025 08:57:12 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6u5OJIQBw8QLGe_@slm.duckdns.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/17] hwmon: Fix Intel Family-model checks to include
+ extended Families
+To: "Zhang, Rui" <rui.zhang@intel.com>, "Mehta, Sohil"
+ <sohil.mehta@intel.com>, "Luck, Tony" <tony.luck@intel.com>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+ "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+ "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+ "luto@kernel.org" <luto@kernel.org>,
+ "david.laight.linux@gmail.com" <david.laight.linux@gmail.com>,
+ "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+ "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+ "Hunter, Adrian" <adrian.hunter@intel.com>,
+ "jdelvare@suse.com" <jdelvare@suse.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "irogers@google.com" <irogers@google.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "linux@roeck-us.net" <linux@roeck-us.net>, "lenb@kernel.org"
+ <lenb@kernel.org>, "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
+ <peterz@infradead.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "bp@alien8.de" <bp@alien8.de>, "acme@kernel.org" <acme@kernel.org>,
+ "rafael@kernel.org" <rafael@kernel.org>, "jolsa@kernel.org"
+ <jolsa@kernel.org>, "linux-acpi@vger.kernel.org"
+ <linux-acpi@vger.kernel.org>, "namhyung@kernel.org" <namhyung@kernel.org>
+References: <20250211194407.2577252-1-sohil.mehta@intel.com>
+ <20250211194407.2577252-8-sohil.mehta@intel.com>
+ <23e24c79-96ca-45da-832b-83a9b6456208@intel.com>
+ <882357df-7600-4aee-9fb1-4a118872f1af@intel.com>
+ <273b9080d42bcd2fb36fc4510416f0e111edee62.camel@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <273b9080d42bcd2fb36fc4510416f0e111edee62.camel@intel.com>
 
-On Tue 11-02-25 10:55:20, Tejun Heo wrote:
-> Hello, Michal.
-> 
-> On Thu, Feb 06, 2025 at 01:26:33PM +0100, Michal Hocko wrote:
-> ...
-> > It has turned out that iscsid has worked around this by dropping
-> > PR_SET_IO_FLUSHER (https://github.com/open-iscsi/open-iscsi/pull/382)
-> > when scanning host. But we can do better in this case on the kernel side
-> 
-> FWIW, requiring GFP_KERNEL context for probing doesn't sound too crazy to
-> me.
-> 
-> > @@ -2204,7 +2204,12 @@ static void pcpu_balance_workfn(struct work_struct *work)
-> >  	 * to grow other chunks.  This then gives pcpu_reclaim_populated() time
-> >  	 * to move fully free chunks to the active list to be freed if
-> >  	 * appropriate.
-> > +	 *
-> > +	 * Enforce GFP_NOIO allocations because we have pcpu_alloc users
-> > +	 * constrained to GFP_NOIO/NOFS contexts and they could form lock
-> > +	 * dependency through pcpu_alloc_mutex
-> >  	 */
-> > +	unsigned int flags = memalloc_noio_save();
-> 
-> Just for context, the reason why the allocation mask support was limited to
-> GFP_KERNEL or not rather than supporting full range of GFP flags is because
-> percpu memory area expansion can involve page table allocations in the
-> vmalloc area which always uses GFP_KERNEL. memalloc_noio_save() masks IO
-> part out of that, right? It might be worthwhile to explain why we aren't
-> passing down GPF flags throughout and instead depending on masking.
+This is a multi-part message in MIME format.
+--------------BhJCh6KKkL052rdWpL6DiAAA
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-I have gone with masking because that seemed easier to review and more
-robust solution. vmalloc does support NOFS/NOIO contexts these days (it
-will just uses scoped masking in those cases). Propagating the gfp
-throughout the worker code path is likely possible, but I haven't really
-explored that in detail to be sure. Would that be preferable even if the
-fix would be more involved?
+On 2/12/25 05:43, Zhang, Rui wrote:
+> I agree.
+> adjust_tjmax() contains a list of quirks based on PCI-
+> ID/x86_vendor_id/x86_model/x86_stepping. The common problem is that all
+> the quirks are for Fam6 processors but the family id is not checked. So
+> the fix is sufficient. In fact, I think it is better to move the check
+> to the very beginning of adjust_tjmax().
 
-> Also, doesn't the above always prevent percpu allocations from doing fs/io
-> reclaims? 
+Or, heck, just remove the model list. dev_warn_once() if the rdmsr
+fails. Who cares about one more line in dmesg?
 
-Yes it does. Probably worth mentioning in the changelog. These
-allocations should be rare so having a constrained reclaim didn't really
-seem problematic to me. There should be kswapd running in the background
-with the full reclaim power.
+Why not do the attached patch?
+--------------BhJCh6KKkL052rdWpL6DiAAA
+Content-Type: text/x-patch; charset=UTF-8; name="coretemp-1.patch"
+Content-Disposition: attachment; filename="coretemp-1.patch"
+Content-Transfer-Encoding: base64
 
-> ie. Shouldn't the masking only be used if the passed in gfp
-> doesn't allow fs/io?
+CgotLS0KCiBiL2RyaXZlcnMvaHdtb24vY29yZXRlbXAuYyB8ICAgMTUgKy0tLS0tLS0tLS0t
+LS0tCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDE0IGRlbGV0aW9ucygtKQoK
+ZGlmZiAtcHVOIGRyaXZlcnMvaHdtb24vY29yZXRlbXAuY35jb3JldGVtcC0xIGRyaXZlcnMv
+aHdtb24vY29yZXRlbXAuYwotLS0gYS9kcml2ZXJzL2h3bW9uL2NvcmV0ZW1wLmN+Y29yZXRl
+bXAtMQkyMDI1LTAyLTEyIDA4OjUyOjQ4Ljc4MjczMTIyNiAtMDgwMAorKysgYi9kcml2ZXJz
+L2h3bW9uL2NvcmV0ZW1wLmMJMjAyNS0wMi0xMiAwODo1Mzo0My44Njc2MTc1MDUgLTA4MDAK
+QEAgLTI1OCwxOCArMjU4LDYgQEAgc3RhdGljIGludCBhZGp1c3RfdGptYXgoc3RydWN0IGNw
+dWluZm9feAogCXJldHVybiB0am1heDsKIH0KIAotc3RhdGljIGJvb2wgY3B1X2hhc190am1h
+eChzdHJ1Y3QgY3B1aW5mb194ODYgKmMpCi17Ci0JdTggbW9kZWwgPSBjLT54ODZfbW9kZWw7
+Ci0KLQlyZXR1cm4gbW9kZWwgPiAweGUgJiYKLQkgICAgICAgbW9kZWwgIT0gMHgxYyAmJgot
+CSAgICAgICBtb2RlbCAhPSAweDI2ICYmCi0JICAgICAgIG1vZGVsICE9IDB4MjcgJiYKLQkg
+ICAgICAgbW9kZWwgIT0gMHgzNSAmJgotCSAgICAgICBtb2RlbCAhPSAweDM2OwotfQotCiBz
+dGF0aWMgaW50IGdldF90am1heChzdHJ1Y3QgdGVtcF9kYXRhICp0ZGF0YSwgc3RydWN0IGRl
+dmljZSAqZGV2KQogewogCXN0cnVjdCBjcHVpbmZvX3g4NiAqYyA9ICZjcHVfZGF0YSh0ZGF0
+YS0+Y3B1KTsKQEAgLTI4Nyw4ICsyNzUsNyBAQCBzdGF0aWMgaW50IGdldF90am1heChzdHJ1
+Y3QgdGVtcF9kYXRhICp0CiAJICovCiAJZXJyID0gcmRtc3Jfc2FmZV9vbl9jcHUodGRhdGEt
+PmNwdSwgTVNSX0lBMzJfVEVNUEVSQVRVUkVfVEFSR0VULCAmZWF4LCAmZWR4KTsKIAlpZiAo
+ZXJyKSB7Ci0JCWlmIChjcHVfaGFzX3RqbWF4KGMpKQotCQkJZGV2X3dhcm4oZGV2LCAiVW5h
+YmxlIHRvIHJlYWQgVGpNYXggZnJvbSBDUFUgJXVcbiIsIHRkYXRhLT5jcHUpOworCQlkZXZf
+d2Fybl9vbmNlKGRldiwgIlVuYWJsZSB0byByZWFkIFRqTWF4IGZyb20gQ1BVICV1XG4iLCB0
+ZGF0YS0+Y3B1KTsKIAl9IGVsc2UgewogCQl2YWwgPSAoZWF4ID4+IDE2KSAmIDB4ZmY7CiAJ
+CWlmICh2YWwpCl8K
 
-This is a good question. I have to admit that my understanding might be
-incorrect but wouldn't it be possible that we could get the lock
-dependency chain if GFP_KERNEL and scoped NOFS alloc_pcp calls are
-competing? 
-
-					fs/io lock
-					pcpu_alloc_noprof(NOFS/NOIO)
-pcpu_alloc_noprof(GFP_KERNEL)
-  pcpu_schedule_balance_work
-    pcpu_alloc_mutex
-    					  pcpu_alloc_mutex
-      allocation_deadlock throgh fs/io lock
-
-This is currently not possible because constrained allocations only do
-trylock.
-
-Makes sense?
--- 
-Michal Hocko
-SUSE Labs
+--------------BhJCh6KKkL052rdWpL6DiAAA--
 
