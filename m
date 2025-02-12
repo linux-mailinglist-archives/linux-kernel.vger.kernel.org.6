@@ -1,144 +1,160 @@
-Return-Path: <linux-kernel+bounces-511556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E51A32C93
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:56:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C45CA32C8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:56:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3771B1640D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB6B188BF8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582CD256C94;
-	Wed, 12 Feb 2025 16:54:48 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D87256C74;
+	Wed, 12 Feb 2025 16:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fIDxdnhL"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D794520C49B;
-	Wed, 12 Feb 2025 16:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D72253F09;
+	Wed, 12 Feb 2025 16:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379288; cv=none; b=OpqlPatJkrXOFG1UKgNKre8puL4CTFoRd1J00B69Vciee7hEOZ0hn1czsz6R/scb1CtapaaktYEpKZcc45ke1KwH6GYmdsdyOOhUgv8vDPYiDr4EZSKBLfj064lTgsfdhXqyBqgZvX+TtHNYFLij4xMoBlJlgUYX4AegU7YtRXw=
+	t=1739379332; cv=none; b=jFPVwBvouJ2vWeOKBhwLjvIXgC2cWDuyC8ol2XxIMHTTvcI0RBimE1Tg3HRbjLfIFl3/DiBv6kvRb/XGXcEb/iZoSIrVw17/Becs9enwpamv2/DcU7nB3Z0d4wJRK9Bv/GMKiH5squsPQkwlXgqVGvB2eF2Q169BIbCteBSxlTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379288; c=relaxed/simple;
-	bh=GuygkFi22sYK5b+cU+tCC++IxONC5HFqPoaVnz3mWM8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=idIWd3yry4CU2mK940Zhe/lLyISPbvVtGxN5vFLEeMxTqJmqAfo+KVcEYW8AqHecelxdULENUEPshMSGoKTFQzOJ+p78+2zz8UYCHSPQJ+GrPWuONPArQIY+zTeo7bCRvj4i3X52Kt6Fz7kZf5nldSzo/e69Q0VUS6aWwsiP6j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YtPV61hYCz6L5Lh;
-	Thu, 13 Feb 2025 00:51:42 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id CDF601400CB;
-	Thu, 13 Feb 2025 00:54:42 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 12 Feb
- 2025 17:54:42 +0100
-Date: Wed, 12 Feb 2025 16:54:40 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
-	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
-	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
-	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
-	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
-Subject: Re: [PATCH v3 7/9] ACPI: APEI: EINJ: Add debugfs files for EINJv2
- support
-Message-ID: <20250212165440.0000728b@huawei.com>
-In-Reply-To: <20250210183705.1114624-8-zaidal@os.amperecomputing.com>
-References: <20250210183705.1114624-1-zaidal@os.amperecomputing.com>
-	<20250210183705.1114624-8-zaidal@os.amperecomputing.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739379332; c=relaxed/simple;
+	bh=60cHMAsDRvIOHo48UF7M2hduYfC6u+0l/5xeFUgi6wc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JnYoKYqR2yyA/iix3FOic6bHk7dfOhJoQr1+l8UtDtKuwAcs2nz4jd6mb7CYwzcrI23oIkyb5bZ1Eqfz9oH/K1/orAhabvhoQVhusbgExZI1C9PnNNLKzGlDOTtq/XSqS+cuFTAEuUmlBXqxcEx/UC1YEYni4JHWArE1IlYSr3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fIDxdnhL; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-308f53aef4fso26946281fa.0;
+        Wed, 12 Feb 2025 08:55:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739379329; x=1739984129; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NBvdLo8gkR8Wy8cwK/8Vm6VLKmV1zg6ayYB1+AAnbp0=;
+        b=fIDxdnhLQCKOzSGFTKVsGCLD3kndMohah1Gk0EIsHt3mBzNvve9EtdU4+WF9qw4+c1
+         JkowzElcUaoQJXfpUZoS9fidWdB4Sq5hLq9xGOT15k/BJWmruZZPAfPM3zMowqiJFoi3
+         4Xkpu+VoHhNSJloriIaUIZjGN86JoTRVtuJEucNJZVJs0oId2Xs46RvQtDUcVfENcpt3
+         xZo0BHhxXm4sVlFUzqS4bDMT4jgfRehnzW97bzpy86+QS3Yy/eqVd1f3/GpigSrSznR0
+         539tcaheXRy3FToUe9HJRa60gWCxk+AA6M1Y3pdwzSp0FNUxrTXgWnA9llp6+mLAJk8N
+         Qd4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739379329; x=1739984129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NBvdLo8gkR8Wy8cwK/8Vm6VLKmV1zg6ayYB1+AAnbp0=;
+        b=XCcEzqnCBa6+autOi24WO1guycqE1r5htjZHs3IZxnXd5BO8xlk5y3szZKHtSRYt4R
+         4kdwx3dWkllMVyV2lulV7kG5voz98/+PW/yPmI1CN9NKGit9K0T67owqK395VG4LMo5U
+         peLTsMwriqo/Zo+1P2XDJxlDhrjzzBi1a5zLZlsDuhNvHtVApzCnjET8uGcCbZtRM1P7
+         k9NIglcGHS0VC0qJBT3llZYTAzuu5afWhW9/BO6HqJOnaXjc1sQk1tUFIfOsAjYEFDqY
+         3tB9QIRK2/TI3OzdV5kXKCIVWHGeWTxMb+072Q1AKIytHR4e3TifWOK1ZOXomJuPsBf9
+         VsxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1QplbU0HDfRgfWGlzOkp4xMIoDa6PP+MQDksVVvWpMDQjVHZLhmzgECg0DJvhHh/27FaHifhJE7hMwU4=@vger.kernel.org, AJvYcCVxVC8yjmQDyiJ9RG2y8rPPQu2ccOYUbUTMUx6/wCours5L1Z1pcz2vyvIcd1ChQNCQich4T8NHdikS9br8fGBg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsH9DXf+1WUOr2+ThLebtnzXRpvyQzsKAwEMmXK8fHSBAyDnID
+	AzI1QuijGoG34VYwJrQ+Rv+yl1RfxjjS9MQIrX36eRcCABqoXuA+phxrDifotTmlNoK59rEKpXQ
+	OFvXGwPpy7AkPEDKl4w4p45duD8g=
+X-Gm-Gg: ASbGnct3TND1nFLRf+UVyBceNCvvIcpqDTRorTNqYucIXdrBK1h3FKQh3iYg5l0V68+
+	OO48HFoVSID5GjF+Cwc2y+YfgLDvVxEUbRosAY5k8ikZ8PojtSFN2Gc5f8mMavyMdr/KakqGv/P
+	ruxsTzPReolIC1
+X-Google-Smtp-Source: AGHT+IGlPgCSSnQs6QH/QeGmHrfb6k7riD6rc3wGRHOG75RycIS7kEPtaSqxnS6MDYNzFsUjm8bKnI+kG9vozNb7gGA=
+X-Received: by 2002:a05:651c:b2b:b0:307:db5f:c44f with SMTP id
+ 38308e7fff4ca-309036697d7mr17588861fa.19.1739379328691; Wed, 12 Feb 2025
+ 08:55:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250211-scanf-kunit-convert-v7-0-c057f0a3d9d8@gmail.com>
+ <Z6tvciJpQgTwYpGx@smile.fi.intel.com> <CAJ-ks9mcxW7zY33FPB+mZ75dQ2Xqo-viM9CpbL=0i0WXUPJRhw@mail.gmail.com>
+ <Z6tytjvT1A-5TOrq@smile.fi.intel.com> <CAJ-ks9kSBMh0=dgPC-NiOhibnK_LhBjBdZ_AQ91h-DBZfYR1sw@mail.gmail.com>
+ <Z6uGPZZ7LioJmekz@smile.fi.intel.com> <CAJ-ks9mGwXmiJ3_Kk4j0MnEqn24A9UJJXVhqtUjcG8W5ifodsA@mail.gmail.com>
+In-Reply-To: <CAJ-ks9mGwXmiJ3_Kk4j0MnEqn24A9UJJXVhqtUjcG8W5ifodsA@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 12 Feb 2025 11:54:52 -0500
+X-Gm-Features: AWEUYZmF5UVTVNJrgqmcY6YHP16q-YpXs83zwjEBlC-szLP67C1U0B5hNhwVw28
+Message-ID: <CAJ-ks9k9d4aX+P9F10h3TqHPOCHEQ5m=QyMAv7bU+Xyb3LRsOQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] scanf: convert self-test to KUnit
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: David Gow <davidgow@google.com>, Petr Mladek <pmladek@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Feb 2025 10:37:03 -0800
-Zaid Alali <zaidal@os.amperecomputing.com> wrote:
+On Tue, Feb 11, 2025 at 12:26=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+>
+> > Is it me who cut something or the above missing this information (total=
+ tests)?
+> > If the latter, how are we supposed to answer to the question if the fai=
+led test
+> > is from new bunch of cases I hypothetically added or regression of the =
+existing
+> > ones? Without this it seems like I need to go through all failures. OTO=
+H it may
+> > be needed anyway as failing test case needs an investigation.
+>
+> I assume you mean missing from the new output. Yeah, KUnit doesn't do
+> this counting. Instead you get the test name in the failure message:
+>
+> > > > > > >     vsscanf("0 1e 3e43 31f0 0 0 5797 9c70", "%1hx %2hx %4hx %=
+4hx %1hx %1hx %4hx %4hx", ...) expected 837828163 got 1044578334
+> > > > > > >             not ok 1 " "
+> > > > > > >         # numbers_list_field_width_val_width: ASSERTION FAILE=
+D at lib/scanf_kunit.c:92
+>
+> I think maybe you're saying: what if I add a new assertion (rather
+> than a new test case), and I start getting failure reports - how do I
+> know if the reporter is running old or new test code?
+>
+> In an ideal world the message above would give you all the information
+> you need by including the line number from the test. This doesn't
+> quite work out in this case because of the various test helper
+> functions; you end up with a line number in the test helper rather
+> than in the test itself. We could fix that by passing around __FILE__
+> and __LINE__ (probably by wrapping the test helpers in a macro). What
+> do you think?
 
-> Create a debugfs blob file to be used for reading the user
-> input for the component array. EINJv2 enables users to inject
-> errors to multiple components/devices at the same time using
-> component array.
-> 
-> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
-> ---
->  drivers/acpi/apei/einj-core.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-> index c604aa875644..40ebdbc4961f 100644
-> --- a/drivers/acpi/apei/einj-core.c
-> +++ b/drivers/acpi/apei/einj-core.c
-> @@ -33,6 +33,7 @@
->  #define SLEEP_UNIT_MAX		5000			/* 5ms */
->  /* Firmware should respond within 1 seconds */
->  #define FIRMWARE_TIMEOUT	(1 * USEC_PER_SEC)
-> +#define COMP_ARR_SIZE		1024
->  #define ACPI65_EINJV2_SUPP	BIT(30)
->  #define ACPI5_VENDOR_BIT	BIT(31)
->  #define MEM_ERROR_MASK		(ACPI_EINJ_MEMORY_CORRECTABLE | \
-> @@ -107,6 +108,9 @@ static struct debugfs_blob_wrapper vendor_blob;
->  static struct debugfs_blob_wrapper vendor_errors;
->  static char vendor_dev[64];
->  
-> +static struct debugfs_blob_wrapper einjv2_component_arr;
-> +static u64 component_count;
-> +static void *user_input;
->  static u32 available_error_type;
->  static u32 available_error_type_v2;
->  
-> @@ -892,6 +896,19 @@ static int __init einj_probe(struct platform_device *pdev)
->  				   &error_param4);
->  		debugfs_create_x32("notrigger", S_IRUSR | S_IWUSR,
->  				   einj_debug_dir, &notrigger);
-> +		if (available_error_type & ACPI65_EINJV2_SUPP) {
-> +			debugfs_create_x64("einjv2_component_count", S_IRUSR | S_IWUSR,
-> +					einj_debug_dir,	&component_count);
-> +			user_input = kzalloc(COMP_ARR_SIZE, GFP_KERNEL);
-> +			if (!user_input) {
-> +				rc = -ENOMEM;
-> +				goto err_release;
-I think you need a new label as need to undo a few more things.
-At least call apei_exec_post_unmap_gars() probably given it is called
-in the remove function.
+I gave this a try locally, and it produced this output:
 
-> +			}
-> +			einjv2_component_arr.data = user_input;
-> +			einjv2_component_arr.size = COMP_ARR_SIZE;
-> +			debugfs_create_blob("einjv2_component_array", S_IRUSR | S_IWUSR,
-> +					einj_debug_dir, &einjv2_component_arr);
-> +		}
->  	}
->  
->  	if (vendor_dev[0]) {
-> @@ -941,6 +958,7 @@ static void __exit einj_remove(struct platform_device *pdev)
->  	apei_resources_fini(&einj_resources);
->  	debugfs_remove_recursive(einj_debug_dir);
->  	acpi_put_table((struct acpi_table_header *)einj_tab);
-> +	kfree(user_input);
-Should be place din equivalent location of where you allocate it in probe.
-So probably before einj_exec_ctx_init()
+>     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/scanf_k=
+unit.c:94
+> lib/scanf_kunit.c:555: vsscanf("0 1e 3e43 31f0 0 0 5797 9c70", "%1hx %2hx=
+ %4hx %4hx %1hx %1hx %4hx %4hx", ...) expected 837828163 got 1044578334
+>         not ok 1 " "
+>     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/scanf_k=
+unit.c:94
+> lib/scanf_kunit.c:555: vsscanf("dc2:1c:0:3531:2621:5172:1:7", "%3hx:%2hx:=
+%1hx:%4hx:%4hx:%4hx:%1hx:%1hx", ...) expected 892403712 got 28
+>         not ok 2 ":"
+>     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/scanf_k=
+unit.c:94
+> lib/scanf_kunit.c:555: vsscanf("e083,8f6e,b,70ca,1,1,aab1,10e4", "%4hx,%4=
+hx,%1hx,%4hx,%1hx,%1hx,%4hx,%4hx", ...) expected 1892286475 got 757614
+>         not ok 3 ","
+>     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/scanf_k=
+unit.c:94
+> lib/scanf_kunit.c:555: vsscanf("2e72-8435-1-2fc-7cbd-c2f1-7158-2b41", "%4=
+hx-%4hx-%1hx-%3hx-%4hx-%4hx-%4hx-%4hx", ...) expected 50069505 got 99381
+>         not ok 4 "-"
+>     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/scanf_k=
+unit.c:94
+> lib/scanf_kunit.c:555: vsscanf("403/0/17/1/11e7/1/1fe8/34ba", "%3hx/%1hx/=
+%2hx/%1hx/%4hx/%1hx/%4hx/%4hx", ...) expected 65559 got 1507328
+>         not ok 5 "/"
 
-Whilst it may make no actual difference a clean reverse order
-is much easier to review as any exception can be easily spotted
-and typically should have a comment on why the order is different.
-
->  }
->  
->  static struct platform_device *einj_dev;
-
+Andy, Petr: what do you think? I've added this (and the original
+output, as you requested) to the cover letter for when I reroll v8
+(not before next week).
 
