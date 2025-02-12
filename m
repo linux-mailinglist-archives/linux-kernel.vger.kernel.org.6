@@ -1,167 +1,192 @@
-Return-Path: <linux-kernel+bounces-511453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A32A32B3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:11:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F05DA32B3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:13:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0DF1883610
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B04C8164732
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FF9212B06;
-	Wed, 12 Feb 2025 16:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59F621127F;
+	Wed, 12 Feb 2025 16:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pskOkgaG"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SgZcGpe9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD051D89E4
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9466A1B21AD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739376686; cv=none; b=PqjEcpRove0YmMQDmY1T/S9/p0Hio0M+a6zIyTRqVXDt8msfQweZptI+Vxw4WAindO4TH2LXm/NNiBrs6ukCJGzbZuBylCjarcfN3VVy9kCqBBoU0GM8OP76YLyoZjTSFp1u+KMTIrJwVQ3784643HE69/ZWQl3aBeiD3gFjKFk=
+	t=1739376816; cv=none; b=hITBjddQropTPZmXk5YtLAoIYXX07o4NenFprsKFQSiISCfilaaI3l8VDaVrL+2a6YWnVLs49+dqzZ51muhKxLHG8AhPP+MeC4ANmovS5xfjHdtv9L8W6U8eWfIVtZSd2y7AK8wOCdoCRGppk07ORnZGR4yG6xp6aerngFv612E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739376686; c=relaxed/simple;
-	bh=GVhqG056Vdq+Mz9grygtQVwiNYixaIhJsOQkOECDgcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MO1IDbZxo0RvEQ3JsDWNewpwVmQwZgJpPcAYNHrHoNAKpM5mYVbXSedAeDVFmQDG3genvby3TmC8oE/HPx562ok6D9XmUTTEuZSTHvvoMgXfPSyJpi7l+7yWYMwxpeLj0HwdA0wED501NyXt02MjoiB7+x9A03f6YFHcGFzH65Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pskOkgaG; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d05815e89dso151875ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:11:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739376684; x=1739981484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pCQ/+n928Vn9gelcfMvT1zVQa+ndVs/P/rMELGvCBhg=;
-        b=pskOkgaG8SXvBpishnZLWtCdK1H26atq9OZQoK/W+LTyPeq9XkQgZ4n+K0TjJDgkn2
-         isBgQpH/vsP8m4XUevEFoXN9ozuoCEkG10jLAEN4HW48PEdA7LlUAHZm6FhAmBXN6Bnk
-         lsubN7NVdj9ggg5RvaTosj3N386QY2ZRCiM2vsYtH9UBcaKe4meAQ8lr/TdgQGDWK+vu
-         9aFnt2u705vAg86UONUgBfE6a5Av7BiyeHagK5YMqHKTVnX52V0IvwvXM4bJfsmP1juN
-         UjcpDON6PUOkpKu8wxx8qWcOqTfWL5klXNdJOnqC69jRC9ze92wA366y4BpkXPg18nNs
-         xLzg==
+	s=arc-20240116; t=1739376816; c=relaxed/simple;
+	bh=80ekF0izsJI++qv/1xH74L7dJLq+6w8MrPpsyjQMmOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WJNIRO03W68kDe1TJAYhhTluSlohAqHriL+lgj71mLWifey/HqEcA6lomGRcEry5UTFnnw1JiLMUaGKvFTfSwc41BMBizfKoBOvjmYQ4xGTMdyyg/ga2zR47gyIsEVcgF3xIA1t4HefCZLfirlF9FdO8BE6yG6S7ECvWhj3Bnvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SgZcGpe9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C9YpuB015782
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:13:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=m6Zh2vn1ljsfh172oD9RbBFC
+	E7vn6VZybrnfut1DXnw=; b=SgZcGpe9OU5Tp8C7tQhPBW32rgA6otFDUSaDaaoV
+	2HIeUUIf1rZPt0JlwutaztR3Zk/LZUhzeBej2X5S24o0LgqfZd1a5uIqU+u9zPhA
+	YAtgU8kdEsw0CSmraOVsttw73Fa+pUpfClZoAzlnYBKdTTQVqHAL+TWULSbVMT/a
+	kr/+PHCwdpEMoywHRxMiO0dC+TVbY/X05h1TCBZ+LDXzNBQbq8KKgl55lwtHA/8d
+	f9queqkVj4UCdRa+yrlQAnYWnJkosIjJCLVWkf+b2dDldFc51Q/+H3+xG/fvTwIz
+	CIN4SR3K+5wxB0xzVvujWKxAHv3E5YV/BgPMQDRkFfUTVw==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rgpgjbys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:13:33 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fbfa786aa4so1817716a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:13:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739376684; x=1739981484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pCQ/+n928Vn9gelcfMvT1zVQa+ndVs/P/rMELGvCBhg=;
-        b=ZLzNcmHOUuohj68HemmnQ8HXl5l5Gm8/Ej0I8LLglHhDNKnYL5rpSbvob9a3pLAbRe
-         XLWWIF8v8UrHKdcbf8J8ZeEFlB85cV/auiFhEFjpv3VJrZWCKj9QTMU8/+RAZzBgF/Sd
-         uTdE9ZGFmVuFYaCLsLbe1e1ysIvQJBmQMKk03IYvbfOaWkkPglbMiSe0x/iuN7tfqpEy
-         2UEAbxZ1EZjg0j9IrOyzg5e66irc+mgWlNnyiW4iFN2hFgCg/v9iaquD7fPyiwOAfxM3
-         eX0tc2DppfIWkCskDSSFhb176InDfRrUGb+dshK7oO0V1WQhQxptBSAVxxiMBZBrVCzm
-         J/XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbz2NjQjP+J/UqrFWQZ1zsXFPKu5DnE0P6CUt5HOJVXv7ZgnPj3dKLQOCwO2Ur6q5zuexDcHwOZFHm2g4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytdlQH7yCjDKYlDNBl4bdW7H55siobvpBSh5jm8fjZXwbeBsMv
-	ti1n2pxw/ZrS1gx6sA/HpI91OP3DBRo6LUXf9XApMKTA/RkWHi/sTH2jDkB6ixw5lCw9X2vE0Ho
-	IDBEMM96Sm5RkJ7OjohzY2VAviq/7CzAJKH/M
-X-Gm-Gg: ASbGncuVdrqc9Z2x+gsyiLm5lsflDStulKAjQeVePbyJ1ghP0+OHDS7iXJIjXJMa+tQ
-	8n+FMV0gJZML+Jn3tBdc1tCvRCaQ0RdtpcIEojpALORhmEPhMJWYhwdMMQACt8rZJn/PuQzPL6P
-	KydCJUJ3eI7Q2C6svHGXcFRA3D
-X-Google-Smtp-Source: AGHT+IFbq+WY9VzcU/yaimb94wProbxrL7HzQLktm4Pmb2CdI2atD7lBQuYnHsdbEEr4mZ8tSA1x+0qt0b1VDHmXxnY=
-X-Received: by 2002:a92:cd8c:0:b0:3cf:c98a:ceba with SMTP id
- e9e14a558f8ab-3d17cdf6363mr3712565ab.22.1739376684010; Wed, 12 Feb 2025
- 08:11:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739376813; x=1739981613;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m6Zh2vn1ljsfh172oD9RbBFCE7vn6VZybrnfut1DXnw=;
+        b=jUIbsMvpzHUMIPOIxSWeTueDRerqxdDGplF1eYaOZdgmXdivBXDcvsEiXjTNKm+xaE
+         yYohPocXFuR7f85Q2Yk1/+TAgEm8SpDoE1b1jVN/4Y0W4Y5AM4UeSaNt+Y4A0WExx4Iu
+         czULp3NH/qTr342ToJKrsoxYTTI7bZq5QK3G3BygGEeg2U0SUOyftCVNn86xhdMC6jaC
+         k8QJr8d3jnvx9h8ZGD9t8FFsnwZW1ijzZxCu/ZylpFw+UQyuzH9umaUHilxn4ZCFkGBg
+         6iICTfw2RZsz/Hot6utatZM5DL41KYHZ71AUnu6Bs8OiOtO6OoZGMC3OtbqdEGiB1um2
+         XRmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGh1ychKEKaocr7oIvYEultMV7CuTEvMcdabzyE0D1TJxUDJGbJSWIlWVbPa48pQ+qfmOtx9IM4z9/nls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjxvY9gzRaM8YLHzRB/SNzqNkgsFk+sO9Vf+ntXqkKIsPVDQ4m
+	WBTOVCLfOEAz1PnTQASq2+npnCF5phrTftg9hXsDazi0NjLKJD0zuELks/yBJTZ2yBkskKXtjKl
+	BkzbXo9L429dnnH+OQ3QrELkrFKW/cSc4r8g0rMF03mqd7fpTj+w0d3ajj0Fnvu0=
+X-Gm-Gg: ASbGncunHjTCbAOPO/nR8bb26fTTc57qLa2cmHfOeRRbuEs3bK64uo7MZd+aWLnhUwO
+	oiofOnX0Y6Z7px4sCnlDLlahPKd4GMSrVTTXbWqVqrGUr4m4aac/DFkCAJLC3LK/CtWXHFLIJA/
+	nrywGDX4/T1yXw9gKVWWO/dN/JUsmbEG1A7JnJvtIirlGBLwPXvLZHnSHT+A2uypWYD8bN3xPEJ
+	3yoHqlQ3wu8XWR2zQUExrioA69n9851tWV7wsdsB74UHWIhSdjhgzOBXmq67EmReSrgQ09oAX7I
+	IS+3+zgU/JQ+cnd4+Q58MP15WMagaCeK
+X-Received: by 2002:a17:90b:1f81:b0:2fa:4926:d18d with SMTP id 98e67ed59e1d1-2faa0982d50mr13003889a91.13.1739376812666;
+        Wed, 12 Feb 2025 08:13:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHXS9GeexUtgjKmnddattp7uEgbRq+tXnjW66DhGPRPBEcNWpdaDXy+oRX9gNRBnjFd6OU6fA==
+X-Received: by 2002:a17:90b:1f81:b0:2fa:4926:d18d with SMTP id 98e67ed59e1d1-2faa0982d50mr13003843a91.13.1739376812212;
+        Wed, 12 Feb 2025 08:13:32 -0800 (PST)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2faa4aeb7cbsm2264432a91.0.2025.02.12.08.13.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 08:13:28 -0800 (PST)
+Date: Wed, 12 Feb 2025 21:43:11 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Saranya R <quic_sarar@quicinc.com>,
+        Frank Oltmanns <frank@oltmanns.dev>
+Subject: Re: [PATCH v2] soc: qcom: pdr: Fix the potential deadlock
+Message-ID: <Z6zIl/6s2XfSvm71@hu-mojha-hyd.qualcomm.com>
+References: <20250129155544.1864854-1-mukesh.ojha@oss.qualcomm.com>
+ <nqsuml3jcblwkp6mcriiekfiz5wlxjypooiygvgd5fjtmfnvdc@zfoaolcjecpl>
+ <Z6nE0kxF2ipItB2r@hu-mojha-hyd.qualcomm.com>
+ <Z6nKOz97Neb1zZOa@hovoldconsulting.com>
+ <Z6uDv3c3DkmgumnM@hu-mojha-hyd.qualcomm.com>
+ <Z6xr3ylNSC6iYf-C@hovoldconsulting.com>
+ <Z6x_GJg92ddzoRwQ@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250111190143.1029906-1-irogers@google.com> <20250111190143.1029906-3-irogers@google.com>
- <Z6y1dbyF1xY1FvsB@x1>
-In-Reply-To: <Z6y1dbyF1xY1FvsB@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Feb 2025 08:11:12 -0800
-X-Gm-Features: AWEUYZmDXNPKvmaOfmRkYwGw5dkZIh-KEw8TBRIDz2ERpDrvTLeKvTz6iinFF40
-Message-ID: <CAP-5=fVrB8hRc0-K6D001xBNr6M-xjYMOet+-tafei101achig@mail.gmail.com>
-Subject: Re: [PATCH v1 02/10] perf parse-events filter: Use evsel__find_pmu
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Hao Ge <gehao@kylinos.cn>, James Clark <james.clark@linaro.org>, 
-	Howard Chu <howardchu95@gmail.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Levi Yun <yeoreum.yun@arm.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Tengda Wu <wutengda@huaweicloud.com>, Yang Jihong <yangjihong1@huawei.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6x_GJg92ddzoRwQ@hovoldconsulting.com>
+X-Proofpoint-ORIG-GUID: FnsOO70BrlmyBFe0bSa-mRKknuca1K_m
+X-Proofpoint-GUID: FnsOO70BrlmyBFe0bSa-mRKknuca1K_m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
+ priorityscore=1501 mlxscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502120120
 
-On Wed, Feb 12, 2025 at 6:51=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Sat, Jan 11, 2025 at 11:01:35AM -0800, Ian Rogers wrote:
-> > Rather than manually scanning PMUs, use evsel__find_pmu that can use
-> > the PMU set during event parsing.
->
-> Right, and then evsel__find_pmu() also does some extra checks to call
-> pmu_read_sysfs() more selectively, right?
+On Wed, Feb 12, 2025 at 11:59:36AM +0100, Johan Hovold wrote:
+> On Wed, Feb 12, 2025 at 10:37:35AM +0100, Johan Hovold wrote:
+> > On Tue, Feb 11, 2025 at 10:37:11PM +0530, Mukesh Ojha wrote:
+> > > On Mon, Feb 10, 2025 at 10:43:23AM +0100, Johan Hovold wrote:
+> 
+> > > > A Link tag to my report would be good to have as well if this fixes the
+> > > > audio regression.
+> > > 
+> > > I see this is somehow matching the logs you have reported, but this deadlock
+> > > is there from the very first day of pdr_interface driver.
+> > > 
+> > > [   14.565059] PDR: avs/audio get domain list txn wait failed: -110
+> > > [   14.571943] PDR: service lookup for avs/audio failed: -110
+> > 
+> > Yes, but using the in-kernel pd-mapper has exposed a number of existing
+> > bugs since it changes the timing of events enough to make it easier to
+> > hit them.
+> > 
+> > The audio regression is a very real regression for users of Snapdragon
+> > based laptops like, for example, the Lenovo Yoga Slim 7x.
+> > 
+> > If Bjorn has confirmed that this is the same issue (I can try to
+> > instrument the code based on your analysis to confirm this too), then I
+> > think it would be good to mention this in the commit message and link to
+> > the report, for example:
+> > 
+> > 	This specifically also fixes an audio regression when using the
+> > 	in-kernel pd-mapper as that makes it easier to hit this race. [1]
+> > 
+> > 	Link: https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/ # [1]
+> > 
+> > or similar.
+> 
+> I can confirm that audio regression with the in-kernel pd-mapper appears
+> to be caused by the race that this patch fixes.
+> 
+> If I insert a short (100-200 ms) sleep before taking the list lock in
+> pdr_locator_new_server() to increase the race window, I see the audio
+> service failing to register on both the X1E CRD and Lenovo ThinkPad
+> X13s:
+> 
+> [   11.118557] pdr_add_lookup - tms/servreg / msm/adsp/charger_pd
+> [   11.443632] pdr_locator_new_server
+> [   11.558122] pdr_locator_new_server - taking list lock
+> [   11.563939] pdr_locator_new_server - releasing list lock
+> [   11.582178] pdr_locator_work - taking list lock
+> [   11.594468] pdr_locator_work - releasing list lock
+> [   11.992018] pdr_add_lookup - avs/audio / msm/adsp/audio_pd
+> [   11.992034] pdr_add_lookup - avs/audio / msm/adsp/audio_pd
+> [   11.992224] pdr_locator_new_server
+>     < 100 ms sleep inserted before taking lock in pdr_locator_new_server() >
+> [   11.997937] pdr_locator_work - taking list lock
+> [   12.093984] pdr_locator_new_server - taking list lock
+> [   17.120169] PDR: avs/audio get domain list txn wait failed: -110
+> [   17.127066] PDR: service lookup for avs/audio failed: -110
+> [   17.132893] pdr_locator_work - releasing list lock
+> [   17.139885] pdr_locator_new_server - releasing list lock
+> 
+> [ On the X13s, where I have not hit this issue with the in-kernel
+>   pd-mapper, I had to make sure to insert the sleep only on the second
+>   call, possibly because of interaction with the charger_pd registration
+>   which happened closer to the audio registration. ]
+> 
+> Please add a comment and link to the audio regression report as I
+> suggested above, and feel free to include my:
+> 
+> 	Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> 
+> Thanks for fixing this!
 
-Right, but the pmu should already be initialized by parse_events so no
-scanning should be necessary:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/pmus.c?h=3Dperf-tools-next#n759
-You are right that the fall back to perf_pmus__find_by_type is more
-selective in what it scans:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/pmus.c?h=3Dperf-tools-next#n302
-First seeing if the PMU is already loaded then just loading the PMUs
-relevant to the type number.
+Thanks for putting extra effort in reproducing the issue and testing.
 
-Thanks,
-Ian
-
-> - Arnaldo
->
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/parse-events.c | 14 ++++----------
-> >  1 file changed, 4 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-eve=
-nts.c
-> > index 1e23faa364b1..f147e13a7017 100644
-> > --- a/tools/perf/util/parse-events.c
-> > +++ b/tools/perf/util/parse-events.c
-> > @@ -2406,9 +2406,8 @@ foreach_evsel_in_last_glob(struct evlist *evlist,
-> >  static int set_filter(struct evsel *evsel, const void *arg)
-> >  {
-> >       const char *str =3D arg;
-> > -     bool found =3D false;
-> >       int nr_addr_filters =3D 0;
-> > -     struct perf_pmu *pmu =3D NULL;
-> > +     struct perf_pmu *pmu;
-> >
-> >       if (evsel =3D=3D NULL) {
-> >               fprintf(stderr,
-> > @@ -2426,16 +2425,11 @@ static int set_filter(struct evsel *evsel, cons=
-t void *arg)
-> >               return 0;
-> >       }
-> >
-> > -     while ((pmu =3D perf_pmus__scan(pmu)) !=3D NULL)
-> > -             if (pmu->type =3D=3D evsel->core.attr.type) {
-> > -                     found =3D true;
-> > -                     break;
-> > -             }
-> > -
-> > -     if (found)
-> > +     pmu =3D evsel__find_pmu(evsel);
-> > +     if (pmu) {
-> >               perf_pmu__scan_file(pmu, "nr_addr_filters",
-> >                                   "%d", &nr_addr_filters);
-> > -
-> > +     }
-> >       if (!nr_addr_filters)
-> >               return perf_bpf_filter__parse(&evsel->bpf_filters, str);
-> >
-> > --
-> > 2.47.1.613.gc27f4b7a9f-goog
+-Mukesh
+> 
+> Johan
 
