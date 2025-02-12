@@ -1,257 +1,256 @@
-Return-Path: <linux-kernel+bounces-511407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DC4A32AAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:52:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A0EA32A6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:47:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EA0D3A79CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC1D166A06
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024F7263C65;
-	Wed, 12 Feb 2025 15:48:04 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8542521148A;
+	Wed, 12 Feb 2025 15:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ciz7kOn0"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2067.outbound.protection.outlook.com [40.107.249.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD63261391
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739375283; cv=none; b=OGk3AMxriUtElo1bYqxDbtAWhPv1YnNQdvCUGqXHHYzeUzKdAOsAgr8jqjgWVAnfIyYZ38TAqQWba7Zrji4aUUp0qlAedenflSTgETC/nJO/qfJ2DKZ6K+V4ZhVw3Zyyng5Mgx7nq5mDD3hDpZZ3BcUF5Co9jIUokpgo/n3G7Mc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739375283; c=relaxed/simple;
-	bh=iMwraRPqoGZXPSV/ZIi013g4oSfQKmUsDk4bVEfeeAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ubu1ZtSlSw9p5qMYTNBMP5Mab23w3QrvadeHitRBF7d7QKO0IxLsYfA8S637rvIfyeEA2kB4jSL8XpmKG7H8CU0GZ11Jh789dwA2/cjS1+yUS7r0p7rYJ7VFxxVqyeA8wR6VtmOZxTeF2IDoOkSrIdrwF4jvwck2zq3MuZ9rfBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5deb956aa5eso651264a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:48:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739375279; x=1739980079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+uYrRumV9nMSUYKKSpYn+3g5k4eAh93TeT+WqPiVakU=;
-        b=YIrchr+FWM9PioNkCt2MEdZfhCyWqx7dPCOJpMfGyHeGf7h7wkFpb5Se0+1fbgRgc8
-         zixHzWY9TJz5qU7zoaphcHL3nHLhT2eMsQmvl6o9y0mOAp+LRHu0sZ9p8/f5Fj5oHbES
-         hiKEJfTrUlnzRfVCC/q0DgnEc1w+e3/4CKH4dyPZ8yRxElr6+zo1AQCvdQv67h0dC0Ok
-         NdBnNKiBgjwzV2u6oVEo2R/sumnNkAnf6QlaVP5md9Sc0vU2LK8t+8wPjCDdfxYmA3fT
-         qq+KtNPt7TCPDa+kutig9E5nk0CijgjH7IGmvj3yG1MRPm/H1nYQrA7nKquDQldTMa/o
-         BZBw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2zV9FTjLUx6vt0wxR6L2vfP8W+FBlEsremap1zN2PAdET1CqB0WyrvAZfWo0ILyJgnNQHvdaEVinmubw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqxAHAiGuWQ2l/xhpBuVc+iXLqwmY2JFmI6H9m05/iNBoCnOmA
-	eZX/OamOUmcxeOvTVnHIbt4SfxU7IIgMYulX5nukg+k9s8bl0kELWVwKyjhUFXs=
-X-Gm-Gg: ASbGncuEG+/Qm4I+hQe/0YUUIguac4zU0xHzOnGDW9CuldF7fdGvyxgxY5fJ5825h9E
-	9Z6OXjbPB1z2AC+RvjSJ3ERGGRvlhFpjM1AhKJkmSewgGsLQtntaUugv/lRbnja7LIyAT8+09kS
-	qXAG6ujZd1pRze1BhX6wjnOO57g8bSlIy1OflptGZO+0tz/qYoHdvt/fnQdBFTnDK3vVqhRPhY2
-	qubf+h2VBcgCq/g2iz1Tt7aGNkoSTtISTcM8YQ+N/gS62OXXu8HABAAmEpI18kcS2rPuI9bb1gs
-	3T+5pCYn8fUhBkJXd4hm/wWE2NhQNcmaDrd2R+4sCf6zOw==
-X-Google-Smtp-Source: AGHT+IFmce9tH9dLHP7CWUzbmv5vtbnb++XIvWnNQ8LorV9Zr/rB7MFtIoTaUTNXrBFSD71XPDaB8w==
-X-Received: by 2002:a05:6402:a001:b0:5de:b438:1fdb with SMTP id 4fb4d7f45d1cf-5deb43821eamr3515430a12.30.1739375278693;
-        Wed, 12 Feb 2025 07:47:58 -0800 (PST)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7891ec1d1sm1172552566b.178.2025.02.12.07.47.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 07:47:58 -0800 (PST)
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38de1a5f039so2783031f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:47:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX+J4vc4iMo+c5ulQu6stditLCA+uperIxaEccDGUAKsWXlt7YcZz/iVmhH8X8mYkrhh4JKA3OLGhH8GFg=@vger.kernel.org
-X-Received: by 2002:a5d:588c:0:b0:38a:2b39:9205 with SMTP id
- ffacd0b85a97d-38dea2878bfmr3997807f8f.33.1739375277843; Wed, 12 Feb 2025
- 07:47:57 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1F1271814;
+	Wed, 12 Feb 2025 15:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739375261; cv=fail; b=klA7+4il+8al5SokC4kqbv5hAVyZjJHS9PoEWU7dU84cIkPfZgLY+ABuCNkIe1fu+7ixfq+Q/eCgFvPlHm6FgFFMHngQezlL/i6e1fN6iXHRHbZNoXMed2/IrA9iwvhjMgYErNPoNawohhxbkiC34zFTor8KcKsCy5kKxnQbjNA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739375261; c=relaxed/simple;
+	bh=cRv6NgOmBfoNCL/9xJwt7ASpu58DhphgPhS34QujCFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=G2bOuP0UToIscu96xjudjDLxZlqe6JyYOFQaFyMVBLuGbfmsbdqjS9LOsyLkzywLBuggf2hujxd7pAK6nxZzFgM6utNFyYqzBByThccpS5dAxa3QIvhIqk2mU9ucTHwzOWfLmUm76sdwTfHfKoAHt4eeKDlHsyjq6xUeBJdsaXc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ciz7kOn0; arc=fail smtp.client-ip=40.107.249.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JCGx6yYQmjNowstW6lw7+IyiK6UyVkARzkXYevdHdseNAjGm3IyIigOzuXy1oDTeeefgGaoAwlLmI6AwUNle+2eXEu28O4mntbXqk6Qtw8GiS6kd0G5nLLHGIbu3ltDDHbn12+3SNxILrw7tDzhj89VuANwRY0nkH5U+rahIRykHfnRL0YJ0UwY8/hAHFyj1qpNZSRLhsPpFNADCwvZFuIaJaReKY8qGNAhLFwYh0tZxUYL6m6ydZwYaY28rfsRWtREexyMY8OLh9GdjVX9Fy8aVSkaC58SE6W/E2tDMxsCog+Uo41Ln8grwtD5PpWTPQW7CnLbePmO3jiTRWpvKSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0Nem88b8qmvxPwwrv866nL0iyBq3IdKeXoRuK8nU3xY=;
+ b=Esfp9oAB3AofkfllUWmZjIETyWWwSI1J+0ZEZXlxe4Tkr2OldLwT244rmLXYN71eoosfAphJ32QfnjsFsDxDv5Ryhkg40qc7BQBfyiBeomkxJqU/prrBPSXkdTunH4s6Na8nKw3pj1Cc9a+LS37BQue7ZZDOW2Wxb1EepzCR2jFQuNN/P96bLsGYNyvBAdnjqE8YETZhrwSv/gD4gv24uI51Vd9lXaOyY5ydV7Em5a6aR2ozadX9KJYEismTFW5Z6uvUjTEBR/7sci2NlZ71oKzHywkfuN+h4BQQYb8ZgwnCo8HdWpfxUUe/YtiZQVH/Uf1XyPw7aRpQdBKpHCyECA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0Nem88b8qmvxPwwrv866nL0iyBq3IdKeXoRuK8nU3xY=;
+ b=Ciz7kOn09Cr5qpU+D6anHlDu5Vzz20UCqrz+Il6TDzYVzCEvDxZGeWPT1O2b4U2BgPKqZ0sskH3UG4I+KZLiyFm/f6eSUeZI+qOBEMh/EpCtkjdJ1NRWwmSofcimkWD0OZ0oxmgBcb3ZJ0vsnNGYP9FqHK4MsHFhQ2Te/q2fDk5QaFJ9nY1d5IOd39pZhl7O1f5xCX4KqxGLg18EXP8D24SCCyqWNW4SqNdkmvsquh/D9mKTch0kWsb5YMyL5ZNjesRUQedkWjO2taWyicIrb6EeKJIPXf6qxdg+91CLxtqT9lh12nlF6fXQ8ZQMADlZp3QXWgkq9g10WQnswvbfAA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GV1PR04MB10846.eurprd04.prod.outlook.com (2603:10a6:150:210::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.12; Wed, 12 Feb
+ 2025 15:47:35 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8422.012; Wed, 12 Feb 2025
+ 15:47:35 +0000
+Date: Wed, 12 Feb 2025 10:47:25 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, Xiubo.Lee@gmail.com,
+	festevam@gmail.com, nicoleotsuka@gmail.com, lgirdwood@gmail.com,
+	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] ASoC: imx-card: Add playback_only or capture_only
+ support
+Message-ID: <Z6zCjXr6vsVF/6Ag@lizhi-Precision-Tower-5810>
+References: <20250211035737.3886974-1-shengjiu.wang@nxp.com>
+ <20250211035737.3886974-3-shengjiu.wang@nxp.com>
+ <Z6tuFp9nZFMJMgDa@lizhi-Precision-Tower-5810>
+ <CAA+D8AMyXVdAWOTGHtrOyXjSLiMioAhZ1awepX3nproom87azQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8AMyXVdAWOTGHtrOyXjSLiMioAhZ1awepX3nproom87azQ@mail.gmail.com>
+X-ClientProxiedBy: SJ0PR03CA0276.namprd03.prod.outlook.com
+ (2603:10b6:a03:39e::11) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211-rtkit-more-logging-v1-1-93334e9c1c77@rosenzweig.io>
-In-Reply-To: <20250211-rtkit-more-logging-v1-1-93334e9c1c77@rosenzweig.io>
-From: Neal Gompa <neal@gompa.dev>
-Date: Wed, 12 Feb 2025 10:47:21 -0500
-X-Gmail-Original-Message-ID: <CAEg-Je_XadeDiXBeXckZ=UQ2wYHtGppdM3nPmardyYx7SBgCrg@mail.gmail.com>
-X-Gm-Features: AWEUYZloTNjia8wdzYJXwYEgocjhTE4bAY0UXN52FPIm83DaokT5Zoy8sOwb2VQ
-Message-ID: <CAEg-Je_XadeDiXBeXckZ=UQ2wYHtGppdM3nPmardyYx7SBgCrg@mail.gmail.com>
-Subject: Re: [PATCH] soc: apple: rtkit: Check & log more failures
-To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Cc: Sven Peter <sven@svenpeter.dev>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Asahi Lina <lina@asahilina.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10846:EE_
+X-MS-Office365-Filtering-Correlation-Id: b516fcea-7eca-4b5a-e31b-08dd4b7c91da
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|376014|7416014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SnZmenFCQkNzVnhzT0F3RlFndzNFZWZKM2h5aDlZdmFwNi9JQWhHSTVtMnFD?=
+ =?utf-8?B?SXRYbS9XVFRzZUE2SDE5aGZ1K3ZuUU84eGJJOTZNQ3U1Q0RTbnphazJmZlhn?=
+ =?utf-8?B?QnJiWUhUdHRZMTRQS0M2YnZYQ3R3cDJ3bm5xclBqWUowTTJPejNrZi80czdm?=
+ =?utf-8?B?T0trL0d6ckcwVTZiWUpVMDJaMkZrRU05d0I0NzF2eDVPVFZWN1F5bXpRcVR6?=
+ =?utf-8?B?c1EyNFgrejRFL3M2cytWMzJBa3pEVndNOU03eW5JdEkrdndMRzQzVEV2WTBX?=
+ =?utf-8?B?N1BNMGk0NHVOT1lmOWtoWlg1MWltWC9ncVpkNmRDRTFiYTdvQWR2dmNEQWxj?=
+ =?utf-8?B?NUNaQS9SNzExVHRQQkdCN0VtVXlIRjhmQTJCMURXaWtpeHlSRDhTUnB1RHF0?=
+ =?utf-8?B?c1h4Sk5PK0RjaWZHUUw3YzRzeGpBdWxtOFZWYmQ0c3dKTWdJK2w1ZEU0QzN1?=
+ =?utf-8?B?a0lEeU41Q2Uvdm9mVG13UXh4MDVLaWNTMHArWjgrazRHZDJUVDJXRm00azRF?=
+ =?utf-8?B?eHlOWllsQlprOStPblJkY252WHowRE1WZ1RuT3hTaG11UEtDaWM4TVEweGpn?=
+ =?utf-8?B?ZDFhYW1Oa0VOR3V4ZENqZ0FnblVHOG1uKzNyRUwxNU1IMjdpU21mRGVqeFRI?=
+ =?utf-8?B?S2paRDE4OU8wTjc2MHRRVzB0NjFqc1l1clZJSDdWZmRxVStLTXZaSHBPb1dp?=
+ =?utf-8?B?WTI0RHlGVXhBa1NSMllIT2NNRTdwM1dJTEFuM2YrRmRHUDFoK3BKRVoreEJE?=
+ =?utf-8?B?dEZoeWJrUjN6UFZuSThnRnJrc0VjREpYZHZVTm1sTnFSTjdGandWOWwyWllR?=
+ =?utf-8?B?TDlybTFvKzFaeUZTa3VjL3FuL1krM215b3piZXh0RlcxR0pkSHh4YWs5dTJC?=
+ =?utf-8?B?NE12UkhBaEh2a2dSQkNrbXV2enJSWE9JQjdGSk5MVXBqU3doTWJIeVJjRDda?=
+ =?utf-8?B?dGlGQXhlN2dPMUx6aVU2SXZuY0FMMjYzb3NuVEtwZGxDbEowcTZqYWZOZ1ZJ?=
+ =?utf-8?B?U3MrVlJyc3VvZ0JaV1djclNkQ3lmQ0ZRd0dDMVdCT3hVdE9ua3lKMXpvTndR?=
+ =?utf-8?B?MVVjc3RwcnY2RnhXdzl3N2RTblJGVWlTMEUydGwxQTFhUnFPTVNyb3M1d24v?=
+ =?utf-8?B?Qi95UFRTanlZVE5OU0VuY1h4Y3d6enZJTWYxaUJINWJnQmF4NjBONm1WeVBr?=
+ =?utf-8?B?d3VvT1FHajBYenh4d2FuZ2JnOERFcEFBcFBpeFFIY2FnNVVlc0dpSisySDNW?=
+ =?utf-8?B?Z0FYWmt5YnNpdXlmNG1DdEtndXVpYkVhajI4NWJabU1veXNkNWVzMFlhVG1t?=
+ =?utf-8?B?NzBnN1RFRjVVMUp2QktwRGdEcVBLOEd5WUhzYk9rWGlXaXAwYkRWNEJJTG52?=
+ =?utf-8?B?NEJRaEFRVnI4Y0tkcStzM1hYM1NRandNNjcvd3VjcnRCbGxqOWJoWUh3N3Y1?=
+ =?utf-8?B?Q2luMG1jKzhFSHVsdGRsejh4QzhKMWF1Q2FGQkRZcGxlR2tzYVlmTWFtVWRE?=
+ =?utf-8?B?cjdhVFN0VjQxRUQvMmZQanhSejMxVWF2aU8xd3VWR3haK3V6WllQQ3F1eURC?=
+ =?utf-8?B?WGIweWo5MUlWSXV1NDI5ZVJFNmlUcVdyWEJ2a0ZtbjRYcnZyVXNkd0tTcHRX?=
+ =?utf-8?B?Y2QzRDFZdFdpSldoY1RoOGpkY21sa3hFbEFvQ1N4d0k1TTBNMHRhZUI0ZkFC?=
+ =?utf-8?B?T0JVdkdxbG53T1NqOFdsZFNMdUR2L2QwUUF5YkpoOVU5LzlkakFDSjNBMHQy?=
+ =?utf-8?B?UVk0cUVXOHB6WGN1NWN5MDk3RkJjSWFyMWdlTFdOQ3BVRVB6VFRicko0bFM1?=
+ =?utf-8?B?NEpGaTc1ZzJLZ2VoTExtSzd2SGlUazBaaUpjME43RmhCSnV0YldmbVpwYUdr?=
+ =?utf-8?B?Zk1RTWtZdWFxWUIzZU8vZTd6c1poZUliL3FLOUVWcUJkOG5xaDJ6TkwwWFkr?=
+ =?utf-8?Q?M1H3LBuEXqssBKnIk0Kg+v/xfZ8keRIy?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dkFLbHlkUEt0b0lLMC92bDc1YU0zby8yMmwzQ3hmbEZ5bU51Rk1tem9BZHRk?=
+ =?utf-8?B?cEFTZ05iZkl4NlBjeGxiZ1hyWVVuU1pyMTBVMnFqRllSblQ1RHV1OGlCdmVk?=
+ =?utf-8?B?QmhCUkZCczVDSEc0S0FTUERtNVA4Mmk0TnBuOWFqYVZRWng1VHlaQlpTMSsx?=
+ =?utf-8?B?Rkl2dWorZzRScTFYelR1cEtZanYyV2pBNENaL1JBRzVJdTlZMldhVUNmWHBE?=
+ =?utf-8?B?aktWZ0pRVkE2Y3FvRWtweHoyOTFpM0FUc2hRTjQwSDg1R0J1bmRpTTRVRmg2?=
+ =?utf-8?B?WUNZYlFUSmlzM01PMGZkRXZpZEhqZTlsbXIxeFFEWUJZYlRrMncwNE84dnVV?=
+ =?utf-8?B?SnhldXJBSEFDQ1VySW9kK244WkVhaEJKMndYd0FyRDkvTXBEb05rcHlJc2pt?=
+ =?utf-8?B?VWlmUUQ4UXR3ZExacEVrUFZjK3Rrckp5V3FKY2F1WHgvamdwTjdaakdpTzgy?=
+ =?utf-8?B?bEZ6c1c3eWpNWWhBM2V4ZmNNUHNqMFE3djFZbkdmUnl3R1gvQjVaL2x2d2Fp?=
+ =?utf-8?B?UEZneVIvYS9MYlM5ZkdPVDFrTjVFVFRDbVpDRmJPZ21DcEZpM0dmVGdNTTc3?=
+ =?utf-8?B?OHBPdi8vQ254czRmL0Jac055NjdGUVhLZDJRZVNpSzdFWXloU25ZUnhBQmdF?=
+ =?utf-8?B?ZkR6OVZRWTlkRnpNd2xhY2hMZytSZTZaSnlMZkdwVFJqNWdFRzFlVmRqU05D?=
+ =?utf-8?B?dldueEtJaktvdldZVmhMR2NuZmc2eGlSK0RMVVFoekdLM0hhY0dUbXhpNDhk?=
+ =?utf-8?B?Y0xoc1d1Rm5nSzFDNlZLTlpGNitNTWVBc1BUQ2FRbm5DMEdYNitVajhLREgw?=
+ =?utf-8?B?NTlyblVXL3JoQWYrV3pLeXltSTViSkNQbHg3TUVabWFlaVVSQ2IrZFRxbUVv?=
+ =?utf-8?B?OVlSRHBXODBCMFcwbUZHdlRtRzROQVZtcDRBcG5FNXJ5MU5KWGV2bnhKVFVq?=
+ =?utf-8?B?ZlRid01ETjlGcFlNTElMQXg0b21ZaU9EM0x6c0tRaUYvbm04azZ6bTd1WmlT?=
+ =?utf-8?B?bjJBRkJXL245cTFxeDlHaGRqWGhRbmtyOXhha1pSTUUyc2RIRkVOTktNMGdv?=
+ =?utf-8?B?czBzK2NQQitQZmo5aTVweE03VWJFWGNlaDJGb3pQdVFyMHk1KzBzU05DdUZE?=
+ =?utf-8?B?YTFNeGxYZ0hrVThiMHI0SXlRdzRMOERtL1hvYUdEMEZRa1hNdXhqMEUzaksz?=
+ =?utf-8?B?Y0FOVi9xbjB4RDFqTDZENlE4eXJIWFQ5amNXTVVJL20zNW1KRGJwaHVOTndm?=
+ =?utf-8?B?TEduUXJJenAweCt1VnVpdERuTWFsS3MrRW1hYm5WZ1VHM0JCZ1dGMGQ2Uno0?=
+ =?utf-8?B?UDU0ODdGMUdsMSs0Tm5aYkNtcmhJUHZjQlc2ZWhSaEtBUUNkVTk0dkJINEh1?=
+ =?utf-8?B?N1MrRWhpZFZDMkZ6TGRoOHFMZGk1NE0vaDE1TW5qejcrMWxwTGJUK1pIOEhM?=
+ =?utf-8?B?aVFHQjhzL0ZXaHR6a1cyZHQrVHhWZmt3R1psRGxYRVB1MmZQY3E5K1JvVkQ0?=
+ =?utf-8?B?Q0xrVHRyWEQ2SjliQ3I0NVVXMCtScEVIZlhMcTYyblB2bWlMSHNKT0FZbEp1?=
+ =?utf-8?B?MWZudEphVTg4Y3FXRG5uVCtFSnVabER5MWRNNmxGaUlJRkNNZ0E1VzArTk9K?=
+ =?utf-8?B?czlHb2RqZ08rby9BbmpvZVczcmw3amJNTUhnZUpTWm5oVkxWeHBJaXd5Ui9Q?=
+ =?utf-8?B?bjhpL01EZU1zZytnWVU0WGhsMEF1OUdYQmRJSUo0N3Q2VXhtMXJaSlB6eWhR?=
+ =?utf-8?B?ZzJQaEV2SndNOWlpV3RyOURoVkswNVlYMVExZERQWW9zZysrM2VIRmlGSEpX?=
+ =?utf-8?B?NjJRaWtocEdBN0hoZW1VMWh4NWhOay9rLzM4eXNtZlh3S3UxYXlnRDhMNFlB?=
+ =?utf-8?B?Z1lSNUdpaE1Ta1hKNEtVc0JXRlJQdTMvaTQ1Z1ZBR0tZTEQ3bUxqUzBCdFpP?=
+ =?utf-8?B?b0c5M2hheGtXSitic0RpbXhsc1k2SVpTZFhUU0JwMW9qOWt2VXVvcEZka3dE?=
+ =?utf-8?B?QUx1Wk9Ea2VqbjF3QkRHUWhVZzdGNmFYazRFUDRmTDVPcVk1NGlMUVZRc3hR?=
+ =?utf-8?B?V3J4OEY0WTJZTWJRUW5RZURrZjFVeXB6aUFqNVBsT29DZDFUNDdGMHdJcm5G?=
+ =?utf-8?Q?MYZ/AKj7xhw1IrmpJULjQ0tmI?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b516fcea-7eca-4b5a-e31b-08dd4b7c91da
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 15:47:35.3473
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +HDbjKmvxS/wyHC7ovVr/c25t9OxdCKU1IP8ID/2IySsdPyShtKfisg3qlvz8uU1SLtYjTIHgFlmfMdkLeSA3w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10846
 
-On Tue, Feb 11, 2025 at 1:00=E2=80=AFPM Alyssa Rosenzweig <alyssa@rosenzwei=
-g.io> wrote:
+On Wed, Feb 12, 2025 at 11:48:43AM +0800, Shengjiu Wang wrote:
+> On Tue, Feb 11, 2025 at 11:34 PM Frank Li <Frank.li@nxp.com> wrote:
+> >
+> > On Tue, Feb 11, 2025 at 11:57:37AM +0800, Shengjiu Wang wrote:
+> > > With the DPCM case, the backend only support capture or
+> > > playback, then the linked frontend can only support
+> > > capture or playback, but frontend can't automatically
+> > > enable only capture or playback, it needs the input
+> > > from dt-binding.
+> >
+> > wrap at 75 chars
 >
-> From: Asahi Lina <lina@asahilina.net>
+> On my side, there are in 75 chars...
 >
-> Check and log the following failures:
+> >
+> > >
+> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > ---
+> > >  sound/soc/fsl/imx-card.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/sound/soc/fsl/imx-card.c b/sound/soc/fsl/imx-card.c
+> > > index ac043ad367ac..905294682996 100644
+> > > --- a/sound/soc/fsl/imx-card.c
+> > > +++ b/sound/soc/fsl/imx-card.c
+> > > @@ -518,6 +518,7 @@ static int imx_card_parse_of(struct imx_card_data *data)
+> > >       struct snd_soc_dai_link *link;
+> > >       struct dai_link_data *link_data;
+> > >       struct of_phandle_args args;
+> > > +     bool playback_only, capture_only;
+> > >       int ret, num_links;
+> > >       u32 asrc_fmt = 0;
+> > >       u32 width;
+> > > @@ -679,6 +680,10 @@ static int imx_card_parse_of(struct imx_card_data *data)
+> > >                       link->ops = &imx_aif_ops;
+> > >               }
+> > >
+> > > +             graph_util_parse_link_direction(np, &playback_only, &capture_only);
+> > > +             link->playback_only = playback_only;
+> > > +             link->capture_only = capture_only;
+> > > +
+> >
+> > if only use once, needn't local variable.
+> >
+> > graph_util_parse_link_direction(np, &link->playback_only, &link->capture_only)
 >
-> * regular messages
-> * management messages
-> * failed buffer requests
+> sound/soc/fsl/imx-card.c:683:53: error: cannot take address of
+> bit-field ‘playback_only’
+>   683 |                 graph_util_parse_link_direction(np,
+> &link->playback_only, &link->capture_only);
+>       |                                                     ^
+> sound/soc/fsl/imx-card.c:683:75: error: cannot take address of
+> bit-field ‘capture_only’
+>   683 |                 graph_util_parse_link_direction(np,
+> &link->playback_only, &link->capture_only);
 >
-> This helps debugging.
->
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> ---
-> Originally multiple commits by Asahi Lina, squashed here and
-> checkpatch.pl warn fixed.
-> ---
->  drivers/soc/apple/rtkit.c | 44 ++++++++++++++++++++++++++++++++++-------=
----
->  1 file changed, 34 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/soc/apple/rtkit.c b/drivers/soc/apple/rtkit.c
-> index e6d940292c9fbdfc4cd42020e89aca2662c5cdce..f8077a1ec3a42265eb9565a0e=
-a1ca6a4cf7e79dc 100644
-> --- a/drivers/soc/apple/rtkit.c
-> +++ b/drivers/soc/apple/rtkit.c
-> @@ -97,12 +97,19 @@ bool apple_rtkit_is_crashed(struct apple_rtkit *rtk)
->  }
->  EXPORT_SYMBOL_GPL(apple_rtkit_is_crashed);
->
-> -static void apple_rtkit_management_send(struct apple_rtkit *rtk, u8 type=
-,
-> +static int apple_rtkit_management_send(struct apple_rtkit *rtk, u8 type,
->                                         u64 msg)
->  {
-> +       int ret;
-> +
->         msg &=3D ~APPLE_RTKIT_MGMT_TYPE;
->         msg |=3D FIELD_PREP(APPLE_RTKIT_MGMT_TYPE, type);
-> -       apple_rtkit_send_message(rtk, APPLE_RTKIT_EP_MGMT, msg, NULL, fal=
-se);
-> +       ret =3D apple_rtkit_send_message(rtk, APPLE_RTKIT_EP_MGMT, msg, N=
-ULL, false);
-> +
-> +       if (ret)
-> +               dev_err(rtk->dev, "RTKit: Failed to send management messa=
-ge: %d\n", ret);
-> +
-> +       return ret;
->  }
->
->  static void apple_rtkit_management_rx_hello(struct apple_rtkit *rtk, u64=
- msg)
-> @@ -295,6 +302,9 @@ static int apple_rtkit_common_rx_get_buffer(struct ap=
-ple_rtkit *rtk,
->         return 0;
->
->  error:
-> +       dev_err(rtk->dev, "RTKit: failed buffer request for 0x%zx bytes (=
-%d)\n",
-> +               buffer->size, err);
-> +
->         buffer->buffer =3D NULL;
->         buffer->iomem =3D NULL;
->         buffer->iova =3D 0;
-> @@ -588,11 +598,18 @@ int apple_rtkit_send_message(struct apple_rtkit *rt=
-k, u8 ep, u64 message,
->                 .msg1 =3D ep,
->         };
->
-> -       if (rtk->crashed)
-> +       if (rtk->crashed) {
-> +               dev_warn(rtk->dev,
-> +                        "RTKit: Device is crashed, cannot send message\n=
-");
->                 return -EINVAL;
-> +       }
-> +
->         if (ep >=3D APPLE_RTKIT_APP_ENDPOINT_START &&
-> -           !apple_rtkit_is_running(rtk))
-> +           !apple_rtkit_is_running(rtk)) {
-> +               dev_warn(rtk->dev,
-> +                        "RTKit: Endpoint 0x%02x is not running, cannot s=
-end message\n", ep);
->                 return -EINVAL;
-> +       }
->
->         /*
->          * The message will be sent with a MMIO write. We need the barrie=
-r
-> @@ -742,8 +759,10 @@ static int apple_rtkit_set_ap_power_state(struct app=
-le_rtkit *rtk,
->         reinit_completion(&rtk->ap_pwr_ack_completion);
->
->         msg =3D FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, state);
-> -       apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_AP_PWR_STAT=
-E,
-> -                                   msg);
-> +       ret =3D apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_AP_=
-PWR_STATE,
-> +                                         msg);
-> +       if (ret)
-> +               return ret;
->
->         ret =3D apple_rtkit_wait_for_completion(&rtk->ap_pwr_ack_completi=
-on);
->         if (ret)
-> @@ -763,8 +782,10 @@ static int apple_rtkit_set_iop_power_state(struct ap=
-ple_rtkit *rtk,
->         reinit_completion(&rtk->iop_pwr_ack_completion);
->
->         msg =3D FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, state);
-> -       apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_IOP_PWR_STA=
-TE,
-> -                                   msg);
-> +       ret =3D apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_IOP=
-_PWR_STATE,
-> +                                         msg);
-> +       if (ret)
-> +               return ret;
->
->         ret =3D apple_rtkit_wait_for_completion(&rtk->iop_pwr_ack_complet=
-ion);
->         if (ret)
-> @@ -865,6 +886,7 @@ EXPORT_SYMBOL_GPL(apple_rtkit_quiesce);
->  int apple_rtkit_wake(struct apple_rtkit *rtk)
->  {
->         u64 msg;
-> +       int ret;
->
->         if (apple_rtkit_is_running(rtk))
->                 return -EINVAL;
-> @@ -876,8 +898,10 @@ int apple_rtkit_wake(struct apple_rtkit *rtk)
->          * will wait for the completion anyway.
->          */
->         msg =3D FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, APPLE_RTKIT_PWR_ST=
-ATE_ON);
-> -       apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_IOP_PWR_STA=
-TE,
-> -                                   msg);
-> +       ret =3D apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_IOP=
-_PWR_STATE,
-> +                                         msg);
-> +       if (ret)
-> +               return ret;
->
->         return apple_rtkit_boot(rtk);
->  }
->
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250211-rtkit-more-logging-79cbbbe21eee
->
-> Best regards,
-> --
-> Alyssa Rosenzweig <alyssa@rosenzweig.io>
->
->
+> There are errors with it.
 
-Looks good to me.
+Okay, it should be fine.
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+Frank
 
-
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
+>
+> best regards
+> Shengjiu Wang
+> >
+> > Frank
+> >
+> > >               /* Get dai fmt */
+> > >               ret = simple_util_parse_daifmt(dev, np, codec,
+> > >                                              NULL, &link->dai_fmt);
+> > > --
+> > > 2.34.1
+> > >
 
