@@ -1,76 +1,66 @@
-Return-Path: <linux-kernel+bounces-511141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E583A32681
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:04:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94F3A32683
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C1FC7A31B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:03:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6411166923
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2520820E00E;
-	Wed, 12 Feb 2025 13:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B2B20E306;
+	Wed, 12 Feb 2025 13:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yyFkh7uK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OqFRzqLI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wtnCllAT"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8F820C49F;
-	Wed, 12 Feb 2025 13:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1190120CCF5;
+	Wed, 12 Feb 2025 13:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739365443; cv=none; b=TJB82xQ3rBn1t9Gb1QI5JoW0bbiNRPNvOrdBoA7MqK9m+ZiQr0c/FUkN8BTildaeN+nQiwPqKLfBXSQ8mUxW+D+Y9n2ZezmATl5zqP7TO+wVZvnFhGdIlyu2I/j1/VLyrpQJFTVpmVAvll4JdpijjZzb+BHCM1vEF/6+3oNRyxY=
+	t=1739365457; cv=none; b=cdCSntr+fU+6Z7JIbwBhE7nWSEa6WQYed02ydVtRGwU4vjMuoIWB8E38bArcIKzfFXxzaDghKnuJRBFDdyZx7FUJCbvgc+tbdMTlLk/kYYzmNWzbhHxOuOX6T5T405SUHjsLpQud1Uhm8FArJQm+h9QXpfR89SSHdClhNiVN03w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739365443; c=relaxed/simple;
-	bh=WPpoEVXz6qHST5bg1jg3HxWN+lQyhY1AExJV/hTo36U=;
+	s=arc-20240116; t=1739365457; c=relaxed/simple;
+	bh=XF3aE4u9MDVcJXLrzb1xDxpA18U3deRBPV3zVRngzZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ffVf4E5mq0eiCseFDQai4e8qjrP64IZEms7nxcr1Yp3oXaukAgHn0/0+9BEYRjTJB8FD/l5RlldQYYQ10mA0zYjQPfGguRKdUEXwVT9tuQ+6aOAsxAG2N4eWYcN9E5V104CNZ7wI9bVIor9vLjjSmBuJOxSi72nYAqg5B1amWds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yyFkh7uK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OqFRzqLI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 12 Feb 2025 14:03:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739365440;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=soGwUcM7FS1/q41UUnp8a+P68mixKiDDmCjv27Yua7g=;
-	b=yyFkh7uKgxkpEzxHO9IJM/Su5JamH2HM8z78zJzBJYgf0Lxpy6M6hWQ1rXpixOlD8fL2rZ
-	hiysYZUa5k84oeZDgPBdlpZlO+Oj68XYfCARPvdqf5dE5wV417yuPq3udxS4nxZgyzOlsk
-	+QD4vLafFb3qOWe6fGvm2qbXpquB9TJUiNsAW1ohhUxRsPts8AlEaIUb7ohKiV++04U4Zw
-	/zSZ32L15VL92eJe2Vh/MWaW55AUPwUcvNLkKiXRXOA7gxreGAd3D4W1k1/bG4jeiPMymy
-	tL3tsOCpnUk8JLEkY8P9tKafkORcFX1Xk0YrCP/PhtAKAtJ7Vl2RY9OeFQj9mg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739365440;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=soGwUcM7FS1/q41UUnp8a+P68mixKiDDmCjv27Yua7g=;
-	b=OqFRzqLIlg24n/tDmtYsX94R48vsZwYDpth0U9pqbAGNaSCr8vHQileOHaoaaTu6hn1vpX
-	yjX+qcIgpSa3+KAA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, hch@lst.de, 
-	ojeda@kernel.org, adobriyan@gmail.com, johannes@sipsolutions.net, 
-	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org, anna-maria@linutronix.de, 
-	mark.rutland@arm.com, linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, f.fainelli@gmail.com, 
-	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
-	mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com, 
-	enh@google.com, rientjes@google.com, groeck@chromium.org, mpe@ellerman.id.au, 
-	aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
-Subject: Re: [RFC PATCH v5 2/7] selftests: x86: test_mremap_vdso: skip if
- vdso is msealed
-Message-ID: <20250212135000-861e6353-6e0a-43c3-9b28-649ae4dfc607@linutronix.de>
-References: <20250212032155.1276806-1-jeffxu@google.com>
- <20250212032155.1276806-3-jeffxu@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=INkivKTbYv3cpkcooFGouFSssYNBAWyp3Kr0KL2fR6YcmXO6s8l1DAmdCNUZHe8zE+A2kKfarQFHyfanlUvCIDOG9cy+aD6YIJKpqqS+Z5UsylXFdk1PCPvIT9G4lIB0W3R4VZELxYWQchlaEO8XYpN2NxD7z/EWrjVJUfQ4sS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wtnCllAT; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0sj66E/QwXcmygIYcoyyi03W/kyTbRiJl+nH/qypQi4=; b=wtnCllATKXlCUCZrSQr5izWyYq
+	Epn0gtEFhBE+wa6RvEeGujY1/zSRdCrl23VYsm8ydYVWqTg2sByVFqyOo+ofpuvSc/Xgp08UAgVgn
+	KAweVTGJ7rGbmTYmV4IjEfLTdAyd6qX5uHVUOgSCxUpGK7xMcEApf7ZSSig1Xw1pyY50=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tiCPK-00DOcU-H1; Wed, 12 Feb 2025 14:04:02 +0100
+Date: Wed, 12 Feb 2025 14:04:02 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: dimitri.fedrau@liebherr.com
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dimitri Fedrau <dima.fedrau@gmail.com>
+Subject: Re: [PATCH net-next v4 1/3] dt-bindings: net: ethernet-phy: add
+ property tx-amplitude-100base-tx-percent
+Message-ID: <b60f286a-75c8-4b60-9707-6d834fd4d3ad@lunn.ch>
+References: <20250211-dp83822-tx-swing-v4-0-1e8ebd71ad54@liebherr.com>
+ <20250211-dp83822-tx-swing-v4-1-1e8ebd71ad54@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,64 +69,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212032155.1276806-3-jeffxu@google.com>
+In-Reply-To: <20250211-dp83822-tx-swing-v4-1-1e8ebd71ad54@liebherr.com>
 
-On Wed, Feb 12, 2025 at 03:21:50AM +0000, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
+On Tue, Feb 11, 2025 at 09:33:47AM +0100, Dimitri Fedrau via B4 Relay wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 > 
-> Add code to detect if the vdso is memory sealed, skip the test
-> if it is.
+> Add property tx-amplitude-100base-tx-percent in the device tree bindings
+> for configuring the tx amplitude of 100BASE-TX PHYs. Modifying it can be
+> necessary to compensate losses on the PCB and connector, so the voltages
+> measured on the RJ45 pins are conforming.
 > 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 > ---
->  .../testing/selftests/x86/test_mremap_vdso.c  | 38 +++++++++++++++++++
->  1 file changed, 38 insertions(+)
+>  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/tools/testing/selftests/x86/test_mremap_vdso.c b/tools/testing/selftests/x86/test_mremap_vdso.c
-> index d53959e03593..c68077c56b22 100644
-> --- a/tools/testing/selftests/x86/test_mremap_vdso.c
-> +++ b/tools/testing/selftests/x86/test_mremap_vdso.c
-> @@ -14,6 +14,7 @@
->  #include <errno.h>
->  #include <unistd.h>
->  #include <string.h>
-> +#include <stdbool.h>
+> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> index 2c71454ae8e362e7032e44712949e12da6826070..e0c001f1690c1eb9b0386438f2d5558fd8c94eca 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> @@ -232,6 +232,12 @@ properties:
+>        PHY's that have configurable TX internal delays. If this property is
+>        present then the PHY applies the TX delay.
 >  
->  #include <sys/mman.h>
->  #include <sys/auxv.h>
-> @@ -55,13 +56,50 @@ static int try_to_remap(void *vdso_addr, unsigned long size)
->  
->  }
->  
-> +#define VDSO_NAME "[vdso]"
-> +#define VMFLAGS "VmFlags:"
-> +#define MSEAL_FLAGS "sl"
-> +#define MAX_LINE_LEN 512
-> +
-> +bool vdso_sealed(FILE *maps)
-> +{
-> +	char line[MAX_LINE_LEN];
-> +	bool has_vdso = false;
-> +
-> +	while (fgets(line, sizeof(line), maps)) {
-> +		if (strstr(line, VDSO_NAME))
-> +			has_vdso = true;
-> +
-> +		if (has_vdso && !strncmp(line, VMFLAGS, strlen(VMFLAGS))) {
-> +			if (strstr(line, MSEAL_FLAGS))
-> +				return true;
-> +
-> +			return false;
+> +  tx-amplitude-100base-tx-percent:
+> +    description:
+> +      Transmit amplitude gain applied for 100BASE-TX. When omitted, the PHYs
+> +      default will be left as is.
+> +    default: 100
 
-This only tests that any mapping after the vdso is sealed.
-There is a real parser for /proc/self/smaps in
-tools/testing/selftests/mm/vm_util.[ch], see check_vmflag_io().
+Doesn't having a default statement contradict the text? Maybe the
+bootloader has set it to 110%, the text suggests it will be left at
+that, but the default value of 100 means it will get set back to 100%?
 
-> +		}
-> +	}
-> +
-> +	return false;
-> +}
+What do your driver changes actually do?
 
-<snip>
+	Andrew
 
