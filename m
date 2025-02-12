@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-511731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB79A32EDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:48:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FE8A32EE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B1DA7A1762
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:48:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0815F7A2CD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5049260A4F;
-	Wed, 12 Feb 2025 18:48:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914812116F5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09473260A3F;
+	Wed, 12 Feb 2025 18:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="wTdGCD0k"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A375E25B689;
+	Wed, 12 Feb 2025 18:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739386127; cv=none; b=SMJm3Sa8cnE/KFxTk7HEJqoCL4NHNqtwPsJT1+8XWBQKYzH83Pk1DNoIXsWS6kurkjIdp9HTGNC58onDujL0hYVE+L4ZaBR1y9AuSm1tTaTDkUboxS68yS4rdB3FNfKJMl2U5OBsC0SJpdBxxzzWDFdyqx5o5vvave2myIHivB0=
+	t=1739386137; cv=none; b=XLq8AzQtM1eBr58vFvAumI7fBnCkAuIxP2TYDtWCVvWobMKjZPb1XNcMLCqG7VCBlMF9HhTgOpP+dkWz/Ifc6Xm1AssydpDtqUpxklp3jdbspW+e9ASbpP20AdNyRPVyUyxaHDNBUmuyz0MRwBM76ryt17WApG5K7MU3ivNH8fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739386127; c=relaxed/simple;
-	bh=EPaDlXqdeo/5WchY7h4bV0WV4vJvAT4/PZlfRf6blgM=;
+	s=arc-20240116; t=1739386137; c=relaxed/simple;
+	bh=cJ4xjBVT34Te8xOhdsM+iqRMXJ1gLZlE2BJA8YnTqcA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XDo+FyAT4sIonmm0I0bvLjiy+8+HsPQBQG1MYOBdhyY3BPs9rZSbRPFHfk4mKESrzl52YDX0MeZjIv2NAG7BY2XvVBEBVt1VAwfWpZEuiHu5oW5wNNw/ioMeq/BZaPI1A2VDexNNye83Swb44Bp/qDqL2jB+DyXbebhRcpJIHP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6BFA113E;
-	Wed, 12 Feb 2025 10:49:04 -0800 (PST)
-Received: from [10.57.36.240] (unknown [10.57.36.240])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 083613F58B;
-	Wed, 12 Feb 2025 10:48:41 -0800 (PST)
-Message-ID: <55743353-60fb-4ad2-a0c2-6d5a3a2f8ac0@arm.com>
-Date: Wed, 12 Feb 2025 18:48:40 +0000
+	 In-Reply-To:Content-Type; b=b51NuEYvmHF6UlIelzQfbiBGIHD9Bdx3G/gYEV2ilO9zOf1Cb5KdHIPmSa5+DxzO2WZpWyB4sEGQ+NsSG2JhwtUMfmJaa+49iUEdlFKf/Rum4Bl8enxV4uc/8262NJfK5LonxbEzMV07cQlETYEKFFkEhLztuQ++TQA2si2kDy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=wTdGCD0k; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4YtS5F2hGlz6Cl0jX;
+	Wed, 12 Feb 2025 18:48:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1739386124; x=1741978125; bh=Ed3TZsxbinVVCbs1/cx1GNVl
+	DZdZKrZvTnFO8NQKKgY=; b=wTdGCD0k40b2735mz65OJarJCV9JIUhCiUHR6QSo
+	YyOACUFyIQ/N0QiboV8dW+OTeeW8q+i0nAw8uQ7kKLRYbG6v5PmXFHOGvWhFhbfB
+	PZyo5+cfCM41ZCsjtnUTt8fwSAOnfwaG5o/LDCQDjjdEthsi3AQovExhOYGi5Fzz
+	xs0X7I3dQpdfpKQQOqP6NooWWaqCKJhQ/2prsHLBOWx2ygOcrMtPQshRDcorS4Bw
+	nnCMUfuKOI+EFOSyUCfpROWHGhCcLo0flD+DFODOcZD7P0BxEDdHa6elbRYLYNiu
+	/0TomnP62LUVTWDOQzkCYO8LkcxePcRemjPu4z4eDU/g6w==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id pGMmm2Koljea; Wed, 12 Feb 2025 18:48:44 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4YtS561Qf6z6Ckj6B;
+	Wed, 12 Feb 2025 18:48:41 +0000 (UTC)
+Message-ID: <7a39a882-4f00-483e-942d-36a7cff53954@acm.org>
+Date: Wed, 12 Feb 2025 10:48:41 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,222 +64,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] arm64: realm: Use aliased addresses for device DMA to
- shared buffers
-Content-Language: en-GB
-To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org, maz@kernel.org,
- catalin.marinas@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- gregkh@linuxfoundation.org, aneesh.kumar@kernel.org, steven.price@arm.com,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Christoph Hellwig <hch@lst.de>, Tom Lendacky <thomas.lendacky@amd.com>
-References: <20250212171411.951874-1-suzuki.poulose@arm.com>
- <20250212171411.951874-2-suzuki.poulose@arm.com>
- <7ebe959b-132e-468a-bad5-5273427b6928@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <7ebe959b-132e-468a-bad5-5273427b6928@arm.com>
+Subject: Re: [PATCH] scsi: hpsa: Use min() to simplify code
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Don Brace <don.brace@microchip.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: storagedev@microchip.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250212115557.111263-2-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250212115557.111263-2-thorsten.blum@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Robin
-
-On 12/02/2025 18:18, Robin Murphy wrote:
-> On 2025-02-12 5:14 pm, Suzuki K Poulose wrote:
->> When a device performs DMA to a shared buffer using physical addresses,
->> (without Stage1 translation), the device must use the "{I}PA address" 
->> with the
->> top bit set in Realm. This is to make sure that a trusted device will 
->> be able
->> to write to shared buffers as well as the protected buffers. Thus, a 
->> Realm must
->> always program the full address including the "protection" bit, like 
->> AMD SME
->> encryption bits.
->>
->> Add the support for this by providing arm64 version of the 
->> phys_to_dma(). We
->> cannot use the __sme_mask as it assumes the "encryption" always "sets 
->> a bit",
->> which is the opposite for CCA. i.e., "set a bit" for "decrypted" 
->> address. So,
->> move the common code that can be reused by all - i.e., add 
->> __phys_to_dma() and
->> __dma_to_phys() - and do the arch specific processing.
->>
->> Please note that the VMM needs to similarly make sure that the SMMU 
->> Stage2 in
->> the Non-secure world is setup accordingly to map IPA at the 
->> unprotected alias.
->>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Robin Murphy <robin.murphy@arm.com>
->> Cc: Steven Price <steven.price@arm.com>
->> Cc: Christoph Hellwig <hch@lst.de>
->> Cc: Tom Lendacky <thomas.lendacky@amd.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/Kconfig                  |  1 +
->>   arch/arm64/include/asm/dma-direct.h | 38 +++++++++++++++++++++++++++++
->>   include/linux/dma-direct.h          | 35 +++++++++++++++++---------
->>   3 files changed, 62 insertions(+), 12 deletions(-)
->>   create mode 100644 arch/arm64/include/asm/dma-direct.h
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index fcdd0ed3eca8..7befe04106de 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -41,6 +41,7 @@ config ARM64
->>       select ARCH_HAS_NMI_SAFE_THIS_CPU_OPS
->>       select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
->>       select ARCH_HAS_NONLEAF_PMD_YOUNG if ARM64_HAFT
->> +    select ARCH_HAS_PHYS_TO_DMA
->>       select ARCH_HAS_PTE_DEVMAP
->>       select ARCH_HAS_PTE_SPECIAL
->>       select ARCH_HAS_HW_PTE_YOUNG
->> diff --git a/arch/arm64/include/asm/dma-direct.h b/arch/arm64/include/ 
->> asm/dma-direct.h
->> new file mode 100644
->> index 000000000000..37c3270542b8
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/dma-direct.h
->> @@ -0,0 +1,38 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +#ifndef __ASM_DMA_DIRECT_H
->> +#define __ASM_DMA_DIRECT_H
->> +
->> +#include <asm/pgtable-prot.h>
->> +
->> +static inline unsigned long addr_to_shared(unsigned long addr)
->> +{
->> +    if (is_realm_world())
->> +        addr |= prot_ns_shared;
->> +    return addr;
->> +}
->> +
->> +static inline unsigned long addr_to_private(unsigned long addr)
->> +{
->> +    if (is_realm_world())
->> +        addr &= prot_ns_shared - 1;
->> +    return addr;
->> +}
->> +
->> +static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t 
->> paddr)
->> +{
->> +    return __phys_to_dma(dev, paddr);
->> +}
->> +
->> +static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
->> +                         phys_addr_t paddr)
->> +{
->> +    return addr_to_shared(__phys_to_dma(dev, paddr));
->> +}
->> +#define phys_to_dma_unencrypted phys_to_dma_unencrypted
->> +
->> +static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t 
->> dma_addr)
->> +{
->> +    return addr_to_private(__dma_to_phys(dev, dma_addr));
->> +}
->> +
->> +#endif    /* __ASM_DMA_DIRECT_H */
->> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
->> index d7e30d4f7503..3e9bf6ca640e 100644
->> --- a/include/linux/dma-direct.h
->> +++ b/include/linux/dma-direct.h
->> @@ -72,18 +72,36 @@ static inline dma_addr_t dma_range_map_max(const 
->> struct bus_dma_region *map)
->>       return ret;
->>   }
->> +static inline dma_addr_t __phys_to_dma(struct device *dev, 
->> phys_addr_t paddr)
->> +{
->> +    if (dev->dma_range_map)
->> +        return translate_phys_to_dma(dev, paddr);
->> +    return paddr;
->> +}
->> +
->> +static inline phys_addr_t __dma_to_phys(struct device *dev, 
->> dma_addr_t dma_addr)
->> +{
->> +    phys_addr_t paddr;
->> +
->> +    if (dev->dma_range_map)
->> +        paddr = translate_dma_to_phys(dev, dma_addr);
->> +    else
->> +        paddr = dma_addr;
->> +
->> +    return paddr;
->> +}
->> +
->>   #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
->>   #include <asm/dma-direct.h>
->>   #ifndef phys_to_dma_unencrypted
->>   #define phys_to_dma_unencrypted        phys_to_dma
->>   #endif
->>   #else
->> +
->>   static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
->>           phys_addr_t paddr)
->>   {
->> -    if (dev->dma_range_map)
->> -        return translate_phys_to_dma(dev, paddr);
->> -    return paddr;
->> +    return __phys_to_dma(dev, paddr);
->>   }
->>   /*
->> @@ -94,19 +112,12 @@ static inline dma_addr_t 
->> phys_to_dma_unencrypted(struct device *dev,
->>    */
->>   static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t 
->> paddr)
->>   {
->> -    return __sme_set(phys_to_dma_unencrypted(dev, paddr));
->> +    return __sme_set(__phys_to_dma(dev, paddr));
+On 2/12/25 3:55 AM, Thorsten Blum wrote:
+> Use min() to simplify the host_store_hp_ssd_smart_path_status() and
+> host_store_raid_offload_debug() functions.
 > 
-> Hmm, it really feels like we should generalise __sme_{set,clr} at this 
-> level, rather than drag in the entire ARCH_HAS_PHYS_TO_DMA override for 
-> the purposes of setting/clearing an address bit just because the 
-> "generic" mechanism for doing that is unashamedly AMD-specific.
-
-I was planning to convert that to use ARCH_HAS_PHYS_TO_DMA ;-) too, in a
-separate patch, to get rid of this "one approach" works for all hook.
-
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>   drivers/scsi/hpsa.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Maybe something like:
-> 
-> #define dma_shared(x)  sme_clr(x)
-> #define dma_private(x) sme_set(x)
-> 
-> for x86, then go from there?
+> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+> index 84d8de07b7ae..1d19eb2ca1d3 100644
+> --- a/drivers/scsi/hpsa.c
+> +++ b/drivers/scsi/hpsa.c
+> @@ -460,7 +460,7 @@ static ssize_t host_store_hp_ssd_smart_path_status(struct device *dev,
+>   
+>   	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
+>   		return -EACCES;
+> -	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
+> +	len = min(count, sizeof(tmpbuf) - 1);
+>   	strncpy(tmpbuf, buf, len);
+>   	tmpbuf[len] = '\0';
+>   	if (sscanf(tmpbuf, "%d", &status) != 1)
+> @@ -484,7 +484,7 @@ static ssize_t host_store_raid_offload_debug(struct device *dev,
+>   
+>   	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
+>   		return -EACCES;
+> -	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
+> +	len = min(count, sizeof(tmpbuf) - 1);
+>   	strncpy(tmpbuf, buf, len);
+>   	tmpbuf[len] = '\0';
+>   	if (sscanf(tmpbuf, "%d", &debug_level) != 1)
 
-But this looks sensible too, can switch to this approach.
-Thanks for the feedback.
+ From Documentation/process/deprecated.rst:
 
-Suzuki
+<quote>
+strncpy() on NUL-terminated strings
+-----------------------------------
+Use of strncpy() does not guarantee that the destination buffer will
+be NUL terminated. This can lead to various linear read overflows and
+other misbehavior due to the missing termination. It also NUL-pads
+the destination buffer if the source contents are shorter than the
+destination buffer size, which may be a needless performance penalty
+for callers using only NUL-terminated strings.
 
+When the destination is required to be NUL-terminated, the replacement is
+strscpy(), though care must be given to any cases where the return value
+of strncpy() was used, since strscpy() does not return a pointer to the
+destination, but rather a count of non-NUL bytes copied (or negative
+errno when it truncates). Any cases still needing NUL-padding should
+instead use strscpy_pad().
 
-> 
-> Thanks,
-> Robin.
-> 
->>   }
->>   static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t 
->> dma_addr)
->>   {
->> -    phys_addr_t paddr;
->> -
->> -    if (dev->dma_range_map)
->> -        paddr = translate_dma_to_phys(dev, dma_addr);
->> -    else
->> -        paddr = dma_addr;
->> -
->> -    return __sme_clr(paddr);
->> +    return __sme_clr(__dma_to_phys(dev, dma_addr));
->>   }
->>   #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
-> 
+If a caller is using non-NUL-terminated strings, strtomem() should be
+used, and the destinations should be marked with the `__nonstring
+<https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html>`_
+attribute to avoid future compiler warnings. For cases still needing
+NUL-padding, strtomem_pad() can be used.
+</quote>
 
+Instead of only changing the calculation of 'len', please change the
+strncpy() calls into strscpy() calls.
+
+Thanks,
+
+Bart.
 
