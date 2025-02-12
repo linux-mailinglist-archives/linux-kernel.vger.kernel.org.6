@@ -1,118 +1,225 @@
-Return-Path: <linux-kernel+bounces-512067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0AAFA3339F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:46:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A82A333A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:47:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F89D188A957
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:47:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7F143A889C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37FB20967E;
-	Wed, 12 Feb 2025 23:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Ldvvc3op"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A137E126C05
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403AA20AF66;
+	Wed, 12 Feb 2025 23:47:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5B32046B2;
+	Wed, 12 Feb 2025 23:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739404009; cv=none; b=LowK+ELfa18IgN9JWiRcbLvNxAuk9EiJw6LO3ubvtqJ82Kf3dSsAMqvLrU9H6TLHOOWaGI2+duxP7ZzVeTdGDZXB1SaovehQtMeSJ/ijBXy4CZTabzFBYlExqHDmIwmyd73oHgorNcD+9YoGyGrRRHpzoobq9VvyW88t6ma9Xm4=
+	t=1739404035; cv=none; b=tDjzh2rQZNVZsqu81NFyhBZSXYGuDRYSFuLxgfHUZUDLx5JwxqeTwVV/3O5qBMYJWT00KLe7YMJmdnrZ2STR5OdESw0he9YHZ2Z+MiV1Dbt9f62nTDA6eUFzzPtQOT6sMFu5wM6nX3JxwCUiPHdyE9+Sd95U7rePiVJRR9o+g4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739404009; c=relaxed/simple;
-	bh=o6FDtd+rlSa8IIiwz0tvMUjI0siD1ajnHXHA0qLGxTA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LJesRoUUMwMuqhWvU6zHkeJSZM7zm9wz4jkWR3mVcrfmEkvBMjAsj3OVZXSNZOzqT/1sSrbKU/U8NlYbMLpJ4zn2evQy75tagMCUR1diYdEmLsaVfF5QQ0EgFijMKoMGgNf4fzcwbno5P+nDhVAYKQtX4cQYZl2oGNGpq+vhCuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Ldvvc3op; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fbfe16cbf5so75478a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:46:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1739404007; x=1740008807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6FDtd+rlSa8IIiwz0tvMUjI0siD1ajnHXHA0qLGxTA=;
-        b=Ldvvc3opMEZidGkydWHylsEzqF9pl5POspaUypyrzogGSdVRg1k906P1tyBs39rV6t
-         qy+yFdjmO2ZkGbcTDRluUjoeSE5PsOQPpCOyb7OGh/luPH1HndqcbxcRbDM7h4DvrvEo
-         qu+JY9hte81bH/6nPOnO5PPauKr3HE9ayDeWI90gbiNwIjkg9frNRoZE689CXtKgiPve
-         9Jix32Joj9UpsVCdSnX8N1C51gnYybD+DVVVdnrqlLLyGhrKtN+D9qS1TrcyUPN6iFOT
-         i0mTugUbkQkd7NQKmDlDabXKFFJdPkqC9uncChgS9u3V3nJtlOT+DKuxAssJj27d/Lx3
-         HWZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739404007; x=1740008807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o6FDtd+rlSa8IIiwz0tvMUjI0siD1ajnHXHA0qLGxTA=;
-        b=XBFSAyLf9pnfNqhNtGdvjgRKXqairtr4FvBnm5C6QVqjDxWrnjta0ROnbIdCrkoNfY
-         mO+TUJpmriNChNEmIqNH1mELF5mzSzmnDeTda3ilivbWqZO16VvcNwBc6vIkUMEovcZ/
-         /MtKwXjvBuFQspf2it61C4HDIpvKC4s0y/Hwr9NSnW1C9W7969A4vl+Ke2AQngyLYBJn
-         rHun+pjdHnLESVjUclXYbqM+vzlF+D2sm0Ome/zc9ACY4sMo6/pfgtlXBb6kH5cOvSrI
-         1Sr98QdeQzNVniSssuFa7SzC+5sZqQxiUmCtM6qtoeMU0KXTecjIHgMiyBZs5BDQXYeh
-         zVWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEBHNoSRgLB2VRd1MpEj3lFz2CCeKKQ4nu3XHYw6j5PPCNS6jx0qWdylSzhF0j/Y+mfFvH4OJkh+qthcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu+iHyGCuGp4S6t9IfXFZJtU3BEkfrgZdGPBwGk2RY26o4fIPO
-	gr3loyJleouzrhuWCL0SrEUnba1bcsliVuvGQvGQgZIu4yHYA77Z2F7DOBf4pi6meSngm6H4gZ2
-	0r3lBaWzHFlod+NO68XysNUwK2mx918LXRvmeWQ==
-X-Gm-Gg: ASbGncvC1MP+PUo4Eef+7tsRCF5XtlenORgYg89X3s5kVwsWPjjmGG1/BsSRF0Q7TTt
-	kEZ1H2/BhzQgdGyHztVfqFL/h7USySyENwzrjkKGZnMko6cFnXTi2J72ek9K1tOGmpJBxOgU=
-X-Google-Smtp-Source: AGHT+IFUzD6F21FEiPi2oFeL5AqMhJ27H5M6NGdg1O+UC3vP8pRfnkjBXARokV8Obb0d2BBChyHfyOpmrmhnjIGPTY0=
-X-Received: by 2002:a17:90b:3845:b0:2ee:948b:72d3 with SMTP id
- 98e67ed59e1d1-2fbf5bb8de3mr3010403a91.1.1739404006850; Wed, 12 Feb 2025
- 15:46:46 -0800 (PST)
+	s=arc-20240116; t=1739404035; c=relaxed/simple;
+	bh=hHKR+zd/LcZnjzFpifORs+YQ+3C7tKWUmFGFiBtvG/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l9UIgICvZYKY9ysqutUZygZUpy+y1IVuLxle//dJDSikq+9ZP6WanccnLXrPv5oV6GSivVFhUjvXvrIHu8lQiY2q3xfIIeaMh9UO/moX8sHVCSQbxNTUSNB0/w60MijjIPgKy/47Uj7Joz73L1WLhE3Ky5VB5VoWJyOq48+PvJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF053106F;
+	Wed, 12 Feb 2025 15:47:32 -0800 (PST)
+Received: from [10.57.37.151] (unknown [10.57.37.151])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 415783F58B;
+	Wed, 12 Feb 2025 15:47:10 -0800 (PST)
+Message-ID: <96959ef4-2287-4601-85fb-2ce457c605d2@arm.com>
+Date: Wed, 12 Feb 2025 23:47:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212204546.3751645-1-csander@purestorage.com>
- <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk> <CADUfDZqK9+GLsRSdFVd47eZTsz863B3m16GtHc+Buiqdr7Jttg@mail.gmail.com>
- <999d55a6-b039-4a76-b0f6-3d055e91fd48@kernel.dk> <CADUfDZrjDF+xH1F98mMdR6brnPMARZ64yomfTYZ=5NStFM5osQ@mail.gmail.com>
- <Z60s3ryl5UotleV-@kbusch-mbp>
-In-Reply-To: <Z60s3ryl5UotleV-@kbusch-mbp>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 12 Feb 2025 15:46:34 -0800
-X-Gm-Features: AWEUYZnYCZGJbY6mpKpWZGNclaPT0GiXmiIEetwGyU1NF3JZsUGwzvo9IcWcJjg
-Message-ID: <CADUfDZqa5v7Rb-EXp-v_iMXAESts8u-DisMtjdBEu2+kK-ykeQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
-To: Keith Busch <kbusch@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
-	Riley Thomasson <riley@purestorage.com>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] mmc: core: Handle undervoltage events and register
+ regulator notifiers
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20250212132403.3978175-1-o.rempel@pengutronix.de>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20250212132403.3978175-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 3:21=E2=80=AFPM Keith Busch <kbusch@kernel.org> wro=
-te:
->
-> On Wed, Feb 12, 2025 at 03:07:30PM -0800, Caleb Sander Mateos wrote:
-> >
-> > Yes, we completely agree. We are working on incorporating Keith's
-> > patchset now. It looks like there is still an open question about
-> > whether userspace will need to enforce ordering between the requests
-> > (either using linked operations or waiting for completions before
-> > submitting the subsequent operations).
->
-> In its current form, my series depends on you *not* using linked
-> requests. I didn't think it would be a problem as it follows an existing
-> pattern from the IORING_OP_FILES_UPDATE operation. That has to complete
-> in its entirety before prepping any subsequent commands that reference
-> the index, and using links would get the wrong results.
+On 2/12/25 13:24, Oleksij Rempel wrote:
+> Extend the MMC core to handle undervoltage events by implementing
+> infrastructure to notify the MMC bus about voltage drops.
+> 
+> Background & Decision at LPC24:
+> 
+> This solution was proposed and refined during LPC24 in the talk
+> "Graceful Under Pressure: Prioritizing Shutdown to Protect Your Data in
+> Embedded Systems" which aimed to address how Linux should handle power
+> fluctuations in embedded devices to prevent data corruption or storage
+> damage.
+> 
+> At the time, multiple possible solutions were considered:
+> 
+> 1. Triggering a system-wide suspend or shutdown: when undervoltage is
+>    detected, with device-specific prioritization to ensure critical
+>    components shut down first.
+>    - This approach was disliked by Greg Kroah-Hartman, as it introduced
+>      complexity and was not suitable for all use cases.
+> 
+> 2. Notifying relevant devices through the regulator framework: to allow
+>    graceful per-device handling.
+>    - This approach was agreed upon as the most acceptable: by participants
+>      in the discussion, including Greg Kroah-Hartman, Mark Brown,
+>      and Rafael J. Wysocki.
+>    - This patch implements that decision by integrating undervoltage
+>      handling into the MMC subsystem.
+> 
+> This patch was tested on iMX8MP based system with SDHCI controller.
 
-As implementers of a ublk server, we would also prefer the current
-interface in your patch series! Having to explicitly order the
-requests would definitely make the interface more cumbersome and
-probably less performant. I was just saying that Ming and Pavel had
-raised some concerns about guaranteeing the order in which io_uring
-issues SQEs. IORING_OP_FILES_UPDATE is a good analogy. Do we have any
-examples of how applications use it? Are they waiting for a
-completion, linking it, or relying on io_uring to issue it
-synchronously?
+Any details here? How long does it take from undervoltage to
+poweroff notification.
+Roughly how long of a heads up would that yield in realistic
+undervoltage scenarios?
+
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/mmc/core/card.h      |  5 ++
+>  drivers/mmc/core/core.c      | 29 ++++++++++++
+>  drivers/mmc/core/core.h      |  2 +
+>  drivers/mmc/core/mmc.c       |  6 +++
+>  drivers/mmc/core/regulator.c | 90 ++++++++++++++++++++++++++++++++++++
+>  include/linux/mmc/host.h     |  4 ++
+>  6 files changed, 136 insertions(+)
+> 
+> diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h
+> index 3205feb1e8ff..f8341e1657f0 100644
+> --- a/drivers/mmc/core/card.h
+> +++ b/drivers/mmc/core/card.h
+> @@ -24,6 +24,9 @@
+>  #define MMC_CARD_REMOVED	(1<<4)		/* card has been removed */
+>  #define MMC_STATE_SUSPENDED	(1<<5)		/* card is suspended */
+>  #define MMC_CARD_SDUC		(1<<6)		/* card is SDUC */
+> +#define MMC_CARD_UNDERVOLTAGE   (1<<7)		/* card is in undervoltage
+> +						 * condition
+> +						 */
+>  
+>  #define mmc_card_present(c)	((c)->state & MMC_STATE_PRESENT)
+>  #define mmc_card_readonly(c)	((c)->state & MMC_STATE_READONLY)
+> @@ -32,6 +35,7 @@
+>  #define mmc_card_removed(c)	((c) && ((c)->state & MMC_CARD_REMOVED))
+>  #define mmc_card_suspended(c)	((c)->state & MMC_STATE_SUSPENDED)
+>  #define mmc_card_ult_capacity(c) ((c)->state & MMC_CARD_SDUC)
+> +#define mmc_card_in_undervoltage(c) ((c)->state & MMC_CARD_UNDERVOLTAGE)
+>  
+>  #define mmc_card_set_present(c)	((c)->state |= MMC_STATE_PRESENT)
+>  #define mmc_card_set_readonly(c) ((c)->state |= MMC_STATE_READONLY)
+> @@ -41,6 +45,7 @@
+>  #define mmc_card_set_removed(c) ((c)->state |= MMC_CARD_REMOVED)
+>  #define mmc_card_set_suspended(c) ((c)->state |= MMC_STATE_SUSPENDED)
+>  #define mmc_card_clr_suspended(c) ((c)->state &= ~MMC_STATE_SUSPENDED)
+> +#define mmc_card_set_undervoltage(c) ((c)->state |= MMC_CARD_UNDERVOLTAGE)
+>  
+>  /*
+>   * The world is not perfect and supplies us with broken mmc/sdio devices.
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index 5241528f8b90..4b94017d2600 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -1399,6 +1399,35 @@ void mmc_power_cycle(struct mmc_host *host, u32 ocr)
+>  	mmc_power_up(host, ocr);
+>  }
+>  
+> +/**
+> + * mmc_handle_undervoltage - Handle an undervoltage event on the MMC bus
+> + * @host: The MMC host that detected the undervoltage condition
+> + *
+> + * This function is called when an undervoltage event is detected on one of
+> + * the MMC regulators.
+> + *
+> + * Returns: 0 on success or a negative error code on failure.
+> + */
+> +int mmc_handle_undervoltage(struct mmc_host *host)
+> +{
+> +	spin_lock(&host->lock);
+> +
+> +	if (!host->card || mmc_card_in_undervoltage(host->card)) {
+> +		spin_unlock(&host->lock);
+> +		return 0;
+> +	}
+> +
+> +	/* Mark the card as in undervoltage condition */
+> +	mmc_card_set_undervoltage(host->card);
+> +	spin_unlock(&host->lock);
+> +
+> +	/* Call bus-specific undervoltage handler if available */
+> +	if (host->bus_ops && host->bus_ops->handle_undervoltage)
+> +		return host->bus_ops->handle_undervoltage(host);
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Assign a mmc bus handler to a host. Only one bus handler may control a
+>   * host at any given time.
+> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+> index fc9c066e6468..578c98e2f04d 100644
+> --- a/drivers/mmc/core/core.h
+> +++ b/drivers/mmc/core/core.h
+> @@ -31,6 +31,7 @@ struct mmc_bus_ops {
+>  	int (*sw_reset)(struct mmc_host *);
+>  	bool (*cache_enabled)(struct mmc_host *);
+>  	int (*flush_cache)(struct mmc_host *);
+> +	int (*handle_undervoltage)(struct mmc_host *);
+>  };
+>  
+>  void mmc_attach_bus(struct mmc_host *host, const struct mmc_bus_ops *ops);
+> @@ -59,6 +60,7 @@ void mmc_power_off(struct mmc_host *host);
+>  void mmc_power_cycle(struct mmc_host *host, u32 ocr);
+>  void mmc_set_initial_state(struct mmc_host *host);
+>  u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
+> +int mmc_handle_undervoltage(struct mmc_host *host);
+>  
+>  static inline void mmc_delay(unsigned int ms)
+>  {
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 6a23be214543..c8b8e7a7b7d6 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -2273,6 +2273,11 @@ static int _mmc_hw_reset(struct mmc_host *host)
+>  	return mmc_init_card(host, card->ocr, card);
+>  }
+>  
+> +static int _mmc_handle_undervoltage(struct mmc_host *host)
+> +{
+> +	return mmc_shutdown(host);
+> +}
+> +
+
+The poweroff notification part I understand, because it polls for busy
+(i.e. hopefully until the card thinks it's done committing to flash).
+Poweroff isn't always available though, the other paths of
+_mmc_suspend() are:
+
+	else if (mmc_can_sleep(host->card))
+		err = mmc_sleep(host);
+	else if (!mmc_host_is_spi(host))
+		err = mmc_deselect_cards(host);
+
+	if (!err) {
+		mmc_power_off(host);
+
+So we may also just deselect, which AFAIR succeeds as a FSM (i.e.
+doesn't mean anything was committed to flash) and then we just
+poweroff.
+Is that what we want in an undervoltage scenario?
 
