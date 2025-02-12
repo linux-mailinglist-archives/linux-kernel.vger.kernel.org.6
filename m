@@ -1,200 +1,329 @@
-Return-Path: <linux-kernel+bounces-511435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1992AA32B09
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:01:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0E7A32B0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:02:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72485167C45
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCCBE164492
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0D6253B49;
-	Wed, 12 Feb 2025 16:00:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8A522333F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03422744D;
+	Wed, 12 Feb 2025 16:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kBFyOMRB"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2443E1B21AD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739376032; cv=none; b=Jc8JdeORkxB4yz+bje88AWg0D3OqkW3Ewjl7GwJdYSRaZy82jQQDFkQR6TQK9yvpfQA4xUrA+9nNr6dOGZTrBSvuNg1zvtFh+ludw5xIfCgcXXcysXiz0PDnd/9lQYXvYfZRdWlJAfdnvew3nXlveekpoSJHXgPfZBwFt3c4T+0=
+	t=1739376110; cv=none; b=oUM6/ILOn9ysZik3mk+SHSQ7LPr42HC60CPyJwfIjibED5ZYffFFzx8WaRMmcfEzqxQeIfz9nOgyYJ7h7e6nT6C1i5MflPRgQ7iNo2iZkAvpVDHJr4k3bFRWMlbS2DLNYEx9lDeLTYXI87/dcPbS9FsugIpXOOsvp7c1jOF0j1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739376032; c=relaxed/simple;
-	bh=joLO9v/8cNWLxylCqQoACHdMoKnJz4vJUD1BNrVyQUs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LvnxRQGnwSj/scenOL5kUHjNaI964x9WDEgTtxMY7hHiZ7nafI8G7VpSyIt9gAU5W6hibOscPk/BbaL/dLpqalD1HcmTok+G4bPuTFQ9DL8HZtJsxDMYoEuaCvVeLHAXI/adY2Mvux1AnjxNlgJsCQPNSE1au4S7/+mOs+8VBgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A89BF12FC;
-	Wed, 12 Feb 2025 08:00:50 -0800 (PST)
-Received: from [10.57.81.93] (unknown [10.57.81.93])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12BD23F6A8;
-	Wed, 12 Feb 2025 08:00:26 -0800 (PST)
-Message-ID: <6b3ad437-04df-41c6-81f4-c0fec5a099ec@arm.com>
-Date: Wed, 12 Feb 2025 16:00:25 +0000
+	s=arc-20240116; t=1739376110; c=relaxed/simple;
+	bh=O3xP3Kv4ue9SRZO9yoN0LhLQzJPAvXKalm0H21fLOcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=im8MbtN5Bccebidu+a1BTDWrwSYJg/0RDcAJZUaAEpozaqYw+ZAAEWe2e7cZ0tv7surHnkEbSYiXBW7nD448OvytD1TKgSLFSCMJtCqTidwL8RjU8bd34fBNR8x8P/mzu8qAut/uJ9b3Ilk1fGrjTRhYxNXjuag8e1E1frBljvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kBFyOMRB; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 12 Feb 2025 16:01:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739376106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v4Nj4mEHCXAl1eKShLrxkBx5V4PjtNl3cv+kh46Bl/g=;
+	b=kBFyOMRBYL+85+B/9XOMAECNpb9WXs453vaiFN50Gwpx/7q1XBlM188t7RXg0zP5QzTEa9
+	E+rSCavAHMpFGgnjQBFUbfEuzWGOzDpFdjyatMYA8cw62QtqKlLtSMNNZcqZHXSYldWtcV
+	KGGco0GAPlpcANByEU76P7o8ieZ/w5c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 02/18] zram: permit preemption with active compression
+ stream
+Message-ID: <Z6zF5QvTQwVoAhMP@google.com>
+References: <20250212063153.179231-1-senozhatsky@chromium.org>
+ <20250212063153.179231-3-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 08/16] arm64/mm: Hoist barriers out of ___set_ptes()
- loop
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Muchun Song <muchun.song@linux.dev>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
- Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250205151003.88959-1-ryan.roberts@arm.com>
- <20250205151003.88959-9-ryan.roberts@arm.com>
- <858ecac5-9ba7-48da-8f34-ffda28d17609@arm.com>
- <e0400886-d4bc-40f5-8375-fc3d515fd386@arm.com>
-In-Reply-To: <e0400886-d4bc-40f5-8375-fc3d515fd386@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212063153.179231-3-senozhatsky@chromium.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 07/02/2025 10:38, Ryan Roberts wrote:
-> On 07/02/2025 05:35, Anshuman Khandual wrote:
->>
->>
->> On 2/5/25 20:39, Ryan Roberts wrote:
->>> ___set_ptes() previously called __set_pte() for each PTE in the range,
->>> which would conditionally issue a DSB and ISB to make the new PTE value
->>> immediately visible to the table walker if the new PTE was valid and for
->>> kernel space.
->>>
->>> We can do better than this; let's hoist those barriers out of the loop
->>> so that they are only issued once at the end of the loop. We then reduce
->>> the cost by the number of PTEs in the range.
->>>
->>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->>> ---
->>>  arch/arm64/include/asm/pgtable.h | 14 ++++++++++----
->>>  1 file changed, 10 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->>> index 3b55d9a15f05..1d428e9c0e5a 100644
->>> --- a/arch/arm64/include/asm/pgtable.h
->>> +++ b/arch/arm64/include/asm/pgtable.h
->>> @@ -317,10 +317,8 @@ static inline void __set_pte_nosync(pte_t *ptep, pte_t pte)
->>>  	WRITE_ONCE(*ptep, pte);
->>>  }
->>>  
->>> -static inline void __set_pte(pte_t *ptep, pte_t pte)
->>> +static inline void __set_pte_complete(pte_t pte)
->>>  {
->>> -	__set_pte_nosync(ptep, pte);
->>> -
->>>  	/*
->>>  	 * Only if the new pte is valid and kernel, otherwise TLB maintenance
->>>  	 * or update_mmu_cache() have the necessary barriers.
->>> @@ -331,6 +329,12 @@ static inline void __set_pte(pte_t *ptep, pte_t pte)
->>>  	}
->>>  }
->>>  
->>> +static inline void __set_pte(pte_t *ptep, pte_t pte)
->>> +{
->>> +	__set_pte_nosync(ptep, pte);
->>> +	__set_pte_complete(pte);
->>> +}
->>> +
->>>  static inline pte_t __ptep_get(pte_t *ptep)
->>>  {
->>>  	return READ_ONCE(*ptep);
->>> @@ -647,12 +651,14 @@ static inline void ___set_ptes(struct mm_struct *mm, pte_t *ptep, pte_t pte,
->>>  
->>>  	for (;;) {
->>>  		__check_safe_pte_update(mm, ptep, pte);
->>> -		__set_pte(ptep, pte);
->>> +		__set_pte_nosync(ptep, pte);
->>>  		if (--nr == 0)
->>>  			break;
->>>  		ptep++;
->>>  		pte = pte_advance_pfn(pte, stride);
->>>  	}
->>> +
->>> +	__set_pte_complete(pte);
->>
->> Given that the loop now iterates over number of page table entries without corresponding
->> consecutive dsb/isb sync, could there be a situation where something else gets scheduled
->> on the cpu before __set_pte_complete() is called ? Hence leaving the entire page table
->> entries block without desired mapping effect. IOW how __set_pte_complete() is ensured to
->> execute once the loop above completes. Otherwise this change LGTM.
+On Wed, Feb 12, 2025 at 03:27:00PM +0900, Sergey Senozhatsky wrote:
+> Currently, per-CPU stream access is done from a non-preemptible
+> (atomic) section, which imposes the same atomicity requirements on
+> compression backends as entry spin-lock, and makes it impossible
+> to use algorithms that can schedule/wait/sleep during compression
+> and decompression.
 > 
-> I don't think this changes the model. Previously, __set_pte() was called, which
-> writes the pte to the pgtable, then issues the barriers. So there is still a
-> window where the thread could be unscheduled after the write but before the
-> barriers. Yes, my change makese that window bigger, but if it is a bug now, it
-> was a bug before.
+> Switch to preemptible per-CPU model, similar to the one used
+> in zswap.  Instead of a per-CPU local lock, each stream carries
+> a mutex which is locked throughout entire time zram uses it
+> for compression or decompression, so that cpu-dead event waits
+> for zram to stop using a particular per-CPU stream and release
+> it.
 > 
-> Additionally, the spec for set_ptes() is:
+> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> ---
+>  drivers/block/zram/zcomp.c    | 36 +++++++++++++++++++++++++----------
+>  drivers/block/zram/zcomp.h    |  6 +++---
+>  drivers/block/zram/zram_drv.c | 20 +++++++++----------
+>  3 files changed, 39 insertions(+), 23 deletions(-)
 > 
-> /**
->  * set_ptes - Map consecutive pages to a contiguous range of addresses.
->  * @mm: Address space to map the pages into.
->  * @addr: Address to map the first page at.
->  * @ptep: Page table pointer for the first entry.
->  * @pte: Page table entry for the first page.
->  * @nr: Number of pages to map.
->  *
->  * When nr==1, initial state of pte may be present or not present, and new state
->  * may be present or not present. When nr>1, initial state of all ptes must be
->  * not present, and new state must be present.
->  *
->  * May be overridden by the architecture, or the architecture can define
->  * set_pte() and PFN_PTE_SHIFT.
->  *
->  * Context: The caller holds the page table lock.  The pages all belong
->  * to the same folio.  The PTEs are all in the same PMD.
->  */
-> 
-> Note that the caller is required to hold the page table lock. That's a spin lock
-> so should be non-preemptible at this point (perhaps not for RT?)
-> 
-> Although actually, vmalloc doesn't hold a lock when calling these helpers; it
-> has a lock when allocating the VA space, then drops it.
-> 
-> So yes, I think there is a chance of preemption after writing the pgtable entry
-> but before issuing the barriers.
-> 
-> But in that case, we get saved by the DSB in the context switch path. There is
-> no guarrantee of an ISB in that path (AFAIU). But the need for an ISB is a bit
-> whooly anyway. My rough understanding is that the ISB is there to prevent
-> previous speculation from determining that a given translation was invalid and
-> "caching" that determination in the pipeline. That could still (theoretically)
-> happen on remote CPUs I think, and we have the spurious fault handler to detect
-> that. Anyway, once you context switch, the local CPU becomes remote and we don't
-> have the ISB there, so what's the difference... There's a high chance I've
-> misunderstood a bunch of this.
+> diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
+> index bb514403e305..e83dd9a80a81 100644
+> --- a/drivers/block/zram/zcomp.c
+> +++ b/drivers/block/zram/zcomp.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/wait.h>
+>  #include <linux/sched.h>
+>  #include <linux/cpu.h>
+> +#include <linux/cpuhotplug.h>
 
-I thought about this some more; The ISB is there to ensure that the "speculative
-invalid translation marker" cached in the pipeline gets removed prior to any
-code that runs after set_ptes() returns which accesses an address now mapped by
-the pte that was set. Even if preemption occurs, the ISB will still execute when
-the thread runs again, before the return from set_ptes(). So all is well.
+What code changes prompt this?
 
-> 
-> 
-> In conclusion, I don't think I've made things any worse.
-> 
-> Thanks,
-> Ryan
-> 
->>
->>>  }
->>>  
->>>  static inline void __set_ptes(struct mm_struct *mm,
-> 
+>  #include <linux/crypto.h>
+>  #include <linux/vmalloc.h>
+>  
+> @@ -54,6 +55,7 @@ static int zcomp_strm_init(struct zcomp *comp, struct zcomp_strm *zstrm)
+>  {
+>  	int ret;
+>  
+> +	mutex_init(&zstrm->lock);
 
+I don't think we can initialize the mutex in the hotplug callback. I
+think the following scenario is possible:
+
+CPU #1					CPU #2
+zcomp_stream_get()
+  zstrm = raw_cpu_ptr()
+/* task migrated to CPU 2 */
+
+CPU goes offline
+  zcomp_cpu_dead()
+    mutex_lock()
+    ..
+    mutex_unlock()
+					/* migrated task continues */
+					zcomp_stream_get()
+					  mutex_lock()
+CPU goes online
+  mutex_init()
+  					  mutex_unlock() /* problem */
+					
+In this case we'll end up initializing the mutex on CPU #1 while CPU #2
+has it locked. When we unlocked it on CPU #2 we will corrupt it AFAICT.
+
+This is why I moved the mutex initialization out of the hotplug callback
+in zswap. I suspect to do something similar for zram we'd need to do it
+in zcomp_init()?
+
+>  	ret = comp->ops->create_ctx(comp->params, &zstrm->ctx);
+>  	if (ret)
+>  		return ret;
+> @@ -109,13 +111,29 @@ ssize_t zcomp_available_show(const char *comp, char *buf)
+>  
+>  struct zcomp_strm *zcomp_stream_get(struct zcomp *comp)
+>  {
+> -	local_lock(&comp->stream->lock);
+> -	return this_cpu_ptr(comp->stream);
+> +	for (;;) {
+> +		struct zcomp_strm *zstrm = raw_cpu_ptr(comp->stream);
+> +
+> +		/*
+> +		 * Inspired by zswap
+> +		 *
+> +		 * stream is returned with ->mutex locked which prevents
+> +		 * cpu_dead() from releasing this stream under us, however
+> +		 * there is still a race window between raw_cpu_ptr() and
+> +		 * mutex_lock(), during which we could have been migrated
+> +		 * to a CPU that has already destroyed its stream.  If so
+
+"we could have been migrated from** a CPU that has already destroyed its
+stream"? Right?
+
+> +		 * then unlock and re-try on the current CPU.
+> +		 */
+> +		mutex_lock(&zstrm->lock);
+> +		if (likely(zstrm->buffer))
+> +			return zstrm;
+> +		mutex_unlock(&zstrm->lock);
+> +	}
+>  }
+>  
+> -void zcomp_stream_put(struct zcomp *comp)
+> +void zcomp_stream_put(struct zcomp_strm *zstrm)
+>  {
+> -	local_unlock(&comp->stream->lock);
+> +	mutex_unlock(&zstrm->lock);
+>  }
+>  
+>  int zcomp_compress(struct zcomp *comp, struct zcomp_strm *zstrm,
+> @@ -151,12 +169,9 @@ int zcomp_decompress(struct zcomp *comp, struct zcomp_strm *zstrm,
+>  int zcomp_cpu_up_prepare(unsigned int cpu, struct hlist_node *node)
+>  {
+>  	struct zcomp *comp = hlist_entry(node, struct zcomp, node);
+> -	struct zcomp_strm *zstrm;
+> +	struct zcomp_strm *zstrm = per_cpu_ptr(comp->stream, cpu);
+>  	int ret;
+>  
+> -	zstrm = per_cpu_ptr(comp->stream, cpu);
+> -	local_lock_init(&zstrm->lock);
+> -
+>  	ret = zcomp_strm_init(comp, zstrm);
+>  	if (ret)
+>  		pr_err("Can't allocate a compression stream\n");
+> @@ -166,10 +181,11 @@ int zcomp_cpu_up_prepare(unsigned int cpu, struct hlist_node *node)
+>  int zcomp_cpu_dead(unsigned int cpu, struct hlist_node *node)
+>  {
+>  	struct zcomp *comp = hlist_entry(node, struct zcomp, node);
+> -	struct zcomp_strm *zstrm;
+> +	struct zcomp_strm *zstrm = per_cpu_ptr(comp->stream, cpu);
+>  
+> -	zstrm = per_cpu_ptr(comp->stream, cpu);
+> +	mutex_lock(&zstrm->lock);
+>  	zcomp_strm_free(comp, zstrm);
+> +	mutex_unlock(&zstrm->lock);
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/block/zram/zcomp.h b/drivers/block/zram/zcomp.h
+> index ad5762813842..23b8236b9090 100644
+> --- a/drivers/block/zram/zcomp.h
+> +++ b/drivers/block/zram/zcomp.h
+> @@ -3,7 +3,7 @@
+>  #ifndef _ZCOMP_H_
+>  #define _ZCOMP_H_
+>  
+> -#include <linux/local_lock.h>
+> +#include <linux/mutex.h>
+>  
+>  #define ZCOMP_PARAM_NO_LEVEL	INT_MIN
+>  
+> @@ -31,7 +31,7 @@ struct zcomp_ctx {
+>  };
+>  
+>  struct zcomp_strm {
+> -	local_lock_t lock;
+> +	struct mutex lock;
+>  	/* compression buffer */
+>  	void *buffer;
+>  	struct zcomp_ctx ctx;
+> @@ -77,7 +77,7 @@ struct zcomp *zcomp_create(const char *alg, struct zcomp_params *params);
+>  void zcomp_destroy(struct zcomp *comp);
+>  
+>  struct zcomp_strm *zcomp_stream_get(struct zcomp *comp);
+> -void zcomp_stream_put(struct zcomp *comp);
+> +void zcomp_stream_put(struct zcomp_strm *zstrm);
+>  
+>  int zcomp_compress(struct zcomp *comp, struct zcomp_strm *zstrm,
+>  		   const void *src, unsigned int *dst_len);
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index 3708436f1d1f..43f460a45e3e 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -1608,7 +1608,7 @@ static int read_compressed_page(struct zram *zram, struct page *page, u32 index)
+>  	ret = zcomp_decompress(zram->comps[prio], zstrm, src, size, dst);
+>  	kunmap_local(dst);
+>  	zs_unmap_object(zram->mem_pool, handle);
+> -	zcomp_stream_put(zram->comps[prio]);
+> +	zcomp_stream_put(zstrm);
+>  
+>  	return ret;
+>  }
+> @@ -1769,14 +1769,14 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
+>  	kunmap_local(mem);
+>  
+>  	if (unlikely(ret)) {
+> -		zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
+> +		zcomp_stream_put(zstrm);
+>  		pr_err("Compression failed! err=%d\n", ret);
+>  		zs_free(zram->mem_pool, handle);
+>  		return ret;
+>  	}
+>  
+>  	if (comp_len >= huge_class_size) {
+> -		zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
+> +		zcomp_stream_put(zstrm);
+>  		return write_incompressible_page(zram, page, index);
+>  	}
+>  
+> @@ -1800,7 +1800,7 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
+>  				   __GFP_HIGHMEM |
+>  				   __GFP_MOVABLE);
+>  	if (IS_ERR_VALUE(handle)) {
+> -		zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
+> +		zcomp_stream_put(zstrm);
+>  		atomic64_inc(&zram->stats.writestall);
+>  		handle = zs_malloc(zram->mem_pool, comp_len,
+>  				   GFP_NOIO | __GFP_HIGHMEM |
+> @@ -1812,7 +1812,7 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
+>  	}
+>  
+>  	if (!zram_can_store_page(zram)) {
+> -		zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
+> +		zcomp_stream_put(zstrm);
+>  		zs_free(zram->mem_pool, handle);
+>  		return -ENOMEM;
+>  	}
+> @@ -1820,7 +1820,7 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
+>  	dst = zs_map_object(zram->mem_pool, handle, ZS_MM_WO);
+>  
+>  	memcpy(dst, zstrm->buffer, comp_len);
+> -	zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
+> +	zcomp_stream_put(zstrm);
+>  	zs_unmap_object(zram->mem_pool, handle);
+>  
+>  	zram_slot_lock(zram, index);
+> @@ -1979,7 +1979,7 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+>  		kunmap_local(src);
+>  
+>  		if (ret) {
+> -			zcomp_stream_put(zram->comps[prio]);
+> +			zcomp_stream_put(zstrm);
+>  			return ret;
+>  		}
+>  
+> @@ -1989,7 +1989,7 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+>  		/* Continue until we make progress */
+>  		if (class_index_new >= class_index_old ||
+>  		    (threshold && comp_len_new >= threshold)) {
+> -			zcomp_stream_put(zram->comps[prio]);
+> +			zcomp_stream_put(zstrm);
+>  			continue;
+>  		}
+>  
+> @@ -2047,13 +2047,13 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+>  			       __GFP_HIGHMEM |
+>  			       __GFP_MOVABLE);
+>  	if (IS_ERR_VALUE(handle_new)) {
+> -		zcomp_stream_put(zram->comps[prio]);
+> +		zcomp_stream_put(zstrm);
+>  		return PTR_ERR((void *)handle_new);
+>  	}
+>  
+>  	dst = zs_map_object(zram->mem_pool, handle_new, ZS_MM_WO);
+>  	memcpy(dst, zstrm->buffer, comp_len_new);
+> -	zcomp_stream_put(zram->comps[prio]);
+> +	zcomp_stream_put(zstrm);
+>  
+>  	zs_unmap_object(zram->mem_pool, handle_new);
+>  
+> -- 
+> 2.48.1.502.g6dc24dfdaf-goog
+> 
 
