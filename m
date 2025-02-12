@@ -1,74 +1,63 @@
-Return-Path: <linux-kernel+bounces-510827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7285AA32290
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:40:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B20A3228B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F26B7A48D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:39:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BF7F7A3FE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB8C2063EF;
-	Wed, 12 Feb 2025 09:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6AA20896C;
+	Wed, 12 Feb 2025 09:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WvUfhgYz"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQQpFous"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0969C209669;
-	Wed, 12 Feb 2025 09:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0C12046BF;
+	Wed, 12 Feb 2025 09:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353056; cv=none; b=uE6Q0uq4yp2xYW89Gn1SFEL0N+4Xl0cusWpRGfGjhdj4hGNkPSmgMcZXnYUCRBCfOFPkAB0WNbbPRW4fAFFybY3bNMPi4vzyjxn/ww18hU+qF3spLc07il3EhMLftb+P/f61S61OESUeNVVAHjOkw34pEXIeWSb5SiD0WuALNwM=
+	t=1739353048; cv=none; b=J2SJ+f3DpP/tR1D3s1bSo/8jfhb/jzKcXISFTqeqnm1KisEZq8GJDZiRP1o0cl+bVUgDd7ml9rnHg5KhgxOkoQJjBhmq83MYsueYEIlmGz73yf7qvVybGbkotfYOghQGB903pMtPOd7UNdpWSvh0sYUcpXFzkuAVtpSgCFYeNkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353056; c=relaxed/simple;
-	bh=g/jxvtEieoR9thBQ1v/PKEAtaAP8MyOBWUQMZHkH7cM=;
+	s=arc-20240116; t=1739353048; c=relaxed/simple;
+	bh=Sf9TKmSkzVueM1GHBhBchFQOzKBW36BR9sNxJqN89VI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmk/DLlBrFwbm2YjLNDdY1c/XuHwdtilXTfbFjr609qN4olGTbs3Dcqamvvtb6fYJ+1VAzM7yTabTw9snvkNdLJbfR5cgEPVgZHHV1BsSz2To3alKHRrtgCbjvInXi4FuYYoJfD76/tPDSKJgmiI5tzJ/5tsdvIzjQXR5Xuku7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WvUfhgYz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HEALg1IGx6/LckpOQHDyFWyXlK0VFMy3UaS9Vl8dN20=; b=WvUfhgYz5XWHXsspF+k3YI8aZ3
-	Ex1OmuY1woiRJBeky/G9aVU6xWErS6aj+eDCxkrGzdLnr7WP2AikaGyY9ZdqKHKt98eolDfwI+ZJn
-	e1UVj+K3kYJqRHTWWjTDZou/zlw5NpYotKiFCVgCVSIl8KvVdKjysmc+pCfit/jln3RSRvLiOuGjY
-	45i8k4eJHxYTY+bYQVU882JiQ6bDm1w/29XxLY0tokFHs9dR8s7QtyCpLE5G1usTCLm7nQMxduXAX
-	g32qE61Zjx0/xVSjOcoyVad7nWD9LXMcK5/6ay5invyY/zSSP0Hn515KxVwoKyhcWjJR4jRdMoKzg
-	61t7SDlg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1ti9BL-00000004AIA-0oYB;
-	Wed, 12 Feb 2025 09:37:23 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8F84E300318; Wed, 12 Feb 2025 10:37:21 +0100 (CET)
-Date: Wed, 12 Feb 2025 10:37:21 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Cristian Prundeanu <cpru@amazon.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
-	Ali Saidi <alisaidi@amazon.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Geoff Blake <blakgeof@amazon.com>, Csaba Csoma <csabac@amazon.com>,
-	Bjoern Doebel <doebel@amazon.com>,
-	Gautham Shenoy <gautham.shenoy@amd.com>,
-	Joseph Salisbury <joseph.salisbury@oracle.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Borislav Petkov <bp@alien8.de>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2] [tip: sched/core] sched: Move PLACE_LAG and
- RUN_TO_PARITY to sysctl
-Message-ID: <20250212093721.GA24784@noisy.programming.kicks-ass.net>
-References: <20250119110410.GAZ4zcKkx5sCjD5XvH@fat_crate.local>
- <20250212053644.14787-1-cpru@amazon.com>
- <20250212091711.GA19118@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xv2iBaF1XvpU/f41blimhilUWXFC4XPunpkMh4rIGMzA6hd3ejvjJ/q1G1hGJlhlIdXQWQ7HI1+sqhDZiyBFcFZfxcFiFos7imgp5aN6nUUortn3jlx4oUxX3TtgyIWwoX+Rso7lX05nWA9R5t6wFskuHdIQE3VCckPF0Zp5zvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQQpFous; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BBA1C4CEDF;
+	Wed, 12 Feb 2025 09:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739353048;
+	bh=Sf9TKmSkzVueM1GHBhBchFQOzKBW36BR9sNxJqN89VI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hQQpFousasWfqZDY4+6b2djjxTKiIwrHPS+SSGh1gn4skoX77dASovqUU3Q23JmjR
+	 UqH0fPhy0fA/dVP9wGCvcbGWp3dnP03pHup/wZXMsbT9G+sPVaQ6CMgLrUjDR/Mdpb
+	 YMEDMh/Vvs5j+Ig+tsZ6aYQFL5joW4DwUoB6vsM2ugzfu4pXNT3gEGTL0KotJqccRT
+	 Iyo9ZYrsUZ+giqMbM3h4zY0U1qywr+kyEc3vBVVJJAETCUdi2hzdbr9H6erqm/kE+D
+	 ZKjgH/L5S2PGAdqnMSSHGf0BgbR2ApBFGEW97KjVashyG+gwnuyiuYAq5dQuNW8gzp
+	 i+REHQZXqMvpQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1ti9BX-000000003Nw-2Eii;
+	Wed, 12 Feb 2025 10:37:35 +0100
+Date: Wed, 12 Feb 2025 10:37:35 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Saranya R <quic_sarar@quicinc.com>,
+	Frank Oltmanns <frank@oltmanns.dev>
+Subject: Re: [PATCH v2] soc: qcom: pdr: Fix the potential deadlock
+Message-ID: <Z6xr3ylNSC6iYf-C@hovoldconsulting.com>
+References: <20250129155544.1864854-1-mukesh.ojha@oss.qualcomm.com>
+ <nqsuml3jcblwkp6mcriiekfiz5wlxjypooiygvgd5fjtmfnvdc@zfoaolcjecpl>
+ <Z6nE0kxF2ipItB2r@hu-mojha-hyd.qualcomm.com>
+ <Z6nKOz97Neb1zZOa@hovoldconsulting.com>
+ <Z6uDv3c3DkmgumnM@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,47 +66,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212091711.GA19118@noisy.programming.kicks-ass.net>
+In-Reply-To: <Z6uDv3c3DkmgumnM@hu-mojha-hyd.qualcomm.com>
 
-On Wed, Feb 12, 2025 at 10:17:11AM +0100, Peter Zijlstra wrote:
-> On Tue, Feb 11, 2025 at 11:36:44PM -0600, Cristian Prundeanu wrote:
-> > Replacing CFS with the EEVDF scheduler in kernel 6.6 introduced
-> > significant performance degradation in multiple database-oriented
-> > workloads. This degradation manifests in all kernel versions using EEVDF,
-> > across multiple Linux distributions, hardware architectures (x86_64,
-> > aarm64, amd64), and CPU generations.
-> > 
-> > Testing combinations of available scheduler features showed that the
-> > largest improvement (short of disabling all EEVDF features) came from
-> > disabling both PLACE_LAG and RUN_TO_PARITY.
-> > 
-> > Moving PLACE_LAG and RUN_TO_PARITY to sysctl will allow users to override
-> > their default values and persist them with established mechanisms.
+On Tue, Feb 11, 2025 at 10:37:11PM +0530, Mukesh Ojha wrote:
+> On Mon, Feb 10, 2025 at 10:43:23AM +0100, Johan Hovold wrote:
+> > On Mon, Feb 10, 2025 at 02:50:18PM +0530, Mukesh Ojha wrote:
+> > > On Thu, Feb 06, 2025 at 04:13:25PM -0600, Bjorn Andersson wrote:
+
+> > > > I came to the same patch while looking into the issue related to
+> > > > in-kernel pd-mapper reported here:
+> > > > https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/
+> > > > 
+> > > > So:
+> > > > Reviewed-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> > > > Tested-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 > 
-> Nope -- you have knobs in debugfs, and that's where they'll stay. Esp.
-> PLACE_LAG is super dodgy and should not get elevated to anything
-> remotely official.
+> Should i add this in next version ?
 
-Just to clarify, the problem with NO_PLACE_LAG is that by discarding
-lag, a task can game the system to 'gain' time. It fundamentally breaks
-fairness, and the only reason I implemented it at all was because it is
-one of the 'official' placement strategies in the original paper.
+Yes, if there is another revision.
 
-But ideally, it should just go, it is not a sound strategy and relies on
-tasks behaving themselves.
+> > I was gonna ask if you have confirmed that this indeed fixes the audio
+> > regression with the in-kernel pd-mapper?
+> > 
+> > Is this how you discovered the issue as well, Mukesh and Saranya?
+> 
+> No, we are not using in kernel pd-mapper yet in downstream..
 
-That is, assuming your tasks behave like the traditional periodic or
-sporadic tasks, then it works, but only because the tasks are limited by
-the constraints of the task model.
+Ok, thanks for confirming.
 
-If the tasks are unconstrained / aperiodic, this goes out the window and
-the placement strategy becomes unsound. And given we must assume
-userspace to be malicious / hostile / unbehaved, the whole thing is just
-not good.
+> > If so, please mention that in the commit message, but in any case also
+> > include the corresponding error messages directly so that people running
+> > into this can find the fix more easily. (I see the pr_err now, but it's
+> > not as greppable).
+> 
+> Below is the sample log which got in downstream when we hit this issue
+> 
+> 13.799119:   PDR: tms/servreg get domain list txn wait failed: -110
+> 13.799146:   PDR: service lookup for msm/adsp/sensor_pd:tms/servreg failed: -110
 
-It is for this same reason that SCHED_DEADLINE has a constant bandwidth
-server on top of the earliest deadline first policy. Pure EDF is only
-sound for periodic / sporadic tasks, but we cannot assume userspace will
-behave themselves, so we have to put in guard-rails, CBS in this case.
+I think it would be good to include this (without the time stamp) as an
+example as it would make it easier to find this fix even if the failure
+happens for another service.
 
+> > A Link tag to my report would be good to have as well if this fixes the
+> > audio regression.
+> 
+> I see this is somehow matching the logs you have reported, but this deadlock
+> is there from the very first day of pdr_interface driver.
+> 
+> [   14.565059] PDR: avs/audio get domain list txn wait failed: -110
+> [   14.571943] PDR: service lookup for avs/audio failed: -110
+
+Yes, but using the in-kernel pd-mapper has exposed a number of existing
+bugs since it changes the timing of events enough to make it easier to
+hit them.
+
+The audio regression is a very real regression for users of Snapdragon
+based laptops like, for example, the Lenovo Yoga Slim 7x.
+
+If Bjorn has confirmed that this is the same issue (I can try to
+instrument the code based on your analysis to confirm this too), then I
+think it would be good to mention this in the commit message and link to
+the report, for example:
+
+	This specifically also fixes an audio regression when using the
+	in-kernel pd-mapper as that makes it easier to hit this race. [1]
+
+	Link: https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/ # [1]
+
+or similar.
+
+Johan
 
