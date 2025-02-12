@@ -1,194 +1,236 @@
-Return-Path: <linux-kernel+bounces-511911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931C0A33152
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:13:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B0FA33153
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:14:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D061884320
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783753AA17C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB68202F62;
-	Wed, 12 Feb 2025 21:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919A7202F68;
+	Wed, 12 Feb 2025 21:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zmy49Fzg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZVdNe2Bc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zmy49Fzg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZVdNe2Bc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FM39xked"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A88200B95;
-	Wed, 12 Feb 2025 21:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C56200B95;
+	Wed, 12 Feb 2025 21:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739394812; cv=none; b=pP2hGVj9E6jpme0NXpZb8QhHjq958S+8mnGhWqHPUnHNoLTgy4DBCOjl2r7a/OY88k4Met67WWisSInolshlVEjZ/oIU1eGNglgHa7zueGajX2hkYfOtUnLBTiY4ru4d7k00q2i0C429vq/MrUcLEW/4zdE+heEUSNk4nvUr7kg=
+	t=1739394859; cv=none; b=UQRck0379Az/h6cVR5YzuW0KFzg+NsEv8FVPfjMBhL9gf3+s1OQoh+x2t1zEXP17y20XfpL6hAU72zQXFZSxM/zItNDOpbNh8gxQ2ezohB17FfNgOcVdaeHxIISFb7DQFkrp3Z4xsvPHJ4M/Lq50U9LOcGBy5c1azLfVLq1a1fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739394812; c=relaxed/simple;
-	bh=5VKrW0LTf0NyUdyU/YBbpCwS7UtHhXGmwfKBGVR0NbU=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=cR3B8ZoHbVDB/uk5XEl9UIFB5RL1JeN6pfsD9pOzo6TEEGY/oz0luJvNT+onieIno2PcMEqD48OwwdHdXWxDgx2oBXx5g/MD7WBA0wLyUExfx74UBRHyDBe2Im4mUVkfl4i93Y0LqH18gR23oe2iQNnNnkOqThng02JdykZqNqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zmy49Fzg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZVdNe2Bc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zmy49Fzg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZVdNe2Bc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 21C7F337B1;
-	Wed, 12 Feb 2025 21:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739394808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vYE4/MKpIJGNFpjPVzpVcoZZ+uRyGZs06Or74T5dZ5U=;
-	b=Zmy49FzgUVm4dxuiEdyN91Tjly0NEBzu62phMQAe2IHR0UDNNygcShb2NxKdcTUiq696XQ
-	grclxkbfAAD7javWR6L78ykNwUNs4K2BuF4Z7D986odXCjJ3WYSp99/8qUq50GI/135unT
-	6CPD0fux+R10LgsalEwAprVMXfiPAe4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739394808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vYE4/MKpIJGNFpjPVzpVcoZZ+uRyGZs06Or74T5dZ5U=;
-	b=ZVdNe2BckdPnIklk8JVSFs6d7iCQaLimEJoGcbW47U+YOD2U015Xd+FfW+IS9Ugq1eVcBC
-	hU7y9rnIkFXYmDBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739394808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vYE4/MKpIJGNFpjPVzpVcoZZ+uRyGZs06Or74T5dZ5U=;
-	b=Zmy49FzgUVm4dxuiEdyN91Tjly0NEBzu62phMQAe2IHR0UDNNygcShb2NxKdcTUiq696XQ
-	grclxkbfAAD7javWR6L78ykNwUNs4K2BuF4Z7D986odXCjJ3WYSp99/8qUq50GI/135unT
-	6CPD0fux+R10LgsalEwAprVMXfiPAe4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739394808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vYE4/MKpIJGNFpjPVzpVcoZZ+uRyGZs06Or74T5dZ5U=;
-	b=ZVdNe2BckdPnIklk8JVSFs6d7iCQaLimEJoGcbW47U+YOD2U015Xd+FfW+IS9Ugq1eVcBC
-	hU7y9rnIkFXYmDBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BF3E813874;
-	Wed, 12 Feb 2025 21:13:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KV9pHfUOrWe/NQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 12 Feb 2025 21:13:25 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1739394859; c=relaxed/simple;
+	bh=dIqhk3djFsc3cAOqbHbhVUyG0+f+BY8S2yEkmEIiT0A=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=uj25RgMvhMAn7Tdtp7KKMGlWjGHchakiBI6YT4j0PCAhEgKCzedsac6ndstnIgDau9DO1WIX8Hn7MyctKdREm6GHrUrCdJqPumI9fmlVUI7oNvmfxdQ2v5wpZ9/DNX2pGSdNYCUwPBvLadXK3ggR9wa3lY5U38zXIjB6XMQjcTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FM39xked; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE131C4CEDF;
+	Wed, 12 Feb 2025 21:14:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739394859;
+	bh=dIqhk3djFsc3cAOqbHbhVUyG0+f+BY8S2yEkmEIiT0A=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=FM39xked9CJJ3VZLi/LCH1yVlQqygsPF/WnRs/3TQ2j433zTnyeI/p/Ijho6DIq/3
+	 pvz7mYSzGYJqWeTLWKAjh/TnwSYjLq9cu34OsSH0+Zh+yfa+qGZ4izxvs0yxwa2OGX
+	 4pOYDBnRURLqRKCtB0g0cNc+J8IYSNo8n4BUz5UTmBRQVG9w0Ch2btNJpcBjRa9fQy
+	 Vrf7A139Fu0Jfb+nVA/cgfyGSzvuus8wMazx1h2r87V07jE5/ONnaSj6Njh8KOkbbX
+	 y23UCGj69P19iTesAWohj3PGUSbj3zisSvm7na3Q0LZ0YU0yg3/hNwweBzimQlI2+t
+	 lpNCWwV7fRtMQ==
+Date: Wed, 12 Feb 2025 13:14:16 -0800 (PST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
+To: =?UTF-8?Q?J=C3=BCrgen_Gro=C3=9F?= <jgross@suse.com>
+cc: Stefano Stabellini <sstabellini@kernel.org>, linux-kernel@vger.kernel.org, 
+    x86@kernel.org, iommu@lists.linux.dev, 
+    Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    "H. Peter Anvin" <hpa@zytor.com>, 
+    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
+    xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 2/2] xen/swiotlb: don't destroy contiguous region in all
+ cases
+In-Reply-To: <b7bc43f9-47e6-4994-bba9-5c8be92a8e52@suse.com>
+Message-ID: <alpine.DEB.2.22.394.2502121310320.619090@ubuntu-linux-20-04-desktop>
+References: <20250211120432.29493-1-jgross@suse.com> <20250211120432.29493-3-jgross@suse.com> <alpine.DEB.2.22.394.2502111728560.619090@ubuntu-linux-20-04-desktop> <b7bc43f9-47e6-4994-bba9-5c8be92a8e52@suse.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
-Subject: Re: [PATCH] nfsd: allow SC_STATUS_FREEABLE when searching via
- nfs4_lookup_stateid()
-In-reply-to: <20250212-nfsd-fixes-v1-1-935e3a4919fc@kernel.org>
-References: <20250212-nfsd-fixes-v1-1-935e3a4919fc@kernel.org>
-Date: Thu, 13 Feb 2025 08:13:13 +1100
-Message-id: <173939479366.22054.8896171620747680077@noble.neil.brown.name>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: multipart/mixed; BOUNDARY="8323329-226463992-1739394832=:619090"
+Content-ID: <alpine.DEB.2.22.394.2502121313580.619090@ubuntu-linux-20-04-desktop>
 
-On Thu, 13 Feb 2025, Jeff Layton wrote:
-> When a delegation is revoked, it's initially marked with
-> SC_STATUS_REVOKED, or SC_STATUS_ADMIN_REVOKED and later, it's marked
-> with the SC_STATUS_FREEABLE flag, which denotes that it is waiting for
-> s FREE_STATEID call.
->=20
-> nfs4_lookup_stateid() accepts a statusmask that includes the status
-> flags that a found stateid is allowed to have. Currently, that mask
-> never includes SC_STATUS_FREEABLE, which means that revoked delegations
-> are (almost) never found.
->=20
-> Add SC_STATUS_FREEABLE to the always-allowed status flags.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-There are 4 calls to nfsd4_lookup_stateid().  One already has
-SC_STATUS_FREEABLE passed.  Which of the others need it?
-If all of them, then this patch is sensible but should also remove the
-flag in the one place it is already passed.
-If only one other call needs it, then maybe we should just pass it
-there?
+--8323329-226463992-1739394832=:619090
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.DEB.2.22.394.2502121313581.619090@ubuntu-linux-20-04-desktop>
 
-Could you at least include in the description some detail of what
-request is failing and which particular nfsd4_lookup_stateid() call is
-relevant in that case?
+On Wed, 12 Feb 2025, Jürgen Groß wrote:
+> On 12.02.25 02:30, Stefano Stabellini wrote:
+> > On Tue, 11 Feb 2025, Juergen Gross wrote:
+> > > In case xen_swiotlb_alloc_coherent() needed to create a contiguous
+> > > region only for other reason than the memory not being compliant with
+> > > the device's DMA mask, there is no reason why this contiguous region
+> > > should be destroyed by xen_swiotlb_free_coherent() later. Destroying
+> > > this region should be done only, if the memory of the region was
+> > > allocated with more stringent placement requirements than the memory
+> > > it did replace.
+> > > 
+> > > Signed-off-by: Juergen Gross <jgross@suse.com>
+> > > ---
+> > >   arch/x86/include/asm/xen/swiotlb-xen.h |  5 +++--
+> > >   arch/x86/xen/mmu_pv.c                  | 18 ++++++++++++------
+> > >   drivers/xen/swiotlb-xen.c              | 11 +++++++----
+> > >   3 files changed, 22 insertions(+), 12 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/include/asm/xen/swiotlb-xen.h
+> > > b/arch/x86/include/asm/xen/swiotlb-xen.h
+> > > index abde0f44df57..a353f20c7e79 100644
+> > > --- a/arch/x86/include/asm/xen/swiotlb-xen.h
+> > > +++ b/arch/x86/include/asm/xen/swiotlb-xen.h
+> > > @@ -4,8 +4,9 @@
+> > >     int xen_swiotlb_fixup(void *buf, unsigned long nslabs);
+> > >   int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
+> > > -				unsigned int address_bits,
+> > > -				dma_addr_t *dma_handle);
+> > > +				 unsigned int address_bits,
+> > > +				 dma_addr_t *dma_handle,
+> > > +				 unsigned int *address_bits_in);
+> > >   void xen_destroy_contiguous_region(phys_addr_t pstart, unsigned int
+> > > order);
+> > >     #endif /* _ASM_X86_SWIOTLB_XEN_H */
+> > > diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+> > > index 2c70cd35e72c..fb586238f7c4 100644
+> > > --- a/arch/x86/xen/mmu_pv.c
+> > > +++ b/arch/x86/xen/mmu_pv.c
+> > > @@ -2208,19 +2208,22 @@ void __init xen_init_mmu_ops(void)
+> > >   static unsigned long discontig_frames[1<<MAX_CONTIG_ORDER];
+> > >     #define VOID_PTE (mfn_pte(0, __pgprot(0)))
+> > > -static void xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
+> > > -				unsigned long *in_frames,
+> > > -				unsigned long *out_frames)
+> > > +static int xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
+> > > +			     unsigned long *in_frames,
+> > > +			     unsigned long *out_frames)
+> > >   {
+> > >   	int i;
+> > > +	u64 address_bits = 0;
+> > >   	struct multicall_space mcs;
+> > >     	xen_mc_batch();
+> > >   	for (i = 0; i < (1UL<<order); i++, vaddr += PAGE_SIZE) {
+> > >   		mcs = __xen_mc_entry(0);
+> > >   -		if (in_frames)
+> > > +		if (in_frames) {
+> > >   			in_frames[i] = virt_to_mfn((void *)vaddr);
+> > > +			address_bits |= in_frames[i] << PAGE_SHIFT;
+> > > +		}
+> > >     		MULTI_update_va_mapping(mcs.mc, vaddr, VOID_PTE, 0);
+> > >   		__set_phys_to_machine(virt_to_pfn((void *)vaddr),
+> > > INVALID_P2M_ENTRY);
+> > > @@ -2229,6 +2232,8 @@ static void xen_zap_pfn_range(unsigned long vaddr,
+> > > unsigned int order,
+> > >   			out_frames[i] = virt_to_pfn((void *)vaddr);
+> > >   	}
+> > >   	xen_mc_issue(0);
+> > > +
+> > > +	return fls64(address_bits);
+> > >   }
+> > >     /*
+> > > @@ -2321,7 +2326,8 @@ static int xen_exchange_memory(unsigned long
+> > > extents_in, unsigned int order_in,
+> > >     int xen_create_contiguous_region(phys_addr_t pstart, unsigned int
+> > > order,
+> > >   				 unsigned int address_bits,
+> > > -				 dma_addr_t *dma_handle)
+> > > +				 dma_addr_t *dma_handle,
+> > > +				 unsigned int *address_bits_in)
+> > >   {
+> > >   	unsigned long *in_frames = discontig_frames, out_frame;
+> > >   	unsigned long  flags;
+> > > @@ -2336,7 +2342,7 @@ int xen_create_contiguous_region(phys_addr_t pstart,
+> > > unsigned int order,
+> > >   	spin_lock_irqsave(&xen_reservation_lock, flags);
+> > >     	/* 1. Zap current PTEs, remembering MFNs. */
+> > > -	xen_zap_pfn_range(vstart, order, in_frames, NULL);
+> > > +	*address_bits_in = xen_zap_pfn_range(vstart, order, in_frames, NULL);
+> > >     	/* 2. Get a new contiguous memory extent. */
+> > >   	out_frame = virt_to_pfn((void *)vstart);
+> > > diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> > > index 26c62e0d34e9..3f3724f53914 100644
+> > > --- a/drivers/xen/swiotlb-xen.c
+> > > +++ b/drivers/xen/swiotlb-xen.c
+> > > @@ -118,6 +118,7 @@ int xen_swiotlb_fixup(void *buf, unsigned long nslabs)
+> > >   	int rc;
+> > >   	unsigned int order = get_order(IO_TLB_SEGSIZE << IO_TLB_SHIFT);
+> > >   	unsigned int i, dma_bits = order + PAGE_SHIFT;
+> > > +	unsigned int dummy;
+> > >   	dma_addr_t dma_handle;
+> > >   	phys_addr_t p = virt_to_phys(buf);
+> > >   @@ -129,7 +130,7 @@ int xen_swiotlb_fixup(void *buf, unsigned long
+> > > nslabs)
+> > >   		do {
+> > >   			rc = xen_create_contiguous_region(
+> > >   				p + (i << IO_TLB_SHIFT), order,
+> > > -				dma_bits, &dma_handle);
+> > > +				dma_bits, &dma_handle, &dummy);
+> > >   		} while (rc && dma_bits++ < MAX_DMA_BITS);
+> > >   		if (rc)
+> > >   			return rc;
+> > > @@ -144,6 +145,7 @@ xen_swiotlb_alloc_coherent(struct device *dev, size_t
+> > > size,
+> > >   		dma_addr_t *dma_handle, gfp_t flags, unsigned long attrs)
+> > >   {
+> > >   	u64 dma_mask = dev->coherent_dma_mask;
+> > > +	unsigned int address_bits = fls64(dma_mask), address_bits_in;
+> > >   	int order = get_order(size);
+> > >   	phys_addr_t phys;
+> > >   	void *ret;
+> > > @@ -160,10 +162,11 @@ xen_swiotlb_alloc_coherent(struct device *dev,
+> > > size_t size,
+> > >   	if (*dma_handle + size - 1 > dma_mask ||
+> > >   	    range_straddles_page_boundary(phys, size) ||
+> > >   	    range_requires_alignment(phys, size)) {
+> > > -		if (xen_create_contiguous_region(phys, order, fls64(dma_mask),
+> > > -				dma_handle) != 0)
+> > > +		if (xen_create_contiguous_region(phys, order, address_bits,
+> > > +						 dma_handle,
+> > > &address_bits_in))
+> > >   			goto out_free_pages;
+> > > -		SetPageXenRemapped(virt_to_page(ret));
+> > > +		if (address_bits_in > address_bits)
+> > > +			SetPageXenRemapped(virt_to_page(ret));
+> > 
+> > This has the unfortunate side effect of making "PageXenRemapped"
+> > unreliable as an indicator of whether a page has been remapped. A page
+> > could still be remapped without the "PageXenRemapped" bit being set.
+> > 
+> > I recommend adding an in-code comment to clarify this behavior.
+> 
+> The PageXenRemapped bit is used only for determining whether
+> xen_destroy_contiguous_region() should be called. And by not setting the bit
+> I'm avoiding to call xen_destroy_contiguous_region() later. So I don't see any
+> unfortunate side effect.
 
-Thanks,
-NeilBrown
+While the purpose of PageXenRemapped is to determine whether
+xen_destroy_contiguous_region() should be called for the region, the
+name "PageXenRemapped" suggests more generically that the region is
+remapped.
 
+Without this patch, all the regions that are remapped have
+PageXenRemapped set. The name matches its meaning. (Also,
+xen_destroy_contiguous_region() is called an them.)
 
->=20
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> This fixes the pynfs DELEG8 test.
-> ---
->  fs/nfsd/nfs4state.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index 153eeea2c7c999d003cd1f36cecb0dd4f6e049b8..56bf07d623d085589823f3fba18=
-afa62c0b3dbd2 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -7051,7 +7051,7 @@ nfsd4_lookup_stateid(struct nfsd4_compound_state *cst=
-ate,
->  		 */
->  		statusmask |=3D SC_STATUS_REVOKED;
-> =20
-> -	statusmask |=3D SC_STATUS_ADMIN_REVOKED;
-> +	statusmask |=3D SC_STATUS_ADMIN_REVOKED | SC_STATUS_FREEABLE;
-> =20
->  	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid) ||
->  		CLOSE_STATEID(stateid))
->=20
-> ---
-> base-commit: 4990d098433db18c854e75fb0f90d941eb7d479e
-> change-id: 20250212-nfsd-fixes-fa8047082335
->=20
-> Best regards,
-> --=20
-> Jeff Layton <jlayton@kernel.org>
->=20
->=20
-
+With this patch, not all the regions that are remapped have
+PageXenRemapped set. The name does not match its meaning.
+--8323329-226463992-1739394832=:619090--
 
