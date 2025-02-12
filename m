@@ -1,139 +1,120 @@
-Return-Path: <linux-kernel+bounces-510837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84113A322AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:46:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BB0A322B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052CD188480F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA533A6B1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261C020551D;
-	Wed, 12 Feb 2025 09:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD87D205E15;
+	Wed, 12 Feb 2025 09:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mHammSSf"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zOD+Ake8"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B79271828;
-	Wed, 12 Feb 2025 09:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82701E282D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353556; cv=none; b=CEkGGI5aPGZi88bAA2lCby4q9oIGdf3Dx5bPs7QT94KJz5TBWHeIRM4dpcfqYydGZ+1DMx0kOgwaQrpmKBF/4KyXLYfIyj3AAIS7YcRqH9VjR3sBULvN1NT9cQQJaI1J/W2IOeDKXsoshsxgmqU0rIKxQOzqvV9fGCcnhBQUvAQ=
+	t=1739353643; cv=none; b=kjMlp1zqfwfE+eooXcvHU5Gh4Zev5xObQ1NP43YNvSctxhCqE0E1++kdlUS6n1VW1H4mTVNmZuTRSx9Wdqe6Rv8kTGFPpi3/ra3blU437x5YnTCI03IFnyCZY3H0Bg0A3Di6Q+7Pxy515uaIspobEf62hDJDKmJbh45VMC2c4t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353556; c=relaxed/simple;
-	bh=kAK1JNEXBVI90rtvbzvhelzR8j2Kk8vnxGVJn1p7bBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MkvZ842eExKM+/dwU4NVFHBH6MRwW/HezjwdRPzcWTj9AoSKEZItvVZ8Y0gC3+yczqg6S8845YiSdiiOWmMhAeAdGn/C5JaDdUOgUdksuWDbVcmW35grOAF5x5hO5bo93LFwL69NbvQspKkoJJ/KwUHgPwpqgV0tmcVS69gemCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mHammSSf; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E398A432FA;
-	Wed, 12 Feb 2025 09:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739353551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CfitNOlVMCBM5pFcbQFIlvndtGb2TiK3zUMFNWZwgDY=;
-	b=mHammSSfAxD36lSKrqFlgQ0FxjGr0GSfooYA6WuHOPvHq9JQbumFr0Ho3U1Q8tbb9rmgj8
-	tzyPK6jPpwkd3G3gLk3e1NimGOsnqsuAFerXeIsRKeyGNl/6qLEg3wHBjMGJoqCzuNpIlu
-	gG5mm//6DtYFd517rnZxUZIplJuyLTrwTsT9S9iFmFmODq2DPfQlcrRjAFf7c3H6SKPIQo
-	cRNPcLf/EXG4VWiBv8ryfwFbhp9vR61Su+ehl48mzUydz6bja2p044wqlsDs8IPX5fY0d3
-	3VQ0BUcWlu/pehPCt64yUHk1WP1jizH/rz1hkKhC60ggLigUfumfX2WaRsFFZw==
-Date: Wed, 12 Feb 2025 10:45:49 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [RFC PATCH 3/3] i2c: i2c-core-of: Handle i2c bus extensions
-Message-ID: <20250212104549.6b1d8781@bootlin.com>
-In-Reply-To: <71468d78-07aa-49b1-8b6d-3d98c6fc9893@kernel.org>
-References: <20250205173918.600037-1-herve.codina@bootlin.com>
-	<20250205173918.600037-4-herve.codina@bootlin.com>
-	<71468d78-07aa-49b1-8b6d-3d98c6fc9893@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739353643; c=relaxed/simple;
+	bh=TKqcICL6TXKPxSRegpy9J7XyX60nER860Jd1kslHKlk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NyomYi9fyhLoaOHvbeY/i/Zaabd30OuE/RMFd8S8Rs6M109tUtVqIDzqeCQ9lx6Zm6DCt+fQme5249zxVUz99qneTP0t6QA6ZVjOH4niS/bGGMUpFLtycIlxEfq3kPzML/8+PExQD+y+W/7S9+GqlpkGlPnZRRx6jBM2X825iZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zOD+Ake8; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab2b29dfc65so996959966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:47:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739353640; x=1739958440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TKqcICL6TXKPxSRegpy9J7XyX60nER860Jd1kslHKlk=;
+        b=zOD+Ake8DyXjX6p5UpYt0dkTWSVP3hII4Pb9TTAmi7P/ajGoE4D/QRXJGStq9zuwAK
+         HpJkdDOGnMbcMTGhjKbkKkAIhUq8e4qYeYJiE1u5IE2xT3HqRlJopjmz+dZZ4fjJO9LH
+         bPHYWpCDdOAM/tjO0y+YCTAVi22GmUBBtPN7+oS4WzxmAckeGO8ph9yfQLE+VWbAhw7a
+         2LTnj7H4ZimyzY+zbL7Pto4STZt2bMxo7JDT2gO8hMDz+owHV2GymQqjmEZfe2Wz88gC
+         qd9Kel9Izes7JmuxIXoUAg07SgUvo3JQo7OIHIi+XnkNPnEybnNB3FZ10DLMUU3hPIsZ
+         xm+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739353640; x=1739958440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TKqcICL6TXKPxSRegpy9J7XyX60nER860Jd1kslHKlk=;
+        b=HWWNwNxJFVrOhYXl+lrlJFaoU738cfDxtweb6NSWfXuaSLreJ2prNe5BQfME0kyaip
+         +Os1elcam0cgaH1od0EwH6rhfGobJUSCRKmP0+to8vPlwLCfHrm9qXuaugZ50iR+uWFk
+         MOCfwUmkrCedcCk1FJXzZVvqXFauRN9ByQ+OoMRErUZ0cceVo5lryoOpBq7u+dZanRRS
+         e3ErbGRkqXaMRGlf/UtgYkiNXnJ4X8g1w1URupWf1ex20KrS8PNdTy5tolbLiAkbcewC
+         igWTErF5jnA59vn5POV0vZBo405V2wMXmJ1BMhjllzEMrEdlKELB865Xxu7DkXQLB8ta
+         IEWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXz3vA/azxSSXU2s7kWBWxcT8Yha1hsSmMC/inQ3z/pTEcqfp1S1U14KkGtSpOpyWRd7JOMKOT6zWm+W+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/C/bFtVUWzuzcTOrlAQZ9mEQ+QN9sILXuZrFv5yBTgGewSNrZ
+	SNxKd90dU5BYBTlnRzfQwf6RVna+oRo5ecNXSB/76nAMAk0K+3qm/mjIKmHnaNuLBQImkdiIght
+	2BTrmwYk2k/MYB1UOUMMB3s5WVClzaY7PBc6s
+X-Gm-Gg: ASbGncu6Qh1/uKBlFWJrgDQMZnSU1j0n4S//1fq181PoR9ind0AZuURYjlhDklQ9++0
+	AQJQIIYBWAWCyvOyjg7a9WdqSEo7mtza4tfro+tBnJCsagQnvpX1UHZ6EPYcZ7U4bAo6ht6d5it
+	N3sTELb0nnXEcYn5dx55wQkWk/IE09JQ==
+X-Google-Smtp-Source: AGHT+IGQtYtV8hB9z4cqfu+GD6xWt9yKHzH3Tmh6TBoqYNAt+cogJqa1226aKLwvMy8OQDTzT4ej9do/nT4u8m18J2A=
+X-Received: by 2002:a17:907:3f8d:b0:ab7:dc1d:7d7d with SMTP id
+ a640c23a62f3a-ab7f33c578dmr199546266b.25.1739353639819; Wed, 12 Feb 2025
+ 01:47:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeehhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedtvdefvefgiedvtedvgedvgeelhfejkeejgefgvdfguedtudeiiedtieejffduhfenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnv
- ghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: herve.codina@bootlin.com
+References: <SY8P300MB04210D3E18CFEA27AE9E9338A1FC2@SY8P300MB0421.AUSP300.PROD.OUTLOOK.COM>
+In-Reply-To: <SY8P300MB04210D3E18CFEA27AE9E9338A1FC2@SY8P300MB0421.AUSP300.PROD.OUTLOOK.COM>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 12 Feb 2025 10:47:08 +0100
+X-Gm-Features: AWEUYZmVcw8L3xAI6H_huoGpEXCmHBOAY8OxIyVRj6KAvbkKDGsIbSCp832MFn8
+Message-ID: <CANn89iKxw4=29p_Ys3H0=mDQFOfZYbqxaTuLsRYK2X2tJCuwHQ@mail.gmail.com>
+Subject: Re: BUG: corrupted list in neigh_destroy [with reproducer]
+To: YAN KANG <kangyan91@outlook.com>
+Cc: Joel Granados <joel.granados@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, 
+	"j.granados@samsung.com" <j.granados@samsung.com>, "linux@weissschuh.net" <linux@weissschuh.net>, 
+	"judyhsiao@chromium.org" <judyhsiao@chromium.org>, "James.Z.Li@dell.com" <James.Z.Li@dell.com>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+On Wed, Feb 12, 2025 at 10:18=E2=80=AFAM YAN KANG <kangyan91@outlook.com> w=
+rote:
+>
+> Hi:
+>
+> I found a kernel bug titiled "BUG: corrupted list in neigh_destroy " whil=
+e using modified syzkaller fuzzing tool. I Itested it on the latest Linux u=
+pstream version (6.13.0-rc7), and it was able to be triggered. I found earl=
+y report has no repro. I have a reproducer that can stable trigger this bug=
+ .
+>
+> early report: https://lore.kernel.org/netdev/20241007202240.bsqczev75yzdg=
+n3g@joelS2.panther.com/
+>
+> The bug info is:
+>
+> kernel revision: v6.13-rc7
+> OOPS message: BUG: corrupted list in neigh_destroy
+> reproducer:YES
+> subsystem: NETWORKING
 
-On Wed, 12 Feb 2025 06:54:19 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+FYI, there are already many public reports using bcachefs to trigger
+'bugs' in networking or other layers.
 
-> On 05/02/2025 18:39, Herve Codina wrote:
-> >  
-> >  	dev_dbg(&adap->dev, "of_i2c: walking child nodes from %pOF\n", bus);
-> >  
-> > -	/* Register device directly attached to this bus */
-> > +	/*
-> > +	 * Register device directly described in this bus node before looking
-> > +	 * at extensions.
-> > +	 */
-> >  	for_each_available_child_of_node(bus, node) {
-> > +		/* Filter out extension node */
-> > +		if (of_node_name_eq(node, "i2c-bus-extension"))  
-> 
-> Where is the ABI documented?
-> 
-> > +			continue;
-> > +
-> >  		if (of_node_test_and_set_flag(node, OF_POPULATED))
-> >  			continue;
-> >  
-> > @@ -103,6 +110,23 @@ static void of_i2c_register_children(struct i2c_adapter *adap,
-> >  			of_node_clear_flag(node, OF_POPULATED);
-> >  		}
-> >  	}
-> > +
-> > +	/* Look at extensions */
-> > +	for_each_available_child_of_node(bus, node) {
-> > +		if (!of_node_name_eq(node, "i2c-bus-extension"))
-> > +			continue;
-> > +
-> > +		extension = of_parse_phandle(node, "i2c-bus", 0);  
-> 
-> And this?
-> 
-> > +		if (!extension)
-> > +			continue;
-> > +  
-
-I know the binding is not present in this RFC series.
-
-As I mentioned in my cover letter, the binding that needs to be updated is
-available in dt-schema repo [0].
-
-When the binding is be accepted in dt-schema repo, I will not be able to
-change it and because two repos are involved, I cannot send the binding and
-the implementation in the same series.
-
-Before sending a patch to update the binding in dt-schema repo, I would
-like first to discuss the proposed i2c bus extension idea in terms of:
-  1) DT properties naming and purpose
-  2) implementation
-
-[0] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
-
-Best regards,
-Hervé
+Do not send other reports, or make sure your repro is _only_ using
+networking stuff.
 
