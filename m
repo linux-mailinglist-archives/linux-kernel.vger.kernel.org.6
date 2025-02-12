@@ -1,193 +1,234 @@
-Return-Path: <linux-kernel+bounces-511260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B407A32875
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5512A3287B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08F00188B729
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:30:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03B81882A61
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3847F2101AB;
-	Wed, 12 Feb 2025 14:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BA220E70B;
+	Wed, 12 Feb 2025 14:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LD7SkfO9"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nUvShn1a";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ItWYJmnp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nUvShn1a";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ItWYJmnp"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD44020FA85;
-	Wed, 12 Feb 2025 14:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C630327180B;
+	Wed, 12 Feb 2025 14:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739370590; cv=none; b=tL5NDqUEZa/PU34TZk2B0c2fLaSPuYxWK/3Q59HMNgvx4+0gJn+cvrKGMmpmW1u6xgx9evRlKFCNM1iDevWzRYcc6499aoK0Ri3sTom5hy3u0lGbC/dChrGbfGAW+t69SrlxLUeQxzLPVQChrT78wOf3dJWHnWyQX4TEpbXAdWs=
+	t=1739370744; cv=none; b=otc2reRHEqjxTMZ7EYGqDN31Pbq77FVUbF8xy72CJwZTyu2pQx3j08BPhAqYSz4g1tfX99qdjmuevgD8IE+T67X7sbd40582BFbrOD+hgKGonSOlfAvOdiG9+1ARTcSNfwUQCZ1X093Iwhu3S6C2TKPM0mwk8HRMc/0LRTOiPD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739370590; c=relaxed/simple;
-	bh=VUUeUPQh1Fqb/o0nTY5L5XzwSrNwsrjQ/4e6Xs+ii4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AK7ggHNwFZTjO8GhKzlQgx+2EtiKLAzadltd6Btm/Q6Dy6C6SX7L89hwbcghbWi348du7KnKzh7gL3envU7S4srYOBsfGHgigg6d7dLQiHLj2HJYVO1K9du+cdvk8jKvTxjxxdUIJncNIPIcMaYCqgfmuzdtIFDJu2zH7Q/nEDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LD7SkfO9; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A53311140177;
-	Wed, 12 Feb 2025 09:29:47 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 12 Feb 2025 09:29:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1739370587; x=1739456987; bh=se8eRiep1x3pdAKW/NZ5Dm0QEQsx3rvUSYo
-	OH4EnVuU=; b=LD7SkfO9CzC9mmEN11AsQZPOTnPAYwBA6iPWuTbFE7ACBBCS8ZC
-	62mCTPBZ/eDpONAzGgK0tVRXzOv11ohPjCNqo+TnP/+w1zjf78wvJLLwoDIP5QBO
-	x1TE83BYyanpLRj1smHMrt2vNTpTIKwt/clN0BqeFe5v7hAUx+qdJULynttF7qqW
-	2qtZtm8qh2NPw2njE3aU5rXoudtnqjszjcEdLqrwiGXNX6t8FwObCZVRnIivuKM8
-	jt8NF8o7Pg/IbWDBTelP7nebv9Am/Lby/J33c8dinplcqurWNiLN+1EkvdVGRHxQ
-	PES8Vl4l5PFsI5bjLtnhUIs/D0tJt7WXBpQ==
-X-ME-Sender: <xms:WrCsZx_kmQrbN9FztoJdc8wq35kfas-3Hm7yeMksO7hTw-ilFYjyXg>
-    <xme:WrCsZ1sXBD0R-7pxOT__9AFx7LNRYItDGZGZQ61LTCufy7sX0WsYLFqklII1F8LRP
-    AUZb_61cmtTFQg>
-X-ME-Received: <xmr:WrCsZ_AL_hDaAaZhauMG-k9FMMc-g25g1FydBKimcveUcv5u6k9Fi01OF5xO>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggedufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefkughoucfutghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrd
-    horhhgqeenucggtffrrghtthgvrhhnpeehhfdtjedviefffeduuddvffegteeiieeguefg
-    udffvdfftdefheeijedthfejkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepihguohhstghh
-    sehiughoshgthhdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehoshgtmhgrvghsledvsehgmhgrihhlrdgtohhmpdhrtghpthht
-    ohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvh
-    gvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghho
-    ohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmshes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrd
-    horhhgrdhukhdprhgtphhtthhopehjihhrihesrhgvshhnuhhllhhirdhush
-X-ME-Proxy: <xmx:WrCsZ1chCOFpyCNrg-rSnorAQQV_5mGq3_LAh_QX7mGGJ_vJ-CqZAw>
-    <xmx:WrCsZ2Mg4oi3kvRpzSK7QK4sITJSCVwWdfjVFHFofrUjrQGh5infPA>
-    <xmx:WrCsZ3lYi6ddP_9jiLdruk4zTQ3cL79wqnADIa25cNSu8ZORP_Rzdw>
-    <xmx:WrCsZwvz-ncVjWJsmhXpAKcT4PM7Tnp10Seb5MDPSy-YNCKhOrar2Q>
-    <xmx:W7CsZ3l7fFbOTq3wNZSOOjYxnhtMFbVaLiMH1uSrDxPnrUX-ps9xyV2Z>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Feb 2025 09:29:45 -0500 (EST)
-Date: Wed, 12 Feb 2025 16:29:43 +0200
-From: Ido Schimmel <idosch@idosch.org>
-To: Oscar Maes <oscmaes92@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	viro@zeniv.linux.org.uk, jiri@resnulli.us,
-	linux-kernel@vger.kernel.org, security@kernel.org,
-	syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
-Subject: Re: [PATCH net] net: 802: enforce underlying device type for GARP
- and MRP
-Message-ID: <Z6ywV4OkFu52AB8P@shredder>
-References: <20250212113218.9859-1-oscmaes92@gmail.com>
+	s=arc-20240116; t=1739370744; c=relaxed/simple;
+	bh=uttk/8N9bTT/GbyOULHpMzTmqJDYocTv4bs1LU5K9kM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GssxSJOtqjbz6hoqqAMUhn7iF/6Q64FTuGkQlqdA9J5dllibsQXCmxv7CNCaChH9Rn92XPhfBMsClF3P3BvfOby+mIzhuIFrmR8pI7AKrPMWkqu30qy5Cro+/T4OwhbqEYLVIwokEE6uFkRCk6Tg21ZIEuOD+qaKAfSatPIE5r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nUvShn1a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ItWYJmnp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nUvShn1a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ItWYJmnp; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C958C337B4;
+	Wed, 12 Feb 2025 14:32:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739370740; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ye8yKCiRFKz8E9Wr/Bto9ANzqQ7EA3W0jKUpD3AWWoM=;
+	b=nUvShn1ahh2rK2QbQlkJ/Jxz1wrohrDssNykOM1+g5l8CtQHh41swYgWCfvgLUTPAQ8pt6
+	IvbIic3s5Aux3Npwu4OGRe4JLLzmNypgRrax+lCd1OpDehlEZ3xsD3mkCLuVoCXOdyq7sG
+	IV6UOW7OesyWUdVzAdBh4VlAG3sCT2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739370740;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ye8yKCiRFKz8E9Wr/Bto9ANzqQ7EA3W0jKUpD3AWWoM=;
+	b=ItWYJmnp5XYFvrPiqmNB8vwDNfiASyb0jSyYhE8+VQEtnLPoWyW7qhgQRZK+NnwhW0PBqk
+	379iC2Xktobw6vBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739370740; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ye8yKCiRFKz8E9Wr/Bto9ANzqQ7EA3W0jKUpD3AWWoM=;
+	b=nUvShn1ahh2rK2QbQlkJ/Jxz1wrohrDssNykOM1+g5l8CtQHh41swYgWCfvgLUTPAQ8pt6
+	IvbIic3s5Aux3Npwu4OGRe4JLLzmNypgRrax+lCd1OpDehlEZ3xsD3mkCLuVoCXOdyq7sG
+	IV6UOW7OesyWUdVzAdBh4VlAG3sCT2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739370740;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ye8yKCiRFKz8E9Wr/Bto9ANzqQ7EA3W0jKUpD3AWWoM=;
+	b=ItWYJmnp5XYFvrPiqmNB8vwDNfiASyb0jSyYhE8+VQEtnLPoWyW7qhgQRZK+NnwhW0PBqk
+	379iC2Xktobw6vBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AAC1C13874;
+	Wed, 12 Feb 2025 14:32:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pQYrKfSwrGfyMgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 12 Feb 2025 14:32:20 +0000
+Message-ID: <30b06d39-f1b8-45b3-8c81-5d4dffed30a5@suse.cz>
+Date: Wed, 12 Feb 2025 15:32:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212113218.9859-1-oscmaes92@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] Refine kmalloc caches randomization in kvmalloc
+Content-Language: en-US
+To: Harry Yoo <42.hyeyoo@gmail.com>, GONG Ruiqi <gongruiqi1@huawei.com>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>,
+ Tamas Koczka <poprdi@google.com>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Xiu Jianfeng <xiujianfeng@huawei.com>, linux-mm@kvack.org,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250212081505.2025320-1-gongruiqi1@huawei.com>
+ <Z6yuQEYJbmWi8z23@fedora>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <Z6yuQEYJbmWi8z23@fedora>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com,huawei.com];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Feb 12, 2025 at 12:32:18PM +0100, Oscar Maes wrote:
-> When creating a VLAN device, we initialize GARP (garp_init_applicant)
-> and MRP (mrp_init_applicant) for the underlying device.
+On 2/12/25 15:20, Harry Yoo wrote:
+> On Wed, Feb 12, 2025 at 04:15:03PM +0800, GONG Ruiqi wrote:
+>> Hi,
+>> 
+>> v3:
+>>   - move all the way from kmalloc_gfp_adjust to kvrealloc_noprof into
+>>     mm/slub.c
+>>   - some rewording for commit logs
+>> v2: https://lore.kernel.org/all/20250208014723.1514049-1-gongruiqi1@huawei.com/
+>>   - change the implementation as Vlastimil suggested
+>> v1: https://lore.kernel.org/all/20250122074817.991060-1-gongruiqi1@huawei.com/
+>> 
+>> Tamás reported [1] that kmalloc cache randomization doesn't actually
+>> work for those kmalloc invoked via kvmalloc. For more details, see the
+>> commit log of patch 2.
+>> 
+>> The current solution requires a direct call from __kvmalloc_node_noprof
+>> to __do_kmalloc_node, a static function in a different .c file. As
+>> suggested by Vlastimil [2], it's achieved by simply moving
+>> __kvmalloc_node_noprof from mm/util.c to mm/slub.c, together with some
+>> other functions of the same family.
 > 
-> As part of the initialization process, we add the multicast address of
-> each applicant to the underlying device, by calling dev_mc_add.
+> Hi, GONG!
+> Sorry for my late review.
 > 
-> __dev_mc_add uses dev->addr_len to determine the length of the new
-> multicast address.
+> This patch series looks good to me (with a nit),
+> Reviewed-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 > 
-> This causes an out-of-bounds read if dev->addr_len is greater than 6,
-> since the multicast addresses provided by GARP and MRP are only 6 bytes
-> long.
-> 
-> This behaviour can be reproduced using the following commands:
-> 
-> ip tunnel add gretest mode ip6gre local ::1 remote ::2 dev lo
-> ip l set up dev gretest
-> ip link add link gretest name vlantest type vlan id 100
-> 
-> Then, the following command will display the address of garp_pdu_rcv:
-> 
-> ip maddr show | grep 01:80:c2:00:00:21
-> 
-> Fix this by enforcing the type and address length of
-> the underlying device during GARP and MRP initialization.
-> 
-> Fixes: 22bedad3ce11 ("net: convert multicast list to list_head")
-> Reported-by: syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
-> Closes: https://lore.kernel.org/netdev/000000000000ca9a81061a01ec20@google.com/
-> Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
-> ---
->  net/802/garp.c | 5 +++++
->  net/802/mrp.c  | 5 +++++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/net/802/garp.c b/net/802/garp.c
-> index 27f0ab146..2f383ee73 100644
-> --- a/net/802/garp.c
-> +++ b/net/802/garp.c
-> @@ -9,6 +9,7 @@
->  #include <linux/skbuff.h>
->  #include <linux/netdevice.h>
->  #include <linux/etherdevice.h>
-> +#include <linux/if_arp.h>
->  #include <linux/rtnetlink.h>
->  #include <linux/llc.h>
->  #include <linux/slab.h>
-> @@ -574,6 +575,10 @@ int garp_init_applicant(struct net_device *dev, struct garp_application *appl)
->  
->  	ASSERT_RTNL();
->  
-> +	err = -EINVAL;
-> +	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
+> Also, I verified that the problem you described exists on slab/for-next,
+> and the patch series fixes the problem. Please feel free to add,
+> Tested-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 
-Checking for 'ARPHRD_ETHER' is not enough? Other virtual devices such as
-macsec, macvlan and ipvlan only look at 'dev->type' AFAICT.
+Thanks!
 
-Also, how about moving this to vlan_check_real_dev()? It's common to
-both the IOCTL and netlink paths.
+> nit: Does it make sense to call __kvmalloc_node_track_caller_noprof()
+> instead of __do_kmalloc_node() to avoid bloating the code size?
 
-> +		goto err1;
-> +
->  	if (!rtnl_dereference(dev->garp_port)) {
->  		err = garp_init_port(dev);
->  		if (err < 0)
-> diff --git a/net/802/mrp.c b/net/802/mrp.c
-> index e0c96d0da..1efee0b39 100644
-> --- a/net/802/mrp.c
-> +++ b/net/802/mrp.c
-> @@ -12,6 +12,7 @@
->  #include <linux/skbuff.h>
->  #include <linux/netdevice.h>
->  #include <linux/etherdevice.h>
-> +#include <linux/if_arp.h>
->  #include <linux/rtnetlink.h>
->  #include <linux/slab.h>
->  #include <linux/module.h>
-> @@ -859,6 +860,10 @@ int mrp_init_applicant(struct net_device *dev, struct mrp_application *appl)
->  
->  	ASSERT_RTNL();
->  
-> +	err = -EINVAL;
-> +	if (dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
-> +		goto err1;
-> +
->  	if (!rtnl_dereference(dev->mrp_port)) {
->  		err = mrp_init_port(dev);
->  		if (err < 0)
-> -- 
-> 2.39.5
+Hm I think it would be a bit arbitrary to make kvmalloc special like this
+here. But we should probably change __do_kmalloc_node() to
+__fastpath_inline. Or even check if not making it inline at all results in
+other callers (not kvmalloc probably due to its complexity) doing a tail
+call there, which should be fast enough.
+
+> My simple build test says it saves 1592 bytes:
+>   $ ./scripts/bloat-o-meter slub.o.before slub.o.after
+>   add/remove: 0/1 grow/shrink: 0/1 up/down: 0/-1592 (-1592)
+>   Function                                     old     new   delta
+>   __kvmalloc_node_noprof.cold                   39       -     -39
+>   __kvmalloc_node_noprof                      1755     202   -1553
+>   Total: Before=79723, After=78131, chg -2.00%
 > 
+>> Link: https://github.com/google/security-research/blob/908d59b573960dc0b90adda6f16f7017aca08609/pocs/linux/kernelctf/CVE-2024-27397_mitigation/docs/exploit.md?plain=1#L259 [1]
+>> Link: https://lore.kernel.org/all/62044279-0c56-4185-97f7-7afac65ff449@suse.cz/ [2]
 > 
+
 
