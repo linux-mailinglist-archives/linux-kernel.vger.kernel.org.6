@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-512027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FA8A332E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:52:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE798A332F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03243188A1FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:52:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5E17A2EC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0CA25C70F;
-	Wed, 12 Feb 2025 22:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D2821129D;
+	Wed, 12 Feb 2025 22:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="WgYdRnKK"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0+oa/YGN"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF022045A1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76E22036E2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739400751; cv=none; b=rKmBB46p5eb21is5TfogjFWl08HFK0Hw2Y61cPjdWe+0u2+6INpSLJQ5ukgKzLXifsgyGkDvoe0a/5gdR3S53WRP2KPddfmRS0lrJCUu9jHcLDDPzP8NeLygFUJM2tBtUtJNcmFbduA5Rv79fw01hzLai1NefJbhTyLvFX4FIp8=
+	t=1739400944; cv=none; b=saX+B4IfMc84tYCZ00n1Ycx0MpwfEtpTO0uSAXYi4oFzykfwQjMvhTBEnliSLKRJhzcVsgfkZ0SgP3l+4wLKgDhBrBS+UYzaa3xaTBnA/VMy59Qhme4K1XkXgqCsueVoi9XR9uSZh+3opBHNjdSW5hPrZSqbAtN/EZhKE5tOSAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739400751; c=relaxed/simple;
-	bh=SWGL+qKoHjkKydonxxolqze9lweGFt9BYvi6cuMfK9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AuxQKVqgkrIllptwt+UcYxaVeM8u34BJ5sYZg/KkNDFq++ZAjYoQCRQOGeBuAxR3GjlwYsbusyIce5bgACjVYKjPrNv3+CEr96IguGGzhGYbLO5rlKekkR6cualTRm6IC3/Po14FQnO3ak89+3N0OS/G36GkhNy+aU6D4cn+/ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=WgYdRnKK; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d14811cabfso732125ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:52:28 -0800 (PST)
+	s=arc-20240116; t=1739400944; c=relaxed/simple;
+	bh=M/JEAtm/aKqZQpUcIkbOx1V5MbhNPluJ7A9OR2+JsF8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=O0tj4trzwKlFwT5YsZV3sjHzRY/nfNqk665saiv+a0+h7Bby6xqy+C+fllEjt4km1Jgyu1SYp3Qh0U9Y/6vKgOd9BcgknhKye6Q/n2W/b+mv9ekK3P5DwxNWu6STYhGdK1vg3NkdnbZFx6+2lgBjcEd/gjZJl1k3ARG9kiRo80s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0+oa/YGN; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21f022fc6a3so5009065ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:55:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739400748; x=1740005548; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NVfXGj8zpj+Qn/84lGpaV8DSwtFOmUf9lyjwLMDCFsU=;
-        b=WgYdRnKKU98hxmfTj4NdEzrl/5kKHlov8hk52uJuTVaMAOoPavfhEo2KrcnNOCnG3h
-         5M3W7znDzK87K7vkn3+tyk1wDHUU4gua25xJXJsOnfeI65o+sbFJHTc1LMvLyw7a1oj8
-         7BsCStvN1QbJ4R8F/qRF1+1m5/lQf2Wa/NqOD+fxmeJvU1nVKj+b3B4UMPLMiLKquRxv
-         +TYBaSZFbOg0fv9pTLutBHGot1RA1sLFS59Y29INwYs7aHoqSFaE6jLjRd4rA26k/Uuk
-         zqsXjMXQaJXMQQ9tr8pugzsF+0RxHqi2w6I0hY/tf1+HDfPNMfFY9zQgKx9mx7gVOq1K
-         W6LQ==
+        d=google.com; s=20230601; t=1739400942; x=1740005742; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G4pJwe4WBZK7j0Qn81lTWodsKOqME7mNPJqkDCUIDvw=;
+        b=0+oa/YGNFhfNfAvc1DakAtTUGsb5fIjUlQ8FgLTRkg4g1oQyavX/X3Goe3VKnShPef
+         sathwRfPc14c/SS/26TodPkSpcyzfl3XYEr9eD3+NKhZ05MA8IpZOeWBer9yGZdhkcZg
+         vYzPXJsuWtL36f/RQOOZ6ZGR0NpUaTqI7oN/qOUKlOn8bvDfB5QLFBFv0wQAHb7EYZZh
+         kMeayyeRT8PqJE3MHyteMkdaI14XvZfIVt0dUvMYtIEAGznLN65J37HiJGuZe3Ih2/nK
+         SaRuIN8GhT2SwQG9cLxEL2bY5wKx/5x8+sumghXwYfj0es1OJMTZcsxVPzpCpT8g64ko
+         5HHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739400748; x=1740005548;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NVfXGj8zpj+Qn/84lGpaV8DSwtFOmUf9lyjwLMDCFsU=;
-        b=E/UtGctJD0VilRXYw9QnsxxaaJ+Kz7cWw2tY0reAdopgBm+X829S23nPGbPk2CWrFT
-         dZZgNvvJk9bnVR3kx1ANulBdD749HpIkD0zljRN8NWiLGpUDm6/Yzj+3UCx2jaZ/C0Qi
-         19hGd67Yc4hTkWytaEEDLYIAoHanGs8yNKKd8U5LDk2YszC9Ml+HG3s5qXwfjUJTuIA6
-         ZA1eOy6KJFNE2u7XCNIczJoffdiSElaTsxudI9FWDmzIM55/ASsZ7sOQmDKd5SZOQw0C
-         UDDoIfiZTr1Tyfe0p8ClBYMaVZc5yIqRAIr8m0/q45mlJsWWufzGQ8kFEk6CdtroR7u/
-         dtrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+s3EDB6l47gS/76oMKiSP0v8qoio8KzHl65YK/+9FghN05Khx3ry0QmW5YjL852DjzjKADxcth2Gs+Yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrRbnbcHBzfH8dcb5+qDtqX94hJhWcw9cqqm1xBNrVMXVq2PVS
-	S2JCfpmS8Mjt0xGSQndSpi6U9CKJ1mwy1LX7XC7sfkFUni9WLx5eAK36ib8ddt8=
-X-Gm-Gg: ASbGncs0Vv44xzJo0TTl6lVFUA6PygLD3rmQhERZs6n37qNF0g0RWx/HRsstSPYkTJS
-	htzRF59fgw5vG3iRJIOzq2yEEzIvmGZagV4MgbVRXTo85Ny2eKee8R59+XVghs84H403nkY8tTN
-	1snOz/qVdmU7jM0NM2flQ+2caR7jlZBz0h+IoCxeE4tsOjE19CDV0g4jKEpTEgu5pudG2Ti7vUe
-	TKX0QJGFWE6Nmln2M28RCG47IN+OJYCSUFaWhyl3CoVPWNFB9me21r85coL2GPyMMs63WyAXmKD
-	OYZIN8X8GRDx
-X-Google-Smtp-Source: AGHT+IEVucKe+Bwn3kpsif8ddoHmG/lUq2XHVyUfI1HDjERU36c7zfxTH6zQqWZ1cuUoUSWMIsoTnQ==
-X-Received: by 2002:a05:6e02:480a:b0:3d1:8a22:766a with SMTP id e9e14a558f8ab-3d18a2277f4mr14144385ab.22.1739400747944;
-        Wed, 12 Feb 2025 14:52:27 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ed282dd102sm22456173.118.2025.02.12.14.52.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 14:52:27 -0800 (PST)
-Message-ID: <da1428dc-e117-45fe-82a3-26d56b414652@kernel.dk>
-Date: Wed, 12 Feb 2025 15:52:25 -0700
+        d=1e100.net; s=20230601; t=1739400942; x=1740005742;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G4pJwe4WBZK7j0Qn81lTWodsKOqME7mNPJqkDCUIDvw=;
+        b=V5uztmNRM1LxwAaQcWFKczPH14P37k+pRx1cIzACdkJkR8l8yuTLHqOhq1+I0KQ1CL
+         cAf2YvTMrGuTw9yXdfKVwUv7i/mjg2/qtqbx+hnrmSck99DzvRXEswESkHbTS1V/ps5F
+         tkLOtL6f3sfxCMSimH68XqE7naJzuCLCw6Hr9gtnUxIADNgrKVSRy+n0uNAzjjtZYDOu
+         WbX+S/Tzceo0EZ1u1KHED9WbPbQgsacU/UllGLE//5pgL1j+0nuggrnkvxNDgOkE6uZT
+         VqYCV1FGGdGmEqgibhSrvxS+6/fG9CswLioz4bCz8F4wUddKnwyZt7P0iel6ot7ldPlM
+         Egbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPCtVO6Y+3P6VePeRTR4fE4g5h26nGMdRVv53Aa1bq+hIU1O4CvUpPPjNzIKZQnpehycK1FYuk938Lp5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiK50NV5ZsUva7ZAXY5RCWCmH3LwXVtJ1DDwKRoSneCa8kT+MJ
+	9oCquf1LH9cxQ8Xv7wog16vTvm1mnI9+4po6yT5uTFuRYYeTMLBZAXcMr2ClP7cjmz+Lizh/ZNH
+	dBg==
+X-Google-Smtp-Source: AGHT+IFCvprC2FVz2MYwofAu+gOZ+t6GzfO0x6W16EewccF+NjWJufThiJaaDpuXjWvbsRckLewQnEmSOUI=
+X-Received: from plbb4.prod.google.com ([2002:a17:903:c04:b0:21f:14cc:68b0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c94e:b0:220:c2bf:e8ba
+ with SMTP id d9443c01a7336-220d3528cc9mr11030295ad.14.1739400941927; Wed, 12
+ Feb 2025 14:55:41 -0800 (PST)
+Date: Wed, 12 Feb 2025 14:55:36 -0800
+In-Reply-To: <SN6PR02MB4157DBAF1E3BB0E4FFD2C92DD4FC2@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: use napi_id_valid helper
-To: Stefano Jordhani <sjordhani@gmail.com>, netdev@vger.kernel.org
-Cc: Paolo Abeni <pabeni@redhat.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Pavel Begunkov <asml.silence@gmail.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
- <willemb@google.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Joe Damato <jdamato@fastly.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Sridhar Samudrala <sridhar.samudrala@intel.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Mina Almasry
- <almasrymina@google.com>,
- "open list:FILESYSTEMS (VFS and infrastructure)"
- <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:IO_URING" <io-uring@vger.kernel.org>,
- "open list:XDP SOCKETS (AF_XDP)" <bpf@vger.kernel.org>
-References: <CAEEYqun=uM-VuWZJ5puHnyp7CY06fr5kOU3hYwnOG+AydhhmNA@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAEEYqun=uM-VuWZJ5puHnyp7CY06fr5kOU3hYwnOG+AydhhmNA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250201021718.699411-1-seanjc@google.com> <20250201021718.699411-17-seanjc@google.com>
+ <Z6ZBjNdoULymGgxz@google.com> <SN6PR02MB4157A85EC0B1B2D45CB611FAD4F02@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <Z6onnUthSBUVAklf@google.com> <SN6PR02MB4157DBAF1E3BB0E4FFD2C92DD4FC2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Message-ID: <Z60m6NiOlCmy4-q0@google.com>
+Subject: Re: [PATCH 16/16] x86/kvmclock: Use TSC for sched_clock if it's
+ constant and non-stop
+From: Sean Christopherson <seanjc@google.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Juergen Gross <jgross@suse.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Ajay Kaher <ajay.kaher@broadcom.com>, 
+	Jan Kiszka <jan.kiszka@siemens.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, Nikunj A Dadhania <nikunj@amd.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 2/12/25 2:15 PM, Stefano Jordhani wrote:
-> In commit 6597e8d35851 ("netdev-genl: Elide napi_id when not present"),
-> napi_id_valid function was added. Use the helper to refactor open-coded
-> checks in the source.
+On Wed, Feb 12, 2025, Michael Kelley wrote:
+> From: Sean Christopherson <seanjc@google.com> Sent: Monday, February 10, 2025 8:22 AM
+> > On Sat, Feb 08, 2025, Michael Kelley wrote:
+> > > But I would be good with some restructuring so that setting the sched clock
+> > > save/restore hooks is more closely tied to the sched clock choice,
+> > 
+> > Yeah, this is the intent of my ranting.  After the dust settles, the code can
+> > look like this.
+> 
+> I'm good with what you are proposing. And if you want, there's no real need
+> for hv_ref_counter_at_suspend and hv_save/restore_sched_clock_state()
+> to be in the #ifdef sequence since the code has no architecture dependencies.
 
-For the io_uring side:
-
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-
--- 
-Jens Axboe
+Right, but because they will be local/static and there are no users outside of
+x86, the compiler will complain about unused variables/functions on other
+architectures.
 
