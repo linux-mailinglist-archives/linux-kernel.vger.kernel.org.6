@@ -1,195 +1,109 @@
-Return-Path: <linux-kernel+bounces-511472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE9BA32B7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:22:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA2EA32B7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F14B01885944
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:22:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 848C616643E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2151521018A;
-	Wed, 12 Feb 2025 16:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74211E766F;
+	Wed, 12 Feb 2025 16:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d9GmcSLx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f+d4lLC7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3CF2135B0
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772142135A1;
+	Wed, 12 Feb 2025 16:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739377335; cv=none; b=nVKqI3iOdED0g6X/NvsBZfFDlxhlvGcE6WMRg2ntpWLkGbvupZgyC5FoeJvoF47OG2M22JNTiw3IOOFcDVN+mKLFNZV/VV9uuF2Qrt6r+EN1bQdg6KzX0qHwSfJ4SJOvVXPkW/mdXWiWJVeC8w7VJY03MqLCbQaorJ4QIVRFdqk=
+	t=1739377335; cv=none; b=sJ9wHycRd0BmZ0NVT/xO02gHSsAgnBFoXAw9JyLIs2s0rPt922LMloRKmal0JdvGzXxLLK7l6nMv1BXr5DRpr8edqHYBz8nmB7YeWaQN1mF74RGDG6UKVv1bRtYhZHtzD+JBC6sLym8ChaLTTahBDKbaT/XcqenIxwi/lZArGwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739377335; c=relaxed/simple;
-	bh=Hzgs46TnIY+1XTuVlrUyLq39N5+Ofv85tKlkA0srnSs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TmS9FwmrS0TDSpJX56E2f1PiGL+OZEBdLOkn3vXajUCvTDrBFGwKSxZ20RDSFdg2cxNicbrozt7VHdcnPQP6mCmJo7zBqeWbL8pwnm0HpISnb+HISq3hsEqWngeuejU4l+UoZMDKcrM0LlqIBSi8oHyr/Z0R4drv2E+/HpCnw3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d9GmcSLx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739377332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3mkeENwhXrVCnkP0vqjiIG1p6lDK9GeK7SyVkLKRxtQ=;
-	b=d9GmcSLxac8e1P4/OhXWac03OYDIkT7FhISz7reUGtJlqbUYtlG9l4nwVWbIHMJ/dhhVeP
-	Fk4BLnF5UD6olAZAjeuYPAyj3dse7vn261xtk6L9eBg9KH7R9/sCY6X8rjEfBovSUQOSAa
-	CSG0WzklStTvKO2evcZ6KsRZtWpjnpI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-464-gENj6CbJMx6w85Nz5YcQ9Q-1; Wed,
- 12 Feb 2025 11:22:07 -0500
-X-MC-Unique: gENj6CbJMx6w85Nz5YcQ9Q-1
-X-Mimecast-MFC-AGG-ID: gENj6CbJMx6w85Nz5YcQ9Q
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 68C7D1801A3A;
-	Wed, 12 Feb 2025 16:22:05 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.88.238])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C78DB1800359;
-	Wed, 12 Feb 2025 16:22:01 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: kasan-dev@googlegroups.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	Nico Pache <npache@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v2] kasan: Don't call find_vm_area() in RT kernel
-Date: Wed, 12 Feb 2025 11:21:51 -0500
-Message-ID: <20250212162151.1599059-1-longman@redhat.com>
+	bh=zAt+KHCm2WIHn21DRXUOGexi0mT5f1t387ncoNKjYuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lMlaTjXLX96UbvQapmh/vvh54wFlD+VLR0UXR46O5rwM8XiMHBZYMio5RlUpiJQzwV4PSCi7BSwkvkuQ1nQtafqk/KrVaTPyGNhikont119N1Ns1GniyCzOmgOzZQJ7bBU0ehExqMZ3uj/2+cdjChsMabMc6hOVr0pOxiWt5cs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f+d4lLC7; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739377333; x=1770913333;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zAt+KHCm2WIHn21DRXUOGexi0mT5f1t387ncoNKjYuM=;
+  b=f+d4lLC7GY2D23Aj3qMmEqX/uyJaRQsis2rqPnS8exFWtDyuvQotAIdE
+   XdgrglR7dZsBELTGYRX7Brk3UZUuhCKDeKVV7kH3jP7H2LB+Tdr1R+oE7
+   1uc+5MPzbmiiYnFIbIqn/ilfWzpCeZC9yzoQr17H15Kqjs+uvcfdvbfV8
+   aYfUhYOMGxySSM/fqKRfaN+GU5rg/UGcg+gmX8pUCR2oN5OdPbjOwzk9b
+   AAkdwKDK0qoU+WIk2R5s2jt1TWkIAEoJ1NDJWZUUxA3rl9PpWhYMDUhRG
+   qI3NvpKw/DipF7OiNFK+8iUMYbSOaf1fVyRZjWfShbnCAnSC2HDU5fC44
+   Q==;
+X-CSE-ConnectionGUID: nVqUfJuFQlOuAesG39Itfw==
+X-CSE-MsgGUID: Keg2ySv1Ttq4r1KTbEIfxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39967029"
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="39967029"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:22:12 -0800
+X-CSE-ConnectionGUID: h9l+8dR6Q6265NLaG+W0eg==
+X-CSE-MsgGUID: YAuoXcCEQuu5LuYVt94GiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="143812635"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:22:09 -0800
+Date: Wed, 12 Feb 2025 18:22:06 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, rafael@kernel.org,
+	linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
+	dmitry.torokhov@gmail.com, jic23@kernel.org,
+	przemyslaw.kitszel@intel.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH v5 00/12] Split devres APIs to device/devres.h and
+ introduce devm_kmemdup_array()
+Message-ID: <Z6zKrvdPYPKPcjk2@black.fi.intel.com>
+References: <20250212062513.2254767-1-raag.jadav@intel.com>
+ <Z6yAbfVtm8nlZzqu@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6yAbfVtm8nlZzqu@smile.fi.intel.com>
 
-The following bug report appeared with a test run in a RT debug kernel.
+On Wed, Feb 12, 2025 at 01:05:17PM +0200, Andy Shevchenko wrote:
+> On Wed, Feb 12, 2025 at 11:55:01AM +0530, Raag Jadav wrote:
+> > This series
+> > 
+> > 1. Splits device/devres.h for the users that are only interested in devres APIs.
+> >    Original work by Andy Shevchenko:
+> >    https://lore.kernel.org/r/20241203195340.855879-1-andriy.shevchenko@linux.intel.com
+> > 
+> > 2. Introduces a more robust and cleaner devm_kmemdup_array() helper and uses it
+> >    across drivers.
+> > 
+> > The idea behind embedding both work into a single series is to make the review
+> > process easier and reduce conflicts while merging.
+> > 
+> > Current proposal is to merge initial patches with an immutable tag (volunteered
+> > by Andy) for other subsystems to use. Feel free to share a better alternative.
+> 
+> > v5: Move IOMEM_ERR_PTR() to err.h (Andy)
+> >     Reduce distribution to pinctrl/iio/input patches
+> 
+> Weren't there two more patches that were actually Acked by Jonathan?
 
-[ 3359.353842] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-[ 3359.353848] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 140605, name: kunit_try_catch
-[ 3359.353853] preempt_count: 1, expected: 0
-  :
-[ 3359.353933] Call trace:
-  :
-[ 3359.353955]  rt_spin_lock+0x70/0x140
-[ 3359.353959]  find_vmap_area+0x84/0x168
-[ 3359.353963]  find_vm_area+0x1c/0x50
-[ 3359.353966]  print_address_description.constprop.0+0x2a0/0x320
-[ 3359.353972]  print_report+0x108/0x1f8
-[ 3359.353976]  kasan_report+0x90/0xc8
-[ 3359.353980]  __asan_load1+0x60/0x70
+Nope, iio only has one user each.
 
-Commit e30a0361b851 ("kasan: make report_lock a raw spinlock")
-changes report_lock to a raw_spinlock_t to avoid a similar RT problem.
-The print_address_description() function is called with report_lock
-acquired and interrupt disabled.  However, the find_vm_area() function
-still needs to acquire a spinlock_t which becomes a sleeping lock in
-the RT kernel. IOW, we can't call find_vm_area() in a RT kernel and
-changing report_lock to a raw_spinlock_t is not enough to completely
-solve this RT kernel problem.
-
-Fix this bug report by skipping the find_vm_area() call in this case
-and just print out the address as is.
-
-For !RT kernel, follow the example set in commit 0cce06ba859a
-("debugobjects,locking: Annotate debug_object_fill_pool() wait type
-violation") and use DEFINE_WAIT_OVERRIDE_MAP() to avoid a spinlock_t
-inside raw_spinlock_t warning.
-
-Fixes: e30a0361b851 ("kasan: make report_lock a raw spinlock")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- mm/kasan/report.c | 47 ++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 34 insertions(+), 13 deletions(-)
-
- [v2] Encapsulate the change into a new
-      kasan_print_vmalloc_info_ret_page() helper
-
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index 3fe77a360f1c..9580ac3f3203 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -370,6 +370,38 @@ static inline bool init_task_stack_addr(const void *addr)
- 			sizeof(init_thread_union.stack));
- }
- 
-+/*
-+ * RT kernel cannot call find_vm_area() in atomic context. For !RT kernel,
-+ * prevent spinlock_t inside raw_spinlock_t warning by raising wait-type
-+ * to WAIT_SLEEP.
-+ *
-+ * Return: page pointer or NULL
-+ */
-+static inline struct page *kasan_print_vmalloc_info_ret_page(void *addr)
-+{
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-+		static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEEP);
-+		struct page *page = NULL;
-+		struct vm_struct *va;
-+
-+		lock_map_acquire_try(&vmalloc_map);
-+		va = find_vm_area(addr);
-+		if (va) {
-+			pr_err("The buggy address belongs to the virtual mapping at\n"
-+			       " [%px, %px) created by:\n"
-+			       " %pS\n",
-+			       va->addr, va->addr + va->size, va->caller);
-+			pr_err("\n");
-+
-+			page = vmalloc_to_page(addr);
-+		}
-+		lock_map_release(&vmalloc_map);
-+		return page;
-+	}
-+	pr_err("The buggy address %px belongs to a vmalloc virtual mapping\n", addr);
-+	return NULL;
-+}
-+
- static void print_address_description(void *addr, u8 tag,
- 				      struct kasan_report_info *info)
- {
-@@ -398,19 +430,8 @@ static void print_address_description(void *addr, u8 tag,
- 		pr_err("\n");
- 	}
- 
--	if (is_vmalloc_addr(addr)) {
--		struct vm_struct *va = find_vm_area(addr);
--
--		if (va) {
--			pr_err("The buggy address belongs to the virtual mapping at\n"
--			       " [%px, %px) created by:\n"
--			       " %pS\n",
--			       va->addr, va->addr + va->size, va->caller);
--			pr_err("\n");
--
--			page = vmalloc_to_page(addr);
--		}
--	}
-+	if (is_vmalloc_addr(addr))
-+		page = kasan_print_vmalloc_info_ret_page(addr);
- 
- 	if (page) {
- 		pr_err("The buggy address belongs to the physical page:\n");
--- 
-2.48.1
-
+Raag
 
