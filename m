@@ -1,58 +1,52 @@
-Return-Path: <linux-kernel+bounces-511725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72ACBA32ECD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:37:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9A3A32ED2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31C51884CF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 577D53A49E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB97A25E463;
-	Wed, 12 Feb 2025 18:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxuLxvnq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE22D25E463;
+	Wed, 12 Feb 2025 18:41:52 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D0627180B;
-	Wed, 12 Feb 2025 18:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906BD134A8;
+	Wed, 12 Feb 2025 18:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739385435; cv=none; b=Z23ZNArRBHrxJYVkZtRY8IYx/RjNC8xjEQ2za1c8AACthBgaz8ZHltRFEwAD+q4uCZhjU7S8sta/GoTlmwYkB9Q/+Spn0RaF394Ag+np5zbfNGb29GBKklfyalEOeIG1/+4nMgxkf9W+WD3NZHnPJtVnkECs9MiJtafGLG4Fp6w=
+	t=1739385712; cv=none; b=iH4sBUQgLj8XLg+vLILrX4m5PSTqqTqAocf3xqkjRDoCmfbgl7eoZgPSp/aPbdQ6chLRt0IGH/LEToX5AcLu3D6FzA8ilFMRbC/jV/BUcp5cV/vGqYRYnSr9sUVNs9zQMuZavKBW0SnePHGAHnc+0noIwBUuR2S+NHL5rd6Vrx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739385435; c=relaxed/simple;
-	bh=MqYIPwPX2fN8FIm6K1ROUFQveHjsiR7V4H6VXdFj48M=;
+	s=arc-20240116; t=1739385712; c=relaxed/simple;
+	bh=ToC5PWdVV0L8ziXowZqcSfmdPrWjcstzwCI+oLNsMWw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VMEXZzv2M+eh+ZYQnoZcsQC1cz/5iF47xpMm8zOWRgIKC9VhmzpwP/l1gZBQWX+9H6/AOdlztRlfl5GGgHsSs/T5Em6l5Qo58EZeC56qAIjGBvO20h2106ozbMXYFWvsvAW1BoKzkcpKwK4fXuKv+ER23s/mNpcCP6gf8bNsbfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxuLxvnq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6310C4CEDF;
-	Wed, 12 Feb 2025 18:37:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739385434;
-	bh=MqYIPwPX2fN8FIm6K1ROUFQveHjsiR7V4H6VXdFj48M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sxuLxvnqYXvHV2r5iyP2hIHTQFy+b6N6Ao/6tx20f7FpDH3VwCNEm+Z4FSaBJ5mhV
-	 PDJ7cG83QT9xDGGYT1VhmIChi9UVRvNmP2mmOrUOdx0N7TrjOE6xnvGdXDoucs3UEa
-	 0BzshAx9HiG9rZO3C6a/ozETYKkH7x2TuPJtiSJlhyBpfJVbZLuMJhCKdpFl0VfaaY
-	 exJOsphy9AxhVXxyU2zXOIyvMRT1AKDM0sAX0AqKxkSrbUAfRGctKLankRC8EzJrzn
-	 hk1Cv72NdUge8xO7ycnz/7Bp/q1sM7iP029fAw4xGS8vmuMj+/6GkncpBkFHHpFvQ4
-	 1GU4T1McR0UAg==
-Date: Wed, 12 Feb 2025 19:37:08 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Zoie Lin <zoie.lin@mediatek.com>
-Cc: Qii Wang <qii.wang@mediatek.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Project_Global_Chrome_Upstream_Group@mediatek.com, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, teddy.chen@mediatek.com, 
-	joseph-cc.chang@mediatek.com, leilk.liu@mediatek.com
-Subject: Re: [PATCH v4 0/1] i2c: mediatek: add runtime PM operations and bus
- regulator control
-Message-ID: <minka4xfg4pymy4hjekooqyqk6xpbgenacsw32u6pdf3llcyyl@eh4u4ohccx3d>
-References: <20250211144016.488001-1-zoie.lin@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTb9QcCSZA1Wnj96EihBU0TUPi2Fpp61pJWbwJIDieR7jpy3YvX+vSnDF8A3EsTF4D46K1h/FSeS1DFYRJSjNFPygtTVoNixCMaSM5KTrJgKkxYU2d+0Hcrr8xgSg9bFJvrFPhqNEzrNtsGmQDUGZbR/KgMTTtHFxlMF6BGOT/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49FCBC4CEDF;
+	Wed, 12 Feb 2025 18:41:49 +0000 (UTC)
+Date: Wed, 12 Feb 2025 18:41:46 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 4/9] arm64: Rely on generic printing of preemption
+ model.
+Message-ID: <Z6zramjL3dceOwIl@arm.com>
+References: <20250212134115.2583667-1-bigeasy@linutronix.de>
+ <20250212134115.2583667-5-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,67 +55,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211144016.488001-1-zoie.lin@mediatek.com>
+In-Reply-To: <20250212134115.2583667-5-bigeasy@linutronix.de>
 
-Hi Zoie,
-
-my comment was on the [PATCH v3 ...], this should have been
-[PATCH v4 1/1]. If you use git-format-patch, most probably you
-will get it right.
-
-If you have more than one patch, you can use the --cover-letter.
-option to get the patch 0/X.
-
-On Tue, Feb 11, 2025 at 10:39:37PM +0800, Zoie Lin wrote:
-> Introduce support for runtime PM operations in
-> the I2C driver, enabling runtime suspend and resume functionality.
+On Wed, Feb 12, 2025 at 02:41:10PM +0100, Sebastian Andrzej Siewior wrote:
+> __die() invokes later show_regs() -> show_regs_print_info() which prints
+> the current preemption model.
+> Remove it from the initial line.
 > 
-> Although in most platforms, the bus power of i2c is always
-> on, some platforms disable the i2c bus power in order to meet
-> low power request.
-> 
-> This implementation includes bus regulator control to facilitate
-> proper handling of the bus power based on platform requirements.
-> 
-> Signed-off-by: Zoie Lin <zoie.lin@mediatek.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Acked-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Is it possible to have an ack from Qii?
-
-> ---
->  drivers/i2c/busses/i2c-mt65xx.c | 73 +++++++++++++++++++++++++++------
->  1 file changed, 61 insertions(+), 12 deletions(-)
-> 
-> This series is based on linux-next, tag: next-20250210
-> 
-> Changes in v4:
-
-what about the previous versions?
-
-> - Removed unnecessary variable initialization.
-> - Removed unnecessary brackets.
-> - Corrected grammar issues in the commit message.
-> - Confirmed autosuspend delay is not necessary.
-> 
-
-...
-
-> @@ -1472,13 +1507,18 @@ static int mtk_i2c_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	ret = clk_bulk_prepare_enable(I2C_MT65XX_CLK_MAX, i2c->clocks);
-> +	ret = clk_bulk_prepare(I2C_MT65XX_CLK_MAX, i2c->clocks);
->  	if (ret) {
-> -		dev_err(&pdev->dev, "clock enable failed!\n");
-
-Why have you removed this dev_err? You coulde have rather changed
-it to match the error. While at it you could also replace it with
-dev_err_probe()
-
-The rest looks good to me, I'll be happy if you can have an ack
-from Qii.
-
-Andi
-
->  		return ret;
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
