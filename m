@@ -1,135 +1,119 @@
-Return-Path: <linux-kernel+bounces-510957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EEFA32416
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:58:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87342A3241A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26BF4161E82
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:58:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883381671A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8310E209F4F;
-	Wed, 12 Feb 2025 10:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB99209F46;
+	Wed, 12 Feb 2025 10:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O/X1Adqi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JQXah5wi"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9D0206F2C;
-	Wed, 12 Feb 2025 10:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C5E209F32
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357890; cv=none; b=Ba0X+J7rzCr5ZVTt7Iy8sPyecPyLBjpvlWm2/4MvUA9cr08+cTL1PnmG0zvhLHB0gILyVYjtzr0IJvj1XUH5dnKf7wnFCJ3L9XSleE96GAi8r5he7c60H2nrBlvEHFXsOquohiXvWkbsTfts8GeWBSBzAzD/hPT2EYDpbfTh/BQ=
+	t=1739357899; cv=none; b=koY1cwcPLicUFVqOGj3TWBAp8diPawLQoFkCAQfr1Yt1uQ742JzHuO6K9v1jYWI9KjSkYTQizZmE/KWGiIDqE2Y8MU4AOhSQwdS/QnQPNiZEcq1trWm1J7KdBOja4CNGpmGmPY7sDRhwlKM2IyeQujrHQACYvNJerHN9Eg5xoN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357890; c=relaxed/simple;
-	bh=+z2XvD2jfED7TixE7ouV+IiMt8A2lUXzW0REOLFZMxM=;
+	s=arc-20240116; t=1739357899; c=relaxed/simple;
+	bh=6AQTxLpjLpfJiPBrHtlhZPTmpePFJrZOq4BwSa0DNQk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZdoCBFt8zEnn7HzR9MLvin2iSZg7bBPJvpuApqNXNriioBK/I9SHFyLyQTEnOQL9Q9A7uW6InxXF8r7/gyS6PXAqEug7XzwZ/3f99KDQWOgtjGTnJM7/Mfevzi2zr61fnMO/ux0FVGEWQGB4+1ULyx6b9snHnahq35RV4G1gp4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O/X1Adqi; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739357889; x=1770893889;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=+z2XvD2jfED7TixE7ouV+IiMt8A2lUXzW0REOLFZMxM=;
-  b=O/X1AdqiymFiEC5aPbAg4zrUdmlPu+XJ7+rAF46m0FzY6LYL32t1WoWi
-   OxceSI38PDSnSJ9zl22IMCnDujfntjyHRzni3wA2kJhZHW7IRiWyFxOew
-   EiMexYLQazG1Yrl1vvBi4BPYgkYz9DhhasdFTyJ1rqH2vlnvYE4v7xu3D
-   nrHtffhVljCIx7YEZhxqh0WbxKw2fNSKs3rg3vfqk7obNYmqu2HKsjMYy
-   aelbDqyzr5iFPzJxur+MWblSUtaYTUJdXaJz/5G4OHJ/89TatIO1dG8LT
-   yFSNM7TWjIq6ZDwxg+cjOVKMCkujWngHKvcjy1byBAOLbHbrqsSxGyhyj
-   A==;
-X-CSE-ConnectionGUID: ptNvhZjQQxK5gTOusFjw6Q==
-X-CSE-MsgGUID: iKbD3aUXQS6NpoRJZpw1vg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39932272"
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="39932272"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:58:09 -0800
-X-CSE-ConnectionGUID: ZCIVHWtYRQ+/zz/ylBdfnw==
-X-CSE-MsgGUID: vdPeYeeFT7KVQt2EtKQp9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="149977759"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:58:05 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tiARN-0000000AoM3-0RBJ;
-	Wed, 12 Feb 2025 12:58:01 +0200
-Date: Wed, 12 Feb 2025 12:58:00 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v8 01/17] spi: add basic support for SPI offloading
-Message-ID: <Z6x-uBWEsoAIV2n-@smile.fi.intel.com>
-References: <b1dcbb19-190a-45e7-8e94-cb5ef65f1f1b@sirena.org.uk>
- <Z6pim_nLct33LzfN@smile.fi.intel.com>
- <b000d3fd-754a-43e8-ab10-82677eeee1d2@sirena.org.uk>
- <Z6tcwg7QgQwytoSb@smile.fi.intel.com>
- <Z6tezVXVxVCwXuds@smile.fi.intel.com>
- <Z6tfUfHilO2KLmxv@smile.fi.intel.com>
- <Z6tgNjH6Qq5pe9Gt@smile.fi.intel.com>
- <tnjsrq3trijh4agmbhrfnqeq4iojhwybtg45bwt5n7mg7qqgcx@s7gw7idjuxgd>
- <Z6uhHssgIvI2DJ4c@smile.fi.intel.com>
- <57swm23ik5kyzcjvnhkizctnemtlqf3duhrd5u3n6yelxkerxt@6akfoqmyqsup>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dy81dNWHen+wzo4LJQ96L6jM1ORmUPsj7WNMOS3Pyn/NJBYoUBWRj1b+aGstSyoQT7Ida7gpw3pZCOUbsTGGctP7ehg8A9bvF6sNrK3gRK1DFKyfAu/zg2kwRHuOObcRIv2N0BSK+5jU8SHGvRBRiRZQZiSjb4oX/wK83l1gmus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JQXah5wi; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54504f5cfe9so762113e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:58:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739357896; x=1739962696; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tFCRTI+uxekbKaB7VjoVJZp4kloQ9ULA619mLaD9fcs=;
+        b=JQXah5wisDpIwJNCFWQrFcTVbbyiT0pdrUkOXWeRcJiEAgc/jaVOm5rt1z1D0wuJe4
+         Na5WRBIPEcFfkUduZMu5Z0ZWp3K8VNLxQh4i1z2NKPAPwF27UpzZxtqHZhTV/5d3qZmV
+         YswJCoLt6EJGHk7h8y0eoRHJ0aa016IRQyJz2Z97TzYNQjMHx/WxxC7VQ95nAaZ3Wh7l
+         1DKgzZy8Q8qchM3fJXJICst70A+aq/I2rarz7LSpkRiI4YVvhRZBlfcZejQjUeIyoZfI
+         wuL8GxfEqv/VYVQd+SMbqiCr2PeIZOG+damJ7jwuN31eSZSfFCGE5Vg5dT95nFaXu3qU
+         SWOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739357896; x=1739962696;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tFCRTI+uxekbKaB7VjoVJZp4kloQ9ULA619mLaD9fcs=;
+        b=Wrl7daWPOtZLJou3VpYKRX9jJCETqws6pbq3z+CS8bcsmdpJKuA1B4glLnGLvY8wVH
+         nM0QIFTAUEt3LoXHwRbkFsY7HYMY9e5Uo/9Q2kaxuGqSm9Ro3ebMy/s58XZL6iFno7sW
+         oud3PRuTI4C8XeNsCLkrtoo6Gt7zmwuHT5nbPVOMCRh9z16ENBWsiGq6uzUBB5T40gkh
+         /isnD0CUPQNJIvGIh4uRiTQfC0/MybjqB1OCNUyCg+aOBydtIC78GGIKGmi3HfCPOrfX
+         +hxJRec1ozgx/dWEMInayeCOWj9GzCfeW83e66JBZDhnp/4RRtQ63HIbKV4KYyYuX1gW
+         CK6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXX5ikPAXWRTHCdcKYXxLW/q2NbQgp1SwNMV/i82/+oJwic64TV4VF2ghq30k/dYJ+PYqvQHsVYrTZQQd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgmrvdCeFF7PZwnkpJY2oZrV6R+VEP0+3mxe76wxF3qipJVa/j
+	aXie1X4OV5pbc44YiSuJbtWK0NVo0nzM2UoLgX4TH9sidqU/jKO7Tzt0Eej4iIc=
+X-Gm-Gg: ASbGncsTtfAkNmPfT1YrJ46o/FVy664dxX/JOegBxd6a3jeXIP2dBZdbcdYcifgJ91s
+	zBLyWGjK8Hu9flaw9yn6Q6JgjlNdUK7PkMjakbS2lr+JE26o05Q9yEC3Rua1G4yJANvA3g9We/3
+	9XBfCJkKzWPQQAyilGj1wMgevjX0VqmDfy2HiLCXIz7qY5UEB+NC2pT8TQFhMTbhXvhfHht/2Da
+	eCI60nalbcwRAYGqTva9prdr4qvJsQ/BP5/xNEcnd8ANenx+EyHjbWUIm/oQAHp4CU8D9Esr+gJ
+	ObGZm9JiBr+HFnvg9mwz0ZaVGCjdKTOtaTJe2mh3hFUgGKL6ePsSHtDCxbY4JUv+S5G6Lo8=
+X-Google-Smtp-Source: AGHT+IGUpJ0IHuG1bctt41bVvHPQ/W3w8vStlenWEjKpIntH94rgVWmcXj9gpbKua89+PLGTI1w42A==
+X-Received: by 2002:a05:6512:b08:b0:545:240:55ba with SMTP id 2adb3069b0e04-5451809a3bamr822239e87.26.1739357895751;
+        Wed, 12 Feb 2025 02:58:15 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5450cfff106sm894926e87.99.2025.02.12.02.58.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 02:58:15 -0800 (PST)
+Date: Wed, 12 Feb 2025 12:58:13 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, quic_abhinavk@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dpu: Disable dither in phys encoder cleanup
+Message-ID: <hb42tamaguzgoxbsqxqyvhwvsegcbqxwtcmdwlnrx4hqcityfj@dqa2seg5bt2a>
+References: <20250211-dither-disable-v1-1-ac2cb455f6b9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <57swm23ik5kyzcjvnhkizctnemtlqf3duhrd5u3n6yelxkerxt@6akfoqmyqsup>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250211-dither-disable-v1-1-ac2cb455f6b9@quicinc.com>
 
-On Wed, Feb 12, 2025 at 09:52:37AM +0100, Uwe Kleine-König wrote:
-> On Tue, Feb 11, 2025 at 09:12:30PM +0200, Andy Shevchenko wrote:
-> > On Tue, Feb 11, 2025 at 07:45:30PM +0100, Uwe Kleine-König wrote:
-> > > I have no problem here. If the header becomes stale we will most
-> > > probably notice that eventually and remove it.
-> > 
-> > Lol. Look at the header hell we have now. 98% code in the drivers/ just show
-> > that the developers either don't care or do not understand C (in terms of
-> > what headers are for and why it's important to follow IWYU principle).
+On Tue, Feb 11, 2025 at 07:59:19PM -0800, Jessica Zhang wrote:
+> Disable pingpong dither in dpu_encoder_helper_phys_cleanup().
 > 
-> Yeah, there is a problem. The source is that we have a metric ton of
-> recursive includes (i.e. headers that include other headers that include
-> still more headers). Even if you care, its sometimes hard to know which
-> headers you actually need. One idea on my long-term list is to add a
-> machine-parsable info to header files about the list of symbols that the
-> given file is responsible for. With that in place we could create a
-> linter that tells you that this source file doesn't use any symbols from
-> <linux/of_irq.h> and it should #include <linux/of.h> directly instead to
-> make use of symbols defined there.
+> This avoids the issue where an encoder unknowingly uses dither after
+> reserving a pingpong block that was previously bound to an encoder that
+> had enabled dither.
+> 
+> Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Closes: https://lore.kernel.org/all/jr7zbj5w7iq4apg3gofuvcwf4r2swzqjk7sshwcdjll4mn6ctt@l2n3qfpujg3q/
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> ---
+> This was tested on SC7180 Trogdor by pulling in the concurrent writeback
+> series [1] and running the IGT kms_writeback@writeback_check_output
+> subtest.
+> 
+> [1] https://patchwork.freedesktop.org/series/144083/
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-There were already few attempts to untangle the dependency hell we have in LK
-project, but all seems to fail. The infamous one by Ingo stale, however a few
-patches (out of more than 2200!) made upstream.
-
-So, any tooling for that will be warmly accepted!
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
 
