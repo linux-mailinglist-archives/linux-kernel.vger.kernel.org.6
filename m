@@ -1,202 +1,236 @@
-Return-Path: <linux-kernel+bounces-511553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7FE4A32C8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:56:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910EDA32C8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:55:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1DE616AC84
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:54:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C2CC3A922B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813F6255E42;
-	Wed, 12 Feb 2025 16:53:28 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465CE255E5D;
+	Wed, 12 Feb 2025 16:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHsSCn8X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349F3254B0F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814AF255E27;
+	Wed, 12 Feb 2025 16:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379208; cv=none; b=nWBvjeNY2pi7UUc26ZoX9rhw/F8BZqq7R8ZuivL55Ea3YdtHoZ4nUGuHseuIzivyMkpYMam1dIba27kG3FECaIy1ItuJHAggfGa/104kfJtbLO9lSMxvypPo/Z36tXxjuReE+ZAM+SQPAoknSbqgiHehDv9EOMc/oGyr6xckTJI=
+	t=1739379223; cv=none; b=cWY4a2wr5EFQimOvmkYgOd6dJoO+lFc+7HkYQea0EqM6RN3Bh9TysgGzA656RMzrXC+0Fj8LghpCl5ez/Mh2ivjUolZlbMURYL731ZuXd5vo/Aaunkf7a7pOAeW/g7NscY5PjBZOocnQFM5//CR5I/YGKNgCjFMpzBQiebFGmAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379208; c=relaxed/simple;
-	bh=r25dJTKSFecaxXGpmSfG7z/bcWbBk3TiIUvjTPw9Goc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AxfSC9xcDPFDPhylD4W0dTF2LN7thYo8XFDhXvs1WhakpJlgpou46lBRQ/8kct2BEiLmjQGsqOOzNL4g76pstG+ksS5Ti9y+nY9Iwd4sVSkcJ6iwInGf+HNMnqw+ip3DHh8o1OdazQCp0YkF659gujdrkySWoTkCQcM9pORc1Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ce81a40f5cso128471095ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:53:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739379205; x=1739984005;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uWgLD1vusl8skohv78bYDjNV0c9w8OpHAzd5f8hHkd8=;
-        b=roxHy4plGnfvbPQ69Tr1TAkwfoRtHmenkJQyvVEp5l0POl1ExT5OgHj3XhKpsDQpzr
-         BR4G4LMtgoXsDlFDRmN5h3xDi1pfNfjOywFWRwI5j+CUCYQdu8Ozw8tz65kcpcKnjh0H
-         jL/SxNMCczM+97DMDFMRb77ecVDE68uBesX2qdizeVK/y1VsiLu1Ji+v3Z2EIhR4dWgk
-         m6aETxK3aTsQbREgN9L1Ymvys9kNpxYWJMkv8QoyoV4x6RBaOpnmAwMjwnUMsIU6z+8Z
-         e+orcrtwPKBsSu+JY2Jwvs3+JgNLm0C7nqm7V8jDRtsHFJgykLQyFDFQZj0lsKZ6KdgL
-         nCDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMngh8EMxZJmqEk3i0/c3YL/6xkJqEsdCz0Sfpa2E5z7iVsDiP46uzmYz2K7dl7AVIun9Mc5liPGsUtkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcIf8cvr03WORXNU/l00sFlWhtBSCE6l42M8W/5KsC0JOcG/sc
-	2Z/zr10HYUqPA0xefySP3OGt6JBgREOge8KEFokqFWNJTjheu38AFY/sgWJNHwl+Rn5IT4tPU5h
-	tvCevROvApq1BOBsVCMJLUi+9cNhuy0oVBiAJ3YUt6z1G4J8kC5KZ/yE=
-X-Google-Smtp-Source: AGHT+IGwJ6cBqgXv7DnZVIBFzb6rv4k41eoOZFrlQ4CMlfisQqY7Aot5REdFqPkae7IuHy80sidluk2ZIDYAfMcLuB8Ukd9AQudE
+	s=arc-20240116; t=1739379223; c=relaxed/simple;
+	bh=mr8GjH+15lBi8VHein+7pK0kYx+HbXlrW0PLl41bbgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tKGm7qap8Rk2TV33crZhCTR+umATADhH2vyJTxNHESduEMr7094z+8v9FCKEKhueHaB5LpDY2fhHx7pujhEOx66xbiI4U9uvCGR3M/BeO1WfmEgstzcHuWLaSSXW5uap9RdcHNXFQ+BsOZaSj9ZSGy7IjTSwJuj35VKr9YnXRbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHsSCn8X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B51FC4CEDF;
+	Wed, 12 Feb 2025 16:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739379221;
+	bh=mr8GjH+15lBi8VHein+7pK0kYx+HbXlrW0PLl41bbgI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iHsSCn8XJSMVzS2R2YduVzicWLVtjzBlcvyemeAYYOK5ilrQ92vm7KYHmjDSgKUVB
+	 FsBw7NG5juZw7q/grxpAJvQDYrkN+qugXz5DzHvaoEdlC/PxEyEJLKRZiWCZSpQz5C
+	 8oejDzd6WHTm5IYKdV3TRQPGthgTZ3HAkZ0gr9DiWP23J4i6X33yE5kz19UWvwR6XI
+	 KDNH4JVmo2ybhup8V3m/9915Bc/LxvOlcG8lRd4Rox2ybvjIQf4w/sx0kKtJjYfPqY
+	 LRMkg1D6iO87JL7blAmgFPzIzOPOUm17LhafOwYmgljLykwFDV423qXJypW7kVDgJO
+	 3baJSHEdDOv3A==
+Message-ID: <76c991dd-f99b-497c-9d68-9e08541be4f0@kernel.org>
+Date: Wed, 12 Feb 2025 17:53:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cc:b0:3cf:c9ad:46a1 with SMTP id
- e9e14a558f8ab-3d17bfc7465mr36439155ab.13.1739379205288; Wed, 12 Feb 2025
- 08:53:25 -0800 (PST)
-Date: Wed, 12 Feb 2025 08:53:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67acd205.050a0220.3d72c.01bf.GAE@google.com>
-Subject: [syzbot] [bcachefs?] general protection fault in bch2_journal_do_writes
- (2)
-From: syzbot <syzbot+167028f6dd31d18e95c3@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drivers: i3c: Add driver for NXP P3H2x4x i3c-hub
+ device
+To: Aman Kumar Pandey <aman.kumarpandey@nxp.com>,
+ linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org,
+ alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org
+Cc: vikash.bansal@nxp.com, priyanka.jain@nxp.com,
+ shashank.rebbapragada@nxp.com, Frank.Li@nxp.com
+References: <20250212132227.1348374-1-aman.kumarpandey@nxp.com>
+ <20250212132227.1348374-2-aman.kumarpandey@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20250212132227.1348374-2-aman.kumarpandey@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 12/02/2025 14:22, Aman Kumar Pandey wrote:
+> +
+> +static void p3h2x4x_of_get_tp_dt_conf(struct device *dev,
+> +					const struct device_node *node)
+> +{
+> +	struct p3h2x4x *priv = dev_get_drvdata(dev);
+> +	struct device_node *dev_node;
+> +	int tp_port;
+> +
+> +	for_each_available_child_of_node(node, dev_node) {
+> +		if (!dev_node->full_name ||
+> +			(sscanf(dev_node->full_name, "target-port@%d", &tp_port) != 1))
 
-syzbot found the following issue on:
-
-HEAD commit:    ed58d103e6da Add linux-next specific files for 20250207
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=158addf8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=244a34ec1429746
-dashboard link: https://syzkaller.appspot.com/bug?extid=167028f6dd31d18e95c3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ce459b7174dd/disk-ed58d103.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/60699733c0c8/vmlinux-ed58d103.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f589bce7c898/bzImage-ed58d103.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+167028f6dd31d18e95c3@syzkaller.appspotmail.com
-
-bcachefs (loop0): done initializing freespace
-bcachefs (loop0): reading snapshots table
-bcachefs (loop0): reading snapshots done
-Oops: general protection fault, probably for non-canonical address 0xf110004ee8002002: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: maybe wild-memory-access in range [0x8880227740010010-0x8880227740010017]
-CPU: 0 UID: 0 PID: 9260 Comm: syz.0.650 Not tainted 6.14.0-rc1-next-20250207-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-RIP: 0010:__lock_acquire+0x6a/0x2100 kernel/locking/lockdep.c:5091
-Code: b6 04 30 84 c0 0f 85 f8 16 00 00 45 31 f6 83 3d 3b fe 80 0e 00 0f 84 c8 13 00 00 89 54 24 60 89 5c 24 38 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 e8 79 8b 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc90004886c30 EFLAGS: 00010803
-RAX: 1110044ee8002002 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 8880227740010017
-RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000001
-R10: dffffc0000000000 R11: fffffbfff20376cf R12: ffff888025483c00
-R13: 0000000000000000 R14: 0000000000000000 R15: 8880227740010017
-FS:  00007f1ec11346c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbd2b5fbdf0 CR3: 000000005e3ea000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- __queue_work+0x759/0xf50
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
- queue_work include/linux/workqueue.h:662 [inline]
- closure_queue include/linux/closure.h:268 [inline]
- closure_call include/linux/closure.h:432 [inline]
- bch2_journal_do_writes+0x383/0x420 fs/bcachefs/journal.c:200
- bch2_journal_buf_put_final+0x9e/0xf0 fs/bcachefs/journal.c:218
- __bch2_journal_buf_put fs/bcachefs/journal.h:277 [inline]
- __journal_entry_close+0x812/0xdf0 fs/bcachefs/journal.c:309
- journal_entry_want_write+0xf3/0x250 fs/bcachefs/journal.c:339
- bch2_journal_flush_seq_async+0x769/0x880 fs/bcachefs/journal.c:805
- bch2_journal_flush_seq+0xe5/0x2b0 fs/bcachefs/journal.c:822
- bch2_fs_initialize+0x129a/0x1610 fs/bcachefs/recovery.c:1200
- bch2_fs_start+0x36d/0x610 fs/bcachefs/super.c:1042
- bch2_fs_get_tree+0xd8d/0x1740 fs/bcachefs/fs.c:2203
- vfs_get_tree+0x90/0x2b0 fs/super.c:1759
- do_new_mount+0x2be/0xb40 fs/namespace.c:3659
- do_mount fs/namespace.c:3999 [inline]
- __do_sys_mount fs/namespace.c:4210 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4187
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1ec038e58a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f1ec1133e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f1ec1133ef0 RCX: 00007f1ec038e58a
-RDX: 00004000000000c0 RSI: 0000400000000180 RDI: 00007f1ec1133eb0
-RBP: 00004000000000c0 R08: 00007f1ec1133ef0 R09: 0000000000000010
-R10: 0000000000000010 R11: 0000000000000246 R12: 0000400000000180
-R13: 00007f1ec1133eb0 R14: 00000000000059d5 R15: 0000400000000480
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__lock_acquire+0x6a/0x2100 kernel/locking/lockdep.c:5091
-Code: b6 04 30 84 c0 0f 85 f8 16 00 00 45 31 f6 83 3d 3b fe 80 0e 00 0f 84 c8 13 00 00 89 54 24 60 89 5c 24 38 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 e8 79 8b 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc90004886c30 EFLAGS: 00010803
-RAX: 1110044ee8002002 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 8880227740010017
-RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000001
-R10: dffffc0000000000 R11: fffffbfff20376cf R12: ffff888025483c00
-R13: 0000000000000000 R14: 0000000000000000 R15: 8880227740010017
-FS:  00007f1ec11346c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbd2b5fbdf0 CR3: 000000005e3ea000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	b6 04                	mov    $0x4,%dh
-   2:	30 84 c0 0f 85 f8 16 	xor    %al,0x16f8850f(%rax,%rax,8)
-   9:	00 00                	add    %al,(%rax)
-   b:	45 31 f6             	xor    %r14d,%r14d
-   e:	83 3d 3b fe 80 0e 00 	cmpl   $0x0,0xe80fe3b(%rip)        # 0xe80fe50
-  15:	0f 84 c8 13 00 00    	je     0x13e3
-  1b:	89 54 24 60          	mov    %edx,0x60(%rsp)
-  1f:	89 5c 24 38          	mov    %ebx,0x38(%rsp)
-  23:	4c 89 f8             	mov    %r15,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 30 00          	cmpb   $0x0,(%rax,%rsi,1) <-- trapping instruction
-  2e:	74 12                	je     0x42
-  30:	4c 89 ff             	mov    %r15,%rdi
-  33:	e8 e8 79 8b 00       	call   0x8b7a20
-  38:	48                   	rex.W
-  39:	be 00 00 00 00       	mov    $0x0,%esi
-  3e:	00 fc                	add    %bh,%ah
+NAK, undocumented ABI. Also weird code, why are you parsing DT structure
+manually? Use proper functions to get the reg.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> +			continue;
+> +
+> +		if (tp_port < P3H2x4x_TP_MAX_COUNT) {
+> +			priv->tp_bus[tp_port].dt_available = true;
+> +			priv->tp_bus[tp_port].of_node = dev_node;
+> +			priv->tp_bus[tp_port].tp_mask = BIT(tp_port);
+> +			priv->tp_bus[tp_port].priv = priv;
+> +			priv->tp_bus[tp_port].tp_port = tp_port;
+> +		}
+> +	}
+> +}
+> +
+> +/* return true when backend node exist */
+> +static bool p3h2x4x_is_backend_node_exist(int port, struct p3h2x4x *priv, u32 addr)
+> +{
+> +	struct smbus_device *backend = NULL;
+> +
+> +	list_for_each_entry(backend,
+> +			&priv->tp_bus[port].tp_device_entry, list) {
+> +		if (backend->addr == addr)
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static int p3h2x4x_read_backend_from_p3h2x4x_dts(struct device_node *i3c_node_target,
+> +					struct p3h2x4x *priv)
+> +{
+> +	struct device_node *i3c_node_tp;
+> +	const char *compatible;
+> +	int tp_port, ret;
+> +	u32 addr_dts;
+> +	struct smbus_device *backend;
+> +
+> +	if (sscanf(i3c_node_target->full_name, "target-port@%d", &tp_port) == 0)
+> +		return -EINVAL;
+> +
+> +	if (tp_port > P3H2x4x_TP_MAX_COUNT)
+> +		return -ERANGE;
+> +
+> +	if (tp_port < 0)
+> +		return -EINVAL;
+> +
+> +	INIT_LIST_HEAD(&priv->tp_bus[tp_port].tp_device_entry);
+> +
+> +	if (priv->settings.tp[tp_port].mode == P3H2x4x_TP_MODE_I3C)
+> +		return 0;
+> +
+> +	for_each_available_child_of_node(i3c_node_target, i3c_node_tp) {
+> +
+> +		ret = of_property_read_u32(i3c_node_tp, "reg", &addr_dts);
+> +		if (ret)
+> +			return ret;
+> +
+> +		if (p3h2x4x_is_backend_node_exist(tp_port, priv, addr_dts))
+> +			continue;
+> +
+> +		ret = of_property_read_string(i3c_node_tp, "compatible", &compatible);
+> +		if (ret)
+> +			return ret;
+> +
+> +		backend = kzalloc(sizeof(*backend), GFP_KERNEL);
+> +		if (!backend)
+> +			return -ENOMEM;
+> +
+> +		backend->addr = addr_dts;
+> +		backend->compatible = compatible;
+> +		backend->tp_device_dt_node = i3c_node_tp;
+> +		backend->client = NULL;
+> +
+> +		list_add(&backend->list,
+> +			&priv->tp_bus[tp_port].tp_device_entry);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void p3h2x4x_parse_dt_tp(struct device *dev,
+> +				const struct device_node *i3c_node_hub,
+> +				struct p3h2x4x *priv)
+> +{
+> +	struct device_node *i3c_node_target;
+> +	int ret;
+> +
+> +	for_each_available_child_of_node(i3c_node_hub, i3c_node_target) {
+> +		if (!strcmp(i3c_node_target->name, "target-port")) {
+> +			ret = p3h2x4x_read_backend_from_p3h2x4x_dts(i3c_node_target, priv);
+> +			if (ret)
+> +				dev_err(dev, "DTS entry invalid - error %d", ret);
+> +		}
+> +	}
+> +}
+> +
+> +static int p3h2x4x_get_tp_local_device_dt_setting(struct device *dev,
+> +					const struct device_node *node, u32 id)
+> +{
+> +	u8 i;
+> +	u32 local_dev_count, local_dev;
+> +	struct p3h2x4x *priv = dev_get_drvdata(dev);
+> +
+> +	if (!of_get_property(node, "local_dev", &local_dev_count))
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Oh no, read DTS conding style before upstreaming such code.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best regards,
+Krzysztof
 
