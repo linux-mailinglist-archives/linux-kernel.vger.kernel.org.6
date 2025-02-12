@@ -1,160 +1,112 @@
-Return-Path: <linux-kernel+bounces-511688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3519A32E55
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:18:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B4AA32E4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB153A419B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:17:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141B4188AE0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F47825D55A;
-	Wed, 12 Feb 2025 18:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FCD25E45C;
+	Wed, 12 Feb 2025 18:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="pTFKGVis"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="IEwFdSHJ"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613A0260A29;
-	Wed, 12 Feb 2025 18:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6D425E444
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739384226; cv=none; b=IVwwI372/rzLh1FuD65PhiWyOE+PStKC6cPgbn1xmZmaneiRTpggGS1L4JUp+sVhjPm7f6Xchy2YupGds43gxS3ShTZ4tBVIy20fAM4zG9yhzk3bwpDZG3ukx0qZP03X2UPyH9SlQSnrYH7eIhTQis2lW2epR+PyePKQ6kBNZak=
+	t=1739384207; cv=none; b=TErtWIICOZE0bkqlx7mUUO3EpKusAVtexYG0STq5laKgU7FW/0rUWRJT6HAwYHWpJmrM/Q1PcJYFJ/qKt7CuyxmcNxHUOtvKas3JWvrupTLJ8GKT+XwoaUhhGgNhBuCwGfZU1jaTEgYg8q4pgKfY1YM31Q5U0NDkdTY84wsihrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739384226; c=relaxed/simple;
-	bh=T3Y0CqcpuCH1sUhoXlnPnkdMUZWO3lk5BT1V1r5nnk0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JIqS8BxM/KShM81KCT5N9aYio37kMwJ7aQgSYLX3KY6SjRAy+Ro7XTx0w+MEip16dhj8csAc45+8KwEucP0FOKygiypJfiWFsHGnJ4cfQwKuwUTuHifX3avl52GiQcTsuGFwd3FBQe2Br6ZEBO6Lb44Wt8UelruR374eG+6qKVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=pTFKGVis; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CH5JpM014127;
-	Wed, 12 Feb 2025 13:16:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=GFR1C
-	ULRNZ0vSKSYHuNnKDbDlt7Tscij1M+x+ohJk64=; b=pTFKGVismhYJiIOg4DDmf
-	vfpV3XmjC4YWkGuSGgTbv9Aizphp7mn4yPQ2LdtEw+frXD0s4XwsPHtmrjBLQQ3d
-	Tc/DBGZfW26XlAmlV37/E9kRFoCIm6d8sqUdLUVom8pfUQasxNxRKIIhy26Jha1D
-	1e1Y7/Qtzn3TYMAGzeA/vtWJIAyGaT+Vu4auxv3wR6iH/h13d8TaU1tRnQrkJWKg
-	PKfyTsXnDXsAaRu86lc/nbR6R0hxNFbiHZUaVbAcFSuV49XBQ2pGlkc5w1IyUg/F
-	IpWojLE6pOPzGzvEwxqt1LOK8CyIoWVpcL1qGakSA4b+0JZL1llwXblAqygkcblI
-	w==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 44p52a3n6e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 13:16:50 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 51CIGng9046439
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Feb 2025 13:16:49 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Wed, 12 Feb
- 2025 13:16:49 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Wed, 12 Feb 2025 13:16:49 -0500
-Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51CIGZLE017460;
-	Wed, 12 Feb 2025 13:16:38 -0500
-From: Jonathan Santos <Jonathan.Santos@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
-        <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <jonath4nns@gmail.com>,
-        <marcelo.schmitt1@gmail.com>, <dlechner@baylibre.com>
-Subject: [PATCH RESEND v3 05/17] dt-bindings: iio: adc: ad7768-1: document regulator provider property
-Date: Wed, 12 Feb 2025 15:16:35 -0300
-Message-ID: <78c7d5d139d6c158423804f0e6c81cbfe9717b1b.1739368121.git.Jonathan.Santos@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1739368121.git.Jonathan.Santos@analog.com>
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1739384207; c=relaxed/simple;
+	bh=nxaghZtbV8iPMZqQbj0tMPrqCnay/4K4HwCIcKOe/Xg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EUHVYS8Zg/hqw+89qkUYQrKE1RaDQ0rX7LKWZbScaFsMYpY1xr/bL2Z463hTEedheTDJkX8cDLLn4Zage0A+Sb51jGFMu4bP07ND9myu3CRYGmG9z56Qu45ThZByEFXF5M7pHs9dUFNe6j5K6XpbmY7Cokhol46DkjKuogSQgiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=IEwFdSHJ; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-8552ae0fc4dso261757339f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:16:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739384204; x=1739989004; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bh1w2AkubS48pkWRnoVHrva30bRn2+neydxUc1lOTos=;
+        b=IEwFdSHJSQhmZC3K0QWLQHUS2LC+/25+za3ktod/wrRo+hA2xHEadNnMtnt8t6d9Hg
+         x5hPdzzhezUM5X1O1dj/Cdn/rtsB8g7sWcbDsasPrsh2UpLRmItaQs9RNq9vUJ9EpmTA
+         ueEYuSZmmt1FUXWOtvfBLagFdvBmOB4T7fvDKxz1v/DVaIvEKm+EXzRh8uwRH9o9Xqp4
+         L4YbTlFp5o5QZY3fNc5q43bDRM/dsI0QFq9MNKa9ofKtg7o/yjnzUfzjZvEKzT9UxPFm
+         HudUI+0fRUSg8DSSqxlBFgzX8BH6EBCZYFHyZMOY31sPLZW7khxanYHh9TJHg7Mt1QeJ
+         OmEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739384204; x=1739989004;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bh1w2AkubS48pkWRnoVHrva30bRn2+neydxUc1lOTos=;
+        b=pOzrKYfmndAM1H6txzZa+0UnjEohdPoCS1C56AuayOg8UixYD4USICJgKXRJoSDmAW
+         BUuwvQ1H6pM7flpph063mkLqOut5Um1UQ2m4jgZuVxqaalLG2PgFEHc6l7TK0ZVu7K3x
+         vB7nvSCePg9bsOQxB6KnUe7qY9xGV2kPhNaP+A8Bz9Qq/nGOc1Y96nKOCvsPacSyKKYX
+         FuXGDvCPaBi+PGkzB4NPTipCSNuKGRCyLsWCSzfibOLVN8DFakifVGtq9HtfGZOHUUuW
+         ErHBHdNMvHg5X2u1dly9qYALgmnyf1W1R0kRUF+6uGBjUiv60KvCTE5dAonhg4m5Bkw9
+         gWtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUnp1a+AoMWT6aWi1rQf4IIpAgvYieRQU6nyr+3cOjSF8+vdXtE5E8+D+KBPXQ719qSMueVTGy6JRW5bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7nWmx5lJ4cUkwgfwdH21KMl58rJgrTCgu0iDOZSa93uvMvXxV
+	+q6JoXSanZqVSpONTQSe/i31OpBnxKLCK/xwuDGXStD3U2HknTxkvVWTi5BzmO5S8uPI7kT7Bdi
+	J
+X-Gm-Gg: ASbGncvk/hm+4pHq3BAyKpl9IXMoqrnVNFd4gEuY91K/DTY7bDA0QlkFXG0P592auOP
+	2mIOjcgY7eIsEBKwoej+iQMWvQMebezZdTYEpFmZMCpvO3ZS7S590EfEIhm/kKmJhd01EnPSdQA
+	TaLjPuybU9zxfpMK8G8rkwokQhA5EpAtMoFcii2ZHELa+zy4bi5nvVgMbwCyQsnXgSwU+sRsSox
+	9jyGpEdETYvO0Hgc3vohlRMnwam3SdnizU2/pBaZ0kQSdWiJMMGYAhlSHqhRpQMkPptorwmRgPT
+	ZyjMSQ==
+X-Google-Smtp-Source: AGHT+IGwl3dQNpzDSqvnGXuUMLAOcppzXS11R5szrRHNzSQcgYf151afWBfFZyDrC3S06SX3T1C4Ig==
+X-Received: by 2002:a05:6602:3f84:b0:844:b6bd:4b35 with SMTP id ca18e2360f4ac-855577946f3mr345091239f.0.1739384204692;
+        Wed, 12 Feb 2025 10:16:44 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-854f666ba26sm328049439f.14.2025.02.12.10.16.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 10:16:44 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250211202002.3316324-1-csander@purestorage.com>
+References: <20250211202002.3316324-1-csander@purestorage.com>
+Subject: Re: [PATCH] io_uring: use IO_REQ_LINK_FLAGS more
+Message-Id: <173938420370.36938.9943547252583287992.b4-ty@kernel.dk>
+Date: Wed, 12 Feb 2025 11:16:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: vFqKpD9BzPiN9L5ZUQW7Li5QzryQRe4C
-X-Authority-Analysis: v=2.4 cv=FabNxI+6 c=1 sm=1 tr=0 ts=67ace592 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=T2h4t0Lz3GQA:10 a=gAnH3GRIAAAA:8 a=J1-tWBq05h-qFn0eaeUA:9 a=oVHKYsEdi7-vN-J5QA_j:22
-X-Proofpoint-GUID: vFqKpD9BzPiN9L5ZUQW7Li5QzryQRe4C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0
- spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502120132
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-14bd6
 
-The AD7768-1 provides a buffered common-mode voltage output
-on the VCM pin that can be used to bias analog input signals.
 
-Add regulators property to enable the use of the VCM output,
-referenced here as vcm_output, by any other device.
+On Tue, 11 Feb 2025 13:19:56 -0700, Caleb Sander Mateos wrote:
+> Replace the 2 instances of REQ_F_LINK | REQ_F_HARDLINK with
+> the more commonly used IO_REQ_LINK_FLAGS.
+> 
+> 
 
-Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
----
-v3 Changes:
-* VCM is now provided as a regulator within the device, instead of a 
-  custom property.
+Applied, thanks!
 
-v2 Changes:
-* New patch in v2.
----
- .../bindings/iio/adc/adi,ad7768-1.yaml        | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+[1/1] io_uring: use IO_REQ_LINK_FLAGS more
+      commit: fddceb353d686cf377d8b630ff6e3cdcb69ef4fb
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-index e2f9782b5fc8..38f7bb0a0e20 100644
---- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-@@ -59,6 +59,19 @@ properties:
-       in any way, for example if the filter decimation rate changes.
-       As the line is active low, it should be marked GPIO_ACTIVE_LOW.
- 
-+  regulators:
-+    type: object
-+    description:
-+      list of regulators provided by this controller.
-+
-+    properties:
-+      vcm_output:
-+        $ref: /schemas/regulator/regulator.yaml#
-+        type: object
-+        unevaluatedProperties: false
-+
-+    additionalProperties: false
-+
-   reset-gpios:
-     maxItems: 1
- 
-@@ -152,6 +165,14 @@ examples:
-                 reg = <0>;
-                 label = "channel_0";
-             };
-+
-+            regulators {
-+              vcm_reg: vcm_output {
-+                regulator-name = "vcm_output";
-+                regulator-min-microvolt = <900000>;
-+                regulator-max-microvolt = <2500000>;
-+              };
-+            };
-         };
-     };
- ...
+Best regards,
 -- 
-2.34.1
+Jens Axboe
+
+
 
 
