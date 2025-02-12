@@ -1,214 +1,221 @@
-Return-Path: <linux-kernel+bounces-511908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059EEA3314B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:08:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D421A3314D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5C7F3A67D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6E61643D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A8C202C4F;
-	Wed, 12 Feb 2025 21:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EE5202F6D;
+	Wed, 12 Feb 2025 21:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1hk/Eqi7"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2062.outbound.protection.outlook.com [40.107.96.62])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SUCthkxI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A9202F95;
-	Wed, 12 Feb 2025 21:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739394497; cv=fail; b=IcuZJK/i0HU9zqgmpOqrFM87iCiyFDJ42zRTcpzwhFvVA0ACmQdgVTmcylzIaZ0WNw825iYdRhsVgxcMJj+9F8ipkIiluHuOHKPIjPCbsCJgsKxVf9Xm7D0/w9jEpeuybpWzg/kpd6NlMW5pvPSdUUXiVUn2b6bJfv7bpn1cn3Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739394497; c=relaxed/simple;
-	bh=IpbEWdmFAQXHj+opqdBr7I95g0THAisHmSRNVZ9R3/A=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DoLL2sntmE/fkrASCZalQxHek521hCTb71ejGFKQOaGN29niK4BC6H2UXtHJl0L7sVTsS2soU6BiLpAJu+/gJPTfNIW0AxJmnnoLPfmrSejxG5GOs6kJlQJHv5wpXPsB1C1ncZydvGDV7dAe1RP0fcJbORoBmJ1SB2F9HQ3BwBM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1hk/Eqi7; arc=fail smtp.client-ip=40.107.96.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nofXTm9Q9B5lwz67W+Bs512yoSu+GNzsTazKpegFGSdKWDbfi9UKT//MRG6EpFWTVl4Adb7TOSxMyw21REtDe9ljChG1cxN6I3b+4DhfQyrA/gUfrTlRszMncL9uDDs1itO1QSCwJWbu4ZI22SD5qXMarX2e/hD4u+GDFB4Lk0pc9vaj7WOQbNsOo9u0i18HypcvQLITiG3j3Ddd8/yzYbyA6BORqLYxJlDpuqqW6C4P8DtAwVAOSZD19TTpZgZpDvDImW8tU5ucofEj3HJz13IepRnd/xa4o3He/OpegBnFJdiB77gCJYsAtFPXoULCmrx9UECZpdkoz7h68pG34Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e6C3r4rGZJqgJ6HF7PV6oYo1a/Cp2toqoFhBVaAzNGE=;
- b=YnRrcBtTUB+IICveFeyAKSIU1KTPfsNOsnhihRSqM/8OGKWf/YcXI3hHTj5C5R6z1lu9baawQ6qtDWYsmLKO315spkfiBebk6pISsCYcYsGdh6Bk2GL3inOxpx6cp3PDYxJGVFmxfqD85Bf9ujwvoz8iyjimjOfEloxg+boCg4DaJJdNHBnyTgidAg0IWruRiSlgDsgtFs1jiB0VWA4tW5luHHin9rsu/M3XFOqw9kO26P5qPQbMtIW2x1Ks5jbDhybFIeujCgdm0Go7Z6IEG8zY9ZD0ifaw9FqEQYHI78NT9ptoer2P8OGXJzqkAuS99gtKhj4QrOD8jxyG015RIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e6C3r4rGZJqgJ6HF7PV6oYo1a/Cp2toqoFhBVaAzNGE=;
- b=1hk/Eqi7E/gIu7DuYY3x4lmvrk/Y5rbD2P9n/zYFO1ZPXyIQxjORYJplbeDi56gDgOENBEtjgSfvrJY1rh7ukRknVrtDohh8cQEX992wvYZqyAsemL9FM8O/TOluk0W4mGMb4aDp8TDTB1i6gGovqKUapN6VJAutCmqSZAlLx+E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- SJ0PR12MB7081.namprd12.prod.outlook.com (2603:10b6:a03:4ae::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Wed, 12 Feb
- 2025 21:08:13 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8422.010; Wed, 12 Feb 2025
- 21:08:13 +0000
-Message-ID: <02c5b364-f97a-44de-980f-e16438ec66f8@amd.com>
-Date: Wed, 12 Feb 2025 15:08:10 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 04/17] PCI/AER: Modify AER driver logging to report CXL
- or PCIe bus error type
-To: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
- oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
- nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com,
- lukas@wunner.de, ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
- <20250211192444.2292833-5-terry.bowman@amd.com>
- <67abe1903a8ed_2d1e2942f@dwillia2-xfh.jf.intel.com.notmuch>
- <9035be0b-7102-4abc-a21a-61648211be55@amd.com>
- <67acfd24a4245_2d1e29437@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <67acfd24a4245_2d1e29437@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0020.namprd04.prod.outlook.com
- (2603:10b6:806:f2::25) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A170202C48;
+	Wed, 12 Feb 2025 21:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739394572; cv=none; b=ciENBMpujCfLRodf3Af+0SCMTCshg4qRF08DWE7OXlLX7AtjPmfUP8DIWuFjk7/vot4umCwXdtP0R2keGy2NV9GCxnO3hxIdFmF2W0aFRpda8jna+sA/pJ3S0DJ9LwppQLZzizZS6aWHZGu+FrbfXfSS1WT51WsjsGXthkmbQ88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739394572; c=relaxed/simple;
+	bh=oF0JigHFH/l1ikPMQZhKR5mxc360qHhk0rGLIWZr3U8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=b/H5gOk6ERPyh/1p2FZbDjaigNhKwkgTaA37AgK3HVOVEqOC2D/HbbL4Apx6tICxZPEQMNTWToKmyjT6F5F8lgqnDV43whQvRnIPhFkyxCInGH86IlH5BIN5EF7OC3J+TR1dG8fCgixiH6htyhmpS5sF9ewCyc+7IpN598Hwuv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SUCthkxI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CIVPWq025705;
+	Wed, 12 Feb 2025 21:09:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3UXq15iJ8mRome0icL9hb5EkNcKpc5PO26ZwWTtBMRY=; b=SUCthkxIQU6G+e7Z
+	oiWTcqHq66RtSYjZKX6aPar8CUfwBLszpOdhC0Ls4rJvz6x12aq4EAIoBi62HTbo
+	NkEJUDJKNW7O6Yn4/Q5Dxb5NJSHMU37j+wbATWZqK2TuT5HfCBnwgc6iooPHGJbQ
+	YcVkldu105WxlWhu4omgeCwDEi2ViikhXFCjm2b9X8udrT3dpC0hZUAz10RXcUaN
+	SywsCGiT0GbqNfEBHrVJcettS8Y/bQc2QxPusYeSuRPFfsGBKVKlVapQP4msQnp3
+	+rmnjTVamMfsaEF+V4X8P9zCx1fRb5hTFgPH8sri5SwAtmv1dTnhy0cTuc0esSX8
+	DhB+RA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44r5j5cyu4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 21:09:22 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51CL9Lcg030690
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 21:09:21 GMT
+Received: from [10.216.26.102] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
+ 2025 13:09:18 -0800
+Message-ID: <5bd75fc2-56e9-4e58-a18a-29afd07fe0df@quicinc.com>
+Date: Thu, 13 Feb 2025 02:39:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|SJ0PR12MB7081:EE_
-X-MS-Office365-Filtering-Correlation-Id: 765e02a1-98d5-4abe-9146-08dd4ba95c77
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TFpDQzZEbjZTVGVobVpRd212TjJlUnc2QTBKSVRqaXI5TitkSHFnVUFiVXBX?=
- =?utf-8?B?USsxc2ZGMnAya25wRWFoekN2YmVFOG5MNHBEMkZyZzZlNENTM0tpMXUrdlVu?=
- =?utf-8?B?Y1BYclAxckdKTVB1Wkg2eS8zYWxoQ3djMkQ5TzREdS9WckdGMnZvV1h0RUND?=
- =?utf-8?B?emgrU2w1WHBBQ0hBUGsrdkRKc0lOZHZRSldlVHcvMUVueXYvZDFMcC9LRzY3?=
- =?utf-8?B?Q3R4cDhiK2thWTIyamlBeDQxblp1d0RHazQrQi9UcC9nWWRwMFdac2pLNHVj?=
- =?utf-8?B?cEpFb3VkSE5IbWVxeUtxR0xWMFM5R3NHTEYvNFVOSlJnblhsTmYxZ29WN0w2?=
- =?utf-8?B?Q1FKaWIrbFY4OXlSaWxnYXhWdWNLNVNieVVFNmZuTG03dkF6Q3QxenlXaVZ1?=
- =?utf-8?B?WlREeWJ2cFVsZVgzaVk0VVpjK1VCSmUrTGJYVmNhazNpK1ZvNUlxQW9SWGRI?=
- =?utf-8?B?ejZ5bFVMSytmOGFGOVRhWlhYR0dsZHJtUWk5TzdodFcvMktiMHF0NzBmQ2o0?=
- =?utf-8?B?OFQxbk5NaEhLWk5aTTRleXpGUVErc05CWDVwZXhuVjdXWjJLTGhiRGlIVlVr?=
- =?utf-8?B?bllxUVZTRVgwQnVla3VOODRtZ2UvOUVrVzdNbG5CSUNra2VOQWE1T29nNDk3?=
- =?utf-8?B?YmpNeC9ZNjVVeUVSUHlFTE41UTVQYU1qSUp3WUpqMDVhYWxVckJpdzhLK3ZZ?=
- =?utf-8?B?c0pFeG5SZ3lleCtieko2YmJUdHpHSTF6VU5JelRVSHpOYS93a3E5V0krSm00?=
- =?utf-8?B?TE1rWUZ3cGM4QWhzR1ZEd1NRQ0Q0MUhkWHlicVFzMlNjeCtnd05LcllVTWk0?=
- =?utf-8?B?ckxFaXRNdDd5UVpwamlRMy9IRVNmM25rTXRiT2U5R2hlZGlsMHlnRDcyN0hW?=
- =?utf-8?B?V25UV0ZvOVRqdDRFZUx3Wk81OWN4bnpvVDlLRDJaNkpocWlMaVB0WXFGNmVV?=
- =?utf-8?B?VmZwSEpvdlY5NHhRVVdEbXF1UDdUL082VXBUZG1NZnVrbVc0R2F0ZlNhRHd3?=
- =?utf-8?B?UVBlKy9WOHRaL085amptUk9Xa0gvd0ZhM1NJNHYwMTZGWWkrb002MHUyeTdY?=
- =?utf-8?B?TytybnhFekFVOG0rdkFxejRGSWtMaklocTlWdjdXMm90WnFqaTJ1cWlsb2FH?=
- =?utf-8?B?bDNZMDYzeUFxdklBR1hva2ZHdXJpaUZtL2tNRHpLUnF6T2NmcEZaMmYxVFZX?=
- =?utf-8?B?TUhZeVdkTEgrdmw3T0o4TDQ4V01FWFdUalBWcmRVNFhBS2hLR2Y1MThyVUNp?=
- =?utf-8?B?aGFZVDRybmMvT0hzU0NDMkF6Zzg1eHpxUDFTOTA3K0Zma3BxT25aMGNDbjZP?=
- =?utf-8?B?ZGUwZXZSZnRCRmw4OTl5WitvTzRDTU5wVG44M1hxMDA3TVowN2Y0TDgwVEM1?=
- =?utf-8?B?eEZRRHdiRWN1ai9QZzZjQm1xRjAzL0JkN3RtVXMvbUpYd2FlbHJwcGpFY1Nn?=
- =?utf-8?B?RW9WSW1WdHl3M0JYbmFyZEg5VHRySG01WEx5Ykw5b05oSnp4UkY4R2NGSUJ3?=
- =?utf-8?B?UzNaOElQZzRIT3ZFU2E4WHhUR0tJZStqSHlSd2hqRFhkQ0hPSzZFb29mem5p?=
- =?utf-8?B?WTFOUEpkR0JDajRRak02eFZVNnRDZ0xlNHc2ZFphRXZFeW9Dd1Zwejl5Nzh1?=
- =?utf-8?B?bkt0OVFQTVRQTm9jNkpUL05LVWR6MXBhcG5nNDFJMGJFVzhaVDMwU3JXb29H?=
- =?utf-8?B?eVBlUzMvdGlkcW9XcHVVMFhuaHdlNmZkRklMZTFPM0tiV3pTaWZPTG1kRDM5?=
- =?utf-8?B?M3ZaWjc4d0l0OXg2eTZPdE8xKzVuZnNIYXhSRVphcVlXS3VBL1Z6M3QzSTMr?=
- =?utf-8?B?MUtpRlgwUkRQRytheW9JRW9RV1NvbTJtYmxqa2tqdmlxam5MQUZTd2pVWHoy?=
- =?utf-8?B?ZkMzVWFVMkkrT1BTVzVXaFRJYUYxTlI4czU3NkE0WVh4ZzdPZjdSSFZ1ZUlq?=
- =?utf-8?Q?DRCSHAnYhqc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NnRzYkNUWUVjUWFSNWl5SUw1V05MRlFSR0twNmw1T3d4clVnNHppMVNOYVRD?=
- =?utf-8?B?bWZvcFJUMkNOQlYwSVROelJzRXkxMk5lNU1DT3dQSmNsYWFxOWgranRGSzI2?=
- =?utf-8?B?NnF2WmI4c3g2bDZDMThWNHB2OGhkNzZhNWVmK2VqOTBIK1ZHeDZoTWx1NjRo?=
- =?utf-8?B?eWtyV1EyUnlacDdLT0RCay9HNk9IdUdxdGZGRjAwZUFKc3MzZzhQSDcxUkVQ?=
- =?utf-8?B?TjdvZHBtRXRkWk1JVE5KdGJlY0REcVdQWTNVVS9tbzF1ZUZ5TTBTVE42VldV?=
- =?utf-8?B?Z3FFWXNoUUxIRHQxVzFjb0RHekhLTEJqRTgyQ1JwbllYOWRFdTljV1J4c0Nx?=
- =?utf-8?B?YWgyaHc0VElrRkl2MFdNVDhjcUdBVWpkV3JKZUF0NVpSZTJEQURORHdHR283?=
- =?utf-8?B?M3k1dktJWVZTOVlxMHo1bzdGdG0vZ0xhZk4rV01EUXpmSFZXMEZ4Qm5MZVN2?=
- =?utf-8?B?T1pQbG80Y2hhQ3RiQVZxOTY5WUs5YndkZTdjOEtMaWJvcDRNWWhzZE1WR1RC?=
- =?utf-8?B?aFRoNlVPQVlaYnFxNDFGOUpaSFhwbUpGS0xIeDQwSERQQ1FmOUJqczI5Z0FI?=
- =?utf-8?B?WnVKQ0Z4dWdKa0dsSVh5ZFB2YjBkeHBzVERxZllzTEg4YkRoVFd3WWVlWVRM?=
- =?utf-8?B?MmVaZlFhUG42R2NQRTNzd0VOb1JBVWdMZEhEYWdQQVVXVHQ1ZzBZVlFYaUZi?=
- =?utf-8?B?S3hkWlgxN1hFQWZJd0JhbGZ5L29DQ3dwcHIycktJOFJqQ1c1emR0dzNUQjFz?=
- =?utf-8?B?LzU1a04randYVzBlbnpGK0Y4Q1BTTnMxMUZmNnBBTEQ2dlhmdFlxL2s0NVZu?=
- =?utf-8?B?WVBrajRydDdoNmlhdmJZNTlpWUg1ODFFNjBhMTk2RG1zNU15SGhGYkFRTnl3?=
- =?utf-8?B?L3hKQTdxWkNOVWlCV2p5bUdzdWVyTlNrYkxHV0Y3WUNhZmVQbGJFcjZ3Tk5x?=
- =?utf-8?B?Y2F5K1pCVWlLcmFPaitoRE01M3FkYnNWUEkvc2xzQmlTOTM2dHVZN1RERlhj?=
- =?utf-8?B?Zkh1alZPeHRCamplTDAwcUlobnkrMlJUanZoOCtmdlFzdXh6K0MrWjM5bFMv?=
- =?utf-8?B?aGVtNVpTQWRsU0NVQzdacXgvclZyVTduK1RJSXpPV2I3a2lJdWdEV0hEMnlm?=
- =?utf-8?B?TDdpT2RySUlSck5ZeTZCOWpyYUtqLzg0MVU4dXlzRytoVlB3b2xaWVl4TitC?=
- =?utf-8?B?aVNRaVJkUVVwc0pldnNXWnZ0aDJ1Wk1sYUFtMzVTZGt5NUtZb3p1OTdsMy9X?=
- =?utf-8?B?anpDbGRHeU1abjRidGJzVERETUYwdCs1a3dZZVQ2RENFZ2lucThXV2ZtUkFt?=
- =?utf-8?B?c3kyN2tpS3JuYkFZaDc0UGp2T2EyNWZyNmRjMTEvK1g1eEVkTXhHa0R6VTVP?=
- =?utf-8?B?RkpUbDZOUkU3QXlJbEZYNmZEclE0dlJac2F2ZmYzQmFmcjA4NHIyTG1menhp?=
- =?utf-8?B?TUpWTThhbFNwR3ZwV2RCWldzMzlZVERXNDZ3SnBLTU5rQnNZdG1HZWt1bnVE?=
- =?utf-8?B?Ly9lM2piZG9SeVZGU2dicTExSzVCR3A5WnhrUnNHblZQWU5OVGhqdTZrN1hM?=
- =?utf-8?B?LzhaQm9CS09pWkxUbDJ4VU5mVERqREZJV2JMWjBodUZYYmR3MURyelhPelhX?=
- =?utf-8?B?djNmTlduS1ZaL0ZCazhRT2dCNFlOVlY3NEFmWjJqVUFUdE1pMlcwdjFGbVI2?=
- =?utf-8?B?NmNMVEh3SzlrZytaRjlUL3cwRlVLRUFWcGhSTE95cVhTSmdhdnhBaXNLTTJ4?=
- =?utf-8?B?MWNVV2ZPTVdTblczSE1kdkQydFg1c2w3cVM0V3J1bEV0S0hHbHhwNUlPVk1R?=
- =?utf-8?B?VnhNazZqaVRTa0dpUlErUE4rRXFES2N3MmpsU2pjRmpaQ2lBbkFVUGR0dDkx?=
- =?utf-8?B?cHN2elRSdWhuTSt5VCt5YWxXV1lOczViUE85bzd0RWgxa05hTUI0dWxrc0Yv?=
- =?utf-8?B?WnFiaEYrWWZoNlhJdmJBUXp3d25pMXNkbmU4WkpEdkVVVldPR25lb1BiaVNQ?=
- =?utf-8?B?emR4dDRZd2pLZTVOS3JjbTAybXRtZGRHdkN0dm1tdE5lYitLaGppUzJqUEVr?=
- =?utf-8?B?R0gvRUNQTkYzWERwMThPemV4eEN1NHI1TXlUbFI2YVIzUHVBcURJQU5MZFhx?=
- =?utf-8?Q?fxryDK48Ad0bkPz8n/Co+OWYL?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 765e02a1-98d5-4abe-9146-08dd4ba95c77
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 21:08:13.1781
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d1ypfoxjqDv1dG2O6qc0j1SX/2SMBOHxzxwYxJD2n8IowVJYVh40EKz/JsJVkabAgkFs+NWETPwrhyPeVGIk6A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7081
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] thermal: core: Fix race between zone registration and
+ userspace sysfs access
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui
+	<rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250211124421.27169-1-quic_manafm@quicinc.com>
+ <CAJZ5v0j8WY4LdM-3AYr9nUO+z09jq2vAVnaW0rFP=RKAe7jTUA@mail.gmail.com>
+From: Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
+In-Reply-To: <CAJZ5v0j8WY4LdM-3AYr9nUO+z09jq2vAVnaW0rFP=RKAe7jTUA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: wMUz0f9Rt5lSki0ELDMb0TOcVHRW01gW
+X-Proofpoint-GUID: wMUz0f9Rt5lSki0ELDMb0TOcVHRW01gW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_06,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 adultscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120150
 
 
+Hi Rafael,
 
-On 2/12/2025 1:57 PM, Dan Williams wrote:
-> Bowman, Terry wrote:
-> [..]
->>> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
->> Ok. I can add is_cxl to 'struct aer_err_info'. Shall I set it by reading the
->> alternate protocol link state?
-> I am thinking no because dev->is_cxl at least indicates that a CXL link
-> was up at some point, and racing CXL link down is not something the
-> error core can reasonably mitigate.
+Thank you for reviewing the patch.
+
+On 2/13/2025 1:12 AM, Rafael J. Wysocki wrote:
+> On Tue, Feb 11, 2025 at 1:45 PM Manaf Meethalavalappu Pallikunhi
+> <quic_manafm@quicinc.com> wrote:
+>> Currently, the thermal zone sysfs is created before setting the
+>> governor for that thermal zone during registration. If a thermal
+>> zone is being registered while a userspace module tries to access
+>> the same thermal zone policy sysfs node, it can lead to a potential
+>> NULL pointer dereference issue in the policy sysfs path.
+>>
+>> To avoid this race condition, set the thermal zone governor first
+>> before enabling the thermal zone sysfs during registration.
+>> This change fixes below issue,
+>>
+>> [ 20.964589]   Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+>> [ 21.049645]   pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+>> [ 21.049647]   pc : policy_show+0x1c/0x3c
+>> [ 21.049652]   lr : dev_attr_show+0x38/0x7c
+>> [ 21.049655]   sp : ffffffc09a98bbf0
+>> [ 21.049657]   x29: ffffffc09a98bbf0 x28: ffffff885b940000 x27: 0000000000000000
+>> [ 21.049660]   x26: 0000000000000000 x25: 000000007ffff001 x24: 0000000000000001
+>> [ 21.049664]   x23: ffffffdca6334c78 x22: ffffff88a2b2fe00 x21: ffffff881cee8000
+>> [ 21.049667]   x20: ffffff8868318018 x19: ffffffdca7640d78 x18: ffffffdca74d94c0
+>> [ 21.049670]   x17: 00000000ae84bcd4 x16: 00000000ae84bcd4 x15: 000000002df29963
+>> [ 21.049673]   x14: 00000000cbef29c7 x13: 000000004e61db0a x12: ffffff885b940be0
+>> [ 21.049677]   x11: ffffff881cee8000 x10: 0000000000000000 x9 : ffffffdca59f00b8
+>> [ 21.049680]   x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000000000003f
+>> [ 21.049683]   x5 : 0000000000000040 x4 : 0000000000000000 x3 : 0000000000000004
+>> [ 21.049686]   x2 : ffffff881cee8000 x1 : ffffffdca66e5bfb x0 : ffffff881cee8000
+>> [ 21.049689]   Call trace:
+>> [ 21.049690]    policy_show+0x1c/0x3c
+>> [ 21.049692]    dev_attr_show+0x38/0x7c
+>> [ 21.049695]    sysfs_kf_seq_show+0xd8/0x160
+>> [ 21.049699]    kernfs_seq_show+0x44/0x54
+>> [ 21.049701]    seq_read_iter+0x16c/0x4ec
+>> [ 21.049705]    kernfs_fop_read_iter+0x64/0x1d8
+>> [ 21.049709]    vfs_read+0x2d8/0x33c
+>> [ 21.049711]    ksys_read+0x78/0xe8
+>> [ 21.049714]    __arm64_sys_read+0x1c/0x2c
+>> [ 21.049716]    invoke_syscall+0x58/0x10c
+>> [ 21.049719]    el0_svc_common+0xa8/0xdc
+>> [ 21.049722]    do_el0_svc+0x1c/0x28
+>> [ 21.049724]    el0_svc+0x40/0x90
+>> [ 21.049726]    el0t_64_sync_handler+0x70/0xbc
+>> [ 21.049728]    el0t_64_sync+0x1a8/0x1ac
+>> [ 21.049731]   Code: f9435008 aa0203e0 d00054e1 912fec21 (f9400108)
+>>
+>> Signed-off-by: Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
+>> ---
+>>   drivers/thermal/thermal_core.c | 16 ++++++++--------
+>>   1 file changed, 8 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+>> index 2328ac0d8561..c6e6b229cc6e 100644
+>> --- a/drivers/thermal/thermal_core.c
+>> +++ b/drivers/thermal/thermal_core.c
+>> @@ -1589,6 +1589,11 @@ thermal_zone_device_register_with_trips(const char *type,
+>>
+>>          tz->state = TZ_STATE_FLAG_INIT;
+>>
+>> +       thermal_zone_device_init(tz);
+>> +       result = thermal_zone_init_governor(tz);
+>> +       if (result)
+>> +               goto unregister;
+>> +
+>>          /* sys I/F */
+>>          /* Add nodes that are always present via .groups */
+>>          result = thermal_zone_create_device_groups(tz);
+>> @@ -1600,19 +1605,14 @@ thermal_zone_device_register_with_trips(const char *type,
+>>                  thermal_zone_destroy_device_groups(tz);
+>>                  goto remove_id;
+>>          }
+>> -       thermal_zone_device_init(tz);
+>>          result = device_register(&tz->device);
+>>          if (result)
+>>                  goto release_device;
+>>
+>> -       result = thermal_zone_init_governor(tz);
+>> -       if (result)
+>> -               goto unregister;
+>> -
+>>          if (!tz->tzp || !tz->tzp->no_hwmon) {
+>>                  result = thermal_add_hwmon_sysfs(tz);
+>>                  if (result)
+>> -                       goto unregister;
+>> +                       goto release_device;
+>>          }
+>>
+>>          result = thermal_thresholds_init(tz);
+>> @@ -1629,12 +1629,12 @@ thermal_zone_device_register_with_trips(const char *type,
+>>
+>>   remove_hwmon:
+>>          thermal_remove_hwmon_sysfs(tz);
+>> -unregister:
+>> -       device_del(&tz->device);
+>>   release_device:
+>>          put_device(&tz->device);
+>>   remove_id:
+>>          ida_free(&thermal_tz_ida, id);
+>> +unregister:
+>> +       device_del(&tz->device);
+>>   free_tzp:
+>>          kfree(tz->tzp);
+>>   free_tz:
+>> --
+> The catch is good, but the patch isn't AFAICS.  The changes in the
+> error path don't look correct to me in particular.
+I understood the issues in the error path. I’ll try to fix them in the 
+v2 patch. Is there any concern with setting the governor before 
+initializing sysfs ?
 >
-> In the end I think that it should be something like:
->
->    info->is_cxl = dev->is_cxl && is_internal_error()
->
-> ...on the expectation that a CXL device is unlikely to multiplex
-> internal errors across CXL protocol error events and device-specific
-> internal events. Even if a device *did* multiplex those I think it is
-> reasonable for the kernel to treat a device-specific UCE the same as a
-> CXL protocol UCE and panic the system.
-Ok.
+> I'd rather make the attached change, please let me know if it works for you.
 
-I found in using is_internal_error() (v5) a USP with fatal UCE will not have AER status
-populated in aer_info structure, only the severity field is populated (see
-aer_get_device_error_info()). The aer_info is not populated because concern reading
-the USP's AER (config space) when the upstream link state is invalid. Calling
-is_internal_error() in this case will return false because the uncorrectable internal error (UIE) bit is 0 and proceed to treat as a PCIe error.
-How do you want to proceed to handle the UCE protocol error in this case?
+Yes, It will work for current issue. But it could provide a incorrect 
+policy information to userspace if a thermal zone is created with a 
+governor other than the default one (def_governor), right ?
 
-Terry
+Thanks,
+
+Manaf
+
 
