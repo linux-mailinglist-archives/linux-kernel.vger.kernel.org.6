@@ -1,78 +1,92 @@
-Return-Path: <linux-kernel+bounces-511593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15C4A32D18
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:12:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 422ACA32D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:12:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B77116C1BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:09:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F298E3AB4D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B6E256C8E;
-	Wed, 12 Feb 2025 17:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E0F2586D2;
+	Wed, 12 Feb 2025 17:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pFlxGPBO"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+XqIQhC"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AB1253B63
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680FD221D8B;
+	Wed, 12 Feb 2025 17:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739380136; cv=none; b=FYcaZGo6wVY9MeAfcnlFsA7GHXHrjdR89c7R5b6YMp3scNkFPEl5dE9A4jDe8rib93JnC0/A9musYbNWu/Z3ngB0qsVXf3V1QQrXP3r7OdLDkDcNWZSLNkIExndmCbEbVxnLrBWi8t0tZORLQKuvUnpkh1RkBKlnAChcFGARDoQ=
+	t=1739380162; cv=none; b=bIUyxFBVTIU5ZE+lBjoiDoXMdIDq+uy41EosENVy4mSbgmualtu85K9aZOdBQGbWOPWFtEjzsRCh8veX6NYX0S7L4Xl62xZ6pc94lg5gWWobV44Uaj1uvgExwkND0EZv5u/z7vKhZ3IdRYwe5G1T+ILdi3sRj+U7rUUpXtebqkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739380136; c=relaxed/simple;
-	bh=WYGCA/5PA8RVabOezI8jUKp+br/HPzbB2/YE7M0yBBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=foBwANjqRrIg8PNHuDfg7YaFlAYMXbqWV7eTtucXEn195jwd/PAa9ob2q9q8n+wUg04VND/t5DT91VBQ9UBbsSFvc/xSBOJRY3BjDPGNU65MoRKQgd9Ep9iCvpX/mhGBs8ZrzGxxHlS5FGlD7MFgpnvn64sUYO6ilZx6RKQEbzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pFlxGPBO; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CAkptk012575;
-	Wed, 12 Feb 2025 17:08:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=K2I1nWVkfCkRd0Xe12e1T3Yl0yxmtCAJNed23sGtc
-	ag=; b=pFlxGPBOEEM+60LtTNzVrVtKRFTa+5uYBMzJVSk/DWmC0w/WxkejuFFYa
-	uLx9l1oTnsbdnhFr7EBi9bGAKzWdKKpgi2LaQqrGENl5M/GqgBHZxqfch4xZzniN
-	yJmw+qvtmoF2uEbmJQ2Eq1uCk/CA+e1dikufsEcYnhXn6VB6kxx2D79j8EWQbOiU
-	ZcaiETh/LvfFYtzkbw3OWsCnZyx/Fq0Sj+drgNMeQz1UbRdsJ6kR5lYqwD/BcYyF
-	6YJCE0O8CR7oVCf+gUWJ2b8u2/eTARYW88l8CWOe2Okwzj6jESoydT9IA9UeXo5z
-	51JaJZ1WCDQVNAUUfXBRVHRoydJ1g==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rfpa4xs7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 17:08:33 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CFrJfd001051;
-	Wed, 12 Feb 2025 17:08:32 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pjkn9y9e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 17:08:32 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CH8VAW22217420
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 17:08:32 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CB56758065;
-	Wed, 12 Feb 2025 17:08:31 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9B2B158063;
-	Wed, 12 Feb 2025 17:08:31 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.104.210])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Feb 2025 17:08:31 +0000 (GMT)
-From: Eddie James <eajames@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, eajames@linux.ibm.com, jk@ozlabs.org,
-        joel@jms.id.au, alistair@popple.id.au, linux-fsi@lists.ozlabs.org
-Subject: [PATCH] MAINTAINERS: change maintainer for FSI
-Date: Wed, 12 Feb 2025 11:08:27 -0600
-Message-ID: <20250212170827.1477102-1-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1739380162; c=relaxed/simple;
+	bh=Lh55yAkn/jwAg8s+MFsDmpPz7xByDWEIZkZnARkgLDU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uJK97T6JXfQUfMfzh8EkvxwM202wjaGhgu7FApLqpERTj7KlMJ6bPcku5ndjJ9sdTbMSLtlza2UkGKW4/gpXmq3/NRQX5zITRHqK4qggBr7+OdSR2f9sNy2yk0Dwc1y3+DjQtVavgAhK/Xdr++xHVaDaA6uyjPG9GLfZeJr/MO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+XqIQhC; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c05aa6d3beso39405685a.0;
+        Wed, 12 Feb 2025 09:09:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739380160; x=1739984960; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9jyKbsmNHdxaThJU2NsEz7xz1EsWrp4w0F6ozYi/oa4=;
+        b=c+XqIQhCqV5hfso1lL5gOBbGD1NL1yzeRbnd5lzlEpT7/V8tdxUZvZ8zQadBja8xWT
+         hXK48TmXfNzs5okMih807+XXNsHzRU+N2MI4H7oVNGfVE4qxtXeeNNu6VP7jYLmhFh5v
+         e1byu/wn5YfaMYL4jJzSUxGFXZ0svVNNmF9QcUHC7DID9zNah27uGAUsnNdSWWr83bDL
+         ESlp/nPiOLYalJSSl79gmgG0/8IfWoxLEgOGBGk3BCnsJsyG9LyElTB2Kb1FU+7zOhEn
+         gnfCS0XbX8N0KyDqhy+uDnd+9Yj3Hv5Savd+Jd/XsNO5aEWeHLJ4Xjv6uOv63KAvaDl8
+         1C1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739380160; x=1739984960;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9jyKbsmNHdxaThJU2NsEz7xz1EsWrp4w0F6ozYi/oa4=;
+        b=Z0H7RleSLxLjJbS+z9nc8X4AzYqb/5VosRm4mO/AS7RxwruPG+FRsHBLXOBd5U4+ni
+         36sH5WKcxI4vCXHJs+Ret6pnCh9daZq+Dln9NL8N0/U6sbMSDbREPcILT7xnMVYJImOb
+         0Ljnpu0riIq3QU4cC8DFLs84XPQl5lzG+fKTfm2QSrfjEShVp2rfbesNTDsDu0AK4ihE
+         vP3gthIEkaG+CcVaYTKU2HKBoGS+QmiUTQOTYg/9rpkFwUmTv3YCdRUsnm8N9lkFoDXs
+         mXrxXGp7/Rwq2tfUILSj8w8pMPGYBlkQ6fDrDTwL2sxxHlQC462pYYBp9paSmvf10wOL
+         gp5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUHTUFuWbTCG5DbU5kEq/wjAKHWYM19I1lrWHdxL/8gf42FcmNVN0Y8iMc0GtqTXLhkGsqUeRox7NxFVWQ=@vger.kernel.org, AJvYcCWEqTp+XfRxrcGZ5usO+DGC/9L6z/pt6ENcLdG0r95KyOD5N+RTMn+fjCNF/PhZ/tAr7WAueMAsIdy+1oU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiOpwGnXUFWFjcYzK20X/Wez1PoU9boH3LKvbT2CeNZfuM0Hb+
+	SCpxrH9wDTGcQarL2OTon6wDzzzRXPQXIJxjqW19WCJZWszElWbo
+X-Gm-Gg: ASbGncsAO/gnVpbHZulWtUD5K3Si14dawe1lCFR/4HasuMRhZYGhIOpqp1H/CahExX0
+	+KHpl4UABYBU16eJg+Q/Yp9JGXMlziAIFS/2m1C0O+xEq9zKJGXxxAp5v9FiXXx6kITVqOIKrYd
+	oHXD422iGN0/VdKguxI2DgNcx/KUt+QM0DFtm5obrk5WpBvfvwEPrEzNSrtOIlbziwn3+9CmvbA
+	Xv6pf3WG6aWy04JFNC/iR6oLshAvhNap5sJCsoeuHzu+WBlrFz++F0HhIj2PFOtuR7ZdBs6cK2A
+	v8vTmkdmQIvXFIHC6QLwGAlNwsfBSbdYZfX9eloSKwMb53gQCkgGjN+L
+X-Google-Smtp-Source: AGHT+IFLqOvawynQDFjk6qHZV4hFnVvTcQB5/VW+Wp7M42vEsaUw9Cj/Yl8s7alh1TINeLoDtgqwdw==
+X-Received: by 2002:a05:6214:c65:b0:6d4:1f85:3975 with SMTP id 6a1803df08f44-6e46edb4baamr22705426d6.8.1739380160099;
+        Wed, 12 Feb 2025 09:09:20 -0800 (PST)
+Received: from matt-Z87X-UD4H.mynetworksettings.com ([2600:1002:a012:94a2:c438:570:6155:5ffc])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e52798f66asm12079546d6.37.2025.02.12.09.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 09:09:19 -0800 (PST)
+From: Matthew Majewski <mattwmajewski@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	"Uwe Kleine-Konig" <u.kleine-koenig@baylibre.com>,
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matthew Majewski <mattwmajewski@gmail.com>
+Subject: [PATCH 0/2] media: m2m-deinterlace: add device-tree support
+Date: Wed, 12 Feb 2025 12:08:59 -0500
+Message-Id: <20250212170901.3881838-1-mattwmajewski@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,57 +94,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: jPhs8sh0UBW5UswdmdsWyMFPoKBHS5Zr
-X-Proofpoint-ORIG-GUID: jPhs8sh0UBW5UswdmdsWyMFPoKBHS5Zr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- mlxlogscore=976 clxscore=1011 phishscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502120124
 
-Due to job transitions, both Joel and Jeremy can no longer maintain
-the FSI subsystem. I will take over.
-I also removed the link to Joel's FSI tree as he won't be maintaining
-it.
+Hello all, this patch series adds device-tree support for the generic
+m2m-deinterlace driver.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
+A specific dma controller channel can now be provided to the driver
+via the dt, but the driver still supports the original dma query if an
+of_node is not present. This should preserve backwards compatibility
+with platform drivers that directly instantiate the device.
 
-Since there is no longer a tree associated with this subsystem, can we rely
-on you, Greg, to merge changes to the FSI subsystem? Or will I need to create
-a kernel.org account and an associated tree and send you merge requests?
-Thanks.
+Probing the m2m-deinterlace device via device-tree was tested on the
+BeagleBone Black with an m2m-appropriate edma channel.
 
- MAINTAINERS | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Best,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1f65a2a1cde5b..83024cd416143 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9441,14 +9441,13 @@ F:	include/linux/fscrypt.h
- F:	include/uapi/linux/fscrypt.h
- 
- FSI SUBSYSTEM
--M:	Jeremy Kerr <jk@ozlabs.org>
--M:	Joel Stanley <joel@jms.id.au>
-+M:	Eddie James <eajames@linux.ibm.com>
-+R:	Jeremy Kerr <jk@ozlabs.org>
-+R:	Joel Stanley <joel@jms.id.au>
- R:	Alistar Popple <alistair@popple.id.au>
--R:	Eddie James <eajames@linux.ibm.com>
- L:	linux-fsi@lists.ozlabs.org
- S:	Supported
- Q:	http://patchwork.ozlabs.org/project/linux-fsi/list/
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joel/fsi.git
- F:	drivers/fsi/
- F:	include/linux/fsi*.h
- F:	include/trace/events/fsi*.h
+Matthew Majewski
+
+Matthew Majewski (2):
+  media: dt-bindings: Add dt bindings for m2m-deinterlace device
+  media: m2m-deinterlace: add device-tree support
+
+ .../bindings/media/m2m-deinterlace.yaml       | 41 +++++++++++++++++++
+ drivers/media/platform/m2m-deinterlace.c      | 25 ++++++++---
+ 2 files changed, 60 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/m2m-deinterlace.yaml
+
 -- 
-2.43.5
+2.25.1
 
 
