@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-510649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F10A31FFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:30:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FF1A31FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FBBB7A44F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:29:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7068C7A1366
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF99204691;
-	Wed, 12 Feb 2025 07:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73260204682;
+	Wed, 12 Feb 2025 07:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hhE+aJQ2"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JESZux1A"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704D15CB8;
-	Wed, 12 Feb 2025 07:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E451DACB1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739345417; cv=none; b=CJFn5ODtezDY1uyuZ+Zkk01GRKrynX5D6y9fYx0Cn9WIE1//h/Bgp9vsr5rZ9XHeiuckvw/o6RwVKKUoD4Jt5miPC1NM6iTrNt0b2svnhi962K1cTv4Eb22dj3hSxo451h95Tep9yTeWQsE7enQuOJEiYa0WGHlvdUVs5hT8zZA=
+	t=1739345428; cv=none; b=Aca+vGEHOfDZSsdu5ujSNP6Ax6W5oha6VnBAZT3hFVnGyLc+Xx+hM2QR6sMbkpZCYbCIo8UTgfE01C7S6TcrXQzJa/Iw8OtKkQZp8zUB+c4u9ZiJA0pUsCn595ercTrPD8F0x+BcehC7tqWEvQqqTPRRjAnCqHBoxk9ystK1oQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739345417; c=relaxed/simple;
-	bh=wS5s9hksR0MLT3HaP0K5gvrOuEBXey9Zmp+b1T/R7+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cyJkYbDRF9mNEd7KXE7UErDo19ZkxA+f/My6BBTxbUJ2E31wOiataaZm6//JJWK0VyiR6/ISjlB3VaNVOPBSQ2LBYfZGhp2XmhjCC2uKRWu2LfqEgPYLzP0XPAiOCl1VuBNcnDW4FOUZdvj6FqpjlaHeml30M6YJWNqgby13aGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hhE+aJQ2; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ab7d58aa674so325431466b.0;
-        Tue, 11 Feb 2025 23:30:14 -0800 (PST)
+	s=arc-20240116; t=1739345428; c=relaxed/simple;
+	bh=liUB+vQy91cPqvsQbsA0kidijtsiriBht+TngZlpY70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nzazdyWqGs9uyqpRCAjg7PLihGdNCOA/r3oFWzUqVX3GHCWnGbGY+6ig+7tiAypPebhKYXnoWllkssENEpLCPpFA7iPjDK1zsyePWrhVo3D7TDa7TVRu8HIrkbCuG22kjuwLqfFRT8YZiUTJvSUPPO2fRZMdGpUq0Ca1oc15ANI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JESZux1A; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fa0c039d47so9536885a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 23:30:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739345413; x=1739950213; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=bytedance.com; s=google; t=1739345426; x=1739950226; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vc1QFWT/cgthoMhaz+tPsi61Vk+kKCWwtNLYtiSq6hA=;
-        b=hhE+aJQ2llofqBAjEmSldYskFWihg1AXLcOmuEsRaYmEwYslxxyGinNxTuV33T0wro
-         M8pptHb1WLBllcyQlViq16jh/jVdURWppiiEA5akKFVm8x72hmNw63nXxygKTIQsIUCd
-         CYrz7cO7hWLX9Du2ESvhU65RTdpWgveBmuJx/wrCzLINUlq2emuPCtNDGLrM/BXnM6in
-         c3hvc/NTFys9DcXGbJbIXFrRyvteKxcIoO6Hq6yzqB1FFnAZt6YFpcs50OtMOUKcnp9z
-         flCWhLtXbaO8qs7O/4ZKQy1m1GxqRHX7I23fM9qSMTjCQxBJ5o3Rl6tYZcWlg71nWku8
-         njgA==
+        bh=UblfR+D8Nrr1xWGWMhXPdM3NZsuuKTqKkiEnqxIjVPk=;
+        b=JESZux1AgSGJtbWSsVsKU6hB7kMcXlgNOI9hzgTVGsknbEPA/qHMn8tD8dNUqnxalj
+         2fk64DMWWbCRT9cJY+0w7wW/cgok7B7h4KBR6ctmx4WykBLbqd/wJH66CcLrCLuiqrOO
+         PbUms/CBLI6EDYXLOhElx+vmAfNb13CskhWvjLKi02JjCza9gbYmPFk4CEd3nY7Lb0Xh
+         JkeYibbs6SC5I0zKuYFHXch64IW5WjmYqqbrRBU4eTny/FYtAtugRqBeSEymv3lJF2OU
+         YpLWbXYBrFENhe03gqtL5l98IQ0C4J3INTxqNWz7dgaXTLPiJ6Tu9mfM7DVdPU//OCyh
+         1ICg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739345413; x=1739950213;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vc1QFWT/cgthoMhaz+tPsi61Vk+kKCWwtNLYtiSq6hA=;
-        b=vmZcFOyXn9ICQC+61mrGyilF7EY7oxuA01iQtjKZeKM4hsEQ0NP96f47VZcKnDycRE
-         6slqwKDClVJvzBiilbdrpI4p9VFwVUspARKB2hEH4PEll54pH+MK+OdK2ie5X4yC/ERN
-         lJch88Q7pXHiLHtKPBD1hpNssrt/4HfEPpBhtmbJgyOAmrUD+zoWZjnFg9d0DHcQhFp/
-         hwltGShSxhiV3hBr+bUxDDcXagABixuqBzD6HYxapEar3qVzC9W5S8vc2FL2wSwULBYm
-         BMT3WMCpzrhMd5us+5I3TRjiVkDETD14FEP7CVvPMqVjmKiir3htyVc7yMdyQEgSDGX1
-         8R4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8wfHrCyDqlK581TXeC9SZGdImcG8cCKxbG84QVsGV8gFK54ZWiYDhhKrtQkzGCsl+tbQUe0lUHYn0@vger.kernel.org, AJvYcCWAVhgz4kWJ/BZFmPYaBwd8VGY/sskIb0/+awCg8Thgd58a0vpajdyPKTTOY7IfFKAIUYC8bQNhq4AeCO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMcNWslH/P0qYXjJrNhD0ZsQqPLil/VViHhi2Wtgt5QWJkZhNZ
-	ibzZI6LqDFbDZFaHebMedOa997dSsHKKTMm0Py0Qecim8j+LYr+rTQ+9Hw==
-X-Gm-Gg: ASbGncuZ0wJH5dmvmYNShDZGTYYU2r+Y5Ktq+CQOCSuc02IQBBBRf2VZUbDR8lqsj0M
-	6fEvuj1T4xqoNUw7zsHiuL70Mf22B38ajCD7A90eYTKw++cV6Ur0tHzZRPrbTTTuklW01xmeOcK
-	rRuY3oCraPCaL7ihHdiIo9LV3Ra4qR/U0Hhn4eaQedk4CExbt99gXj3zCe1xnWNM/Vbn6lLguQz
-	Jdwtj6Wm9+lvnfZXUMJg1mUUYA2z46WdjZcpgBxWknR85Fk37t7A/TaHpvIq0MDOb3yOOCQOwR4
-	essM6F/UtTSPpRcF9bY88WglhFUg7P1D
-X-Google-Smtp-Source: AGHT+IHvARJZuyGyIzVt3aHpJBrrqcq+pOl4+qQKuEruKJk2J6TnlkfNeG+CVynG1Qyic0MjEwnMAQ==
-X-Received: by 2002:a17:907:da9:b0:ab7:c1d5:14f9 with SMTP id a640c23a62f3a-ab7f337505dmr176444466b.10.1739345412419;
-        Tue, 11 Feb 2025 23:30:12 -0800 (PST)
-Received: from foxbook (adth118.neoplus.adsl.tpnet.pl. [79.185.219.118])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab78aab804csm1053924766b.3.2025.02.11.23.30.11
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 11 Feb 2025 23:30:12 -0800 (PST)
-Date: Wed, 12 Feb 2025 08:30:07 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Niklas Neronin
- <niklas.neronin@linux.intel.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] usb: xhci: Skip only one TD on Ring
- Underrun/Overrun
-Message-ID: <20250212083007.04383b5d@foxbook>
-In-Reply-To: <7bb25848-c80e-4ba8-8790-8628951806b3@linux.intel.com>
-References: <20250210083718.2dd337c3@foxbook>
-	<20250210084220.3e5414e9@foxbook>
-	<7bb25848-c80e-4ba8-8790-8628951806b3@linux.intel.com>
+        d=1e100.net; s=20230601; t=1739345426; x=1739950226;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UblfR+D8Nrr1xWGWMhXPdM3NZsuuKTqKkiEnqxIjVPk=;
+        b=Th7x2WBGFGXt13H+zaLrA+dVSxYFyRq1Tkt1qNt/Jp3DssVFIbzAV1dxbY3o1e9szw
+         /0tbaoaRQ3A14hB9o1H8HLqLlLLs5P/HB9fN9ZqNlCbiHs37b1wUSMYYOaZ/PwVzD+s9
+         Ey/3n73GJpulJicHgFSJ6txqd2Zoyiwf35VD35aKaH4qhbZm4uX2JSMjJrEeQ+FbeNzA
+         KPc7XdO01spq85Xo0XFIm3+wT+x73n86cQzdh3wxzZRTLqArulVmjbtLree/oW3pzZLC
+         nBPmi4Mb7OyvkYr+ESpM1l9b0NvBu23lizgComW3VG4UfpIiIprRywAZlg/UROhkcp3y
+         guXw==
+X-Gm-Message-State: AOJu0YyeS7VwImRqjBzkfSlGkMY/3KN4A3ruSVF670rdz8XVeDpWILRB
+	huMFRAtBgPo3IgA0YWYLwf4i0xk4CZwmFyU8qGXp3yRBGi8Q8uiBz1hXz2wEwJo=
+X-Gm-Gg: ASbGncuoj3DGEJFByI0tJJ1v6P/Z+Ta26Fh1jxySLRLxofBOa4Lf/grGSrAU5DGUBjV
+	HXEd+En462U/e4o8I+fQDaQTHFmJMWVSiRGZOWd6A8mBqOmJuFIRANlVI8zBVHXhg5vHnBayzY/
+	A9Tgpypnvf3jyR0/zFrHMtUNhf4CjjSY5kVIjJmIS/qh55+Gc2L7wLnXgH9PqYE0Hwq6t7cBROa
+	HLcX1862VIMbG3F0jwAfumiGPxwl9bccmvEh8F27tVN27clWRn2ZpDEHKwEAt/FY20Kms+LkAOH
+	lPqqAbMKhVMvvUZI+RcEi3sGudGjecjAKBW7
+X-Google-Smtp-Source: AGHT+IHiMXIaeQkGDLmj4QLaxRdqosV2WjXomIBTbT6B3CFHOM3mBaT9LMJguECrLMcZrydqDGw60Q==
+X-Received: by 2002:a05:6a00:804:b0:730:91fc:f9c4 with SMTP id d2e1a72fcca58-7322c43a997mr3942114b3a.24.1739345425990;
+        Tue, 11 Feb 2025 23:30:25 -0800 (PST)
+Received: from [10.254.28.19] ([139.177.225.229])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73048bf144dsm10531324b3a.85.2025.02.11.23.30.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Feb 2025 23:30:25 -0800 (PST)
+Message-ID: <9c9498a0-342f-4ade-8310-b5a9aaa485b0@bytedance.com>
+Date: Wed, 12 Feb 2025 15:30:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched_ext: Fix the incorrect bpf_list kfunc API in
+ common.bpf.h.
+To: tj@kernel.org, void@manifault.com, arighi@nvidia.com, changwoo@igalia.com
+Cc: linux-kernel@vger.kernel.org
+References: <20250212071936.1406029-1-zhouchuyi@bytedance.com>
+From: Chuyi Zhou <zhouchuyi@bytedance.com>
+In-Reply-To: <20250212071936.1406029-1-zhouchuyi@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Feb 2025 17:41:39 +0200, Mathias Nyman wrote:
-> > +				if (ring_xrun_event) {
-> > +					/*
-> > +					 * If we are here, we are on xHCI 1.0 host with no idea how
-> > +					 * many TDs were missed and where the xrun occurred. Don't
-> > +					 * skip more TDs, they may have been queued after the xrun.
-> > +					 */
-> > +					xhci_dbg(xhci, "Skipped one TD for slot %u ep %u",
-> > +							slot_id, ep_index);
-> > +					break;  
+
+
+在 2025/2/12 15:19, Chuyi Zhou 写道:
+> Now BPF only supports bpf_list_push_{front,back}_impl kfunc, not bpf_list_
+> push_{front,back}.
 > 
-> This would be the same as return 0; right?
+> This patch fix this issue. Without this patch, if we use bpf_list kfunc
+> in scx, the BPF verifier would complain:
+> 
+> libbpf: extern (func ksym) 'bpf_list_push_back': not found in kernel or
+> module BTFs
+> libbpf: failed to load object 'scx_foo'
+> libbpf: failed to load BPF skeleton 'scx_foo': -EINVAL
+> 
+> With this patch, the bpf list kfunc will work as expected.
+> 
 
-Currently, yes. I know it looks silly, but I thought it would be more
-future proof than hardcoding 'return 0' into the loop. The point it to
-simply stop iteration, what happens next is none of the loop's business.
+Sorry, I missed the Fixes tag.
 
-I hope gcc is clever enough to do the right thing here.
+Fixes: 2a52ca7c98960 ("sched_ext: Add scx_simple and scx_example_qmap 
+example schedulers")
 
-Regards,
-Michal
+> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+> ---
+>   tools/sched_ext/include/scx/common.bpf.h | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+> index d72b60a0c582..7849405614b1 100644
+> --- a/tools/sched_ext/include/scx/common.bpf.h
+> +++ b/tools/sched_ext/include/scx/common.bpf.h
+> @@ -270,8 +270,16 @@ void bpf_obj_drop_impl(void *kptr, void *meta) __ksym;
+>   #define bpf_obj_new(type) ((type *)bpf_obj_new_impl(bpf_core_type_id_local(type), NULL))
+>   #define bpf_obj_drop(kptr) bpf_obj_drop_impl(kptr, NULL)
+>   
+> -void bpf_list_push_front(struct bpf_list_head *head, struct bpf_list_node *node) __ksym;
+> -void bpf_list_push_back(struct bpf_list_head *head, struct bpf_list_node *node) __ksym;
+> +int bpf_list_push_front_impl(struct bpf_list_head *head,
+> +				    struct bpf_list_node *node,
+> +				    void *meta, __u64 off) __ksym;
+> +#define bpf_list_push_front(head, node) bpf_list_push_front_impl(head, node, NULL, 0)
+> +
+> +int bpf_list_push_back_impl(struct bpf_list_head *head,
+> +				   struct bpf_list_node *node,
+> +				   void *meta, __u64 off) __ksym;
+> +#define bpf_list_push_back(head, node) bpf_list_push_back_impl(head, node, NULL, 0)
+> +
+>   struct bpf_list_node *bpf_list_pop_front(struct bpf_list_head *head) __ksym;
+>   struct bpf_list_node *bpf_list_pop_back(struct bpf_list_head *head) __ksym;
+>   struct bpf_rb_node *bpf_rbtree_remove(struct bpf_rb_root *root,
+
 
