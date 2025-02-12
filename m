@@ -1,147 +1,132 @@
-Return-Path: <linux-kernel+bounces-510596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A135FA31F3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:42:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120ADA31F41
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:42:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E25D57A1BA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:41:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62912188C420
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934101FE46B;
-	Wed, 12 Feb 2025 06:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB93F1FF1A2;
+	Wed, 12 Feb 2025 06:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="R6fagGky";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XPf4LlXq"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJHzF+Vz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF19B1FC114;
-	Wed, 12 Feb 2025 06:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA9C1FCF4F;
+	Wed, 12 Feb 2025 06:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739342535; cv=none; b=I9ZIsSt5CfrhmCTDrvR2XjT1F5UqXrZaQR4umttMC4SOtiOUPmqHZIxpFJuzX+QM0Wx5+8Jv/nO4bGOB1IIiFmqZKJc9lWur9rKEjIIM/FQ6u3pC2ZhAkBL+U/oWZ2WsyCMr9awtGQM4DOtLKA/CR0sPANoNlZYNwAoDANqin1o=
+	t=1739342553; cv=none; b=iJHvuDMCmGDcl4vcZ3WrO8nFlt98tl9tbplneCIPKUzmAoFVCjY+bAb8rXy9BZq+7bFk7TDjCm1wxqcXmZiUG3xY1HU6VRqkrMBhx7YnVjZ4rRU1aDxyY1586/OzUodOEEe3Ukhr//f2lMUp51kQqpnVcXsep4nuLTDiqJSBPdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739342535; c=relaxed/simple;
-	bh=J9+lbUJeMTLyE3XBLqGE5vHG21bWIh11YuVz0u/YmE0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=gE2O/xRaI3+s2iUYpaphIxbsXHOl1XBxWTV1iiaSKzDTTcc80gESv0Gwb6wh/ES1Q5liUkkPbep9V6ESWHwz32AK21kZAl9szZnHZd41eo1LL3Qib4EnMdER/rPS7pIiFy7B3oHdC83swcZF1ie0LNmuDSFumlPoxg4XeMh5rlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=R6fagGky; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XPf4LlXq; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id C08CF11401BC;
-	Wed, 12 Feb 2025 01:42:12 -0500 (EST)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-10.internal (MEProxy); Wed, 12 Feb 2025 01:42:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1739342532;
-	 x=1739428932; bh=NJ9jDy4M2IixYsn/6MZ1R985FuHiTyNQJDBfOGPI6og=; b=
-	R6fagGky/QjAPTJ0If3NT0IY1nJPH+mFRhxVp2o3fb5mHb0/d84d9GACwjUDJzul
-	3ztaAXX1Mh1xD0MAI+eL4QlCXfFSrF84oZsht6nYW7rByFaWDg3mK4YkOGpG3Y13
-	MekidPb6llSl8tU3o5oLgtULErLx6+lrf0H3AGBNF8lCZj4RDlaymrYQiQsBA0N7
-	kuJzmjPRXh0CnijQC0PI/QhgQtHEU/+E0ukYJlgInEmYwuJIOM93evLGADgwV9uF
-	v7hUHnXnraxg9J21wPkB7T+nGDFMldf2ivMdEs6PTpu8wybe1NrPs1sVxRRjBWbf
-	u5oWDgoGdiTYox9AjaqHeQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739342532; x=
-	1739428932; bh=NJ9jDy4M2IixYsn/6MZ1R985FuHiTyNQJDBfOGPI6og=; b=X
-	Pf4LlXqnjrPYE/tDO1Lyt0yY7CB0MlDk6BzD0XRxr3JWAmA7qkbGkVfikCEdvuAC
-	5wUH51GnsDCX0WBAc7FhDg4I8IumubNxKQJ2+Q3CazSB2Ueg7OWl8+tTQVi5uF23
-	PIsFIsxFrWplj3aOoUCfgh+jGJzzJPgy62pWyExQxUSurlw5z3xLMZJ8h02iaKWL
-	VpmFT96L1JbA94jFX7Nu/pzGdj+u0S3bc74hZ+wNqpH2lw9DirxShOsa3Wds0odk
-	L01SSr/eVsZ6PLIOJrclMufOcYILHjbcbCBgaiIJ6C+gMIdnGWLK1EVhFMPv2xdL
-	5TFhpp6D6c1zsXlphAczw==
-X-ME-Sender: <xms:xEKsZ2r8mm7m77PEayUrozeecv6M6q2_Ku5VZw4F-QYtU_otYlrWsQ>
-    <xme:xEKsZ0rRcjwS5fQwGI9xUOE_lj4dlEUNJ4UFEq2SxPeo-Wqyw1SjFh7r5SrD3EP4I
-    xYMrt-GuLDjXmXVEYg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfedulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughmihhtrhihrdhtohhrohhkhh
-    hovhesghhmrghilhdrtghomhdprhgtphhtthhopehprhiivghmhihslhgrfidrkhhithhs
-    iigvlhesihhnthgvlhdrtghomhdprhgtphhtthhopehrrggrghdrjhgruggrvhesihhnth
-    gvlhdrtghomhdprhgtphhtthhopehjihgtvdefsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfi
-    grlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprghnughrihihrdhshhgv
-    vhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmihhkrg
-    drfigvshhtvghrsggvrhhgsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohep
-    ghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:xEKsZ7Pwg_gkg4C4aBYZpjULmsxBkPYr3ytvVD2BWRNO8dkxH0DyQw>
-    <xmx:xEKsZ166Vb707-yYTgsBxm0wlxshnnsMSFEXemvr2xI130O6vGyU5g>
-    <xmx:xEKsZ16S3J7IEDT1YmDsxiyZQIoXtqZeHwxkGusv--piAeOv9fGhMQ>
-    <xmx:xEKsZ1hi-cIapV8d_E1f9j8qTCyFe-3MPhKKDr90CyLcNVGEBy72hQ>
-    <xmx:xEKsZ9y87fhkDhiAzkLXIpLwfltWeNx6sOp-xJ8YoLmDRbMhTLO1hOqh>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 1C2371C20066; Wed, 12 Feb 2025 01:42:12 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739342553; c=relaxed/simple;
+	bh=gcWrlH4VJdCzAwzQ0TQ13bD5T421NNpIotpvRoe8/0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzRzV1neg+FOsd473NZmFZGj0Nf+ROKeoX+h6mODC3B+nFNwe4jIXiBYJBX5IneGttI1CstFh0qk4fUbanLOOz1K87Tq7eJfPSpQDOnPc4sdnLFQPFEy6PUjGF5xUkBj5+SEFqlEBpNV7k8nj5lcK9ZwDRvP/uyK20blkyWli0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJHzF+Vz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EF6C4CEDF;
+	Wed, 12 Feb 2025 06:42:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739342552;
+	bh=gcWrlH4VJdCzAwzQ0TQ13bD5T421NNpIotpvRoe8/0s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XJHzF+VzfFWlp4P1JPrUMCQkbJ5KBGLBnHIArBL2rm8chHQT3+YCoPK4OJRy5r7E3
+	 sAEvp7f7Om4wRIuJbEio3qwxlaK3G6jul9C+7mhkn+/CcOPn94KJGKuYMJNv4kBrB9
+	 iyu0wu+S5Pof3d5E6GJVuoEPQE0wwdWUJY3opqtFifXLHL3cOus7Plu+nJbBT25k6Z
+	 MLozZWZUL+9x2+p6l1ZevMJfiIYKEVfvQADJL7cew3LCDAreCs1eXEpQof9x5Sqj/D
+	 D/2n2MOO/76zGJrkaqFhCTWkj5d65Lh9hCqXduyTu+7RL200etCIuJx6zTQ6XwCouc
+	 GTngHdXyvPRoQ==
+Date: Wed, 12 Feb 2025 07:42:28 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, 
+	catalin.marinas@arm.com, conor+dt@kernel.org, dave.hansen@linux.intel.com, 
+	decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com, krzk+dt@kernel.org, 
+	kw@linux.com, kys@microsoft.com, lpieralisi@kernel.org, 
+	manivannan.sadhasivam@linaro.org, mingo@redhat.com, robh@kernel.org, ssengar@linux.microsoft.com, 
+	tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	x86@kernel.org, benhill@microsoft.com, bperkins@microsoft.com, 
+	sunilmut@microsoft.com
+Subject: Re: [PATCH hyperv-next v4 4/6] dt-bindings: microsoft,vmbus: Add GIC
+ and DMA coherence to the example
+Message-ID: <20250212-rough-terrier-of-serendipity-68a0db@krzk-bin>
+References: <20250212014321.1108840-1-romank@linux.microsoft.com>
+ <20250212014321.1108840-5-romank@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 12 Feb 2025 07:41:47 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Raag Jadav" <raag.jadav@intel.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Mika Westerberg" <mika.westerberg@linux.intel.com>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Jonathan Cameron" <jic23@kernel.org>,
- "Przemek Kitszel" <przemyslaw.kitszel@intel.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
- linux-iio@vger.kernel.org
-Message-Id: <4ea5bd29-3d42-440b-bbea-203479116b48@app.fastmail.com>
-In-Reply-To: <20250212062513.2254767-3-raag.jadav@intel.com>
-References: <20250212062513.2254767-1-raag.jadav@intel.com>
- <20250212062513.2254767-3-raag.jadav@intel.com>
-Subject: Re: [PATCH v5 02/12] driver core: Split devres APIs to device/devres.h
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250212014321.1108840-5-romank@linux.microsoft.com>
 
-On Wed, Feb 12, 2025, at 07:25, Raag Jadav wrote:
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> device.h is a huge header which is hard to follow and easy to miss
-> something. Improve that by splitting devres APIs to device/devres.h.
->
-> In particular this helps to speedup the build of the code that includes
-> device.h solely for a devres APIs.
->
-> While at it, cast the error pointers to __iomem using IOMEM_ERR_PTR()
-> and fix sparse warnings.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+On Tue, Feb 11, 2025 at 05:43:19PM -0800, Roman Kisel wrote:
+> The existing example lacks the GIC interrupt controller property
+> making it not possible to boot on ARM64, and it lacks the DMA
+
+GIC controller is not relevant to this binding.
+
+> coherence property making the kernel do more work on maintaining
+> CPU caches on ARM64 although the VMBus trancations are cache-coherent.
+> 
+> Add the GIC node, specify DMA coherence, and define interrupt-parent
+> and interrupts properties in the example to provide a complete reference
+> for platforms utilizing GIC-based interrupts, and add the DMA coherence
+> property to not do extra work on the architectures where DMA defaults to
+> non cache-coherent.
+> 
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
 > ---
->  include/linux/device.h        | 119 +-------------------------------
->  include/linux/device/devres.h | 124 ++++++++++++++++++++++++++++++++++
+>  .../devicetree/bindings/bus/microsoft,vmbus.yaml      | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Last time I said: not tested by automation.
+Now: I see automation build failures, although I do not see anything
+incorrect in the code, so that's a bit surprising. Please confirm that
+binding was tested on latest dtschema.
 
-Splitting this out makes a lot of sense conceptually, though
-I don't think it will actually help with build speed: In order
-to see real benefits, we'd need to remove the linux/device.h
-inclusion from other headers that are frequently included,
-but those don't really rely on the devres interfaces.
+> 
+> diff --git a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+> index a8d40c766dcd..5ec69226ab85 100644
+> --- a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+> +++ b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+> @@ -44,11 +44,22 @@ examples:
+>              #size-cells = <1>;
+>              ranges;
+>  
+> +            gic: intc@fe200000 {
+> +              compatible = "arm,gic-v3";
+> +              reg = <0x0 0xfe200000 0x0 0x10000>,   /* GIC Dist */
+> +                    <0x0 0xfe280000 0x0 0x200000>;  /* GICR */
+> +              interrupt-controller;
+> +              #interrupt-cells = <3>;
+> +            }
 
-    Arnd
+I fail to see how this is relevant here. This is example only of vmbus.
+Look how other bindings are done. Drop the example.
+
+
+> +
+>              vmbus@ff0000000 {
+>                  compatible = "microsoft,vmbus";
+>                  #address-cells = <2>;
+>                  #size-cells = <1>;
+>                  ranges = <0x0f 0xf0000000 0x0f 0xf0000000 0x10000000>;
+> +                dma-coherent;
+> +                interrupt-parent = <&gic>;
+> +                interrupts = <1 2 1>;
+
+Use proper defines for known constants.
+
+Best regards,
+Krzysztof
+
 
