@@ -1,98 +1,86 @@
-Return-Path: <linux-kernel+bounces-512051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB374A33365
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:32:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838CEA33368
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F281641E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:32:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E5D31686C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A11209F55;
-	Wed, 12 Feb 2025 23:32:45 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADF821324C;
+	Wed, 12 Feb 2025 23:33:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53E41EF0B9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3041420B1FE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739403164; cv=none; b=CO5gifDVbShdQ+QhUSaCKxmvPzVksS/d44nC8FphTa847heSq8/rv2MhQUI5qsKW3dx8vlSpWQqn2BTXD43e3IdWyKjVH/hl6u4SXPSncHLJNqRVkXhh6tr5H3z3evduETbV9p7SKvRLFjUoPFoigml9CDvPu4uCjHq2VHdQ2Vg=
+	t=1739403184; cv=none; b=Y5DdPf4QIgr6Tz+go2vk98xS/PTQLTZk80VzhmHo61ecrnJ/OunpLcJDOn7Hnuxj11o6BcZEY+kWf84VEtjDS0XH5w86MFmWpTzHWQVzbdntvEilR+hWF5jY7El5IN/U3/iMe2g9GmtsM419i1ESLYAseFMvEQID8pabFVOCy3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739403164; c=relaxed/simple;
-	bh=2c9L7o/NOWe5sQeiJ8Ja5INnXAHyzsmTZ1faqR2gQZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EzaOlTUcnq+ygHrP6k2Qn0ikXLzbQ9m9N2VxHW6zlyEeBbtaf3rEfh+aUSqepBArIyDHoR9DU4gnXlFbYsPAi1NQ6U1xI6HTYcj0kZk/NNsPf2yFu4XLY8On2KTE2xFBQIHRhNIxwANXVika7XdvauTjgXwLIHmTrRaLWSFZdk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BC61C4CEDF;
-	Wed, 12 Feb 2025 23:32:44 +0000 (UTC)
-Date: Wed, 12 Feb 2025 15:32:42 -0800
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Jan Beulich <jbeulich@suse.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: Re: [PATCH] compiler: remove stringification from __ADDRESSABLE_ASM()
-Message-ID: <20250212233242.pnzazr3lxu3f6p6e@jpoimboe>
-References: <561c52d6-9728-4dfc-a629-353dc2488c8b@suse.com>
+	s=arc-20240116; t=1739403184; c=relaxed/simple;
+	bh=HWgschc3bTmkKCGz39VAAuyvpwK4TLO5qHJRHRTW7R0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cTg6ISyCne5PiuAxq6LvKHJ8xba38oeTIzD7TJOY3uWrqc/nsOGyPkxQPUJu5AUi1zgsC7npF0NFviRCnc9Bq5fNqualV31rp/9D/Mb/kBewmf8qMvsHEq4D7j+CW4/JcukjGV8fGVAtdXyECuUg80KxksuTUX45XlogXigqeRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d143a428bcso3761145ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:33:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739403182; x=1740007982;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SHII4dhm1xzjJJUaIcvHyvUo+PI6bSWwhH0ZROmrUkw=;
+        b=Vdc4HUkJcPzL0q0UfH63/GZQg0a4RxNVW3jtRv+5Nd2GxfbJVKFUeTGRIphX9waf5A
+         u6SV+rtOumjaq0/9HuFl1UOagArz/dOT79QKNB+ohYqKp+c1DaVbEuPXrOa3anM8N3RP
+         hkXsUvAbttAqxC5Qo5y1DQJxn6/MYFwGM5Ze3aefFHNWysJkM4goDD4OSdE70rLncV8f
+         ojgF5QCxcurASg+uO+u76HdODJJInvBPfkBEPZZOa1UQB6dv6Y4S2utGzpXnoIGDFsDP
+         oxFw2wfIxl+97FVLEgKETx63puonr8uUsSO8lHkfk2bo9bL5y0CU4NM+1o3RAhVdFyTu
+         GfPA==
+X-Gm-Message-State: AOJu0YyZXUTT8Ptj8DQWBk8M4CmKzl6W0IsMJlEH2hp0Xg4/driT8Wef
+	3G3nybw1Y+dC6DuVxdI+pGYmNJDWmDKfF6CVsOfCMxCV0d8bT/6ol6R5IiV2VjSfR2gIQ6GfmfY
+	qypTNyrvHhujJe/1jubNrSm09MAzeHj/sQ50CKtuxgP182aPvGWpffTg=
+X-Google-Smtp-Source: AGHT+IF4PNWck9kNtEN0/aqJu4jquJ8UM6lqNRZ5ks849buTrjqHQkv7LfVj/RLgTABFIX9RLXgRDwMlX9yRDzymWppY4aI6hPok
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <561c52d6-9728-4dfc-a629-353dc2488c8b@suse.com>
+X-Received: by 2002:a05:6e02:450b:b0:3d1:8ab7:9569 with SMTP id
+ e9e14a558f8ab-3d18ab79922mr13400565ab.0.1739403182269; Wed, 12 Feb 2025
+ 15:33:02 -0800 (PST)
+Date: Wed, 12 Feb 2025 15:33:02 -0800
+In-Reply-To: <Z60m75RgIMCZTldX@qasdev.system>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ad2fae.050a0220.110943.0056.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] KASAN: slab-out-of-bounds Read in ea_get (4)
+From: syzbot <syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, qasdev00@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 12, 2025 at 04:11:51PM +0100, Jan Beulich wrote:
-> __ADDRESSABLE_ASM_STR() is where the necessary stringification happens.
-> As long as "sym" doesn't contain any odd characters, no quoting is
-> required for its use with .quad / .long. In fact the quotation gets in
-> the way with gas 2.25; it's only from 2.26 onwards that quoted symbols
-> are half-way properly supported.
-> 
-> Fixes: 0ef8047b737d ("x86/static-call: provide a way to do very early static-call updates")
-> Signed-off-by: Jan Beulich <jbeulich@suse.com>
-> Cc: stable@vger.kernel.org
-> ---
-> I think that __ADDRESSABLE_ASM{,_STR}() better would have a separate
-> comment, as that presently kind of shared with {_,}__ADDRESSABLE() isn't
-> really applicable to assembly code.
-> 
-> Is data allocation actually necessary in __ADDRESSABLE_ASM()? Aiui the
-> sole goal is to have sym in the symbol table. That could be achieved by
-> a simple .global (or e.g. .hidden) directive.
+Hello,
 
-Hm, yes, but isn't that a bug?  It shouldn't be defining the symbol, as
-that will already be defined elsewhere.  So it would link to the local
-symbol instead of the actual static key defined in another object.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Even worse, the local symbol gets discarded during linking?  Not sure
-how that works without a linker error...
+Reported-by: syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com
+Tested-by: syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com
 
-.global sounds like it would work, then we can just remove all the
-__ADDRESSABLE_ASM() cruft.
+Tested on:
 
-> Shouldn't Xen's __ADDRESSABLE_xen_hypercall use STATIC_CALL_KEY() rather
-> than open-coding it?
+commit:         4dc1d1be Merge tag 'mfd-fixes-6.14' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16bdb718580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c2347dd6174fbe2
+dashboard link: https://syzkaller.appspot.com/bug?extid=4e6e7e4279d046613bc5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11d0e3f8580000
 
-Indeed...
-
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -245,7 +245,7 @@ static inline void *offset_to_ptr(const
->  #define __ADDRESSABLE_ASM(sym)						\
->  	.pushsection .discard.addressable,"aw";				\
->  	.align ARCH_SEL(8,4);						\
-> -	ARCH_SEL(.quad, .long) __stringify(sym);			\
-> +	ARCH_SEL(.quad, .long) sym;					\
->  	.popsection;
->  
->  #define __ADDRESSABLE_ASM_STR(sym) __stringify(__ADDRESSABLE_ASM(sym))
-
--- 
-Josh
+Note: testing is done by a robot and is best-effort only.
 
