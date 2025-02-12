@@ -1,216 +1,184 @@
-Return-Path: <linux-kernel+bounces-512073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE21A333B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:57:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2086A333BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96AB1889894
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:57:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350DD3A87EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27C325E44F;
-	Wed, 12 Feb 2025 23:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AE2214204;
+	Wed, 12 Feb 2025 23:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SXLJJ4OF"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A09126C05;
-	Wed, 12 Feb 2025 23:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CaCuilnj"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF543206F2C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739404646; cv=none; b=jAVXgV6lcLsivtIzYFbFh1BB9HBxyZQi2uvgm3ai5NRVV+FKIEG/faE+ul+LrZ9c9kHCKjOplRjSj2QIwZpqpfagvQo8a0dneerW8LW239dBx5aslcJQqFiGAHvInZfPbKS2eoTpq1jgdEO9A/6k0WNyPR3bfe3k+DKLRkGiuM8=
+	t=1739404693; cv=none; b=RdIfxyrgrgy1kp2e1RfdGr1G7duVXxNn/j7mVoOMWlNmxxt7osPHtg7spObB+d0PUwlZXFnxC7mV+it0YkopR0f99zKe1+Pr36/qpJSOwYiD87buzgSbYmxGJD+NmP9w+XpuTDmf4TuurqZuEI+6P8PoR7TRGf8G3GQS5u9y9DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739404646; c=relaxed/simple;
-	bh=bceuig7AHvs+8cF63nsWXxEM673ylyOTryzj6s+vkL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jCxHEYXXzIHFxYLB9/ZBRYxaxP3VkUxPN8RJTHrjZse8FBmKmW7KvMg8zC6oeaG9Q4yR3CAgwQyz5DppqTvb9Afg+JliVtKYOuliLwTU+I72bgla3wdLcJpLA098DxgcJk45il5OBPh43vEjCn4OWf6VJn7lvQVdqdapjpWyAgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SXLJJ4OF; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A3E52203F3C9;
-	Wed, 12 Feb 2025 15:57:23 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A3E52203F3C9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739404643;
-	bh=bF6ePzz3cN2y4GYtn1pyoRmQYzjv5ZNDww08RM/kA5w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SXLJJ4OFPJZkogD0StqTyUAgwfIJIPnY8/4TngSfN1c5mhPDJIm7aVYDdimj/oAnX
-	 Yd7w/OE1MVKPuIswlc5gyslqUL+d311wjoJ4MwCIU3B0b3BIqYgPZwXNs7GC9thVN3
-	 s91qYLYjt5mzVMS08XeoNubtxgKPcmd+OIFopIII=
-Message-ID: <bb863c8f-a92c-42d0-abc4-ff0b92f701c2@linux.microsoft.com>
-Date: Wed, 12 Feb 2025 15:57:23 -0800
+	s=arc-20240116; t=1739404693; c=relaxed/simple;
+	bh=GXgapAEMfDI8VVTx7ozZlmThk7UNNcxIVlFjSwQ0cck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o1zv2LgzY/jcbOGn+yliAnJ2lfUVjC2z2lHG30P6R+1esWAfxT/szirvk+IZcl1O6G6hQBzM3NGG+SsD5vEpgM9i7unCZgNkMOdDL5fha0Pt7i9BKOTqY2KaYry0aMDG6ifd4K/DY06mu2fu/ihhVRg5ejYn67NC3o3DeXfzOQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CaCuilnj; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54505a75445so240829e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:58:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739404690; x=1740009490; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3BAFGjYw2QJwqRQ3fFZmP6lC2tUfHuW+BgEHuxf/+t0=;
+        b=CaCuilnjIWPpF4ADeVQXGfZ7luYwoLrRGN2wG90qNAw4IyevC8bmuRdugCantGWkKq
+         nbdmG/e1OBijeG0at22T5kUlNHkj03zoQgXDE1yTPe4UnoQZYTldbgMCaeZtAxHKfHW7
+         JKQfRruz91AtPY1mN5uAN9UZ5Oc74CwaYezK14Fr0OMifO9SuEF3zsPbsrQa1fCSyTcM
+         PZgmHH6N+QYoLsKeAeVsPqpbZszcNfkuG8LXanV8KEqPUAl6P9VaYN4poqpI5iRfQjZv
+         FJ6WmbvxQSBC675d7dqMw6Uc4QmGc4E2uCT7zNp6E9Y88rsNBS7fJzC6FhPRAU/don0Y
+         iLWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739404690; x=1740009490;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3BAFGjYw2QJwqRQ3fFZmP6lC2tUfHuW+BgEHuxf/+t0=;
+        b=eiw8qNK+T+nb+F7CNQrPhvQYTPMuPr87INXo3D7wmXskGvWltPouhVeXtdfUJXvLcJ
+         j4wXYFU8oOQcsTjkAVG9C0TfWq5DMEm2cB5CfDAnhhS0JHBO9oItWmg5OWXslzHJVDQL
+         VUz8LBwHMMgSirH5aRjF0TPG9UCWL3FNvKuatPa+Po9PM1e5e/kazvsSDxt+qlBrd1lR
+         cSYRRjNJZkTGs6R+EAP+jKX+gcW5vJXDOrdM48BeyYN1GLjVtQhqWGiKD8WVuAmlK9Ut
+         kuCe6DTpHtq3kWUTRJDLn0ZT1B+95HaB/vCIC7B9IdmRJ1BoQ9GPMu/dBQHQf+/J4API
+         sJeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSxEROE1J3khifkeNC/UYA+bUiO8QbmNo+m6IGeZQq6ID4T4RmwLiWwqj75NwbhSimsKkAbvEuHgl5/a0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziP/tMu1IVVdC6Ep1tNExbsBtE6Ha7a8NP/mfp8FX8/mVvQpew
+	bLyXgg/jBPunueQvqtL3s+zr7TlmSoM+FXBVF48HbnCzwXaseHS2K1sxHY+eSpE=
+X-Gm-Gg: ASbGncs3PeQzo48vBGtygRcKZCmDQ8+ih398k/XFsMxMptjYXXK7RAhPUyJDq7b7YcO
+	e5HVvBbuUP0rMRWFIGhfhJH8nKNoi5P3jIepsLK3E5NbMWiT+xgr5Ywb9aI6T9AGPzfALhxo3aL
+	q3Z1pgklr1LKJl1JXoLxHP/K+6qiul804Wqh+eE/DahQtYbqpPahGLtJUxz5L3B0sdc31cTejX0
+	7Sw3sNbSjM/RPtqUewpCPaXwAvimAa8W0tIiNkosTxjpVXeUknBqrpPSIPvVxgmPLVb8l4WsnQe
+	qheEWYtadCRODvr358wXVFpzY/xFiCzFUAs9MrKD6r1uW9Jfr1qudJe3KV4iVozGtS8j8Ks=
+X-Google-Smtp-Source: AGHT+IFOzevMzwSqrsW5SI2f6zfmPKiGi7Ag3hljzjdY6B6YmBgvHDwMJG1evRLjw+6YvkchrmUSAA==
+X-Received: by 2002:ac2:465b:0:b0:545:1d25:460d with SMTP id 2adb3069b0e04-5451d255120mr480534e87.12.1739404689779;
+        Wed, 12 Feb 2025 15:58:09 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f09ab70sm13305e87.78.2025.02.12.15.58.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 15:58:08 -0800 (PST)
+Date: Thu, 13 Feb 2025 01:58:06 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+Cc: "James A. MacInnes" <james.a.macinnes@gmail.com>, 
+	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Chandan Uddaraju <chandanu@codeaurora.org>, 
+	Stephen Boyd <swboyd@chromium.org>, Vara Reddy <quic_varar@quicinc.com>, 
+	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Guenter Roeck <groeck@chromium.org>, Rob Clark <robdclark@chromium.org>
+Subject: Re: [PATCH v2 1/2] drm/msm/dp: Disable wide bus support for SDM845
+Message-ID: <dk7udmgj3mexlvxxoxvgwut6p3cv4faxhtcbqrikvfp6h6odi3@myp4sxi7nh5c>
+References: <20250212-sdm845_dp-v2-0-4954e51458f4@gmail.com>
+ <20250212-sdm845_dp-v2-1-4954e51458f4@gmail.com>
+ <voecekzdacvrxedltgkiq5vwnaomchv2dryi6ukvk2xynw72wp@5nre7uesyvkk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v4 4/6] dt-bindings: microsoft,vmbus: Add GIC
- and DMA coherence to the example
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, conor+dt@kernel.org, dave.hansen@linux.intel.com,
- decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
- krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, mingo@redhat.com, robh@kernel.org,
- ssengar@linux.microsoft.com, tglx@linutronix.de, wei.liu@kernel.org,
- will@kernel.org, devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
-References: <20250212014321.1108840-1-romank@linux.microsoft.com>
- <20250212014321.1108840-5-romank@linux.microsoft.com>
- <20250212-rough-terrier-of-serendipity-68a0db@krzk-bin>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <20250212-rough-terrier-of-serendipity-68a0db@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <voecekzdacvrxedltgkiq5vwnaomchv2dryi6ukvk2xynw72wp@5nre7uesyvkk>
 
-
-
-On 2/11/2025 10:42 PM, Krzysztof Kozlowski wrote:
-> On Tue, Feb 11, 2025 at 05:43:19PM -0800, Roman Kisel wrote:
->> The existing example lacks the GIC interrupt controller property
->> making it not possible to boot on ARM64, and it lacks the DMA
+On Thu, Feb 13, 2025 at 12:41:02AM +0100, Marijn Suijten wrote:
+> On 2025-02-12 15:03:46, James A. MacInnes wrote:
+> > SDM845 DPU hardware is rev 4.0.0 per hardware documents.
+> > Original patch to enable wide_bus operation did not take into account
+> > the SDM845 and it got carried over by accident.
+> > 
+> > - Incorrect setting caused inoperable DisplayPort.
+> > - Corrected by separating SDM845 into its own descriptor.
 > 
-> GIC controller is not relevant to this binding.
+> If anything I'd have appreciated to see our conversation in v1 pasted here
+> verbatim which is of the right verbosity to explain this.  I can't do much with
+> a list of two items.
 > 
-
-Will remove, thank you for pointing that out!
-
->> coherence property making the kernel do more work on maintaining
->> CPU caches on ARM64 although the VMBus trancations are cache-coherent.
->>
->> Add the GIC node, specify DMA coherence, and define interrupt-parent
->> and interrupts properties in the example to provide a complete reference
->> for platforms utilizing GIC-based interrupts, and add the DMA coherence
->> property to not do extra work on the architectures where DMA defaults to
->> non cache-coherent.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   .../devicetree/bindings/bus/microsoft,vmbus.yaml      | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
+> I don't have a clearer way of explaining what all I find confusing about this
+> description, so let me propose what I would have written if this was my patch
+> instead:
 > 
-> Last time I said: not tested by automation.
-> Now: I see automation build failures, although I do not see anything
-> incorrect in the code, so that's a bit surprising. Please confirm that
-> binding was tested on latest dtschema.
+> 	When widebus was enabled for DisplayPort in commit c7c412202623 ("drm/msm/dp:
+> 	enable widebus on all relevant chipsets") it was clarified that it is only
+> 	supported on DPU 5.0.0 onwards which includes SC7180 on DPU revision 6.2.
+> 	However, this patch missed that the description structure for SC7180 is also
+> 	reused for SDM845 (because of identical io_start address) which is only DPU
+> 	4.0.0, leading to a wrongly enbled widebus feature and corruption on that
+> 	platform.
+> 
+> 	Create a separate msm_dp_desc_sdm845 structure for this SoC compatible,
+> 	with the wide_bus_supported flag turned off.
+> 
+> 	Note that no other DisplayPort compatibles currently exist for SoCs older
+> 	than DPU 4.0.0 besides SDM845.
 
-They weren't for which I am sorry. Read through
+With more or less similar commit message:
 
-https://www.kernel.org/doc/html/v6.14-rc2/devicetree/bindings/writing-schema.html
 
-and was able to see and fix the break by bringing the YAML to [1].
-Getting now this
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-/Documentation/devicetree/bindings/bus/microsoft,vmbus.example.dtb: 
-vmbus@ff0000000: 'dma-coherent', 'interrupts' do not match any of the 
-regexes: 'pinctrl-[0-9]+'
-         from schema $id: 
-http://devicetree.org/schemas/bus/microsoft,vmbus.yaml#
-
-so maybe I need to add some more to the "requires" section. Will follow
-other examples as you suggested.
 
 > 
->>
->> diff --git a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
->> index a8d40c766dcd..5ec69226ab85 100644
->> --- a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
->> +++ b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
->> @@ -44,11 +44,22 @@ examples:
->>               #size-cells = <1>;
->>               ranges;
->>   
->> +            gic: intc@fe200000 {
->> +              compatible = "arm,gic-v3";
->> +              reg = <0x0 0xfe200000 0x0 0x10000>,   /* GIC Dist */
->> +                    <0x0 0xfe280000 0x0 0x200000>;  /* GICR */
->> +              interrupt-controller;
->> +              #interrupt-cells = <3>;
->> +            }
+> Hope I'm not considered being too picky.  I first sketch **how** the original
+> patch created a problem, then explain how this patch is intending to fix it,
+> and finally describe that we went a step further and ensured no other SoCs
+> are suffering from a similar problem.
 > 
-> I fail to see how this is relevant here. This is example only of vmbus.
-> Look how other bindings are done. Drop the example.
-
-The bus refers to the interrupt controller, and I didn't have it, so
-added it :) Now I in other examples that is not required, and the
-tooling generates fake intc's. Appreciate your advice very much!
-
+> - Marijn
 > 
-> 
->> +
->>               vmbus@ff0000000 {
->>                   compatible = "microsoft,vmbus";
->>                   #address-cells = <2>;
->>                   #size-cells = <1>;
->>                   ranges = <0x0f 0xf0000000 0x0f 0xf0000000 0x10000000>;
->> +                dma-coherent;
->> +                interrupt-parent = <&gic>;
->> +                interrupts = <1 2 1>;
-> 
-> Use proper defines for known constants.
-
-Will do as in [1], thank you!
-
-> 
-
-[1]
-
---- a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
-+++ b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
-@@ -28,6 +28,7 @@ properties:
-  required:
-    - compatible
-    - ranges
-+  - interrupts
-    - '#address-cells'
-    - '#size-cells'
-
-@@ -35,6 +36,8 @@ additionalProperties: false
-
-  examples:
-    - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-      soc {
-          #address-cells = <2>;
-          #size-cells = <1>;
-@@ -44,14 +47,6 @@ examples:
-              #size-cells = <1>;
-              ranges;
-
--            gic: intc@fe200000 {
--              compatible = "arm,gic-v3";
--              reg = <0x0 0xfe200000 0x0 0x10000>,   /* GIC Dist */
--                    <0x0 0xfe280000 0x0 0x200000>;  /* GICR */
--              interrupt-controller;
--              #interrupt-cells = <3>;
--            }
--
-              vmbus@ff0000000 {
-                  compatible = "microsoft,vmbus";
-                  #address-cells = <2>;
-@@ -59,7 +54,7 @@ examples:
-                  ranges = <0x0f 0xf0000000 0x0f 0xf0000000 0x10000000>;
-                  dma-coherent;
-                  interrupt-parent = <&gic>;
--                interrupts = <1 2 1>;
-+                interrupts = <GIC_PPI 2 IRQ_TYPE_EDGE_RISING>;
-              };
-          };
-      };
-
-> Best regards,
-> Krzysztof
+> > 
+> > Fixes: c7c412202623 ("drm/msm/dp: enable widebus on all relevant chipsets")
+> > Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
+> > ---
+> >  drivers/gpu/drm/msm/dp/dp_display.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+> > index aff51bb973eb..e30cccd63910 100644
+> > --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> > +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> > @@ -126,6 +126,11 @@ static const struct msm_dp_desc msm_dp_desc_sa8775p[] = {
+> >  	{}
+> >  };
+> >  
+> > +static const struct msm_dp_desc msm_dp_desc_sdm845[] = {
+> > +	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0 },
+> > +	{}
+> > +};
+> > +
+> >  static const struct msm_dp_desc msm_dp_desc_sc7180[] = {
+> >  	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
+> >  	{}
+> > @@ -178,7 +183,7 @@ static const struct of_device_id msm_dp_dt_match[] = {
+> >  	{ .compatible = "qcom,sc8180x-edp", .data = &msm_dp_desc_sc8180x },
+> >  	{ .compatible = "qcom,sc8280xp-dp", .data = &msm_dp_desc_sc8280xp },
+> >  	{ .compatible = "qcom,sc8280xp-edp", .data = &msm_dp_desc_sc8280xp },
+> > -	{ .compatible = "qcom,sdm845-dp", .data = &msm_dp_desc_sc7180 },
+> > +	{ .compatible = "qcom,sdm845-dp", .data = &msm_dp_desc_sdm845 },
+> >  	{ .compatible = "qcom,sm8350-dp", .data = &msm_dp_desc_sc7180 },
+> >  	{ .compatible = "qcom,sm8650-dp", .data = &msm_dp_desc_sm8650 },
+> >  	{ .compatible = "qcom,x1e80100-dp", .data = &msm_dp_desc_x1e80100 },
+> > 
+> > -- 
+> > 2.43.0
+> > 
 
 -- 
-Thank you,
-Roman
-
+With best wishes
+Dmitry
 
