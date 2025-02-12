@@ -1,51 +1,39 @@
-Return-Path: <linux-kernel+bounces-510770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0169DA321B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:05:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B48A321B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:06:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56F6D162997
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:05:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0649D18860D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E2F205AD8;
-	Wed, 12 Feb 2025 09:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T+BU1Zif"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54271E7C07;
-	Wed, 12 Feb 2025 09:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407A0205ACE;
+	Wed, 12 Feb 2025 09:06:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695BB1D86F2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739351129; cv=none; b=c7QLJRI6xSxwXfHDh+aaJeD6nMyWmPln2+SJTagfvCrtd3IuNW83P2GzbPdloBIIs14Esu2hwqoQbucX9bybXVPw8/YvD86fD3htIBo/doNL7tufXUYkpsx0JOcU8CffwoVTdG2Pyc83lpXhul2dHm+exTZ1/rSb+4L9UUbPNhE=
+	t=1739351182; cv=none; b=hAqxFfKp4Hsdsjyg15qcQcn6Iq0fHz8j4ss6o7pLenCqqM+sXSzLU/Mz/I6VRvo5/TMcnSFt2N+dL52slvZq8645JesxWc/V6TaqSKNIShnkswZnWg07KQvN0ySQadw4ugUha/YmeExBH5hnPvM/AYxw9a+iWzVBiCkBL7yU5YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739351129; c=relaxed/simple;
-	bh=aFTsUnMwWQzKBC/DK5FQncvco/G679V5+HYcSuiwxpY=;
+	s=arc-20240116; t=1739351182; c=relaxed/simple;
+	bh=stwLR5GSPXOa5U8+urbEYw7ByWYe8oojGTKQJzML/FY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X4cfooJAms4/Fy35OcqPnGp/98n448UJxTt4LnsedqC6yABmxSlFo/tCqI8NkOlVSG2YePdnPrNEhx/dlYpF9MQt1fTCd+CnfRakzL+rbvUyxEEoELR8hgf8d2DkJw+4FYVx71ic5Xk25yDSQj/2dj3u0cZ9BqQ85hsKDXK4C4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T+BU1Zif; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9EFAE43418;
-	Wed, 12 Feb 2025 09:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739351118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/UOYKKTFWHAEgWX/tpxti6Hahb0bpNQ1UD67p+CryXY=;
-	b=T+BU1Zif0FvjjrgHnWDd2zTlA8Ub18LPUOtr7vXpY8VrEk+VfejKm+vD2vaHAEhg7Xkbds
-	rzAaydVDPMGuCO8kdZKYdzUxlAPELvFR2KP3virYhihL37bHH3KWWxttwMbMnl0yyWxxd8
-	i9ZaOlIGQJXTbuFST5MTtk6Mi9kEJ9G7axptXAhInTxNpQXUHsCZW7BaIDexcPcv4nwfEF
-	BI+/3NOoOMjP5uvaJsEvc0ctCUHyBwI5TOqSOEENY90UzkAVpKcrL+KA9/mgzNkvPxolsQ
-	KewnvIzYRS4xprFvCow9l0IQ3mCvOx5zCibc8Y+V5oe7AqzIXDwwCbXeufYUMQ==
-Message-ID: <fd8da5d5-8e11-4e88-bef3-3e50dad72aa6@bootlin.com>
-Date: Wed, 12 Feb 2025 10:05:17 +0100
+	 In-Reply-To:Content-Type; b=Mje4be2saIRVkCSdJD15SiRIowmfrTKFRoUIjihg3IqWtJe3PXdW+bVyegTeXBIWcywVSgjYaxA7poCHYEo4Ey4Gub5sfTERgMT5lGItfmKm6BSbxl5PfZjlkZ3FNG7XIQw7jdckwBYSokQqWZHF47deYw5pTSTGKIK3eM2pmJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F1EE13D5;
+	Wed, 12 Feb 2025 01:06:40 -0800 (PST)
+Received: from [10.162.43.26] (K4MQJ0H1H2.blr.arm.com [10.162.43.26])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 548DF3F58B;
+	Wed, 12 Feb 2025 01:06:17 -0800 (PST)
+Message-ID: <27db405d-666a-4064-b13c-9f1c81b8512a@arm.com>
+Date: Wed, 12 Feb 2025 14:36:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,45 +41,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 2/2] rtnetlink: Release nets when leaving
- rtnl_setlink()
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: alexis.lothore@bootlin.com, davem@davemloft.net, edumazet@google.com,
- horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, razor@blackwall.org,
- stable@vger.kernel.org, thomas.petazzoni@bootlin.com
-References: <20250212-rtnetlink_leak-v1-2-27bce9a3ac9a@bootlin.com>
- <20250212083117.32671-1-kuniyu@amazon.com>
+Subject: Re: [PATCH 2/2] mm/mm.h: Write folio->_flags_1 & 0xff as a macro
+ definition
+To: liuye <liuye@kylinos.cn>, brauner@kernel.org, dhowells@redhat.com,
+ akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250212025843.80283-1-liuye@kylinos.cn>
+ <20250212025843.80283-3-liuye@kylinos.cn>
+ <1739340112672653.3.seg@mailgw.kylinos.cn>
+ <52fcd6b2-bbe1-4de7-85d1-1e5968f87e0d@kylinos.cn>
 Content-Language: en-US
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-In-Reply-To: <20250212083117.32671-1-kuniyu@amazon.com>
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <52fcd6b2-bbe1-4de7-85d1-1e5968f87e0d@kylinos.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeegjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeurghsthhivghnucevuhhruhhttghhvghtuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfehgefgteffkeehveeuvdekvddvueefgeejvefgleevveevteffveefgfehieejnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehkuhhnihihuhesrghmrgiiohhnrdgtohhmpdhrtghpthhtoheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlr
- dhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: bastien.curutchet@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 2/12/25 9:31 AM, Kuniyuki Iwashima wrote:
-> From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-> Date: Wed, 12 Feb 2025 09:23:48 +0100
->> rtnl_setlink() uses the rtnl_nets_* helpers but never calls the
->> rtnl_nets_destroy(). It leads to small memory leaks.
->>
->> Call rtnl_nets_destroy() before exiting to properly decrement the nets'
->> reference counters.
->>
->> Fixes: 636af13f213b ("rtnetlink: Register rtnl_dellink() and rtnl_setlink() with RTNL_FLAG_DOIT_PERNET_WIP.")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+
+
+On 12/02/25 12:37 pm, liuye wrote:
 > 
-> It's fixed in 1438f5d07b9a ("rtnetlink: fix netns leak with
-> rtnl_setlink()").
+> 
+> 在 2025/2/12 13:12, Dev Jain 写道:
+>>
+>>
+>> On 12/02/25 8:28 am, Liu Ye wrote:
+>>> There are multiple locations in mm.h where (folio->_flags_1 & 0xff) is
+>>> used. Write it as a macro definition to improve the readability and
+>>> maintainability of the code.
+>>>
+>>> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+>>> ---
+>>>    include/linux/mm.h | 10 ++++++----
+>>>    1 file changed, 6 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>> index 7b1068ddcbb7..750e75f45557 100644
+>>> --- a/include/linux/mm.h
+>>> +++ b/include/linux/mm.h
+>>> @@ -1098,6 +1098,8 @@ int vma_is_stack_for_current(struct vm_area_struct *vma);
+>>>    struct mmu_gather;
+>>>    struct inode;
+>>>    +#define FOLIO_ORDER(folio) ((folio)->_flags_1 & 0xff)
+>>> +
+>>>    /*
+>>>     * compound_order() can be called without holding a reference, which means
+>>>     * that niceties like page_folio() don't work.  These callers should be
+>>> @@ -1111,7 +1113,7 @@ static inline unsigned int compound_order(struct page *page)
+>>>          if (!test_bit(PG_head, &folio->flags))
+>>>            return 0;
+>>> -    return folio->_flags_1 & 0xff;
+>>> +    return FOLIO_ORDER(folio);
+>>>    }
+>>>      /**
+>>> @@ -1127,7 +1129,7 @@ static inline unsigned int folio_order(const struct folio *folio)
+>>>    {
+>>>        if (!folio_test_large(folio))
+>>>            return 0;
+>>> -    return folio->_flags_1 & 0xff;
+>>> +    return FOLIO_ORDER(folio);
+>>>    }
+>>>      #include <linux/huge_mm.h>
+>>> @@ -2061,7 +2063,7 @@ static inline long folio_nr_pages(const struct folio *folio)
+>>>    #ifdef CONFIG_64BIT
+>>>        return folio->_folio_nr_pages;
+>>>    #else
+>>> -    return 1L << (folio->_flags_1 & 0xff);
+>>> +    return 1L << FOLIO_ORDER(folio);
+>>>    #endif
+>>>    }
+>>>    @@ -2086,7 +2088,7 @@ static inline unsigned long compound_nr(struct page *page)
+>>>    #ifdef CONFIG_64BIT
+>>>        return folio->_folio_nr_pages;
+>>>    #else
+>>> -    return 1L << (folio->_flags_1 & 0xff);
+>>> +    return 1L << FOLIO_ORDER(folio);
+>>>    #endif
+>>>    }
+>>>    
+>>
+>> Personally I do not think this is improving readability. You are introducing one more macro for people to decipher instead of directly seeing folio->_flags_1 & 0xff. This is similar to whether to write
+>> if (x) => do_stuff(), or if (x != 0) => do_stuff(). The former is more "readable" by convention but the latter makes it easier and obvious to understand.
+>>
+> Or simply for maintenance purposes, if the meaning of a bit changes, only the macro definition needs to be modified.
+
+Well, then let us wait for that time to come :) Personally I am not a 
+fan of over-abstracting, especially when it is just a single line; one 
+benefit I have seen of writing the way it is written right now, is that 
+I actually get reminded where the folio order is actually stored. I have 
+no objection on getting this patch applied, if someone else thinks this 
+is a fruitful abstraction. In any case, you do need to come up with a 
+better name than FOLIO_ORDER, as it is confusing.
+
+> 
+> Thanks，
+> Liu Ye
 > 
 
-Oops, I missed it, sorry about that.
+> 
+> 
 
-Best regards,
-Bastien
 
