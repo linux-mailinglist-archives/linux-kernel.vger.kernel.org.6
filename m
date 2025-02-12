@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-510687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C12A3208E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:03:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2407A320A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6592A7A1964
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:02:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 421BB1888420
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ECC204C08;
-	Wed, 12 Feb 2025 08:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4201D204C28;
+	Wed, 12 Feb 2025 08:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XbYso5MR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i01zHflA"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CCF26AEC;
-	Wed, 12 Feb 2025 08:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA072046AD;
+	Wed, 12 Feb 2025 08:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739347407; cv=none; b=G+RQIwQiNM0MZjNHUP3H5LtiuylsGaK8WIniqu5OI9SayXKZF30IiAoJkzksOEaki93v06OEGmnySCyyhOyD8MCPTqXisAmrlh3Iczb+tD/CIms5Kbve+L9O2w8R70ii9ME1r8+anYRNBgW78/bHheY1YkqCKvaZQD1gXev9QrE=
+	t=1739347748; cv=none; b=GOtijlAWL4/t6fK1yNGo+lE9whT/3EbacRiDrNZe8a5sOPoAKEmTT572u6bKoX+Aj6GJPS2gfFQGwAL2VKjDy3viaDcC9ZrotsLDLcw/z96qtLBfd7p0ukdQQOfVSkZ/Q5uM5als0ECqCkpfo5KqQAiXsFLlOIEBsiyDG2mkX/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739347407; c=relaxed/simple;
-	bh=pO031soeAN2xTZUcwq6yyzqPBbAKgf77wG9z2Co6OAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uE8PIVzURGR6/2ZQfiupkOwLwtNwE85DOomzDvVlZddyqKI0IxOBVHtG1PdgVsriJgPKBDvQiGEQFiG3j72N8V2jvWXAf9///Hsf6jeLQPfmYr9FnrsF8iQPsc3YBplJrf49P7ICcOaq1SiLFq60Lb3KhcG6TilzjqGkhr5COWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XbYso5MR; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739347405; x=1770883405;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pO031soeAN2xTZUcwq6yyzqPBbAKgf77wG9z2Co6OAQ=;
-  b=XbYso5MRmNLCb1dQeLGQ9DmwQ72bgjp4OGpl6q5yNkpb9BX4WPj9V1a2
-   HZF4esuZKWbdfG8TURw4H44bpqFmET2UQit+U0FCP0DR5akf4SNAiIACj
-   q9amjsG8BY6bax/gT5jlajmuACrfmrgUYnhH5+a59q6yuHt4HW8Cgr5v3
-   ZV8EmjKDaIBcC/KoD4+I2RaE2WGODi20xAurZ4AHhns0mYvILQ0T4Gzf7
-   F+3OfmJcy7ub9acjntmGoV9B/KrlieoYpPfpzekQ+Giti6Wqknf4fdA/4
-   DHlKHUQXmL/pLsHaa0YXoGcsmQvDO3YMUdkTOz4+YRi7eB4yLfAEcz08B
-   w==;
-X-CSE-ConnectionGUID: PTtOYggZTTaQOILKZKVrXg==
-X-CSE-MsgGUID: xUZsNhcKQhKrnLE3dK7GyA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="51384806"
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="51384806"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 00:03:24 -0800
-X-CSE-ConnectionGUID: FFGiGoEsRq+bQBfIANicbw==
-X-CSE-MsgGUID: RXhg/U3zReqi686kTX0hrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117929688"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 12 Feb 2025 00:03:22 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ti7iJ-0015L9-1O;
-	Wed, 12 Feb 2025 08:03:19 +0000
-Date: Wed, 12 Feb 2025 16:03:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Bamvor Jian Zhang <bamv2005@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Keerthy <j-keerthy@ti.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 01/14] gpiolib: make value setters have return values
-Message-ID: <202502121512.CmoMg9Q7-lkp@intel.com>
-References: <20250211-gpio-set-retval-v1-1-52d3d613d7d3@linaro.org>
+	s=arc-20240116; t=1739347748; c=relaxed/simple;
+	bh=hzT0JxmA3i2IqVtMi8UfiZA6vOY5R4unXhUpxwoj1is=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RGZf3MznxyT154aLAYD1c1CGF0E0ryJeXRvubkru5/SdnELVW8hyK17mOU8ciTul/9/81WdoY4l0cZUKbp6Rxj5aU0V+8F6Wb5p6eGZryAOfVd20EnfNPB8NrEeuZEaKcKinozlDqw93NSQ+R5jxS79qnTXkTvlRNvwba79khPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i01zHflA; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fa2c456816so7442197a91.1;
+        Wed, 12 Feb 2025 00:09:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739347746; x=1739952546; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uzz/ztA8J5OEcraVsYIfYsDCP8O1/+bhCpXSvSiKTAk=;
+        b=i01zHflAAfx9VhZO7cgcJv75v+eG2hGXJRyubZCvLpWly+mEvtiaVVBwVz2ZJv09Im
+         h4ZZPBV/M2ccJquVUTAEaKQbt761gZyHMQwxxcJeopKgZAVaLL+8msMjeJIfIJm7s74Y
+         emDJ3HST1UxRmXQAkTle0y1UAaKAKULkFBQ0FzEBQj/ANyW/4RpHrat6t6NT6vNT60jk
+         aSAXDNslC3WcJGjEAcPzkTcYTwhO/R5CaEubHeJkJ5wAr/D5M7gQ4WyPQeejvrFGkXKm
+         PV3M1Zng+pKzTulZzS7NLHSOyzmT/aCN3qfC8RWkv1SRt6kvY72+u7db9Umj/YSWAxwv
+         j/sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739347746; x=1739952546;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Uzz/ztA8J5OEcraVsYIfYsDCP8O1/+bhCpXSvSiKTAk=;
+        b=Y8/Ld1nuIcMZKVg5YJfyoETGh+DqBFfHzj6XHsT5nvoXc9gXy41s6E1aFlxALpamRT
+         t8a2RRnMvO/06hDPEPyJAYkJ96Kexqrlwz25AhiWlbZlQqBbhO85SfuHXnhzABMRYriH
+         OECguzoTVP0dJ0zGq/0x6b1WjSGlnLwiAhQw2TxI2avHx/X8VP0CrI/Bot6Npsf9JnXr
+         W8P0V5j42YLApI9WZL0/Q9og9O7zoLM08ENo9VwwiYyuy4jYL+UlFE5QIXbfc0hRwM1i
+         TVshaAs3JqQwbAw++XsFMG//arqLebDgFDQD5Qors3oy9BL2U3OTpMXFablX2tG9TLXB
+         SWTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXd4sc3m2/OyZF4NDNGNTgT5yZjNE8MDSfWL5BNWYIqzGQrR/aVMS6xr1iYUok+Vv+zpPlP/Lyq3XIakus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVAF1RRf7jaHAWFMLmvEWmjJxisinGGlRXyBTF70ngrHHjhmS2
+	nVzTKAUA51OkdrMpUbS1do7S7ep4SP598+tVsJqVyII9XBgIYcVL
+X-Gm-Gg: ASbGncs0M8SLl1cevoeif18ZCs1TJbMeUJtv/AC8vJv4i9KLBqRJUmkrKuGv56fwpIw
+	Wb7xifXB7nCv1kYLToV119c/X15wMgZz5yMB2Bca0tCo4sFDS2LOjF8P03iRzEhe3bDbygu0WiS
+	/20zKo7Kqgf0++jkKc6vFUZKJj/H72LwvbyzrPURfEm9IElDShAuhn8bDCUcCbZD9GuEuROA1V6
+	vm0VUHILwkZUuC8VQcj7oOXpOc5PyEVjmK9IL54LoxLlDGuF2KW1a4OBQnioFWoy7t/COefPHJK
+	77QGYan3+owfj8LUpwPPPv0Vtez/3vLfZlUZ3IT9Bl9RzA7vXQ==
+X-Google-Smtp-Source: AGHT+IG2Bzz9E5EiedwHTMJWTWNMK7lgiuQCvQWlS4nGxBclsahMfq5ltIXb5KcmWhLepPoYJs0soA==
+X-Received: by 2002:a17:90a:d64e:b0:2ee:db8a:29f0 with SMTP id 98e67ed59e1d1-2fbf5c603b9mr3426862a91.27.1739347746403;
+        Wed, 12 Feb 2025 00:09:06 -0800 (PST)
+Received: from [172.16.203.237] ([103.233.162.226])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98cfd03sm871927a91.15.2025.02.12.00.09.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 00:09:05 -0800 (PST)
+Message-ID: <f827cbb0-f6ad-4397-9f30-ca43223c4853@gmail.com>
+Date: Wed, 12 Feb 2025 16:08:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211-gpio-set-retval-v1-1-52d3d613d7d3@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] riscv: Optimize crct10dif with zbc extension
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, ardb@kernel.org
+References: <20250205065815.91132-1-zhihang.shao.iscas@gmail.com>
+ <20250205163012.GB1474@sol.localdomain>
+From: Zhihang Shao <zhihang.shao.iscas@gmail.com>
+In-Reply-To: <20250205163012.GB1474@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Bartosz,
+On 2025/2/6 0:30, Eric Biggers wrote:
 
-kernel test robot noticed the following build warnings:
+> Maybe use 'const __be64 *' and 'const __be32 *' for the pointer, and use
+> be64_to_cpu() and be32_to_cpu().  Then the __force cast won't be needed.
+Maybe this problem seems dumb, but I have no idea to adapt both riscv32 
+and riscv64. I have tried to use 'const __be64 *' and 'const __be32 *' 
+pointer in patch v4, but I forgot to test them in riscv32, and it turns 
+out the code failed to compile due to my mistake of defining 'const 
+__be64 * p_ul' and of course it wouldn't be work for riscv32. Maybe I 
+need some inspiration for this problem, or I still think it better to 
+use 'unsigned long const *' since it works fine in both riscv64 and riscv32.
 
-[auto build test WARNING on df5d6180169ae06a2eac57e33b077ad6f6252440]
+Looking forward to your reply and guidance.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/gpiolib-make-value-setters-have-return-values/20250211-201426
-base:   df5d6180169ae06a2eac57e33b077ad6f6252440
-patch link:    https://lore.kernel.org/r/20250211-gpio-set-retval-v1-1-52d3d613d7d3%40linaro.org
-patch subject: [PATCH 01/14] gpiolib: make value setters have return values
-config: i386-buildonly-randconfig-002-20250212 (https://download.01.org/0day-ci/archive/20250212/202502121512.CmoMg9Q7-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502121512.CmoMg9Q7-lkp@intel.com/reproduce)
+Yours,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502121512.CmoMg9Q7-lkp@intel.com/
+Zhihang
 
-All warnings (new ones prefixed by >>):
-
-   drivers/leds/leds-aw200xx.c: In function 'aw200xx_disable':
->> drivers/leds/leds-aw200xx.c:382:16: warning: 'return' with a value, in function returning void [-Wreturn-type]
-     382 |         return gpiod_set_value_cansleep(chip->hwen, 0);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/leds/leds-aw200xx.c:380:13: note: declared here
-     380 | static void aw200xx_disable(const struct aw200xx *const chip)
-         |             ^~~~~~~~~~~~~~~
-
-
-vim +/return +382 drivers/leds/leds-aw200xx.c
-
-d882762f7950c3 Dmitry Rokosov 2023-11-25  379  
-d882762f7950c3 Dmitry Rokosov 2023-11-25  380  static void aw200xx_disable(const struct aw200xx *const chip)
-d882762f7950c3 Dmitry Rokosov 2023-11-25  381  {
-d882762f7950c3 Dmitry Rokosov 2023-11-25 @382  	return gpiod_set_value_cansleep(chip->hwen, 0);
-d882762f7950c3 Dmitry Rokosov 2023-11-25  383  }
-d882762f7950c3 Dmitry Rokosov 2023-11-25  384  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
