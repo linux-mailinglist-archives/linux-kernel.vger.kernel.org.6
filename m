@@ -1,120 +1,232 @@
-Return-Path: <linux-kernel+bounces-511628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD773A32D73
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:27:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7670A32D79
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:28:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98093160D2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:27:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC3418826AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2702F2586C6;
-	Wed, 12 Feb 2025 17:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC7F2586F7;
+	Wed, 12 Feb 2025 17:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Un9xLCGe"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLAqTWMf"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E29B210186
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056972135A1;
+	Wed, 12 Feb 2025 17:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739381251; cv=none; b=b2d2VhaIfv26uhNwP+NGmXhryRmFkABaJoClaSzDHUW1moTdE+4JFEw5MeaT6NR8Og6oAvHWzgOEEP0d2chOeD/joKQeoHhuA8ZOR1kPdcIHOCfaRiUKgCNlCG5FYLPQAoDew/uXmTno593krXwY9iqMHejZ9rXrGOW7KH4syfg=
+	t=1739381296; cv=none; b=ih2arZebqZj9QCOcWxuHJJcnp/FpjGEq15IZkK4Yh7j2EYX5+iz7kHV3L13EQAbB74SDg3X299m/1T2cdQd9CDG87XhlJNoF4lSywzn+xHIUHJjTw5iaPtEkdS7ssG7WCC/sIgDviLmuhoJS7XuFhazXFwomXGLxgPAIw3KrVwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739381251; c=relaxed/simple;
-	bh=WsXNicR6jaNblz/mUCSZP8cRv1n93+uq/dm06XHfv0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mG+Arf92QdwzudfuHyFyxjrmzKP7vDrs+1IL0+PUTbNrbiVV5Q8qO7WP9HPGDiVKidFUH8E3ksdiG7BzUrNEhHD6Z/7uHc/rLaQnYIhHWQFky1B22VJPut+ISz74J53T/D2F63SD6Xcc4SrXsNG9tOG2FISMT/sDoKFaS05z5BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Un9xLCGe; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e440e64249so227346d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:27:28 -0800 (PST)
+	s=arc-20240116; t=1739381296; c=relaxed/simple;
+	bh=y402Yi8SlQ7bGjb7YK7/fHgP8dhEV3YupmxX00SBe0I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e1YZDifdFY6yrN+5k0PJ6/OmudzmJgeFE1JJTMSuywa+Zfh+rHjBZeFcK73La6A2XLU5c21JQLjr7thy7oSRYPCtgV8+Uu8PYzWjMeUhuaappupyi2NtXbfq29Bf8Mq2ruKY72P37UNUvwTgsWRMQh+vQkLwj1jc8UzTyRN4CQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLAqTWMf; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38dcae0d6dcso3305530f8f.1;
+        Wed, 12 Feb 2025 09:28:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1739381247; x=1739986047; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Smy8Ep/libgaUjooQcIAevVXF9JphJMkMPuXMpEKUoA=;
-        b=Un9xLCGeGk4fjQ7rrIapXM7AwPTJlx0pWcUHKUkJVCXfvqDFSyiOUyir8IHkoqRyuc
-         RUz2hVurCwSvt7AdqCWuWseEnVG3wN0HyeuRXdxrrXJulbz+NFR14Qt8IvT2NORqykbn
-         WqGALU6YCKjasn+8J2m61XnRDKY+mGS9O89XNB3UqUVhnKizSXPPbYExfpylku7/qDj1
-         MBYmHyqawsk4G9iSL/ze9+kwmVFqz4e6caln+V2XgU6/eSQY5tqv/AD+6kATXro5RlWg
-         50iZbbmvOs0uz/j/QOebHMQy58X119ndFkVkJHcKsMSGENzRmRamXXNqy9Uk6aDYPHAH
-         ZMgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739381247; x=1739986047;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1739381293; x=1739986093; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Smy8Ep/libgaUjooQcIAevVXF9JphJMkMPuXMpEKUoA=;
-        b=S1dNWXnk42nhshSAkvUFjV6ecE3uatHLRhoGSJy81Qdq3y5RPxCoQKLYQw3+iLvcjG
-         tLjz5cz/QL3+R7gkaJ4QMnTUo49F8Xq34n0Lvz9SM7bAElOVqynaI8HOhuRVVvpfkEu3
-         10LBc+tpyVb9jWtppa9DHzyKSbOCiZGUp0kME0dTowyPs0rhjjpjmsNvxXIHdPHH0qj3
-         loPyDx7p09tRxeDxRPkyXJ6ozvy4kN9bw7ktgaY84Ze8eC68oRtGa2l/CZKTGhNSPnKA
-         r85J8y5U9b9HcK685XG33TI5b1ht4Gh5ojc60LbGmnZDViSWmMnNOE+VLZZFyz8NHsVb
-         AtBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNdg7MttfQffZF/IhJz08FXOC3vsMvzZuCHlTOVuf7O+oc45luvxEDkw8KY/LITDdsjWKqijYAzRwfP60=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0CfyBPqQJS+f4Luf8jlphMSYRh1UqK+1FstM/FSNr2mLn282p
-	cmvPq0Kg27raEpPdmwXRd0kOjs6jWoV7KIrbXMe8yJRTA+IeseM23TeirRqeEZQ=
-X-Gm-Gg: ASbGncu70RcHBT/Fuftp8uZ+Z/QZW3W/3s/iP49BL/TNT8xpAtTF3o2tOw2MIV3yQeH
-	fZjKuHyl/T+mjB9uUFP2Pg561w4FDDDnRqgMjT7R6F+9gl6gq8Ej/dy5EV1jqR4fnSOqbC3YMPt
-	j81EVZEilU3BN0xFr367C3tfsc2cEfjsLoAZaNqTQFRyIQBbF1NfaUKeNy3OzLmukinXnvnROio
-	sCkp2aaJq4vpzyVMbiJtvXarW3iD+i30Ec6FwaHvGyyCpzyTiEwwkD/YNQ/1KW32zXRhYDQi/bn
-	LUcAIzfltLX7O2wOkrxkJSI5dcZkhe4rrwrpu4rpIZAxazJhMjo0Vc7VQGiOi5NFHypq5kjPUQ=
-	=
-X-Google-Smtp-Source: AGHT+IFxLq/9chQgLM98IqnvfPjNIMr3SqvTbtBXTR+199INYC5w6TgCv988GbjKoOmNdHzhzqWKwA==
-X-Received: by 2002:ad4:4348:0:b0:6e6:5bda:a47b with SMTP id 6a1803df08f44-6e65bdaa4e8mr6261416d6.9.1739381247418;
-        Wed, 12 Feb 2025 09:27:27 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65b3df028sm2097176d6.117.2025.02.12.09.27.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 09:27:26 -0800 (PST)
-Date: Wed, 12 Feb 2025 12:27:25 -0500
-From: Gregory Price <gourry@gourry.net>
-To: "Harry (Hyeonggon) Yoo" <42.hyeyoo@gmail.com>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, hyeonggon.yoo@sk.com,
-	ying.huang@linux.alibaba.com, rafael@kernel.org, lenb@kernel.org,
-	gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-	honggyu.kim@sk.com, rakie.kim@sk.com, dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com, dave.jiang@intel.com,
-	horen.chuang@linux.dev, hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org, kernel-team@meta.com
-Subject: Re: [PATCH v4] Weighted Interleave Auto-tuning
-Message-ID: <Z6zZ_UqcY9MbyDL1@gourry-fedora-PF4VCD3F>
-References: <20250128222332.3835931-1-joshua.hahnjy@gmail.com>
- <Z6HGwq731v+VX1CP@localhost.localdomain>
- <Z6JAicm5VxE6HKnO@gourry-fedora-PF4VCD3F>
+        bh=nH75rro3+C3cMLVqxRXiovHK/yvOZnOVe7YXKDBOPmc=;
+        b=NLAqTWMfpoAzJb+sP/p9O08mhUpdcA/fkapQMefIfG4PtKHL5jlYshVjnLbOtAKXP+
+         +MSvyIp1ojs6786uuroK9w/cWO8wYPlP/ngH/PCTasZwZTJVwtxAQVTCkrfp3CsxRkOE
+         w9Mck2sUB3upcZgWYF+NnU1Xiwd9x+57tpTYzalXpkiKKBMFYCv17xSnB2uv2ryxO4sg
+         zV3I0IimZCNPX3EFMtkrG/g55ArocYScxv885M6IOimcQJ4ozC84HurRsadoTeumdbdr
+         jIfLt3XP5zgXTMe6cQazPOilZSjmqT1pZY4KEBuj2nUQpGCO/sPp60XU/l6TSPegBqpn
+         aMbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739381293; x=1739986093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nH75rro3+C3cMLVqxRXiovHK/yvOZnOVe7YXKDBOPmc=;
+        b=He8JecktzLxmqDijjOTkex/PKrTheSlxVLDOvwHkS67/ZA41fWNDPWkzVQioyFJDXz
+         OioZtZ/5e76wQ3DoZVUO1GwpoJChjUTalfIc5UZjnS+LgOb2aU1UlAKDow0AKQlG9kzI
+         T0sm2zaZlIqBx7hzIVp9ee4MLauDiVDmtdllVKovIoocwUv0GCrfE2FODiijuRNNyDY7
+         gia+1t5qQl02WsT6R480Wq6iuVr+NPf+JS9kbCc8ZKm/XncmfsCTV5Vz/Y6NeSebOj0c
+         n2s4uLYWre+7jgnRNdJAX79ElakD0E3GLm7Pxyh/e44jicNK22MGEE6tqdRo55p6gSHd
+         ZNxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgveNgVpiFcPBJNzVyxnl6uAiYZ+F9W0L4CnpR2PXPtKaC8+1OgEv8WPlDyz2TvJGNjmHYztRC6DVb+pA=@vger.kernel.org, AJvYcCVu3gHf/H0F8u+JVWcSOYNsUuSNDr4higjhFAXIQabGXzr+2Z3eT6+7ETRPkOfLLckbs7yTVPjdau/VQyrb@vger.kernel.org, AJvYcCWWqUZQsLqi73gmXgBBxL4xZQVHiD6Qqpq3EtZ9OoG5TeyVvX98ADmrW0wZiT5Scoz67JKoyK6SJZ5a@vger.kernel.org, AJvYcCXIqYQENwuMO5UHXhvwZ7ALgh5DkRiHCKW5+tZl9eryIYgHdC9bapNnfFnFZq7qiBbuOzGlfQkNCbJc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK4Y5/3qBUxzmwduOaoWqJAOuJx2bywwVuhXz91xz2Dql0YrqW
+	jrcirOnUOTOdQjfOP9cRBcyZMAwjUyN+fCgjXLG2XzMRn8stCgnvW2FZfZSFZavurVPOsyszPFt
+	jsuh1Q/6+UL6JyEs2A63A0On6ypvG4g==
+X-Gm-Gg: ASbGnct4zmIPenhT2BfAfsr+NL1t27JQ0P5I0AAvyOBeKEA9R/Ewid9AmfUBmP8tIu8
+	aemgmr1ENS7yKoeBB2iw5E7lEZbnGLFaRFO0YnoMEkuHYvmGmpY2oRv4GLuiBBedaSoQlSGM3Rg
+	==
+X-Google-Smtp-Source: AGHT+IFHGp2VcddJyJd0r3Yjkkf4R+8u+ifNxosxw3I+t06VNCVxc0BSZYOBbdWlqlQrvmWVh0BuxAawy0AYWiecw+E=
+X-Received: by 2002:a5d:59ab:0:b0:38c:5d42:1516 with SMTP id
+ ffacd0b85a97d-38dea2e9023mr3528978f8f.34.1739381293078; Wed, 12 Feb 2025
+ 09:28:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6JAicm5VxE6HKnO@gourry-fedora-PF4VCD3F>
+References: <20250212064657.5683-1-clamor95@gmail.com> <20250212064657.5683-3-clamor95@gmail.com>
+ <Z6ywGgofzU1bvm0H@smile.fi.intel.com> <CAPVz0n1UuZPCb3Jdj_fK3Ut7WKBgtvj7aROqJ4YeYVMutuyv7A@mail.gmail.com>
+ <Z6zIAGLot3YQLo9S@smile.fi.intel.com>
+In-Reply-To: <Z6zIAGLot3YQLo9S@smile.fi.intel.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 12 Feb 2025 19:28:01 +0200
+X-Gm-Features: AWEUYZmbKhIPHc15NWh3JjbFH7JV2WWJgN4WfsaqJ90DpyIvebOO039oY67e30k
+Message-ID: <CAPVz0n0YFXUugt1E5siZSYbCBcp6LdNv136eTWGQTbLAXE4pxQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] iio: light: Add support for AL3000a illuminance sensor
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Emil Gedenryd <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, 
+	Mudit Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson <perdaniel.olsson@axis.com>, 
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
+	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 04, 2025 at 11:30:01AM -0500, Gregory Price wrote:
-> > > diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-> > > index 80a3481c0470..cc94cba112dd 100644
-> > > --- a/drivers/acpi/numa/hmat.c
-> > > +++ b/drivers/acpi/numa/hmat.c
-> > > @@ -20,6 +20,7 @@
-> > >  #include <linux/list_sort.h>
-> > >  #include <linux/memregion.h>
-> > >  #include <linux/memory.h>
-> > > +#include <linux/mempolicy.h>
-> > 
-> > nit: is this #include directive necessary?
-> 
-> yes because hmat.c now calls
-> 	mempolicy_set_node_perf(nid, coord))
-> 
+=D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 18:10 Andy=
+ Shevchenko
+<andriy.shevchenko@linux.intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Feb 12, 2025 at 05:20:04PM +0200, Svyatoslav Ryhel wrote:
+> > =D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:28 =
+Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > On Wed, Feb 12, 2025 at 08:46:56AM +0200, Svyatoslav Ryhel wrote:
+>
+> ...
+>
+> > > > +/*
+> > > > + * AL3000a - Dyna Image Ambient Light Sensor
+> > > > + */
+> > >
+> > > Can be on a single line.
+> >
+> > Patch checking script did not catch this as warning or style issue. If
+> > such commenting is discouraged than please add this to patch checking
+> > script. Comments are stripped on compilation anyway, they do not
+> > affect size.
+>
+> First of all, it uses verb 'can' for a reason (it's not anyhow big deal).
+> Second, not all stuff should be documented or scripted, we called it
+> a "common sense". The common sense rule in the code is: "Do not introduce
+> lines that are not needed or do not add a value". I see these 3 LoCs can
+> be replaced without any downsides to 1 LoC and make it even more readable=
+,
+> less consumable of the resources, and more informative as opening the
+> first page in the editor will give me more code than mostly unrelated
+> comments.
+>
+> ...
+>
+> > > > +#include <linux/bitfield.h>
+> > > > +#include <linux/i2c.h>
+> > > > +#include <linux/module.h>
+> > >
+> > > > +#include <linux/of.h>
+> > >
+> > > No of*.h in the new code, please.
+> > >
+> > > > +#include <linux/regulator/consumer.h>
+> > >
+> > > Too small headers to be included. You use much more.
+> >
+> > Is there a check which determines the amount of headers I must include
+> > and which headers are mandatory to be included and which are forbidden
+> > to inclusion. Maybe at least a list? Thanks
+>
+> No check, there is IWYU principle.
+>
+> https://include-what-you-use.org/
+>
+> The tool is not (yet?) suitable for the Linux kernel project and Jonathan=
+,
+> who is the maintainer of IIO code, had even tried it for real some time a=
+go.
+>
+> > > > +#include <linux/iio/iio.h>
+> > > > +#include <linux/iio/sysfs.h>
+>
+> ...
+>
+> > > > +static const u32 lux_table[64] =3D {
+> > >
+> > > I think you don't need 64 to be there, but okay, I understand the int=
+ention.
+> > >
+> > > > +     1, 1, 1, 2, 2, 2, 3, 4, 4, 5, 6, 7, 9, 11, 13, 16,
+> > >
+> > > For the better readability and maintenance put pow-of-2 amount of val=
+ues per
+> > > line, like 8, and add the respective comment:
+> > >
+> > >         1, 1, 1, 2, 2, 2, 3, 4,                                 /*  0=
+ -  7 */
+> > >         4, 5, 6, 7, 9, 11, 13, 16,                              /*  8=
+ - 15 */
+> > >
+> > > > +     19, 22, 27, 32, 39, 46, 56, 67, 80, 96, 116, 139,
+> > > > +     167, 200, 240, 289, 347, 416, 499, 600, 720, 864,
+> > > > +     1037, 1245, 1495, 1795, 2155, 2587, 3105, 3728, 4475,
+> > > > +     5373, 6450, 7743, 9296, 11160, 13397, 16084, 19309,
+> > > > +     23180, 27828, 33408, 40107, 48148, 57803, 69393,
+> > > > +     83306, 100000
+> > >
+> > > Leave trailing comma, it's not a terminated list generally speaking
+> > > (in the future it might grow).
+> >
+> > No, this list will not grow since the bit field seems to be 0x3f
+> > (datasheet is not available, code is adaptation of downstream driver).
+>
+> You never know. Sometimes driver is getting reused to support other compa=
+tible
+> HW. Telling you from the experience.
+>
+> > > > +};
+>
+> ...
+>
+> > > > +     ret =3D i2c_smbus_write_byte_data(data->client, AL3000A_REG_S=
+YSTEM, val);
+> > >
+> > > Why not using regmap I=E6=B6=8E APIs?
+> >
+> > This adaptation was written quite a long time ago, patch check did not
+> > complained about using of i2c smbus. Is use of regmap mandatory now?
+> > Is it somewhere specified? Thanks
+>
+> It adds a value to the code (in particular debugfs for free and
+> many nice helper APIs). It's recommended and many maintainers would like
+> to have it. It's rare that some of the generic framework or library commi=
+tted
+> into the kernel just left to become rotten there.
+>
+> > I am not a full time linux contributor and may not be familiar with
+> > the recent rules.
+>
+> Many are not the rules so far, but recommendations and/or preferences by
+> certain maintainer(s).
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
-apologies, i missed that there were two of these, we'll drop this.
+I will apply all your suggestions. Thank you.
 
-~Gregory
+Regards other patch series, may you please contain all advice inside
+patch series since it is quite hard to track between them. For future
+patches, I will try to avoid listed issues. Thank you.
 
