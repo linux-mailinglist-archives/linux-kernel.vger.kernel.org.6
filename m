@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-511663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB62EA32DF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:54:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8D4A32DFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69009161EB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:54:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98BAF163098
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4765225C718;
-	Wed, 12 Feb 2025 17:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688C525D521;
+	Wed, 12 Feb 2025 17:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GLpuORcJ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEAE2586C6;
-	Wed, 12 Feb 2025 17:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXZsyfQW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B994B2586C6;
+	Wed, 12 Feb 2025 17:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739382888; cv=none; b=Z1Yzg9KtsJpITVvt6IZJ/NaHWsZqd6d+m+qRLtk3FKsQKxNn+imIX2qFbwOSVmeBPWl9MBGlXDtp80gJcYp40VJl7cZhJvLbvxdkIiTvMOKR/KpfArjMGPsQf1ziRUieETnFuU+WFcMUyf0TD9XBH9gAyuKs86znBqDvPFH4idI=
+	t=1739383034; cv=none; b=FQ6Ed6BFvetfP5Yivliyw/0xd50mx43+p6RP9r5DKPGy+mvEO2pRnxEGLXjFHnCWy9mzGK4MF1XUcGPukycWtXvnyRox1PsklZx5310QDy6dIBa8uYMo5ixC9JQquDHtkisArSbcXZk7cIMkQaEGmWnIsCyLJV2h34oBA2327Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739382888; c=relaxed/simple;
-	bh=x9ISrJ7Gdk2XHi0VniGAHfo5QA2NIH+n8e1czOikANU=;
+	s=arc-20240116; t=1739383034; c=relaxed/simple;
+	bh=cK+PJN2rWgsqW47Djf1d/0Ua8acL+IoX8Ek8gmB1a4c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K35X4KEbhOZtsyhZwEVut8g/q0XVM442EEP9HVKrEqXOcPbBN5C3mUGZl3rOPaJXgkx2IFC4uuqjNNEzj2CPy6bUdLrhK/Re5FlfPXtwb3gOqEGcm1F0ZQQTAcgmoAEZRIk4usAjkHPmcc9HS1yFTO7iXVBhltlxDCMrtC0RmoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GLpuORcJ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id D2206203F3C3; Wed, 12 Feb 2025 09:54:45 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D2206203F3C3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739382885;
-	bh=kCDAn1dUHH9zvvIMxLPjNOSM49m/EMWQnwmPYjynmYo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=MPidRtY/y63WDgyKkCxxvPYTnelCPC6Gs9dhAWLASExuwHQ72HRhlVFKD8BgAv0ov4OE111/LgCA2EuxPObQBfWkQB2xZaxOXjEaYyXIBymqOXSPB85wCkPpzY3l2cyyxzT1PzQSysFund+A7ZQbsrNFoLZ9+CFiSxWzR2YvgXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXZsyfQW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F23C5C4CEDF;
+	Wed, 12 Feb 2025 17:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739383034;
+	bh=cK+PJN2rWgsqW47Djf1d/0Ua8acL+IoX8Ek8gmB1a4c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GLpuORcJWKTVR/06dwvY/iaOgWs2sr8tMEw+4AYtj/BoT4n2pF6i/GisM4vjuXvp6
-	 Kydr+Nyu0G94WfGisliIrhLmRlsQGOvklfP0hRCjfSqySX0orATmer+Pj7eGGsauVD
-	 HQrAhuAFgvNGK0pi4x4BdfIf6agw3QyO70bt2Cgc=
-Date: Wed, 12 Feb 2025 09:54:45 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Wei Liu <wei.liu@kernel.org>
-Cc: Roman Kisel <romank@linux.microsoft.com>, bp@alien8.de,
-	dave.hansen@linux.intel.com, decui@microsoft.com,
-	haiyangz@microsoft.com, hpa@zytor.com, kys@microsoft.com,
-	mingo@redhat.com, tglx@linutronix.de, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
-	benhill@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
-Subject: Re: [PATCH hyperv-next 0/2] x86/hyperv: VTL mode reboot fixes
-Message-ID: <20250212175445.GA19243@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20250117210702.1529580-1-romank@linux.microsoft.com>
- <Z6wFnoK-X7i1bd9x@liuwe-devbox-debian-v2>
+	b=iXZsyfQWZj4aB9Mnt58Bz6IKcmXgQeXwSb1MhLGH9BtULIaFpqQIAIMYc8Dhlx3o8
+	 X9wSfFK+wWXV5be8j/0jYanRVR11Lgupg1ZCoUMDSznpR2KS7OroiF9Kr6iJoJUxlA
+	 nYQocyYHRvGn4tJ3pOKfc3hr0R87OLsb59kMD/nCXqeN7y7KjFf/OB9DfsFZ7oipa7
+	 QnLJjZSpA9IlwL8JIsT+a3h9Db+ebLbaApN1X9N36X+ti/TnDJaA0XCuUDTCsZrSwh
+	 9pxULRYHRExD24Je2CLiFvXnmH13p/RsllLQYS8+nhVfJ9hOpK21Fr1BM+aHfM8VM1
+	 hRvvB6pX8t3Iw==
+Date: Wed, 12 Feb 2025 11:57:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: Naresh Solanki <naresh.solanki@9elements.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, broonie@kernel.org,
+	conor@kernel.org, Jean Delvare <jdelvare@suse.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ir38060: Move & update dt binding
+Message-ID: <20250212175713.GA4032715-robh@kernel.org>
+References: <20250207132806.3113268-1-naresh.solanki@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,63 +63,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z6wFnoK-X7i1bd9x@liuwe-devbox-debian-v2>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20250207132806.3113268-1-naresh.solanki@9elements.com>
 
-On Wed, Feb 12, 2025 at 02:21:18AM +0000, Wei Liu wrote:
-> On Fri, Jan 17, 2025 at 01:07:00PM -0800, Roman Kisel wrote:
-> > The first patch defines a specialized machine emergency restart
-> > callback not to write to the physical address of 0x472 which is
-> > what the native_machine_emergency_restart() does unconditionally.
-> > 
-> > I first wanted to tweak that function[1], and in the course of
-> > the discussion it looked as the risks of doing that would
-> > outweigh the benefit: the bare-metal systems have likely adopted
-> > that behavior as a standard although I could not find any mentions
-> > of that magic address in the UEFI+ACPI specification.
-> > 
-> > The second patch removes the need to always supply "reboot=t"
-> > to the kernel command line in the OpenHCL bootloader [2]. There is
-> > no other option at the moment; when/if it appears the newly added
-> > callback's code can be adjusted as required.
-> > 
-> > It would be great to apply this to the stable tree if no concerns,
-> > should apply cleanly.
-> > 
-> > [1] https://lore.kernel.org/all/20250109204352.1720337-1-romank@linux.microsoft.com/
-> > [2] https://github.com/microsoft/openvmm/blob/7a9d0e0a00461be6e5f3267af9ea54cc7157c900/openhcl/openhcl_boot/src/main.rs#L139
-> > 
-> > Roman Kisel (2):
-> >   x86/hyperv: VTL mode emergency restart callback
-> >   x86/hyperv: VTL mode callback for restarting the system
+On Fri, Feb 07, 2025 at 06:58:03PM +0530, Naresh Solanki wrote:
+> Move dt binding under hwmon/pmbus & align accordingly.
 > 
-> Saurabh please review these patches. Thanks.
+> Previously the DT binding was invalid & wouldn't work with pmbus driver.
+> Pmbus driver expects a regulator node & hence added the same.
 
-Hi Roman,
-
-Thanks for the patch, few suggestions and queries:
-
-1. Please fix the kernel bot warning
-2. Cc Stable tree is not enough, you need to mention the "Fixes" tag as well
-   for the commit upto where you want this patch to be backported.
-3. In your 2/2 commit, you mention 'triple fault' is the only way to reboot in x86.
-   Is that accurate ? Do you mean to say OpenHCL/VTL here ?
-   If this behaviour is specific to OpenHCl and not VTLs in general, is there a way
-   we can make these changes only for OpenHCL.
-   
-
-- Saurabh
+2 out of 3 (schema, dts, driver) agree. Fix the driver.
 
 > 
-> I don't have a strong opinion on them.
+> Fixes: 1d333cd641fb ("ARM: dts: aspeed: sbp1: IBM sbp1 BMC board")
+> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+> ---
+> Changes in V2:
+> 1. Update commit message
+> 2. Add Fixes tags
+> ---
+>  .../hwmon/pmbus/infineon,ir38060.yaml         | 61 +++++++++++++++++++
+>  .../bindings/regulator/infineon,ir38060.yaml  | 45 --------------
+>  2 files changed, 61 insertions(+), 45 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/infineon,ir38060.yaml
 > 
-> > 
-> >  arch/x86/hyperv/hv_vtl.c | 31 +++++++++++++++++++++++++++++++
-> >  1 file changed, 31 insertions(+)
-> > 
-> > 
-> > base-commit: 2e03358be78b65d28b66e17aca9e0c8700b0df78
-> > -- 
-> > 2.34.1
-> > 
+> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml
+> new file mode 100644
+> index 000000000000..e1f683846a54
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwmon/pmbus/infineon,ir38060.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Infineon Buck Regulators with PMBUS interfaces
+> +
+> +maintainers:
+> +  - Not Me.
+
+Nothing new here, but WTF. Expect a meta-schema change to warn on this.
+
+Rob
 
