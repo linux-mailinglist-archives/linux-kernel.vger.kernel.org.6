@@ -1,266 +1,133 @@
-Return-Path: <linux-kernel+bounces-511551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE21A32C86
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:54:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F197EA32C88
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:55:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737821883D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:53:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884F9188629B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3779256C83;
-	Wed, 12 Feb 2025 16:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086D725743B;
+	Wed, 12 Feb 2025 16:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZVSDXTEH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mkooxIuT"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62499253B6A;
-	Wed, 12 Feb 2025 16:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC4E2505C2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379132; cv=none; b=DIZe1OFvbMB+eML2pDvi/OCHYOZkZ1A67OgDFMGsPorh6Nu0L5tF1V1TjIKD4EsaK1GCGIt0lXND2stkWh14xL1hWMKA3Cfg1k/d5u8UYw6cAmabPew4kfb07mPHK2vX10H1qdYhekxvJbBXeN3LADQBcgJgVz7XjyON9qS8Jq4=
+	t=1739379188; cv=none; b=J0mLUaxfIkUXAnDQolhnzTXTEFaMrWE99m3juNKIBPY6c718jzd9ueb5z6obrMI69GoR1MjUomn7G8ctlgIRGNpQX5eriXrdqh35c18M9cpu5QbLpTZ3C/O5jEd0J9Nn5cUW4uM8QAmgnsLg2vnRCxyb3nfs2L5YS3hk89D+eCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379132; c=relaxed/simple;
-	bh=DuDi2b+Klx0jWzs1GBIpIImj+rbr7oIyuVMulAca84Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r3Kb5c6A/qnzWUZnQi6jU6eDMWGEXzYgbrvtAKeIbF0zyWdxL6PkEYlAQlYbs8KLzCehhv5Ep/DY1Fi2n60k+L9Iuil5jyTG7Jcs30IKYhTVSVxGXequ/Merliq65nfIGIoQcuEcUBPYzqHb+k9+pf5l9zAfABm9XoCyy2DCdHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZVSDXTEH; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739379130; x=1770915130;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=DuDi2b+Klx0jWzs1GBIpIImj+rbr7oIyuVMulAca84Q=;
-  b=ZVSDXTEHS8Rth64TVF6RqXScuysVLVC228YvdPBc/v6qqW4/7dsvVVHs
-   6KhVm9yyUOapFRBWZPO4XdCGAQvAmjaf2oQ2wubzWG4yCiRLVBrSSehQ/
-   CpHsg4NQqPJD0Err2ZPiim1lyLajVhNUEBvU+RwJpfHBmtafPsdjTGx1E
-   cs+d0Yhb5VQ8nt5kuEbFv+Fnu68tBCKppQg40qlV+yPW6uMIHwe1xcEkB
-   7sHdCkk1xGzqfevNgJgdQ3N+mueVaxFy6S0m2SdWpHbdlz5lAfTAeMBbG
-   J4GzOdhN9KxsYPb9PXEEcTLyz/3nVhhmHV94dYZG1jKOKKB9cRwK+2/rs
-   Q==;
-X-CSE-ConnectionGUID: PwtFNsYhRW+d4qbSVXnLKA==
-X-CSE-MsgGUID: OjAtmSYFTaS4Xc92+falAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="40196668"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="40196668"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 08:51:32 -0800
-X-CSE-ConnectionGUID: LgDlmX5ITJOQt0TQh5wOvw==
-X-CSE-MsgGUID: CnrwtECdQXuLeO0Fm39RFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="117969856"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Feb 2025 08:51:30 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D35F811E; Wed, 12 Feb 2025 18:51:28 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Khalil Blaiech <kblaiech@nvidia.com>,
-	Asmaa Mnebhi <asmaa@nvidia.com>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PATCH v1 1/1] i2c: mlxbf: Use readl_poll_timeout_atomic() for polling
-Date: Wed, 12 Feb 2025 18:51:28 +0200
-Message-ID: <20250212165128.2413430-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
+	s=arc-20240116; t=1739379188; c=relaxed/simple;
+	bh=AMNpujMwxEF0lqcT39JFds7LDCNGNjFeFh/KBzfjZKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gzTeM5f1IVTvxbv31kUE7STCYbe6TwlShyjfAL16CUxfIWsBaoNGup3BV2KWvWsTYyVsjcnQkCFnjF1byqSgLK1hP06Vqf5x25vsBOJJcPXIKVoFnBG2+6qwqDcDuliH4PhGeoZZtn2MVT0guDXuPtgu6sGRR7RPBqGZDmeJmDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mkooxIuT; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dec85c8bfcso901a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:53:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739379184; x=1739983984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dIV7IWz0yjddKyv/beIYGjRoq6XNzByBQnMEf8PUBBs=;
+        b=mkooxIuTZNDO/4grzWX7KKOLTDysqlPWw0U5bYrYw1GI2DcVW3nOrtrnGluny6v29I
+         /1Yl2guKh4LYCyXIpcpOKOe6VOybo82rxUlfdl6/j1cRF0iYPHeK3GtwST40b/XynGKZ
+         n2d95SY+UnDGEQl0Um4A0qW2PudLm3K20G+CjxLFqo6Gy+8YvLD1z1/T4F7T3SFQEr+J
+         ZlJXdXfmRG9yhdB1BYkdDB0EE1maKUgNkSHnAHC+x1vwZocSXjDyMqnwfaGJlXOfw2No
+         UzHN/8FEgDa/0g5dTiXBfVYJ+SEpJcTTlpmjRDxhLemNrpJ3YzeYvmin9X2wwKxLftYu
+         FVqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739379184; x=1739983984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dIV7IWz0yjddKyv/beIYGjRoq6XNzByBQnMEf8PUBBs=;
+        b=OFhbOBMvNJiiMFswDnOv0nrya2OQjjvDYuEqEu9odrlaG7GYf/KCvxJ2g6dkk1kuBt
+         NrzVSRJ44dLF3PceM/9gPdUh3hpYjXqf9/0jzbpi97obAV98UIJpk8JWBVj3N+0I1BXV
+         ds90cThXbgkiHEZiBIqIKcUK36OaN/fBbF2ibAB4DuCqG6wqwqPcFaKdqRBTw4QDnAqT
+         a+DYAIQUoiMaaV6Gm8hFsY/siW2UzTMJwgFRobiG86hWQbpmpRJ7F4FUxPrv5x/Ijbol
+         j88mxzXEKfT1kRfDrW+WHIHGZuHRJSEE47hoBtYt7nHHV19qUH9WkRzpj5pajgnw0LXE
+         rvdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZJa+dqHsYK9+I7gsVwkONbwSFWjL8z6rceXdKGLlgIp1e61jHMUlWfOgAAPHgfQYQ+k9LlHRKdjVegmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEjFnEf3ILP+Mki+KDumXC7PH+56uR+5sN8KdKr8hXm0/7e1Pm
+	2cU3tlYnlsoojjDirBXwBe5HCQNRPLH3JOpc1X4Q/yik241IrSCMKOU/fjzer4XhAbuc8rZNET1
+	js9URxhRACh/Rxm6xl7nC4lzKTkgLMfGPNN4C
+X-Gm-Gg: ASbGncsxb/m2Yngt+0Rx0IBhE0rVCrT2gnnmYYrOP6TwdtKP/AusNKxz9gy+vtod3Ff
+	j5Xg6bashAb3FwAAnbBN3RWQS4Fqjjt8tNGmKPmWFt6wX/O+eqjxV6VUu2+BTyV5uCLPpvA==
+X-Google-Smtp-Source: AGHT+IHGz5vufPcLaUodmyGxxGtYNbNdz1AykWXGGm3hYrwe+nD3RKGRGnrjo4hwPRDJ2Dv82yKvK06Jw364LFyYOsk=
+X-Received: by 2002:a50:cd5a:0:b0:5dc:5ae8:7e1 with SMTP id
+ 4fb4d7f45d1cf-5deaeb262camr123278a12.6.1739379183792; Wed, 12 Feb 2025
+ 08:53:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <173881156244.211648.1242168038709680511.stgit@devnote2>
+ <20250206081225.GI7145@noisy.programming.kicks-ass.net> <20250206205449.5f83a585945ae6eb0cc15483@kernel.org>
+ <20250206121328.GN7145@noisy.programming.kicks-ass.net> <20250206123307.GO7145@noisy.programming.kicks-ass.net>
+ <20250207085959.b3e9d922eab33edf885368e3@kernel.org> <20250210173016.0ce79bc8@gandalf.local.home>
+ <20250211100914.GA29593@noisy.programming.kicks-ass.net> <20250211105002.31b5a517@gandalf.local.home>
+In-Reply-To: <20250211105002.31b5a517@gandalf.local.home>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Wed, 12 Feb 2025 08:52:27 -0800
+X-Gm-Features: AWEUYZmCWP-_bDLn8AzH0F5wUOCKagIjnDD4PTtFP-tRkjvGdXKpxK7eMOGff0U
+Message-ID: <CABCJKudwf11wAbv9NdKh_FN-Z+pLaupMHJxNGtRKK1-1D94hCQ@mail.gmail.com>
+Subject: Re: [PATCH] ftrace: x86: Fix a compile error about get_kernel_nofault()
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Gabriel de Perthuis <g2p.code@gmail.com>, Haiyue Wang <haiyuewa@163.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
+	linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the usage of an open-coded custom tight poll while loop
-with the provided readl_poll_timeout_atomic() macro.
+On Tue, Feb 11, 2025 at 7:49=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Tue, 11 Feb 2025 11:09:14 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> > I was aiming my patch for x86/core, but if there's a reason to expedite
+> > them, I can stick it in x86/urgent I suppose.
+> >
+> > Just need a reason -- what's this compile error nonsense about, my
+> > kernels build just fine?
+>
+> Masami,
+>
+> Do you have a config that fails to build without this fix? If so, can you
+> please reply with it, and then this can go in as a quick fix.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/i2c/busses/i2c-mlxbf.c | 106 ++++++++-------------------------
- 1 file changed, 26 insertions(+), 80 deletions(-)
+x86 builds with both CONFIG_GENDWARFKSYMS and CONFIG_FUNCTION_TRACER
+are broken without this fix. Here's how to reproduce:
 
-diff --git a/drivers/i2c/busses/i2c-mlxbf.c b/drivers/i2c/busses/i2c-mlxbf.c
-index 21f67f3b65b6..280dde53d7f3 100644
---- a/drivers/i2c/busses/i2c-mlxbf.c
-+++ b/drivers/i2c/busses/i2c-mlxbf.c
-@@ -12,6 +12,7 @@
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-@@ -495,65 +496,6 @@ static u8 mlxbf_i2c_bus_count;
- 
- static struct mutex mlxbf_i2c_bus_lock;
- 
--/*
-- * Function to poll a set of bits at a specific address; it checks whether
-- * the bits are equal to zero when eq_zero is set to 'true', and not equal
-- * to zero when eq_zero is set to 'false'.
-- * Note that the timeout is given in microseconds.
-- */
--static u32 mlxbf_i2c_poll(void __iomem *io, u32 addr, u32 mask,
--			    bool eq_zero, u32  timeout)
--{
--	u32 bits;
--
--	timeout = (timeout / MLXBF_I2C_POLL_FREQ_IN_USEC) + 1;
--
--	do {
--		bits = readl(io + addr) & mask;
--		if (eq_zero ? bits == 0 : bits != 0)
--			return eq_zero ? 1 : bits;
--		udelay(MLXBF_I2C_POLL_FREQ_IN_USEC);
--	} while (timeout-- != 0);
--
--	return 0;
--}
--
--/*
-- * SW must make sure that the SMBus Master GW is idle before starting
-- * a transaction. Accordingly, this function polls the Master FSM stop
-- * bit; it returns false when the bit is asserted, true if not.
-- */
--static bool mlxbf_i2c_smbus_master_wait_for_idle(struct mlxbf_i2c_priv *priv)
--{
--	u32 mask = MLXBF_I2C_SMBUS_MASTER_FSM_STOP_MASK;
--	u32 addr = priv->chip->smbus_master_fsm_off;
--	u32 timeout = MLXBF_I2C_SMBUS_TIMEOUT;
--
--	if (mlxbf_i2c_poll(priv->mst->io, addr, mask, true, timeout))
--		return true;
--
--	return false;
--}
--
--/*
-- * wait for the lock to be released before acquiring it.
-- */
--static bool mlxbf_i2c_smbus_master_lock(struct mlxbf_i2c_priv *priv)
--{
--	if (mlxbf_i2c_poll(priv->mst->io, MLXBF_I2C_SMBUS_MASTER_GW,
--			   MLXBF_I2C_MASTER_LOCK_BIT, true,
--			   MLXBF_I2C_SMBUS_LOCK_POLL_TIMEOUT))
--		return true;
--
--	return false;
--}
--
--static void mlxbf_i2c_smbus_master_unlock(struct mlxbf_i2c_priv *priv)
--{
--	/* Clear the gw to clear the lock */
--	writel(0, priv->mst->io + MLXBF_I2C_SMBUS_MASTER_GW);
--}
--
- static bool mlxbf_i2c_smbus_transaction_success(u32 master_status,
- 						u32 cause_status)
- {
-@@ -583,6 +525,7 @@ static int mlxbf_i2c_smbus_check_status(struct mlxbf_i2c_priv *priv)
- {
- 	u32 master_status_bits;
- 	u32 cause_status_bits;
-+	u32 bits;
- 
- 	/*
- 	 * GW busy bit is raised by the driver and cleared by the HW
-@@ -591,9 +534,9 @@ static int mlxbf_i2c_smbus_check_status(struct mlxbf_i2c_priv *priv)
- 	 * then read the cause and master status bits to determine if
- 	 * errors occurred during the transaction.
- 	 */
--	mlxbf_i2c_poll(priv->mst->io, MLXBF_I2C_SMBUS_MASTER_GW,
--			 MLXBF_I2C_MASTER_BUSY_BIT, true,
--			 MLXBF_I2C_SMBUS_TIMEOUT);
-+	readl_poll_timeout_atomic(priv->mst->io + MLXBF_I2C_SMBUS_MASTER_GW,
-+				  bits, !(bits & MLXBF_I2C_MASTER_BUSY_BIT),
-+				  MLXBF_I2C_POLL_FREQ_IN_USEC, MLXBF_I2C_SMBUS_TIMEOUT);
- 
- 	/* Read cause status bits. */
- 	cause_status_bits = readl(priv->mst_cause->io +
-@@ -740,7 +683,8 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
- 	u8 read_en, write_en, block_en, pec_en;
- 	u8 slave, flags, addr;
- 	u8 *read_buf;
--	int ret = 0;
-+	u32 bits;
-+	int ret;
- 
- 	if (request->operation_cnt > MLXBF_I2C_SMBUS_MAX_OP_CNT)
- 		return -EINVAL;
-@@ -760,11 +704,22 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
- 	 * Try to acquire the smbus gw lock before any reads of the GW register since
- 	 * a read sets the lock.
- 	 */
--	if (WARN_ON(!mlxbf_i2c_smbus_master_lock(priv)))
-+	ret = readl_poll_timeout_atomic(priv->mst->io + MLXBF_I2C_SMBUS_MASTER_GW,
-+					bits, !(bits & MLXBF_I2C_MASTER_LOCK_BIT),
-+					MLXBF_I2C_POLL_FREQ_IN_USEC,
-+					MLXBF_I2C_SMBUS_LOCK_POLL_TIMEOUT);
-+	if (WARN_ON(ret))
- 		return -EBUSY;
- 
--	/* Check whether the HW is idle */
--	if (WARN_ON(!mlxbf_i2c_smbus_master_wait_for_idle(priv))) {
-+	/*
-+	 * SW must make sure that the SMBus Master GW is idle before starting
-+	 * a transaction. Accordingly, this call polls the Master FSM stop bit;
-+	 * it returns -ETIMEDOUT when the bit is asserted, 0 if not.
-+	 */
-+	ret = readl_poll_timeout_atomic(priv->mst->io + priv->chip->smbus_master_fsm_off,
-+					bits, !(bits & MLXBF_I2C_SMBUS_MASTER_FSM_STOP_MASK),
-+					MLXBF_I2C_POLL_FREQ_IN_USEC, MLXBF_I2C_SMBUS_TIMEOUT);
-+	if (WARN_ON(ret)) {
- 		ret = -EBUSY;
- 		goto out_unlock;
- 	}
-@@ -855,7 +810,8 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
- 	}
- 
- out_unlock:
--	mlxbf_i2c_smbus_master_unlock(priv);
-+	/* Clear the gw to clear the lock */
-+	writel(0, priv->mst->io + MLXBF_I2C_SMBUS_MASTER_GW);
- 
- 	return ret;
- }
-@@ -1829,18 +1785,6 @@ static bool mlxbf_i2c_has_coalesce(struct mlxbf_i2c_priv *priv, bool *read,
- 	return true;
- }
- 
--static bool mlxbf_i2c_slave_wait_for_idle(struct mlxbf_i2c_priv *priv,
--					    u32 timeout)
--{
--	u32 mask = MLXBF_I2C_CAUSE_S_GW_BUSY_FALL;
--	u32 addr = MLXBF_I2C_CAUSE_ARBITER;
--
--	if (mlxbf_i2c_poll(priv->slv_cause->io, addr, mask, false, timeout))
--		return true;
--
--	return false;
--}
--
- static struct i2c_client *mlxbf_i2c_get_slave_from_addr(
- 			struct mlxbf_i2c_priv *priv, u8 addr)
- {
-@@ -1943,7 +1887,9 @@ static int mlxbf_i2c_irq_send(struct mlxbf_i2c_priv *priv, u8 recv_bytes)
- 	 * Wait until the transfer is completed; the driver will wait
- 	 * until the GW is idle, a cause will rise on fall of GW busy.
- 	 */
--	mlxbf_i2c_slave_wait_for_idle(priv, MLXBF_I2C_SMBUS_TIMEOUT);
-+	readl_poll_timeout_atomic(priv->slv_cause->io + MLXBF_I2C_CAUSE_ARBITER,
-+				  data32, data32 & MLXBF_I2C_CAUSE_S_GW_BUSY_FALL,
-+				  MLXBF_I2C_POLL_FREQ_IN_USEC, MLXBF_I2C_SMBUS_TIMEOUT);
- 
- clear_csr:
- 	/* Release the Slave GW. */
--- 
-2.45.1.3035.g276e886db78b
+$ make defconfig
+$ ./scripts/config -e DEBUG_INFO -e DEBUG_INFO_DWARF5 -e MODVERSIONS
+-e GENDWARFKSYMS -e FUNCTION_TRACER
+$ make olddefconfig && make -j
+...
+In file included from ./arch/x86/include/asm/asm-prototypes.h:2,
+                 from <stdin>:3:
+./arch/x86/include/asm/ftrace.h: In function =E2=80=98arch_ftrace_get_symad=
+dr=E2=80=99:
+./arch/x86/include/asm/ftrace.h:46:21: error: implicit declaration of
+function =E2=80=98get_kernel_nofault=E2=80=99 [-Wimplicit-function-declarat=
+ion]
+   46 |                 if (get_kernel_nofault(instr, (u32
+*)(fentry_ip - ENDBR_INSN_SIZE)))
+...
 
+Sami
 
