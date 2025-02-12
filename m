@@ -1,142 +1,147 @@
-Return-Path: <linux-kernel+bounces-511994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E349DA33286
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:26:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBEDA3328B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:27:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF9F3A5369
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26E671885565
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E109C205516;
-	Wed, 12 Feb 2025 22:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37322202F67;
+	Wed, 12 Feb 2025 22:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qGQ57XXI"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ABWIiiPq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54E1202C45
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA8D202C45
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739399148; cv=none; b=bILnvFqAF273m1BduC+bit6Yvjotsfz07nr5l0qzI+r3Yaszqmg6bBX0VFqRnzlz8sDOGzyN4DRYunzRmSNq2PwWvvu5azFqCe3PEeiuCkMZDliqv9mIzutRw3h+w3c8DS/a8DtuqTOSayPRc3+tRZkJsFOtA9ZGbE81HDsj8go=
+	t=1739399265; cv=none; b=LQ+HB4LjJugS0nlqrqunGP7Cpa5uGyP9X9yaA5977cN5v4En1jQtK+YB8MvY8HvxM8Kl7BEVna0fJJ05+FO02fr8ggXBk8NzTY9V4Wtq+UhhuDu+ZjwIzDDN7eGfGVmbpSzlNeehvbSb/wTURl8iqAMgmHdTagiHRr5usWrv0Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739399148; c=relaxed/simple;
-	bh=cRsst9VUZPQ4xjX0JjGxH/HZKO6ga8iI/0by98CXMI0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sIqkIKdXMUoXpVmXun4W2BGUTv94drtRyrtQXfGkwIQD9kOU/lPojUMfKH4Zv6o3y1S62xoCCSqNjoKmKTQYSobM93eCbLOZQITuUUASgWx5M9QVzIBorgLx49hdSQN8QoEdkxiUFBMA9AiwaJf2M1J0JSa55647SSSBLdP50zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qGQ57XXI; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d18c325ee4so7635ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:25:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739399146; x=1740003946; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eb8NB3DXPVSxp8ymRsumf/Gc3u9+Crn5k7jX9QVoT18=;
-        b=qGQ57XXICBWt4v7pTUUjcg6HduSc4W8c5CDVU+YQVMmLAPquEmLBkBZH60DYSbJV26
-         Fb6ievsf6+gqpMx6bkuJElY46OK+o9q8w3hNUzSFgOsc88Ym5DK5Y5m2uhOmIgMVDTsD
-         f0g442zLMpu+H1aflzNFVXuwCwozaVMfzOO9md7KRH9cHiBaUMJcdtrEarWd6I1Qh6xp
-         uvXPZIHPYfuKkm/+EBgbrHNE5CGa1rPkXcJDajYSRciOArkRVcD9qhU0GyKNG+bPGowd
-         WVqNRGFW2fY3kqYMh4RO//bP6A4Elq03qvGxaTsuw80le+3Pc+SbU1fFio84JGDllNLW
-         d2jg==
+	s=arc-20240116; t=1739399265; c=relaxed/simple;
+	bh=RuVfgyHjpa0Dr8v3kLqklchuQuADCZEXTGbZnpszfzs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WmJBWOG8/iPTTHnCOb9P8BRFYjAhOXBvMKBfQ44UTleRRoJn/MTu2gAl1cAaFiDnZG/NQ7/PQRkbPr6fvQC2nKBKxthOhaLMfMZt5IHixZ3waDP8iRb/9ykfj1nEFeB4O93OXOlPv6POzPWA1GG2I5TCN4iDKMyQKliMKhmGh0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ABWIiiPq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CLd8nS030555
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:27:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	p2R/RTt+0MfG1Sv58vOwjs183HLY+inpys37nzh2bbQ=; b=ABWIiiPq+geEJsAT
+	QAIgs/Qa7LVlfMV7TFGq6lZNEdi+WZKz1fBnP62E8jwUGBbs4QO5ZF53lZkR77wu
+	L6EQWxVu76KH0F2X1EOgIYoc3eKshXkHEuEQOqwbwWAVXiBw+edkg6/RN5x8xZMs
+	yF2KED1gH9YsgRtliTOXR8M8V18iPcxDHHAkymtpe95VAjSO3udeT207AsPme823
+	F473kKrWEnZxGqxa1C7q1ZmvCu8eK5k7BCWM1w6UTS3aePcRam97emPekP8PoFxX
+	ZLJuMd4Pnn06cbgS/s4nb2BN3fxCATB0+GYyjM+7yp3PPKwPVnJ1OCgiEgOLELuM
+	5PLh4g==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qxg9pa5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:27:42 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c060361144so3195885a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:27:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739399146; x=1740003946;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eb8NB3DXPVSxp8ymRsumf/Gc3u9+Crn5k7jX9QVoT18=;
-        b=ppFG/MvVDKxoxMKfQeLScen42BD2VMqRtob6GrlG8FrS279YU50P7jrTT1Zw91wkWA
-         8QOAZaK4WceDZBHXkM9xaYaGpMgsIEuhwaPOAdov0xMMJgHK/EXLWtjNXGksd/ndX76g
-         rIClRD45ugKG9Y6X8LWcOAg2QBRJ9BIm2La4sZsZdZhdWZcp2uaq39I+u0RHEXuoFQU8
-         zZ1e1SJ1Biha4M5QxHSyWZD9Gh6/ymnxlaXS/01k6qZ3EYeLzqI33rC9tJcqMUW1cNCQ
-         B+OamRHUPx1pmAtc9iphpu6Cbqv4RbZqWThxFcZE8a6HQJllx/CPYstTonK+NibCWkKy
-         IpNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOVhzPeaCCBMbiHMXibss1yViBB+vcJ8QYWPP4NS24l+csIBPQ7CZ+VfRQlp2x8Kc6YzzZzbdejbPtgok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT5oCVQu1Lpch/Z0HDXopzznjHfnfgpt/uP8sa/yMNhYZxoB6t
-	7J1rF8SyWpUcwM7c9wVObUPFDkeLIHjkQpBCC1Xt0aMsFVL7UmGzQJ50opnPdT1haK56ltkpLXm
-	tCNRiLGTWy3/hBEm63wZ2cPP0u50xslyE6o4V
-X-Gm-Gg: ASbGncs09LX0QRJL+HSxgiB759u5E9i+pEdXyNiqsQSmFHzFL37mw9s22F9ygXZjNPG
-	YUeWaBoo22B6f0nwJtYeveyw0bjBHHmBIv/SjEtRT487nr7bcBek5n/ztZhUvjwTY4STdttJ2sR
-	9ikDFj7K4ni13JtS95TUiKaCSq
-X-Google-Smtp-Source: AGHT+IEPi18vHfc6677zYsQWxRRWLmfPS/2RcM6gJqq5aFJEzAn2ciymxv8IrOUJUOw3+je2EcPOc6fxm7v4RthHM4k=
-X-Received: by 2002:a05:6e02:2405:b0:3d0:5ac6:f493 with SMTP id
- e9e14a558f8ab-3d18e1e33d2mr339635ab.5.1739399145693; Wed, 12 Feb 2025
- 14:25:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739399262; x=1740004062;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p2R/RTt+0MfG1Sv58vOwjs183HLY+inpys37nzh2bbQ=;
+        b=g9fqi0qK6HMvmJQX4DeoOC8CEXs53mdo2Per2bqyOD7L3ivBEivmgHnW3y4gKMvx5x
+         xtZDjXjFCsxc60o5w01cdtVOoNAQJunlc5yZydwxiCwTy3S6h9PZtWQycjGRYYjGG/ZV
+         ZpPXhxrQs7/6kRSv8TqMic9OSuV0FrvBF4dfgz6NkJCUjU8jY/HbSUjFiW7msBcg3RMT
+         jiM8MmuFCrn1qvYcSwPSxL/8VbJpdMZS6XPtdNJsAiZ7FwtM41SlFXAJHlXITXoCh7Tj
+         8uh42u1iUmwsW03KKwbsxNTxxWNovrIwlwLJYAFFfm7JOqSp/VyRfE0PaW4BHv1fomiK
+         I6yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVw7w46EnkxCW3WVUWE0xNc7dbC1j/KE1RSdPvkxARCFAE0aIw3dq9KRTz1ZYhkVKf4tALNeIkH4pgHrfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybBqeyHVPgKCpVzsXATBiKaUKRGOKiZ7sSBD+RO8GfU31EM9Ta
+	UyxUF5irziiLeAQ8EM/FTLvJPtuzPC5gyC/Y+4Ha8qcqC0B6WiN8PR6/ns/ZFjTMJYCX23ujIix
+	AO3UnmHVR2QT5fM5swWBrtvJAvB4T2XnlX5UG2sO6WkVGi5WVqx42spLrc5uLXUw=
+X-Gm-Gg: ASbGncsn6BZVzh/KQLWv4a0CsTmcwyNHGf3xPgve3CyyvEPvMok6k3M5GuKF0vcfHr3
+	AP3MnZeyabshYeQuIXuF1ZbjripnGWwy1hbH9t7gkbM1AoTfETYJremMT/MRhcaxzLOioW873fj
+	0wCHRE0D8A27Eul2LaSUVXCLCE6S4IbPSBp+IicpOOg1CCTzgljfu2A+wtAqytmkn1eZ+9TGCDd
+	M4FYmMF5GIOv5qRD7ygz+a7qVf5yGuZJ8KIXJFss0xUtdQEFE/F29lxvv9y3dzrXJLLZ7XjXH9s
+	xU0S/SD2tT2pI2Qs3XSEvyh8I5Y1qvtXlwCNALAYjrn2LlzqkUa/EUr+j/k=
+X-Received: by 2002:ac8:5dd2:0:b0:467:5d7f:c684 with SMTP id d75a77b69052e-471afed5648mr27378781cf.12.1739399261979;
+        Wed, 12 Feb 2025 14:27:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFm7HwjnD8TfrrD8qTdjd3ZCWCL72oFAhN3KcFlNCVuMikLAd4knHaHey2dB/mkKLaZ7ZWWgA==
+X-Received: by 2002:ac8:5dd2:0:b0:467:5d7f:c684 with SMTP id d75a77b69052e-471afed5648mr27378541cf.12.1739399261580;
+        Wed, 12 Feb 2025 14:27:41 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53376756sm4479566b.115.2025.02.12.14.27.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 14:27:41 -0800 (PST)
+Message-ID: <82fee126-4e03-4366-8dad-d8ea98081beb@oss.qualcomm.com>
+Date: Wed, 12 Feb 2025 23:27:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212221445.437481-1-namhyung@kernel.org>
-In-Reply-To: <20250212221445.437481-1-namhyung@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Feb 2025 14:25:34 -0800
-X-Gm-Features: AWEUYZkOKMbZzWVbJGyBP-A50OG1S_X-IxmfIoNOeRJjPef2U-p22t0pd2K8YnM
-Message-ID: <CAP-5=fV4w=y5-mFdwa8_UAxPYJeqnFhdXjyVic88CKwP_XdmSg@mail.gmail.com>
-Subject: Re: [PATCH] perf tools: Use symfs when opening debuginfo by path
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: pm8937: Add LPG PWM driver
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Daniil Titov <daniilt971@gmail.com>
+References: <20250212-pm8937-pwm-v1-0-a900a779b4ad@mainlining.org>
+ <20250212-pm8937-pwm-v1-1-a900a779b4ad@mainlining.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250212-pm8937-pwm-v1-1-a900a779b4ad@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: O0H2WlQ3Jtw7jvfJR72pzkgwgDdK4j-m
+X-Proofpoint-GUID: O0H2WlQ3Jtw7jvfJR72pzkgwgDdK4j-m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_07,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ mlxscore=0 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ mlxlogscore=990 lowpriorityscore=0 phishscore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120159
 
-On Wed, Feb 12, 2025 at 2:14=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> I found that it failed to load a binary using --symfs option.  Say I
-> have a binary in /home/user/prog/xxx and a perf data file with it.  If I
-> move them to a different machine and use --symfs, it tries to find the
-> binary in some locations under symfs using dso__read_binary_type_filename=
-(),
-> but not the last one.
->
->   ${symfs}/usr/lib/debug/home/user/prog/xxx.debug
->   ${symfs}/usr/lib/debug/home/user/prog/xxx
->   ${symfs}/home/user/prog/.debug/xxx
->   /home/user/prog/xxx
->
-> It should check ${symfs}/home/usr/prog/xxx.  Let's fix it.
->
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-
-Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks,
-Ian
-
+On 12.02.2025 11:21 PM, Barnabás Czémán wrote:
+> From: Daniil Titov <daniilt971@gmail.com>
+> 
+> Add PWM/LPG node to the PM8937 dtsi so devices
+> which use this block can enable them.
+> 
+> Signed-off-by: Daniil Titov <daniilt971@gmail.com>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 > ---
->  tools/perf/util/debuginfo.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/perf/util/debuginfo.c b/tools/perf/util/debuginfo.c
-> index 19acf4775d3587a4..b5deea7cbdf24620 100644
-> --- a/tools/perf/util/debuginfo.c
-> +++ b/tools/perf/util/debuginfo.c
-> @@ -125,8 +125,12 @@ struct debuginfo *debuginfo__new(const char *path)
->         dso__put(dso);
->
->  out:
-> +       if (dinfo)
-> +               return dinfo;
-> +
->         /* if failed to open all distro debuginfo, open given binary */
-> -       return dinfo ? : __debuginfo__new(path);
-> +       symbol__join_symfs(buf, path);
-> +       return __debuginfo__new(buf);
->  }
->
->  void debuginfo__delete(struct debuginfo *dbg)
-> --
-> 2.48.1.502.g6dc24dfdaf-goog
->
+>  arch/arm64/boot/dts/qcom/pm8937.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/pm8937.dtsi b/arch/arm64/boot/dts/qcom/pm8937.dtsi
+> index 42b3575b36ff4d37df11ccb5ed68e965e3716300..d13f39d81386b9493e33411e7fa0fb69e94644f4 100644
+> --- a/arch/arm64/boot/dts/qcom/pm8937.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pm8937.dtsi
+> @@ -143,6 +143,14 @@ pmic@1 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  
+> +		pm8937_pwm: pwm {
+> +			compatible = "qcom,pm8916-pwm";
+
+Please add a new compatible with this one as fallback, i.e.
+
+compatible = "qcom,pm8937-pwm", "qcom,pm8916-pwm";
+
+and add it in dt-bindings
+
+Konrad
 
