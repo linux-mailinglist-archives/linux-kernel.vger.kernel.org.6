@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-510703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645D9A320CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:20:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE11A320CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:20:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC5B164C02
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:20:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A44C7164F7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58016204F75;
-	Wed, 12 Feb 2025 08:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2970F204F8C;
+	Wed, 12 Feb 2025 08:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NVD08XIG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="J7qg5N4h"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9A61DF27D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30181E9B3B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739348428; cv=none; b=RmREq4HrqHmEaNV1RtigAWnNk0r3cnv0n+2uQqC7hrUUjhNodf2Ori+Yu3Rb3xI0Ek4LsNmD7B94S1mRQrxGb1uPcHLvSc3yIjuUpwYFsivmpc3JuiVcsuotZA7kqwI/84oeExpSX15phJjnY0vP0LUJmXrhfb8UAD/2ID3sUOU=
+	t=1739348444; cv=none; b=jb+C6Y7bfG9Hi9W8f03tKbyllUUPvaizidmpTY69Ctp68plVIbXdioyFgs4HoQ2TQu3CjSsUZfxLngyRtfFu6wZskxiuCVkXFKE0kcKAjF3iVm890uRIj59OJLJtCuYhPyH8oAF/7MnxAIGjv4EK0gVF8xsNbRKOFEa9SuYnQgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739348428; c=relaxed/simple;
-	bh=vXyH1NMNryqwPgzRty5BYg1Vg9bBpgYGPf93ZiPDx1c=;
+	s=arc-20240116; t=1739348444; c=relaxed/simple;
+	bh=S4hSIPOftNB6lFWm7JsVPSQO1ZY84MmI5zfQTDiKGH8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EjBbayUxw+eX0B14CH0ROEnlhTW6RUrql98yZpRNDgCmPZMyq7VofJw/XVMflk4cNP6XDQ3giNL8iDpFvRBs8G8t7N+LaEk6w2MXpVI+zqSMeY9a+pRElQItrAOzAy1sxBTDqf3CFX2rj0X+pSRw4PQHw4g0/3lTW+8//bww+h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NVD08XIG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739348425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ip9E1CfkRC9Vcb9bxsI6NSkr9QdKRS3qpRbaSmxdcRY=;
-	b=NVD08XIGxbvJw8aCJmgnDV/AuPQt4b08oNOzlQ4rLoyFFOVeSGHE+TebxlrFepAeqel44u
-	vZ6E6k6A4Aj4cFPLYnxvHr+QnlhgmGkMJWHFPr7qqooIER7vIr5gxHUJddfnJvoom0gtkQ
-	rOLoMVxSK1Cmdr6fSiCyAdQe26XY0FU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-XRrvUDlyPcSfG04qzHfq9A-1; Wed, 12 Feb 2025 03:20:23 -0500
-X-MC-Unique: XRrvUDlyPcSfG04qzHfq9A-1
-X-Mimecast-MFC-AGG-ID: XRrvUDlyPcSfG04qzHfq9A_1739348423
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38de1668f18so1346003f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:20:23 -0800 (PST)
+	 In-Reply-To:Content-Type; b=UXB9wxxCCuRHXnuWOai5j5ZncpWU9gO6A60RZpqDmNaTQU5n/8gr0LJAEnMtD8FX01FSjCEuzpWUGA8tt+REWk+Oe1Jl1i97OH5YcY+xnjKQdm2jgXU0ckh2LM7YHLwSQ32dzLqNzw3Ro3BQrv8SyjavJsjqy1z38zdpk3iW5qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=J7qg5N4h; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5de5e3729ecso8048352a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:20:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1739348441; x=1739953241; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2wN5plf6DQoz8MXbMzn7OeAYAYu7hV2vZ8E2rhA+6WY=;
+        b=J7qg5N4hXNRd0C7RFimsuMdLfm8fFKbhgdKZMgQuZfOIdaz6wAd1fDkVbk7AnPH8ib
+         FLc659FatLAMaAz9q60Qs9zg9oonB0OzFJ4/cxLtMQsdhWbsRBm5x2SKXUe8cO23Zr68
+         qQlZJiqhr02BSzauNG5zL1GVQHEmY1VM6Osus1dS6k+FdiwQfnuaMJzEs8w/edznz7rK
+         zvalqbHWqXXetBWyjRMT+sBSUND2VLzxjwry471hd2E5Utw1YjeF/urBHNXTxC86zzn+
+         2bWgGVra2EgR9h0hq9d5cyG7HCM/Yyt/P+Y2mvxlZO1RKYhlbKuw9bOGrA62Bqv9MIo+
+         HQjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739348423; x=1739953223;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ip9E1CfkRC9Vcb9bxsI6NSkr9QdKRS3qpRbaSmxdcRY=;
-        b=a61tB5IEXUBD0LGe3JSLwloESyc2imI2YG88qpJN2Q7gip5GE4kl4O2QHu3ty1OF0d
-         ORN6GMVqzvVvKIS+Gv35EDm4DFI0JG8S7lyzh0pd3EtC/Jg+T24Nje11fYyb2/GJCda+
-         14ksEMguHYSX6S78+SVzbuwcvPifMwMc3GLb6VY3k3RbINKlaC8U9Tn+uJhJzcZpu0Ga
-         tWgOn3AL+5Lcsc2NWHet7H/wphtMJXaKzmXcm1MuZ4+AcaR6yPZgG1wz/3BTji0tE6fy
-         2A588KeA2pZLLfXHA6A+Jq4l9zTk8UEknIqPsGPqNaPU+R4EdaIRncUphxg6+fklV78n
-         MgTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoxCCVAh5e8xemYHk6yen4JKxp5SefqlBb6/m3B6CRxqQhT3c3Bg6xjPsDN+EY3C8A4m1TJoy7plsyaIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjJDy6L0ZYjZNAjmJL+H1XpE3Od2FKodCRceli0zWUfjMF4cca
-	TqiELsag5vgZ5QTvslFLJemBS1i2P4UMmapFtIYISKvupHFOWCdMZMpzj8jFXs8ithBHEETZ33c
-	9GxVC24Rtz4T9YDxfPOJFeDb2ItpMa8gjyL/ncW6iZM7j6MBnrccuPSRuF9SRxK1sCt/Mrw==
-X-Gm-Gg: ASbGncuYZe2OrLOu8eJ/QY1O05YsG+n/Sl8wuZYWQPvaMlLbU8Ma5u+zxYuRwVODOTX
-	Y2FeCNnQ0sc36dsfgyNGW1K3NSznCG/CVUgPvQiJXQGaK/HF80/sAkFJ002dZG1GwvwOI51h6wQ
-	PyBWA28DraLIf6/gzB1gZED/gEXkleJCvpjKSLjB379aSV8IuW1k64A9cbjdMsrFkb4FzkPcEAr
-	uJz1tVPHwf3/UFAhcT1eG8hfwukCELfwCEn6nnc/ZhMXsXMIALhmJvPAd3X44ywM+9rJRwcqc9D
-	egu7aJZJb+eV+4ueA4uKnOaZvO/J5zichb1rIdy+Is+h46MczY9K7E2q4MUO+QuofQvAwW+65h9
-	caYfq6rquBNteICoc4DeKn+RhJEpjkg==
-X-Received: by 2002:a5d:4ac3:0:b0:38d:db8b:f518 with SMTP id ffacd0b85a97d-38dea289689mr1334163f8f.22.1739348422657;
-        Wed, 12 Feb 2025 00:20:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFDiAn5jK616MdAOfAfYMVUT9zNM9+jEtMDT3b0cH3qnNzPUlBYFG45nWaSD905rA0F+LnzPA==
-X-Received: by 2002:a5d:4ac3:0:b0:38d:db8b:f518 with SMTP id ffacd0b85a97d-38dea289689mr1334131f8f.22.1739348422230;
-        Wed, 12 Feb 2025 00:20:22 -0800 (PST)
-Received: from ?IPV6:2003:cb:c70c:a600:1e3e:c75:d269:867a? (p200300cbc70ca6001e3e0c75d269867a.dip0.t-ipconnect.de. [2003:cb:c70c:a600:1e3e:c75:d269:867a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dcd0fac67sm13744585f8f.54.2025.02.12.00.20.19
+        d=1e100.net; s=20230601; t=1739348441; x=1739953241;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2wN5plf6DQoz8MXbMzn7OeAYAYu7hV2vZ8E2rhA+6WY=;
+        b=hIBWO4RzpMe/TMcKIq1OLghrxs7RnoTRSW5gbbctUMLfP0GJBfyM7cMIiFVCCAKdkm
+         28RLBk8qUVfuxw+OEyZm3fM/GGulSne6u4pO40B77rjpdEaXtrQOO6pN3vjXOcOdRQh9
+         2dAi8l/oeSzq+B4rACxDVyRm0TX4XlCEqaVgTgSldVGB4INpFFup+8BeUwnj0FsVL5V2
+         2REUyoSvFJ1JRL0C4P6ygw4SifZxmBkXSm3VGHZ3U+JXVEFjOZC0qL+XqGQ5FbtLwYl0
+         lpQGDgEwhjalCvnoUIQZgkmQZSA5/nNs/OXm0gy6nwl+zdbgCCkzbAg9CljKVowsvc2u
+         xasg==
+X-Forwarded-Encrypted: i=1; AJvYcCWF052BUAsNgvHdJ6OhSV6lr4Pm6DYu5zV05E9JHk7Z70AL/FLHXFgG4cy7jt+4edh8RBsaNk37P/5qAks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcxcP4us++bzW0RdUOknLiCiQ+GUZ/yIfjHNWPIX3kqRSKKVFB
+	4KwjiISMueNbxVx9xWo8ruVijgHE2qRhLoDkGOX5LYX1X2CAB2z1dlipzqIUkQM=
+X-Gm-Gg: ASbGncuPOSekXjbsdV2K7L7Q5MDh4NylWg945zzBvxRACXBX/Y0DmyQV9TwY8BOFjAR
+	CCK6l4bgc2GTRMOhthfJBW4j2Wbdf9hEqL3I8uapuoTMfE43CCgYC71qPfOox8X4pG2Vre0KFn6
+	B8KW4HIa7W0f8Gk+W0pe9uYW4FtmVxTjOMER0RsbCuvqLwyJhN1TSvymBSAf2/AJgQxHa3HGN58
+	sRpzgxtSELgORXDNB7tMxFdYfFTLhgfH+rZQC3260JPhMMnnSRgOO/IOvkzjtqnCcrPPK4bKjI/
+	qeoy9w7dUffr1g2QKK3dlQy9
+X-Google-Smtp-Source: AGHT+IGH5sEhr0U+ODZ2ybXw27QQ2etp37E5mEcz8CPyECrALs3n5tNlB3o2g80JXIcC69CgqPxvTw==
+X-Received: by 2002:a05:6402:40c7:b0:5de:6bc2:7bb with SMTP id 4fb4d7f45d1cf-5deb088ebb9mr1358535a12.17.1739348441007;
+        Wed, 12 Feb 2025 00:20:41 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.173])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de61830117sm7548806a12.6.2025.02.12.00.20.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 00:20:21 -0800 (PST)
-Message-ID: <d5bba68b-1dba-4367-8d4f-103348b80229@redhat.com>
-Date: Wed, 12 Feb 2025 09:20:19 +0100
+        Wed, 12 Feb 2025 00:20:40 -0800 (PST)
+Message-ID: <202c1e0b-f17b-43ec-918c-2a4460a666c2@tuxon.dev>
+Date: Wed, 12 Feb 2025 10:20:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,219 +80,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm: pgtable: fix NULL pointer dereference issue
-To: Qi Zheng <zhengqi.arch@bytedance.com>, linux@armlinux.org.uk,
- ezra@easyb.ch, hughd@google.com, ryan.roberts@arm.com,
- akpm@linux-foundation.org, muchun.song@linux.dev
-Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <be323425-2465-423a-a6f4-affbaa1efe09@bytedance.com>
- <20250212064002.55598-1-zhengqi.arch@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 10/15] ARM: at91: pm: add DT compatible support for
+ sama7d65
+To: Ryan.Wanner@microchip.com, lee@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, sre@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+ p.zabel@pengutronix.de
+Cc: linux@armlinux.org.uk, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+References: <cover.1739221064.git.Ryan.Wanner@microchip.com>
+ <a35bf7aece5f43f2517f2a4082160f47ef2acb32.1739221064.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250212064002.55598-1-zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <a35bf7aece5f43f2517f2a4082160f47ef2acb32.1739221064.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12.02.25 07:40, Qi Zheng wrote:
-> When update_mmu_cache_range() is called by update_mmu_cache(), the vmf
-> parameter is NULL, which will cause a NULL pointer dereference issue in
-> adjust_pte():
+
+
+On 10.02.2025 23:13, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> Unable to handle kernel NULL pointer dereference at virtual address 00000030 when read
-> Hardware name: Atmel AT91SAM9
-> PC is at update_mmu_cache_range+0x1e0/0x278
-> LR is at pte_offset_map_rw_nolock+0x18/0x2c
-> Call trace:
->   update_mmu_cache_range from remove_migration_pte+0x29c/0x2ec
->   remove_migration_pte from rmap_walk_file+0xcc/0x130
->   rmap_walk_file from remove_migration_ptes+0x90/0xa4
->   remove_migration_ptes from migrate_pages_batch+0x6d4/0x858
->   migrate_pages_batch from migrate_pages+0x188/0x488
->   migrate_pages from compact_zone+0x56c/0x954
->   compact_zone from compact_node+0x90/0xf0
->   compact_node from kcompactd+0x1d4/0x204
->   kcompactd from kthread+0x120/0x12c
->   kthread from ret_from_fork+0x14/0x38
-> Exception stack(0xc0d8bfb0 to 0xc0d8bff8)
+> Add support for SAMA7D65 new compatible strings in pm.c file for wakeup source
+> IDs and PMC.
+> This is the first bits of PM for this new SoC. PM depends on other patches.
 > 
-> To fix it, do not rely on whether 'ptl' is equal to decide whether to hold
-> the pte lock, but decide it by whether CONFIG_SPLIT_PTE_PTLOCKS is
-> enabled. In addition, if two vmas map to the same PTE page, there is no
-> need to hold the pte lock again, otherwise a deadlock will occur. Just add
-> the need_lock parameter to let adjust_pte() know this information.
-> 
-> Reported-by: Ezra Buehler <ezra@easyb.ch>
-> Closes: https://lore.kernel.org/lkml/CAM1KZSmZ2T_riHvay+7cKEFxoPgeVpHkVFTzVVEQ1BO0cLkHEQ@mail.gmail.com/
-> Fixes: fc9c45b71f43 ("arm: adjust_pte() use pte_offset_map_rw_nolock()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> [nicolas.ferre@microchip.com: split patch and address only the pm.c changes]
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 > ---
->   arch/arm/mm/fault-armv.c | 40 ++++++++++++++++++++++++++++------------
->   1 file changed, 28 insertions(+), 12 deletions(-)
+>  arch/arm/mach-at91/pm.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm/mm/fault-armv.c b/arch/arm/mm/fault-armv.c
-> index 2bec87c3327d2..3627bf0957c75 100644
-> --- a/arch/arm/mm/fault-armv.c
-> +++ b/arch/arm/mm/fault-armv.c
-> @@ -62,7 +62,7 @@ static int do_adjust_pte(struct vm_area_struct *vma, unsigned long address,
->   }
->   
->   static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
-> -		      unsigned long pfn, struct vm_fault *vmf)
-> +		      unsigned long pfn, bool need_lock)
->   {
->   	spinlock_t *ptl;
->   	pgd_t *pgd;
-> @@ -99,12 +99,11 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
->   	if (!pte)
->   		return 0;
->   
-> -	/*
-> -	 * If we are using split PTE locks, then we need to take the page
-> -	 * lock here.  Otherwise we are using shared mm->page_table_lock
-> -	 * which is already locked, thus cannot take it.
-> -	 */
-> -	if (ptl != vmf->ptl) {
-> +	if (need_lock) {
-> +		/*
-> +		 * Use nested version here to indicate that we are already
-> +		 * holding one similar spinlock.
-> +		 */
->   		spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
->   		if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
->   			pte_unmap_unlock(pte, ptl);
-> @@ -114,7 +113,7 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
->   
->   	ret = do_adjust_pte(vma, address, pfn, pte);
->   
-> -	if (ptl != vmf->ptl)
-> +	if (need_lock)
->   		spin_unlock(ptl);
->   	pte_unmap(pte);
->   
-> @@ -123,16 +122,17 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
->   
->   static void
->   make_coherent(struct address_space *mapping, struct vm_area_struct *vma,
-> -	      unsigned long addr, pte_t *ptep, unsigned long pfn,
-> -	      struct vm_fault *vmf)
-> +	      unsigned long addr, pte_t *ptep, unsigned long pfn)
->   {
->   	struct mm_struct *mm = vma->vm_mm;
->   	struct vm_area_struct *mpnt;
->   	unsigned long offset;
-> +	unsigned long start;
->   	pgoff_t pgoff;
->   	int aliases = 0;
->   
->   	pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
-> +	start = ALIGN_DOWN(addr, PMD_SIZE);
+> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+> index 6c3e6aa22606f..1eec68e92f8d8 100644
+> --- a/arch/arm/mach-at91/pm.c
+> +++ b/arch/arm/mach-at91/pm.c
+> @@ -222,13 +222,16 @@ static const struct of_device_id sam9x60_ws_ids[] = {
+>  	{ /* sentinel */ }
+>  };
+>  
+> -static const struct of_device_id sama7g5_ws_ids[] = {
+> -	{ .compatible = "microchip,sama7g5-rtc",	.data = &ws_info[1] },
+> +static const struct of_device_id sama7_ws_ids[] = {
+> +	{ .compatible = "microchip,sama7d65-rtc",	.data = &ws_info[1] },
+> +	{ .compatible = "microchip,sama7g5-rtc",        .data = &ws_info[1] },
 
-I assume you can come up with a better name than "start" :)
+There are spaces b/w , and .data
 
-aligned_addr ... pmd_start_addr ...
+>  	{ .compatible = "microchip,sama7g5-ohci",	.data = &ws_info[2] },
+>  	{ .compatible = "usb-ohci",			.data = &ws_info[2] },
+>  	{ .compatible = "atmel,at91sam9g45-ehci",	.data = &ws_info[2] },
+>  	{ .compatible = "usb-ehci",			.data = &ws_info[2] },
+> +	{ .compatible = "microchip,sama7d65-sdhci",	.data = &ws_info[3] },
+>  	{ .compatible = "microchip,sama7g5-sdhci",	.data = &ws_info[3] },
+> +	{ .compatible = "microchip,sama7d65-rtt",       .data = &ws_info[4] },
 
-Maybe simply
+There are spaces b/w , and .data
 
-pmd_start_addr = ALIGN_DOWN(addr, PMD_SIZE);
-pmd_end_addr = addr + PMD_SIZE;
-
-Then the comparison below also becomes easier to read.
-
->   
->   	/*
->   	 * If we have any shared mappings that are in the same mm
-> @@ -141,6 +141,14 @@ make_coherent(struct address_space *mapping, struct vm_area_struct *vma,
->   	 */
->   	flush_dcache_mmap_lock(mapping);
->   	vma_interval_tree_foreach(mpnt, &mapping->i_mmap, pgoff, pgoff) {
-> +		unsigned long mpnt_addr;
-> +		/*
-> +		 * If we are using split PTE locks, then we need to take the pte
-> +		 * lock. Otherwise we are using shared mm->page_table_lock which
-> +		 * is already locked, thus cannot take it.
-> +		 */
-> +		bool need_lock = IS_ENABLED(CONFIG_SPLIT_PTE_PTLOCKS);
-
-Nit: move "unsigned long mpnt_addr;" below this longer variable+init.
-
-> +
->   		/*
->   		 * If this VMA is not in our MM, we can ignore it.
->   		 * Note that we intentionally mask out the VMA
-> @@ -151,7 +159,15 @@ make_coherent(struct address_space *mapping, struct vm_area_struct *vma,
->   		if (!(mpnt->vm_flags & VM_MAYSHARE))
->   			continue;
->   		offset = (pgoff - mpnt->vm_pgoff) << PAGE_SHIFT;
-> -		aliases += adjust_pte(mpnt, mpnt->vm_start + offset, pfn, vmf);
-> +		mpnt_addr = mpnt->vm_start + offset;
-> +		/*
-> +		 * If mpnt_addr and addr are mapped to the same PTE page, there
-> +		 * is no need to hold the pte lock again, otherwise a deadlock
-> +		 * will occur.
-
-/*
-  * Avoid deadlocks by not grabbing the PTE lock if we already hold the
-  * PTE lock of this PTE table in the caller.
-  */
-
-?
-
-> +		 */
-> +		if (mpnt_addr >= start && mpnt_addr - start < PMD_SIZE)
-> +			need_lock = false;
-
-
-
--- 
-Cheers,
-
-David / dhildenb
+>  	{ .compatible = "microchip,sama7g5-rtt",	.data = &ws_info[4] },
+>  	{ /* sentinel */ }
+>  };
+> @@ -1379,6 +1382,7 @@ static const struct of_device_id atmel_pmc_ids[] __initconst = {
+>  	{ .compatible = "atmel,sama5d2-pmc", .data = &pmc_infos[1] },
+>  	{ .compatible = "microchip,sam9x60-pmc", .data = &pmc_infos[4] },
+>  	{ .compatible = "microchip,sam9x7-pmc", .data = &pmc_infos[4] },
+> +	{ .compatible = "microchip,sama7d65-pmc", .data = &pmc_infos[4] },
+>  	{ .compatible = "microchip,sama7g5-pmc", .data = &pmc_infos[5] },
+>  	{ /* sentinel */ },
+>  };
+> @@ -1672,7 +1676,7 @@ void __init sama7_pm_init(void)
+>  	at91_pm_modes_init(iomaps, ARRAY_SIZE(iomaps));
+>  	at91_pm_init(NULL);
+>  
+> -	soc_pm.ws_ids = sama7g5_ws_ids;
+> +	soc_pm.ws_ids = sama7_ws_ids;
+>  	soc_pm.config_pmc_ws = at91_sam9x60_config_pmc_ws;
+>  
+>  	soc_pm.sfrbu_regs.pswbu.key = (0x4BD20C << 8);
 
 
