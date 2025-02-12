@@ -1,416 +1,222 @@
-Return-Path: <linux-kernel+bounces-511819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246FBA33022
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:51:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11AD5A33024
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 978D6162172
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2DD3A1C21
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A281FFC6F;
-	Wed, 12 Feb 2025 19:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEC1200106;
+	Wed, 12 Feb 2025 19:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="QPDeYVXM"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I+kgBsJB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3514E1FCF62
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 19:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739389892; cv=none; b=q318O2/AtSRbQo3R06udVfwYu3Cjq/+mLUzfne1Jw+cONrUFFjUvmxyN7/oS2dIf5LwS2hPrAzh1HCzFZuIZsXR55Q5PW+mKtHBNOp/IAIxFdQ4YI+f7Bo/TzFmx7q84iR00HeTvmwDhY90Rh9rwo9UkYRwQZmzlluHixAN4tkU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739389892; c=relaxed/simple;
-	bh=v5gi1ISZVSBvQPGrj1374pYnd52LCsULqEAMuTZuSsw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YPCQ2MPXNvPI0QsAxbUSwJ2tLiE7OIPVHsoK74d4MwT2jMggU/MgOI8cL2Zlt8+Kz+2nTQVtHv6hskad5reBSxlpWc++JvvlH6mBhJKU0LvCCrM2e92Ht9WVWyFcyqTNoaXeInXYE508Ija54PUd+U8AoqakJYlU49Rmdg94y+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=QPDeYVXM; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21f818a980cso564035ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:51:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1739389889; x=1739994689; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3amVsx8Ci03zXdDpEUIaq7SCAMVrHBBM+qenXfv5ZR4=;
-        b=QPDeYVXMNHsyNrbZEhDMQSeuGrkuTB1zP8ayCbDoYLY73f+bj1o8yS6HMv8FnAsiGS
-         bej+SnLO152sFXyiw+8IkSnGrK0xlX6//u53Ug97pSCALr2BYKLutzqO0cBVW7SR2D9R
-         o+64TGLpZFrZkvVh3Z3kJmLpcDizyk4U6DPY7EYWZiqzuPH8G+s/soilDWI40rNjczqF
-         8SP8LvOBtjqqGeX3zs6u6R/+eMtEUqUMVp5NTJS++L9HL2fAOpKNdYXnPWTVDJXbS+St
-         kqgdM1lkvT20Jq6PssXayW6MiW4TfI4G9thRVGIiLGp1I9rDnsgcpyaTHwtDF6cr2hby
-         0Yng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739389889; x=1739994689;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3amVsx8Ci03zXdDpEUIaq7SCAMVrHBBM+qenXfv5ZR4=;
-        b=U6GpdjTBS/YOY+F6uDJKtPi2dGUqWWujvlUOSZXdBRDtsowWEy3nIpLGK7gURVJI57
-         tqmMhlNi48Y49D0Bv/uAOR/5TUGMJkIasMnefeRhs9r6tD2g31rAGfUM4YUWHVfSQ5pJ
-         WNEOxevPYnVAQ5ATExoabzMxBa4p5hznPqFBa2S1x9NqBhIZ240HF9SWTxXfxGvytyO8
-         cKZ2VclkrDzklEOH152kF1yJUxxBR0fE9i+qPzExJMZoq2j4jN5V/WW7UpH/vkHHfRsB
-         J9FzD4u0cBwxF0xO8/BZPzZ4bQX5417SgQ93vNutZfIOqPaQQcIsLmlpCw+Cmish8b2L
-         tljw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbMZnp49sOVqEfUixQOmIhjc8cAgtHGWWo5RhdwLSVpfpSlulY2fgQbwbZpAPTPy2vy55QAbxUYOOEn8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhwxooCgh6uOAHRPXrjk48N8qqgvhgCpNrz5dvO6NnZHHdiez8
-	9TXdYbG3H3TlUFQuU9MyE9SBBRGGbKw/sH50V9TOuToIXaUJCM+marYxF/wwNLo=
-X-Gm-Gg: ASbGncutZZdHvXI3mNrV1iQ5B0usarJDgLc/FsdC9L5erx43RZHAf3KqqqW/b7I6jfj
-	IJ9xVSegmjX6kUBxlhqQbHvfMhn+CPfTFAaSDajSVvc9kwrm/KkF7/4IyBc1aO2Iv32nOPjbMUU
-	fo2aZf1qRU5ge6Yi4QqB4PsR4Qa5HsBjSoyxZlEnADnogt5A/tCrYlGvl0HUpPrkHbz2Icl51Bz
-	Nuu4B/YyV37VfajvsiySYClGGj60RxSL2+BvSl1xnM+o25lgABy/6ydyGcE2kSfKpiNHffWcX1s
-	poi8qOah90n1SRWsFX2JWxeq4z6t3/M=
-X-Google-Smtp-Source: AGHT+IEEvEByzP+UwvSlz3Wl3sMSsMOYf2t2jQTgZm9hPz6gNFn/8KomqHQP45IN8uMvN0dOsI3hJQ==
-X-Received: by 2002:a05:6a20:db0c:b0:1d9:2b51:3ccd with SMTP id adf61e73a8af0-1ee5c733420mr9638478637.7.1739389889379;
-        Wed, 12 Feb 2025 11:51:29 -0800 (PST)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ad555e8f22bsm4594772a12.68.2025.02.12.11.51.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 11:51:27 -0800 (PST)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Wed, 12 Feb 2025 11:51:17 -0800
-Subject: [PATCH v6] riscv: Add runtime constant support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2F91FCF62;
+	Wed, 12 Feb 2025 19:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739389923; cv=fail; b=BU/q3dICAzoc/pb6AuG3qe4981yqSozpiMXCQb7myR2pR30fDWP3G5eMFdR0SFHTVopPoMnequz7LvNUYePOhgWe+J4t7jSpjIAH1dUrYUXOMQi1KsaDkLplx5hvE77GX8xyLgmOsJExd/q3VaetstQySoWwVQoVExfuMiDvMbg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739389923; c=relaxed/simple;
+	bh=Nt+llfCEYr8jir4sLkTwr1tQ92ZkX+GImGtOXn/r0KY=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NJG9IoWTzgDVNHIBYLGETOQLnswOGILDdSJqfZw4L8z3/hEqJdoO/+tn3YPR3V5Ib4Lx2sZ80J4zkEochCCKpmySYg5tVKet7A0W6y7ecrQhIyL0zrykGq8+V+o3ELs4RbLbdIBOekSe/n9QVz0SHwO63EMy7dcXyGKi90sYah8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I+kgBsJB; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739389921; x=1770925921;
+  h=date:from:to:subject:message-id:references:in-reply-to:
+   mime-version;
+  bh=Nt+llfCEYr8jir4sLkTwr1tQ92ZkX+GImGtOXn/r0KY=;
+  b=I+kgBsJBvDrW691E9rrKOAngoIeN93QeyIs14C87V61QW4JJYw0XVNHJ
+   aNhJsJpCdh9ZqKkd+DxR5fw8F7JT8TLcjA1OKyqiRMu3jlM5Be/BPB+50
+   6EJjTurI4TQtWgniNaDKcZ3bBCd9P5GznRDQnARGbG0p8daXAcbjoMGpX
+   uiPcU3+hgGyrreDQLaPhEH5H/8nFrbpbqJqwL+Ywie04eF/heu9kOkqzf
+   UjebeGbWNCTXyHwLRBLshrSHKjqbGrS5vyuqwsaLuK8lBhlxlIBxg1Rms
+   9lpaPdIg8OkYzTGUGYK/gTPEYSx/rPUCMBOYtgTdo9qSI8I3ag37/IsgC
+   g==;
+X-CSE-ConnectionGUID: 7oasG3kYRGmDUBPeKcVFBw==
+X-CSE-MsgGUID: lYNu56dcRGGi1kJc675KQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="50716923"
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="50716923"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 11:52:00 -0800
+X-CSE-ConnectionGUID: yth8j7KtRaaoqDuX14O9Dg==
+X-CSE-MsgGUID: VymWtpYBQ8+ZBDVD+3X1dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="112887906"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Feb 2025 11:51:59 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 12 Feb 2025 11:51:59 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Wed, 12 Feb 2025 11:51:59 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.45) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 12 Feb 2025 11:51:58 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=epjxeLgGQkhRBl5IRf+SEB0RpBVpEfy6YcLl8aK7HHgneF58KruJZItZE6ozAMtla4ZP5qUvVvwp8Q8MsAI5GTYh4iGtsR0NYg0zbLjN/hW7uGBTuGtzA6Us3KMmivzu8uZ1jYiS7BKkeJJgoo8TR9tnoJJLVOarKFKOv0FdQTJd5G2CYJjDtu92DGaHAuvjPqbFcW/qiojFbiN4kL82QapXpu/tlqkkmfg/hvi1Hgp0j+fQYGJZjW3k+S02jwo1EIFgQ/5FBvr2fQEgieIed9xg4HhuT30dgul6EDdhoOOsL16Kp98UcE/ZGMTfyUjn9/ivhmW1rrG5BOfAEYqkeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hAwAkU1l8Qyw0BkFM61aY0VOJv62N4xgBLQJCK5ELzo=;
+ b=ICGTOsgiIH20Xo/T5KGuRCIhthvDoFtwnA7gQdnZkOADTNCPYWzBoYe1kTbwciM76zmJGEcpXVqMsmpfeNqA9JW402AKeDF5RAR7e0Jw4Z2/sZrK8KEjw4WvwsWEQ/Uu7MbqrXPIc4e5hZ0SsGJqou3R2xF5QXUz9a5pbIbL/RvHW+AwgBMU30GSQk987RfdipzUXjBwp9CL80dS0A0FXyNllFy+CGfX4VU/IHZz5ISoRqAxEqfot9LCtlLKhTHO4vTRARNZLV0kSyrkuochNbAJ8eeCoCORW5V6iOkxZOx6E3R1HkSH+EsnVyTWzLiV2ekWVDm4abn9PLArUuEatg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by CY8PR11MB7826.namprd11.prod.outlook.com (2603:10b6:930:76::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.19; Wed, 12 Feb
+ 2025 19:51:41 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8445.008; Wed, 12 Feb 2025
+ 19:51:39 +0000
+Date: Wed, 12 Feb 2025 11:51:36 -0800
+From: Dan Williams <dan.j.williams@intel.com>
+To: "Bowman, Terry" <terry.bowman@amd.com>, Dan Williams
+	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<nifan.cxl@gmail.com>, <dave@stgolabs.net>, <jonathan.cameron@huawei.com>,
+	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <bhelgaas@google.com>, <mahesh@linux.ibm.com>,
+	<ira.weiny@intel.com>, <oohall@gmail.com>, <Benjamin.Cheatham@amd.com>,
+	<rrichter@amd.com>, <nathan.fontenot@amd.com>,
+	<Smita.KoralahalliChannabasappa@amd.com>, <lukas@wunner.de>,
+	<ming.li@zohomail.com>, <PradeepVineshReddy.Kodamati@amd.com>
+Subject: Re: [PATCH v7 03/17] CXL/PCI: Introduce PCIe helper functions
+ pcie_is_cxl() and pcie_is_cxl_port()
+Message-ID: <67acfbc83ba44_2d1e294c5@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250211192444.2292833-1-terry.bowman@amd.com>
+ <20250211192444.2292833-4-terry.bowman@amd.com>
+ <67abd04519e67_2d1e294f2@dwillia2-xfh.jf.intel.com.notmuch>
+ <7600b0ac-673c-4e1e-a9ee-d56efe386f99@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7600b0ac-673c-4e1e-a9ee-d56efe386f99@amd.com>
+X-ClientProxiedBy: MW4PR03CA0214.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::9) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250212-runtime_const_riscv-v6-1-3ef0146b310b@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIALT7rGcC/43QwWoDIRAG4FcJnmvRcdW1p75HKEHdSeMhWnQrK
- WHfvZNAaSgeevwH/m+GubKGNWFjL7srq9hTSyVTME87Fk8+vyNPC2UGArSQoHj9zGs64yGW3NZ
- DTS12buIy6wkRZmkZNT8qHtPlru7fKJ9SW0v9ui/p8jb98ezQ65JLbp0OAhR6EOG1pl5ayvE5l
- jO7kR3+wQAxTnu08eisV27AqEdmHjOKGCkdgJsdwqIGzPTAKDFmJmKobeIkgw0uDhj9y4AY/7p
- rYkI00irjFd30h9m27Rtj5UV71QEAAA==
-X-Change-ID: 20250123-runtime_const_riscv-6cd854ee2817
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Ard Biesheuvel <ardb@kernel.org>, 
- Ben Dooks <ben.dooks@codethink.co.uk>, 
- Pasha Bouzarjomehri <pasha@rivosinc.com>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10462; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=v5gi1ISZVSBvQPGrj1374pYnd52LCsULqEAMuTZuSsw=;
- b=owGbwMvMwCXWx5hUnlvL8Y3xtFoSQ/qa3zs/+Jpxrzr78cYcw/9ajYsvhAmb9FY3z3cv2L/06
- wEHxt2hHaUsDGJcDLJiiiw81xqYW+/olx0VLZsAM4eVCWQIAxenAExkqzfD/4DcS+4lWVpxrhuV
- lqfw8aQqngv1apnt9j133v37PRqC2Qx/eLkPtq/ykyrlFT35KMeIY73/vMKY8F3y2iXi6R4Vq4L
- ZAA==
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CY8PR11MB7826:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c6d3725-8514-42a7-8506-08dd4b9eaa93
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?2K1cTDZTHxbZjjVhoMsW5trOQPCYe86LwoWURWdnHJkbiiGtHJlzWyU7seVm?=
+ =?us-ascii?Q?+Oo/+0vaSz6DmkGAjOavMIE7r9SI6rt412eIGWZSfq50+u+SzN8hFZA+KBak?=
+ =?us-ascii?Q?Va/HG7DoTNtTfrjIkNFLl8hFMdyDjIikJquTAllJx0FStLdTXsgTmNM+F50V?=
+ =?us-ascii?Q?fAP4751OWtDTB/gKPRmIHj7lOYz62Fkd/pC/03LKA61TdQwN8heysPKPFSOZ?=
+ =?us-ascii?Q?U0FY/3K8mRdKC54KLgliKWexNP0Y1j4CBfDT4YF8yT9CBx8zpZ7RUwPsdOvJ?=
+ =?us-ascii?Q?7DBG3z/mMcvR6uEBxdYjEUg6E8zpPU6QTvbPoTnK6IIvEDQ43H9H6yt+g25f?=
+ =?us-ascii?Q?JIhsjJrb+rYuzigoYmA5pYVmueCtBF/ZrvGh30tDRqUXR1gENRX4W96amEhz?=
+ =?us-ascii?Q?63p8mN56y8Iyll1rB7Jc75x7FwCcWBnDgQGD20p/fT7BrshtV2Zo58jUwBJv?=
+ =?us-ascii?Q?i8kPZZ2O2esKML5KkzJQAiilAq3hQjfm6D0/46I5762zQ96Fo7NDFIMrZ85l?=
+ =?us-ascii?Q?zuf/rXIhjbypbOrwUA9TYkerz7TpOEpig379gelT55T53Ndix9AdSQXhKh6I?=
+ =?us-ascii?Q?0bq3XIxnu55YNqeTUDXHuI7LaI0/pxj0qyIVF8NTTxlxRkDAaIcPPXOFFV8f?=
+ =?us-ascii?Q?AaTAiTXChwzbtBCthBEOZnp/vpPMfmgAJOmbzzDdFIBHRwlxJ/dm1RMyJtLx?=
+ =?us-ascii?Q?aK1Mr1DLnyCQLgxNJFrcApYJeFue5vMJazBQIYP0JOCdTHWTE6KqBlcRlbS/?=
+ =?us-ascii?Q?33b/3nZvlf2kAMS9MwfoZxTlRaia9jJtj8sQmd8+KH1GRKBoXwnwiN0RFtgm?=
+ =?us-ascii?Q?AXsrI5UeNoGT0gQSoWa5vCwce/3Er7aWGN1oxzA4nANZIuPte6DoosJL8H50?=
+ =?us-ascii?Q?DNxXvGGVff6w6kMgxSda8DPzVAOOz0FnqJV7pnkU8sQ87xqDWCUuhrjehJ8J?=
+ =?us-ascii?Q?Uak6YyLEC2VFtx4XM1eTL1ILKks5srQmeE1flU4+6NosuFvXuQvzKWlhnaT8?=
+ =?us-ascii?Q?RszKNkyIVTbfL7RrPxl/Tx8ki6Uy5SsP3tecOABYiYhWYfAtvH58lMeCUt0O?=
+ =?us-ascii?Q?sn8PB3N0klcV61Vf84Bf3rZhetfATfF38LlGd+ZFdpB+eIcE/SrKGGh9roPi?=
+ =?us-ascii?Q?quLz8iCApO6xo5pBM8KOCH52a4LNWF6Xo0uUbt+YJ5RKib5bfuYCU9QKq8DE?=
+ =?us-ascii?Q?1nQqwMsuKVYNt35aOHWci8dSno5y/cBfZRXhrQtHaXA/63G8kBso+RquJEQ0?=
+ =?us-ascii?Q?H8T5yKsnLB38S7EGsjWhYIcd7tQviRMbDkdpi7/rJnYWmzW+zSE3Rx8fln/6?=
+ =?us-ascii?Q?p7WZZCXkgluxaPZwkSMeU3qKEb7ZBYzlyH/Wjr1vPc3UgV5R6hSgB1m0Gj9d?=
+ =?us-ascii?Q?UoxQgLgVjnKgIIjiGf5352386lJp60sQ0O49I9tgija92xiWcdhpQW+bXlIP?=
+ =?us-ascii?Q?StKwMGwpcFo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Vdm2128wdk0wyo4lxeeOZLA7ViF80uvvkFI41UMyZKCZshjIlQ0n/Yo0BeXZ?=
+ =?us-ascii?Q?c5Gh9LGgTA8Y1h2DIrd4YyU3IHv6DqdRWan+l90+Q7heLzhelnclp29NJ6R6?=
+ =?us-ascii?Q?c/ZeI6pgJRpvz/2TjNBtMdY8KHiAD02c5Jl1hi25SuzLVN8gVtqSKe9znzLZ?=
+ =?us-ascii?Q?ZL+6ySBRUWA5CWQIaOWMgereDZNul6Ww9mlooGokbPkZgC8yEMVnE2P+53uT?=
+ =?us-ascii?Q?P3iPtSWoTXNgz7hoK2NQa+mtnd1Okep1ySFoCrKIr36RDdR0EdP4NzT37aaC?=
+ =?us-ascii?Q?rrjbFivV8ac5Mz92DA01kkOXrjsDNnbeUORL27iQpOyLrA73/4YZlx3r0Jlo?=
+ =?us-ascii?Q?x1ENSGv6xsNeotVi09V3CWm/Y7pPZtJzZE93BENAeSVZFeBpOtImNkybj7YT?=
+ =?us-ascii?Q?mBGFkDKiJFIroofL8DYXj5HzMtKSd2npivoi6/hl4RlrJTTxwFFSXWBCGQk3?=
+ =?us-ascii?Q?IWx8J60PrXPeXmrMlx5TOcaOuVx0Wn8Pu6dEwdeCswIu9LGlaXMnQ9HgLNQ+?=
+ =?us-ascii?Q?Iu0uCOcjEZupVEl3YGm1TuIS6Y+B+vgd84gK0fqvV9vjZE2NCm8i25YtTLJT?=
+ =?us-ascii?Q?iBuPil/2twsf66BumOgv9h7eoBt8gHIEPwlC90dWPHvdGqs0guWJska7+0NF?=
+ =?us-ascii?Q?az5W4VB5pJ26THCRZD5LcZ0lA7ZObVxMr39d7AO3PF83WPdTD+d/fzB82Atj?=
+ =?us-ascii?Q?O1E5k6g2nOn5LOBWQGM+v2hHNONvgf1M3b1hw+6e321kVhhF+tLeOx0TD7Q/?=
+ =?us-ascii?Q?EBKF1CkibDg6AA4Gal7Z6fV2a+HoCkUAMATOw/LZlygAx3m6YasuXqBII7V4?=
+ =?us-ascii?Q?+VtqB/fjgvSehMwHZVb1FAVpmdJ4+Fba/OjLlFoa8R8+jNCNHBs01c8vIXlG?=
+ =?us-ascii?Q?frQ/26lrESEIzS6DTVWOM/Bhty5j3dh/z5qMhvKyhVTvZrUy+XWPfdKm6tWP?=
+ =?us-ascii?Q?I85X5xhbcc1Cw8Cv4p/XZoroZ5h0UZo9HbD6edp9egAFI3Ebqe80q0OpgY3P?=
+ =?us-ascii?Q?ftFrZRg/zfXiXeQL7aZUyQdCck7h95UZNmuulBvQis2q/GRfZ0g0vwcWG7Fo?=
+ =?us-ascii?Q?xDu5UCxN7VMm3iRO+KGbB7wBr8+fAvcC0Dz64qYz2JCLcOpDvhfd+JyhSnLo?=
+ =?us-ascii?Q?mlTTpFfPFMDej6hH7tRO64qM4xoYUXVgPRWTBLwvD+DukLN4fHEzsN+grsRy?=
+ =?us-ascii?Q?qTANW2SDJMBnwCyCI1kKEvCHk+vuZlDPUrnD3MXbyQwoZBEsemaeSbzLlUPa?=
+ =?us-ascii?Q?JFaRAU4GUNDTgACRAxP3F9jMGyUYt3aqCRq3MeVQyGL8cb8l/R36l2KHQS9d?=
+ =?us-ascii?Q?+X4Wf5IbrKQSFiKF0twqL45e2WUKx48Z3zbGvaaLiwf3kHrwo+4mZdAScAGe?=
+ =?us-ascii?Q?eexGK/bvoKlezRLr2IKakByORSUn5bAG3az5nx+FJFjzvsR9LvRWRJl69XeO?=
+ =?us-ascii?Q?JZGhJwMwKJK81cZzHKtPm6uRtbZQHvrTjrr1Pzpcac9/SaAWGHbjfN5E4inR?=
+ =?us-ascii?Q?i+qxrBpTdMvZx2t5v1kKqcIOmCfWFsa3KC5nOFpSaEIAfPUVRuJei5keqEp0?=
+ =?us-ascii?Q?fgOc6LfZI7FP+WGDeyR5+hDOP4R+u7j7cKb6ol1CxyIP08oNjoNBD9jqlJUF?=
+ =?us-ascii?Q?Lg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c6d3725-8514-42a7-8506-08dd4b9eaa93
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 19:51:39.6929
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tOwGRbSJug9FENYx3P/WUp1txT4LuBmP2CtLPwI+QQ1Kkc4nKhKiXnfhmqz9rQMsJOHKEVPe9f19O9cODbVMC94AjVZRLM7zX7IpQne1Qp8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7826
+X-OriginatorOrg: intel.com
 
-Implement the runtime constant infrastructure for riscv. Use this
-infrastructure to generate constants to be used by the d_hash()
-function.
+Bowman, Terry wrote:
+[..]
+> >
+> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Ok, I will add the comment.
+> 
+> Would you like for me to add the enable/disable internal error logic to cxl_port_probe()? I can but want to confirm.
 
-This is the riscv variant of commit 94a2bc0f611c ("arm64: add 'runtime
-constant' support") and commit e3c92e81711d ("runtime constants: add
-x86 architecture support").
+If it's quick, go ahead. Otherwise I think it is ok to leave it in
+aer_probe() for now if only because this is not the only place in the
+CXL stack that needs to be fixed up to honor the fact that DVSEC 3 and 7
+are only reliable post link-up.
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
-Ard brought this to my attention in this patch [1].
+I.e. the other places I know of are:
 
-[1] https://lore.kernel.org/lkml/CAMj1kXE4DJnwFejNWQu784GvyJO=aGNrzuLjSxiowX_e7nW8QA@mail.gmail.com/
----
-Changes in v6:
-- .option arch only became officially supported by clang in version 17.
-  Add a config to check that and guard the alternatives uses .option
-  arch.
-- Link to v5: https://lore.kernel.org/r/20250203-runtime_const_riscv-v5-1-bc61736a3229@rivosinc.com
+- cxl_acpi: fails to probe for cachemem component registers on
+  disconnected root ports
 
-Changes in v5:
-- Split instructions into 16-bit parcels to avoid alignment (Emil)
-- Link to v4: https://lore.kernel.org/r/20250130-runtime_const_riscv-v4-1-2d36c41b7b9c@rivosinc.com
+- cxl_switch_port_probe(): enumerates all dports even though not all may
+  be link up yet
 
-Changes in v4:
-- Add newlines after riscv32 assembler directives
-- Align instructions along 32-bit boundary (Emil)
-- Link to v3: https://lore.kernel.org/r/20250128-runtime_const_riscv-v3-1-11922989e2d3@rivosinc.com
-
-Changes in v3:
-- Leverage "pack" instruction for runtime_const_ptr() to reduce hot path
-  by 3 instructions if Zbkb is supported. Suggested by Pasha Bouzarjomehri (pasha@rivosinc.com)
-- Link to v2: https://lore.kernel.org/r/20250127-runtime_const_riscv-v2-1-95ae7cf97a39@rivosinc.com
-
-Changes in v2:
-- Treat instructions as __le32 and do proper conversions (Ben)
-- Link to v1: https://lore.kernel.org/r/20250127-runtime_const_riscv-v1-1-795b023ea20b@rivosinc.com
----
- arch/riscv/Kconfig                     |   5 +
- arch/riscv/include/asm/runtime-const.h | 223 +++++++++++++++++++++++++++++++++
- arch/riscv/kernel/vmlinux.lds.S        |   3 +
- 3 files changed, 231 insertions(+)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index d4a7ca0388c071b536df59c0eb11d55f9080c7cd..f4722fb1f529b433e60ccf096b0b60ff328744e5 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -229,6 +229,11 @@ config GCC_SUPPORTS_DYNAMIC_FTRACE
- 	def_bool CC_IS_GCC
- 	depends on $(cc-option,-fpatchable-function-entry=8)
- 
-+config CC_SUPPORTS_ASM_ARCH
-+	def_bool y
-+	#https://github.com/llvm/llvm-project/commit/9e8ed3403c191ab9c4903e8eeb8f732ff8a43cb4
-+	depends on !CC_IS_CLANG || CLANG_VERSION >= 170000
-+
- config HAVE_SHADOW_CALL_STACK
- 	def_bool $(cc-option,-fsanitize=shadow-call-stack)
- 	# https://github.com/riscv-non-isa/riscv-elf-psabi-doc/commit/a484e843e6eeb51f0cb7b8819e50da6d2444d769
-diff --git a/arch/riscv/include/asm/runtime-const.h b/arch/riscv/include/asm/runtime-const.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..77f55201e97cd7640a902cb833ccdcaceb925005
---- /dev/null
-+++ b/arch/riscv/include/asm/runtime-const.h
-@@ -0,0 +1,223 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_RISCV_RUNTIME_CONST_H
-+#define _ASM_RISCV_RUNTIME_CONST_H
-+
-+#include <asm/alternative.h>
-+#include <asm/cacheflush.h>
-+#include <asm/text-patching.h>
-+#include <linux/uaccess.h>
-+
-+#ifdef CONFIG_32BIT
-+#define runtime_const_ptr(sym)					\
-+({								\
-+	typeof(sym) __ret;					\
-+	asm_inline(".option push\n\t"				\
-+		".option norvc\n\t"				\
-+		"1:\t"						\
-+		"lui	%[__ret],0x89abd\n\t"			\
-+		"addi	%[__ret],%[__ret],-0x211\n\t"		\
-+		".option pop\n\t"				\
-+		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"	\
-+		".long 1b - .\n\t"				\
-+		".popsection"					\
-+		: [__ret] "=r" (__ret));			\
-+	__ret;							\
-+})
-+#else
-+/*
-+ * Loading 64-bit constants into a register from immediates is a non-trivial
-+ * task on riscv64. To get it somewhat performant, load 32 bits into two
-+ * different registers and then combine the results.
-+ *
-+ * If the processor supports the Zbkb extension, we can combine the final
-+ * "slli,slli,srli,add" into the single "pack" instruction. If the processor
-+ * doesn't support Zbkb but does support the Zbb extension, we can
-+ * combine the final "slli,srli,add" into one instruction "add.uw".
-+ */
-+#ifdef CONFIG_CC_SUPPORTS_ASM_ARCH
-+#define runtime_const_ptr(sym)						\
-+({									\
-+	typeof(sym) __ret, __tmp;					\
-+	asm_inline(".option push\n\t"					\
-+		".option norvc\n\t"					\
-+		"1:\t"							\
-+		"lui	%[__ret],0x89abd\n\t"				\
-+		"lui	%[__tmp],0x1234\n\t"				\
-+		"addiw	%[__ret],%[__ret],-0x211\n\t"			\
-+		"addiw	%[__tmp],%[__tmp],0x567\n\t"			\
-+		ALTERNATIVE_2(						\
-+			"slli	%[__tmp],%[__tmp],32\n\t"		\
-+			"slli	%[__ret],%[__ret],32\n\t"		\
-+			"srli	%[__ret],%[__ret],32\n\t"		\
-+			"add	%[__ret],%[__ret],%[__tmp]\n\t",	\
-+			".option push\n\t"				\
-+			".option arch,+zba\n\t"				\
-+			"slli	%[__tmp],%[__tmp],32\n\t"		\
-+			"add.uw %[__ret],%[__ret],%[__tmp]\n\t"		\
-+			"nop\n\t"					\
-+			"nop\n\t"					\
-+			".option pop\n\t",				\
-+			0, RISCV_ISA_EXT_ZBA, 1,			\
-+			".option push\n\t"				\
-+			".option arch,+zbkb\n\t"			\
-+			"pack	%[__ret],%[__ret],%[__tmp]\n\t"		\
-+			"nop\n\t"					\
-+			"nop\n\t"					\
-+			"nop\n\t"					\
-+			".option pop\n\t",				\
-+			0, RISCV_ISA_EXT_ZBKB, 1			\
-+		)							\
-+		".option pop\n\t"					\
-+		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"		\
-+		".long 1b - .\n\t"					\
-+		".popsection"						\
-+		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
-+	__ret;								\
-+})
-+#else
-+#define runtime_const_ptr(sym)						\
-+({									\
-+	typeof(sym) __ret, __tmp;					\
-+	asm_inline(".option push\n\t"					\
-+		".option norvc\n\t"					\
-+		"1:\t"							\
-+		"lui	%[__ret],0x89abd\n\t"				\
-+		"lui	%[__tmp],0x1234\n\t"				\
-+		"addiw	%[__ret],%[__ret],-0x211\n\t"			\
-+		"addiw	%[__tmp],%[__tmp],0x567\n\t"			\
-+		"slli	%[__tmp],%[__tmp],32\n\t"			\
-+		"slli	%[__ret],%[__ret],32\n\t"			\
-+		"srli	%[__ret],%[__ret],32\n\t"			\
-+		"add	%[__ret],%[__ret],%[__tmp]\n\t"			\
-+		".option pop\n\t"					\
-+		".pushsection runtime_ptr_" #sym ",\"a\"\n\t"		\
-+		".long 1b - .\n\t"					\
-+		".popsection"						\
-+		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
-+	__ret;								\
-+})
-+#endif
-+#endif
-+
-+#ifdef CONFIG_32BIT
-+#define SRLI "srli "
-+#else
-+#define SRLI "srliw "
-+#endif
-+
-+#define runtime_const_shift_right_32(val, sym)			\
-+({								\
-+	u32 __ret;						\
-+	asm_inline(".option push\n\t"				\
-+		".option norvc\n\t"				\
-+		"1:\t"						\
-+		SRLI "%[__ret],%[__val],12\n\t"			\
-+		".option pop\n\t"				\
-+		".pushsection runtime_shift_" #sym ",\"a\"\n\t"	\
-+		".long 1b - .\n\t"				\
-+		".popsection"					\
-+		: [__ret] "=r" (__ret)				\
-+		: [__val] "r" (val));				\
-+	__ret;							\
-+})
-+
-+#define runtime_const_init(type, sym) do {			\
-+	extern s32 __start_runtime_##type##_##sym[];		\
-+	extern s32 __stop_runtime_##type##_##sym[];		\
-+								\
-+	runtime_const_fixup(__runtime_fixup_##type,		\
-+			    (unsigned long)(sym),		\
-+			    __start_runtime_##type##_##sym,	\
-+			    __stop_runtime_##type##_##sym);	\
-+} while (0)
-+
-+static inline void __runtime_fixup_caches(void *where, unsigned int insns)
-+{
-+	/* On riscv there are currently only cache-wide flushes so va is ignored. */
-+	__always_unused uintptr_t va = (uintptr_t)where;
-+
-+	flush_icache_range(va, va + 4*insns);
-+}
-+
-+/*
-+ * The 32-bit immediate is stored in a lui+addi pairing.
-+ * lui holds the upper 20 bits of the immediate in the first 20 bits of the instruction.
-+ * addi holds the lower 12 bits of the immediate in the first 12 bits of the instruction.
-+ */
-+static inline void __runtime_fixup_32(__le16 *lui_parcel, __le16 *addi_parcel, unsigned int val)
-+{
-+	unsigned int lower_immediate, upper_immediate;
-+	__le32 lui_res, addi_res;
-+	u32 lui_insn, addi_insn;
-+
-+	lui_insn = (u32)le16_to_cpu(lui_parcel[0]) | (u32)le16_to_cpu(lui_parcel[1]) << 16;
-+	addi_insn = (u32)le16_to_cpu(addi_parcel[0]) | (u32)le16_to_cpu(addi_parcel[1]) << 16;
-+
-+	lower_immediate = sign_extend32(val, 11);
-+	upper_immediate = (val - lower_immediate);
-+
-+	if (upper_immediate & 0xfffff000) {
-+		/* replace upper 20 bits of lui with upper immediate */
-+		lui_insn &= 0x00000fff;
-+		lui_insn |= upper_immediate & 0xfffff000;
-+	} else {
-+		/* replace lui with nop if immediate is small enough to fit in addi */
-+		lui_insn = 0x00000013;
-+	}
-+
-+	if (lower_immediate & 0x00000fff) {
-+		/* replace upper 12 bits of addi with lower 12 bits of val */
-+		addi_insn &= 0x000fffff;
-+		addi_insn |= (lower_immediate & 0x00000fff) << 20;
-+	} else {
-+		/* replace addi with nop if lower_immediate is empty */
-+		addi_insn = 0x00000013;
-+	}
-+
-+	addi_res = cpu_to_le32(addi_insn);
-+	lui_res = cpu_to_le32(lui_insn);
-+	patch_insn_write(addi_parcel, &addi_res, sizeof(addi_res));
-+	patch_insn_write(lui_parcel, &lui_res, sizeof(lui_res));
-+}
-+
-+static inline void __runtime_fixup_ptr(void *where, unsigned long val)
-+{
-+#ifdef CONFIG_32BIT
-+		__runtime_fixup_32(where, where + 4, val);
-+		__runtime_fixup_caches(where, 2);
-+#else
-+		__runtime_fixup_32(where, where + 8, val);
-+		__runtime_fixup_32(where + 4, where + 12, val >> 32);
-+		__runtime_fixup_caches(where, 4);
-+#endif
-+}
-+
-+/*
-+ * Replace the least significant 5 bits of the srli/srliw immediate that is
-+ * located at bits 20-24
-+ */
-+static inline void __runtime_fixup_shift(void *where, unsigned long val)
-+{
-+	__le16 *parcel = where;
-+	__le32 res;
-+	u32 insn;
-+
-+	insn = (u32)le16_to_cpu(parcel[0]) | (u32)le16_to_cpu(parcel[1]) << 16;
-+
-+	insn &= 0xfe0fffff;
-+	insn |= (val & 0b11111) << 20;
-+
-+	res = cpu_to_le32(insn);
-+	patch_text_nosync(where, &res, sizeof(insn));
-+}
-+
-+static inline void runtime_const_fixup(void (*fn)(void *, unsigned long),
-+				       unsigned long val, s32 *start, s32 *end)
-+{
-+	while (start < end) {
-+		fn(*start + (void *)start, val);
-+		start++;
-+	}
-+}
-+
-+#endif /* _ASM_RISCV_RUNTIME_CONST_H */
-diff --git a/arch/riscv/kernel/vmlinux.lds.S b/arch/riscv/kernel/vmlinux.lds.S
-index 002ca58dd998cb78b662837b5ebac988fb6c77bb..61bd5ba6680a786bf1db7dc37bf1acda0639b5c7 100644
---- a/arch/riscv/kernel/vmlinux.lds.S
-+++ b/arch/riscv/kernel/vmlinux.lds.S
-@@ -97,6 +97,9 @@ SECTIONS
- 	{
- 		EXIT_DATA
- 	}
-+
-+	RUNTIME_CONST_VARIABLES
-+
- 	PERCPU_SECTION(L1_CACHE_BYTES)
- 
- 	.rel.dyn : {
-
----
-base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
-change-id: 20250123-runtime_const_riscv-6cd854ee2817
--- 
-- Charlie
-
+So, in the interest of moving this set forward, that wider fix can be
+deferred to a later rework series that address all the dynamic DVSEC 3,7
+issues.
 
