@@ -1,149 +1,123 @@
-Return-Path: <linux-kernel+bounces-510824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 407D4A32294
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:40:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7285AA32290
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54B903A9410
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:39:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F26B7A48D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E94820C49E;
-	Wed, 12 Feb 2025 09:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB8C2063EF;
+	Wed, 12 Feb 2025 09:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1bY7ylZ7"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WvUfhgYz"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F15207E19
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0969C209669;
+	Wed, 12 Feb 2025 09:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353019; cv=none; b=MhrLKYZzgfbcFuJglJp1I5rYx3573PzzFC+ba4dnphqFJYlPPNjR/ahvtlC+oL6D1pnwvkOEK0veohgZrgzgdN+hi+dqNvKVRejJKG6a5n5ThqA4RQAc0tXsaM0z3ev6cSgzfQPJ6PYGF0OX8B0pPdVGVJFVbVO/GrvTzs47gJE=
+	t=1739353056; cv=none; b=uE6Q0uq4yp2xYW89Gn1SFEL0N+4Xl0cusWpRGfGjhdj4hGNkPSmgMcZXnYUCRBCfOFPkAB0WNbbPRW4fAFFybY3bNMPi4vzyjxn/ww18hU+qF3spLc07il3EhMLftb+P/f61S61OESUeNVVAHjOkw34pEXIeWSb5SiD0WuALNwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353019; c=relaxed/simple;
-	bh=7KT0FF/FzIbIE6w2ehfIcEyeGHIB5NZeS2fUmYmWmwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a0t78fda63BKLBuqvTfENIL5KKuNmw1lcASZoMk4538UkIQ8wuh5GfqnVfsNhssO2L7+7V6/s3UCh6x8UyB1A0EBVhN71iJfGI8a5gDuveZwZv3hpb8OXCD8yXslf25KLxbIKGQ2N4x718H2jSXjcbqWhGWhY5oP/q0LbnzTlDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1bY7ylZ7; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4394820123dso18647065e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 01:36:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739353016; x=1739957816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NRhZaB3W6faFlCbku+LscU579s6QSzZfyLaHX9G8q1c=;
-        b=1bY7ylZ78sEe+qzdUjM2zmGfl1QOFXMRsX6hXdSa68HPLuyAOu9iJXDh0S+L6QuX6e
-         NGG0J80Xki52AuIezFQssR0b3LYZRjmc7w2Mi+gjGrz5fFn4u9aYZ9BEBvvJl2YQVLzm
-         34JyT8vew1VSBU9l4TeMWsrWJoOSZqen1K0wrXR5UVDzay1x1nMCl2fgAkqD0yTgz+6l
-         rvVXrBNSuIMhJtFa8EvuqyyKbBN1JrdwVZDhRpe+gGQDpssIr6uTkd3BnUVVRgbzh/6k
-         JwBUSbRHO5tJlDdyhhgPLpTIFpDVbsOizKfSb9nUArzef29+F7UPKxezK8ze/Pok4iI8
-         CHKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739353016; x=1739957816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NRhZaB3W6faFlCbku+LscU579s6QSzZfyLaHX9G8q1c=;
-        b=Wwj79a3cI2znl6ehK6KvxJzEAfySgDVh36jMGqBPO+P84BZdlP3Q7d3X8ko4SSSgMD
-         /hQ97eSJ7FFHdPKPJJr66otyEJx8S7W0ezQ8faI8d7npEMFnIwjwwj/DUnNVh1wqIWyu
-         Oa0cDG9N7laZLcY+ic281DvCQvO21aTa+vZrT/h4f4wvdmlL2oh3GP62Erp3Gdzase/B
-         P86jzpXltJ3nts0k2Co5YF5LrW8QDzs9pTH1JUIukptdL9XE5FZzqYwkCswo/SAfvfQ4
-         BP6L/CfxYDxKqHsjv43pSsz8KqfbiG2Td2yUyPBqTTM3lwSxfzIQPcSDGK6U9Pkfv+u8
-         zwoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl8I4/yqeZlt3TxPIgsZeiMKFYpGf8Ak+QWtslx8CxA7kziwFydn/61jOilSKnrajfpnGyujzD/02z8fk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6UZw3BYFur/envP8+QW/jbxBkXSfLLjiOPI9iOieHy3a+rV4a
-	aMv71RPAdXNKPsmg7NjdbTXCB5cUzCGuSDjjo0Fg+gJc9T2zPNjfbsFUOdrAhPM=
-X-Gm-Gg: ASbGnct90LIrRsf/wJH/WwegzeoZjZ98aRJdeWkIzAYhjwMSe5zyUvtmveIwNwUZne/
-	LW/G37OQBhNG4VQhnlyNnt3SU5lCVT1UKFCFCoNb759RcwWMLhmASG0+ym4k9me4iNcJM5DBpnt
-	rljEgbBaivD9P8F/mvJuCLN3dg8pjuj9jv3QpBk2KFVpSOe4q+voFdaVjMf2AlukBXH05ToYmv2
-	rGK+SO/oiQIIaXIqSenT/WrXr8ELQvsDEuSpMdhSrZzFNdkQmcdf6iF4vYl8gIKtkI4ENg9UjC8
-	p0cIYxFiWGALktM=
-X-Google-Smtp-Source: AGHT+IFQnul0kNzls6ThIvi1z7bQ429pLFDaGlT/FcOXJm3pTEnq6re0+Qc4O8V8syw5sWV5sK78UQ==
-X-Received: by 2002:a05:6000:188b:b0:38d:b34a:679 with SMTP id ffacd0b85a97d-38dea2cefc8mr1824460f8f.37.1739353016217;
-        Wed, 12 Feb 2025 01:36:56 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:521c:13af:4882:344c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a078448sm14132935e9.34.2025.02.12.01.36.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 01:36:55 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Peter Rosin <peda@axentia.se>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	David Lechner <dlechner@baylibre.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: (subset) [PATCH v3 00/15] gpiolib: add gpiod_multi_set_value_cansleep
-Date: Wed, 12 Feb 2025 10:36:53 +0100
-Message-ID: <173935301204.11039.10193374588878813157.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
-References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
+	s=arc-20240116; t=1739353056; c=relaxed/simple;
+	bh=g/jxvtEieoR9thBQ1v/PKEAtaAP8MyOBWUQMZHkH7cM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmk/DLlBrFwbm2YjLNDdY1c/XuHwdtilXTfbFjr609qN4olGTbs3Dcqamvvtb6fYJ+1VAzM7yTabTw9snvkNdLJbfR5cgEPVgZHHV1BsSz2To3alKHRrtgCbjvInXi4FuYYoJfD76/tPDSKJgmiI5tzJ/5tsdvIzjQXR5Xuku7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WvUfhgYz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HEALg1IGx6/LckpOQHDyFWyXlK0VFMy3UaS9Vl8dN20=; b=WvUfhgYz5XWHXsspF+k3YI8aZ3
+	Ex1OmuY1woiRJBeky/G9aVU6xWErS6aj+eDCxkrGzdLnr7WP2AikaGyY9ZdqKHKt98eolDfwI+ZJn
+	e1UVj+K3kYJqRHTWWjTDZou/zlw5NpYotKiFCVgCVSIl8KvVdKjysmc+pCfit/jln3RSRvLiOuGjY
+	45i8k4eJHxYTY+bYQVU882JiQ6bDm1w/29XxLY0tokFHs9dR8s7QtyCpLE5G1usTCLm7nQMxduXAX
+	g32qE61Zjx0/xVSjOcoyVad7nWD9LXMcK5/6ay5invyY/zSSP0Hn515KxVwoKyhcWjJR4jRdMoKzg
+	61t7SDlg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1ti9BL-00000004AIA-0oYB;
+	Wed, 12 Feb 2025 09:37:23 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8F84E300318; Wed, 12 Feb 2025 10:37:21 +0100 (CET)
+Date: Wed, 12 Feb 2025 10:37:21 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Cristian Prundeanu <cpru@amazon.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
+	Ali Saidi <alisaidi@amazon.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Geoff Blake <blakgeof@amazon.com>, Csaba Csoma <csabac@amazon.com>,
+	Bjoern Doebel <doebel@amazon.com>,
+	Gautham Shenoy <gautham.shenoy@amd.com>,
+	Joseph Salisbury <joseph.salisbury@oracle.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Borislav Petkov <bp@alien8.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2] [tip: sched/core] sched: Move PLACE_LAG and
+ RUN_TO_PARITY to sysctl
+Message-ID: <20250212093721.GA24784@noisy.programming.kicks-ass.net>
+References: <20250119110410.GAZ4zcKkx5sCjD5XvH@fat_crate.local>
+ <20250212053644.14787-1-cpru@amazon.com>
+ <20250212091711.GA19118@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212091711.GA19118@noisy.programming.kicks-ass.net>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Mon, 10 Feb 2025 16:33:26 -0600, David Lechner wrote:
-> This series was inspired by some minor annoyance I have experienced a
-> few times in recent reviews.
+On Wed, Feb 12, 2025 at 10:17:11AM +0100, Peter Zijlstra wrote:
+> On Tue, Feb 11, 2025 at 11:36:44PM -0600, Cristian Prundeanu wrote:
+> > Replacing CFS with the EEVDF scheduler in kernel 6.6 introduced
+> > significant performance degradation in multiple database-oriented
+> > workloads. This degradation manifests in all kernel versions using EEVDF,
+> > across multiple Linux distributions, hardware architectures (x86_64,
+> > aarm64, amd64), and CPU generations.
+> > 
+> > Testing combinations of available scheduler features showed that the
+> > largest improvement (short of disabling all EEVDF features) came from
+> > disabling both PLACE_LAG and RUN_TO_PARITY.
+> > 
+> > Moving PLACE_LAG and RUN_TO_PARITY to sysctl will allow users to override
+> > their default values and persist them with established mechanisms.
 > 
-> Calling gpiod_set_array_value_cansleep() can be quite verbose due to
-> having so many parameters. In most cases, we already have a struct
-> gpio_descs that contains the first 3 parameters so we end up with 3 (or
-> often even 6) pointer indirections at each call site. Also, people have
-> a tendency to want to hard-code the first argument instead of using
-> struct gpio_descs.ndescs, often without checking that ndescs >= the
-> hard-coded value.
-> 
-> [...]
+> Nope -- you have knobs in debugfs, and that's where they'll stay. Esp.
+> PLACE_LAG is super dodgy and should not get elevated to anything
+> remotely official.
 
-Applied, thanks!
+Just to clarify, the problem with NO_PLACE_LAG is that by discarding
+lag, a task can game the system to 'gain' time. It fundamentally breaks
+fairness, and the only reason I implemented it at all was because it is
+one of the 'official' placement strategies in the original paper.
 
-[06/15] gpio: max3191x: use gpiod_multi_set_value_cansleep
-        commit: eb2e9c308d2882d9d364af048eb3d8336d41c4bb
+But ideally, it should just go, it is not a sound strategy and relies on
+tasks behaving themselves.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+That is, assuming your tasks behave like the traditional periodic or
+sporadic tasks, then it works, but only because the tasks are limited by
+the constraints of the task model.
+
+If the tasks are unconstrained / aperiodic, this goes out the window and
+the placement strategy becomes unsound. And given we must assume
+userspace to be malicious / hostile / unbehaved, the whole thing is just
+not good.
+
+It is for this same reason that SCHED_DEADLINE has a constant bandwidth
+server on top of the earliest deadline first policy. Pure EDF is only
+sound for periodic / sporadic tasks, but we cannot assume userspace will
+behave themselves, so we have to put in guard-rails, CBS in this case.
+
 
