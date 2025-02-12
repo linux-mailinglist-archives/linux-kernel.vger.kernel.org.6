@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-511163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC9BA32718
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:29:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D02A32720
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:30:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F5A3A7E5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81EEF1883BFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1D20E317;
-	Wed, 12 Feb 2025 13:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2634520E33D;
+	Wed, 12 Feb 2025 13:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S5nJwnWs"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2o7GEuq"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2294120E03B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 13:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7453205AA7;
+	Wed, 12 Feb 2025 13:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739366943; cv=none; b=lpPnQX8zOJSQ2rYEtSY887n6zItYYsG7iMH07GVEcSSzxo3J3sfWH/UY0bNBYXOvfHkmpCW80TM6vrJqsSYZF+4B/1coUg6cdnzN5nC5PEGlpZqduG6LkuUd0vaIpMqBedbnLSM/qLHg6a4vw2tl/HHKLv/120ClB+Mw6wtgJZs=
+	t=1739367023; cv=none; b=tHFQL1Nbi4rWcPAdR0fAZJ2yUuXyTpLFTZNVXsV3DU8Bx2LunS52hStMK6KctS7qWtqtvHqN8r+Ff30XTdheidUl2gWRjf6O1TufSGYbaOvJfyxJCpkUKJs53LUSfQqnLji+UyXgv8dIl0Up9CGcoXkpqMI3FWtik+Sc/jh63GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739366943; c=relaxed/simple;
-	bh=dcPwOogXC38uVoyd6zrdXBJSymZEmEN1/uCRO1Visbg=;
+	s=arc-20240116; t=1739367023; c=relaxed/simple;
+	bh=8OarCyi/2sBPTXHgjyXYueHQFxb9Vqk/YkPHGmY0XbQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KbNAjcoIXEAY62D9kph2Dq00Dksf2VebmkBkNDa9bx1A7ahHNS8LzJClHVoMMaddjCgO/5T8IOJtaLvgyHYUQyObcvuQwGIlM7GbGlvh9GB1vxjoh3TyvsBIihCEBkDqVGDFLRrtoume28VQCqPKzHk3E4CjHeq2UgshTfqR5YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S5nJwnWs; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47180c199ebso267631cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:29:01 -0800 (PST)
+	 To:Cc:Content-Type; b=swvcMW/UvT0dyfcz4ncMfkB+jO6XofRoGKCLoj3wlL6JU39uuwvD1/JH/JVaQKTsmVsghBlIHMv0EK6ZNJLHYhYYd/Aod6l+gPlW5PPpiqnZ/ZdB24pQ9kqTloCUz/hQ71U3QmKYZ5ANSVd1eUl1e3dVeHiu9jp44fD3L1bR7xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C2o7GEuq; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so3587419f8f.2;
+        Wed, 12 Feb 2025 05:30:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739366941; x=1739971741; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1oevKEhZpdcUgIPsqB5jXWn7er2+P5SxSWdzJyUQCGc=;
-        b=S5nJwnWsK0bSfeweEPKK4yCbogl6hej/8HoY9RlgHRaZHL5gk2YgNwTBz+gyJnjlBe
-         v8myqvuXkzVhY8o4Tkd+RLWXPUtAYdhznqziZXUI/BzwQugHiDNuYXAW0gIsGNyq93oD
-         WimKb8E1JrLzJRIRli/PdfYtuS56w+1HkW2EQKd3G2ug9kj3WlIQBBqxnkch5yCB3Tun
-         rRvKlQGPWoyzMHsCYVrM1GjYtMFEDLBj+GdcbmqGT6Zkw82w591JzVGxitV+6ASZSWay
-         lFjpoOImugKFbg/4UIk/5w3OfkeFdMlxMmU/C/oLmrSP8Y8LZtIx1MzjknpYpp3atD6K
-         jTIA==
+        d=gmail.com; s=20230601; t=1739367020; x=1739971820; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8OarCyi/2sBPTXHgjyXYueHQFxb9Vqk/YkPHGmY0XbQ=;
+        b=C2o7GEuqzsfHT39dEX/2/J9EMiXxE8tNLzVd03uX8FmzuVURnN4WS2APlLNiMiV5vX
+         SPw6OlUUcNCPIwmDbMdC/Z8jEHXa9APinFLHsm6Jbs1lcugHDX3amd4ZDoUcTTZ7IrWO
+         o2o/J87gcFwX1HWy5d9Jqf29VPD1IyeJ/EijF3KgFv8WBILLiVZPER0oryQlLmh9OZeX
+         iL4s365x5jOLeFWU/6ctw8BQwyjMNgncn0xgUyPKX3tKbWe5dDDyrnT/EEBreNBiXpt6
+         JIXWvf+AOiqboDd0UuO9WJ6dAgOqpLRZS7nOnz3lIbsz7+7MGvBQ85eDELHhmJdwUVwl
+         KB9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739366941; x=1739971741;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1oevKEhZpdcUgIPsqB5jXWn7er2+P5SxSWdzJyUQCGc=;
-        b=Bx/94hh5703fVqbFWD2Qz49JL3PI9FYnD3df1YymEQSbTQnjDvawflahoKOLe8bxzU
-         IIweuASsjpCh9La6vV1ffsYE5gJ7D3V/kZbVXKRn0IFpv4vj4OEwDFzlq5+RNGuF+oMv
-         cDc9MgjhoNJKOTpKxoCSP3XhNgWlxz1pNRovDepuzc+AiWTd+J25Lhg1Fn3UY+jJVvfv
-         rpkpMsfkOAwhG5xqFbZBIJ5Ib/RUNCAVwZRNyHsyTVRo0UN2R1NbgNTDF0m+/EodkaY8
-         CwgB40zECn/TjYXLul7RtUtN2dlVhTSr3rMs5VkZlyQ3H5TG8HvS85KEmsQNddYcC9WC
-         pxGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtUEQDVqeiTH7ZvNazehDlcSnbzmUOCb8GUlPt37jj94N0J1M1kDZ+bpPWXqqESGojf3bygQBgzPkXAFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/NDVvw5IZOoLhVHMVQc6/GuEe1nX5FhRIVLqXF92DC01XJSPw
-	U41mYr10ul6SZSTh/o+YTMUPjQvPrgmAuVnB5JPM8i94V36F6BzzBiLxsZn28SXqorb2AxxIAH4
-	6n367hHm4U+ZYH6FLD/4d8G6436OBluvU4kBX
-X-Gm-Gg: ASbGncvpEFj+cOqlokjkA4CN6PCH2e0AEF5VKSW2wT8Ywhts9rSWRkbk9i+DlXx7HMI
-	WFn0eLnwUagyG8kwyDt6c49Ui79yse3Ar33P+zuXiI8d8teHg1xdG8nqXyQE1o4yBaMD7AVhicZ
-	cCEM4/Ann+ug7y6Uc8aI2FvZ/znpY=
-X-Google-Smtp-Source: AGHT+IFY7L/Myi794B1SK+3UlK21ZXz5RBVCl3KeIJna5/SZL0sEYBOmA5JkjmD5IfT9EtGDO2KAnqAmYbqEqpdLGX0=
-X-Received: by 2002:a05:622a:606:b0:46d:f29d:4173 with SMTP id
- d75a77b69052e-471b0211422mr3517011cf.16.1739366940740; Wed, 12 Feb 2025
- 05:29:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739367020; x=1739971820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8OarCyi/2sBPTXHgjyXYueHQFxb9Vqk/YkPHGmY0XbQ=;
+        b=n+oZmBydoaQvzK+uVfCToI1qOre/qwB1Suc9ShJ9KsRDbOotBs5xU4KbsdwmMV1esw
+         OSyrz3QQJBBsbcQrlK6KHuo4scICD3UNx9GKVO1iX1pSNpzWO11TXLKIEBaRY1gbOXs1
+         UsSH+JKDtkLrZiAy2XMWXD1yMcQfQTrQbUhxdULGBep/hjRrP7nrELf7LVkLWtysIeM1
+         6YY5PWZY9UyagTde7W7+B1dyRB8vOvwB0eK5cJq1lKBCQy35r7lysWZIhOtRSNFoDjAU
+         +MQs5xYYm5ks9TpXpPZnTLQ843DLBxpYtf5Hxd3GOR1aVdVdnIbZTFnPleEQBZKTUrTQ
+         0CfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBDIW9ibMLtIWMEf7sMCVPD1h7h6idcEuBxTDp71S3AC5NKujIg03pJrCxFXSClmMEWaMy0ZQX@vger.kernel.org, AJvYcCVBILCrGTHXm9DHmyLKqbum7vMim+jnBgEJfRfqGfaHzdCba4lsElK/lNH84/bs80SrMN8paTZmK/JYaqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIK6YxHg3suKTMsuIL3vkZnf7rbDpGCk42q0UAceV1f0wlwtf5
+	JTp7yY0MaSPgCkEt4HYjknTed572WtVNL7DtkF32GqaOE57gx+x7jpRZtnAcf9CHcPZCU7Y/azQ
+	zpggXWoHB9UI5bHzkGkcZ3cWw3euWmbQflCk=
+X-Gm-Gg: ASbGnctj7nTNiXETQro7ttM4FH0KoE4fI/cfFC5VY/Qcl0YAwEEUNegFr70ERgW8uFc
+	kh/LLD5fj2j8rGrUjFSej8njjywaMxN19bcKHsoGePcfHpYsrCylbwnG3LItDM40K6i0LjRkZ7A
+	==
+X-Google-Smtp-Source: AGHT+IFHhh5oqpyH/D2cfy7b78tMJZ2mZRqa66iVfEVT5BzSiqHsS6yyRfF8NNzh1IUfxIUwZEPDfOysfmKOXL8O0Yo=
+X-Received: by 2002:a5d:6dac:0:b0:38d:c433:a97 with SMTP id
+ ffacd0b85a97d-38dea2ece71mr2616786f8f.47.1739367019588; Wed, 12 Feb 2025
+ 05:30:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211210823.242681-1-riel@surriel.com> <20250211210823.242681-10-riel@surriel.com>
-In-Reply-To: <20250211210823.242681-10-riel@surriel.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Wed, 12 Feb 2025 14:28:49 +0100
-X-Gm-Features: AWEUYZn7d4B4bRC0FiC6VGjDHlL6JQqFPYLv5MVNharb2RHtWqjjfMY6zCfQF3A
-Message-ID: <CA+i-1C3-F-VAy_JccwKx_AcD1mXsVcGHGwUFvi_ruAiqusiXZQ@mail.gmail.com>
-Subject: Re: [PATCH v10 09/12] x86/mm: enable broadcast TLB invalidation for
- multi-threaded processes
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
-	peterz@infradead.org, dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com, 
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com, 
-	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com, 
-	mhklinux@outlook.com, andrew.cooper3@citrix.com, 
-	Manali Shukla <Manali.Shukla@amd.com>
+References: <20250211224705.13576-3-stuart.a.hayhurst@gmail.com> <49bc1a59-1f5b-456b-aba4-be056d091e26@kernel.org>
+In-Reply-To: <49bc1a59-1f5b-456b-aba4-be056d091e26@kernel.org>
+From: Stuart <stuart.a.hayhurst@gmail.com>
+Date: Wed, 12 Feb 2025 13:30:08 +0000
+X-Gm-Features: AWEUYZkEXnEYq6yzKdSaRoeVNiAFAPbvzkfeEth-6I9Rr5PKawyR8ob7sDkBRfw
+Message-ID: <CALTg27=ZNv5taGCXChRtW90WXfS8iz10koQcSScLJaTHbXwfYg@mail.gmail.com>
+Subject: Re: [PATCH v2] HID: corsair-void: Update power supply values with a
+ unified work handler
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-input@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Feb 2025 at 22:09, Rik van Riel <riel@surriel.com> wrote:
-> +       /* Transition from global->local ASID does not currently happen. */
-> +       if (!global_asid && is_global_asid(prev_asid))
-> +               return true;
+> No \n ^^ here.
 
-What about a WARN_ON_ONCE? Then the code contains evidence that the
-comment is true. IIUC this isn't just a "not implemented feature",
-rather there is plenty of other code that would need to be updated to
-make it safe.
+Thanks, corrected that
 
-> +static void use_global_asid(struct mm_struct *mm)
-> +{
-> +       u16 asid;
-> +
-> +       guard(raw_spinlock_irqsave)(&global_asid_lock);
-> +
-> +       /* This process is already using broadcast TLB invalidation. */
-> +       if (READ_ONCE(mm->context.global_asid))
-> +               return;
-> +
-> +       /* The last global ASID was consumed while waiting for the lock. */
-> +       if (!READ_ONCE(global_asid_available)) {
+> I would do an enum, but it's a matter of taste/preference.
 
-I think the READ_ONCE is unnecessary while we have the spinlock, it's
-fine if this read gets split or whatever?
+I suppose that makes more sense since they're related, applied
 
-Ditto for mm->context.global_asid, it's only modified with the lock held.
+> What is to skip a battery? Anyway, the comments here seem to be
+> superfluous as the code is obvious=E2=84=A2.
+
+It was supposed to indicate doing nothing if there was a request to remove =
+a
+battery and another to add the battery, what would you suggest?
+
+> Perhaps '&& drvdata->battery' instead of the nested 'if'?
+
+Sure, what about corsair_void_add_battery()? It's got an equivalent
+condition inside it, should I leave it there or move it to the
+'add_battery && !remove_battery' for consistency?
+
+Thanks for the review,
+
+Stuart
 
