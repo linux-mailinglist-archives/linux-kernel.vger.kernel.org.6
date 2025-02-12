@@ -1,152 +1,142 @@
-Return-Path: <linux-kernel+bounces-510959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2872AA3241C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:59:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D9FA3241F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:59:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09811632D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3C263A5F80
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845D8209F44;
-	Wed, 12 Feb 2025 10:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181FC209F49;
+	Wed, 12 Feb 2025 10:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+i7e48A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMLmFD/O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8303206F2C;
-	Wed, 12 Feb 2025 10:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD06209F35;
+	Wed, 12 Feb 2025 10:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357953; cv=none; b=jL6jQqoMswfCvYF9IEFQ7r3AuhbXVwHyANMM3Lb+MXqPUgHVW9Ea5Vgw57ulIwvQUocHrDLduO/C8Pd3s1a//3qoQN4Xh32z4Cob6raKaSkpfyyo2GvQGlIzMmgR8Ve5XwqP3QGWVQc6ua28WJ42nGjhAbTPaQiZbRq1ntNXPJc=
+	t=1739357969; cv=none; b=ZzCrdtl+uYShwu9z0TVPuwQAKWCCsgeSUeglVBHDqnhbwQ8CNXnER4v0lh0i7DhYCsgeYqoS3bu5VTe89TMdgGuOKckGvBhG3lMrpYvICUP2tv35U6PuG3se0Gr4vFF5jVvDRDzs3aKwZu5Kj5m2r9pXPE7LA6f+5j46YE4RhTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357953; c=relaxed/simple;
-	bh=6ynvjwiirw9pMPqaFmUszoi8riMDvjaa43Q0OnomhyY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IQRdRiV6JS/5RZEPsPtEqjjwiDLmur2pQJMOMKAkIA2RCzd+aTB8QRygs65DpY24+GNS/n34sG/4Yf0qGdkCOqj93b8W3llIRvHRkPV5Yz2d7q3ECEZwVpipe6V30ZjqeMsoDEfWX1WGgH1d72lUv4B3+UCqnLERFmfJaEfknnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+i7e48A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AEC8C4CEDF;
-	Wed, 12 Feb 2025 10:59:13 +0000 (UTC)
+	s=arc-20240116; t=1739357969; c=relaxed/simple;
+	bh=SWfK5E+asiqNvK5yZlVvwPZxamhKEoIr2RspAVaSiYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pHIVf9L5LBHQ4gPCCTIEeggGUeC+5mZf1q37iX6nFlyT7PMiQ1IgnFJsNmw6QPt3HNrJkCuIUXmsBOwrDoA7mt3nMfO/FA04/otuos2mW0N6CT96vNwmh2JDCGrAZOV9VCthvTbB28wxJ/lBYTrhnnZ2M2sH5WYzGUA2qhRGo9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMLmFD/O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E03CEC4CEDF;
+	Wed, 12 Feb 2025 10:59:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739357953;
-	bh=6ynvjwiirw9pMPqaFmUszoi8riMDvjaa43Q0OnomhyY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=I+i7e48A18OPZ7QAL7RlpiB+2HBjm7fKAEJG2P4o4hm10eY1DB/8aLTIL59Q848cq
-	 wQOhwOR6Vym90bja0VZT9/TeyZxpuXyxG5tM4nXGFqdJqBJ1f1IPN0+4a+J50+cqAD
-	 e1DqC0XHa02wH8JgMvGDGKAz2yEZqm0PQKhOYdlnPf6Jp+/kpnYC4Fqh5ZSvLmNWyu
-	 rDXTniMapqot6GwsVx8hSHql+lihgCNPPVN7OXGTdg1o7/7f1xW3ymsuHWcNsUuMLN
-	 OYpnF2r+UMjQTWwzVO9I2CjPhXITvsgnGwchcw4e3lU0APuyST7sv7wrVrykB1r2V8
-	 sYU15cHoLTTig==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-29fe83208a4so432052fac.0;
-        Wed, 12 Feb 2025 02:59:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV7DOdLTX2hdF/E/6OfJnGczaoFP7UrhGijBeZkf8dZq9lEYG4o63Ynl7nr+bIMv6GFHX2LhMqNIJI=@vger.kernel.org, AJvYcCX2dNVhtsmm94MsI5Z/HyXnOneobiXKtr7yoaka4prlzRjc5rb8ingRwxebrPRv7lRynY5gAvnKTqO+Kac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIwR/hnRf2KssHv5/yRkcwfuamQyjpiw/R8w63aqFLGAoTmJB4
-	SjQAIyW++Xo9eGy4laRZVRNqSQckF13xh32b6EG0P50sHW6VsaJAA0BoI93S3rZMmilre6kLk2W
-	ZlTQvMAGDHgZ7HJyizJY+EM0G/Mk=
-X-Google-Smtp-Source: AGHT+IG8QKAMUrvf7UKtROR6aDoc2C+w6x3rW2FjrqQKNmgcv5Enubi24yKLLGjLSma4ad+RujMSCIDPV2yBLz/vRGs=
-X-Received: by 2002:a05:6870:9a21:b0:2b8:a5a9:c615 with SMTP id
- 586e51a60fabf-2b8b6d5f653mr4471213fac.3.1739357952589; Wed, 12 Feb 2025
- 02:59:12 -0800 (PST)
+	s=k20201202; t=1739357968;
+	bh=SWfK5E+asiqNvK5yZlVvwPZxamhKEoIr2RspAVaSiYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tMLmFD/OmNgxxb45yMeX28QBLtpg/DOvT+SjeE+Uyd+Yp9CTpS5fuVbZEludZP2ga
+	 rpLj5CYe4nBU0aCo5nI+g1JzfU7MrgC+vVXh0wOvUvL5KYUekmR/MzHeakrFX7wqgZ
+	 GTa6N7eMr/0opIkPgDCFwrB2iC+6pd61wKpfbMjbWeVnpjaiwqO4wZAZG70v0C+EQF
+	 ohI094oTMCz7nEWhWaMepScQy4Sq+CwvTAMj9PEHXUZbz+1YYAb0cSiAUrNgnDft6a
+	 QH9Mo2AifpiuGfl2mT0CxEhTwoi7Oktz4uYOJmWNlypp8b7Iiv3lMzbQ3wFi6x+vY+
+	 4O0wMJYDUN5Xw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tiASu-000000001ca-0GAw;
+	Wed, 12 Feb 2025 11:59:36 +0100
+Date: Wed, 12 Feb 2025 11:59:36 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Saranya R <quic_sarar@quicinc.com>,
+	Frank Oltmanns <frank@oltmanns.dev>
+Subject: Re: [PATCH v2] soc: qcom: pdr: Fix the potential deadlock
+Message-ID: <Z6x_GJg92ddzoRwQ@hovoldconsulting.com>
+References: <20250129155544.1864854-1-mukesh.ojha@oss.qualcomm.com>
+ <nqsuml3jcblwkp6mcriiekfiz5wlxjypooiygvgd5fjtmfnvdc@zfoaolcjecpl>
+ <Z6nE0kxF2ipItB2r@hu-mojha-hyd.qualcomm.com>
+ <Z6nKOz97Neb1zZOa@hovoldconsulting.com>
+ <Z6uDv3c3DkmgumnM@hu-mojha-hyd.qualcomm.com>
+ <Z6xr3ylNSC6iYf-C@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2314745.iZASKD2KPV@rjwysocki.net> <CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQGwNWeteJWqpW29BojhQ@mail.gmail.com>
-In-Reply-To: <CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQGwNWeteJWqpW29BojhQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Feb 2025 11:59:01 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0h44Yxp95pHW+75gk5yWKviLO1_YK_cZNFKaGnid7nx9A@mail.gmail.com>
-X-Gm-Features: AWEUYZnUZ89kR8nnk8jl2vFBp3d8Lo9uDbYIeRM2O4NyovM9vBRPbcJB9RpaZBU
-Message-ID: <CAJZ5v0h44Yxp95pHW+75gk5yWKviLO1_YK_cZNFKaGnid7nx9A@mail.gmail.com>
-Subject: Re: [PATCH v1 00/10] PM: Make the core and pm_runtime_force_suspend/resume()
- agree more
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Jon Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6xr3ylNSC6iYf-C@hovoldconsulting.com>
 
-On Wed, Feb 12, 2025 at 10:12=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.or=
-g> wrote:
->
-> On Tue, 11 Feb 2025 at 22:25, Rafael J. Wysocki <rjw@rjwysocki.net> wrote=
-:
-> >
-> > Hi Everyone,
-> >
-> > This series is a result of the discussion on a recently reported issue
-> > with device runtime PM status propagation during system resume and
-> > the resulting patches:
-> >
-> > https://lore.kernel.org/linux-pm/12619233.O9o76ZdvQC@rjwysocki.net/
-> > https://lore.kernel.org/linux-pm/6137505.lOV4Wx5bFT@rjwysocki.net/
-> >
-> > Overall, due to restrictions related to pm_runtime_force_suspend() and
-> > pm_runtime_force_resume(), it was necessary to limit the RPM_ACTIVE
-> > setting propagation to the parent of the first device in a dependency
-> > chain that turned out to have to be resumed during system resume even
-> > though it was runtime-suspended before system suspend.
-> >
-> > Those restrictions are that (1) pm_runtime_force_suspend() attempts to
-> > suspend devices that have never had runtime PM enabled if their runtime
-> > PM status is currently RPM_ACTIVE and (2) pm_runtime_force_resume()
-> > will skip device whose runtime PM status is currently RPM_ACTIVE.
-> >
-> > The purpose of this series is to eliminate the above restrictions and
-> > get pm_runtime_force_suspend() and pm_runtime_force_resume() to agree
-> > more with what the core does.
->
-> For my understanding, would you mind elaborating a bit more around the
-> end-goal with this?
+On Wed, Feb 12, 2025 at 10:37:35AM +0100, Johan Hovold wrote:
+> On Tue, Feb 11, 2025 at 10:37:11PM +0530, Mukesh Ojha wrote:
+> > On Mon, Feb 10, 2025 at 10:43:23AM +0100, Johan Hovold wrote:
 
-The end goal is, of course, full integration of runtime PM with system
-sleep for all devices.  Eventually.
+> > > A Link tag to my report would be good to have as well if this fixes the
+> > > audio regression.
+> > 
+> > I see this is somehow matching the logs you have reported, but this deadlock
+> > is there from the very first day of pdr_interface driver.
+> > 
+> > [   14.565059] PDR: avs/audio get domain list txn wait failed: -110
+> > [   14.571943] PDR: service lookup for avs/audio failed: -110
+> 
+> Yes, but using the in-kernel pd-mapper has exposed a number of existing
+> bugs since it changes the timing of events enough to make it easier to
+> hit them.
+> 
+> The audio regression is a very real regression for users of Snapdragon
+> based laptops like, for example, the Lenovo Yoga Slim 7x.
+> 
+> If Bjorn has confirmed that this is the same issue (I can try to
+> instrument the code based on your analysis to confirm this too), then I
+> think it would be good to mention this in the commit message and link to
+> the report, for example:
+> 
+> 	This specifically also fixes an audio regression when using the
+> 	in-kernel pd-mapper as that makes it easier to hit this race. [1]
+> 
+> 	Link: https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/ # [1]
+> 
+> or similar.
 
-And it is necessary to make the core and
-pm_runtime_force_suspend|resume() work together better for this
-purpose.
+I can confirm that audio regression with the in-kernel pd-mapper appears
+to be caused by the race that this patch fixes.
 
-> Are you trying to make adaptations for
-> pm_runtime_force_suspend|resume() and the PM core, such that drivers
-> that uses pm_runtime_force_suspend|resume() should be able to cope
-> with other drivers for child-devices that make use of
-> DPM_FLAG_SMART_SUSPEND?
+If I insert a short (100-200 ms) sleep before taking the list lock in
+pdr_locator_new_server() to increase the race window, I see the audio
+service failing to register on both the X1E CRD and Lenovo ThinkPad
+X13s:
 
-Yes.
+[   11.118557] pdr_add_lookup - tms/servreg / msm/adsp/charger_pd
+[   11.443632] pdr_locator_new_server
+[   11.558122] pdr_locator_new_server - taking list lock
+[   11.563939] pdr_locator_new_server - releasing list lock
+[   11.582178] pdr_locator_work - taking list lock
+[   11.594468] pdr_locator_work - releasing list lock
+[   11.992018] pdr_add_lookup - avs/audio / msm/adsp/audio_pd
+[   11.992034] pdr_add_lookup - avs/audio / msm/adsp/audio_pd
+[   11.992224] pdr_locator_new_server
+    < 100 ms sleep inserted before taking lock in pdr_locator_new_server() >
+[   11.997937] pdr_locator_work - taking list lock
+[   12.093984] pdr_locator_new_server - taking list lock
+[   17.120169] PDR: avs/audio get domain list txn wait failed: -110
+[   17.127066] PDR: service lookup for avs/audio failed: -110
+[   17.132893] pdr_locator_work - releasing list lock
+[   17.139885] pdr_locator_new_server - releasing list lock
 
-This is a more general case, though, when a device that was
-runtime-suspended before system suspend and is left in suspend during
-it, needs to be resumed during the system resume that follows.
+[ On the X13s, where I have not hit this issue with the in-kernel
+  pd-mapper, I had to make sure to insert the sleep only on the second
+  call, possibly because of interaction with the charger_pd registration
+  which happened closer to the audio registration. ]
 
-Currently, DPM_FLAG_SMART_SUSPEND can lead to this sometimes and it
-cannot happen otherwise, but I think that it is a generally valid
-case.
+Please add a comment and link to the audio regression report as I
+suggested above, and feel free to include my:
 
-> If we can make this work, it would enable the propagation of
-> RPM_ACTIVE in the PM core for more devices, but still not for all,
-> right?
+	Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-It is all until there is a known case in which it isn't.  So either
-you know a specific case in which it doesn't work, or I don't see a
-reason for avoiding it.
+Thanks for fixing this!
 
-ATM the only specific case in which it doesn't work is when
-pm_runtime_force_suspend|resume() are used.
-
-> The point is, the other bigger issue that I pointed out in our earlier
-> discussions; all those devices where their drivers/buses don't cope
-> with the behaviour of the DPM_FLAG_SMART_SUSPEND flag, will prevent
-> the PM core from *unconditionally* propagating the RPM_ACTIVE to
-> parents. I guess this is the best we can do then?
-
-OK, what are they?
-
-You keep saying that they exist without giving any examples.
+Johan
 
