@@ -1,239 +1,214 @@
-Return-Path: <linux-kernel+bounces-511388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C063BA32A44
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:40:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2204A32A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:41:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FE7F16750C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:40:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6211675D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9324E215174;
-	Wed, 12 Feb 2025 15:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC3A213E89;
+	Wed, 12 Feb 2025 15:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fqz5bnvt"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cTvlOpnk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BPNNI9J0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cTvlOpnk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BPNNI9J0"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1421621129F;
-	Wed, 12 Feb 2025 15:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75A8211719;
+	Wed, 12 Feb 2025 15:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739374793; cv=none; b=npAWQ5St4lKLA7fZdWT1viXNG1wvhf7WF0BAc7ooPAnYBUDc7m6HgC9uA5gGSAPMZ0CxMa56a+fPMKMzG2YOnFDz3NScvXOhAvLCM6bT1hhEubkaJZrJT/aFge2Q62Ip+UYyqYZQWFTWOdvkln8hxFvYxsguJRk/AnVGzrhZp6Y=
+	t=1739374840; cv=none; b=sUdyf+ZZF5FbRlQDzNMfZqbuSfHfJzU/K+QSMpYUAAk/ckq+Sw61B3io7sOzu/tgTPGFOe8BVLptKDnDjqZQO8BzbJ1Z6WBGBMzkTGRZiv8BHoDFIJpgEZt8NGanPedB0sWt2xJrUv0omfe14UHibP/zuMVO+NlEiv4tpygEjKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739374793; c=relaxed/simple;
-	bh=3z+OUDZVEpd6KTuA41lQ6fdesEzkm8fAbRNuIOcZxoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bMGjWWRwY+FH91L0iKhsIczwQtRPgAqj8xvdLdW5XgQCpyDJQDD4ZbK3nDVr4TFwSGpiuQ/rybzPhMUjWuLS1913efeaG58PY8UFFqAfRY7CWkQ1mSASqiQ3ZZDUy92mW8U8CFy7yl8IGHuzAF6yfHaEo7L10YL+OQMKc9+s9Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fqz5bnvt; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-471a4f8bf65so535721cf.3;
-        Wed, 12 Feb 2025 07:39:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739374791; x=1739979591; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HbouPgm0agqCXksCDmZHeVO+0y6FRGzW0Of6wTqd3II=;
-        b=Fqz5bnvt2eCgNW9Pesi3prVx74U4sd55qAIVu1gH/ChzP1lYz4bVsH3MQ48MuVz3tM
-         9HV7f7FGotPuY6b3QVgSKjA09jAR/XTp9CqvKyIdahJUNDqwo4vdOH4zWd9Mi1AjA5Um
-         rFQ80qfl/TTfo19mNU8bfno/WOy5V/jIQ9NZsMG6XBvZqedUDQC35ufsEOGzqZHhm9SD
-         B3nWxG8fJ2LKpVuI09NkeltyI11p2Qp/TY8Rlhu9XMLXEO/t7pLiVW10/Egpg82V5xF+
-         S+AvJqZRK0XrMXsmku6gvgTyVp0sjqbnJGUghThPpi+Bj0LZhoU0Ghro0XYnQjB1hdkw
-         q/AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739374791; x=1739979591;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HbouPgm0agqCXksCDmZHeVO+0y6FRGzW0Of6wTqd3II=;
-        b=q2iFUpUEORKgMaTMgcXtx0+DE+comgN4zBQ1JGy5AspkPgV4/OJaSUHQftPLwXDcuu
-         URiK3rDd2kLRySQU9VpRzDccjrVzdYcskYkoSky2Wl/vviF9I5Hw0yrZHI2k4DsdRN/M
-         f/8z1OtUQQNPKp1yAt9qEUWJBsQ0t7HbRHdMkztwNmbtILo2LYi9XOCIF8eO0bs2ZERL
-         uzFNPEf/S+bCVC4A9204mVt7tchPMmZ1msEMwM1jmp9Vb40nFWF70C/jFm9MCd5aq/c+
-         tPJPd2TwhxWZNkiHUfa7axhyTmSlW9wiy+PAm8Fll8gGURJ0fdeTQ3M5ysfetNf8/0WS
-         p7EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVt7Oeqnec5F+WO4zHqAuq/6bghKCwZxSvR4XKJXTfUke0O8ebN/G9pYU2d/pOeoNpHRa18ftyI@vger.kernel.org, AJvYcCWMcnvvYbWLZnWaOQjCRNig7v5TI9vPAlZkqsbNudGi2Xt+rH5nseWi1fBOeEYK3qEcEfTY536Pn6hO@vger.kernel.org, AJvYcCWud1B+IiOQu928UYpKPlxbBiXaPkdey46lc0bYmRklf5BQPS0QjtoHgZKYCdz/GFm9k65CwD/wQgVo0VTQxQ==@vger.kernel.org, AJvYcCXkAO7gJvs4k9GiYLQaGTAx7W3NMkYaUrjttXMH3F04Z09rsX9GhhTpQEErWpDrVkhW6+4QW7NZLXthVLPl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo3JXH96IMnt91S4373H4w6RkOO/NoqFnSM1OwcQTOxvGSSUBm
-	cXKLkB2imbuZpEV7uzrckFT/qEhY1k4JukTp6RWFyOFOtWfNHIMX
-X-Gm-Gg: ASbGncsYyuPMsD1CGDOMXm89EIOjlzUB24gFD2wHY/nR1wwzUUsNwbYCa4gPU3J6Y7a
-	BaUjKFITMKscS9mCyhrTtcGb2AVdgy2x9tJLOPQYYoPc2UK54DD81yZRcT2gsSilk+eg5JPgU3c
-	m06HUCPFPSSb4vvqUkSYULlHRFzoBf2sBUri+ftw3UwzKTa6HWU8GF3pyz1bVOFx7MStaO706r9
-	hYJB2sEEqOyzde2b7n8mNCkvbMINvLQUC7DjYm6WXUeSBcyCp1mQGujeKhhe7eitrqHaihJOfGF
-	Y1pdEVpEgppf+uFQtsoj1mX0EYPZXYD10ujFLT4z7n99iyFerSpgNSEJtJxIurMh9LI=
-X-Google-Smtp-Source: AGHT+IF+MmctVYs07ml0PNL3TjoY/lXXGyUEn0qQZbuTuskppxtwfI/b18sBj2L2nJE1T1LQBrflrg==
-X-Received: by 2002:ac8:59ce:0:b0:467:6bbf:c1ab with SMTP id d75a77b69052e-471afdf1d29mr22021761cf.3.1739374790839;
-        Wed, 12 Feb 2025 07:39:50 -0800 (PST)
-Received: from [192.168.1.201] (pool-108-28-192-105.washdc.fios.verizon.net. [108.28.192.105])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471492a90bcsm76580671cf.31.2025.02.12.07.39.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 07:39:50 -0800 (PST)
-Message-ID: <c927247b-e39c-8511-d95c-77fb23b82808@gmail.com>
-Date: Wed, 12 Feb 2025 10:39:48 -0500
+	s=arc-20240116; t=1739374840; c=relaxed/simple;
+	bh=8xxpimJPx2BWd7+7ZelhGur63diWjAPtO0Xxizv9mAo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FCXfDAnxRNlCwL7kPmWe7HcMcPVOAF7oiBaDWfH8kkzXabuq3Uai4DKf2bYW2rvXkam3vrJ3QkzagMEuqn0+D6IymSOHk5XNnxVUGdeEmU+t5yJcVVcYckb2rkE7qGSwyvOkOA0Il2gnGJVseCPmW5H2ihoBH5w52F1YCq9F1DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cTvlOpnk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BPNNI9J0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cTvlOpnk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BPNNI9J0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C1F831FB68;
+	Wed, 12 Feb 2025 15:40:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739374836; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Stfxrx3s1IcnHzynaf4EIL6SBz02V4LY+WllomxPWz8=;
+	b=cTvlOpnkxoaIoTU1A6Db5N1wWHUpkkDGVlwZueMNVhCLOEsZV6q51AQz3IkezdaNMzjp7P
+	l3TMPLiZ3j2BqAfJqTdLYqaRZDTrdsYlC4Hqn9HYaOFrqKmxiNKNZlQ4ItHYWoO/YPG/Vm
+	ckdJZVkKpXiQowYX/ufAxML+vy5JCLk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739374836;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Stfxrx3s1IcnHzynaf4EIL6SBz02V4LY+WllomxPWz8=;
+	b=BPNNI9J05NWgctZ+NMrdZi4VYqDUo1IpbCMAHG28t/QVPDJ/V10sGYRGS8WCT+Cqsu2vSd
+	TRxe9gR6uD2TtRAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739374836; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Stfxrx3s1IcnHzynaf4EIL6SBz02V4LY+WllomxPWz8=;
+	b=cTvlOpnkxoaIoTU1A6Db5N1wWHUpkkDGVlwZueMNVhCLOEsZV6q51AQz3IkezdaNMzjp7P
+	l3TMPLiZ3j2BqAfJqTdLYqaRZDTrdsYlC4Hqn9HYaOFrqKmxiNKNZlQ4ItHYWoO/YPG/Vm
+	ckdJZVkKpXiQowYX/ufAxML+vy5JCLk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739374836;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Stfxrx3s1IcnHzynaf4EIL6SBz02V4LY+WllomxPWz8=;
+	b=BPNNI9J05NWgctZ+NMrdZi4VYqDUo1IpbCMAHG28t/QVPDJ/V10sGYRGS8WCT+Cqsu2vSd
+	TRxe9gR6uD2TtRAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 70FBE13AEF;
+	Wed, 12 Feb 2025 15:40:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id n82eD/TArGcuTAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Wed, 12 Feb 2025 15:40:36 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Kees Cook <kees@kernel.org>
+Cc: David Gow <davidgow@google.com>,  Gabriela Bittencourt
+ <gbittencourt@lkcamp.dev>,  Pedro Orlando <porlando@lkcamp.dev>,  Danilo
+ Pereira <dpereira@lkcamp.dev>,  Shuah Khan <skhan@linuxfoundation.org>,
+  Rae Moar <rmoar@google.com>,  Luis Felipe Hernandez
+ <luis.hernandez093@gmail.com>,  Nicolas Pitre <npitre@baylibre.com>,
+  Diego Vieira <diego.daniel.professional@gmail.com>,  "Steven Rostedt
+ (Google)" <rostedt@goodmis.org>,  Jakub Kicinski <kuba@kernel.org>,
+  "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,  Vlastimil Babka
+ <vbabka@suse.cz>,  Bruno Sobreira =?utf-8?Q?Fran=C3=A7a?=
+ <brunofrancadevsec@gmail.com>,
+  linux-kernel@vger.kernel.org,  linux-hardening@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  kunit-dev@googlegroups.com, Thorsten
+ Leemhuis <linux@leemhuis.info>
+Subject: Re: [PATCH v2 6/6] unicode: kunit: change tests filename and path
+In-Reply-To: <20250211003136.2860503-6-kees@kernel.org> (Kees Cook's message
+	of "Mon, 10 Feb 2025 16:31:34 -0800")
+References: <20250211002600.it.339-kees@kernel.org>
+	<20250211003136.2860503-6-kees@kernel.org>
+Date: Wed, 12 Feb 2025 10:40:34 -0500
+Message-ID: <87pljnw4r1.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH net-next 00/13] Introduce an ethernet port representation
-Content-Language: en-US
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?Q?K=c3=b6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=c3=b2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Romain Gantois <romain.gantois@bootlin.com>
-References: <20250207223634.600218-1-maxime.chevallier@bootlin.com>
- <8349c217-f0ef-3629-6a70-f35d36636635@gmail.com>
- <20250210095542.721bf967@fedora-1.home>
-From: Sean Anderson <seanga2@gmail.com>
-In-Reply-To: <20250210095542.721bf967@fedora-1.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[google.com,lkcamp.dev,linuxfoundation.org,gmail.com,baylibre.com,goodmis.org,kernel.org,suse.cz,vger.kernel.org,googlegroups.com,leemhuis.info];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Maxime,
+Kees Cook <kees@kernel.org> writes:
 
-On 2/10/25 03:55, Maxime Chevallier wrote:
-> Hi Sean,
-> 
-> On Fri, 7 Feb 2025 21:14:32 -0500
-> Sean Anderson <seanga2@gmail.com> wrote:
-> 
->> Hi Maxime,
->>
->> On 2/7/25 17:36, Maxime Chevallier wrote:
->>> Hello everyone,
->>>
->>> This series follows the 2 RFC that were sent a few weeks ago :
->>> RFC V2: https://lore.kernel.org/netdev/20250122174252.82730-1-maxime.chevallier@bootlin.com/
->>> RFC V1: https://lore.kernel.org/netdev/20241220201506.2791940-1-maxime.chevallier@bootlin.com/
->>>
->>> The goal of this series is to introduce an internal way of representing
->>> the "outputs" of ethernet devices, for now only focusing on PHYs.
->>>
->>> This allows laying the groundwork for multi-port devices support (both 1
->>> PHY 2 ports, or more exotic setups with 2 PHYs in parallel, or MII
->>> multiplexers).
->>>
->>> Compared to the RFCs, this series tries to properly support SFP,
->>> especially PHY-driven SFPs through special phy_ports named "serdes"
->>> ports. They have the particularity of outputing a generic interface,
->>> that feeds into another component (usually, an SFP cage and therefore an
->>> SFP module).
->>>
->>> This allows getting a fairly generic PHY-driven SFP support (MAC-driven
->>> SFP is handled by phylink).
->>>
->>> This series doesn't address PHY-less interfaces (bare MAC devices, MACs
->>> with embedded PHYs not driven by phylink, or MAC connected to optical
->>> SFPs) to stay within the 15 patches limit, nor does it include the uAPI
->>> part that exposes these ports to userspace.
->>>
->>> I've kept the cover short, much more details can be found in the RFC
->>> covers.
->>>
->>> Thanks everyone,
->>>
->>> Maxime
->>
->> Forgive me for my ignorance, but why have a new ethtool interface instead of
->> extending ethtool_link_settings.port? It's a rather ancient interface, but it
->> seems to be tackling the exact same problem as you are trying to address. Older
->> NICs used to have several physical connectors (e.g. BNC, MII, twisted-pair) but
->> only one could be used at once. This seems directly analogous to a PHY that
->> supports multiple "port"s but not all at once. In fact, the only missing
->> connector type seems to be PORT_BACKPLANE.
->>
->> I can think of a few reasons why you wouldn't use PORT_*:
->>
->> - It describes the NIC and not the PHY, and perhaps there is too much impedance
->>     mismatch?
->> - There is too much legacy in userspace (or in the kernel) to use that API in
->>     this way?
->> - You need more flexibility?
-> 
-> So there are multiple reasons that make the PORT_* field limited :
-> 
->   - We can't gracefully handle multi-port PHYs for complex scenarios
-> where we could say "I'm currently using the Copper port, but does the
-> Fiber port has link ?"
-> 
->   - As you mention in your first argument, what I'd like to try to do is
-> come-up with a "generic" representation of outgoing NIC interfaces. The
-> final use-cases I'd like to cover are multi-port NICs, allowing
-> userspace to control which physical interfaces are available, and which
-> t use. Looking at the hardware, this can be implemented in multiple
-> ways :
-> 
->             ___ Copper
->            /
->   MAC - PHY
->            \__ SFP
-> 
-> Here, a single PHY has 2 media-side interfaces, and we'd like to select
-> the one to use. That's fairly common now, there are quite a number of
-> PHYs that support this : mv33x3310, VSC8552, mv88x2222 only to name a
-> few. But there are other, more uncommon topologies that exist :
-> 
->                             ____ SGMII PHY -- Copper
->                            /
->   MAC - SGMII/1000BaseX MUX
->                            \____ SFP
-> 
-> Here, we also have 2 media-side ports, but they are driver through
-> different entities : The Copper port sits behind a single-port PHY,
-> that is itself behind a *MII MUX, that's also connected to an SFP. Here
-> the port selection is done at the MUX level
-> 
-> Finally, I've been working on supporting devices whith another topology
-> (actually, what started this whole work) :
-> 
->              ___ PHY
->             /
->   MAC --MUX |
->             \__ PHY
-> 
-> Here both PHYs are on the same *MII bus, with some physical,
-> gpio-driven MUX, and we have 2 PORT_TP on the same NIC. That design is
-> used for link redundancy, if one PHY loses the link, we switch to the
-> other one (that hopefully has link).
-> 
-> All these cases have different drivers involved in the MUX'ing (phy
-> driver itself, intermediate MUX in-between...), so the end-goal would
-> be to expose to userspace info about the media interfaces themselves.
-> 
-> This phy_port object would be what we expose to userspace. One missing
-> step in this series is adding control on the ports (netlink API,
-> enabling/disabling logic for ports) but that far exceeds the 15 patches
-> limitation :)
-> 
-> Sorry if all of that was blurry, I did make so good of a job linking to
-> all previous discussions on the topic, I'll address that for the next
-> round.
+> From: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+>
+> Change utf8 kunit test filename and path to follow the style
+> convention on Documentation/dev-tools/kunit/style.rst
+>
+> Co-developed-by: Pedro Orlando <porlando@lkcamp.dev>
+> Signed-off-by: Pedro Orlando <porlando@lkcamp.dev>
+> Co-developed-by: Danilo Pereira <dpereira@lkcamp.dev>
+> Signed-off-by: Danilo Pereira <dpereira@lkcamp.dev>
+> Signed-off-by: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+> Reviewed-by: David Gow <davidgow@google.com>
+> Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
+> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+> Reviewed-by: Rae Moar <rmoar@google.com>
+> Link: https://lore.kernel.org/r/20241202075545.3648096-7-davidgow@google.com
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Thanks for the detailed explanation, especially regarding PHY redundancy.
-Could you add it to a commit message (or even better to Documentation/)?
+Hi Kees,
 
---Sean
+Last time this was submitted, I have reported this patch breaks the
+build when the kunit is built as a module, and it wasn't fixed before
+resubmission.  Thorsten Leemhuis just reported the same issue is now on
+linux-next and I confirmed it is still there.
+
+https://lore.kernel.org/lkml/2c26c5e4-9cf3-4020-b0be-637dc826b4e9@leemhuis.info/T/#m2e2ddb3b2600274e5eae50b93ea821914dc85f20
+
+The build error is:
+
+fs/unicode/tests/utf8_kunit.c:11:10: fatal error: utf8n.h: No such file or directory
+   11 | #include "utf8n.h"
+      |          ^~~~~~~~~
+
+The problem is that the patch moves utf8_kunit.c into tests/ but doesn't
+fix the include line above.  Can you fix it in your tree since it is
+already merged?
+
+Thanks,
+
+> ---
+>  fs/unicode/Makefile                                | 2 +-
+>  fs/unicode/{ => tests}/.kunitconfig                | 0
+>  fs/unicode/{utf8-selftest.c => tests/utf8_kunit.c} | 0
+>  3 files changed, 1 insertion(+), 1 deletion(-)
+>  rename fs/unicode/{ => tests}/.kunitconfig (100%)
+>  rename fs/unicode/{utf8-selftest.c => tests/utf8_kunit.c} (100%)
+>
+> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
+> index 37bbcbc628a1..d95be7fb9f6b 100644
+> --- a/fs/unicode/Makefile
+> +++ b/fs/unicode/Makefile
+> @@ -4,7 +4,7 @@ ifneq ($(CONFIG_UNICODE),)
+>  obj-y			+= unicode.o
+>  endif
+>  obj-$(CONFIG_UNICODE)	+= utf8data.o
+> -obj-$(CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST) += utf8-selftest.o
+> +obj-$(CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST) += tests/utf8_kunit.o
+>  
+>  unicode-y := utf8-norm.o utf8-core.o
+>  
+> diff --git a/fs/unicode/.kunitconfig b/fs/unicode/tests/.kunitconfig
+> similarity index 100%
+> rename from fs/unicode/.kunitconfig
+> rename to fs/unicode/tests/.kunitconfig
+> diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/tests/utf8_kunit.c
+> similarity index 100%
+> rename from fs/unicode/utf8-selftest.c
+> rename to fs/unicode/tests/utf8_kunit.c
+
+-- 
+Gabriel Krisman Bertazi
 
