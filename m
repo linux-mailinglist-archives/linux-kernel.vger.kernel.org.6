@@ -1,187 +1,159 @@
-Return-Path: <linux-kernel+bounces-510298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F4CBA31ADF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:55:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268B3A31AE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86A0168646
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:55:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBF9C168628
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738CC111AD;
-	Wed, 12 Feb 2025 00:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BB217996;
+	Wed, 12 Feb 2025 00:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="ATu/kmAq"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+hasUA2"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0441101E6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B765835944
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739321698; cv=none; b=pgpswP4z9ATF/sGK70xy7ZLBdRieUP4CORhOHpDqg9W1sJop4Fzb6v5tHobweq8pirxcGr95GoiqAwnb/FpXXrerYmNhgURk7eZyfB+o1oVMW89bx8bQgUV2/Dn1qHq6XlIE6VQRxaaZ+f2H6YbCcYQacbFJ5PiQQsfQBol/UIY=
+	t=1739321718; cv=none; b=fPggkQQCLB+PbjgXUFCtHmHPtxfvnt/OG++ny15oeJeAZB892lPD3bFhJ1zH5w9ogw6KSNLa6NgutcBljDG6dFc+WYNV7zZRHQJ47zNaA3glaS6rAHKLsh1p/1237UQNt76NxSxeLl/7ZKxnbBmmJnvlKIYR2wNOs/v5+sPbT10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739321698; c=relaxed/simple;
-	bh=UIzklivqR5Z23WPkWjVe2n77YozrOST8ZDHjd23oRgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YDB26JT3eDiu677vh5rd/NM5aEvPaFz8vdJHi/NMGx2Zm7Zk+iIfzW4fiLgwaBiGPHhAaT1GnWPqjEaW4arvYBcaikPYCWZc6z8YTHDUKj7MCNZaUFg2RiV+pg1wTjIsDkg1r3k5ssJbr9FQdpGUAozE0p8++a1J9g520hj7r1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=ATu/kmAq; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so21029585e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:54:56 -0800 (PST)
+	s=arc-20240116; t=1739321718; c=relaxed/simple;
+	bh=jCIurlHM76zZcC+ag0j1ChJ979i5vOv3fvHyabZoXuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgJB4rEKPLD39zCcw43G4WXVJznkwpVdzq84I4UvParEOo928Jl6N9HTI4FtOt/hWbmpBiTyVkNkICOwmYgPeOrizA/maSkPkTFuDldnRNAqlBESz84AtVl6SntRz6kQHTZWCmhWFph5iOtRXH3jwYkQB+0sEFJgMojpoNu9ofM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+hasUA2; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-308edbc368cso28575921fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:55:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1739321695; x=1739926495; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=3eEjYLiIzAQvKfFhJfuIXXpvDRbqlCf0jI1QKURWY7Q=;
-        b=ATu/kmAq6UsVYQ31QRq+jvEFumCs+gQo6q462XofCYlHjpHBjgCIhjksLVgH+ACCfF
-         v4E+kgMLzwlXXjM+2/2GJ2cFP2qyzgZIBI+5Gou67i0douboKH2VTCRLkhj3Y2LiQS0U
-         lhOI9+StSp00lDDoFid24c9COnjrE8fdeVpU8=
+        d=linaro.org; s=google; t=1739321715; x=1739926515; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mUxNo4sdmWLVTWOH02xXE+iuTiw7pWWtDZzrPFzNKj4=;
+        b=A+hasUA2gaRDwPuRIfLYEVasUS4mPC9f7V3Netd8+6K0fvTjs7Xe4VxxVMoO3GFqUc
+         6GHkPO6sKyTYTD+5gPoXpq7uAU+Hk7sz0Irx5LNI6pKmfE4ONdBGwT4dry4usq0BSNH0
+         p8HS5rZCj3qtW+IvVqBWwJnX5JQfYBx9PGI66Z/e8jlt3783q8Vll/+KleQyU2afUztU
+         tDvXnLS88TGLBPeF1YbGfKiaTsMcODGkv8VzWLNG97g7M4tMW86gWOn96dB5f0rDUQlo
+         lIReBqmzqys3x9rTV0WdGjU14KyxMNkU1clOM+lsu2aL7xLf6H36f55ZT4FZZERjLL2o
+         /Xsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739321695; x=1739926495;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1739321715; x=1739926515;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3eEjYLiIzAQvKfFhJfuIXXpvDRbqlCf0jI1QKURWY7Q=;
-        b=EpIjpQKox89Kw5gOK7JobworB0pzMrayLYb+LiMHHD854VI+6LiD4BIb9nMAa0P+zH
-         pb3uo8fRrV3n8FmALDwiDgtDsDN/9sBoEVUt7f2Yc7ejmf/53/EYL4Mizh9h43c8s9Vr
-         MO9Kj8aXq9Weo1GeqZvRrID8CRj2c5MSmQ65o1VoKPdmaGZkYp2ZLsC0u1ydmvfp0vTg
-         NIVc+BOnsYtN0Q38bkEGktxMjwr0s77Zjbvqw6rkj9cHQ9r76xaPZ5M9ft2VnOpIJTtb
-         tqmyOpbKZ1CHCaIqE+zWuhDSW9QBwWZ80tY6cg+nc8rx0UimBB0ftkFI8hYyBf76NpB1
-         z8Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbeiNRSB0kHHgv+RmjkeFk2m2LhFKg7ClOH6yOX1+cZHas94RkU5QoxJxA9hewPcnd8ZM928dDarJDjxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTFL2vDlP/dvRGDjvgh+aUK7izwU7QN0OWtoGP/a54zvE6EfWC
-	PDXnzduaGBUdyYghN2izZ+rgRFuKpkDdpTvBqasSDqJNT/rz5u1+5E00uhjl3Xo=
-X-Gm-Gg: ASbGnct7rRxd6cO+JAiONeBIve5SaIlS/kn9O/FoYSLVgC+XRutaaniTiSz1r5UrN+l
-	HnkQciVNsqJdr54KBIKPbcPS1PFyWmMdDfjJk9iwwhq00QhCIpDSmg/aV+ukHNl7IxudbjtC+1J
-	eSjA2CbfpvG/9riOA8yfE3gyKgklqPYYwtY3fNOxud1UHkejNrBVjjTaJH7udvI3neu67MP76Ni
-	wk793Az3Ho7G94sJo5Ffv5o0lVzplQIKjeD2q/iEYxMR1QvIzPr0wl/IUbQyyuGwQ90FYtkM0vt
-	Bzt9RlIqUc3nE/Rqc5i1Nwr4feUoSnIY1N46cjYCy6N7QCyBdTxhn14=
-X-Google-Smtp-Source: AGHT+IFBoL5K522A7AuoflUF+1XhMG9n3ItwKCGI8JCLC5Il05/77VAGdvXbN30wro/dkD3TCaY0yg==
-X-Received: by 2002:a05:600c:4e8d:b0:439:4a1f:cf85 with SMTP id 5b1f17b1804b1-439580e532amr12252835e9.0.1739321695252;
-        Tue, 11 Feb 2025 16:54:55 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06ae8asm3736345e9.21.2025.02.11.16.54.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2025 16:54:54 -0800 (PST)
-Message-ID: <2299c94f-aa46-47b5-bd25-9436a8fbd619@citrix.com>
-Date: Wed, 12 Feb 2025 00:54:52 +0000
+        bh=mUxNo4sdmWLVTWOH02xXE+iuTiw7pWWtDZzrPFzNKj4=;
+        b=aki2wBRIeWq05VLVbrC+QpmtPbcrOdcc4nOOAtncF+oAX+9m+dpRVvrPayMl0foL1w
+         DgMjWL+eyzMh6Jtoh4Pv/JJ6Hgz4Wx2yub5VlpFwhuAnxnl/tr/QQ27C8IZrTHIfY8Oi
+         Qoe1DXYJnVieXrJbvibF1AvipbqsdbmI4d1V+bzDnuCthUizFZbzZu/ksbeKGoNhnyDR
+         xWFdNdDALc3RKUpWCnJOnb2PeqBWP00h4nXYVgt6fjSD/v9Trbnzm3LDFeaYm/DPam/T
+         gg8rxIFQOC+gnIYfQiFZTT7th9RLwsBrJxRxEP8HfNaXU96mAUI9mnW1n6x4HeCDjuE6
+         MPog==
+X-Forwarded-Encrypted: i=1; AJvYcCU1SCWRxcqySxqipEGk4UsAyGyWeveJalg2vkLT2efrtqUjz/SWbV+THa4QhLXNHG0jsVj97cpg9a1MbDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+/BGZyJXRD0FVYAzsVPcX0zJzRMmVaKlRT8gx35z86hhgBZRm
+	XA+NhcP6C611FDFPMqsna2oiilb+t/O5ZRAlUFCi3Cp2+lawa9x8JpZWrN868sw=
+X-Gm-Gg: ASbGncvF4Q6ODmyiWWVAqfcS59FvHt1juBjzNsDe2u/jV7qZ8nOnkhpdPq6tDaqAeML
+	vTPO+kr6FQS+9HiKq2VFnVQur8oSNNsgO98Xpt9HHC2sbDI1pGCnfYfa4huaF1wcFSgfGncEy9c
+	azyNG/wlRfJmkPrzU1laIxaUrZzlQi5HMwbdjo3f5W0EferQZ0N7IKHxRDXC5ph0lOFMNsal6Ba
+	+QD3ViWul7syACBvi9hYme1V6CxByC4e59HiRYy5g+nBodj6ABptJ9FwfXNNSItrYPY1VCc6xh1
+	6UlZ2X91+1xau6FUXRncily+WUuWNa1IN7Atxuro0w4Jt0nTlWLYUIfPEW/vJbFvSzKtgx8=
+X-Google-Smtp-Source: AGHT+IGs0cV1u4iegcMKrjuoero2v6sW5UX43WNEwXp7nEN1CqXaDi6DN+1s0QUOAJhNgTLw4fuguQ==
+X-Received: by 2002:a2e:a985:0:b0:308:e54d:61a6 with SMTP id 38308e7fff4ca-309050be548mr1754521fa.34.1739321714727;
+        Tue, 11 Feb 2025 16:55:14 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-308e95f67f1sm9534311fa.48.2025.02.11.16.55.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 16:55:13 -0800 (PST)
+Date: Wed, 12 Feb 2025 02:55:10 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Simona Vetter <simona@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Daniel Thompson <danielt@kernel.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Sam Ravnborg <sam@ravnborg.org>, Boris Brezillon <bbrezillon@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Paul Kocialkowski <contact@paulk.fr>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, =?utf-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: Re: [PATCH v6 14/26] drm/bridge: add support for refcounted DRM
+ bridges
+Message-ID: <i5q5zuymhn6sy4nou22zxbolztqbq6soef2cwrdq3ey63vfugj@z3rv7zh7xhle>
+References: <20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com>
+ <20250206-hotplug-drm-bridge-v6-14-9d6f2c9c3058@bootlin.com>
+ <20250207-ingenious-daffodil-dugong-51be57@houat>
+ <ucttjaf3trkgtpvhnsj7xfsybhnoi4qqow5ucwghlggivbagy7@gngjhbtu73lb>
+ <20250210181244.0e3e9189@booty>
+ <qnuskv4mln32nqgbgvwi2qcdwfma6tqfbq7e6sqb3za6pmms2j@ir7pt5634dsh>
+ <20250211-venomous-dragon-of-competition-d76bf9@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/17] x86/cpu/intel: Fix page copy performance for
- extended Families
-To: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>,
- x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
- Tony Luck <tony.luck@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Fenghua Yu <fenghua.yu@intel.com>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Zhang Rui <rui.zhang@intel.com>,
- David Laight <david.laight.linux@gmail.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20250211194407.2577252-1-sohil.mehta@intel.com>
- <20250211194407.2577252-6-sohil.mehta@intel.com>
- <b9c21518-54fc-4907-8fc3-d492a3f33bdf@intel.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <b9c21518-54fc-4907-8fc3-d492a3f33bdf@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211-venomous-dragon-of-competition-d76bf9@houat>
 
-On 11/02/2025 8:53 pm, Dave Hansen wrote:
-> On 2/11/25 11:43, Sohil Mehta wrote:
->> +	/*
->> +	 * Modern CPUs are generally expected to have a sane fast string
->> +	 * implementation. However, the BIOS may disable it on certain CPUs
->> +	 * via the architectural FAST_STRING bit.
->> +	 */
->> +	if (IS_ENABLED(CONFIG_X86_64) && (c->x86 == 6 || c->x86 > 15))
->> +		set_cpu_cap(c, X86_FEATURE_REP_GOOD);
-> I'm not sure the BIOS comment is helpful here.
->
-> Also, at this point, let's just make the check >=6 (or the >=PPRO
-> equivalent).
->
-> It will only matter if *all* of these are true:
-> 1. Someone has a 64-bit capable P4 that powers on
-> 2. They're running a 64-bit mainline kernel
-> 3. String copy is *actually* slower than the alternative
-> 4. They are performance sensitive enough to notice
->
-> We don't even know the answer to #3 for sure. Let's just say what we're
-> doing in a comment:
->
-> 	/* Assume that any 64-bit CPU has a good implementation */
+On Tue, Feb 11, 2025 at 09:48:31AM +0100, Maxime Ripard wrote:
+> On Tue, Feb 11, 2025 at 01:14:28AM +0200, Dmitry Baryshkov wrote:
+> > On Mon, Feb 10, 2025 at 06:12:44PM +0100, Luca Ceresoli wrote:
+> > > Hi Maxime, Dmitry
+> > > 
+> > > On Fri, 7 Feb 2025 21:54:06 +0200
+> > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> > > 
+> > > > > > +/* Internal function (for refcounted bridges) */
+> > > > > > +void __drm_bridge_free(struct kref *kref)
+> > > > > > +{
+> > > > > > +	struct drm_bridge *bridge = container_of(kref, struct drm_bridge, refcount);
+> > > > > > +	void *container = ((void *)bridge) - bridge->container_offset;
+> > > > > > +
+> > > > > > +	DRM_DEBUG("bridge=%p, container=%p FREE\n", bridge, container);  
+> > > > > 
+> > > > > Pointers are not really useful to track here, since they are obfuscated
+> > > > > most of the time. Using the bridge device name would probably be better
+> > > > > (or removing the SHOUTING DEBUG entirely :))  
+> > > > 
+> > > > bridge device name or bridge funcs (I opted for the latter for the
+> > > > debugfs file)
+> > > 
+> > > These DRM_DEBUG()s proved extremely useful exactly because of the
+> > > pointer. This is because when using hotplug one normally has the same
+> > > device added and removed multiple times, and so the device name or
+> > > bridge funcs is always the same, preventing from understanding which
+> > > instance is leaking, or being freed, get, put, etc.
+> > > 
+> > > Do you think this is a sufficient motivation to keep it?
+> > 
+> > Then it should be something like %px. I found that %p is mangled.
+> > What about having both device name _and_ a pointer?
+> 
+> No, %px must not be used there. %p is mangled but should be consistent
+> across calls. But yeah, it's kind of the reason I suggested to use the
+> bridge device name instead.
 
-If you're going to override the BIOS setting, then you need to
-explicitly set MSR_MISC_ENABLE.FAST_STRINGS.
+Then we need to extend struct drm_bridge with struct device *dev (which
+I would appreciate, it will solve whole hdmi_audio_dev / CEC device /
+etc story).
 
-Otherwise you're claiming to Linux that REP is good even when hardware
-is prohibited from using optimisations.
-
-~Andrew
-
+-- 
+With best wishes
+Dmitry
 
