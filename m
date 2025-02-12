@@ -1,111 +1,162 @@
-Return-Path: <linux-kernel+bounces-511671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC733A32E15
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:02:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B323A32E1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B61318890D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307B516892C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1F325D53C;
-	Wed, 12 Feb 2025 18:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C3B25D538;
+	Wed, 12 Feb 2025 18:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gnECJf1c"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSvHG7uQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3293F20E02B;
-	Wed, 12 Feb 2025 18:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F6420E02B;
+	Wed, 12 Feb 2025 18:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739383318; cv=none; b=iUOXF4oG6fb2SAtD933hTWGAg1iDJ37yM1esmqYyA1xUD6TD9+Ke0T7b3rfe7qgVlYLbjUThABNPDSF0QFROgQh1yG4m4Lg2GSREbpRltre/CNKfUWCuHt6C/Ixbkfov82kXmu/t0Lo/st7UY354L/rZrI9M0a2xsZ98etPpc0w=
+	t=1739383362; cv=none; b=C8Y38TRPZ1jG1fqyHcG8KS4zedWkAk1eIZv2tIQLg33elL6PG7r28X1n3/kWH6vIdfYyfBdVEc5e6dtqE/GuomFrcamnn6KCUqc9LYupMKNipElVTFAE3hzwdHo1o8geJAoP68sbAnFeleG+ZyRarUhGEPAiRKCfz2E1mgjtVh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739383318; c=relaxed/simple;
-	bh=ApVjZL7R4gIKkJK0P861NvcM7oao9TZoGvth5kdN1QI=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=hYS/kP78s72z5iiGB2Yw61bdZsW3BRo+olT7m+IpLrurmawAJud8zkubmkYCq2W+YYj8sgSYdepyaZ8Snnm6cW/hsNhZQrxphHyvSDXTZix7gONPEGVMkfafZgvorR+gh6Acym3YJ/GPO7DxylvvOsX0TE5z+Xfwb/w+4819ZwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gnECJf1c; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1739383362; c=relaxed/simple;
+	bh=VOtPgaQkN4DFZIjc+OZtl+y5YAXVhsm1DiEW2xACoKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=NXf/5JmOK4Bd/j1qpqlYqvTLSvwlP0WhPubGp6jRpbcoZ6uPxVSM3r+3gz43hnmOOcx3P4L/WpioF7XK6XTzVyfUgzqjq7rX0Ov9QQIyKkaEc0YHbCZZyEu8AZH6SNy9IkA+OZQZhQLSqHNb/ejfRepRc+HNtFql8rk8q3DlHJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSvHG7uQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E05C4CEDF;
+	Wed, 12 Feb 2025 18:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739383361;
+	bh=VOtPgaQkN4DFZIjc+OZtl+y5YAXVhsm1DiEW2xACoKg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=iSvHG7uQkcy9TafoAztHzQVnJFYPtMwC3ie4fsCRV1ce3ifnDZJSB8ic67KP5VgtW
+	 jVIWoypaeqLqt7TpZuZ8ZqL9UWQYWnSZdI6nhYxUvNDH3tZpDMPqEhXb6m8Vm5XMwz
+	 0YZZTCgm2o52+IFhiPxsMSmC0IUhHVp4O8Ph4Jfm0QSZUqDneSFhvAL6uuDzJmF5sC
+	 4ffS3rBHdW/tCz3SLKZJIXLRmlggZ6/voQutOashton1BDTwfBlokVpZBtwoAr4Hzo
+	 nMLxnau6646AEFmyvdOAoyCegJm7pRWUU/MLWILL2nMsLuMCIQ8nPh4oHU/qBRsadt
+	 4PZKKdFySr+IQ==
+Date: Wed, 12 Feb 2025 12:02:37 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v5 -next 06/11] PCI: brcmstb: Add bcm2712 support
+Message-ID: <20250212180237.GA85622@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739383303;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xzDmp7n11SXDWq7ajSDnUq46FyfKrhpeHIHAWHCUuZw=;
-	b=gnECJf1cKJ5M5rm0NV6epIvN4swhWMvhk8bPz5Q9uS0EFIW2dkZiBTPUjQZ0NEcqzvBJOq
-	lfZQGt6LRxQMhPn63eFx7OnBzTUmwErFPiocGe/S79yjXcM7Zbq6Oxf3AAO6CT1fXcQGn0
-	zNpCUiqYtLRaoeUvCLbFpdv+c0cx1HY=
-Date: Wed, 12 Feb 2025 18:01:40 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Ihor Solodrai" <ihor.solodrai@linux.dev>
-Message-ID: <62dacb9480327bfececb60e956f18f6f1924745b@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH] netfs: Fix setting NETFS_RREQ_ALL_QUEUED to be after all
- subreqs queued
-To: "David Howells" <dhowells@redhat.com>
-Cc: dhowells@redhat.com, "Marc Dionne" <marc.dionne@auristor.com>, "Steve 
- French" <stfrench@microsoft.com>, "Eric Van Hensbergen"
- <ericvh@kernel.org>, "Latchesar  Ionkov" <lucho@ionkov.net>, "Dominique
- Martinet" <asmadeus@codewreck.org>, "Christian Schoenebeck"
- <linux_oss@crudebyte.com>, "Paulo Alcantara" <pc@manguebit.com>, "Jeff
- Layton" <jlayton@kernel.org>, "Christian Brauner" <brauner@kernel.org>,
- v9fs@lists.linux.dev, linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- ast@kernel.org, bpf@vger.kernel.org
-In-Reply-To: <3459755.1739353676@warthog.procyon.org.uk>
-References: <84a8e6737fca05dd3ec234760f1c77901d915ef9@linux.dev>
- <8d8a5d5b00688ea553b106db690e8a01f15b1410@linux.dev>
- <335ad811ae2cf5ebdfc494c185b9f02e9ca40c3e@linux.dev>
- <3173328.1738024385@warthog.procyon.org.uk>
- <3187377.1738056789@warthog.procyon.org.uk>
- <2986469.1739185956@warthog.procyon.org.uk>
- <3210864.1739229537@warthog.procyon.org.uk>
- <3459755.1739353676@warthog.procyon.org.uk>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250120130119.671119-7-svarbanov@suse.de>
 
-On 2/12/25 1:47 AM, David Howells wrote:
-> Hi Ihor,
->
-> Okay, the bug you're hitting appears to be a different one to the one I
-> thought first.  Can you try the attached patch?  I managed to reproduce=
- it
-> with AFS by injecting a delay.
->
-> [...]
->
-> netfs: Fix setting NETFS_RREQ_ALL_QUEUED to be after all subreqs queued
->
-> [...]
+On Mon, Jan 20, 2025 at 03:01:14PM +0200, Stanimir Varbanov wrote:
+> Add bare minimum amount of changes in order to support PCIe RC hardware
+> IP found on RPi5. The PCIe controller on bcm2712 is based on bcm7712 and
+> as such it inherits register offsets, perst, bridge_reset ops and inbound
+> windows count.
 
-Hi David.
+Add blank line between paragraphs.  We can fix when merging if you
+don't repost for other reasons.
 
-I tried this patch locally, and then on BPF CI. It fixes the 9p hanging i=
-ssue.
-A couple of platforms and toolchains are tested there:
-https://github.com/kernel-patches/vmtest/actions/runs/13291034531
-
-Tested-by: Ihor Solodrai <ihor.solodrai@linux.dev>
-
-Note that on CI the "netfs: Fix a number of read-retry hangs" patch [1]
-is *not* applied. Only this one.
-
-Thank you!
-
-[1] https://lore.kernel.org/v9fs/3173328.1738024385@warthog.procyon.org.u=
-k/
-
-> [...]
+> Although, the implementation for bcm2712 needs a workaround related to the
+> control of the bridge_reset where turning off of the root port must not
+> shutdown the bridge_reset and this must be avoided. To implement this
+> workaround a quirks field is introduced in pcie_cfg_data struct.
+> 
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+> v4 -> v5:
+>  - No changes.
+> 
+>  drivers/pci/controller/pcie-brcmstb.c | 25 +++++++++++++++++++++++--
+>  1 file changed, 23 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 59190d8be0fb..50607df34a66 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -234,10 +234,20 @@ struct inbound_win {
+>  	u64 cpu_addr;
+>  };
+>  
+> +/*
+> + * The RESCAL block is tied to PCIe controller #1, regardless of the number of
+> + * controllers, and turning off PCIe controller #1 prevents access to the RESCAL
+> + * register blocks, therefore no other controller can access this register
+> + * space, and depending upon the bus fabric we may get a timeout (UBUS/GISB),
+> + * or a hang (AXI).
+> + */
+> +#define CFG_QUIRK_AVOID_BRIDGE_SHUTDOWN		BIT(0)
+> +
+>  struct pcie_cfg_data {
+>  	const int *offsets;
+>  	const enum pcie_soc_base soc_base;
+>  	const bool has_phy;
+> +	const u32 quirks;
+>  	u8 num_inbound_wins;
+>  	int (*perst_set)(struct brcm_pcie *pcie, u32 val);
+>  	int (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
+> @@ -1488,8 +1498,9 @@ static int brcm_pcie_turn_off(struct brcm_pcie *pcie)
+>  	u32p_replace_bits(&tmp, 1, PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK);
+>  	writel(tmp, base + HARD_DEBUG(pcie));
+>  
+> -	/* Shutdown PCIe bridge */
+> -	ret = pcie->bridge_sw_init_set(pcie, 1);
+> +	if (!(pcie->cfg->quirks & CFG_QUIRK_AVOID_BRIDGE_SHUTDOWN))
+> +		/* Shutdown PCIe bridge */
+> +		ret = pcie->cfg->bridge_sw_init_set(pcie, 1);
+>  
+>  	return ret;
+>  }
+> @@ -1699,6 +1710,15 @@ static const struct pcie_cfg_data bcm2711_cfg = {
+>  	.num_inbound_wins = 3,
+>  };
+>  
+> +static const struct pcie_cfg_data bcm2712_cfg = {
+> +	.offsets	= pcie_offsets_bcm7712,
+> +	.soc_base	= BCM7712,
+> +	.perst_set	= brcm_pcie_perst_set_7278,
+> +	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
+> +	.quirks		= CFG_QUIRK_AVOID_BRIDGE_SHUTDOWN,
+> +	.num_inbound_wins = 10,
+> +};
+> +
+>  static const struct pcie_cfg_data bcm4908_cfg = {
+>  	.offsets	= pcie_offsets,
+>  	.soc_base	= BCM4908,
+> @@ -1750,6 +1770,7 @@ static const struct pcie_cfg_data bcm7712_cfg = {
+>  
+>  static const struct of_device_id brcm_pcie_match[] = {
+>  	{ .compatible = "brcm,bcm2711-pcie", .data = &bcm2711_cfg },
+> +	{ .compatible = "brcm,bcm2712-pcie", .data = &bcm2712_cfg },
+>  	{ .compatible = "brcm,bcm4908-pcie", .data = &bcm4908_cfg },
+>  	{ .compatible = "brcm,bcm7211-pcie", .data = &generic_cfg },
+>  	{ .compatible = "brcm,bcm7216-pcie", .data = &bcm7216_cfg },
+> -- 
+> 2.47.0
+> 
 
