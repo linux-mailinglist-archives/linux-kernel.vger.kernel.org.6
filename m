@@ -1,277 +1,417 @@
-Return-Path: <linux-kernel+bounces-510458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F6BA31D23
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:52:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB92A31D26
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:54:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6DB67A346A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:51:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F2E165910
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF631DB154;
-	Wed, 12 Feb 2025 03:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C3D1DE882;
+	Wed, 12 Feb 2025 03:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EgZ2Y3U5"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2044.outbound.protection.outlook.com [40.107.220.44])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRatvdZn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CF5271838;
-	Wed, 12 Feb 2025 03:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739332358; cv=fail; b=LxYBddPPceC3GtwcVU3Fs3+jlt0vXXTjMK13j4iz9wP6pabepPkZ5ilkHUwBJMO4H2PZIXtAOH+i6bUgWrJ9dW2//xEsa0HOZEU3oSuRLjMTv0TpDrKtw0WXNUKY6vdZ9NwydrJnYUwBR51Schqsl3Jg8QbL+QyKlJBrUMRFPP8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739332358; c=relaxed/simple;
-	bh=y8ugVznMrt5Xg+PwxdBUlq/2f5p3ky9p7n6qGsfufFM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YKxgG6p6/QyxMEslktwWi3tf0XbNR0jLYCnHuVDkNV/07L5iMWj9W6JuPBzvAORA9vp3H4iqVMb70uxKCtKRg53Xs0K0vXkj1HQNX56F8rUfiE4k+8ORi1j+HS6AlwxAtA5syEoj4mGPssurhI+zdo2JQ+Tj8NinlH6fUlw7pg8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EgZ2Y3U5; arc=fail smtp.client-ip=40.107.220.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MtiZOHUL8HfbA5B5ii/cZpv4TWeA8+JreRq/IYWCMnx17gX7g9oPTNFDml9MWC7ZutK3g55fqBmrjWp/SIJ8lnarXd0yJ5fXnxU+SW6U/BkMkKo+tHsD8VfO7kE2d7mvkZUSDHE9FILoyZ8q2deffNngZv2b6xE595IjW4IzhcsqSX11BUr6xBiJVWWtRLXL99v1AuCN/BJEOxjB/5oXYYE8HPwiuBmjROLOym54luoFBXitK3AnwQo/meR9fn8bKx4WnWWovztX4+bzQarMUWIMYAQRTSJkynwGNyBpdjbtsaozodp0m8bNdiIL+5Ij1CuoI5BhCJT3c1N34JhD5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Hfr0aPsGZrXgLU1E63XW4U4MCYLfSbbzUw+vcHiwFl4=;
- b=HbbBcZ7lK+A7SdFewECBTjWOmGm1uJR9F5pNi7Pb568SFwITHAhSfp0GeJpnCqFqkXlUg20rTmk9E6/QCLMiCVqpacsEMiww1upOGJ/rgg0citpczuMK6VDlIZ1C+AKdGOuSZBWLYxnXVyz4SipveZPX/Do4knonGnAPrm82/2TP7yaBnJwyHr0YamVUnoe32L5tCTUSbBv5ON+57sqqPF8Lg/TXAajSlCjAPD5QQtTFs/oowgddX+3+EDZ3h2D5l10P9C+Ysu+3/D54TdA+pIWQxwOf/hixwdDtfpl+fHRnWayzbg5M221HKPRCJHa3gYWs3DRNtdbZctX79AA61Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hfr0aPsGZrXgLU1E63XW4U4MCYLfSbbzUw+vcHiwFl4=;
- b=EgZ2Y3U5qBponlFkq/ALICYXxrx9gRLiI+F9H7rC5sLCaaNTGWJdAbtGvx749I1SCm19d4xne0Z9DSkM2ZF52gexF6Qo7fuvBvXs0CMDiohCVXJXmUjEaxMOzXwgmfcCioo9gwRZTdbyh05oAelY8Z/dpHBc1B7pYuJJrSOFizE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by DM6PR12MB4139.namprd12.prod.outlook.com (2603:10b6:5:214::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Wed, 12 Feb
- 2025 03:52:33 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%6]) with mapi id 15.20.8422.015; Wed, 12 Feb 2025
- 03:52:33 +0000
-Message-ID: <3bd7acde-a4ea-42d6-8e75-bf17e6a4f143@amd.com>
-Date: Wed, 12 Feb 2025 09:22:27 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/14] cpufreq/amd-pstate: Cache a pointer to policy in
- cpudata
-To: Mario Limonciello <superm1@kernel.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250206215659.3350066-1-superm1@kernel.org>
- <20250206215659.3350066-13-superm1@kernel.org>
- <a3d10f58-3d69-40e8-b0ea-53f4ed9ce31a@amd.com>
- <2877ad66-0148-483e-83b3-fab5da5dbe1f@kernel.org>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <2877ad66-0148-483e-83b3-fab5da5dbe1f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN2P287CA0014.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:21b::8) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB5B1581F8;
+	Wed, 12 Feb 2025 03:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739332491; cv=none; b=sqYPjl5SusednkaZbiNIDIpVApahorBVmz2ZIid439SdVrtPLGHSZENMvxl1eCk0/UEBl0i6iovQxwPS29uA2rB+yiVZotPbOBmYqn+TTjyEfUHwu6Z5a9z6MZR4bGVQOLD7QrROU29yxCvCpX4C5utncqaCHDYA71nKDmP84qQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739332491; c=relaxed/simple;
+	bh=VJU4OkT72njE7nPgWRVMKmpmfirQRoypaDEddTcRczg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDUcMfcH9/s6Xct8/1CVGRO3tzLVh+M9K56oCjzC5TqdaHh5YcGc7kQh9RprIKodegijy0+9r1I5lJuVVt/SCBGbk8BqxnMOdoQ2Z5GGZ1E8yHn43sFrEyTeWg/DVTsjG+IUynHIEiu6Kl4DZfZaZh0XeFFjTzrXh8lJkGwKGpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRatvdZn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3AAEC4CEDF;
+	Wed, 12 Feb 2025 03:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739332491;
+	bh=VJU4OkT72njE7nPgWRVMKmpmfirQRoypaDEddTcRczg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QRatvdZn3cto/WRVRJAxJ2oXVJ/VYXWHQqeqaPljqwFV25HSlW6TVVkNJCsZFbhHW
+	 /gSv8hp234jBGpDpzMCqLqMwvgCj/oqUO+OB3Wjf/iOu1KZ8F41N7UX/MZIo3LLR+M
+	 Zbcw0EKjqnL/G68CXqTFPU2JlXw5zr0atUJH2IZXJW0uYX3K4vtCDM/J7tuwjNhoro
+	 areM8JKK1ZR/H59n7jMzeod41skcH/O+ElMkW1wPoGwmsPvqIyGmI3fhFRMc7577zB
+	 r4zZC5CFdmEAF1TVV5b+oIqXaTpoLoZBx3bHZ4HQZlMA0vz97SclfsxSMcKPU3LYy5
+	 vxBSdjyu5dcGg==
+Date: Tue, 11 Feb 2025 21:54:48 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 3/8] remoteproc: Introduce load_fw and release_fw
+ optional operation
+Message-ID: <ol4wp4szz2qpyz7viukivpjtvx3urw3yfaae3rzxvfuywrfjmb@aojo6gcc65ww>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com>
+ <adqulwb54wvn36mnjq7u23qdiyapadr3ruhqluxab7mg3kowz5@4rexefd5mlwp>
+ <a8654e63-ff92-4d11-a3f5-75626e6dc6fe@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|DM6PR12MB4139:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5daebb63-ffce-4565-6962-08dd4b18ae2a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WXhtVC9XQ2EySDFVT3dLR0JVY3JTelcvb2JFenpIQjNCOHo2a1l2YmlESXZS?=
- =?utf-8?B?cFJITjlwQjdkNTlrUUVvdkVIdnlxbHJLMlhKMHVRdnJsb3RIQi9sUU5nb0Yx?=
- =?utf-8?B?cVJCbjd0bjJkNkZ6RmQ5NkNjMWVRanFGVTd2VTVsMk5YaW9QaUxtb3RORXpv?=
- =?utf-8?B?TFNVbDk4L1NZTlJPUmg2ZkhadEcxWHNxZi93THhFYXJCTGFnNVd2RTQvYjdt?=
- =?utf-8?B?U3hrT3c0MFpHbXRMODZYSEZaQThtNW5qY2huUFRpOFlxVDIydkFIc0lkV0lx?=
- =?utf-8?B?YkUwM2haQ3RZeHVmQkhyYjdiQWtyQ2Zla1VwYTZ3clVld0tlTGNCQlZEUzdR?=
- =?utf-8?B?T3VGSncwSUcxamdwcTUvWnphSmUweWgyeUVoM29qaVNyY2wySDU2WVhDbGhW?=
- =?utf-8?B?SnE4dEk0OWZFcFB4emhrR2lhOUlGdnVpNW92Qnc1R3lpOVJKazVSTU9FUTZZ?=
- =?utf-8?B?ZS9Fa2JiZVV4cjdSV21OT1dtcFN3RWFEeWhaNkQ3MHE3N0MycWQwV3FMVTVW?=
- =?utf-8?B?T1pBKzdTb2NZWEduYWdieDJBa1dmRWhrZHVpMEZVcmltQ1hhdFZEQ3NZeTJG?=
- =?utf-8?B?Q2dLVjIzbStyU2wxS0NpK09RWUl6ZDN3bFRlaXpYVFJUR3JTK3RMZVdoZDNG?=
- =?utf-8?B?K1lIVzZMdytqNlpoSThWZFVlNGw3SWdLcUVQRTJ6bWwyTExKbURiWGIzY3FQ?=
- =?utf-8?B?aGJqU0hhQkVIWFFvSTQ0S01zWis1a083WStTbi9aYmFFamFUd3U3RTJ2R05D?=
- =?utf-8?B?ZUh5RXlxZ0hVU1hRMDU4VGZWSlZleWxpSFVNM1ZYcVByc3NUK1pzU1lERGIz?=
- =?utf-8?B?UGNXMTlqcGhPK1lUMDEvRG1nUkg5Q1JpQjRCVldDbG5BVzQvN3NDckttaUZp?=
- =?utf-8?B?K20xRmE1V0VhQlNtMkV1dUxZNEtCY1ZKK2p3MkVlcTF1cnVCNlJaNXRCSUEx?=
- =?utf-8?B?a3Y1L1hRQkFqeGRVWmt6VWxKTHF0MWZ4TS91WG01ZFFmc0xyM2g3b1daSXFE?=
- =?utf-8?B?ekRTbTcwaTZVcytHVHVXMlEzY25RSEl4OGZubSs4N3BKWEtlbFJuZmZ2b0Q1?=
- =?utf-8?B?V2FnZXMwRVB3dnJqbThUVFptbi9memhHMlhwQ2cvK2hOL2pha2MxY2treU5F?=
- =?utf-8?B?WkpxYjkvVzBjdGZRZXljcG0vQWw1SHFiMWxiTTBlUExmdi9Bd1BIaTBEVE1a?=
- =?utf-8?B?SUVFQ3R4RlB1OWxQVDdSWHRVcGttbW1KMGZhQUw1VUtiVWRmRW5JRDRrY1hD?=
- =?utf-8?B?c203VDdZaS9rRmlJc1F3UWVFTXEvd2RRNzI1N3JVZDg3bDQxQ082SWttc2Ny?=
- =?utf-8?B?QXNVWUZrdzF0UkdIVWpoZ1VWOE9TOXV4K0Zld3pJNCszZklyOVYzWTIrZ0JO?=
- =?utf-8?B?TitkcDZiVGVjWUh1TUNnY0JpUEthazd0dndlQjdkM3VkYU5uUVJOcG1TNC84?=
- =?utf-8?B?ak4xenBxVHNpbWhCdzdzdzlmRFFpMFJDem1HYXBwa1RNUDRVMGRMNzJqNWVT?=
- =?utf-8?B?R3prZXEwMHMvUHRUV0tscTNFVUttT2d1WlpHQjJxWDloOUhvcnVnRnVwbEZn?=
- =?utf-8?B?L01mbFAxSWpwWHU4anZ3bksvbUpKR041UStNT2o2N2NyZW5jRXAwc0k0NjBS?=
- =?utf-8?B?MllZRzhHcklxQjlCeEhmTTBEa1U3aTNNSFlXajBIMlZqN3dKRGRFZWtNTU9x?=
- =?utf-8?B?M2xmMVVGNXk0MzQrc0hlcFhTbHNmZDNScjdRdjBpWC9wa3ljMmRuOURkOEJJ?=
- =?utf-8?B?T0gxVVNxbUhCNGVTdzFXeFNwVkR0V2FlVmhPWDZsZ2RDSFRPVHVBTWNKRHR1?=
- =?utf-8?B?aXNzUnF0ekFjSlVRMERmdmtIYnlkZWlvNkNUUkt1NnhjNm9DNGdRd25Mb01D?=
- =?utf-8?Q?KGbW/Syenz021?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z3NURU1tUTNobTFXK3h1TVdoSERPRUZvVnJ0ZkNKbDlHa3d2cFVNWGVlbjIv?=
- =?utf-8?B?Um1vK3hJN2VzeFRGbkRkNHlZTjZxL0lNVldkTEdHT29rYnlTbC9qMXZwaU1z?=
- =?utf-8?B?WC9qRklxcVFqRi9YOFFlNlNJdTFQRWxwMXgwVGx3eW4xS2cwMGp5d2VmS0h4?=
- =?utf-8?B?Sm1TMUdZWDEvZHNCcVVhamRBTXRTZlU0d2VUZHZCbE5IcDIvUjBGOGFWTTZE?=
- =?utf-8?B?eFUwRC9Ca0l0UGtYWk5DdHB3SzdLWURrWHk0Rk04a2RPM0FtWHlrOS9oVnVI?=
- =?utf-8?B?YmQ2azdOMnprRXY0WnhJVlo4T3BPcVMzTVhPTWN0NmlFeS81Vm45VkhyZ05k?=
- =?utf-8?B?cXRCU3N4aThpYzlWL01VcVVGNjNLdjZkWXNFRjJpd2JDUnllemhoaU9pZnlF?=
- =?utf-8?B?T0ZuQUJMSEV1M0dZVHlUUG9mTG9PMTZxL2x1Z0wrRXVkaDNRc1hLQlp6TnA4?=
- =?utf-8?B?Sk1qVGVxL0NkNlpJSnRJK3F4N1NqeHZMQVFyTVBlZkh1cG5vRUlXak92UUo2?=
- =?utf-8?B?R2JrZzRqYmc4T1ZxSW1DeWVkbjJHdnV4WkNiVk0vbEo3R0FuUUtRdEtmMzA3?=
- =?utf-8?B?Ukx2N1M1eDhSV1hybytmeWVyVjhadzdlajBaT1pOUkFRbUJwR00yWlp0MHY4?=
- =?utf-8?B?LzBPOVAxbzJSYlFoWXdaWG5lekl5eDllRWZ0c2w2TVMwQUh1VFc5OUFWRFVw?=
- =?utf-8?B?RkdFWHp2VkpMNHhZd3M2dHJTWnlLQUVOZHgrblRnQ2FaVW1kWmtHWDlWeFRn?=
- =?utf-8?B?OU5Vci9OWm9yOWg5bkI1MlhyaTBsWlc2OGg0emx6MnJ4Tm1JWEJmemI3ZWcz?=
- =?utf-8?B?NWFqS1dZZllZVEZBSWhBcTFwTTR2OVNUc2U4SnQwdzhVYTBMN0o2U0F0V0lH?=
- =?utf-8?B?dnVPODZMRWlSSFB4UHFHdU1MM0VVT01JbHFBZWNvRUIxa3VxQ2lmTHBMMU1m?=
- =?utf-8?B?NG5RdTJwMm9sc2wrNkUvT3NKeklPTklFTFZtOExUbTVrNkhSQU9WWkYweUwv?=
- =?utf-8?B?RWpJa2cvenl0SEdoWmF6WGkyK1JnUTZRN0trSXRVQTFvZ2Znb2g4cFJ2Z0Rl?=
- =?utf-8?B?eE9IUE9ZcDd2Yk4vckFIZHU4Y0tkZ05GeE5mQjRFRFMzYVZCZnN1L2lFT244?=
- =?utf-8?B?R3lKbmlBN2pvTHRCYTZHSDNBYU5qa3VxcDh4OG9maXpaaTIwTnljd1A4M1d6?=
- =?utf-8?B?elJzd01tbnlDOFZUVzdDYW9Pb1l2ZjdrandlR2FpVlhQT3RoNGdwdks2UVVX?=
- =?utf-8?B?T3JhNFp3bjRzSDV1WG1VZG51ZytXQUc1d2JqMHVTOHNVdkx0R3pwYUEydmQr?=
- =?utf-8?B?UHFxS2hMTDRYOGNXVlRjcVRGRDJ6WlZGZ1dxejFqN29VbVpFeU4wNXcya2d6?=
- =?utf-8?B?djh3cExZUEQ0dVBVc0pqZFlXMzhmSStKUlFMeXA5eWF3aWtvZmd2V0REaUk2?=
- =?utf-8?B?dEg1NklsakNtVzBTV1ZSajdxUkZOWGlWVmlhaCtHY045Z29MS0NLK2pDcnJk?=
- =?utf-8?B?NC92aWpJVWd4M2VVYlFyUmRTMFlVZ2pJZnRkSzV6Lzd4ZGFOcUV1clNHQXdL?=
- =?utf-8?B?M0FiQW1Nd1ZjbHRUREFNVC9NcEF2S3hsVDRFd1A3cyt0aFZ6L0owdjRneXhk?=
- =?utf-8?B?cTA1UVBUc2t1eGlZOTZVTU02ZzhEQUNtZnZpUGd0NUprOHo3cWl0UmpXdlVL?=
- =?utf-8?B?SDMxRFJBNldkZk5XcjIyVnBTekVnQkNqMy95b0xkVVY2cGIvbjRmQm5YNmxh?=
- =?utf-8?B?VUtJb002dXZHTDNFQkhVL2NvdU9zMEl6ZzhHSEtrYjQ1cW1kYTZuUjBpaHdx?=
- =?utf-8?B?dEE3V1lOYTc2SWJvVVFaNDk0ZFppd2RTblZ2Vm1aZUxRRmdKTE9sTFVQWmFk?=
- =?utf-8?B?UjZYZU1zZ3MvZ2hoMVROVFlJcnVxOGkwNDlKM2ZnRkdaakdGZmhRUjZUUzc3?=
- =?utf-8?B?UTYvR3ZuREJQUCthbGlteCtMd2ZyUmRFNlpUUVY2Y3BwQ0JpMG9hOGxmbVJQ?=
- =?utf-8?B?SXNWUnpObythL3lBZy9NS0F3Mm9PMTZKVnRPb2JFdG5TWnFEdVdzVHZTRTFS?=
- =?utf-8?B?YlFteXkxeUJvaUxCQVVPZGRzR2xWU3JoUHF0Z0haSmhkYWRaOXJ2c2hXaGNx?=
- =?utf-8?Q?ekAdNLhzuSJ63QGy6bXbV9Im4?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5daebb63-ffce-4565-6962-08dd4b18ae2a
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 03:52:33.2922
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mnc0ofB1CUWqkeK61vv4X7JQqcG794130QwPrLoFp069L+nvWb9Fj3aiRvAZ1IVC2oNyBDg9xq12V/uLMxB9Ug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4139
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8654e63-ff92-4d11-a3f5-75626e6dc6fe@foss.st.com>
 
-On 2/12/2025 12:47 AM, Mario Limonciello wrote:
-> On 2/11/2025 07:13, Dhananjay Ugwekar wrote:
->> On 2/7/2025 3:26 AM, Mario Limonciello wrote:
->>> From: Mario Limonciello <mario.limonciello@amd.com>
->>>
->>> In order to access the policy from a notification block it will
->>> need to be stored in cpudata.
->>
->> This might break the cpufreq_policy ref counting right?, if we cache the pointer
->> and use it independent of the ref counting framework.
+On Tue, Dec 10, 2024 at 11:33:31AM +0100, Arnaud POULIQUEN wrote:
 > 
-> Would it be reasonable to bump the ref count when we take the pointer?
 > 
-> I'm not sure if this will work properly.
+> On 12/10/24 00:14, Bjorn Andersson wrote:
+> > On Thu, Nov 28, 2024 at 09:42:10AM GMT, Arnaud Pouliquen wrote:
+> >> This patch updates the rproc_ops structures to include two new optional
+> >> operations.
+> >>
+> >> - The load_fw() op is responsible for loading the remote processor
+> >> non-ELF firmware image before starting the boot sequence. This ops will
+> >> be used, for instance, to call OP-TEE to  authenticate an load the firmware
+> >> image before accessing to its resources (a.e the resource table)
+> >>
+> >> - The release_fw op is responsible for releasing the remote processor
+> >> firmware image. For instance to clean memories.
+> >> The ops is called in the following cases:
+> >>  - An error occurs between the loading of the firmware image and the
+> >>    start of the remote processor.
+> >>  - after stopping the remote processor.
+> >>
+> > 
+> > Why does this difference need to be encoded in rproc_ops? I think we
+> > should strive for having a single, simple high level flow of operations
+> > through the remoteproc core for which the specifics of each remoteproc
+> > instance can be encoded in that driver.
+> > 
+> > 
+> > Perhaps there's a good reason for this, but if so please read and follow
+> > https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+> > to make that reasoning clear in the commit message.
+> > 
+> 
+> The actual sequence to load a remoteproc firmware is
+> - get firmware from file system and store the firmware image in Linux kernel memory
 
-One doubt, why cant we get the policy ref normally using the cpufreq_cpu_get(cpudata->cpu) 
-in the notification block ? I'm not aware of that code, if there is any restriction on this.
+This sounds like "load" in remoteproc terminology.
+
+> - get resource table from the firmware image and make a copy(
+> - parse the resource table and handle the resources
+
+> - load the firmware
+> - start the firmware
+
+And these two are "start".
 
 > 
->>
->>>
->>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>> ---
->>>   drivers/cpufreq/amd-pstate.c | 13 +++++++------
->>>   drivers/cpufreq/amd-pstate.h |  3 ++-
->>>   2 files changed, 9 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
->>> index 689de385d06da..5945b6c7f7e56 100644
->>> --- a/drivers/cpufreq/amd-pstate.c
->>> +++ b/drivers/cpufreq/amd-pstate.c
->>> @@ -388,7 +388,7 @@ static int amd_pstate_set_energy_pref_index(struct cpufreq_policy *policy,
->>>       else
->>>           epp = epp_values[pref_index];
->>>   -    if (epp > 0 && cpudata->policy == CPUFREQ_POLICY_PERFORMANCE) {
->>> +    if (epp > 0 && policy->policy == CPUFREQ_POLICY_PERFORMANCE) {
->>>           pr_debug("EPP cannot be set under performance policy\n");
->>>           return -EBUSY;
->>>       }
->>> @@ -689,7 +689,7 @@ static void amd_pstate_update_min_max_limit(struct cpufreq_policy *policy)
->>>       perf.max_limit_perf = freq_to_perf(perf, cpudata->nominal_freq, policy->max);
->>>       perf.min_limit_perf = freq_to_perf(perf, cpudata->nominal_freq, policy->min);
->>>   -    if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
->>> +    if (policy->policy == CPUFREQ_POLICY_PERFORMANCE)
->>>           perf.min_limit_perf = min(perf.nominal_perf, perf.max_limit_perf);
->>>         WRITE_ONCE(cpudata->perf, perf);
->>> @@ -1042,6 +1042,7 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
->>>           return -ENOMEM;
->>>         cpudata->cpu = policy->cpu;
->>> +    cpudata->policy = policy;
->>>         mutex_init(&cpudata->lock);
->>>       guard(mutex)(&cpudata->lock);
->>> @@ -1224,9 +1225,8 @@ static ssize_t show_energy_performance_available_preferences(
->>>   {
->>>       int i = 0;
->>>       int offset = 0;
->>> -    struct amd_cpudata *cpudata = policy->driver_data;
->>>   -    if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
->>> +    if (policy->policy == CPUFREQ_POLICY_PERFORMANCE)
->>>           return sysfs_emit_at(buf, offset, "%s\n",
->>>                   energy_perf_strings[EPP_INDEX_PERFORMANCE]);
->>>   @@ -1543,6 +1543,7 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
->>>           return -ENOMEM;
->>>         cpudata->cpu = policy->cpu;
->>> +    cpudata->policy = policy;
->>>         mutex_init(&cpudata->lock);
->>>       guard(mutex)(&cpudata->lock);
->>> @@ -1632,7 +1633,7 @@ static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
->>>         amd_pstate_update_min_max_limit(policy);
->>>   -    if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
->>> +    if (policy->policy == CPUFREQ_POLICY_PERFORMANCE)
->>>           epp = 0;
->>>       else
->>>           epp = READ_ONCE(cpudata->epp_cached);
->>> @@ -1651,7 +1652,7 @@ static int amd_pstate_epp_set_policy(struct cpufreq_policy *policy)
->>>       if (!policy->cpuinfo.max_freq)
->>>           return -ENODEV;
->>>   -    cpudata->policy = policy->policy;
->>> +    cpudata->policy = policy;
->>>         ret = amd_pstate_epp_update_limit(policy);
->>>       if (ret)
->>> diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
->>> index 7501d30db9953..16ce631a6c3d5 100644
->>> --- a/drivers/cpufreq/amd-pstate.h
->>> +++ b/drivers/cpufreq/amd-pstate.h
->>> @@ -97,9 +97,10 @@ struct amd_cpudata {
->>>         struct mutex    lock;
->>>   +    struct cpufreq_policy *policy;
->>> +
->>>       /* EPP feature related attributes*/
->>>       u8    epp_cached;
->>> -    u32    policy;
->>>       bool    suspended;
->>>       u8    epp_default;
->>>   };
->>
+> 
+> In OP-TEE we support not only one ELF image but n images (for instance a TF-M +
+> a zephyr), the segments can be encrypted the OP-TEE load sequence is
+>  - copy header and meta data of the signed image in a secure memory
+>  - verify it
+>  - copy segments in remote processor memory and authenticate segments in place.
+>  - optionally decrypt the segments
+> 
+> Only at this step the resource table as been authenticated (and decrypted)
+
+"this step" meaning TA_RPROC_FW_CMD_LOAD_FW? Above you say that happens
+after you parse the resource table.
+
+> 
+> So the point is that we need to load the firmware before getting the resource table
+> 
+> 
+> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >> ---
+> >> Update vs version V13:
+> >> - Rework the commit to introduce load_fw() op.
+> >> - remove rproc_release_fw() call from  rproc_start() as called in
+> >>   rproc_boot() and rproc_boot_recovery() in case of error.
+> >> - create rproc_load_fw() and rproc_release_fw() internal functions.
+> >> ---
+> >>  drivers/remoteproc/remoteproc_core.c     | 16 +++++++++++++++-
+> >>  drivers/remoteproc/remoteproc_internal.h | 14 ++++++++++++++
+> >>  include/linux/remoteproc.h               |  6 ++++++
+> >>  3 files changed, 35 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >> index ace11ea17097..8df4b2c59bb6 100644
+> >> --- a/drivers/remoteproc/remoteproc_core.c
+> >> +++ b/drivers/remoteproc/remoteproc_core.c
+> >> @@ -1488,6 +1488,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+> >>  	kfree(rproc->cached_table);
+> >>  	rproc->cached_table = NULL;
+> >>  	rproc->table_ptr = NULL;
+> >> +	rproc_release_fw(rproc);
+> >>  unprepare_rproc:
+> >>  	/* release HW resources if needed */
+> >>  	rproc_unprepare_device(rproc);
+> >> @@ -1855,8 +1856,14 @@ static int rproc_boot_recovery(struct rproc *rproc)
+> >>  		return ret;
+> >>  	}
+> >>  
+> >> +	ret = rproc_load_fw(rproc, firmware_p);
+> > 
+> > It is not clear to me why in the case of OP-TEE we need to invoke the
+> > "load operation" here, and in the case of "legacy" ELF loading we do it
+> > first thing in rproc_start() (i.e. on the very next line of code being
+> > executed).
+> 
+> For the OP-TEE, please refer to my comment above.
+> 
+> The only reason I can see for the legacy ELF is that the resource table could
+> contain information to be able to configure some resources to load the firmware.
+> In case of OP-TEE this would be managed in OP-TEE.
 > 
 
+Sure, but as I say...inline rproc_start() here and the very next
+operation we perform is something we call "load".
+
+Why do we need to differentiate "load" and "load firmware", when we call
+them at the same step in the sequence?
+
+> > 
+> > 
+> > Should we start by renaming rproc_load_segments() rproc_load() and move
+> > it out of rproc_start()? (I.e. here?)
+> > 
+> > Perhaps define that rproc_load() is responsible for "loading firmware"
+> > (whatever that means) and establishing rproc->cached_table, and
+> > rproc->table_ptr?
+> > 
+> > (Note that this seems like a good cleanup of the spaghetti regardless)
+> > 
+> 
+> It's something that crossed my mind, but I don't know the legacy well enough to
+> guarantee that it will work in all drivers.
+> 
+
+Looking at this again, if we move it, we need to duplicate it across a
+few different call sites. So might need to take another look at that.
+
+Still flatten the code and you seem to do:
+
+if (load_fw)
+	load_fw();
+if (load)
+	load();
+
+Why do we need two different things named "load".
+
+> If you want to go in this direction, perhaps this is something that could be
+> addressed in a dedicated pull request? In this case, the ops could become
+> load_fw and load_fw_new, similar to how it is done for platform_driver::remove.
+> 
+
+No need to make it more complicated than it is, change the symbol name
+and fix the 3 places that calls the function.
+
+> 
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >>  	/* boot the remote processor up again */
+> >>  	ret = rproc_start(rproc, firmware_p);
+> >> +	if (ret)
+> >> +		rproc_release_fw(rproc);
+> > 
+> > The fact that you rproc_release_fw() in the error path here, right
+> > before we unconditionally release_firmware() the actual firmware means
+> > that you have 2 different life cycles with very very similar names.
+> > 
+> > This will contain bugs, sooner or later.
+> 
+> So we need to find a better way for the ops if we continue in this direction.
+> What about introducing rproc_load_new and rproc_release?
+> 
+
+You need to help me understand why load and load_new are both needed.
+
+And no, "load_new" is not an ok name.
+
+> > 
+> >>  
+> >>  	release_firmware(firmware_p);
+> >>  
+> >> @@ -1997,7 +2004,13 @@ int rproc_boot(struct rproc *rproc)
+> >>  			goto downref_rproc;
+> >>  		}
+> >>  
+> >> +		ret = rproc_load_fw(rproc, firmware_p);
+> >> +		if (ret)
+> >> +			goto downref_rproc;
+> >> +
+> >>  		ret = rproc_fw_boot(rproc, firmware_p);
+> >> +		if (ret)
+> >> +			rproc_release_fw(rproc);
+> >>  
+> >>  		release_firmware(firmware_p);
+> >>  	}
+> >> @@ -2071,6 +2084,7 @@ int rproc_shutdown(struct rproc *rproc)
+> >>  	kfree(rproc->cached_table);
+> >>  	rproc->cached_table = NULL;
+> >>  	rproc->table_ptr = NULL;
+> >> +	rproc_release_fw(rproc);
+> >>  out:
+> >>  	mutex_unlock(&rproc->lock);
+> >>  	return ret;
+> >> @@ -2471,7 +2485,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+> >>  	if (!rproc->ops->coredump)
+> >>  		rproc->ops->coredump = rproc_coredump;
+> >>  
+> >> -	if (rproc->ops->load)
+> >> +	if (rproc->ops->load || rproc->ops->load_fw)
+> >>  		return 0;
+> >>  
+> >>  	/* Default to ELF loader if no load function is specified */
+> >> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> >> index 0cd09e67ac14..2104ca449178 100644
+> >> --- a/drivers/remoteproc/remoteproc_internal.h
+> >> +++ b/drivers/remoteproc/remoteproc_internal.h
+> >> @@ -221,4 +221,18 @@ bool rproc_u64_fit_in_size_t(u64 val)
+> >>  	return (val <= (size_t) -1);
+> >>  }
+> >>  
+> >> +static inline void rproc_release_fw(struct rproc *rproc)
+> >> +{
+> >> +	if (rproc->ops->release_fw)
+> >> +		rproc->ops->release_fw(rproc);
+> >> +}
+> >> +
+> >> +static inline int rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
+> >> +{
+> >> +	if (rproc->ops->load_fw)
+> >> +		return rproc->ops->load_fw(rproc, fw);
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >>  #endif /* REMOTEPROC_INTERNAL_H */
+> >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >> index 2e0ddcb2d792..ba6fd560f7ba 100644
+> >> --- a/include/linux/remoteproc.h
+> >> +++ b/include/linux/remoteproc.h
+> >> @@ -381,6 +381,10 @@ enum rsc_handling_status {
+> >>   * @panic:	optional callback to react to system panic, core will delay
+> >>   *		panic at least the returned number of milliseconds
+> >>   * @coredump:	  collect firmware dump after the subsystem is shutdown
+> >> + * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
+> >> + *		processor expects to find it.
+> > 
+> > Why does it matter if it's an ELF or not?
+> 
+> No matter. It was more to differentiate from the legacy one, but it does not
+> make sense and adds to the argument that the ops naming is not accurate.
+> 
+
+I'm probably misunderstanding your intention here, but I can't help
+feeling that you add this code path to avoid understanding or fixing the
+existing code.
+
+> > 
+> > In the Qualcomm case, firmware comes in ELF format, Linux loads the
+> > LOAD segments and the trusted world then authenticates the content and
+> > start the remote processor.
+> > 
+> > 
+> > I think the difference in your case is that you have memory reserved
+> > elsewhere, and you want the "load" operation to pass the firmware to the
+> > TEE - which means that you need rproc_release_fw() to eventually clean
+> > up the state if rproc_start() fails - and upon shutdown.
+> 
+> Yes the OP-TEE is make more stuff:
+> - authenticate several firmware images
+
+Please tell me how that work. I'm not able to see the multiple calls to
+request_firmware()...
+
+> - decrypt images if encrypted
+
+This is done for some Qualcomm remoteprocs as well.
+
+> - ensure that the load is done in granted memories
+
+At the top of your reply you say that you're loading the firmware into
+Linux memory, then you invoke TA_RPROC_FW_CMD_LOAD_FW to "load" it once
+more - presumably copying into some other memory.
+
+It sounds like this is an optimization to fail early in the case that
+something is wrong?
+
+> - manage the memory access rights to enure that the code and data memory
+>  is never accessible by the Linux.
+> 
+
+Right, after authentication Linux must be locked out. That's done in the
+Qualcomm "authenticate and start" phase, at the very end of the loading
+and setting things up.
+
+> > 
+> > If we improve the definition of rproc_load_segments() to mean
+> > "remoteproc (or remoteproc driver) is loading segments", then in your
+> > case there's no "loading" operation in Linux. Instead you make that a
+> > nop and invoke LOAD_FW and START_FW within your start callback, then you
+> > can clean up the remnant state within your driver's start and stop
+> > callbacks - without complicating the core framework.
+> 
+> This would not work as I need to load the firmware before calling
+> rproc_handle_resources().
+> 
+
+Ohh, now I see what you're saying. This is why you should follow
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+when you write a commit message. Then I would have understood your
+problem in the very first paragraph of the patch.
+
+This very much sounds like what's intended to happen in
+rproc_parse_fw(), per the comment right next to the call:
+
+/* Load resource table, core dump segment list etc from the firmware */
+
+
+But I'm guessing that would require loading the segments etc into the
+destination memory, perform the authentication and then you can get hold
+of the resource table?
+
+Which..per your patch you do before calling rproc_fw_boot(), so you're
+already diverging completely from the expected flow.
+
+> I can not use rproc_prepare_device() as it is not called on recovery
+> 
+
+The purpose of rproc_prepare_device() is to ensure that any clocks etc
+for the memory where we're going to load the firmware is enabled, so
+that doesn't sounds like the right place.
+
+Regards,
+Bjorn
+
+> Thanks,
+> Arnaud
+> 
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> >> + * @release_fw:	optional function to release the firmware image from memories.
+> >> + *		This function is called after stopping the remote processor or in case of error
+> >>   */
+> >>  struct rproc_ops {
+> >>  	int (*prepare)(struct rproc *rproc);
+> >> @@ -403,6 +407,8 @@ struct rproc_ops {
+> >>  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> >>  	unsigned long (*panic)(struct rproc *rproc);
+> >>  	void (*coredump)(struct rproc *rproc);
+> >> +	int (*load_fw)(struct rproc *rproc, const struct firmware *fw);
+> >> +	void (*release_fw)(struct rproc *rproc);
+> >>  };
+> >>  
+> >>  /**
+> >> -- 
+> >> 2.25.1
+> >>
 
