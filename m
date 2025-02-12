@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-511799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D6FA32FD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:35:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B16A32FDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C9E168EAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:35:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A721C3A9B9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8301FF7D7;
-	Wed, 12 Feb 2025 19:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810451FF614;
+	Wed, 12 Feb 2025 19:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uI3m2wF4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlbpXgJP"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ED41FF1B7;
-	Wed, 12 Feb 2025 19:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373E41F8BCA;
+	Wed, 12 Feb 2025 19:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739388924; cv=none; b=P733j6+u41+koWPj2ugnaG/vEM0BMq7YPwujvu368nHz1hafIZCcntgfz6BsoQGKjlPNtm2wfmONpMTzweCVTn5KonAafMVyvgYFjugDG7zWYD1Utb4S0lyHxDdX+RPzxX1DSYQgBNRXg3VJh4KhZ/lon6+QAoKJE3C4iL/sxG8=
+	t=1739388985; cv=none; b=XsvqC96B4+O5i9S/9UovXYB/urkxyHpnvb5+Hhb2nQMPQvZyL6hayvfSFjK0cIOlpXo/n9TEeyhWQ0fMEKV2y+sHBZjjAS0Ff3/hFmFAiXtIZf8vFm21VujIzoZjGHqmJYRtvz4casKEGXr9BWuQp9rX9v2cif9BrIDIEFhdApE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739388924; c=relaxed/simple;
-	bh=Ugf2g2Yhg5Aw7lvSOZInqiVQU41aKtxd+Iq+ubuXWEg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kjUFGGXblMZfY13TFNavbuHeOUvodbfWUYscXOx8iNTLLbKL9K/ZetDHyVI7BUMSfwS6KLbwLu57XSUK95siotmqdkQRLd2u8Ph6gqLTfehvMycASzqw984msbUZjjTqaz39tV23+h7Yp8/Cod3/FnGUDxFfBAFOr/wCGvVwIIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uI3m2wF4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A419C4CEDF;
-	Wed, 12 Feb 2025 19:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739388923;
-	bh=Ugf2g2Yhg5Aw7lvSOZInqiVQU41aKtxd+Iq+ubuXWEg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uI3m2wF4Xy0uTW4CBkbjuWo3J7yN1REN3JcZj1mpdYXFEtL7T88sdAvRnb1/MVrU0
-	 HXdV7MmRBPS0YI+UXLj+AvaYht9/ohnRiXQU3tnh31cN9WYwW57S2uZmvTjg7rm4nw
-	 oekL0p384QdGbuQvSSCQ4s6AWgb+kU89zVwLeZbeYvUmavrBOZlotZjvR2VO6YQqbK
-	 jnZncsAC7MCaP/DmaCPaN/jfVVcmZLr2Ce+PLa8l2dk3LIQ9d3K2s21TZcme6sYMx0
-	 L0TcvYDJaO9zmPCvT39dPi7GgTfEVyAn7Q5nPyLTrcmfn28Vm+FuSEJlJBot2Lv4D7
-	 65O8+aKHg5kaw==
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
-	linux-pci@vger.kernel.org
-Cc: =?UTF-8?q?J=C3=BCrgen=20Gro=C3=9F?= <jgross@suse.com>,
-	=?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Felix Fietkau <nbd@nbd.name>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Jan Beulich <jbeulich@suse.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Deren Wu <Deren.Wu@mediatek.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Shayne Chen <Shayne.Chen@mediatek.com>,
-	Sean Wang <Sean.Wang@mediatek.com>,
-	Leon Yen <Leon.Yen@mediatek.com>,
-	linux-mediatek@lists.infradead.org,
-	regressions@lists.linux.dev,
-	xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH] PCI: Avoid FLR for Mediatek MT7922 WiFi
-Date: Wed, 12 Feb 2025 13:35:16 -0600
-Message-Id: <20250212193516.88741-1-helgaas@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739388985; c=relaxed/simple;
+	bh=QO4/KNc9x4dzK3QBi705JZGrxHHJJZS+sDqwNV41osA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lVJMpmqEHMR8Fe0T+bDLb/b2vRqykxj6iL7e+OOwuUw+9iONj2NOdPsqioHKjM5zMRtwI7u9TIRMbxo08is9tcM+bAselakFLjH4yYtBDbpnvOqvQPGGRH6+/HALOwsYJpifg4Ahue6Z3uZJv7qMNhoAUIIiSsB+HvRG0JEY0lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlbpXgJP; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7c07e8b9bso28235866b.1;
+        Wed, 12 Feb 2025 11:36:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739388982; x=1739993782; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nj8WHZGsoOuauuYxbxbB7oKPr0MKW37ni43BF0NAcDg=;
+        b=MlbpXgJPjTDxVQl+8o1+S4FQLUDymcFGF/idWH1AHcpSpW22L1t6WRmY7kjnLYveMA
+         PTTRj3ao6M6hHJ/sQPN3S9ZJu49pJOq/YbOZ//KpIs89O2NdYzWoMU3DnbMjSZSwUHXT
+         R/wiEKuidHvtIISI+eyfS/BhS4aXoHq+S5kmDvkYBMFjhf7V2cxfRnX9571fyX56LJrD
+         EhnRC0TgblsMqPA/S7sOnM19JuGK/DreIDbcrggjOVCoWvzfvJqFIsULOZRn7zfdZWjN
+         1OiY65D9X6YloEXhb40WUGVs9qb/KKxr2LFF2G8/HK5L6S74OHPiC5n+6L00LC9qfYUs
+         pPdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739388982; x=1739993782;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nj8WHZGsoOuauuYxbxbB7oKPr0MKW37ni43BF0NAcDg=;
+        b=DmEnsX4ZEXEjQoFK7QyGEFydtngaxKFWcQuqNzhwvb9qUgxqnJlnUtmk1AwD+zC/zM
+         wwNiZcovKfDdu7iJDzLoKRFyEYh9ZOR+bb8hy7RLMT9DLccHHJTfWKBWdjKJEB3Edmkc
+         bmxgmCsInVNGgaxjyoLHHV2RqvbaK9+9LC+tefJ4EBig0sgWfn7NiSkwtDXs9oozwU9y
+         AOXyfm/aBLIRLzD3jdc2uAu5nWY0bXkOqYrHu4C6NS9EQzsYEWpporfsgOBvEIK34Eda
+         qrZadVDcNGP8S+h7G/4lX2aW6irH03ElyuZ4dOXdt/HUMrJtgTH1ce6jz/h6pOLGL3nX
+         wNqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUq0Ma7JQHlk9S3lF9IySoQxZWnEVeMt368hQxvuLcy4cgH7v1pwgvYPIyGNHHRi0xcXDQrxtO1zpw+mo=@vger.kernel.org, AJvYcCWfhMY3KNg1SYndXeWcWld1t0XTWXt9mAeTx80+8OowbdKFENci8coqaHWl/zRMFvsPHPlrF64tEBzwZMZV@vger.kernel.org, AJvYcCXwrf/HdyTFq7W0v/rU5/oFn1PfRvIUkPIKN7uxCA2gZNHy2r11AXNRN2uvB+KSH6LFCWTLkz6+jDis@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmEDPi44muMUy45cBn+mhK+182NPR8i203588oIxQ6QWNCX0V2
+	pumQ4Hkx3GrnlCILzwDFoJLdk02SR4n3umIfvOZov6PDXB+7epku/h7jq6U2
+X-Gm-Gg: ASbGncvNxwdXITrfPKJe+zi6AFCTWwmzjiCVUydOb7uc24XiE7y+9xtwv/l9GQ4anat
+	rTPwM2U7V0OzYxB8bIayihx0X0GmMiANc6cCa/TODn87pwfi7nAjsQIiHwgiJF/PAZIXZm3J0eJ
+	T6QrkZXs5ll8pfSkdyrl/cIaxzssLwoWTqWP0hQ/zF7zu+64pnVJzY1rukWWeRiijK/VEHIj/4e
+	5YsnKhI/fC+wy6UBoptysEZvQFNG1so5XTxLUxXNAuo/oX58vSAhHYjUpfGIa3CPiw0+Yb367PX
+	xvVL5h8d64ixU+hsHTBn2bBeNRpLcqkFlQ+mj4i364nl
+X-Google-Smtp-Source: AGHT+IGL83Kis97/b459m6UtdYpnAuiWRMSSg5OjvrrLppYn0/cJ+CJ1qwhXz6yKmy+MT4z9GaeW5g==
+X-Received: by 2002:a17:907:c1e:b0:ab7:9b86:598d with SMTP id a640c23a62f3a-ab7f33c1e0amr401910866b.17.1739388982053;
+        Wed, 12 Feb 2025 11:36:22 -0800 (PST)
+Received: from [192.168.1.130] ([82.79.237.175])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab772f49361sm1319997166b.33.2025.02.12.11.36.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 11:36:21 -0800 (PST)
+Message-ID: <e45411df-1b8b-4f21-878d-d52e1112e62d@gmail.com>
+Date: Wed, 12 Feb 2025 21:36:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] ASoC: dt-bindings: support imx95's CM7 core
+Content-Language: en-US
+To: Mark Brown <broonie@kernel.org>, Daniel Baluta <daniel.baluta@gmail.com>
+Cc: Marco Felsch <m.felsch@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, linux-arm-kernel@lists.infradead.org
+References: <20250211225808.3050-1-laurentiumihalcea111@gmail.com>
+ <20250211225808.3050-2-laurentiumihalcea111@gmail.com>
+ <20250212093610.x4ixrackmn3u2xrf@pengutronix.de>
+ <CAEnQRZBeQdnC+K92+Udb5awTmom10YHHNt7Ld-pYK4A1i8sr3Q@mail.gmail.com>
+ <d66996eb-f49b-448b-9743-d19a3c3eba52@sirena.org.uk>
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <d66996eb-f49b-448b-9743-d19a3c3eba52@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Bjorn Helgaas <bhelgaas@google.com>
 
-The Mediatek MT7922 WiFi device advertises FLR support, but it apparently
-does not work, and all subsequent config reads return ~0:
 
-  pci 0000:01:00.0: [14c3:0616] type 00 class 0x028000 PCIe Endpoint
-  pciback 0000:01:00.0: not ready 65535ms after FLR; giving up
+On 2/12/2025 2:38 PM, Mark Brown wrote:
+> On Wed, Feb 12, 2025 at 12:11:49PM +0200, Daniel Baluta wrote:
+>> On Wed, Feb 12, 2025 at 11:38 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
+>>> On 25-02-11, Laurentiu Mihalcea wrote:
+>>>> +    const: fsl,imx95-cm7-sof
+>>> Albeit Krzysztof already add his Reviewed-by, can I ask why we need to
+>>> add the -sof suffix instead of -audio or so? SOF is a software project
+>>> but you can clearly run different software on the audio-copro as well.
+>> Sure you can run a different software project on the audio DSP but
+>> you will need a way to distinguish between the different projects.
+>> There might be different mailbox, memory configurations. So you will  need
+>> to invent another suffix specific to the new project.
+>> We can make  const: fsl,imx95-cm7-audio as the one used with SOF
+>> and think about a different name later for when another project will
+>> want to use the DSP.
+> I think the point here was that the DT should stay the same even if the
+> DSP firwmare changes, just as how changing the main OS shouldn't affect
+> the DT.
 
-After an FLR, pci_dev_wait() waits for the device to become ready.  Prior
-to d591f6804e7e ("PCI: Wait for device readiness with Configuration RRS"),
-it polls PCI_COMMAND until it is something other that PCI_POSSIBLE_ERROR
-(~0).  If it times out, pci_dev_wait() returns -ENOTTY and
-__pci_reset_function_locked() tries the next available reset method.
-Typically this is Secondary Bus Reset, which does work, so the MT7922 is
-eventually usable.
+It's rather unfortunate but based on the experience from the 8 series
+(imx8qm, imx8qxp, imx8mp), the programming model can differ quite
+a bit (e.g: remoteproc vs SOF) even if the core is the same (i.e: DSP core).
 
-After d591f6804e7e, if Configuration Request Retry Status Software
-Visibility (RRS SV) is enabled, pci_dev_wait() polls PCI_VENDOR_ID until it
-is something other than the special 0x0001 Vendor ID that indicates a
-completion with RRS status.
+The different programming models also required different DT configurations
+(e.g: dif. mboxes as Daniel mentioned, some extra properties (i.e: reg-names), etc...)
 
-When RRS SV is enabled, reads of PCI_VENDOR_ID should return either 0x0001,
-i.e., the config read was completed with RRS, or a valid Vendor ID.  On the
-MT7922, it seems that all config reads after FLR return ~0 indefinitely.
-When pci_dev_wait() reads PCI_VENDOR_ID and gets 0xffff, it assumes that's
-a valid Vendor ID and the device is now ready, so it returns with success.
-
-After pci_dev_wait() returns success, we restore config space and continue.
-Since the MT7922 is not actually ready after the FLR, the restore fails and
-the device is unusable.
-
-We considered changing pci_dev_wait() to continue polling if a
-PCI_VENDOR_ID read returns either 0x0001 or 0xffff.  This "works" as it did
-before d591f6804e7e, although we have to wait for the timeout and then fall
-back to SBR.  But it doesn't work for SR-IOV VFs, which *always* return
-0xffff as the Vendor ID.
-
-Mark Mediatek MT7922 WiFi devices to avoid the use of FLR completely.  This
-will cause fallback to another reset method, such as SBR.
-
-Fixes: d591f6804e7e ("PCI: Wait for device readiness with Configuration RRS")
-Link: https://github.com/QubesOS/qubes-issues/issues/9689#issuecomment-2582927149
-Link: https://lore.kernel.org/r/Z4pHll_6GX7OUBzQ@mail-itl
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/quirks.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index b84ff7bade82..82b21e34c545 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -5522,7 +5522,7 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x443, quirk_intel_qat_vf_cap);
-  * AMD Matisse USB 3.0 Host Controller 0x149c
-  * Intel 82579LM Gigabit Ethernet Controller 0x1502
-  * Intel 82579V Gigabit Ethernet Controller 0x1503
-- *
-+ * Mediatek MT7922 802.11ax PCI Express Wireless Network Adapter
-  */
- static void quirk_no_flr(struct pci_dev *dev)
- {
-@@ -5534,6 +5534,7 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_AMD, 0x149c, quirk_no_flr);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_AMD, 0x7901, quirk_no_flr);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x1502, quirk_no_flr);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x1503, quirk_no_flr);
-+DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_MEDIATEK, 0x0616, quirk_no_flr);
- 
- /* FLR may cause the SolidRun SNET DPU (rev 0x1) to hang */
- static void quirk_no_flr_snet(struct pci_dev *dev)
--- 
-2.34.1
+The "-sof" suffix was chosen here instead of the more generic "-audio" (or whatever else
+alternative) because the DT configuration is specific to SOF's programming model. Other
+audio applications running on the same core may have dif. configurations (e.g: use
+DTCM/ITCM for memory instead of DDR, dif. mbox count, etc...). I suppose this kind of thing
+is bound to happen to some degree since the DT node doesn't just describe the CM7 core
+(but, rather, it also encompasses information on the memory, mboxes, etc. used)
+but perhaps I'm wrong?
 
 
