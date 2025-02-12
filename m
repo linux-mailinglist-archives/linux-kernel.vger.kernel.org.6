@@ -1,214 +1,114 @@
-Return-Path: <linux-kernel+bounces-511390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2204A32A49
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:41:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B8CA32A53
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6211675D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:40:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D701882B47
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC3A213E89;
-	Wed, 12 Feb 2025 15:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EC9230276;
+	Wed, 12 Feb 2025 15:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cTvlOpnk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BPNNI9J0";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cTvlOpnk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BPNNI9J0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlzXXs60"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75A8211719;
-	Wed, 12 Feb 2025 15:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB6121E097;
+	Wed, 12 Feb 2025 15:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739374840; cv=none; b=sUdyf+ZZF5FbRlQDzNMfZqbuSfHfJzU/K+QSMpYUAAk/ckq+Sw61B3io7sOzu/tgTPGFOe8BVLptKDnDjqZQO8BzbJ1Z6WBGBMzkTGRZiv8BHoDFIJpgEZt8NGanPedB0sWt2xJrUv0omfe14UHibP/zuMVO+NlEiv4tpygEjKw=
+	t=1739374844; cv=none; b=jyzxPWLQJQBeJojfij5QC10+HuE8aYMd1iwFN5EUN5zFpJHE4qQuQq800Sxam7y2hIKW8Gy40076sXUyx/dbIAbJY0b0R/jU7cSo99TGIgnI5TNhUX1199jJgAnwbPnzGVuPDJouEX5/bWiU30rItjNUISNiQCpSHjJTBJzo4ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739374840; c=relaxed/simple;
-	bh=8xxpimJPx2BWd7+7ZelhGur63diWjAPtO0Xxizv9mAo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FCXfDAnxRNlCwL7kPmWe7HcMcPVOAF7oiBaDWfH8kkzXabuq3Uai4DKf2bYW2rvXkam3vrJ3QkzagMEuqn0+D6IymSOHk5XNnxVUGdeEmU+t5yJcVVcYckb2rkE7qGSwyvOkOA0Il2gnGJVseCPmW5H2ihoBH5w52F1YCq9F1DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cTvlOpnk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BPNNI9J0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cTvlOpnk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BPNNI9J0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C1F831FB68;
-	Wed, 12 Feb 2025 15:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739374836; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Stfxrx3s1IcnHzynaf4EIL6SBz02V4LY+WllomxPWz8=;
-	b=cTvlOpnkxoaIoTU1A6Db5N1wWHUpkkDGVlwZueMNVhCLOEsZV6q51AQz3IkezdaNMzjp7P
-	l3TMPLiZ3j2BqAfJqTdLYqaRZDTrdsYlC4Hqn9HYaOFrqKmxiNKNZlQ4ItHYWoO/YPG/Vm
-	ckdJZVkKpXiQowYX/ufAxML+vy5JCLk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739374836;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Stfxrx3s1IcnHzynaf4EIL6SBz02V4LY+WllomxPWz8=;
-	b=BPNNI9J05NWgctZ+NMrdZi4VYqDUo1IpbCMAHG28t/QVPDJ/V10sGYRGS8WCT+Cqsu2vSd
-	TRxe9gR6uD2TtRAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739374836; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Stfxrx3s1IcnHzynaf4EIL6SBz02V4LY+WllomxPWz8=;
-	b=cTvlOpnkxoaIoTU1A6Db5N1wWHUpkkDGVlwZueMNVhCLOEsZV6q51AQz3IkezdaNMzjp7P
-	l3TMPLiZ3j2BqAfJqTdLYqaRZDTrdsYlC4Hqn9HYaOFrqKmxiNKNZlQ4ItHYWoO/YPG/Vm
-	ckdJZVkKpXiQowYX/ufAxML+vy5JCLk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739374836;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Stfxrx3s1IcnHzynaf4EIL6SBz02V4LY+WllomxPWz8=;
-	b=BPNNI9J05NWgctZ+NMrdZi4VYqDUo1IpbCMAHG28t/QVPDJ/V10sGYRGS8WCT+Cqsu2vSd
-	TRxe9gR6uD2TtRAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 70FBE13AEF;
-	Wed, 12 Feb 2025 15:40:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id n82eD/TArGcuTAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 12 Feb 2025 15:40:36 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Kees Cook <kees@kernel.org>
-Cc: David Gow <davidgow@google.com>,  Gabriela Bittencourt
- <gbittencourt@lkcamp.dev>,  Pedro Orlando <porlando@lkcamp.dev>,  Danilo
- Pereira <dpereira@lkcamp.dev>,  Shuah Khan <skhan@linuxfoundation.org>,
-  Rae Moar <rmoar@google.com>,  Luis Felipe Hernandez
- <luis.hernandez093@gmail.com>,  Nicolas Pitre <npitre@baylibre.com>,
-  Diego Vieira <diego.daniel.professional@gmail.com>,  "Steven Rostedt
- (Google)" <rostedt@goodmis.org>,  Jakub Kicinski <kuba@kernel.org>,
-  "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,  Vlastimil Babka
- <vbabka@suse.cz>,  Bruno Sobreira =?utf-8?Q?Fran=C3=A7a?=
- <brunofrancadevsec@gmail.com>,
-  linux-kernel@vger.kernel.org,  linux-hardening@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  kunit-dev@googlegroups.com, Thorsten
- Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH v2 6/6] unicode: kunit: change tests filename and path
-In-Reply-To: <20250211003136.2860503-6-kees@kernel.org> (Kees Cook's message
-	of "Mon, 10 Feb 2025 16:31:34 -0800")
-References: <20250211002600.it.339-kees@kernel.org>
-	<20250211003136.2860503-6-kees@kernel.org>
-Date: Wed, 12 Feb 2025 10:40:34 -0500
-Message-ID: <87pljnw4r1.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1739374844; c=relaxed/simple;
+	bh=zriqMxxivzJ+e+SRUhbYjcGx6tySbbLJ8Jprrig86VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ogya9S0/mVQVHs04h8BDwFvWyjslLyN+Wa8slcst/RUKcgzfHEjyMnrjy9WUzWiZvQ5nnhQXdndzVKJV0MO9lf9VY9Jtnip+wfY2Xgf9TixcdFhTQzeqLViZnQziXBtcOG3WU/HVo5fn5QWdEskfIT8Xf51r2ew/kV2mq//URsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlzXXs60; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A04A2C4CEDF;
+	Wed, 12 Feb 2025 15:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739374844;
+	bh=zriqMxxivzJ+e+SRUhbYjcGx6tySbbLJ8Jprrig86VM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NlzXXs60MAUomwoBgs1NCPoADrVw0Ssbfuk0Xy9+tnfyQifq3TUvT8ghgxN7Zt5Vg
+	 q88KvhPsjWtGhfHC5ISbe/9ky9Hy10O/MpsywIdrh9ADdWJqCyui/mgEbhh1civiBF
+	 I8DnC5nO17K2h9fTGf91THDhI+paJr7nBYSEIklyVbv7sKvNA8/DuGjOOhPhmK5qQ7
+	 FShFV7TdJrkJa7wWJH4rYjYjjWj+tC3oF4l+CFeBn6MjBK5NayzpYU6jHpXUt5loTe
+	 OD/CrQftFVgXqT2Kudxa3rl2MvZK7cOEcGNF4XZCep25n91LlW/92WiuF9ogVfQKHr
+	 bl3kN9ysNohBg==
+Date: Wed, 12 Feb 2025 16:40:37 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, DJ Delorie <dj@redhat.com>,
+	Eric Blake <eblake@redhat.com>, Paul Eggert <eggert@cs.ucla.edu>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-man@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] rust: alloc: satisfy POSIX alignment requirement
+Message-ID: <Z6zA9UNm_UckccRm@pollux>
+References: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[google.com,lkcamp.dev,linuxfoundation.org,gmail.com,baylibre.com,goodmis.org,kernel.org,suse.cz,vger.kernel.org,googlegroups.com,leemhuis.info];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
 
-Kees Cook <kees@kernel.org> writes:
-
-> From: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
->
-> Change utf8 kunit test filename and path to follow the style
-> convention on Documentation/dev-tools/kunit/style.rst
->
-> Co-developed-by: Pedro Orlando <porlando@lkcamp.dev>
-> Signed-off-by: Pedro Orlando <porlando@lkcamp.dev>
-> Co-developed-by: Danilo Pereira <dpereira@lkcamp.dev>
-> Signed-off-by: Danilo Pereira <dpereira@lkcamp.dev>
-> Signed-off-by: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
-> Reviewed-by: David Gow <davidgow@google.com>
-> Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-> Reviewed-by: Rae Moar <rmoar@google.com>
-> Link: https://lore.kernel.org/r/20241202075545.3648096-7-davidgow@google.com
-> Signed-off-by: Kees Cook <kees@kernel.org>
-
-Hi Kees,
-
-Last time this was submitted, I have reported this patch breaks the
-build when the kunit is built as a module, and it wasn't fixed before
-resubmission.  Thorsten Leemhuis just reported the same issue is now on
-linux-next and I confirmed it is still there.
-
-https://lore.kernel.org/lkml/2c26c5e4-9cf3-4020-b0be-637dc826b4e9@leemhuis.info/T/#m2e2ddb3b2600274e5eae50b93ea821914dc85f20
-
-The build error is:
-
-fs/unicode/tests/utf8_kunit.c:11:10: fatal error: utf8n.h: No such file or directory
-   11 | #include "utf8n.h"
-      |          ^~~~~~~~~
-
-The problem is that the patch moves utf8_kunit.c into tests/ but doesn't
-fix the include line above.  Can you fix it in your tree since it is
-already merged?
-
-Thanks,
-
-> ---
->  fs/unicode/Makefile                                | 2 +-
->  fs/unicode/{ => tests}/.kunitconfig                | 0
->  fs/unicode/{utf8-selftest.c => tests/utf8_kunit.c} | 0
->  3 files changed, 1 insertion(+), 1 deletion(-)
->  rename fs/unicode/{ => tests}/.kunitconfig (100%)
->  rename fs/unicode/{utf8-selftest.c => tests/utf8_kunit.c} (100%)
->
-> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-> index 37bbcbc628a1..d95be7fb9f6b 100644
-> --- a/fs/unicode/Makefile
-> +++ b/fs/unicode/Makefile
-> @@ -4,7 +4,7 @@ ifneq ($(CONFIG_UNICODE),)
->  obj-y			+= unicode.o
->  endif
->  obj-$(CONFIG_UNICODE)	+= utf8data.o
-> -obj-$(CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST) += utf8-selftest.o
-> +obj-$(CONFIG_UNICODE_NORMALIZATION_KUNIT_TEST) += tests/utf8_kunit.o
+On Wed, Feb 12, 2025 at 09:43:02AM -0500, Tamir Duberstein wrote:
+> diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+> index e3240d16040b..17a475380253 100644
+> --- a/rust/kernel/alloc/allocator_test.rs
+> +++ b/rust/kernel/alloc/allocator_test.rs
+> @@ -62,6 +62,26 @@ unsafe fn realloc(
+>              ));
+>          }
 >  
->  unicode-y := utf8-norm.o utf8-core.o
->  
-> diff --git a/fs/unicode/.kunitconfig b/fs/unicode/tests/.kunitconfig
-> similarity index 100%
-> rename from fs/unicode/.kunitconfig
-> rename to fs/unicode/tests/.kunitconfig
-> diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/tests/utf8_kunit.c
-> similarity index 100%
-> rename from fs/unicode/utf8-selftest.c
-> rename to fs/unicode/tests/utf8_kunit.c
+> +        // ISO C (ISO/IEC 9899:2011) defines `aligned_alloc`:
+> +        //
+> +        // > The value of alignment shall be a valid alignment supported by the implementation
+> +        // [...].
+> +        //
+> +        // As an example of the "supported by the implementation" requirement, POSIX.1-2001 (IEEE
+> +        // 1003.1-2001) defines `posix_memalign`:
+> +        //
+> +        // > The value of alignment shall be a power of two multiple of sizeof (void *).
+> +        //
+> +        // and POSIX-based implementations of `aligned_alloc` inherit this requirement. At the time
+> +        // of writing, this is known to be the case on macOS (but not in glibc).
+> +        //
+> +        // Satisfy the stricter requirement to avoid spurious test failures on some platforms.
+> +        let min_align = core::mem::size_of::<*const crate::ffi::c_void>();
+> +        let layout = layout.align_to(min_align).unwrap_or_else(|_err| {
+> +            crate::build_error!("invalid alignment")
 
--- 
-Gabriel Krisman Bertazi
+That's not what I thought this patch will look like. I thought you'll directly
+follow Gary's proposal, which is why I said you can keep the ACK.
+
+build_error!() doesn't work here, there is no guarantee that this can be
+evaluated at compile time.
+
+I think this should just be:
+
+let layout = layout.align_to(min_align).map_err(|_| AllocError)?.pad_to_align();
+
+- Danilo
+
+> +        });
+> +        let layout = layout.pad_to_align();
+> +
+>          // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
+>          // exceeds the given size and alignment requirements.
+>          let dst = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
 
