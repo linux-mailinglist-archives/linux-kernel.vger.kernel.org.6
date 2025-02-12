@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-511254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794C4A32860
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:28:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F69BA3285C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:27:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B30E63A743E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:27:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58B11889858
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF7221018D;
-	Wed, 12 Feb 2025 14:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6391210182;
+	Wed, 12 Feb 2025 14:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OQolyUlq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6UQ+tFx"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6736207667;
-	Wed, 12 Feb 2025 14:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4201209669;
+	Wed, 12 Feb 2025 14:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739370474; cv=none; b=M51P38mrq3bR94CCcAwG5C7iRWy+eYl/lwDNtOji5D96tXF7zC2xtDwTjGWow9D506qjC5XemlEbKQEs7JdGcSoyoto6Gp5YJC843dR7SxXg9I/LHb++oWaPHfKciuBrE6EEI2u84HMpdzIFMEt3L6zlnmRMEIeLoPxbZKMGXSQ=
+	t=1739370432; cv=none; b=it8at9bPVhGDIW8o8nrtVmr4uGbjSRLzYRY/yv6MMH0eJvR7Ig9RdGjUMWuQw/INvJu9WT8Km7QmBiW4qDz+BOS76a4I6Z9JNIulLfP0YfrUNDTCarKTubrYJqf+rCc9SWre46zjt+TmJcgTZHieA6dtsoZcmYR93Gv9ZH0QD/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739370474; c=relaxed/simple;
-	bh=7Onv8wCoFp82DoYKMFeqXuc971OxNeF9sQrYOQ5F6d8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c76r6y2qa8yp1i6g9ODFcM0I7sq7MAl48HBGlM0ibBM+czWj9c/+2yP7W5/TcoiWy8R41VjYrnVq077kyj546cHaVV0sc9AlI9ECmJAP5KzhDaz/qLYG6LJwzA78+0+Zg6oXqqYMLMjR8IXzS3ME0tIdj9UUT0M7r3i7+OkCHuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OQolyUlq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D00C4CEDF;
-	Wed, 12 Feb 2025 14:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739370474;
-	bh=7Onv8wCoFp82DoYKMFeqXuc971OxNeF9sQrYOQ5F6d8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OQolyUlqhdEcuF3NefxpXApUDXd3HRyCLlnyI1Cj5pDMBl6d9gATlzXF8sc40ShH3
-	 H9/1Mg0uLn6fo2NmW+Rjsgny/IIQII0lqmZZPs4sGBiZo4hX05Zf9MBPD4D/gbxQ7c
-	 qzb6UdhK2ITEYw8oiqpZspToqWF+GKrC6fMQGj6I=
-Date: Wed, 12 Feb 2025 15:26:49 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Cc: mathias.nyman@intel.com, WeitaoWang-oc@zhaoxin.com,
-	Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
-	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
-	h10.kim@samsung.com, eomji.oh@samsung.com, alim.akhtar@samsung.com,
-	thiagu.r@samsung.com, muhammed.ali@samsung.com,
-	pritam.sutar@samsung.com, cpgs@samsung.com
-Subject: Re: [PATCH 0/2] Fix unassigned variables in xhci driver
-Message-ID: <2025021234-reaction-womankind-1c0b@gregkh>
-References: <CGME20250211115704epcas5p4140a490572fb9c4ac71a82abcb61f291@epcas5p4.samsung.com>
- <1296674576.21739322602698.JavaMail.epsvc@epcpadp1new>
+	s=arc-20240116; t=1739370432; c=relaxed/simple;
+	bh=G5aGh/z5cuZAAKzmU8Tp316oork2upuMCHWPHJKvovg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HnmOmyYtTaYtCBuKbBRPr8IAEvlVavYuJLJ/gT/FoisOiLzZ6273g63/Av5S5s6m+qy0aw1CKvTEZsayZIlYkMApGmpFnjUK1X0WeuQVPSWtKQT26BibDF9AynNdHVERvIvwNHLBpxdgMgeE9JRK3GNmP2C4wZnB4qg0euWYutM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6UQ+tFx; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2f9b9c0088fso1499644a91.0;
+        Wed, 12 Feb 2025 06:27:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739370429; x=1739975229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YLLFSTDiSu+HGCeHAI59YjqyuxW6/jqR1IPEHINh9UU=;
+        b=O6UQ+tFxbNXi3up21pAyyeMqcEtMQ/7SPRo29IpjQThimzKPFfsRlCZIa2wlCWOuXO
+         0Fx1+uCXutVwrXBOAm286xaDcCk5lNTidhqFzAKRpKqjSlQDMTUnt+HMvQRNJe3L6V28
+         yAYOIIKD8MlwQFUG3WZJsyjsxeZUg7w4PT51PV6Uuh+vBuJaSt4TcnCZG5ikPBz5UIhp
+         HWFdkouxjLMHSTNHZ2Corrg7wNpXRuuHQnT89QRYXrqRzWIVVOcPVfY5Zh3b2+wZv29K
+         NTGYCAUgoRNQrwls0a4SIu46f4XPgy8wlXv/HlW+OvO2SqkjbxtwOZVkJ4sEEsV+tz+V
+         blKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739370429; x=1739975229;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YLLFSTDiSu+HGCeHAI59YjqyuxW6/jqR1IPEHINh9UU=;
+        b=v/3p+pmmKpB3Lc/g31c0TIYDPSzVzQ6fQyXZXUTnGuciSGzWrkjGQuogB6TXnPzdiu
+         by/XwCx7/oQp63o4MT7YWw/FM53NZTipwE0jZLjCia8pWGJmnQfffQstS2YgE1lWNC1Z
+         qvOEVuu6n0VDnS5etadIc7dyLg52NCwvi73f3OBrRjQEPjcCBEXDen5VTDFIvcUlP//T
+         lcj79NHcnKrEW/63pufBe9iTA/zCbfkxC3xGgzpqKhZQ4So4qsHdvmgbr7RT4ATg7B3A
+         +zuYl/TBvrLnbcAP3C57ZFF1KmZILD6U5C1K3wzizGtLH6yylaFZht6YgiQSpco7Xy3l
+         +J2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVI/xy17HJyjGNpIK4w+3GrpJCbyUGl6MudMFaOVM81chWW8IHb41fRXqIj0xMKlBhffKeeyxqkXEan@vger.kernel.org, AJvYcCXRlmomxlLt0mvxOVJwomBEOFyPulCzQebbF2vU0ezIXWssyOz42mbtH5U67FTpB5HMdEp5xcEeRDMyaKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvWDBkNgX549iFgqGD0SB28T/6thP4ZnP0Ao97xFVdoI7QtaYc
+	G1aOqYEqOkGlGWWL3ZXxdEELLGwBwAVBzSpVe7el0s952dUWuh9NF/K33A==
+X-Gm-Gg: ASbGnctMRCBjFaz8AKIXdutcvVwGzPnWfZsIp1N/cjHetoD79zZbKJ/hQpHOmF9PB9l
+	yuV5CV/iCqdcEFR8tE7Q/ZR+vvb2k36XAoud+okwPYX3Og9Ok/kWxygi2voaM3W4mdaZBW2x+QR
+	y7C9aq5vqX0iYueCtVBwxq6U/4t54inCV1nm9zanpIKzTrrMLErLoTp8dyjv4pW8xnyR5QjRHoM
+	B1fXIOo7MmvpMzhIud5Y8OEgxbaa1sPayMKme1NBI6Cb8CnXny1lKGxX2188HQOJ35HjKWTUMTM
+	h6DxWu3vLGP6ckWnz++jNhuWwoHtBAPXvtD6Ya7y7qATSeSUq0KjeYNjR05GPw==
+X-Google-Smtp-Source: AGHT+IHsBuRHC0w4yLYgopWWb29hm2Ux+wINxvdj4nJCX9zlDlvuHeA/vuU9gCNkpMplMusSJxp6FQ==
+X-Received: by 2002:a17:90a:d88c:b0:2fa:2252:f436 with SMTP id 98e67ed59e1d1-2fbf5be094amr5150882a91.3.1739370429109;
+        Wed, 12 Feb 2025 06:27:09 -0800 (PST)
+Received: from ?IPV6:2409:40c0:2e:ea4:a251:12db:9bc4:5019? ([2409:40c0:2e:ea4:a251:12db:9bc4:5019])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf9ab049fsm1536032a91.47.2025.02.12.06.27.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 06:27:08 -0800 (PST)
+Message-ID: <85c3ef44-9be6-4264-bfb3-6017c46413c0@gmail.com>
+Date: Wed, 12 Feb 2025 19:57:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1296674576.21739322602698.JavaMail.epsvc@epcpadp1new>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: dwc3: Document nostream_work member in dwc3_ep
+ struct
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250205202733.18611-1-purvayeshi550@gmail.com>
+ <20250211032002.vhoewlv6bu65m7sl@synopsys.com>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <20250211032002.vhoewlv6bu65m7sl@synopsys.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 11, 2025 at 05:26:28PM +0530, Selvarasu Ganesan wrote:
-> This series of patches to fix the following smatch errors from
-> xhci driver:
+On 11/02/25 08:50, Thinh Nguyen wrote:
+> On Thu, Feb 06, 2025, Purva Yeshi wrote:
+>> Added description for the 'nostream_work' member in struct dwc3_ep to
+>> resolve the kerneldoc warning when running 'make htmldocs'.
+>>
+>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+>> ---
+>>   drivers/usb/dwc3/core.h | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+>> index ac7c730f8..9095878d7 100644
+>> --- a/drivers/usb/dwc3/core.h
+>> +++ b/drivers/usb/dwc3/core.h
+>> @@ -717,6 +717,7 @@ struct dwc3_event_buffer {
+>>   /**
+>>    * struct dwc3_ep - device side endpoint representation
+>>    * @endpoint: usb endpoint
+>> + * @nostream_work: delayed work structure for handling no-stream events
+>>    * @cancelled_list: list of cancelled requests for this endpoint
+>>    * @pending_list: list of pending requests for this endpoint
+>>    * @started_list: list of started requests on this endpoint
+>> -- 
+>> 2.34.1
+>>
 > 
-> drivers/usb/host/xhci-mem.c:2060 xhci_add_in_port() error: unassigned variable 'tmp_minor_revision'
-> drivers/usb/host/xhci-hub.c:71 xhci_create_usb3x_bos_desc() error: unassigned variable 'bcdUSB'
+> I believe this fix was already added to Greg's usb-linus branch.
 > 
-> ---
-> Selvarasu Ganesan (2):
->   usb: xhci: Fix unassigned variable 'tmp_minor_revision' in
->     xhci_add_in_port()
->   usb: xhci: Fix unassigned variable 'bcdUSB' in
->     xhci_create_usb3x_bos_desc()
-> 
->  drivers/usb/host/xhci-hub.c | 2 +-
->  drivers/usb/host/xhci-mem.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
-> 
+> BR,
+> Thinh
 
-Hi,
+Thank you for the update. I was not aware that this fix had already been 
+included.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+Best regards,
+Purva Yeshi
 
