@@ -1,182 +1,191 @@
-Return-Path: <linux-kernel+bounces-511598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661F1A32D22
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:14:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2776CA32D1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:13:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A0C168C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:11:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27D41889453
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A6C254AFB;
-	Wed, 12 Feb 2025 17:11:46 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66560253F09;
+	Wed, 12 Feb 2025 17:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pL1GxGpr"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125B2144AC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94807254AFB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739380305; cv=none; b=QDIzoOM1DfCBvNv52CAZctioCb2ZiAlHAPRNZ2uDyH8cJx6dWu1ADdBBYIOUJNplZIStGhKcElLJNEyXDa7OnX1LC5t8nuONZQPY/6CeZ1U7pSeH2Z1HZka5qSbG54Ha8g9nj9QAzGLTjVj301FPeTNemDsjVi9yb4eZoSpBFho=
+	t=1739380355; cv=none; b=dbpMoKcx9MXmmU18hzIbagX+9fuxbjL6qevJXYckVZVOZNxW20l3PBp+TMFUjHwLo6oNgyyrU0B2tWrR3uYCWC4NDxXBeFLi/DnlFrQaztgj8kcaFsCYqcOWSDRrGVQ20GhmsLcFdZxu7mhheM9DvhWHqV/h7D1hjju6vS4nRCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739380305; c=relaxed/simple;
-	bh=0SM6/Wr25zlzo0tsfi+Q4NGtzAtTEc67tdg067yXP5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BC8Ufgmsdb84u2ZI6heNniYgiY6GQ1HOfp6tnnyEdWR/cdh4jazJxCLD3q7ood7BPHfR2FmEspXRubohwL8PYU/6zTnxDxZDnhXOODZCoJ35JoZfFT/Coq6AYaNhxGRPFFk0uhLNTn3ldN2MIicDvq83ajPS89EF+TQG7BJWjKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F24C4CEDF;
-	Wed, 12 Feb 2025 17:11:40 +0000 (UTC)
-Date: Wed, 12 Feb 2025 17:11:37 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Tong Tiangen <tongtiangen@huawei.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Morse <james.morse@arm.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, wangkefeng.wang@huawei.com,
-	Guohanjun <guohanjun@huawei.com>
-Subject: Re: [PATCH v13 4/5] arm64: support copy_mc_[user]_highpage()
-Message-ID: <Z6zWSXzKctkpyH7-@arm.com>
-References: <20241209024257.3618492-1-tongtiangen@huawei.com>
- <20241209024257.3618492-5-tongtiangen@huawei.com>
+	s=arc-20240116; t=1739380355; c=relaxed/simple;
+	bh=TEAn9XEJY37GkNpj6JIBjdfCk5yUerLMnh27Ni0kVlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TjZwpvCfMyMa9JjpvuToPaR2Ej2iHoK2m+z0zugIiZlU/Oanu9+NnGIS73e1g4sHMdA1kfOKKu5/oSAzeDKHD9RFhNdO6FWVHvQJ8SwoB/T/Jpqn1jlKlhrh8JSvatbqnR9gmM6rIgEafYWM5ASbHtRBvxDzzxkM/jVgof7ZdQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pL1GxGpr; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38dd9b3419cso2290702f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:12:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739380351; x=1739985151; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2e3hPQxup0lPwaLwklLsTcmfKILhtXcP5+Sg3+RgTg8=;
+        b=pL1GxGprs6iBVK+Im/UAkLK60KS9HQl7xgogLTp6zZ1240G4Iu/Jw4kYc8nb77bl9k
+         7Hq9mwG8WCGKVJiWqT4T6kv2nqLA7Xgjn0dfaH2tdPRRNVNYH8zHJ/rG+0laWNcarjlw
+         wGaWydniEF6zMjrogHuCwEJ8BtMFmDEKs6pdyMfaEkhGayEEkYdRsESTIo4hdrQnHVCc
+         U6VV2jhWmklZOHkUTSKcnDwrOPEIAGSNleBpBSbCgW6FpHI5q6qW8+wzBdt4GLqXAZN6
+         +6Ca8L9eCknLdg6YL2JvFrpEVbyvLtoxI6y5dn9rv7a6v8C/40pVLDx510WDpPECpKXd
+         uA4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739380351; x=1739985151;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2e3hPQxup0lPwaLwklLsTcmfKILhtXcP5+Sg3+RgTg8=;
+        b=v3TPiV3o9qSBuCT9rVWyoVuzhqGeiWUXy6yPfU6W20k214X3tvVNq4LdfoMn3YIMfO
+         Q1X9zyoHMqv2mVFDMNqwY5Nwqz9iNY22I18CZXP6UZXelskFeYIGtvhO3vR0GeIiaLNu
+         Uf0NeVvD1IN5/4966n2pwJMdp4hosTY3aRb7q7tCZSzW8d1ynLHI7NN3hFeWc8QkZvln
+         MHwVT5zRw4A1YkMsT5tIELGl7K/CnthB+k50IaadbbCq4T3MIccdq1yakc48yVvoKoZs
+         sigAlWDUQdaNtzt/LzBOBCqR2k4f473u0JCFy6lMQzPQavzaba+HyP1JdugPoyywuJDn
+         0ZjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwb3V0+99wXPQLJEapSR3ORcUZzZljW3BLw7Oo0+CzTeqSG1ODs/G+wvzVGSqRhT5i8wuKBOnrg+WVotE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6rDYrO7SrQMzTIU84XRBFasXLUcOpKegAFuxklTlNgXykNwJM
+	1E89RKv9o0jZI0kHIZCKHdzGEJV7MClrotQ97mcYWTKNeTtwIgUcLoZYfJBuKV4=
+X-Gm-Gg: ASbGncujgsCTIe6YnSKnjjocPjC/Neu0JsZuSEz6428l/8aROP26RMBbWD2zQodWwIe
+	xju4E3P7Rl9wvT2CNP1cBqZKoD5W1Ujx/t+mmVnay0XI2qDP8z9OFlzQjM1xNyLQNeMmR2KBFRh
+	DjLqieBHwRwpeUen17lAQDfWIi4OmcM9jE46HHMJampfdF4HuYGJmxCMNpUvfqdFYg0PslD/8Bi
+	FsTspnlOltI3gOzRaDu2qBiEzQwr47cLs6m5R56eC5NN/7WmNfxz+FglC5PWTqxiinqzyq6bWxD
+	XY384OaqjXW472OvN37tvrwbttKHYpOOybO2EANIbYzuKpPygfZCrj7ZSvP6WQr7qVqgug==
+X-Google-Smtp-Source: AGHT+IGDrSl2sPKQZkZ2Wh5gwzUR2MlJ2zSqK8I2dmUQcoKztFuviOtdvDZxLOZdxHedx/bImSwSjg==
+X-Received: by 2002:a5d:64a3:0:b0:38d:df70:23cf with SMTP id ffacd0b85a97d-38dea3d00a0mr3564189f8f.16.1739380350759;
+        Wed, 12 Feb 2025 09:12:30 -0800 (PST)
+Received: from ?IPV6:2a0a:ef40:1d11:ab01:416b:3913:893e:bb4? ([2a0a:ef40:1d11:ab01:416b:3913:893e:bb4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dd2ef7efesm13104756f8f.52.2025.02.12.09.12.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 09:12:30 -0800 (PST)
+Message-ID: <acb47522-920d-46aa-8c65-440f7c0b31e2@linaro.org>
+Date: Wed, 12 Feb 2025 17:12:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209024257.3618492-5-tongtiangen@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] regulator: qcom_usb_vbus: Add support for PMI8998
+ VBUS
+To: "James A. MacInnes" <james.a.macinnes@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+ quic_wcheng@quicinc.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, lgirdwood@gmail.com, broonie@kernel.org
+References: <20250212010744.2554574-1-james.a.macinnes@gmail.com>
+ <20250212010744.2554574-3-james.a.macinnes@gmail.com>
+ <fcf907a5-9fb7-4988-a30a-a555740ca817@linaro.org>
+ <20250212085609.06e0f949@jamesmacinnes-VirtualBox>
+Content-Language: en-US
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <20250212085609.06e0f949@jamesmacinnes-VirtualBox>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 09, 2024 at 10:42:56AM +0800, Tong Tiangen wrote:
-> Currently, many scenarios that can tolerate memory errors when copying page
-> have been supported in the kernel[1~5], all of which are implemented by
-> copy_mc_[user]_highpage(). arm64 should also support this mechanism.
+Hi James,
+
+On 2/12/25 16:56, James A. MacInnes wrote:
+> On Wed, 12 Feb 2025 15:29:54 +0000
+> Caleb Connolly <caleb.connolly@linaro.org> wrote:
 > 
-> Due to mte, arm64 needs to have its own copy_mc_[user]_highpage()
-> architecture implementation, macros __HAVE_ARCH_COPY_MC_HIGHPAGE and
-> __HAVE_ARCH_COPY_MC_USER_HIGHPAGE have been added to control it.
 > 
-> Add new helper copy_mc_page() which provide a page copy implementation with
-> hardware memory error safe. The code logic of copy_mc_page() is the same as
-> copy_page(), the main difference is that the ldp insn of copy_mc_page()
-> contains the fixup type EX_TYPE_KACCESS_ERR_ZERO_MEM_ERR, therefore, the
-> main logic is extracted to copy_page_template.S. In addition, the fixup of
-> MOPS insn is not considered at present.
+> Hi Caleb,
+> 
+>> Hi James,
+>>
+>> On 2/12/25 01:07, James A. MacInnes wrote:
+>>> This patch extends the Qualcomm USB VBUS regulator driver to support
+>>> PMI8998 PMIC alongside the existing support for PM8150B.
+>>
+>> Thanks for the patch!
+> 
+> Happy to try and contribute. I know that the working Type-C port is
+> going to be a misery after the relative simplicity of pushing the VBUS
+> upstream.
 
-Could we not add the exception table entry permanently but ignore the
-exception table entry if it's not on the do_sea() path? That would save
-some code duplication.
+Yeah, it's hard to get used to the process... I'm happy to hear you're 
+trying to get type-c working on this platform though! This will make a 
+bunch of folks very happy if it finally lands, folks have been doing all 
+sorts of workarounds for this over on 
+https://wiki.postmarketos.org/wiki/OnePlus_6_(oneplus-enchilada)#OTG_doesn't_work
 
-> diff --git a/arch/arm64/lib/copy_mc_page.S b/arch/arm64/lib/copy_mc_page.S
-> new file mode 100644
-> index 000000000000..51564828c30c
-> --- /dev/null
-> +++ b/arch/arm64/lib/copy_mc_page.S
-> @@ -0,0 +1,37 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +
-> +#include <linux/linkage.h>
-> +#include <linux/const.h>
-> +#include <asm/assembler.h>
-> +#include <asm/page.h>
-> +#include <asm/cpufeature.h>
-> +#include <asm/alternative.h>
-> +#include <asm/asm-extable.h>
-> +#include <asm/asm-uaccess.h>
-> +
-> +/*
-> + * Copy a page from src to dest (both are page aligned) with memory error safe
-> + *
-> + * Parameters:
-> + *	x0 - dest
-> + *	x1 - src
-> + * Returns:
-> + * 	x0 - Return 0 if copy success, or -EFAULT if anything goes wrong
-> + *	     while copying.
-> + */
-> +	.macro ldp1 reg1, reg2, ptr, val
-> +	KERNEL_MEM_ERR(9998f, ldp \reg1, \reg2, [\ptr, \val])
-> +	.endm
-> +
-> +SYM_FUNC_START(__pi_copy_mc_page)
-> +#include "copy_page_template.S"
-> +
-> +	mov x0, #0
-> +	ret
-> +
-> +9998:	mov x0, #-EFAULT
-> +	ret
-> +
-> +SYM_FUNC_END(__pi_copy_mc_page)
-> +SYM_FUNC_ALIAS(copy_mc_page, __pi_copy_mc_page)
-> +EXPORT_SYMBOL(copy_mc_page)
-[...]
-> diff --git a/arch/arm64/lib/copy_page_template.S b/arch/arm64/lib/copy_page_template.S
-> new file mode 100644
-> index 000000000000..f96c7988c93d
-> --- /dev/null
-> +++ b/arch/arm64/lib/copy_page_template.S
-> @@ -0,0 +1,70 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2012 ARM Ltd.
-> + */
-> +
-> +/*
-> + * Copy a page from src to dest (both are page aligned)
-> + *
-> + * Parameters:
-> + *	x0 - dest
-> + *	x1 - src
-> + */
-> +
-> +#ifdef CONFIG_AS_HAS_MOPS
-> +	.arch_extension mops
-> +alternative_if_not ARM64_HAS_MOPS
-> +	b	.Lno_mops
-> +alternative_else_nop_endif
-> +
-> +	mov	x2, #PAGE_SIZE
-> +	cpypwn	[x0]!, [x1]!, x2!
-> +	cpymwn	[x0]!, [x1]!, x2!
-> +	cpyewn	[x0]!, [x1]!, x2!
-> +	ret
-> +.Lno_mops:
-> +#endif
-[...]
 
-So if we have FEAT_MOPS, the machine check won't work?
+>>>
+>>> Key changes:
+>>> - Added current limit tables specific to PMI8998.
+>>
+>> I also played around with vbus on PMI8998 before for type-c support
+>> (unfortunately didn't make it's way to the lists yet...) and I needed
+>> some additional changes for this to work correctly. I found that it
+>> was possible for the overcurrent protection to be hit if the type-c
+>> port manager allowed the peripheral to pull current too early, and
+>> it's necessary to allow 2.5ms enable time.
+>>
+>> PM8150b doesn't have these limitations (and supports the instant
+>> power role switch feature that's part of the type-c PD spec, allowing
+>> the power role to be switched without either side losing power e.g.
+>> when you unplug the power supply from a dock), hence it's only
+>> necessary for PMI8998.
+>>
+>> I would suggest implementing a proper .is_enabled op to poll the
+>> status register for OTG_STATE_ENABLED and configuring
+>> qcom_usb_vbus_rdesc.enable_time = 250000;
+>>
+>> Kind regards,
+>>
+> 
+> Technical question for you in regards to the VBUS overcurrent and
+> timing for the PMI8998. I would like to try and reproduce what you have
+> seen as my system hasn't had switching issues, but then again the TCPM
+> system may be covering the exact bug you are mentioning. I also
+> searched for some definite bit in the 4.9 Android driver and was left
+> wanting. As of yet, I have not had issues with the overcurrent
+> protecction.
 
-Kristina is going to post MOPS support for the uaccess routines soon.
-You can see how they are wired up and do something similar here.
+I guess there could be differences in our implementations, there is a 
+delay after enabling the regulator for pm8150b type-c iirc
 
-But I'd prefer if we had the same code, only the exception table entry
-treated differently. Similarly for the MTE tag copying.
+I never got around to chasing some of the remaining issues and sending 
+this upstream, but maybe my patches will be useful for you:
+
+https://git.codelinaro.org/caleb_connolly/kernel/-/commits/b4/pmi8998-typec/?ref_type=heads
+
+I spent many many hours pouring over the smb2 driver downstream, so feel 
+free to reach out if you have some specific questions.
+> 
+> I will be all too happy to migrate to the PM8150B and its associated
+> SoCs and leave the 845 platform to history.
+
+Well I for one am always happy to see SDM845 getting attention, it has a 
+special place in my heart :>
+
+And still gets love over here, even if not nearly enough of these 
+patches have made it upstream: 
+https://gitlab.com/sdm845-mainline/linux/-/commits/sdm845/6.13-release?ref_type=heads
+
+Kind regards,
+> 
+> Thank you for your feedback and I look forward to narrowing down this
+> issue.
+> 
+> Best wishes,
 
 -- 
-Catalin
+Caleb (they/them)
+
 
