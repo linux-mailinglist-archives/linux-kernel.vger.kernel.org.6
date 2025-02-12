@@ -1,340 +1,126 @@
-Return-Path: <linux-kernel+bounces-511795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E58A32FCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:33:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D12AA32FCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:34:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31CFB3A9C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:33:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 856887A4228
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663B71FF7A9;
-	Wed, 12 Feb 2025 19:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837771FF1C2;
+	Wed, 12 Feb 2025 19:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4BnvrUb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FwIp5RnN"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651411DC07D;
-	Wed, 12 Feb 2025 19:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA071DC07D;
+	Wed, 12 Feb 2025 19:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739388797; cv=none; b=mhlcWa7TPHZpp2+M2c0SrXiMRbpeuoSPGH/STVtXwzxF/JHqCy5yI/MOOa/ab9/ze+7Y0tGAH7BAjc5U0gXSHB4cz8mqclQ8ZXszWI1KV+7aN2yS31QOWFSbZ2P98TkEzeGt7txektcdppVk8aA5oEF1A+iKHPChQ3xtrDgFBSA=
+	t=1739388841; cv=none; b=K3losHJxmiJR2ZUSabsLeuEW42q4GPSi6Q9afFZAzA3oVwhyyAy56v6rW9qbMQW2E0eEH1wbfBoTgVibpzBqoIhcMpAa0dPuFHY+GAAKmWvEXMjJCTVBfuL8dL7SsGfX+nWjNg2IYYcI+GFUueQ72sQD/HzarU3lMZ5Fvk7S1TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739388797; c=relaxed/simple;
-	bh=DA8aW6TC91af7qZ599ujgZGfby8bu3yyXCCl/yeb3Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVHCvSPoyNfulxyQvLfOY+MI3DmXYzDJz3RCc9rL5gR0Azwi/jkwuAIiU15IxKPoxJvh2Xiev2RnsY8HXYXfAfgpmp+3npNN3sktCzHOkkfx0YE2t/rNf6G01QfTVxefMv8CeBaPEe5gGt3obQAa3UID3jTOZ8NgEuFeHpVf5po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4BnvrUb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C5AC4CEDF;
-	Wed, 12 Feb 2025 19:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739388795;
-	bh=DA8aW6TC91af7qZ599ujgZGfby8bu3yyXCCl/yeb3Fg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o4BnvrUbuKt991EKanNsBOItVAGsM6PWGCh7sTdEonDfyh/BCF8oLxPYtgnnGAp4K
-	 B664GQwZwUzlCy0U3Igue+7lF0xzMIlbi2twjdxobGT5gDs5im3ir8lc5b5rAf1Ras
-	 IjJnEME07Et62oxLoX3sbhm6rgPQd6WPwoWwXSE0pryqmwJvOf+scUMY0sU4q7efnw
-	 eZ8OJDMTiGf8QTdZ7pVQAmXNtgQDT/NQqv1T6rFsLQQ+vV+TZIUtqswu6vJyUp40Uw
-	 ehxX5ZUz4uBREJmIvDdReeoT5QHtBo0HL5dqNz2mM2T8m7w/tQ+qycL2b+kJ1xaJCP
-	 lFZ9DHVjhcYJQ==
-Date: Wed, 12 Feb 2025 13:33:14 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
-	Scott Wood <oss@buserror.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 03/12] dt-bindings: crypto: Convert fsl,sec-2.0 to YAML
-Message-ID: <20250212193314.GA4134845-robh@kernel.org>
-References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
- <20250207-ppcyaml-v2-3-8137b0c42526@posteo.net>
+	s=arc-20240116; t=1739388841; c=relaxed/simple;
+	bh=PcPT3RHBHVoo2zPOijRuSRcLS8iDyLJHQGs/g4jK9u0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MSvQt+ZCCaxCrIeR0GYN3l8bO663Z0mtom/LKeuOsKgNQrJSvoxKjYWcVAAwJ7gGW5svjojALW9qhUwE2/P0u0JY/kvfdmNtYovp4gPXBpANd14dEiyljlT8ywQpRR7msgIFbwLzxAiSGl9AmBKAarHCeYQGg4ILcbqNa3XjCFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FwIp5RnN; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5de4d3bbc76so38033a12.3;
+        Wed, 12 Feb 2025 11:33:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739388838; x=1739993638; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lasNycot9OROMRz3Tf45TsHUJIexVqDWGvappPiMilU=;
+        b=FwIp5RnNHKAVah5DECBThXHmkp/YuQPjZZGOjO+576GL1cnU7vtFzQTHoe1P328nX8
+         Bty6jPNJaiwcA615cHA9N2LYKQpVdSeKyc6TTCPnN9CqCpErMIPPIkuCOemuGTOjeQi/
+         7n/drhJNaAl2EqdsQO+/cmFFvfKgp6zEAJId+HUO6BXmLLEy3QEIKtKx3nx1jNZbqEZq
+         3NNho+QYTMG5DCNSONOGsxMi3opGxtSUgTiOZhZXkihnYBtDQeLum/5jYiYotgPstjMo
+         LviwIt/iD26mqfrX+6sKWqKpjrhGQtAxSW1TDBpG3m1wOTR4iqg1JavCoqpmCuYWP/Kz
+         AdiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739388838; x=1739993638;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lasNycot9OROMRz3Tf45TsHUJIexVqDWGvappPiMilU=;
+        b=tp3jShtD1zBj8GrYEBK/3jYO72C3Zwdf8+olcG/djQKvouOBlfeI/hI5kYjLVEsonq
+         wwJvkK27iHJACFOvq74+vhWklGav9yMyL07xJCvDw0imVYNttly7yV7+A+ULhNkQyQFv
+         FRxbeKLs1j4AV5eFyyKoI2YouGJ7T/HXDD4J7RiUDacSloSbjY6BNsStL0NMcm3XJQhc
+         h+/qGm/3rADUsgGB4a6R+XHx2ALTs3ic5UKpUvnV9B7Ghjq0MKXLY5hyK2FMXabSiDQH
+         iMG+DQcbp+4AImlYTba7VBbY93Ph0MgUE0t6fBKobT4suf5FGcL4Ll7GmpqRpLgee0Xf
+         SJnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxWezoqfToYefjXhi32T5u2+XF9Gx4ByR9Xo1P0LU++tis1McyoZtJWz9izrF3cyAy3qA/D2JW@vger.kernel.org, AJvYcCWtp62Bxj9WzQsTlMpJxBX1JW3PVbj1IjHYcNJeR6grN9cEqX/8HCmxsg8s5PaOVJ8ekGMEH1MfXoPcNrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5hQGLUpAOhCm+vwUvVh0wsuUW9UyW0CsWnX9wht4d/HUPoBqD
+	4HQ0P8CojwiIVujWnD5KqAKnNcqyEsFo+MwZhYdc4oZrIvYh5vKy
+X-Gm-Gg: ASbGncvNdeyeWrmY7pfPt1iMHa0hdWpLguRGVOnEaF6Z9bixv7bs37Eqk8rTp2CGacA
+	pP1/omPw91EoY4PfnUi4FVX9a3fUcoOSBAx61SdCjkMepBL19It9BNzlZMe0IKSrY+pdBs9h6yX
+	wY+m3jRY6EjmPLGtRStaRlk4bMY67HPvS6Yt11SEZhE27JfyPF2n9mRr1G80z1/1/JvtisnAazI
+	VzX4PsA4x/6Sk2Ydjts1FgTR/RqhvlHBKLpkeshSsw2Ew4f16TN+dpRRWd3mqXGfcQpbl7aGaRD
+	Y33Gxco5NUk95fUQ+cYmOeBcVsw/Q7wPxRwaHe9CTS2bWLpX1OO9XQVJKN6J6+j3UB+r1mWckY4
+	oDkgeAC9RY1oOavN4cdQK3U7tvaQPLFqxYjp7L25aWJZ7mYlNfLzBo+n32nZJcfsALQ==
+X-Google-Smtp-Source: AGHT+IHkmVd30f3deykKxL2ZIUBA3+EnIW5l4h6W1mPQ91mHlha7qyevukukOy5IENG+fcG0BHpRFA==
+X-Received: by 2002:a05:6402:2106:b0:5de:4877:ef41 with SMTP id 4fb4d7f45d1cf-5deade00a82mr4171173a12.25.1739388837360;
+        Wed, 12 Feb 2025 11:33:57 -0800 (PST)
+Received: from ?IPV6:2001:1c00:20d:1300:1b1c:4449:176a:89ea? (2001-1c00-020d-1300-1b1c-4449-176a-89ea.cable.dynamic.v6.ziggo.nl. [2001:1c00:20d:1300:1b1c:4449:176a:89ea])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de63a89b6asm8193610a12.46.2025.02.12.11.33.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 11:33:56 -0800 (PST)
+Message-ID: <fe6509ab-c186-47c1-b004-4e17a875c5c7@gmail.com>
+Date: Wed, 12 Feb 2025 20:33:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250207-ppcyaml-v2-3-8137b0c42526@posteo.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 net-next] net: ethernet: mtk_ppe_offload: Allow QinQ
+To: Jakub Kicinski <kuba@kernel.org>,
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250209110936.241487-1-ericwouds@gmail.com>
+ <20250211165127.3282acb0@kernel.org>
+From: Eric Woudstra <ericwouds@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20250211165127.3282acb0@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 07, 2025 at 10:30:20PM +0100, J. Neuschäfer wrote:
-> Convert the Freescale security engine (crypto accelerator) binding from
-> text form to YAML. The list of compatible strings reflects what was
-> previously described in prose; not all combinations occur in existing
-> devicetrees.
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> ---
-> 
-> V2:
-> - several improvements suggested by Rob Herring:
->   - remove unnecessary multiline markers
->   - constrain fsl,num-channels to enum: [1,4]
->   - constrain fsl,channel-fifo-len to plausible limits
->   - constrain fsl,exec-units-mask to maximum=0xfff
-> - trim subject line (remove "binding")
-> ---
->  .../devicetree/bindings/crypto/fsl,sec2.0.yaml     | 142 +++++++++++++++++++++
->  .../devicetree/bindings/crypto/fsl-sec2.txt        |  65 ----------
->  2 files changed, 142 insertions(+), 65 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/fsl,sec2.0.yaml b/Documentation/devicetree/bindings/crypto/fsl,sec2.0.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..0b82f3b68b5f82e7fb52d292a623d452c1cdb059
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/crypto/fsl,sec2.0.yaml
-> @@ -0,0 +1,142 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/crypto/fsl,sec2.0.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale SoC SEC Security Engines versions 1.x-2.x-3.x
-> +
-> +maintainers:
-> +  - J. Neuschäfer <j.ne@posteo.net.
 
-missing >
 
-> +
-> +properties:
-> +  compatible:
-> +    description:
-> +      Should contain entries for this and backward compatible SEC versions,
-> +      high to low. Warning - SEC1 and SEC2 are mutually exclusive.
-> +    oneOf:
-> +      - items:
-> +          - const: fsl,sec3.3
-> +          - const: fsl,sec3.1
-> +          - const: fsl,sec3.0
-> +          - const: fsl,sec2.4
-> +          - const: fsl,sec2.2
-> +          - const: fsl,sec2.1
-> +          - const: fsl,sec2.0
-> +      - items:
-> +          - const: fsl,sec3.1
-> +          - const: fsl,sec3.0
-> +          - const: fsl,sec2.4
-> +          - const: fsl,sec2.2
-> +          - const: fsl,sec2.1
-> +          - const: fsl,sec2.0
-> +      - items:
-> +          - const: fsl,sec3.0
-> +          - const: fsl,sec2.4
-> +          - const: fsl,sec2.2
-> +          - const: fsl,sec2.1
-> +          - const: fsl,sec2.0
-> +      - items:
-> +          - const: fsl,sec2.4
-> +          - const: fsl,sec2.2
-> +          - const: fsl,sec2.1
-> +          - const: fsl,sec2.0
-> +      - items:
-> +          - const: fsl,sec2.2
-> +          - const: fsl,sec2.1
-> +          - const: fsl,sec2.0
-> +      - items:
-> +          - const: fsl,sec2.1
-> +          - const: fsl,sec2.0
-> +      - items:
-> +          - const: fsl,sec2.0
-> +      - items:
-> +          - const: fsl,sec1.2
-> +          - const: fsl,sec1.0
-> +      - items:
-> +          - const: fsl,sec1.0
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  fsl,num-channels:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 1, 4 ]
-> +    description: An integer representing the number of channels available.
-> +
-> +  fsl,channel-fifo-len:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    maximum: 100
-> +    description:
-> +      An integer representing the number of descriptor pointers each channel
-> +      fetch fifo can hold.
-> +
-> +  fsl,exec-units-mask:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    maximum: 0xfff
-> +    description: |
-> +      The bitmask representing what execution units (EUs) are available.
-> +      EU information should be encoded following the SEC's Descriptor Header
-> +      Dword EU_SEL0 field documentation, i.e. as follows:
-> +
-> +        bit 0  = reserved - should be 0
-> +        bit 1  = set if SEC has the ARC4 EU (AFEU)
-> +        bit 2  = set if SEC has the DES/3DES EU (DEU)
-> +        bit 3  = set if SEC has the message digest EU (MDEU/MDEU-A)
-> +        bit 4  = set if SEC has the random number generator EU (RNG)
-> +        bit 5  = set if SEC has the public key EU (PKEU)
-> +        bit 6  = set if SEC has the AES EU (AESU)
-> +        bit 7  = set if SEC has the Kasumi EU (KEU)
-> +        bit 8  = set if SEC has the CRC EU (CRCU)
-> +        bit 11 = set if SEC has the message digest EU extended alg set (MDEU-B)
-> +
-> +      remaining bits are reserved for future SEC EUs.
-> +
-> +  fsl,descriptor-types-mask:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      The bitmask representing what descriptors are available. Descriptor type
-> +      information should be encoded following the SEC's Descriptor Header Dword
-> +      DESC_TYPE field documentation, i.e. as follows:
-> +
-> +        bit 0  = set if SEC supports the aesu_ctr_nonsnoop desc. type
-> +        bit 1  = set if SEC supports the ipsec_esp descriptor type
-> +        bit 2  = set if SEC supports the common_nonsnoop desc. type
-> +        bit 3  = set if SEC supports the 802.11i AES ccmp desc. type
-> +        bit 4  = set if SEC supports the hmac_snoop_no_afeu desc. type
-> +        bit 5  = set if SEC supports the srtp descriptor type
-> +        bit 6  = set if SEC supports the non_hmac_snoop_no_afeu desc.type
-> +        bit 7  = set if SEC supports the pkeu_assemble descriptor type
-> +        bit 8  = set if SEC supports the aesu_key_expand_output desc.type
-> +        bit 9  = set if SEC supports the pkeu_ptmul descriptor type
-> +        bit 10 = set if SEC supports the common_nonsnoop_afeu desc. type
-> +        bit 11 = set if SEC supports the pkeu_ptadd_dbl descriptor type
-
-Why 3 variations of 'descriptor type'?
-
-> +
-> +      ..and so on and so forth.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - fsl,num-channels
-> +  - fsl,channel-fifo-len
-> +  - fsl,exec-units-mask
-> +  - fsl,descriptor-types-mask
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    /* MPC8548E */
-> +    crypto@30000 {
-> +        compatible = "fsl,sec2.1", "fsl,sec2.0";
-> +        reg = <0x30000 0x10000>;
-> +        interrupts = <29 2>;
-> +        interrupt-parent = <&mpic>;
-> +        fsl,num-channels = <4>;
-> +        fsl,channel-fifo-len = <24>;
-> +        fsl,exec-units-mask = <0xfe>;
-> +        fsl,descriptor-types-mask = <0x12b0ebf>;
-> +    };
-> diff --git a/Documentation/devicetree/bindings/crypto/fsl-sec2.txt b/Documentation/devicetree/bindings/crypto/fsl-sec2.txt
-> deleted file mode 100644
-> index 125f155d00d052eec7d5093b5c5076cbe720417f..0000000000000000000000000000000000000000
-> --- a/Documentation/devicetree/bindings/crypto/fsl-sec2.txt
-> +++ /dev/null
-> @@ -1,65 +0,0 @@
-> -Freescale SoC SEC Security Engines versions 1.x-2.x-3.x
-> -
-> -Required properties:
-> -
-> -- compatible : Should contain entries for this and backward compatible
-> -  SEC versions, high to low, e.g., "fsl,sec2.1", "fsl,sec2.0" (SEC2/3)
-> -                             e.g., "fsl,sec1.2", "fsl,sec1.0" (SEC1)
-> -    warning: SEC1 and SEC2 are mutually exclusive
-> -- reg : Offset and length of the register set for the device
-> -- interrupts : the SEC's interrupt number
-> -- fsl,num-channels : An integer representing the number of channels
-> -  available.
-> -- fsl,channel-fifo-len : An integer representing the number of
-> -  descriptor pointers each channel fetch fifo can hold.
-> -- fsl,exec-units-mask : The bitmask representing what execution units
-> -  (EUs) are available. It's a single 32-bit cell. EU information
-> -  should be encoded following the SEC's Descriptor Header Dword
-> -  EU_SEL0 field documentation, i.e. as follows:
-> -
-> -	bit 0  = reserved - should be 0
-> -	bit 1  = set if SEC has the ARC4 EU (AFEU)
-> -	bit 2  = set if SEC has the DES/3DES EU (DEU)
-> -	bit 3  = set if SEC has the message digest EU (MDEU/MDEU-A)
-> -	bit 4  = set if SEC has the random number generator EU (RNG)
-> -	bit 5  = set if SEC has the public key EU (PKEU)
-> -	bit 6  = set if SEC has the AES EU (AESU)
-> -	bit 7  = set if SEC has the Kasumi EU (KEU)
-> -	bit 8  = set if SEC has the CRC EU (CRCU)
-> -	bit 11 = set if SEC has the message digest EU extended alg set (MDEU-B)
-> -
-> -remaining bits are reserved for future SEC EUs.
-> -
-> -- fsl,descriptor-types-mask : The bitmask representing what descriptors
-> -  are available. It's a single 32-bit cell. Descriptor type information
-> -  should be encoded following the SEC's Descriptor Header Dword DESC_TYPE
-> -  field documentation, i.e. as follows:
-> -
-> -	bit 0  = set if SEC supports the aesu_ctr_nonsnoop desc. type
-> -	bit 1  = set if SEC supports the ipsec_esp descriptor type
-> -	bit 2  = set if SEC supports the common_nonsnoop desc. type
-> -	bit 3  = set if SEC supports the 802.11i AES ccmp desc. type
-> -	bit 4  = set if SEC supports the hmac_snoop_no_afeu desc. type
-> -	bit 5  = set if SEC supports the srtp descriptor type
-> -	bit 6  = set if SEC supports the non_hmac_snoop_no_afeu desc.type
-> -	bit 7  = set if SEC supports the pkeu_assemble descriptor type
-> -	bit 8  = set if SEC supports the aesu_key_expand_output desc.type
-> -	bit 9  = set if SEC supports the pkeu_ptmul descriptor type
-> -	bit 10 = set if SEC supports the common_nonsnoop_afeu desc. type
-> -	bit 11 = set if SEC supports the pkeu_ptadd_dbl descriptor type
-> -
-> -  ..and so on and so forth.
-> -
-> -Example:
-> -
-> -	/* MPC8548E */
-> -	crypto@30000 {
-> -		compatible = "fsl,sec2.1", "fsl,sec2.0";
-> -		reg = <0x30000 0x10000>;
-> -		interrupts = <29 2>;
-> -		interrupt-parent = <&mpic>;
-> -		fsl,num-channels = <4>;
-> -		fsl,channel-fifo-len = <24>;
-> -		fsl,exec-units-mask = <0xfe>;
-> -		fsl,descriptor-types-mask = <0x12b0ebf>;
-> -	};
+On 2/12/25 1:51 AM, Jakub Kicinski wrote:
+> On Sun,  9 Feb 2025 12:09:36 +0100 Eric Woudstra wrote:
+>> This patch adds QinQ support to mtk_flow_offload_replace().
+>>
+>> Only PPPoE-in-Q (as before) and Q-in-Q are allowed. A combination
+>> of PPPoE and Q-in-Q is not allowed.
 > 
-> -- 
-> 2.48.0.rc1.219.gb6b6757d772
+> AFAIU the standard asks for outer tag in Q-in-Q to be ETH_P_8021AD,
+> but you still check:
 > 
+>> 			    act->vlan.proto != htons(ETH_P_8021Q))
+>> 				return -EOPNOTSUPP;
+> 
+> If this is a HW limitation I think you should document that more
+> clearly in the commit message. If you can fix it, I think you should..
+
+It will be the first case. mtk_foe_entry_set_vlan() is limited to using
+only 1 fixed protocol. I'll drop the reviewed-by, amend the commit
+message and send v4.
+
 
