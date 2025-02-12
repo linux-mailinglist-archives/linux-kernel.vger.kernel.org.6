@@ -1,99 +1,181 @@
-Return-Path: <linux-kernel+bounces-510902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F20DA3236C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:23:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C70A3236D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 167AC188957D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:23:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC9A1888EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2702080EB;
-	Wed, 12 Feb 2025 10:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE42208965;
+	Wed, 12 Feb 2025 10:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iPKiqLsW"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U6uwTcB6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC891E500C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1642080CB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739355790; cv=none; b=uvE2MAbnszayoYk5P5av/1URk4TByKhdBo+fmR9gNAAvgZ/WwY/ZUBWE5qiB+sFlZZ3tXRF0u1hiR75BznJiLzKi2WsfHIZK0ImbZsxCdrarfio1qob7oVubPU7Xu3EZDSHAVwk2fvget/TV0lN2O9WUG1jAwk7eOAQ4hXfYB8Q=
+	t=1739355829; cv=none; b=alzTchzLhqK/gY2O1R3pLZhczuFxJo2zjNmzikS9NQFhh796FpD56LVjEhBUO8/DcyS77+46KGnX9UASDImfSRwL6I+WkS1rVsV/toHDpAmBofeYJRTJwejzKJSkUOvPXJiOo/h3F8eIN0GBoYEM9In/XKLwpnpRD9Xnv5azCRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739355790; c=relaxed/simple;
-	bh=lsH+vgqlhsRJ7Z/449muYLAhD57q4dhfhf3vZL+cRaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2JSk4Ezl/lmZ2E25QKC/tZGKhKgrZd5O4Y+gMDL2uJY3Sr4pk2atFrKVoRyfRvEKgYdvwlYHYgXcKhBRxd8vU/q7LSf/VP7tsiRPtWlVBbiVeOr3JHWRJ3vrOhjlS7fCvFXedcPNzLLAgGusyGCRrT58eXiVfyEv4Y1Ge3LjHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iPKiqLsW; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DlhjYzhTOJoc9WT6ycPlrW3tR0dtUeVHkM7mEliMgS8=; b=iPKiqLsWgZFonVsI2rfvo/DjEc
-	eYmUwp9Q8zC8jDUT7z/V4F8q2Rabl40NVj+4u/DQ0jkdRigJcIPogLElWT14PkhcF+60Vj3on/E6c
-	qrHGhQwxbsKXKzWjE0nvN8nTrYu8FxPRiGjpZ4fmhza9Tj3qRvu3csKrQTr/z2AHKeile92QsHQuZ
-	e4n/ShYvVa6wZBHpxS1RBKQ9gQvagzbQcIkCinmyOdDFR453cdxQ/jrEwB4HdtjhblmGYbh/rs8Sr
-	V3pyXHFZnRg6kgbzzG5O25Wf6a1LLIn4xw1n6yqJYlnc/k3vDqtrLsfEfiN4vK/zEZRJoMbFn970n
-	DfyLyUuQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1ti9tE-00000004EIe-0lYC;
-	Wed, 12 Feb 2025 10:22:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EB30E300318; Wed, 12 Feb 2025 11:22:42 +0100 (CET)
-Date: Wed, 12 Feb 2025 11:22:42 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali Shukla <Manali.Shukla@amd.com>
-Subject: Re: [PATCH v10 09/12] x86/mm: enable broadcast TLB invalidation for
- multi-threaded processes
-Message-ID: <20250212102242.GB24784@noisy.programming.kicks-ass.net>
-References: <20250211210823.242681-1-riel@surriel.com>
- <20250211210823.242681-10-riel@surriel.com>
- <20250212095438.GC19118@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1739355829; c=relaxed/simple;
+	bh=BZBEVuaiMiQpifiiunyV3GoEyCbfAhZHtiKdSJfCe5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PJklH2mFfQ1vE3vLPIvxKi+Z6ksVFd0hO/ZbCgd8PuujHbAmjRiQFlo8g6VgY5shC15m9rUbk0HfcPWVXAuvklikSiCowyWFw4/JXODrURqgN/tktYc0ImlCrI4ZWJxkoc27JdDXtqZ/BygYOdgxyiucqDvAW2uMvC6RJtVBkq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U6uwTcB6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739355825;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L8X4DcZFs2elKxOWwa0k/NR+c76D4y+brE6Aap7ycNU=;
+	b=U6uwTcB6eM/mhAvMZkCu0gZokW4O/edU8XqINz3Yw22vG59YffkOGfO0EDOotGEESAF6hJ
+	bw8qQjJkF8zweaRYRhdEULpFBTG4GJ20Rt0/QGh+GzelS43s9epwbMPFflnkGb9RfKCzA0
+	I77BLMR/m6kuqQaiYk1KW+kH5kiwQI4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-539-SsrMxDKhMf2QZpyp89Lkhw-1; Wed, 12 Feb 2025 05:23:44 -0500
+X-MC-Unique: SsrMxDKhMf2QZpyp89Lkhw-1
+X-Mimecast-MFC-AGG-ID: SsrMxDKhMf2QZpyp89Lkhw
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38ddba9814bso1588706f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:23:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739355823; x=1739960623;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=L8X4DcZFs2elKxOWwa0k/NR+c76D4y+brE6Aap7ycNU=;
+        b=oOoRP1exwBwLGGNO1LvrTlnrm6bMsfNTuit64hDEuZ12lxC6lSglFxHIssiXlsD9WQ
+         SUFYhQZM//I/bSnkjxq6CntJ3pxJcH+AaFGLfysPUcsb1Nz5OH8SQqDQhEtSCs4FJzkI
+         SyjBjYPO1qMJjfIgKIJNvRGuRRKgHeq+QqqXJZXpFvTV3NKCjXC+mjwLu+9rEtTmFp2b
+         x6NnIOBlFlfJw6cDb/iBob/3cfchvfK3rSn1qzg0dJoMqVb7P7ottbKNE+YpMWb+LuVl
+         a3J6d373JSGCl4gsX/+S6QX5tRXOXLApUeVQ/pNNIuWX2iPIOXeNxxFscaMOcZhjBE5a
+         9ggQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBpvYkvHo4TRcibkz5LC703x6MqWrPywGvGDJz08NJ2Cqt3fTPr5Dx/d/PvPCe/XCH3/4w8CX+r7ngbPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk9WesY9V+n9JSBwJSk++X0L9rEJGel6Y+kIOQkd8Yt9vNvA8F
+	KDzfYLwou9+4bSX6KYBKyoQn8vZr8P+vZQvfLMFatMqG2KQhJ+wbA90SR9CsWZurPxdBty2eHOn
+	I618719aS+GKXdjCGLtNC7qUVYuCfn4Q3V2UjsVFzsiskNDAFAWYVALwu9ql8rw==
+X-Gm-Gg: ASbGncsEPZQJflt6T24BW5DVHrVW2bo++0OgzZH+TvtCvm1S+Xdoq8jjaskIRf/EO0T
+	VV124+355cTdcd5KWEBQRpK3VwexZuLeQGCTs0A9A6z/RevzXlylYVM37A7r70hLas3OGRLypaL
+	IKf5dj3W/eN8WUnWjl/4HBLKYJUnOMUfSvNTnsAbVjYb/O9vurZrmROyJAd/VA3mblfiRs4Og4O
+	46TyNmwbsQQ/jEqh09F1Q2RY9bw6UJi93p3vkD/kA3aHJABWbFVY4S2AqsoX+BIcXXeBIjeIbY2
+	Z1ST90CfbL1mZvKsC4hfQsXdsukvdDirRdehILRtPuNwZcvxFlWRUVDq1k8VAP/B3S/4AUfBWPK
+	i7PGPlqJ61TNTOnzNf5HyTGOwV1d4Uw==
+X-Received: by 2002:a5d:648d:0:b0:38d:e6f4:5a87 with SMTP id ffacd0b85a97d-38dea2516e5mr2148768f8f.10.1739355822865;
+        Wed, 12 Feb 2025 02:23:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE7zr5n5F5+dcD+mXARYuAo/50Zt+QCUnGeNukOUn+08qLpr3cu4noNKpaotZqF4NpfaApiaw==
+X-Received: by 2002:a5d:648d:0:b0:38d:e6f4:5a87 with SMTP id ffacd0b85a97d-38dea2516e5mr2148727f8f.10.1739355822457;
+        Wed, 12 Feb 2025 02:23:42 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70c:a600:1e3e:c75:d269:867a? (p200300cbc70ca6001e3e0c75d269867a.dip0.t-ipconnect.de. [2003:cb:c70c:a600:1e3e:c75:d269:867a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dc5a8a9e4sm15765546f8f.10.2025.02.12.02.23.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 02:23:41 -0800 (PST)
+Message-ID: <9392618e-32de-4a86-9e1e-bcfeefe39181@redhat.com>
+Date: Wed, 12 Feb 2025 11:23:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212095438.GC19118@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 2/3] mm/mempolicy: export memory policy symbols
+To: Shivank Garg <shivankg@amd.com>, akpm@linux-foundation.org,
+ willy@infradead.org, pbonzini@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-coco@lists.linux.dev, chao.gao@intel.com, seanjc@google.com,
+ ackerleytng@google.com, vbabka@suse.cz, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com
+References: <20250210063227.41125-1-shivankg@amd.com>
+ <20250210063227.41125-3-shivankg@amd.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250210063227.41125-3-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 10:54:38AM +0100, Peter Zijlstra wrote:
-> On Tue, Feb 11, 2025 at 04:08:04PM -0500, Rik van Riel wrote:
+On 10.02.25 07:32, Shivank Garg wrote:
+> Export memory policy related symbols needed by the KVM guest-memfd to
+> implement NUMA policy support.
 > 
-> > +static void broadcast_tlb_flush(struct flush_tlb_info *info)
-> > +{
-> > +	bool pmd = info->stride_shift == PMD_SHIFT;
-> > +	unsigned long maxnr = invlpgb_count_max;
-> > +	unsigned long asid = info->mm->context.global_asid;
-> > +	unsigned long addr = info->start;
-> > +	unsigned long nr;
-> > +
-> > +	/* Flushing multiple pages at once is not supported with 1GB pages. */
-> > +	if (info->stride_shift > PMD_SHIFT)
-> > +		maxnr = 1;
-> 
-> How does this work?
-> 
-> Normally, if we get a 1GB range, we'll iterate on the stride and INVLPG
-> each one (just like any other stride).
-> 
-> Should you not instead either force the stride down to PMD level or
-> force a full flush?
+> These symbols are required to implement per-memory region NUMA policies
+> for guest memory, allowing VMMs to control guest memory placement across
+> NUMA nodes.
 
-Oh, n/m, I think I see.
+Probably worth mentioning something like
+
+"guest_memfd wants to implement support for NUMA policies just like 
+shmem already does using the shared policy infrastructure. As 
+guest_memfd currently resides in KVM module code, we have to export the 
+relevant symbols.
+
+In the future, guest_memfd might be moved to core-mm, at which point the 
+symbols no longer would have to be exported. When/if that happens is 
+still unclear."
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
