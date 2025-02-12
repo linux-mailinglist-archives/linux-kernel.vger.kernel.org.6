@@ -1,116 +1,267 @@
-Return-Path: <linux-kernel+bounces-511904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F3FA33141
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:06:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A7DBA33142
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE1AD7A1C9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 874A8188AAF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D803D202F62;
-	Wed, 12 Feb 2025 21:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD93F202F62;
+	Wed, 12 Feb 2025 21:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DIx/C20G"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLDTVdpf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F296B201269;
-	Wed, 12 Feb 2025 21:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75C0201269;
+	Wed, 12 Feb 2025 21:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739394389; cv=none; b=IcxnDrp6y3d57wX+kqBcBPMFt70fCzP5aV30+ynXo29cto5w6wYYbaioaPegc1U3IfH1pFl1N4wwwzIE8H82EA+cEBWO/yqTajgUn279DVbGGU1PO2NrQfLtNMPwdYx3eBtTY3CBduVtfT6FYjskWQgdNcD5u1qBs78k0ASQYbs=
+	t=1739394426; cv=none; b=IhHOtgOzfY9Ye6TW/T5WYuf+wbDPKL8jjq7NTQQ3bE1xESxIUciEi4FVlisLNW7gGFCCkVYH/IyP8jSbNKWwCYyoH/pMaLUEtq3TxrnBfWQ9etMm5/AhPyxj0JeNv0pc3J6B0eUyajRhc/COxp8ftWwnkTXnSArvk73MeOQvFdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739394389; c=relaxed/simple;
-	bh=rsT7j/zUDwUI/0z6b5BwWt9md/wtWdOMRAVonfKal8o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TgXyompeqeRbG2AyXr9MjbW+Y1jTdcOlqFKp8Z+C/b1HdAn//hwzQQXX9qSFJeqxeFC11qryHj0GB8NVYbouFfDRv9Ea2X+0VrBEj/s7TWzAacKsnuULApgksTQeAzBR44pjcQ3O+qP5hB0kd98v65LXcKmnyaBG+HzpOn7XCjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DIx/C20G; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51CL65Zg3977713
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 15:06:06 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739394366;
-	bh=mMUjaEjJEv8Fp6KTvvVQCD916I1txak6eBFZLlKuOe0=;
-	h=From:To:CC:Subject:Date;
-	b=DIx/C20G074mRXZ+qV/OZZRuX2jeIExXkklKAsWxLVoIm9fZLiPY/cEcD4syaxae/
-	 e5EUiBaKZRUWSRRNZZG1cvOKkumqTB0DJD5Yq8sM76q3JlCm3bQaL9qRxGn4hRVgwN
-	 kBhFQCiVubjIIU1ir0QGrIq/XX93H22KeENI5Juw=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51CL65lY129213
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Feb 2025 15:06:05 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Feb 2025 15:06:04 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Feb 2025 15:06:04 -0600
-Received: from uda0506412.dhcp.ti.com (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51CL64Sc099103;
-	Wed, 12 Feb 2025 15:06:04 -0600
-From: Kendall Willis <k-willis@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <d-gole@ti.com>, <msp@baylibre.com>, <khilman@baylibre.com>,
-        <k-willis@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] arm64: dts: ti: k3-am62a7-sk: Add alias for RTC
-Date: Wed, 12 Feb 2025 15:06:04 -0600
-Message-ID: <20250212210604.745175-1-k-willis@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739394426; c=relaxed/simple;
+	bh=wocYZo5gW+t7bu0YpWlDKB7vx4UV/EHEFSUdsgZuovw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HubW/E0QHvT4On2M3xIUntG6mEW5pGFE0iIbE3b+nksgFnJVfouQ4xMh7kt0hApWb9jJr2pNTyXzjT7+43lU1xw81mSV1LJ1qr9qfIv/dp5ndq8b0zHTVeNnIz7/qwn5Gva9Y776wolgyTQcJ1BtF3XB8DKPfo0yvD4MWrN75nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLDTVdpf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F48C4CEDF;
+	Wed, 12 Feb 2025 21:07:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739394425;
+	bh=wocYZo5gW+t7bu0YpWlDKB7vx4UV/EHEFSUdsgZuovw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CLDTVdpfedNnAB5ZoigALcQgb1ycOUeCaratiDCaa6pPZKTLri3qgZIPZIXUvHXet
+	 m7d54WRJYjrTKOo1sxK+lvl2KECi/xF1TiMN4hNd57xADkL8aqgI+pgrhWbIFlOzmZ
+	 pOoxdeN6FG8Ib+ReuYGt5NML7tFifhvjRAf07qADr8gHxuMJt+SoZHheVDOU5/OmW8
+	 s745Hj2eaU1KlxoSP9YORkPJCcgEEdnw5WFXYByr28Rvsgd4b4xf5ww8clsjXhuuUC
+	 wHVfy77e9fyOEYFkwuur8qvxLheT9nl7oHTfnwx6soIzgw1Go1A5JjmUqzSzVYeMvL
+	 xeUdVZD/DWqvA==
+Date: Wed, 12 Feb 2025 22:07:02 +0100
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf report: Add 'tgid' sort key
+Message-ID: <Z60Ndm8VVI4Ao31U@x1>
+References: <20250206000137.2026034-1-namhyung@kernel.org>
+ <Z60NFEAf2C8cL8Xh@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <Z60NFEAf2C8cL8Xh@x1>
 
-From: Vibhore Vardhan <vibhore@ti.com>
+On Wed, Feb 12, 2025 at 10:05:27PM +0100, Arnaldo Carvalho de Melo wrote:
+> On Wed, Feb 05, 2025 at 04:01:37PM -0800, Namhyung Kim wrote:
+> > Sometimes we need to analyze the data in process level but current sort
+> > keys only work on thread level.  Let's add 'tgid' sort key for that as
+> > 'pid' is already taken for thread.
+> > 
+> > This will look mostly the same, but it only uses tgid instead of tid.
+> > Here's an example of a process with two threads (thloop).
+> > 
+> >   $ perf record -- perf test -w thloop
+> 
+> Unrelated, but when building perf with DEBUG=1 and trying to test the
+> above I noticed:
+> 
+> root@number:~# perf record -- perf test -w thloop
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.404 MB perf.data (7968 samples) ]
+> perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
+> Aborted (core dumped)
+> root@number:~# perf record -- perf test -w offcpu
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.040 MB perf.data (23 samples) ]
+> perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
+> Aborted (core dumped)
+> root@number:~#
+> 
+> I have:
+> 
+> ⬢ [acme@toolbox perf-tools-next]$ git log --oneline perf-tools-next/perf-tools-next..
+> 9de1ed6fa3b73cb1 (HEAD -> perf-tools-next) perf report: Add 'tgid' sort key
+> 23e98ede2a353530 perf trace: Add --summary-mode option
+> e6d6104625a3790b perf tools: Get rid of now-unused rb_resort.h
+> 173ec14e72ef4ed7 perf trace: Convert syscall_stats to hashmap
+> 66edfb5d404e743d perf trace: Allocate syscall stats only if summary is on
+> ca6637e1ea08e6f4 perf parse-events filter: Use evsel__find_pmu()
+> bd1ac4a678f7f2c8 perf bench evlist-open-close: Reduce scope of 2 variables
+> cd59081880e89df8 perf test: Add direct off-cpu test
+> 56cbd794c0c46ba9 perf record --off-cpu: Add --off-cpu-thresh option
+> 28d9b19c5455556f perf record --off-cpu: Dump the remaining samples in BPF's stack trace map
+> 2bc05b02743b50a7 perf script: Display off-cpu samples correctly
+> bfa457a621596947 perf record --off-cpu: Disable perf_event's callchain collection
+> eca732cc42d20266 perf evsel: Assemble offcpu samples
+> 74ce50e40c569e90 perf record --off-cpu: Dump off-cpu samples in BPF
+> e75f8ce63bfa6cb9 perf record --off-cpu: Preparation of off-cpu BPF program
+> 0ffab9d26971c91c perf record --off-cpu: Parse off-cpu event
+> efc3fe2070853b7d perf evsel: Expose evsel__is_offcpu_event() for future use
+> ⬢ [acme@toolbox perf-tools-next]$
+> 
+> locally, that is the stuff I've been testing lately, doubt it is related
+> to these patches, I'll investigate later, have to go AFK, so FWIW as a
+> heads up.
 
-Adds alias for SoC RTC so that it gets assigned rtc0. PMIC node is
-assisgned rtc1 so that PMIC RTC gets probed as rtc1. This makes it
-consistent for testing rtcwake with other AM62 devices where rtc0
-is SoC RTC.
+Had time to extract this, now going really AFK:
 
-Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
-[k-willis@ti.com: Reworded commit message]
-Signed-off-by: Kendall Willis <k-willis@ti.com>
----
-Tested with rtcwake on AM62A.
+[New Thread 0x7fffdf24c6c0 (LWP 580622)]
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.403 MB perf.data (7948 samples) ]
+[Thread 0x7fffdf24c6c0 (LWP 580622) exited]
+perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
 
-Original patch for AM62A existed in the TI Vendor tree with Vibhore's
-authorship:
-https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/commit/?h=ti-linux-6.6.y&id=f745d9063212d1088dcfb068ecb4b16648b96487
----
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index a6f0d87a50d8..51ea961f166e 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -22,6 +22,8 @@ aliases {
- 		serial3 = &main_uart1;
- 		mmc0 = &sdhci0;
- 		mmc1 = &sdhci1;
-+		rtc0 = &wkup_rtc0;
-+		rtc1 = &tps659312;
- 	};
+Thread 1 "perf" received signal SIGABRT, Aborted.
+Downloading 4.06 K source file /usr/src/debug/glibc-2.39-37.fc40.x86_64/nptl/pthread_kill.c
+__pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44                                                                      
+44	      return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCALL_ERRNO (ret) : 0;
+(gdb) bt
+#0  __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44
+#1  0x00007ffff6ea80a3 in __pthread_kill_internal (threadid=<optimized out>, signo=6) at pthread_kill.c:78
+#2  0x00007ffff6e4ef1e in __GI_raise (sig=sig@entry=6) at ../sysdeps/posix/raise.c:26
+#3  0x00007ffff6e36902 in __GI_abort () at abort.c:79
+#4  0x00007ffff6e3681e in __assert_fail_base (fmt=0x7ffff6fc3bb8 "%s%s%s:%u: %s%sAssertion `%s' failed.\n%n", assertion=assertion@entry=0x7bef08 "map__end(prev) <= map__end(map)", 
+    file=file@entry=0x7bedf8 "util/maps.c", line=line@entry=95, function=function@entry=0x7bf1c0 <__PRETTY_FUNCTION__.6> "check_invariants") at assert.c:96
+#5  0x00007ffff6e47047 in __assert_fail (assertion=0x7bef08 "map__end(prev) <= map__end(map)", file=0x7bedf8 "util/maps.c", line=95, 
+    function=0x7bf1c0 <__PRETTY_FUNCTION__.6> "check_invariants") at assert.c:105
+#6  0x00000000006347a1 in check_invariants (maps=0xf987e0) at util/maps.c:95
+#7  0x0000000000635ae2 in maps__remove (maps=0xf987e0, map=0xf98a80) at util/maps.c:538
+#8  0x000000000062afd2 in machine__destroy_kernel_maps (machine=0xf98178) at util/machine.c:1176
+#9  0x000000000062b32b in machines__destroy_kernel_maps (machines=0xf98178) at util/machine.c:1238
+#10 0x00000000006388af in perf_session__destroy_kernel_maps (session=0xf97f60) at util/session.c:105
+#11 0x0000000000638df0 in perf_session__delete (session=0xf97f60) at util/session.c:248
+#12 0x0000000000431f18 in __cmd_record (rec=0xecace0 <record>, argc=4, argv=0x7fffffffde60) at builtin-record.c:2888
+#13 0x00000000004351fb in cmd_record (argc=4, argv=0x7fffffffde60) at builtin-record.c:4286
+#14 0x00000000004bd4d4 in run_builtin (p=0xecddc0 <commands+288>, argc=6, argv=0x7fffffffde60) at perf.c:351
+#15 0x00000000004bd77b in handle_internal_command (argc=6, argv=0x7fffffffde60) at perf.c:404
+#16 0x00000000004bd8d4 in run_argv (argcp=0x7fffffffdc4c, argv=0x7fffffffdc40) at perf.c:448
+#17 0x00000000004bdc1d in main (argc=6, argv=0x7fffffffde60) at perf.c:556
+(gdb)
  
- 	chosen {
-
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
--- 
-2.34.1
-
+> - Arnaldo
+> 
+> >   $ perf report --stdio -s tgid,pid -H
+> >   ...
+> >   #
+> >   #    Overhead  Tgid:Command / Pid:Command
+> >   # ...........  ..........................
+> >   #
+> >      100.00%     2018407:perf
+> >          50.34%     2018407:perf
+> >          49.66%     2018409:perf
+> > 
+> > Suggested-by: Stephane Eranian <eranian@google.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/Documentation/perf-report.txt |  1 +
+> >  tools/perf/util/hist.h                   |  1 +
+> >  tools/perf/util/sort.c                   | 35 ++++++++++++++++++++++++
+> >  tools/perf/util/sort.h                   |  1 +
+> >  4 files changed, 38 insertions(+)
+> > 
+> > diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+> > index 87f86451940623f3..4050ec4038425bf0 100644
+> > --- a/tools/perf/Documentation/perf-report.txt
+> > +++ b/tools/perf/Documentation/perf-report.txt
+> > @@ -79,6 +79,7 @@ OPTIONS
+> >  
+> >  	- comm: command (name) of the task which can be read via /proc/<pid>/comm
+> >  	- pid: command and tid of the task
+> > +	- tgid: command and tgid of the task
+> >  	- dso: name of library or module executed at the time of sample
+> >  	- dso_size: size of library or module executed at the time of sample
+> >  	- symbol: name of function executed at the time of sample
+> > diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+> > index 46c8373e314657fa..c164e178e0a48a8e 100644
+> > --- a/tools/perf/util/hist.h
+> > +++ b/tools/perf/util/hist.h
+> > @@ -38,6 +38,7 @@ enum hist_column {
+> >  	HISTC_TIME,
+> >  	HISTC_DSO,
+> >  	HISTC_THREAD,
+> > +	HISTC_TGID,
+> >  	HISTC_COMM,
+> >  	HISTC_CGROUP_ID,
+> >  	HISTC_CGROUP,
+> > diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+> > index 3dd33721823f365d..5987438174967fd6 100644
+> > --- a/tools/perf/util/sort.c
+> > +++ b/tools/perf/util/sort.c
+> > @@ -141,6 +141,40 @@ struct sort_entry sort_thread = {
+> >  	.se_width_idx	= HISTC_THREAD,
+> >  };
+> >  
+> > +/* --sort tgid */
+> > +
+> > +static int64_t
+> > +sort__tgid_cmp(struct hist_entry *left, struct hist_entry *right)
+> > +{
+> > +	return thread__pid(right->thread) - thread__pid(left->thread);
+> > +}
+> > +
+> > +static int hist_entry__tgid_snprintf(struct hist_entry *he, char *bf,
+> > +				       size_t size, unsigned int width)
+> > +{
+> > +	int tgid = thread__pid(he->thread);
+> > +	const char *comm = NULL;
+> > +
+> > +	if (thread__pid(he->thread) == thread__tid(he->thread)) {
+> > +		comm = thread__comm_str(he->thread);
+> > +	} else {
+> > +		struct maps *maps = thread__maps(he->thread);
+> > +		struct thread *leader = machine__find_thread(maps__machine(maps),
+> > +							     tgid, tgid);
+> > +		if (leader)
+> > +			comm = thread__comm_str(leader);
+> > +	}
+> > +	width = max(7U, width) - 8;
+> > +	return repsep_snprintf(bf, size, "%7d:%-*.*s", tgid, width, width, comm ?: "");
+> > +}
+> > +
+> > +struct sort_entry sort_tgid = {
+> > +	.se_header	= "   Tgid:Command",
+> > +	.se_cmp		= sort__tgid_cmp,
+> > +	.se_snprintf	= hist_entry__tgid_snprintf,
+> > +	.se_width_idx	= HISTC_TGID,
+> > +};
+> > +
+> >  /* --sort simd */
+> >  
+> >  static int64_t
+> > @@ -2501,6 +2535,7 @@ static void sort_dimension_add_dynamic_header(struct sort_dimension *sd)
+> >  
+> >  static struct sort_dimension common_sort_dimensions[] = {
+> >  	DIM(SORT_PID, "pid", sort_thread),
+> > +	DIM(SORT_TGID, "tgid", sort_tgid),
+> >  	DIM(SORT_COMM, "comm", sort_comm),
+> >  	DIM(SORT_DSO, "dso", sort_dso),
+> >  	DIM(SORT_SYM, "symbol", sort_sym),
+> > diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+> > index a8572574e1686be6..6044eb1d61447c0d 100644
+> > --- a/tools/perf/util/sort.h
+> > +++ b/tools/perf/util/sort.h
+> > @@ -72,6 +72,7 @@ enum sort_type {
+> >  	SORT_ANNOTATE_DATA_TYPE_OFFSET,
+> >  	SORT_SYM_OFFSET,
+> >  	SORT_ANNOTATE_DATA_TYPE_CACHELINE,
+> > +	SORT_TGID,
+> >  
+> >  	/* branch stack specific sort keys */
+> >  	__SORT_BRANCH_STACK,
+> > -- 
+> > 2.48.1.502.g6dc24dfdaf-goog
 
