@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-511265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E3DA3288B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:35:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F57A3288D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:36:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833EB3A8131
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C833A8089
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4013721019E;
-	Wed, 12 Feb 2025 14:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B878020FAAC;
+	Wed, 12 Feb 2025 14:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIxLR7y7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Gwd2nf4u"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9127020E314;
-	Wed, 12 Feb 2025 14:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD4E20F092;
+	Wed, 12 Feb 2025 14:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739370940; cv=none; b=cBZoH3otNTob85XsxbcDGJjCFgKMXRRzNtDAOGdghpitebHvDpRexiFf2NZ6NlmHbB5BtX6LFXWj0FUCGo9XNZDLeXwkHa1tVH68LqzxAypLEy8sby1myKlJR4B1n0Dim+hkgk+6NmuvqxKqQ2H0htWXQFxg270rSuhWfF67BYg=
+	t=1739370967; cv=none; b=N0MhFw3l5PPGBSfIhsYE7Kaz92tG5X9/ArcDgySlanyK4MPTZsnI+dkazzyYXsy8jSOK14Znl0sXlRZVX9yZqZlthZ4PPc8Da/Mju5IbnNAxF95vRtEW5vVdJjHQqI3SzFuhpC7yn1hiKFU0aqGhorTx07oZzuGd2g1T2uYMPik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739370940; c=relaxed/simple;
-	bh=k9FJCp/EzqgT8t9ccuHwMGiXvLArAc9zO7kzZEzxqco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZGTHnKP+kpa8oOmqyoKwjnoyU/cbzahxOzh6Y77inVXA2LVQQKbAKnPz+82T6nA4aCTj9pe5k+T7Q3+skkWpo3KCee3G80sS/L+6iyS0wnShABD+CPBBmtLfukmlTgzkm+m6JZXDv0Vb5MRxiwhKhDv1KfxoSjT0vDJGopDL3I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIxLR7y7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39E7C4CEDF;
-	Wed, 12 Feb 2025 14:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739370940;
-	bh=k9FJCp/EzqgT8t9ccuHwMGiXvLArAc9zO7kzZEzxqco=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sIxLR7y7ahfCJf7INhdJVZuc2vgomq0+pFO44mEH0BAED2jguVIqmCKFOuZxbrsBv
-	 Mn4rCHDajZI2WJOxBV/4EVZmkyZTJVTrGr/h9alK1XA5QW9rE3spcS6QWI2czg/QGi
-	 hVvm+eLKAxi2itsBAInUkjXuI1j/e7+GDJe1gmRNOmMVsSUE+vAfCqFrVs+hKDs+mP
-	 CMRwKYbhxNykxXNYQQS8nz0dTK+W7BlC/NRe47EZ+dnePrzBKqbmenk6HIU35fU8vs
-	 CZaTf/PN5SOJUaw69mJZzofEHkAaaHvxttBzmDLTulfvBh9FS9qck4XPT2xjHDJpSt
-	 G+C0z+mE5bRrQ==
-Date: Wed, 12 Feb 2025 08:35:38 -0600
-From: Rob Herring <robh@kernel.org>
-To: Yongxing Mou <quic_yongmou@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Add MST support for qcs8300 platform
-Message-ID: <20250212143538.GA3554863-robh@kernel.org>
-References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
+	s=arc-20240116; t=1739370967; c=relaxed/simple;
+	bh=zPPPVDyPCQy/uHZXmtEqFziYEoLwnzvm/k6HokPTs8Y=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=DRfs0NotBgBsAcN3A9mgPQTQLQfoCgP0Th5DNSH/vvQKQICPqzUPFVambgak/SPtcwWhXKVXSxqgVSct3ch18UDuK6S/GgVcK3RXJIg7NG85W503dQtBn2k64cAwYysxZmdJGK0JxaozpCT3I4p37FIQsgGBY13MqOkEnuQXs1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Gwd2nf4u; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739370961; x=1739975761; i=markus.elfring@web.de;
+	bh=zPPPVDyPCQy/uHZXmtEqFziYEoLwnzvm/k6HokPTs8Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Gwd2nf4uGpWFVYwPZNR2f54bp1dAOn0+gxOxCHU7GjKNe73p5DqK/u+qOIJFSA/j
+	 Uzl88cNZs1VGusZwAm5+303BXXSIyCZmK+Ibr14+NOLl4/f5HAWxiUIiEb4E3SaP2
+	 IEGfjfuTJ3Z8E0SC2/bfl59gn5//befGz+SGv1Zthp1pVPHzgHeW8Jz1bj35A+8oa
+	 kKdpsqyZviIe31icfEGUuPN+86YCJOqLNkW4hcDcghnuDNKe7yz8A3I828kAfAndy
+	 B37ScyxLl7nxtU3dmv8NEnCbs776L/t8va/BY7nBydK1ToAeQTuGv2TOXOmGYYtA7
+	 UHkd+PtqF9Qm59vSnQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MXGOI-1tshgt3Oc2-00MRfd; Wed, 12
+ Feb 2025 15:36:01 +0100
+Message-ID: <2a06847c-9060-47eb-aea7-901dd7816b59@web.de>
+Date: Wed, 12 Feb 2025 15:36:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, linux-scsi@vger.kernel.org
+Cc: storagedev@microchip.com, LKML <linux-kernel@vger.kernel.org>,
+ Don Brace <don.brace@microchip.com>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <20250211123309.723-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] scsi: hpsa: Fix missing error check for
+ hpsa_scsi_do_simple_cmd_with_retry()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250211123309.723-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gJkvfD+tYzgcuzwiWb0TURFprS2qG6NCDBPpTgb9miQD8bUENO+
+ O8aHneFQcCbRiCUUFAiz1/zXImbBoYrZyUY8xiiVsxF4hRjSWX9Bh6uQVJugNLC8mZfo4xV
+ vJEPRyhLNQKEosVUZ19XT9IBz2XqGRjRCO6wFlaFTeSL6bkGZ9PjHN6KhPhm6EN8Sjbh2ok
+ Mut2BGWFYJTXTXoA8n6jw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lxIAYONmDI0=;995tViGduZo0xDg0+3ofsL3+EzH
+ hkUVtPR4g8z7cSCk/pqUmgwrGYzMaeyg4t/rzLhFQNUks99yxI9CPS+L+Fo+Hj+Fn89RLR6FP
+ 3h0ntFdJS6aaANx6HBQI52Je+q9aS26nQmV3AsWkbILdRDjjPCVtlvMTFBeWNP95+d7Oac1Xd
+ txxG/q/SFfIfov6TNTPVjF2gWaeFzLi+ZXGPrgEGNfEhtM6sWZRaVbel8D1UamHrkd5dJLlBb
+ eOFB+Llv92X2sjD4fufTFvSIFdB24o63usstiic6kXhURRqUXrxwKlbOLo26iAmOtosE+6j59
+ la7QF6g/LzTcAE6/5kQhKsMFrxu4oXNVy8guUMBuTlXjwXgaeb7dbwmYncF0KVFFcvtSMncXd
+ Y/6bIHQuW/jGlGqyE6pWuCeio9jota5fe+G6zqze332KPmCQTGpnEhRdzB+H0p/zNCAc3eP25
+ hhDtPgOMjGn+gLQ+49sp2rdVZpj7c6xvIuzwSYyxBDRCg2kToJSfVB+VAvBi9NK+2xtJ8jEWe
+ O8oUQLhnL6nQykRsU8/VWHPBtugMWCHjGmq9uvFcig+ydUlVxFYYnw7xCdgZWG8IMBFm94M/b
+ V4nSHCTWv1nu1WXEme8P/hMffAvvHNi+SKLxCCuj2mAA6ypkCKcghN7Cmg8p+QT5J9ORPcanj
+ j9+G03rYl483zXpWfqVFD+/aY89yiKu7KBDcOVkApZ9q8wuKwaWquwimndjIUSJtX/DrBV4lQ
+ v58lzBWQHltSmxnigjPUlpTPAJXhlaia71o7/JZiVcdBOJ55bSvwFR6MBtxalZPuKFabzh97a
+ RcJPTMcm9ba68jTFRfv0vMrE48LEu6eP6sVAgT7mGo/mop6v0xvIJpETeJ39uv12wv/+8Tugu
+ 8nIstoml2Y06ZEfI90AKVgA6tbs0C7MEqo2rpUhqyWge2+H3ainibYEE16SVg+ehNyFUOEhRM
+ MWpzi+DHSCIYCKyAqnaasrjPWLhPHGphN652n/zHayAKPvnD/lZGaUVXhPSrt2FTlCQsa8+Bb
+ Ea1B9kixhnYiNb+Q5eN9stCzPONq38Fua6a3T3gfYsBIFRXtroEBCvBAYi6C9ZKWieLXE4Hj0
+ 7uDhhm7lMx3o6d/CKF6Q7UXBDuYlvqP2z6+JsyMTJZ0rE4uptTaxIYzYLrH052Cu2gMeGTh0c
+ 5n8fmzwllsMvt7NlVp0Pg7PGLNDhYCJd22RUokJPvRXC/Jy4VeGeuVgsrFQiMbcAT+RTmluNN
+ dfrhDhSnH/ApOS6H6h0Wo1A3nQ1IcRWTWsuX7BLRdXPnUqxeWyda5giL5PYct0eXGSZxdCuFu
+ Yac4pd+KoFFF4S+kR2GbwMxZeduQwqp+4poB70vANImBKThWxU3seChqbd3mDC8EO5KooFRoc
+ /ci/k31nAgn/LwVMdMO2vb95+JX4Qrshwda7v1Q+C3SBSzWcDA9J87UBz3RThb2x7vtL0JMeJ
+ +ab2Cb5bziTWgxm5KV9r+ttFcxIE=
 
-On Wed, Feb 12, 2025 at 03:12:23PM +0800, Yongxing Mou wrote:
-> This series of patches introduces how to enable MST functionality on
-> the qcs8300 platform. The qcs8300 platform uses dpu_8_4 hardware, which
-> is the same as the sa8775p, but it only has one DPU. So it only has one
-> DP0 controller, supporting 4-stream MST. This patch only enables 
-> 2-stream MST, using intf0 and intf3. The first and second patches are
-> modifications to the correspond dt-bindings, third patch is the dp 
-> controller driver after not reuse sm8650, fourth patch is the qcs8300
-> dts modification which add the clk support for stream 1.
-> 
-> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> ---
-> This patch depends on following series:
-> https://lore.kernel.org/all/20250120-mdssdt_qcs8300-v4-0-1687e7842125@quicinc.com/
-> https://lore.kernel.org/all/20250114-dts_qcs8300-v3-0-d114cc5e4af9@quicinc.com/
-> https://lore.kernel.org/all/20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com
-> https://lore.kernel.org/all/20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com/
-> 
-> ---
-> Yongxing Mou (4):
->       dt-bindings: display/msm: Redocument the dp-controller for QCS8300
->       dt-bindings: display/msm: Add stream 1 pixel clock for QCS8300
->       drm/msm/dp: Populate the max_streams for qcs8300 mst controller
->       arm64: dts: qcom: qcs8300: Add support for stream 1 clk for DP MST
-> 
->  .../devicetree/bindings/display/msm/dp-controller.yaml     |  5 +----
->  .../devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml | 14 ++++++++------
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi                      | 12 ++++++++----
->  drivers/gpu/drm/msm/dp/dp_display.c                        |  8 ++++++++
->  4 files changed, 25 insertions(+), 14 deletions(-)
-> ---
-> base-commit: 7ba9bcc5090556c007d9a718d7176e097fe54f19
+=E2=80=A6
+> This patch adds a check for the return value =E2=80=A6
 
-Your series doesn't apply because this commit doesn't exist in any repo 
-I have.
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n94
 
-Rob
+
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n145
+
+Regards,
+Markus
 
