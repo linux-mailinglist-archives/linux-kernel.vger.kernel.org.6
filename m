@@ -1,146 +1,172 @@
-Return-Path: <linux-kernel+bounces-511786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9917DA32FA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:28:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3D5A32FAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:29:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309553A2595
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:28:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3AA3A1373
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF4D262D30;
-	Wed, 12 Feb 2025 19:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A71263882;
+	Wed, 12 Feb 2025 19:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhkQCBab"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNGelLin"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604DD1DEFDD;
-	Wed, 12 Feb 2025 19:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3491DEFDD;
+	Wed, 12 Feb 2025 19:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739388515; cv=none; b=dlEkoes/Nrx13EVSxTtQOiPKWN33VAqLnH0/Gu4Lf2F3fekT/tch3GpkKH4u2fFBR/l8uIvc9loBoL18Wp8XkhC4X4lQaJ2D/3dLs//abNqPHL2Rx2YqR6+RUMrL55OS8jMRjz70Zyv5b5k0zBJfSARhor3awHB+o/y/mgKiasU=
+	t=1739388586; cv=none; b=jqFnJzhTJ8P6wwWzyZJrRbGN/jQxY3BpHsYIMOW5IfMA+uILjoP48cio6O2AdeybdSkfcPRQMVCzBaVENDnfrYNNsm0firORiRzog6YRhPZBtxUQnpkr63VfbNp3JuIZIpnpe2ubSaML+CB3gVeWvxajuHMwkPetJm3XGcD9GWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739388515; c=relaxed/simple;
-	bh=76ce+6c5pg+zeAsKc8pLYPMmWPnyMADHfy6sMwTw6l0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AYu77IYHHOiLZzQMEuyJVmriRcJMXPElVTjfVSg18ZHlB/+83tQKyqrlrci5jSogdAXvt42mBcehpB4+Eap4ndRtA+3PP78qprOgtkPpd9B3hN195GncammCqW913neTWSqNRxCkuD7y+BEGH9Vo0l8vvVIeWIXc5HS5kellCL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhkQCBab; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DC50C4CEDF;
-	Wed, 12 Feb 2025 19:28:28 +0000 (UTC)
+	s=arc-20240116; t=1739388586; c=relaxed/simple;
+	bh=Sq2mdjjVXHCvdecbhWDPkmqbNJgIoFdbEeglMcDtF4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W1r3Su/Mv+q8FYY6H+1QPpvBoVI7B97ODLbByKO/lW6VQDfbTmIjWH8xOqgM2lj30xqNR6wFZZwp+QuS0ntn6gd4m1Q6cCV9AkbznQQdibFkuJmsSvlV9zTuy2Qd/0Xn+O7pF+uTDsUNJzABx6Yj3KsvOXkEXPv+zZhcr8/iulc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNGelLin; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2780EC4CEDF;
+	Wed, 12 Feb 2025 19:29:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739388513;
-	bh=76ce+6c5pg+zeAsKc8pLYPMmWPnyMADHfy6sMwTw6l0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QhkQCBabbJyHrRez6eVn6H9jViqfl1LQnjvWik6Q6Syfn13yRrRydruG+FMf8cdTf
-	 c7aM4AaaHEE2Dl1OnG2eh4/HJu95zgzfjGVjkv7ULPHsVImrTwtNInk0JUjKCDsyWy
-	 Xi5pIXSQMDIjP8xUfIPnb+joQP8rNGTgqWyLRW1Jp+5IRMbGqej9/dBakdJbM6KDm4
-	 vaKfh5Taun/FY5uwLW1ehtzsewW6iDj9eAi1Cvmeg1TD6dAFGijlioQdK6gmJmmf+d
-	 RFnRktWtRXSkrPCZiFK1SHMb5WBm9arWEE6Y75xRDmdaBOt78YIYKlkYToUHhYA0oQ
-	 ghOtDl8z5iVpw==
-Message-ID: <912dc0d1-6236-43cf-b423-54368eeed2e7@kernel.org>
-Date: Wed, 12 Feb 2025 20:28:26 +0100
+	s=k20201202; t=1739388586;
+	bh=Sq2mdjjVXHCvdecbhWDPkmqbNJgIoFdbEeglMcDtF4s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hNGelLinKWa3yJy/UL3Ohy2rSRXh4sIgw/80eeeCmQm45xAOu2hrWZ3A0efiSxwwI
+	 hfeJF3pen8MXcQHO8bjcHb6BWlWPqthbSWIN1j1hUTCse/g5PFwhsqqQyqCu77SrgG
+	 CwLVJaI4KhEk1uECiX/Z75naPpWTzaS06IQGqMntKprtedTtyD8qqMQtxYtKq7Zj1U
+	 Ps5YRxj1bsU8PGHfhv6Sb5iIMrU/I/RIvzt6uiMvTgt3VceqBZHX14EIuqZ8SKNM/R
+	 pPasJ7vAvsyTUkGsvHqsT/StGCLpXTxpMzGC5Rtyosvul8GNCgTKAKBdyakSqy2Qbb
+	 9dHmUj0bfjEVg==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5fcad6dbc73so60920eaf.3;
+        Wed, 12 Feb 2025 11:29:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUdKFaKV74MW14g3BPq7fEctHPEmNr0Alr5XtW5je1aKUdtp+gcOe5idDm7X62+q5g0cxkLT4v5F4Z9BlXy@vger.kernel.org, AJvYcCVOfPniTOiWc+d1e6XPQrsWR9q2CiYVdoPUd7s7h3oWCF/7/D6HfRemeIYPAb8/In4MxRSagUEgbV8=@vger.kernel.org, AJvYcCXpj/sGLqI1qlDo3aB+cgDaBq4p/GgSn390LfkjPCWO3y85V353N6C7/JFr4lP3ZDnFkH/50BJTQJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTYZ7qKrsarUCmme6bAYZ35/hinYD4K/7Dd4oOqq8zAJOnUe58
+	HuQlteZnUqzOa/ZQPNlPlw8cTcw7MVhweD1oGyjcMoMSv0PgXY+08ZF4T7ftFxVid5krEKNnwKu
+	qplHdB3BcJeCaO9r+aauNXthfNNU=
+X-Google-Smtp-Source: AGHT+IFH0LFzIaVbHxzQmkxG28Ku3hRsFYi5/u37pvluWcr1gxWGDY+jNPKRzZuWpBlZEk08St3O8rnU0ZCabSz2gAE=
+X-Received: by 2002:a05:6870:fb87:b0:2b8:3d8c:15ad with SMTP id
+ 586e51a60fabf-2b8dac927acmr2322300fac.1.1739388585467; Wed, 12 Feb 2025
+ 11:29:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/3] dt-bindings: media: cdns,csi2rx.yaml: Add
- optional interrupts for cdns-csi2rx
-To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: mripard@kernel.org, mchehab@kernel.org, jai.luthra@linux.dev,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, devarsht@ti.com,
- vaishnav.a@ti.com, r-donadkar@ti.com, u-kumar1@ti.com
-References: <20250212131244.1397722-1-y-abhilashchandra@ti.com>
- <20250212131244.1397722-2-y-abhilashchandra@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250212131244.1397722-2-y-abhilashchandra@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220620144231.GA23345@axis.com> <5caa944f-c841-6f74-8e43-a278b2b93b06@suse.com>
+ <20220708110325.GA5307@axis.com> <4ca77763-53d0-965a-889e-be2eafadfd2f@intel.com>
+ <1937b65c-36c0-5475-c745-d7285d1a6e25@suse.com> <CAJZ5v0j0mgOcfKXRzyx12EX8CYLzowXrM8DGCH9XvQGnRNv0iw@mail.gmail.com>
+ <5c37ee19-fe2c-fb22-63a2-638e3dab8f7a@suse.com> <CAJZ5v0ijy4FG84xk_n8gxR_jS0xao246eVbnFj-dXzwz=8S9NQ@mail.gmail.com>
+ <Z6lzWfGbpa7jN1QD@google.com> <Z6vNV8dDDPdWUKLS@google.com>
+In-Reply-To: <Z6vNV8dDDPdWUKLS@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 12 Feb 2025 20:29:34 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i83eJWV_kvWxZvja+Js3tKbrwZ8rVVGn7vR=0qLf1mtw@mail.gmail.com>
+X-Gm-Features: AWEUYZmhW5ok-2DBVnS1_g02ioOjQJzY8xCt2BGdeeXG0jyqtGs2qrNxSO61FRI
+Message-ID: <CAJZ5v0i83eJWV_kvWxZvja+Js3tKbrwZ8rVVGn7vR=0qLf1mtw@mail.gmail.com>
+Subject: Re: PM runtime_error handling missing in many drivers?
+To: Brian Norris <briannorris@google.com>
+Cc: Ajay Agarwal <ajayagarwal@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Oliver Neukum <oneukum@suse.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Vincent Whitchurch <vincent.whitchurch@axis.com>, "jic23@kernel.org" <jic23@kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/02/2025 14:12, Yemike Abhilash Chandra wrote:
-> The Cadence CSI2RX IP exposes 3 interrupts [0] 12.7 camera subsystem.
-> Enabling these interrupts will provide additional information about a CSI
-> packet or an individual frame. So, add support for optional interrupts
-> and interrupt-names properties.
-> 
-> [0]: http://www.ti.com/lit/pdf/spruil1
+On Tue, Feb 11, 2025 at 11:21=E2=80=AFPM Brian Norris <briannorris@google.c=
+om> wrote:
+>
+> Hi Ajay,
+>
+> On Mon, Feb 10, 2025 at 09:02:41AM +0530, Ajay Agarwal wrote:
+> > On Wed, Jul 27, 2022 at 06:31:48PM +0200, Rafael J. Wysocki wrote:
+> > > On Wed, Jul 27, 2022 at 10:08 AM Oliver Neukum <oneukum@suse.com> wro=
+te:
+> > > > On 26.07.22 17:41, Rafael J. Wysocki wrote:
+> > > > > Well, in general suspending or resuming a device is a collaborati=
+ve
+> > > > > effort and if one of the pieces falls over, making it work again
+> > > > > involves fixing up the failing piece and notifying the others tha=
+t it
+> > > > > is ready again.  However, that part isn't covered and I'm not sur=
+e if
+> > > > > it can be covered in a sufficiently generic way.
+> > > >
+> > > > True. But that still cannot solve the question what is to be done
+> > > > if error handling fails. Hence my proposal:
+> > > > - record all failures
+> > > > - heed the record only when suspending
+> > >
+> > > I guess that would boil down to moving the power.runtime_error update
+> > > from rpm_callback() to rpm_suspend()?
+> > Resuming this discussion. One of the ways the device drivers are
+> > clearing the runtime_error flag is by calling pm_runtime_set_suspended
+> > [1].
 
+I personally think that jumping on a 2.5 years old thread is not a
+good idea.  It would be better to restate the problem statement and
+provide the link to the previous discussion.
 
-Why is this RFC?
+> > To me, it feels weird that a device driver calls pm_runtime_set_suspend=
+ed
+> > if the runtime_resume() has failed. It should be implied that the devic=
+e
+> > is in suspended state if the resume failed.
+> >
+> > So how really should the runtime_error flag be cleared? Should there be
+> > a new API exposed to device drivers for this? Or should we plan for it
+> > in the framework itself?
+>
+> While the API naming is unclear, that's exactly what
+> pm_runtime_set_suspended() is about. Personally, I find it nice when a
+> driver adds the comment "clear runtime_error flag", because otherwise
+> it's not really obvious why a driver has to take care of "suspending"
+> after a failed resume. But that's not the biggest question here, IMO.
+>
+> The real reson I pointed you at this thread was because I think it's
+> useful to pursue the proposal above: to avoid setting a persistent
+> "runtime_error" for resume failures. This seems to just create a pitfall
+> for clients, as asked by Vincent and Oliver upthread.
+>
+> And along this line, there are relatively few drivers that actually
+> bother to reset this error flag ever (e.g., commit f2bc2afe34c1
+> ("accel/ivpu: Clear runtime_error after pm_runtime_resume_and_get()
+> fails")).
+>
+> So to me, we should simply answer Rafael's question:
+>
+> (repeated:)
+> > > I guess that would boil down to moving the power.runtime_error update
+> > > from rpm_callback() to rpm_suspend()?
+>
+> Yes, I think so. (Although I'm not sure if this leaves undesirable spam
+> where persistent .runtime_resume() failures occur.)
+>
+> ...and then write/test/submit such a patch, provided it achieves the
+> desired results.
+>
+> Unless of course one of the thread participants here has some other
+> update in the intervening 2.5 years, or if Rafael was simply asking the
+> above rhetorically, and wasn't actually interested in fielding such a
+> change.
 
-> 
-> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-> ---
->  .../devicetree/bindings/media/cdns,csi2rx.yaml        | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> index 2008a47c0580..a3acf4f861c2 100644
-> --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> @@ -24,6 +24,17 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 3
+The reason why runtime_error is there is to prevent runtime PM
+callbacks from being run until something is done about the error,
+under the assumption that running them in that case may make the
+problem worse.
 
-I understand interrupts might be unused by driver, but are you sure they
-are optionally connected one-by-one? IOW, why is this flexible?
+I'm not sure if I see a substantial difference between suspend and
+resume in that respect: If any of them fails, the state of the device
+is kind of unstable.  In particular, if resume fails and the device
+doesn't actually resume, something needs to be done about it or it
+just becomes unusable.
 
-
-Best regards,
-Krzysztof
+Now, the way of clearing the error may not be super-convenient, which
+was a bit hard to figure out upfront, so I'm not against making any
+changes as long as there are sufficient reasons for making them.
 
