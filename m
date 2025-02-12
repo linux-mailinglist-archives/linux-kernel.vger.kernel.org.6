@@ -1,153 +1,156 @@
-Return-Path: <linux-kernel+bounces-511511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7EDA32C08
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:40:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7580BA32C04
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:40:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53E5168B36
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE5D188BCD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20C22505B3;
-	Wed, 12 Feb 2025 16:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C0E250BF1;
+	Wed, 12 Feb 2025 16:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LwS+nkzE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OqJ+9dpa"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E812E21D59F;
-	Wed, 12 Feb 2025 16:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689FF256C8E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739378366; cv=none; b=or5tDALZtHDBHqvDTx2Hwqf1CpyS1Vg68idZsAE6qaC0jx60KcvauWZ/36zfgNUT1bfVoou9kGRj0CyKTjy7B0GSJB/rPqZKHCxc3hF/59nx8aXaZcrhs+MNZ6OEIRvL3oFKDCYj2aZYdxjyb3DqwxmM6RdkhKy+KFukjWSYkAI=
+	t=1739378372; cv=none; b=qzy83N4XYjYG7zJIxmaEjGckDcIhNqNUwcELQyxK7bQUEYnEZvxs4delGjdRYMrFsenXTbpw2P+oIjeOhHZIAwFhMiOp08iIeP6kAI24sO+nWiXnt561+pn4KJmQpkA6zeceEvrEGMUEEE3N8/H+Fk+RAY9dghjqSwDh+WEB6Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739378366; c=relaxed/simple;
-	bh=zfEIpiTrcj/R2Ru79c+QdETWalY9N06YUbZ/uIkxoRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ouMkRc1IdQFW9foD5Jwj1kinCEjhoWbTyYoIv2Agkv1xv0FkbY1ocVKcpMjpRHyuZSpHGzl7Rueign0AOE0kFZYLWuaV7Ij4gQ4YnPsSM3ogWq+Lb03GK4unqlIkG6u0/ewYeGCcILqEmNb55pADrC4BFDrRTK39kyPzo3NNUPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LwS+nkzE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B45E0C4CEDF;
-	Wed, 12 Feb 2025 16:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739378365;
-	bh=zfEIpiTrcj/R2Ru79c+QdETWalY9N06YUbZ/uIkxoRU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LwS+nkzE62iYAWY6oMvTiOE2hZdqZW4je7lUt/Tn8svDT0aqJyRSG1Te50dWeoSK6
-	 yZO90wTxRzWvs64nxtq+JimjJqslPOcN7j/gDEv42ILOhCNdmCR6wWLQcePUqYZ0Yz
-	 uadqjYhtm/BeUJnOKtwxaC2USAWhcuMi9AeP4KLnjL50JLMhS7jyRHMJsejxavbVDh
-	 sV1QU2dtmz9BzlPJHJQTzkrOQXYWw8C3AzJ/mP1FzbO60nnOuds/LnOuA/bs/jEEl1
-	 +GgoenuPWq9nhK1ojBt2vq5J0TI5Wg9+EvPg0Lk5i7f20zfeNS5Qm+VHUuZdt6qoTp
-	 WjzuuOLLR6qTQ==
-Date: Wed, 12 Feb 2025 18:39:06 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
-	linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 05/14] kexec: Add Kexec HandOver (KHO) generation
- helpers
-Message-ID: <Z6zOqtaLQwnIWl2E@kernel.org>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <20250206132754.2596694-6-rppt@kernel.org>
- <20250210202220.GC3765641@nvidia.com>
- <CA+CK2bBBX+HgD0HLj-AyTScM59F2wXq11BEPgejPMHoEwqj+_Q@mail.gmail.com>
- <20250211124943.GC3754072@nvidia.com>
- <CA+CK2bAEnaPUJmd3LxFwCRa9xWrSJ478c4xisvD4pwvNMiTCgA@mail.gmail.com>
- <20250211163720.GH3754072@nvidia.com>
- <20250212152336.GA3848889@nvidia.com>
+	s=arc-20240116; t=1739378372; c=relaxed/simple;
+	bh=SqrHKzrnFGepf7djcq2JyOhODUv+D2vmoBsZ1xq9Mfg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SX2C89UddQyMtBSXTPsIisPBX2ixWRxMOJ2ByYrPF6JVQzjnBY4RC2h+m84f2Z9ZT+RlYh1od4ezSiGyke4cldt35zlvUPQ+7uO5+URMEHGbbWHj+VYvk0QF5Sxc4HzQJVPpceGHDC7f18A5hRrB555aw26BcSVKI7MTAQRZDYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OqJ+9dpa; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-308edbc368cso36321841fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:39:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739378368; x=1739983168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g9J4VAMrvjFIthFOUeNoRIlqfbAqCet1lDNYxHiSCoI=;
+        b=OqJ+9dpa0raGWq3XzwnErmo6krpYzKu4f4rZe4TPClXbR68Ls746QAppIxzOlmd0vB
+         4vtIq7km1jfFTqW8mZZGyEoi2mSEnfL8F/IJZWcHZIV37N967atcIOjLLeohwbDTHh58
+         QRo/qqNGTlkGcfjMMgxqNjFZKeeQfcYPo5wYdavpeLtCQ3k0tGNcFOed8d5ZTjXXq5Et
+         6tdNMe2qBDmYdGMMXqveuVAs+tZS5b34GtVMv2U9+pfwgHNele+tIuyVmtB2QiU8fsdQ
+         W4saen6qbjVA1bgH8ChEjeZRGUXJLGsgcOx1EyD9pZTiB5Gn/s3BYm3WKFOiOC9XjqWG
+         TiFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739378368; x=1739983168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g9J4VAMrvjFIthFOUeNoRIlqfbAqCet1lDNYxHiSCoI=;
+        b=SeyfHipGpxGngclgXSV3srutqjKysc3kL5xLHn4zugkXhaFuNpquI82G2qKbSEgV1u
+         pXMLwcKFMjPU1pg7D/Dt3nvlAxKVBzP3Zblcyu4zkJMhCb3mrwZrss9DaawWDFdLUJrY
+         DZe3HiOZw4pP5iNhuvh9UNBnXk6PtUVNyq675YU7y7jVt7Tugg3CRxOSUEY6YZbNgj4Y
+         Fmx8mWDTRsH5V0gwXd2OZDWqdjzhGZL8mXhWimCDDMXQyYNf88h9gFJZOvIK2uQGQu5y
+         odfHFKdWw1yn9dr7H91VouGWPc1xfRvou3cGviUDbZPr5NGZGwsey7p+IbRSHbHw0Y34
+         Mviw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+Ol/OP/mnBVDWDWxCV1DUf+9a3UggGGp/MtfQhXVrG1HLPGVocgBvMpVFKOqwRgXhCy4laQbF7Vm2byI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoSpzI0HWzVKyqkPK4/qNjOeIkqUy/cmm/hgBthiCgzHE8B1la
+	WoaKP1RWiaL5tdE145hH4TO5/rtdyfarNIEWis+7jpNy8VXafpyjb94SA8ZFLAIWnyUAJ2CE0/T
+	D3bRdMsQExb0MmUsmqwYmUIy09MTdfxF9CgJFEIhS5rhrYhQfTy/oKQ==
+X-Gm-Gg: ASbGnctsB8SF7rJI+PfVZwnrwtpDuWjc0zRjxIoc31LSVWO3JFnHQYRimMxkGgE7e9V
+	ejPEPUDNaU+IBn0BtvCGIcsy+hLpHVjTDc+MOyq09ARnozkt3rUut8MNv0NDoKVui8oO7Trr6P2
+	vrHfAEz/fxryofe3ETTOTo9mlIqDaX
+X-Google-Smtp-Source: AGHT+IGJSilHTkyG543GwkVXgOCLC5wxxAUOH6Du13FUEkPkgsZP4J+t1m6e3kH+6mL7xYbhbLX9btLHN1Ux9+Vvxyw=
+X-Received: by 2002:a2e:a99e:0:b0:308:e9ae:b5a8 with SMTP id
+ 38308e7fff4ca-30904fe6b6fmr12180011fa.13.1739378368403; Wed, 12 Feb 2025
+ 08:39:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212152336.GA3848889@nvidia.com>
+References: <20250212085918.6902-1-brgl@bgdev.pl> <CAMRc=MdFwe2onYhwY__n-kAOSrXKKDWJ38hpbYb0711Nx60DHw@mail.gmail.com>
+ <20250212155512.GE2274105@google.com>
+In-Reply-To: <20250212155512.GE2274105@google.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 12 Feb 2025 17:39:16 +0100
+X-Gm-Features: AWEUYZmGJUAGvgR0rK_Au78KUTPXxd0-vdf5bbSOE6eZxG3UNG7JHjJD80yu-r0
+Message-ID: <CAMRc=Met68e5c16ShiJ1mHQM-GSvautN_whVMGh53g3mx7OQSg@mail.gmail.com>
+Subject: Re: [PATCH] leds: aw200xx: don't use return with gpiod_set_value() variants
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jason,
+On Wed, Feb 12, 2025 at 4:55=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
+>
+> On Wed, 12 Feb 2025, Bartosz Golaszewski wrote:
+>
+> > On Wed, Feb 12, 2025 at 9:59=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev=
+.pl> wrote:
+> > >
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > While it now returns void, it will soon be converted to return an
+> > > integer instead. Don't do `return gpiod_set...`.
+> > >
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > > Closes: https://lore.kernel.org/oe-kbuild-all/202502121512.CmoMg9Q7-l=
+kp@intel.com/
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > >  drivers/leds/leds-aw200xx.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.=
+c
+> > > index 08cca128458c..fe223d363a5d 100644
+> > > --- a/drivers/leds/leds-aw200xx.c
+> > > +++ b/drivers/leds/leds-aw200xx.c
+> > > @@ -379,7 +379,7 @@ static void aw200xx_enable(const struct aw200xx *=
+const chip)
+> > >
+> > >  static void aw200xx_disable(const struct aw200xx *const chip)
+> > >  {
+> > > -       return gpiod_set_value_cansleep(chip->hwen, 0);
+> > > +       gpiod_set_value_cansleep(chip->hwen, 0);
+> > >  }
+> > >
+> > >  static int aw200xx_probe_get_display_rows(struct device *dev,
+> > > --
+> > > 2.45.2
+> > >
+> >
+> > Lee, Pavel:
+> >
+> > If this is OK for you, can you please provide me with an immutable
+> > branch so that I can pull it into the GPIO tree? It seems it's the
+> > only such use-case in the tree apart from the gpio.h header that I can
+> > fix locally. Alternatively you can just Ack this and let me take it
+> > through the GPIO tree.
+>
+> I'm okay with it, but why do you need it?
+>
 
-On Wed, Feb 12, 2025 at 11:23:36AM -0400, Jason Gunthorpe wrote:
-> On Tue, Feb 11, 2025 at 12:37:20PM -0400, Jason Gunthorpe wrote:
-> 
-> > To do that you need to preserve folios as the basic primitive.
-> 
-> I made a small sketch of what I suggest.
-> 
-> I imagine the FDT schema for this would look something like this:
-> 
-> /dts-v1/;
-> / {
->   compatible = "linux-kho,v1";
->   phys-addr-size = 64;
->   void-p-size = 64;
->   preserved-folio-map = <phys_addr>;
-> 
->   // The per "driver" storage
->   instance@1 {..};
->   instance@2 {..};
-> };
-> 
-> I think this is alot better than what is in this series. It uses much
-> less memory when there are alot of allocation, it supports any order
-> folios, it is efficient for 1G guestmemfd folios, and it only needs a
-> few bytes in the FDT. It could preserve and restore the high order
-> folio struct page folding (HVO).
-> 
-> The use cases I'm imagining for drivers would be pushing gigabytes of
-> memory into this preservation mechanism. It needs to be scalable!
-> 
-> This also illustrates my point that I don't think FDT is a good
-> representation to use exclusively. This in-memory structure is much
-> better and faster than trying to represent the same information
-> embedded directly into the FDT. I imagine this to be the general
-> pattern that drivers will want to use. A few bytes in the FDT pointing
-> at a scalable in-memory structure for the bulk of the data.
+For historical reasons gpiod_set_value() and its variants don't have a
+return value. However, we now support all kinds of hardware that can
+fail to set a line value: I2C, SPI, USB (hot-unpluggable chips), etc.
+I want to rework the GPIO subsystem to make these functions return int
+and become able to indicate failures. Build-bot complained about my
+series[1] and pointed at this driver after the interface for
+gpiod_set_value_cansleep() changed in patch 1. This is why I want to
+fix it, get it into my tree and then pick up the series.
 
-As I've mentioned off-list earlier, KHO in its current form is the lowest
-level of abstraction for state preservation and it is by no means is
-intended to provide complex drivers with all the tools necessary.
+Sorry for not explaining it in detail earlier.
 
-It's sole purpose is to allow preserving simple properties and ensure that
-memory ranges KHO clients need to preserve won't be overwritten.
+Bart
 
-What you propose is a great optimization for memory preservation mechanism,
-and additional and very useful abstraction layer on top of "basic KHO"!
-
-But I think it will be easier to start with something *very simple* and
-probably suboptimal and then extend it rather than to try to build complex
-comprehensive solution from day one.
-
--- 
-Sincerely yours,
-Mike.
+[1] https://lore.kernel.org/linux-gpio/20250211-gpio-set-retval-v1-0-52d3d6=
+13d7d3@linaro.org/
 
