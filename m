@@ -1,153 +1,88 @@
-Return-Path: <linux-kernel+bounces-510379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD56FA31BFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:27:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AED8A31C00
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C1461889FC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:27:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8DC3A8192
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A591D435F;
-	Wed, 12 Feb 2025 02:27:25 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A297C1CDFC1;
+	Wed, 12 Feb 2025 02:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgN9z1y/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C7A1C3BEE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0A11CBEAA;
+	Wed, 12 Feb 2025 02:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739327244; cv=none; b=OT3LcZon9kzKfllUiEAZpAPvHPstkpMqbLJwTdKXSyEYfk19QrWGGvP2rfNGP81dpskJUfEi/Cz3x5NTDEuFAykJooB/zQC78kMv5tNWEJvOsYndIUJkVGjv0C+/5xoPLATLU7Pxjt66qnUo9k0MxOQO+La47WUrjlZmZnkmpjo=
+	t=1739327250; cv=none; b=Do7h77DPlZnJ5SaYyykSZ94+WQccCz45T+SH9sL5vAozkcHm9n/lUgFsH+LuyjvK6XeimLfLHzZtEbphdDl3n09AirTeekdr//0EkPATV7Vd5Pg8jo/ypD/G42cRFCdHIzAH11zqdWmh3zdlqeBdr6Erb+VhEww3p46E2eQ1jao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739327244; c=relaxed/simple;
-	bh=OvePDz61hU89iP6mjSJW/9XhetJ3HI8k3T4tIuDg20o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fjo5Sje3ofJFPj4I2p3U13adOEQhhrtK7YDN2SjO4o3rPBS9eYrsIsj920zZe9/xN2D24gPQrGsWqlS2PbpnFThR1i29BSVO6O+mbSJlaiKHJqgQMcN5GENZJFDKXozoP7iB241+o0ir+4FUnKIdot7fXvEF3oL/dXjF+tbI01c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Yt2DR1mdgz1V6bL;
-	Wed, 12 Feb 2025 10:23:35 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3B2C6140119;
-	Wed, 12 Feb 2025 10:27:21 +0800 (CST)
-Received: from localhost.huawei.com (10.90.30.45) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Feb 2025 10:27:20 +0800
-From: Qinxin Xia <xiaqinxin@huawei.com>
-To: <baohua@kernel.org>, <chenxiang66@hisilicon.com>
-CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
-	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<xiaqinxin@huawei.com>
-Subject: [PATCH 3/3] dma mapping benchmark:add support for dma_map_sg
-Date: Wed, 12 Feb 2025 10:27:18 +0800
-Message-ID: <20250212022718.1995504-4-xiaqinxin@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250212022718.1995504-1-xiaqinxin@huawei.com>
-References: <20250212022718.1995504-1-xiaqinxin@huawei.com>
+	s=arc-20240116; t=1739327250; c=relaxed/simple;
+	bh=ZYzY4+l+dFRYzltNbW6pH6aQvA9KFT1LHvoYLNAw0oQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/SdkC3A6AFva20TmxcT5SPEAbPdKcTplfUN+BdICvvx9j67eSXhd8hy6LKlvNFpu89YZJnuUFWdpKi3RUAXC6sSEeB2u//bYeAPLxonvV8hIJiQgwYvJgwkFTNCbsfAIgio+iPd63xrCoW36WDbpyeq5K689me/zxAYQOS+XFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgN9z1y/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 335CBC4CEDD;
+	Wed, 12 Feb 2025 02:27:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739327249;
+	bh=ZYzY4+l+dFRYzltNbW6pH6aQvA9KFT1LHvoYLNAw0oQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AgN9z1y/SGiCZfh4jONXnZe7Z3FTeK+evpamez7ckDebJkMxbSk6RtQEAHifX7y+t
+	 TYFG/MSCvMj9hM1QSBuMMcNivVAv2+SoNklsUbU7RnUjW/IKx8PcppLe+uq3OwIYQU
+	 AaSbXGe6qdG4u5NkzU9iATBqIRGx0AWMSnY4QYCAFvgWdMQ+uOpXfxOOWq9Cn9Qx5l
+	 58ZAdicfJ8mHP9XeQ7QTC0WhB7bheyIOoPYAJROSQQNGmqT6B99rM/phRsM943C3nk
+	 BkPudRTFvQx3eLJHokmwbC8L5D5kvnaPy5VIDAtJd5OOAx1K8+tlSjIBh8uET4lIBl
+	 hUvo3w0qKI4dg==
+Date: Wed, 12 Feb 2025 02:27:27 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: mhklinux@outlook.com
+Cc: haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	deller@gmx.de, weh@microsoft.com, dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH 1/1] fbdev: hyperv_fb: iounmap() the correct memory when
+ removing a device
+Message-ID: <Z6wHDw8BssJyQHiM@liuwe-devbox-debian-v2>
+References: <20250209235252.2987-1-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250209235252.2987-1-mhklinux@outlook.com>
 
-Support for dma_map_sg, add option '-m' to distinguish mode.
+On Sun, Feb 09, 2025 at 03:52:52PM -0800, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+> 
+> When a Hyper-V framebuffer device is removed, or the driver is unbound
+> from a device, any allocated and/or mapped memory must be released. In
+> particular, MMIO address space that was mapped to the framebuffer must
+> be unmapped. Current code unmaps the wrong address, resulting in an
+> error like:
+> 
+> [ 4093.980597] iounmap: bad address 00000000c936c05c
+> 
+> followed by a stack dump.
+> 
+> Commit d21987d709e8 ("video: hyperv: hyperv_fb: Support deferred IO for
+> Hyper-V frame buffer driver") changed the kind of address stored in
+> info->screen_base, and the iounmap() call in hvfb_putmem() was not
+> updated accordingly.
+> 
+> Fix this by updating hvfb_putmem() to unmap the correct address.
+> 
+> Fixes: d21987d709e8 ("video: hyperv: hyperv_fb: Support deferred IO for Hyper-V frame buffer driver")
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
 
-i) Users can set option '-m' to select mode:
-   DMA_MAP_SINGLE_MODE=0, DMA_MAP_SG_MODE:=1
-   (The mode is also show in the test result).
-ii) Users can set option '-g' to set sg_nents
-    (total count of entries in scatterlist)
-    the maximum number is 1024. Each of sg buf size is PAGE_SIZE.
-    e.g
-    [root@localhost]# ./dma_map_benchmark -m 1 -g 8 -t 8 -s 30 -d 2
-    dma mapping mode: DMA_MAP_SG_MODE
-    dma mapping benchmark: threads:8 seconds:30 node:-1
-    dir:FROM_DEVICE granule/sg_nents: 8
-    average map latency(us):1.4 standard deviation:0.3
-    average unmap latency(us):1.3 standard deviation:0.3
-    [root@localhost]# ./dma_map_benchmark -m 0 -g 8 -t 8 -s 30 -d 2
-    dma mapping mode: DMA_MAP_SINGLE_MODE
-    dma mapping benchmark: threads:8 seconds:30 node:-1
-    dir:FROM_DEVICE granule/sg_nents: 8
-    average map latency(us):1.0 standard deviation:0.3
-    average unmap latency(us):1.3 standard deviation:0.5
-
-Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
----
- tools/testing/selftests/dma/dma_map_benchmark.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/dma/dma_map_benchmark.c b/tools/testing/selftests/dma/dma_map_benchmark.c
-index b12f1f9babf8..036ddb5ac862 100644
---- a/tools/testing/selftests/dma/dma_map_benchmark.c
-+++ b/tools/testing/selftests/dma/dma_map_benchmark.c
-@@ -27,6 +27,7 @@ int main(int argc, char **argv)
- 	int fd, opt;
- 	/* default single thread, run 20 seconds on NUMA_NO_NODE */
- 	int threads = 1, seconds = 20, node = -1;
-+	int map_mode = DMA_MAP_SINGLE_MODE;
- 	/* default dma mask 32bit, bidirectional DMA */
- 	int bits = 32, xdelay = 0, dir = DMA_MAP_BIDIRECTIONAL;
- 	/* default granule 1 PAGESIZE */
-@@ -34,7 +35,7 @@ int main(int argc, char **argv)
- 
- 	int cmd = DMA_MAP_BENCHMARK;
- 
--	while ((opt = getopt(argc, argv, "t:s:n:b:d:x:g:")) != -1) {
-+	while ((opt = getopt(argc, argv, "t:s:n:b:d:x:g:m:")) != -1) {
- 		switch (opt) {
- 		case 't':
- 			threads = atoi(optarg);
-@@ -57,11 +58,20 @@ int main(int argc, char **argv)
- 		case 'g':
- 			granule = atoi(optarg);
- 			break;
-+		case 'm':
-+			map_mode = atoi(optarg);
-+			break;
- 		default:
- 			return -1;
- 		}
- 	}
- 
-+	if (map_mode >= DMA_MAP_MODE_MAX) {
-+		fprintf(stderr, "invalid map mode, DMA_MAP_SINGLE_MODE:%d, DMA_MAP_SG_MODE:%d\n",
-+			DMA_MAP_SINGLE_MODE, DMA_MAP_SG_MODE);
-+		exit(1);
-+	}
-+
- 	if (threads <= 0 || threads > DMA_MAP_MAX_THREADS) {
- 		fprintf(stderr, "invalid number of threads, must be in 1-%d\n",
- 			DMA_MAP_MAX_THREADS);
-@@ -111,13 +121,15 @@ int main(int argc, char **argv)
- 	map.dma_dir = dir;
- 	map.dma_trans_ns = xdelay;
- 	map.granule = granule;
-+	map.map_mode = map_mode;
- 
- 	if (ioctl(fd, cmd, &map)) {
- 		perror("ioctl");
- 		exit(1);
- 	}
- 
--	printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:%s granule: %d\n",
-+	printf("dma mapping mode: %d\n", map_mode);
-+	printf("dma mapping benchmark: threads:%d seconds:%d node:%d dir:%s granule/sg_nents: %d\n",
- 			threads, seconds, node, dir[directions], granule);
- 	printf("average map latency(us):%.1f standard deviation:%.1f\n",
- 			map.avg_map_100ns/10.0, map.map_stddev/10.0);
--- 
-2.33.0
-
+Applied to hyperv-fixes. Thanks.
 
