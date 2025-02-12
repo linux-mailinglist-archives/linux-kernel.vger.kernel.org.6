@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-511033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04B5A324E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:29:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F42AA324E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:29:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D623A0601
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6849718853BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CBE253B58;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8BA254B09;
 	Wed, 12 Feb 2025 11:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rM/uvM0X"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WyUQY0xz"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F41820B1ED
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A4A20B1F4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359421; cv=none; b=EjvDuW23wI8iLqikVSLX8MY+sZFMe7bvsP38LFSQPbmDNUb+zZH6sWX5Iwb7sM9qJAVRZVEyUN89uSaBxJ0+N9s8zkslvwwdliAHfzA/aCaWpOMUhskDcwms+og81MfKgNq6lqR95GQSh+R2KVvA90eoUsYXUHQfc0o6y6eFvkw=
+	t=1739359422; cv=none; b=YR4PYVyZGD7eCV/pJXBh+9iTqf+XoatQtXDpgNCvds6xlMqOS6TGUm2+ZxWxjTZSK3Fjrg3Rc06Muaxn3wk1acpgbpiVPD1qHRrmh9UBcH7VPqfLfWraAmCZQlJpuc0S93HN65KQD9y4+z+vdNp+CBRBWcoq525vbjIU+kRmFO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359421; c=relaxed/simple;
-	bh=mZJOXWfu791srRnVf30GNB51gYy1b2GWyvvBBPfxfVU=;
+	s=arc-20240116; t=1739359422; c=relaxed/simple;
+	bh=b3M6qYg0KD95KLfHfeT357d4vgmk2nogAqPAsvE5nuo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ErmbfQZOK4ZdL2AMs67JHlNaQNE8RI1MH1qtM2IKO24u/sfBUVuC25fENFmenSiy7kopW44iFg/tLtUG47iktVWyKiqEeNL5QfCr0D2gjaYsraWIU9THNqn253kk4PTNgpViwKTFPvRNz5S5A3Fs/ooeK0DdSO1yFmssbAh7cmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rM/uvM0X; arc=none smtp.client-ip=209.85.208.175
+	 In-Reply-To:To:Cc; b=h8Lf3+1h8XVF69f68o8be9KfPvcZwIiBMXO7BP2H/W4AbG6/oAFCUbLwOs54DlSljDfG3fAa1uqhquAFU7xJLNhLnUrKATafF+8eEXrj8DHyQnC/MeylFE5le7Kpu1OjRxNZRxBZuuqYwFjojqDGI+/2UYPo5/IwmF6uBC0SPpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WyUQY0xz; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-307bc125e2eso62131441fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:23:39 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-308edbc368cso32852311fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:23:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739359418; x=1739964218; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739359419; x=1739964219; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BLyynCt450Utx2Z4sB12bYa6WPePLKZjdTj9AHDawWQ=;
-        b=rM/uvM0X6VdOs5xfzl9A6ngRyfBqOZn50FQKbUcbftKGL71qs31ghXbOLEuaLbK7LI
-         H8RAfJr3Nv6ZTjMUvg//1d46EyZlM4v/kowebVBzq7Al6Nzrtwvi10l6msSF023JXPyH
-         4UBTcReGI+zuO65MvT3ys6ANeVoO9TTLgOBjdAoXYKSgHjl1J8IHuFuSVV1KZkoHI5zu
-         xlq9umk8thjnECjWi9h+r3SoVbCv/DJ3U3WB+K6Srvql6Q2vDVUw9Cm1dSAg7227Bz1i
-         LfDP97qBrAQySOiY7+JRYV9HH4SipvUfRfAIqwqFPTaBieu5oy8E2Tb8rK/HTwvecBvA
-         eUsg==
+        bh=Pd5myOXJmBrq2ZireMN1LAxoO4XGu12StPrpGUT11PQ=;
+        b=WyUQY0xzdx6U95jLocwtNAHUmKKz4y9XCmk84ZAypI1ohv9bnT9Vlv1jI7b//ioUur
+         DsV7zCKgMfOK0d3GzyFLCnXaEO9KczWoYY2kT6OAjwKEUlf8/CAjIMDv4mB3fzVBxSGV
+         7L+II1tshPpPSTIv9+h7bjY7OPu3UPUQ5+d1HsbSGxy0jnWe+We27C01tvmaEDIbGNqa
+         WAhpPUaD40hDJZrLc9qAC5Rma0x/TI3uLIur+Pd3xhM11t8HWMA5uzdNMdHmkNkjTWuE
+         xnj+0kN8qgNCld63PPi6KBPhxap9FFCkUWO9Mk6XaPR2LzVU7GcXqzJKle6TNsReHbmV
+         xhmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739359418; x=1739964218;
+        d=1e100.net; s=20230601; t=1739359419; x=1739964219;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BLyynCt450Utx2Z4sB12bYa6WPePLKZjdTj9AHDawWQ=;
-        b=Aa3TbPXeDTuCOLkX4KoHxsYuscYLAovJxz+mjFdxLmgbttVSwt95efnsFlm1Yclwje
-         go5Ykuk21ub9gULDhmKEJ+yuuOHbpzrZC+Mhiktnkxi4x7etTFcttg9OfHpYI83O+KNK
-         pwEhV11XdtywAq7wNjTC8ZW/uchonwnl7b26vGN/vMi00BAJaT0yf/BmY1OqzWQhwVmg
-         vR4XIkmQ46pfEzf9gt5LKdQvmQhAat9HiuaAG1DQeTTzfQ/9whneGW4BMYksuZ0OC1dJ
-         NWKbzv1UaV4ionLUUIYVUGLpFfWhNOsdiTXIOxTFL286wQI16I5KQ3BFEU+sxX99pm+f
-         9YvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWU2R0i60Ia5CnTNV7Hc97zfiUe3EaOc5fbhyuKZekdJ6Ww6xE30niuMbc4jG2otnzG3Yl9hirx8Zr4s48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkTJ0cMDmzl6FFGhCngsKax+mAUK8kwlNE2I1eNP52W2kUM4Q8
-	6aylomtEjnNZNaASD3Z2HvsGCSu8bKYBaI9Zd2YxKnmVwdazsVccbvs3xuG1uYs=
-X-Gm-Gg: ASbGnctoZnoBiKoJeXLq3EW2v1SprA6OXbsPP3icno+Uhff0ZvFA7VP18GWd5vTPXBV
-	Rp+IElYmD+LW2/2xZl3P5d2PI29VvymBRicAvjM2iv1Yun/3IZStWhdTJcamML+v2cAmJ0MOeQQ
-	O//IIccujJ2rtPzDK7SWhSb+NF5j1pOaKvVaQcG2Lay1cn8Z0+Gx2jF4u5UVoWsR2wL9ltBN/wT
-	fFUIJFOMplzLUogt8H1VxFH/qO8K8tYM2h5wOPd8CgK0saePZpOeIzhC89jqG3vsBOg0t9kCrBr
-	QZU28zTNfwuftZwiZRU4Zvv5XQ==
-X-Google-Smtp-Source: AGHT+IHK2ire6eSOXUjIyEB1DADW6wNdjzmfwgrMquJUSGQom2k6V3tykQc82oC2UKLm7kJWGSeVIQ==
-X-Received: by 2002:a05:651c:1b06:b0:2fa:cdd1:4f16 with SMTP id 38308e7fff4ca-3090364236dmr12530571fa.14.1739359417574;
-        Wed, 12 Feb 2025 03:23:37 -0800 (PST)
+        bh=Pd5myOXJmBrq2ZireMN1LAxoO4XGu12StPrpGUT11PQ=;
+        b=F8OoV2SxsgbP6Sbw8XS4X3kdVhYsM45u8BEmlghl7zm+fl8lEhjxMJj12n+Dl+Rbtq
+         AqAsa755qwQshnmDzYDoolpW87xdGkgYb+iW4QfiaP1SPuUD8m9JB42SnHw1pSUYvI1O
+         cCrWiuXPSZZ5K8R3j6I3GWy6/VhYi/fTkZLrJAsrnfe5o4KG2g0JUYBql2EwMvMuoLwY
+         PgdSxGwzw9PPFjQ4J1OJGsu9ZBLsV3qAVN6qHwx4HwygrE8XUYVAXw4ot1B9wiEAEkN8
+         AkfIqJFeyxN7zd6NsjFBVCZ3PVlCk+j5M5AGQDlRbh/bz/9a0pOQEbEfeBajOf6C4/o/
+         RwhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlA/jlBetrh7yzCbIa9/yW5+hI9Kz6Z5GDWKUh2sePcsuq7J0bKMRKQcz0+0gYJ6b7SxdD74Si/kGfmTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7kn79I2cr2noV07JVAoCmOOQKoRbXmBUf0izeX65T8lfi+Ani
+	3grd7fWJ2XAaGksjyacXGu5YLdZT6LMgbVyiuGBneVrmFM6YFyo4E2GPn5Qh3jg=
+X-Gm-Gg: ASbGncs+9lfMMNnsOd9M2do19XH6uDGHaKtbWT2X5Aa8ho3BJHgO9Pphh/knKeqJlUq
+	Np+wY2k5QfeNZoADUNIno1huMZWZUz/h0ztw5wpqlbpcfEOYEHOz6O5HNNw0XC6VaT4/e4CgpCu
+	5brPucWVwm3v6F/FLkC1bSnCthmQsw9VGEwi4p54BXho2CzqtDanCdwdf5mNIuqQLi4e33U8CS9
+	3iJq+uvxfnn1xp19VWlQu8ZiLvTuswS8/cMCU6j3V9pTRox86xDH9TLBLV1XLV6QnRxkaDD4q87
+	jjqvGauRd7o4PvfrAcv1X9KDvA==
+X-Google-Smtp-Source: AGHT+IFnBCvVu/VGrB3ufwIm9PIPjMNjQwi218jFm+vuC3QKd2lwYi8qU7J4iPr0yHXGhJ+sLSoDTg==
+X-Received: by 2002:a05:651c:1991:b0:2ff:c3a2:f408 with SMTP id 38308e7fff4ca-30904fe65b4mr8433611fa.12.1739359418597;
+        Wed, 12 Feb 2025 03:23:38 -0800 (PST)
 Received: from [192.168.1.140] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-307de1a6531sm18310511fa.45.2025.02.12.03.23.36
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-307de1a6531sm18310511fa.45.2025.02.12.03.23.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 03:23:36 -0800 (PST)
+        Wed, 12 Feb 2025 03:23:38 -0800 (PST)
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 12 Feb 2025 12:23:24 +0100
-Subject: [PATCH v4 30/31] ARM: entry: Block IRQs in early IRQ context
+Date: Wed, 12 Feb 2025 12:23:25 +0100
+Subject: [PATCH v4 31/31] ARM: entry: Straighten syscall returns
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250212-arm-generic-entry-v4-30-a457ff0a61d6@linaro.org>
+Message-Id: <20250212-arm-generic-entry-v4-31-a457ff0a61d6@linaro.org>
 References: <20250212-arm-generic-entry-v4-0-a457ff0a61d6@linaro.org>
 In-Reply-To: <20250212-arm-generic-entry-v4-0-a457ff0a61d6@linaro.org>
 To: Dmitry Vyukov <dvyukov@google.com>, Oleg Nesterov <oleg@redhat.com>, 
@@ -96,127 +96,86 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.14.2
 
-When dabt, pabt or und exceptions occur on ARM, ordinary
-interrupts (IRQs) can still happen. This isn't nice for the
-kernels context tracker, which expect (when using generic
-entry at least) that any nested IRQs happens
-between irqentry_enter() and irqentry_exit(), else it
-thinks something is fishy.
+Since ret_fast_syscall() is now only called in two spots in
+vector_swi, we can inline the function into vector_swi, and
+skip the separate call, placing the code from ret_fast_syscall
+at the end of vector_swi and one of them inside an ifdef that
+gets compiled out for !EABI.
 
-This change blocks interrupts in the pabt, dabt, und and
-abt exception paths (all of them really) by unconditionally
-setting PSR_I_BIT in the early exception handler, until
-after context has been established with irqentry_enter()
-and before it is exited with irqentry_exit(). Inside the
-context-tracked exception handler we enable IRQs again,
-and once we leave it we disable them while exiting the
-exception.
-
-The local_irq_disable() in bad_mode() can be dropped
-since we are now disabling IRQs in the early assembly
-exception handler for all exceptions.
-
-This seems like not perfect: it seems an interrupt
-could still occur right before CPSR is set, or right after
-the userspace registers are restored in ret_from_exception.
-I would like to know if there is some
-way to set up these exceptions to inherently block IRQs
-when handled, until we explicitly allow them between
-irqentry_enter() and irqentry_exit() or if this is simply
-the best we can do on ARM for these exceptions to make the
-context tracker happy.
+TODO: is the UNWIND(.fnstart/.cantunwind/.fnend) really needed
+on vector_swi after this change or can I just drop it?
+I do not understand unwind well enough :/
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/kernel/entry-armv.S |  6 +-----
- arch/arm/kernel/entry.c      | 18 ++++++++++++++++++
- arch/arm/kernel/traps.c      |  1 -
- 3 files changed, 19 insertions(+), 6 deletions(-)
+ arch/arm/kernel/entry-common.S | 32 ++++++++++++++------------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
-index ae2f952beea7611f0abc7bd299fc944335a21219..3dae35b0bb3f440ecaf157a45687bf4690fb8f88 100644
---- a/arch/arm/kernel/entry-armv.S
-+++ b/arch/arm/kernel/entry-armv.S
-@@ -416,11 +416,6 @@ ENDPROC(__irq_usr)
- __und_usr:
- 	usr_entry uaccess=0
+diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
+index a5a0e757ab23d151485092a078af98966e039869..f9c38f5311851e299234997796cd78de06a5c531 100644
+--- a/arch/arm/kernel/entry-common.S
++++ b/arch/arm/kernel/entry-common.S
+@@ -30,21 +30,6 @@ saved_pc	.req	lr
  
--	@ IRQs must be enabled before attempting to read the instruction from
--	@ user space since that could cause a page/translation fault if the
--	@ page table was modified by another CPU.
--	enable_irq
+ 	.section .entry.text,"ax",%progbits
+ 	.align	5
+-/*
+- * As we will need to call out to some C functions,
+- * we save r0 first to avoid needing to save registers around each C function
+- * call.
+- */
+-ret_fast_syscall:
+- UNWIND(.fnstart	)
+- UNWIND(.cantunwind	)
+-	add	sp, sp, #(S_R0 + S_OFF)
+-#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+-	bl	stackleak_erase_on_task_stack
+-#endif
+-	restore_user_regs
+- UNWIND(.fnend		)
+-ENDPROC(ret_fast_syscall)
+ 
+ /*
+  * "slow" syscall return path.  "why" tells us if this was a real syscall.
+@@ -122,6 +107,8 @@ ENDPROC(vector_bhb_bpiall_swi)
+ #endif
+ 	.align	5
+ ENTRY(vector_swi)
++ UNWIND(.fnstart	)
++ UNWIND(.cantunwind	)
+ #ifdef CONFIG_CPU_V7M
+ 	v7m_exception_entry
+ #else
+@@ -210,9 +197,9 @@ ENTRY(vector_swi)
+ 	mov	r0, tbl
+ 	mov	r2, scno			@ syscall number from r7
+ 	bl	invoke_syscall
+-	b	ret_fast_syscall
 -
- 	tst	r5, #PSR_T_BIT			@ Thumb mode?
- 	mov	r1, #2				@ set insn size to 2 for Thumb
- 	bne	0f				@ handle as Thumb undef exception
-@@ -847,6 +842,7 @@ vector_\name:
- 	@
- 	mrs	r0, cpsr
- 	eor	r0, r0, #(\mode ^ SVC_MODE | PSR_ISETSTATE)
-+	orr	r0, r0, #PSR_I_BIT
- 	msr	spsr_cxsf, r0
- 
- 	@
-diff --git a/arch/arm/kernel/entry.c b/arch/arm/kernel/entry.c
-index 01e4339ccdb4951e04a89fb91ad7c6e1991e09af..3881670e0987ee40be6fff32f412edcf4f3ec80a 100644
---- a/arch/arm/kernel/entry.c
-+++ b/arch/arm/kernel/entry.c
-@@ -17,8 +17,18 @@ noinstr asmlinkage void arm_und_handler(struct pt_regs *regs)
- {
- 	irqentry_state_t state = irqentry_enter(regs);
- 
-+	/*
-+	 * IRQs must be enabled before attempting to read the instruction from
-+	 * user space since that could cause a page/translation fault if the
-+	 * page table was modified by another CPU.
-+	 */
+ #if defined(CONFIG_OABI_COMPAT) || !defined(CONFIG_AEABI)
++	b	9002
 +
-+	local_irq_enable();
+ 	/*
+ 	 * We failed to handle a fault trying to access the page
+ 	 * containing the swi instruction, but we're not really in a
+@@ -225,8 +212,17 @@ ENTRY(vector_swi)
+ 	sub	lr, saved_pc, #4
+ 	str	lr, [sp, #S_PC]
+ 	get_thread_info tsk
+-	b	ret_fast_syscall
++9002:
++	/* Exit !AEABI clause */
++#endif
 +
- 	do_undefinstr(regs);
- 
-+	local_irq_disable();
-+
- 	irqentry_exit(regs, state);
- }
- 
-@@ -27,8 +37,12 @@ noinstr asmlinkage void arm_dabt_handler(unsigned long addr, unsigned int fsr,
- {
- 	irqentry_state_t state = irqentry_enter(regs);
- 
-+	local_irq_enable();
-+
- 	do_DataAbort(addr, fsr, regs);
- 
-+	local_irq_disable();
-+
- 	irqentry_exit(regs, state);
- }
- 
-@@ -37,8 +51,12 @@ noinstr asmlinkage void arm_pabt_handler(unsigned long addr, unsigned int ifsr,
- {
- 	irqentry_state_t state = irqentry_enter(regs);
- 
-+	local_irq_enable();
-+
- 	do_PrefetchAbort(addr, ifsr, regs);
- 
-+	local_irq_disable();
-+
- 	irqentry_exit(regs, state);
- }
- 
-diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
-index d3a689bd05955f1ae46a6341e456bb097e831311..b2eaab9cc4977c448f77faa4e6bc22a0749d1f9c 100644
---- a/arch/arm/kernel/traps.c
-+++ b/arch/arm/kernel/traps.c
-@@ -515,7 +515,6 @@ asmlinkage void bad_mode(struct pt_regs *regs, int reason)
- 	pr_crit("Bad mode in %s handler detected\n", handler[reason]);
- 
- 	die("Oops - bad mode", regs, 0);
--	local_irq_disable();
- 	panic("bad mode");
- }
++	/* Return from syscall */
++	add	sp, sp, #(S_R0 + S_OFF)
++#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
++	bl	stackleak_erase_on_task_stack
+ #endif
++	restore_user_regs
++ UNWIND(.fnend		)
+ ENDPROC(vector_swi)
+ 	.ltorg
  
 
 -- 
