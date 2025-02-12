@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-511941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C091A331CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:55:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B8FA331DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCCF87A3B61
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:54:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E1B188ADC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3BE204086;
-	Wed, 12 Feb 2025 21:55:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02481FF1DF;
-	Wed, 12 Feb 2025 21:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546CA2036ED;
+	Wed, 12 Feb 2025 22:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RwrY2tJW"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98DA1EBA0C;
+	Wed, 12 Feb 2025 22:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739397331; cv=none; b=BYHdqz0394+p0lCylRtNuq819msbkOAQtKgoAlmYSMky7W7HDj0tuPEh6NO920eo3IUeTNm0Q1DezXDjd1QHeUEaCB/NsEXzEn1v00wTLZm8coU5TR2Ty9RwuAAHVwIBYBLxDpOXhK+U4wPG8E5MO/odcNknlSd/ZLxp7VTUdCk=
+	t=1739397772; cv=none; b=OjBUX5uch+RuW+F5b2YYVPtZUZ8M+FcmRU17V9W80vkYoFpmI5zFyPQvbZKFezVU/Ky1NnzXtYsI/ly6abmro2Ueerqaquad6G8AEgP+K8dQA0B8+FmtPtIiKnXl1c+9iF+klsn1LAYGzREG+WvyzvUI8aZJv5MRex26naZ3ACI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739397331; c=relaxed/simple;
-	bh=gHcV0lnpLWJYJxLs7QprlXgEmM1aIqcMb4O8yITOdz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HHnM9F6qFdWTIzuOu7IbJDrmOr0GsN2hX6QHC5iUvrSPKIeXz4yUhNNIWbUpTgc2Ur7WI0FmTTpofMxqCf2iJ+511kM85w6vYUHCF6TQpS8vpjddPjiFx1XNVGJEdkD1R4d62pWPj6eAmSNPsC50NEtF98fMWcCEcprlZnU8BZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E893113E;
-	Wed, 12 Feb 2025 13:55:48 -0800 (PST)
-Received: from [10.118.100.66] (G9L3377F54.austin.arm.com [10.118.100.66])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 494AB3F58B;
-	Wed, 12 Feb 2025 13:55:27 -0800 (PST)
-Message-ID: <fdaa9a58-790f-4839-8db7-1b9a81eb8edf@arm.com>
-Date: Wed, 12 Feb 2025 15:55:26 -0600
+	s=arc-20240116; t=1739397772; c=relaxed/simple;
+	bh=2uo7IfeiuOXUi0myVVwnmI+JmegC4mWq+V748nOaNYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WlT9UrGO9CDEnCPn9l+tWwGjhRdB2uYz0dzQbFEr3g7IWOjvA85E9iD+u8+5R4Cs4hqtMv63TUx/p7oOV6tcoAjCGDnjYYa7Cg/SAS1PXIupKZcBG6cjn5EJNxkm+Kq214ZsWDEKiYT+XyD1bTp9P8ER3FxFix0pbIMe6Nt9gt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RwrY2tJW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739397768;
+	bh=2uo7IfeiuOXUi0myVVwnmI+JmegC4mWq+V748nOaNYs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RwrY2tJWxCkgV7LvDs4ThiXuOybb7OsYoH8G4TA67PXuqzXDswZfaaA8A30b9VN37
+	 DprhJ84emcYIM7VnkpHgI0cDNjohzqFNBCofH57DYu2sgepvTJunDoN3hf0qMi9rC9
+	 s7RkI7pmeUrQ4Q2s15qK5elzbvAj65dODWbFCQk8amHzZTsCwW3N4c1v9DFGslvgQi
+	 oEqLc3Qh657novN9qi8L17Zx0+TRm9gLnowfe4QuFizbIpVnb2FwPl5a2/zFA87mkg
+	 3KuNgqaquA59148HTMB39OyNzXA6pYQFozmdoTKXCZB04wrsOPPOk13jpdE50jR6V0
+	 MVDVawmnT5PFA==
+Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3565417E01B3;
+	Wed, 12 Feb 2025 23:02:46 +0100 (CET)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Stephen Chen <stephen@radxa.com>,
+	Weizhao Ouyang <weizhao.ouyang@arm.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Elon Zhang <zhangzj@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH 0/1] Add Radxa Rock 4D support
+Date: Wed, 12 Feb 2025 16:56:48 -0500
+Message-ID: <20250212220236.116383-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add support for the TPM FF-A start method
-To: Sumit Garg <sumit.garg@linaro.org>
-Cc: linux-integrity@vger.kernel.org, jarkko@kernel.org, peterhuewe@gmx.de,
- jgg@ziepe.ca, sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jens Wiklander <jens.wiklander@linaro.org>
-References: <20250210232227.97761-1-stuart.yoder@arm.com>
- <CAFA6WYM7K4_toy5_n1arW4po4SOX0R9624rCgO=_MvcMeySwUA@mail.gmail.com>
- <4bb3cefa-b843-45ca-82c5-d96b13454baa@arm.com>
- <CAFA6WYM3UA9+TE8L2U5Qd8FZfaGZnbba=QzWU7fEu3LKQVm-tw@mail.gmail.com>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <CAFA6WYM3UA9+TE8L2U5Qd8FZfaGZnbba=QzWU7fEu3LKQVm-tw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Add the basic support for the board. (Not officially released yet)
+It is based on the Rockchip rk3576 SoC, so I haven't added the
+following devices yet:
+ - VOP/HDMI
+ - UFS
+as the support for those has not been merged yet, but are close to be
+and I already validated that they work.
+It will come with another patch set.
 
+The following devices are supported and working:
+ - UART
+ - SD Card
+ - Ethernet
+ - USB
+ - RTC
 
-On 2/12/25 1:39 AM, Sumit Garg wrote:
-> On Tue, 11 Feb 2025 at 21:39, Stuart Yoder <stuart.yoder@arm.com> wrote:
->>
->> Hi Sumit,
->>
->> On 2/11/25 12:45 AM, Sumit Garg wrote:
->>> + Jens
->>>
->>> Hi Stuart,
->>>
->>> On Tue, 11 Feb 2025 at 04:52, Stuart Yoder <stuart.yoder@arm.com> wrote:
->>>>
->>>> These patches add support for the CRB FF-A start method defined
->>>> in the TCG ACPI specification v1.4 and the FF-A ABI defined
->>>> in the Arm TPM Service CRB over FF-A (DEN0138) specification.
->>>> (https://developer.arm.com/documentation/den0138/latest/)
->>>
->>> Nice to have a specification standardizing interface to TPM
->>> managed/implemented by the firmware. Care to add corresponding kernel
->>> documentation under Documentation/security/tpm/.
->>
->> Yes, I can add some documentation there.
->>
->>> BTW, we already have drivers/char/tpm/tpm_ftpm_tee.c, so do you see
->>> possibilities for an abstraction layer on top of communication channel
->>> based on either FF-A or TEE or platform bus?
->>
->> I think the CRB and OP-TEE based messaging approaches for interacting
->> with a TZ-based TPM are fundamentally different and I don't see how
->> to harmonize them through some abstraction.
->>
->> The OP-TEE TPM protocol copies the TPM command into a temp shared memory
->> buffer and sends a message to the TPM referencing that buffer.
->>
->> The CRB uses a permanently shared memory carve-out that in addition
->> to the command/response data has other fields for locality control,
->> command control, status, TPM idle, etc. The only 'message' needed is
->> something to signal 'start'.  Any OS that is FF-A aware and has a
->> CRB driver can simply add a new start method, which is what this
->> patch series does.
-> 
-> Okay, I see how the CRB driver is closely tied to the ACPI based
-> systems.
+Stephen Chen (1):
+  arm64: dts: rockchip: Add Radxa ROCK 4D device tree
 
-The CRB driver is currently probed based on ACPI, but it fundamentally
-doesn't have to be.  If there was a DT binding for CRB-based
-TPMs the different start methods would be defined there and the
-CRB driver could support that.
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3576-rock-4d.dts      | 649 ++++++++++++++++++
+ 2 files changed, 650 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
 
-> I was expecting the FF-A based TPM interface to be
-> independent of ACPI or DT such that it's not constrained by the
-> hardware description a platform chooses to use. I suppose there will
-> be a different TPM FF-A driver or spec when someone wants to deploy it
-> on DT based systems, right?
+-- 
+2.48.1
 
-The CRB is just a shared memory buffer, with some architected semantics
-defined by TCG. The basic CRB usage model is that a client puts
-something in the CRB, such as the bytes of a TPM command, and then
-notifies the TPM that a change was made to the CRB. The CRB over
-FF-A spec just defines the message to perform that notification
-when FF-A is used.
-
-So, whether the fTPM was advertised via ACPI or DT, it doesn't matter.
-The FF-A based interface is only about the the notification messages
-needed for the OS driver to tell the TPM that something has changed
-in the CRB.
-
-Thanks,
-Stuart
 
