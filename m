@@ -1,84 +1,187 @@
-Return-Path: <linux-kernel+bounces-510296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC08A31AD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:51:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4CBA31ADF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:55:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747E41888C77
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:51:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86A0168646
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1B917996;
-	Wed, 12 Feb 2025 00:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738CC111AD;
+	Wed, 12 Feb 2025 00:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUB7Aohh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="ATu/kmAq"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691182C187;
-	Wed, 12 Feb 2025 00:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0441101E6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739321489; cv=none; b=Rs9VHqGTCf5tQMkBtK13IFyllCjusBU4eZvmbDoGZFf2kR2WtVICcrh1+hRzUZG0ORct6ZIOitDiSL0Z1KYLLvyhLcbJ2H5PEhYMLmum0bAXlySR2b4mq7HwI/oxrBQRxTFvnythHGbF/kMGkYkxniGToymTFxJaYj7me/ocS4Q=
+	t=1739321698; cv=none; b=pgpswP4z9ATF/sGK70xy7ZLBdRieUP4CORhOHpDqg9W1sJop4Fzb6v5tHobweq8pirxcGr95GoiqAwnb/FpXXrerYmNhgURk7eZyfB+o1oVMW89bx8bQgUV2/Dn1qHq6XlIE6VQRxaaZ+f2H6YbCcYQacbFJ5PiQQsfQBol/UIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739321489; c=relaxed/simple;
-	bh=VeoIbDzVqmui1/kOCFxZmx+bZMjORYTB/ZUjr6uj000=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tgduTz97gZQMawolmL9qz04xEHNJUtfUT9PB9lKkva4PRSf+pwl8cWkKbBiLVCzVA4nJB4ACMD0XahpgfkQDst0DjkOOXHjed/8h6a+lqFfrwwXJxmED7li2OZsfb+5k0shnDIG1LbEr2/YOL2HUJNHIB/7IPFpznF4EHeujz94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUB7Aohh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27CB6C4CEDD;
-	Wed, 12 Feb 2025 00:51:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739321488;
-	bh=VeoIbDzVqmui1/kOCFxZmx+bZMjORYTB/ZUjr6uj000=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JUB7Aohh8OSwM4X4zNkrv438iwEU1mi2ELXa0huB/spNm8QxIkJp3gKXh0SGbCK8h
-	 2MHgJtvccSGNKvEdwMdeJHa9UBflrJt7K1rorXUNEe+y0wWJQ7CO0s6ZAurel3SV2V
-	 SqG7/ik9FaPMIpafcWwSrHmiNamvEOotmY3eF5EVTOHRXpamxVfz6JvY/CiRvAEtW+
-	 6SEHhXuKpAmIpaHuk+WAxeFU0rkXGmCv77SX3z5sCOz49r5+YZ7FQoQjI02KHgQ2Gi
-	 uQ41LPAefhAU/j+M69sGd40dgFI0BjkARyN126PM0Lxp5Oij3ZQaOCk+Lo7CC+Yhz1
-	 i2i1c16fgfoVA==
-Date: Tue, 11 Feb 2025 16:51:27 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Eric Woudstra <ericwouds@gmail.com>
-Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, "Frank Wunderlich"
- <frank-w@public-files.de>, Daniel Golle <daniel@makrotopia.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 net-next] net: ethernet: mtk_ppe_offload: Allow QinQ
-Message-ID: <20250211165127.3282acb0@kernel.org>
-In-Reply-To: <20250209110936.241487-1-ericwouds@gmail.com>
-References: <20250209110936.241487-1-ericwouds@gmail.com>
+	s=arc-20240116; t=1739321698; c=relaxed/simple;
+	bh=UIzklivqR5Z23WPkWjVe2n77YozrOST8ZDHjd23oRgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YDB26JT3eDiu677vh5rd/NM5aEvPaFz8vdJHi/NMGx2Zm7Zk+iIfzW4fiLgwaBiGPHhAaT1GnWPqjEaW4arvYBcaikPYCWZc6z8YTHDUKj7MCNZaUFg2RiV+pg1wTjIsDkg1r3k5ssJbr9FQdpGUAozE0p8++a1J9g520hj7r1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=ATu/kmAq; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so21029585e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:54:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1739321695; x=1739926495; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3eEjYLiIzAQvKfFhJfuIXXpvDRbqlCf0jI1QKURWY7Q=;
+        b=ATu/kmAq6UsVYQ31QRq+jvEFumCs+gQo6q462XofCYlHjpHBjgCIhjksLVgH+ACCfF
+         v4E+kgMLzwlXXjM+2/2GJ2cFP2qyzgZIBI+5Gou67i0douboKH2VTCRLkhj3Y2LiQS0U
+         lhOI9+StSp00lDDoFid24c9COnjrE8fdeVpU8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739321695; x=1739926495;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3eEjYLiIzAQvKfFhJfuIXXpvDRbqlCf0jI1QKURWY7Q=;
+        b=EpIjpQKox89Kw5gOK7JobworB0pzMrayLYb+LiMHHD854VI+6LiD4BIb9nMAa0P+zH
+         pb3uo8fRrV3n8FmALDwiDgtDsDN/9sBoEVUt7f2Yc7ejmf/53/EYL4Mizh9h43c8s9Vr
+         MO9Kj8aXq9Weo1GeqZvRrID8CRj2c5MSmQ65o1VoKPdmaGZkYp2ZLsC0u1ydmvfp0vTg
+         NIVc+BOnsYtN0Q38bkEGktxMjwr0s77Zjbvqw6rkj9cHQ9r76xaPZ5M9ft2VnOpIJTtb
+         tqmyOpbKZ1CHCaIqE+zWuhDSW9QBwWZ80tY6cg+nc8rx0UimBB0ftkFI8hYyBf76NpB1
+         z8Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbeiNRSB0kHHgv+RmjkeFk2m2LhFKg7ClOH6yOX1+cZHas94RkU5QoxJxA9hewPcnd8ZM928dDarJDjxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTFL2vDlP/dvRGDjvgh+aUK7izwU7QN0OWtoGP/a54zvE6EfWC
+	PDXnzduaGBUdyYghN2izZ+rgRFuKpkDdpTvBqasSDqJNT/rz5u1+5E00uhjl3Xo=
+X-Gm-Gg: ASbGnct7rRxd6cO+JAiONeBIve5SaIlS/kn9O/FoYSLVgC+XRutaaniTiSz1r5UrN+l
+	HnkQciVNsqJdr54KBIKPbcPS1PFyWmMdDfjJk9iwwhq00QhCIpDSmg/aV+ukHNl7IxudbjtC+1J
+	eSjA2CbfpvG/9riOA8yfE3gyKgklqPYYwtY3fNOxud1UHkejNrBVjjTaJH7udvI3neu67MP76Ni
+	wk793Az3Ho7G94sJo5Ffv5o0lVzplQIKjeD2q/iEYxMR1QvIzPr0wl/IUbQyyuGwQ90FYtkM0vt
+	Bzt9RlIqUc3nE/Rqc5i1Nwr4feUoSnIY1N46cjYCy6N7QCyBdTxhn14=
+X-Google-Smtp-Source: AGHT+IFBoL5K522A7AuoflUF+1XhMG9n3ItwKCGI8JCLC5Il05/77VAGdvXbN30wro/dkD3TCaY0yg==
+X-Received: by 2002:a05:600c:4e8d:b0:439:4a1f:cf85 with SMTP id 5b1f17b1804b1-439580e532amr12252835e9.0.1739321695252;
+        Tue, 11 Feb 2025 16:54:55 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06ae8asm3736345e9.21.2025.02.11.16.54.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Feb 2025 16:54:54 -0800 (PST)
+Message-ID: <2299c94f-aa46-47b5-bd25-9436a8fbd619@citrix.com>
+Date: Wed, 12 Feb 2025 00:54:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/17] x86/cpu/intel: Fix page copy performance for
+ extended Families
+To: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>,
+ x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+ Tony Luck <tony.luck@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Fenghua Yu <fenghua.yu@intel.com>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Zhang Rui <rui.zhang@intel.com>,
+ David Laight <david.laight.linux@gmail.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+References: <20250211194407.2577252-1-sohil.mehta@intel.com>
+ <20250211194407.2577252-6-sohil.mehta@intel.com>
+ <b9c21518-54fc-4907-8fc3-d492a3f33bdf@intel.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <b9c21518-54fc-4907-8fc3-d492a3f33bdf@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Sun,  9 Feb 2025 12:09:36 +0100 Eric Woudstra wrote:
-> This patch adds QinQ support to mtk_flow_offload_replace().
-> 
-> Only PPPoE-in-Q (as before) and Q-in-Q are allowed. A combination
-> of PPPoE and Q-in-Q is not allowed.
+On 11/02/2025 8:53 pm, Dave Hansen wrote:
+> On 2/11/25 11:43, Sohil Mehta wrote:
+>> +	/*
+>> +	 * Modern CPUs are generally expected to have a sane fast string
+>> +	 * implementation. However, the BIOS may disable it on certain CPUs
+>> +	 * via the architectural FAST_STRING bit.
+>> +	 */
+>> +	if (IS_ENABLED(CONFIG_X86_64) && (c->x86 == 6 || c->x86 > 15))
+>> +		set_cpu_cap(c, X86_FEATURE_REP_GOOD);
+> I'm not sure the BIOS comment is helpful here.
+>
+> Also, at this point, let's just make the check >=6 (or the >=PPRO
+> equivalent).
+>
+> It will only matter if *all* of these are true:
+> 1. Someone has a 64-bit capable P4 that powers on
+> 2. They're running a 64-bit mainline kernel
+> 3. String copy is *actually* slower than the alternative
+> 4. They are performance sensitive enough to notice
+>
+> We don't even know the answer to #3 for sure. Let's just say what we're
+> doing in a comment:
+>
+> 	/* Assume that any 64-bit CPU has a good implementation */
 
-AFAIU the standard asks for outer tag in Q-in-Q to be ETH_P_8021AD,
-but you still check:
+If you're going to override the BIOS setting, then you need to
+explicitly set MSR_MISC_ENABLE.FAST_STRINGS.
 
-> 			    act->vlan.proto != htons(ETH_P_8021Q))
-> 				return -EOPNOTSUPP;
+Otherwise you're claiming to Linux that REP is good even when hardware
+is prohibited from using optimisations.
 
-If this is a HW limitation I think you should document that more
-clearly in the commit message. If you can fix it, I think you should..
--- 
-pw-bot: cr
+~Andrew
+
 
