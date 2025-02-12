@@ -1,116 +1,280 @@
-Return-Path: <linux-kernel+bounces-511087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3D8A325AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:09:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38306A325AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5484C167F51
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF95188B593
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E41C20B7EE;
-	Wed, 12 Feb 2025 12:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G9o1PLaU"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AC7271822;
-	Wed, 12 Feb 2025 12:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EC720B814;
+	Wed, 12 Feb 2025 12:10:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFBB271822;
+	Wed, 12 Feb 2025 12:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739362155; cv=none; b=qAJtDlaLhWqrqQ8U1YDYJAMCJRtN0PO55Yy/hAkDROq1Qu5hEaWTQVLqAcNQYdaGMqudx/buPcAs2Mjdg7NP6bvMthddhV2ceA5bHCN1CCGBFnrVcTq5pKaQH6tXNeQW+fU6dISezc9h6neOYilmLgAnFBqc4EpwzvWTCZ2pHBQ=
+	t=1739362254; cv=none; b=jsYgi/V5MBW6iSuCy6GDX/rpRgbXTeET2eo2bS5ZRvTp+9ured2EeD1bxwQnTbTSmb7X2T6K0aOc/mGDum70pptzSHwMRR89y6SVgyhc9pYOP5RgbR8FUNYhkRdHel9xXbLt4Uu4kDdaCw6+AGKvI8xP6m9kQWLU9rMSLE25QJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739362155; c=relaxed/simple;
-	bh=Vm3zqddiaQiFAR//aliDzdbsYBycePtZ/HzNM1/y6QM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=XZ06u+fTxUfjTZQfzC6c6oGSUcUEY4eCC0qgrZDv69hvymyR7FiMsCSnv75vMCiYwQoKEcoOG72DLV70/klWLCZ+8MPbn10/3UNxY5pqWodmtQH6b2rhw3w1CAXV64narZM8GG4yTR/i416Y9+sNWfMAeM4xxoYI0bPvTXOHs3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G9o1PLaU; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1739362130; x=1739966930; i=markus.elfring@web.de;
-	bh=duDd6UKIq1X57ebMyhME9oa4JR/K++kmZ6ASY94gwig=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=G9o1PLaU7dvPrR52LvJ5TsISeHrBnD/OkcjneppoAV3V/9JWIRvZfSG36dex1TJi
-	 9P0SUXGlUdkLxA74vZA4sxPB9QPGgq33pcyrXTntEO5G9RI77uE6I5XmckBdQrnF4
-	 dW/ZBEXtQ+PxtmcPUCbaiKOEP403iRqM9Wawehcsy8+YSAcaTuvSZsOqFSmopOZFi
-	 hcZ/m2znsA+0aOEAorZj/I41zbsgfeF9A/8j/3GNIOD0HWDhAsOGHfcUjEZ9Qhyro
-	 VIiJw1tzfo43BLs0EIBWk5qk8MlZARUil4ZneU/WkvNsY3SIoggke0EE8s1krx1an
-	 8e9p4r0WXI6x5sni7g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzkOL-1tVCzr062z-017tgD; Wed, 12
- Feb 2025 13:08:50 +0100
-Message-ID: <ef5b12b4-d7f6-421e-9339-8621fb672021@web.de>
-Date: Wed, 12 Feb 2025 13:08:38 +0100
+	s=arc-20240116; t=1739362254; c=relaxed/simple;
+	bh=3cMlbShasNaTjDQlhgec8F70jWl3atG199Ep1PjuelQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Obuo7pH5UJXPXDkCkCevsgKGxJRW5N4dBzuqHm2v86yzjGlju6rRzoso5E5MotwtDRAea4A9vx6eQir6stWzIMyKlA6j5Yj6q8wm9FJXByqTMNMGD8bFtAuqgmRz3So0SWkme4b+YUyemyiwmVFs5h1dqVReSbUi9hGgME2aMX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC7A1113E;
+	Wed, 12 Feb 2025 04:11:12 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 399C53F58B;
+	Wed, 12 Feb 2025 04:10:51 -0800 (PST)
+Date: Wed, 12 Feb 2025 12:10:46 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v19 09/11] arm64: Handle BRBE booting requirements
+Message-ID: <20250212121046.GB235556@e132581.arm.com>
+References: <20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org>
+ <20250202-arm-brbe-v19-v19-9-1c1300802385@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>, linux-edac@vger.kernel.org,
- Tony Luck <tony.luck@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
- James Morse <james.morse@arm.com>, John Audia <therealgraysky@proton.me>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, ramses@well-founded.dev,
- Robert Richter <rric@kernel.org>
-References: <20250212083354.31919-1-qiuxu.zhuo@intel.com>
-Subject: Re: [PATCH] EDAC/igen6: Fix the flood of invalid error reports
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250212083354.31919-1-qiuxu.zhuo@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dcz8MeYNQcc3ndn6ErODct7FGspj+2rulOIoUJyBX8fkaysD8/H
- Z71qvaDsVmR+WLfVhGoDKQg8S+blyANPvX79JCWyB2dh3ADQKQkRQLo6x/iz8kpl3abrCj5
- SA2COkNZyHl8ieQKbfD+ZVxdPCORyFplBIUXtp3X0s61bXRisLGew+9ZlzmUlWmK5KM/RZp
- fgTmPt+w6bDS/LVeKH1/Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R6y0rttj/xs=;EJH1+wh2JXpL1QZHpUIrF1UaOH6
- T6cj8vzedIRZDcMuz1trh5/DlH9KtvutS3+GMLbWDD/k4cAQSxaXaWU1lQXRUXTKqmxIzcRj2
- Ay/Hp5g02V0U1FoWpIZOIbAOqUl1t6nK4AISBX2TopTXOGq9AUG6YVTrahzgTv+yeNRllr7pZ
- 6+v+30rDC9heMUWLPUkIcG0m6mTu2IKOOfcl0t7z5PZCxAkPN6suuklfgqzLMh18PMXxDcfP2
- PwFu/6ho38knyf3Rk/YuHoN6rHrlHWFXOCCXnQ6qW6d/FVlIKMhNLN2WZfUT0Oieb1faO51Cc
- ADHouCD3efi0/dbACI14ou2TAM2Kbczduf6jipuqpU+H4mMrbyd4dCVZ99a8j2+J+mYKo7sZJ
- k7cXRjW95JkO9crynochtENaicKo6PewuNsCd+VY4Zl57SKC8LIeKGsBPpSmfZgGzYd3XVKoS
- bcDj6Ga2BhYfuM4xAzdH0Bfh2MxrC2b1ZNHY1t/WnZx4ul4aWJkUR/8Bhxay3TwlnCwEkCo7j
- HIyvw9d0At5Z8JXPbqNUZEJVus+do7FoqcjB7okosn6q3xFLEO3A7RhhqYP3+0cZIUZHqUdof
- P5p6N83r8yljkQaBGIe+xBG4V2rFqXHCM+xvVIZfHGlxn3erTdzufrmtMrDBk1WvtpNYo42uB
- knTj9AhXCcAfEb1OwMxEkOVgXRdVDqxdNVAixvIf7sh0xrAcO/qHk4aNcKrCPM1DRlOsstuQ3
- a4PdO43xqSgtfWcN+PjvifVt7EurRq6C9CUtQHpEC3RFTNJXw6tPoISrsK1Rv6q9fzz3euT4g
- b7woEfpDRc4ANkK2G1FeEWlZl6q1yZ2L1Hk2M82mSFng+Q2GAyEHWQfcOYPiVeEQW4juIKJUw
- 9YALQACuMzzTk/T7c81+ZYXxzfjeeQFhvXW0W3nZrxoq8J7Ho0APBE7hPtBM5+k1N1v0AT6L+
- xhvuyIcGOKdEfroQ1xPxha4RmmLtHNYJGtdTPZYRFzEXqb4jubwRq/gj9XFX+BChacmZHmjeg
- Ogf1g3tLUXYf9FezxznFTCpw02Um3nchbN5ipyou1vR/k795josH2PDhuOswyHet3Nk5CV+pA
- Kjtzn/MiwyzQ0/wXvGVAtwbgMn1MR1GGB2E//MP+XEtXRQpZLvtKgDBZkhWzXK0ox8puYZXZd
- NXDT7THPX8A8frSPoehmAUujvQYCcnFg43GGCTKsJrOXXSst+B9FOSGTCR+79QzAC18MOdnch
- Sxj/CKasrjABYMBhnOHv5wx/pIiWfQ+NPGiILvPQcNAyD9ZBaj/KwBs+skW2SBIqiJgPz8AE7
- 9DBsXEf8Vb1aB3wgerbnShM/jtoWL7ESrZ/WsTLP2n8dqyFubctSRWD2j9MrJhv6QXp42C8zl
- wJBLlN4KzI7PtLz54Md80XwSKLOqOIgrFNlhrqGCNENTAoWBNTYwi6/zeNwQUzJxwTEFIWDfC
- wTVijxw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250202-arm-brbe-v19-v19-9-1c1300802385@kernel.org>
 
-=E2=80=A6
-> +++ b/drivers/edac/igen6_edac.c
-> @@ -785,13 +785,22 @@ static u64 ecclog_read_and_clear(struct igen6_imc =
-*imc)
->  {
-=E2=80=A6
-> +	if (ecclog =3D=3D ~0)
-=E2=80=A6
-> +	if (!(ecclog & (ECC_ERROR_LOG_CE | ECC_ERROR_LOG_UE)))
-=E2=80=A6
+On Sun, Feb 02, 2025 at 06:43:03PM -0600, Rob Herring (Arm) wrote:
+> 
+> From: Anshuman Khandual <anshuman.khandual@arm.com>
+> 
+> To use the Branch Record Buffer Extension (BRBE), some configuration is
+> necessary at EL3 and EL2. This patch documents the requirements and adds
+> the initial EL2 setup code, which largely consists of configuring the
+> fine-grained traps and initializing a couple of BRBE control registers.
+> 
+> Before this patch, __init_el2_fgt() would initialize HDFGRTR_EL2 and
+> HDFGWTR_EL2 with the same value, relying on the read/write trap controls
+> for a register occupying the same bit position in either register. The
+> 'nBRBIDR' trap control only exists in bit 59 of HDFGRTR_EL2, while bit
+> 59 of HDFGRTR_EL2 is RES0, and so this assumption no longer holds.
 
-May these condition checks be combined without repeating the statement =E2=
-=80=9Creturn 0;=E2=80=9D?
+s/HDFGRTR_EL2/HDFGWTR_EL2
 
-Regards,
-Markus
+> To handle HDFGRTR_EL2 and HDFGWTR_EL2 having (slightly) different bit
+> layouts, __init_el2_fgt() is changed to accumulate the HDFGRTR_EL2 and
+> HDFGWTR_EL2 control bits separately. While making this change the
+> open-coded value (1 << 62) is replaced with
+> HDFG{R,W}TR_EL2_nPMSNEVFR_EL1_MASK.
+> 
+> The BRBCR_EL1 and BRBCR_EL2 registers are unusual and require special
+> initialisation: even though they are subject to E2H renaming, both have
+> an effect regardless of HCR_EL2.TGE, even when running at EL2, and
+> consequently both need to be initialised. This is handled in
+> __init_el2_brbe() with a comment to explain the situation.
+> 
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> [Mark: rewrite commit message, fix typo in comment]
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/arch/arm64/booting.rst | 21 +++++++++
+>  arch/arm64/include/asm/el2_setup.h   | 86 ++++++++++++++++++++++++++++++++++--
+>  2 files changed, 104 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
+> index cad6fdc96b98..0a421757cacf 100644
+> --- a/Documentation/arch/arm64/booting.rst
+> +++ b/Documentation/arch/arm64/booting.rst
+> @@ -352,6 +352,27 @@ Before jumping into the kernel, the following conditions must be met:
+> 
+>      - HWFGWTR_EL2.nSMPRI_EL1 (bit 54) must be initialised to 0b01.
+> 
+> +  For CPUs with feature Branch Record Buffer Extension (FEAT_BRBE):
+> +
+> +  - If EL3 is present:
+> +
+> +    - MDCR_EL3.SBRBE (bits 33:32) must be initialised to 0b11.
+
+Can MDCR_EL3.SBRBE be 0b01 ?
+
+> +
+> +  - If the kernel is entered at EL1 and EL2 is present:
+> +
+> +    - BRBCR_EL2.CC (bit 3) must be initialised to 0b1.
+> +    - BRBCR_EL2.MPRED (bit 4) must be initialised to 0b1.
+
+Should clarify BRBCR_EL2.TS to be initialised to 0b00 ?  Arm ARM
+claims the reset behaviour of the TS field is unknown value.  The
+assembly code below actually has initializes the TS field as zero.
+
+Except the above minor comments, I read the assembly code and it looks
+good to me:
+
+Reviewed-by: Leo Yan <leo.yan@arm.com>
+
+> +
+> +    - HDFGRTR_EL2.nBRBDATA (bit 61) must be initialised to 0b1.
+> +    - HDFGRTR_EL2.nBRBCTL  (bit 60) must be initialised to 0b1.
+> +    - HDFGRTR_EL2.nBRBIDR  (bit 59) must be initialised to 0b1.
+> +
+> +    - HDFGWTR_EL2.nBRBDATA (bit 61) must be initialised to 0b1.
+> +    - HDFGWTR_EL2.nBRBCTL  (bit 60) must be initialised to 0b1.
+> +
+> +    - HFGITR_EL2.nBRBIALL (bit 56) must be initialised to 0b1.
+> +    - HFGITR_EL2.nBRBINJ  (bit 55) must be initialised to 0b1.
+> +
+>    For CPUs with the Scalable Matrix Extension FA64 feature (FEAT_SME_FA64):
+> 
+>    - If EL3 is present:
+> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+> index 25e162651750..bf21ce513aff 100644
+> --- a/arch/arm64/include/asm/el2_setup.h
+> +++ b/arch/arm64/include/asm/el2_setup.h
+> @@ -163,6 +163,39 @@
+>  .Lskip_set_cptr_\@:
+>  .endm
+> 
+> +/*
+> + * Configure BRBE to permit recording cycle counts and branch mispredicts.
+> + *
+> + * At any EL, to record cycle counts BRBE requires that both BRBCR_EL2.CC=1 and
+> + * BRBCR_EL1.CC=1.
+> + *
+> + * At any EL, to record branch mispredicts BRBE requires that both
+> + * BRBCR_EL2.MPRED=1 and BRBCR_EL1.MPRED=1.
+> + *
+> + * When HCR_EL2.E2H=1, the BRBCR_EL1 encoding is redirected to BRBCR_EL2, but
+> + * the {CC,MPRED} bits in the real BRBCR_EL1 register still apply.
+> + *
+> + * Set {CC,MPRED} in both BRBCR_EL2 and BRBCR_EL1 so that at runtime we only
+> + * need to enable/disable these in BRBCR_EL1 regardless of whether the kernel
+> + * ends up executing in EL1 or EL2.
+> + */
+> +.macro __init_el2_brbe
+> +       mrs     x1, id_aa64dfr0_el1
+> +       ubfx    x1, x1, #ID_AA64DFR0_EL1_BRBE_SHIFT, #4
+> +       cbz     x1, .Lskip_brbe_\@
+> +
+> +       mov_q   x0, BRBCR_ELx_CC | BRBCR_ELx_MPRED
+> +       msr_s   SYS_BRBCR_EL2, x0
+> +
+> +       __check_hvhe .Lset_brbe_nvhe_\@, x1
+> +       msr_s   SYS_BRBCR_EL12, x0      // VHE
+> +       b       .Lskip_brbe_\@
+> +
+> +.Lset_brbe_nvhe_\@:
+> +       msr_s   SYS_BRBCR_EL1, x0       // NVHE
+> +.Lskip_brbe_\@:
+> +.endm
+> +
+>  /* Disable any fine grained traps */
+>  .macro __init_el2_fgt
+>         mrs     x1, id_aa64mmfr0_el1
+> @@ -170,16 +203,48 @@
+>         cbz     x1, .Lskip_fgt_\@
+> 
+>         mov     x0, xzr
+> +       mov     x2, xzr
+>         mrs     x1, id_aa64dfr0_el1
+>         ubfx    x1, x1, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
+>         cmp     x1, #3
+>         b.lt    .Lskip_spe_fgt_\@
+> +
+>         /* Disable PMSNEVFR_EL1 read and write traps */
+> -       orr     x0, x0, #(1 << 62)
+> +       orr     x0, x0, #HDFGRTR_EL2_nPMSNEVFR_EL1_MASK
+> +       orr     x2, x2, #HDFGWTR_EL2_nPMSNEVFR_EL1_MASK
+> 
+>  .Lskip_spe_fgt_\@:
+> +#ifdef CONFIG_ARM64_BRBE
+> +       mrs     x1, id_aa64dfr0_el1
+> +       ubfx    x1, x1, #ID_AA64DFR0_EL1_BRBE_SHIFT, #4
+> +       cbz     x1, .Lskip_brbe_reg_fgt_\@
+> +
+> +       /*
+> +        * Disable read traps for the following registers
+> +        *
+> +        * [BRBSRC|BRBTGT|RBINF]_EL1
+> +        * [BRBSRCINJ|BRBTGTINJ|BRBINFINJ|BRBTS]_EL1
+> +        */
+> +       orr     x0, x0, #HDFGRTR_EL2_nBRBDATA_MASK
+> +
+> +       /*
+> +        * Disable write traps for the following registers
+> +        *
+> +        * [BRBSRCINJ|BRBTGTINJ|BRBINFINJ|BRBTS]_EL1
+> +        */
+> +       orr     x2, x2, #HDFGWTR_EL2_nBRBDATA_MASK
+> +
+> +       /* Disable read and write traps for [BRBCR|BRBFCR]_EL1 */
+> +       orr     x0, x0, #HDFGRTR_EL2_nBRBCTL_MASK
+> +       orr     x2, x2, #HDFGWTR_EL2_nBRBCTL_MASK
+> +
+> +       /* Disable read traps for BRBIDR_EL1 */
+> +       orr     x0, x0, #HDFGRTR_EL2_nBRBIDR_MASK
+> +
+> +.Lskip_brbe_reg_fgt_\@:
+> +#endif /* CONFIG_ARM64_BRBE */
+>         msr_s   SYS_HDFGRTR_EL2, x0
+> -       msr_s   SYS_HDFGWTR_EL2, x0
+> +       msr_s   SYS_HDFGWTR_EL2, x2
+> 
+>         mov     x0, xzr
+>         mrs     x1, id_aa64pfr1_el1
+> @@ -220,7 +285,21 @@
+>  .Lset_fgt_\@:
+>         msr_s   SYS_HFGRTR_EL2, x0
+>         msr_s   SYS_HFGWTR_EL2, x0
+> -       msr_s   SYS_HFGITR_EL2, xzr
+> +       mov     x0, xzr
+> +#ifdef CONFIG_ARM64_BRBE
+> +       mrs     x1, id_aa64dfr0_el1
+> +       ubfx    x1, x1, #ID_AA64DFR0_EL1_BRBE_SHIFT, #4
+> +       cbz     x1, .Lskip_brbe_insn_fgt_\@
+> +
+> +       /* Disable traps for BRBIALL instruction */
+> +       orr     x0, x0, #HFGITR_EL2_nBRBIALL_MASK
+> +
+> +       /* Disable traps for BRBINJ instruction */
+> +       orr     x0, x0, #HFGITR_EL2_nBRBINJ_MASK
+> +
+> +.Lskip_brbe_insn_fgt_\@:
+> +#endif /* CONFIG_ARM64_BRBE */
+> +       msr_s   SYS_HFGITR_EL2, x0
+> 
+>         mrs     x1, id_aa64pfr0_el1             // AMU traps UNDEF without AMU
+>         ubfx    x1, x1, #ID_AA64PFR0_EL1_AMU_SHIFT, #4
+> @@ -275,6 +354,7 @@
+>         __init_el2_hcrx
+>         __init_el2_timers
+>         __init_el2_debug
+> +       __init_el2_brbe
+>         __init_el2_lor
+>         __init_el2_stage2
+>         __init_el2_gicv3
+> 
+> --
+> 2.47.2
+> 
+> 
 
