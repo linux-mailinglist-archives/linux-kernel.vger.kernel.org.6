@@ -1,161 +1,155 @@
-Return-Path: <linux-kernel+bounces-510612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778B5A31F84
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:54:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE01A31F8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF9D16436A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:54:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B555188C1CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9556A1FF1B8;
-	Wed, 12 Feb 2025 06:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB181FF1C3;
+	Wed, 12 Feb 2025 06:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQ4nczQs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PTBtnGr1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bJ6uMQOP"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38F21DDA1B;
-	Wed, 12 Feb 2025 06:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BEF11CA9;
+	Wed, 12 Feb 2025 06:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739343250; cv=none; b=FGbP0mfvoEd9Nsjtt1bLfbeoaYjnDzh+LPRkyfL4KGXXSy5/Kny9IS1n7mjVmjntsoW0kVCNjEUG8Wk9hID6Mkq4V1iUCNPKLQxirIfbzBhynUtBvlHI5SBSQ7nXnMzhveWHMpz4vzGai3FnVsmxffRhqbQNY5pvNVnd6J2ORRM=
+	t=1739343314; cv=none; b=b+1r1EjoQwlZj+3rt2KGumFDpEpMNoT1+1qcgwXJvXPnGRtqO09ySLGJquKrzNpJjS3AVIw8QAe7TECpIfvW0I30L7o9KbbfgD3Z/g15X+VNbYsNmi6d4WV4FsTLk8346qkQnN3gr8ePCyR32HJzE/6ZUd/TaGLsY1lvDuhq5gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739343250; c=relaxed/simple;
-	bh=sGflbOzx1uKvn7+OZqdY+pHs4WaO0WTqV1tpoY4gKJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T0TmoOntWQNeQKkmeKDaUFC8Nveo8a6RpCw9i46zXsUIIIMrDuwJInbjgNIW5i/grzinHTBImqSC4/FSjH5G8ZG6MV8zN7ZRR6mHaNdtMRNbdOQzbvWcfxRYSPI8xsMzZb8bDTz4QLxiq0uwrjMJzTgVDKoozaRgB1jX2W8TAUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQ4nczQs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA5EC4CEDF;
-	Wed, 12 Feb 2025 06:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739343250;
-	bh=sGflbOzx1uKvn7+OZqdY+pHs4WaO0WTqV1tpoY4gKJk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BQ4nczQs7GioHRfG1QA32rzP3c0ZlzZqMrXOBDqNjBXOPGplpE74JjVUyT8b7IPa7
-	 KkcwoIff7aR/G+r6BfNdBHm9FTis8UtKz08NUqAp07RTFMGiVe01SZ/iGKl0uT0tg5
-	 tajqnWREdhbIRMD9Rw8dKS1Lm80EJNihRUELy57BKPSuVcNfSMKwnnLTNcns8Zi0VT
-	 MQuTaMX4fg26a6qKsrDvD9vxYWyal6RiLR8zt2R5NiU7VgMqioA2dS2zU+S4O3RLQc
-	 1dpeB0F+CwFfw3rYlMAQr9mRg94pt28tdiwUJn2FR8+kNcIGHdIo3595BB8yoeR8mn
-	 /XzFRbukpSstQ==
-Message-ID: <046a3fd9-8c31-4639-9da1-ea7f26b08249@kernel.org>
-Date: Wed, 12 Feb 2025 07:54:03 +0100
+	s=arc-20240116; t=1739343314; c=relaxed/simple;
+	bh=XXj/8N3WiTbadg4dcS3JnZHFs6Fr8RVjIsEGpwQzGzI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=R5+XkdECxqzjqcCu+wjhZAp1/wP2lHAN3L2xJv9TQrBsENZ50Q+YNETiCOV8LLat7NIn7hmp7u4uxODjaitNsySDNMd8a6AY3bWiL0LNUBvxUza/s6+0hiPhCK+C6FJxNQj490YzLjMHVr/zN/T3WHMUKxsAXk+xnJyMkI62olA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PTBtnGr1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bJ6uMQOP; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id B05AE25401C7;
+	Wed, 12 Feb 2025 01:55:10 -0500 (EST)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-10.internal (MEProxy); Wed, 12 Feb 2025 01:55:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1739343310;
+	 x=1739429710; bh=5NJuwD59cIzb4Af+tlSAfPPA3lFxGUeAX1fygvbn4iY=; b=
+	PTBtnGr1VGKL6GzZtS+f8euXR5URncpa2RCMq8nsApxHnYPt57OogC2J63cPOmVp
+	2k+9i0nPJX9TEl8G/ZiP5h0yOQa1xu4qw51VbAJXQ1Wu8u7Bj6+jfU4uhvuysesI
+	727d0E+HYkerv7Q81K6OVeWVKY2PC5ZIkoPaQjKjbNaSLv7NBUcBXeJRPEEpE8YF
+	EuEpv2KYEWStwFIxKHE8LT5EIQefwIJPPwF49NzWR3uOX+uhHR12Qo2NqK7BofE8
+	wktQY9797xenfrmWwA/Dw0y55q/mksw5t6JoP+WmFbV85NR5v+6Fj4eJBc+6H20o
+	LGiVuXrdnfhBpNnYJcUMmw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739343310; x=
+	1739429710; bh=5NJuwD59cIzb4Af+tlSAfPPA3lFxGUeAX1fygvbn4iY=; b=b
+	J6uMQOP/ZjuxxmWkQIK/wR5R+AhoSeFUoSNOWsZzWewkE4rnAMUCcIg8zqpZRjHJ
+	nGLLIp2cNmlOq1h6sUNv9NB6+IzFOlo1uXWlidbtxEYBg52BUHXNmOXIkyitDuB8
+	9nCxaEdjfsi3NwVUloaG9rgHpE3Tdyo014H+7DbWsx+0rrMOWA3gGO20tBVOVOxp
+	ps/42VI1Y/a1mrMOLuQvfdoL3gpdJ3MflO3ZU2LiCB7s6tMtCOr3u6knY3aQ5nWD
+	f3QA8Em5/hFCO+ky7i8BidC4O7fF8B5NbxtNf2C4Hn2CI+K5W8IlRtvvzDM0RzVO
+	ioSidDQLPdVwFaugH5+YA==
+X-ME-Sender: <xms:zEWsZ-AdUSE0llP3YTj9D_riPe38n4a8-S846_dSLESMca6szqvpNg>
+    <xme:zEWsZ4gU1yIJxHIJeThH9z34fLnj_gt02NgXQkvFSXtLXizKP1gKzqDDzMVdF8B47
+    0qSaRi6DBavpwQ2G_w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfedvudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeef
+    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpd
+    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
+    thhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheptghonhhorh
+    doughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlphhivghrrghlihhsiheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifvghirdhl
+    ihhusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorh
+    hg
+X-ME-Proxy: <xmx:zEWsZxlGxubx8akHImGwweAAVqHfLj02gdt0HRtm0QHmJkREYeDxiQ>
+    <xmx:zEWsZ8y6VffcBHiAZMvEZNsvNcFZccVRAilv2Eq-q5RxDp3G1YVHHg>
+    <xmx:zEWsZzSVp61Hd4Hv4zNOoukfTc36UKdf69WP_ZovMFngikNyV4DEZg>
+    <xmx:zEWsZ3bbPaWbsC8kxvmjxEPz_x3XcG5--tH23KnFwo_f3H8rsUPBXg>
+    <xmx:zkWsZ3KHhotJDpG9j-OOWPYElTXm-Qj6unZyqYe1db0466EDl8xDRZnQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6A02E1C20066; Wed, 12 Feb 2025 01:55:08 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: i3c: Add Qualcomm I3C master
- controller bindings
-To: Rob Herring <robh@kernel.org>,
- Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, conor+dt@kernel.org,
- jarkko.nikula@linux.intel.com, linux-i3c@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250205143109.2955321-1-quic_msavaliy@quicinc.com>
- <20250205143109.2955321-2-quic_msavaliy@quicinc.com>
- <248000f5-63db-492c-884d-ac72db337493@kernel.org>
- <0ae3f754-edcb-4b22-9d49-b20ef264554b@quicinc.com>
- <7c518972-75df-4c8a-8920-06d5aa2849ae@kernel.org>
- <b7f2c973-e161-4b83-9b3a-415e84510bd2@quicinc.com>
- <20250211213924.GA1215572-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250211213924.GA1215572-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Date: Wed, 12 Feb 2025 07:54:47 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Roman Kisel" <romank@linux.microsoft.com>, bhelgaas@google.com,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Dexuan Cui" <decui@microsoft.com>,
+ "Haiyang Zhang" <haiyangz@microsoft.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, krzk+dt@kernel.org,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+ "Ingo Molnar" <mingo@redhat.com>, "Rob Herring" <robh@kernel.org>,
+ ssengar@linux.microsoft.com, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Wei Liu" <wei.liu@kernel.org>, "Will Deacon" <will@kernel.org>,
+ devicetree@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
+Cc: benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
+Message-Id: <1b14e3de-4d3e-420c-819c-31ffb2d448bd@app.fastmail.com>
+In-Reply-To: <20250212014321.1108840-2-romank@linux.microsoft.com>
+References: <20250212014321.1108840-1-romank@linux.microsoft.com>
+ <20250212014321.1108840-2-romank@linux.microsoft.com>
+Subject: Re: [PATCH hyperv-next v4 1/6] arm64: hyperv: Use SMCCC to detect hypervisor
+ presence
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 11/02/2025 22:39, Rob Herring wrote:
-> On Mon, Feb 10, 2025 at 09:42:03PM +0530, Mukesh Kumar Savaliya wrote:
->> Thanks Krzysztof !
->>
->>>
->> Sure. I reviewed other files and seems i should write as below. Please help
->> confirm.
->>
->>   compatible:
->>     items:
->>       - enum:
->>           - qcom,sm8550-i3c-master
->>       - const: qcom,i3c-master
-> 
-> No, that's even worse. I doubt there is some universal, never changing 
-> QCom I3C master.
-> 
->>>>
->>>> SoC name is not required, as this compatible is generic to all the SOCs.
->>>
->>> That's the statement you make. I accept it. I will bookmark this thread
->>> and use it whenever you try to add any future property here (to be
->>> clear: you agree you will not add new properties to fulfill *FUTURE* SoC
->>> differences).
->>>
->> Sorry, i am not saying there won't be any other compatible but i was saying
->> base driver will use "qcom,i3c-master".
->> After checking other files i realized there can be const compatible but
->> other SOC specific can be added as enum.  Hope above given way is fine.
-> 
-> AIUI, "geni" is some firmware based multi-protocol serial i/o controller 
-> and we already have other "geni" bindings. So really, it's probably more 
-> coupled to firmware versions than SoC versions. If we haven't had 
-> problems with per SoC quirks with the other geni bindings, then I think 
-> using the same "geni" here is fine. But we won't be happy if we start 
-> seeing per SoC quirk properties.
+On Wed, Feb 12, 2025, at 02:43, Roman Kisel wrote:
+> +static bool hyperv_detect_via_smccc(void)
+> +{
+> +	struct arm_smccc_res res = {};
+> +
+> +	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
+> +		return false;
+> +	arm_smccc_1_1_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
+> +	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
+> +		return false;
+> +
+> +	return res.a0 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0 &&
+> +		res.a1 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_1 &&
+> +		res.a2 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_2 &&
+> +		res.a3 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_3;
+> +}
 
-Qualcomm IP blocks are heavily versioned. Sometimes it is version per
-SoC (about which you commented enough) but mostly multiple SoCs use same
-IP block. Therefore maybe this should be simply versioned according to
-firmware/IP block?
+I had to double-check that this function is safe to call on
+other hypervisors, at least when they follow the smccc spec.
 
+Seeing that we have the same helper function checking for
+ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_* and there was another
+patch set adding a copy for gunyah, I wonder if we can
+put this into a drivers/firmware/smccc/smccc.c directly
+the same way we handle soc_id, and make it return a uuid_t,
+or perhaps take a constant uuid_t to compare against.
 
-Best regards,
-Krzysztof
+      Arnd
 
