@@ -1,144 +1,139 @@
-Return-Path: <linux-kernel+bounces-510538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B27FA31E6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:00:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF97A31E6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:03:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64F23A7674
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 753913A8F90
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248F41FBC8D;
-	Wed, 12 Feb 2025 06:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4113B1F8937;
+	Wed, 12 Feb 2025 06:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSOBY4ny"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahr1P44G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7959A1D5AA7;
-	Wed, 12 Feb 2025 06:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB5D2AE69;
+	Wed, 12 Feb 2025 06:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739340033; cv=none; b=EDf5SLX9SOWW1KG9u48sitJgluQX4c0dG82dPdIFt3P4TiumO4br9ll2N3r4B0UAxGEev3hQ+jWnvgNHaM2mSki7XjsoJXJEImZkG9fW9DXff29rVjHyo4CTL/59wVkk1vYzMwbEHOLilsqf9x7r371WIWq0xj1JuFQV73ULEFc=
+	t=1739340191; cv=none; b=mIO8/pFTHCemkf//ihptJsqNyV1OsVQIrAyN4Z4SnDsz6hb5PIYYnPeJ4y1CFOykbx0ahbrjUv6GVceJCT3IRjGq+LbaIkvqTRhRLJJAdQxwSYg76D9yeYxuQPpr6d+qnFSqgDM+ppDvEWHuhW3TVfJBeqv21l/CZN5TIk37kAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739340033; c=relaxed/simple;
-	bh=i8bTX1Co+FmlgtA9zWCJAWKrZ6aCGzABIWN6cna4Lzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TKNUdPTVB3JZ3dzkbjdzRKG7SrJG0zE4b+51WrcthDgaYwdgtSiZ5COWeNqB4Ypc2ue960CXhTXWnrsN9cf0+dQd9TD8mjnBZxBTzf1AI3SJTqL12TRjDrlNBqPxqib/AyLrq9WRv+buxHr+QQWJn966JYYz4qU0bhGgivRQuhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSOBY4ny; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 546AAC4CEDF;
-	Wed, 12 Feb 2025 06:00:23 +0000 (UTC)
+	s=arc-20240116; t=1739340191; c=relaxed/simple;
+	bh=AbtiWm7KrQwGR0dmAQH/R+3c6zbpBrPp9XhZWqZGL9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JSUXdFdWNUVMy4YE3MyIY0Mxlk/BDCZFapFiSnOsnnLJB0iL4dNNUVewMCbP+vM7d/49KCvC1kaiyWxy4GTYoSyrQK6ZJeyCMwcRWQcB50cn7qSZfWqUlkyIEmoORBXMjjaeZp3dtfh6QfzPIC4Tu+nFGNPtwwM2K7UEJWS14L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahr1P44G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE708C4CEDF;
+	Wed, 12 Feb 2025 06:03:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739340033;
-	bh=i8bTX1Co+FmlgtA9zWCJAWKrZ6aCGzABIWN6cna4Lzs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QSOBY4nyf9ubr+hZrSaMn/AwWGO6firkPyE1pbdSjnKEAQ3ur7O9iD0vPjtgY+JbW
-	 iR9LOysOwWwP4mYqWDoOQUhEF8zasl1in1jrAxby6YD9KVrbqduBOoyC68/i0CnmcJ
-	 PmKQY1p45yLIajMCestKp1VQznuuS5J/8gvQIRvBmOPHj3g3AtpujnSyXXntzg/U5K
-	 BVHtU0fT0r+ONGmQunOwXtz2QfgarlQo7F90T+9Mq9Hgw1YUP9eBcXg14HcrGkW8I7
-	 joSvgrLE5ZAh5hr8fvxid68Xa5a9P8DziAdzoVgapZ2QpQjonNhdoLYHv6ysMt0OdR
-	 0w4tGXIyPHuFQ==
-Message-ID: <6842eded-725f-41be-9249-7fe633093585@kernel.org>
-Date: Wed, 12 Feb 2025 07:00:21 +0100
+	s=k20201202; t=1739340190;
+	bh=AbtiWm7KrQwGR0dmAQH/R+3c6zbpBrPp9XhZWqZGL9c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ahr1P44G85GHvYzMrlmjMXxg4h5XSr1xR7jQy5B676/WTEF5IN7FTVuVVZb1fljat
+	 mAV2ytY04Hi4L99oILqDkDbwJF06/VHYRluPFQ78/AEOmYDMFk0dCnVcEGmbPfTJ+O
+	 pYQSrcDvhZo46Gbwyxca/M4o11EQJsJKHVDUwpNg3GjDbwFf4NhW61R3aFGEllRoa1
+	 i80D/HTcxyRl2eri0uDKRFdR4FPKZ+qY3/nFjF5s8xoK4jrYBdk+jkSmZO+OxugPuX
+	 dAJdQ5xhdiDXLWqHu7qIBts9RgUZ4tZqyKdqa32i1FGMmHjcHL3m7nNWD1orZptTHO
+	 fYnm28JNMwQgw==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1ti5q0-00000009L1Z-3QCx;
+	Wed, 12 Feb 2025 07:03:08 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: "Jonathan Corbet" <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/kernel-doc: remove an obscure logic from kernel-doc
+Date: Wed, 12 Feb 2025 07:02:52 +0100
+Message-ID: <fd3b28dec36ba1668325d6770d4c4754414337fc.1739340170.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/7] arm64: dts: agilex: add dts enabling PCIe Root
- Port
-To: Matthew Gerlach <matthew.gerlach@linux.intel.com>, lpieralisi@kernel.org,
- kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
- bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
- dinguyen@kernel.org, joyce.ooi@intel.com, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: matthew.gerlach@altera.com, peter.colberg@altera.com
-References: <20250211151725.4133582-1-matthew.gerlach@linux.intel.com>
- <20250211151725.4133582-7-matthew.gerlach@linux.intel.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250211151725.4133582-7-matthew.gerlach@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On 11/02/2025 16:17, Matthew Gerlach wrote:
-> Add a device tree enabling PCIe Root Port support on an Agilex F-series
-> Development Kit which has the P-tile variant of the PCIe IP.
-> 
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-> ---
-> v6:
->  - Fix SPDX header.
+Kernel-doc has an obscure logic that uses an external file
+to map files via a .tmp_filelist.txt file stored at the current
+directory. The rationale for such code predates git time,
+as it was added on Kernel v2.4.5.5, with the following description:
 
-...
+	# 26/05/2001 -         Support for separate source and object trees.
+	#              Return error code.
+	#              Keith Owens <kaos@ocs.com.au>
 
-> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dts b/arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dts
-> new file mode 100644
-> index 000000000000..3588c845cf9c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dts
-> @@ -0,0 +1,87 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2024, Intel Corporation
-> + */
-> +
-> +#include "socfpga_agilex.dtsi"
-> +#include "socfpga_agilex_socdk.dtsi"
-> +#include "socfpga_agilex_pcie_root_port.dtsi"
-> +
+from commit 396a6123577d ("v2.4.5.4 -> v2.4.5.5") at the historic
+tree:
+	https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/
 
+Support for separate source and object trees is now done on a different
+way via make O=<object>.
 
-Missing compatible, missing model, missing bindings.
+There's no logic to create such file, so it sounds to me that this is
+just dead code.
 
+So, drop it.
 
-Best regards,
-Krzysztof
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ scripts/kernel-doc | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
+
+diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+index e57c5e989a0a..70da9a3369c6 100755
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -179,7 +179,7 @@ my ($function, %function_table, %parametertypes, $declaration_purpose);
+ my %nosymbol_table = ();
+ my $declaration_start_line;
+ my ($type, $declaration_name, $return_type);
+-my ($newsection, $newcontents, $prototype, $brcount, %source_map);
++my ($newsection, $newcontents, $prototype, $brcount);
+ 
+ if (defined($ENV{'KBUILD_VERBOSE'}) && $ENV{'KBUILD_VERBOSE'} =~ '1') {
+     $verbose = 1;
+@@ -2005,10 +2005,6 @@ sub map_filename($) {
+         $file = $orig_file;
+     }
+ 
+-    if (defined($source_map{$file})) {
+-        $file = $source_map{$file};
+-    }
+-
+     return $file;
+ }
+ 
+@@ -2403,19 +2399,6 @@ for (my $k = 0; $k < @highlights; $k++) {
+     $dohighlight .=  "\$contents =~ s:$pattern:$result:gs;\n";
+ }
+ 
+-# Read the file that maps relative names to absolute names for
+-# separate source and object directories and for shadow trees.
+-if (open(SOURCE_MAP, "<.tmp_filelist.txt")) {
+-    my ($relname, $absname);
+-    while(<SOURCE_MAP>) {
+-        chop();
+-        ($relname, $absname) = (split())[0..1];
+-        $relname =~ s:^/+::;
+-        $source_map{$relname} = $absname;
+-    }
+-    close(SOURCE_MAP);
+-}
+-
+ if ($output_selection == OUTPUT_EXPORTED ||
+     $output_selection == OUTPUT_INTERNAL) {
+ 
+-- 
+2.48.1
+
 
