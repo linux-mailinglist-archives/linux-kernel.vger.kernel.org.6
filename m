@@ -1,230 +1,227 @@
-Return-Path: <linux-kernel+bounces-511366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC95A32A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:29:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F16BA32A23
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:33:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62F563A7CA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:29:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61481188DF96
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D322250BF6;
-	Wed, 12 Feb 2025 15:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BF8211A00;
+	Wed, 12 Feb 2025 15:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hy3ARH4x"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RWpt4B6B"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00ACE24C679;
-	Wed, 12 Feb 2025 15:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD76211719;
+	Wed, 12 Feb 2025 15:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739374116; cv=none; b=qa8uBB7qk2LtOAB6i7qIidKyTKeHN5WFdHEOHK6Rvr6WX2OOtUHZgx6F/n87gtmMsIXqUTnagihmkiqPu7fwercRGvuigIkMtnpfmlIqU6XShCyTMNVbtBJ8WC4bgnc1fif4zV4t7OfphVYhdMzddznrfutTaegpAJH+d/8udBE=
+	t=1739374184; cv=none; b=L+BtbkyMkHaffW59ZTeqh7eG4LT+r6UP8NVvim2zJa1XmlyvE9qEPCpGAbYWSKtqWZXqF8Mu9sm3eTXQ39XtDJfbzywBpLqLIjlL7eM85tZyXBi0/mgl2WCmEPCoQaw9qmyXqRHPJrK/FFzcQOekPkyNtChTwg67aKnAuyZTqqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739374116; c=relaxed/simple;
-	bh=YsiNlyiHQ9d6W2tDHYhJHKwP2PsIzM6e+uSXKvMPjI4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=PKzR0P/9EXwsb6cqcg0KUZoJbTC8Ia+g5QCkZYu20RWYkSJEal2J2BHK/bYV5QNwfd8VVYCkW9JYn7V+h9KH5b/RAHnSwT+mLgpszUOdqgWBLwasREPuwl3+A6MwesNQ6qoyGXaO3ER6bOFnXOxiu5ePVBnMGZhdrqQfOFpXO5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hy3ARH4x; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-219f8263ae0so125186735ad.0;
-        Wed, 12 Feb 2025 07:28:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739374114; x=1739978914; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=j+dEqt7IhqX28nFJ8Lafm8We0lyyX8DlOy63dc5352Q=;
-        b=hy3ARH4xPO2rioGw4YSuI90+zjwCSZTXgKbLjCNgmvon1OoiishBMke5jpwajegzn6
-         pfzNZW26s9pgLCKZKp+GU6w0No87G1qfka0yrtJqaHEaLK1Yn9Jl0GOxF+yONDTA4D+w
-         d8IRV77ejmA6vCDiLvLBoaiFSjatYHTaNP/RaupkrDWk4U4yoI3KNHdUjTes1wXpc3RF
-         ktQQnwC5XPzd2CdeiVToML2Bcy8lNVEKDwiFf1Zaib0zIkAD92/e2t47ppsknrWF49EV
-         QJbY/22BDkaJtP2kus/I73fNTpz6h+L8ZluhlLaPJTgichF5awoPOPKmuRHNKLHFPA2S
-         9Osw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739374114; x=1739978914;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j+dEqt7IhqX28nFJ8Lafm8We0lyyX8DlOy63dc5352Q=;
-        b=rYrsYqmh3fRqtkiyP8QAnudV2zx2dc6wIRpSgcdZh3L7FfMjN1IB2MFEbPdZ3HcZQk
-         qvWlLbYEsTHRvkTnO4e+IF3Vw1hOSA0PFJ6sRqazoAc9vo55VUiHj2C7A5p+KiMoC1lR
-         gusDzkWzi0usS3QAGGoBvtynSE4nzlLOigVpMi5oH+HdpR2gFNrghDPkMsDsu512Fg0n
-         Z65I/WTyHZfKcdI5UsuTLgGDPgGxLksOP02OaH0jB1anqBG8pvJGdvqIoJRPSMwyLty9
-         XOdH45jL+cSy+mVcPL18Uo4cXF496zA5LhrWJMCOkfTa9xeukGkP50j8nc9MbSJ6LMT6
-         e2QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOTEmBEPlINYgULYwMLPrlMvERCsQRPxZZvtBhk0QOX+gj6obwZkL2D/MoBlg2L8BNp016D7v2ecFCtpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKVVb8ecrqg0ThvQqtvf6TELpKxP5XS2LgxXMk0Eq+VbfWOfdK
-	MVwoQoeGqYgNBfdbcM6gjwJoWVbS3fI52gBsSuR3Tfc0MDrZngjR
-X-Gm-Gg: ASbGnctEsjXG1Z0nNdkSuyVtxiqoouysjIRKg4yX1MEQcFU191El89gYWqjEoXvU5Gp
-	en5xEp02oshAukCBbSxxOiX95oKR7UfNs0MeigvLvjSyQMKL0U784XvhxGLPW6ltBin71jNwAMf
-	VPmiBz0mnQ+NyYf36Q0F/JobRz5lffNfO7cZxvWtrODNg081d7vhA2YiUwp3AS9CCBZKfg/WX5x
-	L6scLCWlKkYmn6iSrQ7/8UvcJk1Xtc92OOyFkCyojQz2/lqpkicBOoTMiRFKHilOMLV9CMHhNJz
-	RfqeN4xE/McM58fA
-X-Google-Smtp-Source: AGHT+IFRQAKpLCs4B5ITEvW85jYEiiaO7YsbKMAHs0d1bJXhm//DqA/UV9+RoOaZAMiTNt05J2jr+A==
-X-Received: by 2002:a17:902:d512:b0:215:bb50:6a05 with SMTP id d9443c01a7336-220bbab103bmr46847975ad.9.1739374114082;
-        Wed, 12 Feb 2025 07:28:34 -0800 (PST)
-Received: from localhost ([111.229.209.227])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f36511237sm114878525ad.2.2025.02.12.07.28.33
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Feb 2025 07:28:33 -0800 (PST)
-From: Tao Chen <chen.dylane@gmail.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	qmo@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chen.dylane@gmail.com,
-	Tao Chen <dylane.chen@didiglobal.com>
-Subject: [PATCH bpf-next v7 4/4] selftests/bpf: Add libbpf_probe_bpf_kfunc API selftests
-Date: Wed, 12 Feb 2025 23:28:16 +0800
-Message-Id: <20250212152816.18836-5-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250212152816.18836-1-chen.dylane@gmail.com>
-References: <20250212152816.18836-1-chen.dylane@gmail.com>
+	s=arc-20240116; t=1739374184; c=relaxed/simple;
+	bh=gWVsYqLuwJ7CAqCt36J55nN9VU6WmafeE6UVdUgCLf0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WIU+pLDwGJNBtwAeW1wqLKkgom61QrMfw+VuN+i0D2OQ1PBOIaLHZK/zRWWBd5BCRjIkDbjbr3IpKaAa9aIQqP6aEWDuOgAUuswYovBdbL4eQk+iGR2CCvPdiIs56xK7MJluDMKEptI/bOI2lkkxps1N/DiMnCWG+MTzsgOqSl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RWpt4B6B; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CCWCEZ008086;
+	Wed, 12 Feb 2025 15:29:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=ZbeqsoMJOh1MCHbiET31piLClnAv
+	GVOWiGlykHUGYek=; b=RWpt4B6BxWTrQx2fEDRhVTxMTqvMO4b1/zwmZ+ybuHb7
+	owk0Wh6c1KIwBAYS66Z1We43knetP8WZEbhay5C3Dsw6xbHZ7hYzhBHneyb2LKcZ
+	ncnzOyDoa7I6I7ggLRqO2Ai7ZXxqWoYp9KWU0VHMmoBi9zJPt/95QAnw7K9fsxDd
+	IoJ0gEJ36D4HL4kwPSrc1/18ALAe8JY94Ve0hc+n/fP0E6TkK77SAGM0d17UDIPk
+	0kS9Tv2qozsHJ8PKYRBc27hx2N9Iqd7zxWDtwdqPM+9NdRS4z6dl0Tc93cyC5jQd
+	ZLfBJQqqbw7zjFUj7bDT2sAbsFPiaxFCiV0f2VN7rQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rhqaby98-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 15:29:33 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51CFNmvH026517;
+	Wed, 12 Feb 2025 15:29:32 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rhqaby73-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 15:29:32 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CDgdl2028667;
+	Wed, 12 Feb 2025 15:28:54 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pma1s4ar-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 15:28:54 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CFSrh128967672
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Feb 2025 15:28:53 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A37C5805C;
+	Wed, 12 Feb 2025 15:28:53 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D3E8958058;
+	Wed, 12 Feb 2025 15:28:49 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Feb 2025 15:28:49 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Subject: [PATCH v5 0/2] vfio/pci: s390: Fix issues preventing
+ VFIO_PCI_MMAP=y for s390 and enable it
+Date: Wed, 12 Feb 2025 16:28:30 +0100
+Message-Id: <20250212-vfio_pci_mmap-v5-0-633ca5e056da@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB6+rGcC/23OSQoCMRCF4atI1kaqKkkPrryHiLQZtMAe6NagS
+ N/dKIISXP4P6qMeYvIj+0msFw8x+sgT910Ks1wIe2q6o5fsUgsC0mBAyRi43w+W923bDBKNrr1
+ yQLYpRboZRh/49va2u9Qnni79eH/zEV/rRyLMpIgSJIVCofEARvvNmbvrbcWHdmX7Vry0SL9C/
+ kukJICzhUVVNzrgP0H9CnUuqCRYR1g6wJqw+ifor1BQkQs6CWUAVVUlBCDKhXmenxjxvq10AQA
+ A
+X-Change-ID: 20240503-vfio_pci_mmap-1549e3d02ca7
+To: Bjorn Helgaas <helgaas@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Alexandra Winter <wintera@linux.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Thorsten Winkler <twinkler@linux.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc: Julian Ruess <julianr@linux.ibm.com>, Halil Pasic <pasic@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-pci@vger.kernel.org, Niklas Schnelle <schnelle@linux.ibm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4437;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=gWVsYqLuwJ7CAqCt36J55nN9VU6WmafeE6UVdUgCLf0=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNLX7JM35u1pCZjKP7089It9TWav15ojS8IWdYgsvbM37
+ 9XCPfqyHaUsDGJcDLJiiiyLupz91hVMMd0T1N8BM4eVCWQIAxenAEzkXAzDXxnNPR4FAkLTwp86
+ fP6su/f6i1mXb5y7ee9uQ6LZG8ezr1wYGd7k/VOy6zQ/kq1ockrh31RXLbfO2+Kegb+2CddwzKn
+ pYQAA
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: xqdRDPfqog7RsALN5g2-rBBveKUMttUI
+X-Proofpoint-GUID: h6TbmHHmPemMU8ojdshYN4mfAqv5Or1T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ spamscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 mlxlogscore=658 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120117
 
-Add selftests for prog_kfunc feature probing.
+With the introduction of memory I/O (MIO) instructions enbaled in commit
+71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
+gained support for direct user-space access to mapped PCI resources.
+Even without those however user-space can access mapped PCI resources
+via the s390 specific MMIO syscalls. There is thus nothing fundamentally
+preventing s390 from supporting VFIO_PCI_MMAP, allowing user-space
+drivers to access PCI resources without going through the pread()
+interface. To actually enable VFIO_PCI_MMAP a few issues need fixing
+however.
 
- ./test_progs -t libbpf_probe_kfuncs
- #153     libbpf_probe_kfuncs:OK
- Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
+Firstly the s390 MMIO syscalls do not cause a page fault when
+follow_pte() fails due to the page not being present. This breaks
+vfio-pci's mmap() handling which lazily maps on first access.
 
-Cc: Tao Chen <dylane.chen@didiglobal.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+Secondly on s390 there is a virtual PCI device called ISM which has
+a few oddities. For one it claims to have a 256 TiB PCI BAR (not a typo)
+which leads to any attempt to mmap() it fail with the following message:
+
+    vmap allocation for size 281474976714752 failed: use vmalloc=<size> to increase size
+
+Even if one tried to map this BAR only partially the mapping would not
+be usable on systems with MIO support enabled. So just block mapping
+BARs which don't fit between IOREMAP_START and IOREMAP_END. Solve this
+by keeping the vfio-pci mmap() blocking behavior around for this
+specific device via a PCI quirk and new pdev->non_mappable_bars
+flag.
+
+Note:
+For your convenience the code is also available in the tagged
+b4/vfio_pci_mmap branch on my git.kernel.org site below:
+https://git.kernel.org/pub/scm/linux/kernel/git/niks/linux.git/
+
+Thanks,
+Niklas
+
+Link: https://lore.kernel.org/all/c5ba134a1d4f4465b5956027e6a4ea6f6beff969.camel@linux.ibm.com/
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 ---
- .../selftests/bpf/prog_tests/libbpf_probes.c  | 111 ++++++++++++++++++
- 1 file changed, 111 insertions(+)
+Changes in v5:
+- Instead of relying on the existing pdev->non_compliant_bars introduce
+  a new pdev->non_mappable_bars flag. This replaces the VFIO_PCI_MMAP
+  Kconfig option and makes it per-device. This is necessary to not break
+  upcoming vfio-pci use of ISM devices (Julian Ruess)
+- Squash the removal of VFIO_PCI_MMAP into the second commit as this
+  is now where its only use goes away.
+- Switch to using follow_pfnmap_start() in MMIO syscall page fault
+  handling to match upstream changes
+- Dropped R-b's because the changes are significant
+- Link to v4: https://lore.kernel.org/r/20240626-vfio_pci_mmap-v4-0-7f038870f022@linux.ibm.com
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c b/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-index 4ed46ed58a7b..d8f5475a94ce 100644
---- a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-+++ b/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-@@ -126,3 +126,114 @@ void test_libbpf_probe_helpers(void)
- 		ASSERT_EQ(res, d->supported, buf);
- 	}
- }
-+
-+static int module_btf_fd(char *module)
-+{
-+	int fd, err;
-+	__u32 id = 0, len;
-+	struct bpf_btf_info info;
-+	char name[64];
-+
-+	while (true) {
-+		err = bpf_btf_get_next_id(id, &id);
-+		if (err)
-+			return -1;
-+
-+		fd = bpf_btf_get_fd_by_id(id);
-+		if (fd < 0) {
-+			if (errno == ENOENT)
-+				continue;
-+			return -1;
-+		}
-+		len = sizeof(info);
-+		memset(&info, 0, sizeof(info));
-+		info.name = ptr_to_u64(name);
-+		info.name_len = sizeof(name);
-+		err = bpf_btf_get_info_by_fd(fd, &info, &len);
-+		if (err) {
-+			close(fd);
-+			return -1;
-+		}
-+		/* find target module BTF */
-+		if (!strcmp(name, module))
-+			break;
-+
-+		close(fd);
-+	}
-+
-+	return fd;
-+}
-+
-+void test_libbpf_probe_kfuncs(void)
-+{
-+	int ret, kfunc_id, fd;
-+	char *kfunc = "bpf_cpumask_create";
-+	struct btf *vmlinux_btf = NULL;
-+	struct btf *module_btf = NULL;
-+
-+	vmlinux_btf = btf__parse("/sys/kernel/btf/vmlinux", NULL);
-+	if (!ASSERT_OK_PTR(vmlinux_btf, "btf_parse"))
-+		return;
-+
-+	kfunc_id = btf__find_by_name_kind(vmlinux_btf, kfunc, BTF_KIND_FUNC);
-+	if (!ASSERT_GT(kfunc_id, 0, kfunc))
-+		goto cleanup;
-+
-+	/* prog BPF_PROG_TYPE_SYSCALL supports kfunc bpf_cpumask_create */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, kfunc_id, -1, NULL);
-+	if (!ASSERT_EQ(ret, 1, "kfunc in vmlinux support"))
-+		goto cleanup;
-+
-+	/* prog BPF_PROG_TYPE_KPROBE does not support kfunc bpf_cpumask_create */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_KPROBE, kfunc_id, -1, NULL);
-+	if (!ASSERT_EQ(ret, 0, "kfunc in vmlinux not suuport"))
-+		goto cleanup;
-+
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_KPROBE, -1, -1, NULL);
-+	if (!ASSERT_EQ(ret, 0, "invalid kfunc id:-1"))
-+		goto cleanup;
-+
-+	ret = libbpf_probe_bpf_kfunc(100000, kfunc_id, -1, NULL);
-+	if (!ASSERT_ERR(ret, "invalid prog type:100000"))
-+		goto cleanup;
-+
-+	if (!env.has_testmod)
-+		goto cleanup;
-+
-+	module_btf = btf__load_module_btf("bpf_testmod", vmlinux_btf);
-+	if (!ASSERT_OK_PTR(module_btf, "load module BTF"))
-+		goto cleanup;
-+
-+	kfunc_id = btf__find_by_name(module_btf, "bpf_kfunc_call_test1");
-+	if (!ASSERT_GT(kfunc_id, 0, "func not found"))
-+		goto cleanup;
-+
-+	fd = module_btf_fd("bpf_testmod");
-+	if (!ASSERT_GE(fd, 0, "module BTF fd"))
-+		goto cleanup;
-+
-+	/* prog BPF_PROG_TYPE_SYSCALL supports kfunc bpf_kfunc_call_test1 in bpf_testmod */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, kfunc_id, fd, NULL);
-+	if (!ASSERT_EQ(ret, 1, "kfunc in module BTF support"))
-+		goto cleanup_fd;
-+
-+	/* prog BPF_PROG_TYPE_KPROBE does not support kfunc bpf_kfunc_call_test1
-+	 * in bpf_testmod
-+	 */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_KPROBE, kfunc_id, fd, NULL);
-+	if (!ASSERT_EQ(ret, 0, "kfunc in module BTF not support"))
-+		goto cleanup_fd;
-+
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, -1, fd, NULL);
-+	if (!ASSERT_EQ(ret, 0, "invalid kfunc id in module BTF"))
-+		goto cleanup_fd;
-+
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, kfunc_id, 100, NULL);
-+	ASSERT_EQ(ret, 0, "invalid BTF fd in module BTF");
-+
-+cleanup_fd:
-+	close(fd);
-+cleanup:
-+	btf__free(vmlinux_btf);
-+	btf__free(module_btf);
-+}
+Changes in v4:
+- Overhauled and split up patch 2 which caused errors on ppc due to
+  unexported __kernel_io_end. Replaced it with a minimal s390 PCI fixup
+  harness to set pdev->non_compliant_bars for ISM plus ignoring devices
+  with this flag in vfio-pci. Idea for using PCI quirks came from
+  Christoph Hellwig, thanks. Dropped R-bs for patch 2 accordingly.
+- Rebased on v6.10-rc5 which includes the vfio-pci mmap fault handler
+  fix to the issue I stumbled over independently in v3
+- Link to v3: https://lore.kernel.org/r/20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com
+
+Changes in v3:
+- Rebased on v6.10-rc1 requiring change to follow_pte() call
+- Use current->mm for fixup_user_fault() as seems more common
+- Collected new trailers
+- Link to v2: https://lore.kernel.org/r/20240523-vfio_pci_mmap-v2-0-0dc6c139a4f1@linux.ibm.com
+
+Changes in v2:
+- Changed last patch to remove VFIO_PCI_MMAP instead of just enabling it
+  for s390 as it is unconditionally true with s390 supporting PCI resource mmap() (Jason)
+- Collected R-bs from Jason
+- Link to v1: https://lore.kernel.org/r/20240521-vfio_pci_mmap-v1-0-2f6315e0054e@linux.ibm.com
+
+---
+Niklas Schnelle (2):
+      s390/pci: Fix s390_mmio_read/write syscall page fault handling
+      PCI: s390: Support mmap() of BARs and replace VFIO_PCI_MMAP by a device flag
+
+ arch/s390/Kconfig                |  4 +---
+ arch/s390/pci/Makefile           |  2 +-
+ arch/s390/pci/pci_fixup.c        | 23 +++++++++++++++++++++++
+ arch/s390/pci/pci_mmio.c         | 18 +++++++++++++-----
+ drivers/s390/net/ism_drv.c       |  1 -
+ drivers/vfio/pci/Kconfig         |  4 ----
+ drivers/vfio/pci/vfio_pci_core.c |  2 +-
+ include/linux/pci.h              |  1 +
+ include/linux/pci_ids.h          |  1 +
+ 9 files changed, 41 insertions(+), 15 deletions(-)
+---
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+change-id: 20240503-vfio_pci_mmap-1549e3d02ca7
+
+Best regards,
 -- 
-2.43.0
+Niklas Schnelle
 
 
