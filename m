@@ -1,124 +1,73 @@
-Return-Path: <linux-kernel+bounces-511738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32FB5A32EF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:54:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51EC1A32EF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:54:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5435167947
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:54:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 724607A3477
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0780260A33;
-	Wed, 12 Feb 2025 18:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c6fDmPWf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E47426157C;
+	Wed, 12 Feb 2025 18:54:08 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9743225D558
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D3626137A;
+	Wed, 12 Feb 2025 18:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739386442; cv=none; b=cpjBO7i53rof6wKYRvB2vnYN9MhbsdBLp3WfDkXyaSAws5EKU9lMSHmWHzhI9jwfyqsToMovp6TeEtBsw8xe0TlyTdkqjS0PpVF04xtAKU759vc55XtKufkkPCvzd9CibB63WIzwp1U4TtYNNGOa1UpOX7bJH11J368EA4X67Po=
+	t=1739386447; cv=none; b=Yoz7YISBz0Txsqsv2uJ20hUOsYytP+f+C80Xoqblgc+bB7Sox7g91WY+e/dez0Ty2Z6QwZTLE1vMUOz+cSwVJx42MoR908Es8pJQ/rN9Ciiw6T5haRQVHZqqpP9Yke6lUJg84BFWtmuJCX1YpfXb4ZKNlDBUKYNnIYP242BVrqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739386442; c=relaxed/simple;
-	bh=88U6LkkyjwbgU3fwElzt9RyVjJumxgt5JSaA4PqEjSE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZhTKhXOygPtly5vGcAhkDM+8QRD9C6Po2YOVKjs0qDKFa1BWruzFX6EthzCgEQvB1riSF+qTQCyilcNpodw58AwoFxEXXGUFpqAR8a1jQQmfomlUIfC4woxX8MIXb+qH3n09cVUqtZJZthbtkHdOq3FgIAUDxzIqsTxh8GLW56M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c6fDmPWf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739386439;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8Pk1/OrFBXHG51Uy+54VqQQAZpp/Rcxfrj0+oCV3QUE=;
-	b=c6fDmPWfLHugi26Fv1svcTp4FPcKf8bii8Anu5sk52Nh3L6zAm9EcEK/UWeDAMAipqIT9N
-	t/7IG4BIksjowT9OOw/9CRjfUUM6e4CxDVbxlCDcFCy9Vhizt51heVSO+0Qn7hHwqycVSm
-	JPG9mHdRGgnCSnzf50RuffNqcaq/IPA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657--a0L9dtiOOiU_a_5OBq_GA-1; Wed,
- 12 Feb 2025 13:53:58 -0500
-X-MC-Unique: -a0L9dtiOOiU_a_5OBq_GA-1
-X-Mimecast-MFC-AGG-ID: -a0L9dtiOOiU_a_5OBq_GA
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A488719560A7;
-	Wed, 12 Feb 2025 18:53:56 +0000 (UTC)
-Received: from omen.home.shazbot.org (unknown [10.22.88.77])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3C6B21800876;
-	Wed, 12 Feb 2025 18:53:54 +0000 (UTC)
-From: Alex Williamson <alex.williamson@redhat.com>
-To: bhelgaas@google.com
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mitchell.augustin@canonical.com,
-	ilpo.jarvinen@linux.intel.com,
-	david.laight.linux@gmail.com,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v2] PCI: Fix BUILD_BUG_ON usage for old gcc
-Date: Wed, 12 Feb 2025 11:53:32 -0700
-Message-ID: <20250212185337.293023-1-alex.williamson@redhat.com>
+	s=arc-20240116; t=1739386447; c=relaxed/simple;
+	bh=bkVhflZeLEpbEPNVV8gcaf98X2tvO0WnYVzbJKOTJuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n+DMQJ+YMTqUY8DCHpntmPvPOIuWAltIVq85HD8MLXFPTpcxulnJz/ILiq4woXzOSJWO3H5dCojejAok/4rXGIBfWXv7mM6Cj4fma7mYqymrN3Z+WI1yy9ynbpgITt+4iqeMKQrZ9q65gSlXTdXRKzfp2q/Kb+SM0USWSnbZQRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 856FEC4CEDF;
+	Wed, 12 Feb 2025 18:54:06 +0000 (UTC)
+Date: Wed, 12 Feb 2025 13:54:14 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: scripts/sorttable: Implement sorting
+ mcount_loc at boot for arm64
+Message-ID: <20250212135414.785e6403@gandalf.local.home>
+In-Reply-To: <Z6zqHY0a5CPEaTCN@arm.com>
+References: <20250211141139.03d2997e@gandalf.local.home>
+	<Z6zqHY0a5CPEaTCN@arm.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-As reported in the below link, it seems older versions of gcc cannot
-determine that the howmany variable is known for all callers.  Include
-a test so that newer compilers can enforce this sanity check and older
-compilers can still work.  Add __always_inline attribute to give the
-compiler an even better chance to know the inputs.
+On Wed, 12 Feb 2025 18:36:13 +0000
+Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-Fixes: 4453f360862e ("PCI: Batch BAR sizing operations")
-Link: https://lore.kernel.org/all/20250209154512.GA18688@redhat.com
-Reported-by: Oleg Nesterov <oleg@redhat.com>
-Tested-by: Oleg Nesterov <oleg@redhat.com>
-Tested-by: Mitchell Augustin <mitchell.augustin@canonical.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
----
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> 
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
-v2:
- - Switch to statically_true (David Laight)
- - Add __always_inline (David Laight)
- - Included Tested-by reports
+Much appreciated!
 
- drivers/pci/probe.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> (unless you want this to go in via the arm64 tree)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index b6536ed599c3..246744d8d268 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -339,13 +339,14 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
- 	return (res->flags & IORESOURCE_MEM_64) ? 1 : 0;
- }
- 
--static void pci_read_bases(struct pci_dev *dev, unsigned int howmany, int rom)
-+static __always_inline void pci_read_bases(struct pci_dev *dev,
-+					   unsigned int howmany, int rom)
- {
- 	u32 rombar, stdbars[PCI_STD_NUM_BARS];
- 	unsigned int pos, reg;
- 	u16 orig_cmd;
- 
--	BUILD_BUG_ON(howmany > PCI_STD_NUM_BARS);
-+	BUILD_BUG_ON(statically_true(howmany > PCI_STD_NUM_BARS));
- 
- 	if (dev->non_compliant_bars)
- 		return;
--- 
-2.48.1
+Nope, I have more code to add on top of this that is related to function
+tracing.
 
+Thanks!
+
+-- Steve
 
