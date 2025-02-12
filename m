@@ -1,77 +1,141 @@
-Return-Path: <linux-kernel+bounces-511667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE237A32E08
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:59:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF550A32E0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCCF3A77EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F2071886F05
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC6E25D537;
-	Wed, 12 Feb 2025 17:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E9925D53C;
+	Wed, 12 Feb 2025 18:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTVTLPqT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S0rHNUaU"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F4125C6F0;
-	Wed, 12 Feb 2025 17:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA73025B694
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739383151; cv=none; b=TD0QzFhHUFzXT7WICwAPieHfRGMugdHwl20yGAWF8O3DL5DE4xMf3f+o9bOpYzHbFXK8EIJVX9Q4ceu/EdV2q/jD4+oVuvyNH768n37iwX12SMio1yk/nMpFzmrylBF9lrUnnMydD8S/sgn2ZTWhuiEnHz4NEql+tkuT0QhW4vY=
+	t=1739383209; cv=none; b=WebARcoTYfII48IqbV6mOXNvD+gx3z8ozStPhYIpshYUUiD5VZ6pzLo9XjlvSKZ2sOy3nimqISlEOGjfLW7QmS6jg9xpl2mIHVOOqhJ34+55d8Fpp3BacyLmrvYAKNcd8sTPzq6OxGSMUhIcMBF4uZSOjeGWAD3jX7ZyMB10yYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739383151; c=relaxed/simple;
-	bh=7FZmUFVS3klnUPuYRwtsVfz8zmBeu3PQo5Tp5OmlS9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZDrFPcYPh1dc2uGZurRZfj6x3Q4/dnW0GV4iXpFTyf1c0IIC1/pCENC6QQnjCmJlIw2to9vzsKC4uiP6Fq10ApqzmIY/VJyr5hmAoAIPmlAu8wsEhSuBXh1c7H+7rGHLXtp9NMwFYAUQVNmXWazCE2AbW3H7SfVFSqGGH2A6R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTVTLPqT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57641C4CEDF;
-	Wed, 12 Feb 2025 17:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739383149;
-	bh=7FZmUFVS3klnUPuYRwtsVfz8zmBeu3PQo5Tp5OmlS9Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZTVTLPqTYziWyX/EsodjbJdGRAgyBsZ1FgcjgHib9ngGWVSjwN8UFoebeQghdGS9X
-	 wXWDcM5VUkoH7ub0H64Js/cnV0lxBMAylKdMsyKjFGMBzlpzw0oL95ll4GRpoapVWm
-	 pOyJlNgMhy/beoZzfOSDN+guO+jTh0JAIu2S/AwKsYMBDU0yRSd/yy8FMzxGAFe4pV
-	 xso8XUhe6UMLkaajM7UCpdkHcPK7bC7K1Tg8b+o108voA3f6suAV0i7uNuOFdzz2sP
-	 5VSC2TMfWImWvxPqmk4mtMDkRrxrZTlfc+mNjXFpyaXYBfLg8zmhB7NGk3lfrr+r8p
-	 26HYvh1LtuJzA==
-Date: Wed, 12 Feb 2025 11:59:08 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com
-Subject: Re: [PATCH] ASoC: dt-bindings: wlf,wm8960: add 'port' property
-Message-ID: <173938314806.4055277.15033019734121376770.robh@kernel.org>
-References: <20250207163029.3365-1-laurentiumihalcea111@gmail.com>
+	s=arc-20240116; t=1739383209; c=relaxed/simple;
+	bh=nuBKaKKm6JzdYDuLhSMKTDpSPaXhX6oO85o3tYs4RLY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WF9XiL9yUyvw5pfqVd1AEFzD7XElabpV5QbAWUYpN6S5g6z2BJyHlLUUHhVfqIyVgoXEuQBBwBxvlYQn24cbZea/JjyGAE0NUQbWvH/Fm0WaYY1vXGk2pw0XzgFSh7PNiOHm7LQn38GMXtgDLQb9UdP3iEJATivI+EGVcm3mUN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S0rHNUaU; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4718e224eb1so223251cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:00:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739383206; x=1739988006; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mnxLzYWtl4fTdxDjuL6cUFX+003YtIZX0UUuj6CKe0s=;
+        b=S0rHNUaUSrjn4sfVoZsYOpeEQpMbJ9tIPxEEf2w6BY7Ag9VW/CUQhooV5hnHqum6Ve
+         Ar+Dk44JMndEe+s64ifAsEhPoliZFJn1dODeCTmhDYXyndESJ3UswKIyo6/M8yrxWeTl
+         12AE5J0N5THwk1hcb75W9yi0ti+y+ZyIwRD2MzY/qqQFeLwpFuVIr1Naraq83yTRp4xJ
+         75fKkIaWs/YD8lzSPtQj6aw+QVqCRKQxKmEoVEVDatFoxYdzKyNPCtPr7sWhefkgLJr6
+         EVfwo7orO2ccDPihj7i62t0sScpfeudvZLWQDiKZ5vS/NpSAE13WKFjk5ON92BtYL1Vt
+         t+vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739383206; x=1739988006;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mnxLzYWtl4fTdxDjuL6cUFX+003YtIZX0UUuj6CKe0s=;
+        b=J8fC2FkZpQQMtbM5A7bMk5AAb9LcRjY0TvghUOvKKPoeXeZFsOQfIff/XoFGjscq/5
+         mM1vShq4QlM5B77c/a6V872I778aZtgWLxxOMFcWyYRt7MchQYgoqub+AO2IRkRiCDif
+         heg9famLfjaF/a/A38twqRxYTxpSan4AyQFP7XODBTzy7lOPKapYDLpjh/YBEj2D6nOF
+         0SRnjBEAh0ZIelbuukIsI0gT7qgeJr9VSqk3IwuTXNjQWWpigg4pMHdmdpAumB6ocE5D
+         cIOl9c2B6ZgJYdTZJqmGfvVfc7MzACer9PD3Ng1wTPeGezxkZ9Za3ktk1iCTYmkufUsm
+         UAGw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4U947Q2KezcBc8dHiURZc6CZdVPHLD5tLMTZEg2cvpa+OcQonL9ofOi/BdMQB/yGQNSs5aSSERuZqpI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8WeRUnJRxnMvEdyhFfWVwCWhbOw8Hdyw5Q1wZeMCWiYlvPHfu
+	EtmZ8UK2kRZloSfA/OFlORzlsWyxhYluBQM9XvUkvtITIMPuAXUpW+O4pp6Ol7mYgVDIS/33Fqn
+	CTzohUOxAUwwmmxMHCuERIGOUmE+WPCl8v9sO
+X-Gm-Gg: ASbGncvggBL0Y1/Z6kHq0djCCViGGmkKvvEYSejvkuizYcl12bIPloocxjMjLpds+gm
+	ksW1jUBVvktLiSJkDBP0vJkJzzpDt3XNGOHH1mB4LkJczqo3Y9xc28Q3hJPurPz+qkLRc8A==
+X-Google-Smtp-Source: AGHT+IGSw4YKDtfh08bcjWht1M4/uuus9yui3/j9nrKRuQDs5q9mLrKwVQaTI4vhzkToVQHIrnyJG34qHvC4LRsr3hw=
+X-Received: by 2002:a05:622a:1b8c:b0:46c:9f17:12f6 with SMTP id
+ d75a77b69052e-471b1e5afe4mr3975661cf.27.1739383206304; Wed, 12 Feb 2025
+ 10:00:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250207163029.3365-1-laurentiumihalcea111@gmail.com>
+References: <1aa70a33-2acd-49fb-8049-a20dae40ecba@stanley.mountain>
+In-Reply-To: <1aa70a33-2acd-49fb-8049-a20dae40ecba@stanley.mountain>
+From: Frank van der Linden <fvdl@google.com>
+Date: Wed, 12 Feb 2025 09:59:54 -0800
+X-Gm-Features: AWEUYZkACIoh4E5LCzP8OVY51LXm0pOowyPRO2n9q1lglrxQw_WVHe-hypVPcjI
+Message-ID: <CAPTztWahPK5MLTxMnGH8woe1emM=QA=3pjy1ZCBBG+D39aLGog@mail.gmail.com>
+Subject: Re: [PATCH next] x86/mm: Fix uninitialized variable in register_page_bootmem_memmap()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Fri, 07 Feb 2025 11:30:29 -0500, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> 
-> The wm8960 codec may be used with audio graph card and thus may require an
-> additional property: 'port'. Add it.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Wed, Feb 12, 2025 at 7:21=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Smatch complains that "next" could be uninitialized.  The "next"
+> assignment was accidentally left out when we moved these lines to earlier
+> in the function.
+>
+> Fixes: bdadaec1526d ("x86/mm: make register_page_bootmem_memmap handle PT=
+E mappings")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  Documentation/devicetree/bindings/sound/wlf,wm8960.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+> This goes through the -mm tree.
+>
+>  arch/x86/mm/init_64.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index e7572af639a4..6e8e4ef5312a 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1600,8 +1600,10 @@ void register_page_bootmem_memmap(unsigned long se=
+ction_nr,
+>                 get_page_bootmem(section_nr, pud_page(*pud), MIX_SECTION_=
+INFO);
+>
+>                 pmd =3D pmd_offset(pud, addr);
+> -               if (pmd_none(*pmd))
+> +               if (pmd_none(*pmd)) {
+> +                       next =3D (addr + PAGE_SIZE) & PAGE_MASK;
+>                         continue;
+> +               }
+>
+>                 if (!boot_cpu_has(X86_FEATURE_PSE) || !pmd_leaf(*pmd)) {
+>                         next =3D (addr + PAGE_SIZE) & PAGE_MASK;
+> --
+> 2.47.2
+>
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks for catching that Dan. I believe Andrew took the series out of
+mm-unstable because of some conflicts, and asked me to do a v4 for
+mm-unstable. Would you mind if I just folded your change in to the v4
+series?
 
+As an aside, it seems that this function could use some cleanup. It
+seems wrong to only advance by PAGE_SIZE when you encounter an
+unpopulated p4d/pgd/pud/pmd. It should advance to the end of that
+p4d/pgd/pud/pmd. I suppose that case won't happen in practice, though,
+which is also why this hasn't caused me any issues.
+
+- Frank
 
