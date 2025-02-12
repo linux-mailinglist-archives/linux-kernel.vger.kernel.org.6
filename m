@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-511086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE422A325AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:07:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3D8A325AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380923A2C39
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:07:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5484C167F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7493320B7F7;
-	Wed, 12 Feb 2025 12:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E41C20B7EE;
+	Wed, 12 Feb 2025 12:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcIw9ksd"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G9o1PLaU"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365FF271822
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AC7271822;
+	Wed, 12 Feb 2025 12:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739362045; cv=none; b=XxgLcd0TxndjWqXROnIFJm6vE9KjodLoCzLoDefYPNOWDwaswWUo4btHxF7LqsOgyGH+D189c5Ag1XTFO9BYRZShXXwSDdkizy9W6Z5aii9rBo+MrOI1v+i9/L2wlI/LPdmVhhl32YhkIxa0cbNIzPS/fDMCzFLYTq+qdlO6c/0=
+	t=1739362155; cv=none; b=qAJtDlaLhWqrqQ8U1YDYJAMCJRtN0PO55Yy/hAkDROq1Qu5hEaWTQVLqAcNQYdaGMqudx/buPcAs2Mjdg7NP6bvMthddhV2ceA5bHCN1CCGBFnrVcTq5pKaQH6tXNeQW+fU6dISezc9h6neOYilmLgAnFBqc4EpwzvWTCZ2pHBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739362045; c=relaxed/simple;
-	bh=m+7AIzaS6qw6D7rm+xj+rIUgbPFe9Yd5MZAp2+/RNKg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=rp/zbqpuYKI+Q+zRtAAXDbh8HGU0qsXD/mL+xTB//VKGNzhR6+KRIKPDsAmhDbTl5YZCRKTYnHVFEbt69iuRGxF1A28+6gTTbG2f0lTQkz3338TcVv6A50sKoM7ahZXcxmxeKcmCfYCFpRfyT+0IafMd0ac6ysh2SerlAH+yf7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcIw9ksd; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7e1286126so335060066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 04:07:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739362041; x=1739966841; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6CrVye6MPzWCLDkatFMo1WLbDCtOoMAqYZUqUGOJz98=;
-        b=gcIw9ksdfLOIkCxJ0vJl6CelCN14T04mHVvycv631cAQSxewl4eUJNwDFMGKKbQIJA
-         4ZB6mKG0a6Umx/q0xQ3q8XEa+oteO3Y0/7HtPDatNHwB7X0V8LS1yBNsf5gReCygLDK1
-         oTbGqlhRBszqYhUiMoTx6vX5H4sVJOf8tud93r/U0ehV7GT7BV5mnCsHsah8aYkwWZ/i
-         2lZ3nvIU7ECnt8F+Y1LzQpwiJDiCVt9KsOgz1NU+96UcIs6E6GO8QxePPaRHkxByTJiz
-         uKt9/a2MRtoHDVlCAPZU/Kc2mQOgkSSykH+pOQAKfkATFfClQk7xR96xJ0k/I0TCcNY2
-         K7Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739362041; x=1739966841;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6CrVye6MPzWCLDkatFMo1WLbDCtOoMAqYZUqUGOJz98=;
-        b=MR9OQFGP9FVXlfLZV17eaZUxhoOXsyXwJJwKWv4NZMqqICEzw2DswoIUV73rj1u0D2
-         uHu1X/s77AnCRD4Tc+orjHc/MQ19JZN7IOhOt5Wl2yHWbbYLIqR6+smylVYQG1NIo3wh
-         oIa6bNMU0V/1I6lx44wNaIxqujq9Ijf3qB4oP7H/auNQjBJfWFrXxaH4RC8MyCMmg3kP
-         CHy1arK+9yvUHEKc3CGnw8V6Yo7DELq3ZM4A2/PbHwrL80y9rcNxCeF+7SW59Mw9seIC
-         1lZk/h2MfJohUku9PmkmHvoCxom2qzxlklL3xxWHPJYxTldeLR0jC9QlZPsQl7YUDluy
-         GCAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzFLHtZvEJx04qaDWqcYtEWtBbOvrX4GRiqrJ+tXzzu6gCY/4AUTI2AygZ7Ig3ftJCQ2hqrbjEpjAP9NA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ0GMbc7j5D2nqa1znsLg2Zie+FvlULzdBHQgFws+PFViFqRL7
-	wUQ9+VUwdsqAJbFoSXNKTtiFlJ2Aib7szI8CgC1Hzx3/JpL3aJAq
-X-Gm-Gg: ASbGncv+DCesJsge35sQTnxry5rgPznmaIhOTON/nogcjzk9hqrgmFRqZKwNWzFnbor
-	Zcebf9YLngA6MLg3iCAa+o9eLO+Je7c3TGf08Emi5Owziq7Bd0ng99V3FVT+l+DlxaaOJqfZH5n
-	wVizNi0oVbjw1XZC4XjirFs3hnGENDtzG7np345ijvh5V4R/s2t3vELMFUBLxnZ7/rVLyIzaV3C
-	NX/JiIf66XJrXw2eH1/aQGyDSYN/4Uz5sSyCo/SyuNaSLK66EELApOiUvhRpp1zKuJVh8nyqetL
-	LRdyI9drmsgVQ71hYtsHLEUGG6g5lh8=
-X-Google-Smtp-Source: AGHT+IFc1v0JcVlWA924bMLzSxaUPYChpvrd2w78UTf+MsA4sSygFAE0xQZWb8eWB8RA+HbFzu+bYA==
-X-Received: by 2002:a17:907:3f0f:b0:aaf:ada2:181e with SMTP id a640c23a62f3a-ab7f33c63b9mr221665566b.26.1739362041265;
-        Wed, 12 Feb 2025 04:07:21 -0800 (PST)
-Received: from smtpclient.apple ([132.68.46.98])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7d101ed7dsm455259866b.106.2025.02.12.04.07.19
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Feb 2025 04:07:20 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1739362155; c=relaxed/simple;
+	bh=Vm3zqddiaQiFAR//aliDzdbsYBycePtZ/HzNM1/y6QM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XZ06u+fTxUfjTZQfzC6c6oGSUcUEY4eCC0qgrZDv69hvymyR7FiMsCSnv75vMCiYwQoKEcoOG72DLV70/klWLCZ+8MPbn10/3UNxY5pqWodmtQH6b2rhw3w1CAXV64narZM8GG4yTR/i416Y9+sNWfMAeM4xxoYI0bPvTXOHs3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G9o1PLaU; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739362130; x=1739966930; i=markus.elfring@web.de;
+	bh=duDd6UKIq1X57ebMyhME9oa4JR/K++kmZ6ASY94gwig=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=G9o1PLaU7dvPrR52LvJ5TsISeHrBnD/OkcjneppoAV3V/9JWIRvZfSG36dex1TJi
+	 9P0SUXGlUdkLxA74vZA4sxPB9QPGgq33pcyrXTntEO5G9RI77uE6I5XmckBdQrnF4
+	 dW/ZBEXtQ+PxtmcPUCbaiKOEP403iRqM9Wawehcsy8+YSAcaTuvSZsOqFSmopOZFi
+	 hcZ/m2znsA+0aOEAorZj/I41zbsgfeF9A/8j/3GNIOD0HWDhAsOGHfcUjEZ9Qhyro
+	 VIiJw1tzfo43BLs0EIBWk5qk8MlZARUil4ZneU/WkvNsY3SIoggke0EE8s1krx1an
+	 8e9p4r0WXI6x5sni7g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzkOL-1tVCzr062z-017tgD; Wed, 12
+ Feb 2025 13:08:50 +0100
+Message-ID: <ef5b12b4-d7f6-421e-9339-8621fb672021@web.de>
+Date: Wed, 12 Feb 2025 13:08:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH v10 09/12] x86/mm: enable broadcast TLB invalidation for
- multi-threaded processes
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20250211210823.242681-10-riel@surriel.com>
-Date: Wed, 12 Feb 2025 14:07:08 +0200
-Cc: the arch/x86 maintainers <x86@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Borislav Petkov <bp@alien8.de>,
- peterz@infradead.org,
- Dave Hansen <dave.hansen@linux.intel.com>,
- zhengqi.arch@bytedance.com,
- thomas.lendacky@amd.com,
- kernel-team@meta.com,
- "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- jackmanb@google.com,
- jannh@google.com,
- mhklinux@outlook.com,
- andrew.cooper3@citrix.com,
- Manali Shukla <Manali.Shukla@amd.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>, linux-edac@vger.kernel.org,
+ Tony Luck <tony.luck@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
+ James Morse <james.morse@arm.com>, John Audia <therealgraysky@proton.me>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, ramses@well-founded.dev,
+ Robert Richter <rric@kernel.org>
+References: <20250212083354.31919-1-qiuxu.zhuo@intel.com>
+Subject: Re: [PATCH] EDAC/igen6: Fix the flood of invalid error reports
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250212083354.31919-1-qiuxu.zhuo@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <940E9420-0CD3-4C9A-AFCC-23433AF8EFA4@gmail.com>
-References: <20250211210823.242681-1-riel@surriel.com>
- <20250211210823.242681-10-riel@surriel.com>
-To: Rik van Riel <riel@surriel.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-Provags-ID: V03:K1:dcz8MeYNQcc3ndn6ErODct7FGspj+2rulOIoUJyBX8fkaysD8/H
+ Z71qvaDsVmR+WLfVhGoDKQg8S+blyANPvX79JCWyB2dh3ADQKQkRQLo6x/iz8kpl3abrCj5
+ SA2COkNZyHl8ieQKbfD+ZVxdPCORyFplBIUXtp3X0s61bXRisLGew+9ZlzmUlWmK5KM/RZp
+ fgTmPt+w6bDS/LVeKH1/Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:R6y0rttj/xs=;EJH1+wh2JXpL1QZHpUIrF1UaOH6
+ T6cj8vzedIRZDcMuz1trh5/DlH9KtvutS3+GMLbWDD/k4cAQSxaXaWU1lQXRUXTKqmxIzcRj2
+ Ay/Hp5g02V0U1FoWpIZOIbAOqUl1t6nK4AISBX2TopTXOGq9AUG6YVTrahzgTv+yeNRllr7pZ
+ 6+v+30rDC9heMUWLPUkIcG0m6mTu2IKOOfcl0t7z5PZCxAkPN6suuklfgqzLMh18PMXxDcfP2
+ PwFu/6ho38knyf3Rk/YuHoN6rHrlHWFXOCCXnQ6qW6d/FVlIKMhNLN2WZfUT0Oieb1faO51Cc
+ ADHouCD3efi0/dbACI14ou2TAM2Kbczduf6jipuqpU+H4mMrbyd4dCVZ99a8j2+J+mYKo7sZJ
+ k7cXRjW95JkO9crynochtENaicKo6PewuNsCd+VY4Zl57SKC8LIeKGsBPpSmfZgGzYd3XVKoS
+ bcDj6Ga2BhYfuM4xAzdH0Bfh2MxrC2b1ZNHY1t/WnZx4ul4aWJkUR/8Bhxay3TwlnCwEkCo7j
+ HIyvw9d0At5Z8JXPbqNUZEJVus+do7FoqcjB7okosn6q3xFLEO3A7RhhqYP3+0cZIUZHqUdof
+ P5p6N83r8yljkQaBGIe+xBG4V2rFqXHCM+xvVIZfHGlxn3erTdzufrmtMrDBk1WvtpNYo42uB
+ knTj9AhXCcAfEb1OwMxEkOVgXRdVDqxdNVAixvIf7sh0xrAcO/qHk4aNcKrCPM1DRlOsstuQ3
+ a4PdO43xqSgtfWcN+PjvifVt7EurRq6C9CUtQHpEC3RFTNJXw6tPoISrsK1Rv6q9fzz3euT4g
+ b7woEfpDRc4ANkK2G1FeEWlZl6q1yZ2L1Hk2M82mSFng+Q2GAyEHWQfcOYPiVeEQW4juIKJUw
+ 9YALQACuMzzTk/T7c81+ZYXxzfjeeQFhvXW0W3nZrxoq8J7Ho0APBE7hPtBM5+k1N1v0AT6L+
+ xhvuyIcGOKdEfroQ1xPxha4RmmLtHNYJGtdTPZYRFzEXqb4jubwRq/gj9XFX+BChacmZHmjeg
+ Ogf1g3tLUXYf9FezxznFTCpw02Um3nchbN5ipyou1vR/k795josH2PDhuOswyHet3Nk5CV+pA
+ Kjtzn/MiwyzQ0/wXvGVAtwbgMn1MR1GGB2E//MP+XEtXRQpZLvtKgDBZkhWzXK0ox8puYZXZd
+ NXDT7THPX8A8frSPoehmAUujvQYCcnFg43GGCTKsJrOXXSst+B9FOSGTCR+79QzAC18MOdnch
+ Sxj/CKasrjABYMBhnOHv5wx/pIiWfQ+NPGiILvPQcNAyD9ZBaj/KwBs+skW2SBIqiJgPz8AE7
+ 9DBsXEf8Vb1aB3wgerbnShM/jtoWL7ESrZ/WsTLP2n8dqyFubctSRWD2j9MrJhv6QXp42C8zl
+ wJBLlN4KzI7PtLz54Md80XwSKLOqOIgrFNlhrqGCNENTAoWBNTYwi6/zeNwQUzJxwTEFIWDfC
+ wTVijxw==
 
-It all looks pretty sane to me.
+=E2=80=A6
+> +++ b/drivers/edac/igen6_edac.c
+> @@ -785,13 +785,22 @@ static u64 ecclog_read_and_clear(struct igen6_imc =
+*imc)
+>  {
+=E2=80=A6
+> +	if (ecclog =3D=3D ~0)
+=E2=80=A6
+> +	if (!(ecclog & (ECC_ERROR_LOG_CE | ECC_ERROR_LOG_UE)))
+=E2=80=A6
 
-One small note:
+May these condition checks be combined without repeating the statement =E2=
+=80=9Creturn 0;=E2=80=9D?
 
-> On 11 Feb 2025, at 23:08, Rik van Riel <riel@surriel.com> wrote:
->=20
-> +/*
-> + * Check whether a process is currently active on more than =
-"threshold" CPUs.
-> + * This is a cheap estimation on whether or not it may make sense to =
-assign
-> + * a global ASID to this process, and use broadcast TLB invalidation.
-> + */
-> +static bool mm_active_cpus_exceeds(struct mm_struct *mm, int =
-threshold)
-> +{
-> +	int count =3D 0;
-> +	int cpu;
-> +
-> +	/* This quick check should eliminate most single threaded =
-programs. */
-> +	if (cpumask_weight(mm_cpumask(mm)) <=3D threshold)
-> +		return false;
-> +
-
-Does it make sense to first check mm.mm_users against the threshold? It =
-might
-be less cache-contended.
-
-Anyhow, for what=E2=80=99s it worth:
-
-Reviewed-by: Nadav Amit <nadav.amit@gmail.com =
-<mailto:nadav.amit@gmail.com>>
-
+Regards,
+Markus
 
