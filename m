@@ -1,75 +1,62 @@
-Return-Path: <linux-kernel+bounces-511980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0127A3324E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:16:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2793FA33232
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E507188C2E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA2E188B4D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86956202C2E;
-	Wed, 12 Feb 2025 22:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RuYw5nad"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3104F190470;
-	Wed, 12 Feb 2025 22:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C55C2040A3;
+	Wed, 12 Feb 2025 22:13:20 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C151EBA0C;
+	Wed, 12 Feb 2025 22:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739398594; cv=none; b=EgbdC8vHnueL+CfqF4imaSyMCQwFSMDT8Kthgi+MKvOEfVNlYDK7BFU6MNzKzcg9W75s0mgkUTkoFUoyHGEX2skMDcUf9+WOeHrDpKbi99GQ6tVVsKF1uIuRgKwAKlEriM0jUVFmNuHoWzQ0HNXmqmqT9Os3Ec6xelstD2LLyHo=
+	t=1739398399; cv=none; b=O9pCdd3f2Xi+uyoio6sKwf8u4LHWTMo13rFU07WjQqLJhh5BckFpnYs92CrBFNsmTxW9gYArtq6wY7lJvM2NZnJ006N3ZwXU+l2gYhyOfTo46FPaTl2/k5GBbkpoi7leaPdMedcz3j29jyJi8kQgVPELQqRTQd3v4A5z9FwE7lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739398594; c=relaxed/simple;
-	bh=kNDG/gEhiX5P6/7ND6hRtddzOBz2ryqMmMGUppU/+Fs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DLFTWxOBeVPFslLwfYMZ03osgonrBH+Q9ylUudNdSYqiWmspkrne4Wc5k6JPjmsNez2dnaq54lkrmcXbQu5mHgCUoQDsqOFjYxG7a0grxfzlej77ENZpNn5KigG20uYtlUdV+dXik5x0/5ibAlAXALBnjswn9Vzx62nJpa7uJH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RuYw5nad; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739398592; x=1770934592;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kNDG/gEhiX5P6/7ND6hRtddzOBz2ryqMmMGUppU/+Fs=;
-  b=RuYw5nadeTrNlUZD4udC+PgBvETILiA9ow7QCho22iu0OOjTdzRzS3I9
-   UokC3E3bW8pOUlVWYni4YXtgwUX6mo/OOEMGKxR2gJxYyOku63Mj4m3Dv
-   wJVPNZY0Nrucl492PkXJfiQqbV1lAdQkfxVzyEqdJnOBNQfLK/O6MHbeL
-   xhOOLUWCyKlDHbUuCpsmu+lQ0IRb9dObynNVswm8K1/JeVpLcAFLm+eH8
-   U+bkltvV/X2QmWoWvwDaRgUuc0BFzvpynnENw67N3MXaBziHRUEqBh3JQ
-   zR7a7SuQ0dzVgFahxFz6fG3zi4NooQGLknEEhFm1AJ9LXXduPeFya2X++
-   A==;
-X-CSE-ConnectionGUID: bfFxhWuESvC4SFRK0g+Jxw==
-X-CSE-MsgGUID: h+lgoIbpSfq6Afe4NFWcRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="51066689"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="51066689"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 14:16:32 -0800
-X-CSE-ConnectionGUID: 96gXPdYgRO2hb2f6hjraLw==
-X-CSE-MsgGUID: AkjgMlqmQduJcg5E8fOQcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="150123862"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by orviesa001.jf.intel.com with ESMTP; 12 Feb 2025 14:16:29 -0800
-From: tien.sung.ang@intel.com
-To: Moritz Fischer <mdf@kernel.org>,
-	Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	linux-fpga@vger.kernel.org,
+	s=arc-20240116; t=1739398399; c=relaxed/simple;
+	bh=N5IK13DJ6LnwPwC02e2aqsOqTe2QDLovLs8E0lyG83c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IWdW0YX+9nQUoubXszSFSnLCM8HQ61M32ICw28ikMPCGtM0BUfKWipA3HQfHMejyXTLEZGlI/wJR5y6MhlXsN703yw5MTvHiNs6oPbBtBbrL7uRwPUHnlyF58kAZVXevrThMOz2XFjPARFWs9Qjq7nWR2XsKs0s6JqknxeI10vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: asgVNVzpSty0OW2moQBTDw==
+X-CSE-MsgGUID: viPmXcvdSf6GhzuDzqklCQ==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 13 Feb 2025 07:13:13 +0900
+Received: from mulinux.example.org (unknown [10.226.93.8])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C5DA340AACBB;
+	Thu, 13 Feb 2025 07:13:07 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kuhanh.murugasen.krishnan@intel.com,
-	kuhanh.murugasen.krishnan@altera.com
-Cc: Ang Tien Sung <tien.sung.ang@intel.com>
-Subject: [PATCH] fpga: altera-cvp: Increase credit timeout
-Date: Thu, 13 Feb 2025 06:12:49 +0800
-Message-Id: <20250212221249.2715929-1-tien.sung.ang@intel.com>
-X-Mailer: git-send-email 2.25.1
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/7] Add DMAC support to the RZ/V2H(P)
+Date: Wed, 12 Feb 2025 22:12:58 +0000
+Message-Id: <20250212221305.431716-1-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,36 +65,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
+Dear All,
 
-Increase the timeout for SDM (Secure device manager) data credits from
-20ms to 40ms. Internal stress tests running at 500 loops failed with the
-current timeout of 20ms. At the start of a FPGA configuration, the CVP
-host driver reads the transmit credits from SDM. It then sends bitstream
-FPGA data to SDM based on the total credits. Each credit allows the
-CVP host driver to send 4kBytes of data. There are situations whereby,
-the SDM did not respond in time during testing.
+This series adds DMAC support to the Renesas RZ/V2H(P).
 
-Signed-off-by: Ang Tien Sung <tien.sung.ang@intel.com>
-Signed-off-by: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
----
- drivers/fpga/altera-cvp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cheers,
+Fab
 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 6b0914432445..5af0bd33890c 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -52,7 +52,7 @@
- /* V2 Defines */
- #define VSE_CVP_TX_CREDITS		0x49	/* 8bit */
- 
--#define V2_CREDIT_TIMEOUT_US		20000
-+#define V2_CREDIT_TIMEOUT_US		40000
- #define V2_CHECK_CREDIT_US		10
- #define V2_POLL_TIMEOUT_US		1000000
- #define V2_USER_TIMEOUT_US		500000
+v1->v2:
+* Improved macros in ICU driver
+* Shared new macros between ICU driver and DMAC driver
+* Improved dt-bindings
+
+Fabrizio Castro (7):
+  clk: renesas: r9a09g057: Add entries for the DMACs
+  dt-bindings: dma: rz-dmac: Restrict properties for RZ/A1H
+  dt-bindings: dma: rz-dmac: Document RZ/V2H(P) family of SoCs
+  irqchip/renesas-rzv2h: Add rzv2h_icu_register_dma_req_ack
+  dmaengine: sh: rz-dmac: Allow for multiple DMACs
+  dmaengine: sh: rz-dmac: Add RZ/V2H(P) support
+  arm64: dts: renesas: r9a09g057: Add DMAC nodes
+
+ .../bindings/dma/renesas,rz-dmac.yaml         | 113 ++++++++++--
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 165 +++++++++++++++++
+ drivers/clk/renesas/r9a09g057-cpg.c           |  24 +++
+ drivers/clk/renesas/rzv2h-cpg.h               |   2 +
+ drivers/dma/sh/Kconfig                        |   1 +
+ drivers/dma/sh/rz-dmac.c                      | 167 ++++++++++++++++--
+ drivers/irqchip/irq-renesas-rzv2h.c           |  56 ++++++
+ include/linux/irqchip/irq-renesas-rzv2h.h     |  21 +++
+ 8 files changed, 516 insertions(+), 33 deletions(-)
+ create mode 100644 include/linux/irqchip/irq-renesas-rzv2h.h
+
 -- 
-2.25.1
+2.34.1
 
 
