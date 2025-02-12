@@ -1,143 +1,129 @@
-Return-Path: <linux-kernel+bounces-511788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04E7A32FB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:30:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91990A32FB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:31:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B608188B590
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010073A8531
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514681FF1DA;
-	Wed, 12 Feb 2025 19:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610BC1FCFEC;
+	Wed, 12 Feb 2025 19:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bruTrFcu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iuP1EakZ"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2EE1E7C32;
-	Wed, 12 Feb 2025 19:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6E8271813;
+	Wed, 12 Feb 2025 19:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739388614; cv=none; b=XIV9C82ZVJMCqPPtH7y10pEI8a7ITz4ri4qcPd6fvSkjntv2jY+fKmvMANwZ6lH/Ag9kIWFU0pCanr0YSaSGxmZRUe198HppubY7JH3Z6ZMlu9a+dJZuseq+9ZVWyHIGB1yRHCWs4JSfUUOGOSJ6KBSSKOAmWMdpILZ0UIp0t+I=
+	t=1739388678; cv=none; b=IINz6zE1RqfwQsmMk3QTHI8H/DYZ6bFTnVj63bXUk6d+lESKwSEUUik3w3VOwq70mgsi+KDzFd9Hs6PbwLZjjaVo9MkqUNjrIWWGKZDdS9QhMIT51EWFP/B6bNas5BxAmV9u0DfhusSBl8LINbyzLqS+/cho3Z0TduxZNA5J2Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739388614; c=relaxed/simple;
-	bh=3HXpiEReneTHl7ZV/Gv++IhPpNQMfRCiX1QcVCM8U30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UdkP2SUHqmqCUaaQPVwNNmt6ieykhxeN7OWzpBCtelzGBw42uvwnD5uLRyAWxT2Cd0uCJY9IxWf9DsbLnddqry23Rogu6skHpwKFLBr6GrVbKUgjfymHnwZgr53hQEQ5xotl2yf+xc5E4lE8aYI+70QtjbTcilSdUWx+9j/DV0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bruTrFcu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CHmXuQ008940;
-	Wed, 12 Feb 2025 19:30:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kbViyHr4HUyzndKcRL6rVCmA2akW3awY7n9ZNgIvpW8=; b=bruTrFcuVh26B5BS
-	GeK4MkItxtAAFHZhmEaxqGyx/7J/cdldB0Hc61SRLlhzlq9vi4GMEbPiwOoX9twx
-	nQv7IFOKHFA3SSdnc8WJRI0S4RJ+SiGRGszQQzgwi14Gq7B6309wTx83SatRzbkP
-	+otGKYS2padPwNVUWfjBZ7TrTQvLt+nRgo07o/5b6m/KRzOIufbPa1t+H/70O893
-	IHY4xZmSV96jFqwXY9p9eOodqaWbcqh2PwRlvQV9+AuTTVEgBjnyx7Vdu3bFM0Li
-	YJ+JfwWyBKyZl9C7/ocbOVuCyRLeQ4BVrI/RRRiA3VvRo6WvlHbWGBistrLDo6s9
-	7QpQcw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rr1qsq97-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 19:30:05 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51CJU4w0011168
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 19:30:04 GMT
-Received: from [10.216.10.30] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
- 2025 11:30:00 -0800
-Message-ID: <b873c744-6b38-4ea0-a5de-2cc7dd0e4501@quicinc.com>
-Date: Thu, 13 Feb 2025 00:59:56 +0530
+	s=arc-20240116; t=1739388678; c=relaxed/simple;
+	bh=GfZdTX/Oy7XJ8tKG6LUgqykp1o40xiaIANvWfqZKCJc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ejFbGYOx74PvTr7R2yWtGFZLSsVY+qacMfM2iSl+r4AHZbAbKfOe63b6pzJtHCki5sOOfhn5LWxYYQ5CeAFE0HgU5nG7Y/PEwrfPTJGtHNlO6XFXJAXefc9n8dYIADI/fCT6pCAJTMed45NF7O7bytnqSVn8KwtFqyvh0TDhzz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iuP1EakZ; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6efe4e3d698so1237957b3.0;
+        Wed, 12 Feb 2025 11:31:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739388676; x=1739993476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jxerhnt8Y8id2USTwJkEjWouua1WjZ12bm3toHhyogY=;
+        b=iuP1EakZsIaBkFdEtP2V7okMjDa0Pzu7YuM2oEEFANOtZybhmovPlBx+SsEl5PegjV
+         HItXKrg3pI+rRui6D+kl6JToNJ9tvTC33HEeCz70vWXLqpdSk3j4ffSNeJ6TnaZMyrLT
+         Dp2M8MR9NnL4swhCJYxkV+Iu7sh8/aOCTNvanYdLZcY2YAqU28/byudeC1lkL5d6po8J
+         qEjujeuzgFJu39zSetZ6GWBCMYAuik7pxwJ/lZ+rv+CwVCxb1d6NFSmMyedsCsSZvxzF
+         p0R+2wOGwoJYwlb5r8quVFAiYjHDPZr6IPrcu3KHcA8IZeWtK3n2XfIULE2KVYsNx+h3
+         p1pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739388676; x=1739993476;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jxerhnt8Y8id2USTwJkEjWouua1WjZ12bm3toHhyogY=;
+        b=IB9D/4GfUeUjNay6uFSAiO8C59eLW64kkA5WFGxfTnLUc3fyn4Bb5FMTTUaGahfCpK
+         oRg4f4055kz1G3aQgCRN94j/4Pv4hPqB98Mdflz7TmaQtMh36Ist6zrx6j2PR5OX1jra
+         b/XuXtwY1LpyTSuQoIlFvN62sNLHI0gttnJei2SKYNOzE70sXjUVUPDZzmwyfBREX9rC
+         zqPgy7Ny/KOl+xXieMnCbpVq+ylb8tSz+pKiwW4ykRX/krswPdPySbBLzLqesACa8jEK
+         3anKMpW/7hpVUFHmeE0AHn9u+1HaueJRiBJN+Xa9jMW8hZ3h4FBojA+rIrR1j5/fMHAX
+         KMZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqy6buLbmDG/DjnSX5OPbgreYrdzijHZNvMlM1teyBdb0JNtsFZ4ItNffQFsN3Wx1jYnnAeO0bKwsc@vger.kernel.org, AJvYcCWmKuYfk4w9y3R7tMkvGbs70MywBq0xvEqrHer547P8UwlrG8+Ba+19Tja1OIawzZnn9rW59beVPu4x7x0U@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6jsecv8O13luTHx4NFkdzR60wnHUs32/wXk5DvmTjVxXewrt2
+	uCbOXC3Dbs39Gv42xBFJ/64Su9Cg4BubJB5CogkbUGRZrCInpSv9
+X-Gm-Gg: ASbGncuwBm0RTzZvUAjCqf/vAvwsZdiv2BufjAx5pFTPvGlBiXJ/93kD+9JE5s6So3W
+	dBpGiag+BAG5EthFTaGvFBOWCPJSDA1fmRSX7Oht9xQ5Lwr0SPvLpvspNE6uimBhpKKXU2y4JRr
+	BO3ffJH35iZobqwrPikHl0zsFykQ06nBlUjABq8krFCnGlvKNj0xHrrb7SIih6iVNQTlnvmSh8Q
+	3rN4m03z+QDhTLj0XDwWzS2O2AGBWzP6uRQErGQMnDGKOf5OPb79/DktgzM7foZYERcnn75d0vY
+	kcJDNoMkTO7ppJFkTj3ARh07fA==
+X-Google-Smtp-Source: AGHT+IHZTmVClcsZUB5sJHSCBll2LFC3eeHBfHQFpiL4RynRDnie9rUozkzvnBkA6YLecFLTVlH+zQ==
+X-Received: by 2002:a05:690c:350a:b0:6f6:c95c:85b5 with SMTP id 00721157ae682-6fb1f286679mr43317497b3.25.1739388676177;
+        Wed, 12 Feb 2025 11:31:16 -0800 (PST)
+Received: from localhost.localdomain ([2800:bf0:179:113e:f067:4e25:4298:6451])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f99fd1fefbsm27889097b3.46.2025.02.12.11.31.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 11:31:15 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Armin Wolf <W_Armin@gmx.de>,
+	Kurt Borja <kuurtb@gmail.com>,
+	Gergo Koteles <soyer@irl.hu>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ACPI: platform_profile: Fix memory leak in profile_class_is_visible()
+Date: Wed, 12 Feb 2025 14:30:58 -0500
+Message-ID: <20250212193058.32110-1-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] i3c: master: Add Qualcomm I3C master controller
- driver
-To: Rob Herring <robh@kernel.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, <alexandre.belloni@bootlin.com>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <jarkko.nikula@linux.intel.com>, <linux-i3c@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250205143109.2955321-1-quic_msavaliy@quicinc.com>
- <20250205143109.2955321-3-quic_msavaliy@quicinc.com>
- <fec85cd8-4c56-4b48-a15f-e7ae08352cc2@kernel.org>
- <e5cad9d0-e602-442f-b216-2f655a9526e3@quicinc.com>
- <1e3a103d-d468-40c6-b03c-723427d7bb41@kernel.org>
- <e5dcc2f0-df6d-46ed-b341-46de513c0728@quicinc.com>
- <20250211214128.GB1215572-robh@kernel.org>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <20250211214128.GB1215572-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YpFZhfbwHAwty72EciwSvKZwnmzTcl6W
-X-Proofpoint-ORIG-GUID: YpFZhfbwHAwty72EciwSvKZwnmzTcl6W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_06,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- mlxscore=0 impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502120140
+Content-Transfer-Encoding: 8bit
 
-Thanks a lot Rob ! sorry, i was late to respond on this while waiting 
-for other comments agreements.
+If class_find_device() finds a device it's reference count is
+incremented. Call put_device() to drop this reference before returning.
 
-On 2/12/2025 3:11 AM, Rob Herring wrote:
-> On Mon, Feb 10, 2025 at 09:41:28PM +0530, Mukesh Kumar Savaliya wrote:
->> Thanks Krzysztof !
->>
->> On 2/9/2025 5:10 PM, Krzysztof Kozlowski wrote:
->>> On 07/02/2025 13:03, Mukesh Kumar Savaliya wrote:
->>>>>> +	gi3c->se.clk = devm_clk_get(&pdev->dev, "se-clk");
->>>>>> +	if (IS_ERR(gi3c->se.clk)) {
->>>>>> +		ret = PTR_ERR(gi3c->se.clk);
->>>>>> +		dev_err(&pdev->dev, "Error getting SE Core clk %d\n", ret);
->>>>>> +		return ret;
->>>>>> +	}
->>>>>> +
->>>>>> +	ret = device_property_read_u32(&pdev->dev, "se-clock-frequency", &gi3c->clk_src_freq);
->>>>>
->>>>> You never tested your DTS or this code... Drop
->>>>>
->>>> I have tested on SM8550 MTP only. Below entry in my internal/local DTSI.
->>>
->>>
->>> And how is it supposed to work? Are you going to send us your local
->>> internal DTSI? Is it going to pass any checks?
->> was saying about code was testing with MTP. DTS was tested using dt-bindings
->> check.
-> 
-> make dtbs_check is how you test.
-Sure, we are running "make dt_binding_check 
-DT_SCHEMA_FILES=qcom,i3c-master.yaml"
-> 
->> I should add "se-clock-frequency" and "dfs-index"
-> 
-> No. We already have standard clock properties and we don't put indexes
-> into DT.
-> 
-Okay, sure Rob. I shall remove both of these and set internally within 
-driver as they can be set to default.
-> Rob
+Fixes: 77be5cacb2c2 ("ACPI: platform_profile: Create class for ACPI platform profile")
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+ drivers/acpi/platform_profile.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+index fc92e43d0fe9..2ad53cc6aae5 100644
+--- a/drivers/acpi/platform_profile.c
++++ b/drivers/acpi/platform_profile.c
+@@ -417,8 +417,14 @@ static int profile_class_registered(struct device *dev, const void *data)
+ 
+ static umode_t profile_class_is_visible(struct kobject *kobj, struct attribute *attr, int idx)
+ {
+-	if (!class_find_device(&platform_profile_class, NULL, NULL, profile_class_registered))
++	struct device *dev;
++
++	dev = class_find_device(&platform_profile_class, NULL, NULL, profile_class_registered);
++	if (!dev)
+ 		return 0;
++
++	put_device(dev);
++
+ 	return attr->mode;
+ }
+ 
+
+base-commit: 3e3e377dd1f300bbdd230533686ce9c9f4f8a90d
+-- 
+2.48.1
 
 
