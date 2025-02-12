@@ -1,162 +1,103 @@
-Return-Path: <linux-kernel+bounces-511581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6253BA32CF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:08:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3EDA32CF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0B83A4208
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1542188C3EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E82820B1E5;
-	Wed, 12 Feb 2025 17:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC83925C6E4;
+	Wed, 12 Feb 2025 17:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hafMovTN"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="qHWlJLzg"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECAC2580D9;
-	Wed, 12 Feb 2025 17:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379885; cv=none; b=VBckoaSQZgGddGbRdzndS+K+4bwxWme2Seo5OPXxpqwRiI24DgiUeY1YPJdNPxXKsUwhmpaCfgLeJKs8VUIqk/r8hOLNLXtHhOuEoNMH30U9qYQ+FQP3ng8VTKlwWYrOSYOYBumZR2yTxIbM7pNyAiavs0hJcFELWu/LmL/nJNA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379885; c=relaxed/simple;
-	bh=Bfidi7anesqYs999M9Ik6ywb85mPeR+VxYEwuDAAFOU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q1lmKtz/lGq0lJMUulqXCYcvnIvtXnhWqgCwV7cgFnOkLDn0laal988Vv+QzoEuNebFHWWFG7PYPGYAGO3kZbyu8JHgOkGsM59BFfG/PueEA0mK9bQEZvKUNI5YIcc2WTIbsspGuPUST0mDOfxkVa8jOFd+1HrJl5bTbb3vq4z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hafMovTN; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4362bae4d7dso47187005e9.1;
-        Wed, 12 Feb 2025 09:04:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739379882; x=1739984682; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+7x9dWz5+kt+yK4VtjE7r4PpL/wI+I4YOt5i78vMh+Y=;
-        b=hafMovTNwM6qiexAvRxMY6gjD6fSWxxxnj+6c5Do/tj5+CGqV0WvEv+Nag5S1PG3cx
-         N3qESwMa/XSgQXEpG9+vvqbSjh4oqvCO6kbHdJMJCr6HU5yduPLmYkoS9TZJD2Ss4Sgz
-         dhZ82TstaGvhry+MS9J+A+v4CnMjKFQB0Q+x9/AJ5hTKGVVaN4d6xJbpUetVLM+aYs2a
-         Id2N2MmqT6ysdE64ucSMhZj2jTVLnFVwYd4wxhlUP1rRZPmDhN9Ia+VNG3RUQfBV4rdI
-         NHbnPajouiQRhm6xm5EdepNfaWaJvrXbgi1+hxqHgZ74rfi0I36XRsxcfHzjqbrHBtGl
-         O/tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739379882; x=1739984682;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+7x9dWz5+kt+yK4VtjE7r4PpL/wI+I4YOt5i78vMh+Y=;
-        b=Ssc6G543a1Hx0MZYKQ268Tje1uOlvnOihBn/rsNj6FO2Kd1Zcp/XBF2aF9pwUrmtU4
-         bCdVIdujJIAMcWVP7FNP1CNdIxufyn7JKHg59cUPTM1QzjlRZLiR5ocAU/2OvpQ9gCJq
-         TRZKd+/1NW2fGndBICQYIH0wkQFfK8Uw9Nl0p/qzeACj+YWaawLKRdAXu4s+RGq/y9pW
-         vzdQHUdLCoFJhKAPiPRbhvcLxEICT9htDOLkohlNJOmvtCnp05j2UjuCxmVCdgrQ4Bxj
-         t0q6gKseYwoWpPiI42fIIoC3HrZAmRg+cEJqVbFk24jBwyrhzfm6EbfGBmWic6VtKtSf
-         1KaA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6UVZVDWkTckMRofvjL5VoGjLlTDCFDSGu/7oPzL2y5gZZGvnNS+arQ5/k7uMvcK1v8zST4zyeg1cx602Q@vger.kernel.org, AJvYcCW+jsk9xUNtsoomrDbKVwau0d7z98uu23qcwozFp0aCt5RH2lJskAc3X/i3q+/5pjnQPc+B0Xq3noKrksryDjHO@vger.kernel.org, AJvYcCX+eoT57ikk2gKU5OkJxBKsdLCL2BffpjEjT4sYzGcrEKJmhXt9Sf94x5PvNZ/AUjzJBsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEBqhPnrKgF6+qaRRpXjPDia3hqzw0xiYrEutSXZ3q7a9NwzgV
-	ZJB++O5/j3mQtjvhcru/DTpncDpRLE6ZByiUAy7rXLPkiTtH3l7n
-X-Gm-Gg: ASbGnct3wma8AD6jKDQUf6v48I27d2QGpXhesz9fNrchJugEHWPJ6ppG1R/1vXmBu8Y
-	ILxcMj58ePZbp/9iqBOPVjDaWATlbhdssDGqQr18S4323IiCBdnpdtzm42GUjO+WNlsF2VWlmki
-	xgAucshC1IZu86jbVjbz7oY7IJz3W/4nDU8i2/aejSKHabl0LCgAV4qD+3Ap7SupKVBtR6oIM7m
-	R1YdRjy52Qf0TqPldh8Wg1bFJJV8+bGIvXMbpm7y96Q0IcvGUH3THz0Vdur5RSP+SthtWP8jvpF
-	vsHXKHiESadzXxxMEJSRjfjcm9PAuEw=
-X-Google-Smtp-Source: AGHT+IFDrW6X+85TE5d3qfk8XGG1Z1AhG0IbM9mne5W129Zyv1eca0C1OKyE5SjomlKof7boeX4iEQ==
-X-Received: by 2002:a05:600c:6046:b0:439:5a7e:5c5e with SMTP id 5b1f17b1804b1-4395a7e5f79mr27622725e9.26.1739379881461;
-        Wed, 12 Feb 2025 09:04:41 -0800 (PST)
-Received: from krava (ip4-95-82-160-96.cust.nbox.cz. [95.82.160.96])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dd2750829sm12883804f8f.7.2025.02.12.09.04.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 09:04:40 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 12 Feb 2025 18:04:38 +0100
-To: Yan Zhai <yan@cloudflare.com>
-Cc: Brian Vazquez <brianvv@google.com>, Jiri Olsa <olsajiri@gmail.com>,
-	bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-team@cloudflare.com,
-	Hou Tao <houtao@huaweicloud.com>
-Subject: Re: [PATCH v3 bpf 1/2] bpf: skip non exist keys in
- generic_map_lookup_batch
-Message-ID: <Z6zUpt5Y4I1p0A3n@krava>
-References: <cover.1739171594.git.yan@cloudflare.com>
- <85618439eea75930630685c467ccefeac0942e2b.1739171594.git.yan@cloudflare.com>
- <Z6nEsGSbWqCSaVp3@krava>
- <CAMzD94QZQjpwOA8Os3khG32d2zgH8i=Sy1VoudRCGqZudyHkag@mail.gmail.com>
- <CAO3-Pbqa_oOm-u318mTwqPfuRJ2_kdk+ou99BOu53A3O_wEyZg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DCC21506D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739379925; cv=pass; b=nw7XT8mpA06exFMD6B3jvmm6UlABJtLUivpItuJuMm7JvwG+Se0F/CB1Zte2imqB3vEf61exy+0pvUWdYYRm+UG3Kb2EGDlZle0wYditOmbGBJh0VoJFHloaiOoEbJWaiTkJs1ZcxrMPpwM3vRLPmGSDM6KO7WCnzJbYb/8O3hY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739379925; c=relaxed/simple;
+	bh=RdsXEv3SBSsPet3rWrbJqb5tDfGYvktt/g0mVmqlN+M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=maho/kVl+VQ/PxJjRcNjFqN6puWEhh6+f2O+25tT20cWCc2I/k7FLGXdY5qBRrhVz13nNWUD4plZCe5zCpTfM/NjFrhkUFdEELJ5H8rjBVFuWhyWEZRUKQNBK2nnhXadKLc5qE98UaFVmZS4yRS56VYGl+VbIqiSq83kwA+QODw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=qHWlJLzg; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1739379905; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XzIdDMmlQvd+7eqBZ48Ft6NFDObvfGC3Be/pMeDmAHLPoCZJGXVUw97X39UEEAiRrblYMg9eWQxWtGxx8O+AOY7du8of9Rb7iiopL+no7EDmhp/ei/Iwodm+YTmrTV6TYBr/KeYfR9PvUHuI9Rf9HEr+EX4+uC+9W6LQrxfUG1s=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739379905; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=EhaY44LabIRZbp1gFKZbV5ZkU6S68tdKwnnQCkN/Ysg=; 
+	b=Q6hdsqLSw2EQ8IoXJFpXGiIyLVC6ufy+1fbbE0nOhSS9xbF7jam4O4R/MEDsdQFi4qs5MuOVtefWGgWbtg65f2E+CfCbxSffeN6MLw6NKh3bI+beQJrfn0nLzjn0CzEZkIYsWs74w34oZI4jGGWc53o6ppxEMNQ36bUkw6iKBk4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739379905;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=EhaY44LabIRZbp1gFKZbV5ZkU6S68tdKwnnQCkN/Ysg=;
+	b=qHWlJLzgnc9QMfKFDayNYxao2HW5JMbJuKDS1DFJa3ffaak9qasaCWlhv0RcSBXQ
+	3oETqjpXidQyELvC8sc4Kv6ckCR5CtA+OpUkiGob0VzTWXaSF++VcCoqtlrnIRXlz+6
+	m0nLTPfPTBKEB/XAd+xXfF51zWFMEpclkGlnwGCBF+Htit8Wl6j2AOut7qWo1HyTVVW
+	no1hkY7wzQcKlDHBsY515YGGoL551gwJwxOsJt3z3EKjdktHTGLoUElNfbYKL2Bo92m
+	gQ651RY/FaucuTgXU7Jy2ofel++q52NOhkhUr1W5Wp+ZuObrYuohrl9EWTtudbKhVkh
+	Vbv3G5QxAg==
+Received: by mx.zohomail.com with SMTPS id 1739379903389217.33151028331645;
+	Wed, 12 Feb 2025 09:05:03 -0800 (PST)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 0/2] Misc fixes on registering PCI NVMe CMB
+Date: Thu, 13 Feb 2025 01:04:42 +0800
+Message-ID: <20250212170444.16138-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO3-Pbqa_oOm-u318mTwqPfuRJ2_kdk+ou99BOu53A3O_wEyZg@mail.gmail.com>
+X-ZohoMailClient: External
 
-On Mon, Feb 10, 2025 at 10:21:38AM -0600, Yan Zhai wrote:
-> Hi Brian, Jiri
-> 
-> thanks for the comments.
-> 
-> On Mon, Feb 10, 2025 at 8:47 AM Brian Vazquez <brianvv@google.com> wrote:
-> >
-> > On Mon, Feb 10, 2025 at 4:19 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> > >
-> > > On Sun, Feb 09, 2025 at 11:22:35PM -0800, Yan Zhai wrote:
-> > > > The generic_map_lookup_batch currently returns EINTR if it fails with
-> > > > ENOENT and retries several times on bpf_map_copy_value. The next batch
-> > > > would start from the same location, presuming it's a transient issue.
-> > > > This is incorrect if a map can actually have "holes", i.e.
-> > > > "get_next_key" can return a key that does not point to a valid value. At
-> > > > least the array of maps type may contain such holes legitly. Right now
-> > > > these holes show up, generic batch lookup cannot proceed any more. It
-> > > > will always fail with EINTR errors.
-> > > >
-> > > > Rather, do not retry in generic_map_lookup_batch. If it finds a non
-> > > > existing element, skip to the next key. This simple solution comes with
-> > > > a price that transient errors may not be recovered, and the iteration
-> > > > might cycle back to the first key under parallel deletion. For example,
-> > >
-> > > probably stupid question, but why not keep the retry logic and when
-> > > it fails then instead of returning EINTR just jump to the next key
-> > >
-> > > jirka
-> >
-> > +1, keeping the retry logic but moving to the next key on error sounds
-> > like a sensible approach.
-> >
-> I made the trade off since retry would consistently fail for the array
-> of maps, so it is merely wasting cycles to ever do so. It is already
-> pretty slow to read these maps today from userspace (for us we read
-> them for accounting/monitoring purposes), so it is nice to save a few
-> cycles especially for sparse maps. E.g. We use inner maps to store
-> protocol specific actions in an array of maps with 256 slots, but
-> usually only a few common protocols like TCP/UDP/ICMP are populated,
-> leaving most "holes". On the other hand, I personally feel it is
-> really "fragile" if users rely heavily on this logic to survive
-> concurrent lookup and deletion. Would it make more sense to provide
-> concurrency guarantee with map specific ops like hash map?
+Here is a small patchset that is developed during my investigation of
+a WARNING in my boot kernel log (AMD EPYC 7K62 CPU + Intel DC D4502
+SSD), which is because of the SSD's too-small CMB block (512KB only).
 
-Brian, any details on the EINTR path? is that just to survive concurent
-batch-lookup and delete?
+The first patch is a fix of the PCI DMA registration error handling
+codepath, which is just a observation-based patch (because my disk is
+only NVMe 1.2 compliant, and the register cleaned up here is only added
+in NVMe 1.4).
 
-if that's important use case I guess the map specific function would be
-possible, because it's broken for maps with holes as you described
+The second patch really fixes the warning by testing the CMB block
+against the memory hotplugging alignment requirement (which the CMB
+block of my SSD surely cannot satisfy -- the alignment requirement is
+usually 2M with SPAREMEM_VMEMMAP enabled and even larger in other cases).
 
-thanks,
-jirka
+Refer to commit 6acd7d5ef264 ("libnvdimm/namespace: Enforce
+memremap_compat_align()") for a similar approach for NVDIMM subsystem.
+
+Icenowy Zheng (2):
+  nvme-pci: clean up CMBMSC when registering CMB fails
+  nvme-pci: skip CMB blocks incompatible with PCI P2P DMA
+
+ drivers/nvme/host/pci.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+-- 
+2.48.1
+
 
