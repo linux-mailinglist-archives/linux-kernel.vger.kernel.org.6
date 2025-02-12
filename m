@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-510628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882B0A31FB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:15:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A59FA31FD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:17:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184E2188BAB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2CD3A1C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6FA204581;
-	Wed, 12 Feb 2025 07:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FCE204593;
+	Wed, 12 Feb 2025 07:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ligrOa55"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLrMKbRa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC039204097;
-	Wed, 12 Feb 2025 07:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1224202C26;
+	Wed, 12 Feb 2025 07:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739344529; cv=none; b=QV8Lmh5WWZZIYLXmPXfWkeryJi4rMHnHKC5kq9oyQWDtGffgZwyC3b9+5wfkaj79gVQ0VJmxNw9ZOcTjOQZR83Dh5gPhcD9q2RL1lJuCs5vqqq8DjMHRn+7GjSXmdx5ax2Tu5qodSBOyfDYkufGTvFL/VIFcqkP9+h1GHiGuofo=
+	t=1739344662; cv=none; b=EW2XUaLBT813kEqTEWBXP1/WNGbdWFa7+WnzSjDpmqOVPAyn4YRTyzfAtzBv3kpLvoYHeyak5rp1cVMIfsgR7mK+oEQddkKviP5o1B3pAiwV0yhcs6lf3z5Xvqyk6BgybiUFjEhQRtdftVcmSZBiNCPZLyDxHe7J75OoyGmd1iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739344529; c=relaxed/simple;
-	bh=V66YCvC0FuwsQ3Tm8P1Y43IROGLiDwhKoiqjaV3vOeg=;
+	s=arc-20240116; t=1739344662; c=relaxed/simple;
+	bh=M0TCl9ruWebYVpXDJMwU6dNYVy2BWrny5aV2GLhyWvQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qhwv4403ud+xDuPOYWoynW2IeDSL+j2xBFy7Mrzy3e5joiPuDl/EOgr6aoYBcHyTDEGVeUijQmrmXTRlnqmG+c1xOwLcbEgHbq5fnAXZJ9lKpp+cIsxXuZRUzpsKUj2zOkGkW4edKLJS0BYwHxHVieTNlWSrOfpRw54SP9/JaNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ligrOa55; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5C5C4CEDF;
-	Wed, 12 Feb 2025 07:15:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lizZsLjyQfepJp4aaE7ge6KAjDuTnl6DdW7bH8Vz/7oQ+2vICzKCjqfWHDBZytD5d/8hTRfS3XfFU+DXYVJA+J4FIZBERsdouBpLLRT1oRxKv9nCdm1rHcEafeNIgjoH9xW5pC//DpIBZq58+ytrNLvXxSUEzBsywXStMfLR9xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLrMKbRa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B07C4CEDF;
+	Wed, 12 Feb 2025 07:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739344528;
-	bh=V66YCvC0FuwsQ3Tm8P1Y43IROGLiDwhKoiqjaV3vOeg=;
+	s=k20201202; t=1739344661;
+	bh=M0TCl9ruWebYVpXDJMwU6dNYVy2BWrny5aV2GLhyWvQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ligrOa55dlzfdnDNNi2tX2QeAofE/o4XhppmFpY7n4ksubSdNSb60y7Bv6fuhL42G
-	 uKARlCvUJFO1cT6RY9+AvvtLe5EDhgYZFeOvnmrXPMp/49YIKZ5uHAE/twE56SpwLh
-	 55crwSbwXweCl07jG+fHp2plhJe3umU1DSp1JC+88dBg/NIDszVLXgRHmXyq2Y4WR/
-	 2NQIMtvvEKuR8m+D9TQYZ4dLkvrOTNK9Yc5sNXfnp0FxALkKTbzmxbV3BC0qj0Ctn3
-	 s1Pj8lhSdOb+agDfHyayP96xBWZVhNQJM8yEjna46SC+2ml/6QU5lfYoYRdxEyHQJk
-	 hEJt7Sfw2gwaw==
-Date: Wed, 12 Feb 2025 08:15:25 +0100
+	b=kLrMKbRaETei6Rm9BsZLwh7ulvGsFzKWxATUwGYPGTTnUXOIJg9AUacaAhvNHypVe
+	 sA6alhnFUbx64MGolpEsPwgBhpIhXPzaVWgbPWwmvfcfSt1SyEz1OV8ah6Th396gLE
+	 NokReo+OcGmB+0NcRnfXBlSpuM1yAgIVdWZ3zr0gFJEih16NQTw82jxpAqJU5tkV9I
+	 lIi/RpbCez4+Z6WsKEAhzWQ6AT/VK9oSbhrQHayewwdiCt+R48ZOahTzHk2EaHG/fN
+	 nE6o6Ruj5ptLGZEY5xwIQlUvId7BDvWO9fWvEiM0fAeobSu7RA3Yw2optKRByDo+xL
+	 foTwh8QwdN7Dw==
+Date: Wed, 12 Feb 2025 08:17:37 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nikola Jelic <nikola.jelic83@gmail.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, 
-	tiwai@suse.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rwalton@cmlmicro.com
-Subject: Re: [PATCH V3 1/2] ASoC: dt-bindings: Add cmx655 codec
-Message-ID: <20250212-gabby-aardwolf-of-chivalry-a7fda2@krzk-bin>
-References: <20250210222903.88282-1-nikola.jelic83@gmail.com>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, jonath4nns@gmail.com, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v3 05/17] dt-bindings: iio: adc: ad7768-1: document
+ regulator provider property
+Message-ID: <20250212-dazzling-glaring-shrimp-9530e6@krzk-bin>
+References: <20250211234717.1008325-1-Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,128 +59,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250210222903.88282-1-nikola.jelic83@gmail.com>
+In-Reply-To: <20250211234717.1008325-1-Jonathan.Santos@analog.com>
 
-On Mon, Feb 10, 2025 at 11:28:46PM +0100, Nikola Jelic wrote:
-> Signed-off-by: Nikola Jelic <nikola.jelic83@gmail.com>
+On Tue, Feb 11, 2025 at 08:47:16PM -0300, Jonathan Santos wrote:
+> The AD7768-1 provides a buffered common-mode voltage output
+> on the VCM pin that can be used to bias analog input signals.
 > 
-
-Nothing improved here. Respond to previous comments or implement them.
-
-Some things got better in this patch, thank you. Other did not. Maybe
-there is misunderstanding about my comments, but you never replied to
-them, so I would assume you will be implementing them fully. If
-something is unclear, ask responding inline.
-
-
-> ---
-> V2 -> V3: fixed dt_binding_check + yamllint warnings
-> V1 -> V2: removed the txt file, fixed review remarks
-> ---
->  .../bindings/sound/cml,cmx655d.yaml           | 78 +++++++++++++++++++
->  .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
->  2 files changed, 80 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/cml,cmx655d.yaml
+> Add regulators property to enable the use of the VCM output,
+> referenced here as vcm_output, by any other device.
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/cml,cmx655d.yaml b/Documentation/devicetree/bindings/sound/cml,cmx655d.yaml
-> new file mode 100644
-> index 000000000000..1648f606bf48
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/cml,cmx655d.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/cml,cmx655d.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: CML Micro CMX655D codec
-> +
-> +maintainers:
-> +  - Richard Walton <rwalton@cmlmicro.com>
-> +  - Nikola Jelic <nikola.jelic83@gmail.com>
-> +
-> +description:
-> +  The CMX655D is an ultra-low power voice codec.
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - cml,cmx655d
-> +
-> +  reg:
-> +    description: Local bus address
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+> v3 Changes:
+> * VCM is now provided as a regulator within the device, instead of a 
+>   custom property.
+> 
+> v2 Changes:
+> * New patch in v2.
 
-Drop, why did this appear?
+There is some mess in this posting. Nothing looks threaded and b4 does
+not see entire posting.
 
-> +    maxItems: 1
-> +
-> +  "#sound-dai-cells":
-> +    description: The first cell indicating the audio interface
-
-Drop, redundant. It wasn't here before and I did not ask for this, so why?
-
-> +    const: 0
-> +
-> +  reset-gpios:
-> +    description: GPIO used for codec reset, negative logic
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description: Interrupt for the CMX655D IRQ line
-
-Drop
-
-> +    maxItems: 1
-> +
-> +  interrupt-names:
-> +    description: Interrupt name for the CMX655D IRQ line
-
-Nothing improved. Maybe there was some misunderstanding. I asked to look
-at other bindings doing this. Where do you see syntax like that for
-interrupt-names? What syntax do you see for interrupt-names?
-
-> +    maxItems: 1
-> +
-> +  cml,classd-oc-reset-attempts:
-> +    description: Maximum number of times to reset CMX655 class-D
-> +      following a overcurrent event.
-> +      >10000 = disable limit.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 10001
-> +    default: 5
-
-Still no answer why this is board configurable.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        status = "okay";
-
-Another ignored comment.
-
-> +        audio-codec@54 {
-> +            compatible = "cml,cmx655d";
-> +            #sound-dai-cells = <0>;
-> +            reg = <0x54>;
-
-Another...
-
+Sorry, don't make it complicated to us. Send proper submission - see
+numorous guides or submitting-patches - so reviewing will be
+straightforward.
 
 Best regards,
 Krzysztof
