@@ -1,112 +1,143 @@
-Return-Path: <linux-kernel+bounces-511923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51304A3317D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:30:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803CBA33183
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6A06167213
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:30:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FA5C7A3037
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B14D2036E0;
-	Wed, 12 Feb 2025 21:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A175202F90;
+	Wed, 12 Feb 2025 21:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmxOk7fE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qtDmKaS/"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A893E202F90
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 21:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AFE202F6D;
+	Wed, 12 Feb 2025 21:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739395809; cv=none; b=Fe+liyC2hmU3CDkcoYSdmhpsiwJ6XwL0yv7RBYZUKwj3ykZdQo/rntUxrK+7YtxS3vGGgO4p7EqNPqi6kNzckGZ0fMMbKHoyZJqsMAzGnxUT+30X5R5MnVyd8SI1cnA3DlciWifAgurrvEgHFXD18BxyzawmQlkQFyxClTg8TbU=
+	t=1739396078; cv=none; b=DgVaqxvkBEt5IQrxT/Z3r2NnThjVY9X2HbHkFY0LlapH3fcHZmpQlAJpTMAuyx9DL8zFIcBtiiIjwWuhp2DIjlqyP7wVnvMXZGndeCJYygy9CqsSMoiFw0c06O1pin2gzXeLIyYqxOYpufdOTZcXAWm8v5w8QUBtC6ICkoQo1ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739395809; c=relaxed/simple;
-	bh=E11JdGdSryE4u0Zj75nD+BOOC9K1hxW6LuRwZCgPYLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M0eRINQRciSZoyBvIZqk6cSVqxj4XkU+Wfug9UJ9j8++m0ViagLv3VnmK4HbH5mJ9CCv+HcW51lNJ3/0HEDMXYcxQuaCk2Zba3hvZ3GNV4LFyjU7Hc/9g/MvvXWRS0CwIjaDcMqwK4OWoQPLnUrH1fpOblDyCoksgOIIj1s3NbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmxOk7fE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B781C4CEDF;
-	Wed, 12 Feb 2025 21:30:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739395809;
-	bh=E11JdGdSryE4u0Zj75nD+BOOC9K1hxW6LuRwZCgPYLI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jmxOk7fEH6KfaykFBtirOyC0oMQup5NfTBne2E4szWsvNk7vMzgmFtSyvqsWpVvy7
-	 Y5HOr7EU7Zm2Amp7eprapQ8NXhL2coJ3jvPCt/tOdDcsNjexyhgo6B+085ZqoXcmV9
-	 eqaGE//C49gj1NWkwHw5gUbyGWKgrxKbymxkl3+84xdfRttir1OrzlQRZVnPBXW5aG
-	 1kCyzw1uz1TtTeh3jQ6dfYY4mE8OHztmIUx8WFthQ3bFQEF7Dcry4PwcI5nGEht1tr
-	 BJEQeovg3POnPoVJEIVrWbaxEYtxiJ9XP5s2i18ltnTs6xcZk0j5PCeUZEfHWhzpQO
-	 Djm3OETH4cqGQ==
-Date: Wed, 12 Feb 2025 11:30:08 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Dennis Zhou <dennis@kernel.org>, Filipe Manana <fdmanana@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm, percpu: do not consider sleepable allocations atomic
-Message-ID: <Z60S4NMUzzKbW5HY@slm.duckdns.org>
-References: <20250206122633.167896-1-mhocko@kernel.org>
- <Z6u5OJIQBw8QLGe_@slm.duckdns.org>
- <Z6zS4Dtyway78Gif@tiehlicka>
- <Z6zlC3juT46dLHr9@slm.duckdns.org>
- <Z60KQCuPCueqRwzc@tiehlicka>
+	s=arc-20240116; t=1739396078; c=relaxed/simple;
+	bh=fzERoalNNXp/hmizWvEuDSArp4eamDZD6SV8xLCFnvg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mFM+96PsKhIqc+S2/J5kfl+hBUcA4SHAE121MPPIbL1MKAGZaq/0M/MsBKVEGODcbPcwyTBJzjxbJxGlpk+n4NxsnpIoeV5cDvlsPIxyzFWgAqBQRAFiRIF+YkQ2T+Y55FCIwmVtXAbfSGyB4zB5FeeBBF3EWwt6hOCXRHwYXDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qtDmKaS/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CKGGfx030209;
+	Wed, 12 Feb 2025 21:34:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=MgBTRAm2qlJPQpFVXIko132bunUaVhteRudWPVi7E
+	cQ=; b=qtDmKaS/QND1FLaq2CHccAYvt3EpqeaIgNcG+ds+rjYnrZyPBJlclhtgN
+	7NQmFI121Ig3lwz/olAaLxevcBsK1OW/I9ELZk914nr31sXuYOdONzT69/lFt4e2
+	QymGUS6zsQsbopPgvxZmCAC4qhiwzSLoQex6YJuphBgfK+jh4iivVOm9LMVzQcij
+	/gcyQL7vM30VHoI8yn0h6t6ghVIyjomDuEJxZaMExIIcNFnpNTFV5uW16D+TPhGU
+	CAZlnWIVrzRpwmR4ILuSEO/m9yOr9llT8RKUftLchyHAq4piyxAg3o+LSKnf5H89
+	TDJKVNiLWWlxY2Xd6xUEbbdU2mSCQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rjfywmnd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 21:34:22 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CISi6L028244;
+	Wed, 12 Feb 2025 21:34:21 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44phyyk53x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 21:34:21 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CLYKK427460106
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Feb 2025 21:34:20 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6C5975805A;
+	Wed, 12 Feb 2025 21:34:20 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4C74F58056;
+	Wed, 12 Feb 2025 21:34:19 +0000 (GMT)
+Received: from li-2311da4c-2e09-11b2-a85c-c003041e9174.ibm.com.com (unknown [9.61.186.234])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Feb 2025 21:34:19 +0000 (GMT)
+From: Matthew Rosato <mjrosato@linux.ibm.com>
+To: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+        gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
+Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        svens@linux.ibm.com, borntraeger@linux.ibm.com, farman@linux.ibm.com,
+        clegoate@redhat.com, jgg@nvidia.com, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [PATCH v5 0/4] iommu/s390: add support for IOMMU passthrough
+Date: Wed, 12 Feb 2025 16:34:14 -0500
+Message-ID: <20250212213418.182902-1-mjrosato@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z60KQCuPCueqRwzc@tiehlicka>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: c8Zv0tFLzrc5MeB81vmbhQJXWciR6Rc1
+X-Proofpoint-ORIG-GUID: c8Zv0tFLzrc5MeB81vmbhQJXWciR6Rc1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_06,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxscore=0 suspectscore=0 adultscore=0 clxscore=1015 mlxlogscore=689
+ lowpriorityscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120152
 
-Hello,
+This series introduces the ability for certain devices on s390 to bypass
+a layer of IOMMU via the iommu.passthrough=1 option.  In order to enable
+this, the concept of an identity domain is added to s390-iommu.  On s390,
+IOMMU passthrough is only allowed if indicated via a special bit in s390
+CLP data for the associated device group, otherwise we must fall back to
+dma-iommu.
 
-On Wed, Feb 12, 2025 at 09:53:20PM +0100, Michal Hocko wrote:
-...
-> > Hmm... you'd a better judge on whether that'd be okay or not but it does
-> > bother me that we might be increasing the chance of allocation failures for
-> > GFP_KERNEL users at least under memory pressure.
-> 
-> Nope, this will not change the allocation failure mode. Reclaim
-> constrains do not change the failure mode they just change how much the
-> allocation might struggle to reclaim to succeed. 
->
-> My undocumented assumption (another dept on my end) is that pcp
-> allocations are no hot paths. So the worst case is that GFP_KERNEL
-> pcp_allocation could have been satisfied _easier_ (i.e. faster) because
-> it could have reclaimed fs/io caches and now it needs to rely on kswapd
-> to do that on memory tight situations. On the other hand we have a
-> situation when NOIO/FS allocations fail prematurely so there is
-> certainly some pros and cons.
+Changes for v5:
+- Fixup error checking for bus_dma_region size
+- Add review/test tags
 
-I'm having a hard time following. Are you saying that it won't increase the
-likelihood of allocation failures even under memory pressure but that it
-might just make allocations take longer to succeed?
+Changes for v4:
+- Additional patch to handle IOAT registration within s390-iommu.  This
+  fixes an issue with re-registration of identity domain during events
+  like zpci_hot_reset_device
+- Fixup page alignment for bus_dma_region setup
+- Dropped a few review/test tags due to above changes
 
-NOFS/IO prevents allocation attempt from entering fs/io reclaim paths,
-right? It would still trigger kswapd for reclaim but can the allocation
-attempt wait for that to finish? If so, wouldn't that constitute a
-dependency cycle all the same?
+Changes for v3:
+- Rebase onto 6.13
+- fixed bus_dma_region size (Niklas) 
 
-All in all, percpu allocations taking longer under memory pressure is fine.
-Becoming more prone to allocation failures, especially for GFP_KERNEL
-callers, probably isn't great.
+Changes for v2:
+- Remove ARCH_HAS_PHYS_TO_DMA, use bus_dma_region
+- Remove use of def_domain_type, use 1 of 2 ops chosen at init
 
-> As I've said I am no pcp allocator expert so I cannot really make proper
-> judgment calls. I can improve the changelog or move from scope to
-> specific gfp flags but I do not feel like I am positioned to make deeper
-> changes to the subsystem.
+Matthew Rosato (4):
+  s390/pci: check for relaxed translation capability
+  s390/pci: store DMA offset in bus_dma_region
+  iommu/s390: handle IOAT registration based on domain
+  iommu/s390: implement iommu passthrough via identity domain
 
-I don't think deciding whether always using NOIO/FS is a good idea requires
-knowing the percpu allocator that well. It's just depending on the
-underlying page allocator for that part.
-
-Thanks.
+ arch/s390/include/asm/pci.h     |   4 +-
+ arch/s390/include/asm/pci_clp.h |   4 +-
+ arch/s390/kvm/pci.c             |  17 +---
+ arch/s390/pci/pci.c             |  35 ++++----
+ arch/s390/pci/pci_bus.c         |  25 ++++++
+ arch/s390/pci/pci_clp.c         |   1 +
+ arch/s390/pci/pci_sysfs.c       |  11 +--
+ drivers/iommu/s390-iommu.c      | 138 ++++++++++++++++++++++++++------
+ 8 files changed, 168 insertions(+), 67 deletions(-)
 
 -- 
-tejun
+2.48.1
+
 
