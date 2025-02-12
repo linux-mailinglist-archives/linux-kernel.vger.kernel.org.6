@@ -1,162 +1,105 @@
-Return-Path: <linux-kernel+bounces-511978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0BEA3324B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:15:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040D5A3324C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F693188C089
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:15:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA07E168D7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036642040BF;
-	Wed, 12 Feb 2025 22:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53573205AB6;
+	Wed, 12 Feb 2025 22:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oAtLihFF"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BY3/kzF0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C1620408A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E982045A1;
+	Wed, 12 Feb 2025 22:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739398467; cv=none; b=DbmRa3uLP34oHLfLnOoYI54D3tKxZIL86PgslNtZbaaRAfg4yfz2Ut9OX7J913OwzVZvCrdZivkeWUZFY1gjrdkU3VBL3MwQLNdZNSE+HVrYsNITs/eHDWiar9JoYYYOEd4uirSZhkQeXSk9JXlGJo9B96Q6LZWAOF5cHmqtOn0=
+	t=1739398487; cv=none; b=reLtFSji+3EDU+rX/n0Arr/OxXHKc4br6agrfapcaajNUlyRGi8J43Ah6owJaYyullehgKZxCQhmgcUk/0oiof4FNpTbQkNaEj+/li8O/NWp3T/fhoXvb8K687lkNUT9H0t/zvbYWi409yPQgxwGoPy68cZxQeAtVwOabzDJ4/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739398467; c=relaxed/simple;
-	bh=G+nTDK4sSbJchmSn+8ZNil8Qq03iohzkfde6VphcdsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LO9IMC71HRrA+cxDz/ty9yI5G+AETz/OiHqpR9QVH9UTi8kyZeQH4TTfz6tJ3J/Oeej3y4D7azqCWAr/wV5yOG4BcIMV1Qk+P4PU0X2r0zIUOEK5M3FMTP7kkZJ2hSJ58qMDwfcwKx2+KijPdzPzCj+r4BQqjIcXRNQYMNPUiBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oAtLihFF; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-219f6ca9a81so7925ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:14:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739398465; x=1740003265; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RIamoPjwg48ZZC5Sh2bLQXIBfW0utIiRcjouU0t3hJI=;
-        b=oAtLihFFzWr1++knG4t85uNigpH2CRah7Dqjht8T1kuano3h04OZq2vY3Kv/ve1rBz
-         RkdBpUysaGLVyfPAY5OKra3PCXuR3ichk221TsfABDU9EacSiLQcuUiwPxteFgXaV5MN
-         tT9w0NwBn3D5McigAtYIT78PxV0r2UdhTucYol2Sr+ITPrDCZ9sFTJj2DIJltOBzY41L
-         xQaUUliphs4vBKdi17f2Mp77QANFXJihEXQMhxXfBzUvhGoWdpW2xBJID6gATw6Su2K9
-         XmMeICQ41zzegJnxVkPJOoEQxkyuNfViK9NVO6+hid6Is85T92Fw6r3DdWKCk3oTo68S
-         1TxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739398465; x=1740003265;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RIamoPjwg48ZZC5Sh2bLQXIBfW0utIiRcjouU0t3hJI=;
-        b=cZb7XEH9hdRca2QDjSJFxiyeB0o8io7rF6GQdKXtG6E8oxMCx+7SuKLmGu2mKQoP0s
-         l8mgWtjQ9yxRDtABYTnoyPFYgBf70q4XbAn/GMvczW04nigixfCoPBuGvgPvreMx37zH
-         XA9WkXg+Nn7ynpnNWdMBe3rESsR9UcfPK6z3ouP917G69thv27d6X8CQKeE976oKmkR6
-         Pb21qjp5cmDlm5YvNlDgLTTdIzfPVKBJ3VE0gXSUVmRvTeJYbgeaZmow8tc3rmA2p02W
-         EMGK9h6ZGwNHBmsM50J3OCAiZYBRmYmQaoC2JyWAutapZAYwj0oirKzg6rllUX2lq7Uf
-         CnAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOskaJuLqpj2r8JD99Nks1q44GkGuZWf7bFyftrNTD7UlDLK5HBp/0JX/TkrVIM2fhsR/ZkexYl8CuUG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweEGWuwB9ZiHuH+MFXaY+ywLnjJJ+B3/FUb3naqEhLNhgwwU73
-	khI9Puk9/S8omkWvNV3AKz/vWW+f3LLoLDGJqEquG1BowpW+8rXvsg/+iZg+zg==
-X-Gm-Gg: ASbGncsrWRusFPURTQ8aoDSvycvUX7blxVI5VmUfZttQlBZy/jIHPFH96mt9aE7X1so
-	JMfz3wj+I5jHGTJXusoACorV5qQFztPZJCTGlQUyAVWb1l+UV7JBgFQMszbiwU2MdS9ezYW5XdV
-	y3ZtYkBfvlH8OoaR5kYqXbtL7PrJmaamxdFvXeO+aS4ziNDeh4jrQTAYhcs7n/f04+Gs47lqeMB
-	OQcDhBEH0EYfwC5D3Rb3xwTpq3Fj7tC1UWhbYpZH1eUZ3nw/egcqWm77BS66vmMIMTyCYfe0KiI
-	E83FWtpCEtzDMB0f3cXyi2mlzyZz+GD90IhLxcEu2+VB0aTwY0tVNA==
-X-Google-Smtp-Source: AGHT+IHoHezTdxvkJ/1VIrDh3oYzMtm6RGlYCwXFrwTeWP7zj3QgqCDHMbHI4+dadLOhjZf0y9DdCw==
-X-Received: by 2002:a17:902:f550:b0:21c:e29:b20d with SMTP id d9443c01a7336-220d555da00mr178295ad.3.1739398464924;
-        Wed, 12 Feb 2025 14:14:24 -0800 (PST)
-Received: from google.com (147.141.16.34.bc.googleusercontent.com. [34.16.141.147])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73048ae7f8fsm11770742b3a.71.2025.02.12.14.14.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 14:14:24 -0800 (PST)
-Date: Wed, 12 Feb 2025 22:14:19 +0000
-From: Peilin Ye <yepeilin@google.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	bpf@ietf.org, Xu Kuohai <xukuohai@huaweicloud.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	David Vernet <void@manifault.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Quentin Monnet <qmo@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Ihor Solodrai <ihor.solodrai@linux.dev>,
-	Yingchi Long <longyingchi24s@ict.ac.cn>,
-	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>,
-	Neel Natu <neelnatu@google.com>,
-	Benjamin Segall <bsegall@google.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v2 4/9] bpf: Introduce load-acquire and
- store-release instructions
-Message-ID: <Z60dO2sV6VIVNE6t@google.com>
-References: <cover.1738888641.git.yepeilin@google.com>
- <d03d8c3305e311c6cb29924119b5eecae8370bbc.1738888641.git.yepeilin@google.com>
- <CAADnVQ+L0h8qXfYkC3+ORyQkXFJ2MgO8FDHr_Ha0QMAtS_ujag@mail.gmail.com>
- <Z6gRHDLfA7cjnlSn@google.com>
- <CAADnVQLkHA9LGv99k2TZOJEGUU=dw=q6nVurJ=aoh0v6cFS6zQ@mail.gmail.com>
- <Z6qC303CzfUMN8nV@google.com>
+	s=arc-20240116; t=1739398487; c=relaxed/simple;
+	bh=NZW/9uBsUIjGoRgqr43K+mpay3vj7uS6/3JlM50sCdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nzw9eOz4xfO3MTCZVCAaLlqLh8wQijZSfnBB9gWYW1ePlD49JG6juhwUE9v51t9sfYGXdcJdeZEPlwzeLUMEtAAyHzbYWyXQ8M3nssB4QEZRkxqT1+k+r1YSU2Jn2ph7jOMc/f0CnpdWV2D5VOML+f05sMJVGdwm/FqSRMpc5U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BY3/kzF0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACDA6C4CEDF;
+	Wed, 12 Feb 2025 22:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739398487;
+	bh=NZW/9uBsUIjGoRgqr43K+mpay3vj7uS6/3JlM50sCdU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BY3/kzF0cVm/Vkm6KiKsM1Vc/PK1cnV8tNW3FWMStTVMpTnSl6XgEqQRaJ1YrQI12
+	 nNOi4B8lstCJK85H+0LhMTZU+MRcWRRGBc6sVF+gE2v6aUWdw4vYvjcDWJ/pjc4zQO
+	 NZXnGslum6p98bvpcT4egXyQnh4I0B3PEF0RWjIRHXSNDewbRbmM4mayG1VNHa1Ptd
+	 gwo3pqwnn9JdhzJ9FSMlX5TGLiJySkNp4Nx8ZC5ccjQa2LlPX8qPJDUyuLXtnc5u2d
+	 W1NRllTKIMEAN80sltfiBi6m4Kr/bW8MqJfhZZs4ZprkyC+Y8DGH41mB6hmI7NotAh
+	 QyrrDdAb2VmFQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH] perf tools: Use symfs when opening debuginfo by path
+Date: Wed, 12 Feb 2025 14:14:45 -0800
+Message-ID: <20250212221445.437481-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6qC303CzfUMN8nV@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 10, 2025 at 10:51:11PM +0000, Peilin Ye wrote:
-> > >   #define BPF_LOAD_ACQ   0x10
-> > >   #define BPF_STORE_REL  0x20
-> > 
-> > why not 1 and 2 ?
-> 
-> I just realized that we can't do 1 and 2 because BPF_ADD | BPF_FETCH
-> also equals 1.
-> 
-> > All other bits are reserved and the verifier will make sure they're zero
-> 
-> IOW, we can't tell if imm<4-7> is reserved or BPF_ADD (0x00).  What
-> would you suggest?  Maybe:
-> 
->   #define BPF_ATOMIC_LD_ST 0x10
-> 
->   #define BPF_LOAD_ACQ      0x1
->   #define BPF_STORE_REL     0x2
-> 
-> ?
+I found that it failed to load a binary using --symfs option.  Say I
+have a binary in /home/user/prog/xxx and a perf data file with it.  If I
+move them to a different machine and use --symfs, it tries to find the
+binary in some locations under symfs using dso__read_binary_type_filename(),
+but not the last one.
 
-Or, how about reusing 0xb in imm<4-7>:
+  ${symfs}/usr/lib/debug/home/user/prog/xxx.debug
+  ${symfs}/usr/lib/debug/home/user/prog/xxx
+  ${symfs}/home/user/prog/.debug/xxx
+  /home/user/prog/xxx
 
-  #define BPF_ATOMIC_LD_ST 0xb0
+It should check ${symfs}/home/usr/prog/xxx.  Let's fix it.
 
-  #define BPF_LOAD_ACQ      0x1
-  #define BPF_STORE_REL     0x2
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/debuginfo.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-0xb is BPF_MOV in BPFArithOp<>, and we'll never need it for BPF_ATOMIC.
-Instead of moving values between registers, we now "move" values from/to
-the memory - if I can think of it that way.
-
-- - -
-Or, do we want to start to use the remaining bits of the imm field (i.e.
-imm<8-31>) ?
-
-Thanks,
-Peilin Ye
+diff --git a/tools/perf/util/debuginfo.c b/tools/perf/util/debuginfo.c
+index 19acf4775d3587a4..b5deea7cbdf24620 100644
+--- a/tools/perf/util/debuginfo.c
++++ b/tools/perf/util/debuginfo.c
+@@ -125,8 +125,12 @@ struct debuginfo *debuginfo__new(const char *path)
+ 	dso__put(dso);
+ 
+ out:
++	if (dinfo)
++		return dinfo;
++
+ 	/* if failed to open all distro debuginfo, open given binary */
+-	return dinfo ? : __debuginfo__new(path);
++	symbol__join_symfs(buf, path);
++	return __debuginfo__new(buf);
+ }
+ 
+ void debuginfo__delete(struct debuginfo *dbg)
+-- 
+2.48.1.502.g6dc24dfdaf-goog
 
 
