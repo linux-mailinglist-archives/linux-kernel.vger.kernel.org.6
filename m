@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-511885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80961A33105
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCEEA3310D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:51:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B973AA646
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:48:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27E73A1817
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C2A1EEA4A;
-	Wed, 12 Feb 2025 20:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC04202C4A;
+	Wed, 12 Feb 2025 20:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YYRYO1Oj"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=fr.zoreil.com header.i=@fr.zoreil.com header.b="SjBtZNKA"
+Received: from violet.fr.zoreil.com (violet.fr.zoreil.com [92.243.8.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C5327183B;
-	Wed, 12 Feb 2025 20:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012291EEA4A;
+	Wed, 12 Feb 2025 20:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.243.8.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739393312; cv=none; b=KmRxSkJ8La2JV3Ra7y0OaxP2qWlQJopJD4b2BwiLVRc5XSKD23duPU7LNVtYKXKsHxDDCgDt1Csu7wp8Hh0vOPD3v0KZF3g7igVH3lIPwqT+yueCwCJjLsk0WvwgYVkP6CQQ9oXD9zOP1iIci9Myba+9QVJrMICfZYJx8RA2AOU=
+	t=1739393491; cv=none; b=Rz8eDv+9liXEzNh26SE2BP0vFaF4T4lCEDoIOi6B9p2GN/1Fb+3jmKncIDqWWAN8v8tNY8lrlpJgtPlUo+r8lUMrYgciny+p1o3pAxnfeoyIxnX/z3pnrw7FcHhCtxntHh8HSWVuEJc16lE+3kS8bkPzTxu4niPVEVFxAIU5pLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739393312; c=relaxed/simple;
-	bh=Ynjcg/wBAh7toCB0/mDBaDazWwr2eUsLbQ9/GS1Hxn0=;
+	s=arc-20240116; t=1739393491; c=relaxed/simple;
+	bh=jzUTJv45demkUarPa9lEr/aqyCAwc9mdZXYtnY7m2+o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zjqp72wYGu1XM7WWp+fjK0cVvSbwGeG7nqjArwzZwToZGuLxgtOKgwAJH6WX/a/ZOM9unIZi2c4+XfKGfsJyCDMDUiEjxF8b9b9ZVYw0duSCpaLwlrzFQFh/YmAIfETAdtWk1VLKpHp29AAiPEscKQhSltFPlwTJBolaGKruJw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YYRYO1Oj; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=EwJX+/PWZhhxXieABK1r+Cs6kda0dREWNvtRzcjq2PA=; b=YYRYO1OjbfN1ipIniBiMRwfD+Z
-	HzCz8ntig54vjPXSymcaB7nyxWrvp1OGaJSBBNnOF4WYL+vqjSVcskfzlDaeDAEJPlgdVbrOVeRJR
-	4WKmKc9PotsJ+bZay6XeLy0DXGIbOgp1LxyloLASbWP1uVfw+GrTthSwq+QfRUBnXGuo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tiJeh-00DVhn-4v; Wed, 12 Feb 2025 21:48:23 +0100
-Date: Wed, 12 Feb 2025 21:48:23 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] ARM: dts: marvell: armada: Align GPIO hog name
- with bindings
-Message-ID: <b4b4c809-6f25-43a7-92d1-e9d16a09249b@lunn.ch>
-References: <20250212204156.57261-1-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ph0BH+CO/5WwLLJpNwUjpb7v44ZucSYXYWUS8edDfQcdmolr0DEcCYV96veP5RlAfocBqockxm/sSCtOe2eAD4mDh1mxWjPEHXBYIYgNBs1xuoUtbWG9ayD7w4dgfNTmRqeoFpJctOZLS6VIKz5JCeItQFnQmgsfnh3ypw2N18k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fr.zoreil.com; spf=pass smtp.mailfrom=fr.zoreil.com; dkim=pass (1024-bit key) header.d=fr.zoreil.com header.i=@fr.zoreil.com header.b=SjBtZNKA; arc=none smtp.client-ip=92.243.8.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fr.zoreil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fr.zoreil.com
+Received: from violet.fr.zoreil.com ([127.0.0.1])
+	by violet.fr.zoreil.com (8.17.1/8.17.1) with ESMTP id 51CKnVvS2686036;
+	Wed, 12 Feb 2025 21:49:31 +0100
+DKIM-Filter: OpenDKIM Filter v2.11.0 violet.fr.zoreil.com 51CKnVvS2686036
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fr.zoreil.com;
+	s=v20220413; t=1739393371;
+	bh=F1PJTb1t/9OF2CI48FIGTG+U0Elr59Ye0fqTYu9brXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SjBtZNKATBhPzqrDVztSYIMN0JC235eiJFrg6UZ+OJ8gh1f6lPlR2p1E7Y/5byHzH
+	 8L+QtL0T0ELQ4z2eqWU2omkP2eVSF+yzIbQQ6rxo3V7knM6oINfZyiS2eUn8k0W/Cf
+	 1bQrrIgclgHcvDS430l5G1tIpjH/6GRiJjbXYL/U=
+Received: (from romieu@localhost)
+	by violet.fr.zoreil.com (8.17.1/8.17.1/Submit) id 51CKnT7J2686035;
+	Wed, 12 Feb 2025 21:49:29 +0100
+Date: Wed, 12 Feb 2025 21:49:29 +0100
+From: Francois Romieu <romieu@fr.zoreil.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Hayes Wang <hayeswang@realtek.com>, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Re: [PATCH 2/2] r8152: Call napi_schedule() from proper context
+Message-ID: <20250212204929.GA2685909@electric-eye.fr.zoreil.com>
+References: <20250212174329.53793-1-frederic@kernel.org>
+ <20250212174329.53793-3-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,17 +65,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212204156.57261-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250212174329.53793-3-frederic@kernel.org>
+X-Organisation: Land of Sunshine Inc.
 
-On Wed, Feb 12, 2025 at 09:41:56PM +0100, Krzysztof Kozlowski wrote:
-> Bindings expect GPIO hog names to end with 'hog' suffix, so correct it
-> to fix dtbs_check warnings like:
-> 
->   armada-385-clearfog-gtr-s4.dtb: wifi-disable: $nodename:0: 'wifi-disable' does not match '^.+-hog(-[0-9]+)?$'
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Frederic Weisbecker <frederic@kernel.org> :
+[...]
+> r8152 may call napi_schedule() on device resume time from a bare task
+> context without disabling softirqs as the following trace shows:
+[...]
+> diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+> index 468c73974046..1325460ae457 100644
+> --- a/drivers/net/usb/r8152.c
+> +++ b/drivers/net/usb/r8152.c
+> @@ -8537,8 +8537,11 @@ static int rtl8152_runtime_resume(struct r8152 *tp)
+>  		clear_bit(SELECTIVE_SUSPEND, &tp->flags);
+>  		smp_mb__after_atomic();
+>  
+> -		if (!list_empty(&tp->rx_done))
+> +		if (!list_empty(&tp->rx_done)) {
+> +			local_bh_disable();
+>  			napi_schedule(&tp->napi);
+> +			local_bh_enable();
+> +		}
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+AFAIU drivers/net/usb/r8152.c::rtl_work_func_t exhibits the same
+problem.
 
-    Andrew
+-- 
+Ueimor
 
