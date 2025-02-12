@@ -1,232 +1,162 @@
-Return-Path: <linux-kernel+bounces-510906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE90A32378
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:28:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD61A3234E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:17:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F552188B1AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:28:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A098D162C9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4073208961;
-	Wed, 12 Feb 2025 10:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6193B20551C;
+	Wed, 12 Feb 2025 10:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="XN/z+1b9"
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lxL5udSV"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2F41E500C;
-	Wed, 12 Feb 2025 10:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946931E500C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739356104; cv=none; b=N5uGYNt9fRu2nDgwla9KHz+XB+4w3A38KBEP/tLrKtXiyQXjXtG9PR59WPO6R0+qbGRhT6D//JSjfSwvQlUgEQ9ydRTWi7I5ydu7RwTqefIcvhDz2Zd55v8MMkhEPzfZWRjGyugxhyXglOmd5kAZu6GGF9o4XzIngfOQkaii7RY=
+	t=1739355421; cv=none; b=c/UQ+nyNLOxqOO5f40QMgkXnYdHagbsz2U4PPyAD9YZ/S0Ohy+ZTqi0Ggujzj7FckxeRAoOg42vGHrrLDXfFmQcksAT6ReRAfpIeKNs4gm/XXPe6flDAOFMhbWKhgAmP25tokTNrm0n908jX8Z/wLTDHTIqDh1K1E2fRiBES1EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739356104; c=relaxed/simple;
-	bh=Wz6iXmcsFrEVmG+EnId6NIbwPCBvteN3+pwH0yeRkCw=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=B8q3vvfaSFSXsC407dlqOWQeNOYOMTZzSuaBZl4biEDLJIuBRwhGbuZ+zVYnofHzauo7bXiuTTNwnad+68qPx6PG9Lwc38UKQ1uzaa9R7SAhpM0hy/n4o8mRV1i6mD+3f1p73Mcshi1zuPjDAtB8Qmvp/hponqGqwv8u9sW2GWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=XN/z+1b9; arc=none smtp.client-ip=203.205.221.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1739356098;
-	bh=oSSe/GgjHh0szYlaaSrh9h5S5lfXg+8ynEri0cdnafE=;
-	h=From:To:Cc:Subject:Date;
-	b=XN/z+1b9lnObCyfUBddYK18Quw9q3Oul84P+30onmtZ4zg0TFVI/GXfNNLFJB4FZ2
-	 +Q+umUnph7CR/RKXA7QxwPFg/bzWrvvmDcmC+BJHUkhDapnPleaIbcsmw8uVQqrE9K
-	 aRUG0LOrWCF0b+wVx6XarGl3RrBn7EhBrFzSQq+4=
-Received: from NUC10.. ([39.156.73.10])
-	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
-	id 3A13BEE0; Wed, 12 Feb 2025 18:14:33 +0800
-X-QQ-mid: xmsmtpt1739355273tjnp76cxp
-Message-ID: <tencent_515567355C0AA854BDA68C3A219A18040B0A@qq.com>
-X-QQ-XMAILINFO: OIJV+wUmQOUAFZpyS7yx/QaJJ5E7k2RZ6evFMt+32t2NM12PZiwQMFH+K4aC5f
-	 1Tf6QWtScoaM4kvdwK0TnyxmcOVNVR8SI5kQkD8d3tc1i2RzJYO2GEDa34Ikj16eoKMW3VMtV1Np
-	 uMtmNG5yBMXbkpjeJbXYz1lpYXfH6PIaB+5LJq+apOAIxvQTkCbcTlgZ1hY1eVOsfFHIE2A8KN5T
-	 KTlN7R3pB2CCX69SIK9WOOIt4oWkX/I4XaiMRrKhESZ5ljjlFicwDxzJt44Qo3JfEcZR5ojhcbSb
-	 Ao7q9gbQCRcVPLq7FYt6+0yqSddNNOYP3kwMO9f1TWqcQkaj2VBLPLA0tjHydeQrW+yDeExqjFKH
-	 SX9E/JjGZYX4JjNgibNL+NSJynrD7oSt4FDcZw9LMD+6H6uw+/ELlgNPkxkOlNSM12TcTr16ahT/
-	 EDuN+hhRoqFDOVZT9dxSeo9G7RliqLxwpf0OkVG0Ctq6bju/E1LAhyObswmEBQuTfK9tOx1oDdTl
-	 x4C03VQHDEQmjceejL3Y303Cepdk1Ci8keLeMHpuR80xWE90FkvnifoB+P2XuvlMrTrdmdDnMP/A
-	 fvnETyPayttdYyxFcejzyeiRujLomRERYX/k/ZCNfVl2+65y6fkTWFKBDJWkRvr/aEjq415jLSk8
-	 8RV7Q7l/tB6Vh4nF2k6n1Xd6BN1CVauNp/M10oC62WwDUZ2o2bI6Iumtkrltqc9d/qsHDIN0eLsf
-	 tu4hQ0fRbi3Tvu6mbdLG6V37dXVo3GKnxIvpGzqSbX4tsz5O6ujDuBFz0rzAgv4EMWG5OTnqnBPX
-	 0hWC6QRS3ayPrR3WLYV/PIXHUFwjAovFUNu9pyy2fw3HRRxsDGVFnFqE34XdjArdxoA1CfT1FcGW
-	 P+79qZri1+CHVlERhAS48DaFayKkKFwN/axoaTClp5AZEccO1cj6ppAq7MAIj6Jq/rOMMQ02S29b
-	 KH/fEvqWvjAO4Gz/CX/EsRQoS6iNR1LTeVFDr2PTIkKXVD9Ch7/LHiQlwy1Lw3
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Rong Tao <rtoax@foxmail.com>
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org
-Cc: rongtao@cest.ccn,
-	rtoax@foxmail.com,
-	Rong Tao <rongtao@cestc.cn>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Tao Chen <chen.dylane@gmail.com>,
-	Mykyta Yatsenko <yatsenko@meta.com>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	bpf@vger.kernel.org (open list:BPF [TOOLING] (bpftool)),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH bpf-next] bpftool: bash-completion: Add nopasswd sudo prefix for bpftool
-Date: Wed, 12 Feb 2025 18:14:30 +0800
-X-OQ-MSGID: <20250212101432.186343-1-rtoax@foxmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739355421; c=relaxed/simple;
+	bh=aDiJ7MzcZuOp59joBAKOXPnxH/9tlAB04GJhUTcCYwI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IczKvCSr3rcG6xQcEGjbpKjqdGjWSNQ/KPirtrbKjL2f/Wa0yFgxC5mPewyR9RbTKr6Quthe4laAC6enjVXn9meyLPtCiyZecNu2EKKzulCL8umxrWfpueOb0fX0u60SlQszL3ngQ/350ZwoyCeXVsVtQf5EQ7kS7JhBFENvbss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lxL5udSV; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43957634473so9717945e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:16:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739355418; x=1739960218; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hCOjIl9TK1N5GOFcZIiD312EURItMH5pxsfAsuejYZk=;
+        b=lxL5udSVfEGZR8HBBxORDCwrp+3+LeCxI/VSXHchy4edPH4tOvfsH2aGSbFaej17Px
+         Yc64UyXXWOD+poV7B0Hryt85HVEQlkk8zrfqYoJd/n5+R8uxQM4a4bqwlXSbcJmybQFK
+         CyvlSFwEwB2YHguXZZjaugACKEfWLaYHjdCW5ivTQUTZr6CUIgZbSZ0Bl5UylnGm/RBc
+         YPV6DUF/Nsve0EUKs2RNx45NZ+2x8tyUyhu3A1Gt+HNyK7bBXfyXFUBSVQ9VAwkuibbC
+         StsmtPbxSbu35aO2Uslk8pGxwyjY7zss9YgFjZOBolOUTZ8zhQK//EuieaILNVUBV7nD
+         /jhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739355418; x=1739960218;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hCOjIl9TK1N5GOFcZIiD312EURItMH5pxsfAsuejYZk=;
+        b=m4D0s2R5os61wj0IMx3S5kmyQ7/mztX+tTOcNuxHW9HyZbHpcmXqLS9hU5jORXdvq0
+         3v8mFThqntpfIYvnSuJgmnp4Vbeoc+aA+LBrOuYyoBzpz/1CPmNDm8W/TBZC4AKaLEJ5
+         5+S2Q1nx0W1htUEGtRQBabiyH8OKXd2FtS1ZUeV6383dyp6lX6o32Wi3uI17TGVK63e3
+         XCnKhbmkU0w4mwhtG9ZjT5OyGbAcjVDQQ+OOMcGSW9z8ZvOZ5yCDtZYF+Uq4EgUcnQxs
+         dhlMqakDAXbnSWgIcbNOmQOJviTiUz7PSkhDAZlVUmhmx3KgoHoSfFp5b52EppD+mT05
+         d13g==
+X-Forwarded-Encrypted: i=1; AJvYcCVmt28+8UvEBKzRx+f0Nte/mP9yRpI1VshXcj/nBpjygbs6FU98GM46qG5/7n/OdfWw8MMjsfGDVMhjD2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu6xjX3XXmUoZwoW6MfaBQFXmyvRHUPQ6HKaxE4oICtXnF+4GP
+	9SxXiqdVkTMEmL0A1R54KHHbLrC2wo8j+k4TElfaFWGsW9QnMciqwhShK8OdKBw=
+X-Gm-Gg: ASbGncup9AHb2p6lAhKiypie22fQ9eDIxfL56eEGdgKTmkk2aQyuBzgEi755Rg8F/xv
+	rixV0CdyhaXpXSf+cf4cvYLSXia/4Aq46lDjifJdERd/+0j+MfRCNm9pMs9kog14JkHUjfJHcr2
+	g+zNjeALzIPewrLaJDnAvXlsd3couUjdcVSNW0/LU5avlcjrlChEsP8Ftx007bfE39njUrNEov1
+	sg6F9QZrffCuQ0DTsHhwUnUJSYlVBLqTXcl5WBBDX1iKWAdzmYVMthYKAJKUTqJ9bvoBf/tXVm1
+	xhYq7cHcUOgl9A==
+X-Google-Smtp-Source: AGHT+IHbLFUK64oZDaRhyUljmKTni82bcsfQUnjFGMVlOka7cHXg7qh7zuixm+Pnf373SApmvVszgQ==
+X-Received: by 2002:a05:600c:35ce:b0:436:ed38:5c7f with SMTP id 5b1f17b1804b1-43958176904mr27619615e9.12.1739355417891;
+        Wed, 12 Feb 2025 02:16:57 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:65bb:e6ee:3141:374])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a053fb3sm15318055e9.16.2025.02.12.02.16.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 02:16:57 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev,  Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  Dave Ertman <david.m.ertman@intel.com>,
+  Ira Weiny <ira.weiny@intel.com>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  Stephen Boyd <sboyd@kernel.org>,  Arnd Bergmann
+ <arnd@arndb.de>,  lkp@intel.com,  oe-kbuild-all@lists.linux.dev,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] clk: clk-imx8mp-audiomix: use the auxiliary
+ device creation helper
+In-Reply-To: <7bb0b7ea-8ca4-4ea1-a7ec-d56646240e59@stanley.mountain> (Dan
+	Carpenter's message of "Wed, 12 Feb 2025 10:26:50 +0300")
+References: <7bb0b7ea-8ca4-4ea1-a7ec-d56646240e59@stanley.mountain>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Wed, 12 Feb 2025 11:16:56 +0100
+Message-ID: <1jldub1n8n.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Rong Tao <rongtao@cestc.cn>
+On Wed 12 Feb 2025 at 10:26, Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-In the bpftool script of bash-completion, many bpftool commands require
-superuser privileges to execute. Otherwise, Operation not permission will
-be displayed. Here, we check whether ordinary users are exempt from
-entering the sudo password. If so, we need to add the sudo prefix to the
-bpftool command to be executed. In this way, we can obtain the correct
-command completion content instead of the wrong one.
+> Hi Jerome,
+>
+> kernel test robot noticed the following build warnings:
+>
+> url:
+> https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/driver-core-auxiliary-bus-add-device-creation-helper/20250207-023433
+> base:   2014c95afecee3e76ca4a56956a936e23283f05b
+> patch link:    https://lore.kernel.org/r/20250206-aux-device-create-helper-v2-6-fa6a0f326527%40baylibre.com
+> patch subject: [PATCH v2 6/7] clk: clk-imx8mp-audiomix: use the auxiliary device creation helper
+> config: xtensa-randconfig-r071-20250208
+> (https://download.01.org/0day-ci/archive/20250208/202502081655.FlCrxpYN-lkp@intel.com/config)
+> compiler: xtensa-linux-gcc (GCC) 14.2.0
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202502081655.FlCrxpYN-lkp@intel.com/
+>
+> smatch warnings:
+> drivers/clk/imx/clk-imx8mp-audiomix.c:241
+> clk_imx8mp_audiomix_reset_controller_register() warn: passing zero to
+> 'PTR_ERR'
+>
+> vim +/PTR_ERR +241 drivers/clk/imx/clk-imx8mp-audiomix.c
+>
+> c350f4c434316c Jerome Brunet 2025-02-06 231 static int
+> clk_imx8mp_audiomix_reset_controller_register(struct device *dev)
+> 6f0e817175c5b2 Shengjiu Wang 2024-06-14  232  {
+> c350f4c434316c Jerome Brunet 2025-02-06  233  	struct auxiliary_device *adev;
+> 6f0e817175c5b2 Shengjiu Wang 2024-06-14  234  
+> 6f0e817175c5b2 Shengjiu Wang 2024-06-14  235  	if (!of_property_present(dev->of_node, "#reset-cells"))
+> 6f0e817175c5b2 Shengjiu Wang 2024-06-14  236  		return 0;
+> 6f0e817175c5b2 Shengjiu Wang 2024-06-14  237  
+> c350f4c434316c Jerome Brunet 2025-02-06  238  	adev = devm_auxiliary_device_create(dev, KBUILD_MODNAME,
+> c350f4c434316c Jerome Brunet 2025-02-06  239  					    "reset", NULL, 0);
+> c350f4c434316c Jerome Brunet 2025-02-06  240  	if (IS_ERR_OR_NULL(adev))
+> c350f4c434316c Jerome Brunet 2025-02-06 @241  		return PTR_ERR(adev);
+>
+> If devm_auxiliary_device_create() could return NULL then that would count
+> as success.  But devm_auxiliary_device_create() can't return NULL.  It
+> only makes sense to return NULL if the auxiliary device is optional.
 
-For example, when updating array_of_maps, the wrong 'hex' is completed:
+Hi Dan,
 
-    $ sudo bpftool map update name arr_maps key 0 0 0 0 value [tab]
-    $ sudo bpftool map update name arr_maps key 0 0 0 0 value hex
+It should have been IS_ERR() there. It is something I've noticed and
+fixed in the other changes before submitting the v2 but, somehow, this
+one slipped through. Thanks for catching this. This is obviously still
+present in the v3 I've sent yesterday but will be fixed on the next
+version. I'm waiting for feedback on the core part before making another
+one.
 
-However, what we need is "id name pinned". Similarly, there is the same
-problem in getting the map 'name' and 'id':
+Cheers
 
-    $ sudo bpftool map show name [tab] < get nothing
-    $ sudo bpftool map show id [tab]   < get nothing
+>
+> https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
+>
+> 6f0e817175c5b2 Shengjiu Wang 2024-06-14  242  
+> 6f0e817175c5b2 Shengjiu Wang 2024-06-14  243  	return 0;
+> 6f0e817175c5b2 Shengjiu Wang 2024-06-14  244  }
 
-This commit fixes the issue.
-
-    $ sudo bpftool map update name arr_maps key 0 0 0 0 value [tab]
-    id      name    pinned
-
-    $ sudo bpftool map show name
-    arr_maps         cgroup_hash      inner_arr1       inner_arr2
-
-    $ sudo bpftool map show id
-    11    1383  4091  4096
-
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- tools/bpf/bpftool/bash-completion/bpftool | 29 +++++++++++++++--------
- 1 file changed, 19 insertions(+), 10 deletions(-)
-
-diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
-index 1ce409a6cbd9..25fb859cdfa4 100644
---- a/tools/bpf/bpftool/bash-completion/bpftool
-+++ b/tools/bpf/bpftool/bash-completion/bpftool
-@@ -5,6 +5,15 @@
- #
- # Author: Quentin Monnet <quentin.monnet@netronome.com>
- 
-+# In the bpftool script of bash-completion, many bpftool commands require
-+# superuser privileges to be executed. Otherwise, EPERM will occur. Here,
-+# it is detected whether ordinary users are exempt from sudo passwords. If
-+# so, it is necessary to add the "sudo" prefix to the required bpftool
-+# command execution.
-+if sudo --non-interactive true 2>/dev/null; then
-+    _sudo=sudo
-+fi
-+
- # Takes a list of words in argument; each one of them is added to COMPREPLY if
- # it is not already present on the command line. Returns no value.
- _bpftool_once_attr()
-@@ -46,7 +55,7 @@ _bpftool_one_of_list()
- 
- _bpftool_get_map_ids()
- {
--    COMPREPLY+=( $( compgen -W "$( bpftool -jp map  2>&1 | \
-+    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp map  2>&1 | \
-         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
- }
- 
-@@ -54,14 +63,14 @@ _bpftool_get_map_ids()
- _bpftool_get_map_ids_for_type()
- {
-     local type="$1"
--    COMPREPLY+=( $( compgen -W "$( bpftool -jp map  2>&1 | \
-+    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp map  2>&1 | \
-         command grep -C2 "$type" | \
-         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
- }
- 
- _bpftool_get_map_names()
- {
--    COMPREPLY+=( $( compgen -W "$( bpftool -jp map  2>&1 | \
-+    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp map  2>&1 | \
-         command sed -n 's/.*"name": \(.*\),$/\1/p' )" -- "$cur" ) )
- }
- 
-@@ -69,38 +78,38 @@ _bpftool_get_map_names()
- _bpftool_get_map_names_for_type()
- {
-     local type="$1"
--    COMPREPLY+=( $( compgen -W "$( bpftool -jp map  2>&1 | \
-+    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp map  2>&1 | \
-         command grep -C2 "$type" | \
-         command sed -n 's/.*"name": \(.*\),$/\1/p' )" -- "$cur" ) )
- }
- 
- _bpftool_get_prog_ids()
- {
--    COMPREPLY+=( $( compgen -W "$( bpftool -jp prog 2>&1 | \
-+    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp prog 2>&1 | \
-         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
- }
- 
- _bpftool_get_prog_tags()
- {
--    COMPREPLY+=( $( compgen -W "$( bpftool -jp prog 2>&1 | \
-+    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp prog 2>&1 | \
-         command sed -n 's/.*"tag": "\(.*\)",$/\1/p' )" -- "$cur" ) )
- }
- 
- _bpftool_get_prog_names()
- {
--    COMPREPLY+=( $( compgen -W "$( bpftool -jp prog 2>&1 | \
-+    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp prog 2>&1 | \
-         command sed -n 's/.*"name": "\(.*\)",$/\1/p' )" -- "$cur" ) )
- }
- 
- _bpftool_get_btf_ids()
- {
--    COMPREPLY+=( $( compgen -W "$( bpftool -jp btf 2>&1 | \
-+    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp btf 2>&1 | \
-         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
- }
- 
- _bpftool_get_link_ids()
- {
--    COMPREPLY+=( $( compgen -W "$( bpftool -jp link 2>&1 | \
-+    COMPREPLY+=( $( compgen -W "$( ${_sudo} bpftool -jp link 2>&1 | \
-         command sed -n 's/.*"id": \(.*\),$/\1/p' )" -- "$cur" ) )
- }
- 
-@@ -156,7 +165,7 @@ _bpftool_map_guess_map_type()
-     [[ -z $ref ]] && return 0
- 
-     local type
--    type=$(bpftool -jp map show $keyword $ref | \
-+    type=$(${_sudo} bpftool -jp map show $keyword $ref | \
-         command sed -n 's/.*"type": "\(.*\)",$/\1/p')
-     [[ -n $type ]] && printf $type
- }
 -- 
-2.48.1
-
+Jerome
 
