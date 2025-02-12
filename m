@@ -1,238 +1,201 @@
-Return-Path: <linux-kernel+bounces-510821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B68A32285
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D872A3224D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F743A8BF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:38:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B113A7ACA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC17120B1F2;
-	Wed, 12 Feb 2025 09:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68342204F81;
+	Wed, 12 Feb 2025 09:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j05U+FMj"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9B4206F3F;
-	Wed, 12 Feb 2025 09:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NoHPEgm7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA951F0E56
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739353006; cv=none; b=hpM9P2XJXokX3EkyOSHIDUaGEmiuyvPXz9dVdB3Wv5qA3z/mZ7RJoAbT6m5c6ous6GKG0uFR+xqCO2dSCx7WNEUHu1eHdLchQNJaaLO4rKi2NcRlxZb0hZFpn+jWQJLSuUsAqhth6An9HwkUCaUWSQJs2AZ9OSJvnMlURykPQRk=
+	t=1739352936; cv=none; b=MzEe56AOTuOnDTFyNM+m7OTHt1ZXAvUqCR0jClmxdaG+jEsudr7dy6m+g9xqY7nLeTIUCS2VCzy1t1r+ae4nJy8UIfyuI0CdDTnrsi/tT6eVrFhPiW45BlrX3ymifoDAFPpHCzUaxN7oJLppZSmIJ3VXquoF0QPnsFJ73iTNmIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739353006; c=relaxed/simple;
-	bh=sRftGElrF6c3C08wQ5ath1LdlHK2N+pyY6TDGNXNF7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=baz0JyRCgCq+SCMChpH4MhBI9+LviQ2rw0B3J3YAlW6/5YJgfgS0uLjTbYTnsV2QQ5WsH4Ot0KlI4nFT4pyvWPhecC6JEcgZOEMA8JeLXxh6eVrlw7ndykXy6SolnU8muz/mDfJTEFLDDk9U4d7UnzNp+KeijK5GZ7YXNHNjkFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=j05U+FMj; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=B+2D+
-	j5/r7swNWHTHahxPbClGVc2AFfDHnl7wLwAR1c=; b=j05U+FMjCi0ZZKnJBfDIR
-	wqgACpxPvsylBpVRBOvPl3TwC3cgp/iwHRBQPyC3VZ2Bi3+3wguLKAKl2L77v9fC
-	rBRIAnGDw5ep2p5Ibfq/CyKJ9r3Ws/qGcV5Ogy8rZT9K2m9jgGHL0Mw3Upxj0nf3
-	tv+7xvjwkIrjYvwoI9+wpo=
-Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wBnG9Fja6xn14FuLQ--.33700S9;
-	Wed, 12 Feb 2025 17:35:42 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	krzk+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	derek.foreman@collabora.com,
-	detlev.casanova@collabora.com,
-	daniel@fooishbar.org,
-	robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Michael Riesch <michael.riesch@wolfvision.net>
-Subject: [PATCH v14 07/13] drm/rockchip: vop2: Register the primary plane and overlay plane separately
-Date: Wed, 12 Feb 2025 17:35:02 +0800
-Message-ID: <20250212093530.52961-8-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250212093530.52961-1-andyshrk@163.com>
-References: <20250212093530.52961-1-andyshrk@163.com>
+	s=arc-20240116; t=1739352936; c=relaxed/simple;
+	bh=TywHvju8H//FMXAG5rOoTaJNZv1IFklKjNHqTmhsrSA=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=ejm7Q1CvWhlH2l0SpYLcKOTcYuJAqXqXtNrmWhmz/n4qJp6KLYquX8shdu0N/FJDqvRtZ4HKKN0wCjvhsPoQX6MaPjfop040VBEuu/jE+gT5xPg50p3TQrZnLsxm3O5r4NVzOwbJQ1nRmzY9KroPyaU4N9eJrLSkQBrCeAiaoYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NoHPEgm7; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739352934; x=1770888934;
+  h=date:from:to:cc:subject:message-id;
+  bh=TywHvju8H//FMXAG5rOoTaJNZv1IFklKjNHqTmhsrSA=;
+  b=NoHPEgm7LaK4B52V0pTBjPTFHdJROL9X5lY6QXkkBTCq91HNMc/xVeKc
+   Z1ghtO7T2EaBDdQncx5e0x3vyvKlHMCA6BgREeeOkJqnpI9GBNQt8eM9u
+   7lhCr9LweeQkPgN/labCxcakvEZqQ1ARIvN1u8b2b1MRM2Ee5sz67+joq
+   /tTzxqdw64UNXiihsW4CuChezGpDVflKkX6wBfY5cusAGPYFaqQ0LotEg
+   7nxv5SCoSCOoTo0ICWZTV7LHZbVrDKqXrcom+VEnGxfQpx9WILlGX3rc6
+   unbTGftk4FBQg7BeWACzbhQ4rBmaZBts3YRyVNLYkifUD3dYtgAIn0hhA
+   w==;
+X-CSE-ConnectionGUID: LHZkZMpoTaK1noHujK8Cew==
+X-CSE-MsgGUID: KcxcLvxLQHmERPWerT9sWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="62467353"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="62467353"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 01:35:34 -0800
+X-CSE-ConnectionGUID: qzC1B6reSvmyvrRQi8ud8A==
+X-CSE-MsgGUID: tuKIMIbrTc6VkqCEAKJlPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="112756475"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 12 Feb 2025 01:35:33 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ti99W-0015Rf-2Q;
+	Wed, 12 Feb 2025 09:35:30 +0000
+Date: Wed, 12 Feb 2025 17:35:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20250210] BUILD SUCCESS
+ 85e9e79e48ba1042e61ff8bf0f100e35e1b9e3bc
+Message-ID: <202502121748.DuNg35NR-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBnG9Fja6xn14FuLQ--.33700S9
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGFWxtw4ktFWktrWkZr4DCFg_yoWrZrW3pa
-	13ta98tr47WF42gry8JF4UAFWYyan2kay7Crn8Gw1a934fKr93ur48KF1DAF1ruFnrWFya
-	kFW3K39Y9FWj9r7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jFFALUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hHxXmesX27yJQAAsB
 
-From: Andy Yan <andy.yan@rock-chips.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250210
+branch HEAD: 85e9e79e48ba1042e61ff8bf0f100e35e1b9e3bc  cifs: Avoid multiple -Wflex-array-member-not-at-end warnings
 
-In the upcoming VOP of rk3576, a Window cannot attach to all Video Ports,
-so make sure all VP find it's suitable primary plane, then register the
-remain windows as overlay plane will make code easier.
+elapsed time: 1457m
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
-Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
+configs tested: 109
+configs skipped: 2
 
----
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-(no changes since v3)
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                   randconfig-001-20250211    gcc-13.2.0
+arc                   randconfig-002-20250211    gcc-13.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-17
+arm                         lpc32xx_defconfig    clang-21
+arm                          pxa910_defconfig    gcc-14.2.0
+arm                   randconfig-001-20250211    gcc-14.2.0
+arm                   randconfig-002-20250211    clang-21
+arm                   randconfig-003-20250211    gcc-14.2.0
+arm                   randconfig-004-20250211    gcc-14.2.0
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250211    clang-17
+arm64                 randconfig-002-20250211    clang-19
+arm64                 randconfig-003-20250211    gcc-14.2.0
+arm64                 randconfig-004-20250211    clang-19
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250211    gcc-14.2.0
+csky                  randconfig-002-20250211    gcc-14.2.0
+hexagon                          allmodconfig    clang-21
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-18
+hexagon               randconfig-001-20250211    clang-18
+hexagon               randconfig-002-20250211    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250211    gcc-12
+i386        buildonly-randconfig-002-20250211    gcc-12
+i386        buildonly-randconfig-003-20250211    gcc-12
+i386        buildonly-randconfig-004-20250211    gcc-12
+i386        buildonly-randconfig-005-20250211    gcc-12
+i386        buildonly-randconfig-006-20250211    clang-19
+i386                                defconfig    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250211    gcc-14.2.0
+loongarch             randconfig-002-20250211    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                         db1xxx_defconfig    clang-21
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250211    gcc-14.2.0
+nios2                 randconfig-002-20250211    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                randconfig-001-20250211    gcc-14.2.0
+parisc                randconfig-002-20250211    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-16
+powerpc                      cm5200_defconfig    clang-21
+powerpc               mpc834x_itxgp_defconfig    clang-18
+powerpc                      pcm030_defconfig    clang-17
+powerpc               randconfig-001-20250211    clang-15
+powerpc               randconfig-002-20250211    clang-21
+powerpc               randconfig-003-20250211    clang-19
+powerpc                        warp_defconfig    gcc-14.2.0
+powerpc64             randconfig-001-20250211    clang-21
+powerpc64             randconfig-002-20250211    gcc-14.2.0
+powerpc64             randconfig-003-20250211    clang-17
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-21
+riscv                 randconfig-001-20250211    gcc-14.2.0
+riscv                 randconfig-002-20250211    clang-19
+s390                             alldefconfig    gcc-14.2.0
+s390                             allmodconfig    clang-19
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250211    clang-21
+s390                  randconfig-002-20250211    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250211    gcc-14.2.0
+sh                    randconfig-002-20250211    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250211    gcc-14.2.0
+sparc                 randconfig-002-20250211    gcc-14.2.0
+sparc64               randconfig-001-20250211    gcc-14.2.0
+sparc64               randconfig-002-20250211    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                                allnoconfig    clang-18
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250211    clang-17
+um                    randconfig-002-20250211    clang-15
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20250211    clang-19
+x86_64      buildonly-randconfig-002-20250211    gcc-12
+x86_64      buildonly-randconfig-003-20250211    clang-19
+x86_64      buildonly-randconfig-004-20250211    gcc-11
+x86_64      buildonly-randconfig-005-20250211    clang-19
+x86_64      buildonly-randconfig-006-20250211    gcc-12
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250211    gcc-14.2.0
+xtensa                randconfig-002-20250211    gcc-14.2.0
 
-Changes in v3:
-- Add comments for why we should treat rk3566 with special care.
-
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 100 +++++++++++--------
- 1 file changed, 61 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index a7c26ef18b85..d6f22c17b0f9 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -2248,22 +2248,29 @@ static int vop2_plane_init(struct vop2 *vop2, struct vop2_win *win,
- 	return 0;
- }
- 
--static struct vop2_video_port *find_vp_without_primary(struct vop2 *vop2)
-+/*
-+ * On RK3566 these windows don't have an independent
-+ * framebuffer. They can only share/mirror the framebuffer
-+ * with smart0, esmart0 and cluster0 respectively.
-+ * And RK3566 share the same vop version with Rk3568, so we
-+ * need to use soc_id for identification here.
-+ */
-+static bool vop2_is_mirror_win(struct vop2_win *win)
- {
--	int i;
--
--	for (i = 0; i < vop2->data->nr_vps; i++) {
--		struct vop2_video_port *vp = &vop2->vps[i];
--
--		if (!vp->crtc.port)
--			continue;
--		if (vp->primary_plane)
--			continue;
-+	struct vop2 *vop2 = win->vop2;
- 
--		return vp;
-+	if (vop2->data->soc_id == 3566) {
-+		switch (win->data->phys_id) {
-+		case ROCKCHIP_VOP2_SMART1:
-+		case ROCKCHIP_VOP2_ESMART1:
-+		case ROCKCHIP_VOP2_CLUSTER1:
-+			return true;
-+		default:
-+			return false;
-+		}
-+	} else {
-+		return false;
- 	}
--
--	return NULL;
- }
- 
- static int vop2_create_crtcs(struct vop2 *vop2)
-@@ -2274,7 +2281,9 @@ static int vop2_create_crtcs(struct vop2 *vop2)
- 	struct drm_plane *plane;
- 	struct device_node *port;
- 	struct vop2_video_port *vp;
--	int i, nvp, nvps = 0;
-+	struct vop2_win *win;
-+	u32 possible_crtcs;
-+	int i, j, nvp, nvps = 0;
- 	int ret;
- 
- 	for (i = 0; i < vop2_data->nr_vps; i++) {
-@@ -2313,42 +2322,55 @@ static int vop2_create_crtcs(struct vop2 *vop2)
- 	}
- 
- 	nvp = 0;
--	for (i = 0; i < vop2->registered_num_wins; i++) {
--		struct vop2_win *win = &vop2->win[i];
--		u32 possible_crtcs = 0;
--
--		if (vop2->data->soc_id == 3566) {
--			/*
--			 * On RK3566 these windows don't have an independent
--			 * framebuffer. They share the framebuffer with smart0,
--			 * esmart0 and cluster0 respectively.
--			 */
--			switch (win->data->phys_id) {
--			case ROCKCHIP_VOP2_SMART1:
--			case ROCKCHIP_VOP2_ESMART1:
--			case ROCKCHIP_VOP2_CLUSTER1:
-+	/* Register a primary plane for every crtc */
-+	for (i = 0; i < vop2_data->nr_vps; i++) {
-+		vp = &vop2->vps[i];
-+
-+		if (!vp->crtc.port)
-+			continue;
-+
-+		for (j = 0; j < vop2->registered_num_wins; j++) {
-+			win = &vop2->win[j];
-+
-+			/* Aready registered as primary plane */
-+			if (win->base.type == DRM_PLANE_TYPE_PRIMARY)
- 				continue;
--			}
--		}
- 
--		if (win->type == DRM_PLANE_TYPE_PRIMARY) {
--			vp = find_vp_without_primary(vop2);
--			if (vp) {
-+			if (vop2_is_mirror_win(win))
-+				continue;
-+
-+			if (win->type == DRM_PLANE_TYPE_PRIMARY) {
- 				possible_crtcs = BIT(nvp);
- 				vp->primary_plane = win;
-+				ret = vop2_plane_init(vop2, win, possible_crtcs);
-+				if (ret) {
-+					drm_err(vop2->drm, "failed to init primary plane %s: %d\n",
-+						win->data->name, ret);
-+					return ret;
-+				}
- 				nvp++;
--			} else {
--				/* change the unused primary window to overlay window */
--				win->type = DRM_PLANE_TYPE_OVERLAY;
-+				break;
- 			}
- 		}
-+	}
-+
-+	/* Register all unused window as overlay plane */
-+	for (i = 0; i < vop2->registered_num_wins; i++) {
-+		win = &vop2->win[i];
-+
-+		/* Aready registered as primary plane */
-+		if (win->base.type == DRM_PLANE_TYPE_PRIMARY)
-+			continue;
-+
-+		if (vop2_is_mirror_win(win))
-+			continue;
- 
--		if (win->type == DRM_PLANE_TYPE_OVERLAY)
--			possible_crtcs = (1 << nvps) - 1;
-+		win->type = DRM_PLANE_TYPE_OVERLAY;
- 
-+		possible_crtcs = (1 << nvps) - 1;
- 		ret = vop2_plane_init(vop2, win, possible_crtcs);
- 		if (ret) {
--			drm_err(vop2->drm, "failed to init plane %s: %d\n",
-+			drm_err(vop2->drm, "failed to init overlay plane %s: %d\n",
- 				win->data->name, ret);
- 			return ret;
- 		}
--- 
-2.34.1
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
