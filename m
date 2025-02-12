@@ -1,182 +1,173 @@
-Return-Path: <linux-kernel+bounces-510284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251AFA31AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:46:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6242FA31AAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:45:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30323A77CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:46:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CCC43A7977
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474381CA9C;
-	Wed, 12 Feb 2025 00:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266D38493;
+	Wed, 12 Feb 2025 00:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F7Q+1cUw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpFYXFUt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD371F94D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D7AA50;
+	Wed, 12 Feb 2025 00:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739321160; cv=none; b=iMXq4POTyESsFJiUN7n43ImzKtGlwDMJn4g+mxy7lFns0YzC7y0oMAWCPDOAi81McWCNsVxme3VL5AFpIRoytroBDYrWYj8A5OcwE740HtgJYiBpPsFQhRyIwW+FlflIX+bsROYfCDVwyrywM1pnPEwpp2I6FKa4ADSCOaIQMTc=
+	t=1739321131; cv=none; b=HuylgyiuG+e3rCW3P+825pOvXu4eEEoHtwAc+9mafw00iFXEnxTmMQwSRBYJ1ih8CqMuPF7xHSF9HHkiLrO2J9kPOaI6apYLHetKf7Gme5stUH3DN6fgHpyQjjrAuJ6ofRwO3zmrHYL1BoI4tzrskaSuAkRY9Ywmu9yPcoylVLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739321160; c=relaxed/simple;
-	bh=L8M9J0DT+3fg7fOa9jiMrBAmSPXuGJDr6zpRasFuZpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d+CvYGGAqnokiNtosN+QStmOjlaeO3o4soRoj6za5Vh5ONodX0FqxITJiOuzgju2vHwZdDFDs9Ayc0zOfTtn3L0C3nmmgPFj/2NKZwVVFRZhXsivUYQpR4dTuHPOW6fUXuX+GVhpqxlgLyCvXE7p5AW2GkeW+3q1VRXu6L+DwoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F7Q+1cUw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739321157;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eua/hApNBjEqd+RMENEi87Sr+Mh/D0hB/oWXPr8GJgk=;
-	b=F7Q+1cUwtjFx88vB6UAeWKVYkzqr3SgSGz1YoDgIvuLffSVa/NVD4YmmBSWiJnFkaPQ5tc
-	IXrlfpAxgDR3k8kdl6/eMgtSyJUHmncLDbDs5NK6AbGUMo7K0OdRVpT7K1dpblB54IwqVW
-	ZccO3SbKQr5Xw3ltU07ttRfJCGXT9ac=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-jt4UKMa5O9qdEmhk_P6QFw-1; Tue, 11 Feb 2025 19:45:56 -0500
-X-MC-Unique: jt4UKMa5O9qdEmhk_P6QFw-1
-X-Mimecast-MFC-AGG-ID: jt4UKMa5O9qdEmhk_P6QFw
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2f83e54432dso19410388a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:45:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739321155; x=1739925955;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eua/hApNBjEqd+RMENEi87Sr+Mh/D0hB/oWXPr8GJgk=;
-        b=XlvPXuWk7ZpAotC2009WIEOSXyRisFEQnMlSLvLwFk+yAEGXWgB/3qwkn6N4kxFWl9
-         JudltO709TYg8av98MHGRj0MhHWLcv9RpsCbTJFPj1RvBp5sNxCtaTLdSZ8PycRgcQVO
-         pkz4bRET/O6GfK4hxgTW+IPueL63UncTGn/Z7dI7DvrxbDotozHvvZ9z+G/+PE6yVY6s
-         G+upnbpzn8dDtaDs4TC8rDzShqMvdI/y+l4dKqW6eStzyyXA/YnZGOUwKYLTqkdX3jNp
-         yXHm6kIUjONUUMl2zzv1TwVRqMDZ7pwibQMjrd+AjFJudiNvuQEdmWGK0nHWLgUgLdb7
-         xSsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaNFgl5Q9UJE/s9FJ7eJcj8m11tPgv0XN7esbp1vgvh7M7rHPS2YpxGzeOjQDyWgN7B+p9hzvQW5m/0hA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAkOW7csjaWfiT9QErYeoo+fU3LlGd3D2G9ccbdSIZFTXPpVM+
-	z5u1UaAyPbglaLmh1DPksQlCt0j0PoGjZ548+DX1x0HaI79K/JTiH7IIhZcki75PCTi0YelQ0CK
-	z1iWpoiTrx9R1V/N8Cu5pm4XPrNXRiTObFO4F9aU0pOVKMy3bK5tCIPsjUbEhGw==
-X-Gm-Gg: ASbGncuajXnbwOCCT8+ku/ESGiKH9YpIZcmfHBGCHJJpQ2tsQVn5yaa/fUMfKQNZtgt
-	raGDpN28XJ1JoVGtVRKjkhziE7e0mgNlD1eCJ7vmCP/q/XVg8NDg/riVrxk85UeIm0C1EimYDKf
-	L/WaLUZ5NNiQQh3YnNdj1DifgUPeB2OBrjtiglNAQ8IOyrLX4ZumQNtCZ/OxWtNR0CzV97nhSRJ
-	txzTv37ToKc0o1M6pwv9UFiG1R7LRDJTxPa5JSD67PLBuq6gESO72KTOctL552hOwMgUY++
-X-Received: by 2002:a17:90b:544f:b0:2ee:aed6:9ec2 with SMTP id 98e67ed59e1d1-2fbf5c0f653mr2103365a91.14.1739321155472;
-        Tue, 11 Feb 2025 16:45:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE6IIMJ+3Hvx8Id8rTg0AZzH7XEwW28qToMrNpGHIdmEypuProqH9OrCUS32B2pihOhAwnVBg==
-X-Received: by 2002:a17:90b:544f:b0:2ee:aed6:9ec2 with SMTP id 98e67ed59e1d1-2fbf5c0f653mr2103334a91.14.1739321155171;
-        Tue, 11 Feb 2025 16:45:55 -0800 (PST)
-Received: from localhost ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf9908960sm202009a91.41.2025.02.11.16.45.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 16:45:54 -0800 (PST)
-Date: Wed, 12 Feb 2025 08:43:21 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Baoquan He <bhe@redhat.com>
-Cc: akpm@linux-foundation.org, kexec@lists.infradead.org, 
-	Ondrej Kozina <okozina@redhat.com>, Milan Broz <gmazyland@gmail.com>, 
-	Thomas Staudt <tstaudt@de.ibm.com>, Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, 
-	Kairui Song <ryncsn@gmail.com>, Pingfan Liu <kernelfans@gmail.com>, 
-	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Dave Hansen <dave.hansen@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: [PATCH v8 0/7] Support kdump with LUKS encryption by reusing
- LUKS volume keys
-Message-ID: <uo2q3jxzcu3d4noiznxpw5woaclikmywyzi7yjlnpef3fdjt4e@idvs7tiv3znb>
-References: <20250207080818.129165-1-coxu@redhat.com>
- <Z6sljm1lurDKPCvj@MiWiFi-R3L-srv>
+	s=arc-20240116; t=1739321131; c=relaxed/simple;
+	bh=5rRoChObeNqNxfmbCbT8iUIfiBHkKWAFVjiyqgK4VdI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YeqZ0z0NfcyK2P2A7eEX7EhLt+iMzlrsuSq3zYousAJ2lCGqNl9jEJBo71/J9BkCnraEErlq1A3iRTb9vz5MwMsJTELhd2+tfyhH2WCJAKawEQXEpaHcfYyzFmON5Soq3DhNXdKY/bPwukWhZF3qXtpFrADBlVHlGefjPqJ85hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpFYXFUt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EDBBC4CEDD;
+	Wed, 12 Feb 2025 00:45:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739321130;
+	bh=5rRoChObeNqNxfmbCbT8iUIfiBHkKWAFVjiyqgK4VdI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=lpFYXFUt+KAocrDCcNBlhRj+YexM6svmmv4blnBwr7/gvIS9+zIFa2M0plNMl0vIH
+	 egkj2HURSf4Yz6L7zsKrF+g4KSONRNDVuTrLYiIv5LPewE3N7dZNY3f4HzYn6Laqc5
+	 8bLm4IlbNyv05uJZfeCKuIfpArbkGgCT+7gKAFzvC40HA+iKQB1AMrqQsMna0HsvUX
+	 vhlHU5x/Lks1kf0dytJd8JBlwm5jIRsFTHuVrWyWPkxzTfvfU6GJO+aP/CEkj0XB6f
+	 HMLDIzLgeqkDXBeMcPGUHnz4+lUPlsVk0dZssZ3PNLE16oOah8UPNVRmgNiiLMIa1N
+	 QDEcxZzugEODA==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 12 Feb 2025 00:44:57 +0000
+Subject: [PATCH v7] KVM: arm64: Fix confusion in documentation for pKVM SME
+ assert
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Z6sljm1lurDKPCvj@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250212-kvm-arm64-sme-assert-v7-1-0f786db838d3@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAjvq2cC/4XO3UrEMBAF4FdZcm0kPzNp4pXvIV7kr7thbSvJE
+ pSl7266oKuU4OUZON+ZKykxp1jI0+FKcqyppGVuYXg4EH+y8zHSFFomgglgigE914naPCmgZYr
+ Ulta/ULRhQAwQtVWkVd9zHNPHjX15bfmUymXJn7eVyrfrP2DllFMMRkvQgbFRP59jnuPb45KPZ
+ BOr+K1gRxGbAtJwx5gUI+wUeVcGyTqKbIpWxgBCRO/2v8BdMV0FmiK9CePAg1N6r+CPwgXvKdg
+ UY9DrEDgT6HaK+laQ9RXVFO+F8qACdyD/KOu6fgHzMGksFwIAAA==
+X-Change-ID: 20240604-kvm-arm64-sme-assert-5ad755d4e8a6
+To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org
+Cc: Fuad Tabba <tabba@google.com>, Mark Brown <broonie@kernel.org>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>
+X-Mailer: b4 0.15-dev-1b0d6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3561; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=5rRoChObeNqNxfmbCbT8iUIfiBHkKWAFVjiyqgK4VdI=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnq+8nYl1hKlgAf8UHLSYhrZpD14NjnmH5zjzaln2A
+ iud10pqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ6vvJwAKCRAk1otyXVSH0LWKB/
+ 9WcV7yweaKsEXcht6lTbS/nW+jDulcbredFQ/S5R3OBygrOiXxhYUMUhYQlRIExRnXH0PDMZTvaSoQ
+ zMyBGJN9tL1+P8UhBZTQGSqJp5Gl2l8g92E0lzW25OMVlUwPh6+znCOVyuB311NRYle1PwpH+jHfWv
+ Nl76YHN6j2/owhMof3gXUwZ5u3rgiM56wATZzD0IlpoqG34LEqY1TEHn0k+J4CYcZrjJOZH3aynwLC
+ QcigqJizzoQ1tYUz1QBgmMYNE1g+bm06HQFRe+BZRLY3wzI7OR7FDV7RhoVuI31EY19Py9KCA53Fpb
+ epELU9TEUOZqVllh1DSdfdIRe/PAbq
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, Feb 11, 2025 at 06:25:18PM +0800, Baoquan He wrote:
->On 02/07/25 at 04:08pm, Coiby Xu wrote:
->> LUKS is the standard for Linux disk encryption, widely adopted by users,
->> and in some cases, such as Confidential VMs, it is a requirement. With
->> kdump enabled, when the first kernel crashes, the system can boot into
->> the kdump/crash kernel to dump the memory image (i.e., /proc/vmcore)
->> to a specified target. However, there are two challenges when dumping
->> vmcore to a LUKS-encrypted device:
->>
->>  - Kdump kernel may not be able to decrypt the LUKS partition. For some
->>    machines, a system administrator may not have a chance to enter the
->>    password to decrypt the device in kdump initramfs after the 1st kernel
->>    crashes; For cloud confidential VMs, depending on the policy the
->>    kdump kernel may not be able to unseal the keys with TPM and the
->>    console virtual keyboard is untrusted.
->>
->>  - LUKS2 by default use the memory-hard Argon2 key derivation function
->>    which is quite memory-consuming compared to the limited memory reserved
->>    for kdump. Take Fedora example, by default, only 256M is reserved for
->>    systems having memory between 4G-64G. With LUKS enabled, ~1300M needs
->>    to be reserved for kdump. Note if the memory reserved for kdump can't
->>    be used by 1st kernel i.e. an user sees ~1300M memory missing in the
->>    1st kernel.
->>
->> Besides users (at least for Fedora) usually expect kdump to work out of
->> the box i.e. no manual password input or custom crashkernel value is
->> needed. And it doesn't make sense to derivate the keys again in kdump
->> kernel which seems to be redundant work.
->>
->> This patch set addresses the above issues by making the LUKS volume keys
->> persistent for kdump kernel with the help of cryptsetup's new APIs
->> (--link-vk-to-keyring/--volume-key-keyring). Here is the life cycle of
->> the kdump copies of LUKS volume keys,
->>
->>  1. After the 1st kernel loads the initramfs during boot, systemd
->>     use an user-input passphrase to de-crypt the LUKS volume keys
->>     or TPM-sealed key and then save the volume keys to specified keyring
->>     (using the --link-vk-to-keyring API) and the key will expire within
->>     specified time.
->>
->>  2. A user space tool (kdump initramfs loader like kdump-utils) create
->>     key items inside /sys/kernel/config/crash_dm_crypt_keys to inform
->>     the 1st kernel which keys are needed.
->>
->>  3. When the kdump initramfs is loaded by the kexec_file_load
->>     syscall, the 1st kernel will iterate created key items, save the
->>     keys to kdump reserved memory.
->>
->>  4. When the 1st kernel crashes and the kdump initramfs is booted, the
->>     kdump initramfs asks the kdump kernel to create a user key using the
->>     key stored in kdump reserved memory by writing yes to
->>     /sys/kernel/crash_dm_crypt_keys/restore. Then the LUKS encrypted
->>     device is unlocked with libcryptsetup's --volume-key-keyring API.
->>
->>  5. The system gets rebooted to the 1st kernel after dumping vmcore to
->>     the LUKS encrypted device is finished
->>
->> After libcryptsetup saving the LUKS volume keys to specified keyring,
->> whoever takes this should be responsible for the safety of these copies
->> of keys. The keys will be saved in the memory area exclusively reserved
->> for kdump where even the 1st kernel has no direct access. And further
->> more, two additional protections are added,
->>  - save the copy randomly in kdump reserved memory as suggested by Jan
->>  - clear the _PAGE_PRESENT flag of the page that stores the copy as
->>    suggested by Pingfan
->>
->> This patch set only supports x86. There will be patches to support other
->> architectures once this patch set gets merged.
->
->This v8 looks good to me, thanks for the great effort, Coiby.
->
->Acked-by: Baoquan He <bhe@redhat.com>
+As raised in the review comments for the original patch the assert and
+comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+disabled in protected mode") are bogus. The comments says that we check
+that we do not have SME enabled for a pKVM guest but the assert actually
+checks to see if the host has anything set in SVCR which is unrelated to
+the guest features or state, regardless of if those guests are protected
+or not. This check is also made in the hypervisor, it will refuse to run
+a guest if the check fails, so it appears that the assert here is
+intended to improve diagnostics.
 
-Great, thanks for reviewing and acknowledging the patch set!
+Update the comment to reflect the check in the code, and to clarify that
+we do actually enforce this in the hypervisor. While we're here also
+update to use a WARN_ON_ONCE() to avoid log spam if this triggers.
 
--- 
+Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
+Reviewed-by: Fuad Tabba <tabba@google.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+This has been sent with v6.10 with only positive review comments after
+the first revision, if there is some issue with the change please share
+it.
+
+To: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+To: James Morse <james.morse@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>
+To: Fuad Tabba <tabba@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+---
+Changes in v7:
+- Reword the comment.
+- Link to v6: https://lore.kernel.org/r/20250210-kvm-arm64-sme-assert-v6-1-cc26c46d1b43@kernel.org
+
+Changes in v6:
+- Rebase onto v6.14-rc1.
+- Link to v5: https://lore.kernel.org/r/20241210-kvm-arm64-sme-assert-v5-1-995c8dd1025b@kernel.org
+
+Changes in v5:
+- Rebase onto v6.13-rc1.
+- Link to v4: https://lore.kernel.org/r/20240930-kvm-arm64-sme-assert-v4-1-3c9df71db688@kernel.org
+
+Changes in v4:
+- Rebase onto v6.12-rc1
+- Link to v3: https://lore.kernel.org/r/20240730-kvm-arm64-sme-assert-v3-1-8699454e5cb8@kernel.org
+
+Changes in v3:
+- Rebase onto v6.11-rc1.
+- Link to v2: https://lore.kernel.org/r/20240605-kvm-arm64-sme-assert-v2-1-54391b0032f4@kernel.org
+
+Changes in v2:
+- Commit message tweaks.
+- Change the assert to WARN_ON_ONCE().
+- Link to v1: https://lore.kernel.org/r/20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org
+---
+ arch/arm64/kvm/fpsimd.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
+index 4d3d1a2eb157047b4b2488e9c4ffaabc6f5a0818..e37e53883c357093ff4455f5afdaec90e662d744 100644
+--- a/arch/arm64/kvm/fpsimd.c
++++ b/arch/arm64/kvm/fpsimd.c
+@@ -93,11 +93,14 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	/*
+-	 * If normal guests gain SME support, maintain this behavior for pKVM
+-	 * guests, which don't support SME.
++	 * Protected and non-protected KVM modes require that
++	 * SVCR.{SM,ZA} == {0,0} when entering a guest so that no
++	 * host/guest SME state needs to be saved/restored by hyp code.
++	 *
++	 * In protected mode, hyp code will verify this later.
+ 	 */
+-	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+-		read_sysreg_s(SYS_SVCR));
++	WARN_ON_ONCE(is_protected_kvm_enabled() && system_supports_sme() &&
++		     read_sysreg_s(SYS_SVCR));
+ }
+ 
+ /*
+
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20240604-kvm-arm64-sme-assert-5ad755d4e8a6
+
 Best regards,
-Coiby
+-- 
+Mark Brown <broonie@kernel.org>
 
 
