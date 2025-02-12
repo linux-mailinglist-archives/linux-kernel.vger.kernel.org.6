@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-511478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9722A32B8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:24:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E15A32B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:28:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C013F167852
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:24:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36541664DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAA021D59F;
-	Wed, 12 Feb 2025 16:24:46 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6140B212B05;
+	Wed, 12 Feb 2025 16:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="czNW84DX"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028D11E766F;
-	Wed, 12 Feb 2025 16:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF981D516D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739377485; cv=none; b=ZedNPUG/afFghsFfFZlVjF1jZXVmUvszEhHKV5nX46jTD914Jc93s8ZVq2n2va/mW/skPGooH8nnv9O9U4nfLRrZ3bd6+8EIrVe4c2gStcnuvAiDmKPASNpcdhUk/bgPlSsNctkPHV4AacnmSTDNb7sQBjScpmL+F5CXyRfC2S4=
+	t=1739377697; cv=none; b=QGcHGZ0B6HGdoG7Txd+X4aRsQMarSxbTiCLdRgtGwUTCKqC3fq89YyCuE9ibswURGnHyJu0xMJRrvvjd7fhUKlQDajjaiUXxm1Rq1eB6dx5pZ8q2MUdhCQSEtj+USoTRbKW76WiCHU8sagJ/ykaLUZVTqAXyoNc3TMXsnzcMVa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739377485; c=relaxed/simple;
-	bh=GRS9ax3wN+bieY+KEnsqa9qqa9HX5fGmjjLn0u3zBPQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jJaAUWocgNzj67W5oITSHfaNP0962AWm3T7GSHQRzbVNgSNspBbm/+YMji2/vmR13/5bThTnbgh9m06o/em8Nf7bjpNh+B+OKS5zSkiqjTxDuYbRTPfZSVNwWZYm2KSQhQsN1ua0t727yDK51SsdKxUH+st/F8DBCdYFHC/h1eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4YtNvM3tcPz20qKr;
-	Thu, 13 Feb 2025 00:25:03 +0800 (CST)
-Received: from kwepemd500010.china.huawei.com (unknown [7.221.188.84])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0E08C1402CF;
-	Thu, 13 Feb 2025 00:24:34 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd500010.china.huawei.com (7.221.188.84) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 13 Feb 2025 00:24:33 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Thu, 13 Feb 2025 00:24:33 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Caleb Sander Mateos <csander@purestorage.com>, Jens Axboe
-	<axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] io_uring: use IO_REQ_LINK_FLAGS more
-Thread-Topic: [PATCH] io_uring: use IO_REQ_LINK_FLAGS more
-Thread-Index: AQHbfMJ74rJl+dLZSU6Ux2PgSQvA+7ND25tw
-Date: Wed, 12 Feb 2025 16:24:33 +0000
-Message-ID: <4edea498ea61476484fd3829349e4fb0@huawei.com>
-References: <20250211202002.3316324-1-csander@purestorage.com>
-In-Reply-To: <20250211202002.3316324-1-csander@purestorage.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1739377697; c=relaxed/simple;
+	bh=TZuDBz/MQSCI0W6Y1MIlb4k+WX79YX+OdPUXe7FESaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l2Q2w5Sh//xXV0BQHN1Wgq0qGcRWCjxqzOP6zLsdux5XzkwemjMxFANpUGn8OkKbwb3xjUwz4HoI2IlYqTmTNM570QgJnUxgCLYb+XoL2nn/zTbM23AT1Kpa25WUTMnm+JrnNbbhrXc2L7xnZzKTLmgl4HU5EFLGy+EMcATs+Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=czNW84DX; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5450d56199cso1162893e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:28:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739377694; x=1739982494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TZuDBz/MQSCI0W6Y1MIlb4k+WX79YX+OdPUXe7FESaI=;
+        b=czNW84DX6cY+yVs/pwpa1BrTEzcOVrtnwMtkfLqT+0qsCcUg53SJR+X4RjRB6p+wDg
+         onjT1c+4nRlSWkoxeAx4iEB0Env7rUYhnYyA5gSOpb4CnfsfphgcWzgkjv9XXXBY4fho
+         od83Kj6b4y3U4oxRw6xM1pasbDjRoMzHIVCHSMxhOo1PMTtE77N36dUt9emmXrVMnsBw
+         1l7Tkk1NWXTaRdDmoP3MLzD5dczqBXY2NWKClgiBFaAywX+NHrZ/7Fj3SPBCvyhwaASO
+         pprfmmTx9ULDkJiK5CecYEphtVj1+1bb97tRtZeLhjWbtPCW/ZTIsDVa0at7gBUqpq9C
+         Calw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739377694; x=1739982494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TZuDBz/MQSCI0W6Y1MIlb4k+WX79YX+OdPUXe7FESaI=;
+        b=LsASC6GZ39zPiyZAEgiZkjInwedoNy0S7zrXMHsJ12sjoc4FKpstBF8liW6ePwx5ad
+         ySUHmuNiSDYSvWgb233LZAWmSLuTf2BfOSmXAEw/t62WED7jmrcHxytYgp8qOIIp1qD/
+         bWT9ch2NpqjZJVniaSea21eoJ+lEf0fUMCGtQiHxb5GdYIscfP6BYVsj/Lioar42C42W
+         PZgkO3vnVNMX9JIu5MG4O0iYNug1/ePTeKp26k0sGUPVrWDTWJi3Ds1RfKL5vCqvK0mo
+         a3p93XZbbHPWrWvzgO/E9N4V19k+ph/cCjDhIdSR0NdgOQaulgj03axMUQo3k0j5gc8y
+         yIWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZSVFc9UZR1P5ckx4a0BrqgOw2fciYNGtB/QdFsO6Gr5VwBrogZWmQko9OfZil0i+07DkzlB9y1qUJLdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2D9gYLSsQ5PMn4mGGV9VdvLi37NUI3I5D2xf8KanZEVSn/jS2
+	GGuToh0mzRqc1205yAkaIy2n5Ldls+xmz6dUnPjXfKMqLDaxdce2txgZm2LcyCRNfHXfPNtdNO6
+	1HbZMwOiPIM7T8Q2HWz47P44D1txeTySN7qWSRw==
+X-Gm-Gg: ASbGncukTUdEA8BY20t/r7o/K6M2A9oa97kjANE7k4mx4ZvgZ9VTW3ko6+dAGZkwpBo
+	sD3BrnJoS4AkMSTRqcfFWfY/KCwq3WKmtEJvwq8IIT49sA7lU/6s05gbXcwclW44CEa9FLaVavG
+	9Y+5d06Np357XfTB9amkMDPcApj4DK
+X-Google-Smtp-Source: AGHT+IHxOU7el76O6ARJgH/qSyoLSVZhpVM8aMA7Z5L0zSG1UJuAQdeZ/CLEIaRjM80ZHRoBtF9ivf8u/8H5ppM7Ojg=
+X-Received: by 2002:ac2:4886:0:b0:545:16a8:6a5d with SMTP id
+ 2adb3069b0e04-54516a86b7amr1230558e87.2.1739377693855; Wed, 12 Feb 2025
+ 08:28:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250212-kernel-upstreaming-add_gpio_support-v1-0-080e724a21f3@blaize.com>
+ <20250212-kernel-upstreaming-add_gpio_support-v1-5-080e724a21f3@blaize.com>
+ <9442a87b-ab61-40e3-bbf0-caae87c5731a@kernel.org> <259dd121-8c49-44f7-b8f6-e0b68ab88304@blaize.com>
+In-Reply-To: <259dd121-8c49-44f7-b8f6-e0b68ab88304@blaize.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 12 Feb 2025 17:28:03 +0100
+X-Gm-Features: AWEUYZkIVdRopbQJY-FCVehpC4ahYO-92VDY2yMNzSqT804kqps9s9wQ30KQZw8
+Message-ID: <CAMRc=MehUWAsBO6YWvwOsexu0yj6S5-g_ydS8tdX12iA0KER=g@mail.gmail.com>
+Subject: Re: [PATCH 5/5] arm64: defconfig: Add VeriSilicon GPIO driver
+To: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	James Cowgill <james.cowgill@blaize.com>, Matt Redfearn <matthew.redfearn@blaize.com>, 
+	Neil Jones <neil.jones@blaize.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2FsZWIgU2FuZGVy
-IE1hdGVvcyA8Y3NhbmRlckBwdXJlc3RvcmFnZS5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwgRmVi
-cnVhcnkgMTIsIDIwMjUgNDoyMCBBTQ0KPiBUbzogSmVucyBBeGJvZSA8YXhib2VAa2VybmVsLmRr
-PjsgUGF2ZWwgQmVndW5rb3YgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+DQo+IENjOiBDYWxlYiBT
-YW5kZXIgTWF0ZW9zIDxjc2FuZGVyQHB1cmVzdG9yYWdlLmNvbT47IGlvLQ0KPiB1cmluZ0B2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BB
-VENIXSBpb191cmluZzogdXNlIElPX1JFUV9MSU5LX0ZMQUdTIG1vcmUNCj4gDQo+IFJlcGxhY2Ug
-dGhlIDIgaW5zdGFuY2VzIG9mIFJFUV9GX0xJTksgfCBSRVFfRl9IQVJETElOSyB3aXRoIHRoZSBt
-b3JlDQo+IGNvbW1vbmx5IHVzZWQgSU9fUkVRX0xJTktfRkxBR1MuDQo+IA0KPiBTaWduZWQtb2Zm
-LWJ5OiBDYWxlYiBTYW5kZXIgTWF0ZW9zIDxjc2FuZGVyQHB1cmVzdG9yYWdlLmNvbT4NCj4gLS0t
-DQo+ICBpb191cmluZy9pb191cmluZy5jIHwgNyArKysrLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwg
-NCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2lvX3Vy
-aW5nL2lvX3VyaW5nLmMgYi9pb191cmluZy9pb191cmluZy5jIGluZGV4DQo+IGVjOThhMGVjNmYz
-NC4uOGJiOGMwOTljM2UxIDEwMDY0NA0KPiAtLS0gYS9pb191cmluZy9pb191cmluZy5jDQo+ICsr
-KyBiL2lvX3VyaW5nL2lvX3VyaW5nLmMNCj4gQEAgLTEwOCwxNSArMTA4LDE3IEBADQo+ICAJCQkg
-IElPU1FFX0lPX0hBUkRMSU5LIHwgSU9TUUVfQVNZTkMpDQo+IA0KPiAgI2RlZmluZSBTUUVfVkFM
-SURfRkxBR1MJKFNRRV9DT01NT05fRkxBR1MgfA0KPiBJT1NRRV9CVUZGRVJfU0VMRUNUIHwgXA0K
-PiAgCQkJSU9TUUVfSU9fRFJBSU4gfCBJT1NRRV9DUUVfU0tJUF9TVUNDRVNTKQ0KPiANCj4gKyNk
-ZWZpbmUgSU9fUkVRX0xJTktfRkxBR1MgKFJFUV9GX0xJTksgfCBSRVFfRl9IQVJETElOSykNCj4g
-Kw0KPiAgI2RlZmluZSBJT19SRVFfQ0xFQU5fRkxBR1MgKFJFUV9GX0JVRkZFUl9TRUxFQ1RFRCB8
-DQo+IFJFUV9GX05FRURfQ0xFQU5VUCB8IFwNCj4gIAkJCQlSRVFfRl9QT0xMRUQgfCBSRVFfRl9J
-TkZMSUdIVCB8DQo+IFJFUV9GX0NSRURTIHwgXA0KPiAgCQkJCVJFUV9GX0FTWU5DX0RBVEEpDQo+
-IA0KPiAtI2RlZmluZSBJT19SRVFfQ0xFQU5fU0xPV19GTEFHUyAoUkVRX0ZfUkVGQ09VTlQgfCBS
-RVFfRl9MSU5LIHwNCj4gUkVRX0ZfSEFSRExJTksgfFwNCj4gKyNkZWZpbmUgSU9fUkVRX0NMRUFO
-X1NMT1dfRkxBR1MgKFJFUV9GX1JFRkNPVU5UIHwNCj4gSU9fUkVRX0xJTktfRkxBR1MgfCBcDQo+
-ICAJCQkJIFJFUV9GX1JFSVNTVUUgfCBJT19SRVFfQ0xFQU5fRkxBR1MpDQo+IA0KPiAgI2RlZmlu
-ZSBJT19UQ1RYX1JFRlNfQ0FDSEVfTlIJKDFVIDw8IDEwKQ0KPiANCj4gICNkZWZpbmUgSU9fQ09N
-UExfQkFUQ0gJCQkzMg0KPiBAQCAtMTI5LDExICsxMzEsMTAgQEAgc3RydWN0IGlvX2RlZmVyX2Vu
-dHJ5IHsNCj4gIAl1MzIJCQlzZXE7DQo+ICB9Ow0KPiANCj4gIC8qIHJlcXVlc3RzIHdpdGggYW55
-IG9mIHRob3NlIHNldCBzaG91bGQgdW5kZXJnbyBpb19kaXNhcm1fbmV4dCgpICovICAjZGVmaW5l
-DQo+IElPX0RJU0FSTV9NQVNLIChSRVFfRl9BUk1fTFRJTUVPVVQgfCBSRVFfRl9MSU5LX1RJTUVP
-VVQgfA0KPiBSRVFfRl9GQUlMKSAtI2RlZmluZSBJT19SRVFfTElOS19GTEFHUyAoUkVRX0ZfTElO
-SyB8IFJFUV9GX0hBUkRMSU5LKQ0KPiANCj4gIC8qDQo+ICAgKiBObyB3YWl0ZXJzLiBJdCdzIGxh
-cmdlciB0aGFuIGFueSB2YWxpZCB2YWx1ZSBvZiB0aGUgdHcgY291bnRlcg0KPiAgICogc28gdGhh
-dCB0ZXN0cyBhZ2FpbnN0IC0+Y3Ffd2FpdF9uciB3b3VsZCBmYWlsIGFuZCBza2lwIHdha2VfdXAo
-KS4NCj4gICAqLw0KPiBAQCAtMTE1NSwxMSArMTE1NiwxMSBAQCBzdGF0aWMgaW5saW5lIHZvaWQg
-aW9fcmVxX2xvY2FsX3dvcmtfYWRkKHN0cnVjdA0KPiBpb19raW9jYiAqcmVxLA0KPiANCj4gIAkv
-Kg0KPiAgCSAqIFdlIGRvbid0IGtub3cgaG93IG1hbnkgcmV1cWVzdHMgaXMgdGhlcmUgaW4gdGhl
-IGxpbmsgYW5kIHdoZXRoZXINCj4gIAkgKiB0aGV5IGNhbiBldmVuIGJlIHF1ZXVlZCBsYXppbHks
-IGZhbGwgYmFjayB0byBub24tbGF6eS4NCj4gIAkgKi8NCj4gLQlpZiAocmVxLT5mbGFncyAmIChS
-RVFfRl9MSU5LIHwgUkVRX0ZfSEFSRExJTkspKQ0KPiArCWlmIChyZXEtPmZsYWdzICYgSU9fUkVR
-X0xJTktfRkxBR1MpDQo+ICAJCWZsYWdzICY9IH5JT1VfRl9UV1FfTEFaWV9XQUtFOw0KPiANCj4g
-IAlndWFyZChyY3UpKCk7DQo+IA0KPiAgCWhlYWQgPSBSRUFEX09OQ0UoY3R4LT53b3JrX2xsaXN0
-LmZpcnN0KTsNCj4gLS0NCj4gMi40NS4yDQo+IA0KDQpSZXZpZXdlZC1ieTogTGkgWmV0YW8gPGxp
-emV0YW8xQGh1YXdlaS5jb20+DQoNCi0tLQ0KTGkgWmV0YW8NCg0K
+On Wed, Feb 12, 2025 at 5:20=E2=80=AFPM Nikolaos Pasaloukos
+<nikolaos.pasaloukos@blaize.com> wrote:
+>
+> On 12/02/2025 15:25, Krzysztof Kozlowski wrote:
+>
+> > On 12/02/2025 14:46, Nikolaos Pasaloukos wrote:
+> >> Add support for VeriSilicon GPIO controller.
+> > You enable not add support, but still the main question is: Why? Which
+> > devices needs it? Why this cannot be a module?
+>
+> Hi Krzysztof,
+>
+> Thank you for your fast review and apologies for the typo. I forgot to
+> mention on the commit message but I have mentioned in the cover letter
+> that the driver is needed for the Blaize BLZP1600 CB2 board which is
+> already supported on v6.14. I will fix the commit message on V2.
+>
+> This driver enables support (controls) for multiple peripherals on
+> the board, like Ethernet for NFS boot, SD and eMMC to load modules from
+> these media. Without this driver build in the kernel, it will be hard to
+> mount a filesystem and load modules.
+>
+
+That's alright but typically you'd want to have something like:
+
+default y if ARCH_BLAIZE
+
+in the driver's Kconfig entry.
+
+Bart
 
