@@ -1,182 +1,156 @@
-Return-Path: <linux-kernel+bounces-511703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DDAA32E81
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:21:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02DC3A32E85
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:21:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9870C188A5EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA523A1C37
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9359263C9B;
-	Wed, 12 Feb 2025 18:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F91263F2E;
+	Wed, 12 Feb 2025 18:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="bVrlwn0T"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LgIPFhmr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D3A25E454;
-	Wed, 12 Feb 2025 18:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AF6260A3F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739384384; cv=none; b=PAlPnqpWSsESgfRqw9g/5ArKUoRxsqG8gG0QX/2zqnBGM+JGXWJcAlR8BDIqzcMKtj8+19GEIoZb0GHrxuZmpiPK8mJDiLgKUpISE9XO6G8MdYRCRv0pHmAwdIQZc/DoRqmOIoT8cFIIfqVZdgAkTn66SI8iYyiKPAypXbPWdqM=
+	t=1739384396; cv=none; b=lNMj4e22oLn0jW5gXUEQq4GOOc+4bvX6uls+djztoWcAwf3X+qf3gNL1Jts8YqnDe02lA3cL9hAT38gBEo1vrLUadfMrCALh+8cwv8HFxugzydM41qYagUuWa9C246th2sRObZq3+loMVhELtlJ8Dfbo54pk4H0ky1Z/bNbl4Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739384384; c=relaxed/simple;
-	bh=jKHbzLkCAIvO2Cnj250sTSCRFTLS5ht9G+0S5kyTGtU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MbBQzdYkhqaFdzcI/zfuj/am2/ptpJ7miZkqywVUH3dI/QCvL5Ns2wErzOlQhfF7MwvQr1Dc6LQbo8bfefKYT+JlzZF4jmcDPBsfEtG/yVb4IQ04bR8MVh0JjCN5T3DEDZWc54GRq7ZqUSlpTyzpKvJj0pxBaLTyzkfZbTawegU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=bVrlwn0T; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CFBC88019773;
-	Wed, 12 Feb 2025 13:19:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=CleEQ
-	0NLKk1DHfvjBHeRNC/VFBV+FYNu0XFqhzQYpjQ=; b=bVrlwn0Tap1kXYq3wkGYY
-	pOCwGK4N7GHYCTK9T1KnlujaX1D+LFSS51iEnLMqrTWeubjurvv1lOgRh1v7wH+q
-	1jnHISvRDIWEqk2PFcjWvzxdpdF0NDnBBeb8JbXierNTi/bC4jkRkAMWqFcPjrLP
-	Mm2FjyalCjQw9ABL5UZpF17jCvh+uYuvW3XkBkgt7uME9pcJoKKERpREj+9m6ZAu
-	A4Ei/v8nhh/PaBcqG5AaadC/zy/z+ENHk/LjjbkNKU1X182cntsH9TcSnpO3D7jb
-	rS6sghHfW5hQGYhCacI02m5D9Wwv7WYXadw5fuOgjOeGJqZoQBerIWr9co+8ppdE
-	Q==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 44rs9aa4xx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 13:19:28 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 51CIJQx1041202
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Feb 2025 13:19:26 -0500
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 12 Feb 2025 13:19:26 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 12 Feb 2025 13:19:26 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Wed, 12 Feb 2025 13:19:26 -0500
-Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51CIJCnr017537;
-	Wed, 12 Feb 2025 13:19:14 -0500
-From: Jonathan Santos <Jonathan.Santos@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
-        <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <jonath4nns@gmail.com>,
-        <marcelo.schmitt1@gmail.com>, <dlechner@baylibre.com>
-Subject: [PATCH RESEND v3 17/17] iio: adc: ad7768-1: add low pass -3dB cutoff attribute
-Date: Wed, 12 Feb 2025 15:19:10 -0300
-Message-ID: <50098494d2d3d50fe914de1f966d86c6fff7ecfc.1739368121.git.Jonathan.Santos@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1739368121.git.Jonathan.Santos@analog.com>
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1739384396; c=relaxed/simple;
+	bh=qFOWa4pauo4Iuu6WGgcIEz+h/qWRaq8iwgw9wmS1RWQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TvIS14M0y0LwsuXmh9bplwuspyHiw8LlvhSzUWben9OZMWKZHyZ1DzrkU4Rdpmts0MPrMGNi+x7kcrqz5XnXy+DeO5Ku0DeMH2/lVq5YDx9+q0ZrG2edb6PaJGPMzKp1kb5kwKseItycb1Ykqu9bLFUaikefdY0wAjKfdQlCyUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LgIPFhmr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739384393;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gZh4AjieEBhVpChkY/ZbfZf/JCY7uSfZ7yn1oUrifN0=;
+	b=LgIPFhmrS9cYHg9EA2O/K/WqLKdZN2dSV9fmIeQxOuRJDFASFjmzFanFw0OGWDL7yvmqgp
+	JMhrEIwBOMDaF6/WojjPu1+/xC6YeqP28oDZeV5E7jcOL02U/PBV6ky7GlXrWYJtdkUy7N
+	4ttlisIzFAJjoG5MQZBDjU3vA2Gl6tw=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-612-MsReOXULN5aEKtzhqnLypw-1; Wed, 12 Feb 2025 13:19:50 -0500
+X-MC-Unique: MsReOXULN5aEKtzhqnLypw-1
+X-Mimecast-MFC-AGG-ID: MsReOXULN5aEKtzhqnLypw
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5da0b47115aso6852196a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:19:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739384389; x=1739989189;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gZh4AjieEBhVpChkY/ZbfZf/JCY7uSfZ7yn1oUrifN0=;
+        b=f0jcGr3ErPLq9HHpcINzIuffRDlQaKI6IxjUZX9B4wOAVzCpsTFJq6phcKMGdca12m
+         XILotMPhlqSfX6398WBLpmuFU2qSn6WrMdoO/2VlTtQfXd9SlwhnkKpapolvHYPzZweg
+         ZXLA2UrvKM3cAFXojS/mW7g1ajjja4Ypg9JI0bkm0IVIpsDYehL5o5gxCfergARDV7R+
+         1Od1Ovjabjc0KZqxIhzn5X+wTzwG8bH6LJikBbrHlLB0jsZ3UH05SC1jbTcKweEplHNO
+         WWANdPK8I3XyM3YmESAQYKNAe14ht/Hfxtie7bDGxOQ5pacG4wLQINJHLTBEup91WssE
+         JmdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXD2HRelFT/vwQ0ewmNilrHnL/9x626+7j5NAFdPisgVPZ42Ctvg55iD4EJhpeCBHxFvbuIXpKS2Cdd8c4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmonkcvBq26TcOaV3LyCgCznoAqCgKVrOeK4bGywUBJF8Eb/0H
+	Eh3it+ouWzpV/uyS74HCSv63UVCZMsjo6VLbFmMmnKdtTfhM9MxtDx+JlYxo4nyATRIvLmx2Zr3
+	zKbQsERkGshW6rNTD+sib2Fm2d54wXB2VpA/KPQXa8abYcGhfpmDH+l7XGf2haw==
+X-Gm-Gg: ASbGncvWJ8FLdXYSjY5UPOtNb1Dub1oWU0fSq5aB2o9vqnicJMHMRLIS5vF1L9Bam2h
+	2dzPdOXitYe9Xrbs8PxiJ0tj3L1nMLWs6xgZv/DO1oEjzxfMFGEJnGIJgjJdlOqlgulDgnbDqUJ
+	UvjyhYGGVGLnnI1t56sHig/H8Jnj/CQGS/JId3gHz/ktYOhd6xkSg+J24+71lTX3nwP54WE0Eus
+	uap5sfl7vtVj/neLcdrZ9uj6SLzydTWDX90tg0uNhRuVCrLGeyIKsVmn+BYLGre88FG4zyqDPCm
+	PuDQLYFg98IPkkVmupPpFlqv/X6CND6DPmwfiOzFbc5TJMo5/q579l8SCdH7nppmJ0GcfUHRL6c
+	6yxHq39VNAwWDkTpZtpH6cyadWz84tp+c5A==
+X-Received: by 2002:a05:6402:4605:b0:5dc:8f03:bb5c with SMTP id 4fb4d7f45d1cf-5deadd9217bmr3909060a12.11.1739384389359;
+        Wed, 12 Feb 2025 10:19:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IESGQAXDzed7Fmi16ciLszJ4Ey0xkXA+j06UKHlLqfUdrmcANPKem5IWP/WHHNGNcVUN6LRhQ==
+X-Received: by 2002:a05:6402:4605:b0:5dc:8f03:bb5c with SMTP id 4fb4d7f45d1cf-5deadd9217bmr3909028a12.11.1739384389013;
+        Wed, 12 Feb 2025 10:19:49 -0800 (PST)
+Received: from ?IPv6:2001:16b8:2d24:c00:803c:5b80:8fe:19d4? (200116b82d240c00803c5b8008fe19d4.dip.versatel-1u1.de. [2001:16b8:2d24:c00:803c:5b80:8fe:19d4])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de4d250084sm10090241a12.16.2025.02.12.10.19.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 10:19:48 -0800 (PST)
+Message-ID: <dfbc4edd2670fc102ba4959d99bb2c5d6bd1d626.camel@redhat.com>
+Subject: Re: [PATCH] stmmac: Replace deprecated PCI functions
+From: Philipp Stanner <pstanner@redhat.com>
+To: Andrew Lunn <andrew@lunn.ch>, Philipp Stanner <phasta@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,  Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Serge Semin <fancer.lancer@gmail.com>,
+ Huacai Chen <chenhuacai@kernel.org>, Yinggang Gu <guyinggang@loongson.cn>,
+ Yanteng Si <si.yanteng@linux.dev>,  netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Wed, 12 Feb 2025 19:19:47 +0100
+In-Reply-To: <885058ae-605b-46e6-989b-3ff52908e6fd@lunn.ch>
+References: <20250212145831.101719-2-phasta@kernel.org>
+	 <885058ae-605b-46e6-989b-3ff52908e6fd@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: O_rhGL143OZFettItnb-hgMr05ArG89z
-X-Authority-Analysis: v=2.4 cv=ZdznNtVA c=1 sm=1 tr=0 ts=67ace630 cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=T2h4t0Lz3GQA:10 a=gAnH3GRIAAAA:8 a=ZkoTrUv0hqWFqrPu6skA:9 a=oVHKYsEdi7-vN-J5QA_j:22
-X-Proofpoint-ORIG-GUID: O_rhGL143OZFettItnb-hgMr05ArG89z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 clxscore=1015
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502120132
 
-Ad7768-1 has a different -3db frequency multiplier depending on
-the filter type configured. The cutoff frequency also varies according
-to the current ODR.
+On Wed, 2025-02-12 at 19:13 +0100, Andrew Lunn wrote:
+> > =C2=A0	/* Get the base address of device */
+> > -	for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
+> > -		if (pci_resource_len(pdev, i) =3D=3D 0)
+> > -			continue;
+> > -		ret =3D pcim_iomap_regions(pdev, BIT(0),
+> > pci_name(pdev));
+> > -		if (ret)
+> > -			goto err_disable_device;
+> > -		break;
+> > -	}
+> > -
+> > -	memset(&res, 0, sizeof(res));
+> > -	res.addr =3D pcim_iomap_table(pdev)[0];
+> > +	res.addr =3D pcim_iomap_region(pdev, 0, DRIVER_NAME);
+>=20
+> I don't know too much about PCI, but this change does not look
+> obviously correct to me. Maybe the commit message needs expanding to
+> explain why the loop can be thrown away? Also, is that BIT(0)
+> actually
+> wrong, it should of been BIT(i)? Is that why the loop is pointless
+> and
+> can be removed? If so, we should be asking the developer of this code
+> what are the implications of the bug. Should the loop be kept?
 
-Add a readonly low pass -3dB frequency cutoff attribute to clarify to
-the user which bandwidth is being allowed depending on the filter
-configurations.
+Yes, the reason why the loop is pointless is that it calls BIT(0) for
+all runs, instead of BIT(i). This would have caused an error btw if it
+weren't for pci_resource_len(=E2=80=A6) =3D=3D 0, which I assume prevents t=
+rying to
+request BAR0 more than once, which s hould fail.
 
-Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
----
-v3 Changes:
-* None
+The commit message should mention this, agreed.
 
-v2 Changes:
-* New patch in v2.
+I assume this is not a bug, but the code was just copied from the other
+part (also touched in this patch) where a loop was necessary. Argument
+being that if the above were a bug, it would definitely have been
+noticed because the BARs other than 0 are not being mapped, so trying
+to access them should result in faults.
 
-OBS: should i drop this?
----
- drivers/iio/adc/ad7768-1.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+Although a confirmation by the respective developer would indeed be
+nice.
 
-diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-index 18f1ea0bf66d..2bf133da18c6 100644
---- a/drivers/iio/adc/ad7768-1.c
-+++ b/drivers/iio/adc/ad7768-1.c
-@@ -150,6 +150,17 @@ enum ad7768_scan_type {
- 	AD7768_SCAN_TYPE_HIGH_SPEED,
- };
- 
-+/*
-+ * -3dB cutoff frequency multipliers (relative to ODR) for
-+ * each filter type. Values are multiplied by 1000.
-+ */
-+static const int ad7768_filter_3db_odr_multiplier[] = {
-+	[AD7768_FILTER_SINC5] = 204,
-+	[AD7768_FILTER_SINC3] = 261,
-+	[AD7768_FILTER_SINC3_REJ60] = 261,
-+	[AD7768_FILTER_WIDEBAND] = 433,
-+};
-+
- static const int ad7768_mclk_div_rates[4] = {
- 	16, 8, 4, 2,
- };
-@@ -229,7 +240,8 @@ static const struct iio_chan_spec ad7768_channels[] = {
- 		.type = IIO_VOLTAGE,
- 		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
- 		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
--					    BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
-+					    BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |
-+					    BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY),
- 		.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
- 		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
- 		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-@@ -746,7 +758,7 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
- {
- 	struct ad7768_state *st = iio_priv(indio_dev);
- 	const struct iio_scan_type *scan_type;
--	int scale_uv, ret;
-+	int scale_uv, ret, temp;
- 
- 	scan_type = iio_get_current_scan_type(indio_dev, chan);
- 	if (IS_ERR(scan_type))
-@@ -786,6 +798,12 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
- 	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
- 		*val = st->oversampling_ratio;
- 
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-+		temp = st->samp_freq * ad7768_filter_3db_odr_multiplier[st->filter_type];
-+		*val = DIV_ROUND_CLOSEST(temp, 1000);
-+
- 		return IIO_VAL_INT;
- 	}
- 
--- 
-2.34.1
+P.
+
+>=20
+> 	Andrew
 
 
