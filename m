@@ -1,329 +1,220 @@
-Return-Path: <linux-kernel+bounces-511437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0E7A32B0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:02:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8168A32B0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:03:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCCBE164492
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:01:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D3A81637C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03422744D;
-	Wed, 12 Feb 2025 16:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D4E21129F;
+	Wed, 12 Feb 2025 16:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kBFyOMRB"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="n9zYIluu"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2077.outbound.protection.outlook.com [40.107.249.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2443E1B21AD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739376110; cv=none; b=oUM6/ILOn9ysZik3mk+SHSQ7LPr42HC60CPyJwfIjibED5ZYffFFzx8WaRMmcfEzqxQeIfz9nOgyYJ7h7e6nT6C1i5MflPRgQ7iNo2iZkAvpVDHJr4k3bFRWMlbS2DLNYEx9lDeLTYXI87/dcPbS9FsugIpXOOsvp7c1jOF0j1o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739376110; c=relaxed/simple;
-	bh=O3xP3Kv4ue9SRZO9yoN0LhLQzJPAvXKalm0H21fLOcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=im8MbtN5Bccebidu+a1BTDWrwSYJg/0RDcAJZUaAEpozaqYw+ZAAEWe2e7cZ0tv7surHnkEbSYiXBW7nD448OvytD1TKgSLFSCMJtCqTidwL8RjU8bd34fBNR8x8P/mzu8qAut/uJ9b3Ilk1fGrjTRhYxNXjuag8e1E1frBljvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kBFyOMRB; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 12 Feb 2025 16:01:41 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739376106;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v4Nj4mEHCXAl1eKShLrxkBx5V4PjtNl3cv+kh46Bl/g=;
-	b=kBFyOMRBYL+85+B/9XOMAECNpb9WXs453vaiFN50Gwpx/7q1XBlM188t7RXg0zP5QzTEa9
-	E+rSCavAHMpFGgnjQBFUbfEuzWGOzDpFdjyatMYA8cw62QtqKlLtSMNNZcqZHXSYldWtcV
-	KGGco0GAPlpcANByEU76P7o8ieZ/w5c=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 02/18] zram: permit preemption with active compression
- stream
-Message-ID: <Z6zF5QvTQwVoAhMP@google.com>
-References: <20250212063153.179231-1-senozhatsky@chromium.org>
- <20250212063153.179231-3-senozhatsky@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C231B21AD;
+	Wed, 12 Feb 2025 16:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739376189; cv=fail; b=HqXewsdaEHd0Yr64ZLn9CKCfF7eyBoUlhK+NxrHNAqD58AJt8e/anZsB8n8GWKblvn0lXEELwsqJUNRBk8jQxDZcAl6/FUdwPjsIY84bWG2BEmy44qpwwJuejQac31zusbYKyD8jraXzA1kLiZ2CVZMSmwYmhnJRi1IwnVc0xgg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739376189; c=relaxed/simple;
+	bh=G/5Q5cuWnq5Hwwj3MNiNtSTC7xxLOc55ZKGLHWJJLTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OMS9i2G8mdkNns4ZOxniOg5aFodRHvwNNWwHAqFSaGt184oqkVtIYxxDftu/Ib3lUooxqS0zjA6WhfiNTx9np+uYArMRCu1l7CF44UrRAL4fxO6TX2cgVOhl40T45StI7nzu0W60BJwIOfinjbKpxuaMIrgHAGRfHzBw0yaAgjA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=n9zYIluu; arc=fail smtp.client-ip=40.107.249.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Yukl52Q8T3bYlQTZu+7geQ4tynE3YlJGKR7JGray+n8pMs0BSEc78P7LWBzBd7SD/ZOWZMQlVY6GLle5MHuZuTYjYcZYV+0DXih864HIXnMchcXCl/AzTCAELxhKgh86c7nKPZNRGKpoWHiEOfLibeyPva9B29b6bYl9aI9w9L+3rVZ3St9j8LGPUQAeOVZ5JF8Ofbi2saNUNnTdkfRkTEgqoVi2PTiNxzn2vWnNwVt9X8oC7cDDb5G4TNHFOSWwKf+ecOx+cIRxdEweJudGlJxyFHb5pu7pFwREQvxgTVWRP6WEEAMEy1Vh5UcC/kZLzoYHllO7+S5ecyfBUIW0NQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h01tBPiU2ygRwWSeLPL4wTT6oU1ghrAYDYjLDeQtDIY=;
+ b=BOz0hKRKLSvFAB1QHgUUHKNzvg0+mrStHsCNkvDmqbw4IW0cgbez8onR1e1KbZmJI06jYXTe4U34taYJCvxcivi7cufaKgxl5IcY8tJy8KRIJbvAZlY31zxa2kHRSewRbQ3DiUZbKSFPlqa6TAnvi8goFb1xZe+aqLqjmCJzWohIOwH7Wf4w0ZN3ygEGtf4D8LrFu6F2w4EUBOoT+rriSAOn12kKd84PCHQP6/Je98OpSR339HMv8jGNPnlzl3Ba4dfyTqxUqFe/ioJwycxgo2sLZATkVxTgmoh1KtWOnZcT1jyhZHjKlzl2Nns6Tk8j7jNWiJ22syz1kSMHn242WA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h01tBPiU2ygRwWSeLPL4wTT6oU1ghrAYDYjLDeQtDIY=;
+ b=n9zYIluubKgc+CaF9hm/kNJRKn7+k9EiBpTxtETr4Tv13HQZaf6E5VUdCUgkQClitBH7asfXiXMlJV302G1T4B1hYcdEOxhXjILyCaUpLd2+eLETosYik4dwvUWG4yvZDAzaK8ElGzWNtgf5feK+lW/KynSCRrvVFOzKgdTPmCId4G4kZMIapFynnr94IApcEPIK+ci9prc4D4/CcvhMxKorKalAEmlD5XTfbCuL1HTN0zDZ9Qh7ggR+sDLchVSmxq67rwVRfRnuiY1h+6GxLm5ILKmuHBdehWNZaNYmVmXwcF7mQ5oDoEuMAU19Kya9dQkz0txcYPLdfppy7SKlUQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8071.eurprd04.prod.outlook.com (2603:10a6:20b:3f9::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Wed, 12 Feb
+ 2025 16:03:03 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8422.012; Wed, 12 Feb 2025
+ 16:03:03 +0000
+Date: Wed, 12 Feb 2025 11:02:54 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: shawnguo@kernel.org, robh@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	aisheng.dong@nxp.com, daniel.baluta@gmail.com,
+	laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com,
+	iuliana.prodan@nxp.com, a.fatoum@pengutronix.de,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v4 5/6] arm64: dts: imx8mp: Add fsl,dsp-ctrl property for
+ dsp
+Message-ID: <Z6zGLn3B6SVXhTV1@lizhi-Precision-Tower-5810>
+References: <20250212085222.107102-1-daniel.baluta@nxp.com>
+ <20250212085222.107102-6-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212085222.107102-6-daniel.baluta@nxp.com>
+X-ClientProxiedBy: BY5PR03CA0015.namprd03.prod.outlook.com
+ (2603:10b6:a03:1e0::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212063153.179231-3-senozhatsky@chromium.org>
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8071:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24a9231b-1e33-415d-990b-08dd4b7ebacc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lpXX6ycfcfwlqce7HB6Azjp7kw3SK6VaYq6+lfttprVpI9hMFfw0lW3Z8QqA?=
+ =?us-ascii?Q?HbxaGxb2D/my/UwA+nC3kAyWaAGbJ04XtaBNRY30lPcuXuxZskOM9ajueK95?=
+ =?us-ascii?Q?NKCmKmR8KfMZLWL5uKuV7log+yf/mH6vRFkjsx3Mng3kUp6qve63gRHyoSWc?=
+ =?us-ascii?Q?iVT4i5L45keiAPuqn7Op1ANiuiAit5PS9ntgxhm6EY2Z9m14hc40JKLJsUqP?=
+ =?us-ascii?Q?Ia/rDWQVrLGt8NgdE88YZS/fANsQvnfeYfZ23+lIHLSV+ISXnb5TFGh7PnED?=
+ =?us-ascii?Q?eQsObau2FqG3ggvs+9znMOJUbtjruK1AwBqq0HviJ5x6e8sEqZZhVjDhVdWs?=
+ =?us-ascii?Q?qoWe1vbysltMaLvlYrpXZVtW/oUTHn72mMMpyDkLQxTq3tUe135eq2g7Iztn?=
+ =?us-ascii?Q?M8r9u7dbiDtj4HdQqNyD+hWOAUnTEUgYa4++3OtX+bNhQCydFJo7vkJqrxEV?=
+ =?us-ascii?Q?NrxBB0c9CviPouXpDANPPV9D/G6L2GRywmv07CWzFq3XxVoWr4nmwx2UqN3Y?=
+ =?us-ascii?Q?ikIBMjKoBNrFpCQ8w2mtktIjgeZ2rhuw7UFJSKrmphJ3kmY4gSzvHNsYW4g/?=
+ =?us-ascii?Q?Stzk7UYYGYvZd5ej3FDoRFiwf6cN/ltCpQ7cPzyfPDVEWsQYDe3wur2uQzvS?=
+ =?us-ascii?Q?oHzOwQGqWZD0qJj9pndwR6ormvceioBqoDnT1cpnhsNg1KIT6GUDFpSnZZIx?=
+ =?us-ascii?Q?kgus7kAVZ5H0sG3c3+EFgSPVWRXw3x3WbnsfPQW7W4kPRUqfHN6n494Zx4U7?=
+ =?us-ascii?Q?zfJuhe0Vdrj/fEZJEpDyivgljHHoMYNwS/7TDNR+1w8lYoWmStBOJjQ11dtR?=
+ =?us-ascii?Q?9OwZqMzYl6XpNom1e1qNSf7Ctiq4QcjBJG5ZtuFyiKXO5PycGEGSpJEtJXf2?=
+ =?us-ascii?Q?hg72reIn+O1+kGuEsDVBM7ClJ0O/xmQRZ2GVzH3NaJNqAKgom5ljG0Jou97D?=
+ =?us-ascii?Q?ERuCNXpvCouSdsbhWGmYh8SrWKjiqlaEq0k0zxWqmN3gqq5U9cvRTVUZL0pT?=
+ =?us-ascii?Q?aUu1dRKJjOQz9kdN14lrnkVs+0botk1x8iLKfv7NBokiyNxkitOR5i+0YsRV?=
+ =?us-ascii?Q?J8UuNTTufTvRO61M3E107spNbi2owEn8H7yijA8kqibuPCgCogXPSYmNLj6d?=
+ =?us-ascii?Q?IPOa5LOiZxSkzb85ZvY2oraB9gO+WuAwlO6fqOpPap6Mf6SstX0NY6yK02Ex?=
+ =?us-ascii?Q?cQkyF16dET28iSjLhCCcLZrkTbZp4xG30S9gkYtau6Cy5MhZVYcZvyKC9U+7?=
+ =?us-ascii?Q?GKQp2FoM4GGcGPBHIygEtb3DVkpPTIhZHeLgjTlZBfWKkkOtMaGLisbsvUTN?=
+ =?us-ascii?Q?emvErNpwOJUklB1xmqno7hpemIqyyyodU4jTkYHpRjInbISJ2vKt1wb9Y5Xp?=
+ =?us-ascii?Q?3EKfJvJjyJFSCZHfupod2S49mXegHvWgfEDgWJPfZzefCQ83p2v6snZp8FSx?=
+ =?us-ascii?Q?bQq6LEy2VwDK1/cL4qTD1fnlvhqEUpbG?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?D/FTxexSJzURdZtE7cvRjDSW6f+zt3WIz56rO+GKdDSqbW26p1DUxWFUBJtL?=
+ =?us-ascii?Q?2MfKFQZBL9VBJZlalJqpidv7vkoLvg74VZ1eHOkBgl8yvjP/0mzAyMgTYE/B?=
+ =?us-ascii?Q?D8AAC8Com0Yd0IKxvlcfcf8KFznxNuSNn45upcIDGp1bShB1Bmewxik0wcie?=
+ =?us-ascii?Q?aUmOWfwoBEVLrDNR0fhxKFhhDaKyi5HtByFmi9v7O2C4Le+I/7fdGIgm3CGx?=
+ =?us-ascii?Q?CBiyYVehO8RxgD/wsU6euumOqtFZc6pvjiwJhw+v9mJ3PW6Wd2pDl4NJQezh?=
+ =?us-ascii?Q?kL4hvXi1BK7Ij4Zv5zSfhbQ5DWFb9F8ayOAetmJatJiBIFN3AOIwJHympZwc?=
+ =?us-ascii?Q?hwhQ6W3VkoXdOvmiD2lfnjvuV95J0YvUW+drG2IUeW01JIAlpcfTxZGKgkOd?=
+ =?us-ascii?Q?iLJrHgz2VuwhgNU8QLq6I848UT+yj8MmqAycrn2Fz2DUhuGXzybIpYsAKAbL?=
+ =?us-ascii?Q?bJAQfb0mTDnybmks67VzL5RkuF6Dnmk7Vh8KxjiYAHtzlLU6EM3IEYxN6MRm?=
+ =?us-ascii?Q?HiKS0uAREdziRh0qAf0zCnFuLqC+E1Y0UpyN2lteTP7Y7cpevQL8ntmNH3QO?=
+ =?us-ascii?Q?HO24OwlPJiNkrhLzLtzGHVZMkueQfAVNr/sOEjVV+qKo/zFcTO32E2KtjizV?=
+ =?us-ascii?Q?EVo5F8UNKt+1JVg3bxZ2r8h9ZyZ07QdA3GUv2nK0GCiQKtH/DaJ4RPkaXPcL?=
+ =?us-ascii?Q?18uS3Xkj7eEAd7x+mSLlRkx3PdeNDUC4MitEMwW5kGFCn/UuPZtPwDoDYlvL?=
+ =?us-ascii?Q?zL0LaOUGdBTHXGQjPgHpdoaJsSCtiXn1E1XAgQXDdVhNazE4Q3RYjT25Dyw0?=
+ =?us-ascii?Q?CSSXtsQkRO2fJGmAyQxbZ8HCXr/XhUnvkc8UJHayj4rIKtApYX15faXUMxQP?=
+ =?us-ascii?Q?e47mTqplm6wXKo/+ZDxT5HpIYPkrcGFCyTo2DDTdbJvlxjzoas5LU91+lx7E?=
+ =?us-ascii?Q?lGOmYsoKXPflzHu09VcD9BvsQA4Z5yRm6LwsrnzVr0rF8FnXrBYNjjb6mTqf?=
+ =?us-ascii?Q?7N47utYadD7MxHDs3xgEdb0BAjbXzWYSNAFh9m98AIlf4z0HOxLEwmApV7Sb?=
+ =?us-ascii?Q?wDKh5PUAJNr3Pbxa7hjCShPBBFOX3el7b7SQwH6jtlK0HTfZUJkcJGVtBo0i?=
+ =?us-ascii?Q?wORIWioP+lM7TYL24UhRAtLMrVzmQlZPDu9fV8TjY9eCyaJXXu0IrKxflyz2?=
+ =?us-ascii?Q?/VH/GMwZgSAJ2JzFAPGMikn3DhJFJFzx7qOzZfwby1qaO7lzAo+gAR3GRD8J?=
+ =?us-ascii?Q?38ASB9W0TgIArxSzZswl+pYPWCrNloZfGf4GJ9m+M7ZzZy2iF66dhxXgXzs3?=
+ =?us-ascii?Q?sIpMD58oJquHnmZXVv9NfpBDgbMdb+eNT72Zj+tUlKGcikeGRlaaxb1yFDb5?=
+ =?us-ascii?Q?JU4C06gSR/CWStUKxkJEyNm4O1YJDhVaKFBRdngCzbfr0z2bv1MPy00JSwlY?=
+ =?us-ascii?Q?Q6INduV7UTRSvyyGVAOHa8ZU70nPDYse/UuxMKUh2cnBRqIvgiO2bfvRr6Sn?=
+ =?us-ascii?Q?CInZMQVsrSuVaktINnbuEqnB1j+Xj6BXTqt8VCOhEua/9kM5RP62GvSCT3HL?=
+ =?us-ascii?Q?PGno3EIywU2mnPVL3wFA5mNOdr91hLU2henYHE95?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24a9231b-1e33-415d-990b-08dd4b7ebacc
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 16:03:03.2078
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GV8G33RnOsF+LoZsUwlcReSIa16stuPtuxXAbKdPGPciJ0ub8ERDymCKw6iQJ1om2oQ5jNb6nbbTl15s027BOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8071
 
-On Wed, Feb 12, 2025 at 03:27:00PM +0900, Sergey Senozhatsky wrote:
-> Currently, per-CPU stream access is done from a non-preemptible
-> (atomic) section, which imposes the same atomicity requirements on
-> compression backends as entry spin-lock, and makes it impossible
-> to use algorithms that can schedule/wait/sleep during compression
-> and decompression.
-> 
-> Switch to preemptible per-CPU model, similar to the one used
-> in zswap.  Instead of a per-CPU local lock, each stream carries
-> a mutex which is locked throughout entire time zram uses it
-> for compression or decompression, so that cpu-dead event waits
-> for zram to stop using a particular per-CPU stream and release
-> it.
-> 
-> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+On Wed, Feb 12, 2025 at 10:52:21AM +0200, Daniel Baluta wrote:
+> Audio block control contains a set of registers and some of them used for
+> DSP configuration.
+>
+> Drivers (rproc, SOF) are using fsl,dsp-ctrl property in order to control
+> the DSP, particularly for Run/Stall bit.
+>
+> Note that audio block control doesn't offer the functionality to reset
+> thte DSP. Reset is done via DAP interface.
+>
+> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 > ---
->  drivers/block/zram/zcomp.c    | 36 +++++++++++++++++++++++++----------
->  drivers/block/zram/zcomp.h    |  6 +++---
->  drivers/block/zram/zram_drv.c | 20 +++++++++----------
->  3 files changed, 39 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
-> index bb514403e305..e83dd9a80a81 100644
-> --- a/drivers/block/zram/zcomp.c
-> +++ b/drivers/block/zram/zcomp.c
-> @@ -7,6 +7,7 @@
->  #include <linux/wait.h>
->  #include <linux/sched.h>
->  #include <linux/cpu.h>
-> +#include <linux/cpuhotplug.h>
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> index 14cfbd228b45..46b33fbb9bd1 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -1609,7 +1609,7 @@ sdma2: dma-controller@30e10000 {
+>  			};
+>
+>  			audio_blk_ctrl: clock-controller@30e20000 {
+> -				compatible = "fsl,imx8mp-audio-blk-ctrl";
+> +				compatible = "fsl,imx8mp-audio-blk-ctrl", "syscon";
+>  				reg = <0x30e20000 0x10000>;
+>  				#clock-cells = <1>;
+>  				#reset-cells = <1>;
+> @@ -2425,6 +2425,7 @@ dsp: dsp@3b6e8000 {
+>  			mboxes = <&mu2 0 0>, <&mu2 1 0>, <&mu2 3 0>;
+>  			firmware-name = "imx/dsp/hifi4.bin";
+>  			memory-region = <&dsp_reserved>;
+> +			fsl,dsp-ctrl = <&audio_blk_ctrl>;
 
-What code changes prompt this?
+I think kk's comments in v3
 
->  #include <linux/crypto.h>
->  #include <linux/vmalloc.h>
->  
-> @@ -54,6 +55,7 @@ static int zcomp_strm_init(struct zcomp *comp, struct zcomp_strm *zstrm)
->  {
->  	int ret;
->  
-> +	mutex_init(&zstrm->lock);
+"This should have been implemented as reset controller, not syscon. It's
+really poor choice to call everything syscon. It does not scale, does
+not provide you runtime PM or probe ordering (device links). Quick look
+at your drivers suggest that you have exacvtly that problems."
 
-I don't think we can initialize the mutex in the hotplug callback. I
-think the following scenario is possible:
+The above is quite good suggestion.
 
-CPU #1					CPU #2
-zcomp_stream_get()
-  zstrm = raw_cpu_ptr()
-/* task migrated to CPU 2 */
+Your reply "But for Run/Stall bits we need to use a syscon.",
 
-CPU goes offline
-  zcomp_cpu_dead()
-    mutex_lock()
-    ..
-    mutex_unlock()
-					/* migrated task continues */
-					zcomp_stream_get()
-					  mutex_lock()
-CPU goes online
-  mutex_init()
-  					  mutex_unlock() /* problem */
-					
-In this case we'll end up initializing the mutex on CPU #1 while CPU #2
-has it locked. When we unlocked it on CPU #2 we will corrupt it AFAICT.
+Run/Stall actually is reset, Most system, release reset signal means dsp/core
+RUN.
 
-This is why I moved the mutex initialization out of the hotplug callback
-in zswap. I suspect to do something similar for zram we'd need to do it
-in zcomp_init()?
+Frank
 
->  	ret = comp->ops->create_ctx(comp->params, &zstrm->ctx);
->  	if (ret)
->  		return ret;
-> @@ -109,13 +111,29 @@ ssize_t zcomp_available_show(const char *comp, char *buf)
->  
->  struct zcomp_strm *zcomp_stream_get(struct zcomp *comp)
->  {
-> -	local_lock(&comp->stream->lock);
-> -	return this_cpu_ptr(comp->stream);
-> +	for (;;) {
-> +		struct zcomp_strm *zstrm = raw_cpu_ptr(comp->stream);
-> +
-> +		/*
-> +		 * Inspired by zswap
-> +		 *
-> +		 * stream is returned with ->mutex locked which prevents
-> +		 * cpu_dead() from releasing this stream under us, however
-> +		 * there is still a race window between raw_cpu_ptr() and
-> +		 * mutex_lock(), during which we could have been migrated
-> +		 * to a CPU that has already destroyed its stream.  If so
-
-"we could have been migrated from** a CPU that has already destroyed its
-stream"? Right?
-
-> +		 * then unlock and re-try on the current CPU.
-> +		 */
-> +		mutex_lock(&zstrm->lock);
-> +		if (likely(zstrm->buffer))
-> +			return zstrm;
-> +		mutex_unlock(&zstrm->lock);
-> +	}
->  }
->  
-> -void zcomp_stream_put(struct zcomp *comp)
-> +void zcomp_stream_put(struct zcomp_strm *zstrm)
->  {
-> -	local_unlock(&comp->stream->lock);
-> +	mutex_unlock(&zstrm->lock);
->  }
->  
->  int zcomp_compress(struct zcomp *comp, struct zcomp_strm *zstrm,
-> @@ -151,12 +169,9 @@ int zcomp_decompress(struct zcomp *comp, struct zcomp_strm *zstrm,
->  int zcomp_cpu_up_prepare(unsigned int cpu, struct hlist_node *node)
->  {
->  	struct zcomp *comp = hlist_entry(node, struct zcomp, node);
-> -	struct zcomp_strm *zstrm;
-> +	struct zcomp_strm *zstrm = per_cpu_ptr(comp->stream, cpu);
->  	int ret;
->  
-> -	zstrm = per_cpu_ptr(comp->stream, cpu);
-> -	local_lock_init(&zstrm->lock);
-> -
->  	ret = zcomp_strm_init(comp, zstrm);
->  	if (ret)
->  		pr_err("Can't allocate a compression stream\n");
-> @@ -166,10 +181,11 @@ int zcomp_cpu_up_prepare(unsigned int cpu, struct hlist_node *node)
->  int zcomp_cpu_dead(unsigned int cpu, struct hlist_node *node)
->  {
->  	struct zcomp *comp = hlist_entry(node, struct zcomp, node);
-> -	struct zcomp_strm *zstrm;
-> +	struct zcomp_strm *zstrm = per_cpu_ptr(comp->stream, cpu);
->  
-> -	zstrm = per_cpu_ptr(comp->stream, cpu);
-> +	mutex_lock(&zstrm->lock);
->  	zcomp_strm_free(comp, zstrm);
-> +	mutex_unlock(&zstrm->lock);
->  	return 0;
->  }
->  
-> diff --git a/drivers/block/zram/zcomp.h b/drivers/block/zram/zcomp.h
-> index ad5762813842..23b8236b9090 100644
-> --- a/drivers/block/zram/zcomp.h
-> +++ b/drivers/block/zram/zcomp.h
-> @@ -3,7 +3,7 @@
->  #ifndef _ZCOMP_H_
->  #define _ZCOMP_H_
->  
-> -#include <linux/local_lock.h>
-> +#include <linux/mutex.h>
->  
->  #define ZCOMP_PARAM_NO_LEVEL	INT_MIN
->  
-> @@ -31,7 +31,7 @@ struct zcomp_ctx {
->  };
->  
->  struct zcomp_strm {
-> -	local_lock_t lock;
-> +	struct mutex lock;
->  	/* compression buffer */
->  	void *buffer;
->  	struct zcomp_ctx ctx;
-> @@ -77,7 +77,7 @@ struct zcomp *zcomp_create(const char *alg, struct zcomp_params *params);
->  void zcomp_destroy(struct zcomp *comp);
->  
->  struct zcomp_strm *zcomp_stream_get(struct zcomp *comp);
-> -void zcomp_stream_put(struct zcomp *comp);
-> +void zcomp_stream_put(struct zcomp_strm *zstrm);
->  
->  int zcomp_compress(struct zcomp *comp, struct zcomp_strm *zstrm,
->  		   const void *src, unsigned int *dst_len);
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index 3708436f1d1f..43f460a45e3e 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -1608,7 +1608,7 @@ static int read_compressed_page(struct zram *zram, struct page *page, u32 index)
->  	ret = zcomp_decompress(zram->comps[prio], zstrm, src, size, dst);
->  	kunmap_local(dst);
->  	zs_unmap_object(zram->mem_pool, handle);
-> -	zcomp_stream_put(zram->comps[prio]);
-> +	zcomp_stream_put(zstrm);
->  
->  	return ret;
->  }
-> @@ -1769,14 +1769,14 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
->  	kunmap_local(mem);
->  
->  	if (unlikely(ret)) {
-> -		zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
-> +		zcomp_stream_put(zstrm);
->  		pr_err("Compression failed! err=%d\n", ret);
->  		zs_free(zram->mem_pool, handle);
->  		return ret;
->  	}
->  
->  	if (comp_len >= huge_class_size) {
-> -		zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
-> +		zcomp_stream_put(zstrm);
->  		return write_incompressible_page(zram, page, index);
->  	}
->  
-> @@ -1800,7 +1800,7 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
->  				   __GFP_HIGHMEM |
->  				   __GFP_MOVABLE);
->  	if (IS_ERR_VALUE(handle)) {
-> -		zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
-> +		zcomp_stream_put(zstrm);
->  		atomic64_inc(&zram->stats.writestall);
->  		handle = zs_malloc(zram->mem_pool, comp_len,
->  				   GFP_NOIO | __GFP_HIGHMEM |
-> @@ -1812,7 +1812,7 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
->  	}
->  
->  	if (!zram_can_store_page(zram)) {
-> -		zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
-> +		zcomp_stream_put(zstrm);
->  		zs_free(zram->mem_pool, handle);
->  		return -ENOMEM;
->  	}
-> @@ -1820,7 +1820,7 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
->  	dst = zs_map_object(zram->mem_pool, handle, ZS_MM_WO);
->  
->  	memcpy(dst, zstrm->buffer, comp_len);
-> -	zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
-> +	zcomp_stream_put(zstrm);
->  	zs_unmap_object(zram->mem_pool, handle);
->  
->  	zram_slot_lock(zram, index);
-> @@ -1979,7 +1979,7 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
->  		kunmap_local(src);
->  
->  		if (ret) {
-> -			zcomp_stream_put(zram->comps[prio]);
-> +			zcomp_stream_put(zstrm);
->  			return ret;
->  		}
->  
-> @@ -1989,7 +1989,7 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
->  		/* Continue until we make progress */
->  		if (class_index_new >= class_index_old ||
->  		    (threshold && comp_len_new >= threshold)) {
-> -			zcomp_stream_put(zram->comps[prio]);
-> +			zcomp_stream_put(zstrm);
->  			continue;
->  		}
->  
-> @@ -2047,13 +2047,13 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
->  			       __GFP_HIGHMEM |
->  			       __GFP_MOVABLE);
->  	if (IS_ERR_VALUE(handle_new)) {
-> -		zcomp_stream_put(zram->comps[prio]);
-> +		zcomp_stream_put(zstrm);
->  		return PTR_ERR((void *)handle_new);
->  	}
->  
->  	dst = zs_map_object(zram->mem_pool, handle_new, ZS_MM_WO);
->  	memcpy(dst, zstrm->buffer, comp_len_new);
-> -	zcomp_stream_put(zram->comps[prio]);
-> +	zcomp_stream_put(zstrm);
->  
->  	zs_unmap_object(zram->mem_pool, handle_new);
->  
-> -- 
-> 2.48.1.502.g6dc24dfdaf-goog
-> 
+>  			status = "disabled";
+>  		};
+>  	};
+> --
+> 2.43.0
+>
 
