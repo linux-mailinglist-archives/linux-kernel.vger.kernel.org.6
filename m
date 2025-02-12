@@ -1,189 +1,232 @@
-Return-Path: <linux-kernel+bounces-511694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812CCA32E65
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:19:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F017A32E61
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:19:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A741639C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DAB2188AE97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B39E260A31;
-	Wed, 12 Feb 2025 18:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4419D262D17;
+	Wed, 12 Feb 2025 18:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="n1hRdZSC"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H87SpPOg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6229E20E02A;
-	Wed, 12 Feb 2025 18:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715CB26157D;
+	Wed, 12 Feb 2025 18:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739384281; cv=none; b=mZTEZGa+OWAffXtetjmxrMS899v5IqM35pl7wFgn7Vngc7+bG1wUebq3F83E2D5KzwR6qUr2RBmNOr58BmtpSGZ4KSmj4AdTwp1yprdUN8quzxLIiV7bXqj3r5AbDcyyq285B3Bn24r0Lmw3uumqzpcRnBdQuQVO7Ty/co4KvAc=
+	t=1739384261; cv=none; b=KfsyczTMLV5Sku5Y95Us2sFib/AVuU4Ewzr/Md6lcGoz20HPnWmjbCon4hf9YGn6cwuuvSKmzXmqbzvxYrWgrRDj0HY+6OcOaPkTDNSzc1/3FcD6X8BmA/32PUNiE/TX9IX8YRrbcALvYUJ8Kwged5j8aiUuHxM0aj9qTs9a1tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739384281; c=relaxed/simple;
-	bh=6yh6sIDpTeelx0pGMYkqBdEzrGTT4jpixUibIkEdsTY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PxDEWKKZCMw6jI5KvUlpcQnyKMK9P93rVGD9K5Hz3kzCBctR2MO+Dss99UHniKJ6dTWgGUbaP/Ee4Z5MjAmsycNsD0BMIH+1O38hBfJw9SEcF6oSbx3C+s9rPKkhzu5/qqiEbOZImvdB+RZ98UQR5nkikeYP7LFev4GDI4iMIvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=n1hRdZSC; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CGx0WQ014280;
-	Wed, 12 Feb 2025 13:17:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=/5/RV
-	sozl6dPVyR4qc7R6bfCqeA1USMCMGt+cmpIcr4=; b=n1hRdZSCamjR8zhOFKdXD
-	ndtx8tc6PDX1E6xiJXpphzQnUh688MwmxMtG7QvD6s7twB4ZHN2X2a1s6U184xaY
-	RstYMeMgD5OPoVN+/UzGK4632nPa0MooeLpVw4LJDI3sn0fJQj61QEDn4BIxYPxI
-	EadQ9SFpZtkG1waufXU7Ni8s299q2WActRqyut8GNVcjyJgMIIc9HkV3ME9xoovE
-	NKW60SVsUvz8PFhh4CprdTBh/N3Umzp6mrkTYlmcRNJs/+vgUjwUPybi/zQf7oB5
-	r62hu4NKO/tlOuSlRQ+Mb8f+eOvZIfcstFdFxy7h6z1UXUMmPOeXZOqZt1It553x
-	w==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 44p52a3nbt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 13:17:44 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 51CIHhGq041132
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Feb 2025 13:17:43 -0500
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 12 Feb 2025 13:17:43 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 12 Feb 2025 13:17:42 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Wed, 12 Feb 2025 13:17:42 -0500
-Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51CIHR6J017484;
-	Wed, 12 Feb 2025 13:17:29 -0500
-From: Jonathan Santos <Jonathan.Santos@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sergiu Cuciurean <sergiu.cuciurean@analog.com>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
-        <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <jonath4nns@gmail.com>,
-        <marcelo.schmitt1@gmail.com>, <dlechner@baylibre.com>,
-        Jonathan Santos <Jonathan.Santos@analog.com>
-Subject: [PATCH RESEND v3 09/17] iio: adc: ad7768-1: Add reset gpio
-Date: Wed, 12 Feb 2025 15:17:27 -0300
-Message-ID: <9562e1a999ae3e7523a618f100b809a70ead17fa.1739368121.git.Jonathan.Santos@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1739368121.git.Jonathan.Santos@analog.com>
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1739384261; c=relaxed/simple;
+	bh=jU2kPhgyRZAfdjYf2MKVcaAlilzb8sQchUY6HIPoYUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3y1TE5oRq8MmbgprGT4KigPMfqMlTVzXKnKhGDEbCfx9XTHeCgGHgojuCtgXlRkKL2peN+/3XIWKJTHEg4FoJh7pQdE3oXOURGNRY0hqo2QRhLuTfEu3Xi5ccABYxc/LXv4gihh5isPtf0xdCGrgTcktMitOwbV7zaZsBMT/m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H87SpPOg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90D38C4CEDF;
+	Wed, 12 Feb 2025 18:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739384259;
+	bh=jU2kPhgyRZAfdjYf2MKVcaAlilzb8sQchUY6HIPoYUM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H87SpPOgrCyGqo44WNZMOiY7ftkh5qONH0YCgttNiuye/7uexi28ExoBCGok2InLh
+	 zNiobaiOZ/eFofd97uUB/D/h/O0wjL/9ACrJaexTBoWg0/iof73FHv440cYpRX7jI0
+	 avnjFg0skeGp0kisV/1SlCUXSUH1kPqwn7Ub0cc1lVDNIqAd8XOjo/FecG2DVnkIjR
+	 GBQD1GRMX8DGjtvcIpK+ztuo4dlbPr7CVuMyncJ9R3IaOh23lWs8SVBRE4BXCsNNxq
+	 8qXJX88jNTmmzkz+qxD1JdWEemHmcsuwOTlSFbgS3lpVVKNo3A3odYulBgInJ89ryF
+	 ZhxR89buP8NkQ==
+Date: Wed, 12 Feb 2025 12:17:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christian Daudt <bcm@fixthebug.org>,
+	Sherman Yin <syin@broadcom.com>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Stanislav Jakubek <stano.jakubek@gmail.com>,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 1/7] dt-bindings: pinctrl: Add bindings for BCM21664 pin
+ controller
+Message-ID: <20250212181738.GA4056295-robh@kernel.org>
+References: <20250207-bcm21664-pinctrl-v1-0-e7cfac9b2d3b@gmail.com>
+ <20250207-bcm21664-pinctrl-v1-1-e7cfac9b2d3b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: 6nqAgi4u29CYYqIU9G3a72RFJgZHCmmI
-X-Authority-Analysis: v=2.4 cv=FabNxI+6 c=1 sm=1 tr=0 ts=67ace5c8 cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=T2h4t0Lz3GQA:10 a=gAnH3GRIAAAA:8 a=IpJZQVW2AAAA:8 a=AMVuJT6RiP1W9vSWcgYA:9 a=oVHKYsEdi7-vN-J5QA_j:22
- a=IawgGOuG5U0WyFbmm1f5:22
-X-Proofpoint-GUID: 6nqAgi4u29CYYqIU9G3a72RFJgZHCmmI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0
- spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- mlxlogscore=963 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502120132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250207-bcm21664-pinctrl-v1-1-e7cfac9b2d3b@gmail.com>
 
-From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+On Fri, Feb 07, 2025 at 09:02:40PM +0100, Artur Weber wrote:
+> Add device tree bindings for the pin controller included in the
+> BCM21664 chip. The bindings are based off brcm,bcm11351-pinctrl.yaml;
+> both chips use the same driver, but have different pins, and the
+> BCM21664 has 6 alt modes instead of 4.
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+>  .../bindings/pinctrl/brcm,bcm21664-pinctrl.yaml    | 169 +++++++++++++++++++++
+>  1 file changed, 169 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm21664-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,bcm21664-pinctrl.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..233bea91b640ffa8480637d7304f661b7a4f5d79
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm21664-pinctrl.yaml
+> @@ -0,0 +1,169 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/brcm,bcm21664-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom BCM21664 pin controller
+> +
+> +maintainers:
+> +  - Florian Fainelli <florian.fainelli@broadcom.com>
+> +  - Ray Jui <rjui@broadcom.com>
+> +  - Scott Branden <sbranden@broadcom.com>
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: brcm,bcm21664-pinctrl
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    patternProperties:
+> +      '-grp[0-9]$':
+> +        type: object
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          pins:
+> +            description:
+> +              Specifies the name(s) of one or more pins to be configured by
+> +              this node.
+> +            items:
+> +              enum: [ adcsyn, batrm, bsc1clk, bsc1dat, camcs0, camcs1, clk32k,
+> +                      clk_cx8, dclk1, dclk4, dclkreq1, dclkreq4, dmic0clk,
+> +                      dmic0dq, dsi0te, gpio00, gpio01, gpio02, gpio03, gpio04,
+> +                      gpio05, gpio06, gpio07, gpio08, gpio09, gpio10, gpio11,
+> +                      gpio12, gpio13, gpio14, gpio15, gpio16, gpio17, gpio18,
+> +                      gpio19, gpio20, gpio21, gpio22, gpio23, gpio24, gpio25,
+> +                      gpio26, gpio27, gpio28, gpio32, gpio33, gpio34, gpio93,
+> +                      gpio94, gps_calreq, gps_hostreq, gps_pablank, gps_tmark,
+> +                      icusbdm, icusbdp, lcdcs0, lcdres, lcdscl, lcdsda, lcdte,
+> +                      mdmgpio00, mdmgpio01, mdmgpio02, mdmgpio03, mdmgpio04,
+> +                      mdmgpio05, mdmgpio06, mdmgpio07, mdmgpio08, mmc0ck,
+> +                      mmc0cmd, mmc0dat0, mmc0dat1, mmc0dat2, mmc0dat3, mmc0dat4,
+> +                      mmc0dat5, mmc0dat6, mmc0dat7, mmc0rst, mmc1ck, mmc1cmd,
+> +                      mmc1dat0, mmc1dat1, mmc1dat2, mmc1dat3, mmc1dat4,
+> +                      mmc1dat5, mmc1dat6, mmc1dat7, mmc1rst, pc1, pc2, pmbscclk,
+> +                      pmbscdat, pmuint, resetn, rfst2g_mtsloten3g,
+> +                      rtxdata2g_txdata3g1, rtxen2g_txdata3g2, rxdata3g0,
+> +                      rxdata3g1, rxdata3g2, sdck, sdcmd, sddat0, sddat1, sddat2,
+> +                      sddat3, simclk, simdat, simdet, simrst, spi0clk, spi0fss,
+> +                      spi0rxd, spi0txd, sri_c, sri_d, sri_e, sspck, sspdi,
+> +                      sspdo, sspsyn, stat1, stat2, swclktck, swdiotms, sysclken,
+> +                      tdi, tdo, testmode, traceclk, tracedt00, tracedt01,
+> +                      tracedt02, tracedt03, tracedt04, tracedt05, tracedt06,
+> +                      tracedt07, tracedt08, tracedt09, tracedt10, tracedt11,
+> +                      tracedt12, tracedt13, tracedt14, tracedt15, trstb,
+> +                      txdata3g0, ubctsn, ubrtsn, ubrx, ubtx ]
+> +
+> +          function:
+> +            description:
+> +              Specifies the pin mux selection.
+> +            enum: [ alt1, alt2, alt3, alt4, alt5, alt6 ]
+> +
+> +          slew-rate:
+> +            description: |
+> +              Meaning depends on configured pin mux:
+> +                bsc*clk/pmbscclk or bsc*dat/pmbscdat:
+> +                  0: Standard (100 kbps) & Fast (400 kbps) mode
+> +                  1: Highspeed (3.4 Mbps) mode
+> +                Otherwise:
+> +                  0: fast slew rate
+> +                  1: normal slew rate
+> +
+> +          bias-disable: true
+> +          bias-pull-up: true
+> +          input-disable: true
+> +          input-enable: true
 
-Depending on the controller, the default state of a gpio can vary. This
-change excludes the probability that the dafult state of the ADC reset
-gpio will be HIGH if it will be passed as reference in the devicetree.
+With unevaluateProperties, these have no effect.
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-Co-developed-by: Jonathan Santos <Jonathan.Santos@analog.com>
-Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
----
-v3 Changes:
-* fixed SoB order.
-* increased delay after finishing the reset action to 200us, as the
-  datasheet recommends.
+> +
+> +        required:
+> +          - pins
+> +
+> +        allOf:
+> +          - $ref: pincfg-node.yaml#
+> +
+> +          # Optional properties for standard pins
+> +          - if:
+> +              properties:
+> +                pins:
+> +                  contains:
+> +                    enum: [ adcsyn, batrm, camcs0, camcs1, clk32k, clk_cx8,
+> +                            dclk1, dclk4, dclkreq1, dclkreq4, dmic0clk, dmic0dq,
+> +                            dsi0te, gpio00, gpio01, gpio02, gpio03, gpio04,
+> +                            gpio05, gpio06, gpio07, gpio08, gpio09, gpio10,
+> +                            gpio11, gpio12, gpio13, gpio14, gpio15, gpio18,
+> +                            gpio19, gpio20, gpio21, gpio22, gpio23, gpio24,
+> +                            gpio25, gpio26, gpio27, gpio28, gpio32, gpio33,
+> +                            gpio34, gpio93, gpio94, gps_calreq, gps_hostreq,
+> +                            gps_pablank, gps_tmark, icusbdm, icusbdp, lcdcs0,
+> +                            lcdres, lcdscl, lcdsda, lcdte, mdmgpio00, mdmgpio01,
+> +                            mdmgpio02, mdmgpio03, mdmgpio04, mdmgpio05,
+> +                            mdmgpio06, mdmgpio07, mdmgpio08, mmc0ck, mmc0cmd,
+> +                            mmc0dat0, mmc0dat1, mmc0dat2, mmc0dat3, mmc0dat4,
+> +                            mmc0dat5, mmc0dat6, mmc0dat7, mmc0rst, mmc1ck,
+> +                            mmc1cmd, mmc1dat0, mmc1dat1, mmc1dat2, mmc1dat3,
+> +                            mmc1dat4, mmc1dat5, mmc1dat6, mmc1dat7, mmc1rst,
+> +                            pc1, pc2, pmuint, resetn, rfst2g_mtsloten3g,
+> +                            rtxdata2g_txdata3g1, rtxen2g_txdata3g2, rxdata3g0,
+> +                            rxdata3g1, rxdata3g2, sdck, sdcmd, sddat0, sddat1,
+> +                            sddat2, sddat3, simclk, simdat, simdet, simrst,
+> +                            spi0clk, spi0fss, spi0rxd, spi0txd, sri_c, sri_d,
+> +                            sri_e, sspck, sspdi, sspdo, sspsyn, stat1, stat2,
+> +                            swclktck, swdiotms, sysclken, tdi, tdo, testmode,
+> +                            traceclk, tracedt00, tracedt01, tracedt02,
+> +                            tracedt03, tracedt04, tracedt05, tracedt06,
+> +                            tracedt07, tracedt08, tracedt09, tracedt10,
+> +                            tracedt11, tracedt12, tracedt13, tracedt14,
+> +                            tracedt15, trstb, txdata3g0, ubctsn, ubrtsn, ubrx,
+> +                            ubtx ]
+> +            then:
+> +              properties:
+> +                drive-strength:
+> +                  enum: [ 2, 4, 6, 8, 10, 12, 14, 16 ]
 
-v2 Changes:
-* Replaced usleep_range() for fsleep() and gpiod_direction_output() for 
-  gpiod_set_value_cansleep().
-* Reset via SPI register is performed if the Reset GPIO is not defined. 
----
- drivers/iio/adc/ad7768-1.c | 36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+Not sure this is worth the complexity. And actually, 'drive-strength' 
+will be allowed on the pins not listed here and can have any value.
 
-diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-index 64d123b52b02..5ee29f9813ce 100644
---- a/drivers/iio/adc/ad7768-1.c
-+++ b/drivers/iio/adc/ad7768-1.c
-@@ -166,6 +166,7 @@ struct ad7768_state {
- 	struct completion completion;
- 	struct iio_trigger *trig;
- 	struct gpio_desc *gpio_sync_in;
-+	struct gpio_desc *gpio_reset;
- 	const char *labels[ARRAY_SIZE(ad7768_channels)];
- 	/*
- 	 * DMA (thus cache coherency maintenance) may require the
-@@ -486,19 +487,30 @@ static int ad7768_setup(struct ad7768_state *st)
- {
- 	int ret;
- 
--	/*
--	 * Two writes to the SPI_RESET[1:0] bits are required to initiate
--	 * a software reset. The bits must first be set to 11, and then
--	 * to 10. When the sequence is detected, the reset occurs.
--	 * See the datasheet, page 70.
--	 */
--	ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x3);
--	if (ret)
--		return ret;
-+	st->gpio_reset = devm_gpiod_get_optional(&st->spi->dev, "reset",
-+						 GPIOD_OUT_HIGH);
-+	if (IS_ERR(st->gpio_reset))
-+		return PTR_ERR(st->gpio_reset);
- 
--	ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x2);
--	if (ret)
--		return ret;
-+	if (st->gpio_reset) {
-+		fsleep(10);
-+		gpiod_set_value_cansleep(st->gpio_reset, 0);
-+		fsleep(200);
-+	} else {
-+		/*
-+		 * Two writes to the SPI_RESET[1:0] bits are required to initiate
-+		 * a software reset. The bits must first be set to 11, and then
-+		 * to 10. When the sequence is detected, the reset occurs.
-+		 * See the datasheet, page 70.
-+		 */
-+		ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x3);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x2);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	st->gpio_sync_in = devm_gpiod_get(&st->spi->dev, "adi,sync-in",
- 					  GPIOD_OUT_LOW);
--- 
-2.34.1
+I would just move this to the main section and drop the if/then. You 
+could list the subset of pins where 'drive-strength' is not valid 
+instead and then put 'drive-strength: false'.
 
+Rob
 
