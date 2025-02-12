@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-510277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD36A31A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:39:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4E8A31A9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:40:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5471A18879FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:39:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7389F16753F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A16D1EEF9;
-	Wed, 12 Feb 2025 00:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FFA125B9;
+	Wed, 12 Feb 2025 00:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebeRGoMY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tlph9vm8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5AF1C695;
-	Wed, 12 Feb 2025 00:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501A2FBF6;
+	Wed, 12 Feb 2025 00:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739320747; cv=none; b=mrdQOC36iCTaEgssoVS9M/w3lLcdCwxB9PC3EEFsnMvXrnqhlNi8huu/2roW/okQ0tqlUAencxo8e4edtuX/98IzFLi4QYIuqw37O1/vFiDehnm1kKjPa6uCkxACQ2uHWkD76xFRU2UY8HQYBg16ShLQoRwPkmco8d/4qKO2oAM=
+	t=1739320809; cv=none; b=H6/2Z8F7Wju05YEH27xPshaxwkG2UMuN4Fe6mL1NlKvVJi7ljeqOJ4xm/oelbsqICHnu1Y/GWCDoRzwsDWSmlaJOzsafL7nDLp8NRFSCBk3x2rAGczOBrn/yGkOIrSRrFGMiNk/sC4zItsjDRbbkgA3gulzb+K8z68kMnfFGSiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739320747; c=relaxed/simple;
-	bh=4UzwP9mzXKuiCXOs+Y9SzPdYG/HGt/RpUx2drHDa7J4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IlOxzBUjrPUYYQ8aFxbHlD6+gkBuCTI8y2vwXeGL13VFx2U07OPEAhsPNF58zkknjdVa18dQDGhp++IIY8rkja+URIZm+1cdzQq6tXQJpxWWK6iNuMm99f/ylq3pM6FDrwf+WwYEExpgiDur242pY2qLUraw8VFsXb/u2DAqZ5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebeRGoMY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B854C4CEDD;
-	Wed, 12 Feb 2025 00:39:06 +0000 (UTC)
+	s=arc-20240116; t=1739320809; c=relaxed/simple;
+	bh=oCWwfNGxCQKYtvtgrXmiVJ8HiXZkgXpur1QcqnWncLI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=g1YduyEQOzzKBv/3GPHp6Dq7nHpodjndN5UFuH+d+0F6kgWcWpVh1OVZ+Ukz4gprXQijNqagr9kTZwtKwy6V1z9DauobibGNTkjuaxq2fPCZQOYhAMEtXuszqLP3HRPPRcqmBeH+zqySw5bHHk8BqBdpnejbXiFfJFWLhhj12sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tlph9vm8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A06DC4CEDD;
+	Wed, 12 Feb 2025 00:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739320746;
-	bh=4UzwP9mzXKuiCXOs+Y9SzPdYG/HGt/RpUx2drHDa7J4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ebeRGoMYbTZd2SfuijG7tuIxqoBpjfvwIZJnfD/90W8lULSGbjjBUobyzxBQYhoOO
-	 h+qoJw8YLwP8RvzGyl3HgUFTfSpmFM9otwil+uqnndpim1jG0S3tFveQcvzR7JGApV
-	 o2iXRA10BU3x9wo5XjPlDh1t782hkJmymH28h4ey/b1NLNGtgL+htxyWC7IOhcivjy
-	 ECmioTToU65ecSINjnchVemGqfXjrs2i61bdkDy1CVorYfbKHRFBepM/ZBtxu45fyj
-	 LsOmEnysEAOp851zcnqx2A7TV8r45lKhcqDrdpPn5KuBYRV3vsx//uq5tMSiwZxFHU
-	 UDfYoQpp5j/xw==
-Date: Wed, 12 Feb 2025 00:39:04 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v6] add ioctl/sysfs to donate file-backed pages
-Message-ID: <Z6vtqMB1P_t390Vg@google.com>
-References: <20250117164350.2419840-1-jaegeuk@kernel.org>
- <Z4qb9Pv-mEQZrrXc@casper.infradead.org>
- <Z4qmF2n2pzuHqad_@google.com>
- <Z4qpurL9YeCHk5v2@casper.infradead.org>
- <Z4q_cd5qNRjqSG8i@google.com>
- <Z6JAcsAOCCWp-y66@google.com>
- <Z6owv7koMsTWH1uM@google.com>
- <Z6o1TcS7mQ2POrc9@casper.infradead.org>
- <Z6pNBxgMKHTiHAnv@google.com>
+	s=k20201202; t=1739320809;
+	bh=oCWwfNGxCQKYtvtgrXmiVJ8HiXZkgXpur1QcqnWncLI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Tlph9vm8t/5i6AH669roEWZRljH/dley5MDy/6gcxDL1Ce3GInwpcEyij74H4y+J3
+	 0y3DEXA5fMuHGOa4q/LZ4Tzxj4JdrvQLYJn1IFqZOKgfiHdzz2tWhS/qmFUhsiqxLT
+	 OZBMRCiBLfHU+gUkVxrLv68LeDNZWu6mpE9xzl2Ek2su9zGP6hIoKUFoBehtPMWdBf
+	 jNqoxnrTnpVJaUdmnJyusFKtJ+/c7IgzHfYngYSXk7h/Hpe5pvQhxXndE/bHf77aWn
+	 quTXZ9MgRcEM41d1k8RPhHRlUrrvXUO8U554Ff/D2R+campeAXYdjrtZZxxrc8NZxd
+	 PrMZEcb4hOrWg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3438B380AA7A;
+	Wed, 12 Feb 2025 00:40:39 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6pNBxgMKHTiHAnv@google.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH RESEND] net: wwan: t7xx: don't include '<linux/pm_wakeup.h>'
+ directly
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173932083786.51333.5847568369053049903.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Feb 2025 00:40:37 +0000
+References: <20250210113710.52071-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20250210113710.52071-2-wsa+renesas@sang-engineering.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, ryazanov.s.a@gmail.com,
+ chandrashekar.devegowda@intel.com, chiranjeevi.rapolu@linux.intel.com,
+ haijun.liu@mediatek.com, m.chetan.kumar@linux.intel.com,
+ ricardo.martinez@linux.intel.com, loic.poulain@linaro.org,
+ johannes@sipsolutions.net, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org
 
-On 02/10, Jaegeuk Kim wrote:
-> On 02/10, Matthew Wilcox wrote:
-> > On Mon, Feb 10, 2025 at 05:00:47PM +0000, Jaegeuk Kim wrote:
-> > > On 02/04, Jaegeuk Kim wrote:
-> > > > On 01/17, Jaegeuk Kim wrote:
-> > > > > On 01/17, Matthew Wilcox wrote:
-> > > > > > On Fri, Jan 17, 2025 at 06:48:55PM +0000, Jaegeuk Kim wrote:
-> > > > > > > > I don't understand how this is different from MADV_COLD.  Please
-> > > > > > > > explain.
-> > > > > > > 
-> > > > > > > MADV_COLD is a vma range, while this is a file range. So, it's more close to
-> > > > > > > fadvise(POSIX_FADV_DONTNEED) which tries to reclaim the file-backed pages
-> > > > > > > at the time when it's called. The idea is to keep the hints only, and try to
-> > > > > > > reclaim all later when admin expects system memory pressure soon.
-> > > > > > 
-> > > > > > So you're saying you want POSIX_FADV_COLD?
-> > > > > 
-> > > > > Yeah, the intention looks similar like marking it cold and paging out later.
-> > > > 
-> > > > Kindly ping, for the feedback on the direction. If there's demand for something
-> > > > generalized api, I'm happy to explore.
-> > > 
-> > > If there's no objection, let me push the change in f2fs and keep an eye on
-> > > who more will need this in general.
-> > 
-> > I don't know why you're asking for direction.  I gave my direction: use
-> > fadvise().
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 10 Feb 2025 12:37:11 +0100 you wrote:
+> The header clearly states that it does not want to be included directly,
+> only via '<linux/(platform_)?device.h>'. Which is already present, so
+> delete the superfluous include.
 > 
-> Funny, that single question didn't mean like this at all. Will take a look
-> how the patch looks like.
-
-Ok, it seems we can get this hint via POSIX_FADV_NOREUSE. I'll take that
-instead of adding a new API. Thanks.
-
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Acked-by: Sergey Ryazanov <ryazanov.s.a@gmail.com>
 > 
-> > 
-> > Putting this directly in f2fs is a horrible idea.  NAK.
+> [...]
+
+Here is the summary with links:
+  - [RESEND] net: wwan: t7xx: don't include '<linux/pm_wakeup.h>' directly
+    https://git.kernel.org/netdev/net-next/c/4d3f687e2432
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
