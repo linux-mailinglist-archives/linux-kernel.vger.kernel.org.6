@@ -1,150 +1,129 @@
-Return-Path: <linux-kernel+bounces-510890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD8FA32344
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:10:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6B4A32349
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669BF162B9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:10:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2BF163468
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226372080CB;
-	Wed, 12 Feb 2025 10:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB7A2080D5;
+	Wed, 12 Feb 2025 10:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvMFP3n8"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4Mrbg3L"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0561F0E5F;
-	Wed, 12 Feb 2025 10:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE8D1FF1DD;
+	Wed, 12 Feb 2025 10:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739355017; cv=none; b=cyY74LLTYI1zaf/eli8VKoir1mBLVxOrEhNovLo3nErVmjJblv49lcGU/GrUorPtfZtomD8jf5F3DZ4yCL0P3jRczMt3Bw2FVZN4mv6lw/Ha5dJnzEMj7w9Wp0ryuu1hVLulXfgGb3VgTDhpMEenL8LVXI1CFoWuJ2NPnUylos8=
+	t=1739355164; cv=none; b=O0HWh0tlgKXDC0HSVRMBi3fa4rTeneNVNPbSlmB8B0yJIyj2MhG7A/Odf0WePHR84b2jJSCJU6LsFPiZLZRkz3aGzStDnnBadnO7Y3mvIOSfViR9sLyXfkzXTzCwSL7UF/zgUehTHRbB/1lbr0kuWOxNnQGUZKUmuTB2VaRF0B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739355017; c=relaxed/simple;
-	bh=dksiq7Wu+Tr8U4ZmasPxlXsm3FDPqcOrzej22bOgA+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Og3Ov5ADEedg7NFZ2vbGV6d2q2o2C/WWmRiZNDkD+XrdwTHZ8wBK/ktraYVeYIf7tix3If7a0tF6fsAIRi7OSLlDaQTlI60wF7pvSnG9HBAILvt9nj/beTP7YlRdQfs2u35XjpO4FTJ7RMcMD9bIEllJgXVjcNmZtvrNIWpolzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvMFP3n8; arc=none smtp.client-ip=209.85.216.53
+	s=arc-20240116; t=1739355164; c=relaxed/simple;
+	bh=Ipdw+HzMVUc1a2SsAq+NMqJ+fJDERecKuobxFYR7C5g=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AZ8EBA79Sf4fHZp4XiEYL8q4UUECGqiMpZwqAg1m5bseP9qLWgoShkEvlNm/3xxMgQ0oAXTCGcKWUdp5le9xmTl4tWI+IprMfjKgksyWwabcjFazhgGtdjbkaR45fc1VkF+Hd38fh5cc3bpIYy4KBrJO/7hwf+/vpdDl5XewD1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d4Mrbg3L; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fbfe16cc39so502304a91.3;
-        Wed, 12 Feb 2025 02:10:15 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4394820123dso18934025e9.2;
+        Wed, 12 Feb 2025 02:12:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739355015; x=1739959815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=88AwpE99PaoAeek/DCfv+c+a/zWXUaUFSdw15oFH2AA=;
-        b=fvMFP3n8wen3rXeUxELDe3Lc0vbWKkqdRo/eDORvvN4BOSTZ9htdZ8nQYjEL7nBluZ
-         pa3kKrWQjWtP6Ix+l7DvYiIKWfOTLFa+SW11a/7plEBFhKonkWMGCnZejkQMFjalHseN
-         P+MYd0aXHCGTEzSD5K6PL+NAa9m1KrLqFGqvWwre7otyfvtkt3KEUcyXRAnzZOwLBG4V
-         iOX0oPRgMwa4NAGozHUaH1SuQLHRCwJGkDaR48prEqlgLjbghRWAqVdzVmieE49fuLkO
-         6n5qYHmETfX6f/yGRRHzlAySvX/4ka2rvKyuFKXpHy6PfNW2gQzEsbAyNnraykS8uH+3
-         zBnA==
+        d=gmail.com; s=20230601; t=1739355161; x=1739959961; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mNNKBtbX7Tvug8Fw4Lq02BaT1unD/9lLJspUhFklJfQ=;
+        b=d4Mrbg3LXDbyd+cQv2ce51ykOQH6k8sDYC/pMMZsG3yokoTXn2189W8q7S/YBNacXp
+         4NcIJinZg39tom3bt6jaY8VSucpUEgxHAJM8FeemQ56+MlpZ5/X2DYHaNXhCdV59yqKz
+         MgvM8K4WoSvZAQuRIrd69On/0vjt5KwUBpiGbRgumT0Q3jifwC2aZR7xLa5yySXFOerV
+         sXfd5zyFQfX78xUxkjmxHyWjWO3Y2Rbxbpn29CUDeSWXA1wQhdICiw2ot8F+RC1iVj1c
+         B089ODqTmqOZLrp1A5OLyAVXWnz5Z6aSP5e2czlKU/7c+admAi8POA4ikqItQInNoGC2
+         4dwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739355015; x=1739959815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=88AwpE99PaoAeek/DCfv+c+a/zWXUaUFSdw15oFH2AA=;
-        b=lgkg2TFH6Tfv146aJrpV+KhDYBcxnErqJ1K0VssbiOCQymtEIZSdQoiuk+yiybLkbJ
-         NwaYUW6g+hFdW5Y2n8N4Gms2pOcfjdt0FBFCCnNH85oTlnGPgbYH2HN/xLkTtIsoTSsL
-         OVfTafPGF1qAT0Y73B+gUNZ+mceIdF56KrQOPu/sfUYpHXY5+khOK562YSGoxlPvueG2
-         O6hQffILf257XZo6SKXFnjv5u1ZS/YtxnqJAml/gCKXQHUqhBAwlCgAVMRoEsQibedP2
-         cax+Dx4RKYwWWjqG/EO+AuYNt9uHqVlnl2ujD+Y2omLRUuzeUPsl9cqFAPNYdM3+XvBy
-         yGHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEERpoPh0hYENYtvpGMz82vR+l2i45thKjoU2boF8c1Mx56IBeGs/SCt56/yuSDTM6z1QblBNjvh84wHD8@vger.kernel.org, AJvYcCUne8zTp0yZg3hGQ2NBXbTUYZxwsaXYrwLmPzM7l+K4IQKzxdIOP2fne79W/lnbEU4Bxgkg9EQD/Mje@vger.kernel.org, AJvYcCWvhJl0x1tSyUrHWzu6v5p6D0OAF3F/lyfkqYM597UCzR+XKTodPjC1o4A40yBs1JT6GjkoOL6094CUJhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/h/ZSPZQBo542/ZtYwyJSERrUiC7UGDlhqq5XceWe0jI+tIRO
-	FbZpBibzVe8SXKjO5vuhB3rxphvtEEM0KSCcvDxATQ6lXaC595XR8EQWTPIbQ/IG3b5SR/jkSwV
-	Hqmy0YTE1ROaFQ9wyAHbSJfc8ZFg=
-X-Gm-Gg: ASbGnctvIKeGY1O1Fiy8B5xvjFTt/3xiUlZVwz7wZXhUakG8oBUK+W/C/6endtaUxkk
-	yHDxBXfEaU528bgppkApAILENtcSSbprFv3M0FhKgpfizsV+seFiUcwf97iXyp8LP9y28gg==
-X-Google-Smtp-Source: AGHT+IGmuZRdGl3j3qwqlGA+I6iMmpaYMwad+794x21O14HpgAdBUJZvPf+MREMoJEJJ7oo0IQ1nHPq82m46EvhwjX0=
-X-Received: by 2002:a17:90b:50c4:b0:2ee:ab29:1482 with SMTP id
- 98e67ed59e1d1-2fbf5c0f645mr4582577a91.16.1739355015327; Wed, 12 Feb 2025
- 02:10:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739355161; x=1739959961;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mNNKBtbX7Tvug8Fw4Lq02BaT1unD/9lLJspUhFklJfQ=;
+        b=IgRUgIct7ozsE1LgVDM0HQW68BAF0scsQV9uVqPUw38B4z3osHYKGXgq/t7owgoMD3
+         ygTyWPE3FlHiC2vTddccjGjU44j5DJXTIstTgjaeKSQmk3Sv6IPjtjWyBs7IqTDQ9XNP
+         4weqiRZu6ns1xoqkH5C5FKrBr4lHRw3dVB52z0N63Aizx9SBJ4PSLzs2b/lWH3HoyJdC
+         +0a8Mxnm1q5Wj+eys5g0OKhCgaF7NaBoP5DHM9rDVbaU4TAoUlqe3JJ7MAytji3C6QGE
+         +M4Zr5vijXoBgfkj5eROUeP1LTwdGBIiQ53/hEpUD7BWGJJOmq3dninuOhVquW73Q6sE
+         h/1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWCpvkIzh6SmU7MmwYMsN1ER7ePBV7nhjdpbaCL7iu5GA6npr++Q4WR3rCuj6Jl+bfdt75OsJx6/2MyYQ==@vger.kernel.org, AJvYcCXEliLu4AHve7MmKtt1OLMDfzlY5e0jTfFq5k7AlC1aaGcFDR/9b2MOwmBp84MRzxx8Ny//B8o8BvOx0iw/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHCQno+sjGJ8gfjXetVuiX9tMR3Qig1Hk0wJao9bkxstMRUfad
+	vYhmmXecgv8JA4LNsbGth/iGMDKCCHWLhGe9w6EM34LgI/7KL+6deDBQwKj1MY8=
+X-Gm-Gg: ASbGncu0Es05y6+3gf3GZZZYvckHpk+EaDtZORoNJljQgRr8xurhqmdU+pCsMECISq/
+	E3uRjZJWmIVCL6J6I5Vp54N+iIMKZMna0nECBtXkfz9LWlK9P9Jn9Fh2872zH9rKsfBKyXtkI4m
+	98W4b3I90RsFjwbXQMc9m6l867azPGmSsHtisxE7r13MDuTPUPSVJthKbjaisk+aM696mmw6j8h
+	Q/1HMIMimZJzFoBoi/ogL1LwgDS7gfUEgdCIyxdsx0LKi9ipwG/y7cjM6pFKwISLaoy71j7sMjN
+	7KxB9JywmqI1g3/V04pwlTdw50ik+zf/kMPw7lW6eZGifNbsVHoMX/RZlEnTigcG2mu8urqwbS/
+	XFx50aro+
+X-Google-Smtp-Source: AGHT+IHhRK8nxFM1MkvP02b1tIRnIroxS4UXE3wB4NUmuptZfBzKer8oXq6j4K8FtetcxrRrEyBHDQ==
+X-Received: by 2002:a05:600c:5487:b0:439:3dc0:29b6 with SMTP id 5b1f17b1804b1-4395815fcc5mr23241965e9.2.1739355161186;
+        Wed, 12 Feb 2025 02:12:41 -0800 (PST)
+Received: from michael-devbox (ec2-52-59-234-77.eu-central-1.compute.amazonaws.com. [52.59.234.77])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1b83a3sm14845085e9.33.2025.02.12.02.12.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 02:12:40 -0800 (PST)
+Date: Wed, 12 Feb 2025 10:12:40 +0000
+From: Michael Anckaert <michael.anckaert@gmail.com>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Teddy Wang <teddy.wang@siliconmotion.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"open list:STAGING - SILICON MOTION SM750 FRAME BUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
+	"open list:STAGING SUBSYSTEM" <linux-staging@lists.linux.dev>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: sm750fb: fix checkpatch warning architecture
+ specific defines should be avoided
+Message-ID: <Z6x0GEM5sxcruYlS@michael-devbox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211225808.3050-1-laurentiumihalcea111@gmail.com>
- <20250211225808.3050-2-laurentiumihalcea111@gmail.com> <20250212093610.x4ixrackmn3u2xrf@pengutronix.de>
-In-Reply-To: <20250212093610.x4ixrackmn3u2xrf@pengutronix.de>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Wed, 12 Feb 2025 12:11:49 +0200
-X-Gm-Features: AWEUYZmaBc7oKF6zAnQ7CZxr3zaURFYGkUGsn3Z_TJnj1f8vLuCQ0QWTQQTBMT4
-Message-ID: <CAEnQRZBeQdnC+K92+Udb5awTmom10YHHNt7Ld-pYK4A1i8sr3Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] ASoC: dt-bindings: support imx95's CM7 core
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Feb 12, 2025 at 11:38=E2=80=AFAM Marco Felsch <m.felsch@pengutronix=
-.de> wrote:
->
-> On 25-02-11, Laurentiu Mihalcea wrote:
-> > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> >
-> > Add binding for imx95's CM7 core, used for audio processing.
-> > Additionally, introduce a common binding for NXP audio processors with
-> > Sound Open Firmware (SOF) support.
-> >
-> > Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> > ---
-> >  .../bindings/sound/fsl,imx95-cm7-sof.yaml     | 64 +++++++++++++++++++
-> >  .../bindings/sound/fsl,sof-cpu.yaml           | 27 ++++++++
-> >  2 files changed, 91 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/sound/fsl,imx95-c=
-m7-sof.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/sound/fsl,sof-cpu=
-.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.=
-yaml b/Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml
-> > new file mode 100644
-> > index 000000000000..f00ae3219e15
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml
-> > @@ -0,0 +1,64 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/sound/fsl,imx95-cm7-sof.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: NXP imx95 CM7 core
-> > +
-> > +maintainers:
-> > +  - Daniel Baluta <daniel.baluta@nxp.com>
-> > +
-> > +description: NXP imx95 CM7 core used for audio processing
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: fsl,imx95-cm7-sof
->
-> Albeit Krzysztof already add his Reviewed-by, can I ask why we need to
-> add the -sof suffix instead of -audio or so? SOF is a software project
-> but you can clearly run different software on the audio-copro as well.
+Replace architecture-specific defines with CONFIG_X86 checks to improve
+portability and adhere to kernel coding standards.
 
-Sure you can run a different software project on the audio DSP but
-you will need a way to distinguish between the different projects.
+Fixes checkpatch warning:
+- CHECK: architecture specific defines should be avoided.
 
-There might be different mailbox, memory configurations. So you will  need
-to invent another suffix specific to the new project.
+Changes made:
+- Using CONFIG_X86 instead of i386 and x86.
 
-We can make  const: fsl,imx95-cm7-audio as the one used with SOF
-and think about a different name later for when another project will
-want to use the DSP.
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Signed-off-by: Michael Anckaert <michael.anckaert@gmail.com>
+---
+Changes in v2:
+ - Moved the '} else {' into the ifdef to avoid the possibly empty
+else branch
+
+ drivers/staging/sm750fb/ddk750_chip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/sm750fb/ddk750_chip.c b/drivers/staging/sm750fb/ddk750_chip.c
+index 02860d3ec365..025dae3756aa 100644
+--- a/drivers/staging/sm750fb/ddk750_chip.c
++++ b/drivers/staging/sm750fb/ddk750_chip.c
+@@ -228,8 +228,8 @@ int ddk750_init_hw(struct initchip_param *p_init_param)
+ 		reg = peek32(VGA_CONFIGURATION);
+ 		reg |= (VGA_CONFIGURATION_PLL | VGA_CONFIGURATION_MODE);
+ 		poke32(VGA_CONFIGURATION, reg);
++#ifdef CONFIG_X86
+ 	} else {
+-#if defined(__i386__) || defined(__x86_64__)
+ 		/* set graphic mode via IO method */
+ 		outb_p(0x88, 0x3d4);
+ 		outb_p(0x06, 0x3d5);
+-- 
+2.39.5
+
 
