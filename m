@@ -1,81 +1,94 @@
-Return-Path: <linux-kernel+bounces-510598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE493A31F4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:44:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671F0A31F50
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:44:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D16B166BF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:44:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19E97166C5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20631FE47D;
-	Wed, 12 Feb 2025 06:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfUXC0BL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DD81FCF62;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2339A1FF1B8;
+	Wed, 12 Feb 2025 06:44:35 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D54C1FCF4F;
 	Wed, 12 Feb 2025 06:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739342673; cv=none; b=Khl/6m7kmGOzcslBjLpwdB3ouxCR8g8RM/EHFRg9pTyA9KaxoOeFcLdH6+lISPupa3oo8PQGoGhXAFt7J+LucWF0y9VohWPjDCxpZVUmiJIyZYA0ImJ9/XHz+MvMahyKKuRC7VlErbr6TV0AK1T3vNt1VITp5fjaK3hl6g+wADc=
+	t=1739342674; cv=none; b=cPOgB77VGVEQBi08px/07fZJfutgnXL7s9StkOmLKz5GqJsWY5lvq5FCMJEOJoWVGJ+vUPLqX94YCKIQgHH9WsYoecpmtv0S/U74pMWZhMmHohDylnnslTyBTg72ES0Sd8n9MT2fa93ntfdF53AkybwEcc8JJACh6K7ZCETk4Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739342673; c=relaxed/simple;
-	bh=Sv9qNL+TN5TjV7dcAh3uCs0tMgt7UdZj63e5XWo0KJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N9ZY+SMSF/GeconY578mi4cml/5ou0CNWSxjlc94e4OCnNMdpjJdgJyA9HWzqNAfzkM+ECrwzF+cSmSS/F3OUFxULjMdQ63VBDEjlVEf3kqje3YkYsAhDnHspl+xMTdSI6rKcWvVHCiwD2oZwFcB2No8NMQaMpZY6bzkMnsilnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfUXC0BL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 505EEC4CEDF;
-	Wed, 12 Feb 2025 06:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739342672;
-	bh=Sv9qNL+TN5TjV7dcAh3uCs0tMgt7UdZj63e5XWo0KJw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tfUXC0BLirlUXBWTvvt0AJzcvF0lHh9wK8R5XaaS+Wl1kkpJ1p251RZ3KuZMnnY4H
-	 hHF8g/BHY2ZqEwg9csC76QN/ORdw2gqcmxpwnGKXUNr7EfLik3ayZfaTyNrgtOMGeZ
-	 fzH8JvLwuIsqof/UnySBYsbry++vdHDaZ0rj+ifOdJovO0mB6MaYCwdT37ZzMu/me9
-	 jqVmmb+GaMwFC1+WfvFoUnehxg6umOkJp3dt7Dwzhm2OYDPWrkVF5t5g43esQPvnAF
-	 WaI4tfXxlwkLNy1xuEfxlIuY0638gIUBdtffuu/kBnld5maDpljDOqAn5E4L1lx3nU
-	 jhNIek9FoKY+w==
-Date: Wed, 12 Feb 2025 07:44:27 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jammy Huang <jammy_huang@aspeedtech.com>
-Cc: eajames@linux.ibm.com, mchehab@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, andrew@aj.id.au, 
-	linux-media@vger.kernel.org, openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] media: dt-bindings: aspeed,video-engine: Convert to
- json schema
-Message-ID: <20250212-copper-tortoise-from-hyperborea-8dddcc@krzk-bin>
-References: <20250212014711.2181865-1-jammy_huang@aspeedtech.com>
+	s=arc-20240116; t=1739342674; c=relaxed/simple;
+	bh=+Jfg4OzS1vKOMOlhVXTVHrU4Gw5UHqFa4g5yO+1hLi4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=h3qmoGm/FYwAaqMf6JSlt6aRneVTtv2OJz29hlaN3flumgKTE4dJm459yMW39JgUpRIdpKnVF3X47cIhoPNr3hZQLHGyGhscVYccadFeceifl8kPEfUFm3mbjeN/qUhyxF987U4hJpCeQi3Lkq/U/IC0hYIw22XhqhOz1qsFBTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 85C9392009C; Wed, 12 Feb 2025 07:44:30 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 7FCB492009B;
+	Wed, 12 Feb 2025 06:44:30 +0000 (GMT)
+Date: Wed, 12 Feb 2025 06:44:30 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: WangYuli <wangyuli@uniontech.com>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    masahiroy@kernel.org, jiaxun.yang@flygoat.com, zhanjun@uniontech.com, 
+    guanwentao@uniontech.com, Chen Linxuan <chenlinxuan@uniontech.com>
+Subject: Re: [PATCH 2/2] MIPS: Explicitly check KBUILD_SYM32=n
+In-Reply-To: <D23DC9B8BD1C245D+20250211140740.1812778-2-wangyuli@uniontech.com>
+Message-ID: <alpine.DEB.2.21.2502120612000.65342@angie.orcam.me.uk>
+References: <41107E6D3A125047+20250211135616.1807966-1-wangyuli@uniontech.com> <D23DC9B8BD1C245D+20250211140740.1812778-2-wangyuli@uniontech.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250212014711.2181865-1-jammy_huang@aspeedtech.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Feb 12, 2025 at 09:47:11AM +0800, Jammy Huang wrote:
-> Convert aspeed-video.txt to yaml format.
-> Update aspeed-video.txt to aspeed,video-engine.yaml in MAINTAINER file.
+On Tue, 11 Feb 2025, WangYuli wrote:
+
+> During make module_install, the need_compiler variable becomes 0,
+> so Makefile.compiler isn't included.
 > 
-> Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
-> ---
->  v5:
->   - Don't put additional changes in this commit.
+> This results in call cc-option-yn returning nothing.
+> 
+> Add a check for KBUILD_SYM32=n to avoid the
+> "CONFIG_CPU_DADDI_WORKAROUNDS unsupported without -msym32" error
+> when KBUILD_SYM32 is unset (meaning it's not 'y' or 'n').
 
-But it fails then, right? I asked for justification or separate commit,
-depending on what is really hapenning here.
+ Jeez, just wrap it into `ifdef need-compiler' as I told you previously.  
 
-Are you sure you tested this? I am pretty confident it will fail :/.
+ This stuff isn't used with `make modules_install', none of the compiler 
+flags matter as the compiler isn't ever called, which is obvious from 
+Makefile.compiler not being included in the first place.  I only did not 
+do it with commit a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS 
+`modules_install' regression"), because I was unaware about this LLVM's 
+limitation and GCC version requirements at the time implied the presence 
+of this feature at all times.
 
-Best regards,
-Krzysztof
+ See also commit 4fe4a6374c4d ("MIPS: Only fiddle with CHECKFLAGS if 
+`need-compiler'") for a similar change from the same series[1].
 
+ Also need-compiler is nil rather than 0 in the relevant case.
+
+ Please also double-check your change description before posting, at least 
+when it comes to referring to codebase artifacts:
+
+s/module_install/modules_install/
+s/need_compiler/need-compiler/
+
+This is stuff people may be grepping for.
+
+References:
+
+[1] "MIPS: Fix build issues from the introduction of `need-compiler'", 
+    <https://lore.kernel.org/r/alpine.DEB.2.21.2307180025120.62448@angie.orcam.me.uk/>
+
+  Maciej
 
