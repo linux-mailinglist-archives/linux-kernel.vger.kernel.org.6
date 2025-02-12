@@ -1,119 +1,148 @@
-Return-Path: <linux-kernel+bounces-510923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210C8A323A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:41:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D832A323A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:41:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98EBF18872F1
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7293A2BE7
 	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A19208962;
-	Wed, 12 Feb 2025 10:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05502208978;
+	Wed, 12 Feb 2025 10:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oKpzx+ua"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ldgtC9Pg"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C94B1EE7B9;
-	Wed, 12 Feb 2025 10:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E82B79C2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 10:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739356856; cv=none; b=rNYRumSnGAZbwuPvCWsTGCP6QFChHFp8QPvrpeqgzab1ONmEeWtGKliNgHhxvhpo+JeCbq78g5lRjVkqWIHLWNDYgfTJW/tptYbZtdMS6n3bHzpIEnCqQRyqFJs+Vvw/4C9hWdd9L+xDCIyVpiLNfRPPezfVsgFHO3XwnpK1eyE=
+	t=1739356870; cv=none; b=fL+vRiA4Rq/VE3bEwv2gcYIS7gTkZgcjtykTm/pcyQPH/c/MelfiYTWiNpqCYyBLBUdK8y+0c89OjWlS7JpmHhBtDwSiyCTp5MW8wen9cuX+ozShmZYQ3KldCAf2k3KkPHgWRsD5Kq7pYNMeXuK7hPWyNqqUTZ1nGlR7DElpq8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739356856; c=relaxed/simple;
-	bh=OnLNwlAhOzZBDtombGvT1kO0+N5VxyWb4bM79tyfeAU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hIzweoMYbx3FHn4lvGgF8KvrJTal9xIAUAhRXGfgRm2pKO3mpEi4A0nRC1P3X31HAjKXWClAMWs7+joY/Dt/NUal9QUSiTcH6Wj79mB3wZTF/IIMQInpAcegV5JCDDoL83z0/gWzKId1bTybg5BcNMVUcE3l+90DVeF5eIWgxs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oKpzx+ua; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739356852;
-	bh=OnLNwlAhOzZBDtombGvT1kO0+N5VxyWb4bM79tyfeAU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oKpzx+uauilxWz4qkbCZu5puD+Kog7MdyGiBCX09ni8mKVlblWfmcXXbcHAsvHkNF
-	 BYPS+ZZBpavAg62F5cr8U5kFeVZ06dEcQv+m4C6tzvmrd2hpND3A4RSfM/xjAYiz49
-	 pTi3W0o87h7IFJPPwrIafBXAX3Ft4WF3zHZgyYuGXKZkoDnZxb4aEWfmUH0LZYVolq
-	 /BXhTZuLQtgjZD8odUmPuIZA6uO4wQ4OFOjNibBckZ+UgfF5uS3vPdkRF//CFr2OKO
-	 xiqQYlt1lYtcldjoPdpwA8vn1LCfbYevPJDEGSsgmc1KKY4zihQZ2eeDk7sTfD4ObC
-	 u8VDSPn/rpwBg==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A3EC917E0ECF;
-	Wed, 12 Feb 2025 11:40:51 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: heikki.krogerus@linux.intel.com
-Cc: gregkh@linuxfoundation.org,
-	andre.draszik@linaro.org,
-	angelogioacchino.delregno@collabora.com,
-	linux@roeck-us.net,
-	shufan_lee@richtek.com,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	pablo.sun@mediatek.com
-Subject: [PATCH] usb: typec: tcpci_rt1711h: Unmask alert interrupts to fix functionality
-Date: Wed, 12 Feb 2025 11:40:40 +0100
-Message-ID: <20250212104040.38723-1-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739356870; c=relaxed/simple;
+	bh=HPiAWGGn9V3rjB/jGEe+4xyyXn//f8nUQh5na9jeQEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=duw/Yt3qgoTAbQ7/jcf9WxnpI7qhpwuZjqTdNHWwdRrOCdwgVLvAM0rF6qxPgs/CzPRCfNIkNLtLhUjGD91pLkXPLblgw/LxRnrDn9qyQxfKDB1gCEwsG0Agql+UzqRF3u19JU7kJXA3FfvXZoRGcmbKwl316MckJ4DCvccIGb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ldgtC9Pg; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-308f32984bdso24436601fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 02:41:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739356865; x=1739961665; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l1iDkFXJdTLoJv5QQSzaQMxwjFb0WaoMFN/yVr47274=;
+        b=ldgtC9Pg00q4T4piXD2BEFWhemsLQDolWmdLMA+3SpcbvRSUkvkx751Aq5WwH/nFfH
+         KWzLFSnkXqPsx7yprWGPN3fjoNT3LKFnFfkxhcWXEkBIYoii+UOlyW8eNMaSqLEN1xHV
+         qt5/isnB2rX7hDEkw7FRKWXWazaQv6ccVIA5smdYFo/CWJxwObLvYqPpzv1zycpK9cE7
+         geCuRwk09oSoCIOdLKlaA4EwP+amIuxVkX5Lsg1JgxkKD6qf292nowYi0DIkoXaJCyOe
+         fKPXwuY7K29qcbb5skJKS6M3vK+1MhI7SeJgeuRIDSQsikvll7iN9bulRExKkVexEHH5
+         kLIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739356865; x=1739961665;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l1iDkFXJdTLoJv5QQSzaQMxwjFb0WaoMFN/yVr47274=;
+        b=Gg2WDfZeQ/UvZlEpa8bmmEAY1fK1Fuxyh2ahgC7PVUylFjdSzUpu3Q/cqUbZzrbxnv
+         A+bpvm2Pwr8Y18L2vR6MxR2uPd86GlE9eIpO3aOXlR7yBEDfKZzSUs3vGQAR2Z0lFhu1
+         7X30TrNlTF4Um9m14J7QkhnQ5Frb7ZPGrzo5F9BjI5QYifh5wYzCvygTmTdfVrHbx/UE
+         WK/yHZaXe8OusPYhD3fSBIOGFV1xc9SJjCmS3wIJPVx8XLz4l4RHiFgWC+huPz2WvkGo
+         CNKDwxL4eCMLxq+Bk1UihSNF7AeSFz/zaLCtUwe817YGAJurx6lCB7nF9GHWdT1l6Q7L
+         3pXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2qtX43k+giXJ4yeyQsiL1fL4ZNXJlYrSIGl5IhIK8FqwgBImDdKFgEILdc1EB/aTHIrIS/8CboTcIEpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF8Pp2NpNqRc9HBxg2EgBaxvZMogXYHLa+GeNWGdTMa5Asos4y
+	0BTrynMTR6tDNCK+smWDhJQoJOqJuCQrl6IaihlnVxaVk03TPeMYW0kilSEzl3M=
+X-Gm-Gg: ASbGncui3FF24CxI53VtVP3VxqOToBmKUTTxDXMPCrCl53XIY7FaYwMPKpvS5M1H/wK
+	0ss2CpT6KCw4C+YtOG8phZScpgxYl5kukVs5ERThVOQbsUld6GwZXkvjjYgaRyl5LvgJuIgMNrZ
+	Y1zs1FBMhp1LUiXucV7EPpNDsRWSzq+fyl3IReAYeWl5r5K7mKM5IvaEZOgdQJZ6n0IJq4LsHlO
+	5vHqDO4rfojDBqOVyJH6uuauY5zPJY0Nf2UEROda60mJmPRX8Q9Oj5JyyTb9WdwRpz1fT9zr5m2
+	FqPFkBrsNFuooHVnEOmg6WVJccYj0szdbAJCy/I6Dum6u1/blAWEAv372A8uRNrNBl9MySw=
+X-Google-Smtp-Source: AGHT+IFSoauwUmjTLIfP8x5XTTgpa0CFQaxSPV+VulxRisj6BoyUTlqKfWl0RYYwgy038tCn23zfGQ==
+X-Received: by 2002:a05:6512:3054:b0:545:b49:f96d with SMTP id 2adb3069b0e04-54517f86bf8mr848075e87.0.1739356865416;
+        Wed, 12 Feb 2025 02:41:05 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54504a2d1d9sm1310680e87.56.2025.02.12.02.41.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 02:41:04 -0800 (PST)
+Date: Wed, 12 Feb 2025 12:41:01 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: display/msm: Redocument the
+ dp-controller for QCS8300
+Message-ID: <wyd7i47pkafa7n2yjohuvlh4btasxle4rw5xm55h4bhv24yvah@pfo224xz4xfl>
+References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
+ <20250212-mst_qcs8300-v1-1-38a8aa08394b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212-mst_qcs8300-v1-1-38a8aa08394b@quicinc.com>
 
-During probe, the TCPC alert interrupts are getting masked to
-avoid unwanted interrupts during chip setup: this is ok to do
-but there is no unmasking happening at any later time, which
-means that the chip will not raise any interrupt, essentially
-making it not functional as, while internally it does perform
-all of the intended functions, it won't signal anything to the
-outside.
+On Wed, Feb 12, 2025 at 03:12:24PM +0800, Yongxing Mou wrote:
+> We need to enable mst for qcs8300, dp0 controller will support 2 streams
+> output. So not reuse sm8650 dp controller driver and will add a new driver
+> patch for qcs8300 mst feature. Modify the corresponding dt-bingding file
+> to compatible with the qcs8300-dp.
 
-Unmask the alert interrupts to fix functionality.
+NAK for a different reason: QCS8300 is still compatible with SM8650.
+Enable features instead of randomly reshuffle compats. In this case,
+enable MST for both architectures.
 
-Fixes: ce08eaeb6388 ("staging: typec: rt1711h typec chip driver")
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/usb/typec/tcpm/tcpci_rt1711h.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> 
+> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> index 359e364d79b20469d41cd8416a55b6a5d5c7d8ce..59075d7f05147f1f477f236a76fee6ec5d8c5ad8 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> @@ -18,6 +18,7 @@ properties:
+>    compatible:
+>      oneOf:
+>        - enum:
+> +          - qcom,qcs8300-dp
+>            - qcom,sa8775p-dp
+>            - qcom,sc7180-dp
+>            - qcom,sc7280-dp
+> @@ -37,10 +38,6 @@ properties:
+>                - qcom,sm8450-dp
+>                - qcom,sm8550-dp
+>            - const: qcom,sm8350-dp
+> -      - items:
+> -          - enum:
+> -              - qcom,qcs8300-dp
+> -          - const: qcom,sm8650-dp
+>  
+>    reg:
+>      minItems: 4
+> 
+> -- 
+> 2.34.1
+> 
 
-diff --git a/drivers/usb/typec/tcpm/tcpci_rt1711h.c b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
-index 64f6dd0dc660..c71b213b2441 100644
---- a/drivers/usb/typec/tcpm/tcpci_rt1711h.c
-+++ b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
-@@ -334,6 +334,11 @@ static int rt1711h_probe(struct i2c_client *client)
- {
- 	int ret;
- 	struct rt1711h_chip *chip;
-+	const u16 alert_mask = TCPC_ALERT_TX_SUCCESS | TCPC_ALERT_TX_DISCARDED |
-+			       TCPC_ALERT_TX_FAILED | TCPC_ALERT_RX_HARD_RST |
-+			       TCPC_ALERT_RX_STATUS | TCPC_ALERT_POWER_STATUS |
-+			       TCPC_ALERT_CC_STATUS | TCPC_ALERT_RX_BUF_OVF |
-+			       TCPC_ALERT_FAULT;
- 
- 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
- 	if (!chip)
-@@ -384,6 +389,11 @@ static int rt1711h_probe(struct i2c_client *client)
- 		return ret;
- 	enable_irq_wake(client->irq);
- 
-+	/* Enable alert interrupts */
-+	ret = rt1711h_write16(chip, TCPC_ALERT_MASK, alert_mask);
-+	if (ret < 0)
-+		return ret;
-+
- 	return 0;
- }
- 
 -- 
-2.48.1
-
+With best wishes
+Dmitry
 
