@@ -1,236 +1,298 @@
-Return-Path: <linux-kernel+bounces-511912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B0FA33153
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:14:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F44A33159
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783753AA17C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:14:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE204164ED7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919A7202F68;
-	Wed, 12 Feb 2025 21:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0E72036E8;
+	Wed, 12 Feb 2025 21:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FM39xked"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTUtnn/I"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C56200B95;
-	Wed, 12 Feb 2025 21:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BD2200BA3;
+	Wed, 12 Feb 2025 21:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739394859; cv=none; b=UQRck0379Az/h6cVR5YzuW0KFzg+NsEv8FVPfjMBhL9gf3+s1OQoh+x2t1zEXP17y20XfpL6hAU72zQXFZSxM/zItNDOpbNh8gxQ2ezohB17FfNgOcVdaeHxIISFb7DQFkrp3Z4xsvPHJ4M/Lq50U9LOcGBy5c1azLfVLq1a1fo=
+	t=1739394909; cv=none; b=KoCbPfwVwIeILXwVsPh8iVBaqrclmkThLKhwlD1lHAOt8jRpvtoDX/0ny1OpO4CvBf1GYLXZjMI/O7N4ZIF+Yy6uGBp+K6LRm+QmDN/uFGX/g72+KPh/abG1fn3Nl1DclJMsn4Zw3ajGFoGLwi7fRVJLLWH3jtewl1WOiNXy+JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739394859; c=relaxed/simple;
-	bh=dIqhk3djFsc3cAOqbHbhVUyG0+f+BY8S2yEkmEIiT0A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=uj25RgMvhMAn7Tdtp7KKMGlWjGHchakiBI6YT4j0PCAhEgKCzedsac6ndstnIgDau9DO1WIX8Hn7MyctKdREm6GHrUrCdJqPumI9fmlVUI7oNvmfxdQ2v5wpZ9/DNX2pGSdNYCUwPBvLadXK3ggR9wa3lY5U38zXIjB6XMQjcTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FM39xked; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE131C4CEDF;
-	Wed, 12 Feb 2025 21:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739394859;
-	bh=dIqhk3djFsc3cAOqbHbhVUyG0+f+BY8S2yEkmEIiT0A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=FM39xked9CJJ3VZLi/LCH1yVlQqygsPF/WnRs/3TQ2j433zTnyeI/p/Ijho6DIq/3
-	 pvz7mYSzGYJqWeTLWKAjh/TnwSYjLq9cu34OsSH0+Zh+yfa+qGZ4izxvs0yxwa2OGX
-	 4pOYDBnRURLqRKCtB0g0cNc+J8IYSNo8n4BUz5UTmBRQVG9w0Ch2btNJpcBjRa9fQy
-	 Vrf7A139Fu0Jfb+nVA/cgfyGSzvuus8wMazx1h2r87V07jE5/ONnaSj6Njh8KOkbbX
-	 y23UCGj69P19iTesAWohj3PGUSbj3zisSvm7na3Q0LZ0YU0yg3/hNwweBzimQlI2+t
-	 lpNCWwV7fRtMQ==
-Date: Wed, 12 Feb 2025 13:14:16 -0800 (PST)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: =?UTF-8?Q?J=C3=BCrgen_Gro=C3=9F?= <jgross@suse.com>
-cc: Stefano Stabellini <sstabellini@kernel.org>, linux-kernel@vger.kernel.org, 
-    x86@kernel.org, iommu@lists.linux.dev, 
-    Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, 
-    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-    xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 2/2] xen/swiotlb: don't destroy contiguous region in all
- cases
-In-Reply-To: <b7bc43f9-47e6-4994-bba9-5c8be92a8e52@suse.com>
-Message-ID: <alpine.DEB.2.22.394.2502121310320.619090@ubuntu-linux-20-04-desktop>
-References: <20250211120432.29493-1-jgross@suse.com> <20250211120432.29493-3-jgross@suse.com> <alpine.DEB.2.22.394.2502111728560.619090@ubuntu-linux-20-04-desktop> <b7bc43f9-47e6-4994-bba9-5c8be92a8e52@suse.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1739394909; c=relaxed/simple;
+	bh=8oFaZGYB7aKcn3LSIDmTGouwbqxlkl5PDh9Fdqo1MdM=;
+	h=From:MIME-Version:Date:Message-ID:Subject:To:Cc:Content-Type; b=gqB2wABoould1n/bsNZKuC7VK/sCwtO2J39d01uHsCzDIfvxUYHhB9V1sb1plcta6LYQUi5y/+Ww8lFSUnYSWlbrue5mf2SaNNiBx9ORrr4LKU4fGuPz8xczw7eWdfR2COFHVoc1/brnqyc1r5zg/9h3p5pcgccn22HX5P4ZGu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTUtnn/I; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e442b79de4so2105966d6.2;
+        Wed, 12 Feb 2025 13:15:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739394906; x=1739999706; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:mime-version:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PRpTMU+QQrOptneUAcLbMg6GtdMWUJRT8ADEFKtR/MA=;
+        b=cTUtnn/ItXm4nrb/1mnkKDIYbJP0uXrzN5YVUorbM+L6TXfKUBO8iO3JNWQR0Bda3Y
+         yUV5fHASajLOrp2hJPKX1mPl+4YTZCjWp1HOmTEOmRoqcykJTLG4jvxZ0uiO7wVKXz1W
+         CaLHq9llg3aQI8ESJbcNriqU52M/1h//TSk1MGUOrZLc0OH5AxZH7bXZZ+VI34B7DKzD
+         6F4wTGGRqI9GMIEPSpIqIdU2SARZb1liSDHfFD+FCgMW9yhQXB/r1FUZz4YZLvVN7jRV
+         C9txyadlHIyrAIXiWy97HvQcwfOZFatbrfdexj0eIa6/MENY0ibVVC1Dv0JT+VIdUEuN
+         Doaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739394906; x=1739999706;
+        h=cc:to:subject:message-id:date:mime-version:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PRpTMU+QQrOptneUAcLbMg6GtdMWUJRT8ADEFKtR/MA=;
+        b=kM9keaTp1HGekmXXmDUtOY+folKG886jFhQe91n/iGkdLANZuQhMcKifyjvzC9R5kg
+         1nEt9MGzobydnxCZped7PbifReu/wHayAyZoxgj90wHheoQN+FPzLGJNmyPi4PGhot+x
+         jjbexVh/A4LHdPTFjHNmgw48yGvAVIS8x9/DfwHgMtR3hqZDuZfFqswz/4x1f4Cx8dAx
+         BCkJRzfnr1OQmAf426+WGUQczOraqpxHc0eGDZ6s7assLXvmwK9Si79t2YZYlwFo4Fg0
+         1QeZj9xWKvSbt07eJAmxa5rlXvb4xLnz40u6bsXNH2k4tPCxchchwZxhV/UmoHA6IWIN
+         NUzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUu8rNKtk4/ss7HYj+n5ZfUbjRd1bxhdqTdQX+r8DIoG77DRr1Yb1/Wx0vm3GzCkZtRyl8nINT2xU8=@vger.kernel.org, AJvYcCVJ77zZVL13Ph3MuUeltJH0geI5ND21/kcjx8HFR/R2d4FVH5SslbsPNhVcP8g51Aab8BmrQ1VBhSJTlt2M2g==@vger.kernel.org, AJvYcCVmgtKI0S54NyzFJBwq2UMX51xN4ItASYB/kzvZPqorM97UtUIeXuPDdAOEKj2l1rCDX0I=@vger.kernel.org, AJvYcCVn3E5p1WUbySe9vOTah5hTAA31+TIEqb2I/ZA8caHXLtcQB4/4aCo9dteQwRCrDoAVUVLIOaQa7iJ/TORP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmRbWCCvXFNXa5y2ZtQ88kZ4yeClNyjC0MMREObUbmUeb627X+
+	gFn7AfD2bMnx4o4jsG59QP4fqrxfhRgASMb5HYzR9EomLWJSrWWzNkYjot1qTPDZzdLgDQtHH9B
+	wqDhDV3QzfoAl036IH8WXrTD+gpQMaVqj8I0=
+X-Gm-Gg: ASbGncv7JNwKlOqugTmStqVMBK4p5elZugqh/fdkwHHAb8Zxxj0lZ2uedfbNIG1ed6a
+	7dY0Q3dUgXx+LW1LIVv/c2rzE+6+/7vxzzoGBkU4NtnHSLUjQe+gicrEU093Y68uF4hFZar0y
+X-Google-Smtp-Source: AGHT+IH/wfGm3/CAsTBU+YAwWOZncBAj615IMgx+6j59WDBDXnbe//4t1nBqJ8S/66IEaHeTZF3BiaCQpNfOJfjQjQY=
+X-Received: by 2002:a05:6214:29c2:b0:6d8:8a60:ef24 with SMTP id
+ 6a1803df08f44-6e46ed77efcmr70712546d6.9.1739394906262; Wed, 12 Feb 2025
+ 13:15:06 -0800 (PST)
+Received: from 270782892852 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 12 Feb 2025 16:15:05 -0500
+Received: from 270782892852 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 12 Feb 2025 16:15:05 -0500
+From: Stefano Jordhani <sjordhani@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-226463992-1739394832=:619090"
-Content-ID: <alpine.DEB.2.22.394.2502121313580.619090@ubuntu-linux-20-04-desktop>
+Date: Wed, 12 Feb 2025 16:15:05 -0500
+X-Gm-Features: AWEUYZktblv-CWUc8KgHQzjBmPtXup2CD1xGkAjazST08bCQ32ye5meR_Nki59M
+Message-ID: <CAEEYqun=uM-VuWZJ5puHnyp7CY06fr5kOU3hYwnOG+AydhhmNA@mail.gmail.com>
+Subject: [PATCH net-next] net: use napi_id_valid helper
+To: netdev@vger.kernel.org
+Cc: Stefano Jordhani <sjordhani@gmail.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Willem de Bruijn <willemb@google.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Magnus Karlsson <magnus.karlsson@intel.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Joe Damato <jdamato@fastly.com>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	Sridhar Samudrala <sridhar.samudrala@intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Mina Almasry <almasrymina@google.com>, 
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:IO_URING" <io-uring@vger.kernel.org>, 
+	"open list:XDP SOCKETS (AF_XDP)" <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+In commit 6597e8d35851 ("netdev-genl: Elide napi_id when not present"),
+napi_id_valid function was added. Use the helper to refactor open-coded
+checks in the source.
 
---8323329-226463992-1739394832=:619090
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.DEB.2.22.394.2502121313581.619090@ubuntu-linux-20-04-desktop>
+Suggested-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Stefano Jordhani <sjordhani@gmail.com>
+---
+ fs/eventpoll.c            | 8 ++++----
+ include/net/busy_poll.h   | 4 ++--
+ io_uring/napi.c           | 4 ++--
+ net/core/dev.c            | 6 +++---
+ net/core/netdev-genl.c    | 2 +-
+ net/core/page_pool_user.c | 2 +-
+ net/core/sock.c           | 2 +-
+ net/xdp/xsk.c             | 2 +-
+ 8 files changed, 15 insertions(+), 15 deletions(-)
 
-On Wed, 12 Feb 2025, Jürgen Groß wrote:
-> On 12.02.25 02:30, Stefano Stabellini wrote:
-> > On Tue, 11 Feb 2025, Juergen Gross wrote:
-> > > In case xen_swiotlb_alloc_coherent() needed to create a contiguous
-> > > region only for other reason than the memory not being compliant with
-> > > the device's DMA mask, there is no reason why this contiguous region
-> > > should be destroyed by xen_swiotlb_free_coherent() later. Destroying
-> > > this region should be done only, if the memory of the region was
-> > > allocated with more stringent placement requirements than the memory
-> > > it did replace.
-> > > 
-> > > Signed-off-by: Juergen Gross <jgross@suse.com>
-> > > ---
-> > >   arch/x86/include/asm/xen/swiotlb-xen.h |  5 +++--
-> > >   arch/x86/xen/mmu_pv.c                  | 18 ++++++++++++------
-> > >   drivers/xen/swiotlb-xen.c              | 11 +++++++----
-> > >   3 files changed, 22 insertions(+), 12 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/include/asm/xen/swiotlb-xen.h
-> > > b/arch/x86/include/asm/xen/swiotlb-xen.h
-> > > index abde0f44df57..a353f20c7e79 100644
-> > > --- a/arch/x86/include/asm/xen/swiotlb-xen.h
-> > > +++ b/arch/x86/include/asm/xen/swiotlb-xen.h
-> > > @@ -4,8 +4,9 @@
-> > >     int xen_swiotlb_fixup(void *buf, unsigned long nslabs);
-> > >   int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
-> > > -				unsigned int address_bits,
-> > > -				dma_addr_t *dma_handle);
-> > > +				 unsigned int address_bits,
-> > > +				 dma_addr_t *dma_handle,
-> > > +				 unsigned int *address_bits_in);
-> > >   void xen_destroy_contiguous_region(phys_addr_t pstart, unsigned int
-> > > order);
-> > >     #endif /* _ASM_X86_SWIOTLB_XEN_H */
-> > > diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-> > > index 2c70cd35e72c..fb586238f7c4 100644
-> > > --- a/arch/x86/xen/mmu_pv.c
-> > > +++ b/arch/x86/xen/mmu_pv.c
-> > > @@ -2208,19 +2208,22 @@ void __init xen_init_mmu_ops(void)
-> > >   static unsigned long discontig_frames[1<<MAX_CONTIG_ORDER];
-> > >     #define VOID_PTE (mfn_pte(0, __pgprot(0)))
-> > > -static void xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
-> > > -				unsigned long *in_frames,
-> > > -				unsigned long *out_frames)
-> > > +static int xen_zap_pfn_range(unsigned long vaddr, unsigned int order,
-> > > +			     unsigned long *in_frames,
-> > > +			     unsigned long *out_frames)
-> > >   {
-> > >   	int i;
-> > > +	u64 address_bits = 0;
-> > >   	struct multicall_space mcs;
-> > >     	xen_mc_batch();
-> > >   	for (i = 0; i < (1UL<<order); i++, vaddr += PAGE_SIZE) {
-> > >   		mcs = __xen_mc_entry(0);
-> > >   -		if (in_frames)
-> > > +		if (in_frames) {
-> > >   			in_frames[i] = virt_to_mfn((void *)vaddr);
-> > > +			address_bits |= in_frames[i] << PAGE_SHIFT;
-> > > +		}
-> > >     		MULTI_update_va_mapping(mcs.mc, vaddr, VOID_PTE, 0);
-> > >   		__set_phys_to_machine(virt_to_pfn((void *)vaddr),
-> > > INVALID_P2M_ENTRY);
-> > > @@ -2229,6 +2232,8 @@ static void xen_zap_pfn_range(unsigned long vaddr,
-> > > unsigned int order,
-> > >   			out_frames[i] = virt_to_pfn((void *)vaddr);
-> > >   	}
-> > >   	xen_mc_issue(0);
-> > > +
-> > > +	return fls64(address_bits);
-> > >   }
-> > >     /*
-> > > @@ -2321,7 +2326,8 @@ static int xen_exchange_memory(unsigned long
-> > > extents_in, unsigned int order_in,
-> > >     int xen_create_contiguous_region(phys_addr_t pstart, unsigned int
-> > > order,
-> > >   				 unsigned int address_bits,
-> > > -				 dma_addr_t *dma_handle)
-> > > +				 dma_addr_t *dma_handle,
-> > > +				 unsigned int *address_bits_in)
-> > >   {
-> > >   	unsigned long *in_frames = discontig_frames, out_frame;
-> > >   	unsigned long  flags;
-> > > @@ -2336,7 +2342,7 @@ int xen_create_contiguous_region(phys_addr_t pstart,
-> > > unsigned int order,
-> > >   	spin_lock_irqsave(&xen_reservation_lock, flags);
-> > >     	/* 1. Zap current PTEs, remembering MFNs. */
-> > > -	xen_zap_pfn_range(vstart, order, in_frames, NULL);
-> > > +	*address_bits_in = xen_zap_pfn_range(vstart, order, in_frames, NULL);
-> > >     	/* 2. Get a new contiguous memory extent. */
-> > >   	out_frame = virt_to_pfn((void *)vstart);
-> > > diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-> > > index 26c62e0d34e9..3f3724f53914 100644
-> > > --- a/drivers/xen/swiotlb-xen.c
-> > > +++ b/drivers/xen/swiotlb-xen.c
-> > > @@ -118,6 +118,7 @@ int xen_swiotlb_fixup(void *buf, unsigned long nslabs)
-> > >   	int rc;
-> > >   	unsigned int order = get_order(IO_TLB_SEGSIZE << IO_TLB_SHIFT);
-> > >   	unsigned int i, dma_bits = order + PAGE_SHIFT;
-> > > +	unsigned int dummy;
-> > >   	dma_addr_t dma_handle;
-> > >   	phys_addr_t p = virt_to_phys(buf);
-> > >   @@ -129,7 +130,7 @@ int xen_swiotlb_fixup(void *buf, unsigned long
-> > > nslabs)
-> > >   		do {
-> > >   			rc = xen_create_contiguous_region(
-> > >   				p + (i << IO_TLB_SHIFT), order,
-> > > -				dma_bits, &dma_handle);
-> > > +				dma_bits, &dma_handle, &dummy);
-> > >   		} while (rc && dma_bits++ < MAX_DMA_BITS);
-> > >   		if (rc)
-> > >   			return rc;
-> > > @@ -144,6 +145,7 @@ xen_swiotlb_alloc_coherent(struct device *dev, size_t
-> > > size,
-> > >   		dma_addr_t *dma_handle, gfp_t flags, unsigned long attrs)
-> > >   {
-> > >   	u64 dma_mask = dev->coherent_dma_mask;
-> > > +	unsigned int address_bits = fls64(dma_mask), address_bits_in;
-> > >   	int order = get_order(size);
-> > >   	phys_addr_t phys;
-> > >   	void *ret;
-> > > @@ -160,10 +162,11 @@ xen_swiotlb_alloc_coherent(struct device *dev,
-> > > size_t size,
-> > >   	if (*dma_handle + size - 1 > dma_mask ||
-> > >   	    range_straddles_page_boundary(phys, size) ||
-> > >   	    range_requires_alignment(phys, size)) {
-> > > -		if (xen_create_contiguous_region(phys, order, fls64(dma_mask),
-> > > -				dma_handle) != 0)
-> > > +		if (xen_create_contiguous_region(phys, order, address_bits,
-> > > +						 dma_handle,
-> > > &address_bits_in))
-> > >   			goto out_free_pages;
-> > > -		SetPageXenRemapped(virt_to_page(ret));
-> > > +		if (address_bits_in > address_bits)
-> > > +			SetPageXenRemapped(virt_to_page(ret));
-> > 
-> > This has the unfortunate side effect of making "PageXenRemapped"
-> > unreliable as an indicator of whether a page has been remapped. A page
-> > could still be remapped without the "PageXenRemapped" bit being set.
-> > 
-> > I recommend adding an in-code comment to clarify this behavior.
-> 
-> The PageXenRemapped bit is used only for determining whether
-> xen_destroy_contiguous_region() should be called. And by not setting the bit
-> I'm avoiding to call xen_destroy_contiguous_region() later. So I don't see any
-> unfortunate side effect.
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 7c0980db77b3..2fecf66661e9 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -447,7 +447,7 @@ static bool ep_busy_loop(struct eventpoll *ep, int nonblock)
+ 	if (!budget)
+ 		budget = BUSY_POLL_BUDGET;
 
-While the purpose of PageXenRemapped is to determine whether
-xen_destroy_contiguous_region() should be called for the region, the
-name "PageXenRemapped" suggests more generically that the region is
-remapped.
+-	if (napi_id >= MIN_NAPI_ID && ep_busy_loop_on(ep)) {
++	if (napi_id_valid(napi_id) && ep_busy_loop_on(ep)) {
+ 		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end,
+ 			       ep, prefer_busy_poll, budget);
+ 		if (ep_events_available(ep))
+@@ -492,7 +492,7 @@ static inline void ep_set_busy_poll_napi_id(struct
+epitem *epi)
+ 	 *	or
+ 	 * Nothing to do if we already have this ID
+ 	 */
+-	if (napi_id < MIN_NAPI_ID || napi_id == ep->napi_id)
++	if (!napi_id_valid(napi_id) || napi_id == ep->napi_id)
+ 		return;
 
-Without this patch, all the regions that are remapped have
-PageXenRemapped set. The name matches its meaning. (Also,
-xen_destroy_contiguous_region() is called an them.)
+ 	/* record NAPI ID for use in next busy poll */
+@@ -546,7 +546,7 @@ static void ep_suspend_napi_irqs(struct eventpoll *ep)
+ {
+ 	unsigned int napi_id = READ_ONCE(ep->napi_id);
 
-With this patch, not all the regions that are remapped have
-PageXenRemapped set. The name does not match its meaning.
---8323329-226463992-1739394832=:619090--
+-	if (napi_id >= MIN_NAPI_ID && READ_ONCE(ep->prefer_busy_poll))
++	if (napi_id_valid(napi_id) && READ_ONCE(ep->prefer_busy_poll))
+ 		napi_suspend_irqs(napi_id);
+ }
+
+@@ -554,7 +554,7 @@ static void ep_resume_napi_irqs(struct eventpoll *ep)
+ {
+ 	unsigned int napi_id = READ_ONCE(ep->napi_id);
+
+-	if (napi_id >= MIN_NAPI_ID && READ_ONCE(ep->prefer_busy_poll))
++	if (napi_id_valid(napi_id) && READ_ONCE(ep->prefer_busy_poll))
+ 		napi_resume_irqs(napi_id);
+ }
+
+diff --git a/include/net/busy_poll.h b/include/net/busy_poll.h
+index 741fa7754700..cab6146a510a 100644
+--- a/include/net/busy_poll.h
++++ b/include/net/busy_poll.h
+@@ -119,7 +119,7 @@ static inline void sk_busy_loop(struct sock *sk,
+int nonblock)
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+ 	unsigned int napi_id = READ_ONCE(sk->sk_napi_id);
+
+-	if (napi_id >= MIN_NAPI_ID)
++	if (napi_id_valid(napi_id))
+ 		napi_busy_loop(napi_id, nonblock ? NULL : sk_busy_loop_end, sk,
+ 			       READ_ONCE(sk->sk_prefer_busy_poll),
+ 			       READ_ONCE(sk->sk_busy_poll_budget) ?: BUSY_POLL_BUDGET);
+@@ -134,7 +134,7 @@ static inline void skb_mark_napi_id(struct sk_buff *skb,
+ 	/* If the skb was already marked with a valid NAPI ID, avoid overwriting
+ 	 * it.
+ 	 */
+-	if (skb->napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(skb->napi_id))
+ 		skb->napi_id = napi->napi_id;
+ #endif
+ }
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index b1ade3fda30f..4a10de03e426 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -44,7 +44,7 @@ int __io_napi_add_id(struct io_ring_ctx *ctx,
+unsigned int napi_id)
+ 	struct io_napi_entry *e;
+
+ 	/* Non-NAPI IDs can be rejected. */
+-	if (napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(napi_id))
+ 		return -EINVAL;
+
+ 	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
+@@ -87,7 +87,7 @@ static int __io_napi_del_id(struct io_ring_ctx *ctx,
+unsigned int napi_id)
+ 	struct io_napi_entry *e;
+
+ 	/* Non-NAPI IDs can be rejected. */
+-	if (napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(napi_id))
+ 		return -EINVAL;
+
+ 	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
+diff --git a/net/core/dev.c b/net/core/dev.c
+index d5ab9a4b318e..bcb266ab2912 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1008,7 +1008,7 @@ struct net_device *dev_get_by_napi_id(unsigned
+int napi_id)
+
+ 	WARN_ON_ONCE(!rcu_read_lock_held());
+
+-	if (napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(napi_id))
+ 		return NULL;
+
+ 	napi = napi_by_id(napi_id);
+@@ -6740,7 +6740,7 @@ static void napi_hash_add(struct napi_struct *napi)
+
+ 	/* 0..NR_CPUS range is reserved for sender_cpu use */
+ 	do {
+-		if (unlikely(++napi_gen_id < MIN_NAPI_ID))
++		if (unlikely(!napi_id_valid(++napi_gen_id)))
+ 			napi_gen_id = MIN_NAPI_ID;
+ 	} while (napi_by_id(napi_gen_id));
+
+@@ -6911,7 +6911,7 @@ netif_napi_dev_list_add(struct net_device *dev,
+struct napi_struct *napi)
+
+ 	higher = &dev->napi_list;
+ 	list_for_each_entry(pos, &dev->napi_list, dev_list) {
+-		if (pos->napi_id >= MIN_NAPI_ID)
++		if (napi_id_valid(pos->napi_id))
+ 			pos_id = pos->napi_id;
+ 		else if (pos->config)
+ 			pos_id = pos->config->napi_id;
+diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+index 0dcd4faefd8d..cdcd39724cb3 100644
+--- a/net/core/netdev-genl.c
++++ b/net/core/netdev-genl.c
+@@ -267,7 +267,7 @@ netdev_nl_napi_dump_one(struct net_device *netdev,
+struct sk_buff *rsp,
+
+ 	prev_id = UINT_MAX;
+ 	list_for_each_entry(napi, &netdev->napi_list, dev_list) {
+-		if (napi->napi_id < MIN_NAPI_ID)
++		if (!napi_id_valid(napi->napi_id))
+ 			continue;
+
+ 		/* Dump continuation below depends on the list being sorted */
+diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
+index 9d8a3d8597fa..c82a95beceff 100644
+--- a/net/core/page_pool_user.c
++++ b/net/core/page_pool_user.c
+@@ -233,7 +233,7 @@ page_pool_nl_fill(struct sk_buff *rsp, const
+struct page_pool *pool,
+ 		goto err_cancel;
+
+ 	napi_id = pool->p.napi ? READ_ONCE(pool->p.napi->napi_id) : 0;
+-	if (napi_id >= MIN_NAPI_ID &&
++	if (napi_id_valid(napi_id) &&
+ 	    nla_put_uint(rsp, NETDEV_A_PAGE_POOL_NAPI_ID, napi_id))
+ 		goto err_cancel;
+
+diff --git a/net/core/sock.c b/net/core/sock.c
+index eae2ae70a2e0..84dbdc78dea3 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2041,7 +2041,7 @@ int sk_getsockopt(struct sock *sk, int level, int optname,
+ 		v.val = READ_ONCE(sk->sk_napi_id);
+
+ 		/* aggregate non-NAPI IDs down to 0 */
+-		if (v.val < MIN_NAPI_ID)
++		if (!napi_id_valid(v.val))
+ 			v.val = 0;
+
+ 		break;
+diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+index 89d2bef96469..0edf25973072 100644
+--- a/net/xdp/xsk.c
++++ b/net/xdp/xsk.c
+@@ -875,7 +875,7 @@ static bool xsk_no_wakeup(struct sock *sk)
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+ 	/* Prefer busy-polling, skip the wakeup. */
+ 	return READ_ONCE(sk->sk_prefer_busy_poll) && READ_ONCE(sk->sk_ll_usec) &&
+-		READ_ONCE(sk->sk_napi_id) >= MIN_NAPI_ID;
++		napi_id_valid(READ_ONCE(sk->sk_napi_id));
+ #else
+ 	return false;
+ #endif
+
+base-commit: 39f54262ba499d862420a97719d2f0eea0cbd394
+-- 
+2.43.0
 
