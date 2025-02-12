@@ -1,57 +1,75 @@
-Return-Path: <linux-kernel+bounces-511986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A94A33264
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:24:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE61DA33289
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:27:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838021884C98
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:24:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691A81884E7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2D820408E;
-	Wed, 12 Feb 2025 22:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D604020408D;
+	Wed, 12 Feb 2025 22:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e83HsoxU"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RKW3YlQz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED7B2036E6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518C9202C45;
+	Wed, 12 Feb 2025 22:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739399035; cv=none; b=eLXwlo4FgD6HSMVEtCuuUxe1YAmGMH9/FT7TLjngSUTDFgEhPVKe6CoQwyUCcNYpR1SwKYsOoT8X0R0uZ0Mmz56GiAx98U3SbCUBflC8LZkOJnn86AV4JrU104eohxLiJPtZxKMjNK4wRAiODgHXiQQlgYjViS39VGvo1GQPBDk=
+	t=1739399221; cv=none; b=BNFl0lrFLuly0adzKksQZmn1DLp9uHu0nVzWmwQvkM0zT77qybEfj4Qf26XNBEdUpviapW0d5PiT0a6uoCbYxg+PmHpbfEDAtauz3wQC6pSrcJsqFFqyYHb2f1s8iiX7PYJ4XhC1CJS9/6Gn5pGfbbnWtgduDwYqxmjsUXxaQgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739399035; c=relaxed/simple;
-	bh=1jeWaSLD5tHtzDUpc0Naqe9/RXjJP7H4xKkVzPVgMks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E44m2KS7bZ7XznDg2FcCBIsyGhCY/k93HiQyvQi4ipyCJzOxUEAOd3x7xdf2a4GgJT6RZycAobNV3Zt/oS+Tmt1VH4/+V4YbjXcCVNOjYDtFSlOpb8SmnraIKMe5+0ubPmrua5vI2Mm4OTZV3+phVG46S4NjQ2vHMCwxG5pOZRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e83HsoxU; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739399030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cspwxC9nVN+grYvnsk1+x8gpGvhnB9zjEEBy7u03DWo=;
-	b=e83HsoxU2P5tv3o1FnLX+D56W4CzaWbBgE89Mgr8mmcbe3Qrp/UFtjnb29kzyxkHatq19L
-	zd65jM9ysG8ZE4N5mxcDBWEkJ7DveMpGKkiNcyavyPEuOr5R9ToMFmrBufDwB9iQTPFlzx
-	ycHJ2lWphXLd20ulTvVG7opP/qOQESA=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Don Brace <don.brace@microchip.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-hardening@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	storagedev@microchip.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: hpsa: Replace deprecated strncpy() with strscpy()
-Date: Wed, 12 Feb 2025 23:22:15 +0100
-Message-ID: <20250212222214.86110-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1739399221; c=relaxed/simple;
+	bh=/3+mBVrE63/84GWfZK7OmV4Ny/tGhzzzgdhYFy/il4Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HJrTVU3mXSrGe+Tjz8ZEKWn3aYPKggD9HDwFKsgdBIx/rW6lFxT2kI8dR8VckEHoOxNxEF6ouHqEVdBHgFr1Svm+2bc7fcYnqOoDmgY+r+2ZT20EAo8hNbHm3u45Nl+WAZJyt0sWRIYJT+ptuxkp6eT8FXOZj1oQp4pfYlKXF+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RKW3YlQz; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739399219; x=1770935219;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/3+mBVrE63/84GWfZK7OmV4Ny/tGhzzzgdhYFy/il4Q=;
+  b=RKW3YlQzhT+0w2VxLepW/buJ6YAtdng2+jL6vc00z+rqZv5b6xExmtxe
+   Srs42M9/G8s7ieTQf3F+/KMtpE5ae/8DGY3oQYtcAlAlmpi8g9WFq6E9+
+   RnS5oZ/GpZxRnpmUj5M9COoe1Hjd5ZGnnfWjodbVIFqDuqLSm7omPz3c5
+   97U4GW8swmFVNPIS/f2TGASHvAmnTxmgzXRvh/5t9xaQoZ6smX9Xdwd9p
+   4WMoJeNt/tpjJ75ep2GhhucpoEiBEzIXspmFgByKN/f6f2JimgsoISmZ7
+   0jnFNs1QSjaf7//el/BfYsFw47Yu2YP8md8hDWEd5ybjYtUMUwjIF9FEB
+   w==;
+X-CSE-ConnectionGUID: 7IBeE15jR/m/FEYqGMus/Q==
+X-CSE-MsgGUID: f0WXe2sMQDyRyx1ADL5Ehg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="42919934"
+X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
+   d="scan'208";a="42919934"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 14:26:58 -0800
+X-CSE-ConnectionGUID: 5gpj1kBGTU60agfsopnnIg==
+X-CSE-MsgGUID: H+oFrjRlRKCfbaGSO0YdUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
+   d="scan'208";a="118038847"
+Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
+  by fmviesa004.fm.intel.com with ESMTP; 12 Feb 2025 14:26:56 -0800
+From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
+To: Moritz Fischer <mdf@kernel.org>,
+	Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>,
+	kuhanh.murugasen.krishnan@altera.com
+Cc: Ang Tien Sung <tien.sung.ang@intel.com>
+Subject: [PATCH] fpga: altera-cvp: PCIex8x8 ports (#94)
+Date: Thu, 13 Feb 2025 06:23:21 +0800
+Message-Id: <20250212222321.2716639-1-kuhanh.murugasen.krishnan@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,52 +77,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-strncpy() is deprecated for NUL-terminated destination buffers [1]. Use
-strscpy() instead and remove the manual NUL-termination.
+Enabling the possibility of supporting multiple
+PCIe devices from Intel Altera FPGA but with different
+device ids. The current driver registers itself
+to all device IDs which causes an incorrect driver
+association.
 
-Use min() to simplify the size calculation.
-
-Compile-tested only.
-
-Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-Suggested-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Ang Tien Sung <tien.sung.ang@intel.com>
+Signed-off-by: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@intel.com>
 ---
- drivers/scsi/hpsa.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/fpga/altera-cvp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 84d8de07b7ae..9399e101f150 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -460,9 +460,8 @@ static ssize_t host_store_hp_ssd_smart_path_status(struct device *dev,
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 5af0bd33890c..97e9d4d981ad 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ static void altera_cvp_remove(struct pci_dev *pdev);
  
- 	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
- 		return -EACCES;
--	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
--	strncpy(tmpbuf, buf, len);
--	tmpbuf[len] = '\0';
-+	len = min(count, sizeof(tmpbuf) - 1);
-+	strscpy(tmpbuf, buf, len);
- 	if (sscanf(tmpbuf, "%d", &status) != 1)
- 		return -EINVAL;
- 	h = shost_to_hba(shost);
-@@ -484,9 +483,8 @@ static ssize_t host_store_raid_offload_debug(struct device *dev,
- 
- 	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
- 		return -EACCES;
--	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
--	strncpy(tmpbuf, buf, len);
--	tmpbuf[len] = '\0';
-+	len = min(count, sizeof(tmpbuf) - 1);
-+	strscpy(tmpbuf, buf, len);
- 	if (sscanf(tmpbuf, "%d", &debug_level) != 1)
- 		return -EINVAL;
- 	if (debug_level < 0)
+ static struct pci_device_id altera_cvp_id_tbl[] = {
+-	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
++	{ PCI_VDEVICE(ALTERA, 0x00) },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
 -- 
-2.48.1
+2.25.1
 
 
