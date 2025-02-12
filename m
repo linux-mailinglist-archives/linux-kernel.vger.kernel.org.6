@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-511870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDD5A330D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:30:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CB5A330DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B88188A703
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 700CB3A7952
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95B4201017;
-	Wed, 12 Feb 2025 20:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A919B200B95;
+	Wed, 12 Feb 2025 20:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yOzo2QTi"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FlkRQVC0"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422F4134A8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352E2134A8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739392245; cv=none; b=Kin3ujiOY8MAsCBw48S3uccvTguY0QS5mZQ8nV3BQzWkNAlu0E61NSWqmxkD6gPNJFVg0bnMOwWIe3FNirhGmHTnJvKCv2Seg99/pcQRauGkvsMHvZbheiagwimJvMSizAGazOc91T7ww9SnSXbTgJSWVtPCNc+9jWFOqyNBeFo=
+	t=1739392407; cv=none; b=Qj3Rt0H/Goe33swG3RiLx2oppLbhXaGQ3E8gzpj/GOUzCPFVC2DTs5f8Iox9WcnIm9CGj3KqjUG41p1T+5bVuxuEP20HGBj8Zl3b3wfUktXwLwr2GnhDgfquIFrMES1cZjyqy3OkciImSm0rLT57y4zRm0UCSodHHIxmDxI82ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739392245; c=relaxed/simple;
-	bh=62XOCJaY/t66luJFF5h5rOCgBVw9Y8phtjVL6ga39Eo=;
+	s=arc-20240116; t=1739392407; c=relaxed/simple;
+	bh=yH64L4+bl1w0nfMZxq2PSZFyl8TfHHOghqbF6gZIU24=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Hb5oZuniQO3si/Qa1tBkjKIsZzvS8v9XS0V58NJbI/ZlYurdw8gSd7sHuyKzsxtGEZX64kZ8iObrSV0vA5n0ANMeR7rDUHJj2LtxohpRL3J3pNArezbaHxqoLFC4xUAVInQ3ZXN7A0Fq3E9cfd72UjX+qhVQpCO5DQcsL9cE+10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yOzo2QTi; arc=none smtp.client-ip=209.85.218.42
+	 In-Reply-To:Content-Type; b=pS1ps06h9SSVB24+sN2uZyMcTuWphTSMb9Hx/U+ypUPG3oefwyUBleMBcRa+euzKGqGiVoatSEQ1fIEJtARJ1LLLAUEhIcCgK6RX4ZhcRdr7rgR+d9dqyushZKQ84+9WxTC+AB6FqdFJiModKBDW32hIGZEY9msixlcVS1bYg8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FlkRQVC0; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7bf29883aso3484266b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:30:43 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5de47b3c6c9so8376a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:33:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739392242; x=1739997042; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739392403; x=1739997203; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cmRXcdjEFTtwWErLiczOTSh5GDvvFaZtrg8q8bv4gpA=;
-        b=yOzo2QTieNe9e85IT4nrDmnumISeOAf2Ae1ccHRMydfnrJ/lJ6kT71Ls5ukYy899ZC
-         /Nxj9MgWBbwzr95eYRC9ePjV90FAHRDy2nihBub85hroVX6encYP6v8RpKRKORIdnUeL
-         iVro+ehIrjueiGiol3DXP99Be1Y3/WlIS91hgKVqCuzIpBt/KRfL1+FaSU3li8+9cmEh
-         D3wZji0ihem+/swDNPetJGTr8GnJBOqzcAkrnQti1XivkvKsqjtcZjHjbg6oLuG2qb8t
-         uguuweL/7slcPG0anFKkyk0k7dKRNngy1GEgSwa+H/tF/8ZQy+isYk2w+AoI8gE1+XPv
-         lyyQ==
+        bh=bIWQ1cYFsKmdYVBFw76fShsZ0oqbQapNfjENnquqJYM=;
+        b=FlkRQVC0qgXgrTl+SzSkRhmZXoOCIpgxzWZdDf0yiLbXZ5kaRTJNLkyh+APzlSWvIv
+         b7HROtqvCv51VdnlaERD+qnvZIh6ZllbCU4bp1iB6yjlQGtDpQzsCfzfIcORqTYVRtjp
+         LKll7whQL8Bzje9h7fkoceN0hozcWtYSEckuSDX/RiIbUK9Ytfa/QGMHXs9FtX1fOJHi
+         FNSaoBEPUC9hDOwDb0ZqLTJq25+aQlZb2w81FYJOO/a86O3z/IGIXjND9QcEjxJE6xw1
+         RGhbdr5fAe6XvGAiE/3PscClIPjgShxj7mbUcQQ29yZS9ISq0gSG8lCgHLnddotEredb
+         MlAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739392242; x=1739997042;
+        d=1e100.net; s=20230601; t=1739392403; x=1739997203;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cmRXcdjEFTtwWErLiczOTSh5GDvvFaZtrg8q8bv4gpA=;
-        b=wF58kujQYXcZ1bv5HnzoUF9wBdM86ql5zb7E7VfM5Hpy+1h2deDgjmBDuWrbUoeI2T
-         okdxu3AyU7BP//qcmp8UWCBAGiYFZUPHGaFN3UH++BXgGSvJrxzceVfyo/cwS5AvUBa1
-         Oaz9Z5G1/A6zTugQpAPFrvQs89RdHzUIU3aYbopWBU8wyFhq7gU99OphtQE1QlI9nKH7
-         XiNd228LujQNUBvV98YRjjvWR0cv6eUntwBy9k+s/qIpUndHGKaFYfMfOjB67F0+4CL1
-         FLa3ZILPIW6YLcaGq5YJzbeX4eLLjAJ5czIKkupedycMoaiAc/p6Kh5MnWXNHuuT6aaQ
-         NRJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYcke1BwMyTbVJFSIeJdGJRTWe1GmEk5HPkceK5REe1fnHQQDB2oPQTBfUNZlT+WPNxO6aPKOmIS9rwJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoNDrQynzcg7RhjaYKIDiXj5uOd4KQ+1CecypR269e155yj8op
-	hjjov1dcZWr+T+lENjCyN/2HgxdtQsRqDvGvGK4liLkoJVWPCbYYSyC7qAAByxg=
-X-Gm-Gg: ASbGnctj5CXjYy9Uaij62EaE4YZSCye0SePy+P/Pqys09Fp1PbXY4lmhUvZQ+1gTGa4
-	ltoJhg/6S5vpbTWJuOqA49JsW8A9+mBvtTMhzveI9ryfgtz6L51h4enJfcspASgevE4Cthd0q3V
-	y+snzvcbwecGf29psJ6TGqKuEaUTG+1E1PszPhoG02I7p63sVmKNPetDE9gTOCoi36pd8OmX9bL
-	q00pe05ABqTns0NHK2Z023JJW2kFDXG0ROE7SccmuMB4ERdHhMz6y/LwbgX6A/Vgs+T7KjW8TzB
-	SVQMs7U0Vw7NHc1iRoYuy0hhT8L1A6Nf0b4=
-X-Google-Smtp-Source: AGHT+IEy5MNFfUhE4KoXzS+0qnWcf+fR/v9TpWdLTk4yS/53co/Ga9Puko1DFJtx4WWKhW6Sl6TL2w==
-X-Received: by 2002:a17:907:da5:b0:ab6:6176:9dff with SMTP id a640c23a62f3a-ab7f31a654amr186338666b.0.1739392241639;
-        Wed, 12 Feb 2025 12:30:41 -0800 (PST)
+        bh=bIWQ1cYFsKmdYVBFw76fShsZ0oqbQapNfjENnquqJYM=;
+        b=ONSk2oAr1v7GA1cBPWLeUueyGx0weMVVlQgCxVsjC2uGGH9HNOSC9LoYs+xgoRwttD
+         957VKm0dmABKfYLSIFod2DtM7JKvh2AFhqbgJy1bAjcYa9SvA8u4fkhoRBG5vL6KLxZD
+         HZE1VElPUQ5662WxtZ7b11FoedTv1PEQa0EcriSFtBaso9U6ibdinBBFdpONKQI8XUXq
+         CucSx8WT8LcVeTDbHjK66+tsCm6EwQTTQCOAiFjHmbij9cKcoTLOMWTbm5BF4QK+Ti/o
+         5NV+ltWJ0EQ8xkY/eSGIRA3Sm46Nm5DXCSONGh+N8e2QkVy2RCNQvcaDDbFQFFpMv4mc
+         lzjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpW+4M3FwWmTH75OPVPP1oCJ0hDDL6vjND+cMqXuELlFuKVzh/x4qqBQMSMa0R5P3eCGiN2TSl+7XoBfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF2zG0liDHNFFfCf+3bO/MWQEUorrZbktn0Cq2AEV0IM4ISO0r
+	G/wXSUIYj2MlL3WTUQQBrIttrEbG+5P8Eo2I2WRp16RO+6s9Pa/Glcw5LuArtbvAspVhBh8RW99
+	p
+X-Gm-Gg: ASbGnctjnManuikx0/+C3mhAwNk+e/i/xVKRamj/pJ5wG7g8Mau1jr/mcPcJ2FrSSeC
+	UQH0PpsW3PpnEfJcmpXbOWc/FRdAepjaTElZTsbtplaq23DDGEE39FZKQ06YuSVKOzcYP2CchTO
+	UtIHc5cJMrStAQktAXhA5ctFGyaX4ERovzrklmjO5no+b1zkNq+2PGVxIoJgzmuHCt1T5V6FB7c
+	Qgb7zfuWQIXFrVfbRR0ierHA7uV9bDelnIzQi/42CbXC52gu1LDc876cMgZ0jBQIT9mPaSAG3kD
+	P+RS7VnBlxrMcE6JPdhaf2lXDwxtOVzfu+o=
+X-Google-Smtp-Source: AGHT+IGeDMm9h5OyPOgGl/JpRPwFojPaGai7niCiDvwSAxEh7i84pRRG1VSKCLWjp1rMUxxzCdw7xQ==
+X-Received: by 2002:a05:6402:51d4:b0:5dc:91b6:10e6 with SMTP id 4fb4d7f45d1cf-5deade2734amr1424141a12.10.1739392403390;
+        Wed, 12 Feb 2025 12:33:23 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7dd77c151sm418897366b.57.2025.02.12.12.30.40
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dcf9f6fa21sm12002595a12.68.2025.02.12.12.33.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 12:30:40 -0800 (PST)
-Message-ID: <55aed776-ebee-4b0a-a6e0-17732fdd5191@linaro.org>
-Date: Wed, 12 Feb 2025 21:30:39 +0100
+        Wed, 12 Feb 2025 12:33:21 -0800 (PST)
+Message-ID: <7341db6b-aed0-4da0-a5b2-6992d86ffaf3@linaro.org>
+Date: Wed, 12 Feb 2025 21:33:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,13 +81,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: stih407-usb: Use
- syscon_regmap_lookup_by_phandle_args
-To: Patrice Chotard <patrice.chotard@foss.st.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250111185407.183855-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 2/2] drm/mediatek/hdmi: Simplify with dev_err_probe
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250112134708.46100-1-krzysztof.kozlowski@linaro.org>
+ <20250112134708.46100-2-krzysztof.kozlowski@linaro.org>
+ <ef0baed6-54d2-4f1f-9a4a-769ec09a069f@collabora.com>
+ <59f8a02e-a716-40a8-bf73-111ad2a7af79@linaro.org>
+ <8e8e3eca-dee0-43ab-95d9-aebd636245c7@collabora.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -133,30 +139,37 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20250111185407.183855-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <8e8e3eca-dee0-43ab-95d9-aebd636245c7@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/01/2025 19:54, Krzysztof Kozlowski wrote:
-> Use syscon_regmap_lookup_by_phandle_args() which is a wrapper over
-> syscon_regmap_lookup_by_phandle() combined with getting the syscon
-> argument.  Except simpler code this annotates within one line that given
-> phandle has arguments, so grepping for code would be easier.
+On 13/01/2025 14:48, AngeloGioacchino Del Regno wrote:
+> Il 13/01/25 14:07, Krzysztof Kozlowski ha scritto:
+>> On 13/01/2025 13:41, AngeloGioacchino Del Regno wrote:
+>>> Il 12/01/25 14:47, Krzysztof Kozlowski ha scritto:
+>>>> Use dev_err_probe() to make error code and deferred probe handling
+>>>> simpler.
+>>>>
+>>>
+>>> That's already done in [1] so you can drop this commit.
+>>>
+>>> [1]:
+>>> https://lore.kernel.org/r/20250108112744.64686-1-angelogioacchino.delregno@collabora.com
+>>>
+>> Eh, this was first in v3 in the middle of Dec, so why you cannot get it
+>> merged first? Creating such 34-behemoths causes simple cleanups to
+>> unnecessarily wait.
+>>
 > 
-> There is also no real benefit in printing errors on missing syscon
-> argument, because this is done just too late: runtime check on
-> static/build-time data.  Dtschema and Devicetree bindings offer the
-> static/build-time check for this already.
+> Getting the series partially merged is okay for me, no complaints about that,
+> but then ... in v4, there are two minor comments to address (one of which
+> is a one-char nitpick!) that might as well be done while applying, depending
+> on what CK thinks about that, so there's no real benefit in getting 28 commits
+> out of 34 picked instead of, well, just everything...
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/phy/st/phy-stih407-usb.c | 24 +++++++-----------------
->  1 file changed, 7 insertions(+), 17 deletions(-)
 
-Vinod, was this patch lost?
-
-There is review and patch should still apply. Let me know if you need
-resend.
+OK, month passed, I waited, so is your big patchset merged? If it is,
+then this will effectively rebase my patch, as you requested.
 
 Best regards,
 Krzysztof
