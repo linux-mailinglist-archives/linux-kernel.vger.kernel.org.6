@@ -1,107 +1,149 @@
-Return-Path: <linux-kernel+bounces-511134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA9BA32662
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:58:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A30A32660
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB49C168F11
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:58:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542A11888F7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAB420CCF5;
-	Wed, 12 Feb 2025 12:57:52 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0967220DD7F;
+	Wed, 12 Feb 2025 12:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B98dfFuc"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAC2271824;
-	Wed, 12 Feb 2025 12:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB19271824;
+	Wed, 12 Feb 2025 12:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739365071; cv=none; b=uZFDGlHOA5e9t8HUWf4NU6PrQUQ5gT1ti2cgMqaITjNFzLIAcTKYRBjBG//KAqU8YE+uX2oOBMAmKQrC2/vy3XqC/xF4EmUvloVbmZ0i1Ys1dCj6jI4Nu/EuPbe899f45oO0WsJMswcLfr+n9FlJf2nmsv6r8nnDrnl9QPnUyNw=
+	t=1739365066; cv=none; b=MRH4x/5gJjNxSXVHRm4TTsuTZpUaKCRjsTAH66uk+zvFrjeLbtupmYEsFdCGJacld/CTwG6BsNKtR5lttMSJv/uFxjhq51yTRw15WYOvj+jrdjsHWAORSqhXKW9I0FE41ti8U+n1qOzRIUhVHIQJJnDs5oYFbTyAVCRqWX9YxyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739365071; c=relaxed/simple;
-	bh=1fQJ9/QoaiCE3XRCo0rze42eHMuZ87wHTMYWXy0JzSk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEJryDGqUyp0UTiULYNLLpGSxmcwxuZ/eEbN0cFg+ay7VO2j3Wr5sSLSnpJev1rihWW9tsD/Ybo70TuhELyDYUFpQq4tfnxCrTEGghduUXJMk0Qse31Oz4j3snC0JLcO9Hl8njH45WeoPF6lhRkxFUOBcb1Jo5dO/9L1++M9ZAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so1256650766b.3;
-        Wed, 12 Feb 2025 04:57:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739365067; x=1739969867;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j+omTqBzUILm+6CyB0Br0bTGYlVV+kHRwXXStam8eq0=;
-        b=FidvBiEo5R2x9KaabmY/XnkLcnSV8/sESRkB33QTHuMKNvozdIGrahxDbmKbs1ER1r
-         opi3zt6CelV2EiylSQsbXYY0/wyrDLefJ38JFBGe48+Y9GaHLuXjmxlEtgIo29Fvhv3T
-         458AE+TA7Fi7RhGJ7U9VXVYw1TXBdYZU98OuBwNDlvCsIyMHCAmRltFBOzGq87NTarqC
-         cFOLK00+Et9HGLSFowSrBi5TJQT7dhEMv6oAlAyqYmFrH20MonMlP5Gvb/gw4Zymol2n
-         4KTEZ2jZqFFcvfTlEVHahQD8OQEWAZh4ezJZuIF1wAfIjCXPFW2dAa//P7FYnVMPpyW0
-         NA0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUAFo/3YKRCli/px2AvsA2s9JiQBaPg4HDMq8Y9va0KZjH3zs9ctadXIUAHqvd+NxLlT9LTL5TYD0u68k8@vger.kernel.org, AJvYcCXP0o20to/rUW0AZvHN9oKfLqUdIE4F8QBtsDdSZvtFKGSiLFygtaA3zZhO4lICKi1dY9O6klrH5kLvog==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzekzaZff2I0zkvL1Xr2TEg9TQQ1XihW6ekapI6g5sFOktX9yo
-	zMUior+58MIHwEYB7QPNLSjVj9W0YELV7FYMTTm9CPkXcRQ/PPjq7A6rxIjAJOY=
-X-Gm-Gg: ASbGncsiHJOppVbRZzxZEI2EIhN8dTAKzUov6MA0ppKSS3UtpfaAA58hwjUhruWhnQc
-	Eez53XQAM0uxTL0tc1Xl16lcj3AIaE0snVioyj4eJuvUbwveRYa7V48IeLRNH2EimzoKznwar6E
-	MZ+3/cgeaqoEGhqo36bxVsTWbtzjHMXgRGKH/VSw8LCehTh0rvyMybpdsUr0SBFdAlhbr+qoUTL
-	HJootsUyksS9JpHVY5rHS5vJRYX+UQsGoSR9aqg2jW5vOyF5ML31n7VHj6ccEhZbk52xCzsigkx
-	rkad6rHNlJtV95dhFtof8jrFIrm79wOfB93wMddFMXK+mqKzsA7OFQ==
-X-Google-Smtp-Source: AGHT+IGOq9ERUslcLV2yMahTl/DW/mD3ioaQPVufgDYepNMLUztCai413N2H0Ft4q8c8y+OxwSQcNA==
-X-Received: by 2002:a17:907:6e8c:b0:ab7:d59c:41d0 with SMTP id a640c23a62f3a-ab7f3381283mr263332366b.20.1739365066844;
-        Wed, 12 Feb 2025 04:57:46 -0800 (PST)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7ced6fe0dsm487000166b.179.2025.02.12.04.57.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 04:57:44 -0800 (PST)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5de4f4b0e31so8755516a12.0;
-        Wed, 12 Feb 2025 04:57:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUha9wqxpDdqoRtSt1h/RsL8rue6fblttCjQV4LpyPj85ihvAA/SrbB1s+4zJ1byEqNdl0i22USGNgAvi1B@vger.kernel.org, AJvYcCXlvvqtP5oTAaqM4DKbd+Ww/Ztyby+0VfgXNg4JSlsqSzdfs15n5SkEYaNXW+42ixFAdo+YMwvxMiJ7lQ==@vger.kernel.org
-X-Received: by 2002:a05:6402:34d2:b0:5d3:cff5:634f with SMTP id
- 4fb4d7f45d1cf-5deadde6002mr2835112a12.24.1739365063427; Wed, 12 Feb 2025
- 04:57:43 -0800 (PST)
+	s=arc-20240116; t=1739365066; c=relaxed/simple;
+	bh=OPanrCfS1lvnoz7OwCheozB8dxHqLkWEb7Fz9X5l1dg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:Cc:
+	 References:In-Reply-To; b=aaLyzrRBq6JJxWrvkljjezaJJFueHmUns7cRWZ/CiPeLzZknJSBYoWXn04LkFO+Uzr1yPoS2f9n3mQyqdQ1EA50w/S3J+iW8+LTclehzqNKK9t50oQNuPQuaqBsmaS0avs7VdRJ9RcXyUjfK5o7jSwCzYHksvzRgH2TaU7YaX5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B98dfFuc; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 68FA242CCD;
+	Wed, 12 Feb 2025 12:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739365056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UQlDvmMNjG6HkmTEiN6yuUtQAxZ2XiJJ4GjbKF++9lE=;
+	b=B98dfFucobdoepjJa/+I5uJim69YPNxpmIzqWZbtDGtT74sp09+RvN0m8WCOUlplsmj11t
+	C+7hseTbDtcH3dNXP4f+LEAw8LQmksx2rM8BybUWtv9Ml4bJSurqALhWf8UdzL4K4jLlKU
+	JKIIFhLzDosYGbhYwG57aIt99iv8fOhSbw+wdfwpAxmANXeZJYJhGmMsaKir6yzRVKbE1+
+	csNMWKcihRpXeg44ZifqI1T7O8BKb2c0KUPy0yIUrSo5DAm9jkiWYwiOE/yXMSseIPGQ9k
+	oajfa4yP0TsfYqAxEDULdtEDCH+tqaAw7T9oaaiXlyFZaWJftnFCrwTEsdKfxQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250212111449.3675-2-thorsten.blum@linux.dev>
-In-Reply-To: <20250212111449.3675-2-thorsten.blum@linux.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Feb 2025 13:57:26 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXSaRCQMePxnfP7EdMUf4PU9ZCC09NsyHUSjhhXC=eT2A@mail.gmail.com>
-X-Gm-Features: AWEUYZnrp1PaU2E7y_Z-ScKjyKKRUdtJyijVggRYIiNip4_87QuBmsShUjRCjAY
-Message-ID: <CAMuHMdXSaRCQMePxnfP7EdMUf4PU9ZCC09NsyHUSjhhXC=eT2A@mail.gmail.com>
-Subject: Re: [PATCH] alpha: Use str_yes_no() helper in pci_dac_dma_supported()
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guo Weikang <guoweikang.kernel@gmail.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 12 Feb 2025 13:57:34 +0100
+Message-Id: <D7QHGB7D0VSG.X255SDU7DFOF@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v3 4/7] gpio: max7360: Add MAX7360 gpio support
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250113-mdb-max7360-support-v3-0-9519b4acb0b1@bootlin.com>
+ <20250113-mdb-max7360-support-v3-4-9519b4acb0b1@bootlin.com>
+ <Z5eFGJspoGOINcG6@smile.fi.intel.com>
+In-Reply-To: <Z5eFGJspoGOINcG6@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffhvffuvefofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheevtdekffeuleehkedtvdejhfeihfegtdduveeghedvveelgfevteekveelleetnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkohesihhnthgvlhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdro
+ hhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Wed, 12 Feb 2025 at 12:15, Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> Remove hard-coded strings by using the str_yes_no() helper function.
+Hi Andy,
+
+Thanks for your review. I've been addressing most of your comments in
+this mail and the ones related to regmap-irq. I should be able to send a
+new version in a few days.
+
+However I have a few questions regarding some of the points.
+
+On Mon Jan 27, 2025 at 2:07 PM CET, Andy Shevchenko wrote:
+> On Mon, Jan 13, 2025 at 01:42:28PM +0100, Mathieu Dubois-Briand wrote:
+> > +	parent =3D to_platform_device(pdev->dev.parent);
 >
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> Why do you need this? Can't the fwnode be propagated to the children and =
+then
+> the respective APIs to be used?
+>
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+I'm not sure to understand this correctly, what do you mean by
+propagating the fwnode to the children?
 
-Can't test it, though, my UDB died +20y ago...
+Just a quick summary of the situation and what I try to do. The device
+tree looks like this, only keeping the interesting properties:
 
-Gr{oetje,eeting}s,
+io-expander@38 {
+  ...
+  interrupts =3D <23 IRQ_TYPE_LEVEL_LOW>,
+               <24 IRQ_TYPE_LEVEL_LOW>;
+  interrupt-names =3D "inti", "intk";
 
-                        Geert
+  max7360_gpio: gpio {
+    ...
+  };
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  max7360_gpo: gpo {
+    ...
+  };
+};
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Our pdev fwnode points either to the "gpio" or "gpo" nodes, the one from
+our parent device points to "io-expander@38". Here we need to get the
+"inti" interrupt from the parent node. What would be the correct way to
+do it?
+
+> > +	if (!max7360_gpio)
+> > +		return -ENOMEM;
+>
+> > +	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios)) {
+> > +		dev_err(&pdev->dev, "Missing ngpios OF property\n");
+> > +		return -ENODEV;
+> > +	}
+>
+> This is not needed, it is already done in GPIOLIB core.
+>
+
+I believe this is still needed:
+- For gpos, we need the gpio count to correctly set the partition
+  between gpo and keypad columns in max7360_set_gpos_count().
+- For gpios, we need the gpio count to setup the IRQs.
+
+Best regards,
+Mathieu
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
