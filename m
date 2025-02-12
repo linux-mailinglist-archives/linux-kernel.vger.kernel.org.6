@@ -1,256 +1,179 @@
-Return-Path: <linux-kernel+bounces-511395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A0EA32A6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:47:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88D0A32AD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC1D166A06
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9968D3A9E8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8542521148A;
-	Wed, 12 Feb 2025 15:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ciz7kOn0"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2067.outbound.protection.outlook.com [40.107.249.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A886253B66;
+	Wed, 12 Feb 2025 15:49:25 +0000 (UTC)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1F1271814;
-	Wed, 12 Feb 2025 15:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739375261; cv=fail; b=klA7+4il+8al5SokC4kqbv5hAVyZjJHS9PoEWU7dU84cIkPfZgLY+ABuCNkIe1fu+7ixfq+Q/eCgFvPlHm6FgFFMHngQezlL/i6e1fN6iXHRHbZNoXMed2/IrA9iwvhjMgYErNPoNawohhxbkiC34zFTor8KcKsCy5kKxnQbjNA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739375261; c=relaxed/simple;
-	bh=cRv6NgOmBfoNCL/9xJwt7ASpu58DhphgPhS34QujCFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=G2bOuP0UToIscu96xjudjDLxZlqe6JyYOFQaFyMVBLuGbfmsbdqjS9LOsyLkzywLBuggf2hujxd7pAK6nxZzFgM6utNFyYqzBByThccpS5dAxa3QIvhIqk2mU9ucTHwzOWfLmUm76sdwTfHfKoAHt4eeKDlHsyjq6xUeBJdsaXc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ciz7kOn0; arc=fail smtp.client-ip=40.107.249.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JCGx6yYQmjNowstW6lw7+IyiK6UyVkARzkXYevdHdseNAjGm3IyIigOzuXy1oDTeeefgGaoAwlLmI6AwUNle+2eXEu28O4mntbXqk6Qtw8GiS6kd0G5nLLHGIbu3ltDDHbn12+3SNxILrw7tDzhj89VuANwRY0nkH5U+rahIRykHfnRL0YJ0UwY8/hAHFyj1qpNZSRLhsPpFNADCwvZFuIaJaReKY8qGNAhLFwYh0tZxUYL6m6ydZwYaY28rfsRWtREexyMY8OLh9GdjVX9Fy8aVSkaC58SE6W/E2tDMxsCog+Uo41Ln8grwtD5PpWTPQW7CnLbePmO3jiTRWpvKSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0Nem88b8qmvxPwwrv866nL0iyBq3IdKeXoRuK8nU3xY=;
- b=Esfp9oAB3AofkfllUWmZjIETyWWwSI1J+0ZEZXlxe4Tkr2OldLwT244rmLXYN71eoosfAphJ32QfnjsFsDxDv5Ryhkg40qc7BQBfyiBeomkxJqU/prrBPSXkdTunH4s6Na8nKw3pj1Cc9a+LS37BQue7ZZDOW2Wxb1EepzCR2jFQuNN/P96bLsGYNyvBAdnjqE8YETZhrwSv/gD4gv24uI51Vd9lXaOyY5ydV7Em5a6aR2ozadX9KJYEismTFW5Z6uvUjTEBR/7sci2NlZ71oKzHywkfuN+h4BQQYb8ZgwnCo8HdWpfxUUe/YtiZQVH/Uf1XyPw7aRpQdBKpHCyECA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0Nem88b8qmvxPwwrv866nL0iyBq3IdKeXoRuK8nU3xY=;
- b=Ciz7kOn09Cr5qpU+D6anHlDu5Vzz20UCqrz+Il6TDzYVzCEvDxZGeWPT1O2b4U2BgPKqZ0sskH3UG4I+KZLiyFm/f6eSUeZI+qOBEMh/EpCtkjdJ1NRWwmSofcimkWD0OZ0oxmgBcb3ZJ0vsnNGYP9FqHK4MsHFhQ2Te/q2fDk5QaFJ9nY1d5IOd39pZhl7O1f5xCX4KqxGLg18EXP8D24SCCyqWNW4SqNdkmvsquh/D9mKTch0kWsb5YMyL5ZNjesRUQedkWjO2taWyicIrb6EeKJIPXf6qxdg+91CLxtqT9lh12nlF6fXQ8ZQMADlZp3QXWgkq9g10WQnswvbfAA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10846.eurprd04.prod.outlook.com (2603:10a6:150:210::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.12; Wed, 12 Feb
- 2025 15:47:35 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8422.012; Wed, 12 Feb 2025
- 15:47:35 +0000
-Date: Wed, 12 Feb 2025 10:47:25 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, Xiubo.Lee@gmail.com,
-	festevam@gmail.com, nicoleotsuka@gmail.com, lgirdwood@gmail.com,
-	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] ASoC: imx-card: Add playback_only or capture_only
- support
-Message-ID: <Z6zCjXr6vsVF/6Ag@lizhi-Precision-Tower-5810>
-References: <20250211035737.3886974-1-shengjiu.wang@nxp.com>
- <20250211035737.3886974-3-shengjiu.wang@nxp.com>
- <Z6tuFp9nZFMJMgDa@lizhi-Precision-Tower-5810>
- <CAA+D8AMyXVdAWOTGHtrOyXjSLiMioAhZ1awepX3nproom87azQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA+D8AMyXVdAWOTGHtrOyXjSLiMioAhZ1awepX3nproom87azQ@mail.gmail.com>
-X-ClientProxiedBy: SJ0PR03CA0276.namprd03.prod.outlook.com
- (2603:10b6:a03:39e::11) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C950F271814;
+	Wed, 12 Feb 2025 15:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739375364; cv=none; b=HIGdxbajNCORJ+vYuITro3zrqYvSEPF/Oz/zSK0JTmQP483QyuKBlDwf5m20TjKld92G0V5AvyTo2VsOK8yUTvTJ/8/JzZofsfdYli1ZBRmv0OMIuokkANJ4QSyVm49gQQ4nFVMcOcFg0husrF9Pg2tLiWZB1Z4qLqmXBIx/wH4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739375364; c=relaxed/simple;
+	bh=ZYb25KYfw2P0BGhQV+uuhhL05dEUG6c5vP2hzj2tUFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o6rtqvSIlAQ+HrERVdqTClN33fk12A+bd6OaYIe3yMkRQnfg1+y86YcrkRevdL/XU6G3eD306c3o7icA0kpfNy7Khb3sdObGL0d2w582U8zhP/GkTtwGJkAO20K9+wQinah3fAM5LxwM8DsRyaFLNQczh0xwfPtSgpkQjvAjba0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4bbefec9362so398264137.1;
+        Wed, 12 Feb 2025 07:49:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739375360; x=1739980160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TdhMIUeQbiUqE75o3CDsfPB27KyZHvKIbaqHUkg+aFM=;
+        b=gvntMcj4LaRsO07cXkxGsV4L4IXaJyPHAD5dFpGmKhVnv0/AMEFHs65qWDftpB98N5
+         zs3ta1eLYIar1VNrIjA3IwhlDKJ6+BzMWBqXTqbPzEmXnB3q46t+SDVTxHQFNgGkESLV
+         VDxejy481A03ZtcOYnOc2KJxWe9LYkDdIVANl/tk9SsoTW7raZfARtVQ58SYpQbAMG14
+         ndKP+ma+botp+aDSF7KZOg7kE0Q2STdtptEfKBe9gu3Y+fzEF4r6PH4NmRLmGsocKnLb
+         4dVgXfJaG2RPuPRGlhF1nceYaMiNfFDqS1aFHUiZyqdYyHVq2Rg4MB+vHECqUsgBwkCF
+         /MoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrHF1vC/Eigm0dhiPsnNw8XEn+bprAeI5wZ5pJ1q/7qaUaqHuFxDJ+bz0NBWrrQwsWtysmzw1H/kHw@vger.kernel.org, AJvYcCVSYFpWmMqSCnGOG/Hd13byhVgCvM7tiNNG/gfM6OTDFtmwfPQ6s5CBiFmwRiXt+8nr2r5/Jbxv6Fnad4To@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW396lEu5hKB4g2CkpBSo4xWlV2GGcfHNyna1O7uasKyd3u4MM
+	kQmFKXd8f2v8nvfQGJWMUDym3p1B2Kn0+WlHeypZ72wQ00/lyeQzPgOdZV+MW0U=
+X-Gm-Gg: ASbGnctobVT+okOx5dAru/gPb4KoNNlV4+YjQ1ENs1YCdVP2yv6Qq8k7IXLewW7P3Cv
+	2dUN7wYilygyf7ATX7uYbLym/AbxNcpFfBysqIq6dEKggkINnQRW/RCt8ajSHP7oR0MhFN+pvpx
+	H//Ae0ua5GS9yivlz3f0VnPApDZPJvKu71zgpvhY0O7y4aMYWLETv5Rql2ujaJMyRpfvDzQ4e+w
+	EabYyr43Pq7T4/cqzU/i7eEGJo+9a65MJcQ3Gmlc4GgzUjCLRCjoZHF8MhVn4Jb2I9JrWea8Lf7
+	cNdfGJv1Qdqh+RH6635vcAB8bDUXXZ1pP56zTb/5Cgo0+2jv3G1eMw==
+X-Google-Smtp-Source: AGHT+IHxjNeXYHO/TESLn6/+lP4SNRO4bJlI25tPHOGWd/RtsWE2l1h+Xo8F6I9hHNqv6rfSWOZbng==
+X-Received: by 2002:a05:6102:3751:b0:4bb:e2a1:183e with SMTP id ada2fe7eead31-4bbf22df22dmr3535914137.18.1739375360470;
+        Wed, 12 Feb 2025 07:49:20 -0800 (PST)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4ba76ebe373sm2418189137.12.2025.02.12.07.49.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 07:49:19 -0800 (PST)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-866e924f735so1968162241.2;
+        Wed, 12 Feb 2025 07:49:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV17y4RXKJWF7GgJosW1oe+q98bP2HSYBjSXK1CsafneZn79tLFvkAF4TDQPegnBxma8ICrw9r+1SSd@vger.kernel.org, AJvYcCXDocyd1TXX/STPMQyp7iixpt88W/C33hW/qY2s9/veFfVyswljlq3v0tSqMNm7Rr7EQ6eCrufk4qIvR5aN@vger.kernel.org
+X-Received: by 2002:a05:6122:65a2:b0:515:4b68:c37f with SMTP id
+ 71dfb90a1353d-52067cfe3b1mr3462313e0c.6.1739375359679; Wed, 12 Feb 2025
+ 07:49:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10846:EE_
-X-MS-Office365-Filtering-Correlation-Id: b516fcea-7eca-4b5a-e31b-08dd4b7c91da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|376014|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SnZmenFCQkNzVnhzT0F3RlFndzNFZWZKM2h5aDlZdmFwNi9JQWhHSTVtMnFD?=
- =?utf-8?B?SXRYbS9XVFRzZUE2SDE5aGZ1K3ZuUU84eGJJOTZNQ3U1Q0RTbnphazJmZlhn?=
- =?utf-8?B?QnJiWUhUdHRZMTRQS0M2YnZYQ3R3cDJ3bm5xclBqWUowTTJPejNrZi80czdm?=
- =?utf-8?B?T0trL0d6ckcwVTZiWUpVMDJaMkZrRU05d0I0NzF2eDVPVFZWN1F5bXpRcVR6?=
- =?utf-8?B?c1EyNFgrejRFL3M2cytWMzJBa3pEVndNOU03eW5JdEkrdndMRzQzVEV2WTBX?=
- =?utf-8?B?N1BNMGk0NHVOT1lmOWtoWlg1MWltWC9ncVpkNmRDRTFiYTdvQWR2dmNEQWxj?=
- =?utf-8?B?NUNaQS9SNzExVHRQQkdCN0VtVXlIRjhmQTJCMURXaWtpeHlSRDhTUnB1RHF0?=
- =?utf-8?B?c1h4Sk5PK0RjaWZHUUw3YzRzeGpBdWxtOFZWYmQ0c3dKTWdJK2w1ZEU0QzN1?=
- =?utf-8?B?a0lEeU41Q2Uvdm9mVG13UXh4MDVLaWNTMHArWjgrazRHZDJUVDJXRm00azRF?=
- =?utf-8?B?eHlOWllsQlprOStPblJkY252WHowRE1WZ1RuT3hTaG11UEtDaWM4TVEweGpn?=
- =?utf-8?B?ZDFhYW1Oa0VOR3V4ZENqZ0FnblVHOG1uKzNyRUwxNU1IMjdpU21mRGVqeFRI?=
- =?utf-8?B?S2paRDE4OU8wTjc2MHRRVzB0NjFqc1l1clZJSDdWZmRxVStLTXZaSHBPb1dp?=
- =?utf-8?B?WTI0RHlGVXhBa1NSMllIT2NNRTdwM1dJTEFuM2YrRmRHUDFoK3BKRVoreEJE?=
- =?utf-8?B?dEZoeWJrUjN6UFZuSThnRnJrc0VjREpYZHZVTm1sTnFSTjdGandWOWwyWllR?=
- =?utf-8?B?TDlybTFvKzFaeUZTa3VjL3FuL1krM215b3piZXh0RlcxR0pkSHh4YWs5dTJC?=
- =?utf-8?B?NE12UkhBaEh2a2dSQkNrbXV2enJSWE9JQjdGSk5MVXBqU3doTWJIeVJjRDda?=
- =?utf-8?B?dGlGQXhlN2dPMUx6aVU2SXZuY0FMMjYzb3NuVEtwZGxDbEowcTZqYWZOZ1ZJ?=
- =?utf-8?B?U3MrVlJyc3VvZ0JaV1djclNkQ3lmQ0ZRd0dDMVdCT3hVdE9ua3lKMXpvTndR?=
- =?utf-8?B?MVVjc3RwcnY2RnhXdzl3N2RTblJGVWlTMEUydGwxQTFhUnFPTVNyb3M1d24v?=
- =?utf-8?B?Qi95UFRTanlZVE5OU0VuY1h4Y3d6enZJTWYxaUJINWJnQmF4NjBONm1WeVBr?=
- =?utf-8?B?d3VvT1FHajBYenh4d2FuZ2JnOERFcEFBcFBpeFFIY2FnNVVlc0dpSisySDNW?=
- =?utf-8?B?Z0FYWmt5YnNpdXlmNG1DdEtndXVpYkVhajI4NWJabU1veXNkNWVzMFlhVG1t?=
- =?utf-8?B?NzBnN1RFRjVVMUp2QktwRGdEcVBLOEd5WUhzYk9rWGlXaXAwYkRWNEJJTG52?=
- =?utf-8?B?NEJRaEFRVnI4Y0tkcStzM1hYM1NRandNNjcvd3VjcnRCbGxqOWJoWUh3N3Y1?=
- =?utf-8?B?Q2luMG1jKzhFSHVsdGRsejh4QzhKMWF1Q2FGQkRZcGxlR2tzYVlmTWFtVWRE?=
- =?utf-8?B?cjdhVFN0VjQxRUQvMmZQanhSejMxVWF2aU8xd3VWR3haK3V6WllQQ3F1eURC?=
- =?utf-8?B?WGIweWo5MUlWSXV1NDI5ZVJFNmlUcVdyWEJ2a0ZtbjRYcnZyVXNkd0tTcHRX?=
- =?utf-8?B?Y2QzRDFZdFdpSldoY1RoOGpkY21sa3hFbEFvQ1N4d0k1TTBNMHRhZUI0ZkFC?=
- =?utf-8?B?T0JVdkdxbG53T1NqOFdsZFNMdUR2L2QwUUF5YkpoOVU5LzlkakFDSjNBMHQy?=
- =?utf-8?B?UVk0cUVXOHB6WGN1NWN5MDk3RkJjSWFyMWdlTFdOQ3BVRVB6VFRicko0bFM1?=
- =?utf-8?B?NEpGaTc1ZzJLZ2VoTExtSzd2SGlUazBaaUpjME43RmhCSnV0YldmbVpwYUdr?=
- =?utf-8?B?Zk1RTWtZdWFxWUIzZU8vZTd6c1poZUliL3FLOUVWcUJkOG5xaDJ6TkwwWFkr?=
- =?utf-8?Q?M1H3LBuEXqssBKnIk0Kg+v/xfZ8keRIy?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dkFLbHlkUEt0b0lLMC92bDc1YU0zby8yMmwzQ3hmbEZ5bU51Rk1tem9BZHRk?=
- =?utf-8?B?cEFTZ05iZkl4NlBjeGxiZ1hyWVVuU1pyMTBVMnFqRllSblQ1RHV1OGlCdmVk?=
- =?utf-8?B?QmhCUkZCczVDSEc0S0FTUERtNVA4Mmk0TnBuOWFqYVZRWng1VHlaQlpTMSsx?=
- =?utf-8?B?Rkl2dWorZzRScTFYelR1cEtZanYyV2pBNENaL1JBRzVJdTlZMldhVUNmWHBE?=
- =?utf-8?B?aktWZ0pRVkE2Y3FvRWtweHoyOTFpM0FUc2hRTjQwSDg1R0J1bmRpTTRVRmg2?=
- =?utf-8?B?WUNZYlFUSmlzM01PMGZkRXZpZEhqZTlsbXIxeFFEWUJZYlRrMncwNE84dnVV?=
- =?utf-8?B?SnhldXJBSEFDQ1VySW9kK244WkVhaEJKMndYd0FyRDkvTXBEb05rcHlJc2pt?=
- =?utf-8?B?VWlmUUQ4UXR3ZExacEVrUFZjK3Rrckp5V3FKY2F1WHgvamdwTjdaakdpTzgy?=
- =?utf-8?B?bEZ6c1c3eWpNWWhBM2V4ZmNNUHNqMFE3djFZbkdmUnl3R1gvQjVaL2x2d2Fp?=
- =?utf-8?B?UEZneVIvYS9MYlM5ZkdPVDFrTjVFVFRDbVpDRmJPZ21DcEZpM0dmVGdNTTc3?=
- =?utf-8?B?OHBPdi8vQ254czRmL0Jac055NjdGUVhLZDJRZVNpSzdFWXloU25ZUnhBQmdF?=
- =?utf-8?B?ZkR6OVZRWTlkRnpNd2xhY2hMZytSZTZaSnlMZkdwVFJqNWdFRzFlVmRqU05D?=
- =?utf-8?B?dldueEtJaktvdldZVmhMR2NuZmc2eGlSK0RMVVFoekdLM0hhY0dUbXhpNDhk?=
- =?utf-8?B?Y0xoc1d1Rm5nSzFDNlZLTlpGNitNTWVBc1BUQ2FRbm5DMEdYNitVajhLREgw?=
- =?utf-8?B?NTlyblVXL3JoQWYrV3pLeXltSTViSkNQbHg3TUVabWFlaVVSQ2IrZFRxbUVv?=
- =?utf-8?B?OVlSRHBXODBCMFcwbUZHdlRtRzROQVZtcDRBcG5FNXJ5MU5KWGV2bnhKVFVq?=
- =?utf-8?B?ZlRid01ETjlGcFlNTElMQXg0b21ZaU9EM0x6c0tRaUYvbm04azZ6bTd1WmlT?=
- =?utf-8?B?bjJBRkJXL245cTFxeDlHaGRqWGhRbmtyOXhha1pSTUUyc2RIRkVOTktNMGdv?=
- =?utf-8?B?czBzK2NQQitQZmo5aTVweE03VWJFWGNlaDJGb3pQdVFyMHk1KzBzU05DdUZE?=
- =?utf-8?B?YTFNeGxYZ0hrVThiMHI0SXlRdzRMOERtL1hvYUdEMEZRa1hNdXhqMEUzaksz?=
- =?utf-8?B?Y0FOVi9xbjB4RDFqTDZENlE4eXJIWFQ5amNXTVVJL20zNW1KRGJwaHVOTndm?=
- =?utf-8?B?TEduUXJJenAweCt1VnVpdERuTWFsS3MrRW1hYm5WZ1VHM0JCZ1dGMGQ2Uno0?=
- =?utf-8?B?UDU0ODdGMUdsMSs0Tm5aYkNtcmhJUHZjQlc2ZWhSaEtBUUNkVTk0dkJINEh1?=
- =?utf-8?B?N1MrRWhpZFZDMkZ6TGRoOHFMZGk1NE0vaDE1TW5qejcrMWxwTGJUK1pIOEhM?=
- =?utf-8?B?aVFHQjhzL0ZXaHR6a1cyZHQrVHhWZmt3R1psRGxYRVB1MmZQY3E5K1JvVkQ0?=
- =?utf-8?B?Q0xrVHRyWEQ2SjliQ3I0NVVXMCtScEVIZlhMcTYyblB2bWlMSHNKT0FZbEp1?=
- =?utf-8?B?MWZudEphVTg4Y3FXRG5uVCtFSnVabER5MWRNNmxGaUlJRkNNZ0E1VzArTk9K?=
- =?utf-8?B?czlHb2RqZ08rby9BbmpvZVczcmw3amJNTUhnZUpTWm5oVkxWeHBJaXd5Ui9Q?=
- =?utf-8?B?bjhpL01EZU1zZytnWVU0WGhsMEF1OUdYQmRJSUo0N3Q2VXhtMXJaSlB6eWhR?=
- =?utf-8?B?ZzJQaEV2SndNOWlpV3RyOURoVkswNVlYMVExZERQWW9zZysrM2VIRmlGSEpX?=
- =?utf-8?B?NjJRaWtocEdBN0hoZW1VMWh4NWhOay9rLzM4eXNtZlh3S3UxYXlnRDhMNFlB?=
- =?utf-8?B?Z1lSNUdpaE1Ta1hKNEtVc0JXRlJQdTMvaTQ1Z1ZBR0tZTEQ3bUxqUzBCdFpP?=
- =?utf-8?B?b0c5M2hheGtXSitic0RpbXhsc1k2SVpTZFhUU0JwMW9qOWt2VXVvcEZka3dE?=
- =?utf-8?B?QUx1Wk9Ea2VqbjF3QkRHUWhVZzdGNmFYazRFUDRmTDVPcVk1NGlMUVZRc3hR?=
- =?utf-8?B?V3J4OEY0WTJZTWJRUW5RZURrZjFVeXB6aUFqNVBsT29DZDFUNDdGMHdJcm5G?=
- =?utf-8?Q?MYZ/AKj7xhw1IrmpJULjQ0tmI?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b516fcea-7eca-4b5a-e31b-08dd4b7c91da
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2025 15:47:35.3473
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +HDbjKmvxS/wyHC7ovVr/c25t9OxdCKU1IP8ID/2IySsdPyShtKfisg3qlvz8uU1SLtYjTIHgFlmfMdkLeSA3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10846
+References: <20250203031213.399914-1-koichiro.den@canonical.com>
+ <20250203031213.399914-10-koichiro.den@canonical.com> <CAMRc=Meb633zVgemPSeNtnm8oJmk=njcr2CQQbD5UJd=tBC5Zg@mail.gmail.com>
+In-Reply-To: <CAMRc=Meb633zVgemPSeNtnm8oJmk=njcr2CQQbD5UJd=tBC5Zg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Feb 2025 16:49:07 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU24x9pxEjBHTKxySxwr-L+iKXSUNFxpM9hvaSTNAWDuQ@mail.gmail.com>
+X-Gm-Features: AWEUYZmpWWmZOz-tU2hYiwfvYtFQ4il4iVmshwrei97TcpDUFUcWtvxe_jjHHOw
+Message-ID: <CAMuHMdU24x9pxEjBHTKxySxwr-L+iKXSUNFxpM9hvaSTNAWDuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/10] gpio: aggregator: cancel deferred probe for
+ devices created via configfs
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Koichiro Den <koichiro.den@canonical.com>, linux-gpio@vger.kernel.org, 
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 11:48:43AM +0800, Shengjiu Wang wrote:
-> On Tue, Feb 11, 2025 at 11:34 PM Frank Li <Frank.li@nxp.com> wrote:
-> >
-> > On Tue, Feb 11, 2025 at 11:57:37AM +0800, Shengjiu Wang wrote:
-> > > With the DPCM case, the backend only support capture or
-> > > playback, then the linked frontend can only support
-> > > capture or playback, but frontend can't automatically
-> > > enable only capture or playback, it needs the input
-> > > from dt-binding.
-> >
-> > wrap at 75 chars
->
-> On my side, there are in 75 chars...
->
-> >
-> > >
-> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > ---
-> > >  sound/soc/fsl/imx-card.c | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > >
-> > > diff --git a/sound/soc/fsl/imx-card.c b/sound/soc/fsl/imx-card.c
-> > > index ac043ad367ac..905294682996 100644
-> > > --- a/sound/soc/fsl/imx-card.c
-> > > +++ b/sound/soc/fsl/imx-card.c
-> > > @@ -518,6 +518,7 @@ static int imx_card_parse_of(struct imx_card_data *data)
-> > >       struct snd_soc_dai_link *link;
-> > >       struct dai_link_data *link_data;
-> > >       struct of_phandle_args args;
-> > > +     bool playback_only, capture_only;
-> > >       int ret, num_links;
-> > >       u32 asrc_fmt = 0;
-> > >       u32 width;
-> > > @@ -679,6 +680,10 @@ static int imx_card_parse_of(struct imx_card_data *data)
-> > >                       link->ops = &imx_aif_ops;
-> > >               }
-> > >
-> > > +             graph_util_parse_link_direction(np, &playback_only, &capture_only);
-> > > +             link->playback_only = playback_only;
-> > > +             link->capture_only = capture_only;
-> > > +
-> >
-> > if only use once, needn't local variable.
-> >
-> > graph_util_parse_link_direction(np, &link->playback_only, &link->capture_only)
->
-> sound/soc/fsl/imx-card.c:683:53: error: cannot take address of
-> bit-field ‘playback_only’
->   683 |                 graph_util_parse_link_direction(np,
-> &link->playback_only, &link->capture_only);
->       |                                                     ^
-> sound/soc/fsl/imx-card.c:683:75: error: cannot take address of
-> bit-field ‘capture_only’
->   683 |                 graph_util_parse_link_direction(np,
-> &link->playback_only, &link->capture_only);
->
-> There are errors with it.
+Hi Bartosz,
 
-Okay, it should be fine.
+On Tue, 4 Feb 2025 at 14:14, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> On Mon, Feb 3, 2025 at 4:12=E2=80=AFAM Koichiro Den <koichiro.den@canonic=
+al.com> wrote:
+> > For aggregators initialized via configfs, write 1 to 'live' waits for
+> > probe completion and returns an error if the probe fails, unlike the
+> > legacy sysfs interface, which is asynchronous.
+> >
+> > Since users control the liveness of the aggregator device and might be
+> > editting configurations while 'live' is 0, deferred probing is both
+> > unnatural and unsafe.
+> >
+> > Cancel deferred probe for purely configfs-based aggregators when probe
+> > fails.
+> >
+> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
 
-Frank
-
+> > --- a/drivers/gpio/gpio-aggregator.c
+> > +++ b/drivers/gpio/gpio-aggregator.c
+> > @@ -1313,7 +1313,6 @@ static struct attribute *gpio_aggregator_attrs[] =
+=3D {
+> >  };
+> >  ATTRIBUTE_GROUPS(gpio_aggregator);
+> >
+> > -
+> >  /*
+> >   *  GPIO Aggregator platform device
+> >   */
+> > @@ -1342,8 +1341,22 @@ static int gpio_aggregator_probe(struct platform=
+_device *pdev)
+> >
+> >         for (i =3D 0; i < n; i++) {
+> >                 descs[i] =3D devm_gpiod_get_index(dev, NULL, i, GPIOD_A=
+SIS);
+> > -               if (IS_ERR(descs[i]))
+> > +               if (IS_ERR(descs[i])) {
+> > +                       /*
+> > +                        * Deferred probing is not suitable when the ag=
+gregator
+> > +                        * is created by userspace. They should just re=
+try later
+> > +                        * whenever they like. For device creation via =
+sysfs,
+> > +                        * error is propagated without overriding for b=
+ackward
+> > +                        * compatibility. .prevent_deferred_probe is ke=
+pt unset
+> > +                        * for other cases.
+> > +                        */
+> > +                       if (!init_via_sysfs && !dev_of_node(dev) &&
+> > +                           descs[i] =3D=3D ERR_PTR(-EPROBE_DEFER)) {
+> > +                               pr_warn("Deferred probe canceled for cr=
+eation by userspace.\n");
+> > +                               return -ENODEV;
+> > +                       }
+> >                         return PTR_ERR(descs[i]);
+> > +               }
+> >         }
+> >
+> >         features =3D (uintptr_t)device_get_match_data(dev);
 >
-> best regards
-> Shengjiu Wang
-> >
-> > Frank
-> >
-> > >               /* Get dai fmt */
-> > >               ret = simple_util_parse_daifmt(dev, np, codec,
-> > >                                              NULL, &link->dai_fmt);
-> > > --
-> > > 2.34.1
-> > >
+> Geert, what do you think about making the sysfs interface synchronous
+> instead? I would argue it's actually more logical as the user will
+> instinctively expect the aggregator to be ready after write() to
+> new_device returns.
+
+On one hand, I agree that it would make some scenarios simpler, and
+let us propagate an error code to the sysfs writer in case of failure.
+
+On the other hand, it would change user behavior. Currently people can
+configure a GPIO aggregator, and load the driver module for the parent
+gpiochip later, relying on deferred probing to bring up everything
+when it is ready.
+
+I2C's new_device is also synchronous.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
