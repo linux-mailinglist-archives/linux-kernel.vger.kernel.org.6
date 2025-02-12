@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-510529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39896A31E50
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:54:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E12BA31E59
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E601A162710
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:54:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159D73A9261
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6882E1FBC90;
-	Wed, 12 Feb 2025 05:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406C81FBC90;
+	Wed, 12 Feb 2025 05:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFSdYPdh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMZYPYTp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B629B1F9F51;
-	Wed, 12 Feb 2025 05:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937AD2B9BC;
+	Wed, 12 Feb 2025 05:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739339666; cv=none; b=XR8MdVHl86uMvb/1PguZpWNKRIXrWxb5BEgHYAnYm68RjmmTEiKi+3w3m2NlCYNi9DAfCM0g+0CNoGoEBkpG/JOTQDv+sbCfpHmurOpPI51pL53nqLtrKPEHyXbQq6cr5KRZOBokaxtyLeO3ZXkpjfmHoFyWmivr2NCxcqr3bnU=
+	t=1739339777; cv=none; b=cgMPEag9rY0G7RhWker2eyBomGYMcreWC20aNNWMCaG+X9pViHWGSxolyJBvBom3B4tYYCkALNIOErQgkezrvikBvVcL4bIzL7BO286AWsT0Bau8340lAkiwLq0g5E2bunhIQd0l7ZLPq8BqPaKEY/vI/MqJlov6ogibkwbLEJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739339666; c=relaxed/simple;
-	bh=O6HDgz7dBwSFOHVHdKu/mLb+k7tNuqO6IYE19f7IZE8=;
+	s=arc-20240116; t=1739339777; c=relaxed/simple;
+	bh=/HLUff7AtA+oJM2X8KzBa4LIH+2M9ap97x836zhn2R4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YR4Vv58gcoElONG7IMG9leAkkBACoaqJyX+nfrvmm5Es9h5/a7FnyDKkeiVcjsMp+TKO+q1xRSfqSqAW/0tDeQop2JHeygdi9KLdOENBIGDKCzI63mxeLxoP8dRNHFmApTKTjlG3B154SzX7r3MbIDV/TaCMzMOf+PyAsMVf3Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFSdYPdh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59646C4CEDF;
-	Wed, 12 Feb 2025 05:54:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=i//lCfSEclGFki/aCENkBlPSGRtCiJ5ag/8xZORMjbXDU13tnuRMQzhavAdnw6y5eFt0jKQ6XAGMAg4QEdTXZRV1RNMXvg8x/oEe51JzR0tKbyzakMsHpmtXAF8Zhl4nc6a58NwSEMSnvxtS9gaiskm+5dXKNtvQ0QUC/Bvul6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMZYPYTp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E31C4CEE4;
+	Wed, 12 Feb 2025 05:56:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739339666;
-	bh=O6HDgz7dBwSFOHVHdKu/mLb+k7tNuqO6IYE19f7IZE8=;
+	s=k20201202; t=1739339777;
+	bh=/HLUff7AtA+oJM2X8KzBa4LIH+2M9ap97x836zhn2R4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nFSdYPdh+VOq1hehBaShcCQPiKkSnJ+X3wulwcz2g2KRQy/YYhB3G3ehAav14v4w4
-	 Gc57mk8DJrhHOubgvWhHSSOaVWY54NziIS/u6TQCz87sOCuSKIVn/ju482RHVXzvCV
-	 quzjP83ie4bUscLYwDur05mPcO5ROe2zJVzvnfykrjdnDnqZW+YKpXW8Wudq0woVrP
-	 Gbr7RvsjZljQdsr+3P4m9m8PE2+HYH6lgMBQf7H4QGF1PvhdXs0LOFYqmqOP2juIh7
-	 UfHdUh/TJRRU3EHFnVXozJb++Nl9JtOIyQ90PjLCnUdPI2TJ+Oqxm9YsDg1swv52iV
-	 1gafjzF31ZDFw==
-Message-ID: <71468d78-07aa-49b1-8b6d-3d98c6fc9893@kernel.org>
-Date: Wed, 12 Feb 2025 06:54:19 +0100
+	b=WMZYPYTpgte9E9DmgWkHKHrHgYgfaUQb/CaGM3BGBPc4OgRpEwfY4jx9C4ZqaMqWU
+	 dQHkR0N0DnxpX6isSZ8o6dN03b6E/RHLe/mZ5eI0sYh17m52QC1Csm0emq9dbBMqh/
+	 GNWNagwoOtaQoJkkHXv3v/Y8bHX5Hmek7OvGUeJswkiCg1o/oFcXHc7jfSZF1sle0u
+	 5GoiDC9Jgp7CM4r1HApII2KsKdNrK5Vbn1nxF5g8A8D5fAtnbnG75MibGTarOCX6Cp
+	 jDEK/QO365ur6CL8kNQC3QghQgnR25JQk7lYl5AU4p4/P+xT+fV5NlScGDePh1CyYk
+	 V4G72B06nIRWA==
+Message-ID: <8bf87b59-fe80-4bb5-a558-bff35d876e67@kernel.org>
+Date: Wed, 12 Feb 2025 06:56:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/3] i2c: i2c-core-of: Handle i2c bus extensions
-To: Herve Codina <herve.codina@bootlin.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20250205173918.600037-1-herve.codina@bootlin.com>
- <20250205173918.600037-4-herve.codina@bootlin.com>
+Subject: Re: [PATCH v6 2/7] arm64: dts: agilex: Fix fixed-clock schema
+ warnings
+To: Matthew Gerlach <matthew.gerlach@linux.intel.com>, lpieralisi@kernel.org,
+ kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+ bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dinguyen@kernel.org, joyce.ooi@intel.com, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: matthew.gerlach@altera.com, peter.colberg@altera.com
+References: <20250211151725.4133582-1-matthew.gerlach@linux.intel.com>
+ <20250211151725.4133582-3-matthew.gerlach@linux.intel.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,47 +104,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250205173918.600037-4-herve.codina@bootlin.com>
+In-Reply-To: <20250211151725.4133582-3-matthew.gerlach@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/02/2025 18:39, Herve Codina wrote:
->  
->  	dev_dbg(&adap->dev, "of_i2c: walking child nodes from %pOF\n", bus);
->  
-> -	/* Register device directly attached to this bus */
-> +	/*
-> +	 * Register device directly described in this bus node before looking
-> +	 * at extensions.
-> +	 */
->  	for_each_available_child_of_node(bus, node) {
-> +		/* Filter out extension node */
-> +		if (of_node_name_eq(node, "i2c-bus-extension"))
+On 11/02/2025 16:17, Matthew Gerlach wrote:
+> Add required clock-frequency property to fixed-clock nodes
+> to fix schema check warnings.
+> 
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> ---
+> v6:
+>  - New patch to series.
+> ---
+>  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> index 1235ba5a9865..42cb24cfa6da 100644
+> --- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> @@ -114,21 +114,25 @@ clocks {
+>  		cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
+>  			#clock-cells = <0>;
+>  			compatible = "fixed-clock";
+> +			clock-frequency = <0>;
 
-Where is the ABI documented?
+That's not a correct frequency. You silence some error by introducing
+incorrect properties. That's wrong.
 
-> +			continue;
-> +
->  		if (of_node_test_and_set_flag(node, OF_POPULATED))
->  			continue;
->  
-> @@ -103,6 +110,23 @@ static void of_i2c_register_children(struct i2c_adapter *adap,
->  			of_node_clear_flag(node, OF_POPULATED);
->  		}
->  	}
-> +
-> +	/* Look at extensions */
-> +	for_each_available_child_of_node(bus, node) {
-> +		if (!of_node_name_eq(node, "i2c-bus-extension"))
-> +			continue;
-> +
-> +		extension = of_parse_phandle(node, "i2c-bus", 0);
+Don't fix the warnings just to silence them, while keeping actual errors
+still in the code.
 
-And this?
-
-> +		if (!extension)
-> +			continue;
-> +
 Best regards,
 Krzysztof
 
