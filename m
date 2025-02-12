@@ -1,210 +1,162 @@
-Return-Path: <linux-kernel+bounces-511876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51794A330EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:42:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E696A330E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:42:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AD33A88D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD7723A8A0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFBC20103A;
-	Wed, 12 Feb 2025 20:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C524201269;
+	Wed, 12 Feb 2025 20:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="Bhp3CiOD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gQFR/WS8"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RzUk/Gxc"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5A02010F6;
-	Wed, 12 Feb 2025 20:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB58E1FBC81
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739392928; cv=none; b=fbgSvJZ6A06cKhFAxTz6mVbSExr8nCLNDXNkiWlZNugMRLvQutGJCDHS1UNF/PXjjvyfBYRch1h1izlo6FjuRlu80lzRtGiGX6Ox3oGDLxRJIeMCHbIcpuLptbTw5t/gvcUlgwBQJ1qs9EZWRV2myslXHPdzXThoeaup0tqUWWo=
+	t=1739392925; cv=none; b=DkAoFF6SXEqqSr5MBK0T89WD4Bc8XeCQV5fcJCeerl7L/26v4K9cyFNswnorVZbisEMRV9T+NB7DQwJECdfdBWdClNQNWZZ6yWsGMEY6qMxyB0NbdfkoZ9OINECB2ksy86xQc5xv92SWDoG5VsUNklOrdiT/ZRWDUS/AhrHz53w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739392928; c=relaxed/simple;
-	bh=L08+Uf6L/sH1zcaIZyXOJL0XdQ1wrqlMWrFkZKArxk8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=VCSmeryc2nnF4gunUWiNuvzUbi5WMTHRbjqfRgw6Spt/htOCwIID5jpeuWjxHuvHBe9H4gC2wf7/Y9yBr3JSK5SWFB+lKqKJ2ZVi2WuDuH9E4R+JDuFtVlIM5vkmc34ivJb1FoipigkCS6FFq9EXEdHri/5cedLTljeG3DQhtxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=Bhp3CiOD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gQFR/WS8; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 265801140109;
-	Wed, 12 Feb 2025 15:42:05 -0500 (EST)
-Received: from phl-imap-13 ([10.202.2.103])
-  by phl-compute-04.internal (MEProxy); Wed, 12 Feb 2025 15:42:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1739392925;
-	 x=1739479325; bh=t51aP4WhW/zTiyDc+WImCazriP69izX0SMtc5AkJXnE=; b=
-	Bhp3CiODAqSWps0/NavyftDi/CfgS28mgXK2vJHTXOLQzvooR/a300VvZgq/FILt
-	cIJQbv2/0wro9zHBgmpcQAe111dx6QUlfLYctDXghBT4beWJnBZEEOywhGr0MrEo
-	yspE9EZGTIG+1nbt+5w5bPaeX5re9fgUkaFchJbyUbyNtaxeIYs57cbTr00Ayaqr
-	3QuH+pAJe/F9Uq/3UgyfiBezfYUVevjqSi81PldfzIW21ifDvHQ5Dd0EdShuDVHy
-	/zRE+PdpCRxxBxXgj23Kf/VE1qYGAV4Obme7IJQ7+nsG2FM7JZ4wcH1psbM6V42n
-	TdEXmOZ+UWUDx4ToBP859g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739392925; x=
-	1739479325; bh=t51aP4WhW/zTiyDc+WImCazriP69izX0SMtc5AkJXnE=; b=g
-	QFR/WS8myEjMV6mLar7koiLZPJ55BgZ/LIRLmwAgMUz3cyQ1oNNnE/xf/TRM+ZJJ
-	11x7dRGlQFoL9ghUOITUbOj5NyoXors1J+bJpsWljdHt4OY5EEh4XFcvUueSNiGP
-	84Wi9WxrIIrZ1k9kKN+CYq0YorDqBnDI8uKbtaI4K1tJ3TFvtaJyYwSRCLzFsNvl
-	zvch7J9kFt0oG/hueu/UeuvRovNFx4eHPv1hon3rFsgCnj5IZAVjUsVzVU5cEgpz
-	9b4+PhqZ+1PYppwsuco/3S2FXib77Ixv8djBxWRj/efMSeqCDGISrbrJtBFxMApx
-	+c2ugL4mLCJWy/k8/m9Vg==
-X-ME-Sender: <xms:nAetZzVqUlBbE1FjYozA3NTwgMhU9PXfPO4UQT2lIrVxLOU2_J3RNA>
-    <xme:nAetZ7nyVGX3fmk6dl1O1APDnbLyk8KkBwiFcotlDFX7ODTdsohvZpxG2tdMRjb6g
-    uuwWlhqk0UZyzkgglk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggeekjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
-    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfeuvdehteeghedt
-    hedtveehuddvjeejgffgieejvdegkefhfeelheekhedvffehnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
-    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdp
-    rhgtphhtthhopehkuhhurhhtsgesghhmrghilhdrtghomhdprhgtphhtthhopehlvghnsg
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrd
-    gtohhmpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghr
-    rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:nAetZ_bmKZ91P33jEJK0OEmb8NxLZoEx1rt0ONvSON3pypJxuPVw-g>
-    <xmx:nAetZ-XGA-71dUvVzsoyg2JDlcWUofucEHnbw0KZdn0kPVJ2WooKFA>
-    <xmx:nAetZ9kxrek14dr5pGMzn81mtTdoKmLDQXZzvPykJzIgs9ZzhCFTqw>
-    <xmx:nAetZ7fLebwniLh5VlBejqAaWOpteg6VzKi5xhRtKLPWSEK7at6Bcw>
-    <xmx:nQetZzWdtLKaUsXWOhdzjihwD04ubRSMQQ-SCqPdu8HWX45cQ8lb6uYP>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 458371F00077; Wed, 12 Feb 2025 15:42:04 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739392925; c=relaxed/simple;
+	bh=RfMuUoXeJl/FEyLheCqx61LU5UQ5YT9Fqhag252tm9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JDRd+bOWxUQTVKllis5NZFVytaw47jEQmn3qv7+GkbCZSEjrExXsTlj2spLjQQWnWTJNvobaSS7YikXkcpgEr50DI5cZb8mQbD7NTQp269xNe2DeTnYH16LQCM5TPhUnpYKl26MU6oizSQl+DFS9uEg3/yZt/2xWbnFhyPVNU44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RzUk/Gxc; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4395e234c02so186035e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 12:42:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739392921; x=1739997721; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UZ/rmGzncsFVOVpELvTtqMQDv8MILpBfFA/LpGTbzeo=;
+        b=RzUk/GxcCqcMgEzcs+H17FHYSh5t3TYJngxcI5mU+NfHimDpT+rd7to/iclLm2AoLV
+         fMJMfBrksVVNxVHDE0qNo6rKUVBzZzUt7N2W27Yzx0i2/+boerVRaKtwbAPrs0I1M7DJ
+         fQZ+m2s05KZXv6FhKHXhAKVhc2RYDEhirBxd/1KS8pELW0CCDhBKNUEP9BchEOXe81AP
+         iczil9W61P2uRebifN7qK568U+wQGI7VnT+fErJ9zTJfOSfCbZ8JGscdqXrqyiou+WEC
+         RN0rT/a8ORUWI8m8wdkOFbs2y30ygeWPuIb2s+HwLxRUJw7tIUeKfLwY538iqnY40nak
+         oC5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739392921; x=1739997721;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UZ/rmGzncsFVOVpELvTtqMQDv8MILpBfFA/LpGTbzeo=;
+        b=KbmDlS+8m2HxJawokTu5w6RguLhky21tbAU5quTRPTGHOauNLw7qNHhj6LN+PmrQj2
+         Ju3H8SmuGg9ZwF3y8IVpFjXDDYb5zRQAbTaSBGVmU2WXvO9X3HDVrNfFFuj370yGJoji
+         V0bQZ9W6TRmC4QrLBRSzi4Sm++ui9iqDgkfzX3mYaPLGW9x0Vcxo7i/Vfifd81CBX5zK
+         IY/bWFeQO1AWtxgFP3I4X5voVSPJMPSLOOiRnw7X+B8bk9fAdbd3GwmB1YXT2Fi5KVGA
+         7D79A5qAtz2bF7J8KNjcHk/omKGIXm3urE/SrzQm7bmCViToUiW2DeAFg2CFgdVT62G+
+         P3MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDYBCaIeyn9st/EEcuY4xiATcjpO8oUxNqGabaQvuU4kkfI9I2LFdXARLHt8URT4fxvEXx8ER90MIoeUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8XOOMgtn64WT8ktJtYYYFfNc4MyB0uBWS6/bQhUwzlyJBcTL6
+	R5aeX3DUvUAFFREkDd2ZqtrxjqB+F9lfvmIyEgLalKGDP3lpC7cvzIsZ9LC5H6s=
+X-Gm-Gg: ASbGncu2icVg7mhDjy3yRT/dJyGNz0j0vg1go7GqgKlkjSapLdUZdh75odaGD8zJYT1
+	xUdD/OeCWpjkIBegjTnjCM74J6qbXIy4lJOXs2L2wZDX8UwKp/hVCoHhNoWIGwSgWVKflM834L1
+	Q90DnRBrZ+mrbTZrVRV84tbHBb+EmmH9SnPILoriqTmN4pxc2xsGDy0Y6DBOObOWWkOMLwLdNM3
+	cs0/3wl+1jggRPhSfgz62xDF3E8n7Fj1DWC3rQkRXrB5aPQ5h6yJ42joQcgUq0n/jeWsggm3d3/
+	EXY6miZaUgTl7HFamNE9hm2W3h3Vmw==
+X-Google-Smtp-Source: AGHT+IGoPR2Drpc4wRwddj+6Un33qP+pZ07paA98x1dyqW0bfxx+Hf1EVCbq5JjVdt7OJuqOXUx5Nw==
+X-Received: by 2002:a5d:6d0b:0:b0:38d:c2f8:d945 with SMTP id ffacd0b85a97d-38dea2fa9b7mr1563975f8f.13.1739392919603;
+        Wed, 12 Feb 2025 12:41:59 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a070ea7sm29818865e9.25.2025.02.12.12.41.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 12:41:58 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH RESEND] ARM: dts: marvell: armada: Align GPIO hog name with bindings
+Date: Wed, 12 Feb 2025 21:41:56 +0100
+Message-ID: <20250212204156.57261-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 12 Feb 2025 15:41:44 -0500
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Kurt Borja" <kuurtb@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Len Brown" <lenb@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Limonciello, Mario" <mario.limonciello@amd.com>,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
-Message-Id: <bc0a60ef-bdf7-4f48-8215-891cb1efbdf5@app.fastmail.com>
-In-Reply-To: <20250212190308.21209-1-kuurtb@gmail.com>
-References: <20250212190308.21209-1-kuurtb@gmail.com>
-Subject: Re: [PATCH v2] ACPI: platform_profile: Improve platform_profile_unregister
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Kurt
+Bindings expect GPIO hog names to end with 'hog' suffix, so correct it
+to fix dtbs_check warnings like:
 
-On Wed, Feb 12, 2025, at 2:03 PM, Kurt Borja wrote:
-> Drivers usually call this method on error/exit paths and do not check
-> for it's return value, which is always 0 anyway, so make it void. This
-> is safe to do as currently all drivers use
-> devm_platform_profile_register().
->
-I was worried I had mucked that up with the revert done in thinkpad_acpi? But it's not checking the return there so I think it's fine
+  armada-385-clearfog-gtr-s4.dtb: wifi-disable: $nodename:0: 'wifi-disable' does not match '^.+-hog(-[0-9]+)?$'
 
-> While at it improve the style and make the function safer by checking
-> for IS_ERR_OR_NULL before dereferencing the device pointer.
->
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> ---
-> Hi all,
->
-> I made a little modification that I forgot in the last version.
->
-> Rafael, please tell me if you prefer different commits for this. Also
-> should we WARN_ON(IS_ERR_OR_NULL)?
->
-> Based on the acpi branch of the linux-pm tree.
->
-> ~ Kurt
->
-> Changes in v2:
->   - Get reference to pprof after checking for IS_ERR_OR_NULL(dev)
->   - CC Mark Pearson (sorry!)
->
->  drivers/acpi/platform_profile.c  | 19 +++++++++----------
->  include/linux/platform_profile.h |  2 +-
->  2 files changed, 10 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> index fc92e43d0fe9..ed9c0cc9ea9c 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -569,24 +569,23 @@ EXPORT_SYMBOL_GPL(platform_profile_register);
->  /**
->   * platform_profile_remove - Unregisters a platform profile class device
->   * @dev: Class device
-> - *
-> - * Return: 0
->   */
-> -int platform_profile_remove(struct device *dev)
-> +void platform_profile_remove(struct device *dev)
->  {
-> -	struct platform_profile_handler *pprof = to_pprof_handler(dev);
-> -	int id;
-> +	struct platform_profile_handler *pprof;
-> +
-> +	if (IS_ERR_OR_NULL(dev))
-> +		return;
-> +
-> +	pprof = to_pprof_handler(dev);
-> +
->  	guard(mutex)(&profile_lock);
-> 
-> -	id = pprof->minor;
-> +	ida_free(&platform_profile_ida, pprof->minor);
->  	device_unregister(&pprof->dev);
-> -	ida_free(&platform_profile_ida, id);
-> 
->  	sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> -
->  	sysfs_update_group(acpi_kobj, &platform_profile_group);
-> -
-> -	return 0;
->  }
->  EXPORT_SYMBOL_GPL(platform_profile_remove);
-> 
-> diff --git a/include/linux/platform_profile.h 
-> b/include/linux/platform_profile.h
-> index 8ab5b0e8eb2c..d5499eca9e1d 100644
-> --- a/include/linux/platform_profile.h
-> +++ b/include/linux/platform_profile.h
-> @@ -47,7 +47,7 @@ struct platform_profile_ops {
->  struct device *platform_profile_register(struct device *dev, const 
-> char *name,
->  					 void *drvdata,
->  					 const struct platform_profile_ops *ops);
-> -int platform_profile_remove(struct device *dev);
-> +void platform_profile_remove(struct device *dev);
->  struct device *devm_platform_profile_register(struct device *dev, 
-> const char *name,
->  					      void *drvdata,
->  					      const struct platform_profile_ops *ops);
->
-> base-commit: 3e3e377dd1f300bbdd230533686ce9c9f4f8a90d
-> -- 
-> 2.48.1
-Looks good to me
-Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi | 8 ++++----
+ arch/arm/boot/dts/marvell/armada-388-clearfog-base.dts | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Mark
+diff --git a/arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi b/arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi
+index 8208c6a9627a..7aa71a9aa1bb 100644
+--- a/arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi
++++ b/arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi
+@@ -453,7 +453,7 @@ &gpio0 {
+ 	pinctrl-0 = <&cf_gtr_fan_pwm &cf_gtr_wifi_disable_pins>;
+ 	pinctrl-names = "default";
+ 
+-	wifi-disable {
++	wifi-disable-hog {
+ 		gpio-hog;
+ 		gpios = <30 GPIO_ACTIVE_LOW>, <31 GPIO_ACTIVE_LOW>;
+ 		output-low;
+@@ -465,7 +465,7 @@ &gpio1 {
+ 	pinctrl-0 = <&cf_gtr_isolation_pins &cf_gtr_poe_reset_pins &cf_gtr_lte_disable_pins>;
+ 	pinctrl-names = "default";
+ 
+-	lte-disable {
++	lte-disable-hog {
+ 		gpio-hog;
+ 		gpios = <2 GPIO_ACTIVE_LOW>;
+ 		output-low;
+@@ -476,14 +476,14 @@ lte-disable {
+ 	 * This signal, when asserted, isolates Armada 38x sample at reset pins
+ 	 * from control of external devices. Should be de-asserted after reset.
+ 	 */
+-	sar-isolation {
++	sar-isolation-hog {
+ 		gpio-hog;
+ 		gpios = <15 GPIO_ACTIVE_LOW>;
+ 		output-low;
+ 		line-name = "sar-isolation";
+ 	};
+ 
+-	poe-reset {
++	poe-reset-hog {
+ 		gpio-hog;
+ 		gpios = <16 GPIO_ACTIVE_LOW>;
+ 		output-low;
+diff --git a/arch/arm/boot/dts/marvell/armada-388-clearfog-base.dts b/arch/arm/boot/dts/marvell/armada-388-clearfog-base.dts
+index f7daa3bc707e..cf32ba9b4e8e 100644
+--- a/arch/arm/boot/dts/marvell/armada-388-clearfog-base.dts
++++ b/arch/arm/boot/dts/marvell/armada-388-clearfog-base.dts
+@@ -34,7 +34,7 @@ &eth1 {
+ };
+ 
+ &gpio0 {
+-	phy1_reset {
++	phy1-reset-hog {
+ 		gpio-hog;
+ 		gpios = <19 GPIO_ACTIVE_LOW>;
+ 		output-low;
+-- 
+2.43.0
+
 
