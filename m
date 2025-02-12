@@ -1,168 +1,262 @@
-Return-Path: <linux-kernel+bounces-511730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E858A32EDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:48:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB79A32EDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A558B3A3437
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:48:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B1DA7A1762
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489B225EF8C;
-	Wed, 12 Feb 2025 18:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vu4I6prt"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A411F76A5;
-	Wed, 12 Feb 2025 18:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5049260A4F;
+	Wed, 12 Feb 2025 18:48:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914812116F5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739386101; cv=none; b=n902lAVy6ssbToq+YWNkSga1yzem3wHUpuN4fvg0FJ7hvxvFaVYWIouQW8KeyvV6X+39CxcNO3K9qZ3dkvHNb/WyVCNgGDiAEjY2/29l2NWIWoxbWPOeDWeMSPh0CuXDH5u2D/FFvj5ZzLM5MxBSb7H8QCrC6ZpSRAtJh0I7nZE=
+	t=1739386127; cv=none; b=SMJm3Sa8cnE/KFxTk7HEJqoCL4NHNqtwPsJT1+8XWBQKYzH83Pk1DNoIXsWS6kurkjIdp9HTGNC58onDujL0hYVE+L4ZaBR1y9AuSm1tTaTDkUboxS68yS4rdB3FNfKJMl2U5OBsC0SJpdBxxzzWDFdyqx5o5vvave2myIHivB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739386101; c=relaxed/simple;
-	bh=Eqpyg4hmNu9ocUQzEcAGhdpaBhKdg5oflZSaKCbqwL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GsEK6N/LYl/SKaZhslMCBNHbxafUzAcxTicsIX5Ez896GJyWNyq4vr5MGpRXR/kb7yrAhV6IcJNC9xaT3+AHyl84O2dLuAMKyJsq5uxDcw79DSwEO/Vcju3+wJWf6ntlK4IDvrC5ZArpCjfRry/7sYzf2G4eok0slG+v209j694=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vu4I6prt; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471b049e273so11532051cf.2;
-        Wed, 12 Feb 2025 10:48:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739386099; x=1739990899; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZASkp6PCL8/WlHtTvN4bXlrF7OXxOuY1zeD3mdzMNtA=;
-        b=Vu4I6prtsL2jiHUbmtrD4s7CRlYY9LnQ5QkY6ze8Hv/+NmBH3P1R9lnNH5o++Ozdsu
-         WuKTxHBO2GQXvC5Ax+KkvjPKZwsOPGi2UvuqeJzOvrTpjB8F55n/LS7iyGTD70gLAG78
-         H+NY2wy5rKuXwszdaqnZtD9IwN9k1QdDlt1e410pmXGGP8XjZLVpG0eOw8998beMZ1ya
-         t91Fh07mlqCHt+ucxUP9flSsurTx5OtBb0kNMXWS3WmDNwRfPbevL+YP7Qa4KbkYQeaD
-         UnTkCkGOGqg1eHJ0IEPb9T6rOLxkKR2XUx1kUlfJakYQNVcPHvhM4O1DSbJAB3FbvqwQ
-         XqZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739386099; x=1739990899;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZASkp6PCL8/WlHtTvN4bXlrF7OXxOuY1zeD3mdzMNtA=;
-        b=E9rE6iZZeQkS9c+5WfamHEmu9V5UOenYHtb1iGj/rmN5SNzk4sHzTLQA3SHY0wnCFW
-         J2sorZ5VjROVfR00bhzzSYlTwJzP5smOBEZhoUa582iyJzryq+iBmGoyNxTIMr2JknYb
-         rA/pbfZ10NIG6swn1updHtYqt7wNtHYJzx7WLPPvNJTitIHaFJwL0KP4+tzj7BDJGwTx
-         FCh7UcBqnRDSzVudbvRmCMpsrcRmHiAWEwltDp3YCIKaYfSJCwVIj1Ul5bBhDpIyCalX
-         kXyqV8K1ZcCiLW6kr4ssXG9YIyjoSQQuMltas4bWEJ1oWCpbjdSEc+ys451banPCKrfC
-         8TNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDjE+h02o0/gQ/2FDTJz9wlgz99PYad7eJVbWqYAjmmUIBSuLGWWp+1hE198L5g7j0f63m46WEBvOojawI@vger.kernel.org, AJvYcCWb5cfOL5VHo2aQdPeQg/utc91MX7OAJGrlst2KxB44AfCduc1mUi8SsHMoVGB3FClXJWDnL+0snw7iDARg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWMVCYv9WmIJ14TnXj8vywG0By0LdxcSqGnNxvYYIDzj9lxyqY
-	yPgFPYRlU6b9kjvwy6biiHzu61bmWdjFhOQp2lUw0Nd3V+vScB57DEf2uPjg2P8O2grhwY3q/0+
-	dbArp9HGXrTfGOEPWWj0vw0kICaENWMwJM9o=
-X-Gm-Gg: ASbGncu0q2JMfIrOvteKbk8S9JnGNNt+Mltq8wlIBNA8HHOIpRd/aWBUEjlhaTRgOWl
-	KAYul5aV8hKCA0Om1BksQUWr3Il4xqBKSbA6N+jZofTd5y+6mkPp8tawnUovhWRZhR4V27JAqY9
-	1zG1bx4hX93FI=
-X-Google-Smtp-Source: AGHT+IFlFkV7aYZs2utz/iZsBLLt0+a7zY/YwhAWQu45D2zt1uVzJM7iX/axNKQZ5Z6o1mUaT0iyZJqMYKvLu5Nm+Nc=
-X-Received: by 2002:ac8:5a0c:0:b0:461:646c:b8fc with SMTP id
- d75a77b69052e-471afe505d8mr65715981cf.23.1739386098867; Wed, 12 Feb 2025
- 10:48:18 -0800 (PST)
+	s=arc-20240116; t=1739386127; c=relaxed/simple;
+	bh=EPaDlXqdeo/5WchY7h4bV0WV4vJvAT4/PZlfRf6blgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XDo+FyAT4sIonmm0I0bvLjiy+8+HsPQBQG1MYOBdhyY3BPs9rZSbRPFHfk4mKESrzl52YDX0MeZjIv2NAG7BY2XvVBEBVt1VAwfWpZEuiHu5oW5wNNw/ioMeq/BZaPI1A2VDexNNye83Swb44Bp/qDqL2jB+DyXbebhRcpJIHP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6BFA113E;
+	Wed, 12 Feb 2025 10:49:04 -0800 (PST)
+Received: from [10.57.36.240] (unknown [10.57.36.240])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 083613F58B;
+	Wed, 12 Feb 2025 10:48:41 -0800 (PST)
+Message-ID: <55743353-60fb-4ad2-a0c2-6d5a3a2f8ac0@arm.com>
+Date: Wed, 12 Feb 2025 18:48:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu>
- <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
- <9cd88643-daa8-4379-be0a-bd31de277658@suse.cz> <20250207172917.GA2072771@perftesting>
- <8f7333f2-1ba9-4df4-bc54-44fd768b3d5b@suse.cz> <CAJnrk1aNVMCfTjL0vo-Qki68-5t1W+6-bJHg+x67kHEo_-q0Eg@mail.gmail.com>
- <Z6ct4bEdeZwmksxS@casper.infradead.org> <CAJnrk1aY0ZFcS4JvmJL=icigencsCD8g4qmZiTuoPWj2S2Y_LQ@mail.gmail.com>
-In-Reply-To: <CAJnrk1aY0ZFcS4JvmJL=icigencsCD8g4qmZiTuoPWj2S2Y_LQ@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 12 Feb 2025 10:48:07 -0800
-X-Gm-Features: AWEUYZk-0djWTKrtRmi8VrGFoz0pLfNoKipNM8dCPw51QEUcZp_d7Q09JdxuGyQ
-Message-ID: <CAJnrk1YB5c+wO0U=7aOiWAMaMwQCKUL1-FuvuPMjnB_gnjD28w@mail.gmail.com>
-Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for FUSE/Flatpak
- related applications since v6.13
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Josef Bacik <josef@toxicpanda.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Christian Heusel <christian@heusel.eu>, 
-	Miklos Szeredi <mszeredi@redhat.com>, regressions@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm <linux-mm@kvack.org>, =?UTF-8?Q?Mantas_Mikul=C4=97nas?= <grawity@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] arm64: realm: Use aliased addresses for device DMA to
+ shared buffers
+Content-Language: en-GB
+To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org, maz@kernel.org,
+ catalin.marinas@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ gregkh@linuxfoundation.org, aneesh.kumar@kernel.org, steven.price@arm.com,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Christoph Hellwig <hch@lst.de>, Tom Lendacky <thomas.lendacky@amd.com>
+References: <20250212171411.951874-1-suzuki.poulose@arm.com>
+ <20250212171411.951874-2-suzuki.poulose@arm.com>
+ <7ebe959b-132e-468a-bad5-5273427b6928@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <7ebe959b-132e-468a-bad5-5273427b6928@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Feb 8, 2025 at 7:46=E2=80=AFAM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> On Sat, Feb 8, 2025 at 2:11=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
-g> wrote:
-> >
-> > On Fri, Feb 07, 2025 at 04:22:56PM -0800, Joanne Koong wrote:
-> > > > Thanks, Josef. I guess we can at least try to confirm we're on the =
-right track.
-> > > > Can anyone affected see if this (only compile tested) patch fixes t=
-he issue?
-> > > > Created on top of 6.13.1.
-> > >
-> > > This fixes the crash for me on 6.14.0-rc1. I ran the repro using
-> > > Mantas's instructions for Obfuscate. I was able to trigger the crash
-> > > on a clean build and then with this patch, I'm not seeing the crash
-> > > anymore.
-> >
-> > Since this patch fixes the bug, we're looking for one call to folio_put=
-()
-> > too many.  Is it possibly in fuse_try_move_page()?  In particular, this
-> > one:
-> >
-> >         /* Drop ref for ap->pages[] array */
-> >         folio_put(oldfolio);
-> >
-> > I don't know fuse very well.  Maybe this isn't it.
->
-> Yeah, this looks it to me. We don't grab a folio reference for the
-> ap->pages[] array for readahead and it tracks with Mantas's
-> fuse_dev_splice_write() dmesg. this patch fixed the crash for me when
-> I tested it yesterday:
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 7d92a5479998..172cab8e2caf 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -955,8 +955,10 @@ static void fuse_readpages_end(struct fuse_mount
-> *fm, struct fuse_args *args,
->                 fuse_invalidate_atime(inode);
->         }
->
-> -       for (i =3D 0; i < ap->num_folios; i++)
-> +       for (i =3D 0; i < ap->num_folios; i++) {
->                 folio_end_read(ap->folios[i], !err);
-> +               folio_put(ap->folios[i]);
-> +       }
->         if (ia->ff)
->                 fuse_file_put(ia->ff, false);
->
-> @@ -1049,6 +1051,7 @@ static void fuse_readahead(struct readahead_control=
- *rac)
->
->                 while (ap->num_folios < cur_pages) {
->                         folio =3D readahead_folio(rac);
-> +                       folio_get(folio);
->                         ap->folios[ap->num_folios] =3D folio;
->                         ap->descs[ap->num_folios].length =3D folio_size(f=
-olio);
->                         ap->num_folios++;
->
->
-> I reran it just now with a printk by that ref drop in
-> fuse_try_move_page() and I'm indeed seeing that path get hit.
->
-> Not sure why fstests didn't pick this up though since splice is
-> enabled by default in passthrough_hp, i'll look into this next week.
+Hi Robin
 
-This wasn't hit in fstests because passthrough_hp doesn't set
-SPLICE_F_MOVE. After adding that, I was able to trigger this crash by
-running generic/075. I'll send out a libfuse pr for this
+On 12/02/2025 18:18, Robin Murphy wrote:
+> On 2025-02-12 5:14 pm, Suzuki K Poulose wrote:
+>> When a device performs DMA to a shared buffer using physical addresses,
+>> (without Stage1 translation), the device must use the "{I}PA address" 
+>> with the
+>> top bit set in Realm. This is to make sure that a trusted device will 
+>> be able
+>> to write to shared buffers as well as the protected buffers. Thus, a 
+>> Realm must
+>> always program the full address including the "protection" bit, like 
+>> AMD SME
+>> encryption bits.
+>>
+>> Add the support for this by providing arm64 version of the 
+>> phys_to_dma(). We
+>> cannot use the __sme_mask as it assumes the "encryption" always "sets 
+>> a bit",
+>> which is the opposite for CCA. i.e., "set a bit" for "decrypted" 
+>> address. So,
+>> move the common code that can be reused by all - i.e., add 
+>> __phys_to_dma() and
+>> __dma_to_phys() - and do the arch specific processing.
+>>
+>> Please note that the VMM needs to similarly make sure that the SMMU 
+>> Stage2 in
+>> the Non-secure world is setup accordingly to map IPA at the 
+>> unprotected alias.
+>>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Robin Murphy <robin.murphy@arm.com>
+>> Cc: Steven Price <steven.price@arm.com>
+>> Cc: Christoph Hellwig <hch@lst.de>
+>> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   arch/arm64/Kconfig                  |  1 +
+>>   arch/arm64/include/asm/dma-direct.h | 38 +++++++++++++++++++++++++++++
+>>   include/linux/dma-direct.h          | 35 +++++++++++++++++---------
+>>   3 files changed, 62 insertions(+), 12 deletions(-)
+>>   create mode 100644 arch/arm64/include/asm/dma-direct.h
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index fcdd0ed3eca8..7befe04106de 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -41,6 +41,7 @@ config ARM64
+>>       select ARCH_HAS_NMI_SAFE_THIS_CPU_OPS
+>>       select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+>>       select ARCH_HAS_NONLEAF_PMD_YOUNG if ARM64_HAFT
+>> +    select ARCH_HAS_PHYS_TO_DMA
+>>       select ARCH_HAS_PTE_DEVMAP
+>>       select ARCH_HAS_PTE_SPECIAL
+>>       select ARCH_HAS_HW_PTE_YOUNG
+>> diff --git a/arch/arm64/include/asm/dma-direct.h b/arch/arm64/include/ 
+>> asm/dma-direct.h
+>> new file mode 100644
+>> index 000000000000..37c3270542b8
+>> --- /dev/null
+>> +++ b/arch/arm64/include/asm/dma-direct.h
+>> @@ -0,0 +1,38 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +#ifndef __ASM_DMA_DIRECT_H
+>> +#define __ASM_DMA_DIRECT_H
+>> +
+>> +#include <asm/pgtable-prot.h>
+>> +
+>> +static inline unsigned long addr_to_shared(unsigned long addr)
+>> +{
+>> +    if (is_realm_world())
+>> +        addr |= prot_ns_shared;
+>> +    return addr;
+>> +}
+>> +
+>> +static inline unsigned long addr_to_private(unsigned long addr)
+>> +{
+>> +    if (is_realm_world())
+>> +        addr &= prot_ns_shared - 1;
+>> +    return addr;
+>> +}
+>> +
+>> +static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t 
+>> paddr)
+>> +{
+>> +    return __phys_to_dma(dev, paddr);
+>> +}
+>> +
+>> +static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
+>> +                         phys_addr_t paddr)
+>> +{
+>> +    return addr_to_shared(__phys_to_dma(dev, paddr));
+>> +}
+>> +#define phys_to_dma_unencrypted phys_to_dma_unencrypted
+>> +
+>> +static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t 
+>> dma_addr)
+>> +{
+>> +    return addr_to_private(__dma_to_phys(dev, dma_addr));
+>> +}
+>> +
+>> +#endif    /* __ASM_DMA_DIRECT_H */
+>> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+>> index d7e30d4f7503..3e9bf6ca640e 100644
+>> --- a/include/linux/dma-direct.h
+>> +++ b/include/linux/dma-direct.h
+>> @@ -72,18 +72,36 @@ static inline dma_addr_t dma_range_map_max(const 
+>> struct bus_dma_region *map)
+>>       return ret;
+>>   }
+>> +static inline dma_addr_t __phys_to_dma(struct device *dev, 
+>> phys_addr_t paddr)
+>> +{
+>> +    if (dev->dma_range_map)
+>> +        return translate_phys_to_dma(dev, paddr);
+>> +    return paddr;
+>> +}
+>> +
+>> +static inline phys_addr_t __dma_to_phys(struct device *dev, 
+>> dma_addr_t dma_addr)
+>> +{
+>> +    phys_addr_t paddr;
+>> +
+>> +    if (dev->dma_range_map)
+>> +        paddr = translate_dma_to_phys(dev, dma_addr);
+>> +    else
+>> +        paddr = dma_addr;
+>> +
+>> +    return paddr;
+>> +}
+>> +
+>>   #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
+>>   #include <asm/dma-direct.h>
+>>   #ifndef phys_to_dma_unencrypted
+>>   #define phys_to_dma_unencrypted        phys_to_dma
+>>   #endif
+>>   #else
+>> +
+>>   static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
+>>           phys_addr_t paddr)
+>>   {
+>> -    if (dev->dma_range_map)
+>> -        return translate_phys_to_dma(dev, paddr);
+>> -    return paddr;
+>> +    return __phys_to_dma(dev, paddr);
+>>   }
+>>   /*
+>> @@ -94,19 +112,12 @@ static inline dma_addr_t 
+>> phys_to_dma_unencrypted(struct device *dev,
+>>    */
+>>   static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t 
+>> paddr)
+>>   {
+>> -    return __sme_set(phys_to_dma_unencrypted(dev, paddr));
+>> +    return __sme_set(__phys_to_dma(dev, paddr));
+> 
+> Hmm, it really feels like we should generalise __sme_{set,clr} at this 
+> level, rather than drag in the entire ARCH_HAS_PHYS_TO_DMA override for 
+> the purposes of setting/clearing an address bit just because the 
+> "generic" mechanism for doing that is unashamedly AMD-specific.
+
+I was planning to convert that to use ARCH_HAS_PHYS_TO_DMA ;-) too, in a
+separate patch, to get rid of this "one approach" works for all hook.
+
+> 
+> Maybe something like:
+> 
+> #define dma_shared(x)  sme_clr(x)
+> #define dma_private(x) sme_set(x)
+> 
+> for x86, then go from there?
+
+But this looks sensible too, can switch to this approach.
+Thanks for the feedback.
+
+Suzuki
+
+
+> 
+> Thanks,
+> Robin.
+> 
+>>   }
+>>   static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t 
+>> dma_addr)
+>>   {
+>> -    phys_addr_t paddr;
+>> -
+>> -    if (dev->dma_range_map)
+>> -        paddr = translate_dma_to_phys(dev, dma_addr);
+>> -    else
+>> -        paddr = dma_addr;
+>> -
+>> -    return __sme_clr(paddr);
+>> +    return __sme_clr(__dma_to_phys(dev, dma_addr));
+>>   }
+>>   #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+> 
+
 
