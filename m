@@ -1,230 +1,132 @@
-Return-Path: <linux-kernel+bounces-511953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D98AA331FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:06:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDFDA331FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ADA4188ADF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44DAC163F10
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A123220686;
-	Wed, 12 Feb 2025 22:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732D120370D;
+	Wed, 12 Feb 2025 22:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJVT8kjj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ttgayTej"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4990B204087;
-	Wed, 12 Feb 2025 22:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F6C203707
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739397924; cv=none; b=QOG7i1pW+76y5EgNwDV/zuMJj/f7zHjiRb84OVw0vGitTO27sIh+WXw6MkyuHBT9JbgKs5YraBVAa/KIe4vlmlsToXN/GCjGzQniQHR7gwTV7FuV11q6C8bYMOjZwwD1yK0gPCAbER4uLnduXaTu9UiJiS95gnlABgzdlqFlUf0=
+	t=1739397951; cv=none; b=Js0465irfx+uWMoSUL2GfuAJ8SYtp1saGcbGa3X1c/7LMB4cHtjoGBi1cu77LQKQ1wRZPwIqg8LMSUPt/Z2vOefPzI4z3sY13R4ASVabvnpxDRYpZTfYkVwNuHP8tvRZmIzv0euhBG289Dbt4VdN0yCtRC/jqbcgpamCzdR8cqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739397924; c=relaxed/simple;
-	bh=MQI+PKcaHTqtA7qNC5oF+u39hyT4lvLQUfBwteyUk0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aMLGgMb5JAfmrWNj722w04ZbAK+YbZbKOO/VQmGBfyv+ygtKOicF9MLXG112T3u8fFfdUO/jFqnuicEZGhHSzoQcGs+Hleageht78oGsYkXhNzrzCdTv98xmxI6rHRLrzoqsMucwiGNLSkg5xsyXFfj70EXtxYWD3R3PEmEguY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJVT8kjj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04081C4CEDF;
-	Wed, 12 Feb 2025 22:05:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739397923;
-	bh=MQI+PKcaHTqtA7qNC5oF+u39hyT4lvLQUfBwteyUk0c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TJVT8kjjGRUmJI2QMR+AWjvdphUmVun9lACRjgqqYlTUaB3TeMTlvyUdVCkMoDQhJ
-	 eb82v5bQasBPqg28MeL4NhfYu4IrF8NkGplwoo5B4QA1XGFq4QzWv3q9hygHguJMn0
-	 TPMnPe27DrBkZK52k0pof/aItQWioFkq0eh98Z0HzWPJ+mGQ597d1YNW7rk+RgulGq
-	 R5gJlfRpDGYM4yhW1Dp9LiG8qcWjke/ARLgRN37YuRWwwVUnnWKrkKfLMjYS+CpurT
-	 vb0K9S17HEjE//byKpo4+WRA80zuxOFntZbP6qtRKUDxbTf3ZMq8UHTKC4Gp8VFGwb
-	 Q8ELHsr9ZFtXQ==
-Message-ID: <04f036bf-e863-45c1-87de-7b61f8bc510d@kernel.org>
-Date: Wed, 12 Feb 2025 16:05:22 -0600
+	s=arc-20240116; t=1739397951; c=relaxed/simple;
+	bh=TIp6IiSw9J6XeW41z4PtWs3Pf5rf0JtnBBQ3ET3vPAw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kmq+3CpM3ZTHikvOtqAXHsIOy111qPcR0BbH7EsqZtNVdSvchbNoTEcyFhQqFKY9O97sVWxM3ao1pCtfCiec12oFpd+cZbvWMgFBbsK50+Ik6rnM9wG8yIDbuN1R9CNKAn/7yfP5ZlnE7x6zAoZAbzQzSej6qaBJpBbr8SYcuFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ttgayTej; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-308ec50eb3dso2296361fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:05:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739397948; x=1740002748; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AyeS31oOn+dyoHdEWwNg/btCvozuEbvtdJVbwfowCPI=;
+        b=ttgayTejd1PyC4/daUQsPLiIUzmFcgNOFlR3oRFQDJq6S3kvSPz3zjPpvV1zEITOU5
+         bFsCqHW7clcTqeKHUFyRJx9FvFxF8myeI2SvFacrVkD638WTHZY6vB8RKX+608j+lOVM
+         VAXrESsDlx4yS2NX5UWPbYykJUChAV2r6O1nwQrBuMQLQo0Ol/4LInKdyrUKiCBgSOMG
+         +JyMrlhX8jKO8TdafilAekwhxd/6HJ+8abV3KMAaedDS4UUgMLUsqJbT/JF97TSQbavN
+         fSTDsQz1DjHoOMtdjg1fpk1UFYZur9atEfwjVnTXao/p5xOMahyVbOyALsir6RUmsJp5
+         skIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739397948; x=1740002748;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AyeS31oOn+dyoHdEWwNg/btCvozuEbvtdJVbwfowCPI=;
+        b=YHzHCxyOTRedEfCIEc7CQvL7pS2lG3dZYO4amu8MNL0W5lbzhw81Mi6mWq1ZPz4R/q
+         P/o/HDXjBmlomUIL/E7pwQoCt60XIg4ukc14ecYcRIIysD5yfqg7QJwUDD1Cu8V9ANvu
+         ACrBDkiJxoOwdCSVXgQ9yB3pCO6yYwYk7n3vqRy6WigenfKLahH+URl5gXomVEnmGWlW
+         AFH08QEgALL2IkT7e6P5+sA09LvAX4rV9IvyCPLMRC01idrknFDicGO6k8BOvkyhplZ7
+         phxVGAHNNcqgh6HbDrcn3wtfCvOgiu43Ik/zdcj+ZrwtPZo2SWSf39svSyDWuzf0oKZe
+         0JtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+SXV86IHaRtAibZqoD3sducKo1PVIfvOg3rLk/EQhRKvisL5g/wv+YN1/Dgrakuw/9uXVuoXRd7FYPEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8QkPxZsBFc9mJsMpSKDAIyxKNqKNxdZj+CKl7yQCFJRcjBaPY
+	xLF8ytZT52E3zvhu7sVvT7Z09PF6i95Zbf7KOl1qLO99DFV1RQNNDNTAgKpK+sSUAKnGrKs49dI
+	7p3QKtkyEiYKtaWvNGKH+qPPz88Y+1sjvdyJhOw==
+X-Gm-Gg: ASbGnctq0uxNcAVnBE3H0jML+UAz2h4LB8LKyAirHch/sFTE2p3lh8qZJMCXHfwVqLd
+	qxZSMiKwDh1INGuguTgX/iU1N8MnMKlmvaSTKhC1WapvyXCmGctvFpuHBwly4wBSok6zFLxYq
+X-Google-Smtp-Source: AGHT+IFVaagqh0CMTsKcRkmd3v9fDc83O1leceTlQ3IBKxH8tfOt/VuYKAEwsc8W8nqObHABGLW4nQjjLkytNesf0P0=
+X-Received: by 2002:a2e:a9a6:0:b0:301:12:1ef3 with SMTP id 38308e7fff4ca-3090363078fmr16793271fa.4.1739397948015;
+ Wed, 12 Feb 2025 14:05:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/14] cpufreq/amd-pstate: Overhaul locking
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250206215659.3350066-1-superm1@kernel.org>
- <20250206215659.3350066-5-superm1@kernel.org>
- <adccc912-bf93-4320-8011-21c0220c839a@amd.com>
- <bfcafbaf-c407-412b-a5e4-d152e2a565d7@kernel.org>
- <82f27cde-4725-4f4e-b4ae-c23885b31d14@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <82f27cde-4725-4f4e-b4ae-c23885b31d14@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250212-kernel-upstreaming-add_gpio_support-v1-0-080e724a21f3@blaize.com>
+ <20250212-kernel-upstreaming-add_gpio_support-v1-3-080e724a21f3@blaize.com>
+In-Reply-To: <20250212-kernel-upstreaming-add_gpio_support-v1-3-080e724a21f3@blaize.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 12 Feb 2025 23:05:36 +0100
+X-Gm-Features: AWEUYZlDq7_9jonIwEr0yAB71k3AJVNBKOFS6VlejNFuOFWzLB734tg5VjHuCCs
+Message-ID: <CACRpkdaWSgTO=S=L=m4bCXCU5b7aOG-DzN-TLEvPjb-QZGc72A@mail.gmail.com>
+Subject: Re: [PATCH 3/5] gpio: vsiapb: Add VeriSilicon APB support
+To: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, James Cowgill <james.cowgill@blaize.com>, 
+	Matt Redfearn <matthew.redfearn@blaize.com>, Neil Jones <neil.jones@blaize.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/11/2025 23:15, Dhananjay Ugwekar wrote:
-> On 2/12/2025 3:24 AM, Mario Limonciello wrote:
->> On 2/10/2025 23:02, Dhananjay Ugwekar wrote:
->>> On 2/7/2025 3:26 AM, Mario Limonciello wrote:
->>>> From: Mario Limonciello <mario.limonciello@amd.com>
->>>>
->>>> amd_pstate_cpu_boost_update() and refresh_frequency_limits() both
->>>> update the policy state and have nothing to do with the amd-pstate
->>>> driver itself.
->>>>
->>>> A global "limits" lock doesn't make sense because each CPU can have
->>>> policies changed independently.  Instead introduce locks into to the
->>>> cpudata structure and lock each CPU independently.
->>>>
->>>> The remaining "global" driver lock is used to ensure that only one
->>>> entity can change driver modes at a given time.
->>>>
->>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>>> ---
->>>>    drivers/cpufreq/amd-pstate.c | 27 +++++++++++++++++----------
->>>>    drivers/cpufreq/amd-pstate.h |  2 ++
->>>>    2 files changed, 19 insertions(+), 10 deletions(-)
->>>>
->>>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
->>>> index 77bc6418731ee..dd230ed3b9579 100644
->>>> --- a/drivers/cpufreq/amd-pstate.c
->>>> +++ b/drivers/cpufreq/amd-pstate.c
->>>> @@ -196,7 +196,6 @@ static inline int get_mode_idx_from_str(const char *str, size_t size)
->>>>        return -EINVAL;
->>>>    }
->>>>    -static DEFINE_MUTEX(amd_pstate_limits_lock);
->>>>    static DEFINE_MUTEX(amd_pstate_driver_lock);
->>>>      static u8 msr_get_epp(struct amd_cpudata *cpudata)
->>>> @@ -283,6 +282,8 @@ static int msr_set_epp(struct amd_cpudata *cpudata, u8 epp)
->>>>        u64 value, prev;
->>>>        int ret;
->>>>    +    lockdep_assert_held(&cpudata->lock);
->>>
->>> After making the perf_cached variable writes atomic, do we still need a cpudata->lock ?
->>
->> My concern was specifically that userspace could interact with multiple sysfs files that influence the atomic perf variable (and the HW) at the same time.  So you would not have a deterministic behavior if they raced.  But if you take the mutex on all the paths that this could happen it will be a FIFO.
-> 
-> I guess, the lock still wont guarantee the ordering right? It will just ensure that one thread executes
-> that code path for a specific CPU at a time. And do we even care about the ordering ? I'm having a hard
-> time thinking of a scenario where we'll need the lock. Can you or Gautham think of any such scenario?
-> 
+Hi Nikolaos,
 
-You're right; I can't really think of one either.  Let me take out the 
-private lock for the per-cpu device and I'll just overhaul the global 
-lock locations.
+thanks for your patch!
 
->>
->>>
->>> Regards,
->>> Dhananjay
->>>
->>>> +
->>>>        value = prev = READ_ONCE(cpudata->cppc_req_cached);
->>>>        value &= ~AMD_CPPC_EPP_PERF_MASK;
->>>>        value |= FIELD_PREP(AMD_CPPC_EPP_PERF_MASK, epp);
->>>> @@ -315,6 +316,8 @@ static int shmem_set_epp(struct amd_cpudata *cpudata, u8 epp)
->>>>        int ret;
->>>>        struct cppc_perf_ctrls perf_ctrls;
->>>>    +    lockdep_assert_held(&cpudata->lock);
->>>> +
->>>>        if (epp == cpudata->epp_cached)
->>>>            return 0;
->>>>    @@ -335,6 +338,8 @@ static int amd_pstate_set_energy_pref_index(struct cpufreq_policy *policy,
->>>>        struct amd_cpudata *cpudata = policy->driver_data;
->>>>        u8 epp;
->>>>    +    guard(mutex)(&cpudata->lock);
->>>> +
->>>>        if (!pref_index)
->>>>            epp = cpudata->epp_default;
->>>>        else
->>>> @@ -750,7 +755,6 @@ static int amd_pstate_set_boost(struct cpufreq_policy *policy, int state)
->>>>            pr_err("Boost mode is not supported by this processor or SBIOS\n");
->>>>            return -EOPNOTSUPP;
->>>>        }
->>>> -    guard(mutex)(&amd_pstate_driver_lock);
->>>>          ret = amd_pstate_cpu_boost_update(policy, state);
->>>>        refresh_frequency_limits(policy);
->>>> @@ -973,6 +977,9 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
->>>>          cpudata->cpu = policy->cpu;
->>>>    +    mutex_init(&cpudata->lock);
->>>> +    guard(mutex)(&cpudata->lock);
->>>> +
->>>>        ret = amd_pstate_init_perf(cpudata);
->>>>        if (ret)
->>>>            goto free_cpudata1;
->>>> @@ -1179,8 +1186,6 @@ static ssize_t store_energy_performance_preference(
->>>>        if (ret < 0)
->>>>            return -EINVAL;
->>>>    -    guard(mutex)(&amd_pstate_limits_lock);
->>>> -
->>>>        ret = amd_pstate_set_energy_pref_index(policy, ret);
->>>>          return ret ? ret : count;
->>>> @@ -1353,8 +1358,10 @@ int amd_pstate_update_status(const char *buf, size_t size)
->>>>        if (mode_idx < 0 || mode_idx >= AMD_PSTATE_MAX)
->>>>            return -EINVAL;
->>>>    -    if (mode_state_machine[cppc_state][mode_idx])
->>>> +    if (mode_state_machine[cppc_state][mode_idx]) {
->>>> +        guard(mutex)(&amd_pstate_driver_lock);
->>>>            return mode_state_machine[cppc_state][mode_idx](mode_idx);
->>>> +    }
->>>>          return 0;
->>>>    }
->>>> @@ -1375,7 +1382,6 @@ static ssize_t status_store(struct device *a, struct device_attribute *b,
->>>>        char *p = memchr(buf, '\n', count);
->>>>        int ret;
->>>>    -    guard(mutex)(&amd_pstate_driver_lock);
->>>>        ret = amd_pstate_update_status(buf, p ? p - buf : count);
->>>>          return ret < 0 ? ret : count;
->>>> @@ -1472,6 +1478,9 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
->>>>          cpudata->cpu = policy->cpu;
->>>>    +    mutex_init(&cpudata->lock);
->>>> +    guard(mutex)(&cpudata->lock);
->>>> +
->>>>        ret = amd_pstate_init_perf(cpudata);
->>>>        if (ret)
->>>>            goto free_cpudata1;
->>>> @@ -1558,6 +1567,8 @@ static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
->>>>        union perf_cached perf;
->>>>        u8 epp;
->>>>    +    guard(mutex)(&cpudata->lock);
->>>> +
->>>>        amd_pstate_update_min_max_limit(policy);
->>>>          if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
->>>> @@ -1646,8 +1657,6 @@ static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
->>>>        if (cpudata->suspended)
->>>>            return 0;
->>>>    -    guard(mutex)(&amd_pstate_limits_lock);
->>>> -
->>>>        if (trace_amd_pstate_epp_perf_enabled()) {
->>>>            trace_amd_pstate_epp_perf(cpudata->cpu, perf.highest_perf,
->>>>                          AMD_CPPC_EPP_BALANCE_POWERSAVE,
->>>> @@ -1684,8 +1693,6 @@ static int amd_pstate_epp_resume(struct cpufreq_policy *policy)
->>>>        struct amd_cpudata *cpudata = policy->driver_data;
->>>>          if (cpudata->suspended) {
->>>> -        guard(mutex)(&amd_pstate_limits_lock);
->>>> -
->>>>            /* enable amd pstate from suspend state*/
->>>>            amd_pstate_epp_reenable(policy);
->>>>    diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
->>>> index a140704b97430..6d776c3e5712a 100644
->>>> --- a/drivers/cpufreq/amd-pstate.h
->>>> +++ b/drivers/cpufreq/amd-pstate.h
->>>> @@ -96,6 +96,8 @@ struct amd_cpudata {
->>>>        bool    boost_supported;
->>>>        bool    hw_prefcore;
->>>>    +    struct mutex    lock;
->>>> +
->>>>        /* EPP feature related attributes*/
->>>>        u8    epp_cached;
->>>>        u32    policy;
->>>
->>
-> 
+This driver is really high quality, only nitpicks below.
 
+With these addressed:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+On Wed, Feb 12, 2025 at 2:47=E2=80=AFPM Nikolaos Pasaloukos
+<nikolaos.pasaloukos@blaize.com> wrote:
+
+> VeriSilicon APB v0.2 is a custom GPIO design provided from VeriSilicon
+> Microelectronics. It has 32 input/output ports which can be
+> configured as edge or level triggered interrupts. It also provides
+> a de-bounce feature.
+>
+> Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
+(...)
+> +config GPIO_VSIAPB
+> +       tristate "Verisilicon APB GPIO support"
+> +       depends on OF_GPIO
+> +       select GPIO_GENERIC
+> +       select GPIOLIB_IRQCHIP
+> +       select IRQ_DOMAIN_HIERARCHY
+
+Are you really using the hierarchical domain?
+
+Not in this driver, right? This is just regular chained IRQ.
+
+> +       /* configure the gpio chip */
+> +       gc =3D &chip->gc;
+> +       gc->owner =3D THIS_MODULE;
+
+I think the core sets up owner for you so you can drop this assignment?
+
+Yours,
+Linus Walleij
 
