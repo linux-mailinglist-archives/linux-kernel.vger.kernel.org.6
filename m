@@ -1,107 +1,168 @@
-Return-Path: <linux-kernel+bounces-511632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDB8A32D7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:29:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A6DA32D87
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FFB5163687
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:29:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2693518832D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF6D25A331;
-	Wed, 12 Feb 2025 17:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B498425A630;
+	Wed, 12 Feb 2025 17:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GHyFBImX"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d8IwQx5v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6112135A1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A54271829;
+	Wed, 12 Feb 2025 17:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739381355; cv=none; b=AA846vpsUN6zUw7QqRP1OI7V+TCBQMeapX13ogxe+P/kpwHOm/lXdwaF6yN8V3SDZI9EfJm4Shl0v9LXrCNH5ADDLtFpQYdC5XM+SCqYL+pM39Tv5tPN3lUtjwIAw5sbbpImEh0/wwrjV2SvLgZ/kIpbLO1BLtKjXlbUi6g/zug=
+	t=1739381570; cv=none; b=QHbfTZDt+vZiNrnf0eURwyGrO8j4b+AmKfCVRKfat6K3F5WoabL8uBNYJShgOcjXk1OrEXZeK5Lxm0HhLBjis0fULcznwhgSE4wpyKotUzk2HaaojeWPS1ZvZcR1xfVbpCABXPcL7e70F/0/3koHLk8JE5ivNcb83tPoZzwGMHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739381355; c=relaxed/simple;
-	bh=v1E0baCYwvPTm6W2l7mhYSDoo8BYoAb0Zh7kaADVDQI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RkssKUxa5j6siNd0rCnEbmeSj9GQfbV/kMlrC1sVCQq3t5M45w8oathlsa2yn6pOTqjJjU5MXnJRJ3iQcN4fBhATciHE78w487cOZMT5sAFnuM0p4PKKP7LqM+6bszFgOftGUZjrlCgWf+XuiGzg4g/mA1LI5mxj0uRu1F5ka9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GHyFBImX; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6dd049b5428so183846d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:29:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739381353; x=1739986153; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gquHr0eT2+B6bx9x04CQUMoJUVGXo0TIanyPjb2fHkM=;
-        b=GHyFBImXoKYpaJLH0jS9V0i7iYzkC4DxH3N2q3YKZsGeOJdBrxiossETK46ubAeQaN
-         oTke4evi216ERhawBRt+/jbbHZiLccFQ6omBRA5owDm6I8F7PXkTpLm0j3LFsEEorT8T
-         elgNAEgal5wMGkVZhOlRYOfKTVNYXdix8rUCBvmAn1cdBJ9HoyVDmdUkFw6XNMBxiwCF
-         nmM5vu8qzI8W2Vary8/FIbRqGN17dh4RE3aFGDfWW9Ef5/calZz62v4/FXgDF4z4K3Dz
-         lgjKbtr4QDe95qs1nD8eovSNqv5B8ZvtDpZ1WxyWkiAqdv+JDpvC4vq/DTzQfvkYmxcI
-         3BGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739381353; x=1739986153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gquHr0eT2+B6bx9x04CQUMoJUVGXo0TIanyPjb2fHkM=;
-        b=p4axdSf8W9A4ZnQqlUe64i2J9L92qVSorLG2Y2PyMWIuHohw2e/HPwZLpfoOHsl3gR
-         vzuvn46pJ8/r8tCfrNmMBLeUVpgY9oCwCDrtm+F4+Xsocd853uCspS53vKS8j0//U1Hx
-         KW6YZ+4+ToCr2sp8V3xrmeqw+D4Tl5IIxNbS4vI6rjjBIflE5HWoY5DHklJ+6ABGgrbo
-         DzNydBBTtKIRQTGVytk9ITaobRpxrWqGv76yGVPvhNDYkpBGi/wn66khurpmuYk2agBR
-         G4/5QbZqhl5GPXCVlIWSPfkMK8LerpSz6mIQ+kFXitub9e+gU5GIuieSBqppqAtRjcjw
-         jniQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0ZT9nZnTo4uO56nHgtSlP76Nfz+ZJiiinB9JSyTDrIPSUEGbmGR9MUjqyKyCwSfz4PxRsPKMSw2HnXig=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0R1eSAkOiwansT/VeEKQUFBPaFDtHFW1OWr7RJVgQXojvhDDz
-	4bPXLU4QqStAMJqE9ABC0bPR01vhr55yOzjBWRds4vszHgGNMwiUrS7AWlUclCpMNXFWXlmpdqb
-	WPSPwUwQLAM1NTo+r7l2Blgh+FcT7/u+P3rhauwDRbwBS0adzqw==
-X-Gm-Gg: ASbGnctR3I4akaSXNOcaAmXFfDCvfFMjf0G03CiNmLLHZCvmZbGL34UkTgqQEmpuAxk
-	TrFVvvH6Lquo1MKDaNir6vJXE8McoVrOpAiCDPHezXvn9FxJjgkGMhzjPxB1Cn5sAqFIXQ6ueRr
-	5/a8FP2FhS5BAiM34U+t2D1u/ZRRU=
-X-Google-Smtp-Source: AGHT+IGyUbj2hccuFFHlk1Hhvr5KM33hs3n3t+wSbcCxGyj6DvlsLf+y7cGmeGwq95MetrI7dseIGPBZiiNjexR0q7E=
-X-Received: by 2002:a05:6214:19cc:b0:6e1:a51d:e96f with SMTP id
- 6a1803df08f44-6e46ed8e6d5mr68013576d6.8.1739381352553; Wed, 12 Feb 2025
- 09:29:12 -0800 (PST)
+	s=arc-20240116; t=1739381570; c=relaxed/simple;
+	bh=TsAUZDN7dw/ozl9tzhSbG2kUks+xD1sddY6H6S783ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bvhMnTF5WZfWfjKfxjQq8eoW0+9IVW+EI/RSOrzqGJP3Wj21r2WQTZ50FuCxXeWG+r/Di5WSh681WFzwCmlVQ/Amzh5cZYhIc7jbbYlLzIQjjf42sHoxXwGf7kqEtRFPx8VVDKVwGI3h2MTq+hLmUk6GBjDOO+GCAxvNbKEaSqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d8IwQx5v; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739381568; x=1770917568;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=TsAUZDN7dw/ozl9tzhSbG2kUks+xD1sddY6H6S783ic=;
+  b=d8IwQx5vYRSvj5olKnmWXaXg594i3QfA9NlT37OyIPcJKz7YLB2Qbwvz
+   sYq0QC9PIQTip3ST3lZxvAkMy7mrfK5O3nL2vILoTCDWhYvy8kfKY8o1y
+   FQg57HcSp6kxkEgdfYKCjIzm/CWQnhOdG6DkmrS3se/sL93SrHQUDC1Ld
+   x2ib3zqxNb4v0Sj6rCZncs1XB0hf8aN73E6veY4PELQcNwzzA8Zutm7y5
+   uX1veO3pU75HC5GlzmWNDNO/jaN7h3v2OChLLWSEijM/zyA/pUNJfU1dT
+   Q0J/7wp2LvspDl1muVgbX4wCiDmux6NpRWmRe8l+BpKEexKvjW7Bo9pBT
+   A==;
+X-CSE-ConnectionGUID: YjMzeyO3SQe4w7xWlUIykQ==
+X-CSE-MsgGUID: z8geW/MQR0ueqB9BarC9aA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="62520857"
+X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
+   d="scan'208";a="62520857"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 09:32:47 -0800
+X-CSE-ConnectionGUID: pBozJAGsQ2GYbDJd89JYmA==
+X-CSE-MsgGUID: SwvQ+c5+Tm6OzSEl8XKpdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="117831698"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 09:32:42 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tiGbH-0000000AuIS-1VRs;
+	Wed, 12 Feb 2025 19:32:39 +0200
+Date: Wed, 12 Feb 2025 19:32:39 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+Message-ID: <Z6zbN4fjD1YUQlDI@smile.fi.intel.com>
+References: <20250212064657.5683-1-clamor95@gmail.com>
+ <20250212064657.5683-3-clamor95@gmail.com>
+ <Z6ywGgofzU1bvm0H@smile.fi.intel.com>
+ <CAPVz0n1UuZPCb3Jdj_fK3Ut7WKBgtvj7aROqJ4YeYVMutuyv7A@mail.gmail.com>
+ <Z6zIAGLot3YQLo9S@smile.fi.intel.com>
+ <CAPVz0n1Mf02GvSBd_TOuNiuCVTTOx4-228qkdf-JL_eqGCh2MA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <SY8P300MB0421FF8BC82A17CA7A892675A1F42@SY8P300MB0421.AUSP300.PROD.OUTLOOK.COM>
-In-Reply-To: <SY8P300MB0421FF8BC82A17CA7A892675A1F42@SY8P300MB0421.AUSP300.PROD.OUTLOOK.COM>
-From: Alexander Potapenko <glider@google.com>
-Date: Wed, 12 Feb 2025 18:28:36 +0100
-X-Gm-Features: AWEUYZlUvPCrE_W2ZQDiIkwuwePQ9_OsUYB2xuuCg9zu3mpKV7G1pBpzp4LkW9M
-Message-ID: <CAG_fn=Wh-Z12SaBNgXJNqKyfODwxUAYJqyc86hguXn2M2Fv=nA@mail.gmail.com>
-Subject: Re: general protection fault in __fib6_drop_pcpu_from [CVE-2024-40905
- Incomplete fix]
-To: YAN KANG <kangyan91@outlook.com>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPVz0n1Mf02GvSBd_TOuNiuCVTTOx4-228qkdf-JL_eqGCh2MA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Feb 4, 2025 at 5:27=E2=80=AFAM YAN KANG <kangyan91@outlook.com> wro=
-te:
->
-> Dear developers and maintainers,
->
-> I found a new kernel UAF  bug titiled "general protection fault in __fib6=
-_drop_pcpu_from" while using modified syzkaller fuzzing tool. I Itested it =
-on the latest Linux upstream version (6.13.0-rc1), and it was able to be tr=
-iggered many times .
->
-I was running an unmodified syzkaller build today for a different
-reason, and came across this bug within 40 minutes of fuzzing.
-Just giving you a heads-up for the case you will be evaluating the
-fuzzer modifications.
+On Wed, Feb 12, 2025 at 06:36:37PM +0200, Svyatoslav Ryhel wrote:
+> ср, 12 лют. 2025 р. о 18:10 Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> пише:
+> > On Wed, Feb 12, 2025 at 05:20:04PM +0200, Svyatoslav Ryhel wrote:
+> > > ср, 12 лют. 2025 р. о 16:28 Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> пише:
+> > > > On Wed, Feb 12, 2025 at 08:46:56AM +0200, Svyatoslav Ryhel wrote:
+
+...
+
+> > > > > +#include <linux/i2c.h>
+> > > > > +#include <linux/module.h>
+> > > >
+> > > > > +#include <linux/of.h>
+> > > >
+> > > > No of*.h in the new code, please.
+> > > >
+> > > > > +#include <linux/regulator/consumer.h>
+> > > >
+> > > > Too small headers to be included. You use much more.
+> > >
+> > > Is there a check which determines the amount of headers I must include
+> > > and which headers are mandatory to be included and which are forbidden
+> > > to inclusion. Maybe at least a list? Thanks
+> >
+> > No check, there is IWYU principle.
+> >
+> > https://include-what-you-use.org/
+> >
+> > The tool is not (yet?) suitable for the Linux kernel project and Jonathan,
+> > who is the maintainer of IIO code, had even tried it for real some time ago.
+> 
+> So it is not adopted by the Linux kernel.
+> Lets return to this once it will be adopted.
+
+I understand you want to push your way, but here is the thing. This is a
+community of people and review is not something that comes for free. People,
+who are reviewing a code, want to make sure the code follows not only
+documented style, etc., but also common sense and the future maintenance.
+When a contributor comes and drops something into Linux Kernel project
+it adds a lot of work on maintainers' shoulders and other contributors
+who may be in progress of solving the other tasks. I specifically sent
+you a link where the tool and the principle is _explained_. So, it's not
+about the tool, it's about the whole project to become better and easier
+to maintain. You are a new guy in the development as you stated, so,
+please try to see how this all works.
+
+Of course, the last word here is Jonathan's as he is the maintainer of IIO,
+but I truly believe he will suggest you to follow my advice and not otherwise.
+
+> > > > > +#include <linux/iio/iio.h>
+> > > > > +#include <linux/iio/sysfs.h>
+
+...
+
+I assume the non-commented parts you are satisfied with and they will be
+addressed as suggested. Thank you!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
