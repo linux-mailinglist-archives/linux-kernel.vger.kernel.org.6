@@ -1,142 +1,235 @@
-Return-Path: <linux-kernel+bounces-511534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32ABA32C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:49:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2147DA32C60
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2EDF3A5E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:49:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F4F81639D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E24D256C62;
-	Wed, 12 Feb 2025 16:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46329256C70;
+	Wed, 12 Feb 2025 16:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QuDu2vOC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OHFAU7pe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE7721D59F;
-	Wed, 12 Feb 2025 16:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84299254B0F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739378972; cv=none; b=Xh2PB3XTc1Biu5IOawWh/FRcaZd5QClzwKasyI8SUk7lRpFyZSbz5EowdZ3Won7KfD7X05Ko2PFtXNoXA4iuC5E6h5KbmDzcVscrWSDIbJR+pW6IxXFn5chWxMe0z6zTAGYeQHDUtSsjC47WjZNuclDX4IsnKDA+B0tQUB6c63o=
+	t=1739379002; cv=none; b=OVkhAnjEXB+DRCT3h1Scypa1+YSRs4I/RSkRo4p4jucuRFQURxEb1Td0C4v2NcqoxaZo1+kop5jCXagd57VqjRNyTm0u7eJu20qH8tvk81oord8ZYImIGJ7jolGvoTS+UINARMcVDbc7+7dzIDTyBXxW8fIBs7BpxbYDcKy+ewY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739378972; c=relaxed/simple;
-	bh=oiJ709oCpEPB9kcfZlrUorygYDxTbmj70Ft/9Pu06Z4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tnzIOnl4SSU1ZyxR4sGibcBPvNUMBW8V0vW5WmVAYH6e9eG1OaDH4lydieYv3oF0DW7uN3StnqZEv/tHXy6LVRruk2dIlckvftLaMnTiuPvz2ifKtv5WB9Nll3Y7BZ63IGV7vcYz9F2CjjUal0p/g+BQgV5Jx+rtLpb1q5Rk1m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QuDu2vOC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63EE0C4CEE4;
-	Wed, 12 Feb 2025 16:49:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739378972;
-	bh=oiJ709oCpEPB9kcfZlrUorygYDxTbmj70Ft/9Pu06Z4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QuDu2vOCN8Og5PDN/o0qAWPIh5IehilQX3JPmZt/P8XUJRPwGzvG+wjStZngVMTSl
-	 umJEapzok9F3kB/cWAINOokS19IEqdZ4VAMW+lNASxIi7ZUkpsLkeBLpNfqIHQxwqr
-	 jQOsehRMEzKaQrXoacpV+ZncoACURmd0QTSZp+DIg6Nj+Op885ekt/X8EPckXWixSc
-	 V6p6FdIg12DzZ+hj4JL4SLyMpEwjHjaPwaqKSn+sf6iXvSk/MwbjPY3G7SCekrUnaM
-	 ccYZMeeb0OzvEj7ot1bPk/SWo+j2NO6fbcdgKASSH4bgl0a+Y+aAF78eGlKcDbSufA
-	 jQjkJDPK0NyKA==
-Message-ID: <822d6dca-b2c6-4439-ade5-219620ebc435@kernel.org>
-Date: Wed, 12 Feb 2025 17:49:25 +0100
+	s=arc-20240116; t=1739379002; c=relaxed/simple;
+	bh=EZsQp4ww9+8FDitQ4h/lp1cNx+MSZV9M41/RDxB9N60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E+xJ/sJVlUye6JrCQT4gztnecHSTTlJTpOtE36/YbtP7HWx+YZSX1uayh52LM9upoxlaoDYmc2zN3P4g0NamZS1+TPEUskzKZXDINa19E/G7upkzBm37KEEEuJFeZBBxMfYQCCx+tF2zRtJ0Dw48xf0brpx5lPnQPFyMz4s20xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OHFAU7pe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739378999;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPnsWp+uVadB0fIbvemTi3mHnbvU4Gf2i6YtDyhOUfg=;
+	b=OHFAU7pe+Ak5toT6V/Qwav0EmshwxXCkVQWRimTB+aYbbRxp9QQDLigMoAsXo9H1wBUxT6
+	mE2WBmKkUMuxajetqVUn6VZjsndLRQ/WUxBUD1j4JVbQ4jvyRvPVDirNLKo4r3IZaUlUFp
+	uez9PNjPp5AzK824NwYbi/qAqhfkRw0=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-457-SmPIfpXHNe-2ncbYKtzdBg-1; Wed, 12 Feb 2025 11:49:58 -0500
+X-MC-Unique: SmPIfpXHNe-2ncbYKtzdBg-1
+X-Mimecast-MFC-AGG-ID: SmPIfpXHNe-2ncbYKtzdBg
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e5b4b8d71easo7331893276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 08:49:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739378997; x=1739983797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oPnsWp+uVadB0fIbvemTi3mHnbvU4Gf2i6YtDyhOUfg=;
+        b=N1tNoRKj+gARb3zbK1qHiuOQjWKechrTnDetm9Eqzg9KOetP2aj7Po/RFUjMgYS19K
+         +yAwXQZs2GX4AZWCcjyhBf4vKHhQ0NI6T9YFjnMfgU+LCpf5wwdGwKVDMM+WE+KNcxg1
+         Pmfzi9w85zkpo6KWHL/7DlAye8TaGurAQBeU0SI1tVlOTK/jK8r8tOtIfcRcqlt3fWwA
+         6oBH5Mj71bFZWV1Ju5y/+USHWyIZuYdfXQ7u9AFIm3n8wVRy9H3CP9LI652/mOfq8MXh
+         cBl27P3/2z122flaIhcID83tGXBF5q7X4ejrhQIdIv5OK5mBgnzyfiuGppzbYQYn1Rh5
+         N/Yw==
+X-Gm-Message-State: AOJu0YwtHJxf0H7rr8++eWV3ZKxx2GYVEX+PL4R0sGtFauvyR5MtEGlH
+	c3RYmqTYJ+rvBIQIuKTl6bhYtR2tVpIINp/JYtN/ocHY17lD1m3Wnk97OyZY/uTnZOZnBZ40+3K
+	8e8VbfqYYQqk4gDed7oitzfM/p3xgNyvaO5WX7HuyOEIJ4deYqsV316m3eIru410HHqWGjnwH6e
+	jNvFJMsMm1hKWkAg37KSUNGpxWQZ7RAhZA6jJs
+X-Gm-Gg: ASbGncs7fvORdmLVOrPkdoty8AbJeFRiBCTh/olDViQnI5yuFL6rfKNTvh9Vr18EMKh
+	XWk5qRagc6Uo/ZW3MoI5wQHmOLLFGgvnHBjTkgQetpK0wPePCb4shT8LUCWIi1Skrp5CYA309RX
+	I=
+X-Received: by 2002:a05:6902:c0f:b0:e5b:3af0:d4b6 with SMTP id 3f1490d57ef6-e5d9f177b0dmr3693031276.39.1739378997494;
+        Wed, 12 Feb 2025 08:49:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFr+Hr/PiVfn3FXUMlE+63a6PGVj7So6+xFWHOYXeUydSTxRONJiUBSP04mHmt4hrxEkxGTKY672V1DpUF87tE=
+X-Received: by 2002:a05:6902:c0f:b0:e5b:3af0:d4b6 with SMTP id
+ 3f1490d57ef6-e5d9f177b0dmr3692985276.39.1739378997157; Wed, 12 Feb 2025
+ 08:49:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: i3c: Add NXP P3H2x4x i3c-hub support
-To: Aman Kumar Pandey <aman.kumarpandey@nxp.com>,
- linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org,
- alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org
-Cc: vikash.bansal@nxp.com, priyanka.jain@nxp.com,
- shashank.rebbapragada@nxp.com, Frank.Li@nxp.com
-References: <20250212132227.1348374-1-aman.kumarpandey@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250212132227.1348374-1-aman.kumarpandey@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250211003028.213461-1-npache@redhat.com> <5a995dc9-fee7-442f-b439-c484d9de1750@arm.com>
+In-Reply-To: <5a995dc9-fee7-442f-b439-c484d9de1750@arm.com>
+From: Nico Pache <npache@redhat.com>
+Date: Wed, 12 Feb 2025 09:49:31 -0700
+X-Gm-Features: AWEUYZkUQXup4w4I6JGkySBAdTJoh13pZXv8Cq59n4Sa4gnQ7P9zDt7JYRCHl0c
+Message-ID: <CAA1CXcCo3eCH-5axnw3WUqPfL-EPCbLVFo_AFYXkbnExfX=KLQ@mail.gmail.com>
+Subject: Re: [RFC v2 0/9] khugepaged: mTHP support
+To: Dev Jain <dev.jain@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, ryan.roberts@arm.com, anshuman.khandual@arm.com, 
+	catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, 
+	apopple@nvidia.com, dave.hansen@linux.intel.com, will@kernel.org, 
+	baohua@kernel.org, jack@suse.cz, srivatsa@csail.mit.edu, 
+	haowenchao22@gmail.com, hughd@google.com, aneesh.kumar@kernel.org, 
+	yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com, 
+	wangkefeng.wang@huawei.com, ziy@nvidia.com, jglisse@google.com, 
+	surenb@google.com, vishal.moola@gmail.com, zokeefe@google.com, 
+	zhengqi.arch@bytedance.com, jhubbard@nvidia.com, 21cnbao@gmail.com, 
+	willy@infradead.org, kirill.shutemov@linux.intel.com, david@redhat.com, 
+	aarcange@redhat.com, raquini@redhat.com, sunnanyong@huawei.com, 
+	usamaarif642@gmail.com, audra@redhat.com, akpm@linux-foundation.org, 
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com, tiwai@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/02/2025 14:22, Aman Kumar Pandey wrote:
-> P3H2x4x (P3H2440/P3H2441/P3H2840/P3H2841) is multiport I3C hub
-> device which connects to a host CPU via I3C/I2C/SMBus bus on one
-> side and to multiple peripheral devices on the other side.
-> 
-> Signed-off-by: Aman Kumar Pandey <aman.kumarpandey@nxp.com>
-> Signed-off-by: Vikash Bansal <vikash.bansal@nxp.com>
-> ---
->  .../bindings/i3c/p3h2x4x_i3c_hub.yaml         | 404 ++++++++++++++++++
->  MAINTAINERS                                   |   7 +
->  2 files changed, 411 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/p3h2x4x_i3c_hub.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/i3c/p3h2x4x_i3c_hub.yaml b/Documentation/devicetree/bindings/i3c/p3h2x4x_i3c_hub.yaml
-> new file mode 100644
-> index 000000000000..33ea524e5432
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i3c/p3h2x4x_i3c_hub.yaml
+On Tue, Feb 11, 2025 at 5:50=E2=80=AFAM Dev Jain <dev.jain@arm.com> wrote:
+>
+>
+>
+> On 11/02/25 6:00 am, Nico Pache wrote:
+> > The following series provides khugepaged and madvise collapse with the
+> > capability to collapse regions to mTHPs.
+> >
+> > To achieve this we generalize the khugepaged functions to no longer dep=
+end
+> > on PMD_ORDER. Then during the PMD scan, we keep track of chunks of page=
+s
+> > (defined by MTHP_MIN_ORDER) that are utilized. This info is tracked
+> > using a bitmap. After the PMD scan is done, we do binary recursion on t=
+he
+> > bitmap to find the optimal mTHP sizes for the PMD range. The restrictio=
+n
+> > on max_ptes_none is removed during the scan, to make sure we account fo=
+r
+> > the whole PMD range. max_ptes_none will be scaled by the attempted coll=
+apse
+> > order to determine how full a THP must be to be eligible. If a mTHP col=
+lapse
+> > is attempted, but contains swapped out, or shared pages, we dont perfor=
+m the
+> > collapse.
+> >
+> > With the default max_ptes_none=3D511, the code should keep its most of =
+its
+> > original behavior. To exercise mTHP collapse we need to set max_ptes_no=
+ne<=3D255.
+> > With max_ptes_none > HPAGE_PMD_NR/2 you will experience collapse "creep=
+" and
+> > constantly promote mTHPs to the next available size.
+> >
+> > Patch 1:     Some refactoring to combine madvise_collapse and khugepage=
+d
+> > Patch 2:     Refactor/rename hpage_collapse
+> > Patch 3-5:   Generalize khugepaged functions for arbitrary orders
+> > Patch 6-9:   The mTHP patches
+> >
+> > ---------
+> >   Testing
+> > ---------
+> > - Built for x86_64, aarch64, ppc64le, and s390x
+> > - selftests mm
+> > - I created a test script that I used to push khugepaged to its limits =
+while
+> >     monitoring a number of stats and tracepoints. The code is available
+> >     here[1] (Run in legacy mode for these changes and set mthp sizes to=
+ inherit)
+> >     The summary from my testings was that there was no significant regr=
+ession
+> >     noticed through this test. In some cases my changes had better coll=
+apse
+> >     latencies, and was able to scan more pages in the same amount of ti=
+me/work,
+> >     but for the most part the results were consistant.
+> > - redis testing. I tested these changes along with my defer changes
+> >    (see followup post for more details).
+> > - some basic testing on 64k page size.
+> > - lots of general use. These changes have been running in my VM for som=
+e time.
+> >
+> > Changes since V1 [2]:
+> > - Minor bug fixes discovered during review and testing
+> > - removed dynamic allocations for bitmaps, and made them stack based
+> > - Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
+> > - Updated trace events to include collapsing order info.
+> > - Scaled max_ptes_none by order rather than scaling to a 0-100 scale.
+> > - No longer require a chunk to be fully utilized before setting the bit=
+. Use
+> >     the same max_ptes_none scaling principle to achieve this.
+> > - Skip mTHP collapse that requires swapin or shared handling. This help=
+s prevent
+> >     some of the "creep" that was discovered in v1.
+> >
+> > [1] - https://gitlab.com/npache/khugepaged_mthp_test
+> > [2] - https://lore.kernel.org/lkml/20250108233128.14484-1-npache@redhat=
+.com/
+> >
+> > Nico Pache (9):
+> >    introduce khugepaged_collapse_single_pmd to unify khugepaged and
+> >      madvise_collapse
+> >    khugepaged: rename hpage_collapse_* to khugepaged_*
+> >    khugepaged: generalize hugepage_vma_revalidate for mTHP support
+> >    khugepaged: generalize alloc_charge_folio for mTHP support
+> >    khugepaged: generalize __collapse_huge_page_* for mTHP support
+> >    khugepaged: introduce khugepaged_scan_bitmap for mTHP support
+> >    khugepaged: add mTHP support
+> >    khugepaged: improve tracepoints for mTHP orders
+> >    khugepaged: skip collapsing mTHP to smaller orders
+> >
+> >   include/linux/khugepaged.h         |   4 +
+> >   include/trace/events/huge_memory.h |  34 ++-
+> >   mm/khugepaged.c                    | 422 +++++++++++++++++++---------=
+-
+> >   3 files changed, 306 insertions(+), 154 deletions(-)
+> >
+>
+> Does this patchset suffer from the problem described here:
+> https://lore.kernel.org/all/8abd99d5-329f-4f8d-8680-c2d48d4963b6@arm.com/
+Hi Dev,
 
-Nothing here looks like being even close to existing coding style. Look
-how other files are written, including file naming, blank lines, style
-of properties and entire layout.
+Sorry I meant to get back to you about that.
 
-Your current code is not only unreadable but also incorrect. But due to
-unreadability, I won't waste time to review.
+I understand your concern, but like I've mentioned before, the scan
+with the read lock was done so we dont have to do the more expensive
+locking, and could still gain insight into the state. You are right
+that this info could become stale if the state changes dramatically,
+but the collapse_isolate function will verify it and not collapse.
+From my testing I found this to rarely happen.
 
-You should have make internal review of all this.
+Also, khugepaged, my changes, and your changes are all a victim of
+this. Once we drop the read lock (to either allocate the folio, or
+right before acquiring the write_lock), the state can change. In your
+case, yes, you are gathering more up to date information, but is it
+really that important/worth it to retake locks and rescan for each
+instance if we are about to reverify with the write lock taken?
 
->  L:	linux-hwmon@vger.kernel.org
+So in my eyes, this is not a "problem"
+
+Cheers,
+-- Nico
 
 
-Best regards,
-Krzysztof
+>
+
 
