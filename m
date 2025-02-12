@@ -1,70 +1,98 @@
-Return-Path: <linux-kernel+bounces-510679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263EDA32061
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:58:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFDBA3207B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 08:59:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024FB161448
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D14B01882816
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 07:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58A4204C35;
-	Wed, 12 Feb 2025 07:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D31204C08;
+	Wed, 12 Feb 2025 07:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CfK8AYYx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVnX3oGT"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D6A204C1B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2301CB31D;
+	Wed, 12 Feb 2025 07:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739347058; cv=none; b=URLatFOxrp4PBx9OEOmUNn41HqzJsp4IzSQZMiKBcs6/iwOLWy2shO7kLL0wvdtIcAkSf+tkyTG74h97TPirqnUPar1elY2ywvHHpnzkU5AxDuLt3SpR7L4kmbccB0Frla79TEep+DkG9I4aZVc6Yy6pe7snEfMCXgHYC8gocVo=
+	t=1739347159; cv=none; b=FiI3KmMY6Xovkg5ILuTiao0VULUQkeQQ2CzsFZPiUYEZnFGmI9afSlBerDjCcCpH/VhbzafNRsO/lQ5yuGO/2SdlwgDyx7dE7VNCLuZQej3Vq3Di3RMeBSv60eqc8O7hdb9Jymhaq+M2gQ8AZs1gBqzkZA7RXaDHCPQN0uDHL34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739347058; c=relaxed/simple;
-	bh=03WLSSFoaU02CLxWG0tXeMYv/zQbNS0SuGJ8yfYpC0E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aQL28iddRIjmP4ZMDS6Z+8hUITZJhzkTeRpvKfaqki6/2SmXSWA8SGxtsEyefx1gpvlAZHkb+LQG8iK3bpSPFglDcQYGKXSeqCrypKdAc0GmW7QOnjAwqYg9biepueWIumFVjZ144GKA6E7Kuxp9/yb9+SyWVqwvk2oV5kj31JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CfK8AYYx; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739347056; x=1770883056;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=03WLSSFoaU02CLxWG0tXeMYv/zQbNS0SuGJ8yfYpC0E=;
-  b=CfK8AYYx9f+gJE67GzxJS72QpojQL3vbyfd6WSAIbUtcAF3usq53bd38
-   7p0KCgEVhOp1yA5vrkOYQrHO/awQ8/DQZZ5urjIiq4K02wJT01+Z3AbWF
-   mpAM1K/0hSAl9w8SMbHYXxl1u59oL773YXDf+f/EqTqhhTZicpJn6b9UH
-   Zfo1UrCfarfibGu9etEVGg6XwCsCqVYheRQUTbIDdcHdekq4qcFbOJQeg
-   59b3/niRoOra/l5mqVz/6Kqm/zJ221W6G69L1STqpZiFM65mYNCM5u8tU
-   vo2gOKHFln1YKcSp4MZmI+gCG+zX45u+E85DCgXuD0P1mrg1x/g4mTG92
-   Q==;
-X-CSE-ConnectionGUID: BR4CZVcASn6KQsf8puinBw==
-X-CSE-MsgGUID: h4xboBwsSeS86WhCuXQs6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50633575"
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="50633575"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 23:57:35 -0800
-X-CSE-ConnectionGUID: 13DZUju0SoiMtD+w64Lw0Q==
-X-CSE-MsgGUID: +yODgdJLT2uqUBxxM0irSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="112700731"
-Received: from ubuntu.bj.intel.com ([10.238.156.105])
-  by orviesa006.jf.intel.com with ESMTP; 11 Feb 2025 23:57:34 -0800
-From: Jun Miao <jun.miao@intel.com>
-To: kirill.shutemov@linux.intel.com,
-	dave.hansen@linux.intel.com
-Cc: linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/virt/tdx: Correct the errors in the comments
-Date: Wed, 12 Feb 2025 15:58:05 +0800
-Message-Id: <20250212075805.2906200-1-jun.miao@intel.com>
-X-Mailer: git-send-email 2.32.0
+	s=arc-20240116; t=1739347159; c=relaxed/simple;
+	bh=kmE+a+rMZPk6SbwcvZuve+G9NeqY3nYlWpAAYw29Ihg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c4Jn3XPbbnr4ZyaGXVXJy7PDBJqd1aEaMoHb5OqYZbIBXwCtYZPaK10YtZdg9RTiLnGu/W9jKy1PjwiISCw1HoXqPsNCLkQQKSWplJSjyTfFSOORlFpXL3FO1u59spHmExpUEgS1r6LApRT5eYMTFZ25tjRG+CW2dps3hiroKAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BVnX3oGT; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-543d8badc30so6738136e87.0;
+        Tue, 11 Feb 2025 23:59:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739347155; x=1739951955; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wv0GhJL/R4in4Vn8Ofx8yxqMCUurvzPMIRxBdypJOK8=;
+        b=BVnX3oGTG9Dt3kRSWCmHHE4Y+bNi+XHkmr23kJJppxYRT08fpTvXBeLvblOm8lba3U
+         6pAcgXyb1lWd8FtxsbiA23Z3WgxtfoTLUEp/OhAUiMReb6Xl0oOJYNTow0SSlCNZn74u
+         4yqXxbAnmrkkYBcM8nDq7AmP8csQodNysSGupQq89nfg1MNQWUAozSFllSyd7KodQWvc
+         HrOGc7AMBXRi1w/D6j0kX24h9Hz9dLz/91RhwUiZTqOYRMbUDIJVyMuNpDG9XKIjCzA8
+         Kt5SOfyrgbbE/MN3ZCVDFjy5MBwY2XbXI8Z3j8Wz1hu1QjvWhewIT7eSnOorakxyXjgT
+         vQnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739347155; x=1739951955;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wv0GhJL/R4in4Vn8Ofx8yxqMCUurvzPMIRxBdypJOK8=;
+        b=dVvJK2Gy3UrC/DHjJwRSpbBCGxi56zN01ikoLbEHyxFqswY2FU7wzgR0Gb1+lTBmto
+         jW9MwhPiGY02nWEZNabECBdJqfdrZK8uL1G7+eKra45BYz2RQi6HjOMZcHSdIEU+2iYr
+         gH/jLQFVPN0WvCPRyRDIjv8KLbiNUAPD800dKoytef+JhixAr8xHHsgx3+4JJuVbjbQH
+         WA0Vd2dG7jb1RUaWijbqiRUz4tyLlP9l2YBIOsK7RmdzSGtZmqiq/K0hDMy8Tl2OigZ5
+         r6sKGOQRIweQivLoZWrEPZ1YOUxttB9Ai0/mNYEx8oFHSsKdMJZ5f0ghS12a/SYQndXP
+         qpgA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9mDsPNqGBPnxpkc8BJRS4P6g+2mWRdzp/3mJMKvv0bHT+iFOOjLPl+cb13GBDZgDVVvcBaiczGN3/wtjH@vger.kernel.org, AJvYcCVkPqqE3Urm4vYv1BezDWLwyRkiJVUPZRyDmwcpf0AQ6ALWbIIybTryz3P59c1YMaZ5/dTEyfs/lSxi@vger.kernel.org, AJvYcCWih34JtKQQVf7WgLPymU+wKFaNFQ6JoQOIzevN5p5znpCjtDcuMr3QmbJBZvliwxgDq7iKbjIscsz6KQ==@vger.kernel.org, AJvYcCX6OlofPf1Qz1dBv8Sza3OMHSo6Me9BlBg65yg49dg5lR0UNUylzPwMluEwVEt5fIFfeHdOjiOpplW5jw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ1YsbZdo4q38uMWuscu5GuWdFSLOiUks2QW+Cz2OzfaIi/b4n
+	4aXesuLSw2kyADYj4X1isDgJLOKGPN2qc+IBLOGUYHmM7hfJnN8C
+X-Gm-Gg: ASbGnctufAmANVE2aOFW1FFZdw9iWxObNL77gY7dR47N/l0yIXTJZlnecWQ8vwTuwig
+	i9d3iDObzntsVq4B1ll1nVIocIDaUaGUCZu8xw/yRftBYa3/8y9aAKoXydPAli2ixrwt66iCkSJ
+	BSNCaM7ssGpQvgBdU+M2/u7Sro7Cl1OihKX5QPf0+Fn/2SewwubUUUgzC7sKlIEfbLCXSDymvSa
+	crLWvwLaUhl8Ra5JZxjG2faRscOjVPJy1zVrNjIHPMaZfyBzZpYHSKI3MpWTO9oS/R/JJpiKROx
+	BxJZhbE=
+X-Google-Smtp-Source: AGHT+IEWCPu+93+2rHmlSJUSCShTSZW5NXY2rvx6S35bgz3OSkiN9RIMowHcRkWsDjFpbQ96aMGwjw==
+X-Received: by 2002:a05:6512:2251:b0:545:169b:9b51 with SMTP id 2adb3069b0e04-54518123291mr684139e87.24.1739347154984;
+        Tue, 11 Feb 2025 23:59:14 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5441053eacfsm1797880e87.38.2025.02.11.23.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 23:59:14 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Pavel Machek <pavel@ucw.cz>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Helge Deller <deller@gmx.de>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org
+Subject: [PATCH v1 0/2] mfd: lm3533: convert to use OF
+Date: Wed, 12 Feb 2025 09:58:40 +0200
+Message-ID: <20250212075845.11338-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,29 +101,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In comment of config_global_keyid(), the "will fail" is duplicate, delete it.
+Add schema and add support for lm3533 mfd to use device
+tree bindings.
 
-Signed-off-by: Jun Miao <jun.miao@intel.com>
----
- arch/x86/virt/vmx/tdx/tdx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Svyatoslav Ryhel (2):
+  dt-bindings: mfd: Document TI LM3533 MFD
+  mfd: lm3533: convert to use OF
 
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 7fdb37387886..2023216a04a9 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -961,8 +961,8 @@ static int do_global_key_config(void *unused)
-  * Attempt to configure the global KeyID on all physical packages.
-  *
-  * This requires running code on at least one CPU in each package.
-- * TDMR initialization) will fail will fail if any package in the
-- * system has no online CPUs.
-+ * TDMR initialization) will fail if any package in the system has
-+ * no online CPUs.
-  *
-  * This code takes no affirmative steps to online CPUs.  Callers (aka.
-  * KVM) can ensure success by ensuring sufficient CPUs are online and
+ .../devicetree/bindings/mfd/ti,lm3533.yaml    | 221 ++++++++++++++++++
+ drivers/iio/light/lm3533-als.c                |  58 ++++-
+ drivers/leds/leds-lm3533.c                    |  69 +++++-
+ drivers/mfd/lm3533-core.c                     |  79 +++++--
+ drivers/video/backlight/lm3533_bl.c           |  72 +++++-
+ include/dt-bindings/mfd/lm3533.h              |  19 ++
+ include/linux/mfd/lm3533.h                    |   1 +
+ 7 files changed, 496 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,lm3533.yaml
+ create mode 100644 include/dt-bindings/mfd/lm3533.h
+
 -- 
-2.32.0
+2.43.0
 
 
