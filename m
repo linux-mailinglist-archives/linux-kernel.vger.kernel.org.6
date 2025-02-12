@@ -1,59 +1,90 @@
-Return-Path: <linux-kernel+bounces-510932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211FCA323C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:44:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D109A323C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041CA1687C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:43:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3495188C2B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676DA208973;
-	Wed, 12 Feb 2025 10:43:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD22209F24;
-	Wed, 12 Feb 2025 10:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B04209F30;
+	Wed, 12 Feb 2025 10:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FmtZQn1B"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E89209674;
+	Wed, 12 Feb 2025 10:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357012; cv=none; b=fGWwXuWG584YCbucGJxIx10j6QWerV+8lG4buwmU2a0n5FKnFhMF1X4Se1PBpho70OuXTeT2CkeVF0TsJRh1ar6eDSV2EQWMiIYItlOFa/lzjgm0B7XfnDe+2tyYcAKhSca5lBMzU7qvYwfc3HucsT51y4H0ib1+XfWHe5w3WB0=
+	t=1739357032; cv=none; b=YRD/9hnXsrDL7wvAOznziDPrFARwNL9TFmLTDDqmgk64zSiRAUYXMkCaD24sy891dqXlgwUjKCT2sTG3tto5HEMGrIrn/4YVTw9mBfUcOfjA2TAvwB0Ccz4rSkjjifR36hRprw/lFwzeWPTr4VcD6DdTyaUhpvI4KXZbpXhV5IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357012; c=relaxed/simple;
-	bh=HCfswIkRUWqCkSlxznTAVF1bVVQxdphLqoiOwibUgSo=;
+	s=arc-20240116; t=1739357032; c=relaxed/simple;
+	bh=X2eltLRhw1w4UIkkJvn+viee4/SqEPKwaFrktrUEYQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sU8+1/vUc0cBbSdBfURtBCVut5yPAWmDKmQMTHay4Kc+SPr71xSWEndhyivDqmFj0tY3ed/1/GGB3CFkTFvoK/Vqb3JRX5V/0ftG347pw8y2KN5xvxrJtIfUmH7n1AN8ZIEVyqbEVu9XUrwLg59+dhsQnavpZslyw6qtPvjBGLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C94312FC;
-	Wed, 12 Feb 2025 02:43:51 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE7B23F6A8;
-	Wed, 12 Feb 2025 02:43:27 -0800 (PST)
-Date: Wed, 12 Feb 2025 10:43:24 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	"cristian.marussi@arm.com" <cristian.marussi@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
-Subject: Re: [PATCH 0/4] rtc/scmi: Support multiple RTCs
-Message-ID: <Z6x7TBSjBFBxGo77@bogus>
-References: <20250120-rtc-v1-0-08c50830bac9@nxp.com>
- <20250120102117538ef59b@mail.local>
- <PAXPR04MB8459968DFDE5979802CC034A88E62@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <Z6uCCeG2d395ZGDS@bogus>
- <20250212063532.GB15796@localhost.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MW0LomOY+MkvwLS0dZMI6HibLpf+dF/xpbrvRDjffGFpxkl/Fw7hZrxwb0oKwLZRNXdNFUjT8n+P1z/2OzuRxIy+F58xjFoO222CFR7MDidpmVxpzJa0PsDxtcRbJlykpDUtFpbxVmZZr1XWMGjDoY2njbgyqvgt0o17FFGzKAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FmtZQn1B; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739357031; x=1770893031;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X2eltLRhw1w4UIkkJvn+viee4/SqEPKwaFrktrUEYQ0=;
+  b=FmtZQn1BLzus6bNFcNKWSJtoVzBdQSBws7WBsJqo/epOY77IAtFfcg5L
+   3H3B5YYjPRd3KHfOJmo0v+59CrbWMXHEVOPEjRrjB2adDHipBKWjAws1j
+   A3/o48xZrW8roOxpgtSSq4fjiMdOqiUbxreKsZyF20vS7QpdjHI2lrBwP
+   xyxh7tVRml6njGbXjIY2nfsR3nkFatRP+gnKrwDwC4IHvBlmn6yKFsJMg
+   HMiCxx3Gcg1tuNc+b3fZYM0xFsxk118egeULleh/7s751RlaDtLaMnGWQ
+   s2S0pmBcihFwKtpZJvZiy4Nvqmj18hwdwyPKs7lwyGHJ4EQV1zhga6Uhd
+   Q==;
+X-CSE-ConnectionGUID: MF+EgDxRSRGhAXdkTPap3A==
+X-CSE-MsgGUID: VR1FiWZFRj6YdwqvQD9Vew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="40032078"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="40032078"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:43:51 -0800
+X-CSE-ConnectionGUID: 9ogGZln/SR2AoJP2f85ftg==
+X-CSE-MsgGUID: 082GvNeQSUKxR8PlBtUqjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="112998158"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:43:46 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tiADW-0000000Ao56-16Qk;
+	Wed, 12 Feb 2025 12:43:42 +0200
+Date: Wed, 12 Feb 2025 12:43:42 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Aren Moynihan <aren@peacevolution.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Kaustabh Chakraborty <kauschluss@disroot.org>,
+	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
+	Julien Stephan <jstephan@baylibre.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, Ondrej Jirman <megi@xff.cz>,
+	Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v5 6/8] iio: light: stk3310: use dev_err_probe where
+ possible
+Message-ID: <Z6x7XgtGr8Thx08Z@smile.fi.intel.com>
+References: <20250208211325.992280-2-aren@peacevolution.org>
+ <20250208211325.992280-8-aren@peacevolution.org>
+ <Z6jAEEU2dqn_FJVp@smile.fi.intel.com>
+ <20250211194311.5255f25b@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,48 +93,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212063532.GB15796@localhost.localdomain>
+In-Reply-To: <20250211194311.5255f25b@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Feb 12, 2025 at 02:35:32PM +0800, Peng Fan wrote:
-> On Tue, Feb 11, 2025 at 04:59:53PM +0000, Sudeep Holla wrote:
-> >On Tue, Jan 21, 2025 at 02:31:55PM +0000, Peng Fan wrote:
-> >> 
-> >> It is the i.MX SCMI Protocol exports two RTCs using one protocol.
-> >> 
-> >> Two RTC devices are created, but share one parent device.
-> >> 
-> >> Do you mean each RTC device should have a unique parent device?
-> >>
-> >
-> >Can you point where is this check for unique parent ? I am not so familiar
-> >with RTC but I couldn't find myself with quick search.
+On Tue, Feb 11, 2025 at 07:43:11PM +0000, Jonathan Cameron wrote:
+> On Sun, 9 Feb 2025 16:47:44 +0200
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Sat, Feb 08, 2025 at 04:13:24PM -0500, Aren Moynihan wrote:
+> > > Using dev_err_probe instead of dev_err and return makes the errors  
+> > 
+> > Use dev_err_probe()
+> > dev_err()
+> > 
+> > > easier to understand by including the error name, and saves a little
+> > > code.  
+> > 
+> > I believe this patch will make more sense before switching to local 'dev'
+> > variable. Then the previous one will have an additional justification as
+> > the "struct device *dev = ...;" lines in some cases will be added already
+> > by this patch.
 > 
-> The RTC ops takes the rtc parent as input parameter
-> https://elixir.bootlin.com/linux/v6.13.2/source/drivers/rtc/interface.c#L94
-> "err = rtc->ops->read_time(rtc->dev.parent, tm);"
+> I'm not sure I follow this one comment.
+> The only line that has struct device *dev =  added in this patch is
+> replacing an existing client->dev lookup that could have been pushed
+> to previous patch if this patch ordering was maintained.
 > 
-> So in the rtc device driver, there is no way to know which rtc it is just
-> from the parent device.
->
+> For dev_err() to dev_err_probe() the number of references to dev
+> is the same after all. The only additional justification this patch
+> makes is some longer lines that using a local dev pointer shortens
+> again.
 
-If that is the expectation, you could create a platform or normal device
-per instance of RTC on your platform and slap them as parent device.
+When converting to dev_err_probe() in some cases it makes sense to add a
+temporary variable at the same time.
 
-IIUC on any pure DT based system, a device node exists per RTC and hence
-platform device associated with it. And the RTC devices are created with
-parent pointing to unique platform device.
+	if (ret) {
+		dev_err(&pdev->dev, ...);
+		return ...;
+	}
 
-> However i.MX SCMI BBM exports two RTCs(id: 0, id: 1), so to make it work for
-> current RTC framework, we could only pick one RTC and pass the id to BBM
-> server side.
->
-> I am not sure whether Alexandre wanna me to update the code following each
-> parent could only support one RTC or else.
->
+===>
 
-I assume something like my suggestion above.
+	struct device *dev = &pdev->dev;
+	...
+	if (ret)
+		return dev_err_probe(dev, ...);
 
---
-Regards,
-Sudeep
+which reduces automatically the churn in the patch that wants to (re)use that
+temporary variable and also adds to the justification as "we already have that
+variable, just want to use it".
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
