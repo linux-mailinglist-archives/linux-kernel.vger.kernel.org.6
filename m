@@ -1,95 +1,116 @@
-Return-Path: <linux-kernel+bounces-510460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DCBA31D2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:59:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70966A31D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51277188ABB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:59:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65E118882D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09FD1E7C06;
-	Wed, 12 Feb 2025 03:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC481E7C0B;
+	Wed, 12 Feb 2025 04:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKZcHPYA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPIDA6ro"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483D678F54;
-	Wed, 12 Feb 2025 03:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8E3271835;
+	Wed, 12 Feb 2025 04:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739332777; cv=none; b=iWSFgxFcFv4UQiD7S9UObhAp1VnGQn7INPLKvF/QbRObpIHtwPBP6+gjXFsh2/WrUoNOzEBNaojUAzrNEyUlwv8YY+K4NMt+aIhYN/nuzQKNatY2QACrilHrELFogOQOs8zKKyoQtqACu+8yFm40Y0T+R+mKnzEkln3m3y/x6y4=
+	t=1739333114; cv=none; b=MXVpASojqTRrP6WcSvSOW2NKpz4MVd+Ut6TS1kNko4hxEVg4H2ItT67o63wqpfpwiV0Xj/jlNrrv5+JAMNWXrKftja6RUVMVYNEtiPL1f1AJehZNGsjccwcEZuqam85TbX7MD0L7unyg6Mkbxifn4Pjwjt6zUseeIz9fCnhAK9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739332777; c=relaxed/simple;
-	bh=JaLBBTLuZK3t1z48SvdeLWkeg0yEjSt8JbPcEaXMLZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iYOQksnSO0Qf01cUXKDdc1E4rBwGnvJ8HQF40hbkaGRnwzvZh2BNFGLYwQATOZQRAB3jYeelq7HaYXMNpTx8Yh/EbhftFl4UcqGuqs0tCGdwAGadItAYAoZtbE5Pzs2Wcb483Vha99aZ6R5Vpw+Y7g361Kc5PBYgN/iWcbS3iyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKZcHPYA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4DBBC4CEDF;
-	Wed, 12 Feb 2025 03:59:35 +0000 (UTC)
+	s=arc-20240116; t=1739333114; c=relaxed/simple;
+	bh=ybIygu13oOH3MI8QbIfsK7m4pRQxcHlQE2MUTFs9fjQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=m4ekgV5a1wuf7R7sz3Ssy50LIvyx2/gWOxwyEAAEuqInziP3zN2rkr76+4yFH4KmKnYiq5oTVC3NQYNFD1ZajckTWuABJrBX466SGnfZsrskMtHvVhVtOUUDZeS9dOglhnHX6MNdNSXCepiocDG8j/qy3KZH191Fxi9w8WaZMPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPIDA6ro; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3850C4CEDF;
+	Wed, 12 Feb 2025 04:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739332776;
-	bh=JaLBBTLuZK3t1z48SvdeLWkeg0yEjSt8JbPcEaXMLZ4=;
+	s=k20201202; t=1739333113;
+	bh=ybIygu13oOH3MI8QbIfsK7m4pRQxcHlQE2MUTFs9fjQ=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FKZcHPYADRK/fL0VqWgjL7xe5OaolNokgPhL0oqnORO33d367/VqDqfWC4KDbjKxF
-	 tWXRDj9YhdVwjUGxWqwddFIbKjgUmyeS1oTBCR3fr/u9rtGZWLUS+NIFoJWRCL7RvD
-	 VMSy5QxfoTZqzDtAWvPDss+/BJuLVBThYUOM3V4Xk7ywroMtz7Zf7k6POhFqVsbgRq
-	 9SVgDelOXjkw2AhGvOVDCUxx8Iyw7a3utQZxkiQPSKgSOpiflLBtDGlkDtbekEl9cx
-	 s19HzEwGyfvPxIYGfzBh4JuYq9N5X1lKmPwtxY/0f0KAS2l+G1x+mAItmQ36seI65h
-	 gxce6QPVxRcpQ==
-Date: Tue, 11 Feb 2025 19:59:34 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Lei Wei <quic_leiwei@quicinc.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, <netdev@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <quic_kkumarcs@quicinc.com>,
- <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
- <quic_linchen@quicinc.com>, <quic_luoj@quicinc.com>,
- <srinivas.kandagatla@linaro.org>, <bartosz.golaszewski@linaro.org>,
- <vsmuthu@qti.qualcomm.com>, <john@phrozen.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH net-next v5 0/5] Add PCS support for Qualcomm IPQ9574
- SoC
-Message-ID: <20250211195934.47943371@kernel.org>
-In-Reply-To: <20250207-ipq_pcs_6-14_rc1-v5-0-be2ebec32921@quicinc.com>
-References: <20250207-ipq_pcs_6-14_rc1-v5-0-be2ebec32921@quicinc.com>
+	b=EPIDA6roMboDSVK9Hu+DMva2D4DI1vs1cARp6GDK4B2UlsWiJOvf6Cmrd/HY1pxcM
+	 XChqNqjTc1JLVAsyOyv6wrJja4l6ggvaFtGZxp900mpKsLQJBGMvH10kSEf8TMYzUI
+	 b7Hqhamm9WhTNgyMFNff6AflhioI1v3WAj0L0cGKrb/Qqn/29w0t+2u8gKv68lVdhv
+	 90ST5Aoxlkp8Y1K1aDxeiI0xd8WkpgB0qVrg48B13y3qVRUY3ExcYPVBJU9waGugCy
+	 LaiXh9hSos/9iZlc8XxztDvszX94Nc/lcPZQ6Oei/ql1wGUjIgYh36Dukq8nbv7kSM
+	 mwc4KLZHdWDCQ==
+Date: Wed, 12 Feb 2025 13:05:09 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Jiri Olsa <jolsa@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>, Kees
+ Cook <kees@kernel.org>, Eyal Birger <eyal.birger@gmail.com>, stable
+ <stable@vger.kernel.org>, Jann Horn <jannh@google.com>, LKML
+ <linux-kernel@vger.kernel.org>, linux-trace-kernel
+ <linux-trace-kernel@vger.kernel.org>, Linux API
+ <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, bpf
+ <bpf@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>, Deepak Gupta
+ <debug@rivosinc.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCHv2 perf/core] uprobes: Harden uretprobe syscall
+ trampoline check
+Message-Id: <20250212130509.ce1987095c6b17b26d3ee40a@kernel.org>
+In-Reply-To: <20250211165940.GB9174@redhat.com>
+References: <20250211111559.2984778-1-jolsa@kernel.org>
+	<CAEf4BzYPmtUirnO3Bp+3F3d4++4ttL_MZAG+yGcTTKTRK2X2vw@mail.gmail.com>
+	<CAADnVQJ05xkXw+c_T1qB+ECUqO5sJxDVJ3bypjS3KSQCTJb-1g@mail.gmail.com>
+	<20250211165940.GB9174@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 7 Feb 2025 23:53:11 +0800 Lei Wei wrote:
-> The 'UNIPHY' PCS block in the Qualcomm IPQ9574 SoC provides Ethernet
-> PCS and SerDes functions. It supports 1Gbps mode PCS and 10-Gigabit
-> mode PCS (XPCS) functions, and supports various interface modes for
-> the connectivity between the Ethernet MAC and the external PHYs/Switch.
-> There are three UNIPHY (PCS) instances in IPQ9574, supporting the six
-> Ethernet ports.
-> 
-> This patch series adds base driver support for initializing the PCS,
-> and PCS phylink ops for managing the PCS modes/states. Support for
-> SGMII/QSGMII (PCS) and USXGMII (XPCS) modes is being added initially.
-> 
-> The Ethernet driver which handles the MAC operations will create the
-> PCS instances and phylink for the MAC, by utilizing the API exported
-> by this driver.
-> 
-> While support is being added initially for IPQ9574, the driver is
-> expected to be easily extendable later for other SoCs in the IPQ
-> family such as IPQ5332.
+On Tue, 11 Feb 2025 17:59:41 +0100
+Oleg Nesterov <oleg@redhat.com> wrote:
 
-Could someone with PHY, or even, dare I say, phylink expertise
-take a look here?
+> On 02/11, Alexei Starovoitov wrote:
+> >
+> > > > +#define UPROBE_NO_TRAMPOLINE_VADDR ((unsigned long)-1)
+> >
+> > If you respin anyway maybe use ~0UL instead?
+> > In the above and in
+> > uprobe_get_trampoline_vaddr(),
+> > since
+> >
+> > unsigned long trampoline_vaddr = -1;
+> 
+> ... or -1ul in both cases.
+> 
+> I agree, UPROBE_NO_TRAMPOLINE_VADDR has a single user, looks
+> a bit strange...
+
+I think both this function and uprobe_get_trampoline_vaddr()
+should use the same macro as a token.
+(and ~0UL is a bit more comfortable for me too :) )
+
+----
+unsigned long uprobe_get_trampoline_vaddr(void)
+{
+	struct xol_area *area;
+	unsigned long trampoline_vaddr = -1;
+----
+
+Thank you,
+
+> 
+> Oleg.
+> 
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
