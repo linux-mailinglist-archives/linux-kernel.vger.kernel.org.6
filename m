@@ -1,64 +1,45 @@
-Return-Path: <linux-kernel+bounces-510528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B14BA31E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:52:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717AEA31E5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EFA31652B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BE383A7610
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8249C1FBC96;
-	Wed, 12 Feb 2025 05:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE311FBC8D;
+	Wed, 12 Feb 2025 05:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="auo5J/Xm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OLz/jlMq"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762161FAC45;
-	Wed, 12 Feb 2025 05:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545EB2B9BC;
+	Wed, 12 Feb 2025 05:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739339500; cv=none; b=sr/rEKXBOSiKJMa5vN4TKq7TWHwES451rNcFsC+nD13uvBUliCEQib3VpnYcD9pz0lgh2DchhpMRLhGaiZW26VCsl8mtFys5Fdbdur83BVRCnkqj1C+S58VxQLOlIDBgwnM8A1GWMmXFcsWL2bee42RPePnBBaF0NifiCC8Lp2E=
+	t=1739339826; cv=none; b=m1zo0sP/KKMw6Akqzrsj4ORCOummCsbvUC8YUfLUVaL9vVlW2ytdRytitdRe/MX9j6ZpUI1DmGh8aOkXhIgbgTL1q/ZfWXIAMf/kXAUKsCMq4Mb0br5ePers1WcJWqbw9FIRQ5bGXPGxBHCPnW2wTwjrM9OW8Y4FozXXv3I6gv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739339500; c=relaxed/simple;
-	bh=OdeC2Rb28IXw9QRvLZlSuGXJ/Uv++46UhvOES/0+HZc=;
+	s=arc-20240116; t=1739339826; c=relaxed/simple;
+	bh=ZwCnMCj3UIdPDy3oeREeeSS2FtGVAdmTHB52TJ5R+MI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xml9FFHMV+MWFPpnAagpSOUgwlyvvQQm0xjhheCDFDFFKfmrtCvxN/yWyBUIJX/5afQ2Vpp20I8JUJOG73IG3GsqHR1vE247+ItZmsraffqi5tzFYN9nEVxYqg0pXdeDx5MSGjsSHunTtjFj35Eg7NiH2ktrytGxA9WKQIBWjSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=auo5J/Xm; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739339499; x=1770875499;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OdeC2Rb28IXw9QRvLZlSuGXJ/Uv++46UhvOES/0+HZc=;
-  b=auo5J/XmqJP79frTMvHytaZ9j+6KNxpGXr86BtG4kRz9146fX050lla7
-   8G36NlCIR/5vl11KVtZaCzWvOm4izvQOlqffgShM2F7U57GmSF9HGUSj6
-   K5beQLeD3fMjO/T5r9HUauxxZpPR/dSTzjPyrqnLjaYvkzx9E3x48XDW0
-   lfqg4Bk6CxyDOt3tgNsbqXBpnX1wWoICN2a1ll6TWYnfYxPaHWAW+wDD+
-   hleNqHNS8sCqjffEa2zXJuUW3WMAc0qsVeQlg06vwmdsY+laEYXSAgm/Y
-   8nxhItuKuViAKQifRCSrv0Vdp0DqRrdQRQ+ZF2dfBCxhS5Ej2yQUSE0PU
-   g==;
-X-CSE-ConnectionGUID: aEYEbQUJSImXSExfiiZ67w==
-X-CSE-MsgGUID: CGy5Zqv9RxGLYyixz46sDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="62448113"
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="62448113"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 21:51:39 -0800
-X-CSE-ConnectionGUID: +9YbovWjRVeQsLDdGgZILw==
-X-CSE-MsgGUID: V8Zn/khKQZmKVKyErD2MdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="112580594"
-Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 21:51:36 -0800
-Message-ID: <518a71a9-011f-456c-bc99-639a5d69c144@linux.intel.com>
-Date: Wed, 12 Feb 2025 13:51:33 +0800
+	 In-Reply-To:Content-Type; b=Rrxalabq5LmKpyk0ZliBeAc6emBwxoJfCmKK1C4wZRvSX/mhJuUgAm6uyarEbjtEr6fzYrOxNhKk/w4a5D4tlqinwEgXNKwtFlCuC4lHuyY7VKdekPUU6A6kCUSnD/qY41yPb5yyEr2DG3HEwJvpEJ1WqaXWNkHYXA/t+x8yUAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OLz/jlMq; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739339821; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=KvRmoe/zsC7m2wXD5OYDHglu/jPFjgfHTsdUpjdqzNE=;
+	b=OLz/jlMqIuXSmsfprApWU42ES8U05RWJo2qJh2PThNoh5VdJBXjgsYup8zcYY8FF5g5+gGGRLAQTpEZpMVzti/sO4Pqi6NBacj6BGOVpCj56hdl4859tn6UPSVQ2huuukqfyR+2AWILVShauRHUa3sPWHQCiCVp+eO7uXou9sOA=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPIso2v_1739339502 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 12 Feb 2025 13:51:42 +0800
+Message-ID: <a89b973e-a168-49f1-8a82-2e9280cc08b6@linux.alibaba.com>
+Date: Wed, 12 Feb 2025 13:51:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,55 +47,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/17] KVM: TDX: Handle SMI request as !CONFIG_KVM_SMM
-To: Sean Christopherson <seanjc@google.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, rick.p.edgecombe@intel.com,
- kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com,
- xiaoyao.li@intel.com, tony.lindgren@intel.com, isaku.yamahata@intel.com,
- yan.y.zhao@intel.com, chao.gao@intel.com, linux-kernel@vger.kernel.org
-References: <20250211025828.3072076-1-binbin.wu@linux.intel.com>
- <20250211025828.3072076-10-binbin.wu@linux.intel.com>
- <Z6v9yjWLNTU6X90d@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <Z6v9yjWLNTU6X90d@google.com>
+Subject: Re: [PATCH v3 3/4] PCI/DPC: Run recovery on device that detected the
+ error
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
+ terry.bowman@amd.com
+References: <20250207093500.70885-1-xueshuai@linux.alibaba.com>
+ <20250207093500.70885-4-xueshuai@linux.alibaba.com>
+ <c1837324-98b0-4548-893f-b14e89ced9db@linux.intel.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <c1837324-98b0-4548-893f-b14e89ced9db@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2/12/2025 9:47 AM, Sean Christopherson wrote:
-> On Tue, Feb 11, 2025, Binbin Wu wrote:
->> +#ifdef CONFIG_KVM_SMM
->> +static int vt_smi_allowed(struct kvm_vcpu *vcpu, bool for_injection)
->> +{
->> +	if (KVM_BUG_ON(is_td_vcpu(vcpu), vcpu->kvm))
->> +		return false;
-> Nit, while the name suggests a boolean return, the actual return in -errno/0/1,
-> i.e. this should be '0', not "false".
-Yes.
+在 2025/2/12 05:23, Sathyanarayanan Kuppuswamy 写道:
+> 
+> On 2/7/25 1:34 AM, Shuai Xue wrote:
+>> The current implementation of pcie_do_recovery() assumes that the
+>> recovery process is executed on the device that detected the error.
+>> However, the DPC driver currently passes the error port that experienced
+>> the DPC event to pcie_do_recovery().
+>>
+>> Use the SOURCE ID register to correctly identify the device that detected the
+>> error. By passing this error device to pcie_do_recovery(), subsequent
+>> patches will be able to accurately access AER status of the error device.
+> 
+> I also recommend adding info about the fact that pcie_do_recovery() finds
+> upstream bridge to run the recovery process and hence should not observe
+> any functional changes (compared to previous version)
 
->
-> A bit late to be asking this, but has anyone verified all the KVM_BUG_ON() calls
-> are fully optimized out when CONFIG_KVM_INTEL_TDX=n?
->
-> /me rummages around
->
-> Sort of.  The KVM_BUG_ON()s are all gone, but sadly a stub gets left behind.  Not
-> the end of the world since they're all tail calls, but it's still quite useless,
-> especially when using frame pointers.
->
-> Aha!  Finally!  An excuse to macrofy some of this!
->
-> Rather than have a metric ton of stubs for all of the TDX variants, simply omit
-> the wrappers when CONFIG_KVM_INTEL_TDX=n.  Quite nearly all of vmx/main.c can go
-> under a single #ifdef.  That eliminates all the silly trampolines in the generated
-> code, and almost all of the stubs.
-Thanks for the suggestion!
+Got it.  Will add it.
+> 
+>>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> ---
+>>   drivers/pci/pci.h      |  2 +-
+>>   drivers/pci/pcie/dpc.c | 25 +++++++++++++++++++++----
+>>   drivers/pci/pcie/edr.c |  7 ++++---
+>>   3 files changed, 26 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 01e51db8d285..870d2fbd6ff2 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -572,7 +572,7 @@ struct rcec_ea {
+>>   void pci_save_dpc_state(struct pci_dev *dev);
+>>   void pci_restore_dpc_state(struct pci_dev *dev);
+>>   void pci_dpc_init(struct pci_dev *pdev);
+>> -void dpc_process_error(struct pci_dev *pdev);
+>> +struct pci_dev *dpc_process_error(struct pci_dev *pdev);
+>>   pci_ers_result_t dpc_reset_link(struct pci_dev *pdev);
+>>   bool pci_dpc_recovered(struct pci_dev *pdev);
+>>   unsigned int dpc_tlp_log_len(struct pci_dev *dev);
+>> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+>> index 1a54a0b657ae..a91440f3b118 100644
+>> --- a/drivers/pci/pcie/dpc.c
+>> +++ b/drivers/pci/pcie/dpc.c
+>> @@ -253,10 +253,17 @@ static int dpc_get_aer_uncorrect_severity(struct pci_dev *dev,
+>>       return 1;
+>>   }
+>> -void dpc_process_error(struct pci_dev *pdev)
+>> +/**
+>> + * dpc_process_error - handle the DPC error status
+>> + * @pdev: the port that experienced the containment event
+>> + *
+>> + * Return the device that detected the error.
+>> + */
+> 
+> Add a note about calling pci_dev_put() after using this function.
 
-Since the changes will be across multiple sections of TDX KVM support,
-instead of modifying them individually, are you OK if we do it in a separate
-cleanup patch?
+Will add it in next version.
 
-[...]
+Thanks.
+Shuai
+
+
 
