@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-511334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82CFA32997
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:12:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D180A32998
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08BF11887604
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:12:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24BBA7A1756
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE7E211470;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36E92116E5;
 	Wed, 12 Feb 2025 15:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="imuTfGHs"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZbCrvPuM"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C302A271800;
-	Wed, 12 Feb 2025 15:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54B1205AD9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739373116; cv=none; b=Y8N4I/r/YMg3xVX/7UfawLD6oByj3rWx0VgIdf6iYah2PFtf/AWyERwIeWDB4wue1JDgcbV7PiRjubignpcp1YHcJGxpZ0HA/VecvjQZBMsWlK0CebxXlll82Zs6CvaiH5h9QIzFyITWoQ8PuwS4mUarI20s3brCt4smpbnkwrY=
+	t=1739373117; cv=none; b=W/jb0/xCB1FyZ59kACwgV0Mz7LZSoA0tBesWVDXGoOvr3Ww4dOrNBE3xRisVGWuqjQMdU6rndkv/FIEJOcDxPU7EqcS0QYEUb5fOBedDcUStMQpFYUbmlqI/y3C6oflcHFn4AYc/WGz0DkX1Ojg3AObkjfF0jmRfz85UnNIv9I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739373116; c=relaxed/simple;
-	bh=99arZH731iDZzfa8ZZPAfBQWn0acSMZBM8u1cuqUXuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HfEl+3/rLsWjFeqfpcHn4mJ9q/FWMLTUjktaGQPUAlSNg1fUvN4FjQFX1MvcVIf8UlJL56bLoEFrTJGjwL2J/uOknA2mIK3zd3trdNSyeh8xI0e/ZU2xJy/zlYJZ1AYzPMseE/AggvYufSLWBQfZi8PVSMkpOs2p2O1MVqBtNRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=imuTfGHs; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C6u2Y2016943;
-	Wed, 12 Feb 2025 09:10:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=gaOUuX7MQMuia9McaDE2MM2EVmIcLDAQ3K7abX1j5EI=; b=
-	imuTfGHsfbgtQ94PMHcxX8dKsZW+Oc0j6LC0gyMYNSvSxqzXnaTaNlWMlRasdXb8
-	Nvpn0HrIn7DtIobeHILQes4oMoaNlG73Y8wm7zusuXTIV6LoUIk3ST5faNQWzKj7
-	2XJD6A9hHaGH09OdY5nTy3QSOpzWbQYodSyX3CAwKuhjM2+KS9YZc3YNNmmV8m25
-	D9i01azVLWhpnnkJTPvSjBepXblKH+VJ8YY/c8ZMwcYO3NAnwIbcl3MiiiWby1mp
-	TT9kYkZsv9tR2sHEUE1gVttwJMs81xJPVCfBthzNAaJGreCY6mhx/w0flyThJr4r
-	+d2ehwWTAzHOVJUxjx+Tfw==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44rpsv8nss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 09:10:58 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 12 Feb
- 2025 15:10:56 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Wed, 12 Feb 2025 15:10:51 +0000
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 1F10582025A;
-	Wed, 12 Feb 2025 15:10:51 +0000 (UTC)
-Message-ID: <c92f8f5b-e6f4-41bb-86c1-dc45b80cd49b@opensource.cirrus.com>
-Date: Wed, 12 Feb 2025 15:10:51 +0000
+	s=arc-20240116; t=1739373117; c=relaxed/simple;
+	bh=lW2eR9C5xxd+d47ZjXSOq/Rs1Lr85IzEjJbUtB/rYck=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Zq+F98EIvTxtZ/kSiSb2l96Xwg0YESS4QjfnSns1xQh81Kty+X/KLKBo3TkH0TZFNJA3Xeabv3L+Kf3yNHprZ1dCmr88DOop57TGxGV+fVRRTrkRquEW/En0Or0KsM8tj0OGy7pRscmwnm4N4XenaXfDDxhJhglgYzQrFU/Ceg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZbCrvPuM; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so1289364666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:11:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1739373113; x=1739977913; darn=vger.kernel.org;
+        h=content-transfer-encoding:autocrypt:subject:from:cc:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=27wXC/RGyRWjlGAoZwYGHUFkKIvXjmAZFqTsWcAXkpw=;
+        b=ZbCrvPuMNtjXyth5+yDEBmod5IQMMc/esfFIChaMxHfRaJK6Z+6S2+KZlsH0UKSvSS
+         OLu+hI3bCJrZgpVNSxhTYGbr+wh/oRqsG1JWDalWB+Xhm0/PuNU5Rbd5MguwvQWog8nl
+         Sn4oQ6jH0IlU4JNLGFxqTjClcIEIsi7LEsUFRnmWYH6sn+54qrlZLpyVLUy6zJ3ezrtk
+         YOIg2PrwdLJqPUtelJzPpodCGZtpKxfNLzAmyqifN1J5qI0TkgjsP+ZKAzpdTZeefaHE
+         M+H+ZHlnJrj0VGIPpcjDuck1rHggM0McW7f6FCd0dprD0yyYiXwRCkJeDgtlDIz2/Vqp
+         QZQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739373113; x=1739977913;
+        h=content-transfer-encoding:autocrypt:subject:from:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=27wXC/RGyRWjlGAoZwYGHUFkKIvXjmAZFqTsWcAXkpw=;
+        b=uCCilOO47zjMZQGb5MFqwQnXla2xyAJXrZvdh1Yn5sRcLh0Sa5Zy1qynZ7cW1e6Hpi
+         YDXzLfSPbcEEvAm5oV0zvEu38xtoA1002rrX0w6VBWsXdLZv5e//fxZ99Ci9Jq6WJ/pR
+         JIh29Z6iwvBeb2CFnXMb9IGv90K9a8UPjnXOAhQfY1ys/rFaeqIS2Ng1KD3aiRsAcsvc
+         lVzmHsoIfqDbZySkGyf2KqOLRGMwuLHvKUphVDqN81pSe+zwGlLzDZsiaz+ZL86ilwb3
+         HPySP0596RdfZ9W9hupdj2OtIJlCskHwBnpAT3FnJnhdtHhadVoa/THvhuPAnjVgN/8m
+         tDRg==
+X-Gm-Message-State: AOJu0YzkCf2dXY2KT8sKuMxBPbmAeqoL0MInoXPRBc+Ziw2JPR+X1lp6
+	2iU4PGzIzEMtM+UwNyyrozlN6Kca8IegWBRZZfbc47Ngu7FGDw9D6o4ctMPtL62Zf/x1qFlSdR0
+	=
+X-Gm-Gg: ASbGncukTKAtKopdEoP3bptCu/2fHfAYeVVl2/N4yXlaNVx8B7Uds1YZjL1+TewPkKJ
+	0QO79rAPy1n61Z+1KoCSyWA8d8fPO36Dt1AAQAdhErMNh9iZlCwIA3lyc7Bj7KmGiz4JP1moTl4
+	K7dmUKauehUEMHD1w4g5bK49/juooKLBGTr0K+llG4REjrFtR6vjoLbtcDfAEHwZbvkqjsB5R2V
+	rq6J/3lPWpL1QBUyYxC7XsHwdMutlhgLdgqxts46ijsj5Y1ey3z1BMMQs+Kn8frB/orMvbMGMst
+	+uUFQv8gjH8xEouti0VUSUCc6z29aNb9cepuRKhCzJB3buzRtZeZJ4Toge1WvxLhOyx+KvHWTHk
+	7
+X-Google-Smtp-Source: AGHT+IHgx2VJWakGuR7z5wkrDlPx3Dd2+2qHizLDchE4j+yKE2uJ4nBaPonow1MwBAOiWnOL7/SsTA==
+X-Received: by 2002:a17:907:2d12:b0:ab7:a39:db4 with SMTP id a640c23a62f3a-ab7f34ac985mr313038866b.57.1739373112898;
+        Wed, 12 Feb 2025 07:11:52 -0800 (PST)
+Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7878b18a9sm1150244366b.167.2025.02.12.07.11.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 07:11:52 -0800 (PST)
+Message-ID: <561c52d6-9728-4dfc-a629-353dc2488c8b@suse.com>
+Date: Wed, 12 Feb 2025 16:11:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,96 +80,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 5/7] mfd: cs40l26: Add support for CS40L26 core
- driver
-To: Fred Treven <ftreven@opensource.cirrus.com>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Simon Trimmer <simont@opensource.cirrus.com>,
-        Charles Keepax
-	<ckeepax@opensource.cirrus.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        James Ogletree <jogletre@opensource.cirrus.com>,
-        Ben Bright
-	<ben.bright@cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>,
-        David Rhodes <david.rhodes@cirrus.com>,
-        Jeff LaBundy
-	<jeff@labundy.com>, Heiko Stuebner <heiko@sntech.de>,
-        Karel Balej
-	<balejk@matfyz.cz>,
-        Igor Prusov <ivprusov@salutedevices.com>,
-        Jack Yu
-	<jack.yu@realtek.com>,
-        Weidong Wang <wangweidong.a@awinic.com>,
-        Binbin Zhou
-	<zhoubinbin@loongson.cn>,
-        Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
-        "Paul
- Handrigan" <paulha@opensource.cirrus.com>,
-        Masahiro Yamada
-	<masahiroy@kernel.org>, Nuno Sa <nuno.sa@analog.com>
-CC: <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-sound@vger.kernel.org>
-References: <20250204231835.2000457-1-ftreven@opensource.cirrus.com>
- <20250204231835.2000457-6-ftreven@opensource.cirrus.com>
- <4e5f0194-22bc-4e17-85f4-6dbc145a936b@kernel.org>
- <3bff0ff8-7397-414d-a701-011d5b5a41f4@opensource.cirrus.com>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <3bff0ff8-7397-414d-a701-011d5b5a41f4@opensource.cirrus.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=O73DvA9W c=1 sm=1 tr=0 ts=67acba02 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=_SCIqTSYrM5XDuVbtgUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: dGfg_TWu3AP67jc1rHjLAyjt-XIXdm3d
-X-Proofpoint-GUID: dGfg_TWu3AP67jc1rHjLAyjt-XIXdm3d
-X-Proofpoint-Spam-Reason: safe
+Content-Language: en-US
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: Juergen Gross <jgross@suse.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+From: Jan Beulich <jbeulich@suse.com>
+Subject: [PATCH] compiler: remove stringification from __ADDRESSABLE_ASM()
+Autocrypt: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
+ e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
+ hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
+ IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
+ FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
+ t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
+ AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
+ HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
+ mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
+ m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
+ EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
+ wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
+ nAuWpQkjM1ASeQwSHEeAWPgskBQL
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/02/2025 9:16 pm, Fred Treven wrote:
-> On 2/5/25 04:34, Krzysztof Kozlowski wrote:
->> On 05/02/2025 00:18, Fred Treven wrote:
->>> Introduce support for Cirrus Logic Device CS40L26:
->>> A boosted haptic driver with integrated DSP and
->>> waveform memory with advanced closed loop algorithms
->>> and LRA protection.
->>>
+__ADDRESSABLE_ASM_STR() is where the necessary stringification happens.
+As long as "sym" doesn't contain any odd characters, no quoting is
+required for its use with .quad / .long. In fact the quotation gets in
+the way with gas 2.25; it's only from 2.26 onwards that quoted symbols
+are half-way properly supported.
 
-<SNIP>
+Fixes: 0ef8047b737d ("x86/static-call: provide a way to do very early static-call updates")
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Cc: stable@vger.kernel.org
+---
+I think that __ADDRESSABLE_ASM{,_STR}() better would have a separate
+comment, as that presently kind of shared with {_,}__ADDRESSABLE() isn't
+really applicable to assembly code.
 
->>> +static const struct spi_device_id cs40l26_id_spi[] = {
->>> +    { "cs40l26a", 0 },
->>> +    { "cs40l27b", 1 },
->>
->> What are these 0 and 1?
-> 
-> I will make it clear that these are enumerating the different possible
-> device variants.
-> 
-> 
->>
->>> +    {}
->>> +};
->>> +MODULE_DEVICE_TABLE(spi, cs40l26_id_spi);
->>> +
->>> +static const struct of_device_id cs40l26_of_match[] = {
->>> +    { .compatible = "cirrus,cs40l26a" },
->>> +    { .compatible = "cirrus,cs40l27b" },
->>
->> So devices are compatible? Or rather this is unsynced with other ID 
->> table.
-> I'm not sure what you mean by this.
-> 
+Is data allocation actually necessary in __ADDRESSABLE_ASM()? Aiui the
+sole goal is to have sym in the symbol table. That could be achieved by
+a simple .global (or e.g. .hidden) directive.
 
-cs40l26_id_spi[] has the 0/1 cookie values to indicate which part
-variant is being instantiated. But cs40l26_of_match[] doesn't have
-these cookie values to indicate which part ID was matched.
+Shouldn't Xen's __ADDRESSABLE_xen_hypercall use STATIC_CALL_KEY() rather
+than open-coding it?
 
-
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -245,7 +245,7 @@ static inline void *offset_to_ptr(const
+ #define __ADDRESSABLE_ASM(sym)						\
+ 	.pushsection .discard.addressable,"aw";				\
+ 	.align ARCH_SEL(8,4);						\
+-	ARCH_SEL(.quad, .long) __stringify(sym);			\
++	ARCH_SEL(.quad, .long) sym;					\
+ 	.popsection;
+ 
+ #define __ADDRESSABLE_ASM_STR(sym) __stringify(__ADDRESSABLE_ASM(sym))
 
