@@ -1,151 +1,142 @@
-Return-Path: <linux-kernel+bounces-510326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19996A31B2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:29:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB99A31B1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 02:23:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EA9F3A63E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:29:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53AB3A8638
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBE83594F;
-	Wed, 12 Feb 2025 01:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8062AF19;
+	Wed, 12 Feb 2025 01:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="fLVGjX+i"
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVWLqG08"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCEDAD27;
-	Wed, 12 Feb 2025 01:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBF52C1A2;
+	Wed, 12 Feb 2025 01:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739323786; cv=none; b=pwtziUS+sBOjyhk+aBvg+O3L6naKXOlM+Y8YbZuC5zo15wIeQBd2m9U+yFcDHD7hBjLqgvoQ5ANl0T+Na6gbBstff8ayQQO0CfzYOJH889DNH/8VDycbeZldf2X6eWv5XrfjelPea5gdzf+0Tt8poyH0aul7DKWW2hqr/lNNAT4=
+	t=1739323419; cv=none; b=qaZA+p0qZMApSsaB3aF8EfFE2/zww6kcpbqgtpWIOPzFmYV7V5HC/rB91Sch6QLRqcIQx3v5LoydhrY6JzQtJwHBOrqWWzFR38H+GyNpkv3pgIgGvHbnsSAn5xpNCblxjFC6DcO0VtX6DxJjkbZPmcG+cMzqIlHQB2zkUvPmPg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739323786; c=relaxed/simple;
-	bh=93VfGGxp9bDVjLPuPlcrPa9irsDjQc3C/amhn3XmjtM=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=Bzoqaby/mD0efury0WYf/GjPP4ZU1uHDSQC/XjcFO7UK41ZrUlbYZb0Q5h5Z26Up9yZKxaF549b2XhFlg2ff+HQV3k6XsS8tcDPN9Os4M3qIftdWxpAOnH49JNe1cZCrxkqUaSHFRszU4zz4o/c7l7kj/GV2RvPq+c5clCmKFkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=fLVGjX+i; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1739323772;
-	bh=ljA0W5xtMbewVjeQFdHOJlXOQpYykejr/VKAcc/lcbY=;
-	h=From:To:Cc:Subject:Date;
-	b=fLVGjX+iJ+Lvao4OZsxv+6JPDpCW9GBGANo/3y4iJ+3nCNrwbGtaBHM+GN1maRNtj
-	 PT+i3mSBf2ua+wQ/AfgRHCUISFJSw6Si7iYTExFua1uq9vPFft/s2KNrw4H9kfHarJ
-	 OaAJMRmkNH6RBstx6TphP1qqMkGN4r7LvIQQSDr0=
-Received: from NUC10.. ([39.156.73.10])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 53B304D2; Wed, 12 Feb 2025 09:20:59 +0800
-X-QQ-mid: xmsmtpt1739323259ty60p11s6
-Message-ID: <tencent_AF066A426F591F977D2A73AF00A34A883808@qq.com>
-X-QQ-XMAILINFO: M9VsxC5s0NEwobLBGcXuh2E3HsCEfrCiXs3M+lgxvqPb7zbttK7bce+SZdu/8G
-	 y4zSlhND4OYcLSj90MlmyafjaC0dYYH/GhJAtNOkisCYTs1zcst57ts+s1fa6IudWT1kGkdDbRMZ
-	 JmJvx3yobHJDJ95R+EAa7XYHUSDRXnX2CELKMN8k4wUQQsJ5a4mgVeOT1YblYeNr97w+M0UeLIp9
-	 WXtJDbWPSwWXYb+XtYjRtQYzJ6jd7qOzJbWpSHvhn7MNDzn1p+JyrsHHn5C72Cm0BMn1iwMwk60p
-	 jp+ttriXYT0Ly8BfZj++eECoCvlGf9u6HWn5aDA/mOMS3I9t28g4EgugnInI5/VUKtTRk8rX7cfD
-	 oEdWVHfO6y7DcIjB83BOztcSV5XnAqtg3bCrkIk1KWx1HEVy9f0SjkWgqU20JB3RlGaGQqpETAAw
-	 4GE9QgnhzSKQ+1dF3nzFNxoN+MMV5graG1RfO3TUQcMew0jLxPBf+PHa/af0qGMXvFtngOe+BqVQ
-	 F54BbQ8zU83FSRjnu/OBqgvQtQYcnypjeeLdw3VwXSNAp43fw3l/KQnRRRGa3MK9FEY07PaG4/ch
-	 5jOQCGvPnVEKjUkt4CRVrYpRqlAYlKqtC5MRPTuOC6UUMUaZQxvdcATh/fREDQq8/mxij/u3SbaY
-	 zMk7/4yzxR9ggO0BPHhkO9c+92GfSp/JMNMLw9Ccp17A6luYMaYUGWDVcphNC4vE0U0G2udUJQRD
-	 VyGn0FcL4YmfnQZwC5PA5LGy93LjpFDTPiaoC/yF+DDc5fjH9TQHC2CcKW3ICImb/6LB3DIT7qIh
-	 1K03iF5cBv5C18jdqrZH1Qi0S+Dp03XubtsO+7TJXx6/X0utGcS31C74/sxqHzlht6jseHEFy6KK
-	 r/VfwDAYla4o2cne5rOK4YziA2bYdN0ZfoesmrFtOkwB+k3qf0IkmEHETpNYo3qP7Kr9fkQTvxTI
-	 QrXdlNouStH+1PPeKF2mwLiBhx2DB/VOEzvQwbUYiL4xxpFhM0SBuUvwmnvCLCWBQ0DSHq+cKf2q
-	 KMVmk5Cg==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii.nakryiko@gmail.com,
-	ast@kernel.org,
-	qmo@kernel.org,
-	daniel@iogearbox.net
-Cc: Rong Tao <rongtao@cestc.cn>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [TOOLING] (bpftool)),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH bpf-next v3] bpftool: Check map name length when map create
-Date: Wed, 12 Feb 2025 09:20:57 +0800
-X-OQ-MSGID: <20250212012058.93986-1-rtoax@foxmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739323419; c=relaxed/simple;
+	bh=NxZg3s6KMEv9gnhHvHFUocnGM1b/XIp3StXzcFhH2Xo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=UuD1p2md9E7lpPuIAdwv2zOJvG/DnX/XTG20uqiJwlhoErzSLFGdEdJh/PAQKkuVL0dddat8yW9wLGZuoEOwQtUmg2+gy5PlTgyRtT3T1LBay5hBM7YQg2cusrrQ7/NzlyeQ+jwaKYT+7DRHJH690Nu7g6+KCGHuWLiaiquAPEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVWLqG08; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1FD4C4CEDD;
+	Wed, 12 Feb 2025 01:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739323418;
+	bh=NxZg3s6KMEv9gnhHvHFUocnGM1b/XIp3StXzcFhH2Xo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=oVWLqG08PSOIXVkoGpvBSiL9K4kGQ1GwdmXPtyeAygaJn0meND1EiB2qktwJ22JVf
+	 go66AHTs0Cf3DuR6GsEFGt6bRYNSBNihzJP+6imQsIeJ8y+jU2ux129YLsrqJeegRJ
+	 RVmCgUnBlcMePi+eTjrQoAcpuPanxmZHoJFoTk4RjKV9Lf9v7lqoH7puNadklMKJr5
+	 eE+1NSuNulTWL95rJw8t2pmoJsp5RU/ZkWGjmj1ouBSSb1TujhysaTM2fFu38UHGgU
+	 b/slIh2skJHM9AGoogbS0SBO79NplryENo8z6B8yjdmhnjczivKwoL2/TN9DkcYDSi
+	 8LD8TglJLq9fg==
+Date: Tue, 11 Feb 2025 17:23:36 -0800 (PST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
+To: Juergen Gross <jgross@suse.com>
+cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+    Stefano Stabellini <sstabellini@kernel.org>, 
+    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
+    xen-devel@lists.xenproject.org, 
+    Jan Vejvalka <jan.vejvalka@lfmotol.cuni.cz>
+Subject: Re: [PATCH 1/2] xen/swiotlb: relax alignment requirements
+In-Reply-To: <20250211120432.29493-2-jgross@suse.com>
+Message-ID: <alpine.DEB.2.22.394.2502111723280.619090@ubuntu-linux-20-04-desktop>
+References: <20250211120432.29493-1-jgross@suse.com> <20250211120432.29493-2-jgross@suse.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: Rong Tao <rongtao@cestc.cn>
+On Tue, 11 Feb 2025, Juergen Gross wrote:
+> When mapping a buffer for DMA via .map_page or .map_sg DMA operations,
+> there is no need to check the machine frames to be aligned according
+> to the mapped areas size. All what is needed in these cases is that the
+> buffer is contiguous at machine level.
+> 
+> So carve out the alignment check from range_straddles_page_boundary()
+> and move it to a helper called by xen_swiotlb_alloc_coherent() and
+> xen_swiotlb_free_coherent() directly.
+> 
+> Fixes: 9f40ec84a797 ("xen/swiotlb: add alignment check for dma buffers")
+> Reported-by: Jan Vejvalka <jan.vejvalka@lfmotol.cuni.cz>
+> Tested-by: Jan Vejvalka <jan.vejvalka@lfmotol.cuni.cz>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
-The size of struct bpf_map::name is BPF_OBJ_NAME_LEN (16).
+Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
 
-bpf(2) {
-  map_create() {
-    bpf_obj_name_cpy(map->name, attr->map_name, sizeof(attr->map_name));
-  }
-}
 
-When specifying a map name using bpftool map create name, no error is
-reported if the name length is greater than 15.
-
-    $ sudo bpftool map create /sys/fs/bpf/12345678901234567890 \
-        type array key 4 value 4 entries 5 name 12345678901234567890
-
-Users will think that 12345678901234567890 is legal, but this name cannot
-be used to index a map.
-
-    $ sudo bpftool map show name 12345678901234567890
-    Error: can't parse name
-
-    $ sudo bpftool map show
-    ...
-    1249: array  name 123456789012345  flags 0x0
-    	key 4B  value 4B  max_entries 5  memlock 304B
-
-    $ sudo bpftool map show name 123456789012345
-    1249: array  name 123456789012345  flags 0x0
-    	key 4B  value 4B  max_entries 5  memlock 304B
-
-The map name provided in the command line is truncated, but no warning is
-reported. This submission checks the length of the map name.
-
-Reviewed-by: Quentin Monnet <qmo@kernel.org>
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
-v2: https://lore.kernel.org/lkml/tencent_26592A2BAF08A3A688A50600421559929708@qq.com/
-v1: https://lore.kernel.org/lkml/tencent_1C4444032C2188ACD04B4995B0D78F510607@qq.com/
----
- tools/bpf/bpftool/map.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
-index ed4a9bd82931..9617e64d3d11 100644
---- a/tools/bpf/bpftool/map.c
-+++ b/tools/bpf/bpftool/map.c
-@@ -1270,6 +1270,10 @@ static int do_create(int argc, char **argv)
- 		} else if (is_prefix(*argv, "name")) {
- 			NEXT_ARG();
- 			map_name = GET_ARG();
-+			if (strlen(map_name) > BPF_OBJ_NAME_LEN - 1) {
-+				p_info("Warning: map name is longer than %d characters, it will be truncated.\n",
-+				      BPF_OBJ_NAME_LEN - 1);
-+			}
- 		} else if (is_prefix(*argv, "key")) {
- 			if (parse_u32_arg(&argc, &argv, &key_size,
- 					  "key size"))
--- 
-2.48.1
-
+> ---
+>  drivers/xen/swiotlb-xen.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> index a337edcf8faf..26c62e0d34e9 100644
+> --- a/drivers/xen/swiotlb-xen.c
+> +++ b/drivers/xen/swiotlb-xen.c
+> @@ -74,19 +74,21 @@ static inline phys_addr_t xen_dma_to_phys(struct device *dev,
+>  	return xen_bus_to_phys(dev, dma_to_phys(dev, dma_addr));
+>  }
+>  
+> +static inline bool range_requires_alignment(phys_addr_t p, size_t size)
+> +{
+> +	phys_addr_t algn = 1ULL << (get_order(size) + PAGE_SHIFT);
+> +	phys_addr_t bus_addr = pfn_to_bfn(XEN_PFN_DOWN(p)) << XEN_PAGE_SHIFT;
+> +
+> +	return IS_ALIGNED(p, algn) && !IS_ALIGNED(bus_addr, algn);
+> +}
+> +
+>  static inline int range_straddles_page_boundary(phys_addr_t p, size_t size)
+>  {
+>  	unsigned long next_bfn, xen_pfn = XEN_PFN_DOWN(p);
+>  	unsigned int i, nr_pages = XEN_PFN_UP(xen_offset_in_page(p) + size);
+> -	phys_addr_t algn = 1ULL << (get_order(size) + PAGE_SHIFT);
+>  
+>  	next_bfn = pfn_to_bfn(xen_pfn);
+>  
+> -	/* If buffer is physically aligned, ensure DMA alignment. */
+> -	if (IS_ALIGNED(p, algn) &&
+> -	    !IS_ALIGNED((phys_addr_t)next_bfn << XEN_PAGE_SHIFT, algn))
+> -		return 1;
+> -
+>  	for (i = 1; i < nr_pages; i++)
+>  		if (pfn_to_bfn(++xen_pfn) != ++next_bfn)
+>  			return 1;
+> @@ -156,7 +158,8 @@ xen_swiotlb_alloc_coherent(struct device *dev, size_t size,
+>  
+>  	*dma_handle = xen_phys_to_dma(dev, phys);
+>  	if (*dma_handle + size - 1 > dma_mask ||
+> -	    range_straddles_page_boundary(phys, size)) {
+> +	    range_straddles_page_boundary(phys, size) ||
+> +	    range_requires_alignment(phys, size)) {
+>  		if (xen_create_contiguous_region(phys, order, fls64(dma_mask),
+>  				dma_handle) != 0)
+>  			goto out_free_pages;
+> @@ -182,7 +185,8 @@ xen_swiotlb_free_coherent(struct device *dev, size_t size, void *vaddr,
+>  	size = ALIGN(size, XEN_PAGE_SIZE);
+>  
+>  	if (WARN_ON_ONCE(dma_handle + size - 1 > dev->coherent_dma_mask) ||
+> -	    WARN_ON_ONCE(range_straddles_page_boundary(phys, size)))
+> +	    WARN_ON_ONCE(range_straddles_page_boundary(phys, size) ||
+> +			 range_requires_alignment(phys, size)))
+>  	    	return;
+>  
+>  	if (TestClearPageXenRemapped(virt_to_page(vaddr)))
+> -- 
+> 2.43.0
+> 
 
