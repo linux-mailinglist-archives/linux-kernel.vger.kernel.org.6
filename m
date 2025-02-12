@@ -1,185 +1,144 @@
-Return-Path: <linux-kernel+bounces-511806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC346A32FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:44:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 786C3A33007
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:45:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC24F1889FAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:44:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB47188BEBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496CE1FFC4A;
-	Wed, 12 Feb 2025 19:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2475200114;
+	Wed, 12 Feb 2025 19:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l3nluVDj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRSJyY9C"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791391FF615;
-	Wed, 12 Feb 2025 19:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41D21FFC69;
+	Wed, 12 Feb 2025 19:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739389429; cv=none; b=pPZhC/o4M9de+Ds0n2KSzTRbJULRzKzE1WzeXYwoCV8e/EYbrcKuNh8nAAQHF19Jzud3fjQad7NtCzNlz8D/8kvcQQKR4FY6ucgCUO+toEzu+qTunBzUXOI4KfPBB+NN/InMgFrwdieA8ehP1UW1aqeKTlKDK8MzQ+lwej1SjL8=
+	t=1739389492; cv=none; b=HgsqfQuXTllZ8UFFmITjb7/VhDVoN0NKwKhVtTYvrTPscUOfF+nZcq9BPSx4hYQE2braqniLRKkiRNNdvKR92/XswHZllU2qkDyzEKB1y3WkQ8u9G6il78Rbzf4XrmyJXGKDCKE4bTmnbtykvOXMtd+wxuHxj+Q+WTQ/1jSxH94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739389429; c=relaxed/simple;
-	bh=J53gut3FCEvv7QNmL9a0iiaxDFCqQSjC2O6Ihu/AJ84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kA6lTbUVgydKQL1hxX7S6vgR5B7N0A6OFejvu9UNI4G9ZdbUNIqr2UcuMBuKNTvpebdLeXUlEhuHEsJbh4UalkH0cZrAtbkuf06yiPQp8hjXTiTHwdJh25f57bVXOtWy/b87xoJXwTqAUm9C1yR5WO28LNueH1FPOrjBLCpOqP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l3nluVDj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6EEFC4CEDF;
-	Wed, 12 Feb 2025 19:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739389428;
-	bh=J53gut3FCEvv7QNmL9a0iiaxDFCqQSjC2O6Ihu/AJ84=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l3nluVDjmkhujiS09PDYmKWR8ZpL1NvZ673ie95nbqovNihUcry7wp4RhxDaIcW4C
-	 WzALgu8RqrEf8AEKXJa1NQN36127tWGpqtfMt+ceF8qkKxFUatwJV8mWOCXDA7c8U6
-	 5c6mvpzQn7EtvSK26FGhsTxvo9nA5pW5qx8gSDuBJ7zl/wl5WF+1A0qzlo/GtstEyq
-	 UpvxdrPQwjDAE3IeNXfcspWaobaAE2jMqkTwrZPDdD8R5k2k0xPPuMTtHZRy6guNwr
-	 J6A5CGOXSwgZePq4BouABSV8KVXF9QiPXKh5Adk1Oyuh6/Hd8f5WNo1Hpr1RY3Eam1
-	 dqgSlb5voTSKg==
-Date: Wed, 12 Feb 2025 13:43:47 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
-	Scott Wood <oss@buserror.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 08/12] dt-bindings: spi: Convert Freescale SPI
- bindings to YAML
-Message-ID: <20250212194347.GA119448-robh@kernel.org>
-References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
- <20250207-ppcyaml-v2-8-8137b0c42526@posteo.net>
+	s=arc-20240116; t=1739389492; c=relaxed/simple;
+	bh=ywIzaOVXmImOoO4Gas/GMqK2ose5vqyNopDAxiufQoo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nYMXbhUH2+eZpQhHQe5tkiRza3TaqDVBOekXMQPY74Omm7cnNkH8doveE31cOB1A0TgxJnsH/ChF3FZlnkPCo6gcFDSBEEcrK0dCfuK70W8/rVWH0bNX5BYCzNoZFBx6Ys9qj9jJKjOv4rbKXSElpql5NPYA1hBo1RLNzslxR1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRSJyY9C; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5fc7d346980so46728eaf.1;
+        Wed, 12 Feb 2025 11:44:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739389489; x=1739994289; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jPSeivS3uH0MhnhX3dDqt0ADzcQbXXGvaG4UAUIk9ZM=;
+        b=nRSJyY9Cd3FlMk7wpBMxAl5Aq1LCMs+e/UxuptaqEwx6xgj8GX2qzhJ0jyQonTwHZr
+         sT9vzYsqS+wOcYxjjGFwPvSQx5VMIB7dV2a/1zjfbaXfjDM0EsTA/BjJn9wfeEnYQrz8
+         uJ+sxs1Mt0NQMf7r0vJGLzDxztZ87d4ExtmUtw2XyFx9WlcscdMIvG3jri6/nD2sF258
+         ypdUUGiyAsA40tnkBNTPNZlRGscACj6QYWyIjUxLWUcaWCdMbGeXynib89i0/gg2X4u7
+         ZmCTB7wkexMPRYNMVjThGFVHBq8R7xPovkylOuH4notuRCutx5FEKoYpue+8ooQRiI3N
+         6HFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739389489; x=1739994289;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jPSeivS3uH0MhnhX3dDqt0ADzcQbXXGvaG4UAUIk9ZM=;
+        b=AE78VsV9aiWR4Wf4siOKVaI00ZQnoc78HKv44esLFeoDcEFDu8rHkS2/zpzGZOTUOr
+         cuJbjlwdjVlTDSdEJ1YZS+rWORG/NTcOiey80E1sHZuEYbyb+2DfVhrXj1wZeXRrGQRT
+         DJx8QJ+gKjOihYLUS/3mUdBsxgfmZZJ3nNn6P9fkthMacUGqGWJpfuvirnFbC/oLDDMu
+         lOcFdpJSB3nHiVkc32+CTryQEgidENGl2f/OoOQsYIMc04b0/WEGBlAMXgxySuXmzDYo
+         6rlzFZXbuwaBxQKW/jtF5Y+HVOrTWvUsrgR3IheNT6cEvnQGuX0b4nVBI9wp1qaI9cmJ
+         k+Og==
+X-Forwarded-Encrypted: i=1; AJvYcCVNLe2k91NlWJltfS4MG7DWFEqtOZmpBCb9x0EPkBf+ortV9enb1wCu6We3WGqYFQbkKXXYQfANok70udc=@vger.kernel.org, AJvYcCVd9/ysv3HdTtz9vpgmDFrEkVr7oNKxKeiaHSVL4h9GL49NQVAJpxLBiaEzPICNZKw6gz/Nsw5zS9KlA3MjHzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIchI3/KSJGz5EreAMubfxTN0D0u9MPKnT4zBh9oDiCBpG9Qh+
+	l99uvEk5TfUg8n3DJrdCt2ePZABuyC/c5/OAd5yhqpzS5mKL3qPQ
+X-Gm-Gg: ASbGnct2v+hafB/mITgal5zfHBwupvtxMlOwgHN2PhOXShcH7d+fEYZYfrRKG2Y8LB0
+	9b0+ubngvbCHqA1So9i4TtVa4ddMR/rpkk01qmmGl7tWPendbUg+xXmzDf0kJTBBOmelATCAZiM
+	N9SavCmyWKv4T6C7URoHyx4BJ+0T9kgNKjDlUyGwh/TkNwV3ZuoMg3onLOLGapXBn1QgISBtNnw
+	N6a4obWANIThzZmZI/MKWGOAYVjsaL34f+0jq4Ldwd0r3hInz79b/GwORs3awxGMqs00S90mgQU
+	ImXPuVjUT7D0Oz/lJx8u2zi0
+X-Google-Smtp-Source: AGHT+IG1q7HGNZPT8DKly1ZJUqQ7kl1B2boZmwT8sZe5OX/BYvT62Tib01zooHzL3adQanG4Bv2URw==
+X-Received: by 2002:a05:6820:1995:b0:5fc:a44c:b62a with SMTP id 006d021491bc7-5fca44cbd34mr2529986eaf.6.1739389489570;
+        Wed, 12 Feb 2025 11:44:49 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.154.251])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fc8a0cb99bsm2590915eaf.9.2025.02.12.11.44.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 11:44:48 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	apw@canonical.com,
+	arnd@arndb.de,
+	aswinunni01@gmail.com,
+	axboe@kernel.dk,
+	benno.lossin@proton.me,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	dwaipayanray1@gmail.com,
+	ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com,
+	gary@garyguo.net,
+	gregkh@linuxfoundation.org,
+	joe@perches.com,
+	lukas.bulwahn@gmail.com,
+	ojeda@kernel.org,
+	pbonzini@redhat.com,
+	tmgross@umich.edu,
+	walmeida@microsoft.com
+Cc: trintaeoitogc@gmail.com,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] author field in module! macro should be a array
+Date: Wed, 12 Feb 2025 16:44:30 -0300
+Message-Id: <20250212194433.191882-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250207-ppcyaml-v2-8-8137b0c42526@posteo.net>
 
-On Fri, Feb 07, 2025 at 10:30:25PM +0100, J. Neuschäfer wrote:
-> fsl-spi.txt contains the bindings for the fsl,spi and fsl,espi
-> contollers. Convert them to YAML.
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> ---
-> 
-> V2:
-> - add missing end-of-document ("...") markers
-> - add missing constraints to interrupts, fsl,espi-num-chipselects,
->   fsl,csbef and fsl,csaft properties
-> - remove unnecessary type from clock-frequency property
-> - fix property order to comply with dts coding style
-> ---
->  .../devicetree/bindings/spi/fsl,espi.yaml          | 64 +++++++++++++++++++
->  Documentation/devicetree/bindings/spi/fsl,spi.yaml | 73 ++++++++++++++++++++++
->  Documentation/devicetree/bindings/spi/fsl-spi.txt  | 62 ------------------
->  3 files changed, 137 insertions(+), 62 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/fsl,espi.yaml b/Documentation/devicetree/bindings/spi/fsl,espi.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c504b7957dde39086ef7d7a7550d6169cf5ec407
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/fsl,espi.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/fsl,espi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale eSPI (Enhanced Serial Peripheral Interface) controller
-> +
-> +maintainers:
-> +  - J. Neuschäfer <j.ne@posteo.net>
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,mpc8536-espi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  fsl,espi-num-chipselects:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 1, 4 ]
-> +    description: The number of the chipselect signals.
-> +
-> +  fsl,csbef:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 15
-> +    description: Chip select assertion time in bits before frame starts
-> +
-> +  fsl,csaft:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 15
-> +    description: Chip select negation time in bits after frame ends
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - fsl,espi-num-chipselects
-> +
-> +allOf:
-> +  - $ref: spi-controller.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    spi@110000 {
-> +        compatible = "fsl,mpc8536-espi";
-> +        reg = <0x110000 0x1000>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        interrupts = <53 0x2>;
-> +        interrupt-parent = <&mpic>;
+In the module! macro, the author field has a string type. Once that the
+modules can has more than one author, this is impossible in the current
+scenary.
 
-Drop interrupt-parent. Otherwise,
+- Change the author field for accept a array string type and enable
+  module creations with more than one author.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+- In modules that use the author field, change its value to a string
+  array.
 
-> +        fsl,espi-num-chipselects = <4>;
-> +        fsl,csbef = <1>;
-> +        fsl,csaft = <1>;
-> +    };
-> +
-> +...
+- Change the check patch to find poorly formatted arrays in the macro
+  module!
+
+Guilherme Giacomo Simoes (3):
+  rust: module: change author to be a array
+  rust: macros: change author field to array
+  checkpatch: throw error in malformed arrays
+
+ drivers/block/rnull.rs           |  2 +-
+ rust/kernel/net/phy.rs           |  4 +-
+ rust/kernel/pci.rs               |  2 +-
+ rust/macros/lib.rs               |  4 +-
+ rust/macros/module.rs            |  8 ++--
+ samples/rust/rust_driver_pci.rs  |  2 +-
+ samples/rust/rust_minimal.rs     |  2 +-
+ samples/rust/rust_misc_device.rs |  2 +-
+ samples/rust/rust_print_main.rs  |  2 +-
+ scripts/checkpatch.pl            | 68 ++++++++++++++++++++++++++++++++
+ 10 files changed, 83 insertions(+), 13 deletions(-)
+
+-- 
+2.34.1
+
 
