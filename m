@@ -1,149 +1,220 @@
-Return-Path: <linux-kernel+bounces-511237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B16AA32827
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:12:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D788CA32830
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:15:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84C191678B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:12:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74ECF3A5C67
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA1A20F06F;
-	Wed, 12 Feb 2025 14:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B2C20B212;
+	Wed, 12 Feb 2025 14:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3SMC5GI"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NrzD/pmB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D3F219ED
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 14:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF2020FAB4;
+	Wed, 12 Feb 2025 14:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739369564; cv=none; b=as1rJB2tmpgAsWW9WFx8mo35UyDio73zPAqQKoUV+FioCzCP3nqLco/S5oO+UXJGGNAmtiRUeEjLJTqo5uQtl1dCFr6z4ntr8k4afw2UMRwlDIDHZHjf4A2z23pxX5RsPd3iEju8daoIof7yma7fHdWkASSqGYRQvUBVE13e0E4=
+	t=1739369735; cv=none; b=kQ5Rf0a5KSFb3wD4ONYZwCDM1TR/9KZhwMzCtiMPsD1lXRLJLOWx4AKGv9buSw5SjG9KLTdsG2Z78kNKidleldqzbmg/ikbcWGFS7ANmFmX5EAkcsrtpkx4blp46ad9F6yTvZ73p2/nZQjnLeAyyvawiNpC8UNB0nPqwWcIcQKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739369564; c=relaxed/simple;
-	bh=0PgnPZsTGuDed6/z9wwIBHpTcSBe6JCKQsHjTB4Bkms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UOTJGIJgLBnYFXNfqpQcvixsVe/OuQ4MMzvzK3sNUcEx7aCSLiJwp1H6AATPR8lQEOSy4/BJDMdaGDO8WpvzJX5S+SlYovnsrZDqPs52iU8G+CDPClnqxIdMfnV/2GqpLQ+mQmKMBCSTBII3gv5CpS+72lc+WFD8m0r1zJKQOg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3SMC5GI; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21f3c119fe6so155294265ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 06:12:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739369561; x=1739974361; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HYU4s5CugQUFhnoWcNFYM55BtxMFvGMOkBes3VyQjjc=;
-        b=f3SMC5GILB4epmGPy3kd50Bx9NrUvhHpvtVjqNqOgziei3zseALIN+jWYEsEOp3clJ
-         PwSAPcPJtAk707F2h5M0pUOp1S4DkY1XLfnw1EuNbf2aaIXq52vV3GS26Hg4MLYM4ztA
-         yShL1OgH68YXYHLkQjHDiLv2UFF9D65H3y+d9mAS+I2jAyQ3o/hYw5yuSpVw/c/k9cx5
-         bMfzukfgr5CKaui4PPd2XNU4GTRJwHSvDtDheN6rHovaKxQc/ds72neWOvL/pfYhoMjV
-         VT1xJA/030z+9uszp5zCU/dINghc/SJWJ1CNlvlWWTRzl6g6bh2HMsEIyhfG8qQBTWYq
-         4TSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739369561; x=1739974361;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HYU4s5CugQUFhnoWcNFYM55BtxMFvGMOkBes3VyQjjc=;
-        b=xG5G1JXUgfHG306i4Xu+7UdBDUuDFuEmMuICyw08hnzLkekn8MsobmviM33BPuJyJ3
-         A+p2An9XNPPyIgfZxEYgLNVlo7pi/BiqcuUaYNuDP2iCkKh+no5hM/wRCVS6DT2n8TpF
-         XkcNi1/6xB1Nuo9DAVzDixj0fjQW0SPnt0OSDd2+74edlp2CgLdJUvFwUXDLlyIjb5dl
-         o0JHSKGTnbnZAMRjsV4xV4w5Dz2/EuVE4UifOHwyqKMV8PGTxfBGlMXPsTaC0QAbLpH4
-         bEDuGpVeTxiYnHSwxdWl0kpgdFcWsRTa3Re4PSt+bwDjOrBvHHEpKDGrF4hZjZSExUft
-         teqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLim81+Hllv3OKi5MIs9fwaiu08ikLQN0eDpveofcin8OOIZSOMc7spqndfu6uaptlvWTuc57w0GoSVYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3LUgM1ijRZvxVjjBZ0+yd2iO4K6qzP/2K51yAKNf7P/VyyNQu
-	izkLxJO4KP1PAvbLa4fgdGsJN+z6VWiWL5RDwHOyI5y+5T1K8Ot1
-X-Gm-Gg: ASbGncu+UKg+a3frvvvXizApcX7v9s2ciB0NUSNAvUY9womzFsS6w4TNMBwlR+adOGg
-	mzRX+iijgOj5dHe5qXLysD4TEUXW5WIvT5OMMJVZ6wz3D9r2lrM1eBu42umOrHc1ZbkIll3Soyh
-	EKTeAMAOWGIb+9t9rjiqm0OkwEtBxTUb+aw8xjynTmCzL5m5Wcpyo9CcFFwpaJkgkLnXPJ78kgO
-	AheeqplXf7zh0jvHQfcxz5FR+weRAujy+0Hy9qYTinCqXtSpMBJW5MHWLiuxD3TI7Yd3YRu+/o9
-	r3APnP3WfFMtCUc=
-X-Google-Smtp-Source: AGHT+IF4x03U2XL3LMqaq/QOPxrusKrZy/Z5j5Q0xTubyppnVW51XdIuOjSID/gBJx3Z/XLDh1+oyQ==
-X-Received: by 2002:a05:6a20:258e:b0:1e0:d6ef:521a with SMTP id adf61e73a8af0-1ee5c732f01mr6135206637.1.1739369560933;
-        Wed, 12 Feb 2025 06:12:40 -0800 (PST)
-Received: from localhost ([216.228.125.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73048ae7e6dsm11194417b3a.70.2025.02.12.06.12.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 06:12:40 -0800 (PST)
-Date: Wed, 12 Feb 2025 09:12:36 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: I Hsin Cheng <richard120310@gmail.com>
-Cc: David Laight <david.laight.linux@gmail.com>, anshuman.khandual@arm.com,
-	arnd@arndb.de, linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthias Kaehlcke <mka@chromium.org>, skhan@linuxfoundation.org
-Subject: Re: [PATCH 2/2] uapi: Refactor __GENMASK_ULL() for speed-up
-Message-ID: <Z6ysVBWFRfdFdLlT@thinkpad>
-References: <20250211162412.477655-1-richard120310@gmail.com>
- <20250211162412.477655-3-richard120310@gmail.com>
- <20250211223045.5c2b92a4@pumpkin>
- <Z6yWbROu5rREhw85@vaxr-BM6660-BM6360>
+	s=arc-20240116; t=1739369735; c=relaxed/simple;
+	bh=30FYxQAAzvLmXJTET4m8kzQwJjjljMpe0ptvbtivnis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gpU6GLQGVeuoXLHjgZwqzJELjc5T1we0pmdVfc+gc6BODJtkA8l5t7bfOlzxfqzgdNI7SE2+QfTl818BBuaATHjv16YE5exkRcClPPOc8/xRGY2JDT1KH4d0H3aSfUulYAkrHWKz9nk7hQeSGye+BMjpzIigCLXsgaTI7MtHLTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NrzD/pmB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C8lEl2028737;
+	Wed, 12 Feb 2025 14:15:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SwXJh/CGXv0FJaW1sQ7EFOYx4LdPcBFmv7GOLkJ3gL8=; b=NrzD/pmBw5V4R3Hw
+	hmD3eV+86EhC94dkfLjEaTmKA9s40Q1p/wX1A5cgkGWssYpT+FnMRJ6i9MHFsrfs
+	PN6vqpye5iqTS/Z2olrcdYmKW0gICa1u//p9Zg81s3iBl9kdck10zyf0h2cx6eZp
+	0jCMF6mDtOVmvlXum/ytVRVv5wMFHI3wtpf+D5M+elQICh7smX1GAiiudyY9HKZ3
+	3LSXbwRXLr8slz7uldWyKQ15Ruhfv2qPiYF6uv5IncMI3pZkFxREFHqPiQkT8EkU
+	C2075kKDl7gKzEFo7FZgIJVjXDt3SMQ6mTG2SN0DLc79iFvP1kKSkwIqeEmtIB2Y
+	KtoaNA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qxg9n5vt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 14:15:22 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51CEFIfE021226
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 14:15:18 GMT
+Received: from [10.216.47.54] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
+ 2025 06:15:14 -0800
+Message-ID: <6ff07b46-2c0d-41e7-9958-1525ab4da9e4@quicinc.com>
+Date: Wed, 12 Feb 2025 19:45:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6yWbROu5rREhw85@vaxr-BM6660-BM6360>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: i3c: Add Qualcomm I3C master
+ controller bindings
+To: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, <alexandre.belloni@bootlin.com>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <jarkko.nikula@linux.intel.com>, <linux-i3c@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250205143109.2955321-1-quic_msavaliy@quicinc.com>
+ <20250205143109.2955321-2-quic_msavaliy@quicinc.com>
+ <248000f5-63db-492c-884d-ac72db337493@kernel.org>
+ <0ae3f754-edcb-4b22-9d49-b20ef264554b@quicinc.com>
+ <7c518972-75df-4c8a-8920-06d5aa2849ae@kernel.org>
+ <b7f2c973-e161-4b83-9b3a-415e84510bd2@quicinc.com>
+ <20250211213924.GA1215572-robh@kernel.org>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <20250211213924.GA1215572-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vQvWBTB4K4xxgkA2KP9g2FsvjkNJiONm
+X-Proofpoint-GUID: vQvWBTB4K4xxgkA2KP9g2FsvjkNJiONm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ mlxscore=0 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 phishscore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120110
 
-+ Matthias, Andrew
+Thanks Rob !
 
-On Wed, Feb 12, 2025 at 08:39:09PM +0800, I Hsin Cheng wrote:
-> On Tue, Feb 11, 2025 at 10:30:45PM +0000, David Laight wrote:
-> > On Wed, 12 Feb 2025 00:24:12 +0800
-> > I Hsin Cheng <richard120310@gmail.com> wrote:
-> > 
-> > > The calculation of "((~_ULL(0)) - (_ULL(1) << (l)) + 1)" is to generate
-> > > a bitmask with "l" trailing zeroes, which is equivalent to
-> > > "(~_ULL(0) << (l))".
-> > 
-> > Yes, and if you look through the commit history you'll see it was changed
-> > to avoid a compiler warning about the shift losing significant bits.
-> > So you are just reverting that change and the compiler warnings will
-> > reappear.
-> > For non-constants I suspect that (2ul << hi) - (1ul << lo) is the
-> > best answer.
-> > But the compiler (clang with some options?) will still complain
-> > for constants when trying to set the high bit.
-> > 
-> > That version also doesn't need BITS_PER_[U]LONG.
-> > While that is valid for C, the _ULL() are there for the assembler
-> > (when they are no-ops) so there is no way asm copies can be right
-> > for both GENMASK() ans GENMASK_ULL().
-> > 
-> > 	David
+On 2/12/2025 3:09 AM, Rob Herring wrote:
+> On Mon, Feb 10, 2025 at 09:42:03PM +0530, Mukesh Kumar Savaliya wrote:
+>> Thanks Krzysztof !
+>>
+>> On 2/9/2025 5:15 PM, Krzysztof Kozlowski wrote:
+>>> On 06/02/2025 14:43, Mukesh Kumar Savaliya wrote:
+>>>> Hi Krzysztof,  Thanks !
+>>>>
+>>>> On 2/5/2025 8:12 PM, Krzysztof Kozlowski wrote:
+>>>>> On 05/02/2025 15:31, Mukesh Kumar Savaliya wrote:
+>>>>>> Add device tree bindings for the Qualcomm I3C master controller. This
+>>>>>> includes the necessary documentation and properties required to describe
+>>>>>> the hardware in the device tree.
+>>>>>
+>>>>> A nit, subject: drop second/last, redundant "bindings". The
+>>>>> "dt-bindings" prefix is already stating that these are bindings.
+>>>> Sure
+>>>>> See also:
+>>>>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>>>>>
+>>>>> Use modern terminology, which means:
+>>>>> s/master/whatever else or even nothing/
+>>>>> See other recent bindings and discussions.
+>>>>>
+>>>> Sure
+>>>>>
+>>>>>>
+>>>>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>>>>> ---
+>>>>>>     .../bindings/i3c/qcom,i3c-master.yaml         | 57 +++++++++++++++++++
+>>>>>>     1 file changed, 57 insertions(+)
+>>>>>>     create mode 100644 Documentation/devicetree/bindings/i3c/qcom,i3c-master.yaml
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/i3c/qcom,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/qcom,i3c-master.yaml
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..ad63ea779fd6
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/i3c/qcom,i3c-master.yaml
+>>>>>
+>>>>> Filename matching compatible.
+>>>>>
+>>>> Changed compatible to "qcom,i3c-master"
+>>>>>> @@ -0,0 +1,57 @@
+>>>>>> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+>>>>>> +%YAML 1.2
+>>>>>> +---
+>>>>>> +$id: http://devicetree.org/schemas/i3c/qcom,i3c-master.yaml#
+>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>>> +
+>>>>>> +title: Qualcomm I3C master controller
+>>>>>> +
+>>>>>> +maintainers:
+>>>>>> +  - Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>>>>> +
+>>>>>> +allOf:
+>>>>>> +  - $ref: i3c.yaml#
+>>>>>> +
+>>>>>> +properties:
+>>>>>> +  compatible:
+>>>>>> +    const: qcom,geni-i3c
+>>>>>
+>>>>> No SoC? So to be sure: you claim all future SoCs will be using exactly
+>>>>> the same interface. No new compatibles, no new properties will be added.
+>>>>>
+>>>> I think i should remove const. kept it for now as no other compatible to
+>>>> be added as of now.
+>>>>
+>>>> let me remove const.
+>>>
+>>> No, it does not matter. Keep const.
+>>>
+>> Sure. I reviewed other files and seems i should write as below. Please help
+>> confirm.
+>>
+>>    compatible:
+>>      items:
+>>        - enum:
+>>            - qcom,sm8550-i3c-master
+>>        - const: qcom,i3c-master
 > 
-> Hi David,
+> No, that's even worse. I doubt there is some universal, never changing
+> QCom I3C master.
 > 
-> Thanks for the review!
+Agree, it may change. So can i go with "qcom, i3c-master" now instead of 
+going SOC specific name ? The current i2c and spi qcom drivers are also 
+using "qcom, geno-proto".
+
+Since other i3c drivers using "vendor, i3c-master", i followed same.
+Should i use "qcom, geni-i3c" or "qcom, i3c-master". Accordingly i can 
+make next patch.
+
+>>>>
+>>>> SoC name is not required, as this compatible is generic to all the SOCs.
+>>>
+>>> That's the statement you make. I accept it. I will bookmark this thread
+>>> and use it whenever you try to add any future property here (to be
+>>> clear: you agree you will not add new properties to fulfill *FUTURE* SoC
+>>> differences).
+>>>
+>> Sorry, i am not saying there won't be any other compatible but i was saying
+>> base driver will use "qcom,i3c-master".
+>> After checking other files i realized there can be const compatible but
+>> other SOC specific can be added as enum.  Hope above given way is fine.
 > 
-> > Yes, and if you look through the commit history you'll see it was changed
-> > to avoid a compiler warning about the shift losing significant bits.
+> AIUI, "geni" is some firmware based multi-protocol serial i/o controller
+> and we already have other "geni" bindings. So really, it's probably more
+> coupled to firmware versions than SoC versions. If we haven't had
+> problems with per SoC quirks with the other geni bindings, then I think
+> using the same "geni" here is fine. But we won't be happy if we start
+> seeing per SoC quirk properties.
 > 
-> I've browse through the commits of include/linux/bits.h , where
-> GENMASK() was placed under. Though I didn't find specific commit of it,
-> would you be so kind to paste the link of the commit?
+Yes, was trying to follow same like geni based i2c, spi.
+SOC specific can come, but that would be kind of variant which may 
+depend on QUP GENI HW version or FW version.
+> Rob
 
-It's c32ee3d9abd284b4f ("bitops: avoid integer overflow in GENMASK(_ULL)").
-
-[From cover letter] 
-
-> $ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
-> add/remove: 0/2 grow/shrink: 46/510 up/down: 464/-1733 (-1269)
-
-You can see, Andrew tested it and found no changes in .text size. If that
-has changed, we need to revert the original patch and suppress warning.
-
-Can you please print the full bloat-o-meter result? Which compiler(s) did
-you try?
-
-Thanks,
-Yury
 
