@@ -1,133 +1,96 @@
-Return-Path: <linux-kernel+bounces-511918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A8CA3316E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:24:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A94A3316F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:25:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCA95166546
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048DA18893BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934E2202F8E;
-	Wed, 12 Feb 2025 21:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC866202F8D;
+	Wed, 12 Feb 2025 21:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYTN17rM"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VABRKGHm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B2D201025;
-	Wed, 12 Feb 2025 21:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320A6202C23;
+	Wed, 12 Feb 2025 21:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739395486; cv=none; b=T5ArLCj3L4FWohvRHh30Zx8EwVqN2ppSCOIYLldSii8UDWe8YZWon3U/dT77r5SNgpTIJ1SPKSkPEdVv/ywO+9s48QDtw4Fk6T5gZ/nPd7PrKy15ncqSoKLd3yuUdrfy1lv9UKBYQgb3wpBSOxEdnNmHVoVjGTvmcKwloSsgbrU=
+	t=1739395510; cv=none; b=cZeBG1CVUswRvc8k51OTJjy2vre1mHdF6XlDdYRZfgP/UfxbfhFqV5ZFloco/IdCLePxhm//fWeyMARN+FLBEXKTW83HQHyDT7Zejxz8b/n71GlFrzZEs3/JVUoUrnQYRe7GMa+QjWu9gVyv4KmF8ZG2J/iaVatyTOU2xgqGoUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739395486; c=relaxed/simple;
-	bh=tRZTeamGz5BJDPFfZrAGCpU2zTQ7mRIPnQ/R/+fL1sQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P0nQv2h5THo/okTqmHTtWpOIXftTu0Hh37tCT4hj60LUiwhAwLGr3VEfPPzh8+/uUOwNsQBcc1s1HAfaQsBbRsvKw035Do2QaQOoghBBvRqwiqn4k/fB5EPcWGboQYwO2049ILBiW8iKkt0SYrWDYm8uUMBu6wN9wVqchRupzI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYTN17rM; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-308f141518cso2002071fa.2;
-        Wed, 12 Feb 2025 13:24:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739395482; x=1740000282; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MZg2BklOS9vVSBBuLp3MZwmqGaE28/zjbe+Lcf2xlKE=;
-        b=TYTN17rMz4AYTfJGaW0a4x01Nbl0JNSxwn1D/nskETBE/0J66HsA+CUT2K2qCQqUA5
-         ClyjipnW2eyuqUG7+1hNDZi6qStyq/fIdLMeH6R05DbHnTfl2bApghvughfg+iDlFRef
-         tGJ4KsNp49ISsk6q0eG7Vu2GOTpppLKD5IYs/3Cd4XTrZAzfuj7IY4++cLu8lGY8+VOk
-         G196Zeewo4xvhGff8ywWGVNDUrIde3aAECu0K54d8w62BYotGmWhJMRYEPh02i/iYbbH
-         AjdQ8plkO2OfN7TqowK1RWLJw0VNAPG6BUGd7CO4ZePC3SNvJCuH3dH4iuH4NbpitYIs
-         P0BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739395482; x=1740000282;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MZg2BklOS9vVSBBuLp3MZwmqGaE28/zjbe+Lcf2xlKE=;
-        b=vugaDZeYVw4KzHcctouMqx0u8TRPqirYeN5EJAEoQUkdEIVhGwyaMLz4Bu8WM+YofU
-         ZTQNwVuo5l1lc4x0ubznVqOBpkBrk9hsyv/FbUnHjBYZXTKwlKuqEa5w5P1e37uOFI/m
-         Xkuko7e5+tFp5n29TkI4mXPPxTDAr3pYiiTsHHtxChI9EX7qTbV/9mArDYM1Z7q2GzfO
-         qeShI8LED6lnHRFzLwzefLD5MZXwXPoEJfd5668hscfjdPADmeedBN79MF2PRWi065Lp
-         mjXt11GpiiKux3YsjXav1R7DQPccuFFJCM/yTNTbTtC6amAS7PFx4RYVJa60BVNwJZtI
-         usxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMye78REBVy2iR4dRZtf5BVKEHDVlEVy+olhLss2yJBzrjOVpaANlSp4nlaCwfFdrZSpafOacyiGM7FDc=@vger.kernel.org, AJvYcCV4JmdQIrtMor2gyrtRquhl8iOSvsPn2I/IAMksQKbVMAl4JRzFHqNlymtyjgNrpw5vr54nOZn0/3oc@vger.kernel.org, AJvYcCVZmkxk5Wyo/7kxJ5YSnuhYpZhNd7Mrrw4o+V2tazj9wvQ8yS2WslCUsFm8nwbwk0cAynJ/XiqSuamu+5EmQEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdPswWmw9eXxYBGfQ701UqEXhyZKPjAUWqxCRQnt3Xyne0do9w
-	6t332kP2zDBS7y0cKQYHykqjeK6xz8tIBcBNZw6fuMjwFnPkg9jhk5o5JTsTx7WywGvzP/DeMGm
-	61qIv+0X5M8xxZ64SQD3pme2KIefQaRO2u2w=
-X-Gm-Gg: ASbGncs1PBaEytAeh6VrnHkHq9dsRMRKBQRqNIeG0ozaYQyVzWRyDHsQkwXhqjAeSxg
-	HBRsOH/O+h/G402Ugv6pRdJy3A9UTlnxLD/Z90NyapiFdWUIa8Yz9QwCxR9omuC8uwGwohYDhX8
-	CPe44cWOXP/FDg
-X-Google-Smtp-Source: AGHT+IH7+HSoUyulMxdw/cVunCmXsDrXX7OOJhYHFaBQf2oXTE1p6NFr1BaiikLyMxS0GKmTptWz5VJT2te675YWdTg=
-X-Received: by 2002:a05:651c:b13:b0:308:e803:1175 with SMTP id
- 38308e7fff4ca-30904e7e60cmr14911301fa.0.1739395482191; Wed, 12 Feb 2025
- 13:24:42 -0800 (PST)
+	s=arc-20240116; t=1739395510; c=relaxed/simple;
+	bh=Mzi7QQnZdKicD04qd9DyYxXy0btE7+XlZGLov5JbUtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ifV97LGk4hBmlCrUeNMasxQeqTKKBqHgDDCxEJvd6ShzghZ9e7JllC7MsQQw7R8Euhw43CL9YkKWEUz4ZzHDqb8mb4eV669U260c+GxSZ8l4CDtcgaZoHyAaXTickLQXbPI5H7ZVYU34GoTSBR8w5BzYAXpvxmzF5rNRXLD/kJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VABRKGHm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 181BDC4CEDF;
+	Wed, 12 Feb 2025 21:25:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739395509;
+	bh=Mzi7QQnZdKicD04qd9DyYxXy0btE7+XlZGLov5JbUtg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VABRKGHmZqwjTPNGbKY4Ng79xbRhgqjB5Y+n1+IySz1OxtZHS1c0DVtbnUI65LKj9
+	 1WTL3ipYfHMhRG1rV4X87P9HRlGrRsrDEWtgVu6xiguEu4WZW/iXQDFH+yhP3Q35sr
+	 qPqQ+azr4wx9w92+6v/nJQusKrD7hAIxYZpYdDL3ONrB3v6jUzK8004GROlSR01LBP
+	 5wbGBDbHya934lnI3577s1p0nL8gWYMZ0WjRmnRe1yKTHluJ9XGArADR1F6Fy3bGhk
+	 QpVcx+7ZOWCPlUgLFouZdreUjMywqUhGy7tyCSNB0J5sdCx4PxDgGBJu+qS2F0m3+h
+	 TJ1FNCDkRMsCw==
+Date: Wed, 12 Feb 2025 23:25:04 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: "Huang, Kai" <kai.huang@intel.com>,
+	Andrew Zaborowski <andrew.zaborowski@intel.com>, x86@kernel.org,
+	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, balrogg@gmail.com
+Subject: Re: [PATCH] x86: sgx: Don't track poisoned pages for reclaiming
+Message-ID: <Z60RsC1h94UdsjRb@kernel.org>
+References: <20250211150150.519006-1-andrew.zaborowski@intel.com>
+ <3bd497be-54d7-43b8-a392-4bf82bf64679@intel.com>
+ <Z6u7PEQKb-L8X4e6@kernel.org>
+ <4a1c8b84-d8ee-414a-bd6d-a8633302dab4@intel.com>
+ <7ed9b288-69a2-446c-9f7f-50ef6bc56673@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
- <Z6zA9UNm_UckccRm@pollux> <20250212163848.22e8dcff@eugeo> <Z6zT6mZuxonewQ9z@pollux>
- <CAJ-ks9=-kP5jBGQ_A88VPU_HW9VkF=OCqcGufqrJobhJu8dhww@mail.gmail.com>
- <Z6z-FlEUk9OfeJCV@cassiopeiae> <CAJ-ks9=-ZQpmhJRs3YstZBGb9UvLwRQJ7od+dsc_sYZtwUhF2A@mail.gmail.com>
- <Z60Lb4OK3jLCAAra@pollux>
-In-Reply-To: <Z60Lb4OK3jLCAAra@pollux>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 12 Feb 2025 16:24:06 -0500
-X-Gm-Features: AWEUYZm17LejvdKv-dHcX4Sozn5OpFsszwIZyJAO83w3f0HsQQtUErIDU580TCQ
-Message-ID: <CAJ-ks9=3LC7MM+uubZfjRTrWYa+sOakeq-0hwZpXK9hxXtuG5g@mail.gmail.com>
-Subject: Re: [PATCH v5] rust: alloc: satisfy POSIX alignment requirement
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, DJ Delorie <dj@redhat.com>, 
-	Eric Blake <eblake@redhat.com>, Paul Eggert <eggert@cs.ucla.edu>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7ed9b288-69a2-446c-9f7f-50ef6bc56673@intel.com>
 
-On Wed, Feb 12, 2025 at 3:58=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Wed, Feb 12, 2025 at 03:47:11PM -0500, Tamir Duberstein wrote:
-> > Looks like I wasn't the only one to fall into the trap (rust/kernel/io.=
-rs):
-> >
-> >     #[inline]
-> >     const fn io_addr_assert<U>(&self, offset: usize) -> usize {
-> >         build_assert!(Self::offset_valid::<U>(offset, SIZE));
-> >
-> >         self.addr() + offset
-> >     }
-> >
-> > since offset isn't known at compile time, this can easily be misused?
->
-> Well, that's intentional.
->
-> iomem.readb(0x0)     // succeeds if SIZE >=3D1
-> iomem.readb(foo)     // fails if foo is not known at compile time
+On Tue, Feb 11, 2025 at 03:31:54PM -0800, Dave Hansen wrote:
+> On 2/11/25 13:18, Huang, Kai wrote:
+> >>> This requires low-level SGX implementation knowledge to fully
+> >>> understand. Both what "ETRACK, EBLOCK and EWB" are in the first place,
+> >>> how they are involved in reclaim and also why EREMOVE doesn't lead to
+> >>> the same fate.
+> >>
+> >> Does it? [I'll dig up Intel SDM to check this]
+> >>
+> > I just did. 🙂
+> > 
+> > It seems EREMOVE only reads and updates the EPCM entry for the target
+> > EPC page but won't actually access that EPC page.
+> 
+> Actually, now that I think about it even more, why would ETRACK or
+> EBLOCK access the page itself? They seem superficially like they'd be
+> metadata-only too.
 
-By "fails" here you mean fail to link, right?
+Did a sanity check to SDM.
 
-> iomem.try_readb(foo) // succeeds if self.maxsize() >=3D 1
+I think you're correct, and also there's zero rational reason them use
+anything but EPCM (no legit reason to access payload itself).
 
-Apologies for being dense throughout this discussion. Could you check
-my understanding?
-
-The trick is that `build_error` is marked `#[export_name =3D
-"rust_build_error"]` which isn't exported unless
-CONFIG_RUST_BUILD_ASSERT_ALLOW is defined, causing linking to it to
-fail. This even works for doctests, but not for #[test] in the kernel
-crate because they are built as part of the crate. The only to way
-make that work correctly is to put `build_error` in a crate all by
-itself.
+BR, Jarkko
 
