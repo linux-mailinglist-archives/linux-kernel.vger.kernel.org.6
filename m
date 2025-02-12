@@ -1,249 +1,164 @@
-Return-Path: <linux-kernel+bounces-510987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BAEA32479
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:13:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA18BA32481
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:14:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E1437A36BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:12:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055F2188C692
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EFC20ADD5;
-	Wed, 12 Feb 2025 11:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2ED209F49;
+	Wed, 12 Feb 2025 11:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kQvekFsW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QqXY0IC6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kQvekFsW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QqXY0IC6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cQ4IutSq"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A72620A5D5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3622C20A5D2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739358718; cv=none; b=U7Ag6BXiZMHC1e3tt3I3dmhAWWsi0I1qieorMd9x52Ik9RjOwdtaL605lUcgyG9sUSnTAJytvgsuCdJwWxop9qRXtVQOIgk0h3Y1DaWkZzemPzAV2dMRp9C4c9IMn6R4XonJtq15pSy/wmbb06sSyPwAQe35I4/QkALHD/MkBGo=
+	t=1739358773; cv=none; b=eodTCawEhFz067vHR1uXHoAjyrs9YMfXY0/RKVDd6eRo64lGOa/E/vu05auDrYbLY6T8UMeDjRsKGymTOdjA8alX92VMTMQ1UhEnHzZ07fOoPEYDgGvommGCU06BCIgkgb8RJyVLIhxTwJAtWwoBvRn/Lmc77+s7cUJ3WLJQRD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739358718; c=relaxed/simple;
-	bh=i+E7tf5qIFBNUdd69wAjvOJp7KOHCo+a4du+/W/yC+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FPFPbr0m4hj5Jf0FSiauQjSe9m7RKGd1thlY2IAANCXCA6afF2SQfmUEGpzJhEZc99yJPOGNs4/jlCtVRlQeH0L35eE9b+4w3UN2FaS2mYEgAktvPdh8X7/zVPrwdUoIaOBg69FJitKniblp+tp1eqI9jvesBcG+H4hpUbA6QHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kQvekFsW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QqXY0IC6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kQvekFsW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QqXY0IC6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1CD691FD5B;
-	Wed, 12 Feb 2025 11:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739358714; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=V2qR2R0TZlQ5ib87gVbzwHvONn3HHqdEpwFEnSH3Hdw=;
-	b=kQvekFsW/bARSPvVfeQV19/oYpvZBExZAeH5aQEf9B1XsuPVFrM++bMx9VdZeloMCTw3aW
-	iJlW2CyvIE7bUyh7lk8UYUOy7GPtOa7amwXic1Ub3ZSRh9TF+oWd3HVlme1rRtvvSa2MTu
-	483zRp5u1wNUTi/WUZHD/BC9EBhQiLc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739358714;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=V2qR2R0TZlQ5ib87gVbzwHvONn3HHqdEpwFEnSH3Hdw=;
-	b=QqXY0IC6CaKSad9y52l+hWgYQJVuSYCz6ZCNm+vsfL/6GFHTtGDdrIt/n7Dut6h2aJNNHd
-	tuYZptyV2uWg08Ag==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739358714; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=V2qR2R0TZlQ5ib87gVbzwHvONn3HHqdEpwFEnSH3Hdw=;
-	b=kQvekFsW/bARSPvVfeQV19/oYpvZBExZAeH5aQEf9B1XsuPVFrM++bMx9VdZeloMCTw3aW
-	iJlW2CyvIE7bUyh7lk8UYUOy7GPtOa7amwXic1Ub3ZSRh9TF+oWd3HVlme1rRtvvSa2MTu
-	483zRp5u1wNUTi/WUZHD/BC9EBhQiLc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739358714;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=V2qR2R0TZlQ5ib87gVbzwHvONn3HHqdEpwFEnSH3Hdw=;
-	b=QqXY0IC6CaKSad9y52l+hWgYQJVuSYCz6ZCNm+vsfL/6GFHTtGDdrIt/n7Dut6h2aJNNHd
-	tuYZptyV2uWg08Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3E1A13AEF;
-	Wed, 12 Feb 2025 11:11:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HzZJMvmBrGc+agAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 12 Feb 2025 11:11:53 +0000
-Message-ID: <f0185bb4-4f43-4ae1-8f81-ec4185160a5b@suse.de>
-Date: Wed, 12 Feb 2025 12:11:53 +0100
+	s=arc-20240116; t=1739358773; c=relaxed/simple;
+	bh=czDBhXds2774fwZNyEeYA03Jzlh2/wYesLkUERE8+UM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p7056ej9HGqzjVAaY7NyJihuYC0yl+phATS+SX8VyHpdq3Gp9+LC2t4YnNwAYtFxcy7Da0gUzwVlNZZYAeLgpuvx4fYZGrlqI8KMlQtB6BMIx3lmaDSuKAj+BH3xwehBMMZik8WOfCtI+Q/AYLTsLCZpc48wxxbQTBWZ5FKV2to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cQ4IutSq; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-308f32984bdso24708101fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:12:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739358769; x=1739963569; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zi7NSGVlmdukYXP2xLDE0jItD13dYbVjBU6ou/KCEC8=;
+        b=cQ4IutSqVBqRUrbXKbHaw/NNLr1RNmie25Y/MVG8IodnPJSqJa1cPFbqwN103Z0JrV
+         oQD/xEU3XgRSarfKrcXiX1R6KEago3ox9oIBsnI0DjB9UJsWl5sDcNop4HlLguL/G1hu
+         GxTT24uzp3zZ4xPySTjF/eTz1vun4CLeFjc33jlvNrBwu6cGZBt5hl0Rt8fbjQf+H/rZ
+         eUaZpg1KGuoSAJWBY++4lRaSip9zdagPjDMryJPbVXhf7eYMR4rUviwCv5HHeZUxfMTw
+         0myu+Z8dFmtj8OsLAL07GSg9YY4qwgAAg4x0xyfKZRR1n/bfa4Un0GDIw6/E2zW6vQa0
+         gw6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739358769; x=1739963569;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zi7NSGVlmdukYXP2xLDE0jItD13dYbVjBU6ou/KCEC8=;
+        b=XP9GNyiaN9NR9eeq7tcMtlLNFFRPDtsseYgMLggEZbWGzSkQagvZnjzmNWixAZW8JO
+         ByFYX1hihrGaLMyE7a3OpAndmyyJx0t//1wHkya9cWtj456tkNcF//nvoRzbWJKAqDTP
+         AJw2/UlCkIWnVGresguIMZFN5HQIoWf5JJpL2JmoZwRFkd0pqLR0CAJvyr7/IalYupdJ
+         KVQv/flwp9ZX+fuIJowJFOeV5sRWXgmInV27uptSuyLJvsTBdw7zgL0UgxuMA92rirQc
+         rZrLmvbNgtRnyZsJ3vyGcIiiqUfDlf+QWmSqgZQHctO+6jT/hTUFiLx9uU4aR8Lg2JWY
+         HNUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNbOHZw2FiOyMjTUoDkffrXnEWBc2he0/0mf+TIhzAY3sh6oj0ss30tnoXk6EF5WDFAEgxI6k0oHGfuuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp+SK2mync2B6BhtLjGpEd2qEP/faiamaNY+gYqYtzu/EOjiXd
+	tuHCrh7wTGfM6YNorNFMcIivvLjtkstQ5ZCwb+td+cXPObwXjTXemqxjhxDuFqE=
+X-Gm-Gg: ASbGncurwSNnFziVyeuASWpqXrQ5oeLDZPuSpbAdpFk9G4lTZTkBStsxNCJ6b4mF0TM
+	erUJ/jJgLVM9czLjqZ89llM+AwUZGzCoqIitAdcC8qx/S9BDtsMqkCbzIN5+HqtVfrvB//4F/6G
+	epTWVj6e3cYoNxzoCg/H0uUljyheHQ6mmJh0HiNbC6xK16C8y7k2+e7HpogdPTVLH2O8SaMe9Th
+	ZAFDkKt52yUBnN6soYt5yh+y8D0xfc03mL8GiDljo1zlh3a9MQ+FYWnzytSIF6zzHjDdJWKXGio
+	VNsNrVWnfkF4ptROdMhWTvytWlQPRebXA8ibsFtQE34e6V1rNhQgk3UxSqDIjD9fuJZdHkQ=
+X-Google-Smtp-Source: AGHT+IGWDa45dg3xRQlPrBCB2RykQBWQjwcAddvmjkqC+H/VzwhKqUGo6U53A3FTwTYDMQ62clov2A==
+X-Received: by 2002:a05:651c:220c:b0:307:e0c3:5293 with SMTP id 38308e7fff4ca-309036ea829mr7444151fa.36.1739358769271;
+        Wed, 12 Feb 2025 03:12:49 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-308fe555e5dsm4932671fa.72.2025.02.12.03.12.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 03:12:48 -0800 (PST)
+Date: Wed, 12 Feb 2025 13:12:46 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, quic_kamalw@quicinc.com, quic_jprakash@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v2 1/5] dt-bindings: thermal: Add MBG thermal monitor
+ support
+Message-ID: <iuzhsmcfmc5kxpxirqdacxgaqqufs3hdhlvhw2mds2wq3rb6si@pcsvops5yd6h>
+References: <20241212-mbg-v2-support-v2-0-3249a4339b6e@quicinc.com>
+ <20241212-mbg-v2-support-v2-1-3249a4339b6e@quicinc.com>
+ <ojukpywkhu72cimujmijzidf26654g5vkjaj477imcf4suz2o6@cmow62jcqsfz>
+ <7a5db383-914c-4c1e-846e-5d68cc6a7765@quicinc.com>
+ <fcd718be-fe8a-466f-bd2b-7b75d5f8dd6c@kernel.org>
+ <c85903c6-6a89-4382-bfa2-2fed95f0cbc0@kernel.org>
+ <sybrfmrpegq7fcqykgsfhm56wjyx5vp6zafqw2d73tiral64aw@hg4di55fzdle>
+ <9a61e73d-29d1-4189-89eb-1299b8934af9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] Handheld gaming PC panel orientation quirks
-To: Hans de Goede <hdegoede@redhat.com>, John Edwards <uejji@uejji.net>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: Andrew Wyatt <fewtarius@steamfork.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250124204648.56989-2-uejji@uejji.net>
- <b3caa748-2dbd-4911-968f-878fcd118a9b@suse.de>
- <6abc98bd-5ef9-491e-985b-7ed8a848c96e@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <6abc98bd-5ef9-491e-985b-7ed8a848c96e@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[redhat.com,uejji.net,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a61e73d-29d1-4189-89eb-1299b8934af9@kernel.org>
 
-Hi
+On Wed, Feb 12, 2025 at 07:06:56AM +0100, Krzysztof Kozlowski wrote:
+> On 12/02/2025 00:57, Dmitry Baryshkov wrote:
+> > On Tue, Feb 11, 2025 at 12:50:12PM +0100, Krzysztof Kozlowski wrote:
+> >> On 11/02/2025 12:46, Krzysztof Kozlowski wrote:
+> >>> On 11/02/2025 12:15, Satya Priya Kakitapalli wrote:
+> >>>>
+> >>>> On 12/13/2024 2:08 PM, Krzysztof Kozlowski wrote:
+> >>>>> On Thu, Dec 12, 2024 at 09:41:20PM +0530, Satya Priya Kakitapalli wrote:
+> >>>>>> +
+> >>>>>> +required:
+> >>>>>> +  - compatible
+> >>>>>> +  - reg
+> >>>>>> +  - interrupts
+> >>>>>> +  - io-channels
+> >>>>>> +  - io-channel-names
+> >>>>> Binding looks ok, but this wasn't tested due to unneeded dependency.
+> >>>>> Please decouple from dependency, so automation can properly test it.
+> >>>>
+> >>>>
+> >>>> The dependency is needed because this mbg peripheral is present on only 
+> >>>> targets which have GEN3 ADC5, for which the bindings support is added in 
+> >>>> the series [1]
+> >>>>
+> >>>>
+> >>>> [1] 
+> >>>> https://lore.kernel.org/linux-arm-msm/c4ca0a4c-e421-4cf6-b073-8e9019400f4c@quicinc.com/
+> >>>
+> >>> Sure. Then this cannot be merged due to resulting test failure.
+> >>>
+> >>> Please don't post new versions before this can be actually tested and
+> >>> applied.
+> >>
+> >> Heh, you responded *after two months*, to an old email so even previous
+> >> discussion is gone from my inbox.
+> > 
+> > Are you responding to your own email?
+> 
+> Look at the timeline of these emails. Satya responded after two months
+> with some comment. I responded now. Then I noticed that it is talk about
+> something two months old, so I responded again. Two responses from me,
+> that's correct.
 
-Am 12.02.25 um 11:51 schrieb Hans de Goede:
-> Hi Thomas,
->
-> On 11-Feb-25 2:55 PM, Thomas Zimmermann wrote:
->> Hi
->>
->> Am 24.01.25 um 21:46 schrieb John Edwards:
->>> Hello.
->>>
->>> I am submitting a small number of patches to add panel rotation quirks for
->>> a few handheld gaming PCs.  These patches were created by the SteamFork
->>> team and are in daily use by us and/or members of our community.
->>>
->>> The following devices are covered by these patches:
->>> 1: AYANEO 2S
->>> 2: AYANEO Flip DS, AYANEO Flip KB
->>> 3: AYANEO Slide, Antec Core HS
->>> 4: GPD Win 2 (with correct DMI strings)
->>> 5: OneXPlayer Mini (Intel)
->>>
->>> Thank you for your consideration and for taking the time to review these
->>> patches.
->> Did you ever receive any response to this series? If not, then
->>
->> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-> I had the following remark for 3 new entries added in patches 2/5 + 3/5:
->
-> "Since this '}' is closing the .matches initializer it should be indented 2 tabs"
->
-> With that fixed, you can add my:
->
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->
-> to the entire series.
->
->> for the series. Let me know if you need assistance for getting the patch files merged.
-> Normally I pickup/merge these panel orientation quirks, but I've been swamped
-> which is why these have just been sitting on the list.
->
-> Thomas, I would appreciate it if you can merge the set into drm-misc-fixes, with
-> the 3 minor indentation issues fixed.
+I see, Satya's email didn't get to lore.kernel.org, so it wasn't fetched
+by lei.
 
-Sure, no problem. I'll wait for John to provide an update. Otherwise, 
-I'll fix it myself while merging the series.
-
-Best regards
-Thomas
-
->
-> Regards,
->
-> Hans
->
->
->
->
->>> v2:
->>> - Minor rewording of commit messages
->>> - Include Tested-by tag for Paco Avelar in AYANEO Flip DS/KB patch
->>> - Add OneXPlayer Mini (Intel) patch
->>>
->>> v1:
->>> https://lore.kernel.org/dri-devel/20250116155049.39647-2-uejji@uejji.net/
->>>
->>> Andrew Wyatt (5):
->>>     drm: panel-orientation-quirks: Add support for AYANEO 2S
->>>     drm: panel-orientation-quirks: Add quirks for AYA NEO Flip DS and KB
->>>     drm: panel-orientation-quirks: Add quirk for AYA NEO Slide
->>>     drm: panel-orientation-quirks: Add new quirk for GPD Win 2
->>>     drm: panel-orientation-quirks: Add quirk for OneXPlayer Mini (Intel)
->>>
->>>    .../gpu/drm/drm_panel_orientation_quirks.c    | 40 ++++++++++++++++++-
->>>    1 file changed, 38 insertions(+), 2 deletions(-)
->>>
+> I recently got way too many such 2-month old clarifications.
+> 
+> That's indeed right of the contributor to respond in their own pace, I
+> am also sometimes slow, but really there should be some limit. It's
+> putting unnecessary burden on reviewers as now I should dig some old
+> discussion.
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+With best wishes
+Dmitry
 
