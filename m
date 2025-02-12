@@ -1,113 +1,90 @@
-Return-Path: <linux-kernel+bounces-511041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD9CA324F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:31:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4053A324EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:30:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8B918867C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:31:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 534B43A4004
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6665020E314;
-	Wed, 12 Feb 2025 11:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3B820ADF0;
+	Wed, 12 Feb 2025 11:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eIEQHlT8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IN+fPS0/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3635920E03B;
-	Wed, 12 Feb 2025 11:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88A520ADE6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359761; cv=none; b=Z5wfs+jn1VB6ZNUaJTTqJAuE96g0mV8DBkTY8Thg2WqPHFc9a9bMeRyCb8pln5r5SYMrDCSNdd310gQJzaRGMjjpsMjLKJeB8PKlUptj6jIGfiMgw31ImaqLZiuLI3WM3ihnLX1mra2L+3T5MchuhzspceCCiNSFYhMCFfRwjSQ=
+	t=1739359703; cv=none; b=AkEVK4BeaS+qWBSeiNQckW472YKU3ksv4wR74/qB+/JNTjT4qF0rxRGBHhnhnfTPH+aUkKgn9Jwc+4F7Owse5kMYa5/5qSRbtDVVuaNSZLiWaME5njSwGebAnZ2GYtHEPh4mDTIRtCFWvpfr1EQmCscf3XreR6LmwBuQPUwsUpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359761; c=relaxed/simple;
-	bh=ZkCZwKSdx0DSw7NKE/kuifcxpWJJ6EApm7Ls5SmmHYA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TXDVi+OumtYVaOppxkp3qEaBIBLsWcsxT3ga97ennQLw4y5YqF9hZOvFwhA5oZKExrFoEpRuN7nRTZZwNQijQrkFEcF4ZBopCaNmUBNvH1T+UWNiuNUFTU8cgNZ8ylzuLL04jQB1XqMmC4EGaUcZC2pJ6ALCKIjZIHXtMdc7Awo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eIEQHlT8; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739359760; x=1770895760;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ZkCZwKSdx0DSw7NKE/kuifcxpWJJ6EApm7Ls5SmmHYA=;
-  b=eIEQHlT8eT7Yo8OpOrf+xB1B6v7fdCrUNVeBJwuj7/a3IP0vJErRqHRT
-   d0wPHkXvpTg5gx6iCgaUvapIzE6MBZC0d7SYI4FPPk0d+jxTbKolHSSCI
-   BJQIFn9KMzJU2nwXx1L64vMMUsn2XFzp3Vm+nilt32PpfV3zi3RDe7FHq
-   Mx6lqz3JZe7Ei2ufMjHxSql+WqLVRULXc69bJO9nkFMsRJohw6cEjenK6
-   2pbj3LD7cLHHmoQMxbF5qwj7PoqqBzElz4kSmEULhBqSYAixmKFIzHl/5
-   UHXmfT7WqEQTSfpV5prxaLrb9XBSey0ApGwrA/LmeuoWf6J+Cyv+eXK67
-   Q==;
-X-CSE-ConnectionGUID: d28fNLC5RN+JqhZpx/sdbQ==
-X-CSE-MsgGUID: XNHbk6kxS1SYhSUDL/Iy1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39895761"
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="39895761"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 03:29:20 -0800
-X-CSE-ConnectionGUID: lQEPo361RRaeXAR1ueUlwQ==
-X-CSE-MsgGUID: dUehkeDKTryCLT4/qPXviQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="112648516"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by orviesa010.jf.intel.com with ESMTP; 12 Feb 2025 03:29:16 -0800
-From: niravkumar.l.rabara@intel.com
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
-	nirav.rabara@altera.com,
-	devicetree@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 2/2] arm64: dts: socfpga: agilex5: add clock-names property to nand node
-Date: Wed, 12 Feb 2025 19:25:35 +0800
-Message-Id: <20250212112535.2674256-3-niravkumar.l.rabara@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250212112535.2674256-1-niravkumar.l.rabara@intel.com>
-References: <20250212112535.2674256-1-niravkumar.l.rabara@intel.com>
+	s=arc-20240116; t=1739359703; c=relaxed/simple;
+	bh=crBH/z2IHA/+ZXt/+MdRv6oNnh+5SECu9UFZCDeV2sQ=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=pLVIGuXvn+W9rmnmf0ShbKG7raVM3LOk7R3c/a/sEz/TSmTc98IDYqGMu+4IhzD0e2zqcHNXtFp7iqu6x2J6C4IxtDNaqpdnKJQh+PvbLFETomqwPJ6OrqZhOiEtIug7diUSUPuc97CWJK8lNuInzfo2yAHWXOWGtHss59UYWoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IN+fPS0/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739359700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U+53ctVXxszASoqutnviIyhNloVmP44++pToMJO4ztk=;
+	b=IN+fPS0/Dn2gBKTImSzrAqmjDu6DwjAzqXx/M1xHCWj2cfJFRj9vujmHNOFCXROrsAavIC
+	M/9MOn1V4F59uk1fXVh8L4Bp7zwdoUEzzsZePe0/quvuOzLGLIhAFn59FEdmwm6WLZYUkF
+	wIT69OHzXXU3RjxRWsgP5mcDaxi5oP4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-351-TNiaGmmYMzi9fHfL-vUmZg-1; Wed,
+ 12 Feb 2025 06:28:19 -0500
+X-MC-Unique: TNiaGmmYMzi9fHfL-vUmZg-1
+X-Mimecast-MFC-AGG-ID: TNiaGmmYMzi9fHfL-vUmZg
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFA4419560AF;
+	Wed, 12 Feb 2025 11:28:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B59CF19560A3;
+	Wed, 12 Feb 2025 11:28:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250212025843.80283-2-liuye@kylinos.cn>
+References: <20250212025843.80283-2-liuye@kylinos.cn> <20250212025843.80283-1-liuye@kylinos.cn>
+To: Liu Ye <liuye@kylinos.cn>
+Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] mm/folio_queue: Delete __folio_order and use folio_order directly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3517720.1739359694.1@warthog.procyon.org.uk>
+Date: Wed, 12 Feb 2025 11:28:14 +0000
+Message-ID: <3517721.1739359694@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+Liu Ye <liuye@kylinos.cn> wrote:
 
-Add required clock-names property to the nand node.
+> __folio_order is the same as folio_order, remove __folio_order and then
+> just include mm.h and use folio_order directly.
+> 
+> Signed-off-by: Liu Ye <liuye@kylinos.cn>
 
-Fixes: 2d599bc43813 (arm64: dts: agilex5: add initial support for Intel Agilex5 SoCFPGA)
-Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-index 51c6e19e40b8..27f75e1bc8eb 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-@@ -271,6 +271,7 @@ nand: nand-controller@10b80000 {
- 			#size-cells = <0>;
- 			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clkmgr AGILEX5_NAND_NF_CLK>;
-+			clock-names = "nf_clk";
- 			cdns,board-delay-ps = <4830>;
- 			status = "disabled";
- 		};
--- 
-2.25.1
+Acked-by: David Howells <dhowells@redhat.com>
 
 
