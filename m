@@ -1,210 +1,106 @@
-Return-Path: <linux-kernel+bounces-511606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF49A32D2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:15:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01472A32D31
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:17:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5351886F4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:15:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0995169D2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 17:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9682586F3;
-	Wed, 12 Feb 2025 17:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5882F257AD0;
+	Wed, 12 Feb 2025 17:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xd9MBPY+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEN6PE5K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3D42046BD;
-	Wed, 12 Feb 2025 17:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B241C2046BD;
+	Wed, 12 Feb 2025 17:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739380520; cv=none; b=YAnRlCkNXmI9bY82Ot6SBCm42YQeABIA//8vRJLBTSTyBOFF66c0XS5ENq3UPg87o07o0tARMbccKVNZAjIMFTDG+7LRYo/9EAGd2gK6K0rhKoTe6YmUarRU1RzNLISc0O1fnYY0iuUrYKyTFlZgPVQB6Rjzy6ilSt7JFyWbxP8=
+	t=1739380514; cv=none; b=eig6JP16AHFkSBeF9+hutQkNepH1e9pYOchpmc2hqPGb8RFQdlDIKKpdTorz2QfKkXRLsHL4w3O9VY/sEV24XaCRVQQpLtwOsu1yHShTYfaoiKpC8V/6U+iN+lNbyfVd0czEaVVUOFXzNgYb6S11FCTxi47bC1744wkYKWIp588=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739380520; c=relaxed/simple;
-	bh=GVymmSVS1ebyVXbVBweLRHWKTDtLJbwNbno7SHJrNQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=E+3LcjgZ7BSH8wRb6ObE4okm7IfLqGCNS+pkQIRa6we5RMosg+znAMpl0b7P51XfZ9JZFEWWO69gE8MqfH3gBwsRUNg4R7g1t1v2MFdF3ga3sWcdK1ReARf6TGv9nyHv4pczKmyf4+0qoJ2xhW3PTBVuUZXTkJRoJtbMKhelQNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xd9MBPY+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C7ZO0t008337;
-	Wed, 12 Feb 2025 17:15:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fn/Uz0QQ5xJlUtUINV8OA+ppVRksOiwjgOFLQIeYh9c=; b=Xd9MBPY+gJ+/a5wl
-	pt1UGCoaLOEXvvjQB1BeZxAaXtR63bNm8bc+ymc/1bDSo0auww2W1yY08X4axja7
-	FTTF03kVLt+j114oNdJG2sglmhLw5w+CUNwiQ/QoBIrIeilfwoydIJZPUvJzeFcm
-	JHkkS4hP/Eh4dCmUZKz6gY9rVVvEv2ACqR7zYVIdSNaqiMdCLKOkoiRSdJV/rY5a
-	ZTl13SVFwWsANUmZMyXtc+0OrTLiMSrjCBVFZS6KoQEel/KDQ33Dm1ta9OH4aw9g
-	JV7BjTA442WmIWs0i7y8V5gXs5vb/dOhLC1f89w/Vjpb3u8STnTSxp1PU/7vbG+t
-	nr5Bhw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qewh88xr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 17:15:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51CHF65x010552
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 17:15:06 GMT
-Received: from [10.216.2.211] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
- 2025 09:15:01 -0800
-Message-ID: <ccc87c55-d157-4ffc-8081-1a5900752931@quicinc.com>
-Date: Wed, 12 Feb 2025 22:44:58 +0530
+	s=arc-20240116; t=1739380514; c=relaxed/simple;
+	bh=cKWGt8kgtTf7K+sXX7rpMB7u5WU0srtUtr1HTI1JiQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y9arJDEIOnR6oEZYj2AryuaEkbZ3DydX4RC7FXSCB5fp4Evid9FJuBxGr9qZtMlvPnS1lRiwkGMMuvfoo0C0MyrO1F0iL4/dy/859kS9Y5lrHmKV+Gj8FckAurvMuruewfdwodufQ7rQTZDzmbfah44c7EABzuf2HTbE+pf/Q9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEN6PE5K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88979C4CEE7;
+	Wed, 12 Feb 2025 17:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739380514;
+	bh=cKWGt8kgtTf7K+sXX7rpMB7u5WU0srtUtr1HTI1JiQE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tEN6PE5K/XgVeMyrUnpj9X/H4P4nEZLgld/QYdv1IyzLUACjHKR/kD/WGyQwpFhWz
+	 bGg4aSEytJiKgZBmHjwLoRR0bFwQaL++lCLzfoWdIIZqOtTlsFkuGVMOub0bIiHRRv
+	 qVrbyxNbGOh+lsOWNZgKy+0gpWSMJrfKduSjZPAxfiKz9+Yx1p/5LfIoUEmzwoPI3l
+	 Pjhja6Sd8fWGfbEUlnI+P/ngNfRvVxuE2CAvDCPVu161hlb9LnHCyWHCPlNNG3+ety
+	 voxxcgAbHP80D+47CejQi0Mwsn7VI3zieKQTMy01iDcwZ154fPXz0yCr3ZNNuQdYmC
+	 n6TyiFqqxtuiw==
+Date: Wed, 12 Feb 2025 18:15:07 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Vitalii Mordan <mordan@ispras.ru>
+Cc: Russell King <rmk@dyn-67.arm.linux.org.uk>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Fedor Pchelkin <pchelkin@ispras.ru>, 
+	Alexey Khoroshilov <khoroshilov@ispras.ru>, Vadim Mutilin <mutilin@ispras.ru>, lvc-project@linuxtesting.org
+Subject: Re: [PATCH] i2c: pxa: fix call balance of i2c->clk handling routines
+Message-ID: <3vpserpv2pzslwefiqxgyzg6ttjtvb73n3wnkq7k2wotszj2tl@hgxp7yh4umwc>
+References: <20250211145321.1137001-1-mordan@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
- LPASS resets for QCM6490
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
- <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
- <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ccX__PlDW1lE0AA6xIKmP-_va8_5B_LK
-X-Proofpoint-GUID: ccX__PlDW1lE0AA6xIKmP-_va8_5B_LK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- impostorscore=0 mlxlogscore=985 phishscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502120126
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211145321.1137001-1-mordan@ispras.ru>
 
+Hi Vitalii,
 
-
-On 2/12/2025 4:39 PM, Dmitry Baryshkov wrote:
-> On Wed, Feb 12, 2025 at 01:52:20PM +0530, Taniya Das wrote:
->> On the QCM6490 boards the LPASS firmware controls the complete clock
->> controller functionalities. But the LPASS resets are required to be
->> controlled from the high level OS. The Audio SW driver should be able to
->> assert/deassert the audio resets as required. Thus in clock driver add
->> support for the resets.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> ---
->>  drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
->>  1 file changed, 19 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
->> index 45e7264770866f929a3f4663c477330f0bf7aa84..b6439308926371891cc5f9a5e0d4e8393641560d 100644
->> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
->> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
->> @@ -1,6 +1,7 @@
->>  // SPDX-License-Identifier: GPL-2.0-only
->>  /*
->>   * Copyright (c) 2021, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>   */
->>  
->>  #include <linux/clk-provider.h>
->> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
->>  	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
->>  };
->>  
->> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
->> +	.name = "lpassaudio_cc_reset",
->> +	.reg_bits = 32,
->> +	.reg_stride = 4,
->> +	.val_bits = 32,
->> +	.fast_io = true,
->> +	.max_register = 0xc8,
->> +};
->> +
->>  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
->> -	.config = &lpass_audio_cc_sc7280_regmap_config,
->> +	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
->>  	.resets = lpass_audio_cc_sc7280_resets,
->>  	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
->>  };
->>  
->>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
->> -	{ .compatible = "qcom,sc7280-lpassaudiocc" },
->> +	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
->> +	{ .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
->>  	{ }
->>  };
->>  MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
->> @@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
->>  	struct regmap *regmap;
->>  	int ret;
->>  
->> +	desc = device_get_match_data(&pdev->dev);
->> +
->> +	if (desc->num_resets)
->> +		return qcom_cc_probe_by_index(pdev, 1, desc);
+On Tue, Feb 11, 2025 at 05:53:21PM +0300, Vitalii Mordan wrote:
+> If the clock i2c->clk was not enabled in i2c_pxa_probe(), it should not be
+> disabled in any path.
 > 
-> Won't this break SC7280 support by causing an early return?
+> Found by Linux Verification Center (linuxtesting.org) with Klever.
 > 
+> Fixes: c3cef3f3c07b ("[ARM] pxa: update pxa i2c driver to use clk support")
 
-The resets are not defined for SC7280.
-static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
-        .config = &lpass_audio_cc_sc7280_regmap_config,
-        .clks = lpass_audio_cc_sc7280_clocks,
-        .num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
-};
+I'm not sure the Fixes tag is really needed here. It's not a real
+bug, just a check on the return value.
 
-The reset get registered for SC7280 after the clocks are registered.
-qcom_cc_probe_by_index(pdev, 1,  &lpass_audio_cc_reset_sc7280_desc);
-
->> +
->>  	ret = lpass_audio_setup_runtime_pm(pdev);
->>  	if (ret)
->>  		return ret;
->>  
->>  	lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
->>  	lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
->> -	desc = &lpass_audio_cc_sc7280_desc;
->>  
->>  	regmap = qcom_cc_map(pdev, desc);
->>  	if (IS_ERR(regmap)) {
->> @@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
->>  	regmap_write(regmap, 0x4, 0x3b);
->>  	regmap_write(regmap, 0x8, 0xff05);
->>  
->> -	ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
->> +	ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
->>  	if (ret) {
->>  		dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
->>  		goto exit;
->>
->> -- 
->> 2.45.2
->>
+> Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+> ---
+>  drivers/i2c/busses/i2c-pxa.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.c
+> index cb6988482673..4144b0ae195e 100644
+> --- a/drivers/i2c/busses/i2c-pxa.c
+> +++ b/drivers/i2c/busses/i2c-pxa.c
+> @@ -1503,7 +1503,11 @@ static int i2c_pxa_probe(struct platform_device *dev)
+>  				i2c->adap.name);
+>  	}
+>  
+> -	clk_prepare_enable(i2c->clk);
+> +	ret = clk_prepare_enable(i2c->clk);
+> +	if (ret) {
+> +		dev_err(&dev->dev, "failed to enable clock\n");
+> +		return ret;
 
+can you please use dev_err_probe() here?
+
+Thanks,
+Andi
+
+> +	}
+>  
+>  	if (i2c->use_pio) {
+>  		i2c->adap.algo = &i2c_pxa_pio_algorithm;
+> -- 
+> 2.25.1
+> 
 
