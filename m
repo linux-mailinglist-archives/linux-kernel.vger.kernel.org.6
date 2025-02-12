@@ -1,138 +1,135 @@
-Return-Path: <linux-kernel+bounces-510956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF317A32412
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:57:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EEFA32416
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D6E83A6CA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:57:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26BF4161E82
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C82209F55;
-	Wed, 12 Feb 2025 10:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8310E209F4F;
+	Wed, 12 Feb 2025 10:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CO1SZVc0"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O/X1Adqi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B6A209F4D;
-	Wed, 12 Feb 2025 10:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9D0206F2C;
+	Wed, 12 Feb 2025 10:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739357861; cv=none; b=GhMCvi/L20d9ix3kKp/aIY7k6kTicjXJhKUDp3AKkrLJgIMcRt+7u1//6iwip3+gJjfmfi97C/W7wbC3TbQFZq4n2e3ozVOX9qK5pTcl8oHbLdgOkcmfsQRpXYabSP7ktPr/zSqV8nOaAT8c40LJKeZ2M2YGO7TxrzDFd6apEe8=
+	t=1739357890; cv=none; b=Ba0X+J7rzCr5ZVTt7Iy8sPyecPyLBjpvlWm2/4MvUA9cr08+cTL1PnmG0zvhLHB0gILyVYjtzr0IJvj1XUH5dnKf7wnFCJ3L9XSleE96GAi8r5he7c60H2nrBlvEHFXsOquohiXvWkbsTfts8GeWBSBzAzD/hPT2EYDpbfTh/BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739357861; c=relaxed/simple;
-	bh=DxsRVHn+IoOw4t6HcvfmabIuE6OhYAGH8nufPSrhJe4=;
+	s=arc-20240116; t=1739357890; c=relaxed/simple;
+	bh=+z2XvD2jfED7TixE7ouV+IiMt8A2lUXzW0REOLFZMxM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UOsZ7MG67x62xzi/ToibRSCo1Bo+ytiMvyZexu3NfEkMrfbrwT2vYdv2+uyTI/KnTtcg4E9ySzhvoizLjcPR4LD1JNFpiktUo/RjzJeF7nA7H5qAVo5VzSYTS/yHGSIsUd+2/9JbscHkXuuJ+wgk/waeaX3E2CEqQ0QO7RoeywE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CO1SZVc0; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220c2a87378so5426115ad.1;
-        Wed, 12 Feb 2025 02:57:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739357859; x=1739962659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gUDk1zcLrpXnvzTsm2uKzR73IoX4Z07XrYWZgkm6NP4=;
-        b=CO1SZVc0w+Ug649tIgy67I/jCbn21U0K1j4Y6eV6o3zxb1MhW3toJRw87Me0/2eIQk
-         X+57boYqxvwCnQtawBpgKUw0Vi/dDMiAU2hOfXAL+moujDMgKZwN6xjm+xezPnRQrIHt
-         Q/IaM/+dg2Oy3BpQE5ZRGM+ex4esVCb6OowRvXMaPsXFbvvB/mxo+u7tg6htW3dE5i5u
-         g83/4j+syEO2YcFDk1DtpDE681aNuUh/VNUV9I+wF5KK1tlzq4NlBzXElgIR9GnMfUxZ
-         9ohSg0LLniAd1d3oPVk2liz98TEVbed2lmZw9qDHFFNaNxhha9E5j6z9cUbCYSkUL6pZ
-         rd6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739357859; x=1739962659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gUDk1zcLrpXnvzTsm2uKzR73IoX4Z07XrYWZgkm6NP4=;
-        b=ttI6WIUQ9Zi38o3DPaWYv4sRcqbmLAfKTvtAv6udDVBWRAiJ1u3nSYEkpJ+nF/SJdk
-         6VwmkSuKbkV+DJ5aznZFWTBsUUe0zUudcGKYQQurijxQCFH/cIb/eAJKHFQPrMX4fyYN
-         QMMhqSm3n+cQ7DOWrveLbMOVpRcMOFwNQl8TUUimkIUDQ09nhoImaY/LQ3ZmOz5dxFBS
-         HbI871Sl1YSj/o9GYALiyMRMs7w73BLSo+Py9FqyTr8YCle0oE0gvs86YeDL12tMobGo
-         u3u5WHMMIy1gOe5Fl//Qvvo7OShB6POG6GlbdBcA/2LYjoRPsqOxX+Q0V590IMxXB8fq
-         7fLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtw3MGdulA1isExUHhXI4G9wLZ2fAuZtbZ9KTukcjfaUldhLrDQ7/lPhV/OM8koungdmD/2vxEo8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlC3Z5eiQ99Ywgm+Jt00CwmWpeQ/pRKUiA5nnw/ODbJuB8nndg
-	RCCH25H0ncpNKhi6I9D2cwS5thwofKOzCV1LwJTyoQ/DTj7yp/4y
-X-Gm-Gg: ASbGncuG2RZCAc9yi1Yi2DESz6JCxlLXPhx5Slf9+fDyztNZSjXA62Rp2eAgcPzF3j3
-	VmrUJ6ScN7rRB7TWeMzmgaoUV0gVFuqKguRt/Qr5FQgWDMZi4r4zJLcsFKFh8qaKVVtgB4S64eG
-	HlagZP3omewrC9WSWbsYWgn9v5hmAMa2BMhxK+8xlJTLSlFIqPpw2kxe/Su4kL/IYaxfUdTnKte
-	lR0B2oMWbdhE7OEpPijYlH213A1DGvB4HBD0mzlcg2PsNRg88dnI5puRg4uw/dPep1GTiOdEzhV
-	B7MC5mFFkjb6DJw=
-X-Google-Smtp-Source: AGHT+IHmYr477s1KuP6so1P+5qf/CdBWlosojZkB2v6AyA9WZxKpAZ1TX3P1VIsLbpp8rD8PP4dgyw==
-X-Received: by 2002:a05:6a00:a90:b0:730:9446:4d8a with SMTP id d2e1a72fcca58-7322c3f6d63mr3325609b3a.16.1739357858911;
-        Wed, 12 Feb 2025 02:57:38 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73086b7f9e9sm6255190b3a.97.2025.02.12.02.57.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 02:57:37 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 615E541F5559; Wed, 12 Feb 2025 17:57:35 +0700 (WIB)
-Date: Wed, 12 Feb 2025 17:57:35 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] docs: Makefile: use the new script to check for bad ABI
- references
-Message-ID: <Z6x-n9U7p1rq60ZV@archie.me>
-References: <20250211054446.1696826-1-mchehab+huawei@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZdoCBFt8zEnn7HzR9MLvin2iSZg7bBPJvpuApqNXNriioBK/I9SHFyLyQTEnOQL9Q9A7uW6InxXF8r7/gyS6PXAqEug7XzwZ/3f99KDQWOgtjGTnJM7/Mfevzi2zr61fnMO/ux0FVGEWQGB4+1ULyx6b9snHnahq35RV4G1gp4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O/X1Adqi; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739357889; x=1770893889;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=+z2XvD2jfED7TixE7ouV+IiMt8A2lUXzW0REOLFZMxM=;
+  b=O/X1AdqiymFiEC5aPbAg4zrUdmlPu+XJ7+rAF46m0FzY6LYL32t1WoWi
+   OxceSI38PDSnSJ9zl22IMCnDujfntjyHRzni3wA2kJhZHW7IRiWyFxOew
+   EiMexYLQazG1Yrl1vvBi4BPYgkYz9DhhasdFTyJ1rqH2vlnvYE4v7xu3D
+   nrHtffhVljCIx7YEZhxqh0WbxKw2fNSKs3rg3vfqk7obNYmqu2HKsjMYy
+   aelbDqyzr5iFPzJxur+MWblSUtaYTUJdXaJz/5G4OHJ/89TatIO1dG8LT
+   yFSNM7TWjIq6ZDwxg+cjOVKMCkujWngHKvcjy1byBAOLbHbrqsSxGyhyj
+   A==;
+X-CSE-ConnectionGUID: ptNvhZjQQxK5gTOusFjw6Q==
+X-CSE-MsgGUID: iKbD3aUXQS6NpoRJZpw1vg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39932272"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="39932272"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:58:09 -0800
+X-CSE-ConnectionGUID: ZCIVHWtYRQ+/zz/ylBdfnw==
+X-CSE-MsgGUID: vdPeYeeFT7KVQt2EtKQp9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="149977759"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:58:05 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tiARN-0000000AoM3-0RBJ;
+	Wed, 12 Feb 2025 12:58:01 +0200
+Date: Wed, 12 Feb 2025 12:58:00 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v8 01/17] spi: add basic support for SPI offloading
+Message-ID: <Z6x-uBWEsoAIV2n-@smile.fi.intel.com>
+References: <b1dcbb19-190a-45e7-8e94-cb5ef65f1f1b@sirena.org.uk>
+ <Z6pim_nLct33LzfN@smile.fi.intel.com>
+ <b000d3fd-754a-43e8-ab10-82677eeee1d2@sirena.org.uk>
+ <Z6tcwg7QgQwytoSb@smile.fi.intel.com>
+ <Z6tezVXVxVCwXuds@smile.fi.intel.com>
+ <Z6tfUfHilO2KLmxv@smile.fi.intel.com>
+ <Z6tgNjH6Qq5pe9Gt@smile.fi.intel.com>
+ <tnjsrq3trijh4agmbhrfnqeq4iojhwybtg45bwt5n7mg7qqgcx@s7gw7idjuxgd>
+ <Z6uhHssgIvI2DJ4c@smile.fi.intel.com>
+ <57swm23ik5kyzcjvnhkizctnemtlqf3duhrd5u3n6yelxkerxt@6akfoqmyqsup>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="40CA+Cf7cHl0g0vT"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250211054446.1696826-1-mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <57swm23ik5kyzcjvnhkizctnemtlqf3duhrd5u3n6yelxkerxt@6akfoqmyqsup>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Wed, Feb 12, 2025 at 09:52:37AM +0100, Uwe Kleine-König wrote:
+> On Tue, Feb 11, 2025 at 09:12:30PM +0200, Andy Shevchenko wrote:
+> > On Tue, Feb 11, 2025 at 07:45:30PM +0100, Uwe Kleine-König wrote:
+> > > I have no problem here. If the header becomes stale we will most
+> > > probably notice that eventually and remove it.
+> > 
+> > Lol. Look at the header hell we have now. 98% code in the drivers/ just show
+> > that the developers either don't care or do not understand C (in terms of
+> > what headers are for and why it's important to follow IWYU principle).
+> 
+> Yeah, there is a problem. The source is that we have a metric ton of
+> recursive includes (i.e. headers that include other headers that include
+> still more headers). Even if you care, its sometimes hard to know which
+> headers you actually need. One idea on my long-term list is to add a
+> machine-parsable info to header files about the list of symbols that the
+> given file is responsible for. With that in place we could create a
+> linter that tells you that this source file doesn't use any symbols from
+> <linux/of_irq.h> and it should #include <linux/of.h> directly instead to
+> make use of symbols defined there.
+
+There were already few attempts to untangle the dependency hell we have in LK
+project, but all seems to fail. The infamous one by Ingo stale, however a few
+patches (out of more than 2200!) made upstream.
+
+So, any tooling for that will be warmly accepted!
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---40CA+Cf7cHl0g0vT
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 11, 2025 at 06:44:06AM +0100, Mauro Carvalho Chehab wrote:
-> diff --git a/Documentation/Makefile b/Documentation/Makefile
-> index 52c6c5a3efa9..63094646df28 100644
-> --- a/Documentation/Makefile
-> +++ b/Documentation/Makefile
-> @@ -12,7 +12,7 @@ endif
-> =20
->  # Check for broken ABI files
->  ifeq ($(CONFIG_WARN_ABI_ERRORS),y)
-> -$(shell $(srctree)/scripts/get_abi.pl validate --dir $(srctree)/Document=
-ation/ABI)
-> +$(shell $(srctree)/scripts/get_abi.py --dir $(srctree)/Documentation/ABI=
- validate)
->  endif
-> =20
->  # You can set these variables from the command line.
-
-The warning squashed away, thanks!
-
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---40CA+Cf7cHl0g0vT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ6x+lgAKCRD2uYlJVVFO
-o3TSAP9/vicgk7LXwi5IXt5JDCRfxfl9RPwCsgsV7N+uXvmWLwEAjDOO3MZEuOLB
-9cFCewu79s5VFhyFsgINr0nDkvTXSgo=
-=2p7L
------END PGP SIGNATURE-----
-
---40CA+Cf7cHl0g0vT--
 
