@@ -1,142 +1,230 @@
-Return-Path: <linux-kernel+bounces-511952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DC2A331F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:05:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D98AA331FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:06:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 485E7163166
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:05:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ADA4188ADF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 22:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F06F205AC3;
-	Wed, 12 Feb 2025 22:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A123220686;
+	Wed, 12 Feb 2025 22:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHHc6gqq"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJVT8kjj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693A32036E9;
-	Wed, 12 Feb 2025 22:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4990B204087;
+	Wed, 12 Feb 2025 22:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739397918; cv=none; b=jur8AowIyCaIq21yMYsl02pC9SiXu6CuhtpabZzdMVr80q4Qm+8Ks7IcziEtNfem96FRDbWSzazcV9/bqlOMITSwKYxp5ZiDoX5lC4Mpfgbarx4pKEjbRQ0n/WRFnUsP1bDEzddX8VoahPFpxtM1m09Zac44z4364VsZMI8Fwbg=
+	t=1739397924; cv=none; b=QOG7i1pW+76y5EgNwDV/zuMJj/f7zHjiRb84OVw0vGitTO27sIh+WXw6MkyuHBT9JbgKs5YraBVAa/KIe4vlmlsToXN/GCjGzQniQHR7gwTV7FuV11q6C8bYMOjZwwD1yK0gPCAbER4uLnduXaTu9UiJiS95gnlABgzdlqFlUf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739397918; c=relaxed/simple;
-	bh=jR8Imfk+/emEWwggsHjMSSH2I2/loBmnfcLAq7i43J4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gp8bDyg6ahR8zJddTwpQa8nlbvy9myOSJYK9Fwz6ODySy42NLBFysPt9Ida3pSTp6D3oGu5pd1QCGSXz7uQxyYcWPKAjLoaLV4bdcVLjSAM6Z1qFEXvuSCgc2+5PnGduBHm+eRLPfbzlAI5SC6flye6sNUBqTuAtrlTe2g+EDJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YHHc6gqq; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fbf77b2b64so487690a91.2;
-        Wed, 12 Feb 2025 14:05:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739397917; x=1740002717; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eOj7jdTw739Z3O2EZLYaX1Zcx8m73qJ0L/6aXVbYUg8=;
-        b=YHHc6gqqBNNabsum/bvF0oe4s9UnfgWG1ikRlI1fc/lJIhSPJTKYJh7SD/DfJn00A3
-         wbrCE7D1FbVoiUnad3xThd48jtQDvpnFOgM+DyZOqBGGH0+NLJr4rCuspERaGB0KU36n
-         5s4LrlXQUOSsYIJBww+0dE0S9nt+jsZu/AyFTRPbGX0l5+sn1ZM6gz8g2WJRuB2maWPc
-         jr8GZQxBFLAIwk/gu2OXWDuStmrOCj6fQKFj8sQdezLXsdJVsN9ukc0CA/Py+EHTXSLX
-         5O9P8RnPHlDY6PxxZmxv/K0kWoW4AqP5flqg6puP2jeNDoBkI34EXe7PlOjb40Bizj+2
-         ONiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739397917; x=1740002717;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eOj7jdTw739Z3O2EZLYaX1Zcx8m73qJ0L/6aXVbYUg8=;
-        b=F7u5mXRS1YYSXImgQ1rFLofa7e1LdrSw/ObL8W257DTQDoH2IdpJsSZy3rknrXyNZm
-         zaBCVSCr+WHfuvpTfXLyZqNvxxEV/H/XI1XlfTA8tXbogYSs5/95WcDlalJtumO21NV0
-         LFB4hF4qXPD7Sz+4tl0ywuDU1BYMxx8UhUDznkSghHq/PQdiIGRplI6+CbnKthwV69vF
-         o/DdT65MC2jrJ9OwbJR22nwuKkOuvOVMz0CLXBEICsehTraJmk8qzs4e6GOadeFgI3od
-         YdRyYAV5bgWW43fBE21im8tyFa9vM106uOQzusZS8J4ADCmkYuKwgH/CwZGk1dmrHBXl
-         huFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkiGEHO23WBXa8/lGcdOvPWqR7mhc41BBY40EPMy3YplXVwrYl5v5dpoHozBLYoFJ4AHPccYgt@vger.kernel.org, AJvYcCVhNfHeMXsGqJgr3Kd1XyvTKSt7SGx8MowMUlIVQI/TT1aHxq/A/ulBa29Tk/uU+MrwT88v9/cY@vger.kernel.org, AJvYcCVjeMwTNHovn0yPtX7F0dxRCgPh16L9rwD/ZN4g/aNxvB7xAkifJ1mbEVgVlmeaizEju2aH8HytXbccBE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8EN5ltyJ/Cv4gUdCAUbkDuQX9Pjag1xgpX59nPtGDlAvYO2nz
-	LGH1QC4iMjZj93C/CmrAPn3iqiIlK4a615+Z+CTfJmtfs21YU30=
-X-Gm-Gg: ASbGncsy2kcD/t2n9fLJ3DpDV8TnKricerLe7ddzMaZ0cBPue2o5jkX0VtlolZtAZmV
-	X4tr6ZoF+nPK9z7EGSOwE6onV/RL/ezty5hJ/6a3rhbHEZnFaWLcXZcKJV//K8xq4FNI6ZfMbqO
-	HP5typw8J6FGue0JEkg6mkb/QlLtKllCL+dAQPN21Sne230WruGymC5E/r8r1QSUJCVv4FxrJkf
-	CRV7euRMexJ2E2uw/6oIJ/YbhEHaPetbv/mGtYYVxnc05CxzUjyRLhvEjSBwVDqFT0WSYywwXW6
-	/U8ZoGTi/c/QZZA=
-X-Google-Smtp-Source: AGHT+IG1z2oLYiVi3UzGihjXVQjsvFy9qEGl58dn4cNX1dguRSWp7c87vBdUozrJtk51epj/oWk6dQ==
-X-Received: by 2002:a17:90b:1f87:b0:2ee:edae:75e with SMTP id 98e67ed59e1d1-2fbf5c013a6mr7053062a91.13.1739397916637;
-        Wed, 12 Feb 2025 14:05:16 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fbf999b5ddsm1989562a91.37.2025.02.12.14.05.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 14:05:16 -0800 (PST)
-Date: Wed, 12 Feb 2025 14:05:15 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, David Wei <dw@davidwei.uk>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paulmck@kernel.org, kernel-team@meta.com, stable@vger.kernel.org
-Subject: Re: [PATCH net] netdevsim: disable local BH when scheduling NAPI
-Message-ID: <Z60bG180MW5gQ9oy@mini-arch>
-References: <20250212-netdevsim-v1-1-20ece94daae8@debian.org>
- <CANn89iKnqeDCrEsa4=vf1XV4N6+FUbfB8S6tXG6n8V+LKGfBEg@mail.gmail.com>
+	s=arc-20240116; t=1739397924; c=relaxed/simple;
+	bh=MQI+PKcaHTqtA7qNC5oF+u39hyT4lvLQUfBwteyUk0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aMLGgMb5JAfmrWNj722w04ZbAK+YbZbKOO/VQmGBfyv+ygtKOicF9MLXG112T3u8fFfdUO/jFqnuicEZGhHSzoQcGs+Hleageht78oGsYkXhNzrzCdTv98xmxI6rHRLrzoqsMucwiGNLSkg5xsyXFfj70EXtxYWD3R3PEmEguY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJVT8kjj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04081C4CEDF;
+	Wed, 12 Feb 2025 22:05:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739397923;
+	bh=MQI+PKcaHTqtA7qNC5oF+u39hyT4lvLQUfBwteyUk0c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TJVT8kjjGRUmJI2QMR+AWjvdphUmVun9lACRjgqqYlTUaB3TeMTlvyUdVCkMoDQhJ
+	 eb82v5bQasBPqg28MeL4NhfYu4IrF8NkGplwoo5B4QA1XGFq4QzWv3q9hygHguJMn0
+	 TPMnPe27DrBkZK52k0pof/aItQWioFkq0eh98Z0HzWPJ+mGQ597d1YNW7rk+RgulGq
+	 R5gJlfRpDGYM4yhW1Dp9LiG8qcWjke/ARLgRN37YuRWwwVUnnWKrkKfLMjYS+CpurT
+	 vb0K9S17HEjE//byKpo4+WRA80zuxOFntZbP6qtRKUDxbTf3ZMq8UHTKC4Gp8VFGwb
+	 Q8ELHsr9ZFtXQ==
+Message-ID: <04f036bf-e863-45c1-87de-7b61f8bc510d@kernel.org>
+Date: Wed, 12 Feb 2025 16:05:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/14] cpufreq/amd-pstate: Overhaul locking
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>
+Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250206215659.3350066-1-superm1@kernel.org>
+ <20250206215659.3350066-5-superm1@kernel.org>
+ <adccc912-bf93-4320-8011-21c0220c839a@amd.com>
+ <bfcafbaf-c407-412b-a5e4-d152e2a565d7@kernel.org>
+ <82f27cde-4725-4f4e-b4ae-c23885b31d14@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <82f27cde-4725-4f4e-b4ae-c23885b31d14@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iKnqeDCrEsa4=vf1XV4N6+FUbfB8S6tXG6n8V+LKGfBEg@mail.gmail.com>
 
-On 02/12, Eric Dumazet wrote:
-> On Wed, Feb 12, 2025 at 7:34 PM Breno Leitao <leitao@debian.org> wrote:
-> >
-> > The netdevsim driver was getting NOHZ tick-stop errors during packet
-> > transmission due to pending softirq work when calling napi_schedule().
-> >
-> > This is showing the following message when running netconsole selftest.
-> >
-> >         NOHZ tick-stop error: local softirq work is pending, handler #08!!!
-> >
-> > Add local_bh_disable()/enable() around the napi_schedule() call to
-> > prevent softirqs from being handled during this xmit.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 3762ec05a9fb ("netdevsim: add NAPI support")
-> > Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> >  drivers/net/netdevsim/netdev.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
-> > index 42f247cbdceecbadf27f7090c030aa5bd240c18a..6aeb081b06da226ab91c49f53d08f465570877ae 100644
-> > --- a/drivers/net/netdevsim/netdev.c
-> > +++ b/drivers/net/netdevsim/netdev.c
-> > @@ -87,7 +87,9 @@ static netdev_tx_t nsim_start_xmit(struct sk_buff *skb, struct net_device *dev)
-> >         if (unlikely(nsim_forward_skb(peer_dev, skb, rq) == NET_RX_DROP))
-> >                 goto out_drop_cnt;
-> >
-> > +       local_bh_disable();
-> >         napi_schedule(&rq->napi);
-> > +       local_bh_enable();
-> >
+On 2/11/2025 23:15, Dhananjay Ugwekar wrote:
+> On 2/12/2025 3:24 AM, Mario Limonciello wrote:
+>> On 2/10/2025 23:02, Dhananjay Ugwekar wrote:
+>>> On 2/7/2025 3:26 AM, Mario Limonciello wrote:
+>>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>>
+>>>> amd_pstate_cpu_boost_update() and refresh_frequency_limits() both
+>>>> update the policy state and have nothing to do with the amd-pstate
+>>>> driver itself.
+>>>>
+>>>> A global "limits" lock doesn't make sense because each CPU can have
+>>>> policies changed independently.  Instead introduce locks into to the
+>>>> cpudata structure and lock each CPU independently.
+>>>>
+>>>> The remaining "global" driver lock is used to ensure that only one
+>>>> entity can change driver modes at a given time.
+>>>>
+>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>> ---
+>>>>    drivers/cpufreq/amd-pstate.c | 27 +++++++++++++++++----------
+>>>>    drivers/cpufreq/amd-pstate.h |  2 ++
+>>>>    2 files changed, 19 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+>>>> index 77bc6418731ee..dd230ed3b9579 100644
+>>>> --- a/drivers/cpufreq/amd-pstate.c
+>>>> +++ b/drivers/cpufreq/amd-pstate.c
+>>>> @@ -196,7 +196,6 @@ static inline int get_mode_idx_from_str(const char *str, size_t size)
+>>>>        return -EINVAL;
+>>>>    }
+>>>>    -static DEFINE_MUTEX(amd_pstate_limits_lock);
+>>>>    static DEFINE_MUTEX(amd_pstate_driver_lock);
+>>>>      static u8 msr_get_epp(struct amd_cpudata *cpudata)
+>>>> @@ -283,6 +282,8 @@ static int msr_set_epp(struct amd_cpudata *cpudata, u8 epp)
+>>>>        u64 value, prev;
+>>>>        int ret;
+>>>>    +    lockdep_assert_held(&cpudata->lock);
+>>>
+>>> After making the perf_cached variable writes atomic, do we still need a cpudata->lock ?
+>>
+>> My concern was specifically that userspace could interact with multiple sysfs files that influence the atomic perf variable (and the HW) at the same time.  So you would not have a deterministic behavior if they raced.  But if you take the mutex on all the paths that this could happen it will be a FIFO.
 > 
-> I thought all ndo_start_xmit() were done under local_bh_disable()
+> I guess, the lock still wont guarantee the ordering right? It will just ensure that one thread executes
+> that code path for a specific CPU at a time. And do we even care about the ordering ? I'm having a hard
+> time thinking of a scenario where we'll need the lock. Can you or Gautham think of any such scenario?
 > 
-> Could you give more details ?
 
-Not 100% sure this patch is the culprit, but looks related:
+You're right; I can't really think of one either.  Let me take out the 
+private lock for the per-cpu device and I'll just overhaul the global 
+lock locations.
 
-https://netdev-3.bots.linux.dev/vmksft-net-drv-dbg/results/989901/5-netcons-fragmented-msg-sh/stderr
+>>
+>>>
+>>> Regards,
+>>> Dhananjay
+>>>
+>>>> +
+>>>>        value = prev = READ_ONCE(cpudata->cppc_req_cached);
+>>>>        value &= ~AMD_CPPC_EPP_PERF_MASK;
+>>>>        value |= FIELD_PREP(AMD_CPPC_EPP_PERF_MASK, epp);
+>>>> @@ -315,6 +316,8 @@ static int shmem_set_epp(struct amd_cpudata *cpudata, u8 epp)
+>>>>        int ret;
+>>>>        struct cppc_perf_ctrls perf_ctrls;
+>>>>    +    lockdep_assert_held(&cpudata->lock);
+>>>> +
+>>>>        if (epp == cpudata->epp_cached)
+>>>>            return 0;
+>>>>    @@ -335,6 +338,8 @@ static int amd_pstate_set_energy_pref_index(struct cpufreq_policy *policy,
+>>>>        struct amd_cpudata *cpudata = policy->driver_data;
+>>>>        u8 epp;
+>>>>    +    guard(mutex)(&cpudata->lock);
+>>>> +
+>>>>        if (!pref_index)
+>>>>            epp = cpudata->epp_default;
+>>>>        else
+>>>> @@ -750,7 +755,6 @@ static int amd_pstate_set_boost(struct cpufreq_policy *policy, int state)
+>>>>            pr_err("Boost mode is not supported by this processor or SBIOS\n");
+>>>>            return -EOPNOTSUPP;
+>>>>        }
+>>>> -    guard(mutex)(&amd_pstate_driver_lock);
+>>>>          ret = amd_pstate_cpu_boost_update(policy, state);
+>>>>        refresh_frequency_limits(policy);
+>>>> @@ -973,6 +977,9 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
+>>>>          cpudata->cpu = policy->cpu;
+>>>>    +    mutex_init(&cpudata->lock);
+>>>> +    guard(mutex)(&cpudata->lock);
+>>>> +
+>>>>        ret = amd_pstate_init_perf(cpudata);
+>>>>        if (ret)
+>>>>            goto free_cpudata1;
+>>>> @@ -1179,8 +1186,6 @@ static ssize_t store_energy_performance_preference(
+>>>>        if (ret < 0)
+>>>>            return -EINVAL;
+>>>>    -    guard(mutex)(&amd_pstate_limits_lock);
+>>>> -
+>>>>        ret = amd_pstate_set_energy_pref_index(policy, ret);
+>>>>          return ret ? ret : count;
+>>>> @@ -1353,8 +1358,10 @@ int amd_pstate_update_status(const char *buf, size_t size)
+>>>>        if (mode_idx < 0 || mode_idx >= AMD_PSTATE_MAX)
+>>>>            return -EINVAL;
+>>>>    -    if (mode_state_machine[cppc_state][mode_idx])
+>>>> +    if (mode_state_machine[cppc_state][mode_idx]) {
+>>>> +        guard(mutex)(&amd_pstate_driver_lock);
+>>>>            return mode_state_machine[cppc_state][mode_idx](mode_idx);
+>>>> +    }
+>>>>          return 0;
+>>>>    }
+>>>> @@ -1375,7 +1382,6 @@ static ssize_t status_store(struct device *a, struct device_attribute *b,
+>>>>        char *p = memchr(buf, '\n', count);
+>>>>        int ret;
+>>>>    -    guard(mutex)(&amd_pstate_driver_lock);
+>>>>        ret = amd_pstate_update_status(buf, p ? p - buf : count);
+>>>>          return ret < 0 ? ret : count;
+>>>> @@ -1472,6 +1478,9 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
+>>>>          cpudata->cpu = policy->cpu;
+>>>>    +    mutex_init(&cpudata->lock);
+>>>> +    guard(mutex)(&cpudata->lock);
+>>>> +
+>>>>        ret = amd_pstate_init_perf(cpudata);
+>>>>        if (ret)
+>>>>            goto free_cpudata1;
+>>>> @@ -1558,6 +1567,8 @@ static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
+>>>>        union perf_cached perf;
+>>>>        u8 epp;
+>>>>    +    guard(mutex)(&cpudata->lock);
+>>>> +
+>>>>        amd_pstate_update_min_max_limit(policy);
+>>>>          if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
+>>>> @@ -1646,8 +1657,6 @@ static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
+>>>>        if (cpudata->suspended)
+>>>>            return 0;
+>>>>    -    guard(mutex)(&amd_pstate_limits_lock);
+>>>> -
+>>>>        if (trace_amd_pstate_epp_perf_enabled()) {
+>>>>            trace_amd_pstate_epp_perf(cpudata->cpu, perf.highest_perf,
+>>>>                          AMD_CPPC_EPP_BALANCE_POWERSAVE,
+>>>> @@ -1684,8 +1693,6 @@ static int amd_pstate_epp_resume(struct cpufreq_policy *policy)
+>>>>        struct amd_cpudata *cpudata = policy->driver_data;
+>>>>          if (cpudata->suspended) {
+>>>> -        guard(mutex)(&amd_pstate_limits_lock);
+>>>> -
+>>>>            /* enable amd pstate from suspend state*/
+>>>>            amd_pstate_epp_reenable(policy);
+>>>>    diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
+>>>> index a140704b97430..6d776c3e5712a 100644
+>>>> --- a/drivers/cpufreq/amd-pstate.h
+>>>> +++ b/drivers/cpufreq/amd-pstate.h
+>>>> @@ -96,6 +96,8 @@ struct amd_cpudata {
+>>>>        bool    boost_supported;
+>>>>        bool    hw_prefcore;
+>>>>    +    struct mutex    lock;
+>>>> +
+>>>>        /* EPP feature related attributes*/
+>>>>        u8    epp_cached;
+>>>>        u32    policy;
+>>>
+>>
+> 
 
----
-pw-bot: cr
 
