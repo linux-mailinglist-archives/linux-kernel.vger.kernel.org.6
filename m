@@ -1,484 +1,257 @@
-Return-Path: <linux-kernel+bounces-511417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ACC9A32AD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:55:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DC4A32AAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE692167AD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:54:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EA0D3A79CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1490D26656E;
-	Wed, 12 Feb 2025 15:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/WCEw27"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024F7263C65;
+	Wed, 12 Feb 2025 15:48:04 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBEC265608;
-	Wed, 12 Feb 2025 15:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD63261391
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739375303; cv=none; b=J/V2xEK+n0vs3ZBmdx1PgBl7giYUXYEL6JfWx48MhALwSuD3Yv/y+UIhfM0CzB3HGfQzo580pq8KRMdL0/58gqTrKlHSBeQENUYKcu8rrfm4oOzV59Mz0nMAB8SYCMbUqOa3znbpOx77OksHIzT4m/fz4ApFoh6V2bXmgjoV35A=
+	t=1739375283; cv=none; b=OGk3AMxriUtElo1bYqxDbtAWhPv1YnNQdvCUGqXHHYzeUzKdAOsAgr8jqjgWVAnfIyYZ38TAqQWba7Zrji4aUUp0qlAedenflSTgETC/nJO/qfJ2DKZ6K+V4ZhVw3Zyyng5Mgx7nq5mDD3hDpZZ3BcUF5Co9jIUokpgo/n3G7Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739375303; c=relaxed/simple;
-	bh=oVypRrmBKCP/5S7jDU/vWmTiLqE9ogc9j5l29PF5Gk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ac2KqDHTNxENkgxlXMnWejcxjCkeQY2YSS4dYkdfz6MZgSG6WQA8EHHg9uaJMQbXngxaEmMgrRA49quOlAbTG6TvjKKXz/oUiAhoGhyy4T7aBGGytWnj99EezuTMZYZZGKfEdeD58odUR8qU+Gpv8UE4gqvhjzdRSnhkfvTcPeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/WCEw27; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BECCC4CEE2;
-	Wed, 12 Feb 2025 15:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739375302;
-	bh=oVypRrmBKCP/5S7jDU/vWmTiLqE9ogc9j5l29PF5Gk0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X/WCEw273V+C1dDfXD9GOW5ZAW5QSUHcxQ+MmXXPSgOGC3EhxwfIRLDjsElDFhqIj
-	 M47p2tJbSXGW7oiN2W8Ln+NutB9o+RJ1yhjFG41WTZGZSsZGN/CWSBq8KXEbV8/XxR
-	 MYvuyfINJ+b8TQc62mW096ktL9ltj5ufT0Ly6+jrXMYPiN5nf+dw9vUF4imMP2uSAw
-	 fMrATBo4hwrUplCck7/6GfUSIeztDknrSTPGvK5A+4KiwuaBwExAKLRYysW6MYRY9h
-	 gBDvdl2b6soChz57d7JL3nEXNeOa9Pcp0sAigwVpAE8v2MleNLw4y8PvRCNMJ0o2Ep
-	 LbjmG886RuIaA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: fsverity@lists.linux.dev
-Cc: linux-crypto@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mikulas Patocka <mpatocka@redhat.com>
-Subject: [PATCH v8 7/7] dm-verity: improve performance by using multibuffer hashing
-Date: Wed, 12 Feb 2025 07:47:18 -0800
-Message-ID: <20250212154718.44255-8-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250212154718.44255-1-ebiggers@kernel.org>
-References: <20250212154718.44255-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1739375283; c=relaxed/simple;
+	bh=iMwraRPqoGZXPSV/ZIi013g4oSfQKmUsDk4bVEfeeAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ubu1ZtSlSw9p5qMYTNBMP5Mab23w3QrvadeHitRBF7d7QKO0IxLsYfA8S637rvIfyeEA2kB4jSL8XpmKG7H8CU0GZ11Jh789dwA2/cjS1+yUS7r0p7rYJ7VFxxVqyeA8wR6VtmOZxTeF2IDoOkSrIdrwF4jvwck2zq3MuZ9rfBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5deb956aa5eso651264a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:48:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739375279; x=1739980079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+uYrRumV9nMSUYKKSpYn+3g5k4eAh93TeT+WqPiVakU=;
+        b=YIrchr+FWM9PioNkCt2MEdZfhCyWqx7dPCOJpMfGyHeGf7h7wkFpb5Se0+1fbgRgc8
+         zixHzWY9TJz5qU7zoaphcHL3nHLhT2eMsQmvl6o9y0mOAp+LRHu0sZ9p8/f5Fj5oHbES
+         hiKEJfTrUlnzRfVCC/q0DgnEc1w+e3/4CKH4dyPZ8yRxElr6+zo1AQCvdQv67h0dC0Ok
+         NdBnNKiBgjwzV2u6oVEo2R/sumnNkAnf6QlaVP5md9Sc0vU2LK8t+8wPjCDdfxYmA3fT
+         qq+KtNPt7TCPDa+kutig9E5nk0CijgjH7IGmvj3yG1MRPm/H1nYQrA7nKquDQldTMa/o
+         BZBw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2zV9FTjLUx6vt0wxR6L2vfP8W+FBlEsremap1zN2PAdET1CqB0WyrvAZfWo0ILyJgnNQHvdaEVinmubw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqxAHAiGuWQ2l/xhpBuVc+iXLqwmY2JFmI6H9m05/iNBoCnOmA
+	eZX/OamOUmcxeOvTVnHIbt4SfxU7IIgMYulX5nukg+k9s8bl0kELWVwKyjhUFXs=
+X-Gm-Gg: ASbGncuEG+/Qm4I+hQe/0YUUIguac4zU0xHzOnGDW9CuldF7fdGvyxgxY5fJ5825h9E
+	9Z6OXjbPB1z2AC+RvjSJ3ERGGRvlhFpjM1AhKJkmSewgGsLQtntaUugv/lRbnja7LIyAT8+09kS
+	qXAG6ujZd1pRze1BhX6wjnOO57g8bSlIy1OflptGZO+0tz/qYoHdvt/fnQdBFTnDK3vVqhRPhY2
+	qubf+h2VBcgCq/g2iz1Tt7aGNkoSTtISTcM8YQ+N/gS62OXXu8HABAAmEpI18kcS2rPuI9bb1gs
+	3T+5pCYn8fUhBkJXd4hm/wWE2NhQNcmaDrd2R+4sCf6zOw==
+X-Google-Smtp-Source: AGHT+IFmce9tH9dLHP7CWUzbmv5vtbnb++XIvWnNQ8LorV9Zr/rB7MFtIoTaUTNXrBFSD71XPDaB8w==
+X-Received: by 2002:a05:6402:a001:b0:5de:b438:1fdb with SMTP id 4fb4d7f45d1cf-5deb43821eamr3515430a12.30.1739375278693;
+        Wed, 12 Feb 2025 07:47:58 -0800 (PST)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7891ec1d1sm1172552566b.178.2025.02.12.07.47.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 07:47:58 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38de1a5f039so2783031f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 07:47:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX+J4vc4iMo+c5ulQu6stditLCA+uperIxaEccDGUAKsWXlt7YcZz/iVmhH8X8mYkrhh4JKA3OLGhH8GFg=@vger.kernel.org
+X-Received: by 2002:a5d:588c:0:b0:38a:2b39:9205 with SMTP id
+ ffacd0b85a97d-38dea2878bfmr3997807f8f.33.1739375277843; Wed, 12 Feb 2025
+ 07:47:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250211-rtkit-more-logging-v1-1-93334e9c1c77@rosenzweig.io>
+In-Reply-To: <20250211-rtkit-more-logging-v1-1-93334e9c1c77@rosenzweig.io>
+From: Neal Gompa <neal@gompa.dev>
+Date: Wed, 12 Feb 2025 10:47:21 -0500
+X-Gmail-Original-Message-ID: <CAEg-Je_XadeDiXBeXckZ=UQ2wYHtGppdM3nPmardyYx7SBgCrg@mail.gmail.com>
+X-Gm-Features: AWEUYZloTNjia8wdzYJXwYEgocjhTE4bAY0UXN52FPIm83DaokT5Zoy8sOwb2VQ
+Message-ID: <CAEg-Je_XadeDiXBeXckZ=UQ2wYHtGppdM3nPmardyYx7SBgCrg@mail.gmail.com>
+Subject: Re: [PATCH] soc: apple: rtkit: Check & log more failures
+To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Cc: Sven Peter <sven@svenpeter.dev>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Asahi Lina <lina@asahilina.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Eric Biggers <ebiggers@google.com>
-
-When supported by the hash algorithm, use crypto_shash_finup_mb() to
-interleave the hashing of pairs of data blocks.  On some CPUs this
-nearly doubles hashing performance.  The increase in overall throughput
-of cold-cache dm-verity reads that I'm seeing on arm64 and x86_64 is
-roughly 35% (though this metric is hard to measure as it jumps around a
-lot).
-
-For now this is only done on data blocks, not Merkle tree blocks.  We
-could use finup_mb on Merkle tree blocks too, but that is less important
-as there aren't as many Merkle tree blocks as data blocks, and that
-would require some additional code restructuring.
-
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Tue, Feb 11, 2025 at 1:00=E2=80=AFPM Alyssa Rosenzweig <alyssa@rosenzwei=
+g.io> wrote:
+>
+> From: Asahi Lina <lina@asahilina.net>
+>
+> Check and log the following failures:
+>
+> * regular messages
+> * management messages
+> * failed buffer requests
+>
+> This helps debugging.
+>
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+> ---
+> Originally multiple commits by Asahi Lina, squashed here and
+> checkpatch.pl warn fixed.
+> ---
+>  drivers/soc/apple/rtkit.c | 44 ++++++++++++++++++++++++++++++++++-------=
 ---
- drivers/md/dm-verity-target.c | 166 ++++++++++++++++++++++++++--------
- drivers/md/dm-verity.h        |  33 ++++---
- 2 files changed, 147 insertions(+), 52 deletions(-)
+>  1 file changed, 34 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/soc/apple/rtkit.c b/drivers/soc/apple/rtkit.c
+> index e6d940292c9fbdfc4cd42020e89aca2662c5cdce..f8077a1ec3a42265eb9565a0e=
+a1ca6a4cf7e79dc 100644
+> --- a/drivers/soc/apple/rtkit.c
+> +++ b/drivers/soc/apple/rtkit.c
+> @@ -97,12 +97,19 @@ bool apple_rtkit_is_crashed(struct apple_rtkit *rtk)
+>  }
+>  EXPORT_SYMBOL_GPL(apple_rtkit_is_crashed);
+>
+> -static void apple_rtkit_management_send(struct apple_rtkit *rtk, u8 type=
+,
+> +static int apple_rtkit_management_send(struct apple_rtkit *rtk, u8 type,
+>                                         u64 msg)
+>  {
+> +       int ret;
+> +
+>         msg &=3D ~APPLE_RTKIT_MGMT_TYPE;
+>         msg |=3D FIELD_PREP(APPLE_RTKIT_MGMT_TYPE, type);
+> -       apple_rtkit_send_message(rtk, APPLE_RTKIT_EP_MGMT, msg, NULL, fal=
+se);
+> +       ret =3D apple_rtkit_send_message(rtk, APPLE_RTKIT_EP_MGMT, msg, N=
+ULL, false);
+> +
+> +       if (ret)
+> +               dev_err(rtk->dev, "RTKit: Failed to send management messa=
+ge: %d\n", ret);
+> +
+> +       return ret;
+>  }
+>
+>  static void apple_rtkit_management_rx_hello(struct apple_rtkit *rtk, u64=
+ msg)
+> @@ -295,6 +302,9 @@ static int apple_rtkit_common_rx_get_buffer(struct ap=
+ple_rtkit *rtk,
+>         return 0;
+>
+>  error:
+> +       dev_err(rtk->dev, "RTKit: failed buffer request for 0x%zx bytes (=
+%d)\n",
+> +               buffer->size, err);
+> +
+>         buffer->buffer =3D NULL;
+>         buffer->iomem =3D NULL;
+>         buffer->iova =3D 0;
+> @@ -588,11 +598,18 @@ int apple_rtkit_send_message(struct apple_rtkit *rt=
+k, u8 ep, u64 message,
+>                 .msg1 =3D ep,
+>         };
+>
+> -       if (rtk->crashed)
+> +       if (rtk->crashed) {
+> +               dev_warn(rtk->dev,
+> +                        "RTKit: Device is crashed, cannot send message\n=
+");
+>                 return -EINVAL;
+> +       }
+> +
+>         if (ep >=3D APPLE_RTKIT_APP_ENDPOINT_START &&
+> -           !apple_rtkit_is_running(rtk))
+> +           !apple_rtkit_is_running(rtk)) {
+> +               dev_warn(rtk->dev,
+> +                        "RTKit: Endpoint 0x%02x is not running, cannot s=
+end message\n", ep);
+>                 return -EINVAL;
+> +       }
+>
+>         /*
+>          * The message will be sent with a MMIO write. We need the barrie=
+r
+> @@ -742,8 +759,10 @@ static int apple_rtkit_set_ap_power_state(struct app=
+le_rtkit *rtk,
+>         reinit_completion(&rtk->ap_pwr_ack_completion);
+>
+>         msg =3D FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, state);
+> -       apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_AP_PWR_STAT=
+E,
+> -                                   msg);
+> +       ret =3D apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_AP_=
+PWR_STATE,
+> +                                         msg);
+> +       if (ret)
+> +               return ret;
+>
+>         ret =3D apple_rtkit_wait_for_completion(&rtk->ap_pwr_ack_completi=
+on);
+>         if (ret)
+> @@ -763,8 +782,10 @@ static int apple_rtkit_set_iop_power_state(struct ap=
+ple_rtkit *rtk,
+>         reinit_completion(&rtk->iop_pwr_ack_completion);
+>
+>         msg =3D FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, state);
+> -       apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_IOP_PWR_STA=
+TE,
+> -                                   msg);
+> +       ret =3D apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_IOP=
+_PWR_STATE,
+> +                                         msg);
+> +       if (ret)
+> +               return ret;
+>
+>         ret =3D apple_rtkit_wait_for_completion(&rtk->iop_pwr_ack_complet=
+ion);
+>         if (ret)
+> @@ -865,6 +886,7 @@ EXPORT_SYMBOL_GPL(apple_rtkit_quiesce);
+>  int apple_rtkit_wake(struct apple_rtkit *rtk)
+>  {
+>         u64 msg;
+> +       int ret;
+>
+>         if (apple_rtkit_is_running(rtk))
+>                 return -EINVAL;
+> @@ -876,8 +898,10 @@ int apple_rtkit_wake(struct apple_rtkit *rtk)
+>          * will wait for the completion anyway.
+>          */
+>         msg =3D FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, APPLE_RTKIT_PWR_ST=
+ATE_ON);
+> -       apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_IOP_PWR_STA=
+TE,
+> -                                   msg);
+> +       ret =3D apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_IOP=
+_PWR_STATE,
+> +                                         msg);
+> +       if (ret)
+> +               return ret;
+>
+>         return apple_rtkit_boot(rtk);
+>  }
+>
+> ---
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> change-id: 20250211-rtkit-more-logging-79cbbbe21eee
+>
+> Best regards,
+> --
+> Alyssa Rosenzweig <alyssa@rosenzweig.io>
+>
+>
 
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index f7c9edbb1a575..3223c7eafe09e 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -184,22 +184,28 @@ static int verity_ahash_final(struct dm_verity *v, struct ahash_request *req,
- 	r = crypto_wait_req(crypto_ahash_final(req), wait);
- out:
- 	return r;
- }
- 
-+static int verity_ahash(struct dm_verity *v, struct dm_verity_io *io,
-+			const u8 *data, size_t len, u8 *digest, bool may_sleep)
-+{
-+	struct ahash_request *req = verity_io_hash_req(v, io);
-+	struct crypto_wait wait;
-+
-+	return verity_ahash_init(v, req, &wait, may_sleep) ?:
-+	       verity_ahash_update(v, req, data, len, &wait) ?:
-+	       verity_ahash_final(v, req, digest, &wait);
-+}
-+
- int verity_hash(struct dm_verity *v, struct dm_verity_io *io,
- 		const u8 *data, size_t len, u8 *digest, bool may_sleep)
- {
- 	int r;
- 
- 	if (static_branch_unlikely(&ahash_enabled) && !v->shash_tfm) {
--		struct ahash_request *req = verity_io_hash_req(v, io);
--		struct crypto_wait wait;
--
--		r = verity_ahash_init(v, req, &wait, may_sleep) ?:
--		    verity_ahash_update(v, req, data, len, &wait) ?:
--		    verity_ahash_final(v, req, digest, &wait);
-+		r = verity_ahash(v, io, data, len, digest, may_sleep);
- 	} else {
- 		struct shash_desc *desc = verity_io_hash_req(v, io);
- 
- 		desc->tfm = v->shash_tfm;
- 		r = crypto_shash_import(desc, v->initial_hashstate) ?:
-@@ -208,10 +214,38 @@ int verity_hash(struct dm_verity *v, struct dm_verity_io *io,
- 	if (unlikely(r))
- 		DMERR("Error hashing block: %d", r);
- 	return r;
- }
- 
-+static int verity_hash_mb(struct dm_verity *v, struct dm_verity_io *io,
-+			  const u8 *data[], size_t len, u8 *digests[],
-+			  int num_blocks)
-+{
-+	int r = 0;
-+
-+	if (static_branch_unlikely(&ahash_enabled) && !v->shash_tfm) {
-+		int i;
-+
-+		/* Note: in practice num_blocks is always 1 in this case. */
-+		for (i = 0; i < num_blocks; i++) {
-+			r = verity_ahash(v, io, data[i], len, digests[i],
-+					 !io->in_bh);
-+			if (r)
-+				break;
-+		}
-+	} else {
-+		struct shash_desc *desc = verity_io_hash_req(v, io);
-+
-+		desc->tfm = v->shash_tfm;
-+		r = crypto_shash_import(desc, v->initial_hashstate) ?:
-+		    crypto_shash_finup_mb(desc, data, len, digests, num_blocks);
-+	}
-+	if (unlikely(r))
-+		DMERR("Error hashing blocks: %d", r);
-+	return r;
-+}
-+
- static void verity_hash_at_level(struct dm_verity *v, sector_t block, int level,
- 				 sector_t *hash_block, unsigned int *offset)
- {
- 	sector_t position = verity_position_at_level(v, block, level);
- 	unsigned int idx;
-@@ -457,13 +491,16 @@ static noinline int verity_recheck(struct dm_verity *v, struct dm_verity_io *io,
- }
- 
- static int verity_handle_data_hash_mismatch(struct dm_verity *v,
- 					    struct dm_verity_io *io,
- 					    struct bio *bio,
--					    const u8 *want_digest,
--					    sector_t blkno, u8 *data)
-+					    struct pending_block *block)
- {
-+	const u8 *want_digest = block->want_digest;
-+	sector_t blkno = block->blkno;
-+	u8 *data = block->data;
-+
- 	if (static_branch_unlikely(&use_bh_wq_enabled) && io->in_bh) {
- 		/*
- 		 * Error handling code (FEC included) cannot be run in the
- 		 * BH workqueue, so fallback to a standard workqueue.
- 		 */
-@@ -488,10 +525,57 @@ static int verity_handle_data_hash_mismatch(struct dm_verity *v,
- 		return -EIO;
- 	}
- 	return 0;
- }
- 
-+static void verity_clear_pending_blocks(struct dm_verity_io *io)
-+{
-+	int i;
-+
-+	for (i = io->num_pending - 1; i >= 0; i--) {
-+		kunmap_local(io->pending_blocks[i].data);
-+		io->pending_blocks[i].data = NULL;
-+	}
-+	io->num_pending = 0;
-+}
-+
-+static int verity_verify_pending_blocks(struct dm_verity *v,
-+					struct dm_verity_io *io,
-+					struct bio *bio)
-+{
-+	const u8 *data[DM_VERITY_MAX_PENDING_DATA_BLOCKS];
-+	u8 *real_digests[DM_VERITY_MAX_PENDING_DATA_BLOCKS];
-+	int i;
-+	int r;
-+
-+	for (i = 0; i < io->num_pending; i++) {
-+		data[i] = io->pending_blocks[i].data;
-+		real_digests[i] = io->pending_blocks[i].real_digest;
-+	}
-+
-+	r = verity_hash_mb(v, io, data, 1 << v->data_dev_block_bits,
-+			   real_digests, io->num_pending);
-+	if (unlikely(r))
-+		return r;
-+
-+	for (i = 0; i < io->num_pending; i++) {
-+		struct pending_block *block = &io->pending_blocks[i];
-+
-+		if (likely(memcmp(block->real_digest, block->want_digest,
-+				  v->digest_size) == 0)) {
-+			if (v->validated_blocks)
-+				set_bit(block->blkno, v->validated_blocks);
-+		} else {
-+			r = verity_handle_data_hash_mismatch(v, io, bio, block);
-+			if (unlikely(r))
-+				return r;
-+		}
-+	}
-+	verity_clear_pending_blocks(io);
-+	return 0;
-+}
-+
- /*
-  * Verify one "dm_verity_io" structure.
-  */
- static int verity_verify_io(struct dm_verity_io *io)
- {
-@@ -499,10 +583,13 @@ static int verity_verify_io(struct dm_verity_io *io)
- 	const unsigned int block_size = 1 << v->data_dev_block_bits;
- 	struct bvec_iter iter_copy;
- 	struct bvec_iter *iter;
- 	struct bio *bio = dm_bio_from_per_bio_data(io, v->ti->per_io_data_size);
- 	unsigned int b;
-+	int r;
-+
-+	io->num_pending = 0;
- 
- 	if (static_branch_unlikely(&use_bh_wq_enabled) && io->in_bh) {
- 		/*
- 		 * Copy the iterator in case we need to restart
- 		 * verification in a work-queue.
-@@ -512,36 +599,38 @@ static int verity_verify_io(struct dm_verity_io *io)
- 	} else
- 		iter = &io->iter;
- 
- 	for (b = 0; b < io->n_blocks;
- 	     b++, bio_advance_iter(bio, iter, block_size)) {
--		int r;
--		sector_t cur_block = io->block + b;
-+		sector_t blkno = io->block + b;
-+		struct pending_block *block;
- 		bool is_zero;
- 		struct bio_vec bv;
- 		void *data;
- 
- 		if (v->validated_blocks && bio->bi_status == BLK_STS_OK &&
--		    likely(test_bit(cur_block, v->validated_blocks)))
-+		    likely(test_bit(blkno, v->validated_blocks)))
- 			continue;
- 
--		r = verity_hash_for_block(v, io, cur_block,
--					  verity_io_want_digest(v, io),
-+		block = &io->pending_blocks[io->num_pending];
-+
-+		r = verity_hash_for_block(v, io, blkno, block->want_digest,
- 					  &is_zero);
- 		if (unlikely(r < 0))
--			return r;
-+			goto error;
- 
- 		bv = bio_iter_iovec(bio, *iter);
- 		if (unlikely(bv.bv_len < block_size)) {
- 			/*
- 			 * Data block spans pages.  This should not happen,
- 			 * since dm-verity sets dma_alignment to the data block
- 			 * size minus 1, and dm-verity also doesn't allow the
- 			 * data block size to be greater than PAGE_SIZE.
- 			 */
- 			DMERR_LIMIT("unaligned io (data block spans pages)");
--			return -EIO;
-+			r = -EIO;
-+			goto error;
- 		}
- 
- 		data = bvec_kmap_local(&bv);
- 
- 		if (is_zero) {
-@@ -551,34 +640,30 @@ static int verity_verify_io(struct dm_verity_io *io)
- 			 */
- 			memset(data, 0, block_size);
- 			kunmap_local(data);
- 			continue;
- 		}
--
--		r = verity_hash(v, io, data, block_size,
--				verity_io_real_digest(v, io), !io->in_bh);
--		if (unlikely(r < 0)) {
--			kunmap_local(data);
--			return r;
-+		block->data = data;
-+		block->blkno = blkno;
-+		if (++io->num_pending == v->mb_max_msgs) {
-+			r = verity_verify_pending_blocks(v, io, bio);
-+			if (unlikely(r))
-+				goto error;
- 		}
-+	}
- 
--		if (likely(memcmp(verity_io_real_digest(v, io),
--				  verity_io_want_digest(v, io), v->digest_size) == 0)) {
--			if (v->validated_blocks)
--				set_bit(cur_block, v->validated_blocks);
--			kunmap_local(data);
--			continue;
--		}
--		r = verity_handle_data_hash_mismatch(v, io, bio,
--						     verity_io_want_digest(v, io),
--						     cur_block, data);
--		kunmap_local(data);
-+	if (io->num_pending) {
-+		r = verity_verify_pending_blocks(v, io, bio);
- 		if (unlikely(r))
--			return r;
-+			goto error;
- 	}
- 
- 	return 0;
-+
-+error:
-+	verity_clear_pending_blocks(io);
-+	return r;
- }
- 
- /*
-  * Skip verity work in response to I/O error when system is shutting down.
-  */
-@@ -1282,14 +1367,15 @@ static int verity_setup_hash_alg(struct dm_verity *v, const char *alg_name)
- 
- 	/*
- 	 * Allocate the hash transformation object that this dm-verity instance
- 	 * will use.  The vast majority of dm-verity users use CPU-based
- 	 * hashing, so when possible use the shash API to minimize the crypto
--	 * API overhead.  If the ahash API resolves to a different driver
--	 * (likely an off-CPU hardware offload), use ahash instead.  Also use
--	 * ahash if the obsolete dm-verity format with the appended salt is
--	 * being used, so that quirk only needs to be handled in one place.
-+	 * API overhead, especially when multibuffer hashing is used.  If the
-+	 * ahash API resolves to a different driver (likely an off-CPU hardware
-+	 * offload), use ahash instead.  Also use ahash if the obsolete
-+	 * dm-verity format with the appended salt is being used, so that quirk
-+	 * only needs to be handled in one place.
- 	 */
- 	ahash = crypto_alloc_ahash(alg_name, 0,
- 				   v->use_bh_wq ? CRYPTO_ALG_ASYNC : 0);
- 	if (IS_ERR(ahash)) {
- 		ti->error = "Cannot initialize hash function";
-@@ -1313,17 +1399,21 @@ static int verity_setup_hash_alg(struct dm_verity *v, const char *alg_name)
- 		ahash = NULL;
- 		v->shash_tfm = shash;
- 		v->digest_size = crypto_shash_digestsize(shash);
- 		v->hash_reqsize = sizeof(struct shash_desc) +
- 				  crypto_shash_descsize(shash);
--		DMINFO("%s using shash \"%s\"", alg_name, driver_name);
-+		v->mb_max_msgs = min(crypto_shash_mb_max_msgs(shash),
-+				     DM_VERITY_MAX_PENDING_DATA_BLOCKS);
-+		DMINFO("%s using shash \"%s\"%s", alg_name, driver_name,
-+		       v->mb_max_msgs > 1 ? " (multibuffer)" : "");
- 	} else {
- 		v->ahash_tfm = ahash;
- 		static_branch_inc(&ahash_enabled);
- 		v->digest_size = crypto_ahash_digestsize(ahash);
- 		v->hash_reqsize = sizeof(struct ahash_request) +
- 				  crypto_ahash_reqsize(ahash);
-+		v->mb_max_msgs = 1;
- 		DMINFO("%s using ahash \"%s\"", alg_name, driver_name);
- 	}
- 	if ((1 << v->hash_dev_block_bits) < v->digest_size * 2) {
- 		ti->error = "Digest size too big";
- 		return -EINVAL;
-diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
-index 17d1d271e076a..57ead43adedf4 100644
---- a/drivers/md/dm-verity.h
-+++ b/drivers/md/dm-verity.h
-@@ -58,10 +58,11 @@ struct dm_verity {
- 	unsigned char hash_per_block_bits;	/* log2(hashes in hash block) */
- 	unsigned char levels;	/* the number of tree levels */
- 	unsigned char version;
- 	bool hash_failed:1;	/* set if hash of any block failed */
- 	bool use_bh_wq:1;	/* try to verify in BH wq before normal work-queue */
-+	unsigned char mb_max_msgs; /* max multibuffer hashing interleaving factor */
- 	unsigned int digest_size;	/* digest size for the current hash algorithm */
- 	unsigned int hash_reqsize; /* the size of temporary space for crypto */
- 	enum verity_mode mode;	/* mode for handling verification errors */
- 	enum verity_mode error_mode;/* mode for handling I/O errors */
- 	unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
-@@ -78,10 +79,19 @@ struct dm_verity {
- 
- 	struct dm_io_client *io;
- 	mempool_t recheck_pool;
- };
- 
-+#define DM_VERITY_MAX_PENDING_DATA_BLOCKS	HASH_MAX_MB_MSGS
-+
-+struct pending_block {
-+	void *data;
-+	sector_t blkno;
-+	u8 want_digest[HASH_MAX_DIGESTSIZE];
-+	u8 real_digest[HASH_MAX_DIGESTSIZE];
-+};
-+
- struct dm_verity_io {
- 	struct dm_verity *v;
- 
- 	/* original value of bio->bi_end_io */
- 	bio_end_io_t *orig_bi_end_io;
-@@ -95,12 +105,19 @@ struct dm_verity_io {
- 
- 	struct work_struct work;
- 	struct work_struct bh_work;
- 
- 	u8 tmp_digest[HASH_MAX_DIGESTSIZE];
--	u8 real_digest[HASH_MAX_DIGESTSIZE];
--	u8 want_digest[HASH_MAX_DIGESTSIZE];
-+
-+	/*
-+	 * This is the queue of data blocks that are pending verification.  We
-+	 * allow multiple blocks to be queued up in order to support multibuffer
-+	 * hashing, i.e. interleaving the hashing of multiple messages.  On many
-+	 * CPUs this improves performance significantly.
-+	 */
-+	int num_pending;
-+	struct pending_block pending_blocks[DM_VERITY_MAX_PENDING_DATA_BLOCKS];
- 
- 	/*
- 	 * This struct is followed by a variable-sized hash request of size
- 	 * v->hash_reqsize, either a struct ahash_request or a struct shash_desc
- 	 * (depending on whether ahash_tfm or shash_tfm is being used).  To
-@@ -112,22 +129,10 @@ static inline void *verity_io_hash_req(struct dm_verity *v,
- 				       struct dm_verity_io *io)
- {
- 	return io + 1;
- }
- 
--static inline u8 *verity_io_real_digest(struct dm_verity *v,
--					struct dm_verity_io *io)
--{
--	return io->real_digest;
--}
--
--static inline u8 *verity_io_want_digest(struct dm_verity *v,
--					struct dm_verity_io *io)
--{
--	return io->want_digest;
--}
--
- extern int verity_hash(struct dm_verity *v, struct dm_verity_io *io,
- 		       const u8 *data, size_t len, u8 *digest, bool may_sleep);
- 
- extern int verity_hash_for_block(struct dm_verity *v, struct dm_verity_io *io,
- 				 sector_t block, u8 *digest, bool *is_zero);
--- 
-2.48.1
+Looks good to me.
 
+Reviewed-by: Neal Gompa <neal@gompa.dev>
+
+
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
