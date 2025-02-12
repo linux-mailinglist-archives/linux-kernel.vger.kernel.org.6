@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-510998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24165A324A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:17:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15110A324B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652A03A362C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:16:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFAB8165911
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F38F20ADE6;
-	Wed, 12 Feb 2025 11:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD7B20A5CC;
+	Wed, 12 Feb 2025 11:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdrPTOgU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HuxGHPUH"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774CA201260;
-	Wed, 12 Feb 2025 11:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A0B1B21AD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 11:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739359012; cv=none; b=jLeYSr+4sedl8Q/W9wNE5F7VZrKhg7GCMslHDsCPk99E4wOx8RIQE2deEsoq6OI0ft/gWJ8+UBmuevtcm513tk8rnm2kwEzGXFUrsSqJIvx0ZxbpatCpfBQXJPDnUs67H7ct5hvK6df2WxWbLjxEMqSJBJulPfGv4lPUpbDjtdc=
+	t=1739359207; cv=none; b=gbHXCT7ok7jCRxNexggSbZpYAlDanVX6iJp5MvfJEg/9X10roEbwdscgyDvCWW84c2XyrCP74DgOuB7xEb3o0AJcgkJ4R0LBmzJQKf58wElbKXLWf6CEZu6hQkKAfn6VLDJRh/fXgYP5xBJ1n7sCa2opexj3/dAz4ILYHnO+RHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739359012; c=relaxed/simple;
-	bh=JWsrM6Tcs+C9f+X8PVgHyMjnM9oD4EdsAg4asrUaRs8=;
+	s=arc-20240116; t=1739359207; c=relaxed/simple;
+	bh=R7SXFF5xZBvaqgymZWePikKLlqhrCZfQBN+7ls2UueA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aN4qo0CsBcY6pgDlJV2tFPiU0juaP3UEjxsk7Mgeuu+xoEM6l7jhTZ7PtBqs38gL2VvK1F29zrY/BeXKpeCzbNpL3/bu3X3GxhdB9lgGdOyyQzVPLyM7yOGPy0uBYv6M1Z8Dmg+DwttYAn6eYRpCZfBB5JBAwVLOWMZtc9i7c3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdrPTOgU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 850B9C4CEDF;
-	Wed, 12 Feb 2025 11:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739359011;
-	bh=JWsrM6Tcs+C9f+X8PVgHyMjnM9oD4EdsAg4asrUaRs8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XdrPTOgUPTRYAb9XnRKvfjHMPiC89ZEiduHxoz0NJnI4GQVJiol0rv9oBOdpvoFJR
-	 p+VnuStLAkDMk7yhzb+ULDoK1ItVa7cTgbwxMQjzW2EAe2oT+WkhjuFa02DwQSFN47
-	 3uYA9g72SheD+ASXImFYR+guVxPx9r8fBwGJY97r6IsgOABfdXdDypW39nMTW8HkTW
-	 /Irzkqu31/F1cAmyAwdoT+HWRbcBWvnhstMmKve8fnxIOrGOXSO4YHgwwHzYv3YIht
-	 sbBJ4oD01v+2sEtm/BR052Ksbq9O8N7p67wamWwjxLSDnrByAKv1kLNkn/tlNVpHnl
-	 leISBHzu7+t8w==
-Date: Wed, 12 Feb 2025 12:16:44 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Zicheng Qu <quzicheng@huawei.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, axboe@kernel.dk, joel.granados@kernel.org, tglx@linutronix.de, 
-	viro@zeniv.linux.org.uk, hch@lst.de, len.brown@intel.com, pavel@ucw.cz, 
-	pengfei.xu@intel.com, rafael@kernel.org, tanghui20@huawei.com, zhangqiao22@huawei.com, 
-	judy.chenhui@huawei.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, linux-pm@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 0/2] acct: don't allow access to internal filesystems
-Message-ID: <20250212-giert-spannend-8893f1eaba7d@brauner>
-References: <20250210-unordnung-petersilie-90e37411db18@brauner>
- <20250211-work-acct-v1-0-1c16aecab8b3@kernel.org>
- <c780964d17b908846f07d01f4020be7bc784ec8b.camel@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pd09L33JqYasXAGGAgEKPdRBMWqXc7hAn6b48dY1teYOLmSJDVTmjHrH3lGpn41oc5tTZKLT2yye8xpHo0W/jh+D4nDq5NzrhvkiiHP9tNN2IXdQK+L3aGINR1DmeMMU//AfExRzRe9huQmT5qPJ8U2AdKIHvzvDI0XmTN3z03I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HuxGHPUH; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30227c56b11so68253711fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:20:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739359204; x=1739964004; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MRZ92fMzGnVasOx4w5jeLJUvN4okvRK9mTCYHy/vUF8=;
+        b=HuxGHPUHG7FVF1JBwm2wZBN4A3EjeaD8njr+w7Tyfb5JYdhZnmoq5FSow5V2wJ9Cyr
+         OPT7Al3vkMufrZN0x436cb+HUmScHqyA5Ygd0Y1VipUfKaTSlDQLoHxlDruzpdBO55AY
+         Bu9iZS2P5d8GTDmtTsecqbEkKCVxNy3VKtqTAlos+wdJ61im37g+oFec+TRIDun07CJC
+         UNcl+o7gGQOZZJfEwK/fz7KFhLTrpPmKoUlnMHDPcaOCBNoQbw14aoSZCa7G/bqMmrFP
+         k72p7e7hS1EKAqgKypzuaUTU9pjV44PedTWbn2LHomYRAqD4XJ1xTqUFcsSgty81FMAq
+         PZ5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739359204; x=1739964004;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MRZ92fMzGnVasOx4w5jeLJUvN4okvRK9mTCYHy/vUF8=;
+        b=luce/UlrxwOez/SgFxxxgvRxy4JlQnwAfBzFriYm+ZvTNS8h3ztt+svLYauIbAaKt/
+         F/ygmtGCi28IEEFCNbDiyQzXL53tzE4lsx4DNhP0QOy37WAq6JUOheHqdue5oYxNr5lu
+         tQK4FE7QVbijD+ewa53iRVQGqtkuAIAcASROqvVCiMGQCpiQtHQHeV8ltw2OXhnPh5fA
+         0sEgbyJWzJlnjGFCB7AzmoyPSxL9lwKGQTRCABa9rujLCSuKRaa09qHqQkx8ZpnVwfh7
+         frgalljAdEkB+DbrKG3eWXC5+9TaenYqUKa/LYMWm0EfkrGRUXLhDQcuGFjO9H3QBGFO
+         gr8A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4wOozKmZ4z4EbWk7CLr2otHHDjEsOrZL0ARMrXz/StXJIjHShb632IzNgl/mkCF5ytCOjwtPgrbXH7is=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxisUqETZycrZ9sE3ZolR4cXRvD/aP1JNhMKY9LouClojO0F+Kf
+	deZ70PtSjHvacSrifW3dIVvKzbjz6hKZ3cpHYV5CqB5ZggonifyDZ4MDQ8r0s6M=
+X-Gm-Gg: ASbGncvrMW+aZM4ebxb+KcHUQpxynty1Ojkhzj6qbAC30SSLjm0KeARz09Vqo8AWVGM
+	fTauW2deTjNmjNqDgxw4OLTlS4MKg8b32JQcBEonaA4LjY8MvP7E2M91Wx6oZ9gICRQ01Ht1sGw
+	PaZ0yjdlCTeW5XTJrXXMn83f/eej+Kov9Br+LEMhfwCealVjBBMJKODBIfj4Mn8SLrhvEhjcNiE
+	a+qUlvWuX8CAIzP13Xc1P+D3GXsKL9t+Gm9nR/S7D33HWUpP6i1/x6dT05CF5nvw9VgO8pe4KUc
+	0Ay+Fqf+NGwh5CNxk7yeWYUUeVrVpCKrl3BiTadNQJj6wklGJU/kWW3lASTOwgLllRwG3vM=
+X-Google-Smtp-Source: AGHT+IFJgGK8ZLouL/AWBGo/S7q0LDko4RL8Ud8msbJQTLEZRaJgYviwJwVP9yImY07L4CtWYdBbWw==
+X-Received: by 2002:a05:6512:39c8:b0:545:f9c:a81f with SMTP id 2adb3069b0e04-5451826ea22mr878271e87.6.1739359203971;
+        Wed, 12 Feb 2025 03:20:03 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5450e09e9dbsm823644e87.120.2025.02.12.03.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 03:20:03 -0800 (PST)
+Date: Wed, 12 Feb 2025 13:20:01 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: "James A. MacInnes" <james.a.macinnes@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch
+Subject: Re: [PATCH 0/2] drm/msm/dp: Fix Type-C Timing
+Message-ID: <yle4tv3rhxkygvxvq56pls2u4muzmuxlzg5mp6ibckkyhbaycm@mv4hmom2e46c>
+References: <20250212034225.2565069-1-james.a.macinnes@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c780964d17b908846f07d01f4020be7bc784ec8b.camel@kernel.org>
+In-Reply-To: <20250212034225.2565069-1-james.a.macinnes@gmail.com>
 
-On Tue, Feb 11, 2025 at 01:56:41PM -0500, Jeff Layton wrote:
-> On Tue, 2025-02-11 at 18:15 +0100, Christian Brauner wrote:
-> > In [1] it was reported that the acct(2) system call can be used to
-> > trigger a NULL deref in cases where it is set to write to a file that
-> > triggers an internal lookup.
-> > 
-> > This can e.g., happen when pointing acct(2) to /sys/power/resume. At the
-> > point the where the write to this file happens the calling task has
-> > already exited and called exit_fs() but an internal lookup might be
-> > triggered through lookup_bdev(). This may trigger a NULL-deref
-> > when accessing current->fs.
-> > 
-> > This series does two things:
-> > 
-> > - Reorganize the code so that the the final write happens from the
-> >   workqueue but with the caller's credentials. This preserves the
-> >   (strange) permission model and has almost no regression risk.
-> > 
-> > - Block access to kernel internal filesystems as well as procfs and
-> >   sysfs in the first place.
-> > 
-> > This api should stop to exist imho.
-> > 
+On Tue, Feb 11, 2025 at 07:42:23PM -0800, James A. MacInnes wrote:
+> SDM845 DisplayPort output inop on DP Monitor and tears on HDMI.
 > 
-> I wonder who uses it these days, and what would we suggest they replace
-> it with? Maybe syscall auditing?
+> Fixed
+>  - SDM845 does not support wide mode.
+>  - SDM845 does not need porch shift.
+> 
+> Verified functionality on SDM845.
 
-Someone pointed me to atop but that also works without it. Since this is
-a privileged api I think the natural candidate to replace all of this is
-bpf. I'm pretty sure that it's relatively straightforward to get a lot
-more information out of it than with acct(2) and it will probably be
-more performant too.
-
-Without any limitations as it is right now, acct(2) can easily lockup
-the system quite easily by pointing it to various things in sysfs and
-I'm sure it can be abused in other ways. So I wouldn't enable it.
+Please use ./scripts/get_maintainer.pl to get the To / Cc lists. Your
+messages missed several mailing lists and maybe some of maintainers.
 
 > 
-> config BSD_PROCESS_ACCT
->         bool "BSD Process Accounting"
->         depends on MULTIUSER
->         help
->           If you say Y here, a user level program will be able to instruct the
->           kernel (via a special system call) to write process accounting
->           information to a file: whenever a process exits, information about
->           that process will be appended to the file by the kernel.  The
->           information includes things such as creation time, owning user,
->           command name, memory usage, controlling terminal etc. (the complete
->           list is in the struct acct in <file:include/linux/acct.h>).  It is
->           up to the user level program to do useful things with this
->           information.  This is generally a good idea, so say Y.
+> James A. MacInnes (2):
+>   drm/msm/dp: Disable wide bus support for SDM845
+>   drm/msm/disp: Correct porch timing for SDM845
 > 
-> Maybe at least time to replace that last sentence and make this default
-> to 'n'?
-
-I agree.
-
-> 
-> > Link: https://lore.kernel.org/r/20250127091811.3183623-1-quzicheng@huawei.com [1]
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> > Christian Brauner (2):
-> >       acct: perform last write from workqueue
-> >       acct: block access to kernel internal filesystems
-> > 
-> >  kernel/acct.c | 134 ++++++++++++++++++++++++++++++++++++----------------------
-> >  1 file changed, 84 insertions(+), 50 deletions(-)
-> > ---
-> > base-commit: af69e27b3c8240f7889b6c457d71084458984d8e
-> > change-id: 20250211-work-acct-a6d8e92a5fe0
-> > 
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 8 ++++----
+>  drivers/gpu/drm/msm/dp/dp_display.c                  | 7 ++++++-
+>  2 files changed, 10 insertions(+), 5 deletions(-)
 > 
 > -- 
-> Jeff Layton <jlayton@kernel.org>
+> 2.43.0
+> 
+
+-- 
+With best wishes
+Dmitry
 
