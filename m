@@ -1,170 +1,127 @@
-Return-Path: <linux-kernel+bounces-510295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B48A31AD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:51:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BB9A31ADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:52:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF331888D2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 118351888D77
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A76156CA;
-	Wed, 12 Feb 2025 00:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A0717996;
+	Wed, 12 Feb 2025 00:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3YOQvw5"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YQuBBhdX"
+Received: from mail-il1-f225.google.com (mail-il1-f225.google.com [209.85.166.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E635FBF6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B887C1CF96
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739321473; cv=none; b=E5t7fFzH7qD2+PhdZQO4YDC8loe/SkaEZBemSvm13hJSKhxFZoRAEGpwEI5sJRS6xUHyCJ5HLU7hd4XaiaDz4Rux3unFnhlsJLTS6AQSbNQI5l1XMNSqVIwXXW9T0Fb+rQDrPdr3uG7WnCFRcjsELWpJ0TXxnXKnZNoPWMgFoLE=
+	t=1739321518; cv=none; b=jJHIW8gWOAi7teAjXt+mRkb46hOLJ5+uk/6rox3Mgo8GdCQU9S8t5alZSksB58+9rrC4OfheOOu+ilDKr1Wq4HW5XOZe+AAzHWZgLMGF9aYhPz+O/q53Z3fmg5cDayVAmvK2XWmR/uifz0qIryQwD241e6Xwu0NWWfm5YxZqmGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739321473; c=relaxed/simple;
-	bh=iDgfw7D06BV6DpvWC/SBKtipHT37O7eJVNt47iRLts0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nrLvpm2fjpVRUey0xFhqtjf9AP8T85Jx0K67Xvz3SH8f1yu22Cef1SGb7P3XA/hmci4ujBhBhFEN8Xy/hcipKKdHO11j4GpO18l3aUsYZNw+FZ2OKEL/AkL3cVYn3sdQDtSpuSQGY/FIN5j8/8xf/nNTfVwrUo9Cr2pDbQNvv8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r3YOQvw5; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30795988ebeso62616821fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:51:09 -0800 (PST)
+	s=arc-20240116; t=1739321518; c=relaxed/simple;
+	bh=uybylxy3CxWXbqjZP/G8qtq9yh04SBEkS6ZcbdxAOJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MADy9llYN2903KM6Yp4ibJl/wQAmEXJTcLrQ2xflW2zU0ya18Tesa93c6881YYgc4sAOfxIgsjZmSwd+ZsC6RLWge1QzakAsZQXh+e4jjEnoRKSohQPY6YjPNud2cR63cD1ndBn3aQOi38FAu60a2c+zW/EGy+r8WfmetZDB/X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YQuBBhdX; arc=none smtp.client-ip=209.85.166.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-il1-f225.google.com with SMTP id e9e14a558f8ab-3d142933f32so1336385ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:51:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739321468; x=1739926268; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+nLci9veCthHDubqv0cSUycI42m1FuOueczGHBi1MmQ=;
-        b=r3YOQvw5PMymzjvzLqy7ImTV938P580U8SxuDuL/RlppJNgh6IyaiRCSx3uZWh6+nc
-         cRA4NuzA22uYDwEbA6pO8oA676xZY+rmmEUOm5CV0AaN76O0+ct0UfZT0ez+FJmSqlpj
-         v+H77lUfJrzzqqNgpn6R4slYutPBfFY4MHSYDqke2PGvcGPQdYYEEzajbaniIuqdRML/
-         R3dEjYJMX97nYSSCtwxs/qP+Xx1c0CWX7+QipUpc8SK4X4pmC5frdzLxJt8RrZooLKFr
-         cWoTjJGbDKnUBgLKFxNmG5J+tVRCT7rukgqB/5HsGd9xNB3J4ixWp+cm5/TyfTthceg+
-         Wcow==
+        d=purestorage.com; s=google2022; t=1739321514; x=1739926314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxjIUJ0LCGQtTFpUNlyNV0SkSCoelxvdgjl3lNP3O8Q=;
+        b=YQuBBhdXtlhiMYbjNudL7nmHpca/Y0mTj4OVMAt8jhZ3lunmcaFqjmt5+N+ARepVb4
+         /HbwefJrySa8AAehPF5SYyd8bvsey+j2f1+d6GmbEQ2FEW7TmmjlD53u2vJZ+UPOB/2s
+         TixUWP++afQFjuKjiWUenY5QHxzXx8YN8R3rtmLmD+zuw3WhALLMrPnWj8wSajvnSG1m
+         RXx2BaGw9x3Z0DkZ61EBMkiH5UlY1pmDezcky/onvd48YJM2hvidVkJ0wvShTLpDnMix
+         fHHzMVo0EO+ZyyN5Mz/L4Z+1cqGJj7GVgdB3sMAePo8QjZAzRz6Zwcn8V8wk7xawEEaQ
+         UpSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739321468; x=1739926268;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+nLci9veCthHDubqv0cSUycI42m1FuOueczGHBi1MmQ=;
-        b=gFzRbbGf/Z6I/NCXA9xaTKdv6HR6d9N9f9qZgrmGa/TvTvxEPvrdjqAUtL2/1Al9Yw
-         HDvrrVZjTRAijjc17S9VuTH3oVLS5Lo/92OMwU0FXj8blY2RdBwfmQvwrCH/wVgC0iQm
-         pMHUXZvKcvkapyskcmdHaxGHZ1XgHVYZNeIx8xsfAhiDLVQqXKe8kJz8WJJpAfqbwe1Q
-         oWq2jSrVKW8p6dXbePMEE9Fxu53Zr8rHV0zueyV3RySO7FUb8KUlq9OtW8tLO2bFJT7v
-         juUyUTByOwEL8hwnXY/xuHvvR+2VEUUMgadwp8Ujvw6Brb2IOxoIp+FPJ42CtN9IBpMa
-         nyHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcB8Sr+hd8TRAXxTPdfSeMWKU7RX970b/XuTwlxODMJDKYxqZhOPXSxn/hrCyRlG7JZQqweNiqAqUiWaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm5qT9DKqfn8+NcrfNxNGTBiDqhRwvNzFF9tYsyX2RnzTclnl4
-	+XrftO7XCOn+dXr5WM8Ga6g6AFZeR+T1QHqBw/LVEH8LZ6gzm8MBeqFZmVjcObllg3vrnQ8Kw9N
-	eYqY=
-X-Gm-Gg: ASbGnctAsQYaNl/bI/Qm4TeufGOkQzut3T8yb9r/kFUorvx1U+GTmQnn2LN+WN/VAPG
-	z6QiVrhTOtaBlcztcaptcrkDAwOeulbimT3K6rYSVYEpTMpTj0khwQqb9zFF4cPIYDo8ZZATFHC
-	AEmj6Z7KagVqrWUaxqRJXHfxXuzsVOTqJGukevvccGfy4euk5FfRqa3yRMLAx0BgSIXB+x6LkCL
-	78m2spVWFRTjZMoL3wpwdcOi+zke9618LUzh+BRUrlgjzMh7NIDtFc5vTurEOIV72bUe3vTEEnJ
-	4X5kZxRD7ktcZEKjhAi3MAYkfmt63C58cevx8wZIQAeetcAHBqk7H08WZhqLdBdBpAovXqg=
-X-Google-Smtp-Source: AGHT+IHrEVCtROhIx+YyYA4QRU91GByT1IhN/KKKBcdE8BrWoX2fAT7zlZDzAxjgWmcLyL1wGBtxPg==
-X-Received: by 2002:a05:6512:33c9:b0:545:6fa:bf60 with SMTP id 2adb3069b0e04-545180ef5famr301216e87.19.1739321468152;
-        Tue, 11 Feb 2025 16:51:08 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545067a7576sm1079063e87.198.2025.02.11.16.51.05
+        d=1e100.net; s=20230601; t=1739321514; x=1739926314;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wxjIUJ0LCGQtTFpUNlyNV0SkSCoelxvdgjl3lNP3O8Q=;
+        b=P+qtGtjDpRl7DR1NRYFEwMyqsX7MZwWK7FCjIbSI4M5lKswVDVVHFmMGJ+38VM4ckh
+         5fd/2vZptRf/pF5VD2Xk5+OV1+xjZjRzOuql0lmPZvLK1XCOrlzXR3bbc2FoiI9p9b9B
+         UKuo92+TBl6yO9EKW2a4rg4sZ5woRdtqIBqJ0FLNxV4FvkJvr1/AkqdpAfp49zPOUPLK
+         MLy8MWCDUICWrASGTbE0RO15sGsI5lz/7NT9LbVuZ326Ftlm+F7fyQb8MjluY7ULeRAz
+         NKea87cbgbdIxPViTMG9Pk7SM76PgHuRqJtNyLl9H5e72ZLZm8W3vRgeyI8h+gNIhydq
+         QIMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGwqsK2R7r56dHvT0DRrv57UsJ4ywI85QCOB6WcZooex9EV7JCTYm/RkMQ7dJv2ou1dj/k4u65wUMRQgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbT2XHKm/Fip83TdSyKzPVHBdPTwgRdIbMnokxGTj2qzJeYA7m
+	xOGa3kN76G0Hezz+aYI1OltY+rSNfqUxdx3C1Z1d9dxDK/QHQcED7DWgnK1BgGXjhTJxQT3iU9I
+	j8oM7aDn2RabtyFKmZK3dCC6YGRctyk50XQ2MN5tgbFwXHpEe
+X-Gm-Gg: ASbGncsmJNWlzbGvxjv4j+42QjiKC9Q07thgeC01KZUPeCwnqBKKysWRuqkJhkBbRLs
+	/xCWtaMXD8DSbk/WvnduLdr8t1F3fCuW4d9JHMZXqxayF1Ob7KFVk0kHHsLFNORGtiUbw5x+qmN
+	CDwqEwHEkeya/swy/HVQs01kr0jVxLYUQuUUUEr3rO/hCgiXxCZUL1vEplpRMfRKK2EXMHowCjg
+	sD8nvEkVUapMilx86B02+FpNXIldMtrOUurgnsn2GkjGDjpaih6JPVOZH5NcuuY6PqAmXrufCHb
+	q8y/q+nLL2EUK5qo8nZOtd4=
+X-Google-Smtp-Source: AGHT+IHYpDUM5IoG8Gefvs4nmEzKc+3MUcQyKzvpDeSdd4lhbhbGh2EnHmPFJjw+Kv8PFBLmrPRm+a/xUBfZ
+X-Received: by 2002:a05:6e02:1d9a:b0:3d0:13f1:b47c with SMTP id e9e14a558f8ab-3d17c2155e0mr3318165ab.4.1739321514520;
+        Tue, 11 Feb 2025 16:51:54 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d16133e8f5sm3111825ab.69.2025.02.11.16.51.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 16:51:06 -0800 (PST)
-Date: Wed, 12 Feb 2025 02:51:04 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Simona Vetter <simona.vetter@ffwll.ch>
-Subject: Re: [PATCH v2 00/35] drm/bridge: Various quality of life improvements
-Message-ID: <b5og5jvjq4jnq5rogyro5rtahayvsbroq4z3yrplioyb4itbak@3cepdouqxyny>
-References: <20250204-bridge-connector-v2-0-35dd6c834e08@kernel.org>
- <yudkovtipwtnofr3o2qwqrmriwxlczrwploieh5i4ke3sx5zhk@5ktlrew7o6k2>
- <20250211-peculiar-misty-moose-639556@houat>
+        Tue, 11 Feb 2025 16:51:54 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 715553400C7;
+	Tue, 11 Feb 2025 17:51:53 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 685E6E40C16; Tue, 11 Feb 2025 17:51:23 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: use lockless_cq flag in io_req_complete_post()
+Date: Tue, 11 Feb 2025 17:51:18 -0700
+Message-ID: <20250212005119.3433005-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211-peculiar-misty-moose-639556@houat>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 11, 2025 at 02:17:30PM +0100, Maxime Ripard wrote:
-> On Sun, Feb 09, 2025 at 05:27:01AM +0200, Dmitry Baryshkov wrote:
-> > On Tue, Feb 04, 2025 at 03:57:28PM +0100, Maxime Ripard wrote:
-> > > Hi,
-> > > 
-> > > Here's a series of changes after to the KMS helpers and bridge API
-> > > following a bunch of reviews I did.
-> > > 
-> > > It's mostly centered across providing an easier time to deal with bridge
-> > > states, and a somewhat consistent with the other entities API.
-> > > 
-> > > It's build tested only, with arm64 allmodconfig.
-> > > 
-> > > Maxime
-> > > 
-> > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > > ---
-> > > Changes in v2:
-> > > - Pass the full atomic state to bridge atomic hooks
-> > > - Make attach take the encoder as a parameter
-> > > - Mark bridge->encoder as deprecated
-> > > - Rework the logic to detect if a bridge uses a state or not at
-> > >   atomic_check time
-> > > - Add lockdep assertion to drm_bridge_get_current_state()
-> > > - Link to v1: https://lore.kernel.org/r/20250115-bridge-connector-v1-0-9a2fecd886a6@kernel.org
-> > > 
-> > > ---
-> > > Maxime Ripard (35):
-> > >       drm/atomic: Document history of drm_atomic_state
-> > >       drm/bridge: Pass full state to atomic_pre_enable
-> > >       drm/bridge: Pass full state to atomic_enable
-> > >       drm/bridge: Pass full state to atomic_disable
-> > >       drm/bridge: Pass full state to atomic_post_disable
-> > >       drm/atomic-helper: Fix commit_tail state variable name
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_wait_for_dependencies()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_tail()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_tail_rpm()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_modeset_disables()
-> > >       drm/atomic-helper: Change parameter name of disable_outputs()
-> > >       drm/bridge: Change parameter name of drm_atomic_bridge_chain_disable()
-> > >       drm/bridge: Change parameter name of drm_atomic_bridge_chain_post_disable()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_update_legacy_modeset_state()
-> > >       drm/atomic-helper: Change parameter name of crtc_set_mode()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_planes()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_modeset_enables()
-> > >       drm/bridge: Change parameter name of drm_atomic_bridge_chain_pre_enable()
-> > >       drm/bridge: Change parameter name of drm_atomic_bridge_chain_enable()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_writebacks()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_fake_vblank()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_hw_done()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_wait_for_vblanks()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_cleanup_planes()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_commit_cleanup_done()
-> > >       drm/atomic-helper: Change parameter name of drm_atomic_helper_wait_for_flip_done()
-> > 
-> > I agree that use of the old_state can be confusing (and it has been
-> > confusing to me for some time). The main question is, do we loose useful
-> > memo 'this is the state after swap'. Most likely it is useless now, just
-> > wanted to give it a second thought.
-> 
-> The drm_atomic_state doesn't change after a swap, only the
-> plane/crtc/connector/private_obj (and their state) state pointer do. And
-> if you meant that old_state mentions that the states have been swapped,
-> it's still a terrible name and we should change it still :)
+io_uring_create() computes ctx->lockless_cq as:
+ctx->task_complete || (ctx->flags & IORING_SETUP_IOPOLL)
 
-Ack, sounds good.
+So use it to simplify that expression in io_req_complete_post().
 
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ io_uring/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index ec98a0ec6f34..0bd94599df81 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -897,11 +897,11 @@ static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+ 
+ 	/*
+ 	 * Handle special CQ sync cases via task_work. DEFER_TASKRUN requires
+ 	 * the submitter task context, IOPOLL protects with uring_lock.
+ 	 */
+-	if (ctx->task_complete || (ctx->flags & IORING_SETUP_IOPOLL)) {
++	if (ctx->lockless_cq) {
+ 		req->io_task_work.func = io_req_task_complete;
+ 		io_req_task_work_add(req);
+ 		return;
+ 	}
+ 
 -- 
-With best wishes
-Dmitry
+2.45.2
+
 
