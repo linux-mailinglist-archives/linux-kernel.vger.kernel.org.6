@@ -1,250 +1,207 @@
-Return-Path: <linux-kernel+bounces-510809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F58AA32251
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:36:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E368A3227F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55053A64AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:35:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C503A91C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 09:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2321F205E01;
-	Wed, 12 Feb 2025 09:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iSb3Z8PG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCD72063CC;
+	Wed, 12 Feb 2025 09:36:41 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4712046BF
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AD820ADC7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 09:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739352963; cv=none; b=aXCSS1emB8C4hTvvfxvsZuYqPCFq10SMlti5o0ux25lXhi/0UTdRsSjqn21/2beZO9NkXbZsdB3pwbpegnfIujlUkDxFJRBhraC01pQcrwKWWDlnBUkbDHIhT/HOY7bMFNLupv7V1GLJt66sxEHCn8D4P02DbqpokJn/VnuWchs=
+	t=1739353001; cv=none; b=m6Ik/Yi1chtpHNvySJajSnzU8iDK27GQQOfB0HgcuvsmItOfzzj3B8W/t4Ew8fE0YHJj6bjr/qQofCSZoUXBk5eo8pcSvDyJemA0rPRuV3H8dWIuoOFNJsNLiskuKMx0+8izbprnBu29fxlDbxbcbqLv/AXbQFpcgh86peE+Uhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739352963; c=relaxed/simple;
-	bh=pgsH206nPEenEmQhZW+SG0liBtabwfb1Nu2RC806B+k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=azc/jGghLZQ/ZyX8WB/CGrFDG4O0k8GzwP0RgDn0lN4Q3Q2gqsu1a1HSnYd04y3/ZHPmKxKoVbKcFOXst8FPIiMWXeribIk/3DaS3vTJuKq2bqgdOCI3embU+984D2LUCEfIQFQpZgo0NUKW2qtiyT12ux3uUa5xNxEhq6asc5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iSb3Z8PG; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739352961; x=1770888961;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=pgsH206nPEenEmQhZW+SG0liBtabwfb1Nu2RC806B+k=;
-  b=iSb3Z8PG4GwUIJIY5x8d3Kg7btdJlXJdKCAkQZwzvoVB2Sj/EuVsvgan
-   wp+bSnbyyovvNOsdXNn9+AMpKNjerBchg99gng/oUT2yMTk9ce7vpt1YF
-   ac0Qf9KdZu/OGB9b+Rd1vfaJj1HVtstAZl0SNMEkOfeLol98Ri+hpA7gk
-   CFZtNKdp4ySifClo2HtOukJindzTetGKOGCdVr+5jroTBp63siNdh6Acn
-   8jR3IU3tHMZkSjzdaASxQWfFUfVfX0FKVzf4PUUyDbsVpJUUC+nqIvv9w
-   zrKfD8Lz4Le0do+2U24TNhQwC2UFs5no+99LGZD0meAfV5zAJn+sJJQb6
-   w==;
-X-CSE-ConnectionGUID: QcE5giz5SiCXooHVc31J/Q==
-X-CSE-MsgGUID: 0/4aF3IyQYe0kwu/C+xE5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="42842046"
-X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
-   d="scan'208";a="42842046"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 01:36:01 -0800
-X-CSE-ConnectionGUID: Oo0fouXhTxeRkDfuWT5sBw==
-X-CSE-MsgGUID: JsFMgzXiQZKCDAg/1zcBcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117951478"
-Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.167])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 01:35:57 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Egor Vorontsov <sdoregor@sdore.me>, linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Egor Vorontsov
- <sdoregor@sdore.me>
-Subject: Re: [PATCH v2] drm/edid: Implement DisplayID Type IX & X timing
- blocks parsing
-In-Reply-To: <7cab8349bc8bb6fa08d2a7127a724efea155f154.camel@sdore.me>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <7cab8349bc8bb6fa08d2a7127a724efea155f154.camel@sdore.me>
-Date: Wed, 12 Feb 2025 11:35:54 +0200
-Message-ID: <87zfirzerp.fsf@intel.com>
+	s=arc-20240116; t=1739353001; c=relaxed/simple;
+	bh=fJ0oQVoe3v+GZGtKDqY/m+T+upxz/j86dCJyFecV9bQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYYF+mgQQWnFGMDYmLOZaLCh1zZjLVP1TQd+nuvqpOmEHLbEyorcChc5nbudBGaaonW8QgqSrzjH3b4vb4QWKR6kwu5BbmrNYVe1omhbCpgEZXcZDJuRwyEdh6MhiZkd1fLcAJXa0bp+1MBTgcYmICKk9tsXqPx6/YqbmFELgio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1ti9AB-0003qj-6V; Wed, 12 Feb 2025 10:36:11 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1ti9AA-000Z2U-1y;
+	Wed, 12 Feb 2025 10:36:10 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1ti9AA-00AzSK-1c;
+	Wed, 12 Feb 2025 10:36:10 +0100
+Date: Wed, 12 Feb 2025 10:36:10 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 1/3] ASoC: dt-bindings: support imx95's CM7 core
+Message-ID: <20250212093610.x4ixrackmn3u2xrf@pengutronix.de>
+References: <20250211225808.3050-1-laurentiumihalcea111@gmail.com>
+ <20250211225808.3050-2-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211225808.3050-2-laurentiumihalcea111@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2025, Egor Vorontsov <sdoregor@sdore.me> wrote:
-> Some newer high refresh rate consumer monitors (including those by Samsun=
-g)
-> make use of DisplayID 2.1 timing blocks in their EDID data, notably for
-> their highest refresh rate modes. Such modes won't be available as of now.
->
-> Implement partial support for such blocks in order to enable native
-> support of HRR modes of most such monitors for users without having to re=
-ly
-> on EDID patching/override (or need thereof).
->
-> Closes: https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/55
-> Suggested-by: Maximilian Bo=C3=9Fe <max@bosse.io>
-> Signed-off-by: Egor Vorontsov <sdoregor@sdore.me>
+On 25-02-11, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> 
+> Add binding for imx95's CM7 core, used for audio processing.
+> Additionally, introduce a common binding for NXP audio processors with
+> Sound Open Firmware (SOF) support.
+> 
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 > ---
->  drivers/gpu/drm/drm_displayid_internal.h | 13 +++++
->  drivers/gpu/drm/drm_edid.c               | 63 ++++++++++++++++++++++++
->  2 files changed, 76 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_displayid_internal.h b/drivers/gpu/drm/d=
-rm_displayid_internal.h
-> index aee1b86a73c1..88220c107822 100644
-> --- a/drivers/gpu/drm/drm_displayid_internal.h
-> +++ b/drivers/gpu/drm/drm_displayid_internal.h
-> @@ -66,6 +66,7 @@ struct drm_edid;
->  #define DATA_BLOCK_2_STEREO_DISPLAY_INTERFACE	0x27
->  #define DATA_BLOCK_2_TILED_DISPLAY_TOPOLOGY	0x28
->  #define DATA_BLOCK_2_CONTAINER_ID		0x29
-> +#define DATA_BLOCK_2_TYPE_10_FORMULA_TIMING	0x2a
->  #define DATA_BLOCK_2_VENDOR_SPECIFIC		0x7e
->  #define DATA_BLOCK_2_CTA_DISPLAY_ID		0x81
->=20=20
-> @@ -129,6 +130,18 @@ struct displayid_detailed_timing_block {
->  	struct displayid_detailed_timings_1 timings[];
->  };
->=20=20
-> +struct displayid_formula_timings_9 {
-> +	u8 flags;
-> +	__be16 hactive;
-> +	__be16 vactive;
-> +	u8 vrefresh;
-> +} __packed;
+>  .../bindings/sound/fsl,imx95-cm7-sof.yaml     | 64 +++++++++++++++++++
+>  .../bindings/sound/fsl,sof-cpu.yaml           | 27 ++++++++
+>  2 files changed, 91 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/fsl,sof-cpu.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml b/Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml
+> new file mode 100644
+> index 000000000000..f00ae3219e15
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/fsl,imx95-cm7-sof.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/fsl,imx95-cm7-sof.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +struct displayid_formula_timing_block {
-> +	struct displayid_block base;
-> +	struct displayid_formula_timings_9 timings[];
-> +} __packed;
+> +title: NXP imx95 CM7 core
 > +
->  #define DISPLAYID_VESA_MSO_OVERLAP	GENMASK(3, 0)
->  #define DISPLAYID_VESA_MSO_MODE		GENMASK(6, 5)
->=20=20
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 13bc4c290b17..9c363df5af9a 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -6833,6 +6833,66 @@ static int add_displayid_detailed_1_modes(struct d=
-rm_connector *connector,
->  	return num_modes;
->  }
->=20=20
-> +static struct drm_display_mode *drm_mode_displayid_formula(struct drm_de=
-vice *dev,
-> +							   const struct displayid_formula_timings_9 *timings,
-> +							   bool type_10)
-> +{
-> +	struct drm_display_mode *mode;
-> +	u16 hactive =3D be16_to_cpu(timings->hactive) + 1;
-> +	u16 vactive =3D be16_to_cpu(timings->vactive) + 1;
-> +	u8 timing_formula =3D timings->flags & 0x7;
+> +maintainers:
+> +  - Daniel Baluta <daniel.baluta@nxp.com>
 > +
-> +	/* TODO: support RB-v2 & RB-v3 */
-> +	if (timing_formula > 1)
-> +		return NULL;
+> +description: NXP imx95 CM7 core used for audio processing
 > +
-> +	/* TODO: support video-optimized refresh rate */
-> +	if (timings->flags & (1 << 4))
-> +		return NULL;
+> +properties:
+> +  compatible:
+> +    const: fsl,imx95-cm7-sof
 
-Mmh. I'm not sure I'd go this far. The bit indicates *two* timings, one
-for which the below *is* correct, and another additional one with
-vrefresh * (1000/1001).
+Albeit Krzysztof already add his Reviewed-by, can I ask why we need to
+add the -sof suffix instead of -audio or so? SOF is a software project
+but you can clearly run different software on the audio-copro as well.
 
-We could just add a drm_dbg_kms(dev, "<message>") here about missing
-fractional refresh rate, and proceed with the one non-fractional rate?
-Or just have the TODO comment with no checks.
-
-And I'm not asking you to just implement the fractional refresh rate
-here, because we can't simply do it on the vrefresh due to losing
-precision. Needs to be done on the clock. But it could be a follow-up,
-using the above bit to do something similar to what
-add_alternate_cea_modes() does.
-
-Either way,
-
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-
-
-Are you up for the follow-ups too? And since you've got the hang of it,
-maybe fix struct displayid_formula_timings_9 hactive/vactive to __be16
-as well?
-
-BR,
-Jani.
+Regards,
+  Marco
 
 > +
-> +	mode =3D drm_cvt_mode(dev, hactive, vactive, timings->vrefresh + 1, tim=
-ing_formula =3D=3D 1, false, false);
-> +	if (!mode)
-> +		return NULL;
+> +  reg:
+> +    maxItems: 1
 > +
-> +	/* TODO: interpret S3D flags */
+> +  reg-names:
+> +    const: sram
 > +
-> +	mode->type =3D DRM_MODE_TYPE_DRIVER;
-> +	drm_mode_set_name(mode);
+> +  memory-region:
+> +    maxItems: 1
 > +
-> +	return mode;
-> +}
+> +  memory-region-names:
+> +    const: dma
 > +
-> +static int add_displayid_formula_modes(struct drm_connector *connector,
-> +				       const struct displayid_block *block)
-> +{
-> +	const struct displayid_formula_timing_block *formula_block =3D (struct =
-displayid_formula_timing_block *)block;
-> +	int num_timings;
-> +	struct drm_display_mode *newmode;
-> +	int num_modes =3D 0;
-> +	bool type_10 =3D block->tag =3D=3D DATA_BLOCK_2_TYPE_10_FORMULA_TIMING;
-> +	int timing_size =3D 6 + ((formula_block->base.rev & 0x70) >> 4);
+> +  port:
+> +    description: SAI3 port
+> +    $ref: audio-graph-port.yaml#
+> +    unevaluatedProperties: false
 > +
-> +	/* extended blocks are not supported yet */
-> +	if (timing_size !=3D 6)
-> +		return 0;
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - memory-region
+> +  - memory-region-names
+> +  - port
 > +
-> +	if (block->num_bytes % timing_size)
-> +		return 0;
+> +allOf:
+> +  - $ref: fsl,sof-cpu.yaml#
 > +
-> +	num_timings =3D block->num_bytes / timing_size;
-> +	for (int i =3D 0; i < num_timings; i++) {
-> +		const struct displayid_formula_timings_9 *timings =3D &formula_block->=
-timings[i];
+> +unevaluatedProperties: false
 > +
-> +		newmode =3D drm_mode_displayid_formula(connector->dev, timings, type_1=
-0);
-> +		if (!newmode)
-> +			continue;
+> +examples:
+> +  - |
+> +    cm7-cpu@80000000 {
+> +        compatible = "fsl,imx95-cm7-sof";
+> +        reg = <0x80000000 0x6100000>;
+> +        reg-names = "sram";
+> +        mboxes = <&mu7 2 0>, <&mu7 2 1>, <&mu7 3 0>, <&mu7 3 1>;
+> +        mbox-names = "txdb0", "txdb1", "rxdb0", "rxdb1";
+> +        memory-region = <&adma_res>;
+> +        memory-region-names = "dma";
+> +        port {
+> +            /* SAI3-WM8962 link */
+> +            endpoint {
+> +                remote-endpoint = <&wm8962_ep>;
+> +            };
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/sound/fsl,sof-cpu.yaml b/Documentation/devicetree/bindings/sound/fsl,sof-cpu.yaml
+> new file mode 100644
+> index 000000000000..31863932dbc3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/fsl,sof-cpu.yaml
+> @@ -0,0 +1,27 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/fsl,sof-cpu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +		drm_mode_probed_add(connector, newmode);
-> +		num_modes++;
-> +	}
-> +	return num_modes;
-> +}
+> +title: NXP audio processor common properties
 > +
->  static int add_displayid_detailed_modes(struct drm_connector *connector,
->  					const struct drm_edid *drm_edid)
->  {
-> @@ -6845,6 +6905,9 @@ static int add_displayid_detailed_modes(struct drm_=
-connector *connector,
->  		if (block->tag =3D=3D DATA_BLOCK_TYPE_1_DETAILED_TIMING ||
->  		    block->tag =3D=3D DATA_BLOCK_2_TYPE_7_DETAILED_TIMING)
->  			num_modes +=3D add_displayid_detailed_1_modes(connector, block);
-> +		else if (block->tag =3D=3D DATA_BLOCK_2_TYPE_9_FORMULA_TIMING ||
-> +			 block->tag =3D=3D DATA_BLOCK_2_TYPE_10_FORMULA_TIMING)
-> +			num_modes +=3D add_displayid_formula_modes(connector, block);
->  	}
->  	displayid_iter_end(&iter);
-
---=20
-Jani Nikula, Intel
+> +maintainers:
+> +  - Daniel Baluta <daniel.baluta@nxp.com>
+> +
+> +properties:
+> +  mboxes:
+> +    maxItems: 4
+> +
+> +  mbox-names:
+> +    items:
+> +      - const: txdb0
+> +      - const: txdb1
+> +      - const: rxdb0
+> +      - const: rxdb1
+> +
+> +required:
+> +  - mboxes
+> +  - mbox-names
+> +
+> +additionalProperties: true
+> -- 
+> 2.34.1
+> 
+> 
+> 
 
