@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-511263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054B9A32882
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:34:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E3DA3288B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E690D18850A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:34:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833EB3A8131
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 14:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2C520FA86;
-	Wed, 12 Feb 2025 14:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4013721019E;
+	Wed, 12 Feb 2025 14:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQs0rJiJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIxLR7y7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EFD27180B;
-	Wed, 12 Feb 2025 14:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9127020E314;
+	Wed, 12 Feb 2025 14:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739370841; cv=none; b=n8gnlZ6ejqRj/K45T70gImacNEr5wfUlqfH9TSnNitJ8CHK70vUMGCSPe98L88hnPEWGukZICn1i1A4tf3SazQVma+DbO4DVZjEjSuU/frnVcztZbOfF3cUB+11ox775MiiAOy+SBowmMrHmEjAdXd7ElHVPF5mgwofeDOIDnQk=
+	t=1739370940; cv=none; b=cBZoH3otNTob85XsxbcDGJjCFgKMXRRzNtDAOGdghpitebHvDpRexiFf2NZ6NlmHbB5BtX6LFXWj0FUCGo9XNZDLeXwkHa1tVH68LqzxAypLEy8sby1myKlJR4B1n0Dim+hkgk+6NmuvqxKqQ2H0htWXQFxg270rSuhWfF67BYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739370841; c=relaxed/simple;
-	bh=QgYvjfxo+X0cHfwEov1X2s9rPdFbVkrA5z+AnagMuOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kOP8DS7U9nWWrNB1QlgUdW54PFitNl3YzES5Rs9s4O6qHiezhMBjIVJjeEd1CWCRsPw8vtA0YWVYVXK9VQa737qbnr+NG4wbHFwayQ9Pedg8fg8FQ2NuUvEvIIen1dxYZWMQwxArS4h9qzeVX5wlhFaB9w6SiDhR8hlSbkOGOOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQs0rJiJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F985C4CEE2;
-	Wed, 12 Feb 2025 14:33:58 +0000 (UTC)
+	s=arc-20240116; t=1739370940; c=relaxed/simple;
+	bh=k9FJCp/EzqgT8t9ccuHwMGiXvLArAc9zO7kzZEzxqco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZGTHnKP+kpa8oOmqyoKwjnoyU/cbzahxOzh6Y77inVXA2LVQQKbAKnPz+82T6nA4aCTj9pe5k+T7Q3+skkWpo3KCee3G80sS/L+6iyS0wnShABD+CPBBmtLfukmlTgzkm+m6JZXDv0Vb5MRxiwhKhDv1KfxoSjT0vDJGopDL3I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIxLR7y7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39E7C4CEDF;
+	Wed, 12 Feb 2025 14:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739370840;
-	bh=QgYvjfxo+X0cHfwEov1X2s9rPdFbVkrA5z+AnagMuOI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pQs0rJiJgEDjvCI0l0pvtk7cVsUWXVzfgvuDvcYJbfawVHOB8VItrau5u1c2Xfmyw
-	 KEloyytS+zW6NNycj2g4xnIIAUPfQSHYxbAjtIX5Pp33ShfIwhkyqkFdDUpfV5pC4z
-	 FzlPZ5Y9mkT2dLBAoUYeojbjtaK6sRjgobKdUGJK7i1H0TL9glkuUEu8hf3haEBvd2
-	 KbENN44fThevG4yHP3DiMjg4whfNu9+u4eNzU7OKtFMCwEu0VJcTcAUxcl0HtReQZO
-	 XLJi9MgFGZe9mHhwiXsEITD1Mew7oS+GhzUlGYjL0GWWYpfk5aLcwQeQrTzZHxATeW
-	 6U+CVlZwTuB8A==
-Message-ID: <1ad40918-8b5b-43fb-bd32-66db7825726e@kernel.org>
-Date: Wed, 12 Feb 2025 14:33:56 +0000
+	s=k20201202; t=1739370940;
+	bh=k9FJCp/EzqgT8t9ccuHwMGiXvLArAc9zO7kzZEzxqco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sIxLR7y7ahfCJf7INhdJVZuc2vgomq0+pFO44mEH0BAED2jguVIqmCKFOuZxbrsBv
+	 Mn4rCHDajZI2WJOxBV/4EVZmkyZTJVTrGr/h9alK1XA5QW9rE3spcS6QWI2czg/QGi
+	 hVvm+eLKAxi2itsBAInUkjXuI1j/e7+GDJe1gmRNOmMVsSUE+vAfCqFrVs+hKDs+mP
+	 CMRwKYbhxNykxXNYQQS8nz0dTK+W7BlC/NRe47EZ+dnePrzBKqbmenk6HIU35fU8vs
+	 CZaTf/PN5SOJUaw69mJZzofEHkAaaHvxttBzmDLTulfvBh9FS9qck4XPT2xjHDJpSt
+	 G+C0z+mE5bRrQ==
+Date: Wed, 12 Feb 2025 08:35:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kuogee Hsieh <quic_khsieh@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Add MST support for qcs8300 platform
+Message-ID: <20250212143538.GA3554863-robh@kernel.org>
+References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v4] bpftool: Check map name length when map
- create
-To: Rong Tao <rtoax@foxmail.com>, andrii@kernel.org, ast@kernel.org
-Cc: rongtao@cestc.cn, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>,
- "open list:BPF [TOOLING] (bpftool)" <bpf@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <tencent_B44B3A95F0D7C2512DC40D831DA1FA2C9907@qq.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <tencent_B44B3A95F0D7C2512DC40D831DA1FA2C9907@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
 
-2025-02-12 20:45 UTC+0800 ~ Rong Tao <rtoax@foxmail.com>
-> From: Rong Tao <rongtao@cestc.cn>
+On Wed, Feb 12, 2025 at 03:12:23PM +0800, Yongxing Mou wrote:
+> This series of patches introduces how to enable MST functionality on
+> the qcs8300 platform. The qcs8300 platform uses dpu_8_4 hardware, which
+> is the same as the sa8775p, but it only has one DPU. So it only has one
+> DP0 controller, supporting 4-stream MST. This patch only enables 
+> 2-stream MST, using intf0 and intf3. The first and second patches are
+> modifications to the correspond dt-bindings, third patch is the dp 
+> controller driver after not reuse sm8650, fourth patch is the qcs8300
+> dts modification which add the clk support for stream 1.
 > 
-> The size of struct bpf_map::name is BPF_OBJ_NAME_LEN (16).
+> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> ---
+> This patch depends on following series:
+> https://lore.kernel.org/all/20250120-mdssdt_qcs8300-v4-0-1687e7842125@quicinc.com/
+> https://lore.kernel.org/all/20250114-dts_qcs8300-v3-0-d114cc5e4af9@quicinc.com/
+> https://lore.kernel.org/all/20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com
+> https://lore.kernel.org/all/20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com/
 > 
-> bpf(2) {
->   map_create() {
->     bpf_obj_name_cpy(map->name, attr->map_name, sizeof(attr->map_name));
->   }
-> }
+> ---
+> Yongxing Mou (4):
+>       dt-bindings: display/msm: Redocument the dp-controller for QCS8300
+>       dt-bindings: display/msm: Add stream 1 pixel clock for QCS8300
+>       drm/msm/dp: Populate the max_streams for qcs8300 mst controller
+>       arm64: dts: qcom: qcs8300: Add support for stream 1 clk for DP MST
 > 
-> When specifying a map name using bpftool map create name, no error is
-> reported if the name length is greater than 15.
-> 
->     $ sudo bpftool map create /sys/fs/bpf/12345678901234567890 \
->         type array key 4 value 4 entries 5 name 12345678901234567890
-> 
-> Users will think that 12345678901234567890 is legal, but this name cannot
-> be used to index a map.
-> 
->     $ sudo bpftool map show name 12345678901234567890
->     Error: can't parse name
-> 
->     $ sudo bpftool map show
->     ...
->     1249: array  name 123456789012345  flags 0x0
->     	key 4B  value 4B  max_entries 5  memlock 304B
-> 
->     $ sudo bpftool map show name 123456789012345
->     1249: array  name 123456789012345  flags 0x0
->     	key 4B  value 4B  max_entries 5  memlock 304B
-> 
-> The map name provided in the command line is truncated, but no warning is
-> reported. This submission checks the length of the map name.
-> 
-> Reviewed-by: Quentin Monnet <qmo@kernel.org>
-> Signed-off-by: Rong Tao <rongtao@cestc.cn>
+>  .../devicetree/bindings/display/msm/dp-controller.yaml     |  5 +----
+>  .../devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml | 14 ++++++++------
+>  arch/arm64/boot/dts/qcom/qcs8300.dtsi                      | 12 ++++++++----
+>  drivers/gpu/drm/msm/dp/dp_display.c                        |  8 ++++++++
+>  4 files changed, 25 insertions(+), 14 deletions(-)
+> ---
+> base-commit: 7ba9bcc5090556c007d9a718d7176e097fe54f19
 
-Looks good to me, thank you!
-Quentin
+Your series doesn't apply because this commit doesn't exist in any repo 
+I have.
+
+Rob
 
