@@ -1,124 +1,254 @@
-Return-Path: <linux-kernel+bounces-510246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E79DA31A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:11:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32F7A31A38
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F843A050A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B63418809F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A365C6136;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C1353AC;
 	Wed, 12 Feb 2025 00:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="QraXSjfA"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPMxE80F"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D4FA50
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CE31367;
+	Wed, 12 Feb 2025 00:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739319089; cv=none; b=rV7T1cUmHF9xtf1sw1HTzlkz3tF+DnQPlurLn3yy/b1gy9hEkAhpN5EUrCC9BbOEmewOdmOH47mvNGYa1uoi5dyI7g6T04C2JSnTd0qSAhCJyVJg+jhKgxSfsHPAG3y2rMdGoRBrNaxuDFqLKqS5S7omOzFbGlK8lAtA/D5eEKY=
+	t=1739319088; cv=none; b=T7GorUi6noUhqsgju/FrjVUYeQoDE0UzVluv/Dq3wGxV1iuhILfZ7tu2UjuSwqWtKYfTWO9fw8ZodseRpZFfr1ZgQPfO4PjL6p2F0FwatmsANu2iJcKIQ09YcgYEnJUh8NiRtdjo3TaiQY0zRGtQS7VT0dBrwmHLVw9ZUYiHo2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739319089; c=relaxed/simple;
-	bh=qfqWUaxj4M5XI8X8hWIn0j03pFGWYZcGVqGDzFiPUfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5GUrN8EgqIM0KI1Vb8cyah7iX5q2JlJlj+98Iy9D/An4WW1EPKqaTAJnOSAqxvxtLFZTg+m904wZuQwoPEi0KIUY0CJr8AS0R+bJwciOulatXB7pIpjCw/tUL2/DXioUgxQyZxlUxmd8N7h24VBLBSDPN5sHZdXIq5rVmDNNLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=QraXSjfA; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c05f7d9ac0so317376585a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:11:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1739319085; x=1739923885; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aMkf5oPLsMJQj2JhE5y7/ZrwjQP1VsYL3M5+AWgX0gA=;
-        b=QraXSjfAWVOjH1StPU4l8HRAErmPT+Gm0pdnhEDejP9/qaj8snwSnYirygR2Zgiof3
-         +jARFhrlEBN5bR4WCflWGI61CUt545DDL5vIxPgVSj5h1/VpeAhKBuOjTsMo4cQQbgUb
-         6Qh0kShh0thOnGSPZwxs118qXP5MyLad43OA5L9y/6++EyQT1nlJFnROiCxOQmFDm8kb
-         M8slzsWrkyHwld+oMJ8kC9ucYNk1jDP/dYtWwfu8jQAWViUHKLvln2snUjRgO8kRT1vU
-         n5w41P4hadn7l1NHptslSHIbxU20mHW+R8ICinJqiYuMZtuya4ymNxzElp3da+Hol7tY
-         Gp7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739319085; x=1739923885;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aMkf5oPLsMJQj2JhE5y7/ZrwjQP1VsYL3M5+AWgX0gA=;
-        b=pQp3YN9FmZYMw43t4p2uysQjKe3tOM4yY6fmy83DENIcQOtmhPd+wYQbJeZwgmnhpe
-         U8f9WWc+KI67xZmg7t1kKi2cSWdfmD9TkUvuCFHtIX7ISPVrsaV0pk9JxSToOl+3G9Ca
-         kJxyu+oNPT6Tc3c/phCWsX9KJeZQkq/GZXwjNqYCub0NI1V9Gw1CsMt4yPCvOnhL1ec/
-         B8tKUkibiJiE/dJiMWdfqM/OCzIcCSRqS2412Ae+d/XSjbSTA3+1eenKjaxMZ4iCjWgk
-         LZizE0tPndRYx/WTKUd2Yf2tVGFg5AI+yM86twaIeYBUc8eMWlSgFk4FAEszH7AFaMlO
-         yYuA==
-X-Forwarded-Encrypted: i=1; AJvYcCW77R0MrEUUxkOqx2Asm1eVVqwm1dmDq6+A9aTfmBYYHDrWFHSNJYjVNT8bTgGYdpIZeX+DoUQT4oRcL6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW0/JqkhUR6SKQuB7foqE2EmtdDEcAO0VaUoA6lC3LlCAkaL22
-	pNc9DFG+xv8fG3ooIc4nfgWfblul+pZpo0dkcFQFn2yyd/Y1WYMLs2podpiv7c4=
-X-Gm-Gg: ASbGncses4Q1yXTf8ewk8/Phpb+VNFVKlIzJPB1Vla30iK/0C3S+ajYN2ePruB/xrzo
-	jYJtkhLP+NVUgNtoJCh+2iwVDS1MHiActh+J+gRedVvtjub4ovprM+81svQhHKyHEjbmdzPhOaT
-	fbVE1XrJ/pKsPMV1qrgb8xppsJzZddHgBaAcDmno6j2ql4sXFoAIikFHjAkWRruh8+jdZtLef68
-	lrVsLV3YTaZWd2tCRVkdE2LwlDLQeCdyMPPFwCYZfEier5vBPmkTxSCgTUAAE+unBXUcxU3aFsc
-	0SHR5FQlD/hzpPBmQ0N7ii0DbyExACm1wbp7ITJuhdqGU6HHWzFy0e09q/+a2ZSDJcDZ/B61kQ=
-	=
-X-Google-Smtp-Source: AGHT+IEhQLIsJaG/fbU8sJBgBx+OFg8MFFCqDuN0KUnDhhirQwBhRT3I4eLnjVSHDoK5Bq2ymF340g==
-X-Received: by 2002:a05:620a:6293:b0:7b6:d6e5:ac6e with SMTP id af79cd13be357-7c06fc57302mr210133485a.4.1739319084971;
-        Tue, 11 Feb 2025 16:11:24 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c065424c9esm257293885a.43.2025.02.11.16.11.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 16:11:24 -0800 (PST)
-Date: Tue, 11 Feb 2025 19:11:21 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
-	ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
-	rrichter@amd.com, nathan.fontenot@amd.com,
-	Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
-	ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-Subject: Re: [PATCH v7 13/17] cxl/pci: Add trace logging for CXL PCIe Port
- RAS errors
-Message-ID: <Z6vnKT1pXuON2WNg@gourry-fedora-PF4VCD3F>
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
- <20250211192444.2292833-14-terry.bowman@amd.com>
+	s=arc-20240116; t=1739319088; c=relaxed/simple;
+	bh=CnLzc4amrVwGIMg/9TKICSJ+uuTpvMPjYaiU839PggE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UaLrIyN1GEyhjeWIPT87SBZp4Jho6UeHBQdYDRCv+KxqCllxEZfREiDus3cusNwYamfJfI/Snboe6hy9WuXIaTgAaEDsKZKePPiW8YjQQqCS9hSisftiDI6+gWTlQjXT0v9RXOnxal636JN4Qwiog8ADWjyQjarDgOHQDH64bw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPMxE80F; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739319086; x=1770855086;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=CnLzc4amrVwGIMg/9TKICSJ+uuTpvMPjYaiU839PggE=;
+  b=MPMxE80F51wwO+wHUXhrgyZ39rYB+0MJVt3UzIFNyJfyj48XrlyMvPaR
+   kt/bmTrKB+YaH3i12mMIFmX4ci3RoIprgyMHDQWXMqRJe3yzfBpe4WSlX
+   EBtQtyV+r3k/km+6PA67sGrd0+6yN4/6I3abq9se+EqUR6dol7xooMqpY
+   7cLkPMYaN7sVi1S0NElxgSj3XIHWhHeCdSYWwkmT3FdI5zNZS+LITcJl0
+   SVZVCPgwZdwjSVE+X58/QLbUlI35tkgXDoJGPdEnXWnKttQWQrPPGJuSg
+   fyYKGulc+Q0dQMhZQb6+KHhgOdIp7UgnrlLqgwtVdSH1gFR52FRWDFQ33
+   A==;
+X-CSE-ConnectionGUID: r/saEoFRTM2KThJpCfuRjg==
+X-CSE-MsgGUID: QLgXi2npTkeSC5se6kOPzA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50599067"
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="50599067"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 16:11:25 -0800
+X-CSE-ConnectionGUID: lg14CeiTR5mbT6H6E2foDw==
+X-CSE-MsgGUID: gM0nUw4kQRicjsbZVAvJ1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,278,1732608000"; 
+   d="scan'208";a="112625183"
+Received: from agladkov-desk.ger.corp.intel.com (HELO [10.125.108.65]) ([10.125.108.65])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 16:11:24 -0800
+Message-ID: <dc7bc625-0a14-4d25-9211-2e0639f02566@intel.com>
+Date: Tue, 11 Feb 2025 17:11:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211192444.2292833-14-terry.bowman@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 12/17] cxl/pci: Add error handler for CXL PCIe Port RAS
+ errors
+To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
+ ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
+References: <20250211192444.2292833-1-terry.bowman@amd.com>
+ <20250211192444.2292833-13-terry.bowman@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250211192444.2292833-13-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 11, 2025 at 01:24:40PM -0600, Terry Bowman wrote:
-> The CXL drivers use kernel trace functions for logging Endpoint and
-> Restricted CXL host (RCH) Downstream Port RAS errors. Similar functionality
-> is required for CXL Root Ports, CXL Downstream Switch Ports, and CXL
-> Upstream Switch Ports.
+
+
+On 2/11/25 12:24 PM, Terry Bowman wrote:
+> Introduce correctable and uncorrectable (UCE) CXL PCIe Port Protocol Error
+> handlers.
 > 
-> Introduce trace logging functions for both RAS correctable and
-> uncorrectable errors specific to CXL PCIe Ports. Additionally, update
-> the CXL Port Protocol Error handlers to invoke these new trace functions.
+> The handlers will be called with a 'struct pci_dev' parameter
+> indicating the CXL Port device requiring handling. The CXL PCIe Port
+> device's underlying 'struct device' will match the port device in the
+> CXL topology.
 > 
-> Examples of the output from these changes is below.
+> Use the PCIe Port's device object to find the matching CXL Upstream Switch
+> Port, CXL Downstream Switch Port, or CXL Root Port in the CXL topology. The
+> matching CXL Port device should contain a cached reference to the RAS
+> register block. The cached RAS block will be used in handling the error.
 > 
-> Correctable error:
-> cxl_port_aer_correctable_error: device=port1 parent=root0 status='Received Error From Physical Layer'
+> Invoke the existing __cxl_handle_ras() or __cxl_handle_cor_ras() using
+> a reference to the RAS registers as a parameter. These functions will use
+> the RAS register reference to indicate an error and clear the device's RAS
+> status.
 > 
-> Uncorrectable error:
-> cxl_port_aer_uncorrectable_error: device=port1 parent=root0 status: 'Memory Byte Enable Parity Error' first_error: 'Memory Byte Enable Parity Erro'
+> Update __cxl_handle_ras() to return PCI_ERS_RESULT_PANIC in the case
+> an error is present in the RAS status. Otherwise, return
+> PCI_ERS_RESULT_NONE.
+
+Maybe a comment on why the change?
+
 > 
 > Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Alejandro Lucero <alucerop@amd.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  drivers/cxl/core/pci.c | 81 +++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 77 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index af809e7cbe3b..3f13d9dfb610 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -699,7 +699,7 @@ static void header_log_copy(void __iomem *ras_base, u32 *log)
+>   * Log the state of the RAS status registers and prepare them to log the
+>   * next error status. Return 1 if reset needed.
+>   */
+> -static bool __cxl_handle_ras(struct device *dev, void __iomem *ras_base)
+> +static pci_ers_result_t __cxl_handle_ras(struct device *dev, void __iomem *ras_base)
+>  {
+>  	u32 hl[CXL_HEADERLOG_SIZE_U32];
+>  	void __iomem *addr;
+> @@ -708,13 +708,13 @@ static bool __cxl_handle_ras(struct device *dev, void __iomem *ras_base)
+>  
+>  	if (!ras_base) {
+>  		dev_warn_once(dev, "CXL RAS register block is not mapped");
+> -		return false;
+> +		return PCI_ERS_RESULT_NONE;
+>  	}
+>  
+>  	addr = ras_base + CXL_RAS_UNCORRECTABLE_STATUS_OFFSET;
+>  	status = readl(addr);
+>  	if (!(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK))
+> -		return false;
+> +		return PCI_ERS_RESULT_NONE;
+>  
+>  	/* If multiple errors, log header points to first error from ctrl reg */
+>  	if (hweight32(status) > 1) {
+> @@ -733,7 +733,7 @@ static bool __cxl_handle_ras(struct device *dev, void __iomem *ras_base)
+>  
+>  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
+>  
+> -	return true;
+> +	return PCI_ERS_RESULT_PANIC;
+>  }
+>  
+>  static bool cxl_handle_endpoint_ras(struct cxl_dev_state *cxlds)
+> @@ -782,6 +782,79 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
+>  	writel(aer_cmd, aer_base + PCI_ERR_ROOT_COMMAND);
+>  }
+>  
+> +static int match_uport(struct device *dev, const void *data)
+> +{
+> +	const struct device *uport_dev = data;
+> +	struct cxl_port *port;
+> +
+> +	if (!is_cxl_port(dev))
+> +		return 0;
+> +
+> +	port = to_cxl_port(dev);
+> +
+> +	return port->uport_dev == uport_dev;
+> +}
+> +
+> +static void __iomem *cxl_pci_port_ras(struct pci_dev *pdev, struct device **dev)
+> +{
+> +	void __iomem *ras_base;
+> +
+> +	if (!pdev || !*dev) {
+> +		pr_err("Failed, parameter is NULL");
+> +		return NULL;
+> +	}
+> +
+> +	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
+> +	    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM)) {
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
+Can probably just do a switch block here for the type?
+
+> +		struct cxl_port *port __free(put_cxl_port);
+> +		struct cxl_dport *dport = NULL;
+> +
+> +		port = find_cxl_port(&pdev->dev, &dport);
+
+Just declare port inline:
+
+struct cxl_port *port __free(put_cxl_port) =
+		find_cxl_port(&pdev->dev, &dport);
+
+> +		if (!port) {
+> +			pci_err(pdev, "Failed to find root/dport in CXL topology\n");
+> +			return NULL;
+> +		}
+> +
+> +		ras_base = dport ? dport->regs.ras : NULL;
+> +		*dev = &port->dev;
+> +	} else if (pci_pcie_type(pdev) == PCI_EXP_TYPE_UPSTREAM) {
+> +		struct device *port_dev __free(put_device);
+
+same comment here as above
+
+DJ
+
+> +		struct cxl_port *port;
+> +
+> +		port_dev = bus_find_device(&cxl_bus_type, NULL, &pdev->dev,
+> +					   match_uport);
+> +		if (!port_dev || !is_cxl_port(port_dev)) {
+> +			pci_err(pdev, "Failed to find uport in CXL topology\n");
+> +			return NULL;
+> +		}
+> +
+> +		port = to_cxl_port(port_dev);
+> +		ras_base = port ? port->uport_regs.ras : NULL;
+> +		*dev = port_dev;
+> +	} else {
+> +		pci_err(pdev, "Unsupported device type\n");
+> +		ras_base = NULL;
+> +	}
+> +
+> +	return ras_base;
+> +}
+> +
+> +static void cxl_port_cor_error_detected(struct pci_dev *pdev)
+> +{
+> +	struct device *dev;
+> +	void __iomem *ras_base = cxl_pci_port_ras(pdev, &dev);
+> +
+> +	__cxl_handle_cor_ras(dev, ras_base);
+> +}
+> +
+> +static pci_ers_result_t cxl_port_error_detected(struct pci_dev *pdev)
+> +{
+> +	struct device *dev;
+> +	void __iomem *ras_base = cxl_pci_port_ras(pdev, &dev);
+> +
+> +	return __cxl_handle_ras(dev, ras_base);
+> +}
+> +
+>  void cxl_uport_init_ras_reporting(struct cxl_port *port)
+>  {
+>  
+
 
