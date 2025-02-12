@@ -1,222 +1,114 @@
-Return-Path: <linux-kernel+bounces-510485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8EEA31DB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:06:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E020DA31DC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 06:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14D7B7A34E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:05:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85CCD3A5054
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 05:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A51486353;
-	Wed, 12 Feb 2025 05:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7480C1E7C0E;
+	Wed, 12 Feb 2025 05:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sdore.me header.i=@sdore.me header.b="bvkhKi2I"
-Received: from sdore.me (unknown [95.165.1.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pn5tCHJr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D862BD10
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 05:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.165.1.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5972D600;
+	Wed, 12 Feb 2025 05:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739336758; cv=none; b=sqpOpWwaUiVWyNVQMLj7fOIKng+6bRO1HZke3V6LsQSkHJrIKKs1/J5AM5HX3OkF6gCr+fRxOvp3dTr0MWaRiuVjjygxSGKNcoj3J5KSnMeqlOTUJitEbQDsktkRHD+8OLwSCRSc7XDkn0Nf/wD/tvCMD2bk+NwcQMh0QnZ9/YU=
+	t=1739336978; cv=none; b=X0uT45wjZiNAG8n+GFv2Elq3Q7Ct7s/IomQ1NEuxEe1YfG9+Np0Gs1liGp9fuoqbyWmmWSOfAGawSFAjHtIWbBSMXQCqJUn9NXgVWmIEYUIjp8m89MfR9DT4y/AbdDTFIAUlEF7wh1yydISFRaaoSEptKMA6hWgJdOW/AZdjL+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739336758; c=relaxed/simple;
-	bh=jBow0XBFS4NkVA2SAiZo353ClhCTYHuSKNX+QguRRms=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=Lt6uRQT1jDydTRbfetINI9BiEUFWlMWmcBRRMPwDgZH9Wt8/W+5ByAnf3o4cbK2comEKl9UuTegz5pZD6o0ubS8lAetlXOsIzeZObzQULVdqJsFHkzikdygdFWOunEoSQWG+xHnBixYIoX5V5k6VByag6Il0Zu9iB9WdRInu7s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdore.me; spf=pass smtp.mailfrom=sdore.me; dkim=pass (1024-bit key) header.d=sdore.me header.i=@sdore.me header.b=bvkhKi2I; arc=none smtp.client-ip=95.165.1.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdore.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sdore.me
-Received: from [192.168.1.2] (beast.lan [192.168.1.2])
-	by sdore.me (Postfix) with ESMTPSA id 80C11EE79A0C6;
-	Wed, 12 Feb 2025 08:05:54 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sdore.me; s=SERV;
-	t=1739336754; bh=jBow0XBFS4NkVA2SAiZo353ClhCTYHuSKNX+QguRRms=;
-	h=Subject:From:Reply-To:To:Cc:Date;
-	b=bvkhKi2IDfgS1+SaLEqoNVl59MlZOPT/q5z0Kj0o9cVMWKkKIXwSUMOrGBkYJ3eEr
-	 /iQc0SfkeUrPvJZdtTPhP/yTMClS6yaK/Gqzkj+WMP045CYYMTbGVSL6LMU9rvdqkK
-	 v69X6HM3CwOVyy9W3gSAPiu1XMQJcoCa6A+IP4tw=
-Message-ID: <7cab8349bc8bb6fa08d2a7127a724efea155f154.camel@sdore.me>
-Subject: [PATCH v2] drm/edid: Implement DisplayID Type IX & X timing blocks
- parsing
-From: Egor Vorontsov <sdoregor@sdore.me>
-Reply-To: sdoregor@sdore.me
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Jani Nikula
- <jani.nikula@linux.intel.com>, Egor Vorontsov <sdoregor@sdore.me>
-Date: Wed, 12 Feb 2025 08:05:54 +0300
-Autocrypt: addr=sdoregor@sdore.me; prefer-encrypt=mutual;
- keydata=mQINBGDSFnMBEADfvtLiuRL6CHdMzETKrux7sNHWG+eJ2+pgRZ3Nc9pH/YWqjoed8OpFx
- OLeUxr9YSQ3uMD//JEe3+Sgte29Z3PAAHVkCwKBIucCnhHpXbcQZgC9xYMCd6GWR5+DpXN9szOIyb
- kvnEtuqTddz6Q7fYsaFDs0pH3jUUWmSAyCn2JCIRfT22XgO44B/yoqnM3JXHAayeHbEAQOzMe81q3
- deauI9W7SC9ScRT6VkgLuc+SxqH99el/OkiKTe/QpO6I6cVS8leesqnOGffkRPos/o2eRonqgDu0e
- Mw4YTu0x5iNr8Lbr4TefU2W1l6M3MNwOsLmI+58+3fK1vh0QqZ70NC4eyD9UEXk3mJyV7epfNU6fY
- 0mFJbAhGV1TXomcy2MlOD1rDixw85zdK5uUwp0tfEkpxqKtihJmrTdApOTTVed303CLzgDsMokTIe
- aUOPqVZoWFDkvOzq6IppBkApJHBf1lcLlgwEn3cLQlGpYRSSi5NY3+UYtcOEZLDbF3TO6ncY8W2h3
- yQH/sAcSllfKKvkhdqEz4/Mha3GbZQXWgjrLy9BcISsQFj+DBN54I6a6kLm2n5wXH99sOp7s3jMeN
- zSU6PtuxZq4Gkt2K5JGT8yrIdfJfOH7yRUVm+8JqKNKqd6oczlDKV+lzRk9M/kjb8VQivaNSNwTo9
- 3NxEuft0+tZgwARAQABtCJFZ29yIFZvcm9udHNvdiA8c2RvcmVnb3JAc2RvcmUubWU+iQJOBBMBCA
- A4FiEEXlTCjXwaPBiJP3U33a9iH2xv60MFAmDSFnMCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4A
- ACgkQ3a9iH2xv60OquRAAgbgenXi+Ud0tYoAz6giuFKYqzuEYuoSVkjxYvZq90ODrzbu7EdvMVuKA
- qNqYjs3VRBPBMHXhJKEftKbX4bZwCoC2o2wB5oV5O13jVN083r49FTLCxmOoufCkaqscBBxi/X2T6
- +i0n5Nqx5NLBL0kE4NMTk1jxEEyuEjv7bBMs196G/d3EpNJT3YGkLXBUibpaSaVjE6zBr3UygieLD
- 2QXNkRJubx2d0FoD8TezSt5hsHWg9FOElsW6ZImRI+5q+ptL39K3cpjxHMKyhmo7xypD5XNWdmsmV
- 1+STnK7R+id18xs7JUDxHBtG7Z/3K6txgF5CPbPvtaEi9fB3K/uS03BnIzsY2/cY3r9UHHrHa/sP6
- DhDwj9dr2xIFG5w6ZNh4mUTHEJoWKEEsYKwXy2eJCB3XvP7GURAm8fXdIapONbHDYj7XX49Mj+LBr
- s4PNBuKaZTFgGQ6RSc7LpAR56xaEDR93m7zNy84mQtpab/owaox1A+BEujzKK/vEDvj9f8EWlWZRa
- DH2auNNAxdr2ACR8RzkojcFDCErAgc5sFQrgVUlvNmMdn3VL0CWmndzEQxsOdgVk9SwoHHYpHf4Cg
- gtchq3pTQ5XSRaP/wxOtQpzqJWq5uFERBTLU8WRXYv3mM3KMdvtTJadF8+P+KSSnn+/yHahR0HKVx
- PtHSH7Px/vI=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1739336978; c=relaxed/simple;
+	bh=rTwWzK2R5eDHPwNZlzEPgv/sFPzyIQ5iAEXmdHJPvLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpDVndHBDmiIcUqEvZZHe1Ct/cNLheXsnZDq/GDnFzih8weMpal/pqRDc1fP1ys5KxKjY5jucDXFL54BX4iOvHbbzbzwEdr8qosU03/b2xplsByj7MpubHHB0hMDhMxGwQmggFLvssdPj9+5C0nmfWHM3cmysjqfzz2YLbcWvb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pn5tCHJr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF04C4CEDF;
+	Wed, 12 Feb 2025 05:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739336978;
+	bh=rTwWzK2R5eDHPwNZlzEPgv/sFPzyIQ5iAEXmdHJPvLU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pn5tCHJrzTM3ToHa89t1YtbsX3sakR38xaIZQmVhye3ZeCDtfB/OM2NIPy+p6YsvX
+	 w27WDsufZQbzUwe08sthFVmMjPZjbtAecz45Tw4IG1nV38qsQqRCmpggxsZEaOZUmv
+	 tyO+CFqxNtohfD7gd3hMovkjbsyNZj9/xjMdmEjsHHiIbbOBcoAw/gndw6rJL/l1YE
+	 xHuYGY5CRpPiNmT5D514pwHCNHhlko4NnIdxmYrtww9jaP090NRZBXOt2AlcQ93UCy
+	 gxBQO6UdJP86APaf8wU748uYhGO5rPFHGraLkckcl6wbxHPp7qx8S+2gv6JZ6/ap6m
+	 gySGaiE04PWXg==
+Date: Wed, 12 Feb 2025 05:09:36 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kernel test robot <lkp@intel.com>, Danny Tsen <dtsen@linux.ibm.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH] crypto: lib/Kconfig - Fix lib built-in failure when arch
+ is modular
+Message-ID: <20250212050936.GB2010357@google.com>
+References: <202501230223.ikroNDr1-lkp@intel.com>
+ <Z6woN4vgdaywOZxm@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6woN4vgdaywOZxm@gondor.apana.org.au>
 
-Some newer high refresh rate consumer monitors (including those by Samsung)
-make use of DisplayID 2.1 timing blocks in their EDID data, notably for
-their highest refresh rate modes. Such modes won't be available as of now.
+On Wed, Feb 12, 2025 at 12:48:55PM +0800, Herbert Xu wrote:
+> On Thu, Jan 23, 2025 at 02:18:27AM +0800, kernel test robot wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > head:   c4b9570cfb63501638db720f3bee9f6dfd044b82
+> > commit: b42519dbba838c928e82b55f32712fbe3eed2c45 crypto: ppc/curve25519 - Update Kconfig and Makefile for ppc64le
+> > date:   8 months ago
+> > config: powerpc64-randconfig-r111-20250122 (https://download.01.org/0day-ci/archive/20250123/202501230223.ikroNDr1-lkp@intel.com/config)
+> > compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+> > reproduce: (https://download.01.org/0day-ci/archive/20250123/202501230223.ikroNDr1-lkp@intel.com/reproduce)
+> 
+> Thanks for the report.  This is the old built-in vs. modular Kconfig
+> problem.  This patch should fix it:
+> 
+> ---8<---
+> The HAVE_ARCH Kconfig options in lib/crypto try to solve the
+> modular versus built-in problem, but it still fails when the
+> the LIB option (e.g., CRYPTO_LIB_CURVE25519) is selected externally.
+> 
+> Fix this by introducing a level of indirection with ARCH_MAY_HAVE
+> Kconfig options, these then go on to select the ARCH_HAVE options
+> if the ARCH Kconfig options matches that of the LIB option.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202501230223.ikroNDr1-lkp@intel.com/
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> 
+> diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
+> index 32650c8431d9..47d9cc59f254 100644
+> --- a/arch/arm/crypto/Kconfig
+> +++ b/arch/arm/crypto/Kconfig
+> @@ -6,7 +6,7 @@ config CRYPTO_CURVE25519_NEON
+>  	tristate "Public key crypto: Curve25519 (NEON)"
+>  	depends on KERNEL_MODE_NEON
+>  	select CRYPTO_LIB_CURVE25519_GENERIC
+> -	select CRYPTO_ARCH_HAVE_LIB_CURVE25519
+> +	select CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519
+>  	help
+>  	  Curve25519 algorithm
 
-Implement partial support for such blocks in order to enable native
-support of HRR modes of most such monitors for users without having to rely
-on EDID patching/override (or need thereof).
+Please name these like ARCH_HAS_CURVE25519 and CRYPTO_LIB_CURVE25519_ARCH to be
+consistent with the CRC library, the many other ARCH_HAS_* options, and
+CRYPTO_LIB_CURVE25519_GENERIC.  Nothing uses names that contain "MAY_HAVE",
+which is ambiguous.
 
-Closes: https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/55
-Suggested-by: Maximilian Bo=C3=9Fe <max@bosse.io>
-Signed-off-by: Egor Vorontsov <sdoregor@sdore.me>
----
- drivers/gpu/drm/drm_displayid_internal.h | 13 +++++
- drivers/gpu/drm/drm_edid.c               | 63 ++++++++++++++++++++++++
- 2 files changed, 76 insertions(+)
+FWIW, at some point the arch optimized crypto algorithms also need to just be
+enabled by default.  The fact that they're not is a longstanding bug that is
+really harmful to users and needs to be fixed.
 
-diff --git a/drivers/gpu/drm/drm_displayid_internal.h b/drivers/gpu/drm/drm=
-_displayid_internal.h
-index aee1b86a73c1..88220c107822 100644
---- a/drivers/gpu/drm/drm_displayid_internal.h
-+++ b/drivers/gpu/drm/drm_displayid_internal.h
-@@ -66,6 +66,7 @@ struct drm_edid;
- #define DATA_BLOCK_2_STEREO_DISPLAY_INTERFACE	0x27
- #define DATA_BLOCK_2_TILED_DISPLAY_TOPOLOGY	0x28
- #define DATA_BLOCK_2_CONTAINER_ID		0x29
-+#define DATA_BLOCK_2_TYPE_10_FORMULA_TIMING	0x2a
- #define DATA_BLOCK_2_VENDOR_SPECIFIC		0x7e
- #define DATA_BLOCK_2_CTA_DISPLAY_ID		0x81
-=20
-@@ -129,6 +130,18 @@ struct displayid_detailed_timing_block {
- 	struct displayid_detailed_timings_1 timings[];
- };
-=20
-+struct displayid_formula_timings_9 {
-+	u8 flags;
-+	__be16 hactive;
-+	__be16 vactive;
-+	u8 vrefresh;
-+} __packed;
-+
-+struct displayid_formula_timing_block {
-+	struct displayid_block base;
-+	struct displayid_formula_timings_9 timings[];
-+} __packed;
-+
- #define DISPLAYID_VESA_MSO_OVERLAP	GENMASK(3, 0)
- #define DISPLAYID_VESA_MSO_MODE		GENMASK(6, 5)
-=20
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 13bc4c290b17..9c363df5af9a 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -6833,6 +6833,66 @@ static int add_displayid_detailed_1_modes(struct drm=
-_connector *connector,
- 	return num_modes;
- }
-=20
-+static struct drm_display_mode *drm_mode_displayid_formula(struct drm_devi=
-ce *dev,
-+							   const struct displayid_formula_timings_9 *timings,
-+							   bool type_10)
-+{
-+	struct drm_display_mode *mode;
-+	u16 hactive =3D be16_to_cpu(timings->hactive) + 1;
-+	u16 vactive =3D be16_to_cpu(timings->vactive) + 1;
-+	u8 timing_formula =3D timings->flags & 0x7;
-+
-+	/* TODO: support RB-v2 & RB-v3 */
-+	if (timing_formula > 1)
-+		return NULL;
-+
-+	/* TODO: support video-optimized refresh rate */
-+	if (timings->flags & (1 << 4))
-+		return NULL;
-+
-+	mode =3D drm_cvt_mode(dev, hactive, vactive, timings->vrefresh + 1, timin=
-g_formula =3D=3D 1, false, false);
-+	if (!mode)
-+		return NULL;
-+
-+	/* TODO: interpret S3D flags */
-+
-+	mode->type =3D DRM_MODE_TYPE_DRIVER;
-+	drm_mode_set_name(mode);
-+
-+	return mode;
-+}
-+
-+static int add_displayid_formula_modes(struct drm_connector *connector,
-+				       const struct displayid_block *block)
-+{
-+	const struct displayid_formula_timing_block *formula_block =3D (struct di=
-splayid_formula_timing_block *)block;
-+	int num_timings;
-+	struct drm_display_mode *newmode;
-+	int num_modes =3D 0;
-+	bool type_10 =3D block->tag =3D=3D DATA_BLOCK_2_TYPE_10_FORMULA_TIMING;
-+	int timing_size =3D 6 + ((formula_block->base.rev & 0x70) >> 4);
-+
-+	/* extended blocks are not supported yet */
-+	if (timing_size !=3D 6)
-+		return 0;
-+
-+	if (block->num_bytes % timing_size)
-+		return 0;
-+
-+	num_timings =3D block->num_bytes / timing_size;
-+	for (int i =3D 0; i < num_timings; i++) {
-+		const struct displayid_formula_timings_9 *timings =3D &formula_block->ti=
-mings[i];
-+
-+		newmode =3D drm_mode_displayid_formula(connector->dev, timings, type_10)=
-;
-+		if (!newmode)
-+			continue;
-+
-+		drm_mode_probed_add(connector, newmode);
-+		num_modes++;
-+	}
-+	return num_modes;
-+}
-+
- static int add_displayid_detailed_modes(struct drm_connector *connector,
- 					const struct drm_edid *drm_edid)
- {
-@@ -6845,6 +6905,9 @@ static int add_displayid_detailed_modes(struct drm_co=
-nnector *connector,
- 		if (block->tag =3D=3D DATA_BLOCK_TYPE_1_DETAILED_TIMING ||
- 		    block->tag =3D=3D DATA_BLOCK_2_TYPE_7_DETAILED_TIMING)
- 			num_modes +=3D add_displayid_detailed_1_modes(connector, block);
-+		else if (block->tag =3D=3D DATA_BLOCK_2_TYPE_9_FORMULA_TIMING ||
-+			 block->tag =3D=3D DATA_BLOCK_2_TYPE_10_FORMULA_TIMING)
-+			num_modes +=3D add_displayid_formula_modes(connector, block);
- 	}
- 	displayid_iter_end(&iter);
-=20
---=20
-2.48.0
+- Eric
 
