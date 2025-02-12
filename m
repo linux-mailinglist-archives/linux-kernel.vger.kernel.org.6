@@ -1,149 +1,113 @@
-Return-Path: <linux-kernel+bounces-511133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A30A32660
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:57:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CADEA32668
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 13:58:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542A11888F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14B9916156B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 12:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0967220DD7F;
-	Wed, 12 Feb 2025 12:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F26E20E009;
+	Wed, 12 Feb 2025 12:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B98dfFuc"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aYoHh9I8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB19271824;
-	Wed, 12 Feb 2025 12:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C3120CCF5;
+	Wed, 12 Feb 2025 12:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739365066; cv=none; b=MRH4x/5gJjNxSXVHRm4TTsuTZpUaKCRjsTAH66uk+zvFrjeLbtupmYEsFdCGJacld/CTwG6BsNKtR5lttMSJv/uFxjhq51yTRw15WYOvj+jrdjsHWAORSqhXKW9I0FE41ti8U+n1qOzRIUhVHIQJJnDs5oYFbTyAVCRqWX9YxyA=
+	t=1739365100; cv=none; b=At1IHgq7R16M8Jm4y7dHwYS6ZWxWRc3My/jtmhG5N8kDlTmrPR4GQ+n6QkTOnWjat3NtP/6W6WkzVeI8VxtWpIYI5eydGpp1yqnRZhWniBW4IMk1J1Kq/HwJqsbTMsYLX6vULPP0g2pqZpS1Wymgr+rf3AFwTmJL/nSPUU0Mokk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739365066; c=relaxed/simple;
-	bh=OPanrCfS1lvnoz7OwCheozB8dxHqLkWEb7Fz9X5l1dg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:Cc:
-	 References:In-Reply-To; b=aaLyzrRBq6JJxWrvkljjezaJJFueHmUns7cRWZ/CiPeLzZknJSBYoWXn04LkFO+Uzr1yPoS2f9n3mQyqdQ1EA50w/S3J+iW8+LTclehzqNKK9t50oQNuPQuaqBsmaS0avs7VdRJ9RcXyUjfK5o7jSwCzYHksvzRgH2TaU7YaX5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B98dfFuc; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 68FA242CCD;
-	Wed, 12 Feb 2025 12:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739365056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UQlDvmMNjG6HkmTEiN6yuUtQAxZ2XiJJ4GjbKF++9lE=;
-	b=B98dfFucobdoepjJa/+I5uJim69YPNxpmIzqWZbtDGtT74sp09+RvN0m8WCOUlplsmj11t
-	C+7hseTbDtcH3dNXP4f+LEAw8LQmksx2rM8BybUWtv9Ml4bJSurqALhWf8UdzL4K4jLlKU
-	JKIIFhLzDosYGbhYwG57aIt99iv8fOhSbw+wdfwpAxmANXeZJYJhGmMsaKir6yzRVKbE1+
-	csNMWKcihRpXeg44ZifqI1T7O8BKb2c0KUPy0yIUrSo5DAm9jkiWYwiOE/yXMSseIPGQ9k
-	oajfa4yP0TsfYqAxEDULdtEDCH+tqaAw7T9oaaiXlyFZaWJftnFCrwTEsdKfxQ==
+	s=arc-20240116; t=1739365100; c=relaxed/simple;
+	bh=+rUyy8CCsAX49LoyMo4QlyZTIfngKhPrGjoTwwC4T/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IwiesL5Qg9yxLF/KybMQcb7AMBL76/rOW+jnC2+dwYMrLrSw55v189nkfspgUZYA5JLxc2g19y0b9VihFE/05/75r8H5wJI1o/XHeXMxkZjSr2jm5I5UyikYKxQMDBgzajQGj5R9XUHLHDTtSHksGgM+WWpQtGI8qXMALLi10xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aYoHh9I8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC30EC4CEDF;
+	Wed, 12 Feb 2025 12:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739365099;
+	bh=+rUyy8CCsAX49LoyMo4QlyZTIfngKhPrGjoTwwC4T/4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aYoHh9I8hOFC/rd6q6DuWBa0ELk6Z7OMZH+d1Po86Hca4RmKPfp6Iy748FXUdyIlI
+	 tgH/3yl0mOAPAoIko670EqeX9y9i+3JZ/uI7ZsPHzcVNNFWCQ27UkVj53+bdt/O6h1
+	 tp2zNyvG6uiP3W6uc1ax8M6WidyQaPTSueZo4zk6WWNhXIYT0nyl+heT4KgnulLxOT
+	 VgWKUUVaGzBd9JgaNBnvjddPhhnrvtOVueKPNh9Ht9jYirxxZuEV9VqTmcHVbKcyW5
+	 ewHSt4dDIHHeiLGHQBiKMVEehzQ+s32Auf+U/HtB+/DzK1kpDbUrePlehroB/oTObM
+	 X96pQV4d2Rp4A==
+Date: Wed, 12 Feb 2025 13:58:08 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, linux-kernel@vger.kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Andreas Noever <andreas.noever@gmail.com>, Avadhut
+ Naik <avadhut.naik@amd.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Eric Dumazet <edumazet@google.com>, Hu Haowen
+ <2023002089@link.tyut.edu.cn>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Jamet <michael.jamet@intel.com>, Mika Westerberg
+ <mika.westerberg@linux.intel.com>, Paolo Abeni <pabeni@redhat.com>, Sean
+ Young <sean@mess.org>, Yanteng Si <si.yanteng@linux.dev>, Yehezkel Bernat
+ <YehezkelShB@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Michael
+ Ellerman <mpe@ellerman.id.au>, Shrikanth Hegde <sshegde@linux.ibm.com>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Pawan Gupta
+ <pawan.kumar.gupta@linux.intel.com>, James Morse <james.morse@arm.com>,
+ "Nysal Jan K.A" <nysal@linux.ibm.com>, Tom Lendacky
+ <thomas.lendacky@amd.com>, Sourabh Jain <sourabhjain@linux.ibm.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, Frederic Barrat
+ <fbarrat@linux.ibm.com>, Andrew Donnellan <ajd@linux.ibm.com>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao
+ <naveen@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+ workflows@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 0/9] Extend automarkup support for ABI symbols
+Message-ID: <20250212135808.58d2f032@foz.lan>
+In-Reply-To: <Z6yFG_NntQfkwYli@archie.me>
+References: <cover.1739254867.git.mchehab+huawei@kernel.org>
+	<Z6yFG_NntQfkwYli@archie.me>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 12 Feb 2025 13:57:34 +0100
-Message-Id: <D7QHGB7D0VSG.X255SDU7DFOF@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH v3 4/7] gpio: max7360: Add MAX7360 gpio support
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20250113-mdb-max7360-support-v3-0-9519b4acb0b1@bootlin.com>
- <20250113-mdb-max7360-support-v3-4-9519b4acb0b1@bootlin.com>
- <Z5eFGJspoGOINcG6@smile.fi.intel.com>
-In-Reply-To: <Z5eFGJspoGOINcG6@smile.fi.intel.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegfeelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffhvffuvefofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheevtdekffeuleehkedtvdejhfeihfegtdduveeghedvveelgfevteekveelleetnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkohesihhnthgvlhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdro
- hhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Andy,
+Em Wed, 12 Feb 2025 18:25:15 +0700
+Bagas Sanjaya <bagasdotme@gmail.com> escreveu:
 
-Thanks for your review. I've been addressing most of your comments in
-this mail and the ones related to regmap-irq. I should be able to send a
-new version in a few days.
+> On Tue, Feb 11, 2025 at 07:22:54AM +0100, Mauro Carvalho Chehab wrote:
+> > Now that ABI creates a python dictionary, use automarkup to create cross
+> > references for ABI symbols as well.   
+> 
+> I get three new warnings:
+> 
+> WARNING: /sys/devices/system/cpu/cpuX/topology/physical_package_id is defined 2 times: /home/bagas/repo/linux-kernel/Documentation/ABI/stable/sysfs-devices-system-cpu:27; /home/bagas/repo/linux-kernel/Documentation/ABI/testing/sysfs-devices-system-cpu:70
+> WARNING: /sys/devices/system/cpu/cpuX/topology/ppin is defined 2 times: /home/bagas/repo/linux-kernel/Documentation/ABI/stable/sysfs-devices-system-cpu:89; /home/bagas/repo/linux-kernel/Documentation/ABI/testing/sysfs-devices-system-cpu:70
 
-However I have a few questions regarding some of the points.
+Those two are new reports that get_abi.py detects after the recent changes.
+In the past, symbol duplication were detected only within the same group
+(testing, stable, ...). The new version can detect symbols that are
+duplicated on different parts of the ABI. In this specific case, the same
+symbols exist on both stable and testing.
 
-On Mon Jan 27, 2025 at 2:07 PM CET, Andy Shevchenko wrote:
-> On Mon, Jan 13, 2025 at 01:42:28PM +0100, Mathieu Dubois-Briand wrote:
-> > +	parent =3D to_platform_device(pdev->dev.parent);
->
-> Why do you need this? Can't the fwnode be propagated to the children and =
-then
-> the respective APIs to be used?
->
+There is a fix for them already at:
 
-I'm not sure to understand this correctly, what do you mean by
-propagating the fwnode to the children?
+https://lore.kernel.org/linux-doc/673e9543783349b0fcf625018e38e4e93fe98f52.1738020236.git.mchehab+huawei@kernel.org/
 
-Just a quick summary of the situation and what I try to do. The device
-tree looks like this, only keeping the interesting properties:
+> WARNING: Documentation/ABI/testing/sysfs-class-cxl not found
 
-io-expander@38 {
-  ...
-  interrupts =3D <23 IRQ_TYPE_LEVEL_LOW>,
-               <24 IRQ_TYPE_LEVEL_LOW>;
-  interrupt-names =3D "inti", "intk";
+I need to double-check verify this one, as it didn't appear on
+my tests. Are you getting it against docs-next or linux-next?
 
-  max7360_gpio: gpio {
-    ...
-  };
-
-  max7360_gpo: gpo {
-    ...
-  };
-};
-
-Our pdev fwnode points either to the "gpio" or "gpo" nodes, the one from
-our parent device points to "io-expander@38". Here we need to get the
-"inti" interrupt from the parent node. What would be the correct way to
-do it?
-
-> > +	if (!max7360_gpio)
-> > +		return -ENOMEM;
->
-> > +	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios)) {
-> > +		dev_err(&pdev->dev, "Missing ngpios OF property\n");
-> > +		return -ENODEV;
-> > +	}
->
-> This is not needed, it is already done in GPIOLIB core.
->
-
-I believe this is still needed:
-- For gpos, we need the gpio count to correctly set the partition
-  between gpo and keypad columns in max7360_set_gpos_count().
-- For gpios, we need the gpio count to setup the IRQs.
-
-Best regards,
-Mathieu
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Thanks,
+Mauro
 
