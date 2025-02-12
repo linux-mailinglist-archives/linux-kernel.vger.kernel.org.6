@@ -1,60 +1,83 @@
-Return-Path: <linux-kernel+bounces-510911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBF1A32386
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:33:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40748A3238B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 11:36:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9E7163020
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5ED43A34A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 10:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629032080EB;
-	Wed, 12 Feb 2025 10:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08615208965;
+	Wed, 12 Feb 2025 10:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apDjr8av"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WhrjfjhQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3791F9A83;
-	Wed, 12 Feb 2025 10:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF761F9A83;
+	Wed, 12 Feb 2025 10:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739356413; cv=none; b=ABTvYvJVIykOsUvigokedw/FM4PHHW6zK3IEBNfjWD1qKsur9vnt9rR9tkEqiKXfJJqA79zXGer+ga491KaqSnoIgPhhUnS4IOFH6F879NHzkAz2MnxxJiGq5w7YGWjfCGj8sV96TfSrGlW7dk7a/b383+AO3ydzqUUP+yhX3n0=
+	t=1739356572; cv=none; b=EOcGjwmhCxMNSal61Ze8hUe9nqXiMjQ9GIe9C1aZNbe7Y1BPAtfLX2waTgokPy1oKJPdhAiOQTrl4fKv4tdm2DlyHOJRzIAr7Htf38bmbJsjZAnp4mfL/Ds3C02AjwriFCB0YrOtEjCYTt2GZYWdN/tWxIXGBKWXH87aqg83DDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739356413; c=relaxed/simple;
-	bh=JjXhB+/E2GYRT9cPPM8Yrb46y4WEBtQtoQZkMTTIIsU=;
+	s=arc-20240116; t=1739356572; c=relaxed/simple;
+	bh=U+c+IUesQkxYjvnR8zFinWB/EQGDYXNhX1r/1VZq/90=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqoR3e9bMUA2vpedYLn13MkDciBUiYB1kIprWmTbnRt1QXkSaLYf+JKgYKQfkn7iJ35ldKNOlAup1zzJoT0Fi4zQT1CPwYZl+cF17y29j1yRFpQtZOAA2YppkSA0LSJmZud5FPaOpmAusJYcDLzr0OKgaCeQkpxsnML/txUPY+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apDjr8av; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D81C4CEDF;
-	Wed, 12 Feb 2025 10:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739356413;
-	bh=JjXhB+/E2GYRT9cPPM8Yrb46y4WEBtQtoQZkMTTIIsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=apDjr8avlkhnXF3iYJxdGj3L2E/iuYjYY0W+1VgglUF2zyfjUBWv/QfwhUWcaktWx
-	 f9zy5MauWALBXh1TzaiMxPgJc5g3WqukiknGRksl/qBTThVZopPV23wgS/UC91rcMT
-	 y/gN3QnR5SLCS9sxxG+8vIxJT9FZ2OwGzBnbTURQT8aczBtFfJYvJ5mkQtfx59UXvn
-	 pHMA1MLQ3ZKAPDKLMreZ7FRFiL+lASvFeKqtNzzTftT6xA9rQ1FD6csCO/Vmj0bBy4
-	 2VrLr0k5JgYH3PusfRJfAiNhPBF5evGq/gRaKsEJqxPnm6BQqdXB3FAbX5H05tKNkA
-	 Mr68rTFdKG2IA==
-Date: Wed, 12 Feb 2025 11:33:27 +0100
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Zheng Zengkai <zhengzengkai@huawei.com>
-Subject: Re: [PATCH] ACPI: GTDT: Relax sanity checking on Platform Timers
- array count
-Message-ID: <Z6x4987CJ0zgmw3s@lpieralisi>
-References: <20250128001749.3132656-1-oliver.upton@linux.dev>
- <Z5i2j9gFB2iyN9g4@lpieralisi>
- <Z5lBMBY7XoFJmpGM@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=thR57lRMNpjknVGTRJGddLaSzWivDLU3t7Ux5TrqQEPLYAxnlvviV+GSYl+VKJzYl0NOcNURL9QTu2bOPAbHmyFaTYJhydXBUs/5WjUZt/2dJKDZ8AK/qNOKCEG2nfhJqW3fBENw1yoaQLTtJoNmoNOEd7vMgcPEwAD7KLz4ofM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WhrjfjhQ; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739356570; x=1770892570;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U+c+IUesQkxYjvnR8zFinWB/EQGDYXNhX1r/1VZq/90=;
+  b=WhrjfjhQWWn2q6/76i5lNqeK9xKOothc5klws1igxbASpgpl+ta0rNRw
+   61uf1K58BFrpgaR/MGG5wwJel9XHXSCbZdQeL01I63ogXHDFgkFJUji/1
+   qtMULAma4H74NWDm5dqsJXxDbQlrbKdvgE2hrklxl6jL+7Pnjvx/TaGFG
+   CehT3Y+RZtZ6Trm//bym9r0IexrZ3VAxJtFmaxFs4VyJYb7MyLzO3AVEN
+   WIOzekmGHdDzMZxSV6Ruu0XIpB8Zesb0/SraigTgN+lVe2riD5wQTd8x0
+   DmoqgqYeX8odE/gJwooDjjmbmJM86BsmDoBnHGx+9b6Ohn2GqDIfk1VnL
+   g==;
+X-CSE-ConnectionGUID: jo3EgtJ9RiKlFsHKbvxvyQ==
+X-CSE-MsgGUID: t91MvRu0RymvMZEb7Ex+KA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50229048"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="50229048"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:36:10 -0800
+X-CSE-ConnectionGUID: b9QEK0mWTSSiC354VRZ84w==
+X-CSE-MsgGUID: yuaYBeT9RWSiK4YYAVlyRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="117799074"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 02:36:07 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tiA68-0000000Anyl-3KQh;
+	Wed, 12 Feb 2025 12:36:04 +0200
+Date: Wed, 12 Feb 2025 12:36:04 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Felipe Balbi <balbi@kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Ferry Toth <fntoth@gmail.com>
+Subject: Re: [PATCH v2 2/3] usb: dwc3: gadget: Add support for
+ snps,reserved-endpoints property
+Message-ID: <Z6x5lB4hGpz-9IzS@smile.fi.intel.com>
+References: <20250203191524.3730346-1-andriy.shevchenko@linux.intel.com>
+ <20250203191524.3730346-3-andriy.shevchenko@linux.intel.com>
+ <20250212011013.xumqgguhluxdslpz@synopsys.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,76 +86,142 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z5lBMBY7XoFJmpGM@linux.dev>
+In-Reply-To: <20250212011013.xumqgguhluxdslpz@synopsys.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Jan 28, 2025 at 12:42:24PM -0800, Oliver Upton wrote:
-> Hi Lorenzo,
-> 
-> On Tue, Jan 28, 2025 at 11:50:55AM +0100, Lorenzo Pieralisi wrote:
-> > > @@ -188,13 +188,17 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
-> > >  		cnt++;
-> > >  
-> > >  	if (cnt != gtdt->platform_timer_count) {
-> > > +		cnt = min(cnt, gtdt->platform_timer_count);
-> > 
-> > Thank you for reporting this.
-> > 
-> > There is something I need to understand.
-> > 
-> > What's wrong cnt (because platform_timer_valid() fails for some
-> > reason on some entries whereas before the commit we
-> > are fixing was applied we *were* parsing those entries) or
-> > gtdt->platform_timer_count ?
-> > 
-> > I *guess* the issue is the following:
-> > 
-> > gtdt->platform_timer_count reports the number of GT blocks in the
-> > GTDT not including Arm generic watchdogs, whereas cnt counts both
-> > structure types (and that's what gtdt->platform_timer_count should
-> > report too if it was correct).
-> 
-> I've seen two different issues so far:
-> 
->  - In one case, the offset of the platform timer array is entirely
->    beyond the GTDT
-> 
->  - In another, the GTDT has a timer array of length 2, but only the
->    first structure falls within the length of the overall GTDT
-> 
-> Since cnt is the result of doing a bounds-checked walk of the platform
-> timer array, both of these issues cause the sanity check to fail.
-> 
-> > >  	if (platform_timer_count)
-> > > -		*platform_timer_count = gtdt->platform_timer_count;
-> > > +		*platform_timer_count = cnt;
-> > 
-> > I think this should be fine as things stand (but see above).
-> > 
-> > It is used in:
-> > 
-> > gtdt_sbsa_gwdt_init() - just to check if there are platform timers entries
-> > 
-> > arch_timer_mem_acpi_init() - to create a temporary array to init arch mem timer
-> > 			     entries (the array is oversized because it
-> > 			     includes watchdog entries in the count)
-> > 
-> > In both cases taking the
-> > 
-> > min(cnt, gtdt->platform_timer_count);
-> > 
-> > should work AFAICS
-> 
-> It was probably worth noting in the changelog that I did this to
-> gracefully handle the reverse of this issue where we could dereference
-> platform timer entries that are within the bounds of the GTDT but exceed
-> gtdt->platform_timer_count.
+On Wed, Feb 12, 2025 at 01:10:17AM +0000, Thinh Nguyen wrote:
+> On Mon, Feb 03, 2025, Andy Shevchenko wrote:
+> > The snps,reserved-endpoints property lists the reserved endpoints
+> > that shouldn't be used for normal transfers. Add support for that
+> > to the driver.
 
-Hi Oliver,
+> > While at it, make sure we don't crash by a sudden access to those
+> > endpoints in the gadget driver.
 
-I was about to ask Catalin/Will to pick this up, don't know if you have
-time to update the changelog and send a v2 - a Link: to this thread will
-be added anyway.
+^^^ (1)
 
-Thanks,
-Lorenzo
+...
+
+> >  	/* Reset resource allocation flags */
+> > -	for (i = resource_index; i < dwc->num_eps && dwc->eps[i]; i++)
+> > -		dwc->eps[i]->flags &= ~DWC3_EP_RESOURCE_ALLOCATED;
+> > +	for (i = resource_index; i < dwc->num_eps; i++) {
+> > +		dep = dwc->eps[i];
+> > +		if (!dep)
+> > +			continue;
+> > +
+> > +		dep->flags &= ~DWC3_EP_RESOURCE_ALLOCATED;
+> > +	}
+> 
+> Please keep code refactoring as a separate patch.
+
+It's induced by the change you asked for, it's not a simple refactoring.
+
+Or do you want me to have the patch to check eps against NULL to be separated
+from this one (see (1) above)?
+
+> >  
+> >  	return 0;
+
+...
+
+> > +static int dwc3_gadget_parse_reserved_endpoints(struct dwc3 *dwc, const char *propname,
+> > +						u8 *eps, u8 num)
+> > +{
+> > +	u8 count;
+> > +	int ret;
+> > +
+> > +	if (!device_property_present(dwc->dev, propname))
+> > +		return 0;
+> > +
+> > +	ret = device_property_count_u8(dwc->dev, propname);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +	count = ret;
+> > +
+> > +	ret = device_property_read_u8_array(dwc->dev, propname, eps, min(num, count));
+> 
+> Why do min(num, count)? Can we just put the size of the eps array as
+> specified by the function doc.
+
+No, we can't ask more than there is. The call will fail in such a case.
+In case you wonder, the similar OF call also behaves in the same way.
+
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return count;
+> > +}
+
+...
+
+> >  static int dwc3_gadget_init_endpoints(struct dwc3 *dwc, u8 total)
+> >  {
+> > +	const char			*propname = "snps,reserved-endpoints";
+> >  	u8				epnum;
+> > +	u8				eps[DWC3_ENDPOINTS_NUM];
+> 
+> Can we rename eps to reserved_eps.
+
+Sure.
+
+> > +	u8				count;
+> > +	u8				num;
+> > +	int				ret;
+> >  
+> >  	INIT_LIST_HEAD(&dwc->gadget->ep_list);
+> >  
+> > +	ret = dwc3_gadget_parse_reserved_endpoints(dwc, propname, eps, ARRAY_SIZE(eps));
+> 
+> Base on the name of this function, I would expect the return value
+> to be a status and not a count. Since we are not really parsing but
+> getting the property array. Can we rename this to
+> dwc3_gadget_get_reserved_endpoints()?
+
+Sure.
+
+> > +	if (ret < 0) {
+> > +		dev_err(dwc->dev, "failed to read %s\n", propname);
+> > +		return ret;
+> > +	}
+> > +	count = ret;
+
+...
+
+> > static bool dwc3_gadget_endpoint_trbs_complete(struct dwc3_ep *dep,
+
+> >  		for (i = 0; i < DWC3_ENDPOINTS_NUM; i++) {
+> >  			dep = dwc->eps[i];
+> > +			if (!dep)
+> > +				continue;
+> 
+> It should be fine to ignore this check here. Something must be really
+> wrong if there's an interrupt pointing to an endpoint that we shouldn't
+> be touching. If we do add a check, we should print a warn or something
+> here. But that should be a patch separate from this.
+
+Theoretically everything is possible as it may be HW integration bug,
+for example. But are you asking about separate patch even from the rest
+of the checks? Please, elaborate what do you want to see.
+
+...
+
+> > static void dwc3_endpoint_interrupt(struct dwc3 *dwc,
+
+> >  	dep = dwc->eps[epnum];
+> > +	if (!dep)
+> > +		return;
+> 
+> Same here.
+> 
+> Looks like the only NULL check needed is in
+> dwc3_gadget_clear_tx_fifos().
+
+Seems more, see above.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
