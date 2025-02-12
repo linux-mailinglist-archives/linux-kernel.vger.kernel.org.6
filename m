@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-511878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB640A330F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:44:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5759FA330F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 21:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58DA9188523D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:44:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA18B3A8A5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94213202C2A;
-	Wed, 12 Feb 2025 20:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D280202C32;
+	Wed, 12 Feb 2025 20:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmGG0t/C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5J3LMxm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C9A1FBC81;
-	Wed, 12 Feb 2025 20:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5991FF7CC;
+	Wed, 12 Feb 2025 20:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739393033; cv=none; b=oVdqG0rFsm3iWw4e23kl/4QEoiLGxh1WPmAmwzmHAcDpJAzBuRXFGrLKxm92BC6olGVvjfQjGc9EJCZYBsMe9ua/oMeURjPYMlZ8ZX7QHQmRI2hD/3ffzqE+FjtJpi6LPGVoF4XVCh/5Lpon8+I6OvbkWmFcWoC5/NJpFz7bv9Y=
+	t=1739393112; cv=none; b=sVSuYsvheVF+A6RmZScTqnsio1cEXtmA20tqwu7JaTe2eEfGQILqWtkLRZ+bOYV1gho6XlezGrpNeeUEsokmW6LOIAo/R/w8ZDEywYFY69gFzSrbkVJKszaRaKxFSqP3ZJR7BKM5q9oOjdlBMk7xFyYmnLoKhIy8185XklrfKdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739393033; c=relaxed/simple;
-	bh=2Z2SgbECzYCEjtHn8nblF4n270WAOrT6/8nalVEvK1o=;
+	s=arc-20240116; t=1739393112; c=relaxed/simple;
+	bh=ULS4WM6akbdtKPR1XFa2DciZVne9eSIkg/0RKmDwN6E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AFBVWbO5oqvh6wxrL1yVY2iVFy6i+FPPr0sQvGPmGI3HYHH3QP8dLqAMF3G43OGZ/YMPS74TQaSY8AVASfM+HYR4HgVs/ClxQscJaVz+EAX8qE2Z4QZzhH7RiqYklbaIHyIIoFgiCiRpiUdNdy5d77G3/jxeyvTxr+7vNXs8FU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GmGG0t/C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44FD9C4CEDF;
-	Wed, 12 Feb 2025 20:43:47 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=iqZJOCGMFgQvE+h5OFjEbCSkiHew1KK+qWRAYLOlk+/l4/5RATC7KiPRNc5TBQLM0G089wor/XC7FyhkQO1QeUI7Gl6KbmtyCL8dtBu5zuefW7FwzfcrGw9H+LnphTFsc7K2u+KZUMK10w4s5FDy/FDPbo9D7xsS+OxzQw0QzCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5J3LMxm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF429C4CEDF;
+	Wed, 12 Feb 2025 20:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739393032;
-	bh=2Z2SgbECzYCEjtHn8nblF4n270WAOrT6/8nalVEvK1o=;
+	s=k20201202; t=1739393112;
+	bh=ULS4WM6akbdtKPR1XFa2DciZVne9eSIkg/0RKmDwN6E=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=GmGG0t/C/TeZc/1f4Fc9SnxnvzjfRQfclnWpNa4eB69lbSGfgdyglM9wuTCiwN1es
-	 iR7uXrrWXPawpds3vUFUlazbZ1DwyDfwsNwdXV+4ghUY7/CG9rnjU2BxNg+XYv4s74
-	 dyhkXvUOGlqy0PYCFmUn2eereM7Iac1GEL8SD0xCt6h+gFU7TitBRtIBDK+8tuFxel
-	 Yn+9H4nEKXTKIZyWI7jRzs8KD+8oFMVWrH09ldvAT+Sju/dulwcSgbqg/qcdD1/bve
-	 9/uLlB88Tb65eMpeIrrVT0PykRQMMgqODqIgstLieQeh4Ou463DMyhW0ZYe9l0QTkJ
-	 wto6WCCFfJGrw==
-Message-ID: <643d8b81-d551-4263-9443-089c157d2c8d@kernel.org>
-Date: Wed, 12 Feb 2025 21:43:46 +0100
+	b=Y5J3LMxm+TCqZEs6u14CX7pYwT+wMdZd/qZKbq2/luCo6jb708i6Sef3fr2z2I3hy
+	 OCjvLv2ssbcscE2F1horf8n7RwV+mG9DdEK6y5MlyHGkcnnDGp5qEWRSYz1gLxuoPY
+	 IWYvOEws4q9JIz1HF78buotIJ9ws9MofjKgm+O4Qrn/JZ40jI/GIF2T5exGZB0xpIQ
+	 Hr5RaqQKIWOfiUdmoVLj7ZB+ncv1wxhSaUapkUd2c934486RD3j0VysBc4CGxPC1hI
+	 D5zf5XqpEVDX93XYTpQMdAUF+D2qj2dS4HhXh+Ypfqqdn2Y4VPSHWYFdakSlcKbkS6
+	 68yFYdkP7NQVQ==
+Message-ID: <0e49a1cf-c28d-4643-88be-b9cb855fb234@kernel.org>
+Date: Wed, 12 Feb 2025 21:45:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: nxp: vf: Align GPIO hog name with bindings
+Subject: Re: [PATCH] arm64: dts: mediatek: mt7622: Align GPIO hog name with
+ bindings
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Stefan Agner <stefan@agner.ch>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-References: <20250115211659.194072-1-krzysztof.kozlowski@linaro.org>
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250115211801.194247-1-krzysztof.kozlowski@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,20 +104,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250115211659.194072-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250115211801.194247-1-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/01/2025 22:16, Krzysztof Kozlowski wrote:
+On 15/01/2025 22:18, Krzysztof Kozlowski wrote:
 > Bindings expect GPIO hog names to end with 'hog' suffix, so correct it
 > to fix dtbs_check warning:
 > 
->   vf610-zii-dev-rev-c.dtb: eth0_intrp: $nodename:0: 'eth0_intrp' does not match '^.+-hog(-[0-9]+)?$'
+>   mt7622-bananapi-bpi-r64.dtb: asm_sel: $nodename:0: 'asm_sel' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
+>  arch/arm64/boot/dts/mediatek/mt7622-bananapi-bpi-r64.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Any comments on the patch? Shawn, can you apply it?
+
+
+Any comments on the patch?
+
 
 Best regards,
 Krzysztof
