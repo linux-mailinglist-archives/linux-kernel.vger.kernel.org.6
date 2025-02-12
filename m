@@ -1,151 +1,274 @@
-Return-Path: <linux-kernel+bounces-511801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E03A32FDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:36:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6751EA32FE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 20:38:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8E2B188AC11
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:36:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F1E816889B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97771FF7AC;
-	Wed, 12 Feb 2025 19:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181381FF7D7;
+	Wed, 12 Feb 2025 19:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCRsPeDi"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQBWoZm9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ED61FECA2;
-	Wed, 12 Feb 2025 19:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC721DC07D;
+	Wed, 12 Feb 2025 19:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739389000; cv=none; b=VtwkvdNjYsxanVscSPxU3ApmpQB4xCCZ+Es+79cQdzpGWgmlgiFWfb4fmU5pfxyPIQBxuJusfFffhshuTicWMxKnh46isQ8LR0oPWqFjycatLvWosALRvALeTybKTJJ0PEbTdax0UkKThSLOUa2RMaIdZzwOyohAuNWF6uEKALY=
+	t=1739389098; cv=none; b=rmJXBazaqWiYx4T5EEn2sxpmSrZg73Js9fTC9dptS41gwQgezXwGAM/t+z2v7SP9vMe2AFgMzbABPzqs1vXiNz3pMcKbsE1gqEHTeuK+4BaLXleX1BdFL9GbIlKaArvUyC7E4tQb9R6Gz+4NYqqT0/z+n0SspH0q8IY4+Xxw5xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739389000; c=relaxed/simple;
-	bh=//U/YEf4GTn80X/Yqah8NCCGVUUA/kgq9Vwzb7fid1s=;
+	s=arc-20240116; t=1739389098; c=relaxed/simple;
+	bh=pq9uKQvjFYwDm1Q4B6BmedrGAyc5w91dQwDdbRZBMW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLpkGR6nfiwpfllwcg+QG40gyHyGeCudUwD1fIqvUaO93QjqnJH3B7bYd5gLIA6vGOFIf/rLgLYt3246/Au/uKsMJDRVEFIAAn+V2Z73HS4Ve+K/ta5XAeCp5uvF5gFh5424vVrELVoIM1WCF5655coT73GAErJ4jiBLS/retvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCRsPeDi; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7d583d2afso223171666b.0;
-        Wed, 12 Feb 2025 11:36:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739388997; x=1739993797; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xrkhdUFQwi4/lCMpN9Y5pmHU3syxsdq4GG+NHqwz2EU=;
-        b=fCRsPeDidHSXbqfT9QA+RcXH+KwqJAso69utADADSTp9QNzyvASU+rdazj/J3j6uEb
-         E0xpDT1nWwpmgeyhmT/UPDQpnQRVS83/ydc7Pua5qspkKBXkR1bbInGupJrnBe6KMw8h
-         NPCnx1RLu3ygXm8ZggKAIFTeqT/LE+dmwtmdXrNEkMhZB+pZaoWimGLX5jPsQFO340Ku
-         oEtx8niqK+xfyV5BXldslLRKZkiLYJVIp/ec7hEBEskRhTkHMR74uUbowGiPkpqThjMU
-         oyGqDFrl6Ha9fHnkFV30jdDlcbtktE4ayhWG5qh5CXx/GWBAql/9bhswrTsuTOiUI0Az
-         FKpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739388997; x=1739993797;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xrkhdUFQwi4/lCMpN9Y5pmHU3syxsdq4GG+NHqwz2EU=;
-        b=lojY54psPx5zg2CWrpJxZxLVdZQq2VDAtx6n3j5lnYctPh22jx+7ua2UWvVe7DsoXb
-         vbSkJO+D8VgViokKFDTObL+L1TFRiHMaxSSyZnZrN2PlHrJjUk9iKXhj+Ly+XKrx3t+Z
-         xpTt3cZVXptridhTtI5TKInUTB6oq47+HjkD0+4WZiIjVlxg0qVUOTeRuCZkYiu+KR82
-         vU8iNK/VL/ECRNZKSgUCFS/1fmkQWK3xO47enJ1npJHySIIvdESTAuhyxhJfDLVMOckq
-         gJzGJX2jb9I4cyPxLgyxfyZeykQg646TnVksBRnCjzWOpH31B+2rVOCB8YFBpZzVILr6
-         ncVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAjf7CGE7GzyAIXTWIE9mvfU40iGYJ33sCXNVHhw4mU1wVIaWw+OinMLnBbm1unp8vulSJdY+11j6qe7MW@vger.kernel.org, AJvYcCVZ01jKD4d1npidL38+9+jetTLWoTQvXKUp3qWDBu50q2tlZJaYsG2JFz9IdcK1HMeepGDHXk6C1Lq8@vger.kernel.org, AJvYcCWi++cTvAtFABzNX1fWyViEN8QyO8MbW04yGJ9wwIZU3N9y0jDNsPHOFWy64kX1AW8pMG13xgiR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD/2XgYg908mJE7STdTDK5BI5NxvQXS1kLmdKT5wzrTdIuvTwP
-	VOWtZ6w+TwaavvmpiLKvvUwUY4b8FjBxh4lK2aJrRaVeXCg5tSBN
-X-Gm-Gg: ASbGncvbDol0OSjfzYguG8C/TUJPugWhguHjzyQlucEuIsFeRVZlD53yh6ZBWQLjFiv
-	YZEWsBlmKbIxr2CoXwZ8A5VARXVXkFuv10pBjzCVoRF3bd33eD7F3XdIQFXVevy674WXjrPJYML
-	jIqKHEDDXngQcqh9b6qDvK6Vvad7gWCOAygxbWidQqreIDGUh3vqv3hEGCUZI95lrjxMfSNjyuf
-	EvsQpG7ASHVyYRraiO88MZdVZD1rpP/zNIqsZihTGn03pVVmmfEuGwJamvmIH300ro5A/JejxWb
-	B4ZDeP5wXlo9
-X-Google-Smtp-Source: AGHT+IGhGb+HhZEKckwfH7aJO5Cb7saEPI0QiOmLhZBlsGU0FWR3LegRggw8s/DtIXNo0IZ0iXpWPg==
-X-Received: by 2002:a17:907:7f8c:b0:ab3:a18e:c8b6 with SMTP id a640c23a62f3a-aba5145d897mr12342666b.10.1739388996714;
-        Wed, 12 Feb 2025 11:36:36 -0800 (PST)
-Received: from debian ([2a00:79c0:659:fd00:45fb:7d1a:5e4d:9727])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7b9bfd2c4sm731681366b.43.2025.02.12.11.36.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 11:36:36 -0800 (PST)
-Date: Wed, 12 Feb 2025 20:36:32 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: dimitri.fedrau@liebherr.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=a3wvq3TdJxI6pIQTqXR8U20vG5ICcNADUXT5OT5jFkDun7vOjr9xT//SI/5Kj3g0DB9IvshgGNGOfcbdF42COKeXM4fe1rPeUKdQAO94aMvlCIUyU798V70m86XUhfm05IvlxtTZ9/lA1NxCielloy1941pSEhTQsXMdk0HEChY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQBWoZm9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642E5C4CEDF;
+	Wed, 12 Feb 2025 19:38:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739389096;
+	bh=pq9uKQvjFYwDm1Q4B6BmedrGAyc5w91dQwDdbRZBMW8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mQBWoZm9pBkAJzBWRz85ZCMTj9IvaY3BA0rxBDDYNpPHMJZ17i09UNxwChFyw0hVZ
+	 mbBIuzakROKILvDV5vGDjyN1gMB2TYRWqQYBR/NF21saMN5npe5HC205R2hRIW+xEJ
+	 WNMFsM4kAklYkc3yn8/eKUkVaJUPLrYOT0ROBS+XvncYTfQTtAvKtOISkDXenE24NQ
+	 6wa3y+6po0NoVWWK2jUywFmF+27+PJBC6jKh0tBUWtlCctbBKKTKQ7EMqk3FyYliyM
+	 C7NHhBicFH74iUz86RYpL6uWHOkMzY1SyHEKxjDgogi/QjGlEPpfqSM/yW6mc8gl9J
+	 kGVNNVKgf+GQQ==
+Date: Wed, 12 Feb 2025 13:38:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
+Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
+	Scott Wood <oss@buserror.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 2/3] net: phy: Add helper for getting tx
- amplitude gain
-Message-ID: <20250212193632.GC4383@debian>
-References: <20250211-dp83822-tx-swing-v4-0-1e8ebd71ad54@liebherr.com>
- <20250211-dp83822-tx-swing-v4-2-1e8ebd71ad54@liebherr.com>
- <84b5b401-e48b-4328-84b2-f795c1404630@lunn.ch>
+	Conor Dooley <conor+dt@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v2 05/12] dt-bindings: dma: Convert fsl,elo*-dma to YAML
+Message-ID: <20250212193815.GA113049-robh@kernel.org>
+References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
+ <20250207-ppcyaml-v2-5-8137b0c42526@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <84b5b401-e48b-4328-84b2-f795c1404630@lunn.ch>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250207-ppcyaml-v2-5-8137b0c42526@posteo.net>
 
-Am Wed, Feb 12, 2025 at 02:15:08PM +0100 schrieb Andrew Lunn:
-> > @@ -3133,12 +3126,12 @@ static int phy_get_int_delay_property(struct device *dev, const char *name)
-> >  s32 phy_get_internal_delay(struct phy_device *phydev, struct device *dev,
-> >  			   const int *delay_values, int size, bool is_rx)
-> >  {
-> > -	s32 delay;
-> > -	int i;
-> > +	u32 delay;
-> > +	int i, ret;
+On Fri, Feb 07, 2025 at 10:30:22PM +0100, J. Neuschäfer wrote:
+> The devicetree bindings for Freescale DMA engines have so far existed as
+> a text file. This patch converts them to YAML, and specifies all the
+> compatible strings currently in use in arch/powerpc/boot/dts.
 > 
-> Networking uses reverse christmass tree. So you need to sort these two
-> longest first.
->
-Will fix it.
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> ---
+> 
+> V2:
+> - remove unnecessary multiline markers
+> - fix additionalProperties to always be false
+> - add description/maxItems to interrupts
+> - add missing #address-cells/#size-cells properties
+> - convert "Note on DMA channel compatible properties" to YAML by listing
+>   fsl,ssi-dma-channel as a valid compatible value
+> - fix property ordering in examples: compatible and reg come first
+> - add missing newlines in examples
+> - trim subject line (remove "bindings")
+> ---
+>  .../devicetree/bindings/dma/fsl,elo-dma.yaml       | 140 ++++++++++++++
+>  .../devicetree/bindings/dma/fsl,elo3-dma.yaml      | 123 +++++++++++++
+>  .../devicetree/bindings/dma/fsl,eloplus-dma.yaml   | 134 ++++++++++++++
+>  .../devicetree/bindings/powerpc/fsl/dma.txt        | 204 ---------------------
+>  4 files changed, 397 insertions(+), 204 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/fsl,elo-dma.yaml b/Documentation/devicetree/bindings/dma/fsl,elo-dma.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..3d8be9973fb98891a73cb701c1f983a63f444837
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/fsl,elo-dma.yaml
+> @@ -0,0 +1,140 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/dma/fsl,elo-dma.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale Elo DMA Controller
+> +
+> +maintainers:
+> +  - J. Neuschäfer <j.ne@posteo.net>
+> +
+> +description:
+> +  This is a little-endian 4-channel DMA controller, used in Freescale mpc83xx
+> +  series chips such as mpc8315, mpc8349, mpc8379 etc.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - fsl,mpc8313-dma
+> +          - fsl,mpc8315-dma
+> +          - fsl,mpc8323-dma
+> +          - fsl,mpc8347-dma
+> +          - fsl,mpc8349-dma
+> +          - fsl,mpc8360-dma
+> +          - fsl,mpc8377-dma
+> +          - fsl,mpc8378-dma
+> +          - fsl,mpc8379-dma
+> +      - const: fsl,elo-dma
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description:
+> +      DMA General Status Register, i.e. DGSR which contains status for
+> +      all the 4 DMA channels.
+> +
+> +  cell-index:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Controller index. 0 for controller @ 0x8100.
+> +
+> +  ranges: true
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description: Controller interrupt.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +patternProperties:
+> +  "^dma-channel@.*$":
 
-> > +int phy_get_tx_amplitude_gain(struct phy_device *phydev, struct device *dev,
-> > +			      enum ethtool_link_mode_bit_indices linkmode,
-> > +			      u32 *val)
-> 
-> Since this is an exported symbol, it would be nice to have some
-> kerneldoc for it.
->
-Yes.
+You need to define the unit-address format.
 
-> > +{
-> > +	switch (linkmode) {
-> > +	case ETHTOOL_LINK_MODE_100baseT_Full_BIT:
-> > +		return phy_get_u32_property(dev,
-> > +					    "tx-amplitude-100base-tx-percent",
-> > +					    val);
-> 
-> So no handling of the default value here. This would be the logical
-> place to have the 100 if the value is not in device tree.
-> 
-I will get rid of the default value.
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      compatible:
+> +        oneOf:
+> +          # native DMA channel
+> +          - items:
+> +              - enum:
+> +                  - fsl,mpc8315-dma-channel
+> +                  - fsl,mpc8323-dma-channel
+> +                  - fsl,mpc8347-dma-channel
+> +                  - fsl,mpc8349-dma-channel
+> +                  - fsl,mpc8360-dma-channel
+> +                  - fsl,mpc8377-dma-channel
+> +                  - fsl,mpc8378-dma-channel
+> +                  - fsl,mpc8379-dma-channel
+> +              - const: fsl,elo-dma-channel
+> +
+> +          # audio DMA channel, see fsl,ssi.yaml
+> +          - const: fsl,ssi-dma-channel
+> +
+> +      reg:
+> +        maxItems: 1
+> +
+> +      cell-index:
+> +        description: DMA channel index starts at 0.
+> +
+> +      interrupts:
+> +        maxItems: 1
+> +        description:
+> +          Per-channel interrupt. Only necessary if no controller interrupt has
+> +          been provided.
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    dma@82a8 {
 
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +}
-> > +EXPORT_SYMBOL(phy_get_tx_amplitude_gain);
-> 
-> I would prefer EXPORT_SYMBOL_GPL, but up to you.
->
-Ok.
+dma-controller@...
 
-Best regards,
-Dimitri Fedrau
+> +        compatible = "fsl,mpc8349-dma", "fsl,elo-dma";
+> +        reg = <0x82a8 4>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0 0x8100 0x1a4>;
+> +        interrupt-parent = <&ipic>;
+
+Drop interrupt-parent everywhere.
+
+> +        interrupts = <71 8>;
+> +        cell-index = <0>;
+> +
+> +        dma-channel@0 {
+> +            compatible = "fsl,mpc8349-dma-channel", "fsl,elo-dma-channel";
+> +            reg = <0 0x80>;
+> +            cell-index = <0>;
+> +            interrupt-parent = <&ipic>;
+> +            interrupts = <71 8>;
+> +        };
+> +
+> +        dma-channel@80 {
+> +            compatible = "fsl,mpc8349-dma-channel", "fsl,elo-dma-channel";
+> +            reg = <0x80 0x80>;
+> +            cell-index = <1>;
+> +            interrupt-parent = <&ipic>;
+> +            interrupts = <71 8>;
+> +        };
+> +
+> +        dma-channel@100 {
+> +            compatible = "fsl,mpc8349-dma-channel", "fsl,elo-dma-channel";
+> +            reg = <0x100 0x80>;
+> +            cell-index = <2>;
+> +            interrupt-parent = <&ipic>;
+> +            interrupts = <71 8>;
+> +        };
+> +
+> +        dma-channel@180 {
+> +            compatible = "fsl,mpc8349-dma-channel", "fsl,elo-dma-channel";
+> +            reg = <0x180 0x80>;
+> +            cell-index = <3>;
+> +            interrupt-parent = <&ipic>;
+> +            interrupts = <71 8>;
+> +        };
+> +    };
+> +
+> +...
+
+Similar comments on the others.
+
+Rob
 
