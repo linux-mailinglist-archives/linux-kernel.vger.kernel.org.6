@@ -1,145 +1,76 @@
-Return-Path: <linux-kernel+bounces-511733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FE8A32EE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:49:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0081EA32EE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 19:49:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0815F7A2CD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89D8E3A2AEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 18:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09473260A3F;
-	Wed, 12 Feb 2025 18:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C01A261378;
+	Wed, 12 Feb 2025 18:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="wTdGCD0k"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qp6hL2vz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A375E25B689;
-	Wed, 12 Feb 2025 18:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AAE256C74;
+	Wed, 12 Feb 2025 18:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739386137; cv=none; b=XLq8AzQtM1eBr58vFvAumI7fBnCkAuIxP2TYDtWCVvWobMKjZPb1XNcMLCqG7VCBlMF9HhTgOpP+dkWz/Ifc6Xm1AssydpDtqUpxklp3jdbspW+e9ASbpP20AdNyRPVyUyxaHDNBUmuyz0MRwBM76ryt17WApG5K7MU3ivNH8fQ=
+	t=1739386127; cv=none; b=eCAgmb6qLq2sjfUJKV3w3red+ny/zh52Q4ztw4bJor0zjOEv4AVOjAWrO+pgf1mJYGo/XhRaVzcGIgCh9E7j9JskVy39r+PCDZr2nLKqn1aGsGDe5j94AtztaQ+uoCRETO72Xd0T+pxfNSfuPHkSU6s0qTfdwffVuPyt0PvT2Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739386137; c=relaxed/simple;
-	bh=cJ4xjBVT34Te8xOhdsM+iqRMXJ1gLZlE2BJA8YnTqcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b51NuEYvmHF6UlIelzQfbiBGIHD9Bdx3G/gYEV2ilO9zOf1Cb5KdHIPmSa5+DxzO2WZpWyB4sEGQ+NsSG2JhwtUMfmJaa+49iUEdlFKf/Rum4Bl8enxV4uc/8262NJfK5LonxbEzMV07cQlETYEKFFkEhLztuQ++TQA2si2kDy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=wTdGCD0k; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4YtS5F2hGlz6Cl0jX;
-	Wed, 12 Feb 2025 18:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1739386124; x=1741978125; bh=Ed3TZsxbinVVCbs1/cx1GNVl
-	DZdZKrZvTnFO8NQKKgY=; b=wTdGCD0k40b2735mz65OJarJCV9JIUhCiUHR6QSo
-	YyOACUFyIQ/N0QiboV8dW+OTeeW8q+i0nAw8uQ7kKLRYbG6v5PmXFHOGvWhFhbfB
-	PZyo5+cfCM41ZCsjtnUTt8fwSAOnfwaG5o/LDCQDjjdEthsi3AQovExhOYGi5Fzz
-	xs0X7I3dQpdfpKQQOqP6NooWWaqCKJhQ/2prsHLBOWx2ygOcrMtPQshRDcorS4Bw
-	nnCMUfuKOI+EFOSyUCfpROWHGhCcLo0flD+DFODOcZD7P0BxEDdHa6elbRYLYNiu
-	/0TomnP62LUVTWDOQzkCYO8LkcxePcRemjPu4z4eDU/g6w==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id pGMmm2Koljea; Wed, 12 Feb 2025 18:48:44 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4YtS561Qf6z6Ckj6B;
-	Wed, 12 Feb 2025 18:48:41 +0000 (UTC)
-Message-ID: <7a39a882-4f00-483e-942d-36a7cff53954@acm.org>
-Date: Wed, 12 Feb 2025 10:48:41 -0800
+	s=arc-20240116; t=1739386127; c=relaxed/simple;
+	bh=x5cUHjS8wcKrs320uyZQTcHrj2ZRAkm8TZUlxtqk/EE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YDvzuRCtQRJLNLvBZGzc8UFcRw6NbRpixY76/sOwBe2uJLuO/oX03GTRBgtD3ES3FZKYTWqyj+L042WeuQUxIjYsRiqCaUzd84AOx8g6g3NqmF3oujek1PZSZgnZzyc5mpHVGM9midhFi49H2XwiLJfMnMcyKrR5qn+7lYygQ54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qp6hL2vz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 827E1C4CEE2;
+	Wed, 12 Feb 2025 18:48:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739386126;
+	bh=x5cUHjS8wcKrs320uyZQTcHrj2ZRAkm8TZUlxtqk/EE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qp6hL2vzkBW9A+Ejh5TgvnFwNfr5cJQChn9ZcLXDoISL2pleLBjSCUVNTaH3g8vgI
+	 GJVAJzkS0oUhNfLJ25P2TgR5NOkPLo4Sz4Wv12uLUQ1+guLLszeQcJt77dktTz4usv
+	 8HlxYQTrfUlmWh2Wz33RfE6sOf39K0jkRVpLAGbm3zmLjkrsxcU4MDj4O0JbICPaI0
+	 dAjX941NqfxX3kzrGCKRmJ0VTqoF6+2QMu5Mogg+W3T/yWskcbYKXjumLMNXhmiZ5F
+	 ya6qNHFmbW0xy/+FDKExuGgBTRQEKKTHM3DM6NrwwKRAhDu0yDhyVtt8fEa8U/NElV
+	 Rb1ntn3LDhRrA==
+Date: Wed, 12 Feb 2025 10:48:45 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Purva Yeshi <purvayeshi550@gmail.com>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, davem@davemloft.net,
+ edumazet@google.com, horms@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, skhan@linuxfoundation.org
+Subject: Re: [PATCH net-next v2] af_unix: Fix undefined 'other' error
+Message-ID: <20250212104845.2396abcf@kernel.org>
+In-Reply-To: <dbdcff01-3c46-47f2-b2db-54f16facc7db@gmail.com>
+References: <20250210075006.9126-1-purvayeshi550@gmail.com>
+	<20250211003203.81463-1-kuniyu@amazon.com>
+	<dbdcff01-3c46-47f2-b2db-54f16facc7db@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: hpsa: Use min() to simplify code
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Don Brace <don.brace@microchip.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: storagedev@microchip.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250212115557.111263-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250212115557.111263-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2/12/25 3:55 AM, Thorsten Blum wrote:
-> Use min() to simplify the host_store_hp_ssd_smart_path_status() and
-> host_store_raid_offload_debug() functions.
+On Wed, 12 Feb 2025 19:54:16 +0530 Purva Yeshi wrote:
+> > The 5 lines of the 3 sentences above have trailing double spaces.
+> > You may want to configure your editor to highlight them.
+> > 
+> > e.g. for emacs
+> > 
+> > (setq-default show-trailing-whitespace t)  
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->   drivers/scsi/hpsa.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-> index 84d8de07b7ae..1d19eb2ca1d3 100644
-> --- a/drivers/scsi/hpsa.c
-> +++ b/drivers/scsi/hpsa.c
-> @@ -460,7 +460,7 @@ static ssize_t host_store_hp_ssd_smart_path_status(struct device *dev,
->   
->   	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
->   		return -EACCES;
-> -	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
-> +	len = min(count, sizeof(tmpbuf) - 1);
->   	strncpy(tmpbuf, buf, len);
->   	tmpbuf[len] = '\0';
->   	if (sscanf(tmpbuf, "%d", &status) != 1)
-> @@ -484,7 +484,7 @@ static ssize_t host_store_raid_offload_debug(struct device *dev,
->   
->   	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
->   		return -EACCES;
-> -	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
-> +	len = min(count, sizeof(tmpbuf) - 1);
->   	strncpy(tmpbuf, buf, len);
->   	tmpbuf[len] = '\0';
->   	if (sscanf(tmpbuf, "%d", &debug_level) != 1)
+> Thank you for pointing that out. I will ensure to check for such
+> issues before submitting future patches.
 
- From Documentation/process/deprecated.rst:
-
-<quote>
-strncpy() on NUL-terminated strings
------------------------------------
-Use of strncpy() does not guarantee that the destination buffer will
-be NUL terminated. This can lead to various linear read overflows and
-other misbehavior due to the missing termination. It also NUL-pads
-the destination buffer if the source contents are shorter than the
-destination buffer size, which may be a needless performance penalty
-for callers using only NUL-terminated strings.
-
-When the destination is required to be NUL-terminated, the replacement is
-strscpy(), though care must be given to any cases where the return value
-of strncpy() was used, since strscpy() does not return a pointer to the
-destination, but rather a count of non-NUL bytes copied (or negative
-errno when it truncates). Any cases still needing NUL-padding should
-instead use strscpy_pad().
-
-If a caller is using non-NUL-terminated strings, strtomem() should be
-used, and the destinations should be marked with the `__nonstring
-<https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html>`_
-attribute to avoid future compiler warnings. For cases still needing
-NUL-padding, strtomem_pad() can be used.
-</quote>
-
-Instead of only changing the calculation of 'len', please change the
-strncpy() calls into strscpy() calls.
-
-Thanks,
-
-Bart.
+To be clear - please fix this and repost this patch
 
