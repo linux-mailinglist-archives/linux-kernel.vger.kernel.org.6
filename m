@@ -1,108 +1,146 @@
-Return-Path: <linux-kernel+bounces-512070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FACA333A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:50:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58BF5A333AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:55:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9780A3A882C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:49:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154541668FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 23:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A331C21324C;
-	Wed, 12 Feb 2025 23:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772E4214204;
+	Wed, 12 Feb 2025 23:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ceKxZu1j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="I9ZE+9o+"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0476F126C05;
-	Wed, 12 Feb 2025 23:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E255C2010E5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739404189; cv=none; b=ri+PFJkclg9dHc/vG/3pMAwMJLk3gCf8yR1hL8TC37OqRstEyM7ubNuaVt0Bgkh/E/GtuRO5K+B9K3jKZqgT0deZ/LGjCXq1FeAhanOtsggu8VYu8lix0xuhyQ3bpaq5UuBUwTyrhgysnRNR+Owi+6YrxR27vQN1ofmPPfbGPHA=
+	t=1739404538; cv=none; b=toLeBLVODjNuWgMv89mKbxRY46KtCxNdcERnQRVrEffpLRMmX3BTBUAxijewCvcEOdBfhHmyS+t2vUofw7d9b2p1ZmvWtUuBfiWiaUl9rEvvL9J9NapmxaIvBJ2+qWap++q+YuGrttDpznTHAInO+n/96e9D9CddhBQXd7TJIG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739404189; c=relaxed/simple;
-	bh=FGFJHoLpbX4ySRnxs3bfJkdLdlmxhJIsYSNovBRH/qY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m7dCxR6TNz+qy2OQFJUsURByPqbzDiifsCbSluH1ru8VyQKePMIHsjmyI1uwJLN40GdsMgB0014hjUYTOdSaWEPqva7PVuhFPRSKdITzKzsRfXgrDTxTleSYeC+ETcuMfq+Hp3FnlRAfPpPbNuMqwRQc4ULCrjUYM0nKmR8W/78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ceKxZu1j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B14C4CEDF;
-	Wed, 12 Feb 2025 23:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739404188;
-	bh=FGFJHoLpbX4ySRnxs3bfJkdLdlmxhJIsYSNovBRH/qY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ceKxZu1jn6eoyI8R1Jdqmo8izXjI15NYJ+bvYiFJPlkFiSauSqexaCKdbElLr1uCc
-	 mFC8xlRJcLyxMVQJCyStPbdTNUcfCkNXTyJlO/eoBDE83k/RaH6NkHFNchBKz5Ito4
-	 rbON7EKyXBSVM0dUu2DU1XLFmahq0dEaYXeEXAnBkjk8EVHGvAp1GNHpIxfVyS0djJ
-	 dJlHjz/RLz1mrEs8GYYOUBAuGn2ETTc/A9C9uQwAgBUjs0j+7ov1e7yMq0VIXG/H2t
-	 i4JPJAcmRi33/f7Q+i+AVg3hLywiWQE8oNUDd72oeZ9UZL6aijYKIETYbZu8MtjP7w
-	 W1NKQCDWPA6ew==
-Date: Wed, 12 Feb 2025 15:49:46 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: Weinan Liu <wnliu@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev,
-	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>,
-	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org,
-	live-patching@vger.kernel.org, joe.lawrence@redhat.com,
-	linux-arm-kernel@lists.infradead.org,
-	Puranjay Mohan <puranjay@kernel.org>
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-Message-ID: <20250212234946.yuskayyu4gx3ul7m@jpoimboe>
-References: <20250127213310.2496133-1-wnliu@google.com>
- <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
+	s=arc-20240116; t=1739404538; c=relaxed/simple;
+	bh=BX2Vnm1dvN+dZi7mnduhrhCzZmg1hL39RaIgC960Fd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UqTRLjHPJffDgWRVgiZKP4j5lQD7bb3Z3/THSRku9A0riDn3czQ9ZU9T8mD6QYLlSblhNlqmy6+Ys3HEyOp4L0as6rmn5A5WJ3Q70NprokVPbNnXC28l++vZcrQR4PhJdq28MHNF4S1wFaCQsgp8baBl0Eyp8I2Rj6/p7Ff8cQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=I9ZE+9o+; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d050fdf2ffso900435ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 15:55:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739404536; x=1740009336; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5T5KWhJatXWshxJvkWL9bXGaHOpBQ3aVQM+8yUJxnE0=;
+        b=I9ZE+9o+S3IEVbrhV1IB7OvF3hCXHavOvPZfVTtrzN/0g5jC4FCMLHhgU1pjxrrbLJ
+         2QIyOYdsQaFLvSKl3IPWvVYh11xMI7xMtg0Lb75+Qg+PoCIkjN+XzaVqbetSdO1J6nmn
+         JBn4KI+sqnBdUiYNn7XvMKsSWjD92nFraaWesaTukva4Lkxxc+25M98rjLHQhlK6yaU8
+         /nEJz9oVzur0mki/8h8eEsgsWgdY03eWlpqLOyrX8WJTKn9ikj/wPG6f1mgswMQIJCkv
+         PrkZjKSGRBXuTVMGrx2i1QhMjpkGLT62EC1utaYcbLiGu5mwJDdT3uc9mhNEYGfXzwod
+         8cbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739404536; x=1740009336;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5T5KWhJatXWshxJvkWL9bXGaHOpBQ3aVQM+8yUJxnE0=;
+        b=lap9ivoZbxhOxcV5uSP13/Haknek510csqZGJlsknCfscCE/mmwnU6mgJXXnJLRTsN
+         tUWUV4drYUbjdetThapop4916enP9IjIz/tQtzZneAE/3YXQ9Dj/ZTQGq6YAZCi7ERsk
+         +FLevqfTIDCeKfQmVaaHPwF0hzdzYzLQRpNdrSXtuY3W6qdIUVXRygPj6OeLNsn652K3
+         SS4QzFJg01HhOkzsfwhPhmrmxJkehDoIkxW9EoIjoXQiNVjZrSDOUCvwMrkElYFKatRZ
+         JSOTNpdobAm2nlymZ1uPrVBg9gbY3Ymdnxg/iQjiZLXG1vZ8aEvj6wIKn1tUoK0537k4
+         VW2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWW6hPIKq53U1DNh+n84jkS/ogCyQTC3GonSmcLZefBgK72mP5incxnZK/yMEFyEzBAJ0vIirZVc5g5cCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFeTTlbaeHhq2eSP/3f8kU+XCuUa49PYqYt6AAxcbClT5kkZus
+	faByZsjlRlIo4kOfCcK92XCsEWd28WpmS4Djt/yI30wtX99eJbQef2T4rBLXDQ4=
+X-Gm-Gg: ASbGnct6eqUD1jajM9DjVWL1jVC9odQ84EnjrIHFA6A6etOdUqShqXIoHeTtI1DUquj
+	sSdLfrBj9HF2ReAM9HvjCBdjqL9zv7ZMqdVFHVP2p+Wv7Nl+ZeOwIkfcqPHoYfwrNOIRkgpspJo
+	w0HTMEyBPXC8O9aSm5VjJEZVbju6/FkUoT+nx2YPSTXFEUre/6WvKxqv75EbTmGN/PaOioiCsOA
+	nT3BMWqLJDikkbe+4IA3FVTWd5LXLSgfr1N8HFqmLpm1N6TmJhh3Whay0CZi3PXdgg2UFV/EeBi
+	qHjv2Rnt5Qef
+X-Google-Smtp-Source: AGHT+IHYFHt0UZ3Eu9kV2C1JCYy+xM/C/iX1RnaOCm9KoKnIXKw2eDtPqV1Vosoku1pEt3y6yf61rg==
+X-Received: by 2002:a05:6e02:1c2c:b0:3d0:4d76:79b8 with SMTP id e9e14a558f8ab-3d18c0abe5dmr9464135ab.0.1739404535904;
+        Wed, 12 Feb 2025 15:55:35 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ed2816ee33sm50323173.31.2025.02.12.15.55.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 15:55:35 -0800 (PST)
+Message-ID: <49382366-c561-44cb-8acb-7241d0b95dd2@kernel.dk>
+Date: Wed, 12 Feb 2025 16:55:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Keith Busch <kbusch@kernel.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
+ Riley Thomasson <riley@purestorage.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250212204546.3751645-1-csander@purestorage.com>
+ <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
+ <CADUfDZqK9+GLsRSdFVd47eZTsz863B3m16GtHc+Buiqdr7Jttg@mail.gmail.com>
+ <999d55a6-b039-4a76-b0f6-3d055e91fd48@kernel.dk>
+ <CADUfDZrjDF+xH1F98mMdR6brnPMARZ64yomfTYZ=5NStFM5osQ@mail.gmail.com>
+ <Z60s3ryl5UotleV-@kbusch-mbp>
+ <CADUfDZqa5v7Rb-EXp-v_iMXAESts8u-DisMtjdBEu2+kK-ykeQ@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CADUfDZqa5v7Rb-EXp-v_iMXAESts8u-DisMtjdBEu2+kK-ykeQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 03:32:40PM -0800, Song Liu wrote:
-> [   81.250437] ------------[ cut here ]------------
-> [   81.250818] refcount_t: saturated; leaking memory.
-> [   81.251201] WARNING: CPU: 0 PID: 95 at lib/refcount.c:22
-> refcount_warn_saturate+0x6c/0x140
-> [   81.251841] Modules linked in: livepatch_special_static(OEK)
-> [   81.252277] CPU: 0 UID: 0 PID: 95 Comm: bash Tainted: G
-> OE K    6.13.2-00321-g52d2813b4b07 #49
-> [   81.253003] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE, [K]=LIVEPATCH
-> [   81.253503] Hardware name: linux,dummy-virt (DT)
-> [   81.253856] pstate: 634000c5 (nZCv daIF +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-> [   81.254383] pc : refcount_warn_saturate+0x6c/0x140
-> [   81.254748] lr : refcount_warn_saturate+0x6c/0x140
-> [   81.255114] sp : ffff800085a6fc00
-> [   81.255371] x29: ffff800085a6fc00 x28: 0000000001200000 x27: ffff0000c2966180
-> [   81.255918] x26: 0000000000000000 x25: ffff8000829c0000 x24: ffff0000c2e9b608
-> [   81.256462] x23: ffff800083351000 x22: ffff0000c2e9af80 x21: ffff0000c062e140
-> [   81.257006] x20: ffff0000c1c10c00 x19: ffff800085a6fd80 x18: ffffffffffffffff
-> [   81.257544] x17: 0000000000000001 x16: ffffffffffffffff x15: 0000000000000006
-> [   81.258083] x14: 0000000000000000 x13: 2e79726f6d656d20 x12: 676e696b61656c20
-> [   81.258625] x11: ffff8000829f7d70 x10: 0000000000000147 x9 : ffff8000801546b4
-> [   81.259165] x8 : 00000000fffeffff x7 : 00000000ffff0000 x6 : ffff800082f77d70
-> [   81.259709] x5 : 80000000ffff0000 x4 : 0000000000000000 x3 : 0000000000000001
-> [   81.260257] x2 : ffff8000829f7a88 x1 : ffff8000829f7a88 x0 : 0000000000000026
-> [   81.260824] Call trace:
-> [   81.261015]  refcount_warn_saturate+0x6c/0x140 (P)
-> [   81.261387]  __refcount_add.constprop.0+0x60/0x70
-> [   81.261748]  copy_process+0xfdc/0xfd58 [livepatch_special_static]
+On 2/12/25 4:46 PM, Caleb Sander Mateos wrote:
+> On Wed, Feb 12, 2025 at 3:21?PM Keith Busch <kbusch@kernel.org> wrote:
+>>
+>> On Wed, Feb 12, 2025 at 03:07:30PM -0800, Caleb Sander Mateos wrote:
+>>>
+>>> Yes, we completely agree. We are working on incorporating Keith's
+>>> patchset now. It looks like there is still an open question about
+>>> whether userspace will need to enforce ordering between the requests
+>>> (either using linked operations or waiting for completions before
+>>> submitting the subsequent operations).
+>>
+>> In its current form, my series depends on you *not* using linked
+>> requests. I didn't think it would be a problem as it follows an existing
+>> pattern from the IORING_OP_FILES_UPDATE operation. That has to complete
+>> in its entirety before prepping any subsequent commands that reference
+>> the index, and using links would get the wrong results.
+> 
+> As implementers of a ublk server, we would also prefer the current
+> interface in your patch series! Having to explicitly order the
+> requests would definitely make the interface more cumbersome and
+> probably less performant. I was just saying that Ming and Pavel had
+> raised some concerns about guaranteeing the order in which io_uring
+> issues SQEs. IORING_OP_FILES_UPDATE is a good analogy. Do we have any
+> examples of how applications use it? Are they waiting for a
+> completion, linking it, or relying on io_uring to issue it
+> synchronously?
 
-Does that copy_process+0xfdc/0xfd58 resolve to this line in
-copy_process()?
+Yes it's a good similar example - and I don't think it matters much
+how it's used. If you rely on its completion before making progress AND
+you set flags like IOSQE_ASYNC or LINK/DRAIN that will make it go async
+on purposes, then yes you'd need to similarly link dependents on it. If
+you don't set anything that forces it to go async, then it WILL complete
+inline - there's nothing in its implementation that would cause it
+needing to retry. Any failure would be fatal.
 
-			refcount_inc(&current->signal->sigcnt);
-
-Maybe the klp rela reference to 'current' is bogus, or resolving to the
-wrong address somehow?
+This is very much the same thing with the buf update / insertion, it'll
+behave in exactly the same way. You could argue "but you need to handle
+failures" and that is true. But if the failure case is that your
+consumer of the buffer fails with an import failure, then you can just
+as well handle that as you can the request getting failed with
+-ECANCELED because your dependent link failed.
 
 -- 
-Josh
+Jens Axboe
 
