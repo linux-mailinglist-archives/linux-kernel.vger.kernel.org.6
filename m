@@ -1,209 +1,116 @@
-Return-Path: <linux-kernel+bounces-510260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076A9A31A66
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:22:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C4A0A31A68
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 01:23:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BEB41885A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F6D3A5662
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 00:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39773C2F;
-	Wed, 12 Feb 2025 00:22:29 +0000 (UTC)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3ED24C81;
+	Wed, 12 Feb 2025 00:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4MLHbF/9"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE7B15A8;
-	Wed, 12 Feb 2025 00:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D23579EA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 00:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739319749; cv=none; b=LqPGeccZtDr8ZHdTobW3J7Oir4zYYSaldPEan80DPrsmz49DTj5PGonds+qhlKh4J8VOM9Y4sSNRKJk7vemx9G+tvjl08bRJF//OS865DdaTjKEL7jrHmTsuIpkab8tl7cdeo8fKtsXWzRieIib//04M4XXY8due2LbqMDNnw+g=
+	t=1739319794; cv=none; b=TSdRuAtVJ4+nqzBaxlcm+NSh23N29JziRvp/HCAU7L4Obd9gjLajTsBH+G02/yV2c5fCP44OcSEBmuEatzMYZfk3wCxCFUEuaG05PL7Jug0BzZY4xVrwLFRVUTvJ6p3QqhThJvVo6AMnJfx9bGuJ1HOuQf8pmRb745P0P3kSzAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739319749; c=relaxed/simple;
-	bh=YW7cK/oM31vkHrVJh4iKIJ9ZXmUt4M/kqA4TQLnCnf8=;
+	s=arc-20240116; t=1739319794; c=relaxed/simple;
+	bh=qNR6Tk+GObHhwah3Z3S1fvOkyR0+TVEpjXojg1MVygE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hWLxtSlMZCH0kslukk2rlIg0VUCCscvaISFxm9Tb+9qVDlGza7NgBbbUicVpF/O09oDacqhCQ5beho7yeSS/31kSB+xGjF0y6vPQE4hdcxW+P7yZrKv2tZK8sMG0SgSj6mF2rtUKV1vVzBfmLEIdeRL+Qh/NM1WN7nY1uRpObW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-308f71d5efcso20462991fa.3;
-        Tue, 11 Feb 2025 16:22:27 -0800 (PST)
+	 To:Cc:Content-Type; b=uSLaaaXIwOvWsje3BoxKUriXWIZDGSsR4REFOxuy5FAJZHoMp932tMapOvA5a/iW4Flyt/PxVsLYJ7SSwjbfEA1Yn+84KIRmdn9GH9S2342+b1vzDimfKjh3hHYE23p8kRHp56SnzeYsbGGkRHVsypH4+Jk/XDooyiC13eb74Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4MLHbF/9; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5440f27da4fso3369e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 16:23:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739319790; x=1739924590; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mACifcoi2DxXepU+x0EutTWQzaMm/Sos4wROfYi3LJM=;
+        b=4MLHbF/9MvyJlVpqwihOMAbZEWmHui6Y/YoJWyrTe3ADLmu+r/1qeP2PffGFmCCjkH
+         lVzN9XgIIEY9qNvk5CC9opqfil8PdjAmo95Tyfy8Gz2cuvHLCxPHBgl8pfhH2zWCrA6A
+         cPsZm97NxRE46U/R5gJ4Wm6lZNt7tniwC1XrnF69awagyBbcDGrxpOrXgDqAXGRaHfM2
+         jq19A4MP2qwShRWVymA8MJ3+EbIlSH0OnCeFbUawsxhJueWPrTJGbtqZ+kf/nQmYl0Np
+         tg3pc7m8G4SGPYZT3o+oEwtjyqyhjex00xKOo2Pm7ofOl+xrszNaJzG5M3B6PSxepz2/
+         KFBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739319745; x=1739924545;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xrJwy1vi51bKwxVHXs7ZVxiaOa6/rQ1XDuL5HIdbTL0=;
-        b=ewdm52j49daEDCEJgJ7NGk5kaSIGUfrKiDYVUQaKK4hb1cnjzgV1akniXbj/6JSGm7
-         iLrPcECPpJc3qc2BbSaSewDzkSosYxg00ewYtA5hRWVmtU87kVRzjhFGJCxSADzHnxQf
-         RTlfHG63MYD1/OKUmfZyv2KdqECT1PyfY8B7NxRsua6BIOUh3nOoCSNOfHZw/erMZooL
-         RUFYagtcWsKttJa0A/7kPlJaVP9sKQXZ9+ZtxbodCdQAoeXpdsHSTrRYpQhXVTZKtTLf
-         +4++1Kkli2a4lRFyVMZ2dhJS6auUPaz90HYVJYYeVyyPEU/yl1qXzt5HNZCn4yXJpo6D
-         iPpg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0vXvQOtawH1UZC41zm6irrkvmHiykrtDYz1PTamJu4Q1Xt+u4UFQgWDVxsNiVTXAMnDJSkc0GMXAW@vger.kernel.org, AJvYcCWwG7nVNk68pWJGoI27Mz7i1JkIY2oZAZrMpOcCOpU6DLk/Le6TffLVKgNR8fhxWtJYo2hbpu9NopGmHd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygJoaWBADOy8s1F/GUkPNTN4M9a+LNTRn7Tc428fIMCmn7cXiP
-	Vnop99YoZhDF67u1NjB+9+KkpEQEcL/jq7Y4G2EXQo/slGps9k1fM8mhnMBkKrZtWA==
-X-Gm-Gg: ASbGncsMPdNh9b0rttUFuAzUSpj6Q6d9J9o/ovoGUVrUIsH2easbiaUit8PckfgOytM
-	i6zKvwAkTyRpcZVTX7eV4ERU3GYJGOoMRFxiEF4fouok6j/DCgtf8KkMqJWlGmc+u52K77p8On6
-	L0GcvEF5888O6YANP9n4yoc4c8ipPva5zXx4ry6NUu321n282fZqqDpQ0la4Wg0qDmoGzgdSuZr
-	ud7yzMZikbCNNxU1smuhCAXtdVwHhtN1FSPglbPG2b4LRioOKzZERF6ucdrbO4DYwDzfDLHBO6A
-	xbSYf/4CRc4aNqUCkDqPplKbjgc3iefPtP9dfOaqh878zpYd+VwdU5Fls7wCHqe1WnA=
-X-Google-Smtp-Source: AGHT+IHJTqVfcenXj3ToNQa1hEEGFMAIDPwpCySH64VgAilCDE4QPk0JKPZYkbgrTtJuSB290gU8EA==
-X-Received: by 2002:a05:6512:2394:b0:545:ea9:1a21 with SMTP id 2adb3069b0e04-545180e9275mr194115e87.11.1739319744863;
-        Tue, 11 Feb 2025 16:22:24 -0800 (PST)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545064a48e8sm1088608e87.232.2025.02.11.16.22.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2025 16:22:24 -0800 (PST)
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-308f71d5efcso20462811fa.3;
-        Tue, 11 Feb 2025 16:22:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXRsVhPbeVTJSdfdLXzHZCBa16gaEfSfQWWL+l3UbJLgOBU1o/nYDtNXnc0GVIRd90ssFw6gO6bGXMt@vger.kernel.org, AJvYcCXuDuwk1gtlPPq7Q3w4xywLS0xcZpM/4qxFADi9tbs7vOunHvjCh7QGj54Cn/GnWfcjRElu6OMO7AVLPXA=@vger.kernel.org
-X-Received: by 2002:a2e:a805:0:b0:300:3a15:8f22 with SMTP id
- 38308e7fff4ca-309037d6f62mr5053141fa.21.1739319744487; Tue, 11 Feb 2025
- 16:22:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739319790; x=1739924590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mACifcoi2DxXepU+x0EutTWQzaMm/Sos4wROfYi3LJM=;
+        b=BFhmispdDr47tw89NFbnKzGAvPVclZFpORsZxhwqCVzYNhTRX5HhZo9YNnbmPRSxuh
+         6IwXjz2bUzUdFC3DWtNC4lK9DdqNS5Lt1V6TwMeP/GQ57SDD7n4lnaYtP3r47omtlEg5
+         c68UrJ0Hss8Zudi5ZEQPQYSvyLtNqSG/0Z9Q5oZNhs2hAYomgOx2wA2eC1U1RDoOzRHe
+         lgmOK/pU9rYmGYggIRfEnLzyqen/ZECkKncfZHLHoB/8eFWmgBW0blVWS607ioX5tndx
+         Isq2gwi/JRDm+88cmX7EjV8BxHYeL0qrlOtU4v1ZlGCy8gtePF6PGDi6P0ycoOYE8Rnq
+         aAHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVCm8kcTCho2V54R9HgZzGOBt22ob6Aj9vd1YnvkSB/qmwQIh92Tsnpx5z+saHyZQXokEieTQFW7gbziM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBVAYXmIpReIu8Fzad9uXxx9zJUkBZ6SPB6dQtxvcJ7JjydyLi
+	EVsa/MD5/AwR6t1tFUMYjVMxFc8BPDs/rHe71SboW7TEtO4bJ98GvMynW5JmLX26zqvVY1CaTZ1
+	baFpRYfS2hSuhCNqYQat0iKCO22UVh/fXlNZr
+X-Gm-Gg: ASbGncss4h3eBUQRBt9gXVTKQ4K5b7IHer6uW76SYCCr18akUuXK5cJmYd4xesmNGUc
+	S2zJ1MLDpUFqth2241Aft5/6QOiHhicvbfqPQFcGhWXJCacJ00V+6IwTHUsjBWmWFTTdAwDs69f
+	zDDhrn9kZ9PgfCjjAoa2kydxrq0QInOQ==
+X-Google-Smtp-Source: AGHT+IFPKhZm0/EPYURfMy8o2OglVh9zff4nbrdv9CblcFNVpZjWo90EpnyStQulFiUbZl+EMuN5argcpQNCmKAOnj4=
+X-Received: by 2002:a05:6512:3d90:b0:545:34e:16c0 with SMTP id
+ 2adb3069b0e04-54518de9606mr49823e87.5.1739319790362; Tue, 11 Feb 2025
+ 16:23:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211150150.519006-1-andrew.zaborowski@intel.com> <3bd497be-54d7-43b8-a392-4bf82bf64679@intel.com>
-In-Reply-To: <3bd497be-54d7-43b8-a392-4bf82bf64679@intel.com>
-From: Andrew Zaborowski <andrew.zaborowski@intel.com>
-Date: Wed, 12 Feb 2025 01:22:13 +0100
-X-Gmail-Original-Message-ID: <CAOq732KJ658+mRTZV+SdMRVTdKBUARzWz2WCoTyHqtF98fkdWA@mail.gmail.com>
-X-Gm-Features: AWEUYZm0pK47I6I99gyff23lgrIXF-lWEIjWjwb17mqecH7HoHis7I16BOzs44c
-Message-ID: <CAOq732KJ658+mRTZV+SdMRVTdKBUARzWz2WCoTyHqtF98fkdWA@mail.gmail.com>
-Subject: Re: [PATCH] x86: sgx: Don't track poisoned pages for reclaiming
+References: <20250206222714.1079059-1-vannapurve@google.com>
+ <wra363f7ye6mwv2papahmpgmybi45yqyzeohunbqju3zsf22td@zcutpjluiury> <c07fa2b7-d453-4a9d-b1fc-e3e96514a8d3@intel.com>
+In-Reply-To: <c07fa2b7-d453-4a9d-b1fc-e3e96514a8d3@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Tue, 11 Feb 2025 16:22:59 -0800
+X-Gm-Features: AWEUYZlkk-jh9FqHHuYl2log-YQTJzWr98PHa1jkE8VtQRSzVdPYb1_-7Dq2dlc
+Message-ID: <CAGtprH_4Z15UdPDDCYg=pnroS41fX7c7VzK_ziPMsk=UgQYfgw@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] x86/tdx: Route safe halt execution via tdx_safe_halt()
 To: Dave Hansen <dave.hansen@intel.com>
-Cc: x86@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, pbonzini@redhat.com, seanjc@google.com, 
+	erdemaktas@google.com, ackerleytng@google.com, jxgao@google.com, 
+	sagis@google.com, oupton@google.com, pgonda@google.com, kirill@shutemov.name, 
+	dave.hansen@linux.intel.com, linux-coco@lists.linux.dev, 
+	chao.p.peng@linux.intel.com, isaku.yamahata@gmail.com, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Feb 2025 at 17:25, Dave Hansen <dave.hansen@intel.com> wrote:
->         git log arch/x86/kernel/cpu/sgx/
+On Tue, Feb 11, 2025 at 3:46=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
+ wrote:
 >
-> That usually works for every little nook and cranny of the kernel and
-> will show you what the subject rules are.
+> On 2/11/25 00:32, Kirill A. Shutemov wrote:
+> >> If CONFIG_PARAVIRT_XXL is disabled, "sti;hlt" sequences can still get
+> >> executed from TDX VMs via paths like:
+> >>         acpi_safe_halt() =3D>
+> >>         raw_safe_halt()  =3D>
+> >>         arch_safe_halt() =3D>
+> >>      native_safe_halt()
+> >> There is a long term plan to fix these paths by carving out
+> >> irq.safe_halt() outside paravirt framework.
+> > I don't think it is acceptable to keep !PARAVIRT_XXL (read no-Xen) conf=
+ig
+> > broken.
 >
-> Could you do that for this patch for v2, please?
+> Oh, I thought it took PARAVIRT_XXL=3Dy to even trigger this issue. Was I
+> just confused?
 
-My bad, I'll use x86/sgx: ...
-
->
-> Also, this isn't about _tracking_ pages per se. It's avoiding SGX page
-> reclaim, don't you think?
-
-Ok, the goal is to avoid the crash so I'll update the subject line.
-That said clearing SGX_EPC_PAGE_RECLAIMER_TRACKED for a page that
-cannot be reclaimed seems reasonable on its own.
-
->
-> On 2/11/25 07:01, Andrew Zaborowski wrote:
-> > Pages used by an enclave only get page->poison set in
->
-> Could we please call these "epc_page" instead of "page"?
-
-Ok, makes sense.
-
->
-> > arch_memory_failure() but stay on sgx_active_page_list.
-> > page->poison is not checked in the reclaimer logic meaning that a page could be
-> > reclaimed and go through ETRACK, EBLOCK and EWB.  This can lead to the
-> > firmware receiving and MCE in one of those operations and going into
-> > "unbreakable shutdown" and triggering a kernel panic on remaining cores.
->
-> This requires low-level SGX implementation knowledge to fully
-> understand. Both what "ETRACK, EBLOCK and EWB" are in the first place,
-> how they are involved in reclaim and also why EREMOVE doesn't lead to
-> the same fate.
->
-> Can it be written in a more approachable way?
->
-> During SGX reclaim, the CPU actually touches the SGX data page,
-> encrypting and writing its contents out to normal memory. These "EWB"
-> writeback operations are implemented in what are effectively big,
-> complicated chunks of microcode. Any machine checks encountered during
-> this writeback operation are usually fatal to the entire system.
->
-> If an epc_page has poison, reclaiming it is highly likely to bring the
-> whole system down. The SGX reclaim code does not currently check for poison.
-
-Ok, I agree part of this explanation is fit for the commit message.
-In a busy area of code I don't think every commit touching it should
-explain what the code does but here it makes sense.
-
-As a side note with a set of enclaves fighting badly enough for the
-EPC memory the probability of an MCE happening inside one of the EWB
-operations can become considerable because of the sheer amount of time
-spent in them and I don't think anything can be done about it.
-
->
-> --
->
-> > Remove the affected page from sgx_active_page_list but don't add it
-> > immediately to &node->sgx_poison_page_list to keep most of the current
-> > semantics.
->
-> What semantics are being kept? Are they important?
-
-That's a good question.  An epc_page can be on one of 3 or 4 lists, or
-none, so the logic is already complicated.  My guess is that moving
-the page to &node->sgx_poison_page_list only after EREMOVE is done
-adds some order, because functionally it doesn't change anything.
-(But __sgx_sanitize_pages skips the EREMOVE for poisoned pages)
-
-So epc_page->poison is used temporarily while the page is mapped into
-an enclave.  Once the enclave is released a poisoned page is moved to
-sgx_poison_page_list.  The current semantics ensure that by that time
-the epc_page is not referenced by an encl_page and is not on any other
-list so for all purposes it's forgotten.
-
->
-> > Tested with CONFIG_PROVE_LOCKING as suggested by Tony Luck.
->
-> "I tested it with lockdep and it didn't blow up" is definitely better
-> than "I booted this and it didn't blow up" or not testing it at all.
->
-> But even better would be demonstrating in the changelog that the locking
-> rules were understood and respected in this patch.
->
-> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > index 671c26513..7076464d4 100644
-> > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > @@ -719,6 +719,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
-> >               goto out;
-> >       }
-> >
-> > +     sgx_unmark_page_reclaimable(page);
-> > +
-> >       /*
-> >        * TBD: Add additional plumbing to enable pre-emptive
-> >        * action for asynchronous poison notification. Until
->
-> I'll 100% buy that this is the most expeditious fix.
->
-> But is it the _best_ one?
->
-> In the end, this patch has the semantics of avoiding SGX reclaim on
-> poisoned pages. Wouldn't it be most straightforward to implement that in
-> the SGX *reclaim* code?
-
-I don't know.  If we know we cannot reclaim a page should we force the
-reclaimer to still look at its flags?
-
-I'm sure we don't want to have to check epc_page->poison multiple
-times if we can remove it from a relevant list once. Perhaps it's not
-great that my patch adds a period when the epc_page is not on *any*
-list, everywhere else this is done only for very short times.  I'm not
-sure what it would take to eremove the page earlier so it can be added
-to sgx_poison_page_list, I think the "TBD" comment in
-arch_memory_failure() refers to that and I hoped to leave it as a TBD.
-
-Best regards
+Original issue with unsafe "sti;hlt" execution for TDX VMs doesn't
+need PARAVIRT_XXL to be enabled in theory. Any caller just needs to
+reach native*halt() to trigger the issue.
 
