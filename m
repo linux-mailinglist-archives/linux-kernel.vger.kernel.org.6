@@ -1,147 +1,128 @@
-Return-Path: <linux-kernel+bounces-510415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-510418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4511DA31C82
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:01:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEEB2A31C8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 04:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4ED5166D87
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:01:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8D216729F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 03:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71771D5146;
-	Wed, 12 Feb 2025 03:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBABB1D7E50;
+	Wed, 12 Feb 2025 03:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="PbqxVD2w"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JODFbWLt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8323D27183B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 03:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFF727182B;
+	Wed, 12 Feb 2025 03:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739329265; cv=none; b=R903+hdI7evDYMk8+WLh8k84gjlCqTHo6t5I6wMdL0rmSK1g2lJrpVxXvQu29Yjhgl81USJVtVQcStuq9skRkza+ddiYY517GvnhuerW+yUYp34l3pU9OqAut+XHNg48SKwCpt4jDRm3WN2JR9xPHjovgN4iEwoWtGf26yBjIRU=
+	t=1739329944; cv=none; b=NkZufyn76BxLPFwqZDFzyy6ZuUSN+bqeY9sSd041tafyHDW+WM0S/YCloAiBMSgpjI4MKC5VLQnkspFqe5o6hCMMf2osOc+/v2TiLZz91TutQjz0rwS0Sl6gl8VyLf8MH5hMUWhvoEKdu5+tVOwRxfvbfSLqUqk8z1cI/Cj9L18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739329265; c=relaxed/simple;
-	bh=XPP9kRN6kzoAOAZHknQN2SY3BFA8CtzNYCTu5ea1JwM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s6HHvB/3vfCiCqhZxfDKKDz7b1xxYdxPLpmJB6O3Abx9Ppy5hTpCwzePowTFIfu48HdXnbD/hh+8SF6WjoKZIxnplYj80l81d6ib1i6rj0sUVqenlDXDLsiPWPpzwp/hVSsDbV7xtiPewekKkC9Fu5i3IblFaVy9ypy2zjNQO3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=PbqxVD2w; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21f61b01630so5704185ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Feb 2025 19:01:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1739329263; x=1739934063; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rX+yii2dh/Nt6iZHfj27+NPFJKvRakVXL3zR3FNiPnU=;
-        b=PbqxVD2wnGV9Y/QVtFTK3JnnIfruORn4vsmvKQSubIWNrrKEQbi4yLFGDkS6QbD/OA
-         mxBZhfmi+pPyJojoveR+T8BPtveesaPGJ0Qr74fbBn/Kdb1EerP4Q9p9B64FNZjNmLLF
-         SHXz684PWl4z5AikVtEEEoKlB7kUIVzQCNMIU/qMMTC3gN4JRWPeRBFR4Bj8L/7r9bgg
-         Pojby8vN7Gg/CBwNeHqyhK2pzXGZ4pyE/5C1Ow8oqzR9SEE5BYCFcA9WN7AUUiStY0XO
-         0aN673blVklybvKn5iTAGo4HeaDOq4Obr/bi3IwjnEa1eHqdJqzCqHjv6UBGUpIUKuEk
-         bFQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739329263; x=1739934063;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rX+yii2dh/Nt6iZHfj27+NPFJKvRakVXL3zR3FNiPnU=;
-        b=KF4H4g3mY/4/+ffIKQOpKtr8A9/8eP+Mruhwp0AEfBrra6BTjpnQNT8wDZWRouKWk7
-         eDmBY/6B2QTrjChcUJ1qNC6RrmC16ODxCwrQqBZmDlLC3oeYEgeNnXkX0ZNQjEP1IOJ+
-         szmc7XWzTkMR5hyTzI4cW07hr8mrTh6W0Km2wAhw+vJ1W/+hMSaQUYUZzUdgv+ac2jtk
-         P7JHqykclEHLmQ2XMorSPcIiQvXU9+pwvrma+4HLSc3F0MRojGc8PMGwRAl36UitGv50
-         m1SuqiyUj1DLKOcQWcehGgoBYnTR4MT6Im4z5Vc3w/1tcg6QCRcyikdAhHOMLK5OOV3i
-         FYgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvQBBTl6Fz2DgwmIhZ5ABniP0apXv6Jg9Y+s5TXUIP9xb2LeUMTUv7Yfh2Cx01XcKlWqMDuj/n77kgsaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk93Vq4huyP7kJVqXMamXFvm1bPg5bmy3ONbOzzVsU3qZ9EhAB
-	HAh0cajf2vafotNSm/YxYKCqZ0tyViDwVSMHnIP+e/0NoGV2HT269VyhfTPiPsU=
-X-Gm-Gg: ASbGncsjMOan7JT33CIhKyP5PmiA0hpVPTnLqXDVomR4UnfxnFz1ApIXV1C0iqZN+4U
-	r24N0b49wtfevy8G3F56rOowy4pOVUK/qDylvStep1boofyg+R7ibS3rUbyOgMaUbc5LtlcvTwX
-	k6hzjkrqNIcCa0aBJcUZ4by1qFmNhL3wvA4/A4yXMY88DdhW0AyKxOFJw9pn43hYO5Gk/lvWaN2
-	8HH0Om5V1/Urqylzzwmsv9tvVc/hoKHYsc9SQo92kNVIO6uog0jaNrNHveaRLCE7hjRhxl+835r
-X-Google-Smtp-Source: AGHT+IHYiD5282yAI56S5u6sv+uNijoJoeBldjyAL4y6gsfbUi6PiXik3/CCecp77O4OY+bdxO9OlA==
-X-Received: by 2002:a05:6a00:3d03:b0:730:84e7:cc with SMTP id d2e1a72fcca58-7322bdc4f48mr2719774b3a.0.1739329262552;
-        Tue, 11 Feb 2025 19:01:02 -0800 (PST)
-Received: from localhost.localdomain ([143.92.64.17])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73091f94bf9sm4170337b3a.20.2025.02.11.19.00.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 19:01:00 -0800 (PST)
-From: Tang Yizhou <yizhou.tang@shopee.com>
-X-Google-Original-From: Tang Yizhou
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tang Yizhou <yizhou.tang@shopee.com>
-Subject: [PATCH] blk-wbt: Cleanup some comments
-Date: Wed, 12 Feb 2025 11:00:55 +0800
-Message-Id: <20250212030055.407090-1-yizhou.tang@shopee.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739329944; c=relaxed/simple;
+	bh=hS0C6YuBmSuMaJvuGugmlUTvoT5Svl7GpzGy4fckWqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R1HATPnkBuZA+6x6/MIE0IvylEujGasbOZ2rAY4GWs0RQs6mrXroRTRIQo7vkBils/Asu3Pq4QtQRYvrvzx3MuxDRfK4BnOFZHyEVfAsbriw6lJm/UnMBg2crTS12GUpBCYiHJHGReUneHR9XtltPF/a3R0v4RuKwtLzL0Y5y38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JODFbWLt; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739329942; x=1770865942;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hS0C6YuBmSuMaJvuGugmlUTvoT5Svl7GpzGy4fckWqg=;
+  b=JODFbWLtGujXT+ErZoSzfN1WNJJN1kuPXD+FTFxee5RPZoajKt31K4nH
+   5lkkocFfO8LXKLsme/wy9sLBqczj2t18yz6JXSyWfT8PViJ9Pmkx9ILgg
+   pEwZgt2E7puoqnKmYw5nSMuJhYGAdpbSjL/ETPwotH6j1KEryAMaHdESv
+   k800oWWROMmrL264FEFvtjdAvnq5B4641/EhApBUe9FzN3LXMOax1gytt
+   ADE1Jf2L85Q8jcvr4FnOHeInwKxYk1QAXL6/JTEJEIBsQ6ig1PSEnS/Mj
+   Hocus2SfmLiFy7RNfBuNhsSSG4mX4VSV/eLanQN352VNUsprOlznifnyR
+   Q==;
+X-CSE-ConnectionGUID: +DgbPe7qRlO371EPWpXD9Q==
+X-CSE-MsgGUID: f8KqcM+0T9WBE4MKr2h+SQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="39992757"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="39992757"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 19:12:21 -0800
+X-CSE-ConnectionGUID: WZWEef/aS7WzUr1iw4fYBA==
+X-CSE-MsgGUID: bcGxCh1+TV2ZLtDPHxCwHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="112681941"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2025 19:12:18 -0800
+Message-ID: <13d7d1ad-d631-436f-b1b6-a11a77e6660a@intel.com>
+Date: Wed, 12 Feb 2025 11:12:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] KVM: x86: Have ____kvm_emulate_hypercall() read
+ the GPRs
+To: Binbin Wu <binbin.wu@linux.intel.com>, pbonzini@redhat.com,
+ seanjc@google.com, kvm@vger.kernel.org
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@intel.com,
+ isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
+ linux-kernel@vger.kernel.org
+References: <20250211025442.3071607-1-binbin.wu@linux.intel.com>
+ <20250211025442.3071607-2-binbin.wu@linux.intel.com>
+ <de966c9c-54e4-4da2-8dd3-d23b59b279a3@intel.com>
+ <7abea257-7d83-40a2-8d56-c155593153f4@linux.intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <7abea257-7d83-40a2-8d56-c155593153f4@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Tang Yizhou <yizhou.tang@shopee.com>
+On 2/12/2025 9:32 AM, Binbin Wu wrote:
+> 
+> 
+> On 2/11/2025 6:23 PM, Xiaoyao Li wrote:
+>> On 2/11/2025 10:54 AM, Binbin Wu wrote:
+>>> Have ____kvm_emulate_hypercall() read the GPRs instead of passing them
+>>> in via the macro.
+>>>
+>>> When emulating KVM hypercalls via TDVMCALL, TDX will marshall 
+>>> registers of
+>>> TDVMCALL ABI into KVM's x86 registers to match the definition of KVM
+>>> hypercall ABI _before_ ____kvm_emulate_hypercall() gets called. 
+>>> Therefore,
+>>> ____kvm_emulate_hypercall() can just read registers internally based 
+>>> on KVM
+>>> hypercall ABI, and those registers can be removed from the
+>>> __kvm_emulate_hypercall() macro.
+>>>
+>>> Also, op_64_bit can be determined inside ____kvm_emulate_hypercall(),
+>>> remove it from the __kvm_emulate_hypercall() macro as well.
+>>
+>> After this patch, __kvm_emulate_hypercall() becomes superfluous.
+>> we can just put the logic to call the "complete_hypercall" into 
+>> ____kvm_emulate_hypercall() and rename it to __kvm_emulate_hypercall()
+>>
+>>
+> According to the commit message of
+> "KVM: x86: Refactor __kvm_emulate_hypercall() into a macro":
+> "Rework __kvm_emulate_hypercall() into a macro so that completion of
+> hypercalls that don't exit to userspace use direct function calls to the
+> completion helper, i.e. don't trigger a retpoline when RETPOLINE=y."
 
-wbt_wait() no longer uses a spinlock as a parameter. Update the
-function comments accordingly.
+I see.
 
-Additionally, revise other comments to ensure they align with the
-actual implementation.
+I thought the purpose of introducing the macro was for TDX usage. My 
+fault that didn't checking the commit message of that change.
 
-Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
----
- block/blk-wbt.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+It makes sense for retpoline reason.
 
-diff --git a/block/blk-wbt.c b/block/blk-wbt.c
-index 6dfc659d22e2..f1754d07f7e0 100644
---- a/block/blk-wbt.c
-+++ b/block/blk-wbt.c
-@@ -136,8 +136,9 @@ enum {
- 	RWB_MIN_WRITE_SAMPLES	= 3,
- 
- 	/*
--	 * If we have this number of consecutive windows with not enough
--	 * information to scale up or down, scale up.
-+	 * If we have this number of consecutive windows without enough
-+	 * information to scale up or down, slowly return to center state
-+	 * (step == 0).
- 	 */
- 	RWB_UNKNOWN_BUMP	= 5,
- };
-@@ -446,9 +447,9 @@ static void wb_timer_fn(struct blk_stat_callback *cb)
- 		break;
- 	case LAT_UNKNOWN_WRITES:
- 		/*
--		 * We started a the center step, but don't have a valid
--		 * read/write sample, but we do have writes going on.
--		 * Allow step to go negative, to increase write perf.
-+		 * We don't have a valid read/write sample, but we do have
-+		 * writes going on. Allow step to go negative, to increase
-+		 * write performance.
- 		 */
- 		scale_up(rwb);
- 		break;
-@@ -638,11 +639,7 @@ static void wbt_cleanup(struct rq_qos *rqos, struct bio *bio)
- 	__wbt_done(rqos, flags);
- }
- 
--/*
-- * May sleep, if we have exceeded the writeback limits. Caller can pass
-- * in an irq held spinlock, if it holds one when calling this function.
-- * If we do sleep, we'll release and re-grab it.
-- */
-+/* May sleep, if we have exceeded the writeback limits. */
- static void wbt_wait(struct rq_qos *rqos, struct bio *bio)
- {
- 	struct rq_wb *rwb = RQWB(rqos);
--- 
-2.25.1
+> So I kept the macro.
 
 
