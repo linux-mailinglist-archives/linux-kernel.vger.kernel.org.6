@@ -1,115 +1,187 @@
-Return-Path: <linux-kernel+bounces-511409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-511410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E40A32AB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:53:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69E3A32ABE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 16:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83D833A8854
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:52:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B36B1650D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Feb 2025 15:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99A4263F47;
-	Wed, 12 Feb 2025 15:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE42424C667;
+	Wed, 12 Feb 2025 15:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mXvv70m2"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpKfe7nh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D78262151;
-	Wed, 12 Feb 2025 15:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D5F21B1BE;
+	Wed, 12 Feb 2025 15:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739375285; cv=none; b=E0/FHMWe2iP1OlQHy5rzfQss/UeXWjz6F5hd08ewyx87MntF34eq9xptZPW0FVnK2KP3ARqrZFqojSRm++DOZn1gQvK3xqu3ARN5ib/7nowGI8OH3kdVF70Rbt/de1ygqYmyTlKXa6UZJ+zDFZ57DQ9rfzWknctaz7kuStfGcVE=
+	t=1739375300; cv=none; b=TWIIZiWvH6BwJjJzR9C4C9/xfj0jK3SHCD/RJNYx7FbQqGG/fSRT9D4fu1vsS7cr2pH1pT3tNuksOWYsoIeR46DCh3HH6vHJnZI45K4IQ7ZwvGtCZpTq7OAURTKtgNgEdeZkuYn3PowyTw5Qz0cn/kImE2g9gzhx7Bez4sfVr08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739375285; c=relaxed/simple;
-	bh=osZmc1DPVoTq245gL1CMMReUC2xc6UC5A8bH+WgUWnc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qcxsns8x82jdNw5bJCUjjDzFLNXMbPL68wwDflEXh5AXz0kCDDZczttCZ8iyfyAP4XheWMEFYJ7xMShsYNO3mNcJ0Nu9cwMucxYK/nYq/Hr98x4sCyUT+ObhCJ3I1ftobM7SU4RxslAzq22Zch9KDsuoUQJyeWM2GgET9kxsetU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mXvv70m2; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 364144416E;
-	Wed, 12 Feb 2025 15:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739375280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P0G+yYadJWDhMsM9S6K3wOyG/oWy+c8825+nanSQpks=;
-	b=mXvv70m2Am4yO9Kvh96qPNwuxJRncLele/NuEh6/2t4WDnmi3Z/YfV9XJ2Sc+NNlAW0FgG
-	7hxEycTIR8B7mq2rLD3m96VSZMlRCDVvtNR9IBwJNWyRy4Pn7VQaOeOhgeNU/N/dFdaHVl
-	s+/443rY8H5dyrNEHa/6aNADLCq0wzn7oTBUF1MwUAdluXbD+hW2ESqaNHFvMtwvDuSLDg
-	MYi+Ord8vFvRNsqeodt+svNBmSq85ft2DTI3BGiwtT0pIUpdrIoqKUTKpraxtbIn+5K08P
-	hfH5ZQyps+2ZiKs537yNF+taQyBpbRY6dPth7dbiUyFT0Bhs7BFXZdYO6rVQtg==
-From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Date: Wed, 12 Feb 2025 16:46:31 +0100
-Subject: [PATCH 12/12] MAINTAINERS: add entry for new wilc3000 bluetooth
- driver
+	s=arc-20240116; t=1739375300; c=relaxed/simple;
+	bh=jGTcO7uOKoo9Sew7/PnGEbprmSHHDRcuUgN9YyNsgpk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UfwoJYS2YqxPdVKHssJeJAvQXwUt9JD0g6sZKv1bQw2n770VrKmq8upBOpBAYBlhUk6dmW+Vl4gTgZRJ94q+ngHLybG5D+KLIS9DSjDSi2Qe36heIhJCErj5MSOyu4fSvKrYcw5/7SjuP0dxWElWPe2L4pzJWWk3Dgps2Ktyqm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpKfe7nh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE85C4CEDF;
+	Wed, 12 Feb 2025 15:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739375299;
+	bh=jGTcO7uOKoo9Sew7/PnGEbprmSHHDRcuUgN9YyNsgpk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LpKfe7nhCwi7G2IBXWHGfrifPCjdBtpx5STvudjspOxexJrzMWCekZRcSy+b9Vbp+
+	 q23nMNet1qLz58BEZ7ZJD8Od5x3hBDTSM3JPm7qU44xp3eGoyc8iDo8CdUcyssUwv7
+	 ucT4r7Gg/OrMxzjjmuKXivISpXYBEXztV/dyfH5UdVJmNLRpjs2QZFPCXKxPg/2m73
+	 xaoF0NsbIXnwxVpu9Gejxt/KRvD6osrOClBaVLbZMUK3VuGKQtBnT+vx7JNinCz6ks
+	 qTQj4l3I4sNeubtfDCs5JH0CeW6fK+HH1wJC3P4sDY2e7e90cBJ+tkB6i1nnKWrFL1
+	 WIc/dou+/Dh1w==
+From: Eric Biggers <ebiggers@kernel.org>
+To: fsverity@lists.linux.dev
+Cc: linux-crypto@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mikulas Patocka <mpatocka@redhat.com>
+Subject: [PATCH v8 0/7] Optimize dm-verity and fsverity using multibuffer hashing
+Date: Wed, 12 Feb 2025 07:47:11 -0800
+Message-ID: <20250212154718.44255-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250212-wilc3000_bt-v1-12-9609b784874e@bootlin.com>
-References: <20250212-wilc3000_bt-v1-0-9609b784874e@bootlin.com>
-In-Reply-To: <20250212-wilc3000_bt-v1-0-9609b784874e@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>, 
- Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Ajay Singh <ajay.kathat@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Kalle Valo <kvalo@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Marek Vasut <marex@denx.de>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggedvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrrocuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevgefhteffuefhheekkeelffffvdeugffgveejffdtvdffudehtedtieevteetnecukfhppedvrgdtvdemkeegvdekmehfleegtgemvgdttdemmehfkeehnecuvehluhhsthgvrhfuihiivgepkeenucfrrghrrghmpehinhgvthepvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemfhekhedphhgvlhhopegludelvddrudeikedruddrudeljegnpdhmrghilhhfrhhomheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdpr
- hgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhuihiirdguvghnthiisehgmhgrihhlrdgtohhm
-X-GND-Sasl: alexis.lothore@bootlin.com
 
-Add MAINTAINERS entry for the new bluetooth driver in
-drivers/bluetooth/hci_wilc.c
+[ This patchset keeps getting rejected by Herbert, who prefers a
+  complex, buggy, and slow alternative that shoehorns CPU-based hashing
+  into the asynchronous hash API which is designed for off-CPU offload:
+  https://lore.kernel.org/linux-crypto/cover.1730021644.git.herbert@gondor.apana.org.au/
+  This patchset is a much better way to do it though, and I've already
+  been maintaining it downstream as it would not be reasonable to go the
+  asynchronous hash route instead.  Let me know if there are any
+  objections to me taking this patchset through the fsverity tree, or at
+  least patches 1-5 as the dm-verity patches could go in separately. ]
 
-Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+[ This patchset applies to v6.14-rc2 ]
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 82b227c3939a49996498f4e829541eb5380ab2b3..2f02aecc21e96a2f9e6ff2de3864bb2d2b964127 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15526,6 +15526,13 @@ L:	linux-wireless@vger.kernel.org
- S:	Supported
- F:	drivers/net/wireless/microchip/wilc1000/
- 
-+MICROCHIP WILC3000 BLUETOOTH DRIVER
-+M:	Alexis Lothoré <alexis.lothore@bootlin.com>
-+L:	linux-bluetooth@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/net/bluetooth/microchip,wilc3000-bt.yaml
-+F:	drivers/bluetooth/hci_wilc.c
-+
- MICROSEMI MIPS SOCS
- M:	Alexandre Belloni <alexandre.belloni@bootlin.com>
- M:	UNGLinuxDriver@microchip.com
+On many modern CPUs, it is possible to compute the SHA-256 hash of two
+equal-length messages in about the same time as a single message, if all
+the instructions are interleaved.  This is because each SHA-256 (and
+also most other cryptographic hash functions) is inherently serialized
+and therefore can't always take advantage of the CPU's full throughput.
 
+An earlier attempt to support multibuffer hashing in Linux was based
+around the ahash API.  That approach had some major issues, as does the
+alternative ahash-based approach proposed by Herbert (e.g. see my
+responses at
+https://lore.kernel.org/linux-crypto/20240610164258.GA3269@sol.localdomain/
+and
+https://lore.kernel.org/linux-crypto/20241028190045.GA1408@sol.localdomain/,
+and the other discussion on v4
+https://lore.kernel.org/linux-crypto/20240603183731.108986-1-ebiggers@kernel.org/T/#t)
+This patchset instead takes a much simpler approach of just adding a
+synchronous API for hashing equal-length messages.
+
+This works well for dm-verity and fsverity, which use Merkle trees and
+therefore hash large numbers of equal-length messages.
+
+This patchset is organized as follows:
+
+- Patch 1-2 add crypto_shash_finup_mb() and tests for it.
+- Patch 3-4 implement finup_mb on x86_64 and arm64, using an
+  interleaving factor of 2.
+- Patch 5 adds multibuffer hashing support to fsverity.
+- Patch 6-7 add multibuffer hashing support to dm-verity.
+
+This patchset increases raw SHA-256 hashing throughput by up to 98%,
+depending on the CPU (see patches for per-CPU results).  The throughput
+of cold-cache reads from dm-verity and fsverity increases by around 35%.
+
+Changed in v8:
+  - Rebased onto v6.14-rc2 and updated cover letter.
+
+Changed in v7:
+  - Rebased onto v6.12-rc1 and dropped patches that were upstreamed.
+  - Added performance results for more CPUs.
+
+Changed in v6:
+  - All patches: added Reviewed-by and Acked-by tags
+  - "crypto: testmgr - add tests for finup_mb": Whitespace fix
+  - "crypto: testmgr - generate power-of-2 lengths more often":
+    Fixed undefined behavior
+  - "fsverity: improve performance by using multibuffer hashing":
+    Simplified a comment
+  - "dm-verity: reduce scope of real and wanted digests":
+    Fixed mention of nonexistent function in commit message
+  - "dm-verity: improve performance by using multibuffer hashing":
+    Two small optimizations, and simplified a comment
+
+Changed in v5:
+  - Reworked the dm-verity patches again.  Split the preparation work
+    into separate patches, fixed two bugs, and added some new cleanups.
+  - Other small cleanups
+
+Changed in v4:
+  - Reorganized the fsverity and dm-verity code to have a unified code
+    path for single-block vs. multi-block processing.  For data blocks
+    they now use only crypto_shash_finup_mb().
+
+Changed in v3:
+  - Change API from finup2x to finup_mb.  It now takes arrays of data
+    buffer and output buffers, avoiding hardcoding 2x in the API.
+
+Changed in v2:
+  - Rebase onto cryptodev/master
+  - Add more comments to assembly
+  - Reorganize some of the assembly slightly
+  - Fix the claimed throughput improvement on arm64
+  - Fix incorrect kunmap order in fs/verity/verify.c
+  - Adjust testmgr generation logic slightly
+  - Explicitly check for INT_MAX before casting unsigned int to int
+  - Mention SHA3 based parallel hashes
+  - Mention AVX512-based approach
+
+Eric Biggers (7):
+  crypto: shash - add support for finup_mb
+  crypto: testmgr - add tests for finup_mb
+  crypto: x86/sha256-ni - add support for finup_mb
+  crypto: arm64/sha256-ce - add support for finup_mb
+  fsverity: improve performance by using multibuffer hashing
+  dm-verity: reduce scope of real and wanted digests
+  dm-verity: improve performance by using multibuffer hashing
+
+ arch/arm64/crypto/sha2-ce-core.S    | 281 ++++++++++++++++++++-
+ arch/arm64/crypto/sha2-ce-glue.c    |  40 +++
+ arch/x86/crypto/sha256_ni_asm.S     | 368 ++++++++++++++++++++++++++++
+ arch/x86/crypto/sha256_ssse3_glue.c |  39 +++
+ crypto/shash.c                      |  58 +++++
+ crypto/testmgr.c                    |  73 +++++-
+ drivers/md/dm-verity-fec.c          |  19 +-
+ drivers/md/dm-verity-fec.h          |   5 +-
+ drivers/md/dm-verity-target.c       | 192 +++++++++++----
+ drivers/md/dm-verity.h              |  34 +--
+ fs/verity/fsverity_private.h        |   7 +
+ fs/verity/hash_algs.c               |   8 +-
+ fs/verity/verify.c                  | 169 ++++++++++---
+ include/crypto/hash.h               |  52 +++-
+ 14 files changed, 1224 insertions(+), 121 deletions(-)
+
+
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
 -- 
-2.48.0
+2.48.1
 
 
