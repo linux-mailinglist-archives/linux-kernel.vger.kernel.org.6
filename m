@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-513540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23AAA34B68
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:13:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46363A34B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A72D1624CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:07:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 508187A4A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96953221700;
-	Thu, 13 Feb 2025 17:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1CC3595F;
+	Thu, 13 Feb 2025 17:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="VdA8mVjE"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SIO/nQJZ"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D9E214A69
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB73202C4C;
+	Thu, 13 Feb 2025 17:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466429; cv=none; b=V4QGXs9iN5u6d0/rGKohHo95m8Hxt84nQ/tCWnwFDX1riCs6cIqTetcFvn4onLmLJCbyGODZn2ZQIOdLH9V1t74ccIKC4tg43taO+ssSYGjtg4SDvcdfqkc1NUlYEliHylxPGCpW7pn8EOc6FPwGSJXJq3/f5medGfOttvf7n7Y=
+	t=1739466462; cv=none; b=njKsgs1rW0h/sWLjEcn4/Ff0UURyaMa8HtlPA0ssNJWnKs5cWyII6b2txl1oqL9llTX3Cn1rC6YQPgdFUxbINYHaFFeFCapv6tE/zLSujcGlVVAxMLQXEPfhvgRjfxwir9f4kCkLZ/tmOKCz5qo/V+WTK5UrVhDdS6JArDnDQN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466429; c=relaxed/simple;
-	bh=rB8KbwGPwVVprGssZRAa1SZhAKnXoGoYh27vDNsmwDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GtivS6ZEWZJKHxicwzDz57FgWu0WVqQgPdZwCte9uyTtmCYD1p2YAU48/t30K8sG7B9obkZXuU38YunCFygvFS7XJ5zrllttVr+m9ktxcnIOnliZcS6fOqWWgF7fMaJ65RCVO+MuOQMbYMconEd8rgAE3OdPE219aQNMlsPuV5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=VdA8mVjE; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c05f7d9ac0so130078985a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:07:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1739466426; x=1740071226; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WlLNOt9fP+kEnliAil52DiLv0in7lZUPZKbD7Kg1MnE=;
-        b=VdA8mVjEI0FrfpknUEsm+N0DvN0Iko0/xAGNzYZp8kAiONdU6bLcSz7nIHJxXB13xv
-         OwQwozB/esfM4fnJ2MEumr+av7e05yCiTunCZtsH4DdDGWgPhKOx3MudTNzkL/izcXKN
-         xxPwlIQ06DMUGf+nNTufHNgdse4oMnKde7gpq4y4IZBqPsc5yRPstFE3i2uDNVSUU+LD
-         FPtXMpH3TyqrakwPPp9KjuYsiceku6obbVP8B5TWAXOfSNI7MMcCxFOhrc+wHRyGDVVt
-         3HyyVq+ArZxMJXrvYDVOjAlifEfZrov95umeX8KNMEMH5ICl2vdhdzoWr3tAJemXCtoW
-         IcJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739466426; x=1740071226;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WlLNOt9fP+kEnliAil52DiLv0in7lZUPZKbD7Kg1MnE=;
-        b=r5czw4wV3BKMJoLaq0Nw7Ty2u4hwbfLw7eWEaq6yPuCReL1ZmLKuVudCe4xnUkmtrd
-         VlNZx9gYGvvWVgk3p59azJJD4AHwdx9mJdIZG2FWuD9R9sLkMhSd54xlcCOUFZ0qAJ54
-         +vGVRePbFmQKn8W/WKFunvnfkJOaRJPuLJrwR4O8hD7ojox6srmsVvwe2IwzEe/bILbe
-         s6Uud8Ra22JUVdqTKg8Z/Cg5vpjEzYKXWueIdI80zlDrnh+HyYyiYO15+sdZB3F0Lpwk
-         1ZoSrD1ebR6LTKsGtpxoOiF59w4TcYPkZcEWUs6QW1w/3lD+ACqzVNPhbnxIyQKeAEmE
-         YbsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWY4MNpE8Of4RXZqc2FzNPR30Jrh7XSTx+lFflU+e2hDAmgCE97M2AmYp2oVDj8/7VYerb4BHqsp4I/hs0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUnv6KXGguJygEakvf0+9qtxdoN5cuvVV0czE5xiAgJdLB6bF7
-	dmp0e7TrJqe53z77RBQ9naUScV8zSGKFgEfYRVBixemRN7wqmN4yUZWV0Q2C8g==
-X-Gm-Gg: ASbGncs5EsvCjFQKZvigptHsYnhYOJ9w173qzTWqfOfVVUw6LlM55VmmZpFDjmxpwRd
-	IlyfByaDVX4vuZyU3FnYI/AzUWlX4sx0dFTHyz4727P9oj7WH2EHwO66sUzHcHeB21rT9q1XFwu
-	WaPtHpjYHykDOS3LPJFzkUM8d6LkroEwxwqnBFL0him/qP51O39vhEvui94S+oGRf5XM7+as7wK
-	aLFWljzWaIiFmkV9rgacSEl4NOQujcCoZNe2HrjgMS9h9yrIkUwUBB8Uo/mfeCjOoBsCZxMl0m+
-	2qs6PhnHVQII8OoCzqs/lzr/tlHI66evpA==
-X-Google-Smtp-Source: AGHT+IGsMfgrhffZotxEBPAkCoKFxM2e4MJHynAIf4UclWxtnIYSVF6Pzff8nHgCVhV2dzf3/QqyvA==
-X-Received: by 2002:a05:6214:2a8a:b0:6df:97a3:5e76 with SMTP id 6a1803df08f44-6e46ed8a47cmr126158686d6.27.1739466425747;
-        Thu, 13 Feb 2025 09:07:05 -0800 (PST)
-Received: from [10.200.24.228] ([12.55.13.134])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471c2a12436sm9719841cf.23.2025.02.13.09.07.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 09:07:05 -0800 (PST)
-Message-ID: <e4a4c688-b78c-468b-8196-68d2df980167@tenstorrent.com>
-Date: Thu, 13 Feb 2025 11:07:03 -0600
+	s=arc-20240116; t=1739466462; c=relaxed/simple;
+	bh=W4OErFGysDwGXaHwpzIF3REBjPTSH176IPgpfA/4uJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dx5pHIT1jWLtPbBA5vVTA+SexOV5kaFHBwYdsWeXkBPkPT4v8W97NoYpcCck7ZrKGZy90JnTkz4GTOGhc4qC1XVIkzGnag4jnwVJ5stM/J3D19mcuxGcNfDGEM4OlTY0yd8w3kiMULLJq8uk6XbWKXBqyRJ8jo+bBIVGWydRD6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SIO/nQJZ; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 393344445D;
+	Thu, 13 Feb 2025 17:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739466457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pkRWv4JP/idAuAK+mR/AdT1Zif8+aeGhHShLWeul7BY=;
+	b=SIO/nQJZv43iVUadTFzcCneOf8JkXKitdCkSooThMyMJzhEtByvC05ZJRe+qnJb/hviIcI
+	DH1RlVBOcZUqBeq9xEK6DmbHgonpPz9mVKmv4RhCMF9auDacoaHaLoXmEuBwuRv9JFluok
+	R+vvrhaltCo9NJVrf1vIjkj1uum3p2wE0077wC72ivgzPLxTyM/tZOoCphmdDWNcgUliLM
+	ArcBDF9EmKibqx6ABf+zoGTTDy6zLJFFstjH4YZCudasC5tLxeNCZcnWE4sS3bBeDS/SY6
+	FPPv3yskQLPfHk+3OFCdoLIf7LGAA5/lAAvIaGp0Ave040GhGpDoHn4d3HfKIQ==
+Date: Thu, 13 Feb 2025 18:07:33 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Phil Elwell <phil@raspberrypi.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta
+ <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+ "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com,
+ brgl@bgdev.pl, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+ <conor+dt@kernel.org>, derek.kiernan@amd.com, devicetree@vger.kernel.org,
+ dragan.cvetic@amd.com, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
+ kw@linux.com, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "open
+ list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
+ <linux-pci@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835 ARM
+ ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+ lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
+ manivannan.sadhasivam@linaro.org, masahiroy@kernel.org, Michael Turquette
+ <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ saravanak@google.com, Stephen Boyd <sboyd@kernel.org>,
+ thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, Will Deacon
+ <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <20250213180733.11999e07@bootlin.com>
+In-Reply-To: <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+	<20250213171435.1c2ce376@bootlin.com>
+	<a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+	<CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] riscv: implement user_access_begin and families
-To: Ben Dooks <ben.dooks@codethink.co.uk>,
- Charlie Jenkins <charlie@rivosinc.com>
-Cc: palmer@dabbelt.com, aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jisheng Zhang <jszhang@kernel.org>
-References: <20241118230112.2872978-1-cyrilbur@tenstorrent.com>
- <20241118230112.2872978-2-cyrilbur@tenstorrent.com> <Z4rl8BgoV8tygCn9@ghost>
- <b45aab1e-6d37-4027-9a15-4fa917d806b9@codethink.co.uk>
-Content-Language: en-US
-From: Cyril Bur <cyrilbur@tenstorrent.com>
-In-Reply-To: <b45aab1e-6d37-4027-9a15-4fa917d806b9@codethink.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjeeffecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeehpdhrtghpthhtohepphhhihhlsehrrghsphgsvghrrhihphhirdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtoheprghnughrvggrrdhpohhrthgrsehsuhhsvgdrtghomhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtoheps
+ ggtmhdqkhgvrhhnvghlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhm
+X-GND-Sasl: herve.codina@bootlin.com
 
+On Thu, 13 Feb 2025 16:30:44 +0000
+Phil Elwell <phil@raspberrypi.com> wrote:
 
-
-On 6/2/2025 1:08 am, Ben Dooks wrote:
-> On 17/01/2025 23:21, Charlie Jenkins wrote:
->> On Mon, Nov 18, 2024 at 11:01:09PM +0000, Cyril Bur wrote:
->>> From: Jisheng Zhang <jszhang@kernel.org>
->>>
->>> Currently, when a function like strncpy_from_user() is called,
->>> the userspace access protection is disabled and enabled
->>> for every word read.
->>>
->>> By implementing user_access_begin and families, the protection
->>> is disabled at the beginning of the copy and enabled at the end.
->>>
->>> The __inttype macro is borrowed from x86 implementation.
->>>
->>> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
->>> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
+> Hi Andrew,
 > 
-> If we're doing this, then saving the STATUS.SUM flag is going to
-> be more important than before. We had this discussion when the
-> initial user-access with syzbot stress testing turned up.
+> On Thu, 13 Feb 2025 at 16:27, Andrew Lunn <andrew@lunn.ch> wrote:
+> >
+> > On Thu, Feb 13, 2025 at 05:14:35PM +0100, Herve Codina wrote:  
+> > > Hi Phil,
+> > >
+> > > On Thu, 13 Feb 2025 15:18:45 +0000
+> > > Phil Elwell <phil@raspberrypi.com> wrote:
+> > >  
+> > > > Hi Andrea,
+> > > >
+> > > > The problem with this approach (loading an overlay from the RP1 PCIe
+> > > > driver), and it's one that I have raised with you offline, is that
+> > > > (unless anyone can prove otherwise) it becomes impossible to create a
+> > > > Pi 5 DTS file which makes use of the RP1's resources. How do you
+> > > > declare something as simple as a button wired to an RP1 GPIO, or fan
+> > > > connected to a PWM output?  
+> >
+> > Where is this button or fan? On a pluggable board? Isn't that what
+> > overlays are for, and they are stackable. So when you probe the
+> > pluggable board via its eeprom etc, you find the overlay and load it?  
 > 
-> We partially fixed this by rewriting the ordering in the __put_user
-> function to stop the 'x' argument being evaluated inside the area
-> where SUM is enabled, but this is going to make the window of
-> opportunity of a thread switch much bigger and the bug will just
-> come back and bite harder.
-> 
-> If you want I can look at re-doing my original patch and resubmitting.
+> In the Raspberry Pi ecosystem it would be the firmware that applies
+> the overlay, and it can't do that if the resources the overlay refers
+> to are not yet present in the dtb.
 
-Oh! Could you please link the patch? I haven't seen it and can't seem to 
-find it now.
+What do you mean by the 'the resources are not yet present in the dtb' ?
 
-Thanks.
+Also what you call the 'firmware' is the bootloader ? the kernel ?
+Can you tell me who is the 'firmware' what is the mecanisme it uses to
+load the overlay.
+
+Best regards,
+Hervé
+
 
 > 
+> > Or do you mean a custom board, which has a CPU, RP1 and the button and
+> > fan are directly on this custom board? You then want a board DTS which
+> > includes all these pieces?  
 > 
-
+> That depends on whether you count the Raspberry Pi 5 as a custom board.
+> 
 
