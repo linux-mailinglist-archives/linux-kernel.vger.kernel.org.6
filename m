@@ -1,86 +1,115 @@
-Return-Path: <linux-kernel+bounces-513797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50238A34ECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:55:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29C2A34ECE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:56:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAE317A061C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592F616D1B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BF2266B72;
-	Thu, 13 Feb 2025 19:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73D924BC17;
+	Thu, 13 Feb 2025 19:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="W4mfyfic"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="cRduRGnx"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5C8266B62;
-	Thu, 13 Feb 2025 19:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFF624A079;
+	Thu, 13 Feb 2025 19:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739476505; cv=none; b=f8jz1U7Pvh0hL5Zg6A5m/nvVkCzxTfB3JkOyEqCOJ1YoyAIvOXvlSvmsbdXS+scDBIpQFEPUwCh6/OokATlkysbdwDxQfuD8PnSwxEfD+DJtsJZz5x4UM9VgKxnNHlZsWfd3s/1DdNRHV1i1XC4UtImCkzLnS0UOyvyhU2k7pis=
+	t=1739476520; cv=none; b=eKJq6NmfobsW0/cjcB33AU0IL17SxUUDJvzEvQE6tlGZLc3jmdqEPRTgCxQNFcl7JBiDL/dzbJeK0qbC+Uz+QoFFJ/9Ak3Iw4l5Zkyxmherfx18+SjPlelqC+inaY/pFxypr9aolWr936mKBuymHdFV6IRKXdSizkzjf3YbUVAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739476505; c=relaxed/simple;
-	bh=3ph/sVj9uFbBjTAgcfcM1g7k+e3uf+Q4Jk8v0dYrjlQ=;
+	s=arc-20240116; t=1739476520; c=relaxed/simple;
+	bh=F7LqE1URqCuGoEQFHUM1HVqLqGoB41rk2iUP9g0/W7M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/fb2JJ8OBD1IRohBjMT0cGq5xCti3Pd7U8ZrXcNJ6OfLWsBMFXaw2QOCJKEVrtNXyMCnKHEAROFJib6/a68YJKLCMUEw681e6YiHMNY4KqF01n4IZC1wvDpdbZ5iE+VXTAKDTvsovCTNL7UL/AlEbHPkSrzMnbFoqo2szVqaPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=W4mfyfic; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=k2ipZEKqxXNF4XLP52ASASuGbRiJWj39yrm5/DIG5rQ=; b=W4mfyficfnZaIx5BOl7wBgMGoy
-	2vYXN+02xuLAAT6Mghfe7A+RzA5os+3vs6vh/cUaepdil/VuwyDeC8FFMkdpLudtprrRQLgQA5qqa
-	mtCYjVmFcJcpcXf1FmbrYIkpxXsPWPQGXINQuBPSV3xZt1omYB/6d0qGeacZscnhMMAU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tifIQ-00DqQQ-Nn; Thu, 13 Feb 2025 20:54:50 +0100
-Date: Thu, 13 Feb 2025 20:54:50 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/7] net: hibmcge: Add dump statistics supported
- in this module
-Message-ID: <47e8bab3-61cb-4c5a-9b40-03011b6267b3@lunn.ch>
-References: <20250213035529.2402283-1-shaojijie@huawei.com>
- <20250213035529.2402283-2-shaojijie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNUEJf0B7KoBIML5gN9wy3Py3qtThCAfhPfW4bxbD3aYu+nCJZ7NoZ9B6gyGzuzF7ocbFylmeRu85LJDHSONOyR5D3DcJ9PzUgXt04TzXe52yjjIVwhwPYcKnA6J26/khy1Qk6SrxXxQRjwtgUcE5nma47XgC6bfVl6hMZjduUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=cRduRGnx; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 43490103718D2;
+	Thu, 13 Feb 2025 20:55:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1739476509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uwSpogVphSkIKxtS8Irhggq5O+LrKrQVqm3lkNYpHoY=;
+	b=cRduRGnxua0U/fU6sNzJZhrcqX4qCqtT4Vxlmx82BUmH410Qi3MLWAgrsCJWD3LAdoF9SI
+	wWIZSfDpWf+NFLHQWhv6uwyaQxb0t41CCiP58mZa+/1BLVY3Nm51YtOsC8kVngl8VJVNdF
+	yVt3z3IYLIwvmQRIHJpB/l688XJoZynfbhblQtArHy/xasTkpcPZIrLZwhJmVHlzriTQiZ
+	Bn0cpxghPWZDLJnGXZDK0DA6BwOqOAsibqbo7ZZoEYaDaFlzr7yuLlB5uAvfpfz6Vdp3Xh
+	TZCeK1zTqwlTv6tu4rtL8cIyjT4a0dWlWG+AQHGpkK43PlKw8uuhK7LThy+nGA==
+Date: Thu, 13 Feb 2025 20:55:03 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.13 000/443] 6.13.3-rc1 review
+Message-ID: <Z65OF7U5grQm3TR2@duo.ucw.cz>
+References: <20250213142440.609878115@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4CVjw4G1ZCejys6T"
+Content-Disposition: inline
+In-Reply-To: <20250213142440.609878115@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
+
+
+--4CVjw4G1ZCejys6T
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213035529.2402283-2-shaojijie@huawei.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 11:55:23AM +0800, Jijie Shao wrote:
-> The driver supports many hw statistics. This patch supports
-> dump statistics through ethtool_ops and ndo.get_stats64().
-> 
-> The type of hw statistics register is u32,
-> To prevent the statistics register from overflowing,
-> the driver dump the statistics every 5 minutes
-> in a scheduled task.
+Hi!
 
-u32 allows the counter to reach 4294967295 before wrapping. So over 5
-minutes, that is around 14,316,557 per second. Say this is your
-received byte counter? That means your line rate cannot be higher than
-114Mbps? Is this device really only Fast Ethernet?
+> This is the start of the stable review cycle for the 6.13.3 release.
+> There are 443 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-	 Andrew
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.13.y
+
+6.12 passes our testing, too; 6.6 will likely be ok after retries.
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.12.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--4CVjw4G1ZCejys6T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ65OFwAKCRAw5/Bqldv6
+8rZYAJ9cFT/nMMToOE6xSZPJ35dFgqS0WACggMqWYByv/qlUBQWjgPFDUMjelQo=
+=B9tV
+-----END PGP SIGNATURE-----
+
+--4CVjw4G1ZCejys6T--
 
