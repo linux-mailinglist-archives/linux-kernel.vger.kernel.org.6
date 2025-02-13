@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-514043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57991A351A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:53:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C26A351AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:55:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 370741882BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D303ACAAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D096F2753EC;
-	Thu, 13 Feb 2025 22:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE022753EC;
+	Thu, 13 Feb 2025 22:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DYpCm9iJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XCl5M61D"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5731F2753E8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA3D2753E1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739487164; cv=none; b=pPYhNQHg1fjSqcFpfW/Nd12PU+pCyySfd65YG9BhlhftHdv14xwD6sN1hk3+cApeGIhyQ4QshGyavFDsXux4NpPUqh0opV8hwvLDY+o8wFmY3XU9Kd5zUvaA/mOpmSqVAVFLOuZqtpPiQpd6oMd6EP+gHHXhx3UGR54SGBuS/Qg=
+	t=1739487307; cv=none; b=icmyVvJr/ILNFm+857LvQXcCXRFUAc/wQsBTS0r2LdyGX0s1yp5EnzA/ilgaAjAlLZTRlNGul1ccpA7yYRozsc70jT8w7oOWwpppjGExcBE1Tf/TvVQjaNniXG2Skl+RRRb61BLimooNbl+HbZmYFvuc+p2rpNCVT1Cex00na2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739487164; c=relaxed/simple;
-	bh=ZdAaRSQBdHLvutJUD7iiNJZZ+fgTiSlLTbKntKkz7V0=;
+	s=arc-20240116; t=1739487307; c=relaxed/simple;
+	bh=Sf+szxcLhUShr8ExPqZm//DpiJcQJVJQpR7VswJv8CM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tu3GF8MqvLrHusjGKCnmOcYCaaCtfK8GefzsIU18iXmAx+eB+qBEiTV4Z72AagSiMUC2NgRjV5YRHe7LpcKr/5usIQOcVfqUYCAwUthvFMkJyGR73Zq3QzwGM7todybNj3fa3zUiLA5Lo+ufF6LkRq/VaS+oo0j6spqZIjClxps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DYpCm9iJ; arc=none smtp.client-ip=192.198.163.11
+	 In-Reply-To:Content-Type; b=YqXeLY3awFz5NobACZYHXKRAIjOrNdRNE+b27ThVgfMjN7K2YKLjOAFtTq3ARv9sHg6pLBaEKhsizJfe75Yd4OXpAMuBd3noih0wvNzRzgOWqMD5voEbgtmm4OtdI7sLttppLrRnqVH/3scpTyW1CsbxJN/MkNcUpfuR2FNSC/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XCl5M61D; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739487162; x=1771023162;
+  t=1739487306; x=1771023306;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=ZdAaRSQBdHLvutJUD7iiNJZZ+fgTiSlLTbKntKkz7V0=;
-  b=DYpCm9iJbEMP9VV3CSirv+NgwsfIdOPyih5S7EImXX3cZKgYWUZPLJL+
-   ma8fyYao2YSbc0JKQ2aYRHJUbwXBvH5S504fABmATJQc84pS5ZS/95u+O
-   R2vJRC2ZHQhSshQeaO1tCgG09znWgmPrdXt4ojA9JqXnniJrD8I9XhyMA
-   PTB/qATGEb/ytjo/uMCe+w0TIDDsTMjQoar3z75luLhCtB2nNwsA/WhEU
-   vvszYa1/ymCmEBSlnfjwRXtDtgOb2lb6fjYPycZaQIbgYD5grZ0ZktAWJ
-   3Bjde0kechRpszdKRG/nH1iG/Sj2ECC1R2Ym+htf5RhYDchn19JrNg28R
+  bh=Sf+szxcLhUShr8ExPqZm//DpiJcQJVJQpR7VswJv8CM=;
+  b=XCl5M61DJ2P7Bg8nFLCqN289uOoWWaN1jmhXDtoQNl+wmBeakM8za9qx
+   tINk+ziZCy0pI3Xqh6ORDrLaYSi3l/rrQYWDHKxfCce/JvA3w56NW7Mh0
+   La+41LlAfEbya+QTLMcLUgSqpWTAcYOmB90tlFvB5RNS2Ris0fW4bpv7/
+   oq+AEHfe1aKbHOQwA0WqRVeVNeHTBKsZ6E9T0KjzYqUC/tqtLEJeyoc/f
+   0iGWZD3TbQPX2zWMfvnv0dOtS1vlr5mbsuobU5UJ9ncc94ndB8GUJgaoF
+   nYlSVDkibve97ud7O9oRNF82IIDZajQPg/1gTCUwOYtGrJazdCLUiwxcp
    g==;
-X-CSE-ConnectionGUID: yXpAlbY+TEW8tkQtVEg+MQ==
-X-CSE-MsgGUID: BP7NsZk2T6yjRrIuxgTbyQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="50842165"
+X-CSE-ConnectionGUID: hQlkLeRsTwSzp/I6dcIa9w==
+X-CSE-MsgGUID: ZyPWV4rISGyX6KofHZ/2SA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="62685107"
 X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
-   d="scan'208";a="50842165"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 14:52:42 -0800
-X-CSE-ConnectionGUID: nO8NP5xVRum/6p8UR7u41w==
-X-CSE-MsgGUID: to+9fr9RTWugbrVZwm1FDg==
+   d="scan'208";a="62685107"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 14:54:46 -0800
+X-CSE-ConnectionGUID: FS1avYeUQg+Mej+JGS0Ibg==
+X-CSE-MsgGUID: ACPBrnOsSFWv83/VzOzbpg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="150459322"
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="113164091"
 Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.108.188]) ([10.125.108.188])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 14:52:42 -0800
-Message-ID: <87194c62-7e97-41d3-98bd-14288e8bde8f@intel.com>
-Date: Thu, 13 Feb 2025 14:52:41 -0800
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 14:54:45 -0800
+Message-ID: <38c424bd-8f49-466a-b414-93a45a7ee3ec@intel.com>
+Date: Thu, 13 Feb 2025 14:54:44 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,8 +66,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 2/2] x86/locking: Use asm_inline for
- {,try_}cmpxchg{64,128} emulations
+Subject: Re: [PATCH RESEND 1/2] x86/locking: Use ALT_OUTPUT_SP() for
+ percpu_{,try_}cmpxchg{64,128}_op()
 To: Uros Bizjak <ubizjak@gmail.com>
 Cc: x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
@@ -76,9 +76,8 @@ Cc: x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
  Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>
 References: <20250213191457.12377-1-ubizjak@gmail.com>
- <20250213191457.12377-2-ubizjak@gmail.com>
- <62965669-bf1d-461f-9401-20e303c6d619@intel.com>
- <CAFULd4ZyCNy3MaCLqcuqyJKABMvbiToA5aZxfEt3iMgdRuLuYg@mail.gmail.com>
+ <04adffd9-2900-4cdb-a557-1c486a87b522@intel.com>
+ <CAFULd4YUSCBSJQ1F0Rn45bwTonQJb2_=c2sZZEGV7RfgHBAOJA@mail.gmail.com>
 From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -124,96 +123,17 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <CAFULd4ZyCNy3MaCLqcuqyJKABMvbiToA5aZxfEt3iMgdRuLuYg@mail.gmail.com>
+In-Reply-To: <CAFULd4YUSCBSJQ1F0Rn45bwTonQJb2_=c2sZZEGV7RfgHBAOJA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2/13/25 14:13, Uros Bizjak wrote:
-> On Thu, Feb 13, 2025 at 9:48 PM Dave Hansen <dave.hansen@intel.com> wrote:
->> On 2/13/25 11:14, Uros Bizjak wrote:
->>> According to [1], the usage of asm pseudo directives in the asm template
->>> can confuse the compiler to wrongly estimate the size of the generated
->>> code. ALTERNATIVE macro expands to several asm pseudo directives, so
->>> its usage in {,try_}cmpxchg{64,128} causes instruction length estimate
->>> to fail by an order of magnitude (the compiler estimates the length of
->>> an asm to be more than 20 instructions).
->>
->> Just curious, but how did you come up with the "20 instructions" number?
-> 
-> Currently, a patched GCC compiler is needed (please see
-> asm_insn_count() and asm_str_count() functions in gcc/final.cc on how
-> the asm length is calculated) to report the length. For historic
-> reasons, the length of asm is not printed in asm dumps, but recently a
-> GCC PR was filled with a request to change this).
+On 2/13/25 13:17, Uros Bizjak wrote:
+>> Basically, you've told me what the patch does, but not why anyone should
+>> care or why it should be applied.
+> This is actually explained at length in the comment for
+> ASM_CALL_CONSTRAINT, which ALT_OUTPUT_SP macro uses.
 
-So, that's also good info to add. You can  even do it in the changelog
-with little more space than the existing changelog:
-
-	... fail by an order of magnitude (a hacked-up gcc shows that it
-	estimates the length of an asm to be more than 20 instructions).
-
-...
->> Is any of this measurable? Is there any objective data to support that
->> this change is a good one?
-> 
-> Actually, "asm inline" was added to the GCC compiler just for this
-> purpose by request from the linux community [1].
-
-Wow, that's really important important information. Shouldn't the fact
-that this is leveraging a new feature that we asked for specifically get
-called out somewhere?
-
-Who asked for it? Are they on cc? Do they agree that this feature fills
-the gap they wanted filled?
-
-> My patch follows the
-> example of other similar macros (e.g. arch/x86/include/alternative.h)
-> and adds the same cure to asms that will undoubtedly result in a
-> single instruction [*].  The benefit is much more precise length
-> estimation, so compiler heuristic is able to correctly estimate the
-> benefit of inlining, not being skewed by excessive use of
-> __always_inline directive. OTOH, it is hard to back up compiler
-> decisions by objective data, as inlining decisions depend on several
-> factors besides function size (e.g. how hot/cold is function), so a
-> simple comparison of kernel sizes does not present the full picture.
-
-Yes, the world is complicated. But, honestly, one data point is a
-billion times better than zero. Right now, we're at zero.
-
->> It's quite possible that someone did the "asm" on purpose because
->> over-estimating the size was a good thing.
-> 
-> I doubt this would be the case, and I would consider the code that
-> depends on this detail defective. The code that results in one asm
-> instruction should be accounted as such, no matter what internal
-> details are exposed in the instruction asm template.
-
-Yeah, but defective or not, if this causes a regression, it's either not
-getting applied to gets reverted.
-
-All that I'm asking here is that someone look at the kernel after the
-patch gets applied and sanity check it. Absolutely basic scientific
-method stuff. Make a hypothesis about what it will do:
-
-	1. Inline these locking functions
-	2. Make the kernel go faster for _something_
-
-and if it doesn't match the hypothesis, then try and figure out why. You
-don't have to do every config or every compiler. Just do one config and
-one modern compiler.
-
-Right now, this patch is saying:
-
-	1. gcc appears to have done something that might be suboptimal
-	2. gcc has a new feature that might make it less suboptimal
-	3. here's a patch that should optimize things
-	...
-
-but then it leaves us hanging.  There's a lot of "mights" and "shoulds"
-in there, but nothing that shows that this actually does anything
-positive in practice.
-
-Maybe I'm just a dummy and this is just an obvious improvement that I
-can't grasp. If so, sorry for being so dense, but I'm going to need a
-little more education before this gets applied.
+Great info, thanks! Could you give the patch another shot and include
+this in the changelog, please? Better yet, you could paraphrase the
+comment so that we don't have to go searching for it.
 
