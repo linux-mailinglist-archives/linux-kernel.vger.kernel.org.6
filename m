@@ -1,56 +1,98 @@
-Return-Path: <linux-kernel+bounces-513593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A8AA34C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:38:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F79CA34C32
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 900EC7A3001
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:37:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34EF3A42B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C081A204C0B;
-	Thu, 13 Feb 2025 17:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF334204C0B;
+	Thu, 13 Feb 2025 17:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BfYkO0oe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ECU7WBy3"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D03328A2D6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A8013A3EC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468294; cv=none; b=RiubWpeGKJW7+bx6+Ij7TIhAHMSfwRZWAe7d/MmPeYExnQjinP8PWLLIiMXIb1oASKNP+yd5d9zcpArfvrTBalqrzI4IOMzCNNR87SNKgTKpMi6SFBGH6Z0Lt4B8cc6XB80u3HwFCNenFz9o4hFB82ndw+8E5985jWX/rC48Vl8=
+	t=1739468338; cv=none; b=knT56caw3xgB6hzcOKCE0uJb9hoiFFw+RWwl2y0lwqzXDgXpSV62YljGFRkE0tz82uyFq5HEB7yntLy1Xv+k1ugyN+JJMcw33oHD/TguglxQS9W+8iCfvOe7GVT2bMS7lYeDU0sy60YxqemXXkcsMKb2gJbgZbQsrTEzgBrzCvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468294; c=relaxed/simple;
-	bh=cnxfUNBbqbYlLFA77nUvaz5wzyMXDOOF13HQXlveTa4=;
+	s=arc-20240116; t=1739468338; c=relaxed/simple;
+	bh=b7N+8dSPQ0OnlGTOQ+2/iyi4f6259SWAIHYoRWb24J8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIkt189OcXqn4Pmx3KWpVcXRCj+TWYBWO1ORc4Iq2eXtpWGiGY8Qy3wy0eyaY8yY0P/mPUBwBq9c5sP17fWS/YL9LdU9SulkSFHAqP4VDeI8RtSFZ7E7hCtMmM4eF+IMHabxOj/4eXxZh3rGt4lQG9i3j53qeLtBTrQe2ImkG2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BfYkO0oe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63394C4CED1;
-	Thu, 13 Feb 2025 17:38:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739468293;
-	bh=cnxfUNBbqbYlLFA77nUvaz5wzyMXDOOF13HQXlveTa4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BfYkO0oewUevWKucBYARTUfa0Kqd5b/FbOe7lZX+v3FSgghhfG3Xg+iNZ5NHpVumJ
-	 q/7oc61C6TecC+yOKTEeZWhQ1zLPrNs4UmvuJqJJuoNU01Z1Az2oS89jIV3SGyHjHy
-	 PeiWg6T0e+SSxPZtcZhSn2yEQ4m84HCTR/d8v0Te7dXM99AGTNCEFWNXjqFyy0kdkz
-	 e32oyonqTncA7Q49M4Op7Rao6izadgNcINpHj/VySJrVcy71Ah0iFKmqA5q462l51f
-	 FH9qNNf3x1A8K+N7FZDyYennNRWhQudwj66QhkKh6XKYHleSgePzeQeOeSvrNkFaag
-	 srLdi3HKuKxJg==
-Date: Thu, 13 Feb 2025 17:38:11 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	Leo Stone <leocstone@gmail.com>,
-	syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4] f2fs: add check for deleted inode
-Message-ID: <Z64uA2ys4nhV54lI@google.com>
-References: <20250212072742.977248-1-chao@kernel.org>
- <Z6zQoyNp5td-Wgd1@google.com>
- <d8be79a2-9470-45b7-9df1-b571f2219c30@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0OYEQtyp/D7PfLAxeQKJxRI+XFABM8osgvxTn3Mm83BssN1fkSnSOhlLY/qwo/W+IkH1oxcGSfIzVtC3NIL+EOKkXcg2I8ddVi7RpzeWZ7rERk/QP3yvZdxMLuSziTstGSOz/ELkGq6U3Lcd2KkjH1y14l6n4psovEvBr0avs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ECU7WBy3; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21f6d2642faso30084245ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:38:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1739468336; x=1740073136; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oLC9kfYPwLBjTLU9fLAjv67CM2H+dgqHjhipB5hFLZc=;
+        b=ECU7WBy3jbHPomLP0Xv0uYG7Q3Uwur/tm0kyRQqp1L0sCK3uTarWXuth+a+LOA4Umw
+         brm3i/Kbk3Vk7W8H4zDLq4Q1KDeVz7TDOn6nyJ0Vyx+UXJHl1q8INHTYUENkFqDu5bgj
+         SabyGG1Yp9h18+gTUcWsm7IM+4/kyExktlqaI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739468336; x=1740073136;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oLC9kfYPwLBjTLU9fLAjv67CM2H+dgqHjhipB5hFLZc=;
+        b=Yj4GAg94yq4qqYkeuHgIF0s5hlL6byvq92ptqp/FaD7sNOZzwJ4JweNmbOb7q/Riwg
+         Y0A9Lw1fRRi0Q5ATSuq9Jjfo1OnNTSsJQDs08mRDELmfMsSt+YEHAH0bonS4tl+0QvfR
+         A4XOWGvd2b2p2FAxt680AXHfPQNhX0IQ0iqMWKjVVaoU52eRQR+EH1tsnTlsYxk3O40S
+         8c2YY/rilAOQWkkorD4UB3UCRVu0h+hnOVF76NZzndlWzQc40MLz3W76rz1XA1bt6BtW
+         fq/fO9pDJ+gII5EHlYNWshn1yqEfUSbivFULZayStJLIZjaWzgJoIzl4l0bHiv0UX8fH
+         e4uA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnxGpUINSfGxFM9IA2al7OSoydOmJmq2sq9EgcDf9qjlkW4M3h61jRWWx9E+bCm8WqYqlfDZ06Pmkd6SQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMzixOcV+S9XBbNtzyuVouAnl1iZCwS/9TLB4GF0GCcSyVRSWt
+	0WLTCDI9UoJ+DBHJy7gbix5Mv4WRjKJ24PQv9qfWVEWk1rpBzyuTr+fsxX/wy9+itXSfswx70ds
+	9
+X-Gm-Gg: ASbGncurINvPUhBhHfs5Swlemc4xAsXkcbQMlhJ11ENZFk1rpiR08NBMbGBnNCXmLYg
+	wYeshCOUZ2RHdSTJGzsjj10PgPmNWGUXGiEch8yoAY5WcmdWiXkxP4MTW0nDhc82k95stitSjvh
+	eg9P5E8ajCMdj2Vc/NNuEKIw2oyX5+4/nNJlW8zL+dgWKx1R/bUXyJMc+J/TmAaczvNg0KJAGDk
+	t1X8ntutalnDVKeAagbmhAMwyKcoReBoe4ARzMteNTS9+iTrwlF8098J0dDYOCuYeso3uTNVBjF
+	vrgrDlKinKa3k+cz0MnChnsfo0/v3KnljeTWT+TqLVyMjpXM/WBrpDg35Q==
+X-Google-Smtp-Source: AGHT+IHKx7UoBaIYvNAKG4jbdIsvHPKTWLspdf35/yTjPBwhkv4ORzitL5INUVr5HwUTUERzhGKRNQ==
+X-Received: by 2002:a05:6a00:2e1c:b0:732:1ffc:36f5 with SMTP id d2e1a72fcca58-7322c374111mr12059457b3a.5.1739468335955;
+        Thu, 13 Feb 2025 09:38:55 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e4casm1588770b3a.103.2025.02.13.09.38.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 09:38:55 -0800 (PST)
+Date: Thu, 13 Feb 2025 09:38:52 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+	rdunlap@infradead.org, bagasdotme@gmail.com, ahmed.zaki@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2] documentation: networking: Add NAPI config
+Message-ID: <Z64uLN63gD0nNvk_@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, rdunlap@infradead.org, bagasdotme@gmail.com,
+	ahmed.zaki@intel.com, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <CALALjgz_jtONSFLAhOTYFcfL2-UwDct9AxhaT4BFGOnnt2UF8A@mail.gmail.com>
+ <013921c8-1fd0-410d-9034-278fc56ff8f5@redhat.com>
+ <Z633ggyM-F2pfAkG@LQ3V64L9R2>
+ <20250213081418.6d3966af@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,99 +101,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d8be79a2-9470-45b7-9df1-b571f2219c30@kernel.org>
+In-Reply-To: <20250213081418.6d3966af@kernel.org>
 
-On 02/13, Chao Yu wrote:
-> On 2/13/25 00:47, Jaegeuk Kim wrote:
-> > On 02/12, Chao Yu wrote:
-> >> From: Leo Stone <leocstone@gmail.com>
-> >>
-> >> The syzbot reproducer mounts a f2fs image, then tries to unlink an
-> >> existing file. However, the unlinked file already has a link count of 0
-> >> when it is read for the first time in do_read_inode().
-> >>
-> >> Add a check to sanity_check_inode() for i_nlink == 0.
-> >>
-> >> [Chao Yu: rebase the code and fix orphan inode recovery issue]
-> >> Reported-by: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
-> >> Closes: https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
-> >> Fixes: 39a53e0ce0df ("f2fs: add superblock and major in-memory structure")
-> >> Signed-off-by: Leo Stone <leocstone@gmail.com>
-> >> Signed-off-by: Chao Yu <chao@kernel.org>
-> >> ---
-> >>  fs/f2fs/checkpoint.c | 4 ++++
-> >>  fs/f2fs/f2fs.h       | 1 +
-> >>  fs/f2fs/inode.c      | 6 ++++++
-> >>  3 files changed, 11 insertions(+)
-> >>
-> >> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> >> index bd890738b94d..ada2c548645c 100644
-> >> --- a/fs/f2fs/checkpoint.c
-> >> +++ b/fs/f2fs/checkpoint.c
-> >> @@ -751,6 +751,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
-> >>  	if (is_sbi_flag_set(sbi, SBI_IS_WRITABLE))
-> >>  		f2fs_info(sbi, "orphan cleanup on readonly fs");
-> >>  
-> >> +	set_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
+On Thu, Feb 13, 2025 at 08:14:18AM -0800, Jakub Kicinski wrote:
+> On Thu, 13 Feb 2025 05:45:38 -0800 Joe Damato wrote:
+> > On Thu, Feb 13, 2025 at 12:45:01PM +0100, Paolo Abeni wrote:
+> > > On 2/11/25 9:06 PM, Joe Damato wrote:  
+> > > > +++ b/Documentation/networking/napi.rst
+> > > > @@ -171,12 +171,43 @@ a channel as an IRQ/NAPI which services queues
+> > > > of a given type. For example,  
+> > > 
+> > > It looks like your client mangled the patch; the above lines are
+> > > corrupted (there should be no line split)
+> > > 
+> > > Please respin  
 > > 
-> > What about using SBI_POR_DOING?
-> 
-> SBI_POR_DOING will cover most flow of f2fs_fill_super(), I think we can add a
-> separated flag just covering f2fs_recover_orphan_inodes(), so that we can allow
-> iget() of root_inode and all inodes during roll-forward recovery to do sanity
-> check nlink w/ zero. What do you think?
-
-Can we do this sanity check after f2fs_iget in the f2fs_unlink() only?
-
-> 
-> Thanks,
-> 
+> > I must be missing something: I don't see the line split when looking
+> > at the original email and I just tried applying the patch directly
+> > from my email and it applied just fine.
 > > 
-> >> +
-> >>  	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
-> >>  	orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
-> >>  
-> >> @@ -778,9 +780,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
-> >>  		}
-> >>  		f2fs_put_page(page, 1);
-> >>  	}
-> >> +
-> >>  	/* clear Orphan Flag */
-> >>  	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
-> >>  out:
-> >> +	clear_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
-> >>  	set_sbi_flag(sbi, SBI_IS_RECOVERED);
-> >>  
-> >>  	return err;
-> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >> index 05879c6dc4d6..1c75081c0c14 100644
-> >> --- a/fs/f2fs/f2fs.h
-> >> +++ b/fs/f2fs/f2fs.h
-> >> @@ -1322,6 +1322,7 @@ enum {
-> >>  	SBI_IS_CLOSE,				/* specify unmounting */
-> >>  	SBI_NEED_FSCK,				/* need fsck.f2fs to fix */
-> >>  	SBI_POR_DOING,				/* recovery is doing or not */
-> >> +	SBI_ORPHAN_RECOVERY,			/* orphan inodes recovery is doing */
-> >>  	SBI_NEED_SB_WRITE,			/* need to recover superblock */
-> >>  	SBI_NEED_CP,				/* need to checkpoint */
-> >>  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
-> >> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> >> index d6ad7810df69..02f1b69d03d8 100644
-> >> --- a/fs/f2fs/inode.c
-> >> +++ b/fs/f2fs/inode.c
-> >> @@ -386,6 +386,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
-> >>  		}
-> >>  	}
-> >>  
-> >> +	if (inode->i_nlink == 0 && !is_sbi_flag_set(sbi, SBI_ORPHAN_RECOVERY)) {
-> >> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
-> >> +			  __func__, inode->i_ino);
-> >> +		return false;
-> >> +	}
-> >> +
-> >>  	return true;
-> >>  }
-> >>  
-> >> -- 
-> >> 2.48.1.502.g6dc24dfdaf-goog
+> > Are you sure its not something with your client?
+> > 
+> > See the message on lore:
+> > 
+> > https://lore.kernel.org/netdev/20250211151543.645d1c57@kernel.org/T/
+> 
+> It's also broken on lore.
+> 
+> The first diff block starting with the @@ line overflows and gets
+> broken into the next line. All lines within a diff block must start
+> with a space, + or -. The "of a given type. For example," line breaks
+> that.
+
+I see; I think it's this oauth2 helper I've been trying to use with
+my google cloud account. Arg.
+
+I'll RESEND this and my XSK attribute thing, too, which for some
+reason isn't on lore but is on other sites (like spinics).
 
