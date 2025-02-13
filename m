@@ -1,185 +1,179 @@
-Return-Path: <linux-kernel+bounces-513755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268A1A34E40
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:12:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5A3A34E4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4CFA16BF34
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A082188F5FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42480245AFC;
-	Thu, 13 Feb 2025 19:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EBD24A06D;
+	Thu, 13 Feb 2025 19:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdmQ/uuS"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpMLUBxp"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16729245AF3;
-	Thu, 13 Feb 2025 19:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A49F24A043
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739473969; cv=none; b=szf12Pu9zw6YeteUb6SKfXD/7Z3QRcRrM8ND4sz1lgy8HCPxahZFZbWSIErDsz4pqCrD80htOqyJldd4bkpcmuwn15rr21QiRd/L2D0Vzouo+D1Fev6U1dketXw05/WuXKS3D71uHSrB4MgEPMXBvzZYIfS2R8XbRErIJpvqPXE=
+	t=1739474116; cv=none; b=TJiN3EiAtst4QiJEqxT2sWw4TWAm5/415GENwZ6x6xBasL+c6ubZwR6mzkwgA8SaxmXmhH6w/GS3PWZvMtaUp9gGSMQ6ThvK8x8q6H51RJ4DfkT4ChF6CKULpXNJKpDoeTK+85mxOc+7Aqbe+URRJL+YwApsKbn7Fonxer6WfPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739473969; c=relaxed/simple;
-	bh=whJVFJpZ5hjKqod+I+UoQ2c7Oa8tX/YaEntD7dHnm28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ulcxvS0ZQvZioMvN5gNR3OmOP+VEsj1+M7JLq54ukOApehgiLCEtX3P1qrrVYR7zJgKk2iZ6fbhEQfVLTTYtIILNMl8q+wZpLc3KljaDnclWqNqUH9zYtY8SlSGlx+MRGGxNhXQUUWGpzNQc9e53zI3ZpC9kqz8cMJrmAW26OGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdmQ/uuS; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1739474116; c=relaxed/simple;
+	bh=a/uBemEj9PszXi3HK4tvKrfiV+5Lk8UXkW7mGrTPlz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Voh/y8Tmzc6izgD+KpitfAClk9SfT5sQLaoyaTFg1KinyFwCduxayoMvzsN3Fw0WTTTwavnKqV7puELhxSA54ey6VaKvNTIBmB/ROWNs07sjas8q2M14DEPrqIc4GXXyog7Ak5GkkuxCGtfqsDPv2WYqHtaW9bqoD2k1e9QTitw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpMLUBxp; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21f6a47d617so21300425ad.2;
-        Thu, 13 Feb 2025 11:12:47 -0800 (PST)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5ded69e6134so1178058a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:15:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739473967; x=1740078767; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CyrOUZ4c/O4Rk2lNeVeCefXD2FpT/45K2UAlRvlIaN4=;
-        b=bdmQ/uuSjzZvweMCseehgeXv139HgWQ2h68ENGzfDjAhN7txz6QaQNKQp0UzENSJHC
-         AeUu4/zCGst5xHuWT2IKXYnMEI7NJTcl7KL54op5kbG9gp7aAsJLi71NK55PRNpPZly0
-         mmpOwQmV9+F2ScktIeF7nJDhwoxFXYqS/EJDjyVLGM4S15kCqRHzCvx1WfUB38uwEdCH
-         iVmG0j7nldJv8kNu7kQFdnFDxIdL3VW8UZ6Kc0w8YQWORw26FBuzpkNClEzjL8VcNeN8
-         Mo0KlKy9B1AWucsD0SqNuvHm8C/J/186l+Bqt2GyVG63ZbEg0MIK5RzGrTSQ8iG1UMG8
-         VchA==
+        d=gmail.com; s=20230601; t=1739474112; x=1740078912; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MCZRk8F5oIr78QIJHIsQc5tZNTNUkD+BR9QkiJxVXFM=;
+        b=dpMLUBxp9UujMaURR6oE1EvtUWMJwJPlmR/6iHV/jEHB4MkrEhbFoLHeiy5pSKsgdx
+         T6f7xvV+8mAnciKxmt4FlS+MEjJmsCmU0UqArRbiVLRyQRDZ+TINl4RUm6JPMllbFocS
+         9/4yrccLIT2fgBJW9xekvhz6OE8VzqlWz4lc6EHdjYn2ysZ54q9u6nViH35zT8MPMPUo
+         V25hFzbbMV0B/8uqeQUkicWnt2zarAbYQhGLhXp+Vfr1hZvz8VjAQMxL9UXnCU0VHaDO
+         hUa+jCTVzjFnGyen1s0kyB+EZwdXdVDp5odj1deJ1vjkTuhjpdVhgr2p/qPSKXzo7hkt
+         MBoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739473967; x=1740078767;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CyrOUZ4c/O4Rk2lNeVeCefXD2FpT/45K2UAlRvlIaN4=;
-        b=xLuLkMLfpb7fMBI8wpyen7UEe0wsOXgsZrX6bl/YO6YcZdsSoCs025L3zsJ0gjrI6I
-         863L++ijJNe/V1c7Ku/aM82VbigErXdnN8REHPi8NjuC7ezpYfm09WRyohhLKDmpn+en
-         MXnmSlBt/S7EZ3cfr8W9EKwxi9Cfv39nlFKaYsueExWP7xbAvkZyjuEUxS2OubIWyT+5
-         sFDlqd3kc2j7pTOO5wMZwV+CJ3sa3Bnv+OInmsp+Bf1W2RDU/kl13UKBnSyji4Ub3p0v
-         WywQ9G8j7F3Ma3zvpY+DNcSOGN0GcQOJ/N1W6Bblut3TMMNbgMCVVJa5xw+C6VFCLQT6
-         KKng==
-X-Forwarded-Encrypted: i=1; AJvYcCUeHN79V6AEu7yxAuKUN1jzU0IheNJjXAaHY3opyUYk5TzwIyurkxQxU8B6SPI4OS2+1KRSsl95Merbwoivtl8g3/+m@vger.kernel.org, AJvYcCVwNYCEFkUdsro5FSQ7zWE7mdK/wGeq0CPxv7U9O2TOtwcQiBn4cagRqGNFjuIo5JvPWJiusl+amXU=@vger.kernel.org, AJvYcCW66b9oOFmv2qclNap2ci6LfBX6y5MwciUq/j5H+3v1e5JvwA9hpOyksyA9aVkmwyDV9zTznrAULpEt4Y6A@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtlBGH1iaisF2ZB6qhLxgjOAC2aNgV6nM3mRNovNW6450weS7b
-	7ONKqOOdFUH8Lb8eB0QZTavH9x75HO+GQ9TF/Q+vbPL1+XAPfY1L
-X-Gm-Gg: ASbGncsHMHpsdKMwDSgI8pjyoEnKVspV3gEdQ/ihpkPiAL4QiIuE1vZmw1XeSUX39cP
-	oIy9DG9Xo2wNPN1bYzEN1quMjBlfc9HKTBtfRba4ZgtsV1BwROvzOXIpfYQR+lsw065g5lZeO8S
-	4bsv7ID1OWoPr6Ma+SXadTneodq7kvJdko0/NHHQ6kCQnwFkVUsuIT4OIXrJqpiR5MQffyuvlUn
-	wPaAwg/QfghIL25pycYxUOc0UqfZ3byiNzgH5k/ZpALqjU2JPt1tACUNa1DZa0Hbkphx6kduZO7
-	u9gLJV8azJKnQpkdyRdTLWDtPMn1qQyPeRqUjYMJq9T+dZ6uMacJc1HcdQyipg==
-X-Google-Smtp-Source: AGHT+IHFRukuPnsM1+aB0U8OHPzTcRhhSW++4oxsMgoBPq9AHW/FUPktX2NqfA3m+ZacWs4Le13y9Q==
-X-Received: by 2002:a17:902:e848:b0:21f:14e3:165d with SMTP id d9443c01a7336-220bbca9c47mr162275775ad.44.1739473967277;
-        Thu, 13 Feb 2025 11:12:47 -0800 (PST)
-Received: from ?IPV6:2409:40c0:2e:ea4:cc2e:af72:ec63:143a? ([2409:40c0:2e:ea4:cc2e:af72:ec63:143a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556d111sm15550855ad.169.2025.02.13.11.12.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 11:12:46 -0800 (PST)
-Message-ID: <7dc0e44c-32ae-402c-a89e-aa0824770bcd@gmail.com>
-Date: Fri, 14 Feb 2025 00:42:39 +0530
+        d=1e100.net; s=20230601; t=1739474112; x=1740078912;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MCZRk8F5oIr78QIJHIsQc5tZNTNUkD+BR9QkiJxVXFM=;
+        b=rBub9i+G6d0EiXHJhT2sXUY7bFVfliQn2v8SPGMA4q5FG1c3nQk8zxjChOljv9MCaB
+         pjB+cFdSnoMfZJpiCaLfegyE9jorYOqxl0y5Y8w0yZYXkNe/19MpNTtlrwFbhibdRuiQ
+         3famVkRfL5v5gUW+QfmGunp3hbRcDcu7ThNc8SuEd+Ki+k9bavUi0Mfgpq9OcRGU9NnJ
+         Vvf75lnu2RUJU65N01xv0HNLyqldgSNNveRYZZXKfz5veF6yrDZVe9yxcEDD/U50SBln
+         bfxRrm9GbVJY0F9FZ4GvqYJ8P2AbiQlwec6ePGEBY/0UKrsTTPdtN1XGy5GH2YNR5N4n
+         B5Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpyvCot3zplH69XrPzqySRL9Sxp2GjllzI8I4JoS32hCeQqniyGM6dnYGJAgN8nst7uxyqNj7X4bc4MSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlu0OqxpjVoJHHe4VTbR0WVOD+TLQYibVTPY4udpPQdkky42AK
+	fsndoVm3U+iOJEx84AThSl7cbzHsy4pCaOx2sv/3PQO9r+2t0rtl
+X-Gm-Gg: ASbGncsTWqTteNiJkHZuaSmKfEyfEClVzlo7qJ81iH4OPrehULveuFBOYb7Y/6LttTM
+	e1eowFYtnjYt9/GEyY0MkzPoyzg8MSbGaY6efAc/KdZl1JZb8lqpn6+QcYHsUDIPAsLnM3RQAEm
+	wrMk4HoWbxSOhI89WOg3W5E6dnmzBvOkV9YvCq+qz1R/5D/thx5QJ61XFskIY7mZ24Cgo3VmH22
+	+DgPGYLxmNyXq94s9TNo2Ezm8RRZ5YMcHdvE7XC2UJEqYy99gJdGhuQvYYZoShva+/cWuNZdwV2
+	tqsPvYfkaZUVQxirFaG8bwmy
+X-Google-Smtp-Source: AGHT+IGDmxUXgTbru6c8edVkbG2Aem3VAU2thpwucZbIXMGfjZ+bCKmeFDFZQtDaYQRE50Elj5HiGg==
+X-Received: by 2002:a05:6402:2106:b0:5dc:a452:4f7 with SMTP id 4fb4d7f45d1cf-5deade07f4dmr8704114a12.28.1739474111241;
+        Thu, 13 Feb 2025 11:15:11 -0800 (PST)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece288e2dsm1634508a12.80.2025.02.13.11.15.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 11:15:10 -0800 (PST)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: [PATCH RESEND 1/2] x86/locking: Use ALT_OUTPUT_SP() for percpu_{,try_}cmpxchg{64,128}_op()
+Date: Thu, 13 Feb 2025 20:14:25 +0100
+Message-ID: <20250213191457.12377-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs: trace: Refactor index documentation
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250206141453.139613-1-purvayeshi550@gmail.com>
- <20250210174556.70fc53b7@gandalf.local.home>
- <1906f93a-dc32-4dbe-9b11-eabd4aad196e@gmail.com>
- <20250213114721.23d07909@gandalf.local.home>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <20250213114721.23d07909@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 13/02/25 22:17, Steven Rostedt wrote:
-> On Thu, 13 Feb 2025 17:26:21 +0530
-> Purva Yeshi <purvayeshi550@gmail.com> wrote:
-> 
->>>> +Tracing in the Linux kernel is a powerful mechanism that allows
->>>> +developers and system administrators to analyze and debug system
->>>> +behavior. This guide provides documentation on various tracing
->>>> +frameworks and tools available in the Linux kernel.
->>>> +
->>>> +Introduction to Tracing
->>>> +-----------------------
->>>> +
->>>> +This section provides an overview of Linux tracing mechanisms
->>>> +and debugging approaches.
->>>>    
->>>>    .. toctree::
->>>> -   :maxdepth: 2
->>>> +   :maxdepth: 1
->>>
->>> I don't really know what the maxdepth gives here, but there was no mention
->>> in the change log why it had to be converted from 2 to 1.
->>>    
->>
->> I changed :maxdepth: from 2 to 1 to simplify the table of contents,
->> keeping only document titles instead of also including second-level
->> section headings. The intent was to improve readability and navigation.
->>
->> Additionally, I referred to commit '270beb5b2aae', as suggested by
->> Jonathan Corbet in the v1 patch, to align the documentation structure
->> accordingly.
->>
->> I'll update the commit message in the next revision to explicitly
->> mention this change.
->>
-> 
-> Can you make that a separate patch. A commit should do only one thing and
-> that change isn't necessary to be part of the rest of the changes.
+percpu_{,try_}cmpxchg{64,128}() macros use CALL instruction inside
+asm statement in one of their alternatives. Use ALT_OUTPUT_SP()
+macro to add required dependence on %esp register.
 
-Okay, I’ll separate this change into a new patch.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+---
+ arch/x86/include/asm/percpu.h | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-> 
->>>>    
->>>> -   ftrace-design
->>>> +   debugging
->>>> +   tracepoints
->>>>       tracepoint-analysis
->>>> +
-> 
->>>> +
->>>> +Hardware and Performance Tracing
->>>> +--------------------------------
->>>> +
->>>> +This section covers tracing features that monitor hardware
->>>> +interactions and system performance.
->>>> +
->>>> +.. toctree::
->>>> +   :maxdepth: 1
->>>> +
->>>>       intel_th
->>>    
->>>>       ring-buffer-design
->>>
->>> The ring-buffer-design should be in "Core Tracing Frameworks".
->>>    
->>
->> I'll move 'ring-buffer-design' to the Core Tracing Frameworks section.
->>
->>>>       ring-buffer-map
->>>
->>> This describes how to map the ring buffer in user space. Maybe it should go
->>> at the "Introduction" section?
->>>
->>>    
->>
->> For ring-buffer-map, placing it in the Introduction section could
->> provide early context, but since it is more implementation-specific, it
->> might fit better under Core Tracing Frameworks alongside
->> ring-buffer-design. Would that placement works?
-> 
-> 
-> But it's not kernel implementation. It describes how to use it in user
-> space. That is, it's not part of the tracing framework.
-> 
-> -- Steve
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index e525cd85f999..0ab991fba7de 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -350,9 +350,9 @@ do {									\
+ 									\
+ 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+ 			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
+-		  : [var] "+m" (__my_cpu_var(_var)),			\
+-		    "+a" (old__.low),					\
+-		    "+d" (old__.high)					\
++		  : ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
++				  "+a" (old__.low),			\
++				  "+d" (old__.high))			\
+ 		  : "b" (new__.low),					\
+ 		    "c" (new__.high),					\
+ 		    "S" (&(_var))					\
+@@ -381,10 +381,10 @@ do {									\
+ 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+ 			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
+ 		  CC_SET(z)						\
+-		  : CC_OUT(z) (success),				\
+-		    [var] "+m" (__my_cpu_var(_var)),			\
+-		    "+a" (old__.low),					\
+-		    "+d" (old__.high)					\
++		  : ALT_OUTPUT_SP(CC_OUT(z) (success),			\
++				  [var] "+m" (__my_cpu_var(_var)),	\
++				  "+a" (old__.low),			\
++				  "+d" (old__.high))			\
+ 		  : "b" (new__.low),					\
+ 		    "c" (new__.high),					\
+ 		    "S" (&(_var))					\
+@@ -421,9 +421,9 @@ do {									\
+ 									\
+ 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
+ 			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
+-		  : [var] "+m" (__my_cpu_var(_var)),			\
+-		    "+a" (old__.low),					\
+-		    "+d" (old__.high)					\
++		  : ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
++				  "+a" (old__.low),			\
++				  "+d" (old__.high))			\
+ 		  : "b" (new__.low),					\
+ 		    "c" (new__.high),					\
+ 		    "S" (&(_var))					\
+@@ -452,10 +452,10 @@ do {									\
+ 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
+ 			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
+ 		  CC_SET(z)						\
+-		  : CC_OUT(z) (success),				\
+-		    [var] "+m" (__my_cpu_var(_var)),			\
+-		    "+a" (old__.low),					\
+-		    "+d" (old__.high)					\
++		  : ALT_OUTPUT_SP(CC_OUT(z) (success),			\
++				  [var] "+m" (__my_cpu_var(_var)),	\
++				  "+a" (old__.low),			\
++				  "+d" (old__.high))			\
+ 		  : "b" (new__.low),					\
+ 		    "c" (new__.high),					\
+ 		    "S" (&(_var))					\
+-- 
+2.42.0
 
-Thanks for the clarification. I’ll move it to the Introduction section 
-in the next revision.
 
