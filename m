@@ -1,76 +1,105 @@
-Return-Path: <linux-kernel+bounces-513698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5711A34D8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:23:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 967AFA34D9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42DA3AA128
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A0FF3A11B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E66242929;
-	Thu, 13 Feb 2025 18:22:29 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F961245AEB;
+	Thu, 13 Feb 2025 18:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jf0AyP2B"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA52814AD20
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CBA241678;
+	Thu, 13 Feb 2025 18:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739470949; cv=none; b=Ey07c+uzhXjZSbo6gcyJtiufhIcH4r/9iNpxF0gT1KarKiNS4+MyZahxlJWJOr/jTNRgGv+hIKcCCe5HZVkzmuEgNj7OMan5hi3ILaOTamOVAfoIvWGbyoHXNVqJGAFjg5RC04Ga7Uhamn1gUW8k+Ub6SPZ3Eq0WRkz4aabMJeI=
+	t=1739471141; cv=none; b=tjCqOCwb5Pl1UqA/e+hqLxIdGKlBFW48yHuncP7WgyO3dHq+6fq9/q4K1w6ZR0Kf9QfM7g75rECIKAbNenoZQLhH8274xxHi9LnKo1AJebbifQZR385Vr88TiB0i6rL0+iWehX20JDXOXPW8ihAF0By2hze7LyuGAQhKWGRzzqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739470949; c=relaxed/simple;
-	bh=yBXzG4i9Dkiru55lQyz1Xr5+cE0Yl9ZHuQy6/bd/lrM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nLRGtlE9FRoCQdjG8znGt0ba4ye/QIVNQaRRdQnCoI239lEpq55DkqNBtSPIwVTwt+nVH1Emkmw4E0nVvNc+pAeHO/33huv7bec55FMGDsWNsBjCMmLCjMlnZOrpFMM6bpTLz2U6iI1kPEXuzgn2l7QgyskwsFEpnLwLebxeuLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d18a553f42so25154835ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:22:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739470947; x=1740075747;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKU5Kcevzf5gXwIZbo3x8mZboejbG5jsHlKHFlgunn8=;
-        b=ihZm0dW56eMkuXAcBlChTXHx5CsYtNTBRvpTpUefbCHEHJtVjJiMhxERfaCwBoAzp9
-         BtAGsdGA3mrJt94Cf/Y46ori+Vlie8io3raoKyiUYpFkyoLDekT8ho7dxp0UbNOKKUhM
-         7IqmDtq2008eo8XYX/ifGcT6yPvYmLgN4hsp65j4IRBY2L6X5TfPjH9pbDBEhaEj5/lp
-         hPXBAobhVHBe1V7wpt8wEgVjnKK82t2rOMUsZAtEevv46uKNfkfolaiRdE+/fpxr4mQY
-         9AUmMtDaWALsG1h6iw7Tkz26CttsicyLi+6NwueCZtCZkZNgPSzwd5GLbpq8RQpdc0Zl
-         BFDw==
-X-Gm-Message-State: AOJu0YxRF/vj5cxDVLpwt1dy/olGm5X+GGh56sBamye3nXcMqK8UzCkC
-	DZIv7/GT5b8bpymORrVIagQgfkC9+LC6LRCACTiBi+GaWCjD0RSogDYXEE9ZivF0kIXpHmnCwVd
-	QiXqmqbanC2MOHPfOCpG2BmkEPVIAR287mB9vTXp/FliwCrEXG38zDuc=
-X-Google-Smtp-Source: AGHT+IEnrpszSMbtVzbXqW7bOdLhJdsfPgoTP/FcvRq+EqallcwMEFAJ9YQBrScxk4/uvQg0/1SU1YzR/ttJGwAobhm5H4wZMoFK
+	s=arc-20240116; t=1739471141; c=relaxed/simple;
+	bh=feGGHOi3zI3MPTYTRwIv47zVrsjrDEIKTSIWX8tUD9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jEM8vSfH6zRjIq8LrnpW73BoLbhbas2s4U+qDchYJSsBdt60Q40u6agJsU2ZTIJx4s4hd4nY+kvLJUzFV3ZvjFuiWzifgCrKB31hpVBSkCMrlkjok5dOqABiOQy0oBqbfXU7NDo40LLMv8CefsBTcDDr6wODp0w5IKtOShS36/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jf0AyP2B; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739471140; x=1771007140;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=feGGHOi3zI3MPTYTRwIv47zVrsjrDEIKTSIWX8tUD9w=;
+  b=jf0AyP2BUUN13t5lMBpWk8AMKpgQCoSSHxgYNjXKsA5FIhLsii8qrDHP
+   wTuAOSkcS0HDnSOdM0aVToLLUINrzFyIvNQjbLKMrbRo/N8PYD28Jalzk
+   E6z1BNPCs7PJIJikBO8NVS2VnfZ7lPPARmD8NeB6ofo0FPfc8xxrE05z4
+   21ip2gffmo3BRqHr0IvhVhnfSAXPz0gkfHCXl4dRIqKXKiw/g6PX3wNfZ
+   Ox5adR2AtMWOTXOw4ZLB2DS9v+gRcPViic+OtBkY+sRfVAhe7NFB3S5ow
+   BNSAqCRoCU7nqtCcQQsM97yVgSQGvnhXxQfxwtBdfRvh1ppJdEUHXfV5g
+   Q==;
+X-CSE-ConnectionGUID: DNrDaqBdSGmJCy8/CMT8Ug==
+X-CSE-MsgGUID: q+eYHp8SRkS8X+8jZDTqYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="51177673"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="51177673"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:25:35 -0800
+X-CSE-ConnectionGUID: 2kv5/gDFTa2LCfXXmvCe7A==
+X-CSE-MsgGUID: PQkSx2DlREChrWj3GYuAGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113721779"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 13 Feb 2025 10:25:30 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id EAC3B1FD; Thu, 13 Feb 2025 20:25:28 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Alexandru Ardelean <aardelean@baylibre.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/2] gpiolib: Make code more robust by using for_each_if()
+Date: Thu, 13 Feb 2025 20:23:59 +0200
+Message-ID: <20250213182527.3092371-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a61:b0:3d1:78c6:208e with SMTP id
- e9e14a558f8ab-3d17bfddcd4mr83345455ab.15.1739470946865; Thu, 13 Feb 2025
- 10:22:26 -0800 (PST)
-Date: Thu, 13 Feb 2025 10:22:26 -0800
-In-Reply-To: <67aca50a.050a0220.110943.004e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ae3862.050a0220.21dd3.0020.GAE@google.com>
-Subject: Re: [syzbot] 
-From: syzbot <syzbot+1fcd957a82e3a1baa94d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Instead of opencoding with long lines, use for_each_if() macro
+which makes intention clearer and less error prone.
 
-***
+In v2:
+- moved original for_each_if() implementation to the global header (Bart)
 
-Subject: 
-Author: purvayeshi550@gmail.com
+Andy Shevchenko (2):
+  drm: Move for_each_if() to util_macros.h for wider use
+  gpiolib: Switch to use for_each_if() helper
 
-#syz test
+ include/drm/drm_util.h      | 16 +---------------
+ include/linux/gpio/driver.h |  7 ++++---
+ include/linux/util_macros.h | 15 +++++++++++++++
+ 3 files changed, 20 insertions(+), 18 deletions(-)
+
+-- 
+2.45.1.3035.g276e886db78b
+
 
