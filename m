@@ -1,63 +1,66 @@
-Return-Path: <linux-kernel+bounces-513416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16F8A34A67
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:44:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25481A34995
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:22:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4569E3B9E5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEE3F7A4456
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0E72222AE;
-	Thu, 13 Feb 2025 16:20:07 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672DC2222AC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B490423A9AE;
+	Thu, 13 Feb 2025 16:16:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD873202C43;
+	Thu, 13 Feb 2025 16:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463606; cv=none; b=EGVoczG/BcvMYV8+rT4mFEjUVP00FvF7QcocadoV2OhuH+e2Db0ysnZzAOrHj8VLaVIQReJ3gFgkFLef7xJHR79OQ8zn0ff5+aIjh+kpZczlylhA8qxox5oHbpR8S+BzTWO8tuIVx8jO8kdUHGkfGg944LUMlMlkSIyroeiQgwY=
+	t=1739463388; cv=none; b=e1OBjfenixUaQhVliuZnzvzdPqNjRKTnUvi/eTRt3y5LrZ8b0rWqlWRfAxzQf2zcbPkPXK4AkPtdUH5E5xAUZoFO3nDGPugKvbfVCK1oDD4SQLryB0OVQWF90raNu6h6GkNcE5Hq7ECTAl0u1OUgYuwnUf/E2DBbOVt2erbSdBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463606; c=relaxed/simple;
-	bh=7Vx5LU3xCK3towobKAwkNoPYars7RZMCsZaAztbDU8o=;
+	s=arc-20240116; t=1739463388; c=relaxed/simple;
+	bh=/IP4sPTzdL6OqvGI+gk5wXMcQOe47kMjaa+v4kcbCHU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KdZ2B/I2Ve6T1MTqcjGVQqMtTv0e/3x133cLzOFtUnlojdBKIm/1BuG7wmFcMba2r9m3GcGP2TGspwABrkGzvIZMZDQKJKvq7FlrV2zXgC3EfY6uQll3seMhyfUAa1JY0aZSo5CckDSzkSZpCm8oDy2cnV1OYJYiqxER1EmiyWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tibr7-000000003xx-1N2E;
-	Thu, 13 Feb 2025 11:14:25 -0500
-From: Rik van Riel <riel@surriel.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	bp@alien8.de,
-	peterz@infradead.org,
-	dave.hansen@linux.intel.com,
-	zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com,
-	thomas.lendacky@amd.com,
-	kernel-team@meta.com,
-	linux-mm@kvack.org,
-	akpm@linux-foundation.org,
-	jackmanb@google.com,
-	jannh@google.com,
-	mhklinux@outlook.com,
-	andrew.cooper3@citrix.com,
-	Rik van Riel <riel@surriel.com>,
-	Manali Shukla <Manali.Shukla@amd.com>
-Subject: [PATCH v11 12/12] x86/mm: only invalidate final translations with INVLPGB
-Date: Thu, 13 Feb 2025 11:14:03 -0500
-Message-ID: <20250213161423.449435-13-riel@surriel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250213161423.449435-1-riel@surriel.com>
-References: <20250213161423.449435-1-riel@surriel.com>
+	 MIME-Version; b=FXSprXJZPmmkn730ik9BiUC8f9p76hBGvh/3HvfHEFuS18XVpuhjIa7RmnbaAy/VVGy1MgZ9hx9teYh4z+D1ncscv5Sn9aukGbD9x4nQ9kRhN0ADgbR7FU/KeaFrBhRqYldFbAGYRe1MUVCDKunq1tF+ny6P0wJ9wiWx4lVWXlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E32BC26BA;
+	Thu, 13 Feb 2025 08:16:46 -0800 (PST)
+Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.32.44])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E48EB3F6A8;
+	Thu, 13 Feb 2025 08:16:21 -0800 (PST)
+From: Steven Price <steven.price@arm.com>
+To: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Cc: Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: [PATCH v7 23/45] KVM: arm64: Validate register access for a Realm VM
+Date: Thu, 13 Feb 2025 16:14:03 +0000
+Message-ID: <20250213161426.102987-24-steven.price@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250213161426.102987-1-steven.price@arm.com>
+References: <20250213161426.102987-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,89 +68,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: riel@surriel.com
 
-Use the INVLPGB_FINAL_ONLY flag when invalidating mappings with INVPLGB.
-This way only leaf mappings get removed from the TLB, leaving intermediate
-translations cached.
+The RMM only allows setting the GPRS (x0-x30) and PC for a realm
+guest. Check this in kvm_arm_set_reg() so that the VMM can receive a
+suitable error return if other registers are accessed.
 
-On the (rare) occasions where we free page tables we do a full flush,
-ensuring intermediate translations get flushed from the TLB.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Tested-by: Manali Shukla <Manali.Shukla@amd.com>
-Tested-by: Brendan Jackman <jackmanb@google.com>
-Tested-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/x86/include/asm/invlpgb.h | 10 ++++++++--
- arch/x86/mm/tlb.c              | 13 +++++++------
- 2 files changed, 15 insertions(+), 8 deletions(-)
+Changes since v5:
+ * Upper GPRS can be set as part of a HOST_CALL return, so fix up the
+   test to allow them.
+---
+ arch/arm64/kvm/guest.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/arch/x86/include/asm/invlpgb.h b/arch/x86/include/asm/invlpgb.h
-index 43c331507cc0..220aba708b72 100644
---- a/arch/x86/include/asm/invlpgb.h
-+++ b/arch/x86/include/asm/invlpgb.h
-@@ -67,9 +67,15 @@ static inline void invlpgb_flush_user(unsigned long pcid,
- static inline void __invlpgb_flush_user_nr_nosync(unsigned long pcid,
- 						  unsigned long addr,
- 						  u16 nr,
--						  bool pmd_stride)
-+						  bool pmd_stride,
-+						  bool freed_tables)
- {
--	__invlpgb(0, pcid, addr, nr - 1, pmd_stride, INVLPGB_PCID | INVLPGB_VA);
-+	u8 flags = INVLPGB_PCID | INVLPGB_VA;
-+
-+	if (!freed_tables)
-+		flags |= INVLPGB_FINAL_ONLY;
-+
-+	__invlpgb(0, pcid, addr, nr - 1, pmd_stride, flags);
+diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+index 2196979a24a3..ff0306650b39 100644
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -73,6 +73,24 @@ static u64 core_reg_offset_from_id(u64 id)
+ 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
  }
  
- /* Flush all mappings for a given PCID, not including globals. */
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 8880bc7456ed..f09049207b78 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -502,9 +502,10 @@ static inline void tlbsync(void)
- 
- static inline void invlpgb_flush_user_nr_nosync(unsigned long pcid,
- 						unsigned long addr,
--						u16 nr, bool pmd_stride)
-+						u16 nr, bool pmd_stride,
-+						bool freed_tables)
++static bool kvm_realm_validate_core_reg(u64 off)
++{
++	/*
++	 * Note that GPRs can only sometimes be controlled by the VMM.
++	 * For PSCI only X0-X6 are used, higher registers are ignored (restored
++	 * from the REC).
++	 * For HOST_CALL all of X0-X30 are copied to the RsiHostCall structure.
++	 * For emulated MMIO X0 is always used.
++	 */
++	switch (off) {
++	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
++	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
++	case KVM_REG_ARM_CORE_REG(regs.pc):
++		return true;
++	}
++	return false;
++}
++
+ static int core_reg_size_from_offset(const struct kvm_vcpu *vcpu, u64 off)
  {
--	__invlpgb_flush_user_nr_nosync(pcid, addr, nr, pmd_stride);
-+	__invlpgb_flush_user_nr_nosync(pcid, addr, nr, pmd_stride, freed_tables);
- 	if (!this_cpu_read(cpu_tlbstate.need_tlbsync))
- 		this_cpu_write(cpu_tlbstate.need_tlbsync, true);
+ 	int size;
+@@ -783,12 +801,34 @@ int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+ 	return kvm_arm_sys_reg_get_reg(vcpu, reg);
  }
-@@ -547,9 +548,9 @@ static void broadcast_tlb_flush(struct flush_tlb_info *info)
- 			nr = clamp_val(nr, 1, invlpgb_count_max);
- 		}
  
--		invlpgb_flush_user_nr_nosync(kern_pcid(asid), addr, nr, pmd);
-+		invlpgb_flush_user_nr_nosync(kern_pcid(asid), addr, nr, pmd, info->freed_tables);
- 		if (static_cpu_has(X86_FEATURE_PTI))
--			invlpgb_flush_user_nr_nosync(user_pcid(asid), addr, nr, pmd);
-+			invlpgb_flush_user_nr_nosync(user_pcid(asid), addr, nr, pmd, info->freed_tables);
++/*
++ * The RMI ABI only enables setting some GPRs and PC. The selection of GPRs
++ * that are available depends on the Realm state and the reason for the last
++ * exit.  All other registers are reset to architectural or otherwise defined
++ * reset values by the RMM, except for a few configuration fields that
++ * correspond to Realm parameters.
++ */
++static bool validate_realm_set_reg(struct kvm_vcpu *vcpu,
++				   const struct kvm_one_reg *reg)
++{
++	if ((reg->id & KVM_REG_ARM_COPROC_MASK) == KVM_REG_ARM_CORE) {
++		u64 off = core_reg_offset_from_id(reg->id);
++
++		return kvm_realm_validate_core_reg(off);
++	}
++
++	return false;
++}
++
+ int kvm_arm_set_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+ {
+ 	/* We currently use nothing arch-specific in upper 32 bits */
+ 	if ((reg->id & ~KVM_REG_SIZE_MASK) >> 32 != KVM_REG_ARM64 >> 32)
+ 		return -EINVAL;
  
- 		addr += nr << info->stride_shift;
- 	} while (addr < info->end);
-@@ -1697,10 +1698,10 @@ void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
- 	u16 asid = mm_global_asid(mm);
- 
- 	if (asid) {
--		invlpgb_flush_user_nr_nosync(kern_pcid(asid), uaddr, 1, false);
-+		invlpgb_flush_user_nr_nosync(kern_pcid(asid), uaddr, 1, false, false);
- 		/* Do any CPUs supporting INVLPGB need PTI? */
- 		if (static_cpu_has(X86_FEATURE_PTI))
--			invlpgb_flush_user_nr_nosync(user_pcid(asid), uaddr, 1, false);
-+			invlpgb_flush_user_nr_nosync(user_pcid(asid), uaddr, 1, false, false);
- 
- 		/*
- 		 * Some CPUs might still be using a local ASID for this
++	if (kvm_is_realm(vcpu->kvm) && !validate_realm_set_reg(vcpu, reg))
++		return -EINVAL;
++
+ 	switch (reg->id & KVM_REG_ARM_COPROC_MASK) {
+ 	case KVM_REG_ARM_CORE:	return set_core_reg(vcpu, reg);
+ 	case KVM_REG_ARM_FW:
 -- 
-2.47.1
+2.43.0
 
 
