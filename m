@@ -1,119 +1,84 @@
-Return-Path: <linux-kernel+bounces-512441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C90CA33957
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:56:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F51A3395C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:57:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2AD91886D8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70D7A164D77
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4317720B1ED;
-	Thu, 13 Feb 2025 07:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1949520AF8D;
+	Thu, 13 Feb 2025 07:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NrVC0Iee"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="quqrMz3u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D44920AF6D;
-	Thu, 13 Feb 2025 07:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704ACBA2D;
+	Thu, 13 Feb 2025 07:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739433373; cv=none; b=BTy81V8ANGP6QVvQeSRjpw68JVpfi/m3njXHQ7rN0HMKbl2LVx8mCnXdwuoO/KndztQ3/LNGn71oOzu/uSKKLNP93jzjQbke8sSlHhybzQ9vHdlfkGjyzLwm+yvc4KRO/v4S21iZwdhf+ojjeVwpPkpT4e2wunoL/7myqMQvCRM=
+	t=1739433414; cv=none; b=WtZsEhubB8iJTsqOqBbNom2Q4+SYDyXnftKPcJ8JZR9nQM5/4+gAs47Jo1xUZ/+5GAgpQH3GzkWhmgGKHREIjtOVFznmiCxX1840btCyESZwgyDCK0YXPSaGWaytJ/dLJeeuStL5BurL0Wx0OSVCI5+9nG5GkTwW2duWbsNftRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739433373; c=relaxed/simple;
-	bh=2Uc8K89lE0uWZIs0oK3hlodSTLVChNSVCiXAEXGJsPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GJea5Vup6cAa0AVe3gP1LDVXtlNKy0CTqp+/xhc7qVNKb48UfQElfizq9y2LN+OKAyRy6gWl6M1JqIBHxU7nePlgo586J/Da8CPWS9v1cnpVzlmTYvZRhos9QP627ZUwO0F979XwmWhvMGC8+qmxLoVQWUZIzZoWt+k38We/UXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NrVC0Iee; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CLjDTw013703;
-	Thu, 13 Feb 2025 07:56:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7y2mJuEdlm/pritz5pU/RHzXk27S62Sg5arowrorT40=; b=NrVC0Iee/WSzHpTS
-	wiocvhtdJHSUeHzrPELDTINUeA+0EwCmKaeYG8mr4TSb81JBs33f3EpSSALPKcfX
-	l8LoB2rCbnV7DLjLyBtROkcZMVInCyfSUDHaW54/MJki2vfilVpJ0Ug14EqEkgvB
-	nMk2RTBriOJLpwgGyh7N9TpLlvuSXStaxfDH+hzd6v6MXBb+UmGN4bara3Ki+Kne
-	38a5TYiimk4dWXXqPu4pc6ZBZIsUUXAtOxSwLlGJDa82SF3wTOtNX/ZsC6ASc1/E
-	2t6nvVopHdg9wpaHzXhWXyl6mk6hEVqgg+rEpOfVVUSamQVGAD1P6hDpfM4SdoJ8
-	NRCMRg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rsd7txkn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 07:55:59 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D7txHv028872
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 07:55:59 GMT
-Received: from [10.239.155.136] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
- 2025 23:55:55 -0800
-Message-ID: <a8543496-095a-4467-bae6-784f68e62597@quicinc.com>
-Date: Thu, 13 Feb 2025 15:55:52 +0800
+	s=arc-20240116; t=1739433414; c=relaxed/simple;
+	bh=Iw7l11wmjpe86HkNwFn62sRLFVZeqZaemNraot+F2wU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czSOTjQUTUrZ+sYe0pvyleZJfo9tkXjVnjOtYvkHV27dKBE86kk2UP9V3zfDLjh1xJzgI4XeJV504gu6bzXXl+TOncU9aN91ELMdNhzuWJ4dRTCbLj/NZMyhMqnRqyAyBI2fiZs64Ae2fs4NLmminXhlvdjRGz3ujsan2WzeTMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=quqrMz3u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A1CC4CED1;
+	Thu, 13 Feb 2025 07:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739433413;
+	bh=Iw7l11wmjpe86HkNwFn62sRLFVZeqZaemNraot+F2wU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=quqrMz3uae0Oo1jl94HETvKATZAtuY6Grn6QVvedAs+nhmiWU8iCf+PIUUT7Iu1xw
+	 7nxDal0wUQhsjviUmX1uPIMG4lyuTPZhKuZ88TJebIcXLgk0mfUHMnQ6OeeDuSEfnF
+	 jB2WzNmyh+d12OSzhCxG6Ji03eMbFciaMXtvJLwzZqRwe+eudo8nI0VzWTuuODYGbK
+	 0yOvGYX+kX/lOji/xeGL+dJOfCPCQesBt1gUgRJ5g9zxMwgeYFhU23A6+yE6/PlLNf
+	 t/EBJx7NytUfUgxyERrzXkug8Zj9wkBpQaqtSEtk0fObmkhyR7t1XRXgkfJ6sfTwBv
+	 1zK6LVJ+zIoxQ==
+Date: Thu, 13 Feb 2025 08:56:50 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: patrice.chotard@foss.st.com
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, christophe.kerello@foss.st.com
+Subject: Re: [PATCH v3 0/8] Add STM32MP25 SPI NOR support
+Message-ID: <20250213-lush-rainbow-moth-0f5e18@krzk-bin>
+References: <20250210131826.220318-1-patrice.chotard@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 8/8] ABI: sysfs-driver-ufs: Add missing UFS sysfs
- attributes
-To: Bean Huo <huobean@gmail.com>, <quic_cang@quicinc.com>,
-        <bvanassche@acm.org>, <mani@kernel.org>, <beanhuo@micron.com>,
-        <avri.altman@wdc.com>, <junwoo80.lee@samsung.com>,
-        <martin.petersen@oracle.com>, <quic_nguyenb@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <quic_rampraka@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        "Keoseong
- Park" <keosung.park@samsung.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20250210100212.855127-1-quic_ziqichen@quicinc.com>
- <20250210100212.855127-9-quic_ziqichen@quicinc.com>
- <619be8d99c88c9519634a3b116e71b22d2e25fd8.camel@gmail.com>
-Content-Language: en-US
-From: Ziqi Chen <quic_ziqichen@quicinc.com>
-In-Reply-To: <619be8d99c88c9519634a3b116e71b22d2e25fd8.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: sKY_o7Y475zvoh-Rjn0Rw7579PzGA4HT
-X-Proofpoint-GUID: sKY_o7Y475zvoh-Rjn0Rw7579PzGA4HT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- mlxlogscore=809 mlxscore=0 adultscore=0 spamscore=0 phishscore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130059
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250210131826.220318-1-patrice.chotard@foss.st.com>
 
+On Mon, Feb 10, 2025 at 02:18:18PM +0100, patrice.chotard@foss.st.com wrote:
+> From: Patrice Chotard <patrice.chotard@foss.st.com>
+> 
+> This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics,
+> for that it adds support for:
+>   - Octo Memory Manager driver.
+>   - Octo SPI driver.
+>   - yaml schema for Octo Memory Manager and Octo SPI drivers.
+> 
 
+You combined three different subsystems in one patchset and nothing here
+explains why and what is the merging intention. Either split your work
+or explain dependencies/merging.
 
-On 2/11/2025 2:24 AM, Bean Huo wrote:
-> On Mon, 2025-02-10 at 18:02 +0800, Ziqi Chen wrote:
->> Add UFS driver sysfs attributes clkscale_enable, clkgate_enable and
->> clkgate_delay_ms to this doucment.
-> 
-> "doucment" → "document"
-> 
->>
->> Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
-> 
-> 
-> Reviewed-by: Bean Huo <beanhuo@micron.com>
-> 
-Thanks, Bean
+Best regards,
+Krzysztof
 
--Ziqi
 
