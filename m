@@ -1,284 +1,112 @@
-Return-Path: <linux-kernel+bounces-512726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E009BA33D05
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:53:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81FBA33D0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81DF07A3BD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:53:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CA4C188B3B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD422135C0;
-	Thu, 13 Feb 2025 10:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E10B2135BD;
+	Thu, 13 Feb 2025 10:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E32+R2Cw"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fD9ywQCV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3895212D8D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127472080D4;
+	Thu, 13 Feb 2025 10:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739444025; cv=none; b=RB4v1yYHL4FpOxkXQcE9JopKMJn2RTyBmML9SNGkAP3qKrWPutMUFqY5RQZ5503WLc7M+FIvt9M7SYu1QyhSxSJjrRg/fLj761UkcvSGMYdie5E6jYJRnYg12ujlDH4sVF1VHDEIDEUDfpekcjGf+a0zH5s7aMtWZtmGV9oeAQ0=
+	t=1739444101; cv=none; b=qstCZgsRrXFnHqpywE0oSYuiqeDFsdaFvF1ruZVVj0Vf/rKzss5sRy9KVzriw5qzXrUwu7XHdP+QCLh5BRmR+gzVJulvU2etpS5f/kEDmXV94qZExNnDGUKK2I3GQSHtyKeszTZlMm6FxzZNusSQO3dbuKvGPedNOxQgo3dbCVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739444025; c=relaxed/simple;
-	bh=CxdSoIHuO3hDAjz4B5KLTm/OYqVLRMNIIpY0qRy4XtM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z4iJB2+BwtV67fvPyojlcdMrF24S5Jqr9AnsSJd3Qn0q5vTjGGWQ6PIn+U9BD460oEmfzLpIWitziGCO9gUbAS+HRDH+BEd/eNmwpmftAPhrvBxydf/6RctwMW6e7E21CEjxWIoREo/j4DpQqc52TGNzWWO0qnJ+JoTjscHWzMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E32+R2Cw; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-38dc88ed7e6so490398f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:53:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739444022; x=1740048822; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LH65o5YRE1ZNPyB4JSqw2z5nXm8tS/ZU1Ybl+xJhaus=;
-        b=E32+R2Cwh+yVluyu/0VqhtKavKg1FiQF/Se24rbqKNV14aalP9ZPcE+wOAjx1odpWA
-         zcNW3YhPVl0Q1ARNvKXzuW+5EeJqB/BHO1Sn3I3lOOUXn4qP5GY7Mm5Z7EqEmvDSohrv
-         FX95VD2ZHj6O3m9Qfu1p7PrbLfGWGeY0mfuxCEFZpn1Nawi1di8iDJOk6a6lU+s+HvtI
-         ZMYCHMPraGy3ZLlOD6EaAYBhobGJvL6OdexnaPV0MvUeChiRgWADZVhQGlAZ+TDsF7AK
-         fWgiWxK+WIZG+nNShObkoJvhmvXaZwIQ9h1uDMlbmyr4mpyjxpawGQV41vBYSePvmgEY
-         wc6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739444022; x=1740048822;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LH65o5YRE1ZNPyB4JSqw2z5nXm8tS/ZU1Ybl+xJhaus=;
-        b=Avw3rYMjxsEktHf8LQyaBftGkC/4P550rVAx5/u+Elu+G2A9WbxcELMcDu2ZSfKYFn
-         DKw9LT+zjcjUE48ZE3M9BHmPL3ec0PjmN4ArQOpyoJSnw1ulaUJnucLjIX+9swtjjrrU
-         4kPj6apvooxisrb2icxHRNOqJmOgQNiYhIE4QLbZGyWfgY5QAaYtSfMJCRwdsgbRLftl
-         EQpSr+gv28JdQHuegfwMx7il9SsoiyIBLERBCyzJ/Z9RIOEHQPMSmpoIQ+gMf3HU1Mk3
-         hBKDKmKuhwuoN+1JSuXYGiiYFvqPEgV4HCSVO5SOAZQi5cjhsbIdXT6ICR5xO4/jjjET
-         pMlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX677nXBAVE8+uOLf3FcpOkLcfOCwm0Tgwt1/S1o80EwZcgAXXc1rUecZztcqFc26SWgvxcldUNyzQusFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLrajBNNVWQXn5pszoM2BMfjKOil8gvakVyYwIJlD2vETOG4I0
-	+iZRKh6l6EMolnvVmy7wYsdAcY3dLwDEsuRu3kPO2FcPaZ8AoGA8x9si29Eh0CCY1IZbA8Qb5P1
-	ccYTKqk0glA==
-X-Google-Smtp-Source: AGHT+IFxznP0aCdnsFpcLgdw7/40LdRcVDzdZgumVDt95Dc2hRgsaFtKg75OlD16IyilijGhRybsgT2KdZ3HCQ==
-X-Received: from wmsp21.prod.google.com ([2002:a05:600c:1d95:b0:439:4829:ec32])
- (user=derkling job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:90:b0:38d:d92e:5f7a with SMTP id ffacd0b85a97d-38f244ee0f5mr2519203f8f.28.1739444022091;
- Thu, 13 Feb 2025 02:53:42 -0800 (PST)
-Date: Thu, 13 Feb 2025 10:53:04 +0000
-In-Reply-To: <20250123170149.GCZ5J1_WovzHQzo0cW@fat_crate.local>
+	s=arc-20240116; t=1739444101; c=relaxed/simple;
+	bh=FC+osHMM1wMl321HcyQTgueNyff8+QNBAFPiwB2uKhA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KplAdQOrM8MRDRg3EXTwFwlNbAVw/nw/439mydLaLBd+9uvkWCFbNKW8t0RoFgJRRoIZPT7SJw59nyTZd7Cm9wnYW7sasB7OGUVHxcNnQLxo8di4SRUkjaDQG6pwXt642xwpUrx4Q21Qru/zJDnjrD3cHv9jIPK0OqFY/gPFfWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fD9ywQCV; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739444100; x=1770980100;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=FC+osHMM1wMl321HcyQTgueNyff8+QNBAFPiwB2uKhA=;
+  b=fD9ywQCVVFS5poMpcIhvz1Qn5xemPV+daill3TqDq6QLJr0r3OitD5Nn
+   RRKP5FHX4XYfo1Bo1NyIRYPE+M1gCLZQJ6/Lm2Aux2fm4f6LG4wFROWWO
+   8W6hcHVQOp6asrbt1cPQxorPClEAlkTcw17ncjcbBSLs14KjFCk2kqSrn
+   WHxF2tfBe6enIGSZ78S2GtRc1AFJLwHxCXLGbpHqxj3OzXFnjYzgJlf/p
+   Y5bTvCXIu89NarEM8/yS6hD9b+XXPhEzbuFgMvNscj8S/8XIlMGm7wjuG
+   aegjKppc+BcxzjVCfBIIlOp7QkBBRGX/WMsq6W5lFDl2TIlXQILUzSXWC
+   w==;
+X-CSE-ConnectionGUID: pQUG0r1vR92RAZ0faSmmUw==
+X-CSE-MsgGUID: X6rHjMlpSCWyngjdH0vcrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51568223"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="51568223"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:54:59 -0800
+X-CSE-ConnectionGUID: gH7RkWeCSpOd3hLhl3vVuA==
+X-CSE-MsgGUID: qaKLpqIXQIm8x0zlic78AQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="118049979"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:54:55 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tiWrr-0000000B8iO-2JGV;
+	Thu, 13 Feb 2025 12:54:51 +0200
+Date: Thu, 13 Feb 2025 12:54:51 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v1 1/8] i2c: Introduce i2c_10bit_addr_from_msg()
+Message-ID: <Z63Pe1clM4VZBmIX@smile.fi.intel.com>
+References: <20250212163359.2407327-1-andriy.shevchenko@linux.intel.com>
+ <20250212163359.2407327-2-andriy.shevchenko@linux.intel.com>
+ <CAMuHMdW1wxQ0cddeE72D+Sii4HkT4bJfeTWX4-8FfHiFr+=3DA@mail.gmail.com>
+ <Z6zwqbzd5evG0H2z@smile.fi.intel.com>
+ <Z63DT_XdzEWrP4eR@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250123170149.GCZ5J1_WovzHQzo0cW@fat_crate.local>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250213105304.1888660-1-derkling@google.com>
-Subject: Re: Re: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-From: Patrick Bellasi <derkling@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Patrick Bellasi <derkling@matbug.net>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z63DT_XdzEWrP4eR@shikoro>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-FWIW, this should be the updated version of the patch with all the review
-comments posted so far.
+On Thu, Feb 13, 2025 at 11:02:55AM +0100, Wolfram Sang wrote:
+> 
+> Just a generic comment: please don't spend too much energy on 10-bit
+> support. I have never seen it used in the wild. It seems more like an
+> academic excercise.
 
-Posting here just to have an overall view of how the new patch should look like.
-This is also based on todays Linus's master branch.
+True, but still it makes sense to reduce the respective code base.
 
-Compile tested only...
-
-Best,
-Patrick
-
----
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-
-Add support for
-
-  CPUID Fn8000_0021_EAX[31] (SRSO_MSR_FIX). If this bit is 1, it
-  indicates that software may use MSR BP_CFG[BpSpecReduce] to mitigate
-  SRSO.
-
-enable this BpSpecReduce bit to mitigate SRSO across guest/host
-boundaries.
-
-Co-developed-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- Documentation/admin-guide/hw-vuln/srso.rst | 20 ++++++++++++++++++++
- arch/x86/include/asm/cpufeatures.h         |  1 +
- arch/x86/kernel/cpu/bugs.c                 | 21 +++++++++++++++++----
- arch/x86/kvm/svm/svm.c                     | 14 ++++++++++++++
- tools/arch/x86/include/asm/msr-index.h     |  1 +
- 5 files changed, 53 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/admin-guide/hw-vuln/srso.rst b/Documentation/admin-guide/hw-vuln/srso.rst
-index 2ad1c05b8c883..49680ab99c393 100644
---- a/Documentation/admin-guide/hw-vuln/srso.rst
-+++ b/Documentation/admin-guide/hw-vuln/srso.rst
-@@ -104,6 +104,26 @@ The possible values in this file are:
- 
-    (spec_rstack_overflow=ibpb-vmexit)
- 
-+ * 'Mitigation: Reduced Speculation':
-+
-+   This mitigation gets automatically enabled when the above one "IBPB on
-+   VMEXIT" has been selected and the CPU supports the BpSpecReduce bit.
-+
-+   It gets automatically enabled on machines which have the
-+   SRSO_USER_KERNEL_NO=1 CPUID bit. In that case, the code logic is to switch
-+   to the above =ibpb-vmexit mitigation because the user/kernel boundary is
-+   not affected anymore and thus "safe RET" is not needed.
-+
-+   After enabling the IBPB on VMEXIT mitigation option, the BpSpecReduce bit
-+   is detected (functionality present on all such machines) and that
-+   practically overrides IBPB on VMEXIT as it has a lot less performance
-+   impact and takes care of the guest->host attack vector too.
-+
-+   Currently, the mitigation uses KVM's user_return approach
-+   (kvm_set_user_return_msr()) to set the BpSpecReduce bit when a vCPU runs
-+   a guest and reset it upon return to host userspace or when the KVM module
-+   is unloaded. The intent being, the small perf impact of BpSpecReduce should
-+   be incurred only when really necessary.
- 
- 
- In order to exploit vulnerability, an attacker needs to:
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 508c0dad116bc..c46754298507b 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -468,6 +468,7 @@
- #define X86_FEATURE_IBPB_BRTYPE		(20*32+28) /* MSR_PRED_CMD[IBPB] flushes all branch type predictions */
- #define X86_FEATURE_SRSO_NO		(20*32+29) /* CPU is not affected by SRSO */
- #define X86_FEATURE_SRSO_USER_KERNEL_NO	(20*32+30) /* CPU is not affected by SRSO across user/kernel boundaries */
-+#define X86_FEATURE_SRSO_BP_SPEC_REDUCE	(20*32+31) /* BP_CFG[BpSpecReduce] can be used to mitigate SRSO for VMs (SRSO_MSR_FIX in AMD docs). */
- 
- /*
-  * Extended auxiliary flags: Linux defined - for features scattered in various
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index a5d0998d76049..d2007dbfcc1cc 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2522,6 +2522,7 @@ enum srso_mitigation {
- 	SRSO_MITIGATION_SAFE_RET,
- 	SRSO_MITIGATION_IBPB,
- 	SRSO_MITIGATION_IBPB_ON_VMEXIT,
-+	SRSO_MITIGATION_BP_SPEC_REDUCE,
- };
- 
- enum srso_mitigation_cmd {
-@@ -2539,7 +2540,8 @@ static const char * const srso_strings[] = {
- 	[SRSO_MITIGATION_MICROCODE]		= "Vulnerable: Microcode, no safe RET",
- 	[SRSO_MITIGATION_SAFE_RET]		= "Mitigation: Safe RET",
- 	[SRSO_MITIGATION_IBPB]			= "Mitigation: IBPB",
--	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only"
-+	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only",
-+	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation"
- };
- 
- static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
-@@ -2578,7 +2580,7 @@ static void __init srso_select_mitigation(void)
- 	    srso_cmd == SRSO_CMD_OFF) {
- 		if (boot_cpu_has(X86_FEATURE_SBPB))
- 			x86_pred_cmd = PRED_CMD_SBPB;
--		return;
-+		goto out;
- 	}
- 
- 	if (has_microcode) {
-@@ -2590,7 +2592,7 @@ static void __init srso_select_mitigation(void)
- 		 */
- 		if (boot_cpu_data.x86 < 0x19 && !cpu_smt_possible()) {
- 			setup_force_cpu_cap(X86_FEATURE_SRSO_NO);
--			return;
-+			goto out;
- 		}
- 
- 		if (retbleed_mitigation == RETBLEED_MITIGATION_IBPB) {
-@@ -2670,6 +2672,12 @@ static void __init srso_select_mitigation(void)
- 
- ibpb_on_vmexit:
- 	case SRSO_CMD_IBPB_ON_VMEXIT:
-+		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-+			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
-+			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-+			break;
-+		}
-+
- 		if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
- 			if (has_microcode) {
- 				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
-@@ -2691,7 +2699,12 @@ static void __init srso_select_mitigation(void)
- 	}
- 
- out:
--	pr_info("%s\n", srso_strings[srso_mitigation]);
-+
-+	if (srso_mitigation != SRSO_MITIGATION_BP_SPEC_REDUCE)
-+		setup_clear_cpu_cap(X86_FEATURE_SRSO_BP_SPEC_REDUCE);
-+
-+	if (srso_mitigation != SRSO_MITIGATION_NONE)
-+		pr_info("%s\n", srso_strings[srso_mitigation]);
- }
- 
- #undef pr_fmt
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 7640a84e554a6..6ea3632af5807 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -257,6 +257,7 @@ DEFINE_PER_CPU(struct svm_cpu_data, svm_data);
-  * defer the restoration of TSC_AUX until the CPU returns to userspace.
-  */
- static int tsc_aux_uret_slot __read_mostly = -1;
-+static int zen4_bp_cfg_uret_slot __ro_after_init = -1;
- 
- static const u32 msrpm_ranges[] = {0, 0xc0000000, 0xc0010000};
- 
-@@ -1540,6 +1541,11 @@ static void svm_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
- 	    (!boot_cpu_has(X86_FEATURE_V_TSC_AUX) || !sev_es_guest(vcpu->kvm)))
- 		kvm_set_user_return_msr(tsc_aux_uret_slot, svm->tsc_aux, -1ull);
- 
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-+		kvm_set_user_return_msr(zen4_bp_cfg_uret_slot,
-+					BIT_ULL(MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT),
-+					BIT_ULL(MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT));
-+
- 	svm->guest_state_loaded = true;
- }
- 
-@@ -5306,6 +5312,14 @@ static __init int svm_hardware_setup(void)
- 
- 	tsc_aux_uret_slot = kvm_add_user_return_msr(MSR_TSC_AUX);
- 
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-+		zen4_bp_cfg_uret_slot = kvm_add_user_return_msr(MSR_ZEN4_BP_CFG);
-+		if (WARN_ON_ONCE(zen4_bp_cfg_uret_slot < 0)) {
-+			r = -EIO;
-+			goto err;
-+		}
-+	}
-+
- 	if (boot_cpu_has(X86_FEATURE_AUTOIBRS))
- 		kvm_enable_efer_bits(EFER_AUTOIBRS);
- 
-diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-index 3ae84c3b8e6db..1372a569fb585 100644
---- a/tools/arch/x86/include/asm/msr-index.h
-+++ b/tools/arch/x86/include/asm/msr-index.h
-@@ -717,6 +717,7 @@
- 
- /* Zen4 */
- #define MSR_ZEN4_BP_CFG                 0xc001102e
-+#define MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT 4
- #define MSR_ZEN4_BP_CFG_SHARED_BTB_FIX_BIT 5
- 
- /* Fam 19h MSRs */
 -- 
-2.48.1.601.g30ceb7b040-goog
+With Best Regards,
+Andy Shevchenko
+
 
 
