@@ -1,144 +1,193 @@
-Return-Path: <linux-kernel+bounces-512123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C5DA33459
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:01:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D09A3345D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444653A7F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:01:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A2031659D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A3878F4A;
-	Thu, 13 Feb 2025 01:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DC16F2F2;
+	Thu, 13 Feb 2025 01:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oi32xUeu"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nQCQxvT9"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2936FC3;
-	Thu, 13 Feb 2025 01:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA50B6FC3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739408491; cv=none; b=X5ZwhK/qxwqJwsvnAKRPHzqbIOf3wQ5/zxgxE0fZ/4yOmk1o68ttoOcfn6Vw/XGqIKZks83vop5mico4Csu/dgtHCeknPzY81FZ11fDDUEy4tKbEZJlUB4RbvMv12dubUarupphCYV2sSrloPFySc9MS+duk/YYzM2KUqiHkyQQ=
+	t=1739408654; cv=none; b=J7g6JDRPfjxlW4pKVBODrQNJNNV+Aqp4LJyeQgHgAwDU8LM0bFvrAQW34FrKG6tbQFHiiECgyFH4zXTP04tGPigll+3EaFEqV4lsW1IGk+4dWhWabY6iWxIVC1SB4d4Xajjk4lTP4OUtiybY8kEKtzFIThiDn7Ib+ody7UCa1PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739408491; c=relaxed/simple;
-	bh=lVqsu1UPjaIEtaD6xvPeAnNOVZARwL5KXvGshOLpvPg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mUDsf43grCSGWLJ1AkLTLOalBxZfteBbYhpa+WOTMXKrNzIuIgU6O51gztYnr7qjp2r14RCunnAMam9y2ALt+Rb4rILoqar1em7MAwurY9O79V+oIvN2lF3sRj2AdXQhp9HXqsxU+fao4bXCEZv1C8xDM3Dnk/Ec0pQanMPi3w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oi32xUeu; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-308dc0878dfso3643321fa.3;
-        Wed, 12 Feb 2025 17:01:28 -0800 (PST)
+	s=arc-20240116; t=1739408654; c=relaxed/simple;
+	bh=g3fe0jDXcZCS3mUVQP+qhAvs9oAGxv2IZAXBclP3B3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MC/7gFNsgQjuLnhMDE4S43Z+eiV5bDokgaiTOEK54sHZv7oWcivff1uQK4GnFqXuA63OZgupxEjxDspsl6mLwyMCYlHxFCRN7vyKfDPFQ7DDXsXjX1GBWDLXlBs1vn6NNmJB0c83s80y/eMfGQ79mbUGWBx9om1Mdjf0u63sSpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nQCQxvT9; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-220bfdfb3f4so5490575ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:04:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739408487; x=1740013287; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PwH1+bRzUvItGRmNCEPnnsP1l4ssLo5J+YSnIAgd8sE=;
-        b=Oi32xUeuhCX35gutLgHDqGe4JXdG55Q74iihyw70NV+m59c1o62p8X7/du6KXMg7iR
-         qn++qBd9+aumZstI5cQgYUO24h68kM18pMw+UkTX8xUOZ27Yxs4zNLqKYgb07yRq0Oxo
-         jwuBxOX4+kpZRLUlRkG/HIqcI7nIqEmkQby1ybox3C//EJj7mSylXzZbPSuyVwPEpPjJ
-         BwjNAL56F1YvG+IZvbdEmFBoBJzKMDB75o6i42yW0jjf+KXmzlTaNwnftQc6WVciIWtw
-         amNLJb3StCb6bvxssQ6nmXp7BfhjeBFiKHAz/hYewqRvvzcFSCr8nvWkUSHvFqDHacYG
-         sO2A==
+        d=chromium.org; s=google; t=1739408652; x=1740013452; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YNBKlfsVmtlHTkH9IZhvvajaLh8zkK9XIaf8ryQGr5E=;
+        b=nQCQxvT9uQARTXQJKbKqllooPSaJLV6vu8NaraSK3aUeqImjGt3xX6NQ/tMU4rciZr
+         bQWaE0WmKC4K6msFpPHw6RCaP3V7ryggFzjtgyZmSjB1twD1bPcrMR3Ns5jAmBNPYiOx
+         rTuzR6/qrqo54iNQ3bhd5pOjICY2OtyJxurrY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739408487; x=1740013287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PwH1+bRzUvItGRmNCEPnnsP1l4ssLo5J+YSnIAgd8sE=;
-        b=VDcow/aSE7WfW3rA0zJhetLs0nLiwuzye7wK6ugY5/Ht3aBTbtsy1bfNgoA5tWQNwm
-         CqOmM9svywOc7Z+cOkfCttF4KWMfN8+VD2F+NxARKoe9rjyvTRkWrEJ9ruTmwejyg7+D
-         nyedobxkcQqmj18xsgkzHREw+r/G3tRKMp98i2KrWU8DJYtj4/000huYz94Z9Gi6RnEp
-         QrpS34Sp+/5ywch6W16IGnetKWfr/mvTtoOVrJVPtTJYY1B2L6NNdBgiIpawD01WjV30
-         QwpdyId3i6Q1EDJn5xop+Z97KnlQgbDdbO9+50fZIjRZsgVTEfWyouaHPoPBrKU64Sdl
-         +Oag==
-X-Forwarded-Encrypted: i=1; AJvYcCUpEV6vyHa5pCwfUon6RoNou/ARbEwmCH2gxrje20YN8wWb1dWWAQGZf6nwAu3D26Ox6ZZGqjH6mCMWlfY=@vger.kernel.org, AJvYcCV4AbjM1dXIhy03Dsntix9D6fZtXIVY8YGh9nqomSj9jWTkAXboGwqqCrq03RcSPh5q9hZ0c3zCmCRP@vger.kernel.org, AJvYcCVJ4rSUQH+RiIFW0ZuKO5g4BQ6wujiV+C8ndemZB10++qQXU+PFmfoJjipEubBfWLNzqP1FNDaejoaLyt+Imug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJuUzEszTnBjxSUx5xcHNwXwtqqyL/tKHc3fhgyFNJbSwWxQja
-	Sf1VEKZHGJQrwZ6Vubt5PY50D4J871slbnmg1I53NAEWuWkoS9prEJAXN6Cjn2xjFXMkPjFtFmo
-	aDJWjEaMOiD/jS29jri6xMxWza40=
-X-Gm-Gg: ASbGncv4CV9nsxOTQthV1q+Gp0sQwRSM6uAf+LQi8wDg/4rLnFQp/SMONoj80mkFTWD
-	GgDvBcOq1y96q/dUoW+PpksbWuR3Poct05FriNB1Fwex3cfPL9/6rv3aynl3/7S0VJtJsHtiYTB
-	0MlzBwzaiehFVP28hORA8USXuCdotILvI=
-X-Google-Smtp-Source: AGHT+IEWShSpJbA2J8teP0j6h6GMwJQJUZRNsbEcECAWxJ5ftLSRiy/NOOTLTTw5YYhjqRM6g0RcMfwZCTLikbdbBGE=
-X-Received: by 2002:a2e:bc16:0:b0:300:2a29:d47c with SMTP id
- 38308e7fff4ca-309036d731bmr20346141fa.24.1739408487200; Wed, 12 Feb 2025
- 17:01:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739408652; x=1740013452;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YNBKlfsVmtlHTkH9IZhvvajaLh8zkK9XIaf8ryQGr5E=;
+        b=oDvR70ir/i1wZjjwH7J4WJxnTjiiMtOoLfEjUWMYOLyLs8Qpc/51o1m04ZuA6d05/f
+         OFMi6NKxop0QwY5mfEk5ooX0s2ndFylmJZBI8Qn2urWKQ+ecjm1EYK9rUFRIycNu/C69
+         LxpOlgfPC2j4cvLJ5ox8DXvskSluPoVi8rVVvB7PvjPn3TkB1PrvQfcrOtd+DUm9mp5c
+         Q07q+brGDEf2PDdXPx7okiPx4aXrPOMq4OdASVcc+wDTH+9Ai5IO1nJ83+y6Bgk4K49X
+         3UkOrZceoO2iu/rqAj4BnA/TZhD05//jl7aHUDeO5CSNpiYBtfDH8GpGvEvDjdQjuRQR
+         8MmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0S4t1DWkc38L8aX2ep3EUIx8eYjfYIyt+jfdi7F5LgQQkKFWZEl8hpz5ED76USCOF6qC0gS5IFry71p8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgPw9usq1e6g1rASkpx/gEInjpSDLKifOnVVsdc87UhHPpP33l
+	uylqrTM+8K8lPT0wkuXod9EUqFRIMm4Vqj+QJ0fLrdTNC37+/YkoN5TG9Pu2jg==
+X-Gm-Gg: ASbGncvXnmRGptw/5NrBxmvEyIcY2iLlItAGgBn/90lL07oawTX5QhRk4INKXb/MdEd
+	2j8nPaOmwQOjirjfmKT4YkJI0+1C7xHs8j81PbxDE8bNDTWtBBJSPcoPF1f9iLRNaoZLHn4bPIM
+	jeNKTZIJ84UFjMDC24VRFon5aWoa89if8yr3WJ/5sX5SXQaflfcJreUwZG3Q8kSuueYix5XKYZg
+	FXzOGld6K1lux/wI2iYo2Zq3eBagr6QZymc6g2aaGTFiaZx1LE+9oLeUeoL36wY3p+htusEW+Hs
+	odaAt7VmAmutksY8q1c=
+X-Google-Smtp-Source: AGHT+IEsXd7pTwSdHVb6/w5n0BoUOPkwr/sRjXyRUZKPV0O4FUJWx/q+Ok9ezXMZIpRjdgj7hmkV+A==
+X-Received: by 2002:a05:6a20:914d:b0:1ee:6b16:983e with SMTP id adf61e73a8af0-1ee6b169967mr2949103637.11.1739408651929;
+        Wed, 12 Feb 2025 17:04:11 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:69f5:6852:451e:8142])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5a5304a9sm61241a12.52.2025.02.12.17.04.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 17:04:11 -0800 (PST)
+Date: Thu, 13 Feb 2025 10:04:05 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 02/18] zram: permit preemption with active compression
+ stream
+Message-ID: <js555qtbh76tq3wn4o3qcnwbwddv3l7xyob35iszjw3ifvoyi2@kupe2ii762cu>
+References: <20250212063153.179231-1-senozhatsky@chromium.org>
+ <20250212063153.179231-3-senozhatsky@chromium.org>
+ <Z6zF5QvTQwVoAhMP@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
- <Z6zA9UNm_UckccRm@pollux> <20250212163848.22e8dcff@eugeo> <Z6zT6mZuxonewQ9z@pollux>
- <CAJ-ks9=-kP5jBGQ_A88VPU_HW9VkF=OCqcGufqrJobhJu8dhww@mail.gmail.com>
- <Z6z-FlEUk9OfeJCV@cassiopeiae> <CAJ-ks9=-ZQpmhJRs3YstZBGb9UvLwRQJ7od+dsc_sYZtwUhF2A@mail.gmail.com>
- <Z60Lb4OK3jLCAAra@pollux> <CAJ-ks9=3LC7MM+uubZfjRTrWYa+sOakeq-0hwZpXK9hxXtuG5g@mail.gmail.com>
-In-Reply-To: <CAJ-ks9=3LC7MM+uubZfjRTrWYa+sOakeq-0hwZpXK9hxXtuG5g@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 12 Feb 2025 20:00:50 -0500
-X-Gm-Features: AWEUYZm_15lZtdyjYy2Ljp_nODSkfvZUWlFHrvc9vWeIkADxQ7fYGlaWtbwsX4c
-Message-ID: <CAJ-ks9moi5vQREcy=DL4sVoNZ+T2mA263M1axOGxSHf7Ram1xw@mail.gmail.com>
-Subject: Re: [PATCH v5] rust: alloc: satisfy POSIX alignment requirement
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, DJ Delorie <dj@redhat.com>, 
-	Eric Blake <eblake@redhat.com>, Paul Eggert <eggert@cs.ucla.edu>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6zF5QvTQwVoAhMP@google.com>
 
-On Wed, Feb 12, 2025 at 4:24=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> On Wed, Feb 12, 2025 at 3:58=E2=80=AFPM Danilo Krummrich <dakr@kernel.org=
-> wrote:
-> >
-> > On Wed, Feb 12, 2025 at 03:47:11PM -0500, Tamir Duberstein wrote:
-> > > Looks like I wasn't the only one to fall into the trap (rust/kernel/i=
-o.rs):
-> > >
-> > >     #[inline]
-> > >     const fn io_addr_assert<U>(&self, offset: usize) -> usize {
-> > >         build_assert!(Self::offset_valid::<U>(offset, SIZE));
-> > >
-> > >         self.addr() + offset
-> > >     }
-> > >
-> > > since offset isn't known at compile time, this can easily be misused?
-> >
-> > Well, that's intentional.
-> >
-> > iomem.readb(0x0)     // succeeds if SIZE >=3D1
-> > iomem.readb(foo)     // fails if foo is not known at compile time
->
-> By "fails" here you mean fail to link, right?
->
-> > iomem.try_readb(foo) // succeeds if self.maxsize() >=3D 1
->
-> Apologies for being dense throughout this discussion. Could you check
-> my understanding?
->
-> The trick is that `build_error` is marked `#[export_name =3D
-> "rust_build_error"]` which isn't exported unless
-> CONFIG_RUST_BUILD_ASSERT_ALLOW is defined, causing linking to it to
-> fail. This even works for doctests, but not for #[test] in the kernel
-> crate because they are built as part of the crate. The only to way
-> make that work correctly is to put `build_error` in a crate all by
-> itself.
+On (25/02/12 16:01), Yosry Ahmed wrote:
+> On Wed, Feb 12, 2025 at 03:27:00PM +0900, Sergey Senozhatsky wrote:
+> > Currently, per-CPU stream access is done from a non-preemptible
+> > (atomic) section, which imposes the same atomicity requirements on
+> > compression backends as entry spin-lock, and makes it impossible
+> > to use algorithms that can schedule/wait/sleep during compression
+> > and decompression.
+> > 
+> > Switch to preemptible per-CPU model, similar to the one used
+> > in zswap.  Instead of a per-CPU local lock, each stream carries
+> > a mutex which is locked throughout entire time zram uses it
+> > for compression or decompression, so that cpu-dead event waits
+> > for zram to stop using a particular per-CPU stream and release
+> > it.
+> > 
+> > Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> > ---
+> >  drivers/block/zram/zcomp.c    | 36 +++++++++++++++++++++++++----------
+> >  drivers/block/zram/zcomp.h    |  6 +++---
+> >  drivers/block/zram/zram_drv.c | 20 +++++++++----------
+> >  3 files changed, 39 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
+> > index bb514403e305..e83dd9a80a81 100644
+> > --- a/drivers/block/zram/zcomp.c
+> > +++ b/drivers/block/zram/zcomp.c
+> > @@ -7,6 +7,7 @@
+> >  #include <linux/wait.h>
+> >  #include <linux/sched.h>
+> >  #include <linux/cpu.h>
+> > +#include <linux/cpuhotplug.h>
+> 
+> What code changes prompt this?
 
-Which of course, it is.
+Just a missing header include.  We use cpuhotplug.
+I actually think I wanted to replace cpu.h with it.
 
-I thought maybe this was specific to building on macOS, but it
-reproduces on Linux as well.
+> >  #include <linux/crypto.h>
+> >  #include <linux/vmalloc.h>
+> >  
+> > @@ -54,6 +55,7 @@ static int zcomp_strm_init(struct zcomp *comp, struct zcomp_strm *zstrm)
+> >  {
+> >  	int ret;
+> >  
+> > +	mutex_init(&zstrm->lock);
+> 
+> I don't think we can initialize the mutex in the hotplug callback. I
+> think the following scenario is possible:
+> 
+> CPU #1					CPU #2
+> zcomp_stream_get()
+>   zstrm = raw_cpu_ptr()
+> /* task migrated to CPU 2 */
+> 
+> CPU goes offline
+>   zcomp_cpu_dead()
+>     mutex_lock()
+>     ..
+>     mutex_unlock()
+> 					/* migrated task continues */
+> 					zcomp_stream_get()
+> 					  mutex_lock()
+> CPU goes online
+>   mutex_init()
+>   					  mutex_unlock() /* problem */
+> 					
+> In this case we'll end up initializing the mutex on CPU #1 while CPU #2
+> has it locked. When we unlocked it on CPU #2 we will corrupt it AFAICT.
+> 
+> This is why I moved the mutex initialization out of the hotplug callback
+> in zswap. I suspect to do something similar for zram we'd need to do it
+> in zcomp_init()?
 
-Gary, can you help me understand how the linker magic works? Is it
-possible to make it work on the host as well?
+Yeah, I think you are right.  Let me take a look.
+
+> >  	ret = comp->ops->create_ctx(comp->params, &zstrm->ctx);
+> >  	if (ret)
+> >  		return ret;
+> > @@ -109,13 +111,29 @@ ssize_t zcomp_available_show(const char *comp, char *buf)
+> >  
+> >  struct zcomp_strm *zcomp_stream_get(struct zcomp *comp)
+> >  {
+> > -	local_lock(&comp->stream->lock);
+> > -	return this_cpu_ptr(comp->stream);
+> > +	for (;;) {
+> > +		struct zcomp_strm *zstrm = raw_cpu_ptr(comp->stream);
+> > +
+> > +		/*
+> > +		 * Inspired by zswap
+> > +		 *
+> > +		 * stream is returned with ->mutex locked which prevents
+> > +		 * cpu_dead() from releasing this stream under us, however
+> > +		 * there is still a race window between raw_cpu_ptr() and
+> > +		 * mutex_lock(), during which we could have been migrated
+> > +		 * to a CPU that has already destroyed its stream.  If so
+> 
+> "we could have been migrated from** a CPU that has already destroyed its
+> stream"? Right?
+
+"from", "to"... what's the difference :)
 
