@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-512878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FB0A33EC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:06:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE08A33EC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC296161FBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:06:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8493162DA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F90221576;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F48B221574;
 	Thu, 13 Feb 2025 12:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fc+AlMlx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElRnAjM2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFC021D3DD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E03421D3EE;
 	Thu, 13 Feb 2025 12:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739448388; cv=none; b=WqWawHf4K7dBEzJhCcOm47fyIlPaKmge2rAoPUXdSkKHla4Xuglfdcn5aIG0MhektathkOpU3WhwhTsZXHUqZHp2qaALWs/0U2nqZMzwmJu6zwGlGs66h3HVlK9JgaKDRODUKkmQmngCxH7+VcWZv4CaP2eUt6WeJQpv1G/DAgE=
+	t=1739448388; cv=none; b=SopNSy5e95MPOlXtjH7RVGkPofmMnDovz1iIm0Vrm39FV2VwYVvgc00S81rNZbu26qQbT5gwWHOiqLNicmzsa7muHpvE3bhC5lQGhxWzAgbX+K0Yde/8cMHvOLveVYT8jq3ZQWLnbQ9aIVsy1GGxwdM4V03HcMzp+QF/5Ib2o0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739448388; c=relaxed/simple;
-	bh=AbtiWm7KrQwGR0dmAQH/R+3c6zbpBrPp9XhZWqZGL9c=;
+	bh=/Amj8QMX4cjKrM7YxDVeFIGaF99CFoJ+BqTe2Cuk59w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ONqnop8c8osSGNXg5Xpiw1kFe1Mbh0kMaE6CUaJCSjpcdUcDczSJeAsliCWvi/wsoUBIA9ZZ1u3z/nQLN8kRoGCoqoHF23/Bd2jr4K4Rk0i+CblVd/PDzWgzfJI0ftMUdMGVMjp2v0e+mnHLZhcvV2cdi2w6aTRsZoV3pR0i1nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fc+AlMlx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF777C4CEE7;
+	 MIME-Version; b=gvXMpcAxVHlqixuwFLrT3Qz0dg93j/1bqvrtjUKeMypNeG5bhWX0QeI2nf07B1ToegPSOYAeP1mQ5K9nC/KI4HozW/I2YcyyRwvNsEUYcCNZk4QQSYQEj2nPpjdSY4KE3sRw2aE7gdJEsytXd3u5Fz/yshskD7CRZG1Q3UsI/n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElRnAjM2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5B54C4CEE6;
 	Thu, 13 Feb 2025 12:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1739448388;
-	bh=AbtiWm7KrQwGR0dmAQH/R+3c6zbpBrPp9XhZWqZGL9c=;
+	bh=/Amj8QMX4cjKrM7YxDVeFIGaF99CFoJ+BqTe2Cuk59w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fc+AlMlx23kPbg+1fjwaxv8a3tTB2B+A8MgSZtThj2W60xr/Vu9rtG7voWbJl1aa1
-	 sBYc424nnK+QXpT38doNydnbI8K87mW2PC432N0ltUgxXUyq8ytUd3HXY+qKxywoQC
-	 8n4UbdtCDm26LBV+4nt92QgO0lr5yLOhdlb92vfTiJ4KAsqERBIy4Uk7LSdmczVvz7
-	 KbjHHyT+lkDUxRy5JK03k2sdy+dcHgazq14SHgz6ZlkezBRWTgJsDz/KiQcftVBAfX
-	 8atGqglZZRw1CwHwYLwC6WnkdeQLBmUOw5orUwuC/yxDDvPb74mGkCtY76DMCg+TK8
-	 YbCiNmOsHIrrg==
+	b=ElRnAjM2qTYuEjtNgrjahFrZky1+vAlgWHIzeNs2dRnH3ZrchN4ZXMvj33cy0cO7J
+	 E43J81Q09oOxmkByjIRViVA7LUo2WQKUdp5v9k+5BLTawTsYFYfHpYVT8+rekwzOl5
+	 eLNGHi9dFq3BEORWJo6/fjzSNqWaMLjza/lxWr2p6WwwzkNvrriy1NLGpqt7CynTAw
+	 Zwao8IB2d0MDmLOUXOj3qc+n+khKSgpSr8vCwvCsvaUyKYtpKtwImSdBBozVPxLcag
+	 g4h0tTfvRqmpJfcZe41+/fS2Z3KjoUOMarp6dvtBQYpw20kH88Syvb++iRLSFhogV3
+	 0p6ttRaX108+w==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tiXz7-0000000BIV8-1VDd;
+	id 1tiXz7-0000000BIVC-1bq7;
 	Thu, 13 Feb 2025 13:06:25 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -50,9 +50,9 @@ To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFCv2 2/5] scripts/kernel-doc: remove an obscure logic from kernel-doc
-Date: Thu, 13 Feb 2025 13:06:15 +0100
-Message-ID: <ba4b0d8fbfe8d6cc3a818f0578857369e6d695e5.1739447912.git.mchehab+huawei@kernel.org>
+Subject: [PATCH RFCv2 3/5] scripts/kernel-doc: don't add not needed new lines
+Date: Thu, 13 Feb 2025 13:06:16 +0100
+Message-ID: <5b5017631b7499d53c4da9ff9b0288eb0d1f914d.1739447912.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1739447912.git.mchehab+huawei@kernel.org>
 References: <cover.1739447912.git.mchehab+huawei@kernel.org>
@@ -65,77 +65,29 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Kernel-doc has an obscure logic that uses an external file
-to map files via a .tmp_filelist.txt file stored at the current
-directory. The rationale for such code predates git time,
-as it was added on Kernel v2.4.5.5, with the following description:
+This helps comparing kernel-doc output with the new .py version
+of it.
 
-	# 26/05/2001 -         Support for separate source and object trees.
-	#              Return error code.
-	#              Keith Owens <kaos@ocs.com.au>
-
-from commit 396a6123577d ("v2.4.5.4 -> v2.4.5.5") at the historic
-tree:
-	https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/
-
-Support for separate source and object trees is now done on a different
-way via make O=<object>.
-
-There's no logic to create such file, so it sounds to me that this is
-just dead code.
-
-So, drop it.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/kernel-doc | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+ scripts/kernel-doc | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index e57c5e989a0a..70da9a3369c6 100755
+index 70da9a3369c6..0dfee1c3d365 100755
 --- a/scripts/kernel-doc
 +++ b/scripts/kernel-doc
-@@ -179,7 +179,7 @@ my ($function, %function_table, %parametertypes, $declaration_purpose);
- my %nosymbol_table = ();
- my $declaration_start_line;
- my ($type, $declaration_name, $return_type);
--my ($newsection, $newcontents, $prototype, $brcount, %source_map);
-+my ($newsection, $newcontents, $prototype, $brcount);
- 
- if (defined($ENV{'KBUILD_VERBOSE'}) && $ENV{'KBUILD_VERBOSE'} =~ '1') {
-     $verbose = 1;
-@@ -2005,10 +2005,6 @@ sub map_filename($) {
-         $file = $orig_file;
+@@ -816,6 +816,10 @@ sub output_highlight_rst {
+     if ($block) {
+         $output .= highlight_block($block);
      }
- 
--    if (defined($source_map{$file})) {
--        $file = $source_map{$file};
--    }
--
-     return $file;
- }
- 
-@@ -2403,19 +2399,6 @@ for (my $k = 0; $k < @highlights; $k++) {
-     $dohighlight .=  "\$contents =~ s:$pattern:$result:gs;\n";
- }
- 
--# Read the file that maps relative names to absolute names for
--# separate source and object directories and for shadow trees.
--if (open(SOURCE_MAP, "<.tmp_filelist.txt")) {
--    my ($relname, $absname);
--    while(<SOURCE_MAP>) {
--        chop();
--        ($relname, $absname) = (split())[0..1];
--        $relname =~ s:^/+::;
--        $source_map{$relname} = $absname;
--    }
--    close(SOURCE_MAP);
--}
--
- if ($output_selection == OUTPUT_EXPORTED ||
-     $output_selection == OUTPUT_INTERNAL) {
- 
++
++    $output =~ s/^\n+//g;
++    $output =~ s/\n+$//g;
++
+     foreach $line (split "\n", $output) {
+         print $lineprefix . $line . "\n";
+     }
 -- 
 2.48.1
 
