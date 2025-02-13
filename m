@@ -1,89 +1,82 @@
-Return-Path: <linux-kernel+bounces-512115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05DE0A33444
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:51:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F55EA33445
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549771888EC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:51:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E24167095
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486026EB7C;
-	Thu, 13 Feb 2025 00:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F7878F24;
+	Thu, 13 Feb 2025 00:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gWmhF8tZ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JsoEzPnx"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9081F171D2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95ADD4D8A3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739407868; cv=none; b=ext3pn3ta0Z4QMNlghQg6DuL5yeCU4SmCBpgtbYhP3mlzlXda4hgw9inWqP1tofqE5fDDN5ZauuUc1zQ89O1YHLZq12x166X3xso2jAsK1ifBv293Z/kSSNvnUA5l4L5b0X1CpoNyYr9h9oObvzq28ESNiYeBi0z78HpEqUBOrs=
+	t=1739407886; cv=none; b=rPzcK/k5RZU9ouP0/WyxCEHVHV8xrxo3Tuc5B7xOt4HTGS4pHzAN5fHEfFzY17EgBP0/lx3m5EXnMrlej9bJGtS/kobFGRjpW6nlPdy9HiXFMM/Pikse3nC1vOzTAhW4XotVSK/aI1rnLVBlAycnd2jFbtPIWEwtOcPjBK2C2e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739407868; c=relaxed/simple;
-	bh=Pi49J0C0xlV6JwLa2S4yQ0RFEowGWHKvl2FWoDay6ZM=;
+	s=arc-20240116; t=1739407886; c=relaxed/simple;
+	bh=HEEc1OQOOdaTanth8exTPs0cDMXFCNsQuNkN8Ht8j/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0I9UI1qxx8uUcosCfhg/6xZVD5+hNRwKjQmM1Mo13NRKkp6bQkf2lxP9UO79P/ronhljql9VOHtBAFwKE5ACHA/JxvSzdHiLsQ3dAEkEgobfoW9G0yar0ccbo4sKUivh8iVILyyZO2w3y/Rv02EzwS1BpBIT75weW3wL6OLWPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gWmhF8tZ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54508b026d1so188412e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:51:03 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AmEKmbSAZa6FMXTSzDJkRfqSRd+6PfShbstjM4vKT2GDhLeV75E523HhgmNGKv9acKGEZqI37NnptZRjg4JydoReZpvJfsVS3NmCWMOYWkuXMA5xMrnDeL014K0u63QCs9Tt9JTHtlirIefgstPsNuY/eo/J3c9F+r/5qkBzrvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JsoEzPnx; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21f49bd087cso4110615ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:51:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739407861; x=1740012661; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1739407883; x=1740012683; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rqigqz7VsvHvjDZLKrzENnpIDRVXNd7wQyN9hE5QEH0=;
-        b=gWmhF8tZEKLlWlBMPOhZKoLG3PcLmAHhaMdDu+mASWr9OS5CnronMFdV76sjixoQS1
-         xpACkJE2RvvAnmSax3sL8C6CAykMTMM5ODvkO1+PgLWz6P3GKQae6mP2KPLVDoEYzKvX
-         DM70Z0eRsAYEpI2l4ZT5PV0p+oNxcKlU8z6jNbpsX0/DJr/NR/rUDNJ2AHtwu8xflVHs
-         Cb+gQdXe9sK4tBPe5V23DRYyq03SU3YGEb7m8de0oWVOu9zC0WzoEPkbv0e8x/7prQiZ
-         bQdQPLWI5u1UuH1g/+//Cirjx+hkfNFwrb2msS0zj0wo/MkyAhx9CmiNFNXaeQ2juimf
-         8vGg==
+        bh=r05a82z1APr0gUiGEvrQLAFO4U9vsuwFZGbyN1oDXqs=;
+        b=JsoEzPnxksc2l05SK9joPBc4UzhS7tqbcq55DDQF3y5QVbi4y4rylZbzdpbT80T4XU
+         vPP//1xuTnBJPLNMe0NozMHAJZFEhSaDKNfGvFAWO1qdZjlFZV9v7C9bFdk1FgQzXpid
+         2oab2cjZYqKoE0AFQPXQx+Giep2xWjxwoWXSc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739407861; x=1740012661;
+        d=1e100.net; s=20230601; t=1739407883; x=1740012683;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Rqigqz7VsvHvjDZLKrzENnpIDRVXNd7wQyN9hE5QEH0=;
-        b=hGIza6vfLEoY3Oku7rI59V+Y/EOPb1LF+qCVGZSSmzGek1yG7ku26XyMSCtULXyf/X
-         YXWdAGN+UIVMxuzFAisrf+uddaO35q86cO5Mg9qdtu7s5qO12M8pCwb8LmylWBBmZjg8
-         6x6tXXWOWaX0Iu49c2Uw3xnMfZNY3hPQK67tcOuxIOCiKfvyfnj7AQPyyNlToUbTMLFg
-         yetpjjiBCYIURXTjlFCTAvZ3/tFLfquvkD1+XcsGIjqgs5HWNQMisG79JsliGIGX8PX4
-         ykwF+80gdSaMsT78x81kqOsjGa3k8/lhL+ypTm8XBGEO3HNqtWipAm/fgkL0zCjs+KPm
-         vqZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjLnwyR8+ODVGxZo9DN+S617CSktFhn4lmCoFxFhxoK8ElUB3jnFD+H9tV2aubY/kwrOaChcyKFa34+Dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNsbAQg6X5tE7lPpZ1mh8AwESOtrls6E66e2bfNR2IvNQZJuh0
-	R3v9HVgUNqAI0ITXRFV5Do5k1saW2/f27ETHh3iyGaTxdYc6TBy6YiIaVj/zRyQ=
-X-Gm-Gg: ASbGncsqoPGWfr7JTtBX3Mv5wQGO59gV77MWwFEPnZADB8a5kOrsvAbzssfCRCfGeAx
-	rB2ZqubO1BPrDSY79ASd2tQBfX+YEBw6A9EwwC1PlQjKka/ZuPBuyCzCrQAq78k48gqEE1mhS9l
-	VL/HtO5qza1t2YbwOnhBYjxq/KZwHDMLoYvCdXq/kiZVqpHiorv0tq1jU0r8AcJ2N4LaNwMpqcI
-	bUe247YcfsyoWLDfulP4ySo/4ZzCPUMmxY3tX4JpXaUPBqsA3uq6oYQ4a2dkgsO0rwpJrt/P7kO
-	B/Xxyovxn4tF7vC6Etc6lceOwxz6yRSs9SXn3wFNjHw6bDnA0yyKtnnmnXARe/9DCq9u8T8=
-X-Google-Smtp-Source: AGHT+IFjkw30z40D63ZpFBNnhdaR0NzBABs0fEXk4IhCsjkAw9hFFstUmVaf2lYdSRmrdWFFEbfsiQ==
-X-Received: by 2002:a05:6512:2031:b0:545:a2f:22bd with SMTP id 2adb3069b0e04-545181859d6mr1559896e87.48.1739407861367;
-        Wed, 12 Feb 2025 16:51:01 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f10cb54sm19680e87.163.2025.02.12.16.50.59
+        bh=r05a82z1APr0gUiGEvrQLAFO4U9vsuwFZGbyN1oDXqs=;
+        b=HmLTONNNVJqD97uv0U3xdOr5TL7ujJEj6R14F3O3EQn3/KCfNA1gNHgIzJPwPYwbEW
+         YZWq7maCZAQMrMFR0mpDrMfvwH5E2eAT6ZTvFmV+cgHqGiP0MoDuDf3smBXmiOnp3aL+
+         8MTaxxV1/vV4H99ZeUSb0jhZryZSq6vrCyKayNh3/WiHCoGq7ZHIzkrua1GQKxfSWN7d
+         66EUkMm2xNTiECxqvi/toWWHoKLmquKgGt4GPaT6FPej9aFX6rUnW8BN1WNRMrqIDqJs
+         8X7F8QX2HnblCXPLWXhYRHTa3BS7o78vKqn0VEdGVx6mclo/AwgNSZt/wCEPFFNQklRb
+         YI0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWqBz3uN6g/GbiVpk8IYMkmnieaNjMGLPx4PeUsJAOnlByf/DJg1GSxDPovqftH+AsJiHCfMPzs/cllBJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsZJa05BgvRlgKrh/tZcEU0PVCgAknLYewjuMe1pYoj5AJ5rGi
+	cuU9DjOwxdxe5Y/hSML1C1QcQNUSHrJCkFOrpcxvdFPlpD0+WRaHgeq86mk3UA==
+X-Gm-Gg: ASbGncueNfzGFZgCPtzt+P3ETzlpgHqIgj1/LdBkYd7JmjezyAVboP4R9LnUlxtbtdD
+	XStS1z/04NpmueILypDsz13RZrtWyrFQPidTKE4zK/sk12+3Li/lrImJ3EAlRWn5bNV04TuNlyC
+	vx/qljFlW6Uckq0AUJicUj9Zg1qYM0vuvqOm12K6GLQPjakRSNfdPoBJv1wyia88e6+0UTVzykK
+	IVthAcX3v8QJPnCJaQNpTigX47nWBpMYp+m8qN/aaXMSesdSbAwaA3Uvr/kRMMh0OQvClyzwYqR
+	SmYk+a+Y1TksOiqG0g0=
+X-Google-Smtp-Source: AGHT+IGgz0RAEzqP4Wx85JQhy+tJfkh+g8KkMgjaQdFTqWqNqIMWapFbTKSFayf4RrSW0aN+jnkZgQ==
+X-Received: by 2002:a05:6a20:3d86:b0:1ee:67ec:227d with SMTP id adf61e73a8af0-1ee6b399b6amr3133288637.34.1739407882799;
+        Wed, 12 Feb 2025 16:51:22 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:69f5:6852:451e:8142])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324276169fsm65303b3a.140.2025.02.12.16.51.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 16:51:00 -0800 (PST)
-Date: Thu, 13 Feb 2025 02:50:57 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
-	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
-	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 drm-dp 7/7] drm/hisilicon/hibmc: Enable this hot plug
- detect of irq feature
-Message-ID: <zbbksbprvvwkjsmhuxac7ugshfjbnnp4hxxwxmmnosjzcebb3l@ppyn2cijj6bi>
-References: <20250210144959.100551-1-shiyongbang@huawei.com>
- <20250210144959.100551-8-shiyongbang@huawei.com>
+        Wed, 12 Feb 2025 16:51:22 -0800 (PST)
+Date: Thu, 13 Feb 2025 09:51:17 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>, Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/18] zsmalloc/zram: there be preemption
+Message-ID: <p5tmome7ycfezuunnz4l24lt6sir4nms524cfuebr5ndkokbk5@lflejozsvgtf>
+References: <20250212063153.179231-1-senozhatsky@chromium.org>
+ <20250212160956.8bc390876af3c6669b8031d2@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,435 +85,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250210144959.100551-8-shiyongbang@huawei.com>
+In-Reply-To: <20250212160956.8bc390876af3c6669b8031d2@linux-foundation.org>
 
-On Mon, Feb 10, 2025 at 10:49:59PM +0800, Yongbang Shi wrote:
-> From: Baihan Li <libaihan@huawei.com>
+On (25/02/12 16:09), Andrew Morton wrote:
+> On Wed, 12 Feb 2025 15:26:58 +0900 Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
 > 
-> To realize HPD feature, we have getting hpd status function, registering
-> irq function, interrupt handler function, and hpd event process function.
-> And also we use pci_alloc_irq_vectors() to get our msi irq, because we have
-> two interrupts now.
+> > First, zsmalloc is converted to use sleepable RW-"lock" (it's atomic_t
+> > in fact) for zspage migration protection.
 > 
-> Signed-off-by: Baihan Li <libaihan@huawei.com>
-> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-> ---
-> ChangeLog:
-> v1 -> v2:
->   - optimizing the description in commit message, suggested by Dmitry Baryshkov.
->   - add mdelay(100) comments, suggested by Dmitry Baryshkov.
->   - deleting display enable in hpd event, suggested by Dmitry Baryshkov.
-> ---
->  .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  1 +
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 33 ++++++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    | 13 ++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  2 +
->  .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 57 +++++++++++++-
->  .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   | 78 +++++++++++++++----
->  .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   | 14 ++++
->  7 files changed, 181 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
-> index c5feef8dc27d..08f9e1caf7fc 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
-> @@ -16,5 +16,6 @@
->  #define HIBMC_DP_SYNC_EN_MASK		0x3
->  #define HIBMC_DP_LINK_RATE_CAL		27
->  #define HIBMC_DP_SYNC_DELAY(lanes)	((lanes) == 0x2 ? 86 : 46)
-> +#define HIBMC_DP_INT_ENABLE		0xc
->  
->  #endif
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-> index 5e889c377117..0b6ce48c5d8f 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-> @@ -181,6 +181,7 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
->  	/* int init */
->  	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
->  	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
-> +	writel(HIBMC_DP_INT_ENABLE, dp_dev->base + HIBMC_DP_INTR_ENABLE);
->  	/* rst */
->  	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
->  	/* clock enable */
-> @@ -284,3 +285,35 @@ void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg)
->  	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(0), cfg->enable);
->  	writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
->  }
-> +
-> +enum hibmc_dp_hpd_status hibmc_dp_get_hpd_status(const struct hibmc_dp *dp)
-> +{
-> +	enum hibmc_dp_hpd_status status;
-> +	u32 val;
-> +
-> +	/* spec said the HPD signal needs to be pulled up for
-> +	 * more than 100 ms to enter the plug status
-> +	 */
-> +	mdelay(100);
+> This sentence is stale?
 
-Please check that your code doesn't break with CONFIG_DEBUG_ATOMIC_SLEEP=y
-
-Having a 100msec delay in the ISR handler is a really sad idea. Don't
-you have HPD debouncing handled in the hardware?
-
-> +
-> +	val = readl(dp->dp_dev->base + HIBMC_DP_HPD_STATUS);
-> +	val = (val & HIBMC_DP_CFG_SINK_HPD_STATE_MACHINE) >> 4;
-> +
-> +	switch (val) {
-> +	case 0: /* 0: IDLE */
-> +	case 3: /* 3: DONE */
-> +		status = HIBMC_DP_HPD_OUT;
-> +		break;
-> +	case 1: /* 1: PLUG */
-> +		status = HIBMC_DP_HPD_IN;
-> +		break;
-> +	case 4: /* 4: ASSERT_LENGHT */
-> +		status = HIBMC_DP_HPD_DETECTING;
-> +		break;
-> +	default: /* unknown status */
-> +		status = HIBMC_DP_HPD_DET_FAIL;
-> +		break;
-> +	}
-
-Is there a way to detect a short pulse on the HPD line aka attention?
-You have defined HIBMC_DP_HPD_SHORT below, but it is not being assigned
-at all.
-
-> +
-> +	return status;
-> +}
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-> index 823544b8008b..df7b692b1998 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-> @@ -41,6 +41,17 @@ struct hibmc_dp_cbar_cfg {
->  	enum hibmc_dp_cbar_pattern pattern;
->  };
->  
-> +enum hibmc_dp_hpd_status {
-> +	HIBMC_DP_HPD_DETECTING,
-> +	HIBMC_DP_HPD_IN,
-> +	HIBMC_DP_HPD_OUT,
-> +	HIBMC_DP_HPD_SHORT, /* Short hpd (irq_hpd) */
-> +	HIBMC_DP_HPD_DET_FAIL,
-> +	HIBMC_DP_HPD_IN_SIMULATE,
-> +	HIBMC_DP_HPD_OUT_SIMULATE,
-> +	HIBMC_DP_HPD_SHORT_SIMULATE,
-> +};
-> +
->  struct hibmc_dp {
->  	struct hibmc_dp_dev *dp_dev;
->  	struct drm_device *drm_dev;
-> @@ -49,6 +60,7 @@ struct hibmc_dp {
->  	void __iomem *mmio;
->  	struct drm_dp_aux aux;
->  	struct hibmc_dp_cbar_cfg cfg;
-> +	u32 hpd_status;
->  };
->  
->  int hibmc_dp_hw_init(struct hibmc_dp *dp);
-> @@ -58,5 +70,6 @@ int hibmc_dp_get_dpcd(struct hibmc_dp *dp);
->  u8 hibmc_dp_get_link_rate(struct hibmc_dp *dp);
->  u8 hibmc_dp_get_lanes(struct hibmc_dp *dp);
->  void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg);
-> +enum hibmc_dp_hpd_status hibmc_dp_get_hpd_status(const struct hibmc_dp *dp);
->  
->  #endif
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-> index c43ad6b30c2c..6c4ba0412b15 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-> @@ -12,6 +12,7 @@
->  #define HIBMC_DP_AUX_RD_DATA0			0x64
->  #define HIBMC_DP_AUX_REQ			0x74
->  #define HIBMC_DP_AUX_STATUS			0x78
-> +#define HIBMC_DP_HPD_STATUS			0x98
->  #define HIBMC_DP_PHYIF_CTRL0			0xa0
->  #define HIBMC_DP_VIDEO_CTRL			0x100
->  #define HIBMC_DP_VIDEO_CONFIG0			0x104
-> @@ -75,5 +76,6 @@
->  #define HIBMC_DP_CFG_STREAM_HTOTAL_SIZE		GENMASK(31, 16)
->  #define HIBMC_DP_CFG_STREAM_HBLANK_SIZE		GENMASK(15, 0)
->  #define HIBMC_DP_CFG_STREAM_SYNC_CALIBRATION	GENMASK(31, 20)
-> +#define HIBMC_DP_CFG_SINK_HPD_STATE_MACHINE	GENMASK(7, 4)
->  
->  #endif
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-> index 1f8f7b74f5b4..057dd3caa043 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-> @@ -11,8 +11,12 @@
->  #include <drm/drm_edid.h>
->  
->  #include "hibmc_drm_drv.h"
-> +#include "hibmc_drm_regs.h"
->  #include "dp/dp_hw.h"
->  
-> +#define DP_MASKED_SINK_HPD_UNPLUG_INT	BIT(3)
-> +#define DP_MASKED_SINK_HPD_PLUG_INT	BIT(2)
-> +
->  static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
->  	.get_modes = drm_connector_helper_get_modes,
->  	.detect_ctx = drm_connector_helper_detect_from_ddc,
-> @@ -81,6 +85,53 @@ static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
->  	.atomic_disable = hibmc_dp_encoder_disable,
->  };
->  
-> +static int hibmc_dp_cfg(struct hibmc_dp *dp)
-> +{
-> +	int ret;
-> +
-> +	ret = hibmc_dp_hw_init(dp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	hibmc_dp_display_en(dp, false);
-
-Does this enable video signal? You should only enable AUX and perform
-link training at this point.
-
-> +
-> +	return 0;
-> +}
-> +
-> +irqreturn_t hibmc_dp_hpd_event_isr(int irq, void *arg)
-> +{
-> +	struct drm_device *dev = (struct drm_device *)arg;
-> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
-> +	enum hibmc_dp_hpd_status status;
-> +	int idx;
-> +
-> +	if (!drm_dev_enter(dev, &idx))
-> +		return -ENODEV;
-> +
-> +	status  = hibmc_dp_get_hpd_status(&priv->dp);
-> +	if (status == HIBMC_DP_HPD_IN) {
-> +		if (!(priv->dp.hpd_status & DP_MASKED_SINK_HPD_PLUG_INT))
-> +			goto err;
-> +		drm_dbg_dp(&priv->dev, "HPD IN isr occur!\n");
-> +		hibmc_dp_cfg(&priv->dp);
-> +		drm_kms_helper_connector_hotplug_event(&priv->dp.connector);
-> +	} else if (status == HIBMC_DP_HPD_OUT) {
-> +		if (!(priv->dp.hpd_status & DP_MASKED_SINK_HPD_UNPLUG_INT))
-> +			goto err;
-> +		drm_dbg_dp(&priv->dev, "HPD OUT isr occur!\n");
-> +		drm_kms_helper_connector_hotplug_event(&priv->dp.connector);
-
-This looks like a hand-coded drm_connector_helper_hpd_irq_event()
-
-> +	} else {
-> +		drm_warn(&priv->dev, "HPD unknown isr occur, status: %d\n", status);
-> +	}
-> +
-> +err:
-> +	priv->dp.hpd_status = 0;
-> +
-> +	drm_dev_exit(idx);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
->  int hibmc_dp_init(struct hibmc_drm_private *priv)
->  {
->  	struct drm_device *dev = &priv->dev;
-> @@ -93,14 +144,12 @@ int hibmc_dp_init(struct hibmc_drm_private *priv)
->  	dp->mmio = priv->mmio;
->  	dp->drm_dev = dev;
->  
-> -	ret = hibmc_dp_hw_init(&priv->dp);
-> +	ret = hibmc_dp_cfg(dp);
->  	if (ret) {
-> -		drm_err(dev, "hibmc dp hw init failed: %d\n", ret);
-> +		drm_err(dev, "hibmc dp cfg failed: %d\n", ret);
->  		return ret;
->  	}
->  
-> -	hibmc_dp_display_en(&priv->dp, false);
-> -
->  	encoder->possible_crtcs = drm_crtc_mask(crtc);
->  	ret = drmm_encoder_init(dev, encoder, NULL, DRM_MODE_ENCODER_TMDS, NULL);
->  	if (ret) {
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> index bade693d9730..199acb3e7a73 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> @@ -29,9 +29,13 @@
->  #include "hibmc_drm_regs.h"
->  
->  #define HIBMC_DP_HOST_SERDES_CTRL	0x1f001c
-> +#define HIBMC_DP_INTSTAT		0x1e0724
-> +#define HIBMC_DP_INTCLR			0x1e0728
-
-Why are those defined outside of hibmc_drm_regs.h?
-
->  
->  DEFINE_DRM_GEM_FOPS(hibmc_fops);
->  
-> +static const char *g_irqs_names_map[HIBMC_MAX_VECTORS] = { "vblank", "hpd" };
-> +
->  static irqreturn_t hibmc_interrupt(int irq, void *arg)
->  {
->  	struct drm_device *dev = (struct drm_device *)arg;
-> @@ -49,6 +53,22 @@ static irqreturn_t hibmc_interrupt(int irq, void *arg)
->  	return IRQ_HANDLED;
->  }
->  
-> +static irqreturn_t hibmc_dp_interrupt(int irq, void *arg)
-> +{
-> +	struct drm_device *dev = (struct drm_device *)arg;
-> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
-> +	u32 status;
-> +
-> +	status = readl(priv->mmio + HIBMC_DP_INTSTAT);
-> +	if (status) {
-> +		priv->dp.hpd_status = status;
-> +		writel(status, priv->mmio + HIBMC_DP_INTCLR);
-> +		return IRQ_WAKE_THREAD;
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
->  static int hibmc_dumb_create(struct drm_file *file, struct drm_device *dev,
->  			     struct drm_mode_create_dumb *args)
->  {
-> @@ -248,15 +268,52 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
->  	return 0;
->  }
->  
-> -static int hibmc_unload(struct drm_device *dev)
-> +static void hibmc_unload(struct drm_device *dev)
-> +{
-> +	drm_atomic_helper_shutdown(dev);
-> +
-> +	pci_disable_msi(to_pci_dev(dev->dev));
-> +}
-> +
-> +static int hibmc_msi_init(struct drm_device *dev)
->  {
-> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
->  	struct pci_dev *pdev = to_pci_dev(dev->dev);
-> +	int ret;
->  
-> -	drm_atomic_helper_shutdown(dev);
-> +	ret = pci_alloc_irq_vectors(pdev, HIBMC_MIN_VECTORS,
-> +				    HIBMC_MAX_VECTORS, PCI_IRQ_MSI);
-> +	if (ret < 0) {
-> +		drm_err(dev, "enabling MSI failed: %d\n", ret);
-> +		return ret;
-> +	}
->  
-> -	free_irq(pdev->irq, dev);
-> +	priv->valid_irq_num = ret;
->  
-> -	pci_disable_msi(to_pci_dev(dev->dev));
-> +	priv->irqs = drmm_kcalloc(dev, priv->valid_irq_num,
-> +				  sizeof(struct hibmc_irq), GFP_KERNEL);
-
-Why do you need an extra pointer?  You know that there are no more than
-HIBMC_MAX_VECTORS, so you can have this data as a part of your private
-structure.
-
-> +	if (!priv->irqs)
-> +		return -ENOMEM;
-> +
-> +	for (int i = 0; i < priv->valid_irq_num; i++) {
-> +		snprintf(priv->irqs[i].name, sizeof(priv->irqs[i].name) - 1, "%s-%s-%s",
-> +			 dev->driver->name, pci_name(pdev), g_irqs_names_map[i]);
-> +
-> +		priv->irqs[i].irq_num = pci_irq_vector(pdev, i);
-> +
-> +		if (i)
-> +			/* PCI devices require shared interrupts. */
-> +			ret = devm_request_threaded_irq(&pdev->dev, priv->irqs[i].irq_num,
-> +							hibmc_dp_interrupt, hibmc_dp_hpd_event_isr,
-> +							IRQF_SHARED, priv->irqs[i].name, dev);
-> +		else
-> +			ret = devm_request_irq(&pdev->dev, priv->irqs[i].irq_num, hibmc_interrupt,
-> +					       IRQF_SHARED, priv->irqs[i].name, dev);
-
-This feels like "too many changes". You have MSI-related changes, devm_,
-your HPD interrupt. Please split this patch into logical parts.
-
-> +		if (ret) {
-> +			drm_err(dev, "install irq failed: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
->  
->  	return 0;
->  }
-> @@ -288,15 +345,10 @@ static int hibmc_load(struct drm_device *dev)
->  		goto err;
->  	}
->  
-> -	ret = pci_enable_msi(pdev);
-> +	ret = hibmc_msi_init(dev);
->  	if (ret) {
-> -		drm_warn(dev, "enabling MSI failed: %d\n", ret);
-> -	} else {
-> -		/* PCI devices require shared interrupts. */
-> -		ret = request_irq(pdev->irq, hibmc_interrupt, IRQF_SHARED,
-> -				  dev->driver->name, dev);
-> -		if (ret)
-> -			drm_warn(dev, "install irq failed: %d\n", ret);
-> +		drm_err(dev, "hibmc msi init failed, ret:%d\n", ret);
-> +		goto err;
->  	}
->  
->  	/* reset all the states of crtc/plane/encoder/connector */
-> @@ -372,7 +424,7 @@ static void hibmc_pci_remove(struct pci_dev *pdev)
->  
->  static void hibmc_pci_shutdown(struct pci_dev *pdev)
->  {
-> -	drm_atomic_helper_shutdown(pci_get_drvdata(pdev));
-> +	hibmc_pci_remove(pdev);
->  }
->  
->  static const struct pci_device_id hibmc_pci_table[] = {
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-> index bc89e4b9f4e3..764e211a8779 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-> @@ -22,6 +22,14 @@
->  
->  #include "dp/dp_hw.h"
->  
-> +#define HIBMC_MIN_VECTORS	1
-> +#define HIBMC_MAX_VECTORS	2
-> +
-> +struct hibmc_irq {
-> +	s32 irq_num;
-> +	char name[32];
-> +};
-> +
->  struct hibmc_vdac {
->  	struct drm_device *dev;
->  	struct drm_encoder encoder;
-> @@ -40,6 +48,10 @@ struct hibmc_drm_private {
->  	struct drm_crtc crtc;
->  	struct hibmc_vdac vdac;
->  	struct hibmc_dp dp;
-> +
-> +	/* irqs */
-> +	struct hibmc_irq *irqs;
-> +	u32 valid_irq_num;
->  };
->  
->  static inline struct hibmc_vdac *to_hibmc_vdac(struct drm_connector *connector)
-> @@ -71,4 +83,6 @@ int hibmc_dp_init(struct hibmc_drm_private *priv);
->  
->  void hibmc_debugfs_init(struct drm_connector *connector, struct dentry *root);
->  
-> +irqreturn_t hibmc_dp_hpd_event_isr(int irq, void *arg);
-> +
->  #endif
-> -- 
-> 2.33.0
-> 
-
--- 
-With best wishes
-Dmitry
+I'd say it is accurate, zspage has 'atomic_t lock' which is reader-writer
+type of lock (permitting scheduling for readers and forbidding scheduling
+for writers).
 
