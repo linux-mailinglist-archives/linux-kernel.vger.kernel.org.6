@@ -1,187 +1,150 @@
-Return-Path: <linux-kernel+bounces-513965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B873AA350D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:03:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75762A3348C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:21:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 016C43A7D7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:03:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1161188A020
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C188206F15;
-	Thu, 13 Feb 2025 22:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D860D86349;
+	Thu, 13 Feb 2025 01:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="mKZSZQHY"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfjYpt8w"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FE41714B7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923B078F26
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739484227; cv=none; b=ZkPjmlY6NlX0bjU46wkf8NZojCEJSYuNdCoWQNUAIrkjmcAcpX7j7Xb2oWgCVDhShwdjfThzLw7n5JlU0+Q6gaVhN5daGj3PPwpFZlCotsdvDoNturtSZbkXMsPHojfC3Q3gkAR7wWopnsBARzxCT/VlPP50ghS48GatT8gGSs8=
+	t=1739409708; cv=none; b=YH433UuCNPGPHKmvqiWe9mt27bnN9f6T3bKJYBX9d9+Wu8eYQO7R5JrCSzhLBaomcZNOPLIfdzf2TcxtGau5d13Jyif96NJMRQFBwGPwqMKk9PrxqYv7gpDEzVF5rYazl/cYpuzPWGLULsLev5ooRuCzEYIN15y+h7osTZr5W5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739484227; c=relaxed/simple;
-	bh=vRm1GqPMyqXA4pzClKC7bvwwNmM1WifeOw0DDoJQWxM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y3bfDthfbQOhjN/p6PtOt3oNQjyfayifHdvGrQXY2zQDokGtutgeAjFE2xwu8w3F4JTOxTUYevXhuBgQBh612YKCu4SlVw305CIXfWY+8jeJ4SE6hVlPZ49T/QxSRypupA6d7GQwUWftyiDHaD9DhOKuY4INBT9l0AhrTRXlAbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=mKZSZQHY; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fbffe0254fso2518716a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:03:44 -0800 (PST)
+	s=arc-20240116; t=1739409708; c=relaxed/simple;
+	bh=q+nCXvcuGbP6lZuLocKajT0ORe5EGrF6T3/N8VpC8fs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KueByD88zh6dkx1DYuM+ia0sATnA8R+pRuv0j62qvl4CGtwJBXW1kTy7G8haRPDAopWLBy6JYu0Pc4jrpocoK9C5odA8MahMbaxDgq1c7YyC3iF8VhzpQKn3JrTRxuUU0mvxpUBPbLYp7XPWKhb0sTAjha/9R4YgtsBo85SfyRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfjYpt8w; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43956fcd608so1977485e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:21:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1739484224; x=1740089024; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vofSNuCMlReC+WuFTXGYAG+iOC4hNVftxe7EdwNqb5U=;
-        b=mKZSZQHYlozsiTZI+eZ2aZ9RN+TbJcsjaUfm7VZ3EPztIaJa8xcuNrBAu+K6JCjStr
-         NhMVjDIxXlx8Kr65ANodrFcnY0KeEF2X2uXuTZAs4z9OCk9iGl85RbucbEpxmObyIPp/
-         FtgA9yusEAv26k4XtiZqEO+6VYJoRITx6RF5hfb4nholpfgcFDtxApTKcQo9s1mQvjRu
-         XrlfRYpJgdes+1japH60Mgb2DgCCvRu8L1PnoUHaqq7CYriijXH8yoFX9cxWYfeNiCFX
-         B7T9F0WCiuyUhrJk+RFFvDxIe+I/1cq4eESLJWtJKxAt3W4F8z69rywNHFhG9Um/EOHs
-         SqPA==
+        d=gmail.com; s=20230601; t=1739409705; x=1740014505; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q+nCXvcuGbP6lZuLocKajT0ORe5EGrF6T3/N8VpC8fs=;
+        b=HfjYpt8wQHhUYd2ZRQuf3oSOgLs6yha3tTp4A+R34vbmrAbTWh5TVtKS3eLS+iO6g4
+         maDCkH/nNp/ZOHuhialk9S6PFGYBcSpYiFJh19PDkIxsEhqHu67n2Bh1P+EIw/2o6YKA
+         e33iXmpR/zB8cvDmIW3g4q2nqVnqqaXP8DqsroS13hZuhxJCvf4Q9MK0JIYDo9BfNz8J
+         hdprjRXFgcpzEMqp/8eTH6GAil0gRUyHvQHO1LolG5draZPPu9aJYOK+2UgTzLllXMci
+         qpGhj5COTTQIzS1/3Cn2pBLuM+fePxvX6+f2nv7XU+wQeMI4fUVGbowzl0UT/eZhupBC
+         ZP6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739484224; x=1740089024;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vofSNuCMlReC+WuFTXGYAG+iOC4hNVftxe7EdwNqb5U=;
-        b=IHr0ORjUNZO0YRTXCjGv45QDvt0Pw3rpnX7wWmmvR4r/oTphuKgzIzM4pzQA3xC2Hf
-         4/gH/W0ws9tA9TO3QPm6McQ2odYBUHwjw5eEgLGQBayHGP9RbJqoENqwl7Oz6BSMXSCb
-         PMu7Id8eD2c+DiB0Xb2tHIrrFYzyDm2p1G8KrwRFXLXqCHPOfIrbjZGMonWTN32wVIz+
-         OgJqG5wbZTKhG9LXekmPzEh2lcLTYdXgKwnVUlryRHUTz7UnsDTDyf3/V13Cvg8ivMAn
-         txQuunb7tw3yvrJUnwyurcljJW/252iRP8CSgMUgXdPZqWRj9DMX8Wm7Xd0CqpiRj8j4
-         UwEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnBk/MS9kIn1ixwYFUJdrqOuTAHOdDLTd7bDEZ1caf1/LzuxUZKebNftbWaHhDChWgQzZ0BWysZdBVii4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhlNQ5PNIvOc15lo/z1FuUiNLSNqa6JLtINuif9chYxcl7WJBb
-	1lVkGVOsFFFamDzky/YxpUFZ2wANuxGdAZS/pn815x+GiL7OTkja3K1WAhuBayM=
-X-Gm-Gg: ASbGncvjg/k7BStciyDSw1yq/htuXzoOsCd+JdIPBjggNGjtcVE90FzKLOp8mZ2S4P9
-	BYwJw7wLJgCLhKegHCRUkQmvBu5S2S3diiT3+cimLEECux1+1VFptaQujYEqcbeEfTO/odPMCxy
-	QlRttttppHT+sf8d8UuhNlzZZvYjm/IjFhkgNRkZqFoMB4kChPQ6Ihsgk0slwwNgh2Pgr84qWXt
-	UXqiTpouTg7YODq7nPF/irOhJ/uhlwAw0Om0oqlQgTOqeWO/25kW8Mt5y98zN2bH89/l1NgrUKm
-	MKiAMdwi0eFhIMS/lBSepL3R1XQ4Qq/AC5ZOGA==
-X-Google-Smtp-Source: AGHT+IHZZb2Jta84jO1YUZkaqS3bvyvNnQldZh8oh2u99VvWuVBNfNp7QsimOh8/7XV9ie22K9NXig==
-X-Received: by 2002:a05:6a00:3d46:b0:72f:f872:30a7 with SMTP id d2e1a72fcca58-7322c37d9b1mr13653146b3a.6.1739484224011;
-        Thu, 13 Feb 2025 14:03:44 -0800 (PST)
-Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e438sm1847491b3a.94.2025.02.13.14.03.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 14:03:43 -0800 (PST)
-From: Samuel Holland <samuel.holland@sifive.com>
-To: Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Ian Rogers <irogers@google.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	Jiri Olsa <jolsa@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: [RESEND PATCH 0/7] perf vendor events riscv: Update SiFive CPU PMU events
-Date: Wed, 12 Feb 2025 17:21:33 -0800
-Message-ID: <20250213220341.3215660-1-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1739409705; x=1740014505;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q+nCXvcuGbP6lZuLocKajT0ORe5EGrF6T3/N8VpC8fs=;
+        b=l5lBv4H8r2rBd2BKqS2FTLm7w3WnEQZ0D27gPYiiwKTRx9IceK3+fAdroJLMAGbun2
+         hYsn8JTI16Km+RonDnZqvE3yoE8XvkQjKxSNpzYHqOh3iT49x+OeNmXcnsv1ou4UkgJ7
+         A757zvLEfuor2oifC+4UpOHa3sS1+CkugwzVgcuvPiedE1+bJG2rlHeATLJWQpgi13hv
+         cUyH65jkbGTdA3II3wiVikft+iPkf3q4prU2AoBHVHqAmigOtGlTsJNwGXyupIZFphQn
+         V9j3gCn4aTzSMh/kUe54MqDHvMAZqRIpba53nlgmnDFm6xmHZq9bSL9EeqwUKJVQscaH
+         WA9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU/2tQ8y7mSpjED8xTsQ536Cz1n3sl+TJL2t4JrJbv2l6t1qKtDawzR3JxAvVLIMH4Hfr3Lw/Z8W8GFeOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjucxttkvSdwIiw5UXC1arWok/AAb7VIsoxu8q6txRHviM9IBE
+	VNYWs20VfPf0dgXUUn9+drVqFCe+X4L5o4BJWDqY3MV9TF+UBAKjdPUxwIANConlHSz+pfM6mTo
+	AFqmkpxQjnjMdExtyNnCed5Rl2xE=
+X-Gm-Gg: ASbGnctVbHnPN3yqnh5oEyGv/SD0DWbNFKtCpYruKE3XU6MYJsMW1vAehE0tRcn1wJq
+	V3/jWa41cF5KYHP90ecKzYZS2IfhkCMKOsfG4S2Bt6OXvxrGu4q7ubIn6R/2iY49k342sDccw6K
+	Q=
+X-Google-Smtp-Source: AGHT+IEjJMkC/hHaotdqSukhMJQZrOiaCkGtVrbEkJiI15zjYiRvHohJ4FkUwvWx7PY95qrg/tcG6HP5nsDWETkesBs=
+X-Received: by 2002:a05:600c:198b:b0:439:60bc:71b3 with SMTP id
+ 5b1f17b1804b1-43960bc744emr6893225e9.25.1739409704648; Wed, 12 Feb 2025
+ 17:21:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241022015913.3524425-1-samuel.holland@sifive.com>
+ <20241022015913.3524425-2-samuel.holland@sifive.com> <CA+fCnZeBEe3VWm=VfYvG-f4eh2jAFP-p4Xn4SLEeFCGTudVuEw@mail.gmail.com>
+ <e7t5yzfw3dq5stp5xjy5yclcx6ikne4vwz7d6w2ukfw2b7gr6t@oomoynf3b2jl>
+ <zjuvfdbl7q76ahdxk3lrgaznk7vjj43f5ftzfgrnca6dqtcd5x@5qj24womzgyq>
+ <CA+fCnZfySpeRy0FCFidLdUUeqp97eBdjAqQyYPpz1WxYwcsW9A@mail.gmail.com> <aqhm7lc57srsfuff3bceb3dcmsdyxksb7t6bgwbqi54ppevpoh@apolj3nteaz6>
+In-Reply-To: <aqhm7lc57srsfuff3bceb3dcmsdyxksb7t6bgwbqi54ppevpoh@apolj3nteaz6>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Thu, 13 Feb 2025 02:21:33 +0100
+X-Gm-Features: AWEUYZnQToSGphLmBmZFBpfuiZIg1iWlon9vHp3PXB7Fk9evMSAokOcZX5tZFRE
+Message-ID: <CA+fCnZdjTkreTcoo+J8wMhwDuAFM4g33U5BFy0OPtE0UCvyJbQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] kasan: sw_tags: Use arithmetic shift for shadow computation
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: Samuel Holland <samuel.holland@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	linux-riscv@lists.infradead.org, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com, 
+	llvm@lists.linux.dev, Catalin Marinas <catalin.marinas@arm.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Will Deacon <will@kernel.org>, 
+	Evgenii Stepanov <eugenis@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This series updates the PMU event JSON files to add support for newer
-SiFive CPUs, including those used in the HiFive Premier P550 board.
-Since most changes are incremental, symbolic links are used when a set
-of events is unchanged from the previous CPU series.
+On Tue, Feb 11, 2025 at 7:07=E2=80=AFPM Maciej Wieczor-Retman
+<maciej.wieczor-retman@intel.com> wrote:
+>
+> I did some experiments with multiple addresses passed through
+> kasan_mem_to_shadow(). And it seems like we can get almost any address ou=
+t when
+> we consider any random bogus pointers.
+>
+> I used the KASAN_SHADOW_OFFSET from your example above. Userspace address=
+es seem
+> to map to the range [KASAN_SHADOW_OFFSET - 0xffff8fffffffffff]. Then goin=
+g
+> through non-canonical addresses until 0x0007ffffffffffff we reach the end=
+ of
+> kernel LA and we loop around. Then the addresses seem to go from 0 until =
+we
+> again start reaching the kernel space and then it maps into the proper sh=
+adow
+> memory.
+>
+> It gave me the same results when using the previous version of
+> kasan_mem_to_shadow() so I'm wondering whether I'm doing this experiment
+> incorrectly or if there aren't any addresses we can rule out here?
 
-I originally sent this series about a year ago[1], but received no
-feedback. The P550 board is now available (and I have tested this series
-on it), so it would be good to get perf support for it upstream.
+By the definition of the shadow mapping, if we apply that mapping to
+the whole 64-bit address space, the result will only contain 1/8th
+(1/16th for SW/HW_TAGS) of that space.
 
-[1]: https://lore.kernel.org/linux-perf-users/20240509021531.680920-1-samuel.holland@sifive.com/
+For example, with the current upstream value of KASAN_SHADOW_OFFSET on
+x86 and arm64, the value of the top 3 bits (4 for SW/HW_TAGS) of any
+shadow address are always the same: KASAN_SHADOW_OFFSET's value is
+such that the shadow address calculation never overflows. Addresses
+that have a different value for those top 3 bits are the once we can
+rule out.
 
+The KASAN_SHADOW_OFFSET value from my example does rely on the
+overflow (arguably, this makes things more confusing [1]). But still,
+the possible values of shadow addresses should only cover 1/16th of
+the address space.
 
-Eric Lin (5):
-  perf vendor events riscv: Update SiFive Bullet events
-  perf vendor events riscv: Add SiFive Bullet version 0x07 events
-  perf vendor events riscv: Add SiFive Bullet version 0x0d events
-  perf vendor events riscv: Add SiFive P550 events
-  perf vendor events riscv: Add SiFive P650 events
+So whether the address belongs to that 1/8th (1/16th) of the address
+space is what we want to check in kasan_non_canonical_hook().
 
-Samuel Holland (2):
-  perf vendor events riscv: Rename U74 to Bullet
-  perf vendor events riscv: Remove leading zeroes
+The current upstream version of kasan_non_canonical_hook() actually
+does a simplified check by only checking for the lower bound (e.g. for
+x86, there's also an upper bound: KASAN_SHADOW_OFFSET +
+(0xffffffffffffffff >> 3) =3D=3D 0xfffffbffffffffff), so we could improve
+it.
 
- tools/perf/pmu-events/arch/riscv/mapfile.csv  |  6 +-
- .../cycle-and-instruction-count.json          | 12 +++
- .../arch/riscv/sifive/bullet-07/firmware.json |  1 +
- .../riscv/sifive/bullet-07/instruction.json   |  1 +
- .../arch/riscv/sifive/bullet-07/memory.json   |  1 +
- .../riscv/sifive/bullet-07/microarch.json     | 62 +++++++++++++
- .../riscv/sifive/bullet-07/watchpoint.json    | 42 +++++++++
- .../cycle-and-instruction-count.json          |  1 +
- .../arch/riscv/sifive/bullet-0d/firmware.json |  1 +
- .../riscv/sifive/bullet-0d/instruction.json   |  1 +
- .../arch/riscv/sifive/bullet-0d/memory.json   |  1 +
- .../riscv/sifive/bullet-0d/microarch.json     | 72 +++++++++++++++
- .../riscv/sifive/bullet-0d/watchpoint.json    |  1 +
- .../sifive/{u74 => bullet}/firmware.json      |  0
- .../arch/riscv/sifive/bullet/instruction.json | 92 +++++++++++++++++++
- .../arch/riscv/sifive/bullet/memory.json      | 32 +++++++
- .../arch/riscv/sifive/bullet/microarch.json   | 57 ++++++++++++
- .../arch/riscv/sifive/p550/firmware.json      |  1 +
- .../arch/riscv/sifive/p550/instruction.json   |  1 +
- .../arch/riscv/sifive/p550/memory.json        | 47 ++++++++++
- .../arch/riscv/sifive/p550/microarch.json     |  1 +
- .../p650/cycle-and-instruction-count.json     |  1 +
- .../arch/riscv/sifive/p650/firmware.json      |  1 +
- .../arch/riscv/sifive/p650/instruction.json   |  1 +
- .../arch/riscv/sifive/p650/memory.json        | 57 ++++++++++++
- .../arch/riscv/sifive/p650/microarch.json     | 62 +++++++++++++
- .../arch/riscv/sifive/p650/watchpoint.json    |  1 +
- .../arch/riscv/sifive/u74/instructions.json   | 92 -------------------
- .../arch/riscv/sifive/u74/memory.json         | 32 -------
- .../arch/riscv/sifive/u74/microarch.json      | 57 ------------
- 30 files changed, 555 insertions(+), 182 deletions(-)
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/cycle-and-instruction-count.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/firmware.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/instruction.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/memory.json
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/microarch.json
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/watchpoint.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/cycle-and-instruction-count.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/firmware.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/instruction.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/memory.json
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/microarch.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/watchpoint.json
- rename tools/perf/pmu-events/arch/riscv/sifive/{u74 => bullet}/firmware.json (100%)
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/instruction.json
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/memory.json
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/microarch.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/firmware.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/instruction.json
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p550/memory.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/microarch.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/cycle-and-instruction-count.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/firmware.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/instruction.json
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p650/memory.json
- create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p650/microarch.json
- create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/watchpoint.json
- delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/instructions.json
- delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/memory.json
- delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/microarch.json
-
--- 
-2.47.0
-
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=3D218043
 
