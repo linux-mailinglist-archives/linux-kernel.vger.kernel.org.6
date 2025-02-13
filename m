@@ -1,115 +1,118 @@
-Return-Path: <linux-kernel+bounces-512904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8655A33F0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:25:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88812A33F15
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BB3C188B1DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220F2188AD7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866A8221566;
-	Thu, 13 Feb 2025 12:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D650F221575;
+	Thu, 13 Feb 2025 12:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kMP1GvgS"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="03wE78lF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="46pwfePF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAA921D3C0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 12:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C566722154D;
+	Thu, 13 Feb 2025 12:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739449495; cv=none; b=EWObe11lmW7F4F9tkwdrLGr0aFF8etQ1Zl8Xaw6kG/8WWDGQ/nOXWcSbYWbqU/AriKPM94vDsJ61muCjlVFbWZXwoOUMk5PsBfmbuROk0KKp3Z1DerxniTdJWWsGA0uhsXdjfNSWw0oH2waWSa0tUylkCmsslVOz6s2hmwXUJWs=
+	t=1739449560; cv=none; b=bAAZFdi1616zi0VbZVABvdj46ClwD5yoVFzcDN7LY+h+Sh8BQa0B0XrzLPx7QYhnJNr16NcmE8BFuSZ+WsYOkoniuN9ijiFLpa+gj5Fv45rmd3Vpi6gZFHBwiWlWOY4fbfWOIqJa0qNO6gXJQ9jqZqRklXI7y04TmPpPbgqQrXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739449495; c=relaxed/simple;
-	bh=ZDgifnO2eXQLO+3FjCdjysEvK77aW7cAL9ZpjrzvDXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pSnpCjeNQDpUfT6Ptrl7VUSurO/Bx0hjNo1pMvdBYthCixoSK3+WOFPaY7UknDaYGXtm7RdZWFFJ/pPmrLzpMPn0j03gg5JVJECwZuYjT5OGM8SBfGQRWVhVq+wWx4UssAIkp4MMHjQM/mQXkxGw5D+Wm2NMV7bX/L9m4blCvtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kMP1GvgS; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5450982c7edso76686e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 04:24:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739449491; x=1740054291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5GCfGb+lf3aOIwd+RY6NCgd8Twa0/XMsahXFwWYyqjk=;
-        b=kMP1GvgSPYe4qzneEhYLHbfaV3B5c5p/WxWm09rpN8J2zrDONAWsjvvkZ/xY54DNc1
-         KHpgkvLdHTGJy8YavBRrhsqsDAW6i25OK/BCAdbgHZO1YAW8Laq+f30mnrz7pu0sPZS/
-         0CTlwl4QE4ZoK7U9biWPu94EdqcQ4OwmUYLL7ZY1cEqsxUhh1vbVwY6QZING1d9nBIDO
-         5ld5PQc277jGFwMPEHPxSP28qhIxaERB4OJ7ejtS4gLPRREFeWEI7fXezqrR7k3VOmYj
-         +/didzFi3x0+K16Hv/getXcXguskXpeBq6KUtFVOWBofiM1NRJp3z8kN2nAgbZMbGNDh
-         ED1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739449491; x=1740054291;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5GCfGb+lf3aOIwd+RY6NCgd8Twa0/XMsahXFwWYyqjk=;
-        b=Z/g7D3C6M6QdPuwjTgfW830lWOBvR8Hel5XZs6PpsTYGrH27DVucboQrJOjVxgH2Kt
-         mFGGzVhgwnrVoNQFWBjrq3kQQSRYLGcp0mVtC1hipGOUVVETmicdE1xFWTff+30vTf0x
-         8wAMSP2NRgllEHRAYKmeRAHEwBsQiYDaEYncTP0l8o9QxjaRCjmE22HezWeZtjd8RoO1
-         OXtO7F+p/KWjqsA0hep+GYPaGJnkcSgI8b+lI9X2XtV1m5odQlRscRzhLtHffLrMCAWr
-         WVySroyY6V2KRELC0pWCvmIsEUxTzV7MZrUx4nDeTD+cSBC1SWSQmXDZ6MIS5zQJKhIQ
-         2c8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWFQHqQg4TDdnOBBVAa2vHMcemaRySusXk8xCLp/4lI/P4IIWqZiQ9wKop2tPl8CUB8BTGAKg7k9hVL0Qc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJa5+9QjowTCa+G2dUz0tZTi0E/ZF03Mlbddj7hooGAixUqgvi
-	iqkkrgXcnvRnBt1PxZEmL5namAMTu8E6xONIAmABLyxMDhRmUJ3T+xC6kX8Ns9TgJR+j4Ry5SjI
-	n
-X-Gm-Gg: ASbGncuoo9GJ1EqIn+X8xY80vpu751Vy+yKlDHY9FoDZdHsUKgu1ian1xcvNkRHBHU5
-	SzYwPwNXZG5gO/rHrKWPIMEtoI2ljC0hpGPg0krBFMZkWY2bGrvSVNtxICfzKi/EjUHhaKKaOVW
-	yjO1ccfqYE64bAH2byEwxMm+QAlCdqq5dJj6JMKkFbjDooX82Sij2q0XRl5xFdB8Ir/8WPdOk7v
-	pjOoH14ByagR2eaCtQKZSbL1lAs0TzGhrbHmBt04wqBRxij+ZZaBKYAClwpwgjxKPcp6J3GYON7
-	NLR1D3ZzaG+KiSA7veoA+9XkfLpO8wBxMHBDX1pMZSWpLQc3TVkdb/GVo79MbbLj2eg4QA==
-X-Google-Smtp-Source: AGHT+IGGGD1LnQRTjzKIMu7P71jbpTMS7skHZBVLY6dWl3mmG7KfIeCOfXaf1YVcbcnJypSEi1k+cQ==
-X-Received: by 2002:a05:6512:234e:b0:545:576:9e07 with SMTP id 2adb3069b0e04-545180ddc06mr822493e87.2.1739449490594;
-        Thu, 13 Feb 2025 04:24:50 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f09ab7dsm162311e87.61.2025.02.13.04.24.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 04:24:50 -0800 (PST)
-Message-ID: <85a9eda7-a6f5-401e-90b6-0353182b8deb@linaro.org>
-Date: Thu, 13 Feb 2025 14:24:49 +0200
+	s=arc-20240116; t=1739449560; c=relaxed/simple;
+	bh=FyuIqyRwY5pDKpb7ccdF0fQ5vbPAdd5lkH6XBrhkYQo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=j7ObYLZfLSl59Y4i/WYiJiuV6yykDTfM09FXbWj3D+qBuWAtPAenq7kdlAgW/fPeb6TZV1vNmde1tGIr6ryqLuniQxWf+OGrTmDp8LNIsV19x+9HzzspAJMbeaeAYu67VK5bWvJnZg4OmTXU17bo0XBNOfTUVK0OL+XUIUO9xzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=03wE78lF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=46pwfePF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Feb 2025 12:25:53 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739449556;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vPfERE/UbKRR3WrPrpYUc66xEFupz7II8bdHYN9nBvA=;
+	b=03wE78lFIaOm3LbkD8reZ/VITLra6NjdaPYGCIShJlAOlLSJhUdZyU9Z+bcDKWfCa20S8F
+	j/Os0oQ9corM+SQRiSvozUyv9O7j2kC1JaVfRkV+KaRfj35uxQwh47SAca+IPhd2CaFbM5
+	13UD2SPWz3HuQHtDIQsOBzcQuudJw+/0wLGhNpq4+6I1PA5FH8BmA5aFxI99FTEOjH3gLM
+	ayY38c3CVUE9LIDHdFceQ2sLrqFVY/hXb6UTurfdSkNZQ5LVTHWke8QUetkDXhodfZpw9c
+	jNvZWZvhF/Y35yHoYYtocGjncaRlxBfd9tXC/rXs8v96hBgIkBfzazAZFO52zw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739449556;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vPfERE/UbKRR3WrPrpYUc66xEFupz7II8bdHYN9nBvA=;
+	b=46pwfePFhpMxVHBwp1NsiDTIe8q5JkGFZpf5+c0lP0aO/A9O9mBNQ/gzKSoDMOFTqgrkKd
+	15A3JrFbWwEIe6Bg==
+From: "tip-bot2 for Anup Patel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/urgent] genirq: Remove unused CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS
+Cc: Anup Patel <apatel@ventanamicro.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20250209041655.331470-7-apatel@ventanamicro.com>
+References: <20250209041655.331470-7-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] power: ip5xxx_power: Make use of
- i2c_get_match_data()
-Content-Language: ru-RU
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Samuel Holland <samuel@sholland.org>, Sebastian Reichel <sre@kernel.org>
-References: <20250213114613.2646933-1-andriy.shevchenko@linux.intel.com>
- <20250213114613.2646933-2-andriy.shevchenko@linux.intel.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250213114613.2646933-2-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <173944955351.10177.11768052833964210440.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 2/13/25 13:45, Andy Shevchenko wrote:
-> Get matching data in one step by switching to use i2c_get_match_data().
-> 
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The following commit has been merged into the irq/urgent branch of tip:
 
-Now sending the tag from my different email address for the sake of consistency.
+Commit-ID:     4cf7d58620bfc2ebe934e3dfa97208f13f14ab8b
+Gitweb:        https://git.kernel.org/tip/4cf7d58620bfc2ebe934e3dfa97208f13f14ab8b
+Author:        Anup Patel <apatel@ventanamicro.com>
+AuthorDate:    Sun, 09 Feb 2025 09:46:50 +05:30
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 13 Feb 2025 13:18:54 +01:00
 
-Thank you for the change.
+genirq: Remove unused CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS is not used anymore, hence remove it.
 
---
-Best wishes,
-Vladimir
+Fixes: f94a18249b7f ("genirq: Remove IRQ_MOVE_PCNTXT and related code")
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250209041655.331470-7-apatel@ventanamicro.com
+---
+ kernel/irq/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+index 5432418..875f25e 100644
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -31,10 +31,6 @@ config GENERIC_IRQ_EFFECTIVE_AFF_MASK
+ config GENERIC_PENDING_IRQ
+ 	bool
+ 
+-# Deduce delayed migration from top-level interrupt chip flags
+-config GENERIC_PENDING_IRQ_CHIPFLAGS
+-	bool
+-
+ # Support for generic irq migrating off cpu before the cpu is offline.
+ config GENERIC_IRQ_MIGRATION
+ 	bool
 
