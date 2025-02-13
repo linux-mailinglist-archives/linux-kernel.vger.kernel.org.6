@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-513357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C7CA34970
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:17:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F033A3498D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:21:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1892188FF61
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:15:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49F53B2459
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31366221553;
-	Thu, 13 Feb 2025 16:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3653D200B89;
+	Thu, 13 Feb 2025 16:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="9Hy452L+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aEIBhSP1"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o/ragaeq"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D00200130
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E96D155326;
+	Thu, 13 Feb 2025 16:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463294; cv=none; b=b2FPYhE5Cggujvic8QrIJfK1K2tLGiE3uhlMx2tofLrJCTI/8jqqhp2RSyl2MTBoxaw9kxdBrZauQgGSAzjrC3BnNKS5TkqKn6Gk9KWnSyR0m7l6KeVkO/8Xi/lu7U3q84XaDs2SNa4NxaQZPgEPf5zDRehRrmUIUII2IsQ9vsc=
+	t=1739463283; cv=none; b=Ba/sOifu0MnOPiDwu8Jz7IYi9GG6+m7OSG8QJp4uaq7FXt1n3sBCqIk2+BbvUEom9ucAZzpIAFg0M1GFjolBms0RQuRLkRhnMo7kTFxXKMbaOiljCckOsrKpvNxDHbuuaLLAtj4bt2cuQnF0U6duGlU9Rw8pCSPfEjcqP1h0lK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463294; c=relaxed/simple;
-	bh=vB2tLQ8luJCtcby10TZWuCWKxWvuKnuAiaEweV/fb5c=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=JJ6VDQKyTx5pQQPmwLyj7pfL0naP0/uwPlzPZCkNIMs2oeRna2tgRCYgmIvszoWjHJdoR3pUCaQr+zktFrM2hBIeu4PnTkexmjgNr+1i4z+BAl9LSKkFgATtaCkUdXb3IAlMMZg/aAkTRIlOLUfgmutkvBOWUW9xRCyHjPkwYwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=9Hy452L+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aEIBhSP1; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 5E87F138009C;
-	Thu, 13 Feb 2025 11:14:51 -0500 (EST)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-10.internal (MEProxy); Thu, 13 Feb 2025 11:14:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1739463291; x=1739549691; bh=vB2tLQ8luJCtcby10TZWuCWKxWvuKnuA
-	iaEweV/fb5c=; b=9Hy452L+xFsWrycvvvMpOR9cm+RELglLGmf10ti5XFJpCPra
-	aAFURThZV4MJxFN3JrXiPzcJYC7oyrXNsemLBK8G0WWPHSLU+8Uj4DYiTJE2Z15S
-	NHiuo6kmBUERoogKifYuNLdDfz+zzEurt0CbIWRgKaZM7LEj+YIWLGu9UmTJZmM5
-	+Tc7X5ySExZ0Ee8GRJt9AFuhr9j2TUWMwmNict5HHxJi1RHisypS5LGwXfFMVXDO
-	1OcGHZDyzCOB6Rk0VYfATbMSJdmeBNAxhKATpLcGosUIFov+2IpBTvNwc0VJYgL+
-	F2rKYC5+c2qORhR1reHTRbIXaeopPI7dtk/oNQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739463291; x=
-	1739549691; bh=vB2tLQ8luJCtcby10TZWuCWKxWvuKnuAiaEweV/fb5c=; b=a
-	EIBhSP1UMOzP32rXYDdRMd9nK+mSv0CVZBScor0GRIswWzchuBi4SKCIljXYZWzD
-	ZIDUGqG5UMu6qDxoWN0FfW+5SWXnI5bVr+WybgQDGHeLjrB9Np8WhLzrYp1Qge3U
-	HUsYTxsiYfHZ8xoOMNul0s/qzc4WJSQ1xL6A/M0UN/WpZx3o2wkLJoCh/6xQHZzb
-	Cr0lEluVENMTss/xAalNIwEnMEH6N53wizYoCjrZdxLQH0rb600v9FbXRYUVjNvd
-	HcvzCFTlDU3pvnG7sKh1quEaTu4LlA1Ql/lhJiRWspSQlvm5QhZHxizW8Sl9RWRZ
-	qFUZUMRjokZdk/6ynXpLA==
-X-ME-Sender: <xms:eRquZ1tInnf9kRqzkJYdsJgqzfmpV6gZGjgjXJNIFJbokixtEqKbHw>
-    <xme:eRquZ-esQAlMFQFvO1mBsM7OZ1UtJrb7tQAERI6MmUBx3BZf2pre8nnJFwsGb-9m8
-    6GjRV5ggtbEn5v9BEA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjedvvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
-    hrrdguvghvqeenucggtffrrghtthgvrhhnpeelfeetueegudduueduuefhfeehgeevkeeu
-    feffvdffkedtffffleevffdvvdeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghr
-    tghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehnvggrlhesgh
-    homhhprgdruggvvhdprhgtphhtthhopehsrghgihesghhrihhmsggvrhhgrdhmvgdprhgt
-    phhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohepkhgsuhhstghhse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlhes
-    lhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvh
-    hmvgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrshgrhhhi
-    sehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohephhgthheslhhsthdruggvpd
-    hrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshht
-X-ME-Proxy: <xmx:eRquZ4yANbrFpU9QyTEousZ9LrqnpIPXkZxxa-PGG083rHBHu56Czg>
-    <xmx:eRquZ8PvOIgF_dIudDTbFb3hYzN3VV57sFtxSNSpx9W30UeOKXeH-Q>
-    <xmx:eRquZ18Mr4WTOqZxZktpBpbJjwc7YzYHAPIvbJRaxFJOFw4lUyP2xA>
-    <xmx:eRquZ8U6IHsHWO0WvdWVOadkBlGVRqHWhGvy7Uw0Z-yEspRiaaBPbQ>
-    <xmx:exquZ8WIfkMqIOhgPSSFSrjSXxYGnq_gLIRbnQGTv-MXeOuObrmogYKI>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 798FDBA0070; Thu, 13 Feb 2025 11:14:49 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739463283; c=relaxed/simple;
+	bh=vGJnb1m4SzGUIvD8C7Q70RDN83mTiA+BJaGjQwL7LEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uuOACICQBD7QZc41KJo4DNMVeNA3Sm5/SOG5ME0ILN3VXAMDSPboIt2lOnL2vCG9xDuATwC/EIn5idZ6TDEiKPPygnsxjv4hf0Qy4/tAMohsiydIBNRcv8Qum01JSa199dFDpzigxrYCbJZFCmExn7FVUYMUjizgopA9EoyMC3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o/ragaeq; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 25360441D0;
+	Thu, 13 Feb 2025 16:14:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739463278;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0TVSfnhO/D9vf7kVKocZCtgHhLvkRIYScp2kiZ0Rn5s=;
+	b=o/ragaeqE14+pkiUyeerhxStHnHzUEuBaR1MDzBW+7wdy/u3tp+KketwFkv6a1sl29X91R
+	bazTwFPopWFSaJGSUnKpDZQLBGOmVuo2ndmrlnYUDCz/CfzWgQ3cFrXnEsLh/o5rj6Vzn4
+	VVkvrSy7CFWtMgXit8j7dBcts6buJjY42hvgI8s8rJOqOX6cPCwaWN1Rs4f9k222J2ouyg
+	g8hqm/3JkLHGpxJAL0LWtcSlVMlhaRHgSzcKAdhZtP9y9aopwC7UfNpKr9ixsbQlI3cumA
+	81i+wvtWy8TucWElCaV+3PwElF+2fBxbpdNArU7gYJqnCwdZinWA3a/2fuPrjw==
+Date: Thu, 13 Feb 2025 17:14:35 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Phil Elwell <phil@raspberrypi.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>, andrew@lunn.ch, Arnd
+ Bergmann <arnd@arndb.de>, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com,
+ brgl@bgdev.pl, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+ <conor+dt@kernel.org>, derek.kiernan@amd.com, devicetree@vger.kernel.org,
+ dragan.cvetic@amd.com, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
+ kw@linux.com, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "open
+ list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
+ <linux-pci@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835 ARM
+ ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+ lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
+ manivannan.sadhasivam@linaro.org, masahiroy@kernel.org, Michael Turquette
+ <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ saravanak@google.com, Stephen Boyd <sboyd@kernel.org>,
+ thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, Will Deacon
+ <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <20250213171435.1c2ce376@bootlin.com>
+In-Reply-To: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 13 Feb 2025 17:14:28 +0100
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
- "Hector Martin" <marcan@marcan.st>, "Keith Busch" <kbusch@kernel.org>,
- "Jens Axboe" <axboe@kernel.dk>, "hch@lst.de" <hch@lst.de>,
- "sagi@grimberg.me" <sagi@grimberg.me>,
- "Philipp Zabel" <p.zabel@pengutronix.de>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Neal Gompa" <neal@gompa.dev>
-Message-Id: <dec49be0-c49c-4c37-8faf-72d9f89e4d53@app.fastmail.com>
-In-Reply-To: <20250213-nvme-fixes-v2-0-a20032d13e38@rosenzweig.io>
-References: <20250213-nvme-fixes-v2-0-a20032d13e38@rosenzweig.io>
-Subject: Re: [PATCH v2 0/2] apple-nvme: bug fixes
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjedvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeehpdhrtghpthhtohepphhhihhlsehrrghsphgsvghrrhihphhirdgtohhmpdhrtghpthhtoheprghnughrvggrrdhpohhrthgrsehsuhhsvgdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtoheps
+ ggtmhdqkhgvrhhnvghlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhm
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Thu, Feb 13, 2025, at 17:12, Alyssa Rosenzweig wrote:
-> This small series fixes two unrelated issues with the Apple NVMe driver.
->
-> * fix NVMe on certain combinations of firmware + machine
-> * fix a power domain leak
->
-> Although these are strict bug fixes, given the early stage of mainlining
-> for these SoCs, none of this needs to be backported.
->
-> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> ---
+Hi Phil,
 
-For both patches:
+On Thu, 13 Feb 2025 15:18:45 +0000
+Phil Elwell <phil@raspberrypi.com> wrote:
 
-Reviewed-by: Sven Peter <sven@svenpeter.dev>
+> Hi Andrea,
+> 
+> The problem with this approach (loading an overlay from the RP1 PCIe
+> driver), and it's one that I have raised with you offline, is that
+> (unless anyone can prove otherwise) it becomes impossible to create a
+> Pi 5 DTS file which makes use of the RP1's resources. How do you
+> declare something as simple as a button wired to an RP1 GPIO, or fan
+> connected to a PWM output?
 
+The driver could be improved in a second step.
+For instance, it could load the dtbo from user-space using request_firmare()
+instead of loading the embedded dtbo.
 
+> 
+> If this is the preferred route to upstream adoption, I would prefer it
+> if rp1.dtso could be split in two - an rp1.dtsi similar to what we
+> have downstream, and an rp1.dtso that #includes it. In this way we can
+> keep the patching and duplication to a minimum.
 
-Best,
+Indeed, having a rp1.dtsi avoid duplication but how the rp1.dtso in
+the the kernel sources could include user customization (button, fan, ...)
+without being modified ?
+At least we have to '#include <my_rp1_customizations.dtsi>'.
 
+Requesting the dtbo from user-space allows to let the user to create
+its own dtso without the need to modify the one in kernel sources.
 
-Sven
+Does it make sense ?
+
+Best regards,
+Hervé
 
