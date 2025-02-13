@@ -1,84 +1,87 @@
-Return-Path: <linux-kernel+bounces-512276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49AAA336E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:27:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFA6A336F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31844188B57C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A29463A7246
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E7F2063EB;
-	Thu, 13 Feb 2025 04:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B4E2063DB;
+	Thu, 13 Feb 2025 04:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JWiEU3VL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="axMJQkjW"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EBF205E2E;
-	Thu, 13 Feb 2025 04:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085CB7DA93
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 04:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739420855; cv=none; b=MGYDAbUXutxoZMex7QCIlQvPNTQZa18ngRtQpvXarYyjeLNBNGouuV1ziFXLQoqz0IinV2WJNgfjXB2MS/WPWdZCxSVWSCwgkNerkts39JTKCp6q2PxvRakq/tz/S9JS/Z9F3YZ1LxRm6xuvG5w8zew4zSu7mHP/wxNguUnJilg=
+	t=1739421493; cv=none; b=fjgcH+LvhNr4eDUBThyqzViJfwW+b/dd4neK3R23NaP6YVA03SAvh4W8dBezXpMBt0Z/ZtMftFKbouSy9PW9D3SbFmzf3EoTO3z+RE0fX3WYIUHQ4f0wgdYn2FJOdfTp0R2+q/Jflx+OMofIhpBC/wz2OS3VFXDf2jVUQuo/J0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739420855; c=relaxed/simple;
-	bh=EVHodv6A6OesPZihltvxpFqG5LLHT1ysJmum3ERHX50=;
+	s=arc-20240116; t=1739421493; c=relaxed/simple;
+	bh=Xi073yZ8BJUIbvMEhp3sOGEg+au76WHCAoRefy/re4U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bIIZjUPjLnXUw5FUxgQKF6JGyIdusBHeBIFw6bZqeZJr+XPUObIuwKWJVrYfKG7xnVSOTjUiD4vRaViCttFan7VR+73Gs9z8ukT/NdxxnzWC6of/MIWotIB4TqQOeV7h0Jlre/nWfT2gwiBL1mIJ15idxBT7Jy/9bj+appnxfJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JWiEU3VL; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739420853; x=1770956853;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EVHodv6A6OesPZihltvxpFqG5LLHT1ysJmum3ERHX50=;
-  b=JWiEU3VL/iOqjTPtzRDW64+bKhBPRPod0nwuOUmxtLtr2FCmsRi/0XVY
-   td2qCfDHjh7jSOJ8BKxDVyChzK59KIrCKZImD7wZA7B/rlDcbm6g19wfS
-   WPTH5FaByInAM39Zeh6SbpV80DenoCE7LyqfuNq6wdXdV9fcZOP608Ka8
-   AqsY0tg99XXvKWffZstIFRAWpoGSwZfk4VQMwzT4p2TzO6eOxg2Mm1/1P
-   oayZMdLHIBXV7uQp/eImIB5EnQQRpx42piHnVr7wopSjyiPFKYTq6aHdv
-   Evun37whTaPrGwIWowvwcXcRaAaf4MGwQ2kdSrrj5odNmhtDNZMAU4opc
-   A==;
-X-CSE-ConnectionGUID: 43e2jfigS3KascU3V6bwFQ==
-X-CSE-MsgGUID: guseOe8IQASk1L6w7S2asg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39970242"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="39970242"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 20:27:33 -0800
-X-CSE-ConnectionGUID: TUD2K17MR3W67fq6LzJf8Q==
-X-CSE-MsgGUID: TpLnuZ1JTFKyvNCIbr/Yrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113930223"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 12 Feb 2025 20:27:30 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiQox-0016Vj-02;
-	Thu, 13 Feb 2025 04:27:27 +0000
-Date: Thu, 13 Feb 2025 12:27:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Robert Budai <robert.budai@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Ramona Gradinariu <ramona.gradinariu@analog.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v7 3/6] iio: imu: adis: Add DIAG_STAT register
-Message-ID: <202502131226.6CIBwO2c-lkp@intel.com>
-References: <20250211175706.276987-4-robert.budai@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uy3f7I3K6pA2MIggfe8CL4hi36tMAOBDqH3j+E/ke2oxbw5e3loio5o9iA0GEYxSnOC7wTVEZ4slA0jzK1bFcDlmAg9QaRVqR3N7yGush68zCB+kc7WmAbIAPGpNzhfCIcIsFaWuYACCy7e0V7qeJpjvwt5Iev6tqqMyyunxbpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=axMJQkjW; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2f9f6a2fa8dso727053a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 20:38:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1739421489; x=1740026289; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D01JlLjK0EyNlEsFNPE/utvdsk6OKvLcRCbdJYH1Zs4=;
+        b=axMJQkjWsKAtpEsFgubcZBzrat4WAZ5FDfwDSo4qUPX3br+czV+DzR/6xEern3O3aL
+         PIsXWhS/w8jAuKJGqsgfVQOOkaAv1x5TRwDoiJ+QPi3lGMCQOrzJmbFNADd/2k+qDQSh
+         iDFFdKH1mGvqFrFdQkwtvlnG93KuBiI0Gac0R+oo06bjy8QCid8onJcGdakSbZQ7wh8W
+         S5kDp7m7Q0kSpa37XOJEbx/cPWdq138WLthyWjyRUJg01PC9l4t78B5xLVEv0/CmHuic
+         cBDhGcAnQp7aGzwDrDRTD/N/o/0JvdXD2n8hIMLx+MoJ80FCid8wtjcWX22mwDzAaqN8
+         Gylg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739421489; x=1740026289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D01JlLjK0EyNlEsFNPE/utvdsk6OKvLcRCbdJYH1Zs4=;
+        b=PNQ16y5walVhUmDRFZTQE4db7PnlUGh222EacaaxC26prueIQIaoXcwMEFg4oE+V8J
+         hXHh61pYNVuCNk2XoQFJEF16GMxdhI5t31mARNoi2XRXYci6ctQmeDjBH/T+muBamRIO
+         iKj/5gZonTNvuNQYXdO5hb6Erx/eo9D85xEAiq/B7UhhYADKttbbehgxnFV0NHlW0QA6
+         DyWcwWAEI7CLi8qzxXIsTg5QtpVPHNVnyrl92/+Ifonlj1vp4JWCVIf+dmjkXxrIsmdh
+         eriVHk/SxS3WBvkgT17ANWHFn99F/pHiooAIyadqnwapxnOWaUjqaQOa/JT4g5u11clo
+         bQ6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWCYAN/3TFWiABlU0uveTQdL/3VoXoQpjTtuNuOUeo02AQczESdeU2Cx6Wu4aZhh0lvwphHPNAr1QGwBjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRRudnmn/gLUPmIj8Bc7rD/J2CQw4Jmd/leej/ZV7nb+l6Gofh
+	JBxWI4KB/JGcn0Vv7qUEMywRgBIgbxPZlpDpgvoyFVaJyt0TNYHt2vK5UpKcHpnDDAioMJ5tPwg
+	0
+X-Gm-Gg: ASbGncsQj4oF/3lFi3E6pOWM13SiYgRJJiPR3gUwKEsmTH89xrCM3rM8jZvHPzv8KK2
+	lq4qZb6Xkb12MCgyMCnbFWwyQQOaV6+fRFskkxrGo71lgnadDYsX8HWiwb3fPdki7/qA+/qKRKR
+	W9U37Nr8uYNDsxrCkaXYppoXus/dI3MQtzqBMu2p+X+qQPER5iEzta8fz75E8lS6BbpFuJ0PgA0
+	DkTDZgCcuOWl5NjFRmF/T+/dPVHCUdxGYZ5PgQcIN3V7pJQOLl0NUPBNbAhLTuagzTtCTTa2Xac
+	yZhoBvlP2b58zPBC4h9WVmlH8fgw58FxFQO20OSu4z9yZomC5NN4x7yI6w5fi38eSXGkh49bnwF
+	8
+X-Google-Smtp-Source: AGHT+IG33YThWlpDEKXPwzgLAb+celxnEBw9z8ZfaRtRYClRWWrajPqMzLjf2nJ89U2yxELC3/J8Ow==
+X-Received: by 2002:a17:90b:2f03:b0:2ee:c04a:4281 with SMTP id 98e67ed59e1d1-2fbf5bc0254mr7745202a91.6.1739421489131;
+        Wed, 12 Feb 2025 20:38:09 -0800 (PST)
+Received: from medusa.lab.kspace.sh (c-76-103-130-118.hsd1.ca.comcast.net. [76.103.130.118])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2fbf98f0facsm2331274a91.23.2025.02.12.20.38.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 20:38:08 -0800 (PST)
+Date: Wed, 12 Feb 2025 20:38:06 -0800
+From: Mohamed Khalfella <mkhalfella@purestorage.com>
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: linux-next@vger.kernel.org, jan.kiszka@siemens.com, kbingham@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject: Re: [PATCH] scripts/gdb/symbols: follow up on refactoring for const
+ struct bin_attribute
+Message-ID: <20250213043806.GA2552411-mkhalfella@purestorage.com>
+References: <20250112122149.9939-1-koichiro.den@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,95 +90,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211175706.276987-4-robert.budai@analog.com>
+In-Reply-To: <20250112122149.9939-1-koichiro.den@canonical.com>
 
-Hi Robert,
+On 2025-01-12 21:21:49 +0900, Koichiro Den wrote:
+> The work for 'const struct bin_attribute' [1] was merged into linux-next
+> but did not include updates to the lx-symbols code. So it now fails with
+> the following error:
+> Python Exception <class 'gdb.error'>: There is no member named nsections.
+> Error occurred in Python: There is no member named nsections.
+> 
+> Restore its functionality by aligning it with those changes on
+> kernel/module/sysfs.c.
+> 
+> [1] https://lore.kernel.org/all/20241227-sysfs-const-bin_attr-module-v2-0-e267275f0f37@weissschuh.net/
+> 
+> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> ---
+>  scripts/gdb/linux/symbols.py | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
+> index f6c1b063775a..8efefd30df49 100644
+> --- a/scripts/gdb/linux/symbols.py
+> +++ b/scripts/gdb/linux/symbols.py
+> @@ -89,16 +89,26 @@ lx-symbols command."""
+>                  return name
+>          return None
+>  
+> +    def _iter_bin_attrs(self, bin_attrs):
+> +        while True:
+> +            try:
+> +                bin_attr = bin_attrs.dereference()
+> +            except gdb.MemoryError:
 
-kernel test robot noticed the following build errors:
+This should not result in an exception. The array should at least have
+one element on it, that is the NULL terminator.
 
-[auto build test ERROR on jic23-iio/togreg]
-[also build test ERROR on linus/master v6.14-rc2 next-20250212]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +                break
+> +            if bin_attr == 0:
+> +                break
+> +            yield bin_attr
+> +            bin_attrs += 1
+> +
+>      def _section_arguments(self, module, module_addr):
+>          try:
+>              sect_attrs = module['sect_attrs'].dereference()
+>          except gdb.error:
+>              return str(module_addr)
+>  
+> -        attrs = sect_attrs['attrs']
+>          section_name_to_address = {
+> -            attrs[n]['battr']['attr']['name'].string(): attrs[n]['address']
+> -            for n in range(int(sect_attrs['nsections']))}
+> +            bin_attr['attr']['name'].string(): bin_attr['private']
+> +            for bin_attr in self._iter_bin_attrs(sect_attrs['grp']['bin_attrs'])}
+>  
+>          textaddr = section_name_to_address.get(".text", module_addr)
+>          args = []
+> -- 
+> 2.45.2
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Robert-Budai/iio-imu-adis-Add-custom-ops-struct/20250212-040235
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20250211175706.276987-4-robert.budai%40analog.com
-patch subject: [PATCH v7 3/6] iio: imu: adis: Add DIAG_STAT register
-config: sh-randconfig-001-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131226.6CIBwO2c-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131226.6CIBwO2c-lkp@intel.com/reproduce)
+Hello Koichiro,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502131226.6CIBwO2c-lkp@intel.com/
+I hit the same problem came up with similar fix below. Of course I am
+biased and I think my change is more concise. Feel free to take from it.
+Looks like many commits changed this code and any of them would break
+python code. Can you please add Fixes tag at least to the top commit.
 
-All errors (new ones prefixed by >>):
+34f5ec0f8252 ("module: sysfs: Drop 'struct module_sect_attr'")
+4b2c11e4aaf7 ("module: sysfs: Drop member 'module_sect_attr::address'")
+d8959b947a8d ("module: sysfs: Drop member 'module_sect_attrs::nsections'")
 
-   drivers/iio/imu/adis.c: In function '__adis_check_status':
->> drivers/iio/imu/adis.c:319:42: error: passing argument 3 of '__adis_read_reg_16' makes pointer from integer without a cast [-Wint-conversion]
-     319 |                                          status_16);
-         |                                          ^~~~~~~~~
-         |                                          |
-         |                                          u16 {aka short unsigned int}
-   In file included from drivers/iio/imu/adis.c:19:
-   include/linux/iio/imu/adis.h:225:43: note: expected 'u16 *' {aka 'short unsigned int *'} but argument is of type 'u16' {aka 'short unsigned int'}
-     225 |                                      u16 *val)
-         |                                      ~~~~~^~~
+diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
+index f6c1b063775a..e4865ec5aebe 100644
+--- a/scripts/gdb/linux/symbols.py
++++ b/scripts/gdb/linux/symbols.py
+@@ -95,10 +95,15 @@ lx-symbols command."""
+         except gdb.error:
+             return str(module_addr)
 
+-        attrs = sect_attrs['attrs']
+-        section_name_to_address = {
+-            attrs[n]['battr']['attr']['name'].string(): attrs[n]['address']
+-            for n in range(int(sect_attrs['nsections']))}
++        section_name_to_address = {}
++        gattr = sect_attrs['grp']['bin_attrs']
++        battr = gattr.dereference()
++        while battr:
++            sec_name = battr['attr']['name'].string()
++            sec_addr = battr['private']
++            section_name_to_address[sec_name] = sec_addr
++            gattr = gattr + 1
++            battr = gattr.dereference()
 
-vim +/__adis_read_reg_16 +319 drivers/iio/imu/adis.c
-
-   298	
-   299	/**
-   300	 * __adis_check_status() - Check the device for error conditions (unlocked)
-   301	 * @adis: The adis device
-   302	 *
-   303	 * Returns 0 on success, a negative error code otherwise
-   304	 */
-   305	int __adis_check_status(struct adis *adis)
-   306	{
-   307		unsigned int status;
-   308		int diag_stat_bits;
-   309		u16 status_16;
-   310		int ret;
-   311		int i;
-   312	
-   313		if (adis->data->diag_stat_size)
-   314			ret = adis->ops->read(adis, adis->data->diag_stat_reg, &status,
-   315					      adis->data->diag_stat_size);
-   316		else
-   317		{
-   318			ret = __adis_read_reg_16(adis, adis->data->diag_stat_reg,
- > 319						 status_16);
-   320			status = status_16;
-   321		}
-   322		if (ret)
-   323			return ret;
-   324	
-   325		status &= adis->data->status_error_mask;
-   326	
-   327		if (status == 0)
-   328			return 0;
-   329	
-   330		diag_stat_bits = BITS_PER_BYTE * (adis->data->diag_stat_size ?
-   331						  adis->data->diag_stat_size : 2);
-   332	
-   333		for (i = 0; i < diag_stat_bits; ++i) {
-   334			if (status & BIT(i)) {
-   335				dev_err(&adis->spi->dev, "%s.\n",
-   336					adis->data->status_error_msgs[i]);
-   337			}
-   338		}
-   339	
-   340		return -EIO;
-   341	}
-   342	EXPORT_SYMBOL_NS_GPL(__adis_check_status, "IIO_ADISLIB");
-   343	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+         textaddr = section_name_to_address.get(".text", module_addr)
+         args = []
 
