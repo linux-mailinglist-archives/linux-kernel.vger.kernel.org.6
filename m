@@ -1,81 +1,60 @@
-Return-Path: <linux-kernel+bounces-513608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78569A34C5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:51:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A5CA34C64
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E44113A3C4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:51:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 404E33A41D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B06A23A9B8;
-	Thu, 13 Feb 2025 17:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3lUL0Egm"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C5928A2D6;
-	Thu, 13 Feb 2025 17:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D044423A9AB;
+	Thu, 13 Feb 2025 17:52:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02DF221552;
+	Thu, 13 Feb 2025 17:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469067; cv=none; b=l3tdVYih1H9w+IcFkaTDLoUhDiPyYe7ZospWBAY8uFGCErbJ65/BU0VciVZQkpv/KUciS9sU1Ii11hQA0Lqs73oi/5tPliofBVXrsq93ekTeVTpmic8kC+EQV1Wmex7xYppz7uVv/TIBDauWU2A2K6A7NjlhkHRRLMuURkWEF1M=
+	t=1739469120; cv=none; b=ktH3BwvFbVjCDamr3dbqqd6W4Trp5Kjpr0BpgKPrTJN2NZS/XrVZxr0nvpwfJEVPnVvonqwqq10Sot4qvuW5hnjn6jk0Qcr06nRUncp6hJR80+Whvz/LHLmbyeavckAA1sEMuNK/xWzVaKrpQiVXLvENB2xvIuSatncMpXA7S48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469067; c=relaxed/simple;
-	bh=pmHJGGnsgYsxAll7fDYauvZrEGwv6ShLnDby7IECvu0=;
+	s=arc-20240116; t=1739469120; c=relaxed/simple;
+	bh=zqV75qnQLwyFHhLFq1/Rw5B46LsPeHmSTmkyGiMlIk0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cstzeLc0w1oSoVi+f0NAdv2uV8XAqfG2F5LcqNlh6rx767+uLAfMHJQCNd6k7aaKFsIjTW1Gc0UsKzriAKHzRP5fgJ7+gjpAUo07WG7OuW8Vzg2n1r1AELLm2KHoNo17Ae1nT04e1zpJrm12/JAsyHh7OR28j91KqJScmN7VTyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3lUL0Egm; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=bs/dGVyRCitGyRnKeO7eQH7D6LwuR+L9Z8qdseSmZMw=; b=3lUL0EgmfyZf/wkO37FxVODerw
-	A2+xMSFgX1tWtMGJYwAlzAHNhZpGGZPAR6GN7ZJC1m2g4L97tv8vqHRsiLwwkP7jKEgJnuXJwnlRV
-	VFLwQmFuWJx26AmBrSTraGl3EBd6LfK3WU4cIPs6sToJfeYxLFGvQ1+OkBNgL96w/V5w=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tidMY-00DoWf-A2; Thu, 13 Feb 2025 18:50:58 +0100
-Date: Thu, 13 Feb 2025 18:50:58 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Phil Elwell <phil@raspberrypi.com>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
-	bhelgaas@google.com, brgl@bgdev.pl,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com,
-	devicetree@vger.kernel.org, dragan.cvetic@amd.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
-	kw@linux.com, Linus Walleij <linus.walleij@linaro.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
-	manivannan.sadhasivam@linaro.org, masahiroy@kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, saravanak@google.com,
-	Stephen Boyd <sboyd@kernel.org>, thomas.petazzoni@bootlin.com,
-	Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <07b973c1-4e35-440c-9009-85302a455912@lunn.ch>
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
- <20250213171435.1c2ce376@bootlin.com>
- <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
- <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
- <20250213180733.11999e07@bootlin.com>
- <CAMEGJJ2FB-wwyOtjjCmPJ-vUDpZaV-8MMXxV13qXnKxYSzt9pw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=evU61HYvnF+QcRtxPRXjpDf/8Dsh9CIeB1MVuLFjNqj5y4quIR74FgejJ7GYzG9LOFi5JS6V/x6p13iyPGK7g9BFdNirH1pAwHLuQEjQOhN1usZouBTStqCWyRamwVe/Y8hF8EUssXPOF8kWVRDYHEjH4Yb2qawoVcNPOF6FZq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1C4B113E;
+	Thu, 13 Feb 2025 09:52:17 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 444863F5A1;
+	Thu, 13 Feb 2025 09:51:53 -0800 (PST)
+Date: Thu, 13 Feb 2025 17:51:50 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: "Moger, Babu" <babu.moger@amd.com>
+Cc: Peter Newman <peternewman@google.com>, corbet@lwn.net,
+	reinette.chatre@intel.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, tony.luck@intel.com,
+	fenghua.yu@intel.com, x86@kernel.org, hpa@zytor.com,
+	paulmck@kernel.org, akpm@linux-foundation.org, thuth@redhat.com,
+	rostedt@goodmis.org, xiongwei.song@windriver.com,
+	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
+	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
+	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
+	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
+	mario.limonciello@amd.com, james.morse@arm.com,
+	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
+	eranian@google.com
+Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
+ Monitoring Counters (ABMC)
+Message-ID: <Z64xNm7GrXuVj3gv@e133380.arm.com>
+References: <cover.1737577229.git.babu.moger@amd.com>
+ <CALPaoCgiZ=tZE_BF2XzeYMRG84x4+kGKfhHWj2Uo=Cre_B_6Vg@mail.gmail.com>
+ <7a87b18c-cfba-4edd-946b-dd2831f56633@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,13 +63,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMEGJJ2FB-wwyOtjjCmPJ-vUDpZaV-8MMXxV13qXnKxYSzt9pw@mail.gmail.com>
+In-Reply-To: <7a87b18c-cfba-4edd-946b-dd2831f56633@amd.com>
 
-> etc. The same problem would exist for U-boot. Even though RP1 has a
-> standard XHCI controller
+On Mon, Feb 03, 2025 at 02:49:27PM -0600, Moger, Babu wrote:
+> Hi Peter,
+> 
+> On 2/3/25 08:54, Peter Newman wrote:
 
-Although it is a standard XHCI controller, i assume it is not a PCIe
-XHCI controller which can just be enumerated as a PCIe device?
+[...]
 
-	Andrew
+> >> # Linux Implementation
+> >>
+> >> Create a generic interface aimed to support user space assignment
+> >> of scarce counters used for monitoring. First usage of interface
+> >> is by ABMC with option to expand usage to "soft-ABMC" and MPAM
+> >> counters in future.
+> > 
+> > As a reminder of the work related to this, please take a look at the
+> > thread where Reinette proposed a "shared counters" mode in
+> > mbm_assign_control[1]. I am currently working to demonstrate that this
+> > combined with the mbm_*_bytes_per_second events discussed earlier in
+> > the same thread will address my users' concerns about the overhead of
+> > reading a large number of MBM counters, resulting from a maximal
+> > number of monitoring groups whose jobs are not isolated to any L3
+> > monitoring domain.
+> > 
+> > ABMC will add to the number of registers which need to be programmed
+> > in each domain, so I will need to demonstrate that ABMC combined with
+> > these additional features addresses their performance concerns and
+> > that the resulting interface is user-friendly enough that they will
+> > not need a detailed understanding of the implementation to avoid an
+> > unacceptable performance degradation (i.e., needing to understand what
+> > conditions will increase the number of IPIs required).
+> > 
+> > If all goes well, soft-ABMC will try to extend this usage model to the
+> > existing, pre-ABMC, AMD platforms I support.
+> > 
+> > Thanks,
+> > -Peter
+> > 
+> > [1] https://lore.kernel.org/lkml/7ee63634-3b55-4427-8283-8e3d38105f41@intel.com/
+> > 
+> 
+> Thanks for the heads-up. I understand what's going on and have an idea of
+> the plan. Please keep us updated on the progress. Also, if any changes are
+> needed in this series to meet your requirements, feel free to share your
+> feedback.
+
+Playing devil's advocate, I wonder whether there is a point beyond
+which it would be better to have an interface to hand over some of the
+counters to perf?
+
+The logic for round-robin scheduling of events onto counters, dealing
+with overflows etc. has already been invented over there, and it's
+fiddly to get right.  Ideally resctrl wouldn't have its own special
+implementation of that kind of stuff.
+
+(Said my someone who has never tried to hack up an uncore event source
+in perf.)
+
+Cheers
+---Dave
 
