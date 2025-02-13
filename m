@@ -1,86 +1,64 @@
-Return-Path: <linux-kernel+bounces-513034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289FAA340D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CFCA340DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4E9188C693
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9497B188CB6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78D21487FA;
-	Thu, 13 Feb 2025 13:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4B4213233;
+	Thu, 13 Feb 2025 13:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pKAsxd8P"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dsR7wsI/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09DC24BC1C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33F624BC0D;
+	Thu, 13 Feb 2025 13:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454827; cv=none; b=qWastL4+pUYDXfYJii/h/EIXJB6JxtsuiRM08FOXcvTpYrFW5uIuVftSTD+pQqExh204IRd8+GTGOtPyoMq21evLbTqRtgoTr71d5dtixLqEBIpIBSXq//LBuzJ7AG+l+zd6QVvVoez1xCPtnC2lhHh1eA8ipuFDrKWLGQ0v8a0=
+	t=1739454854; cv=none; b=p3KnCbB3m/5u5GrgrztFmt81gnRtvIpLq/aU9BLKf+YhCgPtaUhFClYDdLeTmq86Fnx7sKZNVJHCw/NVtMAL25yhqKQ/vzlZAIYQq8jUVpoREyo44Zom/y+FHzLGsrI56qrotQqoUpIYu6EZmLU+7v4gV0TDo2kna9sJ8n2TSlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454827; c=relaxed/simple;
-	bh=Eng2iBq6FvHc1yUhKMcUzLBmdUfoaMTs+ae3WTkaieQ=;
+	s=arc-20240116; t=1739454854; c=relaxed/simple;
+	bh=g5HGHBuqAjMQOceJtIfxFmXU57w01hrdcPk8EKvjSzU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BgY+/iW5a8YEVOiHl3IWZk/cHzBzD2gqMzkAqQB7d847g07fQdi/Em4I+L4F5aZq0/stTxcqwjkZAysNTvOPzAKVxbqdkzoLwj3Q+dm3Mmh5K2JNYvqroLVtJMCKOam91oUSyOMINMNA2L8ThW2EO3qCGPS5ZAPkrSnr9o1my1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pKAsxd8P; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DA2TiE002672
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:53:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	G0T3NNL6yPWHi23ATwtvU4h45jKTgjlGN7+OXPZamIA=; b=pKAsxd8P6eu1LG+h
-	Ee1B1nOcWiiCOrTWOoEC6MvIYUU6UQrjwwf/07tKOjsk3c5aznQHbzs5dL9Duay8
-	p//qzUEJ5NZ4VEisarBD7W2XdavU+aI1hywDGOohTFI6EjWAoMygQKy8b/IFENEV
-	hpQgRC3INzKlYKf6Z0ocWLKk8ALxIr9gAbjD7VYnKC9cnI979ujYpv3vPufv4fTI
-	CX8BQlp6B2qd05lFl3f3KkOJHpGWgoiarHYf+VimNP0L5SRqqCUninZlDeL56lUB
-	xqz2bIBwYv/z4rAm/KbvhfQ5LvbsFxp133TPuQNz21evan8qcJEBFnM8MsQW3LuP
-	Hgk1vQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44semp8k7p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:53:44 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c07ebd8de4so5473985a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:53:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739454823; x=1740059623;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G0T3NNL6yPWHi23ATwtvU4h45jKTgjlGN7+OXPZamIA=;
-        b=ZHjKv3UDZ8qTHkHbdrIDD1SjY9qk/nDPPIBKzkhXTn1TPFIWr7itg7dXg4kSIwFsGv
-         PKpAg28ptLcVzCglVao43hvjlfFyGi7AAuFsK/8V3ZZFrlflNPw/H9xiw80uhQqm33Xg
-         svNh+nu52APpl7n/OW0yMf1Ws7Sa+aY22/32A4VeNZoWZM81hb8voC4Zt5sIzVVaCHO0
-         qm7OeXplaMcu9at0hQR+Fp3pNqsQJb5lEXHdu1nHIAUfmz7/gU8Rt3XYwhyTmR19w/x6
-         Z5kHNA62Q0VB1PSGJjdrYrVTRAMdZxQlXd7JyFGFOoMudkiogGLxu+i42MvIts0cxsET
-         jRlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfXAIEF2Qjft1ro+61B3EzzyVmXf8ZiFD4kXDh36uSf0cJ8Vwb3y6HVWZWIAfd7cZ5OBXkQYvCJrc0NrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7wb42sgu+KIx8AGCxL/zSRkvPy4cm6qGR4Pit8bWHETx0qFi4
-	daH3j7m8dMq7SuyplDL3oCGSnH7UnrDRBaBjVe93M2kqrCl+s2rGaBcaJpcaHlYKicgwYTZm8Gs
-	kH9TbdChcxbp8W3jJt1Kxrg/uR6krvU8aD5UFK9YP2bamNFxFVBMWFkwLvKUr3/w=
-X-Gm-Gg: ASbGncvf7WNZchQzF5jScd1rDs5ZYnUJp3b2kRNkSjtviSZr2Djrjwk16oid/gNavt9
-	ep50eqrd49w1cUCns2dKykX+C/TOhrW5rfBA36HdGU39t621dT5ESwrcq6m/3sh/Nz21XmNXSoB
-	VVQGpiV4CmOw5a54boxJLtVNnQIeWaljPO7hK486rjgixzhM+7+YcbqrBzPgs+3s7ixmGZMZvde
-	3Ie1dK3P7ippe9FGiErQYsWRNdlRlwtM2njME6yCwU+I49waBI+jXq4s0Woq15SwkVtzoO3a0Vd
-	33koO93ANFA1x20HNshsIvxepwrq4cqc2SVCmvTv3DosI5qhPiV1xVYSCk4=
-X-Received: by 2002:a05:620a:4793:b0:7c0:7753:9807 with SMTP id af79cd13be357-7c07753984fmr245804685a.2.1739454823003;
-        Thu, 13 Feb 2025 05:53:43 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGfRJnsuo/7alsc6cmW1TUv/j5i4/UelSoGDYSvEXPaZTGIzpCzI0MBm2/J7M+CkFWsBrPiFg==
-X-Received: by 2002:a05:620a:4793:b0:7c0:7753:9807 with SMTP id af79cd13be357-7c07753984fmr245803185a.2.1739454822571;
-        Thu, 13 Feb 2025 05:53:42 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c4692sm1219859a12.31.2025.02.13.05.53.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 05:53:42 -0800 (PST)
-Message-ID: <936dc0e7-bd24-4b20-892e-831b4e5ddfaf@oss.qualcomm.com>
-Date: Thu, 13 Feb 2025 14:53:38 +0100
+	 In-Reply-To:Content-Type; b=r/T9Ce0DQCsXxZcpJW6AVT9MgJkkN6d+zlTle5IpY3QhDaS5fQ+7JFih57KDUl5IsC/HSn9PQy0GuPfuL/hmpk11f9Ruato7BZX+KtV7cRGvkz+6hbWitTU9yqiOCshoRRceRCB4fawrAL5zVBRgCP7+4RdeOqEnDp/3GJQivHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dsR7wsI/; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739454853; x=1770990853;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=g5HGHBuqAjMQOceJtIfxFmXU57w01hrdcPk8EKvjSzU=;
+  b=dsR7wsI/gJFB++j7xyA3eg2TFuAPg61NMoHq3uUMi5HremhdxCfkVzDb
+   mq1BOJ0GdlwVPmUYFnpJe9cFkeBuC+0LHZWKLcNzyI25YZk9g9/3BYa9K
+   dSr8V3DywSt1Jy9DLoi7hWwTpDSnXzL4TA6PjUeVuuwwCX7znMWnTON+4
+   4b9V+7NDpfJCQlc95ztHi07c+UDbU3no1oisQWfIOXAl806JhNlmmsdHp
+   QSDJqTP3uJ29RxtU5UDNQEahA9hZKl8mMd5kS+9aDR2p76rqslsjwK36g
+   mF5c2liwiGvN1x3rQ0l5bsZE7R5Jx+YOU11mdBciIlnDGlq9OxdXiYi3b
+   w==;
+X-CSE-ConnectionGUID: WUtiAvDuSzyTpVB3Vbvs5A==
+X-CSE-MsgGUID: o5M64SCRTZONPQcJtMK42Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40019842"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="40019842"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:54:12 -0800
+X-CSE-ConnectionGUID: Va5fv8RuSjiYMn+k3238nA==
+X-CSE-MsgGUID: 1CjFB4TaT2qSpWMyGvwtMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="118080787"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.42.34]) ([10.247.42.34])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:54:04 -0800
+Message-ID: <1c981aa1-e796-4c53-9853-3eae517f2f6d@linux.intel.com>
+Date: Thu, 13 Feb 2025 21:54:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,65 +66,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Add crypto engine
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Johan Hovold <johan@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250213-x1e80100-crypto-v1-1-f93afdd4025a@linaro.org>
- <Z63xEdcvCRHchHWu@linaro.org>
+Subject: Re: [PATCH iwl-next v4 0/9] igc: Add support for Frame Preemption
+ feature in IGC
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Kurt Kanzenbach <kurt@linutronix.de>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
+ Russell King <rmk+kernel@armlinux.org.uk>,
+ Serge Semin <fancer.lancer@gmail.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>,
+ Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
+ Jesper Nilsson <jesper.nilsson@axis.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+References: <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250212220121.ici3qll66pfoov62@skbuf>
+ <b19357dc-590d-458c-9646-ee5993916044@linux.intel.com>
+ <87cyfmnjdh.fsf@kurt.kurt.home>
+ <5902cc28-a649-4ae9-a5ba-83aa265abaf8@linux.intel.com>
+ <20250213130003.nxt2ev47a6ppqzrq@skbuf>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <Z63xEdcvCRHchHWu@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: HMw7n77YhHUKpZFxQtsaYqnbnBNPWDh7
-X-Proofpoint-GUID: HMw7n77YhHUKpZFxQtsaYqnbnBNPWDh7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_06,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- mlxscore=0 bulkscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=914 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502130106
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <20250213130003.nxt2ev47a6ppqzrq@skbuf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 13.02.2025 2:18 PM, Stephan Gerhold wrote:
-> On Thu, Feb 13, 2025 at 02:44:02PM +0200, Abel Vesa wrote:
->> On X Elite, there is a crypto engine IP block similar to ones found on
->> SM8x50 platforms.
+
+
+On 13/2/2025 9:00 pm, Vladimir Oltean wrote:
+> On Thu, Feb 13, 2025 at 08:54:18PM +0800, Abdul Rahim, Faizal wrote:
+>>> Well, my idea was to move the current mqprio offload implementation from
+>>> legacy TSN Tx mode to the normal TSN Tx mode. Then, taprio and mqprio
+>>> can share the same code (with or without fpe). I have a draft patch
+>>> ready for that. What do you think about it?
 >>
->> Describe the crypto engine and its BAM.
+>> Hi Kurt,
 >>
->> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->> ---
->> https://lore.kernel.org/all/20250213-dt-bindings-qcom-qce-x1e80100-v1-1-d17ef73a1c12@linaro.org/
->> ---
->>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 30 ++++++++++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
+>> I’m okay with including it in this series and testing fpe + mqprio, but I’m
+>> not sure if others might be concerned about adding different functional
+>> changes in this fpe series.
 >>
->> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->> index 9d38436763432892ceef95daf0335d4cf446357c..5a2c5dd1dc2950b918af23c0939a112cbe47398b 100644
->> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->> @@ -3708,6 +3708,36 @@ pcie4_phy: phy@1c0e000 {
->>  			status = "disabled";
->>  		};
->>  
->> +		cryptobam: dma-controller@1dc4000 {
->> +			compatible = "qcom,bam-v1.7.0";
+>> Hi Vladimir,
+>> Any thoughts on this ?
 > 
-> Hm, I would expect this is at least "qcom,bam-v1.7.4", "qcom,bam-v1.7.0"
-> given that this is a pretty recent SoC. I don't think this makes any
-> functional difference though, and we don't seem to have it on other
-> recent SoCs...
+> Well, what do you think of my split proposal from here, essentially
+> drawing the line for the first patch set at just ethtool mm?
+> https://lore.kernel.org/netdev/20250213110653.iqy5magn27jyfnwh@skbuf/
+> 
 
-It is v1.7.4 fwiw
+Honestly, after reconsidering, I’d prefer to keep the current series as is 
+(without Kurt’s patch), assuming you’re okay with enabling mqprio + fpe 
+later rather than at the same time as taprio + fpe. There likely won’t be 
+any additional work needed for mqprio + fpe after Kurt’s patch is accepted, 
+since it will mostly reuse the taprio code flow.
 
-Konrad
+If I were to split it, the structure would look something like this:
+First part of fpe series:
+igc: Add support to get frame preemption statistics via ethtool
+igc: Add support to get MAC Merge data via ethtool
+igc: Add support to set tx-min-frag-size
+igc: Add support for frame preemption verification
+igc: Set the RX packet buffer size for TSN mode
+igc: Optimize the TX packet buffer utilization
+igc: Rename xdp_get_tx_ring() for non-XDP usage
+net: ethtool: mm: Extract stmmac verification logic into a common library
+
+Second part of fpe:
+igc: Add support for preemptible traffic class in taprio
+
+I don’t think Kurt’s patch should be included in my second part of fpe, as 
+it’s not logically related. Another approach would be to wait for Kurt’s 
+patch to be accepted first, then submit the second part and verify both 
+taprio + mqprio. However, that would delay i226 from having a basic fpe 
+feature working as a whole, which I'd really like to avoid.
+
 
