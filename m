@@ -1,337 +1,638 @@
-Return-Path: <linux-kernel+bounces-512552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A44A33AB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:12:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AD7A33AB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:10:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBD5A188DD15
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:11:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39282165D82
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD99214200;
-	Thu, 13 Feb 2025 09:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442CF2116F7;
+	Thu, 13 Feb 2025 09:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AZkTIhPl"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXfOiApS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48932139A6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0888211A19;
+	Thu, 13 Feb 2025 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739437737; cv=none; b=VyOmvHVkBgr6KD8RHjX3azhsZVlnmHOI3rPgdOWHodAM+hdDIQedw03jjOHiyTY1O/uNMtkM3Epw8l5QW/XtqCe6rBu9L5vgDbyt7pybXJh3zdi5Y1bHXne7KaKpACDdPvq8jeMS1+CPQCX7lQ25pybJ0Rb5OOw09xVsUm0uWYE=
+	t=1739437729; cv=none; b=rcbIgXabJJ2yfMqbEupzcCuBqhWxxMJH3lx/dveIZExKqNaeKvd5LB85hMPi6PiuM4MZVySW8pFSPz6gJtuxCN/EgpPPUN3zmzN+TFYtc8JYs8SWvu9zogk4r5/aCddkDIFS2BsIoM41KzHfr2kuj6RdzdJpWC/OB2WkuLOln1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739437737; c=relaxed/simple;
-	bh=XfN24f35OJ2vk/m+e6pUtd4T3vptKtMhhNopu2gMhYw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WiCefRcSp2P2ioU5MNYoU0w3rJGYRaPhLDzAQ50ixJ3j75mBg4DvGVJ1QZ5rDpICgE6yRznN9whULkTqmq1Y6/TZFNKolnfB/TtxaMQKR7AKSQzttV0dEw6ePPMP7ZP5m7SLcZnk4+X5oJtP0k1hm8j/dbwbrVNE0BqjPAyfoxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AZkTIhPl; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-ab7fab91f3cso68511166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:08:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739437733; x=1740042533; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fgMJGG8J9qWcW3TupvJXIyqnEtZAoqP7JYM6BoJGJhw=;
-        b=AZkTIhPlKAICxka45kVGwQQindk/IfD24e6ylVuJ2Qy41Lyoc0Y8G0hEePhcOU/ffu
-         1e6EE6n4EaGV33DEAPCPHKkL2/SrL9C4iiyrlhWYz3KuEMfmqqDN9AOQDP8KfZ4Zt4Mv
-         VOl6KDnk8DP/DI6SeLA2dxk9PDdO8jAWEMJX29bO2gnMCN6QO6TzFkWMgBtwpdMwZW1g
-         t3YmAtnYn+6HgD+sly9+YvZZFSdHVtRa9dojFWGwUQZr17zthwMx/Vs5Fdz4he0rgBik
-         azsMrK8L2g/JkYyksdksPoHtiAzLoXRpadm3Vokc/4/hoWJRl2cenB83UqyZQKb1ilgf
-         fVhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739437733; x=1740042533;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fgMJGG8J9qWcW3TupvJXIyqnEtZAoqP7JYM6BoJGJhw=;
-        b=cW7NLMwMI04wtazzpzeNqhna+85bTjUQb9by5hE1c8aj7gj7Xn70aP2Orvq3zODCdJ
-         637S63NzOkd82EjobOByzFtw8qcmXFDyGBYzQGPww5wuonnqYx9W6SXF1AC9lF748GBc
-         AiZ0QhmEvYSBJL1f4PzSj9KUNsJr6G4SGRfYgMHK9/I43wF72tVBSBc5EjLGvjCOq/8P
-         rEHpYyaMTnZV+1Vwxj3B2HD4UkS/tasdzoiam8kMIxKkIbBrl3O+csp0LQA2sX1BhQ+A
-         6LAEVp0RbdsDJJDl3CWdhFanQPoXzPTUocPu5Sz/nxvbRsPAiZqIquPanXjrygMP2vj0
-         3LIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoz012yHtva16NlAvP5O3VAe0BFBh/T7LGkYM4ebR0+YArkjx5mC4znZfYRP3+SaqNc+m9yS+dKLhu3fI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUc60mllkQ3TzIf8BzUTAMIAQ7pn/6TpFAlNsahv9x8TYF+5fd
-	wvcD8lTuUDHK1cMvj66u0T03aPjruVF6XkO5P5dyzVvPdji2noxjn+HZlG5z6kR5mAKg2SJCX7x
-	bIQiavA==
-X-Google-Smtp-Source: AGHT+IESQcCr8+K8FwNJFz7mKQPjJ9j9o1aqQnbiHg2o232jZMxRV6+6jYX0sYilojk6zt9/4a+CTtA4JxXR
-X-Received: from ejv1.prod.google.com ([2002:a17:906:3081:b0:ab7:b298:3b76])
- (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:dab:b0:aa6:8cbc:8d15
- with SMTP id a640c23a62f3a-ab7f338ef2fmr650865366b.14.1739437733104; Thu, 13
- Feb 2025 01:08:53 -0800 (PST)
-Date: Thu, 13 Feb 2025 10:08:22 +0100
-In-Reply-To: <cover.1739437531.git.dvyukov@google.com>
+	s=arc-20240116; t=1739437729; c=relaxed/simple;
+	bh=GIUlT9LC1ocTQlyq1ULMc6PUaVMG6RnWLIb/+PjLhqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ps1uHrBRK8yDhWPnS7PZ2HtpVtNI1z9dwqevHimdw+6gs/s//IbenGHIqRWLJBRbG4PCMHexx21n5INmIufwSSztMTZ0FIz6ArlNn35KIZxw1ZcKC4OE4F2F74X+9S+5UGifqhdoddpDaWZUkwoxdaXn1IL33QcnB8B3uOwmoPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXfOiApS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16921C4CEED;
+	Thu, 13 Feb 2025 09:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739437729;
+	bh=GIUlT9LC1ocTQlyq1ULMc6PUaVMG6RnWLIb/+PjLhqQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cXfOiApS4CvYmByz2sWdMw+soFywSC19cqDepOvB0PcH14Q6cVXWVQoRd3TBsxD8W
+	 5L51snHJgowUfNjJVq1kanTsMQRbzDzbWbXir5oA4Ys9DT4bGskWAbU/NTfYR8SJOX
+	 NST7rnPvIjPbafyYgvCm3XxSccEHcXHHMrznyfPJB34tkz77b0sg7So+WUJy0SeBrx
+	 WUu9HUmFIuE+n1k+Z3SSkuRynCJNFkbz1XUVKp4i3skAuVIrkyFITQh0wT9NEC0uNU
+	 cSJdxb9X+kOkHMSOwN/z0WrO2wwbs0Zl8R9Lc9asejqL+UfTpBx+88ZlDhgNeyU1tQ
+	 reyVY3lOp4tcw==
+Date: Thu, 13 Feb 2025 10:08:45 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 04/10] arm64: dts: st: introduce stm32mp23 SoCs family
+Message-ID: <20250213-intrepid-peridot-dinosaur-c5d0bc@krzk-bin>
+References: <20250210-b4-stm32mp2_new_dts-v1-0-e8ef1e666c5e@foss.st.com>
+ <20250210-b4-stm32mp2_new_dts-v1-4-e8ef1e666c5e@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1739437531.git.dvyukov@google.com>
-X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
-Message-ID: <7c1cb1c8f9901e945162701ba7269d0f9c70be89.1739437531.git.dvyukov@google.com>
-Subject: [PATCH v7 9/9] perf hist: Shrink struct hist_entry size
-From: Dmitry Vyukov <dvyukov@google.com>
-To: namhyung@kernel.org, irogers@google.com, acme@kernel.org, 
-	ak@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dmitry Vyukov <dvyukov@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250210-b4-stm32mp2_new_dts-v1-4-e8ef1e666c5e@foss.st.com>
 
-Reorder the struct fields by size to reduce paddings and reduce
-struct simd_flags size from 8 to 1 byte.
+On Mon, Feb 10, 2025 at 04:20:58PM +0100, Amelie Delaunay wrote:
+> From: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> 
+> STM32MP23 family is composed of 3 SoCs defined as following:
+> 
+> -STM32MP231: common part composed of 1*Cortex-A35, common peripherals
+> like SDMMC, UART, SPI, I2C, parallel display, 1*ETH ...
+> 
+> -STM32MP233: STM32MP231 + 1*Cortex-A35 (dual CPU), a second ETH, CAN-FD.
+> 
+> -STM32MP235: STM32MP233 + GPU/AI and video encode/decode, DSI and LDVS
+> display.
+> 
+> A second diversity layer exists for security features/ A35 frequency:
+> -STM32MP23xY, "Y" gives information:
+>  -Y = A means A35@1.2GHz + no cryp IP and no secure boot.
+>  -Y = C means A35@1.2GHz + cryp IP and secure boot.
+>  -Y = D means A35@1.5GHz + no cryp IP and no secure boot.
+>  -Y = F means A35@1.5GHz + cryp IP and secure boot.
+> 
+> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+> ---
+>  arch/arm64/boot/dts/st/stm32mp231.dtsi  | 1216 +++++++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/st/stm32mp233.dtsi  |   94 +++
+>  arch/arm64/boot/dts/st/stm32mp235.dtsi  |   16 +
+>  arch/arm64/boot/dts/st/stm32mp23xc.dtsi |    8 +
+>  arch/arm64/boot/dts/st/stm32mp23xf.dtsi |    8 +
+>  5 files changed, 1342 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/st/stm32mp231.dtsi b/arch/arm64/boot/dts/st/stm32mp231.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ee93f5412096a7cd30b228b85a5280a551fbfaf4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/st/stm32mp231.dtsi
+> @@ -0,0 +1,1216 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+> +/*
+> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+> + */
+> +#include <dt-bindings/clock/st,stm32mp25-rcc.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/regulator/st,stm32mp25-regulator.h>
+> +#include <dt-bindings/reset/st,stm32mp25-rcc.h>
+> +
+> +/ {
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu0: cpu@0 {
+> +			compatible = "arm,cortex-a35";
+> +			device_type = "cpu";
+> +			reg = <0>;
+> +			enable-method = "psci";
+> +			power-domains = <&CPU_PD0>;
+> +			power-domain-names = "psci";
+> +		};
+> +	};
+> +
+> +	arm-pmu {
+> +		compatible = "arm,cortex-a35-pmu";
+> +		interrupts = <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-affinity = <&cpu0>;
+> +		interrupt-parent = <&intc>;
+> +	};
+> +
+> +	arm_wdt: watchdog {
+> +		compatible = "arm,smc-wdt";
+> +		arm,smc-id = <0xb200005a>;
+> +		status = "disabled";
+> +	};
+> +
+> +	clocks {
 
-This reduces struct hist_entry size by 8 bytes (592->584),
-and leaves a single more usable 6 byte padding hole.
+Drop
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: linux-perf-users@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+> +		clk_dsi_txbyte: txbyteclk {
 
----
-Pahole output before:
+Use consistent naming style. Either prefix or suffix. Or better, use
+what is recommended.
 
-struct hist_entry {
-	struct rb_node             rb_node_in __attribute__((__aligned__(8))); /*     0    24 */
-	struct rb_node             rb_node __attribute__((__aligned__(8))); /*    24    24 */
-	union {
-		struct list_head   node;                 /*    48    16 */
-		struct list_head   head;                 /*    48    16 */
-	} pairs;                                         /*    48    16 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	struct he_stat             stat;                 /*    64    80 */
+See: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
 
-	/* XXX last struct has 4 bytes of padding */
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <0>;
+> +		};
+> +
+> +		clk_rcbsec: clk-rcbsec {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <64000000>;
+> +		};
+> +	};
+> +
+> +	firmware {
+> +		optee: optee {
+> +			compatible = "linaro,optee-tz";
+> +			method = "smc";
+> +			interrupt-parent = <&intc>;
+> +			interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
+> +		};
+> +
+> +		scmi {
+> +			compatible = "linaro,scmi-optee";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			linaro,optee-channel-id = <0>;
+> +
+> +			scmi_clk: protocol@14 {
+> +				reg = <0x14>;
+> +				#clock-cells = <1>;
+> +			};
+> +
+> +			scmi_reset: protocol@16 {
+> +				reg = <0x16>;
+> +				#reset-cells = <1>;
+> +			};
+> +
+> +			scmi_voltd: protocol@17 {
+> +				reg = <0x17>;
+> +
+> +				scmi_regu: regulators {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					scmi_vddio1: regulator@0 {
+> +						reg = <VOLTD_SCMI_VDDIO1>;
+> +						regulator-name = "vddio1";
+> +					};
+> +					scmi_vddio2: regulator@1 {
+> +						reg = <VOLTD_SCMI_VDDIO2>;
+> +						regulator-name = "vddio2";
+> +					};
+> +					scmi_vddio3: regulator@2 {
+> +						reg = <VOLTD_SCMI_VDDIO3>;
+> +						regulator-name = "vddio3";
+> +					};
+> +					scmi_vddio4: regulator@3 {
+> +						reg = <VOLTD_SCMI_VDDIO4>;
+> +						regulator-name = "vddio4";
+> +					};
+> +					scmi_vdd33ucpd: regulator@5 {
+> +						reg = <VOLTD_SCMI_UCPD>;
+> +						regulator-name = "vdd33ucpd";
+> +					};
+> +					scmi_vdda18adc: regulator@7 {
+> +						reg = <VOLTD_SCMI_ADC>;
+> +						regulator-name = "vdda18adc";
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	intc: interrupt-controller@4ac00000 {
 
-	/* --- cacheline 2 boundary (128 bytes) was 16 bytes ago --- */
-	struct he_stat *           stat_acc;             /*   144     8 */
-	struct map_symbol          ms;                   /*   152    24 */
-	struct thread *            thread;               /*   176     8 */
-	struct comm *              comm;                 /*   184     8 */
-	/* --- cacheline 3 boundary (192 bytes) --- */
-	struct namespace_id        cgroup_id;            /*   192    16 */
-	u64                        cgroup;               /*   208     8 */
-	u64                        ip;                   /*   216     8 */
-	u64                        transaction;          /*   224     8 */
-	s32                        socket;               /*   232     4 */
-	s32                        cpu;                  /*   236     4 */
-	int                        parallelism;          /*   240     4 */
+Part of Soc most likely.
 
-	/* XXX 4 bytes hole, try to pack */
+> +		compatible = "arm,cortex-a7-gic";
+> +		#interrupt-cells = <3>;
+> +		#address-cells = <1>;
+> +		interrupt-controller;
+> +		reg = <0x0 0x4ac10000 0x0 0x1000>,
+> +		      <0x0 0x4ac20000 0x0 0x2000>,
+> +		      <0x0 0x4ac40000 0x0 0x2000>,
+> +		      <0x0 0x4ac60000 0x0 0x2000>;
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-1.0";
+> +		method = "smc";
+> +
+> +		CPU_PD0: power-domain-cpu0 {
 
-	u64                        code_page_size;       /*   248     8 */
-	/* --- cacheline 4 boundary (256 bytes) --- */
-	u64                        weight;               /*   256     8 */
-	u64                        ins_lat;              /*   264     8 */
-	u64                        p_stage_cyc;          /*   272     8 */
-	u8                         cpumode;              /*   280     1 */
-	u8                         depth;                /*   281     1 */
+All labels are always lowercase.
 
-	/* XXX 2 bytes hole, try to pack */
+> +			#power-domain-cells = <0>;
+> +			power-domains = <&CLUSTER_PD>;
+> +		};
+> +
+> +		CLUSTER_PD: power-domain-cluster {
+> +			#power-domain-cells = <0>;
+> +			power-domains = <&RET_PD>;
+> +		};
+> +
+> +		RET_PD: power-domain-retention {
+> +			#power-domain-cells = <0>;
+> +		};
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupt-parent = <&intc>;
+> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
+> +		always-on;
+> +	};
+> +
+> +	soc@0 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		interrupt-parent = <&intc>;
+> +		ranges = <0x0 0x0 0x0 0x80000000>;
 
-	int                        mem_type_off;         /*   284     4 */
-	struct simd_flags          simd_flags;           /*   288     8 */
-	_Bool                      dummy;                /*   296     1 */
-	_Bool                      leaf;                 /*   297     1 */
-	char                       level;                /*   298     1 */
+Same comments as for all other patches.
 
-	/* XXX 1 byte hole, try to pack */
+> +
+> +		hpdma: dma-controller@40400000 {
+> +			compatible = "st,stm32mp25-dma3";
+> +			reg = <0x40400000 0x1000>;
+> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&scmi_clk CK_SCMI_HPDMA1>;
+> +			#dma-cells = <3>;
+> +		};
+> +
+> +		hpdma2: dma-controller@40410000 {
+> +			compatible = "st,stm32mp25-dma3";
+> +			reg = <0x40410000 0x1000>;
+> +			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&scmi_clk CK_SCMI_HPDMA2>;
+> +			#dma-cells = <3>;
+> +		};
+> +
+> +		hpdma3: dma-controller@40420000 {
+> +			compatible = "st,stm32mp25-dma3";
+> +			reg = <0x40420000 0x1000>;
+> +			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&scmi_clk CK_SCMI_HPDMA3>;
+> +			#dma-cells = <3>;
+> +		};
+> +
+> +		rifsc: bus@42080000 {
+> +			compatible = "st,stm32mp25-rifsc", "simple-bus";
+> +			reg = <0x42080000 0x1000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			#access-controller-cells = <1>;
+> +			ranges;
+> +
+> +			i2s2: audio-controller@400b0000 {
 
-	filter_mask_t              filtered;             /*   300     2 */
-	u16                        callchain_size;       /*   302     2 */
-	union {
-		struct hist_entry_diff diff;             /*   304   120 */
-		struct {
-			u16        row_offset;           /*   304     2 */
-			u16        nr_rows;              /*   306     2 */
-			_Bool      init_have_children;   /*   308     1 */
-			_Bool      unfolded;             /*   309     1 */
-			_Bool      has_children;         /*   310     1 */
-			_Bool      has_no_entry;         /*   311     1 */
-		};                                       /*   304     8 */
-	};                                               /*   304   120 */
-	/* --- cacheline 6 boundary (384 bytes) was 40 bytes ago --- */
-	char *                     srcline;              /*   424     8 */
-	char *                     srcfile;              /*   432     8 */
-	struct symbol *            parent;               /*   440     8 */
-	/* --- cacheline 7 boundary (448 bytes) --- */
-	struct branch_info *       branch_info;          /*   448     8 */
-	long int                   time;                 /*   456     8 */
-	struct hists *             hists;                /*   464     8 */
-	struct mem_info *          mem_info;             /*   472     8 */
-	struct block_info *        block_info;           /*   480     8 */
-	struct kvm_info *          kvm_info;             /*   488     8 */
-	void *                     raw_data;             /*   496     8 */
-	u32                        raw_size;             /*   504     4 */
-	int                        num_res;              /*   508     4 */
-	/* --- cacheline 8 boundary (512 bytes) --- */
-	struct res_sample *        res_samples;          /*   512     8 */
-	void *                     trace_output;         /*   520     8 */
-	struct perf_hpp_list *     hpp_list;             /*   528     8 */
-	struct hist_entry *        parent_he;            /*   536     8 */
-	struct hist_entry_ops *    ops;                  /*   544     8 */
-	struct annotated_data_type * mem_type;           /*   552     8 */
-	union {
-		struct {
-			struct rb_root_cached hroot_in;  /*   560    16 */
-			/* --- cacheline 9 boundary (576 bytes) --- */
-			struct rb_root_cached hroot_out; /*   576    16 */
-		};                                       /*   560    32 */
-		struct rb_root     sorted_chain;         /*   560     8 */
-	};                                               /*   560    32 */
-	/* --- cacheline 9 boundary (576 bytes) was 16 bytes ago --- */
-	struct callchain_root      callchain[] __attribute__((__aligned__(8))); /*   592     0 */
+Confusing: device has address outside of the bus. What does the bus
+address represent?
 
-	/* size: 592, cachelines: 10, members: 49 */
-	/* sum members: 585, holes: 3, sum holes: 7 */
-	/* paddings: 1, sum paddings: 4 */
-	/* forced alignments: 3 */
-	/* last cacheline: 16 bytes */
-} __attribute__((__aligned__(8)));
+> +				compatible = "st,stm32mp25-i2s";
+> +				reg = <0x400b0000 0x400>;
+> +				#sound-dai-cells = <0>;
+> +				interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
+> +				clocks = <&rcc CK_BUS_SPI2>, <&rcc CK_KER_SPI2>;
+> +				clock-names = "pclk", "i2sclk";
+> +				resets = <&rcc SPI2_R>;
+> +				dmas = <&hpdma 51 0x43 0x12>,
+> +				       <&hpdma 52 0x43 0x21>;
+> +				dma-names = "rx", "tx";
+> +				access-controllers = <&rifsc 23>;
+> +				status = "disabled";
+> +			};
+> +
 
-After:
+...
 
-struct hist_entry {
-	struct rb_node             rb_node_in __attribute__((__aligned__(8))); /*     0    24 */
-	struct rb_node             rb_node __attribute__((__aligned__(8))); /*    24    24 */
-	union {
-		struct list_head   node;                 /*    48    16 */
-		struct list_head   head;                 /*    48    16 */
-	} pairs;                                         /*    48    16 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	struct he_stat             stat;                 /*    64    80 */
+> +			sdmmc1: mmc@48220000 {
+> +				compatible = "st,stm32mp25-sdmmc2", "arm,pl18x", "arm,primecell";
+> +				arm,primecell-periphid = <0x00353180>;
+> +				reg = <0x48220000 0x400>, <0x44230400 0x8>;
+> +				interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
+> +				clocks = <&rcc CK_KER_SDMMC1 >;
+> +				clock-names = "apb_pclk";
+> +				resets = <&rcc SDMMC1_R>;
+> +				cap-sd-highspeed;
+> +				cap-mmc-highspeed;
+> +				max-frequency = <120000000>;
+> +				access-controllers = <&rifsc 76>;
+> +				status = "disabled";
+> +			};
+> +
+> +			ethernet1: ethernet@482c0000 {
+> +				compatible = "st,stm32mp25-dwmac", "snps,dwmac-5.20";
+> +				reg = <0x482c0000 0x4000>;
+> +				reg-names = "stmmaceth";
+> +				interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
 
-	/* XXX last struct has 4 bytes of padding */
+Why extended?
 
-	/* --- cacheline 2 boundary (128 bytes) was 16 bytes ago --- */
-	struct he_stat *           stat_acc;             /*   144     8 */
-	struct map_symbol          ms;                   /*   152    24 */
-	struct thread *            thread;               /*   176     8 */
-	struct comm *              comm;                 /*   184     8 */
-	/* --- cacheline 3 boundary (192 bytes) --- */
-	struct namespace_id        cgroup_id;            /*   192    16 */
-	u64                        cgroup;               /*   208     8 */
-	u64                        ip;                   /*   216     8 */
-	u64                        transaction;          /*   224     8 */
-	u64                        code_page_size;       /*   232     8 */
-	u64                        weight;               /*   240     8 */
-	u64                        ins_lat;              /*   248     8 */
-	/* --- cacheline 4 boundary (256 bytes) --- */
-	u64                        p_stage_cyc;          /*   256     8 */
-	s32                        socket;               /*   264     4 */
-	s32                        cpu;                  /*   268     4 */
-	int                        parallelism;          /*   272     4 */
-	int                        mem_type_off;         /*   276     4 */
-	u8                         cpumode;              /*   280     1 */
-	u8                         depth;                /*   281     1 */
-	struct simd_flags          simd_flags;           /*   282     1 */
-	_Bool                      dummy;                /*   283     1 */
-	_Bool                      leaf;                 /*   284     1 */
-	char                       level;                /*   285     1 */
-	filter_mask_t              filtered;             /*   286     2 */
-	u16                        callchain_size;       /*   288     2 */
+> +				interrupt-names = "macirq";
+> +				clock-names = "stmmaceth",
+> +					      "mac-clk-tx",
+> +					      "mac-clk-rx",
+> +					      "ptp_ref",
+> +					      "ethstp",
+> +					      "eth-ck";
 
-	/* XXX 6 bytes hole, try to pack */
+...
 
-	union {
-		struct hist_entry_diff diff;             /*   296   120 */
-		struct {
-			u16        row_offset;           /*   296     2 */
-			u16        nr_rows;              /*   298     2 */
-			_Bool      init_have_children;   /*   300     1 */
-			_Bool      unfolded;             /*   301     1 */
-			_Bool      has_children;         /*   302     1 */
-			_Bool      has_no_entry;         /*   303     1 */
-		};                                       /*   296     8 */
-	};                                               /*   296   120 */
-	/* --- cacheline 6 boundary (384 bytes) was 32 bytes ago --- */
-	char *                     srcline;              /*   416     8 */
-	char *                     srcfile;              /*   424     8 */
-	struct symbol *            parent;               /*   432     8 */
-	struct branch_info *       branch_info;          /*   440     8 */
-	/* --- cacheline 7 boundary (448 bytes) --- */
-	long int                   time;                 /*   448     8 */
-	struct hists *             hists;                /*   456     8 */
-	struct mem_info *          mem_info;             /*   464     8 */
-	struct block_info *        block_info;           /*   472     8 */
-	struct kvm_info *          kvm_info;             /*   480     8 */
-	void *                     raw_data;             /*   488     8 */
-	u32                        raw_size;             /*   496     4 */
-	int                        num_res;              /*   500     4 */
-	struct res_sample *        res_samples;          /*   504     8 */
-	/* --- cacheline 8 boundary (512 bytes) --- */
-	void *                     trace_output;         /*   512     8 */
-	struct perf_hpp_list *     hpp_list;             /*   520     8 */
-	struct hist_entry *        parent_he;            /*   528     8 */
-	struct hist_entry_ops *    ops;                  /*   536     8 */
-	struct annotated_data_type * mem_type;           /*   544     8 */
-	union {
-		struct {
-			struct rb_root_cached hroot_in;  /*   552    16 */
-			struct rb_root_cached hroot_out; /*   568    16 */
-		};                                       /*   552    32 */
-		struct rb_root     sorted_chain;         /*   552     8 */
-	};                                               /*   552    32 */
-	/* --- cacheline 9 boundary (576 bytes) was 8 bytes ago --- */
-	struct callchain_root      callchain[] __attribute__((__aligned__(8))); /*   584     0 */
+> +		rcc: clock-controller@44200000 {
+> +			compatible = "st,stm32mp25-rcc";
+> +			reg = <0x44200000 0x10000>;
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			clocks = <&scmi_clk CK_SCMI_HSE>,
+> +				<&scmi_clk CK_SCMI_HSI>,
+> +				<&scmi_clk CK_SCMI_MSI>,
+> +				<&scmi_clk CK_SCMI_LSE>,
+> +				<&scmi_clk CK_SCMI_LSI>,
+> +				<&scmi_clk CK_SCMI_HSE_DIV2>,
+> +				<&scmi_clk CK_SCMI_ICN_HS_MCU>,
+> +				<&scmi_clk CK_SCMI_ICN_LS_MCU>,
+> +				<&scmi_clk CK_SCMI_ICN_SDMMC>,
+> +				<&scmi_clk CK_SCMI_ICN_DDR>,
+> +				<&scmi_clk CK_SCMI_ICN_DISPLAY>,
+> +				<&scmi_clk CK_SCMI_ICN_HSL>,
+> +				<&scmi_clk CK_SCMI_ICN_NIC>,
+> +				<&scmi_clk CK_SCMI_ICN_VID>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_07>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_08>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_09>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_10>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_11>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_12>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_13>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_14>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_15>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_16>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_17>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_18>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_19>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_20>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_21>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_22>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_23>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_24>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_25>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_26>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_27>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_28>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_29>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_30>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_31>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_32>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_33>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_34>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_35>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_36>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_37>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_38>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_39>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_40>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_41>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_42>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_43>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_44>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_45>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_46>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_47>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_48>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_49>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_50>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_51>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_52>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_53>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_54>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_55>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_56>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_57>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_58>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_59>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_60>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_61>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_62>,
+> +				<&scmi_clk CK_SCMI_FLEXGEN_63>,
+> +				<&scmi_clk CK_SCMI_ICN_APB1>,
+> +				<&scmi_clk CK_SCMI_ICN_APB2>,
+> +				<&scmi_clk CK_SCMI_ICN_APB3>,
+> +				<&scmi_clk CK_SCMI_ICN_APB4>,
+> +				<&scmi_clk CK_SCMI_ICN_APBDBG>,
+> +				<&scmi_clk CK_SCMI_TIMG1>,
+> +				<&scmi_clk CK_SCMI_TIMG2>,
+> +				<&scmi_clk CK_SCMI_PLL3>,
+> +				<&clk_dsi_txbyte>;
+> +				access-controllers = <&rifsc 156>;
+> +		};
+> +
+> +		exti1: interrupt-controller@44220000 {
+> +			compatible = "st,stm32mp1-exti", "syscon";
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			reg = <0x44220000 0x400>;
+> +			interrupts-extended =
 
-	/* size: 584, cachelines: 10, members: 49 */
-	/* sum members: 578, holes: 1, sum holes: 6 */
-	/* paddings: 1, sum paddings: 4 */
-	/* forced alignments: 3 */
-	/* last cacheline: 8 bytes */
-} __attribute__((__aligned__(8)));
----
- tools/perf/util/hist.h   | 8 ++++----
- tools/perf/util/sample.h | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Why extended?
 
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 29d4c7a3d1747..317d06cca8b88 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -239,16 +239,16 @@ struct hist_entry {
- 	u64			cgroup;
- 	u64			ip;
- 	u64			transaction;
--	s32			socket;
--	s32			cpu;
--	int			parallelism;
- 	u64			code_page_size;
- 	u64			weight;
- 	u64			ins_lat;
- 	u64			p_stage_cyc;
-+	s32			socket;
-+	s32			cpu;
-+	int			parallelism;
-+	int			mem_type_off;
- 	u8			cpumode;
- 	u8			depth;
--	int			mem_type_off;
- 	struct simd_flags	simd_flags;
- 
- 	/* We are added by hists__add_dummy_entry. */
-diff --git a/tools/perf/util/sample.h b/tools/perf/util/sample.h
-index 70b2c3135555e..ab756d61cbcd6 100644
---- a/tools/perf/util/sample.h
-+++ b/tools/perf/util/sample.h
-@@ -67,7 +67,7 @@ struct aux_sample {
- };
- 
- struct simd_flags {
--	u64	arch:1,	/* architecture (isa) */
-+	u8	arch:1,	/* architecture (isa) */
- 		pred:2;	/* predication */
- };
- 
--- 
-2.48.1.502.g6dc24dfdaf-goog
+> +				<&intc GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_0 */
+> +				<&intc GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_10 */
+> +				<&intc GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 0   IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 1   IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0>,						/* EXTI_20 */
+> +				<&intc GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_30 */
+> +				<&intc GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0>,
+> +				<&intc GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_40 */
+> +				<&intc GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_50 */
+> +				<0>,
+> +				<0>,
+> +				<0>,
+> +				<0>,
+> +				<0>,
+> +				<0>,
+> +				<0>,
+> +				<0>,
+> +				<&intc GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0>,						/* EXTI_60 */
+> +				<&intc GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0>,
+> +				<0>,
+> +				<&intc GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0>,
+> +				<0>,
+> +				<&intc GIC_SPI 10  IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0>,
+> +				<&intc GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_70 */
+> +				<0>,
+> +				<&intc GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0>,						/* EXTI_80 */
+> +				<0>,
+> +				<0>,
+> +				<&intc GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>,
+> +				<&intc GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
+> +
+> +		syscfg: syscon@44230000 {
+> +			compatible = "st,stm32mp25-syscfg", "syscon";
+> +			reg = <0x44230000 0x10000>;
+> +		};
+> +
+> +		pinctrl: pinctrl@44240000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+
+Please fix coding style everywhere here.
+
+
+> +			compatible = "st,stm32mp257-pinctrl";
+> +			ranges = <0 0x44240000 0xa0400>;
+> +			interrupt-parent = <&exti1>;
+> +			st,syscfg = <&exti1 0x60 0xff>;
+> +			pins-are-numbered;
+> +
+
+...
+
+> diff --git a/arch/arm64/boot/dts/st/stm32mp23xc.dtsi b/arch/arm64/boot/dts/st/stm32mp23xc.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..e33b00b424e1207dc6212e75235785f8c61e5055
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/st/stm32mp23xc.dtsi
+> @@ -0,0 +1,8 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+> +/*
+> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+> + */
+> +
+
+What is the point of this file?
+
+Best regards,
+Krzysztof
 
 
