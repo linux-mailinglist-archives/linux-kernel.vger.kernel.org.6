@@ -1,185 +1,120 @@
-Return-Path: <linux-kernel+bounces-512899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7E8A33EFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:21:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB37A33F00
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 704FE16A4A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080DD3A5F20
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8153E21D3F9;
-	Thu, 13 Feb 2025 12:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D78221577;
+	Thu, 13 Feb 2025 12:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uaz9doD1"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NbFegvyt"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67237227EB4;
-	Thu, 13 Feb 2025 12:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9238221556;
+	Thu, 13 Feb 2025 12:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739449303; cv=none; b=nQC5o2r/FrQ9E7ksDB2amCIt+rBYI8lFrxwD1RjjdZI3JdgBkN5HaOR7R0hLsUz4uaMICAlDmx9W55PwXHHBruOpWWguJHKuQNNqVUtLDUMxqSOssg2fr/3R3L7oIIpNA56/hJ4sfcCFDYdvtM2NnH/VJ6yhfjt0ERVErmqERv4=
+	t=1739449306; cv=none; b=HxTFWBncGZTiBk9IZ7m94ba5Rb0gwR272Nn4FW2AY59YfjDtTrhdkIGyMXv/eb2NzisPYC7otqi8cph0NHEaeYh+i+/BfS4GpI1mFDGjL1csB344lBhyrRpr1jUu+3unfkuV0yPu9YOzvVJC8Utw5uvhWU4bpMMMevPkp+50GQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739449303; c=relaxed/simple;
-	bh=sZT9y6vh/nem7EpRAeaTqeojK5JH1EE1vPaenyIwBHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NOBWLV7ovXEsDJDn4K4uNUg0wlos29EFyxba6sygRd+go676P/QFZ//HebgbKz+4XkN9YP/RFKRbyFa79pOG7BKLQO/rvwxxkLGSdBFp4GOsPFKoVGFRXqGOFdIapf1txVGnjus+pNKtA7/qxI0g6dgjvxQkk+Rt11WtI4KXtrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uaz9doD1; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1739449306; c=relaxed/simple;
+	bh=1oTIlIq3MEQ0LFVEW83otWTtjbaiBoeQB6YVTrazel8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hEEYKNc5y123mlhnHCd3aTyq1rV7oWv//gArAThXF4WGAHvEQ7FpI6unFWcwelFDUbeQ/kOdsNdo2a1UHU0FWNhz8Nkfz6iGRmJTxlYO39mX8RipqpkUmduMg+x8Si0JVrXptFUg3M5o1u7PUvi2wYmalufKl2FPFECgBN+xs8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NbFegvyt; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-219f8263ae0so12227705ad.0;
-        Thu, 13 Feb 2025 04:21:42 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21f40deb941so18162635ad.2;
+        Thu, 13 Feb 2025 04:21:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739449301; x=1740054101; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ih6mZAjRJz76xwxt0ZT6xMUzrYvU8FqRj/C5WSkXc1g=;
-        b=Uaz9doD1oq2XdM788A1fVuzElvJax6+oZUdiT0O4rQCzEdziJ9BCBdUQhNYZbJORB2
-         EcUjSK2nVYUOkyCCfigMK942IBRxblovIGKut+Zm7PqlDCCixgk+K5vGb/+yfvnMuwbS
-         hUGvpuftnD++tR1w1A82bgSTEj9GOV5QyeXvltNE3kaUHvlKQyTZvC0JD49DrY1Wvh30
-         /5nMn+ZgAQf3xz5GOKrh6Gn/N8CjmhyGVYpUCxdoGvquI0DycN5OwbVjY5xvKIn/k2xM
-         ySRKxvBXK01koa/sO+q8HAj2uxtRbCewD+2q+exV6zn59mGbDuZCIoocrSevevbUDoAt
-         OaUg==
+        d=gmail.com; s=20230601; t=1739449304; x=1740054104; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G0o5D5Q8iO/vYMKnQhyZXnnRR/RYxV00eJSWYKGy6aM=;
+        b=NbFegvytr1GRpT5bYirlUNxmU4yCp54Cx3jW00RCCe+434671UmSIH4QpK40bDT/VY
+         ZHRxVrsbF6efjmEhxnyrmU1NnVf8wjnXOCfzUuJVCK6T9ok0tNKi6CF+ACvC4ma2UQmw
+         uRD1rz8OfgDZWJ0Ku1xcbjl92msxubmTNtXIT88sejc3HvtE4VgWRl/nu5T15y6DAVvP
+         3YXPIhiWsyAZ+D9b8SXYoRPNDWXKrevdimM8H0WEn0D858JCkxUQfC8GobC92aFVg4Wg
+         6qTd5Oc3lydJ+RCyuxEKKV3xPgMb0mtE4+1eq50koSC43rHgq1rXQPYfJFVhtFWDTbUq
+         buuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739449301; x=1740054101;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ih6mZAjRJz76xwxt0ZT6xMUzrYvU8FqRj/C5WSkXc1g=;
-        b=MJy57d+XJByHF9UAbJcbwKN9nfN6FayJkYDFb7j88SbKnopTjWtfG/9Jvq5ChGIlx0
-         IvuU9EAJlCBpC+9Nrh9B/ffMl59wGiiXvHUkzhF/zliUSeYIoFyHm+G21szXWzxdMiO8
-         mB+d77PTIHvEa8I7lC01nnZ9G2aEQY+BVIeGMIKcduLgi2Y87/Bgn0bsIPnt8yOovE3e
-         RTzCim4NGBZTfiGtdIbWMFyh/qIrMFexUiGqBWOA2kQ70q9AorqxkFWz4qQx9i44sGJ+
-         8JDZCkvUzhMLdDiORg2L1F2uCe35Z0XmrS/7UmZfbMrY+UMutxwxzaGBCAKoZ8ura3JV
-         0UIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqAfKLkE5MDE9rS129VhUYDZuvjC1lF+rDg7cpyoGkhOBmCnAYqkgXQbq0/++MLuKMjHOzbkd4fx3tBlDc@vger.kernel.org, AJvYcCVtyDtv2IdOLOlpg9bACgi8/JflepJAlXuBBBcZVPPMjSZJ3BGKOFOTm1zV6a6ztNIgeAmvVgcSqu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAZjqoD0ujCrrBBjtmSr5aRvm8dKbAxL3QTVRafYXPXRKGPxEJ
-	ikrA2to7zcY5RWGWjlFpEmqE/uf0YdShJhZ6S6E6jSmYMYlW1auq
-X-Gm-Gg: ASbGnctIIqKYTH1JeMkiDIsjPIlZOcuq9ijkOcw+5jsM/1TCQ9WeuH/v1pvmB5hZ2Dl
-	idkEFqCczluc643fDxORkzZ3PDdBni7/E4smAZvrW+8sUmilML46VrLoQxIWfhizvZ/gh+FVK22
-	EMvE9TChrjqs2pD+G/zHl9YifD7/vRlsflYwRIADcDeap9MvKvxB1f48mCQ0602/5+Cquivi3j4
-	qMdp94BaicU1IGK9CORAIJJKMMod5Njn97LZDzwyQrvEJvcAO9/NUbfVHhtdQxLCiEsdl//tsWi
-	PM8MrEcRuSxxs14=
-X-Google-Smtp-Source: AGHT+IFml2B2kVVPUcv5EICeISj5vverteoaMYGw1G4vFDkinN7nE3+hmOZi6Bm9DGhOPYzh5VeNCQ==
-X-Received: by 2002:a17:902:e544:b0:212:fa3:f627 with SMTP id d9443c01a7336-220bbad7e71mr116005135ad.16.1739449301425;
-        Thu, 13 Feb 2025 04:21:41 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5349031sm11458905ad.30.2025.02.13.04.21.39
+        d=1e100.net; s=20230601; t=1739449304; x=1740054104;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G0o5D5Q8iO/vYMKnQhyZXnnRR/RYxV00eJSWYKGy6aM=;
+        b=XBV8HTdDDr9UFbGWgdIU/Ee0PS+K6jqHDhcYGqxDbAlqJ4UROr0DRXooJML7owLkld
+         baJvW9XxF9J8qLe/qJWsRBZMWn3AsKc9TZr8HxoexFrrzRBvSfNv8ct0mTsx9fo+gGkf
+         05NsVJdu5tkkl/aZaVY2HhQ6xVpnMVAeSiPs7++WZmJ1wQAA7eJsChGc15Bg3sggzQzU
+         gnMAsnVsaFUQCaCmo069dXnQAfXEYqDW09worTtGTPzdLxb9EplVTAO0qA0zwisb4Q2w
+         S2uPXvF+Aud6ga9OfEQTSzvY++7WUAGVURRRLA22LVwqQmKQf5hItWk0xRpOPVVIh+gq
+         yIZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpSsSB/SnB3z3eORwrrfvik9KJqjNuYo0/bUQi1JVsC/DUM+bbawPRvhDsMBVkHuKR2o1cgdKC+Q2yEMDo@vger.kernel.org, AJvYcCWWYjiEG8QaGhmZRb918QAbmrVzMKj/0B2TyxSOMD4NMFk/nfUtuSShwDhjM1SoSXab47GX1V7x0Xq2dleu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN7xCgFWN5GtKQ+EbVFvni3C9cCLtAb4pyi5kZpErP7pOHhKg6
+	2mZNsUExTE5+1jalK5TGa3wTPcytRntRndxV4bFgftTLx/uyfSIv
+X-Gm-Gg: ASbGnctBl6nGgoi6mwSWAaL/tkK979fU+nzcRvUfyI3w/u4LrNZFFqqUCNPGSTBkYgu
+	O5iW/pX9OeWXVz5Mtk5YrjX0hWvcy0KR5Eom3V+a7pmzCSJhjzIH4CkeVgA5wDNWwv0U9BpapAG
+	8dQNvdWfePy3x1esYeRnKNBT0/RR7oJL+TIqY2YKw0wLjHFa2WSQ8cFADOw11Li8PnQOwqhAzVz
+	fgqYOM3hrNoRfbTE98rnmOEfrZ8VVy3kQopOEXKU7ZAHcU3z9DdwZYmw7a7mMroKz8s9lYjI79r
+	M1ZWEqzvWr5Oqhl/gBy+jWDt+TZf
+X-Google-Smtp-Source: AGHT+IEw7oIxz9K2xsXII5mzZpoJuaKsJV/4Xg1U5jXHmRcOVYcKlOzUO/mlDfoW7NJPtJiOmXxuXg==
+X-Received: by 2002:a05:6a00:8c5:b0:730:9a55:d921 with SMTP id d2e1a72fcca58-7323c1444cemr4643260b3a.14.1739449303913;
+        Thu, 13 Feb 2025 04:21:43 -0800 (PST)
+Received: from VM-32-27-fedora.. ([129.226.128.251])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324276196dsm1174840b3a.147.2025.02.13.04.21.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 04:21:40 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 1A9DC4208FB6; Thu, 13 Feb 2025 19:21:35 +0700 (WIB)
-Date: Thu, 13 Feb 2025 19:21:35 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Nysal Jan K.A" <nysal@linux.ibm.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Baoquan He <bhe@redhat.com>, Tom Lendacky <thomas.lendacky@amd.com>,
-	James Morse <james.morse@arm.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Sourabh Jain <sourabhjain@linux.ibm.com>
-Subject: Re: [PATCH] docs: ABI: drop two duplicate symbols
-Message-ID: <Z63jz7uEoMNeaIga@archie.me>
-References: <c3dce809f577584cf9aedafc6c2a0d5a9ca909ac.1739394480.git.mchehab+huawei@kernel.org>
+        Thu, 13 Feb 2025 04:21:43 -0800 (PST)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: alexjlzheng@tencent.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: remove useless d_unhashed() retry in d_alloc_parallel()
+Date: Thu, 13 Feb 2025 20:21:37 +0800
+Message-ID: <20250213122137.11830-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="V8GpvAGdAdv4I6Vt"
-Content-Disposition: inline
-In-Reply-To: <c3dce809f577584cf9aedafc6c2a0d5a9ca909ac.1739394480.git.mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+After commit 45f78b0a2743 ("fs/dcache: Move the wakeup from
+__d_lookup_done() to the caller."), we will only wake up
+d_wait_lookup() after adding dentry to dentry_hashtable.
 
---V8GpvAGdAdv4I6Vt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Therefore, there is no need to keep retries about d_unhashed()
+in d_alloc_parallel().
 
-On Wed, Feb 12, 2025 at 10:08:01PM +0100, Mauro Carvalho Chehab wrote:
-> As warned by get_abi.py, there are two symbols that are
-> defined twice:
->=20
-> WARNING: /sys/devices/system/cpu/cpuX/topology/physical_package_id is def=
-ined 2 times: \
-> 	/new_devel/v4l/docs/Documentation/ABI/stable/sysfs-devices-system-cpu:27=
-; \
-> 	/new_devel/v4l/docs/Documentation/ABI/testing/sysfs-devices-system-cpu:70
-> WARNING: /sys/devices/system/cpu/cpuX/topology/ppin is defined 2 times: \
-> 	/new_devel/v4l/docs/Documentation/ABI/stable/sysfs-devices-system-cpu:89=
-; \
-> 	/new_devel/v4l/docs/Documentation/ABI/testing/sysfs-devices-system-cpu:70
->=20
-> As the documentation at testing/sysfs-devices-system-cpu, drop
-> the duplicated one from stable.
->=20
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  Documentation/ABI/stable/sysfs-devices-system-cpu | 10 ----------
->  1 file changed, 10 deletions(-)
->=20
-> diff --git a/Documentation/ABI/stable/sysfs-devices-system-cpu b/Document=
-ation/ABI/stable/sysfs-devices-system-cpu
-> index 902392d7eddf..cf78bd99f6c8 100644
-> --- a/Documentation/ABI/stable/sysfs-devices-system-cpu
-> +++ b/Documentation/ABI/stable/sysfs-devices-system-cpu
-> @@ -24,12 +24,6 @@ Description:	Default value for the Data Stream Control=
- Register (DSCR) on
->  		If set by a process it will be inherited by child processes.
->  Values:		64 bit unsigned integer (bit field)
-> =20
-> -What:           /sys/devices/system/cpu/cpuX/topology/physical_package_id
-> -Description:    physical package id of cpuX. Typically corresponds to a =
-physical
-> -                socket number, but the actual value is architecture and =
-platform
-> -                dependent.
-> -Values:         integer
-> -
->  What:           /sys/devices/system/cpu/cpuX/topology/die_id
->  Description:    the CPU die ID of cpuX. Typically it is the hardware pla=
-tform's
->                  identifier (rather than the kernel's). The actual value =
-is
-> @@ -86,10 +80,6 @@ What:           /sys/devices/system/cpu/cpuX/topology/=
-die_cpus
->  Description:    internal kernel map of CPUs within the same die.
->  Values:         hexadecimal bitmask.
-> =20
-> -What:           /sys/devices/system/cpu/cpuX/topology/ppin
-> -Description:    per-socket protected processor inventory number
-> -Values:         hexadecimal.
-> -
->  What:           /sys/devices/system/cpu/cpuX/topology/die_cpus_list
->  Description:    human-readable list of CPUs within the same die.
->                  The format is like 0-3, 8-11, 14,17.
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+ fs/dcache.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-The warnings squashed away, thanks!
+diff --git a/fs/dcache.c b/fs/dcache.c
+index e3634916ffb9..543833eedd8c 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2584,8 +2584,6 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
+ 			goto mismatch;
+ 		if (unlikely(dentry->d_parent != parent))
+ 			goto mismatch;
+-		if (unlikely(d_unhashed(dentry)))
+-			goto mismatch;
+ 		if (unlikely(!d_same_name(dentry, parent, name)))
+ 			goto mismatch;
+ 		/* OK, it *is* a hashed match; return it */
+-- 
+2.48.1
 
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---V8GpvAGdAdv4I6Vt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ63jyQAKCRD2uYlJVVFO
-o1mgAP9Cj8rDcfEMN8OPNDJ4L1JrRYF9z257CO2gYvYOodNjeQD+O/MeH2cK8WPW
-QLhpk5lXXpNiSxdsO3FR3QlPFGmAwQ8=
-=BeeW
------END PGP SIGNATURE-----
-
---V8GpvAGdAdv4I6Vt--
 
