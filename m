@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-513612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E77A34C69
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:52:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8CCA34C71
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7FA16B435
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:52:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0025D16B780
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49ADF2222D5;
-	Thu, 13 Feb 2025 17:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F6923F42D;
+	Thu, 13 Feb 2025 17:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LiDE+xmv"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tS2lLmVd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8322222C1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F42428A2D6;
+	Thu, 13 Feb 2025 17:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469130; cv=none; b=S9Pdwg4uYiMd8rEqG7+qj9+8E/zy2W7ZaXKteWqbcvjcz5fqlqQfmAXiiG7r0RM7FQ8s6TtQFwmQaXCKZBJwVPm5us/657GnC9wPGH5tctMuAdQDONUAUR6HL/MQHOm44U3YjS20kbCP7i7f0mzVyRNUhHCOyiNbB/4ZJUGME2Y=
+	t=1739469186; cv=none; b=eNnQr+rN+u0IbyLM7iOdGRD3YG8tMKwBpf7hWq6dxDxpQ5wwQC0bfv+4rWy7AEHTEl5fue8FylNtl1qAQpyR36O/4WobrdYOHRqbBHFHDQvFiYKLTkaEOsnObF3rjc8Wh63KsCC3m7+dAgXZ1w7Oi1HdmGaT3X1nC9ZDkJ0OWtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469130; c=relaxed/simple;
-	bh=1XiHw4tysHZjQU5ChfFDqUqFY9o9KtfCc8HnMsfBflg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fY7ad4pnPSGN/Ew2mYycBiLBSWBwxrmPfLOMRiIR//csLVzAF1f/+i2j8kE2h7QRe4T8XgYaefhvLFqSWsp8KTYXpS+f1EC6wepof12DT77mwyYBUER06AhS9gunZhKLF7wAX5LoNT4anpgm5SlSRzZoL2L8wF0WaADaIQpxLak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LiDE+xmv; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43956fcd608so7908465e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:52:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739469127; x=1740073927; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mIQEb2lERL52AWDIt9iZmMWM1q2cL+pDQtCUvQlkWmM=;
-        b=LiDE+xmvhnv6XWMILoHwJVG0p3FXz3tzoaQeRUDbzbTdV0EzLuMG17PGrUmT2TMAoW
-         2g8UOBQolN1qtmSbJuy72CTTVluqzvBLNqtWAzBte2toDxTzeaS/ql8ZdLIxJCigF7r3
-         1+5RchEvEvBrPptoYsJcQWDft8d70HKbENpdeBXKLt9TF/6eVGAyfzBSA2sVIxlokbmM
-         T56M9oAQ28fP9fNr8KRbMFHCyQDensSYB0c0PUzsP2AuasnzFGnzv72+05WTkmoY8pjs
-         mcnrpcCHg+4Jgk5rEYAVh8NrK87tKSGpCmVaIXA3xkZrRzhcotEFfqNt2vW6bny+Bsv6
-         ChYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739469127; x=1740073927;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mIQEb2lERL52AWDIt9iZmMWM1q2cL+pDQtCUvQlkWmM=;
-        b=Gb1HCCTRa4RJkFqkP5CznyC1sJuWBeKT47WmJRi2hb3o53e1Hmqo/+ZGTzL2uofQVw
-         1aHBfBG1lPO1pARwHotg/TNLTUBmkD7Rhd6HKCdZiAxgisd2c/gEA3xLkMdmzG3Fcnkq
-         LKyP5Uze2cuhAIyGUJ95fAgVjHznS1owT/lYLksv6ojMy4dPfWRKXAMCVNunOKtNak5o
-         U7NtrZE4PS6ZrjKJqDIb1uwmA1RCWp/3CT2IN2z2eN4wa3Az2svmp7SgSETI8MJ/N3+t
-         zkoQaVXh9Aef+p+FYKe/d1dKpyLoU8S+QHmRjn35RZzMhnK9jLFNdLl4o898pjgFQp2M
-         FUKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnT2lZhajfs9L5kqV6SGeK8cX+SFvnp0ASZFqfxf64IoxUr0Apw7gZBMjn76FpU/JeEfgSpJRguwzDniM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2SFiRGiMNhk6wJL8IVSZLh6U7Zslz9LZgnDcmLassjpIXmxnW
-	+XbR+WO0D4lEDTou5+Scrwu9934i9FmFQ0dmmVsEgpz0cEk+hKKjHxyZ0UThS/M=
-X-Gm-Gg: ASbGncuypKUVHnyVLVfD472OoYviREWzkeFV89dU6RzH9ay8RCnKDwHj30uPCsWh+mb
-	PnZZocMTu/uh6NDm4QvuOzEOCvQVPMKEAbNdz25XjdnX82vAxF1dZEW7aWCyCjbRSW4l4oNIZTQ
-	8GzhuwhCZn4xuWsa0Bn8HIxb3RBiVxwQ6A3z61XRbvm5ZK+CW/x/gLRFdKP14H9xf9fJVATbqr+
-	o0fznvJQ5YniLOfhCv5ZbBJOf8/w6mqsPrwFE+wpt7UCveeFFQ1JNRsRURAF2oNTIyzVaW6fyrz
-	FPI2tbCDWUGSXJM=
-X-Google-Smtp-Source: AGHT+IEFgpaDe8oOT53TJfQOEINjGndH+ERgdUXE5ply5cAp7CoaQUpMOTdQ+mRt1C3jJ/fyYRIh+w==
-X-Received: by 2002:a05:600c:1c1c:b0:439:3ef1:fc36 with SMTP id 5b1f17b1804b1-4395818fdfemr93388065e9.18.1739469127271;
-        Thu, 13 Feb 2025 09:52:07 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:affc:1fb5:fa08:10e8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f8c4bsm2467250f8f.46.2025.02.13.09.52.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 09:52:06 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	s=arc-20240116; t=1739469186; c=relaxed/simple;
+	bh=0/EZ08bVHan3Oir1oM3FqVRV3qOf4zQaimq6QliMxv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JY6yDt3qvEY7GByuphWWoFV6bfhzOGux+q8hk1rXOFIoEg6t2nfHHYERrcXILtvoG/lj11ghi+eENbIUM6lMdtvTo4rBzP/JtkBLazrKiDKLWFo22FrW9O1yA82XKFt2RLOsbxlaA1+8dZz4diZXfFr33wwwAAYxoSzk/uhsQQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tS2lLmVd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFEA1C4CED1;
+	Thu, 13 Feb 2025 17:52:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739469186;
+	bh=0/EZ08bVHan3Oir1oM3FqVRV3qOf4zQaimq6QliMxv8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tS2lLmVdPvAZXUu/UmlDRziM1qm9d2Bg4NRvDv5uzGqDYiZOSrgzi5no2n9N++ZdX
+	 oHRJkPLSZq+PrL7V5NEMyvzmmpeKsnPoXZNx42bTHsBpLj5Jxv68XPw3GHbduDjrJf
+	 qgF8Tmb+/6RUUNVT83x9CWZ41jUMN0XZq7jgyJ5WVa6Gj6LLFiIvFLcNN2tyxGpUjt
+	 VLVljmLmMshzHV7jEmI7CfmG6EC/KfO6/Y+nBzMu0p4O7UwC49DjNkXZsTy/8CPZiy
+	 wBY1c5w+Vwg0jyxI9nrF7NKhxt0MDnJsutq0jwETD6vEkiF37z7pigNaiWF04Zbfop
+	 X8TgFF+tmoELQ==
+Date: Thu, 13 Feb 2025 17:52:56 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: David Lechner <dlechner@baylibre.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 1/1] gpiolib: Fix crash on error in gpiochip_get_ngpios()
-Date: Thu, 13 Feb 2025 18:52:05 +0100
-Message-ID: <173946910471.103328.15879117296822484780.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250213155646.2882324-1-andriy.shevchenko@linux.intel.com>
-References: <20250213155646.2882324-1-andriy.shevchenko@linux.intel.com>
+	Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-sound@vger.kernel.org,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: (subset) [PATCH v3 00/15] gpiolib: add
+ gpiod_multi_set_value_cansleep
+Message-ID: <7989a6a0-b761-416c-ad97-69bd23fdc2c4@sirena.org.uk>
+References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
+ <173935301204.11039.10193374588878813157.b4-ty@linaro.org>
+ <801b5364-129f-42e9-bf9a-a90d9eeb4629@baylibre.com>
+ <CAMRc=MeXTvPnEPjOmPd5Vw0FYKHzndsB0SVjQErA4CY_0MGsMQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZlXg6mnu447oqkvT"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeXTvPnEPjOmPd5Vw0FYKHzndsB0SVjQErA4CY_0MGsMQ@mail.gmail.com>
+X-Cookie: Take it easy, we're in a hurry.
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+--ZlXg6mnu447oqkvT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Feb 2025 17:56:46 +0200, Andy Shevchenko wrote:
-> The gpiochip_get_ngpios() uses chip_*() macros to print messages.
-> However these macros rely on gpiodev to be initialised and set,
-> which is not the case when called via bgpio_init(). In such a case
-> the printing messages will crash on NULL pointer dereference.
-> Replace chip_*() macros by the respective dev_*() ones to avoid
-> such crash.
-> 
-> [...]
+On Thu, Feb 13, 2025 at 06:42:19PM +0100, Bartosz Golaszewski wrote:
+> On Thu, Feb 13, 2025 at 6:25=E2=80=AFPM David Lechner <dlechner@baylibre.=
+com> wrote:
 
-Eeek! Good catch, queued for fixes.
+> > Do you plan to pick up the other patches that have been acked
+> > as well? It seems like most folks were OK with everything going
+> > though the gpio tree since the changes are small.
 
-Bart
+> Jonathan requested a branch so I made one and sent out a PR. I figured
+> people would just pick the relevant patches into their respective
+> trees? For patches that won't be in next by rc5 - I will take them if
+> Acked - just remind me.
 
-[1/1] gpiolib: Fix crash on error in gpiochip_get_ngpios()
-      commit: 7b4aebeecbbd5b5fe73e35fad3f62ed21aa7ef44
+If people are acking things that generally means they're expecting them
+to go along with the rest of the series.  When you didn't apply the ASoC
+patch I did actually put into CI but it was a bit surprising that you
+seemed to be expecting that.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+--ZlXg6mnu447oqkvT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmeuMXgACgkQJNaLcl1U
+h9BoDgf/W5CpihAHC/LYRf8SQvXiRwjxswvLLHFJuH31Mlm004xXbQEhnVGnx0y5
+BQuUSIV5VBOy8sV3etF5jay1rfAtGlXAa6tfyCNLSjF6164Pa3MmGuNcxlA6mijW
+bHTSKgw0661wFELE/2qvRoPQKQmeo6POj/IJBf5mM4u4keHyjlCm+3FaYkBMTz16
+Plm2wDHNvrjxP4KKza3/uwwcSJTSQrVF2SXDqi/bFgV18RrljglU4KJAiM+K08OB
+o0BJjYG+Rxesf072hc7kDvG/B3yk/8cC8bnDpdtIkeVN+dVcW2d7QktryNVqQgbM
+xlC6PgwJOwzMzOkxSTgIUpQqYYa8nQ==
+=Ir02
+-----END PGP SIGNATURE-----
+
+--ZlXg6mnu447oqkvT--
 
