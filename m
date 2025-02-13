@@ -1,282 +1,94 @@
-Return-Path: <linux-kernel+bounces-513551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01377A34B86
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:17:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EBDA34BB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC09016C539
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F913A46D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364E9202C53;
-	Thu, 13 Feb 2025 17:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3829142903;
+	Thu, 13 Feb 2025 17:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfsLGCVq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyZxuFem"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569CD14AD20;
-	Thu, 13 Feb 2025 17:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A821514F6;
+	Thu, 13 Feb 2025 17:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466843; cv=none; b=FObS6mY2StcM+NdIuD3u1LpEYefP3lW4aq44kN8MJrv33bWUOoYaxxHzLPUuymOn+IgTfHniKSCD0XdBEmqHRD7Zkjct3bteSTFe3m1ZAvfieZ2ToeV5k/Ji7EKqp1xDIw8HLUiyuzJVE/h/cpMO2bcjJtHnva/KQA+eoenn30I=
+	t=1739466883; cv=none; b=Azsj41/Ag092lokoIgYL0Teqz99FaCHh79o/mB8a3QNGEoTrFjzwqX9RCcdQQbY8k2b+OLbRO0Ttw57+lVQ6ARc776MkGmZI5rF0BbUESdZX4xlJgoGZlRN1U81McYcVLGeBys8+gvCzX/21/6du0U0Jc6fAhXAJPrY5aFm08Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466843; c=relaxed/simple;
-	bh=c5kpCmM/AUe0gxWM0ksdx93Irwzp3MjKsc8taJMFDkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lO8MxYfadUqHJv7BAuQuDaB9ZJ54CVEGY0Vg09Y474b0WbSAxV5hXXHvE0hz6crCjnQfWotI2GU5HHClmz1mAinQ/EomQF7eDzxWdARqJGFgX/4vkm0pMIMtxPxdMu6JoFph9cFqmMpWLLSNpAeveY2TKRsNToep5cHGhomm7W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfsLGCVq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35D4C4CEE4;
-	Thu, 13 Feb 2025 17:14:02 +0000 (UTC)
+	s=arc-20240116; t=1739466883; c=relaxed/simple;
+	bh=GcsVikiIX3LK72p/q3Te5VOgFxkdd86cKUDlsZnDRbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YLeRjrr9wwZ6Mvuwi44G6D0eck+aZx4LQ/57T3jVbjeqhw2iq1PhPp+urWNoaVP7bAx2DX2390AviqFo1NNyldUbObWJ8VFSyIMYdyAGOh4sotGHjrR6v7COnsl71uuvPHkwB5bTa+WvbpDDzqaTJjHMjSkrkDBGmdV0FWGC774=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyZxuFem; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B639C4CED1;
+	Thu, 13 Feb 2025 17:14:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739466842;
-	bh=c5kpCmM/AUe0gxWM0ksdx93Irwzp3MjKsc8taJMFDkk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VfsLGCVqcnvsz0EPdvO/D1d9L7HWoG9sBA+WrxnRRxQfjSfihFRkvreaFRvRRTKyc
-	 T1Ml9RQ+KkPSVOC0sMPwwtGCINxRdZvohregL0RYui2+LL9BRWNH6wiNV8niVyjluN
-	 LAz5PSyYyqh05V6STGXAf9maWUrTaqRlzKGmM0EBj2AFJLfrI8aljuDgDFe9/MJeqU
-	 CzGabrkbRDo7Ag7oAwuW5ZiG+NwnZbU3y/I13/6a6Mxzyh0jHScQZaDwO78cTIf5Uv
-	 pWi25M1o6osC7Pt00ERpTa+5xO8olPgpxqeTotApd+FfFQGxDq2+Zl+v76j4wJfeJR
-	 PQxXyqv5eDKOQ==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab7cb1154abso154952766b.0;
-        Thu, 13 Feb 2025 09:14:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUIDNXrKNWeUIdnhasrsbOw9gF6F136nAE4UpQDN06gNIqEGiR2OhIBbbICk6KH1odR579nR77gG3eI7yW3@vger.kernel.org, AJvYcCWz9TFvgwZqe7fYtZ4PdoJos2Fwqbj3bFIc2uEeURWDOi0v2YVYni+WLpjhaETkQ6tJ4dnJK9jGyXlLKIqcjIsIAw==@vger.kernel.org, AJvYcCXxJnAYTEaifgLIggfrJTTDRN5NUUDqydWebU0ssgvebTZ2z9KqWm26MU6f4p3KwYQBwsYN5saKZN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcQ5c8eEYaQlme2PC38xFB7d6S2BWMheltm9GrhAEi9J6/heCs
-	VpcOusvqKVPgxaRpqeIcNM4UYO07O+X4nVvRpjJVk/IC0L8a/AnLO/iQjexXdQXrzrGhpa8MAlm
-	cM2vj2i1t5rk+hhexehEAULRpOQ==
-X-Google-Smtp-Source: AGHT+IGLiNgkbdSgKYJxLv9yLc1GoCVMmMj+s80I6QXFJXsr3H3G985MmMlHVjvY6J6a3cMlBPrls5p737/5XQ9g0aM=
-X-Received: by 2002:a05:6402:5285:b0:5dc:5a51:cbfa with SMTP id
- 4fb4d7f45d1cf-5dec9d2c185mr11085898a12.6.1739466841112; Thu, 13 Feb 2025
- 09:14:01 -0800 (PST)
+	s=k20201202; t=1739466882;
+	bh=GcsVikiIX3LK72p/q3Te5VOgFxkdd86cKUDlsZnDRbs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nyZxuFemm0qG1nQAfJ/7yDJRsrFl/tfIxgfMSXK52qWDCstv1e3X2RKIk84Ey0bLv
+	 KNPPG+SDLMyEVirYOvwsklUX8tzX427C2x1cuIi11RasCjoQqXEgW918gc0DZuvFQb
+	 03vlgRs7ZEoJh3VTokjmcPqk/adurYAPftE7P5cwzL2NINDqeTgswh3yVkkd1y0QP4
+	 0NqC25FWKaMfYD2vyEijOoJ/spV6A8VOKJmjk39yLH1ffv2XZC31d5H9TiuWDtVwqQ
+	 UUJYw1WSecGGNd16cRVd3sNHapF1/rHErblOV5gLqbJOmgXvGQ9h8X0A0fMm6sv1PV
+	 PNhOvSnxZ1lYw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1ticnb-000000006th-3RSi;
+	Thu, 13 Feb 2025 18:14:52 +0100
+Date: Thu, 13 Feb 2025 18:14:51 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Maulik Shah <quic_mkshah@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip/qcom-pdc: Workaround hardware register bug on
+ X1E80100
+Message-ID: <Z64oi_UVsJAxmm28@hovoldconsulting.com>
+References: <20250213-x1e80100-pdc-hw-wa-v1-1-f8c248a48cba@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org>
- <20250202-arm-brbe-v19-v19-11-1c1300802385@kernel.org> <20250213161628.GF235556@e132581.arm.com>
-In-Reply-To: <20250213161628.GF235556@e132581.arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 13 Feb 2025 11:13:49 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+VmfibMVdh+9DxqU5Axiv_zMiznAh8_umFB1J2y8reig@mail.gmail.com>
-X-Gm-Features: AWEUYZl-h3OwTWUMTokpITINNaXk1-oL6xdH92FmLUNnd48obarnwJfoMpDQhGA
-Message-ID: <CAL_Jsq+VmfibMVdh+9DxqU5Axiv_zMiznAh8_umFB1J2y8reig@mail.gmail.com>
-Subject: Re: [PATCH v19 11/11] perf: arm_pmuv3: Add support for the Branch
- Record Buffer Extension (BRBE)
-To: Leo Yan <leo.yan@arm.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213-x1e80100-pdc-hw-wa-v1-1-f8c248a48cba@linaro.org>
 
-On Thu, Feb 13, 2025 at 10:16=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
->
-> On Sun, Feb 02, 2025 at 06:43:05PM -0600, Rob Herring (Arm) wrote:
->
-> [...]
->
-> > +void brbe_enable(const struct arm_pmu *arm_pmu)
-> > +{
-> > +       struct pmu_hw_events *cpuc =3D this_cpu_ptr(arm_pmu->hw_events)=
-;
-> > +       u64 brbfcr =3D 0, brbcr =3D 0;
-> > +
-> > +       /*
-> > +        * Merge the permitted branch filters of all events.
-> > +        */
-> > +       for (int i =3D 0; i < ARMPMU_MAX_HWEVENTS; i++) {
-> > +               struct perf_event *event =3D cpuc->events[i];
-> > +
-> > +               if (event && has_branch_stack(event)) {
-> > +                       brbfcr |=3D event->hw.branch_reg.config;
-> > +                       brbcr |=3D event->hw.extra_reg.config;
-> > +               }
-> > +       }
-> > +
-> > +       /*
-> > +        * If the record buffer contains any branches, we've already re=
-ad them
-> > +        * out and don't want to read them again.
-> > +        * No need to sync as we're already stopped.
-> > +        */
-> > +       brbe_invalidate_nosync();
-> > +       isb(); // Make sure invalidate takes effect before enabling
-> > +
-> > +       /*
-> > +        * In VHE mode with MDCR_EL2.HPMN set to PMCR_EL0.N, the counte=
-rs are
-> > +        * controlled by BRBCR_EL1 rather than BRBCR_EL2 (which writes =
-to
-> > +        * BRBCR_EL1 are redirected to). Use the same value for both re=
-gister
-> > +        * except keep EL1 and EL0 recording disabled in guests.
-> > +        */
-> > +       if (is_kernel_in_hyp_mode())
-> > +               write_sysreg_s(brbcr & ~(BRBCR_ELx_ExBRE | BRBCR_ELx_E0=
-BRE), SYS_BRBCR_EL12);
-> > +       write_sysreg_s(brbcr, SYS_BRBCR_EL1);
-> > +       isb(); // Ensure BRBCR_ELx settings take effect before unpausin=
-g
-> > +
-> > +       write_sysreg_s(brbfcr, SYS_BRBFCR_EL1);
->
-> Seems to me, it is weird that first enable recording (BRBCR), then set
-> control register BRBFCR.  And the writing SYS_BRBFCR_EL1 not guarded
-> by a barrier is also a bit concerned.
+On Thu, Feb 13, 2025 at 06:04:00PM +0100, Stephan Gerhold wrote:
+> On X1E80100, there is a hardware bug in the register logic of the
+> IRQ_ENABLE_BANK register. While read accesses work on the normal address,
+> all write accesses must be made to a shifted address. Without a workaround
+> for this, the wrong interrupt gets enabled in the PDC and it is impossible
+> to wakeup from deep suspend (CX collapse).
+> 
+> This has not caused problems so far, because the deep suspend state was not
+> enabled. We need a workaround now since work is ongoing to fix this.
+> 
+> Introduce a workaround for the problem by matching the qcom,x1e80100-pdc
+> compatible and shift the write address by the necessary offset.
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 
-We are always disabled (paused) when we enter brbe_enable(). So the
-last thing we do is unpause. The only ordering we care about after
-writing SYS_BRBFCR_EL1 is writing PMCR which has an isb before it is
-written.
+I've been running with this patch for a while now and it allows me to
+wake up from deep suspend on the X1E CRD using the power button (or
+GPIO interrupts with further patches):
 
-> > +}
-> > +
-> > +void brbe_disable(void)
-> > +{
-> > +       /*
-> > +        * No need for synchronization here as synchronization in PMCR =
-write
-> > +        * ensures ordering and in the interrupt handler this is a NOP =
-as
-> > +        * we're already paused.
-> > +        */
-> > +       write_sysreg_s(BRBFCR_EL1_PAUSED, SYS_BRBFCR_EL1);
->
-> Maybe the Arm ARM causes the confusion for the description of the
-> PAUSED bit, I read it as this bit is a status bit to indicate
-> branch recording is paused.
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-I agree, but I tested that writing it sets the bit (on FVP). Rule
-RSRJND says s/w clears the bit to unpause, so it is definitely
-writeable. While it doesn't say anything explicitly about s/w setting
-the bit, there is no definition in the Arm ARM of a 'write 0 to clear'
-only bit while there are W1C and W1S definitions.
-
-> > +}
-> > +
-> > +static const int brbe_type_to_perf_type_map[BRBINFx_EL1_TYPE_DEBUG_EXI=
-T + 1][2] =3D {
-> > +       [BRBINFx_EL1_TYPE_DIRECT_UNCOND] =3D { PERF_BR_UNCOND, 0 },
-> > +       [BRBINFx_EL1_TYPE_INDIRECT] =3D { PERF_BR_IND, 0 },
-> > +       [BRBINFx_EL1_TYPE_DIRECT_LINK] =3D { PERF_BR_CALL, 0 },
-> > +       [BRBINFx_EL1_TYPE_INDIRECT_LINK] =3D { PERF_BR_IND_CALL, 0 },
-> > +       [BRBINFx_EL1_TYPE_RET] =3D { PERF_BR_RET, 0 },
-> > +       [BRBINFx_EL1_TYPE_DIRECT_COND] =3D { PERF_BR_COND, 0 },
-> > +       [BRBINFx_EL1_TYPE_CALL] =3D { PERF_BR_CALL, 0 },
-> > +       [BRBINFx_EL1_TYPE_ERET] =3D { PERF_BR_ERET, 0 },
-> > +       [BRBINFx_EL1_TYPE_IRQ] =3D { PERF_BR_IRQ, 0 },
->
-> I saw this table cannot reflect the complete branch type.  We might
-> need to consider to extend the perf branch flags later.
->
-> If the 'new_type' is always zero, it is not necessary to maintain a
-> array with two items (the second one is always 0).
-
-I'm adding the new_type's back in the next version.
-
->
-> > +};
-> > +
-> > +static void brbe_set_perf_entry_type(struct perf_branch_entry *entry, =
-u64 brbinf)
-> > +{
-> > +       int brbe_type =3D brbinf_get_type(brbinf);
-> > +
-> > +       if (brbe_type <=3D BRBINFx_EL1_TYPE_DEBUG_EXIT) {
-> > +               const int *br_type =3D brbe_type_to_perf_type_map[brbe_=
-type];
-> > +
-> > +               entry->type =3D br_type[0];
-> > +               entry->new_type =3D br_type[1];
-> > +       }
-> > +}
-> > +
-> > +static int brbinf_get_perf_priv(u64 brbinf)
-> > +{
-> > +       int brbe_el =3D brbinf_get_el(brbinf);
-> > +
-> > +       switch (brbe_el) {
-> > +       case BRBINFx_EL1_EL_EL0:
-> > +               return PERF_BR_PRIV_USER;
-> > +       case BRBINFx_EL1_EL_EL1:
-> > +               return PERF_BR_PRIV_KERNEL;
-> > +       case BRBINFx_EL1_EL_EL2:
-> > +               if (is_kernel_in_hyp_mode())
-> > +                       return PERF_BR_PRIV_KERNEL;
-> > +               return PERF_BR_PRIV_HV;
-> > +       default:
-> > +               pr_warn_once("%d - unknown branch privilege captured\n"=
-, brbe_el);
-> > +               return PERF_BR_PRIV_UNKNOWN;
-> > +       }
-> > +}
-> > +
-> > +static void capture_brbe_flags(struct perf_branch_entry *entry,
-> > +                              const struct perf_event *event,
-> > +                              u64 brbinf)
-> > +{
-> > +       brbe_set_perf_entry_type(entry, brbinf);
-> > +
-> > +       if (!branch_sample_no_cycles(event))
-> > +               entry->cycles =3D brbinf_get_cycles(brbinf);
-> > +
-> > +       if (!branch_sample_no_flags(event)) {
-> > +               /* Mispredict info is available for source only and com=
-plete branch records. */
-> > +               if (!brbe_record_is_target_only(brbinf)) {
-> > +                       entry->mispred =3D brbinf_get_mispredict(brbinf=
-);
-> > +                       entry->predicted =3D !entry->mispred;
-> > +               }
-> > +
-> > +               /*
-> > +                * Currently TME feature is neither implemented in any =
-hardware
-> > +                * nor it is being supported in the kernel. Just warn h=
-ere once
-> > +                * if TME related information shows up rather unexpecte=
-dly.
-> > +                */
-> > +               if (brbinf_get_lastfailed(brbinf) || brbinf_get_in_tx(b=
-rbinf))
-> > +                       pr_warn_once("Unknown transaction states\n");
->
-> If the branch is in transaction, we can set:
->
->   entry->in_tx =3D 1;
-
-We actively don't want to support the feature. The comment there is
-from Mark's feedback on a prior version.
-
->
-> > +       }
-> > +
-> > +       /*
-> > +        * Branch privilege level is available for target only and comp=
-lete
-> > +        * branch records.
-> > +        */
-> > +       if (!brbe_record_is_source_only(brbinf))
-> > +               entry->priv =3D brbinf_get_perf_priv(brbinf);
->
-> This logic is not quite right.  In theory, if we check with above
-> condition (!brbe_record_is_source_only(brbinf)), it might be the
-> case both source and target are not valid.
-
-We never get here if the record is not valid. A valid record must have
-at least 1 address valid.
-
-I could merge capture_brbe_flags() into perf_entry_from_brbe_regset().
-There's not much reason to have a separate function.
-
-Rob
+Johan
 
