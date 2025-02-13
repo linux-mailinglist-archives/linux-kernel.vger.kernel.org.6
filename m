@@ -1,202 +1,207 @@
-Return-Path: <linux-kernel+bounces-513839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947C4A34F4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:24:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA428A34F52
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:24:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE02B3ACE94
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:24:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9443ADC60
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732E4266185;
-	Thu, 13 Feb 2025 20:24:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0DB2222DE;
-	Thu, 13 Feb 2025 20:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7C6266196;
+	Thu, 13 Feb 2025 20:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DbuGESRK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EA5266180;
+	Thu, 13 Feb 2025 20:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739478259; cv=none; b=eX8kgU8lGsuFAcmDjmcoFRMunt+J09H18LdVyBPWwf2LHZ8Fh09iwT7EXZ09DgH4+C47z8taMiZboyRRJl3ShiYrTWmir9YgNWXF1qILMTCD0AzGhYKFSTFPpyXZicEE1jarK3Kml0v+fG6m9f/038TEkZ9VfrwLASnCBroMIds=
+	t=1739478277; cv=none; b=foQInCzjSBrRwLdAGjq0dZed9HGzJJj7bea4e36ajeV8ExrdUFVZKeCq9MwMni8XUhw6tSXg71HteWNIu50TMdsPZFWbuHJlMWTmyNvBU/xMoKFqjrofuaqOaO/Ji/GXlEJgDgnvn9marLQmgOhQBxd2JAOVcVqfmT+ybvEKHGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739478259; c=relaxed/simple;
-	bh=D2YETnVgFrI7hLRiidm23TMJLYAHSLeT0TpoXHZ/UJk=;
+	s=arc-20240116; t=1739478277; c=relaxed/simple;
+	bh=vgPyFYWzWxj67eo+xKZO/b/zcPiePnk59iJY0qxFk48=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NfDI9w9HOR8NitbfIfuziv7I0WMRN1eTihUaccVvOmLbJ9WeNkivmDNFmcYQEW0X/asK9TxVA2SWaIL2SH1wmAyFlKp6wW7IUFAvRq8+Z3m/9MkMn7DsIGDi99kFIY//fCiNZzaNgaw2j/5g/Qov8v7n00f/NiCx+/WjfYBwwm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C5CF113E;
-	Thu, 13 Feb 2025 12:24:35 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E747B3F58B;
-	Thu, 13 Feb 2025 12:24:10 -0800 (PST)
-Date: Thu, 13 Feb 2025 20:23:53 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@oss.nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, imx@lists.linux.dev,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting fwnode for
- scmi cpufreq
-Message-ID: <Z65U2SMwSiOFYC0v@pluto>
-References: <20241225-scmi-fwdevlink-v1-0-e9a3a5341362@nxp.com>
- <20241225-scmi-fwdevlink-v1-1-e9a3a5341362@nxp.com>
- <Z6uFMW94QNpFxQLK@bogus>
- <20250212070120.GD15796@localhost.localdomain>
- <Z6x8cNyDt8rJ73_B@bogus>
- <CAGETcx87Stfkru9gJrc1sf=PtFGLY7=jrfFaCzK5Z4hq+2TCzg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mAs9p7J0l+wLOktOISuH66yooSQRA1EX8HarPmNOaiT3vUVtqh4kA8hVsp8cGWBdQZ5teGutZDYpQfUzW6Ld13KZyiqRT8wOussYNMMRR4fsdlZzoCUxngOo/xHYl+OAMUqorduHITf43vrXTDHEUcFIViVHgvbWAHb5JsCSQio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DbuGESRK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08A9FC4CED1;
+	Thu, 13 Feb 2025 20:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739478276;
+	bh=vgPyFYWzWxj67eo+xKZO/b/zcPiePnk59iJY0qxFk48=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DbuGESRKL2HUhlkyJcEjlKwcN2lMcx2+FHQchLaWkvCA9RLjJOv+DafFgkjdwHZD7
+	 nIJ6mFSvqj8V+mP3PcDq5ji1E0WTx0TPwc+gpB5TaCm8IFxnwM2jtRSdOQzWhtc6KU
+	 CtWAA2NaJiv4G4pU3erClaOfKCvFlaWhbsLhYYO4+x2z9BCvUwps7JjHsbHnWcKhJy
+	 zAU5g2/vU3pfsPDKs9IzTqYfb2H9GJVxo0KZ+e7jXVfuUSRre1sTvRiju6g1e9y8TD
+	 k077WAGUvf7toENcahJOusSH8pm6sEAMTraRaXlSCBUXuxtWTjYM4AbYlu/qbJcZXv
+	 kyxuaZtZ+1QDA==
+Date: Thu, 13 Feb 2025 20:24:31 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com,
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, jonath4nns@gmail.com,
+	marcelo.schmitt1@gmail.com, dlechner@baylibre.com
+Subject: Re: [PATCH RESEND v3 03/17] dt-bindings: iio: adc: ad7768-1: add
+ trigger-sources property
+Message-ID: <20250213-sympathy-suspend-2c414b383195@spud>
+References: <cover.1739368121.git.Jonathan.Santos@analog.com>
+ <4136b5259df75221fc314bcd4a57ecaeeab41a45.1739368121.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lWYe9Flar0M7C111"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGETcx87Stfkru9gJrc1sf=PtFGLY7=jrfFaCzK5Z4hq+2TCzg@mail.gmail.com>
+In-Reply-To: <4136b5259df75221fc314bcd4a57ecaeeab41a45.1739368121.git.Jonathan.Santos@analog.com>
 
-On Thu, Feb 13, 2025 at 12:03:15AM -0800, Saravana Kannan wrote:
-> On Wed, Feb 12, 2025 at 2:48 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
 
-Hi Saravana,
+--lWYe9Flar0M7C111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > On Wed, Feb 12, 2025 at 03:01:20PM +0800, Peng Fan wrote:
-> > > On Tue, Feb 11, 2025 at 05:13:21PM +0000, Sudeep Holla wrote:
-> > > >On Wed, Dec 25, 2024 at 04:20:44PM +0800, Peng Fan (OSS) wrote:
-> > > >> From: Peng Fan <peng.fan@nxp.com>
-> > > >>
+On Wed, Feb 12, 2025 at 03:16:16PM -0300, Jonathan Santos wrote:
+> In addition to GPIO synchronization, The AD7768-1 also supports
+> synchronization over SPI, which use is recommended when the GPIO
+> cannot provide a pulse synchronous with the base MCLK signal. It
+> consists of looping back the SYNC_OUT to the SYNC_IN pin and send
+> a command via SPI to trigger the synchronization.
+>=20
+> Add a new trigger-sources property to enable synchronization over SPI
+> and future multiple devices support. This property references the
+> main device (or trigger provider) responsible for generating the
+> SYNC_OUT pulse to drive the SYNC_IN of device.
+>=20
+> While at it, add description to the interrupts property.
+>=20
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+> v3 Changes:
+> * Fixed dt-bindings errors.
+> * Trigger-source is set as an alternative to sync-in-gpios, so we
+>   don't break the previous ABI.
+> * increased maxItems from trigger-sources to 2.
+>=20
+> v2 Changes:
+> * Patch added as replacement for adi,sync-in-spi patch.
+> * addressed the request for a description to interrupts property.
+> ---
+>  .../bindings/iio/adc/adi,ad7768-1.yaml        | 28 +++++++++++++++++--
+>  1 file changed, 25 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml =
+b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> index 3ce59d4d065f..4bcc9e20fab9 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> @@ -26,7 +26,19 @@ properties:
+>    clock-names:
+>      const: mclk
+> =20
+> +  trigger-sources:
+> +    description:
+> +      Specifies the device responsible for driving the synchronization p=
+in,
+> +      as an alternative to adi,sync-in-gpios. If the own device node is
+> +      referenced, The synchronization over SPI is enabled and the SYNC_O=
+UT
+> +      output will drive the SYNC_IN pin.
 
-[snip]
+Maybe a silly question, but why is self-reference needed here?
+sync-in-gpios is a required property at present, so why can't you
+operate under the assumption that neither the trigger-sources when
+neither are present? Is it because only one of the sources could be
+external and one internal, or there could be either one or two internal
+sources? Self-referencing properties always feel like a bit of a
+mistake.
 
-> 
-> Cristian,
-> 
-> Thanks for taking the time to give a detailed description here[1]. I
-> seem to have missed that email.
-> [1] - https://lore.kernel.org/arm-scmi/ZryUgTOVr_haiHuh@pluto/
-> 
-> Peng/Cristian,
-> 
-> Yes, we can have the driver core ignore this device for fw_devlink by
-> looking at some flag on the device (and not on the fwnode). But that
-> is just kicking the can down the road. We could easily end up with two
+> +    maxItems: 2
+> +
+>    interrupts:
+> +    description:
+> +      Specifies the interrupt line associated with the ADC. This refers
+> +      to the DRDY (Data Ready) pin, which signals when conversion result=
+s are
+> +      available.
+>      maxItems: 1
+> =20
+>    '#address-cells':
+> @@ -57,6 +69,9 @@ properties:
+>    "#io-channel-cells":
+>      const: 1
+> =20
+> +  "#trigger-source-cells":
+> +    const: 0
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -65,7 +80,6 @@ required:
+>    - vref-supply
+>    - spi-cpol
+>    - spi-cpha
+> -  - adi,sync-in-gpios
+> =20
+>  patternProperties:
+>    "^channel@([0-9]|1[0-5])$":
+> @@ -89,6 +103,13 @@ patternProperties:
+>  allOf:
+>    - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> =20
+> +  - oneOf:
+> +      - required:
+> +          - trigger-sources
+> +          - "#trigger-source-cells"
+> +      - required:
+> +          - adi,sync-in-gpios
+> +
+>  unevaluatedProperties: false
+> =20
+>  examples:
+> @@ -99,7 +120,7 @@ examples:
+>          #address-cells =3D <1>;
+>          #size-cells =3D <0>;
+> =20
+> -        adc@0 {
+> +        adc0: adc@0 {
+>              compatible =3D "adi,ad7768-1";
+>              reg =3D <0>;
+>              spi-max-frequency =3D <2000000>;
+> @@ -108,7 +129,8 @@ examples:
+>              vref-supply =3D <&adc_vref>;
+>              interrupts =3D <25 IRQ_TYPE_EDGE_RISING>;
+>              interrupt-parent =3D <&gpio>;
+> -            adi,sync-in-gpios =3D <&gpio 22 GPIO_ACTIVE_LOW>;
+> +            trigger-sources =3D <&adc0 0>;
+> +            #trigger-source-cells =3D <0>;
+>              reset-gpios =3D <&gpio 27 GPIO_ACTIVE_LOW>;
+>              clocks =3D <&ad7768_mclk>;
+>              clock-names =3D "mclk";
+> --=20
+> 2.34.1
+>=20
 
-Oh yes this is definitely some sort of hack/workaround that just kicks
-the can down the road, I agree...just I cannot see any better solution
-from what Peng propose (beside maybe we can discuss his implementation
-details as we are doing...)
+--lWYe9Flar0M7C111
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> SCMI devices needing a separate set of consumers. For example,
-> something like below can have two SCMI devices A and B created where
-> only A needs the mboxes and only B needs shmem and power-domains. This
+-----BEGIN PGP SIGNATURE-----
 
-..not really...it is even worse :P ... the mbox/shmem props down below are
-really definition of a mailbox transport SCMI channel: some transports
-allow multiple channels to be defined and in such case you can dedicate
-one channel to a specific protocol...
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ65U/wAKCRB4tDGHoIJi
+0pB+AQCP+31FGFpNu1bFN4d+aHlh06rWj+vxU4ClpJYE0eJ7OwD+M/sVq6WXXvz7
+w2JeNL9Irj7zUuW6MgiG84wpjZ7I6Qc=
+=tZHi
+-----END PGP SIGNATURE-----
 
-...so, in this case, you will see there will be something similar defined
-in terms of mboxes/shmem at the top SCMI DT node to represent an SCMI channel
-used for all the protocols WHILE this additional definition inside the
-protocol node defines a dedicated channel...IOW these props mboxes/shmem
-are really parsed/consumed upfront by the core SCMI stack at probe to
-configure and allocare basic comms channel BEFORE any SCMI device is created
-...then the protocol DT node is no more used by the core and is instead 'lent'
-to create SCMI devices for the drivers needing them...(possibly lending it to
-multiple users...that is the issue) 
-
-> will get messy even for drivers if the driver for A optionally needs
-> power-domains on some machines, but not this one.
-> 
->         firmware {
->                 scmi {
->                         compatible = "arm,scmi";
->                         scmi_dvfs: protocol@13 {
->                                 reg = <0x13>;
->                                 #clock-cells = <1>;
->                                 mbox-names = "tx", "rx";
->                                 mboxes = <&mailbox 1 0 &mailbox 1 1>;
->                                 shmem = <&cpu_scp_hpri0 &cpu_scp_hpri1>;
->                                 power-domains = <&blah>;
->                         };
-> 
-> Wait a sec, looking around at the SCMI code, I just realized that you
-> don't even really care about the node name to get the protocol number
-> and you just look at "reg" for protocol number. Why not just have
-> peng's device have two protocol@13 DT nodes?
-> 
-> cpufreq@13 {
->     reg = <0x13>;
-> }
-> whateverelse@13 {
->     reg = <0x13>;
-> }
-> 
-> You can also probably throw in a compatible field if you need to help
-> the drivers pick the right node (where they currently pick the same
-> node). Or you can do whatever else would help make sure the cpufreq
-> device is attached to the cpufreq node and the whateverelse device is
-> attached to the whateverelse node.
-
-..well...my longer-than-ever explanation of the innner-workings was
-meant to explain where the problem comes from, and how would be difficult
-to address it WITHOUT changing the DT bindings, BECAUE I pretty much doubt
-that throwing into the mix also multiple nodes definitions and compatibles
-could fly with the DT maintainers, AND certainly it will go against the basic
-rules for 'reg-indexed' properties ...you cannot have 2 prop indexed with the
-same reg-value AFAIK...and the reg-value, here, is indeed the spec protocol
-number so you cannot change that either within the set of nodes sharing
-the same prop....
-
-...moreover the above additional construct of having possibly per-protocol
-channels would create even more a mess in this scenario of explicitly
-declared duplicated protocol-nodes:
- 
-- should we duplicate the optional mbox/shmem too ? not possible...DT sanity
-  would fail immediately also in this (I suppose due to duplicated entries)
-
-...BUT
-
-- at the same time we should assume that ALL the duplicated protocols inherits
-the optional per-protocol dedicated channel that is defined in one of
-them...seems very dirty to me...
-
-...moreover...explicitly allowing for such duplicate DT protocol definitions
-would open the door to create even more SCMI drivers like pinctrl-imx that
-uses the same PINCTRL protocol as the generic-pinctrl BUT really implements
-the SAME functionalities as the generic one (just slightly differently
-and using a complete distinct set of NXP pinctrl bindings for historical
-reasons AFAIU)....BUT pinctrl-imx is an *unfortunate* exception that we had
-to support for the historical reason I mentioned BUT should NOT be the rule
-NOR the advised way...
-
-....while other drivers exists that share the usage of the same protocol
-(HWMON/IIO GENPD/CPUFREQ), they use the same protocol to achieve different
-things in different subsytems...and they are anyway impacted (even to a less
-degree) by this fw_devlink issue AFAIU so the problem indeed exist also
-out of pinctrl-imx
-
-> 
-> Looks like that'll first help clean up the "two devices for one node"
-> issue. And then the rest should just work? Cristian, am I missing
-> anything?
-
-Yes that is the main issue...but still dont see how to solve it in a
-clean way...
-
-Thanks,
-Cristian
+--lWYe9Flar0M7C111--
 
