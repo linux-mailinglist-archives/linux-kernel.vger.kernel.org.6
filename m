@@ -1,120 +1,110 @@
-Return-Path: <linux-kernel+bounces-512900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB37A33F00
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:22:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD59A33F02
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:23:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080DD3A5F20
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649AD3A55A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D78221577;
-	Thu, 13 Feb 2025 12:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22EB221561;
+	Thu, 13 Feb 2025 12:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NbFegvyt"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YuL02+pi"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9238221556;
-	Thu, 13 Feb 2025 12:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE48227EB4;
+	Thu, 13 Feb 2025 12:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739449306; cv=none; b=HxTFWBncGZTiBk9IZ7m94ba5Rb0gwR272Nn4FW2AY59YfjDtTrhdkIGyMXv/eb2NzisPYC7otqi8cph0NHEaeYh+i+/BfS4GpI1mFDGjL1csB344lBhyrRpr1jUu+3unfkuV0yPu9YOzvVJC8Utw5uvhWU4bpMMMevPkp+50GQE=
+	t=1739449341; cv=none; b=ElyoCm9jH6RerL0yR7ilb00op774aBx/NvfxgC0i0trYIte1R4z01fay1LvihcoRDAugdppUZRg1j4U9ZB/u/4UDh64M0c/8iH8AN4uoUicGVHZHuZP1/P/Yj8tvzX1Emu5tCSHL7R12wT32oFMhlz42UIV4W4Jqw2BqUgHrfNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739449306; c=relaxed/simple;
-	bh=1oTIlIq3MEQ0LFVEW83otWTtjbaiBoeQB6YVTrazel8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hEEYKNc5y123mlhnHCd3aTyq1rV7oWv//gArAThXF4WGAHvEQ7FpI6unFWcwelFDUbeQ/kOdsNdo2a1UHU0FWNhz8Nkfz6iGRmJTxlYO39mX8RipqpkUmduMg+x8Si0JVrXptFUg3M5o1u7PUvi2wYmalufKl2FPFECgBN+xs8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NbFegvyt; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1739449341; c=relaxed/simple;
+	bh=JhQ8USlPxenG52f+etBxdWz9DV+4IdlE1eKF2Q41L/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PTaaEif1UqHjL6LW207TNMSnpKoxtaul4+uEil1G1nD7zVLCklG5C4koiGSregPKvNPm9M+5iRYc6tTUPsSmXSrW4Yo6gPhb0a2moGFkhwA9MIAB4Ji56zPs5lojyE+96mClOSYFAQmDgvoM+uK0iJCC+dX4b9bX547wr/Giydw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YuL02+pi; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21f40deb941so18162635ad.2;
-        Thu, 13 Feb 2025 04:21:44 -0800 (PST)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fa18088594so173870a91.3;
+        Thu, 13 Feb 2025 04:22:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739449304; x=1740054104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G0o5D5Q8iO/vYMKnQhyZXnnRR/RYxV00eJSWYKGy6aM=;
-        b=NbFegvytr1GRpT5bYirlUNxmU4yCp54Cx3jW00RCCe+434671UmSIH4QpK40bDT/VY
-         ZHRxVrsbF6efjmEhxnyrmU1NnVf8wjnXOCfzUuJVCK6T9ok0tNKi6CF+ACvC4ma2UQmw
-         uRD1rz8OfgDZWJ0Ku1xcbjl92msxubmTNtXIT88sejc3HvtE4VgWRl/nu5T15y6DAVvP
-         3YXPIhiWsyAZ+D9b8SXYoRPNDWXKrevdimM8H0WEn0D858JCkxUQfC8GobC92aFVg4Wg
-         6qTd5Oc3lydJ+RCyuxEKKV3xPgMb0mtE4+1eq50koSC43rHgq1rXQPYfJFVhtFWDTbUq
-         buuA==
+        d=gmail.com; s=20230601; t=1739449339; x=1740054139; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JhQ8USlPxenG52f+etBxdWz9DV+4IdlE1eKF2Q41L/8=;
+        b=YuL02+pi/HjOjeGea+ITDt4AQJLkzdt6HVb2sz4rKEixkSluBb/XeNpMwHAvz9VXU9
+         F8Cko2vpB84w1aL96P036hTceVevjyHpS+ykVHVseXVc9j3UQKqgJaSd4r26mofkJnDO
+         LUlqQQ394PQyYhpCiCH9YtuBz3ga614f542M7eDdUGYBV5UIhABYIsqogs5ocxzaOLvK
+         FbeRam9rb6LQWG3XvSBpfek8kjTg+UO6KFwdkMifkZeSDrkWAs7efzfgeumo/qf6YGY4
+         4WdIguC2+O62J5p2o0mi+PwX0OO00sdGq75yoUyYj0gZ9V1axejaW1Ad30U6CWXdidi6
+         sP7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739449304; x=1740054104;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G0o5D5Q8iO/vYMKnQhyZXnnRR/RYxV00eJSWYKGy6aM=;
-        b=XBV8HTdDDr9UFbGWgdIU/Ee0PS+K6jqHDhcYGqxDbAlqJ4UROr0DRXooJML7owLkld
-         baJvW9XxF9J8qLe/qJWsRBZMWn3AsKc9TZr8HxoexFrrzRBvSfNv8ct0mTsx9fo+gGkf
-         05NsVJdu5tkkl/aZaVY2HhQ6xVpnMVAeSiPs7++WZmJ1wQAA7eJsChGc15Bg3sggzQzU
-         gnMAsnVsaFUQCaCmo069dXnQAfXEYqDW09worTtGTPzdLxb9EplVTAO0qA0zwisb4Q2w
-         S2uPXvF+Aud6ga9OfEQTSzvY++7WUAGVURRRLA22LVwqQmKQf5hItWk0xRpOPVVIh+gq
-         yIZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpSsSB/SnB3z3eORwrrfvik9KJqjNuYo0/bUQi1JVsC/DUM+bbawPRvhDsMBVkHuKR2o1cgdKC+Q2yEMDo@vger.kernel.org, AJvYcCWWYjiEG8QaGhmZRb918QAbmrVzMKj/0B2TyxSOMD4NMFk/nfUtuSShwDhjM1SoSXab47GX1V7x0Xq2dleu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN7xCgFWN5GtKQ+EbVFvni3C9cCLtAb4pyi5kZpErP7pOHhKg6
-	2mZNsUExTE5+1jalK5TGa3wTPcytRntRndxV4bFgftTLx/uyfSIv
-X-Gm-Gg: ASbGnctBl6nGgoi6mwSWAaL/tkK979fU+nzcRvUfyI3w/u4LrNZFFqqUCNPGSTBkYgu
-	O5iW/pX9OeWXVz5Mtk5YrjX0hWvcy0KR5Eom3V+a7pmzCSJhjzIH4CkeVgA5wDNWwv0U9BpapAG
-	8dQNvdWfePy3x1esYeRnKNBT0/RR7oJL+TIqY2YKw0wLjHFa2WSQ8cFADOw11Li8PnQOwqhAzVz
-	fgqYOM3hrNoRfbTE98rnmOEfrZ8VVy3kQopOEXKU7ZAHcU3z9DdwZYmw7a7mMroKz8s9lYjI79r
-	M1ZWEqzvWr5Oqhl/gBy+jWDt+TZf
-X-Google-Smtp-Source: AGHT+IEw7oIxz9K2xsXII5mzZpoJuaKsJV/4Xg1U5jXHmRcOVYcKlOzUO/mlDfoW7NJPtJiOmXxuXg==
-X-Received: by 2002:a05:6a00:8c5:b0:730:9a55:d921 with SMTP id d2e1a72fcca58-7323c1444cemr4643260b3a.14.1739449303913;
-        Thu, 13 Feb 2025 04:21:43 -0800 (PST)
-Received: from VM-32-27-fedora.. ([129.226.128.251])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324276196dsm1174840b3a.147.2025.02.13.04.21.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 04:21:43 -0800 (PST)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: alexjlzheng@tencent.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: remove useless d_unhashed() retry in d_alloc_parallel()
-Date: Thu, 13 Feb 2025 20:21:37 +0800
-Message-ID: <20250213122137.11830-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1739449339; x=1740054139;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JhQ8USlPxenG52f+etBxdWz9DV+4IdlE1eKF2Q41L/8=;
+        b=R0tuhZKO0jih0rZfXr2P7jLs8lwcqy52GU8Kqw/WqIDZT3T93Lp7U/WZY5NZgQtNkN
+         V6bmPF870legLBrDJBLzQkIziBWUp/hJ4HHw5adnnK553fZd9pYkuPnafPHfGJNACA17
+         kXBL074L351ZZUq0ZoricN+HcOKuOkDsjTQ4oIqo8v1iojTddYBZWFdxOOKY1PWHWx3n
+         Koh3d4pV/yhDeTQZjySiSlyL7JzQzhvf+gDVj+onsTwyykqsPOKTlx6CDbReBx1p6XCy
+         IqlH2xBu+PHfqqvNu/yT0clnNREvAjpyO5izQmFBkol9FPUfhg1Z5xQ7qVPZFio19/dA
+         zbBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYNhdW8nnmtDZtwxgaSVGB18qfTnOVH362oPbC2RDUAGtA6Wh9U4fzgFackJCc9jT40BAxHwttChrOQM4=@vger.kernel.org, AJvYcCWjmVnE0zahJifbm2mSMQ5tXd9rqPoJ8/fLRYxWGrOcaR5za2H8R+lLeVXy0u1S0Pbbszq1TP2688xuKkGPOv8=@vger.kernel.org, AJvYcCX9vz4u/KK5aD9LugtIZOaeskYqmnxhsXCIdFGzk22T2sQQUlvPWfMfNO0dvTUNs8RW2Xyhm5AM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmJ2aiz6ftCd2LwCE0ipfZdUTUMq/zFVrrE0rF6yJAnUcx52ir
+	GOhxmddvcIKCEzBkEYT5HcaCZ+zs97CMuUTZFXaWRTBmcXLXjslZN+JsqQbmVJP0Bywm9EXuW5W
+	vp8wiVRDis0xfiP2islsYj7z+pps=
+X-Gm-Gg: ASbGncumbbUxTktnX+lo5diLw5dOP8Umy7l7W1NUB5H2jfIXOk9bRZ0mw7fFZ815gHC
+	Urzkv7iDItApmh0yx73LtfEyNZwmM3NGnUdZzRzht5IQPJDY/ElrXUz9cOvbnxdMm1Ofd/k1l
+X-Google-Smtp-Source: AGHT+IHmYvEzL9KGp/GiZCJityFb8+Au3r1Y0YDY9cYrjSKGnUmZw+tnh/sBiqD37rnyvyHdxym1Eq0TTuz5tYj63uE=
+X-Received: by 2002:a17:90b:33cb:b0:2ea:853a:99e0 with SMTP id
+ 98e67ed59e1d1-2fbf5c75392mr4064811a91.5.1739449339042; Thu, 13 Feb 2025
+ 04:22:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250210163732.281786-1-ojeda@kernel.org> <20250211103333.GB8653@willie-the-truck>
+In-Reply-To: <20250211103333.GB8653@willie-the-truck>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 13 Feb 2025 13:22:06 +0100
+X-Gm-Features: AWEUYZnMSt2s3upFBai0wYaA0s4vfSFiHEc-syAvZrBIXeINByCQBVsZZ4yEXKc
+Message-ID: <CANiq72=n++Hb1KX5fHCN=XayfPOxgayb=sDG4AvyEnDOZqAsNA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: rust: clean Rust 1.85.0 warning using softfloat target
+To: Will Deacon <will@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, 
+	moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
+	Matthew Maurer <mmaurer@google.com>, Ralf Jung <post@ralfj.de>, 
+	Jubilee Young <workingjubilee@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After commit 45f78b0a2743 ("fs/dcache: Move the wakeup from
-__d_lookup_done() to the caller."), we will only wake up
-d_wait_lookup() after adding dentry to dentry_hashtable.
+On Tue, Feb 11, 2025 at 11:33=E2=80=AFAM Will Deacon <will@kernel.org> wrot=
+e:
+>
+> Patch looks fine to me, but I'll wait for Matthew to confirm that it
+> works for them. I'm also fine with adding the rustc-min-version helper
+> at the same time, tbh -- it's not exactly rocket science, but it would
+> need an Ack from Masahiro.
 
-Therefore, there is no need to keep retries about d_unhashed()
-in d_alloc_parallel().
+Thanks Will -- happy to take it through the Rust tree for if needed
+with your Ack, I have to send a couple other bits anyway for -rc3.
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/dcache.c | 2 --
- 1 file changed, 2 deletions(-)
+And, yeah, I went back and forth on whether to do the helper directly... :)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index e3634916ffb9..543833eedd8c 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2584,8 +2584,6 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
- 			goto mismatch;
- 		if (unlikely(dentry->d_parent != parent))
- 			goto mismatch;
--		if (unlikely(d_unhashed(dentry)))
--			goto mismatch;
- 		if (unlikely(!d_same_name(dentry, parent, name)))
- 			goto mismatch;
- 		/* OK, it *is* a hashed match; return it */
--- 
-2.48.1
-
+Cheers,
+Miguel
 
