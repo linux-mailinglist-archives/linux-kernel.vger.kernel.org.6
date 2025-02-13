@@ -1,110 +1,79 @@
-Return-Path: <linux-kernel+bounces-513268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2202A3474B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:33:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B654BA3477D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:35:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47DEB1890A85
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:27:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D68618937E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBE915DBBA;
-	Thu, 13 Feb 2025 15:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F0A156F3F;
+	Thu, 13 Feb 2025 15:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Km/EJqId"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ai64S+fy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB1D15A856;
-	Thu, 13 Feb 2025 15:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C743326B0BD;
+	Thu, 13 Feb 2025 15:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739460459; cv=none; b=Cmt8Psy9KbzrgT20G+ytN9xpWBYBa4dt1utXP3cjIN0Ct62UulSKgoHnUqn1NNihWzphxc+OmqTZ1eJ2tvPoeTkoYTby/N1ModPdkgHpKt5+BqGOK0I7vqLGRRWNX+sYSLrpWibLJQX6Ys9hPRbtgVoOxRt+H4vZitvrJVUROyg=
+	t=1739460557; cv=none; b=X8/GAKyevyINg+GHcimov7vA6VtM7A0usK4k0DL3baISx+xmqDUkQHLZmBJKvyfvpLG7FfVtuCyWzXZTRHtIXrwTlLJUBGGyojSPQ7hteRVa7muM7YZKFpOz9mlbKZ1z8JZuWlNQIJAWmD9ABhMwjHnxpMy+8rKrjWwkHGGpdUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739460459; c=relaxed/simple;
-	bh=MuP+XmkFAfCI9gqjMWhacbC6RlNrrf77w1csG5Met0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z6+6Iw830PDNn0D9Qp0DcYMeGddruEL4JnT3BJKc7sAyAwhgS9WgjPdmhtm6AhkOh4YrGqZL0FI/jpmfTS6Ce9ftG5ewC8P/c5zDxmDuc2lZw9Yx6Ysv59LeASLip6xLTHsuxj/k6pQRpuI64OHJIYw/2cHqLYLvrcE7X1ssDVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Km/EJqId; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-726ea524419so342433a34.1;
-        Thu, 13 Feb 2025 07:27:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739460457; x=1740065257; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MuP+XmkFAfCI9gqjMWhacbC6RlNrrf77w1csG5Met0s=;
-        b=Km/EJqIdl/77IQQ8o0at1ncuzVxZjmMsmkaAH82LeS4iimDQVjOO8tADzMRfCwsEUZ
-         ieVmapuvIbdb0y1IzGtrwXUe64Z3YbdzKRNUjyRwO1orJFA9jQWy7/olNWc94wzwNYt8
-         oHhvsZkEeS54lvamoOhYxx5g5t1Tp8eGkV67qwT7csxn1tsOvaq70zIIuJxiwjGx2KeJ
-         jx7cLQ2e6BNZMVeN5IDgbgPg1eju4Jrx3vw25MJKdhPL0dW5gk9ij4VPjTxI+6kztVGA
-         2vngqgcUMSYa6Gw5F/u/P6ZCaDKY892Un0i/27hXWPQBD+Uyx4R9dmhqWmfi3lSgB2Yv
-         HwOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739460457; x=1740065257;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MuP+XmkFAfCI9gqjMWhacbC6RlNrrf77w1csG5Met0s=;
-        b=qqn6JDQFimbYFzITFKEOJ3p2t5U2oJBBiVfki0qot/Eo2yY+hDOD8ES9cpval9wqQ3
-         E8BNElf7Cf4cgZG3HmNgo90niY5ZLh1ni+uPZQQyCg/7EJp21o3jtHSo1QdjYBUM8RA5
-         OoLDJ1wHxlK0A1OZPLB9SHMVF5Cv/xxq4CgOzTrvimEhFKW/+ttHEmVYGp1y9IqH6Jfx
-         xH16QoaZViauwRxJOIsJ9qG1gdGUS2TqUV/V0wP/8umMCKFpRQr8g9tVM3oEyafyz/Fo
-         ybAp3c4Up5tE9vVklHG4jKbPA45TcZ201CIXSBR6zvDYJm0DAtvMJU3in3+NJAyusTcH
-         nlfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgy7CCZ7WjBlrGYDEsidNlSMDwbZTx47ZH710Ci2PJflSBKCdHKBLFJEQEYt/RWDHkCoyTck/XNsPjgQJq@vger.kernel.org, AJvYcCXF2/qdl5bU5RkddBtMeTWw2Rte4HMUonEIAQlSQu4R43mQ2US8GenHF30WVDqm05iCHuyZM2eh32WYOAgn@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxHMhBDoFq3y1RzYE9bIJ2N8xxrB2vwSV0ptGtDfiylqILcZbO
-	Lzf+fLm0yuyDQF0jz4m5eavWY1To1S1CVxnIKLk8jNr8em3bhBEldgm6MVrwAFJ+v9ZJBuQ4dsw
-	3wN/Eqbdt3pcArMvIrLyzT2lY/a4=
-X-Gm-Gg: ASbGnctI8fx0xx+uzeDTIeSt/ZJp624ZhMPUMKr77CvoMVcDrphEZqvAx881m0AUFsu
-	IFeYVXBfFqorSwDof33MFicRJeRSW1tlt7dy3F1JKdWvuTBd79jmOreNM0iysjrErU6jV+Gr2IV
-	s=
-X-Google-Smtp-Source: AGHT+IHMXUwmI/PVw+wJieNWH/dKc/pl6QNWwBDvTkzNh0bPHVCVw8B+ttVQAi+r7a8Hj92o5/2R6JVC3hzPvvkDdcI=
-X-Received: by 2002:a05:6830:3c84:b0:726:fca9:bb9 with SMTP id
- 46e09a7af769-726fe76785emr2517272a34.5.1739460456672; Thu, 13 Feb 2025
- 07:27:36 -0800 (PST)
+	s=arc-20240116; t=1739460557; c=relaxed/simple;
+	bh=fnRHXIO3iR4FILihld/26mWyXq/cYQJrSjPBFQ/cX5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TwsbdtdhqyCdV8iKMLBXqPYDTEALVnwGWDjpJcKm0m97Lq3OhOGdz+TCBkX87VNd+CDKBAtx97J+Ga5Eb4EZ3yNDppDZ2OErxaN9n/8vjYpO5U2/PGlCp1b3SG25Htar1TwUp/We6wns00vfaELyUqRj8tAz3pqeSDkF9zJKWeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ai64S+fy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ED63C4CED1;
+	Thu, 13 Feb 2025 15:29:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739460557;
+	bh=fnRHXIO3iR4FILihld/26mWyXq/cYQJrSjPBFQ/cX5g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ai64S+fyPgE98akK08UudFO1xDVEN49B2eU/ZbrBuuc2DrNYGDOJ48hholC6BSafy
+	 BUL47mbV0UoolepCN4S88mU/LGcLPGPZ7I3T4dDU0yCKWIZyyFCa+Qa/N1qb0OfN3D
+	 TYpGi73Or+45GrnPe/FlQYeL2SYgvLk6iu8cDz5MPi4+rHbQTecRVG9+p/Oexsq3KY
+	 Rtojpn6J7HOqQFXM0Ut/q+UBDg9XBvRrVmARD5qbpX+s+EiYv8n7jWMgX8IFqxYzAM
+	 o3JjXjFQwTxOFBrXIj7hocJILO6iQEXOK2XBq3ALfp/pP+BJM6HhxoaTdQxl1Gj2+A
+	 UhlCinQQPWW/Q==
+Date: Thu, 13 Feb 2025 07:29:16 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Mateusz Polchlopek <mateusz.polchlopek@intel.com>, Marcelo Ricardo
+ Leitner <marcelo.leitner@gmail.com>, Xin Long <lucien.xin@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] sctp: Remove commented out code
+Message-ID: <20250213072916.42457bba@kernel.org>
+In-Reply-To: <F83DD790-9085-4670-9694-2668DACFB4C1@linux.dev>
+References: <20250211102057.587182-1-thorsten.blum@linux.dev>
+	<b85e552d-5525-4179-a9c4-6553b711d949@intel.com>
+	<6F08E5F2-761F-4593-9FEB-173ECF18CC71@linux.dev>
+	<2c8985fa-4378-4aa2-a56d-c3ca04e8c74c@intel.com>
+	<20250212195747.198419a3@kernel.org>
+	<F83DD790-9085-4670-9694-2668DACFB4C1@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMnkng1vqZ_8ODeFrynL1sskce1SWGskHtrHLmGo5qfDA@mail.gmail.com>
- <9f3ad2da-3a85-4b1e-94b5-968a34ee7a7a@oracle.com>
-In-Reply-To: <9f3ad2da-3a85-4b1e-94b5-968a34ee7a7a@oracle.com>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Thu, 13 Feb 2025 20:27:24 +0500
-X-Gm-Features: AWEUYZnqOhkmMlR-uyVrXGvAiRy96jCtbuqAhyRMQ3CgIDqFoSRRt7ZCb3imdZo
-Message-ID: <CABXGCsP9vPxu=hN5CO5MPJ5QVNJURKsBbbeb-NLoq60=M=CN3Q@mail.gmail.com>
-Subject: Re: 6.14/regression/bisected - commit b9b588f22a0c somehow broke HW
- acceleration in the Google Chrome
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: brauner@kernel.org, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, linux-fsdevel@vger.kernel.org, 
-	chromium-dev@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 7:18=E2=80=AFPM Chuck Lever <chuck.lever@oracle.com=
-> wrote:
-> I need a simpler reproducer, please. "Chrome stopped working" doesn't
-> give me anything actionable.
->
+On Thu, 13 Feb 2025 11:49:45 +0100 Thorsten Blum wrote:
+> > In the linked thread the point was to document what struct will be next
+> > in memory. Here we'd be leaving an array of u8s which isn't very
+> > informative. I see there's precedent in this file, but I vote we just
+> > delete the line.  
+> 
+> This patch deletes the line and I'm wondering why the "cr"?
 
-After applying commit b9b588f22a0c, the internal page chrome://gpu/ in
-Google Chrome indicates that GPU acceleration is no longer functional.
-I apologize, but as I am not a Google Chrome engineer, I have no idea
-how to create more clean reproducer code.
-I only noticed as a Web browser user that when I scrolled through
-pages with a lot of images, Google Chrome got substantially sluggish.
-Hopefully, someone from chromium-dev will read my message and help us.
-
---=20
-Best Regards,
-Mike Gavrilov.
+My bad! Misread the diff.
 
