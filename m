@@ -1,148 +1,155 @@
-Return-Path: <linux-kernel+bounces-512537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBD3A33AA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:07:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBDADA33A4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:53:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F843A2402
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:07:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38337188A223
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80E720C492;
-	Thu, 13 Feb 2025 09:07:31 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03C120C03B;
+	Thu, 13 Feb 2025 08:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CGrcc83C"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E5B20C021
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F8320767B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739437651; cv=none; b=HOCK8VgWmoe4RrzKDck2jqi9lZAv+20eueBPUMh6mQ2v7LkBFJq1h922Zd++3j8ujQKi+T/8ncRrQVp3jYvhnPLvQW5CnWikOubztcGNF/5dh0W+wwVBg4iikjQPVjx6sSNrHb4sK2sm2VqRQo24PvKcZhAflGjbUFtifwTqUU8=
+	t=1739436773; cv=none; b=tBGfAPRy8UE2PTzwiigNOixKfqvc0BccNUmAk+4ADiGjEBtd4Ag3fTbDpyye/JVWk1c5FWraz5vou0qXaPWnW+NJjMOeehjRyNKHibig3KP4XqCHgfLCCikZmfiwdPUXk1/iWbQ08lyTJBPPOyNzmsOq1VqKUianuSEHn3fMPGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739437651; c=relaxed/simple;
-	bh=Hw6IowBtLjlg/5mH7kGlh+2fXzdGZbe1BmyBSe/xScA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ajHn5X1kJG3YGrZGbpg4/YKn7pEHaE6031AkYqzbkDuP6JoHWuTTluK1bvvXjWjnzIP0FCz3Ajz34DCI1GuI+uvTtivtF18PkdYwc443YM7a0G03+++4ieYlroWqSwZ/WMkTlLC90yWBFjnlAY4Y2q52EpenYiYoEuIXXM0wMWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w013.hihonor.com (unknown [10.68.26.19])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4Ytpn92QmtzYlDsM;
-	Thu, 13 Feb 2025 16:51:09 +0800 (CST)
-Received: from a003.hihonor.com (10.68.18.8) by w013.hihonor.com (10.68.26.19)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Feb
- 2025 16:51:58 +0800
-Received: from a007.hihonor.com (10.68.22.31) by a003.hihonor.com (10.68.18.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Feb
- 2025 16:51:57 +0800
-Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
- a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
- 15.02.1544.011; Thu, 13 Feb 2025 16:51:57 +0800
-From: gaoxu <gaoxu2@honor.com>
-To: Nhat Pham <nphamcs@gmail.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, Barry
- Song <21cnbao@gmail.com>, yipengxiang <yipengxiang@honor.com>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIG1tOiBGaXggcG9zc2libGUgTlVMTCBwb2ludGVy?=
- =?utf-8?B?IGRlcmVmZXJlbmNlIGluIF9fc3dhcF9kdXBsaWNhdGU=?=
-Thread-Topic: [PATCH] mm: Fix possible NULL pointer dereference in
- __swap_duplicate
-Thread-Index: Adt8+0GogoLTL6hgQfOcUIXDGgpBSQAehvKAAB6JUvA=
-Date: Thu, 13 Feb 2025 08:51:56 +0000
-Message-ID: <a67e670777474ae2ad1a29707f00ea3f@honor.com>
-References: <44655569e3a1419f800952004f07e714@honor.com>
- <CAKEwX=NgTfnU8EzpPmC_h5mY1UePAPR6_W2rrBNGs3EZA96FsQ@mail.gmail.com>
-In-Reply-To: <CAKEwX=NgTfnU8EzpPmC_h5mY1UePAPR6_W2rrBNGs3EZA96FsQ@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1739436773; c=relaxed/simple;
+	bh=aeltaq5F+EMvjtZgSTQeyt72v0Z1F94i/IxbvZGjCiA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C9TGMJKh+64OxKI3P3TxB4CaKgDDrnP8ams/93atfVTNFGmZkstF28dtwOJ2qwm0lrsNe7r9+CK55DF/hx33vuiv4n9702ZWvXkuuK9j2bVF7aJUom60SiB5kyxvg1gEXw+qydgVbzqz/fdo41Qd7CPxfqHos8ylFkFLdnGMBQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CGrcc83C; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4bbd3cff198so373501137.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:52:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739436770; x=1740041570; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KRQ3dUIptAKwY6MQYxUEHGw6dXXH6tF8Q68IhjO6QLY=;
+        b=CGrcc83Cg5kvPo/fjxbpDmNB9go8s1rJtlk8neDix/jTiFs5ztLGObdJeB2BAYmmuM
+         cAhcZqs54NSB781n7Q31UAI4ITwrbYb5N6O1LMwR+5urOYAH6Z9+dDqS0VZnnFTyRkXW
+         XCVHlRIKnQ3yckTg+u2meqbycIofUUtEBRKnLxOLliNpboecCRzlcjBcPwRnVRItwxqf
+         t/f5+Dgop4QCvx0LoMFY+YGF1WLzvmjPhQvp3wqrJon/Ax4mV22SmZVwl4UfnZJ1znyi
+         CXx7AY33togDQOjnWy73ZrTJ8MOuZZ8bDUjs18A+tO+GCNCPtaHXmbvpsPa5pyTMxi11
+         iJQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739436770; x=1740041570;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KRQ3dUIptAKwY6MQYxUEHGw6dXXH6tF8Q68IhjO6QLY=;
+        b=EqAKi7upHVT7aMRBGqWxCUK4yBrM9dYgyDYmb1YR8Oj6yKOx8EhSYeFi7GcNF7MZZ5
+         ph+DZLc66MtsUrj74MSeMclthCJxQyPQzZiYVzsltNVLy12LbbSIntehaXpcrcUjUS7P
+         5T3UizU6W3NsBUWZr/r4QiDqLZuEBTSleQoocQwcUAvFOLdrExiB2hEyX1vMt9upDHlK
+         4D7qV91Ge9t1HWDYOd/dbvdCuQbQTuXoviIC2rQtJNyneQXml70dYQfa8iOxD9Hlo+ok
+         uGP97zNIxcsLb5SnEc8aV+3d1jzgBl02bwNsa+wMyWB1PNV/mh8Fubi2ckm0CVD8uLS7
+         xE6A==
+X-Forwarded-Encrypted: i=1; AJvYcCU5sQaRCB5rFcV9AlMYMtmDLDOA0Vl7xkNmYqjpdlUeYSK+/hAOYDIhBaaltUph843+khDFnhiOdIPjZsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7ADHkBnxYHxEOid0B9SbdLmNK94YU1Qw4QFd/fwgsuKVqNSLT
+	I3TkOOMK7Er2kU4EAqcAWkYXc+lFBW0sNuPazG2gkZElvRmifYXNPsCn6KEvUAT89p+VSmkYUkJ
+	azHkIr1hLTXrZo5ghvdGMJpuY6SVx3n88uvX1M8SYnrUa80lsVXw=
+X-Gm-Gg: ASbGncsPUZWAbui1nzBaMDoBZh6WJ4iYeMJvF3yktkzdalNxba6xh4Cj30e+fgmxbqh
+	/2KVoTITZYCjnF/VFv94IkyxR4/cBs6TGCyrTmhxiuhAZypg+XOkNsIbDxATRHqKxJtQ4ouHj3Q
+	0=
+X-Google-Smtp-Source: AGHT+IFnDuYWfE3Q7CuyUtwzYDsXyv9n6Um+OIw404XCQ3zk/sY/TE8+9JT3A2om7er1oTaCb7OwGKlKwkPboIKhvIY=
+X-Received: by 2002:a05:6102:4187:b0:4bb:d062:452 with SMTP id
+ ada2fe7eead31-4bbf207219fmr5886514137.3.1739436770171; Thu, 13 Feb 2025
+ 00:52:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CA+G9fYt6Cuu6=OO9w80yhJbZB77Q0qf7nzYdvjbgDbgAw6t1jw@mail.gmail.com>
+ <8634gku30g.wl-maz@kernel.org> <3902208d-8814-46fe-ba98-3db833b9a886@stanley.mountain>
+ <86wmdvs1oh.wl-maz@kernel.org>
+In-Reply-To: <86wmdvs1oh.wl-maz@kernel.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 13 Feb 2025 14:22:39 +0530
+X-Gm-Features: AWEUYZlmVi_oOrzpHstaYQ-1DQU14Cx8usJ0Mr5C5xxxvEXLMKHSQVpMklUZaec
+Message-ID: <CA+G9fYtKxd8C5W4e5sO93TMC77pRVyJYL8w+i6q988jHk6ztxw@mail.gmail.com>
+Subject: Re: kvm: nVHE hyp panic at: __kvm_nvhe_kvm_hyp_handle_sysre
+To: Marc Zyngier <maz@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, kvmarm@lists.linux.dev, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, virtualization@lists.linux.dev, 
+	Mark Brown <broonie@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-PiANCj4gT24gVHVlLCBGZWIgMTEsIDIwMjUgYXQgNzoxNOKAr1BNIGdhb3h1IDxnYW94dTJAaG9u
-b3IuY29tPiB3cm90ZToNCj4gPg0KPiA+IHN3cF9zd2FwX2luZm8oKSBtYXkgcmV0dXJuIG51bGw7
-IGl0IGlzIG5lY2Vzc2FyeSB0byBjaGVjayB0aGUgcmV0dXJuDQo+ID4gdmFsdWUgdG8gYXZvaWQg
-TlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlLiBUaGUgY29kZSBmb3Igb3RoZXIgY2FsbHMgdG8NCj4g
-PiBzd3Bfc3dhcF9pbmZvKCkgaW5jbHVkZXMgY2hlY2tzLCBhbmQgX19zd2FwX2R1cGxpY2F0ZSgp
-IHNob3VsZCBhbHNvDQo+ID4gaW5jbHVkZSBjaGVja3MuDQo+ID4NCj4gPiBUaGUgcmVhc29uIHdo
-eSBzd3Bfc3dhcF9pbmZvKCkgcmV0dXJucyBOVUxMIGlzIHVuY2xlYXI7IGl0IG1heSBiZSBkdWUN
-Cj4gPiB0byBDUFUgY2FjaGUgaXNzdWVzIG9yIEREUiBiaXQgZmxpcHMuIFRoZSBwcm9iYWJpbGl0
-eSBvZiB0aGlzIGlzc3VlIGlzDQo+ID4gdmVyeSBzbWFsbCwgYW5kIHRoZSBzdGFjayBpbmZvIHdl
-IGVuY291bnRlcmVkIGlzIGFzIGZvbGxvd3PvvJoNCj4gPiBVbmFibGUgdG8gaGFuZGxlIGtlcm5l
-bCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVhbCBhZGRyZXNzDQo+ID4gMDAwMDAw
-MDAwMDAwMDA1OA0KPiA+IFtSQi9FXXJiX3NyZWFzb25fc3RyX3NldDogc3JlYXNvbl9zdHIgc2V0
-IG51bGxfcG9pbnRlciBNZW0gYWJvcnQgaW5mbzoNCj4gPiAgIEVTUiA9IDB4MDAwMDAwMDA5NjAw
-MDAwNQ0KPiA+ICAgRUMgPSAweDI1OiBEQUJUIChjdXJyZW50IEVMKSwgSUwgPSAzMiBiaXRzDQo+
-ID4gICBTRVQgPSAwLCBGblYgPSAwDQo+ID4gICBFQSA9IDAsIFMxUFRXID0gMA0KPiA+ICAgRlND
-ID0gMHgwNTogbGV2ZWwgMSB0cmFuc2xhdGlvbiBmYXVsdCBEYXRhIGFib3J0IGluZm86DQo+ID4g
-ICBJU1YgPSAwLCBJU1MgPSAweDAwMDAwMDA1LCBJU1MyID0gMHgwMDAwMDAwMA0KPiA+ICAgQ00g
-PSAwLCBXblIgPSAwLCBUbkQgPSAwLCBUYWdBY2Nlc3MgPSAwDQo+ID4gICBHQ1MgPSAwLCBPdmVy
-bGF5ID0gMCwgRGlydHlCaXQgPSAwLCBYcyA9IDAgdXNlciBwZ3RhYmxlOiA0ayBwYWdlcywNCj4g
-PiAzOS1iaXQgVkFzLCBwZ2RwPTAwMDAwMDA4YTgwZTUwMDAgWzAwMDAwMDAwMDAwMDAwNThdDQo+
-ID4gcGdkPTAwMDAwMDAwMDAwMDAwMDAsIHA0ZD0wMDAwMDAwMDAwMDAwMDAwLA0KPiA+IHB1ZD0w
-MDAwMDAwMDAwMDAwMDAwDQo+ID4gSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDAwMDAwMDAwOTYwMDAw
-MDUgWyMxXSBQUkVFTVBUIFNNUCBTa2lwIG1kIGZ0cmFjZQ0KPiA+IGJ1ZmZlciBkdW1wIGZvcjog
-MHgxNjA5ZTAgLi4uDQo+ID4gcGMgOiBzd2FwX2R1cGxpY2F0ZSsweDQ0LzB4MTY0DQo+ID4gbHIg
-OiBjb3B5X3BhZ2VfcmFuZ2UrMHg1MDgvMHgxZTc4DQo+ID4gc3AgOiBmZmZmZmZjMGYyYTY5OWUw
-DQo+ID4geDI5OiBmZmZmZmZjMGYyYTY5OWUwIHgyODogZmZmZmZmOGE1YjI4ZDM4OCB4Mjc6IGZm
-ZmZmZjhiMDY2MDMzODgNCj4gPiB4MjY6IGZmZmZmZmRmNzI5MWZlNzAgeDI1OiAwMDAwMDAwMDAw
-MDAwMDA2IHgyNDogMDAwMDAwMDAwMDEwMDA3Mw0KPiA+IHgyMzogMDAwMDAwMDAwMDJkMmQyZiB4
-MjI6IDAwMDAwMDAwMDAwMDAwMDggeDIxOiAwMDAwMDAwMDAwMDAwMDAwDQo+ID4geDIwOiAwMDAw
-MDAwMDAwMmQyZDJmIHgxOTogMTgwMDAwMDAwMDJkMmQyZiB4MTg6IGZmZmZmZmRmNzI2ZmFlYzAN
-Cj4gPiB4MTc6IDAwMDAwMDAwMDAwMDAwMDAgeDE2OiAwMDEwMDAwMDAwMDAwMDAxIHgxNTogMDA0
-MDAwMDAwMDAwMDAwMQ0KPiA+IHgxNDogMDQwMDAwMDAwMDAwMDAwMSB4MTM6IGZmN2ZmZmZmZmZm
-ZmZiN2YgeDEyOiBmZmVmZmZmZmZmZmZmYmZmDQo+ID4geDExOiBmZmZmZmY4YTVjN2UxODk4IHgx
-MDogMDAwMDAwMDAwMDAwMDAxOCB4OSA6IDAwMDAwMDAwMDAwMDAwMDYNCj4gPiB4OCA6IDE4MDAw
-MDAwMDAwMDAwMDAgeDcgOiAwMDAwMDAwMDAwMDAwMDAwIHg2IDogZmZmZmZmODA1N2MwMWYxMA0K
-PiA+IHg1IDogMDAwMDAwMDAwMDAwYTMxOCB4NCA6IDAwMDAwMDAwMDAwMDAwMDAgeDMgOiAwMDAw
-MDAwMDAwMDAwMDAwDQo+ID4geDIgOiAwMDAwMDA2ZGFmMjAwMDAwIHgxIDogMDAwMDAwMDAwMDAw
-MDAwMSB4MCA6IDE4MDAwMDAwMDAyZDJkMmYgQ2FsbA0KPiA+IHRyYWNlOg0KPiA+ICBzd2FwX2R1
-cGxpY2F0ZSsweDQ0LzB4MTY0DQo+ID4gIGNvcHlfcGFnZV9yYW5nZSsweDUwOC8weDFlNzgNCj4g
-PiAgY29weV9wcm9jZXNzKzB4MTI3OC8weDIxY2MNCj4gPiAga2VybmVsX2Nsb25lKzB4OTAvMHg0
-MzgNCj4gPiAgX19hcm02NF9zeXNfY2xvbmUrMHg1Yy8weDhjDQo+ID4gIGludm9rZV9zeXNjYWxs
-KzB4NTgvMHgxMTANCj4gPiAgZG9fZWwwX3N2YysweDhjLzB4ZTANCj4gPiAgZWwwX3N2YysweDM4
-LzB4OWMNCj4gPiAgZWwwdF82NF9zeW5jX2hhbmRsZXIrMHg0NC8weGVjDQo+ID4gIGVsMHRfNjRf
-c3luYysweDFhOC8weDFhYw0KPiA+IENvZGU6IDkxMzljMzVhIDcxMDA2ZjNmIDU0MDAwNTY4IGY4
-Nzk3YjU1IChmOTQwMmVhOCkgLS0tWyBlbmQgdHJhY2UNCj4gPiAwMDAwMDAwMDAwMDAwMDAwIF0t
-LS0gS2VybmVsIHBhbmljIC0gbm90IHN5bmNpbmc6IE9vcHM6IEZhdGFsDQo+ID4gZXhjZXB0aW9u
-DQo+ID4gU01QOiBzdG9wcGluZyBzZWNvbmRhcnkgQ1BVcw0KPiA+DQo+ID4gVGhlIHBhdGNoIHNl
-ZW1zIHRvIG9ubHkgcHJvdmlkZSBhIHdvcmthcm91bmQsIGJ1dCB0aGVyZSBhcmUgbm8gbW9yZQ0K
-PiA+IGVmZmVjdGl2ZSBzb2Z0d2FyZSBzb2x1dGlvbnMgdG8gaGFuZGxlIHRoZSBiaXQgZmxpcHMg
-cHJvYmxlbS4gVGhpcw0KPiA+IHBhdGggd2lsbCBjaGFuZ2UgdGhlIGlzc3VlIGZyb20gYSBzeXN0
-ZW0gY3Jhc2ggdG8gYSBwcm9jZXNzIGV4Y2VwdGlvbiwNCj4gPiB0aGVyZWJ5IHJlZHVjaW5nIHRo
-ZSBpbXBhY3Qgb24gdGhlIGVudGlyZSBtYWNoaW5lLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-Z2FvIHh1IDxnYW94dTJAaG9ub3IuY29tPg0KPiANCj4gWWVhaCB0aGlzIHNtZWxscyBsaWtlIGEg
-YnVnLiBBIGJpdCBzdHJhbmdlIHRob3VnaCAtIEkgaGF2ZSBleWViYWxsZWQgdGhlIGNvZGUsIGFu
-ZA0KPiB3ZSAoc2hvdWxkIGhhdmU/KSBsb2NrZWQgdGhlIFBURSBiZWZvcmUgcmVzb2x2aW5nIGl0
-IGludG8gdGhlIHN3YXAgZW50cnkgZm9ybWF0Lg0KPiBXaGljaCBzaG91bGQgaGF2ZSBiZWVuIGVu
-b3VnaCB0byBwcmV2ZW50IHRoZSBzd2FwIGVudHJ5IGZyb20gYmVpbmcNCj4gdW5tYXBwZWQgYW5k
-IGZyZWVkIHVwLiBXaGljaCBzaG91bGQgaGF2ZSBiZWVuIGVub3VnaCB0byBwcmV2ZW50IHN3YXBv
-ZmYuLi4/DQo+IA0KPiAoYXJlIHlvdSBldmVuIGRvaW5nIGNvbmN1cnJlbnQgc3dhcG9mZj8pDQpO
-bywgdGhlIHN3YXBvZmYgb3BlcmF0aW9uIHdhcyBub3QgZXhlY3V0ZWQuDQo+IA0KPiBDYW4geW91
-IHByb3ZpZGUgbW9yZSBjb250ZXh0PyBXaGF0IGtlcm5lbCB2ZXJzaW9uIGlzIHRoaXMsIHdoYXQg
-a2luZCBvZg0KPiB3b3JrbG9hZCBpcyB0aGlzLCBhbnkgcmVwcm9kdWNlciwgZXRjLj8NCmtlcm5l
-bCB2ZXJzaW9uIGlzIGxpbnV4IDYuNiwgIEFuZHJvaWQxNSAtIGxpbnV4Ni42LjMwLg0KDQpUaGUg
-aXNzdWVzIGVuY291bnRlcmVkIGJ5IG1vYmlsZSB1c2VycyBkdXJpbmcgdXNhZ2UuDQpUaGUgc3lz
-dGVtIGxvYWQgc2hvdWxkIG5vdCBiZSBoaWdoLCBhcyB0aGVyZSBpcyBubyBpbmZvIHJlbGF0ZWQg
-dG8gbG93DQptZW1vcnkgZm91bmQgaW4gdGhlIGxvZ3MuDQpUaGUgcHJvYmFiaWxpdHkgb2YgdGhp
-cyBpc3N1ZSBvY2N1cnJpbmcgaXMgdmVyeSBsb3cgYW5kIGlycmVndWxhci4NCldlIGNhbm5vdCBy
-ZXByb2R1Y2UgdGhlIHByb2JsZW0gZHVyaW5nIHN0cmVzcyB0ZXN0aW5nIGluIHRoZSBsYWJvcmF0
-b3J5Lg0KDQpJIGZvdW5kIHNvbWVvbmUgcmVwb3J0aW5nIGEgc2ltaWxhciBpc3N1ZSBvbiB0aGUg
-d2ViLCBzZWU6DQpodHRwczovL2xrbWwuaW5kaWFuYS5lZHUvaHlwZXJtYWlsL2xpbnV4L2tlcm5l
-bC8yNDA2LjAvMDIzODAuaHRtbA0KaHR0cHM6Ly9mb3J1bS5wcm94bW94LmNvbS90aHJlYWRzL2dl
-dF9zd2FwX2RldmljZS1iYWQtc3dhcC1maWxlLWVudHJ5LjE1NTU4MS8NCmh0dHBzOi8vZm9ydW1z
-LnVucmFpZC5uZXQvdG9waWMvMTQ1NDk3LXNlcnZlci1jcmFzaGVzLXdpdGgtcmVwZWF0ZWQtZ2V0
-X3N3YXBfZGV2aWNlLWJhZC1zd2FwLWZpbGUtZW50cnktM2ZmZmZmZmZmZmZmZi8NCg0KDQoNCg==
+On Wed, 12 Feb 2025 at 19:30, Marc Zyngier <maz@kernel.org> wrote:
+>
+> On Wed, 12 Feb 2025 11:41:38 +0000,
+> Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > On Tue, Feb 11, 2025 at 11:36:31AM +0000, Marc Zyngier wrote:
+> > > For the crash at hand, which clearly shows nVHE, can you report
+> > > whether the following hack fixes it for you?
+> > >
+> > >     M.
+> >
+> > No luck, I'm afraid.  It still crashes the same way.
+>
+> Right. It was one level deeper. The following change fixes it for
+> me. YMMV.
+
+Anders applied this patch and tested on rk3399-rock-pi-4b,
+and confirmed that the regression is resolved.
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Link:
+ - https://lkft.validation.linaro.org/scheduler/job/8119717#L1251
+
+>
+>         M.
+>
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> index f838a45665f26..b899d815d272f 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> @@ -501,9 +501,22 @@ static inline bool handle_tx2_tvm(struct kvm_vcpu *vcpu)
+>         return true;
+>  }
+>
+> +/* Open-coded version of timer_get_offset() to allow for kern_hyp_va() */
+> +static inline u64 hyp_timer_get_offset(struct arch_timer_context *ctxt)
+> +{
+> +       u64 offset = 0;
+> +
+> +       if (ctxt->offset.vm_offset)
+> +               offset += *kern_hyp_va(ctxt->offset.vm_offset);
+> +       if (ctxt->offset.vcpu_offset)
+> +               offset += *kern_hyp_va(ctxt->offset.vcpu_offset);
+> +
+> +       return offset;
+> +}
+> +
+>  static inline u64 compute_counter_value(struct arch_timer_context *ctxt)
+>  {
+> -       return arch_timer_read_cntpct_el0() - timer_get_offset(ctxt);
+> +       return arch_timer_read_cntpct_el0() - hyp_timer_get_offset(ctxt);
+>  }
+>
+>  static bool kvm_handle_cntxct(struct kvm_vcpu *vcpu)
+>
+> --
+> Without deviation from the norm, progress is not possible.
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
