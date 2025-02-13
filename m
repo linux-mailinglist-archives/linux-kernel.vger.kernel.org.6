@@ -1,104 +1,168 @@
-Return-Path: <linux-kernel+bounces-512361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB241A3380B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:41:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B7BA33810
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19CA77A33DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B703A802C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7ED207E01;
-	Thu, 13 Feb 2025 06:40:53 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345D9205AA5;
-	Thu, 13 Feb 2025 06:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0522207DEF;
+	Thu, 13 Feb 2025 06:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Thtf4hO5"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54971206F2A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739428853; cv=none; b=hFAI3aPBjs1sCrS55zSwoiF+css7mz/oTCBOegWZXqZtSH6gMe9b5fEFM2gbbzoVmfA4IVL3F21jU3TTeWA8Qgehs1FKtXnTupH2A9n1tLVVe+uNmWVKScvpLwByFV8bmzdsAszC++PpOb3FuoXGY1BCiSS35zIesmAg+TogicU=
+	t=1739428926; cv=none; b=UD1SQMP0Wztil89N1p/RnFFfsBlhCzjWfP4AbZbaHzA1NvPjcO6GDYByG/hCERw4fzBKbFE20c5NeInfuUsBbMCNIBtXJzkLZdUg/UTDAKD5Ohc/Mkk1Yxo8XuKvbmj6ApQdeY0Q4Vp2VwTL1Y5jDL/7BJMx7KS4VC5VGZ57+1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739428853; c=relaxed/simple;
-	bh=Idvire8JfLNlg/t/DxUmbh1QufF3qrKQ4pmGzadBvb0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pMoog8EF6Hnkk59P8rFDOxQXG8JoLIndhCZEtx9yDZv4XeJ1duXtz1MIQMfAzat8vNxprud67K8LJ5z3yR5X4SAnp8wS4dPIUbezo4IuA3iiwqz2bEowvqx2mdz6fNvrELVdesF8z3ivA/WiIglMZWCa40rOllg6M9NkDulf9To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwBHTibjk61nT76aAg--.63767S2;
-	Thu, 13 Feb 2025 14:40:35 +0800 (CST)
-Received: from phytium.com.cn (unknown [123.150.8.50])
-	by mail (Coremail) with SMTP id AQAAfwDHyYXbk61ngoElAA--.9652S4;
-	Thu, 13 Feb 2025 14:40:32 +0800 (CST)
-From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuquan Wang <wangyuquan1236@phytium.com.cn>
-Subject: [PATCH 1/1] cxl/pmem: debug invalid serial number data
-Date: Thu, 13 Feb 2025 14:40:08 +0800
-Message-Id: <20250213064008.4032730-2-wangyuquan1236@phytium.com.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250213064008.4032730-1-wangyuquan1236@phytium.com.cn>
-References: <20250213064008.4032730-1-wangyuquan1236@phytium.com.cn>
+	s=arc-20240116; t=1739428926; c=relaxed/simple;
+	bh=oTmB7Ig1eQii2PQt8Vq5KK5KdLNWvxjjdgsBUW1hd1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R8xLx4/Fu4T+F+Q9UIe+3uZD20jbh8bfzeZryzP8w0cCt761yGv9YHK8MTnJIHoR6tRRnsxchatD2K/Av8qCgYS9MPGKlfcR7SO4dKzn8AkhGboKFiLDWLIQeKzKU4XxU8kAXMRyF44oAkunJMlqmlXEvuwdRE6cffHKnNqnMCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Thtf4hO5; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4bbeb009101so136335137.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:42:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739428923; x=1740033723; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oTmB7Ig1eQii2PQt8Vq5KK5KdLNWvxjjdgsBUW1hd1Q=;
+        b=Thtf4hO5DCGU3BEzEy00+Dy3ebWOuQt2rpooh0TWuYvocBm0Z9P818nDy+VXE8acj0
+         2eAOTA96a6H9BoCElR6U/I0gmedIol0+F8eAuxBSkoFEsPjDt8J9U+P1MN86oHlsP8xr
+         oqBwUYesQk7N+WAnaEM7kZAXWQsaBwXPyRn6S+u2125pgQEGd+Dlvi0nC3+YylM+KKBu
+         5JC+Ws2XClqgtgjQ1ZhCQA0Yn/jAe4qa6rO8yyMcmPtBU4kVyffry7B1/aNNmjs+BBnU
+         aiutxWKo99nbfF2YnxFAmAqHdtRCqUlq+Q9mN9r7BKXBLDlXiHkvtvnHfESrkwEskGrp
+         XzAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739428923; x=1740033723;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oTmB7Ig1eQii2PQt8Vq5KK5KdLNWvxjjdgsBUW1hd1Q=;
+        b=rWOo+AI/PLXW8vW1EoKqKsU6KLfEKo+RK8YXj4TT4mTPJ/5jRHt22VZYKRxI9vSauQ
+         MuheuXtAgW4CDBanBOIAgL9HbinG/GaiipcARIg2oNxR5ZvNpg0q1Ld57g7g0lwJBHvz
+         li+XNZU8X6aRfE3DXSaAWtN6szIg/N5NbgLKO6LpoDOiKhIK1lbmGS5aVC2h7KmetwbD
+         dXyKT0EhAjBNU3QB6aMmf+EmTmuMvoRQJTgoB9EZmPqf42PvvMJsDfVBpo8yz4ivrkca
+         fedTCrT6/e2BkSpShIOejQhRchtYEm2frxjWajQSDMeDynuiQ1pRuPTSonu3QXdyt5Jz
+         NxBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSgjYkcLGNxBVKcVZeAkipBEpF2ueVDcvV398oS9BlOmZmTPRa20IhMjL29gTrpE1nrrC7u41fdCiLitk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqcxUGDUPxgz2ZsLtSdECE8u+IwGXzbVNjaqamGEi+JF0l6xog
+	R1RDGBGCrALAFTR3duEBQaSA1RzM1bgTAwSmgoY+O5UJgO708A562ESgPR03TFL/kds6+rWJgFp
+	sbvw0TifCKUKAXTekVsm9vpcmtVLuT6HB2UcukA==
+X-Gm-Gg: ASbGnctfvUjcrx5WKNHnL2e9w4PjxxDyX/Xrf6ihH6geUbsYthOZJgFJwfxesIVaOGX
+	Hh0LL8Cqjt1/DU1JnJ6oWWqYFcwvHxiBNxtIKfurttffGbNfMzsEWPbOcd17gYzr1hV/RUg6Mn5
+	s=
+X-Google-Smtp-Source: AGHT+IFhSui+oRYa0yiUwlfe4d8Dd+KjfAVoX7QGNMnwQAifah82de3Os5iBk5Pb0QFnrRe9uhZGgxrDA5ujKbbjaVg=
+X-Received: by 2002:a05:6102:2c08:b0:4ba:eb24:fb06 with SMTP id
+ ada2fe7eead31-4bc03562833mr2668789137.6.1739428923140; Wed, 12 Feb 2025
+ 22:42:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwDHyYXbk61ngoElAA--.9652S4
-X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAAAWes-icCNgABsn
-Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=wangyuquan
-	1236@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvdXoWrtw13tr48JF4rKF1kJr1fWFg_yoWDuFg_KF
-	4DuFyfWFyUGF13KF13Kr4fAr95Ar48XF10qrn8t34fJ39rAFZxuryvvrnFvry09rW8KFnY
-	qrnFqr1fZrn2gjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8wcxFpf9Il3svdxBIdaVrnU
-	Uv73VFW2AGmfu7jjvjm3AaLaJ3UjIYCTnIWjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRUUUUU
-	UUUU=
+References: <20241217100809.3962439-1-jens.wiklander@linaro.org> <20250212205613.4400a888@collabora.com>
+In-Reply-To: <20250212205613.4400a888@collabora.com>
+From: Sumit Garg <sumit.garg@linaro.org>
+Date: Thu, 13 Feb 2025 12:11:52 +0530
+X-Gm-Features: AWEUYZkoZwXb13fMynlvth-g3hUZ-u2ftHq4Gn9B-5c6gMjO7S6PRx1iL7ELE6c
+Message-ID: <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
+	linux-arm-kernel@lists.infradead.org, Olivier Masse <olivier.masse@nxp.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Florent Tomasin <florent.tomasin@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-In a nvdimm interleave-set each device with an invalid or zero
-serial number may cause pmem region initialization to fail, but in
-cxl case such device could still set cookies of nd_interleave_set
-and create a nvdimm pmem region.
+Hi Boris,
 
-This adds the validation of serial number in cxl pmem region creation.
-The event of no serial number would cause to fail to set the cookie
-and pmem region.
+On Thu, 13 Feb 2025 at 01:26, Boris Brezillon
+<boris.brezillon@collabora.com> wrote:
+>
+> +Florent, who's working on protected-mode support in Panthor.
+>
+> Hi Jens,
+>
+> On Tue, 17 Dec 2024 11:07:36 +0100
+> Jens Wiklander <jens.wiklander@linaro.org> wrote:
+>
+> > Hi,
+> >
+> > This patch set allocates the restricted DMA-bufs via the TEE subsystem.
+>
+> We're currently working on protected-mode support for Panthor [1] and it
+> looks like your series (and the OP-TEE implementation that goes with
+> it) would allow us to have a fully upstream/open solution for the
+> protected content use case we're trying to support. I need a bit more
+> time to play with the implementation but this looks very promising
+> (especially the lend rstmem feature, which might help us allocate our
+> FW sections that are supposed to execute code accessing protected
+> content).
 
-Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
----
- drivers/cxl/pmem.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Glad to hear that, if you can demonstrate an open source use case
+based on this series then it will help to land it. We really would
+love to see support for restricted DMA-buf consumers be it GPU, crypto
+accelerator, media pipeline etc.
 
-diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
-index f9c95996e937..89f4eac49313 100644
---- a/drivers/cxl/pmem.c
-+++ b/drivers/cxl/pmem.c
-@@ -384,6 +384,13 @@ static int cxl_pmem_region_probe(struct device *dev)
- 		};
- 		info[i].offset = m->start;
- 		info[i].serial = cxlds->serial;
-+
-+		if (info[i].serial == 0) {
-+			dev_dbg(dev, "%s: invalid serial number\n",
-+				dev_name(&cxlmd->dev));
-+			rc = -ENXIO;
-+			goto out_nvd;
-+		}
- 	}
- 	ndr_desc.num_mappings = cxlr_pmem->nr_mappings;
- 	ndr_desc.mapping = mappings;
--- 
-2.34.1
+>
+> >
+> > The TEE subsystem handles the DMA-buf allocations since it is the TEE
+> > (OP-TEE, AMD-TEE, TS-TEE, or perhaps a future QCOMTEE) which sets up the
+> > restrictions for the memory used for the DMA-bufs.
+> >
+> > I've added a new IOCTL, TEE_IOC_RSTMEM_ALLOC, to allocate the restricted
+> > DMA-bufs. This IOCTL reaches the backend TEE driver, allowing it to choose
+> > how to allocate the restricted physical memory.
+>
+> I'll probably have more questions soon, but here's one to start: any
+> particular reason you didn't go for a dma-heap to expose restricted
+> buffer allocation to userspace? I see you already have a cdev you can
+> take ioctl()s from, but my understanding was that dma-heap was the
+> standard solution for these device-agnostic/central allocators.
 
+This series started with the DMA heap approach only here [1] but later
+discussions [2] lead us here. To point out specifically:
+
+- DMA heaps require reliance on DT to discover static restricted
+regions carve-outs whereas via the TEE implementation driver (eg.
+OP-TEE) those can be discovered dynamically.
+- Dynamic allocation of buffers and making them restricted requires
+vendor specific driver hooks with DMA heaps whereas the TEE subsystem
+abstracts that out with underlying TEE implementation (eg. OP-TEE)
+managing the dynamic buffer restriction.
+- TEE subsystem already has a well defined user-space interface for
+managing shared memory buffers with TEE and restricted DMA buffers
+will be yet another interface managed along similar lines.
+
+[1] https://lore.kernel.org/lkml/mzur3odofwwrdqnystozjgf3qtvb73wqjm6g2vf5dfsqiehaxk@u67fcarhm6ge/T/
+[2] https://lore.kernel.org/lkml/CAFA6WYPtp3H5JhxzgH9=z2EvNL7Kdku3EmG1aDkTS-gjFtNZZA@mail.gmail.com/
+
+-Sumit
+
+>
+> Regards,
+>
+> Boris
+>
+> [1]https://lwn.net/ml/all/cover.1738228114.git.florent.tomasin@arm.com/#t
 
