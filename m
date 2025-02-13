@@ -1,110 +1,144 @@
-Return-Path: <linux-kernel+bounces-512121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D67A33455
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:59:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C5DA33459
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 334D5161D6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444653A7F74
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7682580604;
-	Thu, 13 Feb 2025 00:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A3878F4A;
+	Thu, 13 Feb 2025 01:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Yx/BxV+g"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oi32xUeu"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6010870810
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2936FC3;
+	Thu, 13 Feb 2025 01:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739408332; cv=none; b=h1Q0LFr3CjEWPIrv+PeJCplHkVpRzhxo0einw3JPlfCyvVZUfXgjWmCWVzpMT0DOTCinTU+OPrAASzUfpOA1+pGODsCL8xSZ2vPMI0jvpocIlvRJmdpDMY6Xk37bQieit0885OwDTvZxT/YDFHJ71PjpWLiyJwF4e059D5boorg=
+	t=1739408491; cv=none; b=X5ZwhK/qxwqJwsvnAKRPHzqbIOf3wQ5/zxgxE0fZ/4yOmk1o68ttoOcfn6Vw/XGqIKZks83vop5mico4Csu/dgtHCeknPzY81FZ11fDDUEy4tKbEZJlUB4RbvMv12dubUarupphCYV2sSrloPFySc9MS+duk/YYzM2KUqiHkyQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739408332; c=relaxed/simple;
-	bh=F8zv4LMXdcQEzaUu9AFN5GpEs/7t8PH+2uygr9RyVzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I/7XzE+un8TM0c+6v/eV9lDia0DTSct6uCZ0LB43pepA4CZJx6x4OHrXLZRRRH4+qXMYKRxt3rmi/C7JKN8zcE49RW6hKDLU64p4nxsi+8Gk9ykfO95eFSoylPsbA4GUTfqNCJxctMDl+nlMdkPgiwasfNpiUGu9vsA1mIMykOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=Yx/BxV+g; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 842582C03E8;
-	Thu, 13 Feb 2025 13:58:41 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1739408321;
-	bh=F8zv4LMXdcQEzaUu9AFN5GpEs/7t8PH+2uygr9RyVzs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Yx/BxV+gb1EJxvxGZN3iWlsmLCe59gA87WIEj6lezLKIwnx138qOMCf47ofjMu47Q
-	 XSMNaNobpunRhOqwz2qj9Cn9LJgGaWZGGixsMsSoWAzpr+Jzo9Q8vZrzJiLyB4yHXL
-	 DYXpJ2zlnJcVglDTXlhtrZzJgw8osb9o9S/gUr4uurrou1USQMy5xlNQH2itv7yPqg
-	 wkmWhcLy/t6GpgDriIn5EGMMPOH62Gs5o7gbR7Eig6qQyJnfl1xTO594WiO9YUZchC
-	 QBO3kAegUwGHDX/WBhw0Ika8bDxVdqMG1bodN5jsAd6FXOcKoRYdnZj4HozCYc/yVE
-	 WeAzyrzNj2WKA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67ad43c10001>; Thu, 13 Feb 2025 13:58:41 +1300
-Received: from tonyo-dl.ws.atlnz.lc (tonyo-dl.ws.atlnz.lc [10.33.12.25])
-	by pat.atlnz.lc (Postfix) with ESMTP id 5113D13EE4F;
-	Thu, 13 Feb 2025 13:58:41 +1300 (NZDT)
-Received: by tonyo-dl.ws.atlnz.lc (Postfix, from userid 1161)
-	id 4BEAE5A00A4; Thu, 13 Feb 2025 13:58:41 +1300 (NZDT)
-From: Tony O'Brien <tony.obrien@alliedtelesis.co.nz>
-To: lee@kernel.org,
-	pavel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ben Hoelker <ben.hoelker@alliedtelesis.co.nz>,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH] dt-bindings:leds: Add function define for POE
-Date: Thu, 13 Feb 2025 13:58:41 +1300
-Message-ID: <20250213005841.4143929-2-tony.obrien@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250213005841.4143929-1-tony.obrien@alliedtelesis.co.nz>
-References: <20250213005841.4143929-1-tony.obrien@alliedtelesis.co.nz>
+	s=arc-20240116; t=1739408491; c=relaxed/simple;
+	bh=lVqsu1UPjaIEtaD6xvPeAnNOVZARwL5KXvGshOLpvPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mUDsf43grCSGWLJ1AkLTLOalBxZfteBbYhpa+WOTMXKrNzIuIgU6O51gztYnr7qjp2r14RCunnAMam9y2ALt+Rb4rILoqar1em7MAwurY9O79V+oIvN2lF3sRj2AdXQhp9HXqsxU+fao4bXCEZv1C8xDM3Dnk/Ec0pQanMPi3w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oi32xUeu; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-308dc0878dfso3643321fa.3;
+        Wed, 12 Feb 2025 17:01:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739408487; x=1740013287; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PwH1+bRzUvItGRmNCEPnnsP1l4ssLo5J+YSnIAgd8sE=;
+        b=Oi32xUeuhCX35gutLgHDqGe4JXdG55Q74iihyw70NV+m59c1o62p8X7/du6KXMg7iR
+         qn++qBd9+aumZstI5cQgYUO24h68kM18pMw+UkTX8xUOZ27Yxs4zNLqKYgb07yRq0Oxo
+         jwuBxOX4+kpZRLUlRkG/HIqcI7nIqEmkQby1ybox3C//EJj7mSylXzZbPSuyVwPEpPjJ
+         BwjNAL56F1YvG+IZvbdEmFBoBJzKMDB75o6i42yW0jjf+KXmzlTaNwnftQc6WVciIWtw
+         amNLJb3StCb6bvxssQ6nmXp7BfhjeBFiKHAz/hYewqRvvzcFSCr8nvWkUSHvFqDHacYG
+         sO2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739408487; x=1740013287;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PwH1+bRzUvItGRmNCEPnnsP1l4ssLo5J+YSnIAgd8sE=;
+        b=VDcow/aSE7WfW3rA0zJhetLs0nLiwuzye7wK6ugY5/Ht3aBTbtsy1bfNgoA5tWQNwm
+         CqOmM9svywOc7Z+cOkfCttF4KWMfN8+VD2F+NxARKoe9rjyvTRkWrEJ9ruTmwejyg7+D
+         nyedobxkcQqmj18xsgkzHREw+r/G3tRKMp98i2KrWU8DJYtj4/000huYz94Z9Gi6RnEp
+         QrpS34Sp+/5ywch6W16IGnetKWfr/mvTtoOVrJVPtTJYY1B2L6NNdBgiIpawD01WjV30
+         QwpdyId3i6Q1EDJn5xop+Z97KnlQgbDdbO9+50fZIjRZsgVTEfWyouaHPoPBrKU64Sdl
+         +Oag==
+X-Forwarded-Encrypted: i=1; AJvYcCUpEV6vyHa5pCwfUon6RoNou/ARbEwmCH2gxrje20YN8wWb1dWWAQGZf6nwAu3D26Ox6ZZGqjH6mCMWlfY=@vger.kernel.org, AJvYcCV4AbjM1dXIhy03Dsntix9D6fZtXIVY8YGh9nqomSj9jWTkAXboGwqqCrq03RcSPh5q9hZ0c3zCmCRP@vger.kernel.org, AJvYcCVJ4rSUQH+RiIFW0ZuKO5g4BQ6wujiV+C8ndemZB10++qQXU+PFmfoJjipEubBfWLNzqP1FNDaejoaLyt+Imug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJuUzEszTnBjxSUx5xcHNwXwtqqyL/tKHc3fhgyFNJbSwWxQja
+	Sf1VEKZHGJQrwZ6Vubt5PY50D4J871slbnmg1I53NAEWuWkoS9prEJAXN6Cjn2xjFXMkPjFtFmo
+	aDJWjEaMOiD/jS29jri6xMxWza40=
+X-Gm-Gg: ASbGncv4CV9nsxOTQthV1q+Gp0sQwRSM6uAf+LQi8wDg/4rLnFQp/SMONoj80mkFTWD
+	GgDvBcOq1y96q/dUoW+PpksbWuR3Poct05FriNB1Fwex3cfPL9/6rv3aynl3/7S0VJtJsHtiYTB
+	0MlzBwzaiehFVP28hORA8USXuCdotILvI=
+X-Google-Smtp-Source: AGHT+IEWShSpJbA2J8teP0j6h6GMwJQJUZRNsbEcECAWxJ5ftLSRiy/NOOTLTTw5YYhjqRM6g0RcMfwZCTLikbdbBGE=
+X-Received: by 2002:a2e:bc16:0:b0:300:2a29:d47c with SMTP id
+ 38308e7fff4ca-309036d731bmr20346141fa.24.1739408487200; Wed, 12 Feb 2025
+ 17:01:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com>
+ <Z6zA9UNm_UckccRm@pollux> <20250212163848.22e8dcff@eugeo> <Z6zT6mZuxonewQ9z@pollux>
+ <CAJ-ks9=-kP5jBGQ_A88VPU_HW9VkF=OCqcGufqrJobhJu8dhww@mail.gmail.com>
+ <Z6z-FlEUk9OfeJCV@cassiopeiae> <CAJ-ks9=-ZQpmhJRs3YstZBGb9UvLwRQJ7od+dsc_sYZtwUhF2A@mail.gmail.com>
+ <Z60Lb4OK3jLCAAra@pollux> <CAJ-ks9=3LC7MM+uubZfjRTrWYa+sOakeq-0hwZpXK9hxXtuG5g@mail.gmail.com>
+In-Reply-To: <CAJ-ks9=3LC7MM+uubZfjRTrWYa+sOakeq-0hwZpXK9hxXtuG5g@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 12 Feb 2025 20:00:50 -0500
+X-Gm-Features: AWEUYZm_15lZtdyjYy2Ljp_nODSkfvZUWlFHrvc9vWeIkADxQ7fYGlaWtbwsX4c
+Message-ID: <CAJ-ks9moi5vQREcy=DL4sVoNZ+T2mA263M1axOGxSHf7Ram1xw@mail.gmail.com>
+Subject: Re: [PATCH v5] rust: alloc: satisfy POSIX alignment requirement
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, DJ Delorie <dj@redhat.com>, 
+	Eric Blake <eblake@redhat.com>, Paul Eggert <eggert@cs.ucla.edu>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ccpxrWDM c=1 sm=1 tr=0 ts=67ad43c1 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T2h4t0Lz3GQA:10 a=q2d_3YwXzPll6jce6DgA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
 
-Add a define so network devices with a PoE PSE feature can provide
-status indications of connected PoE PDs.
+On Wed, Feb 12, 2025 at 4:24=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> On Wed, Feb 12, 2025 at 3:58=E2=80=AFPM Danilo Krummrich <dakr@kernel.org=
+> wrote:
+> >
+> > On Wed, Feb 12, 2025 at 03:47:11PM -0500, Tamir Duberstein wrote:
+> > > Looks like I wasn't the only one to fall into the trap (rust/kernel/i=
+o.rs):
+> > >
+> > >     #[inline]
+> > >     const fn io_addr_assert<U>(&self, offset: usize) -> usize {
+> > >         build_assert!(Self::offset_valid::<U>(offset, SIZE));
+> > >
+> > >         self.addr() + offset
+> > >     }
+> > >
+> > > since offset isn't known at compile time, this can easily be misused?
+> >
+> > Well, that's intentional.
+> >
+> > iomem.readb(0x0)     // succeeds if SIZE >=3D1
+> > iomem.readb(foo)     // fails if foo is not known at compile time
+>
+> By "fails" here you mean fail to link, right?
+>
+> > iomem.try_readb(foo) // succeeds if self.maxsize() >=3D 1
+>
+> Apologies for being dense throughout this discussion. Could you check
+> my understanding?
+>
+> The trick is that `build_error` is marked `#[export_name =3D
+> "rust_build_error"]` which isn't exported unless
+> CONFIG_RUST_BUILD_ASSERT_ALLOW is defined, causing linking to it to
+> fail. This even works for doctests, but not for #[test] in the kernel
+> crate because they are built as part of the crate. The only to way
+> make that work correctly is to put `build_error` in a crate all by
+> itself.
 
-Reviewed-by: Ben Hoelker <ben.hoelker@alliedtelesis.co.nz>
-Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Signed-off-by: Tony O'Brien <tony.obrien@alliedtelesis.co.nz>
----
- include/dt-bindings/leds/common.h | 1 +
- 1 file changed, 1 insertion(+)
+Which of course, it is.
 
-diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds=
-/common.h
-index 4f017bea0123..3a8958b81c87 100644
---- a/include/dt-bindings/leds/common.h
-+++ b/include/dt-bindings/leds/common.h
-@@ -94,6 +94,7 @@
- #define LED_FUNCTION_MOBILE "mobile"
- #define LED_FUNCTION_MTD "mtd"
- #define LED_FUNCTION_PANIC "panic"
-+#define LED_FUNCTION_POE "poe"
- #define LED_FUNCTION_PROGRAMMING "programming"
- #define LED_FUNCTION_RX "rx"
- #define LED_FUNCTION_SD "sd"
---=20
-2.48.1
+I thought maybe this was specific to building on macOS, but it
+reproduces on Linux as well.
 
+Gary, can you help me understand how the linker magic works? Is it
+possible to make it work on the host as well?
 
