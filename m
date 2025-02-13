@@ -1,159 +1,154 @@
-Return-Path: <linux-kernel+bounces-512426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040A1A33924
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:47:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50908A33926
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:47:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D5C1666C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:46:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BC6E188BA3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1201920B818;
-	Thu, 13 Feb 2025 07:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1037E20AF6D;
+	Thu, 13 Feb 2025 07:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lw3o8Wtt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dqa9+3Zs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47B520AF96;
-	Thu, 13 Feb 2025 07:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE259207E17;
+	Thu, 13 Feb 2025 07:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739432791; cv=none; b=UnJI1l0ui1zvWBLtmETpXhakdh7QVBqhbDbAw+dMqor9oY7O2WJHCbAUgCfTm9wmJJAf8a/FhMsZaqhk74UPudDzfbUoE+ni3HcPq11n+a9XLZlcBp7swwwgUSOE81/+CeRow8T0E9vjCyZqTaawk4s8wzDwLWM/fZeB+9tuTcw=
+	t=1739432819; cv=none; b=m/oh2Qbfudan7D5861IycOusFVxm9Vjp8W7YMBeKFihy8q7XpVpXeD5mmwMfZ+I3OnydODNtAvfQcoJD4tA95shc0p5Qun2aGqlDxazqwMOsVmWDivbSfLMouPFYAqfgrwSFNTREcYb3olvmB9+rOYJeox0jGUb2aDOLAAjq9Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739432791; c=relaxed/simple;
-	bh=LTlk+Q+OqAOJUrN6UgQEpR0w+zfSfFCR6/DNGGUlgc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Qo8jqA3VvlxU/TKHms1pP1nvJzADOLdu3I2/RJKX8Mv9YMuwr99KpU4Rt70yDDthrSuT1Sqij4Nmw4icdQu/ngTe189CWkjTrArUze4xSqdYfMYXQ48UnmI6PsVxH24iHYJ2wG05dBQgA/8CzhKig5WfY/5QKKgIruoe74x8KH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lw3o8Wtt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CIlBdn001335;
-	Thu, 13 Feb 2025 07:46:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Nbm7pMR3sppbaW6MivVssSNUZKFF+Yg1bC2W6Ym5u8c=; b=Lw3o8WtttHYwMIEc
-	eR0749HKN1mOosx+2n65ajRX7+SP0M0JS2mS/1SJwCP+new4pXVbgyw0nTJTBUYO
-	84VvFZJlwnCUvLu3G5Q8WMto3pqD7i+H3d3i/Uf3uHO/rSzH2jf2DsOtx60aBD0s
-	HgccnCr17KQfSNC7KhXrDYwTUgwjbcYflXram8et1Y0WQDztJMRMdejbP5yVnDMz
-	OCA/AoOTJxjR03WIwARwKvZIOWJGez63NoEF9+rUrgoWRvAAoq3aLs3UpPXV4L6P
-	qgXa0g8/dNE8mY/ROf8AiKMFkuGq8gW7/cww/4EL5ZXC7U9is2qFdwAYc+OR2udu
-	NdbUgw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rrnfu322-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 07:46:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D7k1nO029626
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 07:46:01 GMT
-Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
- 2025 23:45:57 -0800
-Message-ID: <dc69cc0e-c3ca-4e2a-8d0e-998643f31ccf@quicinc.com>
-Date: Thu, 13 Feb 2025 15:45:47 +0800
+	s=arc-20240116; t=1739432819; c=relaxed/simple;
+	bh=VCg0jRUPuHhvK6NR4yFDct642+Q4OOO7b3q05KJjBto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VU6lgw5w7pEl27Yj9Lag4u1GKNzEVUhBA1fSUaw1w2D2/5isBqQVkYjCVsX7c5E3Gr1grn8z9SyViq4ckUcgzw99F3mRSCeUc22+dT24rQvyDhLRcLOOkyBc7NX9irvwotN3ybNI6QyBeUqztfIVRm9L7c56dWxXQC54x+T3sUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dqa9+3Zs; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739432818; x=1770968818;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VCg0jRUPuHhvK6NR4yFDct642+Q4OOO7b3q05KJjBto=;
+  b=dqa9+3ZsiqGqrXzuc7KXdCpzDDNK1W38moIHSXAN63RXJt4vC5xBSz3H
+   CfXbyxV3FqSNQmErY5mLwmmfy1iF1YOCwAj126pwanX2KJAD9AiZPyzG5
+   joF5GDWsoE8NtspyMxGppsnHxB9EwbjzRwnxYhOU94cUsVY/YsVkWtGpy
+   xuSyKgVYkVOJJNC6aUm3sNesnG7zF+wdK8XhLrV3h+Sjw9tVqy0DXteHO
+   HeqaQBC1toJUPuRfBDL5JBVV3o9h7pGu9PT+S67D8JdJWhRUjYe2RxVK+
+   fHsLMQLQ1OErKLKPf3MuTFyK6GQWBDTgx+gSI1w7zWygjPcfGLK4z5MFx
+   g==;
+X-CSE-ConnectionGUID: st0KpbZzQUmANxY39lKlOQ==
+X-CSE-MsgGUID: aWeInoUXQw2agOcJZBoxJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="44052161"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="44052161"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 23:46:57 -0800
+X-CSE-ConnectionGUID: crQpVo6fSqWK8Vul4++oLA==
+X-CSE-MsgGUID: YDT/1sVUQNSgEtE0fWU0Xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117680964"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 12 Feb 2025 23:46:55 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tiTvw-0016k4-2r;
+	Thu, 13 Feb 2025 07:46:52 +0000
+Date: Thu, 13 Feb 2025 15:45:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Dipen Patel <dipenp@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, timestamp@lists.linux.dev,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2] gpiolib: don't build HTE code with CONFIG_HTE disabled
+Message-ID: <202502131503.gMZldZLL-lkp@intel.com>
+References: <20250207083146.17872-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] arm64: mm: Populate vmemmap/linear at the page level
- for hotplugged sections
-To: Catalin Marinas <catalin.marinas@arm.com>
-CC: <anshuman.khandual@arm.com>, <will@kernel.org>, <ardb@kernel.org>,
-        <ryan.roberts@arm.com>, <mark.rutland@arm.com>, <joey.gouly@arm.com>,
-        <dave.hansen@linux.intel.com>, <akpm@linux-foundation.org>,
-        <chenfeiyang@loongson.cn>, <chenhuacai@kernel.org>,
-        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>,
-        <stable@vger.kernel.org>
-References: <20250109093824.452925-1-quic_zhenhuah@quicinc.com>
- <Z6zoWMejCDlN2YF9@arm.com>
-Content-Language: en-US
-From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-In-Reply-To: <Z6zoWMejCDlN2YF9@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oD5n2ERUG7vEUbsd4pslOiDQ1za_FgFG
-X-Proofpoint-ORIG-GUID: oD5n2ERUG7vEUbsd4pslOiDQ1za_FgFG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- bulkscore=0 malwarescore=0 mlxlogscore=859 lowpriorityscore=0
- suspectscore=0 adultscore=0 mlxscore=0 spamscore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130058
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250207083146.17872-1-brgl@bgdev.pl>
+
+Hi Bartosz,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on linus/master v6.14-rc2 next-20250212]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/gpiolib-don-t-build-HTE-code-with-CONFIG_HTE-disabled/20250207-163408
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20250207083146.17872-1-brgl%40bgdev.pl
+patch subject: [PATCH v2] gpiolib: don't build HTE code with CONFIG_HTE disabled
+config: i386-buildonly-randconfig-001-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131503.gMZldZLL-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131503.gMZldZLL-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502131503.gMZldZLL-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/reset/reset-gpio.c:3:
+   include/linux/gpio/consumer.h: In function 'gpiod_enable_hw_timestamp_ns':
+>> include/linux/gpio/consumer.h:557:17: error: implicit declaration of function 'WARN_ON' [-Werror=implicit-function-declaration]
+     557 |                 WARN_ON(desc);
+         |                 ^~~~~~~
+   include/linux/gpio/consumer.h:559:17: error: 'ENOSYS' undeclared (first use in this function)
+     559 |         return -ENOSYS;
+         |                 ^~~~~~
+   include/linux/gpio/consumer.h:559:17: note: each undeclared identifier is reported only once for each function it appears in
+   include/linux/gpio/consumer.h: In function 'gpiod_disable_hw_timestamp_ns':
+   include/linux/gpio/consumer.h:567:17: error: 'ENOSYS' undeclared (first use in this function)
+     567 |         return -ENOSYS;
+         |                 ^~~~~~
+   cc1: some warnings being treated as errors
 
 
+vim +/WARN_ON +557 include/linux/gpio/consumer.h
 
-On 2025/2/13 2:28, Catalin Marinas wrote:
->> @@ -1339,9 +1349,27 @@ int arch_add_memory(int nid, u64 start, u64 size,
->>   		    struct mhp_params *params)
->>   {
->>   	int ret, flags = NO_EXEC_MAPPINGS;
->> +	unsigned long start_pfn = PFN_DOWN(start);
->> +	struct mem_section *ms = __pfn_to_section(start_pfn);
->>   
->>   	VM_BUG_ON(!mhp_range_allowed(start, size, true));
->>   
->> +	/* should not be invoked by early section */
->> +	WARN_ON(early_section(ms));
-> I don't remember the discussion, do we still need this warning here if
-> the sections are not marked as early? I guess we can keep it if one does
-> an arch_add_memory() on an early section.
-> 
-> I think I suggested to use a WARN_ON_ONCE(!present_section()) but I
-> completely forgot the memory hotplug code paths.
+   548	
+   549	#if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_HTE)
+   550	int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
+   551	int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
+   552	#else
+   553	static inline int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc,
+   554						       unsigned long flags)
+   555	{
+   556		if (!IS_ENABLED(CONFIG_GPIOLIB))
+ > 557			WARN_ON(desc);
+   558	
+   559		return -ENOSYS;
+   560	}
+   561	static inline int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc,
+   562							unsigned long flags)
+   563	{
+   564		if (!IS_ENABLED(CONFIG_GPIOLIB))
+   565			WARN_ON(desc);
+   566	
+   567		return -ENOSYS;
+   568	}
+   569	#endif /* CONFIG_GPIOLIB && CONFIG_HTE */
+   570	
 
-Dear Catalin,
-
-The previous discussion can be found at 
-https://lore.kernel.org/lkml/aedbbc4f-8f6c-46d8-a8d7-53103675a816@quicinc.com/, 
-I highlighted the key points from conversation between me and Anshuman 
-for your reference:
-"
- >>
- >> BTW, shall we remove the check for !early_section since 
-arch_add_memory is only called during hotplugging case? Correct me 
-please if I'm mistaken :)
- >
- > While this is true, still might be a good idea to keep the 
-early_section()
- > check in place just to be extra careful here. Otherwise an WARN_ON() 
-might
- > be needed.
-
-Make sense. I would like to add some comments and WARN_ON() if
-early_section().
-"
-Regarding your suggestion, I believed it was intended for the 
-vmemmap_populate() function ?(Discussion: 
-https://lore.kernel.org/linux-mm/Z3_d59kp4CuHQp97@arm.com/), but as 
-workflow below indicates:
-Hot plug:
-1. section_activate -> vmemmap_populate
-2. mark PRESENT
-
-In contrast, the early flow:
-1. memblocks_present -> mark PRESENT
-2. __populate_section_memmap -> vmemmap_populate
-
-Could this result in a false warning during hotplugging? I replied with 
-the doubt in above link before but seems you missed :) Could you please 
-share your thoughts if you have a different idea ?
-
-I will include your tags, correct capitalization nit and post one new 
-version.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
