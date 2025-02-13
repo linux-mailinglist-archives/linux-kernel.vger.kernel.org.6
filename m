@@ -1,248 +1,244 @@
-Return-Path: <linux-kernel+bounces-512375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0E0A3386C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:00:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FEAA33870
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:04:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97493A903B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:00:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AAC03A8CAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B70207E08;
-	Thu, 13 Feb 2025 07:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD43207A3D;
+	Thu, 13 Feb 2025 07:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ul6ddq7E"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="V5QC1ubp"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2056.outbound.protection.outlook.com [40.107.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8DC207DF5;
-	Thu, 13 Feb 2025 07:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739430018; cv=none; b=DKKMhv/elDzLTLzy1zEqkMAH3jQziler3Tn+VZm0nhlgPnAAbksou4MJbA4+7plAGPPU8QJZbX9NwYNTqgL5SSonIOdXJMPPzcdCJbvlws6OlPSw+Z/Bjbynjvb7EX2ACJsSqzBxsNRkmVvKF5cpIiVOb9HFz9mebcaSreCppqs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739430018; c=relaxed/simple;
-	bh=aJh6nSKaICqSNF+iI/ooHpvy89tomykFTx7tOziXDIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KE9e1WyKMMeC73VxeIkcWxXMZyTcku9tnm44RxczGesFmnPIuYql5AQkK+BXWLkHyJmIVLJS7nwqPGUsy7M6rauyIb5933pc5xIv/9tb8YUbR57SHSmp13VZBCKV4XSO6KkjqMsJimegwv+8gF8WTqumWiCY6Yx3qsGu16avtKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ul6ddq7E; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739430001; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=tB5Kve4S2OJd5zNjPgLzfRSqSz5A4e7GPCbqNbIsUvY=;
-	b=Ul6ddq7Es5HcFXmYIw7jKU7SgawhByhx1xNXUg1l6olEBgw4W/KrfIQAeb6/CMAoBuzYtXGY1Zs+4fxHxKxvjv1x7WfoyRz1etgGeVxr/lYRaBkV1sW7WxhggLbKuZXkLCmnitxrYdl+Yq+ug+PtO/mTuegX5Z2USSHmCqCTeb8=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPMZXZn_1739429998 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 13 Feb 2025 14:59:59 +0800
-Message-ID: <84ed4048-606e-47bf-98ad-d850cf30d60d@linux.alibaba.com>
-Date: Thu, 13 Feb 2025 14:59:57 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE8C205ACF;
+	Thu, 13 Feb 2025 07:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739430262; cv=fail; b=RG3JdUMsuhr/eDcv/mIAMnFDNmIgbk1JMWPoO7q/dBcCusa1VjqYRwEgVIcmEkkYSNv9vZ38cBrCsjNIw9n9X/fk4PFa7fC9h5fnsgOTJAEpHZWtuKJUxxF/Q5Yq97Endwn92Y2fCkiAxPAffLmcAQQ9IoAONADXf+y86K78rDg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739430262; c=relaxed/simple;
+	bh=VLf6PN+ZK1p8GJSJLSwEqBz/nDXdKXi3UxmHxtF2WrY=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nnoLpOn6NJWFak5c5Pzgf5M0zjHqLP5KRvCltc0i2YHcNUlRyX7mxtjB7oty6rhzI90+0qb3idNMhT5UozWn6Yq6YOUZb+iJ7GOEro0VAMuHqVL8sbrwaRnZKxDcNhuf5yr8RYAh8kwzq6T6CCfnE50HpS+zRgRWEyHmUn2HyfM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=V5QC1ubp; arc=fail smtp.client-ip=40.107.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=opZuD1m5O5HzzDMio00aTFeGK31l+h5x8UR/zav+lCkj/UwslqSjLHZ9fC8PyculyGaUHdz4uZUrimBVc9XztueLPcoeex34p4Gi/xVk4MsuTzAaOgS0QqX/sb/uXM6CgT2CQPTneLqnN7APHPG18hzMZF7QdSTxAWlcammH4W6FirF37gnQoFcKY/jazU0cN4QLRSLnXyIMb79nXH5NrCO354DArrKEtJJg5iUPWwmjFaVSjPAIhilZ8bQdctXpEvzXwYp1WTBolGm83TBsPCetT+90FlJAvt9zvYZ87qik7gho2OUArvP5+rMLkijnzOtfFEjLQVe/+atHQ+vlZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r6y+kXGuLjQ6dRaqKwxAew/44MG70QD7gS8mE5NyLKs=;
+ b=b6k51SXwO7I5sxl2IpVejOMtnAXhyGagWJoovZbr6v2mkRSsK2to8NpqZZKoaBFwNLtMNWOURrGEU2JvOHOyFc5DU35RPbZk+3ND2CS/zsTIddS1UogLl6kjaxCZJfW7YggU5KgK2FRH5tK6RD43V+ykigUDkl3o/2ylT5KKAhoNQa54HLfcZs72E36kx39jBmnTUI4RZwuL+vGKOL97eTle0142saL5ev5Zo2r3Bxkzn9Q+mi0rU0cJh+PqRQWfEHhV02J2Z/EEuKQrx+CqT/s5SSfO2ArNMSGiXP2bj1o8UeXqdumMIRA9aWevfHtcuigjwRHwJcfA27euOwwyOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r6y+kXGuLjQ6dRaqKwxAew/44MG70QD7gS8mE5NyLKs=;
+ b=V5QC1ubp+2bSthIop1QIo2J2VvQI/YB6S45FBCFKiAg+15cw9BIuzNfHiLmRl+tB3rcXldJI6CIRvnPdLMYjuQs40Uk//Y43fNdkTBMYAiekG7PWdhEyXmj61Jlcw+QYrhPgsnnkJvqNq5SEp/Priew5P+K3upPbF1NieenwKe6ktiXUMvVBi84/x1DuRNwhsoennJYwvxfTdSARYFyenIkdoSh+knIx8p6vW9BkXesz+Sp7nDbaUbC0O050qcueA7EaKg4ODknCPSd7DxppPtdPUCH4GaHwFwmbfDZsXT99d7zMX1k1RLbqRf8+6QxUMWPqUUMi1tF0xyfSthT0Sg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by PA1PR04MB10674.eurprd04.prod.outlook.com (2603:10a6:102:483::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.19; Thu, 13 Feb
+ 2025 07:04:15 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891%3]) with mapi id 15.20.8445.011; Thu, 13 Feb 2025
+ 07:04:15 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ASoC: imx-audmix: remove cpu_mclk which is from cpu dai device
+Date: Thu, 13 Feb 2025 15:05:18 +0800
+Message-Id: <20250213070518.547375-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR04CA0016.apcprd04.prod.outlook.com
+ (2603:1096:4:197::7) To AM0PR04MB7044.eurprd04.prod.outlook.com
+ (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] mm/hwpoison: Fix incorrect "not recovered" report
- for recovered clean pages
-To: Miaohe Lin <linmiaohe@huawei.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
- tianruidong@linux.alibaba.com, tony.luck@intel.com, bp@alien8.de,
- "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>
-References: <20250211060200.33845-1-xueshuai@linux.alibaba.com>
- <20250211060200.33845-5-xueshuai@linux.alibaba.com>
- <5f116840-60df-c6d9-d7ff-dcf1dce7773f@huawei.com>
- <3820329d-20e3-49ee-a329-aac7393c6df3@linux.alibaba.com>
- <23251c74-cc50-012c-409f-c45117b52b16@huawei.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <23251c74-cc50-012c-409f-c45117b52b16@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|PA1PR04MB10674:EE_
+X-MS-Office365-Filtering-Correlation-Id: 439f8864-86b4-4809-1180-08dd4bfca095
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|7416014|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FJkBRXTBycbsPUCwgzwbL+489Q+VXvThl5hPAr+GJpYMfVjAQb1vzTCNnhZA?=
+ =?us-ascii?Q?LgPlrTMZ5K1cWPv3nU3X0OkkZt+fZTO+fdawxZPBdQLtSSaJuBMEQLdCrYrs?=
+ =?us-ascii?Q?siy95+jRQHghEvFTvzHKcM5WFPdj7W1aPP+bVX0wQjkACdTiODNM74wm5+ZA?=
+ =?us-ascii?Q?AJCTukC7P7EYNrq9E3iD+y/QQc66LE4XKgtZ7ClIxsCMA7mTOAek39MoQ4LD?=
+ =?us-ascii?Q?4aveQhB8y0HeDoDEDQn2eAldJvMaoP0LG6rRMrB4LjcGhV4xm4OsAhEhcE7L?=
+ =?us-ascii?Q?liaR6nxmwFc81Cde9WZEWK7H6hND+wSPV5/9JpkTVyRB4RC0MMOhSBmDdULQ?=
+ =?us-ascii?Q?zma33l4adQBJPU5DONJWZzesBP+VinWWoIL27SgSrl/blIjMKwNwzH3bMZiS?=
+ =?us-ascii?Q?ondOVxh0bpLup8aU1/7DxS1gx5rYRSswoTzq4LS0i4NOi9s9FsDdFg03CvW1?=
+ =?us-ascii?Q?M/TRTcl/GPE83nwdSXnNX6OY6brq0WsBg8N2leo7FOXzSDFyUHxo13HfBxSn?=
+ =?us-ascii?Q?97KpmnR4VNUqwHIkZM0TRNIFr9sa/8WIBeMM6eJzKn2o73+5C5stSRnD2Y++?=
+ =?us-ascii?Q?w25HmrDDFrrabtgxOXOHA2XHn5JmX9HlKQoZ7j1ek0vOz93Cl/xxCQM8BnUU?=
+ =?us-ascii?Q?qmS/rAPKpP6aoX8lFePXos6mp+tAqyvO0qQh7RR3ApztPBvq+V8DHbCS0FkB?=
+ =?us-ascii?Q?I7z1Ze67I7ROy8+qXibQ5lPDF0hWHU8thXGvMCIhMqU3fBt9xY4WMbueBR6O?=
+ =?us-ascii?Q?ayZPLkKbGrD21LC75BiGhdqKwdLuq2Iro/7sHoqwRoqoed8lvtz/hbpCsmf6?=
+ =?us-ascii?Q?4r8sFoepn+V+u5kYCroJiryNLbCdEUaZ2bAD1PGCJARQ+rrY7YvqbTAVJQJQ?=
+ =?us-ascii?Q?3bfVtu7fQrdZRWTWs0PeX1iga3q8fe/605tg0EGI5lDtEgLM92GiHhA10Gyj?=
+ =?us-ascii?Q?jYIzPkqkHCon5MIKD3It0+eMg9RG5y4jz2F/g53m2sLRrORWaP1GdUXBWZe0?=
+ =?us-ascii?Q?aKdJMTCd/Xx+WO8wSZ28J9K6uVn2/GZesFcIzdXSHvOaqr1EpFMcMEYAfQhc?=
+ =?us-ascii?Q?JmZXuuhvN8dki+MJLPJ0OAf/CrsfaqI6t+mNMGFiz09M55XDwX8ge42+RYO+?=
+ =?us-ascii?Q?Nacj/v68FZ1MOPniOiT1nN0MRgXuLJ5HEiwB/BKLisO6DsHW2/DrHULeypwU?=
+ =?us-ascii?Q?N6VY2Ctm/nQNFLY70NuzcOtDWyl6y9vR1MmfjW9OynZ+0hjrFDXvoLUrq5Dy?=
+ =?us-ascii?Q?ma3G+GuxSUsITkPFlmDW/zyRWsSm8G21Va91zB3ToyawbJaebsugqLbHieKA?=
+ =?us-ascii?Q?anAh4kBJ78AJVqSYEpoI6P0NaZ510sPiFSdA8p7QMhxsKweHAbfnfmWMUcVP?=
+ =?us-ascii?Q?edSdDOO414VYoPI1jQP40vD8Irgavj4e0+eYwYim81Q7WMqAX9g520xt3U+8?=
+ =?us-ascii?Q?hYaf/82FnS7G8t3LPk/bct1k6r/HmF+RHQFCywfqMK5k1FU6bDoIeA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(7416014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yyfJL+u0tIEDPEtF1/7xJ7L8ji3kMYooOoyuHZ0zwZlW3jVWKhfybXcu9Jvz?=
+ =?us-ascii?Q?5oqpmD1jMj3Vf81lC/C+XSKoXzTcAXY/to9SeOO2TQFHXaQ9IKvqvrQ+ttKc?=
+ =?us-ascii?Q?1kGdwRMTOBuK4d9GMzDF3HsiZgihHLW+qY3xFFXpZkLvsBc4V7pllg/Mfn1H?=
+ =?us-ascii?Q?CjCsMGtPUynZPPgymDx19xTWeKni7ZYe2CWLNUwLWi5rT+3exGQI4FSL6OQg?=
+ =?us-ascii?Q?hYajBJepcFZyDdHKmimwtkvlyFQMZSUDBATeyN5zsthU5Gt9l8IIFVPfa3FX?=
+ =?us-ascii?Q?PHVoJXfGA/kgUjumHJFNvnn3p2Ym+6u3kKnu9uC1eWnDvlqxRjLK59VOS4mM?=
+ =?us-ascii?Q?BC117qpA0ryEitN/P6GB5OhnbiDY7j0MWVF8hbpEURuN06h787J74Df47tKh?=
+ =?us-ascii?Q?7gTAhENMihOBwKbcYLoCksx6GvPu7PnXbj+d5TiwYxaltuYZ1NBOVu3eGBiZ?=
+ =?us-ascii?Q?AuFhMojVHPqplXcRfNmxiJGnaV9fFNK6ZqnpXBsRpvfDGdFb33kocAOF3YLC?=
+ =?us-ascii?Q?g6dkjUA6zLDJ7psTCRSrvLSQw41JJZ3uTmgN1D55O7y655GMQzCKL+KSBJgT?=
+ =?us-ascii?Q?au9rcOTbXpko+3izPxmi1jZRAt2A7n56Im7kAmIjArEWPR7Gc7i1LKI/FUMD?=
+ =?us-ascii?Q?bF8QIFakjO+H3ywf+w75vT0oo3FZfYHGAWxJmrT6dO44SaOnfZqEVOVkg5nO?=
+ =?us-ascii?Q?lIZuhrvsIPNCCd2t0cKadC2gkt/UpaTPOjoMpB+HlJKNBnxcDH/BybDMEVZ/?=
+ =?us-ascii?Q?AU3uo3q0mNv4Segi2jCTLBxgVtZBF87JGsRzKgyD56sB67FXA7FKd8zdw/st?=
+ =?us-ascii?Q?sQ8PU/411PAUtjpKEKQUJK7B3aJD63MBiqDwyhbFX27vT8DM7nDKhtWyQN1n?=
+ =?us-ascii?Q?pEtMAX1/juwZ+ehkJIPlEMh6n1p5/LLm3dCv3BZeTT7ef4vh2LwLpREY4IvI?=
+ =?us-ascii?Q?gOI8rnQPIfsquw/Br9tWY7G5uNiaSKS1yNWSWyQnKYyZcTHi0mKRjtlI4zi6?=
+ =?us-ascii?Q?SNGyUdUqSsswxopx3mnwxL5ukujZCSRvtz/HCYK7Bj2IgtiQQPmXBzF56d/Q?=
+ =?us-ascii?Q?NJeH9ls9Gi/6MMJ5il+bGCVFLSOBBDNObYqXBbuvAkD6i0plscOMIUaxVL7t?=
+ =?us-ascii?Q?LG9xGcqFcNBek9fzHILR5F0LLmVI3+iqyceXypUjUjVqePEuKKeUi6QMtDiU?=
+ =?us-ascii?Q?EXfgWZ9bBQj0FXAz5LLvGkFqYPG5Y9EkL3zbGUZyHhnU95DJJbuT5UK0Voyk?=
+ =?us-ascii?Q?2r3rB1QuVILid0HOUkP3qRAhCnmCbGG1kRv/gR8imtIOgcXOPDMd2ZWy6/Jz?=
+ =?us-ascii?Q?u4aqQVJ9x9xzlekE+iNU38ptaCPdRv6CkObuJSLxkkHcm18AqInWEnsZYvum?=
+ =?us-ascii?Q?vcAjklKqXHacv0RAgm4sEn/KxGb7lKouRRZn/oZdnJw8zsyvwnbMtw/jPTIs?=
+ =?us-ascii?Q?N0zTkznMT5U97hLWhWQnmntolVT8DHfrKXfQXEyP3Cu1VL+HpHDLcbYxvwr6?=
+ =?us-ascii?Q?JvVrZx363tj3+8wwYabGI+8Ggsn1x3iH8VxRysO2PgoI4wFAX/tEBu3OyQ77?=
+ =?us-ascii?Q?B7DA5zetIxz4gkA+/dGyZSuNdRIeVINK1/eNiMUh?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 439f8864-86b4-4809-1180-08dd4bfca095
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 07:04:15.6479
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mIWTtKyyWb30+yQt8b3NxYzzVyGAyb1jAIJmfIxfGJL9ydoEZSiRHbaOMZksiT9fmT5/e+hRkJ5y5AGEO/YscQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10674
 
+When defer probe happens, there may be below error:
 
+platform 59820000.sai: Resources present before probing
 
-在 2025/2/13 11:20, Miaohe Lin 写道:
-> On 2025/2/12 21:55, Shuai Xue wrote:
->>
->>
->> 在 2025/2/12 16:09, Miaohe Lin 写道:
->>> On 2025/2/11 14:02, Shuai Xue wrote:
->>>> When an uncorrected memory error is consumed there is a race between
->>>> the CMCI from the memory controller reporting an uncorrected error
->>>> with a UCNA signature, and the core reporting and SRAR signature
->>>> machine check when the data is about to be consumed.
->>>>
->>>> If the CMCI wins that race, the page is marked poisoned when
->>>> uc_decode_notifier() calls memory_failure(). For dirty pages,
->>>> memory_failure() invokes try_to_unmap() with the TTU_HWPOISON flag,
->>>> converting the PTE to a hwpoison entry. However, for clean pages, the
->>>> TTU_HWPOISON flag is cleared, leaving the PTE unchanged and not converted
->>>> to a hwpoison entry. Consequently, for an unmapped dirty page, the PTE is
->>>> marked as a hwpoison entry allowing kill_accessing_process() to:
->>>>
->>>> - call walk_page_range() and return 1
->>>> - call kill_proc() to make sure a SIGBUS is sent
->>>> - return -EHWPOISON to indicate that SIGBUS is already sent to the process
->>>>     and kill_me_maybe() doesn't have to send it again.
->>>>
->>>> Conversely, for clean pages where PTE entries are not marked as hwpoison,
->>>> kill_accessing_process() returns -EFAULT, causing kill_me_maybe() to send a
->>>> SIGBUS.
->>>>
->>>> Console log looks like this:
->>>>
->>>>       Memory failure: 0x827ca68: corrupted page was clean: dropped without side effects
->>>>       Memory failure: 0x827ca68: recovery action for clean LRU page: Recovered
->>>>       Memory failure: 0x827ca68: already hardware poisoned
->>>>       mce: Memory error not recovered
->>>>
->>>> To fix it, return -EHWPOISON if no hwpoison PTE entry is found, preventing
->>>> an unnecessary SIGBUS.
->>>
->>> Thanks for your patch.
->>>
->>>>
->>>> Fixes: 046545a661af ("mm/hwpoison: fix error page recovered but reported "not recovered"")
->>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->>>> ---
->>>>    mm/memory-failure.c | 5 ++---
->>>>    1 file changed, 2 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>>> index 995a15eb67e2..f9a6b136a6f0 100644
->>>> --- a/mm/memory-failure.c
->>>> +++ b/mm/memory-failure.c
->>>> @@ -883,10 +883,9 @@ static int kill_accessing_process(struct task_struct *p, unsigned long pfn,
->>>>                      (void *)&priv);
->>>>        if (ret == 1 && priv.tk.addr)
->>>>            kill_proc(&priv.tk, pfn, flags);
->>>> -    else
->>>> -        ret = 0;
->>>>        mmap_read_unlock(p->mm);
->>>> -    return ret > 0 ? -EHWPOISON : -EFAULT;
->>>> +
->>>> +    return ret >= 0 ? -EHWPOISON : -EFAULT;
->>>
->>> IIUC, kill_accessing_process() is supposed to return -EHWPOISON to notify that SIGBUS is already
->>> sent to the process and kill_me_maybe() doesn't have to send it again. But with your change,
->>> kill_accessing_process() will return -EHWPOISON even if SIGBUS is not sent. Does this break
->>> the semantics of -EHWPOISON?
->>
->> Yes, from the comment of kill_me_maybe(),
->>
->>       * -EHWPOISON from memory_failure() means that it already sent SIGBUS
->>       * to the current process with the proper error info,
->>       * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
->>
->> this patch break the comment.
->>
->> But the defination of EHWPOISON is quite different from the comment.
->>
->>   #define EHWPOISON    133    /* Memory page has hardware error */
->>
->> As for this issue, returning 0 or EHWPOISON can both prevent a SIGBUS signal
->> from being sent in kill_me_maybe().
->>
->> Which way do you prefer?
->>
->>>
->>> BTW I scanned the code of walk_page_range(). It seems with implementation of hwpoison_walk_ops
->>> walk_page_range() will only return 0 or 1, i.e. always >= 0. So kill_accessing_process() will always
->>> return -EHWPOISON if this patch is applied.
->>>
->>> Correct me if I miss something.
->>
->> Yes, you are right. Let's count the cases one by one:
->>
->> 1. clean page: try_to_remap(!TTU_HWPOISON), walk_page_range() will return 0 and
-> 
-> Do you mean try_to_unmap?
+The cpu_mclk clock is from the cpu dai device, if it is not released,
+then the cpu dai device probe will fail for the second time.
 
-Yes, sorry for the typo.
-> 
->> we should not send sigbus in kill_me_maybe().
->>
->> 2. dirty page:
->> 2.1 MCE wins race
->>            CMCI:w/o Action Require         MCE: w/ Action Require
->>                                        TestSetPageHWPoison
->>        TestSetPageHWPoison
->>        return -EHWPOISON
->>                                        try_to_unmap(TTU_HWPOISON)
->>                                        kill_proc in hwpoison_user_mappings()
->>
->> If MCE wins the race, because the flag of memory_fialure() called by CMCI is
->> not set as MF_ACTION_REQUIRED, everything goes well, kill_proc() will send
->> SIGBUS in hwpoison_user_mappings().
->>
->> 2.2 CMCI win
->>            CMCI:w/o Action Require         MCE: w/ Action Require
->>      TestSetPageHWPoison
->>      try_to_unmap(TTU_HWPOISON)
->>                                         walk_page_range() return 1 due to hwpoison PTE entry
->>                                         kill_proc in kill_accessing_process()
->>
->> If the CMCI wins the race, we need to kill the process in
->> kill_accessing_process(). And if try_to_remap() success, everything goes well,
->> kill_proc() will send SIGBUS in kill_accessing_process().
->>
->> But if try_to_remap() fails, the PTE entry will not be marked as hwpoison, and
->> walk_page_range() return 0 as case 1 clean page, NO SIGBUS will be sent.
-> 
-> If try_to_unmap() fails, the PTE entry will still point to the dirty page. Then in
-> check_hwpoisoned_entry(), we will have pfn == poisoned_pfn. So walk_page_range()
-> will return 1 in this case. Or am I miss something?
-> 
+The cpu_mclk is used to get rate for rate constraint, rate constraint
+may be specific for each platform, which is not necessary for machine
+driver, so remove it.
 
-You’re right; I overlooked the pte_present() branch.
+Fixes: b86ef5367761 ("ASoC: fsl: Add Audio Mixer machine driver")
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+changes in v2:
+- remove cpu_mclk and related constraint setting
 
-Therefore, in the walk_page_range() function:
-- It returns 0 when the poison page is a clean page.
-- It returns 1 when CMCI wins, regardless of whether try_to_unmap succeeds
-   or fails.
+ sound/soc/fsl/imx-audmix.c | 31 -------------------------------
+ 1 file changed, 31 deletions(-)
 
-Then the patch will be like:
+diff --git a/sound/soc/fsl/imx-audmix.c b/sound/soc/fsl/imx-audmix.c
+index 231400661c90..50ecc5f51100 100644
+--- a/sound/soc/fsl/imx-audmix.c
++++ b/sound/soc/fsl/imx-audmix.c
+@@ -23,7 +23,6 @@ struct imx_audmix {
+ 	struct snd_soc_card card;
+ 	struct platform_device *audmix_pdev;
+ 	struct platform_device *out_pdev;
+-	struct clk *cpu_mclk;
+ 	int num_dai;
+ 	struct snd_soc_dai_link *dai;
+ 	int num_dai_conf;
+@@ -32,34 +31,11 @@ struct imx_audmix {
+ 	struct snd_soc_dapm_route *dapm_routes;
+ };
+ 
+-static const u32 imx_audmix_rates[] = {
+-	8000, 12000, 16000, 24000, 32000, 48000, 64000, 96000,
+-};
+-
+-static const struct snd_pcm_hw_constraint_list imx_audmix_rate_constraints = {
+-	.count = ARRAY_SIZE(imx_audmix_rates),
+-	.list = imx_audmix_rates,
+-};
+-
+ static int imx_audmix_fe_startup(struct snd_pcm_substream *substream)
+ {
+-	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
+-	struct imx_audmix *priv = snd_soc_card_get_drvdata(rtd->card);
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct device *dev = rtd->card->dev;
+-	unsigned long clk_rate = clk_get_rate(priv->cpu_mclk);
+ 	int ret;
+ 
+-	if (clk_rate % 24576000 == 0) {
+-		ret = snd_pcm_hw_constraint_list(runtime, 0,
+-						 SNDRV_PCM_HW_PARAM_RATE,
+-						 &imx_audmix_rate_constraints);
+-		if (ret < 0)
+-			return ret;
+-	} else {
+-		dev_warn(dev, "mclk may be not supported %lu\n", clk_rate);
+-	}
+-
+ 	ret = snd_pcm_hw_constraint_minmax(runtime, SNDRV_PCM_HW_PARAM_CHANNELS,
+ 					   1, 8);
+ 	if (ret < 0)
+@@ -323,13 +299,6 @@ static int imx_audmix_probe(struct platform_device *pdev)
+ 	}
+ 	put_device(&cpu_pdev->dev);
+ 
+-	priv->cpu_mclk = devm_clk_get(&cpu_pdev->dev, "mclk1");
+-	if (IS_ERR(priv->cpu_mclk)) {
+-		ret = PTR_ERR(priv->cpu_mclk);
+-		dev_err(&cpu_pdev->dev, "failed to get DAI mclk1: %d\n", ret);
+-		return ret;
+-	}
+-
+ 	priv->audmix_pdev = audmix_pdev;
+ 	priv->out_pdev  = cpu_pdev;
+ 
+-- 
+2.34.1
 
-@@ -883,10 +883,9 @@ static int kill_accessing_process(struct task_struct *p, unsigned long pfn,
-  			      (void *)&priv);
-  	if (ret == 1 && priv.tk.addr)
-  		kill_proc(&priv.tk, pfn, flags);
--	else
--		ret = 0;
-  	mmap_read_unlock(p->mm);
--	return ret > 0 ? -EHWPOISON : -EFAULT;
-+
-+	return ret > 0 ? -EHWPOISON : 0;
-
-Here, returning 0 indicates that memory_failure() successfully handled the
-error by dropping the clean page.
-
-
->>
->> In summary, hwpoison_walk_ops cannot distinguish between try_to_unmap failing
->> and causing the PTE entry not to be set to hwpoison, and a clean page that
->> originally does not have the PTE entry set to hwpoison.
-> 
-> Is it possible current process is not the one accessing the hwpoisoned page? E.g. memory_failure
-> is deferred and called from kworker context or something like that. If it's possible, this is
-> another scene needs to be considered.
-
-Yes, it possibale.
-
-But kill_accessing_process() will only be called with MF_ACTION_REQUIRED.
-MF_ACTION_REQUIRED indates that current process is exactly the one accesing the
-poison data.
-
-Fox x86 platform, GHES driver may queue a kwoker to defer memory_failure() with
-flag=0.  So kill_accessing_process() will not be called in such case.
-
-Thanks.
-Shuai
 
