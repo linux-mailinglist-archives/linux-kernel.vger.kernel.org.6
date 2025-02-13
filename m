@@ -1,296 +1,136 @@
-Return-Path: <linux-kernel+bounces-513758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C472DA34E4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:15:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0168A34E49
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D85893A9CBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:15:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6249F7A31BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAAE206F2A;
-	Thu, 13 Feb 2025 19:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED635245B09;
+	Thu, 13 Feb 2025 19:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aYMl15Sn"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUqS865W"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51B824A048
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B343F2036E4;
+	Thu, 13 Feb 2025 19:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739474116; cv=none; b=VMPITWKB+kHUteVYQk3pYPaJaXIWFe1P4ygN5adXqnw0eKWg3xsArsEcpYq9Gbnl3SnwDLgupYDPie1fS+CAZ0Y+8Hay5VVV6sp4y9Rw55sdakkTLI0cTTyKf7MdqPKTq4zNGPcFxchFE51o9ZwsR9wAbPZSEBChkRhWhzlRjzg=
+	t=1739474100; cv=none; b=SXe9VthBv2G3IgPkNAzrK60ff3cfgfIsr/yCSvXzp77cb0DI9HHU/p/hxoY0/og80V1o3vukZNPqQGXNCkdMlG63Hti7hYj2Cu7Z9wxx7RGcPwfBF6y0we7WlrYaZ1lEmaF/04hjrWDvBMOeE2nLISSo/XNdH8JZLt15BYjvLtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739474116; c=relaxed/simple;
-	bh=3nHtG7PoyixUCtDxS+Y49PjpO3dsXgDgWOyYmD4MGGQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZYgxWp++26PJneodVXto7JI6q/xIt54dvtWecQSSKWlbThIfLqGbKJjExddQ0eRSIR9A2TlvgkIQUxcG+c1gXM/hXcP6n5FnLrNUoYNbDf2snEozQkO36ddjd+VvpI78Sh0c8dAwMSZyy/5DeZyRPhMM8sjPDpvKuIjTOQ3dHkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aYMl15Sn; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1739474100; c=relaxed/simple;
+	bh=BfauIy3o5axRmOkb37mEeCeeVJpE9AHdl2OZQUI3YvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ckR59cM4MNs6YDxbKFhBmT+bdhEn+ydmpgljVzfb4e5QbmxseEyLzLN1jwk40vVA2XUZBin0hQ9cZVuaTkRC77shfikYAG85A3XWjeuiO5+YttXXwWDrDwZrhCSJUgSIUAZMS5sa9YNqanYbRMHlmr51clmksO8XlStsaRRTai4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FUqS865W; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5de849a0b6cso2299474a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:15:14 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4395a06cf43so8525275e9.2;
+        Thu, 13 Feb 2025 11:14:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739474113; x=1740078913; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739474097; x=1740078897; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9ll3EDDTY/6Dh7a8MWuMvGIgfSvEqbbqhDX1OHStQPk=;
-        b=aYMl15SnQSuN7Wv93pbJ9LZkE/CjHBLpM8uS6bgOBJXzxxhNjKD0gp4quXiH9jZdNq
-         IVd1pKbrYgF0l67VjK5/5mXFHv2YGMYMcE2VoPAkRRlP+lustFkTXxcSS01JWYAb7LGV
-         SmJiC79DuneYNBA0vJNlNtXCRgG30/4+FUlLefW5ePqBL8bUUMpt2+OMz55/+VupUTld
-         hL0Pk/y9Gv5ikefvLiHtwZnqL6/VTWMNFmfoRKW02j9yCTeUo9nlkF7Nio2rBEt1D+Mf
-         Ie9lebxZhOON/6fn7ihm/dEmsJFnUCX3PtZqnQJnIIA1fCW6JqSNvTVJgtIL/WY+aUAu
-         wJww==
+        bh=9oYvb+adUifUAMjBHuPFQ7cS+nNgPWz10uBj3ervq5c=;
+        b=FUqS865W5V9msf4sIlivRS9z5UZ5vjqAjLI8qJnVKHT8CYlDBB+Zzcd0YWXpYCJX/0
+         eWkIYSJha5iS4yk1BiNktWrZHfsqlLYYCQhJwOLY8yQm7c/IIHEo7Ug49ANJ/eGyVUtF
+         4Vv9NslUc+xpcXhev7kwSw4K9S1KO9q9qKn2WBpUqNUNdOFrClQ9RfMtfl9uc8+ILrzj
+         cfirLy1XfE6ypovEo+zfUYo/FomYbRWnO3WF7RUwJoc0VRt/V/7KXreFNf7cH7jXXinv
+         3J8i8VNRPtPP402Jp85tr/byzt7KrsoNWyZt1Cm50T9vqDQCuNbzBzWAya5w8a8eyVts
+         Qxmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739474113; x=1740078913;
+        d=1e100.net; s=20230601; t=1739474097; x=1740078897;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9ll3EDDTY/6Dh7a8MWuMvGIgfSvEqbbqhDX1OHStQPk=;
-        b=CQIpMmT6VBYw1QooFBgKzg8g013XO3cQs+AyaXno+QWOl/e+LHdBne7gle5i3ejT5v
-         6HirGclqivrPiPOYw7yZTOzOauqz5/Cai4D0SsBg3xT4SGlxaKsAqqU08pvtUMA4TUTq
-         m4d9TaaMnnnO96at6dbiXIdURG8oFenAlwzCj3ilaTGndXz9LaWyzNOS9YNQzyCf3u/O
-         NnWsrNc3rBe8z3CzjFQ1OOp5GMj+uih9fjSdA7hogNLoQWjTXiRzBZzeCHifCD8iZ5cy
-         s0CZqbShESQrRs3CbV5bYVzdxzgaSjoh/S3oDR4Y/lRT4UJ3PETOiZL4BRBcbCjJnSxw
-         EIGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXimiBdgvr3fg9D3uToLH4cyueJvtFvIZAqvEy1uIgDysEssC7wPyk+DgvJXXPeLpkrLdAoCV+nW592sB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbQvwmAfdM++GTRbW6vdC0AoWaZW/gIXrzO6VsvbEx8a0CRv+3
-	DjJBf9F0hlBHumTPfz7j3+Yth6S2aibqYLr9KK56BrwOzbuVnpSg
-X-Gm-Gg: ASbGncv/lH6q+U9Ry+A5jLT768OocivYT/Qtw3KQvhr45e/G99WXibszFG72XGOf1L2
-	Jsd6qxI+FOTuUWFG6xIuHjXJ1oqbObz72c9/jETvvRdcR0OXWdt/4c6OmH2SUmfwLnSyA9RVri1
-	Mg9p1H8GR1WXQ2REFfO8RxUpEFrUQJChW1MaPadFCmuQnUL/UhGIzKTzGx4nD64EUAhRZPY6uhz
-	6VaymyCDL1lkqc6yEEfsoiNQMSqM/QObiqw5qDqrqxCDUxcArpCYeRGS32U3w3DiyBIXVsBe4/u
-	Ebmim6qoI7gPHBhIEi2tmH+G
-X-Google-Smtp-Source: AGHT+IExUVZvjx/iFh1WkVP3rRpgO7ilttlIBKKBcGqGbRT5JPyBk2NmKS1r9fk+bJSkDogTrrzUaQ==
-X-Received: by 2002:a05:6402:5d1:b0:5d9:a62:32b with SMTP id 4fb4d7f45d1cf-5dec9d326b0mr4771387a12.7.1739474112708;
-        Thu, 13 Feb 2025 11:15:12 -0800 (PST)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece288e2dsm1634508a12.80.2025.02.13.11.15.11
+        bh=9oYvb+adUifUAMjBHuPFQ7cS+nNgPWz10uBj3ervq5c=;
+        b=eaA9F4lXfbxYyRt/4/jy/1GdRkHcLZencNJlmqMr41vfvk+h8yRFhNC+AgYBfY0cKE
+         DFkLhTSmUMrl4L72W/km82iMh0IahT2cTOF7rARNBEEuAqPTMekrYuAeTtnoIooM9+Xt
+         is+FZtrTQudoEAUgTruaZbsRedHym5Fq+BGPvGFPuRefRC4pGDVgfoGu4ETbQhzHWCF2
+         C7I8mlzc7WgqA5yV17N5t09VOwpgAYWyL4m5e82HrjkH4LtsZie6N2rzZH1gDqCXcKpX
+         8tQ9k0TQ+bajTZJprYAMK586Bz+CPS9vTabDa3AL27uzsn0tF/NkfC/Z9lNZPvGIkNs0
+         Tt5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV62W4DrcPUIfWE7BuW2bIX/4stvfOqHwmWbzmehub3PE0LXYb9mChV2VPBmu4eaTQS6CMCl/57EztVVQ==@vger.kernel.org, AJvYcCVNHqYHWXNM/fCGyJXlrvW1OaXzNa8i/rov2hRl/gOTeiDTGb3I9o3Fe1Wf7PETaMgKbZ3b1Q36NulR4z/nkO4=@vger.kernel.org, AJvYcCVrpZzjSX5Tz822lvwpzBwxo7amqJLpVFrBVdk4hbzPCyDxD01EuRwcLVi4NysdXjSlUKBBoTvXkKhASlmm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZQXuNKoQQWoRdeviro6fAyjqOuwriAJ2q9M+T4lPA3HvuOIjY
+	Q0Z5cgXxclMl+Wvt1rfhlid8QbNSgH6E5GiUtjmYcw14k4odhD2b25BvUw==
+X-Gm-Gg: ASbGncug3OdPp69sHyQFayVETx3myI3AoyqRPLkQQwCWnqspQUuU5LjEPj4bX4mkmn/
+	unWdyhLqHYL1Qkp9osPonZRe86goxl40+lfAe1LdlqhyOX0JUk9RSgEvAmqmr2eI2O0UG2T1D7D
+	gt/dd8pY4JFmtAzuMy5LuY4WNzS6VvJov8xJpfHGvMwiCtYaYj6kgDVMLPEdjW+s4mG9nE/oqPD
+	AKNX/th0nNTcs8eEtpyg0yhfgY8MJ1G3us0q4k8KLW7GOc+ZjWS7kzE1yJzMu1SGGDqObMT8g2D
+	NvloFc5VyabG0D5J4X7zf+vVEzHZCwF44huasyR37GiVuiyK9Artcg==
+X-Google-Smtp-Source: AGHT+IGH8lan2Mm3Q8LexytfZbgTjy4KJ17B9w24CGdj1DNizxaautJh0QZgULgHj/3/HPmmZNOnNg==
+X-Received: by 2002:a05:600c:46cc:b0:439:31e0:d9a2 with SMTP id 5b1f17b1804b1-43960169738mr55585585e9.3.1739474096674;
+        Thu, 13 Feb 2025 11:14:56 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f771dsm2574678f8f.81.2025.02.13.11.14.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 11:15:12 -0800 (PST)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH RESEND 2/2] x86/locking: Use asm_inline for {,try_}cmpxchg{64,128} emulations
-Date: Thu, 13 Feb 2025 20:14:26 +0100
-Message-ID: <20250213191457.12377-2-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20250213191457.12377-1-ubizjak@gmail.com>
-References: <20250213191457.12377-1-ubizjak@gmail.com>
+        Thu, 13 Feb 2025 11:14:56 -0800 (PST)
+Date: Thu, 13 Feb 2025 19:14:55 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Don Brace <don.brace@microchip.com>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, linux-hardening@vger.kernel.org,
+ storagedev@microchip.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: hpsa: Replace deprecated strncpy() with
+ strscpy_pad()
+Message-ID: <20250213191455.2249104e@pumpkin>
+In-Reply-To: <20250212224352.86583-3-thorsten.blum@linux.dev>
+References: <20250212224352.86583-3-thorsten.blum@linux.dev>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-According to [1], the usage of asm pseudo directives in the asm template
-can confuse the compiler to wrongly estimate the size of the generated
-code. ALTERNATIVE macro expands to several asm pseudo directives, so
-its usage in {,try_}cmpxchg{64,128} causes instruction length estimate
-to fail by an order of magnitude (the compiler estimates the length of
-an asm to be more than 20 instructions). This wrong estimate further
-causes unoptimal inlining decisions for functions that use these
-locking primitives.
+On Wed, 12 Feb 2025 23:43:53 +0100
+Thorsten Blum <thorsten.blum@linux.dev> wrote:
 
-Use asm_inline instead of just asm. For inlining purposes, the size of
-the asm is then taken as the minimum size, ignoring how many instructions
-compiler thinks it is.
+> strncpy() is deprecated for NUL-terminated destination buffers [1].
+> 
+> Replace memset() and strncpy() with strscpy_pad() to copy the version
+> string and fill the remaining bytes in the destination buffer with NUL
+> bytes. This avoids zeroing the memory before copying the string.
+> 
+> Compile-tested only.
+> 
+> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  drivers/scsi/hpsa.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+> index 84d8de07b7ae..1334886b68d0 100644
+> --- a/drivers/scsi/hpsa.c
+> +++ b/drivers/scsi/hpsa.c
+> @@ -7238,8 +7238,7 @@ static int hpsa_controller_hard_reset(struct pci_dev *pdev,
+>  
+>  static void init_driver_version(char *driver_version, int len)
+>  {
+> -	memset(driver_version, 0, len);
+> -	strncpy(driver_version, HPSA " " HPSA_DRIVER_VERSION, len - 1);
+> +	strscpy_pad(driver_version, HPSA " " HPSA_DRIVER_VERSION, len - 1);
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Size-of-an-asm.html
+Wrong.
+That will truncate maximum length strings.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Dennis Zhou <dennis@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
----
- arch/x86/include/asm/cmpxchg_32.h | 32 +++++++------
- arch/x86/include/asm/percpu.h     | 77 +++++++++++++++----------------
- 2 files changed, 55 insertions(+), 54 deletions(-)
+	David
 
-diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
-index fd1282a783dd..95b5f990ca88 100644
---- a/arch/x86/include/asm/cmpxchg_32.h
-+++ b/arch/x86/include/asm/cmpxchg_32.h
-@@ -91,12 +91,14 @@ static __always_inline bool __try_cmpxchg64_local(volatile u64 *ptr, u64 *oldp,
- 	union __u64_halves o = { .full = (_old), },			\
- 			   n = { .full = (_new), };			\
- 									\
--	asm volatile(ALTERNATIVE(_lock_loc				\
--				 "call cmpxchg8b_emu",			\
--				 _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
--		     : ALT_OUTPUT_SP("+a" (o.low), "+d" (o.high))	\
--		     : "b" (n.low), "c" (n.high), [ptr] "S" (_ptr)	\
--		     : "memory");					\
-+	asm_inline volatile(						\
-+		ALTERNATIVE(_lock_loc					\
-+			    "call cmpxchg8b_emu",			\
-+			    _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8)	\
-+		: ALT_OUTPUT_SP("+a" (o.low), "+d" (o.high))		\
-+		: "b" (n.low), "c" (n.high),				\
-+		  [ptr] "S" (_ptr)					\
-+		: "memory");						\
- 									\
- 	o.full;								\
- })
-@@ -119,14 +121,16 @@ static __always_inline u64 arch_cmpxchg64_local(volatile u64 *ptr, u64 old, u64
- 			   n = { .full = (_new), };			\
- 	bool ret;							\
- 									\
--	asm volatile(ALTERNATIVE(_lock_loc				\
--				 "call cmpxchg8b_emu",			\
--				 _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
--		     CC_SET(e)						\
--		     : ALT_OUTPUT_SP(CC_OUT(e) (ret),			\
--				     "+a" (o.low), "+d" (o.high))	\
--		     : "b" (n.low), "c" (n.high), [ptr] "S" (_ptr)	\
--		     : "memory");					\
-+	asm_inline volatile(						\
-+		ALTERNATIVE(_lock_loc					\
-+			    "call cmpxchg8b_emu",			\
-+			    _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
-+		CC_SET(e)						\
-+		: ALT_OUTPUT_SP(CC_OUT(e) (ret),			\
-+				"+a" (o.low), "+d" (o.high))		\
-+		: "b" (n.low), "c" (n.high),				\
-+		  [ptr] "S" (_ptr)					\
-+		: "memory");						\
- 									\
- 	if (unlikely(!ret))						\
- 		*(_oldp) = o.full;					\
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index 0ab991fba7de..08f5f61690b7 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -348,15 +348,14 @@ do {									\
- 	old__.var = _oval;						\
- 	new__.var = _nval;						\
- 									\
--	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
--			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
--		  : ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
--				  "+a" (old__.low),			\
--				  "+d" (old__.high))			\
--		  : "b" (new__.low),					\
--		    "c" (new__.high),					\
--		    "S" (&(_var))					\
--		  : "memory");						\
-+	asm_inline qual (						\
-+		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
-+			    "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
-+		: ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
-+				"+a" (old__.low), "+d" (old__.high))	\
-+		: "b" (new__.low), "c" (new__.high),			\
-+		  "S" (&(_var))						\
-+		: "memory");						\
- 									\
- 	old__.var;							\
- })
-@@ -378,17 +377,16 @@ do {									\
- 	old__.var = *_oval;						\
- 	new__.var = _nval;						\
- 									\
--	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
--			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
--		  CC_SET(z)						\
--		  : ALT_OUTPUT_SP(CC_OUT(z) (success),			\
--				  [var] "+m" (__my_cpu_var(_var)),	\
--				  "+a" (old__.low),			\
--				  "+d" (old__.high))			\
--		  : "b" (new__.low),					\
--		    "c" (new__.high),					\
--		    "S" (&(_var))					\
--		  : "memory");						\
-+	asm_inline qual (						\
-+		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
-+			    "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
-+		CC_SET(z)						\
-+		: ALT_OUTPUT_SP(CC_OUT(z) (success),			\
-+				[var] "+m" (__my_cpu_var(_var)),	\
-+				"+a" (old__.low), "+d" (old__.high))	\
-+		: "b" (new__.low), "c" (new__.high),			\
-+		  "S" (&(_var))						\
-+		: "memory");						\
- 	if (unlikely(!success))						\
- 		*_oval = old__.var;					\
- 									\
-@@ -419,15 +417,14 @@ do {									\
- 	old__.var = _oval;						\
- 	new__.var = _nval;						\
- 									\
--	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
--			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
--		  : ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
--				  "+a" (old__.low),			\
--				  "+d" (old__.high))			\
--		  : "b" (new__.low),					\
--		    "c" (new__.high),					\
--		    "S" (&(_var))					\
--		  : "memory");						\
-+	asm_inline qual (						\
-+		ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
-+			    "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
-+		: ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
-+				"+a" (old__.low), "+d" (old__.high))	\
-+		: "b" (new__.low), "c" (new__.high),			\
-+		  "S" (&(_var))						\
-+		: "memory");						\
- 									\
- 	old__.var;							\
- })
-@@ -449,19 +446,19 @@ do {									\
- 	old__.var = *_oval;						\
- 	new__.var = _nval;						\
- 									\
--	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
--			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
--		  CC_SET(z)						\
--		  : ALT_OUTPUT_SP(CC_OUT(z) (success),			\
--				  [var] "+m" (__my_cpu_var(_var)),	\
--				  "+a" (old__.low),			\
--				  "+d" (old__.high))			\
--		  : "b" (new__.low),					\
--		    "c" (new__.high),					\
--		    "S" (&(_var))					\
--		  : "memory");						\
-+	asm_inline qual (						\
-+		ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
-+			    "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
-+		CC_SET(z)						\
-+		: ALT_OUTPUT_SP(CC_OUT(z) (success),			\
-+				[var] "+m" (__my_cpu_var(_var)),	\
-+				"+a" (old__.low), "+d" (old__.high))	\
-+		: "b" (new__.low), "c" (new__.high),			\
-+		  "S" (&(_var))						\
-+		: "memory");						\
- 	if (unlikely(!success))						\
- 		*_oval = old__.var;					\
-+									\
- 	likely(success);						\
- })
- 
--- 
-2.42.0
+>  }
+>  
+>  static int write_driver_ver_to_cfgtable(struct CfgTable __iomem *cfgtable)
 
 
