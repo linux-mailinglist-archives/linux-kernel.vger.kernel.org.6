@@ -1,159 +1,146 @@
-Return-Path: <linux-kernel+bounces-512428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF63A3392B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C11DCA33925
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:47:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A0BA3A1E9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212D73A3B5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF4F13CF9C;
-	Thu, 13 Feb 2025 07:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7358620AF68;
+	Thu, 13 Feb 2025 07:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEvnj/Km"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W47A3+26"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512D82063C9;
-	Thu, 13 Feb 2025 07:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB6513CF9C;
+	Thu, 13 Feb 2025 07:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739432820; cv=none; b=PIacdX94ees4LWPccxRug0bUiZxpN66faRuJN9+RoX72LWF+dRZMphUINtn0vodgSrsvVlkTL67SRtFmY0AAzv/thJBHfj31uRCwTsvEUCn2b6pRG/vZWloIblt1CddJcVLL+swTa2JcMNjCDuaXwhYNDHCn2Pd615yzbuZsKZM=
+	t=1739432787; cv=none; b=ZCq+bCO2OJ73BVpWvDipHsPtrkLinwUnl5Kk+We2UA+AycgYLnYs9Zz7YXoNFBM9yyvVrwsGVcJUPSBiQuIEc8VpYhyo15IQbpvNRZjJT4t1+FLVPhbozToM5jL72A/BQqx88WVvvrgiIO1PKH1BCubB6eW+XvXWIoIfIF7fYJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739432820; c=relaxed/simple;
-	bh=m7N01gpsrS64Ul0ZF1AXLBTZ2lTKOYhMJOH5bm/b/Gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njx3F3W749i4EHwD6PCD2nMEytAOoebYUllC6YWYWBEgntuhexhRj34BYqtJyKYrxMxWcRTJBaAyfnLekTpmvqimx/j3blIsJQX1zky7rLLTmC4UqeL0amTySLHM4vzLv83HnWf6S6CB4wrGmIw8SK/Wd1JTE6IDT+T2zoctWPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEvnj/Km; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739432819; x=1770968819;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=m7N01gpsrS64Ul0ZF1AXLBTZ2lTKOYhMJOH5bm/b/Gw=;
-  b=jEvnj/KmTN71p2O7tzX2+RP7fPE+OPoQHi5be69Mkug3m3GqxsPXbgMW
-   DUa8iJvFxrITyrz9UzwKIbmWLfCspJIVChmeymrwZs7/Tn1NodEzmgxCV
-   vB+78Y7NCPy+35kgjbz3kz8NoTuFSm10WHFw9YifEvyNZeCyrpskq0Q9I
-   ZaFqzxnwciHUlmExG9ydNCE26MTs40VNAErjnL8L/sHQBWF6oU/Qkdoiw
-   ynuHAFGDDPNV2oRT1jA9iRpcsx2i5iw68aZDQyEynycmYabI0zJ7739RW
-   0Vwk5EdhOcQ8RoZMYyKEu7H3AADgHH/Jq2j3B3b8YDPP2ROpjjIx56g0m
-   g==;
-X-CSE-ConnectionGUID: F5d4mfVqTTCo8n9JxIp6YQ==
-X-CSE-MsgGUID: 3qqvpQWCTXKv+rJsJ6ko8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="43889586"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="43889586"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 23:46:58 -0800
-X-CSE-ConnectionGUID: kIMk4oU5TYacoA6Out/RQA==
-X-CSE-MsgGUID: unga1muWThCDLOmV4wVp6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="113027361"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 12 Feb 2025 23:46:55 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiTvw-0016k1-2o;
-	Thu, 13 Feb 2025 07:46:52 +0000
-Date: Thu, 13 Feb 2025 15:46:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Akhil R <akhilrajeev@nvidia.com>, herbert@gondor.apana.org.au,
-	davem@davemloft.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
-	linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Akhil R <akhilrajeev@nvidia.com>
-Subject: Re: [PATCH v2 05/10] crypto: tegra: Transfer HASH init function to
- crypto engine
-Message-ID: <202502131554.aBNVn7S9-lkp@intel.com>
-References: <20250211171713.65770-6-akhilrajeev@nvidia.com>
+	s=arc-20240116; t=1739432787; c=relaxed/simple;
+	bh=JGGbLDBxCkqR8K/NNEPGyugpXiMGBbR2y/dGhIlBpSQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bNDYsmO5MjRU9Z5ZifDSY/gG1dMKGI43dHkm/9mo0DoTdfClGb2M6LnzHJ0J/KFWwv/Ip9SF3ckZeBsm5R65bg7u+CAlWIWkxnPMoTgy28KimO1hjMxqcuefidvWt7Q2FYI6IsaMSHWDlmHu3Fyv4lCrXMZwdl/22YkvMI5gyIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W47A3+26; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2887C4CED1;
+	Thu, 13 Feb 2025 07:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739432787;
+	bh=JGGbLDBxCkqR8K/NNEPGyugpXiMGBbR2y/dGhIlBpSQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=W47A3+26jJO+aOSyBxEQffv5xzRZH6zJsXCpbhKr2RKv6VurJxmYSBHg19HA1sCru
+	 L6hKZePewkqAsotyeSTjuiRTJv6VFoSYZ/TZxiOILMWzhabQte/4eZZTnDornch7Bb
+	 9RsoJv52jtJA2WtujUA+URSzzyouzSGpubHGnUdWiwy4E21JCyuEXgjEYYOoZQvGZD
+	 usTfaOk2wWSpuejQ4JYDOW10+H3TEfUbI5YIfiZmJhNCZhijECx0A8ew1x2L+ngu/L
+	 vTEeAc5Wo+fWFSL2BzUZfauY5ZuTvM0VFooa9FAnjQDG+d1ZcV6QflUAP5tl4tP1oR
+	 BDmrH8yEkVFAA==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Song Liu <song@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Weinan Liu <wnliu@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>, Peter Zijlstra
+ <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+ roman.gushchin@linux.dev, Will Deacon <will@kernel.org>, Ian Rogers
+ <irogers@google.com>, linux-toolchains@vger.kernel.org,
+ linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+ joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
+In-Reply-To: <CAPhsuW4iDuTBfZowJRhxLFyK=g=s+-pK2Eq4+SNj9uL99eNkmw@mail.gmail.com>
+References: <20250127213310.2496133-1-wnliu@google.com>
+ <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
+ <20250212234946.yuskayyu4gx3ul7m@jpoimboe>
+ <CAPhsuW5TeMXi_Mn8+jR9Qoa=rAWasMo7M3Hs=im6NT6=+CrxqA@mail.gmail.com>
+ <20250213024507.mvjkalvyqsxihp54@jpoimboe>
+ <CAPhsuW4iDuTBfZowJRhxLFyK=g=s+-pK2Eq4+SNj9uL99eNkmw@mail.gmail.com>
+Date: Thu, 13 Feb 2025 07:46:21 +0000
+Message-ID: <mb61py0yaz3qq.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211171713.65770-6-akhilrajeev@nvidia.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-Hi Akhil,
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build warnings:
+Song Liu <song@kernel.org> writes:
 
-[auto build test WARNING on herbert-crypto-2.6/master]
-[also build test WARNING on herbert-cryptodev-2.6/master linus/master v6.14-rc2 next-20250212]
-[cannot apply to tegra/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> On Wed, Feb 12, 2025 at 6:45=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.o=
+rg> wrote:
+>>
+>> On Wed, Feb 12, 2025 at 06:36:04PM -0800, Song Liu wrote:
+>> > > > [   81.261748]  copy_process+0xfdc/0xfd58 [livepatch_special_stati=
+c]
+>> > >
+>> > > Does that copy_process+0xfdc/0xfd58 resolve to this line in
+>> > > copy_process()?
+>> > >
+>> > >                         refcount_inc(&current->signal->sigcnt);
+>> > >
+>> > > Maybe the klp rela reference to 'current' is bogus, or resolving to =
+the
+>> > > wrong address somehow?
+>> >
+>> > It resolves the following line.
+>> >
+>> > p->signal->tty =3D tty_kref_get(current->signal->tty);
+>> >
+>> > I am not quite sure how 'current' should be resolved.
+>>
+>> Hm, on arm64 it looks like the value of 'current' is stored in the
+>> SP_EL0 register.  So I guess that shouldn't need any relocations.
+>>
+>> > The size of copy_process (0xfd58) is wrong. It is only about
+>> > 5.5kB in size. Also, the copy_process function in the .ko file
+>> > looks very broken. I will try a few more things.
+>
+> When I try each step of kpatch-build, the copy_process function
+> looks reasonable (according to gdb-disassemble) in fork.o and
+> output.o. However, copy_process looks weird in livepatch-special-static.o,
+> which is generated by ld:
+>
+> ld -EL  -maarch64linux -z norelro -z noexecstack
+> --no-warn-rwx-segments -T ././kpatch.lds  -r -o
+> livepatch-special-static.o ./patch-hook.o ./output.o
+>
+> I have attached these files to the email. I am not sure whether
+> the email server will let them through.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/crypto-tegra-Use-separate-buffer-for-setkey/20250212-012434
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git master
-patch link:    https://lore.kernel.org/r/20250211171713.65770-6-akhilrajeev%40nvidia.com
-patch subject: [PATCH v2 05/10] crypto: tegra: Transfer HASH init function to crypto engine
-config: i386-buildonly-randconfig-002-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131554.aBNVn7S9-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131554.aBNVn7S9-lkp@intel.com/reproduce)
+I think, I am missing something here,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502131554.aBNVn7S9-lkp@intel.com/
+I did :
 
-All warnings (new ones prefixed by >>):
+objdump -Dr livepatch-special-static.o | less
 
-   In file included from drivers/crypto/tegra/tegra-se-hash.c:8:
-   In file included from include/linux/dma-mapping.h:8:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/crypto/tegra/tegra-se-hash.c:657:6: warning: unused variable 'ret' [-Wunused-variable]
-     657 |         int ret;
-         |             ^~~
-   2 warnings generated.
---
-   In file included from drivers/crypto/tegra/tegra-se-aes.c:8:
-   In file included from include/linux/dma-mapping.h:8:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/crypto/tegra/tegra-se-aes.c:1788:6: warning: unused variable 'ret' [-Wunused-variable]
-    1788 |         int ret;
-         |             ^~~
-   2 warnings generated.
+and
 
+objdump -Dr output.o | less
 
-vim +/ret +657 drivers/crypto/tegra/tegra-se-hash.c
+and the disassembly of copy_process() looks exactly same.
 
-0880bb3b00c855 Akhil R     2024-04-03  651  
-0880bb3b00c855 Akhil R     2024-04-03  652  static int tegra_sha_digest(struct ahash_request *req)
-0880bb3b00c855 Akhil R     2024-04-03  653  {
-0880bb3b00c855 Akhil R     2024-04-03  654  	struct tegra_sha_reqctx *rctx = ahash_request_ctx(req);
-0880bb3b00c855 Akhil R     2024-04-03  655  	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-0880bb3b00c855 Akhil R     2024-04-03  656  	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
-15589bda468306 Chen Ridong 2024-11-11 @657  	int ret;
-0880bb3b00c855 Akhil R     2024-04-03  658  
-0880bb3b00c855 Akhil R     2024-04-03  659  	if (ctx->fallback)
-0880bb3b00c855 Akhil R     2024-04-03  660  		return tegra_sha_fallback_digest(req);
-0880bb3b00c855 Akhil R     2024-04-03  661  
-0c179ef38db723 Akhil R     2025-02-11  662  	rctx->task |= SHA_INIT | SHA_UPDATE | SHA_FINAL;
-0880bb3b00c855 Akhil R     2024-04-03  663  
-0880bb3b00c855 Akhil R     2024-04-03  664  	return crypto_transfer_hash_request_to_engine(ctx->se->engine, req);
-0880bb3b00c855 Akhil R     2024-04-03  665  }
-0880bb3b00c855 Akhil R     2024-04-03  666  
+> Indu, does this look like an issue with ld?
+>
+> Thanks,
+> Song
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZ62jThQccHVyYW5qYXlA
+a2VybmVsLm9yZwAKCRCwwPkjG3B2nSJWAP9HM6jijr9CHiI0TTsvKU41K4RJKnSA
+ACLOomAKVD3b2gEA+ZOrgnaTgwLNMQtfl4tcQIKU78wweS2kXsAjr2V4/wA=
+=HUa3
+-----END PGP SIGNATURE-----
+--=-=-=--
 
