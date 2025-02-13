@@ -1,194 +1,213 @@
-Return-Path: <linux-kernel+bounces-512481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799F9A339CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:19:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB1A3A339D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30D931613DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:19:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B091188C648
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF11520B7F3;
-	Thu, 13 Feb 2025 08:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7C120B7FF;
+	Thu, 13 Feb 2025 08:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yK486yp5"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jsc/rsc7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2B820011B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739434776; cv=none; b=E8sGoMwTXGWhwNgVSgZlxsA0ak2R+efpmKSmXEL5i0chd+0Lq0myf2IyngkQ6QnxO4Tup1dHGTowcvTPNbVzPT4KOKjCn4pFm61ouPKcc5sMjyeC4oDCAd/WmXR7f3DCsYZdPuZS/zVCdUpsgvmy23ee1Ndu7N6XKjLgmp3L8G8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739434776; c=relaxed/simple;
-	bh=Az9dQ23bPGQCJsqk2rNARA3D3DTwQa8JOi+/AGn2MB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UFVAZ0HjCfmURAWbQhmveBDoJl5N/9/ysbQwEX7XrWGfgMnb3Z5/8zqX/c0QV0nXj44j/Ryg7QEXqQ9bv1ERB5ZNaPuLQPRJo4lNEOA48iEG4YQtiGTbU8PsX+wimR/b3g/fEmIP0OQm/pjQih2P75RsMp5Z6cJERcMOIDdEnrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yK486yp5; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2bc66e26179so9375fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:19:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739434773; x=1740039573; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Az9dQ23bPGQCJsqk2rNARA3D3DTwQa8JOi+/AGn2MB0=;
-        b=yK486yp5l0hCbW4dxtpwxlWQtwbvWPch7dC6goztJ2044xsF3IH90UbN1R+QypYP8+
-         lbI3B5NKlOo11tFCvOvjYtJJPOzsMMNkvayL+ZIfleTwzvdLT+OSDMUXB/5gEzuqEx/E
-         O7LwWyxc5E/rn2EIbW/nqwCxDDytJh7MS+4T2bjzezgnddhFkAmYyot8prF1+27gtWy8
-         83M2J2N45DMNedPwiUaCjipTD6P6dlpTQ6w2WYJqVD4lXkqelcKkCt3XNJg+IpY4PYJF
-         dXPQj72vsQLQJEiZ/KM4qEDvjutLPgjiP8TAm9ThcTXwNTuUaTq+Zc7iFIkFx/+31W3u
-         2TBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739434773; x=1740039573;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Az9dQ23bPGQCJsqk2rNARA3D3DTwQa8JOi+/AGn2MB0=;
-        b=q6JCkhM1ZFmC7naoJiuVzYbLtnM0bl4iEQURB2ILP/LFN53BiK5MNRH8pSXFvsrRXy
-         xrV643jtyR5grYk55nVSBnay54+lPT7cjgo5KPiyuoJ+DxAg38lSb4WyeAPc0s8nAZU1
-         zR/JPmJRG+bP2kUNi3IiwTl+EXrlQe5KVTN5+dMo2f2KHBVHerTS6xDEY1pbvFF9J8k1
-         XA2A77ueRXYDxoUA2LJV6/HQZntwVe8NFAWk6amkIePoEk+6R+u82+xNl2ZZOsLD2aKa
-         ZJXTC+MEMhbHDSEldukBL8lWaQrJKegHJXLauFF6aTce7kQCl5Q8HdFdLS5OhTHHTVgA
-         gpKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMMTZnUn4qLBj3uyxA/f29Z5jf6MoeqJl6aB1agG6cKlmUPo4TmgrGOUnPttheyhCpuD+gU7VbJXIxk+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye6EJQq3mFszmgA4Pz9phWSQqMnEL3arnjzFXgxiZ6yLrupgXp
-	O+nKdoEiwdWiY/jnfKRWX3wKUeO8m6LSpa8zqD9w/PXKkW6djD8k4BE1zP4PbDQ17gbEfaUSole
-	D3cdsT7wlSP91hYHNtuduza2w2bF8jvpyOxRxeg==
-X-Gm-Gg: ASbGncsG0GEV8/jQbPd95BmDgXdhoa6SqXEQv6PvjICpp+v5b+Ir6SgXZ8WMowlCX2C
-	STrxFRiunaz9xEWnubewQHLSyZnQyjvDrZDUYE1neF5Pk1KXwficoNA/tv6mcka794PfaOFhTvA
-	==
-X-Google-Smtp-Source: AGHT+IEYwaXtzSb6L2iPNq96UiAe3ghkX0HNZgeRMU3vnnuVEV+oTgkHvrSkTnrpbFNibYdT1xw/IZq62i2DSoq0Et4=
-X-Received: by 2002:a05:6870:3c13:b0:29e:20c4:2217 with SMTP id
- 586e51a60fabf-2b8f8e8f47emr1365637fac.33.1739434773165; Thu, 13 Feb 2025
- 00:19:33 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A650013B29B;
+	Thu, 13 Feb 2025 08:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739434829; cv=fail; b=uEfIjitV6GLr+4B1xLi/Zg+jJI/QWiCMz1c2p5zyj0kodQMsfErt1N74VhEMqwmnFyltRwuE7l/btnsLPRfmyst16qL2o4o8ard3Z2+gi/4X1k4jE1tv1HfRMuaya17cOS6s6t2iMvUSOAyvmoog7Xn9nIu7IbzGC/QiyEoOo6M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739434829; c=relaxed/simple;
+	bh=AwW2nK9AODqedgB4SgcMA7DiRs/UjnrhUbewxVn+nPA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=l+nUSystIZJipXVUe6+m4nfGS0WR1F1625Ba6G3kpTXSWUZuQMK9kapcKxHlT8LBj2eizfuyHGRM4uVenMwrTQUeBKTjbKKSZtVMldMMi+umu6uvMVAiZdO5ZfLievx5dtWv18RMTP8EJbcFkPTRTgOBGDTjdl95NmTBn+JFl1k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jsc/rsc7; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739434828; x=1770970828;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=AwW2nK9AODqedgB4SgcMA7DiRs/UjnrhUbewxVn+nPA=;
+  b=jsc/rsc7wD4ebhqgVbBqE/dRWMJKGnTuH94wxWgjUngN0IUy0TrMRGI2
+   1aXdxzfTZeL47c/RPVtG2bMI5Rodj6JY0heR/hhHgwJbH/hPraRD96Lba
+   JFO0da0qxZMFfMfwf55XhEnj5//b9jjh/0d5lNh1B6uGJe6V5zAQG6FzN
+   PwPXCm0+n4IHvLJ14Tzydqoo8toiJFovl2J5vnN3Zxh1Uqg4J2na+4GNd
+   rW9k+XAJ7H38vGQLQ9/nSsElWFzHtOFwhJxlHGJUTaBjGRRSW6RBWhsPz
+   QUnoIWWVO3RiGZc9T6h+E9K2qHArGuv8roUwK1ytVmRKmyzLKd9uAUB1a
+   w==;
+X-CSE-ConnectionGUID: SwV+y8IgTaWq9hZ0clh3RQ==
+X-CSE-MsgGUID: EDkHVuyaSzWlA7Z3QJArAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="51518838"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="51518838"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 00:20:27 -0800
+X-CSE-ConnectionGUID: bJnLEZCyRgaJQHwCYY8J/A==
+X-CSE-MsgGUID: MN5H7W9XQ4Oasd1AO9gPsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118263252"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 00:20:28 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 13 Feb 2025 00:20:26 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 13 Feb 2025 00:20:26 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.40) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 13 Feb 2025 00:20:26 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yJzdSUznHbCp6uBMWH8uxfWdxDjYgWAPK4il2RYYFwlot/jEWK8AQqcfdAG8DVRm+8VmHnrXTWL0EeKUrGZgQNv0nD7bOcQYBemBplJysVPCHscLyCPIOdiQfV3xiM8h6Nd/scTyvjM1o08Gkmd3sPOXn1WL/FVgevT7+160p7hkyBZ3t5Q3FTbrOtyRExmwF3B9flDWguEhteANcNhX8H4oN9Bte28WFrMtDqDuv6wqHnI5AzTUVDXu81lUAI2Kb84of+XBXY6Ynd5rCfexfFUNxeadBy9UJj2M90jOoVQARGwE0M19FLfjFw8EEciEXw0EsS9dVMq1A+rfVcfHgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RzbAIzOehSEFNDuF91P2610cIPyp0YwwHuaoLk5OSQE=;
+ b=U63dcHII9vrS8BDyNXnLIzaY3oJjj60ZeamFYAzEg2V+IOopOlKnuSO4QvJMaSo2aCD8QUIURt8lTIn/sYC4AqrcyAX/4YYXWZp6cuQ8eIHuL6aiLRTHwv1f5WpjKIqhUQa0P/9iwDdTAzmrmOkY7YI8aqiVt4U/LoLkY0ZgkzrAspEHrs5/FLaKqQ9GFF1cpNPUWp9qZC2FN5xxnUtbMXrXpRiG4mHJ+P6AyHLwKRUKcWXHQ0wvubKyII0o3W2KTKDQ+hEQazVUTxwK9ExdsmODyULjwKv2z9T4kHrDj6/zsy+kXcmCj+Jm2c+0XrGTLNQPAyCt7OC3g91Kg8+0tQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by DM4PR11MB5246.namprd11.prod.outlook.com (2603:10b6:5:389::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Thu, 13 Feb
+ 2025 08:20:25 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
+ 08:20:24 +0000
+Date: Thu, 13 Feb 2025 16:20:14 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+CC: <pbonzini@redhat.com>, <seanjc@google.com>, <kvm@vger.kernel.org>,
+	<rick.p.edgecombe@intel.com>, <kai.huang@intel.com>,
+	<adrian.hunter@intel.com>, <reinette.chatre@intel.com>,
+	<xiaoyao.li@intel.com>, <tony.lindgren@intel.com>,
+	<isaku.yamahata@intel.com>, <yan.y.zhao@intel.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 08/17] KVM: TDX: Complete interrupts after TD exit
+Message-ID: <Z62rPgmS2RB/LaC7@intel.com>
+References: <20250211025828.3072076-1-binbin.wu@linux.intel.com>
+ <20250211025828.3072076-9-binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250211025828.3072076-9-binbin.wu@linux.intel.com>
+X-ClientProxiedBy: SG2PR02CA0088.apcprd02.prod.outlook.com
+ (2603:1096:4:90::28) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
- <20250212205613.4400a888@collabora.com> <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
-In-Reply-To: <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 13 Feb 2025 09:19:21 +0100
-X-Gm-Features: AWEUYZmAZ7muu4Y0CkS4aHUGrjFZdjBtSwN3vjBgPnCfnhs0YPXrZruLf1ATUM8
-Message-ID: <CAHUa44FtXA8bOS1-BAGSrCFLxu_FRd2TaEtxGNdkzKua_-wNUQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
-To: Sumit Garg <sumit.garg@linaro.org>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
-	linux-arm-kernel@lists.infradead.org, Olivier Masse <olivier.masse@nxp.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
-	Florent Tomasin <florent.tomasin@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|DM4PR11MB5246:EE_
+X-MS-Office365-Filtering-Correlation-Id: 926d2820-3cb6-4c22-848d-08dd4c074413
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?MQndrmPXsJOxECG0nrGtW5x6FmG8LiOQhNm7fGHLxW+4SR+VZ0RH1R36ymwv?=
+ =?us-ascii?Q?qc3GdjU+o2ofzk8QXlex9tO6gUjzRPiTpfnW5N0c86eOX0Z7bC4o3DYL/3ZW?=
+ =?us-ascii?Q?BNKPdYBz+4YpoTPZQTi/Ah1UO8y1swSFQQ+SMDAVF1Iv97pk+xB1KnUen/aB?=
+ =?us-ascii?Q?6e9h42ES/sqGmc/wmKailHcp0pzVsY2R2xlGrtRQ5uoHgTIDgJCQGV4GJ2jB?=
+ =?us-ascii?Q?i3GCPjAiDb61T9a5CHjnqBBBqekMIARK9xkgYTr3RtIMFvXf9tkTATanGmgA?=
+ =?us-ascii?Q?CGm6+MlfGH8CYi1ttaPMuyZC7ILTuLeucr6ZEDkE2+KDZOJpYFeXlkJ14snm?=
+ =?us-ascii?Q?wttZuqQgGjDmkki86GwN7LSzRRBj5gv7xAgpgWoB2OkW4GlwpYqJhW/I9S3Q?=
+ =?us-ascii?Q?ACg5S7oz872Y9O/wASN1j++UL2iiv7hO7wrgf7GCkYRQDsl0Xy70Pi7oKJ3K?=
+ =?us-ascii?Q?/kf9/l01sz+q+EBLNXXtJaPYHn7HeTNNdQmegzTAiwOyyS1EydjAz156cEjH?=
+ =?us-ascii?Q?TRpXzzkMPTA4Eqef8egUg+LBQw5D9+9UbeIDpViZXPfXDQPuvRXZFVWPthO2?=
+ =?us-ascii?Q?+84ZiNbh8mk5EV4VqGOaApiFEZCAZicA0q4RYam2cuA68bhe86J8jqmAw6/x?=
+ =?us-ascii?Q?U5Jnu+tRlWRPMI9eYcZstYlrSAGmhMA99nJo+mkS+2q00vn8hQMqyqLvA7dz?=
+ =?us-ascii?Q?U8scLNjkhbYjgISA6A+aqxTEHhRccAmGNIz8JaOP3wRYlSPohCQG6KQ/+yx7?=
+ =?us-ascii?Q?5J2GD8zy5DSMulKJJjUasjAO+PiJ1e4xskwso74EVl7e0JkIdMsJ/JIX6J+8?=
+ =?us-ascii?Q?85lhaiORJ9vfQ3gjJzY7UrCSNBxSc7fqGkbmpfTGsKXrO5VWRWBljeYk2rie?=
+ =?us-ascii?Q?RrejTein/JCHf48nAy9uYt6dQfupB/r8OxT4+gTo+R0H0i2fVfMleV52vttx?=
+ =?us-ascii?Q?+rtUwtH0s1otX9Vgt+sV18/bpvyoSfW8bkZOwrUnmZiS9uNR+i8MNPxGejZS?=
+ =?us-ascii?Q?NUaNaxfWSebSQ9ozW5PsWpW+kvzsX3v2oI/dHqHAvE/UxqO9UfoycTXkiDeC?=
+ =?us-ascii?Q?pZyAHed/c8WQ3AwjlimcOezszmBOUn3N8nsci6DAmdsY3egGERUrAahMdUlL?=
+ =?us-ascii?Q?XfAb9tz4pIyBqmFUKNXLk5cdcWXmuLUh8mAwquXzP4qt6CjebhHaf+Nn8Knm?=
+ =?us-ascii?Q?hfEVty5Nm6rZjyKuPFvWdbozx5bLrYam5qbQ/8DwoarofUIqAU5L2URsJBml?=
+ =?us-ascii?Q?rGz60V6JCdEjaut5XBAgnIPCATSkoJFJTsKScJj6xxoHQvQKsNmoiuXQF2IE?=
+ =?us-ascii?Q?CV+3sfRyaTKzcmeFFzV/8Drjep1yxfvJF8fO8D8lMDF8mz6qm31v7JRQ+fze?=
+ =?us-ascii?Q?gWwnhXa9bS++jO3RyTWWbfO3z4+C?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?C+Jv1BtOq9KzbTNYn34fDXJMuFqOhB4v937PVINDFRvgemcEdksr+SYt5Kcz?=
+ =?us-ascii?Q?DUM4DtyycBC094Lsl3zOzArFOhsimNtlPbLkYacf9NzrNbzwifl1spxTPAP3?=
+ =?us-ascii?Q?0J7G1FfUyIjQ9ErAsu0hnWt2BQOcp3nnZI/URoout0EGxExbFUuYD2g/VaX8?=
+ =?us-ascii?Q?ORB0+EZCJ6Ang/QEb96CGns4eF7IJqcqilJqTzKhPelie4q9/YXXB5S32iY4?=
+ =?us-ascii?Q?yOcluhj9cVbtL82iq8ipPgziNIvrV9bGHqWbE/z7tlnKKuNVq+yVp/pcpLca?=
+ =?us-ascii?Q?9qkrcMWXB6CQsHuJW+qNGm0OII1LrFU7YE4OYpm+3Da0VlP8oRgOctORmazT?=
+ =?us-ascii?Q?XEiXJbuNIt2/pTY7Wr4Nu+UuvBDo7uCM6eN7H6/Gb784nr+DwO5bwRexxIXs?=
+ =?us-ascii?Q?7G8/tXOnO3j1aVN6Xj1n2om8Hnqf+/xdxYxoii56om4CK8rWwiy3qOJ6Rgbd?=
+ =?us-ascii?Q?w/2zN6SpAty1jrYjcFEjmhmRjvujYoqM449k8eAkPHvEuECGnJ0WOtJV528U?=
+ =?us-ascii?Q?d1xMesWgHB2rfojMXl0AClImSavoMb1dbyYt2H5GPxfEUtEg4Kg9JLHZC1uU?=
+ =?us-ascii?Q?GPsrXGDrVApqtvt9oLHA4wtXkdjsoqG4mxOXEQPAJKfRzuKBX/elVDwuhaGD?=
+ =?us-ascii?Q?hS5O/HOafs77ZS95gyBy0biWR3apKl/litLA2FZjOJuafR9r5GSA14StLc05?=
+ =?us-ascii?Q?OhUc37/viRtda3l/dVZBzDYb29vFlGHZVu8WUPgSyDQKl3A8NQL3Ph08Q3PR?=
+ =?us-ascii?Q?gSstWF3TBg9XH9M6dr04pe2e0qLduCjT1iT1KTrulbFnD6l70YGbNL1rzQ8q?=
+ =?us-ascii?Q?T+dv60U/ZSDmkcmrefWDwV+9pEsVNMqGe3LTm+yJ9xDzgzNNfHAoakJ7ToaI?=
+ =?us-ascii?Q?fkjePJ/wGf+zufLCOHpP74lj4uW4INS/9cGlZDmFpWeQie1LiKXN1CcrePSY?=
+ =?us-ascii?Q?lRp5RBIA1bfJkb6A0xBVqyJc6D1k14fUPP8U7tca/NyNE8LWbYeP3uU+EpLo?=
+ =?us-ascii?Q?gs2NQdrAnaqUHExMN3jK93jyYXTNZI0n0uKbF6rG2ahB0ZBYl6FablJONgzx?=
+ =?us-ascii?Q?Sc6BpWoteVNjlIeMv4HtAeQVOHR5conChzO6iFVZU0ULzorYtmHYX3+4DbOs?=
+ =?us-ascii?Q?h+mlO7O2b4ljTSw+aCsYja3kTndY5t304jHcc1XbdIlRjwcBshdqic3qamN4?=
+ =?us-ascii?Q?NPl9cthIfACWMCpdctM3aU1aE01Oky8bzMI5PTOXZHRWij3IYHwGz9LtN7z3?=
+ =?us-ascii?Q?Q5YKGgb9A99+7waWfTmBEiC1UVTUHEdG2fjhCzDiA0KIEOW1fH7Wn12z8yud?=
+ =?us-ascii?Q?t5wxc2bodLZ5dkoyeSU27niNbc1mFyyhpM/E327g7+rSMpG4PqsIqREJg99+?=
+ =?us-ascii?Q?MmwintTiDsX4nLa+Vs0KaHmVBqZim3ASw0Ro/HZkTVz+LCJ1m3iKqIP7Mjdv?=
+ =?us-ascii?Q?8+O5p8HrhD0MTt0Mqswb/+Q6yIt4bXBaCqreEzBiNX6vpquACNQvT+rymxDd?=
+ =?us-ascii?Q?gdufTFpLluKmnMjcs9RAgmNMgfutS1t0jus0Vy8S0I9dbkQJ32gCDzdj+nih?=
+ =?us-ascii?Q?l1OBtTsOJfVrPoMYujXpUMlaxxajzSerHB3j1e39?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 926d2820-3cb6-4c22-848d-08dd4c074413
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 08:20:24.8408
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wULj02YWfN6qLpPCZKMhGUI/7C3nk2NWgMTv7Gx/wIohQJfdbF3BcCqWt8UY9rI23lPJZfynsEslTkZtWNVUWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5246
+X-OriginatorOrg: intel.com
 
-Hi,
+>+static void tdx_complete_interrupts(struct kvm_vcpu *vcpu)
+>+{
+>+	/* Avoid costly SEAMCALL if no NMI was injected. */
+>+	if (vcpu->arch.nmi_injected) {
+>+		/*
+>+		 * No need to request KVM_REQ_EVENT because PEND_NMI is still
+>+		 * set if NMI re-injection needed.  No other event types need
+>+		 * to be handled because TDX doesn't support injection of
+>+		 * exception, SMI or interrupt (via event injection).
+>+		 */
+>+		vcpu->arch.nmi_injected = td_management_read8(to_tdx(vcpu),
+>+							      TD_VCPU_PEND_NMI);
+>+	}
 
-On Thu, Feb 13, 2025 at 7:42=E2=80=AFAM Sumit Garg <sumit.garg@linaro.org> =
-wrote:
->
-> Hi Boris,
->
-> On Thu, 13 Feb 2025 at 01:26, Boris Brezillon
-> <boris.brezillon@collabora.com> wrote:
-> >
-> > +Florent, who's working on protected-mode support in Panthor.
-> >
-> > Hi Jens,
-> >
-> > On Tue, 17 Dec 2024 11:07:36 +0100
-> > Jens Wiklander <jens.wiklander@linaro.org> wrote:
-> >
-> > > Hi,
-> > >
-> > > This patch set allocates the restricted DMA-bufs via the TEE subsyste=
-m.
-> >
-> > We're currently working on protected-mode support for Panthor [1] and i=
-t
-> > looks like your series (and the OP-TEE implementation that goes with
-> > it) would allow us to have a fully upstream/open solution for the
-> > protected content use case we're trying to support. I need a bit more
-> > time to play with the implementation but this looks very promising
-> > (especially the lend rstmem feature, which might help us allocate our
-> > FW sections that are supposed to execute code accessing protected
-> > content).
->
-> Glad to hear that, if you can demonstrate an open source use case
-> based on this series then it will help to land it. We really would
-> love to see support for restricted DMA-buf consumers be it GPU, crypto
-> accelerator, media pipeline etc.
+Why does KVM care whether/when an NMI is injected by the TDX module?
 
-I'm preparing a demo based on GStreamer to share. It helps with more
-real-world examples to see that APIs etc work.
+I think we can simply set nmi_injected to false unconditionally here, or even in
+tdx_inject_nmi(). From KVM's perspective, NMI injection is complete right after
+writing to PEND_NMI. It is the TDX module that should inject the NMI at the
+right time and do the re-injection.
 
->
-> >
-> > >
-> > > The TEE subsystem handles the DMA-buf allocations since it is the TEE
-> > > (OP-TEE, AMD-TEE, TS-TEE, or perhaps a future QCOMTEE) which sets up =
-the
-> > > restrictions for the memory used for the DMA-bufs.
-> > >
-> > > I've added a new IOCTL, TEE_IOC_RSTMEM_ALLOC, to allocate the restric=
-ted
-> > > DMA-bufs. This IOCTL reaches the backend TEE driver, allowing it to c=
-hoose
-> > > how to allocate the restricted physical memory.
-> >
-> > I'll probably have more questions soon, but here's one to start: any
-> > particular reason you didn't go for a dma-heap to expose restricted
-> > buffer allocation to userspace? I see you already have a cdev you can
-> > take ioctl()s from, but my understanding was that dma-heap was the
-> > standard solution for these device-agnostic/central allocators.
->
-> This series started with the DMA heap approach only here [1] but later
-> discussions [2] lead us here. To point out specifically:
->
-> - DMA heaps require reliance on DT to discover static restricted
-> regions carve-outs whereas via the TEE implementation driver (eg.
-> OP-TEE) those can be discovered dynamically.
-> - Dynamic allocation of buffers and making them restricted requires
-> vendor specific driver hooks with DMA heaps whereas the TEE subsystem
-> abstracts that out with underlying TEE implementation (eg. OP-TEE)
-> managing the dynamic buffer restriction.
-> - TEE subsystem already has a well defined user-space interface for
-> managing shared memory buffers with TEE and restricted DMA buffers
-> will be yet another interface managed along similar lines.
->
-> [1] https://lore.kernel.org/lkml/mzur3odofwwrdqnystozjgf3qtvb73wqjm6g2vf5=
-dfsqiehaxk@u67fcarhm6ge/T/
-> [2] https://lore.kernel.org/lkml/CAFA6WYPtp3H5JhxzgH9=3Dz2EvNL7Kdku3EmG1a=
-DkTS-gjFtNZZA@mail.gmail.com/
 
-Thanks for the good summary. :-)
-
-Cheers,
-Jens
-
->
-> -Sumit
->
-> >
-> > Regards,
-> >
-> > Boris
-> >
-> > [1]https://lwn.net/ml/all/cover.1738228114.git.florent.tomasin@arm.com/=
-#t
+>+}
+>+
 
