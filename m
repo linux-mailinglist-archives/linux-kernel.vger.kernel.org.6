@@ -1,312 +1,214 @@
-Return-Path: <linux-kernel+bounces-513040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3C0A340E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:56:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6F6A3412F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:02:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEF4016AA65
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BF1C1612A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B5C2135AA;
-	Thu, 13 Feb 2025 13:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FE1245035;
+	Thu, 13 Feb 2025 13:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h/2Md6kD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tIJ/Wgen"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2072.outbound.protection.outlook.com [40.107.92.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C5E24BBE0;
-	Thu, 13 Feb 2025 13:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454995; cv=none; b=JuOli79Uv0Dba6r1cjC+WRhKSINHCNnQNo1Vm5HnLbiLKkU5FVP+KYhjqZxbmOc1dEBymvpeBCfNhQEU0bIixbLwGYnyoqx1p2MLCZ6aMCxyleIBKSyndKq0+cHo1bLo10GIzIeUZlpxohY/gMevaMSO14PhEvpNv5bS1iZmhuM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454995; c=relaxed/simple;
-	bh=rRHidVDXPWVK+x9+ECREWygbSwTa4kcxMK3/9SuWWMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDNID4vBzxnHeAuZzegHZcrBdKOzwb4jDyHT7PYsKfsJ8aun8c/XKzRrBKnCtKolhE0jOMTSeLFJT+eX32IeJxEgokfSSfs0fl8deggIwDwBrMt7YJfl9l+l4O2lwwKATQf73VCGI7r+wiw4Cr/tEhZe5ihQ1sBYa7lo1oJ44Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h/2Md6kD; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739454993; x=1770990993;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rRHidVDXPWVK+x9+ECREWygbSwTa4kcxMK3/9SuWWMo=;
-  b=h/2Md6kDXdZ5sMbQNL9+oxQ7fA0VsU4q4yEmQNx8vk4Y57I/GY4g8tqV
-   xmFRbMX2oRa64SSVMwc4IgpWcBCpNFzUFDtJ/5su9QYmd+LiMNy/v/ZuA
-   AFcexFO6Tm2xzVH5T9yQuxu1A6J+e9j+3s7HOGEJGHnEZFfvKisSW3VOa
-   tAsa/ITddv449eRgkiTGDjwUSDVqkkcbBg8yNzU0+3YIrguDYCZkL5FHJ
-   1EyPIcLL+2KkU8ENgTmCAw+moo0AqT7+AsHXuRbyPaA99Bk5b6v27cLNa
-   4R/Uskxyyu8X8w4NLsOmQW/0hsXPa4yqpPh120LeU2hU0XM4TpLGRSLfn
-   A==;
-X-CSE-ConnectionGUID: usuFaIf2S3W2cZUFNp6THw==
-X-CSE-MsgGUID: gm+bhbl6Q9aV6/gpNUX2JQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40020193"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="40020193"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:56:32 -0800
-X-CSE-ConnectionGUID: tBdZYrHFTp2+93dA3mNCjQ==
-X-CSE-MsgGUID: yvVN0Zu6TNqP5j8o4PthVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="118081248"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa003.jf.intel.com with SMTP; 13 Feb 2025 05:56:28 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 13 Feb 2025 15:56:26 +0200
-Date: Thu, 13 Feb 2025 15:56:26 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Fedor Pchelkin <boddah8794@gmail.com>
-Cc: "Christian A. Ehrhardt" <lk@c--e.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Saranya Gopal <saranya.gopal@intel.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mark Pearson <mpearson@squebb.ca>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] acpi: typec: ucsi: Introduce a ->poll_cci method
-Message-ID: <Z636Cn5rbvWmfRbc@kuha.fi.intel.com>
-References: <20250206184327.16308-1-boddah8794@gmail.com>
- <20250206184327.16308-2-boddah8794@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F27245030;
+	Thu, 13 Feb 2025 13:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739455079; cv=fail; b=cAuR7/y4cpOy1gHVrCobQ4M7XOQUsH9HTrSgQXxCDONzN81hGJX7F3FhkVV37zhKO8oEnSU8c9L6QVYdjBiabVwGg1SrXr8KBQbsiqMp5UG/IdIwOoGdCa9jAHG7RBN0+NVDJ5H8nqmC+UcBUB2gFuT7aoZ4wJIx6BMKqcHSP2U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739455079; c=relaxed/simple;
+	bh=Q6gsfjuLfOgY8lhI3kcs5BtJDTBUgP6NY4LOYP4ebdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PXTG+cdHTlnpCSukESCmT37vQ7zyx5V9yjuN9yVhwVTsdUQZWnBBNwQjIYKE4y5QYc1al9E595RdhacPkqiKydTxSKUt1qxHs1XMjUZqRwg3WwultyCGONLa+OjMOzxZtMdnJ1cP1w7IAew/2+OsS/tBD/BW4oPF8PGFX9tU7DY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tIJ/Wgen; arc=fail smtp.client-ip=40.107.92.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lYtthaong5eBDBsFkaZ7YHCxgmO/igMxlY2zqn3fUlRph/S3KddU6doo+U6hpjtV+/h+URkx+BZB8kOIxaHjo9EAk+iCSBT7cq2XIpV8yoY87Z4hxPIf2Bu+8x4JNy7JdpqDVcKOXDj7YFJ6KMlWchORTX2ULsSmP7VYVH2JMx/CkjWrL2sRBth5uFBIzPOQWsCj8rMyjiTbPpXwsvzAEmciwZQz6N9UWGRY1eI/Ug97R7XsNs4P4axx2wLkpkerLMtsZ4B3wOSlVs7n0YjIx0JEnwPGRKgML3/tLPOhZAk4/jLpd/o2ZJgJombGiUrQY/u71l4Ki44K5J3bhpPxEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y+hoZLne4T93wltH42n2qnq/dWpRdPKq+sLPsjjS1/Q=;
+ b=R+k5yeayHHx4iX7mKejD/SHq65qkhRxW8jiBQAf6TalspqrvjeXcfHUNVMsBm+WF7hxNUqzYI+daWel+98FAY+mOTIwGHSO524Ri0xjsDluALrtE48bfEoMc2awgBBUcky2CMGtmhA62xWxhcrifpNyxqgHU7Jke+WrNtgLER8AmerS8eO8yfQXVO35itnEoJPEgiomawQLddjvZb3EBXgCv3m11u4HWi9CnU3wxZVMlGdXesswI2v/Eh1O31gRL8yfUhCnBFwdTqKOod9vXOBClxY79mHzHypqSq9zLORxVpUPsGfdVIRsvfx/0SUhbw4KKgPlu5VK6mnhd1xPpqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y+hoZLne4T93wltH42n2qnq/dWpRdPKq+sLPsjjS1/Q=;
+ b=tIJ/WgenWz9/Erpvnt1Ut4bOluqG04/JiDqRMHjQE2skos8z2/P2DbBH/jn1S0z413qyLSylC5Jlhn3qWOwmWVpVsK3S6AoAyE08tL1DVo4HO5aqxEsTiDis+HQc2lbDnhlwSKGIDgm1Itzs7KTiFXTsal47tG+XCD1ckQHT1F9O3V3XyAvPk60K1BjwBGD3/hnkE2WL7KIqEEXl8GRP9PQ5WVHmtI/Lvj3M1ZtlJVv6bY6fU1vysNJeXvyOzIQNR5QaDru2wdMyxU49It4NfiqnJRyA6yDrUrAIQDsL/iEZLd7dyPvJCubtQZoC0TKnGgvk6d9thRe0mF+P7ZNTKQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by IA0PR12MB7554.namprd12.prod.outlook.com (2603:10b6:208:43e::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.11; Thu, 13 Feb
+ 2025 13:57:54 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
+ 13:57:54 +0000
+Date: Thu, 13 Feb 2025 09:57:52 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
+	maz@kernel.org, joro@8bytes.org, will@kernel.org,
+	robin.murphy@arm.com, shuah@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	baolu.lu@linux.intel.com, yi.l.liu@intel.com, yury.norov@gmail.com,
+	jacob.pan@linux.microsoft.com, patches@lists.linux.dev
+Subject: Re: [PATCH v1 01/13] genirq/msi: Store the IOMMU IOVA directly in
+ msi_desc instead of iommu_cookie
+Message-ID: <20250213135752.GY3754072@nvidia.com>
+References: <cover.1739005085.git.nicolinc@nvidia.com>
+ <a580069c5e494ffffa668218b6fe3a207b01efec.1739005085.git.nicolinc@nvidia.com>
+ <87y0yajc0o.ffs@tglx>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y0yajc0o.ffs@tglx>
+X-ClientProxiedBy: BN9P221CA0024.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:408:10a::23) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250206184327.16308-2-boddah8794@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|IA0PR12MB7554:EE_
+X-MS-Office365-Filtering-Correlation-Id: dbd6465a-8a10-4478-c503-08dd4c366918
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vIkudUJLFFbTvTrl6esEQQ20lAJ9artoYilah7u9jHFVZwJaok3ry13Aoobf?=
+ =?us-ascii?Q?k7HgO9B1AyT8kjG6VQYbvdNBosKTvq+OiSmE8UiasATN2ZVcWqA6yyQeKIXf?=
+ =?us-ascii?Q?hD+yuH7JCU8U4uTJ/FQ46SdwskPlA6T5dyigFp5gagWQRyazSYNkj5tvosZ4?=
+ =?us-ascii?Q?cNepW3X0wIckdCI33I9sjf7VBcqKY/umwo4zUem8VkRdUYKsvNjDLPHk1NKp?=
+ =?us-ascii?Q?kDu/jZcDPLhbjA2TY7xGflnLEyizy6KEOi+r9GLdz/UxawOp2jXtRI9lJkjT?=
+ =?us-ascii?Q?MVqkkJlV6+7rCOwbCTOUr7jxcB6nJabJgJECHssGE8TPmA5gfOxOwtjqflBg?=
+ =?us-ascii?Q?5kv44OK4fbXJpfAi6gtldIKCdq3e4MaLoqi0jmWxGMeTmtTuMMQi4KPd4M2L?=
+ =?us-ascii?Q?r7jBEj4RqBR/TK9BtLQXw/ob2Ht3L8nPub61nWPEvevnQB0jZ+mK4NeTTmHg?=
+ =?us-ascii?Q?WdxVRIUtzOrJVHNGsR5uhSVqEzeAJWX5boO8sWdVdV3LaZiOC3Bb8TRhunKM?=
+ =?us-ascii?Q?lSaxsS3Gni+nFpJyXy8DUenqOHs+kao1Y78LXHXEei6kZmCc41A+/NpM+S2h?=
+ =?us-ascii?Q?37koywZrtBdAKVDqMZWalumdi9KW0boP2qY9WpZP96U/dllSEOVA6pPz7KT7?=
+ =?us-ascii?Q?2asCIVtR0T5rB3GJnTXPquOKKWyWIekQHSckuXb1JdPkullfNEFA1Wakeuu5?=
+ =?us-ascii?Q?SBaYM+EN1t0pSvKbcYsPnp9EoN6D9SgLlUfCvPYE/BxzOVMWgDEKyzh8BiCC?=
+ =?us-ascii?Q?KHkOCp4BBXYVPrXvYO8trcAS4t93a5ivSDOVWIPcGN5qTp+vmIakWDKP1GDS?=
+ =?us-ascii?Q?mbTI+Xio6+bF50eWDAwJTrPz29HagWGM6fTlWJbAHu+op98FprOvW6GSKao9?=
+ =?us-ascii?Q?i92eA1+0Uw/VaplLwQCNll49wG94qufct21luqJz3zLMXKdmrEFHdY5RrdcZ?=
+ =?us-ascii?Q?jnLTnKWTFqV9NBb8VOHk9fI/KQGPctmhIbfpVJq6ArAWcx9a9Ku2kqEndvGx?=
+ =?us-ascii?Q?SbcmPSjulCawKk/uuzdWQ19Nyu31+joFlstiHfDHRfLFXaLmge1GLiD7n5fZ?=
+ =?us-ascii?Q?14QSa4id5CKqWi7tziwpmIwT/T8Lm0RZdQJHiGtHtpmN7fJkjDuYM9DptUmW?=
+ =?us-ascii?Q?eUs/07D+gdz5imipEcaovIj37n6y35humtpS9VyUemAGJEiiULh65AmLSapV?=
+ =?us-ascii?Q?ZRiyOcSXuKKaatjVs2JcaPM06DFfiSAEjTXGj+mg38xYMPmLv3b4M04qpdNU?=
+ =?us-ascii?Q?ObOKCeXjp2DW4SDcBZigRgD8IaJlgLGcISloUfdp1LxYvEY+IJthO1aQsvTV?=
+ =?us-ascii?Q?WiwoIA6fj1Vp/7/4Lmrq3j9MjpcB041+Q5lCMmxJpF/3DinEYWBQKfCwimHe?=
+ =?us-ascii?Q?SPWq8fRZmfw1wp/h6WS2OwiHun49?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?r1YVsyhqsVxBF48OZB1CCP5dFsCBo3wNNUEIl7KdynwEZUqoFh+X2KEKuxZH?=
+ =?us-ascii?Q?3Gc3RwIMwQvrWfaOHyVkNDgsw9cJk5E+E3t69j7VeEObCLekY//5NJqkLEYR?=
+ =?us-ascii?Q?lfR8BD3aoQdVJ9MQaIZVYo0JZrF5A3BlPM/JFNYr5CebjuO3Dekr6K3jgk4N?=
+ =?us-ascii?Q?q+H8uMIZoVHLT0C1PNBnFla3cTblraXN6drVMnuTInTR0KIdpRwJD22slEjn?=
+ =?us-ascii?Q?LoMpib+Dfh4BMba+B5Fk28hKI0r0gjp/rTbcH3fvFFJe2J0zXCTApoDH3o/l?=
+ =?us-ascii?Q?QUCphT3Ao88Iegg8xc5pDiq4AGSOpwD6u9zMbeNOA7XzuwH00Y9mCTXxgRu3?=
+ =?us-ascii?Q?rEQskLIuDEFsPlF0LBQoN21/MLmU7ntabXfwcIIhZW3vPPjabD4F4FiMsNSG?=
+ =?us-ascii?Q?ISyO0H3cpuCssLsJnx8IlMeNj6s+GcNH/DhclJjhkFNcdDyDVq2y4lDMadl2?=
+ =?us-ascii?Q?tvVGBNOmZptKmf8UDAiWTQNNRxruP/Ejj9KwjjIddV78qpxcipNGk1Rm783P?=
+ =?us-ascii?Q?mUOzZ4COy/OE0Jp4o0LUSo46CderFW//VU3Yp8QD/Uqj0DeyRykG2nD9LKNH?=
+ =?us-ascii?Q?yTuEgBPGtTvH/zMMZuR+HLHkR//oxYzzixP572UondXFM4H7W39P97O9pzQo?=
+ =?us-ascii?Q?JVwRPrnQQLOnrLojsEUmvbQ2cbh3EzTJ1x9C95HNLnPbsg4SLmbAGMjJXY44?=
+ =?us-ascii?Q?oHB9OiTT8wjXCr09VjmKshG9xAye/n9G76hUftQMYXxAgA9SeyxtrAypImpR?=
+ =?us-ascii?Q?4LoiR1NzmjeSlbZ7JobfT/o48LZMrvpoiD75oNR4AQ61kRrrcRjloaqxXWFr?=
+ =?us-ascii?Q?mHgyhafyWoUUhi8C2qPoPZzHxnXH8hdjlEghC8OgV9JA7vay2VYnlod5egR5?=
+ =?us-ascii?Q?JiOOddUJVbVNSX0u4HIJe84aBbsjDhtXrXLC+yqZTlq1kCBe78OHR46z7N2Z?=
+ =?us-ascii?Q?QPO7srVZeyG4eMElmJKs0wJ3YQDsSReqoKqthkERdNrY27EVaczM3tuk0fjd?=
+ =?us-ascii?Q?5gMCM5PUMCfyJZQfX4S0dUEhVu1k/FFVvUAvZmKp1sa8ce92nShnjskrugJT?=
+ =?us-ascii?Q?8/tHmkMr/zRahgzQk0CcNW/qEBz86lqAZ6hVYM4JDjMY0HZ/JTGirYUtnfsT?=
+ =?us-ascii?Q?vo1hJhqe7FjjeGJCgOZFm4Gq+8IE6oato/N/otrdI4bF5KMxo+G8VpqM6myL?=
+ =?us-ascii?Q?A8RX/lUFNGPLNClX85iwlzng/j+WmToKq/byiLaQ37EuwZ5+A0bh4iHH7Qxv?=
+ =?us-ascii?Q?zeJPZ/LIhIWP7bbW5ZDbNg7unlXy03GuIS+QSOXPQ7sNQQg3lBFDbxZdAtZi?=
+ =?us-ascii?Q?nvU590mJemlH5tVP4LqXnDCmupKHkCmhlp+GpiNgwxHtPS77EJOxSusxjBKY?=
+ =?us-ascii?Q?m9LmJtAkpQe8Jt0HSHz8t7tNjC85xhENPj+ZSGi0XWT3kHQDhr3E7oU8KR+F?=
+ =?us-ascii?Q?DjhrjQZZFAdy52PwB683eZxLuXDi7nY89O5Hw9M/GeSq9VLa2Y8oh1T47YcT?=
+ =?us-ascii?Q?O6NTml6Zimy/t8rJBNxv/YZbbHMI1cDdUbVH3DYdk6zlHGqxETRwXgga3XvS?=
+ =?us-ascii?Q?i3fNneDjmUFd+1IzmnI=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dbd6465a-8a10-4478-c503-08dd4c366918
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 13:57:54.1665
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fXVPyjrwkw/JZ+DC+huYP9c8qWtMg8alAALF285hSDi/e8QoCAgVOzE3ztj13X3L
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7554
 
-On Thu, Feb 06, 2025 at 09:43:14PM +0300, Fedor Pchelkin wrote:
-> From: "Christian A. Ehrhardt" <lk@c--e.de>
+On Thu, Feb 13, 2025 at 12:54:15PM +0100, Thomas Gleixner wrote:
+> So this change log really fails to follow the basic structure:
 > 
-> For the ACPI backend of UCSI the UCSI "registers" are just a memory copy
-> of the register values in an opregion. The ACPI implementation in the
-> BIOS ensures that the opregion contents are synced to the embedded
-> controller and it ensures that the registers (in particular CCI) are
-> synced back to the opregion on notifications. While there is an ACPI call
-> that syncs the actual registers to the opregion there is rarely a need to
-> do this and on some ACPI implementations it actually breaks in various
-> interesting ways.
-> 
-> The only reason to force a sync from the embedded controller is to poll
-> CCI while notifications are disabled. Only the ucsi core knows if this
-> is the case and guessing based on the current command is suboptimal, i.e.
-> leading to the following spurious assertion splat:
-> 
-> WARNING: CPU: 3 PID: 76 at drivers/usb/typec/ucsi/ucsi.c:1388 ucsi_reset_ppm+0x1b4/0x1c0 [typec_ucsi]
-> CPU: 3 UID: 0 PID: 76 Comm: kworker/3:0 Not tainted 6.12.11-200.fc41.x86_64 #1
-> Hardware name: LENOVO 21D0/LNVNB161216, BIOS J6CN45WW 03/17/2023
-> Workqueue: events_long ucsi_init_work [typec_ucsi]
-> RIP: 0010:ucsi_reset_ppm+0x1b4/0x1c0 [typec_ucsi]
-> Call Trace:
->  <TASK>
->  ucsi_init_work+0x3c/0xac0 [typec_ucsi]
->  process_one_work+0x179/0x330
->  worker_thread+0x252/0x390
->  kthread+0xd2/0x100
->  ret_from_fork+0x34/0x50
->  ret_from_fork_asm+0x1a/0x30
->  </TASK>
-> 
-> Thus introduce a ->poll_cci() method that works like ->read_cci() with an
-> additional forced sync and document that this should be used when polling
-> with notifications disabled. For all other backends that presumably don't
-> have this issue use the same implementation for both methods.
-> 
-> Fixes: fa48d7e81624 ("usb: typec: ucsi: Do not call ACPI _DSM method for UCSI read operations")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
-> Tested-by: Fedor Pchelkin <boddah8794@gmail.com>
-> Signed-off-by: Fedor Pchelkin <boddah8794@gmail.com>
+>    The context, the problem and the solution
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+The IOMMU translation for MSI message addresses is a two step
+process, seperated in time:
 
-> ---
-> Add the explicit WARNING splat and slightly increase the length of text
-> lines in the changelog.
-> Original patch: https://lore.kernel.org/linux-usb/Z2Cf1AI8CXao5ZAn@cae.in-ulm.de/
-> 
->  drivers/usb/typec/ucsi/ucsi.c           | 10 +++++-----
->  drivers/usb/typec/ucsi/ucsi.h           |  2 ++
->  drivers/usb/typec/ucsi/ucsi_acpi.c      | 21 ++++++++++++++-------
->  drivers/usb/typec/ucsi/ucsi_ccg.c       |  1 +
->  drivers/usb/typec/ucsi/ucsi_glink.c     |  1 +
->  drivers/usb/typec/ucsi/ucsi_stm32g0.c   |  1 +
->  drivers/usb/typec/ucsi/ucsi_yoga_c630.c |  1 +
->  7 files changed, 25 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> index fcf499cc9458..0fe1476f4c29 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -1346,7 +1346,7 @@ static int ucsi_reset_ppm(struct ucsi *ucsi)
->  
->  	mutex_lock(&ucsi->ppm_lock);
->  
-> -	ret = ucsi->ops->read_cci(ucsi, &cci);
-> +	ret = ucsi->ops->poll_cci(ucsi, &cci);
->  	if (ret < 0)
->  		goto out;
->  
-> @@ -1364,7 +1364,7 @@ static int ucsi_reset_ppm(struct ucsi *ucsi)
->  
->  		tmo = jiffies + msecs_to_jiffies(UCSI_TIMEOUT_MS);
->  		do {
-> -			ret = ucsi->ops->read_cci(ucsi, &cci);
-> +			ret = ucsi->ops->poll_cci(ucsi, &cci);
->  			if (ret < 0)
->  				goto out;
->  			if (cci & UCSI_CCI_COMMAND_COMPLETE)
-> @@ -1393,7 +1393,7 @@ static int ucsi_reset_ppm(struct ucsi *ucsi)
->  		/* Give the PPM time to process a reset before reading CCI */
->  		msleep(20);
->  
-> -		ret = ucsi->ops->read_cci(ucsi, &cci);
-> +		ret = ucsi->ops->poll_cci(ucsi, &cci);
->  		if (ret)
->  			goto out;
->  
-> @@ -1929,8 +1929,8 @@ struct ucsi *ucsi_create(struct device *dev, const struct ucsi_operations *ops)
->  	struct ucsi *ucsi;
->  
->  	if (!ops ||
-> -	    !ops->read_version || !ops->read_cci || !ops->read_message_in ||
-> -	    !ops->sync_control || !ops->async_control)
-> +	    !ops->read_version || !ops->read_cci || !ops->poll_cci ||
-> +	    !ops->read_message_in || !ops->sync_control || !ops->async_control)
->  		return ERR_PTR(-EINVAL);
->  
->  	ucsi = kzalloc(sizeof(*ucsi), GFP_KERNEL);
-> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-> index 82735eb34f0e..28780acc4af2 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.h
-> +++ b/drivers/usb/typec/ucsi/ucsi.h
-> @@ -62,6 +62,7 @@ struct dentry;
->   * struct ucsi_operations - UCSI I/O operations
->   * @read_version: Read implemented UCSI version
->   * @read_cci: Read CCI register
-> + * @poll_cci: Read CCI register while polling with notifications disabled
->   * @read_message_in: Read message data from UCSI
->   * @sync_control: Blocking control operation
->   * @async_control: Non-blocking control operation
-> @@ -76,6 +77,7 @@ struct dentry;
->  struct ucsi_operations {
->  	int (*read_version)(struct ucsi *ucsi, u16 *version);
->  	int (*read_cci)(struct ucsi *ucsi, u32 *cci);
-> +	int (*poll_cci)(struct ucsi *ucsi, u32 *cci);
->  	int (*read_message_in)(struct ucsi *ucsi, void *val, size_t val_len);
->  	int (*sync_control)(struct ucsi *ucsi, u64 command);
->  	int (*async_control)(struct ucsi *ucsi, u64 command);
-> diff --git a/drivers/usb/typec/ucsi/ucsi_acpi.c b/drivers/usb/typec/ucsi/ucsi_acpi.c
-> index 5c5515551963..ac1ebb5d9527 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_acpi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_acpi.c
-> @@ -59,19 +59,24 @@ static int ucsi_acpi_read_version(struct ucsi *ucsi, u16 *version)
->  static int ucsi_acpi_read_cci(struct ucsi *ucsi, u32 *cci)
->  {
->  	struct ucsi_acpi *ua = ucsi_get_drvdata(ucsi);
-> -	int ret;
-> -
-> -	if (UCSI_COMMAND(ua->cmd) == UCSI_PPM_RESET) {
-> -		ret = ucsi_acpi_dsm(ua, UCSI_DSM_FUNC_READ);
-> -		if (ret)
-> -			return ret;
-> -	}
->  
->  	memcpy(cci, ua->base + UCSI_CCI, sizeof(*cci));
->  
->  	return 0;
->  }
->  
-> +static int ucsi_acpi_poll_cci(struct ucsi *ucsi, u32 *cci)
-> +{
-> +	struct ucsi_acpi *ua = ucsi_get_drvdata(ucsi);
-> +	int ret;
-> +
-> +	ret = ucsi_acpi_dsm(ua, UCSI_DSM_FUNC_READ);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ucsi_acpi_read_cci(ucsi, cci);
-> +}
-> +
->  static int ucsi_acpi_read_message_in(struct ucsi *ucsi, void *val, size_t val_len)
->  {
->  	struct ucsi_acpi *ua = ucsi_get_drvdata(ucsi);
-> @@ -94,6 +99,7 @@ static int ucsi_acpi_async_control(struct ucsi *ucsi, u64 command)
->  static const struct ucsi_operations ucsi_acpi_ops = {
->  	.read_version = ucsi_acpi_read_version,
->  	.read_cci = ucsi_acpi_read_cci,
-> +	.poll_cci = ucsi_acpi_poll_cci,
->  	.read_message_in = ucsi_acpi_read_message_in,
->  	.sync_control = ucsi_sync_control_common,
->  	.async_control = ucsi_acpi_async_control
-> @@ -142,6 +148,7 @@ static int ucsi_gram_sync_control(struct ucsi *ucsi, u64 command)
->  static const struct ucsi_operations ucsi_gram_ops = {
->  	.read_version = ucsi_acpi_read_version,
->  	.read_cci = ucsi_acpi_read_cci,
-> +	.poll_cci = ucsi_acpi_poll_cci,
->  	.read_message_in = ucsi_gram_read_message_in,
->  	.sync_control = ucsi_gram_sync_control,
->  	.async_control = ucsi_acpi_async_control
-> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> index 740171f24ef9..4b1668733a4b 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> @@ -664,6 +664,7 @@ static int ucsi_ccg_sync_control(struct ucsi *ucsi, u64 command)
->  static const struct ucsi_operations ucsi_ccg_ops = {
->  	.read_version = ucsi_ccg_read_version,
->  	.read_cci = ucsi_ccg_read_cci,
-> +	.poll_cci = ucsi_ccg_read_cci,
->  	.read_message_in = ucsi_ccg_read_message_in,
->  	.sync_control = ucsi_ccg_sync_control,
->  	.async_control = ucsi_ccg_async_control,
-> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
-> index fed39d458090..8af79101a2fc 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
-> @@ -206,6 +206,7 @@ static void pmic_glink_ucsi_connector_status(struct ucsi_connector *con)
->  static const struct ucsi_operations pmic_glink_ucsi_ops = {
->  	.read_version = pmic_glink_ucsi_read_version,
->  	.read_cci = pmic_glink_ucsi_read_cci,
-> +	.poll_cci = pmic_glink_ucsi_read_cci,
->  	.read_message_in = pmic_glink_ucsi_read_message_in,
->  	.sync_control = ucsi_sync_control_common,
->  	.async_control = pmic_glink_ucsi_async_control,
-> diff --git a/drivers/usb/typec/ucsi/ucsi_stm32g0.c b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
-> index 6923fad31d79..57ef7d83a412 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_stm32g0.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
-> @@ -424,6 +424,7 @@ static irqreturn_t ucsi_stm32g0_irq_handler(int irq, void *data)
->  static const struct ucsi_operations ucsi_stm32g0_ops = {
->  	.read_version = ucsi_stm32g0_read_version,
->  	.read_cci = ucsi_stm32g0_read_cci,
-> +	.poll_cci = ucsi_stm32g0_read_cci,
->  	.read_message_in = ucsi_stm32g0_read_message_in,
->  	.sync_control = ucsi_sync_control_common,
->  	.async_control = ucsi_stm32g0_async_control,
-> diff --git a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-> index 4cae85c0dc12..d33e3f2dd1d8 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-> @@ -74,6 +74,7 @@ static int yoga_c630_ucsi_async_control(struct ucsi *ucsi, u64 command)
->  static const struct ucsi_operations yoga_c630_ucsi_ops = {
->  	.read_version = yoga_c630_ucsi_read_version,
->  	.read_cci = yoga_c630_ucsi_read_cci,
-> +	.poll_cci = yoga_c630_ucsi_read_cci,
->  	.read_message_in = yoga_c630_ucsi_read_message_in,
->  	.sync_control = ucsi_sync_control_common,
->  	.async_control = yoga_c630_ucsi_async_control,
-> -- 
-> 2.48.1
+ 1) iommu_dma_prepare_msi(): A cookie pointer containing the IOVA
+    address is stored in the MSI descriptor, when a MSI interrupt is
+    allocated.
 
--- 
-heikki
+ 2) iommu_dma_compose_msi_msg(): The compose callback uses this
+    cookkie pointer to compute the translated message address.
+
+This has an inherent lifetime problem for the pointer stored in the
+cookie. It must remain valid between the two steps. There is no
+locking at the irq layer that helps protect the liftime. Today this
+only works under the assumption that the iommu domain is not changed
+while MSI interrupts are being programmed. This is true for normal DMA
+API users within the kernel as the iommu domain is attached before the
+driver is probed and cannot be changed while a driver is attached.
+
+Classic VFIO type1 also prevented changing the iommu domain while VFIO
+was running as it does not support changing the "container" after
+starting up.
+
+However, iommufd has improved this and we can change the iommu domain
+during VFIO operation. This allows userspace to directly race
+VFIO_DEVICE_ATTACH_IOMMUFD_PT (which calls iommu_attach_group()) and
+VFIO_DEVICE_SET_IRQS (which calls into iommu_dma_compose_msi_msg()).
+
+This causes both the cookie pointer and the unlocked call to
+iommu_get_domain_for_dev() on the MSI translation path to become a
+potential UAF.
+
+Fix the MSI cookie UAF by removing the cookie pointer. The translated
+message address is already known during iommu_dma_prepare_msi() and
+can not change. It can simply be stored as an integer in the MSI
+descriptor.
+
+A following patch will correct the iommu_get_domain_for_dev() UAF
+using the IOMMU group mutex.
+
+Ok?
+
+Nicolin - lets change the patch structure a little bit can you adjust
+this patch to leave iommu_dma_compose_msi_msg() in dma-iommu.c and the
+next patch will be all about renaming and moving it to the MSI core
+code instead? Easier to explain
+
+Thanks,
+Jason
 
