@@ -1,255 +1,248 @@
-Return-Path: <linux-kernel+bounces-513664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E1BAA34D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:14:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D87A34D3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:13:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E543AA56C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4C221891C2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8579B245AE6;
-	Thu, 13 Feb 2025 18:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2114C245B07;
+	Thu, 13 Feb 2025 18:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMalfmVP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VbdbpKG8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93952241693;
-	Thu, 13 Feb 2025 18:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739470083; cv=none; b=WEsxWaFltSjeHPtg13/dx2pn3bxw9pGNPjezhvNszPkdCpONgjK8gRffewb7+Onq3AQYvNpz04pcMwxFVD6cfDt+iD5i1puoAhenjBprUgNb+4IOupYLlKkSAZUZGp896h1le8BTce0CT7YDXhiXtJCapn8rC7OUpAgP6+86L9o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739470083; c=relaxed/simple;
-	bh=7tg0eIMwaCCfvANdT4CCgQtB9sEZfYm55QeTSa/g4gs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bqo7WO81JfJ296v+pqmOEITvc/8rVIj9/tpYTJfjWrV2tD/feGl6BldvtymX2SDgfNdcHOXWuZn9/z1tmtpV5ZBr2B2sUVye5CsvJ5SSVxJKg5d6SPo1iLPeWVVJ2RqTgmZCmfk0WXIOn1ROATYT070GNvnXy+VCkzhmhcy/HXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMalfmVP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72785C4CED1;
-	Thu, 13 Feb 2025 18:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739470083;
-	bh=7tg0eIMwaCCfvANdT4CCgQtB9sEZfYm55QeTSa/g4gs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TMalfmVPn8HL9xhS+oBHp05v2YTYoOBItw5mtGnZbBSAJvx0roBVXPsdyfUVpwTlj
-	 y1QM5JhkXc+jdzzzqS34ODn16yAJS3YKA4S4cc1BUkY02IR/0l3TLCRgzxSqhtZcjf
-	 n5X0StaEtW/+LVYfwEgKFz4HqNoJQ/gRtY3osVdoOE7E1L5+PLoVtsK4GWtlmu92Eb
-	 fCRW1v0pt/K16fubpR6MZUJhrltRniIUJDl//O4b7XHyzaLbaCGkOvB4e3qFP3qz83
-	 LpESj5d9vCIFTDkpakncFoFR4y07DpnUjj7xzWm2tTVc9jqJuODWDpQclg+TK5SJji
-	 u/mtD2OUP5vFw==
-Message-ID: <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
-Date: Thu, 13 Feb 2025 19:07:55 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3C6245AF6;
+	Thu, 13 Feb 2025 18:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739470106; cv=fail; b=EaK5Fke4nA0L6ffM/6WIO3nYBXrHcbQkxdiRymJ1jNXMBiAwHfWVg58mtPl2homtHQQ6hhS9Fibq/vQMOWkYawzCMcP+XUWQImjTE3Ak7F7vLZWSC5RSbOiPyi0QFanwPBU3VMFNn955iiICabSVfXtf3/bnAuwpHfD/WycIjNc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739470106; c=relaxed/simple;
+	bh=S3h03yoIyKaQ4YthSi+fV6k0xtQENbBqW/ozRT3r8SU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Jds8BF1TgnKvgAXTAr4YtWlt0ckskixqtHOdzXFcdRCWGcpyhUSX666XNDeg6DBFN3d558FJ6FIx568ajIafOBi8you6gEPe6HmjNbWe4Y2j/Hd+e/uCiP6RVZKtAVQXn8MpDeNrrdR/Wu6i6UdJFfyLt5jknbGSJl50eK9wCAs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VbdbpKG8; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739470104; x=1771006104;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=S3h03yoIyKaQ4YthSi+fV6k0xtQENbBqW/ozRT3r8SU=;
+  b=VbdbpKG89aWyNs2R7w0ja0mb3Ot00bIXndXFmeh8AiCDiAnolXjoUvYG
+   0Nx18huvyV0eF9fhpMYxlhfWP+8ynGvg8DRbzAjBlY2lKNOEZzLlGTcHh
+   a4AryPIWTkkKmfcFjWBXxlgwUs4gpx40vTNgEmt8LgpJCp383EWThK40U
+   YTammocTwHVum0ZpXPpKpjBldZj5h1NKvggHozgMY2Bm6QUZSo/1PCcyM
+   uQkchFdTU7OloFPfJgzs+BAiTfYKT3z5uQr8w8vq2ZCuM5SdK4IgNX9vU
+   3BavOjDJiU4xk4IZtqj0SX5TK5OOXzpfpcDS9Q+k/21wXe/tYG0dsbtVw
+   Q==;
+X-CSE-ConnectionGUID: 0+l9uPULR72DA/rMa8vlGA==
+X-CSE-MsgGUID: bxqJvPclSCWRGGV2zWrBOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="51175485"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="51175485"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:08:23 -0800
+X-CSE-ConnectionGUID: GDswKShnTQS+aczB+c5eMw==
+X-CSE-MsgGUID: tNa86MN9Q/W5BwAcLubQHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113714786"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:08:23 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Thu, 13 Feb 2025 10:08:22 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 13 Feb 2025 10:08:22 -0800
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.43) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 13 Feb 2025 10:08:21 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jmGr4M1YaK+8+SageP65w04mr2Zlz4BuRAsT2f7inlGXz8xlx9M4c3K7QdI4Fx7bCJRc/euJ9PsfgpC9xLWpC9/q4FNhxvthik7y7z7l89UytdKC62R5Ps4JNfZJ3mBMUvsoM25qkzYpyGoKrCoxLfKtAz+vmKxJfXnzI/E9znYzB5CqDOs26q0K+bOOLvQja5/jCEQf/p5MsWn9/GddnjLKDyf9tj8fku1fXmS0B1lqa8ZEcWlB0hdB8JW0wF2avZtSXgx7TbDsqPwDRCrWGMnmDTiAmgDXWskrP7UCdSQsCZBdDDQTWkj4ZcWePQkP/6uupqLtMsP/Zc4P24jtYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1dqgX0IHrabBpS0xusIj68PSiu6VtFw5PFejkPXyz+o=;
+ b=l+0l2WQE5JcE/i1xWurz686Fm73SpIYVJKRpuMvn/E2tPlEo/5GTzitXcLczx1uFrod4nJkqmb+UIrWjKl/LQqRFXpPDZe2S6So/0O5+AvYbRRopg+i0u9fADxrehrDRxVwSSJuRewJUXTMDxFI7iI4e1Rlia5WXEi5u7fdY+5mhw8cZCi1aKc+GVYZ8rWUrpFsT4EhuVF0r/pOBXXvMYf8/wBx+U1t4hXnbTJFXuJVpRSjynS47qKT7oCfYWw/KRiILAcHFgaJcHhs2IXbRdjUkuMmOFkki6ZSzy/tHcdjabdhaszm7lWtyJpgMnmlaqwW2pp+cb4Z7NcjYKMjBdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by BN9PR11MB5292.namprd11.prod.outlook.com (2603:10b6:408:119::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Thu, 13 Feb
+ 2025 18:08:18 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.8422.015; Thu, 13 Feb 2025
+ 18:08:18 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Dave Martin <Dave.Martin@arm.com>, "Moger, Babu" <babu.moger@amd.com>
+CC: Peter Newman <peternewman@google.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"Chatre, Reinette" <reinette.chatre@intel.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"fenghua.yu@intel.com" <fenghua.yu@intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "paulmck@kernel.org"
+	<paulmck@kernel.org>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "thuth@redhat.com" <thuth@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>, "xiongwei.song@windriver.com"
+	<xiongwei.song@windriver.com>, "pawan.kumar.gupta@linux.intel.com"
+	<pawan.kumar.gupta@linux.intel.com>, "daniel.sneddon@linux.intel.com"
+	<daniel.sneddon@linux.intel.com>, "jpoimboe@kernel.org"
+	<jpoimboe@kernel.org>, "perry.yuan@amd.com" <perry.yuan@amd.com>,
+	"sandipan.das@amd.com" <sandipan.das@amd.com>, "Huang, Kai"
+	<kai.huang@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>,
+	"seanjc@google.com" <seanjc@google.com>, "Li, Xin3" <xin3.li@intel.com>,
+	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+	"ebiggers@google.com" <ebiggers@google.com>, "mario.limonciello@amd.com"
+	<mario.limonciello@amd.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"tan.shaopeng@fujitsu.com" <tan.shaopeng@fujitsu.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, "Eranian,
+ Stephane" <eranian@google.com>
+Subject: RE: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
+ Monitoring Counters (ABMC)
+Thread-Topic: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
+ Monitoring Counters (ABMC)
+Thread-Index: AQHbbQsur7YXoEmn/USrZUfWgYnla7M1vROAgABjEICAD4WxAIAAApCA
+Date: Thu, 13 Feb 2025 18:08:18 +0000
+Message-ID: <SJ1PR11MB608379C6C7EF9FB706BCA211FCFF2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <cover.1737577229.git.babu.moger@amd.com>
+ <CALPaoCgiZ=tZE_BF2XzeYMRG84x4+kGKfhHWj2Uo=Cre_B_6Vg@mail.gmail.com>
+ <7a87b18c-cfba-4edd-946b-dd2831f56633@amd.com>
+ <Z64xNm7GrXuVj3gv@e133380.arm.com>
+In-Reply-To: <Z64xNm7GrXuVj3gv@e133380.arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|BN9PR11MB5292:EE_
+x-ms-office365-filtering-correlation-id: f5ce10a0-01a2-41f9-8327-08dd4c5964d7
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?h+2fnv5mTbB9T8cVEIKk2flJqSIuDbZpiOGafrZnEuJkX9WsflPoMtsALle0?=
+ =?us-ascii?Q?lP/Otala8nd0sk0mU+yLvMr3NV8y/7sbWhY3m6MpY5mZI7m6jW+bNkggs1KU?=
+ =?us-ascii?Q?JifKCWYzL7RUjkPd34SJCDiI9m+oJkuB0LKUN3MPFmkMC0oUshnMWUI0BvN5?=
+ =?us-ascii?Q?rGejPy/ZLfB3OBp+IFqDugy9v8hX4uVAYJ89PatX4j6sYwxd7L5DK0h26Z/m?=
+ =?us-ascii?Q?QZd9gQ0ONrslVsJW8htTbmS+xZjLeStnekIIxCrhinm53YCv8kwxHkhv1bn8?=
+ =?us-ascii?Q?2Rh/DeDUYvDSYZpvShThm3brvMScYcor+uGHU+YjkZtxc2DPWK/pbz0xUavj?=
+ =?us-ascii?Q?dbeTOThPqdRSwuVZH7PgVwd5TWxEvYYXxm5VusUhqSDgH6mvR3np2WfPjoJD?=
+ =?us-ascii?Q?L6IwxejfimQnZRl/iO/mUMi/+GJvuXWqEb2JDOXIYszhnlbrEyajJCgmf0I/?=
+ =?us-ascii?Q?s2Hr9M+bRAIuDocxrhWKl7CO+LLyUKx8bTSy4fsee8T9QnatKpvbcLQPNTNt?=
+ =?us-ascii?Q?EGmpdoLcrKXEM9eHpIF84cNYjirkgVKVeL4A+qHPm9JAZekotDeD7bmA9A1L?=
+ =?us-ascii?Q?y8toYVJcgMXSHjoTXImUrir02vlKnl5RiJjh8xYtz8t5Az0HzXPLTsom4irm?=
+ =?us-ascii?Q?bM4eDcDM3dT7bW1/yy0Hwp73ILaMUftXHM8F6QEv9/RGvIHEmNdDQuk3vLJP?=
+ =?us-ascii?Q?03hDSCEqxYNAFsU34BjiyrTh7Hji8a4eSINg7zwffnDR3+ev74dzhTS3O703?=
+ =?us-ascii?Q?J8sJtST7kOppFLZfmGBn0m2i4YDSRQL6YUVolmlbxbyx63VLtgOngzgjmxTY?=
+ =?us-ascii?Q?/bAnO/58lFm0R8gwjdz26S1pJI/uzLawmN6UmqGt6KPB+aVOtvsQOEw5h80d?=
+ =?us-ascii?Q?ShtAkAeSxivqYXV8jezGzjtMJZ5q6FiKXF8Jp/mqixkamRV/lDei3UzMFBgm?=
+ =?us-ascii?Q?kcuH3PVyvVQYvRybUJnBE5lYlQ48XqcPEuvUwImWlGMBzQG6QoAFcpWryh/9?=
+ =?us-ascii?Q?xRal+GBe/hpSZvE9YD2o396g49SBZ1jVRE8pwpP4AelSaI783J1+xjLqRaKh?=
+ =?us-ascii?Q?0Nd54wtQp1lHocmPIKFJ2nKhoAP3yNokJFdlF4dyvFUZAsriS8NYfX6tcjfy?=
+ =?us-ascii?Q?dPppP00B69D5HZkkiZORtXLiLjDagR/3LP1BozbFDt/96xyw+l5LdleyUCOP?=
+ =?us-ascii?Q?V204VJf5OOfx1DVSZ5JDggIoulXuBmMhUtjsTsHv5xHf4W6UpVayvf+M0QN9?=
+ =?us-ascii?Q?SeCXCdSzSBrGb++0+W1q2zdemt4E82cftljxyyiuw34vSEbppYjUR58riLun?=
+ =?us-ascii?Q?BeSyDI/A60NV/Q3IhT0cx8XwhWrvPoKZmb+U+hQuGcJR/d8gPYInEW7KeVtZ?=
+ =?us-ascii?Q?ymz+UiXuRoiKgqb77uNfLQknoYkNLK4+zv/baYJ5KoA1LO8XjshhGV9e+9Gu?=
+ =?us-ascii?Q?+Veq9HXolJGTlbvkvPLAh2DEs8tt+B+J?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ffApwuzWgAaEvYVmOnr+8xujBzVPdihG9OAMsp4lBWwY6+VAgKlVwl/aPxQh?=
+ =?us-ascii?Q?nqjOe+t3V127WNQuC3o+KURSUjzmR1YHhHnfp9JeFK8elGz1HPrIlCvXAYWl?=
+ =?us-ascii?Q?2Brhg/AGS8UoDTe8dsM9FmfhFZxXJ2frk9mWosoQkVVsNxwuVqwmCwwRdhhi?=
+ =?us-ascii?Q?eVHsl4D9EqfGNJcSh0vxJ7zyLckPvInlqGr9lksww1ZAg+9/F13nJ+hPPwe/?=
+ =?us-ascii?Q?IJENW8rAoaHaNFImZWpRMaD6nnZ6WcLduj4+4CjYJR8RrgLm2T/z4e+4k4NZ?=
+ =?us-ascii?Q?Bgm4PJwGrlrkHgYlBZu+29IY7BNH1T/7b+WKM1DDAv3BaoFQhQnOHI8f4UFi?=
+ =?us-ascii?Q?9DKYFbYyHW7kyYrMbdJfP79zZNbTDLskgoxz9GP3+S02djgMCJnw8oIqyoY6?=
+ =?us-ascii?Q?AfEEKbEojvzs+DWy4u1idkCt3GPQsZMBcME0qkllhUt65+we+JkIJ+HwNlQb?=
+ =?us-ascii?Q?icT8ckzgblZReuAW6PRaaTRfwbefe7hqKustd9/VEPAZ4SXhkREg4w4Nxkna?=
+ =?us-ascii?Q?st3tbTEKH6ZOP6U//ZhSuYr6lyqbHqYl+pzquYAcXIyyXJlRnXuvCNSYw8O5?=
+ =?us-ascii?Q?K2b+pccMGHfZ4TlO5BeldroNVK95kH+wWDoS1zPYg5Ftj+kimXk7K9DjyWKt?=
+ =?us-ascii?Q?6tkm+Ilq0SsEZMZcKtqBmpsZ1zpnfSe1AHC/pLtox3Nti6Hr9UarFb1JVkPD?=
+ =?us-ascii?Q?gjy4a8m3nkEAuohUJbBNOjQ2lWaxQqzqdJC550kqJNdkJ8F4g9M1dj5cnn+M?=
+ =?us-ascii?Q?fG9kZOzmPrp4EEazQcNsKdUgYu0JYNMTlVYAhR8W7i9F24g1mqBO49IKh1T0?=
+ =?us-ascii?Q?4sJ+tj7PCwvCwH6oTosuMnC7UNqCr3YRNDrSmS0cSTkLXXNGeXUG/hzBfmLZ?=
+ =?us-ascii?Q?deo7vPwwL14UsfHd7zk8ZV4POJqeVT1xrcD8sIyO2gcBrsreiH4wUXgrjs8Y?=
+ =?us-ascii?Q?sbdJBlY8EBIzQi1gFKxNTkIDEK/6SoVJq0vzbWl1oj0105Yc3kvUEAD7qDYi?=
+ =?us-ascii?Q?mPHbO3AmHzbT2cn98cHKBb+kDOw7vBgzQMXFRRooDMXCXbg+HN0M5/eBH1to?=
+ =?us-ascii?Q?4o0QEKfWG/p5sasBGbkkiZ+9Wapx2LGlGJRl3SLv34Iu73ymh1uwLtXm3kNp?=
+ =?us-ascii?Q?BCs8AEBx39HJ2IA/dtO43ODt66ziJKm2S+u/gI0htnxBZXf4zl682SUsd1e/?=
+ =?us-ascii?Q?Ua9oeKYkxbqeKVFOmkgao51qyvh1H5AlHWCLhUXhS8M3cV2CwwYoGJodzW2y?=
+ =?us-ascii?Q?mdrHBFQfhAOfHiotbOs9hMHhs1jelZ8++wtq3g5imugf3LxuKcbRpPZKyIDD?=
+ =?us-ascii?Q?QZjOk5YbV561xYFBWAL4bL+FQPYE032O/03uRj8NoBggZOLtD4vUYDAVjc7Q?=
+ =?us-ascii?Q?G+P7q3aEO0wp+Y7ghLnkVSYinWZrbbEbLDEKfUCVqMrAXKhlvr8KklfK/46r?=
+ =?us-ascii?Q?Bx3aWDyX8P5jHcAuVI60rGyLxx1B4ZHDF40euRLFnrFs6ecGRGrtyLOHgnTX?=
+ =?us-ascii?Q?qIh3gsDVr2yIx+FCqFBlXyZDSL7cEfbeytcUbzDkyzOCcDXyTjtxtEX973U8?=
+ =?us-ascii?Q?A07mCtiOBXzDfGyuv1H1HPY9zdp6PcwjdAQ+g8Te?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-To: Haylen Chu <heylenay@4d2.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
- Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
- Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>,
- Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-References: <20250103215636.19967-2-heylenay@4d2.org>
- <20250103215636.19967-4-heylenay@4d2.org>
- <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
- <Z6rdBhQ7s2ReOgBL@ketchup> <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
- <Z63T_EDvXiuRQbvb@ketchup>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z63T_EDvXiuRQbvb@ketchup>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5ce10a0-01a2-41f9-8327-08dd4c5964d7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2025 18:08:18.3870
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NlI8TM4IFW8CYAubQjGVX9nzLBTBay116LxGJVEFXRfgipib1ZJrkQwTV0j9IdyAt/eKONT5JMwaVMIjFEr2IQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5292
+X-OriginatorOrg: intel.com
 
-On 13/02/2025 12:14, Haylen Chu wrote:
-> On Tue, Feb 11, 2025 at 09:03:20AM +0100, Krzysztof Kozlowski wrote:
->> On 11/02/2025 06:15, Haylen Chu wrote:
->>> On Sat, Jan 04, 2025 at 11:07:58AM +0100, Krzysztof Kozlowski wrote:
->>>> On Fri, Jan 03, 2025 at 09:56:35PM +0000, Haylen Chu wrote:
->>>>> Add documentation to describe Spacemit K1 system controller registers.
->>>>>
->>>>> Signed-off-by: Haylen Chu <heylenay@4d2.org>
->>>>> ---
->>>>>  .../soc/spacemit/spacemit,k1-syscon.yaml      | 52 +++++++++++++++++++
->>>>>  1 file changed, 52 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..79c4a74ff30e
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
->>>>> @@ -0,0 +1,52 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>> +%YAML 1.2
->>>>> +---
->>>>> +$id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
->>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>> +
->>>>> +title: Spacemit K1 SoC System Controller
->>>>> +
->>>>> +maintainers:
->>>>> +  - Haylen Chu <heylenay@4d2.org>
->>>>> +
->>>>> +description:
->>>>> +  The Spacemit K1 SoC system controller provides access to shared register files
->>>>> +  for related SoC modules, such as clock controller and reset controller.
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    items:
->>>>> +      - enum:
->>>>> +          - spacemit,k1-apbc-syscon
->>>>> +          - spacemit,k1-apbs-syscon
->>>>> +          - spacemit,k1-apmu-syscon
->>>>> +          - spacemit,k1-mpmu-syscon
->>>>> +      - const: syscon
->>>>> +      - const: simple-mfd
->>>>> +
->>>>> +  reg:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  clock-controller:
->>>>> +    $ref: /schemas/clock/spacemit,k1-ccu.yaml#
->>>>> +    type: object
->>>>
->>>> So now we see the full picture and it leads to questions.
->>>>
->>>> 1. Why spacemit,k1-apbc-syscon with spacemit,k1-ccu-apmu child is a
->>>> correct combination?
->>>>
->>>> 2. Why having this split in the first place? Please confirm that clock
->>>> controller is really, really a separate device and its child in
->>>> datasheet. IOW, fake child for your Linux is a no-go. Fake child while
->>>> devices are independent is another no-go.
->>>
->>> These syscons are introduced because the clock controllers share
->>> registers with reset controllers. Folding them into the parents results
->>
->> So a fake split...
->>
->>> in devicetree nodes act as both reset and clock controllers, like what
->>
->> Which is correct hardware representation, isn't it?
->>
->>> has been done for Rockchip SoCs. Such folding isn't practical for the
->>> MPMU region either, since watchdog and other misc bits (e.g. PLL lock
->>> status) locates in it.
-> 
-> I have to correct that the watchdog doesn't stay in the MPMU region, I
-> misremembered it.
-> 
->> Hm? Why? You have a device which is reset and clock controller, so why
->> one device node is not practical? Other vendors do not have problem with
->> this.
-> 
-> Merging reset and clock controllers together is fine to me. What I want
-> to mention is that APMU and MPMU, abbreviated from Application/Main Power
-> Management Unit, contain not only clock/reset-related registers but also
-> power management ones[1]. Additionally, the PLL lock status bits locate
-> at MPMU, split from the PLL configuration registers as you've already
-> seen in the binding of spacemit,k1-ccu-apbs where I refer to it with a
-> phandle.
+> Playing devil's advocate, I wonder whether there is a point beyond
+> which it would be better to have an interface to hand over some of the
+> counters to perf?
+>
+> The logic for round-robin scheduling of events onto counters, dealing
+> with overflows etc. has already been invented over there, and it's
+> fiddly to get right.  Ideally resctrl wouldn't have its own special
+> implementation of that kind of stuff.
+>
+> (Said my someone who has never tried to hack up an uncore event source
+> in perf.)
 
-You need to define what is the device here. Don't create fake nodes just
-for your drivers. If registers are interleaved and manual says "this is
-block APMU/MPMU" then you have one device, so one node with 'reg'.
+Initial implementation on Intel RDT tried to use perf ... it all went badly=
+ and
+was reverted.
 
-If subblocks are re-usable hardware (unlikely) or at least
-separate/distinguishable, you could have children. If subblocks are
-re-usable but addresses are interleaved, then children should not have
-'reg'. If children do not have any resources as an effect, this is
-strong indication these are not re-usable, separate subblocks.
+There are some very un-perf-like properties that we couldn't find a
+workaround for at the time.
 
-> 
-> Since reset/clock and power management registers interleave in the MMIO
-> region, do you think syscons are acceptable in this situation or it
-> should be handled in another way? The reset and clock controllers could
-> still be folded together as they share the same registers. The device
-> tree will look like,
-> 
-> 	syscon_mpmu: system-controller@d4050000 {
-> 		compatible = "spacemit,mpmu-syscon", "syscon", "simple-mfd";
-> 		reg = <0xd4050000 0x10000>;
-> 
-> 		cru_mpmu: clock-controller {
-> 			compatible = "spacemit,k1-cru-mpmu";
-> 			#clock-cells = <1>;
-> 			#reset-cells = <1>;
-> 		};
-> 
-> 		power_mpmu: power-controller {
-> 			compatible = "spacemit,k1-powerdomain-mpmu";
-> 			/* ... */
-> 			#power-domain-cells = <0>;
-> 		};
+E.g.
 
-Based on above, I do not see any need for children device nodes. It's
-fake split to match driver design.
+1) Cache occupancy counters. These change even when your workload
+isn't running (downward due to evictions).
 
+2) Counters based on RMIDs show the aggregated values from multiple
+CPUs as tasks are scheduled on cores.
 
-> 	};
-> 
-> For the other two clock controllers (APBS and APBC), syscons are really
-> unnecessary and it's simple to fold them.
+But maybe you meant "don't let resctrl use all those counters" ... hand som=
+e
+of them to perf to use in some other way?
 
-
-I don't follow. Do we talk about children or syscon compatible?
-
-
-Best regards,
-Krzysztof
+-Tony
 
