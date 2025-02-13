@@ -1,113 +1,174 @@
-Return-Path: <linux-kernel+bounces-513299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCBFA348BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:59:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB89A3489D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9943A7714
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:52:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B0CB1623D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD28B1E0087;
-	Thu, 13 Feb 2025 15:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E7019D092;
+	Thu, 13 Feb 2025 15:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Rq3SvIkI"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xvd8jUfW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787531FFC41
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223CD155326
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739461910; cv=none; b=ULPj5aSfheRYH6r00SMFW1DpLl8YOHRQEFIkKAwc/J+I/jDRs4X/n9ZDLw2AvVnCbqKq0XUuMGpMwyY9/5JAR4djW6zogV6wH/kS3SZlVAGB/flKE9lAefmyNOwazTki6rXh3qTDtxOWANymR67JHpQHhpe+KEsxITmO5Lgwn2E=
+	t=1739461997; cv=none; b=hqoRr3wyzI0Me63b6/LWJcDFDs+Y+mQYZQ/41jcdDXcqVwga3X3PjYbvLpf8e2Tm+bO/Td5Nx5v0QNS/Q5P723jMP4Mqofj4R4O9QMfNbvTcD07+afEUZBswtj9mAZDXiFwvlW/HW+q+7PMHsSaubwf54MnTIEOrTO9Ow3pLxqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739461910; c=relaxed/simple;
-	bh=iFe3o+gFbgY9eNuJ3H/JV+PUoqdwMD86enO8K+At3pI=;
+	s=arc-20240116; t=1739461997; c=relaxed/simple;
+	bh=Fr0YTAU+jzS2hTVLmxjX355fDOiiw6bVHBgQDsvSUwQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aPG65c2KC+fnQMaYN60BHyTThvNKOdGh4fv0OKnH1tpxyTKefzGB6bSVTNMaSMFHKHjc8pFzDoan1LuHtjZO61XQw+9IkXn17kL3HkvXSa9lDPKbRP4E9eku8cHcivNtrW4HgLeOfBawu/mXVqvoqqYcHCHgZaFkDQoIw2WDIvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Rq3SvIkI; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=iFe3
-	o+gFbgY9eNuJ3H/JV+PUoqdwMD86enO8K+At3pI=; b=Rq3SvIkIj/0MiEkBXx0K
-	R2KWriFUngQ0qdxNydHjkIcYQISLKw8LpEehUDS+S2ZDmrT6dVksbesh98FUx/go
-	UThRJtMjUUirSRepepoxIjIj2l/v1KPtEkwbD6vVx9UfyGbS1dkvVgFeH0vYHLv9
-	SLrfiExZcby3k3O7aP+t/bF9kyR/QSnljm1ZmrI2zF4vq0L6zI6HVHc0IM+3Whu4
-	HA0wz5L2/ge06hXX51AwP1ZZCnSSyBUPuanxCGQ8iqXqxy2npbraTrxAtvt+M20S
-	wKrGDjzuydDw/WIulch9DuhMDnglynR+GYcAH1V8AUwmqC+Irp6MfWDOnQA1VOdO
-	jw==
-Received: (qmail 1932260 invoked from network); 13 Feb 2025 16:51:45 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Feb 2025 16:51:45 +0100
-X-UD-Smtp-Session: l3s3148p1@uVX0CAgu0Jlehh99
-Date: Thu, 13 Feb 2025 16:51:45 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Bence =?utf-8?B?Q3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Samuel Holland <samuel@sholland.org>,
-	Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH v2 2/2] i2c: Unexport i2c_of_match_device()
-Message-ID: <Z64VEXs7JNtr2JC7@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Bence =?utf-8?B?Q3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Samuel Holland <samuel@sholland.org>,
-	Sebastian Reichel <sre@kernel.org>
-References: <20250213114613.2646933-1-andriy.shevchenko@linux.intel.com>
- <20250213114613.2646933-3-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fuMsgNCH8t4P8Yq+fwX6sS1PwPacJhltbLR/rlDW+o/fz5uSouYGBS2hFJg25DnMZBSKjW5TSGhh15A1Jz7bsaN1WjtVxfxWjA5f6zCusR/RpbfL7x+xM9fNFncOFz523Wi5KtR5hkmBi/AzunitHjGLzUog35j7EQzA0tEKdD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xvd8jUfW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739461995;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wm65mUYAEbhhNi250l1nY6B0IiEBXXQj82KeWsM7Zn0=;
+	b=Xvd8jUfW71PjHtuma3sYKMUcHlsvTz8gHw5d5CnOrezvv/bIdqfe33AKPj/xQcQFMJGQ20
+	pNABMEjgODXPapdNuJxaIPOYlutjeaSX+S/XVG3YNFh/WqsKiV4cxCeyjrKfub0RBjIKk5
+	5GSUOYc2+7VknwzXI2Qtf91bcfRrdHo=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-cArGOL9wNqmXUW6VsLH36w-1; Thu, 13 Feb 2025 10:53:13 -0500
+X-MC-Unique: cArGOL9wNqmXUW6VsLH36w-1
+X-Mimecast-MFC-AGG-ID: cArGOL9wNqmXUW6VsLH36w
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ab7ee928985so118949066b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:53:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739461992; x=1740066792;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wm65mUYAEbhhNi250l1nY6B0IiEBXXQj82KeWsM7Zn0=;
+        b=sqv+goSTzRP+YEerw69pW/9tAT0k9JfI9jqzEP14SwXsAPIj+3ewohWWqSJOpeZYoY
+         sDU6N/6pPT3HY8iOB9dju3RcCs19kMuf36m3fJV9eGZCl+kiaQ/Fb4BCkXJn/R51Y4FF
+         06URLFXhDtMD1bjus3BkhMkEVAaglnqxYGbBR0Crv9YfpBuixur0pPgoNWRd9YiGgY6K
+         J3KEDAoN4WhXpxOVwoVvjjZVaxSB3DipxQj0AoIjbHMpagBhoxODtQ+2f6Z78mqizN3f
+         YgV8zUswVMDT3e+YXOtvS6tv10YNMPdiYRGVmLbQOwjaN9ABwawRHBU44WqCLVqepMMu
+         bbfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ4q/2r7GBU3EijR74yPb8ZELXWxXV1SVv5sJmZEULWHgqBr7FCE8aAV9ebPwWntGg+3HbLSpoNT/1KTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxH/D20EtbSgsiFRYcU4GvRzQBYMtVdJZ93ivpl5KS9XR4PtEK
+	0g+BdYBQNBZWruk0oM6flT+g5RBE9XaI77k/zMadNQOs++ub3+HffTBEbj949n1/jzXuJzi+Sxi
+	3dfh81V/MXzNkugPNw9Scff3ZtmGjhcRN4/2ag1Wp7CD0622PgZr+uv0IAFOIQg==
+X-Gm-Gg: ASbGncs0c/Kp2sfErfexbdSA/MvMphQ/VSx15cJlk3gtGozTdM1OR28nKP/Ey1smSBS
+	v3RgdrwqAcyXkBx1N9R9fbEWKttL9zCuY0u+JcA63/HiBbhKN7npgrbFLRx5nRSRGUaNIwr+kLb
+	3UinTrCNeRwqB4xCS/ilhvjT81PoMs7PireSY+CLCDHxE3FoPsHq8jrqgbHO+xmHshUC5mPpyvN
+	8Wg+MhaLRwj2VDMyxE6Z1q85tUiSu5qB2I9k3mjnea3DzSH3QuN9QO2nEsKjMNCBkxEGGh9lQ==
+X-Received: by 2002:a17:907:9710:b0:ab2:c1da:b725 with SMTP id a640c23a62f3a-ab7f33f5f15mr585699466b.30.1739461992364;
+        Thu, 13 Feb 2025 07:53:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGPYyt4663087uMZIIKURYrG8Pp4HqyogPBtf0brGd9uzETM6Wmccz2T6+v992nLi1pX3fRsA==
+X-Received: by 2002:a17:907:9710:b0:ab2:c1da:b725 with SMTP id a640c23a62f3a-ab7f33f5f15mr585695966b.30.1739461991960;
+        Thu, 13 Feb 2025 07:53:11 -0800 (PST)
+Received: from redhat.com ([2a02:14f:171:92b6:64de:62a8:325e:4f1d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532581acsm156316266b.50.2025.02.13.07.53.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 07:53:11 -0800 (PST)
+Date: Thu, 13 Feb 2025 10:53:07 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Sergio Lopez <slp@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	David Airlie <airlied@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	fnkl.kernel@gmail.com, virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [RFC PATCH 0/5] virtio: obtain SHM page size from device
+Message-ID: <20250213105231-mutt-send-email-mst@kernel.org>
+References: <20250213-virtio-shm-page-size-v1-0-5ee1f9984350@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UdmvLfBUWaZkYshi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213114613.2646933-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250213-virtio-shm-page-size-v1-0-5ee1f9984350@redhat.com>
+
+On Thu, Feb 13, 2025 at 04:49:14PM +0100, Sergio Lopez wrote:
+> There's an incresing number of machines supporting multiple page sizes
+> and, on these machines, the host and a guest can be running with
+> different pages sizes.
+> 
+> In addition to this, there might be devices that have a required and/or
+> preferred page size for mapping memory.
+> 
+> In this series, we extend virtio_shm_region with a field to hold the
+> page size. This field has a 16-bit size to accommodate into the existing
+> padding virtio_pci_cap, simplifying the introduction of this additional
+> data into the structure. The device will provide the page size in format
+> PAGE_SIZE >> 12.
+> 
+> The series also extends the PCI and MMIO transports to obtain the
+> corresponding value from the device. For the PCI one, it should be safe
+> since we're using an existing 16-bit padding in the virtio_pci_cap
+> struct. For MMIO, we need to access a new register, so there's a risk
+> the VMM may overreact and crash the VM. I've checked libkrun,
+> firecracker, cloud-hypervisor and crosvm, and all of them should deal
+> with the unexpected MMIO read gracefully. QEMU doesn't support SHM for
+> the MMIO transport, so that isn't a concern either.
+> 
+> How the SHM page size information is used depends on each device. Some
+> may silently round up allocations, some may expose this information to
+> userspace. This series includes a patch that extends virtio-gpu to
+> expose the information via the VIRTGPU_GETPARAM ioctl, as an example of
+> the second approach.
+> 
+> This patch series is an RFC because it requires changes to the VIRTIO
+> specifications. This patch series will be used as a reference to
+> propose such changes.
+> 
+> Signed-off-by: Sergio Lopez <slp@redhat.com>
 
 
---UdmvLfBUWaZkYshi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+don't you want to negotiate the page size with the
+driver then?
 
-On Thu, Feb 13, 2025 at 01:45:05PM +0200, Andy Shevchenko wrote:
-> i2c_of_match_device() is not used anymore outside of I=C2=B2C framework,
-> unexport it.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> ---
+> Sergio Lopez (5):
+>       virtio_config: add page_size field to virtio_shm_region
+>       virtio: introduce VIRTIO_F_SHM_PAGE_SIZE
+>       virtio-pci: extend virtio_pci_cap to hold page_size
+>       virtio-mmio: read shm region page size
+>       drm/virtio: add VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE to params
+> 
+>  drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 +++++
+>  drivers/virtio/virtio_mmio.c           | 13 +++++++++++++
+>  drivers/virtio/virtio_pci_modern.c     | 31 ++++++++++++++++++++++++++++---
+>  drivers/virtio/virtio_ring.c           |  2 ++
+>  include/linux/virtio_config.h          |  1 +
+>  include/uapi/drm/virtgpu_drm.h         |  1 +
+>  include/uapi/linux/virtio_config.h     |  7 ++++++-
+>  include/uapi/linux/virtio_mmio.h       |  3 +++
+>  include/uapi/linux/virtio_pci.h        |  2 +-
+>  9 files changed, 60 insertions(+), 5 deletions(-)
+> ---
+> base-commit: 4dc1d1bec89864d8076e5ab314f86f46442bfb02
+> change-id: 20250213-virtio-shm-page-size-6e9a08c7ded1
+> 
+> Best regards,
+> -- 
+> Sergio Lopez <slp@redhat.com>
 
-Applied to for-next, thanks!
-
-
---UdmvLfBUWaZkYshi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmeuFRAACgkQFA3kzBSg
-KbbxXxAAtd8h9kQbwkz3k/y+6Y8k3lJinHEzzk045fbFvpU0U+vv34dqI1PS34Ey
-nmV1f/qjI6D3wJ7NO4jfTiXYp/puXBbb6tellLANWaP/MyzU6S0sE5k6J/aJeHyw
-3mYyQpe1e1NbW5Q7Rom9FTrxVqvA5K64lcYeCj/3eZhrLPYwxWP7C34DDN5fRIzu
-Poeme2rfC5SeIGxz4xxm5igPosYxi0BMBQjEy3mSWR/anLttjvHFQh23JwQl2U5P
-xg6UV4xUO34VQpDDAW7VZNM/MCkfnVdcDNIYj4/zbi0WijnUUy3NQtj7rBHpLGVA
-mygwJ2Rd6ak2IQHwnXjBOlAT62VkooG7K2frg8u4Rl3dcY+wa3XniESPZF6bO0N2
-V4Sv/GSWrGiTnmuHV04F8MVr0V+BjQF/R0l6O56j40BLbU9tmcN0ox0VUhJ22GWI
-90atrFM4skghWK6ShBaIeITTMJ2bDYPl30KXLB34vDqKtRUYHmkSXgVTqrP/7Mvx
-9fldIo7XP/R+GbA6/kXJbUFdpBCv1MhqIQAw50YNRnlj4Ttf71uDUWmg5SiNFwZK
-T5WViWNZmWF9jZZn2tPxd3fPfbjjThR1PMf54SgHdUZzmNWYYg/P4UBNcGueMptI
-f230iGyO0cpWut2QqTyTQaUGtHwdYjsvnR9mgmZ3nkUK0azmuXI=
-=KQxB
------END PGP SIGNATURE-----
-
---UdmvLfBUWaZkYshi--
 
