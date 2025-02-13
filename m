@@ -1,109 +1,104 @@
-Return-Path: <linux-kernel+bounces-512710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD888A33CE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:40:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D528A33CE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:40:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7455B7A1FA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D2901888879
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F98A2135AA;
-	Thu, 13 Feb 2025 10:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89D4212D95;
+	Thu, 13 Feb 2025 10:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o0Fl2GgT"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="b0JIacVt"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BDF211A0D;
-	Thu, 13 Feb 2025 10:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CAD211A06;
+	Thu, 13 Feb 2025 10:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739443228; cv=none; b=tGLcr5mfb1Ad+N51WWE1HXimB1Vm52m6JViPMlN7gvh4Auxw0KEtwd93ITa/5EUdgP6c+r2Getp/207BFSme+Dg/QFgjkwXtjOW4o2a1SS+ZQtYm3age8OHchLAnPosN8EPlIDYzzBmB/5urjl80qQXSz8XeMxSjeBr3NBwrrik=
+	t=1739443243; cv=none; b=dVGfZSZ40Xqo4vvbvPKWix7N+4SAKtZJHsgSiEZQLVwPqUNl+x3tOomcL+QVmacM2f5tSCTCkD3E2LiHBSi2tXKyn3x35EB7oY3YLOg1Hr+IAeVXLPobfL81/W3TVJI8hmtN/+6J90I75Rno7g5ct8pVPwJqHhcuAqT0O5r4n6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739443228; c=relaxed/simple;
-	bh=nlI8DXh6tRmM3EDxHee1gmgyvZXId7Jr12OQ0xEC7zA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrS5Mc8om/BZqXGh2HmaBnHVedCJkEaYmkPX/bVffMbJK1Bn282ff73Eh6kfKqiP89CW4ASFFsBHiRqVTlLf6N6xPXoz1aJj6xUWnVqCJK0hPwd1pg8LoI0sAHec/37UcKNUMC8oTLAV/mDBDJbtQ1tPH3tY5dgW9yY3DkJCPO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o0Fl2GgT; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=lH5ArMbACkKyHoGFSOksU5INJkkZ8BeZNVoHrbssNbg=; b=o0Fl2GgTmsXXY2o+r7xvH1Hed8
-	9kAqTomd5QGtPIOBdtQ9SKdc2dxupT9arC0cok2llTn07UMPm6VZXXmugIFsrEFu9pwxHjOp1J7cc
-	Y5Bf3z8CaIokzsye5sw4J8VV81MvIBcrcH/4P5X4DmfyMesT/rNTbF2RpidNPCzivW8YbUF4PBKvf
-	IVoKSHywqwLzwrmQeaiIeQRP4MhPjsIkF+s4XYjIgjit8UzELZNsHUMb8z5C55bGfRxX7RpupOGlc
-	4Az7z4TAIXsRbYbAP2vSSHjWdQPsC2j1BYCXMchhgBuydMM/GhgBDUaErzhXtjvoY7BpLGjgd0Sre
-	K1x8OSVg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiWdj-000000080Hj-1tYQ;
-	Thu, 13 Feb 2025 10:40:15 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B4ED83001AC; Thu, 13 Feb 2025 11:40:14 +0100 (CET)
-Date: Thu, 13 Feb 2025 11:40:14 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Haiyue Wang <haiyuewa@163.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Gabriel de Perthuis <g2p.code@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ftrace: x86: Fix a compile error about
- get_kernel_nofault()
-Message-ID: <20250213104014.GD28068@noisy.programming.kicks-ass.net>
-References: <20250206205449.5f83a585945ae6eb0cc15483@kernel.org>
- <20250206121328.GN7145@noisy.programming.kicks-ass.net>
- <20250206123307.GO7145@noisy.programming.kicks-ass.net>
- <20250207085959.b3e9d922eab33edf885368e3@kernel.org>
- <20250210173016.0ce79bc8@gandalf.local.home>
- <20250211100914.GA29593@noisy.programming.kicks-ass.net>
- <20250211105002.31b5a517@gandalf.local.home>
- <CABCJKudwf11wAbv9NdKh_FN-Z+pLaupMHJxNGtRKK1-1D94hCQ@mail.gmail.com>
- <20250213100836.GC28068@noisy.programming.kicks-ass.net>
- <08422aab-f4a9-4f67-84ef-82ad3663b01f@163.com>
+	s=arc-20240116; t=1739443243; c=relaxed/simple;
+	bh=rKfJj/nOFTP3ITe5GatUlSP/bs0kOFPFXDa1/jdXj0Q=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=Ea3Z3atIRMfDy7odnVfpJmHWTGTGNuCIEWTHUq4GEa2uH1bf95Y/BT2vpdCGa8OQIWCRJy/OIbODQc4LzEsbWblaYjWs3A+N7t7o78fPSIRqElO4EiPpNcA3541wPXoT4f8oOTA5wFrj0T13eGwVL/eXR1NziKuAKzxiJwpI+lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=b0JIacVt reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 58AC36AF;
+	Thu, 13 Feb 2025 11:39:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739443160;
+	bh=rKfJj/nOFTP3ITe5GatUlSP/bs0kOFPFXDa1/jdXj0Q=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=b0JIacVtrHBLExudGvxw2VW6F6/nRpG6Ko7zZRbOF5hzlown3X9l7YYBxDooS+kn0
+	 EP23NnSl/XMjJvwO6j+1Jl5FF0X9GJATp9tVJ3PujlTWBzn4f4d+gflviRsAoBU0Ca
+	 +rweftJoiunoNp8OZmz8bMPvRF65bN//JuR4eBUE=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <08422aab-f4a9-4f67-84ef-82ad3663b01f@163.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250212195656.69528-1-slavine@d3embedded.com>
+References: <20250212195656.69528-1-slavine@d3embedded.com>
+Subject: Re: [PATCH 0/4] media: i2c: Add driver for Sony IMX728
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: =?utf-8?q?N=C3=ADcolas?= F. R. A. Prado <nfraprado@collabora.com>, Abel Vesa <abel.vesa@linaro.org>, Achath Vaishnav <vaishnav.a@ti.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ard Biesheuvel <ardb@kernel.org>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Biju Das <biju.das.jz@bp.renesas.com>, Bjorn Andersson <quic_bjorande@quicinc.com>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>, Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Hans Verkuil <hverkuil@xs4all.nl>, Javier Carrasco <javier.carrasco@wolfvision.net>, Jianzhong Xu <xuj@ti.com>, Julien Massot <julien.massot@collabora.com>, Kory Maincent <kory.maincent@bootlin.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+ , Mikhail Rudenko <mike.rudenko@gmail.com>, Nishanth Menon <nm@ti.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sascha Hauer <s.hauer@pengutronix.de>, Sebastian LaVine <slavine@d3embedded.com>, Shawn Guo <shawnguo@kernel.org>, Stuart Burtner <sburtner@d3embedded.com>, Tero Kristo <kristo@kernel.org>, Thakkar Devarsh <devarsht@ti.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Umang Jain <umang.jain@ideasonboard.com>, Vignesh Raghavendra <vigneshr@ti.com>, Will Deacon <will@kernel.org>, Zhi Mao <zhi.mao@mediatek.com>
+To: Sebastian LaVine <slavine@d3embedded.com>, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Date: Thu, 13 Feb 2025 10:40:35 +0000
+Message-ID: <173944323591.1238111.8582110055649651187@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-On Thu, Feb 13, 2025 at 06:25:41PM +0800, Haiyue Wang wrote:
+Hi Sebastian,
 
-> It is header file include indirect :-)
-> 
-> https://lore.kernel.org/linux-trace-kernel/20250206131711.ea536f165d5b5980b3909acd@kernel.org/T/#t
-> 
-> File "asm-prototypes.h" is added to entry.S by 'scripts/Makefile.build',
-> adding the missed declaration header file can also fix the error:
-> 
->  getasmexports =                                                        \
->     { echo "\#include <linux/kernel.h>" ;                               \
->       echo "\#include <linux/string.h>" ;                               \
-> +     echo "\#include <linux/uaccess.h>";                               \
->       echo "\#include <asm/asm-prototypes.h>" ;                         \
->       $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
-> 
+Quoting Sebastian LaVine (2025-02-12 19:56:52)
+<snip>
+>=20
+> Total for device /dev/v4l-subdev4: 44, Succeeded: 44, Failed: 0, Warnings=
+: 0
+>=20
+>=20
+> This is a v3 of a series that was originally sent last summer[0].
+>=20
+> [0]: https://lore.kernel.org/r/linux-media/20240628-imx728-driver-v2-0-80=
+efa6774286@d3engineering.com/
 
-So this is simple enough; but the thread you link to also has another
-hunk, which makes the whole thing unfortunate.
+This version of the driver was authored by "Spencer Hill
+<shill@d3engineering.com>" who seems to no longer be credited. Is this
+intentional?
 
-I'm not entirely sure what this GENDWARFKSYMS nonsense is about, but it
-should not clutter the code like that.
+Does his original Signed-off-by: tag need to be kept at least ? Or
+perhaps Co-Authored-by: ?
 
+--
+Kieran
+
+
+>=20
+> v2 -> v3:
+> - Update maintainer
+> - Update bindings example
+> - Add devicetree overlays
+> - The driver now supports SRGGB12_1X12, not SRGGB10_1X10
+> - The driver now outputs at 3856x2176, not 2840x2160
+> - Fixed exposure, again controls
+> - Removed duplicate register writes (removed repeat HDR writes, etc)
+> - Fixed imx728_wait_for_state use of the cci_* API
+> - Re-added _imx728_set_routing (necessary for imx728_init_state)
+>=20
+> Sebastian LaVine (4):
+>   media: dt-bindings: Add Sony IMX728
+>   media: i2c: Add driver for Sony IMX728
+>   arm64: dts: ti: k3-am62a7-sk: Add overlay for fusion 2 board
+>   arm64: dts: ti: Add overlays for IMX728 RCM
 
