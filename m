@@ -1,213 +1,147 @@
-Return-Path: <linux-kernel+bounces-513024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ABC4A340AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:46:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A3DA340BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:49:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82BBA3A8BC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:46:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 970067A5446
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8E22222BB;
-	Thu, 13 Feb 2025 13:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0B9242900;
+	Thu, 13 Feb 2025 13:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NodM34dA"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVkiUUXS"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B30224BC1B;
-	Thu, 13 Feb 2025 13:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24BF23A9A7;
+	Thu, 13 Feb 2025 13:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454337; cv=none; b=WzclKvWLzBmrXl9GWapOLUR2jbQrDZf9ONma0A//TKc7mIk0b4RxYISpAIzmOlFpF2nQJ7WnKW4BPmmDgfCIFZG33F8tvAhanvzineOVUu//z1nxFWIT5P+x0pYMu+hEEKgbZ5sXg82qxOehFAsDFESrnbO2y6KPfN60s098n+g=
+	t=1739454350; cv=none; b=Z3BSxt8iFgLmqIKvFyp3soxVfcqp+reTnK4NY6/DJ+80WIXe76PETcCQENJXfQ7+63Ob9K0JJ01FjhP/5vTrjVmcYmyaSnvNhT8AKToFUzrBslCKAXEA9h7Vlwdqh4VCTG3GMJ4Dow5S1aa93YHHXJDWIaCzRt6+uVf5Ye8ibYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454337; c=relaxed/simple;
-	bh=U8ePno+sKsWtuVr6PNmUVd5zk1D2qd0BJO4jRPxf4cw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=trjEvs7DQ04OhoIsAtT/YVqhxOWjPf6Mvld/U8r/Wunz7Yw+SG/veGlpIaBw2klgadcNBPsk1yMHx1mW7dkDgRgulOFgk0tx8kh5D0G/OB6rIX+02switmUKPMLyrMAwQla4jgZzCuLSaxLBfZ8TyjlSQGCFG+D0Dr1Ak5VL7UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NodM34dA; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 76139442EE;
-	Thu, 13 Feb 2025 13:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739454332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LOY93ekLgvw384eCr7f7tJywpZTgajONjgM57IYL204=;
-	b=NodM34dAYcj7wiLVlzXBa0APHK8K9DaSlZxp+3V5zEHgGYFdGmLefvvLuqbCC466soFE79
-	AxuaobXrJuKgAv4Blrw3zVnbfh4g4pE1z59BPZKYC4NnCMRTjDwaKSQkaEY8KDiTiPF+RN
-	dDvorI1q5PCnPJ/oBcudmams/4lmlidcT8GCQ1vtFwcB2RwWWlIxyd7leRg3lABR81k4ne
-	i1WBlIZhBECuH4XccygJp5XK6IXZ4hBmzU8emlV5eTnABP7MpOFmnW+v4FjPLauaPEp0t3
-	B2GA4OqZOpcd4zsZRI4dBtP3dU11Kv5ir8jN8uWZQjLNWLAdobl7yldj/x4pOQ==
+	s=arc-20240116; t=1739454350; c=relaxed/simple;
+	bh=GSbac0XMGlGpq3LK4pbKLskyjw5oUq3AyoRnGYD0RgE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F7iEf3bG2xp0sMvWSTip9dwAvQm+W2RRGJNrYMZISbXAOzoBwjbRGQ4aUdSIGGWWW2DOyJXFAeavM61SZKgttSrnIJM20l/RUKNXFt4Mr6FXLMAXoa44SLQ6QQbvoPXJazYOUdG2FUn4UDy+sWgUGNq9Zh8eocqpOWVEtlsxwv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dVkiUUXS; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-72707750de0so27709a34.3;
+        Thu, 13 Feb 2025 05:45:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739454348; x=1740059148; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6gQOE+5IhCQGEcBG+5exSEJRqbSS6WLMWBkfFhzqs0I=;
+        b=dVkiUUXS4pQGpAbBaTeTfWXomFIQvfGbfDYOUOzQuUeYyYU31m1ATYJuDI9KgMUaxs
+         m4Ary39dwXMprdj3XO6AE6rlauF9fKUmGPLlTzi6rYO7UbrJx2jUqNpaC+dTghSO3Hz6
+         jWTay2uVSFImT50ZVsvdQJ5rQDfecqQ86U5qXt69wEky8SIvJE21HyllNAB5/tlpddp6
+         ATfUG3JPUnHowEbAXCIc0G/7Q71OVjJ48nCxD5m6Z7EBNUzb/cpltOX6GAobwVxrWgDc
+         KRKdIEpag6IiW7nYy/A9T7Ub/pKqKf+h1R960oCJ/vDGGCxkxaOfChSjiS6I6FX1O8sx
+         4SMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739454348; x=1740059148;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6gQOE+5IhCQGEcBG+5exSEJRqbSS6WLMWBkfFhzqs0I=;
+        b=CXxjWevSsSwBR6NDLB1cRtxShyzin/DF/3T0Di1v9oOK7lWtd7RN7Qjut/oDRONDty
+         TbOK8jP/eAWRlHE54p4t8OfTNrCWHTBK/9w0+ETSsYdvVF2lizaUAhwbHKQsPASnud5k
+         4Ny0BvP1PFJS63TBsvSUA3bfu1Obb35UVxndP0scWF26XhzAyJiYxr/iRveyhLBCI8XV
+         JKDdXXCAJpknqZ/yEhLkdTIL8F+wq8EcdLl3YJ3++fGzf0xh36tw3aaOf7Pp/uknpeb8
+         bwGNWUvRkp6B+0qYhDhxvoE5g2xj1Qgb1KF/Zhx4YlnXIc8KQK1TWqCO8x4feH7A9+S/
+         3KuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4JdBsnLCRG3IOaPkSYRQcVYBD3v18heax1CKGakOJQHBlqvLRpJi8FEgQMJajXQvRlaQOdl3QeGJu@vger.kernel.org, AJvYcCVb9D+lRU0WM8CUAVaTvvq4XcpwamZZrUoV5PC+AwiCqA1NYblT8B3jevp8/RAmrtXwYZ6gljoJ@vger.kernel.org, AJvYcCXpktpc4RKPQjSFXc38B2LglAq5pUdKy2xG8lHP4zkZcBHKUuBWqHNcqqfRh0lTuhveZS/e1080CQxr02U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFvdqNwLmmdGIdRLPYAkdHaOITls4lzkF8AeyO033XKO4Qq+62
+	40F0uxv82W4oJCdxcKaLNkauwyj+5TQxNFL+MtIQ6ePrQ2jRfMY5zUmgmg1Szp2Czr/ugajlTwc
+	KYwDDRidn8ly0peRMHLz+TtG5rk0=
+X-Gm-Gg: ASbGnctt7lYvGnwy77uAThdyS06dY1Ej6AWCSDGWwB7JgAIzN0jIUZmlR//yCa+9Ggj
+	BWuNLvyVLPUTcXk7fbsSivVXPMiZg+HmTQlacUrztimjbQ1OXp66eG/312Xew1IfezoXqHA96
+X-Google-Smtp-Source: AGHT+IFBfX/ztdybMLcS3wSj+Xa+3ijqwcBNNhBdZ0A6tha8fsOV0Z5urFhL/q4CRZobnikCvYpy14N+IWxcPFf5OHo=
+X-Received: by 2002:a05:6870:82a4:b0:29e:255e:9551 with SMTP id
+ 586e51a60fabf-2b8f8ab7afcmr1808374fac.2.1739454347668; Thu, 13 Feb 2025
+ 05:45:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250209071752.69530-1-joswang1221@gmail.com> <5d504702-270f-4227-afd6-a41814c905e3@google.com>
+ <CAPTae5+Z3UcDcdFcn=Ref5aQSUEEyz-yVbRqoPJ1LogP4MzJdg@mail.gmail.com>
+ <CAMtoTm0bchocN6XrQBRdYuye7=4CoFbU-6wMpRAXR4OU77XkwQ@mail.gmail.com>
+ <CAPTae5J5WCD6JmEE2tsgfJDzW9FRusiTXreTdY79MBs4AL6ZHg@mail.gmail.com> <2025021323-surviving-straddle-1f68@gregkh>
+In-Reply-To: <2025021323-surviving-straddle-1f68@gregkh>
+From: Jos Wang <joswang1221@gmail.com>
+Date: Thu, 13 Feb 2025 21:45:36 +0800
+X-Gm-Features: AWEUYZmoFdU52uY9i37E7NZRnAW69SIroh2dDb4IJ8WBYjnXmS0bZLH8p7pupD0
+Message-ID: <CAMtoTm3+0X46e0yO5zne_wxjjDMZGyPfGBUqieDGc6-hWef5_A@mail.gmail.com>
+Subject: Re: [PATCH 1/1] usb: typec: tcpm: PSSourceOffTimer timeout in PR_Swap
+ enters ERROR_RECOVERY
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Badhri Jagan Sridharan <badhri@google.com>, Amit Sunil Dhamne <amitsd@google.com>, 
+	heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jos Wang <joswang@lenovo.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 13 Feb 2025 14:45:31 +0100
-Message-Id: <D7RD3K56C2CQ.1WGUSI809P246@bootlin.com>
-Subject: Re: [PATCH v3 4/7] gpio: max7360: Add MAX7360 gpio support
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>, "Andy
- Shevchenko" <andriy.shevchenko@intel.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20250113-mdb-max7360-support-v3-0-9519b4acb0b1@bootlin.com>
- <20250113-mdb-max7360-support-v3-4-9519b4acb0b1@bootlin.com>
- <Z5eFGJspoGOINcG6@smile.fi.intel.com>
- <D7QHGB7D0VSG.X255SDU7DFOF@bootlin.com>
- <Z6y65SnrprvnpKEa@smile.fi.intel.com>
- <D7QLITNTXRUJ.3NA44E6PQMAUX@bootlin.com>
- <Z6zJljphfTuEhBTP@smile.fi.intel.com>
- <D7R9KGN6EMDM.1DCDL4P5RC23B@bootlin.com>
-In-Reply-To: <D7R9KGN6EMDM.1DCDL4P5RC23B@bootlin.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhhih
- idrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrgh
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Thu Feb 13, 2025 at 11:59 AM CET, Mathieu Dubois-Briand wrote:
-> On Wed Feb 12, 2025 at 5:17 PM CET, Andy Shevchenko wrote:
-> > On Wed, Feb 12, 2025 at 05:08:56PM +0100, Mathieu Dubois-Briand wrote:
-> > > On Wed Feb 12, 2025 at 4:14 PM CET, Andy Shevchenko wrote:
-> > > > On Wed, Feb 12, 2025 at 01:57:34PM +0100, Mathieu Dubois-Briand wro=
-te:
-> > > > > On Mon Jan 27, 2025 at 2:07 PM CET, Andy Shevchenko wrote:
-> > > > > > On Mon, Jan 13, 2025 at 01:42:28PM +0100, Mathieu Dubois-Briand=
- wrote:
-> >
-> > ...
-> >
-> > > > > > > +	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpi=
-os)) {
-> > > > > > > +		dev_err(&pdev->dev, "Missing ngpios OF property\n");
-> > > > > > > +		return -ENODEV;
-> > > > > > > +	}
-> > > > > >
-> > > > > > This is not needed, it is already done in GPIOLIB core.
-> > > > >=20
-> > > > > I believe this is still needed:
-> > > > > - For gpos, we need the gpio count to correctly set the partition
-> > > > >   between gpo and keypad columns in max7360_set_gpos_count().
+On Thu, Feb 13, 2025 at 5:47=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Wed, Feb 12, 2025 at 11:16:35PM -0800, Badhri Jagan Sridharan wrote:
+> > On Tue, Feb 11, 2025 at 5:50=E2=80=AFAM Jos Wang <joswang1221@gmail.com=
+> wrote:
+> > >
+> > > On Tue, Feb 11, 2025 at 7:51=E2=80=AFAM Badhri Jagan Sridharan
+> > > <badhri@google.com> wrote:
 > > > >
-> > > > Shouldn't be that done somewhere in the GPIO valid mask initialisat=
-ion?
+> > > > On Mon, Feb 10, 2025 at 3:02=E2=80=AFPM Amit Sunil Dhamne <amitsd@g=
+oogle.com> wrote:
+> > > > >
+> > > > >
+> > > > > On 2/8/25 11:17 PM, joswang wrote:
+> > > > > > From: Jos Wang <joswang@lenovo.com>
+> > > > nit: From https://elixir.bootlin.com/linux/v6.13.1/source/Documenta=
+tion/process/submitting-patches.rst#L619
 > > > >
-> > > > > - For gpios, we need the gpio count to setup the IRQs.
+> > > >   - A ``from`` line specifying the patch author, followed by an emp=
+ty
+> > > >     line (only needed if the person sending the patch is not the au=
+thor).
 > > > >
-> > > > Doesn't GPIOLIB parse the property before initializing the IRQ vali=
-d mask
-> > > > and other init callbacks?
-> > >=20
-> > > No, I believe I have to register the IRQ before registering the GPIO,=
- so
-> > > I can get the IRQ domain.
-> > >=20
-> > > Right now I have something like:
-> > >=20
-> > > irq_chip->num_irqs =3D ngpios;
-> > > devm_regmap_add_irq_chip_fwnode(dev, dev_fwnode(dev), max7360_gpio->r=
-egmap,
-> > > irq, flags, 0, irq_chip, &irq_chip_data);
-> > > gpio_config.irq_domain =3D regmap_irq_get_domain(irq_chip_data);
-> > > devm_gpio_regmap_register(dev, &gpio_config);
-> > >=20
-> > > Also, gpiolib will store ngpios in the gpio_chip structure, but while
-> > > using gpio-regmap, this structure is masked behind the opaque
-> > > gpio_regmap structure. So I believe there is no easy way to retrieve =
-its
-> > > value.
-> > >=20
-> > > This part of the code changed a lot, maybe it would be easier if I pu=
-sh
-> > > a new version of the series and we continue the discussion there?
+> > > > Given that you are the author, wondering why do you have an explici=
+t "From:" ?
+> > > >
+> > > Hello, thank you for your help in reviewing the code.
+> > > My company email address is joswang@lenovo.com, and my personal gmail
+> > > email address is joswang1221@gmail.com, which is used to send patches=
+.
+> > > Do you suggest deleting the "From:" line?
+> > > I am considering deleting the "From:" line, whether the author and
+> > > Signed-off-by in the patch need to be changed to
+> > > "joswang1221@gmail.com".
 > >
-> > So, what seems need to be added is some flag to GPIO regmap configurati=
-on
-> > data structure and a code that is called after gpiochip_add_data() in
-> > gpio_regmap_register() to create a domain. This will solve the above is=
-sue
-> > and helps other drivers to get rid of potential duplication of
-> > devm_regmap_add_irq_chip_fwnode() calls.
-> >
-> > Have you researched this path?
+> > Yes, changing signed-off to joswang1221@gmail.com will remove the need
+> > for "From:".
+> > Go ahead with it if it makes sense on your side.
 >
-> OK, so looking at the code, I believe it would need to:
-> - Add some flag in gpio_regmap_config structure, so
->   gpio_regmap_register() creates a new IRQ domain.
-> - Add a function allowing to retrieve this domain out of the gpio_regmap
->   structure.
-> - Allow to pass a domain in the regmap_irq_chip structure, so
->   regmap_add_irq_chip_fwnode() use this domain instead of calling
->   regmap_irq_create_domain().
-> - Make sure this domain is still populated with the IRQ data: number of
->   IRQs, IRQ base but also a pointer on the regmap_irq_chip_data
->   structure in .host_data. I believe this will be a bit tricky.
-> - Add a function allowing to retrieve ngpio out of the
->   gpio_regmap.gpio_chip structure, so it can be used for IRQ setup and
->   other places of the driver.
+> No, what was done here originally is correct, please do not ask people
+> to not actually follow the correct procedure.
 >
-> I'm sorry, but I feel like this is a lot of changes to solve this point.
-> I've been thinking about it, and I can suggest a different solution.
+> Jos, thank you, there is nothing wrong with the way you sent this.
 >
-> For gpios, I will remove the ngpios property of the device tree and use
-> a fixed value:
-> - For the today version of the chip, this is always 8.
-> - I a chip variant or a similar chip ever arise later with a different
->   number of gpios, the fixed value can be set according to the
->   "compatible" value.
-> - This removes any issue with the IRQ setup.
+> thanks,
 >
-> For gpos, we have to keep ngpios, as it depends of the implementation on
-> the board. That means ngpios will be used:
-> - For the gpio chip configuration: we let gpiolib retrieve it from the
->   device tree.
-> - In gpio-regmap reg_mask_xlate callback: I can add a function allowing
->   to retrieve it from gpio_regmap.gpio_chip, as suggested above.
-> - In max7360_set_gpos_count() to validate the coherency between
->   requested gpios and keypad columns and set the correct configuration
->   on the chip:
->   - I can also retrieve the value from gpio_regmap.gpio_chip, but that
->     means the check is made after the call to
->     devm_gpio_regmap_register().
->   - Or I will still need to retrieve it using device_property_read_u32()
->     here.
->
-> How do you feel about this solution?
+> greg k-h
 
-Actually there is an additional issue: today, relying on gpiolib to
-parse the "ngpios" property does not work with gpio-regmap.
+Thanks=EF=BC=8CI will submit the v2 version patch soon.
 
-The gpiochip_get_ngpios() function in gpiolib is called in
-gpiochip_add_data_with_key(), but when using gpio_regmap_register(),
-we first ensure ngpio is set correctly before calling anything.
+Thanks,
 
-Yet I believe this check can safely be removed, allowing the magic in
-gpiolib happen as expected.
-
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Jos
 
