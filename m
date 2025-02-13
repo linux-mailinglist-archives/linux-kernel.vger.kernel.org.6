@@ -1,146 +1,116 @@
-Return-Path: <linux-kernel+bounces-512597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF226A33B56
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:38:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DF4A33B58
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:39:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3921F3A535D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC75D3A5BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A0F20DD52;
-	Thu, 13 Feb 2025 09:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E0520E6F3;
+	Thu, 13 Feb 2025 09:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOb9lfsq"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MiXJJNUE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FF220126B;
-	Thu, 13 Feb 2025 09:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10D020CCE3;
+	Thu, 13 Feb 2025 09:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739439529; cv=none; b=M5NhtV+BE+GqWr29/HKiT2Myg03hv5nwMDejJSRuZunu7GTlONJNUui7ZeJf/lhVtTZiyLh4LT6bNuxXUKVBNppG61mJC7m2Wm5AwOfcFDZbt8pERSk6WyBJ9bofSXQ0zSsd19t2OmOZzPCLVUD/NWwCO3c4icLCw0O8E2lDJCM=
+	t=1739439533; cv=none; b=FrFJVH0/vj11WMyPMKiI69lVr7czsiPIXRs72CYpAvzRNcaxWX2/TP6ege3AAf0bOVvASYOt2Q/yuA1SSCZVZyRbXdoMDZiKi2IiLU07bpnyOVGLPyEi1jmD3iJEDUGopf6rvcFW5vSO7sEAxtmHd37fjfTKkVBjZZCiI+sJte0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739439529; c=relaxed/simple;
-	bh=4cygTJ3yR4tRKLsP0wtV3KZdaGLyfmfHvIucsUrQvDg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rXED6eDWbiK7aB80qykm3SvJJQlUQ/a8ErW6nWOYwmzemVuBwZuWp3jePH02Oce4ZDoSGfQFfrw6wzAAEOwmq92CjZU4HarIXvqqGbgW9aBmwcmPZU4xX5plfb5+DGAPY2Piw9izSeox27QbfpS7zBV80Jn08UB/4QmQQ0Q4NXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kOb9lfsq; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5205539e38cso152560e0c.0;
-        Thu, 13 Feb 2025 01:38:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739439527; x=1740044327; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z7ubcBm+BUx/asZzvcxH/Scjsub7kB2AzjvxwQhJQeQ=;
-        b=kOb9lfsq1j9pGRT4ugkiEFA+AtAvQo07IWLO7olzeEAOSrx8r4iNNvjsGViefOshHA
-         4bXVFzZhvXfWGp3ClbtTeZP399BGXESyk+sTdhTJze8L+SfGIzXV97LK2NDrW1qy0I2B
-         eykVkgXoR51brQs6fH0LgOehS92PiT85Fjh0cyOmH1Vak5zgCTVU1zBePHlAXp7bhuDS
-         wihFNH6SrnnAwdi00139146P/zdGJrrwviEbPBRACRdLHMy3dwOrB8iOstmC1VxTnlkK
-         Nsl/x6AoAX+Fy0Yl9i9DFIukBCMI3fXa867g16hQg7DS3VyQv69VaowU5+6H0kfvIGsV
-         iZBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739439527; x=1740044327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z7ubcBm+BUx/asZzvcxH/Scjsub7kB2AzjvxwQhJQeQ=;
-        b=M2Lm/aLzSvnxS8GVUnegWAgskmQXkO5HSIdhy/7E89xhPzdEsqwrj5ohpE8qOMHFaY
-         KsDqONdvZyqWpXpLQWq2GTLDTGvtdTF89tPyl/3BYsYRP1eABW0jNYozSZYTSqigsu+Z
-         U+nfu/KLlNUR7FYb8wiImDyr/694fSpEpmKIttRSdvg1iyLxu/k/nDQdx243rMKpEfeK
-         cmhFkeK5EwVT49cmmoCDfpG0aJ32pK1Cztz3RyCXL012fjNBsV/mnJF3tCA1MsuyMErQ
-         TEHwGJ/9iu1SEJsMtR4VCCEnhNaWIevMnDWO3DVor0gE/4pUP8vLLkUTZ/yQ98HKox59
-         TjTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGXySrzi5krTCT5r0hujN14G7tI+0UDFuvQsaqsXisnexhhTLn0ofNh6ImkQpaEQSwKq80RnWvGqQEBWZvhGbltxY=@vger.kernel.org, AJvYcCVzuxrUK72YNZE5H7HznGeOXZZDOsizxmMnBwcc7hjNTC5NOgHT+i3asPZUr1BeCJ90cP4HtMYliUdOrzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcPzHfGkFabMq8h48QY+X9892e2eEGgQgCHxpLMpq54SVXYO7p
-	KeR9FsVPh31w0hUHRvaNHkY8v+scM3sgxz7eMhwuoFcUrvUqsxgq05aDHDFVG3j9BnECMfHRSSc
-	yNUZxDQNbnoVCqFt2R/ndrPMbsMs=
-X-Gm-Gg: ASbGnctkuJ+IKgLQKIsGpLdcXRrRSNH73fI3skXQmCf88nCqousYuHMpNcYdRVPsnLi
-	idOwqq1UnkYihzW+i2yPs1JaHAdltpBWsppjYrKLlxo9GY3AuQM2iz/OjeN/G3lRjIGSVC3gY3c
-	hjdZYdHcLQzZDrcwXecGNrtOvpaLwlTw==
-X-Google-Smtp-Source: AGHT+IGtI6fY2A3V1nrTUBE/olF2KMIGJJuTixyMLAMR7gZdh6SDlvTZjDO2HvycAnN6UAD62iHauLNb4Sck06/cg0U=
-X-Received: by 2002:a05:6122:65a0:b0:520:51a4:b84f with SMTP id
- 71dfb90a1353d-52069c6dbb8mr5389676e0c.4.1739439527129; Thu, 13 Feb 2025
- 01:38:47 -0800 (PST)
+	s=arc-20240116; t=1739439533; c=relaxed/simple;
+	bh=0zWcTo7NJF9fSVtPaN+XMS58YNRC0oUAa0cekb1aOfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GoGzpRtjlcYuWuUvd6bxh2V9d+Cx8DBXGJSaVlkzFbT0ioN2AO+XDP6EHJye6chSzwxPrK8PRKNEAFFK86XEaD4gGp9BR25JedeGaLVCwmxwdgQaFcv2wCO2Fp9vpp2app0HrSsgz1aDTgeBWDN1g5TAv4vSIEQv7n0OONyaxPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MiXJJNUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CFD8C4CEE8;
+	Thu, 13 Feb 2025 09:38:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739439532;
+	bh=0zWcTo7NJF9fSVtPaN+XMS58YNRC0oUAa0cekb1aOfw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MiXJJNUE2PZpaqwYrgnTicCmFHo4/HXOS8hdhhmLUTnwY1yg0J3+T6MwYJL/mxfK3
+	 EYeC8NyezJ5n7m2ZgAICaA6PS3u6FIVBTgOTqWRuY11nwjUx0uuph3Dw8iCWVlHuMy
+	 raeM2awePu5+czI0fo4CL26A4T8JFPLCLaozbK7w=
+Date: Thu, 13 Feb 2025 10:38:48 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: 412574090@163.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	weiyufeng <weiyufeng@kylinos.cn>
+Subject: Re: [PATCH] usb: fix error while OF and ACPI all config Y
+Message-ID: <2025021334-sagging-activism-3dd3@gregkh>
+References: <20250213091553.198050-1-412574090@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212182034.366167-1-fabrizio.castro.jz@renesas.com> <20250212182034.366167-3-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20250212182034.366167-3-fabrizio.castro.jz@renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 13 Feb 2025 09:38:21 +0000
-X-Gm-Features: AWEUYZn-UeMVAYiQ2tD6IbS6GzdhfFE75lW-4DjQl4ICpd3pc7wFXosOXW-BX8U
-Message-ID: <CA+V-a8vrnrrb2LsWQqW=WhdgMRYgZmExFME3bt-L92aFAv1Gug@mail.gmail.com>
-Subject: Re: [PATCH 2/6] irqchip/renesas-rzg2l: Use devm_reset_control_get_exclusive_deasserted()
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250213091553.198050-1-412574090@163.com>
 
-On Wed, Feb 12, 2025 at 6:32=E2=80=AFPM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
->
-> Use devm_reset_control_get_exclusive_deasserted() to simplify
-> rzg2l_irqc_common_init().
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+On Thu, Feb 13, 2025 at 05:15:53PM +0800, 412574090@163.com wrote:
+> From: weiyufeng <weiyufeng@kylinos.cn>
+> 
+> When both OF and ACPI are configured as Y simultaneously，this may
+> cause error while install os with usb disk，while reading data from
+> the usb disk, the onboard_ hub driver will reinitialize the
+> hub, causing system installation exceptions.
+> 
+> Signed-off-by: weiyufeng <weiyufeng@kylinos.cn>
 > ---
->  drivers/irqchip/irq-renesas-rzg2l.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>  drivers/usb/misc/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
+> index 6497c4e81e95..94e75e7adcc1 100644
+> --- a/drivers/usb/misc/Kconfig
+> +++ b/drivers/usb/misc/Kconfig
+> @@ -318,7 +318,7 @@ config BRCM_USB_PINMAP
+>  
+>  config USB_ONBOARD_DEV
+>  	tristate "Onboard USB device support"
+> -	depends on OF
+> +	depends on OF && !ACPI
+>  	help
+>  	  Say Y here if you want to support discrete onboard USB devices
+>  	  that don't require an additional control bus for initialization,
+> -- 
+> 2.25.1
+> 
 
-Cheers,
-Prabhakar
+Hi,
 
-> diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-re=
-nesas-rzg2l.c
-> index a7c3a3cc6b9f..a29c40466137 100644
-> --- a/drivers/irqchip/irq-renesas-rzg2l.c
-> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-> @@ -562,14 +562,10 @@ static int rzg2l_irqc_common_init(struct device_nod=
-e *node, struct device_node *
->                 return ret;
->         }
->
-> -       resetn =3D devm_reset_control_get_exclusive(dev, NULL);
-> -       if (IS_ERR(resetn))
-> +       resetn =3D devm_reset_control_get_exclusive_deasserted(dev, NULL)=
-;
-> +       if (IS_ERR(resetn)) {
-> +               dev_err(dev, "failed to acquire deasserted reset: %d\n", =
-ret);
->                 return PTR_ERR(resetn);
-> -
-> -       ret =3D reset_control_deassert(resetn);
-> -       if (ret) {
-> -               dev_err(dev, "failed to deassert resetn pin, %d\n", ret);
-> -               return ret;
->         }
->
->         pm_runtime_enable(dev);
-> @@ -609,7 +605,6 @@ static int rzg2l_irqc_common_init(struct device_node =
-*node, struct device_node *
->         pm_runtime_put(dev);
->  pm_disable:
->         pm_runtime_disable(dev);
-> -       reset_control_assert(resetn);
->         return ret;
->  }
->
-> --
-> 2.34.1
->
->
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
