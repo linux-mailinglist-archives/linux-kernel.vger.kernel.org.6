@@ -1,78 +1,54 @@
-Return-Path: <linux-kernel+bounces-512707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37952A33CD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:37:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86345A33CDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B8F3A5454
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:37:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4F81164ECC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B0121322B;
-	Thu, 13 Feb 2025 10:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF83D212FA6;
+	Thu, 13 Feb 2025 10:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UnsCqf8V"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jyapWIhM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F08210F5B;
-	Thu, 13 Feb 2025 10:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7984D1FAC42;
+	Thu, 13 Feb 2025 10:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739443055; cv=none; b=AQtpPmeyH5W3wsTVNoKYcHiYWGtKBCM2fmbvkCkLIyNvET94IXhF4BwrMdcDcCZYYzn5bHgtEL7BnWdAz9Fce2bHZJ8ipcxXoMTaL89+VVzNFx4ldZ7sQ+RBq+fmywG8k8G0BfM7eyy8cpPBoHfBH/03Csdq4KFIwhKRisESGw4=
+	t=1739443093; cv=none; b=QfGIZoxNeZFzmaVoTuwO5EKJS+iN9U1ZHvtcPv59QoT9972VUzVGpB9jxyQuQTXLb78gBaYnXQuwj+OCJZakhPQ1xaFzwFevCGz9kUWP5BU+1p6z2+ucUWWPvxxEJpQfWj85q10YnxDeP97ek0zMAUAbS9AX5GOqqrf7jtFZu6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739443055; c=relaxed/simple;
-	bh=x59ELff3Ko9XV3P4AzW9q22BeUT9x3Uw9yDPdDi/YBY=;
+	s=arc-20240116; t=1739443093; c=relaxed/simple;
+	bh=tPc0mtOSvvNjsiyZamSxUZlYBtpbVsuKn6yjNRsFneg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WyXE6+KEor5FuwzrmWE7o2PGGckZLpAQi+FRd7/QTepy9wLRbBKjrmFbfFHkEvKMnO4iTUHAQfiAva+aRvzbL2++0fWfcSbuz+xCH/EFjzuSkYuKkn5ZVJp2t/abuIT9Z3XwvuwqrQgyZvc2OOpXhpQrVH5oSYIbqnGhNgFvXLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UnsCqf8V; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fa48404207so1600984a91.1;
-        Thu, 13 Feb 2025 02:37:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739443051; x=1740047851; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fpTN9u4BUWo3INTZx8FXN6C9iuKB5h3rpN1TXdUrLeg=;
-        b=UnsCqf8VYwHzFg4I+QSZhpV2eMZC6iyBV4SM9KsFFI4dPlsedfGayKORt6cVuD6L+q
-         qCrx7rQHNs0kOrGniiMnykzAgnzgqcxwz2OJqneKDc9ks2SrFbXNS33iceEKHBcSdqh7
-         QNvXkwTcJPc6ygVrOD4z2Rudoo/CmG00NnUKGPdLyq0ooZa7aTEb/7sZ2ZeqLBBObYNa
-         r0mj1XeRWG+6jRGCiFcFHPwYNNWDEIh6rv8hn+rBAE478VqNxbUiCEm+0mz1w69Yu8qa
-         l8SI6pu3/mBCaENNj8q0GJEHhPoer701g4J2sC8PCksEu27g2Lv1aQK1tw7ZQs2hfpIb
-         6eag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739443051; x=1740047851;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fpTN9u4BUWo3INTZx8FXN6C9iuKB5h3rpN1TXdUrLeg=;
-        b=rIc1EtOIwsa8kyV5BfW+bTq3Q3/1FZwyGS2rUsWyC8CS8SI+CiUKKV2Drk+HumBdk9
-         MiJnvtzoE/G/cTBw7oiSsRkjkPfzwwMpupmQF4OCeSEdwP76A+q+7qcI0S4qrZqPWpq3
-         vtK47SGuSbgG172YJYkCfMLRR96OAdlilj9v1uqQ5rHsO+qEyTrrrJuv3AxspjwI7+v+
-         Sa2AtAr/5/LrtTbV6pVf/44NmQBaGNs3bjBCZzOfxZ2jRhK8UdlH9Q2Hu/27fNrmzp9X
-         i1TJ0aULpTYbz5fZonlFFNfs6pvafA2DEEdZ3FpgxJ92MUG38pR6tWnmMG2q0PPF6LId
-         0OWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWl/mg741k/XjoPrm9RV1/R+rgrrBEw0P0Uhcgd/Z3Y0Sbto9p68iV2ojaKeBkMGvrcChyaJYgHDtJQ@vger.kernel.org, AJvYcCX9SG/tD8QMRQ+KcsXeuyoo+B42vMf1mEiA1IJCUE1kJhp5ufUOZcThednOslDgm/xQZt0dTttem3IhBMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5E/uOzLW2xRu+mcHB/oOHqo+w+1S5loQ8IZ0IY/SMe8eiohjb
-	lcshXFPUAewTwfj0YzJSJbqKBVlsdeuseYHYsGEyZjfNXdZh0Gnz
-X-Gm-Gg: ASbGncvU5W+okUCaHfZl6qfyeCOmcTa7TOQeJdVt0moHDoi3x9FL2HfkMsSrZbWWyHR
-	0MohwwSCnDtXXmpSfuTxNcWzBzbLEnt2ciz5VCdefRqGUaGDFCC150AB1AESMI8uxC1CESU9gzX
-	QoFnyJ01YvxKijPmig7+fiNxuJ5j/Umh3+FGyqJnyJXtuoVcZdkzNidQj5X7RrV69KOaxo+hqkT
-	ysfCAcNJfN3A3LnAJPhIf/wY2QH97gNRdCwW32ZvCTzf8CY6RXJUzbLDNtHUiifvW40zbic3cpD
-	sWhfBWCSH+8W/AmnJruX6A+Kq6Kz5oUxu585lv5dXuxgWtkqMCAQ/far92bkb4G0
-X-Google-Smtp-Source: AGHT+IFp9c4drkpPNFVMCkqQiOLv9O1FyLLSPt+myo1vKT8Z4QPUvCWKntfraEFXNe44f81QtBObXA==
-X-Received: by 2002:a05:6a00:3403:b0:72a:8461:d172 with SMTP id d2e1a72fcca58-7323c1055a2mr4933229b3a.3.1739443051413;
-        Thu, 13 Feb 2025 02:37:31 -0800 (PST)
-Received: from ?IPV6:2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e? ([2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324276175fsm991569b3a.143.2025.02.13.02.37.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 02:37:30 -0800 (PST)
-Message-ID: <93cb6da2-5bba-4574-88dc-1f3d03a9b8b9@gmail.com>
-Date: Thu, 13 Feb 2025 16:07:22 +0530
+	 In-Reply-To:Content-Type; b=EQyXmH1dRWhyEjtojhUICven5Dgp7I3GBtmCwWPLOyw1oKgpMC4xMBvhEhfk3DUQOcZ3HFpKk+l6KrVJv6X3Su2fBTGpCs1mrwaz0gM3OWDgHhvOH37HuysJDg4ZR5PQThAknpM43C6y2QFEjLVDvpn2i0r5uIrcRCnWSvCPkBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jyapWIhM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739443089;
+	bh=tPc0mtOSvvNjsiyZamSxUZlYBtpbVsuKn6yjNRsFneg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jyapWIhMsPTIC4FGk8FX0VVGQrKTcLx1TT3roWkmt8cBuNb/NifXwpN8sVEN7lgrI
+	 eZyAehAbaVhgz1D8F7v6nKC4LpR6kTbo0pIXD3/eeiu2hipqaxTrWHCl6x8v6J+Rot
+	 VfvDhqdurU2GdHkxQZCvvP9u2NyZoh24EmqR3ZxzCujWhOyRs7GU8V9GDbmYzIE0BY
+	 vHv+G59h8jfkdSrp6c/f65FHTwLUYv7mrkjdbr+JMAanEcnTeBQv16mfXK8nH3XbU+
+	 XflDFDPaurrGr5Y8o+8vLeuYh7pVPL/jjTKGC72Xx2ax4eif+muPolU8H0hyipPFIB
+	 0trke5SdKUQuQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4F62717E00A3;
+	Thu, 13 Feb 2025 11:38:08 +0100 (CET)
+Message-ID: <1eff72da-c88f-46bc-aa0a-4e7615184202@collabora.com>
+Date: Thu, 13 Feb 2025 11:38:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,55 +56,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers: pci: Fix flexible array usage
-To: Keith Busch <kbusch@kernel.org>
-Cc: bhelgaas@google.com, skhan@linuxfoundation.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250210132740.20068-1-purvayeshi550@gmail.com>
- <Z6qFvrf1gsZGSIGo@kbusch-mbp>
+Subject: Re: [PATCH v6 37/42] drm/mediatek: mtk_hdmi_common: Assign DDC
+ adapter pointer to bridge
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+ "jie.qiu@mediatek.com" <jie.qiu@mediatek.com>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
+ <mripard@kernel.org>, =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?=
+ <jitao.shi@mediatek.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "kernel@collabora.com" <kernel@collabora.com>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ =?UTF-8?B?TGV3aXMgTGlhbyAo5buW5p+P6YieKQ==?= <Lewis.Liao@mediatek.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ =?UTF-8?B?VG9tbXlZTCBDaGVuICjpmbPlvaXoia8p?= <TommyYL.Chen@mediatek.com>,
+ =?UTF-8?B?SXZlcyBDaGVuamggKOmZs+S/iuW8mCk=?= <Ives.Chenjh@mediatek.com>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+ "junzhi.zhao@mediatek.com" <junzhi.zhao@mediatek.com>
+References: <20250211113409.1517534-1-angelogioacchino.delregno@collabora.com>
+ <20250211113409.1517534-38-angelogioacchino.delregno@collabora.com>
+ <4ff6d01a040b37d4f581ea3808db4851e555a4fe.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <Z6qFvrf1gsZGSIGo@kbusch-mbp>
+In-Reply-To: <4ff6d01a040b37d4f581ea3808db4851e555a4fe.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/02/25 04:33, Keith Busch wrote:
-> On Mon, Feb 10, 2025 at 06:57:40PM +0530, Purva Yeshi wrote:
->> Fix warning detected by smatch tool:
->> Array of flexible structure occurs in 'pci_saved_state' struct
+Il 13/02/25 10:20, CK Hu (胡俊光) ha scritto:
+> On Tue, 2025-02-11 at 12:34 +0100, AngeloGioacchino Del Regno wrote:
+>> External email : Please do not click links or open attachments until you have verified the sender or the content.
 >>
->> The warning occurs because struct pci_saved_state contains struct
->> pci_cap_saved_data cap[], where cap[] has a flexible array member (data[]).
->> Arrays of structures with flexible members are not allowed, leading to this
->> warning.
 >>
->> Replaced cap[] with a pointer (*cap), allowing dynamic memory allocation
->> instead of embedding an invalid array of flexible structures.
->>
->> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
->> ---
->>   drivers/pci/pci.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index 869d204a7..648a080ef 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -1929,7 +1929,7 @@ EXPORT_SYMBOL(pci_restore_state);
->>   
->>   struct pci_saved_state {
->>   	u32 config_space[16];
->> -	struct pci_cap_saved_data cap[];
->> +	struct pci_cap_saved_data *cap;
->>   };
+>> In preparation for adding the new HDMI TX v2 IP driver, assign the
+>> pointer to the DDC adapter to struct drm_bridge during probe.
 > 
-> I don't think this is right. Previously the space for "cap" was
-> allocated at the end of the pci_saved_state, but now it's just an
-> uninitialized pointer.
+> I could not find where to use hdmi->bridge.ddc in the patch of adding hdmi v2.
+> Could you describe more about where or which function would use this?
+> 
 
-Thanks for your feedback. I understand your concern about the 
-uninitialized pointer. To verify this, I tested the file using 
-'~/smatch/smatch_scripts/kchecker drivers/pci/pci.c' smatch command, and 
-it did not report any errors indicating that cap was uninitialized. 
-Based on this, I initially believed the change to be safe.
+I have already replied to this exact question a long time ago.
+
+https://lore.kernel.org/all/b5a77637-64b0-4ed3-9619-e76d094505af@collabora.com/
+
+Regards,
+Angelo
+
+> Regards,
+> CK
+> 
+>>
+>> This commit brings no functional changes.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_common.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
+>> index 5ea45608921c..2c91f65f26fa 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
+>> @@ -411,6 +411,7 @@ struct mtk_hdmi *mtk_hdmi_common_probe(struct platform_device *pdev)
+>>          hdmi->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID
+>>                           | DRM_BRIDGE_OP_HPD;
+>>          hdmi->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
+>> +       hdmi->bridge.ddc = hdmi->ddc_adpt;
+>>          hdmi->bridge.vendor = "MediaTek";
+>>          hdmi->bridge.product = "On-Chip HDMI";
+>>
+>> --
+>> 2.48.1
+>>
+> 
+
+
 
