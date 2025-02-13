@@ -1,117 +1,202 @@
-Return-Path: <linux-kernel+bounces-513838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD0DA34F49
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:19:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 947C4A34F4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:24:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3992516D7E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:19:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE02B3ACE94
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D9026618A;
-	Thu, 13 Feb 2025 20:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSUb0v8N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8D624BC1D;
-	Thu, 13 Feb 2025 20:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732E4266185;
+	Thu, 13 Feb 2025 20:24:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0DB2222DE;
+	Thu, 13 Feb 2025 20:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739477987; cv=none; b=qrDB6IAtJzq8tzKTrQgzp9XEq0PDVELjF1kEdel7XcstFkHH7aAiGOO8rCgclU5PmxUtbHU+05iZ+xhNdmG4NbK+D4LWkEN+C23YbPc0fa3421UFDDFY1gbGHVBs6kd2vIVBLaGs2VHA+qwlNdn2leV9F5/QXlgUk7F85wpXFxc=
+	t=1739478259; cv=none; b=eX8kgU8lGsuFAcmDjmcoFRMunt+J09H18LdVyBPWwf2LHZ8Fh09iwT7EXZ09DgH4+C47z8taMiZboyRRJl3ShiYrTWmir9YgNWXF1qILMTCD0AzGhYKFSTFPpyXZicEE1jarK3Kml0v+fG6m9f/038TEkZ9VfrwLASnCBroMIds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739477987; c=relaxed/simple;
-	bh=hql0WxxUz5upyphom9gBH+X2zwTnwWPz5bjY0x7Q5SM=;
+	s=arc-20240116; t=1739478259; c=relaxed/simple;
+	bh=D2YETnVgFrI7hLRiidm23TMJLYAHSLeT0TpoXHZ/UJk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=td8rmxPfbYNlYZfVW+wEvZSw+Byax5ssmLUb+TuVQu8AXdpejwkCn8pP9JlgiTIj1jpm2r/TvBg2GrFG+J7W1wdr4ypReO9Yb7sgILrj7DmrJcF+EbpNuTls0tSiOgAMFlleIJbtIZzi5CSfumsFESA/VqW90IIw/l7I8Z7S9HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSUb0v8N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DDC0C4CED1;
-	Thu, 13 Feb 2025 20:19:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739477987;
-	bh=hql0WxxUz5upyphom9gBH+X2zwTnwWPz5bjY0x7Q5SM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KSUb0v8NHvyltW8eLeaT3acLr6MXMy8luTSE+qMoS/6v5xox29MOEkB7snYYQRQzh
-	 /tfCx4g+2JVtWoAZ7aGCJzNP17P4BT8VAW2sCup5LVNP0NDWsr5jTFXPnWHKJ0GVKg
-	 YZcic0AHt+0d/yDSlcvGolO77OyMhpGzkZELHte6nzbwMJRDn2fpeZLKLkBK3vaDLW
-	 Dt8r460piQxD+PVyqCleeBiDdJpV903/Yl5TDdDZW5b05D4mPpsm3jKvziZRG0QwDW
-	 4hg2b5qyZMUmK2x0AyQKnysdFKU5ecJmynQAGlKssR3kUnxAfZ4k6q4ZFYQZ64OE5B
-	 +wUYfOssXCL7w==
-Date: Thu, 13 Feb 2025 12:19:46 -0800
-From: Kees Cook <kees@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Don Brace <don.brace@microchip.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-hardening@vger.kernel.org, storagedev@microchip.com,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: hpsa: Replace deprecated strncpy() with
- strscpy_pad()
-Message-ID: <202502131218.B53CB1EB@keescook>
-References: <20250213114047.2366-2-thorsten.blum@linux.dev>
- <2c1fcd13-ffac-4590-a345-c5389d1ccc9f@acm.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NfDI9w9HOR8NitbfIfuziv7I0WMRN1eTihUaccVvOmLbJ9WeNkivmDNFmcYQEW0X/asK9TxVA2SWaIL2SH1wmAyFlKp6wW7IUFAvRq8+Z3m/9MkMn7DsIGDi99kFIY//fCiNZzaNgaw2j/5g/Qov8v7n00f/NiCx+/WjfYBwwm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C5CF113E;
+	Thu, 13 Feb 2025 12:24:35 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E747B3F58B;
+	Thu, 13 Feb 2025 12:24:10 -0800 (PST)
+Date: Thu, 13 Feb 2025 20:23:53 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Saravana Kannan <saravanak@google.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@oss.nxp.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, imx@lists.linux.dev,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting fwnode for
+ scmi cpufreq
+Message-ID: <Z65U2SMwSiOFYC0v@pluto>
+References: <20241225-scmi-fwdevlink-v1-0-e9a3a5341362@nxp.com>
+ <20241225-scmi-fwdevlink-v1-1-e9a3a5341362@nxp.com>
+ <Z6uFMW94QNpFxQLK@bogus>
+ <20250212070120.GD15796@localhost.localdomain>
+ <Z6x8cNyDt8rJ73_B@bogus>
+ <CAGETcx87Stfkru9gJrc1sf=PtFGLY7=jrfFaCzK5Z4hq+2TCzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2c1fcd13-ffac-4590-a345-c5389d1ccc9f@acm.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGETcx87Stfkru9gJrc1sf=PtFGLY7=jrfFaCzK5Z4hq+2TCzg@mail.gmail.com>
 
-On Thu, Feb 13, 2025 at 10:24:25AM -0800, Bart Van Assche wrote:
-> On 2/13/25 3:40 AM, Thorsten Blum wrote:
-> > diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-> > index c7ebae24b09f..968cefb497eb 100644
-> > --- a/drivers/scsi/hpsa.c
-> > +++ b/drivers/scsi/hpsa.c
-> > @@ -7236,8 +7236,7 @@ static int hpsa_controller_hard_reset(struct pci_dev *pdev,
-> >   static void init_driver_version(char *driver_version, int len)
-> >   {
-> > -	memset(driver_version, 0, len);
-> > -	strncpy(driver_version, HPSA " " HPSA_DRIVER_VERSION, len - 1);
-> > +	strscpy_pad(driver_version, HPSA " " HPSA_DRIVER_VERSION, len);
-> >   }
-> >   static int write_driver_ver_to_cfgtable(struct CfgTable __iomem *cfgtable)
-> 
-> Has it been considered to introduce a Coccinelle semantic patch that
-> performs this conversion? See also the scripts/coccinelle directory.
+On Thu, Feb 13, 2025 at 12:03:15AM -0800, Saravana Kannan wrote:
+> On Wed, Feb 12, 2025 at 2:48 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
+> >
 
-Using this:
+Hi Saravana,
 
-@pad0 depends on !(file in "tools") && !(file in "samples")@
-expression DEST, SRC;
-expression LENGTH;
-@@
+> > On Wed, Feb 12, 2025 at 03:01:20PM +0800, Peng Fan wrote:
+> > > On Tue, Feb 11, 2025 at 05:13:21PM +0000, Sudeep Holla wrote:
+> > > >On Wed, Dec 25, 2024 at 04:20:44PM +0800, Peng Fan (OSS) wrote:
+> > > >> From: Peng Fan <peng.fan@nxp.com>
+> > > >>
 
--     memset(DEST, 0, LENGTH);
--     strncpy(DEST, SRC, LENGTH - 1);
-+     strscpy_pad(DEST, SRC, LENGTH);
-
-@padNUL depends on !(file in "tools") && !(file in "samples")@
-expression DEST, SRC;
-expression LENGTH;
-@@
-
--     memset(DEST, '\0', LENGTH);
--     strncpy(DEST, SRC, LENGTH - 1);
-+     strscpy_pad(DEST, SRC, LENGTH);
-
-It turns out this is the only place left in the kernel using that
-pattern. :)
+[snip]
 
 > 
-> Anyway:
+> Cristian,
 > 
-> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Thanks for taking the time to give a detailed description here[1]. I
+> seem to have missed that email.
+> [1] - https://lore.kernel.org/arm-scmi/ZryUgTOVr_haiHuh@pluto/
+> 
+> Peng/Cristian,
+> 
+> Yes, we can have the driver core ignore this device for fw_devlink by
+> looking at some flag on the device (and not on the fwnode). But that
+> is just kicking the can down the road. We could easily end up with two
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+Oh yes this is definitely some sort of hack/workaround that just kicks
+the can down the road, I agree...just I cannot see any better solution
+from what Peng propose (beside maybe we can discuss his implementation
+details as we are doing...)
 
--- 
-Kees Cook
+> SCMI devices needing a separate set of consumers. For example,
+> something like below can have two SCMI devices A and B created where
+> only A needs the mboxes and only B needs shmem and power-domains. This
+
+..not really...it is even worse :P ... the mbox/shmem props down below are
+really definition of a mailbox transport SCMI channel: some transports
+allow multiple channels to be defined and in such case you can dedicate
+one channel to a specific protocol...
+
+...so, in this case, you will see there will be something similar defined
+in terms of mboxes/shmem at the top SCMI DT node to represent an SCMI channel
+used for all the protocols WHILE this additional definition inside the
+protocol node defines a dedicated channel...IOW these props mboxes/shmem
+are really parsed/consumed upfront by the core SCMI stack at probe to
+configure and allocare basic comms channel BEFORE any SCMI device is created
+...then the protocol DT node is no more used by the core and is instead 'lent'
+to create SCMI devices for the drivers needing them...(possibly lending it to
+multiple users...that is the issue) 
+
+> will get messy even for drivers if the driver for A optionally needs
+> power-domains on some machines, but not this one.
+> 
+>         firmware {
+>                 scmi {
+>                         compatible = "arm,scmi";
+>                         scmi_dvfs: protocol@13 {
+>                                 reg = <0x13>;
+>                                 #clock-cells = <1>;
+>                                 mbox-names = "tx", "rx";
+>                                 mboxes = <&mailbox 1 0 &mailbox 1 1>;
+>                                 shmem = <&cpu_scp_hpri0 &cpu_scp_hpri1>;
+>                                 power-domains = <&blah>;
+>                         };
+> 
+> Wait a sec, looking around at the SCMI code, I just realized that you
+> don't even really care about the node name to get the protocol number
+> and you just look at "reg" for protocol number. Why not just have
+> peng's device have two protocol@13 DT nodes?
+> 
+> cpufreq@13 {
+>     reg = <0x13>;
+> }
+> whateverelse@13 {
+>     reg = <0x13>;
+> }
+> 
+> You can also probably throw in a compatible field if you need to help
+> the drivers pick the right node (where they currently pick the same
+> node). Or you can do whatever else would help make sure the cpufreq
+> device is attached to the cpufreq node and the whateverelse device is
+> attached to the whateverelse node.
+
+..well...my longer-than-ever explanation of the innner-workings was
+meant to explain where the problem comes from, and how would be difficult
+to address it WITHOUT changing the DT bindings, BECAUE I pretty much doubt
+that throwing into the mix also multiple nodes definitions and compatibles
+could fly with the DT maintainers, AND certainly it will go against the basic
+rules for 'reg-indexed' properties ...you cannot have 2 prop indexed with the
+same reg-value AFAIK...and the reg-value, here, is indeed the spec protocol
+number so you cannot change that either within the set of nodes sharing
+the same prop....
+
+...moreover the above additional construct of having possibly per-protocol
+channels would create even more a mess in this scenario of explicitly
+declared duplicated protocol-nodes:
+ 
+- should we duplicate the optional mbox/shmem too ? not possible...DT sanity
+  would fail immediately also in this (I suppose due to duplicated entries)
+
+...BUT
+
+- at the same time we should assume that ALL the duplicated protocols inherits
+the optional per-protocol dedicated channel that is defined in one of
+them...seems very dirty to me...
+
+...moreover...explicitly allowing for such duplicate DT protocol definitions
+would open the door to create even more SCMI drivers like pinctrl-imx that
+uses the same PINCTRL protocol as the generic-pinctrl BUT really implements
+the SAME functionalities as the generic one (just slightly differently
+and using a complete distinct set of NXP pinctrl bindings for historical
+reasons AFAIU)....BUT pinctrl-imx is an *unfortunate* exception that we had
+to support for the historical reason I mentioned BUT should NOT be the rule
+NOR the advised way...
+
+....while other drivers exists that share the usage of the same protocol
+(HWMON/IIO GENPD/CPUFREQ), they use the same protocol to achieve different
+things in different subsytems...and they are anyway impacted (even to a less
+degree) by this fw_devlink issue AFAIU so the problem indeed exist also
+out of pinctrl-imx
+
+> 
+> Looks like that'll first help clean up the "two devices for one node"
+> issue. And then the rest should just work? Cristian, am I missing
+> anything?
+
+Yes that is the main issue...but still dont see how to solve it in a
+clean way...
+
+Thanks,
+Cristian
 
