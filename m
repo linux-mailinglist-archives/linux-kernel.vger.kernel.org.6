@@ -1,167 +1,130 @@
-Return-Path: <linux-kernel+bounces-512717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38395A33CF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:49:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20722A33CF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD6633A63B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B27FA188983C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B49B21322B;
-	Thu, 13 Feb 2025 10:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550EC21325A;
+	Thu, 13 Feb 2025 10:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2cV9Wio"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mjzdBwKX"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44539190477;
-	Thu, 13 Feb 2025 10:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C77D41C6A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739443747; cv=none; b=L6PaVbePKlelkWgWSsUIq6Xh6WsMn3TWPUyjQvEtzEy0cmmlVKcFdRQxpa2ZAWfel6BtUo70Yab89DeuN1ihaEPNcjsUUXojf83/t8JH3LM7lEUMu/zik8Q+zxwZZbfzn1dFkuKjLGq2Ntz0jutlQmP/4m3XwIfqaGilFYFMIWw=
+	t=1739443812; cv=none; b=hqkdNykfpK+1QzpO0qyDYygn5pPPhHew26Hl8bj7YMCrMS0JMc7+YxTBZvx3ly0ArGxWR5jQHxKFuBvHkAU47VabWdGRdAJWCgGJMdgr2/D67LZ2ma3r91ROuM4lXQj+NLgXT8V5/rltct/nv3C7XFIRTqaIL8lubN6g+ICP+Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739443747; c=relaxed/simple;
-	bh=XJcMuzWHcfvIFulAAXufOZytkAhIQZd/BEnzBVlNqzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gqH1gum7SzWHLQW+liDHCYJaM0qOrtJaIWpfbwmRZ5iTgIO/vKg16GeVM6FyO4h8TjZcEGZA7jl2Tk1+chmkGeCcHEGhjMEYl8l1awQdl3d/3ZCSCfl5iN6t4bJiByEmxyQXcsoabGFYtqQUPgKQ13rZHbFFkePIMyofRm/LKD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2cV9Wio; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-220d28c215eso9160425ad.1;
-        Thu, 13 Feb 2025 02:49:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739443744; x=1740048544; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6gAqXc8HUCVABGZPiT8WxinVa7t3RXf3lPMGTe4zgq4=;
-        b=B2cV9Wio1fnZsCFO91/jAWT0RrxSqGUtJqs2SlI1utBaImRMqO1Ev97Irsr3FhLYgT
-         Ce1xm+4SVlUYqxZbfW1i6GEq7E86vXMtLQM6tqr3a0+VnnXnxeQYT0Wp5UI/4TZeanw/
-         JmsT8HNpaVJlOo1AlUdoIEVRCU3geMK7uJTZQyFDM0ffjyeAeVpwgposzSksU6vSk2AJ
-         ruCp8olhYdrKno2Hb1LFqqWVgVVfYSifhtp1Cwq93MlhmaAfrJ1/rh9J2NYODsrkYV5k
-         B7n66DW5pwTnhupEw4ObgxDJ+GKfmov2D9JBqtrp9iDVmIG5Cv2qzmBvYrWk7DUBkaKX
-         URhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739443744; x=1740048544;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gAqXc8HUCVABGZPiT8WxinVa7t3RXf3lPMGTe4zgq4=;
-        b=T6uP0CqLBWNrleQrLEsimq/+O0g5LFddJ6bzYVaIplUuzps3ASUYw3xNkG0Kiu6uNS
-         x8iJROk0TVhihs19iXBoXNRMgijbK6gxD+FDosmNzbAUL144VerkLwxTubLuOHMm5w7Z
-         ytD3wvSIRs1gyyklOyc4FAkTdJt777og5Ih7mARLlrIzosQ3IjuCBoG0LKAwMJ8tiPVF
-         byBA4+txVJZ8G/o1cdW8BbvIkC61QZLp7T3HB3N7BlBglps3FOjTwtptmloc0k/iHswY
-         z0etJCQJVw/VSMBHDZtxLMur5HIvqB5k9QW3kQA22x5YJQxmCLUMhtpn/xl4k31qX9Lq
-         nL6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWOV2DP+gy580cvCTiBNVBgWhCsqXFXkC19ZjZ8Guej8+Gjt/29QFST42klGZ4TNdPzJVtcjhQXQgtjwDo=@vger.kernel.org, AJvYcCXsMj6Ve91bNHWVPiXosfp0O96zZtE9aX9HtyOJcjeP6VWHPXoLbXV4fNsPS+JEUcwq1OeTEoAYP81C@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRnh58OXKR9E6znuk1wyrsShPTeZ4v+a2cHk3sZx+0ncH8mB+Q
-	IX3ITCOouZz821EnYFFFYOZKN17sF3EuOeB7zlR1hHOPqykEzGNHPPpOMA==
-X-Gm-Gg: ASbGncsHSmT3XC0DQFDiQFZBa4L6aZ3CqUbcPwpFjU/hzSNOoLWtIJmhAEjRpF4L+Ce
-	AxM82xDfb15gLMY0x4017w2+iBBoIOeqSi9eBXzcw3mu9gpnfAbAoDrzgyeH2+HCwOvYL+F3yN2
-	i0/CVG1TWiAdmMh0J7D+3tHuidD3E+Rx6y4BTuLMuJs7axKCyomuR8BoszFzYSTaJmA9M31R9oj
-	9TDXBgLYZ1a5Lmvmb1wGWkSQO5gZpiAicn3UbeQ7Mh6CIMpk27VqLj5QkDSF7OTa4SqehfdJUg3
-	0XrXexHdkXedpx/KP7xDxJeP+p+FgrZhREQt2G0BBDU87CdtLGAmQgKnZzE=
-X-Google-Smtp-Source: AGHT+IHPI73iqJAhygL+ckoDjjYEVJ+PufLrEnm/87ssHD8ijoBVNGHMmXX1kXE88O++SXm+YNWUKg==
-X-Received: by 2002:a17:903:22cd:b0:220:c63b:d945 with SMTP id d9443c01a7336-220d1ed1d7amr49577425ad.14.1739443744433;
-        Thu, 13 Feb 2025 02:49:04 -0800 (PST)
-Received: from ?IPV6:2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e? ([2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5585708sm9752485ad.217.2025.02.13.02.49.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 02:49:04 -0800 (PST)
-Message-ID: <922bc558-4d5e-4e8d-bf9e-99fe0babfa5d@gmail.com>
-Date: Thu, 13 Feb 2025 16:18:58 +0530
+	s=arc-20240116; t=1739443812; c=relaxed/simple;
+	bh=PZldEN6Abj+iXjTpspjBtDYDXPhcFFE2GIltlBfsO/w=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=KnHNFt2htpvy+w8fC5JZRAAsDGRPRtGKoz8P46p+ojVPer9iDYLVxpbTGVNeiII0mXU35tzLm5942U+wnfjp7tIo87B9ns2Nd0LWGz0Apv6RCleddfGkN0GslYjnUKqXZYG84bcwt2ZHRkPgOGWdQmrsfDlnM6PrT7LxltGS05Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mjzdBwKX; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739443798;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PZldEN6Abj+iXjTpspjBtDYDXPhcFFE2GIltlBfsO/w=;
+	b=mjzdBwKXjH97PHuJxlrFYl9NA4VqpM+GHmQl0XhlHLn82l4KtFXVZNKx1YkSpjao357yJN
+	BdSs+mQcmyFRYpt7nyH5nlemg51obctsp+ED9ANbZo4kwWdVv/MMA1YTXmA/4OXjkAciDz
+	bE7d2qjq+medOvjwao3I0MqwQNKws0A=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers: pci: Fix flexible array usage
-To: Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, skhan@linuxfoundation.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alex Williamson <alex.williamson@redhat.com>
-References: <Z6qFvrf1gsZGSIGo@kbusch-mbp> <20250211210235.GA54524@bhelgaas>
- <Z6u-pwlktLnPZNF-@kbusch-mbp>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <Z6u-pwlktLnPZNF-@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH net-next] sctp: Remove commented out code
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <20250212195747.198419a3@kernel.org>
+Date: Thu, 13 Feb 2025 11:49:45 +0100
+Cc: Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+ Xin Long <lucien.xin@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>,
+ linux-sctp@vger.kernel.org,
+ netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F83DD790-9085-4670-9694-2668DACFB4C1@linux.dev>
+References: <20250211102057.587182-1-thorsten.blum@linux.dev>
+ <b85e552d-5525-4179-a9c4-6553b711d949@intel.com>
+ <6F08E5F2-761F-4593-9FEB-173ECF18CC71@linux.dev>
+ <2c8985fa-4378-4aa2-a56d-c3ca04e8c74c@intel.com>
+ <20250212195747.198419a3@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 12/02/25 02:48, Keith Busch wrote:
-> On Tue, Feb 11, 2025 at 03:02:35PM -0600, Bjorn Helgaas wrote:
->> This is kind of a complicated data structure.  IIUC, a struct
->> pci_saved_state is allocated only in pci_store_saved_state(), where
->> the size is determined by the sum of the sizes of all the entries in
->> the dev->saved_cap_space list.
->>
->> The pci_saved_state is filled by copying from entries in the
->> dev->saved_cap_space list.  The entries need not be all the same size
->> because we copy each entry manually based on its size.
->>
->> So cap[] is really just the base of this buffer of variable-sized
->> entries.  Maybe "struct pci_cap_saved_data cap[]" is not the best
->> representation of this, but *cap (a pointer) doesn't seem better.
-> 
-> The original code is actually correct despite using a flexible array of
-> a struct that contains a flexible array. That arrangement just means you
-> can't index into it, but the code is only doing pointer arithmetic, so
-> should be fine.
-> 
-> With this struct:
-> 
-> struct pci_saved_state {
->   	u32 config_space[16];
-> 	struct pci_cap_saved_data cap[];
-> };
-> 
-> Accessing "cap" field returns the address right after the config_space[]
-> member. When it's changed to a pointer type, though, it needs to be
-> initialized to *something* but the code doesn't do that. The code just
-> expects the cap to follow right after the config.
-> 
-> Anyway, to silence the warning we can just make it an anonymous member
-> and add 1 to the state to get to the same place in memory as before.
-> 
-> ---
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 869d204a70a37..e562037644fd0 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1929,7 +1929,6 @@ EXPORT_SYMBOL(pci_restore_state);
->   
->   struct pci_saved_state {
->   	u32 config_space[16];
-> -	struct pci_cap_saved_data cap[];
->   };
->   
->   /**
-> @@ -1961,7 +1960,7 @@ struct pci_saved_state *pci_store_saved_state(struct pci_dev *dev)
->   	memcpy(state->config_space, dev->saved_config_space,
->   	       sizeof(state->config_space));
->   
-> -	cap = state->cap;
-> +	cap = (void *)(state + 1);
->   	hlist_for_each_entry(tmp, &dev->saved_cap_space, next) {
->   		size_t len = sizeof(struct pci_cap_saved_data) + tmp->cap.size;
->   		memcpy(cap, &tmp->cap, len);
-> @@ -1991,7 +1990,7 @@ int pci_load_saved_state(struct pci_dev *dev,
->   	memcpy(dev->saved_config_space, state->config_space,
->   	       sizeof(state->config_space));
->   
-> -	cap = state->cap;
-> +	cap = (void *)(state + 1);
->   	while (cap->size) {
->   		struct pci_cap_saved_state *tmp;
->   
-> --
+Hi Jakub,
 
-Thanks for the clarification. I now see that the original use of a 
-flexible array inside 'pci_saved_state' is correct. Would you like me to 
-resend the patch with the modifications you suggested?
+> On 13. Feb 2025, at 04:57, Jakub Kicinski wrote:
+> On Tue, 11 Feb 2025 12:33:57 +0100 Mateusz Polchlopek wrote:
+>>>> I don't think we want to remove that piece of code, please refer
+>>>> to the discussion under the link:
+>>>>=20
+>>>> =
+https://lore.kernel.org/netdev/cover.1681917361.git.lucien.xin@gmail.com/ =
+=20
+>>>=20
+>>> Hm, the commit message (dbda0fba7a14) says payload was deleted =
+because
+>>> "the member is not even used anywhere," but it was just commented =
+out.
+>>> In the cover letter it then explains that "deleted" actually means
+>>> "commented out."
+>>>=20
+>>> However, I can't follow the reasoning in the cover letter either:
+>>>=20
+>>> "Note that instead of completely deleting it, we just leave it as a
+>>> comment in the struct, signalling to the reader that we do expect
+>>> such variable parameters over there, as Marcelo suggested."
+>>>=20
+>>> Where do I find Marcelo's suggestion and the "variable parameters =
+over
+>>> there?"
+>>>=20
+>>=20
+>> That's good question, I can't find the Marcelo suggestion that author
+>> mention. It's hard to find without links to previous series or
+>> discussion :/
+>>=20
+>> I guess it should be also commented by maintainers, I see that in the
+>> Xin's thread Kuba also commented change with commenting out instead
+>> of removing code. Let's wait
+>=20
+> In the linked thread the point was to document what struct will be =
+next
+> in memory. Here we'd be leaving an array of u8s which isn't very
+> informative. I see there's precedent in this file, but I vote we just
+> delete the line.
+
+This patch deletes the line and I'm wondering why the "cr"?
+
+Were you referring to this patch maybe?
+=
+https://lore.kernel.org/r/20250114215439.916207-3-thorsten.blum@linux.dev/=
+
+
+Should both payload fields just be deleted since they're not used?
+
+Thanks,
+Thorsten=
 
