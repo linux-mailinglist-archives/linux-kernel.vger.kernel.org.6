@@ -1,197 +1,243 @@
-Return-Path: <linux-kernel+bounces-513856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42444A34F7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B88EEA34F81
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:37:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C3503A45A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FAB13A4AA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E807F2661BA;
-	Thu, 13 Feb 2025 20:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CF32661A2;
+	Thu, 13 Feb 2025 20:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hhOt+KBE"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X+5XUFAE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4252A2661A1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020E624BC04
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739479042; cv=none; b=hgWLdsc23LojVmR/jDHoprlDYOghvs7pZHXeTny80Yxt0G9sW0pYAlde+OUKI/olOmE8LhOLX7YMvuCdAn9OeFhL2UnDQJzoy5Wi7JUBgND6Kfa13hH5QgOp/5v8xthZ3R49eCyCxt8NUbqpX76gLkoK1iDO3K+UYxnrqIibT2Q=
+	t=1739479059; cv=none; b=SP6VWlqFAQh7FRIm7hcHWZggzla16THkxE79gZaMCM4dyT7D+b0aWhzmP4axEiH0DsLo1w2EZNLRsYzGHPVgqeu1zSLmmTIugqJqBD++IvJUDeg6ozpsgo1Y0je3ieqVDKnYIRPrrC9uNJp3fc7Te/OtJH3X8HiBR6juKzfsS2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739479042; c=relaxed/simple;
-	bh=VN2RuvBjkoJAPPb6ivIEGmI81z5fd0DOiMYmSzn4jFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dS8p3gg7sj0U+QCaVoi9UoiWIakwx2pIvImO2GKWIz2M+VWA9A7SExvt7Yoc3akYEnS0MimPgJsCf0ggj1CmpVzWXBO/mu4TWbSqgyInW0tJKR4ta6xHz4PRM7NPc2PcELkxCtaBy+HCp1E2KNMGrRhdP3XYDUb158cUXtmqb1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hhOt+KBE; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6fb3a611afdso7983017b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 12:37:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1739479039; x=1740083839; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VtL2Aljq7K18Ol8pwG2GMa8SAGuvgfRhHbhoMvrHKnE=;
-        b=hhOt+KBEg2QW8NduLPuray1Ii0hdOmoy0Oj5MZHePIWozygVuAPCROoKE6BRIPXmzQ
-         FcjE7qq4QZm18CP2gXSp/sghgp1SzPeZBF5At1X1l7NWsF4RTOqCpui5ymsW1n/ONZ8v
-         rSHubc67FRtZQTmNlRPrCQjac3qFvB3j8idDYa1w0L76VCoqHiY+TyCxwzjWwnn8OyWS
-         csx/DEoW5qQ/AecU2rnkNbCMj+MjCrxocf1hiWIR32b59sgvY5bPcVbXCJPixXiGcNb6
-         cvQuE2qBtf8h6REBEF6T13UwCScFaGGNQrEpsXoi50MXzsOvVqUCoolW8Qakeef6eqR+
-         Gfiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739479039; x=1740083839;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VtL2Aljq7K18Ol8pwG2GMa8SAGuvgfRhHbhoMvrHKnE=;
-        b=j+xxHGTJV4HhtrVsWKD26npHhMZ4aKJyk/B/nrBDhaVxcUuzyv9rcgxFqvLmeN7byn
-         cd42kEFMMG2TXn4n7cbgg4bhMm/Nz7qwXRYk6kC7/QuBF8ESPGvLrcNfIbAqGvH9Budg
-         Fldb6OuEN/voz25jia4Z0oAagMMwMUYfCPDarNr1lj9QMO5LFC9VpcyZSjSfJG/GHs0f
-         VZQ7s9JkFeSD0DJGvJLBV2wmMijtvn0t110ktTu5JaIb0DwzBDL2a3bGXI8ZB0q6vxVy
-         3BQojvrnX4m8+aQcOn5bR5EAwz+TF6UVjDq7mmRJ3GqMjW0xifHAcLUbSj3YcbswwgtE
-         RKfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVu3XnmbGHBEsC2T/o8hnsSRF3O3BlInpsboH8FxroZ3WRF5cJ5aEcVzMW+zMM8Sl6jMpz8ia7yMaGJ05o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWOtWes8l6HhmF/Pa7JMRHLIFWzJ/gCbyVetY6Sb+yUgY4ZRIe
-	CcxEdJ8WYv4RCykS1IzNEDyx8wM0IKvQj3EK8HRTqGTsnn64xxMFW65XlPVYJjk=
-X-Gm-Gg: ASbGncvlm2C04Xc8B8BCTuzGsqhUuAg2p3sidjUyiiMOfYbWvv42aRJlVU/f0qs3/zR
-	y8Xwlr0Hco7nvij1atNQ4n+r1r0gmz8prMLm+P7wIRBYuDoiuz8aq5GpVyUpuES8fX9yowlIqAM
-	6OplBJtWZSluRWQyRH208Ojpqhoc+iYHD/aAM6bIZiXPO4ePDPdAyvMy9Bm4vhsuhwtDHCUDgOb
-	N6yBShzxFsDdEbVZq9O6MywSsrmzInTESqp+JRcUUynYHlKjU6ZcYWY2CG54UtRI/Jd7U3+DYJw
-	C1k=
-X-Google-Smtp-Source: AGHT+IGMfdT8//izHzzVCxCUXm2NF65zwvxCB97iREjU4n/ssdZBJJcyfbQ0HsHUfaMDbqW4yx+Sxw==
-X-Received: by 2002:a05:690c:6181:b0:6fb:1f78:d9ee with SMTP id 00721157ae682-6fb32c7ff5emr48326527b3.15.1739479039148;
-        Thu, 13 Feb 2025 12:37:19 -0800 (PST)
-Received: from ghost ([50.146.0.9])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fb3619bd74sm4583557b3.75.2025.02.13.12.37.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 12:37:18 -0800 (PST)
-Date: Thu, 13 Feb 2025 12:37:16 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Quentin Monnet <qmo@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] tools: Remove redundant quiet setup
-Message-ID: <Z65X_KimLfbE0DG2@ghost>
-References: <20250210-quiet_tools-v2-0-b2f18cbf72af@rivosinc.com>
- <20250210-quiet_tools-v2-2-b2f18cbf72af@rivosinc.com>
- <21f98687-f715-449c-86f0-c095ea499450@kernel.org>
+	s=arc-20240116; t=1739479059; c=relaxed/simple;
+	bh=2D7Ep086uVJepkKeTU1Tt+ob7JgETJDG+BnmK9NIo1o=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RRdiYSGds9x0CK18fQJtgx9JJ6toTP6kohZje/0VKS3drOCTe1axl1sfPi5xB6S2h8boWaKHeLqvI60Rk7cN+FWwQM+bRj7R3gG1xyb+xMc9m6FBINvjozCoLg69Zby4ig65eUr+W9Bp9bMJmQEeViXLwDID6jKCWb79XGZBNV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X+5XUFAE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739479056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mmfa0Lwrfu2BcZRq9JQarPycpfa4dNJTVenTMpKLc9k=;
+	b=X+5XUFAEFqEH0hBseGyYs8AA0eTkkLWRtR0AH2Xta1GCgbUj2ZjB66ve5VhEufQTbNjWc4
+	XPI3Fh/NTKWPc2HzAaZk+l5Cu1zU2pWvq2igX1ewqiyFf4lmRqAStNywcHA1cD68pOfMnK
+	k8+uGvh9xp3AyuRUXaldlRxtZ85kTyo=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-312-vCtkOhd1Mfey-1-7g5rthQ-1; Thu,
+ 13 Feb 2025 15:37:34 -0500
+X-MC-Unique: vCtkOhd1Mfey-1-7g5rthQ-1
+X-Mimecast-MFC-AGG-ID: vCtkOhd1Mfey-1-7g5rthQ_1739479052
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 474C918EAB38;
+	Thu, 13 Feb 2025 20:37:32 +0000 (UTC)
+Received: from [10.22.65.116] (unknown [10.22.65.116])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9B3CA300018D;
+	Thu, 13 Feb 2025 20:37:29 +0000 (UTC)
+Message-ID: <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
+Date: Thu, 13 Feb 2025 15:37:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21f98687-f715-449c-86f0-c095ea499450@kernel.org>
+User-Agent: Mozilla Thunderbird
+From: John Meneghini <jmeneghi@redhat.com>
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: kbusch@kernel.org, hch@lst.de, sagi@grimberg.me
+Cc: bmarzins@redhat.com, Bryan Gurney <bgurney@redhat.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Marco Patalano <mpatalan@redhat.com>, axboe@kernel.dk
+References: <20250204211158.43126-1-bgurney@redhat.com>
+Content-Language: en-US
+Organization: RHEL Core Storge Team
+In-Reply-To: <20250204211158.43126-1-bgurney@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Feb 11, 2025 at 12:00:49AM +0000, Quentin Monnet wrote:
-> 2025-02-10 10:34 UTC-0800 ~ Charlie Jenkins <charlie@rivosinc.com>
-> > Q is exported from Makefile.include so it is not necessary to manually
-> > set it.
-> > 
-> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > ---
-> >  tools/arch/arm64/tools/Makefile           |  6 ------
-> >  tools/bpf/Makefile                        |  6 ------
-> >  tools/bpf/bpftool/Documentation/Makefile  |  6 ------
-> >  tools/bpf/bpftool/Makefile                |  6 ------
-> >  tools/bpf/resolve_btfids/Makefile         |  2 --
-> >  tools/bpf/runqslower/Makefile             |  5 +----
-> >  tools/lib/bpf/Makefile                    | 13 -------------
-> >  tools/lib/perf/Makefile                   | 13 -------------
-> >  tools/lib/thermal/Makefile                | 13 -------------
-> >  tools/objtool/Makefile                    |  6 ------
-> >  tools/testing/selftests/bpf/Makefile.docs |  6 ------
-> >  tools/testing/selftests/hid/Makefile      |  2 --
-> >  tools/thermal/lib/Makefile                | 13 -------------
-> >  tools/tracing/latency/Makefile            |  6 ------
-> >  tools/tracing/rtla/Makefile               |  6 ------
-> >  tools/verification/rv/Makefile            |  6 ------
-> >  16 files changed, 1 insertion(+), 114 deletions(-)
-> > 
-> 
-> 
-> [...]
-> 
-> 
-> > diff --git a/tools/bpf/bpftool/Documentation/Makefile b/tools/bpf/bpftool/Documentation/Makefile
-> > index 4315652678b9f2e27e48b7815f3b9ddc70a57165..bf843f328812e10dd65a73f355f74e6825ad95b9 100644
-> > --- a/tools/bpf/bpftool/Documentation/Makefile
-> > +++ b/tools/bpf/bpftool/Documentation/Makefile
-> > @@ -5,12 +5,6 @@ INSTALL ?= install
-> >  RM ?= rm -f
-> >  RMDIR ?= rmdir --ignore-fail-on-non-empty
-> >  
-> > -ifeq ($(V),1)
-> > -  Q =
-> > -else
-> > -  Q = @
-> > -endif
-> > -
-> >  prefix ?= /usr/local
-> >  mandir ?= $(prefix)/man
-> >  man8dir = $(mandir)/man8
-> > diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
-> > index dd9f3ec842017f1dd24054bf3a0986d546811dc4..6ea4823b770cbbe7fd9eb7da79956cc1dae1f204 100644
-> > --- a/tools/bpf/bpftool/Makefile
-> > +++ b/tools/bpf/bpftool/Makefile
-> > @@ -7,12 +7,6 @@ srctree := $(patsubst %/,%,$(dir $(srctree)))
-> >  srctree := $(patsubst %/,%,$(dir $(srctree)))
-> >  endif
-> >  
-> > -ifeq ($(V),1)
-> > -  Q =
-> > -else
-> > -  Q = @
-> > -endif
-> > -
-> >  BPF_DIR = $(srctree)/tools/lib/bpf
-> >  
-> >  ifneq ($(OUTPUT),)
-> 
-> 
-> This is OK from bpftool's side, the GitHub mirror has a Makefile.include
-> included from both main and doc Makefiles, and where I can move this
-> definition.
+Keith, Christoph and Sagi,
 
-I am glad to hear. Thank you for helping me unify this infrastructure!
+This patch has been fully tested and analyzed by Red Hat's QA group and no
+unexpected side effects or regressions have been found. Both NVMe/FC and NVMe/TCP
+have been tested. Our QE engineer has asked me to report this upstream.
 
-- Charlie
+Tested-by: Marco Patalano <mpatalan@redhat.com>
 
+Fixes: 32acab3181c7 ("nvme: implement multipath access to nvme subsystems")
+
+As discussed in previous email threads, the nvme.core_multipath parameter was included
+by Christoph in the original implementation of nvme/host/multipath.c back in 2017
+at the request of Red Hat. At that time Red Hat was only supporting DMMP multipath
+with NVMe and we needed a way to disable core native nvme multipathing without
+reconfiging the kernel.
+
+The nvme.core_multipath parameter has been used by Red Hat, together with some additional
+out-of-tree changes to nvme/host/core.c, to support DMMP multipath with NVMe since RHEL-8.
+However, the plan all along has been to deprecate and remove support for DMMP multipath with NVMe
+in RHEL and to remove this parameter. This change has been advertised and communicated to our
+customers and partners, beginning with RHEL-9, through release notes and other communications.
+
+In RHEL-9 we changed the default setting of this parameter from "N" to "Y" to match the upstream
+kernel and the move our customers to native nvme multipath. DMMP multipath w/NVMe was deprecated
+in RHEL-9 but still supported. Customers were still able to optionally enabled DMMP multipath
+with NVMe if they wanted, by changing this parameter, and many of them do.
+
+In the (soon to be released) RHEL-10 release DMMP multipath is longer supported with NVMe and
+the out-of-tree patches needed to support DMMP multipath with NVMe have been removed.
+
+Red Hat is proposing this patch to remove nvme.core_multipath parameter from the kernel as we believe
+leaving this non-supported parameter in the kernel for future releases will only lead to confusion.
+
+We plan to ship this patch with RHEL-10. So it would be really good if we could get this
+change accepted and merged upstream, perhaps into v6.15.
+
+/John
+
+On 2/4/25 4:11 PM, Bryan Gurney wrote:
+> Since device-mapper multipath will no longer be operating on NVMe
+> devices, there is no longer a need for the "multipath" parameter.
 > 
-> Acked-by: Quentin Monnet <qmo@kernel.org>
+> Note that, when compiled with CONFIG_NVME_MULTIPATH off multi-path
+> capable controllers and namespaces will continue to present multiple
+> device entries - one for each controller/namespace discovered.  This
+> could be confusing, as device-mapper multipath relies upon code in
+> nvme/host/multipath.c, and running device-mapper multipath with a
+> kernel compiled with CONFIG_NVME_MULTIPATH disabled is not supported.
 > 
-> Thanks
+> Closes: https://lore.kernel.org/linux-nvme/20241121220321.40616-1-bgurney@redhat.com/
+> 
+> Tested-by: John Meneghini <jmeneghi@redhat.com>
+> Reviewed-by: John Meneghini <jmeneghi@redhat.com>
+> 
+> Signed-off-by: Bryan Gurney <bgurney@redhat.com>
+> ---
+>   drivers/nvme/host/core.c      | 14 ++++----------
+>   drivers/nvme/host/multipath.c | 14 ++++++--------
+>   drivers/nvme/host/nvme.h      |  2 --
+>   3 files changed, 10 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index 2bcd9f710cb6..b07cd482fbc1 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -3809,14 +3809,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, struct nvme_ns_info *info)
+>   					info->nsid);
+>   			goto out_put_ns_head;
+>   		}
+> -
+> -		if (!multipath) {
+> -			dev_warn(ctrl->device,
+> -				"Found shared namespace %d, but multipathing not supported.\n",
+> -				info->nsid);
+> -			dev_warn_once(ctrl->device,
+> -				"Support for shared namespaces without CONFIG_NVME_MULTIPATH is deprecated and will be removed in Linux 6.0.\n");
+> -		}
+>   	}
+>   
+>   	list_add_tail_rcu(&ns->siblings, &head->list);
+> @@ -3915,12 +3907,14 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, struct nvme_ns_info *info)
+>   		sprintf(disk->disk_name, "nvme%dc%dn%d", ctrl->subsys->instance,
+>   			ctrl->instance, ns->head->instance);
+>   		disk->flags |= GENHD_FL_HIDDEN;
+> -	} else if (multipath) {
+> +	} else {
+> +#ifdef CONFIG_NVME_MULTIPATH
+>   		sprintf(disk->disk_name, "nvme%dn%d", ctrl->subsys->instance,
+>   			ns->head->instance);
+> -	} else {
+> +#else
+>   		sprintf(disk->disk_name, "nvme%dn%d", ctrl->instance,
+>   			ns->head->instance);
+> +#endif
+>   	}
+>   
+>   	if (nvme_update_ns_info(ns, info))
+> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+> index a85d190942bd..28ab868182b2 100644
+> --- a/drivers/nvme/host/multipath.c
+> +++ b/drivers/nvme/host/multipath.c
+> @@ -9,11 +9,6 @@
+>   #include <trace/events/block.h>
+>   #include "nvme.h"
+>   
+> -bool multipath = true;
+> -module_param(multipath, bool, 0444);
+> -MODULE_PARM_DESC(multipath,
+> -	"turn on native support for multiple controllers per subsystem");
+> -
+>   static const char *nvme_iopolicy_names[] = {
+>   	[NVME_IOPOLICY_NUMA]	= "numa",
+>   	[NVME_IOPOLICY_RR]	= "round-robin",
+> @@ -632,9 +627,11 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
+>   	 * We also do this for private namespaces as the namespace sharing flag
+>   	 * could change after a rescan.
+>   	 */
+> +#ifdef CONFIG_NVME_MULTIPATH
+>   	if (!(ctrl->subsys->cmic & NVME_CTRL_CMIC_MULTI_CTRL) ||
+> -	    !nvme_is_unique_nsid(ctrl, head) || !multipath)
+> +	    !nvme_is_unique_nsid(ctrl, head))
+>   		return 0;
+> +#endif
+>   
+>   	blk_set_stacking_limits(&lim);
+>   	lim.dma_alignment = 3;
+> @@ -1038,10 +1035,11 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+>   	size_t ana_log_size;
+>   	int error = 0;
+>   
+> +#ifdef CONFIG_NVME_MULTIPATH
+>   	/* check if multipath is enabled and we have the capability */
+> -	if (!multipath || !ctrl->subsys ||
+> -	    !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
+> +	if (!ctrl->subsys || !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
+>   		return 0;
+> +#endif
+>   
+>   	/* initialize this in the identify path to cover controller resets */
+>   	atomic_set(&ctrl->nr_active, 0);
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index 2c76afd00390..6dea04f05b59 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -972,7 +972,6 @@ static inline void nvme_trace_bio_complete(struct request *req)
+>   		trace_block_bio_complete(ns->head->disk->queue, req->bio);
+>   }
+>   
+> -extern bool multipath;
+>   extern struct device_attribute dev_attr_ana_grpid;
+>   extern struct device_attribute dev_attr_ana_state;
+>   extern struct device_attribute subsys_attr_iopolicy;
+> @@ -982,7 +981,6 @@ static inline bool nvme_disk_is_ns_head(struct gendisk *disk)
+>   	return disk->fops == &nvme_ns_head_ops;
+>   }
+>   #else
+> -#define multipath false
+>   static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+>   {
+>   	return false;
+
 
