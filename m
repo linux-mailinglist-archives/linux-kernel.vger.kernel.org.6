@@ -1,165 +1,107 @@
-Return-Path: <linux-kernel+bounces-512395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96397A338BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:20:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6B9A338B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:20:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67AD1688C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BE616855A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0D720967F;
-	Thu, 13 Feb 2025 07:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6622080D2;
+	Thu, 13 Feb 2025 07:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="OHgeQudZ"
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nr6PcTii"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090632080D2;
-	Thu, 13 Feb 2025 07:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD022080EE
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739431241; cv=none; b=KioYGiwgm6fuMhkJeCRt1m1aqaPJ9CJTYiHUEW0Ie45PPBA0ljCE2B+27dLWB6dX1uxvD/rYlmZVYYb/9PBqwI8xYjTsN/WQYwai82Q2989k8vXC8unPIluNz96uCEo57sPbNnLQc0ijRcjQd2hC4N+I+A8DTCFpKHW/Uw18yNU=
+	t=1739431227; cv=none; b=nCKQS+EPxTigw6wF6eukp5Tdloo2Mo9bPWCKqHrVi88vSyyI01ElqcLgCjUgFVxZgbbh9IAl6z60ZnoJvbnUMeLyA8uSNBEDf3WMj2e2bInVH5AFd4yimf09bAfgh/8IqYdoWhRS54iQ8LvcmNFzW456Wjg1lwksdCEVB1Z7v4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739431241; c=relaxed/simple;
-	bh=+UmDyGFYqbRGqxiUXDzk0wYia4DEJ/qtggUagtruh1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J/g0UPOzXzj81+/sLY+uDBkBiGRzip4yA1ndUWX73gOyq4vsgM4jGBgt12TrhR97Woclf1C5F7bXEn0d8dTuAcGKpVP3R7pUShsVi2j9uF95bWLCft/WpVqRTFksEKoDxxW9A9cji3ocTBGs+/bKoNwI0k0rME0xGOdsuQDEupk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=OHgeQudZ; arc=none smtp.client-ip=212.42.244.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1739431188; bh=+UmDyGFYqbRGqxiUXDzk0wYia4DEJ/qtggUagtruh1U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OHgeQudZxxT0wgi5FGAagv7q2QLFdFIkd0t7eygA7wxw/marKM8WnD45X7azm8HUM
-	 31EnxHXdDNyET2f/Y/k98z4tGVCY2lYF5djVeG+CkfRgpvh9dAeohwS1GgQ4F+LZK3
-	 zzyqrcRmkF8IiVKSYPI8wXg1bR22JFIxo0Lypzwg=
-Received: from [212.42.244.71] (helo=mail.avm.de)
-	by mail.avm.de with ESMTP (eXpurgate 4.52.1)
-	(envelope-from <n.schier@avm.de>)
-	id 67ad9d14-038b-7f0000032729-7f0000018ad4-1
-	for <multiple-recipients>; Thu, 13 Feb 2025 08:19:48 +0100
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Thu, 13 Feb 2025 08:19:48 +0100 (CET)
-Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
-	by mail-auth.avm.de (Postfix) with ESMTPA id 39DA480175;
-	Thu, 13 Feb 2025 08:19:49 +0100 (CET)
-Received: by buildd.core.avm.de (Postfix, from userid 1000)
-	id 2A47B182D0A; Thu, 13 Feb 2025 08:19:49 +0100 (CET)
-Date: Thu, 13 Feb 2025 08:19:49 +0100
-From: Nicolas Schier <n.schier@avm.de>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH] kbuild: rust: add rustc-min-version support function
-Message-ID: <20250213-masked-wombat-of-painting-8afb53@buildd>
-References: <20250210164245.282886-1-ojeda@kernel.org>
+	s=arc-20240116; t=1739431227; c=relaxed/simple;
+	bh=kUlydEpuFrGUrydFPT1DYlM8hxRj3C3viQCBSEEaXH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=buk5YW4un2MObQFB06NLpsqoBbzQwOmalR48/REu6ZNTFIiWwSjnycSCe5ovdZ/tOHAcTdpC8B+kougk5kD2YNaOrN4PwGjRumikzNUdU+ctCeAV4vnSbgKZvooGf8CPbak90RxUu6Gie/vBW9agxY0m1t41XjaKS14qKjM4YiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nr6PcTii; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5debbced002so1070050a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:20:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739431224; x=1740036024; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kUlydEpuFrGUrydFPT1DYlM8hxRj3C3viQCBSEEaXH0=;
+        b=Nr6PcTiiRkAnY7LZWY3BD7ITa0OAQ63nPuWz8zsBbFTLOPUNrsIkYqvF8X8k1HYn5B
+         s69fmWAKB0t19xG6FosNmmz0VdH9/ZQodTieQOqpwyL3OVp0MA2V22E3Q+P92iT/t+HO
+         gkvf3Xkun79sCueZhRPPUsKCCIfK8ly7iTKpBGiCiaqt1dDoo3SLLoAWh78N7SSUBgN5
+         LYO7BaVph6XbiwvB9u5Mu/pImu8QHLCU9jSsjM3deK4yqEWC7g2tTVfmh9FpANWHwDbh
+         ZHbrnF6TnHXgpd1wOSvH+j3QSxTmxIIfm3qCclLVh9IdxDTE4ilDlRucH0ZUBka1oAPh
+         roYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739431224; x=1740036024;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kUlydEpuFrGUrydFPT1DYlM8hxRj3C3viQCBSEEaXH0=;
+        b=G7lBLxBagnzF1sdBKvJi4mfpBQqvRzSZyfhLRx2LCdqM5xddU62Y7iO2stpfvpbzJc
+         SphkyW8NdPOMOKkUz3UNiJ4i83UCBmZN9X7etdY0Y6U1XpjOGgXxm/2avRQ1plZeSvU5
+         ln//QDmw7AUptE1UQhb0+Agz4xWPgeevNQwOzHe5WYYKtmjMup+kUAfuhV9rzdbOuiiu
+         3ghet1iIM7vgsrPAhsda8qVW7Boy8T3d5IGK8g1PciNvGrpM77q3TUGnQxUmES1GKpOz
+         1CAT7YpOhZfBClgmLn1Z6t3JKuuEN9rMBcgg02GR9nqAaYI9+S+RJ0ATKMkBlnH4L3tF
+         4EEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjwBDtZuJRaYed3RSGlrLv4npElNgCMjAuVxtSSpjlYaXOlyVaNthdEzGVI2E34umDRgUhNMNmngy0H1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmp0hGxY5VtoM9ze9b6OLNRtQilSWULncU13XRhBJMWdAhXNGq
+	tOEnxHCQ1KEoxmbgUPAW3NlQIOIO381QKm18zR4u1HKFHMkiXwvCjC3ww5/SGBU=
+X-Gm-Gg: ASbGnctikhsQgO8MnKrWsN/Vruu3lsGM97//wRGZtN3g/DwocjOZoLpITgy2d0DhCOX
+	jPyb8Lyv/WoY00HXhcvgjRBfUX/47NY2dvvIuHClWn3Ke2wh+0uNXJqhs5FWfXr98N+5HKUPapS
+	fmofOPyuPUeZh2qWYtfvX84g6qtbt+FEhL5eFNMsm0jr1FbTrdo+KxrrAVIbM6cFgYlKVhUfl5E
+	IVwiDYtc7jDn0sE2TGHpJclxwNQfPdMaHsjC9OT6dOu2NryilPcQ2J5n7Y7slAbEyrstzW7nqpQ
+	CFSn8zWcFURrkAYqAshoyJOB
+X-Google-Smtp-Source: AGHT+IGhPxIg59b6w0WCU7iMGOfAb73XGY1LMG+4SX9yxgvaUCg2qqNEqVjigzMYlqAJgEcHDBCS0w==
+X-Received: by 2002:a05:6402:458c:b0:5dc:abe4:9d8d with SMTP id 4fb4d7f45d1cf-5decba62fcdmr1363256a12.9.1739431224388;
+        Wed, 12 Feb 2025 23:20:24 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.124])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c4687sm674664a12.22.2025.02.12.23.20.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 23:20:23 -0800 (PST)
+Message-ID: <fc341dbf-3add-4728-9ec5-7291ad3bcbe9@linaro.org>
+Date: Thu, 13 Feb 2025 07:20:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250210164245.282886-1-ojeda@kernel.org>
-X-purgate-ID: 149429::1739431188-4EA08E17-E08D2BED/0/0
-X-purgate-type: clean
-X-purgate-size: 3033
-X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
-X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
-X-purgate: clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] dt-bindings: serial: samsung: add Exynos990
+ compatible
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, semen.protsenko@linaro.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250212234034.284-1-wachiturroxd150@gmail.com>
+ <20250212234034.284-3-wachiturroxd150@gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250212234034.284-3-wachiturroxd150@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 10, 2025 at 05:42:45PM +0100, Miguel Ojeda wrote:
-> Introduce `rustc-min-version` support function that mimics
-> `{gcc,clang}-min-version` ones, following commit 88b61e3bff93
-> ("Makefile.compiler: replace cc-ifversion with compiler-specific macros").
-> 
-> In addition, use it in the first use case we have in the kernel (which
-> was done independently to minimize the changes needed for the fix).
-> 
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
-> This is based on top of the fix so that the fix remains as simple as
-> possible:
-> 
->     https://lore.kernel.org/rust-for-linux/20250210163732.281786-1-ojeda@kernel.org/
-> 
->  Documentation/kbuild/makefiles.rst | 14 ++++++++++++++
->  arch/arm64/Makefile                |  2 +-
->  scripts/Makefile.compiler          |  4 ++++
->  3 files changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
-> index d36519f194dc..2608aa32c762 100644
-> --- a/Documentation/kbuild/makefiles.rst
-> +++ b/Documentation/kbuild/makefiles.rst
-> @@ -670,6 +670,20 @@ cc-cross-prefix
->              endif
->      endif
-> 
-> +$(RUSTC) support functions
-> +--------------------------
-> +
-> +rustc-min-version
-> +  rustc-min-version tests if the value of $(CONFIG_RUSTC_VERSION) is greater
-> +  than or equal to the provided value and evaluates to y if so.
-> +
-> +  Example::
-> +
-> +    rustflags-$(call rustc-min-version, 108500) := -Cfoo
-> +
-> +  In this example, rustflags-y will be assigned the value -Cfoo if
-> +  $(CONFIG_RUSTC_VERSION) is >= 1.85.0.
-> +
->  $(LD) support functions
->  -----------------------
-> 
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 2b25d671365f..1d5dfcd1c13e 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -48,7 +48,7 @@ KBUILD_CFLAGS	+= $(CC_FLAGS_NO_FPU) \
->  KBUILD_CFLAGS	+= $(call cc-disable-warning, psabi)
->  KBUILD_AFLAGS	+= $(compat_vdso)
-> 
-> -ifeq ($(call test-ge, $(CONFIG_RUSTC_VERSION), 108500),y)
-> +ifeq ($(call rustc-min-version, 108500),y)
->  KBUILD_RUSTFLAGS += --target=aarch64-unknown-none-softfloat
->  else
->  KBUILD_RUSTFLAGS += --target=aarch64-unknown-none -Ctarget-feature="-neon"
-> diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
-> index 8c1029687e2e..8956587b8547 100644
-> --- a/scripts/Makefile.compiler
-> +++ b/scripts/Makefile.compiler
-> @@ -67,6 +67,10 @@ gcc-min-version = $(call test-ge, $(CONFIG_GCC_VERSION), $1)
->  # Usage: cflags-$(call clang-min-version, 110000) += -foo
->  clang-min-version = $(call test-ge, $(CONFIG_CLANG_VERSION), $1)
-> 
-> +# rustc-min-version
-> +# Usage: rustc-$(call rustc-min-version, 108500) += -Cfoo
-> +rustc-min-version = $(call test-ge, $(CONFIG_RUSTC_VERSION), $1)
-> +
->  # ld-option
->  # Usage: KBUILD_LDFLAGS += $(call ld-option, -X, -Y)
->  ld-option = $(call try-run, $(LD) $(KBUILD_LDFLAGS) $(1) -v,$(1),$(2),$(3))
-> --
-> 2.48.1
 
-Reviewed-by: Nicolas Schier <n.schier@avm.de>
+
+On 2/12/25 11:40 PM, Denzeel Oliva wrote:
+> Add samsung,exynos990-uart compatible. It falls back to
+> samsung,exynos8895-uart since FIFO size is defined in DT.
+
+doesn't the 32 bit register restriction apply to uart as it applies to
+SPI? If so, you shall probably fallback to gs101.
 
