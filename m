@@ -1,73 +1,96 @@
-Return-Path: <linux-kernel+bounces-513499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6670EA34ADE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:55:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA3DA34B03
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:57:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BC93178622
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 754E73BCC23
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B54E245AEC;
-	Thu, 13 Feb 2025 16:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F68E20127A;
+	Thu, 13 Feb 2025 16:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnmCJccJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="d32GejBx"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D482524502A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9481124A079;
+	Thu, 13 Feb 2025 16:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739465199; cv=none; b=IvQbGtLVKkvv4dIcGVJzioEiFUZT5hHXTBR3cANsNTaqhUIEHpuQW5P/Qz97edbDZ7Fp32gei0ldK2BIv+ts9UilcKVrtr5R0sPLJVPj5m06CjBmQli4i4JvRTTTtzmw+sptA8M47Dzlrsx66lxNbNd3tpTpnAI3Z1JKtfoCtNw=
+	t=1739465206; cv=none; b=fb+dUFF0ioyY7lj+5fyVj1W9NwUPgwMIy9B7lb5rlbPzfBphrSypMt2Yi1RsxBu/e4oTrEC61pVUJgLM/uNz6jhVO2XfswZRPjaXL6A8rlplxLieRrgxgITyUMsJwizfv9se3kH8q24XdK25+q925GEh4uZtS7hACsTYhK9O61E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739465199; c=relaxed/simple;
-	bh=7MnmMrnzdp7Tha9+9t2+bcP9SACYRnNvBdJrozvaUgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tNX1CCBIlXqUlwfLx1zqixpXJ9otOwV8TeQQn8RO069SIO5PS2SfCQ4h9WrLLk237msKHd5G/Z4Ms+Ce+XsHmCrBlhUAleiw/+TyPOUHDp+opxJvXYAWn0Qmg4qxqRaR3tbHXg7eHIRw8+ZQhjrOB7Ok0vJLUZr1F++TCeKLdA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RnmCJccJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37912C4CEE4;
-	Thu, 13 Feb 2025 16:46:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739465198;
-	bh=7MnmMrnzdp7Tha9+9t2+bcP9SACYRnNvBdJrozvaUgg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RnmCJccJlU8PUjGmVOoioKFlGWP/uhKOSRgfkWP2+Bn8oxHVE14A/eL3KTU9a7Q2j
-	 O9ZUQTVMnO1xiGm5ge7B75boa+/IgH6pypFygFIU11wxgJ85MxN2sF0V0IybXnuiCq
-	 9Lj69/OZVOf61S4XCYRA+4keS0Qhi4GTogz8mVAH2cDuqXskMc3h70iDYPSD9NXp+f
-	 rNJg6/NLE/MvN+sW0gEOSHkYGHBYPjL+Ms/WesfxgbeEDgDYiqFjjkeoz1tse6VTIU
-	 VPwYMElVY6LPUVfIbYnELorifjk1Mb7ecBZcnjBW23gzUy/q6BtpGRBkdSdQEmL4lS
-	 NQK3LKzhLaf7Q==
-Date: Thu, 13 Feb 2025 06:46:37 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Devaansh Kumar <devaanshk840@gmail.com>
-Cc: void@manifault.com, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] sched_ext: selftests: Fix grammar in tests description
-Message-ID: <Z64h7dCnOwo3SM4m@slm.duckdns.org>
-References: <20250211171851.1518556-1-devaanshk840@gmail.com>
+	s=arc-20240116; t=1739465206; c=relaxed/simple;
+	bh=DBrzRiKfHQhUieCoS1jd2keEcouyy2TAdA8Hy9eT5CU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ph/snXJcvS9iU/BQN3h/qmgoDefHWgcmzJObM4qCWxaRuHCM79RQ4Y1mnr6LTe4LxgPrC2e2Ds0/bV8G9yCHUfep2+5OsipeByUQbnVg58TJSWRaPQKLcM7ezHRT1zeEOETlJfc6eDYeffVdY9K9bsDfYmbkXrqpO60gEFukkfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=d32GejBx; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B8FA748EBD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1739465203; bh=KEZqGb45tLQV/Ib54LAY03Ohsm5zJrAVnCYgVwcKUjQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=d32GejBx45dnSb/JQzlubScBvTOOS0S7DlEwWWfk/pxYJNoqzMlWA4gFE95h3srLh
+	 tO2ErhayEOPoWLvpoH5g2WQc3N8Ktu2Gq92AQ/QtXbz3NXTAUFBoyNmpz6jsXu1TkX
+	 4JajJBAmyUaFlUp+A7xx6eCG0w3UtP/ge9n2g2XJONiD+nwGEu3qLMF6JuvRyBdBXG
+	 IyrxS2TfGmdCOD+dzXkVnHypsNTw9MKyz/0MzRFyb9QavYHDVl5q4aMZ5jIEegrPdV
+	 K5LT3mJccGWY3QbNydb9fbw4u9NpsBry2Fkng1aP1V7XsKAVXb9q8za1Kv3OpSWfbV
+	 2sKA+T43jTD5w==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id B8FA748EBD;
+	Thu, 13 Feb 2025 16:46:43 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: trace: decode_msr.py: make it compatible with
+ python 3
+In-Reply-To: <88bb0d47100feaa3cda215e68bf6500dc67da7b3.1739257245.git.mchehab+huawei@kernel.org>
+References: <88bb0d47100feaa3cda215e68bf6500dc67da7b3.1739257245.git.mchehab+huawei@kernel.org>
+Date: Thu, 13 Feb 2025 09:46:42 -0700
+Message-ID: <87frkh6bd9.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211171851.1518556-1-devaanshk840@gmail.com>
+Content-Type: text/plain
 
-On Tue, Feb 11, 2025 at 10:48:48PM +0530, Devaansh Kumar wrote:
-> Fixed grammar for a few tests of sched_ext.
-> 
-> Signed-off-by: Devaansh Kumar <devaanshk840@gmail.com>
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Applied to sched_ext/for-6.14-fixes.
+> This script uses print <foo> instead of print(foo), which is
+> incompatible with Python 3.
+>
+> Fix it.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/trace/postprocess/decode_msr.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/trace/postprocess/decode_msr.py b/Documentation/trace/postprocess/decode_msr.py
+> index aa9cc7abd5c2..f5609b16f589 100644
+> --- a/Documentation/trace/postprocess/decode_msr.py
+> +++ b/Documentation/trace/postprocess/decode_msr.py
+> @@ -32,6 +32,6 @@ for j in sys.stdin:
+>  					break
+>  		if r:
+>  			j = j.replace(" " + m.group(2), " " + r + "(" + m.group(2) + ")")
+> -	print j,
+> +	print(j)
 
-Thanks.
+This does make me wonder when this script was last used ... it hasn't
+seen a real change since it was added in 2015.  Oh well, it should at
+least work with current Python ... applied, thanks.
 
--- 
-tejun
+jon
 
