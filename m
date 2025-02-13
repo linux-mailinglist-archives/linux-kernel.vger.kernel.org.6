@@ -1,159 +1,164 @@
-Return-Path: <linux-kernel+bounces-512346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D86A337DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:21:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83378A337DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:21:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD1316737A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:21:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D599167D0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BAB207DE8;
-	Thu, 13 Feb 2025 06:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0D92080CE;
+	Thu, 13 Feb 2025 06:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="lD82rsbR"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IEBT+tLn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4D920766E;
-	Thu, 13 Feb 2025 06:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10244207A2B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739427652; cv=none; b=KPamYYd/kfAiLkNVwM9frj9ZfXkJbpUsAJHYtXbC86STbmtuDG0Fp3qWKYLgmW7s2FkjHcwtGG05XHEjPI8DLGK87XEljsjjgrBnphAYGQ4OxtPFzJSK5rZc9WvNCFGEJKNer+K/SY2YZlNGcA28RZ7oR9q+Qy1nfFhUsKORy44=
+	t=1739427654; cv=none; b=YNLVsMHr7XeUcjuGizzOQEFgRpVExvjqS2thM+yMU+N8XHwdmS6XyDxUIP3/s64QpnPpfMo3v1VWGC7WuttbANrL6G2ipnPEtCDt+KLOBsFqbIpibfZHASE0TQfBgpgj4lMH/lqcJg4eYdboDzVzIGNTXT5lc8QgRYi54k8ZhI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739427652; c=relaxed/simple;
-	bh=yi8Ds+rvTqCkr4AEhdDx106k9cpqjnHqkzb+kOgIoPY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k0qjCe4fcGytDkPlpHQQGmKhvu4i/roiwN5zae3sPApBE37LsriDE4dIGEPYDHLuSfj59zJoIoN7UtpScREXiPAzgSm6D2leJvbaCrYaBdBbErMeTnac/yIk9tRuZRYUEs7PY6+k4/+vWzJiDiAB85isruIJ+ZxJ6SgB1PcTv3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=lD82rsbR; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1739427651; x=1770963651;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=y0qqspgyXFQAiVZhV1is4ipJluGgHz+aCeCybrjLYs8=;
-  b=lD82rsbRUA1s05HFp36u9KEP2nYnQQfURmf2nx3i+VvSSFd2YRte+adE
-   JzCPoOmLzU3sZcJJHmDzIUJM7SBlt7FnW09PVvIx+caneYm1mSQE9ayC3
-   AkzngNe3/QJ9ZpepPVQTsgOhLlQZerpNgdafxGeFMFUJv1mYgl/qFLG7y
-   4=;
-X-IronPort-AV: E=Sophos;i="6.13,282,1732579200"; 
-   d="scan'208";a="169268254"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 06:20:49 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:11164]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.32.208:2525] with esmtp (Farcaster)
- id 6c86040e-10d2-4a2e-98fc-c45ba71a877d; Thu, 13 Feb 2025 06:20:48 +0000 (UTC)
-X-Farcaster-Flow-ID: 6c86040e-10d2-4a2e-98fc-c45ba71a877d
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Thu, 13 Feb 2025 06:20:48 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.37.244.7) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 13 Feb 2025 06:20:40 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <shaw.leon@gmail.com>
-CC: <alex.aring@gmail.com>, <andrew+netdev@lunn.ch>,
-	<b.a.t.m.a.n@lists.open-mesh.org>, <bpf@vger.kernel.org>,
-	<bridge@lists.linux.dev>, <davem@davemloft.net>, <donald.hunter@gmail.com>,
-	<dsahern@kernel.org>, <edumazet@google.com>, <herbert@gondor.apana.org.au>,
-	<horms@kernel.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-ppp@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-	<linux-wpan@vger.kernel.org>, <miquel.raynal@bootlin.com>,
-	<netdev@vger.kernel.org>, <osmocom-net-gprs@lists.osmocom.org>,
-	<pabeni@redhat.com>, <shuah@kernel.org>, <stefan@datenfreihafen.org>,
-	<steffen.klassert@secunet.com>, <wireguard@lists.zx2c4.com>
-Subject: Re: [PATCH net-next v9 05/11] net: ip_tunnel: Use link netns in newlink() of rtnl_link_ops
-Date: Thu, 13 Feb 2025 15:20:31 +0900
-Message-ID: <20250213062031.4547-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250210133002.883422-6-shaw.leon@gmail.com>
-References: <20250210133002.883422-6-shaw.leon@gmail.com>
+	s=arc-20240116; t=1739427654; c=relaxed/simple;
+	bh=ujajjJF3gxYdA1DcNCIqKS9o38/7j0hv1rZ6wwtwKUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MQ36R7gpm+pJCzIClDnoIet0JXFy3KEpUYMrpifwUUaeChH2kHHF+Ly8HTyQ59c5IaffxAx+bDJAwYJ1uI/GvBeAR/7o2U+aL6xpsQFkV5ffl/SfhOwV8RYEeiSiIunusldr0RO+eZ11rsoqk585AMVcBqUujFa6RYX70il8HlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IEBT+tLn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739427652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CPPPQaWJNVckUPtigjDkhfhBpenPmQjuRXN55oSVE/w=;
+	b=IEBT+tLna3d2EfConaaQ8i333mdwmcx9lqsksyFEdKuVOOX3RARiNF3nVCdzM2/i04psPi
+	JcsPcRJNv17XPBOwHz9aE0BjgxzA45pdj3oJuInhuO/EQeWpd/mQ02lX8lQ0FaUbe29BVh
+	/uUbvkMDDwI5iCGDMKPs1iGuHu/j+cg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-637-MpgHEaHSOdu4UqgNv41SGQ-1; Thu, 13 Feb 2025 01:20:50 -0500
+X-MC-Unique: MpgHEaHSOdu4UqgNv41SGQ-1
+X-Mimecast-MFC-AGG-ID: MpgHEaHSOdu4UqgNv41SGQ
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4395ff90167so2237675e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:20:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739427649; x=1740032449;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CPPPQaWJNVckUPtigjDkhfhBpenPmQjuRXN55oSVE/w=;
+        b=G/it1UJYoAEb7o1pZqswEovhbzN+TtpBz5d1057G1TmxLrjyVy1jpfbSq/URcsxEi0
+         5VmucNTApkOQOGPnZzcdj9GN0xgzOZ0nDsgVq0kQPtsWsYLcl5oOL4M1cE/NIz3kBr43
+         q5Boyu6mcYE2AAXhQ4usvftWQvmkK5iy1kAZN+7TDGISegVp6CXmzzZBkSaR7xAMb1ya
+         N8yNOiUjjGnPb6QZDIW+sNhhg/tegaoGzuogMIMmO+hWDTpZ3BL8pxmpmzgLBWTDpq5B
+         KxWhbbqcFljW7eAp/QppMUYRbEqFtSa1fsrr3oOGY/z+CBJYbbolG4UpivjLbIzbFICh
+         NO9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWuFZEkjK/az8+yxYyTvVSbC1IIFW9f7Z2/KCC2LeUKbelw7nMKI7H5I90IiX3/3HvZYp2S64Tz6BUj6Os=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNBNu65gaIpHw5+9+AHExpwWMUDu7DI6O4eqyQ1EyieDpH3C9M
+	sbnAit/bRJ7aE2PgUcKFNS3qPQ/gC+wq+wLchGPKchiGPkl6HK1/5AIW0MWeeToYIqICQJVItp+
+	tXw56CUe5TKDfWnhfGq5+JYA9FQ17hiucmff/7PpN9LjbeDIYfWSYj2hu1ovZNQ==
+X-Gm-Gg: ASbGncskHV7aDRfaEs24e7M0QyrPBB55YBwrFkbGjVxFbWtIhtmhSe25ebEXjUXFhBc
+	y7XbiDPZQ44mdD+vTlQmWukB6X0+2zFsZ768qaw3QoX+62DBFCvJltPa3S2IcZfdEwEiXj9GRcU
+	3RnXNTstfP6WTRUiYkuAFiWZObELupSYrUhslffAiBLSp9RWF2Z/DWme/gzDj9jpLlkKW0T5PX2
+	whWi3GffnNUgevgc/n/zm1lVj5UhTiHEcE7xoCXDB1X3VqzkgZEe0bNb++6b7ti9D9oRwehGVPS
+	FYEuuLtdv5e+cnbm1MOBMOX+9He1iABRhQ==
+X-Received: by 2002:a05:600c:34cf:b0:431:3bf9:3ebb with SMTP id 5b1f17b1804b1-439581b2618mr55155145e9.24.1739427649050;
+        Wed, 12 Feb 2025 22:20:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IER6/42+eVDeZwjdE+jxN4B0+qhxJwM/n+zSdf4mIKkK9A70FFseUlVSNAfLLV/nC108HkX3g==
+X-Received: by 2002:a05:600c:34cf:b0:431:3bf9:3ebb with SMTP id 5b1f17b1804b1-439581b2618mr55154855e9.24.1739427648614;
+        Wed, 12 Feb 2025 22:20:48 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1aa779sm38582615e9.30.2025.02.12.22.20.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 22:20:48 -0800 (PST)
+Date: Thu, 13 Feb 2025 07:20:45 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+Message-ID: <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
+References: <8572b3bc-46ec-4180-ba55-aa6b9ab7502b@nvidia.com>
+ <Z6SA-1Eyr1zDTZDZ@jlelli-thinkpadt14gen4.remote.csb>
+ <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
+ <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
+ <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
+ <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
+ <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
+ <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
+ <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+ <285a43db-c36d-400e-8041-0566f089a482@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D040UWB002.ant.amazon.com (10.13.138.89) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <285a43db-c36d-400e-8041-0566f089a482@arm.com>
 
-From: Xiao Liang <shaw.leon@gmail.com>
-Date: Mon, 10 Feb 2025 21:29:56 +0800
-> When link_net is set, use it as link netns instead of dev_net(). This
-> prepares for rtnetlink core to create device in target netns directly,
-> in which case the two namespaces may be different.
+On 12/02/25 19:22, Dietmar Eggemann wrote:
+> On 11/02/2025 11:42, Juri Lelli wrote:
+
+...
+
+> > What about we actually ignore them consistently? We already do that for
+> > admission control, so maybe we can do that when rebuilding domains as
+> > well (until we find maybe a better way to deal with them).
+> > 
+> > Does the following make any difference?
 > 
-> Convert common ip_tunnel_newlink() to accept an extra link netns
-> argument. Don't overwrite ip_tunnel.net in ip_tunnel_init().
-
-Why... ?  see a comment below.
-
-
-[...]
-> diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
-> index 1fe9b13d351c..26d15f907551 100644
-> --- a/net/ipv4/ip_gre.c
-> +++ b/net/ipv4/ip_gre.c
-> @@ -1413,7 +1413,8 @@ static int ipgre_newlink(struct net_device *dev,
->  	err = ipgre_netlink_parms(dev, data, tb, &p, &fwmark);
->  	if (err < 0)
->  		return err;
-> -	return ip_tunnel_newlink(dev, tb, &p, fwmark);
-> +	return ip_tunnel_newlink(params->link_net ? : dev_net(dev), dev, tb, &p,
-
-This is duplicate at all call sites, let's move it into
-ip_tunnel_newlink() by passing params.
-
-
-> +				 fwmark);
->  }
->  
->  static int erspan_newlink(struct net_device *dev,
+> It at least seems to solve the issue. And like you mentioned on irc, we
+> don't know the bw req of sugov anyway.
 > 
+> So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
 > 
-> diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
-> index 09b73acf037a..618a50d5c0c2 100644
-> --- a/net/ipv4/ip_tunnel.c
-> +++ b/net/ipv4/ip_tunnel.c
-> @@ -1213,11 +1213,11 @@ void ip_tunnel_delete_nets(struct list_head *net_list, unsigned int id,
->  }
->  EXPORT_SYMBOL_GPL(ip_tunnel_delete_nets);
->  
-> -int ip_tunnel_newlink(struct net_device *dev, struct nlattr *tb[],
-> -		      struct ip_tunnel_parm_kern *p, __u32 fwmark)
-> +int ip_tunnel_newlink(struct net *net, struct net_device *dev,
-> +		      struct nlattr *tb[], struct ip_tunnel_parm_kern *p,
-> +		      __u32 fwmark)
->  {
->  	struct ip_tunnel *nt;
-> -	struct net *net = dev_net(dev);
->  	struct ip_tunnel_net *itn;
->  	int mtu;
->  	int err;
-> @@ -1326,7 +1326,9 @@ int ip_tunnel_init(struct net_device *dev)
->  	}
->  
->  	tunnel->dev = dev;
-> -	tunnel->net = dev_net(dev);
-> +	if (!tunnel->net)
-> +		tunnel->net = dev_net(dev);
+> dl_rq[0]:
+>   .dl_nr_running                 : 0
+>   .dl_bw->bw                     : 996147
+>   .dl_bw->total_bw               : 0       <-- !
+> 
+> IMHO, people who want to run serious DL can always check whether there
+> are already these infrastructural DL tasks or even avoid schedutil.
 
-Isn't tunnel->net always non-NULL ?
+It definitely not ideal and admittedly gross, but not worse than what we
+are doing already considering we ignore sugovs at AC and the current
+bandwidth allocation its there only to help with PI. So, duck tape. :/
 
-ip_tunnel_newlink
--> netdev_priv(dev)->net = net
--> register_netdevice(dev)
-  -> dev->netdev_ops->ndo_init(dev)
-    -> ip_tunnel_init(dev)
-      -> netdev_priv(dev)->net = dev_net(dev)
+A more proper way to work with this would entail coming up with sensible
+bandwidth allocation for sugovs, but that's most probably hardware
+specific, so I am not sure how we can make that general enough.
+
+Anyway, looks like Jon was still seeing the issue. I asked him to verify
+he is using all the proposed changes. Let's see what he reports.
+
+Best,
+Juri
+
 
