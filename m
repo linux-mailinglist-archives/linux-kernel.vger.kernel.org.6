@@ -1,102 +1,76 @@
-Return-Path: <linux-kernel+bounces-512429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB37A3392D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:48:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B660A33932
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:49:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1173A2346
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73BB91888C0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5143820ADFA;
-	Thu, 13 Feb 2025 07:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18E720AF78;
+	Thu, 13 Feb 2025 07:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ta7wYWH/"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMluKzxm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B162BA2D;
-	Thu, 13 Feb 2025 07:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44772BA2D;
+	Thu, 13 Feb 2025 07:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739432887; cv=none; b=tu7paVI/6pNkc+47imMVT6S3rw6C+8v/3ORjToCbetxdEBJqvilJtWXQ0eqASl3LnMR6IuaF3eD5jSpYMWyAFP/Dc6v3PM+U9xEcnSCdOqA6+30W4aHn3/BNrsRdq7ZboUpxWyq/ScFtKE2JK0i1Z9wD3R9TrLIStZYOi4VKSjU=
+	t=1739432966; cv=none; b=XU7WNRZq+3OhIg9Pqfne8vjUDU9AAB22F8qE+X39aRueTyAJComQMXHYubw1z5hIJTrrBraynHHxbZKdgRICoFw0hJE2JdvzhqyRqMtDfS8/hY5x1sFDh+JEOepTxsWCRNsr8UnyheicXCVfncY0GkNYkNYWuwYc+uxsBW+mTwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739432887; c=relaxed/simple;
-	bh=dhAj+kXaTDh6GRxeXB3ePgoHwZ6bN1ob6iqWi2XoFFw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sN6aokGMw4zSFtv2eKIlIROt2jUe7CGPHdeph6D23qD+GhsiQ3gJ1/0nGBG/IAQ0MzTC1JjDjn+Hm/8KsiE/c6RF8+nwzjR5K/JCF2t2m6pyEDjBm5g+qfMhiOCiid86tj9LoZnzL0f9CDDQ80sdGZp6eVzcAY+yAuJejb6Nukg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ta7wYWH/; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1739432886; x=1770968886;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gMGZnrkj1PsBzrRBaQa/AOARDe2r9siZ+blzTwbHXc8=;
-  b=ta7wYWH/uVNakP8KZedwtb9yXl7JP6t+9ahatgSejvRpSHKefwYroUT5
-   mgYsQ59zZn28p25lDtfB95qrVfm090dBnHacvmuhHcOk9TZ3YKA6pIs3G
-   zlwvGQ/an4X5A2HWpaCnyjHoX0Eqo4R2Be3p+YR4I0qylgciN297pVqQz
-   w=;
-X-IronPort-AV: E=Sophos;i="6.13,282,1732579200"; 
-   d="scan'208";a="169283745"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 07:48:05 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:21723]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.9.187:2525] with esmtp (Farcaster)
- id 4f82d4bf-d41e-457b-8d40-10c81143e6ba; Thu, 13 Feb 2025 07:48:05 +0000 (UTC)
-X-Farcaster-Flow-ID: 4f82d4bf-d41e-457b-8d40-10c81143e6ba
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Thu, 13 Feb 2025 07:48:02 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.37.244.7) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 13 Feb 2025 07:47:57 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <kuniyu@amazon.com>
-CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <dsahern@kernel.org>,
-	<edumazet@google.com>, <horms@kernel.org>, <kernel-team@meta.com>,
-	<kuba@kernel.org>, <kuniyu@amazon.co.jp>, <leitao@debian.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <ushankar@purestorage.com>
-Subject: Re: [PATCH net-next v3 1/3] net: document return value of dev_getbyhwaddr_rcu()
-Date: Thu, 13 Feb 2025 16:47:48 +0900
-Message-ID: <20250213074748.16001-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250213073646.14847-1-kuniyu@amazon.com>
-References: <20250213073646.14847-1-kuniyu@amazon.com>
+	s=arc-20240116; t=1739432966; c=relaxed/simple;
+	bh=2r+iftouz+KNmWMr3hXVKgACN/Hfjh0z0QlWbmjE1h4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxOQtRdJZiR+0ZFbmRYq7ivKPjKiaxpvP0tM2ZydKkqbdrtStWJEcPQ1FPTlZEUinxyYY+om+dZxdFP2S98WbwX30O9tJWKBTA5PhYbM9eRKDuMkZoCj7XhcfYKOjQC42MILb6qnW29WuElKOxAp/E4mo8ZkN7Ajjer7kpdV5lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMluKzxm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7596C4CED1;
+	Thu, 13 Feb 2025 07:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739432965;
+	bh=2r+iftouz+KNmWMr3hXVKgACN/Hfjh0z0QlWbmjE1h4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qMluKzxmo91HgIN1XqkBR3AF7NgltciJKCmluuhvjfPw7PanUY4Ka5mozmeVyD5kb
+	 XhASNZQV3PF7zlpU4/W9nXn5/2hUbc0y8/yPTLKFbGPWRZe604hrBuY9RSRXb42L4w
+	 tATww9srWEdEo/s3xQL0FdCoaUHGzZJBYR58r/eaBEZhz6HohlAuddG5xQR2vUr1+E
+	 kMB4mFf0DYXi1IORBjBN1ysHl+A50TxsBym5CV7mYQujhqHGg71oN4/b/8cC3j0b3u
+	 ki0MR2Oxvb+rgyz0IFScFso0vcPnscvYFgF/xV9AjcdxZTRTKilye+wBn2K1WIdbzm
+	 dchmsnZ2sqvVg==
+Date: Thu, 13 Feb 2025 08:49:22 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jammy Huang <jammy_huang@aspeedtech.com>
+Cc: eajames@linux.ibm.com, mchehab@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, andrew@aj.id.au, 
+	linux-media@vger.kernel.org, openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] media: dt-bindings: aspeed,video-engine: Convert to
+ json schema
+Message-ID: <20250213-loose-positive-moth-be16ab@krzk-bin>
+References: <20250213015338.3243171-1-jammy_huang@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D045UWA004.ant.amazon.com (10.13.139.91) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250213015338.3243171-1-jammy_huang@aspeedtech.com>
 
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-Date: Thu, 13 Feb 2025 16:36:46 +0900
-> From: Breno Leitao <leitao@debian.org>
-> Date: Wed, 12 Feb 2025 09:47:24 -0800
-> > diff --git a/net/core/dev.c b/net/core/dev.c
-> > index d5ab9a4b318ea4926c200ef20dae01eaafa18c6b..0b3480a125fcaa6f036ddf219c29fa362ea0cb29 100644
-> > --- a/net/core/dev.c
-> > +++ b/net/core/dev.c
-> > @@ -1134,8 +1134,8 @@ int netdev_get_name(struct net *net, char *name, int ifindex)
-> >   *	The returned device has not had its ref count increased
-> >   *	and the caller must therefore be careful about locking
-> >   *
-> > + *	Return: pointer to the net_device, or NULL if not found
-> >   */
+On Thu, Feb 13, 2025 at 09:53:38AM +0800, Jammy Huang wrote:
+> Convert aspeed-video.txt to yaml format.
+> Update aspeed-video.txt to aspeed,video-engine.yaml in MAINTAINER file.
 > 
-> I noticed here we still mention RTNL and it should be removed.
+> Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
+> ---
 
-I missed this part is removed in patch 2, but the Return: part
-is still duplicate.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
