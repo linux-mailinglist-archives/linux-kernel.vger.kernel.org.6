@@ -1,117 +1,166 @@
-Return-Path: <linux-kernel+bounces-513087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32894A3417A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:13:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9EAA34198
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:16:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92553AD742
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:08:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37B818825FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F05F227EAA;
-	Thu, 13 Feb 2025 14:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA40241683;
+	Thu, 13 Feb 2025 14:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SuyrXBDN"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="jtBeACFN"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CC6171E43;
-	Thu, 13 Feb 2025 14:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CDD23A9AE
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455532; cv=none; b=fDKf9aZTLBorWmnElFM/wdTDA6IKr+618wmExj7E4Ev/rjmImZ5Vxi96dEFoT1aDMa4/ALLzxS5HmAXM2+5yzM7cRIXRJVhacWkXS9i8oBoLUKSZUxYIHGnA6XAySGOG33KSrv8s4e8HU9cr5JtLUqasOekTc1h1DdYpey/c3ug=
+	t=1739455536; cv=none; b=qDe3WyWVs+M3xSHWJOT1W2RUCjbFolqrR8xpUGKR/eGXrsK58T0ZJZUK439Lwv3b4KPuPEaduSoyATP7ZRES9TNnTwnrFGTwQ0KlHqieqoIVi9x+XGFKxiHqrC73vQWlp5Z8WAiIELol48IngVDnB+9ZqkYCwqW25fmKN2abVaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455532; c=relaxed/simple;
-	bh=PRazXW/kbPHtowtTsKIzPmtMu8CfBctVKjuE3JfV5iU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bJ77aykb7eA2y0VJW8W/UGpsfiFmULChJO3PlkUM+Rk178SzBUORFWJNu0K7lCrHbeAQSWQQxr0fanVbF77u6/a+YKF3U4E4Cbz0Twq1X72khNZiXALKqx6P9qNQTT9MmzGv3V9oFX/nUuwNQjc0jFRpVO+WJRxoz9TWpMeZhGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SuyrXBDN; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 948F843204;
-	Thu, 13 Feb 2025 14:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739455529;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QbJppxNHduGQ+2DYZU3v7Z2KhYNzPxsOebdIfv4nVEc=;
-	b=SuyrXBDNecXS47sD8IFsPb+riIglTpi2/yxQkA7eOjkqxW0B3pDgEsWTjKJe3HpudsEKo1
-	rfUHpHNmO25L03hruzfpEYpHQo3LyXgsLW1jmUF6SwdYQ8MpuwWZcW82VOkJuQAouvXGPW
-	qGrboTeu68aJkRs2n/mFAlMXBjN3xwhsLRrQuXqy1n+/cs/Geg6VDEY8Nl/+GezELbs4oe
-	YhBac8FecgPNr+UuZCnAM4et34GPlZ8gboel4wvEOeaI3FN9aJDhJN2yQBaU8W/MfnTxid
-	UKk+Wg0YCbdkY6kSgL4wZGkV+Zd4UrDWhvnHDjMRa1O/IXAe5AZmNEciEaMzrQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 13 Feb 2025 15:05:13 +0100
-Subject: [PATCH v2] drivers: core: fix device leak in
- __fw_devlink_relax_cycles()
+	s=arc-20240116; t=1739455536; c=relaxed/simple;
+	bh=xS258u4nZ8Oh1hovVFPvLu204SUXG1v2PhB8JQekrzU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jWX5EPMTIfJTe7rc2chF/nVH38Tkqjkd82brFRTYPq41XnWCIHKLwM07h9u9KFL/nVn3y0Z79X8+llZ153uAV0q9+szGKT9Ky+alCOgn+iO3lkZNcIitodchaSR/GKnFWMExhAiohxLBI0akwSdjup3Rl9bbvFefXqeAOHY+aDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=jtBeACFN; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c077c9cbb9so73118585a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:05:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1739455534; x=1740060334; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fiZcI5pNzRU07XzzU8EnwEz/jsrm+hKHSzrUBfY4xZU=;
+        b=jtBeACFNrdjCGmaY/9jH6wFB3yez/yqML/HohpGxuCOiB2Tv9GqhrDbijoQy03IIjK
+         1CciDijJj9AY1x7+EyT0JCvKeUL3ZHipaDdohL6BURL9b/+FRFh98q05UlaKMO+0NhfP
+         r3YGT9hz6euC45ZXrwWiobNXazekfITnQpv1iZJXCn2H9PZMsiG/oOpJUl462otRI8QV
+         WL2wtdxumkfdVyyEgfhZ22aP+ns5rHlZ7f9OJ/UIdVq97iZ4s6c85iQC6TD9tP0cR3ex
+         h+MsgGdOhkmDbmICdBlfW87RTN2wJyclaBtGaT6rBfQJoigwZO+iaQvWBBY4Akt3sYcY
+         vUlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739455534; x=1740060334;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fiZcI5pNzRU07XzzU8EnwEz/jsrm+hKHSzrUBfY4xZU=;
+        b=egzXqFQL7JvffPCe3Ew9wsjXxSgF8eXE8Cnt2LjlwQDLLQS+qekkcgv/tn7Wovip44
+         VIGz+qYRqa6fjEGvF0RwBEavImGxoJig9dTW90gy1B2A1CW2Ko2jMQsYrAqLl9WU4mKs
+         n0BEj8KhoHZ9kbMh3Mb8Iv9nTwzQ9VznfWAT6y8HLR3v2285ux14nJ5uEinXXTSZD7hY
+         A5lA4wGglKyq75j5dkZSp1l3TUIHZDjUfsDINv7Vft4b+xot9CMRK8POQXkGlJjQqsEm
+         fEQcZTnkJ9pX75ffHLcP2vJBxCalQVFO/EyCSaKm4WGghMmNNaAMtUcMWTJBcef8VLSC
+         +OnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnXwHF2aU76Y8COQffl+KuXKm7IZt7d0BJaYYIjSVW8MhBm1FskeGNwXwwddIyGnZlzzd7/ZXmaAURb3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq0mwUsdKdbQ+mPZaFYHe2pLR0ft5sHcp80S2e8tz0ihn3JE1p
+	jlRhjOGwOhRwIR1gqGjXA7iLUMT/+DQLFCqdZ7GzHShl5cQP6+JG72XETokzG/TVTJSjSksl8X0
+	FLuYKvprVM+uDYRYFJtfBzS5qYv6O+wv8d5EWnA==
+X-Gm-Gg: ASbGncusWIK/T9S+waKQroUqlHbEVVR2sk+6morrAItrd4UuK8Jr/WNcbCpwvEcITdg
+	KX61Gbf+jXKqv5FyV/pH2sTtgR8QWOdEhVzqpsYVr3hlpEOT6WIqAJFFzNe4fWeBcyWHbpg==
+X-Google-Smtp-Source: AGHT+IGMP88jINMPoFMOhhs/JAOS7v2yzIBooFPBVGpWjkqaheBF8kqUyMw9whWPj/OQ8rwmytDe/wVilf8O/rIqWwA=
+X-Received: by 2002:a05:620a:6841:b0:7b6:d611:ce6f with SMTP id
+ af79cd13be357-7c07a89294cmr506602985a.8.1739455533614; Thu, 13 Feb 2025
+ 06:05:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250213-fix__fw_devlink_relax_cycles_missing_device_put-v2-1-8cd3b03e6a3f@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIABj8rWcC/52OTQ6DIBCFr2JYl0aoBtNV79EYQsdRJ1UwYKnGe
- PeiR+jyey/vZ2MBPWFg92xjHiMFcjaBvGQMemM75NQkZjKXZS6F5C0tWrdf3WAcyL61x8EsGlY
- YMOiRQiDbHSYB6ukz85sCg2VbGAM5S62Tx1RxLj7rxD2F2fn1PBDFof6/FQUXvBCVqEA1Skn5e
- Dk3p+gV3Mjqfd9/c5/VnvAAAAA=
-X-Change-ID: 20250212-fix__fw_devlink_relax_cycles_missing_device_put-37cae5f4aac0
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Saravana Kannan <saravanak@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieeliecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdeuleetffeutdfhvedvjeffuddtteejtdfhffdvhedvleevteekjeejgfejgfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdduudekngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoo
- hhglhgvrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
+ <20250212205613.4400a888@collabora.com> <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
+ <20250213093557.278f5d19@collabora.com> <CAFA6WYOJkSRsH-15QdqXNMd08Q=Dg4NkRd1Cr9LXA+5nozTF6g@mail.gmail.com>
+ <20250213134008.4cbef142@collabora.com>
+In-Reply-To: <20250213134008.4cbef142@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Thu, 13 Feb 2025 14:05:22 +0000
+X-Gm-Features: AWEUYZn29uWPvEYSBg2IY8QVofzDJvdO9H1dHkQQoSFoIsbJfLKOXfSzgdbP8WY
+Message-ID: <CAPj87rM5Y=-Jgf4mwukicF6Yb-vccn2fpG2X1jNq0upH2+cAEQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>, Jens Wiklander <jens.wiklander@linaro.org>, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Florent Tomasin <florent.tomasin@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Commit bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize
-cycle detection logic") introduced a new struct device *con_dev and a
-get_dev_from_fwnode() call to get it, but without adding a corresponding
-put_device().
+Hi,
 
-Closes: https://lore.kernel.org/all/20241204124826.2e055091@booty/
-Fixes: bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize cycle detection logic")
-Cc: stable@vger.kernel.org
-Reviewed-by: Saravana Kannan <saravanak@google.com>
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
-Changes in v2:
-- add 'Cc: stable@vger.kernel.org'
-- use Closes: tag, not Link:
-- Link to v1: https://lore.kernel.org/r/20250212-fix__fw_devlink_relax_cycles_missing_device_put-v1-1-41818c7d7722@bootlin.com
----
- drivers/base/core.c | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, 13 Feb 2025 at 12:40, Boris Brezillon
+<boris.brezillon@collabora.com> wrote:
+> On Thu, 13 Feb 2025 14:46:01 +0530 Sumit Garg <sumit.garg@linaro.org> wrote:
+> > Yeah but all the prior vendor specific secure/restricted DMA heaps
+> > relied on DT information.
+>
+> Right, but there's nothing in the DMA heap provider API forcing that.
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 5a1f051981149dc5b5eee4fb69c0ab748a85956d..2fde698430dff98b5e30f7be7d43d310289c4217 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2079,6 +2079,7 @@ static bool __fw_devlink_relax_cycles(struct fwnode_handle *con_handle,
- out:
- 	sup_handle->flags &= ~FWNODE_FLAG_VISITED;
- 	put_device(sup_dev);
-+	put_device(con_dev);
- 	put_device(par_dev);
- 	return ret;
- }
+Yeah. DMA heaps are just a way to allocate memory from a specific
+place. It allows people to settle on having a single way to do
+allocations from weird platform-specific places; the only weird
+platform-specific part userspace needs to deal with is figuring out
+the name to use. The rest is at least a unified API: the point of
+dma-heaps was exactly to have a single coherent API for userspace, not
+to create one API for ZONE_CMA and DT ranges and everyone else doing
+their own thing.
 
----
-base-commit: 09fbf3d502050282bf47ab3babe1d4ed54dd1fd8
-change-id: 20250212-fix__fw_devlink_relax_cycles_missing_device_put-37cae5f4aac0
+> > Rather than that it's better
+> > for the user to directly ask the TEE device to allocate restricted
+> > memory without worrying about how the memory restriction gets
+> > enforced.
+>
+> If the consensus is that restricted/protected memory allocation should
+> always be routed to the TEE, sure, but I had the feeling this wasn't as
+> clear as that. OTOH, using a dma-heap to expose the TEE-SDP
+> implementation provides the same benefits, without making potential
+> future non-TEE based implementations a pain for users. The dma-heap
+> ioctl being common to all implementations, it just becomes a
+> configuration matter if we want to change the heap we rely on for
+> protected/restricted buffer allocation. And because heaps have
+> unique/well-known names, users can still default to (or rely solely on)
+> the TEE-SPD implementation if they want.
+>
+> > There have been several attempts with DMA heaps in the past which all
+> > resulted in a very vendor specific vertically integrated solution. But
+> > the solution with TEE subsystem aims to make it generic and vendor
+> > agnostic.
+>
+> Just because all previous protected/restricted dma-heap effort
+> failed to make it upstream, doesn't mean dma-heap is the wrong way of
+> exposing this feature IMHO.
 
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+To be fair, having a TEE implementation does give us a much better
+chance of having a sensible cross-vendor plan. And the fact it's
+already (sort of accidentally and only on one platform AFAICT) ready
+for a 'test' interface, where we can still exercise protected
+allocation paths but without having to go through all the
+platform-specific setup that is inaccessible to most people, is also
+really great! That's probably been the biggest barrier to having this
+tested outside of IHVs and OEMs.
 
+But just because TEE is one good backend implementation, doesn't mean
+it should be the userspace ABI. Why should userspace care that TEE has
+mediated the allocation instead of it being a predefined range within
+DT? How does userspace pick which TEE device to use?  What advantage
+does userspace get from having to have a different codepath to get a
+different handle to memory?  What about x86?
+
+I think this proposal is looking at it from the wrong direction.
+Instead of working upwards from the implementation to userspace, start
+with userspace and work downwards. The interesting property to focus
+on is allocating memory, not that EL1 is involved behind the scenes.
+
+Cheers,
+Daniel
 
