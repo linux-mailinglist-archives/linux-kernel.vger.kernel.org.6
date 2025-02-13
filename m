@@ -1,157 +1,93 @@
-Return-Path: <linux-kernel+bounces-513556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9CFA34B95
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:19:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15ACBA34BA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:21:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7ADE1633A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 973DA18881E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43362040B7;
-	Thu, 13 Feb 2025 17:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5632040BA;
+	Thu, 13 Feb 2025 17:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYjavnAg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QqkS/4J8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0727815855E;
-	Thu, 13 Feb 2025 17:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E165203719;
+	Thu, 13 Feb 2025 17:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739467149; cv=none; b=LFg6qFmk1J+5r4qqq1SHJ88a5KpgaNUAQ7n6eEGqmUkjLKLl5F3zRR4n+uai4BHIZiDJT8bKlxSIWNTEM9HEJvsfwIPIPd9Ax6l2DCmLdFrIq9RUj7R7U57k+uFKxhO7LQfEn4e4FJA3ZQR9I1UQkNhOEKR1NXDQ+LJaVgPJzdE=
+	t=1739467161; cv=none; b=QRB8WnQ+ZmNQIdjsUjDllCWmuIThjPE1FF3Gkj35hZMHmi20/l2W/Pgn18R6g155Xva5coJDLxZXBzWBvRuqz1L8auvHLDl7ROfEBZUsAk0ToQFr9BQBdRTMAiYE5KkF4Tl5ZCzG+E68PwN0xGO4AiH7dgZkun4n/0aqPBIqolg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739467149; c=relaxed/simple;
-	bh=zKcbM6IcBXpQkvDiwQ/2d8+zEon4okynGxi4dN1iduQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TeQpekyYasXPoThI3/DcJ5H1oewPiDTaJoylgkOLQQ242PJpjl6H4/JxqYyXr68XZlfcSBKzidhjqaz9poAoKDo2KBAncC/zhmdvHkQHlwkNFMvbPHU7gSaayrByuT0V3pNHWGH9RVTBvu7tzq284AGAXrHJeSf7HTbcqQZF4yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYjavnAg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87CBDC4AF0B;
-	Thu, 13 Feb 2025 17:19:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739467148;
-	bh=zKcbM6IcBXpQkvDiwQ/2d8+zEon4okynGxi4dN1iduQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fYjavnAgjG2ALVhU3n41CpcFyEECQXYNjeAbD5x55o34caZF2OembTmslX/NXoYiH
-	 zeAduvH//VNzZhkC5ViOZAzGblsV8fseHGzpZqg5tGl6vSyoSacECfunMG+uPJ1ojm
-	 Rn8IWOszs8CFlovgEXbRHxcfPrU8qOZX9YkbJKZu8XojMcf8JBZzW113LNzWs6vfXw
-	 59sInjBAvJhxqXcJ8ABZ+uXQJRFXl4o0pPFNiJpCo0mfQn5E9+NUfENidJEdN40tRv
-	 E9PYhxdf8RGCGr20maLcIs6D345DXeHoqDUJwgsvediNEY6op0B7DmcjSeTtXgDvEP
-	 VhnFPdu0wOJww==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-545039b6a67so1019946e87.0;
-        Thu, 13 Feb 2025 09:19:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUUeXWGIFxjM/d1EQXh6c3YScWADTqzIAUDwcjCIqNKJYJDwI8A86Q65xbRBUFjeYMhe1svWLA2@vger.kernel.org, AJvYcCUzU7o+NlTpB1nMBDMTBanacVGVoJArurALuj/NmWQGI+CqPpAhrINTS8TPiKBiP6HdD2qngv4og1g6t5c=@vger.kernel.org, AJvYcCV0d5tQLp67tZSFSSc2X7+JZ7cpWlWHdFj3oKeQYsSTAWnNkOJ+0Cd+reATYrbziDd21dyZsS4bzP8u8XwPDkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaXDnBcbgD3GUc9fQjMVdGAmQz3zfg/cC6q+kTZp3R5MiR9xtS
-	J0IYYHPINzkPgmQwRj8qA6Aub23glsnt+xIiJSvSf4T4zjHzz8FAJJREjzFkSnqcXKhOug3E/Vm
-	K0TX53Z+ESJ8F2laIUMlwzW3UHRg=
-X-Google-Smtp-Source: AGHT+IFBveEmZsMEZsyrxXtWamogvgck+sW2aQvGnVbR5VQvH4/CMwg5fT2sHta2nfxtlArh3COkxd584to+rMNeWCs=
-X-Received: by 2002:a05:6512:ba3:b0:545:cc2:accb with SMTP id
- 2adb3069b0e04-5451811d29fmr2744992e87.28.1739467146599; Thu, 13 Feb 2025
- 09:19:06 -0800 (PST)
+	s=arc-20240116; t=1739467161; c=relaxed/simple;
+	bh=9jSHN4ul3ZleLnTMDmLIZOfk8OvNXvpRioZv/TPSV6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fg7PfsYJpjO8MRLruAD9416zzGCkCAaHEmRLTrIDIwO9Aqwjm79YnxWuRLwwrK7xPaYPwqbTxFAcp5ZifQ9L4qJHAvrxpJ40DiBqSbD7Bhhb6XZT7gipL19Qb4pTJHPC80qpREcbmAyVpCjzdhCZ8JVxlG2ky+2hIctmLTMJwYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QqkS/4J8; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739467159; x=1771003159;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9jSHN4ul3ZleLnTMDmLIZOfk8OvNXvpRioZv/TPSV6Y=;
+  b=QqkS/4J8n5ysXdbooCQUoibIRiv7+6znDjufuE+Y0poa/fxzOu0w7qja
+   RbRU5kkk0Esm46pQcSC37aPJ5W1xuUqbggec0fQF0R5GwM7hS6NKc0U8t
+   MZZptK/W5iXg8VIS2cs9mwWx2nYuACAWurlkaqXF4yX1biTG9A03SQwww
+   XcwTxQBLmhRYeOZsta/vYnRYpHmkRam3X7jhU4hBcQ6AdZEbWGAi+JhGp
+   aD7sFnAlUGK3nOLVJHZNJcD8/5aVixckyrai93AQTUIdEErFzPd9mHvCp
+   GgIKWrlllpLsov9SPX6chDwF7gYk2ar44jRUxl3zUeQi2khc5PCYg5Aj2
+   g==;
+X-CSE-ConnectionGUID: XEfdE3R/T/q3JamtQqfJpQ==
+X-CSE-MsgGUID: LtPNf76JT8KTcNLz31aPGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40219580"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="40219580"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 09:19:18 -0800
+X-CSE-ConnectionGUID: 9N4MUBhwQU2v0fAwWmpkiQ==
+X-CSE-MsgGUID: MYE75GfASb6bCUWppIhORQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="150382550"
+Received: from dprybysh-mobl.ger.corp.intel.com (HELO intel.com) ([10.245.246.5])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 09:19:16 -0800
+Date: Thu, 13 Feb 2025 18:19:12 +0100
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Markus Theil <theil.markus@gmail.com>
+Cc: linux-kernel@vger.kernel.org, andi.shyti@linux.intel.com,
+	intel-gfx@lists.freedesktop.org, netdev@vger.kernel.org,
+	Jason@zx2c4.com, tytso@mit.edu
+Subject: Re: [PATCH v2 1/3] drm/i915/selftests: use prandom in selftest
+Message-ID: <Z64pkN7eU6yHPifn@ashyti-mobl2.lan>
+References: <CAHmME9oqvWp_Nd1Gwgyw52qy8wxztMyCpNsjByH=VnRaXqczww@mail.gmail.com>
+ <20250211063332.16542-1-theil.markus@gmail.com>
+ <20250211063332.16542-2-theil.markus@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210163732.281786-1-ojeda@kernel.org> <CAMj1kXHgjwHkLsJkM3H2pjEPXDvD80V+XhH_Gsjv8N4Cf6Bvkw@mail.gmail.com>
- <9430b26a-8b2b-4ad8-b6b0-402871f2a977@ralfj.de>
-In-Reply-To: <9430b26a-8b2b-4ad8-b6b0-402871f2a977@ralfj.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 13 Feb 2025 18:18:55 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHbXfDz96C3ZPyyXB_dSRyxbc4BP3qNN_oemG9T68eTsQ@mail.gmail.com>
-X-Gm-Features: AWEUYZmMXwdsGWpyxIXpLuvhOOhu7SYkGwPGIA-pgYV0N-zrNn8_zzPI-Pd5f0o
-Message-ID: <CAMj1kXHbXfDz96C3ZPyyXB_dSRyxbc4BP3qNN_oemG9T68eTsQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: rust: clean Rust 1.85.0 warning using softfloat target
-To: Ralf Jung <post@ralfj.de>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
-	Matthew Maurer <mmaurer@google.com>, Jubilee Young <workingjubilee@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211063332.16542-2-theil.markus@gmail.com>
 
-On Thu, 13 Feb 2025 at 16:46, Ralf Jung <post@ralfj.de> wrote:
->
-> Hi all,
->
-> > We have to carefully make the distinction here between codegen and ABI.
-> >
-> > The arm64 C code in the kernel is built with -mgeneral-regs-only
-> > because FP/SIMD registers are not preserved/restored like GPRs, and so
-> > they must be used only in carefully controlled circumstances, i.e., in
-> > assembler code called under kernel_neon_begin()/kernel_neon_end()
-> > [modulo some exceptions related to NEON intrinsics]
-> >
-> > This does not impact the ABI, which remains hard-float [this was the
-> > only arm64 calling convention that existed until about a year ago].
-> > Any function that takes or returns floats or doubles (or NEON
-> > intrinsic types) is simply rejected by the compiler.
->
-> That's how C works. It is not how Rust works. Rust does not reject using floats
-> ever. Instead, Rust offers softfloat targets where you can still use floats, but
-> it won't use float registers. Obviously, that needs to use a different ABI.
-> As you said, aarch64 does not have an official softfloat ABI, but LLVM
-> implements a de-facto softfloat ABI if you ask it to generate functions that
-> take/return float types while disabling the relevant target features. (Maybe
-> LLVM should just refuse to generate such code, and then Rust may have ended up
-> with a different design. But now this would all be quite tricky to change.)
->
-> > Changing this to softfloat for Rust modifies this calling convention,
-> > i.e., it will result in floats and doubles being accepted as function
-> > parameters and return values, but there is no code in the kernel that
-> > actually supports/implements that.
->
-> As explained above, f32/f64 were already accepted as function parameters and
-> return values in Rust code before this change. So this patch does not change
-> anything here. (In fact, the ABI used for these functions should be exactly the
-> same before and after this patch.)
->
+Hi Markus,
 
-OK, so can I summarize the above as
+On Tue, Feb 11, 2025 at 07:33:30AM +0100, Markus Theil wrote:
+> This is part of a prandom cleanup, which removes
+> next_pseudo_random32 and replaces it with the standard PRNG.
+> 
+> Signed-off-by: Markus Theil <theil.markus@gmail.com>
 
-- Rust calling Rust will work fine and happily use float types without
-using FP/SIMD registers in codegen;
-- Rust calling C or C calling Rust will not support float or double
-arguments or return values due to the restrictions imposed by the C
-compiler.
+I merged just this patch in drm-intel-gt-next.
 
-?
-
-> > Also, it should be clarified
-> > whether using a softfloat ABI permits the compiler to use FP/SIMD
-> > registers in codegen. We might still need -Ctarget-feature="-neon"
-> > here afaict.
->
-> Rust's softfloat targets do not use FP/SIMD registers by default. Ideally these
-> targets allow selectively using FP/SIMD registers within certain functions; for
-> aarch64, this is not properly supported by LLVM and therefore Rust.
->
-
-I read this as 'this default behavior might change in the future', and
-so -Ctarget-feature="-neon" should be added even if it is redundant at
-this point in time.
-
-> > Ideally, we'd have a target/target-feature combo that makes this more
-> > explicit: no FP/SIMD codegen at all, without affecting the ABI,
-> > therefore making float/double types in function prototypes illegal.
-> > AIUI, this change does something different.
->
-> Having targets without float support would be a significant departure from past
-> language decisions in Rust -- that doesn't mean it's impossible, but it would
-> require a non-trivial effort (starting with an RFC to lay down the motivation
-> and design).
->
-
-Fair enough. The codegen is all that matters, and there are other
-cases (e.g., spilling) where the compiler may decide to use FP/SIMD
-registers without any floats or doubles in sight. In fact, there are
-swaths of non-performance critical floating point code in the AMDGPU
-driver where it would be useful to have float/double support using
-softfloat codegen too.
+Thanks,
+Andi
 
