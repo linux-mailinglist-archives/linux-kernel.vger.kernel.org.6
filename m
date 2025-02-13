@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-512897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3A4A33EF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:18:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB23EA33ED4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:10:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61A8A7A1F76
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AD3E3A1A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5936F22155B;
-	Thu, 13 Feb 2025 12:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F07221548;
+	Thu, 13 Feb 2025 12:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="R2+1Ezj7";
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="R2+1Ezj7"
-Received: from mail.mleia.com (mleia.com [178.79.152.223])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ixSxsLst"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA7915383A;
-	Thu, 13 Feb 2025 12:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BEB227EBD;
+	Thu, 13 Feb 2025 12:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739449081; cv=none; b=NhW7JXrU9jaExuDARKBlXSh9lnAEgOm1q2NInEeHtmkFptMNazt7156OWjxQ6p5GLWb5Sa3R7Gwkqa2/C7QLXI9B6Nl0WuBykVztpwA89D2emiLnS85IT2AbNKLv/DjUgGXQ8WwxYvaaD3l/h3tF5FEeq0i1ydc1I0HfLFmtChc=
+	t=1739448615; cv=none; b=djLfzIp12WCLxKmB8RjAK7rhwWtjlvRsffCQdt9fXvI4wlslDvRvhGNS14J4giypsv3PZNswCQ6xdq9Dh04HDvrN5QcHbQhRFmKNRhaY3r0GIFZFQTv0LYl5Jda/UM/ZFmNf8AjnsmwgcTXUX9Whb2fwTk4WDJ0yGc9XFRd+frk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739449081; c=relaxed/simple;
-	bh=Js2J+We0EvBUaLzVdJbyTpliD1eqko9gYiN/kW/jRHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CnP2pm+e0hrr0pXG3wpDEjKQU6Un8QHi/FYuvCpdAnKEhD58jeLYd9gRqOk5NDQKHhneioG9qW5pQpXzpozhWjl/CCyedvJS1PIzx+4pYC2TjydDXtkdAGsAqaZdpnGjf2pxZtiU8mdd7hfO3ATr6HQ7stFYS035sGyVZsZlH5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=R2+1Ezj7; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=R2+1Ezj7; arc=none smtp.client-ip=178.79.152.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1739448574; bh=Js2J+We0EvBUaLzVdJbyTpliD1eqko9gYiN/kW/jRHE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R2+1Ezj7XnIiH/8+SKrh/QoEozYuaKzC9/SB4PMu89COfc4wa1PmY7Os7YHyHTBfR
-	 7XjsRnxi0+eMp7NCl8Zz+2xtnWKbusOwLUdfXz0CGS4SQqrNFdM607UR2Dac5LGf1q
-	 oLHJLqEyvUe/rujc9Hms16Uz9nhyfrRrudNhL5vEIYGo/NofSWQhouO5CU7VgVZgy/
-	 67k7UZHBalgvUy6wlq6FE7tHGdr8BoqNs8WxfvREQn+s3eV8eth1FpobAzZCGHeSGK
-	 cgpDItUtfoOO+raAMHf6rTzAOzNHpAK4ud26pt3FH1xWi9wxa1P0DwT4dqghu1DKnp
-	 7DIBxFWFE6CGg==
-Received: from mail.mleia.com (localhost [127.0.0.1])
-	by mail.mleia.com (Postfix) with ESMTP id 601253A2376;
-	Thu, 13 Feb 2025 12:09:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1739448574; bh=Js2J+We0EvBUaLzVdJbyTpliD1eqko9gYiN/kW/jRHE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R2+1Ezj7XnIiH/8+SKrh/QoEozYuaKzC9/SB4PMu89COfc4wa1PmY7Os7YHyHTBfR
-	 7XjsRnxi0+eMp7NCl8Zz+2xtnWKbusOwLUdfXz0CGS4SQqrNFdM607UR2Dac5LGf1q
-	 oLHJLqEyvUe/rujc9Hms16Uz9nhyfrRrudNhL5vEIYGo/NofSWQhouO5CU7VgVZgy/
-	 67k7UZHBalgvUy6wlq6FE7tHGdr8BoqNs8WxfvREQn+s3eV8eth1FpobAzZCGHeSGK
-	 cgpDItUtfoOO+raAMHf6rTzAOzNHpAK4ud26pt3FH1xWi9wxa1P0DwT4dqghu1DKnp
-	 7DIBxFWFE6CGg==
-Message-ID: <9e2b9e70-454d-4573-b1d3-b77fe9dc9a46@mleia.com>
-Date: Thu, 13 Feb 2025 14:09:32 +0200
+	s=arc-20240116; t=1739448615; c=relaxed/simple;
+	bh=0K3K8Ve6Nf+QbJw4fodrmcsL0YTbcamOy8gUjErmc2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ldWnFFj+1B6/mI7q9lDpuyI4IXycda7KaxTxgj3344SAsaPjanXd+ECdAmrls15nVJpi4PHsIQLnq0tCH1KtiEZWnwKJ8LANYjMcTaVVnRwB39tyg7myR+wgg5nB3phAGWSEqWfQG5hfdkLD1D6bjr+HJ/B/svJh8nxzW3k6h6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ixSxsLst; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C0ACC4CED1;
+	Thu, 13 Feb 2025 12:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739448614;
+	bh=0K3K8Ve6Nf+QbJw4fodrmcsL0YTbcamOy8gUjErmc2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ixSxsLstbWTuePxMz3K5LBIMEBN5+UAXB9TpGsYtjORULLl23r3uXZScfa6jCdtAW
+	 eJPFPf29GJ07aFQ7mOOM+Bc4S8DPhswkESUeWlXrHZVLfGcbAUMsWsD4UpxbwAWTQP
+	 2pIvoBZgGl270Q6ixbbAn2sTFd/sTkXqjf+y85Zw=
+Date: Thu, 13 Feb 2025 13:10:11 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hsin-chen Chuang <chharry@google.com>
+Cc: luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org,
+	chromeos-bluetooth-upstreaming@chromium.org,
+	Hsin-chen Chuang <chharry@chromium.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] Bluetooth: Fix possible race with userspace of
+ sysfs isoc_alt
+Message-ID: <2025021347-washboard-slashed-5d08@gregkh>
+References: <20250213114400.v4.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
+ <2025021352-dairy-whomever-f8bd@gregkh>
+ <CADg1FFdez0OdNDPRFPFxNHL_JcKmHE6KNxnYvt4sK7i+Uw6opA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] power: ip5xxx_power: Make use of
- i2c_get_match_data()
-Content-Language: ru-RU
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Samuel Holland <samuel@sholland.org>, Sebastian Reichel <sre@kernel.org>
-References: <20250213114613.2646933-1-andriy.shevchenko@linux.intel.com>
- <20250213114613.2646933-2-andriy.shevchenko@linux.intel.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-In-Reply-To: <20250213114613.2646933-2-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20250213_120934_411596_C50C303C 
-X-CRM114-Status: UNSURE (   4.62  )
-X-CRM114-Notice: Please train this message. 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADg1FFdez0OdNDPRFPFxNHL_JcKmHE6KNxnYvt4sK7i+Uw6opA@mail.gmail.com>
 
-On 2/13/25 13:45, Andy Shevchenko wrote:
-> Get matching data in one step by switching to use i2c_get_match_data().
-> 
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+A: http://en.wikipedia.org/wiki/Top_post
+Q: Were do I find info about this thing called top-posting?
+A: Because it messes up the order in which people normally read text.
+Q: Why is top-posting such a bad thing?
+A: Top-posting.
+Q: What is the most annoying thing in e-mail?
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+A: No.
+Q: Should I include quotations after my reply?
 
---
-Best wishes,
-Vladimir
+http://daringfireball.net/2007/07/on_top
+
+On Thu, Feb 13, 2025 at 07:57:15PM +0800, Hsin-chen Chuang wrote:
+> The btusb driver data is allocated by devm_kzalloc and is
+> automatically freed on driver detach, so I guess we don't have
+> anything to do here.
+
+What?  A struct device should NEVER be allocated with devm_kzalloc.
+That's just not going to work at all.
+
+> Or perhaps we should move btusb_disconnect's content here? Luiz, what
+> do you think?
+
+I think something is really wrong here.  Why are you adding a new struct
+device to the system?  What requires that?  What is this new device
+going to be used for?
+
+confused,
+
+
+greg k-h
 
