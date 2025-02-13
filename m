@@ -1,150 +1,155 @@
-Return-Path: <linux-kernel+bounces-512133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75762A3348C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:21:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E26FEA350D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:04:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1161188A020
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:21:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6674016D644
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D860D86349;
-	Thu, 13 Feb 2025 01:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D36A269810;
+	Thu, 13 Feb 2025 22:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfjYpt8w"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Q6m+YClU"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923B078F26
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186A420A5DF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739409708; cv=none; b=YH433UuCNPGPHKmvqiWe9mt27bnN9f6T3bKJYBX9d9+Wu8eYQO7R5JrCSzhLBaomcZNOPLIfdzf2TcxtGau5d13Jyif96NJMRQFBwGPwqMKk9PrxqYv7gpDEzVF5rYazl/cYpuzPWGLULsLev5ooRuCzEYIN15y+h7osTZr5W5Q=
+	t=1739484227; cv=none; b=iX+M1IMOmCIwh1Ypjw3v7G/4j5j3LxKVG0reUwMcgYj/DiE0UgadsBBSkyj8N83Ro6Qv2RO4NuMPuMUgzYhOoUvMUsC+9O50B7uVMihDp38lqqDmFZFlpO3OSD20njkCeT5wqjpSfuemC63pm97c0bsVc8cdM0eJIUJpwF7j4bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739409708; c=relaxed/simple;
-	bh=q+nCXvcuGbP6lZuLocKajT0ORe5EGrF6T3/N8VpC8fs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KueByD88zh6dkx1DYuM+ia0sATnA8R+pRuv0j62qvl4CGtwJBXW1kTy7G8haRPDAopWLBy6JYu0Pc4jrpocoK9C5odA8MahMbaxDgq1c7YyC3iF8VhzpQKn3JrTRxuUU0mvxpUBPbLYp7XPWKhb0sTAjha/9R4YgtsBo85SfyRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfjYpt8w; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43956fcd608so1977485e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:21:46 -0800 (PST)
+	s=arc-20240116; t=1739484227; c=relaxed/simple;
+	bh=EBcnEm/QrNPY7L+pJSBMhYwK2erXTVxT15U4RvvSL5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QlC6NtM/HRxGk8bFPmyMMXzR+1lUQB5zmOj0sbO13eDcG1TwuQTbIy/khUcvN8beAZow9fUMPlchansRDTo0xwnH5YJX/MFufgK3t45o8yPRfUGu3brHASZzK4CCsVAQMw9WzycFbqnhLZm7roz5k1N84o3R0Jm62BGWKWnUj9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Q6m+YClU; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f9d3d0f55dso2081548a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:03:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739409705; x=1740014505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=sifive.com; s=google; t=1739484225; x=1740089025; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q+nCXvcuGbP6lZuLocKajT0ORe5EGrF6T3/N8VpC8fs=;
-        b=HfjYpt8wQHhUYd2ZRQuf3oSOgLs6yha3tTp4A+R34vbmrAbTWh5TVtKS3eLS+iO6g4
-         maDCkH/nNp/ZOHuhialk9S6PFGYBcSpYiFJh19PDkIxsEhqHu67n2Bh1P+EIw/2o6YKA
-         e33iXmpR/zB8cvDmIW3g4q2nqVnqqaXP8DqsroS13hZuhxJCvf4Q9MK0JIYDo9BfNz8J
-         hdprjRXFgcpzEMqp/8eTH6GAil0gRUyHvQHO1LolG5draZPPu9aJYOK+2UgTzLllXMci
-         qpGhj5COTTQIzS1/3Cn2pBLuM+fePxvX6+f2nv7XU+wQeMI4fUVGbowzl0UT/eZhupBC
-         ZP6A==
+        bh=sn7Sf/VJa7o2kQnvv17430q5LGkiKAmnPlLEbt0xnSg=;
+        b=Q6m+YClUznpyuaO+bzan+jRFkwokm0vtrOII2aW3oEaxtWG+sdbxnhcFJcNcv5bwhO
+         bdu2l3bOBO0OGhWmqQB4lqpa2dvKjjv2SYBmVsXZF6EOBXY23NZmVO1M40Nh5LQx59Du
+         VddqH7GsPONhq482rKrLbC+X5ou/zSsWSGTREkg+fpXyfR7SUCtlCtzgX5QO45UHDStr
+         6afJ4MwluTlpZsglOcyzl2B8cp61XTi5UNVgczgry1rnqiOuXeYPgYxFUOvnD1M6dNse
+         Oopc2LGjyaB+3UoCUZeLV6d2sxB2TqhbNPsvgO5z1CtLkT4/vuGl/JvVmqd6Hp1GgEa+
+         vc1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739409705; x=1740014505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1739484225; x=1740089025;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q+nCXvcuGbP6lZuLocKajT0ORe5EGrF6T3/N8VpC8fs=;
-        b=l5lBv4H8r2rBd2BKqS2FTLm7w3WnEQZ0D27gPYiiwKTRx9IceK3+fAdroJLMAGbun2
-         hYsn8JTI16Km+RonDnZqvE3yoE8XvkQjKxSNpzYHqOh3iT49x+OeNmXcnsv1ou4UkgJ7
-         A757zvLEfuor2oifC+4UpOHa3sS1+CkugwzVgcuvPiedE1+bJG2rlHeATLJWQpgi13hv
-         cUyH65jkbGTdA3II3wiVikft+iPkf3q4prU2AoBHVHqAmigOtGlTsJNwGXyupIZFphQn
-         V9j3gCn4aTzSMh/kUe54MqDHvMAZqRIpba53nlgmnDFm6xmHZq9bSL9EeqwUKJVQscaH
-         WA9w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/2tQ8y7mSpjED8xTsQ536Cz1n3sl+TJL2t4JrJbv2l6t1qKtDawzR3JxAvVLIMH4Hfr3Lw/Z8W8GFeOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjucxttkvSdwIiw5UXC1arWok/AAb7VIsoxu8q6txRHviM9IBE
-	VNYWs20VfPf0dgXUUn9+drVqFCe+X4L5o4BJWDqY3MV9TF+UBAKjdPUxwIANConlHSz+pfM6mTo
-	AFqmkpxQjnjMdExtyNnCed5Rl2xE=
-X-Gm-Gg: ASbGnctVbHnPN3yqnh5oEyGv/SD0DWbNFKtCpYruKE3XU6MYJsMW1vAehE0tRcn1wJq
-	V3/jWa41cF5KYHP90ecKzYZS2IfhkCMKOsfG4S2Bt6OXvxrGu4q7ubIn6R/2iY49k342sDccw6K
-	Q=
-X-Google-Smtp-Source: AGHT+IEjJMkC/hHaotdqSukhMJQZrOiaCkGtVrbEkJiI15zjYiRvHohJ4FkUwvWx7PY95qrg/tcG6HP5nsDWETkesBs=
-X-Received: by 2002:a05:600c:198b:b0:439:60bc:71b3 with SMTP id
- 5b1f17b1804b1-43960bc744emr6893225e9.25.1739409704648; Wed, 12 Feb 2025
- 17:21:44 -0800 (PST)
+        bh=sn7Sf/VJa7o2kQnvv17430q5LGkiKAmnPlLEbt0xnSg=;
+        b=Lzgr3xk9iWRwawU1AXLBKUuHdSIMIN34ch4zN3NLQqGV5BfZwWbWQEUjcZc4qGfxrz
+         njEorxFuW+V/F+uaUC/xmPrNyqlFzdi0A3V7A4+Wcyw98uzEgNrLcqPhKeHWcTSNLDjz
+         9DMX1sTnLYTA/uOmXPZUoQXJdfeCu9BjFI0mSRmYsb6khFs675YBSKr01KGRd90uDTc9
+         De2VoF7Rsq4bRapnB0QC0QfH9nzQIe3s+OLE1UvwOglD+D8+8XDRDnJVh+shG3oeRA3Z
+         JJL0O3wgCgHPnwgh3ZJ0M/cxZLKQJ7FCGipL2c2z3d2Sl/OURCJs83uBC/xZurNiEET/
+         jp7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWAceXd7jxDqf8GmyIsjObB9linKvu+VJVnipMztRJlGc6IdMLw4OURPWqHwSb3fc5Wd7gt29jGkWmySOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzCVU1lZ20HVebzCDyHZyvuv4QZwe4wwKSDZt5zQ9PtG6P3Bpj
+	TD5YVn1x9DYUQCBgo8w5bVdN7W1Bp6tP4cGIwcOlzErit2rqT/IMSufLdzy85SA=
+X-Gm-Gg: ASbGncs8g6rHKRuOKVmN4ehBdzSWOKFH6kZ/4vzOHxb0MQ0LplaWhYXN20jpKJIjm7h
+	kQZhDMgH6QdKz4sS3yhAWhHcR5NUaxNTGna7dTkfa8dUXtQYHRMXlTCdsYZCoYYNipNDqcl3LoC
+	LBwmsaLfK55H6QQ1PHuZx2Ulg+mMtZ15ndygFAOkMG5rGY6PvHa4dA/a2ikVVdO2PFMgTW0xiMt
+	svp55DjO6l9iOjRj40JmYxVQeFzZkmjRFJtFrJlPuXMgfpVwnCSKWqCgOMSbFTWlIRw4hdxboK/
+	zta7Jrw0KEU78KO9iAIvzQmOVv2l+odavxQoLg==
+X-Google-Smtp-Source: AGHT+IHkFJ+qjdPn6uu0QPcmGwTebP9L3ITV/fNakdUXm6n9V5utSpWvIQRkdMaseOUVz3BmpGbQ1g==
+X-Received: by 2002:a05:6a00:2ea3:b0:730:9204:f0c6 with SMTP id d2e1a72fcca58-7322c4310b4mr11699224b3a.16.1739484225285;
+        Thu, 13 Feb 2025 14:03:45 -0800 (PST)
+Received: from sw06.internal.sifive.com ([4.53.31.132])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e438sm1847491b3a.94.2025.02.13.14.03.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 14:03:45 -0800 (PST)
+From: Samuel Holland <samuel.holland@sifive.com>
+To: Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Ian Rogers <irogers@google.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	Jiri Olsa <jolsa@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: [RESEND PATCH 1/7] perf vendor events riscv: Rename U74 to Bullet
+Date: Wed, 12 Feb 2025 17:21:34 -0800
+Message-ID: <20250213220341.3215660-2-samuel.holland@sifive.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250213220341.3215660-1-samuel.holland@sifive.com>
+References: <20250213220341.3215660-1-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022015913.3524425-1-samuel.holland@sifive.com>
- <20241022015913.3524425-2-samuel.holland@sifive.com> <CA+fCnZeBEe3VWm=VfYvG-f4eh2jAFP-p4Xn4SLEeFCGTudVuEw@mail.gmail.com>
- <e7t5yzfw3dq5stp5xjy5yclcx6ikne4vwz7d6w2ukfw2b7gr6t@oomoynf3b2jl>
- <zjuvfdbl7q76ahdxk3lrgaznk7vjj43f5ftzfgrnca6dqtcd5x@5qj24womzgyq>
- <CA+fCnZfySpeRy0FCFidLdUUeqp97eBdjAqQyYPpz1WxYwcsW9A@mail.gmail.com> <aqhm7lc57srsfuff3bceb3dcmsdyxksb7t6bgwbqi54ppevpoh@apolj3nteaz6>
-In-Reply-To: <aqhm7lc57srsfuff3bceb3dcmsdyxksb7t6bgwbqi54ppevpoh@apolj3nteaz6>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Thu, 13 Feb 2025 02:21:33 +0100
-X-Gm-Features: AWEUYZnQToSGphLmBmZFBpfuiZIg1iWlon9vHp3PXB7Fk9evMSAokOcZX5tZFRE
-Message-ID: <CA+fCnZdjTkreTcoo+J8wMhwDuAFM4g33U5BFy0OPtE0UCvyJbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] kasan: sw_tags: Use arithmetic shift for shadow computation
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: Samuel Holland <samuel.holland@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	linux-riscv@lists.infradead.org, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com, 
-	llvm@lists.linux.dev, Catalin Marinas <catalin.marinas@arm.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Will Deacon <will@kernel.org>, 
-	Evgenii Stepanov <eugenis@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 11, 2025 at 7:07=E2=80=AFPM Maciej Wieczor-Retman
-<maciej.wieczor-retman@intel.com> wrote:
->
-> I did some experiments with multiple addresses passed through
-> kasan_mem_to_shadow(). And it seems like we can get almost any address ou=
-t when
-> we consider any random bogus pointers.
->
-> I used the KASAN_SHADOW_OFFSET from your example above. Userspace address=
-es seem
-> to map to the range [KASAN_SHADOW_OFFSET - 0xffff8fffffffffff]. Then goin=
-g
-> through non-canonical addresses until 0x0007ffffffffffff we reach the end=
- of
-> kernel LA and we loop around. Then the addresses seem to go from 0 until =
-we
-> again start reaching the kernel space and then it maps into the proper sh=
-adow
-> memory.
->
-> It gave me the same results when using the previous version of
-> kasan_mem_to_shadow() so I'm wondering whether I'm doing this experiment
-> incorrectly or if there aren't any addresses we can rule out here?
+This set of PMU event descriptions applies not only to the SiFive U74
+core configuration, but also to other SiFive cores that implement the
+Bullet microarchitecture (such as U64, P270, and X280). Rename the
+directory to be more generic.
 
-By the definition of the shadow mapping, if we apply that mapping to
-the whole 64-bit address space, the result will only contain 1/8th
-(1/16th for SW/HW_TAGS) of that space.
+Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+---
 
-For example, with the current upstream value of KASAN_SHADOW_OFFSET on
-x86 and arm64, the value of the top 3 bits (4 for SW/HW_TAGS) of any
-shadow address are always the same: KASAN_SHADOW_OFFSET's value is
-such that the shadow address calculation never overflows. Addresses
-that have a different value for those top 3 bits are the once we can
-rule out.
+ tools/perf/pmu-events/arch/riscv/mapfile.csv                    | 2 +-
+ .../pmu-events/arch/riscv/sifive/{u74 => bullet}/firmware.json  | 0
+ .../sifive/{u74/instructions.json => bullet/instruction.json}   | 0
+ .../pmu-events/arch/riscv/sifive/{u74 => bullet}/memory.json    | 0
+ .../pmu-events/arch/riscv/sifive/{u74 => bullet}/microarch.json | 0
+ 5 files changed, 1 insertion(+), 1 deletion(-)
+ rename tools/perf/pmu-events/arch/riscv/sifive/{u74 => bullet}/firmware.json (100%)
+ rename tools/perf/pmu-events/arch/riscv/sifive/{u74/instructions.json => bullet/instruction.json} (100%)
+ rename tools/perf/pmu-events/arch/riscv/sifive/{u74 => bullet}/memory.json (100%)
+ rename tools/perf/pmu-events/arch/riscv/sifive/{u74 => bullet}/microarch.json (100%)
 
-The KASAN_SHADOW_OFFSET value from my example does rely on the
-overflow (arguably, this makes things more confusing [1]). But still,
-the possible values of shadow addresses should only cover 1/16th of
-the address space.
+diff --git a/tools/perf/pmu-events/arch/riscv/mapfile.csv b/tools/perf/pmu-events/arch/riscv/mapfile.csv
+index 3d3a809a5446..521f416b0006 100644
+--- a/tools/perf/pmu-events/arch/riscv/mapfile.csv
++++ b/tools/perf/pmu-events/arch/riscv/mapfile.csv
+@@ -14,7 +14,7 @@
+ #
+ #
+ #MVENDORID-MARCHID-MIMPID,Version,Filename,EventType
+-0x489-0x8000000000000007-0x[[:xdigit:]]+,v1,sifive/u74,core
++0x489-0x8000000000000007-0x[[:xdigit:]]+,v1,sifive/bullet,core
+ 0x5b7-0x0-0x0,v1,thead/c900-legacy,core
+ 0x67e-0x80000000db0000[89]0-0x[[:xdigit:]]+,v1,starfive/dubhe-80,core
+ 0x31e-0x8000000000008a45-0x[[:xdigit:]]+,v1,andes/ax45,core
+diff --git a/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json b/tools/perf/pmu-events/arch/riscv/sifive/bullet/firmware.json
+similarity index 100%
+rename from tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
+rename to tools/perf/pmu-events/arch/riscv/sifive/bullet/firmware.json
+diff --git a/tools/perf/pmu-events/arch/riscv/sifive/u74/instructions.json b/tools/perf/pmu-events/arch/riscv/sifive/bullet/instruction.json
+similarity index 100%
+rename from tools/perf/pmu-events/arch/riscv/sifive/u74/instructions.json
+rename to tools/perf/pmu-events/arch/riscv/sifive/bullet/instruction.json
+diff --git a/tools/perf/pmu-events/arch/riscv/sifive/u74/memory.json b/tools/perf/pmu-events/arch/riscv/sifive/bullet/memory.json
+similarity index 100%
+rename from tools/perf/pmu-events/arch/riscv/sifive/u74/memory.json
+rename to tools/perf/pmu-events/arch/riscv/sifive/bullet/memory.json
+diff --git a/tools/perf/pmu-events/arch/riscv/sifive/u74/microarch.json b/tools/perf/pmu-events/arch/riscv/sifive/bullet/microarch.json
+similarity index 100%
+rename from tools/perf/pmu-events/arch/riscv/sifive/u74/microarch.json
+rename to tools/perf/pmu-events/arch/riscv/sifive/bullet/microarch.json
+-- 
+2.47.0
 
-So whether the address belongs to that 1/8th (1/16th) of the address
-space is what we want to check in kasan_non_canonical_hook().
-
-The current upstream version of kasan_non_canonical_hook() actually
-does a simplified check by only checking for the lower bound (e.g. for
-x86, there's also an upper bound: KASAN_SHADOW_OFFSET +
-(0xffffffffffffffff >> 3) =3D=3D 0xfffffbffffffffff), so we could improve
-it.
-
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=3D218043
 
