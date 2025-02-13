@@ -1,106 +1,149 @@
-Return-Path: <linux-kernel+bounces-512974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B258A33FF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:09:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB034A33FF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF94A3AB986
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:09:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8209B165C80
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA2223F41C;
-	Thu, 13 Feb 2025 13:09:06 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF2E23F41C;
+	Thu, 13 Feb 2025 13:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvLFSxC6"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C063123F414
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9425F23F400;
+	Thu, 13 Feb 2025 13:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739452146; cv=none; b=UsEd2ORm8txI1qqNIfuZ4lD9m2l7k9UiQ7mWPPpsLBAaABUQuxsEjaNUAF6tuCQfS8oL0HbNQVUUfUFp2NL6nKkhFSYGdpdwwoBep5kCf73bOxqylfURowheKNk5ZHKTsfNjjt8ZspmuAXf40BtlfKTQIEzqHrYFrfyg8nX4ZKI=
+	t=1739452249; cv=none; b=OqPR/rvGTIEVGSWNFHhC424VS23bh118o1Jy4kF4hmGvmb9ptZNK0Nmw+jD39oJrqEyydNDr1Rp8PTX5id/MjIfeGk9p2tbRuFITdbPERZgOaNRlUOUCoITvFtJ+kBq4gbh9KIKNQ7l3y1NUn7or7SFp/RAp46+BQ+LYL6Q/wCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739452146; c=relaxed/simple;
-	bh=ntM782/2jzL/G23Vl7z0e6iSOMLQDb1SW0hS+eVSL0E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AzWjBkQprYfYDtrgdXmxYRmfGORLmbpI67e+VL5/lia7OKe729WZ1hI9HdlLvbsWfSfoTCPlpwz8XzwpXVP8Ht/gCy1dXLLiPMZgPvg1mQrqgSgsHSwEAFb/93oA6pE+eK0HyX/auJN2SSf82itOe5Q7Qfp61iKNj1kdaUVqlmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w012.hihonor.com (unknown [10.68.27.189])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4YtwTM24NfzYmW0V;
-	Thu, 13 Feb 2025 21:07:51 +0800 (CST)
-Received: from a003.hihonor.com (10.68.18.8) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Feb
- 2025 21:08:54 +0800
-Received: from a007.hihonor.com (10.68.22.31) by a003.hihonor.com (10.68.18.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Feb
- 2025 21:08:54 +0800
-Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
- a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
- 15.02.1544.011; Thu, 13 Feb 2025 21:08:54 +0800
-From: gaoxu <gaoxu2@honor.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, Barry
- Song <21cnbao@gmail.com>, yipengxiang <yipengxiang@honor.com>, "Hugh Dickins"
-	<hughd@google.com>, Chris Li <chrisl@kernel.org>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIG1tOiBGaXggcG9zc2libGUgTlVMTCBwb2ludGVy?=
- =?utf-8?B?IGRlcmVmZXJlbmNlIGluIF9fc3dhcF9kdXBsaWNhdGU=?=
-Thread-Topic: [PATCH] mm: Fix possible NULL pointer dereference in
- __swap_duplicate
-Thread-Index: Adt8+0GogoLTL6hgQfOcUIXDGgpBSQAbnlYAACsSnkA=
-Date: Thu, 13 Feb 2025 13:08:54 +0000
-Message-ID: <da7e1ee115454cf8898b4bbe228a5a9c@honor.com>
-References: <44655569e3a1419f800952004f07e714@honor.com>
- <20250212161820.4fda79a3333d2345b60cef72@linux-foundation.org>
-In-Reply-To: <20250212161820.4fda79a3333d2345b60cef72@linux-foundation.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1739452249; c=relaxed/simple;
+	bh=nST1KX2AtNlKcazAzA5bZyVqvZfjm3Kpn0TvSiraDaE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=QenheQ6KzN8BHzsevjQLTUvPYK4AiKWVB2JiQW4Ih9p3gG63S2wfJHH7PypT5P/irGdmR7KjKNjEVPyo81y+ZqMUdoBrg5vcJRNNhIOVtEuWdW2UfVx6PybiclLIf8h8e93U+rhFnNcvwwjCrELn2Vd32tQTbshk1saVtgj/3i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvLFSxC6; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5ded51d31f1so561625a12.3;
+        Thu, 13 Feb 2025 05:10:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739452246; x=1740057046; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a8p9IzEFHA6CvD9gtJ08mmZSSOlXbN8UwMCHkPFBaKU=;
+        b=jvLFSxC6UCdzINh6QtV92Ffsz+X/NEJJ7JQYeaE10NKdzZj8zx2OesJzHU6MWl4tMh
+         7nepGIcrH3I0Ryc0gWsCEVs2aLUHgbBxR6ShJokQwNdevlDYSowVsCgIYzPNu0o1ypv/
+         +P6vl/qJUKb2b3dZJ2JkZXVeOST5JwDaRNtRlcYoZ0yhBOuwtHrNM3gFuGEyvdZGK2Ai
+         rIvLXNarsuOBJnt5PWdR9enyyqLSwykaSfMMThj48r5uDsQnxOfCJEUX6TwfA6inCgZ1
+         UGzRn0IU/VvnNOwXs4k3cqLzcMAaWyhT0mJGJHFCVOekhTO3iCP7iFq2E4ZJNw+pczcv
+         evUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739452246; x=1740057046;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a8p9IzEFHA6CvD9gtJ08mmZSSOlXbN8UwMCHkPFBaKU=;
+        b=PoVqRHblmPwCF2bE4pD4APA1D7PBy6dwurGccdER/fUhdCNd+7w5RTeDRM24OSFxqw
+         zXdOFNRbRoMbX1VQ/Jjk2h2I+lfZ5sPsa03ZCr3RboVxx2SSdlKwo6WsZFier15QR01c
+         nPOV3TD4AoaK2xCTYrzXxMwNX/eYBT9qkgoDhdu5p4ljd9PB5gPxiBbcEfEHZEWHDD0r
+         yfWCO7q1lG0LgBnSS0kQFsu5x9xDRn1NyJDRR/O8XWEk15xao4YgUAGvjvpwyKaleNqV
+         8t+uK5n5gZdsotkN35FBakJY9mg/t0cSa884hD74bOSeCs3sUl013uBdI+YxkyhhpjyI
+         z5Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCViu02uQwwLYnqYuIeQotZl8iPXgr2NwZ1PqqaAoAAxeGY2Ddun1lyXAttGEy5AS8s65d4jbFj7ZrA/+ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL9zoHuWfrRoyiCHGNLfas7f03e7cdfQKAF0DVLwjJDLPS6SfI
+	We51l4REaajSLs66YrPVCVhrUELteCRL3coyZ494kLWnTUtQtkix8bxEUvgi7eeCmdUEEuq0jO3
+	OTlPON3DXCxy+aRjozFZhU7uTnMk=
+X-Gm-Gg: ASbGncu/wgubvjRPU30N2wr1jXj6jigHnQjwAqT1YfeWeAjQ6ahG96u8Oj9IuRdn8QI
+	KWY/IAygeRom6ghZUXBTlYUDEjl+CK1D8P/j/fn4oPj4n9XbOSiHFCmpsKQil4kLSmPaVCXtQow
+	==
+X-Google-Smtp-Source: AGHT+IG81x/h/nYYexjAldTSTTTyF/WQXnBTuMvGWRyQJuvAe08Q3WhAcuCQ5y4KXjSBrhkjiKvGkHZvk+nwt44i0MQ=
+X-Received: by 2002:a05:6402:2807:b0:5dc:da2f:9cda with SMTP id
+ 4fb4d7f45d1cf-5deade07f66mr6394075a12.27.1739452245642; Thu, 13 Feb 2025
+ 05:10:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+From: =?UTF-8?Q?Krzysztof_=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>
+Date: Thu, 13 Feb 2025 14:10:34 +0100
+X-Gm-Features: AWEUYZkF1odEy8t_F7_NujJ3u-A-NDf2mNGsq9trTka2jWc78NOOPB6oY7gbzLE
+Message-ID: <CAOQCU67EsHyw_FsqGbRuityahZTSAtWzffU=hLUJ7K=aZ=1hhA@mail.gmail.com>
+Subject: perf: Question about machine__create_extra_kernel_maps and trampoline symbols
+To: Adrian Hunter <adrian.hunter@intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ian Rogers <irogers@google.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiANCj4gT24gV2VkLCAxMiBGZWIgMjAyNSAwMzoxMzo0NiArMDAwMCBnYW94dSA8Z2FveHUyQGhv
-bm9yLmNvbT4gd3JvdGU6DQo+IA0KPiA+IHN3cF9zd2FwX2luZm8oKSBtYXkgcmV0dXJuIG51bGw7
-IGl0IGlzIG5lY2Vzc2FyeSB0byBjaGVjayB0aGUgcmV0dXJuDQo+ID4gdmFsdWUgdG8gYXZvaWQg
-TlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlLiBUaGUgY29kZSBmb3Igb3RoZXIgY2FsbHMgdG8NCj4g
-PiBzd3Bfc3dhcF9pbmZvKCkgaW5jbHVkZXMgY2hlY2tzLCBhbmQgX19zd2FwX2R1cGxpY2F0ZSgp
-IHNob3VsZCBhbHNvDQo+ID4gaW5jbHVkZSBjaGVja3MuDQo+IA0KPiBBY3R1YWxseSB2ZXJ5IGZl
-dyBvZiB0aGUgc3dwX3N3YXBfaW5mbygpIGNhbGxlcnMgY2hlY2sgZm9yIGEgTlVMTCByZXR1cm4u
-DQpUaGUgc3dhcGZpbGUuYyBmaWxlIGNvbnRhaW5zIHRocmVlIGluc3RhbmNlcyB3aGVyZSB0aGUg
-cmV0dXJuIHZhbHVlIG9mDQpzd3Bfc3dhcF9pbmZvKCkgaXMgY2hlY2tlZCBmb3IgYSBOVUxMIHJl
-dHVybi4gSW4gb3RoZXIgZmlsZXMgdGhhdCBjYWxsDQpzd3Bfc3dhcF9pbmZvKCksIEkgaGF2ZSBj
-b25maXJtZWQgdGhhdCB0aGVyZSBhcmUgbm8gc3VjaCBjaGVja3MuDQpUaGUgZGVzY3JpcHRpb24g
-aW4gdGhlIHBhdGNoIGlzIGluYWNjdXJhdGUsIGFuZCBJIGhhdmUgbWFkZSBtb2RpZmljYXRpb25z
-DQppbiBwYXRjaCB2Mi4NCj4gDQo+ID4gVGhlIHJlYXNvbiB3aHkgc3dwX3N3YXBfaW5mbygpIHJl
-dHVybnMgTlVMTCBpcyB1bmNsZWFyOyBpdCBtYXkgYmUgZHVlDQo+ID4gdG8gQ1BVIGNhY2hlIGlz
-c3VlcyBvciBERFIgYml0IGZsaXBzLg0KPiANCj4gUXVpdGUgcG9zc2libHkgaXQncyBhIGtlcm5l
-bCBidWcuDQo+IA0KPiA+IFRoZSBwcm9iYWJpbGl0eSBvZiB0aGlzIGlzc3VlIGlzIHZlcnkNCj4g
-PiBzbWFsbCwgYW5kIHRoZSBzdGFjayBpbmZvIHdlIGVuY291bnRlcmVkIGlzIGFzIGZvbGxvd3Pv
-vJoNCj4gPiBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2Ug
-YXQgdmlydHVhbCBhZGRyZXNzDQo+ID4gMDAwMDAwMDAwMDAwMDA1OA0KPiA+DQo+ID4gLi4uDQo+
-ID4NCj4gPiAtLS0gYS9tbS9zd2FwZmlsZS5jDQo+ID4gKysrIGIvbW0vc3dhcGZpbGUuYw0KPiA+
-IEBAIC0zNTIxLDYgKzM1MjEsOCBAQCBzdGF0aWMgaW50IF9fc3dhcF9kdXBsaWNhdGUoc3dwX2Vu
-dHJ5X3QgZW50cnksDQo+IHVuc2lnbmVkIGNoYXIgdXNhZ2UsIGludCBucikNCj4gPiAgCWludCBl
-cnIsIGk7DQo+ID4NCj4gPiAgCXNpID0gc3dwX3N3YXBfaW5mbyhlbnRyeSk7DQo+ID4gKwlpZiAo
-dW5saWtlbHkoIXNpKSkNCj4gPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gPg0KPiA+ICAJb2Zmc2V0
-ID0gc3dwX29mZnNldChlbnRyeSk7DQo+ID4gIAlWTV9XQVJOX09OKG5yID4gU1dBUEZJTEVfQ0xV
-U1RFUiAtIG9mZnNldCAlIFNXQVBGSUxFX0NMVVNURVIpOw0KPiANCj4gT0ssIEkgZ3Vlc3MgYXZv
-aWRpbmcgdGhlIGNyYXNoIGlzIGdvb2QuICBCdXQgcGxlYXNlIGxldCdzIGluY2x1ZGUgYSBXQVJO
-IHNvIHRoYXQNCj4gd2UgY2FuIHBlcmhhcHMgZml4IHRoZSBidWcsIGlmIG9uZSBpcyB0aGVyZS4N
-Ckdvb2QuIEknbGwgY2hhbmdlIGl0IGFzIG1lbnRpb25lZCBhbmQgc2VuZCBhIG5ldyBwYXRjaC4N
-CglzaSA9IHN3cF9zd2FwX2luZm8oZW50cnkpOw0KKwlpZiAodW5saWtlbHkoIXNpKSkgew0KKwkJ
-V0FSTigxLCBLRVJOX0VSUiAiJXM6ICVzJTA4bHhcbiIsIF9fZnVuY19fLCBCYWRfZmlsZSwgZW50
-cnkudmFsKTsNCisJCXJldHVybiAtRUlOVkFMOw0KKwl9DQoNCg0K
+Hi,
+
+I'm investigating performance issues with perf's kallsyms parsing. Running
+`perf record -g perf trace -a --max-events 1` on an x86_64 Ubuntu 24.10 on =
+a VM
+(perf version 6.11) showed that about 61% of time was spent in
+'kallsyms__parse'.
+Total execution time was 370 ms. When running latest version from
+tmp.perf-tools-next
+It's 530ms total and 38% in 'kallsyms__parse' because the old version
+doesn't have
+bpf skeletons enabled.
+During regular execution this function is called three times:
+
+1. In machine__get_running_kernel_start - searching for _text
+2. In machine__get_running_kernel_start - searching for _edata
+3. In machine__create_extra_kernel_maps - which is the focus of my question
+
+Regarding the third call (implemented in tools/perf/arch/x86/util/machine.c=
+),
+I notice it searches for:
+- _entry_trampoline
+- __entry_SYSCALL_64_trampoline
+
+I'm puzzled by the dynamic allocation in add_extra_kernel_map, which seems =
+to
+expect multiple __entry_SYSCALL_64_trampoline symbols. This functionality w=
+as
+introduced in:
+https://lore.kernel.org/all/1526986485-6562-1-git-send-email-adrian.hunter@=
+intel.com/
+
+I've attempted to trigger the trampoline logic in two ways:
+
+1. Using the example provided (uname_x_n.c), which only recorded these symb=
+ols:
+   - entry_SYSCALL_64_after_hwframe
+   - entry_SYSCALL_64
+   - entry_SYSCALL_64_safe_stack
+
+2. Setting kprobes and kretprobes to try to make the kernel create these sp=
+ecial
+   trampoline symbols, but this approach also didn't work.
+
+Questions for the perf developer community:
+1. Is there a reliable way to trigger this trampoline logic in perf? I'd li=
+ke to
+   create a perf test for this functionality.
+2. If machine__create_extra_kernel_maps is obsolete (since it's
+x86_64-specific),
+   could we remove it to reduce /proc/kallsyms parsing time by at least 50%=
+?
+
+I'm working on a patch to simplify machine__create_kernel_maps to call
+kallsyms__parse only once. However, I would appreciate guidance from those =
+more
+familiar with perf.
+
+Side note: Could exposing the kernel's lookup_symbol_name function
+(from kernel/kallsyms.c) to userspace eliminate the need for reading
+/proc/kallsyms?
+
+Best regards,
+Krzysztof =C5=81opatowski
 
