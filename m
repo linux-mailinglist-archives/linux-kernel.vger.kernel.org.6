@@ -1,115 +1,148 @@
-Return-Path: <linux-kernel+bounces-512383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24579A33892
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:11:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC215A33899
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 696757A3715
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62E6F167B24
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51EC207E15;
-	Thu, 13 Feb 2025 07:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C320207E14;
+	Thu, 13 Feb 2025 07:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="um1hTdoP"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmY4EG/j"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F4B207DF5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805431FAC42;
+	Thu, 13 Feb 2025 07:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739430661; cv=none; b=h5EiIqdKyQ89nf7oalSLUkE5C0yso0Zv6sDYWcV3b5PPvjke860NHIIt7+aJa2v1v91/vPFSyuFwi6+WDtW2mg8HfTp3k/bojpk4tqeeQuRRWyZGxTjcTadVUXth/2HH7SN3mUHId08rUgKrfmcaCIUFaHr0jJowY2ub0qxW1js=
+	t=1739430933; cv=none; b=VL/a5tgR4uOd0NQ8247oAMjyWL/YCmI/x1lrXS7rnQ0ruG42/l9IDaw+21DIfgLQ2gOP1yOzVXp4yViqcNHIyHzGgqv6WiCgwXJYJ7KTjzEuUJN33bav/hOaDjGvO7aLdvsXiahuvjMQhr8rctsYTl2O/d6YDsrWbJ2KtjJVoSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739430661; c=relaxed/simple;
-	bh=1JzLXGxL0QmiLI5Q7L2Av98JRC5DJw0hUHJfC6Qg2Bw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JBV1aO+s4a9+mFBW8xE5WFqUKT3prN5ykXDu2lapWEvi17Tw9ebRRhmX2HQ7wJrg7dCT8dpAaypgTw8TLEqnn0XkoJ6v3Ngansvu9/vTNuZ5BQWkeRTHHHbZYV73ajoGyL9EcxO92M87hVWQ5vElECPHcYRO9gek2LlKaHSG8W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=um1hTdoP; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso92192766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:10:58 -0800 (PST)
+	s=arc-20240116; t=1739430933; c=relaxed/simple;
+	bh=YNhJ633Uu5JY/VB459x1ZUs/aM+9WIpG3XO2+Tor/5o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=O3aPVgRYUSEIe+LDiXe6xiNw7DnVDEsdFAOA8f0XM2usfRNg1wZBFqHIZC+Z+0pxjiib2pl0SKpGEJ4P7RiSJBVD5TIdowqCIzZESY7TYtUcO3wPSeIF+7Mz4niW97JOyRVIQFw4HiCZdmRaNxjYQKarpVW/aDR58oUG83ADxH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bmY4EG/j; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220d601886fso4259895ad.1;
+        Wed, 12 Feb 2025 23:15:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739430657; x=1740035457; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fM8nRNJfG7rUd02T8erTfV5HvN4Rbdhc15q2XjlMewU=;
-        b=um1hTdoPBVMHAK/ZiGthqfaEd0BOvHcMehdhyGzNN+ELhG8nX3Q+kt3fSJ+4jMuN1W
-         14UgncLJRs71GaPq/kRoZ9MFvParFrkUvKnRC3aa9ZRDiOYGsSJZZiKYqlqaWE81sF+I
-         Frfj2avDxONZP9QTmKgXCAND2AAJQiTLtreLza8ti+GeLfHuX24jPqEHFWeKCoekWnE1
-         awRAfC5weqdh+orzdee16f3p9X8Bfc9uIpd0ia46JMAa2aRishrNo4tx3T8nOoBc63ln
-         oBPnrxrAOcKAlxlaSraoHGr6d+pSY5Ab4E4GJ+NL1HXvy7chia+tqOPQP9Uy2gUn9JiT
-         jIYQ==
+        d=gmail.com; s=20230601; t=1739430932; x=1740035732; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fUcgyWCk+u8Dn7f+PhxtXY5uOs2pwYWI0aCmIl9K7zM=;
+        b=bmY4EG/jSturUEZ5w254CwMh47g0I7vmgyNK82xlZde4JRJkeYO1FgURa2Jt/pn+HK
+         q8aPm0SMAg02o3vN/Rpt4g1+Q/lGXoTE6zhz80MssQedZ5+82mpgmdLvSyC6huiJ7wkn
+         BWtjBShxo5ze6NWSfUZCZCNnPgeJcZr7/1Ip9B6EEsBDeiPZduNd0XH37+cI+F2FcFS2
+         ajeX4Hd4GgSrZHnqYIAwMNNVbHAV5PWTSAcmDzBMM/iCdoHBLr+xMHxZeit50gBuJd5D
+         fcRQwqtMuqfHhC/2hFmw0Z+ZtLVkXgv6hkdX3Vqrn6Iz7SrwTmJutU0qKWY0LRqmvNx6
+         vPSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739430657; x=1740035457;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fM8nRNJfG7rUd02T8erTfV5HvN4Rbdhc15q2XjlMewU=;
-        b=ip2JSGBxKQro3XxOP7ZWbYGTRBI07hI0hfd9kcozRKAnmz66MXbtmO/fpR3MzQ7bnh
-         YyU5o4nXih8aSrcyVvMxZoJVY1o20VEHLC00FoiWf97ZCeXvuVgY7XPyyyMiOBNg8pkI
-         ka70XoApWnBK7ud6u+AL9C/pmPdXmjxXBx28HICf5QGroB+fZPaKJCdMuDniLGT/fG6z
-         o+Ze3fiY24tRCviP/A7wyWMz9wLEa4+9bZcE9xNr8Su8b/fk0vGQlb0H9bJ6VjiiMOkM
-         UQj3+Rz91crVnUuZMK/RKAJKHBKFr1Fcfe3oUbDQtCtjc4ds1JUs6dwr/2S24oTPgwoz
-         NKPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUtmKL0lFZcO7Us0KaiC0t/5v+O0gbKLlBOAcM/YdwdfqnoERfkECf9aovG0WpQaAzumZgx4ThChD7vJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyurYJED9ZZIJnugD0PsLulPOnGDj+xUQI5A1WqghmAyksEtjU
-	FIvGziKIpwm8U0nghcKtPaku48SNUrITX6v8h5XDRh28KqLFflUlF13pA1Dy0FU=
-X-Gm-Gg: ASbGnctxaRpPesFYvsB565bPWZbvg3PPVOf5Ftk2krBhfvRFawvCkeOTvsPKmFZe7Cg
-	6f1a+lkuRYWZZpfDX1TBcxnFcq6Ou4bVrEg4nF81Z0qOZaYCZnw4oJJ+D7c6M80wexVTc/oOXMH
-	FIJIZ61KG8A4P021OCua725aUz/leRt25GN6PwWj3YIOKjuZbBHw4bAIn7PpotNWpUWjWa/kerr
-	V1bSx5pRuK5TvYh7xyKAfxU9usd9U2s7ZVfCoXjfJj6i8FLpthj5bA8HT380rF5nGD3JqKqCHlg
-	emqMb1K1chq+KGhvXC6o8Ony
-X-Google-Smtp-Source: AGHT+IHtrPRE46nXKkFCt4DHjiN8hmdANTLc5iX661OAdX/npX13cIu7Ky0HIkuVU57aNRMuRQab9w==
-X-Received: by 2002:a17:907:3d93:b0:ab7:8520:e953 with SMTP id a640c23a62f3a-ab7f34d4f0dmr512307166b.55.1739430657085;
-        Wed, 12 Feb 2025 23:10:57 -0800 (PST)
-Received: from [192.168.0.14] ([79.115.63.124])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1d349esm659748a12.33.2025.02.12.23.10.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 23:10:56 -0800 (PST)
-Message-ID: <feefbcf2-e441-4cd1-a3de-40bfd4d7197a@linaro.org>
-Date: Thu, 13 Feb 2025 07:10:54 +0000
+        d=1e100.net; s=20230601; t=1739430932; x=1740035732;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fUcgyWCk+u8Dn7f+PhxtXY5uOs2pwYWI0aCmIl9K7zM=;
+        b=HmE+ZpykuV55UN0dJn8VV/l96TD1OtXeDBYSdoNByAwvFj37AAGqKXHDAcSJa3te3Y
+         0D44nysVIOLOnRz66vMOsLVGWpKyzPzmkauN0NC8/c6HbakfNfROWSlA6zNmIdHyp170
+         gS2uhAOwO4zWo50EGntC/b6fw6hMc6sRfUCnVo3qRvxhffUjm95mRx39iL0CGfYkDF2R
+         L031t8Nrv3jQDJEslz+GhflVNmHUeVr7jB0Wz6uxgvf0XnLBTu3eX0R4jS4wPXZ/YFQY
+         Zb4XTOXHxQMEnI5N8IHjfpsOF/+hcF9dL2+SqZFNuYNZ8CZIHBVMDSs4aSh36ppx0MOf
+         uSDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrzkNsw94ZPdMGSkOI/nh77zlOzY2IPxcZZ89Kkp3DWMkO5dj9FfyHe/F5tNpxqdKDUnh8Xi+LuzBvVgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Kfavln5PyFsvcPkCIMbapfchmfdSbuGulMpI0Klv3w/SM52S
+	Y/V9iXTU1AjkKqPCNHPZqfibCHcdNYVgBnha8Z1rkcu0DLLHzIXW
+X-Gm-Gg: ASbGncv19zkgkqxWjatGuSxdfi88orc9kKVXtlQqnIERDyht1jWz/W44vLpw97HbGFS
+	9oOn6N8tOgDIbKjkJTzmLKuO2O1L7s/874BgFqr6rI+oLosh1DS5slRMrMW4Ku2V+Vag3tyynOA
+	ZLTZWbBOiL2CVjTa879vNkEeLUoHYQmvKMZgfMUcviGh90ecwIYNEcegAbFr7vH4s1pCZv2wF9i
+	FF2eHSA5K0Z65KFAh/HanTjYOSvEvo63ckH+Kixzfk5l4L660lasUw5bhdNc+Mi83GRt9kTQqEv
+	Skiv3T39qKd/s/Yw1HqB1lduVE1Nt8IZ+j6K0Ia6r6mjlX0LiNxx9MPbLcFIHfEgeYxj
+X-Google-Smtp-Source: AGHT+IESUUVzPXXPdZpzlDh8rry+98kDAJ3u8IwfE9kokPUoqbExS0rk1/6ABl0gHCy/zI3w64Nohg==
+X-Received: by 2002:a17:902:d508:b0:215:e685:fa25 with SMTP id d9443c01a7336-220d1eddf52mr33675295ad.20.1739430931635;
+        Wed, 12 Feb 2025 23:15:31 -0800 (PST)
+Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55866f9sm6024805ad.230.2025.02.12.23.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 23:15:31 -0800 (PST)
+From: Potin Lai <potin.lai.pt@gmail.com>
+Date: Thu, 13 Feb 2025 15:12:58 +0800
+Subject: [PATCH] ARM: dts: aspeed: bletchley: remove unused ethernet-phy
+ node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] spi: s3c64xx: add support exynos990-spi to new
- port config data
-To: Denzeel Oliva <wachiturroxd150@gmail.com>, andi.shyti@kernel.org,
- broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, peter.griffin@linaro.org,
- andre.draszik@linaro.org, linux-spi@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250212191241.280-1-wachiturroxd150@gmail.com>
- <20250212191241.280-3-wachiturroxd150@gmail.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250212191241.280-3-wachiturroxd150@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250213-bletchley-dts-fix-v1-1-c953315eb894@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHmbrWcC/x2MQQqAIBAAvxJ7bsGUJPpKdDDdckEsNKII/550n
+ IGZFzIlpgxj80KiizPvsULXNmC9iRshu8ogheyF7BQugU7rAz3ozowr36issVqT6wdtoHZHoqr
+ /5zSX8gE4Bp75YwAAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Patrick Williams <patrick@stwcx.xyz>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ Cosmo Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>, 
+ Potin Lai <potin.lai.pt@gmail.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739430928; l=1236;
+ i=potin.lai.pt@gmail.com; s=20240724; h=from:subject:message-id;
+ bh=YNhJ633Uu5JY/VB459x1ZUs/aM+9WIpG3XO2+Tor/5o=;
+ b=pZ48Hnh2P1YAIok5bEXIzdHYHBpzJ2kH3ypTFBISHRz7bwesAYGD463j93AuFRLNoAxYZOdbC
+ 2gpTfAfA22jC4TQQXT86BmoPCGX6rap4V5/pWjOcy/76uXjjozbAwUH
+X-Developer-Key: i=potin.lai.pt@gmail.com; a=ed25519;
+ pk=6Z4H4V4fJwLteH/WzIXSsx6TkuY5FOcBBP+4OflJ5gM=
 
+Remove the unused `ethernet-phy` node and the `phy-handle` property
+from the Bletchley device tree. This fixes warnings reported by the
+kernel DTB checks.
 
+Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
+---
+This fixes warnings reported by the kernel DTB checks.
+---
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts | 5 -----
+ 1 file changed, 5 deletions(-)
 
-On 2/12/25 7:12 PM, Denzeel Oliva wrote:
-> +static const struct s3c64xx_spi_port_config exynos990_spi_port_config = {
-> +	/* fifo-depth must be specified in the device tree. */
-> +	.fifo_depth	= 0,
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts
+index 5be0e8fd2633..21fafa4b2422 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts
+@@ -52,10 +52,6 @@ tpm@0 {
+ 		};
+ 	};
+ 
+-	switchphy: ethernet-phy@0 {
+-		// Fixed link
+-	};
+-
+ 	front_gpio_leds {
+ 		compatible = "gpio-leds";
+ 		sys_log_id {
+@@ -285,7 +281,6 @@ vbus_sled6: vbus_sled6 {
+ &mac2 {
+ 	status = "okay";
+ 	phy-mode = "rgmii";
+-	phy-handle = <&switchphy>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_rgmii3_default>;
+ 
 
-have you tried testing without specifying the fifo_depth in DT?
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250213-bletchley-dts-fix-3cac66ed586a
 
-You'll probably hit a divide by zero at:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/spi/spi-s3c64xx.c#n664
+Best regards,
+-- 
+Potin Lai <potin.lai.pt@gmail.com>
 
-I assume the controller can work with 0 sized FIFO depth, and if so, the
-driver has to be updated to allow 0 sized FIFOs.
-
-btw, how did you test the set?
 
