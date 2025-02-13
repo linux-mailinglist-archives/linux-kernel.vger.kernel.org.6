@@ -1,220 +1,260 @@
-Return-Path: <linux-kernel+bounces-514052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FABA351BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:59:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B317A351D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67C3C7A461F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:58:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E36188F1FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A742753F5;
-	Thu, 13 Feb 2025 22:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3B422D7AA;
+	Thu, 13 Feb 2025 23:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dAcVy8K+"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OIjUfO6t"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E25F2753F1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16FC22D793;
+	Thu, 13 Feb 2025 23:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739487561; cv=none; b=JS1/0HJjGZlN83OHNRv7NCq0kCQJ4cLlU5Ntjoq4vF7szXOrz/o2AEZSPlyzWc40/hlOsPQwBb0vXJ4dAyOkBrqw9LGS5MxrKiHxDpMwzQ+d0sSMZTVIPQGCj0m/B5Xq5TwefrcWNzGau/7PEZnovNrfMsf1AlPAZ52Q2bjQcpY=
+	t=1739487616; cv=none; b=u1PCcesd1ce97JLOd1A5psyccGMiai2CCQuxz0aF+zyvOMMzgIYB9k5PahXubq8i01hfvzXsFd1dw8N6T7lHanI6fSvIxcuR+K7he2D38MFYvFLk3Ukn7HVwPWxGepbKGLxzKG0szbn5wA53pKevDpLur4mQR6Yb8TYw3NHtho8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739487561; c=relaxed/simple;
-	bh=IYWc6MsnXJtGhjkFgmYtXuRtBlusO6zPvFX85df7cNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ITZbnNL0lbaWyzEQXMknBe3xt3raFcgpzx3E3Y44fm5OPBotQkVX+Pr8QQ4myQBFZ0ssLv8v7NorOeJxGwA6uTMg3lVwpdh3T/PwvPwZb39ipkwRqeCdGHKIGNRX9v6zeQ11cn2G8CtQoNkgj8uJ6Y0nUiEoRpbMmzr18BzUhtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dAcVy8K+; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4718aea0718so116681cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:59:19 -0800 (PST)
+	s=arc-20240116; t=1739487616; c=relaxed/simple;
+	bh=NZnCqDkOhajZT2bOObOrNs/a6LW7+uo/PJNgqAQZ6KE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DqVPl83QaARw63jMxw4gW/En4jXyThhItMW6VFXqR28bLuepGKNESDSQdu3E67LseGKXVzcgJB3gpg6hox4WlFwiPRwple5pH9wSgx9cZAFVqQFWED5qQRZQQKKNc90+tbXmcMsuIR5S7dzc65CyEEFrimPb1QJBAhe41KwKtAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OIjUfO6t; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21f62cc4088so26185655ad.3;
+        Thu, 13 Feb 2025 15:00:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739487559; x=1740092359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cDIANBVumajBd13du95VEVdci2R7G4b/MflfuioNn1c=;
-        b=dAcVy8K+IZuib1CRGgTStxnFrH+taQI22CXcLYgTOUbhu9wcrfF8U7Kr5kNDuRLJJr
-         qRoBBu5WZrSGFYS1ABDSiFpTZEbH/rjcfuh7GEgUPMgYS5ISEdakvINigcX7NTNAJckW
-         YCJ1x0eG0Hi5N4rT42LmL+r/P/q0BZopUdIIHo4w7xtzzL3bKWjz/arIMmZtZ2FHCW1d
-         wh5PAvxfqp7f41praYvhjO7WogTFktVprW17UeiDkfoWcmkfg0LhBKa0fWuXyF6iJKho
-         6ECez0nnXPR2olH6Uu+1EPRP+RnR9CtX3W7WCJfLwb/cpyOfptR+um5HcS7g0yYnn7D7
-         yuhQ==
+        d=gmail.com; s=20230601; t=1739487613; x=1740092413; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fm+qJgELrQ3bndRl/HLXGm1wcqOr9YUYYiUv1Q3uwuo=;
+        b=OIjUfO6t6qszqf6T8qJnjysADhPKc6ZdUAkVgNKOjl2v9NY0/1aSuOULKvk7z3KpOI
+         EvRTOgA93pU2/40RIG5TTHDFe8rz31v5ewaP1J/J+5ar3mbq9/vy2LzMjDIgmMim03Q0
+         LjL3jpg/GOs+4YtSHRa3SZp+owXEsEuOA1PDGWapEyY60Y97LWoRiVsj3bx5u9qu7/u7
+         QeMqTX5fjZIQWKHPU7pY73qAXNkNSfkJQ5AnNFl0MYQPowPLeRerSmmL3KjqYqfv3qlV
+         VHfUMuJPQv73Nng8+74YPoTCbC82RWtuCi2zaA0i3BHhYCmNoWcZUq0a4WwmCbQoquME
+         CpBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739487559; x=1740092359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cDIANBVumajBd13du95VEVdci2R7G4b/MflfuioNn1c=;
-        b=DLFDUPnWI4x+OktNV56niY0D2V0PcTqDeYY453BqSrLCkqpUweeON3r+kEoFWj+A4f
-         oK1jBJvYSu5QuC7TZJbmKIpPsH0oeGHQOCC7nZDJNzk9ajn64G1eMnrWHD0OC0ejxG/A
-         VSY9HprSxqG2fkrbA/GzyEDCd11rqHyXXuTVLVC9IEmk/9aYlhqGmLNesHUYm+9/04hn
-         3YvMf0S1UJbYMlvck8mw9SM1NX0doI2h2sBgh6amD7S7ZGoHdHBVO/kcoJLyHtc908KK
-         xDUFazLL8B0s+nUi4gbwSM1jgl9l1TQBL7aVaU1cgcd/QiGhGBid6r31CzxxauPsJLVr
-         +1Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/aCI+PaKR0nQMQ8INMDMGV5PNqmFdng+nLPs+hunTceBBMvg8aJjDNlvOhrsJz2KewJ8H9IP06PyDZW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3Of6NrwEbsiIx7fdf9spGUk7fiF1Hea8eDbT4WuY9pmuCe4Ts
-	fG3IPsAX3zogbVpjVYe7Ew+F6r8DbOLFlwrCamoAut4bR4KdNYQfOTS3y5U1pcy/rSkXLu6aB0S
-	bpEnX4ic9SsouFaNCi6bbjIM5ub8xoVoI7mbH
-X-Gm-Gg: ASbGncuTylChyztZa4YKixQdVykpXvUYWT+srT/lIsFe1h3rIV+EaQzBYJM5Ma6DTke
-	/IGmKgozBf6vRtIlQB6QiXsom0fMR+2BkRJklzCaydU1EqG+SVKHqXWKV3CZWPlB6/T8fYTzRCZ
-	DqybNFdyRRsl0cCj3a5v9hSGELl7Y=
-X-Google-Smtp-Source: AGHT+IH1CnRV5ltlIFYCD8r2z+kCU2AjYaHwGfhq6KhIQ8OE5guM8kGIum9PY0Ww3eZxM7IkjMsYobe9TP0B8I4TUWk=
-X-Received: by 2002:a05:622a:3d0:b0:447:e59b:54eb with SMTP id
- d75a77b69052e-471ce95ecd4mr1005091cf.26.1739487558542; Thu, 13 Feb 2025
- 14:59:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739487613; x=1740092413;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fm+qJgELrQ3bndRl/HLXGm1wcqOr9YUYYiUv1Q3uwuo=;
+        b=lcDEW4ISUuqbRz2zgoyXUzOIqqbGNFvATwhnQkKjPx3ChZzx3tskt+duaYobTV/k0L
+         Clt0WW0928GJJ7Z2CVUbBcNGbfFmWMxkZq51NMFOwDBdJXw736LVX1nIfvF+b9PgC9gS
+         UmdUW1PxC0UmSHZxwj2fLw+us0Q/JSNi5oWRkqTeS9h1vW3puImF/5llfBGLfblLBWe6
+         iQwV+6B5IKOrV/UhGl7aypJrIwGhQbRdYHPan6I9YvV+QdQn8TKLCObp7dOjC287Wgn2
+         804nQ/+l/lmo/WljmvCS11C1+rotS+S7SZo4g7OiIXQS5gGEPesGWB9l+wDvIfUa+JUg
+         l3Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHOywYqQe4n3u/O6xkvTEjC2QQw5gPbhqzjphzHeKRTxPJ55KkWvuYSJpTmEKMoOnaoA9vF3/XRn2DD4w=@vger.kernel.org, AJvYcCXjprgNnfHxW+Q2AknDRfALQ2KNbO0F7cJh/NXIgMPF22oTy7sOIEjqbOwVZvLDLRtm5eVorjnC87rCTPZRHqx0qA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNGXJerEhKmTXM1Sepa/8TbOJ8uAoXl2T9IXyepE4gfJDUMVpN
+	o259ycuqztK7GanY+cIJfZB07x+F1eriUQwoG/Qu9yaETch5sSUg
+X-Gm-Gg: ASbGnctUGyUxj9SrGFKxY86YyWF/8BE/5X0O/a2jt3kt+WLzyixJZdbCP7CZ6lHz7Fn
+	jpg1EmhOgo9AtSpYJWhcGhdSXinoh7LTM08r7EK6RK6vhUsOat51eQdpTMcv4BrNZqsva1yqI9Y
+	Z0NOLMOBc3wWsNkzAppMud+o/MxrFBCkJBieQ1c/PBD84m+qSiBv5NMKM1Yk5olK2auPalwuduH
+	h5P6DrqW42Y125gbockl3989GdDEKdw4W+K6sjxRxdgOFa1vpmNSA+WBvIb26fUTM6cRWPZMLx/
+	dGuHxQbQJFBynnLFrXDfSsKn1UOg21KTUtSCobr2+huwZsc=
+X-Google-Smtp-Source: AGHT+IF0YEokBg/Trf9tygD8uDJ6kk54EDGR0Hs40vOpYJdsHIwRq4vgui0cLy7+ckTO/hLFyNPOQA==
+X-Received: by 2002:a17:902:d549:b0:216:6901:d588 with SMTP id d9443c01a7336-220d1ed1f92mr90870315ad.15.1739487612799;
+        Thu, 13 Feb 2025 15:00:12 -0800 (PST)
+Received: from mbp.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5349210sm17641735ad.11.2025.02.13.15.00.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 15:00:12 -0800 (PST)
+From: Howard Chu <howardchu95@gmail.com>
+To: acme@kernel.org
+Cc: namhyung@kernel.org,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v15 00/10] perf record --off-cpu: Dump off-cpu samples directly
+Date: Thu, 13 Feb 2025 14:59:59 -0800
+Message-ID: <20250213230009.1450907-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250111042604.3230628-1-surenb@google.com> <20250111042604.3230628-13-surenb@google.com>
- <20250115105056.GY5388@noisy.programming.kicks-ass.net> <CAJuCfpEU-D_G3N1aduOprR0YmV+jP+4un78XMs4Qj41_V+_6Ug@mail.gmail.com>
-In-Reply-To: <CAJuCfpEU-D_G3N1aduOprR0YmV+jP+4un78XMs4Qj41_V+_6Ug@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 13 Feb 2025 14:59:07 -0800
-X-Gm-Features: AWEUYZmlg1kcVkmWqjyI70BvcBxyYcl4HVx6CnlwWZWv5s51alYwg7U7bzMVrGY
-Message-ID: <CAJuCfpG+WkmjriuEZH2_=YKgqrVLXfO19b4SMf_tQ=N25ntbww@mail.gmail.com>
-Subject: Re: [PATCH v9 12/17] mm: move lesser used vma_area_struct members
- into the last cacheline
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, david.laight.linux@gmail.com, mhocko@suse.com, 
-	vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
-	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	lokeshgidra@google.com, minchan@google.com, jannh@google.com, 
-	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	klarasmodin@gmail.com, richard.weiyang@gmail.com, corbet@lwn.net, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 15, 2025 at 8:39=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Wed, Jan 15, 2025 at 2:51=E2=80=AFAM Peter Zijlstra <peterz@infradead.=
-org> wrote:
-> >
-> > On Fri, Jan 10, 2025 at 08:25:59PM -0800, Suren Baghdasaryan wrote:
-> > > Move several vma_area_struct members which are rarely or never used
-> > > during page fault handling into the last cacheline to better pack
-> > > vm_area_struct. As a result vm_area_struct will fit into 3 as opposed
-> > > to 4 cachelines. New typical vm_area_struct layout:
-> > >
-> > > struct vm_area_struct {
-> > >     union {
-> > >         struct {
-> > >             long unsigned int vm_start;              /*     0     8 *=
-/
-> > >             long unsigned int vm_end;                /*     8     8 *=
-/
-> > >         };                                           /*     0    16 *=
-/
-> > >         freeptr_t          vm_freeptr;               /*     0     8 *=
-/
-> > >     };                                               /*     0    16 *=
-/
-> > >     struct mm_struct *         vm_mm;                /*    16     8 *=
-/
-> > >     pgprot_t                   vm_page_prot;         /*    24     8 *=
-/
-> > >     union {
-> > >         const vm_flags_t   vm_flags;                 /*    32     8 *=
-/
-> > >         vm_flags_t         __vm_flags;               /*    32     8 *=
-/
-> > >     };                                               /*    32     8 *=
-/
-> > >     unsigned int               vm_lock_seq;          /*    40     4 *=
-/
-> >
-> > Does it not make sense to move this seq field near the refcnt?
->
-> In an earlier version, when vm_lock was not a refcount yet, I tried
-> that and moving vm_lock_seq introduced regression in the pft test. We
-> have that early vm_lock_seq check in the beginning of vma_start_read()
-> and if it fails we bail out early without locking. I think that might
-> be the reason why keeping vm_lock_seq in the first cacheling is
-> beneficial. But I'll try moving it again now that we have vm_refcnt
-> instead of the lock and see if pft still shows any regression.
+Changes in v15:
+ - Fix workload recording bug pointed out by Arnaldo.
+ - Rename struct stack to struct __stack as suggested by Arnaldo.
+ - Delete the extra offcpu workload now that recording workload is fixed,
+   use 'sleep 1' for testing instead.
+ - Add more tests for the off-cpu-thresh option.
 
-I confirmed that moving vm_lock_seq next to vm_refcnt regresses
-pagefault performance:
+Changes in v14:
+ - Change the internal off_cpu_thresh_us to off_cpu_thresh_ns, i.e. use
+   nsec instead of usec
 
-Hmean     faults/cpu-1    508634.6876 (   0.00%)   508548.5498 *  -0.02%*
-Hmean     faults/cpu-4    474767.2684 (   0.00%)   475620.7653 *   0.18%*
-Hmean     faults/cpu-7    451356.6844 (   0.00%)   446738.2381 *  -1.02%*
-Hmean     faults/cpu-12   360114.9092 (   0.00%)   337121.8189 *  -6.38%*
-Hmean     faults/cpu-21   227567.8237 (   0.00%)   205277.2029 *  -9.80%*
-Hmean     faults/cpu-30   163383.6765 (   0.00%)   152765.1451 *  -6.50%*
-Hmean     faults/cpu-48   118048.2568 (   0.00%)   109959.2027 *  -6.85%*
-Hmean     faults/cpu-56   103189.6761 (   0.00%)    92989.3749 *  -9.89%*
-Hmean     faults/sec-1    508228.4512 (   0.00%)   508129.1963 *  -0.02%*
-Hmean     faults/sec-4   1854868.9033 (   0.00%)  1862443.6146 *   0.41%*
-Hmean     faults/sec-7   3088881.6158 (   0.00%)  3050403.1664 *  -1.25%*
-Hmean     faults/sec-12  4222540.9948 (   0.00%)  3951163.9557 *  -6.43%*
-Hmean     faults/sec-21  4555777.5386 (   0.00%)  4130470.6021 *  -9.34%*
-Hmean     faults/sec-30  4336721.3467 (   0.00%)  4150477.5095 *  -4.29%*
-Hmean     faults/sec-48  5163921.7465 (   0.00%)  4857286.2166 *  -5.94%*
-Hmean     faults/sec-56  5413622.8890 (   0.00%)  4936484.0021 *  -8.81%*
+Changes in v13:
+ - Move the definition of 'off_cpu_thresh_ns' to the same commit as
+   dumping off-cpu samples in BPF, and give off_cpu_thresh_ns a default
+   value before the --off-cpu-thresh option is parsed.
 
-So, I kept it unchanged in v10
-(https://lore.kernel.org/all/20250213224655.1680278-14-surenb@google.com/)
+Changes in v12:
+ - Restore patches' bisectability, because the ordering of patches has
+   changed.
+ - Change 'us = ms * 1000' to 'us = ms * USEC_PER_MSEC'
 
->
-> >
-> > >     /* XXX 4 bytes hole, try to pack */
-> > >
-> > >     struct list_head           anon_vma_chain;       /*    48    16 *=
-/
-> > >     /* --- cacheline 1 boundary (64 bytes) --- */
-> > >     struct anon_vma *          anon_vma;             /*    64     8 *=
-/
-> > >     const struct vm_operations_struct  * vm_ops;     /*    72     8 *=
-/
-> > >     long unsigned int          vm_pgoff;             /*    80     8 *=
-/
-> > >     struct file *              vm_file;              /*    88     8 *=
-/
-> > >     void *                     vm_private_data;      /*    96     8 *=
-/
-> > >     atomic_long_t              swap_readahead_info;  /*   104     8 *=
-/
-> > >     struct mempolicy *         vm_policy;            /*   112     8 *=
-/
-> > >     struct vma_numab_state *   numab_state;          /*   120     8 *=
-/
-> > >     /* --- cacheline 2 boundary (128 bytes) --- */
-> > >     refcount_t          vm_refcnt (__aligned__(64)); /*   128     4 *=
-/
-> > >
-> > >     /* XXX 4 bytes hole, try to pack */
-> > >
-> > >     struct {
-> > >         struct rb_node     rb (__aligned__(8));      /*   136    24 *=
-/
-> > >         long unsigned int  rb_subtree_last;          /*   160     8 *=
-/
-> > >     } __attribute__((__aligned__(8))) shared;        /*   136    32 *=
-/
-> > >     struct anon_vma_name *     anon_name;            /*   168     8 *=
-/
-> > >     struct vm_userfaultfd_ctx  vm_userfaultfd_ctx;   /*   176     8 *=
-/
-> > >
-> > >     /* size: 192, cachelines: 3, members: 18 */
-> > >     /* sum members: 176, holes: 2, sum holes: 8 */
-> > >     /* padding: 8 */
-> > >     /* forced alignments: 2, forced holes: 1, sum forced holes: 4 */
-> > > } __attribute__((__aligned__(64)));
-> >
-> >
+Changes in v11:
+ - Modify the options used in the off-cpu tests, as I changed the unit
+   of the off-cpu threshold to milliseconds.
+
+Changes in v10:
+ - Move the commit "perf record --off-cpu: Add --off-cpu-thresh option"
+   to where the direct sample feature is completed.
+ - Make --off-cpu-thresh use milliseconds as the unit.
+
+Changes in v9:
+ - Add documentation for the new option '--off-cpu-thresh', and include
+   an example of its usage in the commit message
+ - Set inherit in evsel__config() to prevent future modifications
+ - Support off-cpu sample data collected by perf before this patch series
+
+Changes in v8:
+ - Make this series bisectable
+ - Rename off_cpu_thresh to off_cpu_thresh_us and offcpu_thresh (in BPF)
+   to offcpu_thresh_ns for clarity
+ - Add commit messages to 'perf evsel: Expose evsel__is_offcpu_event()
+   for future use' commit
+ - Correct spelling mistakes in the commit message (s/is should be/should be/)
+ - Add kernel-doc comments to off_cpu_dump(), and comments to the empty
+   if block
+ - Add some comments to off-cpu test
+ - Delete an unused variable 'timestamp' in off_cpu_dump()
+
+Changes in v7:
+ - Make off-cpu event system-wide
+ - Use strtoull instead of strtoul
+ - Delete unused variable such as sample_id, and sample_type
+ - Use i as index to update BPF perf_event map
+ - MAX_OFFCPU_LEN 128 is too big, make it smaller.
+ - Delete some bound check as it's always guaranteed
+ - Do not set ip_pos in BPF
+ - Add a new field for storing stack traces in the tstamp map
+ - Dump the off-cpu sample directly or save it in the off_cpu map, not both
+ - Delete the sample_type_off_cpu check
+ - Use __set_off_cpu_sample() to parse samples instead of a two-pass parsing
+
+Changes in v6:
+ - Make patches bisectable
+
+Changes in v5:
+ - Delete unnecessary copy in BPF program
+ - Remove sample_embed from perf header, hard code off-cpu stuff instead
+ - Move evsel__is_offcpu_event() to evsel.h
+ - Minor changes to the test
+ - Edit some comments
+
+Changes in v4:
+ - Minimize the size of data output by perf_event_output()
+ - Keep only one off-cpu event
+ - Change off-cpu threshold's unit to microseconds
+ - Set a default off-cpu threshold
+ - Print the correct error message for the field 'embed' in perf data header
+
+Changes in v3:
+ - Add off-cpu-thresh argument
+ - Process direct off-cpu samples in post
+
+Changes in v2:
+ - Remove unnecessary comments.
+ - Rename function off_cpu_change_type to off_cpu_prepare_parse
+
+v1:
+
+As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
+
+Currently, off-cpu samples are dumped when perf record is exiting. This
+results in off-cpu samples being after the regular samples. This patch
+series makes possible dumping off-cpu samples on-the-fly, directly into
+perf ring buffer. And it dispatches those samples to the correct format
+for perf.data consumers.
+
+Before:
+```
+     migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
+            perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
+     migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
+     migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
+
+sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
+	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
+	    585690935cca [unknown] (/usr/bin/sshd)
+```
+
+After:
+```
+            perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
+            perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
+         swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+         swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+    blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
+
+
+    blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
+
+
+         swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+     dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
+```
+
+Howard Chu (10):
+  perf evsel: Expose evsel__is_offcpu_event() for future use
+  perf record --off-cpu: Parse off-cpu event
+  perf record --off-cpu: Preparation of off-cpu BPF program
+  perf record --off-cpu: Dump off-cpu samples in BPF
+  perf evsel: Assemble offcpu samples
+  perf record --off-cpu: Disable perf_event's callchain collection
+  perf script: Display off-cpu samples correctly
+  perf record --off-cpu: Dump the remaining samples in BPF's stack trace
+    map
+  perf record --off-cpu: Add --off-cpu-thresh option
+  perf test: Add direct off-cpu test
+
+ tools/perf/Documentation/perf-record.txt |   9 ++
+ tools/perf/builtin-record.c              |  33 +++++++
+ tools/perf/builtin-script.c              |   4 +-
+ tools/perf/tests/shell/record_offcpu.sh  |  71 ++++++++++++++
+ tools/perf/util/bpf_off_cpu.c            | 118 ++++++++++++++---------
+ tools/perf/util/bpf_skel/off_cpu.bpf.c   |  98 ++++++++++++++++++-
+ tools/perf/util/evsel.c                  |  41 +++++++-
+ tools/perf/util/evsel.h                  |   2 +
+ tools/perf/util/off_cpu.h                |   3 +-
+ tools/perf/util/record.h                 |   1 +
+ 10 files changed, 323 insertions(+), 57 deletions(-)
+
+-- 
+2.45.2
+
 
