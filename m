@@ -1,56 +1,48 @@
-Return-Path: <linux-kernel+bounces-513092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF36A34161
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:10:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECAAA3417C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A98157A5E37
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFD516C4A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5283828134C;
-	Thu, 13 Feb 2025 14:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F87281369;
+	Thu, 13 Feb 2025 14:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPoSaAu2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2AQMbcW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C6038389;
-	Thu, 13 Feb 2025 14:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246028135D;
+	Thu, 13 Feb 2025 14:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455696; cv=none; b=p1uMryBADMB1YZeQ5HUnoC7Z40u4Tkc6woCU4j/8TcsM9A2ap/rUPc8aNU1LU7mzI1OzKj63HQovxQ14yFGtrMtWb3hhgyhJF/LPsHaEthEHYm0k7mpKu0eNSs492TA6uXiVOP0Dhxpcf+FQcjV0IjUdTsjJGuz8s9rhoJC/mpo=
+	t=1739455713; cv=none; b=Pvs12JX1nJ1Yc5AW/YubwSod3LiomlxTvPRJX5XM1/FWfk8PiMI7kANW0duiSDjftG8n3MhFVcUIQUVDBGT3+CdVvTzDWUZbCDfaLNawfkEQnsB4Ho62FOzbrWkdGwb8YzMxys+ZfnEBglqu9EXiR3EViYtGV+Fd61lACdiKWCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455696; c=relaxed/simple;
-	bh=r1KafGyCz1KTAkGpi3NYt3q72aE3wU997ChKRQT9+AM=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=g7rjeMXPwQKf0f6TvzF+iEoM1Pq2q/IvNeFSRE9TNxHaoMspgEknXSOPVpEFqjYG623ryr5VdllHXj/k9IXv3GF22A9nF3xzENz61n2U+qt1OjdM+lz39Ffn/zAlwvMls8NFo5KkmAz9B5wuzRu8rR8ol0aO14DxBNKaE3qr250=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPoSaAu2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11EC5C4CED1;
-	Thu, 13 Feb 2025 14:08:11 +0000 (UTC)
+	s=arc-20240116; t=1739455713; c=relaxed/simple;
+	bh=kgqP5pYJ/bpUOryhSSQygdgkcdkG/n6XTOBq4HLVNBc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mUPtbQHxP/xVoKz09mm712dyHIC4Fyv4Aap12HOlGR8WkGanzXBk1a31vDRPSw4gL2bdNob+UA8LBjaF/Gf66rSYC0xq4ZnEJBcQ1FtbGMAIDg2ZpltuS2eNQn1lnERZXj9GlhUgzGh5urE8LLKpVcWY4SyavDW0/ElIMc6+7To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2AQMbcW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E84FC4CED1;
+	Thu, 13 Feb 2025 14:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739455694;
-	bh=r1KafGyCz1KTAkGpi3NYt3q72aE3wU997ChKRQT9+AM=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=CPoSaAu2vf1OgUPzJOdAsLcl1QV6xnbgFfDsgeYR/nVzw6lK70tufn0ArfjSwWQh0
-	 E+DtLhuP7n5LfrKtUkbw5zA2tef1lxMfN9NAtY5/GYGauvnPdgv+NZzQ8cymp8j9BA
-	 HWqSOE6fdiHqroFWvZuOadrHwPTveSBpDQR1t3oMl3HOdrPNvCfcLqMDCGIJ0Y7y6z
-	 rp7X2VZAvY0iRqZlBxBFfYyQ1D2YAHWtUrKnusP7XNWkrkFk/DCRUDkhFNdxp7DYcg
-	 QCP2DRmsNnRSvabsRXlSaFaS5bY7TZj5pmis+4qBN2sQCTSqft3KINoejkMAUqDGwO
-	 bPEST9AkKQaVw==
-From: Mark Brown <broonie@kernel.org>
-To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- linuxppc-dev@lists.ozlabs.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
-In-Reply-To: <20250213070518.547375-1-shengjiu.wang@nxp.com>
-References: <20250213070518.547375-1-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH v2] ASoC: imx-audmix: remove cpu_mclk which is from cpu
- dai device
-Message-Id: <173945569179.146917.8081621260856817199.b4-ty@kernel.org>
-Date: Thu, 13 Feb 2025 14:08:11 +0000
+	s=k20201202; t=1739455713;
+	bh=kgqP5pYJ/bpUOryhSSQygdgkcdkG/n6XTOBq4HLVNBc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=G2AQMbcWIiltv4YQF1dCdzBJzyosDkOzWz+6pKrfrS4/ugEuos9FG8twISb17VG6f
+	 gP4K2A27eKMVNhzPWWE+Rmr6PeQATQPD5scFYM6f8duObt7Mh1LGtX0VZefutDX5AC
+	 nZiQjbl9Gnj2zaHSPLOlVvVPh8a5/4YDVLWZtsWjZsMK1JywqaEBNqBaEKwdlhCsS9
+	 3MH9TgazeaDtqHaREK1gwytR44VZR/uwq9TZl1kMGEqF5k50rvMxS4UDE+msPi4kjK
+	 sNe7EThewWBHJiBd5kVEGcaLHSwN8gRgzP/mhpJKIx+0pNIL9tILDfBm65lJchaj/3
+	 uAiR3/orlFwkA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Thu, 13 Feb 2025 09:08:29 -0500
+Subject: [PATCH v2] nfsd: allow SC_STATUS_FREEABLE when searching via
+ nfs4_lookup_stateid()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,44 +51,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Message-Id: <20250213-nfsd-fixes-v2-1-55290c765a82@kernel.org>
+X-B4-Tracking: v=1; b=H4sIANz8rWcC/22MTQ7CIBBGr9LMWgwMJRZXvYfpgrRDSzRgBkM0D
+ XcXu3b5vp+3QyYOlOHa7cBUQg4pNsBTB/Pm4koiLI0BJRqJCkX0eRE+vCkL7wbZX+SAWhtohyf
+ TUbT9bWq8hfxK/DncRf3Sv5qihBJWG9Kut8r6ebwTR3qcE68w1Vq/9F3YG6UAAAA=
+X-Change-ID: 20250212-nfsd-fixes-fa8047082335
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2465; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=kgqP5pYJ/bpUOryhSSQygdgkcdkG/n6XTOBq4HLVNBc=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnrfzgaAgVp35tw3jiwtFWlWUPkiLVe/vqgWWfP
+ d1sla5m2kyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ6384AAKCRAADmhBGVaC
+ FaUcD/4pDvsQgqmZFuZw1lsrSiYhAUxs6EWKotDMSQ3E5sMZtjRGaOvntcs4vS60qxJ4nqqmh9d
+ EOZeOkRGdaEmDeeclhoHGCDnk/ViUx1MhOhonJTSHwK8sYGHrMePG9VeOv3JbtVTQnJX+Bgt72J
+ KbpHHfejnSzvgtvVIWNaUvGLGLM2RfuF7K7flncFIDLBAUJwoA9+2VlTJwhtciRgYy219SZ3GrC
+ Q6qq1MShcmYS7S1UlAwKGERmt9pXiciYHZHs3XLBgIl2XCOwHGjJAkKSNkdZWmejzfb7JrZhzLd
+ 4y3W/JPjIiAaLel8Qfn4jTNsBRIQHYYhAtWnSoytHIV0asWCF9eFl/PLEj42QqrQ/NvFjAOMJ6Q
+ uX+wM082RaVODY4yHOQCKPJUVetLM88pj1Rx0vCUPPW1SljXR5cNYcxBrotca8/pXFWbWv2CqlM
+ VwMbb3xDl3ypiZZ/5syQ2ih6L42DdwNqzDDxGSujm9eBQJpB3blVYzNA+BK+8MnORFKMkrm5lOk
+ lI1NmXW0RaC2l/xeTv7pfvhOB+fcXI/gWLmOVF+AFa9dDhFod4A5HEaB5I+JDlMIV0P3GlKp/nu
+ ul+Y8JnVCzQCloL7UcFx/5/mFow8fJfFjUS0KeLM3IEuFktXjo1llw7UJYj0Zny5l81goyeDQA6
+ tDa3Unx5E0NLS6w==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Thu, 13 Feb 2025 15:05:18 +0800, Shengjiu Wang wrote:
-> When defer probe happens, there may be below error:
-> 
-> platform 59820000.sai: Resources present before probing
-> 
-> The cpu_mclk clock is from the cpu dai device, if it is not released,
-> then the cpu dai device probe will fail for the second time.
-> 
-> [...]
+The pynfs DELEG8 test fails when run against nfsd. It acquires a
+delegation and then lets the lease time out. It then tries to use the
+deleg stateid and expects to see NFS4ERR_DELEG_REVOKED, but it gets
+bad NFS4ERR_BAD_STATEID instead.
 
-Applied to
+When a delegation is revoked, it's initially marked with
+SC_STATUS_REVOKED, or SC_STATUS_ADMIN_REVOKED and later, it's marked
+with the SC_STATUS_FREEABLE flag, which denotes that it is waiting for
+s FREE_STATEID call.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+nfs4_lookup_stateid() accepts a statusmask that includes the status
+flags that a found stateid is allowed to have. Currently, that mask
+never includes SC_STATUS_FREEABLE, which means that revoked delegations
+are (almost) never found.
 
-Thanks!
+Add SC_STATUS_FREEABLE to the always-allowed status flags, and remove it
+from nfsd4_delegreturn() since it's now always implied.
 
-[1/1] ASoC: imx-audmix: remove cpu_mclk which is from cpu dai device
-      commit: 571b69f2f9b1ec7cf7d0e9b79e52115a87a869c4
+Fixes: 8dd91e8d31fe ("nfsd: fix race between laundromat and free_stateid")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v2:
+- remove SC_STATUS_FREEABLE from the mask passed in nfsd4_delegreturn()
+- add note to changelog about pynfs test, and Fixes: tag
+- Link to v1: https://lore.kernel.org/r/20250212-nfsd-fixes-v1-1-935e3a4919fc@kernel.org
+---
+ fs/nfsd/nfs4state.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 153eeea2c7c999d003cd1f36cecb0dd4f6e049b8..83e078e52d3a5891f706023cf7d9fabdf26b6705 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -7051,7 +7051,7 @@ nfsd4_lookup_stateid(struct nfsd4_compound_state *cstate,
+ 		 */
+ 		statusmask |= SC_STATUS_REVOKED;
+ 
+-	statusmask |= SC_STATUS_ADMIN_REVOKED;
++	statusmask |= SC_STATUS_ADMIN_REVOKED | SC_STATUS_FREEABLE;
+ 
+ 	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid) ||
+ 		CLOSE_STATEID(stateid))
+@@ -7706,9 +7706,7 @@ nfsd4_delegreturn(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	if ((status = fh_verify(rqstp, &cstate->current_fh, S_IFREG, 0)))
+ 		return status;
+ 
+-	status = nfsd4_lookup_stateid(cstate, stateid, SC_TYPE_DELEG,
+-				      SC_STATUS_REVOKED | SC_STATUS_FREEABLE,
+-				      &s, nn);
++	status = nfsd4_lookup_stateid(cstate, stateid, SC_TYPE_DELEG, SC_STATUS_REVOKED, &s, nn);
+ 	if (status)
+ 		goto out;
+ 	dp = delegstateid(s);
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+---
+base-commit: 4990d098433db18c854e75fb0f90d941eb7d479e
+change-id: 20250212-nfsd-fixes-fa8047082335
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
