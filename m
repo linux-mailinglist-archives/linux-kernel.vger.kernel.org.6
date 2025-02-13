@@ -1,80 +1,162 @@
-Return-Path: <linux-kernel+bounces-512988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D44A34027
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:20:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A648A3402B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:20:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2AD316425C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:20:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929403AA8C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3DC227EA6;
-	Thu, 13 Feb 2025 13:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="T8BRTuYK"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6CB227EA7;
+	Thu, 13 Feb 2025 13:20:28 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EFE23F420;
-	Thu, 13 Feb 2025 13:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA7923F420;
+	Thu, 13 Feb 2025 13:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739452818; cv=none; b=CPt2b5QGB89UmH9SE0/Pbyri41iUoraFOqK94JFlE5yqrmkWXBMiR/6gvQ3pEmiexS8U1VLE7mxb1ZKc10xHzJ06uFN0CyxQmzaIvn6/MUu/DEMv22JLIy8QEtd2CPOh6RutcgX3NWbPxIe4B3KUFKDdrI5msIbpedJRdFi2VOY=
+	t=1739452828; cv=none; b=okA5Xkdw2TtI6/S6rzhu7OS3DBICIE4IJ88BAYgjRcMjZnXuBrSDAibfz8ryGmzfG1ihk2VQnohFSq5QSxCWCd3IGmLUrCSYg5LscRs16SjSOuexXTNX31V5RrluPt4ClsSHpeCgjhabdAba7wKIQKQqFfgha6lHodO1AoBRl6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739452818; c=relaxed/simple;
-	bh=bFjz/8MKj1nHjIQ7WsIdLhSA+XQX+erWp7JBMI2ycZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PSdL1WlRf6Ic9N7wKAPU+y0pcHIXDA3qERRSAqbJHVm43oX9sr+JEGS2HlM8y9t0geCiQJtDPXXvIaRNQmmUWP1PruV2/G97ltqI2Z1Je0PezLl/r4pXD0l2omh8Ve9yWJS3WPA+GWi4MrG63vXND9/W4gvE04oIZoplqcc3JPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=T8BRTuYK; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O9/j/ctUg2mHVWHwpXKsXKlmyr6GshoziQPuOAsorqo=; b=T8BRTuYKDUOyNIb7Y61SzZJr9y
-	+W6P2RVi4rPJj6Jb9eaTqDm/FQmL44WBwRa6LZlFN3O/RKGwkQWsdtI8oyRVdToEf6uafVm5oT/Zp
-	bAP9okkmPyxB358L/vrDpsWpwlQ1QVaeREGsRNAwghQRmIvWmp045TpPbCl2mi+iXzXib/tOcorQ/
-	/54r9ZYktFFQo9x1YSuO70JxY4CpuaVX6y1YLiqGfPlv3LUPs4ROiqocTBOd3SxwmiA41l6/0GCQe
-	baqurdP4ybwvi7T4GF7PJX7LeGo+tbk/ofQyrCZhusSjobjUUwram6AfyXuPEIiz0RuXNm9IdZcIb
-	bv9+0S1A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiZ8Q-0000000Cl36-1T6M;
-	Thu, 13 Feb 2025 13:20:06 +0000
-Date: Thu, 13 Feb 2025 13:20:06 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, alexjlzheng@tencent.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: remove useless d_unhashed() retry in
- d_alloc_parallel()
-Message-ID: <20250213132006.GV1977892@ZenIV>
-References: <20250213122137.11830-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1739452828; c=relaxed/simple;
+	bh=H4AxgIP+F4D1aXH5JdycCNiUL/xrl0gdsuXIYL8S7xQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ltR06aG7UODaCqU9ualBNiuOvg/y/8eFxYXDWBaJBNGS8jWyIQvduZv1BL3sR6Z8FgLGWT9XBzxvTcuHOxcZtdMzSKRrOrfHNTZKZQA6PjSObuL/4D/Nc3HwWb12yskkGs9ulWLN65RSOZo5izduMz0Ze5dQumFplOiTlp/4+PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YtwgR33K4z2FdXs;
+	Thu, 13 Feb 2025 21:16:35 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id AEB6B1400D2;
+	Thu, 13 Feb 2025 21:20:22 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Feb
+ 2025 21:20:21 +0800
+Message-ID: <5e39cc34-99e8-451e-8f61-4f0187a8db6a@huawei.com>
+Date: Thu, 13 Feb 2025 21:20:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213122137.11830-1-alexjlzheng@tencent.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: goto right label 'out_mmap_sem' in ext4_setattr()
+To: Brian Foster <bfoster@redhat.com>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, Baokun Li <libaokun1@huawei.com>, Baokun Li
+	<libaokun@huaweicloud.com>
+References: <20250213112247.3168709-1-libaokun@huaweicloud.com>
+ <Z63qzaDONxM9fRVl@bfoster>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <Z63qzaDONxM9fRVl@bfoster>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On Thu, Feb 13, 2025 at 08:21:37PM +0800, Jinliang Zheng wrote:
-> After commit 45f78b0a2743 ("fs/dcache: Move the wakeup from
-> __d_lookup_done() to the caller."), we will only wake up
-> d_wait_lookup() after adding dentry to dentry_hashtable.
+Hi,
 
-Not true.  d_lookup_done() might be called without having
-*ever* hashed the sucker.
+On 2025/2/13 20:51, Brian Foster wrote:
+> On Thu, Feb 13, 2025 at 07:22:47PM +0800, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> Otherwise, if ext4_inode_attach_jinode() fails, a hung task will
+>> happen because filemap_invalidate_unlock() isn't called to unlock
+>> mapping->invalidate_lock. Like this:
+>>
+>> EXT4-fs error (device sda) in ext4_setattr:5557: Out of memory
+>> INFO: task fsstress:374 blocked for more than 122 seconds.
+>>        Not tainted 6.14.0-rc1-next-20250206-xfstests-dirty #726
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> task:fsstress state:D stack:0     pid:374   tgid:374   ppid:373
+>>                                    task_flags:0x440140 flags:0x00000000
+>> Call Trace:
+>>   <TASK>
+>>   __schedule+0x2c9/0x7f0
+>>   schedule+0x27/0xa0
+>>   schedule_preempt_disabled+0x15/0x30
+>>   rwsem_down_read_slowpath+0x278/0x4c0
+>>   down_read+0x59/0xb0
+>>   page_cache_ra_unbounded+0x65/0x1b0
+>>   filemap_get_pages+0x124/0x3e0
+>>   filemap_read+0x114/0x3d0
+>>   vfs_read+0x297/0x360
+>>   ksys_read+0x6c/0xe0
+>>   do_syscall_64+0x4b/0x110
+>>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>
+>> Fixes: c7fc0366c656 ("ext4: partial zero eof block on unaligned inode size extension")
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> ---
+> First off, thank you for catching this. :)
+Thanks for your review!
+>
+>>   fs/ext4/inode.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 3cc8da6357aa..04ffd802dbde 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -5452,7 +5452,7 @@ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>>   			    oldsize & (inode->i_sb->s_blocksize - 1)) {
+>>   				error = ext4_inode_attach_jinode(inode);
+>>   				if (error)
+>> -					goto err_out;
+>> +					goto out_mmap_sem;
+>>   			}
+> This looks reasonable to me, but I notice that the immediate previous
+> error check looks like this:
+>
+> 		...
+>                  rc = ext4_break_layouts(inode);
+>                  if (rc) {
+>                          filemap_invalidate_unlock(inode->i_mapping);
+>                          goto err_out;
+>                  }
+> 		...
+>
+> ... and then the following after the broken logic uses out_mmap_sem.
+> Could we be a little more consistent here one way or the other? The
+> change looks functionally correct to me either way:
+>
+> Reviewed-by: Brian Foster <bfoster@redhat.com>
+>
+> Brian
+Indeed, this is confusing.
 
-Just think for a moment - what, for example, should happen
-if ->lookup() fails?  Would you have d_alloc_parallel()
-coming during that ->lookup() (while dentry is in in-lookup
-hash) hang forever?
+The reason is that we don't want to call ext4_std_error() when
+ext4_break_layouts() fails. So we first store the error in 'rc', and then
+pass the error to 'error' at the end. (See b9c1c26739ec
+("ext4: gracefully handle ext4_break_layouts() failure during truncate"))
 
-NAK.
+However, because 'error' is not assigned, the goto out_mmap_sem label will
+execute some code that shouldn't be executed. Therefore, in the error
+handling of ext4_break_layouts(), we unlock and then goto err_out label.
+
+While under normal error conditions, 'error' is assigned, and it should
+enter the out_mmap_sem label. Therefore, in the error handling of
+ext4_inode_attach_jinode(), we directly goto out_mmap_sem label.
+
+The handling of 'rc' in this function is indeed very subtle.
+
+
+Cheers,
+Baokun
+>>   
+>>   			handle = ext4_journal_start(inode, EXT4_HT_INODE, 3);
+>> -- 
+>> 2.39.2
+>>
+>>
+
 
