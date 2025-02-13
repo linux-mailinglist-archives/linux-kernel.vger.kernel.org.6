@@ -1,106 +1,124 @@
-Return-Path: <linux-kernel+bounces-513013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F84A3408A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:41:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F360EA3408D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A6A16A87B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:41:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8C43A2AB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A6F23A98C;
-	Thu, 13 Feb 2025 13:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9713023A98E;
+	Thu, 13 Feb 2025 13:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYT9iz0N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UsNJuD4X"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96C720B80D;
-	Thu, 13 Feb 2025 13:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F52227EB3;
+	Thu, 13 Feb 2025 13:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454110; cv=none; b=b1KbKW6h4jj1JBX3SC6Zgq32K0XRvi3jqd75nu9zqavAv8Ug+N2dmKeY8bKbU9pG88WypmUTmlKEZWi7Fnz0Ie8x94tAPJWW18bUlm/QnInQl6TqoQnYLjt2gX+5QZO1u4ZwFboDwMmCOw0ACXjpXmzhHYDYo/WaL7k4L8/VJ9w=
+	t=1739454186; cv=none; b=o4iRU60bap7Q0nk/4FSohpWPsYCjWDOhrXQDB+2GZVtL6GmgARjPGTwVnT6dIbvVwu/pSrbgG0hgl6lxn/1FDf74xfcLkBdRZiKk9FLHupTnFtKq4iv69Q7TtMMpFIOhHM9yrNOOiQquBT19XBJWgRDvxSWxGD4vr01NgTUsTBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454110; c=relaxed/simple;
-	bh=imDG3gI4Tn0Lpp/po3awdM1bNVdqzmKlF13bpxX6/Uw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UoHZdYSKQWDEOLjiEaAXN4+ujvLjBozjRwwgySGrCWfNRus/3hW6SjGu8g256ow335pHyoVgE99imeK2xGrzTlfkNrf8ENWxRmcnf3XRgSIjwF63F69khCKD1Znl/WmFKL80119PMXNPHLpaiZvRSYLHC9vdnma8XYlwuWzkrhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYT9iz0N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE968C4CED1;
-	Thu, 13 Feb 2025 13:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739454109;
-	bh=imDG3gI4Tn0Lpp/po3awdM1bNVdqzmKlF13bpxX6/Uw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=fYT9iz0Np9RBwoxj0zZnYhM5MxAGZeLT1r9aA3ncUp1qQpOkggCXf8oyWIUfGMhGf
-	 07w9OtySQNt0UBR7Mxlg86BBHgWdR1Vs/yN2yIStcgWa8TOEKSCZEEZ3bhLLTNWcqN
-	 eUUG3XLRVSOmFRLqiiJRCXy1r/mRBKANWvbjJ8172MKz2p6fI/PsCcqCPxEiWspGGV
-	 1KlK8l5EAeQDMMJ9WM5qlRNcHXPIcVsXP11/u8bHU2x4d/6J+4fTNmXteukAkLvgF/
-	 q1Uxft+eyN4ueSDaIIma/eR+/Fff7QPa6Rc6EAB3W2rJPKbSf3phFumJxBLvJ5WOT5
-	 NfrUCeEMpPZbQ==
-From: Mark Brown <broonie@kernel.org>
-To: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
- Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Daniel Baluta <daniel.baluta@nxp.com>, 
- Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: imx@lists.linux.dev, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250211225018.2642-1-laurentiumihalcea111@gmail.com>
-References: <20250211225018.2642-1-laurentiumihalcea111@gmail.com>
-Subject: Re: [PATCH] ASoC: SOF: imx-common: set sdev->pdata->hw_pdata after
- common is alloc'd
-Message-Id: <173945410762.135699.10442254060928769655.b4-ty@kernel.org>
-Date: Thu, 13 Feb 2025 13:41:47 +0000
+	s=arc-20240116; t=1739454186; c=relaxed/simple;
+	bh=k4RbEIyAR+ANn73bOtihxB6irmXjDRqcb9idZPMB5Yo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IpiO/PGF4FOhJhw/Pw+0U5wBbluxL+tZEN76FusT9PtS0v80w1zbVlOp7RBVrYMsFZoleVafr6MHz3mpG4x+aEGWOSLuSx09AgoioISSzO44ieAZQu1LMdEtYxkEzO2xXXLuatOFfnd24xv+jyKOOBbhMom/jDmZRLrBw8PolDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UsNJuD4X; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0135D440EA;
+	Thu, 13 Feb 2025 13:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739454176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cm7XKVhBb29N/0ZGLeQV/Hvrssux+61wOZwuTX8KNK4=;
+	b=UsNJuD4XUBmjbgOSrbOsnmXWQjngrRl3HCRZ4AFsbr040l7wQWhGBAYM7ugvSPztEr404y
+	sG3AFOT35aee2kcyCcGkHVWHvDWLTMCVNE1ns8zVCQGnoWl+B0uAw9DpcqVXoo8ozUa6si
+	Jc1gBNVMH0/VFFCz0Rc0+nv4h3ejj3J77wPfgd91fgRYEn0cW0GJg3vXPzj0WO6lJY+UZm
+	MKNeonZzYcSWALUPCOm72eXlzDqM5xYBRM5AYeUyc7A4m5+2STYJhBFkV2mbfyCWgkViuB
+	ldlZfjaFDZunxqzdFCss+IKKZ0vP6wZ8nca4IX8LtwynwYIhz4hzGXWu5iWmbg==
+Message-ID: <64ec49f2-8c3b-4642-a910-32a656095c68@bootlin.com>
+Date: Thu, 13 Feb 2025 14:42:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: mctrl_gpio: add parameter to skip sync
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+ Richard Genoud <richard.genoud@bootlin.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250213-atomic_sleep_mctrl_serial_gpio-v1-1-201ee6a148ad@bootlin.com>
+ <2025021347-cling-smoked-9f28@gregkh>
+Content-Language: en-US
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+In-Reply-To: <2025021347-cling-smoked-9f28@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrrocuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdetteektdehudelheehkeeggfejgfelveevgeevtdejudfgveetgefhtdduuedtnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddungdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhitghhrghrugdrghgvnhhouhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhhitgholhgrshdrfhgvrhhrvgesmhhitghro
+ hgthhhiphdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghlrghuughiuhdrsggviihnvggrsehtuhigohhnrdguvghvpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvg
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On Tue, 11 Feb 2025 17:50:18 -0500, Laurentiu Mihalcea wrote:
-> 'imx_unregister_action' uses 'sdev->pdata->hw_pdata' to fetch the pointer
-> to the common data structure. As such, if 'sdev->pdata->hw_pdata' is not
-> set before adding 'imx_unregister_action' to the devres list, we risk
-> derefrencing a NULL pointer if any of the calls between
-> 'devm_add_action_or_reset' and 'sdev->pdata->hw_pdata = common' fails.
+Hello Greg,
+
+On 2/13/25 10:58, Greg Kroah-Hartman wrote:
+> On Thu, Feb 13, 2025 at 09:25:04AM +0100, Alexis Lothoré wrote:
+
+[...]
+
+>> -	mctrl_gpio_disable_ms(up->gpios);
+>> +	mctrl_gpio_disable_ms(up->gpios, false);
 > 
-> Set 'sdev->pdata->hw_pdata' to point to 'common' as soon as 'common' is
-> allocated.
+> This a bad api.
 > 
-> [...]
+> When you read this line in the driver, do you know what "false" means
+> here?
+> 
+> Please make two functions, mctrl_gpio_disable_ms_sync() and
+> mctrl_gpio_disable_ms_no_sync() which can internally just call
+> mctrl_gpio_disable_ms() with the boolean, but no driver should have to
+> call that at all.
+> 
+> That way, when you read driver code, you KNOW what is happening and you
+> don't have to hunt around in a totally different C file to try to figure
+> it out and loose your concentration.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: SOF: imx-common: set sdev->pdata->hw_pdata after common is alloc'd
-      commit: f22ba3561daa792dd138ed543e0bf48efe0b999c
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Makes sense, I'll spin a v2 with a more explicit API.
 
 Thanks,
-Mark
 
+Alexis
+> 
+> thanks,
+> 
+> greg k-h
+
+
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
