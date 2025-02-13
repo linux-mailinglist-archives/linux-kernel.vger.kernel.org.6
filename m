@@ -1,206 +1,172 @@
-Return-Path: <linux-kernel+bounces-513574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D80A34BE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:27:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 842B9A34BED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:30:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3F21882FCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:27:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0428118853D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85651204C0B;
-	Thu, 13 Feb 2025 17:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8715E20110B;
+	Thu, 13 Feb 2025 17:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Ws91bnDM"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="CDFqEyi6"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E649F28A2D6;
-	Thu, 13 Feb 2025 17:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739467639; cv=pass; b=FLlLxu7ITh9hpbu3Suq0r7E1mwfor41OgaaiOquXwMHGV3yLn12/MEpuTVr5+SYsWHpykMhyp6iauPtupcogLuZg1RnQtM9YQoyEWAfPfVUHdbcIaxMy7lWlQuz73r6hKD6ONScVzB7nBO5oGN8oai349MpdZusirRdx4+hS27A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739467639; c=relaxed/simple;
-	bh=CR8fsFCREtQxkG/1mxeTo2PnTzyV6JpozvmDEtfNgZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FU6MxvYl5Sd+Sibc0XcJwd5MS4Er96Vj5XxbXFJSw0fKVjigmn2X1LNcpiueO+kIXNR+bnVXDy1FU315dGj/Cm2r7OdC8aIa7fgYwQ+NNmFjpJ0rYlONyigoXrzxbD7G6pdpz6/R52ZpDxytjlDAZWRvoz3zbEkaTGOJBWEnZxU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Ws91bnDM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739467611; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DBi2zEpYnKy4XuIgWkaFTscHZ7nB/Yg9TWfeiuiqUtEh568pSlCHcprWV131jLiyNkPrV0PgXxkXOJF+7/joCDKC38TqYAzrCGxvzkMLV61uE0Cy2Cwlt0NXSVaWUu1C8LJGg9BVDEm9IeAAEWyTtJSM2Co8i4iQRkugciWGig0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739467611; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=M5hWV7zpzfxrkj20JGXs36bIgvWN+f1eZBOfQY7SIjM=; 
-	b=H0UaH685Fnf6T5gMeeM3s5UsaIRb+Y9jD6hk4aLgNe8A/HDjoAfNj3RgTEr/Ns0Ic1/pqf25ULiccEHjw+hz1YVZWFRt3ym5UmhNWh9KuCsdH1zQlXoXByMo2ZcWskNHcK8jc1AROJSMHLG/aY76r7gaZ/wj/4twi58HWGWV70s=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739467611;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=M5hWV7zpzfxrkj20JGXs36bIgvWN+f1eZBOfQY7SIjM=;
-	b=Ws91bnDMeBkWP5IXglfIKxIRozeYMM8MzNL39X6Jq2/pVSfbuX7EarFMbKklR5mw
-	dd0tn8C8fZF4DPbhVIEG9+xawrfjR7jTOJWby3nlBp6hy7bDlg7VSU5flovBjG3uei0
-	tgMsDOs+DMRcUp6k8/mTn4NIl9WKVT5S3z6qjrNw=
-Received: by mx.zohomail.com with SMTPS id 1739467608754665.7670786696585;
-	Thu, 13 Feb 2025 09:26:48 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 785651806DE; Thu, 13 Feb 2025 18:26:43 +0100 (CET)
-Date: Thu, 13 Feb 2025 18:26:43 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-Cc: Damon Ding <damon.ding@rock-chips.com>, heiko@sntech.de, 
-	robh@kernel.org, conor+dt@kernel.org, algea.cao@rock-chips.com, rfoss@kernel.org, 
-	devicetree@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	hjc@rock-chips.com, kever.yang@rock-chips.com, dmitry.baryshkov@linaro.org, 
-	vkoul@kernel.org, andy.yan@rock-chips.com, krzk+dt@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, l.stach@pengutronix.de
-Subject: Re: [PATCH v6 00/14] Add eDP support for RK3588
-Message-ID: <tg6eyew4qahuxqakmmejne7xx2rkouj6htp55acun4ajz2irz2@vlmvqv3zc5vc>
-References: <20250123100747.1841357-1-damon.ding@rock-chips.com>
- <5044FFCB-B325-40D0-BA82-03AF64EAF029@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89DB200120
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739467802; cv=none; b=iEtnzyUwS//uW2V0Gd05ihHO+VGkTZiyKcg19deSlSLdACKgqOXd08ADUjIGkbEikOnKy/vvivCbZLv3mGSQYRDicDwdWz62Ql/NI9ITmYSOjrDjdLaO+FfHiK5s9PqXuDtVGo6M8LjGSMLsp3lCqP8koMdk7c9NNcXOwVvBY4Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739467802; c=relaxed/simple;
+	bh=zCyaallTEZbcZi+JylNVW9wmEI/TBI8/RQryPjwOpa8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iUqJhz3Pl4dgfIJF9y63vdMCeGw8u7y5+0ElQUgdzdvRBbZtf+JBxlFQK8Jm9qflMQjkylZYSF/SH8OLIm9Sv5FhxXzF5TIaJfvL+C0Jm3i2MXz8AXtQr9ah96xJsevvoKy5uR3gcbNPnmOIgVn6Rr9jCHKelbBiOuOh8birj1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=CDFqEyi6; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7483b9bf7so150824166b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:30:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1739467799; x=1740072599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zCyaallTEZbcZi+JylNVW9wmEI/TBI8/RQryPjwOpa8=;
+        b=CDFqEyi6Bv1HleC6Cy5siHHPDLJcf1a8cOladBbrJPFmDSCj334wcT0TT2E1pub8Rf
+         LUG1nNpfJkCazIiYf2tXd0UrjkIps4ePzQRuqgiB7mXMtjC8acdpxZtwIk7nHV86Eoz5
+         L00571aJCrVOWwF4ktJPpY1HjgK7i9G6SyM2KCi+FeY1wB2gArrUebDZKNjJj5bkZwP/
+         WKPi82jRW/5qvsAZtvh2jPudofvlki+RrzyXNElThwP/gDj6dCwhJ8aRVEe872XEBFou
+         bDj2rNyCMXhJjIJ0IkmHlZ3KMcRqAUnCJ4hxaU7zVqoFb42MzSDcoAEx36Oaxs06DoJA
+         beWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739467799; x=1740072599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zCyaallTEZbcZi+JylNVW9wmEI/TBI8/RQryPjwOpa8=;
+        b=HIUMhcIWItxAdCRls71+PMPUr3j9Me2pdDkVTK5LzpOOCg1/RKPDo7HIoh0OI6CELy
+         GzkidtccGxpQVKE1tVE25edyM0gicIbGhGRg3zM6lTE2t7W0pgvpriIM843MY1SDIwCP
+         yX1FR2UEHweG75oekF+Ij0Dy6dVxZag19j2cKk6wyzh4i6EJuvZ7pBFUt74EK5rwcxjL
+         /XbRqnjHE1gAuyK+iMCmx7dosoxtnA5PyJ4JLrd3mt0HqhxlNWIysVJHH8FIOmAIMGiX
+         fSpvHno8n/jsQdI9SwjGU91m3+7IYQHm4WiZOcmNsLkE4WRttErr+lHz4JwZmxSIhBxO
+         AOUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbQhPQWn6OPHeIWvmmFY7MtgWRRsq6n9wywxwJ0jc88EOmq/FHTNl+L5C3mQqaYuksWZgPDyiFTC+UY3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6IfOs96HVV7konZOI3p+MbWSerqfWOjIsmAfodWVXiwHj5u+l
+	7Fili5ryQuMYkyfBq7qUX2RxKn5awRDrLOBTEbYXjQWUCHc5r2HfDQJwXyoiNtXzhrXlAzn6IcK
+	StMj0J7cfOo0UjBF4VPaL+HZko9g/BiMbphWGHw==
+X-Gm-Gg: ASbGncsh/X6eQXkVFIPDJUSmu5kIZvMJvK14akAuN2pUS75VPVxHmbfKft5tMVtlbM0
+	9xVcYdlpqZexlOr4NO4JRMyYWGi/l/fCjj/fNdKDtqG6VVVHY9+C1+UTpcZyfPF93LvJqrR/SYp
+	kBheygpQj4t9zsKYqs+3ExGt8mHtU+
+X-Google-Smtp-Source: AGHT+IEHpzGOhWWzUiRDzPOLNzp9YXUJMsGD72YcUx4PUeutR3aym3wR77yLoxsgRGXTk2VSMsiRI1k+qJ+nezQ3KC8=
+X-Received: by 2002:a17:907:86a7:b0:ab7:c284:7245 with SMTP id
+ a640c23a62f3a-ab7f339c875mr683201066b.18.1739467799148; Thu, 13 Feb 2025
+ 09:29:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jnxis7mvi3ww4bac"
-Content-Disposition: inline
-In-Reply-To: <5044FFCB-B325-40D0-BA82-03AF64EAF029@gmail.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.2/239.417.30
-X-ZohoMailClient: External
-
-
---jnxis7mvi3ww4bac
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+ <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+ <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com> <20250213180733.11999e07@bootlin.com>
+In-Reply-To: <20250213180733.11999e07@bootlin.com>
+From: Phil Elwell <phil@raspberrypi.com>
+Date: Thu, 13 Feb 2025 17:29:47 +0000
+X-Gm-Features: AWEUYZklu9_MY3YY8SePLjBKtjUgGs0eTYBH-ezMm1VNb2UMos7_-NKxbQAJTns
+Message-ID: <CAMEGJJ2FB-wwyOtjjCmPJ-vUDpZaV-8MMXxV13qXnKxYSzt9pw@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
+ a DT overlay
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
+	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
+	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
+	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
+	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
+	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 00/14] Add eDP support for RK3588
-MIME-Version: 1.0
 
-Hello Piotr,
+Herv=C3=A9,
 
-On Thu, Feb 13, 2025 at 03:54:00PM +0100, Piotr Oniszczuk wrote:
-> > Wiadomo=C5=9B=C4=87 napisana przez Damon Ding <damon.ding@rock-chips.co=
-m> w dniu 23 sty 2025, o godz. 11:07:
-> >=20
-> > Picked from:
-> > https://patchwork.kernel.org/project/linux-rockchip/list/?series=3D9235=
-93
-> >=20
-> > These patchs have been tested with a 1536x2048p60 eDP panel on
-> > RK3588S EVB1 board, and HDMI 1080P/4K display also has been verified
-> > on RK3588 EVB1 board. Furthermore, the eDP display has been rechecked
-> > on RK3399 sapphire excavator board.
-> >=20
-> > Patch 1~4   are preparations for the RK3588 eDP support on both Analogix
-> >            side and Rockchip side.
-> > Patch 5~8  are to support to get panel from the DP AUX bus.
-> > Patch 9~11 are the RK3588 Analogix DP driver support.
-> > Patch 12    is to add the power sequencing delays for panel model
-> >            LP079QX1-SP0V.
-> > Patch 13    is the addition of RK3588 eDP0 node.
-> > Patch 14    is to enable the eDP0 display on RK3588S EVB1 board.
-> >=20
-> > Damon Ding (14):
-> >  drm/rockchip: analogix_dp: Replace DRM_...() functions with drm_...()
-> >  drm/rockchip: analogix_dp: Use formalized struct definition for grf
-> >    field
-> >  drm/rockchip: analogix_dp: Expand device data to support multiple edp
-> >    display
-> >  drm/bridge: analogix_dp: Add support for phy configuration.
-> >  dt-bindings: display: rockchip: analogix-dp: Add support to get panel
-> >    from the DP AUX bus
-> >  drm/bridge: analogix_dp: support to get &analogix_dp_device.plat_data
-> >    and &analogix_dp_device.aux
-> >  drm/bridge: analogix_dp: Add support to get panel from the DP AUX bus
-> >  drm/rockchip: analogix_dp: Add support to get panel from the DP AUX
-> >    bus
-> >  dt-bindings: display: rockchip: analogix-dp: Add support for RK3588
-> >  drm/bridge: analogix_dp: Add support for RK3588
-> >  drm/rockchip: analogix_dp: Add support for RK3588
-> >  drm/edp-panel: Add LG Display panel model LP079QX1-SP0V
-> >  arm64: dts: rockchip: Add eDP0 node for RK3588
-> >  arm64: dts: rockchip: Enable eDP0 display on RK3588S EVB1 board
-> >=20
-> > .../rockchip/rockchip,analogix-dp.yaml        |  25 +-
-> > arch/arm64/boot/dts/rockchip/rk3588-base.dtsi |  28 +++
-> > .../boot/dts/rockchip/rk3588s-evb1-v10.dts    |  54 ++++
-> > .../drm/bridge/analogix/analogix_dp_core.c    |  76 +++---
-> > .../drm/bridge/analogix/analogix_dp_core.h    |   1 +
-> > .../gpu/drm/bridge/analogix/analogix_dp_reg.c |  52 ++++
-> > drivers/gpu/drm/panel/panel-edp.c             |   8 +
-> > .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 238 +++++++++++++-----
-> > include/drm/bridge/analogix_dp.h              |   8 +-
-> > 9 files changed, 401 insertions(+), 89 deletions(-)
-> >=20
-> > --=20
-> > 2.34.1
-> >=20
->=20
-> Damon,
->=20
-> I=E2=80=99m playing with hdmi0 port enablement on radxa rock5 itx board w=
-ith 6.14 mainline.
->=20
-> rock5 itx has 2 hdmi ports: hdmi0 is wired to rk3588 typeC1/eDP1
-> eDP with ra620 eDP->HDMI converter and hdmi1 from hdmi/edp tx1
-> (see page3 & page29 at
-> https://dl.radxa.com/rock5/5itx/v1110/radxa_rock_5itx_v1110_schematic.pdf)
+On Thu, 13 Feb 2025 at 17:07, Herve Codina <herve.codina@bootlin.com> wrote=
+:
+>
+> On Thu, 13 Feb 2025 16:30:44 +0000
+> Phil Elwell <phil@raspberrypi.com> wrote:
+>
+> > Hi Andrew,
+> >
+> > On Thu, 13 Feb 2025 at 16:27, Andrew Lunn <andrew@lunn.ch> wrote:
+> > >
+> > > On Thu, Feb 13, 2025 at 05:14:35PM +0100, Herve Codina wrote:
+> > > > Hi Phil,
+> > > >
+> > > > On Thu, 13 Feb 2025 15:18:45 +0000
+> > > > Phil Elwell <phil@raspberrypi.com> wrote:
+> > > >
+> > > > > Hi Andrea,
+> > > > >
+> > > > > The problem with this approach (loading an overlay from the RP1 P=
+CIe
+> > > > > driver), and it's one that I have raised with you offline, is tha=
+t
+> > > > > (unless anyone can prove otherwise) it becomes impossible to crea=
+te a
+> > > > > Pi 5 DTS file which makes use of the RP1's resources. How do you
+> > > > > declare something as simple as a button wired to an RP1 GPIO, or =
+fan
+> > > > > connected to a PWM output?
+> > >
+> > > Where is this button or fan? On a pluggable board? Isn't that what
+> > > overlays are for, and they are stackable. So when you probe the
+> > > pluggable board via its eeprom etc, you find the overlay and load it?
+> >
+> > In the Raspberry Pi ecosystem it would be the firmware that applies
+> > the overlay, and it can't do that if the resources the overlay refers
+> > to are not yet present in the dtb.
+>
+> What do you mean by the 'the resources are not yet present in the dtb' ?
 
-The RK3588 has two different DP controllers. The one handled in this
-series should get the eDP port running, which is routed to the
-"eDP Panel" in the block diagram on page 3 of the Rock 5 ITX schematics.
-So this series adds support for using "HDMI/eDP TX0" and "HDMI/eDP TX1"
-in DP mode.
+Consider the fan connector on the Pi 5 PCB. It is wired to GPIO 45 on
+RP1. In our current Pi 5 dtb there is an instance of pwm-fan whose
+"pwms" property links to rp1_pwm node, which declares a PWM block on
+RP1. Similarly, the camera and display ports make use of I2C
+interfaces on RP1. The camera and display overlays, applied by the
+firmware, have references to those interfaces.
 
-The port routed to HDMI0 via RA620 is the other DP controller, which
-also exists twice: "TYPEC0/DP0" and "TYPEC1/DP1". This DP controller
-is not yet supported upstream and there is no pending patchset. As far
-as I know Rockchip plans to work on preparing upstream support for that
-soon.
+If RP1 is not present in the dtb then neither of those scenarios -
+board features and overlays applied the firmware - will work because
+the necessary nodes and symbols are not present until the kernel has
+started running, at which point dtb has been handed over.
 
-Note, that the two DisplayPort controllers are completely different.
-The HDMI/eDP controller is a design from Analogix and the TypeC/DP
-controller is a design from Synopsys.
+> Also what you call the 'firmware' is the bootloader ? the kernel ?
+> Can you tell me who is the 'firmware' what is the mecanisme it uses to
+> load the overlay.
 
-P.S.: Heiko merged support for HDMI1 (RK3588 SoC level) recently. So you
-should be able to get that running by some DT additions to the Rock 5
-ITX board DT with the latest linux-next code :)
+In the case of the Pi 5, the firmware is an EEPROM image containing
+code run by the VPU embedded processor. It can load overlays using the
+same mechanisms it uses to load the kernel - SD/EMMC, NVME, USB, TFTP,
+etc. The same problem would exist for U-boot. Even though RP1 has a
+standard XHCI controller, U-boot wouldn't be able to detect it and
+make use of it, say to load a kernel from a USB stick, because it
+isn't declared in the DTB.
 
-Greetings,
-
--- Sebastian
-
---jnxis7mvi3ww4bac
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmeuK0wACgkQ2O7X88g7
-+prlexAApJeFewv/JsqSV3wCoT23yhvxdlzYKIVVL/yo98r9WQPC4i1qmYmKRBI4
-vzvIr65JV41ReaTQs/q/BoIL0rHdfgn0ZkatJ0H7wbNbH2IztSS2VukNrAz9DwT4
-TvyUoo10hpaHiFTfKKSzDkL5/NI3d9pvi6AmUs+SmWMD7f2eXmyav5L2WHTZ0Nzl
-kLA4FPpSVS/3NQ5qTlhHsyM0kDVsL7R6G7ObMrQ9gAp9qkp6BJ353pHWEWtXgagu
-Dj4iMS5wfJ1VXYyQDJSFgeiibznIzIMlOR83c7AG7IMvowXL7IniG2Q8vUz1nPgC
-syKJOH3btyQzxkc9AYqXYXr7NUldDWhK84iqzsA0E+imxauPhXgfeQxQOR63uTXG
-fvZKtmVjM2gyqGp0ro5rEXSczzcnKj8tSC42AZm0d/ACS/TsCi8CcOKEsgtkCM+L
-7HhI7qlJUNihK6x90i+R9i2k7Ar9STYe+lUqxybSkZnNymp3nZwpkDVYLkuf53Ot
-pwrWkcRYXOhEggDrQNTe6xq3W1C+w/sNPflgnA33KAL2+xFCyt3RQq++BrLN4Aa/
-ECjWYGebnHLh+hFA8FToTF3KG6CjTNiyIvAsFBsjRoF9x/uLrZt+davDhGf1D3fP
-l/jfGWpAOhK6VBdKArybnrr6GEUTvZtb25x6f9eTbsVVTEGORmk=
-=iYP4
------END PGP SIGNATURE-----
-
---jnxis7mvi3ww4bac--
+Phil
 
