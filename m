@@ -1,122 +1,319 @@
-Return-Path: <linux-kernel+bounces-513275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F49DA347D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:38:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FE4A347CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:38:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BF6216A497
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63E518859CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D69155330;
-	Thu, 13 Feb 2025 15:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188EA1547E3;
+	Thu, 13 Feb 2025 15:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zu0rm2RY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FTD3569h"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D1E1865EE;
-	Thu, 13 Feb 2025 15:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457E414F121
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739460784; cv=none; b=ZmUQwT6La6N18cbEnKIHFMfolvOKQ0JEMkbgx1BCo0op1TFByod0MdvHVarnO11ZGE9FQ1OAqlj7rqyNioxmuWEV7hAKicsoueqxJ9jv6lSoXbxbUzY9joC0qrwHHyb1Alc0pXKBmKAgWbZbeDfLNQB+8znaaetWm3w01B5JSWE=
+	t=1739460781; cv=none; b=b51re9xGhF6FOgmwAoeS1xNRocCK0p8xvHioXCqCiQ3Xr4Etn+R/AbXNWftog9II+XP5kFqpj5NsEjXogUF4GSp06TFXM69dOGnV3zfUE+FECutGoKRvVr5U4lQsd3R1IKuOfXMFM3NRXkUPLE/K0bIYz+koB0hk0w2mvftmLvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739460784; c=relaxed/simple;
-	bh=t8QMv5hVTQ+R0IqU8p9CIOvH1ExAEP3a6Vf8v5IaDu0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nwBFaZkdW1J/PlPyP+BmZFLXz+yWNPvTB71Epa5iLXBk6vBM1m4/G36f5fvZitjFaIzBdzsZxHx0xXdUx2nN95Q3Hp7YGzmxgiPtCYqx0G3I+KGlObbBtUZIAW0+zDKBINKmXS6tKED+dkZbl59ndLde3g/isscwl7mXl/o0A5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zu0rm2RY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1DC6C4CEF8;
-	Thu, 13 Feb 2025 15:33:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739460783;
-	bh=t8QMv5hVTQ+R0IqU8p9CIOvH1ExAEP3a6Vf8v5IaDu0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Zu0rm2RYHRQAFLzKn4r1HNUMm8YFtDy2MYYtFUpabmqvXs66874sy8GDK5fdm9ZHY
-	 w5QC+it44v0XhZy8u8SLZWzM+Uo8+2eibnrdhjONcomdz+gkA8LKnLBcvxYEa3awEK
-	 4waS3GORPbRaeRFxe5NCxvQ6EoBVx5VNLpueKTNBqvdUV4k8fp5uUc1dCq0vmuQ03H
-	 QuGWQedP5GwbmxOZI29HQuY93RVX6y37ArJWxIhnXpzsKFhWpzXmyLol1k+UYuNb0k
-	 Ggp6cSPIzMlGEwTKeAOmsHe+NmdczDjA7zD9K3RavX3gAEnscHDnItccaRUyQHOAJp
-	 yCkILzAzWDACg==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54506b54268so968742e87.3;
-        Thu, 13 Feb 2025 07:33:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUYWBBNQ5Ut66pjosYl8YRPKT8qAOfI9qCECcALv/0hv0kSpe+/hjmyKx19wWRJjS3r99NCLmq+@vger.kernel.org, AJvYcCV96RfVCZSCTZSmw4JAwYKdHaRIJhCHXEi7X7s3LFkQ/Ky7GHwyxb/bCwtuDOp2x+4saD9JwIMBOCcj9AI=@vger.kernel.org, AJvYcCVtdghud2YIuYvpDvbffBF2KUOvKZvtjwgnjHhMUgMvGhNs2h+UL9P4Upo2azWxPTHmbzX34HxnzS1kO9X/EiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/0yRR0gi+aUHMUzJZuApMo0Pfn5wdxM29VfYyWZ+LETbBtvtl
-	yh5HZukYXT0YxSfqNUEz4yBuT7DZGy2ABXMmuWQvQnlRiQxRKO+vbvQHcDDkuAlOjiopAUSKXkr
-	G+oS3nsFgvmMnr+swMF3T2lOjyIc=
-X-Google-Smtp-Source: AGHT+IFn/vzxAa1gLojO/0597IUwEJuHjE+ZMbhdN6Wkn18KpSJ16vMq38P8PaQcagI5saZOuyRj6jrZinDRQOOBjFs=
-X-Received: by 2002:a05:6512:1111:b0:545:6cf:6f3e with SMTP id
- 2adb3069b0e04-5451dde81aemr1356458e87.49.1739460781858; Thu, 13 Feb 2025
- 07:33:01 -0800 (PST)
+	s=arc-20240116; t=1739460781; c=relaxed/simple;
+	bh=vbayAeoJDSdwSGxBNk9gnsZeGtsOkumOKXo8+A5ID2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ndr0xC5OCxl4d0Y3C2Ti8cb3oM4vgxLFZYyBzYZQo+BdKZx3pfKtaERCSPJ/m4fVMlZl7X+LrujLEv1iqP5M9n+uBSBQzl7BNka9c0/DNa8tI51jQVUqrhsWHWgGG7BQHE7CkLQMadpcciZ+DbFUnXevgi0jOzf/2SAzsEDF+Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FTD3569h; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38dd9b3419cso557901f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:32:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739460777; x=1740065577; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MfLc32cRf3eetQpPP5I7Ug+lhC4HSsOzdCRi3IPd+cY=;
+        b=FTD3569hxUuWCSLyNqJZNwLEkC7VMzfjdnbFDpquVzgPZ5rdBr2GiFsluYKiC/XitR
+         juwAzAam0bTGChQjPd5bCTirLlRtb4CdDP6CnJmyfAZ8jAafFsjeK0qmJVV3faP16Mk7
+         UlQxLWV+UVt5Y/OtDFgjrotA0qtlEZgW2NO1eT55TxgurTmV9CK/cz0sRrRgK7pXpSQd
+         1eimEuWKznvOJfs97wUc+PJnBYAjmHy1yx9mV0f/uMyttLdRdBCKr6sQrelZrBE85Vac
+         ifna/kfii8e4ZR2Pyk62cMSXdJQUkGmDRRqkbbEb7nIPFnTM30DoqvTqX+F+HQjqKu76
+         SXVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739460777; x=1740065577;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MfLc32cRf3eetQpPP5I7Ug+lhC4HSsOzdCRi3IPd+cY=;
+        b=GvgsBKPdKIq6mYJB90n7DwwyJJE7k7UJfquA+ae621705WlFkoIVlnh6Ni7t7Vgy21
+         Sk8dhs/JT9qh61i1N+BbYXk8/dDmWK216czGY+qGftG8HyjS5lZcFhZOuLxJgFwncj5o
+         02Yn6W7hGU4MydozjowG19qas0uWNVGmgn0gaSMUI7Ay69tPOKwnG2K+WGLkzGMoKRLF
+         gRsYKkeLgjsNfnSWxzf6Z1vEak3HqmSMglJ4DO7r1iQ9pztWsx4oRlBRpkot85Sdhipl
+         rEY5u0gSIC17OR9/DG9YjJdq+aCy40cklEi12ga3MizK8uvGzkP40uoK4HxLfkRhXLTG
+         kgOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYt2yImA2sRKvDaKGsktAYdj4qPQhF+IRXvRNDhR0vCbQ4q9JR2gMaJ1AkPmn1oIXL7hTdP7CGVFnyZyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyijeb4N8O3JZdvmPI2pfE6JNYp+32aMPkaanNOisx3POS++1Ns
+	LNv149s/gLV6uR1VnlUMVx3Aw3jLlDsbLiuFBikm44xC3yRofsJL
+X-Gm-Gg: ASbGncuDjAA/k4LOF18iHOPw6Ah4sDd6mEQy3tLIUyTfKNqJC6ZDE77QaYzT19fb1fY
+	wX/UQ5fnqwkseNGjOff3vDD8X5zMAIV8b+Udk/NcPDeIBQOlCTKDFh5t5whAlCzPmk0VntGRvBY
+	H5VEnHWTZLSiE+CmFv5DnaaJUqxLNV7xfLiMn+h0O6dDZTtZQDY0CVCr5YqvRoWmaSle7yAwdv9
+	3+NNaUlQS8iB3im632AooFO2+051Xamc3muxVRETHzpEQ3A7AqHk4LJiwDGvZ1PWExlGe/mB482
+	Bd1J/vqC15BizAc=
+X-Google-Smtp-Source: AGHT+IFlrVjfyCynKmQHnjJcSFdCu8zrg+P3t2BTmUgSmBdpMC/9LI9CKtj1SkjQ1nL3tla2lBW9fQ==
+X-Received: by 2002:a05:6000:402c:b0:38b:d7c3:3768 with SMTP id ffacd0b85a97d-38dea3cfaabmr7191145f8f.12.1739460777196;
+        Thu, 13 Feb 2025 07:32:57 -0800 (PST)
+Received: from fedora ([213.94.27.232])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5eeesm2200468f8f.63.2025.02.13.07.32.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 07:32:56 -0800 (PST)
+Date: Thu, 13 Feb 2025 16:32:54 +0100
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/13] drm/vkms: Allow to attach planes and CRTCs
+Message-ID: <Z64QpktpcVjtelKY@fedora>
+References: <20250129110059.12199-1-jose.exposito89@gmail.com>
+ <20250129110059.12199-10-jose.exposito89@gmail.com>
+ <Z5uDJd4iV9Vnrp9e@louis-chauvet-laptop>
+ <Z6sq0h0lKxjmBcxk@fedora>
+ <b05831de-c67b-4ba9-8808-f049d97b3654@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210163732.281786-1-ojeda@kernel.org>
-In-Reply-To: <20250210163732.281786-1-ojeda@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 13 Feb 2025 16:32:50 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHgjwHkLsJkM3H2pjEPXDvD80V+XhH_Gsjv8N4Cf6Bvkw@mail.gmail.com>
-X-Gm-Features: AWEUYZmhbBgIMQcrZGkDUPbbIKzS9-BDPJ0yLZaCMkeMRCLb0heF4J8bVRc0_r0
-Message-ID: <CAMj1kXHgjwHkLsJkM3H2pjEPXDvD80V+XhH_Gsjv8N4Cf6Bvkw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: rust: clean Rust 1.85.0 warning using softfloat target
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, 
-	moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
-	Matthew Maurer <mmaurer@google.com>, Ralf Jung <post@ralfj.de>, 
-	Jubilee Young <workingjubilee@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b05831de-c67b-4ba9-8808-f049d97b3654@bootlin.com>
 
-On Mon, 10 Feb 2025 at 17:38, Miguel Ojeda <ojeda@kernel.org> wrote:
->
-> Starting with Rust 1.85.0 (to be released 2025-02-20), `rustc` warns
-> [1] about disabling neon in the aarch64 hardfloat target:
->
->     warning: target feature `neon` cannot be toggled with
->              `-Ctarget-feature`: unsound on hard-float targets
->              because it changes float ABI
->       |
->       = note: this was previously accepted by the compiler but
->               is being phased out; it will become a hard error
->               in a future release!
->       = note: for more information, see issue #116344
->               <https://github.com/rust-lang/rust/issues/116344>
->
-> Thus, instead, use the softfloat target instead.
->
+On Wed, Feb 12, 2025 at 03:10:49PM +0100, Louis Chauvet wrote:
+> 
+> 
+> Le 11/02/2025 à 11:47, José Expósito a écrit :
+> > On Thu, Jan 30, 2025 at 02:48:21PM +0100, Louis Chauvet wrote:
+> > > On 29/01/25 - 12:00, José Expósito wrote:
+> > > > Add a list of possible CRTCs to the plane configuration and helpers to
+> > > > attach, detach and get the primary and cursor planes attached to a CRTC.
+> > > > 
+> > > > Now that the default configuration has its planes and CRTC correctly
+> > > > attached, configure the output following the configuration.
+> > > > 
+> > > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> > > 
+> > > Co-developped-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> > > 
+> > > [...]
+> > > 
+> > > > +int __must_check vkms_config_plane_attach_crtc(struct vkms_config_plane *plane_cfg,
+> > > > +					       struct vkms_config_crtc *crtc_cfg)
+> > > > +{
+> > > > +	struct vkms_config_crtc *possible_crtc;
+> > > > +	unsigned long idx = 0;
+> > > > +	u32 crtc_idx = 0;
+> > > > +
+> > > > +	xa_for_each(&plane_cfg->possible_crtcs, idx, possible_crtc) {
+> > > > +		if (possible_crtc == crtc_cfg)
+> > > > +			return -EINVAL;
+> > > 
+> > > Is it really an error? After this call, we expect plane and crtc to be
+> > > attached, so if the plane is already attached, I don't see any issue.
+> > 
+> > In my opinion, this could be either handled as an error or not. I think that
+> > there are arguments for both approaches but, for our use case, I think that it
+> > is better to return an error.
+> > 
+> > Since the main (and for the moment only) user of this function will be configfs,
+> > it is very convenient to return an error to avoid creating 2 links between
+> > plane <-> crtc.
+> > 
+> > If we allow to create multiple links, and the user deletes one of them, the
+> > items would be still linked, which is a bit unexpected.
+> > 
+> > The same applies to the other vkms_config_*_attach_* functions.
+> 
+> I see your reasoning, I did not think about this issue.
+> We can keep the error, but can we use `EEXIST` to reflect better the status?
 
-We have to carefully make the distinction here between codegen and ABI.
+Very good point, I'll change it to EEXIST in v3.
+ 
+> And I just think about it, maybe we can add here the check "is the crtc part
+> of the same config as the plane" (and return EINVAL if not)? It will remove
+> the need to do the check in configFS + avoid errors for future users of
+> vkms_config.
 
-The arm64 C code in the kernel is built with -mgeneral-regs-only
-because FP/SIMD registers are not preserved/restored like GPRs, and so
-they must be used only in carefully controlled circumstances, i.e., in
-assembler code called under kernel_neon_begin()/kernel_neon_end()
-[modulo some exceptions related to NEON intrinsics]
+Another excellent point. Since we can not use the vkms_config_plane.plane and
+vkms_config_crtc.crtc pointers to check if they belong to the same device, the
+only solution I see is adding a pointer to the parent vkms_config to every
+structure (vkms_config_plane, vkms_config_crtc, etc).
 
-This does not impact the ABI, which remains hard-float [this was the
-only arm64 calling convention that existed until about a year ago].
-Any function that takes or returns floats or doubles (or NEON
-intrinsic types) is simply rejected by the compiler.
+In this way we can do something like:
 
-Changing this to softfloat for Rust modifies this calling convention,
-i.e., it will result in floats and doubles being accepted as function
-parameters and return values, but there is no code in the kernel that
-actually supports/implements that. Also, it should be clarified
-whether using a softfloat ABI permits the compiler to use FP/SIMD
-registers in codegen. We might still need -Ctarget-feature="-neon"
-here afaict.
+  if (plane_cfg->config != crtc_cfg->config)
+          return -EINVAL;
 
-Ideally, we'd have a target/target-feature combo that makes this more
-explicit: no FP/SIMD codegen at all, without affecting the ABI,
-therefore making float/double types in function prototypes illegal.
-AIUI, this change does something different.
+I tried with container_of(), but I don't think it'll work with the current data
+structure.
+
+Unless you can think of a better solution, I'll implement this in v3.
+
+Thanks for the great comments,
+Jose
+
+> > For these reasons, I didn't change it in v2, let me know your opinion.
+> > Jose
+> > 
+> > > > +	}
+> > > > +
+> > > > +	return xa_alloc(&plane_cfg->possible_crtcs, &crtc_idx, crtc_cfg,
+> > > > +			xa_limit_32b, GFP_KERNEL);
+> > > > +}
+> > > > +
+> > > 
+> > > [...]
+> > > 
+> > > > +struct vkms_config_crtc **vkms_config_plane_get_possible_crtcs(struct vkms_config_plane *plane_cfg,
+> > > > +							       size_t *out_length)
+> > > > +{
+> > > > +	struct vkms_config_crtc **array;
+> > > > +	struct vkms_config_crtc *possible_crtc;
+> > > > +	unsigned long idx;
+> > > > +	size_t length = 0;
+> > > > +	int n = 0;
+> > > > +
+> > > > +	xa_for_each(&plane_cfg->possible_crtcs, idx, possible_crtc)
+> > > > +		length++;
+> > > > +
+> > > > +	if (length == 0) {
+> > > > +		*out_length = length;
+> > > > +		return NULL;
+> > > > +	}
+> > > > +
+> > > > +	array = kmalloc_array(length, sizeof(*array), GFP_KERNEL);
+> > > > +	if (!array)
+> > > > +		return ERR_PTR(-ENOMEM);
+> > > > +
+> > > > +	xa_for_each(&plane_cfg->possible_crtcs, idx, possible_crtc) {
+> > > > +		array[n] = possible_crtc;
+> > > > +		n++;
+> > > > +	}
+> > > > +
+> > > > +	*out_length = length;
+> > > > +	return array;
+> > > > +}
+> > > 
+> > > Same as before, can we use an iterator?
+> > > 
+> > > > +static struct vkms_config_plane *vkms_config_crtc_get_plane(const struct vkms_config *config,
+> > > > +							    struct vkms_config_crtc *crtc_cfg,
+> > > > +							    enum drm_plane_type type)
+> > > 
+> > > Even if this is a private function, can we add a comment explaning that
+> > > the returned value is only one of the available planes of this type?
+> > > 
+> > > 	/**
+> > > 	 * vkms_config_crtc_get_plane() - Get the first attached plane
+> > >           * found of a specific type
+> > > 	 * @config: configuration containing the crtc and the planes
+> > > 	 * @crtc_cfg: Only find planes attached to this CRTC
+> > > 	 * @type: Plane type to search
+> > > 	 *
+> > > 	 * Returns:
+> > > 	 * The first plane found attached to @crtc_cfg with the type
+> > > 	 * @type.
+> > > 	 */
+> > > 
+> > > > +{
+> > > > +	struct vkms_config_plane *plane_cfg;
+> > > > +	struct vkms_config_crtc *possible_crtc;
+> > > > +	enum drm_plane_type current_type;
+> > > > +	unsigned long idx;
+> > > > +
+> > > > +	list_for_each_entry(plane_cfg, &config->planes, link) {
+> > > > +		current_type = vkms_config_plane_get_type(plane_cfg);
+> > > > +
+> > > > +		xa_for_each(&plane_cfg->possible_crtcs, idx, possible_crtc) {
+> > > > +			if (possible_crtc == crtc_cfg && current_type == type)
+> > > > +				return plane_cfg;
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > > +	return NULL;
+> > > > +}
+> > > 
+> > > [...]
+> > > 
+> > > > diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> > > 
+> > > [...]
+> > > 
+> > > > +/**
+> > > > + * vkms_config_crtc_primary_plane() - Return the primary plane for a CRTC
+> > > > + * @config: Configuration containing the CRTC
+> > > > + * @crtc_config: Target CRTC
+> > > > + *
+> > > > + * Returns:
+> > > > + * The primary plane or NULL if none is assigned yet.
+> > > > + */
+> > > 
+> > > Same as above, can you speficy that it is one of the primary plane?
+> > > 
+> > > > +struct vkms_config_plane *vkms_config_crtc_primary_plane(const struct vkms_config *config,
+> > > > +							 struct vkms_config_crtc *crtc_cfg);
+> > > > +
+> > > > +/**
+> > > > + * vkms_config_crtc_cursor_plane() - Return the cursor plane for a CRTC
+> > > 
+> > > Ditto
+> > > 
+> > > [...]
+> > > 
+> > > > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> > > 
+> > > [...]
+> > > 
+> > > > @@ -35,19 +41,54 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+> > > >   			ret = PTR_ERR(plane_cfg->plane);
+> > > >   			goto err_free;
+> > > >   		}
+> > > > +	}
+> > > > +
+> > > > +	for (n = 0; n < n_crtcs; n++) {
+> > > > +		struct vkms_config_crtc *crtc_cfg;
+> > > > +		struct vkms_config_plane *primary, *cursor;
+> > > > +
+> > > > +		crtc_cfg = crtc_cfgs[n];
+> > > > +		primary = vkms_config_crtc_primary_plane(vkmsdev->config, crtc_cfg);
+> > > > +		cursor = vkms_config_crtc_cursor_plane(vkmsdev->config, crtc_cfg);
+> > > 
+> > > Linked with a previous comment: here we have no garantee that primary is a
+> > > valid pointer, can we check it or call vkms_config_is_valid to ensure it?
+> > > 
+> > > > +		crtc_cfg->crtc = vkms_crtc_init(dev, &primary->plane->base,
+> > > > +						cursor ? &cursor->plane->base : NULL);
+> > > > +		if (IS_ERR(crtc_cfg->crtc)) {
+> > > > +			DRM_ERROR("Failed to allocate CRTC\n");
+> > > > +			ret = PTR_ERR(crtc_cfg->crtc);
+> > > > +			goto err_free;
+> > > > +		}
+> > > 
+> > > [...]
+> 
+> -- 
+> Louis Chauvet, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+> 
 
