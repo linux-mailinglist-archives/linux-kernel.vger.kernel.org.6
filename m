@@ -1,192 +1,166 @@
-Return-Path: <linux-kernel+bounces-513308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B759AA348B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:58:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F62A348B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:59:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2787D1620B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:58:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558671614A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906641D6DB4;
-	Thu, 13 Feb 2025 15:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB421E9B27;
+	Thu, 13 Feb 2025 15:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HPCowkA4"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEHQRma0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA0E18DF9D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955E9152532;
+	Thu, 13 Feb 2025 15:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739462280; cv=none; b=uaov4gqNSRM7zcOJF6AhThLjN4R5oxOoLqoUMUeaa1qtIbNJCSnCj+SwlOKaWc93cDXdnypbhx66D+iNrDBioS97bqJP2YG/AcFRNGWlcFjoGYiVxsav0UQfOzXIMxZ9+1Wi9GzJlCsJqCQpMLLJ1BE8XbmyNeJYMCMR1/zRd8k=
+	t=1739462354; cv=none; b=O50KfH16jsDi9xaLtNutCeaTNKYrjbIZpOe2V1SALPF1ZEFvKS75aa9A6wSMTVvO7tKraK9lRvlnQnj5HBpOlCxs/gxMA3NTVdYe/3gZWsVbpixTyVjOV6q+Sz189S02DfEprPNcQ+T1PnP0bkRVZ+oqEhd2WX10DZ2un8O0Cfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739462280; c=relaxed/simple;
-	bh=689LjFK8hKatdZaSaF9r6CCqoaXyMdM1aN6KF4TBO24=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N7WfNEetVvCUyeHQA2rw0cXlPYAF0dqs0zESf6xyX78dvXVy1ojF6JYlnEGoRI6R5WLQfZEqTQQ4RFB6ECCdvXnr0/gb55LN1CjQ8aAun7SRV4v7feN3e+aUgOVg+C8tVN/7STQG7OXDlyAhtibdpKwFzh4FRN0sHuaVYk2b3PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HPCowkA4; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3f3de1bdff2so241338b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:57:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739462278; x=1740067078; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NHtO1l0Sm3xnCkozanEaDdmWEvTg249bwN+Pta/EflE=;
-        b=HPCowkA4a/oI6/25vr+EWCHaooAo/KFm2NwgXgk4wdf8hljv7TGFaUTwEO64M/cg/a
-         U47pO+FQZi5aIa0bDDkJ1mr1ffJgbVEXD8QleQ+wp33Ij0J9O9HZQuPvfCcjQqtHir6E
-         SkGY2vleJIy5y96XKyCdNZxW0jKuUtgdgqFVCO8L/unHUuz87khF68v1ZGo4TBf/eywh
-         bsgeUvcMfgI5/dzeDpJraUdyxA1frkeHa0fdYV6QxDuKkgFCcK4lMLMuStwXPpzWeEoF
-         0fieYcJGyj65RL5xgkYIUABTwQxUFhCYwK4nTNCz2r4JB9o0bDbZp/qlqdYQnXXNf5y8
-         fCzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739462278; x=1740067078;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NHtO1l0Sm3xnCkozanEaDdmWEvTg249bwN+Pta/EflE=;
-        b=d1e44bb+AiC90ezM+2ra7lDnVVSLExJNXqZqUp0XisFN8oMvaCsYXjGjjj5IW/ftTX
-         5W1x4yQO8VYOkYCU2jCe7g0B/ME6NULDg77a0FWltfKXMY46pb9VT2GuM9peqobFU8II
-         9SBAwpG0Sf+QR8Hd5b9nKWLsE4jTuZVUlbebvp2CQPGSoXudOqJv89mNsMgZsZfOWXBi
-         UihnCbyaVOS4Iq6q+FunrVrvImQRMEyj0OlQFZFz1ysp2QP9I1HX0qK1UPeLiJKzZawz
-         gJARTpqXSOIIFI+z8fOxmYPi00KRpyCNdBw6X2n3HQ+nU/e4vpd2jwERjpQVnAD+fZDn
-         vT3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWjMpfFM8Qntu3R6P9gQMi4ldAFKfcWtAlLBJj8SgpHIGcLKaA3EEmy0gr5SS/VHF6EaaWK2ZtF4sepZzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCIwptgcLSrQ46IykOtcTO+SO05XLP8Jh2GzfYdZ/P04wXY0MP
-	xhmxYHZBDHrIV6AscJEWtb0s6WlX9QOkUPMC+ApJU6Gq5BqibYTpHc10rDY3PPn5USOlPkkFF8M
-	5QouhGRDcLsiwijmZF1eZAe0r5oQrMsKqQwf/Hw==
-X-Gm-Gg: ASbGncspTMYjVg4PZVHaMDN+3sk9mVN8QGnlg08BPNOsmFjnrUVGnxS/oopkUIA33KE
-	sSxkKGa4roW4Cq8tmscyfgZY6VTQInUCPnglapKBhRv9aL/0Q3K3rTjnjK31uKfifZpigpkLVuw
-	==
-X-Google-Smtp-Source: AGHT+IFP5g43bicIDLt/S4uI2Sk6WesrFKEkZAgRcsR6UVnbplWcWySy+Pe58g7cxxxYF2yjdv9hpHSaFgfwFOWE+Ow=
-X-Received: by 2002:a05:6870:f112:b0:2b8:84d7:ddd5 with SMTP id
- 586e51a60fabf-2b8d68c6af2mr4406581fac.39.1739462278059; Thu, 13 Feb 2025
- 07:57:58 -0800 (PST)
+	s=arc-20240116; t=1739462354; c=relaxed/simple;
+	bh=jhNefGtsRWXyhnxG+bgW4pvnMHzaSA4ko0O4FWE8Lp8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=grgAoPXmAq9G2qZP8928JqxIjDR3kZX3sbtrCwyN3Uoe6JUsnyowBmCtSFLHVbZ3SSXSrNiyODuXqaZ+93OwoGGxPQoPfFMl7murnX6DYcDt1llkosVCAnTlBIOdTUiC8MgwsBkHqvi6efKxa72kMnxGqhOmF4Y89Qf9fq0/vO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEHQRma0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6631CC4CED1;
+	Thu, 13 Feb 2025 15:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739462354;
+	bh=jhNefGtsRWXyhnxG+bgW4pvnMHzaSA4ko0O4FWE8Lp8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ZEHQRma01gw+Qyo9YZZLw6S9xt+9nwhj2+sR/54HPKZYiHpRI+K4RMoMNxh5ADfBd
+	 8jHh5+zhT21n+fAWngs0kXilDBUKI1DyGb0vf4DpXWj72kQLtOdCblgUEGLARDL0Ik
+	 bse6xYa+6/uPJRCCFYjF90JOch67MwjHvDha3fLlu0828wUYJB7SDiEW8fiUGV84Q2
+	 XcbddIQC+qJRoNoEI1Km81B4JftRfRLu2Krh/5rsgROOKeISJLhUSOOfz9gdqylMCS
+	 26ehjAOFFpqay+P4gbv3yv+05wt5nkHTLtbBT4965WvGzPGoJhvh0FiIeFLdq/c1gL
+	 r5V56n7Agy9kA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA10C021A4;
+	Thu, 13 Feb 2025 15:59:14 +0000 (UTC)
+From: Tobias Sperling via B4 Relay <devnull+tobias.sperling.softing.com@kernel.org>
+Subject: [PATCH v4 0/2] Support for TI ADS7128 and ADS7138 ADCs
+Date: Thu, 13 Feb 2025 16:58:56 +0100
+Message-Id: <20250213-adc_ml-v4-0-66b68f8fdb8c@softing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
- <20250212205613.4400a888@collabora.com> <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
- <20250213093557.278f5d19@collabora.com> <CAFA6WYOJkSRsH-15QdqXNMd08Q=Dg4NkRd1Cr9LXA+5nozTF6g@mail.gmail.com>
- <20250213134008.4cbef142@collabora.com> <CAPj87rM5Y=-Jgf4mwukicF6Yb-vccn2fpG2X1jNq0upH2+cAEQ@mail.gmail.com>
-In-Reply-To: <CAPj87rM5Y=-Jgf4mwukicF6Yb-vccn2fpG2X1jNq0upH2+cAEQ@mail.gmail.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 13 Feb 2025 16:57:42 +0100
-X-Gm-Features: AWEUYZmgVASDSvu5hsJWJHBSSPIof2Z6xxr-T5u2MSp4prWGrnjV2aHs43vhfXo
-Message-ID: <CAHUa44G9hw-z6wzxg=HkVAxPKEW1yES5JTEqRWMvJUJAtcUDkQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, Sumit Garg <sumit.garg@linaro.org>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
-	Florent Tomasin <florent.tomasin@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMAWrmcC/2XM3wqCMBTH8VeJXbfYztzUrnqPiNg/dZAuNhmF+
+ O5NISm8/B3O5zuhaIOzEZ0PEwo2uej8kEdxPCDdyaG12Jm8ERAoKAXA0uh7/8CGalsJW3EFGuX
+ nZ7CNe62h6y3vzsXRh/faTXS57hKJYoJJKeoGLFVK00v0zeiG9qR9j5ZIgi/kBAjbIGRYSV6XQ
+ hDNar6H7BeKDbIMqSHKsKJiUsI/nOf5A4mGyXsQAQAA
+X-Change-ID: 20241122-adc_ml-d1ce86e85b2c
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Tobias Sperling <tobias.sperling@softing.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739462353; l=3437;
+ i=tobias.sperling@softing.com; s=20241122; h=from:subject:message-id;
+ bh=jhNefGtsRWXyhnxG+bgW4pvnMHzaSA4ko0O4FWE8Lp8=;
+ b=B3z1r3JT8BOwrbjqgQHDiTpNwRX4k7kpMRgT340opHRRc/PdyFaaou2pXeCZ7WNTV4i3guKAr
+ jUc15Bon+6RDLBG9MQsEkvlFx9fWcPhZ6j3HE6rH+De+VE6qvtXTq/e
+X-Developer-Key: i=tobias.sperling@softing.com; a=ed25519;
+ pk=v7hgaMHsrA9ul4UXkBVUuwusS9PF3uHW/CC+gABI65E=
+X-Endpoint-Received: by B4 Relay for tobias.sperling@softing.com/20241122
+ with auth_id=281
+X-Original-From: Tobias Sperling <tobias.sperling@softing.com>
+Reply-To: tobias.sperling@softing.com
 
-Hi,
+This patch series adds support for Texas Instruments ADS7128 and
+ADS7138, which are 12-bit, 8 channel analog-to-digital converters (ADCs)
+with build-in digital window comparator (DWC), using the I2C interface.
 
-On Thu, Feb 13, 2025 at 3:05=E2=80=AFPM Daniel Stone <daniel@fooishbar.org>=
- wrote:
->
-> Hi,
->
-> On Thu, 13 Feb 2025 at 12:40, Boris Brezillon
-> <boris.brezillon@collabora.com> wrote:
-> > On Thu, 13 Feb 2025 14:46:01 +0530 Sumit Garg <sumit.garg@linaro.org> w=
-rote:
-> > > Yeah but all the prior vendor specific secure/restricted DMA heaps
-> > > relied on DT information.
-> >
-> > Right, but there's nothing in the DMA heap provider API forcing that.
->
-> Yeah. DMA heaps are just a way to allocate memory from a specific
-> place. It allows people to settle on having a single way to do
-> allocations from weird platform-specific places; the only weird
-> platform-specific part userspace needs to deal with is figuring out
-> the name to use. The rest is at least a unified API: the point of
-> dma-heaps was exactly to have a single coherent API for userspace, not
-> to create one API for ZONE_CMA and DT ranges and everyone else doing
-> their own thing.
->
-> > > Rather than that it's better
-> > > for the user to directly ask the TEE device to allocate restricted
-> > > memory without worrying about how the memory restriction gets
-> > > enforced.
-> >
-> > If the consensus is that restricted/protected memory allocation should
-> > always be routed to the TEE, sure, but I had the feeling this wasn't as
-> > clear as that. OTOH, using a dma-heap to expose the TEE-SDP
-> > implementation provides the same benefits, without making potential
-> > future non-TEE based implementations a pain for users. The dma-heap
-> > ioctl being common to all implementations, it just becomes a
-> > configuration matter if we want to change the heap we rely on for
-> > protected/restricted buffer allocation. And because heaps have
-> > unique/well-known names, users can still default to (or rely solely on)
-> > the TEE-SPD implementation if they want.
-> >
-> > > There have been several attempts with DMA heaps in the past which all
-> > > resulted in a very vendor specific vertically integrated solution. Bu=
-t
-> > > the solution with TEE subsystem aims to make it generic and vendor
-> > > agnostic.
-> >
-> > Just because all previous protected/restricted dma-heap effort
-> > failed to make it upstream, doesn't mean dma-heap is the wrong way of
-> > exposing this feature IMHO.
->
-> To be fair, having a TEE implementation does give us a much better
-> chance of having a sensible cross-vendor plan. And the fact it's
-> already (sort of accidentally and only on one platform AFAICT) ready
-> for a 'test' interface, where we can still exercise protected
-> allocation paths but without having to go through all the
-> platform-specific setup that is inaccessible to most people, is also
-> really great! That's probably been the biggest barrier to having this
-> tested outside of IHVs and OEMs.
->
-> But just because TEE is one good backend implementation, doesn't mean
-> it should be the userspace ABI. Why should userspace care that TEE has
-> mediated the allocation instead of it being a predefined range within
-> DT?
+The driver exposes the interfaces to read the raw values, as well as the
+minimum and maximum value for each channel. In addition several settings
+can be configured, like the DWC, sampling frequency or an averaging
+filter/oversampling. Interrupts triggered by the DWC, if configured, are
+then exposed as IIO events.
 
-The TEE may very well use a predefined range that part is abstracted
-with the interface.
+ADS7128 differs in the addition of further hardware features, like a
+root-mean-square (RMS) and a zero-crossing-detect (ZCD) module, which
+are not yet supported by the driver.
 
-> How does userspace pick which TEE device to use?
+Regarding the I2C interface the chips using opcodes to define the way
+how the registeres are accessed, like single or multiple register(s)
+read/write or setting/clearing only bits.
 
-There's normally only one and even if there is more than one it should
-be safe to assume that only one of them should be used when allocating
-restricted memory (TEE_GEN_CAP_RSTMEM from TEE_IOC_VERSION).
+---
+Changes in v4:
+- dt-bindings: make avdd-supply mandatory.
+- Replace wildcard names with ads7138 or ADS7138 respectively.
+- Improve code style (add comments, indentation, placing of brackets,
+  helper struct for dev)
+- Rename _setclear_bit() and use it for single writes.
+- Use DEFINE_RUNTIME_DEV_PM_OPS.
+- Make avdd mandatory and verify it's not a stub.
+- Link to v3: https://lore.kernel.org/r/20250206-adc_ml-v3-0-1d0bd3483aa2@softing.com
 
->  What advantage
-> does userspace get from having to have a different codepath to get a
-> different handle to memory? What about x86?
->
-> I think this proposal is looking at it from the wrong direction.
-> Instead of working upwards from the implementation to userspace, start
-> with userspace and work downwards. The interesting property to focus
-> on is allocating memory, not that EL1 is involved behind the scenes.
+Changes in v3:
+- Make interrupt optional.
+- Replace SET_RUNTIME_PM_OPS() with RUNTIME_PM_OPS() to prevent warning.
+- Rework read_avail for sampling frequency to show each frequency only
+  once.
+- Use IIO_CHAN_INFO_PEAK and IIO_CHAN_INFO_TROUGH instead of ext_info.
+- Link to v2: https://lore.kernel.org/r/20250203-adc_ml-v2-0-8a597660c395@softing.com
 
-From what I've gathered from earlier discussions, it wasn't much of a
-problem for userspace to handle this. If the kernel were to provide it
-via a different ABI, how would it be easier to implement in the
-kernel? I think we need an example to understand your suggestion.
+Changes in v2:
+- Improved commit messages.
+- dt-bindings: drop info about what driver supports, make 'avdd-supply'
+  optional.
+- General rework of driver regarding indentation and code style.
+- General code improvements to make code shorter and improve
+  readability, like remove 'goto's, order of declarations, ...
+- Use kernel macros and functions, like FIELD_*, guard(), ...
+- Rework i2c functions to return 0 in case of success and use
+  i2c_master_send() if possible.
+- Use struct for chip data instead of enum.
+- Add comment to what the lock is used for and make sure it's used in
+  these cases.
+- Use read_avail of iio_info and extend to return also the available
+  values for OSR.
+- Rework to only accept values of the availability list.
+- Use devm_* if possible and therefore drop 'remove' callback.
+- Rebase to kernel 6.13 and adjust to API changes.
+- Link to v1:
+  https://lore.kernel.org/r/20241122-adc_ml-v1-0-0769f2e1bbc1@softing.com
 
-Cheers,
-Jens
+Changes in v1 (to patch series without b4):
+- dt-bindings: Extended description
+
+Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
+
+---
+Tobias Sperling (2):
+      dt-bindings: iio: adc: Introduce ADS7138
+      iio: adc: Add driver for ADS7128 / ADS7138
+
+ .../devicetree/bindings/iio/adc/ti,ads7138.yaml    |  63 ++
+ drivers/iio/adc/Kconfig                            |  10 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/ti-ads7138.c                       | 749 +++++++++++++++++++++
+ 4 files changed, 823 insertions(+)
+---
+base-commit: 05dbaf8dd8bf537d4b4eb3115ab42a5fb40ff1f5
+change-id: 20241122-adc_ml-d1ce86e85b2c
+
+Best regards,
+-- 
+Tobias Sperling <tobias.sperling@softing.com>
+
+
 
