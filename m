@@ -1,305 +1,126 @@
-Return-Path: <linux-kernel+bounces-513828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3903FA34F19
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:11:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53223A34F1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:13:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46A216D3A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA413AD1AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B5224BBEE;
-	Thu, 13 Feb 2025 20:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C4324BBF7;
+	Thu, 13 Feb 2025 20:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t13YTDLY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hobx4y4p"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378B024A06D;
-	Thu, 13 Feb 2025 20:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9664928A2CB;
+	Thu, 13 Feb 2025 20:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739477476; cv=none; b=jnijhQULej7Tw2xByAnL7s2SnbzuRcnP7tdfKXsZtvfyRatqQoXmnMK63Wqu464QdvJzGQfNAWN6MDZXmjlruRyEgQ4xVI03SgHmMkGP4t24xRS/VE7cYja0dZ6Xn8x/Tnilblqsi9e31NuEb2Ycsc4V1aeErOmUUpvURKVfsuM=
+	t=1739477594; cv=none; b=sOkLMPUMcZlOKOslvVQo2eQADmb7vFkC0cUcZAm59cW1sfqr7U4i2Qwg6aFcLWQ0odXSyPhPnmfz3dXzIfM2RzHz90ffy2v/w9Iib0t75WMLyE8RdVoLwQkoMCiQuc01E+mBX4+2P6YNCSLGQXEYG9qY0l8yhOpiWCgi6YREQ1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739477476; c=relaxed/simple;
-	bh=rzAwFOtx8Mlk85SmZ1zam/aDQjsGN4PrEsXmYEmHYhI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nedJchHoAt5H9qLcqDG++wy/KB/AOLDhSG7JgNkwvE83tDP0r6zHH+nKH1NG31Kop9eCUeuWlPeeuln2Mqp0lQzFr5JeGZNNvQxv/55s5k27lnLXtsIlpGoAZAVN+GrwQgfi/9fT9OegNXCtwErsTXrjk6a07EM2fxTYSjxqCLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t13YTDLY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29FDC4CED1;
-	Thu, 13 Feb 2025 20:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739477475;
-	bh=rzAwFOtx8Mlk85SmZ1zam/aDQjsGN4PrEsXmYEmHYhI=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=t13YTDLYBaaZK2ruzOlvQHeKpXg2E7ItI679u9HdrNJF3HveaxsCsbGIIYvLiNRi9
-	 AxQfpqisjqFRpwsfQuSsmWA3+ZqM69Vh31eu1pvIQJhWDlaD6coWzNvw6KKZlIXezh
-	 uxYE6hc00NDguZbn/z15fEqhwdG5iJ5umvS1bg1V0yDkArTxYBWZTPFpUo8E2s3AL2
-	 NBuI9Qc5abWfzuU1knx3BpU2KL1jlAcCjqexNSqILcdKomnnO0F0xqBCNQRgK8NuSF
-	 8XanoXuVjWGji48r2cke8eG1T0r0n8fCukSTronAt4gOpwsB3Bj9XDsSPMucUx3Q6L
-	 xqWnfXWbgGbuA==
-Date: Thu, 13 Feb 2025 12:11:15 -0800
-From: Kees Cook <kees@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Jeff Xu <jeffxu@chromium.org>, akpm@linux-foundation.org,
-	jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, adhemerval.zanella@linaro.org,
-	oleg@redhat.com, avagin@gmail.com, benjamin@sipsolutions.net,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com,
-	hch@lst.de, ojeda@kernel.org, thomas.weissschuh@linutronix.de,
-	adobriyan@gmail.com, johannes@sipsolutions.net,
-	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
-	anna-maria@linutronix.de, mark.rutland@arm.com,
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-	enh@google.com, rientjes@google.com, groeck@chromium.org,
-	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-	mike.rapoport@gmail.com
-Subject: Re: [RFC PATCH v5 1/7] mseal, system mappings: kernel config and
- header change
-Message-ID: <202502131142.F5EE115C3A@keescook>
-References: <20250212032155.1276806-1-jeffxu@google.com>
- <20250212032155.1276806-2-jeffxu@google.com>
- <qrxmfa6jvaojedmo6fle2e6vd5k4hzihcuxdc6zk43dclf6nsd@dvuzolusdtz4>
- <CABi2SkUWGXtWAir5j1TO1c7FwOhbNmSwEzwTrxRgzfBydus=2A@mail.gmail.com>
- <66q7feybn3q2vuam72uwmai322jdx3jtv2m5xmh75l6w6etqiv@knpsyh3o627k>
+	s=arc-20240116; t=1739477594; c=relaxed/simple;
+	bh=5ZipYuMPgrN9n9uPJIkYegGgMsGv/UZehGDUEqj4LLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EU+rBmJjLdSHIYuuaym05ipYsgcGxAEA4j7ZTK88PfsbN02wo8yoLPHLPtEew/nk1ougjmyntU0jQv2VCyY+vZoyZFDX0sJQOZ0/He/CE+3P4FpcUJhYBS9HQRwotX1KC2vDBO/6dbOAEoiimGFFcizu1Sr/D1DB1APEKT1XCBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hobx4y4p; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0AvuaGU/cH1A/7IDZRhEkvHqA4F9A2Qjq+21qlNvMrk=; b=hobx4y4pjW4CvLaZgqgTHG/Ni2
+	HlN2dGSn7BwnXb4spg0TCKfBpblIJSchznx0NAKY9PmedV+BAyaSmB983ppEOB0AO9P79wDqdjNzF
+	JaiRJnUidqglZC/C6Ddi0LFGJNoxfld6pMusrW5UFSuL/i9hmYQPU35u6+1x8F672Fpg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tifa5-00DqgB-GW; Thu, 13 Feb 2025 21:13:05 +0100
+Date: Thu, 13 Feb 2025 21:13:05 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 7/7] net: hibmcge: Add ioctl supported in this
+ module
+Message-ID: <c1d557b6-7f11-449e-aff7-dad974e1c7c9@lunn.ch>
+References: <20250213035529.2402283-1-shaojijie@huawei.com>
+ <20250213035529.2402283-8-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <66q7feybn3q2vuam72uwmai322jdx3jtv2m5xmh75l6w6etqiv@knpsyh3o627k>
+In-Reply-To: <20250213035529.2402283-8-shaojijie@huawei.com>
 
-On Thu, Feb 13, 2025 at 01:29:46PM -0500, Liam R. Howlett wrote:
-> * Jeff Xu <jeffxu@chromium.org> [250213 12:17]:
-> > On Wed, Feb 12, 2025 at 7:05 AM Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
-> > >
-> > ...
-> > > >
-> > > > In this version, we've improved the handling of system mapping sealing from
-> > > > previous versions, instead of modifying the _install_special_mapping
-> > > > function itself, which would affect all architectures, we now call
-> > > > _install_special_mapping with a sealing flag only within the specific
-> > > > architecture that requires it. This targeted approach offers two key
-> > > > advantages: 1) It limits the code change's impact to the necessary
-> > > > architectures, and 2) It aligns with the software architecture by keeping
-> > > > the core memory management within the mm layer, while delegating the
-> > > > decision of sealing system mappings to the individual architecture, which
-> > > > is particularly relevant since 32-bit architectures never require sealing.
-> > > >
-> > > > Additionally, this patch introduces a new header,
-> > > > include/linux/usrprocess.h, which contains the mseal_system_mappings()
-> > > > function. This function helps the architecture determine if system
-> > > > mapping is enabled within the current kernel configuration. It can be
-> > > > extended in the future to handle opt-in/out prctl for enabling system
-> > > > mapping sealing at the process level or a kernel cmdline feature.
-> > > >
-> > > > A new header file was introduced because it was difficult to find the
-> > > > best location for this function. Although include/linux/mm.h was
-> > > > considered, this feature is more closely related to user processes
-> > > > than core memory management. Additionally, future prctl or kernel
-> > > > cmd-line implementations for this feature would not fit within the
-> > > > scope of core memory management or mseal.c. This is relevant because
-> > > > if we add unit-tests for mseal.c in the future, we would want to limit
-> > > > mseal.c's dependencies to core memory management.
-> > > >
-> > ...
-> > > >
-> > > > diff --git a/include/linux/userprocess.h b/include/linux/userprocess.h
-> > > > new file mode 100644
-> > > > index 000000000000..bd11e2e972c5
-> > > > --- /dev/null
-> > > > +++ b/include/linux/userprocess.h
-> > > > @@ -0,0 +1,18 @@
-> > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > +#ifndef _LINUX_USER_PROCESS_H
-> > > > +#define _LINUX_USER_PROCESS_H
-> > > > +#include <linux/mm.h>
-> [...] 
+On Thu, Feb 13, 2025 at 11:55:29AM +0800, Jijie Shao wrote:
+> This patch implements the ioctl interface to
+> read and write the PHY register.
 > 
-> Also, I don't agree with your stated reason for a new header.
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> ---
+>  .../net/ethernet/hisilicon/hibmcge/hbg_main.c  | 18 ++++++++++++++++++
+>  .../net/ethernet/hisilicon/hibmcge/hbg_mdio.c  | 10 ++++++++++
+>  .../net/ethernet/hisilicon/hibmcge/hbg_mdio.h  |  2 ++
+>  3 files changed, 30 insertions(+)
 > 
-> Please remove this header until it is needed.  It can be added later if
-> it is needed.  If we all had tiny headers because we might need them in
-> the future, we'd have serious issues finding anything and the list of
-> included headers would be huge.
-> 
-> You have added unnecessary changes and complications to this patch set
-> on v5.
+> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+> index 78999d41f41d..afd04ed65eee 100644
+> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+> @@ -273,6 +273,23 @@ static netdev_features_t hbg_net_fix_features(struct net_device *netdev,
+>  	return features & HBG_SUPPORT_FEATURES;
+>  }
+>  
+> +static int hbg_net_eth_ioctl(struct net_device *dev, struct ifreq *ifr, s32 cmd)
+> +{
+> +	struct hbg_priv *priv = netdev_priv(dev);
+> +
+> +	if (test_bit(HBG_NIC_STATE_RESETTING, &priv->state))
+> +		return -EBUSY;
+> +
+> +	switch (cmd) {
+> +	case SIOCGMIIPHY:
+> +	case SIOCGMIIREG:
+> +	case SIOCSMIIREG:
+> +		return hbg_mdio_ioctl(priv, ifr, cmd);
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
 
-In all fairness, I think v5 is significantly less complex overall. Jeff
-used his best judgement with a new header, and I don't think it's
-unreasonable. That it is unwanted is fine, mm.h it is, but I think it's
-clear the intent was trying to make this as least burdensome for the mm
-subsystem as possible.
+No need for this switch statement. phy_mii_ioctl() will return
+EOPNOTSUPP for any it does not support.
 
-> > > > +/*
-> > > > + * mseal of userspace process's system mappings.
-> > > > + */
-> > > > +static inline unsigned long mseal_system_mappings(void)
-> > > > +{
-> > > > +#ifdef CONFIG_MSEAL_SYSTEM_MAPPINGS
-> > > > +     return VM_SEALED;
-> > > > +#else
-> > > > +     return 0;
-> > > > +#endif
-> > > > +}
-> > > > +
-> > > > +#endif
-> > >
-> > > Looking in mm.h, there are examples of config checks which either set
-> > > the bit or set it to 0.  This means you wouldn't need the function at
-> > > all and the precompiler would do all the work (although with a static
-> > > inline, I'm not sure it would make a big difference in instructions).
-> > >
-> > > For instance, you could do:
-> > > #ifdef CONFIG_64BIT
-> > > /* VM is sealed, in vm_flags */
-> > > #define VM_SEALED       _BITUL(63)
-> > >
-> > > #ifdef CONFIG_MSEAL_SYSTEM_MAPPINGS
-> > > #define VM_SYSTEM_SEAL          VM_SEALED
-> > > else
-> > > #define VM_SYSTEM_SEAL          VM_NONE
-> > > #endif
-> > >
-> > > #else /* CONFIG_64BIT */
-> > > #define VM_SYSTEM_SEAL          VM_NONE
-> > > #endif
-> > >
-> > > Then you can use VM_SYSTEM_SEAL in the system mappings function in the
-> > > list of flags instead of having a variable + calling the static
-> > > function.
-> > >
-> > > I didn't look close enough to see if the 32bit version is necessary.
-> > >
-> > I'm aware of the other pattern.
-> > 
-> > VM_SEALED isn't defined in 32-bit systems, and mseal.c isn't part of
-> > the build. This is intentional. Any 32-bit code trying to use the
-> > sealing function or the VM_SEALED flag will immediately fail
-> > compilation. This makes it easier to identify incorrect usage.
-> 
-> So you are against using the #define because the VM_SYSTEM_SEAL will be
-> defined, even though it will be VM_NONE?  This is no worse than a
-> function that returns 0, and it aligns better with what we have today in
-> that it can be put in the list of other flags.
+The general structure of an IOCTL handler is to have a switch
+statements for any IOCTL which are handled at this level and the
+default: case then calls into the next layer down.
 
-When I was reading through all of this and considering the history of
-its development goals, it strikes me that a function is easier for the
-future if/when this can be made a boot-time setting.
+> +int hbg_mdio_ioctl(struct hbg_priv *priv, struct ifreq *ifr, int cmd)
+> +{
+> +	struct hbg_mac *mac = &priv->mac;
+> +
+> +	if (!mac->phydev)
+> +		return -ENODEV;
+> +
+> +	return phy_mii_ioctl(mac->phydev, ifr, cmd);
 
-If mm maintainers prefer a #define for now, that's fine of course. The
-value of VM_SYSTEM_SEAL can be VM_NONE on 32-bit.
+phy_do_ioctl(). This is assuming you follow the normal pattern of
+keeping the phydev pointer in the net_device structure.
 
-> Also, my vote for where you should put this code is clear: it should
-> live with the mseal #define in mm.h.  You're going to need mm.h anyways,
-> and that's a big hint as to where it should live.
-
-Sounds good.
-
-> > > > diff --git a/init/Kconfig b/init/Kconfig
-> > > > index d0d021b3fa3b..892d2bcdf397 100644
-> > > > --- a/init/Kconfig
-> > > > +++ b/init/Kconfig
-> > > > @@ -1882,6 +1882,24 @@ config ARCH_HAS_MEMBARRIER_CALLBACKS
-> > > >  config ARCH_HAS_MEMBARRIER_SYNC_CORE
-> > > >       bool
-> > > >
-> > > > +config ARCH_HAS_MSEAL_SYSTEM_MAPPINGS
-> > >
-> > > ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS is more clear.  HAS may mean it's
-> > > supported or it could mean it's enabled. SUPPORTS is more clear that
-> > > this is set if an arch supports the feature.  After all, I think HAS
-> > > here means it "has support for" mseal system mappings.
-> > >
-> > > I see that both are used (HAS and SUPPORTS), but I'm still not sure what
-> > > HAS means in other contexts without digging.
-> > >
-> > The existing pattern is to indicate arch support with
-> > CONFIG_ARCH_HAS_N and   security/KConfig to have CONFIG_N as the main
-> > switch. For example, CONFIG_ARCH_HAS_FORTIFY_SOURCE and
-> > CONFIG_FORTIFY_SOURCE. Since the MSEAL_SYSTEM_MAPPINGS is placed in
-> > security/Kconfig, hence I'm following the existing pattern in
-> > security/Kconfig.
-> 
-> Okay, thanks.  I really think SUPPORTS is more clear, but sticking with
-> whatever your area uses is also fine.
-
-Yeah, I've really scratched my head over what the best practice is here.
-There's a real mixture of "HAS" vs "SUPPORTS" across both hardware
-architectural support, software features, interface implementations,
-and compiler behavior that bridges between those. When I've looked in
-the past, it seemed that "HAS" was in the majority, but I've never been
-able to make sense of it.
-
-Let me look again. Today, HAS shows:
-
-$ git grep 'config .*_HAS_' | grep -v Documentation/ | \
-  awk '{print $2}' | cut -d_ -f1 | sort | uniq -c | sort -n
-      1 ARM
-      1 MAC80211
-      1 PGTABLE
-      1 PPC
-      1 RUSTC
-      1 USB
-      2 ARM64
-      2 SIBYTE
-      2 SOC
-      3 FS
-      3 PAHOLE
-      6 SGI
-      6 TOOLCHAIN
-     10 ARC
-     20 AS
-     32 SYS
-     34 CPU
-     38 CC
-    105 ARCH
-
-Looking through them, it's tools (CC, AS, PAHOLE, etc), and
-system/cpu/architecture prefixes, with ARCH being a clear winner.
-
-SUPPORTS looks similar, but isn't as widely used:
-
-$ git grep 'config .*_SUPPORTS_' | grep -v Documentation/ | \
-  awk '{print $2}' | cut -d_ -f1 | sort | uniq -c | sort -n
-      1 PPC64
-      1 X86
-      2 CLANG
-      2 GCC
-      2 RUSTC
-      8 CPU
-     38 SYS
-     71 ARCH
-
-The mips arch is using SYS, and distinguishes between HAS and SUPPORTS
-in the sense of "this kernel HAS support for CPU $foo, which SUPPORTS
-features x, y, z".
-
-Looking through ARCH_SUPPORTS, it's all software features. Looking
-through ARCH_HAS, it looks like a mix of hardware features
-and software features. Some software features are more about
-implementation availability, though (so "HAS" makes sense,
-but should maybe be "IMPLEMENTS"?) e.g. ARCH_HAS_SYSCALL_WRAPPER,
-ARCH_HAS_STRNLEN_USER, ARCH_HAS_FORTIFY_SOURCE, ARCH_HAS_ELF_RANDOMIZE,
-ARCH_HAS_STRICT_KERNEL_RWX, ARCH_HAS_STRICT_MODULE_RWX.
-
-So, I think I'd agree: this is about a software features and not an API
-implementation nor hardware feature, so let's use ARCH_SUPPORTS_.
-
--Kees
-
--- 
-Kees Cook
+	Andrew
 
