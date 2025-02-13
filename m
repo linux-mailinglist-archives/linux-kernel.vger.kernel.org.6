@@ -1,136 +1,76 @@
-Return-Path: <linux-kernel+bounces-513697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB7FA34D8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:23:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5711A34D8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E3316EBBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:21:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42DA3AA128
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D90245028;
-	Thu, 13 Feb 2025 18:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKl3rQHe"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E66242929;
+	Thu, 13 Feb 2025 18:22:29 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49D624501F;
-	Thu, 13 Feb 2025 18:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA52814AD20
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739470877; cv=none; b=oj6A/j0PXPC3M0xhNt0bf9fq/vthJs48pz71LeK/TSgr3TicHnQL2If4YlGVbjReRfhowNJNTo6g4duoV9LSmfA/9+8EWhyUIXuCBoWDk/mWJyxBdiAzK4hS2ANx4N9NsJpXgNoeBIfrMBmklzTJXVDz61Nq9avp1WDh7ewRRXM=
+	t=1739470949; cv=none; b=Ey07c+uzhXjZSbo6gcyJtiufhIcH4r/9iNpxF0gT1KarKiNS4+MyZahxlJWJOr/jTNRgGv+hIKcCCe5HZVkzmuEgNj7OMan5hi3ILaOTamOVAfoIvWGbyoHXNVqJGAFjg5RC04Ga7Uhamn1gUW8k+Ub6SPZ3Eq0WRkz4aabMJeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739470877; c=relaxed/simple;
-	bh=GFVRQOMr5LkqU8Lku2OheFZ32wfU+LzSDcV5fBCXzok=;
-	h=Message-ID:From:Date:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BTwwGdz5uvlfICExjjZ5DV/f5tA02Zy95POTymmor4/mD8NxbATXybr9BCiAuTENwE19uwozMPLsJE+0gOfbqlZAaZ1yuuIUPO9fT9kHRj1rz6qRujP5Qb+2ucQxo7uUIcpdQi4wD/xnZIsOgQeXGuCTlD/e1BuJu05DByMT9x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKl3rQHe; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-219f8263ae0so20198075ad.0;
-        Thu, 13 Feb 2025 10:21:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739470875; x=1740075675; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:date:from:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=s55JAvrkZ+mckTGI/dTfSx7v207w3H+pRifFPPJEuqg=;
-        b=ZKl3rQHe1oaxKjwvPfzUnFNpLCHGeXjW8XsWhGt0k2mVHDzoojrax06HC5B57O1a0x
-         XbPaWQmZb0H/CuGUy7iCeDeiu/psfJbaAAEqa/zHUeWRbCQTfGk8g27a0Qm6yyxnAETh
-         vOxiTbE+hXJc+VN1j90dw2heZ25EAbmeUGD85qr+Ixvrt1Yi88jXhIDkOWUQ3GjQj336
-         CxeQcGGzsdvwckcZVWqjn7efCayVx6hYW3em4D3u8vkttxCBTPizxmSGERwWADBNsoVu
-         UZ2pdxeVl4ZoSuMA7qVyRykF5nQtQz5J9PRZLm3BSd2liZ0cR+SAni61HnxlosRe0tYf
-         t1Iw==
+	s=arc-20240116; t=1739470949; c=relaxed/simple;
+	bh=yBXzG4i9Dkiru55lQyz1Xr5+cE0Yl9ZHuQy6/bd/lrM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nLRGtlE9FRoCQdjG8znGt0ba4ye/QIVNQaRRdQnCoI239lEpq55DkqNBtSPIwVTwt+nVH1Emkmw4E0nVvNc+pAeHO/33huv7bec55FMGDsWNsBjCMmLCjMlnZOrpFMM6bpTLz2U6iI1kPEXuzgn2l7QgyskwsFEpnLwLebxeuLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d18a553f42so25154835ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:22:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739470875; x=1740075675;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:date:from:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s55JAvrkZ+mckTGI/dTfSx7v207w3H+pRifFPPJEuqg=;
-        b=V51DCeT1L9Y+v9uehb4Vymg+rbv6RnySkCIxnpOPKOC663V0JECRW60JVJNa3MdsVc
-         TNiLM033Z5yg766KcZwmv7B49X1x7+XZcrefkbeQaILZIK3e/MsG55q8iNrgAD2CnAuU
-         SikwZmm80KGiGelvpLc7n84DZ/Zna7OVWqQ3yGCqkiGpCH6ZD2F4OvPxwglUJQS3PSfq
-         5+mvHMsk3nXejQnuL2eBy9eRDrT+oH7k09Ztuca/DrvKwK3YVzn3ORLCRlE95QveLukO
-         clV+pv6k3NdWfHjooJ1SOSQwAd6PTEOeOkJkjcarzCefqXz77I4AzBkW0m4W65PnoJpy
-         dnYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMJkb3YHlO69sNYFZNUi0lVB6cDQ/0dG7xD9R/8+SmYdWm3Av+LO7aKBLsEYJONmRjUU5rkJ8KrP/bNVUB@vger.kernel.org, AJvYcCXjHMMDYO418ZWcvAeNIVr0SoLmmiqEBLFp4u+5MVVQ1aFghg/D4P+HHc4O4Vnq4ltSQc7/k0BdYaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYz0Eb7I/TRQ4WAaNLtpe5OpFeM42OEJ0YURzzE0M94bUEkcir
-	HDHAknqxqXyG07IoltHczuYT1AbesbOkZ5qy+fesUxrsYJFiKCAR
-X-Gm-Gg: ASbGncvt71lMH5D+kjXvvND1K59ofH4th4Vg49R45jL16Okm1l6lswTpxjjFPRmPeG/
-	EJybocgwiMiscQCXhoB45nN1IZp9/N0cloJ2H1lP+M4nT44VRiGxxXlCK54DnQXqujB7/RckZmd
-	tMnDqcxpvHLfnrnpjX983Flq/xZB1QRg8Di+AxePuvrUNpOZcDyDmSvm5OGPGYqkKV8jLJn2frk
-	Lw2X/Oy7TSbPihtnxEdaGVx7X2noQJRTs3v4HnZZEh9yPqJKfVhcVsOsJWfPRNcQeeaup2UtbYG
-	zvAPWZQF8WgqLlEKF70knO63EorOzGUSqcfvuy8zMiM=
-X-Google-Smtp-Source: AGHT+IHHjbD3SCWpcLZyKdyhWklbzLgH1E7bHRn1Ff7UIDa2/tSONO7XHewrgjBHlMKmHedAoGZa+Q==
-X-Received: by 2002:a17:902:e946:b0:216:282d:c67b with SMTP id d9443c01a7336-220bbc67f90mr158799195ad.35.1739470874925;
-        Thu, 13 Feb 2025 10:21:14 -0800 (PST)
-Received: from asus. (c-73-189-148-61.hsd1.ca.comcast.net. [73.189.148.61])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5585fbfsm15310745ad.226.2025.02.13.10.21.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 10:21:14 -0800 (PST)
-Message-ID: <67ae381a.170a0220.362a2c.8f42@mx.google.com>
-X-Google-Original-Message-ID: <Z644EoiqEy5YegEW@asus.>
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Thu, 13 Feb 2025 10:21:06 -0800
-To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] cxl/pmem: debug invalid serial number data
-References: <20250213064008.4032730-1-wangyuquan1236@phytium.com.cn>
- <20250213064008.4032730-2-wangyuquan1236@phytium.com.cn>
+        d=1e100.net; s=20230601; t=1739470947; x=1740075747;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZKU5Kcevzf5gXwIZbo3x8mZboejbG5jsHlKHFlgunn8=;
+        b=ihZm0dW56eMkuXAcBlChTXHx5CsYtNTBRvpTpUefbCHEHJtVjJiMhxERfaCwBoAzp9
+         BtAGsdGA3mrJt94Cf/Y46ori+Vlie8io3raoKyiUYpFkyoLDekT8ho7dxp0UbNOKKUhM
+         7IqmDtq2008eo8XYX/ifGcT6yPvYmLgN4hsp65j4IRBY2L6X5TfPjH9pbDBEhaEj5/lp
+         hPXBAobhVHBe1V7wpt8wEgVjnKK82t2rOMUsZAtEevv46uKNfkfolaiRdE+/fpxr4mQY
+         9AUmMtDaWALsG1h6iw7Tkz26CttsicyLi+6NwueCZtCZkZNgPSzwd5GLbpq8RQpdc0Zl
+         BFDw==
+X-Gm-Message-State: AOJu0YxRF/vj5cxDVLpwt1dy/olGm5X+GGh56sBamye3nXcMqK8UzCkC
+	DZIv7/GT5b8bpymORrVIagQgfkC9+LC6LRCACTiBi+GaWCjD0RSogDYXEE9ZivF0kIXpHmnCwVd
+	QiXqmqbanC2MOHPfOCpG2BmkEPVIAR287mB9vTXp/FliwCrEXG38zDuc=
+X-Google-Smtp-Source: AGHT+IEnrpszSMbtVzbXqW7bOdLhJdsfPgoTP/FcvRq+EqallcwMEFAJ9YQBrScxk4/uvQg0/1SU1YzR/ttJGwAobhm5H4wZMoFK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213064008.4032730-2-wangyuquan1236@phytium.com.cn>
+X-Received: by 2002:a05:6e02:1a61:b0:3d1:78c6:208e with SMTP id
+ e9e14a558f8ab-3d17bfddcd4mr83345455ab.15.1739470946865; Thu, 13 Feb 2025
+ 10:22:26 -0800 (PST)
+Date: Thu, 13 Feb 2025 10:22:26 -0800
+In-Reply-To: <67aca50a.050a0220.110943.004e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ae3862.050a0220.21dd3.0020.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+1fcd957a82e3a1baa94d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 13, 2025 at 02:40:08PM +0800, Yuquan Wang wrote:
-> In a nvdimm interleave-set each device with an invalid or zero
-> serial number may cause pmem region initialization to fail, but in
-> cxl case such device could still set cookies of nd_interleave_set
-> and create a nvdimm pmem region.
-> 
-> This adds the validation of serial number in cxl pmem region creation.
-> The event of no serial number would cause to fail to set the cookie
-> and pmem region.
-> 
-> Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-> ---
->  drivers/cxl/pmem.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
-> index f9c95996e937..89f4eac49313 100644
-> --- a/drivers/cxl/pmem.c
-> +++ b/drivers/cxl/pmem.c
-> @@ -384,6 +384,13 @@ static int cxl_pmem_region_probe(struct device *dev)
->  		};
->  		info[i].offset = m->start;
->  		info[i].serial = cxlds->serial;
-> +
-> +		if (info[i].serial == 0) {
-> +			dev_dbg(dev, "%s: invalid serial number\n",
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Should we use dev_err() instead? 
+***
 
-Fan
-> +				dev_name(&cxlmd->dev));
-> +			rc = -ENXIO;
-> +			goto out_nvd;
-> +		}
->  	}
->  	ndr_desc.num_mappings = cxlr_pmem->nr_mappings;
->  	ndr_desc.mapping = mappings;
-> -- 
-> 2.34.1
-> 
+Subject: 
+Author: purvayeshi550@gmail.com
+
+#syz test
 
