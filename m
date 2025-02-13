@@ -1,268 +1,147 @@
-Return-Path: <linux-kernel+bounces-512247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EA8A33672
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:56:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC81A33678
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A1B1681F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:56:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85DF37A3667
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EB52054E1;
-	Thu, 13 Feb 2025 03:56:10 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F574A29;
-	Thu, 13 Feb 2025 03:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FACD205516;
+	Thu, 13 Feb 2025 03:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XSFQTZss"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8B2204C1F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 03:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739418969; cv=none; b=lJ244/c1tz5Yp5ucJn+OpSzpZ8OPb74HRPJrdAwUGTBiFrpsSG/Z1nn0ZTp1vQDc6ZmQYpsBKlVGOiK6XmD3EnOrBhIBf8n0wve3LN0KKnpAsSQ77NgdKZI4TRSeoV4bYKsKKXZbTwXBoiikzOzMSIAxMEaxY0Xg894wk93X0Rw=
+	t=1739419014; cv=none; b=Hvho0QIPuPJMeE2nzd8DPRIzzlJ34xGJojo6tNharlCUMW997L3ifN3Xh4WXdiD3AMwGEej/GQ447ddesxs20YjNJDcuguyC7GYa2/o2VT26nZZ3aRv03SXk6a/lL0aV7bsmwwjDBLtpe3Mt1aoah0FlPjyauyVRIhQWY427MSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739418969; c=relaxed/simple;
-	bh=azYpgLA8z3kcFfFC5gdpaTzFk4QeSlBrWzku2tNrj7Y=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=LbXalEMVc9kf0GDegkArLVBDvi1/DfhtcBCM4N5vwR7LlOOZiB4+cdG3tlfhuY/57H7Dyhw63wclMwyiUDwJ9FBzSrZuM2MVQ92pQz2/QL+Uyu+EO27DGaevX0BORMe+xQZrELVL2S5LcvoYikqmm3QX/MHtDmdMTEwJAJraEvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8AxjmtKba1nKclzAA--.4753S3;
-	Thu, 13 Feb 2025 11:55:54 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front1 (Coremail) with SMTP id qMiowMDxesQ+ba1nBzYPAA--.2422S2;
-	Thu, 13 Feb 2025 11:55:44 +0800 (CST)
-Subject: Re: [PATCH v2 3/3] tpm: Add a driver for Loongson TPM device
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- peterhuewe@gmx.de, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- linux-crypto@vger.kernel.org, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
- Yinggang Gu <guyinggang@loongson.cn>
-References: <20250212033113.15137-1-zhaoqunqin@loongson.cn>
- <20250212033113.15137-4-zhaoqunqin@loongson.cn> <Z60SfDaWnbgddUnA@kernel.org>
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Message-ID: <c825cd7b-a255-d296-baa0-c1a746cb1bce@loongson.cn>
-Date: Thu, 13 Feb 2025 11:56:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1739419014; c=relaxed/simple;
+	bh=lIp+HsaCTW2c1qH6AV4piTqN68lzAxi9fzfNaYbm8ow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=drmVWZlzilZXIK3ncyFVps0KHLEGTAEILA4BkU8L7MeBPcV7nDbDqcXRzuD/SHBTagDPB9DQRSl8ciYGbHT84VuHE005XlYcLV6eb2EKZyOIqRVq9iLaQYkMWWxb1lyVLqeasN7i8tviK3A6AOS2RRrPKhMh+niGZYJMBQSStYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XSFQTZss; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46c8474d8f6so3274411cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 19:56:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739419012; x=1740023812; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G4d4nkVlEN0PRY0ICgCFHrYMedwLuqUNW6GLaoppbDo=;
+        b=XSFQTZssj0Gy1OrOQGRuw0u7vhK29FdjpsDKRBjm/Gwd7SORmSyd5dUyTv3MY1PYYT
+         viwR/V2odt9jedbMKfAptzTEArq/hY6pKOLT1ZXfOmw4MnlRdDRshQfkYGy6N5fMYkeL
+         L5T/x++l4dsPTMDse4OX1aH7cPVhWUS6HeTf3QvhPkkh0H7XeNbCPWeM3BLIZqq4/71A
+         9U5YyEe9WBQ0cmvaXr3hIkLtAtaIv32wz5RGdoR9F9d4Zb10qrXO2qis2Jk+7s7x5jL2
+         8rmS9+9hpKvRrZe4KlrQf8CrDiFTPSR0xJn83xAWNJ3dlebCOGwA4qXlQFGyOszzcQRP
+         eMAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739419012; x=1740023812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G4d4nkVlEN0PRY0ICgCFHrYMedwLuqUNW6GLaoppbDo=;
+        b=qSpB28PwffDDMGlyaP9SZ/hgvP6ouSAjNNsY/r1XfgZIhVBtm4l1Uv2WTg3QbBOwLE
+         kx0094hSefMVCjQO4/yi48APjrk52xFMKAKQRPdA0H3t/H+VHKWQvRyla4wsQq9rFDks
+         5N+/3cJvh5KI3jR/mocvl+Ba3EL28Wltop29pBseTlohXLzpOL3PKaJ0SSflf0fHWHzc
+         Ki3yiPTi+0+C85u0Rkwn8eqruysqm0x/tu2RDdw+9QCk+dNBltSoz4zlXVLSIqn93pn5
+         ezSrBeZmzrBTo1NNy4klOi9ejFWq0OZlvduUrsl2z9nfHBVnyf//q94CZBFbuLBBgAUv
+         b8Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCW+X+40Qo9ES6DnLFySiWmekxQ69NJB6V7gCyMFfuLY87Xjrc0UJxq/ObKRh2MILzJheuJiRCQonMTy+TU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUwXu8nwNubB9ooBcQ+URKChL3qHJKAG3+ARNnlAIXKop10QRQ
+	RdItFpm91f3LtuK9HCmqLbCq0gQMhIuvuAILVwWcW2U1C5CSEnhNbjSFOSE4SlxWu4r3CeP/G6I
+	CHpbyrKviFLmjMGjs1B1mA9p1rtVZF9Q8CCzF
+X-Gm-Gg: ASbGncvOM+96w8Z5OUs8NPztNumRsx4tlOMY1Jf8MKmXHp/WG3JwLH1+J36o7VxH7Sr
+	ps4lgPiINYo3U5t+JEEn0JFo45khLq+l9pNldxIDPd0DHXIUhW0Wy4gb2ypfzpwt6fYqbwldpyK
+	p8GEap0fEFxls7Rsy1RhNi7AQsiAc=
+X-Google-Smtp-Source: AGHT+IFt2SRHcEtHijHYyd/DgImJNa0gqT37F6giMOPmbndZK9qekQVCUW6Tr4TIzTxrmtUuEL8fr09ot7NeHJrgFAQ=
+X-Received: by 2002:a05:622a:6786:b0:471:b411:700f with SMTP id
+ d75a77b69052e-471b411722fmr57144091cf.50.1739419011776; Wed, 12 Feb 2025
+ 19:56:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z60SfDaWnbgddUnA@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMDxesQ+ba1nBzYPAA--.2422S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxtr15urWfXw4furyDZF4DKFX_yoW7tF1xpF
-	4kCan8CF4UJrW7t39Iqr4DuF9xX34vqFy2krW7tasxZr90v3s5ur4DKFy5uFZ3Zr1kGF1I
-	vFWS9r43uF1Yk3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
+References: <20250107042202.2554063-1-suleiman@google.com> <20250107042202.2554063-2-suleiman@google.com>
+ <Z4gtb-Z2GpbEkAsQ@google.com> <CABCjUKDU4b5QodgT=tSgrV-fb_qnksmSxhMK3gNrUGsT9xeitg@mail.gmail.com>
+ <Z4qK4B6taSoZTJMp@google.com> <CABCjUKDDDhXx8mSRKHCa34JjSX1nfM5WMG-UrPu9fjei6gkUJA@mail.gmail.com>
+ <Z5AB-6bLRNLle27G@google.com> <CABCjUKB-4kvAg5U0D2O2aiTgfHnYx5qBTBEJJsK7edZY5g5eTQ@mail.gmail.com>
+ <CABCjUKCDoHtLyX2CvrN+_D4N5ZiL2sLzyg+vY=LMkWZefrP_cA@mail.gmail.com> <Z6QQjmJE4CiWtUpI@google.com>
+In-Reply-To: <Z6QQjmJE4CiWtUpI@google.com>
+From: Suleiman Souhlal <suleiman@google.com>
+Date: Thu, 13 Feb 2025 12:56:40 +0900
+X-Gm-Features: AWEUYZkiJi609h5vUbEhDyMgn7TCz7Lh_NkQvTV6g9hIlv_y3sD6PlGK0_1NurA
+Message-ID: <CABCjUKBd8izT7NF0CDa56qcMVvEd0i8O4A-5GK7ARMsWD-KE9g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] kvm: Introduce kvm_total_suspend_ns().
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
+	David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ssouhlal@freebsd.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 2025/2/13 上午5:28, Jarkko Sakkinen 写道:
-> On Wed, Feb 12, 2025 at 11:31:13AM +0800, Qunqin Zhao wrote:
->> TPM2.0 is implemented in Loongson security engine. This is the driver
-> TPM 2.0 or just TPM2 (either is fine with me). Quick reminder what
-> Loongson security engine (I could not know that and it would be nice
-> to have that in git log).
-
-Looks like just TPM2 is better.
-
-Some explanations about Loongson security engine will be added to git log.
-
+On Thu, Feb 6, 2025 at 10:29=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
 >
->> for it.
->>
->> Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
->> Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
->> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
->> ---
->>   MAINTAINERS                 |   1 +
->>   drivers/char/tpm/Kconfig    |   9 ++++
->>   drivers/char/tpm/Makefile   |   1 +
->>   drivers/char/tpm/tpm_lsse.c | 104 ++++++++++++++++++++++++++++++++++++
->>   4 files changed, 115 insertions(+)
->>   create mode 100644 drivers/char/tpm/tpm_lsse.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 6493d58436..6aad0f08ad 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -13484,6 +13484,7 @@ LOONGSON CRYPTO DRIVER
->>   M:	Qunqin Zhao <zhaoqunqin@loongson.com>
->>   L:	linux-crypto@vger.kernel.org
->>   S:	Maintained
->> +F:	drivers/char/tpm/tpm_lsse.c
->>   F:	drivers/crypto/loongson/
->>   
->>   LOONGSON-2 APB DMA DRIVER
-> Probably MAINTAINERS update should be a separate patch.
+> On Wed, Feb 05, 2025, Suleiman Souhlal wrote:
+> > >
+> > > I tried your suggestion of moving this to a PM notifier and I found
+> > > that it's possible for VCPUs to run after resume but before the PM
+> > > notifier has been called, because the resume notifiers get called
+> > > after tasks are unfrozen. Unfortunately that means that if we were to
+> > > do that, guest TSCs could go backwards.
+>
+> Ugh.  That explains why KVM hooks the CPU online path.
+>
+> > > However, I think it should be possible to keep the existing backwards
+> > > guest TSC prevention code but also use a notifier that further adjust=
+s
+> > > the guest TSCs to advance time on suspends where the TSC did go
+> > > backwards. This would make both s2idle and deep suspends behave the
+> > > same way.
+> >
+> > An alternative might be to block VCPUs from newly entering the guest
+> > between the pre and post suspend notifiers.
+> > Otherwise, some of the steal time accounting would have to be done in
+> > kvm_arch_enable_virtualization_cpu(), to make sure it gets applied on
+> > the first VCPU run, in case that happens before the resume notifier
+> > would have fired. But the comment there says we can't call
+> > ktime_get_boottime_ns() there, so maybe that's not possible.
+>
+> I don't think the PM notifier approach is viable.  It's simply too late. =
+ Without
+> a hook in CPU online, KVM can't even tell which VMs/vCPUs were running be=
+fore the
+> suspend, i.e. which VMs need to be updated.
+>
+> One idea would be to simply fast forward guest TSC to current time when t=
+he vCPU
+> is loaded after suspend+resume.  E.g. this hack appears to work.
 
-Some  MAINTAINERS updates are not  separated form the driver patch.  
-Like the submit of "drivers/mfd/max7714*".
+That's really interesting!
+One possible concern with this approach is that now each VCPU gets a
+slightly different offset.
+It's possible to avoid that by making sure that only one VCPU computes
+the offset and having the other ones reuse it.
+I'll send a patch. Should it be "Suggested-by:" you or is there
+something else I should do?
 
-So it seems whether the updates to MAINTAINERS  are separated or not is OK.
+I also wasn't sure if we should do this when the user sets the offset
+with KVM_VCPU_TSC_OFFSET. I guess we probably should.
 
-BR, Qunqin.
-
->> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
->> index 0fc9a510e0..56d0417065 100644
->> --- a/drivers/char/tpm/Kconfig
->> +++ b/drivers/char/tpm/Kconfig
->> @@ -225,5 +225,14 @@ config TCG_FTPM_TEE
->>   	help
->>   	  This driver proxies for firmware TPM running in TEE.
->>   
->> +config TCG_LSSE
->> +	tristate "Loongson TPM Interface"
->> +	depends on MFD_LS6000SE
->> +	help
->> +	  If you want to make Loongson TPM support available, say Yes and
->> +	  it will be accessible from within Linux. To compile this
->> +	  driver as a module, choose M here; the module will be called
->> +	  tpm_lsse.
->> +
->>   source "drivers/char/tpm/st33zp24/Kconfig"
->>   endif # TCG_TPM
->> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
->> index 9bb142c752..bf2280352d 100644
->> --- a/drivers/char/tpm/Makefile
->> +++ b/drivers/char/tpm/Makefile
->> @@ -44,3 +44,4 @@ obj-$(CONFIG_TCG_XEN) += xen-tpmfront.o
->>   obj-$(CONFIG_TCG_CRB) += tpm_crb.o
->>   obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
->>   obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
->> +obj-$(CONFIG_TCG_LSSE) += tpm_lsse.o
->> diff --git a/drivers/char/tpm/tpm_lsse.c b/drivers/char/tpm/tpm_lsse.c
->> new file mode 100644
->> index 0000000000..3fd2d9bac8
->> --- /dev/null
->> +++ b/drivers/char/tpm/tpm_lsse.c
->> @@ -0,0 +1,104 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/* Copyright (c) 2025 Loongson Technology Corporation Limited. */
->> +
->> +#include <linux/device.h>
->> +#include <linux/mfd/ls6000se.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/wait.h>
->> +
->> +#include "tpm.h"
->> +
->> +struct tpm_msg {
->> +	u32 cmd;
->> +	u32 data_off;
->> +	u32 data_len;
->> +	u32 info[5];
->> +};
->> +
->> +struct tpm_dev {
->> +	struct lsse_ch *se_ch;
->> +	struct completion tpm_completion;
->> +};
->> +
->> +static void tpm_complete(struct lsse_ch *ch)
->> +{
->> +	struct tpm_dev *td = ch->priv;
->> +
->> +	complete(&td->tpm_completion);
->> +}
->> +
->> +static int tpm_ls_recv(struct tpm_chip *chip, u8 *buf, size_t count)
->> +{
->> +	struct tpm_dev *td = dev_get_drvdata(&chip->dev);
->> +	struct tpm_msg *rmsg;
->> +	int sig;
->> +
->> +	sig = wait_for_completion_interruptible(&td->tpm_completion);
->> +	if (sig)
->> +		return sig;
->> +
->> +	rmsg = td->se_ch->rmsg;
->> +	memcpy(buf, td->se_ch->data_buffer, rmsg->data_len);
->> +
->> +	return rmsg->data_len;
->> +}
->> +
->> +static int tpm_ls_send(struct tpm_chip *chip, u8 *buf, size_t count)
->> +{
->> +	struct tpm_dev *td = dev_get_drvdata(&chip->dev);
->> +	struct tpm_msg *smsg = td->se_ch->smsg;
->> +
->> +	memcpy(td->se_ch->data_buffer, buf, count);
->> +	smsg->data_len = count;
->> +
->> +	return se_send_ch_requeset(td->se_ch);
->> +}
->> +
->> +static const struct tpm_class_ops lsse_tpm_ops = {
->> +	.flags = TPM_OPS_AUTO_STARTUP,
->> +	.recv = tpm_ls_recv,
->> +	.send = tpm_ls_send,
->> +};
->> +
->> +static int lsse_tpm_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct tpm_chip *chip;
->> +	struct tpm_msg *smsg;
->> +	struct tpm_dev *td;
->> +
->> +	td = devm_kzalloc(dev, sizeof(struct tpm_dev), GFP_KERNEL);
->> +	if (!td)
->> +		return -ENOMEM;
->> +
->> +	init_completion(&td->tpm_completion);
->> +	td->se_ch = se_init_ch(dev->parent, SE_CH_TPM, PAGE_SIZE,
->> +			       2 * sizeof(struct tpm_msg), td, tpm_complete);
->> +	if (!td->se_ch)
->> +		return -ENODEV;
->> +	smsg = td->se_ch->smsg;
->> +	smsg->cmd = SE_CMD_TPM;
->> +	smsg->data_off = td->se_ch->off;
->> +
->> +	chip = tpmm_chip_alloc(dev, &lsse_tpm_ops);
->> +	if (IS_ERR(chip))
->> +		return PTR_ERR(chip);
->> +	chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
->> +	dev_set_drvdata(&chip->dev, td);
->> +
->> +	return tpm_chip_register(chip);
->> +}
->> +
->> +static struct platform_driver lsse_tpm_driver = {
->> +	.probe   = lsse_tpm_probe,
->> +	.driver  = {
->> +		.name  = "ls6000se-tpm",
->> +	},
->> +};
->> +module_platform_driver(lsse_tpm_driver);
->> +
->> +MODULE_ALIAS("platform:ls6000se-tpm");
->> +MODULE_LICENSE("GPL");
->> +MODULE_AUTHOR("Yinggang Gu <guyinggang@loongson.cn>");
->> +MODULE_AUTHOR("Qunqin Zhao <zhaoqunqin@loongson.cn>");
->> +MODULE_DESCRIPTION("Loongson TPM driver");
->> -- 
->> 2.43.0
->>
-> BR, Jarkko
-
+-- Suleiman
 
