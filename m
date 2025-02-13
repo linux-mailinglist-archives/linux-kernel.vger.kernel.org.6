@@ -1,146 +1,281 @@
-Return-Path: <linux-kernel+bounces-513010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA50A34084
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:39:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5B6A340A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:45:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0BC188D00F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:39:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A856D7A48B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E56623A98F;
-	Thu, 13 Feb 2025 13:38:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED19720B80D;
-	Thu, 13 Feb 2025 13:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D062222D0;
+	Thu, 13 Feb 2025 13:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etjmyCXo"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ACA2222CE;
+	Thu, 13 Feb 2025 13:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739453928; cv=none; b=tuhvtGJHN0ieU3/bmIJ6YfS3/Mza8af82hMw/PiQVSwvc0vmiM3k1GdsQYKEe4Py7zGvCJhgNmt41WnRXAVHnz4pIShrj+ebVLubXg2iB8pnansymwkZhRh64SG32T16tcSQM6kgiIqrBJXHPL1ABSgwc4S/fOHRt7j2ywmkG1w=
+	t=1739454209; cv=none; b=h/GtjK9Ip4QzXQQXlqjYagrzkiPJD5VuX4XTAizoS4qUkRKAwa8GCQe6cBhU9NLb4IbiWW4NjMY/THT2an8K4EnlvYDzRvpsYPvWw2e/w4bNIDHSRO7YQAKCUu4UIhNPfDUe5szwLlUZb13REo9Q46BgkX8yafF+kbpC/waquBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739453928; c=relaxed/simple;
-	bh=pzBCvlYbL5cZxHO40BZm6owVnS0Y4kV/DE6Ud4axTWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XHmeE+2/wJ08/wvOAByeqz3v1EESEg8C+UhgMM4TrBeEqdoL90k7LDF0UgB3OrGtKeAgRtV5I+a1IB9ch+qbkGB30dDbugOhvZKCXdBCVoVExx1Ccvm7KwN8GpiawLgKTD7R914hjvap1ad4Zk3VWieAR+pV6FGdJHXCTpFxZ9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B385616F3;
-	Thu, 13 Feb 2025 05:39:04 -0800 (PST)
-Received: from [10.1.30.41] (e127648.arm.com [10.1.30.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9188A3F58B;
-	Thu, 13 Feb 2025 05:38:39 -0800 (PST)
-Message-ID: <9629f060-28f4-4743-9e60-688cba039f87@arm.com>
-Date: Thu, 13 Feb 2025 13:38:37 +0000
+	s=arc-20240116; t=1739454209; c=relaxed/simple;
+	bh=1THMgtBUVWtS8iZzrqo/yymnGZZkmDBdqurvA1tE8k4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G3zECh3pqRKV+1sAvxRqNpljoU8QE+JlwmKAjT5sZ/grTJuEe0bVKcE0Toxgtcs9b6GJsXVmF3sSGYQqbcyttZAU5lSe0tglDRxXXk4m0qhMH/FBuuQvggoYmwz5PZ/I9E3pc0D0RZpj5e70MDFr4cJhxzt2SfGLluCKGYG+oWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etjmyCXo; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4361e89b6daso6286755e9.3;
+        Thu, 13 Feb 2025 05:43:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739454205; x=1740059005; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XMPABjjogfdKDCcQgCBVWi5+k2BUL7XWDxcvghN5g/4=;
+        b=etjmyCXol/6m1PYRRYCdy6WjxtRTSheSJ60RCZXrJ84dufGk5KRhUucWS34hfJ8Poi
+         Q51mG0TvetlZmIXuLJ5FECs3pFltUDqJDurufvq+PvdeTEE2mGmpzCa7CHXbHyeQ7ZC5
+         EsM+6AyzBUTChbsL70iCf+keMS31mad/eNn9bJD7q/lmioY2b5Zm375WzWT0erOl/wSM
+         BsWr5SKgRaP44ePL8DNk3CeoaA82eLJdUVSg/yEQtRCORuv+E9Vrb4COkjlZH/Xt72lG
+         P+sQuNq1o2GYFiCToJF2YUZl9qpd06zEwJVcskRi34yGPqCUbU1F48qaLN8bhxnB1Vtg
+         UtNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739454205; x=1740059005;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XMPABjjogfdKDCcQgCBVWi5+k2BUL7XWDxcvghN5g/4=;
+        b=JWXzzMNGyu/kE9t4FBaxOI1Ci7kGHWEbqKLuv7TkUvKwyKtxq1ZadVyplbIuC/oyT4
+         UuHsv1LCjXylKBhQc48U/EXbZbt9oh+jOp3A570A9pWKf939w6cwWeQrtmj66KophN0R
+         Pl4yvVg1LWJDL+V6N4OPZnsnlnqBeCseYZNdMrRonTMwupMumFmaG2/c2oZsScTzf2I6
+         OgS+DdVerORFyNfTqW/Dl2tHMjxs+oxZdFFnamRpF5EBOVZhLGsOfc050+2Xnw37RpSD
+         y+83ImOWEVJOsq2nJko0pm6sgWW3iq7i0GeOJg3LkwP/eFcR2UFcXGFm/7pgPBNSdGT5
+         217g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVw9pp9J3eDLgl32DV01m8SKc6J/OOTH5yKojqGyT2xGD4bj1W83YgzjfNdFFdA6btYJn8tR0v/+7JAxw=@vger.kernel.org, AJvYcCWwVwTBx/GqqAVMvWTQTpFccxXg4YtRHRhC86jEHUyGuwyWdJvWLtWy6nBnilH9/Dgm1jmpMZ0J@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVV+PDvo/3I2D3ZGvJOBHqLwF/MLs4TjBanUF6HM0q8Fu8Fndr
+	Dutvz4wp6p0DwT+fqUvqBq05ly0GIy9OYo/bgoHmgtriJYQqAPc1oVbah0iL
+X-Gm-Gg: ASbGncuNAdexQN2HEOWR0dp5RQo4m0JaNp6RytYpFJn3CgDTlxJfRcETpPKbymBBLbM
+	EeCHQgjDIBLMfS0cKDJu+i0vbD8LVEESiT5J0Rr05DW1dnsbjEZst4Z50g1BgltPnrZrVsVMcZr
+	FriHatWsFwl7VW+Vkg97N+D8Xn+M9qH0/DD+15Pk5bC+q7eB+K172huos9U4sAfabVGczkaqpKw
+	MwOr/IMc8LxuMsLwmPMW0d8rQp5PJiZ4CIhArJm1TIJH+5ryz8ts1OwJ2H7NdWhqTASgJbwOcjl
+	UXr6MZ539XSHMcRrvmzx6nmvPQZ5m09Dokme938=
+X-Google-Smtp-Source: AGHT+IHGh5hxeTTEn/ULQbgxjZRpnBSlL1VvOrm01LozDLNI/OQRJLTs0nLgEadHJzEMLliDtiQkEA==
+X-Received: by 2002:a5d:47c3:0:b0:38d:de92:adab with SMTP id ffacd0b85a97d-38dea28c762mr6807008f8f.29.1739454205306;
+        Thu, 13 Feb 2025 05:43:25 -0800 (PST)
+Received: from localhost.localdomain ([109.175.243.77])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccef7sm1982547f8f.31.2025.02.13.05.43.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 05:43:24 -0800 (PST)
+From: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v3] HID: corsair-void: Update power supply values with a unified work handler
+Date: Thu, 13 Feb 2025 13:38:49 +0000
+Message-ID: <20250213133854.100866-3-stuart.a.hayhurst@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>,
- Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
- <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
- <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
- <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
- <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <285a43db-c36d-400e-8041-0566f089a482@arm.com>
- <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
- <c8f626ba-1be4-4c25-b283-d1e11a061aac@arm.com>
- <Z630nGN1IHhyYIYl@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <Z630nGN1IHhyYIYl@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/13/25 13:33, Juri Lelli wrote:
-> On 13/02/25 12:27, Christian Loehle wrote:
->> On 2/13/25 06:20, Juri Lelli wrote:
->>> On 12/02/25 19:22, Dietmar Eggemann wrote:
->>>> On 11/02/2025 11:42, Juri Lelli wrote:
->>>
->>> ...
->>>
->>>>> What about we actually ignore them consistently? We already do that for
->>>>> admission control, so maybe we can do that when rebuilding domains as
->>>>> well (until we find maybe a better way to deal with them).
->>>>>
->>>>> Does the following make any difference?
->>>>
->>>> It at least seems to solve the issue. And like you mentioned on irc, we
->>>> don't know the bw req of sugov anyway.
->>>>
->>>> So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
->>>>
->>>> dl_rq[0]:
->>>>   .dl_nr_running                 : 0
->>>>   .dl_bw->bw                     : 996147
->>>>   .dl_bw->total_bw               : 0       <-- !
->>>>
->>>> IMHO, people who want to run serious DL can always check whether there
->>>> are already these infrastructural DL tasks or even avoid schedutil.
->>>
->>> It definitely not ideal and admittedly gross, but not worse than what we
->>> are doing already considering we ignore sugovs at AC and the current
->>> bandwidth allocation its there only to help with PI. So, duck tape. :/
->>>
->>> A more proper way to work with this would entail coming up with sensible
->>> bandwidth allocation for sugovs, but that's most probably hardware
->>> specific, so I am not sure how we can make that general enough.
->>>
->>> Anyway, looks like Jon was still seeing the issue. I asked him to verify
->>> he is using all the proposed changes. Let's see what he reports.
->>
->> FWIW it also fixes my reproducer.
->>
->> I agree that dummy numbers for sugov bw is futile, but real bw numbers
->> also don't make a lot of sense (what if we exceed them? The system
->> won't be able to change frequency, i.e. might not be able to provide
->> bw for other DL tasks then either?).
->> I'm slightly worried about now allowing the last legal CPU for a sugov
->> cluster to offline, which would lead to a cluster still being active
->> but sugov DL unable to run anywhere. I can't reproduce this currently
->> though. Is this an issue in theory? Or am I missing something?
-> 
-> Not sure I get what your worry is, sorry. In my understanding when the
-> last cpu of a policy/cluster gets offlined the corresponding sugov
-> kthread gets stopped as well (sugov_exit)?
-> 
+corsair_void_process_receiver can be called from an interrupt context,
+locking battery_mutex in it was causing a kernel panic.
+Fix it by moving the critical section into its own work, sharing this
+work with battery_add_work and battery_remove_work to remove the need
+for any locking
 
-The other way round.
-We may have sugov kthread of cluster [6,7] affined to CPU1. Is it
-guaranteed that we cannot offline CPU1 (while CPU6 or CPU7 are still
-online)?
-Or without the affinity:
-cluster [6,7] with isolcpu=6 (i.e. sugov kthread of that cluster can
-only run on CPU7). Is offlining of CPU6 then prevented (as long as
-CPU7 is online)?
-I don't see how.
-Anyway we probably want to change isolcpu and affinity to merely be 
-a suggestion for the sugov DL case. Fundamentally it belongs to what
-is run on that CPU anyway.
+Closes: https://bugzilla.suse.com/show_bug.cgi?id=1236843
+Fixes: 6ea2a6fd3872 ("HID: corsair-void: Add Corsair Void headset family driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
+---
+
+v2 -> v3:
+ - Use an enum instead of a define for battery flag values
+ - Use an integer instead of BIT() for the bit index
+ - Drop unhelpful comments
+ - Simplify corsair_void_battery_work_handler logic
+ - Remove extra newline in commit message
+v1 -> v2:
+ - Actually remove the mutex
+
+---
+ drivers/hid/hid-corsair-void.c | 83 ++++++++++++++++++----------------
+ 1 file changed, 43 insertions(+), 40 deletions(-)
+
+diff --git a/drivers/hid/hid-corsair-void.c b/drivers/hid/hid-corsair-void.c
+index 56e858066c3c..afbd67aa9719 100644
+--- a/drivers/hid/hid-corsair-void.c
++++ b/drivers/hid/hid-corsair-void.c
+@@ -71,11 +71,9 @@
+ 
+ #include <linux/bitfield.h>
+ #include <linux/bitops.h>
+-#include <linux/cleanup.h>
+ #include <linux/device.h>
+ #include <linux/hid.h>
+ #include <linux/module.h>
+-#include <linux/mutex.h>
+ #include <linux/power_supply.h>
+ #include <linux/usb.h>
+ #include <linux/workqueue.h>
+@@ -120,6 +118,12 @@ enum {
+ 	CORSAIR_VOID_BATTERY_CHARGING	= 5,
+ };
+ 
++enum {
++	CORSAIR_VOID_ADD_BATTERY	= 0,
++	CORSAIR_VOID_REMOVE_BATTERY	= 1,
++	CORSAIR_VOID_UPDATE_BATTERY	= 2,
++};
++
+ static enum power_supply_property corsair_void_battery_props[] = {
+ 	POWER_SUPPLY_PROP_STATUS,
+ 	POWER_SUPPLY_PROP_PRESENT,
+@@ -155,12 +159,12 @@ struct corsair_void_drvdata {
+ 
+ 	struct power_supply *battery;
+ 	struct power_supply_desc battery_desc;
+-	struct mutex battery_mutex;
+ 
+ 	struct delayed_work delayed_status_work;
+ 	struct delayed_work delayed_firmware_work;
+-	struct work_struct battery_remove_work;
+-	struct work_struct battery_add_work;
++
++	unsigned long battery_work_flags;
++	struct work_struct battery_work;
+ };
+ 
+ /*
+@@ -260,11 +264,9 @@ static void corsair_void_process_receiver(struct corsair_void_drvdata *drvdata,
+ 
+ 	/* Inform power supply if battery values changed */
+ 	if (memcmp(&orig_battery_data, battery_data, sizeof(*battery_data))) {
+-		scoped_guard(mutex, &drvdata->battery_mutex) {
+-			if (drvdata->battery) {
+-				power_supply_changed(drvdata->battery);
+-			}
+-		}
++		set_bit(CORSAIR_VOID_UPDATE_BATTERY,
++			&drvdata->battery_work_flags);
++		schedule_work(&drvdata->battery_work);
+ 	}
+ }
+ 
+@@ -536,29 +538,11 @@ static void corsair_void_firmware_work_handler(struct work_struct *work)
+ 
+ }
+ 
+-static void corsair_void_battery_remove_work_handler(struct work_struct *work)
+-{
+-	struct corsair_void_drvdata *drvdata;
+-
+-	drvdata = container_of(work, struct corsair_void_drvdata,
+-			       battery_remove_work);
+-	scoped_guard(mutex, &drvdata->battery_mutex) {
+-		if (drvdata->battery) {
+-			power_supply_unregister(drvdata->battery);
+-			drvdata->battery = NULL;
+-		}
+-	}
+-}
+-
+-static void corsair_void_battery_add_work_handler(struct work_struct *work)
++static void corsair_void_add_battery(struct corsair_void_drvdata *drvdata)
+ {
+-	struct corsair_void_drvdata *drvdata;
+ 	struct power_supply_config psy_cfg = {};
+ 	struct power_supply *new_supply;
+ 
+-	drvdata = container_of(work, struct corsair_void_drvdata,
+-			       battery_add_work);
+-	guard(mutex)(&drvdata->battery_mutex);
+ 	if (drvdata->battery)
+ 		return;
+ 
+@@ -583,16 +567,42 @@ static void corsair_void_battery_add_work_handler(struct work_struct *work)
+ 	drvdata->battery = new_supply;
+ }
+ 
++static void corsair_void_battery_work_handler(struct work_struct *work)
++{
++	struct corsair_void_drvdata *drvdata = container_of(work,
++		struct corsair_void_drvdata, battery_work);
++
++	bool add_battery = test_and_clear_bit(CORSAIR_VOID_ADD_BATTERY,
++					      &drvdata->battery_work_flags);
++	bool remove_battery = test_and_clear_bit(CORSAIR_VOID_REMOVE_BATTERY,
++						 &drvdata->battery_work_flags);
++	bool update_battery = test_and_clear_bit(CORSAIR_VOID_UPDATE_BATTERY,
++						 &drvdata->battery_work_flags);
++
++	if (add_battery && !remove_battery) {
++		corsair_void_add_battery(drvdata);
++	} else if (remove_battery && !add_battery && drvdata->battery) {
++		power_supply_unregister(drvdata->battery);
++		drvdata->battery = NULL;
++	}
++
++	if (update_battery && drvdata->battery)
++		power_supply_changed(drvdata->battery);
++
++}
++
+ static void corsair_void_headset_connected(struct corsair_void_drvdata *drvdata)
+ {
+-	schedule_work(&drvdata->battery_add_work);
++	set_bit(CORSAIR_VOID_ADD_BATTERY, &drvdata->battery_work_flags);
++	schedule_work(&drvdata->battery_work);
+ 	schedule_delayed_work(&drvdata->delayed_firmware_work,
+ 			      msecs_to_jiffies(100));
+ }
+ 
+ static void corsair_void_headset_disconnected(struct corsair_void_drvdata *drvdata)
+ {
+-	schedule_work(&drvdata->battery_remove_work);
++	set_bit(CORSAIR_VOID_REMOVE_BATTERY, &drvdata->battery_work_flags);
++	schedule_work(&drvdata->battery_work);
+ 
+ 	corsair_void_set_unknown_wireless_data(drvdata);
+ 	corsair_void_set_unknown_batt(drvdata);
+@@ -678,13 +688,7 @@ static int corsair_void_probe(struct hid_device *hid_dev,
+ 	drvdata->battery_desc.get_property = corsair_void_battery_get_property;
+ 
+ 	drvdata->battery = NULL;
+-	INIT_WORK(&drvdata->battery_remove_work,
+-		  corsair_void_battery_remove_work_handler);
+-	INIT_WORK(&drvdata->battery_add_work,
+-		  corsair_void_battery_add_work_handler);
+-	ret = devm_mutex_init(drvdata->dev, &drvdata->battery_mutex);
+-	if (ret)
+-		return ret;
++	INIT_WORK(&drvdata->battery_work, corsair_void_battery_work_handler);
+ 
+ 	ret = sysfs_create_group(&hid_dev->dev.kobj, &corsair_void_attr_group);
+ 	if (ret)
+@@ -721,8 +725,7 @@ static void corsair_void_remove(struct hid_device *hid_dev)
+ 	struct corsair_void_drvdata *drvdata = hid_get_drvdata(hid_dev);
+ 
+ 	hid_hw_stop(hid_dev);
+-	cancel_work_sync(&drvdata->battery_remove_work);
+-	cancel_work_sync(&drvdata->battery_add_work);
++	cancel_work_sync(&drvdata->battery_work);
+ 	if (drvdata->battery)
+ 		power_supply_unregister(drvdata->battery);
+ 
+-- 
+2.47.2
+
 
