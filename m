@@ -1,200 +1,182 @@
-Return-Path: <linux-kernel+bounces-513641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC10A34CE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:05:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDD3A34CBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:02:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 493117A3A63
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341833A4050
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D48266B7C;
-	Thu, 13 Feb 2025 18:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBCE241687;
+	Thu, 13 Feb 2025 18:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BTr7XhWu"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2082.outbound.protection.outlook.com [40.107.243.82])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKkAptOe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0493266B51;
-	Thu, 13 Feb 2025 18:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469795; cv=fail; b=SBn4KRN1vdbw/BUG1ip4Yhnp9RmuAiiEUPpPE04TBdQl0tke+Zfptv8Jbp09dcafuUeikFglhNnvI6jGFkuGE8/2E1BSI7r0JY/fw4dU7Cas1y7EEUUYywaITzho6Cy4DZbFjMlzGGPUMYFfp33/IJATzdYYgoU3g8uFpws+IwA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469795; c=relaxed/simple;
-	bh=C83+eZf5KUuNCQScrqnktNXJKq6/WbImoXb5Nr+F0Ec=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g3ICFCHNkS/8ur2YmmNoqsPDQh70sujjuwP3Hk6BVaa5EMDwU0N/g0xvsPqWFe0YU/xLlHICtG2Z6QOAbhZI+qgw7YYC+OB2+yUuDwA8rZl/aKx8e8hxosEYfnng2qFlnOv5jZ5sq2p7jdIP7feycjzpgh2CS13MLtl8sm0mx1Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BTr7XhWu; arc=fail smtp.client-ip=40.107.243.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uEVWh0iYCcvYmn6edSIA4h7c2fmERoG1PADNBq6vNcR+8F+p66iCCWPoAOU6KJI1sl7P2PGkugqFmxUHJz7PlPTMyuqGGWalevSxL26Vc3nI3raKh339nRnd9rOFL9g9qJazLzrqxWbHpFhg4lSyHxavD/PoIMOoiVomo8z7SF0GySRw9Hdz/33beDa+nD3JdoiAyNtKCdYfNnb5Qx5i06mJHuxTrj0KFTXfJ1yY0snPT4xPQcXKemDMY2SvU8Gq/ie4aYDnA53CaS0DQyko0zLRGKchk4VJF/HMIb/+18ZH8tg48yHjE90WZaKuAqQtCt7SdbBBGOO1FAUSlT7vSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+eBV3PeVhl++UF3uYeqBLMNKZ6EeqSrm14B797LVSGU=;
- b=N6pfdYbYJPsRuBKBqdPE+ZncD/ICDJ/RD/oPM1kPiQPy0L4RINui0mh22ZpS8R2Hm25DtmyVk+c1XXlqyciF3tV4P9n/AwOeY/1LLARVIe7+vfSs8hZDmP+5sJxqYRPO7QdDvZDgfPlA9O7wmtqatRgWdCmFzK5QKlJRjYXnF4iO1f5/bI3N0yMKkYbOXsUGCZXUeKleU5agYaUMdrTfnR+S6/rp+zteSIu1eKBdd1S1XZ4VBzrv0jKA7Q09z/CiTp2Rk7jsQyA6xdVvXjUhX+2PpKtOcYueh5gvAszE3lbfHSWYr74HMZKNsVQ1gXC4ijVhQ/s05+/gRuVM7O/WaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+eBV3PeVhl++UF3uYeqBLMNKZ6EeqSrm14B797LVSGU=;
- b=BTr7XhWuebpELzGbMxJigvqVAZDy0znN2EgZT/YvBpE+cApPB5+IXSAJmVKan/jIbZ3Is6Mbm8sVAPvfRiChvBuUgitlX28vr15L4pKHUNykRsWZ4yrEi5JfmJiEwpC1U4cTkbclopEcX3q+J4ht3VsrsGWZjybMskChd3U44SDu/ut22d1/4Hle1sBN+iB9HosUF8TOv9S02jvg5qQ+CfW7lfnwUZ24mwivh527aypdQRMRF5WBVzYPT3VD4mudGr0J8W2Hdypks2tazs/MD56+yqBkiotnY4+kJhxDv9J9/aCCAIYLi4JvY94Z/dtFpg19t/MEnyaPZUftjGhhWA==
-Received: from CH5P223CA0002.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:1f3::10)
- by BL1PR12MB5707.namprd12.prod.outlook.com (2603:10b6:208:386::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
- 2025 18:03:06 +0000
-Received: from DS2PEPF00003447.namprd04.prod.outlook.com
- (2603:10b6:610:1f3:cafe::87) by CH5P223CA0002.outlook.office365.com
- (2603:10b6:610:1f3::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.15 via Frontend Transport; Thu,
- 13 Feb 2025 18:03:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS2PEPF00003447.mail.protection.outlook.com (10.167.17.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.10 via Frontend Transport; Thu, 13 Feb 2025 18:03:05 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 13 Feb
- 2025 10:02:51 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 13 Feb
- 2025 10:02:50 -0800
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Thu, 13
- Feb 2025 10:02:46 -0800
-From: Tariq Toukan <tariqt@nvidia.com>
-To: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew
- Lunn" <andrew+netdev@lunn.ch>, Jiri Pirko <jiri@nvidia.com>
-CC: Cosmin Ratiu <cratiu@nvidia.com>, Carolina Jubran <cjubran@nvidia.com>,
-	Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Donald Hunter
-	<donald.hunter@gmail.com>, Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet
-	<corbet@lwn.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
-	<leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-rdma@vger.kernel.org>
-Subject: [PATCH net-next 09/10] net/mlx5: qos: Init shared devlink rate domain
-Date: Thu, 13 Feb 2025 20:01:33 +0200
-Message-ID: <20250213180134.323929-10-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20250213180134.323929-1-tariqt@nvidia.com>
-References: <20250213180134.323929-1-tariqt@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3C928A2AE;
+	Thu, 13 Feb 2025 18:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739469698; cv=none; b=gbid2NpzVzdT6yB/73i2uE7xVKpKKPyNQpLoZ1C4DyABYS74+eHFTWyIADE4WkKCU0nkiCGK+tna6rfafyMdb1qeccBO9WJ+/E0FIKX97zIEP7+R7chmbPuj/Bt10W7meM0CHwlatcRDrogAcGJNyoV2Jrzrq7eO7lqnpnuCp00=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739469698; c=relaxed/simple;
+	bh=NW1OYpe2mVwwte24KvqPb9pRL5isVReq3c3DtOOBBMA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bfHK71XE+ZeO9pXVHwCccTxoo2bA6241SbkPLdtqBAupemSKXoD0t7Dgye8oV+Cdck94jh/0tepfPTNfYjKKPMV45FBNgF5xqZtLQcElUdowIEdW0mWcgig24KCJcEqnApB0HJH8U9/91DpTXf68TRyefgITvLPBFZd2ArbZmLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKkAptOe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFC4BC4CED1;
+	Thu, 13 Feb 2025 18:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739469697;
+	bh=NW1OYpe2mVwwte24KvqPb9pRL5isVReq3c3DtOOBBMA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lKkAptOe5ZG6vP8rPEis0AlEiA/1jNEChi09tTGq67mYGQvoYjq2QsQirFo+qzZgb
+	 lQ+hWQtnhgTT5QDZIgLE0LLK/qzdHBxEs1u3jP1jbVy94VndeSRhUaa42fTPoXmUqj
+	 pivxwi3j9oPp4knqLBaU597hhT9pV1fhknls8UaWBTrKic1gyFlvuxDovPaJkjkHow
+	 fOkRlYpLpYgd8zNL2X4qtYZnDaLpQS5UPyQudbGm2tBsFUeanF/x7OySGyxItxrZ2K
+	 CIQ52uBM+57WBFOnOJvGIdA3m2yKZ4t4E+ybCY5Pd/bwH1tUj0GrrJZymNHMOSdvEg
+	 JRwnbdjsJbEOQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tidWn-003nTm-Sy;
+	Thu, 13 Feb 2025 18:01:35 +0000
+Date: Thu, 13 Feb 2025 18:01:33 +0000
+Message-ID: <86r041sozm.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>,	Hector Martin
+ <marcan@marcan.st>,	Sven Peter <sven@svenpeter.dev>,	Bjorn Helgaas
+ <bhelgaas@google.com>,	Lorenzo Pieralisi <lpieralisi@kernel.org>,	Krzysztof
+ =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,	Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>,	Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,	Conor Dooley <conor+dt@kernel.org>,	Mark Kettenis
+ <kettenis@openbsd.org>,	Stan Skowronek <stan@corellium.com>,
+	asahi@lists.linux.dev,	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] PCI: apple: Add T602x PCIe support
+In-Reply-To: <CAL_JsqJ-sYsy-11_UiEKrKok49-a-VJUvm3vBGbpu9vY3TKLUw@mail.gmail.com>
+References: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io>
+	<20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
+	<CAL_JsqJ-sYsy-11_UiEKrKok49-a-VJUvm3vBGbpu9vY3TKLUw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003447:EE_|BL1PR12MB5707:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3a3ca5c-f924-4cb7-18a9-08dd4c58aaae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RV+DvtWb/txInid3rOzHiR8FhgDJzhS/xqk7ggnJOI1eD1dw/geQ62c1Q3/q?=
- =?us-ascii?Q?rg8rFWwuIcrdJGHLV0xAuqYi1aCx46IBo9Nb+gqUUno/36MfA5ANH4vnnOTf?=
- =?us-ascii?Q?/QKD0xQjp60mtu3pITKbmJjSWIYG4xBgkfUYFU/xRnN9KpJdWSL6GGoe18Yr?=
- =?us-ascii?Q?R9L5BrQjXoB8kMYaXX4WEdisNqHITp10mQSOdupsHVV+/O5TFITigP0BIko4?=
- =?us-ascii?Q?vzALfeYF6RqNtZAHmFhIGbOPyfU49/o6o5oDezTvLXkUGRb6S+56128400e5?=
- =?us-ascii?Q?FJxtB/iuJ9FqsheUPq+naSLt32srAT4ZPD3gQBGqacmYpOMWges/RWpCbwsO?=
- =?us-ascii?Q?VmvY0WdVhuoMIDiIG2bfwGqOtINwzFhmEj53u/ZYKuWpZ4KBOT85+/Hnybcg?=
- =?us-ascii?Q?amHiQ6BVkIWZ5PnYTf9v4JwXLln5V6ogPNfr7FYiHYJ+m6H05EgvGlT8LiyL?=
- =?us-ascii?Q?wL8LJWaVGbYmRUSR5/HQWCkDFLGE0UlwRpAPfwRYjbGrAv/8kIGYai0BhMyk?=
- =?us-ascii?Q?5yhzy8NFxIksxALwhsVq/RmAFYX9upoDDdRcjVd5nweyZmnmX2G37sDn8mmi?=
- =?us-ascii?Q?aQNrx1PHcIB6nqK7UirB0n4XfTZZdcddQmREQktePmLlKBvsahmSKZl9Bc0f?=
- =?us-ascii?Q?7oA6qA+MpbkObIbVTqGc7tchmxOnyf1W6Rh2he0sQZQpw0sgzYBYMEV3tblB?=
- =?us-ascii?Q?rSxSdEgIzI2P56xLXal7O04ZxTRXQO4c3ueLP/82sVHJULR9C63nR8hKK51A?=
- =?us-ascii?Q?RcL2F7RG5Hhft5SZPeT7Ag9jEsQaSIboRTgwYy4EbFewy1ENXOTEueJ6Apqz?=
- =?us-ascii?Q?Dqx5XTgc7lb6aWssdmZMPhFAyI/+ayEv4aCYhEu7IRgY5JAd3+nw4cnT+pdV?=
- =?us-ascii?Q?rzmsaEyUJDK+C+UHDzSIDezUpMUp6he/SWsrXew6kV+1FtqB5I/Bq0ciI2IN?=
- =?us-ascii?Q?E2cNoREgnrdlPNPX3y62DfDJW98P5j75aZrbBQ5nAb9SjXv1mPcdcZNd9RWu?=
- =?us-ascii?Q?h9wqYjGS6nHeoTlMlHDxfF1sBq25QWMPAEoKre/+R684JSKFTm+rt2YQCcr5?=
- =?us-ascii?Q?RRiWVnBuGIteTNW+LJBVPzNNfbF58pLBRtXT8hoHHKNJPDakpoxivnV9s9te?=
- =?us-ascii?Q?gNn0kecv0zUBX4xOW61Sw5CDCKTEsEl6e2ah8v0Xo/ze1FzNN0XVIfu0mbdL?=
- =?us-ascii?Q?F5VFImenYLjc+tLZIa1SDKBi/VoknSEzSohqwZ3D74nwhH6e2xRU6mErni1D?=
- =?us-ascii?Q?qnMDGNxFnIEElUy5L/crl52tVs+bWIsptSdbqkdPJu5koCZe+60E2naMpY0e?=
- =?us-ascii?Q?7RsRGMy8akpgBVwHsZqnH6ojaiI6owyyfCLMkbFkXFUZvG5Zjt0Y92mjGF+D?=
- =?us-ascii?Q?jR4wRsnR4MB0THrE6ue8yoLgCxoVxssCUdwx9zyCvT8VaHXT0x2qGGvLs+c8?=
- =?us-ascii?Q?2if/BPcHMCaCw2tjn+ZZGtC8QkuGX76DV7E0MHCXW/crYQFzbjM6S9EaCL/J?=
- =?us-ascii?Q?OIMV4VfAhxMnW/g=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 18:03:05.9441
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3a3ca5c-f924-4cb7-18a9-08dd4c58aaae
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003447.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5707
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: robh@kernel.org, alyssa@rosenzweig.io, marcan@marcan.st, sven@svenpeter.dev, bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, krzk+dt@kernel.org, conor+dt@kernel.org, kettenis@openbsd.org, stan@corellium.com, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Cosmin Ratiu <cratiu@nvidia.com>
+On Thu, 13 Feb 2025 17:56:19 +0000,
+Rob Herring <robh@kernel.org> wrote:
+>=20
+> On Tue, Feb 11, 2025 at 1:54=E2=80=AFPM Alyssa Rosenzweig <alyssa@rosenzw=
+eig.io> wrote:
+> >
+> > From: Hector Martin <marcan@marcan.st>
+> >
+> > This version of the hardware moved around a bunch of registers, so we
+> > drop the old compatible for these and introduce register offset
+> > structures to handle the differences.
+> >
+> > Signed-off-by: Hector Martin <marcan@marcan.st>
+> > Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+> > ---
+> >  drivers/pci/controller/pcie-apple.c | 125 ++++++++++++++++++++++++++++=
+++------
+> >  1 file changed, 105 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controll=
+er/pcie-apple.c
+> > index 7f4839fb0a5b15a9ca87337f53c14a1ce08301fc..7c598334427cb56ca066890=
+ac61143ae1d3ed744 100644
+> > --- a/drivers/pci/controller/pcie-apple.c
+> > +++ b/drivers/pci/controller/pcie-apple.c
+> > @@ -26,6 +26,7 @@
+> >  #include <linux/list.h>
+> >  #include <linux/module.h>
+> >  #include <linux/msi.h>
+> > +#include <linux/of_device.h>
+>=20
+> Drivers should not need this...
+>=20
+> > +const struct reg_info t602x_hw =3D {
+> > +       .phy_lane_ctl =3D 0,
+> > +       .port_msiaddr =3D PORT_T602X_MSIADDR,
+> > +       .port_msiaddr_hi =3D PORT_T602X_MSIADDR_HI,
+> > +       .port_refclk =3D 0,
+> > +       .port_perst =3D PORT_T602X_PERST,
+> > +       .port_rid2sid =3D PORT_T602X_RID2SID,
+> > +       .port_msimap =3D PORT_T602X_MSIMAP,
+> > +       .max_rid2sid =3D 512, /* 16 on t602x, guess for autodetect on f=
+uture HW */
+> > +       .max_msimap =3D 512, /* 96 on t602x, guess for autodetect on fu=
+ture HW */
+> > +};
+> > +
+> > +static const struct of_device_id apple_pcie_of_match_hw[] =3D {
+> > +       { .compatible =3D "apple,t6020-pcie", .data =3D &t602x_hw },
+> > +       { .compatible =3D "apple,pcie", .data =3D &t8103_hw },
+> > +       { }
+> > +};
+>=20
+> You should not have 2 match tables.
+>=20
+> > @@ -750,13 +828,19 @@ static int apple_pcie_init(struct pci_config_wind=
+ow *cfg)
+> >         struct platform_device *platform =3D to_platform_device(dev);
+> >         struct device_node *of_port;
+> >         struct apple_pcie *pcie;
+> > +       const struct of_device_id *match;
+> >         int ret;
+> >
+> > +       match =3D of_match_device(apple_pcie_of_match_hw, dev);
+> > +       if (!match)
+> > +               return -ENODEV;
+> > +
+> >         pcie =3D devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+> >         if (!pcie)
+> >                 return -ENOMEM;
+> >
+> >         pcie->dev =3D dev;
+> > +       pcie->hw =3D match->data;
+> >
+> >         mutex_init(&pcie->lock);
+> >
+> > @@ -795,6 +879,7 @@ static const struct pci_ecam_ops apple_pcie_cfg_eca=
+m_ops =3D {
+> >  };
+> >
+> >  static const struct of_device_id apple_pcie_of_match[] =3D {
+> > +       { .compatible =3D "apple,t6020-pcie", .data =3D &apple_pcie_cfg=
+_ecam_ops },
+> >         { .compatible =3D "apple,pcie", .data =3D &apple_pcie_cfg_ecam_=
+ops },
+> >         { }
+>=20
+> You are going to need to merge the data to 1 struct.
+>=20
+> And then use (of_)?device_get_match_data() in probe().
 
-If the device can do cross-esw scheduling, switch to using a shared rate
-domain so that devlink rate nodes can have parents from other functions
-of the same device.
+No, that will break the driver. This isn't a standalone driver, but
+only an ECAM shim (as you can tell from the actual probe function).
 
-As a fallback mechanism, if switching to a shared rate domain failed, a
-warning is logged and the code proceeds with trying to use a private qos
-domain since cross-esw scheduling cannot be supported.
+	M.
 
-Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
-Reviewed-by: Carolina Jubran <cjubran@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
-index e6dcfe348a7e..9af12ae98691 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
-@@ -899,6 +899,20 @@ int mlx5_esw_qos_init(struct mlx5_eswitch *esw)
- 	bool use_shared_domain = esw->mode == MLX5_ESWITCH_OFFLOADS &&
- 		MLX5_CAP_QOS(esw->dev, esw_cross_esw_sched);
- 
-+	if (use_shared_domain) {
-+		u64 guid = mlx5_query_nic_system_image_guid(esw->dev);
-+		int err;
-+
-+		err = devlink_shared_rate_domain_init(priv_to_devlink(esw->dev), guid);
-+		if (err) {
-+			/* On failure, issue a warning and switch to using a private domain. */
-+			esw_warn(esw->dev,
-+				 "Shared devlink rate domain init failed (err %d), cross-esw QoS not available",
-+				 err);
-+			use_shared_domain = false;
-+		}
-+	}
-+
- 	if (esw->qos.domain) {
- 		if (esw->qos.domain->shared == use_shared_domain)
- 			return 0;  /* Nothing to change. */
--- 
-2.45.0
-
+--=20
+Without deviation from the norm, progress is not possible.
 
