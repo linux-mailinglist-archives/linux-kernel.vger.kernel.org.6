@@ -1,140 +1,230 @@
-Return-Path: <linux-kernel+bounces-512770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B413A33D90
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:14:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F9CA33D93
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33DEB165034
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:13:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1B217A24BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1CD214A65;
-	Thu, 13 Feb 2025 11:13:43 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C5C214A62;
+	Thu, 13 Feb 2025 11:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="u1BzMojZ";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="ykJRpAK+"
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F1D20AF66;
-	Thu, 13 Feb 2025 11:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434A6213E97;
+	Thu, 13 Feb 2025 11:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445222; cv=none; b=eEdBHXCUlTISt8RKmFfEKQTCzLlqkdSt6kxtbw/UtvnC1qKNtdEC4K5pPUrmc4rLMWOg/heBoVXY3VsDdXZZy8c2BoyEthkL7H4Zo+GkBUVPFil5s228LuzdynaDLjBRfINdZu8BrQY04S7ezj9JmizsDOn9HScswIo0zosoKS8=
+	t=1739445272; cv=none; b=H+KwWdMJOeltP0t0dbe101v9ngTvUJcDyb25t7DsGTnVyfRNafkV7b1UdwScvjR0k3a/ZXpkB56sRE+BGnf3k7oslOUYkFQMvmM3G1XUFGZwnk0SiJtB0BflHUtE0krh4ajFyus3Tt+E19wPFwgd8wR2e0xqpN6W4mkY/+BIkXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445222; c=relaxed/simple;
-	bh=uBbuyzSkt8awEsdjpCoyug75xEtJcJzY3ERuKiAc0z4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q5Jdhdnf7ac6bha3KNoN0ROIoIi24r2engAcs/9AQJim9X4vS+aaNV5w+yLMkO7sHLHCf240NeeF9hprEpvxTLwlxXKN6gZRHXpI7vyD8lhK1yJJrI8tRtcr+1wWo65YkWa3uWeRIMHlgj3G+mdmxk0wz/294RCQFZf+66cMnOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Ytsrv5vcRz2FdXd;
-	Thu, 13 Feb 2025 19:09:35 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0608A180042;
-	Thu, 13 Feb 2025 19:13:23 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 13 Feb 2025 19:13:22 +0800
-Message-ID: <febbedb5-4d37-4799-83f6-6f1add26a2fd@huawei.com>
-Date: Thu, 13 Feb 2025 19:13:22 +0800
+	s=arc-20240116; t=1739445272; c=relaxed/simple;
+	bh=ezyedybHgoW6oyvPGrkHRiI3fE698KvW6mm+hZJtHs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uH5qbGYOBGK4okuxjrYMrQZE1HOpzW5qKIBUtxg9YsfJu79cryEkqQ9OhqO3Qnc0PIWPlaMxCHh/lGjSHluw/6d636kXtrhL9h1llflz2RRbVKxIEKR590220ddkj46ttsNJO1qZYLauaQSl3Z4RL3AlY3+mPNbOeUKN/yGsES8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=u1BzMojZ; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=ykJRpAK+; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id B300A122FE62;
+	Thu, 13 Feb 2025 03:14:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1739445261; bh=ezyedybHgoW6oyvPGrkHRiI3fE698KvW6mm+hZJtHs8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u1BzMojZL3ro81eOzFy386qDclbivD9UfUH3JBSOK2LPuAO5S1N5cgzUs7CS8o4/V
+	 mOCZwFx8y6DJXR4PLilK3ZA/kweR4PW2TT11/aflC/nZ/9LK/UJq+4yx6XzoDRvtY/
+	 WmK/WVNdQufjgL/UicmtFIq6iiktdwX52VwKgMoyjW8bG85Hp80eP2T8giwBelNIQg
+	 h9tX7lCKKW0QjANPZFOxjRZJBltMWrnQKX80N1DfmOWqCUnpjeWaGrmDV3o6YSwp0V
+	 01t5J/ruSf4S5PbZInrehDr6AurD7XWBKbittq6hziy6doUF/hRAWclmYly4Bs+2iw
+	 r2EKjMeKs2Nrg==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id 8X_IBNMwRZY3; Thu, 13 Feb 2025 03:14:17 -0800 (PST)
+Received: from ketchup (unknown [183.217.81.160])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 6C167122FE26;
+	Thu, 13 Feb 2025 03:14:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1739445257; bh=ezyedybHgoW6oyvPGrkHRiI3fE698KvW6mm+hZJtHs8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ykJRpAK+KgoLP8ji1hI8VKi1mmSh/k3SGDM/qo2eIVrZtmY60RkpRyKEpqSumOImI
+	 AI2hfL8YAxa5kOJAow37Fgq4QYdqHSI0JAMeSoEfWlbOIBWr8EOYstW9B1WHXGrVKW
+	 ogTtGTv/u8AKWLGjQqNeefFSCC1EcOJqjI629hIx9oEGJoMXe/sgTMX3Y4LpNt2NVF
+	 TpvSjLyPgoD+2VyXShy1+voNISY7J28WbTkbSdwcUHTqyispsQyxvoyahfm8qwZQVh
+	 07TVm9AFsOy8VfnZFeBnTEyWermOtFZaOEauqAi7vDRruq6aXUPcrvEJuhZ22V2JYe
+	 mAJWzmy2HEcDg==
+Date: Thu, 13 Feb 2025 11:14:04 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+Message-ID: <Z63T_EDvXiuRQbvb@ketchup>
+References: <20250103215636.19967-2-heylenay@4d2.org>
+ <20250103215636.19967-4-heylenay@4d2.org>
+ <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
+ <Z6rdBhQ7s2ReOgBL@ketchup>
+ <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 0/4] fix the DMA API misuse problem for
- page_pool
-To: Matthew Wilcox <willy@infradead.org>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<zhangkun09@huawei.com>, <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Robin Murphy
-	<robin.murphy@arm.com>, Alexander Duyck <alexander.duyck@gmail.com>, Andrew
- Morton <akpm@linux-foundation.org>, IOMMU <iommu@lists.linux.dev>, MM
-	<linux-mm@kvack.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <netdev@vger.kernel.org>,
-	<intel-wired-lan@lists.osuosl.org>, <bpf@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-References: <20250212092552.1779679-1-linyunsheng@huawei.com>
- <Z6zuLJU7o_gRsQRu@casper.infradead.org>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <Z6zuLJU7o_gRsQRu@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
 
-On 2025/2/13 2:53, Matthew Wilcox wrote:
-> On Wed, Feb 12, 2025 at 05:25:47PM +0800, Yunsheng Lin wrote:
->> This patchset fix the dma API misuse problem as mentioned in [1].
->>
->> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
+On Tue, Feb 11, 2025 at 09:03:20AM +0100, Krzysztof Kozlowski wrote:
+> On 11/02/2025 06:15, Haylen Chu wrote:
+> > On Sat, Jan 04, 2025 at 11:07:58AM +0100, Krzysztof Kozlowski wrote:
+> >> On Fri, Jan 03, 2025 at 09:56:35PM +0000, Haylen Chu wrote:
+> >>> Add documentation to describe Spacemit K1 system controller registers.
+> >>>
+> >>> Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> >>> ---
+> >>>  .../soc/spacemit/spacemit,k1-syscon.yaml      | 52 +++++++++++++++++++
+> >>>  1 file changed, 52 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> >>> new file mode 100644
+> >>> index 000000000000..79c4a74ff30e
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> >>> @@ -0,0 +1,52 @@
+> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>> +%YAML 1.2
+> >>> +---
+> >>> +$id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
+> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>> +
+> >>> +title: Spacemit K1 SoC System Controller
+> >>> +
+> >>> +maintainers:
+> >>> +  - Haylen Chu <heylenay@4d2.org>
+> >>> +
+> >>> +description:
+> >>> +  The Spacemit K1 SoC system controller provides access to shared register files
+> >>> +  for related SoC modules, such as clock controller and reset controller.
+> >>> +
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    items:
+> >>> +      - enum:
+> >>> +          - spacemit,k1-apbc-syscon
+> >>> +          - spacemit,k1-apbs-syscon
+> >>> +          - spacemit,k1-apmu-syscon
+> >>> +          - spacemit,k1-mpmu-syscon
+> >>> +      - const: syscon
+> >>> +      - const: simple-mfd
+> >>> +
+> >>> +  reg:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  clock-controller:
+> >>> +    $ref: /schemas/clock/spacemit,k1-ccu.yaml#
+> >>> +    type: object
+> >>
+> >> So now we see the full picture and it leads to questions.
+> >>
+> >> 1. Why spacemit,k1-apbc-syscon with spacemit,k1-ccu-apmu child is a
+> >> correct combination?
+> >>
+> >> 2. Why having this split in the first place? Please confirm that clock
+> >> controller is really, really a separate device and its child in
+> >> datasheet. IOW, fake child for your Linux is a no-go. Fake child while
+> >> devices are independent is another no-go.
+> > 
+> > These syscons are introduced because the clock controllers share
+> > registers with reset controllers. Folding them into the parents results
 > 
-> That's a very long and complicated thread.  I gave up.  You need to
-> provide a proper description of the problem.
+> So a fake split...
+> 
+> > in devicetree nodes act as both reset and clock controllers, like what
+> 
+> Which is correct hardware representation, isn't it?
+> 
+> > has been done for Rockchip SoCs. Such folding isn't practical for the
+> > MPMU region either, since watchdog and other misc bits (e.g. PLL lock
+> > status) locates in it.
 
-The description of the problem is in the commit log of patch 2
-as something below:
-"Networking driver with page_pool support may hand over page
-still with dma mapping to network stack and try to reuse that
-page after network stack is done with it and passes it back
-to page_pool to avoid the penalty of dma mapping/unmapping.
-With all the caching in the network stack, some pages may be
-held in the network stack without returning to the page_pool
-soon enough, and with VF disable causing the driver unbound,
-the page_pool does not stop the driver from doing it's
-unbounding work, instead page_pool uses workqueue to check
-if there is some pages coming back from the network stack
-periodically, if there is any, it will do the dma unmmapping
-related cleanup work.
+I have to correct that the watchdog doesn't stay in the MPMU region, I
+misremembered it.
 
-As mentioned in [1], attempting DMA unmaps after the driver
-has already unbound may leak resources or at worst corrupt
-memory. Fundamentally, the page pool code cannot allow DMA
-mappings to outlive the driver they belong to."
+> Hm? Why? You have a device which is reset and clock controller, so why
+> one device node is not practical? Other vendors do not have problem with
+> this.
 
+Merging reset and clock controllers together is fine to me. What I want
+to mention is that APMU and MPMU, abbreviated from Application/Main Power
+Management Unit, contain not only clock/reset-related registers but also
+power management ones[1]. Additionally, the PLL lock status bits locate
+at MPMU, split from the PLL configuration registers as you've already
+seen in the binding of spacemit,k1-ccu-apbs where I refer to it with a
+phandle.
 
-The description of the fixing is also in the commit log of patch 2
-as below:
-"By using the 'struct page_pool_item' referenced by page->pp_item,
-page_pool is not only able to keep track of the inflight page to
-do dma unmmaping if some pages are still handled in networking
-stack when page_pool_destroy() is called, and networking stack is
-also able to find the page_pool owning the page when returning
-pages back into page_pool:
-1. When a page is added to the page_pool, an item is deleted from
-   pool->hold_items and set the 'pp_netmem' pointing to that page
-   and set item->state and item->pp_netmem accordingly in order to
-   keep track of that page, refill from pool->release_items when
-   pool->hold_items is empty or use the item from pool->slow_items
-   when fast items run out.
-2. When a page is released from the page_pool, it is able to tell
-   which page_pool this page belongs to by masking off the lower
-   bits of the pointer to page_pool_item *item, as the 'struct
-   page_pool_item_block' is stored in the top of a struct page. And
-   after clearing the pp_item->state', the item for the released page
-   is added back to pool->release_items so that it can be reused for
-   new pages or just free it when it is from the pool->slow_items.
-3. When page_pool_destroy() is called, item->state is used to tell if
-   a specific item is being used/dma mapped or not by scanning all the
-   item blocks in pool->item_blocks, then item->netmem can be used to
-   do the dma unmmaping if the corresponding inflight page is dma
-   mapped."
+Since reset/clock and power management registers interleave in the MMIO
+region, do you think syscons are acceptable in this situation or it
+should be handled in another way? The reset and clock controllers could
+still be folded together as they share the same registers. The device
+tree will look like,
 
-it is worth to mention that the changing of page->pp to page->pp_item
-for the above fix may be able to enable the decoupling page_pool from
-using the metadata of 'struct page' if folios only provide a memdesc
-pointer to the page_pool subsystem in the future as pp_item may be
-used as the metadata replacement of existing 'struct page'.
+	syscon_mpmu: system-controller@d4050000 {
+		compatible = "spacemit,mpmu-syscon", "syscon", "simple-mfd";
+		reg = <0xd4050000 0x10000>;
+
+		cru_mpmu: clock-controller {
+			compatible = "spacemit,k1-cru-mpmu";
+			#clock-cells = <1>;
+			#reset-cells = <1>;
+		};
+
+		power_mpmu: power-controller {
+			compatible = "spacemit,k1-powerdomain-mpmu";
+			/* ... */
+			#power-domain-cells = <0>;
+		};
+	};
+
+For the other two clock controllers (APBS and APBC), syscons are really
+unnecessary and it's simple to fold them.
+
+> > 
+> > If you're more comfortable with reset and clock controllers folded
+> > together and eliminating most of these syscons, I'm willing to make the
+> > change.
+> 
+> This is expected.
+
+Thanks for the explanation.
 
 > 
+> 
+> Best regards,
+> Krzysztof
+
+Best regards,
+Haylen Chu
+
+[1]: https://developer.spacemit.com/documentation?token=T7TnwVZz1iPBk1kKwAPc6lyKnNb#part958
 
