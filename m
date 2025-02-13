@@ -1,52 +1,62 @@
-Return-Path: <linux-kernel+bounces-513595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B932DA34C1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:39:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D344EA34B94
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31B927A3142
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9861888BE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A102C2080CE;
-	Thu, 13 Feb 2025 17:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AE120766B;
+	Thu, 13 Feb 2025 17:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="Eyh1K3WK"
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n8wGfp1k"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAD9202C4C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8183415689A;
+	Thu, 13 Feb 2025 17:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468372; cv=none; b=UGM8EpQYwJ5NPnfGtTSI/TiNkb3fTDXc+7eWqkl2UsvLbtMjPgnQYiml9jdKLkopoCDLDKbwl9P84+kuSt0ZeqEK44Fx2R9qTb6iWtwLvAC5Q2KBt7Lk0AxcuT1fcNMgmFW2Mv2M/kqjrr8V3wAZqb77O7ctFd2kMK98QSlydWw=
+	t=1739467023; cv=none; b=XokJcihu/BY+zVDUiqXRxBe3WQeQCXYQhLv+mMbfKAiXM2CBgAlhMqYveRk1PP2pzTLkyPb6Za2kxs04C1rzVioo9Dsle8CEJo2NOSXJgc7EA8PFS+MH6bcHe5FHcA8GgQ6Moz2W4V8A8fv+sZo9fbkCQ+Ov6EW85PfGuluFAgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468372; c=relaxed/simple;
-	bh=KO5CjaRrsMmSyUYYfavhvo6x6sn7CHl2RDcCF2tZcE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nYhkFlf2cXga9wb0Knen8nptWTxL8IGq8H7hluyfdMe4cF4s4+tUtBuRV9EO4xPa6jc7q6DjofL6edFUK3KSofsfJN59mIbQskV4yQHPPD3vFnnPnPSnKdqMazzBRup+qWp9dRTVdIsjmq9FSMGDnMMJkwEppwmgOufdNPB0mCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=Eyh1K3WK; arc=none smtp.client-ip=78.40.148.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=cKiGkcsixPn4QQtTKc7Lsw9RVigZQY9fPXwk3glZ0vE=; b=Eyh1K3WK+bt6eeYNEDl6HFh6MG
-	Pu53wMhcj8neZh7w/pUF5gbJCETid3gJAMO5ZWdY2aWMZe4tqMloacovCGkLmhbzaYKm3m+lB+RHd
-	Vx47vQWHi5WJ4W3znn72Ta73MlQCRb2Rm+oDHOahy1KH6rvvU5khKRlUSMBMGJQggF56VmmZXai3q
-	xz3az8d2FmgVyCykADzIPUgKnuo7Ewmd1gA4qKj88Fe201qa3w+8xNWlGxLoD/pqLStfaZXEt9lB9
-	8bbt7RwbdRdOlV0+RiEEi1pHq1D83YRmAMGO/kR1Bqe2hQ/SsuX9IWBK59m5w10TFAUoF9a3tZ2XF
-	oLlaihcQ==;
-Received: from [167.98.27.226] (helo=[10.35.6.157])
-	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1ticoo-0081al-LJ; Thu, 13 Feb 2025 17:16:06 +0000
-Message-ID: <a994e94c-3211-4bb4-ab41-71a2c1abebd4@codethink.co.uk>
-Date: Thu, 13 Feb 2025 17:16:05 +0000
+	s=arc-20240116; t=1739467023; c=relaxed/simple;
+	bh=rwN68ZfFZpS+p7Snpl6+Vm3SkAwnIbf/+yQkfbEaAY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f1dIPeOL7QlQSjthceaOtymcNoWSgl0JmJ3T2m6ulJDNcO1yQfs3KxVz55R4aQVipuauzjdL1hthrujRTk2OCLaWO1gBL7r9ltR2eaLKEYaggfeIehDR5UXX+i2RzJF9RVfH7OiKacV4jdgpV02x7sGmyarbhsFnburef0Q0tyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n8wGfp1k; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DGrp5V008337;
+	Thu, 13 Feb 2025 17:16:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9wlBFv7Tbou/aWwuZJOkNHqYSnFsBzD7OpLRH3DjcgI=; b=n8wGfp1kx+Ww46ol
+	ltmCjQpJU3aOzBoaDeDY4u+maocy7k2uTi82/nUtkufbwtkHKKLndqXaOi9Y2Yt8
+	+pTEg8bDooUoEpskn6yVReNONteybJLKgFXjXVZFSWCxufFQICiSBmvTaCCs/Yej
+	OJ+uxVpmr5DWivVF8wbVvJCF0sDIq6/HJ5bVq9WmOyYz4MyIyaixYip2YO3aqXvV
+	kuNvAewXOkCqMtQbLkxfvIwMyxESmZKzl887iFr30MO2PE2gVQA+FBJA/ga08qeH
+	kikHG9YSuY+Ueef5eSeZI0YvRVshrHGb7NhHKlKG9EuXHT6t5foSc+PmKhlDN6WW
+	KolIBQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qewhbm77-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 17:16:48 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51DHGlHA013022
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 17:16:47 GMT
+Received: from [10.216.44.15] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Feb
+ 2025 09:16:40 -0800
+Message-ID: <30c91617-8307-4ea5-8a56-4b3b987f2bdc@quicinc.com>
+Date: Thu, 13 Feb 2025 22:46:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,72 +64,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] riscv: implement user_access_begin and families
-To: Cyril Bur <cyrilbur@tenstorrent.com>,
- Charlie Jenkins <charlie@rivosinc.com>
-Cc: palmer@dabbelt.com, aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jisheng Zhang <jszhang@kernel.org>
-References: <20241118230112.2872978-1-cyrilbur@tenstorrent.com>
- <20241118230112.2872978-2-cyrilbur@tenstorrent.com> <Z4rl8BgoV8tygCn9@ghost>
- <b45aab1e-6d37-4027-9a15-4fa917d806b9@codethink.co.uk>
- <e4a4c688-b78c-468b-8196-68d2df980167@tenstorrent.com>
-Content-Language: en-GB
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <e4a4c688-b78c-468b-8196-68d2df980167@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: qcs8300: Add gpu and gmu nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Jie Zhang
+	<quic_jiezh@quicinc.com>
+References: <20250213-a623-gpu-support-v1-0-993c65c39fd2@quicinc.com>
+ <20250213-a623-gpu-support-v1-4-993c65c39fd2@quicinc.com>
+ <p36nz6p6bbzur7uoitbzc63hv4qf7hhsix3mqa36igarasj67b@evcdfpeybgsh>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <p36nz6p6bbzur7uoitbzc63hv4qf7hhsix3mqa36igarasj67b@evcdfpeybgsh>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Sender: ben.dooks@codethink.co.uk
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 5TEdcz_SSSncZOitpVLLRmj3C4D-DxYh
+X-Proofpoint-GUID: 5TEdcz_SSSncZOitpVLLRmj3C4D-DxYh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_07,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=999 phishscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130123
 
-On 13/02/2025 17:07, Cyril Bur wrote:
-> 
-> 
-> On 6/2/2025 1:08 am, Ben Dooks wrote:
->> On 17/01/2025 23:21, Charlie Jenkins wrote:
->>> On Mon, Nov 18, 2024 at 11:01:09PM +0000, Cyril Bur wrote:
->>>> From: Jisheng Zhang <jszhang@kernel.org>
->>>>
->>>> Currently, when a function like strncpy_from_user() is called,
->>>> the userspace access protection is disabled and enabled
->>>> for every word read.
->>>>
->>>> By implementing user_access_begin and families, the protection
->>>> is disabled at the beginning of the copy and enabled at the end.
->>>>
->>>> The __inttype macro is borrowed from x86 implementation.
->>>>
->>>> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
->>>> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
+On 2/13/2025 10:26 PM, Dmitry Baryshkov wrote:
+> On Thu, Feb 13, 2025 at 09:40:09PM +0530, Akhil P Oommen wrote:
+>> From: Jie Zhang <quic_jiezh@quicinc.com>
 >>
->> If we're doing this, then saving the STATUS.SUM flag is going to
->> be more important than before. We had this discussion when the
->> initial user-access with syzbot stress testing turned up.
+>> Add gpu and gmu nodes for qcs8300 chipset.
 >>
->> We partially fixed this by rewriting the ordering in the __put_user
->> function to stop the 'x' argument being evaluated inside the area
->> where SUM is enabled, but this is going to make the window of
->> opportunity of a thread switch much bigger and the bug will just
->> come back and bite harder.
+>> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 93 +++++++++++++++++++++++++++++++++++
+>>  1 file changed, 93 insertions(+)
 >>
->> If you want I can look at re-doing my original patch and resubmitting.
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>> index f1c90db7b0e6..2dc487dcc584 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>> @@ -2660,6 +2660,99 @@ serdes0: phy@8909000 {
+>>  			status = "disabled";
+>>  		};
+>>  
+>> +		gpu: gpu@3d00000 {
+>> +			compatible = "qcom,adreno-623.0", "qcom,adreno";
+>> +			reg = <0x0 0x03d00000 0x0 0x40000>,
+>> +			      <0x0 0x03d9e000 0x0 0x1000>,
+>> +			      <0x0 0x03d61000 0x0 0x800>;
+>> +			reg-names = "kgsl_3d0_reg_memory",
+>> +				    "cx_mem",
+>> +				    "cx_dbgc";
+>> +			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
+>> +			iommus = <&adreno_smmu 0 0xc00>,
+>> +				 <&adreno_smmu 1 0xc00>;
+>> +			operating-points-v2 = <&gpu_opp_table>;
+>> +			qcom,gmu = <&gmu>;
+>> +			interconnects = <&gem_noc MASTER_GFX3D QCOM_ICC_TAG_ALWAYS
+>> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
+>> +			interconnect-names = "gfx-mem";
+>> +			#cooling-cells = <2>;
+>> +
+>> +			status = "disabled";
+>> +
+>> +			gpu_zap_shader: zap-shader {
+>> +				memory-region = <&gpu_microcode_mem>;
+>> +			};
+>> +
+>> +			gpu_opp_table: opp-table {
+>> +				compatible = "operating-points-v2";
+>> +
+>> +				opp-877000000 {
+>> +					opp-hz = /bits/ 64 <877000000>;
+>> +					opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
+>> +					opp-peak-kBps = <12484375>;
+>> +				};
+>> +
+>> +				opp-780000000 {
+>> +					opp-hz = /bits/ 64 <780000000>;
+>> +					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
+>> +					opp-peak-kBps = <10687500>;
+>> +				};
+>> +
+>> +				opp-599000000 {
+>> +					opp-hz = /bits/ 64 <599000000>;
+>> +					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
+>> +					opp-peak-kBps = <8171875>;
+>> +				};
+>> +
+>> +				opp-479000000 {
+>> +					opp-hz = /bits/ 64 <479000000>;
+>> +					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+>> +					opp-peak-kBps = <5285156>;
+>> +				};
 > 
-> Oh! Could you please link the patch? I haven't seen it and can't seem to 
-> find it now.
+> Does it have no speed bins or are they pending on the nvmem patchset?
 
-https://lore.kernel.org/linux-riscv/20210318151010.100966-1-ben.dooks@codethink.co.uk/
+Product team hasn't shared the details of GPU SKUs or the SKU detection
+mechanism yet. The default assumption is single SKU.
 
-> Thanks.
+-Akhil.
+
 > 
->>
->>
+>> +			};
+>> +		};
+>> +
 > 
-> 
 
-
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
 
