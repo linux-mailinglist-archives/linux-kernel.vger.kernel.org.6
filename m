@@ -1,135 +1,116 @@
-Return-Path: <linux-kernel+bounces-513536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F06BA34B5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:11:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C61AA34B3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FE4D18882E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:05:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E66E7A1A61
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFB71FC7DD;
-	Thu, 13 Feb 2025 17:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="by4eZ+uK"
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C2E202F60;
+	Thu, 13 Feb 2025 17:07:02 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB28A1FDA76
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248E41FF7B0;
+	Thu, 13 Feb 2025 17:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466334; cv=none; b=UFAEWveKOUOTFydJx5udUR9jUoZ6II7lyaVuCeKUof/SkrQDRZYJ3WhPwTOuLKT1p+k2L2ymKCBjyTs9HAAJglmRwnH5ee+T+Tpf1kOwBUTjgFialyxyjiiMU1tcwVJKOJ+A9C6wYPUSTvmqLB8B/AwjSNTTdrqx6CaKIRXLyg8=
+	t=1739466422; cv=none; b=OzHBSsokjJaExIYLMFIxb3bJa+JjbHS7Nf+MEsauLhxY958XocNgV7WkkLUriP5paALEOh/UPbyYwaecY6+8qmyPQEhrx1vcoEtOO8+EpCt1J1pNmbtEgNoQbHT1zjIbYL0232qTjrtkVkXwxtUXB2Wy0xd4JewR/sZC9rdFcrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466334; c=relaxed/simple;
-	bh=2cHiBqkS/LD3shVbQD3h3daEXcL3c6Up7LUMhL+YVg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iJSlxTqsv1nmD6Sd1WtKRWyHBK9QV9gyRpF9TwDDjwnVV6Fd8mU2zQYqT6qJKyr1UGp35YcXOjhTr8PQYicFscI50fcmOVvpJBSkTPLgajoRZcGQ1HI/eaWwTfNcrAzjyOzQ/LYjXmJ8qclnL7GANmdIr7WaMPzqfOnDgskOb+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=by4eZ+uK; arc=none smtp.client-ip=209.85.214.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-21f8f3bd828so2474405ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:05:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1739466332; x=1740071132; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0guEuJNvlGkwonkHXf3ZKU0sySDKrB2+MAVSsNCun0o=;
-        b=by4eZ+uKuRDeKuXIlo+plEnmebBMsAQfFINrBsTg+93QQNvLNAy61qRTLb8XjJKR3y
-         sLlDwBYrY0pti8XkaNa2L4tjFJo6r3bQ0k8ftz8SYr+vr8qxm1ryU5+xoAXP1psikH9x
-         Ru9j7HeBql9vFNr+LtytsZP86+YENFaFEoWB4LmEDjpmDs02IU5rJDEuOE5u6Eisi1C8
-         SOngDBLftk1apC0gPLPX4D68dTwP5QVy7OkZDQJFDXlYo/wYpqwbC/vEFlzq0O7CkmPO
-         eX8YIIHbRkYbHs/fxcJaRnPZkXe6ajCzV669GSi2dZCTm4eGaMBFCglguI4RzePJkm/U
-         A1UA==
+	s=arc-20240116; t=1739466422; c=relaxed/simple;
+	bh=9OZZS9cRGpm80QHsvhNO3U2VncDvKFA706oVsF0GWbs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TX8kVWYFQJKKZGzgbLZKJEG0vf8TG59a2M3h7J55U/xRgPWmqP3GHZser4cHqiZqkTJL1W7RQzgBQHQAFJN9DZE0LLVuyCNX4BIaB2vppA1/EFy5qQ1zYNU2jJbYznewPv56WoDcTBXFkCNCPtYrGyhLAU5U8GFCqcytIth6vs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-51fd609388dso357782e0c.1;
+        Thu, 13 Feb 2025 09:06:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739466332; x=1740071132;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739466418; x=1740071218;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0guEuJNvlGkwonkHXf3ZKU0sySDKrB2+MAVSsNCun0o=;
-        b=BTlVLErDcy/atOLr2TsTSm7nr8Gx8AZctvsmzZGVUYSAFu3OKoBVZx2I6tgpt7Ed6T
-         MEKPQs1yc4xA/KLTO5rTxnm72kIeP8lhvqdc5bZT4wLxHssJlgUlL77ksnuEWYz0fF+Z
-         LRqQ30xRYuKTl+XY2BKAKNg68nhByEuFByYjDqT0xPW6EfVdOhy+7vA+rxE+RTb9faRD
-         L2Sk/M4ij2/d6MC2DbsH9ug5LMGRlbfvxattfvCpCYQE7RTDx7lBFNn7ua99aH9GC+Md
-         7VMv0DiEbOBd67jXL3lamo1xSxc8JpMvrehkQAnZsRokLnR81iz+7ZyXdaDShl9fx4xk
-         Aa1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWu6DZYQHluQs5vync3DkBGkFDB12SQlMY/EIF8yr5KTx3utBNEknyq/PynC8eDtXV4p5sPplPiLTi6xgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQeaHhxAun3LrCTIRGkij7CkHIYpYmMf8O3rmdZOrbyUQc4ist
-	hA4K1BKZkq61ABkXuKGZ3PZBL4lvKutsZAxG0qlwqoPDwdlzYreqCB7TP3s6c2fJVOeIFU0Pl07
-	YpDXsilTnomc5y6OsjBX41SIw6TFaY1XS
-X-Gm-Gg: ASbGnctJHnUllDpHXmIzMGNYLRKfshpvgkItKpj4G17cjpe4YVdXwu4dL3acet6KIKD
-	DAfkTDKwcRDrTD8DHQDZmlxysWhqIzdtJA8zqUCl5AVPUeN48XavDyqiJYRF2wULopkd43HNkkB
-	rgv0lo0IJFSiwkYX0rrFtmqNloa9TvT/97ZA6gwTXvJelELaXZeAH+Su9rVVrGjFQ7nRXLYhNkR
-	jtPnQzs7yI4PPY1zi6JEGlnsXalR3yqEF9hjfKHkO6ByL41iUxtbrkhBVUb5sdrrsoVa+ygnaXq
-	YH5bslN9jBQSoj3KLSEu1k8jBu5xoApDz//DMg==
-X-Google-Smtp-Source: AGHT+IHURWcUxjpQh1hRezwaV451EcRATWFvIcuc8EXv7EdaGhXS1xW89EtTfCobKSrnGs0I1/3+UwR9EHZz
-X-Received: by 2002:a17:902:ea01:b0:20c:5da8:47b8 with SMTP id d9443c01a7336-220bbf3284amr50146265ad.5.1739466332019;
-        Thu, 13 Feb 2025 09:05:32 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id 98e67ed59e1d1-2faa5d0caa1sm63457a91.1.2025.02.13.09.05.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 09:05:32 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 633E934022D;
-	Thu, 13 Feb 2025 10:05:31 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 57A64E416E5; Thu, 13 Feb 2025 10:05:31 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] nvme/ioctl: add missing space in err message
-Date: Thu, 13 Feb 2025 10:05:14 -0700
-Message-ID: <20250213170515.4027908-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+        bh=YF3/2kfrsJYjoCEIlZrwDWAfYUEZcN2JfotI765XeoQ=;
+        b=MGZb8bm99OaA8S4XwC++DWnMG8ibOSWZFsunZwUtIXzVlK96MKs871bpv1Qf+Evmbw
+         7GHdJuIFbemASLSBHbPDCvgN9DIb52vuI5efvJ0hsEzGXTLJF0HKvhPS2OgOb2IS/4qy
+         BQAOzO8+crJn9sCLwDWYf1NsbyMc47hUT+38iLWsHBxfylgDnOQeacxJOlEhjsVjNQwW
+         1P5m8+CKAipnQ7wb5Mrs1zLqxQSNSf5LABn65nVK/fdRl0MkAuk4TkbxiYcaDSnsetTf
+         hjtTTU1we7o8YqIQ0Gaf4CxViJVwRaQ0IFFtzhifcOh62xy0vXrv7/2mZBtXzR/xWFfu
+         DZcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoBf5CGj4zqTSOX3Y0wylDLehv9VrrRPhmMy1R75tVrhCQpKioaXJtxqbuJiXsml9CZ35HfqwFTf9X@vger.kernel.org, AJvYcCV0vcD2pEKixzHIIxredqm4+RF1+3A+QLIHEEsk/vPIsvvQvMy/38vMyUi2lSqO7ejWpAVC3bg+izFPVht5@vger.kernel.org, AJvYcCW/U6EVNhDx+eKNZECWjBo5J4/EUZe/Mq4NaLYAgpWCz6PmiNuYH/Va/9Z5KEUmnXhIFZQo2+pwN0D61TQBVVj7/5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6gc6L6p/ftbpSD/F6jrwmFPdzt5xdsjIcoWke1l694mV9zFwF
+	m+FQ2drmQR8ZHAvujGQix6farSbyZU9zXcgD0PmDhMsgDRXDaJMQWzAeT01oLZU=
+X-Gm-Gg: ASbGncvDyIS3s57w8l5m/4UUY2Fad7Eha86KbN9oYBg5kjUWNm02dKtaIHvY8NK1RVX
+	gRpaADiUHhiroIzJpDTZziebXM6Y3TPtsYFHRBoN7pPs2qjoxjwaWSgu2I9uUQPWRvZBxXKTLyh
+	vwCoZR4uON/yVGHnqXZYb8Z8rEg4nS3vwPU4VpGlh8rkSrD2vTxrbJ9Dzi3dfh6sQgjjnUWwZpg
+	cynALD64n110qgXE0wlQFa0hIHgi0PYfihMUXDJhXA8mBKNeTtO5zPJFWWzZV4Wj3YXPQdRQDDK
+	gD5QYvelfWGxxnHq+SWFEilKK6PTumzN/SoRktP8lHny+pTbArKpUw==
+X-Google-Smtp-Source: AGHT+IHtTWvpDlBDEAdwS6o/Jej8zQ73EJ6e6qtYedGHXpsYMRDsgVPKYGVTQ3mC1NU1Jh7BvcCrhg==
+X-Received: by 2002:a05:6122:a17:b0:520:5185:1c77 with SMTP id 71dfb90a1353d-52069d7ea8cmr6725984e0c.7.1739466418377;
+        Thu, 13 Feb 2025 09:06:58 -0800 (PST)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5207aa40088sm220702e0c.10.2025.02.13.09.06.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 09:06:58 -0800 (PST)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4bbc406499fso274777137.1;
+        Thu, 13 Feb 2025 09:06:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWUZCsSPkkv1nwPZza91a4uGeUkTm6mKXwSS43JjA1kTf372k5k32uQUOXgv74K2hZYlowSvIaRcyzfUDeUv/OX1f4=@vger.kernel.org, AJvYcCWVg1MVRH35NUmvErPKQnpcC/8y61M6p/egM8yDcpcvyY8qQPqRtzmz1EH0fWjmhIGYyYX922aimKsWX1Rv@vger.kernel.org, AJvYcCXaL2GnFE+otLPKSBu/Dj7ln+5iNPDO1RHc9uc90uV9hDML7aVNKuu55p3O/qobLWaqxFXYWPVPIOat@vger.kernel.org
+X-Received: by 2002:a05:6102:4191:b0:4bb:c24b:b623 with SMTP id
+ ada2fe7eead31-4bbf568bd5amr7299920137.19.1739466417907; Thu, 13 Feb 2025
+ 09:06:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250209180616.160253-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250209180616.160253-1-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Feb 2025 18:06:46 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVRu7Kp+qF52ApYYqdHg=tV5WTAOaG-Vi7Vqj5786Us2g@mail.gmail.com>
+X-Gm-Features: AWEUYZliYRg_sys6dyhouDCv7ONlDd2mFCSmyYehrp9fFQVAs0ioNoeU0iPhl6U
+Message-ID: <CAMuHMdVRu7Kp+qF52ApYYqdHg=tV5WTAOaG-Vi7Vqj5786Us2g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: renesas: Add boot phase tags marking to
+ Renesas R-Car Gen2
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-nvme_validate_passthru_nsid() logs an err message whose format string is
-split over 2 lines. There is a missing space between the two pieces,
-resulting in log lines like "... does not match nsid (1)of namespace".
-Add the missing space between ")" and "of". Also combine the format
-string pieces onto a single line to make the err message easier to grep.
+On Sun, 9 Feb 2025 at 19:06, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> bootph-all as phase tag was added to dt-schema (dtschema/schemas/bootph.yaml)
+> to describe various node usage during boot phases with DT. Add bootph-all for
+> all nodes that are used in the bootloader on Renesas R-Car SoC.
+>
+> All SoC require CPG clock and its input clock, RST Reset, PFC pin control and
+> PRR ID register access during all stages of the boot process, those are marked
+> using bootph-all property, and so is the SoC bus node which contains these IP.
+>
+> Each board console UART is also marked as bootph-all to make it available in
+> all stages of the boot process.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-Fixes: e7d4b5493a2d ("nvme: factor out a nvme_validate_passthru_nsid helper")
----
-v2: combine format string onto one line
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.15.
 
- drivers/nvme/host/ioctl.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index e8930146847a..b1b46c2713e1 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -281,12 +281,11 @@ static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
- static bool nvme_validate_passthru_nsid(struct nvme_ctrl *ctrl,
- 					struct nvme_ns *ns, __u32 nsid)
- {
- 	if (ns && nsid != ns->head->ns_id) {
- 		dev_err(ctrl->device,
--			"%s: nsid (%u) in cmd does not match nsid (%u)"
--			"of namespace\n",
-+			"%s: nsid (%u) in cmd does not match nsid (%u) of namespace\n",
- 			current->comm, nsid, ns->head->ns_id);
- 		return false;
- 	}
- 
- 	return true;
+                        Geert
+
 -- 
-2.45.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
