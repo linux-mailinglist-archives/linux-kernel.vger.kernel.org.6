@@ -1,174 +1,158 @@
-Return-Path: <linux-kernel+bounces-513300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB89A3489D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:55:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7513A3489F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B0CB1623D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:53:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C35D16250A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E7019D092;
-	Thu, 13 Feb 2025 15:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C353D19C54A;
+	Thu, 13 Feb 2025 15:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xvd8jUfW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="QCQE+NgM"
+Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazolkn19011026.outbound.protection.outlook.com [52.103.38.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223CD155326
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739461997; cv=none; b=hqoRr3wyzI0Me63b6/LWJcDFDs+Y+mQYZQ/41jcdDXcqVwga3X3PjYbvLpf8e2Tm+bO/Td5Nx5v0QNS/Q5P723jMP4Mqofj4R4O9QMfNbvTcD07+afEUZBswtj9mAZDXiFwvlW/HW+q+7PMHsSaubwf54MnTIEOrTO9Ow3pLxqQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739461997; c=relaxed/simple;
-	bh=Fr0YTAU+jzS2hTVLmxjX355fDOiiw6bVHBgQDsvSUwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fuMsgNCH8t4P8Yq+fwX6sS1PwPacJhltbLR/rlDW+o/fz5uSouYGBS2hFJg25DnMZBSKjW5TSGhh15A1Jz7bsaN1WjtVxfxWjA5f6zCusR/RpbfL7x+xM9fNFncOFz523Wi5KtR5hkmBi/AzunitHjGLzUog35j7EQzA0tEKdD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xvd8jUfW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739461995;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wm65mUYAEbhhNi250l1nY6B0IiEBXXQj82KeWsM7Zn0=;
-	b=Xvd8jUfW71PjHtuma3sYKMUcHlsvTz8gHw5d5CnOrezvv/bIdqfe33AKPj/xQcQFMJGQ20
-	pNABMEjgODXPapdNuJxaIPOYlutjeaSX+S/XVG3YNFh/WqsKiV4cxCeyjrKfub0RBjIKk5
-	5GSUOYc2+7VknwzXI2Qtf91bcfRrdHo=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-cArGOL9wNqmXUW6VsLH36w-1; Thu, 13 Feb 2025 10:53:13 -0500
-X-MC-Unique: cArGOL9wNqmXUW6VsLH36w-1
-X-Mimecast-MFC-AGG-ID: cArGOL9wNqmXUW6VsLH36w
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ab7ee928985so118949066b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:53:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739461992; x=1740066792;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wm65mUYAEbhhNi250l1nY6B0IiEBXXQj82KeWsM7Zn0=;
-        b=sqv+goSTzRP+YEerw69pW/9tAT0k9JfI9jqzEP14SwXsAPIj+3ewohWWqSJOpeZYoY
-         sDU6N/6pPT3HY8iOB9dju3RcCs19kMuf36m3fJV9eGZCl+kiaQ/Fb4BCkXJn/R51Y4FF
-         06URLFXhDtMD1bjus3BkhMkEVAaglnqxYGbBR0Crv9YfpBuixur0pPgoNWRd9YiGgY6K
-         J3KEDAoN4WhXpxOVwoVvjjZVaxSB3DipxQj0AoIjbHMpagBhoxODtQ+2f6Z78mqizN3f
-         YgV8zUswVMDT3e+YXOtvS6tv10YNMPdiYRGVmLbQOwjaN9ABwawRHBU44WqCLVqepMMu
-         bbfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ4q/2r7GBU3EijR74yPb8ZELXWxXV1SVv5sJmZEULWHgqBr7FCE8aAV9ebPwWntGg+3HbLSpoNT/1KTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxH/D20EtbSgsiFRYcU4GvRzQBYMtVdJZ93ivpl5KS9XR4PtEK
-	0g+BdYBQNBZWruk0oM6flT+g5RBE9XaI77k/zMadNQOs++ub3+HffTBEbj949n1/jzXuJzi+Sxi
-	3dfh81V/MXzNkugPNw9Scff3ZtmGjhcRN4/2ag1Wp7CD0622PgZr+uv0IAFOIQg==
-X-Gm-Gg: ASbGncs0c/Kp2sfErfexbdSA/MvMphQ/VSx15cJlk3gtGozTdM1OR28nKP/Ey1smSBS
-	v3RgdrwqAcyXkBx1N9R9fbEWKttL9zCuY0u+JcA63/HiBbhKN7npgrbFLRx5nRSRGUaNIwr+kLb
-	3UinTrCNeRwqB4xCS/ilhvjT81PoMs7PireSY+CLCDHxE3FoPsHq8jrqgbHO+xmHshUC5mPpyvN
-	8Wg+MhaLRwj2VDMyxE6Z1q85tUiSu5qB2I9k3mjnea3DzSH3QuN9QO2nEsKjMNCBkxEGGh9lQ==
-X-Received: by 2002:a17:907:9710:b0:ab2:c1da:b725 with SMTP id a640c23a62f3a-ab7f33f5f15mr585699466b.30.1739461992364;
-        Thu, 13 Feb 2025 07:53:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGPYyt4663087uMZIIKURYrG8Pp4HqyogPBtf0brGd9uzETM6Wmccz2T6+v992nLi1pX3fRsA==
-X-Received: by 2002:a17:907:9710:b0:ab2:c1da:b725 with SMTP id a640c23a62f3a-ab7f33f5f15mr585695966b.30.1739461991960;
-        Thu, 13 Feb 2025 07:53:11 -0800 (PST)
-Received: from redhat.com ([2a02:14f:171:92b6:64de:62a8:325e:4f1d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532581acsm156316266b.50.2025.02.13.07.53.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 07:53:11 -0800 (PST)
-Date: Thu, 13 Feb 2025 10:53:07 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Sergio Lopez <slp@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	David Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	fnkl.kernel@gmail.com, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [RFC PATCH 0/5] virtio: obtain SHM page size from device
-Message-ID: <20250213105231-mutt-send-email-mst@kernel.org>
-References: <20250213-virtio-shm-page-size-v1-0-5ee1f9984350@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698C826B08B;
+	Thu, 13 Feb 2025 15:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.38.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739462073; cv=fail; b=S4yBdkjivToTM/CjBbj4VT5ZYSDO9J50iDaES2hBvBwfjQ2Kef5aeWZxk7kVplxpk6BT1wHHB/wf2pYB3oL+kIreeocfaRayMUbEoyp/s6a49c1lNtpfCN8Qm9c2Gsr7vpuxG1tYuFzzV2JbDKp4RKUZDm1nBZ/Uck2YIg09iWw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739462073; c=relaxed/simple;
+	bh=Ylqg8sNroDK2G5OQKlLukFPsn8POyws0JZ0Eu9/0pOc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 Content-Type:MIME-Version; b=iwN9upFZGSTgRjSnVv2geHEypLEBhLnczHu3vdbMCNIHHx1NlrXA0cVQEVgTzQr9nhTOe9nZqhlDbjFZY1EDKQGTHt8+Hge+k8NHvhOan353/BO/+C++5PHVyvEsLK3zCM/AzDxdZK8iW2gE8MaPsCkvCVHYBv2CTNpQP6V1HwQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=QCQE+NgM; arc=fail smtp.client-ip=52.103.38.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ABW0Hi8Fy7u506rFSupRP9jJOZUpETqUpbnMFSs7zBi7FpllhvVeKssU7ReX4kvEB3py0YR6vimk5xYviLmSNZ26kSpVQbwC05r7Impz+WAgX+7eD3T1uk0s7qUZ7iSn/VWNHkg8Pyta/PR0J4kaQG5xRdRJYSUskhabwDpPkjEGebXSTDBfacKS42OoztXdwDJLzHWEslzrr4clFbdNEsq+BX0OYB35ZaPsoD9hxD0MOHr3EX7ZGMWXJ/yq+5GGXMii9Am+xUJ+V5BzDciAiwfaNiEou2xx9w2NVKaRIL1YuI64/0KR4umiWe3Tyf+7MEj6a58E53NzVf4QajB+bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G5pTJBX6rMGmFZq+Qqm/r0BZvj0MzBWtBUg/Rqloo50=;
+ b=CqVKEwGtY6XcTMKq/bbzkz9b9RD8gMWJ3Wfy1aCjCNdz9wMdyybLcb5COJ4HUdu2bK+9pSUd3BtuwIWJ68MCJ9FJxb6P0/pIALbElrEInPGMK5/YQSjH0o/FvnWoTk4wp4noPqeVpGxbC/O4oTxcWB7c/6gzylN3igWdnfPMtskKYUhs2r2jQ4nXoDWJGlSfQdMDzxCsObN/B/7YFc0dKdzwCIOxWQwXUNn/3cNu9No9MNqEDbqB6pPwmvGbgt0nEzp7RSMgVv1EN8ImEEbFTlauer3Z9wjk+rwAYPd5HCkmKgOn8DB2SLk/9OuaI/pxI0Q8SWEbqZWhS1fliehyRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G5pTJBX6rMGmFZq+Qqm/r0BZvj0MzBWtBUg/Rqloo50=;
+ b=QCQE+NgMiXr9Dy4yenhv8yN9TeDwO38ZQCSr3yApbyMFZRx8ecZQNAcHuAPgmfTyeaxYzU5fFlPxjo1b0BoSgWLLv9ZWRj1XIZk4Vx1Sj//UVYJ7v4leVCp9DidPIAfos32Yb0NzmU4X4rlkr1XLzDNx9kIwI/fGUl58+0JX9cgwfe2e6HUKiWYz6UII4ohSoFPnkN3yX2ALWtJimvvZAqUiccr7jFD4jrYFAzXpIN4cG6Mhi9p97pAPZzDgRVtOs9KMdabbI+RjhKHtdy+sNAbDq6u9MO5MnL/nPy+lQOwKP+xgGLP3ylmHNNoKniEbWCp5Y7FBfckhf1ERw46VOg==
+Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:160::13)
+ by LO0P123MB7700.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:42a::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Thu, 13 Feb
+ 2025 15:54:27 +0000
+Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::c0fe:9ff5:51fd:3fdb]) by CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::c0fe:9ff5:51fd:3fdb%5]) with mapi id 15.20.8445.015; Thu, 13 Feb 2025
+ 15:54:27 +0000
+Date: Thu, 13 Feb 2025 15:54:19 +0000 (GMT)
+From: Manuel Fombuena <fombuena@outlook.com>
+To: Lee Jones <lee@kernel.org>
+cc: Manuel Fombuena <fombuena@outlook.com>, pavel@ucw.cz, corbet@lwn.net, 
+    linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 0/5] LED1202 / leds-st1202 fixes and
+ improvements
+In-Reply-To: <20250213104119.GD2756671@google.com>
+Message-ID:
+ <CWLP123MB5473AD120D1AA064D44B10C7C5FF2@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+References: <CWLP123MB5473933B9B97137828ACC6A6C5EB2@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM> <20250213104119.GD2756671@google.com>
+Content-Type: text/plain; charset=US-ASCII
+X-ClientProxiedBy: AS9PR0301CA0017.eurprd03.prod.outlook.com
+ (2603:10a6:20b:468::33) To CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:400:160::13)
+X-Microsoft-Original-Message-ID:
+ <db7cbbf1-63b0-fbaf-3db9-f8389e2f2643@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213-virtio-shm-page-size-v1-0-5ee1f9984350@redhat.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CWLP123MB5473:EE_|LO0P123MB7700:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cbb1d2b-71af-4479-f2e0-08dd4c46b1a6
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|7092599003|15080799006|6090799003|461199028|5072599009|19110799003|8060799006|440099028|3412199025|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RO4KPHVvitmhU/ZMlIJDPkxb+TbDoG1MQtyg+7KcfyXKlOkH55sJmwLcjBrE?=
+ =?us-ascii?Q?td0UK5sAandPiAQXZxeQy3oM/2VEJu6GyHBK3UXXJo+d/dHBNeKaRcJb5X8/?=
+ =?us-ascii?Q?g95IKs58/9uDs4Xw/zC8nXzixINLo9auhrhTtRTkQ/AamQc9yLFn4xO9vAKm?=
+ =?us-ascii?Q?G0zjn4WuX7JHWtk/7wJ40BGu4mPQBWeJBTFCRfKD5I30x7S81JfktyOy6wmx?=
+ =?us-ascii?Q?WNFGd8TKXb+OrxZVdW873vqMsKr6ixqcBqwwnA6+OQUp/VlNqOqsCJ1Y8kMs?=
+ =?us-ascii?Q?WCDrtY26VZtIVpotaRzhZBaeucMNBU/nnS3+kAwnxBP1dfh6HP6mUiziDTi+?=
+ =?us-ascii?Q?8k72R0WcshXC1OZM3gh9Yueni38S+D65cIpDkwPqM/1JRvlCHUD+JSDqWYMQ?=
+ =?us-ascii?Q?qGTj99TjIXQKdrWcSnqcJnZ6+S/JmqVFeAQBHW3ZSMiY2Vu54ZoIP6KoiBJr?=
+ =?us-ascii?Q?apMwHX960N7hlqJ2JDqmqyfr0WMeUBQOcsRxmFvQr4EePaB8+IJvhjmBW5Ce?=
+ =?us-ascii?Q?6LHHBudWpgn7UNT9EK7gEcYHQXG8tfzkqdBF2ledq2igWc4Z1e4vDvGLKEDe?=
+ =?us-ascii?Q?yfyPhr2uYiEWoNwd9t9I9pHtahmuOy6J+qqcrBKx4zvhfuZFGvldaPOzRvuk?=
+ =?us-ascii?Q?xsuf3bD+nkc/VdbzNj5C91gTEvt7OMaBet6qSGzCAREyIoesxoJ0jO4qMEr0?=
+ =?us-ascii?Q?8cFhm9zQuyC9FLH+/v5Hj+Skg8moj8bSFerNlcyXMVI7h2cgRUNgHFV4ZhKL?=
+ =?us-ascii?Q?Sd9jEJ1KnjUR1ur9U8EX0gxA0scN0anSYIAqTfga0kShfVgR754NaeR2rY4q?=
+ =?us-ascii?Q?yCBjbdGla5OwR83iccm14xAFAyDPWv+UYoYLnHoJTRbenThqDB2ccm6fkSbr?=
+ =?us-ascii?Q?ObAvzcw+NlPo3rIgGsTXdhn4YMzR9wkUbW7TfEBYTUZpUV61IbXXbio6DupE?=
+ =?us-ascii?Q?XbNc6/7fiLumlJi5BIjTJfL+uD5tq3IhDladVpEe/EIZRk+EG3Jb1pB3Xdla?=
+ =?us-ascii?Q?LSnleI4i74MMIEEUC3S/MP7eYt6QKPEz1Aoa6MivBWceZKv7Jxc3ZgL36Wft?=
+ =?us-ascii?Q?47MW4jmZyTXnWoOZDkrUn9Bp0TX9CguI8IENIEzfl189YGzV2iM6Ok3J3jBo?=
+ =?us-ascii?Q?306UridLVjSSqRgRCIZE0Yu8YSxWjATM7g=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ZlWjkYW+fbgpZ1RmOa6ufEQxdsRWjo3GuKn3KXrW7RtcvWkRsdlVp3+H0xXf?=
+ =?us-ascii?Q?QL05pko39E8oVAGWm2z0OlD2efR52BDqiGaxvj8Zrhey7lE3JtkukqCtx4xr?=
+ =?us-ascii?Q?Ts6vUXFzdcOJ1oRV8fuydoy3WfYEREYLTzSgKx1qW1XrA8iBZioQhGIxrizg?=
+ =?us-ascii?Q?xUNSHz3+dy+LzHSwxQt3UbKo0qCS0CDuXaBkjaYyMdHdN1/ChfbeU0MgL7d6?=
+ =?us-ascii?Q?bPe1rxranmR2SZUBJNhUWp9G3HyxCU5tPpivSGmCj7jH/W+G/oIM5dOQJkH9?=
+ =?us-ascii?Q?vGM+mH2MSLsoq7mfPuCCs+TilHB3qsestPSsR6xXT3R4j5Ee3zmt+kgAuUS8?=
+ =?us-ascii?Q?M/iCfNNjXj/Dq6PUTlYkCnDTLd8/ASYMnGUdo0BND6BeGxTxLV9Mfht2cvTN?=
+ =?us-ascii?Q?/L5ReO6cmHHNhK/PDasxk2y9Rsts3r/UzEuX74zMPOajyNixRCtRjQz76AwR?=
+ =?us-ascii?Q?OImGXZjekbsFpD0Y3HgTDFyBSr5SkhDUlug3EmFCsJTlYyrYolHoiTG3OtYQ?=
+ =?us-ascii?Q?5lZ6PPMJHAXZqa3sTOAPY8oG3vUXtOcJixLOQWaipywW0ycOr+CH9QdoqefC?=
+ =?us-ascii?Q?E4PGOL5CYa3/5vo7q8y//8CoDE1aySFQm8KKCyjfFVfUIGNY2Yi4XysXRsXg?=
+ =?us-ascii?Q?JUyC5pIIKf9z5Oia1X9baQPyJw9AjQF1Q7HLtsDNcUtc4ckRueIJlMii74PQ?=
+ =?us-ascii?Q?MKLGZUSO/FXZIlxeplw5tEVeDcThsvGeNvMl8YyHQbC6LAmZL15i8Pe8FZW+?=
+ =?us-ascii?Q?akMGH68HKnA4luNcUI7Ca4YYMuYf1/debjUN/l8EbFQvbI7QTPuI2nztocgE?=
+ =?us-ascii?Q?XSkHgXMSxrqZaiHFkbGkbGPdlv2KZ/yRu8lZbXbxHN4qX6G4tLrMVGt/hOYJ?=
+ =?us-ascii?Q?eOP6d60Yqf+ccEPQKoHOx68j87xLprk4aaDqPMjT+sRylrtTBmZwOJFN3SMi?=
+ =?us-ascii?Q?2LKkhJFN5r+aOsbwFiw1+lSxzAfVgFrM9Yfbj2Z4ZhrpuRIvWgqc8b7OK2OX?=
+ =?us-ascii?Q?ZZQlln3b+erOuvhj7SqgGPqHgST+EpB9yCzJwfxxXVxBopLdEjhIA0ZZE9F0?=
+ =?us-ascii?Q?HjLeau/OqrBdzMluXLNs+QWjIMIc4G3OKy1OsxaBNVEwRRXot774WwneT1RE?=
+ =?us-ascii?Q?XXiK1PNm652HZOCf9ox4QMFcz26Rl9y1uZM/RIQej/iePAeqAtajAlki8gQY?=
+ =?us-ascii?Q?5aqaqtgBIH8dvVuRU82A2tmQPhBaI8Gbn6ZwHkgY5nazyomqY13zLeebL5B1?=
+ =?us-ascii?Q?zERgTEItrpojCfOrOlzd43havQI1uOYN5hmBPkPIu+rdAgBeUS4ocMmQJpxp?=
+ =?us-ascii?Q?AcA=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cbb1d2b-71af-4479-f2e0-08dd4c46b1a6
+X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 15:54:27.1998
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P123MB7700
 
-On Thu, Feb 13, 2025 at 04:49:14PM +0100, Sergio Lopez wrote:
-> There's an incresing number of machines supporting multiple page sizes
-> and, on these machines, the host and a guest can be running with
-> different pages sizes.
-> 
-> In addition to this, there might be devices that have a required and/or
-> preferred page size for mapping memory.
-> 
-> In this series, we extend virtio_shm_region with a field to hold the
-> page size. This field has a 16-bit size to accommodate into the existing
-> padding virtio_pci_cap, simplifying the introduction of this additional
-> data into the structure. The device will provide the page size in format
-> PAGE_SIZE >> 12.
-> 
-> The series also extends the PCI and MMIO transports to obtain the
-> corresponding value from the device. For the PCI one, it should be safe
-> since we're using an existing 16-bit padding in the virtio_pci_cap
-> struct. For MMIO, we need to access a new register, so there's a risk
-> the VMM may overreact and crash the VM. I've checked libkrun,
-> firecracker, cloud-hypervisor and crosvm, and all of them should deal
-> with the unexpected MMIO read gracefully. QEMU doesn't support SHM for
-> the MMIO transport, so that isn't a concern either.
-> 
-> How the SHM page size information is used depends on each device. Some
-> may silently round up allocations, some may expose this information to
-> userspace. This series includes a patch that extends virtio-gpu to
-> expose the information via the VIRTGPU_GETPARAM ioctl, as an example of
-> the second approach.
-> 
-> This patch series is an RFC because it requires changes to the VIRTIO
-> specifications. This patch series will be used as a reference to
-> propose such changes.
-> 
-> Signed-off-by: Sergio Lopez <slp@redhat.com>
+On Thu, 13 Feb 2025, Lee Jones wrote:
 
+> Stripping the separators from patch file names and pasting them
+> culminates in a terrible summary.  In no way does this cover-letter
+> describe what you're trying to achieve, why you're trying to achieve it
+> and the consequences for not applying the set.  Nor does it communicate
+> any merge intentions (which is required due to the assumptions made, as
+> described in our previous conversation).
 
-don't you want to negotiate the page size with the
-driver then?
+Do the messages in the diff section of the patches need similar 
+improvements?
 
-> ---
-> Sergio Lopez (5):
->       virtio_config: add page_size field to virtio_shm_region
->       virtio: introduce VIRTIO_F_SHM_PAGE_SIZE
->       virtio-pci: extend virtio_pci_cap to hold page_size
->       virtio-mmio: read shm region page size
->       drm/virtio: add VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE to params
-> 
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 +++++
->  drivers/virtio/virtio_mmio.c           | 13 +++++++++++++
->  drivers/virtio/virtio_pci_modern.c     | 31 ++++++++++++++++++++++++++++---
->  drivers/virtio/virtio_ring.c           |  2 ++
->  include/linux/virtio_config.h          |  1 +
->  include/uapi/drm/virtgpu_drm.h         |  1 +
->  include/uapi/linux/virtio_config.h     |  7 ++++++-
->  include/uapi/linux/virtio_mmio.h       |  3 +++
->  include/uapi/linux/virtio_pci.h        |  2 +-
->  9 files changed, 60 insertions(+), 5 deletions(-)
-> ---
-> base-commit: 4dc1d1bec89864d8076e5ab314f86f46442bfb02
-> change-id: 20250213-virtio-shm-page-size-6e9a08c7ded1
-> 
-> Best regards,
-> -- 
-> Sergio Lopez <slp@redhat.com>
-
+--
+Manuel Fombuena
 
