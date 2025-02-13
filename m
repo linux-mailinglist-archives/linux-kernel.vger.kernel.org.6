@@ -1,191 +1,81 @@
-Return-Path: <linux-kernel+bounces-514080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A94A35226
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:25:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39A0A35228
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5379189020F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:25:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 413B33AB323
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF5622D7B4;
-	Thu, 13 Feb 2025 23:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C60722D7AA;
+	Thu, 13 Feb 2025 23:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V9/vsZhb"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Le6W/jI2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07E32753F5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 23:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E1F2753F5;
+	Thu, 13 Feb 2025 23:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739489121; cv=none; b=IUt8XmgmHB4QJgIokgsuQBf2e1givRUYZbmcPwPa07ZTCob85ceC/qJWjTNzx2K7scFZcAM1A2nck06EWXTvxd8lUrcUGSI5/puWgr280VhSGS1fUMk3YcEMN26jgVTizoAJJ+cEehQe/1FRwoIdwE+jj4vB7WnA9LroPNPwo7U=
+	t=1739489168; cv=none; b=M+F/Z4IOBymLKER9CaRkHptcD4Vl9pC9Nh8G+vZZ9kwKpsbCoP6+ancKbshLNYC2C2Gr9fF7ykUZg0Xh4+opVCa2OOucOMYvAY+f4T3WMdkeG3pooVDCVAiAsoDoUogsC0eE0KfSQVX/h9rOuJvB/qGz8+/GOjgJWDm0fY2pEW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739489121; c=relaxed/simple;
-	bh=TODc8kLM/Xouk8pD6JlJR6Tsa6qT4/CImIfhu4Qav8A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U9S+XgPhrFr4XXhaRqcss1NQeRBJrtituZrAR1BXXroZcXSV7yXzLavuZV7VPeVelF7FkiYdRftVvhhNvVnVntPbeMdvspFQinHkuNpBtarPrCDC+C5k8OYX3QDX4KkrsnAKzTLQrrC/qC+UM+l7mpEZ9emk5wHQN7xepuopPKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V9/vsZhb; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5450c8b5b3aso2515716e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:25:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739489118; x=1740093918; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vyZKU2VItF3c2AsSc7Vt49la6al69dnIjTLywWBtcgo=;
-        b=V9/vsZhbz8h45mi2qIljX85+Eah2cWs/PgHrIaBI+4Pa85IqPyj5lve1ie6qFdla2H
-         a6dYgZcQVZxID1bE86MWHYp1WLaSXxB1/7znttpDJeOLuz+suJKBHyCCq/V5YEB3EuGc
-         J3QXEceByMTZpcby1zTrf7NXUb8UTXoj/3jHXWD3t6ahCCL5X+UGzwlUuYOx/yGoINqm
-         mzN7v3DzXgGtMdeBBGtAyH76O+jgFaBrJ8wJ3+TIVbZQPEYi4mr3aOtG94JIHpLgnCLf
-         nnJJF76wOe58OK81cDsw2doFXyzL9M1B4paXOaVjEGrX9mRwJKdTnl0UOKYycX4sFh9q
-         i7Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739489118; x=1740093918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vyZKU2VItF3c2AsSc7Vt49la6al69dnIjTLywWBtcgo=;
-        b=p06wcJNqQpdfAl/HGmjznYCPpblapOPXJ+yQ+Z5SXt16Nw6IST6JcrsDKeG9eLEu9k
-         lCpNsNHUTZ0FStqoAOlePRJ4tWW1Hr+32rD9dnudtlEkQzSi7SQJYdcfRHR+WZ0pr27E
-         BjSzJ0Dmgp1Yyg4Iyz5SgwZJSD4KYNK9y1PTXSrlmJbzXHXDZ8bRdX0vbgFxqZjiMsEt
-         n0lWlIUjCsqJJjKtm5HDnrZ9KPeKtTwvXsdT4uOlMHgoDPTY65ac/FvRm5QdjMYBz2Dd
-         iDES9SwdpFJVcJRHGoo0GCLMAyQ3gryqn1xE9BVbsEYI75cG6+NNr95D1OSndieTgE7O
-         ot9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOuj2Zks4oNj2e829o41J78M7YhmoEN2zNXL6texUtuWbfrkBBt5SQyn3WP2Gzm/RGCuUUuqmpuWZrns0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBomSPXYn1VnsY7NNxwJOCYdU0GOO7Y1g7H4hNp8QQYbE/qym9
-	tzMx7D/N1xDsq0HvUYHqZSg1gD9+OEmcMAOMuTcw0IjnZuILgy9lorzGL2OknrBoZ1DryZL/tGE
-	StXXT4Btn//C7jNNDick5ANMJBYNvUTLp1GEiWg==
-X-Gm-Gg: ASbGncsnyADhZpDEwc5zBYGGCM23slUQLPovZkOI/djca8w2KDxR+Iwk/urKweeyz5Q
-	HFR7v1RSSdxMF+I7FY8Y6DWzZOkJKeEMNZku5yLVw+VpFXIozHLoFpbqjy1dDe3TSYrmbIrSv
-X-Google-Smtp-Source: AGHT+IGmjAzrNY8Z0UTae5YliwRsM6MnTTixoI4bM9qkST97BNNxdmQbCoyn1pxrE+FZoDlCxTTPFfOz0rgkvbaPBag=
-X-Received: by 2002:a05:6512:31c9:b0:545:6a2:4c4a with SMTP id
- 2adb3069b0e04-5451dfc139amr1470866e87.1.1739489117809; Thu, 13 Feb 2025
- 15:25:17 -0800 (PST)
+	s=arc-20240116; t=1739489168; c=relaxed/simple;
+	bh=m4SkwGBwuYNWHHghN05gTZyhGsaid8y/tuhX8kpSUHA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CeD9Q6vsHlAcUY8PDAMXVunNF+jBw4OEd8BPFTDOWy/jZJzX0u7IUhoNYTrBdD0Rbsh4f913DV3VmFnoNANKYvfLoK/ZWuQiPy2QWqge6dsOusqmvL2YtvEsiaOmRREsoIw9AnH3NRel2oFh7mCbXi3J7/EMZVnidcvihFbe/oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Le6W/jI2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86329C4CED1;
+	Thu, 13 Feb 2025 23:26:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739489167;
+	bh=m4SkwGBwuYNWHHghN05gTZyhGsaid8y/tuhX8kpSUHA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Le6W/jI2Wia46u7sJKLUgWO5LLTve/tBrHQ2wDMj10/HFNW6b24quZ8F2KYa/io6G
+	 Qll39gEiN+mz+OA40VCZ6ITvjC6RXCoHJWwVo1GKjLzNxyAB94R7CgEhx9jLsFEo2r
+	 hPLXcxMfqAEc3xRcmRNhNAcNkBL17WXFiagUs31bM7XLb6uXMuqXvkD8aHwITTa2Ae
+	 Bzx9A2pLm6VFWkoB+RYJpJa9T62IONWZlRnjz2ZyYQfw+MpHq7lbIlqh/GRzXM0dCp
+	 qmOdeWflX1cA/ebR+6fhSyV5aCex4eVPvQRBII0cZBhNzKzRWDDYfWhSivdSAyVC+0
+	 ryDlFiu46/iHA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	rcu <rcu@vger.kernel.org>
+Subject: [PATCH 0/3] rcu/exp updates
+Date: Fri, 14 Feb 2025 00:25:56 +0100
+Message-ID: <20250213232559.34163-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213-for_upstream-v2-0-ec4eff3b3cd5@analog.com> <20250213-for_upstream-v2-2-ec4eff3b3cd5@analog.com>
-In-Reply-To: <20250213-for_upstream-v2-2-ec4eff3b3cd5@analog.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Feb 2025 00:25:06 +0100
-X-Gm-Features: AWEUYZmhtXgqSIi7PU_BPNP_JIj58JJuOvAuh5G-9TQ2nJTUsjALSXHus6KTIHI
-Message-ID: <CACRpkdZR8X17Bn-i2anqjxf0Gk60V175F7Xfwytkhy7_K+LsSA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: gpio-adg1414: New driver
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Kim,
+Here are a few updates for expedited RCU. Some were inspired by debates
+with Paul while he was investigating the issue that got eventually
+fixed by "rcu: Fix get_state_synchronize_rcu_full() GP-start detection".
 
-thanks for your patch!
+Frederic Weisbecker (3):
+  rcu/exp: Protect against early QS report
+  rcu/exp: Remove confusing needless full barrier on task unblock
+  rcu/exp: Remove needless CPU up quiescent state report
 
-On Thu, Feb 13, 2025 at 2:17=E2=80=AFPM Kim Seer Paller
-<kimseer.paller@analog.com> wrote:
+ kernel/rcu/tree.c        |  2 --
+ kernel/rcu/tree_exp.h    | 59 ++++++----------------------------------
+ kernel/rcu/tree_plugin.h |  1 -
+ 3 files changed, 9 insertions(+), 53 deletions(-)
 
-> The ADG1414 is a 9.5 =CE=A9 RON =C2=B115 V/+12 V/=C2=B15 V iCMOS Serially=
--Controlled
-> Octal SPST Switches
->
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+-- 
+2.46.0
 
-OK so I looked at the data sheet and it looks like this:
-
-A  o-------/ --------o B
-
-It'a a switch.
-
-Why is this switch a "gpio", other than that it is convenient
-to use the GPIO abstraction to control it?
-
-GPIO is usually devices that can drive a line high or low.
-This is very far from that. This could switch some analog
-line or whatever, right?
-
-Now, the kernel does not have switch subsystem I think,
-so this is something like a special case, so we might be
-compelled to make an exception, if the users will all be in
-say userspace and make use of this switch for factory lines
-or similar.
-
-Otherwise there is also drivers/mux, but maybe a 1:1
-mux is an odd type of switch...
-
-> +static int adg1414_spi_write(void *context, const void *data, size_t cou=
-nt)
-> +{
-> +       struct adg1414_state *st =3D context;
-> +
-> +       struct spi_transfer xfer =3D {
-> +               .tx_buf =3D &st->tx,
-> +               .len =3D count,
-> +       };
-> +
-> +       return spi_sync_transfer(st->spi, &xfer, 1);
-> +}
-> +
-> +static int adg1414_spi_read(void *context, const void *reg, size_t reg_s=
-ize,
-> +                           void *val, size_t val_size)
-> +{
-> +       return 0;
-> +}
-> +
-> +static int adg1414_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct adg1414_state *st =3D gpiochip_get_data(chip);
-> +
-> +       guard(mutex)(&st->lock);
-> +
-> +       return st->buf & BIT(offset);
-> +}
-> +
-> +static void adg1414_set(struct gpio_chip *chip, unsigned int offset, int=
- value)
-> +{
-> +       struct adg1414_state *st =3D gpiochip_get_data(chip);
-> +
-> +       guard(mutex)(&st->lock);
-> +
-> +       if (value)
-> +               st->buf |=3D BIT(offset);
-> +       else
-> +               st->buf &=3D ~BIT(offset);
-> +
-> +       st->tx =3D cpu_to_be32(st->buf << (32 - st->chip.ngpio));
-> +
-> +       adg1414_spi_write(st, 0, st->chip.ngpio / 8);
-> +}
-> +
-> +static const struct regmap_bus adg1414_regmap_bus =3D {
-> +       .write =3D adg1414_spi_write,
-> +       .read =3D adg1414_spi_read,
-> +       .reg_format_endian_default =3D REGMAP_ENDIAN_BIG,
-> +       .val_format_endian_default =3D REGMAP_ENDIAN_BIG,
-> +};
-> +
-> +static const struct regmap_config adg1414_regmap_config =3D {
-> +       .reg_bits =3D 8,
-> +       .val_bits =3D 8,
-> +};
-
-This is not how regmap works. Your get/set callbacks for GPIO
-should call regmap_get() and regmap_update_bits() to get/set
-the individual bits.
-
-So the adg1414_spi_write() needs to be done from inside the
-regmap abstraction.
-
-Yours,
-Linus Walleij
 
