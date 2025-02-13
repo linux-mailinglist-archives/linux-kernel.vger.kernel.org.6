@@ -1,86 +1,60 @@
-Return-Path: <linux-kernel+bounces-513990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BABA35114
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:16:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7329EA35143
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3BB1188A8C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 206787A4F0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C1C20DD74;
-	Thu, 13 Feb 2025 22:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CA8270EBF;
+	Thu, 13 Feb 2025 22:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+yBzUM2"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE1944C7C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b="wQ+otXL/"
+Received: from mail.mvand.net (mail.mvand.net [185.229.52.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842E226E15D;
+	Thu, 13 Feb 2025 22:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.229.52.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739484989; cv=none; b=QwQQdweKLdEWEB/wDfPMs2jpjSYUnXPrTL4ymJqMQy2djI1cTZAn+0LoOQnoykdaYmP6CuS+nY7IgIKgi+L8DXCPjsVLEq3hey1oT8nZCbjk3cdJI1m474s0rw+RD30IPkK4NIvvBEd1H3TcvoRqIQ6ihlzr2eclXBGXFmsOooY=
+	t=1739485566; cv=none; b=aI+61OJ1w7NwRlZKustztxzzWorMdQgRqCwLUZ6RzuYmjPK/wZuwvVHgX68mUKJ3NG5GVXarU0RVuwmZf8U9rL3npQzYIHa2fuJg7RKl9Sa0YFs19Bl6tTNwap+l3iFsD+UFvkekiUJ0HfT2UA3Na8PlFYkp/Po1Amyy+4agNtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739484989; c=relaxed/simple;
-	bh=1Fz1RtUXPFobVz87/yFbKQq+ysQWBDo8vvhwHHfaRrs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lQCPY52aysWwbNmtZxIsrgH71h9fcT0dEnFlwMKCZ6/osNyeCCvZowavUbvheujNRi5qdyX0KlE3fnIeqBd96Xx7qYZqUinT2uRRCcDY4CZTcawu6zDAn7HCuL/VR++TyC/iNbTpxntQbMo45j9C2kjryK+VPkRe8Y83CeCb6VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G+yBzUM2; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38dd93ace00so779610f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:16:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739484986; x=1740089786; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HcGHwBHCshi0yz2RQGryrnPpLkVHnABt1yCMpCIlUPI=;
-        b=G+yBzUM2pqDGK59ZeAu4mxiDFx+rgsBELTe/TasveNrKQx8lHHRdoxx9+zMz4YumtU
-         gSLG9DuIO/lJh0LxnDZc81juVZX62/ffAZG2LPSUjF8+rej25K7C1ExzL33R+xhWdALY
-         Wp11hYA9q3qQAfdQqScbYJPkwU1WxYR6csTHBhRyBllUM3USS+BB3MZ7cVTBHCPOQgwz
-         B3BdbEwNcRignfmDlwfbqjCONhV6cPxVreWcgNmDoVrKnVOluNcyqBUn5nGOeVjFT/AX
-         M/r2yTv5YxFAQHZnwJwAO5AT0+KLkIJxbmiSQxrmC1uaGCUSY1lN1+6BENQeVOS9QMgH
-         CiiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739484986; x=1740089786;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HcGHwBHCshi0yz2RQGryrnPpLkVHnABt1yCMpCIlUPI=;
-        b=PxR95e3+1U0lG56ooku7btyxAlL8ZCYzRo2+HvoluolZoLYRoErgVMotT/jahIizl7
-         vdgNuxjzmmTWM7TfBilpXy3UM5gnEEoBx2tTc3NGSY/z+5JQ+BcCcidkzi1o607HoDtB
-         uB+O0xIGCtVDjIqVnDXyWkyUGBWUnUo+5mUkrrhX+kOcjIzeH/2h0WLXfPRmPOniY/Gt
-         ue0AaoOvCcU26dJD6zdDMPmmkIa4zvI0lCDkxandHFwwqn5LzkVYzDgSwrReI6NeCAvj
-         BjVxGot5Oktj2ePtTapINpPi/jpa1jIpSdG4Mt/qLTmfUuofxijDX3uZbYMERj9s5sAv
-         yL4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWIpnpWVv3QCTti5ruYhsKqFbYatxIrPnoyklUJSU92tbvh6mM1w0aELWzxpxhkzqpLH89F8caE4+ZcrLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHC+Rydyl525ArjmxSqz6tv9yPWTrI1+T3Z7d66GyqQRyTckiQ
-	fA9NGu20Gwaup4xOYigejd+ghs89pwTrpme2r6EH9zciLPLvu6wW
-X-Gm-Gg: ASbGncvpzZvaoyInZCGqdPtvTAoaStVPa1dyiEaDJq0EzDbYIJ1kvVOey46zxlbNaFw
-	XSub19/ucxP9fPgLtqhD7wcIS39he5Cik9XeJRVugePEjt3zZSQEd9BahQ8osDpnwWh5XgmrkWH
-	0bLUa5kozF21tZeUa0bVKFQFcH3oUEp6hqLwHIVXnHXzXIwHQ/hbdFnX12vAqlX68oTFFP4ITpN
-	XGsI0tEDKkXqHfx3z62cNvseD17xTo63aq5niYsSPWFmgZap4lPfGpfEvvGqWdQ8ef6wMCFH9Kl
-	e4U31nHrV3NOCVAu
-X-Google-Smtp-Source: AGHT+IGECzW3fSF1xoqweSC//Ej3VoquTbE09pIlohYYLP6905BQnHOPle4p2ajo3BzRgmjrjGxIzg==
-X-Received: by 2002:a05:6000:186b:b0:38f:278f:58e4 with SMTP id ffacd0b85a97d-38f278f5963mr2846752f8f.12.1739484985733;
-        Thu, 13 Feb 2025 14:16:25 -0800 (PST)
-Received: from qasdev.Home ([2a02:c7c:6696:8300:594f:c4b7:a2b1:c822])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcc45sm2974803f8f.33.2025.02.13.14.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 14:16:25 -0800 (PST)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: james.smart@broadcom.com,
-	kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org,
+	s=arc-20240116; t=1739485566; c=relaxed/simple;
+	bh=++zlBheuf2ghp6IKg2VkyhrcpY1H9g9JvPugZj9lb6c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ItujleHTMyDivYxde2Rv8tNb0aDPCir5ZnLrRexg+6EJb6nXSGhu43qI3mhHRZPF6ZMDvw0Yi9c7ys4YRXMEYsyqbZIyMs4AdzAuDhw4HCOHZNgsxsxFrCxbl/2+VYHjJ3YQOz+lYz9jh9TeY7mPOelI9PADTcwZC4oYkA7oaqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl; spf=pass smtp.mailfrom=martijnvandeventer.nl; dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b=wQ+otXL/; arc=none smtp.client-ip=185.229.52.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=martijnvandeventer.nl
+Received: from xrossbuild.mvand.net (mail.mvand.net [185.229.52.35])
+	by mail.mvand.net (Postfix) with ESMTPSA id 4E4D21FF3D;
+	Thu, 13 Feb 2025 23:17:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=martijnvandeventer.nl; s=default; t=1739485043;
+	bh=++zlBheuf2ghp6IKg2VkyhrcpY1H9g9JvPugZj9lb6c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=wQ+otXL/AsRnI0M5Wli7eTKcR1/hhmmL/vCU/O1IhJgNCGT7hTbuBSjpI+2RlDVQ2
+	 vNBKUGLbrLt7BuIbR/sr98pFGcsxJpO4V6wg7ZEfTK9x9PtOAL8a0vwBYaW0+jDfSE
+	 yv3oblxoousTZWjoAWLYGD3akzcFCRTO+f5jC51/VEjvVR7dUubb0MD8Rl0fSQWVdN
+	 QaXHBZkqMHh6HClJNQBSgndP8VJwIZ2HXQ2a4NZsoiEWa+ItYcVlLje011BRFs8yKe
+	 6CMAAdUy04lLaOLmm2IIYfOIZefKiENDwZzArE4ADVmbMHRE6EXVPKJTX1Y2yDE8yb
+	 PT6ice7j7RwIw==
+From: Martijn van Deventer <linux@martijnvandeventer.nl>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] nvme-fc: Utilise min3() to simplify queue count calculation
-Date: Thu, 13 Feb 2025 22:16:22 +0000
-Message-Id: <20250213221622.81457-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+Subject: [PATCH] clk: meson: g12a: Fix kernel warnings when no display attached
+Date: Thu, 13 Feb 2025 23:17:01 +0100
+Message-Id: <20250213221702.606-1-linux@martijnvandeventer.nl>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,38 +63,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refactor nvme_fc_create_io_queues() and nvme_fc_recreate_io_queues() to
-use the min3() macro to find the minimum between 3 values instead of
-multiple min()'s. This shortens the code and makes it easier to read.
+When booting SM1 or G12A boards without a dislay attached to HDMI,
+the kernel shows the following warning:
 
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+[CRTC:46:meson_crtc] vblank wait timed out
+WARNING: CPU: 2 PID: 265 at drivers/gpu/drm/drm_atomic_helper.c:1682 drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+CPU: 2 UID: 0 PID: 265 Comm: setfont Tainted: G         C
+Tainted: [C]=CRAP
+pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+lr : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+Call trace:
+ drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+ drm_atomic_helper_commit_tail_rpm+0x84/0xa0
+ commit_tail+0xa4/0x18c
+ drm_atomic_helper_commit+0x164/0x178
+ drm_atomic_commit+0xb4/0xec
+ drm_client_modeset_commit_atomic+0x210/0x270
+ drm_client_modeset_commit_locked+0x5c/0x188
+ drm_fb_helper_pan_display+0xb8/0x1d4
+ fb_pan_display+0x7c/0x120
+ bit_update_start+0x20/0x48
+ fbcon_switch+0x418/0x54c
+ el0t_64_sync+0x194/0x198
+
+This happens when the kernel disables the unused clocks.
+Sometimes this causes the boot to hang.
+
+By (re)adding the flag CLK_IGNORE_UNUSED to the VCLK2 clocks, these
+clocks will not be disabled.
+
+This partially reverts commit b70cb1a21a54 ("clk: meson: g12a:
+make VCLK2 and ENCL clock path configurable by CCF").
+
+Fixes: b70cb1a21a54 ("clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF").
+Signed-off-by: Martijn van Deventer <linux@martijnvandeventer.nl>
 ---
- drivers/nvme/host/fc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/meson/g12a.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index 094be164ffdc..4fd1669231fd 100644
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -2897,7 +2897,7 @@ nvme_fc_create_io_queues(struct nvme_fc_ctrl *ctrl)
- 	unsigned int nr_io_queues;
- 	int ret;
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index cfffd434e998..1651898658f5 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -3234,7 +3234,7 @@ static struct clk_regmap g12a_vclk2_div = {
+ 			&g12a_vclk2_input.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_GATE,
++		.flags = CLK_SET_RATE_GATE | CLK_IGNORE_UNUSED,
+ 	},
+ };
  
--	nr_io_queues = min(min(opts->nr_io_queues, num_online_cpus()),
-+	nr_io_queues = min3(opts->nr_io_queues, num_online_cpus(),
- 				ctrl->lport->ops->max_hw_queues);
- 	ret = nvme_set_queue_count(&ctrl->ctrl, &nr_io_queues);
- 	if (ret) {
-@@ -2951,7 +2951,7 @@ nvme_fc_recreate_io_queues(struct nvme_fc_ctrl *ctrl)
- 	unsigned int nr_io_queues;
- 	int ret;
+@@ -3270,7 +3270,7 @@ static struct clk_regmap g12a_vclk2 = {
+ 		.ops = &meson_vclk_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
  
--	nr_io_queues = min(min(opts->nr_io_queues, num_online_cpus()),
-+	nr_io_queues = min3(opts->nr_io_queues, num_online_cpus(),
- 				ctrl->lport->ops->max_hw_queues);
- 	ret = nvme_set_queue_count(&ctrl->ctrl, &nr_io_queues);
- 	if (ret) {
+@@ -3354,7 +3354,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3368,7 +3368,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3382,7 +3382,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3396,7 +3396,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
 -- 
-2.39.5
+2.39.2
 
 
