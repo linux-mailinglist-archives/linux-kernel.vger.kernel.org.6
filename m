@@ -1,135 +1,147 @@
-Return-Path: <linux-kernel+bounces-513005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4D2A3406E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:34:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18740A34073
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0107188AAE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:34:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5EFD16A79E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068A122157F;
-	Thu, 13 Feb 2025 13:33:51 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17E3227EB2;
+	Thu, 13 Feb 2025 13:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arw9M1in"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301441F462A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A55823F439;
+	Thu, 13 Feb 2025 13:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739453630; cv=none; b=PgK7WF0hxQPsEVbjHjK6mkLqKh7hfTAqlzHD1K+d3QsgEH7MrEnuifmk6PinHd1J3YpxRkGH1HeauksZhB7q+DHRd2EYOh1v5hv85HH8WteWmJC5e6/jk2lV99FGYiES90dVBLIcqB3UwG3f3mGuktQ5ok3lT0hJhY8sh+2Hyxc=
+	t=1739453748; cv=none; b=kBY8stcJOOHpP+bc0Bcd0WKKwth4puuy4CxbLh1/+yMNlY1V9gGGySvuWik6Raj8VRPBDUfTOxQ+vmD1xDhcaU5/ApxfliYKxIPNcevDIIHVFdVZGhegyjOAW7giWLJTzbV310EwZbytx6OzXvlCOr8Ko7gxkyIjhpJkBAqbLnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739453630; c=relaxed/simple;
-	bh=YC6cKhK8/vxAtvKU5r9p+OZLPX/oiBq0/rpae/Z0z6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pULo/OYmjvNfNgRxh8hOrQON+7Xstez6a0RUmMvxLDLs57H1N/K899ohPLs7J+hvpHzZT6IrKDdscHPFb4/Tz2YDpkjKIkGeVF5Nm0a6zQ4yjH+IqdL7B6ogTsohuduYPB0ga27oPdvcPQFha+qyPv7z80Tc90x7Ne0JN32G/SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1957D204AC;
-	Thu, 13 Feb 2025 13:33:44 +0000 (UTC)
-Message-ID: <c6fdb439-fc85-400a-a278-3858bd3fd90d@ghiti.fr>
-Date: Thu, 13 Feb 2025 14:33:44 +0100
+	s=arc-20240116; t=1739453748; c=relaxed/simple;
+	bh=LAJ2zcQtXURfChEloX6J+PyoNgE5CNbfUKecNJ4qpMA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=krAy0G75028t+vAKpAqmD+NVy3W76nsmBhnPTM1cpfblhEacrmvPVxC9+kQK/aUCE62WKEIZyABgWCtJDVDsL5oImjFUUC0B7EQflHadTB9nH+yIg/TXXGZZ8rLAcnRL7i59yiyvMWbS064pQsjkrOaMt8cY165io+xbnFpjQho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arw9M1in; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F15C4CED1;
+	Thu, 13 Feb 2025 13:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739453747;
+	bh=LAJ2zcQtXURfChEloX6J+PyoNgE5CNbfUKecNJ4qpMA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=arw9M1inPJ3KBtNIz/FdWR/6iSGrlOOOicAFLkNuJMdh3JxN6wiSlv3HP1roeq7jo
+	 exmPjmlT7Xm/kp+INfcLmqal7CQ5r46w+bXWXdoaRKw2Cq66+wQLmfG8A+QeUGqpfI
+	 4hrgyXoy64bm4SW2uKsK3mt5FEAjtOfeslUmlpvsp13vwIojLujCwTtEOBytzvl2yq
+	 /Giv/NdvQscOclSh9QYAoSN52fPB5PBsCsf3oRmQUQI/r4a9v/4quhJzdJn6ig4G7g
+	 eh20wMBpR+8SN2EssbmHnT5CrIauBRHDVLTX2AI4y0QCol304uwZM7TG42sPQY06sA
+	 4WRawVqKCxo2w==
+Date: Thu, 13 Feb 2025 22:35:42 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Sami Tolvanen <samitolvanen@google.com>, Steven Rostedt
+ <rostedt@goodmis.org>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Gabriel de Perthuis <g2p.code@gmail.com>, Haiyue Wang <haiyuewa@163.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ x86@kernel.org, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ftrace: x86: Fix a compile error about
+ get_kernel_nofault()
+Message-Id: <20250213223542.44542e542434158056d3b7ed@kernel.org>
+In-Reply-To: <20250213102634.GA30841@noisy.programming.kicks-ass.net>
+References: <20250206081225.GI7145@noisy.programming.kicks-ass.net>
+	<20250206205449.5f83a585945ae6eb0cc15483@kernel.org>
+	<20250206121328.GN7145@noisy.programming.kicks-ass.net>
+	<20250206123307.GO7145@noisy.programming.kicks-ass.net>
+	<20250207085959.b3e9d922eab33edf885368e3@kernel.org>
+	<20250210173016.0ce79bc8@gandalf.local.home>
+	<20250211100914.GA29593@noisy.programming.kicks-ass.net>
+	<20250211105002.31b5a517@gandalf.local.home>
+	<CABCJKudwf11wAbv9NdKh_FN-Z+pLaupMHJxNGtRKK1-1D94hCQ@mail.gmail.com>
+	<20250213100836.GC28068@noisy.programming.kicks-ass.net>
+	<20250213102634.GA30841@noisy.programming.kicks-ass.net>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] riscv: Fix set up of cpu hotplug callbacks
-Content-Language: en-US
-To: Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, charlie@rivosinc.com,
- jesse@rivosinc.com, Anup Patel <apatel@ventanamicro.com>
-References: <20250207161939.46139-11-ajones@ventanamicro.com>
- <20250207161939.46139-16-ajones@ventanamicro.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250207161939.46139-16-ajones@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegrjhhonhgvshesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrn
- hgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehjvghsshgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegrphgrthgvlhesvhgvnhhtrghnrghmihgtrhhordgtohhm
-X-GND-Sasl: alex@ghiti.fr
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 07/02/2025 17:19, Andrew Jones wrote:
-> CPU hotplug callbacks should be set up even if we detected all
-> current cpus emulate misaligned accesses, since we want to
-> ensure our expectations of all cpus emulating is maintained.
->
-> Fixes: 6e5ce7f2eae3 ("riscv: Decouple emulated unaligned accesses from access speed")
-> Fixes: e7c9d66e313b ("RISC-V: Report vector unaligned access speed hwprobe")
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
->   arch/riscv/kernel/unaligned_access_speed.c | 27 +++++++++++-----------
->   1 file changed, 13 insertions(+), 14 deletions(-)
->
-> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
-> index 780f1c5f512a..c9d3237649bb 100644
-> --- a/arch/riscv/kernel/unaligned_access_speed.c
-> +++ b/arch/riscv/kernel/unaligned_access_speed.c
-> @@ -247,13 +247,6 @@ static void __init check_unaligned_access_speed_all_cpus(void)
->   	/* Check core 0. */
->   	smp_call_on_cpu(0, check_unaligned_access, bufs[0], true);
->   
-> -	/*
-> -	 * Setup hotplug callbacks for any new CPUs that come online or go
-> -	 * offline.
-> -	 */
-> -	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "riscv:online",
-> -				  riscv_online_cpu, riscv_offline_cpu);
-> -
->   out:
->   	for_each_cpu(cpu, cpu_online_mask) {
->   		if (bufs[cpu])
-> @@ -383,13 +376,6 @@ static int __init vec_check_unaligned_access_speed_all_cpus(void *unused __alway
->   {
->   	schedule_on_each_cpu(check_vector_unaligned_access);
->   
-> -	/*
-> -	 * Setup hotplug callbacks for any new CPUs that come online or go
-> -	 * offline.
-> -	 */
-> -	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "riscv:online",
-> -				  riscv_online_cpu_vec, NULL);
-> -
->   	return 0;
->   }
->   #else /* CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS */
-> @@ -415,6 +401,19 @@ static int __init check_unaligned_access_all_cpus(void)
->   			    NULL, "vec_check_unaligned_access_speed_all_cpus");
->   	}
->   
-> +	/*
-> +	 * Setup hotplug callbacks for any new CPUs that come online or go
-> +	 * offline.
-> +	 */
-> +#ifdef CONFIG_RISCV_PROBE_UNALIGNED_ACCESS
-> +	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "riscv:online",
-> +				  riscv_online_cpu, riscv_offline_cpu);
-> +#endif
-> +#ifdef CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS
-> +	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "riscv:online",
-> +				  riscv_online_cpu_vec, NULL);
-> +#endif
-> +
->   	return 0;
->   }
->   
+On Thu, 13 Feb 2025 11:26:34 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-This patch 5 does not apply without patch 4 that is not a fix which, in 
-theory, should not be sent into the next -rcX...I'd say it is not a 
-problem as patch 4 is small enough.
+> On Thu, Feb 13, 2025 at 11:08:36AM +0100, Peter Zijlstra wrote:
+> > On Wed, Feb 12, 2025 at 08:52:27AM -0800, Sami Tolvanen wrote:
+> > > On Tue, Feb 11, 2025 at 7:49 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > >
+> > > > On Tue, 11 Feb 2025 11:09:14 +0100
+> > > > Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > > > I was aiming my patch for x86/core, but if there's a reason to expedite
+> > > > > them, I can stick it in x86/urgent I suppose.
+> > > > >
+> > > > > Just need a reason -- what's this compile error nonsense about, my
+> > > > > kernels build just fine?
+> > > >
+> > > > Masami,
+> > > >
+> > > > Do you have a config that fails to build without this fix? If so, can you
+> > > > please reply with it, and then this can go in as a quick fix.
+> > > 
+> > > x86 builds with both CONFIG_GENDWARFKSYMS and CONFIG_FUNCTION_TRACER
+> > > are broken without this fix. Here's how to reproduce:
+> > > 
+> > > $ make defconfig
+> > > $ ./scripts/config -e DEBUG_INFO -e DEBUG_INFO_DWARF5 -e MODVERSIONS
+> > > -e GENDWARFKSYMS -e FUNCTION_TRACER
+> > > $ make olddefconfig && make -j
+> > > ...
+> > > In file included from ./arch/x86/include/asm/asm-prototypes.h:2,
+> > >                  from <stdin>:3:
+> > > ./arch/x86/include/asm/ftrace.h: In function ‘arch_ftrace_get_symaddr’:
+> > > ./arch/x86/include/asm/ftrace.h:46:21: error: implicit declaration of
+> > > function ‘get_kernel_nofault’ [-Wimplicit-function-declaration]
+> > >    46 |                 if (get_kernel_nofault(instr, (u32
+> > > *)(fentry_ip - ENDBR_INSN_SIZE)))
+> > > ...
+> > 
+> > It breaks much sooner, complaining about not having dwarf.h.. let me go
+> > figure out what package provides that :/
+> 
+> Bah, ofcourse there's libdwarf-dev and libdw-dev, both providing
+> dwarf.h. Obviously I installed libdwarf-dev and instead I need libdw-dev
+> *hate*
 
-Just to say that maybe you'll be requested to rearrange the patchset!
+Agreed. :(
 
-Thanks,
+> 
+> Anyway, yes, compile now fails as advertised.
+> 
+> And patch fixes it -- now I need to figure out what to do about urgent,
+> because applying it on top of Linus' tree will create conflicts with
+> patches already in tip/x86/mm *sigh*.
 
-Alex
+Hmm, if so, can you pick my patch [1], which does not introduce any
+additional header including issue?
 
+[1] https://lore.kernel.org/all/173881156244.211648.1242168038709680511.stgit@devnote2/
+
+
+Thank you,
+
+> 
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
