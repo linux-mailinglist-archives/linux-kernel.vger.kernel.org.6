@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-513463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65055A34AA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:48:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EACD2A34A9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:48:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01314175614
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31478179DC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9EB241664;
-	Thu, 13 Feb 2025 16:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DE6242921;
+	Thu, 13 Feb 2025 16:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s48LYZHM"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="axcWBZ+7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7482723A9BE
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A20242908;
+	Thu, 13 Feb 2025 16:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739464637; cv=none; b=dYn4AY0nCI6cb4/NTSx5jPaX5wIsS4kfJPd2lySnUcWG6oM7UjesaE9yEVhgTgvoRgr4hZ0RSX6u9l7/JWqfOBKi06JV3UwqcSq4+QJjx/l/3RnBBYS4YUfa3YmBeW5aCAnHv5NP3eqXzcFBiIYlsY9uqQO7Ld4x7+7xoHwX2xk=
+	t=1739464693; cv=none; b=D1N8mhn5CmYcPAc0RbaKDRT5tF19fkojHuVNIBQ+OhKtcT49KjK1HxPzoXq42DcQD9sfziahbAMs0szrf8QbQ6Z145O6vCjpfH2kOQEKWGbHm7DS34TnDc65qsxJg+nmXVAYx02OYZpPY6Pv/hormZlXRAyPu7yopttzYtMja8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739464637; c=relaxed/simple;
-	bh=GmAGQpoza31CoAWCZS5s5yqCPDGiX4VXEioPVpXUPG8=;
+	s=arc-20240116; t=1739464693; c=relaxed/simple;
+	bh=Z4F6lLs5DIJbPs+bwuRZBqYEa3kLjWUhgDzZWRR+fM8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCQTMXpLugnD4B2QXh1TSXF9dOT7WQo430ReNYH88xqnwAS1tgYvYw09FAgHpNAMfoSNOsTOCs3xnMPnaSPnHbby/1Uqi1Kq1LLoUDkKa7iLlyxgmdiuTDdYESH7gx1a0vhaeJ559VCC6oQuxsuEposRG73SVORWClddDJo3ZgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s48LYZHM; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5450408455dso1178890e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:37:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739464633; x=1740069433; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K5yI9mtbA6TbP9BSYi0Lu15w4ixyZW4/1lyfqxBYhqc=;
-        b=s48LYZHMpI/i8Q+prVZR6Bczow/uwoJt3fiF+COzbXvQ8TGPetye+x6AP2wwTtgBEW
-         hjOmSLTwfoWbu39nrACLUypwvO+NSW3dZglPGw6YV5JzMjHfmJN5t3SQgvrstPSE9fGU
-         A8NM78ZKOXCfcstKtRRi1hv5Bxv+dX9fVAEKX+4k6ZW8nsCUbbRPJIznLKOub9LqA1sB
-         kaikKA1/CZONhmO7hEezllhpsEzsA+H8GePoCJQPCuT530RN6cQYhuKq55Rs36VQ2wwP
-         R69B90rlU46EMXWLbMUnvKc3dDntHi+i+92waE9mdkJrJzCreD6LFFj5ctUvRCzUoNgo
-         KRrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739464633; x=1740069433;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K5yI9mtbA6TbP9BSYi0Lu15w4ixyZW4/1lyfqxBYhqc=;
-        b=CxqOhWtpUJoQZXV1/feA7nW+IP9M/tvUO4sxYbEnBvY19YjhX5qyCt1NAJo+/RFeh/
-         oDyHIlUjH8cVdaiUqrg+Uixn8JRffHyvpe/DbVfV+Xshe6OLedTYqzCtYLBwphgdzDiF
-         1T/tKdeWdaKEUxznVNY4JBfckyAonAvM1SfsdsPMSxjlXPBzLWPw9WA1mwlf4/wE2LWe
-         CxqSfy1tZ4qepZPs/ODb8YWpNso57qDbkiQoBHwuLyEll+oDIRdKrk0WsJAFOU6Jwui6
-         oL8qlbOah/EBmMDY6LW/BP95KlOxSRm0AwvpFS2KwLuldwhyqqvJ6cOxXW3yMo3LVkfC
-         OXJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhECVa9mN9Xr/aJv58cformOG1KKWrlbyKAnk1koiRizSWWRXqX/yG15KQ6LHs8TI1AABOTabKCe/nyhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybJUWsRyEUf6KRvyrdi7dX3Sib4JwwVnq/UGUx/ZZIOAM0hZVV
-	gCao0YL/Qi0vTBPRlbWFBOVUgrqTVxETB+ScxfBxtu0lmpHxpAo+Kl5yUWBexM8=
-X-Gm-Gg: ASbGncslTGHvwWoYn8o9+uNNAg1idMPruBtk88CnkU6PCpLr6C90Hq/bunEkS8Eqg4V
-	l452qX3QLsu2m+kPmG5wv28PdQul3wGeVwHOsaD4KKQapy++wBkM1F+9kHBAh2Lit+IBzEsZELm
-	2kAEj3pjrOzO/LdwJFJxKY3eIJBdpEQvca1hzwaAb68ceodZlClDjQxemGLL6yp68TzyWv2efs/
-	pkHEFzj6UoWmn5cGNVwXsq7boIXbaQ1F45b+Pesics4ShmNPQt3DzhbY3hMZh/zCuJkGB7SinHI
-	rORejyyo08uqYW8u6y/HRo3ZhRTIG/HWGp/iY0oN4heV/Au3FMaBemFMwreviH4RC75LUeQ=
-X-Google-Smtp-Source: AGHT+IH+q3SO0AlGiFI6AM0BmNsLF/QARW+Zixtb4EjiMyrDyQLHtQ7O4U+e0SrdUEIxNCY9ztY0GQ==
-X-Received: by 2002:a05:6512:6c5:b0:545:6a2:e56 with SMTP id 2adb3069b0e04-5451ddd65f0mr1158897e87.37.1739464633491;
-        Thu, 13 Feb 2025 08:37:13 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105ea1sm213021e87.124.2025.02.13.08.37.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 08:37:12 -0800 (PST)
-Date: Thu, 13 Feb 2025 18:37:11 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 35/37] drm/bridge: tc358768: Stop disabling when
- failing to enable
-Message-ID: <dsccxyorddnhjiff37zxmwh6mwerwtlabxxp6csugomalsgfwv@mfnsky7pacha>
-References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
- <20250213-bridge-connector-v3-35-e71598f49c8f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JPfxYddmi+yr6DvT/w/9ldSvnK22Qea+/1T6nYjXq8Pdo+X+L1BhCTwPY1peMyT6qmjNnL7134UqHP4fSVXg+IIBYEiKkYalhmgnT2jtKndPCQd3juEWKMR68JFYJys+0Eo3yQIs0s2g458x5CaCvBP/PtFO0gzOHh2Mhyo9c5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=axcWBZ+7; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739464692; x=1771000692;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Z4F6lLs5DIJbPs+bwuRZBqYEa3kLjWUhgDzZWRR+fM8=;
+  b=axcWBZ+7WsgafvA1HPWo7UoyuASzT1FIDSUSm0yE2L3TNNsy+DNO8K+D
+   g+dps3mdJW54nJ1cIwxd6n0sXQC1Ai06Plx+5/Frytzn4smojmRBskZ4v
+   SuBwKzpSZTd3FBFRVPit82Ox2CQD+ODRGPZ/LhnlLIP3Gnl8mAUl8ESEa
+   FCgPH4L9w/RnRE1Xl02LAKGAutHc+JsplyN/hhA+6c07OfDfbTcCOrTLx
+   3n09DFtNkVnyEmx+Xrg03LCYiTmbsVgntc7HRzH/0NSfYSyjlqv8rXq5h
+   HyKmSP+2QFlJ3t+4+okOEcxm37IZwdDfrzuEaeq+bc3SLElMO8h+SiHhs
+   w==;
+X-CSE-ConnectionGUID: hpl5/Cy6S5+xcAk4w/WYkw==
+X-CSE-MsgGUID: 19hP06hkRMCCs2mehMjoiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="57584173"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="57584173"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 08:37:47 -0800
+X-CSE-ConnectionGUID: niTSu+OLRH6SflrjdnL4zw==
+X-CSE-MsgGUID: nDLWUmqKQx2tp+6jE5OMkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="118279941"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 08:37:43 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ticDb-0000000BDvA-3sGX;
+	Thu, 13 Feb 2025 18:37:39 +0200
+Date: Thu, 13 Feb 2025 18:37:39 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>, Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v2 07/10] i2c: mt7621: Use i2c_10bit_addr_*_from_msg()
+ helpers
+Message-ID: <Z64f08OhKlXuoYP-@smile.fi.intel.com>
+References: <20250213141045.2716943-1-andriy.shevchenko@linux.intel.com>
+ <20250213141045.2716943-8-andriy.shevchenko@linux.intel.com>
+ <ceb1cb01-78b8-4ed4-b4fc-23fdac78ab21@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,34 +92,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213-bridge-connector-v3-35-e71598f49c8f@kernel.org>
+In-Reply-To: <ceb1cb01-78b8-4ed4-b4fc-23fdac78ab21@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Feb 13, 2025 at 03:43:54PM +0100, Maxime Ripard wrote:
-> The tc358768 bridge driver, if enabling it fails, tries to disable it.
-> This is pretty uncommon in bridge drivers, and also stands in the way
-> for further reworks.
+On Thu, Feb 13, 2025 at 05:01:20PM +0100, AngeloGioacchino Del Regno wrote:
+> Il 13/02/25 15:07, Andy Shevchenko ha scritto:
+> > Use i2c_10bit_addr_*_from_msg() helpers instead of local copy.
+> > No functional change intended.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> Worse, since pre_enable and enable aren't expected to fail, disable and
-> post_disable might be called twice: once to handle the failure, and once
-> to actually disable the bridge.
+> Can we please do the helper conversion as one commit and the (much needed)
+> cleanup of assigning len and de-duplicating the call to mtk_i2c_cmd() as
+> two commits?
 > 
-> Since post_disable uses regulators and clocks, this would lead to enable
-> count imbalances.
-> 
-> In order to prevent that imbalance, and to allow further reworks, let's
-> drop the calls to disable and post_disable, but keep the warning to let
-> users know about what's going on.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/bridge/tc358768.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
-> 
+> One with just the conversion, one with the cleanup (or in inverse order,
+> as you wish).
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
+Yes we can.
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
