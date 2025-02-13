@@ -1,131 +1,115 @@
-Return-Path: <linux-kernel+bounces-512756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19290A33D63
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:06:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C558A33D71
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D8B3A9D9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02833188DC4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A2121576D;
-	Thu, 13 Feb 2025 11:04:56 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E580D267B97;
+	Thu, 13 Feb 2025 11:05:54 +0000 (UTC)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0526021519F;
-	Thu, 13 Feb 2025 11:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346472153C9;
+	Thu, 13 Feb 2025 11:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739444696; cv=none; b=NEwRfQ/xbaQdGyqLVyUhiD6/XqXhudlTSzb0U3ln3LHYaN97DqXqxXnE4zzsso1ouSKqr4j7zJdrVhBol1m0Rbpnzic1mUGXRC2tWusnNVs3O+qR9krQiUecD7SDz7yWHf/9aw24zQ4eoiP+KMl7DzHZm9mVX7wyANQfSr5F+zU=
+	t=1739444754; cv=none; b=gp7j/6dOz5eM9vcTqLHP/lw9Ms/SIIoKDeKgH9Nvb1FYkqL+XqyxYg02mgOmd3EzsAeTrj9J7U1dOtMOrwmfM96LWwLOsTcGcKAE17bbiANVR+7raG32QgOqVDog+/y7J7Gfoyqt/xV2ZaR0VMXtjSrS3f8ZXJ6ezWsKpn/iWNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739444696; c=relaxed/simple;
-	bh=PzBfe4atz6vSeVyd/u+d7DpT2Rrcjc+RgX6K/j/Og7I=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JbuorxMCkmaxiL871lkJpgCLQGI4u0h6OvQYoGuOoiJj4DbEnxOSBl3YizRF5bp17jZi+nC8Qxlt6F2q31ehBok6bUQuSuivJyZoS5O+iSmkHKy/HxCSyBYZL1BUClWbuQ2XaiJW3acL+yGn9rhBu1rir3XbRD8L9Az4FIPKt4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Ytskr0xNwz4f3kvq;
-	Thu, 13 Feb 2025 19:04:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DB6FF1A0BDF;
-	Thu, 13 Feb 2025 19:04:42 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBXul7J0a1nLFToDg--.14503S3;
-	Thu, 13 Feb 2025 19:04:42 +0800 (CST)
-Subject: Re: [PATCH v2 1/2] blk-wbt: Fix some comments
-To: Tang Yizhou <yizhou.tang@shopee.com>, yukuai1@huaweicloud.com,
- axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250213100611.209997-1-yizhou.tang@shopee.com>
- <20250213100611.209997-2-yizhou.tang@shopee.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <76cd73b1-52f5-1f19-ae37-c856a765ebc4@huaweicloud.com>
-Date: Thu, 13 Feb 2025 19:04:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1739444754; c=relaxed/simple;
+	bh=9rOLz9j8ukC3IBY52vM/5h5W1WC8cIF0s1Y3lhZBTyQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lBeOaYLNWXAmxracL8GR3x8Wsy/pSg5pxdrVQx6T9Wh5zFuo4Tu2dKdBME/TpE8bU7Y0uwga2TEKqsqS6MwFalsQrOdfiDC4rZsY2OY+fvfKhs8jH83kWNJJURhEsgzFhHw9Di/W4OtjRxyYgYszq5C3c+ASVbg+AHt9M1T7Apk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4b68cb2abacso203288137.3;
+        Thu, 13 Feb 2025 03:05:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739444750; x=1740049550;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zAeciXbZsCKyuzMnsNDc2dPCf1u4qXoSEiFxuqZqCsA=;
+        b=vntZmvvnQreM+ezUrnCpupT91dKldOPD+u/Q/Z3koobZQ3g/raju3tlzgE0z1WYNrD
+         w7MOwhrjQbSdVDJsXXtFo6V0srsE25qvGIbO8L4y9n+X9G4YZdzXJYX+aVrTjwsyBnNx
+         I66g3msj/vX/UnSSph9JTawaBiMonGVfxYfua7hV6CW8CxW62fL6qva+iWzGt/F4nbh0
+         9ErJuvwl6LWeSGf+KUpdWfQkdnEjYf9kCUu+e0/M2oMp+jcGoIf5HaHB5/JJevydo+HB
+         gg5QCPQ5E48mVzcn5JCWjjCCs1O3gCJJUl4mysluEFcRTEoztuq561CJMrVs1qgH9K1q
+         OYxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4lxG4i/W0VPOuHmnraCVOc0VJCI5Izfgz6bdTPlXvIf/h3DXOBM/nZQt0mWgNFE258LEWIBaWABWsRUd0@vger.kernel.org, AJvYcCXYE7rcAUCo1ZQfcYlFnWnh3PMDX3c1cFxF+O6YGC25GRHnjSXBGRQxtu9UK+LGOVDGZJsG9X3Oj5Wkfif8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsmTRmgagp0fXs1PdeDyaOvPVDZWjcxVR+4V/wB/nkS7HO6NCn
+	wkHi5KPdd24cJnk3UAwA03q8tdCtzAqL91Y57PtVHdDZ9zpSA+X44KCN6UC4wF8=
+X-Gm-Gg: ASbGncuZXwJH/Yd4go9bLsS7A/XkRyi2j3w41f5zAHtGFyMA1PGwDkDWe9sUtzrxxnC
+	7oeqn2/09qgiV8LmlBr1CGlqQ2mjhN8KbtoVSray3eiPT9cnDrw2OolXTjaR+bJbEtX4Ac132wV
+	PulooRZ4VKwnVBHvASlgbIlHY9b/9pBTZ1sCu/K8sG8LHVmPVsqiLSyYvSLZ1aHGW6baGhPx4om
+	mZY9PnjhgRHFTOynJ0LbuEllbCC2za4n7pWlMgfP9PVc3Y9bDdY1jM91TpqbNpENEKRu8b94v/s
+	yiYzA6HXXQQDudVrPv1k44eSsl3bXpHiO5/Hv0umBE5lPxjBLSnyMQ==
+X-Google-Smtp-Source: AGHT+IEolASiqlYK/JFFz4j7e1J27pOf9s+NdDPw3bvSPvtfigBwTEE5MSLCkDSWQ26AUEo/9NVJgg==
+X-Received: by 2002:a67:e7c4:0:b0:4bb:d7f0:6e65 with SMTP id ada2fe7eead31-4bc0351efd8mr3608845137.2.1739444750590;
+        Thu, 13 Feb 2025 03:05:50 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4bc077916dbsm146351137.6.2025.02.13.03.05.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 03:05:49 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-8670fd79990so216223241.3;
+        Thu, 13 Feb 2025 03:05:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU/esfLHqfyoeFdaYZwzC2XxD9/GktugWPB8qOfwJ56+yPDP4l3NsKY25advCfUkTgcrC6IV9c1nACSI6Nu@vger.kernel.org, AJvYcCXzYxERYa0WUZ3LSYUHUK5GBCdgvP4g+S31zuk67CNY9RonMG/UMg7EiPK/BIvQXgf72qLlm5/+IBSRKCp8@vger.kernel.org
+X-Received: by 2002:a05:6102:4191:b0:4bb:c76d:39ec with SMTP id
+ ada2fe7eead31-4bc037ed546mr2901047137.21.1739444749243; Thu, 13 Feb 2025
+ 03:05:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250213100611.209997-2-yizhou.tang@shopee.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXul7J0a1nLFToDg--.14503S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7AryDKr1fCry8GFW7ZF1UZFb_yoW8XF18p3
-	Z2kw1UuF1xKFWxuwnrXa9rZr4fGF4rGF18tryxWrnIqr13Wr1Fvan0kr40vr4FvrWfWr4x
-	X3Wj9F95AF48u3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbSfO7UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20250213163659.414309-1-shikemeng@huaweicloud.com>
+In-Reply-To: <20250213163659.414309-1-shikemeng@huaweicloud.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Feb 2025 12:05:35 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV6ekVdtzVxN6gCOUX5GzO08t+pouJuosfvGz7uRtgeeg@mail.gmail.com>
+X-Gm-Features: AWEUYZnHf2rYoOMv80GeHY-uBNi4bTK5uU1XQydU8dNetDolpRg56K4qRZqIqP0
+Message-ID: <CAMuHMdV6ekVdtzVxN6gCOUX5GzO08t+pouJuosfvGz7uRtgeeg@mail.gmail.com>
+Subject: Re: [PATCH] test_xarray: fix failure in check_pause when
+ CONFIG_XARRAY_MULTI is not defined
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: willy@infradead.org, akpm@linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hi Kemeng,
 
-ÔÚ 2025/02/13 18:06, Tang Yizhou Ð´µÀ:
-> From: Tang Yizhou <yizhou.tang@shopee.com>
-> 
-> wbt_wait() no longer uses a spinlock as a parameter. Update the function
-> comments accordingly.
-> 
-> RWB_UNKNOWN_BUMP is used when we gradually adjust scale_steps toward the
-> center state, which is a value of 0.
-> 
-> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
-> ---
->   block/blk-wbt.c | 11 ++++-------
->   1 file changed, 4 insertions(+), 7 deletions(-)
-> 
+On Thu, 13 Feb 2025 at 08:40, Kemeng Shi <shikemeng@huaweicloud.com> wrote:
+> In case CONFIG_XARRAY_MULTI is not defined, xa_store_order can store a
+> multi-index entry but xas_for_each can't tell sbiling entry from valid
+> entry. So the check_pause failed when we store a multi-index entry and
+> wish xas_for_each can handle it normally. Avoid to store multi-index
+> entry when CONFIG_XARRAY_MULTI is disabled to fix the failure.
+>
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+Thanks, this fixes the selftest on m68k/ARAnyM.
 
-> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
-> index 6dfc659d22e2..8b73c0c11aec 100644
-> --- a/block/blk-wbt.c
-> +++ b/block/blk-wbt.c
-> @@ -136,8 +136,9 @@ enum {
->   	RWB_MIN_WRITE_SAMPLES	= 3,
->   
->   	/*
-> -	 * If we have this number of consecutive windows with not enough
-> -	 * information to scale up or down, scale up.
-> +	 * If we have this number of consecutive windows without enough
-> +	 * information to scale up or down, slowly return to center state
-> +	 * (step == 0).
->   	 */
->   	RWB_UNKNOWN_BUMP	= 5,
->   };
-> @@ -638,11 +639,7 @@ static void wbt_cleanup(struct rq_qos *rqos, struct bio *bio)
->   	__wbt_done(rqos, flags);
->   }
->   
-> -/*
-> - * May sleep, if we have exceeded the writeback limits. Caller can pass
-> - * in an irq held spinlock, if it holds one when calling this function.
-> - * If we do sleep, we'll release and re-grab it.
-> - */
-> +/* May sleep, if we have exceeded the writeback limits. */
->   static void wbt_wait(struct rq_qos *rqos, struct bio *bio)
->   {
->   	struct rq_wb *rwb = RQWB(rqos);
-> 
+Closes: https://lore.kernel.org/r/CAMuHMdU_bfadUO=0OZ=AoQ9EAmQPA4wsLCBqohXR+QCeCKRn4A@mail.gmail.com
+Fixes: c9ba5249ef8b080c ("Xarray: move forward index correctly in xas_pause()")
+Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
