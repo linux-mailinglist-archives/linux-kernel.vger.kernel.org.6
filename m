@@ -1,638 +1,360 @@
-Return-Path: <linux-kernel+bounces-512547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27AD7A33AB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B4FBA33ABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39282165D82
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:10:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35332164473
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442CF2116F7;
-	Thu, 13 Feb 2025 09:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937C921507F;
+	Thu, 13 Feb 2025 09:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXfOiApS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dWFrJCAn"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0888211A19;
-	Thu, 13 Feb 2025 09:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340C821506C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739437729; cv=none; b=rcbIgXabJJ2yfMqbEupzcCuBqhWxxMJH3lx/dveIZExKqNaeKvd5LB85hMPi6PiuM4MZVySW8pFSPz6gJtuxCN/EgpPPUN3zmzN+TFYtc8JYs8SWvu9zogk4r5/aCddkDIFS2BsIoM41KzHfr2kuj6RdzdJpWC/OB2WkuLOln1o=
+	t=1739437772; cv=none; b=LLdYwFfloofPYXoFkFoe+LfSiYeoat5qdG3UVZUTnY8dCAGs90UHX5RJOboYZspvzE7oBwZumYrjjHsAgbjqIq+IWBT5Q03YG9EH0D8NpuAGg0nLfMJG//yPSU1N/4Cuz6wB1PRhgClgyenTUIDFO/sfy3+TErwG7aSeEqsAkeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739437729; c=relaxed/simple;
-	bh=GIUlT9LC1ocTQlyq1ULMc6PUaVMG6RnWLIb/+PjLhqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ps1uHrBRK8yDhWPnS7PZ2HtpVtNI1z9dwqevHimdw+6gs/s//IbenGHIqRWLJBRbG4PCMHexx21n5INmIufwSSztMTZ0FIz6ArlNn35KIZxw1ZcKC4OE4F2F74X+9S+5UGifqhdoddpDaWZUkwoxdaXn1IL33QcnB8B3uOwmoPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXfOiApS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16921C4CEED;
-	Thu, 13 Feb 2025 09:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739437729;
-	bh=GIUlT9LC1ocTQlyq1ULMc6PUaVMG6RnWLIb/+PjLhqQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cXfOiApS4CvYmByz2sWdMw+soFywSC19cqDepOvB0PcH14Q6cVXWVQoRd3TBsxD8W
-	 5L51snHJgowUfNjJVq1kanTsMQRbzDzbWbXir5oA4Ys9DT4bGskWAbU/NTfYR8SJOX
-	 NST7rnPvIjPbafyYgvCm3XxSccEHcXHHMrznyfPJB34tkz77b0sg7So+WUJy0SeBrx
-	 WUu9HUmFIuE+n1k+Z3SSkuRynCJNFkbz1XUVKp4i3skAuVIrkyFITQh0wT9NEC0uNU
-	 cSJdxb9X+kOkHMSOwN/z0WrO2wwbs0Zl8R9Lc9asejqL+UfTpBx+88ZlDhgNeyU1tQ
-	 reyVY3lOp4tcw==
-Date: Thu, 13 Feb 2025 10:08:45 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Amelie Delaunay <amelie.delaunay@foss.st.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 04/10] arm64: dts: st: introduce stm32mp23 SoCs family
-Message-ID: <20250213-intrepid-peridot-dinosaur-c5d0bc@krzk-bin>
-References: <20250210-b4-stm32mp2_new_dts-v1-0-e8ef1e666c5e@foss.st.com>
- <20250210-b4-stm32mp2_new_dts-v1-4-e8ef1e666c5e@foss.st.com>
+	s=arc-20240116; t=1739437772; c=relaxed/simple;
+	bh=KcBD2cPQmGBfq6elz01c8ijxlyjzLUstdIiX1VSTJv8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GUq8jscjHxB3Jx9I2l5w4LwfzUbZKUwVmGK3B8YsjxqQBtNOUXbw2Vq/Z1/vsqkrbLIi/uOoCXBZzI2CxVnRDgABFmHsrirnaiqKgU2jUfxrbGx0c+Gh4JRDaetfubwg7g/pxLngiJX05q6r/qsCDh9kpGEpvK5pnpNX3C96HTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dWFrJCAn; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30613802a6bso7026691fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:09:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739437768; x=1740042568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kAudk4OBy3oQ5BFlJBkk/G/IpQ0/neUpevp/6wokGyc=;
+        b=dWFrJCAn8OeawCz9LqjsdNsRey0sTbVdVZ91WSXo4h1bysqlBAFkediTtx4/yia9lj
+         gWOqzID6sTBrWljJiKFRUf+PV2koiv3VyJkQLUPrirBrmafbuYPGRKJ52KllqFhUtFMh
+         RnX7mqhOafGdhrD/2KO73P4DA6qq4s0gKdmmmdC/MTvygva9v3XyLCkrrAnx5uegE3Nc
+         LAW+HRdTkJgA+GvP/TYPxw/S3+qhG1vcSLIkoWzToWZYhgyKSl3Vi1QPTzs0HAi+6xwG
+         7m81LrHrKQIpH/nO+QZkSC/u4tF5Gu2Zw42VtWoilcOD3mTr+2B3ewMEyPLPwrjztbVh
+         XEwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739437768; x=1740042568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kAudk4OBy3oQ5BFlJBkk/G/IpQ0/neUpevp/6wokGyc=;
+        b=gdITQDPVpUjqGkmjjLolU/CGiC6NI41Dul4bCE5gB+Aoj5qohYyLQd8elTl9DBQeOF
+         CumDUOjKC/KWn7ouvKe4KqlBML4ATfgIh6/85C2Qt1JWNe7JVqsGMeIo3Y5SUjmFEYrn
+         sBIdZ7f0hIApSmKfqomxjO5moKkQ3oSbnOIbBhIPVDXb2a25k8/Xof2OU6APsrURfXP1
+         OTK2y3XJmWyTnucWQtxPZneF6sm+JBp92OrnNGCd5BVmC1UO7HIoXpmlW4ujLoJnpz7t
+         fyxXld0OcqAIFdtZsjHYDvr8bKJHCvnvpVyWG1yzjQ3CPBlsUgMoBgh5OexXeTdpaIKE
+         xjSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1fdNuiJw0yiDAToVQO6hZUrJZAgnf/chk3+gEpz99wpYJr34DnCYTUkk3r8vHLAew1j9eeOsg7BirKEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLgkwsRoIBmEl+gZDRG//If9gfLJFDFt5UKGOkS26accRXaojS
+	Pssoe4Fs5qCaRA8mN2dJLPhvhBTl83faUT6Z2sb/ztjHnx+iTdth4yeMFLfHFq1yKPoDrOnNk3t
+	q3VydQTa3iKrFuiFYGe5zeZ0mVjHpHF+qt6eU
+X-Gm-Gg: ASbGncsFIZKLArH4wCwFgWnN37EaNCULdyKaO1zYUHNjcyf1rJSfjEtRmJRcK/m+uAb
+	QVB/pBtQ9AKO7hpBNOjfguwWY5EpQfiiTd8AWlV2NZSqYhF+LPtVPj29Ddxr/zNvvkb5lvx2KI5
+	by5ibfh3Ei64kpRtMpBLLccLmDh9oNkQ==
+X-Google-Smtp-Source: AGHT+IGytENfR1Y5HPvNb7G5JdouX7QcgKyJucqODl7HSF99koYksEWn58+z7u0X5kP6vJmWxmRVKbLTknVp9MubMeE=
+X-Received: by 2002:a2e:be9a:0:b0:307:c829:f170 with SMTP id
+ 38308e7fff4ca-3090dcba09cmr7118641fa.4.1739437767915; Thu, 13 Feb 2025
+ 01:09:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250210-b4-stm32mp2_new_dts-v1-4-e8ef1e666c5e@foss.st.com>
+References: <cover.1738772628.git.dvyukov@google.com> <eb32b9b13856b0d508836b61b3e8377aef9163a3.1738772628.git.dvyukov@google.com>
+ <Z6WBsruddcx0SFV5@google.com> <CACT4Y+afC5WfTMaKGtg760PS5oXkkurzAyHVyKr9TsPs9RU2DQ@mail.gmail.com>
+ <Z6qhjFs0YOMTzk9W@google.com> <CACT4Y+brgj5vRoxQtZ76hUVcHWUJJ2u_8n89EwuTAoyXXbGDCw@mail.gmail.com>
+ <Z6uMBAG0hePL9JV3@google.com> <CACT4Y+YB_Ckfptkyu6yiF5Daa8q4MgGyf_1u7RPjoTsdQ3h=qw@mail.gmail.com>
+ <Z6z6znWi3o-ewuNs@google.com>
+In-Reply-To: <Z6z6znWi3o-ewuNs@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 13 Feb 2025 10:09:15 +0100
+X-Gm-Features: AWEUYZnvPHNlsYlZPnafaUYgaXRAn2-afRgaVBuyItL5BtSYs1zIW7nxeO7UJYw
+Message-ID: <CACT4Y+aBsT5VddEHQPtkjWkO_2NF_Ra3BDzi=AwvjvxwYo1gMA@mail.gmail.com>
+Subject: Re: [PATCH v5 6/8] perf report: Add --latency flag
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: irogers@google.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 10, 2025 at 04:20:58PM +0100, Amelie Delaunay wrote:
-> From: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> 
-> STM32MP23 family is composed of 3 SoCs defined as following:
-> 
-> -STM32MP231: common part composed of 1*Cortex-A35, common peripherals
-> like SDMMC, UART, SPI, I2C, parallel display, 1*ETH ...
-> 
-> -STM32MP233: STM32MP231 + 1*Cortex-A35 (dual CPU), a second ETH, CAN-FD.
-> 
-> -STM32MP235: STM32MP233 + GPU/AI and video encode/decode, DSI and LDVS
-> display.
-> 
-> A second diversity layer exists for security features/ A35 frequency:
-> -STM32MP23xY, "Y" gives information:
->  -Y = A means A35@1.2GHz + no cryp IP and no secure boot.
->  -Y = C means A35@1.2GHz + cryp IP and secure boot.
->  -Y = D means A35@1.5GHz + no cryp IP and no secure boot.
->  -Y = F means A35@1.5GHz + cryp IP and secure boot.
-> 
-> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-> ---
->  arch/arm64/boot/dts/st/stm32mp231.dtsi  | 1216 +++++++++++++++++++++++++++++++
->  arch/arm64/boot/dts/st/stm32mp233.dtsi  |   94 +++
->  arch/arm64/boot/dts/st/stm32mp235.dtsi  |   16 +
->  arch/arm64/boot/dts/st/stm32mp23xc.dtsi |    8 +
->  arch/arm64/boot/dts/st/stm32mp23xf.dtsi |    8 +
->  5 files changed, 1342 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/st/stm32mp231.dtsi b/arch/arm64/boot/dts/st/stm32mp231.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ee93f5412096a7cd30b228b85a5280a551fbfaf4
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/st/stm32mp231.dtsi
-> @@ -0,0 +1,1216 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
-> +/*
-> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
-> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
-> + */
-> +#include <dt-bindings/clock/st,stm32mp25-rcc.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/regulator/st,stm32mp25-regulator.h>
-> +#include <dt-bindings/reset/st,stm32mp25-rcc.h>
-> +
-> +/ {
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu0: cpu@0 {
-> +			compatible = "arm,cortex-a35";
-> +			device_type = "cpu";
-> +			reg = <0>;
-> +			enable-method = "psci";
-> +			power-domains = <&CPU_PD0>;
-> +			power-domain-names = "psci";
-> +		};
-> +	};
-> +
-> +	arm-pmu {
-> +		compatible = "arm,cortex-a35-pmu";
-> +		interrupts = <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-affinity = <&cpu0>;
-> +		interrupt-parent = <&intc>;
-> +	};
-> +
-> +	arm_wdt: watchdog {
-> +		compatible = "arm,smc-wdt";
-> +		arm,smc-id = <0xb200005a>;
-> +		status = "disabled";
-> +	};
-> +
-> +	clocks {
-
-Drop
-
-> +		clk_dsi_txbyte: txbyteclk {
-
-Use consistent naming style. Either prefix or suffix. Or better, use
-what is recommended.
-
-See: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
-
-> +			#clock-cells = <0>;
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <0>;
-> +		};
-> +
-> +		clk_rcbsec: clk-rcbsec {
-> +			#clock-cells = <0>;
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <64000000>;
-> +		};
-> +	};
-> +
-> +	firmware {
-> +		optee: optee {
-> +			compatible = "linaro,optee-tz";
-> +			method = "smc";
-> +			interrupt-parent = <&intc>;
-> +			interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-> +		};
-> +
-> +		scmi {
-> +			compatible = "linaro,scmi-optee";
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			linaro,optee-channel-id = <0>;
-> +
-> +			scmi_clk: protocol@14 {
-> +				reg = <0x14>;
-> +				#clock-cells = <1>;
-> +			};
-> +
-> +			scmi_reset: protocol@16 {
-> +				reg = <0x16>;
-> +				#reset-cells = <1>;
-> +			};
-> +
-> +			scmi_voltd: protocol@17 {
-> +				reg = <0x17>;
-> +
-> +				scmi_regu: regulators {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					scmi_vddio1: regulator@0 {
-> +						reg = <VOLTD_SCMI_VDDIO1>;
-> +						regulator-name = "vddio1";
-> +					};
-> +					scmi_vddio2: regulator@1 {
-> +						reg = <VOLTD_SCMI_VDDIO2>;
-> +						regulator-name = "vddio2";
-> +					};
-> +					scmi_vddio3: regulator@2 {
-> +						reg = <VOLTD_SCMI_VDDIO3>;
-> +						regulator-name = "vddio3";
-> +					};
-> +					scmi_vddio4: regulator@3 {
-> +						reg = <VOLTD_SCMI_VDDIO4>;
-> +						regulator-name = "vddio4";
-> +					};
-> +					scmi_vdd33ucpd: regulator@5 {
-> +						reg = <VOLTD_SCMI_UCPD>;
-> +						regulator-name = "vdd33ucpd";
-> +					};
-> +					scmi_vdda18adc: regulator@7 {
-> +						reg = <VOLTD_SCMI_ADC>;
-> +						regulator-name = "vdda18adc";
-> +					};
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	intc: interrupt-controller@4ac00000 {
-
-Part of Soc most likely.
-
-> +		compatible = "arm,cortex-a7-gic";
-> +		#interrupt-cells = <3>;
-> +		#address-cells = <1>;
-> +		interrupt-controller;
-> +		reg = <0x0 0x4ac10000 0x0 0x1000>,
-> +		      <0x0 0x4ac20000 0x0 0x2000>,
-> +		      <0x0 0x4ac40000 0x0 0x2000>,
-> +		      <0x0 0x4ac60000 0x0 0x2000>;
-> +	};
-> +
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +
-> +		CPU_PD0: power-domain-cpu0 {
-
-All labels are always lowercase.
-
-> +			#power-domain-cells = <0>;
-> +			power-domains = <&CLUSTER_PD>;
-> +		};
-> +
-> +		CLUSTER_PD: power-domain-cluster {
-> +			#power-domain-cells = <0>;
-> +			power-domains = <&RET_PD>;
-> +		};
-> +
-> +		RET_PD: power-domain-retention {
-> +			#power-domain-cells = <0>;
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupt-parent = <&intc>;
-> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-> +		always-on;
-> +	};
-> +
-> +	soc@0 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		interrupt-parent = <&intc>;
-> +		ranges = <0x0 0x0 0x0 0x80000000>;
-
-Same comments as for all other patches.
-
-> +
-> +		hpdma: dma-controller@40400000 {
-> +			compatible = "st,stm32mp25-dma3";
-> +			reg = <0x40400000 0x1000>;
-> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&scmi_clk CK_SCMI_HPDMA1>;
-> +			#dma-cells = <3>;
-> +		};
-> +
-> +		hpdma2: dma-controller@40410000 {
-> +			compatible = "st,stm32mp25-dma3";
-> +			reg = <0x40410000 0x1000>;
-> +			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&scmi_clk CK_SCMI_HPDMA2>;
-> +			#dma-cells = <3>;
-> +		};
-> +
-> +		hpdma3: dma-controller@40420000 {
-> +			compatible = "st,stm32mp25-dma3";
-> +			reg = <0x40420000 0x1000>;
-> +			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&scmi_clk CK_SCMI_HPDMA3>;
-> +			#dma-cells = <3>;
-> +		};
-> +
-> +		rifsc: bus@42080000 {
-> +			compatible = "st,stm32mp25-rifsc", "simple-bus";
-> +			reg = <0x42080000 0x1000>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			#access-controller-cells = <1>;
-> +			ranges;
-> +
-> +			i2s2: audio-controller@400b0000 {
-
-Confusing: device has address outside of the bus. What does the bus
-address represent?
-
-> +				compatible = "st,stm32mp25-i2s";
-> +				reg = <0x400b0000 0x400>;
-> +				#sound-dai-cells = <0>;
-> +				interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks = <&rcc CK_BUS_SPI2>, <&rcc CK_KER_SPI2>;
-> +				clock-names = "pclk", "i2sclk";
-> +				resets = <&rcc SPI2_R>;
-> +				dmas = <&hpdma 51 0x43 0x12>,
-> +				       <&hpdma 52 0x43 0x21>;
-> +				dma-names = "rx", "tx";
-> +				access-controllers = <&rifsc 23>;
-> +				status = "disabled";
-> +			};
-> +
-
-...
-
-> +			sdmmc1: mmc@48220000 {
-> +				compatible = "st,stm32mp25-sdmmc2", "arm,pl18x", "arm,primecell";
-> +				arm,primecell-periphid = <0x00353180>;
-> +				reg = <0x48220000 0x400>, <0x44230400 0x8>;
-> +				interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks = <&rcc CK_KER_SDMMC1 >;
-> +				clock-names = "apb_pclk";
-> +				resets = <&rcc SDMMC1_R>;
-> +				cap-sd-highspeed;
-> +				cap-mmc-highspeed;
-> +				max-frequency = <120000000>;
-> +				access-controllers = <&rifsc 76>;
-> +				status = "disabled";
-> +			};
-> +
-> +			ethernet1: ethernet@482c0000 {
-> +				compatible = "st,stm32mp25-dwmac", "snps,dwmac-5.20";
-> +				reg = <0x482c0000 0x4000>;
-> +				reg-names = "stmmaceth";
-> +				interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
-
-Why extended?
-
-> +				interrupt-names = "macirq";
-> +				clock-names = "stmmaceth",
-> +					      "mac-clk-tx",
-> +					      "mac-clk-rx",
-> +					      "ptp_ref",
-> +					      "ethstp",
-> +					      "eth-ck";
-
-...
-
-> +		rcc: clock-controller@44200000 {
-> +			compatible = "st,stm32mp25-rcc";
-> +			reg = <0x44200000 0x10000>;
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			clocks = <&scmi_clk CK_SCMI_HSE>,
-> +				<&scmi_clk CK_SCMI_HSI>,
-> +				<&scmi_clk CK_SCMI_MSI>,
-> +				<&scmi_clk CK_SCMI_LSE>,
-> +				<&scmi_clk CK_SCMI_LSI>,
-> +				<&scmi_clk CK_SCMI_HSE_DIV2>,
-> +				<&scmi_clk CK_SCMI_ICN_HS_MCU>,
-> +				<&scmi_clk CK_SCMI_ICN_LS_MCU>,
-> +				<&scmi_clk CK_SCMI_ICN_SDMMC>,
-> +				<&scmi_clk CK_SCMI_ICN_DDR>,
-> +				<&scmi_clk CK_SCMI_ICN_DISPLAY>,
-> +				<&scmi_clk CK_SCMI_ICN_HSL>,
-> +				<&scmi_clk CK_SCMI_ICN_NIC>,
-> +				<&scmi_clk CK_SCMI_ICN_VID>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_07>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_08>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_09>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_10>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_11>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_12>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_13>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_14>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_15>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_16>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_17>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_18>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_19>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_20>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_21>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_22>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_23>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_24>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_25>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_26>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_27>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_28>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_29>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_30>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_31>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_32>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_33>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_34>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_35>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_36>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_37>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_38>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_39>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_40>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_41>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_42>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_43>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_44>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_45>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_46>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_47>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_48>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_49>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_50>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_51>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_52>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_53>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_54>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_55>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_56>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_57>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_58>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_59>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_60>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_61>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_62>,
-> +				<&scmi_clk CK_SCMI_FLEXGEN_63>,
-> +				<&scmi_clk CK_SCMI_ICN_APB1>,
-> +				<&scmi_clk CK_SCMI_ICN_APB2>,
-> +				<&scmi_clk CK_SCMI_ICN_APB3>,
-> +				<&scmi_clk CK_SCMI_ICN_APB4>,
-> +				<&scmi_clk CK_SCMI_ICN_APBDBG>,
-> +				<&scmi_clk CK_SCMI_TIMG1>,
-> +				<&scmi_clk CK_SCMI_TIMG2>,
-> +				<&scmi_clk CK_SCMI_PLL3>,
-> +				<&clk_dsi_txbyte>;
-> +				access-controllers = <&rifsc 156>;
-> +		};
-> +
-> +		exti1: interrupt-controller@44220000 {
-> +			compatible = "st,stm32mp1-exti", "syscon";
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +			reg = <0x44220000 0x400>;
-> +			interrupts-extended =
-
-Why extended?
-
-> +				<&intc GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_0 */
-> +				<&intc GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_10 */
-> +				<&intc GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 0   IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 1   IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>,
-> +				<0>,						/* EXTI_20 */
-> +				<&intc GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_30 */
-> +				<&intc GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
-> +				<0>,
-> +				<&intc GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_40 */
-> +				<&intc GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_50 */
-> +				<0>,
-> +				<0>,
-> +				<0>,
-> +				<0>,
-> +				<0>,
-> +				<0>,
-> +				<0>,
-> +				<0>,
-> +				<&intc GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
-> +				<0>,						/* EXTI_60 */
-> +				<&intc GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>,
-> +				<0>,
-> +				<0>,
-> +				<&intc GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-> +				<0>,
-> +				<0>,
-> +				<&intc GIC_SPI 10  IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-> +				<0>,
-> +				<&intc GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,	/* EXTI_70 */
-> +				<0>,
-> +				<&intc GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>,
-> +				<0>,						/* EXTI_80 */
-> +				<0>,
-> +				<0>,
-> +				<&intc GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>,
-> +				<&intc GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
-> +		syscfg: syscon@44230000 {
-> +			compatible = "st,stm32mp25-syscfg", "syscon";
-> +			reg = <0x44230000 0x10000>;
-> +		};
-> +
-> +		pinctrl: pinctrl@44240000 {
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-
-Please fix coding style everywhere here.
+On Wed, 12 Feb 2025 at 20:47, Namhyung Kim <namhyung@kernel.org> wrote:
+>
+> On Tue, Feb 11, 2025 at 09:23:30PM +0100, Dmitry Vyukov wrote:
+> > On Tue, 11 Feb 2025 at 18:42, Namhyung Kim <namhyung@kernel.org> wrote:
+> > >
+> > > On Tue, Feb 11, 2025 at 09:42:16AM +0100, Dmitry Vyukov wrote:
+> > > > On Tue, 11 Feb 2025 at 02:02, Namhyung Kim <namhyung@kernel.org> wr=
+ote:
+> > > > >
+> > > > > On Fri, Feb 07, 2025 at 08:23:58AM +0100, Dmitry Vyukov wrote:
+> > > > > > On Fri, 7 Feb 2025 at 04:44, Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+> > > [SNIP]
+> > > > > > > > @@ -3547,10 +3549,15 @@ static int __hpp_dimension__add_out=
+put(struct perf_hpp_list *list,
+> > > > > > > >       return 0;
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > > -int hpp_dimension__add_output(unsigned col)
+> > > > > > > > +int hpp_dimension__add_output(unsigned col, bool implicit)
+> > > > > > > >  {
+> > > > > > > > +     struct hpp_dimension *hd;
+> > > > > > > > +
+> > > > > > > >       BUG_ON(col >=3D PERF_HPP__MAX_INDEX);
+> > > > > > > > -     return __hpp_dimension__add_output(&perf_hpp_list, &h=
+pp_sort_dimensions[col]);
+> > > > > > > > +     hd =3D &hpp_sort_dimensions[col];
+> > > > > > > > +     if (implicit && !hd->was_taken)
+> > > > > > > > +             return 0;
+> > > > > > >
+> > > > > > > I don't think you need these implicit and was_taken things.
+> > > > > > > Just removing from the sort list when it's unregistered seems=
+ to work.
+> > > > > > >
+> > > > > > > ---8<---
+> > > > > > > @@ -685,6 +685,7 @@ void perf_hpp_list__prepend_sort_field(st=
+ruct perf_hpp_list *list,
+> > > > > > >  static void perf_hpp__column_unregister(struct perf_hpp_fmt =
+*format)
+> > > > > > >  {
+> > > > > > >         list_del_init(&format->list);
+> > > > > > > +       list_del_init(&format->sort_list);
+> > > > > > >         fmt_free(format);
+> > > > > > >  }
+> > > > > > >
+> > > > > > > ---8<---
+> > > > > >
+> > > > > > It merely suppresses the warning, but does not work the same wa=
+y. See
+> > > > > > this for details:
+> > > > > > https://lore.kernel.org/all/CACT4Y+ZREdDL7a+DMKGFGae1ZjX1C8uNRw=
+CGF0c8iUJtTTq0Lw@mail.gmail.com/
+> > > > >
+> > > > > But I think it's better to pass --latency option rather than addi=
+ng it
+> > > > > to -s option.  If you really want to have specific output fields,=
+ then
+> > > > > please use -F latency,sym instead.
+> > > > >
+> > > > > Also I've realized that it should add one sort key in setup_overh=
+ead()
+> > > > > to support hierarchy mode properly.  Something like this?
+> > > > >
+> > > > > Thanks,
+> > > > > Namhyung
+> > > > >
+> > > > >
+> > > > > ---8<---
+> > > > > diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+> > > > > index 2b6023de7a53ae2e..329c2e9bbc69a725 100644
+> > > > > --- a/tools/perf/util/sort.c
+> > > > > +++ b/tools/perf/util/sort.c
+> > > > > @@ -3817,22 +3817,15 @@ static char *setup_overhead(char *keys)
+> > > > >                 return keys;
+> > > > >
+> > > > >         if (symbol_conf.prefer_latency) {
+> > > > > -               keys =3D prefix_if_not_in("overhead", keys);
+> > > > > -               keys =3D prefix_if_not_in("latency", keys);
+> > > > > -               if (symbol_conf.cumulate_callchain) {
+> > > > > -                       keys =3D prefix_if_not_in("overhead_child=
+ren", keys);
+> > > > > +               if (symbol_conf.cumulate_callchain)
+> > > > >                         keys =3D prefix_if_not_in("latency_childr=
+en", keys);
+> > > > > -               }
+> > > > > -       } else if (!keys || (!strstr(keys, "overhead") &&
+> > > > > -                       !strstr(keys, "latency"))) {
+> > > > > -               if (symbol_conf.enable_latency)
+> > > > > +               else
+> > > > >                         keys =3D prefix_if_not_in("latency", keys=
+);
+> > > > > -               keys =3D prefix_if_not_in("overhead", keys);
+> > > > > -               if (symbol_conf.cumulate_callchain) {
+> > > > > -                       if (symbol_conf.enable_latency)
+> > > > > -                               keys =3D prefix_if_not_in("latenc=
+y_children", keys);
+> > > > > +       } else {
+> > > > > +               if (symbol_conf.cumulate_callchain)
+> > > > >                         keys =3D prefix_if_not_in("overhead_child=
+ren", keys);
+> > > > > -               }
+> > > > > +               else
+> > > > > +                       keys =3D prefix_if_not_in("overhead", key=
+s);
+> > > > >         }
+> > > > >
+> > > > >         return keys;
+> > > >
+> > > >
+> > > > Have I decoded the patch correctly?
+> > > >
+> > > >         if (symbol_conf.prefer_latency) {
+> > > >                 if (symbol_conf.cumulate_callchain)
+> > > >                         keys =3D prefix_if_not_in("latency_children=
+", keys);
+> > > >                 else
+> > > >                         keys =3D prefix_if_not_in("latency", keys);
+> > > >         } else {
+> > > >                 if (symbol_conf.cumulate_callchain)
+> > > >                         keys =3D prefix_if_not_in("overhead_childre=
+n", keys);
+> > > >                 else
+> > > >                         keys =3D prefix_if_not_in("overhead", keys)=
+;
+> > > >         }
+> > > >
+> > >
+> > > Yep, that's correct.
+> > >
+> > >
+> > > > If I decoded the patch correctly, it's not what we want.
+> > > >
+> > > > For the default prefer_latency case we also want to add overhead, t=
+hat
+> > > > was intentional for the --latency preset. It does not harm, and all=
+ows
+> > > > to see/compare differences in latency and overhead.
+> > > > Again, if a user wants something custom, there is no way to second
+> > > > guess all possible intentions. For non-default cases, we just let t=
+he
+> > > > user say what exactly they want, and we will follow that.
+> > > >
+> > > > "latency" should be added even if cumulate_callchain.
+> > >
+> > > Please note that it just sets the sort key - which column you want to
+> > > order the result.  The output fields for overhead and children will b=
+e
+> > > added in perf_hpp__init() if you remove the 'was_taken' logic.  So I
+> > > think this change will have the same output with that.
+> >
+> > Yes, but perf_hpp__init() does not have the logic that's currently
+> > contained in setup_overhead().
+> >
+> > If the user specified a "latency" field, and we don't want to add
+> > "overhead" in that case, then _both_ setup_overhead() and
+> > perf_hpp__init() must not add "overhead".
+>
+> Ok, I see your point.  But I think it'd be much easier if you allow the
+> 'overhead' column in that case too.
 
 
-> +			compatible = "st,stm32mp257-pinctrl";
-> +			ranges = <0 0x44240000 0xa0400>;
-> +			interrupt-parent = <&exti1>;
-> +			st,syscfg = <&exti1 0x60 0xff>;
-> +			pins-are-numbered;
-> +
+It may be possible. However, one of my motivations that I did not
+fully explain and realized myself is as follows.
 
-...
+You referred to fields and sort order as to different things. However,
+for a person not working on perf code internals these are mostly the
+same thing.
 
-> diff --git a/arch/arm64/boot/dts/st/stm32mp23xc.dtsi b/arch/arm64/boot/dts/st/stm32mp23xc.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..e33b00b424e1207dc6212e75235785f8c61e5055
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/st/stm32mp23xc.dtsi
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
-> +/*
-> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
-> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
-> + */
-> +
+Fields are merged into sort order, sort order elements appear as fields.
+Say, if I do "-F symbol,overhead", output will be sorted by symbols
+first, so fields =3D=3D sort. Similarly, anything specified in --sort
+appears as fields in output, so sort =3D=3D fields.
 
-What is the point of this file?
+My current code keeps behavior for them consistent. Making it
+non-consistent may be confusing for users.
 
-Best regards,
-Krzysztof
+For example, --hierarchy requires --sort (fails with -F), so I tend to
+use it more than F (commands with --sort are already in my bash
+history).
+So if I want latency and symbol I tend to do:
 
+perf report --sort latency,symbol
+
+and with my current code this behaves the same way as:
+
+perf report -F latency,symbol
+
+Which matches my mental model of F/sort being the same.
+However, if we remove was_taken, then the above commands behave
+differently, which for end user like me is:
+=C2=AF\_(=E3=83=84)_/=C2=AF
+
+
+After reading the code, I think I understand the difference
+(hopefully), e.g. it allows me to do a subtle things like:
+-F symbol,overhead --sort overhead,symbol
+(not sure how useful this is compared to always sticking to field
+order for sorting)
+
+
+
+
+> > If we do what you proposed, then perf_hpp__init() will still add
+> > "overhead" and we go back to square 0.
+>
+> Right, but currently the default perf report and with --latency option,
+> will show both overhead and latency columns.  That's why I thought you
+> wanted to display them together.
+>
+> Actually I don't want to use -s option to describe output fields (like
+> overhead and latency) but I cannot prevent people from doing that. :(
+> Maybe you can skip the setup_overhead() if user gives either 'overhead'
+> or 'latency' explicitly - oh, you have that in the !prefer_latency case.
+>
+> >
+> > I used was_taken to not duplicate this non-trivial logic in both
+> > functions. As I mentioned in the previous replies, I tried that but it
+> > was messier/more complex. was_taken is a simple way to not duplicate
+> > logic and keep these functions consistent.
+>
+> Hmm.. ok.  Maybe we can update this part later.  Can you please add a
+> comment in the perf_hpp__init() that says overhead and latency columns
+> are added to the sort list in setup_overhead() so it's added implicitly
+> here only if it's already taken?
+
+Added a comment capturing some of this discussion in v7
+
+
+> > > > For the !prefer_latency case, we don't want to mess with
+> > > > overhead/latency fields if the user specified any of them explicitl=
+y.
+> > > > Otherwise this convenience part gets in the user's way and does not
+> > > > allow them to do what they want. User says "I want X" and perf says
+> > > > "screw you, I will give you Y instead, and won't allow you to possi=
+bly
+> > > > do X".
+> > >
+> > > That's what -F option does.  The -s option used to specify how to gro=
+up
+> > > the histogram entries and it will add 'overhead' (and/or 'latency') i=
+f
+> > > it's not even requested.  So I think it's ok to add more output colum=
+n
+> > > when -s option is used.
+> > >
+> > > But unfortunately, using -F and -s together is confusing and change t=
+he
+> > > meaning of -s option - it now says how it sort the result.
+> > >
+> > > >
+> > > > And see above: -F does not work with --hierarchy, so this part is u=
+nskippable.
+> > >
+> > > Yep, but I mean it fixes --hierarchy and --latency.  I'm thinking of =
+a
+> > > way to support -F and --hierarchy in general.
+> >
+> > I don't know why it was disabled. There are likely other things to
+> > improve, but please let's not tie that to this change.
+>
+> Right, it's a separate issue.  I was afraid of mixing output fields and
+> sort keys in an unexpected order.  But maybe we can support that if
+> that's what user wants.
+>
+> Thanks,
+> Namhyung
+>
 
