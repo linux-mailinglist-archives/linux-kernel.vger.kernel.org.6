@@ -1,119 +1,172 @@
-Return-Path: <linux-kernel+bounces-512845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E42A33E5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:45:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368CDA33E54
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:45:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF38169CEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5EE23A58E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63C6209F53;
-	Thu, 13 Feb 2025 11:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D93F21D3DB;
+	Thu, 13 Feb 2025 11:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="D3Ygj82W"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="twS3QFWf"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55F8227EBA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47108212FB1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739447137; cv=none; b=SlJVkR+5jTe3yGwshfORsb6dHgP0s90GReVX9NXrgTkRnVWu1Ax7SJ0M9tvI3tJcS3jUeTU+0XXK84KxhEFLj2M8T9Pdr8O7Yjb7fnPgMjxA/Jcn0yBX2yNF60BDaIi8h+DKZb6B87MNg02+iupLfBJi6CSLH0WRK9khxbpTTCk=
+	t=1739447105; cv=none; b=te/3xU+wOqvgT9ycEOperb0i99L6A0MA5cYw1ttuV40Z+jyJIIBwcV4pqUxxUpyI7wLBAH32efHyW9/dMgl8TKItuXVcbZgIFI6pafWp8+hZSR6WTUnpLXzmKx1SEB09M3PtcO4D1lHkkVCFWEMoLV6OtE+8A2JRnSao4cJZPcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739447137; c=relaxed/simple;
-	bh=YY+OU/b5R2NZDBv+XG+fDZujvR+B8cCjfW4SIV4pBfI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jbyhubX/0iDmqDSgH4oc3D7hjYa24+zdfMoFDgRpjDIQ5PRxxTbVMzxVKHs5Jt5Y+uqo+X56+dAi3GafrZh84CZHdkFmRsSLjTNfmuGRj82kcJlbsamVMLWL7MDcrOM39norrhxuehzslEy52dbeETx6MxKCRavuO0pHJ+1ZsbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=D3Ygj82W; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab7ee6f5535so14887366b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 03:45:34 -0800 (PST)
+	s=arc-20240116; t=1739447105; c=relaxed/simple;
+	bh=7PtZe0tSJIetPwypQyiZo24A/z2QBMIiJyjFAjqbFBc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LmfMg+twgyYxLBifCVnCwt7HvezCOYE4e3DPwDSKEg0Jnd85Ew8PnR5rD0GWx5nZJ/ZpZjo8RLy1GuW6VH3j1y4YvUZfTClXUQ8CLmuz+03mhH7lqnU4BtPsJa1HrgQGIBi9Bwc2kafI5gm4ltZj1Q+obqoYsqhe8uvnyAsNBXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=twS3QFWf; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-436ce2ab251so5299985e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 03:45:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739447133; x=1740051933; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNK7rLFtZxlsVr2HlY81+ucXl/w9wHCFQRGCafrM+CU=;
-        b=D3Ygj82W+/FoU+wszva4D3Pv4SGz0w68bY9agF1aosOgZAMx5aLqJnslYdZ3hWbzsz
-         XIGEQGN6nU3BS+1NDLrf4XpWwINUoACa1XGP94ZXgHvUHeUtvJSDyQKVK++O1RvAtUZL
-         U7y14eUWvbNIPcgUECwp9sVYDVvbPii6k5Wj5yGTIzy7DXrpaLGlSQqzCFsoQPGPpe8k
-         DyD5Yp8YCJrlC91xhhOCTp+KSU/wDDdP4Lpw1Qg2A5oUtKoq9at31B8uvcOLx8tH53JM
-         QigWfu///41DwuXIw2Dku1Cm1NcPeS+fF3NPJSUwbgP1Q+GTbaV8mLcdRXnSy9/xLF1V
-         WXWg==
+        d=linaro.org; s=google; t=1739447100; x=1740051900; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=B864o0fggh+K1JfNxHrkc432l7fxNgcBloINRuCFBwY=;
+        b=twS3QFWfAlmH026H6yFe9sNWWcDXHLNDQ6d3N2Fw7niGxOd5nbZZTVbK3Cbr/rad8o
+         2mg2LEnpIORi7F9SCkAFkw70/xvVYXq5omR60cFAhAYRR3+Z/aucvLdPDjmJ/OWsJBeR
+         ViQKiz/q32m78pAU7gH/5y/junQsVILhIgaW46HGFRueeypIBl5rVHOI9IkZ5eeNaKlP
+         r8vcL8aMEidy7c3wUqpIC3hkTmvuEMikSzt6WknrmuaZOv3RB/tUtbk0ebp+qfistzOa
+         Ymppjaav8JiRpPcTqrzEAL6VRN4TRQt2BnMtLVeRhCpd1u9t3ZNFyi/bggO0tImbJZuJ
+         YPkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739447133; x=1740051933;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zNK7rLFtZxlsVr2HlY81+ucXl/w9wHCFQRGCafrM+CU=;
-        b=QVXi5HiFw5lRyMi106gvkOS8qVQ8G4RW0pFcT8NcAE7W2M59HEk5ZB8ZBssnIRdZzb
-         0QcLorkwjm2hS4TKQZ4IwMogThAU9uKKYLP9LoTCKEXSLf+F1Of4ynYdiYxrrPQav6gY
-         ie0KDs72M0ya7t5kpqz8Z4IrNUBpxu8Zt3FoaD8CEKIKyZcKpG8zesSH6XjS3s8bDF+W
-         SuUGqs2cM/ksy4rwRNSq1Je/UAlIgp8S996kPZ1Zpw0SAV8guw8xhR3toFRRvvxO6fJr
-         19ffYVLhRVxkMBKS9plLYWMX4kTlEv5DYLWnPEsOsX5O3PkVtNQOJ2NmSUx6ngZOQhOJ
-         fa+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWtJQiElly9aqX+GN6yzbcN6WF4fLRP+cWk/UPnll25aU1oDIk2SZKFv5650DOiRHa6rLvqlKs40hXF+Aw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMAdyIeTmsPnVEZAnubAOJM/1S5qxU3ST3iOumTLPBJDFrGzvD
-	4FMHeGh66M1kce14oUZzl/05mxI0fIcVIarqxzQEkTdn4tpL5kcSzp6VBsKemmM=
-X-Gm-Gg: ASbGnctBAPh02FpCrmAz+mOAle66wDJyGn5PsiQ9JxwJe53rVpC1UiAvzK7jOjyxs/d
-	O5onIi0spOehb5gU2GNv+oMRyDEaHeVB+dHs6XbP4olDWbL818Yw5NhH9pUzkK5hwsRy9D+aYlz
-	uROkJg/WedQChG0dOl4eyIHNMgP+xy8fOmE817f4IdeBfjSyWaOw5hx02fmapRrvhTtWTl1uUjl
-	OId92XSA/S948wfQj4/IZ0stESKn3TTurNwI5a3oku1mp2akSyRlPBU+J6YPcd51QtbqAp2BG5J
-	xLIke1rB0CGALzORu+ld/U/x6Dn3jUAfiCOKbuhqiwDQBil800v+/OGCkozWQ+oTeBRlcMy9bcq
-	14o6tug==
-X-Google-Smtp-Source: AGHT+IFhwk4ltxE1xQ3p0mGfeZawu/5MpD6Z/sNSEWalFb7gtGBPeQtv4gNW8tEYCXMCRKVGAjZ0ow==
-X-Received: by 2002:a17:907:60d2:b0:ab6:eec4:c9c2 with SMTP id a640c23a62f3a-ab7f33cd42emr238790366b.7.1739447133131;
-        Thu, 13 Feb 2025 03:45:33 -0800 (PST)
-Received: from localhost (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5339dec3sm115780666b.157.2025.02.13.03.45.32
+        d=1e100.net; s=20230601; t=1739447100; x=1740051900;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B864o0fggh+K1JfNxHrkc432l7fxNgcBloINRuCFBwY=;
+        b=M30ZpIfiPuZUQXF9nXr8zebBjO+BoYL9ZDZyvOVD2v95xYi47owU5iYxuyC41jV60q
+         g1wkx9R+nuGrgJRfjqQTiklZupGu7mJ89X4eO0b0sUxJnq61d69QHOxe8U/YW/Jkxumd
+         wDHEwxZVnikLFHUglTS5j8ynCIVzh09LA3UwzGhIDBlXB2jxSxKtL6sAaJFgTwEkDaad
+         AQpvLyFuRpQK94vODDJLL78L5WGnsodd1pdRUZPNIIPjQjfvkgkXil+mT+LsZBpXDxFD
+         MdDBm7JtMxKqSmxHwR0162+nU6E8Bdqz89Oa86rTPys2iNAthSphSC7zmZHlD+Rl/LYT
+         O1mA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDaFN4/sdsYUrzJcOwa8j3iZglZJc4VP7CKxu7mdJ7RsvXvih22G688Jdb3+I2GsRc73TidJGti4FqJwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp8mBQDAb2aH0mujiT0wujrTrP6r67n7/5DTC2fOEA1OeLrQ9P
+	V+4/C0lo0pDoR4KX2xT3l92iXzmqspnrKBH7b6iMRkAqVn4QV53jzQKZ+MRcVABDgRvOz2/VaM2
+	QvIY=
+X-Gm-Gg: ASbGncu0cvO0hCZAM3a36vvXXKPJlJsdplM8mlVdXHu8/3/ucp2BuQYmzYS7+q6CRSE
+	KZ67sGsxyTh0q1zbLpohSk8Xx2OOQfOAlss6S9yXO1XqVfFcgeMPYigSfm838Nwd9bUot8oOvEI
+	zNXYQ9Iz6U+SoWqPgAwBlGl0msl0PNn1sjF0glkAM8Frwo8vcT62cAKwMXFEcJyrHo2LyU1NEk9
+	RrdIOjqbFpH6ZLk9B0gSeTR72XeVty960KUsralidC4sczxo1uhnOHaLKECJXgFkEGzbnWKqLq0
+	90ZHYTRRkfH/W7BJQDQ=
+X-Google-Smtp-Source: AGHT+IHKD0ms8VgaTWGBDJMvklWj7HpF1w1pq+OTWxzqSwoHxcvtoBbQvKht7o4Zc8bM5Shdt4UGsA==
+X-Received: by 2002:a5d:584e:0:b0:38d:d79a:f82a with SMTP id ffacd0b85a97d-38dea256f8emr5496991f8f.7.1739447100552;
+        Thu, 13 Feb 2025 03:45:00 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b41b5sm1688110f8f.14.2025.02.13.03.44.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 03:45:32 -0800 (PST)
-From: Petr Tesarik <ptesarik@suse.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	maple-tree@lists.infradead.org (open list:MAPLE TREE)
-Cc: linux-mm@kvack.org (open list:MAPLE TREE),
-	linux-kernel@vger.kernel.org (open list:LIBRARY CODE),
-	Petr Tesarik <ptesarik@suse.com>
-Subject: [PATCH] maple_tree: Remove a BUG_ON() in mas_alloc_nodes()
-Date: Thu, 13 Feb 2025 12:44:53 +0100
-Message-ID: <20250213114453.1078318-1-ptesarik@suse.com>
-X-Mailer: git-send-email 2.48.1
+        Thu, 13 Feb 2025 03:45:00 -0800 (PST)
+Message-ID: <58af4b607adbe74725d4869f8f5a09cd5d3be2d3.camel@linaro.org>
+Subject: Re: [PATCH] usb: typec: tcpm/tcpci_maxim: better interrupt name
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-usb@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Thu, 13 Feb 2025 11:44:59 +0000
+In-Reply-To: <2025021302-malformed-captivity-e862@gregkh>
+References: <20250213-max33359-irq-name-v1-1-1900da7a1e79@linaro.org>
+	 <2025021302-malformed-captivity-e862@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Remove a BUG_ON() right before a WARN_ON() with the same condition.
+Hi Greg,
 
-Calling WARN_ON() and BUG_ON() here is definitely wrong.  Since the goal is
-generally to remove BUG_ON() invocations from the kernel, keep only the
-WARN_ON().
+On Thu, 2025-02-13 at 11:11 +0100, Greg Kroah-Hartman wrote:
+> On Thu, Feb 13, 2025 at 09:37:54AM +0000, Andr=C3=A9 Draszik wrote:
+> > This changes the output of /proc/interrupts from the non-descriptive:
+> > =C2=A0=C2=A0=C2=A0 1-0025
+> > (or similar) to a more descriptive:
+> > =C2=A0=C2=A0=C2=A0 1-0025-max33359
+> >=20
+> > This makes it easier to find the device, in particular if there are
+> > multiple i2c devices, as one doesn't have to remember (or lookup) where
+> > it is located.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > =C2=A0drivers/usb/typec/tcpm/tcpci_maxim_core.c | 13 ++++++++++---
+> > =C2=A01 file changed, 10 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/ty=
+pec/tcpm/tcpci_maxim_core.c
+> > index fd1b80593367..46fc626589db 100644
+> > --- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> > +++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> > @@ -420,12 +420,14 @@ static irqreturn_t max_tcpci_isr(int irq, void *d=
+ev_id)
+> > =C2=A0	return IRQ_WAKE_THREAD;
+> > =C2=A0}
+> > =C2=A0
+> > -static int max_tcpci_init_alert(struct max_tcpci_chip *chip, struct i2=
+c_client *client)
+> > +static int max_tcpci_init_alert(struct max_tcpci_chip *chip,
+> > +				struct i2c_client *client,
+> > +				const char *name)
+> > =C2=A0{
+> > =C2=A0	int ret;
+> > =C2=A0
+> > =C2=A0	ret =3D devm_request_threaded_irq(chip->dev, client->irq, max_tc=
+pci_isr, max_tcpci_irq,
+> > -					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), dev_name(chip->dev),
+> > +					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), name,
+> > =C2=A0					chip);
+> > =C2=A0
+> > =C2=A0	if (ret < 0)
+> > @@ -485,6 +487,7 @@ static int max_tcpci_probe(struct i2c_client *clien=
+t)
+> > =C2=A0	int ret;
+> > =C2=A0	struct max_tcpci_chip *chip;
+> > =C2=A0	u8 power_status;
+> > +	const char *name;
+> > =C2=A0
+> > =C2=A0	chip =3D devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+> > =C2=A0	if (!chip)
+> > @@ -531,7 +534,11 @@ static int max_tcpci_probe(struct i2c_client *clie=
+nt)
+> > =C2=A0
+> > =C2=A0	chip->port =3D tcpci_get_tcpm_port(chip->tcpci);
+> > =C2=A0
+> > -	ret =3D max_tcpci_init_alert(chip, client);
+> > +	name =3D devm_kasprintf(&client->dev, GFP_KERNEL, "%s-%s",
+> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_name(&client->dev), client->name=
+);
+> > +	if (!name)
+> > +		return -ENOMEM;
+>=20
+> Please always test your code before sending it out.=C2=A0 You just leaked=
+ a
+> bunch of stuff here :(
 
-Fixes: 067311d33e65 ("maple_tree: separate ma_state node from status")
-Signed-off-by: Petr Tesarik <ptesarik@suse.com>
----
- lib/maple_tree.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks for the review!
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index f7153ade1be5..0f2111d436c4 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -1245,7 +1245,6 @@ static inline void mas_alloc_nodes(struct ma_state *mas, gfp_t gfp)
- 	if (mas->mas_flags & MA_STATE_PREALLOC) {
- 		if (allocated)
- 			return;
--		BUG_ON(!allocated);
- 		WARN_ON(!allocated);
- 	}
- 
--- 
-2.48.1
+I can not see what leak you're referring to. Could you please clarify?
+
+Thanks,
+Andre'
 
 
