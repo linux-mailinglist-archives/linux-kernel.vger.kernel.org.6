@@ -1,184 +1,151 @@
-Return-Path: <linux-kernel+bounces-512811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4C6A33DFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:27:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8505A33E12
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:29:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 291EE161C25
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:27:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5635D188D4F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D3121D3E5;
-	Thu, 13 Feb 2025 11:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFFD227E97;
+	Thu, 13 Feb 2025 11:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmnLr5lU"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="UqyeZ25X"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F6F227EA9;
-	Thu, 13 Feb 2025 11:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ADE227E90
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739446008; cv=none; b=dy7fnytYaBcxtzeSmqMVR7DE8ZjbK7ZjorIETlnoCMhY4nA8VcPo730hKnpGH8CzkXCCDVdiZXKf2JmEnSP0sAsBCuKXCT4ScV4+KtBamT/pzN78jJcCehgheRz9IQSErBLPbaTDmGovdp3sUGPMBfZ7YmVzVV06HLvrb7jLYMI=
+	t=1739446091; cv=none; b=K+y0Ff9JwN5j/mq9l8jMaQrPOKUGhFr3cDoAIaOPAPagfEmrn0o7Px/m3eqLCuCOTsq2lj6i3xA563n/wdTd6x2RX6W5t8gZrcRFfgGzcEFsXUCzxV8Cs8PWKUU/HdNRYRSoUt/eS9W1sF2BEVU+SIBVFnH0VeVyFARE/ZpfmyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739446008; c=relaxed/simple;
-	bh=UvF0qyEAeD84uggiYEODW362+ZzeFxJVzIiWPhGyHzc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U9Pjc/Pl/ALr8wiIbLC/TN49VWLME+ypO+/q0ImXk2c1ZYX0wV4T67RUI1jfAM9DFxetdaShGtnU8VWHytmZp4y3FFalgfRQp+j3k6MD/Vav/TpEOag5j/TPy8JUx8OR+q0tEUI6IywKL1t7FmJvfeAe55V/yGSGFRZ05N0hYeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmnLr5lU; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46c7855df10so12745231cf.3;
-        Thu, 13 Feb 2025 03:26:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739446005; x=1740050805; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LHaCd/GVQXhCshi75jh/YdL77wv4MeC4IivvaIzYoSQ=;
-        b=jmnLr5lU5IaGcx0paRC9MntDoiurx7ANjTaUczkuMJZnNLK9tcScO9GB9JBW7nAnLT
-         xkWyywONA/tNIlW2B91WMnrs1djwDL0yCGZRTAiB3l5BS06JHAU+i2I7bnVgcktlDaCn
-         gj5Kl21KK5legZyTHKasRy9TFcXkc3Raqg5f66m3q0FYUJM+nFlPhh1eoFVu1JH3nTJ/
-         SDgy2UxGJHcAlhashMYKJBsQqLAXuiyBoSTfehHl83B90obKwfChRKXdOToVynKp6z2p
-         1kT52scQmi9Pa7VaQQgA9K4JzK9UkSMPoSRzCUuNBldqTs/U2DKVd5zHtjqqtpraRkht
-         78zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739446005; x=1740050805;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LHaCd/GVQXhCshi75jh/YdL77wv4MeC4IivvaIzYoSQ=;
-        b=p0zSWLsGI/V5a3UTeL2NeZomtgw6dEIARCLy6VhO1TzjZCZILaaAuslz94K0IEa40a
-         iTfZVaHDiunKH2u/hmxx5/3rfU3A88dXfdwPKA6p7wUXnSnA1YXokqr2RHiX9IlezD5G
-         Fa/9qwuRqodsqJFJ4La9NbPIT80mzkxB7pk4Awh63GHYdJRuUtpBs3nZSvoo1ufOBSMQ
-         KJxBbNLyCaqmW1AzWH4hx7zuduurKi0k6+8bh6uRyQv4n+07Dx76IAJEsYtDJHvMCXd1
-         Cfy13eAyYsB7R6gYgT03ExXjDDoOEcyeXYWFqzzognN6xLGKe+RVU+RKiM4zRbKGk5Z1
-         jwzw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1ALHVZqGI5+KIiBW1vfb1F69LcfVP/hXSBgKK3s40WS0swhiTw6aZzTp3sJqukvurKTetaXeuuIKAqco=@vger.kernel.org, AJvYcCWFcmkAUMlMUIwEK58H6ItRJ9EA9P8BPLMYvNuHw+n/8UqDr5mLSkSIJ1+9ZsMt17Cf0G+njxd/nmRy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIbc1VBhO8lbrRTkzu31fhARZhFA3SDiPpXZIH1eIgPF2etGcd
-	LCV6tGesdq8jaH5L5niq0WZDlyobnlGXm/d4bIkgSXQJgrPnukZo
-X-Gm-Gg: ASbGncuYdaVuiLJ/oOFqv7ttsz5d7p4sKQBVQCUHQfYebFdlP+P7N1sQcVw7pV5RDey
-	2vu39O1jqq5AL0CKzDYazx4aQt+mJTs6SqWXehRbrrBjFDM7btyO4q8ImX96SYoqiGXQ6OWu1vl
-	LzDEnwvsPMm5YI6+QR+P/6s4UhnWozATdgLUly6Aab6OhUmB5e8xaz0wAsbyTKM4xQQRPzpk0Q7
-	g73Zfo9m4FSDX4Sjst92lf2qAFzVKnR+fs95r10ArVv5C8Z3BTYV8YWJD0jnxRzMPIf3lpvvMIv
-	CiTNg8MmcLwgNPJJ+GRht4LywUP2OdL9Gz30weM5tnbXrbgwV4qtNybuUn+E5uWfTVJIYzd0WBC
-	WPl7vT2DLAKQGXJsNe03HHNCXVYM8gmrcWMfg8w==
-X-Google-Smtp-Source: AGHT+IHGRagn7x8eSs7Z/JyfOoyd3nmFtQG9HGa52jb6SXFkz2tqApWeqtO3XMaNdGLZypac/vL7rA==
-X-Received: by 2002:a05:622a:1e85:b0:45d:8be9:b0e6 with SMTP id d75a77b69052e-471bee35d02mr50933101cf.43.1739446005044;
-        Thu, 13 Feb 2025 03:26:45 -0800 (PST)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2600:4041:5be7:7c00:c8d8:9808:e9c7:ed5b])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471c2af335asm6641891cf.55.2025.02.13.03.26.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 03:26:43 -0800 (PST)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 13 Feb 2025 06:26:41 -0500
-Subject: [PATCH v6] rust: alloc: satisfy POSIX alignment requirement
+	s=arc-20240116; t=1739446091; c=relaxed/simple;
+	bh=X2bmPGoKkHuDg8cYWq8SnBf/6/7pmLUfnDFqPHvOZ0g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BDTN6ttImAUFQpHEfzIp9AB1tO8xwsuR7hcLol7sTaipY+L/17Ghem6e02j5xwaNQyIo7VEzHTMJ+y99EadEsaqCOzdxnRrZpH9m9fnYPDbNWpoQldyn19dJuxzNEizlm2Y7FK1D5WCRLiqqLyWXtXM3+OVJRsQG4qSZodeXNQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=UqyeZ25X; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 6F2844226E07;
+	Thu, 13 Feb 2025 11:28:06 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 6F2844226E07
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1739446086;
+	bh=NBjVF3pUP7QFgRHJmaW5T9LW35eN83jOLIfzLRGqYek=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UqyeZ25XgLnLDnU5lA+jWmuz+QkDotd96ydS7w70fCrpO/g+S12Xa9WCDAYTGQesA
+	 tYVmO3BlIuIIDN8KBWLT+6gwiiB4rA7MHRldSmA67QOjJJg6hYg8J2zwJAfxb6/VAy
+	 GsBKn00KMHboRsy4ofbrv7A9RhbIGZYc4gCbKgSU=
+From: Vitalii Mordan <mordan@ispras.ru>
+To: Andrzej Hajda <andrzej.hajda@intel.com>
+Cc: Vitalii Mordan <mordan@ispras.ru>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sui Jingfeng <sui.jingfeng@linux.dev>,
+	Aleksandr Mishin <amishin@t-argos.ru>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Jyri Sarha <jsarha@ti.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Swapnil Jakhade <sjakhade@cadence.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH v2] gpu: cdns-mhdp8546: fix call balance of mhdp->clk handling routines
+Date: Thu, 13 Feb 2025 14:28:01 +0300
+Message-Id: <20250213112801.1611525-1-mordan@ispras.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250213-aligned-alloc-v6-1-4fd7f248600b@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAPDWrWcC/3XPwWrDMAwG4FcpPs9DlmJ36anvMXawZTk1pElJR
- tgoefc5PWUuPYlf8P1IdzXLlGVWp8NdTbLkOY9DCe7toPjih050jiUrBLSAYLTvczdILLMfWQe
- LHJAs8QeqYm6TpPzz6Pv8KvmS5+9x+n3UL2bbvmpajDaa29YfKRGH2Jy7q8/9O49XtTUtuNdYa
- yza+gTBphgbl2pNe+1qTUUDBwYfgMDFWjc7baDWTdEOWibvkhhqa233+ulyu/1tjUAwxyjyT6/
- r+gcSwogkogEAAA==
-X-Change-ID: 20250201-aligned-alloc-b52cb2353c82
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- DJ Delorie <dj@redhat.com>, Eric Blake <eblake@redhat.com>, 
- Paul Eggert <eggert@cs.ucla.edu>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: rust-for-linux@vger.kernel.org, linux-man@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
 
-ISO C's `aligned_alloc` is partially implementation-defined; on some
-systems it inherits stricter requirements from POSIX's `posix_memalign`.
+If the clock mhdp->clk was not enabled in cdns_mhdp_probe(), it should not
+be disabled in any path.
 
-This causes the call added in commit dd09538fb409 ("rust: alloc:
-implement `Cmalloc` in module allocator_test") to fail on macOS because
-it doesn't meet the requirements of `posix_memalign`.
+Use the devm_clk_get_enabled() helper function to ensure proper call
+balance for mhdp->clk.
 
-Adjust the call to meet the POSIX requirement and add a comment. This
-fixes failures in `make rusttest` on macOS.
+Found by Linux Verification Center (linuxtesting.org) with Klever.
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
-Fixes: dd09538fb409 ("rust: alloc: implement `Cmalloc` in module allocator_test")
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Fixes: fb43aa0acdfd ("drm: bridge: Add support for Cadence MHDP8546 DPI/DP bridge")
+Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
 ---
-Changes in v6:
-- Replace unsound use of build_error with map_err. (Danilo Krummrich)
-- Link to v5: https://lore.kernel.org/r/20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com
+v2: Use devm_clk_get_enabled() helper function, as per Dmitry Baryshkov's
+request.
 
-Changes in v5:
-- Remove errant newline in commit message. (Miguel Ojeda)
-- Use more succinct expression. (Gary Guo)
-- Drop and then add Danilo's Acked-by again.
-- Link to v4: https://lore.kernel.org/r/20250210-aligned-alloc-v4-1-609c3a6fe139@gmail.com
+ drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-Changes in v4:
-- Revert to `aligned_alloc` and correct rationale. (Miguel Ojeda)
-- Apply Danilo's Acked-by from v2.
-- Rebase on v6.14-rc2.
-- Link to v3: https://lore.kernel.org/r/20250206-aligned-alloc-v3-1-0cbc0ab0306d@gmail.com
-
-Changes in v3:
-- Replace `aligned_alloc` with `posix_memalign` for portability.
-- Link to v2: https://lore.kernel.org/r/20250202-aligned-alloc-v2-1-5af0b5fdd46f@gmail.com
-
-Changes in v2:
-- Shorten some variable names. (Danilo Krummrich)
-- Replace shadowing alignment variable with a second call to
-  Layout::align. (Danilo Krummrich)
-- Link to v1: https://lore.kernel.org/r/20250201-aligned-alloc-v1-1-c99a73f3cbd4@gmail.com
----
- rust/kernel/alloc/allocator_test.rs | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-index e3240d16040b..e68775078e90 100644
---- a/rust/kernel/alloc/allocator_test.rs
-+++ b/rust/kernel/alloc/allocator_test.rs
-@@ -62,6 +62,24 @@ unsafe fn realloc(
-             ));
-         }
+diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+index d081850e3c03..d4e4f484cbe5 100644
+--- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
++++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+@@ -2463,9 +2463,9 @@ static int cdns_mhdp_probe(struct platform_device *pdev)
+ 	if (!mhdp)
+ 		return -ENOMEM;
  
-+        // ISO C (ISO/IEC 9899:2011) defines `aligned_alloc`:
-+        //
-+        // > The value of alignment shall be a valid alignment supported by the implementation
-+        // [...].
-+        //
-+        // As an example of the "supported by the implementation" requirement, POSIX.1-2001 (IEEE
-+        // 1003.1-2001) defines `posix_memalign`:
-+        //
-+        // > The value of alignment shall be a power of two multiple of sizeof (void *).
-+        //
-+        // and POSIX-based implementations of `aligned_alloc` inherit this requirement. At the time
-+        // of writing, this is known to be the case on macOS (but not in glibc).
-+        //
-+        // Satisfy the stricter requirement to avoid spurious test failures on some platforms.
-+        let min_align = core::mem::size_of::<*const crate::ffi::c_void>();
-+        let layout = layout.align_to(min_align).map_err(|_| AllocError)?.pad_to_align();
-+        let layout = layout.pad_to_align();
-+
-         // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
-         // exceeds the given size and alignment requirements.
-         let dst = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
-
----
-base-commit: 8a5aae7dbbfb612509c8a2f112f7e0f79029ed45
-change-id: 20250201-aligned-alloc-b52cb2353c82
-
-Best regards,
+-	clk = devm_clk_get(dev, NULL);
++	clk = devm_clk_get_enabled(dev, NULL);
+ 	if (IS_ERR(clk)) {
+-		dev_err(dev, "couldn't get clk: %ld\n", PTR_ERR(clk));
++		dev_err(dev, "couldn't get and enable clk: %ld\n", PTR_ERR(clk));
+ 		return PTR_ERR(clk);
+ 	}
+ 
+@@ -2504,14 +2504,12 @@ static int cdns_mhdp_probe(struct platform_device *pdev)
+ 
+ 	mhdp->info = of_device_get_match_data(dev);
+ 
+-	clk_prepare_enable(clk);
+-
+ 	pm_runtime_enable(dev);
+ 	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "pm_runtime_resume_and_get failed\n");
+ 		pm_runtime_disable(dev);
+-		goto clk_disable;
++		return ret;
+ 	}
+ 
+ 	if (mhdp->info && mhdp->info->ops && mhdp->info->ops->init) {
+@@ -2590,8 +2588,6 @@ static int cdns_mhdp_probe(struct platform_device *pdev)
+ runtime_put:
+ 	pm_runtime_put_sync(dev);
+ 	pm_runtime_disable(dev);
+-clk_disable:
+-	clk_disable_unprepare(mhdp->clk);
+ 
+ 	return ret;
+ }
+@@ -2632,8 +2628,6 @@ static void cdns_mhdp_remove(struct platform_device *pdev)
+ 	cancel_work_sync(&mhdp->modeset_retry_work);
+ 	flush_work(&mhdp->hpd_work);
+ 	/* Ignoring mhdp->hdcp.check_work and mhdp->hdcp.prop_work here. */
+-
+-	clk_disable_unprepare(mhdp->clk);
+ }
+ 
+ static const struct of_device_id mhdp_ids[] = {
 -- 
-Tamir Duberstein <tamird@gmail.com>
+2.25.1
 
 
