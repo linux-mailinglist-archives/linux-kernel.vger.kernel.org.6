@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-513771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C520A34E7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:32:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5C7A34E81
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:32:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3631416C6E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:32:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0465D18903A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20989245AFB;
-	Thu, 13 Feb 2025 19:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CE324A079;
+	Thu, 13 Feb 2025 19:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GHAnpFY2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fTgtnaQA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D9828A2CE;
-	Thu, 13 Feb 2025 19:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29E624A06C;
+	Thu, 13 Feb 2025 19:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739475118; cv=none; b=mcXkO3r/jimHFnbw85Ue2CzIA6FzmPBk0XC7Cdp0WzVI9fwyxGSLOc7aOto+M/E1lcTwkKlLjVle4Tff7DrPCzDTJI35tmxQ5FcdcwpOOZGa7f9xfcuHlhZ3LUyRLoSZLSrrTIq2noN6Cgx3pjrynzABFExq2ECK9qFZqAM0Lk0=
+	t=1739475145; cv=none; b=iKfrbAgQeVu/7HuaG5ioCxAiK49kOXHsAHChVcaC4vk3CWc8Ftx/TRHNkHO4bz05HLsgiCCOQbDCJHjUUo9cbkzh7U7s3OWpV09vHUaYFYxIsqG0YJP2e2EDxTSfsuQJw0vQS3MeHYB5XknO522gJVPbs5JsdP2X52gt7ry3Pxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739475118; c=relaxed/simple;
-	bh=3isR7VFoqzfVxZrvhDXXIeUYz1Uzy8aLfsgglxXjle0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qo1fM8rvd/0QIxXCvHs46VYpdf8Bktl5C9I9ayZt/wLvgfu61vLB8RHJtYpSL7J5Hte5CuFNqStTqaNpZFZXGzJIDLbpGFCgWnh6bp0G29wJlJRtU0ROpoSBa38XVXELNVmFiRHWXKXBGDPzqhcvHXUxU3F6iAAL0jg87Pw1N1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GHAnpFY2; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1739475145; c=relaxed/simple;
+	bh=Qj+F86dsqXkmAV7Wp0h+E2C2QouUJZ9pZ8c3ZCoW/Lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FIyOUiDUVEVs4m+AzdJHioPFjFZ8YypYWnw0dWXRyPsvSULWMY9DgRED0qhxudUAhTlK83ZNFiyKY/GUY0VwkFAtCXTor8iyb8kJ/EhC6SJPDdzg3l3dOMfM2O4b+3SnKk6gtuvDlE/mseCHhu0Xdpfg7oGKlX5E7tYUnA6wmVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fTgtnaQA; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739475117; x=1771011117;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3isR7VFoqzfVxZrvhDXXIeUYz1Uzy8aLfsgglxXjle0=;
-  b=GHAnpFY2xzbmKNtalUB5N7/dIGX8pQx8WfVM5FGV73WFTLcqkIYPAgBa
-   JnaZD2riiqvr7mCetvCBZ3YZrdjaqTaJa5EmyfM4LwO9kCJjFNy4dBoYn
-   jEkQL3lnjdJF7idy1rLSDccNtqGcIH481r/NtEblIGfmeokm4MrS7jMmW
-   ejJjUIIsZQj+h/fRlCE9loSiM76wPJnabZJ09lAE90rMO+y/7j5Py1F8A
-   aYhdbQnKTKmzyRXnuHRmbxsQuuf3hqVrE6Jig+bqIS0RGutgZDVJ+pEVT
-   BMnXSBKGqHE5y2tFd8yphSKOHvkHMUggg2MgetMhn3bTjQNJb8dyN52QB
-   Q==;
-X-CSE-ConnectionGUID: yjR+eW4VSwSKsBHdARw2Qw==
-X-CSE-MsgGUID: 4vKCwn0dS9iSY79yGun8/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="39386877"
+  t=1739475142; x=1771011142;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Qj+F86dsqXkmAV7Wp0h+E2C2QouUJZ9pZ8c3ZCoW/Lo=;
+  b=fTgtnaQA3wW5KwrQFWZ+3YlPgSqWMp6bYRVq87avJOoTMHTIz+iPzHr4
+   N8i+h5/osJD/TFTJ7b7nL5lecznn1z1S1M0HpYY+zeq7fcsG7WfMDFjJt
+   wldDuDLmOGTkyI9XYLD9d6UPNQtWDiBF2ptIUgKQlE3W7UDiomoGbsbQ+
+   9PqMWC8UkHAUE3gC5uNUbRIhGQBXyFsulPGcC00TUbGObvrdlQ4Mk5p5V
+   W3JVByypqAlZxzgXNV3If6FHUvF7cg+N/Khxyr6TbmHJXsxNeny3K9KzJ
+   P9a9OnQNFQrwpDiylDfEyuXsf6pz3jck9JrBc9LC1OPcHLNTsjBj2+HoD
+   A==;
+X-CSE-ConnectionGUID: 3XIx1N+iSGCK0vwpOgtZHw==
+X-CSE-MsgGUID: 5pAEXOnvTOWFzoUt9Gkl+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="44132343"
 X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="39386877"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 11:31:56 -0800
-X-CSE-ConnectionGUID: ilCaPk/2Qx+K/0Rtci5tTQ==
-X-CSE-MsgGUID: ltjIHdYaRPem+FF+Ox2RJg==
+   d="scan'208";a="44132343"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 11:32:22 -0800
+X-CSE-ConnectionGUID: Cm3tK4RqQkm+dkgYGdCBBw==
+X-CSE-MsgGUID: U7H7sMZsTgey4v5itG7VNw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="136472326"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 13 Feb 2025 11:31:54 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 6A1B91FD; Thu, 13 Feb 2025 21:31:53 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	openbmc@lists.ozlabs.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 1/1] pinctrl: : Switch to use for_each_gpiochip_node() helper
-Date: Thu, 13 Feb 2025 21:31:52 +0200
-Message-ID: <20250213193152.3120396-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113194614"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 13 Feb 2025 11:32:18 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tiewa-0018d9-0v;
+	Thu, 13 Feb 2025 19:32:16 +0000
+Date: Fri, 14 Feb 2025 03:32:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cryolitia PukNgae via B4 Relay <devnull+Cryolitia.gmail.com@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Cryolitia PukNgae <Cryolitia@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>,
+	Yao Zi <ziyao@disroot.org>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	Marcin =?utf-8?Q?Str=C4=85gowski?= <marcin@stragowski.com>,
+	someone5678 <someone5678.dev@gmail.com>,
+	Justin Weiss <justin@justinweiss.com>
+Subject: Re: [PATCH v5 1/2] hwmon: add GPD devices sensor driver
+Message-ID: <202502140302.IkW9UALU-lkp@intel.com>
+References: <20250211-gpd_fan-v5-1-608f4255f0e1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211-gpd_fan-v5-1-608f4255f0e1@gmail.com>
 
-Switch the code to use for_each_gpiochip_node() helper.
+Hi Cryolitia,
 
-While at it, correct header inclusion as device property APIs
-are provided in property.h.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/nuvoton/pinctrl-wpcm450.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+[auto build test WARNING on ffd294d346d185b70e28b1a28abe367bbfe53c04]
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c b/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-index cdad4ef11a2f..2f97accef837 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-@@ -10,7 +10,6 @@
- //   block, shared between all GPIO banks
- 
- #include <linux/device.h>
--#include <linux/fwnode.h>
- #include <linux/gpio/driver.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-@@ -18,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- 
- #include <linux/pinctrl/pinconf.h>
-@@ -1033,7 +1033,7 @@ static int wpcm450_gpio_register(struct platform_device *pdev,
- 		return dev_err_probe(dev, PTR_ERR(pctrl->gpio_base),
- 				     "Resource fail for GPIO controller\n");
- 
--	device_for_each_child_node(dev, child)  {
-+	for_each_gpiochip_node(dev, child) {
- 		void __iomem *dat = NULL;
- 		void __iomem *set = NULL;
- 		void __iomem *dirout = NULL;
-@@ -1044,9 +1044,6 @@ static int wpcm450_gpio_register(struct platform_device *pdev,
- 		u32 reg;
- 		int i;
- 
--		if (!fwnode_property_read_bool(child, "gpio-controller"))
--			continue;
--
- 		ret = fwnode_property_read_u32(child, "reg", &reg);
- 		if (ret < 0)
- 			return ret;
+url:    https://github.com/intel-lab-lkp/linux/commits/Cryolitia-PukNgae-via-B4-Relay/hwmon-add-GPD-devices-sensor-driver/20250211-150418
+base:   ffd294d346d185b70e28b1a28abe367bbfe53c04
+patch link:    https://lore.kernel.org/r/20250211-gpd_fan-v5-1-608f4255f0e1%40gmail.com
+patch subject: [PATCH v5 1/2] hwmon: add GPD devices sensor driver
+config: i386-randconfig-002-20250214 (https://download.01.org/0day-ci/archive/20250214/202502140302.IkW9UALU-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502140302.IkW9UALU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502140302.IkW9UALU-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/hwmon/gpd-fan.c:361:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+     361 |                 const struct gpd_board_drvdata *drvdata = gpd_driver_priv.drvdata;
+         |                 ^
+   drivers/hwmon/gpd-fan.c:452:4: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+     452 |                         int ret = gpd_read_pwm();
+         |                         ^
+   drivers/hwmon/gpd-fan.c:478:4: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+     478 |                         u8 var = clamp_val(val, 0, 255);
+         |                         ^
+   3 warnings generated.
+
+
+vim +361 drivers/hwmon/gpd-fan.c
+
+   352	
+   353	static int gpd_win_mini_set_pwm_enable(enum FAN_PWM_ENABLE pwm_enable)
+   354	{
+   355		switch (pwm_enable) {
+   356		case DISABLE:
+   357			return gpd_generic_write_pwm(255);
+   358		case MANUAL:
+   359			return gpd_generic_write_pwm(gpd_driver_priv.pwm_value);
+   360		case AUTOMATIC:
+ > 361			const struct gpd_board_drvdata *drvdata = gpd_driver_priv.drvdata;
+   362	
+   363			return gpd_ecram_write(drvdata, drvdata->pwm_write, 0);
+   364		}
+   365		return 0;
+   366	}
+   367	
+
 -- 
-2.45.1.3035.g276e886db78b
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
