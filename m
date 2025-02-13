@@ -1,241 +1,116 @@
-Return-Path: <linux-kernel+bounces-513553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E041A34B88
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:18:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2668EA34B6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:14:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E55B165FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:15:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C80C21654F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9A12045B5;
-	Thu, 13 Feb 2025 17:15:37 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357E3200115;
+	Thu, 13 Feb 2025 17:08:03 +0000 (UTC)
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4DD15689A;
-	Thu, 13 Feb 2025 17:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC611FFC41;
+	Thu, 13 Feb 2025 17:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466937; cv=none; b=hNxmDAUhvM4SaE592sO2OuOvSCnLfFn9YtWHtvi9F1Z36rFcIuIrdw4NmWxxDEJLLGz2VNbsbNrOZ2hjy6BeMVN2jE0M2vTNjc0g9i8q5tsyussTgW/BpwfudDHiSrdPuHRckOkgO832FgTNhjlk5SLzIffOMWbmdP1Hm8Au9Ic=
+	t=1739466482; cv=none; b=aWT0KhmPdPr0t/3uGl+t2yUKF2P7Lx7anSKcxa4/Blhhyh8pSRFaA/Sb5N1DSoAu8RqOhiFvjE3PMsUjfjdHS8Pio7+yWMMMuk31Hk6j/1iDo6sQi3UOXveYkLlVdxxHVq2TPZaU9wTYO/rEbhCH6JxteXj21/gbModYpCuK4EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466937; c=relaxed/simple;
-	bh=sKAH8pxmoLFHVCRS/HFwKo3JD4z1kJnrcgM44SAA0J8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uSuggjntZQcUbPRq5ca+1lrtIUnWPZfWr+Y8zb1NFKM6EXCT2aVws1QxuYnEDCMzIS4WB1ifVV3+KcFMIbDGsnBhtVEH0anOTuXP7wq6MygXS5xm7I/6AcsEY8J6jsI7RE7QS2jMv7zbyCkN/7lDu0adLivuynsfMdff+2KwjRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af065.dynamic.kabel-deutschland.de [95.90.240.101])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D3C0261CCD7D2;
-	Thu, 13 Feb 2025 18:07:34 +0100 (CET)
-Message-ID: <1430649f-75e2-4edd-afee-87bf4ac7a961@molgen.mpg.de>
-Date: Thu, 13 Feb 2025 18:07:33 +0100
+	s=arc-20240116; t=1739466482; c=relaxed/simple;
+	bh=9OZZS9cRGpm80QHsvhNO3U2VncDvKFA706oVsF0GWbs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZYddq46DsEJME+uYO4y4dlM3wq6F52sfK2/tQq1DJz+0eRBcBFaiFiML4UbhCLMfwpg4qv6IMH7GaQa1lYbKd7Yxna8z8kWJqjyWpdqAdESC5oy/m1ySTl0EofsONNg0io2dB9UQ3UJQHf2iYNvXQisq7xnrzOYamCzmJ9tFwNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e65d6e1f12so11272656d6.0;
+        Thu, 13 Feb 2025 09:08:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739466479; x=1740071279;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YF3/2kfrsJYjoCEIlZrwDWAfYUEZcN2JfotI765XeoQ=;
+        b=CzCUW6ONt2mbhcBkLI08cpk30u/NYyChHoJ1tq66FjTqzErnN5GFG41wQCJakSlMiq
+         DTVJmVLf9RyJOJWiA+QPsik/gSxtY8qt5q9IErRRUSb3LWzCEdL5zZVtpSIJ2HMBKpoI
+         kYKcnR4CpuOLlsqBNACZ8Ls7lRjXCpwd2dyPwTDN/7rMJbbpi0QYS5brERz7RAhFD14n
+         P5pDiK+rlWqvtGD71ghLNnktgupxJXwI0uHDgjlVmMob47E1q7GVTX/ujlKu/uTh6YCo
+         tulIQueuSci59j7SjnNZ0R7EWxOPiK1vk/fqBepbJcHbNhIFF1v8gPyG9I48ypyhygQk
+         S5IA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDP47OLnvVtSH4PggN9AEqB31RJs5MhRiLJds2397q1XZfyeK6U+MfdjbOKBu+2+SWyME7dp/eUNWdEcFHBXsD7mA=@vger.kernel.org, AJvYcCVDlcuoxNrguD8/j+I3CgGJyl8wief7Ev4wka2+DnuqA1V8SG39nfokPi95JwkFGtLW0fbcbZw2+aO956Ic@vger.kernel.org, AJvYcCXW8iMGasXG5DDdLF8toM+hqw+V+5rEhSWzk2dHxbrWySW1tx2l/bxYs7hWq3HWS5VajpGLAQonV3+4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY3t/1Kc55WdcarXttJ2UPyVuzlvpa4hS8KTPJCFGBPa6rxW6K
+	OsOzDRL9hMMqAxGRp/Myhvmh9KUIwkIh/hLUrszdYtJP9jQ/SoeFtiKlVw+aGLk=
+X-Gm-Gg: ASbGnct8sRr/nHY1+eYkK1m2uZrILUxFY8B+ae2f+aHDSbCF8xESBjRwYeANdnvLNb7
+	01iNg9saRP3s8cdSDfnOr0M/65Ix+Bha4IBxcUTiqECtUmzAtc9X+g9+0CNuGclZS4jfbDKK3XE
+	EJGTiC++kXpdq/riDXLFXnYvt+OEDzATrJ5rbKd3IdIqFLV7BlqPynO4W1BqazWZhW/ZaiwTpJr
+	WxwkTZuvNUB1m7ICj+9C/x5qsT6355Oa6Dw4BZW1Jcq7QFG7O7rOel8HZ8C//RMUDC0DSx7X5J/
+	0XkaxkcBzhiWS0GCiNsDcmXAtxtvrb+ZisOdJ6d2+vP2OXtTRoEbq9t2LQ==
+X-Google-Smtp-Source: AGHT+IEy+KunYZY6G3NJ/O3g9KwQRhOSkcsMDPpxHa4PQpQ5+j41Tr7Cbb1/wezUefx8Iu9l8gEOBw==
+X-Received: by 2002:ad4:4444:0:b0:6e6:610d:a4e5 with SMTP id 6a1803df08f44-6e6610da767mr22842896d6.42.1739466479450;
+        Thu, 13 Feb 2025 09:07:59 -0800 (PST)
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65daff735sm11364986d6.105.2025.02.13.09.07.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 09:07:59 -0800 (PST)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c07351d2feso167913985a.3;
+        Thu, 13 Feb 2025 09:07:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVDeBjanXw/OUvd29dwSZFJlCgp2Zo9nhbOjFA15LfdnXxD8hn4mo/Kv/R2MvyFlHl4vOnN6O46nGbZ@vger.kernel.org, AJvYcCWi6ZeP8ErchvqgaAVqdrRWUBaMIGYUOFzIWUQwr5y11oDemVUs+qrScb7No4Xs2QxYgqWQsd3/t/Oh5K4j@vger.kernel.org, AJvYcCXZoP95oKT5J+Lv2rnITB8dR/y5r8bv3byKam1b6tfQL83jKVlw6mR8rcwffrvHh8vVjIaDqvhH/kSpRixQYIdmz1s=@vger.kernel.org
+X-Received: by 2002:ad4:5e8c:0:b0:6d8:9124:8795 with SMTP id
+ 6a1803df08f44-6e65bf20a4dmr62008406d6.1.1739466479037; Thu, 13 Feb 2025
+ 09:07:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: NOHZ tick-stop error: local softirq work is pending, handler
- #08!!! on Dell XPS 13 9360
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>,
- anna-maria@linutronix.de, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- mingo@kernel.org, tglx@linutronix.de, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Hayes Wang <hayeswang@realtek.com>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org
-References: <20250210124551.3687ae51@foxbook>
- <b0d55f4c-a078-42a0-a0fe-5823700f2837@molgen.mpg.de>
- <Z6n-dWDSxNCjROYV@localhost.localdomain>
- <10de7289-653f-43b1-ad46-2e8a0cd42724@molgen.mpg.de>
- <Z6tmbdl646D_UjrY@localhost.localdomain>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <Z6tmbdl646D_UjrY@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250209180616.160253-1-marek.vasut+renesas@mailbox.org> <20250209180616.160253-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250209180616.160253-2-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Feb 2025 18:07:46 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWBNtxfQiOK-KMsibdKHyr5mN9N+hv+c1ABaiEZSPbWjg@mail.gmail.com>
+X-Gm-Features: AWEUYZkos6MVmaIXRjsuTUlAMc2WWtF5h5-89JnjDflsSFca0ymwfS_ZVV3LF2E
+Message-ID: <CAMuHMdWBNtxfQiOK-KMsibdKHyr5mN9N+hv+c1ABaiEZSPbWjg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: Add boot phase tags marking to
+ Renesas R-Car Gen3 and Gen4
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Dear Frederic,
+On Sun, 9 Feb 2025 at 19:06, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> bootph-all as phase tag was added to dt-schema (dtschema/schemas/bootph.yaml)
+> to describe various node usage during boot phases with DT. Add bootph-all for
+> all nodes that are used in the bootloader on Renesas R-Car SoC.
+>
+> All SoC require CPG clock and its input clock, RST Reset, PFC pin control and
+> PRR ID register access during all stages of the boot process, those are marked
+> using bootph-all property, and so is the SoC bus node which contains these IP.
+>
+> Each board console UART is also marked as bootph-all to make it available in
+> all stages of the boot process.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.15.
 
-Thank you very much for your help.
+Gr{oetje,eeting}s,
 
-Am 11.02.25 um 16:02 schrieb Frederic Weisbecker:
-> Le Tue, Feb 11, 2025 at 12:57:33PM +0100, Paul Menzel a écrit :
+                        Geert
 
->> Am 10.02.25 um 14:26 schrieb Frederic Weisbecker:
->>> Le Mon, Feb 10, 2025 at 12:59:42PM +0100, Paul Menzel a écrit :
->>
->>>> Am 10.02.25 um 12:45 schrieb Michał Pecio:
->>>>
->>>>>>>>>>>> On Dell XPS 13 9360/0596KF, BIOS 2.21.0 06/02/2022, with Linux 6.9-rc2+
->>>>>
->>>>>> Just for the record, I am still seeing this with 6.14.0-rc1
->>>>>
->>>>> Is this a regression? If so, which versions were not affected?
->>>>
->>>> Unfortunately, I do not know. Right now, my logs go back until September
->>>> 2024.
->>>>
->>>>       Sep 22 13:08:04 abreu kernel: Linux version 6.11.0-07273-g1e7530883cd2 (build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 14.2.0-5) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.1) #12 SMP PREEMPT_DYNAMIC Sun Sep 22 09:57:36 CEST 2024
->>>>
->>>>> How hard to reproduce? Wasn't it during resume from hibernation?
->>>>
->>>> It’s not easy to reproduce, and I believe it’s not related with resuming
->>>> from hibernation (which I do not use) or ACPI S3 suspend. I think, I can
->>>> force it more, when having the USB-C adapter with only the network cable
->>>> plugged into it, and then running `sudo powertop --auto-tune`. But sometimes
->>>> it seems unrelated.
->>>>
->>>>> IRQ isuses may be a red herring, this code here is a busy wait under
->>>>> spinlock. There are a few of those, they cause various problems.
->>>>>
->>>>>                   if (xhci_handshake(&xhci->op_regs->status,
->>>>>                                  STS_RESTORE, 0, 100 * 1000)) {
->>>>>                            xhci_warn(xhci, "WARN: xHC restore state timeout\n");
->>>>> 			spin_unlock_irq(&xhci->lock);
->>>>>                            return -ETIMEDOUT;
->>>>>                   }
->>>>>
->>>>> This thing timing out may be close to the root cause of everything.
->>>>
->>>> Interesting. Hopefully the USB folks have an idea.
->>>
->>> Handler #08 is NET_RX. So something raised the NET_RX on some non-appropriate
->>> place, perhaps...
->>>
->>> Can I ask you one more trace dump?
->>>
->>> I need:
->>>
->>> echo 1 > /sys/kernel/tracing/events/irq/softirq_raise/enable
->>> echo 1 > /sys/kernel/tracing/options/stacktrace
->>>
->>> Unfortunately this will also involve a small patch:
->>>
->>> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
->>> index fa058510af9c..accd2eb8c927 100644
->>> --- a/kernel/time/tick-sched.c
->>> +++ b/kernel/time/tick-sched.c
->>> @@ -1159,6 +1159,9 @@ static bool report_idle_softirq(void)
->>>    	if (local_bh_blocked())
->>>    		return false;
->>> +	trace_printk("STOP\n");
->>> +	trace_dump_stack(0);
->>> +	tracing_off();
->>>    	pr_warn("NOHZ tick-stop error: local softirq work is pending, handler #%02x!!!\n",
->>>    		pending);
->>>    	ratelimit++;
->>
->> Thank you for your help. I applied the patch on top of 6.14-rc2, and was
->> able to reproduce the issue. Please find the Linux messages attached, and
->> the trace can be downloaded [1].
-> 
-> So here is the offender:
-> 
->   => __raise_softirq_irqoff
->   => __napi_schedule
->   => rtl8152_runtime_resume.isra.0
->   => rtl8152_resume
->   => usb_resume_interface.isra.0
->   => usb_resume_both
->   => __rpm_callback
->   => rpm_callback
->   => rpm_resume
->   => __pm_runtime_resume
->   => usb_autoresume_device
->   => usb_remote_wakeup
->   => hub_event
->   => process_one_work
->   => worker_thread
->   => kthread
->   => ret_from_fork
->   => ret_from_fork_asm
-> 
-> It is calling napi_schedule() from a non-interrupt. And since
-> ____napi_schedule() assumes to be called from an interrupt, it
-> raises the softirq accordingly without waking up ksoftirqd.
-> 
-> Can you try the following fix (untested, sorry...) ?
-> 
-> diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-> index 468c73974046..8f6ea4e7685c 100644
-> --- a/drivers/net/usb/r8152.c
-> +++ b/drivers/net/usb/r8152.c
-> @@ -8537,8 +8537,11 @@ static int rtl8152_runtime_resume(struct r8152 *tp)
->   		clear_bit(SELECTIVE_SUSPEND, &tp->flags);
->   		smp_mb__after_atomic();
->   
-> -		if (!list_empty(&tp->rx_done))
-> +		if (!list_empty(&tp->rx_done)) {
-> +			local_bh_disable();
->   			napi_schedule(&tp->napi);
-> +			local_bh_enable();
-> +		}
->   
->   		usb_submit_urb(tp->intr_urb, GFP_NOIO);
->   	} else {
-> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-> index 67964dc4db95..1bd730b881f0 100644
-> --- a/include/linux/lockdep.h
-> +++ b/include/linux/lockdep.h
-> @@ -619,6 +619,17 @@ do {									\
->   		     (!in_softirq() || in_irq() || in_nmi()));		\
->   } while (0)
->   
-> +/*
-> + * Assert to be either in hardirq or in serving softirq or with
-> + * softirqs disabled. Verifies a safe context to queue a softirq
-> + * with __raise_softirq_irqoff().
-> + */
-> +#define lockdep_assert_in_interrupt()				\
-> +do {								\
-> +	WARN_ON_ONCE(__lockdep_enabled && !in_interrupt());	\
-> +} while (0)
-> +
-> +
->   extern void lockdep_assert_in_softirq_func(void);
->   
->   #else
-> @@ -634,6 +645,7 @@ extern void lockdep_assert_in_softirq_func(void);
->   # define lockdep_assert_preemption_enabled() do { } while (0)
->   # define lockdep_assert_preemption_disabled() do { } while (0)
->   # define lockdep_assert_in_softirq() do { } while (0)
-> +# define lockdep_assert_in_interrupt() do { } while (0)
->   # define lockdep_assert_in_softirq_func() do { } while (0)
->   #endif
->   
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index c0021cbd28fc..80e415ccf2c8 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -4666,6 +4666,7 @@ static inline void ____napi_schedule(struct softnet_data *sd,
->   	struct task_struct *thread;
->   
->   	lockdep_assert_irqs_disabled();
-> +	lockdep_assert_in_interrupt();
->   
->   	if (test_bit(NAPI_STATE_THREADED, &napi->state)) {
->   		/* Paired with smp_mb__before_atomic() in
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-With this diff applied, I wasn’t able to reproduce the issue. Looks 
-promising. Thank you very much.
-
-Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
